@@ -249,7 +249,7 @@ int writeAnalyze( char *name, _image* im) {
   _openWriteImage(im, outputName);
   if( !im->fd ) {
     fprintf(stderr, "writeAnalyze: error: unable to open file \'%s\'\n", outputName);
-    if ( outputName != NULL ) ImageIO_free( outputName );
+    if ( outputName != nullptr ) ImageIO_free( outputName );
     return ImageIO_OPENING;
   }
 
@@ -257,9 +257,9 @@ int writeAnalyze( char *name, _image* im) {
   if ( res < 0 ) {
     fprintf(stderr, "writeAnalyze: error: unable to write header of \'%s\'\n",
 	    outputName);
-    if ( outputName != NULL ) ImageIO_free( outputName );
+    if ( outputName != nullptr ) ImageIO_free( outputName );
     ImageIO_close( im );
-    im->fd = NULL;
+    im->fd = nullptr;
     im->openMode = OM_CLOSE;
     return( res );
   }
@@ -278,7 +278,7 @@ int writeAnalyze( char *name, _image* im) {
 
   if( !im->fd ) {
     fprintf(stderr, "writeAnalyze: error: unable to open file \'%s\'\n", outputName);
-    if ( outputName != NULL ) ImageIO_free( outputName );
+    if ( outputName != nullptr ) ImageIO_free( outputName );
     return ImageIO_OPENING;
   }
 
@@ -287,14 +287,14 @@ int writeAnalyze( char *name, _image* im) {
     fprintf(stderr, "writeAnalyze: error: unable to write data in \'%s\'\n",
 	    outputName );
     ImageIO_close( im );
-    im->fd = NULL;
+    im->fd = nullptr;
     im->openMode = OM_CLOSE;
     return( res );
   }
 
-  if ( outputName != NULL ) ImageIO_free( outputName );
+  if ( outputName != nullptr ) ImageIO_free( outputName );
   ImageIO_close( im );
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
 
   return ( res );
@@ -469,7 +469,7 @@ int _readAnalyzeHeader( _image* im, const char* name,
        */
       im->nuser = 1 + 17 ;
       im->user = (char **) ImageIO_alloc(im->nuser * sizeof(char *));
-      for ( i=0; i<im->nuser; i++ ) im->user[i] = NULL;
+      for ( i=0; i<im->nuser; i++ ) im->user[i] = nullptr;
       i = 0 ;
       
       im->user[i] = (char *) ImageIO_alloc((strlen("Data lost in the Analyze -> ImageIO conversion:") + 1));
@@ -529,7 +529,7 @@ int _readAnalyzeHeader( _image* im, const char* name,
 
 
       /* header is read. close header file and open data file. */
-      if( name != NULL ) {
+      if( name != nullptr ) {
 
         std::size_t length = strlen(name) ;
 	char* data_filename = (char *) ImageIO_alloc(length+4) ;
@@ -841,7 +841,7 @@ int printAnalyzeHeader( const char* name )
 
 
   ImageIO_close(im);
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
   _freeImage(im);
   return( 1 );

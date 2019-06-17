@@ -103,10 +103,10 @@ struct S_or_D_array< Containee, Dynamic_dimension_tag, true >
 {
     typedef std::vector<Containee> Base;
     S_or_D_array(const int d)
-    : Base(d), fcc_(NULL)
+    : Base(d), fcc_(nullptr)
     {}
     S_or_D_array(const int d, const Containee & c)
-    : Base(d, c), fcc_(NULL)
+    : Base(d, c), fcc_(nullptr)
     {}
     void* fcc_;
     void*   for_compact_container() const { return fcc_; }

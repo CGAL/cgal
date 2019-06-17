@@ -36,27 +36,27 @@
 
 #    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(TYPE, VAR)               \
        static boost::thread_specific_ptr<TYPE> VAR##_ptr;                   \
-       if(VAR##_ptr.get() == NULL) {VAR##_ptr.reset(new TYPE());} \
+       if(VAR##_ptr.get() == nullptr) {VAR##_ptr.reset(new TYPE());} \
        TYPE& VAR =  * VAR##_ptr.get()
 
 #    define CGAL_STATIC_THREAD_LOCAL_VARIABLE(TYPE, VAR, ARG1)               \
        static boost::thread_specific_ptr<TYPE> VAR##_ptr;                   \
-       if(VAR##_ptr.get() == NULL) {VAR##_ptr.reset(new TYPE(ARG1));} \
+       if(VAR##_ptr.get() == nullptr) {VAR##_ptr.reset(new TYPE(ARG1));} \
        TYPE& VAR =  * VAR##_ptr.get()
 
 #    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(TYPE, VAR, ARG1, ARG2)       \
        static boost::thread_specific_ptr<TYPE> VAR##_ptr;                   \
-       if(VAR##_ptr.get() == NULL) {VAR##_ptr.reset(new TYPE(ARG1,ARG2));}  \
+       if(VAR##_ptr.get() == nullptr) {VAR##_ptr.reset(new TYPE(ARG1,ARG2));}  \
        TYPE& VAR =  * VAR##_ptr.get()
 
 #    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_3(TYPE, VAR, ARG1, ARG2, ARG3)    \
        static boost::thread_specific_ptr<TYPE> VAR##_ptr;                       \
-       if(VAR##_ptr.get() == NULL) {VAR##_ptr.reset(new TYPE(ARG1,ARG2,ARG3));} \
+       if(VAR##_ptr.get() == nullptr) {VAR##_ptr.reset(new TYPE(ARG1,ARG2,ARG3));} \
        TYPE& VAR =  * VAR##_ptr.get()
 
 #    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_4(TYPE, VAR, ARG1, ARG2, ARG3, ARG4)   \
        static boost::thread_specific_ptr<TYPE> VAR##_ptr;                            \
-       if(VAR##_ptr.get() == NULL) {VAR##_ptr.reset(new TYPE(ARG1,ARG2,ARG3,ARG4));} \
+       if(VAR##_ptr.get() == nullptr) {VAR##_ptr.reset(new TYPE(ARG1,ARG2,ARG3,ARG4));} \
        TYPE& VAR =  * VAR##_ptr.get()
 
 

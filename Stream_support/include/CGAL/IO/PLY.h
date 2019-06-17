@@ -341,7 +341,7 @@ public:
   {
     for (std::size_t i = 0; i < number_of_properties(); ++ i)
       if (m_properties[i]->name () == tag)
-        return (dynamic_cast<PLY_read_typed_list<Type>*>(m_properties[i]) != NULL);
+        return (dynamic_cast<PLY_read_typed_list<Type>*>(m_properties[i]) != nullptr);
     return false;
   }
     
@@ -350,15 +350,15 @@ public:
   {
     for (std::size_t i = 0; i < number_of_properties(); ++ i)
       if (m_properties[i]->name () == tag)
-        return (dynamic_cast<PLY_read_typed_number<Type>*>(m_properties[i]) != NULL);
+        return (dynamic_cast<PLY_read_typed_number<Type>*>(m_properties[i]) != nullptr);
     return false;
   }
   bool has_property (const char* tag, double)
   {
     for (std::size_t i = 0; i < number_of_properties(); ++ i)
       if (m_properties[i]->name () == tag)
-        return (dynamic_cast<PLY_read_typed_number<double>*>(m_properties[i]) != NULL
-                || dynamic_cast<PLY_read_typed_number<float>*>(m_properties[i]) != NULL);
+        return (dynamic_cast<PLY_read_typed_number<double>*>(m_properties[i]) != nullptr
+                || dynamic_cast<PLY_read_typed_number<float>*>(m_properties[i]) != nullptr);
 
     return false;
   }
@@ -371,7 +371,7 @@ public:
       {
         PLY_read_typed_number<Type>*
           property = dynamic_cast<PLY_read_typed_number<Type>*>(m_properties[i]);
-        CGAL_assertion (property != NULL);
+        CGAL_assertion (property != nullptr);
         t = property->buffer();
         return;
       }
@@ -385,7 +385,7 @@ public:
       {
         PLY_read_typed_list<Type>*
           property = dynamic_cast<PLY_read_typed_list<Type>*>(m_properties[i]);
-        CGAL_assertion (property != NULL);
+        CGAL_assertion (property != nullptr);
         t = property->buffer();
         return;
       }
@@ -398,11 +398,11 @@ public:
       {
         PLY_read_typed_number<double>*
           property_double = dynamic_cast<PLY_read_typed_number<double>*>(m_properties[i]);
-        if (property_double == NULL)
+        if (property_double == nullptr)
         {
           PLY_read_typed_number<float>*
             property_float = dynamic_cast<PLY_read_typed_number<float>*>(m_properties[i]);
-          CGAL_assertion (property_float != NULL);
+          CGAL_assertion (property_float != nullptr);
           t = property_float->buffer();
         }
         else

@@ -42,6 +42,7 @@
 #include <map>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <boost/next_prior.hpp>
 #include <boost/unordered_set.hpp>
 
 namespace CGAL {

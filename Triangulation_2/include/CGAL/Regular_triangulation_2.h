@@ -398,7 +398,7 @@ public:
                   typename std::iterator_traits<InputIterator>::value_type,
                   Weighted_point
               >
-          >::type* = NULL
+          >::type* = nullptr
 )
 #else
   template < class InputIterator >
@@ -519,7 +519,7 @@ public:
                 typename std::iterator_traits<InputIterator>::value_type,
                 std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
               >
-          >::type* = NULL
+          >::type* = nullptr
 )
   {return insert_with_info< std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);}
 
@@ -532,7 +532,7 @@ public:
               typename boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
               typename boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
             >
-          >::type* =NULL
+          >::type* =nullptr
 )
   {return insert_with_info< boost::tuple<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);}
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -1276,7 +1276,7 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
     {
       CGAL_precondition(dimension() >= 0);
       if(dimension() == 0) {
-        // in this case locate() oddly returns loc = NULL and li = 4,
+        // in this case locate() oddly returns loc = nullptr and li = 4,
         // so we work around it.
         loc = finite_vertex()->face();
         li = 0;
@@ -1703,7 +1703,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
     typename Hole::iterator cut_after(hit);
 
     // if tested vertex is c with respect to the vertex opposite
-    // to NULL neighbor,
+    // to nullptr neighbor,
     // stop at the before last face;
     hdone--;
     while(hit != hdone)

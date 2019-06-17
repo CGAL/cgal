@@ -102,7 +102,7 @@ centroid(InputIterator begin,
     points.push_back(s[0]);
     points.push_back(s[1]);
   } 
-  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+  return centroid(points.begin(),points.end(),k,(Point*)nullptr,tag);
 }// end centroid for 2D segment set with 0D tag
 
 // centroid for 2D segment set with 1D tag
@@ -166,7 +166,7 @@ centroid(InputIterator begin,
     points.push_back(triangle[1]);
     points.push_back(triangle[2]);
   }
-  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+  return centroid(points.begin(),points.end(),k,(Point*)nullptr,tag);
 
 } // end centroid of a 2D triangle set with 0D tag
 
@@ -195,7 +195,7 @@ centroid(InputIterator begin,
     segments.push_back(triangle[1],triangle[2]);
     segments.push_back(triangle[2],triangle[0]);
   }
-  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+  return centroid(segments.begin(),segments.end(),k,(Segment*)nullptr,tag);
 
 } // end centroid of a 2D triangle set with 1D tag
 
@@ -330,7 +330,7 @@ centroid(InputIterator begin,
     points.push_back(r[2]);
     points.push_back(r[3]);
   }
-  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+  return centroid(points.begin(),points.end(),k,(Point*)nullptr,tag);
 
 } // end centroid of a 2D rectangle set with 0D tag
 
@@ -360,7 +360,7 @@ centroid(InputIterator begin,
     segments.push_back(r[2],r[3]);
     segments.push_back(r[3],r[0]);
   }
-  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+  return centroid(segments.begin(),segments.end(),k,(Segment*)nullptr,tag);
 
 } // end centroid of a 2D rectangle set with 1D tag
 
@@ -488,7 +488,7 @@ centroid(InputIterator begin,
     points.push_back(triangle[1]);
     points.push_back(triangle[2]);
   }
-  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+  return centroid(points.begin(),points.end(),k,(Point*)nullptr,tag);
 
 } // end centroid of a 3D triangle set with 0D tag
 
@@ -517,7 +517,7 @@ centroid(InputIterator begin,
     segments.push_back(triangle[1],triangle[2]);
     segments.push_back(triangle[2],triangle[0]);
   }
-  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+  return centroid(segments.begin(),segments.end(),k,(Segment*)nullptr,tag);
 
 } // end centroid of a 3D triangle set with 1D tag
 
@@ -656,7 +656,7 @@ centroid(InputIterator begin,
     points.push_back(cuboid[6]);
     points.push_back(cuboid[7]);
   }
-  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+  return centroid(points.begin(),points.end(),k,(Point*)nullptr,tag);
 
 } // end centroid of a 3D cuboid set with 0D tag
 
@@ -694,7 +694,7 @@ centroid(InputIterator begin,
     segments.push_back(cuboid[4],cuboid[7]);
     segments.push_back(cuboid[5],cuboid[6]);
   }
-  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+  return centroid(segments.begin(),segments.end(),k,(Segment*)nullptr,tag);
 
 } // end centroid of a 3D cuboid set with 1D tag
 
@@ -823,7 +823,7 @@ struct Dispatch_centroid_3
   result_type operator()(InputIterator begin, InputIterator end, const K& k, Dim_tag tag) const
   {
     typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-    return centroid(begin, end, k,(Value_type*) NULL, tag);
+    return centroid(begin, end, k,(Value_type*) nullptr, tag);
   }
 };
 

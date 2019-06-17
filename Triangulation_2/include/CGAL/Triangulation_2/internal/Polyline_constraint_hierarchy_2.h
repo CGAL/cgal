@@ -109,7 +109,7 @@ public:
   struct Constraint_id {
     Vertex_list* second;
 
-    Constraint_id(): second(NULL) {}
+    Constraint_id(): second(nullptr) {}
 
     Constraint_id(Vertex_list* vl)
       : second(vl)
@@ -119,7 +119,7 @@ public:
 
     operator std::pair<std::pair<Vertex_handle, Vertex_handle>,Vertex_list*>()
     { 
-      if (second!=NULL){
+      if (second!=nullptr){
         return std::make_pair(std::make_pair(second->front().vertex(),
                                              second->back().vertex()),second);
       } 
@@ -164,7 +164,7 @@ public:
     Vertex_list*    enclosing;
     Vertex_it       pos;
   public:
-    Context() : enclosing(NULL) {}
+    Context() : enclosing(nullptr) {}
 
     Context(const Context& hc)
       : enclosing(hc.enclosing), pos(hc.pos)
@@ -470,7 +470,7 @@ std::size_t
 Polyline_constraint_hierarchy_2<T,Compare,Data>::
 number_of_enclosing_constraints(T va, T vb) const
 {
-  Context_list* hcl = NULL;
+  Context_list* hcl = nullptr;
   CGAL_triangulation_assertion_code( bool found = ) get_contexts(va,vb,hcl);
   CGAL_triangulation_assertion(found);
   return hcl->size();
@@ -1021,7 +1021,7 @@ template <class T, class Compare, class Data>
 void 
 Polyline_constraint_hierarchy_2<T,Compare,Data>::
 add_Steiner(T va, T vb, T vc){
-  Context_list* hcl=NULL;
+  Context_list* hcl=nullptr;
   if(!get_contexts(va,vb,hcl)) CGAL_triangulation_assertion(false);
 
   Context_list* hcl2 = new  Context_list;

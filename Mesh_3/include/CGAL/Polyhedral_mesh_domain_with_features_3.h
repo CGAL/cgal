@@ -131,7 +131,7 @@ public:
                                         Bare_polyline > Polyline_with_context;
   /// Constructors
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
-                                         CGAL::Random* p_rng = NULL)
+                                         CGAL::Random* p_rng = nullptr)
     : Base(p_rng) , borders_detected_(false)
   {
     stored_polyhedra.resize(1);
@@ -145,7 +145,7 @@ public:
 
   CGAL_DEPRECATED
   Polyhedral_mesh_domain_with_features_3(const std::string& filename,
-                                         CGAL::Random* p_rng = NULL)
+                                         CGAL::Random* p_rng = nullptr)
     : Base(p_rng) , borders_detected_(false)
   {
     load_from_file(filename.c_str());
@@ -156,7 +156,7 @@ public:
   // constructor with `std::string`.
   CGAL_DEPRECATED
   Polyhedral_mesh_domain_with_features_3(const char* filename,
-                                         CGAL::Random* p_rng = NULL)
+                                         CGAL::Random* p_rng = nullptr)
     : Base(p_rng) , borders_detected_(false)
   {
     load_from_file(filename);
@@ -165,7 +165,7 @@ public:
 
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
                                          const Polyhedron& bounding_p,
-                                         CGAL::Random* p_rng = NULL)
+                                         CGAL::Random* p_rng = nullptr)
     : Base(p_rng) , borders_detected_(false)
   {
     stored_polyhedra.resize(2);
@@ -185,7 +185,7 @@ public:
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_with_features_3(InputPolyhedraPtrIterator begin,
                                          InputPolyhedraPtrIterator end,
-                                         CGAL::Random* p_rng = NULL)
+                                         CGAL::Random* p_rng = nullptr)
     : Base(p_rng) , borders_detected_(false)
   {
     stored_polyhedra.reserve(std::distance(begin, end));
@@ -202,7 +202,7 @@ public:
   Polyhedral_mesh_domain_with_features_3(InputPolyhedraPtrIterator begin,
                                          InputPolyhedraPtrIterator end,
                                          const Polyhedron& bounding_polyhedron,
-                                         CGAL::Random* p_rng = NULL)
+                                         CGAL::Random* p_rng = nullptr)
     : Base(p_rng) , borders_detected_(false)
   {
     stored_polyhedra.reserve(std::distance(begin, end)+1);

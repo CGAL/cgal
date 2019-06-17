@@ -95,7 +95,7 @@ class Forward_circulator_ptrbase         // forward circulator.
         typedef Size                        size_type;
         typedef T*                          pointer;
         typedef T&                          reference;
-        Forward_circulator_ptrbase()        : _ptr(NULL) {}
+        Forward_circulator_ptrbase()        : _ptr(nullptr) {}
         Forward_circulator_ptrbase(void* p) : _ptr(p) {}
 };
 template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>
@@ -110,7 +110,7 @@ class Bidirectional_circulator_ptrbase   // bidirectional circulator.
         typedef Size                        size_type;
         typedef T*                          pointer;
         typedef T&                          reference;
-        Bidirectional_circulator_ptrbase()        : _ptr(NULL) {}
+        Bidirectional_circulator_ptrbase()        : _ptr(nullptr) {}
         Bidirectional_circulator_ptrbase(void* p) : _ptr(p) {}
 };
 template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>
@@ -125,7 +125,7 @@ class Random_access_circulator_ptrbase   // random access circulator.
         typedef Size                        size_type;
         typedef T*                          pointer;
         typedef T&                          reference;
-        Random_access_circulator_ptrbase()        : _ptr(NULL) {}
+        Random_access_circulator_ptrbase()        : _ptr(nullptr) {}
         Random_access_circulator_ptrbase(void* p) : _ptr(p) {}
 };
 

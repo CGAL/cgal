@@ -4056,11 +4056,11 @@ private:
     /*
 #ifndef CGAL_DISABLE_AM_CODE
     // code added in previous version by Andreas + Monique -- start
-    Site_2 const *pp1 = NULL;
+    Site_2 const *pp1 = nullptr;
     if ( end_pt ) pp1 = &p;
     else if ( end_qt ) pp1 = &q;
     else if ( end_rt ) pp1 = &r;
-    if ( pp1 != NULL ) {
+    if ( pp1 != nullptr ) {
       // As the Voronoi circle and the segment t touch in p1,
       // it is enough to check that the center and the non-touching
       // point of the segment

@@ -93,7 +93,7 @@ public:
   // Access the corresponding static global allocator.
   static MemoryPool<T,nObjects>& global_allocator() {
 #if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
-    if(memPool_ptr.get() == NULL) {memPool_ptr.reset(new Self());}
+    if(memPool_ptr.get() == nullptr) {memPool_ptr.reset(new Self());}
     Self& memPool =  * memPool_ptr.get();
 #endif
     return memPool;

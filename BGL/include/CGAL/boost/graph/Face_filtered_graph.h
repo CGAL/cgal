@@ -370,12 +370,12 @@ struct Face_filtered_graph
     {}
 
     Is_simplex_valid()
-      :adapter(NULL)
+      :adapter(nullptr)
     {}
     template<typename Simplex>
     bool operator()(Simplex s)
     {
-      CGAL_assertion(adapter!=NULL);
+      CGAL_assertion(adapter!=nullptr);
       return (adapter->is_in_cc(s));
     }
     const Self* adapter;

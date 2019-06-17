@@ -76,7 +76,7 @@ public:
 
     /* Constructor */
     _Node(const key_compare& less, const value_compare& vless, tree_type *const t)
-        : parent(NULL), less(less), vless(vless), tree(t) {}
+        : parent(nullptr), less(less), vless(vless), tree(t) {}
 
     /* Destructor */
     virtual ~_Node() {}
@@ -141,8 +141,8 @@ public:
     typedef typename _node_type::tree_type      tree_type;
 
     _Leaf (const key_compare& less, const value_compare& vless, tree_type *const t,
-           _leaf_type *const prev = NULL,
-           _leaf_type *const next = NULL)
+           _leaf_type *const prev = nullptr,
+           _leaf_type *const next = nullptr)
         : _node_type (less, vless, t), prev (prev), next (next) {
         std::memset (values, 0, 2*sizeof(value_type*));
     }
@@ -156,10 +156,10 @@ public:
     virtual ~_Leaf() {
         delete values[0];
         delete values[1];
-        values[0] = NULL;
-        values[1] = NULL;
-        prev = NULL;
-        next = NULL;
+        values[0] = nullptr;
+        values[1] = nullptr;
+        prev = nullptr;
+        next = nullptr;
     }
 
     virtual bool isLeaf() const {
@@ -171,10 +171,10 @@ public:
     }
 
     void add(const key_type& k, const mapped_type& v) {
-        if (NULL == values[0]) {
+        if (nullptr == values[0]) {
             // empty
             values[0] = new value_type(k, v);
-        } else if (NULL == values[1]) {
+        } else if (nullptr == values[1]) {
             // Not full;
             if (this->less(k, values[0]->first)) {
                 values[1] = values[0];
@@ -189,30 +189,30 @@ public:
         } else {
             _leaf_type* split
                 = new _leaf_type(this->less, this->vless, this->tree, this, next);
-            if (NULL != next) next->prev = split;
+            if (nullptr != next) next->prev = split;
             next = split;
             if (this->less(k, values[0]->first)) {
                 // k, [0], [1]
                 split->values[0] = values[0];
                 split->values[1] = values[1];
                 values[0] = new value_type(k, v);
-                values[1] = NULL;
+                values[1] = nullptr;
             } else if (this->less(k, values[1]->first)) {
                 // [0], k, [1]
                 split->values[0] = new value_type(k, v);
                 split->values[1] = values[1];
-                values[1] = NULL;
+                values[1] = nullptr;
             } else {
                 split->values[0] = values[1];
                 split->values[1] = new value_type(k, v);
-                values[1] = NULL;
+                values[1] = nullptr;
             }
 
             // Update pointer to max leaf (for reverse iterator)
             if (this->tree->m_max == this) this->tree->m_max = split;
 
             // Create new parent node current node is not root
-            if (NULL == this->parent) {
+            if (nullptr == this->parent) {
                 this->setParent(new _internal_type(this->less, this->vless, this->tree));
                 this->tree->root = this->parent;
             }
@@ -223,14 +223,14 @@ public:
 
     virtual const mapped_type* minAbove(const key_type& x) const {
         if ( !this->less(x, values[0]->first) && !this->less(values[0]->first, x) // equals
-                && NULL != values[1]) {
+                && nullptr != values[1]) {
             return &values[1]->second;
         }
-        return NULL;
+        return nullptr;
     }
 
     virtual const mapped_type* minV() const {
-        return (NULL == values[1]) ? &values[0]->second : &(std::min)(values[0]->second, values[1]->second, this->vless);
+        return (nullptr == values[1]) ? &values[0]->second : &(std::min)(values[0]->second, values[1]->second, this->vless);
     }
 
 protected:
@@ -239,7 +239,7 @@ protected:
         os << "\t" << "{rank=same; \"" << &(values[0]->first) << "\"--\"" << &(values[0]->second) << "\" [style=dotted];}" << std::endl;
         os << "\t\"" << &(values[0]->first) << "\"--\"" << values[0]->first << "\";" << std::endl;
         os << "\t\"" << &(values[0]->second) << "\"--\"" << values[0]->second << "\";" << std::endl;
-        if (NULL != values[1]) {
+        if (nullptr != values[1]) {
             os << "\t\"" << this << "\"--\"" << &(values[1]->first) << "\" [style=bold];" << std::endl;
             os << "\t" << "{rank=same; \"" << &(values[1]->first) << "\"--\"" << &(values[1]->second) << "\" [style=dotted];}" << std::endl;
             os << "\t" << "{rank=same; \"" << &(values[0]->second) << "\"--\"" << &(values[1]->first) << "\" [color=white]; rankdir=LR;}" << std::endl;
@@ -284,19 +284,19 @@ public:
     }
 
     virtual ~_Internal() {
-        keys[0] = NULL;
-        keys[1] = NULL;
+        keys[0] = nullptr;
+        keys[1] = nullptr;
 
         delete children[0];
-        children[0] = NULL;
+        children[0] = nullptr;
         delete children[1];
-        children[1] = NULL;
+        children[1] = nullptr;
         delete children[2];
-        children[2] = NULL;
+        children[2] = nullptr;
 
-        vMin[0] = NULL;
-        vMin[1] = NULL;
-        vMin[2] = NULL;
+        vMin[0] = nullptr;
+        vMin[1] = nullptr;
+        vMin[2] = nullptr;
     }
 
     virtual bool isLeaf() const {
@@ -305,7 +305,7 @@ public:
 
     virtual _leaf_type* leafNode(const key_type& k) {
         int i = 0;
-        for (i = 0; (i < 2) && (NULL != keys[i]); i++) {
+        for (i = 0; (i < 2) && (nullptr != keys[i]); i++) {
             if (this->less(k, *(keys[i]))) return children[i]->leafNode(k);
         }
         return children[i]->leafNode(k);
@@ -340,7 +340,7 @@ public:
     void splitMe(const key_type *const k,
                  _node_type *const left,
                  _node_type *const right) {
-        if (keys[0] == NULL) {
+        if (keys[0] == nullptr) {
             // New root
             keys[0] = k;
             children[0] = left;
@@ -349,7 +349,7 @@ public:
             children[1] = right;
             right->setParent(this);
             vMin[1] = right->minV();
-        } else if (keys[1] == NULL) {
+        } else if (keys[1] == nullptr) {
             // not full
             if (left == children[0]) {
                 // split 0th
@@ -383,7 +383,7 @@ public:
                 // Split 0th
                 split->keys[0] = keys[1];
                 toPromote = keys[0];
-                keys[1] = NULL;
+                keys[1] = nullptr;
                 keys[0] = k;
 
                 split->children[1] = children[2];
@@ -400,13 +400,13 @@ public:
 
                 vMin[0] = children[0]->minV();
 
-                children[2] = NULL;
-                vMin[2] = NULL;
+                children[2] = nullptr;
+                vMin[2] = nullptr;
             } else if (left == children[1]) {
                 // Split 1st
                 split->keys[0] = keys[1];
                 toPromote = k;
-                keys[1] = NULL;
+                keys[1] = nullptr;
 
                 split->children[1] = children[2];
                 split->vMin[1] = split->children[1]->minV();
@@ -418,13 +418,13 @@ public:
 
                 vMin[1] = children[1]->minV();
 
-                children[2] = NULL;
-                vMin[2] = NULL;
+                children[2] = nullptr;
+                vMin[2] = nullptr;
             } else {
                 // Split last
                 split->keys[0] = k;
                 toPromote = keys[1];
-                keys[1] = NULL;
+                keys[1] = nullptr;
 
                 split->children[1] = right;
                 split->vMin[1] = split->children[1]->minV();
@@ -434,11 +434,11 @@ public:
                 split->vMin[0] = split->children[0]->minV();
                 split->children[0]->setParent(split);
 
-                children[2] = NULL;
-                vMin[2] = NULL;
+                children[2] = nullptr;
+                vMin[2] = nullptr;
             }
 
-            if (NULL == this->parent) {
+            if (nullptr == this->parent) {
                 this->setParent(new _internal_type(this->less, this->vless, this->tree));
                 this->tree->root = this->parent;
             }
@@ -452,18 +452,18 @@ public:
             // x in left tree
             const mapped_type* minFromCh = children[0]->minAbove(x);
             const mapped_type* res =
-                (NULL == minFromCh) ?
+                (nullptr == minFromCh) ?
                 vMin[1] :
                 &(std::min) (*children[0]->minAbove(x), *vMin[1], this->vless);
-            if (vMin[2] != NULL)
+            if (vMin[2] != nullptr)
                 res = &(std::min) (*res, *vMin[2], this->vless);
             return res;
-        } else if (NULL == keys[1] || this->less(x, *keys[1])) {
+        } else if (nullptr == keys[1] || this->less(x, *keys[1])) {
             // x in middle
             const mapped_type* res = children[1]->minAbove(x);
-            if (NULL == res) return vMin[2];
+            if (nullptr == res) return vMin[2];
 
-            if (vMin[2] != NULL)
+            if (vMin[2] != nullptr)
                 res = &(std::min) (*res, *vMin[2], this->vless);
             return res;
         } else {
@@ -473,7 +473,7 @@ public:
 
     virtual const mapped_type* minV() const {
         const mapped_type* res = &(std::min)(*vMin[0], *vMin[1], this->vless);
-        if (NULL != children[2])
+        if (nullptr != children[2])
             res = &(std::min)(*res, *vMin[2], this->vless);
         return res;
     }
@@ -482,21 +482,21 @@ protected:
     virtual void print(std::ostream& os, const size_t level) const {
         os << "\t\"" << this << "\"--\"" << children[0] << "\";" << std::endl;
         os << "\t\"" << this << "\"--\"" << children[1] << "\";" << std::endl;
-        if (NULL != children[2])
+        if (nullptr != children[2])
             os << "\t\"" << this << "\"--\"" << children[2] << "\";" << std::endl;
 
         children[0]->print(os, level+1);
         children[1]->print(os, level+1);
-        if (NULL != children[2])
+        if (nullptr != children[2])
             children[2]->print(os, level+1);
 
         os << "\t\"" << this << "\"--\"" << vMin[0] << "\" [style=dashed,label=vMin0];" << std::endl;
         os << "\t\"" << this << "\"--\"" << vMin[1] << "\" [style=dashed,label=vMin1];" << std::endl;
-        if (NULL != vMin[2])
+        if (nullptr != vMin[2])
             os << "\t\"" << this << "\"--\"" << vMin[2] << "\" [style=dashed,label=vMin2];" << std::endl;
 
         os << "\t\"" << this << "\"--\"" << keys[0] << "\" [style=dotted,label=keys0];" << std::endl;
-        if (NULL != keys[1])
+        if (nullptr != keys[1])
             os << "\t\"" << this << "\"--\"" << keys[1] << "\" [style=dotted,label=keys1];" << std::endl;
     }
 
@@ -514,18 +514,18 @@ public:
     typedef typename  leaf_type::value_type           value_type;
     typedef           _Iterator<Key, T, Comp, VComp>  iterator_type;
 
-    _Iterator(leaf_type* start = NULL) : cell (0), leaf(start) {}
+    _Iterator(leaf_type* start = nullptr) : cell (0), leaf(start) {}
     _Iterator(leaf_type* start, const Key& key) : cell(0), leaf(start) {
         if (start->values[0]->first != key) {
             if (!start->values[1] || start->values[1]->first != key)
-                leaf = NULL;
+                leaf = nullptr;
             else
                 cell = 1;
         }
     }
     ~_Iterator() {
         cell = 0;
-        leaf = NULL;
+        leaf = nullptr;
     }
 
     value_type& operator*() const {
@@ -538,9 +538,9 @@ public:
 
     iterator_type& operator++() {
         cell++;
-        if (NULL == leaf) return *this;
+        if (nullptr == leaf) return *this;
 
-        if (cell > 1 || NULL == leaf->values[cell]) {
+        if (cell > 1 || nullptr == leaf->values[cell]) {
             cell = 0;
             leaf = leaf->next;
         }
@@ -576,18 +576,18 @@ public:
     typedef typename  leaf_type::value_type           value_type;
     typedef           _RIterator<Key, T, Comp, VComp> iterator_type;
 
-    _RIterator(_Leaf<Key, T, Comp, VComp>* start = NULL) : cell (1), leaf(start) {
-        if (NULL == start) return;
+    _RIterator(_Leaf<Key, T, Comp, VComp>* start = nullptr) : cell (1), leaf(start) {
+        if (nullptr == start) return;
 
-        if (NULL == leaf->values[cell]) {
+        if (nullptr == leaf->values[cell]) {
             cell--;
-            if (NULL == leaf->values[cell]) leaf = NULL;
+            if (nullptr == leaf->values[cell]) leaf = nullptr;
         }
     }
 
     ~_RIterator() {
         cell = 0;
-        leaf = NULL;
+        leaf = nullptr;
     }
 
     value_type& operator*() const {
@@ -599,15 +599,15 @@ public:
     }
 
     iterator_type& operator++() {
-        if (NULL == leaf) return *this;
+        if (nullptr == leaf) return *this;
         if (cell == 1) {
             cell--;
         } else if (cell == 0) {
             cell = 1;
             leaf = leaf->prev;
-            if (NULL == leaf) return *this;
+            if (nullptr == leaf) return *this;
 
-            if (NULL == leaf->values[cell]) cell--;
+            if (nullptr == leaf->values[cell]) cell--;
         }
         return *this;
     }

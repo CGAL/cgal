@@ -90,7 +90,7 @@ Creates an empty regular triangulation, possibly specifying a traits class
 must be provided if concurrency is enabled.
 */
 Regular_triangulation_3(const Traits & traits = Traits(),
-                        Lock_data_structure *lock_ds = NULL);
+                        Lock_data_structure *lock_ds = nullptr);
 
 /*!
 Copy constructor. 
@@ -108,7 +108,7 @@ If parallelism is enabled, the points will be inserted in parallel.
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last,
                          const Traits& traits = Traits(),
-                         Lock_data_structure *lock_ds = NULL);
+                         Lock_data_structure *lock_ds = nullptr);
 
 /*! 
 Same as before, with last two parameters in reverse order.
@@ -151,12 +151,12 @@ is true, otherwise it is false (and the point is not inserted). In any case,
 the locked cells are not unlocked by the function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Weighted_point & p, 
-Cell_handle start = Cell_handle(), bool *could_lock_zone = NULL); 
+Cell_handle start = Cell_handle(), bool *could_lock_zone = nullptr); 
 
 /*!
 Same as above but uses `hint` as a starting place for the search. 
 */ 
-Vertex_handle insert(const Weighted_point & p, Vertex_handle hint, bool *could_lock_zone = NULL); 
+Vertex_handle insert(const Weighted_point & p, Vertex_handle hint, bool *could_lock_zone = nullptr); 
 
 /*!
 Inserts the weighted point `p` in the triangulation and returns the corresponding
@@ -165,7 +165,7 @@ parameter the return values of a previous location query. See description of
 `Triangulation_3::locate()`. 
 */ 
 Vertex_handle insert(const Weighted_point & p, Locate_type lt, 
-Cell_handle loc, int li, int lj, bool *could_lock_zone = NULL); 
+Cell_handle loc, int li, int lj, bool *could_lock_zone = nullptr); 
 
 /*!
 Inserts the weighted points in the range `[first,last)`. 
@@ -477,9 +477,9 @@ find_conflicts(const Weighted_point p, Cell_handle c,
 OutputIteratorBoundaryFacets bfit, 
 OutputIteratorCells cit, 
 OutputIteratorInternalFacets ifit,
-bool *could_lock_zone = NULL,
-const Facet *this_facet_must_be_in_the_cz = NULL,
-bool *the_facet_is_in_its_cz = NULL);
+bool *could_lock_zone = nullptr,
+const Facet *this_facet_must_be_in_the_cz = nullptr,
+bool *the_facet_is_in_its_cz = nullptr);
 
 /*!
 \deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 

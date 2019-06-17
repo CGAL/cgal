@@ -168,7 +168,7 @@ public:
   ExprRep();
   /// virtual destructor for this base class
   virtual ~ExprRep() {
-    if (nodeInfo != NULL) // This check is only for optimization.
+    if (nodeInfo != nullptr) // This check is only for optimization.
       delete nodeInfo;
   }
   //@}

@@ -61,7 +61,7 @@ class Compact_mesh_cell_base_3_base
 protected:
   Compact_mesh_cell_base_3_base()
     : bits_(0)
-    , weighted_circumcenter_(NULL)
+    , weighted_circumcenter_(nullptr)
   {}
 
 public:
@@ -104,10 +104,10 @@ public:
     return ( (bits_ & (1 << facet)) != 0 );
   }
 
-  /// Precondition weighted_circumcenter_ == NULL
+  /// Precondition weighted_circumcenter_ == nullptr
   void try_to_set_circumcenter(Point_3 *cc) const
   {
-    CGAL_precondition(weighted_circumcenter_ == NULL);
+    CGAL_precondition(weighted_circumcenter_ == nullptr);
     weighted_circumcenter_ = cc;
   }
 
@@ -138,7 +138,7 @@ protected:
   Compact_mesh_cell_base_3_base()
   {
     bits_ = 0;
-    weighted_circumcenter_ = NULL;
+    weighted_circumcenter_ = nullptr;
   }
 
 public:
@@ -187,11 +187,11 @@ public:
     return ( (bits_ & char(1 << facet)) != 0 );
   }
 
-  /// If the circumcenter is already set (weighted_circumcenter_ != NULL),
+  /// If the circumcenter is already set (weighted_circumcenter_ != nullptr),
   /// this function "deletes" cc
   void try_to_set_circumcenter(Point_3 *cc) const
   {
-    if (weighted_circumcenter_.compare_and_swap(cc, NULL) != NULL)
+    if (weighted_circumcenter_.compare_and_swap(cc, nullptr) != nullptr)
       delete cc;
   }
 
@@ -255,7 +255,7 @@ public:
   {
     if (weighted_circumcenter_) {
       delete weighted_circumcenter_;
-      weighted_circumcenter_ = NULL;
+      weighted_circumcenter_ = nullptr;
     }
   }
 
@@ -337,7 +337,7 @@ public:
 
   ~Compact_mesh_cell_base_3()
   {
-    if(weighted_circumcenter_ != NULL){
+    if(weighted_circumcenter_ != nullptr){
       delete weighted_circumcenter_;
     }
   }
@@ -449,7 +449,7 @@ public:
 
 
   Point_iterator hidden_points_begin() const { return hidden_points_end(); }
-  Point_iterator hidden_points_end() const { return NULL; }
+  Point_iterator hidden_points_end() const { return nullptr; }
   void hide_point (const Point&) const { }
 
   // We must override the functions that modify the vertices.
@@ -483,7 +483,7 @@ public:
   {
     CGAL_static_assertion((boost::is_same<Point_3,
       typename GT_::Construct_weighted_circumcenter_3::result_type>::value));
-    if (weighted_circumcenter_ == NULL) {
+    if (weighted_circumcenter_ == nullptr) {
       this->try_to_set_circumcenter(
         new Point_3(gt.construct_weighted_circumcenter_3_object()
                         (this->vertex(0)->point(),

@@ -522,7 +522,7 @@ public:
     }
     else if (this->_orient == COLLINEAR)
     {
-      CGAL_assertion (this->_extra_data_P != NULL);
+      CGAL_assertion (this->_extra_data_P != nullptr);
 
       // In this case the equation of the supporting line is given by the
       // extra data structure.

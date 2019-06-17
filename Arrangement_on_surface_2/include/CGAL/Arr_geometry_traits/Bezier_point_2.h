@@ -108,7 +108,7 @@ private:
     Originator (const Curve_2& c, const Algebraic& t) :
       _curve (c),
       _xid (0),
-      p_t (NULL)
+      p_t (nullptr)
     {
       set_parameter (t);
     }
@@ -118,7 +118,7 @@ private:
                 const Algebraic& t) :
       _curve (c),
       _xid (xid),
-      p_t (NULL)
+      p_t (nullptr)
     {
       set_parameter (t);
     }
@@ -128,7 +128,7 @@ private:
       _curve (c),
       _xid (0),
       _bpb (bpb),
-      p_t (NULL)
+      p_t (nullptr)
     {}
 
     /*! Constructor with bounding information and no exact representation. */
@@ -137,7 +137,7 @@ private:
       _curve (c),
       _xid (xid),
       _bpb (bpb),
-      p_t (NULL)
+      p_t (nullptr)
     {}
 
     /*! Copy constructor. */
@@ -145,17 +145,17 @@ private:
       _curve (other._curve),
       _xid (other._xid),
       _bpb (other._bpb),
-      p_t (NULL)
+      p_t (nullptr)
     {
       // Deep copy of lazy instantiation
-      if (other.p_t != NULL)
+      if (other.p_t != nullptr)
         p_t = new Algebraic (*(other.p_t));
     }
 
     /*! Destructor. */
     ~Originator() 
     {
-      if (p_t != NULL)
+      if (p_t != nullptr)
         delete p_t;
     }
 
@@ -167,9 +167,9 @@ private:
         return (*this);
 
       // Free memory, if necessary.
-      if (p_t != NULL)
+      if (p_t != nullptr)
         delete p_t;
-      p_t = NULL;
+      p_t = nullptr;
 
       // Copy the data members.
       _curve = other._curve;
@@ -177,7 +177,7 @@ private:
       _bpb = other._bpb;
 
       // Deep copy of lazy instantiation
-      if (other.p_t != NULL)
+      if (other.p_t != nullptr)
         p_t = new Algebraic (*(other.p_t));
 
       return (*this);
@@ -211,7 +211,7 @@ private:
     /*! Check if the algberaic parameter is available. */
     bool has_parameter () const
     {
-      return (p_t != NULL);
+      return (p_t != nullptr);
     }
 
     /*! 
@@ -220,7 +220,7 @@ private:
      */
     const Algebraic& parameter () const
     {
-      CGAL_precondition (p_t != NULL);
+      CGAL_precondition (p_t != nullptr);
       return (*p_t);
     }
 
@@ -230,7 +230,7 @@ private:
      */
     void set_parameter (const Algebraic& t)
     {
-      CGAL_precondition (p_t == NULL);
+      CGAL_precondition (p_t == nullptr);
       
       p_t = new Algebraic (t);
 
@@ -305,28 +305,28 @@ public:
 
   /*! Default constructor. */
   _Bezier_point_2_rep () :
-    p_alg_x (NULL),
-    p_rat_x (NULL),
-    p_alg_y (NULL),
-    p_rat_y (NULL)
+    p_alg_x (nullptr),
+    p_rat_x (nullptr),
+    p_alg_y (nullptr),
+    p_rat_y (nullptr)
   {}
 
   /*! Copy constructor. */
   _Bezier_point_2_rep (const Self& pt) :
-    p_alg_x (NULL),
-    p_rat_x (NULL),
-    p_alg_y (NULL),
-    p_rat_y (NULL),
+    p_alg_x (nullptr),
+    p_rat_x (nullptr),
+    p_alg_y (nullptr),
+    p_rat_y (nullptr),
     _origs (pt._origs),
     _bbox (pt._bbox)
   {
-    if (pt.p_alg_x != NULL)
+    if (pt.p_alg_x != nullptr)
       p_alg_x = new Algebraic (*(pt.p_alg_x));
-    if (pt.p_rat_x != NULL)
+    if (pt.p_rat_x != nullptr)
       p_rat_x = new Rational (*(pt.p_rat_x));
-    if (pt.p_alg_y != NULL)
+    if (pt.p_alg_y != nullptr)
       p_alg_y = new Algebraic (*(pt.p_alg_y));
-    if (pt.p_rat_y != NULL)
+    if (pt.p_rat_y != nullptr)
       p_rat_y = new Rational (*(pt.p_rat_y));
   }
 
@@ -336,8 +336,8 @@ public:
    * \param y The exact y-coordinate.
    */
   _Bezier_point_2_rep (const Algebraic& x, const Algebraic& y, bool) : 
-    p_rat_x (NULL),
-    p_rat_y (NULL)
+    p_rat_x (nullptr),
+    p_rat_y (nullptr)
   {
     p_alg_x = new Algebraic (x);
     p_alg_y = new Algebraic (y);
@@ -407,13 +407,13 @@ public:
   /*! Destructor. */
   ~_Bezier_point_2_rep ()
   {
-    if (p_rat_x != NULL)
+    if (p_rat_x != nullptr)
       delete p_rat_x;
-    if (p_alg_x != NULL)
+    if (p_alg_x != nullptr)
       delete p_alg_x;
-    if (p_rat_y != NULL)
+    if (p_rat_y != nullptr)
       delete p_rat_y;
-    if (p_alg_y != NULL)
+    if (p_alg_y != nullptr)
       delete p_alg_y;
   }
 
@@ -423,24 +423,24 @@ public:
     if (this == &pt)
       return (*this);
 
-    if (p_rat_x != NULL)
+    if (p_rat_x != nullptr)
       delete p_rat_x;
-    if (p_alg_x != NULL)
+    if (p_alg_x != nullptr)
       delete p_alg_x;
-    if (p_rat_y != NULL)
+    if (p_rat_y != nullptr)
       delete p_rat_y;
-    if (p_alg_y != NULL)
+    if (p_alg_y != nullptr)
       delete p_alg_y;
-    p_alg_x = p_rat_x = p_alg_y = p_rat_y = NULL;
+    p_alg_x = p_rat_x = p_alg_y = p_rat_y = nullptr;
 
 
-    if (pt.p_alg_x != NULL)
+    if (pt.p_alg_x != nullptr)
       p_alg_x = new Algebraic (*(pt.p_alg_x));
-    if (pt.p_rat_x != NULL)
+    if (pt.p_rat_x != nullptr)
       p_rat_x = new Rational (*(pt.p_rat_x));
-    if (pt.p_alg_y != NULL)
+    if (pt.p_alg_y != nullptr)
       p_alg_y = new Algebraic (*(pt.p_alg_y));
-    if (pt.p_rat_y != NULL)
+    if (pt.p_rat_y != nullptr)
       p_rat_y = new Rational (*(pt.p_rat_y));
   
     _origs = pt._origs;
@@ -452,13 +452,13 @@ public:
   /*! Check if the point is exactly computed. */
   inline bool is_exact () const
   {
-    return (p_alg_x != NULL && p_alg_y != NULL);
+    return (p_alg_x != nullptr && p_alg_y != nullptr);
   }
 
   /*! Check if the point has rational coordinates. */
   inline bool is_rational () const
   {
-    return (p_rat_x != NULL && p_rat_y != NULL);
+    return (p_rat_x != nullptr && p_rat_y != nullptr);
   }
 
   /*!
@@ -1060,8 +1060,8 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
 template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
         (const Curve_2& B, const Algebraic& t0) :
-  p_rat_x (NULL),
-  p_rat_y (NULL)
+  p_rat_x (nullptr),
+  p_rat_y (nullptr)
 {
   // Create the originator pair <B(t), t0>.
   // Note that this constructor also takes care of the Bez_bound
@@ -1095,8 +1095,8 @@ template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
         (const Curve_2& B, unsigned int xid,
          const Algebraic& t0) :
-  p_rat_x (NULL),
-  p_rat_y (NULL)
+  p_rat_x (nullptr),
+  p_rat_y (nullptr)
 {
   // Create the originator pair <B(t), t0>.
   // Note that this constructor also takes care of the Bez_bound

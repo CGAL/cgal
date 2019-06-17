@@ -69,7 +69,7 @@ private:
     Set* m_set;
     
   public:
-    Is_face_selected(Set* set = NULL) : m_set (set) { }
+    Is_face_selected(Set* set = nullptr) : m_set (set) { }
 
     inline friend value_type get (const Is_face_selected& pm, const key_type& k)
     {
