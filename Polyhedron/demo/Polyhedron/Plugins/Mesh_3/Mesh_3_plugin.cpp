@@ -132,6 +132,7 @@ private:
   Messages_interface* msg;
   QMessageBox* message_box_;
   Scene_item* source_item_;
+  QString source_item_name_;
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;
   bool as_facegraph;
@@ -212,7 +213,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
     }
   }
   Scene_item* item = nullptr;
-  bool more_than_one_item = false;
+  const bool more_than_one_item = sm_items.size() > 1;
   bool features_protection_available = false;
   if(!sm_items.empty())
   {
@@ -340,9 +341,18 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   connect(ui.protect, SIGNAL(toggled(bool)),
           ui.protectEdges, SLOT(setEnabled(bool)));
 
+  QString item_name = more_than_one_item ?
+    QString("%1...").arg(item->name()) :
+    item->name();
+
   // Set default parameters
   CGAL::Three::Scene_interface::Bbox bbox = item->bbox();
-  ui.objectName->setText(item->name());
+  if(more_than_one_item) {
+    for(auto it: sm_items) {
+      bbox = bbox + it->bbox();
+    }
+  }
+  ui.objectName->setText(item_name);
   ui.objectNameSize->setText(tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
                              .arg(bbox.xmax() - bbox.xmin(),0,'g',3)
                              .arg(bbox.ymax() - bbox.ymin(),0,'g',3)
@@ -465,7 +475,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
     thread =    cgal_code_mesh_3(polyhedrons,
                                  (polylines_item == nullptr)?plc:polylines_item->polylines,
                                  bounding_polyhedron,
-                                 item->name(),
+                                 item_name,
                                  angle,
                                  facet_sizing,
                                  approx,
@@ -542,6 +552,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 
   // Launch thread
   source_item_ = item;
+  source_item_name_ = item_name;
   launch_thread(thread);
 
   QApplication::restoreOverrideCursor();
@@ -605,7 +616,7 @@ meshing_done(Meshing_thread* thread)
 {
   // Print message in console
   QString str = QString("Meshing of \"%1\" done in %2s<br>")
-    .arg(source_item_->name())
+    .arg(source_item_name_)
     .arg(thread->time());
 
   Q_FOREACH( QString param, thread->parameters_log() )
@@ -645,7 +656,7 @@ treat_result(Scene_item& source_item,
 {
   if(!as_facegraph)
   {
-    result_item->setName(tr("%1 [3D Mesh]").arg(source_item.name()));
+    result_item->setName(tr("%1 [3D Mesh]").arg(source_item_name_));
 
     result_item->c3t3_changed();
 
@@ -671,7 +682,7 @@ treat_result(Scene_item& source_item,
   {
     Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item;
     CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
-    new_item->setName(tr("%1 [Remeshed]").arg(source_item.name()));
+    new_item->setName(tr("%1 [Remeshed]").arg(source_item_name_));
     Q_FOREACH(int ind, scene->selectionIndices()) {
       scene->item(ind)->setVisible(false);
     }
