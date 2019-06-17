@@ -7,6 +7,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <fstream>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/IO/3mf.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -27,49 +28,31 @@ typedef std::vector<CGAL::Color> ColorRange;
 
 int main(int argc, char** argv)
 {
-  if( argc != 2)
-  {
-    std::cerr<<"please give an input 3mf file.";
-    return 1;
-  }
+  const char* file_name=(argc == 2) ? argv[1] : "data/test.3mf";
+
   std::vector<PointRange> all_points;
   std::vector<PolygonRange> all_polygons;
   std::vector<ColorRange> all_colors;
   std::vector<std::string> names;
+  std::vector<Mesh> meshes;
   //testing reading functions.
   int nb_meshes =
-      CGAL::read_soups_from_3mf(argv[1], all_points, all_polygons,
-      all_colors, names);
+      CGAL::read_3mf(file_name, meshes);
   if(nb_meshes <0)
     return 1;
   for(std::size_t i = 0; i< nb_meshes; ++i)
   {
-    PolygonRange triangles = all_polygons[i];
-    PointRange points = all_points[i];
-    bool ok = true;
-    if(!PMP::is_polygon_soup_a_polygon_mesh(triangles))
-      ok = PMP::orient_polygon_soup(points, triangles);
-    if(!ok)
-    {
-      std::cerr<<"Object is not orientable. Skipped."<<std::endl;
-    }
-    else
-    {
-      Mesh mesh;
-      PMP::polygon_soup_to_polygon_mesh(points, triangles, mesh);
-      std::cout<<names[i]<<" is valid: "<<mesh.is_valid()<<std::endl;
-      std::string outputName("output");
-      outputName.append(std::to_string(i));
-      outputName.append(".off");
-      std::ofstream ofs(outputName);
-      ofs << mesh;
-      ofs.close();
-    }
+    Mesh mesh = meshes[i];
+    std::cout<<names[i]<<" is valid: "<<mesh.is_valid()<<std::endl;
+    std::string outputName("output");
+    outputName.append(std::to_string(i));
+    outputName.append(".off");
+    std::ofstream ofs(outputName);
+    ofs << mesh;
+    ofs.close();
   }
-  all_points.clear();
-  all_colors.clear();
   int nb_polylines =
-      CGAL::read_polylines_from_3mf(argv[1], all_points, all_colors, names);
+      CGAL::read_polylines_from_3mf(file_name, all_points, all_colors, names);
 
   if(nb_polylines == 0)
     std::cout<<"No polyline found."<<std::endl;
@@ -84,7 +67,7 @@ int main(int argc, char** argv)
   all_points.clear();
   all_colors.clear();
   int nb_point_sets =
-      CGAL::read_point_clouds_from_3mf(argv[1], all_points, all_colors, names);
+      CGAL::read_point_clouds_from_3mf(file_name, all_points, all_colors, names);
   if(nb_point_sets == 0)
     std::cout<<"No point cloud found."<<std::endl;
   else
@@ -159,7 +142,7 @@ int main(int argc, char** argv)
   names.push_back(std::string("sphere"));
   names.push_back(std::string("tube"));
 
-  std::vector<Mesh> meshes(2);
+  meshes.resize(2);
   meshes[0] = sphere;
   meshes[1] = tube;
   CGAL::write_triangle_meshes_to_3mf("meshes.3mf", meshes, names);

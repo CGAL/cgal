@@ -18,8 +18,8 @@
 //
 // Author(s) : Maxime Gimeno
 
-#ifndef READ_3MF_H
-#define READ_3MF_H
+#ifndef CGAL_IO_READ_3MF_H
+#define CGAL_IO_READ_3MF_H
 #include <iostream>
 #include <vector>
 #include <string>
@@ -43,7 +43,7 @@ NMR::MODELTRANSFORM initMatrix()
 
   return mMatrix;
 }
-}//end internal
+}//end transform_nmr_internal
 
 template<typename PointRange,
          typename PolygonRange,
@@ -573,8 +573,7 @@ int read_from_3mf(const std::string& file_name, PointRanges& all_points,
 }
 
 /*!
- * \brief read_soups_from_3mf extracts ranges of points and triangles from the
- * `MeshObject`s contained in `file_name`
+ * \brief extracts ranges of points and triangles from a 3mf file.
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
  *  `BackInsertionSequence` whose `value type` is
  * a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
@@ -594,11 +593,11 @@ int read_from_3mf(const std::string& file_name, PointRanges& all_points,
  * \param all_polygons a `PolygonRanges` that will contain the triangles of the
  *  meshes in `file_name`.
  * Each of these meshes will add a range of its triangles. A `triangle` of
- *  all_polygons[i] contains the indices of its points in all_points[i].
+ *  `all_polygons[i]` contains the indices of its points in `all_points[i]`.
  * \param all_colors will contain the color of each triangle for each soup.
  * \param names will contain the name of each mesh in `file_name` if any.
  *  If the i'th mesh has no name, it will be called "Unknown Mesh" in names.
- * \return the number of meshes processed in `file_name`.
+ * \return the number of soups read.
  */
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges>
 int read_soups_from_3mf(const std::string& file_name, PointRanges& all_points,
@@ -654,5 +653,5 @@ int read_point_clouds_from_3mf(const std::string& file_name,
 }
 }//end CGAL
 
-#endif // READ_3MF_H
+#endif // CGAL_IO_READ_3MF_H
 
