@@ -659,7 +659,7 @@ class Intersection_of_triangle_meshes
     if ( cpp11::get<3>(inter_res) ) // is edge target in triangle plane
       nodes.add_new_node(get(vpm1, target(h_1,tm1)));
     else{
-      if (cpp11::get<3>(inter_res)) // is edge source in triangle plane
+      if (cpp11::get<2>(inter_res)) // is edge source in triangle plane
         nodes.add_new_node(get(vpm1, source(h_1,tm1)));
       else
         nodes.add_new_node(h_1,f_2,tm1,tm2,vpm1,vpm2);
