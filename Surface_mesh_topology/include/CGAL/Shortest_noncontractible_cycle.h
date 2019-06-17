@@ -53,20 +53,20 @@ public:
     m_gmap.display_characteristics(std::cerr);
     std::cerr << '\n';
     // Initialize 2-attributes
-    for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it) {
+    for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it) {
       m_gmap.template set_attribute<2>(it, m_gmap.template create_attribute<2>());
+      m_gmap.template set_attribute<1>(it, m_gmap.template create_attribute<1>());
+      m_gmap.template set_attribute<0>(it, m_gmap.template create_attribute<0>());
     }
     // Remove all boundary by adding faces
     m_gmap.template close<2>();
     // Initialize 1-attributes
     for (auto it = gmap.template one_dart_per_cell<1>().begin(), itend = gmap.template one_dart_per_cell<1>().end(); it != itend; ++it) {
       Dart_handle img_dart = m_origin_to_copy[it];
-      m_gmap.template set_attribute<1>(img_dart, m_gmap.template create_attribute<1>());
       m_gmap.template info<1>(img_dart) = wf(it);
     }
     // Initialize 0-attributes
     for (auto it = m_gmap.template one_dart_per_cell<0>().begin(), itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it) {
-      m_gmap.template set_attribute<0>(it, m_gmap.template create_attribute<0>());
       ++m_nb_of_vertices;
     }
     m_spanning_tree.resize(m_nb_of_vertices-1);
