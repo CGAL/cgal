@@ -2232,7 +2232,7 @@ private: //------------------------------------------------------- private data
 
     os << "end_header" << std::endl;  
 
-    BOOST_FOREACH(VIndex vi, sm.vertices())
+    for(VIndex vi : sm.vertices())
     {
       for (std::size_t i = 0; i < vprinters.size(); ++ i)
       {
@@ -2246,11 +2246,11 @@ private: //------------------------------------------------------- private data
 
     std::vector<VIndex> polygon;
     
-    BOOST_FOREACH(FIndex fi, sm.faces())
+    for(FIndex fi : sm.faces())
     {
       // Get list of vertex indices
       polygon.clear();
-      BOOST_FOREACH(HIndex hi, halfedges_around_face(halfedge(fi, sm), sm))
+      for(HIndex hi : halfedges_around_face(halfedge(fi, sm), sm))
         polygon.push_back (sm.target(hi));
 
       if (get_mode (os) == IO::ASCII)
@@ -2283,7 +2283,7 @@ private: //------------------------------------------------------- private data
 
     if (!eprinters.empty())
     {
-      BOOST_FOREACH(EIndex ei, sm.edges())
+      for(EIndex ei : sm.edges())
       {
         if (get_mode (os) == IO::ASCII)
           os << int(sm.vertex(ei,0)) << " " << int(sm.vertex(ei,1)) << " ";
@@ -2309,7 +2309,7 @@ private: //------------------------------------------------------- private data
     
     if (!hprinters.empty())
     {
-      BOOST_FOREACH(HIndex hi, sm.halfedges())
+      for(HIndex hi : sm.halfedges())
       {
         if (get_mode (os) == IO::ASCII)
           os << int(sm.source(hi)) << " " << int(sm.target(hi)) << " ";
