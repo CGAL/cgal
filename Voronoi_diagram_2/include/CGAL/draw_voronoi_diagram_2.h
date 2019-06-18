@@ -84,19 +84,19 @@ public:
 
 protected:
   void compute_face(Face_const_handle fh) {
-    //    CGAL::Color c=m_fcolor.run(v2, fh);
-    //    face_begin(c);
-    //    Ccb_halfedge_circulator ec_start = fh->ccb();
-    //    Ccb_halfedge_circulator ec = ec_start;
+        CGAL::Color c=m_fcolor.run(v2, fh);
+        face_begin(c);
+        Ccb_halfedge_circulator ec_start = fh->ccb();
+        Ccb_halfedge_circulator ec = ec_start;
 
-    //    do{
-    //        if( ec->has_source() )
-    //            add_point_in_face(ec->source()->point());
-    //        else if(ec->has_target())
-    //            add_point_in_face(ec->target()->point());
-    //    } while(++ec != ec_start);
+        do{
+            if( ec->has_source() )
+                add_point_in_face(ec->source()->point());
+            else if(ec->has_target())
+                add_point_in_face(ec->target()->point());
+        } while(++ec != ec_start);
 
-    //    face_end();
+        face_end();
   }
 
   void compute_ray_points(Halfedge_const_handle he) {

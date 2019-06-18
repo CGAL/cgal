@@ -331,7 +331,7 @@ public:
           p1 = Local_kernel::Point_2(p.x() + txmax * v.x(), p.y() + tymax * v.y());
       }
 
-      m_buffer_for_mono_segments.add_segment(p, p1);
+      m_buffer_for_mono_lines.add_segment(p, p1);
   }
 
   bool is_a_face_started() const
@@ -894,6 +894,7 @@ protected:
 
     // Add custom key description (see keyPressEvent).
     setKeyDescription(::Qt::Key_E, "Toggles edges display");
+    setKeyDescription(::Qt::Key_R, "Toggles rays display");
     setKeyDescription(::Qt::Key_F, "Toggles faces display");
     setKeyDescription(::Qt::Key_G, "Switch between flat/Gouraud shading display");
     setKeyDescription(::Qt::Key_M, "Toggles mono color");
@@ -955,6 +956,12 @@ protected:
       m_draw_edges=!m_draw_edges;
       displayMessage(QString("Draw edges=%1.").arg(m_draw_edges?"true":"false"));
       update();
+    }
+    if ((e->key()==::Qt::Key_R) && (modifiers==::Qt::NoButton))
+    {
+        m_draw_lines=!m_draw_lines;
+        displayMessage(QString("Draw rays=%1.").arg(m_draw_lines?"true":"false"));
+        update();
     }
     else if ((e->key()==::Qt::Key_F) && (modifiers==::Qt::NoButton))
     {
