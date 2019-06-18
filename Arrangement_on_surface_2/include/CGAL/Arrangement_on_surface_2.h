@@ -165,7 +165,7 @@ protected:
     const Topology_traits* m_topol_traits;
 
   public:
-    _Is_concrete_vertex() : m_topol_traits(NULL) {}
+    _Is_concrete_vertex() : m_topol_traits(nullptr) {}
 
     _Is_concrete_vertex(const Topology_traits* topol_traits) :
       m_topol_traits(topol_traits)
@@ -173,7 +173,7 @@ protected:
 
     bool operator()(const DVertex& v) const
     {
-      if (m_topol_traits == NULL)
+      if (m_topol_traits == nullptr)
         return true;
 
       return (m_topol_traits->is_concrete_vertex(&v));
@@ -188,7 +188,7 @@ protected:
     const Topology_traits* m_topol_traits;
 
   public:
-    _Is_valid_vertex() : m_topol_traits(NULL) {}
+    _Is_valid_vertex() : m_topol_traits(nullptr) {}
 
     _Is_valid_vertex(const Topology_traits* topol_traits) :
       m_topol_traits(topol_traits)
@@ -196,7 +196,7 @@ protected:
 
     bool operator()(const DVertex& v) const
     {
-      if (m_topol_traits == NULL)
+      if (m_topol_traits == nullptr)
         return true;
 
       return (m_topol_traits->is_valid_vertex(&v));
@@ -211,7 +211,7 @@ protected:
     const Topology_traits* m_topol_traits;
 
   public:
-    _Is_valid_halfedge() : m_topol_traits(NULL) {}
+    _Is_valid_halfedge() : m_topol_traits(nullptr) {}
 
     _Is_valid_halfedge(const Topology_traits* topol_traits) :
       m_topol_traits(topol_traits)
@@ -219,7 +219,7 @@ protected:
 
     bool operator()(const DHalfedge& he) const
     {
-      if (m_topol_traits == NULL)
+      if (m_topol_traits == nullptr)
         return true;
 
       return (m_topol_traits->is_valid_halfedge(&he));
@@ -234,7 +234,7 @@ protected:
     const Topology_traits* m_topol_traits;
 
   public:
-    _Is_valid_face() : m_topol_traits(NULL) {}
+    _Is_valid_face() : m_topol_traits(nullptr) {}
 
     _Is_valid_face(const Topology_traits* topol_traits) :
       m_topol_traits(topol_traits)
@@ -242,7 +242,7 @@ protected:
 
     bool operator()(const DFace& f) const
     {
-      if (m_topol_traits == NULL)
+      if (m_topol_traits == nullptr)
         return true;
 
       return (m_topol_traits->is_valid_face(&f));
@@ -257,7 +257,7 @@ protected:
     const Topology_traits* m_topol_traits;
 
   public:
-    _Is_unbounded_face() : m_topol_traits(NULL) {}
+    _Is_unbounded_face() : m_topol_traits(nullptr) {}
 
     _Is_unbounded_face(const Topology_traits* topol_traits) :
       m_topol_traits(topol_traits)
@@ -587,7 +587,7 @@ public:
       const DHalfedge* he_curr = he_first;
       Size n = 0;
 
-      if (he_curr != NULL) {
+      if (he_curr != nullptr) {
         do {
           ++n;
           he_curr = he_curr->next()->opposite();
@@ -1777,7 +1777,7 @@ protected:
    * \return A pointer to a halfedge whose target is v, where cv should be
    *         inserted between this halfedge and the next halfedge around this
    *         vertex (in a clockwise order).
-   *         A NULL return value indicates a precondition violation.
+   *         A nullptr return value indicates a precondition violation.
    */
   DHalfedge* _locate_around_vertex(DVertex* v, const X_monotone_curve_2& cv,
                                    Arr_curve_end ind) const;
@@ -2031,7 +2031,7 @@ protected:
    * \param bx The boundary condition at the x-coordinate.
    * \param by The boundary condition at the y-coordinate.
    * \param p_pred Output: The predecessor halfedge around this vertex
-   *                       (may be NULL, if no such halfedge exists).
+   *                       (may be nullptr, if no such halfedge exists).
    * \return The vertex that corresponds to the curve end.
    */
   DVertex* _place_and_set_curve_end(DFace* f,

@@ -415,12 +415,12 @@ public:
   /*! @name 2D screen to 3D world coordinate systems conversions */
   //@{
 public:
-  Vec projectedCoordinatesOf(const Vec &src, const Frame *frame = NULL) const;
-  Vec unprojectedCoordinatesOf(const Vec &src, const Frame *frame = NULL) const;
+  Vec projectedCoordinatesOf(const Vec &src, const Frame *frame = nullptr) const;
+  Vec unprojectedCoordinatesOf(const Vec &src, const Frame *frame = nullptr) const;
   void getProjectedCoordinatesOf(const qreal src[3], qreal res[3],
-                                 const Frame *frame = NULL) const;
+                                 const Frame *frame = nullptr) const;
   void getUnprojectedCoordinatesOf(const qreal src[3], qreal res[3],
-                                   const Frame *frame = NULL) const;
+                                   const Frame *frame = nullptr) const;
   void convertClickToLine(const QPoint &pixel, Vec &orig, Vec &dir) const;
   Vec pointUnderPixel(const QPoint &pixel, bool &found) const;
   //@}

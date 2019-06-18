@@ -841,19 +841,19 @@ protected:
 inline tbb::task* TokenTask::execute()
 {
   m_worksharing_ds->run_next_work_item();
-  return NULL;
+  return nullptr;
 }
 
 inline tbb::task* WorkItemTask::execute()
 {
   m_pwi->run();
-  return NULL;
+  return nullptr;
 }
 
 inline tbb::task* WorkBatchTask::execute()
 {
   m_wb.run();
-  return NULL;
+  return nullptr;
 }
 
 } } //namespace CGAL::Mesh_3

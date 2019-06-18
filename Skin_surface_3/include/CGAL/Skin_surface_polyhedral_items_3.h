@@ -39,7 +39,7 @@ struct Skin_Surface_polyhedral_face: public CGAL::HalfedgeDS_face_base<Refs>
 
   typename SkinSurface3::Simplex containing_simplex()
   {
-    CGAL_assertion(tmc_ch != NULL);
+    CGAL_assertion(tmc_ch != nullptr);
     return tmc_ch->info().first;
   }
 

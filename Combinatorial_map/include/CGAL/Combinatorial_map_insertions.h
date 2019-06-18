@@ -33,7 +33,7 @@ namespace CGAL
 
 /** Insert a vertex in a given edge.
  * @param amap the used combinatorial map.
- * @param adart a dart of the edge (!=NULL && !=null_dart_handle).
+ * @param adart a dart of the edge (!=nullptr && !=null_dart_handle).
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new vertex.
@@ -67,7 +67,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
 }
 /** Insert a dangling edge in a 2-cell between given by a dart.
  * @param amap the used combinatorial map.
- * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
+ * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new edge, not incident to the vertex of adart1.
@@ -100,8 +100,8 @@ CGAL_DEPRECATED bool is_insertable_cell_1_in_cell_2
 
 /** Insert an edge in a 2-cell between two given darts.
  * @param amap the used combinatorial map.
- * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
- * @param adart2 a second dart of the facet. If NULL insert a dangling edge.
+ * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
+ * @param adart2 a second dart of the facet. If nullptr insert a dangling edge.
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new edge, and not incident to the

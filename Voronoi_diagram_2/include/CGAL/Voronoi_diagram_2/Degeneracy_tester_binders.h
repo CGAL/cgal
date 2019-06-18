@@ -42,11 +42,11 @@ private:
 public:
   typedef typename ER::result_type               result_type;
 
-  Edge_rejector_binder(const VDA* vda = NULL) : vda_(vda) {}
+  Edge_rejector_binder(const VDA* vda = nullptr) : vda_(vda) {}
 
   template<class A>
   bool operator()(const A& a) const {
-    CGAL_precondition( vda_ != NULL );
+    CGAL_precondition( vda_ != nullptr );
     return vda_->edge_rejector()(vda_->dual(), a);
   }
 
@@ -65,11 +65,11 @@ private:
 public:
   typedef typename FR::result_type               result_type;
 
-  Face_rejector_binder(const VDA* vda = NULL) : vda_(vda) {}
+  Face_rejector_binder(const VDA* vda = nullptr) : vda_(vda) {}
 
   template<class A>
   bool operator()(const A& a) const {
-    CGAL_precondition( vda_ != NULL );
+    CGAL_precondition( vda_ != nullptr );
     return vda_->face_rejector()(vda_->dual(), a);
   }
 

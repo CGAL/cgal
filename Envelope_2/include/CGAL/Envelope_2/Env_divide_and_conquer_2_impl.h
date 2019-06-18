@@ -669,7 +669,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
     objects.pop_front();
 
     if ((intersection_point = CGAL::object_cast<Intersection_point>(&obj)) !=
-        NULL)
+        nullptr)
     {
       // We have a simple intersection point.
       bool is_in_x_range = true; // true if the intersection point is to the
@@ -751,7 +751,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
       // curves.
       intersection_curve = CGAL::object_cast<X_monotone_curve_2>(&obj);
 
-      if (intersection_curve == NULL)
+      if (intersection_curve == nullptr)
         CGAL_error_msg("unrecognized intersection object.");
 
       // Get the endpoints of the overlapping curves.

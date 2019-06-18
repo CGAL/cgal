@@ -353,6 +353,12 @@ if `tr` is modified, `*this` is not.
 Triangulation_2( 
 const Triangulation_2& tr); 
 
+  /*!
+Equivalent to constructing an empty triangulation with the optional traits class argument and calling insert(first,last).
+*/
+template < class InputIterator >
+Triangulation_2( InputIterator first, InputIterator last, const Traits& gt = Traits());
+
 /*!
 Assignment. All the vertices and faces are duplicated. 
 After the assignment, `*this` and `tr` 
@@ -542,11 +548,11 @@ such that
 (the rest of the triangulation lying to the right of this line). 
 
 - for a degenerate one dimensional triangulation it is the (degenerate 
-one dimensional) face \f$ (\infty, p, NULL)\f$ such that `query` 
+one dimensional) face \f$ (\infty, p, nullptr)\f$ such that `query` 
 and the triangulation lie on either side of `p`. 
 
 If the point `query` lies outside the affine hull, 
-the returned `Face_handle` is `NULL`. 
+the returned `Face_handle` is `nullptr`. 
 
 The optional `Face_handle` argument, if provided, is used as a hint 
 of where the locate process has to start its search. 
@@ -685,14 +691,32 @@ Equivalent to `insert(p)`.
 Vertex_handle push_back(const Point& p); 
 
 /*!
-Inserts the points in the range `[first,last)`.
-Returns the number of inserted points. 
-\pre The `value_type` of `InputIterator` is `Point`. 
-*/ 
-template < class InputIterator > 
-std::ptrdiff_t 
-insert(InputIterator first, InputIterator last); 
+Inserts the points in the range `[first,last)` in the given order,
+and returns the number of inserted points. 
 
+\tparam PointInputIterator must be an input iterator with value type `Point`. 
+*/ 
+template < class PointInputIterator > 
+std::ptrdiff_t 
+insert(PointInputIterator first, PointInputIterator last);
+
+  
+/*!
+inserts the points in the iterator range `[first,last)` in the given order,
+and returns the number of inserted points. 
+
+Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
+`v.point() == p` and `v.info() == i`. If several pairs have the same point, 
+only one vertex is created, and one of the objects of type `Vertex::Info` will be stored in the vertex. 
+\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_2`. 
+
+\tparam PointWithInfoInputIterator must be an input iterator with the value type `std::pair<Point,Vertex::Info>`. 
+
+*/ 
+template < class PointWithInfoInputIterator > 
+std::ptrdiff_t 
+insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last);
+  
 /*!
 Removes the vertex from the triangulation. The created hole is 
 re-triangulated. 
@@ -947,7 +971,7 @@ traversed finite face then through the first finite traversed face
 again. 
 \pre The triangulation must have dimension 2. 
 \pre Points `p` and `q` must be different points. 
-\pre If `f != NULL`, it must point to a finite face and the point `p` must be inside or on the boundary of `f`. 
+\pre If `f != nullptr`, it must point to a finite face and the point `p` must be inside or on the boundary of `f`. 
 */ 
 Line_face_circulator 
 line_walk(const Point& p, const Point& q, Face_handle f = Face_handle()) const; 

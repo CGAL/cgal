@@ -155,12 +155,12 @@ template<typename BufferType=float, typename IndexType=std::size_t>
 class Buffer_for_vao
 {
 public:
-  Buffer_for_vao(std::vector<BufferType>* pos=NULL,
-                 std::vector<IndexType>* indices=NULL,
-                 CGAL::Bbox_3* bbox=NULL,
-                 std::vector<BufferType>* color=NULL,
-                 std::vector<BufferType>* flat_normal=NULL,
-                 std::vector<BufferType>* gouraud_normal=NULL) :
+  Buffer_for_vao(std::vector<BufferType>* pos=nullptr,
+                 std::vector<IndexType>* indices=nullptr,
+                 CGAL::Bbox_3* bbox=nullptr,
+                 std::vector<BufferType>* color=nullptr,
+                 std::vector<BufferType>* flat_normal=nullptr,
+                 std::vector<BufferType>* gouraud_normal=nullptr) :
     m_pos_buffer(pos),
     m_index_buffer(indices),
     m_color_buffer(color),
@@ -172,37 +172,37 @@ public:
 
   void clear()
   {
-    if (m_pos_buffer!=NULL)            { m_pos_buffer->clear(); }
-    if (m_color_buffer!=NULL)          { m_color_buffer->clear(); }
-    if (m_index_buffer!=NULL)          { m_index_buffer->clear(); }
-    if (m_flat_normal_buffer!=NULL)    { m_flat_normal_buffer->clear(); }
-    if (m_gouraud_normal_buffer!=NULL) { m_gouraud_normal_buffer->clear(); }
+    if (m_pos_buffer!=nullptr)            { m_pos_buffer->clear(); }
+    if (m_color_buffer!=nullptr)          { m_color_buffer->clear(); }
+    if (m_index_buffer!=nullptr)          { m_index_buffer->clear(); }
+    if (m_flat_normal_buffer!=nullptr)    { m_flat_normal_buffer->clear(); }
+    if (m_gouraud_normal_buffer!=nullptr) { m_gouraud_normal_buffer->clear(); }
   }
 
   bool is_empty() const
   {
     return
-      (m_pos_buffer!=NULL && m_pos_buffer->empty()) &&
-      (m_color_buffer!=NULL || m_color_buffer->empty()) &&
-      (m_flat_normal_buffer!=NULL || m_flat_normal_buffer->empty()) &&
-      (m_gouraud_normal_buffer!=NULL || m_gouraud_normal_buffer->empty()) &&
-      (m_index_buffer!=NULL || m_index_buffer->empty());
+      (m_pos_buffer!=nullptr && m_pos_buffer->empty()) &&
+      (m_color_buffer!=nullptr || m_color_buffer->empty()) &&
+      (m_flat_normal_buffer!=nullptr || m_flat_normal_buffer->empty()) &&
+      (m_gouraud_normal_buffer!=nullptr || m_gouraud_normal_buffer->empty()) &&
+      (m_index_buffer!=nullptr || m_index_buffer->empty());
   }
 
   bool has_position() const
-  { return m_pos_buffer!=NULL; }
+  { return m_pos_buffer!=nullptr; }
 
   bool has_indices() const
-  { return m_index_buffer!=NULL; }
+  { return m_index_buffer!=nullptr; }
 
   bool has_color() const
-  { return m_color_buffer!=NULL; }
+  { return m_color_buffer!=nullptr; }
 
   bool has_flat_normal() const
-  { return m_flat_normal_buffer!=NULL; }
+  { return m_flat_normal_buffer!=nullptr; }
   
   bool has_gouraud_normal() const
-  { return m_gouraud_normal_buffer!=NULL; }
+  { return m_gouraud_normal_buffer!=nullptr; }
 
   // 1.1) Add a point, without color. Return the index of the added point.
   template<typename KPoint>
@@ -213,7 +213,7 @@ public:
     Local_point p=internal::get_local_point(kp);
     add_point_in_buffer(p, *m_pos_buffer);
 
-    if (m_bb!=NULL)
+    if (m_bb!=nullptr)
     { (*m_bb)=(*m_bb)+p.bbox(); }
 
     return m_pos_buffer->size()-3;
@@ -624,11 +624,11 @@ public:
       bool with_vertex_normal=(m_vertex_normals_for_face.size()==m_points_of_face.size());
       
       // (1) We insert all the edges as contraint in the CDT.
-      typename CDT::Vertex_handle previous=NULL, first=NULL;
+      typename CDT::Vertex_handle previous=nullptr, first=nullptr;
       for (unsigned int i=0; i<m_points_of_face.size(); ++i)
       {
         typename CDT::Vertex_handle vh = cdt.insert(m_points_of_face[i]);
-        if(first==NULL)
+        if(first==nullptr)
         { first=vh; }
         
         if (with_vertex_normal)
@@ -639,12 +639,12 @@ public:
         if (m_indices_of_points_of_face.size()>0)
         { vh->info().index=m_indices_of_points_of_face[i]; }
         
-        if(previous!=NULL && previous!=vh)
+        if(previous!=nullptr && previous!=vh)
         { cdt.insert_constraint(previous, vh); }
         previous=vh;
       }
       
-      if (previous!=NULL && previous!=first)
+      if (previous!=nullptr && previous!=first)
       { cdt.insert_constraint(previous, first); }
       
       // (2) We mark all external triangles
@@ -657,8 +657,8 @@ public:
       }
       // (2.2) We check if the facet is external or internal
       std::queue<typename CDT::Face_handle> face_queue;
-      typename CDT::Face_handle face_internal = NULL;
-      if (cdt.infinite_vertex()->face()!=NULL)
+      typename CDT::Face_handle face_internal = nullptr;
+      if (cdt.infinite_vertex()->face()!=nullptr)
       { face_queue.push(cdt.infinite_vertex()->face()); }
       while(!face_queue.empty())
       {
@@ -671,10 +671,10 @@ public:
           {
             if(!cdt.is_constrained(std::make_pair(fh, i)))
             {
-              if (fh->neighbor(i)!=NULL)
+              if (fh->neighbor(i)!=nullptr)
               { face_queue.push(fh->neighbor(i)); }
             }
-            else if (face_internal==NULL)
+            else if (face_internal==nullptr)
             {
               face_internal = fh->neighbor(i);
             }
@@ -682,7 +682,7 @@ public:
         }
       }
       
-      if ( face_internal!=NULL )
+      if ( face_internal!=nullptr )
       { face_queue.push(face_internal); }
       
       while(!face_queue.empty())
@@ -697,7 +697,7 @@ public:
           {
             if(!cdt.is_constrained(std::make_pair(fh, i)))
             {
-              if (fh->neighbor(i)!=NULL)
+              if (fh->neighbor(i)!=nullptr)
               { face_queue.push(fh->neighbor(i)); }
             }
           }
@@ -748,21 +748,21 @@ public:
 
   void add_color(const CGAL::Color& acolor)
   {
-    if (m_color_buffer!=NULL)
+    if (m_color_buffer!=nullptr)
     { add_color_in_buffer(acolor, *m_color_buffer); }
   }
   
   template<typename KVector>
   void add_flat_normal(const KVector& kv)
   {
-    if(m_flat_normal_buffer != NULL)
+    if(m_flat_normal_buffer != nullptr)
     { add_normal_in_buffer(kv, *m_flat_normal_buffer); }
   }
 
   template<typename KVector>
   void add_gouraud_normal(const KVector& kv)
   {
-    if(m_gouraud_normal_buffer != NULL)
+    if(m_gouraud_normal_buffer != nullptr)
     { add_normal_in_buffer(kv, *m_gouraud_normal_buffer); }
   }
 

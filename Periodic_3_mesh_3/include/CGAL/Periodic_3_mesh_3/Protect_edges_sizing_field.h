@@ -486,7 +486,7 @@ private:
   void insert_in_correspondence_map(const Vertex_handle v,
                                     const Bare_point& p,
                                     const Curve_index_container& curve_indices,
-                                    typename Curve_index_container::const_iterator* /*sfinae*/ = NULL);
+                                    typename Curve_index_container::const_iterator* /*sfinae*/ = nullptr);
 
   void insert_in_correspondence_map(const Vertex_handle v,
                                     const Bare_point& p,

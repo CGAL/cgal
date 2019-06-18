@@ -564,7 +564,7 @@ namespace CGAL {
                   if( type==type_map && v2.first == "v" )
                   {
                     if (amap.template attribute<i>(myDarts[id_dart_cellule])
-                        ==NULL )
+                        ==nullptr )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -575,7 +575,7 @@ namespace CGAL {
                   if( ptype==ptype_map && v2.first == "p" )
                   {
                     if (amap.template attribute<i>(myDarts[id_dart_cellule])
-                        ==NULL )
+                        ==nullptr )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -635,7 +635,7 @@ namespace CGAL {
                   if( v2.first == "p" )
                   {
                     if (amap.template attribute<i>
-                        (myDarts[id_dart_cellule])==NULL )
+                        (myDarts[id_dart_cellule])==nullptr )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -696,7 +696,7 @@ namespace CGAL {
                   if( v2.first == "v" )
                   {
                     if (amap.template attribute<i>
-                        (myDarts[id_dart_cellule])==NULL)
+                        (myDarts[id_dart_cellule])==nullptr)
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -740,7 +740,7 @@ namespace CGAL {
               {
                 id_dart_cellule=v1.second.get<unsigned int>("d")-1;
                 
-                if (amap.template attribute<i>(myDarts[id_dart_cellule])==NULL)
+                if (amap.template attribute<i>(myDarts[id_dart_cellule])==nullptr)
                   amap.template set_attribute<i>
                     (myDarts[id_dart_cellule],
                    amap.template create_attribute<i>());

@@ -47,8 +47,8 @@ public:
   /// Constructor
   AABB_node_with_join()
     : m_bbox()
-    , m_p_left_child(NULL)
-    , m_p_right_child(NULL)      { };
+    , m_p_left_child(nullptr)
+    , m_p_right_child(nullptr)      { };
 
   /// Non virtual Destructor
   /// Do not delete children because the tree hosts and delete them

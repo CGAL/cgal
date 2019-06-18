@@ -122,7 +122,7 @@ protected :
     // image rotation
     _im->rx = _im->ry = _im->rz = 0.0;
 
-    _im->fd = NULL;
+    _im->fd = nullptr;
     _im->openMode = OM_CLOSE;
     if(string_field("data_format") == "native_float" ||
        string_field("data_format") == "\"native_float\"")
@@ -135,7 +135,7 @@ protected :
     _im->dataMode = DM_BINARY;
 
     // no user string
-    _im->user = NULL;
+    _im->user = nullptr;
     _im->nuser = 0;
 
     // word type (unsigned byte)
@@ -143,7 +143,7 @@ protected :
     _im->wordKind = WK_FLOAT;
     _im->vectMode = VM_SCALAR;
     _im->sign = SGN_SIGNED;
-    _im->imageFormat = NULL;
+    _im->imageFormat = nullptr;
 
     ::_openReadImage(_im, dataFilename.c_str());
     if(!_im->fd) return false;

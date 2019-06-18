@@ -13,7 +13,15 @@ Release date: September 2019
     and `CGAL::Constrained_triangulation_plus_2::remove_constraint((Vertex_handle va, Vertex_handle vb)`,
     that is a pair of vertex handles is no longer a key for a polyline constraint.
     Users must use a version prior to 5.0 if they need this functionality.
--   **Breaking change**: Removed the deprecated classes `CGAL::Regular_triangulation_euclidean_traits_2`, `CGAL::Regular_triangulation_filtered_traits_2`.   Users must use a version prior to 5.0 if they need these classes.   
+-   **Breaking change**: Removed the deprecated classes `CGAL::Regular_triangulation_euclidean_traits_2`, `CGAL::Regular_triangulation_filtered_traits_2`.   Users must use a version prior to 5.0 if they need these classes.
+-   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_2` which takes
+    a range of points as argument no longer performs a `spatial_sort()` of the points.
+-   Add constructor and `insert()` function to `CGAL::Triangulation_2` that takes a range of points with info.  
+    
+### 3D Triangulations
+-   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_3` which takes
+    a range of points as argument no longer performs a `spatial_sort()` of the points.
+-   Add constructor and `insert()` function to `CGAL::Triangulation_3` that takes a range of points with info.  
     
 ### Surface Mesh
  -   New functions to read and write using the PLY format,
@@ -31,11 +39,21 @@ Release date: September 2019
      Parameters.
 
 ### Polygon Mesh Processing
- -   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
+ -   Added the function `CGAL::Polygon_mesh_processing::centroid()`, which computes
      the centroid of a closed triangle mesh.
+-    Added the functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()` and
+     `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`, which can be used
+     to try and merge together geometrically compatible but combinatorially different halfedges
+     that belong to the same boundary cycle.
 
 ### IO Streams
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
+
+### Shape Detection
+ -   Added a new generic implementation of region growing.
+ -   New region growing can be launched on points in 2D and 3D and on a face graph.
+ -   **Breaking change:** ShapeDetectionTraits is renamed to EfficientRANSACTraits.
+ -   **Breaking change:** Shape_detection_3 namespace is renamed to Shape_detection.
 
 ### 3D Boolean Operations on Nef Polyhedra
  -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_to_polygon_soup()`
@@ -47,7 +65,6 @@ Release date: September 2019
    are also added.
 
 ### IO Streams
-
 -   Added new functions to support some parts of the WKT file format:
     - `CGAL::read_point_WKT()`
     - `CGAL::read_multi_point_WKT()`

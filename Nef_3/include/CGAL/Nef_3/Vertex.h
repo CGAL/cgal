@@ -343,14 +343,14 @@ class Vertex_base {
 	verr << "begin CGAL::SNC_items<...>::Vertex_base::is_valid( verb=true, "
 	  "level = " << level << "):" << std::endl;
       
-	bool valid = (sncp_ != NULL);
-	valid = valid && (svertices_begin_ != NULL && svertices_begin_ != SVertex_iterator());
-	valid = valid && (svertices_last_  != NULL && svertices_last_  != SVertex_iterator());
-	valid = valid && (shalfedges_begin_ != NULL && shalfedges_begin_ != SHalfedge_iterator());
-	valid = valid && (shalfedges_last_  != NULL && shalfedges_last_  != SHalfedge_iterator());
-	valid = valid && (sfaces_begin_ != NULL && sfaces_begin_ != SFace_iterator());
-	valid = valid && (sfaces_last_  != NULL && sfaces_last_  != SFace_iterator());
-	valid = valid && (shalfloop_ != NULL && shalfloop_ != SHalfloop_iterator());
+	bool valid = (sncp_ != nullptr);
+	valid = valid && (svertices_begin_ != nullptr && svertices_begin_ != SVertex_iterator());
+	valid = valid && (svertices_last_  != nullptr && svertices_last_  != SVertex_iterator());
+	valid = valid && (shalfedges_begin_ != nullptr && shalfedges_begin_ != SHalfedge_iterator());
+	valid = valid && (shalfedges_last_  != nullptr && shalfedges_last_  != SHalfedge_iterator());
+	valid = valid && (sfaces_begin_ != nullptr && sfaces_begin_ != SFace_iterator());
+	valid = valid && (sfaces_last_  != nullptr && sfaces_last_  != SFace_iterator());
+	valid = valid && (shalfloop_ != nullptr && shalfloop_ != SHalfloop_iterator());
 
 	if(shalfedges_begin_ == sncp()->shalfedges_end()) {         // point in volume or on plane, which is either isolated or has one outgoing edge
 	  if(shalfloop_ != sncp()->shalfloops_end())

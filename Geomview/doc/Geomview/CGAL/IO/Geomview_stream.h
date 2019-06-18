@@ -34,13 +34,13 @@ public:
   /*!
     Introduces a Geomview stream `gs` with a camera that sees the
     bounding box.  The command `geomview` must be in the user's `PATH`.
-    If `machine` and `login` are not `NULL`,
+    If `machine` and `login` are not `nullptr`,
     Geomview is started on the remote machine using `rsh`.
   */
   Geomview_stream(const Bbox_3 &bbox 
                   = Bbox_3(0,0,0, 1,1,1),
-                  const char *machine = NULL,
-                  const char *login = NULL);
+                  const char *machine = nullptr,
+                  const char *login = nullptr);
 /// @}
 
   

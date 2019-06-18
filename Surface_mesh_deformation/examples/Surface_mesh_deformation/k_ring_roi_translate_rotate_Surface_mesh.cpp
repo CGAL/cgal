@@ -10,10 +10,11 @@ typedef CGAL::Simple_cartesian<double>                                   Kernel;
 typedef Kernel::Point_3 Point_3; 
 typedef CGAL::Surface_mesh<Point_3>  Mesh;
 
-typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Mesh>::vertex_iterator        vertex_iterator;
+typedef boost::graph_traits<Mesh>::vertex_descriptor   vertex_descriptor;
+typedef boost::graph_traits<Mesh>::vertex_iterator     vertex_iterator;
 typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
-typedef boost::graph_traits<Mesh>::out_edge_iterator    out_edge_iterator;
+typedef boost::graph_traits<Mesh>::edge_descriptor     edge_descriptor;
+
 
 typedef Eigen::Vector3d                                                Vector3d;
 
@@ -32,10 +33,9 @@ std::vector<vertex_descriptor> extract_k_ring(const Mesh &P, vertex_descriptor v
   while( current_index < Q.size() && (dist_v = D[ Q[current_index] ]) < k ) {
     v = Q[current_index++];
 
-    out_edge_iterator e, e_end;
-    for(boost::tie(e, e_end) = out_edges(v, P); e != e_end; e++)
+    for(edge_descriptor e : out_edges(v, P))
     {
-      halfedge_descriptor he = halfedge(*e, P);
+      halfedge_descriptor he = halfedge(e, P);
       vertex_descriptor new_v = target(he, P);
       if(D.insert(std::make_pair(new_v, dist_v + 1)).second) {
         Q.push_back(new_v);

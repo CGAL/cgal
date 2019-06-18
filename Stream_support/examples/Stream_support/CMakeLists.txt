@@ -25,6 +25,8 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "Polygon_WKT.cpp" )
     create_single_source_cgal_program( "Linestring_WKT.cpp" )
     create_single_source_cgal_program( "read_WKT.cpp" )
+
+    create_single_source_cgal_program( "read_xml.cpp" )
   
 else ()
   message(STATUS "This project requires the CGAL library, and will not be compiled.")

@@ -195,7 +195,7 @@ namespace CGAL {
     void copy(const GMap2& amap, const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
               const PointConverter& pointconverter,
-              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
+              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=nullptr)
     {
       this->clear();
 
@@ -217,7 +217,7 @@ namespace CGAL {
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
       boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle> local_dartmap;
-      if (dart_mapping==NULL)
+      if (dart_mapping==nullptr)
       { dart_mapping=&local_dartmap; }
       
 
@@ -267,7 +267,7 @@ namespace CGAL {
 
     template <typename GMap2>
     void copy(const GMap2& amap,
-              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
+              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=nullptr)
     {
       std::tuple<> converters;
       Default_converter_dart_info<GMap2, Refs> dartinfoconverter;
@@ -277,7 +277,7 @@ namespace CGAL {
 
     template <typename GMap2, typename Converters>
     void copy(const GMap2& amap, const Converters& converters,
-              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
+              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=nullptr)
     {
       Default_converter_cmap_0attributes_with_point<GMap2, Refs> pointconverter;
       Default_converter_dart_info<GMap2, Refs> dartinfoconverter;
@@ -287,7 +287,7 @@ namespace CGAL {
     template <typename GMap2, typename Converters, typename DartInfoConverter>
     void copy(const GMap2& amap, const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
-              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
+              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=nullptr)
     {
       Default_converter_cmap_0attributes_with_point<GMap2, Refs> pointconverter;
       copy(amap, converters, dartinfoconverter, pointconverter, dart_mapping);
@@ -472,7 +472,7 @@ namespace CGAL {
     }
 
     /** Return a dart belonging to the same edge and to the second vertex
-     * of the current edge (NULL if such a dart does not exist).
+     * of the current edge (nullptr if such a dart does not exist).
      * @return An handle to a dart belonging to the other extremity.
      */
     Dart_handle other_extremity(Dart_handle dh)
@@ -1299,10 +1299,10 @@ namespace CGAL {
       dart_link_alpha(dart2, dart1, i);
     }
 
-    /** Double link two darts, and update the NULL attributes.
+    /** Double link two darts, and update the nullptr attributes.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i-linked
-     * with \em adart1. The NULL attributes of \em adart1 are updated to
-     * non NULL attributes associated to \em adart2, and vice-versa.
+     * with \em adart1. The nullptr attributes of \em adart1 are updated to
+     * non nullptr attributes associated to \em adart2, and vice-versa.
      * If both darts have an attribute, the attribute of adart1 is
      * associated to adart2.
      * We can obtain a non-valid map with darts belonging to a same cell
@@ -1325,8 +1325,8 @@ namespace CGAL {
 
     /** Double link a dart with alphai to a second dart.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
-     * with \em adart1. The NULL attributes of \em adart1 are updated to
-     * non NULL attributes associated to \em adart2, and vice-versa,
+     * with \em adart1. The nullptr attributes of \em adart1 are updated to
+     * non nullptr attributes associated to \em adart2, and vice-versa,
      * if both darts have an attribute, the attribute of adart1 is
      * associated to adart2 (only if update_attributes==true).
      * @param adart1 a first dart.
@@ -2120,8 +2120,8 @@ namespace CGAL {
 
     /** Compute the dual of a Generalized_map.
      * @param amap the gmap in which we build the dual of this map.
-     * @param adart a dart of the initial map, NULL by default.
-     * @return adart of the dual map, the dual of adart if adart!=NULL,
+     * @param adart a dart of the initial map, nullptr by default.
+     * @return adart of the dual map, the dual of adart if adart!=nullptr,
      *         any dart otherwise.
      * As soon as we don't modify this map and amap map, we can iterate
      * simultaneously through all the darts of the two maps and we have
@@ -2943,7 +2943,7 @@ namespace CGAL {
     }
 
     /** Insert a vertex in a given edge.
-     * @param adart a dart of the edge (!=NULL).
+     * @param adart a dart of the edge (!=nullptr).
      * @return a dart of the new vertex.
      */
     Dart_handle insert_cell_0_in_cell_1( Dart_handle adart,
@@ -3168,8 +3168,8 @@ namespace CGAL {
   }
 
   /** Insert an edge in a 2-cell between two given darts.
-   * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
-   * @param adart2 a second dart of the facet. If NULL insert a dangling edge.
+   * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
+   * @param adart2 a second dart of the facet. If nullptr insert a dangling edge.
    * @return a dart of the new edge, and not incident to the
    *         same vertex than adart1.
    */
@@ -3252,7 +3252,7 @@ namespace CGAL {
       else
       {
         if (are_attributes_automatically_managed() &&
-            update_attributes && ah!=NULL)
+            update_attributes && ah!=nullptr)
         {
           internal::Set_i_attribute_of_dart_functor<Self, 0>::run(*this, d2, ah);
           if (!isfree1)
@@ -3310,7 +3310,7 @@ namespace CGAL {
   }
 
   /** Insert a dangling edge in a 2-cell between given by a dart.
-   * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
+   * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
    * @param update_attributes a boolean to update the enabled attributes
    * @return a dart of the new edge, not incident to the vertex of adart1.
    */
@@ -3318,7 +3318,7 @@ namespace CGAL {
                                                 typename Attribute_handle<0>::
                                                 type ah=null_handle,
                                                 bool update_attributes=true )
-  { return insert_cell_1_in_cell_2(adart1, NULL, update_attributes, ah); }
+  { return insert_cell_1_in_cell_2(adart1, nullptr, update_attributes, ah); }
 
   /** Test if a 2-cell can be inserted onto a given 3-cell along
    *  a path of edges.
@@ -3440,7 +3440,7 @@ namespace CGAL {
           basic_link_alpha<2>(alpha<0>(oldb2), alpha<0>(dd));
         }
         else
-          oldb2=NULL;
+          oldb2=nullptr;
 
         basic_link_alpha<2>(*it, d);
         basic_link_alpha<2>(alpha<0>(*it), alpha<0>(d));
@@ -3478,7 +3478,7 @@ namespace CGAL {
               basic_link_alpha(dd, dddd, dim);
               basic_link_alpha(alpha<0>(dd), d0, dim);
 
-              if (oldb2!=NULL)
+              if (oldb2!=nullptr)
               {
                 basic_link_alpha<2>(alpha(oldb2, dim), dddd);
                 basic_link_alpha<2>(alpha(oldb2, 0, dim), d0);

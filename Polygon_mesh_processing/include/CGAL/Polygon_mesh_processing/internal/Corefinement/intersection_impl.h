@@ -416,14 +416,14 @@ class Intersection_of_triangle_meshes
     {
       face_descriptor f_2 = face(edge_intersected, tm2);
       add_intersection_point_to_face_and_all_edge_incident_faces(f_2,e_1,tm2,tm1,node_id);
-      if (fset!=NULL) fset->erase(f_2);
+      if (fset!=nullptr) fset->erase(f_2);
     }
     edge_intersected = opposite(edge_intersected, tm2);
     if (!is_border(edge_intersected, tm2))
     {
       face_descriptor f_2 = face(edge_intersected, tm2);
       add_intersection_point_to_face_and_all_edge_incident_faces(f_2,e_1,tm2,tm1,node_id);
-      if (fset!=NULL) fset->erase(f_2);
+      if (fset!=nullptr) fset->erase(f_2);
     }
 
     //associate the intersection point to all faces incident to edge using the intersected edge
@@ -507,7 +507,7 @@ class Intersection_of_triangle_meshes
                   halfedges_around_target(v_1,tm1))
     {
       typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(h_1,tm1));
-      Face_set* fset = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):NULL;
+      Face_set* fset = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
       cip_handle_case_edge(node_id,fset,h_1,e_2,tm1,tm2);
     }
   }
@@ -530,7 +530,7 @@ class Intersection_of_triangle_meshes
                   halfedges_around_target(v_1,tm1))
     {
       typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(h_1,tm1));
-      Face_set* fset = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):NULL;
+      Face_set* fset = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
       cip_handle_case_vertex(node_id,fset,h_1,v_2,tm1,tm2);
     }
   }
@@ -605,7 +605,7 @@ class Intersection_of_triangle_meshes
               if(is_new_node)
                 visitor.new_node_added(node_id,ON_EDGE,ipt.info_1,ipt.info_2,tm1,tm2,false,false);
               typename Edge_to_faces::iterator it_ets=stm_edge_to_ltm_faces.find(edge(ipt.info_1,tm1));
-              Face_set* fset = (it_ets!=stm_edge_to_ltm_faces.end())?&(it_ets->second):NULL;
+              Face_set* fset = (it_ets!=stm_edge_to_ltm_faces.end())?&(it_ets->second):nullptr;
               cip_handle_case_edge(node_id,fset,ipt.info_1,ipt.info_2,tm1,tm2);
             }
             break;
@@ -658,7 +658,7 @@ class Intersection_of_triangle_meshes
     if ( std::get<3>(inter_res) ) // is edge target in triangle plane
       nodes.add_new_node(get(vpm1, target(h_1,tm1)));
     else{
-      if (std::get<3>(inter_res)) // is edge source in triangle plane
+      if (std::get<2>(inter_res)) // is edge source in triangle plane
         nodes.add_new_node(get(vpm1, source(h_1,tm1)));
       else
         nodes.add_new_node(h_1,f_2,tm1,tm2,vpm1,vpm2);
@@ -754,7 +754,7 @@ class Intersection_of_triangle_meshes
             for (;it_edge!=all_edges.end();++it_edge){
               if ( it_edge!=all_edges.begin() ){
                 typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(*it_edge,tm1));
-                Face_set* fset_bis = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):NULL;
+                Face_set* fset_bis = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
                 cip_handle_case_edge(node_id,fset_bis,*it_edge,h_2,tm1,tm2);
               }
               else
@@ -773,7 +773,7 @@ class Intersection_of_triangle_meshes
             for (;it_edge!=all_edges.end();++it_edge){
               if ( it_edge!=all_edges.begin() ){
                 typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(*it_edge,tm1));
-                Face_set* fset_bis = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):NULL;
+                Face_set* fset_bis = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
                 cip_handle_case_vertex(node_id,fset_bis,*it_edge,h_2,tm1,tm2);
               }
               else

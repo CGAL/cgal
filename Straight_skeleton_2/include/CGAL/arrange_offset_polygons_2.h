@@ -95,7 +95,7 @@ bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
               lParent = lOuter ;
       }
       
-      if (lParent == NULL)
+      if (lParent == nullptr)
         return false;
       
       lParent->add_hole(*lPoly);

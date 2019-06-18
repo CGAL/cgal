@@ -102,7 +102,7 @@ void read_arrangement_end ();
 /*!
 reads a size value, which is supposed to be preceded by the given label. 
 */ 
-Size read_size (const char *label = NULL); 
+Size read_size (const char *label = nullptr); 
 
 /*!
 reads a message indicating the beginning of the vertex records. 

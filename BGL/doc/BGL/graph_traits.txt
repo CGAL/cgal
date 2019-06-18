@@ -116,7 +116,7 @@ For convenience, the type `edge_descriptor` is hashable using the functor `CGAL:
 <ul>
 <li> The item class used by `CGAL::Linear_cell_complex_for_combinatorial_map` must have both 0-attributes and 2-attributes enabled.</li>
 
-<li> No dart is 1-free, nor 2-free. Holes in a mesh are represented by using the same convention than for `CGAL::Polyhedron_3` and `CGAL::Surface_mesh`: a dart <code>d</code> belongs to a border if the 2-attribute of <code>beta<2>(d)</code> is NULL.</li>
+<li> No dart is 1-free, nor 2-free. Holes in a mesh are represented by using the same convention than for `CGAL::Polyhedron_3` and `CGAL::Surface_mesh`: a dart <code>d</code> belongs to a border if the 2-attribute of <code>beta<2>(d)</code> is nullptr.</li>
 
 <li> All darts of the linear cell complexes must be associated with a 2-attribute, except darts that represent holes.</li>
 

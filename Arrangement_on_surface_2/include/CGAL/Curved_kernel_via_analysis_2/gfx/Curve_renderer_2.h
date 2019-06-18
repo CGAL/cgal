@@ -288,7 +288,7 @@ public:
     //! \brief returns the drawing window and resolution 
     void get_setup_parameters(CGAL::Bbox_2 *pbox, int& res_w_, 
                 int& res_h_) const {
-        if(pbox != NULL)
+        if(pbox != nullptr)
             *pbox = engine.window;
         res_w_ = engine.res_w; 
         res_h_ = engine.res_h;
@@ -332,7 +332,7 @@ private:
     
     //! computes pixel coordinates from rational point
     void get_pixel_coords(const Rational& x, const Rational& y, 
-            Pixel_2& pix, Rational *ppix_x=NULL, Rational *ppix_y=NULL)
+            Pixel_2& pix, Rational *ppix_x=nullptr, Rational *ppix_y=nullptr)
     {
         Rational p_x = (x - engine.x_min_r) / engine.pixel_w_r,
                  p_y = (y - engine.y_min_r) / engine.pixel_h_r;
@@ -344,7 +344,7 @@ private:
         pix.x = static_cast<int>(std::floor(CGAL::to_double(p_x)));
         pix.y = static_cast<int>(std::floor(CGAL::to_double(p_y)));   
 
-        if(ppix_x != NULL && ppix_y != NULL) {
+        if(ppix_x != nullptr && ppix_y != nullptr) {
             *ppix_x = p_x;
             *ppix_y = p_y;
         }
@@ -428,8 +428,8 @@ template < class Coord_2, template < class, class > class Container,
         class Allocator >
 void draw(const Arc_2& arc, 
           Container< std::vector< Coord_2 >, Allocator >& points,
-          boost::optional< Coord_2 > *end_pt1 = NULL, 
-          boost::optional< Coord_2 > *end_pt2 = NULL) {
+          boost::optional< Coord_2 > *end_pt1 = nullptr, 
+          boost::optional< Coord_2 > *end_pt2 = nullptr) {
 
 #ifdef CGAL_CKVA_CR_TIMING
     refine_timer.start();
@@ -616,7 +616,7 @@ void draw(const Arc_2& arc,
 #endif
 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-    if(end_pt1 != NULL && loc_p1 == CGAL::ARR_INTERIOR && 
+    if(end_pt1 != nullptr && loc_p1 == CGAL::ARR_INTERIOR && 
          (clip_src || y_lower < engine.y_min_r || y_lower > engine.y_max_r)) {
         y_lower0 = (clip_src ? 
             get_endpoint_y(arc, lower0, CGAL::ARR_MIN_END, false,
@@ -626,7 +626,7 @@ void draw(const Arc_2& arc,
         *end_pt1 = Coord_2(CGAL::to_double(lower0), 
                 CGAL::to_double(y_lower0));  
     }
-    if(end_pt2 != NULL && loc_p2 == CGAL::ARR_INTERIOR && 
+    if(end_pt2 != nullptr && loc_p2 == CGAL::ARR_INTERIOR && 
          (clip_tgt || y_upper < engine.y_min_r || y_upper > engine.y_max_r)) { 
         y_upper0 = (clip_tgt ? 
             get_endpoint_y(arc, upper0, CGAL::ARR_MAX_END, false,
@@ -650,9 +650,9 @@ void draw(const Arc_2& arc,
     get_pixel_coords(upper, y_upper, pix_2);  
     
 #ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT
-    if(end_pt1 != NULL)
+    if(end_pt1 != nullptr)
         *end_pt1 = Coord_2(pix_1.x, pix_1.y);
-    if(end_pt2 != NULL)
+    if(end_pt2 != nullptr)
         *end_pt2 = Coord_2(pix_2.x, pix_2.y);
 #endif
     

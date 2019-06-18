@@ -179,7 +179,7 @@ public:
   const NT & getTailCoeff() const;      // get last non-zero coefficient
   NT** getCoeffs() ;		// get all coefficients
   const NT& getCoeff(int i) const;      // Get single coefficient of X^i
-                                        // NULL pointer if invalid i
+                                        // nullptr pointer if invalid i
   // Set functions
   bool setCoeff(int i, const NT & cc);  // Make cc the coefficient of X^i
                                         // Return FALSE if invalid i
@@ -408,7 +408,7 @@ NT** Polynomial<NT>::getCoeffs() {
 template < class NT >
 CORE_INLINE
 const NT& Polynomial<NT>::getCoeff(int i) const {
-  //if (i > degree) return NULL;
+  //if (i > degree) return nullptr;
   CGAL_assertion(i <= degree);
   return coeff[i];
 }
