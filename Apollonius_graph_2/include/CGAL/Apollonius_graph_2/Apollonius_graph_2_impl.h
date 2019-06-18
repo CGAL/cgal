@@ -817,69 +817,85 @@ check_edge_for_hidden_sites(const Face_handle& f, int i,
 template<class Gt, class Agds, class LTag>
 void
 Apollonius_graph_2<Gt,Agds,LTag>::
-expand_conflict_region(const Face_handle& f, const Site_2& p,
-		       List& l, Face_map& fm, Vertex_map& vm,
-		       std::vector<Vh_triple*>* fe)
+expand_conflict_region(const Face_handle& in_f,
+                       const Site_2& p,
+                       List& l,
+                       Face_map& fm,
+                       Vertex_map& vm,
+                       std::vector<Vh_triple*>* fe)
 {
-  // setting fm[f] to true means that the face has been reached and
-  // that the face is available for recycling. If we do not want the
-  // face to be available for recycling we must set this flag to
-  // false.
-  fm[f] = true;
+  std::stack<Face_handle> face_stack;
+  face_stack.push(in_f);
 
-  //  CGAL_assertion( fm.find(f) != fm.end() );
-  for (int i = 0; i < 3; i++) {
-    bool hidden_found =
-      check_edge_for_hidden_sites(f, i, p, vm);
+  while(!face_stack.empty())
+  {
+    const Face_handle curr_f = face_stack.top();
+    face_stack.pop();
 
-    Face_handle n = f->neighbor(i);
+    // setting fm[curr_f] to true means that the face has been reached and
+    // that the face is available for recycling. If we do not want the
+    // face to be available for recycling we must set this flag to false.
+    fm[curr_f] = true;
 
-    if ( !hidden_found ) {
-      Sign s = incircle(n, p);
-      if ( s != NEGATIVE ) { continue; }
+    //  CGAL_assertion( fm.find(curr_f) != fm.end() );
+    for (int i = 0; i < 3; ++i)
+    {
+      bool hidden_found = check_edge_for_hidden_sites(curr_f, i, p, vm);
 
-      bool interior_in_conflict = edge_interior(f, i, p, true);
+      Face_handle n = curr_f->neighbor(i);
 
-      if ( !interior_in_conflict ) { continue; }
-    }
+      if ( !hidden_found )
+      {
+        Sign s = incircle(n, p);
+        if ( s != NEGATIVE )
+          continue;
 
-    if ( fm.find(n) != fm.end() ) {
-      Edge e = sym_edge(f, i);
-      if ( l.is_in_list(e) ||
-	   l.is_in_list(sym_edge(e)) ) {
-	l.remove(e);
-	l.remove(sym_edge(e));
+        bool interior_in_conflict = edge_interior(curr_f, i, p, true);
+        if ( !interior_in_conflict )
+          continue;
       }
-      continue;
-    }
 
-    Edge e = sym_edge(f, i);
+      if ( fm.find(n) != fm.end() )
+      {
+        Edge e = sym_edge(curr_f, i);
+        if ( l.is_in_list(e) )
+          l.remove(e);
 
-    CGAL_assertion( l.is_in_list(e) );
-    int j = tds().mirror_index(f, i);
-    Edge e_before = sym_edge(n, ccw(j));
-    Edge e_after = sym_edge(n, cw(j));
-    if ( !l.is_in_list(e_before) ) {
-      l.insert_before(e, e_before);
-    }
-    if ( !l.is_in_list(e_after) ) {
-      l.insert_after(e, e_after);
-    }
-    l.remove(e);
+        if( l.is_in_list(sym_edge(e)) )
+            l.remove(sym_edge(e));
 
-    if ( fe != NULL ) {
-      Vh_triple* vhq = new Vh_triple[1];
+        continue;
+      }
 
-      (*vhq)[0] = Vertex_handle();
-      (*vhq)[1] = n->vertex(     j  );
-      (*vhq)[2] = n->vertex( ccw(j) );
+      Edge e = sym_edge(curr_f, i);
+      CGAL_assertion( l.is_in_list(e) );
 
-      fe->push_back(vhq);
-    }
+      int j = tds().mirror_index(curr_f, i);
+      Edge e_before = sym_edge(n, ccw(j));
+      Edge e_after = sym_edge(n, cw(j));
 
+      if ( !l.is_in_list(e_before) )
+        l.insert_before(e, e_before);
 
-    expand_conflict_region(n, p, l, fm, vm, fe);
-  } // for-loop
+      if ( !l.is_in_list(e_after) )
+        l.insert_after(e, e_after);
+
+      l.remove(e);
+
+      if ( fe != NULL )
+      {
+        Vh_triple* vhq = new Vh_triple[1];
+
+        (*vhq)[0] = Vertex_handle();
+        (*vhq)[1] = n->vertex(     j  );
+        (*vhq)[2] = n->vertex( ccw(j) );
+
+        fe->push_back(vhq);
+      }
+
+      face_stack.push(n);
+    } // neighbor for-loop
+  }
 }
 
 
