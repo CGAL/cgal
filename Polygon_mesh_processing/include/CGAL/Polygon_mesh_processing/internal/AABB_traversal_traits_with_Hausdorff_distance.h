@@ -117,7 +117,9 @@ namespace CGAL {
     typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
     typedef typename AABB_tree< AABB_traits<Kernel, TM2_primitive> >::AABB_traits Tree_traits;
     typedef typename AABBTraits::Primitive Primitive;
+    typedef typename AABBTraits::Bounding_box Bounding_box;
     typedef ::CGAL::AABB_node<AABBTraits> Node;
+    typedef typename Kernel::Point_3 Point_3;
     typedef typename Kernel::Triangle_3 Triangle_3;
     typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
 
@@ -157,16 +159,30 @@ namespace CGAL {
     // Hausdorff distance and thus have to be entered
     bool do_intersect(const Query& query, const Node& node) const
     {
-      // Have reached a node, determine whether or not to enter it
+      /* Have reached a node, determine whether or not to enter it */
 
-      /* TODO implement processing of an AABB node
-      /  - Determine distance of the node's bounding box (node.bbox()) to the
-      /    closest point in B (First maybe any point)
-      /  - If the distance is larger than the global lower bound, enter the
-      /    node, i.e. return true.
-      */
-      return true;
-      //return m_traits.do_intersect_object()(query, node.bbox());
+      // Get the bounding box of the nodes
+      Bounding_box bbox = node.bbox();
+      // Compute its center
+      Point_3 center = Point_3(
+        (bbox.min(0) + bbox.max(0)) / 2,
+        (bbox.min(1) + bbox.max(1)) / 2,
+        (bbox.min(2) + bbox.max(2)) / 2);
+      // Find the point from TM2 closest to the center
+      Point_3 closest = tm2_tree.closest_point(center);
+      // Compute the distance of the center to the closest point in tm2
+      double dist = approximate_sqrt(squared_distance(center, closest));
+      // Compute the radius of the circumsphere of the bounding boxes
+      double radius = approximate_sqrt(squared_distance(
+        Point_3(bbox.min(0),bbox.min(1),bbox.min(2)),
+        Point_3(bbox.max(0),bbox.max(1),bbox.max(2)))
+      )/2.;
+      // If the distance is larger than the global lower bound, enter the node, i.e. return true.
+      if (dist + radius > h_lower) {
+          return true;
+      } else {
+        return false;
+      }
     }
 
   private:
