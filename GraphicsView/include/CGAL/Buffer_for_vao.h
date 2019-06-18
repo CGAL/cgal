@@ -471,8 +471,9 @@ public:
     }
     return true;
   }
+  CGAL::Bbox_3 *bb() const { return m_bb; }
 
-protected:
+  protected:
   void face_begin_internal(bool has_color, bool has_normal)
   {
     if (is_a_face_started())
