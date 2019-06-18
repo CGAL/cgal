@@ -27,11 +27,13 @@ int main()
 
   Surface_mesh tm2;
 //  CGAL::make_quad(P(2,2,-2), P(2,-2,-2), P(2,-2,2), P(2,2,2), tm2);  //TODO: test me + also test splitting the diagonal
-// TOOD test more case including non-manifold vertices
-  CGAL::make_quad(P(2,3,-2), P(2,-2,-2), P(2,-2,2), P(2,3,2), tm2);  
+// TODO: test more case including non-manifold vertices
+  CGAL::make_quad(P(2,3,-2), P(2,-2,-2), P(2,-2,2), P(2,3,2), tm2);
   PMP::triangulate_faces(tm2);
 
-  PMP::corefine(tm1,tm2);
+  PMP::Non_manifold_features_map<Surface_mesh> nm_map_1(tm1, get(boost::vertex_point, tm1));
+
+  PMP::corefine(tm1, tm2, CGAL::parameters::non_manifold_features_map(nm_map_1));
 
   std::ofstream("tm1_corefined.off") << tm1;
   std::ofstream("tm2_corefined.off") << tm2;

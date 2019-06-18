@@ -903,6 +903,11 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
   Ecm ecm(tm1,tm2,ecm1,ecm2);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor>
     functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm));
+
+  // Fill non-manifold feature maps if provided
+  functor.set_non_manifold_features_map_1(boost::get_param(np1, internal_np::non_manifold_features_map));
+  functor.set_non_manifold_features_map_2(boost::get_param(np2, internal_np::non_manifold_features_map));
+
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 }
 

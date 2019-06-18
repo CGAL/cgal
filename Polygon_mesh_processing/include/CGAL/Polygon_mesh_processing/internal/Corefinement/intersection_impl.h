@@ -33,6 +33,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_of_coplanar_triangles_3.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_nodes.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersect_triangle_and_segment_3.h>
+#include <CGAL/Polygon_mesh_processing/Non_manifold_features_map.h>
 #include <CGAL/utility.h>
 
 #include <boost/unordered_map.hpp>
@@ -196,12 +197,16 @@ class Intersection_of_triangle_meshes
   Node_visitor visitor;
   Faces_to_nodes_map         f_to_node;      //Associate a pair of triangles to their intersection points
   std::vector<Node_id> extra_terminal_nodes; //used only for autorefinement
+  Non_manifold_features_map<TriangleMesh> non_manifold_features_map_1,
+                                          non_manifold_features_map_2;
   CGAL_assertion_code(bool doing_autorefinement;)
+
 // member functions
   void filter_intersections(const TriangleMesh& tm_f,
                             const TriangleMesh& tm_e,
                             const VertexPointMap& vpm_f,
                             const VertexPointMap& vpm_e,
+                            const Non_manifold_features_map<TriangleMesh>& non_manifold_features_map,
                             bool throw_on_self_intersection)
   {
     std::vector<Box> face_boxes, edge_boxes;
@@ -222,15 +227,38 @@ class Intersection_of_triangle_meshes
 
     edge_boxes.reserve(num_edges(tm_e));
     edge_boxes_ptr.reserve(num_edges(tm_e));
-    for(edge_descriptor ed : edges(tm_e))
-    {
-      halfedge_descriptor h=halfedge(ed,tm_e);
-      edge_boxes.push_back( Box(
-        get(vpm_e,source(h,tm_e)).bbox() +
-        get(vpm_e,target(h,tm_e)).bbox(),
-        h ) );
-      edge_boxes_ptr.push_back( &edge_boxes.back() );
-    }
+    if (non_manifold_features_map.non_manifold_edges.empty())
+      // general manifold case
+      for(edge_descriptor ed : edges(tm_e))
+      {
+        halfedge_descriptor h=halfedge(ed,tm_e);
+        edge_boxes.push_back( Box(
+          get(vpm_e,source(h,tm_e)).bbox() +
+          get(vpm_e,target(h,tm_e)).bbox(),
+          h ) );
+        edge_boxes_ptr.push_back( &edge_boxes.back() );
+      }
+      else
+        // non-manifold case
+        for(edge_descriptor ed : edges(tm_e))
+        {
+          std::size_t eid=get(non_manifold_features_map.e_nm_id, ed);
+          halfedge_descriptor h=halfedge(ed,tm_e);
+          // insert only one copy of a non-manifold edge
+          if (eid!=std::size_t(-1))
+          {
+            if (non_manifold_features_map.non_manifold_edges[eid].front()!=ed)
+              continue;
+            else
+              // make sure the halfedge used is consistant with stored one
+              h = halfedge(non_manifold_features_map.non_manifold_edges[eid].front(), tm_e);
+          }
+          edge_boxes.push_back( Box(
+            get(vpm_e,source(h,tm_e)).bbox() +
+            get(vpm_e,target(h,tm_e)).bbox(),
+            h ) );
+          edge_boxes_ptr.push_back( &edge_boxes.back() );
+        }
 
     /// \todo experiments different cutoff values
     std::ptrdiff_t cutoff = 2 * std::ptrdiff_t(
@@ -670,6 +698,7 @@ class Intersection_of_triangle_meshes
                                    const TriangleMesh& tm2,
                                    const VertexPointMap& vpm1,
                                    const VertexPointMap& vpm2,
+                                   const Non_manifold_features_map<TriangleMesh>& non_manifold_features_map,
                                    Node_id& current_node)
   {
     typedef std::tuple<Intersection_type, halfedge_descriptor, bool,bool>  Inter_type;
@@ -679,6 +708,11 @@ class Intersection_of_triangle_meshes
                                          it!=tm1_edge_to_tm2_faces.end();++it)
     {
       edge_descriptor e_1=it->first;
+
+      std::size_t eid_1 = non_manifold_features_map.non_manifold_edges.empty() ?
+                          std::size_t(-1) :
+                          get(non_manifold_features_map.e_nm_id, e_1);
+
       halfedge_descriptor h_1=halfedge(e_1,tm1);
       Face_set& fset=it->second;
       while (!fset.empty()){
@@ -1289,6 +1323,18 @@ public:
     CGAL_assertion_code( doing_autorefinement=true; )
   }
 
+// setting maps of non manifold features
+  void set_non_manifold_features_map_1(boost::param_not_found){}
+  void set_non_manifold_features_map_2(boost::param_not_found){}
+  void set_non_manifold_features_map_1(const Non_manifold_features_map<TriangleMesh>& m)
+  {
+    non_manifold_features_map_1=m;
+  }
+  void set_non_manifold_features_map_2(const Non_manifold_features_map<TriangleMesh>& m)
+  {
+    non_manifold_features_map_2=m;
+  }
+
   template <class OutputIterator>
   OutputIterator operator()(OutputIterator output,
                             bool throw_on_self_intersection,
@@ -1301,12 +1347,12 @@ public:
     const VertexPointMap& vpm1=nodes.vpm1;
     const VertexPointMap& vpm2=nodes.vpm2;
 
-    filter_intersections(tm1, tm2, vpm1, vpm2, throw_on_self_intersection);
-    filter_intersections(tm2, tm1, vpm2, vpm1, throw_on_self_intersection);
+    filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_features_map_2, throw_on_self_intersection);
+    filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_features_map_1, throw_on_self_intersection);
 
     Node_id current_node((std::numeric_limits<Node_id>::max)());
     CGAL_assertion(current_node+1==0);
-
+// TODO: handle non-manifold edges in coplanar
     #ifndef DO_NOT_HANDLE_COPLANAR_FACES
     //first handle coplanar triangles
     if (&tm1<&tm2)
@@ -1327,8 +1373,8 @@ public:
                                          ? stm_edge_to_ltm_faces
                                          : ltm_edge_to_stm_faces;
 
-    compute_intersection_points(tm1_edge_to_tm2_faces, tm1, tm2, vpm1, vpm2, current_node);
-    compute_intersection_points(tm2_edge_to_tm1_faces, tm2, tm1, vpm2, vpm1, current_node);
+    compute_intersection_points(tm1_edge_to_tm2_faces, tm1, tm2, vpm1, vpm2, non_manifold_features_map_1, current_node);
+    compute_intersection_points(tm2_edge_to_tm1_faces, tm2, tm1, vpm2, vpm1, non_manifold_features_map_2, current_node);
     if (!build_polylines){
       visitor.finalize(nodes,tm1,tm2,vpm1,vpm2);
       return output;
