@@ -130,8 +130,8 @@ While mesh smoothing is achieved by improving the quality of triangles based on 
 shape smoothing is designed to be \e intrinsic, depending as little as possible on the discretization
 and smoothing the shape alone without optimizing the shape of the triangles.
 
-- Mesh smoothing: `CGAL::Polygon_mesh_processing::smooth_angles()` moves vertices so that angles between incident edges equalize,
-and `CGAL::Polygon_mesh_processing::smooth_areas()` moves vertices so that areas of adjacent triangles tend to equalize.
+- Mesh smoothing: `CGAL::Polygon_mesh_processing::smooth()` moves vertices to optimize geometry around each vertex:
+it can try to equalize the angles between incident edges, or (and) move vertices so that areas of adjacent triangles tend to equalize.
 Border vertices are considered constrained and do not move at any step of the procedure. No vertices are inserted at any time.
 Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}.
 Since area smoothing considers only areas as a smoothing criterion, it may result in long and skinny

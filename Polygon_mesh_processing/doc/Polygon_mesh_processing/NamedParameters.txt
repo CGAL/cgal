@@ -391,11 +391,52 @@ if orientation should matter when determining whether two faces are duplicates.
 <b>Default:</b> `false`
 \cgalNPEnd
 
+\cgalNPBegin{use_angle_smoothing_t} \anchor PMP_use_angle_smoothing
+Parameter used in the function `smooth()` to indicate if angle-based smoothing should be used.
+When this type of smoothing is used, the algorithm attempts to equalize angles incident to each vertex.
+
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{use_area_smoothing_t} \anchor PMP_use_area_smoothing
+Parameter used in the function `smooth()` to indicate if area-based smoothing should be used.
+When this type of smoothing is used, the algorithm attempts to equalize the areas of the triangles
+incident to each vertex. Since this can create elongated triangles, a second phase uses Delaunay-based
+flips to recover good shapes, unless specified otherwise (see below).
+
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{use_Delaunay_flips_t} \anchor PMP_use_Delaunay_flips
+Parameter used in the function `smooth()` to indicate if Delaunay-based flips should be used
+after area-based smoothing has been performed. A user wishing to preserve combinatorial information
+can set this parameter to `false`, but the mesh might have elongated elements.
+
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
 \cgalNPBegin{use_safety_constraints} \anchor PMP_use_safety_constraints
-Parameter used in the functions `smooth_angles()` and `smooth_areas()` to indicate
-if some sanity checks should be used to decide if the move of a vertex should be applied or rejected.
-These sanity checks consists of checking that no face incident to the vertex becomes inverted
-and that the minimum angle of the incident faces is not decreased by the move.
+Parameter used in the function `smooth()` to indicate if some sanity checks should be used to decide
+if the move of a vertex should be applied or rejected. These sanity checks consists of checking that
+no face incident to the vertex becomes inverted and that the minimum angle of the incident faces
+is not decreased by the move.
+
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{use_safety_constraints} \anchor PMP_use_safety_constraints
+Parameter used in the function `smooth()` to indicate if some sanity checks should be used to decide
+if the move of a vertex should be applied or rejected. These sanity checks consists of checking that
+no face incident to the vertex becomes inverted and that the minimum angle of the incident faces
+is not decreased by the move.
 
 \n
 <b>Type:</b> `bool` \n

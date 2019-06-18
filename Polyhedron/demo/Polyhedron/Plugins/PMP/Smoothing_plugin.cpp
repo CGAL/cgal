@@ -191,19 +191,21 @@ public Q_SLOTS:
         }
         else
         {
-          smooth_angles(pmesh, parameters::do_project(projection)
-                                           .number_of_iterations(nb_iter)
-                                           .use_safety_constraints(use_safety_measures)
-                                           .vertex_is_constrained_map(vcmap));
+          smooth(pmesh, parameters::do_project(projection)
+                                   .number_of_iterations(nb_iter)
+                                   .use_safety_constraints(use_safety_measures)
+                                   .vertex_is_constrained_map(vcmap)
+                                   .use_area_smoothing(false));
         }
       }
       else if(use_area_smoothing)
       {
-        smooth_areas(pmesh, parameters::do_project(projection)
-                                       .number_of_iterations(nb_iter)
-                                       .use_delaunay_triangulation(use_Delaunay_flips)
-                                       .use_safety_constraints(use_safety_measures)
-                                       .vertex_is_constrained_map(vcmap));
+        smooth(pmesh, parameters::do_project(projection)
+                                 .number_of_iterations(nb_iter)
+                                 .use_delaunay_triangulation(use_Delaunay_flips)
+                                 .use_safety_constraints(use_safety_measures)
+                                 .vertex_is_constrained_map(vcmap)
+                                 .use_angle_smoothing(false));
       }
 
       poly_item->invalidateOpenGLBuffers();
@@ -219,22 +221,28 @@ public Q_SLOTS:
         if(use_angle_smoothing)
         {
           if(use_area_smoothing)
+          {
             smooth(pmesh, parameters::do_project(projection)
                                      .number_of_iterations(nb_iter)
                                      .use_safety_constraints(use_safety_measures)
                                      .vertex_is_constrained_map(vcmap));
+          }
           else
-            smooth_angles(pmesh, parameters::do_project(projection)
-                                            .number_of_iterations(nb_iter)
-                                            .use_safety_constraints(use_safety_measures)
-                                            .vertex_is_constrained_map(vcmap));
+          {
+            smooth(pmesh, parameters::do_project(projection)
+                                     .number_of_iterations(nb_iter)
+                                     .use_safety_constraints(use_safety_measures)
+                                     .vertex_is_constrained_map(vcmap)
+                                     .use_area_smoothing(false));
+          }
         }
         else
         {
-          smooth_areas(pmesh, parameters::do_project(projection)
-                                         .number_of_iterations(nb_iter)
-                                         .use_safety_constraints(use_safety_measures)
-                                         .vertex_is_constrained_map(vcmap));
+          smooth(pmesh, parameters::do_project(projection)
+                                   .number_of_iterations(nb_iter)
+                                   .use_safety_constraints(use_safety_measures)
+                                   .vertex_is_constrained_map(vcmap)
+                                   .use_angle_smoothing(false));
         }
       }
       else // some faces exist in the selection
@@ -250,18 +258,20 @@ public Q_SLOTS:
           }
           else
           {
-            smooth_angles(selection_item->selected_facets, pmesh, parameters::do_project(projection)
-                                                                             .number_of_iterations(nb_iter)
-                                                                             .use_safety_constraints(use_safety_measures)
-                                                                             .vertex_is_constrained_map(vcmap));
+            smooth(selection_item->selected_facets, pmesh, parameters::do_project(projection)
+                                                                      .number_of_iterations(nb_iter)
+                                                                      .use_safety_constraints(use_safety_measures)
+                                                                      .vertex_is_constrained_map(vcmap)
+                                                                      .use_area_smoothing(false));
           }
         }
         else
         {
-          smooth_areas(selection_item->selected_facets, pmesh, parameters::do_project(projection)
-                                                                          .number_of_iterations(nb_iter)
-                                                                          .use_safety_constraints(use_safety_measures)
-                                                                          .vertex_is_constrained_map(vcmap));
+          smooth(selection_item->selected_facets, pmesh, parameters::do_project(projection)
+                                                                    .number_of_iterations(nb_iter)
+                                                                    .use_safety_constraints(use_safety_measures)
+                                                                    .vertex_is_constrained_map(vcmap)
+                                                                    .use_angle_smoothing(false));
         }
       }
 

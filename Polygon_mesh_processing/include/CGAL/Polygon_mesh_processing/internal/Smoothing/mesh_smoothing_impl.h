@@ -431,7 +431,7 @@ public:
     }
 
     ceres::Solver::Options options;
-    options.minimizer_progress_to_stdout = true;
+//    options.minimizer_progress_to_stdout = true;
     ceres::Solver::Summary summary;
     ceres::Solve(options, &problem, &summary);
 //    std::cout << summary.BriefReport() << "\n";
@@ -462,16 +462,6 @@ class Mesh_smoother
   typedef typename boost::property_traits<VertexPointMap>::reference       Point_ref;
   typedef typename GeomTraits::FT                                          FT;
   typedef typename GeomTraits::Vector_3                                    Vector;
-  typedef typename GeomTraits::Segment_3                                   Segment;
-  typedef typename GeomTraits::Triangle_3                                  Triangle;
-
-  typedef std::vector<Triangle>                                            Triangle_list;
-  typedef std::pair<halfedge_descriptor, halfedge_descriptor>              He_pair;
-
-  typedef std::vector<Triangle>                                            Triangle_container;
-  typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_container::iterator> AABB_Primitive;
-  typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive>                    AABB_Traits;
-  typedef CGAL::AABB_tree<AABB_Traits>                                     Tree;
 
 public:
   Mesh_smoother(TriangleMesh& pmesh,
@@ -481,8 +471,6 @@ public:
     :
       mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap), traits_(traits)
   {}
-
-  ~Mesh_smoother() { delete tree_ptr_; }
 
 public:
   template<typename FaceRange>
@@ -511,20 +499,6 @@ public:
     CGAL_precondition(degen_faces.empty());
 
     set_vertex_range(face_range);
-
-    input_triangles_.clear();
-    input_triangles_.reserve(face_range.size());
-
-    for(face_descriptor f : face_range)
-    {
-      halfedge_descriptor h = halfedge(f, mesh_);
-      input_triangles_.push_back(traits_.construct_triangle_3_object()(get(vpmap_, source(h, mesh_)),
-                                                                       get(vpmap_, target(h, mesh_)),
-                                                                       get(vpmap_, target(next(h, mesh_), mesh_))));
-    }
-
-    tree_ptr_ = new Tree(input_triangles_.begin(), input_triangles_.end());
-    tree_ptr_->accelerate_distance_queries();
   }
 
   // generic optimizer, the move is computed by 'Optimizer'
@@ -611,7 +585,8 @@ public:
     return moved_points;
   }
 
-  void project_to_surface()
+  template <typename AABBTree>
+  void project_to_surface(const AABBTree& tree)
   {
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "Projecting back to the surface" << std::endl;
@@ -623,7 +598,7 @@ public:
         continue;
 
       Point_ref p_query = get(vpmap_, v);
-      const Point projected = tree_ptr_->closest_point(p_query);
+      const Point projected = tree.closest_point(p_query);
       put(vpmap_, v, projected);
     }
   }
@@ -724,9 +699,7 @@ private:
   VertexConstraintMap vcmap_;
   GeomTraits traits_;
 
-  Tree* tree_ptr_;
   std::vector<vertex_descriptor> vrange_;
-  Triangle_container input_triangles_;
 };
 
 } // namespace internal

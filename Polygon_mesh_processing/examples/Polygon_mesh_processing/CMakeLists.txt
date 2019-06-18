@@ -69,6 +69,8 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program( "hole_filling_example_SM.cpp" )
   create_single_source_cgal_program( "refine_fair_example.cpp")
   create_single_source_cgal_program( "shape_smoothing_example.cpp")
+  create_single_source_cgal_program( "mesh_smoothing_example.cpp")
+
 endif(EIGEN3_FOUND)
 
 create_single_source_cgal_program( "self_intersections_example.cpp" )
@@ -98,7 +100,6 @@ create_single_source_cgal_program( "corefinement_LCC.cpp")
 create_single_source_cgal_program( "hole_filling_example_LCC.cpp" )
 create_single_source_cgal_program( "detect_features_example.cpp" )
 create_single_source_cgal_program( "manifoldness_repair_example.cpp" )
-create_single_source_cgal_program( "mesh_smoothing_example.cpp")
 create_single_source_cgal_program( "repair_polygon_soup_example.cpp" )
 
     set(SuiteSparse_USE_LAPACK_BLAS ON)

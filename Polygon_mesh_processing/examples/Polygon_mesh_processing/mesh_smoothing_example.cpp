@@ -1,6 +1,3 @@
-#define CGAL_PMP_SMOOTHING_VERBOSE
-#define CGAL_PMP_SMOOTHING_DEBUG
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
@@ -16,7 +13,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv)
 {
-  const char* filename = argc > 1 ? argv[1] : "data/grid.off";
+  const char* filename = argc > 1 ? argv[1] : "data/mech-holes-shark.off";
   std::ifstream input(filename);
 
   Mesh mesh;
@@ -26,27 +23,27 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  const unsigned int repeat = 1;
-  const unsigned int nb_iterations = 50;
-
-  for(unsigned int t=0 ; t<repeat; ++t)
+  std::set<Mesh::Vertex_index> constrained_vertices;
+  for(Mesh::Vertex_index v : vertices(mesh))
   {
-#if 0
-//    std::cout << "Smooth areas..." << std::endl;
-//    PMP::smooth_areas(mesh, PMP::parameters::number_of_iterations(nb_iterations)
-//                                            .use_safety_constraints(false));
-
-    std::cout << "Smooth angles..." << std::endl;
-    PMP::smooth_angles(mesh, PMP::parameters::number_of_iterations(nb_iterations)
-                                             .use_safety_constraints(false));
-#else
-    PMP::smooth(mesh, PMP::parameters::number_of_iterations(nb_iterations)
-                                      .use_safety_constraints(false));
-#endif
+    if(is_border(v, mesh))
+      constrained_vertices.insert(v);
   }
+
+  std::cout << "Constraining: " << constrained_vertices.size() << " border vertices" << std::endl;
+
+  const unsigned int nb_iterations = 5;
+  CGAL::Boolean_property_map<std::set<Mesh::Vertex_index> > vcmap(constrained_vertices);
+
+  std::cout << "Smoothing... (" << nb_iterations << " iterations)" << std::endl;
+  PMP::smooth(mesh, PMP::parameters::number_of_iterations(nb_iterations)
+                                    .use_safety_constraints(false) // authorize all moves
+                                    .vertex_is_constrained_map(vcmap));
 
   std::ofstream output("mesh_smoothed.off");
   output << mesh;
+
+  std::cout << "Done!" << std::endl;
 
   return EXIT_SUCCESS;
 }
