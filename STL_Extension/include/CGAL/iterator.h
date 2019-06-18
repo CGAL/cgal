@@ -1378,10 +1378,6 @@ public:
     
   Dispatch_output_iterator(const Dispatch_output_iterator&)=default;
 
-    
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
-  Dispatch_output_iterator(const Dispatch_output_iterator&)=default;
-#endif
 
   Self& operator=(const Self& s)
   {
