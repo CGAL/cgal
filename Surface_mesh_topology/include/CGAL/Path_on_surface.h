@@ -203,7 +203,7 @@ public:
   void push_back_by_index(std::size_t i)
   { push_back(get_map().dart_handle(i)); }
   
-  void push_back_by_label(std::initializer_list<std::size_t> l)
+  void push_back_by_index(std::initializer_list<std::size_t> l)
   {
     for (std::size_t i : l)
     { push_back_by_index(i); }
@@ -217,15 +217,17 @@ public:
     return can_be_pushed(dh);
   }
   
-  /// Add the dart having this label at the end of this path. 
-  void push_back_by_label(const std::string& e)
+  /// Add the dart having the given labels at the end of this path.
+  /// Each label is a word, possibly starting by -, words are separated by spaces
+  void push_back_by_label(const std::string& s)
   {
-    Dart_const_handle dh=get_map().get_dart_labeled(e);
-    if (dh!=NULL) { push_back(dh); }    
+    std::istringstream iss(s);
+    for (std::string e; std::getline(iss, e, ' '); )
+    {
+      Dart_const_handle dh=get_map().get_dart_labeled(e);
+      if (dh!=NULL) { push_back(dh); }    
+    }
   }
-
-  void push_back_by_label(const char* e)
-  { push_back_by_label(std::string(e)); }
   
   void push_back_by_label(std::initializer_list<const char*> l)
   {

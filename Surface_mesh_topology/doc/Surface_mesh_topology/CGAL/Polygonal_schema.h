@@ -4,48 +4,29 @@ namespace Surface_mesh_topology {
   /*!
     \ingroup PkgSurfaceMeshTopologyClasses
 
-    The class `Polygonal_schema` is a model of `CombinatorialMap` with labeled edges. A  Polygonal_schema is created incrementally by adding facets one at a time.
+    The class `Polygonal_schema_with_combinatorial_map` is a model of `PolygonalSchema` using `Combinatorial_map` as underlying model.
 
-    \tparam CMap a model of `CombinatorialMap`
+    \tparam Items a model of the `PolygonalSchemaItems` concept. Equal to `Polygonal_schema_min_items` by default.
+
+    \tparam Alloc has to match the standard allocator requirements. The `rebind` mechanism  `Alloc` will be used to create appropriate allocators internally with value type `Dart`. Equal to `CGAL_ALLOCATOR(int)` from `<CGAL/memory.h>` by default.
   */
-  template<typename CMap>
-  class Polygonal_schema
+  template<typename Items, typename Alloc>
+  class Polygonal_schema_with_combinatorial_map: public CGAL::Combinatorial_map<2, Items, Alloc>
   {
-  public:
-    /// Dart_handle type.
-    typedef typename CMap::Dart_handle Dart_handle;
-    
-    /*! creates an empty `Polygonal_schema` object.
-     */
-    Polygonal_schema();
-    
-    /// starts a new surface
-    void init_surface();
-      
-    /// finishes the current surface. Returns one dart of the created surface.
-    /// @pre A surface is under creation.
-    Dart_handle finish_surface();
+  };
 
-    /// starts a new facet.
-    void init_facet();
-    
-    /// finishes the current facet. Returns the first dart of this facet.
-    /// @pre A facet is under creation.
-    Dart_handle finish_facet();
+  /*!
+    \ingroup PkgSurfaceMeshTopologyClasses
 
-    /// adds one edge to the current facet, given by its label `l` (any string containing no space, using minus sign for orientation).
-    /// Since the surface is oriented, each label can be used only twice with opposite signs. If this method is called with a label already used, with same sign, an error message is given and this label is ignored. 
-    /// @pre A facet is under creation.
-    void add_edge_to_facet(const std::string& l);
-    
-    /// adds the given edges to the current facet.
-    /// `s` is a sequence of labels, separated by spaces. All the corresponding edges are added into the current facet.
-    /// @pre A facet is under creation.
-    void add_edges_to_facet(const std::string& s);
-    
-    /// adds directly one facet giving the sequence of labels `s` of all its edges (labels are separated by spaces).
-    /// @pre A surface is under creation.
-    void add_facet(const std::string& s);
+    The class `Polygonal_schema_with_generalized_map` is a model of `PolygonalSchema` using `Generalized_map` as underlying model.
+
+    \tparam Items a model of the `PolygonalSchemaItems` concept. Equal to `Polygonal_schema_min_items` by default.
+
+    \tparam Alloc has to match the standard allocator requirements. The `rebind` mechanism  `Alloc` will be used to create appropriate allocators internally with value type `Dart`. Equal to `CGAL_ALLOCATOR(int)` from `<CGAL/memory.h>` by default.
+  */
+  template<typename Items, typename Alloc>
+  class Polygonal_schema_with_generalized_map: public CGAL::Generalized_map<2, Items, Alloc>
+  {
   };
 }
 }

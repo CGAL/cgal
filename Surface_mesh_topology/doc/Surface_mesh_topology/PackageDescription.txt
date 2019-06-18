@@ -30,10 +30,16 @@
 
 \cgalClassifedRefPages
 
-## Classes ##
+\cgalCRPSection{Concepts}
+- `PolygonalSchema`
+- `PolygonalSchemaItems`
+
+\cgalCRPSection{Classes}
 - `CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh>`
 - `CGAL::Surface_mesh_topology::Path_on_surface<Mesh>`
-- `CGAL::Surface_mesh_topology::Polygonal_schema`
+- `CGAL::Surface_mesh_topology::Polygonal_schema_for_combinatorial_map`
+- `CGAL::Surface_mesh_topology::Polygonal_schema_for_generalized_map`
+- `CGAL::Surface_mesh_topology::Polygonal_schema_min_items`
 
 \cgalCRPSubsection{Draw a Mesh with Paths}
 - `CGAL::draw<Mesh>`

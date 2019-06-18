@@ -4,16 +4,16 @@ namespace Surface_mesh_topology {
   /*!
     \ingroup PkgSurfaceMeshTopologyClasses
     
-    The class `Path_on_surface` represents a walk in a mesh which is either a 2D `CombinatorialMap` or a model of a `FaceGraph`. Each object of this class is constructed from an external mesh on which the path should lie. A path is represented as a sequence of darts or halfedges, each one representing an oriented edge in the path. The class `Path_on_surface` behaves as a container for this sequence of darts/halfedges. Elements are added in the path one at a time to the path thanks to the `push_back()` method.
+    The class `Path_on_surface` represents a walk in a mesh which is either a model of `CombinatorialMap`, a model of `GeneralizedMap` or a model of a `FaceGraph`. Each object of this class is constructed from an external mesh on which the path should lie. A path is represented as a sequence of darts or halfedges, each one representing an oriented edge in the path. The class `Path_on_surface` behaves as a container for this sequence of darts/halfedges. Elements are added in the path one at a time to the path thanks to the `push_back()` method.
     
-    \tparam Mesh a model of `CombinatorialMap` or of `FaceGraph`
+    \tparam Mesh a model of `CombinatorialMap`, `GeneralizedMap` or of `FaceGraph`
   */
   template<typename Mesh>
   class Path_on_surface
   {
   public:
     /*!
-      %halfedge_descriptor type. A handle to Dart for combinatorial maps, or a halfedge descriptor for models of FaceGraph.
+      %halfedge_descriptor type. A handle to Dart for combinatorial/generalized maps, or a halfedge descriptor for models of FaceGraph.
     */
     typedef unspecified_type halfedge_descriptor;
 
@@ -63,14 +63,13 @@ namespace Surface_mesh_topology {
     /// @pre !`is_empty()`
     void extend_negative_turn(std::size_t nb); 
 
-    /// returns `true` iff the dart/halfedge with index `l` can be added at the end of this path.
-    /// Mesh must be a Polygonal_schema.
+    /// returns `true` iff the dart/halfedge with label `l` can be added at the end of this path.
+    /// @pre Mesh must be a model of `PolygonalSchema` concept.
     bool can_be_pushed_by_label(const std::string& l) const;
 
-    /// adds the dart/halfedge with label `l` at the end of this path.
-    /// Mesh must be a Polygonal_schema.
-    /// @pre `can_be_pushed_by_label(l)`
-    void push_back_by_label(const std::string& l);
+    /// `s` is a sequence of labels, separated by spaces. For each label `l`, adds the dart/halfedge with label `l` at the end of this path. For each label, l, `can_be_pushed_by_label(l)` should be true.
+    /// @pre Mesh must be a model of `PolygonalSchema` concept.
+    void push_back_by_label(const std::string& s);
 
     /// concatenates `other` to this path.
     /// @pre the last vertex of this path should coincide with the first vertex of `other`.

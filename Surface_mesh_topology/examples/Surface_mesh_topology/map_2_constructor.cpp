@@ -18,12 +18,12 @@ void construct_map_from_edges()
   cm.add_facet("-c d e -d -e");
   cm.end_surface();
 
-  // CGAL::Path_on_surface<Map> p=cm.create_path("a b d e");
+  CGAL::Path_on_surface<Map> p(cm); p.push_back_by_label("a b d e");
 
   std::cout<<"Map valid="<<cm.is_valid()<<std::flush;
   cm.display_characteristics(std::cout);
-  /* std::cout<<"; path lenght="<<p.length()
-     <<", isclosed? "<<(p.is_closed()?"true":"false")<<std::endl; */
+  std::cout<<"; path lenght="<<p.length()
+     <<", isclosed? "<<(p.is_closed()?"true":"false")<<std::endl;
 }
 
 int main()

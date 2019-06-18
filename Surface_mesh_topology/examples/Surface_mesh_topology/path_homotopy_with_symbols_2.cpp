@@ -28,7 +28,7 @@ int main()
   ps.display_characteristics(std::cout)<<std::endl;
   
   CGAL::Path_on_surface<PS> p(ps);
-  p.push_back_by_label({"a","b","-a","e","-b","d"});  
+  p.push_back_by_label("a b -a e -b d");  
 
   CGAL::Homotopy_tester<PS> ht(ps);
   bool res=ht.is_contractible(p);
