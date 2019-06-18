@@ -38,13 +38,6 @@
 #include <CGAL/config.h>
 #include <CGAL/tss.h>
 #include <boost/config.hpp>
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
-// Force the use of Boost.Thread with g++ and C++11, because of the PR66944
-//   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66944
-// See also CGAL PR #1888
-//   https://github.com/CGAL/cgal/pull/1888#issuecomment-278284232
-#  include <boost/thread/tss.hpp>
-#endif
 
 #include <new>           // for placement new
 #include <cassert>
@@ -76,7 +69,7 @@ public:
 	t = t->next;
       }
     //);
-    //CGAL_warning_msg(count ==  nObjects * blocks.size(),
+    //Cgal_warning_msg(count ==  nObjects * blocks.size(),
     //                 "Cannot delete memory as there are cyclic references");
 
     if(count ==  nObjects * blocks.size()){
@@ -92,37 +85,15 @@ public:
 
   // Access the corresponding static global allocator.
   static MemoryPool<T,nObjects>& global_allocator() {
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
-    if(memPool_ptr.get() == nullptr) {memPool_ptr.reset(new Self());}
-    Self& memPool =  * memPool_ptr.get();
-#endif
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Self, memPool);
     return memPool;
   }
  
 private:
-   Thunk* head; // next available block in the pool
+  Thunk* head; // next available block in the pool
   std::vector<void*> blocks;
 
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
-  static boost::thread_specific_ptr<Self> memPool_ptr;
-#elif defined(CGAL_HAS_THREADS) // use the C++11 implementation
-  static thread_local Self memPool;
-#else // not CGAL_HAS_THREADS
-  static Self memPool;
-#endif // not CGAL_HAS_THREADS
 };
-
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
-template <class T, int nObjects >
-boost::thread_specific_ptr<MemoryPool<T, nObjects> >
-MemoryPool<T, nObjects>::memPool_ptr;
-#else // use C++11 or without CGAL_HAS_THREADS
-template <class T, int nObjects >
-#  ifdef CGAL_HAS_THREADS
-thread_local
-#  endif
-MemoryPool<T, nObjects> MemoryPool<T, nObjects>::memPool;
-#endif
 
 template< class T, int nObjects >
 void* MemoryPool< T, nObjects >::allocate(std::size_t) {
