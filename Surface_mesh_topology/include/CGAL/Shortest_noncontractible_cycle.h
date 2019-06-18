@@ -24,7 +24,7 @@ public:
     struct Weight {
       using Weight_t = unsigned int;
       Weight() {}
-      Weight_t operator() (Dart_const_handle_orig) { return 1; }
+      Weight_t operator() (Dart_const_handle_orig) const { return 1; }
     };
   };
 
@@ -50,8 +50,8 @@ public:
   Shortest_noncontractible_cycle(const Gmap_origin& gmap, const Weight& wf = Weight())
   {
     m_gmap.copy(gmap, &m_origin_to_copy, &m_copy_to_origin);
-    m_gmap.display_characteristics(std::cerr);
-    std::cerr << '\n';
+    // m_gmap.display_characteristics(std::cerr);
+    // std::cerr << '\n';
     // Initialize 2-attributes
     for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it) {
       m_gmap.template set_attribute<2>(it, m_gmap.template create_attribute<2>());
@@ -75,8 +75,8 @@ public:
     m_spanning_tree.reserve(m_nb_of_vertices-1);
     m_distance_from_root.reserve(m_nb_of_vertices);
     m_trace_index.reserve(m_nb_of_vertices-1);
-    m_gmap.display_characteristics(std::cerr);
-    std::cerr << '\n';
+    // m_gmap.display_characteristics(std::cerr);
+    // std::cerr << '\n';
   }
   
   bool find_cycle(Dart_const_handle_orig root_vertex, Path& cycle, Distance_type* length = NULL) {
