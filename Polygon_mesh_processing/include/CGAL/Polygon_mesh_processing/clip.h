@@ -33,6 +33,12 @@
 
 #include <CGAL/AABB_triangle_primitive.h>
 
+#include <CGAL/boost/graph/Face_filtered_graph.h>
+
+#include <boost/property_map/property_map.hpp>
+
+#include <unordered_map>
+
 namespace CGAL{
 namespace Polygon_mesh_processing {
 
@@ -441,6 +447,70 @@ bool clip(      TriangleMesh& tm,
                                       np, CGAL::graph_has_property<TriangleMesh, CGAL::face_index_t>());
 }
 
+
+template <class TriangleMesh,
+          class OutputIterator,
+          class NamedParameters1,
+          class NamedParameters2>
+OutputIterator split(TriangleMesh& tm,
+                     TriangleMesh& splitter,
+                     OutputIterator out,
+                     const NamedParameters1& np_tm,
+                     const NamedParameters2& np_s)
+{
+
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor                 face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor                 edge_descriptor;
+
+
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  namespace params = PMP::parameters;
+  using boost::get_param;
+  using boost::choose_param;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type VPMap;
+  VPMap vpm_tm = choose_param(get_param(np_tm, internal_np::vertex_point),
+                             get_property_map(vertex_point, tm));
+  VPMap vpm_s = choose_param(get_param(np_s, internal_np::vertex_point),
+                             get_property_map(vertex_point, splitter));
+
+  typedef typename GetFaceIndexMap<TriangleMesh,
+      NamedParameters1>::type Fid_map;
+
+  Fid_map fimap = boost::choose_param(boost::get_param(np_tm, internal_np::face_index),
+                                      get_property_map(boost::face_index, tm));
+typedef CGAL::Face_filtered_graph<TriangleMesh, Fid_map> Filtered_graph;
+
+  typedef typename boost::template property_map<TriangleMesh, CGAL::dynamic_face_property_t<std::size_t > >::type FCCMap;
+  FCCMap fccmap = get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
+
+
+  typedef typename boost::template property_map<TriangleMesh, CGAL::dynamic_edge_property_t<bool> >::type Ecm;
+  Ecm ecm  = get(CGAL::dynamic_edge_property_t<bool>(), tm);
+
+
+  typedef typename VPMap::value_type Point;
+
+  // create a constrained edge map and corefine input mesh with the plane
+
+  PMP::corefine(tm, splitter,
+                CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm),
+                CGAL::parameters::vertex_point_map(vpm_s));
+  std::size_t num = PMP::connected_components(tm, fccmap, PMP::parameters::edge_is_constrained_map(ecm));
+
+  Filtered_graph ffg(tm, 0, fccmap, PMP::parameters::face_index_map(fimap));
+  for (std::size_t i=0; i <num; ++i)
+  {
+    if (i!=0)
+      ffg.set_selected_faces(i, fccmap);
+
+    // create a new mesh for the component
+    TriangleMesh cc_mesh;
+    CGAL::copy_face_graph(ffg, cc_mesh);
+
+    out++ = cc_mesh;
+  }
+}
+
 /// \cond SKIP_IN_MANUAL
 
 // convenience overloads
@@ -469,6 +539,31 @@ clip(      TriangleMesh& tm,
            TriangleMesh& clipper)
 {
   return clip(tm, clipper, parameters::all_default());
+}
+
+
+// convenience overload
+template <class TriangleMesh,
+          class OutputIterator,
+          class NamedParameters1>
+OutputIterator
+split(      TriangleMesh& tm,
+            TriangleMesh& splitter,
+            OutputIterator out,
+            const NamedParameters1& np_tm)
+{
+  return split(tm, splitter, out, np_tm, parameters::all_default());
+}
+
+// convenience overload
+template <class TriangleMesh,
+          class OutputIterator>
+OutputIterator
+split(      TriangleMesh& tm,
+            TriangleMesh& splitter,
+            OutputIterator out)
+{
+  return split(tm, splitter, out, parameters::all_default());
 }
 /// \endcond
 
