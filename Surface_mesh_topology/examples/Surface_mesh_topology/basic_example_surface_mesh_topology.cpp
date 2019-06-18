@@ -1,6 +1,6 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Homotopy_tester.h>
+#include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/draw_face_graph_with_paths.h>
 
@@ -16,10 +16,7 @@ void create_path_1(CGAL::Path_on_surface<LCC_3_cmap>& p)
 
 ///////////////////////////////////////////////////////////////////////////////
 void create_path_2(CGAL::Path_on_surface<LCC_3_cmap>& p)
-{ 
-  for (std::size_t index : {202, 206, 335, 317, 322, 69, 62, 414})
-  { p.push_back_by_index(index); }
-}
+{ p.push_back_by_index({202, 206, 335, 317, 322, 69, 62, 414}); }
 
 ///////////////////////////////////////////////////////////////////////////////
 void create_path_3(CGAL::Path_on_surface<LCC_3_cmap>& p)
@@ -39,21 +36,21 @@ int main()
     exit(EXIT_FAILURE);
   }
 
-  CGAL::Homotopy_tester<LCC_3_cmap> smct(lcc);
+  CGAL::Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
   CGAL::Path_on_surface<LCC_3_cmap> p1(lcc), p2(lcc), p3(lcc);
   create_path_1(p1);
   create_path_2(p2);
   create_path_3(p3);
   
-  bool res1=smct.is_contractible(p1);
+  bool res1=cst.is_contractible(p1);
   std::cout<<"Path p1 (pink) "<<(res1?"IS":"IS NOT")
            <<" contractible."<<std::endl;
   
-  bool res2=smct.are_freely_homotopic(p1, p2);
+  bool res2=cst.are_freely_homotopic(p1, p2);
   std::cout<<"Path p1 (pink) "<<(res2?"IS":"IS NOT")
            <<" homotopic with path p2 (green)."<<std::endl;
 
-  bool res3=smct.are_freely_homotopic(p1, p3);
+  bool res3=cst.are_freely_homotopic(p1, p3);
   std::cout<<"Path p1 (pink) "<<(res3?"IS":"IS NOT")
            <<" homotopic with path p3 (orange)."<<std::endl;
 

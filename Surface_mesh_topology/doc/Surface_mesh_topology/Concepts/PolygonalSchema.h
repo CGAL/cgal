@@ -2,7 +2,7 @@
   \ingroup PkgSurfaceMeshTopologyConcepts
   \cgalConcept
 
-  The concept `PolygonalSchema` defines a 2D polygonal schema, i.e. a combinatorial surface with labeled edges. A PolygonalSchema is created incrementally by adding facets one at a time. A label is any word that does not contain any space.
+  The concept `PolygonalSchema` defines a 2D polygonal schema, i.e. a combinatorial surface with labeled edges. A PolygonalSchema is created incrementally by adding facets one at a time. A label is any word, that does not contain a space.
 
   PolygonalSchema::Dart_info should be a class having a public data member char* m_label.
   PolygonalSchema::dimension should be equal to 2.
@@ -20,13 +20,6 @@ public:
    */
   PolygonalSchema();
     
-  /// starts a new surface
-  void init_surface();
-  
-  /// finishes the current surface. Returns one dart of the created surface.
-  /// @pre A surface is under creation.
-  Dart_handle finish_surface();
-  
   /// starts a new facet.
   void init_facet();
   
@@ -45,7 +38,6 @@ public:
   void add_edges_to_facet(const std::string& s);
   
   /// adds directly one facet giving the sequence of labels `s` of all its edges (labels are separated by spaces).
-  /// @pre A surface is under creation.
   void add_facet(const std::string& s);
 
   /// returns the label of dart `dh`.

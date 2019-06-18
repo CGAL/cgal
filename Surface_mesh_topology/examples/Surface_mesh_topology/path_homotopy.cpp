@@ -1,6 +1,6 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Homotopy_tester.h>
+#include <CGAL/Curves_on_surface_topology.h>
 
 /* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -117,10 +117,10 @@ int main(int argc, char** argv)
   lcc.display_characteristics(std::cout) << ", valid="
                                          << lcc.is_valid() << std::endl;
   
-  CGAL::Homotopy_tester<LCC_3_cmap> smct(lcc, time);
+  CGAL::Curves_on_surface_topology<LCC_3_cmap> cst(lcc, time);
   std::cout<<"Reduced map: ";
-  smct.get_map().display_characteristics(std::cout)
-    << ", valid="<< smct.get_map().is_valid() << std::endl;
+  cst.get_map().display_characteristics(std::cout)
+    << ", valid="<< cst.get_map().is_valid() << std::endl;
    
   unsigned int nbcontractible=0;
   std::vector<std::size_t> errors_seeds;
@@ -152,10 +152,10 @@ int main(int argc, char** argv)
     paths.push_back(path2);
     std::cout<<std::flush;
 
-    if (smct.is_contractible(path1, time))
+    if (cst.is_contractible(path1, time))
     { ++nbcontractible; }
 
-    bool res=smct.are_freely_homotopic(path1, path2, time);
+    bool res=cst.are_freely_homotopic(path1, path2, time);
     if (!res)
     { errors_seeds.push_back(random.get_seed()); }
 

@@ -1,7 +1,7 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Homotopy_tester.h>
+#include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_generators.h>
 #include <vector>
 #include <sstream>
@@ -37,7 +37,7 @@ static int nbtests=0;
 static int starting_seed;
 
 ///////////////////////////////////////////////////////////////////////////////
-bool unit_test_canonize(CGAL::Homotopy_tester<LCC_3_cmap>& smct,
+bool unit_test_canonize(CGAL::Curves_on_surface_topology<LCC_3_cmap>& cst,
                         std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& paths,
                         const char* msg,
                         bool draw, int testtorun)
@@ -52,7 +52,7 @@ bool unit_test_canonize(CGAL::Homotopy_tester<LCC_3_cmap>& smct,
 
     for (unsigned int i=0; i<paths.size(); ++i)
     {
-      if (i>0 && !smct.are_freely_homotopic(paths[0], paths[i]))
+      if (i>0 && !cst.are_freely_homotopic(paths[0], paths[i]))
       {
         std::cout<<"[Test "<<nbtests<<"] ERROR: ";
         std::cout<<"paths["<<i<<"]"
@@ -92,7 +92,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
       std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl;
       return false;
     }
-    CGAL::Homotopy_tester<LCC_3_cmap> smct(lcc);
+    CGAL::Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
 
     for (unsigned int i=0; i<3; ++i)
     {
@@ -101,7 +101,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
       paths.push_back(p);
     }
 
-    if (!unit_test_canonize(smct, paths,
+    if (!unit_test_canonize(cst, paths,
                             "canonize paths on double torus gen1",
                             draw, testtorun))
     { res=false; }
@@ -116,7 +116,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
       std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl; // ./data/double-torus-smooth.off"<<std::endl;
       return false;
     }
-    CGAL::Homotopy_tester<LCC_3_cmap> smct(lcc);
+    CGAL::Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
 
     if (testtorun==-1 || nbtests==testtorun)
     {
@@ -133,7 +133,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
       paths.push_back(p);
     }
 
-    if (!unit_test_canonize(smct, paths,
+    if (!unit_test_canonize(cst, paths,
                             "random canonize paths on double torus",
                             draw, testtorun))
     { res=false; }
@@ -148,7 +148,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
       std::cout<<"PROBLEM reading file ./data/3torus-smooth.off"<<std::endl; // 3torus.off
       return false;
     }
-    CGAL::Homotopy_tester<LCC_3_cmap> smct(lcc);
+    CGAL::Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
 
     if (testtorun==-1 || nbtests==testtorun)
     {
@@ -164,7 +164,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
       p.update_path_randomly(random);
       paths.push_back(p);
 
-      if (!unit_test_canonize(smct, paths,
+      if (!unit_test_canonize(cst, paths,
                               "random canonize paths on double torus",
                               draw, testtorun))
       { res=false; }

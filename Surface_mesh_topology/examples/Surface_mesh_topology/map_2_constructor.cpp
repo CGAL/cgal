@@ -1,5 +1,3 @@
-#include <CGAL/Combinatorial_map.h>
-#include <CGAL/Generalized_map.h>
 #include <CGAL/Polygonal_schema.h>
 #include <CGAL/Path_on_surface.h>
 #include <iostream>
@@ -13,10 +11,8 @@ void construct_map_from_edges()
 {
   Map cm;
 
-  cm.begin_surface();
   cm.add_facet("a b c -a -b");
   cm.add_facet("-c d e -d -e");
-  cm.end_surface();
 
   CGAL::Path_on_surface<Map> p(cm); p.push_back_by_label("a b d e");
 

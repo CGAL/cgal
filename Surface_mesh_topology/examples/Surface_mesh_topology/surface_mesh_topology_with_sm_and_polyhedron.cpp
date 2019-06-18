@@ -4,7 +4,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Homotopy_tester.h>
+#include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_generators.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/boost/graph/io.h>
@@ -22,7 +22,7 @@ template<class FaceGraph>
 void test(const FaceGraph& mesh)
 {
   CGAL::Random random(seed);
-  CGAL::Homotopy_tester<FaceGraph> smct(mesh);
+  CGAL::Curves_on_surface_topology<FaceGraph> cst(mesh);
 
   CGAL::Path_on_surface<FaceGraph> p1(mesh); // A first path
   p1.generate_random_closed_path(10, random);
@@ -30,10 +30,10 @@ void test(const FaceGraph& mesh)
   CGAL::Path_on_surface<FaceGraph> p2(mesh); // A second path
   p2.generate_random_closed_path(10, random);
 
-  bool res1=smct.is_contractible(p1);
+  bool res1=cst.is_contractible(p1);
   std::cout<<"Path p1 "<<(res1?"IS":"IS NOT")<<" contractible."<<std::endl;
   
-  bool res2=smct.are_freely_homotopic(p1, p2);
+  bool res2=cst.are_freely_homotopic(p1, p2);
   std::cout<<"Path p1 "<<(res2?"IS":"IS NOT")<<" homotopic with path p2."<<std::endl;
 
 #ifdef CGAL_USE_BASIC_VIEWER

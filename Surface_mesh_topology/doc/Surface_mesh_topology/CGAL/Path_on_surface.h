@@ -47,13 +47,18 @@ namespace Surface_mesh_topology {
     void push_back(halfedge_descriptor hd);
 
     /// returns `true` iff the dart/halfedge with index `i` can be added at the end of this path.
-    /// If Mesh is a Polyhedron_3, takes time proportional to the number of darts/halfedges.
+    /// If Mesh is a `Polyhedron_3`, takes time proportional to the number of darts/halfedges.
     bool can_be_pushed_by_index(std::size_t i) const;
 
     /// adds the dart/halfedge with index `i` at the end of this path.
-    /// If Mesh is a Polyhedron_3, takes time proportional to the number of halfedges.
+    /// If Mesh is a `Polyhedron_3`, takes time proportional to the number of halfedges.
     /// @pre `can_be_pushed_by_index(i)`
     void push_back_by_index(std::size_t i);
+
+    /// adds successively all dart/halfedges in `l` (a sequence of indices), at the end of the path.
+    /// If Mesh is a `Polyhedron_3`, takes time proportional to the number of halfedges.
+    /// For each index `i`, `can_be_pushed_by_index(i)` should be true.
+    void push_back_by_index(std::initializer_list<std::size_t> l);
 
     /// adds the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the positive circular order. To extend with a positive 1 turn thus amounts to extend with the `next()` pointer. (A zero turn corresponds to the `opposite()` pointer.)
     /// @pre !`is_empty()`
@@ -67,7 +72,7 @@ namespace Surface_mesh_topology {
     /// @pre Mesh must be a model of `PolygonalSchema` concept.
     bool can_be_pushed_by_label(const std::string& l) const;
 
-    /// `s` is a sequence of labels, separated by spaces. For each label `l`, adds the dart/halfedge with label `l` at the end of this path. For each label, l, `can_be_pushed_by_label(l)` should be true.
+    /// adds successively all darts/halfedges in `s` (a sequence of labels separated by spaces) at the end of this path. For each label, l, `can_be_pushed_by_label(l)` should be true.
     /// @pre Mesh must be a model of `PolygonalSchema` concept.
     void push_back_by_label(const std::string& s);
 

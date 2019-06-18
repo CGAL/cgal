@@ -24,8 +24,8 @@
 // Should be defined before to include Path_on_surface_with_rle.h
 // If nothing is defined, use V1
 // #define CGAL_PWRLE_TURN_V1  // Compute turns by turning (method of CMap)
-// #define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash-table (built and given by Homotopy_tester)
-#define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Homotopy_tester)
+// #define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash-table (built and given by Curves_on_surface_topology)
+#define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Curves_on_surface_topology)
 
 #include <CGAL/Union_find.h>
 #include <CGAL/Random.h>
@@ -56,7 +56,7 @@ typedef CGAL::Combinatorial_map<2, CMap_for_homotopy_tester_items>
 CMap_for_homotopy_tester;
 
   template<typename Mesh>
-  class Homotopy_tester
+  class Curves_on_surface_topology
   {
   public:
     typedef typename CMap_for_homotopy_tester::Dart_handle
@@ -80,7 +80,7 @@ CMap_for_homotopy_tester;
     typedef boost::unordered_map<Dart_const_handle, std::size_t> TDartIds;
 #endif //CGAL_PWRLE_TURN_V2
 
-    Homotopy_tester(const Mesh& amap, bool display_time=false) :
+    Curves_on_surface_topology(const Mesh& amap, bool display_time=false) :
       m_original_map(amap)
     {
       if (!m_map.is_without_boundary(1))
@@ -286,7 +286,7 @@ CMap_for_homotopy_tester;
       CGAL_assertion(m_map.darts().size()==4 || are_paths_valid()); // Because torus is a special case
     }
     
-    ~Homotopy_tester()
+    ~Curves_on_surface_topology()
     {
       m_original_map.free_mark(m_mark_T);
       m_original_map.free_mark(m_mark_L);

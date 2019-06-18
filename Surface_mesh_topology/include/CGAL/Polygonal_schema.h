@@ -324,20 +324,6 @@ namespace CGAL {
       return first_dart;
     }
 
-    /// Start a new surface
-    void begin_surface()
-    {
-      if (facet_started) { end_facet(); }
-
-      first_dart    = this->null_handle;
-      prev_dart     = this->null_handle;
-      edge_label_to_dart.clear();      
-    }
-
-    /// End of the surface. Return one dart of the created surface.
-    Dart_handle end_surface()
-    { return first_dart; }
-
     /// @return dart with the given label, NULL if this dart does not exist.
     Dart_handle get_dart_labeled(const std::string & s) const
     {
