@@ -30,65 +30,6 @@ namespace CGAL {
   typedef std::pair<double, double> Hausdorff_bounds;
 
   /**
-   * @class Hausdorff_primitive_traits_tm1
-   */
-  template<typename AABBTraits, typename Query>
-  class Hausdorff_primitive_traits_tm1
-  {
-    typedef typename AABBTraits::Primitive Primitive;
-    typedef ::CGAL::AABB_node<AABBTraits> Node;
-
-  public:
-    Hausdorff_primitive_traits_tm1(const AABBTraits& traits)
-      : m_traits(traits) {
-        // Initialize the global bounds with 0., they will only grow.
-        h_lower = 0.;
-        h_upper = 0.;
-      }
-
-    // Explore the whole tree, i.e. always enter children if the methods
-    // do_intersect() below determines that it is worthwhile.
-    bool go_further() const { return true; }
-
-    // Compute the explicit Hausdorff distance to the given primitive
-    void intersection(const Query& query, const Primitive& primitive)
-    {
-      // Have reached a single triangle
-      std::cout << "Reached Triangle in TM1: " << primitive.id() << '\n';
-
-      /* TODO implement handling of a single triangle
-      /  - Call Culling on B (First maybe don't cull, but only consider closest
-      /    triangle), obtain local bounds for the triangle
-      /  - Update global Hausdorff bounds according to the obtained local bounds
-      /  - return the current best known global bounds
-      */
-    }
-
-    // Determine whether child nodes will still contribute to a larger
-    // Hausdorff distance and thus have to be entered
-    bool do_intersect(const Query& query, const Node& node) const
-    {
-      // Have reached a node, determine whether or not to enter it
-
-      /* TODO implement processing of an AABB node
-      /  - Determine distance of the node's bounding box (node.bbox()) to the
-      /    closest point in B (First maybe any point)
-      /  - If the distance is larger than the global lower bound, enter the
-      /    node, i.e. return true.
-      */
-      return true;
-      //return m_traits.do_intersect_object()(query, node.bbox());
-    }
-
-  private:
-    const AABBTraits& m_traits;
-    // Global Hausdorff bounds to be taken track of during the traversal
-    double h_lower;
-    double h_upper;
-  };
-
-
-  /**
    * @class Hausdorff_primitive_traits_tm2
    */
   template<typename AABBTraits, typename Query>
@@ -165,6 +106,72 @@ namespace CGAL {
     double h_local_lower_0;
     double h_local_lower_1;
     double h_local_lower_2;
+  };
+
+  /**
+   * @class Hausdorff_primitive_traits_tm1
+   */
+  template<typename AABBTraits, typename Query, typename Kernel, typename TriangleMesh, typename VPM2>
+  class Hausdorff_primitive_traits_tm1
+  {
+    typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
+    typedef typename AABB_tree< AABB_traits<Kernel, TM2_primitive> >::AABB_traits Tree_traits;
+    typedef typename AABBTraits::Primitive Primitive;
+    typedef ::CGAL::AABB_node<AABBTraits> Node;
+    typedef typename Kernel::Triangle_3 Triangle_3;
+    typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
+
+  public:
+    Hausdorff_primitive_traits_tm1(const AABBTraits& traits, const TM2_tree& tree)
+      : m_traits(traits), tm2_tree(tree) {
+        // Initialize the global bounds with 0., they will only grow.
+        h_lower = 0.;
+        h_upper = 0.;
+      }
+
+    // Explore the whole tree, i.e. always enter children if the methods
+    // do_intersect() below determines that it is worthwhile.
+    bool go_further() const { return true; }
+
+    // Compute the explicit Hausdorff distance to the given primitive
+    void intersection(const Query& query, const Primitive& primitive)
+    {
+      // Have reached a single triangle
+      std::cout << "Reached Triangle in TM1: " << primitive.id() << '\n';
+
+
+      Hausdorff_primitive_traits_tm2<Tree_traits, Triangle_3> traversal_traits_tm2( tm2_tree.traits() );
+      /* TODO implement handling of a single triangle
+      /  - Call Culling on B (First maybe don't cull, but only consider closest
+      /    triangle), obtain local bounds for the triangle
+      /  - Update global Hausdorff bounds according to the obtained local bounds
+      /  - return the current best known global bounds
+      */
+    }
+
+    // Determine whether child nodes will still contribute to a larger
+    // Hausdorff distance and thus have to be entered
+    bool do_intersect(const Query& query, const Node& node) const
+    {
+      // Have reached a node, determine whether or not to enter it
+
+      /* TODO implement processing of an AABB node
+      /  - Determine distance of the node's bounding box (node.bbox()) to the
+      /    closest point in B (First maybe any point)
+      /  - If the distance is larger than the global lower bound, enter the
+      /    node, i.e. return true.
+      */
+      return true;
+      //return m_traits.do_intersect_object()(query, node.bbox());
+    }
+
+  private:
+    const AABBTraits& m_traits;
+    // AABB tree for the second triangle meshes
+    const TM2_tree& tm2_tree;
+    // Global Hausdorff bounds to be taken track of during the traversal
+    double h_lower;
+    double h_upper;
   };
 }
 

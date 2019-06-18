@@ -922,8 +922,7 @@ double bounded_error_Hausdorff_impl(
   std::pair<Point_3, face_descriptor> hint = tm2_tree.any_reference_point_and_id();
 
   // Build traversal traits for tm1_tree and tm2_tree
-  Hausdorff_primitive_traits_tm1<Tree_traits, Point_3> traversal_traits_tm1( tm1_tree.traits() );
-  Hausdorff_primitive_traits_tm2<Tree_traits, Triangle_3> traversal_traits_tm2( tm2_tree.traits() );
+  Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM2> traversal_traits_tm1( tm1_tree.traits(), tm2_tree );
   tm1_tree.traversal( Point_3(0,0,0), traversal_traits_tm1 );
 
   // For each vertex in tm1, store the distance to the closest triangle of tm2
