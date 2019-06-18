@@ -32,6 +32,7 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <stack>
 #include <map>
 #include <algorithm>
 #include <boost/tuple/tuple.hpp>
@@ -1448,16 +1449,22 @@ protected:
   std::pair<Face_handle,Face_handle>
   find_faces_to_split(const Vertex_handle& v, const Site_2& t) const;
 
-  void expand_conflict_region(const Face_handle& f, const Site_2& t,
-			      const Storage_site_2& ss,
-#ifdef CGAL_SDG_NO_FACE_MAP
-			      List& l,
-#else
-			      List& l, Face_map& fm,
-			      std::map<Face_handle,Sign>& sign_map,
+  bool check_unregistered_face(const Face_handle& n,
+                               const Site_2& t,
+                               List& l,
+#ifndef CGAL_SDG_NO_FACE_MAP
+                               Face_map& fm,
 #endif
-			      Triple<bool, Vertex_handle,
-			      Arrangement_type>& vcross);
+                               Triple<bool, Vertex_handle, Arrangement_type>& vcross);
+
+  void expand_conflict_region(const Face_handle& in_f,
+                              const Site_2& t,
+                              List& l,
+#ifndef CGAL_SDG_NO_FACE_MAP
+                              Face_map& fm,
+                              std::map<Face_handle, Sign>& sign_map,
+#endif
+                              Triple<bool, Vertex_handle, Arrangement_type>& vcross);
 
   Vertex_handle add_bogus_vertex(Edge e, List& l);
   Vertex_list   add_bogus_vertices(List& l);
