@@ -969,11 +969,11 @@ protected:
 			std::map<Vertex_handle,Vertex_handle>& vmap,
 			List& l) const;
 
-  void expand_conflict_region_remove(const Face_handle& f,
-				     const Site_2& t,
-				     const Storage_site_2& ss,
-				     List& l, Face_map& fm,
-				     Sign_map& sign_map);
+  void expand_conflict_region_remove(const Face_handle& in_f,
+                                     const Site_2& t,
+                                     List& l,
+                                     Face_map& fm,
+                                     Sign_map& sign_map);
 
   void find_conflict_region_remove(const Vertex_handle& v,
 				   const Vertex_handle& vnearest,

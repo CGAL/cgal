@@ -1601,56 +1601,72 @@ equalize_degrees(const Vertex_handle& v, Self& small_d,
 template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
-expand_conflict_region_remove(const Face_handle& f, const Site_2& t,
-			      const Storage_site_2& ss,
-			      List& l, Face_map& fm, Sign_map& sign_map)
+expand_conflict_region_remove(const Face_handle& in_f,
+                              const Site_2& t,
+                              List& l,
+                              Face_map& fm,
+                              Sign_map& sign_map)
 {
-  if ( fm.find(f) != fm.end() ) { return; }
+  std::stack<Face_handle> face_stack;
+  face_stack.push(in_f);
 
-  // setting fm[f] to true means that the face has been reached and
-  // that the face is available for recycling. If we do not want the
-  // face to be available for recycling we must set this flag to
-  // false.
-  fm[f] = true;
+  while(!face_stack.empty())
+  {
+    const Face_handle curr_f = face_stack.top();
+    face_stack.pop();
 
-  //  CGAL_assertion( fm.find(f) != fm.end() );
+    if ( fm.find(curr_f) != fm.end() )
+      continue;
 
-  for (int i = 0; i < 3; i++) {
-    Face_handle n = f->neighbor(i);
+    // setting fm[curr_f] to true means that the face has been reached and
+    // that the face is available for recycling. If we do not want the
+    // face to be available for recycling we must set this flag to
+    // false.
+    fm[curr_f] = true;
 
-    bool face_registered = (fm.find(n) != fm.end());
+    //  CGAL_assertion( fm.find(f) != fm.end() );
 
-    Sign s = incircle(n, t);
+    for (int i = 0; i < 3; ++i)
+    {
+      Face_handle n = curr_f->neighbor(i);
 
-    sign_map[n] = s;
+      bool face_registered = (fm.find(n) != fm.end());
 
-    Sign s_f = sign_map[f];
+      Sign s = incircle(n, t);
 
-    if ( s == POSITIVE ) { continue; }
-    if ( s != s_f ) { continue; }
+      sign_map[n] = s;
 
-    bool interior_in_conflict = edge_interior(f, i, t, s);
+      Sign s_f = sign_map[curr_f];
 
-    if ( !interior_in_conflict ) { continue; }
+      if ( s == POSITIVE )
+        continue;
+      if ( s != s_f )
+        continue;
+      if ( face_registered )
+        continue;
 
-    if ( face_registered ) { continue; }
+      bool interior_in_conflict = edge_interior(curr_f, i, t, s);
+      if ( !interior_in_conflict )
+        continue;
 
-    Edge e = sym_edge(f, i);
+      Edge e = sym_edge(curr_f, i);
+      CGAL_assertion( l.is_in_list(e) );
 
-    CGAL_assertion( l.is_in_list(e) );
-    int j = this->_tds.mirror_index(f, i);
-    Edge e_before = sym_edge(n, ccw(j));
-    Edge e_after = sym_edge(n, cw(j));
-    if ( !l.is_in_list(e_before) ) {
-      l.insert_before(e, e_before);
-    }
-    if ( !l.is_in_list(e_after) ) {
-      l.insert_after(e, e_after);
-    }
-    l.remove(e);
+      int j = this->_tds.mirror_index(curr_f, i);
+      Edge e_before = sym_edge(n, ccw(j));
+      Edge e_after = sym_edge(n, cw(j));
 
-    expand_conflict_region_remove(n, t, ss, l, fm, sign_map);
-  } // for-loop
+      if ( !l.is_in_list(e_before) )
+        l.insert_before(e, e_before);
+
+      if ( !l.is_in_list(e_after) )
+        l.insert_after(e, e_after);
+
+      l.remove(e);
+
+      face_stack.push(n);
+    } // neighbor for-loop
+  }
 }
 
 
@@ -1728,7 +1744,7 @@ find_conflict_region_remove(const Vertex_handle& v,
   }
 
   initialize_conflict_region(start_f, l);
-  expand_conflict_region_remove(start_f, t, ss,	l, fm, sign_map);
+  expand_conflict_region_remove(start_f, t, l, fm, sign_map);
 }
 
 
