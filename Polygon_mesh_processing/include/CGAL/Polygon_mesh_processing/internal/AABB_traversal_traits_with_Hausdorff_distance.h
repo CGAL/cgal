@@ -139,14 +139,18 @@ namespace CGAL {
       // Have reached a single triangle
       std::cout << "Reached Triangle in TM1: " << primitive.id() << '\n';
 
+      // Call Culling on B with the single triangle found.
+      Hausdorff_primitive_traits_tm2<Tree_traits, Primitive> traversal_traits_tm2( tm2_tree.traits() );
+      tm2_tree.traversal(primitive, traversal_traits_tm2);
 
-      Hausdorff_primitive_traits_tm2<Tree_traits, Triangle_3> traversal_traits_tm2( tm2_tree.traits() );
-      /* TODO implement handling of a single triangle
-      /  - Call Culling on B (First maybe don't cull, but only consider closest
-      /    triangle), obtain local bounds for the triangle
-      /  - Update global Hausdorff bounds according to the obtained local bounds
-      /  - return the current best known global bounds
-      */
+      // Update global Hausdorff bounds according to the obtained local bounds
+      Hausdorff_bounds local_bounds = traversal_traits_tm2.get_local_bounds();
+      if (local_bounds.first > h_lower) {
+        h_lower = local_bounds.first;
+      }
+      if (local_bounds.second > h_upper) {
+        h_upper = local_bounds.second;
+      }
     }
 
     // Determine whether child nodes will still contribute to a larger
