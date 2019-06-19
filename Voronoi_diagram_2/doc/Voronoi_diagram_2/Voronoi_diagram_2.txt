@@ -488,6 +488,20 @@ location queries.
 
 \cgalExample{Voronoi_diagram_2/vd_2_point_location.cpp}
 
+\section secvda2drawvoronoi Draw a Voronoi Diagram
+
+A 2D Voronoi Diagram can be visualized by calling the \link PkgDrawVoronoiDiagram2 CGAL::draw<VD>() \endlink function as
+shown in the following example. This function opens a new window showing the Voronoi Diagram of the given input sites/vertix locations. A call to this function is blocking, that is the program continues as soon as the user closes the window.
+
+This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+
+\cgalExample{Voronoi_diagram_2/draw_voronoi_diagram_2.cpp}
+
+\cgalFigureBegin{draw_voronoi_diagram, draw_voronoi_diagram.png}
+Result of the draw_voronoi_diagram_2 program. A window shows the Voronoi vertices and edges. 
+The window allows navigation through the 3D scene.
+\cgalFigureEnd
+
 */ 
 } /* namespace CGAL */
 

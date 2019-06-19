@@ -13,6 +13,14 @@
 /// \ingroup PkgVoronoiDiagram2Ref
 
 /*!
+  \code
+  #include <CGAL/draw_voronoi_diagram_2.h>
+  \endcode
+*/
+/// \defgroup PkgDrawVoronoiDiagram2 Draw a 2D Voronoi Diagram
+/// \ingroup PkgVoronoiDiagram2Ref
+
+/*!
 \addtogroup PkgVoronoiDiagram2Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{2D Voronoi Diagram Adaptor,PkgVoronoiDiagram2}
@@ -80,6 +88,10 @@ performing this adaptation.
 - `CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>`
 - `CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>`
 - `CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>`
+
+\cgalCRPSection{Draw Voronoi Diagram}
+
+- \link PkgDrawVoronoiDiagram2 CGAL::draw<VD>() \endlink
 
 
 */
