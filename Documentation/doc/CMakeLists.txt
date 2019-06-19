@@ -1,7 +1,7 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project(Documentation NONE)
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1)
 
 # Check whether this cmake script is the top level one
 if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
