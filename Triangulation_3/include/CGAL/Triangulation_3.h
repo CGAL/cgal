@@ -196,7 +196,7 @@ public:
 
   const Bbox_3 *get_bbox() const
   {
-    return NULL;
+    return nullptr;
   }
 };
 
@@ -701,7 +701,7 @@ public:
 
 public:
   // CONSTRUCTORS
-  Triangulation_3(const GT& gt = GT(), Lock_data_structure *lock_ds = NULL)
+  Triangulation_3(const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
     : Base(lock_ds), _tds(), _gt(gt)
   {
     init_tds();
@@ -723,7 +723,7 @@ public:
 
   template < typename InputIterator >
   Triangulation_3(InputIterator first, InputIterator last,
-                  const GT& gt = GT(), Lock_data_structure *lock_ds = NULL)
+                  const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
     : Base(lock_ds), _gt(gt)
   {
     init_tds();
@@ -734,7 +734,7 @@ public:
   // Precondition: p0, p1, p3 and p4 MUST BE positively oriented
   Triangulation_3(const Point& p0, const Point& p1,
                   const Point& p3, const Point& p4,
-                  const GT& gt = GT(), Lock_data_structure *lock_ds = NULL)
+                  const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
     : Base(lock_ds), _gt(gt)
   {
     CGAL_triangulation_precondition(orientation(p0, p1, p3, p4) == POSITIVE);
@@ -900,7 +900,7 @@ public:
   locate(const Point& p,
          Locate_type& lt, int& li, int& lj,
          Cell_handle start = Cell_handle(),
-         bool *could_lock_zone = NULL) const;
+         bool *could_lock_zone = nullptr) const;
 #else // no CGAL_NO_STRUCTURAL_FILTERING
 #  ifndef CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 #    define CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
@@ -910,20 +910,20 @@ public:
   Cell_handle inexact_locate(const Point& p,
                              Cell_handle start = Cell_handle(),
                              int max_num_cells = CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS,
-                             bool *could_lock_zone = NULL) const;
+                             bool *could_lock_zone = nullptr) const;
 protected:
   Cell_handle exact_locate(const Point& p,
                            Locate_type& lt,
                            int& li, int& lj,
                            Cell_handle start,
-                           bool *could_lock_zone = NULL) const;
+                           bool *could_lock_zone = nullptr) const;
 
   Cell_handle generic_locate(const Point& p,
                              Locate_type& lt,
                              int& li, int& lj,
                              Cell_handle start,
                              internal::Structural_filtering_3_tag,
-                             bool *could_lock_zone = NULL) const
+                             bool *could_lock_zone = nullptr) const
   {
     Cell_handle ch = inexact_locate(
                        p, start, CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS, could_lock_zone);
@@ -938,7 +938,7 @@ protected:
                              int& li, int& lj,
                              Cell_handle start,
                              internal::No_structural_filtering_3_tag,
-                             bool *could_lock_zone = NULL) const
+                             bool *could_lock_zone = nullptr) const
   {
     return exact_locate(p, lt, li, lj, start, could_lock_zone);
   }
@@ -987,7 +987,7 @@ public:
   Cell_handle locate(const Point& p,
                      Locate_type& lt, int& li, int& lj,
                      Cell_handle start = Cell_handle(),
-                     bool *could_lock_zone = NULL) const
+                     bool *could_lock_zone = nullptr) const
   {
     typedef Triangulation_structural_filtering_traits<Geom_traits> TSFT;
     typedef typename internal::Structural_filtering_selector_3<
@@ -999,7 +999,7 @@ public:
 
   Cell_handle locate(const Point& p,
                      Cell_handle start = Cell_handle(),
-                     bool *could_lock_zone = NULL) const
+                     bool *could_lock_zone = nullptr) const
   {
     Locate_type lt;
     int li, lj;
@@ -1008,14 +1008,14 @@ public:
 
   Cell_handle locate(const Point& p,
                      Locate_type& lt, int& li, int& lj, Vertex_handle hint,
-                     bool *could_lock_zone = NULL) const
+                     bool *could_lock_zone = nullptr) const
   {
     return locate(p, lt, li, lj,
                   hint == Vertex_handle() ? infinite_cell() : hint->cell(),
                   could_lock_zone);
   }
 
-  Cell_handle locate(const Point& p, Vertex_handle hint, bool *could_lock_zone = NULL) const
+  Cell_handle locate(const Point& p, Vertex_handle hint, bool *could_lock_zone = nullptr) const
   {
     return locate(p, hint == Vertex_handle() ? infinite_cell() : hint->cell(),
                   could_lock_zone);
@@ -1118,7 +1118,7 @@ public:
                                           Cell_handle c, int li, int lj,
                                           const Conflict_tester& tester,
                                           Hidden_points_visitor& hider,
-                                          bool *could_lock_zone = NULL);
+                                          bool *could_lock_zone = nullptr);
 
   
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -1293,9 +1293,9 @@ protected:
                  Triple<OutputIteratorBoundaryFacets,
                  OutputIteratorCells,
                  OutputIteratorInternalFacets> it,
-                 bool *could_lock_zone = NULL,
-                 const Facet *this_facet_must_be_in_the_cz = NULL,
-                 bool *the_facet_is_in_its_cz = NULL) const
+                 bool *could_lock_zone = nullptr,
+                 const Facet *this_facet_must_be_in_the_cz = nullptr,
+                 bool *the_facet_is_in_its_cz = nullptr) const
   {
     CGAL_triangulation_precondition(dimension()>=2);
 
@@ -1481,7 +1481,7 @@ protected:
   bool test_dim_down_using_incident_cells_3(Vertex_handle v,
                                             std::vector<Cell_handle>& incident_cells,
                                             std::vector<Vertex_handle>& adj_vertices,
-                                            bool *could_lock_zone = NULL) const;
+                                            bool *could_lock_zone = nullptr) const;
 
   // REMOVAL
   template < class VertexRemover >
@@ -4433,13 +4433,13 @@ fill_hole_2D(std::list<Edge_2D>& first_hole, VertexRemover& remover)
     Vertex_handle v2 = infinite_vertex();
     const Point& p0 = v0->point();
     const Point& p1 = v1->point();
-    const Point *p2 = NULL; // Initialize to NULL to avoid warning.
+    const Point *p2 = nullptr; // Initialize to nullptr to avoid warning.
 
     typename Hole::iterator hdone = hole.end();
     typename Hole::iterator hit = hole.begin();
     typename Hole::iterator cut_after(hit);
 
-    // If tested vertex is c with respect to the vertex opposite to NULL neighbor,
+    // If tested vertex is c with respect to the vertex opposite to nullptr neighbor,
     // stop at the before last face;
     hdone--;
     for(; hit != hdone; ++hit)
@@ -4583,14 +4583,14 @@ fill_hole_2D(std::list<Edge_2D>& first_hole, VertexRemover& remover, OutputItCel
     Vertex_handle v2 = infinite_vertex();
     const Point& p0 = v0->point();
     const Point& p1 = v1->point();
-    const Point *p2 = NULL; // Initialize to NULL to avoid warning.
+    const Point *p2 = nullptr; // Initialize to nullptr to avoid warning.
 
     typename Hole::iterator hdone = hole.end();
     typename Hole::iterator hit = hole.begin();
     typename Hole::iterator cut_after(hit);
 
     // if tested vertex is c with respect to the vertex opposite
-    // to NULL neighbor,
+    // to nullptr neighbor,
     // stop at the before last face;
     hdone--;
     for(; hit != hdone; ++hit)

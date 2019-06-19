@@ -632,7 +632,7 @@ private:
                              triangles.end(), Kernel(), CGAL::Dimension_tag<2>());
 
     CGAL::internal::assemble_covariance_matrix_3 (triangles.begin(), triangles.end(), covariance,
-                                                  c, Kernel(), (Triangle*)NULL, CGAL::Dimension_tag<2>(),
+                                                  c, Kernel(), (Triangle*)nullptr, CGAL::Dimension_tag<2>(),
                                                   DiagonalizeTraits());
       
     m_content->centroids[get(get(CGAL::face_index,g), query)] = {{ float(c.x()), float(c.y()), float(c.z()) }};

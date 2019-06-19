@@ -1333,7 +1333,7 @@ Alpha_shape_2<Dt,EACT>::number_of_solid_components(const Type_of_alpha& alpha) c
        ++face_it) 
     {
       Face_handle pFace = face_it;
-      CGAL_triangulation_postcondition( pFace != NULL);
+      CGAL_triangulation_postcondition( pFace != nullptr);
       
       if (classify(pFace, alpha) == INTERIOR){
 	Data& data = marked_face_set[pFace];
@@ -1367,7 +1367,7 @@ Alpha_shape_2<Dt,EACT>::traverse(const Face_handle& pFace,
     for (int i=0; i<3; i++)
       {
 	pNeighbor = fh->neighbor(i);
-	 CGAL_triangulation_assertion(pNeighbor != NULL);
+	 CGAL_triangulation_assertion(pNeighbor != nullptr);
 	if (classify(pNeighbor, alpha) == INTERIOR){
 	  Data& data = marked_face_set[pNeighbor];
 	  if(data == false){

@@ -250,7 +250,7 @@ public:
 public:
 
   /// Default constructor
-  Polyhedral_mesh_domain_3(CGAL::Random* p_rng = NULL)
+  Polyhedral_mesh_domain_3(CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(&tree_)
     , p_rng_(p_rng)
@@ -262,7 +262,7 @@ public:
    * @param polyhedron the polyhedron describing the polyhedral surface
    */
   Polyhedral_mesh_domain_3(const Polyhedron& p,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(&tree_) // the bounding tree is tree_
     , p_rng_(p_rng)
@@ -277,7 +277,7 @@ public:
 
   Polyhedral_mesh_domain_3(const Polyhedron& p,
                            const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(new AABB_tree_)
     , p_rng_(p_rng)
@@ -307,7 +307,7 @@ public:
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
                            const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : p_rng_(p_rng)
     , delete_rng_(false)
   {
@@ -338,7 +338,7 @@ public:
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : p_rng_(p_rng)
   {
     if(begin != end) {

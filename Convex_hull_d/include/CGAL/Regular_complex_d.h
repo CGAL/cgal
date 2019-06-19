@@ -85,8 +85,8 @@ class RC_vertex_d
 public:
   RC_vertex_d(Simplex_handle s, int i, const Point_d& p) :
     s_(s), index_(i), point_(p) {}
-  RC_vertex_d(const Point_d& p) : point_(p), pp(NULL) {}
-  RC_vertex_d() :  s_(), pp(NULL) {}
+  RC_vertex_d(const Point_d& p) : point_(p), pp(nullptr) {}
+  RC_vertex_d() :  s_(), pp(nullptr) {}
   // beware that ass_point was initialized here by nil_point
   ~RC_vertex_d() {}
 
@@ -213,9 +213,9 @@ public:
   #endif
           
 
-  RC_simplex_d() : pp(NULL) {}
+  RC_simplex_d() : pp(nullptr) {}
   RC_simplex_d(int dmax) : 
-    vertices(dmax+1), neighbors(dmax+1), opposite_vertices(dmax+1), pp(NULL)
+    vertices(dmax+1), neighbors(dmax+1), opposite_vertices(dmax+1), pp(nullptr)
   { for (int i = 0; i <= dmax; i++) { 
       neighbors[i] = Simplex_handle(); 
       vertices[i] = Vertex_handle(); 

@@ -2212,7 +2212,7 @@ nearest_neighbor(const Site_2& p,
     start_vertex = finite_vertex();
   }
 
-  //  if ( start_vertex == NULL ) { return start_vertex; }
+  //  if ( start_vertex == nullptr ) { return start_vertex; }
 
   Vertex_handle vclosest;
   Vertex_handle v = start_vertex;

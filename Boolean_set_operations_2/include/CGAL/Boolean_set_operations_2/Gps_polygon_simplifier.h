@@ -115,9 +115,9 @@ public:
   /*! Destructor. */
   ~Gps_polygon_simplifier()
   {
-    if (m_own_traits && (m_traits != NULL)) {
+    if (m_own_traits && (m_traits != nullptr)) {
       delete m_traits;
-      m_traits = NULL;
+      m_traits = nullptr;
     }
   }
 

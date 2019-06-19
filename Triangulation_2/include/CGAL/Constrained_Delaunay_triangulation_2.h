@@ -276,7 +276,7 @@ public:
                 typename internal::Get_iterator_value_type< InputIterator >::type,
                 Point
             >
-          >::type* = NULL
+          >::type* = nullptr
   )
 #else
 #if defined(_MSC_VER)
@@ -358,7 +358,7 @@ public:
               typename internal::Get_iterator_value_type< InputIterator >::type,
               std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
             >
-          >::type* =NULL
+          >::type* =nullptr
   )
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
@@ -373,7 +373,7 @@ public:
               boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
               boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
             >
-          >::type* =NULL
+          >::type* =nullptr
   )
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);

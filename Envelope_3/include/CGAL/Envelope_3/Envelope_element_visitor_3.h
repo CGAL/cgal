@@ -566,14 +566,14 @@ public:
         for (; inter_it != intersections_list.end(); ++inter_it)
         {
           ip = object_cast<Intersect_point_2>(&(*inter_it));
-          if (ip != NULL)
+          if (ip != nullptr)
           {
             split_points.push_back(Point_2_with_info(ip->first, false, false));
           }
           else
           {
             icv = object_cast<X_monotone_curve_2>(&(*inter_it));
-            CGAL_assertion(icv != NULL);
+            CGAL_assertion(icv != nullptr);
 
             // we will add the *icv end points to the split_points, unless
             // but we should be carefull with infinite curves.
@@ -804,11 +804,11 @@ protected:
     visitor.init(&arr);
   
     if ((fh = object_cast<Face_const_handle>(&obj))
-        != NULL)
+        != nullptr)
     {
       vh_for_p = visitor.found_point_in_face(p, arr.non_const_handle(*fh));
     }
-    else if ((hh = object_cast<Halfedge_const_handle>(&obj)) != NULL)
+    else if ((hh = object_cast<Halfedge_const_handle>(&obj)) != nullptr)
     {
       vh_for_p = visitor.found_point_on_edge(p , arr.non_const_handle(*hh));
     }
@@ -817,7 +817,7 @@ protected:
       // In this case p lies on an existing vertex, so we just update this
       // vertex.
       vh = object_cast<Vertex_const_handle>(&obj);
-      CGAL_assertion(vh != NULL);
+      CGAL_assertion(vh != nullptr);
       vh_for_p = visitor.found_point_on_vertex(p, arr.non_const_handle(*vh));
     }
 
@@ -838,9 +838,9 @@ protected:
   // In either case, we try to copy decision from an incident face, is possible
   // before asking the geometric question
   Comparison_result resolve_minimal_face(Face_handle face, 
-                                         Halfedge_handle* he = NULL)
+                                         Halfedge_handle* he = nullptr)
   {
-    CGAL_precondition(he == NULL || (*he)->face() == face);
+    CGAL_precondition(he == nullptr || (*he)->face() == face);
     Comparison_result res = EQUAL;
 
     bool success = false;
@@ -855,7 +855,7 @@ protected:
     const Xy_monotone_surface_3& surf2 = get_aux_surface(face, 1);
 
     Ccb_halfedge_circulator hec;
-    if (he == NULL)
+    if (he == nullptr)
     {
       // compare the surfaces over arbitrary edge
       bool found_edge = false;
@@ -2640,7 +2640,7 @@ protected:
         if (vi->is_isolated())
         {
           CGAL_assertion(vi->face() == copied_face);
-          copied_vertices_to_halfedges[vi] = Halfedge_handle(NULL);
+          copied_vertices_to_halfedges[vi] = Halfedge_handle(nullptr);
         }
         else
           CGAL_assertion(copied_vertices_to_halfedges.is_defined(vi));
@@ -2740,7 +2740,7 @@ protected:
           Vertex_handle cur_t = new_he->target();
           CGAL_assertion(copied_vertices_to_halfedges.is_defined(cur_t));
           Halfedge_handle copied_b_he = copied_vertices_to_halfedges[cur_t];
-          if (copied_b_he == Halfedge_handle(NULL))
+          if (copied_b_he == Halfedge_handle(nullptr))
           {
             // this was an isolated vertex, which we touch
             // since we have in the new edge aux sources as in the face,
@@ -2802,7 +2802,7 @@ protected:
           Vertex_handle cur_t = new_he->source();
           CGAL_assertion(copied_vertices_to_halfedges.is_defined(cur_t));
           Halfedge_handle copied_b_he = copied_vertices_to_halfedges[cur_t];
-          if (copied_b_he == Halfedge_handle(NULL))
+          if (copied_b_he == Halfedge_handle(nullptr))
           {
             // this was an isolated vertex, which we touch
             // since we have in the new edge aux sources as in the face,
@@ -2862,12 +2862,12 @@ protected:
       {
         // we don't insert the subcurve, but it might touch a vertex of the
         // face's boundary - we need to check it and identify special vertices
-        if (left_v != Vertex_handle(NULL) &&
+        if (left_v != Vertex_handle(nullptr) &&
             copied_arr_orig_vertices.is_defined(left_v))
           copied_arr_special_vertices[left_v] =
             copied_arr_special_vertices.default_value();
 
-        if (right_v != Vertex_handle(NULL) &&
+        if (right_v != Vertex_handle(nullptr) &&
             copied_arr_orig_vertices.is_defined(right_v))
           copied_arr_special_vertices[right_v] =
             copied_arr_special_vertices.default_value();

@@ -38,7 +38,7 @@ struct Triangle_from_face_descriptor_map{
   VertexPointMap m_vpm;
 
   Triangle_from_face_descriptor_map()
-    : m_tm(NULL)
+    : m_tm(nullptr)
   {}
 
   Triangle_from_face_descriptor_map(TriangleMesh const* tm)
@@ -93,7 +93,7 @@ template < class PolygonMesh,
 struct Segment_from_edge_descriptor_map{
 
   Segment_from_edge_descriptor_map()
-    : m_pm(NULL)
+    : m_pm(nullptr)
   {}
 
   Segment_from_edge_descriptor_map(PolygonMesh const * pm)
@@ -143,7 +143,7 @@ template <class PolygonMesh,
           class VertexPointMap = typename boost::property_map<PolygonMesh,vertex_point_t>::type >
 struct One_point_from_face_descriptor_map{
   One_point_from_face_descriptor_map()
-    : m_pm(NULL)
+    : m_pm(nullptr)
   {}
 
   One_point_from_face_descriptor_map(PolygonMesh const * g)
@@ -187,7 +187,7 @@ struct One_point_from_face_descriptor_map{
 template < class PolygonMesh,
            class VertexPointMap = typename boost::property_map<PolygonMesh,vertex_point_t>::type >
 struct Source_point_from_edge_descriptor_map{
-  Source_point_from_edge_descriptor_map()  : m_pm(NULL)
+  Source_point_from_edge_descriptor_map()  : m_pm(nullptr)
   {}
 
   Source_point_from_edge_descriptor_map(PolygonMesh const * g)

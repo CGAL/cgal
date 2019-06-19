@@ -548,11 +548,11 @@ such that
 (the rest of the triangulation lying to the right of this line). 
 
 - for a degenerate one dimensional triangulation it is the (degenerate 
-one dimensional) face \f$ (\infty, p, NULL)\f$ such that `query` 
+one dimensional) face \f$ (\infty, p, nullptr)\f$ such that `query` 
 and the triangulation lie on either side of `p`. 
 
 If the point `query` lies outside the affine hull, 
-the returned `Face_handle` is `NULL`. 
+the returned `Face_handle` is `nullptr`. 
 
 The optional `Face_handle` argument, if provided, is used as a hint 
 of where the locate process has to start its search. 
@@ -971,7 +971,7 @@ traversed finite face then through the first finite traversed face
 again. 
 \pre The triangulation must have dimension 2. 
 \pre Points `p` and `q` must be different points. 
-\pre If `f != NULL`, it must point to a finite face and the point `p` must be inside or on the boundary of `f`. 
+\pre If `f != nullptr`, it must point to a finite face and the point `p` must be inside or on the boundary of `f`. 
 */ 
 Line_face_circulator 
 line_walk(const Point& p, const Point& q, Face_handle f = Face_handle()) const; 

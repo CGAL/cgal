@@ -149,6 +149,7 @@ struct AABB_traits_base_2<GeomTraits,true>{
 template< typename AABBTraits>
 class AABB_tree;
 
+
 /// This traits class handles any type of 3D geometric
 /// primitives provided that the proper intersection tests and
 /// constructions are implemented. It handles points, rays, lines and
@@ -325,7 +326,9 @@ public:
 
   Compute_bbox compute_bbox_object() const {return Compute_bbox(*this);}
 
-
+  /// \brief Function object using `GeomTraits::Do_intersect`.
+  /// In the case the query is a `CGAL::AABB_tree`, the `do_intersect()`
+  /// function of this tree is used.
   class Do_intersect {
     const AABB_traits<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
@@ -359,6 +362,7 @@ public:
   };
 
   Do_intersect do_intersect_object() const {return Do_intersect(*this);}
+
 
   class Intersection {
     const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& m_traits;

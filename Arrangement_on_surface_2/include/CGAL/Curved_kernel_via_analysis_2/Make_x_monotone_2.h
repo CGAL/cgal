@@ -108,7 +108,7 @@ struct Make_x_monotone_2 :
      */
     Make_x_monotone_2(Curved_kernel_via_analysis_2 *kernel) :
         _m_curved_kernel(kernel) {
-        CGAL_assertion(kernel != NULL);
+        CGAL_assertion(kernel != nullptr);
     }
 
     //!@}

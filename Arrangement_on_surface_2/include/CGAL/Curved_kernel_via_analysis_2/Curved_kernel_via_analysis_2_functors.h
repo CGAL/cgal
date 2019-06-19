@@ -93,7 +93,7 @@ public:
     Curved_kernel_via_analysis_2_functor_base(
             Curved_kernel_via_analysis_2 *kernel) :
         _m_curved_kernel(kernel) {
-        CGAL_precondition(kernel != NULL);
+        CGAL_precondition(kernel != nullptr);
     }
 
     //!@}

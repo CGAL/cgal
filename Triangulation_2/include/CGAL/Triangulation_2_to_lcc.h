@@ -31,14 +31,14 @@ namespace CGAL {
    * @param alcc the used linear cell complex.
    * @param atr the Triangulation_2.
    * @param aface_to_dart a pointer to a std::map associating to each
-   *        triangle of atr a corresponding dart in alcc. Not used if NULL.
+   *        triangle of atr a corresponding dart in alcc. Not used if nullptr.
    * @return A dart incident to the infinite vertex.
    */
   template < class LCC, class Triangulation >
   typename LCC::Dart_handle import_from_triangulation_2
   (LCC& alcc, const Triangulation &atr,
    std::map<typename Triangulation::Face_handle,
-            typename LCC::Dart_handle >* aface_to_dart=NULL)
+            typename LCC::Dart_handle >* aface_to_dart=nullptr)
   {
     CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
     
@@ -70,7 +70,7 @@ namespace CGAL {
 
     std::map<typename Triangulation::Face_handle, typename LCC::Dart_handle> TC;
     std::map<typename Triangulation::Face_handle, typename LCC::Dart_handle>*
-      mytc = (aface_to_dart==NULL?&TC:aface_to_dart);
+      mytc = (aface_to_dart==nullptr?&TC:aface_to_dart);
     
     itmap_tcell maptcell_it;
 

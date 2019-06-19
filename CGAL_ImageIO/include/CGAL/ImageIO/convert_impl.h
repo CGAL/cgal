@@ -73,8 +73,8 @@ void ConvertBuffer( void *bufferIn,
 	     proc );
     return;
   }
-  if ( (bufferIn == (void*)NULL) || (bufferOut == (void*)NULL) ) {
-    fprintf( stderr, " Fatal error in %s: NULL buffer(s).\n", 
+  if ( (bufferIn == (void*)nullptr) || (bufferOut == (void*)nullptr) ) {
+    fprintf( stderr, " Fatal error in %s: nullptr buffer(s).\n", 
 	     proc );
     return;
   }

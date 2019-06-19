@@ -267,8 +267,8 @@ public:
      (optionally) the pointer to the function which
      will be called if allocation failed; the message
      passed to this function is "Not enough memory!" */
-  Block(int size, void (*err_function)(const char *) = NULL) {
-    first = last = NULL;
+  Block(int size, void (*err_function)(const char *) = nullptr) {
+    first = last = nullptr;
     block_size = size;
     error_function = err_function;
   }
@@ -301,7 +301,7 @@ public:
         last = next;
         last -> current = & ( last -> data[0] );
         last -> last = last -> current + block_size;
-        last -> next = NULL;
+        last -> next = nullptr;
       }
     }
 
@@ -310,7 +310,7 @@ public:
     return t;
   }
 
-  /* Returns the first item (or NULL, if no items were added) */
+  /* Returns the first item (or nullptr, if no items were added) */
   Type *ScanFirst() {
     for (scan_current_block=first; scan_current_block;
          scan_current_block = scan_current_block->next) {
@@ -318,16 +318,16 @@ public:
       if (scan_current_data < scan_current_block -> current) return scan_current_data
             ++;
     }
-    return NULL;
+    return nullptr;
   }
 
-  /* Returns the next item (or NULL, if all items have been read)
+  /* Returns the next item (or nullptr, if all items have been read)
      Can be called only if previous ScanFirst() or ScanNext()
-     call returned not NULL. */
+     call returned not nullptr. */
   Type *ScanNext() {
     while (scan_current_data >= scan_current_block -> current) {
       scan_current_block = scan_current_block -> next;
-      if (!scan_current_block) return NULL;
+      if (!scan_current_block) return nullptr;
       scan_current_data = & ( scan_current_block -> data[0] );
     }
     return scan_current_data ++;
@@ -375,9 +375,9 @@ public:
      (optionally) the pointer to the function which
      will be called if allocation failed; the message
      passed to this function is "Not enough memory!" */
-  DBlock(int size, void (*err_function)(const char *) = NULL) {
-    first = NULL;
-    first_free = NULL;
+  DBlock(int size, void (*err_function)(const char *) = nullptr) {
+    first = nullptr;
+    first_free = nullptr;
     block_size = size;
     error_function = err_function;
   }
@@ -405,7 +405,7 @@ public:
       first_free = & (first -> data[0] );
       for (item=first_free; item<first_free+block_size-1; item++)
         item -> next_free = item + 1;
-      item -> next_free = NULL;
+      item -> next_free = nullptr;
       first -> next = next;
     }
 
@@ -522,7 +522,7 @@ public:
      function which will be called if an error occurs;
      an error message is passed to this function. If this
      argument is omitted, exit(1) will be called. */
-  Graph(void (*err_function)(const char *) = NULL);
+  Graph(void (*err_function)(const char *) = nullptr);
 
   /* Destructor */
   ~Graph();
@@ -668,7 +668,7 @@ private:
   void	(*error_function)(const char
                           *);	/* this function is called if a error occurs,
 										   with a corresponding error message
-										   (or exit(1) is called if it's NULL) */
+										   (or exit(1) is called if it's nullptr) */
 
   flowtype			flow;		/* total flow */
 
@@ -700,11 +700,11 @@ private:
 inline Graph::Graph(void (*err_function)(const char *))
 {
   error_function = err_function;
-  node_block_first = NULL;
-  arc_for_block_first = NULL;
-  arc_rev_block_first = NULL;
-  orphan_first = NULL;
-  orphan_last = NULL;
+  node_block_first = nullptr;
+  arc_for_block_first = nullptr;
+  arc_rev_block_first = nullptr;
+  orphan_first = nullptr;
+  orphan_last = nullptr;
   flow = 0;
 }
 
@@ -850,10 +850,10 @@ inline void Graph::prepare_graph()
   }
 
   /* FIRST STAGE */
-  a_rev_tmp->sister = NULL;
+  a_rev_tmp->sister = nullptr;
   for (a_rev=arc_rev_block_first->current;
        a_rev<&arc_rev_block_first->arcs_rev[MF_ARC_BLOCK_SIZE]; a_rev++) {
-    a_rev -> sister = NULL;
+    a_rev -> sister = nullptr;
   }
 
   ab_for = ab_for_first = arc_for_block_first;
@@ -870,12 +870,12 @@ inline void Graph::prepare_graph()
           if (error_function) (*error_function)("# of arcs per node exceeds block size!");
           exit(1);
         }
-        if (for_flag) ab_for = NULL;
+        if (for_flag) ab_for = nullptr;
         else          {
           ab_for = ab_for -> next;
           ab_rev_scan = ab_rev_scan -> next;
         }
-        if (ab_for == NULL) {
+        if (ab_for == nullptr) {
           arc_for_block *next = arc_for_block_first;
           char *ptr = new char[sizeof(arc_for_block)+1];
           if (!ptr) {
@@ -907,9 +907,9 @@ inline void Graph::prepare_graph()
           if (error_function) (*error_function)("# of arcs per node exceeds block size!");
           exit(1);
         }
-        if (rev_flag) ab_rev = NULL;
+        if (rev_flag) ab_rev = nullptr;
         else          ab_rev = ab_rev -> next;
-        if (ab_rev == NULL) {
+        if (ab_rev == nullptr) {
           arc_rev_block *next = arc_rev_block_first;
           char *ptr = new char[sizeof(arc_rev_block)+1];
           if (!ptr) {
@@ -957,7 +957,7 @@ inline void Graph::prepare_graph()
       ar = a_rev;
 
       do {
-        ar -> sister = NULL;
+        ar -> sister = nullptr;
 
         shift_new = ((char *)(af->shift)) - (char *)from;
         r_cap_new = af -> r_cap;
@@ -1044,7 +1044,7 @@ inline void Graph::prepare_graph()
 	Functions for processing active list.
 	i->next points to the next node in the list
 	(or to i, if i is the last node in the list).
-	If i->next is NULL iff i is not in the list.
+	If i->next is nullptr iff i is not in the list.
 
 	There are two queues. Active nodes are added
 	to the end of the second queue and read from
@@ -1077,15 +1077,15 @@ inline Graph::node * Graph::next_active()
     if (!(i=queue_first[0])) {
       queue_first[0] = i = queue_first[1];
       queue_last[0]  = queue_last[1];
-      queue_first[1] = NULL;
-      queue_last[1]  = NULL;
-      if (!i) return NULL;
+      queue_first[1] = nullptr;
+      queue_last[1]  = nullptr;
+      if (!i) return nullptr;
     }
 
     /* remove it from the active list */
-    if (i->next == i) queue_first[0] = queue_last[0] = NULL;
+    if (i->next == i) queue_first[0] = queue_last[0] = nullptr;
     else              queue_first[0] = i -> next;
-    i -> next = NULL;
+    i -> next = nullptr;
 
     /* a node in the list is active iff it has a parent */
     if (i->parent) return i;
@@ -1099,13 +1099,13 @@ inline void Graph::maxflow_init()
   node *i;
   node_block *nb;
 
-  queue_first[0] = queue_last[0] = NULL;
-  queue_first[1] = queue_last[1] = NULL;
-  orphan_first = NULL;
+  queue_first[0] = queue_last[0] = nullptr;
+  queue_first[1] = queue_last[1] = nullptr;
+  orphan_first = nullptr;
 
   for (nb=node_block_first; nb; nb=nb->next)
     for (i=&nb->nodes[0]; i<nb->current; i++) {
-      i -> next = NULL;
+      i -> next = nullptr;
       i -> TS = 0;
       if (i->tr_cap > 0) {
         /* i is connected to the source */
@@ -1122,7 +1122,7 @@ inline void Graph::maxflow_init()
         i -> TS = 0;
         i -> DIST = 1;
       } else {
-        i -> parent = NULL;
+        i -> parent = nullptr;
       }
     }
   TIME = 0;
@@ -1266,7 +1266,7 @@ inline void Graph::process_source_orphan(node *i)
   node *j;
   arc_forward *a0_for, *a0_for_first, *a0_for_last;
   arc_reverse *a0_rev, *a0_rev_first, *a0_rev_last;
-  arc_forward *a0_min = NULL, *a;
+  arc_forward *a0_min = nullptr, *a;
   nodeptr *np;
   int d, d_min = MF_INFINITE_D;
 
@@ -1397,7 +1397,7 @@ inline void Graph::process_source_orphan(node *i)
           if (orphan_last) orphan_last -> next = np;
           else             orphan_first        = np;
           orphan_last = np;
-          np -> next = NULL;
+          np -> next = nullptr;
         }
       }
     }
@@ -1414,7 +1414,7 @@ inline void Graph::process_source_orphan(node *i)
           if (orphan_last) orphan_last -> next = np;
           else             orphan_first        = np;
           orphan_last = np;
-          np -> next = NULL;
+          np -> next = nullptr;
         }
       }
     }
@@ -1426,7 +1426,7 @@ inline void Graph::process_sink_orphan(node *i)
   node *j;
   arc_forward *a0_for, *a0_for_first, *a0_for_last;
   arc_reverse *a0_rev, *a0_rev_first, *a0_rev_last;
-  arc_forward *a0_min = NULL, *a;
+  arc_forward *a0_min = nullptr, *a;
   nodeptr *np;
   int d, d_min = MF_INFINITE_D;
 
@@ -1557,7 +1557,7 @@ inline void Graph::process_sink_orphan(node *i)
           if (orphan_last) orphan_last -> next = np;
           else             orphan_first        = np;
           orphan_last = np;
-          np -> next = NULL;
+          np -> next = nullptr;
         }
       }
     }
@@ -1574,7 +1574,7 @@ inline void Graph::process_sink_orphan(node *i)
           if (orphan_last) orphan_last -> next = np;
           else             orphan_first        = np;
           orphan_last = np;
-          np -> next = NULL;
+          np -> next = nullptr;
         }
       }
     }
@@ -1585,8 +1585,8 @@ inline void Graph::process_sink_orphan(node *i)
 
 inline Graph::flowtype Graph::maxflow()
 {
-  node *i, *j, *current_node = NULL, *s_start, *t_start=NULL;
-  captype *cap_middle=NULL, *rev_cap_middle=NULL;
+  node *i, *j, *current_node = nullptr, *s_start, *t_start=nullptr;
+  captype *cap_middle=nullptr, *rev_cap_middle=nullptr;
   arc_forward *a_for, *a_for_first, *a_for_last;
   arc_reverse *a_rev, *a_rev_first, *a_rev_last;
   nodeptr *np, *np_next;
@@ -1597,15 +1597,15 @@ inline Graph::flowtype Graph::maxflow()
 
   while ( 1 ) {
     if ( (i=current_node) ) {
-      i -> next = NULL; /* remove active flag */
-      if (!i->parent) i = NULL;
+      i -> next = nullptr; /* remove active flag */
+      if (!i->parent) i = nullptr;
     }
     if (!i) {
       if (!(i = next_active())) break;
     }
 
     /* growth */
-    s_start = NULL;
+    s_start = nullptr;
 
     a_for_first = i -> first_out;
     if (MF_IS_ODD(a_for_first)) {
@@ -1734,13 +1734,13 @@ inline Graph::flowtype Graph::maxflow()
       /* adoption */
       while ( (np=orphan_first) ) {
         np_next = np -> next;
-        np -> next = NULL;
+        np -> next = nullptr;
 
         while ( (np=orphan_first) ) {
           orphan_first = np -> next;
           i = np -> ptr;
           nodeptr_block -> Delete(np);
-          if (!orphan_first) orphan_last = NULL;
+          if (!orphan_first) orphan_last = nullptr;
           if (i->is_sink) process_sink_orphan(i);
           else            process_source_orphan(i);
         }
@@ -1748,7 +1748,7 @@ inline Graph::flowtype Graph::maxflow()
         orphan_first = np_next;
       }
       /* adoption end */
-    } else current_node = NULL;
+    } else current_node = nullptr;
   }
 
   delete nodeptr_block;

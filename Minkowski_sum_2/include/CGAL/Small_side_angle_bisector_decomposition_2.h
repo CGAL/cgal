@@ -131,9 +131,9 @@ public:
   ~Small_side_angle_bisector_decomposition_2()
   {
     if (m_own_kernel) {
-      if (m_kernel != NULL) {
+      if (m_kernel != nullptr) {
         delete m_kernel;
-        m_kernel = NULL;
+        m_kernel = nullptr;
       }
       m_own_kernel = false;
     }

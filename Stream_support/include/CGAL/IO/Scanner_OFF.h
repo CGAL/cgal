@@ -54,7 +54,7 @@ private:
     Pt                 m_point;
 
     void next_vertex() {
-        CGAL_assertion( m_scan != NULL);
+        CGAL_assertion( m_scan != nullptr);
         if ( m_cnt < m_scan->size_of_vertices()) {
             file_scan_vertex( *m_scan, m_point);
             m_scan->skip_to_next_vertex( m_cnt);
@@ -86,7 +86,7 @@ public:
         return tmp;
     }
     const Point& operator*()  const {
-        CGAL_assertion( m_scan != NULL);
+        CGAL_assertion( m_scan != nullptr);
         return m_point;
     }
     const Point* operator->() const { return & operator*(); }
@@ -113,7 +113,7 @@ private:
     
 
     void next() {
-        CGAL_assertion( m_scan != NULL);
+        CGAL_assertion( m_scan != nullptr);
         if ( m_cnt < m_scan->size_of_vertices()) {
             file_scan_vertex( *m_scan, m_current.first);
             if ( m_scan->has_normals())
@@ -145,7 +145,7 @@ public:
         return tmp;
     }
     reference operator*()  const {
-        CGAL_assertion( m_scan != NULL);
+        CGAL_assertion( m_scan != nullptr);
         return m_current;
     }
     pointer   operator->() const { return & operator*(); }
@@ -165,7 +165,7 @@ private:
     value_type         m_indices;
 
     void next_facet() {
-        CGAL_assertion( m_scan != NULL);
+        CGAL_assertion( m_scan != nullptr);
         if ( m_cnt < m_scan->size_of_facets()) {
             m_indices.erase( m_indices.begin(), m_indices.end());
             std::size_t no;
@@ -211,11 +211,11 @@ public:
         return tmp;
     }
     value_type&       operator*()        {
-        CGAL_assertion( m_scan != NULL);
+        CGAL_assertion( m_scan != nullptr);
         return m_indices;
     }
     const value_type& operator*()  const {
-        CGAL_assertion( m_scan != NULL);
+        CGAL_assertion( m_scan != nullptr);
         return m_indices;
     }
     value_type*       operator->()       { return & operator*(); }

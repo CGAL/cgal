@@ -1640,7 +1640,7 @@ protected:
                             Self* b) :
       Md_observer(arr), base(b)
     {
-      CGAL_assertion(base != NULL);
+      CGAL_assertion(base != nullptr);
     }
 
     /* virtual void before_split_edge (Halfedge_handle e,
@@ -1785,7 +1785,7 @@ protected:
       faces(f),
       base(b)
     {
-      CGAL_assertion(base != NULL);
+      CGAL_assertion(base != nullptr);
     }
 
     // Write the discover time for a given vertex.

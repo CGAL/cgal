@@ -223,7 +223,7 @@ protected:
                 it = S.begin(); it != S.end(); ++it) {
             pst.add(*it, *it);
             const typename Graph_::vertex_descriptor *const ri = pst.minAbove(*it);
-            if ( ri != NULL ) {
+            if ( ri != nullptr ) {
                 typename Graph_::edge_descriptor existing_e;
                 bool                    existing;
                 // check whether the edge already exists

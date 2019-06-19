@@ -191,7 +191,9 @@ a more isotropic mesh.\n
 \cgalNPEnd
 
 \cgalNPBegin{use_delaunay_triangulation} \anchor PMP_use_delaunay_triangulation
-enables the use of the Delaunay triangulation facet search space for hole filling functions.\n
+enables the use of the Delaunay triangulation facet search space for hole filling functions.
+If no valid triangulation can be found in this search space, the algorithm falls back to the
+non-Delaunay triangulations search space to find a solution.\n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `true`
 \cgalNPEnd

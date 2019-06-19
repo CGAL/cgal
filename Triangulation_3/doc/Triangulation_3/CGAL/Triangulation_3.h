@@ -233,12 +233,12 @@ infinite vertex.
 must be provided if concurrency is enabled.
 */ 
 Triangulation_3(const Geom_traits & traits = Geom_traits(),
-                Lock_data_structure *lock_ds = NULL);
+                Lock_data_structure *lock_ds = nullptr);
 
 /*! 
 Same as the previous one, but with parameters in reverse order.
 */ 
-Triangulation_3(Lock_data_structure *lock_ds = NULL,
+Triangulation_3(Lock_data_structure *lock_ds = nullptr,
                 const Geom_traits & traits = Geom_traits());
 
 /*!
@@ -255,7 +255,7 @@ traits class argument and calling `insert(first,last)`.
 template < class InputIterator> 
 Triangulation_3 (InputIterator first, InputIterator last, 
                  const Geom_traits & traits = Geom_traits(),
-                 Lock_data_structure *lock_ds = NULL);
+                 Lock_data_structure *lock_ds = nullptr);
 
 /// @} 
 
@@ -630,14 +630,14 @@ unlocked by `locate`, leaving this choice to the user.
 */ 
 Cell_handle 
 locate(const Point & query, Cell_handle start = Cell_handle(),
-       bool *could_lock_zone = NULL) const; 
+       bool *could_lock_zone = nullptr) const; 
 
 /*!
 Same as above but uses `hint` as the starting place for the search. 
 */ 
 Cell_handle 
 locate(const Point & query, Vertex_handle hint,
-       bool *could_lock_zone = NULL) const; 
+       bool *could_lock_zone = nullptr) const; 
 
 /*!
 Same as `locate()` but uses inexact predicates. 
@@ -683,7 +683,7 @@ unlocked by `locate`, leaving this choice to the user.
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Cell_handle start = Cell_handle(),
-bool *could_lock_zone = NULL ) const; 
+bool *could_lock_zone = nullptr ) const; 
 
 /*!
 Same as above but uses `hint` as the starting place for the search. 
@@ -691,7 +691,7 @@ Same as above but uses `hint` as the starting place for the search.
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Vertex_handle hint,
-bool *could_lock_zone = NULL) const; 
+bool *could_lock_zone = nullptr) const; 
 
 
 /*!

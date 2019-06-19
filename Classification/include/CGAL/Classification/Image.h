@@ -54,7 +54,7 @@ class Image
   
 public:
 
-  Image () : m_width(0), m_height(0), m_depth(0), m_raw (NULL)
+  Image () : m_width(0), m_height(0), m_depth(0), m_raw (nullptr)
   {
   }
   

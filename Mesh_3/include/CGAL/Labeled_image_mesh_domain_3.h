@@ -83,7 +83,7 @@ public:
                               const FT& error_bound = FT(1e-3),
                               Subdomain_index value_outside = 0,
                               Null null = Null(),
-                              CGAL::Random* p_rng = NULL)
+                              CGAL::Random* p_rng = nullptr)
     : Base(Wrapper(image, Identity(), value_outside),
            compute_bounding_box(image),
            error_bound,
