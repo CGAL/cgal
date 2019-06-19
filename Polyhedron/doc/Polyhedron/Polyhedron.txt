@@ -278,7 +278,7 @@ are also marked in the program code.
 \subsection PolyhedronDraw Draw a Polyhedron
 \anchor ssecDrawPolyhedron
 
-A polyhedron can be visualized by calling the `CGAL::draw()` function as shown in the following example. This function opens a new window showing the given polyhedron. The function is blocking, that is the program continues as soon as the user closes the window.
+A polyhedron can be visualized by calling the \link PkgDrawPolyhedron CGAL::draw<POLY>() \endlink function as shown in the following example. This function opens a new window showing the given polyhedron. The function is blocking, that is the program continues as soon as the user closes the window.
 
 \cgalExample{Polyhedron/draw_polyhedron.cpp}
 

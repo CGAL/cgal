@@ -253,7 +253,7 @@ We can observe that the second run is faster than the first one. Indeed, updatin
 \subsection Linear_cell_complexDraw Draw a Linear Cell Complex
 \anchor ssecDrawLCC
 
-A linear cell complex can be visualized by calling the `CGAL::draw()` function as shown in the following example. This function opens a new window showing the given linear cell complex. The function is blocking, that is the program continues as soon as the user closes the window.
+A linear cell complex can be visualized by calling the \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink function as shown in the following example. This function opens a new window showing the given linear cell complex. The function is blocking, that is the program continues as soon as the user closes the window.
 
 \cgalExample{Linear_cell_complex/draw_linear_cell_complex.cpp}
 
