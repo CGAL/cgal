@@ -4,51 +4,39 @@
 \authors Eric Berberich, Joachim Reichel, and Fernando Cacciola
 
 \section installation_introduction Introduction
- 
-This document describes how to install \cgal on Windows, Unix-like systems, and MacOS X.
 
-Ideally, setting up \cgal amounts to:
+Since \cgal version 5.0, \cgal is header-only be default, which means
+that there is no need to compile and install anything before it can be
+used. The dependencies of \cgal still have to be installed.
 
-<PRE>
-cd CGAL-\cgalReleaseNumber # go to \cgal directory
-cmake . # configure \cgal
-make # build the \cgal libraries
-</PRE>
+Ideally, compiling an example or a demo shipped with \cgal is
+as simple as:
 
-Compiling an example or a demo shipped with \cgal is similarly simple:
-
-<PRE>
-cd examples/Triangulation_2 # go to an example directory
-cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the examples
-make # build the examples 
-</PRE>
-
-<PRE>
-cd demo/Triangulation_2 # go to a demo directory
-cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the demos
-make # build the demos 
-</PRE>
+    cd examples/Triangulation_2 # go to an example directory
+    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the examples
+    make # build the examples
+    
+    cd demo/Triangulation_2 # go to a demo directory
+    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the demos
+    make # build the demos
 
 Compiling an own non-shipped program is also close:
 
-<PRE>
-cd /path/to/program 
-cgal_create_CMakeLists -s executable 
-cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . 
-make
-</PRE>
+    cd /path/to/program
+    cgal_create_CMakeLists -s executable
+    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber .
+    make
 
 where the second line creates a `CMakeLists.txt` file (check
 its options in Section \ref seccreate_cgal_CMakeLists for various details).
 
 
-In a less ideal world, you probably have to install CMake, a makefile
-generator, and third party libraries. That is what this manual is about.
+In a less ideal world, you probably have to install required tools, and third party libraries. That is what this manual is about.
 
 \section secprerequisites Prerequisites 
 
-Installing \cgal requires a few components to be installed ahead: a
-supported compiler (see Section \ref seccompilers, CMake, \sc{Boost}, and at least \sc{Gmp}, and \sc{Mpfr}; see 
+Using \cgal requires a few components to be installed ahead: a
+supported compiler (see Section \ref seccompilers), \sc{Boost}, \sc{Gmp}, and \sc{Mpfr}; see 
 Section \ref secessential3rdpartysoftware for more details on
 essential third party software.
 
@@ -59,35 +47,21 @@ essential third party software through the manager,
 for instance, Mac OS X, or some Linux distribution (e.g. Debian).
 For Windows, an installer is provided.
 
-\subsection sseccgalmacosxe CGAL on MAC OS X 
+\subsection sseccgalmacosxe CGAL on macOS
 
-For instance, use macports in the following way:
+The \cgal project recommends the use of <a href="https://brew.sh/">Homebrew</a>, in the following way:
 
-<PRE>
-sudo port install cgal
-</PRE>
-
-or if Qt5 are desired
-
-<PRE>
-sudo port install cgal +qt5 +universal +demos
-</PRE>
-
-The setup is similar for <a href="https://brew.sh/"><tt>homebrew</tt></a> .
+    brew install cgal
 
 \subsection sseccgaldebian CGAL on Linux 
 
-For instance in debian/Ubuntu, use apt-get in the following way:
+For instance in Debian/Ubuntu, use apt-get in the following way:
 
-<PRE>
-sudo apt-get install libcgal-dev
-</PRE>
+    sudo apt-get install libcgal-dev
 
 To get the demos use
 
-<PRE>
-sudo apt-get install libcgal-demo
-</PRE>
+    sudo apt-get install libcgal-demo
 
 Check the \cgal-FAQ for source repository of newest releases.
 
@@ -95,7 +69,7 @@ On other distributions, please consult your package manager documentation.
 
 \subsection sseccgalwindows CGAL on Windows
 
-You can download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from https://www.cgal.org/download.html.
+You can download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from https://www.cgal.org/download/windows.html.
 It is a self extracting executable that installs the \cgal source, and that allows you
 to select and download some precompiled third party libraries. However, you will need to compile
 the library using your favorite compiler.
@@ -122,17 +96,17 @@ In both cases the directory `CGAL-\cgalReleaseNumber` will be created. This dire
 contains the following subdirectories:
 
 
-| Directory   | Contents   | 
-| :-----------| :----------|
-| `auxiliary`  | precompiled \sc{Gmp} and \sc{Mpfr} for Windows |
+| Directory       | Contents   | 
+| :-----------    | :----------|
+| `auxiliary`     | precompiled \sc{Gmp} and \sc{Mpfr} for Windows |
 | `cmake/modules` | modules for finding and using libraries |
-| `config` |configuration files for install script |
-| `demo` | demo programs (most of them need \sc{Qt}, geomview or other third-party products) |
-| `doc_html` |documentation (HTML) | 
-| `examples` | example programs |
-| `include`  | header files |
-| `scripts`  | some useful scripts (e.g. for creating CMakeLists.txt files) |
-| `src`      | source files |
+| `config`        | configuration files for install script |
+| `demo`          | demo programs (most of them need \sc{Qt}, geomview or other third-party products) |
+| `doc_html`      | documentation (HTML) | 
+| `examples`      | example programs |
+| `include`       | header files |
+| `scripts`       | some useful scripts (e.g. for creating CMakeLists.txt files) |
+| `src`           | source files |
 
 
 The directories `include/CGAL/CORE` and `src/CGALCore` contain a
@@ -151,17 +125,18 @@ installation manual. The \cgal manual must be downloaded separately from
 
 \section seccompilers Supported Compilers 
 
-In order to build the \cgal libraries, you need a \cpp compiler. 
+In order to build a program using \cgal, you need a \cpp compiler
+supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
 \cgal \cgalReleaseNumber is supported, that is continuously tested, for the following compilers/operating systems:
 
 
 | Compiler | Operating System |
 | :------- | :--------------- |
-|\sc{Gnu} `g++` 4.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
+|\sc{Gnu} `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
 |          | \sc{MS} Windows | 
-|\sc{MS} Visual `C++` 12.0, 14.0, 15.9 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} | \sc{MS} Windows |
-| `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 7.0.1 | Linux  |
-| Apple `Clang` compiler version 7.0.2 | MacOS X |
+|\sc{MS} Visual `C++` 14.0, 15.9, 16.0 (\sc{Visual Studio} 2015, 2017, and 2019)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} | \sc{MS} Windows |
+| `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 8.0.0 | Linux  |
+| Apple `Clang` compiler versions 7.0.2 and 10.0.1 | MacOS X |
 
 It may work for older versions of the above listed compilers.
 
@@ -176,7 +151,7 @@ This manual explains only those features of
 CMake which are needed in order to build \cgal. Please refer to the 
 CMake documentation at <A HREF="https://cmake.org/">`https://cmake.org/`</A> for further details.
 
-Before building \cgal you have to choose the compiler/linker, 
+Before building anything using \cgal you have to choose the compiler/linker, 
 set compiler and linker flags, specify which
 third-party libraries you want to use and where they can be found, and 
 which \cgal libraries you want to build. Gathering
@@ -321,7 +296,7 @@ variable `BUILD_SHARED_LIBS` to `FALSE`. If you use
 
 \subsubsection subsection_headeronly_withconfiguration Header-only with CMake Configuration
 
-Since \cgal 4.9, \cgal can be used in header-only mode, i.e. without compiling the \cgal libraries and linking with these libraries when compiling examples, tests and demos. This possibility can be enabled by setting the value of the CMake variable `CGAL_HEADER_ONLY` to `ON`. CMake version 3.0.0 or higher is required to use this option.
+Since \cgal 4.9, \cgal can be used in header-only mode, i.e. without compiling the \cgal libraries and linking with these libraries when compiling examples, tests and demos. This possibility can be enabled by setting the value of the CMake variable `CGAL_HEADER_ONLY` to `ON`.
 
 One advantage of using \cgal in header-only mode is that you do not need to compile and install \cgal libraries before compiling a given example or demo. Note that even in header-only mode we still need to run CMake on \cgal in order to generate different configuration files. So, setting up \cgal becomes now:
 
