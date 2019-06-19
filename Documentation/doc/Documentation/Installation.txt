@@ -839,40 +839,6 @@ libCGAL_ImageIO (<i>ImageIO</i>), and libCGAL_Qt5
 A user is free to create the `CMakeLists.txt`
 without calling the script (manual creation).
 
-\subsection installation_custom Custom Flags in the Programs Using CGAL
-
-Normally, programs linked with \cgal must be compiled with the same flags
-used by the compilation of \cgal libraries. For this reason, the <I>very first</I> time
-a program is configured, all the flags given by the CMake variables `CMAKE_*_FLAGS`
-are <I>locked</I> in the sense that the values recorded in `CGALConfig.cmake` 
-are used to override any values given by CMake itself or yourself.
-
-This does not apply to the additional flags that can be given via `CGAL_*_FLAGS`.
-
-Such <I>inherited</I> values are then recorded in the current CMake cache for the program.
-The flags are then <I>unlocked</I> in the sense that at any subsequent configuration you can
-provide your own flags and this time they will not be overridden.
-
-When using the interactive `cmake-gui` the first press on `Configure` unlocks
-the flags, so that you can edit them as needed.
-
-\cgalAdvancedBegin
-The locking of flags is controlled by the variable
-`CGAL_DONT_OVERRIDE_CMAKE_FLAGS` which starts out FALSE and is
-toggled right after the flags have been loaded from
-`CGALConfig.cmake`.
-
-If you use the command line tool you can specify flags <I>directly</I> by setting the
-controlling variable right up front:
-
-<PRE>
-cd CGAL-\cgalReleaseNumber
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-g .
-cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
-cmake -DCGAL_DIR=CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
-</PRE>
-\cgalAdvancedEnd
-
 \section installation_summary Summary of CGAL's Configuration Variables
 
 Most configuration variables are not environment variables but
