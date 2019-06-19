@@ -167,6 +167,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::corefine()`
 - `CGAL::Polygon_mesh_processing::surface_intersection()`
 - `CGAL::Polygon_mesh_processing::clip()`
+- `CGAL::Polygon_mesh_processing::split()`
 - `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
 
 \cgalCRPSection{Geometric Measure Functions}

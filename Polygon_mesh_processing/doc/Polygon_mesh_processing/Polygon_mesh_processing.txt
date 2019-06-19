@@ -258,6 +258,7 @@ the limited precision of floating point numbers.
 As a natural extension, some clipping functionalities with a volume bounded by a closed mesh
 and a halfspace (defined by the negative side of a plane to be consistent with
 the outward normal convention) are offered. The functions `CGAL::Polygon_mesh_processing::clip()`
+and `CGAL::Polygon_mesh_processing::split()`
 have some options to select whether the clipping should be done at the volume or surface
 level, and also if the clipper should be considered as compact or not. This is illustrated on
 \cgalFigureRef{coref_clip_close_open} and \cgalFigureRef{coref_clip_compact}.
