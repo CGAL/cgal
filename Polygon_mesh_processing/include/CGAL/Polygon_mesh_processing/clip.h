@@ -504,9 +504,11 @@ void split(TriangleMesh& tm,
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace params = PMP::parameters;
 
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::face_descriptor face_descriptor;
+  typedef typename GT::edge_descriptor edge_descriptor;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type VPMap1;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type VPMap2;
   typedef typename boost::template property_map<TriangleMesh, CGAL::dynamic_face_property_t<std::size_t > >::type FCCMap;
@@ -524,32 +526,149 @@ void split(TriangleMesh& tm,
   const bool split_volume =
       boost::choose_param(boost::get_param(np_tm, internal_np::clip_volume), false);
 
-  // create a constrained edge map and corefine input mesh with the plane
+  // create a constrained edge map and corefine input mesh with the splitter,
+  // and mark edges
 
   PMP::corefine(tm, splitter,
                 CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm),
                 CGAL::parameters::vertex_point_map(vpm_s));
-  std::size_t num = PMP::connected_components(tm, fccmap, PMP::parameters::edge_is_constrained_map(ecm));
 
-  Filtered_graph ffg(tm, 0, fccmap);
-  TriangleMesh tmp;
-  for (std::size_t i=0; i <num; ++i)
+  //duplicate marked edges to "split" patches
+
+  std::vector<edge_descriptor> shared_edges;
+  shared_edges.reserve( num_edges(tm));
+  for(const auto& e : edges(tm))
   {
-    if (i!=0)
-      ffg.set_selected_faces(i, fccmap);
-
-    // create a new mesh for the component
-    if(split_volume)
+    if(get(ecm, e))
     {
-      std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > h2h;
-      CGAL::copy_face_graph(ffg, tmp, params::halfedge_to_halfedge_output_iterator(std::back_inserter(h2h)));
-    }
-    else{
-      CGAL::copy_face_graph(ffg, tmp);
+      shared_edges.push_back(e);
     }
   }
-  tm.clear();
-  CGAL::copy_face_graph(tmp, tm);
+
+  shared_edges.shrink_to_fit();
+  typedef CGAL::dynamic_halfedge_property_t<bool>                                  Halfedge_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Halfedge_property_tag>::type  Visited_halfedge_map;
+  typedef CGAL::dynamic_vertex_property_t<bool>                                  Vertex_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type  Visited_vertex_map;
+  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), tm);
+  Visited_vertex_map visited_vertices = get(Vertex_property_tag(), tm);
+  // Dynamic pmaps do not have default initialization values (yet)
+  for(vertex_descriptor v : vertices(tm))
+    put(visited_vertices, v, false);
+  for(halfedge_descriptor h : halfedges(tm))
+    put(visited_halfedges, h, false);
+
+
+  std::unordered_map<halfedge_descriptor, std::vector<vertex_descriptor> > vertex_pool;
+  //duplicate vertices
+  for(auto e : shared_edges)
+  {
+    halfedge_descriptor h = halfedge(e, tm);
+    if(!get(visited_halfedges, h))
+    {
+      put(visited_halfedges, h, true);
+      bool is_non_manifold = false;
+
+      vertex_descriptor vd = target(h, tm);
+      if(get(visited_vertices, vd)) // already seen this vertex, but not from this star
+        is_non_manifold = true;
+
+      put(visited_vertices, vd, true);
+
+      halfedge_descriptor ih = h, done = ih;
+      int border_counter = 0;
+      do
+      {
+        put(visited_halfedges, ih, true);
+        if(is_border(ih, tm) || get(ecm, edge(ih, tm)))
+          ++border_counter;
+
+        ih = prev(opposite(ih, tm), tm);
+      }
+      while(ih != done);
+
+      if(border_counter > 1)
+        is_non_manifold = true;
+
+      if(is_non_manifold)
+      {
+        //duplicate
+        vertex_pool[h].push_back(add_vertex(tm));
+        put(vpm_tm, vertex_pool[h].back(), get(vpm_tm, target(h, tm)));
+      }
+    }
+  }
+
+  std::size_t nb_shared_edges = shared_edges.size();
+  std::vector<halfedge_descriptor> new_patch_border;
+  new_patch_border.reserve( nb_shared_edges );
+  // now duplicate the edge and set its pointers
+  for(std::size_t k=0; k<nb_shared_edges; ++k)
+  {
+    halfedge_descriptor h = halfedge(shared_edges[k], tm);
+    face_descriptor fh = face(h, tm);
+    //add edge
+    halfedge_descriptor new_hedge = halfedge(add_edge(tm), tm);
+    halfedge_descriptor new_opp = opposite(new_hedge,tm);
+
+    //replace h with new_hedge
+    set_next(new_hedge, next(h, tm), tm);
+    set_next(prev(h, tm), new_hedge, tm);
+
+    set_next(new_opp, GT::null_halfedge(), tm);
+
+    set_face(new_hedge, fh, tm);
+
+    set_target(new_hedge, vertex_pool[h].empty()
+               ? target(h, tm)
+               : vertex_pool[h].front(), tm);
+
+    set_target(new_opp, vertex_pool[prev(h, tm)].empty()
+        ? source(h, tm)
+        : vertex_pool[prev(h, tm)].front(), tm);
+
+
+    set_halfedge(face(h, tm), new_hedge, tm);
+    new_patch_border.push_back(new_hedge);
+    new_patch_border.push_back(opposite(h, tm));
+    //make new_opposite and h border hedges
+    set_face(new_opp, GT::null_face(), tm);
+    set_face(h, GT::null_face(), tm);
+    set_next(h, GT::null_halfedge(), tm);
+
+    CGAL_assertion( next(opposite(new_hedge, tm), tm)==GT::null_halfedge() );
+    CGAL_assertion( prev(opposite(new_hedge, tm), tm)==GT::null_halfedge() );
+    CGAL_assertion( next(prev(new_hedge, tm), tm) == new_hedge );
+    CGAL_assertion( prev(next(new_hedge, tm), tm) == new_hedge );
+  }
+
+  for(halfedge_descriptor h : new_patch_border)
+  {
+    halfedge_descriptor h_opp = opposite(h, tm);
+    //set next pointer if not already set
+    if ( next(h_opp, tm)==GT::null_halfedge() )
+    {
+      // we visit faces inside the patch we consider
+      halfedge_descriptor candidate = opposite(prev(h, tm), tm);
+      while ( !is_border(candidate, tm) )
+        candidate = opposite(prev(candidate, tm), tm);
+      set_next(h_opp, candidate, tm);
+    }
+    CGAL_assertion( prev(next(h_opp, tm), tm)==h_opp );
+
+    // set prev pointer if not already set
+    if ( prev(h_opp, tm) == GT::null_halfedge() )
+    {
+      halfedge_descriptor candidate = opposite(next(h, tm), tm);
+      while ( !is_border(candidate, tm) )
+        candidate = opposite(next(candidate, tm), tm);
+      set_next(candidate, h_opp, tm);
+    }
+
+    CGAL_assertion( prev(next(h_opp, tm), tm) == h_opp );
+    CGAL_assertion( is_border(prev(h_opp, tm), tm) );
+    CGAL_assertion( is_border(next(h_opp, tm), tm) );
+  }
 }
 
 
