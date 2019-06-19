@@ -32,15 +32,18 @@ namespace CGAL {
   /**
    * @class Hausdorff_primitive_traits_tm2
    */
-  template<typename AABBTraits, typename Query>
+  template<typename AABBTraits, typename Query, typename Kernel, typename TriangleMesh, typename VPM1, typename VPM2>
   class Hausdorff_primitive_traits_tm2
   {
     typedef typename AABBTraits::Primitive Primitive;
     typedef ::CGAL::AABB_node<AABBTraits> Node;
+    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+    typename Kernel::Construct_projected_point_3 project_point;
 
   public:
-    Hausdorff_primitive_traits_tm2(const AABBTraits& traits)
-      : m_traits(traits) {
+    Hausdorff_primitive_traits_tm2(const AABBTraits& traits, const TriangleMesh& tm1, const TriangleMesh& tm2, const VPM1& vpm1, const VPM2& vpm2)
+      : m_traits(traits), m_tm1(tm1), m_tm2(tm2), m_vpm1(vpm1), m_vpm2(vpm2) {
         // Initialize the global bounds with 0., they will only grow.
         h_local_upper = std::numeric_limits<double>::infinity();
         h_local_lower_0 = std::numeric_limits<double>::infinity();
@@ -58,11 +61,38 @@ namespace CGAL {
       // Have reached a single triangle
       std::cout << "Reached Triangle in TM2:" << primitive.id() << '\n';
 
-      double distance = std::numeric_limits<double>::infinity();
       /*
-      /  TODO Determine the distance accroding to
+      / Determine the distance accroding to
       /       min_{b \in primitive} ( max_{vertex in query} ( d(vertex, b)))
+      /
+      / Here, we only have one triangle in B, i.e. tm2. Thus, it suffices to
+      / compute the distance of the vertices of the query triangles to the
+      / primitive triangle and use the maximum of the obtained distances.
       */
+
+      // The query object is a triangle from TM1, get its vertices
+      halfedge_descriptor hd = halfedge(query.id(), m_tm1);
+      vertex_descriptor v0 = source(hd,m_tm1);
+      vertex_descriptor v1 = target(hd,m_tm1);
+      vertex_descriptor v2 = target(next(hd, m_tm1), m_tm1);
+
+      // Compute distances of the vertices to the primitive triangle in TM2
+      Triangle_from_face_descriptor_map<TriangleMesh, VPM2> face_to_triangle_map(&m_tm2, m_vpm2);
+      double v0_dist = squared_distance(
+        project_point(get(face_to_triangle_map, primitive.id()), get(m_vpm1, v0)),
+        get(m_vpm1, v0)
+      );
+      double v1_dist = squared_distance(
+        project_point(get(face_to_triangle_map, primitive.id()), get(m_vpm1, v1)),
+        get(m_vpm1, v1)
+      );
+      double v2_dist = squared_distance(
+        project_point(get(face_to_triangle_map, primitive.id()), get(m_vpm1, v2)),
+        get(m_vpm1, v2)
+      );
+
+      // Get the distance as maximizers over all vertices
+      double distance = approximate_sqrt(std::max(std::max(v0_dist,v1_dist),v2_dist));
 
       // Update local upper bound
       if ( distance < h_local_upper ) h_local_upper = distance;
@@ -99,6 +129,12 @@ namespace CGAL {
 
   private:
     const AABBTraits& m_traits;
+    // The two triangle meshes
+    const TriangleMesh& m_tm1;
+    const TriangleMesh& m_tm2;
+    // Their respective vertex-point Maps
+    const VPM1& m_vpm1;
+    const VPM2& m_vpm2;
     // Local Hausdorff bounds for the query triangle
     double h_local_upper;
     double h_local_lower;
@@ -111,7 +147,7 @@ namespace CGAL {
   /**
    * @class Hausdorff_primitive_traits_tm1
    */
-  template<typename AABBTraits, typename Query, typename Kernel, typename TriangleMesh, typename VPM2>
+  template<typename AABBTraits, typename Query, typename Kernel, typename TriangleMesh, typename VPM1, typename VPM2>
   class Hausdorff_primitive_traits_tm1
   {
     typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
@@ -122,10 +158,12 @@ namespace CGAL {
     typedef typename Kernel::Point_3 Point_3;
     typedef typename Kernel::Triangle_3 Triangle_3;
     typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
+    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   public:
-    Hausdorff_primitive_traits_tm1(const AABBTraits& traits, const TM2_tree& tree)
-      : m_traits(traits), tm2_tree(tree) {
+    Hausdorff_primitive_traits_tm1(const AABBTraits& traits, const TM2_tree& tree, const TriangleMesh& tm1, const TriangleMesh& tm2 , const VPM1& vpm1, const VPM2& vpm2 )
+      : m_traits(traits), tm2_tree(tree), m_tm1(tm1), m_tm2(tm2), m_vpm1(vpm1), m_vpm2(vpm2) {
         // Initialize the global bounds with 0., they will only grow.
         h_lower = 0.;
         h_upper = 0.;
@@ -142,7 +180,7 @@ namespace CGAL {
       std::cout << "Reached Triangle in TM1: " << primitive.id() << '\n';
 
       // Call Culling on B with the single triangle found.
-      Hausdorff_primitive_traits_tm2<Tree_traits, Primitive> traversal_traits_tm2( tm2_tree.traits() );
+      Hausdorff_primitive_traits_tm2<Tree_traits, Primitive, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm2( tm2_tree.traits(), m_tm1, m_tm2, m_vpm1, m_vpm2 );
       tm2_tree.traversal(primitive, traversal_traits_tm2);
 
       // Update global Hausdorff bounds according to the obtained local bounds
@@ -187,6 +225,12 @@ namespace CGAL {
 
   private:
     const AABBTraits& m_traits;
+    // The two triangle meshes
+    const TriangleMesh& m_tm1;
+    const TriangleMesh& m_tm2;
+    // Their vertex-point-maps
+    const VPM1 m_vpm1;
+    const VPM2 m_vpm2;
     // AABB tree for the second triangle meshes
     const TM2_tree& tm2_tree;
     // Global Hausdorff bounds to be taken track of during the traversal
