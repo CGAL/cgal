@@ -83,10 +83,10 @@ namespace Polygon_mesh_processing {
 *  @warning This function involves linear algebra, that is computed using a non-exact floating-point arithmetic.
 */
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
-void smooth_along_curvature_flow(const FaceRange& faces,
-                                 TriangleMesh& tmesh,
-                                 const double time,
-                                 const NamedParameters& np)
+void smooth_shape(const FaceRange& faces,
+                  TriangleMesh& tmesh,
+                  const double time,
+                  const NamedParameters& np)
 {
   if(std::begin(faces) == std::end(faces))
     return;
@@ -177,26 +177,26 @@ void smooth_along_curvature_flow(const FaceRange& faces,
 }
 
 template<typename TriangleMesh, typename FaceRange>
-void smooth_along_curvature_flow(const FaceRange& faces,
-                                 TriangleMesh& tmesh,
-                                 const double time)
+void smooth_shape(const FaceRange& faces,
+                  TriangleMesh& tmesh,
+                  const double time)
 {
-  smooth_along_curvature_flow(faces, tmesh, time, parameters::all_default());
+  smooth_shape(faces, tmesh, time, parameters::all_default());
 }
 
 template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-void smooth_along_curvature_flow(TriangleMesh& tmesh,
-                                 const double time,
-                                 const CGAL_PMP_NP_CLASS& np)
+void smooth_shape(TriangleMesh& tmesh,
+                  const double time,
+                  const CGAL_PMP_NP_CLASS& np)
 {
-  smooth_along_curvature_flow(faces(tmesh), tmesh, time, np);
+  smooth_shape(faces(tmesh), tmesh, time, np);
 }
 
 template<typename TriangleMesh>
-void smooth_along_curvature_flow(TriangleMesh& tmesh,
-                                 const double time)
+void smooth_shape(TriangleMesh& tmesh,
+                  const double time)
 {
-  smooth_along_curvature_flow(faces(tmesh), tmesh, time, parameters::all_default());
+  smooth_shape(faces(tmesh), tmesh, time, parameters::all_default());
 }
 
 } // Polygon_mesh_processing

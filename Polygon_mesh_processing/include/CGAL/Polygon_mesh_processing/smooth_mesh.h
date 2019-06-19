@@ -63,17 +63,17 @@ namespace Polygon_mesh_processing {
 * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below.
 *
 * \cgalNamedParamsBegin
-*  \cgalParamBegin{use_angle_based_smoothing} Boolean value to indicate whether angle-based smoothing should be used.
-*    Default is `true`.
+*  \cgalParamBegin{use_angle_smoothing} Boolean value to indicate whether angle-based smoothing should be used.
+*    %Default is `true`.
 *  \cgalParamEnd
-*  \cgalParamBegin{use_area_based_smoothing} Boolean value to indicate whether area-based smoothing should be used.
-*    Default is `true`.
+*  \cgalParamBegin{use_area_smoothing} Boolean value to indicate whether area-based smoothing should be used.
+*    %Default is `true`.
 *  \cgalParamEnd
 *  \cgalParamBegin{number_of_iterations} the number of iterations for the
 *    sequence of the smoothing iterations performed (default is 1).
 *  \cgalParamEnd
 *  \cgalParamBegin{use_safety_constraints} if `true`, vertex moves that would worsen the mesh
-*    are ignored. Default is `false`.
+*    are ignored. %Default is `false`.
 *  \cgalParamEnd
 *  \cgalParamBegin{use_Delaunay_flips} if `true` (default value), area-based smoothing will be completed
 *    by a phase of Delaunay-based edge-flips to prevent the creation of elongated triangles.
@@ -85,25 +85,26 @@ namespace Polygon_mesh_processing {
 *    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
-*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
+*  \cgalParamBegin{edge_is_constrained_map} a property map, model of `ReadWritePropertyMap`, containing the
 *    constrained-or-not status of each edge of `tmesh`. A constrained edge cannot be flipped.
 *  \cgalParamEnd
-*  \cgalParamBegin{vertex_point_map} the property map with the points associated
-*    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamBegin{vertex_point_map} the property map, model of `ReadWritePropertyMap`, with the points
+*    associated to the vertices of `tmesh`.
 *  \cgalParamEnd
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
 *    Exact constructions kernels are not supported by this function.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
-* @warning The third party libraries Ceres (and Eigen) are required to use the area-based smoothing.
+* @warning The third party libraries \link thirdpartyCeres Ceres \endlink (and \link installation_eigen Eigen \endlink)
+* are required to use the area-based smoothing.
 *
 * @pre `tmesh` does not contain any degenerate faces
 */
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
-void smooth(const FaceRange& faces,
-            TriangleMesh& tmesh,
-            const NamedParameters& np)
+void smooth_mesh(const FaceRange& faces,
+                 TriangleMesh& tmesh,
+                 const NamedParameters& np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor             halfedge_descriptor;
@@ -158,12 +159,12 @@ void smooth(const FaceRange& faces,
   const bool use_area_smoothing = choose_param(get_param(np, internal_np::use_area_smoothing), true);
 
   if(!use_angle_smoothing && !use_area_smoothing)
-    std::cerr << "Warning: called PMP::smooth() but no smoothing method is being used" << std::endl;
+    std::cerr << "Warning: called PMP::smooth_mesh() but no smoothing method is being used" << std::endl;
 
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
   const bool do_project = choose_param(get_param(np, internal_np::do_project), true);
   const bool use_safety_constraints = choose_param(get_param(np, internal_np::use_safety_constraints), true);
-  const bool use_Delaunay_flips = choose_param(get_param(np, internal_np::use_Delaunay_flips), false);
+  const bool use_Delaunay_flips = choose_param(get_param(np, internal_np::use_Delaunay_flips), true);
 
   // Construct the AABB tree (if needed for reprojection)
   std::vector<Triangle> input_triangles;
@@ -249,21 +250,21 @@ void smooth(const FaceRange& faces,
 }
 
 template <typename FaceRange, typename TriangleMesh>
-void smooth(const FaceRange& face_range, TriangleMesh& tmesh)
+void smooth_mesh(const FaceRange& face_range, TriangleMesh& tmesh)
 {
-  smooth(face_range, tmesh, parameters::all_default());
+  smooth_mesh(face_range, tmesh, parameters::all_default());
 }
 
 template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-void smooth(TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
+void smooth_mesh(TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
 {
-  smooth(faces(tmesh), tmesh, np);
+  smooth_mesh(faces(tmesh), tmesh, np);
 }
 
 template<typename TriangleMesh>
-void smooth(TriangleMesh& tmesh)
+void smooth_mesh(TriangleMesh& tmesh)
 {
-  smooth(faces(tmesh), tmesh, parameters::all_default());
+  smooth_mesh(faces(tmesh), tmesh, parameters::all_default());
 }
 
 
@@ -291,7 +292,7 @@ void aspect_ratio_evaluation(TriangleMesh& tmesh, GeomTraits traits, Stream& out
   evaluator.calc_aspect_ratios();
   evaluator.extract_aspect_ratios(output);
 }
-///\cond SKIP_IN_MANUAL
+///\endcond SKIP_IN_MANUAL
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

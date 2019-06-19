@@ -54,8 +54,8 @@ void test_implicit_constrained_devil(Mesh mesh)
     fixed_points[i++] = get(vpmap, v);
 
   const double time_step = 1.0;
-  PMP::smooth_along_curvature_flow(mesh, time_step, CGAL::parameters::vertex_is_constrained_map(vcmap)
-                                                                     .number_of_iterations(2));
+  PMP::smooth_shape(mesh, time_step, CGAL::parameters::vertex_is_constrained_map(vcmap)
+                                                      .number_of_iterations(2));
 
   i = 0;
   for(vertex_descriptor v : selected_vertices)
@@ -97,9 +97,9 @@ void test_implicit_constrained_elephant(Mesh mesh)
   Point fixed_point = get(vpmap, *selected_vertices.begin());
 
   const double time_step = 1.0;
-  PMP::smooth_along_curvature_flow(mesh, time_step,
-                                   CGAL::parameters::vertex_is_constrained_map(vcmap)
-                                                    .number_of_iterations(1));
+  PMP::smooth_shape(mesh, time_step,
+                    CGAL::parameters::vertex_is_constrained_map(vcmap)
+                                     .number_of_iterations(1));
 
   CGAL_assertion(equal_doubles(get(vpmap, *selected_vertices.begin()).x(), fixed_point.x(), 1e-14));
   CGAL_assertion(equal_doubles(get(vpmap, *selected_vertices.begin()).y(), fixed_point.y(), 1e-14));
@@ -120,7 +120,7 @@ void test_curvature_flow_time_step(Mesh mesh)
 #endif
 
   const double time_step = 1e-15;
-  PMP::smooth_along_curvature_flow(mesh, time_step);
+  PMP::smooth_shape(mesh, time_step);
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("output_devil_time_step.off");
@@ -137,7 +137,7 @@ void test_curvature_flow(Mesh mesh)
 #endif
 
   const double time_step = 1.0;
-  PMP::smooth_along_curvature_flow(mesh, time_step);
+  PMP::smooth_shape(mesh, time_step);
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("output_precision_elephant.off");

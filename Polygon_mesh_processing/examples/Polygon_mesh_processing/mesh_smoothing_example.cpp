@@ -36,9 +36,9 @@ int main(int argc, char** argv)
   CGAL::Boolean_property_map<std::set<Mesh::Vertex_index> > vcmap(constrained_vertices);
 
   std::cout << "Smoothing... (" << nb_iterations << " iterations)" << std::endl;
-  PMP::smooth(mesh, PMP::parameters::number_of_iterations(nb_iterations)
-                                    .use_safety_constraints(false) // authorize all moves
-                                    .vertex_is_constrained_map(vcmap));
+  PMP::smooth_mesh(mesh, PMP::parameters::number_of_iterations(nb_iterations)
+                                         .use_safety_constraints(false) // authorize all moves
+                                         .vertex_is_constrained_map(vcmap));
 
   std::ofstream output("mesh_smoothed.off");
   output << mesh;

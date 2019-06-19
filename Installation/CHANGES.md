@@ -27,9 +27,9 @@ Release date: September 2019
 ### Polygon Mesh Processing
 -   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
     the centroid of a closed triangle mesh.
--   Added the mesh smoothing function `smooth()`, which can be used to
+-   Added the mesh smoothing function `smooth_mesh()`, which can be used to
     improve the quality of triangle elements based on various geometric characteristics.
--   Added the shape smoothing function `smooth_along_curvature_flow()`, which can be used to
+-   Added the shape smoothing function `smooth_shape()`, which can be used to
     smooth the surface of a triangle mesh, using the mean curvature flow to perform noise removal.
 
 ### IO Streams

@@ -179,34 +179,13 @@ public Q_SLOTS:
 
     if(poly_item)
     {
-      if(use_angle_smoothing)
-      {
-        if(use_area_smoothing)
-        {
-          smooth(pmesh, parameters::do_project(projection)
-                                   .number_of_iterations(nb_iter)
-                                   .use_delaunay_triangulation(use_Delaunay_flips)
-                                   .use_safety_constraints(use_safety_measures)
-                                   .vertex_is_constrained_map(vcmap));
-        }
-        else
-        {
-          smooth(pmesh, parameters::do_project(projection)
-                                   .number_of_iterations(nb_iter)
-                                   .use_safety_constraints(use_safety_measures)
-                                   .vertex_is_constrained_map(vcmap)
-                                   .use_area_smoothing(false));
-        }
-      }
-      else if(use_area_smoothing)
-      {
-        smooth(pmesh, parameters::do_project(projection)
-                                 .number_of_iterations(nb_iter)
-                                 .use_delaunay_triangulation(use_Delaunay_flips)
-                                 .use_safety_constraints(use_safety_measures)
-                                 .vertex_is_constrained_map(vcmap)
-                                 .use_angle_smoothing(false));
-      }
+      smooth_mesh(pmesh, parameters::do_project(projection)
+                                    .number_of_iterations(nb_iter)
+                                    .vertex_is_constrained_map(vcmap)
+                                    .use_safety_constraints(use_safety_measures)
+                                    .use_angle_smoothing(use_angle_smoothing)
+                                    .use_area_smoothing(use_area_smoothing)
+                                    .use_Delaunay_flips(use_Delaunay_flips));
 
       poly_item->invalidateOpenGLBuffers();
       poly_item->itemChanged();
@@ -218,61 +197,25 @@ public Q_SLOTS:
       // No faces selected --> use all faces
       if(std::begin(selection_item->selected_facets) == std::end(selection_item->selected_facets))
       {
-        if(use_angle_smoothing)
-        {
-          if(use_area_smoothing)
-          {
-            smooth(pmesh, parameters::do_project(projection)
-                                     .number_of_iterations(nb_iter)
-                                     .use_safety_constraints(use_safety_measures)
-                                     .vertex_is_constrained_map(vcmap));
-          }
-          else
-          {
-            smooth(pmesh, parameters::do_project(projection)
-                                     .number_of_iterations(nb_iter)
-                                     .use_safety_constraints(use_safety_measures)
-                                     .vertex_is_constrained_map(vcmap)
-                                     .use_area_smoothing(false));
-          }
-        }
-        else
-        {
-          smooth(pmesh, parameters::do_project(projection)
-                                   .number_of_iterations(nb_iter)
-                                   .use_safety_constraints(use_safety_measures)
-                                   .vertex_is_constrained_map(vcmap)
-                                   .use_angle_smoothing(false));
-        }
+        smooth_mesh(pmesh, parameters::do_project(projection)
+                                      .number_of_iterations(nb_iter)
+                                      .vertex_is_constrained_map(vcmap)
+                                      .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                                      .use_safety_constraints(use_safety_measures)
+                                      .use_angle_smoothing(use_angle_smoothing)
+                                      .use_area_smoothing(use_area_smoothing)
+                                      .use_Delaunay_flips(use_Delaunay_flips));
       }
       else // some faces exist in the selection
       {
-        if(use_angle_smoothing)
-        {
-          if(use_area_smoothing)
-          {
-            smooth(selection_item->selected_facets, pmesh, parameters::do_project(projection)
-                                                                      .number_of_iterations(nb_iter)
-                                                                      .use_safety_constraints(use_safety_measures)
-                                                                      .vertex_is_constrained_map(vcmap));
-          }
-          else
-          {
-            smooth(selection_item->selected_facets, pmesh, parameters::do_project(projection)
-                                                                      .number_of_iterations(nb_iter)
-                                                                      .use_safety_constraints(use_safety_measures)
-                                                                      .vertex_is_constrained_map(vcmap)
-                                                                      .use_area_smoothing(false));
-          }
-        }
-        else
-        {
-          smooth(selection_item->selected_facets, pmesh, parameters::do_project(projection)
-                                                                    .number_of_iterations(nb_iter)
-                                                                    .use_safety_constraints(use_safety_measures)
-                                                                    .vertex_is_constrained_map(vcmap)
-                                                                    .use_angle_smoothing(false));
-        }
+        smooth_mesh(selection_item->selected_facets, pmesh, parameters::do_project(projection)
+                                                                       .number_of_iterations(nb_iter)
+                                                                       .vertex_is_constrained_map(vcmap)
+                                                                       .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                                                                       .use_safety_constraints(use_safety_measures)
+                                                                       .use_angle_smoothing(use_angle_smoothing)
+                                                                       .use_area_smoothing(use_area_smoothing)
+                                                                       .use_Delaunay_flips(use_Delaunay_flips));
       }
 
       selection_item->poly_item_changed();
@@ -309,8 +252,8 @@ public Q_SLOTS:
 
     if(poly_item)
     {
-      smooth_along_curvature_flow(pmesh, time_step, parameters::number_of_iterations(nb_iter)
-                                                               .vertex_is_constrained_map(vcmap));
+      smooth_shape(pmesh, time_step, parameters::number_of_iterations(nb_iter)
+                                                .vertex_is_constrained_map(vcmap));
 
       poly_item->invalidateOpenGLBuffers();
       poly_item->itemChanged();
@@ -321,14 +264,14 @@ public Q_SLOTS:
 
       if(std::begin(selection_item->selected_facets) == std::end(selection_item->selected_facets))
       {
-        smooth_along_curvature_flow(pmesh, time_step, parameters::number_of_iterations(nb_iter)
-                                                                 .vertex_is_constrained_map(vcmap));
+        smooth_shape(pmesh, time_step, parameters::number_of_iterations(nb_iter)
+                                                  .vertex_is_constrained_map(vcmap));
       }
       else
       {
-        smooth_along_curvature_flow(selection_item->selected_facets, pmesh, time_step,
-                                    parameters::number_of_iterations(nb_iter)
-                                               .vertex_is_constrained_map(vcmap));
+        smooth_shape(selection_item->selected_facets, pmesh, time_step,
+                     parameters::number_of_iterations(nb_iter)
+                                .vertex_is_constrained_map(vcmap));
       }
 
       selection_item->poly_item_changed();

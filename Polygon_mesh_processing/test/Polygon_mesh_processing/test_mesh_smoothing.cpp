@@ -36,8 +36,8 @@ void test_smoothing(const char* filename)
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth(mesh);
-  PMP::smooth(mesh, CGAL::parameters::number_of_iterations(10));
+  PMP::smooth_mesh(mesh);
+  PMP::smooth_mesh(mesh, CGAL::parameters::number_of_iterations(10));
 }
 
 template <typename Mesh>
@@ -46,9 +46,9 @@ void test_angle_smoothing(const char* filename)
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth(mesh);
-  PMP::smooth(mesh, CGAL::parameters::number_of_iterations(10)
-                                     .use_area_smoothing(false));
+  PMP::smooth_mesh(mesh);
+  PMP::smooth_mesh(mesh, CGAL::parameters::number_of_iterations(10)
+                                          .use_area_smoothing(false));
 }
 
 template <typename Mesh>
@@ -57,9 +57,9 @@ void test_area_smoothing(const char* filename)
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth(mesh);
-  PMP::smooth(mesh, CGAL::parameters::number_of_iterations(10)
-                                     .use_angle_smoothing(false));
+  PMP::smooth_mesh(mesh);
+  PMP::smooth_mesh(mesh, CGAL::parameters::number_of_iterations(10)
+                                          .use_angle_smoothing(false));
 }
 
 template <typename Mesh>
@@ -68,8 +68,8 @@ void test_angle_smoothing_without_projection(const char* filename)
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth(mesh, CGAL::parameters::do_project(false)
-                                     .use_area_smoothing(false));
+  PMP::smooth_mesh(mesh, CGAL::parameters::do_project(false)
+                                          .use_area_smoothing(false));
 }
 
 template <typename Mesh>
@@ -78,8 +78,8 @@ void test_area_smoothing_without_projection(const char* filename)
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth(mesh, CGAL::parameters::do_project(false)
-                                     .use_angle_smoothing(false));
+  PMP::smooth_mesh(mesh, CGAL::parameters::do_project(false)
+                                          .use_angle_smoothing(false));
 }
 
 template <typename Mesh>
@@ -104,7 +104,7 @@ void test_constrained_vertices(const char* filename)
 
   CGAL::Boolean_property_map<std::set<vertex_descriptor> > vcmap(selected_vertices);
 
-  PMP::smooth(mesh, CGAL::parameters::vertex_is_constrained_map(vcmap));
+  PMP::smooth_mesh(mesh, CGAL::parameters::vertex_is_constrained_map(vcmap));
 
   for(vertex_descriptor v : vertices(mesh))
   {
