@@ -31,7 +31,7 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(CGAL COMPONENTS Qt5 )
+find_package(CGAL COMPONENTS Core Qt5 )
 
 include(${CGAL_USE_FILE})
 
