@@ -86,7 +86,8 @@ namespace Polygon_mesh_processing {
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
 *  \cgalParamBegin{edge_is_constrained_map} a property map, model of `ReadWritePropertyMap`, containing the
-*    constrained-or-not status of each edge of `tmesh`. A constrained edge cannot be flipped.
+*    constrained-or-not status of each edge of `tmesh`. A constrained edge cannot be flipped and its extremities
+*    are tagged as constrained vertices.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map, model of `ReadWritePropertyMap`, with the points
 *    associated to the vertices of `tmesh`.
@@ -114,10 +115,15 @@ void smooth_mesh(const FaceRange& faces,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                 GeomTraits;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type             VertexPointMap;
 
+  // We need a default pmap that is not just 'constant_pmap(false)' because if an edge is constrained,
+  // its vertices are constrained.
+  typedef CGAL::dynamic_vertex_property_t<bool>                                       Vertex_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type       Default_VCMap;
   typedef typename boost::lookup_named_param_def<internal_np::vertex_is_constrained_t,
                                                  NamedParameters,
-                                                 Constant_property_map<vertex_descriptor, bool> // default
+                                                 Default_VCMap
                                                  > ::type                             VCMap;
+
   typedef typename boost::lookup_named_param_def<internal_np::edge_is_constrained_t,
                                                  NamedParameters,
                                                  Constant_property_map<edge_descriptor, bool> // default
@@ -152,8 +158,6 @@ void smooth_mesh(const FaceRange& faces,
                                GeomTraits());
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                get_property_map(CGAL::vertex_point, tmesh));
-  VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                             Constant_property_map<vertex_descriptor, bool>());
 
   const bool use_angle_smoothing = choose_param(get_param(np, internal_np::use_angle_smoothing), true);
   const bool use_area_smoothing = choose_param(get_param(np, internal_np::use_area_smoothing), true);
@@ -165,6 +169,29 @@ void smooth_mesh(const FaceRange& faces,
   const bool do_project = choose_param(get_param(np, internal_np::do_project), true);
   const bool use_safety_constraints = choose_param(get_param(np, internal_np::use_safety_constraints), true);
   const bool use_Delaunay_flips = choose_param(get_param(np, internal_np::use_Delaunay_flips), true);
+
+  VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+                             get(Vertex_property_tag(), tmesh));
+
+  // If it's the default vcmap, manually set everything to false because the dynamic pmap has no default initialization
+  if((std::is_same<VCMap, Default_VCMap>::value))
+  {
+    for(vertex_descriptor v : vertices(tmesh))
+      put(vcmap, v, false);
+  }
+
+  ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
+                             Constant_property_map<edge_descriptor, bool>(false));
+
+  // a constrained edge has constrained extremities
+  for(edge_descriptor e : edges(tmesh))
+  {
+    if(get(ecmap, e))
+    {
+      put(vcmap, source(e, tmesh), true);
+      put(vcmap, target(e, tmesh), true);
+    }
+  }
 
   // Construct the AABB tree (if needed for reprojection)
   std::vector<Triangle> input_triangles;
@@ -186,14 +213,15 @@ void smooth_mesh(const FaceRange& faces,
   aabb_tree.accelerate_distance_queries();
 
   // Setup the working ranges and check some preconditions
-  Area_smoother area_smoother(tmesh, vpmap, vcmap, gt);
   Angle_smoother angle_smoother(tmesh, vpmap, vcmap, gt);
-
-  if(use_area_smoothing)
-    area_smoother.init_smoothing(faces);
+  Area_smoother area_smoother(tmesh, vpmap, vcmap, gt);
+  Delaunay_flipper delaunay_flipper(tmesh, vpmap, ecmap, gt);
 
   if(use_angle_smoothing)
     angle_smoother.init_smoothing(faces);
+
+  if(use_area_smoothing)
+    area_smoother.init_smoothing(faces);
 
   for(std::size_t i=0; i<nb_iterations; ++i)
   {
@@ -217,13 +245,7 @@ void smooth_mesh(const FaceRange& faces,
       }
 
       if(use_Delaunay_flips)
-      {
-        ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
-                                   Constant_property_map<edge_descriptor, bool>(false));
-
-        Delaunay_flipper delaunay_flipper(tmesh, vpmap, ecmap, gt);
         delaunay_flipper(faces);
-      }
     }
 
     // ... then angle smoothing
