@@ -8,27 +8,29 @@
 //      must be present storing the plane index for each point(-1 if the point is
 //      not assigned to a plane).
 
+#include <iostream>
+
+#ifdef CGAL_USE_GLPK
+#include <CGAL/GLPK_mixed_integer_program_traits.h>
+typedef CGAL::GLPK_mixed_integer_program_traits<double>				GLPK_Solver;
+#endif
+
+#ifdef CGAL_USE_SCIP
+#include <CGAL/SCIP_mixed_integer_program_traits.h>
+typedef CGAL::SCIP_mixed_integer_program_traits<double>				SCIP_Solver;
+#endif
+
+#if defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)
+
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#ifndef SKIP_TEST_USING_GLPK
-#include <CGAL/GLPK_mixed_integer_program_traits.h>
-#endif
-#include <CGAL/SCIP_mixed_integer_program_traits.h>
-
 #include "polygonal_surface_reconstruction_test_framework.h"
-
 
 // kernels:
 typedef CGAL::Simple_cartesian<double>								Cartesian;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel			Epick;
-
-// solvers:
-#ifndef SKIP_TEST_USING_GLPK
-typedef CGAL::GLPK_mixed_integer_program_traits<double>				GLPK_Solver;
-#endif
-typedef CGAL::SCIP_mixed_integer_program_traits<double>				SCIP_Solver;
 
 
 int main(int argc, char* argv[])
@@ -60,7 +62,7 @@ int main(int argc, char* argv[])
 
 	//---------------------------------------------------------------------
 
-#ifndef SKIP_TEST_USING_GLPK
+#ifdef CGAL_USE_GLPK
     std::cerr << "\n\t---- Using GLPK solver\n";
 
 	std::cerr << "\t\t---- using provided planes\n";
@@ -70,6 +72,7 @@ int main(int argc, char* argv[])
 	reconstruct<Cartesian, GLPK_Solver>(input_file, true);
 #endif
 
+#ifdef CGAL_USE_SCIP
     std::cerr << "\n\t---- Using SCIP solver\n";
 
 	std::cerr << "\t\t---- using provided planes\n";
@@ -77,7 +80,7 @@ int main(int argc, char* argv[])
 
     std::cerr << "\t\t---- re-extract planes\n";
 	reconstruct<Cartesian, SCIP_Solver>(input_file, true);
-
+#endif
 
 	//---------------------------------------------------------------------
 
@@ -85,7 +88,7 @@ int main(int argc, char* argv[])
 
 	//---------------------------------------------------------------------
 
-#ifndef SKIP_TEST_USING_GLPK
+#ifdef CGAL_USE_GLPK
     std::cerr << "\n\t---- Using GLPK solver\n";
 
 	std::cerr << "\t\t---- using provided planes\n";
@@ -95,6 +98,7 @@ int main(int argc, char* argv[])
 	reconstruct<Epick, GLPK_Solver>(input_file, true);
 #endif 
 
+#ifdef CGAL_USE_SCIP
     std::cerr << "\n\t---- Using SCIP solver\n";
 
 	std::cerr << "\t\t---- using provided planes\n";
@@ -102,6 +106,17 @@ int main(int argc, char* argv[])
 
     std::cerr << "\t\t---- re-extract planes\n";
 	reconstruct<Epick, SCIP_Solver>(input_file, true);
-    
+#endif
+
     return EXIT_SUCCESS;
 }
+
+#else
+
+int main(int argc, char* argv[])
+{
+    std::cerr << "This test requires either GLPK or SCIP.\n";
+    return EXIT_FAILURE;
+}
+
+#endif  // defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)

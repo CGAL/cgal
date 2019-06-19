@@ -4,7 +4,18 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygonal_surface_reconstruction.h>
+
+#ifdef CGAL_USE_SCIP
 #include <CGAL/SCIP_mixed_integer_program_traits.h>
+typedef CGAL::SCIP_mixed_integer_program_traits<double>			MIP_Solver;
+#elif defined(CGAL_USE_GLPK)
+#include <CGAL/GLPK_mixed_integer_program_traits.h>
+typedef CGAL::GLPK_mixed_integer_program_traits<double>			MIP_Solver;
+#endif
+
+
+#if defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)
+
 #include <CGAL/Timer.h>
 
 #include <fstream>
@@ -15,8 +26,6 @@ typedef Kernel::Point_3											Point;
 typedef Kernel::Vector_3										Vector;
 typedef	CGAL::Polygonal_surface_reconstruction<Kernel>			Polygonal_surface_reconstruction;
 typedef CGAL::Surface_mesh<Point>								Surface_mesh;
-
-typedef CGAL::SCIP_mixed_integer_program_traits<double>			MIP_Solver;
 
 // Point with normal, and plane index
 typedef boost::tuple<Point, Vector, int>						PNI;
@@ -131,3 +140,14 @@ int main()
 	}
 	return EXIT_SUCCESS;
 }
+
+
+#else
+
+int main(int argc, char* argv[])
+{
+    std::cerr << "This test requires either GLPK or SCIP.\n";
+    return EXIT_FAILURE;
+}
+
+#endif  // defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)

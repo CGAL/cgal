@@ -31,22 +31,7 @@ if ( NOT Boost_FOUND )
 
 endif()
 
-find_package( SCIP )
-
-if ( NOT SCIP_FOUND )
-
-  message(STATUS "This project requires the SCIP library, and will not be compiled.")
-
-  return()  
-
-endif()
-
-
-# include for local directory
-
-# include for local package
 include_directories( BEFORE ../../include )
-include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
@@ -57,6 +42,39 @@ create_single_source_cgal_program( "polyfit_example_without_input_planes.cpp" )
 create_single_source_cgal_program( "polyfit_example_user_provided_planes.cpp" )
 create_single_source_cgal_program( "polyfit_example_model_complexty_control.cpp" )
 
-target_link_libraries( polyfit_example_without_input_planes PRIVATE ${SCIP_LIBRARIES} )
-target_link_libraries( polyfit_example_user_provided_planes PRIVATE ${SCIP_LIBRARIES} )
-target_link_libraries( polyfit_example_model_complexty_control PRIVATE ${SCIP_LIBRARIES} )
+
+find_package( SCIP )
+
+if ( NOT SCIP_FOUND )
+    find_package( GLPK )
+
+    if ( NOT GLPK_FOUND )
+      message(STATUS "This project requires either SCIP or GLPK, and will not be compiled. "
+                      "Please proivde either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
+    else()
+        add_compile_definitions(CGAL_USE_GLPK)
+
+        include_directories( BEFORE ${GLPK_INCLUDE_DIR} )
+
+        target_link_libraries( polyfit_example_without_input_planes PRIVATE ${GLPK_LIBRARIES} )
+        target_link_libraries( polyfit_example_user_provided_planes PRIVATE ${GLPK_LIBRARIES} )
+        target_link_libraries( polyfit_example_model_complexty_control PRIVATE ${GLPK_LIBRARIES} )
+
+        message("GLPK found and used")
+
+    endif()
+
+else()
+
+    add_compile_definitions(CGAL_USE_SCIP)
+
+    include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
+
+    target_link_libraries( polyfit_example_without_input_planes PRIVATE ${SCIP_LIBRARIES} )
+    target_link_libraries( polyfit_example_user_provided_planes PRIVATE ${SCIP_LIBRARIES} )
+    target_link_libraries( polyfit_example_model_complexty_control PRIVATE ${SCIP_LIBRARIES} )
+
+    message("SCIP found and used")
+
+endif()
+

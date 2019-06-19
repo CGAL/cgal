@@ -20,14 +20,41 @@ if ( CGAL_FOUND )
   endif()
 
   create_single_source_cgal_program( "diagonalize_matrix.cpp" )
+  create_single_source_cgal_program( "mixed_integer_program.cpp" )
 
   find_package( SCIP )
+
   if (SCIP_FOUND)
+
     include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
-    create_single_source_cgal_program( "mixed_integer_program.cpp" )
+
     target_link_libraries( mixed_integer_program PRIVATE ${SCIP_LIBRARIES} )
+
+    add_compile_definitions(CGAL_USE_SCIP)
+
+    message("SCIP found and used")
+
   else()
-    message(STATUS "The MIP example requires the SCIP library, and will not be compiled.")
+
+      find_package( GLPK )
+
+      if (GLPK_FOUND)
+
+        include_directories( BEFORE ${GLPK_INCLUDE_DIR} )
+
+        target_link_libraries( mixed_integer_program PRIVATE ${GLPK_LIBRARIES} )
+
+        add_compile_definitions(CGAL_USE_GLPK)
+
+        message("GLPK found and used")
+
+      else()
+
+        message(STATUS "This project requires either SCIP or GLPK, and will not be compiled. "
+            "Please proivde either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
+
+      endif()
+
   endif()
 
 else()

@@ -22,6 +22,8 @@
 
 #include <CGAL/Mixed_integer_program_traits.h>
 
+#ifdef CGAL_USE_SCIP
+
 #include "scip/scip.h"
 #include "scip/scipdefplugins.h"
 
@@ -239,5 +241,7 @@ namespace CGAL {
 	}
 
 } // namespace CGAL
+
+#endif // CGAL_USE_SCIP
 
 #endif // CGAL_SCIP_MIXED_INTEGER_PROGRAM_TRAITS_H

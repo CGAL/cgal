@@ -22,6 +22,8 @@
 
 #include <CGAL/Mixed_integer_program_traits.h>
 
+#ifdef CGAL_USE_GLPK
+
 #include <glpk.h>
 
 
@@ -291,5 +293,7 @@ namespace CGAL {
 
 
 } // namespace CGAL
+
+#endif // CGAL_USE_GLPK
 
 #endif // CGAL_GLPK_MIXED_INTEGER_PROGRAM_TRAITS_H

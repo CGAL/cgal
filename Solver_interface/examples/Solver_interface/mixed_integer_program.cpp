@@ -18,23 +18,26 @@
 */
 
 
-#if 1	// Uses SCIP
+#include <iostream>
+
+#ifdef CGAL_USE_SCIP
 
 #include <CGAL/SCIP_mixed_integer_program_traits.h>
 typedef CGAL::SCIP_mixed_integer_program_traits<double>			MIP_Solver;
 
-#else	// Uses GLPK
+#elif defined(CGAL_USE_GLPK)
 
 #include <CGAL/GLPK_mixed_integer_program_traits.h>
 typedef CGAL::GLPK_mixed_integer_program_traits<double>			MIP_Solver;
 
 #endif
 
+
+#if defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)
+
 typedef typename MIP_Solver::Variable			Variable;
 typedef typename MIP_Solver::Linear_objective	Linear_objective;
 typedef typename MIP_Solver::Linear_constraint	Linear_constraint;
-
-#include <iostream>
 
 
 int main()
@@ -96,3 +99,15 @@ int main()
 		return EXIT_FAILURE;
 	}
 }
+
+
+#else
+
+int main(int argc, char* argv[])
+{
+    std::cerr << "This test requires either GLPK or SCIP.\n";
+    return EXIT_FAILURE;
+}
+
+#endif  // defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)
+
