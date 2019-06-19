@@ -160,9 +160,16 @@ void smooth_shape(const FaceRange& faces,
     smoother.setup_system(A, bx, by, bz, stiffness, time);
 
     if(smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz, solver))
+    {
       smoother.update_mesh(Xx, Xy, Xz);
+    }
     else
+    {
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+      std::cerr << "Failed to solve system!" << std::endl;
+#endif
       break;
+    }
 
 #ifdef CGAL_PMP_SMOOTHING_OUTPUT_INTERMEDIARY_STEPS
     std::stringstream oss;
