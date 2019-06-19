@@ -858,7 +858,6 @@ protected:
 
     // Add custom key description (see keyPressEvent).
     setKeyDescription(::Qt::Key_E, "Toggles edges display");
-    setKeyDescription(::Qt::Key_R, "Toggles rays display");
     setKeyDescription(::Qt::Key_F, "Toggles faces display");
     setKeyDescription(::Qt::Key_G, "Switch between flat/Gouraud shading display");
     setKeyDescription(::Qt::Key_M, "Toggles mono color");
@@ -920,13 +919,7 @@ protected:
       m_draw_edges=!m_draw_edges;
       displayMessage(QString("Draw edges=%1.").arg(m_draw_edges?"true":"false"));
       update();
-    }else if((e->key()==::Qt::Key_R) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_rays=!m_draw_rays;
-      displayMessage(QString("Draw rays=%1.").arg(m_draw_rays?"true":"false"));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_F) && (modifiers==::Qt::NoButton))
+    }else if ((e->key()==::Qt::Key_F) && (modifiers==::Qt::NoButton))
     {
       m_draw_faces=!m_draw_faces;
       displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));

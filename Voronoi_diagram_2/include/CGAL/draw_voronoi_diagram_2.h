@@ -47,30 +47,29 @@ struct DefaultColorFunctorV2 {
 // Viewer for Voronoi diagram
 template <class V2, class ColorFunctor>
 class SimpleVoronoiDiagram2ViewerQt : public Basic_viewer_qt {
-  typedef Basic_viewer_qt Base;
-  typedef typename V2::Halfedge_iterator Halfedge_const_handle;
-  typedef typename V2::Face_iterator Face_const_handle;
-  typedef typename V2::Vertex_iterator Vertex_const_handle;
-  typedef typename V2::Point_2 Point;
-  typedef typename V2::Delaunay_vertex_handle Delaunay_vertex_const_handle;
-  typedef typename V2::Ccb_halfedge_circulator Ccb_halfedge_circulator;
-  typedef typename V2::Delaunay_geom_traits Delaunay_geom_traits;
+  typedef Basic_viewer_qt                            Base;
+  typedef typename V2::Halfedge_iterator             Halfedge_const_handle;
+  typedef typename V2::Face_iterator                 Face_const_handle;
+  typedef typename V2::Vertex_iterator               Vertex_const_handle;
+  typedef typename V2::Point_2                       Point;
+  typedef typename V2::Delaunay_vertex_handle        Delaunay_vertex_const_handle;
+  typedef typename V2::Ccb_halfedge_circulator       Ccb_halfedge_circulator;
+  typedef typename V2::Delaunay_geom_traits          Delaunay_geom_traits;
 
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Face<V2> Face;
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Handle_adaptor<Face> Face_handle;
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Vertex<V2> Vertex;
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Handle_adaptor<Vertex> Vertex_handle;
-  typedef typename V2::Halfedge_handle Halfedge_handle;
-  typedef Triangulation_cw_ccw_2 CW_CCW_2;
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Face<V2>                  Face;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Handle_adaptor<Face>      Face_handle;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Vertex<V2>                Vertex;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Handle_adaptor<Vertex>    Vertex_handle;
+  typedef typename V2::Halfedge_handle                          Halfedge_handle;
+  typedef Triangulation_cw_ccw_2                                CW_CCW_2;
 
 public:
   /// Construct the viewer.
   /// @param av2 the voronoi diagram to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this
-  /// can be
-  ///        useful for very big object where this time could be long)
+  /// can be useful for very big object where this time could be long)
   SimpleVoronoiDiagram2ViewerQt(QWidget *parent, const V2 &av2,
                                 const char *title = "Basic Voronoi Viewer",
                                 bool anofaces = false,
@@ -78,7 +77,11 @@ public:
       : // First draw: vertices; half-edges; faces; multi-color; no inverse
         // normal
         Base(parent, title, true, true, true, false, false), v2(av2),
-        m_nofaces(anofaces), m_fcolor(fcolor) {
+        m_nofaces(anofaces), m_fcolor(fcolor)
+  {
+    // Add custom key description (see keyPressEvent)
+    setKeyDescription(::Qt::Key_R, "Toggles rays display");
+
     compute_elements();
   }
 
@@ -230,21 +233,22 @@ protected:
     //    { compute_vertex(it);}
   }
 
-  virtual void keyPressEvent(QKeyEvent *e) {
-    // Test key pressed:
-    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-
-    // Call: * compute_elements() if the model changed, followed by
-    //       * redraw() if some viewing parameters changed that implies some
-    //                  modifications of the buffers
-    //                  (eg. type of normal, color/mono)
-    //       * update() just to update the drawing
-
-    // Call the base method to process others/classicals key
-    Base::keyPressEvent(e);
+  virtual void keyPressEvent(QKeyEvent *e)
+  {
+      /// [Keypress]
+      const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+      if((e->key()==::Qt::Key_R) && (modifiers==::Qt::NoButton))
+      {
+          m_draw_rays=!m_draw_rays;
+          displayMessage(QString("Draw rays=%1.").arg(m_draw_rays?"true":"false"));
+          update();
+      }
+      else {
+          // Call the base method to process others/classicals key
+          Base::keyPressEvent(e);
+      }
+      /// [Keypress]
   }
-
 protected:
   const V2 &v2;
   bool m_nofaces;
@@ -257,7 +261,7 @@ void draw(const V2 &av2, const char *title, bool nofill,
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
-  bool cgal_test_suite = false;
+  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
   if (!cgal_test_suite) {
