@@ -163,6 +163,18 @@ overload provided for `CGAL::Point_set_3`:
 
 \cgalExample{Point_set_3/point_set_advanced.cpp}
 
+\subsection Point_set_3_Draw Draw a Point Set
+
+A 3D point set can be visualized by calling the \link PkgDrawPointSet3D CGAL::draw<PS>() \endlink function as shown in the following example. This function opens a new window showing the given point set. A call to this function is blocking, that is the program continues as soon as the user closes the window.
+
+\cgalExample{Point_set_3/draw_point_set_3.cpp}
+
+This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+
+\cgalFigureBegin{fig_draw_point_set,draw_point_set.png}
+Result of the run of the draw_point_set_3 program. A window shows the 3D points and allows to navigate through the 3D scene.
+\cgalFigureEnd
+
 \section Point_set_3_History History
 
 This package has been created to fill the need for a practical data

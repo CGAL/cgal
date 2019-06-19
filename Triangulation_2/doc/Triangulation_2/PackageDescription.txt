@@ -13,7 +13,7 @@
 /// \defgroup PkgTriangulation2Miscellaneous Miscellaneous
 /// \ingroup PkgTriangulation2Ref
 
-/*! Draw.
+/*!
   \code
    #include <CGAL/draw_triangulation_2.h>
   \endcode
@@ -107,7 +107,7 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 - \link CGAL::Triangulation_2::Locate_type `CGAL::Triangulation_2<Traits,Tds>::Locate_type` \endlink
 
 \cgalCRPSection{Draw a Triangulation 2}
-- `CGAL::draw<T2>`
+- \link PkgDrawTriangulation2 CGAL::draw<T2>() \endlink
 
 */
 
