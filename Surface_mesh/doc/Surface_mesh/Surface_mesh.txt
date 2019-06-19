@@ -347,7 +347,7 @@ refering to the right vertices.
 \section SurfaceMeshDraw Draw a Surface Mesh
 \anchor ssecDrawSurfaceMesh
 
-A surface mesh can be visualized by calling the \link PkgDrawSurfaceMesh CGAL::draw<SM>() \endlink as shown in the following example. This function opens a new window showing the given surface mesh. The function is blocking, that is the program continues as soon as the user closes the window.
+A surface mesh can be visualized by calling the \link PkgDrawSurfaceMesh CGAL::draw<SM>() \endlink as shown in the following example. This function opens a new window showing the given surface mesh. A call to this function is blocking, that is the program continues as soon as the user closes the window.
 
 \cgalExample{Surface_mesh/draw_surface_mesh.cpp}
 
