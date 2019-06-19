@@ -1,0 +1,930 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Boolean_set_operations_2</class>
+
+ <widget class="QMainWindow" name="Boolean_set_operations_2">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1124</width>
+    <height>664</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Boolean Set Operations and Minkowksi Sum</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="Boolean_operations_2.qrc">
+    <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QGraphicsView" name="graphicsView">
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="transformationAnchor">
+       <enum>QGraphicsView::NoAnchor</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1124</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew" />
+    <addaction name="separator" />
+    <addaction name="actionOpenLinear" />
+    <addaction name="actionOpenDXF" />
+    <addaction name="actionOpenBezier" />
+    <addaction name="separator" />
+    <addaction name="actionSaveResult" />
+    <addaction name="separator" />
+    <addaction name="actionQuit" />
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionDelete"/>
+    <addaction name="actionDeleteAll"/>
+   </widget>
+   <widget class="QMenu" name="menuOperations">
+    <property name="title">
+     <string>Operations</string>
+    </property>
+    <addaction name="actionInsertLinear"/> 
+    <addaction name="actionInsertCircular"/>
+    <addaction name="actionInsertBezier" />
+    <addaction name="actionInsertConic" />
+   	<addaction name="actionInsertRational" />
+   	<addaction name="actionInsertAlgebraic" />
+    <addaction name="separator"/>
+    <addaction name="actionComplement"/>
+    <addaction name="actionIntersection"/>
+    <addaction name="actionUnion"/>
+    <addaction name="actionDifference"/>
+    <addaction name="actionSymmetric_Difference"/>
+    <addaction name="actionMinkowski_Sum" />
+    <addaction name="actionAdd_new_polygon"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionRecenter"/>
+    <addaction name="actionPAN"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuOperations"/>
+   <addaction name="menuView"/>
+   <addaction name="menu_Help"/>
+  </widget>
+
+  <widget class="QToolBar" name="inputToolBar" >
+   <property name="windowTitle" >
+    <string>Input Tools</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionInsertLinear"/>
+   <addaction name="actionInsertCircular"/>
+   <addaction name="actionInsertBezier" />
+   <addaction name="actionInsertConic" />
+   <addaction name="actionInsertRational" />
+   <addaction name="actionInsertAlgebraic" />
+  </widget>
+
+  <widget class="QToolBar" name="operationsToolBar" >
+   <property name="windowTitle" >
+    <string>Operation Tools</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionComplement"/>
+   <addaction name="actionIntersection"/>
+   <addaction name="actionUnion"/>
+   <addaction name="actionDifference"/>
+   <addaction name="actionSymmetric_Difference"/>
+   <addaction name="actionMinkowski_Sum" />
+  </widget>
+  <widget class="QToolBar" name="viewToolBar" >
+   <property name="windowTitle" >
+    <string>Operation Tools</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionRecenter"/>
+   <addaction name="actionPAN"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="sceneDockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="locale">
+    <locale language="English" country="UnitedStates"/>
+   </property>
+   <property name="windowTitle">
+    <string>Geometric Objects</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContent">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QToolButton" name="addButton">
+           <property name="text">
+            <string>+</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Boolean_operations_2.qrc">
+             <normaloff>:/cgal/icons/plus</normaloff>:/cgal/icons/plus</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="removeButton">
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Boolean_operations_2.qrc">
+             <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="duplicateButton">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Boolean_operations_2.qrc">
+             <normaloff>:/cgal/icons/duplicate</normaloff>:/cgal/icons/duplicate</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="upButton">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Boolean_operations_2.qrc">
+             <normaloff>:/cgal/icons/resources/up.png</normaloff>:/cgal/icons/resources/up.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="downButton">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Boolean_operations_2.qrc">
+             <normaloff>:/cgal/icons/resources/down.png</normaloff>:/cgal/icons/resources/down.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="searchEdit">
+           <property name="placeholderText">
+            <string>Quick filter... &lt;Alt+Q&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QScrollArea" name="scrollArea_2">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents_2">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>332</width>
+            <height>299</height>
+           </rect>
+          </property>
+          <widget class="QRadioButton" name="drawRed">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>40</y>
+             <width>334</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Draw Red</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="drawBlue">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>10</y>
+             <width>334</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Draw Blue</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="showBlue">
+           <property name="geometry">
+            <rect>
+             <x>170</x>
+             <y>10</y>
+             <width>97</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Show Blue</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="showRed">
+           <property name="geometry">
+            <rect>
+             <x>170</x>
+             <y>40</y>
+             <width>97</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Show Red</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="showResult">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>220</y>
+             <width>121</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Show Result</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="drawBlack">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>70</y>
+             <width>117</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Draw Black</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="drawBrown">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>100</y>
+             <width>117</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Draw Brown</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="drawYellow">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>130</y>
+             <width>117</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Draw Yellow</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="drawMagenta">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>160</y>
+             <width>131</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Draw Magenta</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="drawAqua">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>190</y>
+             <width>117</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Draw Aqua</string>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="showBlack">
+           <property name="geometry">
+            <rect>
+             <x>170</x>
+             <y>70</y>
+             <width>111</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Show Black</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="showBrown">
+           <property name="geometry">
+            <rect>
+             <x>170</x>
+             <y>100</y>
+             <width>111</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Show Brown</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="showYellow">
+           <property name="geometry">
+            <rect>
+             <x>170</x>
+             <y>130</y>
+             <width>111</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Show Yellow</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="showMagenta">
+           <property name="geometry">
+            <rect>
+             <x>170</x>
+             <y>160</y>
+             <width>131</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Show Magenta</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="showAqua">
+           <property name="geometry">
+            <rect>
+             <x>170</x>
+             <y>190</y>
+             <width>101</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Show Aqua</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="consoleDockWidget">
+   <property name="allowedAreas">
+    <set>Qt::BottomDockWidgetArea|Qt::LeftDockWidgetArea|Qt::TopDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Console</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QTextEdit" name="consoleTextEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="infoDockWidget">
+   <property name="windowTitle">
+    <string>Infos</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QScrollArea" name="scrollArea">
+         <property name="minimumSize">
+          <size>
+           <width>350</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>625</width>
+            <height>173</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="infoLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="contextMenuPolicy">
+              <enum>Qt::DefaultContextMenu</enum>
+             </property>
+             <property name="lineWidth">
+              <number>0</number>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="displayLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionOpenLinear">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open Circular curve</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionErase">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Erase curve</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionDuplicate">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/duplicate</normaloff>:/cgal/icons/duplicate</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Duplicate curve</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionEraseAll">
+   <property name="text">
+    <string>&amp;Erase All curves</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="text">
+    <string>Delete selected polygons</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Space</string>
+   </property>
+  </action>
+  <action name="actionRecenter">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/fit-page-32.png</normaloff>:/cgal/icons/resources/fit-page-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Recenter Scene</string>
+   </property>
+   <property name ="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionInsertLinear">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/insert_polygon.xpm</normaloff>:/cgal/icons/resources/insert_polygon.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Draw Linear polygon</string>
+   </property>
+   <property name="toolTip" >
+    <string>Draw Linear Polygon</string>
+   </property>
+  </action>
+  <action name="actionInsertCircular">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/insert_circle.xpm</normaloff>:/cgal/icons/resources/insert_circle.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Draw Circular polygon</string>
+   </property>
+   <property name="toolTip" >
+    <string>Draw Circular Polygon</string>
+   </property>
+  </action>
+  <action name="actionInsertConic" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="Boolean_operations_2.qrc" >
+     <normaloff>:/cgal/icons/resources/demo_conic_circle.xpm</normaloff>:/cgal/icons/resources/demo_conic_circle.xpm
+    </iconset>
+   </property>
+   <property name="text" >
+    <string>Insert Conic Polygon</string>
+   </property>
+   <property name="toolTip" >
+    <string>Insert Conic Polygon</string>
+   </property>
+  </action>
+  <action name="actionInsertRational" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="Boolean_operations_2.qrc" >
+     <normaloff>:/cgal/icons/resources/insert_bezier.bmp</normaloff>:/cgal/icons/resources/insert_bezier.bmp
+    </iconset>
+   </property>
+   <property name="text" >
+    <string>Insert Rational Polygon</string>
+   </property>
+   <property name="toolTip" >
+    <string>Insert Rational Polygon</string>
+   </property>
+  </action>
+  <action name="actionInsertAlgebraic" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="Boolean_operations_2.qrc" >
+     <normaloff>:/cgal/icons/resources/insert_bezier.bmp</normaloff>:/cgal/icons/resources/insert_bezier.bmp
+    </iconset>
+   </property>
+   <property name="text" >
+    <string>Insert Algebraic Polygon</string>
+   </property>
+   <property name="toolTip" >
+    <string>Insert Algebraic Polygon</string>
+   </property>
+  </action>
+
+  <action name="actionComplement">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/comp_P.bmp</normaloff>:/cgal/icons/resources/comp_P.bmp</iconset>
+   </property>
+   <property name="text">
+    <string>Complement</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionIntersection">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/intersection.bmp</normaloff>:/cgal/icons/resources/intersection.bmp</iconset>
+   </property>
+   <property name="text">
+    <string>Intersection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionUnion">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/union.bmp</normaloff>:/cgal/icons/resources/union.bmp</iconset>
+   </property>
+   <property name="text">
+    <string>Union</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+  </action>
+  <action name="actionDifference">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/diff_PQ.bmp</normaloff>:/cgal/icons/resources/diff_PQ.bmp</iconset>
+   </property>
+   <property name="text">
+    <string>Difference</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionSymmetric_Difference">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/symm_diff.bmp</normaloff>:/cgal/icons/resources/symm_diff.bmp</iconset>
+   </property>
+   <property name="text">
+    <string>Symmetric Difference</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionMinkowski_Sum">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/mink_sum.bmp</normaloff>:/cgal/icons/resources/mink_sum.bmp</iconset>
+   </property>
+   <property name="text">
+    <string>Minkowski Sum</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionAdd_new_polygon">
+   <property name="text">
+    <string>Add new polygon</string>
+   </property>
+  </action>
+  <action name="actionOpenCircular">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open Circular Curve</string>
+   </property>
+  </action>
+  <action name="actionPAN">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/hand.png</normaloff>:/cgal/icons/resources/hand.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;PAN</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionDeleteAll">
+   <property name="text">
+    <string>Delete all polygons</string>
+   </property>
+  </action>
+  <action name="actionNew" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;New</string>
+   </property>
+  </action>
+   
+  <action name="actionOpenDXF" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Open DXF</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionOpenBezier" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Open Bezier Polygon</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="actionSaveResult" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Save Result Set</string>
+   </property>
+  </action>
+   <action name="actionQuit" >
+   <property name="text" >
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionInsertBezier" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/icons/resources/insert_bezier.xpm</normaloff>:/cgal/icons/resources/insert_bezier.xpm
+    </iconset>
+   </property>
+   <property name="text" >
+    <string>Draw Bezier Polygon</string>
+   </property>
+   <property name="toolTip" >
+    <string>Draw Bezier Polygon</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="Boolean_operations_2.qrc"/>
+ </resources>
+ <connections/>
+</ui>
