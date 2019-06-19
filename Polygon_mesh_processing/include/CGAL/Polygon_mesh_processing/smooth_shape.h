@@ -66,7 +66,6 @@ namespace Polygon_mesh_processing {
 *    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
 *  \cgalParamEnd
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
-*    Kernels with exact constructions are not supported by this function.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
 *    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
