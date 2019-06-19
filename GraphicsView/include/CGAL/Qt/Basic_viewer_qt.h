@@ -760,9 +760,14 @@ protected:
       //      Camera Constraint:
       constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
       constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
-      constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec((has_zero_x()?1.:0.),
-                                                                     (has_zero_y()?1.:0.),
-                                                                     (has_zero_z()?1.:0.)));
+
+      double cx=0., cy=0., cz=0.;
+      if (has_zero_x())      { cx=1.; }
+      else if (has_zero_y()) { cy=1.; }
+      else                   { cz=1.; }
+    
+      camera()->setViewDirection(CGAL::qglviewer::Vec(-cx,-cy,-cz));
+      constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(cx, cy, cz));
       camera()->frame()->setConstraint(&constraint);
     }
   }
