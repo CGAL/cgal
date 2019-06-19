@@ -115,3 +115,32 @@ target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_s
 
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin)
 target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
+
+    set(SuiteSparse_USE_LAPACK_BLAS ON)
+    find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
+    if(NOT SuiteSparse_FOUND)
+      set(SuiteSparse_VERBOSE ON)
+      find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
+      if(SuiteSparse_FOUND)
+        include_directories(${SuiteSparse_INCLUDE_DIRS})
+      endif(SuiteSparse_FOUND)
+    else(NOT SuiteSparse_FOUND)
+      include(${USE_SuiteSparse})
+    endif(NOT SuiteSparse_FOUND)
+
+    if(SuiteSparse_FOUND)
+      if (SuiteSparse_UMFPACK_FOUND)
+        message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
+        message(STATUS "Orbifold Tutte Embeddings will use UmfPackLU")
+        add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
+        add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
+      else()
+        message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library and UmfPack. Try setting SuiteSparse_UMF_INCLUDE_DIR and at least one of SuiteSparse_UMFPACK_LIBRARY_RELEASE and SuiteSparse_UMFPACK_LIBRARY_DEBUG to you UMFPACK installation.")
+      endif()
+    else(SuiteSparse_FOUND)
+      message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library.")
+    endif(SuiteSparse_FOUND)
+
+qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
+polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
+target_link_libraries(smoothing_plugin PUBLIC ceres glog scene_surface_mesh_item scene_selection_item ${SuiteSparse_LIBRARIES})
