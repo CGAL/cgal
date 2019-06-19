@@ -475,7 +475,7 @@ Finally points on the convex hull are written to <TT>cout</TT>.
 \subsection Triangulation2Draw Draw a 2D Triangulation
 \anchor ssecDrawT2
 
-A 2D triangulation can be visualized by calling the \link PkgDrawTriangulation2 CGAL::draw<T2>() \endlink function as shown in the following example. This function opens a new window showing the given 2D triangulation. The function is blocking, that is the program continues as soon as the user closes the window.
+A 2D triangulation can be visualized by calling the \link PkgDrawTriangulation2 CGAL::draw<T2>() \endlink function as shown in the following example. This function opens a new window showing the given 2D triangulation. A call to this function is blocking, that is the program continues as soon as the user closes the window.
 
 \cgalExample{Triangulation_2/draw_triangulation_2.cpp}
 
