@@ -118,6 +118,8 @@ int main(int /*argc*/, char** /*argv*/)
   const char* filename_elephant = "data/elephant.off";
   const char* filename_mannequin = "data/mannequin-devil.off";
 
+  std::cout << "Test files: " << filename_elephant << " " << filename_mannequin << std::endl;
+
   // test with Surface_mesh
   test_smoothing<SurfaceMesh>(filename_elephant);
   test_angle_smoothing<SurfaceMesh>(filename_elephant);
@@ -134,5 +136,6 @@ int main(int /*argc*/, char** /*argv*/)
   test_area_smoothing_without_projection<Polyhedron>(filename_mannequin);
   test_constrained_vertices<Polyhedron>(filename_mannequin);
 
+  std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
 }
