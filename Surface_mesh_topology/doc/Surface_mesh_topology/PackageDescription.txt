@@ -6,7 +6,7 @@
 /// \defgroup PkgSurfaceMeshTopologyClasses Classes
 /// \ingroup PkgSurfaceMeshTopology
 
-/*! Draw.
+/*!
   \code
    #include <CGAL/draw_face_graph_with_paths.h>
   \endcode
@@ -21,7 +21,7 @@
 \cgalPkgPicture{surface-mesh-topology-logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand, Francis Lazarus}
-\cgalPkgDesc{This package provides methods for testing if two (closed) paths on a combinatorial surface are homotopic. The user can choose between free homotopy and homotopy with fixed endpoints. A contractibility test is also provided; it amounts to test homotopy with the constant path. The algorithms are based on a paper by Erickson and Whittlesey. After an initialization step that takes linear time in the size of the input surface, the homotopy tests are performed in linear time in the size of the input curves.}
+\cgalPkgDesc{This package provides methods for testing if two (closed) paths on a combinatorial surface are homotopic. The user can choose between free homotopy and homotopy with fixed endpoints. A contractibility test is also provided; it amounts to test homotopy with the constant path. After an initialization step that takes linear time in the size of the input surface, the homotopy tests are performed in linear time in the size of the input curves.}
 \cgalPkgManuals{Chapter_Surface_Mesh_Topology,PkgSurfaceMeshTopology}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -40,10 +40,10 @@
 \cgalCRPSection{Classes}
 - `CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh>`
 - `CGAL::Surface_mesh_topology::Path_on_surface<Mesh>`
-- `CGAL::Surface_mesh_topology::Polygonal_schema_for_combinatorial_map<Items,Alloc>`
-- `CGAL::Surface_mesh_topology::Polygonal_schema_for_generalized_map<Items,Alloc>`
+- `CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map<Items,Alloc>`
+- `CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map<Items,Alloc>`
 - `CGAL::Surface_mesh_topology::Polygonal_schema_min_items`
 
 \cgalCRPSubsection{Draw a Mesh with Paths}
-- `CGAL::draw<Mesh>`
+- \link PkgDrawFaceGraphWithPaths CGAL::draw<Mesh>() \endlink
 */

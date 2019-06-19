@@ -183,5 +183,9 @@ The canonical form of a curve is obtained by flattening its brackets, removing i
 \subsection SMTopology_Homotopy_Test Homotopy Test 
 It can be proven that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
 
+\section Implementation History
+
+The code was developed in 2018 by Guillaume Damiand and Francis Lazarus.
+
 */
 } /* namespace CGAL */

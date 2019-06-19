@@ -13,7 +13,7 @@ namespace Surface_mesh_topology {
   {
   public:
 
-    /*! Creates a `Curves_on_surface_topology` object using `amesh` as input.
+    /*! creates a `Curves_on_surface_topology` object using `amesh` as input.
      */
     Curves_on_surface_topology(const Mesh& amesh);
 
