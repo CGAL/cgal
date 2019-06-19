@@ -23,13 +23,26 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  const double time = 0.1;
-  const unsigned int nb_iterations = 2;
+  const double time = 0.0001;
+  const unsigned int nb_iterations = 10;
 
-  PMP::smooth_along_curvature_flow(mesh, time, PMP::parameters::number_of_iterations(nb_iterations));
+  std::set<Mesh::Vertex_index> constrained_vertices;
+  for(Mesh::Vertex_index v : vertices(mesh))
+  {
+    if(is_border(v, mesh))
+      constrained_vertices.insert(v);
+  }
+
+  std::cout << "Constraining: " << constrained_vertices.size() << " border vertices" << std::endl;
+  CGAL::Boolean_property_map<std::set<Mesh::Vertex_index> > vcmap(constrained_vertices);
+
+  std::cout << "Smoothing shape... (" << nb_iterations << " iterations)" << std::endl;
+  PMP::smooth_shape(mesh, time, PMP::parameters::number_of_iterations(nb_iterations)
+                                                .vertex_is_constrained_map(vcmap));
 
   std::ofstream output("mesh_shape_smoothed.off");
   output << mesh;
 
+  std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
 }
