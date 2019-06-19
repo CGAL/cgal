@@ -826,15 +826,6 @@
     <string>Add new polygon</string>
    </property>
   </action>
-  <!--<action name="actionOpenCircular">
-   <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
-   </property>
-   <property name="text">
-    <string>Open Circular Curve</string>
-   </property>
-  </action>-->
   <action name="actionPAN">
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
