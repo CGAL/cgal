@@ -1177,10 +1177,5 @@ The file `CGAL/compiler_config.h` is included from
 `<CGAL/config.h>`.
 which is included by all \cgal header files.
 
-\section seccompileroptimisations Compiler Optimizations 
-
-By default CMake generates makefiles for Release mode, with 
-optimization flags switched on, and vcproj files for Release
-and Debug modes.
 
 */ 
