@@ -87,7 +87,5 @@ int main()
   }
   ifq.close();
 
-  CGAL::draw(vd);
-
   return 0;
 }

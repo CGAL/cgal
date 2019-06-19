@@ -1,4 +1,4 @@
-// Copyright(c) 2019  INRIA Sophia-Antipolis (France).
+// Copyright(c) 2019  Foundation for Research and Technology-Hellas (Greece).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -85,27 +85,28 @@ public:
 protected:
   void compute_face(Face_const_handle fh) {
         CGAL::Color c=m_fcolor.run(v2, fh);
-        face_begin(c);
+
         Ccb_halfedge_circulator ec_start = fh->ccb();
         Ccb_halfedge_circulator ec = ec_start;
 
-        do{
-            if( ec->has_source() ){
+        if(!fh->is_unbounded()){
+            face_begin(c);
+            do{
                 add_point_in_face(ec->source()->point());
-            }
-            else{
-                add_point_in_face(get_second_point(ec->twin()));
-            }
-        } while(++ec != ec_start);
-
-//        if(ec == ec_start){
-//            if(ec->has_target()){
-//                add_point_in_face(ec->target()->point());
-//            } else {
-//                add_point_in_face(get_second_point(ec->twin()));
-//            }
-//        }
-        face_end();
+            }while(++ec != ec_start);
+            face_end();
+        }
+        // Test: for unbounded faces
+        //      else {
+        //            do{
+        //                if( ec->has_source() ){
+        //                    add_point_in_face(ec->source()->point());
+        //                }
+        //                else{
+        //                    add_point_in_face(get_second_point(ec->twin()));
+        //                }
+        //            } while(++ec != ec_start);
+        //        }
   }
 
   void compute_ray_points(Halfedge_handle he) {
@@ -186,7 +187,13 @@ protected:
   void compute_rays(Halfedge_const_handle he) {
     if (he->is_ray()) {
       if (he->has_source()) {
-          add_segment(he->source()->point(), get_second_point(he));
+          Delaunay_vertex_const_handle v1 = he->up();
+          Delaunay_vertex_const_handle v2 = he->down();
+
+          Kernel::Vector_2 direction(v1->point().y() - v2->point().y(),
+                                     v2->point().x() - v1->point().x());
+          //add_ray_segment(he->source()->point(), get_second_point(he));
+          add_ray_segment(he->source()->point(), direction);
       }
     }
   }

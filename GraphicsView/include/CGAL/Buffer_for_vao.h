@@ -219,6 +219,16 @@ public:
     return m_pos_buffer->size()-3;
   }
 
+  template<typename KPoint>
+  std::size_t add_point_infinity(const KPoint& kp)
+  {
+      if (!has_position()) return (std::size_t)-1;
+
+      Local_point p=internal::get_local_point(kp);
+      add_point_in_buffer(p, *m_pos_buffer);
+      return m_pos_buffer->size()-3;
+  }
+
   // 1.2) Add a point, with color.
   template<typename KPoint>
   void add_point(const KPoint& kp, const CGAL::Color& c)
@@ -252,12 +262,12 @@ public:
     add_color(c);
   }
 
-  // 2.2+) Add a line, without color. TODO: Modify comment numbering
-  template<typename KPoint>
-  void add_line(const KPoint& kp1, const KPoint& kp2)
+  // 2.2) Add a ray segment, without color
+  template<typename KPoint, typename KVector>
+  void add_ray_segment(const KPoint& kp1, const KVector& kp2)
   {
       add_point(kp1);
-      add_point(kp2);
+      add_point_infinity(kp2);
   }
 
   // 2.3) Add an indexed segment, without color.
