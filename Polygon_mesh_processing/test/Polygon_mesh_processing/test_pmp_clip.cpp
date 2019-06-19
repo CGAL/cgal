@@ -291,68 +291,18 @@ void test()
 template <class Mesh>
 void test_split_plane()
 {
+  // test with a clipper mesh
+  Mesh tm1;
 
-  typedef K::Point_3                                     Point;
+  std::ifstream input("data-coref/elephant.off");
+  input >> tm1;
+  input.close();
 
-  typedef typename boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
-  typedef typename boost::graph_traits<Mesh>::edge_descriptor          edge_descriptor;
+  PMP::split(tm1,K::Plane_3(0,0,1,0));
 
-  typedef typename Mesh::template Property_map<face_descriptor, std::size_t> FCCmap;
-  typedef typename Mesh::template Property_map<edge_descriptor, bool> Cst_edge_map;
+  std::ofstream("out_ccs_plane.off") << std::setprecision(17) << tm1;
+  CGAL::clear(tm1);
 
-  typedef CGAL::Face_filtered_graph<Mesh> Filtered_graph;
-
-  Mesh tm;
-  std::ifstream input("data/blobby_3cc.off");
-  if (!input || !(input >> tm) || tm.is_empty()) {
-    std::cerr << "Not a valid off file." << std::endl;
-    return ;
-  }
-
-
-  // create a splitter mesh for the splitting plane using an internal CGAL function
-  CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
-  double xd=(std::max)(1.,(bbox.xmax()-bbox.xmin())/100);
-  double yd=(std::max)(1.,(bbox.ymax()-bbox.ymin())/100);
-  double zd=(std::max)(1.,(bbox.zmax()-bbox.zmin())/100);
-  bbox=CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
-                    bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
-
-  typename K::Plane_3 plane(0, 0, 1, (bbox.zmin()+bbox.zmax())/2); // arbitratry plane
-  Mesh splitter;
-  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, PMP::parameters::all_default());
-
-
-  if (os == CGAL::ON_ORIENTED_BOUNDARY)
-  {
-    // create a constrained edge map and corefine input mesh with the plane
-    Cst_edge_map ecm = tm.template add_property_map<edge_descriptor, bool>("e:cst", false).first;
-    PMP::corefine(tm, splitter, CGAL::parameters::edge_is_constrained_map(ecm));
-
-    FCCmap fccmap = tm.template add_property_map<face_descriptor, std::size_t>("f:CC").first;
-    std::size_t num = PMP::connected_components(tm, fccmap, PMP::parameters::edge_is_constrained_map(ecm));
-
-    Filtered_graph ffg(tm, 0, fccmap);
-    for (std::size_t i=0; i <num; ++i)
-    {
-      if (i!=0)
-        ffg.set_selected_faces(i, fccmap);
-
-      // create a new mesh for the component
-      Mesh cc_mesh;
-      CGAL::copy_face_graph(ffg, cc_mesh);
-
-      // write the copy into a file
-      std::ofstream(std::string("out_cc-")+std::to_string(i)+std::string(".off")) << std::setprecision(17) << cc_mesh;
-    }
-  }
-  else
-  {
-    // nothing to do, no intersection.
-    std::ofstream("out_cc-0.off") << std::setprecision(17) << tm;
-  }
-
-  return;
 }
 
 template <class TriangleMesh>
@@ -368,15 +318,8 @@ void test_split()
   input.open("data-coref/sphere.off");
   input >> tm2;
   input.close();
-  std::vector<TriangleMesh> output;
-  PMP::split(tm1, tm2, std::back_inserter(output),
-             params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)));
-int i=0;
-  for(const auto& m : output)
-  {
-    std::ofstream(std::string("out_cc-")+std::to_string(i++)+std::string(".off")) << std::setprecision(17) << m;
-    //assert(!CGAL::is_closed(m));
-  }
+  PMP::split(tm1, tm2);
+  std::ofstream("out_ccs.off") << std::setprecision(17) << tm1;
   CGAL::clear(tm1);
   CGAL::clear(tm2);
 
@@ -387,6 +330,7 @@ int main()
   //test<Surface_mesh>();
   //test<Polyhedron>();
   test_split<Surface_mesh>();
+  test_split_plane<Surface_mesh>();
   //test_split<Polyhedron>();
 
   return 0;
