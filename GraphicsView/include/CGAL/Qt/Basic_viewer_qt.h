@@ -170,7 +170,8 @@ public:
                   bool draw_lines=true,
                   bool draw_faces=true,
                   bool use_mono_color=false,
-                  bool inverse_normal=false) :
+                  bool inverse_normal=false,
+                  bool draw_wireframe=false) :
     CGAL::QGLViewer(parent),
     m_draw_vertices(draw_vertices),
     m_draw_edges(draw_edges),
@@ -179,6 +180,7 @@ public:
     m_flatShading(true),
     m_use_mono_color(use_mono_color),
     m_inverse_normal(inverse_normal),
+    m_wireframe(draw_wireframe),
     m_size_points(7.),
     m_size_edges(3.1),
     m_size_lines(3.1),
@@ -896,6 +898,7 @@ protected:
     setKeyDescription(::Qt::Key_E, "Toggles edges display");
     setKeyDescription(::Qt::Key_R, "Toggles rays display");
     setKeyDescription(::Qt::Key_F, "Toggles faces display");
+    setKeyDescription(::Qt::Key_W, "Toggles Wireframe Polygon Mode");
     setKeyDescription(::Qt::Key_G, "Switch between flat/Gouraud shading display");
     setKeyDescription(::Qt::Key_M, "Toggles mono color");
     setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
@@ -957,7 +960,18 @@ protected:
       displayMessage(QString("Draw edges=%1.").arg(m_draw_edges?"true":"false"));
       update();
     }
-    if ((e->key()==::Qt::Key_R) && (modifiers==::Qt::NoButton))
+    else if ((e->key()==::Qt::Key_W) && (modifiers==::Qt::NoButton))
+    {
+        m_wireframe=!m_wireframe;
+        if(m_wireframe){
+          glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        } else {
+          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+        displayMessage(QString("Wireframe=%1.").arg(m_wireframe?"true":"false"));
+        update();
+    }
+    else if ((e->key()==::Qt::Key_R) && (modifiers==::Qt::NoButton))
     {
         m_draw_lines=!m_draw_lines;
         displayMessage(QString("Draw rays=%1.").arg(m_draw_lines?"true":"false"));
@@ -1140,6 +1154,7 @@ protected:
   bool m_flatShading;
   bool m_use_mono_color;
   bool m_inverse_normal;
+  bool m_wireframe;
 
   double m_size_points;
   double m_size_edges;
