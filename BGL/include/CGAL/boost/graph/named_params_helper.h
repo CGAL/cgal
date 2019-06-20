@@ -34,14 +34,28 @@
 
 namespace CGAL {
 
+  namespace parameters
+  {
+    template <class Parameter, class NamedParameters>
+    struct Is_default
+    {
+      typedef typename boost::lookup_named_param_def <
+        Parameter,
+        NamedParameters,
+        boost::param_not_found > ::type NP_type;
+      static const bool value = boost::is_same<NP_type, boost::param_not_found>::value;
+      typedef CGAL::Boolean_tag<value> type;
+    };
+  } // end of parameters namespace
+
   // forward declarations to avoid dependency to Solver_interface
   template <typename FT, unsigned int dim>
   class Default_diagonalize_traits;
   class Eigen_svd;
   class Lapack_svd;
   //
-  
-  
+
+
   //helper classes
   template<typename PolygonMesh, typename PropertyTag>
   class property_map_selector
@@ -245,7 +259,7 @@ namespace CGAL {
         typedef std::random_access_iterator_tag iterator_category;
       };
     };
-    
+
     namespace parameters
     {
       template <typename PointRange>
@@ -259,7 +273,7 @@ namespace CGAL {
     namespace internal{
       BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
     }
-    
+
     template<typename PointRange, typename NamedParameters,
              bool has_nested_iterator=internal::Has_nested_type_iterator<PointRange>::value>
     class GetPointMap
@@ -381,7 +395,7 @@ namespace CGAL {
       DefaultPMap
       > ::type  const_type;
     };
-    
+
     template<typename NamedParameters>
     class GetPlaneIndexMap
     {
@@ -429,7 +443,7 @@ namespace CGAL {
     };
 
   } // namespace Point_set_processing_3
-  
+
   template<typename NamedParameters, typename DefaultSolver>
   class GetSolver
   {
@@ -462,10 +476,10 @@ namespace CGAL {
       typedef int Matrix;
       static FT solve (const Matrix&, Vector&) { return 0.; }
     };
-    
+
   public:
     typedef DummySvdTraits NoTraits;
-    
+
     typedef typename boost::lookup_named_param_def <
     internal_np::svd_traits_t,
     NamedParameters,
