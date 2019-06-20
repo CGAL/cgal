@@ -1615,6 +1615,7 @@ void remove_unused_polylines(
     }
   }
 
+  std::vector<vertex_descriptor> vertices_kept;
   BOOST_FOREACH(vertex_descriptor v, vertices_to_remove)
   {
     bool to_remove=true;
@@ -1629,7 +1630,31 @@ void remove_unused_polylines(
       }
     if (to_remove)
       remove_vertex(v,tm);
+    else
+      vertices_kept.push_back(v);
   }
+
+  // update next/prev pointers around vertices in vertices_kept
+  BOOST_FOREACH(vertex_descriptor v, vertices_kept)
+  {
+    halfedge_descriptor h = halfedge(v, tm), start=GT::null_halfedge();
+
+    do{
+      while ( !is_border(h, tm) || is_border(opposite(h, tm), tm) )
+        h = opposite(next(h, tm), tm);
+      halfedge_descriptor in = h;
+      if (start==GT::null_halfedge())
+        start=in;
+      else
+        if (start==in)
+          break;
+      while ( is_border(h, tm) )
+        h = opposite(next(h, tm), tm);
+      set_next(in, opposite(h, tm), tm);
+    }
+    while(true);//this loop handles non-manifold vertices
+  }
+
   BOOST_FOREACH(edge_descriptor e, edges_to_remove)
     remove_edge(e,tm);
 }
