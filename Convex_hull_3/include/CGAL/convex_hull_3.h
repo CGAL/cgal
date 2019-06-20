@@ -43,6 +43,7 @@
 #include <iostream>
 #include <algorithm>
 #include <utility>
+#include <memory>
 #include <list>
 #include <vector>
 #include <boost/bind.hpp>
@@ -236,17 +237,23 @@ public:
 //and in case of failure, exact arithmetic is used.
 template <class Kernel, class P>
 class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>, boost::true_type >{
-  typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>  PK;
-  typedef Simple_cartesian<Interval_nt_advanced >                               CK;
+  typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>  Exact_K;
+  typedef Simple_cartesian<Interval_nt_advanced >                               Approx_K;
   typedef Convex_hull_traits_3<Kernel, P, Tag_true>                             Traits;
   typedef typename Traits::Point_3                                              Point_3;
 
-  Cartesian_converter<Kernel,CK>                        to_CK;
-  Cartesian_converter<Kernel,PK>                        to_PK;
+  Cartesian_converter<Kernel,Approx_K>                  to_AK;
+  Cartesian_converter<Kernel,Exact_K>                   to_EK;
+
+  template <typename K>
+  struct Vector_plus_point {
+    typename K::Vector_3 vector;
+    typename K::Point_3  point;
+  };
 
   const Point_3& p,q,r;
-  mutable typename CK::Plane_3* ck_plane;
-  mutable typename PK::Plane_3* pk_plane;
+  mutable Vector_plus_point<Approx_K> ak_plane;
+  mutable Vector_plus_point<Exact_K>* ek_plane_ptr;
 
   double m10,m20,m21,Maxx,Maxy,Maxz;
 
@@ -292,8 +299,13 @@ public:
   typedef typename Interval_nt_advanced::Protector           Protector;
 
   Is_on_positive_side_of_plane_3(const Traits&,const Point_3& p_,const Point_3& q_,const Point_3& r_)
-  :p(p_),q(q_),r(r_),ck_plane(NULL),pk_plane(NULL)
+    : p(p_),q(q_),r(r_)
+    , ak_plane()
+    , ek_plane_ptr(0)
   {
+    ak_plane.vector =
+      typename Approx_K::Vector_3(Interval_nt_advanced(0., std::numeric_limits<double>::infinity()),
+                                  0., 0.);
     double pqx = q.x() - p.x();
     double pqy = q.y() - p.y();
     double pqz = q.z() - p.z();
@@ -319,8 +331,7 @@ public:
   }
 
   ~Is_on_positive_side_of_plane_3(){
-    if (ck_plane!=NULL) delete ck_plane;
-    if (pk_plane!=NULL) delete pk_plane;
+    if (ek_plane_ptr!=NULL) delete ek_plane_ptr;
   }
 
   bool operator() (const Point_3& s) const
@@ -334,15 +345,29 @@ public:
       return static_res == 1;
 
     try{
-      if (ck_plane==NULL)
-        ck_plane=new typename CK::Plane_3(to_CK(p),to_CK(q),to_CK(r));
-      return ck_plane->has_on_positive_side(to_CK(s));
+      // infinity() is the sentinel for uninitialized `ak_plane`
+      if (ak_plane.vector.x().sup() == std::numeric_limits<double>::infinity())
+      {
+        const typename Approx_K::Point_3 ap = to_AK(p);
+        ak_plane.vector = cross_product(to_AK(q)-ap, to_AK(r)-ap);
+        ak_plane.point = ap;
+      }
+      Uncertain<Sign> res =
+        sign(scalar_product(to_AK(s) - ak_plane.point,
+                            ak_plane.vector));
+      if(is_certain(res)) {
+        return (get_certain(res) == POSITIVE);
+      }
     }
-    catch (Uncertain_conversion_exception&){
-      if (pk_plane==NULL)
-        pk_plane=new typename PK::Plane_3(to_PK(p),to_PK(q),to_PK(r));
-      return pk_plane->has_on_positive_side(to_PK(s));
+    catch (Uncertain_conversion_exception&){}
+    if (ek_plane_ptr==NULL) {
+      const typename Exact_K::Point_3 ep = to_EK(p);
+      ek_plane_ptr = new Vector_plus_point<Exact_K>;
+      ek_plane_ptr->vector = cross_product(to_EK(q)-ep, to_EK(r)-ep);
+      ek_plane_ptr->point = ep;
     }
+    return sign(scalar_product(to_EK(s) - ek_plane_ptr->point,
+                               ek_plane_ptr->vector)) == POSITIVE;
   }
 };
 
