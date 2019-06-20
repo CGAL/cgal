@@ -369,11 +369,16 @@ private:
     bool operator()(const T* const x, const T* const y, const T* const z,
                     T* residual) const
     {
-#define CGAL_CERES_USE_NUMERIC_DIFFERENCIATION // @todo test this
+      // Defining this because I haven't found much difference empirically (auto-diff being maybe
+      // a couple % faster), but numeric differenciation should be stronger in the face
+      // of difficult cases. Leaving the auto-differenciation formulation in case somebody really
+      // cares about the extra speed.
+#define CGAL_CERES_USE_NUMERIC_DIFFERENCIATION
+
 #ifdef CGAL_CERES_USE_NUMERIC_DIFFERENCIATION
       residual[0] = evaluate(x[0], y[0], z[0]);
 #else
-      // Computations must be explicit so automatic differenciation can be used
+      // Computations must be explicit so that automatic differenciation can be used
       T dqx = qx - x[0];
       T dqy = qy - y[0];
       T dqz = qz - z[0];
