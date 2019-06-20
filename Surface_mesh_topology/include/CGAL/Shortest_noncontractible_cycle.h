@@ -15,20 +15,22 @@ public:
   using Dart_const_handle_orig = typename Gmap_origin::Dart_const_handle;
 
   template <class T>
-  struct Weight_functor_selector {
-    using Weight = T;
+  struct Weight_functor { using Weight = T; };
+
+  template <bool, class T, class>
+  struct Weight_functor_selector : Weight_functor<T> { };
+
+  template <class T, class F>
+  struct Weight_functor_selector<false, T, F> : Weight_functor<F> { }; 
+  
+  struct Default_weight_functor {
+    using Weight_t = unsigned int;
+    Weight_t operator() (Dart_const_handle_orig) const { return 1; }
   };
 
-  template <>
-  struct Weight_functor_selector<void> {
-    struct Weight {
-      using Weight_t = unsigned int;
-      Weight() {}
-      Weight_t operator() (Dart_const_handle_orig) const { return 1; }
-    };
-  };
-
-  using Weight = typename Weight_functor_selector<WeightFunctor>::Weight;
+  using Weight = typename Weight_functor_selector<std::is_same<WeightFunctor, void>::value,
+                                                  Default_weight_functor,
+                                                  WeightFunctor>::Weight;
   using Distance_type = typename Weight::Weight_t;
 
   struct Attributes {
