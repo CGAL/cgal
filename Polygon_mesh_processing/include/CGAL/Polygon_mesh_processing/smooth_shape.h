@@ -106,7 +106,7 @@ void smooth_shape(const FaceRange& faces,
                                       get_property_map(CGAL::vertex_point, tmesh));
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              Constant_property_map<vertex_descriptor, bool>(false));
-  const std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  const unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #if EIGEN_VERSION_AT_LEAST(3,2,0)
@@ -151,7 +151,7 @@ void smooth_shape(const FaceRange& faces,
   // matrix is updated at every iteration). See Kazdhan et al. "Can Mean-Curvature Flow Be Made Non-Singular?".
   smoother.calculate_stiffness_matrix_elements(stiffness);
 
-  for(std::size_t iter=0; iter<nb_iterations; ++iter)
+  for(unsigned int iter=0; iter<nb_iterations; ++iter)
   {
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     std::cout << "iteration #" << iter << std::endl;

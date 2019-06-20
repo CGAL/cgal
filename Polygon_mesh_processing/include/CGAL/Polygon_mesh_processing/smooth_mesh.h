@@ -171,7 +171,7 @@ void smooth_mesh(const FaceRange& faces,
   if(!use_angle_smoothing && !use_area_smoothing)
     std::cerr << "Warning: called PMP::smooth_mesh() but no smoothing method is being used" << std::endl;
 
-  std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
   const bool do_project = choose_param(get_param(np, internal_np::do_project), true);
   const bool use_safety_constraints = choose_param(get_param(np, internal_np::use_safety_constraints), true);
   const bool use_Delaunay_flips = choose_param(get_param(np, internal_np::use_Delaunay_flips), true);
@@ -229,7 +229,7 @@ void smooth_mesh(const FaceRange& faces,
   if(use_area_smoothing)
     area_smoother.init_smoothing(faces);
 
-  for(std::size_t i=0; i<nb_iterations; ++i)
+  for(unsigned int i=0; i<nb_iterations; ++i)
   {
     if(use_area_smoothing)
     {

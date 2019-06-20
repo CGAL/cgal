@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 
   std::cout << sharp_counter << " sharp edges" << std::endl;
 
-  const unsigned int nb_iterations = 10;
+  const unsigned int nb_iterations = (argc > 2) ? std::atoi(argv[2]) : 10;
 
   std::cout << "Smoothing... (" << nb_iterations << " iterations)" << std::endl;
 

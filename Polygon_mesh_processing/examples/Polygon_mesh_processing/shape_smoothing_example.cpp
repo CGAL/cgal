@@ -13,7 +13,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = argc > 1 ? argv[1] : "data/pig.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
   std::ifstream input(filename);
 
   Mesh mesh;
@@ -23,8 +23,8 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  const double time = 0.0001;
-  const unsigned int nb_iterations = 10;
+  const unsigned int nb_iterations = (argc > 2) ? std::atoi(argv[2]) : 10;
+  const double time = (argc > 3) ? std::atof(argv[3]) : 0.0001;
 
   std::set<Mesh::Vertex_index> constrained_vertices;
   for(Mesh::Vertex_index v : vertices(mesh))
