@@ -235,8 +235,9 @@ public:
     for(const std::pair<const TriangleMesh*, const NM_features_map*>& tm_and_nm :
         non_manifold_feature_maps)
     {
+      TriangleMesh* tm_ptr = const_cast<TriangleMesh*>(tm_and_nm.first);
       // update nodes on edges
-      On_edge_map& on_edge_map = on_edge[const_cast<TriangleMesh*>(tm_and_nm.first)];
+      On_edge_map& on_edge_map = on_edge[tm_ptr];
       std::vector< std::pair<std::size_t, const Node_ids*> > edges_to_copy;
       for (const std::pair<const edge_descriptor, Node_ids>& ed_and_ids : on_edge_map)
       {
@@ -252,6 +253,32 @@ public:
 
         for (std::size_t i=1; i<nm_edges.size(); ++i)
           on_edge_map[nm_edges[i]] = *id_and_nodes.second;
+      }
+
+      // update map vertex -> node_id
+      Vertex_to_node_id& vertex_to_node_id = mesh_to_vertex_to_node_id[tm_ptr];
+      Node_to_target_of_hedge_map vertices_on_inter = mesh_to_vertices_on_inter[tm_ptr];
+
+      std::vector< std::pair<vertex_descriptor, Node_id> > vertices_to_add;
+      for (const typename std::pair<const vertex_descriptor, Node_id>& vd_and_id
+          : vertex_to_node_id)
+      {
+        std::size_t vid = get(tm_and_nm.second->v_nm_id, vd_and_id.first);
+        if (vid!=std::size_t(-1))
+          vertices_to_add.push_back(std::make_pair(vd_and_id.first,vd_and_id.second));
+        for(const std::pair<vertex_descriptor, Node_id>& vd_and_nid : vertices_to_add)
+        {
+          std::size_t vid = get(tm_and_nm.second->v_nm_id, vd_and_nid.first);
+          for(vertex_descriptor vd : tm_and_nm.second->non_manifold_vertices[vid])
+          {
+            if (vd != vd_and_nid.first)
+            {
+              vertex_to_node_id.insert(std::make_pair(vd,vd_and_nid.second));
+              output_builder.set_vertex_id(vd, vd_and_nid.second, *tm_ptr);
+              vertices_on_inter.insert(std::make_pair(vd_and_nid.second,halfedge(vd,*tm_ptr)));
+            }
+          }
+        }
       }
     }
   }
@@ -509,8 +536,9 @@ public:
       std::copy(begin,end,std::back_inserter(node_ids_array[it_id->second]));
     }
 
-    // Used by the autorefinement to re-set the id of nodes on the boundary of a
-    // face since another vertex (inside a face or on another edge) might have
+    // Used by the autorefinement and non-manifold edge handling to re-set
+    // the id of nodes on the boundary of a face since another vertex
+    // (inside a face or on another edge) might have
     // overwritten the vertex in node_id_to_vertex
     template <class Node_id_to_vertex>
     void update_node_id_to_vertex_map(Node_id_to_vertex& node_id_to_vertex,
