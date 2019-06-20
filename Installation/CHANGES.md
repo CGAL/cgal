@@ -45,6 +45,11 @@ Release date: September 2019
      `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`, which can be used
      to try and merge together geometrically compatible but combinatorially different halfedges
      that belong to the same boundary cycle.
+-    It is now possible to pass a face-size property map to `CGAL::Polygon_mesh_processing::keep_large_connected_components()`
+     and `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`, enabling users to define
+     how the size of a face is computed (the size of the connected component is the sum of the sizes of its faces).
+     If no property map is passed, the behavior is unchanged to previous versions: the size
+     of a connected component is the number of faces it contains.
 
 ### IO Streams
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
