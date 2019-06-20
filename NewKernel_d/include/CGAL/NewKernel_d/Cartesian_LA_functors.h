@@ -149,7 +149,8 @@ template<class R_> struct Compute_cartesian_coordinate {
 	typedef Tag_true Is_exact;
 	typedef decltype(std::declval<const first_argument_type>()[0]) result_type;
 
-	result_type operator()(first_argument_type const& v,int i)const{
+	template <typename index_type>
+	result_type operator()(first_argument_type const& v,index_type i)const{
 		return v[i];
 	}
 };
