@@ -1,6 +1,19 @@
 Release History
 ===============
 
+Release XXX
+------------
+
+Release date: YYY
+
+### Surface Mesh Topology (new package)
+
+ -   This package allows to compute some topological invariants of
+     surfaces. For now, it is possible to test if two (closed) curves
+     on a combinatorial surface are homotopic. The user can choose
+     between free homotopy and homotopy with fixed endpoints. 
+     A contractibility test is also provided.
+
 Release 4.14
 ------------
 
