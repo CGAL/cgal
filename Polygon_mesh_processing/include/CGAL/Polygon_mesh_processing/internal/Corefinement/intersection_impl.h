@@ -33,7 +33,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_of_coplanar_triangles_3.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_nodes.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersect_triangle_and_segment_3.h>
-#include <CGAL/Polygon_mesh_processing/Non_manifold_features_map.h>
+#include <CGAL/Polygon_mesh_processing/Non_manifold_feature_map.h>
 #include <CGAL/utility.h>
 
 #include <boost/unordered_map.hpp>
@@ -109,8 +109,11 @@ struct Default_surface_intersection_visitor{
   // If we implement a predicate only test, we can get rid of it.
   static const bool Predicates_on_constructions_needed = doing_autorefinement;
   static const bool do_need_vertex_graph = false;
+  void set_non_manifold_feature_map(
+    const TriangleMesh&,
+    const Non_manifold_feature_map<TriangleMesh>&)
+  {}
 };
-
 
 struct Node_id_set {
   typedef std::size_t Node_id;
@@ -197,8 +200,8 @@ class Intersection_of_triangle_meshes
   Node_visitor visitor;
   Faces_to_nodes_map         f_to_node;      //Associate a pair of triangles to their intersection points
   std::vector<Node_id> extra_terminal_nodes; //used only for autorefinement
-  Non_manifold_features_map<TriangleMesh> non_manifold_features_map_1,
-                                          non_manifold_features_map_2;
+  Non_manifold_feature_map<TriangleMesh> non_manifold_feature_map_1,
+                                          non_manifold_feature_map_2;
   CGAL_assertion_code(bool doing_autorefinement;)
 
 // member functions
@@ -206,7 +209,7 @@ class Intersection_of_triangle_meshes
                             const TriangleMesh& tm_e,
                             const VertexPointMap& vpm_f,
                             const VertexPointMap& vpm_e,
-                            const Non_manifold_features_map<TriangleMesh>& non_manifold_features_map,
+                            const Non_manifold_feature_map<TriangleMesh>& non_manifold_feature_map,
                             bool throw_on_self_intersection)
   {
     std::vector<Box> face_boxes, edge_boxes;
@@ -227,7 +230,7 @@ class Intersection_of_triangle_meshes
 
     edge_boxes.reserve(num_edges(tm_e));
     edge_boxes_ptr.reserve(num_edges(tm_e));
-    if (non_manifold_features_map.non_manifold_edges.empty())
+    if (non_manifold_feature_map.non_manifold_edges.empty())
       // general manifold case
       for(edge_descriptor ed : edges(tm_e))
       {
@@ -242,16 +245,16 @@ class Intersection_of_triangle_meshes
         // non-manifold case
         for(edge_descriptor ed : edges(tm_e))
         {
-          std::size_t eid=get(non_manifold_features_map.e_nm_id, ed);
+          std::size_t eid=get(non_manifold_feature_map.e_nm_id, ed);
           halfedge_descriptor h=halfedge(ed,tm_e);
           // insert only one copy of a non-manifold edge
           if (eid!=std::size_t(-1))
           {
-            if (non_manifold_features_map.non_manifold_edges[eid].front()!=ed)
+            if (non_manifold_feature_map.non_manifold_edges[eid].front()!=ed)
               continue;
             else
               // make sure the halfedge used is consistant with stored one
-              h = halfedge(non_manifold_features_map.non_manifold_edges[eid].front(), tm_e);
+              h = halfedge(non_manifold_feature_map.non_manifold_edges[eid].front(), tm_e);
           }
           edge_boxes.push_back( Box(
             get(vpm_e,source(h,tm_e)).bbox() +
@@ -698,7 +701,8 @@ class Intersection_of_triangle_meshes
                                    const TriangleMesh& tm2,
                                    const VertexPointMap& vpm1,
                                    const VertexPointMap& vpm2,
-                                   const Non_manifold_features_map<TriangleMesh>& non_manifold_features_map,
+                                   const Non_manifold_feature_map<TriangleMesh>& nm_features_map_1,
+                                   const Non_manifold_feature_map<TriangleMesh>& nm_features_map_2,
                                    Node_id& current_node)
   {
     typedef std::tuple<Intersection_type, halfedge_descriptor, bool,bool>  Inter_type;
@@ -709,9 +713,9 @@ class Intersection_of_triangle_meshes
     {
       edge_descriptor e_1=it->first;
 
-      std::size_t eid_1 = non_manifold_features_map.non_manifold_edges.empty() ?
+      std::size_t eid_1 = nm_features_map_1.non_manifold_edges.empty() ?
                           std::size_t(-1) :
-                          get(non_manifold_features_map.e_nm_id, e_1);
+                          get(nm_features_map_1.e_nm_id, e_1);
 
       halfedge_descriptor h_1=halfedge(e_1,tm1);
       Face_set& fset=it->second;
@@ -768,9 +772,22 @@ class Intersection_of_triangle_meshes
               add_intersection_point_to_face_and_all_edge_incident_faces(f_2,*it_edge,tm2,tm1,node_id);
               //erase face from the list to test intersection with it_edge
               if ( it_edge==all_edges.begin() )
+              {
                 fset.erase(fset.begin());
+                if (eid_1!=std::size_t(-1))
+                {
+                  for (std::size_t k=1;
+                                   k<nm_features_map_1.non_manifold_edges[eid_1].size();
+                                   ++k)
+                  {
+                    add_intersection_point_to_face_and_all_edge_incident_faces(f_2,halfedge(nm_features_map_1.non_manifold_edges[eid_1][k], tm1),tm2,tm1,node_id);
+                  }
+                }
+              }
               else
               {
+// TODO_NM: removal depends on the non-manifold vertices and not only the current edge!!!!
+
                 typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(*it_edge,tm1));
                 if(it_ets!=tm1_edge_to_tm2_faces.end()) it_ets->second.erase(f_2);
               }
@@ -1140,7 +1157,7 @@ class Intersection_of_triangle_meshes
       }
       else{
         CGAL_assertion(segment.size()==1);
-        isolated_point_seen=true;
+        isolated_point_seen=true; // NOT TRUE CAN BE END POINT OF POLYLINE FALLING ONTO AN INPUT EDGE
       }
     }
 
@@ -1324,15 +1341,17 @@ public:
   }
 
 // setting maps of non manifold features
-  void set_non_manifold_features_map_1(boost::param_not_found){}
-  void set_non_manifold_features_map_2(boost::param_not_found){}
-  void set_non_manifold_features_map_1(const Non_manifold_features_map<TriangleMesh>& m)
+  void set_non_manifold_feature_map_1(boost::param_not_found){}
+  void set_non_manifold_feature_map_2(boost::param_not_found){}
+  void set_non_manifold_feature_map_1(const Non_manifold_feature_map<TriangleMesh>& m)
   {
-    non_manifold_features_map_1=m;
+    non_manifold_feature_map_1=m;
+    visitor.set_non_manifold_feature_map(nodes.tm1, non_manifold_feature_map_1);
   }
-  void set_non_manifold_features_map_2(const Non_manifold_features_map<TriangleMesh>& m)
+  void set_non_manifold_feature_map_2(const Non_manifold_feature_map<TriangleMesh>& m)
   {
-    non_manifold_features_map_2=m;
+    non_manifold_feature_map_2=m;
+    visitor.set_non_manifold_feature_map(nodes.tm2, non_manifold_feature_map_2);
   }
 
   template <class OutputIterator>
@@ -1347,8 +1366,8 @@ public:
     const VertexPointMap& vpm1=nodes.vpm1;
     const VertexPointMap& vpm2=nodes.vpm2;
 
-    filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_features_map_2, throw_on_self_intersection);
-    filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_features_map_1, throw_on_self_intersection);
+    filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection);
+    filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection);
 
     Node_id current_node((std::numeric_limits<Node_id>::max)());
     CGAL_assertion(current_node+1==0);
@@ -1373,8 +1392,9 @@ public:
                                          ? stm_edge_to_ltm_faces
                                          : ltm_edge_to_stm_faces;
 
-    compute_intersection_points(tm1_edge_to_tm2_faces, tm1, tm2, vpm1, vpm2, non_manifold_features_map_1, current_node);
-    compute_intersection_points(tm2_edge_to_tm1_faces, tm2, tm1, vpm2, vpm1, non_manifold_features_map_2, current_node);
+    compute_intersection_points(tm1_edge_to_tm2_faces, tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2, current_node);
+    compute_intersection_points(tm2_edge_to_tm1_faces, tm2, tm1, vpm2, vpm1, non_manifold_feature_map_2, non_manifold_feature_map_1, current_node);
+
     if (!build_polylines){
       visitor.finalize(nodes,tm1,tm2,vpm1,vpm2);
       return output;
@@ -1428,7 +1448,7 @@ public:
 
     //compute intersection points of segments and triangles.
     //build the nodes of the graph and connectivity infos
-    compute_intersection_points(stm_edge_to_ltm_faces, tm, tm, vpm, vpm, current_node);
+    compute_intersection_points(stm_edge_to_ltm_faces, tm, tm, vpm, vpm, non_manifold_feature_map_1, non_manifold_feature_map_1, current_node);
 
     if (!build_polylines){
       visitor.finalize(nodes,tm,tm,vpm,vpm);

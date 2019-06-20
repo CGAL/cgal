@@ -17,6 +17,15 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main()
 {
+// {
+//   Surface_mesh tm;
+//   CGAL::make_triangle (P(0,0,0), P(5,0,0), P(0,5,0), tm);
+//   CGAL::make_triangle (P(1,1,-1), P(2,1,-1), P(1.5,1,1), tm);
+// std::ofstream("/tmp/tm.off") << tm;
+//   PMP::experimental::autorefine(tm);
+// std::ofstream("/tmp/tm_aurefined.off") << tm;
+// }
+
   Surface_mesh tm1;
   CGAL::make_quad(P(0,0,0), P(4,0,0), P(4,4,0), P(0,4,0), tm1);
   CGAL::make_quad(P(0,-4,0), P(4,-4,0), P(4,0,0), P(0,0,0), tm1);
@@ -31,9 +40,21 @@ int main()
   CGAL::make_quad(P(2,3,-2), P(2,-2,-2), P(2,-2,2), P(2,3,2), tm2);
   PMP::triangulate_faces(tm2);
 
-  PMP::Non_manifold_features_map<Surface_mesh> nm_map_1(tm1, get(boost::vertex_point, tm1));
+  PMP::Non_manifold_feature_map<Surface_mesh> nm_map_1(tm1, get(boost::vertex_point, tm1));
 
-  PMP::corefine(tm1, tm2, CGAL::parameters::non_manifold_features_map(nm_map_1));
+  // std::vector< std::vector<P> > polylines;
+  // PMP::surface_intersection(tm1, tm2, std::back_inserter(polylines), CGAL::parameters::non_manifold_feature_map(nm_map_1));
+  //
+  // //dump polylines
+  // std::ofstream output("intersection_polylines.cgal");
+  // for(const std::vector<P>& polyline : polylines)
+  // {
+  //   output << polyline.size() << " ";
+  //   std::copy(polyline.begin(), polyline.end(),std::ostream_iterator<P>(output," "));
+  //   output << "\n";
+  // }
+
+  PMP::corefine(tm1, tm2, CGAL::parameters::non_manifold_feature_map(nm_map_1));
 
   std::ofstream("tm1_corefined.off") << tm1;
   std::ofstream("tm2_corefined.off") << tm2;

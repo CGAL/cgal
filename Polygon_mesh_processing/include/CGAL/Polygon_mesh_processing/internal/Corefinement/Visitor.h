@@ -115,7 +115,8 @@ template< class TriangleMesh,
           class OutputBuilder_ = Default,
           class EdgeMarkMapBind_ = Default,
           class UserVisitor_ = Default,
-          bool doing_autorefinement = false >
+          bool doing_autorefinement = false,
+          bool handle_non_manifold_features = false >
 class Surface_intersection_visitor_for_corefinement{
 //default template parameters
   typedef typename Default::Get<EdgeMarkMapBind_,
@@ -149,6 +150,7 @@ private:
                                            Mesh_to_vertices_on_intersection_map;
    typedef boost::unordered_map<vertex_descriptor,Node_id>    Vertex_to_node_id;
    typedef std::map<TriangleMesh*, Vertex_to_node_id> Mesh_to_vertex_to_node_id;
+   typedef Non_manifold_feature_map<TriangleMesh>               NM_features_map;
 // typedef for the CDT
    typedef typename Intersection_nodes<TriangleMesh,
         VertexPointMap, Predicates_on_constructions_needed>::Exact_kernel    EK;
@@ -173,6 +175,9 @@ private:
   Mesh_to_vertex_to_node_id mesh_to_vertex_to_node_id;
 
   std::map< Node_id,std::set<Node_id> > coplanar_constraints;
+
+// optional data members to handle non-manifold issues
+  std::map<const TriangleMesh*, const NM_features_map*> non_manifold_feature_maps;
 
 //data members that require initialization in the constructor
   UserVisitor& user_visitor;
@@ -216,6 +221,40 @@ public:
     , marks_on_edges(emm)
     , input_with_coplanar_faces(false)
   {}
+
+  void
+  set_non_manifold_feature_map(
+    const TriangleMesh& tm,
+    const NM_features_map& nm)
+  {
+    non_manifold_feature_maps[&tm] = &nm;
+  }
+
+  void copy_nodes_ids_for_non_manifold_features()
+  {
+    for(const std::pair<const TriangleMesh*, const NM_features_map*>& tm_and_nm :
+        non_manifold_feature_maps)
+    {
+      // update nodes on edges
+      On_edge_map& on_edge_map = on_edge[const_cast<TriangleMesh*>(tm_and_nm.first)];
+      std::vector< std::pair<std::size_t, const Node_ids*> > edges_to_copy;
+      for (const std::pair<const edge_descriptor, Node_ids>& ed_and_ids : on_edge_map)
+      {
+        std::size_t eid = get(tm_and_nm.second->e_nm_id, ed_and_ids.first);
+        if (eid!=std::size_t(-1))
+          edges_to_copy.push_back(std::make_pair(eid,&(ed_and_ids.second)));
+      }
+      for(const std::pair<const std::size_t, const Node_ids*>& id_and_nodes : edges_to_copy)
+      {
+        const std::vector<edge_descriptor>& nm_edges =
+          tm_and_nm.second->non_manifold_edges[id_and_nodes.first];
+        CGAL_assertion( on_edge_map.count(nm_edges.front())==1 );
+
+        for (std::size_t i=1; i<nm_edges.size(); ++i)
+          on_edge_map[nm_edges[i]] = *id_and_nodes.second;
+      }
+    }
+  }
 
   template<class Graph_node>
   void annotate_graph(std::vector<Graph_node>& graph)
@@ -561,7 +600,7 @@ public:
           // this condition ensures to consider only graph edges that are in
           // the same triangle
           if ( !points_on_triangle || it_vh!=id_to_CDT_vh.end() ){
-            CGAL_assertion(doing_autorefinement || it_vh!=id_to_CDT_vh.end());
+            CGAL_assertion(doing_autorefinement || handle_non_manifold_features || it_vh!=id_to_CDT_vh.end());
             if (it_vh==id_to_CDT_vh.end()) continue; // needed for autorefinement (interior nodes)
             cdt.insert_constraint(vh,it_vh->second);
             constrained_edges.push_back(std::make_pair(id,id_n));
@@ -601,6 +640,8 @@ public:
                  const VertexPointMap& vpm1,
                  const VertexPointMap& vpm2)
   {
+    copy_nodes_ids_for_non_manifold_features();
+
     nodes.all_nodes_created();
 
     TriangleMesh* tm1_ptr = const_cast<TriangleMesh*>(&tm1);
@@ -824,7 +865,7 @@ public:
           f_vertices[1]=it_fb->second.vertices[1];
           f_vertices[2]=it_fb->second.vertices[2];
           update_face_indices(f_vertices,f_indices,vertex_to_node_id);
-          if (doing_autorefinement)
+          if (doing_autorefinement || handle_non_manifold_features)
             it_fb->second.update_node_id_to_vertex_map(node_id_to_vertex, tm);
         }
         else{
@@ -870,7 +911,7 @@ public:
           {
             id_to_CDT_vh.insert(
                 std::make_pair(f_indices[ik],triangle_vertices[ik]));
-            if (doing_autorefinement)
+            if (doing_autorefinement || handle_non_manifold_features)
               // update the current vertex in node_id_to_vertex
               // to match the one of the face
               node_id_to_vertex[f_indices[ik]]=f_vertices[ik];
@@ -1038,8 +1079,6 @@ public:
         }
       }
     }
-
-    nodes.finalize();
 
     // additional operations
     output_builder(nodes,

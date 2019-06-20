@@ -411,10 +411,10 @@ compute_face_face_intersection(const FaceRange& face_range1,
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor> Box;
-  
+
   CGAL::Bbox_3 b1 = CGAL::Polygon_mesh_processing::bbox(tm1, np1),
                b2 = CGAL::Polygon_mesh_processing::bbox(tm2, np2);
-  
+
   if(!CGAL::do_overlap(b1, b2))
   {
     return out;
@@ -661,7 +661,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   using boost::get_param;
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-  
+
   CGAL::Bbox_3 b1,b2;
   b1 = CGAL::Polygon_mesh_processing::bbox(tm, np);
   for(std::size_t i =0; i< polyline_range.size(); ++i)
@@ -669,10 +669,10 @@ compute_face_polylines_intersection(const FaceRange& face_range,
     b2 += CGAL::bbox_3(polyline_range[i].begin(),
                        polyline_range[i].end());
   }
-  
+
   if(!CGAL::do_overlap(b1,b2))
     return out;
-  
+
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
@@ -887,7 +887,7 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
     b2 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes2.reserve(polylines_size);
-  
+
   if(!CGAL::do_overlap(b1,b2))
     return out;
   std::size_t range_size = std::distance( boost::begin(polylines1), boost::end(polylines1) );
@@ -1715,6 +1715,11 @@ surface_intersection(const TriangleMesh& tm1,
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm>
     functor(tm1, tm2, vpm1, vpm2);
+
+  // Fill non-manifold feature maps if provided
+  functor.set_non_manifold_feature_map_1(boost::get_param(np1, internal_np::non_manifold_feature_map));
+  functor.set_non_manifold_feature_map_2(boost::get_param(np2, internal_np::non_manifold_feature_map));
+
   return functor(polyline_output, throw_on_self_intersection, true);
 }
 

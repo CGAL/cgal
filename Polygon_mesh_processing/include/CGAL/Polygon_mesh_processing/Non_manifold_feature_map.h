@@ -20,15 +20,15 @@
 // Author(s)     : Sebastien Loriot
 
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_NON_MANIFOLD_FEATURES_MAP
-#define CGAL_POLYGON_MESH_PROCESSING_NON_MANIFOLD_FEATURES_MAP
+#ifndef CGAL_POLYGON_MESH_PROCESSING_NON_MANIFOLD_FEATURE_MAP
+#define CGAL_POLYGON_MESH_PROCESSING_NON_MANIFOLD_FEATURE_MAP
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
 //TODO: right now the base name parameter mechanism will make a deep copy, we probably want to avoid that
 template <class PolygonMesh>
-struct Non_manifold_features_map
+struct Non_manifold_feature_map
 {
   typedef boost::graph_traits<PolygonMesh> Graph_traits;
   typedef typename Graph_traits::edge_descriptor edge_descriptor;
@@ -38,11 +38,11 @@ struct Non_manifold_features_map
   Edge_to_nm_id e_nm_id;
   std::vector< std::vector<edge_descriptor> > non_manifold_edges;
 
-  Non_manifold_features_map()
+  Non_manifold_feature_map()
   {}
 
   template <class Vpm>
-  Non_manifold_features_map(PolygonMesh& pm, Vpm vpm)
+  Non_manifold_feature_map(PolygonMesh& pm, Vpm vpm)
     : e_nm_id(get(Edge_to_id_tag(), pm))
   {
     typedef typename boost::property_traits<Vpm>::value_type Point_3;
@@ -66,7 +66,6 @@ struct Non_manifold_features_map
     {
       if (p.second.size()!=1)
       {
-        std::cout << "Found a non-manifold edge, nb representatives: " << p.second.size() << "\n";
         for (edge_descriptor ed : p.second)
           put(e_nm_id, ed, non_manifold_edges.size());
         non_manifold_edges.resize(non_manifold_edges.size()+1);
