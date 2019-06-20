@@ -57,7 +57,7 @@ list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_rvalue_references has_cxx_rvalues)
 list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_variadic_templates has_cxx_variadic)
 
 if(has_cxx_rvalues LESS 0 OR has_cxx_variadic LESS 0)
-  message(STATUS "NOTICE: LAS/PLY IO examples require a C++11 compiler and will not be compiled.")
+  message(STATUS "NOTICE : LAS/PLY IO examples require a C++11 compiler and will not be compiled.")
 else()
   set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
   
@@ -72,4 +72,18 @@ else()
   else()
     message(STATUS "NOTICE : the LAS IO plugin needs LAS libraries and will not be compiled.")
   endif()
+endif()
+
+find_path(3MF_INCLUDE_DIR
+  NAMES Model/COM/NMR_DLLInterfaces.h
+  DOC "Path to lib3MF headers"
+  )
+find_library(3MF_LIBRARIES NAMES 3MF DOC "Path to the lib3MF library")
+
+if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR)
+  include_directories(${3MF_INCLUDE_DIR})
+  polyhedron_demo_plugin(3mf_io_plugin 3mf_io_plugin KEYWORDS IO)
+  target_link_libraries(3mf_io_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
+else()
+  message(STATUS "NOTICE : The 3mf_io_plugin requires the lib3MF library, and will not be compiled.")
 endif()

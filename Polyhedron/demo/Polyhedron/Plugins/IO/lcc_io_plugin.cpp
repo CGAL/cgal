@@ -14,7 +14,7 @@ class LCC_io_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "lcc_io_plugin.json")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "lcc_io_plugin.json")
   
 public:
   bool isDefaultLoader(const CGAL::Three::Scene_item *item) const 
@@ -33,13 +33,14 @@ public:
         "3-map files (*.3map)"; 
   }
   
-  bool canLoad() const { return true; }
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo){
+  bool canLoad(QFileInfo) const { return true; }
+  QList<CGAL::Three::Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true){
     // Open file
     std::ifstream ifs(fileinfo.filePath().toUtf8());
     if(!ifs) {
       std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-      return nullptr;
+      ok = false;
+      return QList<CGAL::Three::Scene_item*>();
     }
     
     Scene_lcc_item::LCC lcc;
@@ -53,17 +54,21 @@ public:
     }
     if(!res)
     {
-      return nullptr;
+      ok = false;
+      return QList<CGAL::Three::Scene_item*>();
     }
     Scene_lcc_item* new_item = new Scene_lcc_item(lcc);
     new_item->setName(fileinfo.fileName());
     new_item->invalidateOpenGLBuffers();
-    return new_item;
+    if(add_to_scene)
+      CGAL::Three::Three::scene()->addItem(new_item);
+    ok = true;
+    return QList<CGAL::Three::Scene_item*>()<<new_item;
   }
   
   
   bool canSave(const CGAL::Three::Scene_item*){return false;}
-  bool save(const CGAL::Three::Scene_item*, QFileInfo){
+  bool save(QFileInfo, QList<CGAL::Three::Scene_item*>& ){
     return false;
   }
   

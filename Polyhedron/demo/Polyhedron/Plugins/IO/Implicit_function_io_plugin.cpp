@@ -42,7 +42,6 @@
 using namespace CGAL::Three;
 class Io_implicit_function_plugin :
   public QObject, 
-  // public Polyhedron_demo_plugin_interface,
   protected Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
