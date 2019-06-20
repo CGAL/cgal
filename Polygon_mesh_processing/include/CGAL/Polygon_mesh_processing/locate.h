@@ -895,7 +895,7 @@ is_on_mesh_border(const typename Location_traits<TriangleMesh>::Face_location& l
 /// \ingroup PMP_locate_grp
 ///
 /// \brief Returns the location of the given vertex `vd` as a location,
-///        that is an ordered pair specifying a face containing the location
+///        that is an ordered pair specifying a face incident to `vd`
 ///        and the barycentric coordinates of the vertex `vd` in that face.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
@@ -910,6 +910,8 @@ is_on_mesh_border(const typename Location_traits<TriangleMesh>::Face_location& l
 /// \param vd a vertex of `tm`
 /// \param tm a triangulated surface mesh
 ///
+/// \pre `vd` is not an isolated vertex
+///
 template <typename TriangleMesh>
 typename Location_traits<TriangleMesh>::Face_location
 locate_in_face(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
@@ -919,6 +921,7 @@ locate_in_face(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor     face_descriptor;
 
   typedef typename Location_traits<TriangleMesh>::FT                      FT;
+  typedef typename Location_traits<TriangleMesh>::Face_location           Face_location;
 
   halfedge_descriptor he = halfedge(vd, tm);
 
@@ -938,6 +941,10 @@ locate_in_face(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
 
   CGAL_assertion(target(he, tm) == vd);
   CGAL_assertion(fd != boost::graph_traits<TriangleMesh>::null_face());
+
+  // isolated vertex
+  if(fd == boost::graph_traits<TriangleMesh>::null_face())
+    return Face_location();
 
   FT coords[3] = { FT(0), FT(0), FT(0) };
   he = next(he, tm); // so that source(he, tm) == vd and it's simpler to handle 'index_in_face'
@@ -966,6 +973,8 @@ locate_in_face(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
 /// \param fd a face of `tm`
 /// \param tm a triangulated surface mesh
 ///
+/// \pre `fd` is not the null face
+///
 template <typename TriangleMesh>
 typename Location_traits<TriangleMesh>::Face_location
 locate_in_face(const typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
@@ -973,6 +982,8 @@ locate_in_face(const typename boost::graph_traits<TriangleMesh>::vertex_descript
                const TriangleMesh& tm)
 {
   typedef typename Location_traits<TriangleMesh>::FT               FT;
+
+  CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
 
   FT coords[3] = { FT(0), FT(0), FT(0) };
   std::size_t vertex_local_index = vertex_index_in_face(vd, fd, tm);
@@ -1062,6 +1073,8 @@ locate_in_face(const typename boost::graph_traits<TriangleMesh>::halfedge_descri
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
+/// \pre `fd` is not the null face
+///
 template <typename TriangleMesh, typename NamedParameters>
 typename Location_traits<TriangleMesh>::Face_location
 locate_in_face(const typename Location_traits<TriangleMesh, NamedParameters>::Point& query,
@@ -1083,6 +1096,8 @@ locate_in_face(const typename Location_traits<TriangleMesh, NamedParameters>::Po
   Geom_traits gt = choose_param(get_param(np, internal_np::geom_traits), Geom_traits());
 
   FT snap_tolerance = choose_param(get_param(np, internal_np::snapping_tolerance), 0);
+
+  CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
 
   vertex_descriptor vd0 = source(halfedge(fd, tm), tm);
   vertex_descriptor vd1 = target(halfedge(fd, tm), tm);
