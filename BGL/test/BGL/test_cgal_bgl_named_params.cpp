@@ -43,11 +43,11 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::METIS_options).v == 800000001);
   assert(get_param(np, CGAL::internal_np::vertex_partition_id).v == 800000002);
   assert(get_param(np, CGAL::internal_np::face_partition_id).v == 800000003);
-  
+
   assert(get_param(np, CGAL::internal_np::vertex_to_vertex_output_iterator).v == 800000004);
   assert(get_param(np, CGAL::internal_np::halfedge_to_halfedge_output_iterator).v == 800000005);
   assert(get_param(np, CGAL::internal_np::face_to_face_output_iterator).v == 800000006);
-  
+
   assert(get_param(np, CGAL::internal_np::vertex_to_vertex_map).v == 800000007);
   assert(get_param(np, CGAL::internal_np::halfedge_to_halfedge_map).v == 800000008);
   assert(get_param(np, CGAL::internal_np::face_to_face_map).v == 800000009);
@@ -88,6 +88,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::require_same_orientation).v == 49);
   assert(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface).v == 50);
   assert(get_param(np, CGAL::internal_np::face_size_map).v == 52);
+  assert(get_param(np, CGAL::internal_np::non_manifold_feature_map).v == 51);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -169,6 +170,7 @@ void test(const NamedParameters& np)
   check_same_type<49>(get_param(np, CGAL::internal_np::require_same_orientation));
   check_same_type<50>(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface));
   check_same_type<52>(get_param(np, CGAL::internal_np::face_size_map));
+  check_same_type<51>(get_param(np, CGAL::internal_np::non_manifold_feature_map));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -249,6 +251,7 @@ int main()
                          .clip_volume(A<44>(44))
                          .use_compact_clipper(A<45>(45))
                          .use_bool_op_to_clip_surface(A<50>(50))
+                         .non_manifold_feature_map(A<51>(51))
                          .apply_per_connected_component(A<46>(46))
                          .output_iterator(A<47>(47))
                          .erase_all_duplicates(A<48>(48))

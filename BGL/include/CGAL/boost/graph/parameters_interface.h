@@ -83,7 +83,8 @@ CGAL_add_named_parameter(output_iterator_t, output_iterator, output_iterator)
 CGAL_add_named_parameter(erase_all_duplicates_t, erase_all_duplicates, erase_all_duplicates)
 CGAL_add_named_parameter(require_same_orientation_t, require_same_orientation, require_same_orientation)
 CGAL_add_named_parameter(face_size_map_t, face_size_map, face_size_map)
-CGAL_add_named_parameter(non_manifold_features_map_t, non_manifold_features_map, non_manifold_features_map)
+CGAL_add_named_parameter(non_manifold_feature_map_t, non_manifold_feature_map, non_manifold_feature_map)
+
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
