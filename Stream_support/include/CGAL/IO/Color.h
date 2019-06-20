@@ -28,6 +28,11 @@
 
 #include <CGAL/config.h>
 #include <CGAL/array.h>
+#include <algorithm>
+#include <cstdlib>
+#include <cmath>
+
+
 
 namespace CGAL {
 
