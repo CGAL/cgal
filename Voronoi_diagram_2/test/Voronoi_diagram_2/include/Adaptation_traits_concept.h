@@ -22,7 +22,6 @@
 #ifndef CGAL_ADAPTATION_TRAITS_CONCEPT_H
 #define CGAL_ADAPTATION_TRAITS_CONCEPT_H 1
 
-#include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>

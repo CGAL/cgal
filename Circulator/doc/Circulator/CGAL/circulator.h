@@ -543,7 +543,7 @@ is `true` if the range `[i, j)` is empty, `false` otherwise.
 In order to write algorithms that work with iterator ranges as well as
 with circulator ranges we have to consider the difference of
 representing an empty range. For iterators this is the range `[i,i)`,
-while for circulators it would be `c == NULL`, the empty sequence test.
+while for circulators it would be `c == nullptr`, the empty sequence test.
 The function `is_empty_range()` provides the necessary generic test
 which accepts an iterator range or a circulator range and says whether
 the range is empty or not.
@@ -640,7 +640,7 @@ Circulator_tag query_circulator_or_iterator( const C& c);
 In order to write algorithms that work with iterator ranges as well as
 with circulator ranges we have to consider the difference of
 representing an empty range. For iterators this is the range `[i,i)`,
-while for circulators it would be `c == NULL`, the empty sequence test.
+while for circulators it would be `c == nullptr`, the empty sequence test.
 The function `is_empty_range()` provides the necessary generic test
 which accepts an iterator range or a circulator range and says whether
 the range is empty or not.

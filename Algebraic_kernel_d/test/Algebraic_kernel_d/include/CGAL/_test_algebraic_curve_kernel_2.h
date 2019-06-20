@@ -21,10 +21,12 @@
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
-#include <cassert>
+#include <CGAL/use.h>
+#include <CGAL/IO/io.h>
 
-//#include <CGAL/_test_basic.h>
+#include <cassert>
+#include <vector>
+
 
 #ifndef CGAL_TEST_ALGEBRAIC_CURVE_KERNEL_2_H
 #define CGAL_TEST_ALGEBRAIC_CURVE_KERNEL_2_H

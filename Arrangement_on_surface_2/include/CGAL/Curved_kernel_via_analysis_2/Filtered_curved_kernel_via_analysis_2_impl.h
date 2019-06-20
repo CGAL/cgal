@@ -511,7 +511,7 @@ public:
 };
 
 
-//! checks wether and how two arcs are intersection - with first filtering
+//! checks whether and how two arcs are intersection - with first filtering
 template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Intersect_2 : 
         public FunctorBase::Intersect_2 {

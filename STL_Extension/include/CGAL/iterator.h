@@ -386,12 +386,12 @@ public:
   Circulator  current_circulator() const { return nt;}
 
   Iterator  current_iterator() const { return nt;}
-  bool operator==( Nullptr_t p) const {
+  bool operator==( std::nullptr_t p) const {
     CGAL_USE(p);
     CGAL_assertion( p == 0);
     return empty;
   }
-  bool  operator!=( Nullptr_t p) const { return !(*this == p); }
+  bool  operator!=( std::nullptr_t p) const { return !(*this == p); }
   bool  operator==( const Self& i) const { return (empty && i.empty) ||( nt == i.nt); }
   bool  operator!=( const Self& i) const { return !(*this == i); }
   reference operator*()  const { return *nt; }
@@ -669,10 +669,10 @@ class Join_input_iterator_1
 
 public:
   typedef typename std::iterator_traits<I1>::iterator_category  iterator_category;
-  typedef typename cpp11::result_of<Op(arg_type)>::type         value_type;
+  typedef std::decay_t<typename cpp11::result_of<Op(arg_type)>::type> value_type;
   typedef typename std::iterator_traits<I1>::difference_type    difference_type;
-  typedef value_type*                                           pointer;
-  typedef value_type&                                           reference;
+  typedef value_type const*                                     pointer;
+  typedef value_type const&                                     reference;
 
 protected:
   I1 i1;

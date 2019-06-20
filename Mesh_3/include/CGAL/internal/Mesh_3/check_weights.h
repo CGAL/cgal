@@ -42,8 +42,7 @@ template<typename Triangulation, typename MeshDomain>
 bool has_non_protecting_weights(const Triangulation& tr,
                                 const MeshDomain&)
 {
-  bool with_features =
-    boost::is_same<Has_features<MeshDomain>, CGAL::Tag_true>::value;
+  const bool with_features = Has_features<MeshDomain>::value;
 
   typedef typename Triangulation::FT                FT;
   typedef typename Triangulation::Weighted_point    Weighted_point;
@@ -59,7 +58,12 @@ bool has_non_protecting_weights(const Triangulation& tr,
     const Weighted_point& vv_wp = tr.point(vv);
     if (cwsr(vv_wp, FT(0)) != CGAL::EQUAL)
     {
-      if (with_features && vv->in_dimension() > 1)
+      if (with_features)
+      {
+        if (vv->in_dimension() > 1)
+          return true;
+      }
+      else
         return true;
     }
   }

@@ -203,7 +203,7 @@ public:
   typedef internal::Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
 
   Triangulation_ds_edge_iterator_3()
-    : _tds(NULL)
+    : _tds(nullptr)
     {
       edge.second = 0;
       edge.third = 1;

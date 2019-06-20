@@ -46,8 +46,8 @@ class chained_map_elem
 template <typename T, typename Allocator>
 class chained_map
 {
-   const std::size_t NULLKEY; 
-   const std::size_t NONNULLKEY;
+   const std::size_t nullptrKEY; 
+   const std::size_t NONnullptrKEY;
 
    chained_map_elem<T> STOP;
 
@@ -144,7 +144,7 @@ inline T& chained_map<T, Allocator>::access(std::size_t x)
      return p->i;
   }
   else {
-    if ( p->k == NULLKEY ) {
+    if ( p->k == nullptrKEY ) {
       p->k = x;
       init_inf(p->i);  // initializes p->i to xdef
       old_index = x;
@@ -173,16 +173,16 @@ void chained_map<T, Allocator>::init_table(std::size_t t)
 
   for (chained_map_item p = table; p < free; p++) 
   { p->succ = &STOP; 
-    p->k = NULLKEY;
+    p->k = nullptrKEY;
   }
-  table->k = NONNULLKEY;
+  table->k = NONnullptrKEY;
 }
 
 
 template <typename T, typename Allocator>
 inline void chained_map<T, Allocator>::insert(std::size_t x, T y)
 { chained_map_item q = HASH(x);                                    
-  if ( q->k == NULLKEY ) {      
+  if ( q->k == nullptrKEY ) {      
     q->k = x;                                                  
     q->i = y; 
   } else { 
@@ -211,7 +211,7 @@ void chained_map<T, Allocator>::rehash()
 
   for(p = old_table + 1; p < old_table_mid; p++)
   { std::size_t x = p->k;
-    if ( x != NULLKEY ) // list p is non-empty
+    if ( x != nullptrKEY ) // list p is non-empty
     { chained_map_item q = HASH(x);  
       q->k = x;
       q->i = p->i;
@@ -275,7 +275,7 @@ T& chained_map<T, Allocator>::access(chained_map_item p, std::size_t x)
     p = HASH(x);
   }
 
-  if (p->k == NULLKEY)
+  if (p->k == nullptrKEY)
   { p->k = x;
     init_inf(p->i);  // initializes p->i to xdef
     return p->i;
@@ -292,7 +292,7 @@ T& chained_map<T, Allocator>::access(chained_map_item p, std::size_t x)
 
 template <typename T, typename Allocator>
 chained_map<T, Allocator>::chained_map(std::size_t n) : 
-  NULLKEY(0), NONNULLKEY(1), old_table(0)
+  nullptrKEY(0), NONnullptrKEY(1), old_table(0)
 { 
   if (n < 512)
     init_table(512); 
@@ -306,13 +306,13 @@ chained_map<T, Allocator>::chained_map(std::size_t n) :
 
 template <typename T, typename Allocator>
 chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D) : 
-  NULLKEY(0), NONNULLKEY(1), old_table(0)
+  nullptrKEY(0), NONnullptrKEY(1), old_table(0)
 { 
   init_table(D.table_size);
   STOP.i = D.STOP.i; // xdef
 
   for(chained_map_item p = D.table + 1; p < D.free; p++) 
-  { if (p->k != NULLKEY || p >= D.table + D.table_size)
+  { if (p->k != nullptrKEY || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //D.copy_inf(p->i);  // see chapter Implementation
     }
@@ -333,7 +333,7 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
   STOP.i = D.STOP.i; // xdef
 
   for(chained_map_item p = D.table + 1; p < D.free; p++) 
-  { if (p->k != NULLKEY || p >= D.table + D.table_size)
+  { if (p->k != nullptrKEY || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //copy_inf(p->i);    // see chapter Implementation
     }
@@ -344,7 +344,7 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
 template <typename T, typename Allocator>
 void chained_map<T, Allocator>::clear_entries() 
 { for(chained_map_item p = table + 1; p < free; p++)
-    if (p->k != NULLKEY || p >= table + table_size) 
+    if (p->k != nullptrKEY || p >= table + table_size) 
       p->i = T();  
 }
 
@@ -380,7 +380,7 @@ template <typename T, typename Allocator>
 typename chained_map<T, Allocator>::chained_map_item 
 chained_map<T, Allocator>::next_item(chained_map_item it) const 
 { if (it == 0) return 0;
-  do it++; while (it < table + table_size && it->k == NULLKEY);
+  do it++; while (it < table + table_size && it->k == nullptrKEY);
   return (it < free ? it : 0);
 }
 
@@ -389,7 +389,7 @@ void chained_map<T, Allocator>::statistics() const
 { std::cout << "table_size: " << table_size <<"\n";
   std::size_t n = 0;
   for (chained_map_item p = table + 1; p < table + table_size; p++)
-     if (p ->k != NULLKEY) n++;
+     if (p ->k != nullptrKEY) n++;
   std::size_t used_in_overflow = free - (table + table_size );
   n += used_in_overflow;
   std::cout << "number of entries: " << n << "\n";

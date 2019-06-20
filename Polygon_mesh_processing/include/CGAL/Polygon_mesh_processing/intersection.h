@@ -1471,7 +1471,7 @@ struct Mesh_callback
       report_overlap(report_overlap), nps(nps), gt(gt)
   {
     std::size_t size = std::distance(meshes.begin(), meshes.end());
-    trees = std::vector<AABBTree*>(size, NULL);
+    trees = std::vector<AABBTree*>(size, nullptr);
     points_of_interest.resize(size);
   }
 

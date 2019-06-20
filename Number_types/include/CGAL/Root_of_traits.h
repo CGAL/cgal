@@ -33,11 +33,12 @@ namespace CGAL {
 template < typename NT >
 struct Root_of_traits;
 
-template < class NT >
+template < class NT1, class NT2, class NT3 >
 inline
-typename Root_of_traits< NT >::Root_of_2
-make_root_of_2(const NT &a, const NT &b, const NT &c)
+auto
+make_root_of_2(const NT1 &a, const NT2 &b, const NT3 &c)
 {
+    using NT = std::common_type_t<NT1, NT2, NT3>;
     typename Root_of_traits<NT>::Make_root_of_2 make_root_of_2;
     return make_root_of_2(a,b,c);
 }

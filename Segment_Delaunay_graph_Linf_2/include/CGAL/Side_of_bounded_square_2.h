@@ -65,8 +65,8 @@ namespace CGAL {
              const Point_2 &pt_p, const Point_2 &pt_q, const Point_2 &pt_r)
       const
       {
-        FT const * min_p (NULL);
-        FT const * max_p (NULL);
+        FT const * min_p (nullptr);
+        FT const * max_p (nullptr);
         bool samepq = false;
         bool samepr = false;
         bool sameqr = false;
@@ -156,8 +156,8 @@ namespace CGAL {
             }
           }
         }
-        CGAL_assertion(min_p != NULL);
-        CGAL_assertion(max_p != NULL);
+        CGAL_assertion(min_p != nullptr);
+        CGAL_assertion(max_p != nullptr);
         Point_2 const * pt_min_p =
           (min_p == &p)? &pt_p : (min_p == &q)? &pt_q : &pt_r;
         Point_2 const * pt_max_p =
@@ -219,8 +219,8 @@ namespace CGAL {
         const bool samex_pq = std::get<2>(tupx);
         const bool samex_pr = std::get<3>(tupx);
         const bool samex_qr = std::get<4>(tupx);
-        CGAL_assertion(lft_p != NULL);
-        CGAL_assertion(rgt_p != NULL);
+        CGAL_assertion(lft_p != nullptr);
+        CGAL_assertion(rgt_p != nullptr);
 
         //compute the minimum y and maximum y
         const FT py (p.y()), qy (q.y()), ry (r.y());
@@ -230,8 +230,8 @@ namespace CGAL {
         const bool samey_pq = std::get<2>(tupy);
         const bool samey_pr = std::get<3>(tupy);
         const bool samey_qr = std::get<4>(tupy);
-        CGAL_assertion(bot_p != NULL);
-        CGAL_assertion(top_p != NULL);
+        CGAL_assertion(bot_p != nullptr);
+        CGAL_assertion(top_p != nullptr);
 
         CGAL_SDG_DEBUG(std::cout << "debug bs before mirror"
             << "  lft=" << *lft_p << "  rgt=" << *rgt_p
@@ -250,9 +250,9 @@ namespace CGAL {
         FT dymirror;
         if (exist_two_with_same_x != exist_two_with_same_y) {
           if (exist_two_with_same_x) {
-            FT const *s1 = NULL;
-            FT const *s2 = NULL;
-            FT const *dx = NULL;
+            FT const *s1 = nullptr;
+            FT const *s2 = nullptr;
+            FT const *dx = nullptr;
             if (samex_pq) {
               s1 = &py;
               s2 = &qy;
@@ -290,9 +290,9 @@ namespace CGAL {
             }
           } else {
             CGAL_assertion( exist_two_with_same_y );
-            FT const *s1 = NULL;
-            FT const *s2 = NULL;
-            FT const *dy = NULL;
+            FT const *s1 = nullptr;
+            FT const *s2 = nullptr;
+            FT const *dy = nullptr;
             if (samey_pq) {
               s1 = &px;
               s2 = &qx;
@@ -308,7 +308,7 @@ namespace CGAL {
               s2 = &rx;
               dy = &px;
             }
-            CGAL_assertion( dy != NULL );
+            CGAL_assertion( dy != nullptr );
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same y"
                 << std::endl;);
             if ( (lft_p == dy) || (rgt_p == dy) ) {
@@ -373,9 +373,9 @@ namespace CGAL {
           else {
             CGAL_assertion( is_bot_input && is_top_input );
             Point_2 const * const pt_lft_p =
-              (is_lft_input)? std::get<5>(tupx) : NULL;
+              (is_lft_input)? std::get<5>(tupx) : nullptr;
             Point_2 const * const pt_rgt_p =
-              (is_rgt_input)? std::get<6>(tupx) : NULL;
+              (is_rgt_input)? std::get<6>(tupx) : nullptr;
             Point_2 const * const pt_top_p = std::get<6>(tupy);
             if ((pt_top_p != pt_lft_p) && (pt_top_p != pt_rgt_p)) {
               // lower the bottom side
@@ -422,9 +422,9 @@ namespace CGAL {
             CGAL_assertion( is_lft_input && is_rgt_input );
             Point_2 const * const pt_lft_p = std::get<5>(tupx);
             Point_2 const * const pt_bot_p =
-              (is_bot_input) ? std::get<5>(tupy) : NULL;
+              (is_bot_input) ? std::get<5>(tupy) : nullptr;
             Point_2 const * const pt_top_p =
-              (is_top_input) ? std::get<6>(tupy) : NULL;
+              (is_top_input) ? std::get<6>(tupy) : nullptr;
             // find the movable side or sides of the rectangle
             if ((pt_lft_p != pt_bot_p) && (pt_lft_p != pt_top_p)) {
               // augment the right side

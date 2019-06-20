@@ -341,6 +341,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   connect(&operationSearchBar, &QLineEdit::textChanged,
           this, &MainWindow::filterOperations);
   loadPlugins();
+  accepted_keywords.clear();
 
   // Setup the submenu of the View menu that can toggle the dockwidgets
   Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
@@ -1000,7 +1001,8 @@ void MainWindow::reloadItem() {
     QFileInfo fileinfo(filename);
 
     CGAL::Three::Scene_item* new_item = loadItem(fileinfo, fileloader);
-
+    if(!new_item)
+      return;
     new_item->setName(item->name());
     new_item->setColor(item->color());
     new_item->setRenderingMode(item->renderingMode());
@@ -1107,7 +1109,12 @@ void MainWindow::open(QString filename)
       if ( !io_plugin->canLoad() ) continue;
       all_items << io_plugin->name();
       if ( file_matches_filter(io_plugin->loadNameFilters(), filename.toLower()) )
-        selected_items << io_plugin->name();
+      {
+        if(io_plugin->isDefaultLoader(fileinfo.completeSuffix()))
+          selected_items.prepend(io_plugin->name());
+        else
+          selected_items << io_plugin->name();
+      }
     }
   }
   else
@@ -1128,7 +1135,7 @@ void MainWindow::open(QString filename)
   default:
     load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
   }
-  viewer->makeCurrent();
+  //viewer->makeCurrent();
   if(!ok || load_pair.first.isEmpty()) { return; }
 
   if (load_pair.second)
@@ -1851,7 +1858,8 @@ void MainWindow::on_actionLoad_triggered()
   dialog.setFileMode(QFileDialog::ExistingFiles);
 
   if(dialog.exec() != QDialog::Accepted) { return; }
-  viewer->update();
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
+    v->update();
   FilterPluginMap::iterator it =
       filterPluginMap.find(dialog.selectedNameFilter());
 
@@ -2007,7 +2015,8 @@ void MainWindow::on_actionSaveAs_triggered()
     {
       filename = filename.append(filter_ext);
     }
-    viewer->update();
+    for(auto v : CGAL::QGLViewer::QGLViewerPool())
+      v->update();
     save(filename, item);
   }
 }
@@ -2290,7 +2299,7 @@ void MainWindow::setBackgroundColor()
 
 void MainWindow::setLighting_triggered()
 {
-  viewer->setLighting();
+  qobject_cast<Viewer*>(CGAL::Three::Three::activeViewer())->setLighting();
 }
 
 void MainWindow::viewerShowObject()
@@ -2340,14 +2349,8 @@ void MainWindow::on_actionRecenterScene_triggered()
   bbox_need_update = true;
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
-  {
-    if(v == NULL)
-      continue;
-    updateViewerBbox(static_cast<Viewer*>(v), true, min, max);
-    v->camera()->interpolateToFitScene();
-  }
-  viewer->camera()->showEntireScene();
+  updateViewerBbox(static_cast<Viewer*>(activeViewer()), true, min, max);
+  activeViewer()->showEntireScene();
 }
 
 void MainWindow::on_actionLoadPlugin_triggered()
@@ -2539,7 +2542,8 @@ void MainWindow::setExpanded(QModelIndex index)
 
 void MainWindow::setMaxTextItemsDisplayed(int val)
 {
-  viewer->textRenderer()->setMax(val);
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
+    qobject_cast<CGAL::Three::Viewer_interface*>(v)->textRenderer()->setMax(val);
 }
 
 void MainWindow::resetHeader()
@@ -2598,7 +2602,8 @@ void MainWindow::colorItems()
   {
     scene->item(id)->setColor(colors_[++nb_item]);
   }
-  viewer->update();
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
+    v->update();
 }
 
 
@@ -3018,9 +3023,6 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   actionOrtho->setCheckable(true);
   actionOrtho->setChecked(false);
   viewMenu->addAction(actionOrtho);
-  QAction* actionLight = new QAction("L&ighting...",this);
-  actionLight->setObjectName("actionLight");
-  viewMenu->addAction(actionLight);
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);

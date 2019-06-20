@@ -67,7 +67,6 @@ if ( CGAL_FOUND )
       endif()
 
 
-  if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
     # Compilable examples
     create_single_source_cgal_program( "mesh_hybrid_mesh_domain.cpp" )
     create_single_source_cgal_program( "mesh_implicit_sphere.cpp" )
@@ -135,10 +134,6 @@ if ( CGAL_FOUND )
         CGAL_target_use_TBB(${target})
       endif()
     endforeach()
-
-  else()
-    message(STATUS "NOTICE: This program requires Boost >= 1.34.1, and will not be compiled.")
-  endif()
 
 else()
   message(STATUS "This program requires the CGAL library, and will not be compiled.")

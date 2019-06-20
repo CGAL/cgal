@@ -191,7 +191,7 @@ public:
 
   Td_active_vertex()
   {
-    PTR = new Data(Traits::empty_vtx_handle(), Traits::empty_he_handle(), NULL);
+    PTR = new Data(Traits::empty_vtx_handle(), Traits::empty_he_handle(), nullptr);
   }
 
   /*! Constructor given Vertex & Halfedge handles. */

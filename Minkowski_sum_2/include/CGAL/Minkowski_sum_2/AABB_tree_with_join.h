@@ -429,7 +429,7 @@ public:
 			if( size() > 1 ) {
 				delete [] m_p_root_node;
 			}
-			m_p_root_node = NULL;
+			m_p_root_node = nullptr;
     }
 
 		// clears internal KD tree
@@ -437,9 +437,9 @@ public:
 		{
 			if ( m_search_tree_constructed )
 			{
-				CGAL_assertion( m_p_search_tree!=NULL );
+				CGAL_assertion( m_p_search_tree!=nullptr );
 				delete m_p_search_tree;
-				m_p_search_tree = NULL;
+				m_p_search_tree = nullptr;
 				m_search_tree_constructed = false;
 				m_default_search_tree_constructed = false;
                         }
@@ -554,8 +554,8 @@ public:
   AABB_tree_with_join<Tr>::AABB_tree_with_join(const Tr& traits)
     : m_traits(traits)
     , m_primitives()
-    , m_p_root_node(NULL)
-    , m_p_search_tree(NULL)
+    , m_p_root_node(nullptr)
+    , m_p_search_tree(nullptr)
     , m_search_tree_constructed(false)
     , m_default_search_tree_constructed(false)
     , m_need_build(false)
@@ -568,8 +568,8 @@ public:
                            T ... t)
 		: m_traits()
     , m_primitives()
-		, m_p_root_node(NULL)
-		, m_p_search_tree(NULL)
+		, m_p_root_node(nullptr)
+		, m_p_search_tree(nullptr)
 		, m_search_tree_constructed(false)
     , m_default_search_tree_constructed(false)
     , m_need_build(false)
@@ -626,10 +626,10 @@ public:
 
 			// allocates tree nodes
 			m_p_root_node = new Node[m_primitives.size()-1]();
-			if(m_p_root_node == NULL)
+			if(m_p_root_node == nullptr)
 			{
 				std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
-				CGAL_assertion(m_p_root_node != NULL);
+				CGAL_assertion(m_p_root_node != nullptr);
 				m_primitives.clear();
 				clear();
 			}
@@ -657,7 +657,7 @@ public:
 		ConstPointIterator beyond) const
 	{
 		m_p_search_tree = new Search_tree(first, beyond);
-		if(m_p_search_tree != NULL)
+		if(m_p_search_tree != nullptr)
 		{
 			m_search_tree_constructed = true;
 			return true;

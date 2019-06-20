@@ -322,9 +322,9 @@ public:
     //We know that none of the segment is degenerate
     Object o = intersection(s1_2,s2_2);
     const Point_2* pi=CGAL::object_cast<Point_2>(&o);
-    if (pi==NULL) { //case of segment or empty
+    if (pi==nullptr) { //case of segment or empty
       const Segment_2* si=CGAL::object_cast<Segment_2>(&o);
-      if (si==NULL) return Object();
+      if (si==nullptr) return Object();
       FT src[3],tgt[3];
       //the third coordinate is the midpoint between the points on s1 and s2
       FT z1 = s1.source()[dim] + ( alpha(si->source(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));

@@ -54,7 +54,7 @@ int main()
                                               image,
                                               criteria,
                                               (unsigned char)0);
-  CGAL::refine_mesh_3<C3t3>(c3t3, domain, criteria);
+  CGAL::refine_mesh_3(c3t3, domain, criteria);
   /// [Meshing]
 
   // Output

@@ -59,7 +59,7 @@ template < class T >
 class In_place_list_base {
 public:
   In_place_list_base()
-    : next_link(NULL), prev_link(NULL)
+    : next_link(nullptr), prev_link(nullptr)
   {}
 
   T* next_link;        // forward pointer

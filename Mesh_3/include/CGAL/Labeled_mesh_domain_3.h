@@ -346,7 +346,7 @@ public:
                         const Sphere_3& bounding_sphere,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bounding_sphere,
                    error_bound,
                    construct_pair_functor(),
@@ -356,7 +356,7 @@ public:
                         const Bbox_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bbox,
                    error_bound,
                    construct_pair_functor(),
@@ -366,7 +366,7 @@ public:
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bbox, error_bound,
                    construct_pair_functor(),
                    null, p_rng)

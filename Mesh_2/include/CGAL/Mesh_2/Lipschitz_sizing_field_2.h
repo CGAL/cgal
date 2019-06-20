@@ -209,7 +209,7 @@ protected:
 	Face_circulator c = fc;
 	std::list<Point> vv;
 			    
-	if (fc != NULL)
+	if (fc != nullptr)
 	  {
 	    do
 	      {

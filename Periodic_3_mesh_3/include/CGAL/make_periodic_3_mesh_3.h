@@ -93,8 +93,7 @@ struct C3t3_initializer_base
                   const MeshDomain& domain,
                   const MeshCriteria& criteria,
                   bool with_features,
-                  bool nonlinear = false,
-                  const int nb_initial_points = -1)
+                  const parameters::internal::Mesh_3_options& mesh_options)
   {
     c3t3.triangulation().set_domain(domain.bounding_box());
     c3t3.triangulation().insert_dummy_points();
@@ -102,8 +101,7 @@ struct C3t3_initializer_base
 
     // Call the basic initialization from c3t3, which handles features and
     // adds a bunch of points on the surface
-    Base::operator()(c3t3, domain, criteria, with_features,
-                     nonlinear, nb_initial_points);
+    Base::operator()(c3t3, domain, criteria, with_features, mesh_options);
   }
 };
 
@@ -119,9 +117,10 @@ struct C3t3_initializer
                                 MeshDomainHasHasFeatures, HasFeatures> Base;
 
   void operator()(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
-                  bool with_features, bool nonlinear = false, const int nb_initial_points = -1)
+                  bool with_features,
+                  const parameters::internal::Mesh_3_options& mesh_options)
   {
-    return Base::operator()(c3t3, domain, criteria, with_features, nonlinear, nb_initial_points);
+    return Base::operator()(c3t3, domain, criteria, with_features, mesh_options);
   }
 };
 
@@ -133,10 +132,11 @@ template <typename C3T3,
 struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, HasFeatures>
 {
   void operator()(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
-                  bool with_features, bool nonlinear = false, const int nb_initial_points = -1)
+                  bool with_features,
+                  const parameters::internal::Mesh_3_options& mesh_options)
   {
     C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, typename MeshDomain::Has_features>()
-        (c3t3, domain, criteria, with_features, nonlinear, nb_initial_points);
+        (c3t3, domain, criteria, with_features, mesh_options);
   }
 };
 
@@ -152,18 +152,21 @@ struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true>
   virtual ~C3t3_initializer() { }
 
   // this override will be used when initialize_features() is called, in make_mesh_3.h
-  virtual void initialize_features(C3T3& c3t3,
-                                   const MeshDomain& domain,
-                                   const MeshCriteria& criteria,
-                                   bool nonlinear = false)
+  virtual void
+  initialize_features(C3T3& c3t3,
+                      const MeshDomain& domain,
+                      const MeshCriteria& criteria,
+                      const parameters::internal::Mesh_3_options& mesh_options)
   {
-    return Periodic_3_mesh_3::internal::init_c3t3_with_features(c3t3, domain, criteria, nonlinear);
+    return Periodic_3_mesh_3::internal::init_c3t3_with_features
+      (c3t3, domain, criteria, mesh_options.nonlinear_growth_of_balls);
   }
 
   void operator()(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
-                  bool with_features, bool nonlinear = false, const int nb_initial_points = -1)
+                  bool with_features,
+                  const parameters::internal::Mesh_3_options& mesh_options)
   {
-    return Base::operator()(c3t3, domain, criteria, with_features, nonlinear, nb_initial_points);
+    return Base::operator()(c3t3, domain, criteria, with_features, mesh_options);
   }
 };
 
@@ -257,8 +260,7 @@ void make_periodic_3_mesh_3_impl(C3T3& c3t3,
                                                              domain,
                                                              criteria,
                                                              with_features,
-                                                             mesh_options.nonlinear_growth_of_balls,
-                                                             mesh_options.number_of_initial_points);
+                                                             mesh_options);
 
   // Build mesher and launch refinement process
   refine_periodic_3_mesh_3(c3t3, domain, criteria,

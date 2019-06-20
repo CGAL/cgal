@@ -83,14 +83,14 @@ protected :
         ( Halfedge_circulator_base<OtherHalfedgeHandle,OtherAccessPolicy> const& aOther )
         : mHandle(aOther.mHandle) {}
 
-      bool operator==( Nullptr_t p ) const 
+      bool operator==( std::nullptr_t p ) const 
       {
-        CGAL_assertion( p == NULL ); 
+        CGAL_assertion( p == nullptr ); 
         HalfedgeHandle null ;
         return mHandle == null ;
       }
       
-      bool operator!=( Nullptr_t p ) const { return !(*this == p); }
+      bool operator!=( std::nullptr_t p ) const { return !(*this == p); }
       
     private :
 

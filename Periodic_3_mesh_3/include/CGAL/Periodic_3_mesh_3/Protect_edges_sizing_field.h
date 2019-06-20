@@ -319,7 +319,7 @@ private:
                       Curve_index curve_index) const;
 
   /// Walk along the edge from \c start, following the direction \c start to
-  /// \c next, and fills \c out with the vertices which do not fullfill
+  /// \c next, and fills \c out with the vertices which do not fulfill
   /// the sampling conditions.
   ///
   /// \param orientation Orientation of the curve segment between \c v1 and
@@ -486,7 +486,7 @@ private:
   void insert_in_correspondence_map(const Vertex_handle v,
                                     const Bare_point& p,
                                     const Curve_index_container& curve_indices,
-                                    typename Curve_index_container::const_iterator* /*sfinae*/ = NULL);
+                                    typename Curve_index_container::const_iterator* /*sfinae*/ = nullptr);
 
   void insert_in_correspondence_map(const Vertex_handle v,
                                     const Bare_point& p,

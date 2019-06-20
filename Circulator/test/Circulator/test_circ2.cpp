@@ -25,7 +25,6 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
 #include <cstddef>
 #include <iterator>
 #include <list>

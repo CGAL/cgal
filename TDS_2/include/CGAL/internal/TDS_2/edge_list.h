@@ -132,7 +132,7 @@ namespace internal {
 
   public:
     Edge_list_circulator()
-      : l_(NULL), c_(List_item::sentinel_edge()) {}
+      : l_(nullptr), c_(List_item::sentinel_edge()) {}
 
     Edge_list_circulator(const List* l, const Edge& c)
       : l_(l), c_(/*const_cast<Edge&>(*/c/*)*/) {}
@@ -147,14 +147,14 @@ namespace internal {
     }
 
     Self& operator++() {
-      CGAL_precondition( l_ != NULL );
+      CGAL_precondition( l_ != nullptr );
       //      c_ = const_cast<Edge&>(l_->next(c_));
       c_ = l_->next(c_);
       return *this;
     }
 
     Self& operator--() {
-      CGAL_precondition( l_ != NULL );
+      CGAL_precondition( l_ != nullptr );
       //      c_ = const_cast<Edge&>(l_->previous(c_));
       c_ = l_->previous(c_);
       return *this;

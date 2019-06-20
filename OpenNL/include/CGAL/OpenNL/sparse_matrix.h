@@ -163,7 +163,7 @@ public:
 
     ~SparseMatrix() {
         delete[] row_ ;
-        row_ = NULL ;
+        row_ = nullptr ;
     }
 
     //___________ access ________________________

@@ -1,6 +1,6 @@
 // This header file is a copy of "boost/config/auto_link.hpp" 
 // from boost version 1.44.0
-// but slightly modified to accomodate CGAL libraries.
+// but slightly modified to accommodate CGAL libraries.
 
 // Before CGAL-4.7-beta1, it has been synchronized with
 // libs/config/ version boost-1.58.0-39-g15d56c9, file

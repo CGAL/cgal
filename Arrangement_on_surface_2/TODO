@@ -125,7 +125,7 @@
   pair of begin/end functions can be changed, so that they return a range of
   objects that represent either edges or vertices.
 
-  The second problem can be fixed by introducing a heirarchy of 2 layers
+  The second problem can be fixed by introducing a hierarchy of 2 layers
   to the arrangement with history. The top layer represent the split of
   general curves into x-monotone curves, and the one below represents the
   split at intersection points. As a response to a user request for the items

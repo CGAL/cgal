@@ -58,6 +58,15 @@ struct FG_is_selected_edge_property_map{
   }
 };
 
+inline CGAL::Three::Viewer_interface* getViewerUnderCursor()
+{
+  QWidget* widget = QApplication::widgetAt(QCursor::pos());
+  CGAL::Three::Viewer_interface* viewer = qobject_cast<CGAL::Three::Viewer_interface*>(widget);
+  if(!viewer)
+    viewer = CGAL::Three::Three::activeViewer();
+  return viewer;
+}
+
 class SCENE_FACEGRAPH_ITEM_K_RING_SELECTION_EXPORT Scene_facegraph_item_k_ring_selection
   : public QObject
 {
@@ -380,7 +389,7 @@ public Q_SLOTS:
     if(is_ready_to_highlight)
     {
       // highlight with mouse move event
-      CGAL::QGLViewer* viewer = CGAL::Three::Three::activeViewer();
+      CGAL::QGLViewer* viewer = getViewerUnderCursor();
       CGAL::qglviewer::Camera* camera = viewer->camera();
       viewer->makeCurrent();
       bool found = false;
@@ -581,10 +590,14 @@ protected:
         viewer->setFocus();
         return false;
       }
+      
       if(!is_lasso_active)
       {
         is_ready_to_paint_select = true;
         QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+        hl_pos = mouse_event->pos();
+        is_ready_to_highlight = !cut_highlighting;
+        QTimer::singleShot(0, this, SLOT(highlight()));
         paint_pos = mouse_event->pos();
         if(!is_edit_mode || event->type() == QEvent::MouseButtonPress)
         {
@@ -606,16 +619,11 @@ protected:
     // highlight the primitive under cursor
     else if(event->type() == QEvent::MouseMove && !state.left_button_pressing)
     {
-      if(target == mainwindow)
-      {
-        CGAL::QGLViewer* viewer = CGAL::Three::Three::activeViewer();
-        viewer->setFocus();
-        return false;
-      }
+      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+      CGAL::QGLViewer* viewer = getViewerUnderCursor();
 
       is_ready_to_highlight = !cut_highlighting;
-      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
-      hl_pos = mouse_event->pos();
+      hl_pos = viewer->mapFromGlobal(mouse_event->globalPos());
       QTimer::singleShot(0, this, SLOT(highlight()));
     }//end MouseMove
     return false;
@@ -720,5 +728,4 @@ protected:
     return false;
   }
 };
-
 #endif

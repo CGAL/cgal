@@ -946,7 +946,7 @@ public:
   converted to a |Vertex_/Halfedge_/Face_const_handle| as described
   above. The object returned is intersected by the ray starting in |p|
   with direction |d| and has minimal distance to |p|.  The operation
-  returns the null handle |NULL| if the ray shoot along |d| does not hit
+  returns the null handle |nullptr| if the ray shoot along |d| does not hit
   any object |h| of |\Mvar| with |\Mvar.contains(h)|. The location mode
   flag |m| allows one to choose between different point location
   strategies.}*/
@@ -986,7 +986,7 @@ public:
   |Vertex_/Halfedge_const_handle| as described above. The object
   returned is part of the $1$-skeleton of |\Mvar|, intersected by the
   ray starting in |p| with direction |d| and has minimal distance to
-  |p|.  The operation returns the null handle |NULL| if the ray shoot
+  |p|.  The operation returns the null handle |nullptr| if the ray shoot
   along |d| does not hit any $1$-skeleton object |h| of |\Mvar|. The
   location mode flag |m| allows one to choose between different point
   location strategies.}*/

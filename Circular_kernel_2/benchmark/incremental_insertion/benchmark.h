@@ -179,7 +179,7 @@ class Bench
     texout << " & " <<utime.tv_sec<<"."<< std::setw(6) << std::setfill('0')
 	     			  << utime.tv_usec;
     
-    //It's necessery to make output of number of filter fails here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //It's necessary to make output of number of filter fails here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     std::cout << "  vertices  : " << vertices     << std::endl
 	      << "  halfedges : " << hedges       << std::endl

@@ -31,7 +31,7 @@ void test_merge_duplicated_vertices_in_boundary_cycles(const char* fname,
          expected_nb_vertices == vertices(mesh).size());
   if (expected_nb_vertices==0)
   {
-    std::cout << "writting output to out1.off\n";
+    std::cout << "writing output to out1.off\n";
     std::ofstream output("out1.off");
     output << std::setprecision(17);
     output << mesh;

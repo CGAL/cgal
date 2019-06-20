@@ -121,7 +121,7 @@ protected:
     {
       if (current_dimension() == preset_flat_orientation_.first)
       {
-        CGAL_assertion(preset_flat_orientation_.second != NULL);
+        CGAL_assertion(preset_flat_orientation_.second != nullptr);
         flat_orientation_ = *preset_flat_orientation_.second;
       }
       else
@@ -274,7 +274,7 @@ public:
         , kernel_(k)
         , infinity_()
         , preset_flat_orientation_((std::numeric_limits<int>::max)(),
-                                   (Flat_orientation_d*) NULL)
+                                   (Flat_orientation_d*) nullptr)
         , rng_((long)0)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
@@ -309,14 +309,14 @@ public:
         , kernel_(t2.kernel_)
         , infinity_()
         , preset_flat_orientation_((std::numeric_limits<int>::max)(), 
-                                   (Flat_orientation_d*) NULL)
+                                   (Flat_orientation_d*) nullptr)
         , rng_(t2.rng_)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(t2.walk_size_)
 #endif
     {
         // We find the vertex at infinity by scanning the vertices of both
-        // triangulations. This works because Compact_container garantees that
+        // triangulations. This works because Compact_container guarantees that
         // the vertices in the copy (*this) are stored in the same order as in
         // the original triangulation (t2)
         infinity_ = vertices_begin();

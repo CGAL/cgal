@@ -198,7 +198,11 @@ public:
   @param end past the end iterator on the input polyhedral surfaces
   @param indices_begin first iterator on the pairs of subdomain indices
              (two subdomain indices per input polyhedral surface),
-             corresponding to the first input polyhedral surface
+             corresponding to the first input polyhedral surface.
+             Each pair should be ordered as follows : the first (resp. second)
+             element is the index of the subdomain that lies on the
+             positively oriented (resp. negatively oriented) side of the
+             corresponding input polyhedral surface.
   @param indices_end past the end iterator on the pairs of subdomain indices
 
   @tparam InputPolyhedraIterator model of `InputIterator`, holding `Polyhedron`'s
@@ -215,7 +219,7 @@ public:
     InputPairOfSubdomainIndicesIterator indices_begin,
     InputPairOfSubdomainIndicesIterator indices_end
 #ifndef DOXYGEN_RUNNING
-    , CGAL::Random* p_rng = NULL
+    , CGAL::Random* p_rng = nullptr
 #endif
     )
     : Base(p_rng)
@@ -252,7 +256,7 @@ public:
   /// @cond DEVELOPERS
   Polyhedral_complex_mesh_domain_3
     (
-    CGAL::Random* p_rng = NULL
+    CGAL::Random* p_rng = nullptr
     )
     : Base(p_rng)
     , borders_detected_(false)

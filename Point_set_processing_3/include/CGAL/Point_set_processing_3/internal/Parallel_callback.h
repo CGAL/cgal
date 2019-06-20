@@ -56,7 +56,7 @@ public:
     , m_interrupted (new cpp11::atomic<bool>())
     , m_size (size)
     , m_creator (true)
-    , m_thread (NULL)
+    , m_thread (nullptr)
   {
     // cpp11::atomic only has default constructor, initialization done in two steps
     *m_advancement = advancement;
@@ -71,7 +71,7 @@ public:
     , m_interrupted (other.m_interrupted)
     , m_size (other.m_size)
     , m_creator (false)
-    , m_thread (NULL)
+    , m_thread (nullptr)
   {
 
   }
@@ -84,7 +84,7 @@ public:
       delete m_advancement;
       delete m_interrupted;
     }
-    if (m_thread != NULL)
+    if (m_thread != nullptr)
       delete m_thread;
   }
 
@@ -92,7 +92,7 @@ public:
   cpp11::atomic<bool>& interrupted() { return *m_interrupted; }
   void join()
   {
-    if (m_thread != NULL)
+    if (m_thread != nullptr)
       m_thread->join();
   }
 

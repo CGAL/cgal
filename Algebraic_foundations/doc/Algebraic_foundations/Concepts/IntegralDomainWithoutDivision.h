@@ -3,7 +3,7 @@
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-This is the most basic concept for algebraic structures considered within CGAL. 
+This is the most basic concept for algebraic structures considered within \cgal. 
 
 A model `IntegralDomainWithoutDivision` represents an integral domain, 
 i.e.\ commutative ring with 0, 1, +, * and unity free of zero divisors. 

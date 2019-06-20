@@ -191,7 +191,9 @@ a more isotropic mesh.\n
 \cgalNPEnd
 
 \cgalNPBegin{use_delaunay_triangulation} \anchor PMP_use_delaunay_triangulation
-enables the use of the Delaunay triangulation facet search space for hole filling functions.\n
+enables the use of the Delaunay triangulation facet search space for hole filling functions.
+If no valid triangulation can be found in this search space, the algorithm falls back to the
+non-Delaunay triangulations search space to find a solution.\n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `true`
 \cgalNPEnd
@@ -368,7 +370,7 @@ should be considered as part of the clipping volume or not.
 Parameter to pass an output iterator.
 \n
 \b Type : a model of `OutputIterator` \n
-\b Default : `Emptyset_iterator`
+\b Default : `#CGAL::Emptyset_iterator`
 \cgalNPEnd
 
 \cgalNPBegin{erase_all_duplicates} \anchor PMP_erase_all_duplicates

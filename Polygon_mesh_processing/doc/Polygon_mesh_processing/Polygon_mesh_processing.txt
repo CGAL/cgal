@@ -484,7 +484,7 @@ described in \cgalCite{gueziec2001cutting}.
 To deal with polygon soups that cannot be converted to a
 combinatorially manifold surface, some points must be duplicated.
 Because a polygon soup does not have any connectivity (each point
-has as many occurences as the number of polygons it belongs to),
+has as many occurrences as the number of polygons it belongs to),
 duplicating one point (or a pair of points)
 amounts to duplicating the polygon to which it belongs.
 The duplicated points are either an endpoint of an edge incident to more
@@ -547,17 +547,20 @@ to obtain an as-clean-as-possible polygon soup.
 
 \subsection Stitching
 
-It happens that a polygon mesh has several edges and vertices that are duplicated.
+When handling polygon meshes, it might happen that a mesh has several edges and vertices that are duplicated.
 For those edges and vertices, the connectivity of the mesh is incomplete, if not considered incorrect.
 
-Stitching the borders of such a polygon mesh consists in two main steps.
-First, border edges that are similar but duplicated are detected and paired.
-Then, they are "stitched" together so that the edges and vertices duplicates are removed
-from the mesh, and each of these remaining edges is incident to exactly two faces.
+Stitching the borders of a polygon mesh can be done to fix some of the duplication.
+It consists in two main steps. First, border edges that are geometrically identical but duplicated
+are detected and paired. Then, they are "stitched" together so that edges and vertices duplicates
+are removed from the mesh, and each of these remaining edges is incident to exactly two faces.
 
-The function \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
- performs such repairing operation. The input mesh should be manifold.
-Otherwise, stitching is not guaranteed to succeed.
+The functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()`, `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`,
+and `CGAL::Polygon_mesh_processing::stitch_borders()` can perform such repairing operations: the first two
+functions can be used to stitch halfedges that are part of the same boundary(ies), whereas the third
+function is more generic and can also stitch halfedges that live on different borders.
+
+The input mesh should be manifold; otherwise, stitching is not guaranteed to succeed.
 
 \subsubsection StitchingExample Stitching Example
 

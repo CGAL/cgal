@@ -154,8 +154,8 @@ struct Shell_polygons_visitor
               polygons.back().push_back(vertex_indices[v[1]]);
               polygons.back().push_back(vertex_indices[v[2]]);
               polygons.push_back( Polygon() );
-              polygons.back().push_back(vertex_indices[v[2]]);
               polygons.back().push_back(vertex_indices[v[0]]);
+              polygons.back().push_back(vertex_indices[v[2]]);
               polygons.back().push_back(vertex_indices[v[3]]);
             }
             else
@@ -165,8 +165,8 @@ struct Shell_polygons_visitor
               polygons.back().push_back(vertex_indices[v[0]]);
               polygons.back().push_back(vertex_indices[v[2]]);
               polygons.push_back( Polygon() );
-              polygons.back().push_back(vertex_indices[v[0]]);
               polygons.back().push_back(vertex_indices[v[2]]);
+              polygons.back().push_back(vertex_indices[v[0]]);
               polygons.back().push_back(vertex_indices[v[3]]);
             }
           }

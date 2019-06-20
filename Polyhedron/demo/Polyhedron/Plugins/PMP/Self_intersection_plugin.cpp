@@ -66,7 +66,11 @@ private:
 template<class Mesh>
 bool selfIntersect(Mesh* mesh, std::vector<std::pair<typename boost::graph_traits<Mesh>::face_descriptor,typename boost::graph_traits<Mesh>::face_descriptor> > &faces)
 {
-
+  if(!CGAL::is_triangle_mesh(*mesh))
+  {
+    CGAL::Three::Three::warning("%1 skipped because not triangulated.");
+    return false;
+  }
   // compute self-intersections
   CGAL::Polygon_mesh_processing::self_intersections
     (*mesh, std::back_inserter(faces),

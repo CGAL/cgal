@@ -352,7 +352,7 @@ namespace CGAL {
     inline FT 
     min_coord(int i) const 
     {
-      CGAL_assertion(coords_ != NULL);
+      CGAL_assertion(coords_ != nullptr);
       return lower()[i];
     }
     

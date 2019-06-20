@@ -1695,7 +1695,7 @@ namespace CommonKernelFunctors {
         res = typename K::Intersect_3()(l1,l2);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
-      CGAL_assertion(e_pt!=NULL);
+      CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
   };
@@ -2095,7 +2095,7 @@ namespace CommonKernelFunctors {
         res = typename K::Intersect_3()(plane,line);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
-      CGAL_assertion(e_pt!=NULL);
+      CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
 
@@ -2109,7 +2109,7 @@ namespace CommonKernelFunctors {
         res = typename K::Intersect_3()(plane,line);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
-      CGAL_assertion(e_pt!=NULL);
+      CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
   };

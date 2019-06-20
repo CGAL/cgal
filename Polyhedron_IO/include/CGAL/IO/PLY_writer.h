@@ -20,7 +20,7 @@
 #ifndef CGAL_IO_PLY_WRITER_H
 #define CGAL_IO_PLY_WRITER_H
 
-#include <CGAL/IO/write_ply_points.h>
+#include <CGAL/IO/PLY.h>
 
 namespace CGAL{
 
@@ -142,7 +142,7 @@ namespace CGAL{
     
     if(has_texture)
     {
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh))
+      for(halfedge_descriptor hd : halfedges(mesh))
       {
         typedef std::tuple<unsigned int, unsigned int, float, float> Super_tuple;
          Super_tuple t = 

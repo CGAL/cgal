@@ -20,7 +20,7 @@
 #ifndef CGAL_IO_PLY_READER_H
 #define CGAL_IO_PLY_READER_H
 
-#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/IO/PLY.h>
 
 namespace CGAL{
 
