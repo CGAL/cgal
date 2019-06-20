@@ -251,6 +251,7 @@ private:
     for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it) {
       if (m_gmap.template attribute<2>(it) == NULL) {
         for (auto dh = m_gmap.template one_dart_per_incident_cell<1,2>(it).begin(), dhend = m_gmap.template one_dart_per_incident_cell<1,2>(it).end(); dh != dhend; ++dh) {
+          if (m_gmap.is_marked(dh, edge_deleted)) continue;
           m_gmap.template mark_cell<1>(dh, edge_deleted);
         }
         m_gmap.template mark_cell<2>(it, face_deleted);
@@ -272,8 +273,10 @@ private:
     while (degree_one_faces.size()) {
       Dart_handle dh_face = degree_one_faces.front();
       degree_one_faces.pop();
-      m_gmap.template mark_cell<2>(dh_face, face_deleted);
-      m_gmap.template mark_cell<1>(dh_face, edge_deleted);
+      if (!m_gmap.is_marked(dh_face, face_deleted))
+        m_gmap.template mark_cell<2>(dh_face, face_deleted);
+      if (!m_gmap.is_marked(dh_face, edge_deleted))
+        m_gmap.template mark_cell<1>(dh_face, edge_deleted);
       Dart_handle dh_adj_face = m_gmap.template alpha<2>(dh_face);
       if (m_gmap.is_marked(dh_adj_face, face_deleted)) continue;
       Dart_handle dh_only_edge = NULL;

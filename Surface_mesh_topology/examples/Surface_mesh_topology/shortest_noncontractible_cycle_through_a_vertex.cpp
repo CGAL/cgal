@@ -75,7 +75,7 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC {
 };
 
 int main(int argc, char* argv[]) {
-  std::cout << "Program started.\n";
+  std::cout << "Program shortest_noncontractible_cycle_through_a_vertex started.\n";
   std::ifstream inp;
   if (argc == 1) inp = std::ifstream("../../examples/Surface_mesh_topology/data/3torus.off");
   else inp = std::ifstream(argv[1]);

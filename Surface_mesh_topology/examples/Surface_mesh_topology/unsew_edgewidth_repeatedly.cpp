@@ -75,7 +75,7 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC {
 };
 
 int main(int argc, char* argv[]) {
-  std::cout << "Program started.\n";
+  std::cout << "Program unsew_edgewidth_repeatedly started.\n";
   std::ifstream inp;
   if (argc == 1) inp = std::ifstream("../../examples/Surface_mesh_topology/data/3torus.off");
   else inp = std::ifstream(argv[1]);
@@ -97,26 +97,32 @@ int main(int argc, char* argv[]) {
       std::cout << "  Cannot find edge-width. Stop.\n";
       break;
     }
-    LCC_3::size_type m = lcc.get_new_mark();
+    
     LCC_3::size_type is_root = lcc.get_new_mark();
-    for (auto e : cycle) {
-      lcc.mark_cell<1>(e, m);
-    }
     lcc.mark_cell<0>(cycle[0], is_root);
     for (auto dh = lcc.one_dart_per_cell<0>().begin(), dhend = lcc.one_dart_per_cell<0>().end(); dh != dhend; ++dh)
       if (lcc.is_marked(dh, is_root)) {
         lcc.info<0>(dh) = CGAL::Color(255, 0, 0);
         break;
       }
+    lcc.free_mark(is_root);
+
+    LCC_3::size_type m = lcc.get_new_mark();
+    for (auto e : cycle) {
+      lcc.mark_cell<1>(e, m);
+    }
     for (auto dh = lcc.one_dart_per_cell<1>().begin(), dhend = lcc.one_dart_per_cell<1>().end(); dh != dhend; ++dh)
-      if (lcc.is_marked(dh, m)) {
+      if (lcc.is_marked(dh, m) && !lcc.is_free<2>(dh)) {
+        lcc.unmark_cell<1>(dh, m);
         lcc.info<1>(dh) = CGAL::Color(0, 0, 255);
         lcc.unsew<2>(dh);
       }
     lcc.free_mark(m);
-    lcc.free_mark(is_root);
+    
     std::cout << "  Number of edges in cycle: " << cycle.size() << std::endl;
     std::cout << "  Cycle length: " << x << std::endl;
+    std::cout << "  Root: " << lcc.point_of_vertex_attribute(lcc.vertex_attribute(cycle[0])) << std::endl;
+    
   }
   CGAL::draw(lcc, "Hello", false, df);
 }
