@@ -376,8 +376,8 @@ public:
   {
     CGAL_triangulation_precondition((_gt.orientation_2_object()(p, q, r) == ON_POSITIVE_SIDE) &&
                                     (_gt.orientation_2_object()(p, s, q) == ON_POSITIVE_SIDE));
-    CGAL_triangulation_precondition((_gt.side_of_oriented_circle_2_object()(p, q, r,s) == ON_NEGATIVE_SIDE) &&
-                                    (_gt.side_of_oriented_circle_2_object()(p, s, q, r) == ON_NEGATIVE_SIDE));
+    /*CGAL_triangulation_precondition((_gt.side_of_oriented_circle_2_object()(p, q, r,s) == ON_NEGATIVE_SIDE) &&
+                                    (_gt.side_of_oriented_circle_2_object()(p, s, q, r) == ON_NEGATIVE_SIDE));*/
 
     Construct_hyperbolic_circumcenter_2<Traits> chc(_gt);
     Construct_circle_or_line_supporting_bisector<Traits> cclsb(_gt);
