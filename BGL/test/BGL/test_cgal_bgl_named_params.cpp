@@ -88,11 +88,10 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::erase_all_duplicates).v == 48);
   assert(get_param(np, CGAL::internal_np::require_same_orientation).v == 49);
   assert(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface).v == 50);
-  assert(get_param(np, CGAL::internal_np::use_angle_smoothing).v == 51);
-  assert(get_param(np, CGAL::internal_np::use_area_smoothing).v == 52);
-  assert(get_param(np, CGAL::internal_np::use_safety_constraints).v == 53);
-  assert(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface).v == 54);
-  assert(get_param(np, CGAL::internal_np::use_safety_constraints).v == 56);
+  assert(get_param(np, CGAL::internal_np::use_angle_smoothing).v == 52);
+  assert(get_param(np, CGAL::internal_np::use_area_smoothing).v == 53);
+  assert(get_param(np, CGAL::internal_np::use_Delaunay_flips).v == 54);
+  assert(get_param(np, CGAL::internal_np::use_safety_constraints).v == 55);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -174,11 +173,10 @@ void test(const NamedParameters& np)
   check_same_type<48>(get_param(np, CGAL::internal_np::erase_all_duplicates));
   check_same_type<49>(get_param(np, CGAL::internal_np::require_same_orientation));
   check_same_type<50>(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface));
-  check_same_type<51>(get_param(np, CGAL::internal_np::use_angle_smoothing));
-  check_same_type<52>(get_param(np, CGAL::internal_np::use_area_smoothing));
-  check_same_type<53>(get_param(np, CGAL::internal_np::use_Delaunay_flips));
-  check_same_type<54>(get_param(np, CGAL::internal_np::use_safety_constraints));
-  check_same_type<56>(get_param(np, CGAL::internal_np::use_safety_constraints));
+  check_same_type<52>(get_param(np, CGAL::internal_np::use_angle_smoothing));
+  check_same_type<53>(get_param(np, CGAL::internal_np::use_area_smoothing));
+  check_same_type<54>(get_param(np, CGAL::internal_np::use_Delaunay_flips));
+  check_same_type<55>(get_param(np, CGAL::internal_np::use_safety_constraints));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -263,10 +261,10 @@ int main()
                          .require_same_orientation(A<49>(49))
                          .use_bool_op_to_clip_surface(A<50>(50))
                          .use_binary_mode(A<51>(51))
-                         .use_angle_smoothing_t(A<52>(52))
-                         .use_area_smoothing_t(A<53>(53))
-                         .use_Delaunay_flips_t(A<54>(54))
-                         .use_safety_constraints(A<56>(56))
+                         .use_angle_smoothing(A<52>(52))
+                         .use_area_smoothing(A<53>(53))
+                         .use_Delaunay_flips(A<54>(54))
+                         .use_safety_constraints(A<55>(55))
        );
 
   return EXIT_SUCCESS;
