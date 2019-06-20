@@ -22,6 +22,7 @@
 #ifndef CGAL_DRAW_POINT_SET_3_H
 #define CGAL_DRAW_POINT_SET_3_H
 
+#include <CGAL/license/Point_set_3.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
