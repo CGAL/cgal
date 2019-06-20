@@ -12,6 +12,9 @@ get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
 
+include(CMakeFindDependencyMacro)
+find_dependency(Boost REQUIRED)
+
 # The code for including exported targets is different from
 # CGAL_Config_install.cmake. We do not have separate export files in
 # an installed version and we need to make sure that we are not
