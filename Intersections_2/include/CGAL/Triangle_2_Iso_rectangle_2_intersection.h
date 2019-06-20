@@ -270,7 +270,10 @@ namespace CGAL{ namespace internal {
       //remove duplicated consecutive points
       typename std::vector<Point>::iterator last = std::unique(result.begin(),result.end());
       result.erase(last,result.end());
-      
+
+      while(result.size() > 1 && result.back() == result.front())
+        result.pop_back();
+
       switch(result.size()){
         case 0:
           return intersection_return<typename K::Intersect_2, Triangle, typename K::Iso_rectangle_2>();
