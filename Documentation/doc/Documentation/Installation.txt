@@ -606,6 +606,16 @@ and, by extension, of surface meshes (see Section \ref BGLPartitioning of the pa
 More information is available on the METIS library
 at <A HREF="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">`http://glaros.dtc.umn.edu/gkhome/metis/metis/overview`</A>.
 
+\subsection thirdpartyCeres Ceres Solver
+
+\sc{Ceres} is an open source C++ library for modeling and solving large, complicated optimization problems.
+
+In \cgal, \sc{Ceres} is used by the \ref PkgPolygonMeshProcessingRef package for mesh smoothing, which
+requires solving complex non-linear least squares problems.
+
+Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>
+for more information.
+
 \section secbuilding Building CGAL 
 
 The results of a successful configuration are build files that control the build step.

@@ -88,6 +88,10 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::require_same_orientation).v == 49);
   assert(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface).v == 50);
   assert(get_param(np, CGAL::internal_np::face_size_map).v == 52);
+  assert(get_param(np, CGAL::internal_np::use_angle_smoothing).v == 53);
+  assert(get_param(np, CGAL::internal_np::use_area_smoothing).v == 54);
+  assert(get_param(np, CGAL::internal_np::use_Delaunay_flips).v == 55);
+  assert(get_param(np, CGAL::internal_np::use_safety_constraints).v == 56);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -169,6 +173,10 @@ void test(const NamedParameters& np)
   check_same_type<49>(get_param(np, CGAL::internal_np::require_same_orientation));
   check_same_type<50>(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface));
   check_same_type<52>(get_param(np, CGAL::internal_np::face_size_map));
+  check_same_type<53>(get_param(np, CGAL::internal_np::use_angle_smoothing));
+  check_same_type<54>(get_param(np, CGAL::internal_np::use_area_smoothing));
+  check_same_type<55>(get_param(np, CGAL::internal_np::use_Delaunay_flips));
+  check_same_type<56>(get_param(np, CGAL::internal_np::use_safety_constraints));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -243,17 +251,21 @@ int main()
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
-                         .use_binary_mode(A<51>(51))
                          .projection_functor(A<42>(42))
                          .throw_on_self_intersection(A<43>(43))
                          .clip_volume(A<44>(44))
                          .use_compact_clipper(A<45>(45))
-                         .use_bool_op_to_clip_surface(A<50>(50))
                          .apply_per_connected_component(A<46>(46))
                          .output_iterator(A<47>(47))
                          .erase_all_duplicates(A<48>(48))
                          .require_same_orientation(A<49>(49))
+                         .use_bool_op_to_clip_surface(A<50>(50))
+                         .use_binary_mode(A<51>(51))
                          .face_size_map(A<52>(52))
+                         .use_angle_smoothing(A<53>(53))
+                         .use_area_smoothing(A<54>(54))
+                         .use_Delaunay_flips(A<55>(55))
+                         .use_safety_constraints(A<56>(56))
        );
 
   return EXIT_SUCCESS;

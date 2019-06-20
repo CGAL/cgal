@@ -136,12 +136,15 @@ and C<sup>2</sup> continuity.\n
 \cgalNPEnd
 
 \cgalNPBegin{sparse_linear_solver} \anchor PMP_sparse_linear_solver
-is the solver used in `fair()`.\n
+is the solver used.\n
 <b>Type:</b> a class model of `SparseLinearAlgebraWithFactorTraits_d`.\n
 <b>Default:</b> if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and
 `CGAL_EIGEN3_ENABLED` is defined, then the following overload of `Eigen_solver_traits`
 is provided as default value:\n
+in `fair()`:\n
 \code CGAL::Eigen_solver_traits<Eigen::SparseLU<CGAL::Eigen_sparse_matrix<double>::EigenType, Eigen::COLAMDOrdering<int> > > \endcode
+in `smooth_shape()`:\n
+\code CGAL::Eigen_solver_traits<Eigen::BiCGSTAB<CGAL::Eigen_sparse_matrix<double>::EigenType, Eigen::IncompleteLUT<double> > > \endcode
 \cgalNPEnd
 
 \cgalNPBegin{number_of_iterations} \anchor PMP_number_of_iterations
@@ -388,6 +391,47 @@ if orientation should matter when determining whether two faces are duplicates.
 \n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `false`
+\cgalNPEnd
+
+\cgalNPBegin{use_angle_smoothing_t} \anchor PMP_use_angle_smoothing
+Parameter used in the function `smooth_mesh()` to indicate if angle-based smoothing should be used.
+When this type of smoothing is used, the algorithm attempts to equalize angles incident to each vertex.
+
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{use_area_smoothing_t} \anchor PMP_use_area_smoothing
+Parameter used in the function `smooth_mesh()` to indicate if area-based smoothing should be used.
+When this type of smoothing is used, the algorithm attempts to equalize the areas of the triangles
+incident to each vertex. Since this can create elongated triangles, a second phase uses Delaunay-based
+flips to recover good shapes, unless specified otherwise (see below).
+
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{use_Delaunay_flips_t} \anchor PMP_use_Delaunay_flips
+Parameter used in the function `smooth_mesh()` to indicate if Delaunay-based flips should be used
+after area-based smoothing has been performed. A user wishing to preserve combinatorial information
+can set this parameter to `false`, but the mesh might have elongated elements.
+
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{use_safety_constraints} \anchor PMP_use_safety_constraints
+Parameter used in the function `smooth_mesh()` to indicate if some sanity checks should be used to decide
+if the move of a vertex should be applied or rejected. These sanity checks consists of checking that
+no face incident to the vertex becomes inverted and that the minimum angle of the incident faces
+is not decreased by the move.
+
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
 \cgalNPEnd
 
 \cgalNPBegin{face_size_map} \anchor PMP_face_size_map
