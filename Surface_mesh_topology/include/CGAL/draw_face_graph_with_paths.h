@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,11 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
-
+//
 #ifndef CGAL_DRAW_FACE_GRAPH_WITH_PATHS_H
 #define CGAL_DRAW_FACE_GRAPH_WITH_PATHS_H
+
+#include <CGAL/license/Surface_mesh_topology.h>
 
 #include <CGAL/draw_linear_cell_complex.h>
 
@@ -27,8 +30,8 @@
 #include <CGAL/Random.h>
 #include <CGAL/Path_on_surface.h>
 
-namespace CGAL
-{
+namespace CGAL {
+
 // Specialisation for face graph; otherwise use the LCC_geom_utils of LCC.
 template<class Mesh, class Kernel>
 struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Kernel, 3>
@@ -99,7 +102,7 @@ public:
   ///        usefull for very big object where this time could be long)
   Face_graph_with_path_viewer(QWidget* parent,
                               const Mesh& amesh,
-                              const std::vector<Path_on_surface<Mesh> >* paths=NULL,
+                              const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* paths=NULL,
                               std::size_t amark=LCC::INVALID_MARK,
                               const char* title="", bool anofaces=false,
                               const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC()) :
@@ -332,7 +335,7 @@ protected:
   const typename Get_map<Mesh, Mesh>::storage_type lcc;
   bool m_nofaces;
   const DrawingFunctorLCC& m_drawing_functor;
-  const std::vector<Path_on_surface<Mesh> >* m_paths;
+  const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* m_paths;
   unsigned int m_current_path;
   unsigned int m_current_dart;
   bool m_draw_marked_darts;
@@ -341,7 +344,7 @@ protected:
   
 template<class Mesh, class DrawingFunctor>
 void draw(const Mesh& alcc,
-          const std::vector<Path_on_surface<Mesh> >& paths,
+          const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
           const char* title="Mesh Viewer",
           std::size_t amark=-1,
           bool nofill=false,
@@ -369,7 +372,7 @@ void draw(const Mesh& alcc,
 
 template<class Mesh>
 void draw(const Mesh& alcc,
-          const std::vector<Path_on_surface<Mesh> >& paths,
+          const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
           const char* title="LCC Viewer",
           std::size_t amark=-1,
           bool nofill=false)

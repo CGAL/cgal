@@ -1,10 +1,10 @@
 // Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,12 +14,14 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_PATH_ON_SURFACE_WITH_RLE_H
 #define CGAL_PATH_ON_SURFACE_WITH_RLE_H 1
+
+#include <CGAL/license/Surface_mesh_topology.h>
 
 #include <list>
 #include <utility>
@@ -32,9 +34,12 @@
 #include <boost/unordered_set.hpp>
 
 namespace CGAL {
+namespace Surface_mesh_topology {
 
 template<typename Map_>
 class Path_on_surface;
+
+namespace internal {
 
 // A flat is a sequence of darts given by its two extremities: begin and end,
 // with +2 turns (if length>0) or -2 turns (if length<0).
@@ -1740,6 +1745,8 @@ protected:
 #endif //CGAL_PWRLE_TURN_V2
 };
 
+} // namespace internal
+} // namespace Surface_mesh_topology
 } // namespace CGAL
 
 #endif // CGAL_PATH_ON_SURFACE_WITH_RLE_H //

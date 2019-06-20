@@ -1,4 +1,4 @@
-// Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -21,7 +21,7 @@
 #ifndef CGAL_CREATION_OF_TEST_CASES_FOR_PATHS_H
 #define CGAL_CREATION_OF_TEST_CASES_FOR_PATHS_H 1
 
-#include<CGAL/Path_generators.h>
+#include<CGAL/Surface_mesh_topology/internal/Path_generators.h>
 
 namespace CGAL {
 

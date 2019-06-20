@@ -1,13 +1,14 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Path_on_surface.h>
-#include <CGAL/Path_on_surface_with_rle.h>
+#include <CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h>
 
 #include <iostream>
 
 ///////////////////////////////////////////////////////////////////////////////
 typedef CGAL::Combinatorial_map<2> CMap;
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3;
+using namespace CGAL::Surface_mesh_topology;
 ///////////////////////////////////////////////////////////////////////////////
 bool basic_tests()
 {
@@ -15,7 +16,7 @@ bool basic_tests()
   CMap cmap;
   cmap.make_combinatorial_hexahedron();
 
-  CGAL::Path_on_surface<CMap> p1(cmap);
+  Path_on_surface<CMap> p1(cmap);
   p1.initialize_random_starting_dart();
   p1.extend_straight_positive(3);
   if (!p1.is_valid() || p1.length()!=4 || !p1.is_closed() || !p1.is_simple())
@@ -25,14 +26,14 @@ bool basic_tests()
     res=false;
   }
 
-  CGAL::Path_on_surface<CMap> p2(p1);
+  Path_on_surface<CMap> p2(p1);
   if (p1!=p2 || !p1.are_paths_equals(p2))
   {
     std::cerr<<"path_tests ERROR: p1!=p2 || !p1.are_paths_equals(p2)."<<std::endl;
     res=false;
   }
 
-  CGAL::Path_on_surface<CMap> p3(cmap);
+  Path_on_surface<CMap> p3(cmap);
   p3.push_back(cmap.beta<2>(p1.front()));
   p3.extend_straight_negative(3);
   if (p3.length()!=4 || !p3.is_closed())
@@ -58,7 +59,7 @@ bool basic_tests()
     res=false;
   }
 
-  CGAL::Path_on_surface<CMap> p4(p3);
+  Path_on_surface<CMap> p4(p3);
   p4.reverse();
   if (p3!=p4 || !p3.are_paths_equals(p4))
   {
@@ -66,7 +67,7 @@ bool basic_tests()
     res=false;
   }
 
-  CGAL::Path_on_surface<CMap> p5(cmap);
+  Path_on_surface<CMap> p5(cmap);
   p5.push_back(cmap.beta<2>(p1.front()));
   for (int i=0; i<3; ++i)
   { p5.extend_positive_turn(); }
@@ -79,7 +80,7 @@ bool basic_tests()
 
   p1.push_around_face(0);
 
-  CGAL::Path_on_surface<CMap> p6(cmap);
+  Path_on_surface<CMap> p6(cmap);
   p6.push_back(p1.front());
   p6.extend_straight_positive(2);
   p6.extend_positive_turn(1);
@@ -90,21 +91,21 @@ bool basic_tests()
     res=false;
   }
 
-  CGAL::Path_on_surface_with_rle<CMap> p7(p6);
+  internal::Path_on_surface_with_rle<CMap> p7(p6);
   if (!p7.is_valid() || p7.size_of_list()!=2)
   {
     std::cerr<<"path_tests ERROR: !p7.is_valid() || size_of_list()!=2."<<std::endl;
     res=false;
   }
 
-  CGAL::Path_on_surface<CMap> p8(p7);
+  Path_on_surface<CMap> p8(p7);
   if (!p8.is_valid() || p6!=p8 || !p6.are_paths_equals(p8))
   {
     std::cerr<<"path_tests ERROR: !p8.is_valid() || p6!=p8 || !p6.are_paths_equals(p8)."<<std::endl;
     res=false;
   }
 
-  CGAL::Path_on_surface<CMap> p9(cmap);
+  Path_on_surface<CMap> p9(cmap);
   p9.push_back(p1.front());
   if (!p9.can_be_pushed(cmap.beta<1,2,1>(p9.back()))) // 1st
   {

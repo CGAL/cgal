@@ -1,16 +1,16 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Curves_on_surface_topology.h>
+#include <CGAL/Path_on_surface.h>
 
 /* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
 #include <CGAL/draw_face_graph_with_paths.h>
 #endif
 
-#include <CGAL/Path_generators.h>
-#include <CGAL/Path_on_surface.h>
-
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
+using namespace CGAL::Surface_mesh_topology;
+
 ///////////////////////////////////////////////////////////////////////////////
 [[ noreturn ]] void usage(int /*argc*/, char** argv)
 {
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
   lcc.display_characteristics(std::cout) << ", valid="
                                          << lcc.is_valid() << std::endl;
   
-  CGAL::Curves_on_surface_topology<LCC_3_cmap> cst(lcc, time);
+  Curves_on_surface_topology<LCC_3_cmap> cst(lcc, time);
   std::cout<<"Reduced map: ";
   cst.get_map().display_characteristics(std::cout)
     << ", valid="<< cst.get_map().is_valid() << std::endl;
@@ -137,16 +137,16 @@ int main(int argc, char** argv)
     length=static_cast<unsigned int>(random.get_int(l1, l2+1));
     defo=static_cast<unsigned int>(random.get_int(d1, d2+1));
     
-    std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
-    std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
+    std::vector<Path_on_surface<LCC_3_cmap> > paths;
+    std::vector<Path_on_surface<LCC_3_cmap> > transformed_paths;
 
-    CGAL::Path_on_surface<LCC_3_cmap> path1(lcc);
+    Path_on_surface<LCC_3_cmap> path1(lcc);
     path1.generate_random_closed_path(length, random);
 
     std::cout<<"Path1 size: "<<path1.length()<<" (from "<<length<<" darts); ";
     paths.push_back(path1);
 
-    CGAL::Path_on_surface<LCC_3_cmap> path2(path1);
+    Path_on_surface<LCC_3_cmap> path2(path1);
     path2.update_path_randomly(defo, random);
     std::cout<<"Path2 size: "<<path2.length()<<" (from "<<defo<<" deformations): ";
     paths.push_back(path2);

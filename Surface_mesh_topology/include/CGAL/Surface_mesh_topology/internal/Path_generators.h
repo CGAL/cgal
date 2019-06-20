@@ -1,10 +1,10 @@
-// Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,20 +14,23 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_PATH_GENERATORS_H
 #define CGAL_PATH_GENERATORS_H 1
 
+#include <CGAL/license/Surface_mesh_topology.h>
+
 #include <CGAL/Random.h>
-#include<unordered_set>
-#include<unordered_map>
+#include <unordered_set>
+#include <unordered_map>
 #include <cstdlib>
 
 namespace CGAL {
-
+namespace Surface_mesh_topology {
+namespace internal {
 
 template<typename Path>
 void create_braket_positive(Path& p, std::size_t length, CGAL::Random& random,
@@ -80,7 +83,7 @@ void generate_random_positive_bracket(Path& path,
   path.clear();
   path.initialize_random_starting_dart(random);
   path.extend_straight_positive(nb1-1);
-  CGAL::create_braket_positive(path, nb2);
+  create_braket_positive(path, nb2);
   path.extend_straight_positive(nb3);
   path.generate_random_path(random.get_int(0, 15), random);
 }
@@ -223,6 +226,8 @@ void generate_random_closed_path(Path& p, std::size_t nb,
   CGAL_assertion(p.is_closed());
 }
 
+} // namespace internal
+} // namespace Surface_mesh_topology
 } // namespace CGAL
 
 #endif // CGAL_PATH_GENERATORS_H //

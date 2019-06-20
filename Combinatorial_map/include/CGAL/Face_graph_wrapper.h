@@ -795,7 +795,8 @@ protected:
   };
 
   template <typename Items, typename Alloc, typename Storage, class Map>
-  struct Get_map<CGAL::Polygonal_schema_with_combinatorial_map<Items, Alloc, Storage>, Map>
+  struct Get_map<CGAL::Surface_mesh_topology::
+                 Polygonal_schema_with_combinatorial_map<Items, Alloc, Storage>, Map>
   {
     typedef Map type;
     typedef const Map& storage_type;
@@ -814,7 +815,8 @@ protected:
   };
 
   template <typename Items, typename Alloc, typename Storage, class Map>
-  struct Get_map<CGAL::Polygonal_schema_with_generalized_map<Items, Alloc, Storage>, Map>
+  struct Get_map<CGAL::Surface_mesh_topology::
+                 Polygonal_schema_with_generalized_map<Items, Alloc, Storage>, Map>
   {
     typedef Map type;
     typedef const Map& storage_type;

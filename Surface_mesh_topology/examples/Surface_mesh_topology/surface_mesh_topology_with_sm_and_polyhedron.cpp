@@ -5,7 +5,6 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Curves_on_surface_topology.h>
-#include <CGAL/Path_generators.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/boost/graph/io.h>
 #include <CGAL/Face_graph_wrapper.h>
@@ -17,17 +16,20 @@ typedef Kernel::Point_3                                     Point_3;
 typedef CGAL::Surface_mesh<Point_3>                         SM;
 
 static unsigned int seed; // Use the same seed for the two tests
+
+using namespace CGAL::Surface_mesh_topology;
+
 ///////////////////////////////////////////////////////////////////////////////
 template<class FaceGraph>
 void test(const FaceGraph& mesh)
 {
   CGAL::Random random(seed);
-  CGAL::Curves_on_surface_topology<FaceGraph> cst(mesh);
+  Curves_on_surface_topology<FaceGraph> cst(mesh);
 
-  CGAL::Path_on_surface<FaceGraph> p1(mesh); // A first path
+  Path_on_surface<FaceGraph> p1(mesh); // A first path
   p1.generate_random_closed_path(10, random);
 
-  CGAL::Path_on_surface<FaceGraph> p2(mesh); // A second path
+  Path_on_surface<FaceGraph> p2(mesh); // A second path
   p2.generate_random_closed_path(10, random);
 
   bool res1=cst.is_contractible(p1);
@@ -37,7 +39,7 @@ void test(const FaceGraph& mesh)
   std::cout<<"Path p1 "<<(res2?"IS":"IS NOT")<<" homotopic with path p2."<<std::endl;
 
 #ifdef CGAL_USE_BASIC_VIEWER
-  std::vector<CGAL::Path_on_surface<FaceGraph> > paths={p1, p2};
+  std::vector<Path_on_surface<FaceGraph> > paths={p1, p2};
   CGAL::draw(mesh, paths); // Enable only if CGAL was compiled with Qt5 */
 #endif // CGAL_USE_BASIC_VIEWER
 }

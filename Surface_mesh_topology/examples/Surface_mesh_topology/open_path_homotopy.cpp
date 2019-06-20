@@ -7,8 +7,10 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point_3;
 typedef CGAL::Surface_mesh<Point_3>                         SM;
 
+using namespace CGAL::Surface_mesh_topology;
+
 ///////////////////////////////////////////////////////////////////////////////
-void create_path_1(CGAL::Path_on_surface<SM>& p)
+void create_path_1(Path_on_surface<SM>& p)
 {
   p.push_back_by_index(88); // Its starting dart
   for (int i=0; i<3; ++i)
@@ -16,7 +18,7 @@ void create_path_1(CGAL::Path_on_surface<SM>& p)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void create_path_2(CGAL::Path_on_surface<SM>& p)
+void create_path_2(Path_on_surface<SM>& p)
 {
   p.push_back_by_index(300);  // Its starting dart
   for (int i=0; i<3; ++i)
@@ -24,7 +26,7 @@ void create_path_2(CGAL::Path_on_surface<SM>& p)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void create_path_3(CGAL::Path_on_surface<SM>& p)
+void create_path_3(Path_on_surface<SM>& p)
 {
   p.push_back_by_index(87); // Its starting dart
   p.extend_positive_turn(1); // Extend the path
@@ -45,8 +47,8 @@ int main()
   }
   in>>sm;
 
-  CGAL::Curves_on_surface_topology<SM> cst(sm);
-  CGAL::Path_on_surface<SM> p1(sm), p2(sm), p3(sm);
+  Curves_on_surface_topology<SM> cst(sm);
+  Path_on_surface<SM> p1(sm), p2(sm), p3(sm);
   create_path_1(p1);
   create_path_2(p2);
   create_path_3(p3);
@@ -60,7 +62,7 @@ int main()
            <<" base point homotopic with path p3 (orange)."<<std::endl;
 
 #ifdef CGAL_USE_BASIC_VIEWER
-  std::vector<CGAL::Path_on_surface<SM> > paths={p1, p2, p3};
+  std::vector<Path_on_surface<SM> > paths={p1, p2, p3};
   CGAL::draw(sm, paths); // Enable only if CGAL was compiled with Qt5
 #endif // CGAL_USE_BASIC_VIEWER
   

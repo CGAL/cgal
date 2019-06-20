@@ -1,10 +1,10 @@
 // Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,16 +14,19 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_POLYGONAL_SCHEMA_MIN_ITEMS_H
 #define CGAL_POLYGONAL_SCHEMA_MIN_ITEMS_H 1
 
+#include <CGAL/license/Surface_mesh_topology.h>
+
 #include <cstring>
   
 namespace CGAL {
+namespace Surface_mesh_topology {
 
   /** @file Polygonal_schema_min_items.h
    * Definition of min item class for Polygonal_schema.
@@ -50,6 +53,7 @@ namespace CGAL {
     };
   };
 
+} // namespace Surface_mesh_topology
 } // namespace CGAL
 
 #endif // CGAL_POLYGONAL_SCHEMA_MIN_ITEMS_H

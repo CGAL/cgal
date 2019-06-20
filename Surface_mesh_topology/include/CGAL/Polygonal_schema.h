@@ -1,10 +1,10 @@
 // Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,25 +14,28 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_POLYGONAL_SCHEMA_H
 #define CGAL_POLYGONAL_SCHEMA_H 1
 
+#include <CGAL/license/Surface_mesh_topology.h>
+
 #include <vector>
 #include <unordered_map>
 #include <cstddef>
 #include <string>
+#include <initializer_list>
 #include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/Polygonal_schema_min_items.h>
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Generalized_map.h>
-#include <initializer_list>
 
 namespace CGAL {
+namespace Surface_mesh_topology {
 
   namespace internal 
   {
@@ -46,141 +49,143 @@ namespace CGAL {
       
       return std::string("-")+s;
     }
+
+    template<class Map, class Combinatorial_data_structure=
+             typename Map::Combinatorial_data_structure>
+    struct Polygonal_schema_tools
+    {};
+    template<class CMap>
+    struct Polygonal_schema_tools<CMap, Combinatorial_map_tag>
+    {
+      typedef typename CMap::Dart_handle Dart_handle;
+      
+      static Dart_handle
+      add_edge_to_face(CMap& cmap, const std::string& s,
+                       Dart_handle prev_dart,
+                       Dart_handle dart_same_label,
+                       Dart_handle dart_opposite_label,
+                       std::unordered_map<std::string, Dart_handle>& edge_label_to_dart)
+      {
+        if (dart_same_label!=NULL && dart_opposite_label!=NULL)
+        {
+          std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
+                   <<" and "<<internal::opposite_label(s)<<" are already added in the surface."
+                   <<" This label can not be use anymore."<<std::endl;
+          return NULL;
+        }
+        
+        if (dart_same_label!=NULL)
+        {
+          std::cerr<<"Polygonal_schema ERROR: "<<"label "<<s
+                   <<" is already added in the surface."
+                   <<" Since the surface is orientable, this label can not be use anymore."<<std::endl;
+          return NULL;
+        }
+        
+        Dart_handle res=cmap.create_dart();
+        edge_label_to_dart[s]=res;
+        
+        cmap.info(res).m_label=new char[s.size()+1];
+        strncpy(cmap.info(res).m_label, s.c_str(), s.size()+1); // +1 to copy also the \0 char
+        
+        if (prev_dart!=cmap.null_handle)
+        { cmap.template link_beta<1>(prev_dart, res); }
+        
+        if (dart_opposite_label!=NULL)
+        { cmap.template link_beta<2>(res, dart_opposite_label); }
+        
+        return res;
+      }
+      
+      std::string get_label(CMap& cmap, Dart_handle dh) const
+      {
+        CGAL_assertion(cmap.info(dh).m_label!=NULL);
+        return std::string(cmap.info(dh).m_label);
+      }
+    };
+    template<class GMap>
+    struct Polygonal_schema_tools<GMap, Generalized_map_tag>
+    {
+      typedef typename GMap::Dart_handle Dart_handle;
+      
+      // In a GMap, if an edge is 2-free, only one of its two dart has one label.
+      // Otherwise, d has one label and alpha<0,2>(d) the opposite label.
+      static Dart_handle
+      add_edge_to_face(GMap& gmap, const std::string& s,
+                       Dart_handle prev_dart,
+                       Dart_handle dart_same_label,
+                       Dart_handle dart_opposite_label,
+                       std::unordered_map<std::string, Dart_handle>& edge_label_to_dart)
+      {
+        if (dart_same_label!=NULL && dart_opposite_label!=NULL)
+        {
+          std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
+                   <<" and "<<internal::opposite_label(s)<<" are already added in the surface."
+                   <<" This label can not be use anymore."<<std::endl;
+          return NULL;
+        }
+      
+        Dart_handle res=gmap.create_dart();
+        Dart_handle dh2=gmap.create_dart();
+
+        gmap.template link_alpha<0>(res, dh2);
+        if (prev_dart!=gmap.null_handle)
+        { gmap.template link_alpha<1>(res, gmap.template alpha<0>(prev_dart)); }
+
+        if (dart_same_label!=NULL)
+        { // Here dart_same_label!=NULL
+          std::string s2=internal::opposite_label(s);
+          edge_label_to_dart[s2]=dh2;
+          gmap.info(dh2).m_label=new char[s2.size()+1];
+          strncpy(gmap.info(dh2).m_label, s2.c_str(), s2.size()+1); // +1 to copy also the \0 char
+
+          gmap.template sew<2>(res, dart_same_label);
+        }
+        else
+        { // Here either dart_opposite_label!=NULL, or both are NULL
+          edge_label_to_dart[s]=res;
+          gmap.info(res).m_label=new char[s.size()+1];
+          strncpy(gmap.info(res).m_label, s.c_str(), s.size()+1); // +1 to copy also the \0 char
+
+          if (dart_opposite_label!=NULL)
+          {
+            std::string s2=internal::opposite_label(s);
+            edge_label_to_dart[s2]=res;
+            gmap.info(res).m_label=new char[s2.size()+1];
+            strncpy(gmap.info(res).m_label, s2.c_str(), s2.size()+1); // +1 to copy also the \0 char
+          
+            gmap.template sew<2>(dh2, dart_opposite_label);
+          }
+        }
+
+        return res;
+      }
+
+      std::string get_label(GMap& gmap, Dart_handle dh) const
+      {
+        char* label=gmap.info(dh).m_label;
+
+        if (label==NULL)
+        {
+          if (!gmap.is_free<2>(dh))
+          { label=gmap.info(gmap.template alpha<2>(dh)).m_label; }
+          else
+          {
+            return internal::opposite_label
+              (std::string(gmap.info(gmap.template alpha<0>(dh))));
+          }
+        }
+        CGAL_assertion(label!=NULL);
+        return std::string(label);
+      }
+    };
+
   }
+  // end namespace internal
 
   struct Combinatorial_map_tag;
   struct Generalized_map_tag;
   
-  template<class Map, class Combinatorial_data_structure=
-           typename Map::Combinatorial_data_structure>
-  struct Polygonal_schema_tools
-  {};
-  template<class CMap>
-  struct Polygonal_schema_tools<CMap, Combinatorial_map_tag>
-  {
-    typedef typename CMap::Dart_handle Dart_handle;
-    
-    static Dart_handle
-    add_edge_to_face(CMap& cmap, const std::string& s,
-                     Dart_handle prev_dart,
-                     Dart_handle dart_same_label,
-                     Dart_handle dart_opposite_label,
-                     std::unordered_map<std::string, Dart_handle>& edge_label_to_dart)
-    {
-      if (dart_same_label!=NULL && dart_opposite_label!=NULL)
-      {
-        std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
-                 <<" and "<<internal::opposite_label(s)<<" are already added in the surface."
-                 <<" This label can not be use anymore."<<std::endl;
-        return NULL;
-      }
-
-      if (dart_same_label!=NULL)
-      {
-       std::cerr<<"Polygonal_schema ERROR: "<<"label "<<s
-                 <<" is already added in the surface."
-                 <<" Since the surface is orientable, this label can not be use anymore."<<std::endl;
-        return NULL;
-      }
-      
-      Dart_handle res=cmap.create_dart();
-      edge_label_to_dart[s]=res;
-
-      cmap.info(res).m_label=new char[s.size()+1];
-      strncpy(cmap.info(res).m_label, s.c_str(), s.size()+1); // +1 to copy also the \0 char
-
-      if (prev_dart!=cmap.null_handle)
-      { cmap.template link_beta<1>(prev_dart, res); }
-      
-      if (dart_opposite_label!=NULL)
-      { cmap.template link_beta<2>(res, dart_opposite_label); }
-      
-      return res;
-    }
-
-    std::string get_label(CMap& cmap, Dart_handle dh) const
-    {
-      CGAL_assertion(cmap.info(dh).m_label!=NULL);
-      return std::string(cmap.info(dh).m_label);
-    }
-  };
-  template<class GMap>
-  struct Polygonal_schema_tools<GMap, Generalized_map_tag>
-  {
-    typedef typename GMap::Dart_handle Dart_handle;
-
-    // In a GMap, if an edge is 2-free, only one of its two dart has one label.
-    // Otherwise, d has one label and alpha<0,2>(d) the opposite label.
-    static Dart_handle
-    add_edge_to_face(GMap& gmap, const std::string& s,
-                     Dart_handle prev_dart,
-                     Dart_handle dart_same_label,
-                     Dart_handle dart_opposite_label,
-                     std::unordered_map<std::string, Dart_handle>& edge_label_to_dart)
-    {
-       if (dart_same_label!=NULL && dart_opposite_label!=NULL)
-      {
-        std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
-                 <<" and "<<internal::opposite_label(s)<<" are already added in the surface."
-                 <<" This label can not be use anymore."<<std::endl;
-        return NULL;
-      }
-      
-      Dart_handle res=gmap.create_dart();
-      Dart_handle dh2=gmap.create_dart();
-
-      gmap.template link_alpha<0>(res, dh2);
-      if (prev_dart!=gmap.null_handle)
-      { gmap.template link_alpha<1>(res, gmap.template alpha<0>(prev_dart)); }
-
-      if (dart_same_label!=NULL)
-      { // Here dart_same_label!=NULL
-        std::string s2=internal::opposite_label(s);
-        edge_label_to_dart[s2]=dh2;
-        gmap.info(dh2).m_label=new char[s2.size()+1];
-        strncpy(gmap.info(dh2).m_label, s2.c_str(), s2.size()+1); // +1 to copy also the \0 char
-
-        gmap.template sew<2>(res, dart_same_label);
-      }
-      else
-      { // Here either dart_opposite_label!=NULL, or both are NULL
-        edge_label_to_dart[s]=res;
-        gmap.info(res).m_label=new char[s.size()+1];
-        strncpy(gmap.info(res).m_label, s.c_str(), s.size()+1); // +1 to copy also the \0 char
-
-        if (dart_opposite_label!=NULL)
-        {
-          std::string s2=internal::opposite_label(s);
-          edge_label_to_dart[s2]=res;
-          gmap.info(res).m_label=new char[s2.size()+1];
-          strncpy(gmap.info(res).m_label, s2.c_str(), s2.size()+1); // +1 to copy also the \0 char
-          
-          gmap.template sew<2>(dh2, dart_opposite_label);
-        }
-      }
-
-      return res;
-    }
-
-    std::string get_label(GMap& gmap, Dart_handle dh) const
-    {
-      char* label=gmap.info(dh).m_label;
-
-      if (label==NULL)
-      {
-        if (!gmap.is_free<2>(dh))
-        { label=gmap.info(gmap.template alpha<2>(dh)).m_label; }
-        else
-        {
-          return internal::opposite_label
-            (std::string(gmap.info(gmap.template alpha<0>(dh))));
-        }
-      }
-      CGAL_assertion(label!=NULL);
-      return std::string(label);
-    }
-  };
-
   template < class BaseModel >
   class Polygonal_schema_base: public BaseModel
   {
@@ -239,7 +244,7 @@ namespace CGAL {
       Dart_handle dart_same_label=get_dart_labeled(s);
       Dart_handle dart_opposite_label=get_dart_labeled(internal::opposite_label(s));
       
-      Dart_handle cur=Polygonal_schema_tools<Map>::
+      Dart_handle cur=internal::Polygonal_schema_tools<Map>::
         add_edge_to_face(*this, s, prev_dart, dart_same_label, dart_opposite_label,
                          edge_label_to_dart);
 
@@ -335,7 +340,7 @@ namespace CGAL {
     }
 
     std::string get_label(Dart_handle dh) const
-    { return Polygonal_schema_tools<Map>::get_label(dh); }
+    { return internal::Polygonal_schema_tools<Map>::get_label(dh); }
     
   protected:
     // For each edge label, its corresponding dart. Stores both association a -a, to allow
@@ -459,6 +464,7 @@ namespace CGAL {
     {}
   };
   
+} //namespace Surface_mesh_topology
 } //namespace CGAL
 
 #endif // CGAL_POLYGONAL_SCHEMA_H //

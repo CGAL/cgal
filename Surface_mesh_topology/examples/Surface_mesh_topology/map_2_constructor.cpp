@@ -3,8 +3,10 @@
 #include <iostream>
 #include <cstdlib>
 
-typedef CGAL::Polygonal_schema_with_combinatorial_map<> CMap;
-typedef CGAL::Polygonal_schema_with_generalized_map<>   GMap;
+using namespace CGAL::Surface_mesh_topology;
+
+typedef Polygonal_schema_with_combinatorial_map<> CMap;
+typedef Polygonal_schema_with_generalized_map<>   GMap;
 
 template<typename Map>
 void construct_map_from_edges()
@@ -14,7 +16,7 @@ void construct_map_from_edges()
   cm.add_facet("a b c -a -b");
   cm.add_facet("-c d e -d -e");
 
-  CGAL::Path_on_surface<Map> p(cm); p.push_back_by_label("a b d e");
+  Path_on_surface<Map> p(cm); p.push_back_by_label("a b d e");
 
   std::cout<<"Map valid="<<cm.is_valid()<<std::flush;
   cm.display_characteristics(std::cout);

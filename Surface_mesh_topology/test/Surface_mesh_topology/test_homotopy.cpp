@@ -2,7 +2,7 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Curves_on_surface_topology.h>
-#include <CGAL/Path_generators.h>
+#include <CGAL/Surface_mesh_topology/internal/Path_generators.h>
 #include <vector>
 #include <sstream>
 
@@ -36,9 +36,11 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3,
 static int nbtests=0;
 static int starting_seed;
 
+using namespace CGAL::Surface_mesh_topology;
+
 ///////////////////////////////////////////////////////////////////////////////
-bool unit_test_canonize(CGAL::Curves_on_surface_topology<LCC_3_cmap>& cst,
-                        std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& paths,
+bool unit_test_canonize(Curves_on_surface_topology<LCC_3_cmap>& cst,
+                        std::vector<Path_on_surface<LCC_3_cmap> >& paths,
                         const char* msg,
                         bool draw, int testtorun)
 {
@@ -82,7 +84,7 @@ bool unit_test_canonize(CGAL::Curves_on_surface_topology<LCC_3_cmap>& cst,
 bool test_double_torus_quad(bool draw, int testtorun)
 {
   bool res=true;
-  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
+  std::vector<Path_on_surface<LCC_3_cmap> > paths;
 
   // Test 0 (double torus, three G1 cycles)
   {
@@ -92,11 +94,11 @@ bool test_double_torus_quad(bool draw, int testtorun)
       std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl;
       return false;
     }
-    CGAL::Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
+    Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
 
     for (unsigned int i=0; i<3; ++i)
     {
-      CGAL::Path_on_surface<LCC_3_cmap> p(lcc);
+      Path_on_surface<LCC_3_cmap> p(lcc);
       CGAL::generate_g1_double_torus(p, i);
       paths.push_back(p);
     }
@@ -116,14 +118,14 @@ bool test_double_torus_quad(bool draw, int testtorun)
       std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl; // ./data/double-torus-smooth.off"<<std::endl;
       return false;
     }
-    CGAL::Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
+    Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
 
     if (testtorun==-1 || nbtests==testtorun)
     {
       CGAL::Random random(starting_seed+nbtests);
-      CGAL::Path_on_surface<LCC_3_cmap> p(lcc);
+      Path_on_surface<LCC_3_cmap> p(lcc);
 
-      generate_random_closed_path(p, random.get_int(5, 20), random); // random path, length between 30 and 500
+      internal::generate_random_closed_path(p, random.get_int(5, 20), random); // random path, length between 5 and 20
       paths.push_back(p);
 
       p.update_path_randomly(random);
@@ -148,14 +150,14 @@ bool test_double_torus_quad(bool draw, int testtorun)
       std::cout<<"PROBLEM reading file ./data/3torus-smooth.off"<<std::endl; // 3torus.off
       return false;
     }
-    CGAL::Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
+    Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
 
     if (testtorun==-1 || nbtests==testtorun)
     {
       CGAL::Random random(starting_seed+nbtests);
-      CGAL::Path_on_surface<LCC_3_cmap> p(lcc);
+      Path_on_surface<LCC_3_cmap> p(lcc);
 
-      generate_random_closed_path(p, random.get_int(5, 200), random); // random path, length between 30 and 500
+      internal::generate_random_closed_path(p, random.get_int(5, 200), random); // random path, length between 5 and 200
       paths.push_back(p);
 
       p.update_path_randomly(random);

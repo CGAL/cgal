@@ -1,10 +1,10 @@
 // Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,12 +14,12 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_HOMOTOPY_TESTER_H
-#define CGAL_HOMOTOPY_TESTER_H 1
+#ifndef CGAL_CURVES_ON_SURFACE_TOPOLOGY_H
+#define CGAL_CURVES_ON_SURFACE_TOPOLOGY_H 1
 
 // Should be defined before to include Path_on_surface_with_rle.h
 // If nothing is defined, use V1
@@ -27,11 +27,13 @@
 // #define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash-table (built and given by Curves_on_surface_topology)
 #define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Curves_on_surface_topology)
 
+#include <CGAL/license/Surface_mesh_topology.h>
+
 #include <CGAL/Union_find.h>
 #include <CGAL/Random.h>
 #include <CGAL/Path_on_surface.h>
-#include <CGAL/Path_on_surface_with_rle.h>
-#include <CGAL/Path_generators.h>
+#include <CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h>
+#include <CGAL/Surface_mesh_topology/internal/Path_generators.h>
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Face_graph_wrapper.h>
@@ -40,6 +42,7 @@
 #include <iostream>
 
 namespace CGAL {
+namespace Surface_mesh_topology {
 
 struct CMap_for_homotopy_tester_items
 {
@@ -324,7 +327,7 @@ CMap_for_homotopy_tester;
       }
       else
       {
-        Path_on_surface_with_rle<CMap_for_homotopy_tester>
+        internal::Path_on_surface_with_rle<CMap_for_homotopy_tester>
             pt=transform_original_path_into_quad_surface_with_rle(p);
 
         pt.canonize();
@@ -379,9 +382,9 @@ CMap_for_homotopy_tester;
       }
       else
       {
-        Path_on_surface_with_rle<CMap_for_homotopy_tester>
+        internal::Path_on_surface_with_rle<CMap_for_homotopy_tester>
           pt1=transform_original_path_into_quad_surface_with_rle(p1);
-        Path_on_surface_with_rle<CMap_for_homotopy_tester>
+        internal::Path_on_surface_with_rle<CMap_for_homotopy_tester>
           pt2=transform_original_path_into_quad_surface_with_rle(p2);
         pt1.canonize();
         pt2.canonize();
@@ -501,11 +504,11 @@ CMap_for_homotopy_tester;
       return res;
     }
 
-    Path_on_surface_with_rle<CMap_for_homotopy_tester>
+    internal::Path_on_surface_with_rle<CMap_for_homotopy_tester>
     transform_original_path_into_quad_surface_with_rle
     (const Path_on_surface<Mesh>& path) const
     {
-      Path_on_surface_with_rle<CMap_for_homotopy_tester>
+      internal::Path_on_surface_with_rle<CMap_for_homotopy_tester>
           res(m_map
         #ifdef CGAL_PWRLE_TURN_V2
               , m_dart_ids
@@ -1158,7 +1161,8 @@ CMap_for_homotopy_tester;
 #endif // CGAL_PWRLE_TURN_V2
   };
   
+} // namespace Surface_mesh_topology
 } // namespace CGAL
 
-#endif // CGAL_HOMOTOPY_TESTER_H //
+#endif // CGAL_CURVES_ON_SURFACE_TOPOLOGY_H //
 // EOF //

@@ -5,9 +5,10 @@
 #include <CGAL/draw_face_graph_with_paths.h>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
+using namespace CGAL::Surface_mesh_topology;
 
 ///////////////////////////////////////////////////////////////////////////////
-void create_path_1(CGAL::Path_on_surface<LCC_3_cmap>& p)
+void create_path_1(Path_on_surface<LCC_3_cmap>& p)
 {
   p.push_back_by_index(14); // Its starting dart
   for (int i=0; i<7; ++i)
@@ -15,11 +16,11 @@ void create_path_1(CGAL::Path_on_surface<LCC_3_cmap>& p)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void create_path_2(CGAL::Path_on_surface<LCC_3_cmap>& p)
+void create_path_2(Path_on_surface<LCC_3_cmap>& p)
 { p.push_back_by_index({202, 206, 335, 317, 322, 69, 62, 414}); }
 
 ///////////////////////////////////////////////////////////////////////////////
-void create_path_3(CGAL::Path_on_surface<LCC_3_cmap>& p)
+void create_path_3(Path_on_surface<LCC_3_cmap>& p)
 {
   p.push_back_by_index(470); // Its starting dart
   for (int i=0; i<13; ++i)
@@ -36,8 +37,8 @@ int main()
     exit(EXIT_FAILURE);
   }
 
-  CGAL::Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
-  CGAL::Path_on_surface<LCC_3_cmap> p1(lcc), p2(lcc), p3(lcc);
+  Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
+  Path_on_surface<LCC_3_cmap> p1(lcc), p2(lcc), p3(lcc);
   create_path_1(p1);
   create_path_2(p2);
   create_path_3(p3);
@@ -55,7 +56,7 @@ int main()
            <<" homotopic with path p3 (orange)."<<std::endl;
 
 #ifdef CGAL_USE_BASIC_VIEWER
-  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths={p1, p2, p3};
+  std::vector<Path_on_surface<LCC_3_cmap> > paths={p1, p2, p3};
   CGAL::draw(lcc, paths); // Enable only if CGAL was compiled with Qt5
 #endif // CGAL_USE_BASIC_VIEWER
   

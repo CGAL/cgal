@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cstdlib>
 
-typedef CGAL::Polygonal_schema_with_combinatorial_map<> PS;
+typedef CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map<> PS;
 
 int main()
 {
@@ -23,10 +23,10 @@ int main()
   std::cout<<"Number of cells of the combinatorial maps: ";
   ps.display_characteristics(std::cout)<<std::endl;
   
-  CGAL::Path_on_surface<PS> p(ps);
+  CGAL::Surface_mesh_topology::Path_on_surface<PS> p(ps);
   p.push_back_by_label("a b -a e -b d");  
 
-  CGAL::Curves_on_surface_topology<PS> cst(ps);
+  CGAL::Surface_mesh_topology::Curves_on_surface_topology<PS> cst(ps);
   bool res=cst.is_contractible(p);
   std::cout<<"Path "<<(res?"IS":"IS NOT")<<" contractible."<<std::endl;
 

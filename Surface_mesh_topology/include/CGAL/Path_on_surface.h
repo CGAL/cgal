@@ -1,10 +1,10 @@
 // Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,17 +14,20 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_PATH_ON_SURFACE_H
 #define CGAL_PATH_ON_SURFACE_H 1
 
+#include <CGAL/license/Surface_mesh_topology.h>
+
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Random.h>
 #include <CGAL/Face_graph_wrapper.h>
+#include <CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h>
 #include <boost/algorithm/searching/knuth_morris_pratt.hpp>
 #include <utility>
 #include <string>
@@ -34,14 +37,12 @@
 #include <initializer_list>
 
 namespace CGAL {
-
-template<typename Mesh>
-class Path_on_surface_with_rle;
+namespace Surface_mesh_topology {
 
 template<typename Mesh>
 class Path_on_surface
 {
-  friend class Path_on_surface_with_rle<Mesh>;
+  friend class internal::Path_on_surface_with_rle<Mesh>;
 
 public:
   typedef Path_on_surface<Mesh>           Self;
@@ -51,7 +52,7 @@ public:
   Path_on_surface(const Mesh& amap) : m_map(amap), m_is_closed(false)
   {}
 
-  Path_on_surface(const Path_on_surface_with_rle<Mesh>& apath) :
+  Path_on_surface(const internal::Path_on_surface_with_rle<Mesh>& apath) :
     m_map(apath.get_map()),
     m_is_closed(apath.is_closed())
   {
@@ -937,6 +938,7 @@ protected:
   bool m_is_closed;                      /// True iff the path is a cycle
 };
 
+} // namespace Surface_mesh_topology
 } // namespace CGAL
 
 #endif // CGAL_PATH_ON_SURFACE_H //

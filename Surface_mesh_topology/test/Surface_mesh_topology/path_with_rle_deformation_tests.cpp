@@ -1,8 +1,8 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Path_generators.h>
 #include <CGAL/Path_on_surface.h>
-#include <CGAL/Path_on_surface_with_rle.h>
+#include <CGAL/Surface_mesh_topology/internal/Path_generators.h>
+#include <CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h>
 #include <vector>
 #include <sstream>
 
@@ -42,15 +42,17 @@ enum Transformation // enum for the type of transformations
   FULL_SIMPLIFICATION
 };
 
+using namespace CGAL::Surface_mesh_topology;
+
 ///////////////////////////////////////////////////////////////////////////////
-void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
+void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
                     bool use_only_positive,
                     bool use_only_negative,
                     bool draw=false,
                     std::size_t repeat=0) // If 0, repeat as long as there is one modifcation;
                                            // otherwise repeat the given number of times
 {
-  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > v;
+  std::vector<Path_on_surface<LCC_3_cmap> > v;
 #ifdef CGAL_USE_BASIC_VIEWER
   if (draw)
   {
@@ -59,15 +61,15 @@ void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
   }
 #endif // CGAL_USE_BASIC_VIEWER
 
-  CGAL::Path_on_surface<LCC_3_cmap> prevp=path;
-  CGAL::Path_on_surface_with_rle<LCC_3_cmap> curp(path.get_map());
+  Path_on_surface<LCC_3_cmap> prevp=path;
+  internal::Path_on_surface_with_rle<LCC_3_cmap> curp(path.get_map());
   std::size_t nb=0;
   bool modified=false;
   do
   {
-    curp=CGAL::Path_on_surface_with_rle<LCC_3_cmap>(prevp,
-                                                    use_only_positive,
-                                                    use_only_negative);
+    curp=internal::Path_on_surface_with_rle<LCC_3_cmap>(prevp,
+                                                        use_only_positive,
+                                                        use_only_negative);
     modified=false;
     /* curp->display_negative_turns();
     std::cout<<"  "; curp->display_positive_turns();
@@ -87,7 +89,7 @@ void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
 
     if (modified)
     {
-      prevp=CGAL::Path_on_surface<LCC_3_cmap>(curp);
+      prevp=Path_on_surface<LCC_3_cmap>(curp);
 #ifdef CGAL_USE_BASIC_VIEWER
       if (draw) { v.push_back(prevp); }
 #endif // CGAL_USE_BASIC_VIEWER
@@ -115,7 +117,7 @@ void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
   path.swap(prevp);
 }
 ///////////////////////////////////////////////////////////////////////////////
-bool unit_test(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
+bool unit_test(Path_on_surface<LCC_3_cmap>& path, Transformation t,
                std::size_t repeat,
                const char* msg, const char* expected_result,
                bool draw, int testtorun,
@@ -163,7 +165,7 @@ bool test_all_cases_spurs_and_bracket(bool draw, int testtorun)
     return false;
   }
 
-  CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
+  Path_on_surface<LCC_3_cmap> path(lcc);
 
   generate_one_positive_spur(path); // Test 0
   if (!unit_test(path, REDUCTION, 1, "Positive spur (2^6 1 0 2^4)",
@@ -236,7 +238,7 @@ bool test_all_cases_l_shape(bool draw, int testtorun)
     std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
     return false;
   }
-  CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
+  Path_on_surface<LCC_3_cmap> path(lcc);
 
   generate_one_l_shape(path); // Test 9
   if (!unit_test(path, PUSH, 1, "L-shape (-2^2 -3 -2^8 -1 -2^5 -3 -2^3)",
@@ -325,29 +327,29 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
     return false;
   }
 
-  CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
+  Path_on_surface<LCC_3_cmap> path(lcc);
   bool res=true;
 
   CGAL::Random random(nbtests); // fix seed
-  generate_random_positive_bracket(path, 2, 6, 3, random); // Test 17
+  internal::generate_random_positive_bracket(path, 2, 6, 3, random); // Test 17
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^1 1 2^6 1 2^3 ... )",
                  "2 2 2 2 2 2 1", draw, testtorun, true, false))
   { res=false; }
 
   random=CGAL::Random(nbtests);
-  generate_random_positive_bracket(path, 3, 8, 4, random); // Test 18
+  internal::generate_random_positive_bracket(path, 3, 8, 4, random); // Test 18
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^2 1 2^8 1 2^4 ... )",
                    "2 1 2 2 2 2 2", draw, testtorun, true, false))
   { res=false; }
 
   random=CGAL::Random(nbtests);
-  generate_random_positive_bracket(path, 5, 12, 8, random); // Test 19
+  internal::generate_random_positive_bracket(path, 5, 12, 8, random); // Test 19
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
                  "2 1 2", draw, testtorun, true, false))
   { res=false; }
 
   random=CGAL::Random(nbtests);
-  generate_random_positive_bracket(path, 5, 12, 8, random); // Test 20
+  internal::generate_random_positive_bracket(path, 5, 12, 8, random); // Test 20
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
                    "1 2 2 2", draw, testtorun, true, false))
   { res=false; }
