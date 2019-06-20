@@ -42,6 +42,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
+#include <CGAL/Dimension.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/circulator.h>
@@ -2089,6 +2090,24 @@ private: //------------------------------------------------------- private data
     return sm;
   }
 
+  /// \cond SKIP_IN_MANUAL
+  template <typename Point,
+            int dim = CGAL::Ambient_dimension<Point>::value>
+  struct Output_point_23
+  {
+    template<typename Stream>
+    Stream& operator()(Stream& os, const Point& p) const { os << p.x() << " " << p.y() << " " << p.z(); return os; }
+  };
+
+  template <typename Point>
+  struct Output_point_23<Point, 2> // 2D Point specialization
+  {
+    template<typename Stream>
+    Stream& operator()(Stream& os, const Point& p) const { os << p.x() << " " << p.y(); return os; }
+  };
+
+  /// \endcond
+
 
   /// \relates Surface_mesh
   /// Inserts the surface mesh in an output stream in Ascii OFF format. 
@@ -2122,10 +2141,12 @@ private: //------------------------------------------------------- private data
                            get_const_property_map(CGAL::vertex_point, sm));
     reindex.resize(sm.num_vertices());
     int n = 0;
+
+    Output_point_23<P> op;
     for(Vertex_index v : sm.vertices()){
 
-      P p  = get(vpm, v);
-      os << p.x() << " " << p.y() << " " << p.z();
+      op(os, get(vpm, v));
+
       if(has_vcolors)
       {
         CGAL::Color color = vcolors[v];
@@ -2361,6 +2382,30 @@ private: //------------------------------------------------------- private data
       return in;
   }
 
+  template <typename Point,
+            int dimension = CGAL::Ambient_dimension<Point>::value>
+  struct Read_point_23
+  {
+    template <typename Stream>
+    Point operator()(Stream& is) const
+    {
+      double x, y, z;
+      is >> iformat(x) >> iformat(y) >> iformat(z);
+      return Point(x, y, z);
+    }
+  };
+
+  template <typename Point>
+  struct Read_point_23<Point, 2> // 2D specialization
+  {
+    template <typename Stream>
+    Point operator()(Stream& is) const
+    {
+      double x, y;
+      is >> iformat(x) >> iformat(y);
+      return Point(x, y);
+    }
+  };
 
 
 /// @endcond
@@ -2419,21 +2464,18 @@ private: //------------------------------------------------------- private data
     }
     char ci;
 
+    Read_point_23<P> point_reader;
     for(int i=0; i < n; i++){
       is >> sm_skip_comments;
-      double x, y, z;
-      is >> iformat(x) >> iformat(y) >> iformat(z);
-      
+
       Vertex_index vi = sm.add_vertex();
-      put(vpm, vi, P(x, y, z));
-      
-      
+      put(vpm, vi, point_reader(is));
+
       vertexmap[i] = vi;
       if(v_has_normals){
         is >> v;
         vnormal[vi] = v;
       }
-
 
       if(i == 0 && ((off == "COFF") || (off == "CNOFF"))){
         std::string col;
