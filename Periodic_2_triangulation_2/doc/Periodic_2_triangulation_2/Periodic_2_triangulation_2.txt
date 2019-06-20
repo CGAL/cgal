@@ -225,7 +225,7 @@ all objects, predicates and constructions with using offsets.
 The class
 `Periodic_2_Delaunay_triangulation_traits_2<Traits,Periodic_2Offset_2>`
 provides the required functionality. It expects two template
-parameters: A model of the concept `DelaunayTriangulationTraits_2`
+parameters: a model of the concept `DelaunayTriangulationTraits_2`
 and a model of the concept `Periodic_2Offset_2`. Since the concept
 `TriangulationTraits_2` refines the concept
 `DelaunayTriangulationTraits_2`, the class

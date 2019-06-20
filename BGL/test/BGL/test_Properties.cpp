@@ -1,5 +1,5 @@
-
 #include "test_Prefix.h"
+
 #include <boost/unordered_set.hpp>
 
 template< typename G,
@@ -31,7 +31,6 @@ void index_uniqueness(const G&,
 
 void index_uniqueness_poly(const Polyhedron& g)
 {
-  std::cerr << "testing Polyhedron\n";
   index_uniqueness(g, edges(g) ,    get(boost::edge_index, g));
   index_uniqueness(g, vertices(g),  get(boost::vertex_index, g));
   index_uniqueness(g, faces(g),     get(boost::face_index, g));
@@ -45,28 +44,23 @@ void index_uniqueness_poly(const Polyhedron& g)
 
 void index_uniqueness_lcc(const LCC& g)
 {
-  std::cerr << "testing Linear_cell_complex\n";
   index_uniqueness(g, edges(g) ,    get(boost::edge_index, g));
   index_uniqueness(g, vertices(g),  get(boost::vertex_index, g));
   index_uniqueness(g, faces(g),     get(boost::face_index, g));
   index_uniqueness(g, halfedges(g), get(boost::halfedge_index, g));
 }
 
-#if defined(CGAL_USE_SURFACE_MESH)
 void index_uniqueness_sm(const SM& g)
 {
-  std::cerr << "testing Surface_mesh\n";
   index_uniqueness(g, edges(g) ,    get(boost::edge_index, g));
   index_uniqueness(g, vertices(g),  get(boost::vertex_index, g));
   index_uniqueness(g, faces(g),     get(boost::face_index, g));
   index_uniqueness(g, halfedges(g), get(boost::halfedge_index, g));
 }
-#endif
 
 #if defined(CGAL_USE_OPENMESH)
 void index_uniqueness_omesh(const OMesh& g)
 {
-  std::cerr << "testing OpenMesh\n";
   index_uniqueness(g, edges(g) ,    get(boost::edge_index, g));
   index_uniqueness(g, vertices(g),  get(boost::vertex_index, g));
   index_uniqueness(g, faces(g),     get(boost::face_index, g));
@@ -74,34 +68,47 @@ void index_uniqueness_omesh(const OMesh& g)
 }
 #endif
 
-int
-main()
+template <typename Triangulation>
+void index_uniqueness_tr(const Triangulation& g)
 {
+  index_uniqueness(g, edges(g) ,    get(boost::edge_index, g));
+  index_uniqueness(g, vertices(g),  get(boost::vertex_index, g));
+  index_uniqueness(g, faces(g),     get(boost::face_index, g));
+  index_uniqueness(g, halfedges(g), get(boost::halfedge_index, g));
+}
+
+int main()
+{
+  std::cout << "testing Polyhedron\n";
   std::vector<Polyhedron> polys = poly_data();
-
-  for(Polyhedron p : polys){
+  for(Polyhedron p : polys)
     index_uniqueness_poly(p);
-  }
 
+  std::cout << "testing Linear_cell_complex\n";
   std::vector<LCC> lccs = lcc_data();
-  for(LCC p : lccs){
+  for(LCC p : lccs)
     index_uniqueness_lcc(p);
-  }
 
-#if defined(CGAL_USE_SURFACE_MESH)
+  std::cout << "testing Surface_mesh\n";
   std::vector<SM> sms = sm_data();
-
-  for(SM p : sms){
+  for(SM p : sms)
     index_uniqueness_sm(p);
-  }
-#endif 
 
 #if defined(CGAL_USE_OPENMESH)
+  std::cout << "testing OpenMesh\n";
   std::vector<OMesh> omeshs = omesh_data();
-  for(OMesh p : omeshs){
+  for(OMesh p : omeshs)
     index_uniqueness_omesh(p);
-  }
 #endif
+
+  std::cout << "testing Triangulations\n";
+  index_uniqueness_tr(t2_data());
+  index_uniqueness_tr(dt2_data());
+  index_uniqueness_tr(rt2_data());
+  index_uniqueness_tr(ct2_data());
+  index_uniqueness_tr(cdt2_data());
+  index_uniqueness_tr(cdtp2_data());
+  index_uniqueness_tr(t2h_data());
 
   std::cerr << "done\n";
   return 0;
