@@ -455,15 +455,18 @@ void test_locate_in_face(const G& g, CGAL::Random& rnd)
 
   halfedge_descriptor neigh_hd = opposite(halfedge(f, g), g);
   face_descriptor neigh_f = face(neigh_hd, g);
-  int neigh_hd_id = CGAL::halfedge_index_in_face(neigh_hd, g);
-  Face_location neigh_loc;
-  neigh_loc.first = neigh_f;
-  neigh_loc.second[neigh_hd_id] = FT(0.3);
-  neigh_loc.second[(neigh_hd_id+1)%3] = FT(0.7);
-  neigh_loc.second[(neigh_hd_id+2)%3] = FT(0);
 
+  // Want to check good correspondence seen from one side and the other. If unfortunately
+  // we have selected a border face, can't do anything!
   if(neigh_f != boost::graph_traits<G>::null_face())
   {
+    int neigh_hd_id = CGAL::halfedge_index_in_face(neigh_hd, g);
+    Face_location neigh_loc;
+    neigh_loc.first = neigh_f;
+    neigh_loc.second[neigh_hd_id] = FT(0.3);
+    neigh_loc.second[(neigh_hd_id+1)%3] = FT(0.7);
+    neigh_loc.second[(neigh_hd_id+2)%3] = FT(0);
+
     PMP::locate_in_adjacent_face(loc, neigh_f, g);
 
     assert(PMP::locate_in_common_face(loc, neigh_loc, g));
@@ -528,7 +531,8 @@ struct Locate_with_AABB_tree_Tester // 2D case
     assert(tree_b.size() == num_faces(g));
 
     Face_location loc = PMP::locate_with_AABB_tree(p_a, tree_a, g);
-    assert(PMP::is_on_vertex(loc, v, g));
+
+    // assert(PMP::is_on_vertex(loc, v, g)); // might fail du to precision issues...
     assert(is_equal(loc.second[CGAL::vertex_index_in_face(v, loc.first, g)], FT(1)));
     assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g)+1)%3], FT(0)));
     assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g)+2)%3], FT(0)));
