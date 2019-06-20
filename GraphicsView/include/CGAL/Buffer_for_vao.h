@@ -266,8 +266,16 @@ public:
   template<typename KPoint, typename KVector>
   void add_ray_segment(const KPoint& kp1, const KVector& kp2)
   {
-      add_point(kp1);
-      add_point_infinity(kp2);
+    add_point(kp1);
+    add_point_infinity(kp2);
+  }
+
+  // 2.2) Add a line
+  template<typename KPoint>
+  void add_line_segment(const KPoint& kp1, const KPoint& kp2)
+  {
+    add_point_infinity(kp1);
+    add_point_infinity(kp2);
   }
 
   // 2.3) Add an indexed segment, without color.

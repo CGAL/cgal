@@ -47,22 +47,15 @@ struct DefaultColorFunctorV2 {
 // Viewer for Voronoi diagram
 template <class V2, class ColorFunctor>
 class SimpleVoronoiDiagram2ViewerQt : public Basic_viewer_qt {
-  typedef Basic_viewer_qt                            Base;
-  typedef typename V2::Halfedge_iterator             Halfedge_const_handle;
-  typedef typename V2::Face_iterator                 Face_const_handle;
-  typedef typename V2::Vertex_iterator               Vertex_const_handle;
-  typedef typename V2::Point_2                       Point;
-  typedef typename V2::Delaunay_vertex_handle        Delaunay_vertex_const_handle;
-  typedef typename V2::Ccb_halfedge_circulator       Ccb_halfedge_circulator;
-  typedef typename V2::Delaunay_geom_traits          Delaunay_geom_traits;
+  typedef Basic_viewer_qt                                       Base;
+  typedef typename V2::Halfedge_iterator                        Halfedge_const_handle;
+  typedef typename V2::Face_iterator                            Face_const_handle;
+  typedef typename V2::Vertex_iterator                          Vertex_const_handle;
+  typedef typename V2::Delaunay_vertex_handle                   Delaunay_vertex_const_handle;
+  typedef typename V2::Ccb_halfedge_circulator                  Ccb_halfedge_circulator;
+  typedef typename V2::Halfedge_handle                          Halfedge_handle;
 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Face<V2>                  Face;
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Handle_adaptor<Face>      Face_handle;
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Vertex<V2>                Vertex;
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::Handle_adaptor<Vertex>    Vertex_handle;
-  typedef typename V2::Halfedge_handle                          Halfedge_handle;
-  typedef Triangulation_cw_ccw_2                                CW_CCW_2;
 
 public:
   /// Construct the viewer.
@@ -112,20 +105,27 @@ protected:
         //        }
   }
 
-  void compute_ray_points(Halfedge_handle he) {
+  void add_segments_and_update_bounding_box(Halfedge_handle he) {
     if (he->is_segment()) {
       add_segment(he->source()->point(), he->target()->point());
-    } else if (he->is_ray()) {
+    }else {
       Delaunay_vertex_const_handle v1 = he->up();
       Delaunay_vertex_const_handle v2 = he->down();
 
       Kernel::Vector_2 direction(v1->point().y() - v2->point().y(),
                                  v2->point().x() - v1->point().x());
-      Kernel::Point_2 end_point;
-
-      if (he->has_source()) {
-        end_point = he->source()->point();
-        add_ray_points(end_point, direction);
+      if (he->is_ray()) {
+        Kernel::Point_2 end_point;
+        if (he->has_source()) {
+          end_point = he->source()->point();
+          update_bounding_box_for_ray(end_point, direction);
+        }
+      } else if (he->is_bisector()){
+        Kernel::Point_2 pointOnLine((v1->point().x() + v2->point().x())/2,
+                                    (v1->point().y() + v2->point().y())/2);
+        Kernel::Vector_2 perpendicularDirection(v2->point().x() - v1->point().x(),
+                                                v2->point().y() - v1->point().y());
+        update_bounding_box_for_line(pointOnLine, direction, perpendicularDirection);
       }
     }
   }
@@ -187,17 +187,21 @@ protected:
       return p1;
   }
 
-  void compute_rays(Halfedge_const_handle he) {
+  void compute_rays_and_bisectors(Halfedge_const_handle he) {
+    Delaunay_vertex_const_handle v1 = he->up();
+    Delaunay_vertex_const_handle v2 = he->down();
+
+    Kernel::Vector_2 direction(v1->point().y() - v2->point().y(),
+                               v2->point().x() - v1->point().x());
     if (he->is_ray()) {
       if (he->has_source()) {
-          Delaunay_vertex_const_handle v1 = he->up();
-          Delaunay_vertex_const_handle v2 = he->down();
-
-          Kernel::Vector_2 direction(v1->point().y() - v2->point().y(),
-                                     v2->point().x() - v1->point().x());
-          //add_ray_segment(he->source()->point(), get_second_point(he));
-          add_ray_segment(he->source()->point(), direction);
-      }
+        //add_ray_segment(he->source()->point(), get_second_point(he));
+        add_ray(he->source()->point(), direction);
+       }
+    } else if(he->is_bisector()){
+        Kernel::Point_2 pointOnLine((v1->point().x() + v2->point().x())/2,
+                                    (v1->point().y() + v2->point().y())/2);
+        add_line(pointOnLine, direction);
     }
   }
 
@@ -213,12 +217,12 @@ protected:
 
     for (typename V2::Halfedge_iterator it = v2.halfedges_begin();
          it != v2.halfedges_end(); ++it) {
-        compute_ray_points(it);
+        add_segments_and_update_bounding_box(it);
     }
 
     for (typename V2::Halfedge_iterator it = v2.halfedges_begin();
          it != v2.halfedges_end(); ++it) {
-        compute_rays(it);
+        compute_rays_and_bisectors(it);
     }
 
     if (!m_nofaces) {
