@@ -15,6 +15,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_placement.h>
 
+#include <chrono>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Surface_mesh;
@@ -31,6 +32,10 @@ int main(int argc, char** argv)
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
+
+
+  std::chrono::steady_clock::time_point start_time
+    = std::chrono::steady_clock::now();
 
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
@@ -53,6 +58,15 @@ int main(int argc, char** argv)
                                .get_placement(SMS::GarlandHeckbert_placement<Surface_mesh>(map))
                                .visitor(vis)
            );
+  std::chrono::steady_clock::time_point end_time
+    = std::chrono::steady_clock::now();
+
+
+
+  std::cout << "Time elapsed: "
+    << std::chrono::duration_cast<std::chrono::milliseconds>(
+          end_time - start_time
+        ).count() << "ms" << std::endl;
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n";
