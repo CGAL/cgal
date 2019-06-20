@@ -143,9 +143,9 @@ public:
     if(!static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isClipping())
       return true;
 
-    double x = p.x(), y = p.y(), z = p.z();
+    double x = p.x()+offset.x, y = p.y()+offset.y, z = p.z()+offset.z;
 
-    return !(clipbox[0][0]*x+clipbox[0][1]*y+clipbox[0][2]*z+clipbox[0][3]>0 ||
+    return !(clipbox[0][0]*x+clipbox[0][1]*y+clipbox[0][2]*z+clipbox[0][3] >0 ||
              clipbox[1][0]*x+clipbox[1][1]*y+clipbox[1][2]*z+clipbox[1][3]>0 ||
              clipbox[2][0]*x+clipbox[2][1]*y+clipbox[2][2]*z+clipbox[2][3]>0 ||
              clipbox[3][0]*x+clipbox[3][1]*y+clipbox[3][2]*z+clipbox[3][3]>0 ||
