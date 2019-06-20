@@ -34,7 +34,42 @@ if(EIGEN3_FOUND)
   else()
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()
-else()
+
+  set(SuiteSparse_USE_LAPACK_BLAS ON)
+  find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
+  if(NOT SuiteSparse_FOUND)
+    set(SuiteSparse_VERBOSE ON)
+    find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
+    if(SuiteSparse_FOUND)
+      include_directories(${SuiteSparse_INCLUDE_DIRS})
+    endif(SuiteSparse_FOUND)
+  else(NOT SuiteSparse_FOUND)
+    include(${USE_SuiteSparse})
+  endif(NOT SuiteSparse_FOUND)
+
+  if(SuiteSparse_FOUND)
+    if (SuiteSparse_UMFPACK_FOUND)
+      message(STATUS "Found SuiteSparse")
+      message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
+      add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
+    endif(SuiteSparse_UMFPACK_FOUND)
+  endif(SuiteSparse_FOUND)
+
+  # Find the Ceres solver and its dependency
+  find_package(Glog QUIET)
+  if(GLOG_FOUND)
+    message(STATUS "Found Glog")
+    include_directories(${GLOG_INCLUDE_DIR})
+
+    find_package(Ceres QUIET)
+    if(CERES_FOUND)
+      message(STATUS "Found Ceres")
+      include_directories(${CERES_INCLUDE_DIR})
+      add_definitions(-DCGAL_PMP_USE_CERES_SOLVER)
+    endif(CERES_FOUND)
+  endif(GLOG_FOUND)
+
+else(EIGEN3_FOUND)
   message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
 endif()
 
@@ -42,19 +77,15 @@ qt5_wrap_ui( soupUI_FILES Repair_soup.ui )
 polyhedron_demo_plugin(orient_soup_plugin Orient_soup_plugin ${soupUI_FILES} KEYWORDS Classification )
 target_link_libraries(orient_soup_plugin PUBLIC scene_polygon_soup_item scene_surface_mesh_item scene_polylines_item scene_points_with_normal_item)
 
-
 polyhedron_demo_plugin(inside_out_plugin Inside_out_plugin)
 target_link_libraries(inside_out_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
 
 polyhedron_demo_plugin(join_and_split_plugin Join_and_split_polyhedra_plugin)
 target_link_libraries(join_and_split_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
-
-
 qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
 polyhedron_demo_plugin(point_inside_polyhedron_plugin Point_inside_polyhedron_plugin ${point_inside_polyhedronUI_FILES})
 target_link_libraries(point_inside_polyhedron_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item)
-
 
 qt5_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
 polyhedron_demo_plugin(polyhedron_slicer_plugin Polyhedron_slicer_plugin ${polyhedron_slicerUI_FILES})
@@ -96,11 +127,8 @@ if(TBB_FOUND)
   CGAL_target_use_TBB(distance_plugin)
 endif()
 
-
 polyhedron_demo_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin KEYWORDS IO Mesh_3)
 target_link_libraries(detect_sharp_edges_plugin PUBLIC scene_surface_mesh_item)
-
-
 
 qt5_wrap_ui( randomPerturbationUI_FILES Random_perturbation_dialog.ui)
 polyhedron_demo_plugin(random_perturbation_plugin Random_perturbation_plugin ${randomPerturbationUI_FILES})
@@ -116,31 +144,10 @@ target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_s
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin)
 target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
-    set(SuiteSparse_USE_LAPACK_BLAS ON)
-    find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
-    if(NOT SuiteSparse_FOUND)
-      set(SuiteSparse_VERBOSE ON)
-      find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
-      if(SuiteSparse_FOUND)
-        include_directories(${SuiteSparse_INCLUDE_DIRS})
-      endif(SuiteSparse_FOUND)
-    else(NOT SuiteSparse_FOUND)
-      include(${USE_SuiteSparse})
-    endif(NOT SuiteSparse_FOUND)
-
-    if(SuiteSparse_FOUND)
-      if (SuiteSparse_UMFPACK_FOUND)
-        message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
-        message(STATUS "Orbifold Tutte Embeddings will use UmfPackLU")
-        add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
-        add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
-      else()
-        message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library and UmfPack. Try setting SuiteSparse_UMF_INCLUDE_DIR and at least one of SuiteSparse_UMFPACK_LIBRARY_RELEASE and SuiteSparse_UMFPACK_LIBRARY_DEBUG to you UMFPACK installation.")
-      endif()
-    else(SuiteSparse_FOUND)
-      message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library.")
-    endif(SuiteSparse_FOUND)
-
 qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
 polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
-target_link_libraries(smoothing_plugin PUBLIC ceres glog scene_surface_mesh_item scene_selection_item ${SuiteSparse_LIBRARIES})
+target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
+
+if(SuiteSparse_FOUND AND CERES_FOUND)
+  target_link_libraries(smoothing_plugin PUBLIC ${SuiteSparse_LIBRARIES} ${GLOG_LIBRARIES} ${CERES_LIBRARY})
+endif()

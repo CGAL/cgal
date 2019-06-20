@@ -69,7 +69,40 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program( "hole_filling_example_SM.cpp" )
   create_single_source_cgal_program( "refine_fair_example.cpp")
   create_single_source_cgal_program( "shape_smoothing_example.cpp")
-  create_single_source_cgal_program( "mesh_smoothing_example.cpp")
+
+  set(SuiteSparse_USE_LAPACK_BLAS ON)
+  find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
+  if(NOT SuiteSparse_FOUND)
+    set(SuiteSparse_VERBOSE ON)
+    find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
+    if(SuiteSparse_FOUND)
+      include_directories(${SuiteSparse_INCLUDE_DIRS})
+    endif(SuiteSparse_FOUND)
+  else(NOT SuiteSparse_FOUND)
+    include(${USE_SuiteSparse})
+  endif(NOT SuiteSparse_FOUND)
+
+  if(SuiteSparse_FOUND)
+    if (SuiteSparse_UMFPACK_FOUND)
+      message(STATUS "Found SuiteSparse")
+      message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
+      add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
+    endif(SuiteSparse_UMFPACK_FOUND)
+  endif(SuiteSparse_FOUND)
+
+  # Find the Ceres solver and its dependency
+  find_package(Glog QUIET)
+  if(GLOG_FOUND)
+    message(STATUS "Found Glog")
+    include_directories(${GLOG_INCLUDE_DIR})
+
+    find_package(Ceres QUIET)
+    if(CERES_FOUND)
+      message(STATUS "Found Ceres")
+      include_directories(${CERES_INCLUDE_DIR})
+      add_definitions(-DCGAL_PMP_USE_CERES_SOLVER)
+    endif(CERES_FOUND)
+  endif(GLOG_FOUND)
 
 endif(EIGEN3_FOUND)
 
@@ -101,33 +134,7 @@ create_single_source_cgal_program( "hole_filling_example_LCC.cpp" )
 create_single_source_cgal_program( "detect_features_example.cpp" )
 create_single_source_cgal_program( "manifoldness_repair_example.cpp" )
 create_single_source_cgal_program( "repair_polygon_soup_example.cpp" )
-
-    set(SuiteSparse_USE_LAPACK_BLAS ON)
-    find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
-    if(NOT SuiteSparse_FOUND)
-      set(SuiteSparse_VERBOSE ON)
-      find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
-      if(SuiteSparse_FOUND)
-        include_directories(${SuiteSparse_INCLUDE_DIRS})
-      endif(SuiteSparse_FOUND)
-    else(NOT SuiteSparse_FOUND)
-      include(${USE_SuiteSparse})
-    endif(NOT SuiteSparse_FOUND)
-
-    if(SuiteSparse_FOUND)
-      if (SuiteSparse_UMFPACK_FOUND)
-        message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
-        message(STATUS "Orbifold Tutte Embeddings will use UmfPackLU")
-        add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
-        add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
-      else()
-        message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library and UmfPack. Try setting SuiteSparse_UMF_INCLUDE_DIR and at least one of SuiteSparse_UMFPACK_LIBRARY_RELEASE and SuiteSparse_UMFPACK_LIBRARY_DEBUG to you UMFPACK installation.")
-      endif()
-    else(SuiteSparse_FOUND)
-      message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library.")
-    endif(SuiteSparse_FOUND)
-
-target_link_libraries( mesh_smoothing_example PRIVATE ceres glog ${SuiteSparse_LIBRARIES})
+create_single_source_cgal_program( "mesh_smoothing_example.cpp")
 
 if(OpenMesh_FOUND)
 create_single_source_cgal_program( "compute_normals_example_OM.cpp" )
@@ -149,5 +156,7 @@ create_single_source_cgal_program( "triangulate_faces_example_OM.cpp")
 target_link_libraries( triangulate_faces_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif(OpenMesh_FOUND)
 
-
+if(SuiteSparse_FOUND AND CERES_FOUND)
+  target_link_libraries( mesh_smoothing_example PRIVATE ${SuiteSparse_LIBRARIES} ${GLOG_LIBRARIES} ${CERES_LIBRARY} -pthread)
+endif(SuiteSparse_FOUND AND CERES_FOUND)
 

@@ -43,7 +43,9 @@
 
 #include <boost/graph/graph_traits.hpp>
 
+#ifdef CGAL_PMP_USE_CERES_SOLVER
 #include "ceres/ceres.h"
+#endif
 
 #include <algorithm>
 #include <cmath>
@@ -400,6 +402,7 @@ private:
 public:
   Vector operator()(const vertex_descriptor v) const
   {
+#ifdef CGAL_PMP_USE_CERES_SOLVER
     const Point_ref vp = get(vpmap_, v);
 
     const double S_av = compute_average_area_around(v);
@@ -440,6 +443,9 @@ public:
 //    std::cout << "z : " << initial_z << " -> " << z << "\n";
 
     return Vector(x - initial_x, y - initial_y, z - initial_z);
+#else
+    return CGAL::NULL_VECTOR;
+#endif
   }
 
 private:

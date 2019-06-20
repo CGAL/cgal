@@ -97,8 +97,8 @@ namespace Polygon_mesh_processing {
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
-* @warning The third party libraries \link thirdpartyCeres Ceres \endlink (and \link installation_eigen Eigen \endlink)
-* are required to use the area-based smoothing.
+* @warning The third party library \link thirdpartyCeres Ceres \endlink is required
+* to use area-based smoothing.
 *
 * @pre `tmesh` does not contain any degenerate faces
 */
@@ -160,7 +160,13 @@ void smooth_mesh(const FaceRange& faces,
                                get_property_map(CGAL::vertex_point, tmesh));
 
   const bool use_angle_smoothing = choose_param(get_param(np, internal_np::use_angle_smoothing), true);
-  const bool use_area_smoothing = choose_param(get_param(np, internal_np::use_area_smoothing), true);
+  bool use_area_smoothing = choose_param(get_param(np, internal_np::use_area_smoothing), true);
+
+#ifndef CGAL_PMP_USE_CERES_SOLVER
+  std::cerr << "Area-based smoothing requires the Ceres Library, which is not available." << std::endl;
+  std::cerr << "No such smoothing will be performed!" << std::endl;
+  use_area_smoothing = false;
+#endif
 
   if(!use_angle_smoothing && !use_area_smoothing)
     std::cerr << "Warning: called PMP::smooth_mesh() but no smoothing method is being used" << std::endl;
