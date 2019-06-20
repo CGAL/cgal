@@ -52,6 +52,7 @@ class SimpleVoronoiDiagram2ViewerQt : public Basic_viewer_qt {
   typedef typename V2::Face_iterator                            Face_const_handle;
   typedef typename V2::Vertex_iterator                          Vertex_const_handle;
   typedef typename V2::Delaunay_vertex_handle                   Delaunay_vertex_const_handle;
+  typedef typename V2::Delaunay_graph::Finite_vertices_iterator Dual_vertices_iterator;
   typedef typename V2::Ccb_halfedge_circulator                  Ccb_halfedge_circulator;
   typedef typename V2::Halfedge_handle                          Halfedge_handle;
 
@@ -66,14 +67,16 @@ public:
   SimpleVoronoiDiagram2ViewerQt(QWidget *parent, const V2 &av2,
                                 const char *title = "Basic Voronoi Viewer",
                                 bool anofaces = false,
+                                bool draw_delaunay_vertices = true,
                                 const ColorFunctor &fcolor = ColorFunctor())
       : // First draw: vertices; half-edges; faces; multi-color; no inverse
         // normal
         Base(parent, title, true, true, true, false, false), v2(av2),
-        m_nofaces(anofaces), m_fcolor(fcolor)
+        m_nofaces(anofaces), m_draw_dual_vertices(draw_delaunay_vertices), m_fcolor(fcolor)
   {
     // Add custom key description (see keyPressEvent)
     setKeyDescription(::Qt::Key_R, "Toggles rays display");
+    setKeyDescription(::Qt::Key_D, "Toggles dual vertices display");
 
     compute_elements();
   }
@@ -206,6 +209,10 @@ protected:
   }
 
   void compute_vertex(Vertex_const_handle vh) { add_point(vh->point()); }
+  void compute_delaunay_vertex(Dual_vertices_iterator vi)
+  {
+      add_point(vi->point(), CGAL::Color(black()));
+  }
 
   void compute_elements() {
     clear();
@@ -231,10 +238,13 @@ protected:
         compute_face(it);
       }
     }
-    //    for(Delaunay_vertex_const_handle it =
-    //    v2.dual().finite_vertices_begin();
-    //        it!=v2.dual().finite_vertices_end(); ++it)
-    //    { compute_vertex(it);}
+    if (m_draw_dual_vertices) {
+        for (Dual_vertices_iterator it = v2.dual().finite_vertices_begin();
+             it != v2.dual().finite_vertices_end();
+             ++it) {
+            compute_delaunay_vertex(it);
+        }
+    }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
@@ -246,8 +256,13 @@ protected:
           m_draw_rays=!m_draw_rays;
           displayMessage(QString("Draw rays=%1.").arg(m_draw_rays?"true":"false"));
           update();
-      }
-      else {
+      } else if((e->key()==::Qt::Key_D) && (modifiers==::Qt::NoButton))
+      {
+          m_draw_dual_vertices=!m_draw_dual_vertices;
+          displayMessage(QString("Dual vertices=%1.").arg(m_draw_dual_vertices?"true":"false"));
+          compute_elements();
+          redraw();
+      } else {
           // Call the base method to process others/classicals key
           Base::keyPressEvent(e);
       }
@@ -256,11 +271,12 @@ protected:
 protected:
   const V2 &v2;
   bool m_nofaces;
+  bool m_draw_dual_vertices;
   const ColorFunctor &m_fcolor;
 };
 
 template <class V2, class ColorFunctor>
-void draw(const V2 &av2, const char *title, bool nofill,
+void draw(const V2 &av2, const char *title, bool nofill, bool draw_dual_vertices,
           const ColorFunctor &fcolor) {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
@@ -273,15 +289,19 @@ void draw(const V2 &av2, const char *title, bool nofill,
     const char *argv[2] = {"v2_viewer", "\0"};
     QApplication app(argc, const_cast<char **>(argv));
     SimpleVoronoiDiagram2ViewerQt<V2, ColorFunctor> mainwindow(
-        app.activeWindow(), av2, title, nofill, fcolor);
+        app.activeWindow(), av2, title, nofill, draw_dual_vertices, fcolor);
     mainwindow.show();
     app.exec();
   }
 }
 
-template <class V2> void draw(const V2 &av2, const char *title, bool nofill) {
+template <class V2> void draw(const V2 &av2, const char *title, bool nofill, bool draw_dual_vertices) {
   DefaultColorFunctorV2 c;
-  draw(av2, title, nofill, c);
+  draw(av2, title, nofill, draw_dual_vertices, c);
+}
+
+template <class V2> void draw(const V2 &av2, const char *title, bool nofill) {
+  draw(av2, title, nofill, true);
 }
 
 template <class V2> void draw(const V2 &av2, const char *title) {
