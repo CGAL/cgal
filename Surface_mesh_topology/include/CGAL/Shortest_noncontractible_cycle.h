@@ -106,6 +106,14 @@ public:
 
 private:
 
+  void find_spanning_tree(Dart_handle root, Dart_container& spanning_tree,
+                          std::vector<Distance_type>& distance_from_root, std::vector<int>& trace_index) {
+    if (std::is_same<WeightFunctor, void>::value)
+      find_BFS_tree(root, spanning_tree, distance_from_root, trace_index);
+    else
+      find_Dijkstra_tree(root, spanning_tree, distance_from_root, trace_index);
+  }
+
   struct Dijkstra_comparator {
     Dijkstra_comparator(const std::vector<Distance_type>& distance_from_root) : m_distance(distance_from_root) {}
     bool operator()(const int x, const int y) const { return m_distance[x] > m_distance[y]; }
@@ -114,8 +122,7 @@ private:
   };
 
   /// Create a spanning tree using Dijkstra
-  template <class>
-  void find_spanning_tree(Dart_handle root, Dart_container& spanning_tree,
+  void find_Dijkstra_tree(Dart_handle root, Dart_container& spanning_tree,
                           std::vector<Distance_type>& distance_from_root, std::vector<int>& trace_index) {
     // Preparation
     Dijkstra_comparator dc (distance_from_root);
@@ -170,9 +177,8 @@ private:
   }
 
   /// Create a spanning tree using BFS
-  template <>
-  void find_spanning_tree<void>(Dart_handle root, Dart_container& spanning_tree,
-                                std::vector<Distance_type>& distance_from_root, std::vector<int>& trace_index) {
+  void find_BFS_tree(Dart_handle root, Dart_container& spanning_tree,
+                     std::vector<Distance_type>& distance_from_root, std::vector<int>& trace_index) {
     // Preparation
     std::queue<int> q;
     int vertex_index = 0;
@@ -297,7 +303,7 @@ private:
     m_trace_index.clear();
     for (auto it = m_gmap.template one_dart_per_cell<0>().begin(), itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it)
       m_gmap.template info<0>(it) = -1;
-    find_spanning_tree<WeightFunctor>(root, m_spanning_tree, m_distance_from_root, m_trace_index);
+    find_spanning_tree(root, m_spanning_tree, m_distance_from_root, m_trace_index);
     find_noncon_edges(m_spanning_tree, m_noncon_edges);
     // std::cerr << "Done find_noncon_edges. noncon_edges.size() = " << m_noncon_edges.size() << '\n';
 
