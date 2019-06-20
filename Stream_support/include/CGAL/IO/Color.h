@@ -24,6 +24,10 @@
 // Author(s)     : Andreas Fabri
 
 #include <CGAL/config.h>
+#include <algorithm>
+#include <cstdlib>
+#include <cmath>
+
 
 #ifndef CGAL_COLOR_H
 #define CGAL_COLOR_H
