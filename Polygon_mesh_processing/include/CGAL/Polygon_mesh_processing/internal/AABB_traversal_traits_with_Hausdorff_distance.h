@@ -37,9 +37,11 @@ namespace CGAL {
   {
     typedef typename AABBTraits::Primitive Primitive;
     typedef ::CGAL::AABB_node<AABBTraits> Node;
+    typedef typename AABBTraits::Bounding_box Bounding_box;
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
     typename Kernel::Construct_projected_point_3 project_point;
+    typedef typename Kernel::Point_3 Point_3;
 
   public:
     Hausdorff_primitive_traits_tm2(const AABBTraits& traits, const TriangleMesh& tm1, const TriangleMesh& tm2, const VPM1& vpm1, const VPM2& vpm2)
@@ -72,8 +74,8 @@ namespace CGAL {
 
       // The query object is a triangle from TM1, get its vertices
       halfedge_descriptor hd = halfedge(query.id(), m_tm1);
-      vertex_descriptor v0 = source(hd,m_tm1);
-      vertex_descriptor v1 = target(hd,m_tm1);
+      vertex_descriptor v0 = source(hd, m_tm1);
+      vertex_descriptor v1 = target(hd, m_tm1);
       vertex_descriptor v2 = target(next(hd, m_tm1), m_tm1);
 
       // Compute distances of the vertices to the primitive triangle in TM2
@@ -94,32 +96,60 @@ namespace CGAL {
       // Get the distance as maximizers over all vertices
       double distance = approximate_sqrt(std::max(std::max(v0_dist,v1_dist),v2_dist));
 
-      // Update local upper bound
+      // Since we are at the level of a single triangle in TM2, distance is
+      // actually the correct Hausdorff distance from the query triangle in
+      // TM1 to the primitive triangle in TM2
       if ( distance < h_local_upper ) h_local_upper = distance;
-
-      double vertex_distance = 0.;
-      /*
-      /  TODO For all vertices v of the query triangle, determine the distance by
-      /       min_{b \in primitive} ( d(v, b) )
-      /       Update h_local_lower_i accordingly
-      */
-
-      h_local_lower = std::max( std::max (h_local_lower_0, h_local_lower_1), h_local_lower_2 );
+      if ( distance < h_local_lower ) h_local_lower = distance;
     }
 
     // Determine whether child nodes will still contribute to a smaller
     // Hausdorff distance and thus have to be entered
     bool do_intersect(const Query& query, const Node& node) const
     {
-      // Have reached a node, determine whether or not to enter it
-      double distance = 0.;
+      /* Have reached a node, determine whether or not to enter it */
 
-      /* TODO Determine distance of the node's bounding box (node.bbox()) to
-      /       the triangle given by the query object.
-      */
+      // Get the bounding box of the nodes
+      Bounding_box bbox = node.bbox();
+      // Compute its center
+      Point_3 bb_center = Point_3(
+        (bbox.min(0) + bbox.max(0)) / 2,
+        (bbox.min(1) + bbox.max(1)) / 2,
+        (bbox.min(2) + bbox.max(2)) / 2);
 
-      if (distance <= h_local_upper) return true;
-      else return false;
+      // Get the center of the query triangle
+      // The query object is a triangle from TM1, get its vertices
+      halfedge_descriptor hd = halfedge(query.id(), m_tm1);
+      Point_3 v0 = get(m_vpm1, source(hd, m_tm1));
+      Point_3 v1 = get(m_vpm1, target(hd, m_tm1));
+      Point_3 v2 = get(m_vpm1, target(next(hd, m_tm1), m_tm1));
+      // Compute the barycenter of the triangle
+      Point_3 tri_center = Point_3( 0.3*(v0.x()+v1.x()+v2.x()), 0.3*(v0.y()+v1.y()+v2.y()),  0.3*(v0.z()+v1.z()+v2.z()) );
+
+      // Compute the distance of the center to the closest point in tm2
+      double dist = approximate_sqrt(squared_distance(bb_center, tri_center));
+
+      // Compute the radius of the circumsphere of the bounding boxes
+      double bb_radius = approximate_sqrt(squared_distance(
+        Point_3(bbox.min(0),bbox.min(1),bbox.min(2)),
+        Point_3(bbox.max(0),bbox.max(1),bbox.max(2)))
+      )/2.;
+
+      // Compute the radius of the circumcircle of the triangle
+      double tri_radius = approximate_sqrt( std::max(
+        std::max(
+          squared_distance(tri_center, v0),
+          squared_distance(tri_center, v1)
+        ),
+        squared_distance(tri_center, v2)
+      ));
+
+      // If triangles in the node can still lower the upper bound, enter it
+      if (tri_radius + bb_radius >= dist) {
+        return true;
+      } else {
+        return false;
+      }
     }
 
     Hausdorff_bounds get_local_bounds()
