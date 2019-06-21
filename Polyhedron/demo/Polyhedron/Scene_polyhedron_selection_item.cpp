@@ -1779,6 +1779,7 @@ void Scene_polyhedron_selection_item::common_constructor()
   d->are_temp_buffers_filled = false;
   d->poly = NULL;
   d->ready_to_move = false;
+  do_process = true;
   setProperty("no_picking", true);
   
   setPointContainer(3, 

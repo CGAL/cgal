@@ -10,7 +10,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
-typedef CGAL::Polyhedron_3<Kernel> Mesh;
+typedef CGAL::Polyhedron_3<Kernel>                           Mesh;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Mesh_with_id;
 
 void mesh_with_id(const char* argv1, const bool save_output)
@@ -23,19 +23,16 @@ void mesh_with_id(const char* argv1, const bool save_output)
   in >> sm;
 
   int i=0;
-  for(face_descriptor f : faces(sm)){
+  for(face_descriptor f : faces(sm))
     f->id() = i++;
-  } 
+
   i=0;
-  for(vertex_descriptor v : vertices(sm)){
+  for(vertex_descriptor v : vertices(sm))
     v->id() = i++;
-  }
 
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(sm).first;
-  PMP::connected_component(fd,
-                           sm,
-                           std::back_inserter(cc));
+  PMP::connected_component(fd, sm, std::back_inserter(cc));
 
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
 
@@ -43,14 +40,15 @@ void mesh_with_id(const char* argv1, const bool save_output)
     boost::property_map<Mesh_with_id, boost::face_index_t>::type>
       fccmap(get(boost::face_index,sm));
 
-  std::size_t num = PMP::connected_components(sm,
-                                              fccmap);
+  std::size_t num = PMP::connected_components(sm, fccmap);
   if (strcmp(argv1, "data/blobby_3cc.off") == 0)
     assert(num == 3);
 
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
 
-  PMP::keep_largest_connected_components(sm,2);
+  PMP::keep_largest_connected_components(sm, 2,
+                                         CGAL::parameters::face_size_map(
+                                           CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
 
   if (!save_output)
     return;
@@ -68,13 +66,9 @@ void mesh_no_id(const char* argv1, const bool save_output)
   std::ifstream in(argv1);
   in >> sm;
 
-  
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(sm).first;
-  PMP::connected_component(fd,
-                           sm,
-                           std::back_inserter(cc));
-
+  PMP::connected_component(fd, sm, std::back_inserter(cc));
 
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
   boost::property_map<Mesh,boost::vertex_external_index_t>::type vim 
@@ -87,10 +81,8 @@ void mesh_no_id(const char* argv1, const bool save_output)
     boost::property_map<Mesh, boost::face_external_index_t>::type>
       fccmap(fim);
 
-  std::size_t num = PMP::connected_components(sm,
-    fccmap,
-    PMP::parameters::face_index_map(fim));
-  
+  std::size_t num = PMP::connected_components(sm, fccmap, PMP::parameters::face_index_map(fim));
+
   if (strcmp(argv1, "data/blobby_3cc.off") == 0)
     assert(num == 3);
 
@@ -99,11 +91,8 @@ void mesh_no_id(const char* argv1, const bool save_output)
   //  std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
   //}
 
-  PMP::keep_largest_connected_components(sm
-    , 2
-    , PMP::parameters::vertex_index_map(vim).
-      face_index_map(fim));
-
+  PMP::keep_largest_connected_components(sm, 2, PMP::parameters::vertex_index_map(vim)
+                                                                .face_index_map(fim));
   if (save_output)
     return;
 
@@ -125,6 +114,7 @@ void test_border_cases()
   std::size_t i=0;
   for(face_descriptor f : faces(sm))
     f->id() = i++;
+
   i=0;
   for(vertex_descriptor v : vertices(sm))
     v->id() = i++;
@@ -170,13 +160,12 @@ void keep_nothing(const char* argv1)
     return;
   }
   int i=0;
-  for(face_descriptor f : faces(sm)){
+  for(face_descriptor f : faces(sm))
     f->id() = i++;
-  }
+
   i=0;
-  for(vertex_descriptor v : vertices(sm)){
+  for(vertex_descriptor v : vertices(sm))
     v->id() = i++;
-  }
 
   PMP::keep_largest_connected_components(sm, 0);
   assert(num_vertices(sm) == 0);
@@ -193,5 +182,6 @@ int main(int argc, char* argv[])
   mesh_no_id(filename, save_output);
   test_border_cases();
   keep_nothing(filename);
-  return 0;
+
+  return EXIT_SUCCESS;
 }
