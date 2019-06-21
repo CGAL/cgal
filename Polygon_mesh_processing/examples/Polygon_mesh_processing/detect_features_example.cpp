@@ -1,6 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/Polygon_mesh_processing/detect_features_pp.h>
 
 #include <fstream>
 
@@ -21,6 +23,8 @@ int main(int argc, char* argv[])
     std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
+
+  std::cout << num_vertices(mesh) << " vertices and " << num_edges(mesh) << " edges" << std::endl;
 
   typedef boost::property_map<Mesh, CGAL::edge_is_feature_t>::type EIFMap;
   typedef boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type PIMap;
