@@ -26,7 +26,6 @@
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_helpers.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/AABB_tree.h>

@@ -29,7 +29,6 @@
 #include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_helpers.h>
 
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/utility.h>
