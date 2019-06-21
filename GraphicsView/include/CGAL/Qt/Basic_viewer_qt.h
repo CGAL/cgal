@@ -168,11 +168,11 @@ public:
                   const char* title="",
                   bool draw_vertices=false,
                   bool draw_edges=true,
-                  bool draw_rays=true,
-                  bool draw_lines=true,
                   bool draw_faces=true,
                   bool use_mono_color=false,
-                  bool inverse_normal=false) :
+                  bool inverse_normal=false,
+                  bool draw_rays=true,
+                  bool draw_lines=true) :
     CGAL::QGLViewer(parent),
     m_draw_vertices(draw_vertices),
     m_draw_edges(draw_edges),
