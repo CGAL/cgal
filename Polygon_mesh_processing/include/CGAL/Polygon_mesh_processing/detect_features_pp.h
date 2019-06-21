@@ -32,6 +32,7 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/utils.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
@@ -59,12 +60,24 @@ class Detector
 
   typedef typename boost::property_traits<VPM>::value_type                        Point;
 
+  typedef CGAL::dynamic_vertex_property_t<double>                                 Vertex_double_tag;
+  typedef CGAL::dynamic_vertex_property_t<bool>                                   Vertex_bool_tag;
+  typedef CGAL::dynamic_halfedge_property_t<double>                               Halfedge_double_tag;
+  typedef CGAL::dynamic_edge_property_t<double>                                   Edge_double_tag;
+  typedef CGAL::dynamic_edge_property_t<bool>                                     Edge_bool_tag;
+
+  typedef typename boost::property_map<PolygonMesh, Vertex_double_tag>::type      Vertex_double_pmap;
+  typedef typename boost::property_map<PolygonMesh, Vertex_bool_tag>::type        Vertex_bool_pmap;
+  typedef typename boost::property_map<PolygonMesh, Halfedge_double_tag>::type    Halfedge_double_pmap;
+  typedef typename boost::property_map<PolygonMesh, Edge_double_tag>::type        Edge_double_pmap;
+  typedef typename boost::property_map<PolygonMesh, Edge_bool_tag>::type          Edge_bool_pmap;
+
   typedef CGAL::Eigen_diagonalize_traits<double, 3>                               Diagonalize_traits;
   typedef Eigen::Matrix<double, 3, 3>                                             EigenMatrix;
   typedef Eigen::Matrix<double, 3, 1>                                             EigenVector;
 
 public:
-  Detector(const PolygonMesh& mesh,
+  Detector(PolygonMesh& mesh,
            const VPM vpmap,
            const GeomTraits& traits,
            const EIFMap ifemap /*is_feature_edge_map*/)
@@ -72,18 +85,26 @@ public:
   {
     CGAL_assertion(theta_T_ >= 2 * theta_t_);
     CGAL_assertion(theta_f_ <= theta_e_ && theta_e_ <= theta_F_);
+
+    angle_defects_ = get(Vertex_double_tag(), mesh_);
+    turning_angles_ = get(Vertex_double_tag(), mesh_);
+    osta_angles_ = get(Halfedge_double_tag(), mesh_);
+    dihedral_angles_ = get(Edge_double_tag(), mesh_);
+
+    candidate_valence_ = get(Vertex_bool_tag(), mesh_);
+    candidate_edges_ = get(Edge_bool_tag(), mesh_);
   }
 
 private:
   // -----------------------------------------------------------------------------------------------
   // ------------------------------------- ANGLE MEASURES ------------------------------------------
   // -----------------------------------------------------------------------------------------------
-  double angle(const Point& p, const Point& q, const Point& r)
+  double angle(const Point& p, const Point& q, const Point& r) const
   {
     return gt_.compute_approximate_angle_3_object()(p, q, r);
   }
 
-  double angle_around_vertex(const vertex_descriptor v)
+  double angle_around_vertex(const vertex_descriptor v) const
   {
     double angle_sum = 0;
     for(halfedge_descriptor h : CGAL::halfedges_around_target(v, mesh_))
@@ -187,24 +208,25 @@ private:
     if(dih_angle < theta_f_)
       return false;
 
-    double max_other_DA_osta_smaller_than_half_pi = 0;
-    double max_other_DA_osta_greater_than_half_pi = 0;
+    double max_other_DA_osta_smaller_than_half_pi = - std::numeric_limits<double>::max();
+    double max_other_DA_osta_greater_than_half_pi = - std::numeric_limits<double>::max();
     for(halfedge_descriptor other_h : CGAL::halfedges_around_source(h, mesh_))
     {
       if(other_h == h)
         continue;
 
-      edge_descriptor other_e = edge(other_h, mesh_);
+      const edge_descriptor other_e = edge(other_h, mesh_);
       const double other_dih_angle = get(dihedral_angles_, other_e);
       if(other_dih_angle < theta_f_)
         continue;
 
-      const double twice_other_osta = 2 * get(osta_angles_, other_e);
+      const double twice_other_osta = 2 * get(osta_angles_, other_h);
 
-      if(twice_other_osta < CGAL_PI)
+      // @fixme really ignore osta == pi/2 ?
+      if(twice_other_osta < CGAL_PI) // <=> osta < pi/2
         max_other_DA_osta_smaller_than_half_pi = (CGAL::max)(max_other_DA_osta_smaller_than_half_pi,
                                                              other_dih_angle);
-      else if(twice_other_osta > CGAL_PI) // @todo really ignore pi/2 ?
+      else if(twice_other_osta > CGAL_PI) // <=> osta < pi/2
         max_other_DA_osta_greater_than_half_pi = (CGAL::max)(max_other_DA_osta_greater_than_half_pi,
                                                              other_dih_angle);
     }
@@ -355,7 +377,7 @@ private:
   bool is_quasi_strong(const edge_descriptor e) const
   {
     halfedge_descriptor h = halfedge(e, mesh_);
-    return (is_quasi_strong(h) && is_quasi_strong(oppposite(h, mesh_)));
+    return (is_quasi_strong(h) && is_quasi_strong(opposite(h, mesh_)));
   }
 
   // -----------------------------------------------------------------------------------------------
@@ -363,8 +385,8 @@ private:
   // -----------------------------------------------------------------------------------------------
   bool is_singleton(const halfedge_descriptor h) const
   {
-    return (candidate_edges_[edge(h, mesh_)] &&
-            candidate_valence_[source(h, mesh_)] == 1);
+    return (get(candidate_edges_, edge(h, mesh_)) &&
+            get(candidate_valence_, source(h, mesh_)) == 1);
   }
 
   bool is_dangling(const halfedge_descriptor h) const
@@ -378,7 +400,7 @@ private:
 
   bool is_semi_joint(const halfedge_descriptor h) const
   {
-    if(!candidate_edges_[edge(h, mesh_)]) // @fixme ? not in paper, but can't see it being not requisite
+    if(!get(candidate_edges_, edge(h, mesh_))) // @fixme ? not in paper, but can't see it being not requisite
       return false;
 
     // not using 'candidate_valence' because we care about the halfedges
@@ -386,7 +408,7 @@ private:
                         second_h = boost::graph_traits<PolygonMesh>::null_halfedge();
     for(halfedge_descriptor other_h : CGAL::halfedges_around_source(h, mesh_))
     {
-      if(candidate_edges_[edge(other_h, mesh_)])
+      if(get(candidate_edges_, edge(other_h, mesh_)))
       {
         if(second_h == boost::graph_traits<PolygonMesh>::null_halfedge())
           second_h = other_h;
@@ -402,7 +424,7 @@ private:
     edge_descriptor first_e = edge(first_h, mesh_);
     edge_descriptor second_e = edge(second_h, mesh_);
 
-    return ((is_sharp(source(h, mesh_)) || turning_angle(first_h, second_h) > theta_T_) &&
+    return ((is_sharp_corner(source(h, mesh_)) || turning_angle(first_h, second_h) > theta_T_) &&
             (!is_unconditionally_strong_in_DA(first_e) || !is_unconditionally_strong_in_DA(second_e)));
   }
 
@@ -424,7 +446,7 @@ private:
       if(is_border_edge(h, mesh_))
         continue;
 
-      if(2 * dihedral_angles_[edge(h, mesh_)] > CGAL_PI) // @todo >= (check across the whole file actually)
+      if(2 * get(dihedral_angles_, edge(h, mesh_)) > CGAL_PI) // @todo >= (check across the whole file actually)
         return true;
     }
 
@@ -434,7 +456,7 @@ private:
   bool is_disjoint(const halfedge_descriptor h) const
   {
     const vertex_descriptor v = source(h, mesh_);
-    if(candidate_valence_[v] < 3)
+    if(get(candidate_valence_, v) < 3)
       return false;
 
     // @cache stuff (esp. 'is_locally_strong_in_...')
@@ -460,7 +482,7 @@ private:
 
   bool is_multi_joint(const halfedge_descriptor h) const
   {
-    return (candidate_valence_[source(h, mesh_)] >= 3 && !is_disjoint(h));
+    return (get(candidate_valence_, source(h, mesh_)) >= 3 && !is_disjoint(h));
   }
 
   bool is_end_halfedge(const halfedge_descriptor h) const
@@ -519,17 +541,17 @@ private:
   void tag_candidate_edges()
   {
     for(vertex_descriptor v : vertices(mesh_))
-      candidate_valence_[v] = 0;
+      put(candidate_valence_, v, 0);
 
     for(edge_descriptor e : edges(mesh_))
     {
       const bool is_qs_edge = is_quasi_strong(e);
-      candidate_edges_[e] = is_qs_edge;
+      put(candidate_edges_, e, is_qs_edge);
 
       if(is_qs_edge)
       {
-        candidate_valence_[source(e, mesh_)] += 1;
-        candidate_valence_[target(e, mesh_)] += 1;
+        put(candidate_valence_, source(e, mesh_), get(candidate_valence_, source(e, mesh_)) + 1);
+        put(candidate_valence_, target(e, mesh_), get(candidate_valence_, target(e, mesh_)) + 1);
       }
     }
   }
@@ -540,7 +562,7 @@ private:
 
   halfedge_descriptor next_candidate_edge(const halfedge_descriptor in_h) const
   {
-    CGAL_precondition(candidate_valence_[target(in_h, mesh_)] == 2);
+    CGAL_precondition(get(candidate_valence_, target(in_h, mesh_)) == 2);
 
     const edge_descriptor in_e = edge(in_h, mesh_);
     for(halfedge_descriptor h : CGAL::halfedges_around_source(target(in_h, mesh_), mesh_))
@@ -548,7 +570,7 @@ private:
       if(edge(h, mesh_) == in_e)
         continue;
 
-      if(candidate_edges_[edge(h, mesh_)])
+      if(get(candidate_edges_, edge(h, mesh_)))
         return h;
     }
 
@@ -563,10 +585,10 @@ private:
     halfedge_descriptor curr_h = start;
     for(;;)
     {
-      CGAL_assertion(candidate_edges_[edge(curr_h, mesh_)]);
-      curve_halfedges.insert(curr_h);
+      CGAL_assertion(get(candidate_edges_, edge(curr_h, mesh_)));
+      curve_halfedges.push_back(curr_h);
 
-      if(dihedral_angles_[edge(curr_h, mesh_)] > theta_k_)
+      if(get(dihedral_angles_, edge(curr_h, mesh_)) > theta_k_)
         ++number_of_edges_with_DAs_over_threshold;
 
       // is this correct?
@@ -578,7 +600,7 @@ private:
       CGAL_assertion(old_h != curr_h);
       CGAL_assertion(target(old_h, mesh_) == source(curr_h, mesh_));
 
-      if(is_end_halfedge(source(curr_h, mesh_)))
+      if(is_end_halfedge(curr_h)) // meaning the next one is _not_ added to the walk
         break;
     }
   }
@@ -587,16 +609,16 @@ private:
   {
     for(vertex_descriptor v : vertices(mesh_))
     {
-      angle_defects_[v] = angle_defect(v);
+      put(angle_defects_, v, angle_defect(v));
       const Vector dir = ridge_direction();
     }
 
     for(halfedge_descriptor h : halfedges(mesh_))
-      dihedral_angles_[h] = dihedral_angle(h);
+      put(dihedral_angles_, h, dihedral_angle(h));
 
     for(halfedge_descriptor h : halfedges(mesh_))
     {
-      osta_angles_[h] = one_side_turning_angle(h);
+      put(osta_angles_, h, one_side_turning_angle(h));
 
       // @cache local extremas at vertices (don't forget about the DA filter)
     }
@@ -616,7 +638,7 @@ public:
       for(halfedge_descriptor h : halfedges(mesh_))
       {
         // @cache order that so it's cheap
-        if(candidate_edges_[edge(h, mesh_)] && is_obscure_end_halfedge(h))
+        if(get(candidate_edges_, edge(h, mesh_)) && is_obscure_end_halfedge(h))
           obscure_end_halfedges.insert(h);
       }
 
@@ -638,20 +660,20 @@ public:
           halfedge_descriptor h = start;
           for(;;)
           {
-            candidate_edges_[edge(h, mesh_)] = false;
-            CGAL_assertion(candidate_valence_[source(h, mesh_)] > 0);
-            candidate_valence_[source(h, mesh_)] -= 1;
+            put(candidate_edges_, edge(h, mesh_), false);
+            CGAL_assertion(get(candidate_valence_, source(h, mesh_)) > 0);
+            put(candidate_valence_, source(h, mesh_), get(candidate_valence_, source(h, mesh_)) - 1);
 
             if(h == last_h)
               break;
           }
 
-          CGAL_assertion(candidate_valence_[target(last_h, mesh_)] > 0);
-          candidate_valence_[target(last_h, mesh_)] -= 1;
+          CGAL_assertion(get(candidate_valence_, target(last_h, mesh_)) > 0);
+          put(candidate_valence_, target(last_h, mesh_), get(candidate_valence_, target(last_h, mesh_)) - 1);
 
           // Reasoning is that, tautologically, we cannot have met any obscure end halfedge
           // before, otherwise we would have stopped
-          obscure_end_halfedges.remove(opposite(last_h, mesh_));
+          obscure_end_halfedges.erase(opposite(last_h, mesh_));
 
           removed_some_halfedges = true;
         }
@@ -663,27 +685,29 @@ public:
   }
 
 private:
-  const PolygonMesh& mesh_;
+  PolygonMesh& mesh_;
   const VPM vpmap_;
   GeomTraits gt_;
   const EIFMap ifemap_;
 
-  std::map<vertex_descriptor, double> angle_defects_;
-  std::map<vertex_descriptor, double> turning_angles_;
-  std::map<halfedge_descriptor, double> osta_angles_;
-  std::map<edge_descriptor, double> dihedral_angles_;
-  std::map<edge_descriptor, bool> candidate_edges_;
-  std::map<vertex_descriptor, bool> candidate_valence_;
+  // @todo all of that into dynamic pmaps and 'at' --> get()
+  Vertex_double_pmap angle_defects_;
+  Vertex_double_pmap turning_angles_;
+  Halfedge_double_pmap osta_angles_;
+  Edge_double_pmap dihedral_angles_;
+
+  Vertex_bool_pmap candidate_valence_;
+  Edge_bool_pmap candidate_edges_;
 
   // bounds
+  double theta_D_;
   double theta_e_;
   double theta_f_; // Bound to define strong edges (DA)
   double theta_F_; // Bound to define unconditionally strong edges (DA)
-  double theta_D_;
+  double theta_k_;
   double theta_t_;
   double theta_T_;
 
-  double theta_k_;
   int k_;
 };
 
