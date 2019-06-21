@@ -256,6 +256,7 @@ public:
   void remove_constraint(Vertex_handle va, Vertex_handle vb)
   {
     remove_constraint(constraint_map[make_edge(va,vb)]);
+    constraint_map.erase(make_edge(va,vb));
   }
 
   void split_constraint(T va, T vb, T vc);
