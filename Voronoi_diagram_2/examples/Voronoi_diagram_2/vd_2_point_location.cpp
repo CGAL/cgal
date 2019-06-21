@@ -10,9 +10,6 @@
 #include <CGAL/Delaunay_triangulation_adaptation_traits_2.h>
 #include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
 
-// include to draw the Voronoi diagram
-#include <CGAL/draw_voronoi_diagram_2.h>
-
 // typedefs for defining the adaptor
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                  K;
 typedef CGAL::Delaunay_triangulation_2<K>                                    DT;

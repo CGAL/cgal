@@ -21,8 +21,6 @@ if ( CGAL_FOUND )
   endforeach()
 
   if(CGAL_Qt5_FOUND )
-    target_link_libraries(vd_2_point_location PUBLIC CGAL::CGAL_Qt5)
-    target_link_libraries(vd_2_point_location_sdg_linf PUBLIC CGAL::CGAL_Qt5)
     target_link_libraries(draw_voronoi_diagram_2 PUBLIC CGAL::CGAL_Qt5)
   endif()
 
