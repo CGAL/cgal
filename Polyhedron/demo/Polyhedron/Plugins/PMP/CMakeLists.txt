@@ -110,17 +110,13 @@ target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_s
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin)
 target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
-### Ceres
-find_package(Ceres QUIET)
-if(CERES_FOUND)
-  add_definitions(-DCGAL_PMP_USE_CERES_SOLVER)
-endif(CERES_FOUND)
-
 # The smoothing plugin can still do some things, even if Ceres is not found
 qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
 polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
 target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
+find_package(Ceres QUIET)
 if(TARGET ceres)
+  target_compile_definitions( smoothing_plugin PRIVATE CGAL_PMP_USE_CERES_SOLVER )
   target_link_libraries(smoothing_plugin PUBLIC ceres)
 endif()

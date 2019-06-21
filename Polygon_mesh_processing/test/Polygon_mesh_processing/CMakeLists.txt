@@ -54,11 +54,6 @@ if (EIGEN3_FOUND)
 
 endif(EIGEN3_FOUND)
 
-find_package(Ceres QUIET)
-if(CERES_FOUND)
-  add_definitions(-DCGAL_PMP_USE_CERES_SOLVER)
-endif(CERES_FOUND)
-
 find_package( OpenMesh QUIET )
 if ( OpenMesh_FOUND )
   include( UseOpenMesh )
@@ -121,7 +116,9 @@ if(OpenMesh_FOUND)
   target_link_libraries( remeshing_test_P_SM_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 
+find_package(Ceres QUIET)
 if(TARGET ceres)
-  target_link_libraries( test_mesh_smoothing PRIVATE ceres)
+  target_compile_definitions( test_mesh_smoothing PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+  target_link_libraries( test_mesh_smoothing PRIVATE ceres )
 endif(TARGET ceres)
 

@@ -72,11 +72,6 @@ if (EIGEN3_FOUND)
 
 endif(EIGEN3_FOUND)
 
-find_package(Ceres QUIET)
-if(CERES_FOUND)
-  add_definitions(-DCGAL_PMP_USE_CERES_SOLVER)
-endif(CERES_FOUND)
-
 create_single_source_cgal_program( "self_intersections_example.cpp" )
 create_single_source_cgal_program( "stitch_borders_example.cpp" )
 create_single_source_cgal_program( "compute_normals_example_Polyhedron.cpp"  CXX_FEATURES cxx_range_for )
@@ -127,7 +122,9 @@ create_single_source_cgal_program( "triangulate_faces_example_OM.cpp")
 target_link_libraries( triangulate_faces_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif(OpenMesh_FOUND)
 
+find_package(Ceres QUIET)
 if(TARGET ceres)
-  target_link_libraries( mesh_smoothing_example PRIVATE ceres)
+  target_compile_definitions( mesh_smoothing_example PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+  target_link_libraries( mesh_smoothing_example PRIVATE ceres )
 endif(TARGET ceres)
 
