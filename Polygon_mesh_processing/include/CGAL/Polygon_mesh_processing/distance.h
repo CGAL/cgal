@@ -896,19 +896,13 @@ double bounded_error_Hausdorff_impl(
   typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::const_type Vertex_closest_triangle_map;
   typedef typename boost::property_map<TriangleMesh, Face_property_tag>::const_type Triangle_hausdorff_bounds;
 
+  typedef std::pair<double, double> Hausdorff_bounds;
+  typedef std::pair<Triangle_3, Hausdorff_bounds> Candidate_triangle;
+  typedef typename std::vector<Candidate_triangle> Candidate_set;
+
   typename Kernel::Compute_squared_distance_3 squared_distance;
   typename Kernel::Construct_projected_point_3 project_point;
   typename Kernel::FT dist;
-
-  // Store all vertices of tm1 in a vector
-  std::vector<vertex_descriptor> tm1_vertices;
-  tm1_vertices.reserve(num_vertices(tm1));
-  tm1_vertices.insert(tm1_vertices.end(),vertices(tm1).begin(),vertices(tm1).end());
-
-  // Sort vertices along a Hilbert curve
-  spatial_sort( tm1_vertices.begin(),
-                tm1_vertices.end(),
-                Search_traits_3(vpm1) );
 
   // Build an AABB tree on tm1
   TM1_tree tm1_tree( faces(tm1).begin(), faces(tm1).end(), tm1, vpm1 );
@@ -925,11 +919,8 @@ double bounded_error_Hausdorff_impl(
   Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1( tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2 );
   tm1_tree.traversal( Point_3(0,0,0), traversal_traits_tm1 );
 
-  // For each vertex in tm1, store the distance to the closest triangle of tm2
-  Vertex_closest_triangle_map vctm  = get(Vertex_property_tag(), tm1);
-  // For each triangle in tm1, sotre its respective local lower and upper bound
-  // on the Hausdorff measure
-  Triangle_hausdorff_bounds thb = get(Face_property_tag(), tm1);
+  Candidate_set candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
+  Hausdorff_bounds global_bounds = traversal_traits_tm1.get_global_bounds();
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
@@ -948,6 +939,22 @@ double bounded_error_Hausdorff_impl(
   // else
 #endif
   {
+    // Store all vertices of tm1 in a vector
+    std::vector<vertex_descriptor> tm1_vertices;
+    tm1_vertices.reserve(num_vertices(tm1));
+    tm1_vertices.insert(tm1_vertices.end(),vertices(tm1).begin(),vertices(tm1).end());
+
+    // Sort vertices along a Hilbert curve
+    spatial_sort( tm1_vertices.begin(),
+                  tm1_vertices.end(),
+                  Search_traits_3(vpm1) );
+
+    // For each vertex in tm1, store the distance to the closest triangle of tm2
+    Vertex_closest_triangle_map vctm  = get(Vertex_property_tag(), tm1);
+    // For each triangle in tm1, sotre its respective local lower and upper bound
+    // on the Hausdorff measure
+    Triangle_hausdorff_bounds thb = get(Face_property_tag(), tm1);
+
     /*
     / For each vertex in the first mesh, find the closest triangle in the
     / second mesh, store it and also store the distance to this triangle

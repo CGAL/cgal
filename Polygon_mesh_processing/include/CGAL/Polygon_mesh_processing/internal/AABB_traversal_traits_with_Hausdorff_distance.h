@@ -44,13 +44,17 @@ namespace CGAL {
     typedef typename Kernel::Point_3 Point_3;
 
   public:
-    Hausdorff_primitive_traits_tm2(const AABBTraits& traits, const TriangleMesh& tm1, const TriangleMesh& tm2, const VPM1& vpm1, const VPM2& vpm2)
+    Hausdorff_primitive_traits_tm2(
+      const AABBTraits& traits,
+      const TriangleMesh& tm1, const TriangleMesh& tm2,
+      const VPM1& vpm1, const VPM2& vpm2,
+      const double h_lower_init, const double h_upper_init
+    )
       : m_traits(traits), m_tm1(tm1), m_tm2(tm2), m_vpm1(vpm1), m_vpm2(vpm2) {
-        // Initialize the global bounds with 0., they will only grow.
-        h_local_upper = std::numeric_limits<double>::infinity();
-        h_local_lower_0 = std::numeric_limits<double>::infinity();
-        h_local_lower_1 = std::numeric_limits<double>::infinity();
-        h_local_lower_2 = std::numeric_limits<double>::infinity();
+        // Initialize the global bounds with infinity, triangles from TM2_tree
+        // try to minimize them.
+        h_local_lower = h_lower_init;
+        h_local_upper = h_upper_init;
       }
 
     // Explore the whole tree, i.e. always enter children if the methods
@@ -152,6 +156,7 @@ namespace CGAL {
       }
     }
 
+    // Return the local Hausdorff bounds computed for the passed query triangle
     Hausdorff_bounds get_local_bounds()
     {
       return Hausdorff_bounds( h_local_lower, h_local_upper );
@@ -168,11 +173,8 @@ namespace CGAL {
     // Local Hausdorff bounds for the query triangle
     double h_local_upper;
     double h_local_lower;
-    // Local Hausdorff bounds for the query triangle's vertices
-    double h_local_lower_0;
-    double h_local_lower_1;
-    double h_local_lower_2;
   };
+
 
   /**
    * @class Hausdorff_primitive_traits_tm1
@@ -187,6 +189,8 @@ namespace CGAL {
     typedef ::CGAL::AABB_node<AABBTraits> Node;
     typedef typename Kernel::Point_3 Point_3;
     typedef typename Kernel::Triangle_3 Triangle_3;
+    typedef std::pair<Triangle_3, Hausdorff_bounds> Candidate_triangle;
+    typedef typename std::vector<Candidate_triangle> Candidate_set;
     typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
@@ -209,8 +213,18 @@ namespace CGAL {
       // Have reached a single triangle
       std::cout << "Reached Triangle in TM1: " << primitive.id() << '\n';
 
+      // Map to transform faces of TM1 to actual triangles
+      Triangle_from_face_descriptor_map<TriangleMesh, VPM1> m_face_to_triangle_map( &m_tm1, m_vpm1 );
+      Triangle_3 candidate_triangle = get(m_face_to_triangle_map, primitive.id());
+
       // Call Culling on B with the single triangle found.
-      Hausdorff_primitive_traits_tm2<Tree_traits, Primitive, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm2( tm2_tree.traits(), m_tm1, m_tm2, m_vpm1, m_vpm2 );
+      Hausdorff_primitive_traits_tm2<
+        Tree_traits, Primitive, Kernel, TriangleMesh, VPM1, VPM2
+      > traversal_traits_tm2(
+        tm2_tree.traits(), m_tm1, m_tm2, m_vpm1, m_vpm2,
+        std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity()
+      );
       tm2_tree.traversal(primitive, traversal_traits_tm2);
 
       // Update global Hausdorff bounds according to the obtained local bounds
@@ -221,6 +235,12 @@ namespace CGAL {
       if (local_bounds.second > h_upper) {
         h_upper = local_bounds.second;
       }
+
+      m_candidiate_triangles.push_back(Candidate_triangle(candidate_triangle, local_bounds));
+      /* TODO Store the triangle given here is primitive as candidate triangle
+              together with the local bounds it optained to send it to
+              subdivision later.
+      */
     }
 
     // Determine whether child nodes will still contribute to a larger
@@ -253,6 +273,18 @@ namespace CGAL {
       }
     }
 
+    // Return those triangles from TM1 which are candidates for including a
+    // point realizing the Hausdorff distance
+    Candidate_set get_candidate_triangles() {
+      return m_candidiate_triangles;
+    }
+
+    // Return the local Hausdorff bounds computed for the passed query triangle
+    Hausdorff_bounds get_global_bounds()
+    {
+      return Hausdorff_bounds( h_lower, h_upper );
+    }
+
   private:
     const AABBTraits& m_traits;
     // The two triangle meshes
@@ -266,6 +298,8 @@ namespace CGAL {
     // Global Hausdorff bounds to be taken track of during the traversal
     double h_lower;
     double h_upper;
+    // List of candidate triangles with their Hausdorff bounds attached
+    Candidate_set m_candidiate_triangles;
   };
 }
 
