@@ -35,40 +35,6 @@ if(EIGEN3_FOUND)
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()
 
-  set(SuiteSparse_USE_LAPACK_BLAS ON)
-  find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
-  if(NOT SuiteSparse_FOUND)
-    set(SuiteSparse_VERBOSE ON)
-    find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
-    if(SuiteSparse_FOUND)
-      include_directories(${SuiteSparse_INCLUDE_DIRS})
-    endif(SuiteSparse_FOUND)
-  else(NOT SuiteSparse_FOUND)
-    include(${USE_SuiteSparse})
-  endif(NOT SuiteSparse_FOUND)
-
-  if(SuiteSparse_FOUND)
-    if (SuiteSparse_UMFPACK_FOUND)
-      message(STATUS "Found SuiteSparse")
-      message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
-      add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
-    endif(SuiteSparse_UMFPACK_FOUND)
-  endif(SuiteSparse_FOUND)
-
-  # Find the Ceres solver and its dependency
-  find_package(Glog QUIET)
-  if(GLOG_FOUND)
-    message(STATUS "Found Glog")
-    include_directories(${GLOG_INCLUDE_DIR})
-
-    find_package(Ceres QUIET)
-    if(CERES_FOUND)
-      message(STATUS "Found Ceres")
-      include_directories(${CERES_INCLUDE_DIR})
-      add_definitions(-DCGAL_PMP_USE_CERES_SOLVER)
-    endif(CERES_FOUND)
-  endif(GLOG_FOUND)
-
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
 endif()
@@ -144,10 +110,17 @@ target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_s
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin)
 target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
+### Ceres
+find_package(Ceres QUIET)
+if(CERES_FOUND)
+  add_definitions(-DCGAL_PMP_USE_CERES_SOLVER)
+endif(CERES_FOUND)
+
+# The smoothing plugin can still do some things, even if Ceres is not found
 qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
 polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
 target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
-if(SuiteSparse_FOUND AND CERES_FOUND)
-  target_link_libraries(smoothing_plugin PUBLIC ${SuiteSparse_LIBRARIES} ${GLOG_LIBRARIES} ${CERES_LIBRARY})
+if(TARGET ceres)
+  target_link_libraries(smoothing_plugin PUBLIC ceres)
 endif()

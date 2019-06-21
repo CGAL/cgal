@@ -70,41 +70,12 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program( "refine_fair_example.cpp")
   create_single_source_cgal_program( "shape_smoothing_example.cpp")
 
-  set(SuiteSparse_USE_LAPACK_BLAS ON)
-  find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
-  if(NOT SuiteSparse_FOUND)
-    set(SuiteSparse_VERBOSE ON)
-    find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
-    if(SuiteSparse_FOUND)
-      include_directories(${SuiteSparse_INCLUDE_DIRS})
-    endif(SuiteSparse_FOUND)
-  else(NOT SuiteSparse_FOUND)
-    include(${USE_SuiteSparse})
-  endif(NOT SuiteSparse_FOUND)
-
-  if(SuiteSparse_FOUND)
-    if (SuiteSparse_UMFPACK_FOUND)
-      message(STATUS "Found SuiteSparse")
-      message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
-      add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
-    endif(SuiteSparse_UMFPACK_FOUND)
-  endif(SuiteSparse_FOUND)
-
-  # Find the Ceres solver and its dependency
-  find_package(Glog QUIET)
-  if(GLOG_FOUND)
-    message(STATUS "Found Glog")
-    include_directories(${GLOG_INCLUDE_DIR})
-
-    find_package(Ceres QUIET)
-    if(CERES_FOUND)
-      message(STATUS "Found Ceres")
-      include_directories(${CERES_INCLUDE_DIR})
-      add_definitions(-DCGAL_PMP_USE_CERES_SOLVER)
-    endif(CERES_FOUND)
-  endif(GLOG_FOUND)
-
 endif(EIGEN3_FOUND)
+
+find_package(Ceres QUIET)
+if(CERES_FOUND)
+  add_definitions(-DCGAL_PMP_USE_CERES_SOLVER)
+endif(CERES_FOUND)
 
 create_single_source_cgal_program( "self_intersections_example.cpp" )
 create_single_source_cgal_program( "stitch_borders_example.cpp" )
@@ -156,7 +127,7 @@ create_single_source_cgal_program( "triangulate_faces_example_OM.cpp")
 target_link_libraries( triangulate_faces_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif(OpenMesh_FOUND)
 
-if(SuiteSparse_FOUND AND CERES_FOUND)
-  target_link_libraries( mesh_smoothing_example PRIVATE ${SuiteSparse_LIBRARIES} ${GLOG_LIBRARIES} ${CERES_LIBRARY} -pthread)
-endif(SuiteSparse_FOUND AND CERES_FOUND)
+if(TARGET ceres)
+  target_link_libraries( mesh_smoothing_example PRIVATE ceres)
+endif(TARGET ceres)
 

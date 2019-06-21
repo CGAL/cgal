@@ -52,44 +52,14 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
   create_single_source_cgal_program("test_shape_smoothing.cpp")
 
-  set(SuiteSparse_USE_LAPACK_BLAS ON)
-  find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
-  if(NOT SuiteSparse_FOUND)
-    set(SuiteSparse_VERBOSE ON)
-    find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
-    if(SuiteSparse_FOUND)
-      include_directories(${SuiteSparse_INCLUDE_DIRS})
-    endif(SuiteSparse_FOUND)
-  else(NOT SuiteSparse_FOUND)
-    include(${USE_SuiteSparse})
-  endif(NOT SuiteSparse_FOUND)
-
-  if(SuiteSparse_FOUND)
-    if (SuiteSparse_UMFPACK_FOUND)
-      message(STATUS "Found SuiteSparse")
-      message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
-      add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
-    endif(SuiteSparse_UMFPACK_FOUND)
-  endif(SuiteSparse_FOUND)
-
-  # Find the Ceres solver and its dependency
-  find_package(Glog QUIET)
-  if(GLOG_FOUND)
-    message(STATUS "Found Glog")
-    include_directories(${GLOG_INCLUDE_DIR})
-
-    find_package(Ceres QUIET)
-    if(CERES_FOUND)
-      message(STATUS "Found Ceres")
-      include_directories(${CERES_INCLUDE_DIR})
-      add_definitions(-DCGAL_PMP_USE_CERES_SOLVER)
-    endif(CERES_FOUND)
-  endif(GLOG_FOUND)
-
 endif(EIGEN3_FOUND)
 
-find_package( OpenMesh QUIET )
+find_package(Ceres QUIET)
+if(CERES_FOUND)
+  add_definitions(-DCGAL_PMP_USE_CERES_SOLVER)
+endif(CERES_FOUND)
 
+find_package( OpenMesh QUIET )
 if ( OpenMesh_FOUND )
   include( UseOpenMesh )
 else()
@@ -151,7 +121,7 @@ if(OpenMesh_FOUND)
   target_link_libraries( remeshing_test_P_SM_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 
-if(SuiteSparse_FOUND AND CERES_FOUND)
-  target_link_libraries( test_mesh_smoothing PRIVATE ${SuiteSparse_LIBRARIES} ${GLOG_LIBRARIES} ${CERES_LIBRARY})
-endif(SuiteSparse_FOUND AND CERES_FOUND)
+if(TARGET ceres)
+  target_link_libraries( test_mesh_smoothing PRIVATE ceres)
+endif(TARGET ceres)
 
