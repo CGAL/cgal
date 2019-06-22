@@ -39,8 +39,6 @@ private:
   const LCC_3& m_lcc;
 };
 
-
-// using SNC = CGAL::Shortest_noncontractible_cycle<LCC_3>;
 using SNC = CGAL::Shortest_noncontractible_cycle<LCC_3, Weight_functor>;
 
 LCC_3 lcc;
