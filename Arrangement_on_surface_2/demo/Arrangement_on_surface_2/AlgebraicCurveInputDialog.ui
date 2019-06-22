@@ -49,7 +49,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Enter polynomial with terms in the format of ax^by^c,</string>
+    <string>Enter polynomial with terms in the format of  Σax^by^c,</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -62,7 +62,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Eg., x^2y^8-12, y^2-x</string>
+    <string>Eg., To show the curve x^2-y+2=0, enter x^2-y+2</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_3">
