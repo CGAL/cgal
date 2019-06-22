@@ -48,13 +48,16 @@ namespace CGAL {
       const AABBTraits& traits,
       const TriangleMesh& tm1, const TriangleMesh& tm2,
       const VPM1& vpm1, const VPM2& vpm2,
-      const double h_lower_init, const double h_upper_init
+      const double h_lower_init, const double h_upper_init,
+      const double h_v0_lower_init, const double h_v1_lower_init, const double h_v2_lower_init
     )
       : m_traits(traits), m_tm1(tm1), m_tm2(tm2), m_vpm1(vpm1), m_vpm2(vpm2) {
-        // Initialize the global bounds with infinity, triangles from TM2_tree
-        // try to minimize them.
+        // Initialize the global and local bounds with the given values
         h_local_lower = h_lower_init;
         h_local_upper = h_upper_init;
+        h_v0_lower = h_v0_lower_init;
+        h_v1_lower = h_v1_lower_init;
+        h_v2_lower = h_v2_lower_init;
       }
 
     // Explore the whole tree, i.e. always enter children if the methods
@@ -84,27 +87,33 @@ namespace CGAL {
 
       // Compute distances of the vertices to the primitive triangle in TM2
       Triangle_from_face_descriptor_map<TriangleMesh, VPM2> face_to_triangle_map(&m_tm2, m_vpm2);
-      double v0_dist = squared_distance(
+      double v0_dist = approximate_sqrt(squared_distance(
         project_point(get(face_to_triangle_map, primitive.id()), get(m_vpm1, v0)),
         get(m_vpm1, v0)
-      );
-      double v1_dist = squared_distance(
+      ));
+      if (v0_dist < h_v0_lower) h_v0_lower = v0_dist;
+
+      double v1_dist = approximate_sqrt(squared_distance(
         project_point(get(face_to_triangle_map, primitive.id()), get(m_vpm1, v1)),
         get(m_vpm1, v1)
-      );
-      double v2_dist = squared_distance(
+      ));
+      if (v1_dist < h_v1_lower) h_v1_lower = v1_dist;
+
+      double v2_dist = approximate_sqrt(squared_distance(
         project_point(get(face_to_triangle_map, primitive.id()), get(m_vpm1, v2)),
         get(m_vpm1, v2)
-      );
+      ));
+      if (v2_dist < h_v2_lower) h_v2_lower = v2_dist;
 
       // Get the distance as maximizers over all vertices
-      double distance = approximate_sqrt(std::max(std::max(v0_dist,v1_dist),v2_dist));
+      double distance_upper = std::max(std::max(v0_dist,v1_dist),v2_dist);
+      double distance_lower = std::max(std::max(h_v0_lower,h_v1_lower),h_v2_lower);
 
-      // Since we are at the level of a single triangle in TM2, distance is
+      // Since we are at the level of a single triangle in TM2, distance_upper is
       // actually the correct Hausdorff distance from the query triangle in
       // TM1 to the primitive triangle in TM2
-      if ( distance < h_local_upper ) h_local_upper = distance;
-      if ( distance < h_local_lower ) h_local_lower = distance;
+      if ( distance_upper < h_local_upper ) h_local_upper = distance_upper;
+      if ( distance_lower < h_local_lower ) h_local_lower = distance_lower;
     }
 
     // Determine whether child nodes will still contribute to a smaller
@@ -173,6 +182,9 @@ namespace CGAL {
     // Local Hausdorff bounds for the query triangle
     double h_local_upper;
     double h_local_lower;
+    double h_v0_lower;
+    double h_v1_lower;
+    double h_v2_lower;
   };
 
 
@@ -223,6 +235,9 @@ namespace CGAL {
       > traversal_traits_tm2(
         tm2_tree.traits(), m_tm1, m_tm2, m_vpm1, m_vpm2,
         std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity()
       );
       tm2_tree.traversal(primitive, traversal_traits_tm2);
@@ -257,6 +272,7 @@ namespace CGAL {
         (bbox.min(1) + bbox.max(1)) / 2,
         (bbox.min(2) + bbox.max(2)) / 2);
       // Find the point from TM2 closest to the center
+      // TODO Insert a hint here to accelerate the query
       Point_3 closest = tm2_tree.closest_point(center);
       // Compute the distance of the center to the closest point in tm2
       double dist = approximate_sqrt(squared_distance(center, closest));
