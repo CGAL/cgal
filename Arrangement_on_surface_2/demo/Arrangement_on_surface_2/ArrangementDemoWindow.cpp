@@ -232,6 +232,7 @@ void ArrangementDemoWindow::setupUi( )
   this->ui->actionGridSnapMode->setEnabled( false );
 
   this->conicTypeGroup = new QActionGroup( this );
+  this->conicTypeGroup->addAction( this->ui->actionAddAlgebraicCurve );
   this->conicTypeGroup->addAction( this->ui->actionConicSegment );
   this->conicTypeGroup->addAction( this->ui->actionConicCircle );
   this->conicTypeGroup->addAction( this->ui->actionConicEllipse );
@@ -817,7 +818,7 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
     }
   }
 #endif
-  if (isAlgSegArr && (newType == this->ui->actionConicSegment))
+  if (isAlgSegArr && (newType == this->ui->actionAddAlgebraicCurve))
   {
     if (this->ui->actionInsert->isChecked())
     {
@@ -1120,6 +1121,7 @@ void ArrangementDemoWindow::on_tabWidget_currentChanged( )
     this->ui->actionCurveRay->setVisible( true );
     this->ui->actionCurveLine->setVisible( true );
 
+    this->ui->actionAddAlgebraicCurve->setVisible( false );
     this->ui->actionConicCircle->setVisible( false );
     this->ui->actionConicEllipse->setVisible( false );
     this->ui->actionConicThreePoint->setVisible( false );
@@ -1135,6 +1137,7 @@ void ArrangementDemoWindow::on_tabWidget_currentChanged( )
 
     this->ui->actionCurveRay->setVisible( false );
     this->ui->actionCurveLine->setVisible( false );
+    this->ui->actionAddAlgebraicCurve->setVisible( false );
 
     this->ui->actionConicCircle->setVisible( true );
     this->ui->actionConicEllipse->setVisible( true );
@@ -1144,17 +1147,29 @@ void ArrangementDemoWindow::on_tabWidget_currentChanged( )
     this->conicTypeGroup->setEnabled( true );
   }
 #endif
+  else if (CGAL::assign( alg_seg, arr) ){
+        this->ui->actionAddAlgebraicCurve->setChecked( true );
+        this->ui->actionAddAlgebraicCurve->setVisible( true );
+        this->ui->actionAddAlgebraicCurve->setToolTip( "Add Curve" );
 
-  else { // segment or polyline or algebraic
+        this->ui->actionSnapMode->setDisabled(true);
+        this->ui->actionGridSnapMode->setDisabled(true);
+
+        this->ui->actionConicSegment->setVisible( false );
+        this->ui->actionCurveRay->setVisible( false );
+        this->ui->actionCurveLine->setVisible( false );
+        this->ui->actionConicCircle->setVisible( false );
+        this->ui->actionConicEllipse->setVisible( false );
+        this->ui->actionConicThreePoint->setVisible( false );
+        this->ui->actionConicFivePoint->setVisible( false );
+
+        this->conicTypeGroup->setEnabled( true );
+  }
+
+  else { // segment or polyline
     this->ui->actionConicSegment->setChecked( true );
 
-    if ( CGAL::assign( alg_seg, arr ) )
-    {
-      this->ui->actionConicSegment->setToolTip("Curve");
-      this->ui->actionSnapMode->setDisabled(true);
-      this->ui->actionGridSnapMode->setDisabled(true);
-    }
-    else if ( CGAL::assign( pol, arr ) )
+    if ( CGAL::assign( pol, arr ) )
     {
       this->ui->actionConicSegment->setToolTip("Polyline");
     }
@@ -1170,6 +1185,7 @@ void ArrangementDemoWindow::on_tabWidget_currentChanged( )
     this->ui->actionCurveRay->setVisible( false );
     this->ui->actionCurveLine->setVisible( false );
 
+    this->ui->actionAddAlgebraicCurve->setVisible( false );
     this->ui->actionConicCircle->setVisible( false );
     this->ui->actionConicEllipse->setVisible( false );
     this->ui->actionConicThreePoint->setVisible( false );

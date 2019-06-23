@@ -63,6 +63,7 @@
    <addaction name="actionConicEllipse"/>
    <addaction name="actionConicThreePoint"/>
    <addaction name="actionConicFivePoint"/>
+   <addaction name="actionAddAlgebraicCurve"/>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -386,6 +387,14 @@
     <string>Five Point Conic</string>
    </property>
   </action>
+  <action name="actionAddAlgebraicCurve">
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Add Curve</string>
+     </property>
+    </action>
   <action name="actionCloseTab">
    <property name="text">
     <string>Close Tab</string>
