@@ -1,12 +1,12 @@
-#include <CGAL/Periodic_2_triangulation_2.h>
-#include <CGAL/Periodic_2_triangulation_traits_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 #include <CGAL/draw_periodic_2_triangulation_2.h>
 
 #include<fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_2_triangulation_traits_2<K>          GT;
-typedef CGAL::Periodic_2_triangulation_2<GT>                PDT;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K> GT;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<GT>       PDT;
 
 typedef PDT::Point                                          Point;
 
@@ -24,6 +24,11 @@ int main(int argc, char* argv[])
   }
   assert(T.is_valid());
 
+  if( T.is_triangulation_in_1_sheet())
+    T.convert_to_9_sheeted_covering();
+
   // Draw the periodic triangulation
   CGAL::draw(T);
+
+  return EXIT_SUCCESS;
 }

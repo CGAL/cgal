@@ -120,6 +120,8 @@ protected:
     add_point_in_face(t[2]);
     face_end();
 
+    // Display the edges of the faces as segments with a
+    // light gray color for better visualization
     add_segment(t[0], t[1], CGAL::Color(207, 213, 211));
     add_segment(t[1], t[2], CGAL::Color(207, 213, 211));
     add_segment(t[2], t[0], CGAL::Color(207, 213, 211));
