@@ -53,7 +53,7 @@ public:
     using Origin_to_copy_map = boost::unordered_map<Dart_const_handle_orig, 
                                                     typename Generic_map::Dart_handle>;
     
-    static typename Generic_map::Dart_handle Get_opposite(Generic_map& amap, typename Generic_map::Dart_handle dh) {
+    static typename Generic_map::Dart_handle opposite(Generic_map& amap, typename Generic_map::Dart_handle dh) {
       return amap.template opposite<2>(dh);
     }
     static void copy(Generic_map& target, const Gmap_origin& source,
@@ -77,7 +77,7 @@ public:
     using Origin_to_copy_map = boost::unordered_map<Dart_const_handle_orig, 
                                                     typename Generic_map::Dart_handle>;
     
-    static typename Generic_map::Dart_handle Get_opposite(Generic_map& amap, typename Generic_map::Dart_handle dh) {
+    static typename Generic_map::Dart_handle opposite(Generic_map& amap, typename Generic_map::Dart_handle dh) {
       return amap.opposite(dh);
     }
     static void copy(Generic_map& target, const Gmap_origin& source,
@@ -102,7 +102,7 @@ public:
     using Origin_to_copy_map = boost::unordered_map<Dart_const_handle_orig, 
                                                     typename Generic_map::Dart_handle>;
     
-    static typename Generic_map::Dart_handle Get_opposite(Generic_map& amap, typename Generic_map::Dart_handle dh) {
+    static typename Generic_map::Dart_handle opposite(Generic_map& amap, typename Generic_map::Dart_handle dh) {
       return amap.opposite(dh);
     }
     static void copy(Generic_map& target, const Gmap_origin& source,
@@ -335,7 +335,7 @@ private:
   }
 
   Dart_handle opposite(Dart_handle dh) {
-    return Gmap_wrapper::Get_opposite(m_gmap, dh);
+    return Gmap_wrapper::opposite(m_gmap, dh);
   }
 
   /// Find E_nc
