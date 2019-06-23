@@ -59,6 +59,7 @@
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
+#include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/minkowski_sum_2.h>
@@ -164,8 +165,8 @@ enum {
 };
 
 //A way to maintain 3 category of polygons namely linear,circular
-//enum genrates errors so, we wil use LINEAR_TYPE=1, CIRCULAR_TYPE=2and BEZIER_TPYE = 3
-//enum { LINEAR_TYPE, CIRCULAR_TYPE, BEZIER_TPYE};
+//enum genrates errors so, we wil use LINEAR_TYPE=1, CIRCULAR_TYPE=2and BEZIER_TPYE = 3 ConicCircle = 4 and ConicEllipse = 5
+//enum { LINEAR_TYPE, CIRCULAR_TYPE, BEZIER_TPYE,ConicCircle,ConicEllipse};
 
 //dawing tools
 QPen sPens[] = {
@@ -704,9 +705,8 @@ public slots:
   void on_actionInsertLinear_triggered();
   void on_actionInsertCircular_triggered();
   void on_actionInsertBezier_triggered();
-  void on_actionInsertConic_triggered();
-  void on_actionInsertRational_triggered();
-  void on_actionInsertAlgebraic_triggered();
+  void on_actionInsertConicCircle_triggered();
+  void on_actionInsertConicEclipse_triggered();
   void on_actionOpenLinear_triggered();
   void on_actionOpenDXF_triggered();
   void on_actionOpenBezier_triggered();
@@ -730,6 +730,7 @@ public slots:
   void on_drawAqua_toggled (bool a_check);
 
   //void on_actionAdd_new_polygon_triggered();
+  void on_actionDeleteResult_triggered();
   void on_actionDelete_triggered();
   void on_actionDeleteAll_triggered();
   void on_actionPAN_triggered();
@@ -1136,20 +1137,27 @@ void MainWindow::on_actionNew_triggered()
 void MainWindow::on_actionDelete_triggered()
 {
   bool lDone = false;
-  bool lProceed=result_set().is_empty() ? ask_user_yesno("Store result", "All polygons of the selected type will be deleted\n continue anyway?\n") : true;
+  bool lProceed=result_set().is_empty() ? true:ask_user_yesno("Store result", "All polygons of the selected type will be deleted\n continue anyway?\n") ;
   if (lProceed) {
     switch(m_color_active) {
-     case 0: blue_set().assign(result_set()); break;
+     /*case 0: blue_set().assign(result_set()); break;
      case 1: red_set().assign(result_set()); break;
      case 2: black_set().assign(result_set()); break;
      case 3: brown_set().assign(result_set()); break;
      case 4: yellow_set().assign(result_set()); break;
      case 5: magenta_set().assign(result_set()); break;
-     case 6: aqua_set().assign(result_set()); break;
+     case 6: aqua_set().assign(result_set()); break;*/
+     case 0: blue_set().clear();blue_circular_sources().clear();blue_bezier_sources().clear();blue_linear_sources().clear();break;
+     case 1: red_set().clear();red_circular_sources().clear();red_bezier_sources().clear();red_linear_sources().clear();break;
+     case 2: black_set().clear();black_circular_sources().clear();black_bezier_sources().clear();black_linear_sources().clear();break;
+     case 3: brown_set().clear();brown_circular_sources().clear();brown_bezier_sources().clear();brown_linear_sources().clear();break;
+     case 4: yellow_set().clear();yellow_circular_sources().clear();yellow_bezier_sources().clear();yellow_linear_sources().clear();break;
+     case 5: magenta_set().clear();magenta_circular_sources().clear();magenta_bezier_sources().clear();magenta_linear_sources().clear();break;
+     case 6: aqua_set().clear();aqua_circular_sources().clear();aqua_bezier_sources().clear();aqua_linear_sources().clear();break;
 
      default: break;    //! \todo Handle default case.
     }
-    result_set().clear();
+    //result_set().clear();
     lDone = true;
   }
   if (lDone) modelChanged();
@@ -1158,22 +1166,31 @@ void MainWindow::on_actionDelete_triggered()
 void MainWindow::on_actionDeleteAll_triggered()
 {
   bool lDone = false;
-  bool lProceed = result_set().is_empty() ?
-    ask_user_yesno("Store result",
-                   "All polygons will be deleted\n continue anyway?\n") : true;
+  bool lProceed = result_set().is_empty() ? true : ask_user_yesno("Store result","All polygons will be deleted\n continue anyway?\n");
   if (lProceed) {
-    blue_set().assign(result_set());
-    red_set().assign(result_set());
-    black_set().assign(result_set());
-    brown_set().assign(result_set());
-    yellow_set().assign(result_set());
-    magenta_set().assign(result_set());
-    aqua_set().assign(result_set());
+    blue_set().clear();blue_circular_sources().clear();blue_bezier_sources().clear();blue_linear_sources().clear();
+    red_set().clear();red_circular_sources().clear();red_bezier_sources().clear();red_linear_sources().clear();
+    black_set().clear();black_circular_sources().clear();black_bezier_sources().clear();black_linear_sources().clear();
+    brown_set().clear();brown_circular_sources().clear();brown_bezier_sources().clear();brown_linear_sources().clear();
+    yellow_set().clear();yellow_circular_sources().clear();yellow_bezier_sources().clear();yellow_linear_sources().clear();
+    magenta_set().clear();magenta_circular_sources().clear();magenta_bezier_sources().clear();magenta_linear_sources().clear();
+    aqua_set().clear();aqua_circular_sources().clear();aqua_bezier_sources().clear();aqua_linear_sources().clear();
+    //result_set().clear();
   }
-  result_set().clear();
   lDone = true;
 
   if (lDone) modelChanged();
+}
+
+void MainWindow::on_actionDeleteResult_triggered()
+{
+    bool lDone  = false;
+    bool lProceed = result_set().is_empty() ? true : ask_user_yesno("Store result","Result will be deleted\n continue anyway?\n");
+    if (lProceed){
+      result_set().clear();
+    }
+    lDone = true;
+    if (lDone) modelChanged();
 }
 
 void MainWindow::on_drawBlue_toggled(bool /* a_check */) { m_color_active = 0; }
@@ -1849,14 +1866,14 @@ void MainWindow::open(QString fileName)
 }
 
 
-void MainWindow::on_actionInsertAlgebraic_triggered()
+
+void MainWindow::on_actionInsertConicCircle_triggered()
 {}
 
-void MainWindow::on_actionInsertRational_triggered()
+
+void MainWindow::on_actionInsertConicEclipse_triggered()
 {}
 
-void MainWindow::on_actionInsertConic_triggered()
-{}
 
 void MainWindow::on_actionInsertCircular_triggered()
 {
@@ -1896,47 +1913,16 @@ void MainWindow::on_actionComplement_triggered()
   bool lDone = false;
   QCursor old = this->cursor();
   this->setCursor(Qt::WaitCursor);
-  if (!blue_set().is_empty()) {
-    result_set().assign(blue_set());
-    result_set().complement();
-    lDone = true;
-  }
-
-  if (!red_set().is_empty()) {
-    result_set().assign(red_set());
-    result_set().complement();
-    lDone = true;
-  }
-
-  if (!black_set().is_empty()) {
-    result_set().assign(black_set());
-    result_set().complement();
-    lDone = true;
-  }
-
-  if (!brown_set().is_empty()) {
-    result_set().assign(brown_set());
-    result_set().complement();
-    lDone = true;
-  }
-
-  if (!yellow_set().is_empty()) {
-    result_set().assign(yellow_set());
-    result_set().complement();
-    lDone = true;
-  }
-
-  if (!magenta_set().is_empty()) {
-    result_set().assign(magenta_set());
-    result_set().complement();
-    lDone = true;
-  }
-
-  if (!aqua_set().is_empty()) {
-    result_set().assign(aqua_set());
-    result_set().complement();
-    lDone = true;
-  }
+  /*switch(m_circular_active)
+  {
+    case 0: if(!blue_set().is_empty()) {result_set().assign(QGraphicsRectItem(0,0,1124,664));result_set().difference(blue_set());} break;
+    case 1: if(!red_set().is_empty()) {result_set().assign();result_set().difference(red_set());} break;
+    case 2: if(!black_set().is_empty()) {result_set().assign();result_set().difference(black_set());} break;
+    case 3: if(!brown_set().is_empty()) {result_set().assign();result_set().difference(brown_set());} break;
+    case 4: if(!yellow_set().is_empty()) {result_set().assign();result_set().difference(yellow_set());} break;
+    case 5: if(!magenta_set().is_empty()) {result_set().assign();result_set().difference(magenta_set());} break;
+    case 6: if(!aqua_set().is_empty()) {result_set().assign();result_set().difference(aqua_set());} break;
+  }*/
   this->setCursor(old);
   if (lDone) modelChanged();
 }
@@ -1974,13 +1960,29 @@ void MainWindow::on_actionDifference_triggered()
   bool lDone = false;
   QCursor old = this->cursor();
   this->setCursor(Qt::WaitCursor);
-  if (!blue_set().is_empty() && !red_set().is_empty()) {
-    result_set().assign(blue_set());
-    result_set().difference(red_set());
-    lDone = true;
-  }
-  this->setCursor(old);
+  switch(m_color_active) {
+    case 0: result_set().assign(red_set());result_set().join(black_set());result_set().join(brown_set());result_set().join(magenta_set());result_set().join(yellow_set());result_set().join(aqua_set());if(!result_set().is_empty())result_set().difference(blue_set());break;
+    case 1: result_set().assign(blue_set());result_set().join(black_set());result_set().join(brown_set());result_set().join(magenta_set());result_set().join(yellow_set());result_set().join(aqua_set());if(!result_set().is_empty())result_set().difference(red_set());break;
+    case 2: result_set().assign(red_set());result_set().join(blue_set());result_set().join(brown_set());result_set().join(magenta_set());result_set().join(yellow_set());result_set().join(aqua_set());if(!result_set().is_empty())result_set().difference(black_set());break;
+    case 3: result_set().assign(red_set());result_set().join(black_set());result_set().join(blue_set());result_set().join(magenta_set());result_set().join(yellow_set());result_set().join(aqua_set());if(!result_set().is_empty())result_set().difference(brown_set());break;
+    case 4: result_set().assign(red_set());result_set().join(black_set());result_set().join(brown_set());result_set().join(magenta_set());result_set().join(blue_set());result_set().join(aqua_set());if(!result_set().is_empty())result_set().difference(yellow_set());break;
+    case 5: result_set().assign(red_set());result_set().join(black_set());result_set().join(brown_set());result_set().join(blue_set());result_set().join(yellow_set());result_set().join(aqua_set());if(!result_set().is_empty())result_set().difference(magenta_set());break;
+    case 6: result_set().assign(red_set());result_set().join(black_set());result_set().join(brown_set());result_set().join(magenta_set());result_set().join(yellow_set());result_set().join(blue_set());if(!result_set().is_empty())result_set().difference(aqua_set());break;
+    /*if (!blue_set().is_empty() && !red_set().is_empty()) {
+      result_set().assign(blue_set());
+      result_set().difference(red_set());
+      lDone = true;
+      case 0: blue_set().assign(result_set()); break;
+     case 1: red_set().assign(result_set()); break;
+     case 2: black_set().assign(result_set()); break;
+     case 3: brown_set().assign(result_set()); break;
+     case 4: yellow_set().assign(result_set()); break;
+     case 5: magenta_set().assign(result_set()); break;
+     case 6: aqua_set().assign(result_set()); break;*/
 
+  }
+  lDone = true;
+  this->setCursor(old);
   if (lDone) modelChanged();
 }
 
@@ -2038,9 +2040,10 @@ void MainWindow::ToogleView(size_t aGROUP, bool a_check)
 
 void MainWindow::on_actionPAN_triggered()
 {
-  if (!m_circular_active) m_scene.removeEventFilter(m_linear_input);
-  else m_scene.removeEventFilter(m_circular_input);
-  this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
+  if (!m_circular_active && !m_bezier_active) { m_scene.removeEventFilter(m_linear_input); this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); m_scene.installEventFilter(m_linear_input);}
+  else if(!m_bezier_active) { m_scene.removeEventFilter(m_circular_input); this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); m_scene.installEventFilter(m_circular_input);}
+  else { m_scene.removeEventFilter(m_bezier_input); this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); m_scene.installEventFilter(m_bezier_input);}
+  
 }
 
 void MainWindow::zoomToFit()

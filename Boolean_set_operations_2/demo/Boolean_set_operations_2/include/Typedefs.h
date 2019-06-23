@@ -24,6 +24,26 @@
 
 #include <iostream>
 
+#include <CGAL/Cartesian.h>
+#include <CGAL/Arr_default_dcel.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_linear_traits_2.h>
+#include <CGAL/Arr_consolidated_curve_data_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_algebraic_segment_traits_2.h>
+#include <CGAL/Arrangement_with_history_2.h>
+#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Arr_trapezoid_ric_point_location.h>
+#include <CGAL/Arr_simple_point_location.h>
+#include <CGAL/Arr_walk_along_line_point_location.h>
+#include <CGAL/Arr_landmarks_point_location.h>
+#include <CGAL/squared_distance_2.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/Bbox_2.h>
+
+#include <CGAL/Arr_observer.h>
+#include <CGAL/Polygon_2.h>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/General_polygon_set_2.h>
 //#include <CGAL/Gps_traits_2.h>
@@ -126,6 +146,41 @@ typedef std::vector<Bezier_boundary_source>      Bezier_region_source ;
 typedef std::vector<Bezier_region_source>        Bezier_region_source_container ;
 
 #endif
+
+// Conics Curves typedefs
+
+//#ifdef CGAL_USE_CORE
+
+//#include <CGAL/CORE_algebraic_number_traits.h>
+
+//typedef CGAL::CORE_algebraic_number_traits              Conic_nt_traits;
+//typedef Conic_nt_traits::Rational                       Conic_rational;
+//typedef Conic_nt_traits::Algebraic                      Conic_algebraic;
+//typedef Conic_rat_kernel : public CGAL::Cartesian<Conic_rational> {};
+//typedef Conic_alg_kernel : public CGAL::Cartesian<Conic_algebraic> {};
+
+//struct Conic_traits: public CGAL::Arr_conic_traits_2<Conic_rat_kernel,Conic_alg_kernel,Conic_nt_traits>{};
+
+//typedef  Conic_traits::Curve_2                          Conic_curve;
+//typedef  Conic_traits::X_monotone_curve_2               Conic_X_monotone_curve;
+//typedef  Conic_traits::Point_2                          Conic_point;
+//typedef  Conic_traits::Rat_point_2                      Conic_rat_point;
+//typedef  Conic_traits::Rat_segment_2                    Conic_rat_segment;
+//typedef  Conic_traits::Rat_circle_2                     Conic_rat_circle;
+//typedef  Conic_traits::Rat_line_2                       Conic_rat_line;
+//typedef  CGAL::Gps_traits_2<Conic_traits>               Conic_gps_traits;
+//typedef  Conic_gps_traits::General_polygon_2		Conic_polygon;
+//typedef  std::vector<Conic_polygon> 			Conic_polygon_vector;
+//typedef  Conic_gps_traits::General_polygon_with_holes_2 Conic_polygon_with_holes;
+//typedef  CGAL::General_polygon_set_2<Conic_gps_traits>  Conic_polygon_set;
+
+//typedef CGAL::Qt::Bezier_set_graphics_item<Conic_polygon_set> Conic_GI;
+
+//typedef std::vector<Conic_curve>                Conic_boundary_source ;
+///typedef std::vector<Conic_boundary_source>      Conic_region_source ;
+//typedef std::vector<Conic_region_source>        Conic_region_source_container ;
+
+//#endif
 
 
 #endif // CGAL_TYPEDEFS_H

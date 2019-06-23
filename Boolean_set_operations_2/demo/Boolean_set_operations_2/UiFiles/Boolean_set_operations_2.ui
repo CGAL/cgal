@@ -67,6 +67,7 @@
     </property>
     <addaction name="actionDelete"/>
     <addaction name="actionDeleteAll"/>
+    <addaction name="actionDeleteResult"/>
    </widget>
    <widget class="QMenu" name="menuOperations">
     <property name="title">
@@ -75,9 +76,6 @@
     <addaction name="actionInsertLinear"/> 
     <addaction name="actionInsertCircular"/>
     <addaction name="actionInsertBezier" />
-    <addaction name="actionInsertConic" />
-   	<addaction name="actionInsertRational" />
-   	<addaction name="actionInsertAlgebraic" />
     <addaction name="separator"/>
     <addaction name="actionComplement"/>
     <addaction name="actionIntersection"/>
@@ -119,9 +117,6 @@
    <addaction name="actionInsertLinear"/>
    <addaction name="actionInsertCircular"/>
    <addaction name="actionInsertBezier" />
-   <addaction name="actionInsertConic" />
-   <addaction name="actionInsertRational" />
-   <addaction name="actionInsertAlgebraic" />
   </widget>
 
   <widget class="QToolBar" name="operationsToolBar" >
@@ -142,6 +137,20 @@
    <addaction name="actionMinkowski_Sum" />
   </widget>
   <widget class="QToolBar" name="viewToolBar" >
+   <property name="windowTitle" >
+    <string>Operation Tools</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionDelete"/>
+   <addaction name="actionDeleteAll"/>
+   <addaction name="actionDeleteResult"/>
+  </widget>
+  <widget class="QToolBar" name="delToolBar" >
    <property name="windowTitle" >
     <string>Operation Tools</string>
    </property>
@@ -638,6 +647,10 @@
    </property>
   </action>
   <action name="actionDelete">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/del_P.bmp</normaloff>:/cgal/icons/resources/del_P.bmp</iconset>
+   </property>
    <property name="text">
     <string>Delete selected polygons</string>
    </property>
@@ -658,6 +671,12 @@
    </property>
   </action>
   <action name="actionInsertLinear">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>	
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/insert_polygon.xpm</normaloff>:/cgal/icons/resources/insert_polygon.xpm</iconset>
@@ -670,6 +689,12 @@
    </property>
   </action>
   <action name="actionInsertCircular">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/insert_circle.xpm</normaloff>:/cgal/icons/resources/insert_circle.xpm</iconset>
@@ -681,63 +706,8 @@
     <string>Draw Circular Polygon</string>
    </property>
   </action>
-  <action name="actionInsertConic" >
-   <property name="checkable" >
-    <bool>true</bool>
-   </property>
-   <property name="checked" >
-    <bool>false</bool>
-   </property>
-   <property name="icon" >
-    <iconset resource="Boolean_operations_2.qrc" >
-     <normaloff>:/cgal/icons/resources/demo_conic_circle.xpm</normaloff>:/cgal/icons/resources/demo_conic_circle.xpm
-    </iconset>
-   </property>
-   <property name="text" >
-    <string>Insert Conic Polygon</string>
-   </property>
-   <property name="toolTip" >
-    <string>Insert Conic Polygon</string>
-   </property>
-  </action>
-  <action name="actionInsertRational" >
-   <property name="checkable" >
-    <bool>true</bool>
-   </property>
-   <property name="checked" >
-    <bool>false</bool>
-   </property>
-   <property name="icon" >
-    <iconset resource="Boolean_operations_2.qrc" >
-     <normaloff>:/cgal/icons/resources/insert_bezier.bmp</normaloff>:/cgal/icons/resources/insert_bezier.bmp
-    </iconset>
-   </property>
-   <property name="text" >
-    <string>Insert Rational Polygon</string>
-   </property>
-   <property name="toolTip" >
-    <string>Insert Rational Polygon</string>
-   </property>
-  </action>
-  <action name="actionInsertAlgebraic" >
-   <property name="checkable" >
-    <bool>true</bool>
-   </property>
-   <property name="checked" >
-    <bool>false</bool>
-   </property>
-   <property name="icon" >
-    <iconset resource="Boolean_operations_2.qrc" >
-     <normaloff>:/cgal/icons/resources/insert_bezier.bmp</normaloff>:/cgal/icons/resources/insert_bezier.bmp
-    </iconset>
-   </property>
-   <property name="text" >
-    <string>Insert Algebraic Polygon</string>
-   </property>
-   <property name="toolTip" >
-    <string>Insert Algebraic Polygon</string>
-   </property>
-  </action>
+  
+  
 
   <action name="actionComplement">
    <property name="icon">
@@ -839,8 +809,30 @@
    </property>
   </action>
   <action name="actionDeleteAll">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/delete.xpm</normaloff>:/cgal/icons/resources/delete.xpm</iconset>
+   </property> 
    <property name="text">
     <string>Delete all polygons</string>
+   </property>
+  </action>
+  <action name="actionNew" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;New</string>
+   </property>
+  </action>
+  <action name="actionDeleteResult">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/check-off.png</normaloff>:/cgal/icons/resources/check-off.png</iconset>
+   </property> 
+   <property name="text">
+    <string>Delete Result</string>
    </property>
   </action>
   <action name="actionNew" >
