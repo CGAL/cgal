@@ -394,6 +394,24 @@ in the unit rectangle. The tests were done on an Intel i7 @ 2.67GHz.
 \image html p2dt2_performance.png
 \image latex p2dt2_performance.png
 
+\section P2T2_Draw_Periodic_Triangulation Draw a 2D Periodic Triangulation
+
+A 2D periodic triangulation can be visualized by calling the 'CGAL::draw()' function as shown in the following example. This function opens a new window showing the given Periodic Triangulation. Elements of the periodic triangulation can be viewed in four different modes:
+
+- <B>STORED</B> Display all geometric primitives as they are stored in Triangulation_data_structure_2
+- <B>UNIQUE</B> Display only one representative of each geometric primitive even if the triangulation is computed in multiply sheeted covering space.
+- <B>STORED_COVER_DOMAIN</B> Same as STORED but also display  all primitives whose intersection with the original domain of the current covering space is non-empty
+- <B>UNIQUE_COVER_DOMAIN</B> Same as UNIQUE but also display all primitives whose intersection with the original domain of the current covering space is non-empty    
+
+The domain can also be visualized by a key press. To see how to visualize the Periodic Triangulation in various modes, press key H when the viewer window is active and go to Keyboard tab. See \cgalFigureRef{P2Triangulation2figdraw1} and \cgalFigureRef{P2Triangulation2figdraw2}
+
+\cgalFigureBegin{P2Triangulation2figdraw1, unique.png, unique-cover.png}
+Result of the run of the draw_periodic_2_triangulation_2 program for display modes Unique(left) and Unique Cover Domain(right). The window allows to navigate through the 3D scene.
+\cgalFigureEnd
+\cgalFigureBegin{P2Triangulation2figdraw2, stored.png, stored-cover.png}
+Result of the run of the draw_periodic_2_triangulation_2 program for display modes Stored(left) and Stored Cover Domain(right).
+\cgalFigureEnd
+
 \section P2T2_Design Design and Implementation History
 
 The periodic 2D-triangulation is based on the 2D triangulation package
