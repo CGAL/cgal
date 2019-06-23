@@ -90,6 +90,7 @@ public:
     setKeyDescription(::Qt::Key_4, "UNIQUE_COVER_DOMAIN: Same as UNIQUE but also display "
                                    "all primitives whose intersection with the original "
                                    "domain of the current covering space is non-empty");
+    setKeyDescription(::Qt::Key_D, "Toggle 9-sheeted domain display");
 
     compute_elements();
   }
