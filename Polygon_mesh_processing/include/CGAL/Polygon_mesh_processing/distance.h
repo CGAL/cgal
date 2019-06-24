@@ -934,8 +934,8 @@ double bounded_error_Hausdorff_impl(
       // Subdivide the triangle into four smaller triangles
       Triangle_3 triangle_for_subdivision = triangle_and_bound.first;
       Point_3 v0 = triangle_for_subdivision.vertex(0);
-      Point_3 v1 = triangle_for_subdivision.vertex(0);
-      Point_3 v2 = triangle_for_subdivision.vertex(0);
+      Point_3 v1 = triangle_for_subdivision.vertex(1);
+      Point_3 v2 = triangle_for_subdivision.vertex(2);
       Point_3 v01 = Point_3( (v0.x()+ v1.x())/2., (v0.y()+v1.y())/2., (v0.z()+v1.z())/2. );
       Point_3 v02 = Point_3( (v0.x()+ v2.x())/2., (v0.y()+v2.y())/2., (v0.z()+v2.z())/2. );
       Point_3 v12 = Point_3( (v1.x()+ v2.x())/2., (v1.y()+v2.y())/2., (v1.z()+v2.z())/2. );
