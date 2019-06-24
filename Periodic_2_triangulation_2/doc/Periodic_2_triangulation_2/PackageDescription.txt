@@ -20,7 +20,7 @@
    #include <CGAL/draw_periodic_2_triangulation_2.h>
   \endcode
 */
-/// \defgroup PkgPeriodic2Triangulation2Draw Draw a 2D Periodic Triangulation
+/// \defgroup PkgDrawPeriodic2Triangulation2 Draw a 2D Periodic Triangulation
 /// \ingroup PkgPeriodic2Triangulation2Ref
 
 /*!
@@ -110,6 +110,9 @@ of the concept `Periodic_2Offset_2`.
 
 - `CGAL::Periodic_2_triangulation_2::Iterator_type`
 - `CGAL::Periodic_2_triangulation_2::Locate_type`
+
+\cgalCRPSection{Draw 2D Periodic Triangulation}
+ - \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
 
 */
 
