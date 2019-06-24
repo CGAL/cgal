@@ -190,12 +190,18 @@ void smooth_mesh(const FaceRange& faces,
                              Constant_property_map<edge_descriptor, bool>(false));
 
   // a constrained edge has constrained extremities
-  for(edge_descriptor e : edges(tmesh))
+  for(face_descriptor f : faces)
   {
-    if(get(ecmap, e))
+    if(f == boost::graph_traits<TriangleMesh>::null_face())
+      continue;
+
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, tmesh), tmesh))
     {
-      put(vcmap, source(e, tmesh), true);
-      put(vcmap, target(e, tmesh), true);
+      if(get(ecmap, edge(h, tmesh)))
+      {
+        put(vcmap, source(h, tmesh), true);
+        put(vcmap, target(h, tmesh), true);
+      }
     }
   }
 
@@ -209,6 +215,9 @@ void smooth_mesh(const FaceRange& faces,
     for(face_descriptor f : faces)
     {
       halfedge_descriptor h = halfedge(f, tmesh);
+      if(is_border(h, tmesh)) // should not happen, but just in case
+        continue;
+
       input_triangles.push_back(gt.construct_triangle_3_object()(get(vpmap, source(h, tmesh)),
                                                                  get(vpmap, target(h, tmesh)),
                                                                  get(vpmap, target(next(h, tmesh), tmesh))));
