@@ -83,8 +83,6 @@ protected:
 
     if (p2.outer_boundary().is_empty()) return;
     
-    Point prev=p2.outer_boundary().vertex(p2.outer_boundary().size()-1);
-      
     CGAL::Color c(75,160,255);
     face_begin(c);
 
