@@ -21,6 +21,7 @@
 #ifndef CGAL_DRAW_SURFACE_MESH_SMALL_FACES_H
 #define CGAL_DRAW_SURFACE_MESH_SMALL_FACES_H
 
+#include <CGAL/license/Surface_mesh.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -82,8 +83,8 @@ public:
 protected:
   void compute_face(face_descriptor fh)
   {
-    /// [Face creation]
-    bool small=false;
+    // [Face creation]
+    bool issmall=false;
     
     // Default color of faces
     CGAL::Color c(75,160,255);
@@ -98,10 +99,10 @@ protected:
     if (get(faces_size, fh)<m_min_size+((m_max_size-m_min_size)/(100-m_threshold)))
     {
       c=CGAL::Color(255,20,20);
-      small=true;
+      issmall=true;
     }
 
-    if ((small && !m_draw_small_faces) || (!small && !m_draw_big_faces))
+    if ((issmall && !m_draw_small_faces) || (!issmall && !m_draw_big_faces))
     { return; }
     
     // Add the color of the face, then all its points.
@@ -164,15 +165,15 @@ protected:
     const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     if ((e->key()==Qt::Key_I) && (modifiers==Qt::NoButton))
     {
-      if (m_threshold<100) ++m_threshold;
-      displayMessage(QString("Threshold percent=%1 \%.").arg(m_threshold));
+      if (m_threshold<100) { ++m_threshold; }
+      displayMessage(QString("Threshold percent=%1%.").arg(m_threshold));
       compute_elements();
       redraw();
     }
     else if ((e->key()==Qt::Key_D) && (modifiers==Qt::NoButton))
     {
-      if (m_threshold>0) --m_threshold;
-      displayMessage(QString("Threshold percent=%1 \%.").arg(m_threshold));
+      if (m_threshold>0) { --m_threshold; }
+      displayMessage(QString("Threshold percent=%1%.").arg(m_threshold));
       compute_elements();
       redraw();
     }
@@ -278,6 +279,14 @@ void draw_surface_mesh_with_small_faces(CGAL::Surface_mesh<K>& amesh)
     mainwindow.show();
     app.exec();
   }
+}
+
+#else // CGAL_USE_BASIC_VIEWER
+
+template<class K>
+void draw_surface_mesh_with_small_faces(CGAL::Surface_mesh<K>&)
+{
+  std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
 }
 
 #endif // CGAL_USE_BASIC_VIEWER
