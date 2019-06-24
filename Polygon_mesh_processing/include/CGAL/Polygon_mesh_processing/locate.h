@@ -1210,7 +1210,7 @@ locate_in_adjacent_face(const typename Location_traits<TriangleMesh>::Face_locat
   }
   else
   {
-    const face_descriptor fd2 = boost::get<face_descriptor>(dv);
+    CGAL_assertion_code(const face_descriptor fd2 = boost::get<face_descriptor>(dv);)
     CGAL_assertion(fd2 != boost::graph_traits<TriangleMesh>::null_face());
     CGAL_assertion(fd2 != fd);
 
