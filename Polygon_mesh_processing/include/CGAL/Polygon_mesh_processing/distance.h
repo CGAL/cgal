@@ -867,7 +867,7 @@ template <class Concurrency_tag,
 double bounded_error_Hausdorff_impl(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
-  const typename Kernel::FT& squared_error_bound,
+  const typename Kernel::FT& error_bound,
   VPM1 vpm1,
   VPM2 vpm2)
 {
@@ -919,8 +919,42 @@ double bounded_error_Hausdorff_impl(
   Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1( tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2 );
   tm1_tree.traversal( Point_3(0,0,0), traversal_traits_tm1 );
 
+  // TODO Implement the candidate_triangles set as Stack instead of Vector
   Candidate_set candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   Hausdorff_bounds global_bounds = traversal_traits_tm1.get_global_bounds();
+
+  while ( (global_bounds.second - global_bounds.first > error_bound) && candidate_triangles.size() > 0 ) {
+    // Get the first triangle and its Hausdorff bounds from the candidate set
+    Candidate_triangle triangle_and_bound = candidate_triangles.front();
+    // Remove it from the candidate set as it will be processed now
+    candidate_triangles.erase (candidate_triangles.begin(),candidate_triangles.begin()+1);
+    // Only process the triangle if it can contribute to the Hausdorff distance,
+    // i.e. if its Upper Bound is higher than the currently known best lower bound
+    if (triangle_and_bound.second.second > global_bounds.first) {
+      // Subdivide the triangle into four smaller triangles
+      Triangle_3 triangle_for_subdivision = triangle_and_bound.first;
+      Point_3 v0 = triangle_for_subdivision.vertex(0);
+      Point_3 v1 = triangle_for_subdivision.vertex(0);
+      Point_3 v2 = triangle_for_subdivision.vertex(0);
+      Point_3 v01 = Point_3( (v0.x()+ v1.x())/2., (v0.y()+v1.y())/2., (v0.z()+v1.z())/2. );
+      Point_3 v02 = Point_3( (v0.x()+ v2.x())/2., (v0.y()+v2.y())/2., (v0.z()+v2.z())/2. );
+      Point_3 v12 = Point_3( (v1.x()+ v2.x())/2., (v1.y()+v2.y())/2., (v1.z()+v2.z())/2. );
+      Triangle_3 t0 = Triangle_3( v0, v01, v1);
+      Triangle_3 t1 = Triangle_3( v0, v02, v2);
+      Triangle_3 t2 = Triangle_3( v1, v12, v2);
+      Triangle_3 t3 = Triangle_3( v01, v02, v12);
+
+      // TODO send each of the four triangles to Culling on B with the bounds of the parent triangle
+      // TODO add those triangles to the candidate set which still contribute to the Hausdorff distance
+    }
+  }
+
+  // Print result found
+  std::cout << "Processing candidates finished, found distance (lower, upper): ("
+            << global_bounds.first << ", " << global_bounds.second << ")" << std::endl;
+
+  // Return linear interpolation between found upper and lower bound
+  return (global_bounds.first + global_bounds.second) / 2.;
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
@@ -938,6 +972,7 @@ double bounded_error_Hausdorff_impl(
   // }
   // else
 #endif
+/*
   {
     // Store all vertices of tm1 in a vector
     std::vector<vertex_descriptor> tm1_vertices;
@@ -955,11 +990,9 @@ double bounded_error_Hausdorff_impl(
     // on the Hausdorff measure
     Triangle_hausdorff_bounds thb = get(Face_property_tag(), tm1);
 
-    /*
-    / For each vertex in the first mesh, find the closest triangle in the
-    / second mesh, store it and also store the distance to this triangle
-    / in a dynamic vertex property
-    */
+    // For each vertex in the first mesh, find the closest triangle in the
+    // second mesh, store it and also store the distance to this triangle
+    // in a dynamic vertex property
     for(vertex_descriptor vd : tm1_vertices)
     {
       // Get the point represented by the vertex
@@ -982,11 +1015,9 @@ double bounded_error_Hausdorff_impl(
     // following
     std::vector<face_descriptor> candidate_triangles;
 
-    /*
-    / For each triangle in the first mesh, initialize its local upper and
-    / lower bound and store these in a dynamic face property for furture
-    / reference
-    */
+    // For each triangle in the first mesh, initialize its local upper and
+    // lower bound and store these in a dynamic face property for furture
+    // reference
     for(face_descriptor fd : faces(tm1))
     {
       // Initialize the local bounds for the current face fd
@@ -1056,6 +1087,7 @@ double bounded_error_Hausdorff_impl(
 
     return (CGAL::approximate_sqrt(h_lower)+CGAL::approximate_sqrt(h_upper))/2.;
   }
+*/
 }
 
 } //end of namespace internal
