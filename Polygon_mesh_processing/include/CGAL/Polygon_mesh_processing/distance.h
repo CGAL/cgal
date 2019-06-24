@@ -880,6 +880,7 @@ double bounded_error_Hausdorff_impl(
   typedef AABB_tree< AABB_traits<Kernel, TM1_primitive> > TM1_tree;
   typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
   typedef typename AABB_tree< AABB_traits<Kernel, TM2_primitive> >::AABB_traits Tree_traits;
+  typedef typename Tree_traits::Point_and_primitive_id Point_and_primitive_id;
 
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
@@ -924,28 +925,88 @@ double bounded_error_Hausdorff_impl(
   Hausdorff_bounds global_bounds = traversal_traits_tm1.get_global_bounds();
 
   while ( (global_bounds.second - global_bounds.first > error_bound) && candidate_triangles.size() > 0 ) {
+
+    // TODO Why does it only stop because of triangles, not because of the global bound condition?
+    std::cout << "There are currently " << candidate_triangles.size()
+              << " candidates. Global bounds are: "
+              << global_bounds.first << ", " << global_bounds.second << std::endl;
+
     // Get the first triangle and its Hausdorff bounds from the candidate set
     Candidate_triangle triangle_and_bound = candidate_triangles.front();
     // Remove it from the candidate set as it will be processed now
     candidate_triangles.erase (candidate_triangles.begin(),candidate_triangles.begin()+1);
+
     // Only process the triangle if it can contribute to the Hausdorff distance,
     // i.e. if its Upper Bound is higher than the currently known best lower bound
-    if (triangle_and_bound.second.second > global_bounds.first) {
-      // Subdivide the triangle into four smaller triangles
+    // and the difference between the bounds to be obtained is larger than the
+    // user given error.
+    Hausdorff_bounds triangle_bounds = triangle_and_bound.second;
+    if ( (triangle_bounds.second > global_bounds.first) && (triangle_bounds.second - triangle_bounds.first > error_bound) ) {
+      // Get the triangle that is to be subdivided and read its vertices
       Triangle_3 triangle_for_subdivision = triangle_and_bound.first;
       Point_3 v0 = triangle_for_subdivision.vertex(0);
       Point_3 v1 = triangle_for_subdivision.vertex(1);
       Point_3 v2 = triangle_for_subdivision.vertex(2);
+
+      // Check second stopping condition: All three vertices of the triangle
+      // are projected onto the same triangle in TM2
+      Point_and_primitive_id closest_triangle_v0 = tm2_tree.closest_point_and_primitive(v0);
+      Point_and_primitive_id closest_triangle_v1 = tm2_tree.closest_point_and_primitive(v1);
+      Point_and_primitive_id closest_triangle_v2 = tm2_tree.closest_point_and_primitive(v2);
+      if( (closest_triangle_v0.second == closest_triangle_v1.second) && (closest_triangle_v1.second == closest_triangle_v2.second)) {
+        // The upper bound of this triangle is the actual Hausdorff distance of
+        // the triangle to the second mesh. Use it as new global lower bound.
+        global_bounds.first = triangle_bounds.second;
+      }
+
+      // Subdivide the triangle into four smaller triangles
       Point_3 v01 = Point_3( (v0.x()+ v1.x())/2., (v0.y()+v1.y())/2., (v0.z()+v1.z())/2. );
       Point_3 v02 = Point_3( (v0.x()+ v2.x())/2., (v0.y()+v2.y())/2., (v0.z()+v2.z())/2. );
       Point_3 v12 = Point_3( (v1.x()+ v2.x())/2., (v1.y()+v2.y())/2., (v1.z()+v2.z())/2. );
-      Triangle_3 t0 = Triangle_3( v0, v01, v1);
-      Triangle_3 t1 = Triangle_3( v0, v02, v2);
-      Triangle_3 t2 = Triangle_3( v1, v12, v2);
-      Triangle_3 t3 = Triangle_3( v01, v02, v12);
+      std::array<Triangle_3,4> sub_triangles = {
+        Triangle_3( v0, v01, v02), Triangle_3( v1, v01, v12),
+        Triangle_3( v2, v02, v12), Triangle_3( v01, v02, v12)
+      };
 
-      // TODO send each of the four triangles to Culling on B with the bounds of the parent triangle
-      // TODO add those triangles to the candidate set which still contribute to the Hausdorff distance
+      // Send each of the four triangles to Culling on B with the bounds of the parent triangle
+      for (int i=0; i<4; i++) {
+        // Call Culling on B with the single triangle found.
+        Hausdorff_primitive_traits_tm2<Tree_traits, Triangle_3, Kernel, TriangleMesh, VPM2> traversal_traits_tm2(
+          tm2_tree.traits(), tm2, vpm2,
+          triangle_bounds.first,
+          triangle_bounds.second,
+          std::numeric_limits<double>::infinity(),
+          std::numeric_limits<double>::infinity(),
+          std::numeric_limits<double>::infinity()
+        );
+        tm2_tree.traversal(sub_triangles[i], traversal_traits_tm2);
+
+        // Get the highest current bound from all candidate triangles
+        double current_max = 0.;
+        for(auto&& ct: candidate_triangles) {
+          if (ct.second.second > current_max) {
+            current_max = ct.second.second;
+          }
+        }
+
+        // Update global Hausdorff bounds according to the obtained local bounds
+        Hausdorff_bounds local_bounds = traversal_traits_tm2.get_local_bounds();
+        if (local_bounds.first > global_bounds.first) {
+          global_bounds.first = local_bounds.first;
+        }
+        global_bounds.second = std::max(current_max, local_bounds.second);
+
+        // Add the subtriangle to the candidate list
+        candidate_triangles.push_back(Candidate_triangle(sub_triangles[i], local_bounds));
+
+        // std::cout << "Split triangle (" << v0 << ", " << v1 << ", " << v2
+        //           << ") with bounds: (" << triangle_bounds.first << ", "
+        //           << triangle_bounds.second << "), sub-triangle " << i
+        //           << " (" << sub_triangles[i].vertex(0) << ", " << sub_triangles[i].vertex(1) << ", " << sub_triangles[i].vertex(2)
+        //           << ") has bounds: ("
+        //           << local_bounds.first << ", " << local_bounds.second << "), gobal bounds are: ("
+        //           << global_bounds.first << ", " << global_bounds.second << ")" << std::endl;
+      }
     }
   }
 

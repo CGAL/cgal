@@ -32,26 +32,24 @@ namespace CGAL {
   /**
    * @class Hausdorff_primitive_traits_tm2
    */
-  template<typename AABBTraits, typename Query, typename Kernel, typename TriangleMesh, typename VPM1, typename VPM2>
+  template<typename AABBTraits, typename Query, typename Kernel, typename TriangleMesh, typename VPM2>
   class Hausdorff_primitive_traits_tm2
   {
     typedef typename AABBTraits::Primitive Primitive;
     typedef ::CGAL::AABB_node<AABBTraits> Node;
     typedef typename AABBTraits::Bounding_box Bounding_box;
-    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-    typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
     typename Kernel::Construct_projected_point_3 project_point;
     typedef typename Kernel::Point_3 Point_3;
 
   public:
     Hausdorff_primitive_traits_tm2(
       const AABBTraits& traits,
-      const TriangleMesh& tm1, const TriangleMesh& tm2,
-      const VPM1& vpm1, const VPM2& vpm2,
+      const TriangleMesh& tm2,
+      const VPM2& vpm2,
       const double h_lower_init, const double h_upper_init,
       const double h_v0_lower_init, const double h_v1_lower_init, const double h_v2_lower_init
     )
-      : m_traits(traits), m_tm1(tm1), m_tm2(tm2), m_vpm1(vpm1), m_vpm2(vpm2) {
+      : m_traits(traits), m_tm2(tm2), m_vpm2(vpm2) {
         // Initialize the global and local bounds with the given values
         h_local_lower = h_lower_init;
         h_local_upper = h_upper_init;
@@ -79,29 +77,22 @@ namespace CGAL {
       */
 
       // The query object is a triangle from TM1, get its vertices
-      halfedge_descriptor hd = halfedge(query.id(), m_tm1);
-      vertex_descriptor v0 = source(hd, m_tm1);
-      vertex_descriptor v1 = target(hd, m_tm1);
-      vertex_descriptor v2 = target(next(hd, m_tm1), m_tm1);
+      Point_3 v0 = query.vertex(0);
+      Point_3 v1 = query.vertex(1);
+      Point_3 v2 = query.vertex(2);
 
       // Compute distances of the vertices to the primitive triangle in TM2
       Triangle_from_face_descriptor_map<TriangleMesh, VPM2> face_to_triangle_map(&m_tm2, m_vpm2);
       double v0_dist = approximate_sqrt(squared_distance(
-        project_point(get(face_to_triangle_map, primitive.id()), get(m_vpm1, v0)),
-        get(m_vpm1, v0)
-      ));
+        project_point( get(face_to_triangle_map, primitive.id()), v0), v0 ) );
       if (v0_dist < h_v0_lower) h_v0_lower = v0_dist;
 
       double v1_dist = approximate_sqrt(squared_distance(
-        project_point(get(face_to_triangle_map, primitive.id()), get(m_vpm1, v1)),
-        get(m_vpm1, v1)
-      ));
+        project_point( get(face_to_triangle_map, primitive.id()), v1), v1 ) );
       if (v1_dist < h_v1_lower) h_v1_lower = v1_dist;
 
       double v2_dist = approximate_sqrt(squared_distance(
-        project_point(get(face_to_triangle_map, primitive.id()), get(m_vpm1, v2)),
-        get(m_vpm1, v2)
-      ));
+        project_point( get(face_to_triangle_map, primitive.id()), v2), v2 ) );
       if (v2_dist < h_v2_lower) h_v2_lower = v2_dist;
 
       // Get the distance as maximizers over all vertices
@@ -131,10 +122,9 @@ namespace CGAL {
 
       // Get the center of the query triangle
       // The query object is a triangle from TM1, get its vertices
-      halfedge_descriptor hd = halfedge(query.id(), m_tm1);
-      Point_3 v0 = get(m_vpm1, source(hd, m_tm1));
-      Point_3 v1 = get(m_vpm1, target(hd, m_tm1));
-      Point_3 v2 = get(m_vpm1, target(next(hd, m_tm1), m_tm1));
+      Point_3 v0 = query.vertex(0);
+      Point_3 v1 = query.vertex(1);
+      Point_3 v2 = query.vertex(2);
       // Compute the barycenter of the triangle
       Point_3 tri_center = Point_3( 0.3*(v0.x()+v1.x()+v2.x()), 0.3*(v0.y()+v1.y()+v2.y()),  0.3*(v0.z()+v1.z()+v2.z()) );
 
@@ -172,11 +162,9 @@ namespace CGAL {
 
   private:
     const AABBTraits& m_traits;
-    // The two triangle meshes
-    const TriangleMesh& m_tm1;
+    // the mesh of this tree
     const TriangleMesh& m_tm2;
-    // Their respective vertex-point Maps
-    const VPM1& m_vpm1;
+    // its vertex point map
     const VPM2& m_vpm2;
     // Local Hausdorff bounds for the query triangle
     double h_local_upper;
@@ -208,7 +196,7 @@ namespace CGAL {
 
   public:
     Hausdorff_primitive_traits_tm1(const AABBTraits& traits, const TM2_tree& tree, const TriangleMesh& tm1, const TriangleMesh& tm2 , const VPM1& vpm1, const VPM2& vpm2 )
-      : m_traits(traits), tm2_tree(tree), m_tm1(tm1), m_tm2(tm2), m_vpm1(vpm1), m_vpm2(vpm2) {
+      : m_traits(traits), m_tm2_tree(tree), m_tm1(tm1), m_tm2(tm2), m_vpm1(vpm1), m_vpm2(vpm2) {
         // Initialize the global bounds with 0., they will only grow.
         h_lower = 0.;
         h_upper = 0.;
@@ -229,16 +217,16 @@ namespace CGAL {
 
       // Call Culling on B with the single triangle found.
       Hausdorff_primitive_traits_tm2<
-        Tree_traits, Primitive, Kernel, TriangleMesh, VPM1, VPM2
+        Tree_traits, Triangle_3, Kernel, TriangleMesh, VPM2
       > traversal_traits_tm2(
-        tm2_tree.traits(), m_tm1, m_tm2, m_vpm1, m_vpm2,
+        m_tm2_tree.traits(), m_tm2, m_vpm2,
         std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity()
       );
-      tm2_tree.traversal(primitive, traversal_traits_tm2);
+      m_tm2_tree.traversal(candidate_triangle, traversal_traits_tm2);
 
       // Update global Hausdorff bounds according to the obtained local bounds
       Hausdorff_bounds local_bounds = traversal_traits_tm2.get_local_bounds();
@@ -274,7 +262,7 @@ namespace CGAL {
         (bbox.min(2) + bbox.max(2)) / 2);
       // Find the point from TM2 closest to the center
       // TODO Insert a hint here to accelerate the query
-      Point_3 closest = tm2_tree.closest_point(center);
+      Point_3 closest = m_tm2_tree.closest_point(center);
       // Compute the distance of the center to the closest point in tm2
       double dist = approximate_sqrt(squared_distance(center, closest));
       // Compute the radius of the circumsphere of the bounding boxes
@@ -311,7 +299,7 @@ namespace CGAL {
     const VPM1 m_vpm1;
     const VPM2 m_vpm2;
     // AABB tree for the second triangle meshes
-    const TM2_tree& tm2_tree;
+    const TM2_tree& m_tm2_tree;
     // Global Hausdorff bounds to be taken track of during the traversal
     double h_lower;
     double h_upper;
