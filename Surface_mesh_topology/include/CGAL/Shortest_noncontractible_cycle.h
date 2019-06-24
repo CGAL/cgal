@@ -47,20 +47,21 @@ public:
 
   struct SNC_for_generalized_map {
     using Generic_map = CGAL::Generalized_map<2, Attributes>;
+    using Dart_handle_orig = typename Gmap_origin::Dart_handle;
     using Dart_const_handle_orig = typename Gmap_origin::Dart_const_handle;
     using Copy_to_origin_map = boost::unordered_map<typename Generic_map::Dart_handle, 
-                                                    Dart_const_handle_orig>;
-    using Origin_to_copy_map = boost::unordered_map<Dart_const_handle_orig, 
+                                                    Dart_handle_orig>;
+    using Origin_to_copy_map = boost::unordered_map<Dart_handle_orig, 
                                                     typename Generic_map::Dart_handle>;
     
     static typename Generic_map::Dart_handle opposite(Generic_map& amap, typename Generic_map::Dart_handle dh) {
       return amap.template opposite<2>(dh);
     }
-    static void copy(Generic_map& target, const Gmap_origin& source,
+    static void copy(Generic_map& target, Gmap_origin& source,
                      Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin) {
       target.copy(source, &origin_to_copy, &copy_to_origin);
     }
-    static void set_weights(Generic_map& target, const Gmap_origin& source, 
+    static void set_weights(Generic_map& target, Gmap_origin& source, 
                             Origin_to_copy_map& origin_to_copy, const Weight& wf) {
       // source.display_characteristics(std::cout);
       for (auto it = source.darts().begin(), itend = source.darts().end(); it != itend; ++it) {
@@ -71,20 +72,21 @@ public:
 
   struct SNC_for_combinatorial_map {
     using Generic_map = CGAL::Combinatorial_map<2, Attributes>;
+    using Dart_handle_orig = typename Gmap_origin::Dart_handle;
     using Dart_const_handle_orig = typename Gmap_origin::Dart_const_handle;
     using Copy_to_origin_map = boost::unordered_map<typename Generic_map::Dart_handle, 
-                                                    Dart_const_handle_orig>;
-    using Origin_to_copy_map = boost::unordered_map<Dart_const_handle_orig, 
+                                                    Dart_handle_orig>;
+    using Origin_to_copy_map = boost::unordered_map<Dart_handle_orig, 
                                                     typename Generic_map::Dart_handle>;
     
     static typename Generic_map::Dart_handle opposite(Generic_map& amap, typename Generic_map::Dart_handle dh) {
       return amap.opposite(dh);
     }
-    static void copy(Generic_map& target, const Gmap_origin& source,
+    static void copy(Generic_map& target, Gmap_origin& source,
                      Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin) {
       target.copy(source, &origin_to_copy, &copy_to_origin);
     }
-    static void set_weights(Generic_map& target, const Gmap_origin& source, 
+    static void set_weights(Generic_map& target, Gmap_origin& source, 
                             Origin_to_copy_map& origin_to_copy, const Weight& wf) {
       // source.display_characteristics(std::cout);
       for (auto it = source.darts().begin(), itend = source.darts().end(); it != itend; ++it) {
@@ -96,20 +98,21 @@ public:
   template <class>
   struct Generic_map_selector {
     using Generic_map = CGAL::Combinatorial_map<2, Attributes>;
+    using Dart_handle_orig = typename boost::graph_traits<Gmap_origin>::halfedge_descriptor;
     using Dart_const_handle_orig = typename boost::graph_traits<Gmap_origin>::halfedge_descriptor;
     using Copy_to_origin_map = boost::unordered_map<typename Generic_map::Dart_handle, 
-                                                    Dart_const_handle_orig>;
-    using Origin_to_copy_map = boost::unordered_map<Dart_const_handle_orig, 
+                                                    Dart_handle_orig>;
+    using Origin_to_copy_map = boost::unordered_map<Dart_handle_orig, 
                                                     typename Generic_map::Dart_handle>;
     
     static typename Generic_map::Dart_handle opposite(Generic_map& amap, typename Generic_map::Dart_handle dh) {
       return amap.opposite(dh);
     }
-    static void copy(Generic_map& target, const Gmap_origin& source,
+    static void copy(Generic_map& target, Gmap_origin& source,
                      Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin) {
       target.import_from_halfedge_graph(source, &origin_to_copy, &copy_to_origin);
     }
-    static void set_weights(Generic_map& target, const Gmap_origin& source, 
+    static void set_weights(Generic_map& target, Gmap_origin& source, 
                             Origin_to_copy_map& origin_to_copy, const Weight& wf) {
       for (auto it = source.halfedges().begin(), itend = source.halfedges().end(); it != itend; ++it) {
         target.template info<1>(origin_to_copy[*it]) = wf(*it);
@@ -148,26 +151,30 @@ public:
 
   using Gmap = typename Generic_map_selector<Gmap_origin>::Generic_map;
   using Gmap_wrapper = Generic_map_selector<Gmap_origin>;
+  using Dart_handle_orig = typename Gmap_wrapper::Dart_handle_orig;
   using Dart_const_handle_orig = typename Gmap_wrapper::Dart_const_handle_orig;
   using Dart_handle = typename Gmap::Dart_handle;
   using size_type = typename Gmap::size_type;
   using Dart_container = std::vector<Dart_handle>;
-  using Path = std::vector<Dart_const_handle_orig>; // Consider: CGAL::Path_on_surface<Gmap>;
+  using Path = std::vector<Dart_handle_orig>; // Consider: CGAL::Path_on_surface<Gmap>;
   
-  Shortest_noncontractible_cycle(const Gmap_origin& gmap, const Weight& wf = Weight())
+  Shortest_noncontractible_cycle(Gmap_origin& gmap, const Weight& wf = Weight())
   {
     Gmap_wrapper::copy(m_gmap, gmap, m_origin_to_copy, m_copy_to_origin);
     // m_gmap.display_characteristics(std::cerr);
     // std::cerr << '\n';
     // Initialize 2-attributes
     for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it) {
-      m_gmap.template set_attribute<2>(it, m_gmap.template create_attribute<2>());
+      if (m_gmap.template attribute<2>(it)==NULL)
+      { m_gmap.template set_attribute<2>(it, m_gmap.template create_attribute<2>()); }
     }
     // Remove all boundary by adding faces
     m_gmap.template close<2>();
     for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it) {
-      m_gmap.template set_attribute<1>(it, m_gmap.template create_attribute<1>());
-      m_gmap.template set_attribute<0>(it, m_gmap.template create_attribute<0>());
+      if (m_gmap.template attribute<1>(it)==NULL)
+      { m_gmap.template set_attribute<1>(it, m_gmap.template create_attribute<1>()); }
+      if (m_gmap.template attribute<0>(it)==NULL)
+      { m_gmap.template set_attribute<0>(it, m_gmap.template create_attribute<0>()); }
     }
     // Initialize 1-attributes
     Gmap_wrapper::set_weights(m_gmap, gmap, m_origin_to_copy, wf);
@@ -183,7 +190,7 @@ public:
     // std::cerr << '\n';
   }
   
-  bool find_cycle(Dart_const_handle_orig root_vertex, Path& cycle, Distance_type* length = NULL) {
+  bool find_cycle(Dart_handle_orig root_vertex, Path& cycle, Distance_type* length = NULL) {
     Dart_handle root = m_origin_to_copy[root_vertex];
     return this->find_cycle(root, cycle, length);
   }
