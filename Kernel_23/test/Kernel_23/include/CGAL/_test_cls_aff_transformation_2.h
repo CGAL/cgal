@@ -24,6 +24,9 @@
 #ifndef CGAL__TEST_CLS_AFF_TRANSFORMATION_2_H
 #define CGAL__TEST_CLS_AFF_TRANSFORMATION_2_H
 
+#include <CGAL/use.h>
+#include <boost/type_traits/is_same.hpp>
+
 template <class R>
 bool
 _test_cls_aff_transformation_2(const R& )
@@ -32,6 +35,8 @@ _test_cls_aff_transformation_2(const R& )
 
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
+
+ const bool nonexact = boost::is_same<FT, double>::value;
 
  typename R::Aff_transformation_2 ia;
  CGAL::Aff_transformation_2<R> a1(ia);
@@ -56,7 +61,7 @@ _test_cls_aff_transformation_2(const R& )
  CGAL::Vector_2<R> tvec;
  CGAL::Point_2<R>  pnt( n8, n1, n10 );      // ( 6,-5)
  CGAL::Point_2<R>  tpnt;
- CGAL::Point_2<R>  pvec = CGAL::ORIGIN + vec;
+ CGAL::Point_2<R>  pvec = CGAL::ORIGIN + vec; CGAL_USE(pvec);
  CGAL::Vector_2<R> vpnt = pnt - CGAL::ORIGIN;
 
  CGAL::Point_2<R>  p1(-n3, n7, n3 );        // (-1, 2)
@@ -168,7 +173,7 @@ _test_cls_aff_transformation_2(const R& )
     tisor= isor.transform( a[i]);
     assert( tseg == CGAL::Segment_2<R>(tp1, tp2) );
     assert( tray == CGAL::Ray_2<R>(tp3, tp2) );
-    assert( tlin == CGAL::Line_2<R>(tp2, tp4) );
+    assert( tlin == CGAL::Line_2<R>(tp2, tp4) || nonexact);
     assert( ttri == CGAL::Triangle_2<R>(tp2, tp3, tp4) );
     assert( tisor== CGAL::Iso_rectangle_2<R>( tp3, tp4 ) );
 
@@ -178,11 +183,11 @@ _test_cls_aff_transformation_2(const R& )
     tray = tray.transform( inv );
     tlin = tlin.transform( inv );
     ttri = ttri.transform( inv );
-    assert( tp4  == p4 );
-    assert( tseg == seg );
-    assert( tray == ray );
-    assert( tlin == lin );
-    assert( ttri == tri );
+    assert( tp4  == p4  || nonexact );
+    assert( tseg == seg || nonexact );
+    assert( tray == ray || nonexact );
+    assert( tlin == lin || nonexact );
+    assert( ttri == tri || nonexact );
  };
 
  std::cout << '.';
@@ -291,7 +296,7 @@ _test_cls_aff_transformation_2(const R& )
  // rotation
  assert( d0.transform( rot90 ) == d1 );
  assert( d1.transform( rot90.inverse() ) == d0 );
- assert( d0.transform( rot3 ) == CGAL::Direction_2<R>( RT(4), RT(3)) );
+ assert( d0.transform( rot3 ) == CGAL::Direction_2<R>( RT(4), RT(3)) || nonexact);
  co1 = rot3 * rot90;
  assert( d1.transform( rot3) == d0.transform( co1 ) );
  co1 = rot2 * rot90;
@@ -324,7 +329,7 @@ _test_cls_aff_transformation_2(const R& )
  tp3 = p3.transform( rot3 );
  tp4 = p4.transform( rot3 );
  tcirc = circ.orthogonal_transform( rot3 );
- assert( tcirc == CGAL::Circle_2<R>( tp2, tp3, tp4 ) );
+ assert( tcirc == CGAL::Circle_2<R>( tp2, tp3, tp4 ) || nonexact );
 
 
  // copy
@@ -593,7 +598,7 @@ _test_cls_aff_transformation_2(const R& )
  p1 = p.transform(trans);
  p1 = p1.transform(refl);
  assert(p1 == CGAL::Point_2<R>(1,-2));
- assert(p1 == p.transform(comp1));
+ assert(p1 == p.transform(comp1) || nonexact);
  p1 = p.transform(refl);
  p1 = p1.transform(trans);
  assert(p1 == p.transform(comp2));
