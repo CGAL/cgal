@@ -848,14 +848,27 @@ class Intersection_of_triangle_meshes
             nodes.add_new_node(get(vpm2, target(h_2,tm2))); //we use the original vertex to create the node
             //before it was ON_FACE but do not remember why, probably a bug...
             visitor.new_node_added(node_id,ON_VERTEX,h_1,h_2,tm1,tm2,std::get<3>(res),std::get<2>(res));
+
+            std::size_t vid2 = nm_features_map_2.non_manifold_vertices.empty()
+                             ? std::size_t(-1)
+                             : get(nm_features_map_2.v_nm_id, target(h_2, tm2));
+
             for (;it_edge!=all_edges.end();++it_edge){
               if ( it_edge!=all_edges.begin() ){
                 typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(*it_edge,tm1));
                 Face_set* fset_bis = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
-                cip_handle_case_vertex(node_id,fset_bis,*it_edge,h_2,tm1,tm2);
+                if( vid2 == std::size_t(-1) )
+                  cip_handle_case_vertex(node_id,fset_bis,*it_edge,h_2,tm1,tm2);
+                else
+                  for (vertex_descriptor vd2 : nm_features_map_2.non_manifold_vertices[vid2])
+                    cip_handle_case_vertex(node_id,fset_bis,*it_edge,halfedge(vd2, tm2),tm1,tm2);
               }
               else
-                cip_handle_case_vertex(node_id,&fset,*it_edge,h_2,tm1,tm2);
+                if( vid2 == std::size_t(-1) )
+                  cip_handle_case_vertex(node_id,&fset,*it_edge,h_2,tm1,tm2);
+                else
+                  for (vertex_descriptor vd2 : nm_features_map_2.non_manifold_vertices[vid2])
+                    cip_handle_case_vertex(node_id,&fset,*it_edge,halfedge(vd2, tm2),tm1,tm2);
             }
           } // end case ON_VERTEX
           break;
