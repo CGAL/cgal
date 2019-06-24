@@ -713,9 +713,7 @@ class Intersection_of_triangle_meshes
     {
       edge_descriptor e_1=it->first;
 
-      std::size_t eid_1 = nm_features_map_1.non_manifold_edges.empty() ?
-                          std::size_t(-1) :
-                          get(nm_features_map_1.e_nm_id, e_1);
+
 
       halfedge_descriptor h_1=halfedge(e_1,tm1);
       Face_set& fset=it->second;
@@ -740,6 +738,29 @@ class Intersection_of_triangle_meshes
             all_edges.push_back(h_1);
         }
 
+        if (!nm_features_map_1.non_manifold_edges.empty())
+        {
+          std::size_t nb_edges = all_edges.size();
+          for (std::size_t ie=0; ie<nb_edges; ++ie)
+          {
+            halfedge_descriptor h1 = all_edges[ie];
+            edge_descriptor e1 = edge(h1, tm1);
+            std::size_t eid1 = get(nm_features_map_1.e_nm_id, e1);
+            if (eid1 != std::size_t(-1))
+            {
+              for (std::size_t k=0;
+                               k<nm_features_map_1.non_manifold_edges[eid1].size();
+                               ++k)
+              {
+                edge_descriptor e1b = nm_features_map_1.non_manifold_edges[eid1][k];
+                if (e1b!=e1)
+                  // note that the orientation of the halfedge pushed back is
+                  // not relevant for how it is used in the following
+                  all_edges.push_back(halfedge(e1b, tm1));
+              }
+            }
+          }
+        }
         CGAL_precondition(all_edges[0]==h_1 || all_edges[0]==opposite(h_1,tm1));
 
         // #ifdef USE_DETECTION_MULTIPLE_DEFINED_EDGES
@@ -774,20 +795,9 @@ class Intersection_of_triangle_meshes
               if ( it_edge==all_edges.begin() )
               {
                 fset.erase(fset.begin());
-                if (eid_1!=std::size_t(-1))
-                {
-                  for (std::size_t k=1;
-                                   k<nm_features_map_1.non_manifold_edges[eid_1].size();
-                                   ++k)
-                  {
-                    add_intersection_point_to_face_and_all_edge_incident_faces(f_2,halfedge(nm_features_map_1.non_manifold_edges[eid_1][k], tm1),tm2,tm1,node_id);
-                  }
-                }
               }
               else
               {
-// TODO_NM: removal depends on the non-manifold vertices and not only the current edge!!!!
-
                 typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(*it_edge,tm1));
                 if(it_ets!=tm1_edge_to_tm2_faces.end()) it_ets->second.erase(f_2);
               }
