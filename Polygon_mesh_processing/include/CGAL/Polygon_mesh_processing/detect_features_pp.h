@@ -19,7 +19,6 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 //
-
 #ifndef CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_PP_H
 #define CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_PP_H
 
@@ -49,7 +48,7 @@
 
 // @fixme compare scalar products instead of computing so many angles
 
-// @fixme, prob needs to take the abs() of the dihedral angle (can be negative with compute_approximate...)
+// @fixme anchor_dense --> filter small salient curves with no strong DA ?
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -96,6 +95,18 @@ public:
   { }
 
 private:
+  void print_candidate_edges(const std::string filename) const
+  {
+    std::ofstream out(filename);
+    out.precision(17);
+
+    for(edge_descriptor e : edges(mesh_))
+    {
+      if(get(candidate_edges_, e))
+        out << "2 " << get(vpmap_, source(e, mesh_)) << " " << get(vpmap_, target(e, mesh_)) << std::endl;
+    }
+  }
+
   // -----------------------------------------------------------------------------------------------
   // ------------------------------------- ANGLE MEASURES ------------------------------------------
   // -----------------------------------------------------------------------------------------------
@@ -129,13 +140,20 @@ private:
       return 2 * 90 - total_angle;
   }
 
-  // "Dihedral angle" is here the angle between the normals, which is supplementary of what is called
-  // dihedral angle in the CGAL kernel...
   double dihedral_angle(const halfedge_descriptor h) const
   {
     if(is_border_edge(h, mesh_))
       return 90;
 
+#if 0 // no good because it loses the sign and convex and concave ridges are not the same thing
+    const Vector n1 = Polygon_mesh_processing::compute_face_normal(face(h, mesh_), mesh_,
+                                                                   parameters::vertex_point_map(vpmap_)
+                                                                              .geom_traits(gt_));
+    const Vector n2 = Polygon_mesh_processing::compute_face_normal(face(opposite(h, mesh_), mesh_), mesh_,
+                                                                   parameters::vertex_point_map(vpmap_)
+                                                                              .geom_traits(gt_));
+    const double val = std::acos(gt_.compute_scalar_product_3_object()(n1, n2)) * 180 / CGAL_PI;
+#else
     Point_reference p = get(vpmap_, source(h, mesh_));
     Point_reference q = get(vpmap_, target(h, mesh_));
     Point_reference r = get(vpmap_, target(next(h, mesh_), mesh_));
@@ -144,9 +162,14 @@ private:
     if(gt_.coplanar_3_object()(p, q, r, s))
       return 0.;
 
-    const double val = gt_.compute_approximate_dihedral_angle_3_object()(p, q, r, s);
+    // "Dihedral angle" is here the angle between the normals, which is supplementary of what is called
+    // dihedral angle in the CGAL kernel...
+    double val = gt_.compute_approximate_dihedral_angle_3_object()(p, q, r, s);
 
-    return (val >= 0) ? 180 - val : -180 - val;
+    val = (val >= 0) ? 180 - val : -180 - val;
+#endif
+
+    return val;
   }
 
   double dihedral_angle(const edge_descriptor e) const
@@ -557,7 +580,7 @@ private:
 
   bool is_end_halfedge(const halfedge_descriptor h) const
   {
-    std::cout << "is " << h << " w/ source(" << source(h, mesh_) << ") an end? "
+    std::cout << "is " << edge(h, mesh_) << " w/ source(" << source(h, mesh_) << ") an end? "
               << is_singleton(h) << " " << is_semi_joint(h) << " " << is_disjoint(h) << " " << is_multi_joint(h) << std::endl;
 
     // @cache all that stuff
@@ -566,7 +589,7 @@ private:
 
   bool is_obscure_end_halfedge(const halfedge_descriptor h) const
   {
-    std::cout << "is " << source(h, mesh_) << " obscure? "
+    std::cout << "is " << edge(h, mesh_) << " (source: " << source(h, mesh_) << " ) obscure? "
               << is_dangling(h) << " " << is_semi_joint(h) << " " << is_disjoint(h) << std::endl;
 
     return (is_dangling(h) || is_semi_joint(h) || is_disjoint(h));
@@ -653,6 +676,8 @@ private:
     std::cout << counter << " candidate edges" << std::endl;
 
     //@tmp
+    print_candidate_edges("results/all_unfiltered_sharp_edges.polylines.txt");
+
     for(vertex_descriptor v : vertices(mesh_))
       std::cout << "valence[" << v << " -- (" << get(vpmap_, v) << ")] = " << get(candidate_valence_, v) << std::endl;
   }
@@ -663,7 +688,7 @@ private:
 
   halfedge_descriptor next_candidate_edge(const halfedge_descriptor in_h) const
   {
-    std::cout << "walking through: " << target(in_h, mesh_) << std::endl;
+    std::cout << "walking through: " << target(in_h, mesh_) << " valence " << get(candidate_valence_, target(in_h, mesh_)) << std::endl;
     CGAL_precondition(get(candidate_valence_, target(in_h, mesh_)) == 2);
 
     const edge_descriptor in_e = edge(in_h, mesh_);
@@ -673,7 +698,10 @@ private:
         continue;
 
       if(get(candidate_edges_, edge(h, mesh_)))
+      {
+        std::cout << "onto " << edge(h, mesh_) << std::endl;
         return h;
+      }
     }
 
     CGAL_assertion(false);
@@ -684,15 +712,11 @@ private:
                   std::list<halfedge_descriptor>& curve_halfedges,
                   int& number_of_edges_with_DAs_over_threshold) const
   {
-    std::cout << "walk from: " << edge(start_h, mesh_) << " ["
-                               << get(vpmap_, source(start_h, mesh_)) << "] ["
-                               << get(vpmap_, target(start_h, mesh_)) << "]" << std::endl;
-
     halfedge_descriptor curr_h = start_h;
     for(;;)
     {
       std::cout << "curr_h: " << edge(curr_h, mesh_) << " ["
-                              << get(vpmap_, source(curr_h, mesh_)) << "] ["
+                              << get(vpmap_, source(curr_h, mesh_)) << " "
                               << get(vpmap_, target(curr_h, mesh_)) << "]" << std::endl;
 
       CGAL_assertion(get(candidate_edges_, edge(curr_h, mesh_)));
@@ -702,6 +726,7 @@ private:
         ++number_of_edges_with_DAs_over_threshold;
 
       // is this correct?
+      std::cout << "check next for curve end (" << edge(opposite(curr_h, mesh_), mesh_) << ")" << std::endl;
       if(is_end_halfedge(opposite(curr_h, mesh_)))
       {
         std::cout << "opposite is the end of things" << std::endl;
@@ -713,11 +738,17 @@ private:
       CGAL_assertion(old_h != curr_h);
       CGAL_assertion(target(old_h, mesh_) == source(curr_h, mesh_));
 
+      std::cout << "check next for curve end (" << edge(curr_h, mesh_) << ")" << std::endl;
       if(is_end_halfedge(curr_h)) // meaning the next one is _not_ added to the walk
       {
         std::cout << "next is the end of things" << std::endl;
         break;
       }
+
+      // might run again into 'start_h', which might have been an end edge when end edges were collected,
+      // but is not an end edge anymore (e.g. because an incident edge is not candidate anymore)
+      if(curr_h == start_h)
+        break;
     }
   }
 
@@ -794,16 +825,22 @@ public:
     // build list of incident candidate halfedges at each vertex
     tag_candidate_edges();
 
+    int iter = 0;
+
     bool removed_some_halfedges;
     do
     {
       removed_some_halfedges = false;
 
+      std::stringstream oss_i;
+      oss_i << "results/iter_" << iter++ << "_sharp_edges.polylines.txt" << std::ends;
+      print_candidate_edges(oss_i.str());
+
       // collect obscure end-edges from quasi-strong edges
       std::unordered_set<halfedge_descriptor> obscure_end_halfedges;
       for(halfedge_descriptor h : halfedges(mesh_))
       {
-        // @cache order that so it's cheap
+        // @cache
         if(get(candidate_edges_, edge(h, mesh_)) && is_obscure_end_halfedge(h))
           obscure_end_halfedges.insert(h);
       }
@@ -814,18 +851,30 @@ public:
       while(!obscure_end_halfedges.empty())
       {
         // traverse curve
-        halfedge_descriptor start = *(obscure_end_halfedges.begin());
+        halfedge_descriptor start_h = *(obscure_end_halfedges.begin());
         obscure_end_halfedges.erase(obscure_end_halfedges.begin());
+
+        std::cout << "-----" << std::endl;
+        std::cout << "start at: " << edge(start_h, mesh_) << " ["
+                                  << get(vpmap_, source(start_h, mesh_)) << " "
+                                  << get(vpmap_, target(start_h, mesh_)) << "]" << std::endl;
+
+        // check if this is still a candidate or it's been cleaned up
+        // simpler than removing the end edge of obscure curves (which wouldn't be enough in any case:
+        // imagine a triple point with one edge being uncandidated, then surviving start edges
+        // can now be in the middle of an obscure curve)
+        if(!get(candidate_edges_, edge(start_h, mesh_)))
+           continue;
 
         std::list<halfedge_descriptor> curve_halfedges;
         int number_of_edges_with_DAs_over_threshold = 0;
 
-        walk_curve(start, curve_halfedges, number_of_edges_with_DAs_over_threshold);
+        walk_curve(start_h, curve_halfedges, number_of_edges_with_DAs_over_threshold);
         std::cout << "Curve has length: " << curve_halfedges.size() << std::endl;
 
         const halfedge_descriptor last_h = curve_halfedges.back();
         // check if the curve is obscure
-        if(is_obscure_curve(start, last_h, number_of_edges_with_DAs_over_threshold))
+        if(is_obscure_curve(start_h, last_h, number_of_edges_with_DAs_over_threshold))
         {
           std::cout << "Obscure curve!!" << std::endl;
 
@@ -839,15 +888,19 @@ public:
           CGAL_assertion(get(candidate_valence_, target(last_h, mesh_)) > 0);
           put(candidate_valence_, target(last_h, mesh_), get(candidate_valence_, target(last_h, mesh_)) - 1);
 
-          // Reasoning is that, tautologically, we cannot have met any obscure end halfedge
-          // before, otherwise we would have stopped
-          obscure_end_halfedges.erase(opposite(last_h, mesh_));
-
           removed_some_halfedges = true;
+        }
+        else
+        {
+          std::cout << "Curve is NOT obscure!!" << std::endl;
         }
       }
     }
     while(removed_some_halfedges); // while removed halfedges
+
+#ifndef SHARP_EDGES_IN_INDEPENDENT_FILES
+    std::ofstream out("results/all_sharp_edges.polylines.txt");
+#endif
 
     // mark remaining candidates halfedges as C1 discontinuities
     int counter = 0; // @tmp
@@ -858,10 +911,13 @@ public:
 
       if(is_sharp)
       {
+#ifdef SHARP_EDGES_IN_INDEPENDENT_FILES
         std::stringstream oss;
-        oss << "sharp_edge_" << counter++ << ".polylines.txt" << std::ends;
+        oss << "results/sharp_edge_" << counter << ".polylines.txt" << std::ends;
         std::ofstream out(oss.str().c_str());
+#endif
         out << "2 " << get(vpmap_, source(e, mesh_)) << " " << get(vpmap_, target(e, mesh_)) << std::endl;
+        ++counter;
       }
     }
 
