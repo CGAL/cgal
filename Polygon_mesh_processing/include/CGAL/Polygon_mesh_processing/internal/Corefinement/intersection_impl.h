@@ -399,14 +399,14 @@ class Intersection_of_triangle_meshes
   }
 
   void add_intersection_point_to_face_and_all_edge_incident_faces(face_descriptor f_1,
-                                                                  halfedge_descriptor e_2,
+                                                                  halfedge_descriptor h_2,
                                                                   const TriangleMesh& tm1,
                                                                   const TriangleMesh& tm2,
                                                                   Node_id node_id)
   {
-    if (!is_border(e_2, tm2))
+    if (!is_border(h_2, tm2))
     {
-      face_descriptor f_2 = face(e_2, tm2);
+      face_descriptor f_2 = face(h_2, tm2);
       if(&tm1!=&tm2 || f_1!=f_2)
       {
         Face_pair face_pair = &tm1==&tm2 ? make_sorted_pair(f_1,f_2):
@@ -417,10 +417,10 @@ class Intersection_of_triangle_meshes
           f_to_node[Face_pair_and_int(face_pair,0)].insert(node_id);
       }
     }
-    e_2 = opposite(e_2, tm2);
-    if (!is_border(e_2, tm2))
+    h_2 = opposite(h_2, tm2);
+    if (!is_border(h_2, tm2))
     {
-      face_descriptor f_2 = face(e_2, tm2);
+      face_descriptor f_2 = face(h_2, tm2);
       if(&tm1!=&tm2 || f_1!=f_2)
       {
         Face_pair face_pair = &tm1==&tm2 ? make_sorted_pair(f_1,f_2):
@@ -521,14 +521,14 @@ class Intersection_of_triangle_meshes
   }
 
   void handle_coplanar_case_VERTEX_EDGE(halfedge_descriptor v_1,
-                                        halfedge_descriptor e_2,
+                                        halfedge_descriptor h_2,
                                         const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
                                         Node_id node_id,
                                         bool is_new_node)
   {
     if(is_new_node)
-      visitor.new_node_added(node_id,ON_VERTEX,e_2,v_1,tm2,tm1,false,false);
+      visitor.new_node_added(node_id,ON_VERTEX,h_2,v_1,tm2,tm1,false,false);
 
     Edge_to_faces& tm1_edge_to_tm2_faces = &tm1 <= &tm2
                                          ? stm_edge_to_ltm_faces
@@ -539,7 +539,7 @@ class Intersection_of_triangle_meshes
     {
       typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(h_1,tm1));
       Face_set* fset = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
-      cip_handle_case_edge(node_id,fset,h_1,e_2,tm1,tm2);
+      cip_handle_case_edge(node_id,fset,h_1,h_2,tm1,tm2);
     }
   }
 
