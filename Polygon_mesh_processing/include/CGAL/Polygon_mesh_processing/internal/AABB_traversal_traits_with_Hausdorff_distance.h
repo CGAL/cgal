@@ -67,8 +67,7 @@ namespace CGAL {
     // Compute the explicit Hausdorff distance to the given primitive
     void intersection(const Query& query, const Primitive& primitive)
     {
-      // Have reached a single triangle
-      std::cout << "Reached Triangle in TM2:" << primitive.id() << '\n';
+      /* Have reached a single triangle, process it */
 
       /*
       / Determine the distance accroding to
@@ -222,8 +221,7 @@ namespace CGAL {
     // Compute the explicit Hausdorff distance to the given primitive
     void intersection(const Query& query, const Primitive& primitive)
     {
-      // Have reached a single triangle
-      std::cout << "Reached Triangle in TM1: " << primitive.id() << '\n';
+      /* Have reached a single triangle, process it */
 
       // Map to transform faces of TM1 to actual triangles
       Triangle_from_face_descriptor_map<TriangleMesh, VPM1> m_face_to_triangle_map( &m_tm1, m_vpm1 );
@@ -251,11 +249,14 @@ namespace CGAL {
         h_upper = local_bounds.second;
       }
 
+      std::cout << "Processed triangle: " << primitive.id()
+                << ", found bounds (low., up.): (" << local_bounds.first
+                << ", " << local_bounds.second << ")" << std::endl;
+
+      // Store the triangle given as primitive here as candidate triangle
+      // together with the local bounds it obtained to sind it to subdivision
+      // later
       m_candidiate_triangles.push_back(Candidate_triangle(candidate_triangle, local_bounds));
-      /* TODO Store the triangle given here is primitive as candidate triangle
-              together with the local bounds it optained to send it to
-              subdivision later.
-      */
     }
 
     // Determine whether child nodes will still contribute to a larger
