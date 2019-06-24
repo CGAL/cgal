@@ -260,23 +260,7 @@ public:
     add_segment(kp1, kp2);
     add_color(c);
     add_color(c);
-  }
-
-  // 2.2) Add a ray segment, without color
-  template<typename KPoint, typename KVector>
-  void add_ray_segment(const KPoint& kp1, const KVector& kp2)
-  {
-    add_point(kp1);
-    add_point_infinity(kp2);
-  }
-
-  // 2.2) Add a line
-  template<typename KPoint>
-  void add_line_segment(const KPoint& kp1, const KPoint& kp2)
-  {
-    add_point_infinity(kp1);
-    add_point_infinity(kp2);
-  }
+  }  
 
   // 2.3) Add an indexed segment, without color.
   template<typename T>
@@ -284,6 +268,44 @@ public:
   {
     add_indexed_point(index1);
     add_indexed_point(index2);
+  }
+
+  // 3.1) Add a ray segment, without color
+  template<typename KPoint, typename KVector>
+  void add_ray_segment(const KPoint& kp1, const KVector& kp2)
+  {
+    add_point(kp1);
+    add_point_infinity(kp2);
+  }
+
+  //3.2) Add a ray segment, with color
+  template<typename KPoint, typename KVector>
+  void add_ray_segment(const KPoint& kp1, const KVector& kp2,
+                       const CGAL::Color& c)
+  {
+    add_point(kp1);
+    add_point_infinity(kp2);
+    add_color(c);
+    add_color(c);
+  }
+
+  // 4.1) Add a line, without color
+  template<typename KPoint>
+  void add_line_segment(const KPoint& kp1, const KPoint& kp2)
+  {
+    add_point_infinity(kp1);
+    add_point_infinity(kp2);
+  }
+
+  // 4.1) Add a line, with color
+  template<typename KPoint>
+  void add_line_segment(const KPoint& kp1, const KPoint& kp2,
+                        const CGAL::Color& c)
+  {
+    add_point_infinity(kp1);
+    add_point_infinity(kp2);
+    add_color(c);
+    add_color(c);
   }
 
   /// @return true iff a face has begun.

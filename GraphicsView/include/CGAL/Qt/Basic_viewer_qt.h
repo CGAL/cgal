@@ -273,6 +273,10 @@ public:
             m_buffer_for_colored_points.is_empty() &&
             m_buffer_for_mono_segments.is_empty() &&
             m_buffer_for_colored_segments.is_empty() &&
+            m_buffer_for_mono_rays.is_empty() &&
+            m_buffer_for_colored_rays.is_empty() &&
+            m_buffer_for_mono_lines.is_empty() &&
+            m_buffer_for_colored_lines.is_empty() &&
             m_buffer_for_mono_faces.is_empty() &&
             m_buffer_for_colored_faces.is_empty());
   }
@@ -297,38 +301,57 @@ public:
                    const CGAL::Color& acolor)
   { m_buffer_for_colored_segments.add_segment(p1, p2, acolor); }
 
-
   template <typename KPoint, typename KVector>
   void update_bounding_box_for_ray(const KPoint &p, const KVector &v) {
-      //m_buffer_for_mono_points.add_point(p);
-      Local_point lp = internal::get_local_point(p);
-      Local_vector lv = internal::get_local_vector(v);
-      CGAL::Bbox_3 b = (lp+lv).bbox();
-      m_bounding_box += b;
-      //m_bounding_box += CGAL::Bbox_3(b.xmin(), 0, b.ymin(), b.xmax(), 0, b.ymax());
+    // m_buffer_for_mono_points.add_point(p);
+    Local_point lp = internal::get_local_point(p);
+    Local_vector lv = internal::get_local_vector(v);
+    CGAL::Bbox_3 b = (lp + lv).bbox();
+    m_bounding_box += b;
+    // m_bounding_box += CGAL::Bbox_3(b.xmin(), 0, b.ymin(), b.xmax(), 0,
+    // b.ymax());
   }
 
   template <typename KPoint, typename KVector>
-  void update_bounding_box_for_line(const KPoint &p, const KVector &v, const KVector &pv) {
-      Local_point lp = internal::get_local_point(p);
-      Local_vector lv = internal::get_local_vector(v);
-      Local_vector lpv = internal::get_local_vector(pv);
+  void update_bounding_box_for_line(const KPoint &p, const KVector &v,
+                                    const KVector &pv)
+  {
+    Local_point lp = internal::get_local_point(p);
+    Local_vector lv = internal::get_local_vector(v);
+    Local_vector lpv = internal::get_local_vector(pv);
 
-      CGAL::Bbox_3 b = lp.bbox() + (lp+lv).bbox() + (lp+lpv).bbox();
-      m_bounding_box += b;
+    CGAL::Bbox_3 b = lp.bbox() + (lp + lv).bbox() + (lp + lpv).bbox();
+    m_bounding_box += b;
   }
 
   template <typename KPoint, typename KVector>
-  void add_ray(const KPoint &p, const KVector &v) {
-      float bigNumber = 1e30;
-      m_buffer_for_mono_rays.add_ray_segment(p, (p + (bigNumber) * v));
+  void add_ray(const KPoint &p, const KVector &v)
+  {
+    float bigNumber = 1e30;
+    m_buffer_for_mono_rays.add_ray_segment(p, (p + (bigNumber)*v));
   }
 
   template <typename KPoint, typename KVector>
-  void add_line(const KPoint &p, const KVector &v) {
-      float bigNumber = 1e30;
-      m_buffer_for_mono_lines.add_line_segment((p - (bigNumber) * v),
-                                              (p + (bigNumber) * v));
+  void add_ray(const KPoint &p, const KVector &v, const CGAL::Color &acolor)
+  {
+    float bigNumber = 1e30;
+    m_buffer_for_colored_rays.add_ray_segment(p, (p + (bigNumber)*v), acolor);
+  }
+
+  template <typename KPoint, typename KVector>
+  void add_line(const KPoint &p, const KVector &v)
+  {
+    float bigNumber = 1e30;
+    m_buffer_for_mono_lines.add_line_segment((p - (bigNumber)*v),
+                                             (p + (bigNumber)*v));
+  }
+
+  template <typename KPoint, typename KVector>
+  void add_line(const KPoint &p, const KVector &v, const CGAL::Color &acolor)
+  {
+    float bigNumber = 1e30;
+    m_buffer_for_colored_lines.add_line_segment((p - (bigNumber)*v),
+                                                (p + (bigNumber)*v), acolor);
   }
 
   bool is_a_face_started() const
@@ -1263,9 +1286,9 @@ protected:
   Buffer_for_vao<float> m_buffer_for_mono_segments;
   Buffer_for_vao<float> m_buffer_for_colored_segments;
   Buffer_for_vao<float> m_buffer_for_mono_rays;
+  Buffer_for_vao<float> m_buffer_for_colored_rays;
   Buffer_for_vao<float> m_buffer_for_mono_lines;
   Buffer_for_vao<float> m_buffer_for_colored_lines;
-  Buffer_for_vao<float> m_buffer_for_colored_rays;
   Buffer_for_vao<float> m_buffer_for_mono_faces;
   Buffer_for_vao<float> m_buffer_for_colored_faces;
 

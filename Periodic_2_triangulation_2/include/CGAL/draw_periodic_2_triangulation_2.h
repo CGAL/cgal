@@ -35,8 +35,9 @@ struct DefaultColorFunctorP2T2 {
   template <typename P2T2>
   static CGAL::Color run(const P2T2 &,
                          const typename P2T2::Periodic_triangle_iterator ti) {
-    CGAL::Random random((unsigned int)(std::size_t)(&*ti));
-    return get_random_color(random);
+    //CGAL::Random random((unsigned int)(std::size_t)(&*ti));
+    //return get_random_color(random);
+    return CGAL::Color(73, 250, 117);
   }
 };
 
@@ -113,8 +114,8 @@ protected:
     // Construct the triangle in 9-sheeted covering space and add to viewer
     Triangle t(p2t2.triangle(*ti));
 
-    //CGAL::Color c=m_fcolor.run(p2t2, ti);
-    face_begin(CGAL::Color(73, 250, 117));
+    CGAL::Color c=m_fcolor.run(p2t2, ti);
+    face_begin(c);
     add_point_in_face(t[0]);
     add_point_in_face(t[1]);
     add_point_in_face(t[2]);
@@ -299,5 +300,14 @@ void draw(const P2T2& ap2t2)
 } // namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+#else // CGAL_USE_BASIC_VIEWER
+
+template<class P2T2>
+void draw_periodic_2_triangulation_2(CGAL::Periodic_2_Triangulation_2<P2T2>&)
+{
+  std::cerr << "Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."
+            << std::endl;
+}
 
 #endif // DRAW_PERIODIC_2_TRIANGULATION_2_H
