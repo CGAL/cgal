@@ -199,39 +199,34 @@ protected:
 
     // Call the base method to process others/classicals key
     const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    if ((e->key() == ::Qt::Key_1) && (modifiers == ::Qt::NoButton))
+    if (e->text()=="1")
     {
       m_display_type = Display_type::UNIQUE;
-      displayMessage(
-          QString("Display type= UNIQUE"));
+      displayMessage(QString("Display type= UNIQUE"));
       compute_elements();
       redraw();
-    } else if ((e->key() == ::Qt::Key_2) && (modifiers == ::Qt::NoButton))
+    } else if (e->text()=="2")
     {
       m_display_type = Display_type::UNIQUE_COVER_DOMAIN;
-      displayMessage(
-          QString("Display type= UNIQUE_COVER_DOMAIN"));
+      displayMessage(QString("Display type= UNIQUE_COVER_DOMAIN"));
       compute_elements();
       redraw();
-    } else if ((e->key() == ::Qt::Key_3) && (modifiers == ::Qt::NoButton))
+    } else if (e->text()=="3")
     {
       m_display_type = Display_type::STORED;
-      displayMessage(
-          QString("Display type= STORED"));
+      displayMessage(QString("Display type= STORED"));
       compute_elements();
       redraw();
-    } else if ((e->key() == ::Qt::Key_4) && (modifiers == ::Qt::NoButton))
+    } else if (e->text()=="4")
     {
       m_display_type = Display_type::STORED_COVER_DOMAIN;
-      displayMessage(
-          QString("Display type= STORED_COVER_DOMAIN"));
+      displayMessage(QString("Display type= STORED_COVER_DOMAIN"));
       compute_elements();
       redraw();
     } else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
     {
       m_domain=!m_domain;
-      displayMessage(
-          QString("Draw domain=%1.").arg(m_domain?"true":"false"));
+      displayMessage(QString("Draw domain=%1.").arg(m_domain?"true":"false"));
       compute_elements();
       redraw();
     } else {
