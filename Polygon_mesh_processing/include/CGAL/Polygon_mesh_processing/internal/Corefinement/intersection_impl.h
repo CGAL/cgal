@@ -201,7 +201,7 @@ class Intersection_of_triangle_meshes
   Faces_to_nodes_map         f_to_node;      //Associate a pair of triangles to their intersection points
   std::vector<Node_id> extra_terminal_nodes; //used only for autorefinement
   Non_manifold_feature_map<TriangleMesh> non_manifold_feature_map_1,
-                                          non_manifold_feature_map_2;
+                                         non_manifold_feature_map_2;
   CGAL_assertion_code(bool doing_autorefinement;)
 
 // member functions
@@ -812,14 +812,31 @@ class Intersection_of_triangle_meshes
             add_new_node(h_1,f_2,tm1,tm2,vpm1,vpm2,res);
             halfedge_descriptor h_2=std::get<1>(res);
             visitor.new_node_added(node_id,ON_EDGE,h_1,h_2,tm1,tm2,std::get<3>(res),std::get<2>(res));
+
+            std::size_t eid2 = nm_features_map_2.non_manifold_edges.empty()
+                             ? std::size_t(-1)
+                             : get(nm_features_map_2.e_nm_id, edge(h_2, tm2));
+
             for (;it_edge!=all_edges.end();++it_edge){
               if ( it_edge!=all_edges.begin() ){
                 typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(*it_edge,tm1));
                 Face_set* fset_bis = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
-                cip_handle_case_edge(node_id,fset_bis,*it_edge,h_2,tm1,tm2);
+                if( eid2 == std::size_t(-1) )
+                  cip_handle_case_edge(node_id,fset_bis,*it_edge,h_2,tm1,tm2);
+                else
+                {
+                  for (edge_descriptor e2 : nm_features_map_2.non_manifold_edges[eid2])
+                    cip_handle_case_edge(node_id,fset_bis,*it_edge,halfedge(e2, tm2),tm1,tm2);
+                }
               }
               else
-                cip_handle_case_edge(node_id,&fset,*it_edge,h_2,tm1,tm2);
+              {
+                if( eid2 == std::size_t(-1) )
+                  cip_handle_case_edge(node_id,&fset,*it_edge,h_2,tm1,tm2);
+                else
+                  for (edge_descriptor e2 : nm_features_map_2.non_manifold_edges[eid2])
+                    cip_handle_case_edge(node_id,&fset,*it_edge,halfedge(e2, tm2),tm1,tm2);
+              }
             }
           } // end case ON_EDGE
           break;
