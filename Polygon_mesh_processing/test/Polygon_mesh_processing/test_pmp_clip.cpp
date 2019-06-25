@@ -330,7 +330,7 @@ int main()
   //test<Surface_mesh>();
   //test<Polyhedron>();
   test_split<Surface_mesh>();
-  test_split_plane<Surface_mesh>();
+  //test_split_plane<Surface_mesh>();
   //test_split<Polyhedron>();
 
   return 0;
