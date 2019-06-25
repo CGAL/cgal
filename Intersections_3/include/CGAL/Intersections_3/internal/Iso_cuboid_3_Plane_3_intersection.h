@@ -105,9 +105,54 @@ intersection(
 
   switch(segments.size())
   {
-  case 1: //adj to an edge
+  case 1:
   {
-    return Result_type(std::forward<Segment_3>(segments.front()));
+    //adj to an edge
+    if(points.size() == 4)
+    {
+      return Result_type(std::forward<Segment_3>(segments.front()));
+    }
+    //through an edge not on diagonal
+    else{
+      Poly res(4);
+      Segment_3 front(segments.front());
+      Point_3 p1,p2;
+      bool has_p1(false),
+          has_p2(false);
+      for(auto p : points)
+      {
+        if(!front.has_on(p))
+        {
+          if(!has_p1)
+          {
+            p1 = p;
+            has_p1 = true;
+          }
+          else {
+            p2 = p;
+            has_p2 = true;
+            break;
+          }
+        }
+      }
+      CGAL_assertion(has_p1 && has_p2);
+      Segment_3 back(p1,p2);
+      res[0] = front.target();
+      if((front.target() - front.source())
+         * (back.target() - back.source()) > 0)
+      {
+        res[1] = back.target();
+        res[2] = back.source();
+      }
+      else
+      {
+        res[1] = back.source();
+        res[2] = back.target();
+      }
+      res[3] = front.source();
+
+      return Result_type(std::forward<Poly>(res));
+    }
   }
     break;
 
