@@ -103,8 +103,7 @@ protected:
 // Specialization of draw function.
 template<class T, class C>
 void draw(const CGAL::Polygon_2<T, C>& ap2,
-          const char* title="Polygon_2 Basic Viewer",
-          bool nofill=false)
+          const char* title="Polygon_2 Basic Viewer")
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
