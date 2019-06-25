@@ -17,7 +17,6 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main()
 {
-
 // polyline intersection with a non-manifold edge
 {
   std::cout << "running polyline test\n";
@@ -206,11 +205,27 @@ int main()
   PMP::Non_manifold_feature_map<Surface_mesh> nm_map_1(tm1, get(boost::vertex_point, tm1));
   PMP::Non_manifold_feature_map<Surface_mesh> nm_map_2(tm2, get(boost::vertex_point, tm2));
 
+#if 0
+  std::vector< std::vector<P> > polylines;
+  PMP::surface_intersection(tm1, tm2, std::back_inserter(polylines),
+                                      CGAL::parameters::non_manifold_feature_map(nm_map_1),
+                                      CGAL::parameters::non_manifold_feature_map(nm_map_2));
+
+  //dump polylines
+  std::ofstream output("intersection_polylines.cgal");
+  for(const std::vector<P>& polyline : polylines)
+  {
+    output << polyline.size() << " ";
+    std::copy(polyline.begin(), polyline.end(),std::ostream_iterator<P>(output," "));
+    output << "\n";
+  }
+#else
   PMP::corefine(tm1, tm2, CGAL::parameters::non_manifold_feature_map(nm_map_1),
                           CGAL::parameters::non_manifold_feature_map(nm_map_2));
 
   std::ofstream("t6_tm1_corefined.off") << tm1;
   std::ofstream("t6_tm2_corefined.off") << tm2;
+#endif
 }
 
 
