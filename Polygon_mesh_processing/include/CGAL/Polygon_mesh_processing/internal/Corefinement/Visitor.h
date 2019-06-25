@@ -731,7 +731,7 @@ public:
                       target(it_node_2_hedge_two->second,tm) )
               {
                 hedge=opposite(next(hedge,tm),tm);
-                if (tm1_ptr==tm2_ptr && hedge==start)
+                if ((doing_autorefinement || handle_non_manifold_features) && hedge==start)
                 {
                   ++it_node_2_hedge_two; // we are using a multimap and
                                          // the halfedge we are looking for
