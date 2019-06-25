@@ -136,6 +136,11 @@ public:
   void all_nodes_created(){}
   void finalize() {}
 
+  void check_no_duplicates()
+  {
+    CGAL_assertion(nodes.size() == std::set<Point_3>(nodes.begin(), nodes.end()).size());
+  }
+
 }; // end specialization
      // Intersection_nodes<Polyhedron,Kernel,No_predicates_on_constructions,false>
 
@@ -310,6 +315,12 @@ public:
         put(vpm2, tm2_vertices[i], pt);
     }
   }
+
+  void check_no_duplicates()
+  {
+    CGAL_assertion(enodes.size() == std::set<typename Exact_kernel::Point_3>(enodes.begin(), enodes.end()).size());
+  }
+
 }; // end specialization
      // Intersection_nodes<Polyhedron,Kernel,Predicates_on_constructions,false>
 
@@ -424,7 +435,10 @@ public:
   void all_nodes_created(){}
   void finalize() {}
 
-
+  void check_no_duplicates()
+  {
+    CGAL_assertion(nodes.size() == std::set<Point_3>(nodes.begin(), nodes.end()).size());
+  }
 }; // end specialization
 
 

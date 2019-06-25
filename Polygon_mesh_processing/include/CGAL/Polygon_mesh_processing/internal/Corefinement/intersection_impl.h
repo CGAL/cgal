@@ -1542,6 +1542,8 @@ public:
     compute_intersection_points(tm1_edge_to_tm2_faces, tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2, current_node);
     compute_intersection_points(tm2_edge_to_tm1_faces, tm2, tm1, vpm2, vpm1, non_manifold_feature_map_2, non_manifold_feature_map_1, current_node);
 
+    nodes.check_no_duplicates();
+
     if (!build_polylines){
       visitor.finalize(nodes,tm1,tm2,vpm1,vpm2);
       return output;
