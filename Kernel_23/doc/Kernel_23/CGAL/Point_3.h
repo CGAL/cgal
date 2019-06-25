@@ -17,6 +17,7 @@ to `NT`, and `Kernel::FT` is equal to `Quotient<NT>`.
 The following operations can be applied on points:
 
 \cgalModels `Kernel::Point_3`
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
 */
 template< typename Kernel >

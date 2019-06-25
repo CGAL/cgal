@@ -77,7 +77,7 @@ public:
   typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename Kernel::Compare_power_distance_3>
       Compare_power_distance_3;
 
-  // Undocumented, requried for Is_Gabriel (Alpha shapes)
+  // Undocumented, required for Is_Gabriel (Alpha shapes)
   typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename Kernel::Power_side_of_bounded_power_sphere_3>
       Power_side_of_bounded_power_sphere_3;
 

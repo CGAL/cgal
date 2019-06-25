@@ -68,9 +68,6 @@ find_package(Qt5
              COMPONENTS            OpenGL Script
              OPTIONAL_COMPONENTS   ScriptTools)
 
-# Find OpenGL
-find_package(OpenGL)
-
 if(Qt5_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
@@ -128,7 +125,7 @@ endif()
 
 
 
-if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
+if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
 
   qt5_wrap_ui( MainWindowUI_files MainWindow.ui)
@@ -395,7 +392,7 @@ add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_Classification )
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 #TO DO script the activation of all the plugins.
 
-else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
+else (CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   set(POLYHEDRON_MISSING_DEPS "")
 
@@ -407,11 +404,7 @@ else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     set(POLYHEDRON_MISSING_DEPS "Qt5, ${POLYHEDRON_MISSING_DEPS}")
   endif()
 
-  if(NOT OPENGL_FOUND)
-    set(POLYHEDRON_MISSING_DEPS "OpenGL, ${POLYHEDRON_MISSING_DEPS}")
-  endif()
-
   message(STATUS "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled.")
 
 
-endif (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
+endif (CGAL_Qt5_FOUND AND Qt5_FOUND)

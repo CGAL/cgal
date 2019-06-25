@@ -241,7 +241,7 @@ public:
       // Chack if the intersection is a point:
       const Point_2             *ip;
 
-      if ((ip = object_cast<Point_2> (&res)) != NULL)
+      if ((ip = object_cast<Point_2> (&res)) != nullptr)
       {
         // Create a pair representing the point with its multiplicity,
         // which is always 1 for line segments for all practical purposes.
@@ -257,7 +257,7 @@ public:
         // The intersection is a segment.
 
         const X_monotone_curve_2 *ov = object_cast<X_monotone_curve_2>(&res);
-        CGAL_assertion (ov != NULL);
+        CGAL_assertion (ov != nullptr);
 
         Self self;
         Comparison_result cmp1 = self.compare_endpoints_xy_2_object()(cv1);

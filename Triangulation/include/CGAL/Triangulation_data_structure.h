@@ -1285,7 +1285,7 @@ bool Triangulation_data_structure<Dimen, Vb, Fcb>
             }
             else
             {
-                if( verbose ) CGAL_warning_msg(false, "full_cell has a NULL neighbor");
+                if( verbose ) CGAL_warning_msg(false, "full_cell has a nullptr neighbor");
                 return false;
             }
     }

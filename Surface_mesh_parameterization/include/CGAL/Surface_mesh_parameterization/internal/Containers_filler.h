@@ -62,7 +62,7 @@ public:
 
   Containers_filler(const TriangleMesh& mesh_,
                     Vertex_set& vertices_)
-    : mesh(mesh_), vertices(vertices_), faces(NULL)
+    : mesh(mesh_), vertices(vertices_), faces(nullptr)
   { }
 
   void operator()(face_descriptor fd)
@@ -72,7 +72,7 @@ public:
       vertices.insert(vd);
     }
 
-    if(faces != NULL)
+    if(faces != nullptr)
       faces->push_back(fd);
   }
 };

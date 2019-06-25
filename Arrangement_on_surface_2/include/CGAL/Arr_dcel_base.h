@@ -92,31 +92,31 @@ protected:
 public:
   /*! Default constructor. */
   Arr_vertex_base() :
-    p_inc(NULL),
-    p_pt(NULL)
+    p_inc(nullptr),
+    p_pt(nullptr)
   { pss[0] = pss[1] = static_cast<char>(CGAL::ARR_INTERIOR); }
 
   /*! Destructor. */
   virtual ~Arr_vertex_base() {}
 
-  /*! Check if the point pointer is NULL. */
-  bool has_null_point() const { return (p_pt == NULL); }
+  /*! Check if the point pointer is nullptr. */
+  bool has_null_point() const { return (p_pt == nullptr); }
 
   /*! Get the point (const version). */
   const Point& point() const
   {
-    CGAL_assertion(p_pt != NULL);
+    CGAL_assertion(p_pt != nullptr);
     return (*p_pt);
   }
 
   /*! Get the point (non-const version). */
   Point& point()
   {
-    CGAL_assertion(p_pt != NULL);
+    CGAL_assertion(p_pt != nullptr);
     return (*p_pt);
   }
 
-  /*! Set the point (may be a NULL point). */
+  /*! Set the point (may be a nullptr point). */
   void set_point(Point* p) { p_pt = p; }
 
   /*! Get the boundary type in x. */
@@ -175,31 +175,31 @@ protected:
 public:
   /*! Default constructor */
   Arr_halfedge_base() :
-    p_opp(NULL),
-    p_prev(NULL),
-    p_next(NULL),
-    p_v(NULL),
-    p_comp(NULL),
-    p_cv(NULL)
+    p_opp(nullptr),
+    p_prev(nullptr),
+    p_next(nullptr),
+    p_v(nullptr),
+    p_comp(nullptr),
+    p_cv(nullptr)
   {}
 
   /*! Destructor. */
   virtual ~Arr_halfedge_base() {}
 
-  /*! Check if the curve pointer is NULL. */
-  bool has_null_curve() const { return (p_cv == NULL); }
+  /*! Check if the curve pointer is nullptr. */
+  bool has_null_curve() const { return (p_cv == nullptr); }
 
   /*! Get the x-monotone curve (const version). */
   const X_monotone_curve& curve() const
   {
-    CGAL_precondition(p_cv != NULL);
+    CGAL_precondition(p_cv != nullptr);
     return (*p_cv);
   }
 
   /*! Get the x-monotone curve (non-const version). */
   X_monotone_curve& curve()
   {
-    CGAL_precondition(p_cv != NULL);
+    CGAL_precondition(p_cv != nullptr);
     return (*p_cv);
   }
 
@@ -712,7 +712,7 @@ private:
 
 public:
   /*! Default constructor. */
-  Arr_outer_ccb() : p_f(NULL), iter_is_not_singular(false) {}
+  Arr_outer_ccb() : p_f(nullptr), iter_is_not_singular(false) {}
 
   /*! Copy constructor. */
   Arr_outer_ccb(const Arr_outer_ccb& other) :
@@ -778,7 +778,7 @@ private:
 
 public:
   /*! Default constructor. */
-  Arr_inner_ccb() : p_f(NULL), iter_is_not_singular(false) {}
+  Arr_inner_ccb() : p_f(nullptr), iter_is_not_singular(false) {}
 
   /*! Copy constructor. */
   Arr_inner_ccb(const Arr_inner_ccb& other) :
@@ -843,7 +843,7 @@ private:
 
 public:
   /*! Default constructor. */
-  Arr_isolated_vertex() : p_f(NULL), iter_is_not_singular(false) {}
+  Arr_isolated_vertex() : p_f(nullptr), iter_is_not_singular(false) {}
 
   /*! Copy constructor. */
   Arr_isolated_vertex(const Arr_isolated_vertex& other) :

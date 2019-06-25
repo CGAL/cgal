@@ -777,7 +777,7 @@ template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::_add_curve(Event* e, Subcurve* sc,
                                                       Attribute type)
 {
-  if (sc == NULL) return;
+  if (sc == nullptr) return;
 
   if (type == Event::LEFT_END) {
     sc->set_left_event(e);

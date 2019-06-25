@@ -457,19 +457,19 @@ after_handle_event(Event* event, Status_line_iterator iter, bool flag)
   // point, we update the top fictitious halfedges for all subcurves incident
   // to this event.
   Event_subcurve_reverse_iterator rev_iter = event->right_curves_rbegin();
-  Subcurve* sc_above = NULL;
+  Subcurve* sc_above = nullptr;
 
   if (iter != this->status_line_end())
     sc_above = (*iter);
 
-  if (sc_above == NULL) {
+  if (sc_above == nullptr) {
     if (rev_iter != event->right_curves_rend()) {
       if ((*rev_iter)->color() == Gt2::BLUE)
         (*rev_iter)->set_red_top_face(m_overlay_helper.red_top_face());
       else if ((*rev_iter)->color() == Gt2::RED)
         (*rev_iter)->set_blue_top_face(m_overlay_helper.blue_top_face());
 
-      (*rev_iter)->set_subcurve_above(NULL);
+      (*rev_iter)->set_subcurve_above(nullptr);
       sc_above = *rev_iter;
       ++rev_iter;
     }
@@ -484,7 +484,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool flag)
     if (! curr_sc->has_same_color(sc_above))
       curr_sc->set_subcurve_above(sc_above);
     else {
-      if (sc_above->subcurve_above() != NULL)
+      if (sc_above->subcurve_above() != nullptr)
         curr_sc->set_subcurve_above(sc_above->subcurve_above());
       else
         curr_sc->set_top_face(sc_above);
@@ -771,7 +771,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       // face. We have to find the identity of this containing blue face.
       Subcurve* sc_above = sc->subcurve_above();
       red_face = red_he->face();
-      blue_face = (sc_above != NULL) ?
+      blue_face = (sc_above != nullptr) ?
         sc_above->blue_halfedge_handle()->face() : sc->blue_top_face();
     }
     else {
@@ -781,7 +781,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       // face. We have to find the identity of this containing red face.
       Subcurve* sc_above = sc->subcurve_above();
       blue_face = blue_he->face();
-      red_face = (sc_above != NULL) ?
+      red_face = (sc_above != nullptr) ?
         sc_above->red_halfedge_handle()->face() : sc->red_top_face();
     }
 
@@ -835,7 +835,7 @@ insert_isolated_vertex(const Point_2& pt,
       // sufficient to go at most two steps up.
       // There is nothing above the vertex - use the current red top face.
       Subcurve* sc_above = *iter;
-      if (sc_above == NULL) {
+      if (sc_above == nullptr) {
         red_face = m_overlay_helper.red_top_face();
       }
       else {
@@ -844,7 +844,7 @@ insert_isolated_vertex(const Point_2& pt,
         }
         else {
           sc_above = sc_above->subcurve_above();
-          red_face = (sc_above != NULL) ?
+          red_face = (sc_above != nullptr) ?
             sc_above->red_halfedge_handle()->face() :
             m_overlay_helper.red_top_face();
         }
@@ -871,7 +871,7 @@ insert_isolated_vertex(const Point_2& pt,
       // sufficient to go at most two steps up.
       // If we do not find a blue halfedge, we use the current red top face.
       Subcurve* sc_above = *iter;
-      if (sc_above == NULL) {
+      if (sc_above == nullptr) {
         blue_face = m_overlay_helper.blue_top_face();
       }
       else {
@@ -880,7 +880,7 @@ insert_isolated_vertex(const Point_2& pt,
         }
         else {
           sc_above = sc_above->subcurve_above();
-          blue_face = (sc_above != NULL) ?
+          blue_face = (sc_above != nullptr) ?
             sc_above->blue_halfedge_handle()->face() :
             m_overlay_helper.blue_top_face();
         }
@@ -991,20 +991,20 @@ _create_vertex(Event* event,
       (event->parameter_space_in_y() != ARR_INTERIOR))
   {
     if (!red_handle) {
-      CGAL_assertion(blue_handle != NULL);
+      CGAL_assertion(blue_handle != nullptr);
       // Obtain the red face by looking for a subcurve above.
       const Subcurve* sc_above = sc->subcurve_above();
-      Face_handle_red red_f = (sc_above != NULL) ?
+      Face_handle_red red_f = (sc_above != nullptr) ?
         sc_above->red_halfedge_handle()->face() : sc->red_top_face();
       Handle_info info = std::make_pair(Cell_handle_red(red_f), *blue_handle);
       m_vertices_map[new_v] = info;
       return;
     }
     if (!blue_handle) {
-      CGAL_assertion(red_handle != NULL);
+      CGAL_assertion(red_handle != nullptr);
       // Obtain the blue face by looking for a subcurve above.
       const Subcurve* sc_above = sc->subcurve_above();
-      Face_handle_blue blue_f = (sc_above != NULL) ?
+      Face_handle_blue blue_f = (sc_above != nullptr) ?
         sc_above->blue_halfedge_handle()->face() : sc->blue_top_face();
       Handle_info info = std::make_pair(*red_handle, Cell_handle_blue(blue_f));
       m_vertices_map[new_v] = info;
@@ -1034,10 +1034,10 @@ _create_vertex(Event* event,
     // A blue vertex is located inside a red face. Obtain the red face
     // by looking for a subcurve above.
     const Subcurve* sc_above = sc->subcurve_above();
-    Face_handle_red red_f = (sc_above != NULL) ?
+    Face_handle_red red_f = (sc_above != nullptr) ?
       sc_above->red_halfedge_handle()->face() : sc->red_top_face();
 
-    CGAL_assertion(blue_handle != NULL);
+    CGAL_assertion(blue_handle != nullptr);
     const Vertex_handle_blue& blue_v =
       boost::get<Vertex_handle_blue>(*blue_handle);
     m_overlay_traits->create_vertex(red_f, blue_v, new_v);
@@ -1048,10 +1048,10 @@ _create_vertex(Event* event,
     // A red vertex is located inside a blue face. Obtain the blue face
     // by looking for a subcurve above.
     const Subcurve* sc_above = sc->subcurve_above();
-    Face_handle_blue blue_f = (sc_above != NULL) ?
+    Face_handle_blue blue_f = (sc_above != nullptr) ?
       sc_above->blue_halfedge_handle()->face() : sc->blue_top_face();
 
-    CGAL_assertion(red_handle != NULL);
+    CGAL_assertion(red_handle != nullptr);
     const Vertex_handle_red& red_v =
       boost::get<Vertex_handle_red>(*red_handle);
     m_overlay_traits->create_vertex(red_v, blue_f, new_v);
@@ -1088,7 +1088,7 @@ _create_edge(Subcurve* sc,
     // We have a red edge on a blue face.
     Halfedge_handle_red   red_he = sc->red_halfedge_handle();
     Subcurve* sc_above = sc->subcurve_above();
-    Face_handle_blue blue_f = (sc_above != NULL) ?
+    Face_handle_blue blue_f = (sc_above != nullptr) ?
       sc_above->blue_halfedge_handle()->face() : sc->blue_top_face();
     m_overlay_traits->create_edge(red_he, blue_f, new_he);
   }
@@ -1098,7 +1098,7 @@ _create_edge(Subcurve* sc,
     // We have a blue edge on a red face.
     Halfedge_handle_blue  blue_he = sc->blue_halfedge_handle();
     Subcurve* sc_above = sc->subcurve_above();
-    Face_handle_red red_f = (sc_above != NULL) ?
+    Face_handle_red red_f = (sc_above != nullptr) ?
       sc_above->red_halfedge_handle()->face() : sc->red_top_face();
     m_overlay_traits->create_edge(red_f, blue_he, new_he);
   }

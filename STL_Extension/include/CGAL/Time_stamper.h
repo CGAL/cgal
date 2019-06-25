@@ -76,22 +76,22 @@ struct Time_stamper
 
   static std::size_t time_stamp(const T* pt)
   {
-    if(pt == NULL){
+    if(pt == nullptr){
       return std::size_t(-1);
     }
     return pt->time_stamp();
   }
 
   static std::size_t hash_value(const T* p) {
-    if(NULL == p)
+    if(nullptr == p)
       return std::size_t(-1);
     else
       return p->time_stamp();
   }
 
   static bool less(const T* p_t1, const T* p_t2) {
-    if(p_t1 == NULL)      return (p_t2 != NULL);
-    else if(p_t2 == NULL) return false;
+    if(p_t1 == nullptr)      return (p_t2 != nullptr);
+    else if(p_t2 == nullptr) return false;
     else {
       CGAL_assertion((p_t1 == p_t2) == (time_stamp(p_t1) == time_stamp(p_t2)));
       return time_stamp(p_t1) < time_stamp(p_t2);

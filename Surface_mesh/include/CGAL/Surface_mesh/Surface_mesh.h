@@ -477,7 +477,7 @@ private: //------------------------------------------------------ iterator types
                                         std::random_access_iterator_tag
                                         > Facade;
     public:
-        Index_iterator() : hnd_(), mesh_(NULL) {}
+        Index_iterator() : hnd_(), mesh_(nullptr) {}
         Index_iterator(const Index_& h, const Surface_mesh* m)
           : hnd_(h), mesh_(m) {
           if (mesh_ && mesh_->has_garbage()){
@@ -489,7 +489,7 @@ private: //------------------------------------------------------ iterator types
         void increment()
         {
             ++hnd_;
-            CGAL_assertion(mesh_ != NULL);
+            CGAL_assertion(mesh_ != nullptr);
 
             if(mesh_->has_garbage())
               while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) ++hnd_;
@@ -498,14 +498,14 @@ private: //------------------------------------------------------ iterator types
         void decrement()
         {
             --hnd_;
-            CGAL_assertion(mesh_ != NULL);
+            CGAL_assertion(mesh_ != nullptr);
             if(mesh_->has_garbage())
                while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) --hnd_;
         }
 
         void advance(std::ptrdiff_t n)
         {
-            CGAL_assertion(mesh_ != NULL);
+            CGAL_assertion(mesh_ != nullptr);
             
             if (mesh_->has_garbage())
             {
@@ -1025,7 +1025,6 @@ public:
     /// adjusting anything.
     void remove_vertex(Vertex_index v)
     {
-        vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
         vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
         vconn_[v].halfedge_ = Halfedge_index(vertices_freelist_);
         vertices_freelist_ = (size_type)v;
@@ -1035,7 +1034,6 @@ public:
     /// adjusting anything.
     void remove_edge(Edge_index e)
     {
-        eremoved_ = add_property_map<Edge_index, bool>("e:removed", false).first;
         eremoved_[e] = true; ++removed_edges_; garbage_ = true;
         hconn_[Halfedge_index((size_type)e << 1)].next_halfedge_ = Halfedge_index(edges_freelist_ );
         edges_freelist_ = ((size_type)e << 1);
@@ -1046,7 +1044,6 @@ public:
 
     void remove_face(Face_index f)
     {
-        fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
         fremoved_[f] = true; ++removed_faces_; garbage_ = true;
         fconn_[f].halfedge_ = Halfedge_index(faces_freelist_);
         faces_freelist_ = (size_type)f;
@@ -2235,7 +2232,7 @@ private: //------------------------------------------------------- private data
 
     os << "end_header" << std::endl;  
 
-    BOOST_FOREACH(VIndex vi, sm.vertices())
+    for(VIndex vi : sm.vertices())
     {
       for (std::size_t i = 0; i < vprinters.size(); ++ i)
       {
@@ -2249,11 +2246,11 @@ private: //------------------------------------------------------- private data
 
     std::vector<VIndex> polygon;
     
-    BOOST_FOREACH(FIndex fi, sm.faces())
+    for(FIndex fi : sm.faces())
     {
       // Get list of vertex indices
       polygon.clear();
-      BOOST_FOREACH(HIndex hi, halfedges_around_face(halfedge(fi, sm), sm))
+      for(HIndex hi : halfedges_around_face(halfedge(fi, sm), sm))
         polygon.push_back (sm.target(hi));
 
       if (get_mode (os) == IO::ASCII)
@@ -2286,7 +2283,7 @@ private: //------------------------------------------------------- private data
 
     if (!eprinters.empty())
     {
-      BOOST_FOREACH(EIndex ei, sm.edges())
+      for(EIndex ei : sm.edges())
       {
         if (get_mode (os) == IO::ASCII)
           os << int(sm.vertex(ei,0)) << " " << int(sm.vertex(ei,1)) << " ";
@@ -2312,7 +2309,7 @@ private: //------------------------------------------------------- private data
     
     if (!hprinters.empty())
     {
-      BOOST_FOREACH(HIndex hi, sm.halfedges())
+      for(HIndex hi : sm.halfedges())
       {
         if (get_mode (os) == IO::ASCII)
           os << int(sm.source(hi)) << " " << int(sm.target(hi)) << " ";

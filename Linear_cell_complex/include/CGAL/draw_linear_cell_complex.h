@@ -170,7 +170,7 @@ public:
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
   SimpleLCCViewerQt(QWidget* parent,
-                    const LCC* alcc=NULL,
+                    const LCC* alcc=nullptr,
                     const char* title="Basic LCC Viewer",
                     bool anofaces=false,
                     const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC()) :
@@ -244,7 +244,7 @@ protected:
 
     Point p1 = lcc->point(dh);
     Dart_const_handle d2 = lcc->other_extremity(dh);
-    if (d2!=NULL)
+    if (d2!=nullptr)
     {
       if (m_drawing_functor.colored_edge(*lcc, dh))
       { add_segment(p1, lcc->point(d2), m_drawing_functor.edge_color(*lcc, dh)); }
@@ -266,7 +266,7 @@ protected:
   void compute_elements()
   {
     clear();
-    if (lcc==NULL) return;
+    if (lcc==nullptr) return;
     
     typename LCC::size_type markvolumes  = lcc->get_new_mark();
     typename LCC::size_type markfaces    = lcc->get_new_mark();

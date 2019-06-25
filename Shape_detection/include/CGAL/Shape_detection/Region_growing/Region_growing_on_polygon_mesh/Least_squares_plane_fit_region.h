@@ -392,7 +392,7 @@ namespace Polygon_mesh {
         m_sqrt(m_squared_distance_3(point, m_plane_of_best_fit));
         
         max_face_distance = 
-        CGAL::max(distance, max_face_distance);
+        (CGAL::max)(distance, max_face_distance);
       }
       CGAL_postcondition(max_face_distance != -FT(1));
 

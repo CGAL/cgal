@@ -62,15 +62,15 @@ public:
   public:
     /*! Constructor. */
     Vertex () :
-      _leftP(NULL),
-      _rightP(NULL)
+      _leftP(nullptr),
+      _rightP(nullptr)
     {}
 
     /*! Constructor with a point. */
     Vertex (const Point_2& p) :
       _p(p),
-      _leftP(NULL),
-      _rightP(NULL)
+      _leftP(nullptr),
+      _rightP(nullptr)
     {}
 
     /*! Get the point. */
@@ -175,8 +175,8 @@ public:
   public:
     /*! Constructor. */
     Edge () :
-      _leftP(NULL),
-      _rightP(NULL)
+      _leftP(nullptr),
+      _rightP(nullptr)
     {}
 
     /*! Check if the edge represents an empty interval. */
@@ -435,14 +435,14 @@ private:
     Vertex* v;
     Edge* e = _leftmostP;
 
-    while (e != NULL) {
+    while (e != nullptr) {
       // Get a pointer to the next vertex.
       v = e->right();
 
       // Free the edge and update it to be the next one after v.
       delete_edge (e);
 
-      if (v != NULL) {
+      if (v != nullptr) {
         e = v->right();
 
         // Free the current vertex.
@@ -450,12 +450,12 @@ private:
       }
       else
       {
-        e = NULL;
+        e = nullptr;
       }
     }
      
-    _leftmostP = NULL;
-    _rightmostP = NULL;
+    _leftmostP = nullptr;
+    _rightmostP = nullptr;
   }
 };
 

@@ -277,11 +277,11 @@ public:
   {
     // protects against inserting a zero length constraint
     if(va == vb){
-      return Constraint_id(NULL);
+      return Constraint_id(nullptr);
     }
     // protects against inserting twice the same constraint
     Constraint_id cid = hierarchy.insert_constraint_old_API(va, vb);
-    if (va != vb && (cid != Constraint_id(NULL)) )  insert_subconstraint(va,vb); 
+    if (va != vb && (cid != Constraint_id(nullptr)) )  insert_subconstraint(va,vb); 
 
     return cid;
   }
@@ -541,7 +541,7 @@ public:
     }
     int n = vertices.size();
     if(n == 1){
-      return NULL;
+      return nullptr;
     }
     Constraint_id ca = hierarchy.insert_constraint(vertices[0],vertices[1]);
     insert_subconstraint(vertices[0],vertices[1], std::back_inserter(fc)); 
@@ -586,7 +586,7 @@ private:
 
     std::size_t n = vertices.size();
     if(n == 1){
-      return NULL;
+      return nullptr;
     }
     CGAL_assertion(n >= 2);
     
@@ -668,11 +668,11 @@ public:
   {
     // protects against inserting a zero length constraint
     if(va == vb){
-    return Constraint_id(NULL);
+    return Constraint_id(nullptr);
     }
     // protects against inserting twice the same constraint
     Constraint_id cid = hierarchy.insert_constraint(va, vb);
-    if (va != vb && (cid != NULL) )  insert_subconstraint(va,vb,out); 
+    if (va != vb && (cid != nullptr) )  insert_subconstraint(va,vb,out); 
   
     for(Vertices_in_constraint_iterator vcit = vertices_in_constraint_begin(cid);
 	vcit != vertices_in_constraint_end(cid);

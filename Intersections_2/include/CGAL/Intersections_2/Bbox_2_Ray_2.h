@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,101 +19,54 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
-
-#ifndef CGAL_INTERSECTIONS_BBOX_2_RAY_2_H
-#define CGAL_INTERSECTIONS_BBOX_2_RAY_2_H
+#ifndef CGAL_INTERSECTIONS_2_BBOX_2_RAY_2_H
+#define CGAL_INTERSECTIONS_2_BBOX_2_RAY_2_H
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Ray_2.h>
-#include <CGAL/kernel_assertions.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Line_2.h>
+
+#include <CGAL/Intersections_2/Iso_rectangle_2_Ray_2.h>
 
 namespace CGAL {
-
-class Bbox_2_Ray_2_pair_impl;
-
-class CGAL_EXPORT Bbox_2_Ray_2_pair {
-public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
-    ~Bbox_2_Ray_2_pair() ;
-    Bbox_2_Ray_2_pair() ;
-    Bbox_2_Ray_2_pair(Bbox_2_Ray_2_pair const &o) ;
-    Bbox_2_Ray_2_pair(Bbox_2 const &box,
-                      double x, double y, double dx, double dy) ;
-    Bbox_2_Ray_2_pair& operator=(Bbox_2_Ray_2_pair const &o) ;
-    Intersection_results intersection_type() const;
-    bool intersection(double &x, double &y) const;
-    bool intersection(double &x1, double &y1, double &x2, double &y2) const;
-protected:
-    Bbox_2_Ray_2_pair_impl *pimpl;
-};
-
-CGAL_EXPORT bool do_intersect_ray_2(
-    const Bbox_2 &box, double x, double y, double dx, double dy);
-
-template <class Ray>
-bool do_intersect_ray_2(
-    const Bbox_2 &box,
-    const Ray &ray)
-{
-    double startx = to_double(ray->start().x());
-    double starty = to_double(ray->start().y());
-    double dx = to_double(ray->direction().to_vector().x());
-    double dy = to_double(ray->direction().to_vector().y());
-    return do_intersect_ray_2(box, startx, starty, dx, dy);
-}
-
-template <class Ray>
-inline bool do_intersect_ray_2(
-    const Ray &ray,
-    const Bbox_2 &box)
-{
-    return do_intersect_ray_2(box, ray);
-}
-
-
-
+namespace Intersections {
+namespace internal {
 
 template <class K>
-inline bool do_intersect(
-    const Ray_2<K> &line,
-    const Bbox_2 &box)
+bool do_intersect(const typename K::Ray_2& ray,
+                  const CGAL::Bbox_2& bbox,
+                  const K& k)
 {
-  typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
-  return do_intersect(rec, line);
+  typedef typename K::Iso_rectangle_2                                   Iso_rectangle_2;
+  return Intersections::internal::do_intersect(ray, Iso_rectangle_2(bbox), k);
 }
 
 template <class K>
-inline bool do_intersect(
-    const Bbox_2 &box,
-const Ray_2<K> &line)
+bool do_intersect(const CGAL::Bbox_2& bbox,
+                  const typename K::Ray_2& ray,
+                  const K& k)
 {
-  return do_intersect(line, box);
+  return Intersections::internal::do_intersect(ray, bbox, k);
+}
+
+} // namespace internal
+} // namespace Intersections
+
+template<typename K>
+bool do_intersect(const CGAL::Bbox_2& bbox, const Ray_2<K>& ray)
+{
+  return K().do_intersect_2_object()(bbox, ray);
 }
 
 template<typename K>
-typename Intersection_traits<K, typename K::Ray_2, Bbox_2>::result_type
-intersection(const CGAL::Bbox_2& box,
-             const Ray_2<K>& line) {
-  typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
-  return intersection(rec, line);
+bool do_intersect(const Ray_2<K>& ray, const CGAL::Bbox_2& bbox)
+{
+  return K().do_intersect_2_object()(ray, bbox);
 }
 
-template<typename K>
-typename Intersection_traits<K, typename K::Ray_2, Bbox_2>::result_type
-intersection(const Ray_2<K>& line,
-             const CGAL::Bbox_2& box) {
-  return intersection(box, line);
-}
-} //namespace CGAL
+} // namespace CGAL
 
-#ifdef CGAL_HEADER_ONLY
-#include <CGAL/Intersections_2/internal/Ray_2_Bbox_2_intersection_impl.h>
-#endif // CGAL_HEADER_ONLY
-
-#endif
+#endif // CGAL_INTERSECTIONS_2_BBOX_2_RAY_2_H

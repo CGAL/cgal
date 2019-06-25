@@ -202,8 +202,8 @@ namespace CGAL {
     */ 
     Efficient_RANSAC(Traits t = Traits())
       : m_traits(t)
-      , m_direct_octrees(NULL)
-      , m_global_octree(NULL)
+      , m_direct_octrees(nullptr)
+      , m_global_octree(nullptr)
       , m_num_subsets(0)
       , m_num_available_points(0)
       , m_num_total_points(0)
@@ -380,7 +380,7 @@ namespace CGAL {
 
       if (m_global_octree) {
         delete m_global_octree;
-        m_global_octree = NULL;
+        m_global_octree = nullptr;
       }
 
       if (m_direct_octrees) {
@@ -388,7 +388,7 @@ namespace CGAL {
           delete m_direct_octrees[i];
         delete [] m_direct_octrees;
 
-        m_direct_octrees = NULL;
+        m_direct_octrees = nullptr;
       }
 
       m_num_subsets = 0;
@@ -650,13 +650,13 @@ namespace CGAL {
             for (std::size_t i = 0;i < candidates.size() - 1;i++) {
               if (best_candidate->is_same(candidates[i])) {
                 delete candidates[i];
-                candidates[i] = NULL;
+                candidates[i] = nullptr;
               }
             }
 
-          candidates.back() = NULL;
+          candidates.back() = nullptr;
           delete best_candidate;
-          best_candidate = NULL;
+          best_candidate = nullptr;
 
           if (callback && !callback(num_invalid / double(m_num_total_points)))
             return false;
@@ -678,7 +678,7 @@ namespace CGAL {
             if (occupied >= candidates.size())
               break;
             candidates[empty] = candidates[occupied];
-            candidates[occupied] = NULL;
+            candidates[occupied] = nullptr;
             empty++;
             occupied++;
           }
@@ -696,7 +696,7 @@ namespace CGAL {
                 <= m_options.probability) {
 
             // Remove candidate from list
-            candidates.back() = NULL;
+            candidates.back() = nullptr;
 
             //1. add best candidate to final result.
             m_extracted_shapes->push_back(
@@ -759,7 +759,7 @@ namespace CGAL {
   
                 if (candidates[i]->max_bound() < m_options.min_points) {
                   delete candidates[i];
-                  candidates[i] = NULL;
+                  candidates[i] = nullptr;
                 }
                 else {
                   best_expected = (candidates[i]->expected_value() > best_expected) ?
@@ -777,7 +777,7 @@ namespace CGAL {
               while (!candidates[end] && start < end) end--;
               if (!candidates[start] && candidates[end] && start < end) {
                 candidates[start] = candidates[end];
-                candidates[end] = NULL;
+                candidates[end] = nullptr;
                 start++;
                 end--;
               }

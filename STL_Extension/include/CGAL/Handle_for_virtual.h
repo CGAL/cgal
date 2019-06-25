@@ -48,7 +48,7 @@ class Ref_counted_virtual
     { return typeid(void); }
 
     virtual const void * object_ptr() const
-    { return NULL; }
+    { return nullptr; }
 
     virtual ~Ref_counted_virtual() {}
 
@@ -77,7 +77,7 @@ class Handle_for_virtual
 
     Handle_for_virtual()
     {
-      ptr = NULL;
+      ptr = nullptr;
     }
 
     Handle_for_virtual( const Handle_for_virtual& h)

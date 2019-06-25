@@ -115,11 +115,11 @@ class SHalfloop_base {
       verr << "begin CGAL::SNC_items<...>::SHalfloop_base::is_valid( verb=true, "
 	"level = " << level << "):" << std::endl;
 
-      bool valid = (twin_  != SHalfloop_handle() && twin_  != NULL);
+      bool valid = (twin_  != SHalfloop_handle() && twin_  != nullptr);
       valid = valid && (incident_sface_ != SFace_handle() && 
-			incident_sface_ != NULL);
+			incident_sface_ != nullptr);
       valid = valid && (facet_ != Halffacet_handle() &&
-			facet_ != NULL);
+			facet_ != nullptr);
       valid = valid && (circle_.d() == 0);
       valid = valid && (circle_.a() != 0 || circle_.b() != 0 || circle_.c() !=0);
       

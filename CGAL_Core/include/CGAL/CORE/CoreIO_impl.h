@@ -55,7 +55,7 @@ void core_io_error_handler(const char *f, const char *m) {
 
 CGAL_INLINE_FUNCTION
 void core_io_memory_handler(char *t, const char *f, const char *m) {
-  if (t == NULL) {
+  if (t == nullptr) {
     std::cout << "\n memory_handler";
     std::cout << "::" << f << "::" << m;
     std::cout << "memory exhausted\n";
@@ -70,7 +70,7 @@ void allocate (char * &s, int old_size, int new_size) {
   if (old_size > new_size)
     old_size = new_size;
 
-  if (s == NULL)
+  if (s == nullptr)
     old_size = 0;
 
   char *t = new char[new_size];

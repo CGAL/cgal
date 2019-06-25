@@ -8,6 +8,7 @@
 # CGAL_VERSION_NR=release string used to update version.h. Must be something like 1041200033 , or 10412009<beta number>0
 # TESTSUITE=indicate if the release is meant to be used by the testsuite, default if OFF
 # GPL_PACKAGE_LIST=path to a file containing the list of GPL packages to include in the release. If not provided all of them are.
+# GENERATE_TARBALLS=[ON/OFF] indicates if release tarballs should be created as DESTINATION
 
 cmake_minimum_required(VERSION 3.1)
 
@@ -292,3 +293,43 @@ if(PUBLIC AND NOT TESTSUITE) # we are not creating an internal release.
     file(REMOVE ${release_dir}/${to_delete})
   endforeach()
 endif()
+
+if (GENERATE_TARBALLS)
+  # create library+examples+demos+tests
+  execute_process(
+  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}
+  RESULT_VARIABLE RESULT_VAR
+  OUTPUT_VARIABLE OUT_VAR
+  )
+
+  #create examples+demos
+  execute_process(
+  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-examples.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}/examples CGAL-${CGAL_VERSION}/demo
+  RESULT_VARIABLE RESULT_VAR
+  OUTPUT_VARIABLE OUT_VAR
+  )
+
+  if(NOT PUBLIC) # we are not creating an internal release.
+    # Taken from create_new_release.
+    file(REMOVE_RECURSE ${release_dir}/test)
+    file(REMOVE_RECURSE ${release_dir}/package_info)
+    file(REMOVE_RECURSE ${release_dir}/developer_scripts)
+    file(REMOVE_RECURSE ${release_dir}/doc)
+    file(REMOVE_RECURSE ${release_dir}/include/CGAL/Test)
+    file(REMOVE_RECURSE ${release_dir}/include/CGAL/Testsuite/)
+  endif()
+  file(REMOVE_RECURSE ${release_dir}/demo)
+  file(REMOVE_RECURSE ${release_dir}/examples)
+  file(REMOVE_RECURSE ${release_dir}/scripts)
+  file(REMOVE_RECURSE ${release_dir}/doc_html)
+
+  # create library only
+  execute_process(
+  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-library.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}
+  RESULT_VARIABLE RESULT_VAR
+  OUTPUT_VARIABLE OUT_VAR
+  )
+
+  #remove directory
+  file(REMOVE_RECURSE ${release_dir})
+endif(GENERATE_TARBALLS)

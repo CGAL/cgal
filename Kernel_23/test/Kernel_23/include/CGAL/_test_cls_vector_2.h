@@ -24,6 +24,8 @@
 #ifndef CGAL__TEST_CLS_VECTOR_2_H
 #define CGAL__TEST_CLS_VECTOR_2_H
 
+#include <CGAL/use.h>
+
 template <class R>
 bool
 _test_cls_vector_2(const R& )
@@ -37,7 +39,7 @@ _test_cls_vector_2(const R& )
  typedef typename R::Vector_2::Cartesian_const_iterator CCI;
 
  CGAL::Vector_2<R>  v1;
- CGAL::Vector_2<R>  v2(iv);
+ CGAL::Vector_2<R>  v2(iv); CGAL_USE(v2);
  CGAL::Vector_2<R>  v0(CGAL::NULL_VECTOR);
 
  RT  n1( 12 );

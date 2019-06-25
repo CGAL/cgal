@@ -233,7 +233,7 @@ namespace CGAL {
         
     public:
       Octree(Sd_traits const& traits) 
-        : m_traits(traits), m_bucket_size(20), m_set_max_level(10), m_root(NULL) {}
+        : m_traits(traits), m_bucket_size(20), m_set_max_level(10), m_root(nullptr) {}
       Octree(Sd_traits const& traits,
              const Input_iterator &first,
              const Input_iterator &beyond,
@@ -244,7 +244,7 @@ namespace CGAL {
              std::size_t maxLevel = 10)
              : PointAccessor(first, beyond, offset),
                m_traits(traits),
-               m_root(NULL),
+               m_root(nullptr),
                m_bucket_size(bucketSize),
                m_set_max_level(maxLevel),
                m_point_pmap (point_pmap),

@@ -44,8 +44,9 @@ namespace qglviewer{
  focusDistance(). */
 CGAL_INLINE_FUNCTION
 Camera::Camera(QObject *parent)
-    : frame_(NULL), fieldOfView_(CGAL_PI / 4.0), modelViewMatrixIsUpToDate_(false),
+    : frame_(nullptr), fieldOfView_(CGAL_PI / 4.0), modelViewMatrixIsUpToDate_(false),
       projectionMatrixIsUpToDate_(false) {
+  m_zMin = 0;
   setParent(parent);
   // #CONNECTION# Camera copy constructor
   interpolationKfi_ = new KeyFrameInterpolator;
@@ -101,7 +102,7 @@ Camera::~Camera() {
 
 /*! Copy constructor. Performs a deep copy using operator=(). */
 CGAL_INLINE_FUNCTION
-Camera::Camera(const Camera &camera) : QObject(), frame_(NULL) {
+Camera::Camera(const Camera &camera) : QObject(), frame_(nullptr) {
   // #CONNECTION# Camera constructor
   interpolationKfi_ = new KeyFrameInterpolator;
   // Requires the interpolationKfi_
@@ -144,7 +145,7 @@ Camera &Camera::operator=(const Camera &camera) {
   projectionMatrixIsUpToDate_ = false;
 
   // frame_ and interpolationKfi_ pointers are not shared.
-  frame_->setReferenceFrame(NULL);
+  frame_->setReferenceFrame(nullptr);
   frame_->setPosition(camera.position());
   frame_->setOrientation(camera.orientation());
 
@@ -228,7 +229,7 @@ qreal Camera::zNear() const {
       z = zMin;
       break;
     case Camera::ORTHOGRAPHIC:
-      z = 0.0;
+      z = m_zMin;
       break;
     }
   return z;
@@ -291,7 +292,7 @@ either. Use addKeyFrameToPath() and playPath() instead.
 This method is actually mainly useful if you derive the ManipulatedCameraFrame
 class and want to use an instance of your new class to move the Camera.
 
-A \c NULL \p mcf pointer will silently be ignored. The calling method is
+A \c nullptr \p mcf pointer will silently be ignored. The calling method is
 responsible for deleting the previous frame() pointer if needed in order to
 prevent memory leaks. */
 CGAL_INLINE_FUNCTION
@@ -1763,7 +1764,7 @@ int unProject(GLdouble winx, GLdouble winy, GLdouble winz, GLdouble *modelview, 
 
 /*! Returns the screen projected coordinates of a point \p src defined in the \p frame coordinate
  system.
- When \p frame in \c NULL (default), \p src is expressed in the world coordinate system.
+ When \p frame in \c nullptr (default), \p src is expressed in the world coordinate system.
  The x and y coordinates of the returned Vec are expressed in pixel, (0,0) being the \e upper left
  corner of the window. The z coordinate ranges between 0.0 (near plane) and 1.0 (excluded, far
  plane). See the \c gluProject man page for details.
@@ -1847,7 +1848,7 @@ Vec Camera::projectedCoordinatesOf(const Vec& src, const Frame* frame) const
  /endcode
  Where z is the distance from the point you project to the camera, along the viewDirection().
  See the \c gluUnProject man page for details.
- The result is expressed in the \p frame coordinate system. When \p frame is \c NULL (default), the
+ The result is expressed in the \p frame coordinate system. When \p frame is \c nullptr (default), the
  result is expressed in the world coordinates system. The possible \p frame Frame::referenceFrame()
  are taken into account.
  projectedCoordinatesOf() performs the inverse transformation.
@@ -1899,14 +1900,14 @@ void Camera::getUnprojectedCoordinatesOf(const qreal src[3], qreal res[3],
 
 /*! Returns the KeyFrameInterpolator that defines the Camera path number \p i.
 
-If path \p i is not defined for this index, the method returns a \c NULL
+If path \p i is not defined for this index, the method returns a \c nullptr
 pointer. */
 CGAL_INLINE_FUNCTION
 KeyFrameInterpolator *Camera::keyFrameInterpolator(unsigned int i) const {
   if (kfi_.contains(i))
     return kfi_[i];
   else
-    return NULL;
+    return nullptr;
 }
 
 /*! Sets the KeyFrameInterpolator that defines the Camera path of index \p i.

@@ -66,13 +66,13 @@ struct Cstr_shared_data<Graph, Base, ObjectPropertyMap, PointPropertyMap, ::CGAL
   typedef void* Shared_data;
   static Shared_data construct_shared_data(Graph&)
   {
-    return NULL;
+    return nullptr;
   }
 
   template <class VertexPmap>
   static Shared_data construct_shared_data(Graph&, VertexPmap)
   {
-    return NULL;
+    return nullptr;
   }
 };
 

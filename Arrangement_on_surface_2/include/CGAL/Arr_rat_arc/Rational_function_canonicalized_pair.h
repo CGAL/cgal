@@ -59,7 +59,7 @@ public:
                                            Algebraic_kernel_d_1* ak_ptr)
     :_f(f),_g(g),_ak_ptr(ak_ptr)
   {
-    CGAL_precondition(_ak_ptr != NULL);
+    CGAL_precondition(_ak_ptr != nullptr);
     //canonicalized representation
     if ( !(f.id() < g.id()) ) 
       std::swap(_f,_g);

@@ -132,13 +132,13 @@ public:
   /*! Default constructor. */
   Arr_bounded_planar_topology_traits_2() :
     Base(),
-    unb_face(NULL)
+    unb_face(nullptr)
   {}
 
   /*! Constructor from a geometry-traits object. */
   Arr_bounded_planar_topology_traits_2(const Gt2* traits) :
     Base(traits),
-    unb_face(NULL)
+    unb_face(nullptr)
   {}
 
   /*! Assign the contents of another topology-traits class. */
@@ -347,7 +347,7 @@ public:
                                 Arr_parameter_space /* ps_y */) const
   {
     CGAL_error();
-    return NULL;
+    return nullptr;
   }
 
   /*! Locate a DCEL feature that contains the given curve end.
@@ -379,7 +379,7 @@ public:
   {
     // This function should never be called:
     CGAL_error();
-    return NULL;
+    return nullptr;
   }
 
   /*! Determine whether the given face is unbounded.
@@ -406,7 +406,7 @@ public:
   {
     // This function should never be called:
     CGAL_error();
-    return NULL;
+    return nullptr;
   }
 
     //! reference_face (const version).

@@ -245,10 +245,10 @@ public:
   mutable ET *et;
 
   Lazy_rep ()
-    : at(), et(NULL){}
+    : at(), et(nullptr){}
 
   Lazy_rep (const AT& a)
-      : at(a), et(NULL){}
+      : at(a), et(nullptr){}
 
   Lazy_rep (const AT& a, const ET& e)
       : at(a), et(new ET(e)) {}
@@ -265,14 +265,14 @@ public:
 
   const ET & exact() const
   {
-    if (et==NULL)
+    if (et==nullptr)
       update_exact();
     return *et;
   }
 
   ET & exact()
   {
-    if (et==NULL)
+    if (et==nullptr)
       update_exact();
     return *et;
   }
@@ -305,7 +305,7 @@ public:
   virtual void print_dag(std::ostream& os, int level) const {}
 #endif
 
-  bool is_lazy() const { return et == NULL; }
+  bool is_lazy() const { return et == nullptr; }
   virtual void update_exact() const = 0;
   virtual ~Lazy_rep() { delete et; }
 };
@@ -541,7 +541,7 @@ public:
     this->et = new ET();
     //this->et->reserve(this->at.size());
     ec()(CGAL::exact(l1_), std::back_inserter(*(this->et)));
-    if(this->et==NULL)
+    if(this->et==nullptr)
     E2A()(*(this->et));
     this->at = E2A()(*(this->et));
     // Prune lazy tree

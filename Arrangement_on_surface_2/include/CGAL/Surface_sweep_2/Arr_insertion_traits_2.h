@@ -127,7 +127,7 @@ public:
       // X_monotone_curve_2
       for(; oi != oi_end; ++oi) {
         base_overlap_cv = object_cast<Base_x_monotone_curve_2>(&(*oi));
-        if (base_overlap_cv != NULL) {
+        if (base_overlap_cv != nullptr) {
           // Add halfedge handles to the resulting curve.
           Halfedge_handle he;
 
@@ -144,7 +144,7 @@ public:
           intersect_p =
             object_cast<std::pair<Base_point_2, unsigned int> >(&(*oi));
 
-          CGAL_assertion (intersect_p != NULL);
+          CGAL_assertion (intersect_p != nullptr);
 
           *oi = make_object(std::make_pair(Point_2(intersect_p->first),
                                            intersect_p->second));

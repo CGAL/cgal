@@ -166,18 +166,18 @@ private:
     
     Scale (const PointRange& input, PointMap point_map,
            const Iso_cuboid_3& bbox, float voxel_size,
-           Planimetric_grid* lower_grid = NULL)
+           Planimetric_grid* lower_grid = nullptr)
       : voxel_size (voxel_size)
     {
       CGAL::Real_timer t;
       t.start();
-      if (lower_grid == NULL)
+      if (lower_grid == nullptr)
         neighborhood = new Neighborhood (input, point_map);
       else
         neighborhood = new Neighborhood (input, point_map, voxel_size);
       t.stop();
       
-      if (lower_grid == NULL)
+      if (lower_grid == nullptr)
         CGAL_CLASSIFICATION_CERR << "Neighborhood computed in " << t.time() << " second(s)" << std::endl;
       else
         CGAL_CLASSIFICATION_CERR << "Neighborhood with voxel size " << voxel_size
@@ -198,7 +198,7 @@ private:
       t.reset();
       t.start();
 
-      if (lower_grid == NULL)
+      if (lower_grid == nullptr)
         grid = new Planimetric_grid (input, point_map, bbox, this->voxel_size);
       else
         grid = new Planimetric_grid(lower_grid);
@@ -208,9 +208,9 @@ private:
     }
     ~Scale()
     {
-      if (neighborhood != NULL)
+      if (neighborhood != nullptr)
         delete neighborhood;
-      if (grid != NULL)
+      if (grid != nullptr)
         delete grid;
       delete eigen;
     }
@@ -218,11 +218,11 @@ private:
     void reduce_memory_footprint(bool delete_neighborhood)
     {
       delete grid;
-      grid = NULL;
+      grid = nullptr;
       if (delete_neighborhood)
       {
         delete neighborhood;
-        neighborhood = NULL;
+        neighborhood = nullptr;
       }
     }
 

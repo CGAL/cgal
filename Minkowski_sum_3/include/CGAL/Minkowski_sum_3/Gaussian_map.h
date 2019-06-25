@@ -1022,7 +1022,7 @@ class Gaussian_map :
 	  CGAL_NEF_TRACEN("simplify");
     
 	  typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-	  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(NULL);
+	  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
 	  CGAL::Union_find< SFace_handle> UF;
     
 	  SFace_iterator f;

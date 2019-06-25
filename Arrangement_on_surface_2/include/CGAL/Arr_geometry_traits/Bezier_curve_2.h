@@ -117,10 +117,10 @@ public:
   /*! Default constructor. */
   _Bezier_curve_2_rep () :
     _no_self_inter (true),
-    p_polyX(NULL),
-    p_normX(NULL),
-    p_polyY(NULL),
-    p_normY(NULL)
+    p_polyX(nullptr),
+    p_normX(nullptr),
+    p_polyY(nullptr),
+    p_normY(nullptr)
   {}
 
   /*! Copy constructor (isn't really used). */
@@ -128,18 +128,18 @@ public:
     _ctrl_pts(other._ctrl_pts),
     _bbox(other._bbox),
     _no_self_inter(other._no_self_inter),
-    p_polyX(NULL),
-    p_normX(NULL),
-    p_polyY(NULL),
-    p_normY(NULL)
+    p_polyX(nullptr),
+    p_normX(nullptr),
+    p_polyY(nullptr),
+    p_normY(nullptr)
   {
-    if (other.p_polyX != NULL)
+    if (other.p_polyX != nullptr)
       p_polyX = new Polynomial(*(other.p_polyX));
-    if (other.p_polyY != NULL)
+    if (other.p_polyY != nullptr)
       p_polyY = new Polynomial(*(other.p_polyY));
-    if (other.p_normX != NULL)
+    if (other.p_normX != nullptr)
       p_normX = new Integer(*(other.p_normX));
-    if (other.p_normY != NULL)
+    if (other.p_normY != nullptr)
       p_normY = new Integer(*(other.p_normY));
   }
 
@@ -152,10 +152,10 @@ public:
    */
   template <class InputIterator>
   _Bezier_curve_2_rep (InputIterator pts_begin, InputIterator pts_end) :
-    p_polyX(NULL),
-    p_normX(NULL),
-    p_polyY(NULL),
-    p_normY(NULL)
+    p_polyX(nullptr),
+    p_normX(nullptr),
+    p_polyY(nullptr),
+    p_normY(nullptr)
   {
     // Copy the control points and compute their bounding box.
     const int   pts_size = static_cast<int>(std::distance (pts_begin, pts_end));
@@ -218,13 +218,13 @@ public:
   /*! Destructor. */
   ~_Bezier_curve_2_rep ()
   {
-    if (p_polyX != NULL)
+    if (p_polyX != nullptr)
       delete p_polyX;
-    if (p_normX != NULL)
+    if (p_normX != nullptr)
       delete p_normX;
-    if (p_polyY != NULL)
+    if (p_polyY != nullptr)
       delete p_polyY;
-    if (p_normY != NULL)
+    if (p_normY != nullptr)
       delete p_normY;
   }
 
@@ -234,14 +234,14 @@ public:
   /*! Check if the polynomials are already constructed. */
   bool has_polynomials () const
   {
-    return (p_polyX != NULL && p_normX != NULL &&
-            p_polyY != NULL && p_normY != NULL);
+    return (p_polyX != nullptr && p_normX != nullptr &&
+            p_polyY != nullptr && p_normY != nullptr);
   }
 
   /*! Get the polynomial X(t). */
   const Polynomial& x_polynomial () const
   {
-    if (p_polyX == NULL)
+    if (p_polyX == nullptr)
       _construct_polynomials ();
 
     return (*p_polyX);
@@ -250,7 +250,7 @@ public:
   /*! Get the normalizing factor for X(t). */
   const Integer& x_norm () const
   {
-    if (p_normX == NULL)
+    if (p_normX == nullptr)
       _construct_polynomials ();
 
     return (*p_normX);
@@ -259,7 +259,7 @@ public:
   /*! Get the polynomial Y(t). */
   const Polynomial& y_polynomial () const
   {
-    if (p_polyY == NULL)
+    if (p_polyY == nullptr)
       _construct_polynomials ();
 
     return (*p_polyY);
@@ -268,7 +268,7 @@ public:
   /*! Get the normalizing factor for Y(t). */
   const Integer& y_norm () const
   {
-    if (p_normY == NULL)
+    if (p_normY == nullptr)
       _construct_polynomials ();
 
     return (*p_normY);

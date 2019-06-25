@@ -129,11 +129,11 @@ namespace CGAL {
       
       intersect_3<SK>(circle,plane,std::back_inserter(inters));      
       CGAL_kernel_precondition(inters.size()==2);
-      const std::pair<typename SK::Circular_arc_point_3,unsigned>* pt[2]={NULL,NULL};
+      const std::pair<typename SK::Circular_arc_point_3,unsigned>* pt[2]={nullptr,nullptr};
       pt[0]=CGAL::Intersections::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[0]);
       pt[1]=CGAL::Intersections::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[1]);
-      CGAL_kernel_precondition(pt[0]!=NULL);
-      CGAL_kernel_precondition(pt[1]!=NULL);
+      CGAL_kernel_precondition(pt[0]!=nullptr);
+      CGAL_kernel_precondition(pt[1]!=nullptr);
       
       if ( compare_theta_of_pts<SK>(pt[0]->first,pt[1]->first,sphere) == SMALLER){
         *out_it++=pt[0]->first;

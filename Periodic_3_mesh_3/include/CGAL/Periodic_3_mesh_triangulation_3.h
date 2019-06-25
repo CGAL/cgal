@@ -616,17 +616,17 @@ public:
 
   Cell_handle locate(const Weighted_point& p,
                      Cell_handle start = Cell_handle(),
-                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = nullptr) const
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     return Base::locate(canonicalize_point(p), start);
   }
 
   Cell_handle locate(const Weighted_point& p,
                      Vertex_handle hint,
-                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = nullptr) const
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     // Compared to the non-periodic version in T3, the infinite cell cannot
     // be used as default hint, so `Cell_handle()` is used instead.
     return Base::locate(canonicalize_point(p),
@@ -636,18 +636,18 @@ public:
   Cell_handle locate(const Weighted_point& p,
                      Locate_type& l, int& i, int& j,
                      Cell_handle start = Cell_handle(),
-                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = nullptr) const
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     return Base::locate(canonicalize_point(p), l, i, j, start);
   }
 
   Cell_handle locate(const Weighted_point& p,
                      Locate_type& l, int& i, int& j,
                      Vertex_handle hint,
-                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = nullptr) const
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     return Base::locate(canonicalize_point(p), l, i, j,
                         hint == Vertex_handle() ? Cell_handle() : hint->cell());
   }
@@ -678,11 +678,11 @@ public:
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
                  OutputIteratorInternalFacets ifit,
-                 bool* CGAL_assertion_code(could_lock_zone) = NULL,
-                 const Facet* /* this_facet_must_be_in_the_cz */ = NULL,
-                 bool* /* the_facet_is_in_its_cz */ = NULL) const
+                 bool* CGAL_assertion_code(could_lock_zone) = nullptr,
+                 const Facet* /* this_facet_must_be_in_the_cz */ = nullptr,
+                 bool* /* the_facet_is_in_its_cz */ = nullptr) const
   {
-    CGAL_triangulation_precondition(could_lock_zone == NULL);
+    CGAL_triangulation_precondition(could_lock_zone == nullptr);
     CGAL_triangulation_precondition(number_of_vertices() != 0);
 
     clear_v_offsets();
@@ -729,9 +729,9 @@ public:
   find_conflicts(const Weighted_point &p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
-                 bool* could_lock_zone = NULL) const
+                 bool* could_lock_zone = nullptr) const
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
 
     Triple<OutputIteratorBoundaryFacets,
            OutputIteratorCells,
@@ -771,17 +771,17 @@ public:
 
   Vertex_handle insert(const Weighted_point& p,
                        Cell_handle start = Cell_handle(),
-                       bool* CGAL_assertion_code(could_lock_zone) = NULL)
+                       bool* CGAL_assertion_code(could_lock_zone) = nullptr)
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     return Base::insert(canonicalize_point(p), start);
   }
 
   Vertex_handle insert(const Weighted_point& p,
                        Vertex_handle hint,
-                       bool* CGAL_assertion_code(could_lock_zone) = NULL)
+                       bool* CGAL_assertion_code(could_lock_zone) = nullptr)
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     // compared to the non-periodic version in T3, the infinite cell cannot
     // be used; `Cell_handle()` is used instead
     return Base::insert(canonicalize_point(p),
@@ -790,18 +790,18 @@ public:
 
   Vertex_handle insert(const Weighted_point& p,
                        Locate_type lt, Cell_handle loc, int li, int lj,
-                       bool* CGAL_assertion_code(could_lock_zone) = NULL)
+                       bool* CGAL_assertion_code(could_lock_zone) = nullptr)
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     return Base::insert(canonicalize_point(p), lt, loc, li, lj);
   }
   /// @}
 
   /// Remove functions
   bool remove(Vertex_handle v,
-              bool* CGAL_assertion_code(could_lock_zone) = NULL)
+              bool* CGAL_assertion_code(could_lock_zone) = nullptr)
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     bool b = Base::remove_if_no_cover_change(v);
     CGAL_postcondition(this->is_1_cover()); // do not ever allow cover change
     return b;
