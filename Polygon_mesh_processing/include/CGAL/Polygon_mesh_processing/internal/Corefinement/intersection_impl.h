@@ -501,6 +501,7 @@ class Intersection_of_triangle_meshes
                                         halfedge_descriptor f_2,
                                         const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
+                                        const Non_manifold_feature_map<TriangleMesh>& nm_features_map_1,
                                         Node_id node_id,
                                         bool is_new_node)
   {
@@ -511,19 +512,31 @@ class Intersection_of_triangle_meshes
                                          ? stm_edge_to_ltm_faces
                                          : ltm_edge_to_stm_faces;
 
-    for(halfedge_descriptor h_1 :
-                  halfedges_around_target(v_1,tm1))
-    {
-      add_intersection_point_to_face_and_all_edge_incident_faces(face(f_2,tm2),h_1,tm2,tm1,node_id);
-      typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(h_1,tm1));
-      if (it_ets!=tm1_edge_to_tm2_faces.end()) it_ets->second.erase(face(f_2,tm2));
-    }
+    std::vector<vertex_descriptor> tmp_vertices_1(1, target(v_1, tm1));
+
+    std::size_t vid1 = nm_features_map_1.non_manifold_vertices.empty()
+      ? std::size_t(-1)
+      : get(nm_features_map_1.v_nm_id, target(v_1, tm1));
+
+    const std::vector<vertex_descriptor>& vertices_1 = vid1==std::size_t(-1)
+                                                     ? tmp_vertices_1
+                                                     : nm_features_map_1.non_manifold_vertices[vid1];
+    for(vertex_descriptor v1 : vertices_1)
+      for(halfedge_descriptor h_1 :
+                    halfedges_around_target(v1,tm1))
+      {
+        add_intersection_point_to_face_and_all_edge_incident_faces(face(f_2,tm2),h_1,tm2,tm1,node_id);
+        typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(h_1,tm1));
+        if (it_ets!=tm1_edge_to_tm2_faces.end()) it_ets->second.erase(face(f_2,tm2));
+      }
   }
 
   void handle_coplanar_case_VERTEX_EDGE(halfedge_descriptor v_1,
                                         halfedge_descriptor h_2,
                                         const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
+                                        const Non_manifold_feature_map<TriangleMesh>& nm_features_map_1,
+                                        const Non_manifold_feature_map<TriangleMesh>& nm_features_map_2,
                                         Node_id node_id,
                                         bool is_new_node)
   {
@@ -534,19 +547,43 @@ class Intersection_of_triangle_meshes
                                          ? stm_edge_to_ltm_faces
                                          : ltm_edge_to_stm_faces;
 
-    for(halfedge_descriptor h_1 :
-                  halfedges_around_target(v_1,tm1))
-    {
-      typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(h_1,tm1));
-      Face_set* fset = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
-      cip_handle_case_edge(node_id,fset,h_1,h_2,tm1,tm2);
-    }
+    std::vector<vertex_descriptor> tmp_vertices_1(1, target(v_1, tm1));
+
+    std::size_t vid1 = nm_features_map_1.non_manifold_vertices.empty()
+                     ? std::size_t(-1)
+                     : get(nm_features_map_1.v_nm_id, target(v_1, tm1));
+
+    const std::vector<vertex_descriptor>& vertices_1 = vid1==std::size_t(-1)
+                                                      ? tmp_vertices_1
+                                                      : nm_features_map_1.non_manifold_vertices[vid1];
+
+    std::vector<edge_descriptor> tmp_edges_2(1, edge(h_2, tm2));
+
+    std::size_t eid2 = nm_features_map_2.non_manifold_edges.empty()
+                     ? std::size_t(-1)
+                     : get(nm_features_map_2.e_nm_id, edge(h_2, tm2));
+
+    const std::vector<edge_descriptor>& edges_2 = eid2==std::size_t(-1)
+                                                ? tmp_edges_2
+                                                : nm_features_map_2.non_manifold_edges[eid2];
+
+    for (vertex_descriptor v1 : vertices_1)
+      for(halfedge_descriptor h_1 :
+                    halfedges_around_target(v1,tm1))
+      {
+        typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(h_1,tm1));
+        Face_set* fset = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
+        for (edge_descriptor e2 : edges_2)
+          cip_handle_case_edge(node_id,fset,h_1,halfedge(e2, tm2),tm1,tm2);
+      }
   }
 
   void handle_coplanar_case_VERTEX_VERTEX(halfedge_descriptor v_1,
                                           halfedge_descriptor v_2,
                                           const TriangleMesh& tm1,
                                           const TriangleMesh& tm2,
+                                          const Non_manifold_feature_map<TriangleMesh>& nm_features_map_1,
+                                          const Non_manifold_feature_map<TriangleMesh>& nm_features_map_2,
                                           Node_id node_id,
                                           bool is_new_node)
   {
@@ -557,13 +594,33 @@ class Intersection_of_triangle_meshes
                                          ? stm_edge_to_ltm_faces
                                          : ltm_edge_to_stm_faces;
 
-    for(halfedge_descriptor h_1 :
-                  halfedges_around_target(v_1,tm1))
-    {
-      typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(h_1,tm1));
-      Face_set* fset = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
-      cip_handle_case_vertex(node_id,fset,h_1,v_2,tm1,tm2);
-    }
+    std::vector<vertex_descriptor> tmp_vertices_1(1, target(v_1, tm1)),
+                                   tmp_vertices_2(1, target(v_2, tm2));
+
+    std::size_t vid1 = nm_features_map_1.non_manifold_vertices.empty()
+                     ? std::size_t(-1)
+                     : get(nm_features_map_1.v_nm_id, target(v_1, tm1));
+
+    std::size_t vid2 = nm_features_map_2.non_manifold_vertices.empty()
+                     ? std::size_t(-1)
+                     : get(nm_features_map_2.v_nm_id, target(v_2, tm2));
+
+    const std::vector<vertex_descriptor>& vertices_1 = vid1==std::size_t(-1)
+                                                     ? tmp_vertices_1
+                                                     : nm_features_map_1.non_manifold_vertices[vid1];
+    const std::vector<vertex_descriptor>& vertices_2 = vid2==std::size_t(-1)
+                                                     ? tmp_vertices_2
+                                                     : nm_features_map_2.non_manifold_vertices[vid2];
+
+    for (vertex_descriptor v1 : vertices_1)
+      for(halfedge_descriptor h_1 :
+                    halfedges_around_target(v1,tm1))
+      {
+        typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(h_1,tm1));
+        Face_set* fset = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
+        for (vertex_descriptor v2 : vertices_2)
+          cip_handle_case_vertex(node_id,fset,h_1,halfedge(v2, tm2),tm1,tm2);
+      }
   }
 
   void compute_intersection_of_coplanar_faces(
@@ -571,7 +628,9 @@ class Intersection_of_triangle_meshes
     const TriangleMesh& tm1,
     const TriangleMesh& tm2,
     const VertexPointMap& vpm1,
-    const VertexPointMap& vpm2)
+    const VertexPointMap& vpm2,
+    const Non_manifold_feature_map<TriangleMesh>& nm_features_map_1,
+    const Non_manifold_feature_map<TriangleMesh>& nm_features_map_2)
   {
     CGAL_assertion( &tm1 < &tm2 || &tm1==&tm2 );
 
@@ -613,13 +672,13 @@ class Intersection_of_triangle_meshes
         {
           switch(ipt.type_2){
           case ON_VERTEX:
-            handle_coplanar_case_VERTEX_VERTEX(ipt.info_1,ipt.info_2,tm1,tm2,node_id,is_new_node);
+            handle_coplanar_case_VERTEX_VERTEX(ipt.info_1,ipt.info_2,tm1,tm2,nm_features_map_1,nm_features_map_2,node_id,is_new_node);
           break;
           case ON_EDGE:
-            handle_coplanar_case_VERTEX_EDGE(ipt.info_1,ipt.info_2,tm1,tm2,node_id,is_new_node);
+            handle_coplanar_case_VERTEX_EDGE(ipt.info_1,ipt.info_2,tm1,tm2,nm_features_map_1,nm_features_map_2,node_id,is_new_node);
           break;
           case ON_FACE:
-            handle_coplanar_case_VERTEX_FACE(ipt.info_1,ipt.info_2,tm1,tm2,node_id,is_new_node);
+            handle_coplanar_case_VERTEX_FACE(ipt.info_1,ipt.info_2,tm1,tm2,nm_features_map_1,node_id,is_new_node);
           break;
           default: CGAL_error_msg("Should not get there!");
           }
@@ -629,15 +688,33 @@ class Intersection_of_triangle_meshes
         {
           switch(ipt.type_2){
             case ON_VERTEX:
-              handle_coplanar_case_VERTEX_EDGE(ipt.info_2,ipt.info_1,tm2,tm1,node_id,is_new_node);
+              handle_coplanar_case_VERTEX_EDGE(ipt.info_2,ipt.info_1,tm2,tm1,nm_features_map_2,nm_features_map_1,node_id,is_new_node);
             break;
             case ON_EDGE:
             {
               if(is_new_node)
                 visitor.new_node_added(node_id,ON_EDGE,ipt.info_1,ipt.info_2,tm1,tm2,false,false);
-              typename Edge_to_faces::iterator it_ets=stm_edge_to_ltm_faces.find(edge(ipt.info_1,tm1));
-              Face_set* fset = (it_ets!=stm_edge_to_ltm_faces.end())?&(it_ets->second):nullptr;
-              cip_handle_case_edge(node_id,fset,ipt.info_1,ipt.info_2,tm1,tm2);
+              std::vector<edge_descriptor> tmp_edges_1(1, edge(ipt.info_1,tm1)),
+                                           tmp_edges_2(1, edge(ipt.info_2,tm2));
+              std::size_t eid1 = nm_features_map_1.non_manifold_edges.empty()
+                 ? std::size_t(-1)
+                 : get(nm_features_map_1.e_nm_id, edge(ipt.info_1, tm1));
+              std::size_t eid2 = nm_features_map_2.non_manifold_edges.empty()
+                 ? std::size_t(-1)
+                 : get(nm_features_map_2.e_nm_id, edge(ipt.info_2, tm2));
+              const std::vector<edge_descriptor>& edges_1 = eid1==std::size_t(-1)
+                                                          ? tmp_edges_1
+                                                          : nm_features_map_1.non_manifold_edges[eid1];
+              const std::vector<edge_descriptor>& edges_2 = eid2==std::size_t(-1)
+                                                          ? tmp_edges_2
+                                                          : nm_features_map_2.non_manifold_edges[eid2];
+              for(edge_descriptor e1 : edges_1)
+                for(edge_descriptor e2 : edges_2)
+                {
+                  typename Edge_to_faces::iterator it_ets=stm_edge_to_ltm_faces.find(e1);
+                  Face_set* fset = (it_ets!=stm_edge_to_ltm_faces.end())?&(it_ets->second):nullptr;
+                  cip_handle_case_edge(node_id,fset,halfedge(e1,tm1),halfedge(e2,tm2),tm1,tm2);
+                }
             }
             break;
             default: CGAL_error_msg("Should not get there!");
@@ -647,7 +724,7 @@ class Intersection_of_triangle_meshes
         case ON_FACE:
         {
           CGAL_assertion(ipt.type_2==ON_VERTEX);
-          handle_coplanar_case_VERTEX_FACE(ipt.info_2,ipt.info_1,tm2,tm1,node_id,is_new_node);
+          handle_coplanar_case_VERTEX_FACE(ipt.info_2,ipt.info_1,tm2,tm1,nm_features_map_2,node_id,is_new_node);
         }
         break;
         default: CGAL_error_msg("Should not get there!");
@@ -1415,9 +1492,9 @@ public:
     #ifndef DO_NOT_HANDLE_COPLANAR_FACES
     //first handle coplanar triangles
     if (&tm1<&tm2)
-      compute_intersection_of_coplanar_faces(current_node, tm1, tm2, vpm1, vpm2);
+      compute_intersection_of_coplanar_faces(current_node, tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2);
     else
-      compute_intersection_of_coplanar_faces(current_node, tm2, tm1, vpm2, vpm1);
+      compute_intersection_of_coplanar_faces(current_node, tm2, tm1, vpm2, vpm1, non_manifold_feature_map_2, non_manifold_feature_map_1);
     visitor.set_number_of_intersection_points_from_coplanar_faces(current_node+1);
     if (!coplanar_faces.empty())
       visitor.input_have_coplanar_faces();
@@ -1480,7 +1557,7 @@ public:
     CGAL_assertion(current_node+1==0);
 
     //first handle coplanar triangles
-    compute_intersection_of_coplanar_faces(current_node, tm, tm, vpm, vpm);
+    compute_intersection_of_coplanar_faces(current_node, tm, tm, vpm, vpm, non_manifold_feature_map_1, non_manifold_feature_map_1);
     if (!coplanar_faces.empty())
       visitor.input_have_coplanar_faces();
 
