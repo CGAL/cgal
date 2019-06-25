@@ -256,7 +256,7 @@ namespace CGAL {
 
 		double total_points = 0.0;
 		std::size_t idx = 0;
-		BOOST_FOREACH(Face_descriptor f, target_mesh.faces()) {
+                for(auto f : target_mesh.faces()) {
 			total_points += face_num_supporting_points[f];
 			face_indices[f] = idx;
 			++idx;
@@ -305,7 +305,7 @@ namespace CGAL {
 		const typename Polygon_mesh::template Property_map<Vertex_descriptor, Point>& coords = target_mesh.points();
 		std::vector<Point> vertices(target_mesh.number_of_vertices());
 		idx = 0;
-		BOOST_FOREACH(Vertex_descriptor v, target_mesh.vertices()) {
+                for(auto v : target_mesh.vertices()) {
 			vertices[idx] = coords[v];
 			++idx;
 		}
@@ -340,7 +340,7 @@ namespace CGAL {
 		}
 		CGAL_assertion(num_edges == num_sharp_edges);
 
-		BOOST_FOREACH(Face_descriptor f, target_mesh.faces()) {
+                for(auto f : target_mesh.faces()) {
 			std::size_t var_idx = face_indices[f];
 
 			// Accumulates data fitting term
@@ -422,7 +422,7 @@ namespace CGAL {
 
 			std::vector<Face_descriptor> to_delete;
 			std::size_t f_idx(0);
-			BOOST_FOREACH(Face_descriptor f, target_mesh.faces()) {
+                        for(auto f : target_mesh.faces()) {
 				if (static_cast<int>(std::round(X[f_idx])) == 0)
 					to_delete.push_back(f);
 				++f_idx;
@@ -437,7 +437,7 @@ namespace CGAL {
 			// Marks the sharp edges
 			typename Polygon_mesh::template Property_map<Edge_descriptor, bool> edge_is_sharp =
 				target_mesh.template add_property_map<Edge_descriptor, bool>("e:sharp_edges").first;
-			BOOST_FOREACH(Edge_descriptor e, target_mesh.edges())
+                        for (auto e : target_mesh.edges())
 				edge_is_sharp[e] = false;
 
 			for (std::size_t i = 0; i < adjacency.size(); ++i) {

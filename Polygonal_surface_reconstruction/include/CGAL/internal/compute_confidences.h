@@ -204,7 +204,7 @@ namespace CGAL {
 
 			FT degenerate_face_area_threshold = CGAL::snap_squared_distance_threshold<FT>() * CGAL::snap_squared_distance_threshold<FT>();
 
-			BOOST_FOREACH(Face_descriptor f, mesh.faces()) {
+                        for(auto f : mesh.faces()) {
 				const Plane* supporting_plane = face_supporting_planes[f];
 				// Face area
 				FT area = face_area(f, mesh);
@@ -229,7 +229,7 @@ namespace CGAL {
 						// We cannot use the area of the 3D faces, because the alpha shape mesh is
 						// not perfectly planar
 						const typename Polygon_mesh::template Property_map<Vertex_descriptor, Point>& coords = covering_mesh.points();
-						BOOST_FOREACH(Face_descriptor face, covering_mesh.faces()) {
+                                                for(auto face : covering_mesh.faces()) {
 							// We have to use the projected version
 							Polygon plg; // the projection of the face onto it supporting plane
 							Halfedge_around_face_circulator<Polygon_mesh> cir(covering_mesh.halfedge(face), covering_mesh), done(cir);

@@ -493,7 +493,7 @@ namespace CGAL {
 
 			// Assigns the original plane for each face
 			const typename  Polygon_mesh::template Property_map<Vertex_descriptor, Point>& coords = mesh.points();
-			BOOST_FOREACH(Face_descriptor fd, mesh.faces()) {
+                        for(auto fd : mesh.faces()) {
 				Halfedge_descriptor h = mesh.halfedge(fd);
 				Vertex_descriptor va = mesh.target(h);	const Point& pa = coords[va]; h = mesh.next(h);
 				Vertex_descriptor vb = mesh.target(h);	const Point& pb = coords[vb]; h = mesh.next(h);
@@ -504,7 +504,7 @@ namespace CGAL {
 			}
 
 			// Assigns the original planes for each edge
-			BOOST_FOREACH(Edge_descriptor ed, mesh.edges()) {
+                        for( auto ed : mesh.edges()) {
 				Halfedge_descriptor h1 = mesh.halfedge(ed);
 				Halfedge_descriptor h2 = mesh.opposite(h1);
 
@@ -523,7 +523,7 @@ namespace CGAL {
 			}
 
 			// Assigns the original planes for each vertex
-			BOOST_FOREACH(Vertex_descriptor vd, mesh.vertices()) {
+                        for(auto vd : mesh.vertices()) {
 				CGAL_assertion(vertex_supporting_planes[vd].size() == 0);
 				CGAL::Halfedge_around_target_circulator<Polygon_mesh> hbegin(vd, mesh), done(hbegin);
 				do {
@@ -581,7 +581,7 @@ namespace CGAL {
 				std::vector<Point> intersecting_points;
 				std::vector< std::set<const Plane*> > intersecting_points_source_planes;
 
-				BOOST_FOREACH(Edge_descriptor ed, bbox_mesh.edges()) {
+                                for(auto ed : bbox_mesh.edges()) {
 					Vertex_descriptor sd = bbox_mesh.vertex(ed, 0);
 					Vertex_descriptor td = bbox_mesh.vertex(ed, 1);
 					const Point& s = coords[sd];
@@ -1013,7 +1013,7 @@ namespace CGAL {
 				mesh.template property_map<Face_descriptor, Planar_segment*>("f:supp_segment").first;
 
 			std::set<Face_descriptor> intersecting_faces;
-			BOOST_FOREACH(Face_descriptor f, mesh.faces()) {
+                        for(auto f : mesh.faces()) {
 				if (f == face ||
 					face_supporting_segments[f] == face_supporting_segments[face] ||
 					face_supporting_planes[f] == face_supporting_planes[face])
@@ -1106,7 +1106,7 @@ namespace CGAL {
 			typedef typename std::unordered_map<const Point*, Edge_map >						Face_pool;
 			Face_pool face_pool;
 
-			BOOST_FOREACH(Halfedge_descriptor h, candidate_faces.halfedges()) {
+                        for(auto h : candidate_faces.halfedges()) {
 				Face_descriptor f = candidate_faces.face(h);
 				if (f == Polygon_mesh::null_face())
 					continue;
