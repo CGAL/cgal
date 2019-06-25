@@ -181,7 +181,7 @@ void test_constructions(const G& g, CGAL::Random& rnd)
   bar = PMP::barycentric_coordinates(p, q, r, mp);
   assert(is_equal(bar[0], FT(0.5)) && is_equal(bar[1], FT(0.5)) && is_equal(bar[2], FT(0)));
 
-  int n = 1e2;
+  int n = 100;
   while(n --> 0) // :)
   {
     const FT a = rnd.get_double(-1., 1.);
@@ -240,8 +240,8 @@ void test_random_entities(const G& g, CGAL::Random& rnd)
     h = opposite(h, g);
   face_descriptor f = CGAL::internal::random_face_in_mesh(g, rnd);
 
-  int nn = 1e2;
-  while(nn --> 0) // the famous 'go to zero' operator
+  int nn = 100;
+  while(nn --> 0) // the infamous 'go to zero' operator
   {
     loc = PMP::random_location_on_mesh(g, rnd);
     assert(loc.first != boost::graph_traits<G>::null_face());
@@ -367,7 +367,7 @@ void test_predicates(const G& g, CGAL::Random& rnd)
   assert(!PMP::is_on_face_border(loc, g));
 
   // ---------------------------------------------------------------------------
-  int max = 1e3, counter = 0;
+  int max = 1000, counter = 0;
   typename boost::graph_traits<G>::halfedge_iterator hit, hend;
   boost::tie(hit, hend) = halfedges(g);
   for(; hit!=hend; ++hit)
