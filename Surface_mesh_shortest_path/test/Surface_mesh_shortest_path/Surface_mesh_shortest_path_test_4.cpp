@@ -146,6 +146,7 @@ int main(int argc, char* argv[])
   Ray_3 outsideRay(maxPoint + (awayDir * FT(0.2)), maxPoint + (awayDir * FT(1.0)));
 
   Surface_mesh_shortest_path::Face_location emptyFaceLocation = shortestPaths.locate<AABB_face_graph_traits>(outsideRay);
+  CGAL_USE(emptyFaceLocation);
 
   assert(Graph_traits::null_face() == emptyFaceLocation.first);
 

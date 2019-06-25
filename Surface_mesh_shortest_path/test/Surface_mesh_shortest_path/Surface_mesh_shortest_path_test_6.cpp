@@ -29,6 +29,7 @@ int main()
       shortest_paths.add_source_point(v1);
       double dist = shortest_paths.shortest_distance_to_source_points(v2).first;
       assert (dist==0 || v1!=v2);
+      CGAL_USE(dist);
     }
 
   return 0;

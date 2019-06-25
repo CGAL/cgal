@@ -289,6 +289,7 @@ void test_simple_saddle_vertex_mesh()
 
     CHECK_CLOSE(result.first, expectedDistances2[i], Kernel::FT(0.0001));
     assert(result.second == expectedSources2[i]);
+    CGAL_USE(expectedSources2);
     ++currentVertex;
   }
 

@@ -65,6 +65,10 @@ int main(int argc, char* argv[])
   HIM halfedgeIndexMap(get(boost::halfedge_index, polyhedron));
   FIM faceIndexMap(get(boost::face_index, polyhedron));
 
+  CGAL_USE(vertexIndexMap);
+  CGAL_USE(halfedgeIndexMap);
+  CGAL_USE(faceIndexMap);
+
   face_iterator facesStart;
   face_iterator facesEnd;
 
