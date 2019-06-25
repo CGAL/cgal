@@ -42,7 +42,7 @@ namespace CGAL {
 	class Solver_entry
 	{
 	public:
-		typedef	Mixed_integer_program_traits<FT>	Solver;
+                typedef	CGAL::Mixed_integer_program_traits<FT>	Solver;
 
 	private:
 		/// A solver element (e.g., variable, constraint, objective) cannot belong to multiple solvers.
@@ -69,18 +69,18 @@ namespace CGAL {
 		std::string	name_;
 		int			index_;
 
-		template <typename T> friend class Variable;
-		template <typename T> friend class Linear_expression;
+                template <typename T> friend class Variable;
+                template <typename T> friend class Linear_expression;
 		template <typename T> friend class Mixed_integer_program_traits;
 	};
 
 
 	/// The base class of solver elements that have bound constraints.
 	template <typename FT>
-	class Bound
+        class Bound
 	{
 	private:
-		Bound(FT lb = -infinity(), FT ub = +infinity());
+                Bound(FT lb = -infinity(), FT ub = +infinity());
 
 	public:
 		void set_bounds(FT lb, FT ub);
@@ -109,15 +109,15 @@ namespace CGAL {
 	///
 	/// \cgalModels `MixedIntegerProgramVariable`
 	template <typename FT>
-	class Variable : public Solver_entry<FT>, public Bound<FT>
+        class Variable : public Solver_entry<FT>, public Bound<FT>
 	{
 		/// \cond SKIP_IN_MANUAL
 	public:
-		enum Variable_type { CONTINUOUS, INTEGER, BINARY };
+                enum Variable_type { CONTINUOUS, INTEGER, BINARY };
 
-		typedef	Bound<FT>							Bound;
-		typedef	Solver_entry<FT>					Solver_entry;
-		typedef	Mixed_integer_program_traits<FT>	Solver;
+                typedef	CGAL::Bound<FT>                             Bound;
+                typedef	CGAL::Solver_entry<FT>                      Solver_entry;
+                typedef	CGAL::Mixed_integer_program_traits<FT>      Solver;
 
 	private:
 		/// A variable cannot belong to several solvers.
@@ -145,7 +145,7 @@ namespace CGAL {
 
 	private:
 		Variable_type	variable_type_;
-		FT				solution_value_;
+                FT		solution_value_;
 
 		template <typename T> friend class Mixed_integer_program_traits;
 		/// \endcond
@@ -158,9 +158,9 @@ namespace CGAL {
 	class Linear_expression : public Solver_entry<FT>
 	{
 	public:
-		typedef Solver_entry<FT>                        Solver_entry;
-		typedef Variable<FT>				Variable;
-		typedef	Mixed_integer_program_traits<FT>	Solver;
+                typedef CGAL::Solver_entry<FT>                  Solver_entry;
+                typedef CGAL::Variable<FT>			Variable;
+                typedef	CGAL::Mixed_integer_program_traits<FT>	Solver;
 
 	private:
 		/// An expression cannot belong to several solvers.
@@ -205,16 +205,16 @@ namespace CGAL {
 	/// The linear constraint.
 	/// \cgalModels `MixedIntegerProgramLinearConstraint`
 	template <typename FT>
-	class Linear_constraint : public Linear_expression<FT>, public Bound<FT>
+        class Linear_constraint : public Linear_expression<FT>, public Bound<FT>
 	{
 		/// \cond SKIP_IN_MANUAL
 	public:
-		typedef	Bound<FT>                               Bound;
-		typedef	Linear_expression<FT>                   Linear_expression;
-		typedef	Mixed_integer_program_traits<FT>	Solver;
+                typedef	CGAL::Bound<FT>                         Bound;
+                typedef	CGAL::Linear_expression<FT>             Linear_expression;
+                typedef	CGAL::Mixed_integer_program_traits<FT>	Solver;
 
 	private:
-		/// A constraint cannot belong to several solvers.
+                /// A constraint cannot belong to several solvers.
 		/// The "solver" owns this constraint.
 		Linear_constraint(
 			Solver* solver,
@@ -240,8 +240,8 @@ namespace CGAL {
 	{
 		/// \cond SKIP_IN_MANUAL
 	public:
-		typedef	Mixed_integer_program_traits<FT>            Solver;
-		typedef Linear_expression<FT>                       Linear_expression;
+                typedef	CGAL::Mixed_integer_program_traits<FT>      Solver;
+                typedef CGAL::Linear_expression<FT>                 Linear_expression;
 		typedef typename Linear_expression::Solver_entry    Solver_entry;
 
 		enum Sense { MINIMIZE, MAXIMIZE, UNDEFINED };
@@ -290,9 +290,9 @@ namespace CGAL {
 	{
 		/// \cond SKIP_IN_MANUAL
 	public:
-		typedef CGAL::Variable<FT>						Variable;
-		typedef CGAL::Linear_constraint<FT>				Linear_constraint;
-		typedef CGAL::Linear_objective<FT>				Linear_objective;
+                typedef CGAL::Variable<FT>				Variable;
+                typedef CGAL::Linear_constraint<FT>			Linear_constraint;
+                typedef CGAL::Linear_objective<FT>			Linear_objective;
 		typedef typename Linear_objective::Sense		Sense;
 		typedef typename Variable::Variable_type		Variable_type;
 
@@ -391,28 +391,28 @@ namespace CGAL {
 	// implementation
 
 	template<typename FT>
-	FT Bound<FT>::infinity_ = 1e20;		// values larger than this value are considered infinity
+        FT Bound<FT>::infinity_ = 1e20;		// values larger than this value are considered infinity
 
 	template<typename FT>
-	Bound<FT>::Bound(FT lb /* = -infinity() */, FT ub /* = +infinity() */)
+        Bound<FT>::Bound(FT lb /* = -infinity() */, FT ub /* = +infinity() */)
 		: lower_bound_(lb)
 		, upper_bound_(ub)
 	{
 	}
 
 	template<typename FT>
-	FT Bound<FT>::infinity() {
+        FT Bound<FT>::infinity() {
 		return infinity_;
 	}
 
 	template<typename FT>
-	void Bound<FT>::set_bounds(FT lb, FT ub) {
+        void Bound<FT>::set_bounds(FT lb, FT ub) {
 		lower_bound_ = lb;
 		upper_bound_ = ub;
 	}
 
 	template<typename FT>
-	void Bound<FT>::get_bounds(FT& lb, FT& ub) const {
+        void Bound<FT>::get_bounds(FT& lb, FT& ub) const {
 		lb = lower_bound_;
 		ub = upper_bound_;
 	}
@@ -425,15 +425,15 @@ namespace CGAL {
 		FT lb /* = -infinity() */,
 		FT ub /* = +infinity() */,
 		const std::string& name /* = "" */,
-		int idx /* = 0*/
+                int idx /* = 0*/
 	)
-		: Solver_entry(solver, name, idx)
-		, Bound(lb, ub)
+                : Solver_entry(solver, name, idx)
+                , Bound(lb, ub)
 		, variable_type_(type)
 		, solution_value_(0.0)
 	{
 		if (type == BINARY)
-			Bound::set_bounds(0.0, 1.0);
+                        Bound::set_bounds(0.0, 1.0);
 	}
 
 
@@ -515,7 +515,7 @@ namespace CGAL {
 		const std::string& name/* = "" */,
 		int idx /* = 0*/
 	)
-		: Linear_expression(solver, name, idx)
+                : Linear_expression(solver, name, idx)
 		, Bound(lb, ub)
 	{
 	}

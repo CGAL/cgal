@@ -53,10 +53,10 @@ namespace CGAL {
 	{
 		/// \cond SKIP_IN_MANUAL
 	public:
-		typedef Mixed_integer_program_traits<FT>		Base_class;
+                typedef CGAL::Mixed_integer_program_traits<FT>		Base_class;
 		typedef typename Base_class::Variable			Variable;
-		typedef typename Base_class::Linear_constraint	Linear_constraint;
-		typedef typename Base_class::Linear_objective	Linear_objective;
+                typedef typename Base_class::Linear_constraint          Linear_constraint;
+                typedef typename Base_class::Linear_objective           Linear_objective;
 		typedef typename Linear_objective::Sense		Sense;
 		typedef typename Variable::Variable_type		Variable_type;
 
@@ -78,7 +78,7 @@ namespace CGAL {
 		// Infers "bound type" (required by GLPK) from the bounds values
 		template <typename FT>
 		int bound_type(FT lb, FT ub) {
-			typedef Variable<FT> Variable;
+                        typedef CGAL::Variable<FT> Variable;
 
 			if (lb <= -Variable::infinity() && ub >= Variable::infinity())
 				return GLP_FR;		// free (unbounded) variable
