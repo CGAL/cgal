@@ -350,18 +350,34 @@ class Intersection_of_triangle_meshes
   get_or_create_node(const Cpl_inter_pt& ipt,
                            Node_id& current_node,
                            std::map<Key,Node_id>& coplanar_node_map,
-                     const TriangleMesh& tm1,
-                     const TriangleMesh& tm2)
+                           const Non_manifold_feature_map<TriangleMesh>& nm_features_map_1,
+                           const Non_manifold_feature_map<TriangleMesh>& nm_features_map_2,
+                           const TriangleMesh& tm1,
+                           const TriangleMesh& tm2)
   {
     halfedge_descriptor h1=graph_traits::null_halfedge(),h2=h1;
     switch(ipt.type_1){
       case ON_VERTEX:
-        h1=halfedge(target(ipt.info_1,tm1),tm1);
+      {
+        std::size_t vid1 = nm_features_map_1.non_manifold_vertices.empty()
+                         ? std::size_t(-1)
+                         : get(nm_features_map_1.v_nm_id, target(ipt.info_1,tm1));
+        if (vid1==std::size_t(-1))
+          h1=halfedge(target(ipt.info_1,tm1),tm1);
+        else
+          h1=halfedge(nm_features_map_1.non_manifold_vertices[vid1][0],tm1);
+      }
       break;
       case ON_EDGE  :
       {
-        h1=opposite(ipt.info_1,tm1);
-        if (h1>ipt.info_1) h1=ipt.info_1;
+        std::size_t eid1 = nm_features_map_1.non_manifold_edges.empty()
+                         ? std::size_t(-1)
+                         : get(nm_features_map_1.e_nm_id, edge(ipt.info_1,tm1));
+        if (eid1==std::size_t(-1))
+          h1=ipt.info_1;
+        else
+          h1=halfedge(nm_features_map_1.non_manifold_edges[eid1][0],tm1);
+        h1=(std::max)(h1, opposite(h1, tm1));
       }
       break;
       case ON_FACE :
@@ -371,12 +387,26 @@ class Intersection_of_triangle_meshes
     }
     switch(ipt.type_2){
       case ON_VERTEX:
-        h2=halfedge(target(ipt.info_2,tm2),tm2);
+      {
+        std::size_t vid2 = nm_features_map_2.non_manifold_vertices.empty()
+                         ? std::size_t(-1)
+                         : get(nm_features_map_2.v_nm_id, target(ipt.info_2,tm2));
+        if (vid2==std::size_t(-1))
+          h2=halfedge(target(ipt.info_2,tm2),tm2);
+        else
+          h2=halfedge(nm_features_map_2.non_manifold_vertices[vid2][0],tm2);
+      }
       break;
       case ON_EDGE  :
       {
-        h2=opposite(ipt.info_2,tm2);
-        if (h2>ipt.info_2) h2=ipt.info_2;
+        std::size_t eid2 = nm_features_map_2.non_manifold_edges.empty()
+                         ? std::size_t(-1)
+                         : get(nm_features_map_2.e_nm_id, edge(ipt.info_2,tm2));
+        if (eid2==std::size_t(-1))
+          h2=ipt.info_2;
+        else
+          h2=halfedge(nm_features_map_2.non_manifold_edges[eid2][0],tm2);
+        h2=(std::max)(h2, opposite(h2, tm2));
       }
       break;
       case ON_FACE :
@@ -664,7 +694,7 @@ class Intersection_of_triangle_meshes
         Node_id node_id;
         bool is_new_node;
         std::tie(node_id, is_new_node) =
-            get_or_create_node(ipt,current_node,coplanar_node_map,tm1,tm2);
+            get_or_create_node(ipt,current_node,coplanar_node_map,nm_features_map_1,nm_features_map_2,tm1,tm2);
         cpln_nodes.push_back(node_id);
 
         switch(ipt.type_1){
