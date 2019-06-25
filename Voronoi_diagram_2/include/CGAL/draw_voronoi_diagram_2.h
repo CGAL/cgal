@@ -18,8 +18,8 @@
 //
 // Author(s)     : Jasmeet Singh <jasmeet.singh.mec11@iitbhu.ac.in>
 
-#ifndef CGAL_DRAW_VORONOI_H
-#define CGAL_DRAW_VORONOI_H
+#ifndef CGAL_DRAW_VORONOI_DIAGRAM_2_H
+#define CGAL_DRAW_VORONOI_DIAGRAM_2_H
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/license/Voronoi_diagram_2.h>
@@ -355,15 +355,6 @@ template <class V2> void draw(const V2 &av2) {
 
 } // End namespace CGAL
 
-#else // CGAL_USE_BASIC_VIEWER
-
-template<class V2>
-void draw_voronoi_diagram_2(CGAL::VoronoiDiagram_2<V2>&)
-{
-  std::cerr << "Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."
-            << std::endl;
-}
-
 #endif // CGAL_USE_BASIC_VIEWER
 
-#endif // CGAL_DRAW_VORONOI_H
+#endif // CGAL_DRAW_VORONOI_DIAGRAM_2_H

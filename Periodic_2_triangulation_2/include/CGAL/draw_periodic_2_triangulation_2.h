@@ -296,13 +296,4 @@ void draw(const P2T2& ap2t2)
 
 #endif // CGAL_USE_BASIC_VIEWER
 
-#else // CGAL_USE_BASIC_VIEWER
-
-template<class P2T2>
-void draw_periodic_2_triangulation_2(CGAL::Periodic_2_Triangulation_2<P2T2>&)
-{
-  std::cerr << "Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."
-            << std::endl;
-}
-
 #endif // DRAW_PERIODIC_2_TRIANGULATION_2_H
