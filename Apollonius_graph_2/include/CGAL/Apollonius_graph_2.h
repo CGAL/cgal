@@ -32,8 +32,9 @@
 
 
 #include <iostream>
-#include <vector>
 #include <map>
+#include <vector>
+#include <stack>
 
 #include <boost/tuple/tuple.hpp>
 

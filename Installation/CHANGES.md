@@ -59,6 +59,11 @@ Release date: September 2019
      `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`, which can be used
      to try and merge together geometrically compatible but combinatorially different halfedges
      that belong to the same boundary cycle.
+-    It is now possible to pass a face-size property map to `CGAL::Polygon_mesh_processing::keep_large_connected_components()`
+     and `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`, enabling users to define
+     how the size of a face is computed (the size of the connected component is the sum of the sizes of its faces).
+     If no property map is passed, the behavior is unchanged to previous versions: the size
+     of a connected component is the number of faces it contains.
 
 ### IO Streams
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
@@ -77,6 +82,14 @@ Release date: September 2019
    the approximate dihedral angle between 2 vectors. Corresponding functors
    in the model (`Compute_approximate_angle_3`) and free function (`approximate_angle`)
    are also added.
+ - The following objects are now hashable and thus trivially usable
+   with `std::unordered_set` and `std::unordered_map`:
+   `CGAL::Aff_transformation_2`, `CGAL::Aff_transformation_3`,
+   `CGAL::Bbox_2`, `CGAL::Bbox_3`, `CGAL::Circle_2`,
+   `CGAL::Iso_cuboid_3`, `CGAL::Iso_rectangle_2`, `CGAL::Point_2`,
+   `CGAL::Point_3`, `CGAL::Segment_2`, `CGAL::Segment_3`,
+   `CGAL::Sphere_3`, `CGAL::Vector_2`, `CGAL::Vector_3`,
+   `CGAL::Weighted_point_2` and `CGAL::Weighted_point_3`.
 
 ### IO Streams
 -   Added new functions to support some parts of the WKT file format:

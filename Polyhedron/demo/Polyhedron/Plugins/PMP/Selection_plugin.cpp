@@ -73,12 +73,12 @@ class Polyhedron_demo_selection_plugin :
   Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface CGAL::Three::Polyhedron_demo_io_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "selection_plugin.json")
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90")
 public:
-  QString nameFilters() const { return "Selection files(*.selection.txt)"; }
-  QString name() const { return "selection_sm_plugin"; }
+  QString nameFilters() const override { return "Selection files(*.selection.txt)"; }
+  QString name() const override { return "selection_sm_plugin"; }
   
-  bool canLoad() const {
+  bool canLoad(QFileInfo) const override {
     Scene_item * item = CGAL::Three::Three::scene()->item(
           CGAL::Three::Three::scene()->mainSelectionIndex());
     Scene_facegraph_item* fg_item = qobject_cast<Scene_facegraph_item*>(item);
@@ -91,36 +91,48 @@ public:
     return false;
   }
 
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
-      if(fileinfo.suffix().toLower() != "txt") return 0;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override {
+      if(fileinfo.suffix().toLower() != "txt")
+      {
+        ok = false;
+        return QList<Scene_item*>();
+      }
       // There will be no actual loading at this step.
       Scene_polyhedron_selection_item* item = new Scene_polyhedron_selection_item();
       if(!item->load(fileinfo.filePath().toStdString())) {
           delete item;
-          return NULL;
+        ok = false;
+        return QList<Scene_item*>();
       }
       item->setName(fileinfo.baseName());
-      return item;
+      ok = true;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(item);
+      return QList<Scene_item*>()<<item;
   }
 
-  bool canSave(const CGAL::Three::Scene_item* scene_item) {
+  bool canSave(const CGAL::Three::Scene_item* scene_item) override {
       return qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
   }
-  bool save(const CGAL::Three::Scene_item* scene_item, QFileInfo fileinfo) {
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items) override {
+    Scene_item* scene_item = items.front();
       const Scene_polyhedron_selection_item* item = qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
       if(item == NULL) { return false; }
 
-      return item->save(fileinfo.filePath().toStdString());
+      bool res = item->save(fileinfo.filePath().toStdString());
+      if(res)
+        items.pop_front();
+      return res;
   }
   
-  bool applicable(QAction*) const { 
+  bool applicable(QAction*) const override {
     return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()))
         || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); 
   }
   void print_message(QString message) { CGAL::Three::Three::information(message); }
-  QList<QAction*> actions() const { return QList<QAction*>() << actionSelection; }
-
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
+  QList<QAction*> actions() const override { return QList<QAction*>() << actionSelection; }
+  using Polyhedron_demo_io_plugin_interface::init;
+  virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) override{
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
@@ -204,7 +216,7 @@ public:
     operations_map[operations_strings[8]] = 8;
     operations_map[operations_strings[9]] = 9;
   }
-  virtual void closure()
+  virtual void closure() override
   {
     dock_widget->hide();
   }

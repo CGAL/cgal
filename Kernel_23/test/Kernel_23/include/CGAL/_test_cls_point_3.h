@@ -29,6 +29,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/Weighted_point_3.h>
+#include <CGAL/use.h>
 
 #include <cassert>
 #include <iostream>
@@ -46,7 +47,7 @@ _test_cls_point_3(const R& )
  typedef typename R::Point_3::Cartesian_const_iterator CCI;
 
  CGAL::Point_3<R>  p1;
- CGAL::Point_3<R>  p2(ip);
+ CGAL::Point_3<R>  p2(ip); CGAL_USE(p2);
  CGAL::Point_3<R>  p0(CGAL::ORIGIN);
 
  RT  n1(-35 );
