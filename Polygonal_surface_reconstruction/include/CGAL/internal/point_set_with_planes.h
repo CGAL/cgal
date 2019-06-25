@@ -50,9 +50,9 @@ namespace CGAL {
 		class Planar_segment : public std::vector<std::size_t>
 		{
 		public:
-			typedef typename Kernel::Point_3            Point;
-			typedef typename Kernel::Plane_3			Plane;
-			typedef Point_set_with_planes<Kernel>		Point_set;
+                        typedef typename Kernel::Point_3            	Point;
+                        typedef typename Kernel::Plane_3		Plane;
+                        typedef internal::Point_set_with_planes<Kernel>	Point_set;
 
 		public:
 
@@ -84,8 +84,8 @@ namespace CGAL {
 			Plane* supporting_plane() const { return supporting_plane_; }
 
 		private:
-			Point_set * point_set_;
-			Plane *		supporting_plane_; // The hypothesis generator owns this plane and manages the memory
+                        Point_set * 	point_set_;
+                        Plane *		supporting_plane_; // The hypothesis generator owns this plane and manages the memory
 		};
 
 
@@ -98,13 +98,13 @@ namespace CGAL {
 		public:
 
 			typedef Point_set_3<typename Kernel::Point_3>	Base_class;
-			typedef Point_set_with_planes<Kernel>			This_class;
+                        typedef Point_set_with_planes<Kernel>		This_class;
 
-			typedef typename Kernel::FT						FT;
-			typedef typename Kernel::Point_3				Point;
-			typedef typename Kernel::Vector_3				Vector;
-			typedef typename Kernel::Plane_3				Plane;
-			typedef Planar_segment<Kernel>					Planar_segment;
+                        typedef typename Kernel::FT			FT;
+                        typedef typename Kernel::Point_3		Point;
+                        typedef typename Kernel::Vector_3		Vector;
+                        typedef typename Kernel::Plane_3		Plane;
+                        typedef internal::Planar_segment<Kernel>	Planar_segment;
 
 		public:
 

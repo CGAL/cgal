@@ -53,21 +53,21 @@ namespace CGAL {
 		class Candidate_confidences
 		{
 		private:
-			typedef typename Kernel::FT						FT;
-			typedef typename Kernel::Point_3				Point;
-			typedef typename Kernel::Point_2				Point2;
-			typedef typename Kernel::Vector_3				Vector;
-			typedef typename Kernel::Line_3					Line;
-			typedef typename Kernel::Segment_3				Segment;
-			typedef typename Kernel::Plane_3				Plane;
-			typedef CGAL::Polygon_2<Kernel>					Polygon;
-			typedef Planar_segment<Kernel>					Planar_segment;
-			typedef Point_set_with_planes<Kernel>			Point_set;
-			typedef CGAL::Surface_mesh<Point>				Polygon_mesh;
+                        typedef typename Kernel::FT				FT;
+                        typedef typename Kernel::Point_3			Point;
+                        typedef typename Kernel::Point_2			Point2;
+                        typedef typename Kernel::Vector_3			Vector;
+                        typedef typename Kernel::Line_3				Line;
+                        typedef typename Kernel::Segment_3			Segment;
+                        typedef typename Kernel::Plane_3			Plane;
+                        typedef CGAL::Polygon_2<Kernel>				Polygon;
+                        typedef internal::Planar_segment<Kernel>		Planar_segment;
+                        typedef internal::Point_set_with_planes<Kernel>		Point_set;
+                        typedef CGAL::Surface_mesh<Point>			Polygon_mesh;
 			typedef typename Polygon_mesh::Face_index		Face_descriptor;
 			typedef typename Polygon_mesh::Edge_index		Edge_descriptor;
 			typedef typename Polygon_mesh::Vertex_index		Vertex_descriptor;
-			typedef typename Polygon_mesh::Halfedge_index	Halfedge_descriptor;
+                        typedef typename Polygon_mesh::Halfedge_index		Halfedge_descriptor;
 
 		public:
 			Candidate_confidences() {}
