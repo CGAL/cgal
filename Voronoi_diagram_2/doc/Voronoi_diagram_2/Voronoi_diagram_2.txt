@@ -499,7 +499,7 @@ This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASI
 
 \cgalFigureBegin{draw_voronoi_diagram, draw_voronoi_diagram.png}
 Result of the draw_voronoi_diagram_2 program. A window shows the Voronoi vertices and edges. 
-The window allows navigation through the 3D scene.
+The window allows navigation through the 2D scene.
 \cgalFigureEnd
 
 */ 
