@@ -202,6 +202,7 @@ class Intersection_of_triangle_meshes
   std::vector<Node_id> extra_terminal_nodes; //used only for autorefinement
   Non_manifold_feature_map<TriangleMesh> non_manifold_feature_map_1,
                                          non_manifold_feature_map_2;
+  std::size_t NM_NID;
   CGAL_assertion_code(bool doing_autorefinement;)
 
 // member functions
@@ -248,7 +249,7 @@ class Intersection_of_triangle_meshes
           std::size_t eid=get(non_manifold_feature_map.e_nm_id, ed);
           halfedge_descriptor h=halfedge(ed,tm_e);
           // insert only one copy of a non-manifold edge
-          if (eid!=std::size_t(-1))
+          if (eid!=NM_NID)
           {
             if (non_manifold_feature_map.non_manifold_edges[eid].front()!=ed)
               continue;
@@ -360,9 +361,9 @@ class Intersection_of_triangle_meshes
       case ON_VERTEX:
       {
         std::size_t vid1 = nm_features_map_1.non_manifold_vertices.empty()
-                         ? std::size_t(-1)
+                         ? NM_NID
                          : get(nm_features_map_1.v_nm_id, target(ipt.info_1,tm1));
-        if (vid1==std::size_t(-1))
+        if (vid1==NM_NID)
           h1=halfedge(target(ipt.info_1,tm1),tm1);
         else
           h1=halfedge(nm_features_map_1.non_manifold_vertices[vid1][0],tm1);
@@ -371,9 +372,9 @@ class Intersection_of_triangle_meshes
       case ON_EDGE  :
       {
         std::size_t eid1 = nm_features_map_1.non_manifold_edges.empty()
-                         ? std::size_t(-1)
+                         ? NM_NID
                          : get(nm_features_map_1.e_nm_id, edge(ipt.info_1,tm1));
-        if (eid1==std::size_t(-1))
+        if (eid1==NM_NID)
           h1=ipt.info_1;
         else
           h1=halfedge(nm_features_map_1.non_manifold_edges[eid1][0],tm1);
@@ -389,9 +390,9 @@ class Intersection_of_triangle_meshes
       case ON_VERTEX:
       {
         std::size_t vid2 = nm_features_map_2.non_manifold_vertices.empty()
-                         ? std::size_t(-1)
+                         ? NM_NID
                          : get(nm_features_map_2.v_nm_id, target(ipt.info_2,tm2));
-        if (vid2==std::size_t(-1))
+        if (vid2==NM_NID)
           h2=halfedge(target(ipt.info_2,tm2),tm2);
         else
           h2=halfedge(nm_features_map_2.non_manifold_vertices[vid2][0],tm2);
@@ -400,9 +401,9 @@ class Intersection_of_triangle_meshes
       case ON_EDGE  :
       {
         std::size_t eid2 = nm_features_map_2.non_manifold_edges.empty()
-                         ? std::size_t(-1)
+                         ? NM_NID
                          : get(nm_features_map_2.e_nm_id, edge(ipt.info_2,tm2));
-        if (eid2==std::size_t(-1))
+        if (eid2==NM_NID)
           h2=ipt.info_2;
         else
           h2=halfedge(nm_features_map_2.non_manifold_edges[eid2][0],tm2);
@@ -545,10 +546,10 @@ class Intersection_of_triangle_meshes
     std::vector<vertex_descriptor> tmp_vertices_1(1, target(v_1, tm1));
 
     std::size_t vid1 = nm_features_map_1.non_manifold_vertices.empty()
-      ? std::size_t(-1)
+      ? NM_NID
       : get(nm_features_map_1.v_nm_id, target(v_1, tm1));
 
-    const std::vector<vertex_descriptor>& vertices_1 = vid1==std::size_t(-1)
+    const std::vector<vertex_descriptor>& vertices_1 = vid1==NM_NID
                                                      ? tmp_vertices_1
                                                      : nm_features_map_1.non_manifold_vertices[vid1];
     for(vertex_descriptor v1 : vertices_1)
@@ -580,20 +581,20 @@ class Intersection_of_triangle_meshes
     std::vector<vertex_descriptor> tmp_vertices_1(1, target(v_1, tm1));
 
     std::size_t vid1 = nm_features_map_1.non_manifold_vertices.empty()
-                     ? std::size_t(-1)
+                     ? NM_NID
                      : get(nm_features_map_1.v_nm_id, target(v_1, tm1));
 
-    const std::vector<vertex_descriptor>& vertices_1 = vid1==std::size_t(-1)
+    const std::vector<vertex_descriptor>& vertices_1 = vid1==NM_NID
                                                       ? tmp_vertices_1
                                                       : nm_features_map_1.non_manifold_vertices[vid1];
 
     std::vector<edge_descriptor> tmp_edges_2(1, edge(h_2, tm2));
 
     std::size_t eid2 = nm_features_map_2.non_manifold_edges.empty()
-                     ? std::size_t(-1)
+                     ? NM_NID
                      : get(nm_features_map_2.e_nm_id, edge(h_2, tm2));
 
-    const std::vector<edge_descriptor>& edges_2 = eid2==std::size_t(-1)
+    const std::vector<edge_descriptor>& edges_2 = eid2==NM_NID
                                                 ? tmp_edges_2
                                                 : nm_features_map_2.non_manifold_edges[eid2];
 
@@ -628,17 +629,17 @@ class Intersection_of_triangle_meshes
                                    tmp_vertices_2(1, target(v_2, tm2));
 
     std::size_t vid1 = nm_features_map_1.non_manifold_vertices.empty()
-                     ? std::size_t(-1)
+                     ? NM_NID
                      : get(nm_features_map_1.v_nm_id, target(v_1, tm1));
 
     std::size_t vid2 = nm_features_map_2.non_manifold_vertices.empty()
-                     ? std::size_t(-1)
+                     ? NM_NID
                      : get(nm_features_map_2.v_nm_id, target(v_2, tm2));
 
-    const std::vector<vertex_descriptor>& vertices_1 = vid1==std::size_t(-1)
+    const std::vector<vertex_descriptor>& vertices_1 = vid1==NM_NID
                                                      ? tmp_vertices_1
                                                      : nm_features_map_1.non_manifold_vertices[vid1];
-    const std::vector<vertex_descriptor>& vertices_2 = vid2==std::size_t(-1)
+    const std::vector<vertex_descriptor>& vertices_2 = vid2==NM_NID
                                                      ? tmp_vertices_2
                                                      : nm_features_map_2.non_manifold_vertices[vid2];
 
@@ -727,15 +728,15 @@ class Intersection_of_triangle_meshes
               std::vector<edge_descriptor> tmp_edges_1(1, edge(ipt.info_1,tm1)),
                                            tmp_edges_2(1, edge(ipt.info_2,tm2));
               std::size_t eid1 = nm_features_map_1.non_manifold_edges.empty()
-                 ? std::size_t(-1)
+                 ? NM_NID
                  : get(nm_features_map_1.e_nm_id, edge(ipt.info_1, tm1));
               std::size_t eid2 = nm_features_map_2.non_manifold_edges.empty()
-                 ? std::size_t(-1)
+                 ? NM_NID
                  : get(nm_features_map_2.e_nm_id, edge(ipt.info_2, tm2));
-              const std::vector<edge_descriptor>& edges_1 = eid1==std::size_t(-1)
+              const std::vector<edge_descriptor>& edges_1 = eid1==NM_NID
                                                           ? tmp_edges_1
                                                           : nm_features_map_1.non_manifold_edges[eid1];
-              const std::vector<edge_descriptor>& edges_2 = eid2==std::size_t(-1)
+              const std::vector<edge_descriptor>& edges_2 = eid2==NM_NID
                                                           ? tmp_edges_2
                                                           : nm_features_map_2.non_manifold_edges[eid2];
               for(edge_descriptor e1 : edges_1)
@@ -853,7 +854,7 @@ class Intersection_of_triangle_meshes
             halfedge_descriptor h1 = all_edges[ie];
             edge_descriptor e1 = edge(h1, tm1);
             std::size_t eid1 = get(nm_features_map_1.e_nm_id, e1);
-            if (eid1 != std::size_t(-1))
+            if (eid1 != NM_NID)
             {
               for (std::size_t k=0;
                                k<nm_features_map_1.non_manifold_edges[eid1].size();
@@ -921,14 +922,14 @@ class Intersection_of_triangle_meshes
             visitor.new_node_added(node_id,ON_EDGE,h_1,h_2,tm1,tm2,std::get<3>(res),std::get<2>(res));
 
             std::size_t eid2 = nm_features_map_2.non_manifold_edges.empty()
-                             ? std::size_t(-1)
+                             ? NM_NID
                              : get(nm_features_map_2.e_nm_id, edge(h_2, tm2));
 
             for (;it_edge!=all_edges.end();++it_edge){
               if ( it_edge!=all_edges.begin() ){
                 typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(*it_edge,tm1));
                 Face_set* fset_bis = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
-                if( eid2 == std::size_t(-1) )
+                if( eid2 == NM_NID )
                   cip_handle_case_edge(node_id,fset_bis,*it_edge,h_2,tm1,tm2);
                 else
                 {
@@ -938,7 +939,7 @@ class Intersection_of_triangle_meshes
               }
               else
               {
-                if( eid2 == std::size_t(-1) )
+                if( eid2 == NM_NID )
                   cip_handle_case_edge(node_id,&fset,*it_edge,h_2,tm1,tm2);
                 else
                   for (edge_descriptor e2 : nm_features_map_2.non_manifold_edges[eid2])
@@ -957,21 +958,21 @@ class Intersection_of_triangle_meshes
             visitor.new_node_added(node_id,ON_VERTEX,h_1,h_2,tm1,tm2,std::get<3>(res),std::get<2>(res));
 
             std::size_t vid2 = nm_features_map_2.non_manifold_vertices.empty()
-                             ? std::size_t(-1)
+                             ? NM_NID
                              : get(nm_features_map_2.v_nm_id, target(h_2, tm2));
 
             for (;it_edge!=all_edges.end();++it_edge){
               if ( it_edge!=all_edges.begin() ){
                 typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(*it_edge,tm1));
                 Face_set* fset_bis = (it_ets!=tm1_edge_to_tm2_faces.end())?&(it_ets->second):nullptr;
-                if( vid2 == std::size_t(-1) )
+                if( vid2 == NM_NID )
                   cip_handle_case_vertex(node_id,fset_bis,*it_edge,h_2,tm1,tm2);
                 else
                   for (vertex_descriptor vd2 : nm_features_map_2.non_manifold_vertices[vid2])
                     cip_handle_case_vertex(node_id,fset_bis,*it_edge,halfedge(vd2, tm2),tm1,tm2);
               }
               else
-                if( vid2 == std::size_t(-1) )
+                if( vid2 == NM_NID )
                   cip_handle_case_vertex(node_id,&fset,*it_edge,h_2,tm1,tm2);
                 else
                   for (vertex_descriptor vd2 : nm_features_map_2.non_manifold_vertices[vid2])
@@ -1473,6 +1474,7 @@ public:
                                   const Node_visitor& v=Node_visitor())
   : nodes(tm1, tm2, vpm1, vpm2)
   , visitor(v)
+  , NM_NID((std::numeric_limits<std::size_t>::max)())
   {
     CGAL_assertion_code( doing_autorefinement=false; )
   }
@@ -1483,6 +1485,7 @@ public:
                                   const Node_visitor& v=Node_visitor())
   : nodes(tm, tm, vpm, vpm)
   , visitor(v)
+  , NM_NID((std::numeric_limits<std::size_t>::max)())
   {
     CGAL_assertion_code( doing_autorefinement=true; )
   }

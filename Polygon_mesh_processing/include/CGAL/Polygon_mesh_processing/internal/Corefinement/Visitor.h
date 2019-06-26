@@ -232,6 +232,8 @@ public:
 
   void copy_nodes_ids_for_non_manifold_features()
   {
+    static const constexpr std::size_t NM_NID((std::numeric_limits<std::size_t>::max)());
+
     for(const std::pair<const TriangleMesh*, const NM_features_map*>& tm_and_nm :
         non_manifold_feature_maps)
     {
@@ -242,7 +244,7 @@ public:
       for (const std::pair<const edge_descriptor, Node_ids>& ed_and_ids : on_edge_map)
       {
         std::size_t eid = get(tm_and_nm.second->e_nm_id, ed_and_ids.first);
-        if (eid!=std::size_t(-1))
+        if (eid!=NM_NID)
           edges_to_copy.push_back(std::make_pair(eid,&(ed_and_ids.second)));
       }
       for(const std::pair<const std::size_t, const Node_ids*>& id_and_nodes : edges_to_copy)
@@ -264,7 +266,7 @@ public:
           : vertex_to_node_id)
       {
         std::size_t vid = get(tm_and_nm.second->v_nm_id, vd_and_id.first);
-        if (vid!=std::size_t(-1))
+        if (vid!=NM_NID)
           vertices_to_add.push_back(std::make_pair(vd_and_id.first,vd_and_id.second));
         for(const std::pair<vertex_descriptor, Node_id>& vd_and_nid : vertices_to_add)
         {
