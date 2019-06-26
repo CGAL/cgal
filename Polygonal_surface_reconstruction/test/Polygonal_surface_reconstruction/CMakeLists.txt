@@ -53,7 +53,7 @@ if (SCIP_FOUND)
 
   target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${SCIP_LIBRARIES} )
 
-  add_definitions(-DCGAL_USE_SCIP)
+  target_compile_definitions(polygonal_surface_reconstruction_test PRIVATE -DCGAL_USE_SCIP)
 
   message("SCIP found and used")
 
@@ -68,7 +68,7 @@ find_package( GLPK )
 
       target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${GLPK_LIBRARIES} )
 
-      add_definitions(-DCGAL_USE_GLPK)
+      target_compile_definitions(polygonal_surface_reconstruction_test PRIVATE -DCGAL_USE_GLPK)
 
       message("GLPK found and used")
 

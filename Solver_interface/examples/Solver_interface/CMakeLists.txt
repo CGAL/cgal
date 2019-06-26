@@ -30,7 +30,7 @@ if ( CGAL_FOUND )
 
     target_link_libraries( mixed_integer_program PRIVATE ${SCIP_LIBRARIES} )
 
-    add_definitions(-DCGAL_USE_SCIP)
+    target_compile_definitions(mixed_integer_program PRIVATE -DCGAL_USE_SCIP)
 
     message("SCIP found and used")
 
@@ -44,7 +44,7 @@ if ( CGAL_FOUND )
 
         target_link_libraries( mixed_integer_program PRIVATE ${GLPK_LIBRARIES} )
 
-        add_definitions(-DCGAL_USE_GLPK)
+        target_compile_definitions(mixed_integer_program PRIVATE -DCGAL_USE_GLPK)
 
         message("GLPK found and used")
 
