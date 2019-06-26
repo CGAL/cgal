@@ -318,7 +318,7 @@ void test_split()
   input.open("data-coref/sphere.off");
   input >> tm2;
   input.close();
-  PMP::split(tm1, tm2, params::clip_volume(true));
+  PMP::split(tm1, tm2);
   std::ofstream("out_ccs.off") << std::setprecision(17) << tm1;
   CGAL::clear(tm1);
   CGAL::clear(tm2);
@@ -327,11 +327,11 @@ void test_split()
 
 int main()
 {
-  //test<Surface_mesh>();
-  //test<Polyhedron>();
+  test<Surface_mesh>();
+  test<Polyhedron>();
   test_split<Surface_mesh>();
-  //test_split_plane<Surface_mesh>();
-  //test_split<Polyhedron>();
+  test_split_plane<Surface_mesh>();
+  test_split<Polyhedron>();
 
   return 0;
 }
