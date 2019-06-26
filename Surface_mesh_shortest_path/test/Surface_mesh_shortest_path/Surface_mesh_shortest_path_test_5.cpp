@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 
   for (size_t i = 0; i < numInitialLocations; ++i)
   {
-    size_t faceId = rand.get_int(0, faces.size());
+    size_t faceId = static_cast<std::size_t>(rand.get_int(0, static_cast<int>(faces.size())));
     sourcePoints.push_back(Face_location(faces[faceId], CGAL::test::random_coordinates<Traits>(rand)));
     shortestPaths.add_source_point(sourcePoints.back().first, sourcePoints.back().second);
   }
