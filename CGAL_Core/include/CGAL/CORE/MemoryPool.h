@@ -95,7 +95,11 @@ public:
 #if defined(CGAL_HAS_THREADS) && defined(BOOST_GCC) && BOOST_GCC < 90100
     if(memPool_ptr.get() == nullptr) {memPool_ptr.reset(new Self());}
     Self& memPool =  * memPool_ptr.get();
-#endif
+#elif defined(CGAL_HAS_THREADS) // use the C++11 implementation
+    static thread_local Self memPool;
+#else // not CGAL_HAS_THREADS
+    static Self memPool;
+#endif // not CGAL_HAS_THREADS
     return memPool;
   }
  
@@ -105,10 +109,6 @@ private:
 
 #if defined(CGAL_HAS_THREADS) && defined(BOOST_GCC) && BOOST_GCC < 90100
   static boost::thread_specific_ptr<Self> memPool_ptr;
-#elif defined(CGAL_HAS_THREADS) // use the C++11 implementation
-  static thread_local Self memPool;
-#else // not CGAL_HAS_THREADS
-  static Self memPool;
 #endif // not CGAL_HAS_THREADS
 };
 
@@ -116,12 +116,6 @@ private:
 template <class T, int nObjects >
 boost::thread_specific_ptr<MemoryPool<T, nObjects> >
 MemoryPool<T, nObjects>::memPool_ptr;
-#else // use C++11 or without CGAL_HAS_THREADS
-template <class T, int nObjects >
-#  ifdef CGAL_HAS_THREADS
-thread_local
-#  endif
-MemoryPool<T, nObjects> MemoryPool<T, nObjects>::memPool;
 #endif
 
 template< class T, int nObjects >
