@@ -13,12 +13,12 @@ typedef CGAL::Constrained_triangulation_plus_2<CDT>                       CDTP;
 typedef CDTP::Point                                                       Point;
 typedef CDTP::Constraint_id                                               Cid;
 typedef CDTP::Vertex_handle                                               Vertex_handle;
-
-
+typedef CDTP::Constraint_id                                               Constraint_id;
+typedef CDTP::Vertices_in_constraint_iterator                             Vertices_in_constraint_iterator;
 
 int countVertex(CDTP &cdtp, CDTP::Constraint_id id)
 {
-    auto v=cdtp.vertices_in_constraint_begin(id);
+    Vertices_in_constraint_iterator v=cdtp.vertices_in_constraint_begin(id);
 
     int count=0;
     while(v!=cdtp.vertices_in_constraint_end(id))
@@ -54,12 +54,12 @@ int main()
     pointsListNoCollinear.push_back(Point(1,5));
 
 
-    auto ctIdCollinear=cdtp.insert_constraint(pointsListCollinear.begin(),pointsListCollinear.end());
-    auto ctIdNoCollinear=cdtp.insert_constraint(pointsListNoCollinear.begin(),pointsListNoCollinear.end());
+    Constraint_id ctIdCollinear=cdtp.insert_constraint(pointsListCollinear.begin(),pointsListCollinear.end());
+    Constraint_id ctIdNoCollinear=cdtp.insert_constraint(pointsListNoCollinear.begin(),pointsListNoCollinear.end());
     
     
     //******************************* attempt with the collinear constraint
-    auto vertexToRemoveCollinear=cdtp.vertices_in_constraint_begin(ctIdCollinear);
+    Vertices_in_constraint_iterator vertexToRemoveCollinear=cdtp.vertices_in_constraint_begin(ctIdCollinear);
     vertexToRemoveCollinear++;
     vertexToRemoveCollinear++;
 
@@ -73,7 +73,7 @@ int main()
     
     
     //******************************* attempt with the collinear constraint
-    auto vertexToRemoveNoCollinear=cdtp.vertices_in_constraint_begin(ctIdNoCollinear);
+    Vertices_in_constraint_iterator vertexToRemoveNoCollinear=cdtp.vertices_in_constraint_begin(ctIdNoCollinear);
     vertexToRemoveNoCollinear++;
     vertexToRemoveNoCollinear++;
 
