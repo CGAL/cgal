@@ -89,7 +89,7 @@ template<typename FT>
 bool is_equal(const FT& a, const FT& b)
 {
   if(boost::is_floating_point<FT>::value)
-    return (CGAL::abs(a - b) <= 1e-12); // numeric_limits' epsilon is too restrictive...
+    return (CGAL::abs(a - b) <= 1e-7); // numeric_limits' epsilon is too restrictive...
   else
     return (a == b);
 }
@@ -101,21 +101,21 @@ void test_snappers(const G& g)
 
   typedef typename PMP::Location_traits<G>::FT                        FT;
 
-  typename PMP::Location_traits<G>::Barycentric_coordinates coords = CGAL::make_array(FT(1e-11), FT(0.99999999999999999), FT(1e-12));
+  typename PMP::Location_traits<G>::Barycentric_coordinates coords = CGAL::make_array(FT(1e-6), FT(0.9999999999999999999), FT(1e-7));
   typename PMP::Location_traits<G>::Face_location loc = std::make_pair(*(faces(g).first), coords);
 
   // ---------------------------------------------------------------------------
   PMP::internal::snap_coordinates_to_border<G>(coords); // uses numeric_limits' epsilon()
-  assert(coords[0] == FT(1e-11) && coords[1] == FT(1) && coords[2] == FT(1e-12));
+  assert(coords[0] == FT(1e-6) && coords[1] == FT(1) && coords[2] == FT(1e-7));
 
-  PMP::internal::snap_coordinates_to_border<G>(coords, 1e-10);
+  PMP::internal::snap_coordinates_to_border<G>(coords, 1e-5);
   assert(coords[0] == FT(0) && coords[1] == FT(1) && coords[2] == FT(0));
 
   // ---------------------------------------------------------------------------
   PMP::internal::snap_location_to_border<G>(loc); // uses numeric_limits' epsilon()
   assert(!PMP::is_on_face_border(loc, g));
 
-  PMP::internal::snap_location_to_border<G>(loc, 1e-10);
+  PMP::internal::snap_location_to_border<G>(loc, 1e-7);
   assert(PMP::is_on_face_border(loc, g));
 }
 
@@ -472,7 +472,7 @@ void test_locate_in_face(const G& g, CGAL::Random& rnd)
     assert(PMP::locate_in_common_face(loc, neigh_loc, g));
 
     assert(PMP::locate_in_common_face(loc, p, neigh_loc, g));
-    assert(PMP::locate_in_common_face(loc, p, neigh_loc, g, 1e-10));
+    assert(PMP::locate_in_common_face(loc, p, neigh_loc, g, 1e-7));
   }
 }
 
