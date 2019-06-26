@@ -1108,6 +1108,8 @@ public:
       }
     }
 
+    nodes.finalize();
+
     // additional operations
     output_builder(nodes,
                    input_with_coplanar_faces,
