@@ -31,6 +31,9 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
+
+#include <CGAL/iterator.h>
 
 #include <CGAL/AABB_triangle_primitive.h>
 
@@ -479,6 +482,10 @@ bool clip(      TriangleMesh& tm,
 *     Note that if the property map is writable, the indices of the faces
 *     of `tm` and `splitter` will be set after refining `tm` with the intersection with `splitter`.
 *   \cgalParamEnd
+* *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the splitting will be done on
+  *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
+  *      (i.e. `tm` will be kept closed).
+  *   \cgalParamEnd
 *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
 *                            that is used to track the creation of new faces.
 *   \cgalParamEnd
@@ -524,7 +531,8 @@ void split(TriangleMesh& tm,
   FCCMap fccmap = get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
   Ecm ecm  = get(CGAL::dynamic_edge_property_t<bool>(), tm);
   const bool split_volume =
-      boost::choose_param(boost::get_param(np_tm, internal_np::clip_volume), false);
+      boost::choose_param(boost::get_param(np_tm, internal_np::clip_volume), false)
+      && is_closed(tm);
 
   // create a constrained edge map and corefine input mesh with the splitter,
   // and mark edges
@@ -532,9 +540,6 @@ void split(TriangleMesh& tm,
   PMP::corefine(tm, splitter,
                 CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm),
                 CGAL::parameters::vertex_point_map(vpm_s));
-  std::ofstream ofs("/home/gimeno//Bureau/coref.off");
-  ofs << tm;
-  ofs.close();
 
   //duplicate marked edges to "split" patches
 
@@ -559,7 +564,7 @@ void split(TriangleMesh& tm,
     put(visited_vertices, v, false);
 
 
-  std::unordered_map<vertex_descriptor, std::vector<vertex_descriptor> > vertex_pool;
+  std::unordered_map<vertex_descriptor, vertex_descriptor > vertex_pool;
   //duplicate vertices
   for(auto e : shared_edges)
   {
@@ -587,8 +592,8 @@ void split(TriangleMesh& tm,
     if(border_counter > 1)
     {
       //duplicate
-      vertex_pool[vd].push_back(add_vertex(tm));
-      put(vpm_tm, vertex_pool[vd].back(), get(vpm_tm, vd));
+      vertex_pool[vd]=add_vertex(tm);
+      put(vpm_tm, vertex_pool[vd], get(vpm_tm, vd));
     }
 source:
     //again with source
@@ -614,15 +619,20 @@ source:
     if(border_counter > 1)
     {
       //duplicate
-      vertex_pool[vd].push_back(add_vertex(tm));
-      put(vpm_tm, vertex_pool[vd].back(), get(vpm_tm, vd));
+      vertex_pool[vd]=add_vertex(tm);
+      put(vpm_tm, vertex_pool[vd], get(vpm_tm, vd));
     }
 
   }
 
+  //clear vertex_map for re-usability
+  for(vertex_descriptor v : vertices(tm))
+    put(visited_vertices, v, false);
+
   std::size_t nb_shared_edges = shared_edges.size();
   std::vector<halfedge_descriptor> new_patch_border;
   new_patch_border.reserve( nb_shared_edges );
+
   // now duplicate the edge and set its pointers
   for(std::size_t k=0; k<nb_shared_edges; ++k)
   {
@@ -640,15 +650,11 @@ source:
     set_halfedge(face(h, tm), new_hedge, tm);
 
     vertex_descriptor vd = target(h, tm);
-    set_target(new_hedge, vertex_pool[vd].empty()
-               ? vd
-               : vertex_pool[vd].front(), tm);
+    set_target(new_hedge, vd, tm);
 
     //set_target(new_hedge, vd, tm);
     vd = source(h, tm);
-    set_target(new_opp, vertex_pool[vd].empty()
-        ? vd
-        : vertex_pool[vd].front(), tm);
+    set_target(new_opp, vd, tm);
     //set_target(new_opp, vd, tm);
 
     set_face(new_opp, GT::null_face(), tm);
@@ -668,7 +674,7 @@ source:
 
   for(halfedge_descriptor h : new_patch_border)
   {
-    std::cout<<tm.point(source(h, tm))<<" "<<tm.point(target(h, tm))<<std::endl;
+   // std::cout<<tm.point(source(h, tm))<<" "<<tm.point(target(h, tm))<<std::endl;
     halfedge_descriptor h_opp = opposite(h, tm);
     //set next pointer
     {
@@ -688,9 +694,53 @@ source:
       set_next(candidate, h_opp, tm);
     }
 
+    //set new target
+    vertex_descriptor vd = target(h, tm);
+    if(!get(visited_vertices, vd))
+    {
+      halfedge_descriptor candidate = h;
+      do{
+        if(vertex_pool.find(vd) != vertex_pool.end())
+        {
+          set_target(candidate, vertex_pool[vd], tm);
+        }
+        candidate = opposite(next(candidate, tm), tm);
+      }while ( !is_border(candidate, tm) );
+      put(visited_vertices, vd, true);
+    }
+
+
     CGAL_assertion( prev(next(h_opp, tm), tm) == h_opp );
+    CGAL_assertion( next(prev(h_opp, tm), tm) == h_opp );
     CGAL_assertion( is_border(prev(h_opp, tm), tm) );
     CGAL_assertion( is_border(next(h_opp, tm), tm) );
+  }
+  std::vector<halfedge_descriptor> border;
+  PMP::border_halfedges(faces(tm),
+                        tm,
+                        std::back_inserter(border));
+  for(auto h : border)
+  {
+    assert(next(prev(h,tm),tm) == h);
+    assert(prev(next(h,tm),tm) == h);
+  }
+
+  if(split_volume)
+  {
+    while(!is_closed(tm))
+    {
+      halfedge_descriptor b_h;
+      for(auto hd : halfedges(tm))
+      {
+        if(is_border(hd, tm))
+        {
+          b_h = hd;
+          break;
+        }
+      }
+      //use the visitor instead of the emptyset_iterator, probably
+      PMP::triangulate_hole(tm, b_h, Emptyset_iterator(), CGAL::parameters::vertex_point_map(vpm_tm).use_delaunay_triangulation(true));
+    }
   }
 }
 

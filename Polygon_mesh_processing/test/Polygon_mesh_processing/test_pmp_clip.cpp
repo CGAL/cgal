@@ -318,7 +318,7 @@ void test_split()
   input.open("data-coref/sphere.off");
   input >> tm2;
   input.close();
-  PMP::split(tm1, tm2);
+  PMP::split(tm1, tm2, params::clip_volume(true));
   std::ofstream("out_ccs.off") << std::setprecision(17) << tm1;
   CGAL::clear(tm1);
   CGAL::clear(tm2);
