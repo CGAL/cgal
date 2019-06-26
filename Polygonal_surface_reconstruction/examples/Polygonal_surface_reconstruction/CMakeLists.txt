@@ -4,14 +4,14 @@
 project( Polygonal_surface_reconstruction_Examples )
 
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1...3.15)
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
 
 if ( NOT CGAL_FOUND )
 
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
+  message(STATUS "NOTICE: This project requires the CGAL library, and will not be compiled.")
   return()  
 
 endif()
@@ -25,7 +25,7 @@ find_package( Boost REQUIRED )
 
 if ( NOT Boost_FOUND )
 
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
+  message(STATUS "NOTICE: This project requires the Boost library, and will not be compiled.")
 
   return()  
 
@@ -49,10 +49,10 @@ if ( NOT SCIP_FOUND )
     find_package( GLPK )
 
     if ( NOT GLPK_FOUND )
-      message(STATUS "This project requires either SCIP or GLPK, and will not be compiled. "
+      message(STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
                       "Please proivde either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
     else()
-        add_compile_definitions(CGAL_USE_GLPK)
+        add_definitions(-DCGAL_USE_GLPK)
 
         include_directories( BEFORE ${GLPK_INCLUDE_DIR} )
 
@@ -66,7 +66,7 @@ if ( NOT SCIP_FOUND )
 
 else()
 
-    add_compile_definitions(CGAL_USE_SCIP)
+    add_definitions(-DCGAL_USE_SCIP)
 
     include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
 

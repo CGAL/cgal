@@ -4,7 +4,7 @@
 
 project( Solver_interface_Examples )
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.1...3.15)
 
 find_package(CGAL QUIET)
 
@@ -30,7 +30,7 @@ if ( CGAL_FOUND )
 
     target_link_libraries( mixed_integer_program PRIVATE ${SCIP_LIBRARIES} )
 
-    add_compile_definitions(CGAL_USE_SCIP)
+    add_definitions(-DCGAL_USE_SCIP)
 
     message("SCIP found and used")
 
@@ -44,13 +44,13 @@ if ( CGAL_FOUND )
 
         target_link_libraries( mixed_integer_program PRIVATE ${GLPK_LIBRARIES} )
 
-        add_compile_definitions(CGAL_USE_GLPK)
+        add_definitions(-DCGAL_USE_GLPK)
 
         message("GLPK found and used")
 
       else()
 
-        message(STATUS "This project requires either SCIP or GLPK, and will not be compiled. "
+        message(STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
             "Please proivde either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
 
       endif()
@@ -59,7 +59,7 @@ if ( CGAL_FOUND )
 
 else()
   
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
   
 endif()
 

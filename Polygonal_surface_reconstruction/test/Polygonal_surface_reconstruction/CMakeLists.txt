@@ -4,7 +4,7 @@
 project( Polygonal_surface_reconstruction_Tests )
 
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1...3.15)
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -53,7 +53,7 @@ if (SCIP_FOUND)
 
   target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${SCIP_LIBRARIES} )
 
-  add_compile_definitions(CGAL_USE_SCIP)
+  add_definitions(-DCGAL_USE_SCIP)
 
   message("SCIP found and used")
 
@@ -68,7 +68,7 @@ find_package( GLPK )
 
       target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${GLPK_LIBRARIES} )
 
-      add_compile_definitions(CGAL_USE_GLPK)
+      add_definitions(-DCGAL_USE_GLPK)
 
       message("GLPK found and used")
 

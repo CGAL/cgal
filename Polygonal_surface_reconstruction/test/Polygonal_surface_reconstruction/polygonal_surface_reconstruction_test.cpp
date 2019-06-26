@@ -43,7 +43,6 @@ int main(int argc, char* argv[])
     //argv[1] = "data/house.ply";
     //argv[1] = "data/chair.ply";
     //argv[1] = "data/square.ply";
-#endif
 
 	// usage
 	if (argc - 1 == 0) {
@@ -53,8 +52,11 @@ int main(int argc, char* argv[])
         std::cerr << "Input file formats are \'pwn\' and \'ply\'. No output.\n";
 		return EXIT_FAILURE;
 	}
+#endif
 
-	char* input_file = argv[1];
+        const char* input_file =
+            (argc > 1) ? argv[1]
+            : "data/icosahedron.pwn";
 
 	//---------------------------------------------------------------------
 
@@ -116,7 +118,7 @@ int main(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
     std::cerr << "This test requires either GLPK or SCIP.\n";
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }
 
 #endif  // defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)

@@ -147,7 +147,7 @@ int main()
 int main(int argc, char* argv[])
 {
     std::cerr << "This test requires either GLPK or SCIP.\n";
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }
 
 #endif  // defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)
