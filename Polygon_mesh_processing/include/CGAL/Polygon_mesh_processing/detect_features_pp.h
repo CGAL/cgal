@@ -316,11 +316,10 @@ private:
 
       const double twice_other_osta = 2 * get(osta_angles_, other_h);
 
-      // @fixme really ignore osta == pi/2 ?
       if(twice_other_osta < 90) // <=> osta < pi/2
         max_other_DA_osta_smaller_than_half_pi = (CGAL::max)(max_other_DA_osta_smaller_than_half_pi,
                                                              other_dih_angle);
-      else if(twice_other_osta > 90) // <=> osta < pi/2
+      else if(twice_other_osta >= 90) // <=> osta < pi/2
         max_other_DA_osta_greater_than_half_pi = (CGAL::max)(max_other_DA_osta_greater_than_half_pi,
                                                              other_dih_angle);
     }
@@ -336,7 +335,7 @@ private:
 
     const double osta_angle = get(osta_angles_, h);
 
-    if(osta_angle < theta_t_)
+    if(osta_angle <= theta_t_)
     {
       double min_osta_value = std::numeric_limits<double>::max();
       for(halfedge_descriptor other_h : CGAL::halfedges_around_source(h, mesh_)) // @fixme? border
@@ -354,7 +353,7 @@ private:
       if(osta_angle <= min_osta_value)
         return true;
     }
-    else if(osta_angle > 90 - theta_t_) // @strict
+    else if(osta_angle >= 90 - theta_t_) // @strict
     {
       double max_osta_value = -(std::numeric_limits<double>::max());
       for(halfedge_descriptor other_h : CGAL::halfedges_around_source(h, mesh_)) // @fixme? border
