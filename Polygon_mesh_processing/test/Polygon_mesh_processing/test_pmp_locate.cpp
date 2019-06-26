@@ -25,16 +25,18 @@
 #include <CGAL/Random.h>
 #include <CGAL/Unique_hash_map.h>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/optional.hpp>
-#include <boost/type_traits/is_floating_point.hpp>
 
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <map>
+#include <set>
+#include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -88,7 +90,7 @@ random_3D_ray(const AABB_tree& aabb_tree, CGAL::Random& rnd)
 template<typename FT>
 bool is_equal(const FT& a, const FT& b)
 {
-  if(boost::is_floating_point<FT>::value)
+  if(std::is_floating_point<FT>::value)
     return (CGAL::abs(a - b) <= 1e-7); // numeric_limits' epsilon is too restrictive...
   else
     return (a == b);
@@ -209,8 +211,10 @@ void test_constructions(const G& g, CGAL::Random& rnd)
   assert(hd);
 
   loc = std::make_pair(f, CGAL::make_array(FT(1), FT(0), FT(0)));
+  assert(PMP::is_on_vertex(loc, source(halfedge(f, g), g), g));
   dv = PMP::get_descriptor_from_location(loc, g);
-  assert(bool(boost::get<vertex_descriptor>(&dv)));
+  if(const vertex_descriptor* v = boost::get<vertex_descriptor>(&dv)) { } else { assert(false); }
+
   // ---------------------------------------------------------------------------
 
   Point s = PMP::construct_point(loc, g, CGAL::parameters::all_default());
