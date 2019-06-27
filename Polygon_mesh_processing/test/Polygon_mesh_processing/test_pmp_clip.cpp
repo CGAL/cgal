@@ -299,8 +299,11 @@ void test_split_plane()
   input.close();
 
   PMP::split(tm1,K::Plane_3(0,0,1,0));
-
-  std::ofstream("out_ccs_plane.off") << std::setprecision(17) << tm1;
+  std::vector<Mesh> meshes;
+  PMP::split_connected_components(tm1,
+                                  std::back_inserter(meshes),
+                                  params::all_default());
+  CGAL_assertion(meshes.size() == 3);
   CGAL::clear(tm1);
 
 }
@@ -319,7 +322,7 @@ void test_split()
   input >> tm2;
   input.close();
   PMP::split(tm1, tm2);
-  std::ofstream("out_ccs.off") << std::setprecision(17) << tm1;
+  //std::ofstream("out_ccs.off") << std::setprecision(17) << tm1;
   CGAL::clear(tm1);
   CGAL::clear(tm2);
 
@@ -332,6 +335,7 @@ int main()
   test_split<Surface_mesh>();
   test_split_plane<Surface_mesh>();
   test_split<Polyhedron>();
+
 
   return 0;
 }

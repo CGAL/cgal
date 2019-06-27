@@ -37,6 +37,7 @@
 
 #include <CGAL/AABB_triangle_primitive.h>
 
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 
 #include <boost/property_map/property_map.hpp>
@@ -278,34 +279,8 @@ clip_to_bbox(const Plane_3& plane,
   return ON_ORIENTED_BOUNDARY;
 }
 
-template <class TriangleMesh, class OutputIterator, class FIMap, class VIMap, class HIMap >
-OutputIterator split_connected_components_impl(
-    FIMap fim,
-    HIMap him,
-    VIMap vim,
-    OutputIterator& out,
-    const TriangleMesh& tm
-    )
-{
-  //use a dynamic propertymap
-  typedef boost::property_map<TriangleMesh,CGAL::face_patch_id_t<int> >::type PatchIDMap;
-  PatchIDMap pidmap = get(CGAL::face_patch_id_t<int>(), tm);
 
-  int nb_patches = PMP::connected_components(tm, pidmap);
 
-  for(int i=0; i<nb_patches; ++i)
-  {
-    CGAL::Face_filtered_graph<TriangleMesh, FIMap, VIMap, HIMap>
-        filter_graph(tm, i, pidmap,
-                     CGAL::parameters::face_index_map(fim)
-                     .halfedge_index_map(him)
-                     .vertex_index_map(vim));
-    TriangleMesh new_graph;
-    CGAL::copy_face_graph(filter_graph, new_graph);
-    out++ = new_graph;
-  }
-  return out;
-}
 } // end of internal namespace
 
 /**
@@ -720,13 +695,17 @@ source:
     if(!get(visited_vertices, vd))
     {
       halfedge_descriptor candidate = h;
+      set_halfedge(vertex_pool[vd], h, tm);
       do{
         if(vertex_pool.find(vd) != vertex_pool.end())
         {
           set_target(candidate, vertex_pool[vd], tm);
         }
         candidate = opposite(next(candidate, tm), tm);
-      }while ( !is_border(candidate, tm) );
+      }while(!is_border(candidate, tm));
+      //reset a valid halfedge for vd.
+      set_halfedge(vd, candidate, tm);
+      assert(target(halfedge(vd, tm), tm) == vd);
       put(visited_vertices, vd, true);
     }
 
@@ -745,6 +724,10 @@ source:
     assert(next(prev(h,tm),tm) == h);
     assert(prev(next(h,tm),tm) == h);
   }
+
+  assert(is_valid(tm));
+  for(auto v : vertices(tm))
+    assert(target(halfedge(v, tm), tm) == v);
 }
 
 
@@ -817,31 +800,6 @@ void split(      TriangleMesh& tm,
   //else nothing to do, no intersection.
 
 }
-
-
-
-
-template <class TriangleMesh, class OutputIterator, class NamedParameters>
-OutputIterator split_connected_components(const TriangleMesh& tm,
-                                OutputIterator& out,
-                                const NamedParameters& np)
-{
-  typedef typename GetFaceIndexMap<TriangleMesh, NamedParameters>::const_type     FIMap;
-  typedef typename boost::property_map<typename internal::Dummy_PM, //defined in border.h
-                                            CGAL::face_index_t>::type   Unset_FIMap;
-
-  if (boost::is_same<FIMap, Unset_FIMap>::value)
-  {
-    //face index map is not given in named parameters, nor as an internal property map
-    return internal::split_connected_components_impl(out, tm);
-  }
-
-  //face index map given as a named parameter, or as an internal property map
-  FIMap fim = boost::choose_param(get_param(np, internal_np::face_index),
-                                  get_const_property_map(CGAL::face_index, pmesh));
-  return internal::split_connected_components_impl(fim, out, tm, np);
-}
-
 
 
 /// \cond SKIP_IN_MANUAL

@@ -38,6 +38,8 @@
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/Face_filtered_graph.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/tuple.h>
@@ -798,6 +800,113 @@ void keep_connected_components(PolygonMesh& pmesh
 {
   keep_connected_components(pmesh, components_to_keep,
     CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+
+namespace internal{
+template <class MapFromNP, class Default_tag, class Dynamic_tag, class Mesh>
+std::pair<MapFromNP , bool>
+get_map(MapFromNP m, Default_tag, Dynamic_tag, Mesh&)
+{
+  return std::make_pair(m, false);
+}
+
+template <class Default_tag, class Dynamic_tag, class Mesh>
+std::pair<typename boost::property_map<Mesh, Default_tag >::type, bool>
+get_map(boost::param_not_found, Default_tag t, Dynamic_tag , Mesh& m)
+{
+
+  return std::make_pair(get(t,m), boost::is_same<Default_tag, Dynamic_tag>::value) ;
+}
+
+template <class TriangleMesh, class OutputIterator, class FIMap, class VIMap, class HIMap >
+OutputIterator split_connected_components_impl(
+    std::pair<FIMap, bool> fim,//pair(map, need_init)
+    std::pair<HIMap, bool> him,//pair(map, need_init)
+    std::pair<VIMap, bool> vim,//pair(map, need_init)
+    OutputIterator out,
+    const TriangleMesh& tm
+    )
+{
+  if(fim.second)
+  {
+    std::size_t id = 0;
+    for(auto f : faces(tm))
+    {
+      put(fim.first, f, id++);
+    }
+  }
+  if(him.second)
+  {
+    std::size_t id = 0;
+    for(auto h : halfedges(tm))
+    {
+      put(him.first, h, id++);
+    }
+  }
+  if(vim.second)
+  {
+    std::size_t id = 0;
+    for(auto v : vertices(tm))
+    {
+      put(vim.first, v, id++);
+    }
+  }
+  typename boost::template property_map<TriangleMesh, CGAL::dynamic_face_property_t<int > >::const_type
+      pidmap = get(CGAL::dynamic_face_property_t<int>(), tm);
+
+  int nb_patches = CGAL::Polygon_mesh_processing::connected_components(tm, pidmap, CGAL::parameters::face_index_map(fim.first));
+
+  for(int i=0; i<nb_patches; ++i)
+  {
+    CGAL::Face_filtered_graph<TriangleMesh, FIMap, VIMap, HIMap>
+        filter_graph(tm, i, pidmap,
+                     CGAL::parameters::face_index_map(fim.first)
+                     .halfedge_index_map(him.first)
+                     .vertex_index_map(vim.first));
+    TriangleMesh new_graph;
+    CGAL::copy_face_graph(filter_graph, new_graph);
+    *out++ = new_graph;
+  }
+  return out;
+}
+}//internal
+
+template <class TriangleMesh, class OutputIterator, class NamedParameters>
+OutputIterator split_connected_components(TriangleMesh& tm,
+                                OutputIterator out,
+                                          const NamedParameters& np)
+{
+  typedef typename boost::mpl::if_c<CGAL::graph_has_property<TriangleMesh, CGAL::face_index_t>::value
+        , CGAL::face_index_t
+        ,CGAL::dynamic_face_property_t<std::size_t >
+        >::type FIM_def_tag; //or no _c ?
+
+  typedef typename boost::mpl::if_c<CGAL::graph_has_property<TriangleMesh, CGAL::halfedge_index_t>::value
+        , CGAL::halfedge_index_t
+        ,CGAL::dynamic_halfedge_property_t<std::size_t >
+        >::type HIM_def_tag; //or no _c ?
+
+  typedef typename boost::mpl::if_c<CGAL::graph_has_property<TriangleMesh, boost::vertex_index_t>::value
+        , boost::vertex_index_t
+        ,CGAL::dynamic_vertex_property_t<std::size_t >
+        >::type VIM_def_tag; //or no _c ?
+
+  return internal::split_connected_components_impl(
+        internal::get_map(
+          get_param(np, internal_np::face_index),
+          CGAL::dynamic_face_property_t<std::size_t >(),
+          FIM_def_tag(), tm),
+       internal::get_map(
+          get_param(np, internal_np::halfedge_index),
+          CGAL::dynamic_halfedge_property_t<std::size_t >(),
+          HIM_def_tag(), tm),
+        internal::get_map(
+          get_param(np, internal_np::vertex_index),
+          CGAL::dynamic_vertex_property_t<std::size_t >(),
+          VIM_def_tag(), tm),
+        out, tm);
+
 }
 
 } // namespace Polygon_mesh_processing
