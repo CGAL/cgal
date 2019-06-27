@@ -221,8 +221,8 @@ test_new_3(const R& rep)
 
   typename R::Construct_tetrahedron_3 construct_tetrahedron
         = rep.construct_tetrahedron_3_object();
-  Tetrahedron_3 th1;
-  Tetrahedron_3 th2 = construct_tetrahedron(p2,p3,p4,p5);
+  Tetrahedron_3 th0; // test default-constructor
+  Tetrahedron_3 th2 = construct_tetrahedron(p2,p3,p4,p5), th1 = th2;
 
   typename R::Construct_iso_cuboid_3 construct_iso_cuboid
         = rep.construct_iso_cuboid_3_object();
