@@ -46,7 +46,7 @@ void test(const FaceGraph& mesh)
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-  std::string file=(argc==1?"data/3torus-smooth.off":argv[1]);
+  std::string file=(argc==1?"data/elephant.off":argv[1]);
   seed=static_cast<unsigned int>(CGAL::get_default_random().get_int(0,INT_MAX));
 
   {

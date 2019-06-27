@@ -96,7 +96,7 @@ void process_command_line(int argc, char** argv,
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-  std::string file="data/3torus-smooth.off";  
+  std::string file="data/elephant.off";  
   bool draw=false;
   unsigned int l1=10, l2=100;
   unsigned int d1=10, d2=100;
@@ -118,9 +118,6 @@ int main(int argc, char** argv)
                                          << lcc.is_valid() << std::endl;
   
   Curves_on_surface_topology<LCC_3_cmap> cst(lcc, time);
-  std::cout<<"Reduced map: ";
-  cst.get_map().display_characteristics(std::cout)
-    << ", valid="<< cst.get_map().is_valid() << std::endl;
    
   unsigned int nbcontractible=0;
   std::vector<std::size_t> errors_seeds;
@@ -183,5 +180,12 @@ int main(int argc, char** argv)
   std::cout<<"Number of contractible paths: "<<nbcontractible<<" among "<<N
            <<" (i.e. "<<(double)(nbcontractible*100)/double(N)<<"%)."<<std::endl;
 
+  if (cst.is_minimal_quadrangulation_computed())
+  {
+    std::cout<<"Reduced map: ";
+    cst.get_minimal_quadrangulation().display_characteristics(std::cout)
+      << ", valid="<< cst.get_minimal_quadrangulation().is_valid() << std::endl;
+  }
+  
   return EXIT_SUCCESS;
 }
