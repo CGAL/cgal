@@ -38,6 +38,7 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/Origin.h>
 #include <CGAL/property_map.h>
+#include <CGAL/use.h>
 #include <CGAL/utils.h>
 
 #include <boost/graph/graph_traits.hpp>
@@ -434,6 +435,7 @@ public:
       ceres::CostFunction* cost_function =
         new ceres::AutoDiffCostFunction<Face_energy, 1, 1, 1, 1>(new Face_energy(vip, vjp, S_av));
 #endif
+      CGAL_USE(v);
       problem.AddResidualBlock(cost_function, NULL, &x, &y, &z);
     }
 
