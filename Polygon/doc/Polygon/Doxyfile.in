@@ -3,7 +3,7 @@
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Polygons"
 EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/examples \
                ${CGAL_Stream_support_EXAMPLE_DIR}
-INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}
 
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true
