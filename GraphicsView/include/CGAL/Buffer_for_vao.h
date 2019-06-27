@@ -66,7 +66,7 @@ namespace internal
     unsigned int nb = 0;
     for (std::size_t i=0; i<points.size(); ++i)
     {
-      newell_single_step_3(points[i], points[(i+1)%points.size()], normal);
+      internal::newell_single_step_3(points[i], points[(i+1)%points.size()], normal);
       ++nb;
     }
     
