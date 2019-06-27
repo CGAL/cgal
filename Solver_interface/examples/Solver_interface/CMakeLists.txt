@@ -22,7 +22,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "diagonalize_matrix.cpp" )
   create_single_source_cgal_program( "mixed_integer_program.cpp" )
 
-  find_package( SCIP )
+  find_package( SCIP QUIET)
 
   if (SCIP_FOUND)
 
@@ -36,7 +36,7 @@ if ( CGAL_FOUND )
 
   else()
 
-      find_package( GLPK )
+      find_package( GLPK QUIET)
 
       if (GLPK_FOUND)
 

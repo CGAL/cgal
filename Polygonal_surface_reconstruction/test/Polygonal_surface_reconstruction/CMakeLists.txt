@@ -45,7 +45,7 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "polygonal_surface_reconstruction_test.cpp" )
 
-find_package( SCIP )
+find_package( SCIP QUIET)
 
 if (SCIP_FOUND)
 
@@ -60,7 +60,7 @@ if (SCIP_FOUND)
 endif()
 
 
-find_package( GLPK )
+find_package( GLPK QUIET)
 
     if (GLPK_FOUND)
 
@@ -77,7 +77,7 @@ endif()
 
 if (NOT SCIP_FOUND AND NOT GLPK_FOUND)
 
-  message(STATUS "This project requires either SCIP or GLPK, and will not be compiled. "
+  message(STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
       "Please proivde either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
 
 endif()

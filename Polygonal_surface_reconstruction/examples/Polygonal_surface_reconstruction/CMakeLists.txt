@@ -43,14 +43,14 @@ create_single_source_cgal_program( "polyfit_example_user_provided_planes.cpp" )
 create_single_source_cgal_program( "polyfit_example_model_complexty_control.cpp" )
 
 
-find_package( SCIP )
+find_package( SCIP QUIET)
 
 if ( NOT SCIP_FOUND )
-    find_package( GLPK )
+    find_package( GLPK QUIET)
 
     if ( NOT GLPK_FOUND )
-      message(STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
-                      "Please proivde either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
+      message( STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
+                      "Please provide either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
     else()
         
 
