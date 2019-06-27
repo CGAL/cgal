@@ -169,7 +169,7 @@ void smooth_mesh(const FaceRange& faces,
 #endif
 
   if(!use_angle_smoothing && !use_area_smoothing)
-    std::cerr << "Warning: called PMP::smooth_mesh() but no smoothing method is being used" << std::endl;
+    std::cerr << "Called PMP::smooth_mesh() without any smoothing method selected or available" << std::endl;
 
   unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
   const bool do_project = choose_param(get_param(np, internal_np::do_project), true);
