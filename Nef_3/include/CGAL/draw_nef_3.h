@@ -27,7 +27,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-//#include <CGAL/Nef_3/SNC_iteration.h>
+#include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Random.h>
 
 namespace CGAL {
@@ -57,6 +57,18 @@ class SimpleNefPolyhedronViewerQt : public Basic_viewer_qt
   typedef typename Nef_Polyhedron::Vertex_const_handle      Vertex_const_handle;
   typedef typename Nef_Polyhedron::SNC_const_decorator      SNC_const_decorator;
   typedef typename Nef_Polyhedron::SNC_structure            SNC_structure;
+  typedef typename SNC_structure::Infi_box                     Infi_box;
+
+  typedef typename Nef_Polyhedron::Shell_entry_const_iterator Shell_entry_const_iterator;
+  typedef typename Nef_Polyhedron::SFace_const_handle SFace_const_handle;
+  typedef typename Nef_Polyhedron::Volume_const_iterator Volume_const_iterator;
+
+  typedef typename Nef_Polyhedron::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Nef_Polyhedron::Halffacet_const_handle Halffacet_const_handle;
+  typedef typename Nef_Polyhedron::SHalfedge_const_handle SHalfedge_const_handle;
+  typedef typename Nef_Polyhedron::SHalfloop_const_handle SHalfloop_const_handle;
+  typedef typename Kernel::Point_3 Point_3;
+
 public:
   /// Construct the viewer
   /// @param anef the nef polyhedron to view
@@ -98,6 +110,23 @@ protected:
 //                he->opposite()->vertex()->point());
 //    // We can use add_segment(p1, p2, c) with c a CGAL::Color to add a colored segment
 //  }
+  class Nef_Visitor {
+  public:
+    Nef_Visitor(SimpleNefPolyhedronViewerQt &v) : viewer(v) {}
+
+    void visit(Vertex_const_handle vh) {
+      viewer.add_point(vh->point());
+    }
+
+    void visit(Halfedge_const_handle ) {}
+    void visit(Halffacet_const_handle ) {}
+    void visit(SHalfedge_const_handle ) {}
+    void visit(SHalfloop_const_handle ) {}
+    void visit(SFace_const_handle ) {}
+  protected:
+
+    SimpleNefPolyhedronViewerQt& viewer;
+  };
 
   void compute_vertex(Vertex_const_handle vh)
   {
@@ -109,19 +138,24 @@ protected:
   {
     clear();
 
+    Vertex_const_iterator vi;
+    Volume_const_iterator c;
+    //SNC_structure sncp(nef.sncp());
+    //SNC_const_decorator scd;
 
+    int ic = 0;
+    Nef_Visitor V(*this);
+    CGAL_forall_volumes(c, nef)
+    {
+      std::cout << "Volume " << ic++ << std::endl;
+      int is = 0;
+      Shell_entry_const_iterator it;
+      CGAL_forall_shells_of(it, c)
+      {
+        nef.visit_shell_objects(SFace_const_handle(it), V);
+      }
 
-//    if (!m_nofaces) {
-//      for (typename Polyhedron_3::Facet_const_iterator f = poly.facets_begin();
-//           f != poly.facets_end(); f++)
-//      {
-//        if (f != boost::graph_traits<Polyhedron>::null_face())
-//        {
-//          compute_face(f);
-//        }
-//      }
-//    }
-
+    }
 //    for (typename Polyhedron_3::Halfedge_const_iterator e =
 //             poly.halfedges_begin();
 //         e != poly.halfedges_end(); ++e)
@@ -131,20 +165,15 @@ protected:
 //        compute_edge(e);
 //      }
 //    }
-//    Vertex_const_iterator vi;
-//    SNC_structure sncp(nef.sncp());
-//    SNC_const_decorator scd;
-//    CGAL_forall_vertices(v, scd)
+
 //    {
 
 //    }
 
-    Vertex_const_iterator vi;
-    for(vi = nef.vertices_begin(); vi != nef.vertices_end();
-        vi++)
-    {
-      compute_vertex(vi);
-    }
+//    for (Vertex_const_iterator vi = nef.vertices_begin();
+//         vi != nef.vertices_end(); vi++) {
+//      compute_vertex(vi);
+//    }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
