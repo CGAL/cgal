@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
-  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(0.1);
+  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(0.05);
 
   SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>::garland_heckbert_map_type map;
   SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh> vis(map);

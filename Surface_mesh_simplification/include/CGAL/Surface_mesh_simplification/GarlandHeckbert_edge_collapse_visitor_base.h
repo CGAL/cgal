@@ -45,7 +45,7 @@ struct GarlandHeckbert_edge_collapse_visitor_base : Edge_collapse_visitor_base<T
       if(mCostMatrices.find(target_vertex) == mCostMatrices.end()) {
         mCostMatrices.emplace(
           target_vertex,
-          std::move(internal::GarlandHeckbertCore<TM>::fundamental_error_quidric(hd, aTM))
+          std::move(internal::GarlandHeckbertCore<TM>::fundamental_error_quadric(hd, aTM))
         );
       }
     }
@@ -56,10 +56,10 @@ struct GarlandHeckbert_edge_collapse_visitor_base : Edge_collapse_visitor_base<T
 
 
     Matrix4x4 combinedMatrix =
-      internal::GarlandHeckbertCore<TM>::combine_matrices(
+      std::move(internal::GarlandHeckbertCore<TM>::combine_matrices(
                           mCostMatrices.at(aProfile.v0()),
                           mCostMatrices.at(aProfile.v1())
-                        );
+                        ));
 
     mCostMatrices.erase(aProfile.v0());
     mCostMatrices.erase(aProfile.v1());

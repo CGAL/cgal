@@ -35,15 +35,15 @@ public:
   operator()(const Profile& aProfile,
              const boost::optional<typename Profile::Point>& aPlacement) const
   {
-    Matrix4x4 combinedMatrix = GHC::combine_matrices(
+    Matrix4x4 combinedMatrix = std::move(GHC::combine_matrices(
                   mCostMatrices.at(aProfile.v0()),
                   mCostMatrices.at(aProfile.v1())
-                );
+                ));
 
     Col4 pt = std::move(GHC::point_to_homogenous_column(*aPlacement));
 
     Optional_FT cost = (pt.transpose() * combinedMatrix * pt)(0,0);
-    
+
     return cost;
   }
 

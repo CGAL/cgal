@@ -50,16 +50,16 @@ struct GarlandHeckbertCore
   * Combines two Q matrices.
   * It is simply the addition of two matrices
   */
-  static Matrix4x4 combine_matrices(const Matrix4x4& aFirst, const Matrix4x4& aSecond) {
+  inline static Matrix4x4 combine_matrices(const Matrix4x4& aFirst, const Matrix4x4& aSecond) {
     return aFirst + aSecond;
   }
 
   /*
-  * fundamental error quidric for the target vertex of aHD in aTM
+  * fundamental error quadric for the target vertex of aHD in aTM
   */
-  static Matrix4x4 fundamental_error_quidric(const halfedge_descriptor& aHD, const TM& aTM) {
-    Matrix4x4 quidric;
-    quidric.setZero();
+  static Matrix4x4 fundamental_error_quadric(const halfedge_descriptor& aHD, const TM& aTM) {
+    Matrix4x4 quadric;
+    quadric.setZero();
 
     for(face_descriptor fd: faces_around_target(aHD, aTM)) {
       if(fd != GraphTraits::null_face()) {
@@ -72,35 +72,39 @@ struct GarlandHeckbertCore
                       get(boost::vertex_point, aTM, vds[1]),
                       get(boost::vertex_point, aTM, vds[2]));
         Row4 plane_mtr;
-        plane_mtr << plane.a(), plane.b(), plane.c(), plane.d();
+        FT norm = sqrt(plane.a() * plane.a() + plane.b() * plane.b() + plane.c() * plane.c());
+        plane_mtr << plane.a() / norm, plane.b() / norm, plane.c() / norm, plane.d() / norm;
       //  std::cout << plane_mtr << std::endl << std::endl;
-        quidric += plane_mtr.transpose() * plane_mtr;
+        quadric += plane_mtr.transpose() * plane_mtr;
       }
     }
-    return quidric;
+    return quadric;
   }
 
 
   /*
   * Return the point p that minimizes p' Q p where p is free.
   * aP0, and aP1 are the points that are being collapsed.
-  * aQuidric is the matrix that is the combination of matrices
+  * aQuadric is the matrix that is the combination of matrices
   * of aP0 and aP1.
   */
-  static Col4 optimal_point(const Matrix4x4& aQuidric, const Col4& aP0, const Col4& aP1) {
+  static Col4 optimal_point(const Matrix4x4& aQuadric, const Col4& aP0, const Col4& aP1) {
     Matrix4x4 X;
 
-    X.block(0, 0, 3, 4) = aQuidric.block(0,0,3,4);
+    /*X.block(0, 0, 3, 4) = aQuadric.block(0,0,3,4);
     X.block(3,0,1,3).setZero();
     X(3,3) = 1;
+    */
+    X << aQuadric.block(0, 0, 3, 4), 0, 0, 0, 1;
 
     Col4 opt_pt;
 
     if(X.determinant() == 0) {
       // not invertible
       Col4 p1mp0 = std::move(aP1 - aP0);
-      FT a = (p1mp0.transpose() * aQuidric * p1mp0)(0,0);
-      FT b = (p1mp0.transpose() * aQuidric * aP0 + aP0.transpose() * aQuidric * p1mp0)(0,0);
+      FT a = (p1mp0.transpose() * aQuadric * p1mp0)(0,0);
+      //FT b = (p1mp0.transpose() * aQuadric * aP0 + aP0.transpose() * aQuadric * p1mp0)(0,0);
+      FT b = 2 * (aP0.transpose() * aQuadric * p1mp0)(0,0);
 
       if(a == 0) {
         if(b < 0) {
@@ -114,8 +118,8 @@ struct GarlandHeckbertCore
         FT ext_t = -b/(2*a);
         if(ext_t < 0 || ext_t > 1 || a > 0) {
           // one of endpoints
-          FT aP0_cost = (aP0.transpose() * aQuidric * aP0)(0,0);
-          FT aP1_cost = (aP1.transpose() * aQuidric * aP1)(0,0);
+          FT aP0_cost = (aP0.transpose() * aQuadric * aP0)(0,0);
+          FT aP1_cost = (aP1.transpose() * aQuadric * aP1)(0,0);
           if(aP0_cost > aP1_cost) {
             opt_pt = aP1;
           } else {
@@ -129,8 +133,7 @@ struct GarlandHeckbertCore
     } else {
       // invertible
       Col4 rhs;
-      rhs.setZero();
-      rhs(3) = 1;
+      rhs << 0, 0, 0, 1;
       opt_pt = X.inverse() * rhs;
     }
     return opt_pt;
