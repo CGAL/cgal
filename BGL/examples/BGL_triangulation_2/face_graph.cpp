@@ -5,7 +5,6 @@
 #include <CGAL/boost/graph/iterator.h>
 
 #include <boost/graph/filtered_graph.hpp>
-#include <boost/foreach.hpp>
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
@@ -104,7 +103,7 @@ main(int,char*[])
   Ppmap ppmap = get(boost::vertex_point, t);
  
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices_around_target(*vertices(t).first, t)){
+  for(vertex_descriptor vd : vertices_around_target(*vertices(t).first, t)){
     std::cout <<  ppmap[vd] << std::endl;
   }
 

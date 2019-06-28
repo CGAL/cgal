@@ -114,14 +114,14 @@ public:
   void Arr_spherical_vert_decomp_helper<Tr, Arr, Evnt, Sbcv>::before_sweep()
 {
   // Get the north pole and the face that intially contains it.
-  m_valid_north_pole = (m_top_traits->north_pole() != NULL);
+  m_valid_north_pole = (m_top_traits->north_pole() != nullptr);
   if (m_valid_north_pole)
     m_north_pole = Vertex_const_handle (m_top_traits->north_pole());
 
   m_north_face = Face_const_handle (m_top_traits->spherical_face());
 
   // Get the south pole and the face that intially contains it.
-  m_valid_south_pole = (m_top_traits->south_pole() != NULL);
+  m_valid_south_pole = (m_top_traits->south_pole() != nullptr);
   if (m_valid_south_pole)
     m_south_pole = Vertex_const_handle (m_top_traits->south_pole());
 

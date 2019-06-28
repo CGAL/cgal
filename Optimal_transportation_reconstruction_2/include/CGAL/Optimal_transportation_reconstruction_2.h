@@ -686,7 +686,7 @@ public:
   {
     if (m_tolerance == (FT)(-1.))
       return false;
-    FT cost = CGAL::approximate_sqrt (pedge.after() / pedge.total_weight());
+    FT cost = CGAL::approximate_sqrt (FT(pedge.after() / pedge.total_weight()));
     return cost > m_tolerance;
   }
 
@@ -1098,7 +1098,7 @@ public:
       m_dt.collect_samples_from_edge(twin, samples);
       copy_twin.first->samples(copy_twin.second) = samples;
     }
-    copy_vertex->set_sample(NULL);
+    copy_vertex->set_sample(nullptr);
   }
 
   Edge get_copy_edge(
@@ -1678,7 +1678,7 @@ public:
     typename PointOutputIterator,
     typename IndexOutputIterator,
     typename IndexPairOutputIterator>
-  CGAL::cpp11::tuple<
+  std::tuple<
     PointOutputIterator, 
     IndexOutputIterator,
     IndexPairOutputIterator>
@@ -1736,7 +1736,7 @@ public:
       *segments++ = std::make_pair(pos_a, pos_b);
     }
 
-    return CGAL::cpp11::make_tuple(points, isolated_points, segments);
+    return std::make_tuple(points, isolated_points, segments);
   }
 
   /*!

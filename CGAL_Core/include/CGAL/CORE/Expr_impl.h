@@ -181,14 +181,14 @@ NodeInfo::NodeInfo() : appValue(CORE_REAL_ZERO), appComputed(false),
     v2p(EXTLONG_ZERO), v2m(EXTLONG_ZERO),
     v5p(EXTLONG_ZERO), v5m(EXTLONG_ZERO),
     u25(EXTLONG_ZERO), l25(EXTLONG_ZERO),
-    ratFlag(0), ratValue(NULL) { }
+    ratFlag(0), ratValue(nullptr) { }
 
 /********************************************************
  *  class ExprRep
  ********************************************************/
 //  constructor
 CGAL_INLINE_FUNCTION
-ExprRep::ExprRep() : refCount(1), nodeInfo(NULL), ffVal(0.0) { }
+ExprRep::ExprRep() : refCount(1), nodeInfo(nullptr), ffVal(0.0) { }
 
 // Computes the root bit bound of the expression.
 // In effect, computeBound() returns the current value of low.
@@ -312,7 +312,7 @@ void ExprRep::reduceToBigRat(const BigRat& rat) {
   lc() = l_e;
   tc() = u_e;
 
-  if (ratValue() == NULL)
+  if (ratValue() == nullptr)
     ratValue() = new BigRat(rat);
   else
     *(ratValue()) = rat;
@@ -377,9 +377,9 @@ void ExprRep::reduceTo(const ExprRep *e) {
   if (get_static_rationalReduceFlag()) {
     ratFlag() = e->ratFlag();
 
-    if (e->ratFlag() > 0 && e->ratValue() != NULL) {
+    if (e->ratFlag() > 0 && e->ratValue() != nullptr) {
       ratFlag() ++;
-      if (ratValue() == NULL)
+      if (ratValue() == nullptr)
         ratValue() = new BigRat(*(e->ratValue()));
       else
         *(ratValue()) = *(e->ratValue());
@@ -417,7 +417,7 @@ void ExprRep::reduceToZero() {
   if (get_static_rationalReduceFlag()) {
     if (ratFlag() > 0) {
       ratFlag() ++;
-      if (ratValue() == NULL)
+      if (ratValue() == nullptr)
         ratValue() = new BigRat(0);
       else
         *(ratValue()) = 0;
@@ -465,7 +465,7 @@ void ExprRep::approx(const extLong& relPrec = get_static_defRelPrec(),
     // to avoid huge lMSB which would cause long time and problems.
 
     // if it is a rational node
-    if (get_static_rationalReduceFlag() && ratFlag() > 0 && ratValue() != NULL)
+    if (get_static_rationalReduceFlag() && ratFlag() > 0 && ratValue() != nullptr)
       appValue() = Real(*(ratValue())).approx(relPrec, absPrec); //< shouldn't
                          // this case be done by computeApproxValue()?
     else
@@ -556,15 +556,15 @@ void ConstRep::initNodeInfo() {
 }
 CGAL_INLINE_FUNCTION
 void UnaryOpRep::initNodeInfo() {
-  if (child->nodeInfo == NULL)
+  if (child->nodeInfo == nullptr)
     child->initNodeInfo();
   nodeInfo = new NodeInfo();
 }
 CGAL_INLINE_FUNCTION
 void BinOpRep::initNodeInfo() {
-  if (first->nodeInfo == NULL)
+  if (first->nodeInfo == nullptr)
     first->initNodeInfo();
-  if (second->nodeInfo == NULL)
+  if (second->nodeInfo == nullptr)
     second->initNodeInfo();
   nodeInfo = new NodeInfo();
 }
@@ -780,7 +780,7 @@ void NegRep::computeExactFlags() {
   }
 
   if (get_static_rationalReduceFlag()) {
-    if (child->ratFlag()>0 && child->ratValue() != NULL) {
+    if (child->ratFlag()>0 && child->ratValue() != nullptr) {
       BigRat val = -(*(child->ratValue()));
       reduceToBigRat(val);
       ratFlag() = child->ratFlag()+1;

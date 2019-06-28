@@ -373,7 +373,7 @@ public:
     if (sample)
       samples.push_back(sample);
     if (cleanup)
-      vertex->set_sample(NULL);
+      vertex->set_sample(nullptr);
   }
 
   void collect_all_samples(Sample_vector& samples) const {
@@ -400,7 +400,7 @@ public:
     }
     for (Finite_vertices_iterator vi = Base::finite_vertices_begin();
         vi != Base::finite_vertices_end(); ++vi) {
-      vi->set_sample(NULL);
+      vi->set_sample(nullptr);
     }
   }
 
@@ -1075,7 +1075,7 @@ public:
         return false;
       }
 
-      FT value = Dbc <= 0 ? 1 : 2*Dbc; // value used if Dbd or Dac are +infinity
+      FT value = Dbc <= 0 ? FT(1) : 2*Dbc; // value used if Dbd or Dac are +infinity
       if ( !is_infinity(Dac) )
       {
         if ( !is_infinity(Dbd))

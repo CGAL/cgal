@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial.h>
 

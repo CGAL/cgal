@@ -47,7 +47,7 @@ public:
   typedef typename Base::Solve_1                       Solve_1;
     
 public:
-  Rational_function_rep() : _ak_ptr(NULL){}
+  Rational_function_rep() : _ak_ptr(nullptr){}
   Rational_function_rep(const Polynomial_1& numer,
                         const Polynomial_1& denom, 
                         Algebraic_kernel_d_1* ak_ptr):
@@ -117,7 +117,7 @@ public:
 private:
   void initialize()
   {
-    CGAL_precondition(_ak_ptr != NULL);
+    CGAL_precondition(_ak_ptr != nullptr);
     CGAL_precondition(CGAL::is_zero(_denom) == false);
     if (CGAL::is_zero(_numer))
     {
@@ -232,9 +232,7 @@ public:
   Rational_function (const Self & r)
     : Base(static_cast<const Base &> (r)) {}
 
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   Self& operator=(const Self&)=default;
-#endif
   
   CGAL::Sign sign_at(const Algebraic_real_1& x,
                      CGAL::Sign epsilon = CGAL::ZERO) const

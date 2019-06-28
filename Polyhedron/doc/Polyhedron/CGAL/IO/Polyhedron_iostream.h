@@ -9,10 +9,10 @@ with file extension <TT>.off</TT>, which is also understood by
 Geomview \cgalCite{cgal:p-gmgv16-96}, from the input stream `in` and 
 appends it to the polyhedral surface \f$ P\f$. Only the point coordinates 
 and facets from the input stream are used to build the polyhedral 
-surface. Neither normal vectors nor color attributes are evaluated. If 
-the stream `in` does not contain a permissible polyhedral surface 
-the `ios::badbit` of the input stream `in` is set and \f$ P\f$ remains 
-unchanged. 
+surface. Neither normal vectors nor color attributes are evaluated. 
+
+\note Before \cgal 5.0 this function has set the `ios::badbit` of the input stream `in`
+when the file contained 0 vertices.
 
 For OFF an ASCII and a binary format exist. The stream detects the 
 format automatically and can read both. 

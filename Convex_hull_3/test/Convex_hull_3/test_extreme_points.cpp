@@ -14,7 +14,7 @@
 #include <iostream>
 
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Epick_without_intervals K;
 typedef CGAL::Polyhedron_3<K> Polyhedron_3;
 typedef K::Point_3 Point_3;
 
@@ -61,7 +61,7 @@ void test_triangulated_cube(const char* fname)
   Pmap vpmap = get_property_map(boost::vertex_point, mesh);
 
   typedef boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+  for(vertex_descriptor v : vertices(mesh))
   {
     Point_3 p = get(vpmap, v);
     mesh_points.push_back(p);

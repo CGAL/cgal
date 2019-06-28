@@ -43,8 +43,9 @@ public:
   
   Indirect_CW_diag_compare(){}
    Indirect_CW_diag_compare(Point_2 vertex, Iterator prev_ref, 
-                         Iterator next_ref) : 
-                _orientation(Traits().orientation_2_object()),
+                            Iterator next_ref,
+                            const Traits& traits) : 
+                _orientation(traits.orientation_2_object()),
                 _vertex(vertex),
                 _prev_v_ref(prev_ref)
    { 
@@ -99,8 +100,8 @@ class Partition_vertex;
 //
 
 template <class Traits_>
-class Partitioned_polygon_2 : 
-                            public std::vector< Partition_vertex< Traits_ > >
+class Partitioned_polygon_2
+  : public std::vector< Partition_vertex< Traits_ > >
 {
 public:
    typedef Traits_                                      Traits;
@@ -114,12 +115,13 @@ public:
    typedef typename Diagonal_list::iterator             Diagonal_iterator;
 
 
-   Partitioned_polygon_2() : _left_turn(Traits().left_turn_2_object())
-   { }
+   Partitioned_polygon_2(const Traits& traits)
+     : _left_turn(traits.left_turn_2_object()), traits(traits)
+   {}
 
    template <class InputIterator>
-   Partitioned_polygon_2(InputIterator first, InputIterator beyond) :  
-       _left_turn(Traits().left_turn_2_object())
+   Partitioned_polygon_2(InputIterator first, InputIterator beyond, const Traits& traits) :  
+       _left_turn(traits.left_turn_2_object()), traits(traits)
    {
       for (; first != beyond; first++) {
          this->push_back(Vertex(*first));
@@ -180,7 +182,7 @@ public:
       {
          next = c;
          next++;
-         (*c).sort_diagonals(prev, next);
+         (*c).sort_diagonals(prev, next, traits);
 #ifdef CGAL_PARTITIONED_POLY_DEBUG
          (*c).print_diagonals();
 #endif
@@ -287,12 +289,14 @@ private:
                cuts_reflex_angle(diag_ref2, diag_ref1));
    }
 
-   Left_turn_2 _left_turn;
+  Left_turn_2 _left_turn;
+  const Traits& traits;
 };
 
 template <class Traits_>
-class Partition_vertex : public Traits_::Point_2
-{
+class Partition_vertex {
+private:
+  typename Traits_::Point_2 point;
   public:
     typedef Traits_                                              Traits;
     typedef typename Traits::Point_2                             Base_point;
@@ -310,28 +314,32 @@ class Partition_vertex : public Traits_::Point_2
     typedef typename Diagonal_list::iterator              Diagonal_iterator;
 
   //default constructor added for EPECK
-  Partition_vertex(): Base_point()
+  Partition_vertex()
   {
     current_diag = diag_endpoint_refs.end() ;
   }
 
   Partition_vertex(Base_point p)
-    : Base_point(p) 
+    : point(p) 
   { 
     current_diag = diag_endpoint_refs.end() ; 
   }
 
     Partition_vertex(const Partition_vertex& other)
-      : Base_point(other) 
+      : point(other.point) 
   { 
     // No need to deep copy.
     // We initialize in order to avoid problem with g++ safe STL
     current_diag = diag_endpoint_refs.end() ; 
   }
 
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+  operator Base_point() const
+  {
+    return point;
+  }
+  
+
     Partition_vertex& operator=(const Partition_vertex&)=default;
-#endif
 
     void insert_diagonal(Circulator v_ref) 
     {
@@ -369,9 +377,9 @@ class Partition_vertex : public Traits_::Point_2
 
     // sort the diagonals ccw around the point they have in common
     // and remove any duplicate diagonals
-    void sort_diagonals(const Circulator& prev, const Circulator& next) 
+  void sort_diagonals(const Circulator& prev, const Circulator& next, const Traits& traits) 
     {
-      diag_endpoint_refs.sort(Indirect_CW_diag_compare<Circulator,Traits>(*this, prev, next));
+      diag_endpoint_refs.sort(Indirect_CW_diag_compare<Circulator,Traits>(*this, prev, next, traits));
 
        diag_endpoint_refs.unique();
        current_diag = diag_endpoint_refs.begin();

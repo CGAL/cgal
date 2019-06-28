@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -85,6 +85,7 @@ public:
       edges_level(tr, clusters_, null_level),
       faces_level(tr, criteria, edges_level),
       visitor(faces_level, edges_level, null_visitor),
+      seeds_mark(false),
       initialized(false)
   {
   }
@@ -99,6 +100,7 @@ public:
       edges_level(edges_level_),
       faces_level(tr, criteria, edges_level),
       visitor(faces_level, null_visitor),
+      seeds_mark(false),
       initialized(false)
   {
   }
@@ -173,7 +175,7 @@ public:
         for(Seeds_it sit=begin; sit!=end; ++sit)
           {
             Face_handle fh=tr.locate(*sit);
-            if(fh!=NULL)
+            if(fh!=nullptr)
               propagate_marks(fh, mark);
           }
 	propagate_marks(tr.infinite_face(), false);

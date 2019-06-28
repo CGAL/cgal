@@ -257,7 +257,7 @@ public:
     }
 
     m_queue = std::priority_queue<RefTriangle> ();
-    BOOST_FOREACH(RefTriangle& r, to_keep)
+    for(RefTriangle& r : to_keep)
       m_queue.push (r);
 
     return (m_queue.size () < before);

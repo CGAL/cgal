@@ -1,9 +1,9 @@
 // Copyright (c) 2017 GeometryFactory
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -13,20 +13,17 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sebastien Loriot
 
 #ifndef CGAL_IO_STL_WRITER_H
 #define CGAL_IO_STL_WRITER_H
 
-#include <CGAL/license/Polyhedron.h>
-
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/boost/graph/properties.h>
 
 #include <boost/cstdint.hpp>
-#include <boost/foreach.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 
@@ -52,7 +49,7 @@ write_STL(const TriangleMesh& tm, std::ostream& out)
     const boost::uint32_t N32 = static_cast<boost::uint32_t>(faces(tm).size());
     out.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
-    BOOST_FOREACH(face_descriptor f, faces(tm))
+    for(face_descriptor f : faces(tm))
     {
       halfedge_descriptor h = halfedge(f, tm);
       Point_3_ref p = get(vpm, target(h, tm));
@@ -76,7 +73,7 @@ write_STL(const TriangleMesh& tm, std::ostream& out)
   else
   {
     out << "solid\n";
-    BOOST_FOREACH(face_descriptor f, faces(tm))
+    for(face_descriptor f : faces(tm))
     {
       halfedge_descriptor h = halfedge(f, tm);
       Point_3_ref p = get(vpm, target(h, tm));

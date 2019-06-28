@@ -40,12 +40,12 @@ template <typename GeomTraits, typename Dcel_>
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
 Arr_unb_planar_topology_traits_2():
   Base(),
-  v_bl(NULL),
-  v_tl(NULL),
-  v_br(NULL),
-  v_tr(NULL),
+  v_bl(nullptr),
+  v_tl(nullptr),
+  v_br(nullptr),
+  v_tr(nullptr),
   n_inf_verts(0),
-  fict_face(NULL)
+  fict_face(nullptr)
 {}
 
 //-----------------------------------------------------------------------------
@@ -55,12 +55,12 @@ template <typename GeomTraits, typename Dcel_>
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
 Arr_unb_planar_topology_traits_2 (const Geometry_traits_2 * geom_traits) :
   Base (geom_traits),
-  v_bl (NULL),
-  v_tl (NULL),
-  v_br (NULL),
-  v_tr (NULL),
+  v_bl (nullptr),
+  v_tl (nullptr),
+  v_br (nullptr),
+  v_tr (nullptr),
   n_inf_verts (0),
-  fict_face (NULL)
+  fict_face (nullptr)
 {}
 
 //-----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
   typename Dcel::Vertex_iterator       vit;
   Halfedge                            *first_he, *next_he;
 
-  v_bl = v_tl = v_br = v_tr = NULL;
+  v_bl = v_tl = v_br = v_tr = nullptr;
   n_inf_verts = 0;
   for (vit = this->m_dcel.vertices_begin();
        vit != this->m_dcel.vertices_end(); ++vit)
@@ -123,23 +123,23 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
         CGAL_error();
     }
   }
-  CGAL_assertion(v_bl != NULL && v_tl != NULL && v_br != NULL && v_tr != NULL);
+  CGAL_assertion(v_bl != nullptr && v_tl != nullptr && v_br != nullptr && v_tr != nullptr);
 
   // Go over the DCEL faces and locate the fictitious face.
   typename Dcel::Face_iterator         fit;
 
-  fict_face = NULL;
+  fict_face = nullptr;
   for (fit = this->m_dcel.faces_begin();
        fit != this->m_dcel.faces_end(); ++fit)
   {
     if (fit->is_fictitious())
     {
-      CGAL_assertion (fict_face == NULL);
+      CGAL_assertion (fict_face == nullptr);
 
       fict_face = &(*fit);
     }
   }
-  CGAL_assertion (fict_face != NULL);
+  CGAL_assertion (fict_face != nullptr);
 
   return;
 }
@@ -200,10 +200,10 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
   Inner_ccb          *ic = this->m_dcel.new_inner_ccb();
   Face               *in_f = this->m_dcel.new_face();
 
-  he1->set_curve (NULL);
-  he2->set_curve (NULL);
-  he3->set_curve (NULL);
-  he4->set_curve (NULL);
+  he1->set_curve (nullptr);
+  he2->set_curve (nullptr);
+  he3->set_curve (nullptr);
+  he4->set_curve (nullptr);
 
   he1->set_next (he2);        he1_t->set_next (he4_t);
   he2->set_next (he3);        he4_t->set_next (he3_t);
@@ -272,7 +272,7 @@ are_equal(const Vertex *v,
     Arr_curve_end                  v_ind;
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
 
-    if (v_cv == NULL)
+    if (v_cv == nullptr)
       return (v->parameter_space_in_x() == ps_x &&
               v->parameter_space_in_y() == ps_y);
 
@@ -287,7 +287,7 @@ are_equal(const Vertex *v,
     Arr_curve_end                  v_ind;
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
 
-    if (v_cv == NULL)
+    if (v_cv == nullptr)
       return (v->parameter_space_in_x() == ARR_INTERIOR &&
               v->parameter_space_in_y() == ps_y);
 
@@ -555,23 +555,23 @@ erase_redundant_vertex (Vertex *v)
 
   // Keep pointers to the components that contain two halfedges he3 and he2,
   // pointing at the end vertices of the merged halfedge.
-  Inner_ccb   *ic1 = (he3->is_on_inner_ccb()) ? he3->inner_ccb() : NULL;
-  Outer_ccb   *oc1 = (ic1 == NULL) ? he3->outer_ccb() : NULL;
-  Inner_ccb   *ic2 = (he4->is_on_inner_ccb()) ? he4->inner_ccb() : NULL;
-  Outer_ccb   *oc2 = (ic2 == NULL) ? he4->outer_ccb() : NULL;
+  Inner_ccb   *ic1 = (he3->is_on_inner_ccb()) ? he3->inner_ccb() : nullptr;
+  Outer_ccb   *oc1 = (ic1 == nullptr) ? he3->outer_ccb() : nullptr;
+  Inner_ccb   *ic2 = (he4->is_on_inner_ccb()) ? he4->inner_ccb() : nullptr;
+  Outer_ccb   *oc2 = (ic2 == nullptr) ? he4->outer_ccb() : nullptr;
 
   // As he1 and he2 will evetually represent the merged edge, while he3 and he4
   // will be deleted, check if the deleted halfedges are represantatives of a
   // face boundary or a hole inside these faces. If so, replace he3 by he1 and
   // he4 by he2.
-  if (ic1 != NULL && ic1->halfedge() == he3)
+  if (ic1 != nullptr && ic1->halfedge() == he3)
     ic1->set_halfedge (he1);
-  else if (oc1 != NULL && oc1->halfedge() == he3)
+  else if (oc1 != nullptr && oc1->halfedge() == he3)
     oc1->set_halfedge (he1);
 
-  if (ic2 != NULL && ic2->halfedge() == he4)
+  if (ic2 != nullptr && ic2->halfedge() == he4)
     ic2->set_halfedge (he2);
-  else if (oc2 != NULL && oc2->halfedge() == he4)
+  else if (oc2 != nullptr && oc2->halfedge() == he4)
     oc2->set_halfedge (he2);
 
   // If he3 is the incident halfedge to its target, replace it by he1.
@@ -625,7 +625,7 @@ compare_x (const Point_2& p, const Vertex* v) const
     Arr_curve_end v_ind = ARR_MIN_END;
     const X_monotone_curve_2* v_cv = _curve (v, v_ind);
 
-    CGAL_assertion(v_cv != NULL);
+    CGAL_assertion(v_cv != nullptr);
     return
       (this->m_geom_traits->compare_x_point_curve_end_2_object()(p, *v_cv,
                                                                  v_ind));
@@ -659,7 +659,7 @@ compare_xy (const Point_2& p, const Vertex* v) const
     Arr_curve_end v_ind = ARR_MIN_END;
     const X_monotone_curve_2* v_cv = _curve (v, v_ind);
 
-    CGAL_assertion (v_cv != NULL);
+    CGAL_assertion (v_cv != nullptr);
 
     Comparison_result res =
       this->m_geom_traits->compare_x_point_curve_end_2_object() (p, *v_cv,
@@ -724,7 +724,7 @@ _curve (const Vertex* v, Arr_curve_end& ind) const
     he = he->next()->opposite();
 
     // No incident curve were found:
-    if (he == v->halfedge()) return (NULL);
+    if (he == v->halfedge()) return (nullptr);
   }
 
   // The halfedge he is directed toward v, so if it is directed from left to
@@ -844,7 +844,7 @@ _is_on_fictitious_edge(const X_monotone_curve_2& cv, Arr_curve_end ind,
       // arrangement, but it hasn't been associated with a valid halfedge
       // yet, as the insertion process is still ongoing.
       // The comparison result in this case is trivial.
-      if (v_cv1 != NULL) {
+      if (v_cv1 != nullptr) {
         res1 =
           this->m_geom_traits->compare_x_curve_ends_2_object()(cv, ind,
                                                                *v_cv1, v_ind);
@@ -878,7 +878,7 @@ _is_on_fictitious_edge(const X_monotone_curve_2& cv, Arr_curve_end ind,
       // arrangement, but it hasn't been associated with a valid halfedge
       // yet, as the insertion process is still ongoing.
       // The comparison result in this case is trivial.
-      if (v_cv2 != NULL) {
+      if (v_cv2 != nullptr) {
         res2 =
           this->m_geom_traits->compare_x_curve_ends_2_object()(cv, ind,
                                                                *v_cv2, v_ind);

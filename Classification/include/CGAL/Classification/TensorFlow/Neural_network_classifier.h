@@ -34,7 +34,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
@@ -129,7 +128,7 @@ public:
   Neural_network_classifier (const Label_set& labels,
                              const Feature_set& features)
     : m_verbose (true), m_labels (labels), m_features (features)
-    , m_root (NULL), m_ph_ft (NULL), m_ph_gt (NULL), m_loss(NULL), m_session (NULL)
+    , m_root (nullptr), m_ph_ft (nullptr), m_ph_gt (nullptr), m_loss(nullptr), m_session (nullptr)
   { }
   
   /// \cond SKIP_IN_MANUAL
@@ -138,7 +137,7 @@ public:
     clear();
   }
 
-  bool initialized() const { return (m_root != NULL); }
+  bool initialized() const { return (m_root != nullptr); }
 
   bool& verbose() { return m_verbose; }
 
@@ -158,9 +157,9 @@ public:
   template <typename T>
   void clear (T* t)
   {
-    if (t != NULL)
+    if (t != nullptr)
       delete t;
-    t = NULL;
+    t = nullptr;
   }
 
   void compute_normalization_coefficients (const std::vector<std::size_t>& indices)
@@ -581,7 +580,7 @@ public:
     m_learning_rate = tree.get<float>("classification.metadata.learning_rate");
 
     std::size_t idx = 0;
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.features"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.features"))
     {
       std::string name = v.second.get<std::string>("name");
 
@@ -606,7 +605,7 @@ public:
     }
 
     idx = 0;
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.labels"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.labels"))
     {
       std::string name = v.second.get<std::string>("name");
       if (name != m_labels[idx]->name())
@@ -630,7 +629,7 @@ public:
     m_bias.resize (nb_layers);
 
     std::vector<std::size_t> hidden_layers;
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.layers"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.layers"))
     {
       if (idx >= nb_layers)
       {

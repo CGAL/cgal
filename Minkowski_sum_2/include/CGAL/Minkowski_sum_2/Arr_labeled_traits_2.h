@@ -388,7 +388,7 @@ public:
         base_pt =
           object_cast<std::pair<Base_point_2, unsigned int> > (&(*obj_it));
 
-        if (base_pt != NULL)
+        if (base_pt != nullptr)
         {
           // Attach an invalid label to an itersection point.
           *oi = CGAL::make_object
@@ -398,7 +398,7 @@ public:
         else
         {
           base_xcv = object_cast<Base_x_monotone_curve_2> (&(*obj_it));
-          CGAL_assertion (base_xcv != NULL);
+          CGAL_assertion (base_xcv != nullptr);
 
           // Attach a merged label to the overlapping curve.
           *oi = CGAL::make_object

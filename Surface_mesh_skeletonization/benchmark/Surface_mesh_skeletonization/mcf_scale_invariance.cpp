@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 
 
 //scale skelton  
-  BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
+  for(Skeleton_vertex v : vertices(skeleton))
   {
     Point new_point = skeleton[v].point+to_origin;
     double x=new_point.x();
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
   std::stringstream ss;
   ss << "skel." << factor << ".cgal"; 
   std::ofstream output(ss.str().c_str());
-  BOOST_FOREACH(Skeleton_edge e, edges(skeleton))
+  for(Skeleton_edge e : edges(skeleton))
   {
     const Point& s = skeleton[source(e, skeleton)].point;
     const Point& t = skeleton[target(e, skeleton)].point;
@@ -102,8 +102,8 @@ int main(int argc, char* argv[])
 
   // Output skeleton points and the corresponding surface points
   output.open("correspondance.cgal");
-  BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
-    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
+  for(Skeleton_vertex v : vertices(skeleton))
+    for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";
 
   return 0;

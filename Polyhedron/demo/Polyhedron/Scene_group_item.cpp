@@ -1,22 +1,21 @@
 #include <CGAL/Three/Scene_group_item.h>
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Three.h>
 #include <QDebug>
 
 using namespace CGAL::Three;
-Scene_group_item::Scene_group_item(QString name, int nb_vbos, int nb_vaos )
-    :  Scene_item(nb_vbos, nb_vaos)
-    , scene(NULL)
+Scene_group_item::Scene_group_item(QString name)
 {
     this->name_ = name;
     expanded = true;
     already_drawn = false;
+    scene = Three::scene();
 }
 
 bool Scene_group_item::isFinite() const
 {
   Q_FOREACH(Scene_interface::Item_id id, children)
-    if(!getChild(id)->isFinite()){
-      return false;
+    if(!getChild(id)->isFinite()){      return false;
     }
   return true;
 }
@@ -263,4 +262,3 @@ void Scene_group_item::setAlpha(int )
     scene->item(id)->setAlpha(static_cast<int>(alpha()*255));
   }
 }
-

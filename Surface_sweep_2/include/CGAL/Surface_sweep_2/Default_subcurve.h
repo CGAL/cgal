@@ -67,7 +67,7 @@ namespace Surface_sweep_2 {
  *
  * The information contained in this class is:
  * - two pointers to subcurves that are the originating subcurves in case of
- *   an overlap, otherwise thay are both NULL.
+ *   an overlap, otherwise thay are both nullptr.
  */
 template <typename GeometryTraits_2, typename Event_, typename Allocator_,
           typename Subcurve_>
@@ -89,16 +89,16 @@ public:
   /*! Construct default.
    */
   Default_subcurve_base() :
-    m_orig_subcurve1(NULL),
-    m_orig_subcurve2(NULL)
+    m_orig_subcurve1(nullptr),
+    m_orig_subcurve2(nullptr)
   {}
 
   /*! Construct from a curve.
    */
   Default_subcurve_base(const X_monotone_curve_2& curve) :
     Base(curve),
-    m_orig_subcurve1(NULL),
-    m_orig_subcurve2(NULL)
+    m_orig_subcurve1(nullptr),
+    m_orig_subcurve2(nullptr)
   {}
 
 protected:
@@ -126,7 +126,7 @@ public:
   template <typename OutputIterator>
   OutputIterator all_leaves(OutputIterator oi)
   {
-    if (m_orig_subcurve1 == NULL) {
+    if (m_orig_subcurve1 == nullptr) {
       *oi++ = reinterpret_cast<Subcurve*>(this);
       return oi;
     }
@@ -141,7 +141,7 @@ public:
   bool is_inner_node(Subcurve* s)
   {
     if (this == s) return true;
-    if (m_orig_subcurve1 == NULL) return false;
+    if (m_orig_subcurve1 == nullptr) return false;
     return (m_orig_subcurve1->is_inner_node(s) ||
             m_orig_subcurve2->is_inner_node(s));
   }
@@ -150,7 +150,7 @@ public:
    */
   bool is_leaf(Subcurve* s)
   {
-    if (m_orig_subcurve1 == NULL) return (this == s);
+    if (m_orig_subcurve1 == nullptr) return (this == s);
     return (m_orig_subcurve1->is_leaf(s) ||
             m_orig_subcurve2->is_leaf(s));
   }
@@ -249,7 +249,7 @@ public:
   template <typename OutputIterator>
   OutputIterator distinct_nodes(Subcurve* s, OutputIterator oi)
   {
-    if (m_orig_subcurve1 == NULL) {
+    if (m_orig_subcurve1 == nullptr) {
       Subcurve* subcurve = reinterpret_cast<Subcurve*>(this);
       if (s->is_leaf(subcurve)) *oi++ = subcurve;
       return oi;
@@ -267,7 +267,7 @@ public:
   /*! Get the depth of the overlap hierarchy. */
   unsigned int overlap_depth()
   {
-    if (m_orig_subcurve1 == NULL) return (1);
+    if (m_orig_subcurve1 == nullptr) return (1);
 
     unsigned int depth1 = m_orig_subcurve1->overlap_depth();
     unsigned int depth2 = m_orig_subcurve2->overlap_depth();
@@ -278,7 +278,7 @@ public:
   /*! Get the number of input curves contributing to the subcurve */
   unsigned int number_of_original_curves() const
   {
-    if (m_orig_subcurve1 == NULL) return 1;
+    if (m_orig_subcurve1 == nullptr) return 1;
     unsigned int d1 = m_orig_subcurve1->number_of_original_curves();
     unsigned int d2 = m_orig_subcurve2->number_of_original_curves();
     return d1+d2;

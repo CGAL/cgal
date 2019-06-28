@@ -68,6 +68,11 @@
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
 
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+#include <CGAL/internal/info_check.h>
+#include <boost/iterator/zip_iterator.hpp>
+#endif
+
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 #include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
@@ -191,7 +196,7 @@ public:
 
   const Bbox_3 *get_bbox() const
   {
-    return NULL;
+    return nullptr;
   }
 };
 
@@ -696,7 +701,7 @@ public:
 
 public:
   // CONSTRUCTORS
-  Triangulation_3(const GT& gt = GT(), Lock_data_structure *lock_ds = NULL)
+  Triangulation_3(const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
     : Base(lock_ds), _tds(), _gt(gt)
   {
     init_tds();
@@ -718,7 +723,7 @@ public:
 
   template < typename InputIterator >
   Triangulation_3(InputIterator first, InputIterator last,
-                  const GT& gt = GT(), Lock_data_structure *lock_ds = NULL)
+                  const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
     : Base(lock_ds), _gt(gt)
   {
     init_tds();
@@ -729,7 +734,7 @@ public:
   // Precondition: p0, p1, p3 and p4 MUST BE positively oriented
   Triangulation_3(const Point& p0, const Point& p1,
                   const Point& p3, const Point& p4,
-                  const GT& gt = GT(), Lock_data_structure *lock_ds = NULL)
+                  const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
     : Base(lock_ds), _gt(gt)
   {
     CGAL_triangulation_precondition(orientation(p0, p1, p3, p4) == POSITIVE);
@@ -895,7 +900,7 @@ public:
   locate(const Point& p,
          Locate_type& lt, int& li, int& lj,
          Cell_handle start = Cell_handle(),
-         bool *could_lock_zone = NULL) const;
+         bool *could_lock_zone = nullptr) const;
 #else // no CGAL_NO_STRUCTURAL_FILTERING
 #  ifndef CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 #    define CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
@@ -905,20 +910,20 @@ public:
   Cell_handle inexact_locate(const Point& p,
                              Cell_handle start = Cell_handle(),
                              int max_num_cells = CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS,
-                             bool *could_lock_zone = NULL) const;
+                             bool *could_lock_zone = nullptr) const;
 protected:
   Cell_handle exact_locate(const Point& p,
                            Locate_type& lt,
                            int& li, int& lj,
                            Cell_handle start,
-                           bool *could_lock_zone = NULL) const;
+                           bool *could_lock_zone = nullptr) const;
 
   Cell_handle generic_locate(const Point& p,
                              Locate_type& lt,
                              int& li, int& lj,
                              Cell_handle start,
                              internal::Structural_filtering_3_tag,
-                             bool *could_lock_zone = NULL) const
+                             bool *could_lock_zone = nullptr) const
   {
     Cell_handle ch = inexact_locate(
                        p, start, CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS, could_lock_zone);
@@ -933,7 +938,7 @@ protected:
                              int& li, int& lj,
                              Cell_handle start,
                              internal::No_structural_filtering_3_tag,
-                             bool *could_lock_zone = NULL) const
+                             bool *could_lock_zone = nullptr) const
   {
     return exact_locate(p, lt, li, lj, start, could_lock_zone);
   }
@@ -982,7 +987,7 @@ public:
   Cell_handle locate(const Point& p,
                      Locate_type& lt, int& li, int& lj,
                      Cell_handle start = Cell_handle(),
-                     bool *could_lock_zone = NULL) const
+                     bool *could_lock_zone = nullptr) const
   {
     typedef Triangulation_structural_filtering_traits<Geom_traits> TSFT;
     typedef typename internal::Structural_filtering_selector_3<
@@ -994,7 +999,7 @@ public:
 
   Cell_handle locate(const Point& p,
                      Cell_handle start = Cell_handle(),
-                     bool *could_lock_zone = NULL) const
+                     bool *could_lock_zone = nullptr) const
   {
     Locate_type lt;
     int li, lj;
@@ -1003,14 +1008,14 @@ public:
 
   Cell_handle locate(const Point& p,
                      Locate_type& lt, int& li, int& lj, Vertex_handle hint,
-                     bool *could_lock_zone = NULL) const
+                     bool *could_lock_zone = nullptr) const
   {
     return locate(p, lt, li, lj,
                   hint == Vertex_handle() ? infinite_cell() : hint->cell(),
                   could_lock_zone);
   }
 
-  Cell_handle locate(const Point& p, Vertex_handle hint, bool *could_lock_zone = NULL) const
+  Cell_handle locate(const Point& p, Vertex_handle hint, bool *could_lock_zone = nullptr) const
   {
     return locate(p, hint == Vertex_handle() ? infinite_cell() : hint->cell(),
                   could_lock_zone);
@@ -1113,39 +1118,103 @@ public:
                                           Cell_handle c, int li, int lj,
                                           const Conflict_tester& tester,
                                           Hidden_points_visitor& hider,
-                                          bool *could_lock_zone = NULL);
+                                          bool *could_lock_zone = nullptr);
 
+  
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+  template < class InputIterator >
+  std::ptrdiff_t insert(InputIterator first, InputIterator last,
+                        typename boost::enable_if<
+                          boost::is_convertible<
+                              typename std::iterator_traits<InputIterator>::value_type,
+                              Point
+                          >
+                        >::type* = NULL)
+#else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
+#endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   {
     size_type n = number_of_vertices();
 
-    std::vector<Point> points (first, last);
-
-    // The function insert(first, last) is overwritten in Regular_triangulation_3.h,
-    // so we know that, here, `Point` is not a type of Weighted point.
-    // Nevertheless, to make it more generic (that is, allowing the user to pass
-    // a `Point` type that is not GT::Point_3), we still use the spatial sort
-    // adapter traits and Construct_point_3 here.
-    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
-    typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
-    typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Point, Ret> fpmap;
-    typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
-
-    spatial_sort(points.begin(), points.end(),
-                 Search_traits_3(
-                   CGAL::internal::boost_::make_function_property_map<Point, Ret, Construct_point_3>(
-                     geom_traits().construct_point_3_object()), geom_traits()));
-
     Vertex_handle hint;
-    for(typename std::vector<Point>::const_iterator p = points.begin(),
-                                                    end = points.end();
-        p != end; ++p)
-      hint = insert(*p, hint);
+    for(; first != last; ++first)
+      hint = insert(*first, hint);
 
     return number_of_vertices() - n;
   }
 
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+protected:
+  //top stands for tuple-or-pair
+  template <class Info>
+  const Point& top_get_first(const std::pair<Point,Info>& pair) const { return pair.first; }
+
+  template <class Info>
+  const Info& top_get_second(const std::pair<Point,Info>& pair) const { return pair.second; }
+
+  template <class Info>
+  const Point& top_get_first(const boost::tuple<Point,Info>& tuple) const { return boost::get<0>(tuple); }
+
+  template <class Info>
+  const Info& top_get_second(const boost::tuple<Point,Info>& tuple) const { return boost::get<1>(tuple); }
+
+  template <class Tuple_or_pair,class InputIterator>
+  std::ptrdiff_t insert_with_info(InputIterator first, InputIterator last)
+  {
+    size_type n = number_of_vertices();
+    std::vector<std::size_t> indices;
+    std::vector<Point> points;
+    std::vector<typename Triangulation_data_structure::Vertex::Info> infos;
+    for(InputIterator it=first;it!=last;++it)
+    {
+      Tuple_or_pair value=*it;
+      points.push_back(top_get_first(value));
+      infos.push_back(top_get_second(value));
+    }
+
+    Vertex_handle hint;
+    for(std::size_t i=0; i < points.size(); ++i)
+      {
+        hint = insert(points[i], hint);
+        if(hint != Vertex_handle())
+          hint->info() = infos[i];
+      }
+
+    return number_of_vertices() - n;
+  }
+
+public:
+  template < class InputIterator >
+  std::ptrdiff_t insert(InputIterator first, InputIterator last,
+                        typename boost::enable_if<
+                          boost::is_convertible<
+                            typename std::iterator_traits<InputIterator>::value_type,
+                            std::pair<Point, typename internal::Info_check<
+                                               typename Triangulation_data_structure::Vertex>::type>
+                          > >::type* =NULL)
+  {
+    return insert_with_info< std::pair<Point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);
+  }
+
+  template <class  InputIterator_1,class InputIterator_2>
+  std::ptrdiff_t
+  insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
+          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
+          typename boost::enable_if<
+            boost::mpl::and_<
+              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
+              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
+            >
+          >::type* =NULL)
+  {
+    return insert_with_info< boost::tuple<Point, typename internal::Info_check<
+        typename Triangulation_data_structure::Vertex>::type> >(first,last);
+  }
+#endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+
+  
+  
   Vertex_handle insert_in_cell(const Point& p, Cell_handle c);
   Vertex_handle insert_in_facet(const Point& p, Cell_handle c, int i);
   Vertex_handle insert_in_facet(const Point& p, const Facet& f) {
@@ -1224,9 +1293,9 @@ protected:
                  Triple<OutputIteratorBoundaryFacets,
                  OutputIteratorCells,
                  OutputIteratorInternalFacets> it,
-                 bool *could_lock_zone = NULL,
-                 const Facet *this_facet_must_be_in_the_cz = NULL,
-                 bool *the_facet_is_in_its_cz = NULL) const
+                 bool *could_lock_zone = nullptr,
+                 const Facet *this_facet_must_be_in_the_cz = nullptr,
+                 bool *the_facet_is_in_its_cz = nullptr) const
   {
     CGAL_triangulation_precondition(dimension()>=2);
 
@@ -1412,7 +1481,7 @@ protected:
   bool test_dim_down_using_incident_cells_3(Vertex_handle v,
                                             std::vector<Cell_handle>& incident_cells,
                                             std::vector<Vertex_handle>& adj_vertices,
-                                            bool *could_lock_zone = NULL) const;
+                                            bool *could_lock_zone = nullptr) const;
 
   // REMOVAL
   template < class VertexRemover >
@@ -1859,7 +1928,7 @@ public:
         Cell_handle next = c->neighbor(i);
         if(!this->try_lock_cell(next)) // LOCK
         {
-          BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+          for(Cell_handle ch : cells)
           {
             ch->tds_data().clear();
           }
@@ -1878,7 +1947,7 @@ public:
     }
     while(head != tail);
 
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+    for(Cell_handle ch : cells)
     {
       ch->tds_data().clear();
     }
@@ -1914,7 +1983,7 @@ public:
         Cell_handle next = c->neighbor(i);
         if(!this->try_lock_cell(next)) // LOCK
         {
-          BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+          for(Cell_handle ch : cells)
           {
             ch->tds_data().clear();
           }
@@ -1933,7 +2002,7 @@ public:
     while(head != tail);
 
     std::set<Vertex_handle> tmp_vertices;
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+    for(Cell_handle ch : cells)
     {
       ch->tds_data().clear();
       for(int i = 0;  i < 4; ++i)
@@ -3636,12 +3705,12 @@ insert_in_conflict(const Point& p,
 
         if(*could_lock_zone == false)
         {
-          BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+          for(Cell_handle ch : cells)
           {
             ch->tds_data().clear();
           }
 
-          BOOST_FOREACH(Facet& f, std::make_pair(facets.begin(), facets.end()))
+          for(Facet& f : facets)
           {
             f.first->neighbor(f.second)->tds_data().clear();
           }
@@ -4364,13 +4433,13 @@ fill_hole_2D(std::list<Edge_2D>& first_hole, VertexRemover& remover)
     Vertex_handle v2 = infinite_vertex();
     const Point& p0 = v0->point();
     const Point& p1 = v1->point();
-    const Point *p2 = NULL; // Initialize to NULL to avoid warning.
+    const Point *p2 = nullptr; // Initialize to nullptr to avoid warning.
 
     typename Hole::iterator hdone = hole.end();
     typename Hole::iterator hit = hole.begin();
     typename Hole::iterator cut_after(hit);
 
-    // If tested vertex is c with respect to the vertex opposite to NULL neighbor,
+    // If tested vertex is c with respect to the vertex opposite to nullptr neighbor,
     // stop at the before last face;
     hdone--;
     for(; hit != hdone; ++hit)
@@ -4514,14 +4583,14 @@ fill_hole_2D(std::list<Edge_2D>& first_hole, VertexRemover& remover, OutputItCel
     Vertex_handle v2 = infinite_vertex();
     const Point& p0 = v0->point();
     const Point& p1 = v1->point();
-    const Point *p2 = NULL; // Initialize to NULL to avoid warning.
+    const Point *p2 = nullptr; // Initialize to nullptr to avoid warning.
 
     typename Hole::iterator hdone = hole.end();
     typename Hole::iterator hit = hole.begin();
     typename Hole::iterator cut_after(hit);
 
     // if tested vertex is c with respect to the vertex opposite
-    // to NULL neighbor,
+    // to nullptr neighbor,
     // stop at the before last face;
     hdone--;
     for(; hit != hdone; ++hit)

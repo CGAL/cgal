@@ -23,7 +23,6 @@
 #ifndef CGAL_TEST_MODEL_METHODS_H
 #define CGAL_TEST_MODEL_METHODS_H
 
-#include <CGAL/basic.h>
 #include <CGAL/test_utils.h>
 #include <cassert>
 #include <vector>

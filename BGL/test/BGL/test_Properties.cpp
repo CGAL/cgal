@@ -1,7 +1,6 @@
 
 #include "test_Prefix.h"
 #include <boost/unordered_set.hpp>
-#include <boost/foreach.hpp>
 
 template< typename G,
           typename ForwardRange,
@@ -80,26 +79,26 @@ main()
 {
   std::vector<Polyhedron> polys = poly_data();
 
-  BOOST_FOREACH(Polyhedron p, polys){
+  for(Polyhedron p : polys){
     index_uniqueness_poly(p);
   }
 
   std::vector<LCC> lccs = lcc_data();
-  BOOST_FOREACH(LCC p, lccs){
+  for(LCC p : lccs){
     index_uniqueness_lcc(p);
   }
 
 #if defined(CGAL_USE_SURFACE_MESH)
   std::vector<SM> sms = sm_data();
 
-  BOOST_FOREACH(SM p, sms){
+  for(SM p : sms){
     index_uniqueness_sm(p);
   }
 #endif 
 
 #if defined(CGAL_USE_OPENMESH)
   std::vector<OMesh> omeshs = omesh_data();
-  BOOST_FOREACH(OMesh p, omeshs){
+  for(OMesh p : omeshs){
     index_uniqueness_omesh(p);
   }
 #endif

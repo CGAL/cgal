@@ -29,7 +29,7 @@
 #include <CGAL/regular_neighbor_coordinates_2.h>
 
 #include <CGAL/Origin.h>
-#include <CGAL/function.h>
+#include <functional>
 
 #include <boost/any.hpp>
 #include <boost/mpl/if.hpp>
@@ -246,7 +246,7 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                                std::is_constructible<
                                  std::function<boost::any(typename Dt::Point)>,
                                  ValueFunctor
-                             >::value>::type* = NULL)
+                             >::value>::type* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Dt::Point                                         VF_arg_type;
@@ -272,7 +272,7 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                                std::is_constructible<
                                  std::function<boost::any(typename Dt::Vertex_handle)>,
                                  ValueFunctor
-                             >::value>::type* = NULL)
+                             >::value>::type* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Dt::Vertex_handle                                 VF_arg_type;
@@ -350,7 +350,7 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                                std::is_constructible<
                                  std::function<boost::any(typename Rt::Point)>,
                                  ValueFunctor
-                             >::value>::type* = NULL)
+                             >::value>::type* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Rt::Point                                         VF_arg_type;
@@ -376,7 +376,7 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                                std::is_constructible<
                                  std::function<boost::any(typename Rt::Vertex_handle)>,
                                  ValueFunctor
-                             >::value>::type* = NULL)
+                             >::value>::type* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Rt::Vertex_handle                                 VF_arg_type;

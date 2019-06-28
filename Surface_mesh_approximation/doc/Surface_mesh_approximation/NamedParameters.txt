@@ -5,7 +5,7 @@
 \cgalHeading{How to use BGL Optional Named Parameters}
 
 The notion of named parameters was introduced in the BGL.
-Details can be found from: http://www.boost.org/libs/graph/doc/bgl_named_params.html.
+Details can be found from: https://www.boost.org/libs/graph/doc/bgl_named_params.html.
 Named parameters enable the user to specify only those parameters which are really needed, by name, making the parameter ordering not required.
 See also \ref bgl_namedparameters.
 
@@ -164,7 +164,7 @@ an `OutputIterator` to put anchor points in.\n
 
 \cgalNPBegin{triangles} \anchor VSA_triangles
 an `OutputIterator` to put indexed triangles in.\n
-\b Type : a class model of `OutputIterator` with `CGAL::cpp11::array<std::size_t, 3>` value type.\n
+\b Type : a class model of `OutputIterator` with `std::array<std::size_t, 3>` value type.\n
 \b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd
 

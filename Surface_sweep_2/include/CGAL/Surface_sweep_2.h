@@ -208,7 +208,7 @@ protected:
    * \param curve1 The first curve.
    * \param curve2 The second curve.
    */
-  void _intersect(Subcurve* c1, Subcurve* c2, Event* event_for_overlap = NULL);
+  void _intersect(Subcurve* c1, Subcurve* c2, Event* event_for_overlap = nullptr);
 
   /*! When a curve is removed from the status line for good, its top and
    * bottom neighbors become neighbors. This method finds these cases and

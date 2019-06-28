@@ -12,10 +12,11 @@
 typedef CGAL::Simple_cartesian<double>                                   Kernel;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3>  Polyhedron;
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator        vertex_iterator;
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor   vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-typedef boost::graph_traits<Polyhedron>::out_edge_iterator    out_edge_iterator;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor     edge_descriptor;
+
 
 typedef Eigen::Vector3d                                                Vector3d;
 
@@ -34,10 +35,9 @@ std::vector<vertex_descriptor> extract_k_ring(const Polyhedron &P, vertex_descri
   while( current_index < Q.size() && (dist_v = D[ Q[current_index] ]) < k ) {
     v = Q[current_index++];
 
-    out_edge_iterator e, e_end;
-    for(boost::tie(e, e_end) = out_edges(v, P); e != e_end; e++)
+    for(edge_descriptor e : out_edges(v, P))
     {
-      halfedge_descriptor he = halfedge(*e, P);
+      halfedge_descriptor he = halfedge(e, P);
       vertex_descriptor new_v = target(he, P);
       if(D.insert(std::make_pair(new_v, dist_v + 1)).second) {
         Q.push_back(new_v);
@@ -66,12 +66,12 @@ int main()
   // Select and insert the vertices of the region of interest
   vertex_iterator vb, ve;
   boost::tie(vb,ve) = vertices(mesh);
-  std::vector<vertex_descriptor> roi = extract_k_ring(mesh, *CGAL::cpp11::next(vb, 47), 9);
+  std::vector<vertex_descriptor> roi = extract_k_ring(mesh, *std::next(vb, 47), 9);
   deform_mesh.insert_roi_vertices(roi.begin(), roi.end());
 
   // Select and insert the control vertices
-  std::vector<vertex_descriptor> cvertices_1 = extract_k_ring(mesh, *CGAL::cpp11::next(vb, 39), 1);
-  std::vector<vertex_descriptor> cvertices_2 = extract_k_ring(mesh, *CGAL::cpp11::next(vb, 97), 1);
+  std::vector<vertex_descriptor> cvertices_1 = extract_k_ring(mesh, *std::next(vb, 39), 1);
+  std::vector<vertex_descriptor> cvertices_2 = extract_k_ring(mesh, *std::next(vb, 97), 1);
   deform_mesh.insert_control_vertices(cvertices_1.begin(), cvertices_1.end());
   deform_mesh.insert_control_vertices(cvertices_2.begin(), cvertices_2.end());
 

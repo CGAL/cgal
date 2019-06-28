@@ -383,7 +383,7 @@ public:
 
     // both circles exist
 
-    // check whether the shadow region is connected, i.e., wether it is
+    // check whether the shadow region is connected, i.e., whether it is
     // of the form (a, b) or (-oo, a) U (b, +oo)
     Bitangent_line bl_12(p1, p2);
 
@@ -507,7 +507,7 @@ public:
 
     // both circles exist
 
-    // check whether the shadow region is connected, i.e., wether it is
+    // check whether the shadow region is connected, i.e., whether it is
     // of the form (a, b) or (-oo, a) U (b, +oo)
     Bitangent_line bl_12(p1, p2);
 
@@ -581,7 +581,7 @@ public:
 
     // both circles exist
     
-    // check whether the shadow region is connected, i.e., wether it is
+    // check whether the shadow region is connected, i.e., whether it is
     // of the form (a, b) or (-oo, a) U (b, +oo)
 
     return !b;

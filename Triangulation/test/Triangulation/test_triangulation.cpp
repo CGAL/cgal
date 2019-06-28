@@ -43,7 +43,7 @@ void test(const int d, const string & type, int N)
     vector<Point> points;
     CGAL::Random rng;
     Random_points_iterator rand_it(d, 1.0, rng);
-    CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
+    std::copy_n(rand_it, N, std::back_inserter(points));
 
     cerr << '\n' << points.size() << " points in the grid.";
 

@@ -45,6 +45,8 @@
 #include <cstdio>
 #endif
 
+#include <CGAL/algorithm.h>
+
 #include <CGAL/tags.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -111,7 +113,7 @@ public:
     std::vector<int> in_bag_samples = sample_idxes;
 
     // Bagging: draw random sample indexes used for this tree
-    std::random_shuffle (in_bag_samples.begin(),in_bag_samples.end());
+    CGAL::cpp98::random_shuffle (in_bag_samples.begin(),in_bag_samples.end());
 
     // Train the tree
     trees[i_tree].train(samples, labels, &in_bag_samples[0], n_in_bag_samples, split_generator, gen);

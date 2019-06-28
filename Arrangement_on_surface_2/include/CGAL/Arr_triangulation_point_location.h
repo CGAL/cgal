@@ -129,7 +129,7 @@ protected:
 public:
   /*! Default constructor. */
   Arr_triangulation_point_location() :
-    m_traits(NULL),
+    m_traits(nullptr),
     m_ignore_notifications(false),
     m_ignore_remove_edge(false)
   {}

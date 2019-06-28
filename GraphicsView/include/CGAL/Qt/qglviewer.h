@@ -79,7 +79,10 @@ class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
 
 public:  
+  //todo check if this is used. If not remove it
   explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
+                     ::Qt::WindowFlags flags = 0);
+  explicit QGLViewer(QOpenGLContext* context, QWidget *parent = 0,
                      ::Qt::WindowFlags flags = 0);
   explicit QGLViewer(QWidget *parent = 0,
                      ::Qt::WindowFlags flags = 0);
@@ -123,6 +126,11 @@ public:
   implemented in the future. */
   bool cameraIsEdited() const { return cameraIsEdited_; }
   
+  /*!
+   * \brief isSharing returns true if the viewer was created from an existing one, 
+   * and therefore is sharing its context with it.
+   */
+  bool isSharing() const;
 public Q_SLOTS:
   /*! Sets the state of axisIsDrawn(). Emits the axisIsDrawnChanged() signal.
    * See also toggleAxisIsDrawn(). */
@@ -284,7 +292,7 @@ public Q_SLOTS:
   /*! @name Associated objects */
   //@{
 public:
-  /*! Returns the associated qglviewer::Camera, never \c NULL. */
+  /*! Returns the associated qglviewer::Camera, never \c nullptr. */
   qglviewer::Camera *camera() const { return camera_; }
 
   /*! Returns the viewer's qglviewer::ManipulatedFrame.
@@ -296,7 +304,7 @@ public:
   See the <a href="../examples/manipulatedFrame.html">manipulatedFrame
   example</a> for a complete implementation.
 
-  Default value is \c NULL, meaning that no qglviewer::ManipulatedFrame is set.
+  Default value is \c nullptr, meaning that no qglviewer::ManipulatedFrame is set.
 */
   qglviewer::ManipulatedFrame *manipulatedFrame() const {
     return manipulatedFrame_;
@@ -310,7 +318,7 @@ public Q_SLOTS:
   /*! @name Mouse grabbers */
   //@{
 public:
-  /*! Returns the current qglviewer::MouseGrabber, or \c NULL if no
+  /*! Returns the current qglviewer::MouseGrabber, or \c nullptr if no
   qglviewer::MouseGrabber currently grabs mouse events.
 
   When qglviewer::MouseGrabber::grabsMouse(), the different mouse events are
@@ -613,10 +621,12 @@ Q_SIGNALS:
   /*! Signal emitted by setMouseGrabber() when the mouseGrabber() is changed.
 
   \p mouseGrabber is a pointer to the new MouseGrabber. Note that this signal is
-  emitted with a \c NULL parameter each time a MouseGrabber stops grabbing
+  emitted with a \c nullptr parameter each time a MouseGrabber stops grabbing
   mouse. */
   void mouseGrabberChanged(qglviewer::MouseGrabber *mouseGrabber);
 
+  //! Signal emitted by the viewer when its OpenGL context is destroyed.
+  void contextIsDestroyed();
   /*! @name Help window */
   //@{
 public:
@@ -953,7 +963,7 @@ protected:
   //@{
 public:
   /*! Returns a \c QList that contains pointers to all the created QGLViewers.
-    Note that this list may contain \c NULL pointers if the associated viewer
+    Note that this list may contain \c nullptr pointers if the associated viewer
   has been deleted.
 
   Can be useful to apply a method or to connect a signal to all the viewers:
@@ -968,7 +978,7 @@ public:
   index in unique and can be used to identify the different created QGLViewers
   (see stateFileName() for an application example).
 
-  When a QGLViewer is deleted, the QGLViewers' indexes are preserved and NULL is
+  When a QGLViewer is deleted, the QGLViewers' indexes are preserved and nullptr is
   set for that index. When a QGLViewer is created, it is placed in the first
   available position in that list. Returns -1 if the QGLViewer could not be
   found (which should not be possible). */
@@ -983,7 +993,8 @@ public:
 public:
   virtual void setVisualHintsMask(int mask, int delay = 2000);
   virtual void drawVisualHints();
-  QOpenGLFramebufferObject* getStoredFrameBuffer();
+  QOpenGLFramebufferObject* getStoredFrameBuffer() const;
+  void setStoredFrameBuffer(QOpenGLFramebufferObject*);
 
 public Q_SLOTS:
   virtual void resetVisualHints();
@@ -1205,6 +1216,9 @@ protected:
   qglviewer::Vec _offset;
   //C o n t e x t
   bool is_ogl_4_3;
+  bool is_sharing;
+  bool is_linked;
+  QOpenGLContext* shared_context;
 public:
   //! Is used to know if the openGL context is 4.3 or ES 2.0.
   //! @returns `true` if the context is 4.3.

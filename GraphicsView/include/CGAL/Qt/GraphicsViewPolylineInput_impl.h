@@ -48,7 +48,7 @@ GraphicsViewPolylineInput_non_templated_base(QObject* parent,
                                    QGraphicsScene* s,
                                    int n,
                                    bool closed)
-  : GraphicsViewInput(parent), closed_(closed), path_item(NULL), b(NULL), e(NULL), n_(n), scene_(s)
+  : GraphicsViewInput(parent), closed_(closed), path_item(nullptr), b(nullptr), e(nullptr), n_(n), scene_(s)
 {}
 
 
@@ -67,7 +67,7 @@ GraphicsViewPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMous
   if(path_item){
     scene_->removeItem(path_item);
     delete path_item;
-    path_item = NULL;
+    path_item = nullptr;
   }
   if( (event->button() == ::Qt::RightButton) || (polygon.size() == n_) ){
     // call the virtual function generate_polygon(), that emit a
@@ -77,12 +77,12 @@ GraphicsViewPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMous
     if(b){
       scene_->removeItem(b);
       delete b;
-      b = NULL;
+      b = nullptr;
     }
     if(e){
       scene_->removeItem(e);
       delete e;
-      e = NULL;
+      e = nullptr;
     }
     return true;
   }
@@ -157,19 +157,19 @@ GraphicsViewPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event 
     if(b){
       scene_->removeItem(b);
       delete b;
-      b = NULL;
+      b = nullptr;
     }
     if(e){
       scene_->removeItem(e);
       delete e;
-      e = NULL;
+      e = nullptr;
     }
     return true;
   }
   if(path_item){
     scene_->removeItem(path_item);
     delete path_item;
-    path_item = NULL;
+    path_item = nullptr;
   }
   QPainterPath qpp;
   qpp.addPolygon(polygon);

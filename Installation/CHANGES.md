@@ -14,6 +14,98 @@ Release date: YYY
      between free homotopy and homotopy with fixed endpoints. 
      A contractibility test is also provided.
 
+Release 5.0
+-----------
+
+Release date: September 2019
+
+### 2D Triangulations
+
+-   **Breaking change**: Removed the functions `CGAL::Constrained_triangulation_plus_2::
+    vertices_in_constraint_{begin/end}(Vertex_handle va, Vertex_handle vb) const;`,
+    and `CGAL::Constrained_triangulation_plus_2::remove_constraint((Vertex_handle va, Vertex_handle vb)`,
+    that is a pair of vertex handles is no longer a key for a polyline constraint.
+    Users must use a version prior to 5.0 if they need this functionality.
+-   **Breaking change**: Removed the deprecated classes `CGAL::Regular_triangulation_euclidean_traits_2`, `CGAL::Regular_triangulation_filtered_traits_2`.   Users must use a version prior to 5.0 if they need these classes.
+-   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_2` which takes
+    a range of points as argument no longer performs a `spatial_sort()` of the points.
+-   Add constructor and `insert()` function to `CGAL::Triangulation_2` that takes a range of points with info.  
+    
+### 3D Triangulations
+-   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_3` which takes
+    a range of points as argument no longer performs a `spatial_sort()` of the points.
+-   Add constructor and `insert()` function to `CGAL::Triangulation_3` that takes a range of points with info.  
+    
+### Surface Mesh
+ -   New functions to read and write using the PLY format,
+     `CGAL::read_ply()` and `CGAL::write_ply()`, allowing to save and
+     load additional property maps of the surface mesh.
+
+### 3D Point Set
+ -   The PLY IO functions now take an additional optional parameter to
+     read/write comments from/in the PLY header.
+
+### Point Set Processing
+ -   **Breaking change**: the old API using iterators and overloads
+     for optional parameters is now removed (it was deprecated since
+     CGAL 4.12). The current (and now only) API uses ranges and Named
+     Parameters.
+
+### Polygon Mesh Processing
+ -   Added the function `CGAL::Polygon_mesh_processing::centroid()`, which computes
+     the centroid of a closed triangle mesh.
+-    Added the functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()` and
+     `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`, which can be used
+     to try and merge together geometrically compatible but combinatorially different halfedges
+     that belong to the same boundary cycle.
+-    It is now possible to pass a face-size property map to `CGAL::Polygon_mesh_processing::keep_large_connected_components()`
+     and `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`, enabling users to define
+     how the size of a face is computed (the size of the connected component is the sum of the sizes of its faces).
+     If no property map is passed, the behavior is unchanged to previous versions: the size
+     of a connected component is the number of faces it contains.
+
+### IO Streams
+ -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
+
+### Shape Detection
+ -   Added a new generic implementation of region growing.
+ -   New region growing can be launched on points in 2D and 3D and on a face graph.
+ -   **Breaking change:** ShapeDetectionTraits is renamed to EfficientRANSACTraits.
+ -   **Breaking change:** Shape_detection_3 namespace is renamed to Shape_detection.
+
+### 3D Boolean Operations on Nef Polyhedra
+ -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_to_polygon_soup()`
+
+### 2D and 3D Linear Geometry Kernel
+ - Add `ComputeApproximateAngle_3` in the 2D/3D Kernel concept to compute
+   the approximate dihedral angle between 2 vectors. Corresponding functors
+   in the model (`Compute_approximate_angle_3`) and free function (`approximate_angle`)
+   are also added.
+ - The following objects are now hashable and thus trivially usable
+   with `std::unordered_set` and `std::unordered_map`:
+   `CGAL::Aff_transformation_2`, `CGAL::Aff_transformation_3`,
+   `CGAL::Bbox_2`, `CGAL::Bbox_3`, `CGAL::Circle_2`,
+   `CGAL::Iso_cuboid_3`, `CGAL::Iso_rectangle_2`, `CGAL::Point_2`,
+   `CGAL::Point_3`, `CGAL::Segment_2`, `CGAL::Segment_3`,
+   `CGAL::Sphere_3`, `CGAL::Vector_2`, `CGAL::Vector_3`,
+   `CGAL::Weighted_point_2` and `CGAL::Weighted_point_3`.
+
+### IO Streams
+-   Added new functions to support some parts of the WKT file format:
+    - `CGAL::read_point_WKT()`
+    - `CGAL::read_multi_point_WKT()`
+    - `CGAL::read_linestring_WKT()`
+    - `CGAL::read_multi_linestring_WKT()`
+    - `CGAL::read_polygon_WKT()`
+    - `CGAL::read_multi_polygon_WKT()`
+    - `CGAL::write_point_WKT()`
+    - `CGAL::write_polygon_WKT()`
+    - `CGAL::write_linestring_WKT()`
+    - `CGAL::write_multi_point_WKT()`
+    - `CGAL::write_multi_polygon_WKT()`
+    - `CGAL::write_multi_linestring_WKT()`
+    - `CGAL:read_WKT()`
+
 Release 4.14
 ------------
 
@@ -3748,7 +3840,7 @@ static runtime (/ML).
     algorithm for placing streamlines in 2D vector fields. It generates
     a list of streamlines corresponding to an input flow using a
     specified separating distance. The algorithm uses a Delaunay
-    triangulation to model objects and adress different queries, and
+    triangulation to model objects and address different queries, and
     relies on choosing the centers of the biggest empty circles to start
     the integration of the streamlines.
 -   Kinetic Data Structures (new package)

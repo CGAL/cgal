@@ -93,7 +93,7 @@ public:
   */
   Random_forest_classifier (const Label_set& labels,
                             const Feature_set& features)
-    : m_labels (labels), m_features (features), m_rfc (NULL)
+    : m_labels (labels), m_features (features), m_rfc (nullptr)
   { }
   
   /*!
@@ -109,7 +109,7 @@ public:
   */
   Random_forest_classifier (const Random_forest_classifier& other,
                             const Feature_set& features)
-    : m_labels (other.m_labels), m_features (features), m_rfc (NULL)
+    : m_labels (other.m_labels), m_features (features), m_rfc (nullptr)
   {
     std::stringstream stream;
     other.save_configuration(stream);
@@ -119,7 +119,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   ~Random_forest_classifier ()
   {
-    if (m_rfc != NULL)
+    if (m_rfc != nullptr)
       delete m_rfc;
   }
   /// \endcond
@@ -209,13 +209,13 @@ public:
     CGAL::internal::liblearning::DataView2D<int> label_vector (&(gt[0]), gt.size(), 1);    
     CGAL::internal::liblearning::DataView2D<float> feature_vector(&(ft[0]), gt.size(), ft.size() / gt.size());
 
-    if (m_rfc != NULL && reset_trees)
+    if (m_rfc != nullptr && reset_trees)
     {
       delete m_rfc;
-      m_rfc = NULL;
+      m_rfc = nullptr;
     }
     
-    if (m_rfc == NULL)
+    if (m_rfc == nullptr)
       m_rfc = new Forest (params);
 
     CGAL::internal::liblearning::RandomForest::AxisAlignedRandomSplitGenerator generator;
@@ -314,7 +314,7 @@ public:
   void load_configuration (std::istream& input)
   {
     CGAL::internal::liblearning::RandomForest::ForestParams params;
-    if (m_rfc != NULL)
+    if (m_rfc != nullptr)
       delete m_rfc;
     m_rfc = new Forest (params);
     

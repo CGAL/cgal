@@ -9,11 +9,11 @@ TDS
   instead of having a cell which stores 4 vertex pointers, it only stores the
   XOR of them.  And a Cell_handle now additionaly stores the 4 vertex pointers
   of the cell, the "context".
-  One problem is the Cell_iterator : it looses the context, so I think that
+  One problem is the Cell_iterator : it loses the context, so I think that
   one way to work around this is to write the Cell_iterator as based on the
   Vertex_iterator (a bit like the reverse used to be made) : we iterate over
   the vertices, and for each vertex, we compute the incident cells, but we
-  pick only those whose smallest vertex (adress-wise) is the one in question.
+  pick only those whose smallest vertex (address-wise) is the one in question.
   
 T3
 - documenter le 2eme tableau de Triangulation_utils

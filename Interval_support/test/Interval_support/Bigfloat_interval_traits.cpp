@@ -1,5 +1,4 @@
 
-#include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Test/_test_bigfloat_interval_traits.h>
 

@@ -4,7 +4,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 
-#include <CGAL/Shape_detection_3.h>
+#include <CGAL/Shape_detection/Efficient_RANSAC.h>
 
 #include <CGAL/structure_point_set.h>
 
@@ -20,10 +20,10 @@ typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
 typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 
 // Efficient RANSAC types
-typedef CGAL::Shape_detection_3::Shape_detection_traits
-  <Kernel, Pwn_vector, Point_map, Normal_map>                Traits;
-typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
-typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
+typedef CGAL::Shape_detection::Efficient_RANSAC_traits
+  <Kernel, Pwn_vector, Point_map, Normal_map>              Traits;
+typedef CGAL::Shape_detection::Efficient_RANSAC<Traits>    Efficient_ransac;
+typedef CGAL::Shape_detection::Plane<Traits>               Plane;
 
 int main (int argc, char** argv)
 {
@@ -61,14 +61,13 @@ int main (int argc, char** argv)
                              0.015, // epsilon for structuring points
                              CGAL::parameters::point_map (Point_map()).
                              normal_map (Normal_map()).
-                             plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
-                             plane_index_map (CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes)));
+                             plane_map (CGAL::Shape_detection::Plane_map<Traits>()).
+                             plane_index_map (CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)));
 
   std::cerr << structured_pts.size ()
             << " structured point(s) generated." << std::endl;
 
   std::ofstream out ("out.pwn");
-  out.precision(17);
   CGAL::write_xyz_points (out, structured_pts,
                           CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()));
   out.close();

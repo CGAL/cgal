@@ -314,25 +314,25 @@ public:
     void set_blue_cell(const Optional_cell_blue& cell_blue)
     { m_blue_cell = cell_blue; }
 
-    /*! Obtain the red cell handle or NULL if it doesn't exist. */
+    /*! Obtain the red cell handle or nullptr if it doesn't exist. */
     const Cell_handle_red* red_cell_handle() const
-    { return m_red_cell ? &(*m_red_cell) : NULL; }
+    { return m_red_cell ? &(*m_red_cell) : nullptr; }
 
-    /*! Obtain the blue cell handle or NULL if it doesn't exist. */
+    /*! Obtain the blue cell handle or nullptr if it doesn't exist. */
     const Cell_handle_blue* blue_cell_handle() const
-    { return m_blue_cell ? &(*m_blue_cell) : NULL; }
+    { return m_blue_cell ? &(*m_blue_cell) : nullptr; }
 
-    /*! Obtain the red vertex handle or NULL if it doesn't exist. */
+    /*! Obtain the red vertex handle or nullptr if it doesn't exist. */
     const Vertex_handle_red* red_vertex_handle() const
     {
-      return m_red_cell ? boost::get<Vertex_handle_red>(&(*m_red_cell)) : NULL;
+      return m_red_cell ? boost::get<Vertex_handle_red>(&(*m_red_cell)) : nullptr;
     }
 
-    /*! Obtain the blue vertex handle or NULL if it doesn't exist. */
+    /*! Obtain the blue vertex handle or nullptr if it doesn't exist. */
     const Vertex_handle_blue* blue_vertex_handle() const
     {
       return
-        m_blue_cell ? boost::get<Vertex_handle_blue>(&(*m_blue_cell)) : NULL;
+        m_blue_cell ? boost::get<Vertex_handle_blue>(&(*m_blue_cell)) : nullptr;
     }
   };
 
@@ -437,7 +437,7 @@ public:
       while (oi != oi_end) {
         base_ipt = object_cast<std::pair<Base_point_2, unsigned int> >(&(*oi));
 
-        if (base_ipt != NULL) {
+        if (base_ipt != nullptr) {
           // We have a red-blue intersection point, so we attach the
           // intersecting red and blue halfedges to it.
           Optional_cell_red red_cell;
@@ -464,7 +464,7 @@ public:
         }
         else {
           overlap_xcv = object_cast<Base_x_monotone_curve_2>(&(*oi));
-          CGAL_assertion(overlap_xcv != NULL);
+          CGAL_assertion(overlap_xcv != nullptr);
 
           // We have a red-blue overlap, so we mark the curve accordingly.
           Halfedge_handle_red        red_he;

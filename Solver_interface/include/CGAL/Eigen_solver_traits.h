@@ -84,7 +84,7 @@ The class `Eigen_solver_traits` provides an interface to the sparse solvers of \
 \sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 \sa `CGAL::Eigen_vector<T>`
-\sa http://eigen.tuxfamily.org
+\sa http://eigen.tuxfamily.org/index.php?title=Main_Page
 
 \cgalHeading{Instantiation Example}
 
@@ -135,7 +135,7 @@ public:
   // Public operations
 public:
   /// Constructor
-  Eigen_solver_traits() : m_mat(NULL), m_solver_sptr(new EigenSolverT) { }
+  Eigen_solver_traits() : m_mat(nullptr), m_solver_sptr(new EigenSolverT) { }
 
   /// \name Operations
   /// @{
@@ -184,7 +184,7 @@ public:
   /// \return `true` if the solver is successful and `false` otherwise.
   bool linear_solver(const Vector& B, Vector& X)
   {
-    CGAL_precondition(m_mat != NULL); // factor should have been called first
+    CGAL_precondition(m_mat != nullptr); // factor should have been called first
     X = solver().solve(B);
     return solver().info() == Eigen::Success;
   }
@@ -194,7 +194,7 @@ public:
   /// \return `true` if the solver is successful and `false` otherwise.
   bool linear_solver(const Matrix& B, Vector& X)
   {
-    CGAL_precondition(m_mat != NULL); // factor should have been called first
+    CGAL_precondition(m_mat != nullptr); // factor should have been called first
     X = solver().solve(B.eigen_object());
     return solver().info() == Eigen::Success;
   }
@@ -218,7 +218,7 @@ public:
   /// \return `true` if the solver is successful and `false` otherwise.
   bool normal_equation_solver(const Vector& B, Vector& X)
   {
-    CGAL_precondition(m_mat != NULL); // non_symmetric_factor should have been called first
+    CGAL_precondition(m_mat != nullptr); // non_symmetric_factor should have been called first
     typename Vector::EigenType AtB = m_mat->transpose() * B.eigen_object();
     X = solver().solve(AtB);
     return solver().info() == Eigen::Success;

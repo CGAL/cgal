@@ -20,7 +20,6 @@
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <algorithm>
 
@@ -48,7 +47,7 @@ void test_algebraic_kernel_2(const AlgebraicKernel_2& ak_2) {
   typedef typename AK_2::Coefficient Coefficient;
   typedef typename AK_2::Bound Bound;
   typedef std::pair<Bound,Bound> BInterval;
-  typedef CGAL::cpp11::array<Bound, 4> BArray;
+  typedef std::array<Bound, 4> BArray;
   typedef typename AK_2::Polynomial_1 Polynomial_1; 
   typedef typename AK_2::Polynomial_2 Polynomial_2; 
   typedef typename AK_2::Algebraic_real_1 Algebraic_real_1; 

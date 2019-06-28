@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup PkgConvexHull3Functions
 
 \brief computes the convex hull of the set of points in the range
-[`first`, `last`). The polyhedron `pm` is cleared, then
+[`first`, `last`). The polygon mesh `pm` is cleared, then
 the convex hull is stored in `pm`. Note that the convex hull will be triangulated,
 that is `pm` will contain only triangular facets.
 if the convex hull is a point or a segment, endpoints will be added in `pm` as isolated vertices.
@@ -39,9 +39,9 @@ void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, con
 
 \brief computes the convex hull of the set of points in the range
 [`first`, `last`). The result, which may be a point, a segment,
-a triangle, or a polyhedron, is stored in `ch_object`.
-In the case the result is a polyhedron, the convex hull will be triangulated,
-that is the polyhedron will contain only triangular facets.
+a triangle, or a polygon mesh, is stored in `ch_object`.
+In the case the result is a polygon mesh, the convex hull will be triangulated,
+that is the polygon mesh will contain only triangular facets.
 
 \tparam InputIterator must be an input iterator with a value type  equivalent to `Traits::Point_3`.
 \tparam Traits must be model of the concept `ConvexHullTraits_3`.
