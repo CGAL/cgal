@@ -34,10 +34,10 @@ TermsArray AlgebraicCurveParser::extractTerms() {
         auto next = iterator + 1;
         if (*next == '+' || *next == '-' || next == expression.end()) {
             //find the term between the +/- and the previous +/-
-            std::string subExpression = std::string(expression.begin() + termIndex, iterator);
+            std::string subExpression = std::string(expression.begin() + termIndex, next);
             AlgebraicTerm term = extractCoefficientAndExponent(subExpression);
             algebraicTerms.push_back(term);
-            termIndex = iterator - expression.begin();
+            termIndex = next - expression.begin();
         }
     }
 }
@@ -55,7 +55,7 @@ AlgebraicTerm AlgebraicCurveParser::extractCoefficientAndExponent(std::string &s
 
 int AlgebraicCurveParser::extractXExponent(std::string &subExpression) {
     bool extractingExponent = false;
-    int exponentValue;
+    int exponentValue = 0;
     std::string exponentString;
 
     for (auto iterator = subExpression.begin(); iterator != subExpression.end(); iterator++) {
@@ -64,63 +64,77 @@ int AlgebraicCurveParser::extractXExponent(std::string &subExpression) {
                 continue;
             } else if (*iterator == 'y' || *iterator == '*') {
                 extractingExponent = false;
-                break;
+                std::string::size_type sz;
+                if (!exponentString.empty()) exponentValue += std::stoi(exponentString, &sz);
+                continue;
             } else {
                 char charAtPosition = *iterator;
-                exponentString.append(charAtPosition, 1);
+                exponentString += charAtPosition;
+                if (iterator == subExpression.end() - 1) {
+                    extractingExponent = false;
+                    std::string::size_type sz;
+                    if (!exponentString.empty()) exponentValue += std::stoi(exponentString, &sz);
+                    continue;
+                }
             }
         } else {
             if (*iterator == 'x') {
                 if (iterator == subExpression.end() - 1) {
-                    return 1;
+                    exponentValue += 1;
+                    continue;
                 } else if (*(iterator + 1) != '^') {
-                    return 1;
+                    exponentValue += 1;
                 } else if (*(iterator + 1) == '^') {
                     extractingExponent = true;
+                    exponentString = "";
                     continue;
                 }
             }
         }
     }
-
-    std::string::size_type sz;
-    exponentValue = std::stoi(exponentString, &sz);
 
     return exponentValue;
 }
 
 int AlgebraicCurveParser::extractYExponent(std::string &subExpression) {
     bool extractingExponent = false;
-    int exponentValue;
+    int exponentValue = 0;
     std::string exponentString;
 
     for (auto iterator = subExpression.begin(); iterator != subExpression.end(); iterator++) {
         if (extractingExponent) {
             if (*iterator == '^') {
                 continue;
-            } else if (*iterator == 'x' || *iterator == '*') {
+            } else if (*iterator == 'y' || *iterator == '*') {
                 extractingExponent = false;
-                break;
+                std::string::size_type sz;
+                if (!exponentString.empty()) exponentValue += std::stoi(exponentString, &sz);
+                continue;
             } else {
-                const char charAtPosition = *iterator;
-                exponentString.append(charAtPosition, 1);
+                char charAtPosition = *iterator;
+                exponentString += charAtPosition;
+                if (iterator == subExpression.end() - 1) {
+                    extractingExponent = false;
+                    std::string::size_type sz;
+                    if (!exponentString.empty()) exponentValue += std::stoi(exponentString, &sz);
+                    continue;
+                }
             }
         } else {
             if (*iterator == 'y') {
                 if (iterator == subExpression.end() - 1) {
-                    return 1;
+                    exponentValue += 1;
+                    continue;
                 } else if (*(iterator + 1) != '^') {
-                    return 1;
+                    exponentValue += 1;
                 } else if (*(iterator + 1) == '^') {
                     extractingExponent = true;
+                    exponentString = "";
                     continue;
                 }
             }
         }
     }
-
-    std::string::size_type sz;
-    exponentValue = std::stoi(exponentString, &sz);
 
     return exponentValue;
 }
@@ -133,14 +147,17 @@ int AlgebraicCurveParser::extractCoefficient(std::string &subExpression) {
     std::string::iterator iteratorStart;
     if (signPresent) iteratorStart = subExpression.begin() + 1;
     else iteratorStart = subExpression.begin();
+    if (*iteratorStart == 'x' || *iteratorStart == 'y') {
+        return 1;
+    }
 
     for (auto iterator = iteratorStart; iterator != subExpression.end(); iterator++) {
         //determine coefficient
         if (*iterator == 'x' || *iterator == 'y' || *iterator == '*') {
             break;
         }
-        const char value = *iterator;
-        coefficientString.append(&value);
+        char value = *iterator;
+        coefficientString += value;
     }
 
     std::string::size_type sz;
