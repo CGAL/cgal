@@ -81,7 +81,7 @@ template<class Mesh, typename DuplicatedPointsOutIterator, class NamedParameters
 bool read_surf(std::istream& input, std::vector<Mesh>& output,
     std::vector<MaterialData>& metadata,
     CGAL::Bbox_3& grid_box,
-    CGAL::cpp11::array<unsigned int, 3>& grid_size,
+    std::array<unsigned int, 3>& grid_size,
     DuplicatedPointsOutIterator out,
     const NamedParameters&)
 {
@@ -235,7 +235,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
     }
 
     //connect triangles
-    typedef CGAL::cpp11::array<std::size_t, 3> Triangle_ind;
+    typedef std::array<std::size_t, 3> Triangle_ind;
     std::vector<Triangle_ind> polygons;
     polygons.reserve(nb_triangles);
     while(std::getline(input, line))
@@ -286,7 +286,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
 
     Mesh& mesh = output[i];
 
-    PMP::internal::Polygon_soup_to_polygon_mesh<Mesh, Point_3, Triangle_ind>
+    PMP::internal::Polygon_soup_to_polygon_mesh<Mesh, std::vector<Point_3>, std::vector<Triangle_ind>>
       converter(points, polygons);
     converter(mesh, false/*insert_isolated_vertices*/);
 
@@ -301,7 +301,7 @@ template<class Mesh, typename DuplicatedPointsOutIterator>
 bool read_surf(std::istream& input, std::vector<Mesh>& output,
   std::vector<MaterialData>& metadata,
   CGAL::Bbox_3& grid_box,
-  CGAL::cpp11::array<unsigned int, 3>& grid_size,
+  std::array<unsigned int, 3>& grid_size,
   DuplicatedPointsOutIterator out)
 {
   return read_surf(input, output, metadata, grid_box, grid_size, out,

@@ -82,7 +82,7 @@ private:
                 "                Appearance {\n"
                 "                    material DEF Material Material {}\n"
                 "                }\n"
-                "            geometry NULL\n"
+                "            geometry nullptr\n"
                 "        }\n"
                 "        #-- End of file header" << std::endl;
     }

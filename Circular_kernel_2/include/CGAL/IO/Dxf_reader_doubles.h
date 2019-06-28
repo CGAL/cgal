@@ -48,7 +48,7 @@ class Dxf_reader_doubles {
 
 public:
   typedef double       FT;
-  typedef cpp11::array<double, 3>  Triplet;
+  typedef std::array<double, 3>  Triplet;
   typedef Triplet Point_2_and_bulge;
   typedef Triplet Circle_2;
 

@@ -66,7 +66,11 @@ private:
 template<class Mesh>
 bool selfIntersect(Mesh* mesh, std::vector<std::pair<typename boost::graph_traits<Mesh>::face_descriptor,typename boost::graph_traits<Mesh>::face_descriptor> > &faces)
 {
-
+  if(!CGAL::is_triangle_mesh(*mesh))
+  {
+    CGAL::Three::Three::warning("%1 skipped because not triangulated.");
+    return false;
+  }
   // compute self-intersections
   CGAL::Polygon_mesh_processing::self_intersections
     (*mesh, std::back_inserter(faces),
@@ -107,11 +111,11 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
         selection_item->selected_facets.insert(fb->second);
 
         //add the edges
-        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->first, *mesh), *mesh))
+        for(halfedge_descriptor he_circ : halfedges_around_face( halfedge(fb->first, *mesh), *mesh))
         {
           selection_item->selected_edges.insert(edge(he_circ, *mesh));
         }
-        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->second, *mesh), *mesh))
+        for(halfedge_descriptor he_circ : halfedges_around_face( halfedge(fb->second, *mesh), *mesh))
         {
           selection_item->selected_edges.insert(edge(he_circ, *mesh));
         }

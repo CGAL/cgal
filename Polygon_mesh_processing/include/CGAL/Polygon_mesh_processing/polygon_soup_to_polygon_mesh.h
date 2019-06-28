@@ -44,12 +44,12 @@ namespace Polygon_mesh_processing
 namespace internal
 {
 template <typename PM
-        , typename Point
-        , typename Polygon>
+        , typename PointRange
+        , typename PolygonRange>
 class Polygon_soup_to_polygon_mesh
 {
-  const std::vector<Point>& _points;
-  const std::vector<Polygon>& _polygons;
+  const PointRange& _points;
+  const PolygonRange& _polygons;
 
   typedef typename boost::property_map<PM, CGAL::vertex_point_t>::type Vpmap;
   typedef typename boost::property_traits<Vpmap>::value_type Point_3;
@@ -57,21 +57,27 @@ class Polygon_soup_to_polygon_mesh
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
+  typedef typename PolygonRange::value_type Polygon;
+  typedef typename PointRange::value_type Point;
 
 public:
   /**
   * The constructor for modifier object.
   * @param points points of the soup of polygons.
-  * @param polygons each element in the vector describes a polygon using the index of the points in the vector.
+  * @param polygons each element in the range describes a polygon using the index of the points in the range.
   */
-  Polygon_soup_to_polygon_mesh(const std::vector<Point>& points,
-                               const std::vector<Polygon>& polygons)
+  Polygon_soup_to_polygon_mesh(const PointRange& points,
+                               const PolygonRange& polygons)
     : _points(points),
       _polygons(polygons)
   { }
 
   void operator()(PM& pmesh, const bool insert_isolated_vertices = true)
   {
+    reserve(pmesh, static_cast<typename boost::graph_traits<PM>::vertices_size_type>(_points.size()),
+                   static_cast<typename boost::graph_traits<PM>::edges_size_type>(2*_polygons.size()),
+                   static_cast<typename boost::graph_traits<PM>::faces_size_type>(_polygons.size()) );
+
     Vpmap vpmap = get(CGAL::vertex_point, pmesh);
 
     boost::dynamic_bitset<> not_isolated;
@@ -157,14 +163,14 @@ public:
     //check there is no polygon with twice the same vertex
     std::set< std::pair<V_ID, V_ID> > edge_set;
     V_ID max_id=0;
-    BOOST_FOREACH(const Polygon& polygon, polygons)
+    for(const Polygon& polygon : polygons)
     {
       std::size_t nb_edges = boost::size(polygon);
       if (nb_edges<3) return false;
 
       std::set<V_ID> polygon_vertices;
-      V_ID prev= *cpp11::prev(boost::end(polygon));
-      BOOST_FOREACH(V_ID id, polygon)
+      V_ID prev= *std::prev(boost::end(polygon));
+      for(V_ID id : polygon)
       {
         if (max_id<id) max_id=id;
         if (! edge_set.insert(std::pair<V_ID, V_ID>(prev,id)).second )
@@ -180,7 +186,7 @@ public:
     //check manifoldness
     typedef std::vector<V_ID> PointRange;
     typedef internal::Polygon_soup_orienter<PointRange, PolygonRange> Orienter;
-    typename Orienter::Edge_map edges;
+    typename Orienter::Edge_map edges(max_id+1);
     typename Orienter::Marked_edges marked_edges;
     Orienter::fill_edge_map(edges, marked_edges, polygons);
     //returns false if duplication is necessary
@@ -195,10 +201,13 @@ public:
   * @pre the input polygon soup describes a consistently oriented
   * polygon mesh.
   *
-  * @tparam PolygonMesh a model of `MutableFaceGraph` with an internal point property map
-  * @tparam Point a point type that has an operator `[]` to access coordinates
-  * @tparam Polygon a `std::vector<std::size_t>` containing the indices
-  *         of the points of the face
+  * @tparam PolygonMesh a model of `MutableFaceGraph` with an internal point 
+  * property map
+  * @tparam PointRange a model of the concepts `RandomAccessContainer` and 
+  * `BackInsertionSequence` whose value type is the point type
+  * @tparam PolygonRange a model of the concept `RandomAccessContainer` whose 
+  * `value_type` is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
+
   *
   * @param points points of the soup of polygons
   * @param polygons each element in the vector describes a polygon using the index of the points in `points`
@@ -211,16 +220,16 @@ public:
   * \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
   *
   */
-  template<class PolygonMesh, class Point, class Polygon>
+  template<class PolygonMesh, class PointRange, class PolygonRange>
   void polygon_soup_to_polygon_mesh(
-    const std::vector<Point>& points,
-    const std::vector<Polygon>& polygons,
+    const PointRange& points,
+    const PolygonRange& polygons,
     PolygonMesh& out)
   {
     CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
                           "Input soup needs to be a polygon mesh!");
 
-    internal::Polygon_soup_to_polygon_mesh<PolygonMesh, Point, Polygon>
+    internal::Polygon_soup_to_polygon_mesh<PolygonMesh, PointRange, PolygonRange>
       converter(points, polygons);
     converter(out);
   }

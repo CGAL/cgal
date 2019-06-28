@@ -341,7 +341,7 @@ public:
   SVertex_/SHalfedge_/SHalfloop_/SFace_handle&)|.\\ The object
   returned is intersected by |d.circle()|, has minimal distance to
   |p|, and |M(h)| holds on the converted object. The operation returns
-  the null handle |NULL| if the ray shoot along |s| does not hit any
+  the null handle |nullptr| if the ray shoot along |s| does not hit any
   object |h| of |M| with |M(h)|.}*/
   { 
     Sphere_circle c(d.circle());

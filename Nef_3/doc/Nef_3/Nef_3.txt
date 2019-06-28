@@ -57,7 +57,7 @@ generality. Starting from halfspaces (and also directly from oriented
 2-manifolds), we can work with set union, set intersection, set
 difference, set complement, interior, exterior, boundary, closure, and
 regularization operations (see Section \ref sectoinRegularized 
-for an explaination of regularized
+for an explanation of regularized
 set operations). In essence, we can evaluate a CSG-tree with
 halfspaces as primitives and convert it into a B-rep representation.
 

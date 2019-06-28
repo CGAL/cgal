@@ -94,9 +94,9 @@ range definition as for iterators. The difference lies in the use of
 an iterator `i` the range `[i,i)` denotes the empty range. As
 long as `c != d` the range `[c,d)` behaves like an iterator
 range and could be used in \stl algorithms. For circulators however,
-an additional test `c == NULL` is required that returns true if
+an additional test `c == nullptr` is required that returns true if
 and only if the circular sequence is empty. As for
-\cpp, we recommend the use of 0 instead of `NULL`.
+\cpp, we recommend the use of 0 instead of `nullptr`.
 
 Besides the conceptual cleanness, the main reason for inventing a new
 concept with a similar intent as iterators is efficiency. An iterator

@@ -4,7 +4,7 @@
 \ingroup PkgBGLRef
 
 The \sc{Bgl} defines the class template
-<A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
+<A HREF="https://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
 as a uniform interface to the properties and types of %graph types.
 
 We provide specializations of this class template for several \cgal data structures.
@@ -116,7 +116,7 @@ For convenience, the type `edge_descriptor` is hashable using the functor `CGAL:
 <ul>
 <li> The item class used by `CGAL::Linear_cell_complex_for_combinatorial_map` must have both 0-attributes and 2-attributes enabled.</li>
 
-<li> No dart is 1-free, nor 2-free. Holes in a mesh are represented by using the same convention than for `CGAL::Polyhedron_3` and `CGAL::Surface_mesh`: a dart <code>d</code> belongs to a border if the 2-attribute of <code>beta<2>(d)</code> is NULL.</li>
+<li> No dart is 1-free, nor 2-free. Holes in a mesh are represented by using the same convention than for `CGAL::Polyhedron_3` and `CGAL::Surface_mesh`: a dart <code>d</code> belongs to a border if the 2-attribute of <code>beta<2>(d)</code> is nullptr.</li>
 
 <li> All darts of the linear cell complexes must be associated with a 2-attribute, except darts that represent holes.</li>
 
@@ -162,7 +162,7 @@ with the default property map of \sc{Bgl} algorithms (obtained with
 `get(t, boost::edge_weight)`) is the length of the edge,
 the edge weight is not well defined for infinite edges. For algorithms
 that make use of the edge weight, the user must therefore
-define a <A HREF="http://www.boost.org/libs/graph/doc/filtered_graph.html">`boost::filtered_graph`</A> or pass a property map to the
+define a <A HREF="https://www.boost.org/libs/graph/doc/filtered_graph.html">`boost::filtered_graph`</A> or pass a property map to the
 algorithm that returns "infinity" for infinite edges.
 
 | Member                   | Value  | Description |

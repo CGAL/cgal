@@ -8,6 +8,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 
 #include "Scene_c3t3_item.h"
 
@@ -141,7 +142,6 @@ private:
   QAction* actionCreateRib;
   
   // Viewer
-  Viewer_interface* viewer_;
   
   typedef std::map<C3t3::Surface_patch_index, QColor> Surface_map;
   typedef std::map<C3t3::Subdomain_index, QColor> Subdomain_map;
@@ -170,7 +170,6 @@ private:
 C3t3_rib_exporter_plugin::
 C3t3_rib_exporter_plugin()
   : actionCreateRib(NULL)
-  , viewer_(NULL)
   , zmax_(0)
   , diag_(0)
   , prev_color_(0,0,0)
@@ -194,13 +193,6 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interfa
     actionCreateRib->setProperty("subMenuName", "Tetrahedral Mesh Generation");
     connect(actionCreateRib, SIGNAL(triggered()), this, SLOT(create_rib()));
   }
-  
-  viewer_ = mw->findChild<Viewer_interface*>("viewer");
-  if ( NULL == viewer_ )
-  {
-    std::cerr << "Can't get CGAL::QGLViewer" << std::endl;
-  }
-  
   init_parameters();
 }
 
@@ -208,7 +200,7 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interfa
 void
 C3t3_rib_exporter_plugin::create_rib()
 {
-  if ( NULL == viewer_ )
+  if ( NULL == Three::activeViewer() )
   {
     std::cerr << "Can't find viewer" << std::endl;
     return;
@@ -242,14 +234,14 @@ C3t3_rib_exporter_plugin::create_rib()
 
     QBitmap bitmap;
     bitmap.clear();
-    viewer_->setMask(bitmap);
+    Three::activeViewer()->setMask(bitmap);
     return;
   }
   
   // Disable Mask
   QBitmap bitmap;
   bitmap.clear();
-  viewer_->setMask(bitmap);
+  Three::activeViewer()->setMask(bitmap);
   
   // Save dialog
   QStringList filters;
@@ -293,7 +285,7 @@ update_mask()
 {
   double ratio = double(parameters_.width) / double(parameters_.height);
   
-  if ( NULL == viewer_ )
+  if ( NULL == Three::activeViewer() )
   {
     std::cerr << "Can't find viewer..." << std::endl;
     return;
@@ -301,7 +293,7 @@ update_mask()
   QBitmap bitmap;
   bitmap.setDevicePixelRatio(ratio);
   bitmap.fill();
-  viewer_->setMask(bitmap);
+  Three::activeViewer()->setMask(bitmap);
 }
 
 
@@ -517,7 +509,7 @@ C3t3_rib_exporter_plugin::
 camera_coordinates(const Bare_point& p)
 {
   qglVec p_vec ( p.x(), p.y(), p.z() );
-  qglVec p_cam = viewer_->camera()->cameraCoordinatesOf(p_vec);
+  qglVec p_cam = Three::activeViewer()->camera()->cameraCoordinatesOf(p_vec);
   
   // Store maximal depth
   zmax_ = (std::max)(zmax_, double(-p_cam[2]));

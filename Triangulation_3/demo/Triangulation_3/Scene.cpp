@@ -29,7 +29,7 @@ void Scene::generatePoints(int num)
   /* Insert them into the point list: */
   /* 1. use CGAL's copy function --tested */
   list<Point_3> pts;
-  CGAL::cpp11::copy_n( pts_generator, num, std::back_inserter(pts) );
+  std::copy_n( pts_generator, num, std::back_inserter(pts) );
   /* 2. use STL's function */
   //for (int i=0; i<num; ++i, ++pts_generator) {
   //  pts.push_back(*pts_generator);
@@ -183,7 +183,7 @@ void Scene::savePointsOFF(const char* filename)
   ofstream fout;
   fout.open( filename );
   if( !fout ) {
-    showError( QObject::tr("Error: cannot open file %1 for writting.").arg(filename) );
+    showError( QObject::tr("Error: cannot open file %1 for writing.").arg(filename) );
     return;
   }
 
@@ -221,7 +221,7 @@ void Scene::savePointsXYZ(const char* filename)
   fout.open( filename );
   // Check whether the file is opened properly
   if( !fout ) {
-    showError( QObject::tr("Error: cannot open file %1 for writting.").arg(filename) );
+    showError( QObject::tr("Error: cannot open file %1 for writing.").arg(filename) );
     return;
   }
 

@@ -230,7 +230,7 @@ public:
 
   The near (resp. far) clipping plane is positioned at a distance equal to
   zClippingCoefficient() * sceneRadius() in front of (resp. behind) the
-  sceneCenter(). This garantees an optimal use of the z-buffer range and
+  sceneCenter(). This guarantees an optimal use of the z-buffer range and
   minimizes aliasing. See the zNear() and zFar() documentations.
 
   Default value is square root of 3.0 (so that a cube of size sceneRadius() is
@@ -298,6 +298,16 @@ public Q_SLOTS:
   void setZClippingCoefficient(qreal coef) {
     zClippingCoef_ = coef;
     projectionMatrixIsUpToDate_ = false;
+  }
+  /*! Sets the zNear value in orthographic mode. */
+  void setOrthoZNear(qreal z)
+  {
+    m_zMin = z;
+  }
+  /*! Returns the zNear value in orthographic mode*/
+  qreal orthoZNear()
+  {
+    return m_zMin;
   }
   //@}
 
@@ -415,12 +425,12 @@ public:
   /*! @name 2D screen to 3D world coordinate systems conversions */
   //@{
 public:
-  Vec projectedCoordinatesOf(const Vec &src, const Frame *frame = NULL) const;
-  Vec unprojectedCoordinatesOf(const Vec &src, const Frame *frame = NULL) const;
+  Vec projectedCoordinatesOf(const Vec &src, const Frame *frame = nullptr) const;
+  Vec unprojectedCoordinatesOf(const Vec &src, const Frame *frame = nullptr) const;
   void getProjectedCoordinatesOf(const qreal src[3], qreal res[3],
-                                 const Frame *frame = NULL) const;
+                                 const Frame *frame = nullptr) const;
   void getUnprojectedCoordinatesOf(const qreal src[3], qreal res[3],
-                                   const Frame *frame = NULL) const;
+                                   const Frame *frame = nullptr) const;
   void convertClickToLine(const QPoint &pixel, Vec &orig, Vec &dir) const;
   Vec pointUnderPixel(const QPoint &pixel, bool &found) const;
   //@}
@@ -463,6 +473,7 @@ private:
   mutable bool modelViewMatrixIsUpToDate_;
   mutable GLdouble projectionMatrix_[16]; // Buffered projection matrix.
   mutable bool projectionMatrixIsUpToDate_;
+  qreal m_zMin; //USed for near plane in orthographic projection.
 
   // S t e r e o   p a r a m e t e r s
   qreal IODistance_;          // inter-ocular distance, in meters

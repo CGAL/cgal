@@ -40,7 +40,7 @@ _test_cls_delaunay_hierarchy_2( const Dh & )
   std::cout << "    insertion removal of 1000 points" << std::endl;
   Delaunay_hierarchy dh;
   CGAL::Random_points_in_square_2<Point,Creator> g(1.);
-  CGAL::cpp11::copy_n( g, 1000, std::back_inserter(dh));
+  std::copy_n( g, 1000, std::back_inserter(dh));
 
   dh.locate(Point(0.,0.));
 

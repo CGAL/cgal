@@ -40,12 +40,12 @@ int main( int argc, char** argv )
   // this id(), so we must do it here:
   int index = 0;
   
-  BOOST_FOREACH(halfedge_descriptor hd , halfedges(surface_mesh)){
+  for(halfedge_descriptor hd : halfedges(surface_mesh)){
     hd->id() = index++;
 }
   index = 0;
   
-  BOOST_FOREACH(vertex_descriptor vd , vertices(surface_mesh)){
+  for(vertex_descriptor vd : vertices(surface_mesh)){
     vd->id() = index++;
 }
     

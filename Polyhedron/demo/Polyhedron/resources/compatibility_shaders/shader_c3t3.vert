@@ -2,7 +2,7 @@
 attribute highp vec4 vertex;
 attribute highp vec3 normals;
 attribute highp vec3 colors;
-attribute highp vec3 barycenter;
+attribute highp vec3 center;
 uniform highp mat4 mvp_matrix;
 uniform highp mat4 mv_matrix;
 uniform highp vec4 cutplane;
@@ -26,11 +26,11 @@ void main(void)
   highp mat4 transOB = mat4(1, 0, 0, 0, // first column
    0, 1, 0, 0, // second column
    0, 0, 1, 0, // third column
-   barycenter.x, barycenter.y, barycenter.z, 1); // fourth column
+   center.x, center.y, center.z, 1); // fourth column
   highp mat4 transBO = mat4(1, 0, 0, 0, // first column
     0, 1, 0, 0, // second column
     0, 0, 1, 0, // third column
-    -barycenter.x, -barycenter.y, -barycenter.z, 1); // fourth column
+    -center.x, -center.y, -center.z, 1); // fourth column
    highp mat4 scaling = mat4(shrink_factor, 0, 0, 0,
     0, shrink_factor, 0, 0,
     0, 0, shrink_factor, 0,

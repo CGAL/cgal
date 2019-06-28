@@ -332,7 +332,7 @@ class PointLocator {
    |PLocTraits| which widely controls its behaviour.
    The traits may even change the return type of a query and its semantics.
    There are predined traits classes for the LEDA graph types, which are
-   described below in a seperate section.
+   described below in a separate section.
 }*/
 public:
   // copied types from PLocTraits

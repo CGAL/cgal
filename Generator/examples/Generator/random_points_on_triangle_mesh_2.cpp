@@ -50,7 +50,7 @@ int main()
   Random_points_in_triangle_mesh_2<Point, CDT> g(cdt);
 
   // Get 100 random points in cdt
-  CGAL::cpp11::copy_n(g, 100, std::back_inserter(points));
+  std::copy_n(g, 100, std::back_inserter(points));
 
   // Check that we have really created 100 points.
   assert(points.size() == 100);

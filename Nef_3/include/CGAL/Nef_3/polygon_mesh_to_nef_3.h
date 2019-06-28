@@ -154,7 +154,7 @@ public:
   
   void resolve_indexes()
   {
-    BOOST_FOREACH(face_descriptor fi, faces(P)) {
+    for(face_descriptor fi : faces(P)) {
       Halfedge_around_facet_const_circulator 
 	fc(halfedge(fi,P),P), end(fc);
       typename boost::property_traits<HalfedgeIndexMap>::value_type
@@ -206,7 +206,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
 
   std::vector<Vector_3> normals(num_faces(P));
 
-  BOOST_FOREACH(face_descriptor f, faces(P)){
+  for(face_descriptor f : faces(P)){
     Vertex_around_face_circulator<PolygonMesh> vafc(halfedge(f,P),P), done(vafc);
     Vector_3 v;
     normal_vector_newell_3(vafc, done, pmap, v);
@@ -217,7 +217,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
                  PolygonMesh, SNC_structure,HalfedgeIndexMap> index_adder(P,himap);
 
 
-  BOOST_FOREACH(vertex_descriptor pv, vertices(P) ) {
+  for(vertex_descriptor pv : vertices(P) ) {
     Vertex_handle nv = S.new_vertex();
     nv->point() = get(pmap,pv);
     nv->mark() = true;

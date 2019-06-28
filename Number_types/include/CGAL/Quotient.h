@@ -32,8 +32,6 @@
 // The include is done before the protect macro on purpose, because
 // of a cyclic dependency.
 
-#include <CGAL/number_type_basic.h>
-
 #ifndef CGAL_QUOTIENT_H
 #define CGAL_QUOTIENT_H
 
@@ -119,28 +117,9 @@ class Quotient
     return *this;
   }
 
-#ifdef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
-
   template <class T1, class T2>
   Quotient(const T1& n, const T2& d) : num(n), den(d)
   { CGAL_precondition( d != 0 ); }
-
-#else
-  template <class T1, class T2>
-  Quotient(T1 && n, T2 && d)
-     : num(std::forward<T1>(n)), den(std::forward<T2>(d))
-  { CGAL_postcondition( den != 0 ); }
-
-  Quotient(NT && n)
-    : num(std::move(n)), den(1) {}
-
-  Quotient& operator=(NT && n)
-  {
-    num = std::move(n);
-    den = 1;
-    return *this;
-  }
-#endif
 
   Quotient<NT>& operator+= (const Quotient<NT>& r);
   Quotient<NT>& operator-= (const Quotient<NT>& r);

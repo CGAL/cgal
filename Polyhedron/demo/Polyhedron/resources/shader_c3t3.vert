@@ -2,7 +2,7 @@
 in vec4 vertex;
 in vec3 normals;
 in vec3 colors;
-in vec3 barycenter;
+in vec3 center;
 uniform  mat4 mvp_matrix;
 uniform  mat4 mv_matrix;
 uniform  vec4 cutplane;
@@ -26,11 +26,11 @@ void main(void)
    mat4 transOB = mat4(1, 0, 0, 0, // first column
    0, 1, 0, 0, // second column
    0, 0, 1, 0, // third column
-   barycenter.x, barycenter.y, barycenter.z, 1); // fourth column
+   center.x, center.y, center.z, 1); // fourth column
    mat4 transBO = mat4(1, 0, 0, 0, // first column
     0, 1, 0, 0, // second column
     0, 0, 1, 0, // third column
-    -barycenter.x, -barycenter.y, -barycenter.z, 1); // fourth column
+    -center.x, -center.y, -center.z, 1); // fourth column
     mat4 scaling = mat4(shrink_factor, 0, 0, 0,
     0, shrink_factor, 0, 0,
     0, 0, shrink_factor, 0,

@@ -77,7 +77,7 @@ public:
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3                        Point;          ///< defines the point type.
   
-  typedef CGAL::cpp11::array< unsigned int, 3 >       Facet;                 ///< defines a triple of point indices indicating a triangle of the surface.
+  typedef std::array< unsigned int, 3 >       Facet;                 ///< defines a triple of point indices indicating a triangle of the surface.
 private:
   typedef std::list< Facet >                         Facetset;              ///< defines a collection of triples.
   // Note that this is a list for two reasons: iterator validity for the shell iterators, and memory requirements for the expected huge collections.
@@ -125,7 +125,7 @@ private:
   typedef typename Shape::Classification_type         Classification_type;
   
   typedef std::map<SFacet, unsigned int> Map_facet_to_shell;
-  typedef typename CGAL::cpp11::array<std::set<SFacet>, 2 >   Bubble;
+  typedef typename std::array<std::set<SFacet>, 2 >   Bubble;
 
   bool _separate_shells;
   bool _force_manifold;
@@ -185,7 +185,7 @@ public:
     : _separate_shells (separate_shells),
       _force_manifold (force_manifold),
       _border_angle (border_angle),
-      _shape (NULL),
+      _shape (nullptr),
       _squared_radius (squared_radius)
   {
 
@@ -235,7 +235,7 @@ public:
 
     for (Facet_iterator it = _surface.begin(); it != _surface.end(); ++ it)
     {
-      cpp11::array<std::size_t, 3> f = {{ std::size_t((*it)[0]), std::size_t((*it)[1]), std::size_t((*it)[2]) }};
+      std::array<std::size_t, 3> f = {{ std::size_t((*it)[0]), std::size_t((*it)[1]), std::size_t((*it)[2]) }};
       *(output ++) = f;
     }
   }
@@ -333,10 +333,10 @@ private:
   
   void deinit_shape()
   {
-    if (_shape != NULL)
+    if (_shape != nullptr)
     {
       delete _shape;
-      _shape = NULL;
+      _shape = nullptr;
     }
   }
   

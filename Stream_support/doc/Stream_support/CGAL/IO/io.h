@@ -288,5 +288,4 @@ The input operator is defined for all classes in the \cgal `Kernel`.
 \sa `CGAL::is_pretty()`
 */
 istream& operator>>(istream& is, Class c);
-
 }

@@ -819,7 +819,7 @@ public:
           // Removes component from list
           components.erase(components.begin());
 
-          if (vertex->halfedge() != NULL) // if not isolated vertex
+          if (vertex->halfedge() != nullptr) // if not isolated vertex
           {
             erase_connected_component(vertex->halfedge());
             nb_erased_components++;
@@ -935,7 +935,7 @@ private:
                 return it;
         }
 
-        return NULL;
+        return nullptr;
     }
 
     /// Helper method for keep_largest_connected_components():
@@ -1015,8 +1015,8 @@ private:
         }
 
         // Record each component
-        Vertex_handle seed_vertex = NULL;
-        while((seed_vertex = get_any_free_vertex(tags)) != NULL)
+        Vertex_handle seed_vertex = nullptr;
+        while((seed_vertex = get_any_free_vertex(tags)) != nullptr)
         {
             // Tag it as "done" and compute its size (number of vertices)
             unsigned int number_of_vertices = tag_component(seed_vertex, tags);

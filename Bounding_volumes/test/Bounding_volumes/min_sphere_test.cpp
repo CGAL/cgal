@@ -28,7 +28,6 @@
 // hack to overcome external linkage conflict warning in MIPS
 #define __SGI_STL_INTERNAL_RELOPS
 
-#include<CGAL/basic.h>
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Random.h>

@@ -254,7 +254,7 @@ class Sphere_point : public VPoint, public Gen_object {
 public:
   Sphere_point() {}
   Sphere_point(const CGAL::Sphere_point<R>& p,
-    CGAL::Color c = CGAL::BLACK, unsigned w = 10) : 
+    CGAL::Color c = CGAL::black(), unsigned w = 10) : 
     VPoint(Approximator<R>::approximate(p)), p_(p), c_(c), w_(w) {}
   Sphere_point(const Sphere_point<R>& p) : VPoint(p), Gen_object()
   { p_ = p.p_; c_ = p.c_; w_ = p.w_; }
@@ -297,7 +297,7 @@ class Sphere_segment : public VSegment, public Gen_object {
 public:
   Sphere_segment() {}
   Sphere_segment(const CGAL::Sphere_segment<R>& s,
-    CGAL::Color c = CGAL::BLACK, unsigned w = 2) 
+    CGAL::Color c = CGAL::black(), unsigned w = 2) 
     : VSegment(Approximator<R>::approximate(s)), s_(s), c_(c), w_(w) {}
   Sphere_segment(const Sphere_segment<R>& s) : VSegment(s), Gen_object()
   { s_ = s.s_; c_ = s.c_; w_ = s.w_; }
@@ -350,7 +350,7 @@ class Sphere_circle : public VSegment, public Gen_object {
 public:
   Sphere_circle() {}
   Sphere_circle(const CGAL::Sphere_circle<R>& s,
-    CGAL::Color c = CGAL::BLACK, unsigned w = 2) 
+    CGAL::Color c = CGAL::black(), unsigned w = 2) 
     : VSegment(Approximator<R>::approximate(s)), s_(s), c_(c), w_(w) {}
   Sphere_circle(const Sphere_circle<R>& s) : VSegment(s), Gen_object()
   { s_ = s.s_; c_ = s.c_; w_ = s.w_; }
@@ -539,27 +539,27 @@ Unit_sphere& operator=(const Unit_sphere& S)
 
 template <typename R>
 void push_back(const CGAL::Sphere_point<R>& p,
-  CGAL::Color c = CGAL::YELLOW, unsigned w = 5)
+  CGAL::Color c = CGAL::yellow(), unsigned w = 5)
 { objects_.push_back(new Sphere_point<R>(p,c,w)); }
 
 template <typename R>
 void push_back(const CGAL::Sphere_segment<R>& s,
-  CGAL::Color c = CGAL::BLACK, unsigned w = 1)
+  CGAL::Color c = CGAL::black(), unsigned w = 1)
 { objects_.push_back(new Sphere_segment<R>(s,c,w)); }
 
 template <typename R>
 void push_back(const CGAL::Sphere_circle<R>& s,
-  CGAL::Color c = CGAL::BLACK, unsigned w = 1)
+  CGAL::Color c = CGAL::black(), unsigned w = 1)
 { objects_.push_back(new Sphere_circle<R>(s,c,w)); }
 
 template <typename R>
 void push_back(const CGAL::Sphere_triangle<R>& t,
-  CGAL::Color c = CGAL::WHITE)
+  CGAL::Color c = CGAL::white())
 { triangles_.push_back(new Sphere_triangle<R>(t,c)); }
 
 template <typename R>
 void push_back_triangle_edge(const CGAL::Sphere_segment<R>& s,
-  CGAL::Color c = CGAL::BLUE, unsigned w = 1)
+  CGAL::Color c = CGAL::blue(), unsigned w = 1)
 { triangle_edges_.push_back(new Sphere_segment<R>(s,c,w)); }
 
 void set_style(int style) { 
@@ -718,11 +718,11 @@ class SM_BooleColor
   typedef typename Map_::Mark Mark;   
 public:
   Color color(SVertex_const_handle, Mark m) const
-  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  { return ( m ? CGAL::black() : CGAL::white() ); }
   Color color(SHalfedge_const_handle, Mark m) const
-  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  { return ( m ? CGAL::black() : CGAL::white() ); }
   Color color(SHalfloop_const_handle, Mark m) const
-  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  { return ( m ? CGAL::black() : CGAL::white() ); }
   Color color(SFace_const_handle, Mark m) const
   { return ( m ? CGAL_NEF_DGREY : CGAL_NEF_LGREY ); }
 };

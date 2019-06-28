@@ -39,7 +39,4 @@
 - `CGAL::Eigen_sparse_matrix`
 - `CGAL::Eigen_sparse_symmetric_matrix`
 - `CGAL::Eigen_svd`
-- `CGAL::Lapack_vector`
-- `CGAL::Lapack_matrix`
-- `CGAL::Lapack_svd`
 */

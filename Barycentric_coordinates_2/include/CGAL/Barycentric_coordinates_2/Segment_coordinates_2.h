@@ -217,7 +217,7 @@ private:
 */
 
 template<class Traits>
-    inline CGAL::cpp11::array<typename Traits::FT,2> compute_segment_coordinates_2(const typename Traits::Point_2 &first_vertex, const typename Traits::Point_2 &second_vertex, const typename Traits::Point_2 &query_point, const Traits &barycentric_traits = Traits())
+    inline std::array<typename Traits::FT,2> compute_segment_coordinates_2(const typename Traits::Point_2 &first_vertex, const typename Traits::Point_2 &second_vertex, const typename Traits::Point_2 &query_point, const Traits &barycentric_traits = Traits())
 {
     // Some predefined functions.
     typename Traits::Compute_scalar_product_2 scalar_product_2 = barycentric_traits.compute_scalar_product_2_object();
@@ -230,7 +230,7 @@ template<class Traits>
     const FT opposite_scalar_product = scalar_product_2(query_point - second_vertex, first_vertex - second_vertex);
     const FT b_first = opposite_scalar_product / squared_distance_2(first_vertex, second_vertex);
 
-    // Return the CGAL::cpp11::array<FT,2> type of coordinates.
+    // Return the std::array<FT,2> type of coordinates.
     return CGAL::make_array(b_first, FT(1) - b_first);
 }
 

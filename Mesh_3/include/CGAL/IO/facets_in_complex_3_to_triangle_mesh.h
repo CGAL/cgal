@@ -52,7 +52,7 @@ void resize(Polygon& p, std::size_t size)
 }
 
 template <std::size_t N, class INT>
-void resize(CGAL::cpp11::array<INT, N>&, std::size_t CGAL_assertion_code(size))
+void resize(std::array<INT, N>&, std::size_t CGAL_assertion_code(size))
 {
   CGAL_assertion(size == N);
 }
@@ -175,7 +175,7 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type  VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type              Point_3;
 
-  typedef CGAL::cpp11::array<std::size_t, 3>                                       Face;
+  typedef std::array<std::size_t, 3>                                       Face;
 
   std::vector<Face> faces;
   std::vector<Point_3> points;

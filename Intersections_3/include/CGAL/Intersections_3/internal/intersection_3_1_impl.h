@@ -33,6 +33,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Intersections_3/Iso_cuboid_3_Iso_cuboid_3.h>
 #include <CGAL/Intersections_3/Iso_cuboid_3_Line_3.h>
+#include <CGAL/utils_classes.h>
 
 #include <CGAL/Intersections_3/internal/bbox_intersection_3.h>
 namespace CGAL {
@@ -64,11 +65,7 @@ namespace CGAL {
 // the special plane_3 function
 template <class K>
 inline 
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename cpp11::result_of<typename K::Intersect_3(typename K::Plane_3, typename K::Plane_3, typename K::Plane_3)>::type
-#endif
 intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
              const Plane_3<K> &plane3)
 {
@@ -194,27 +191,20 @@ intersection(const typename K::Plane_3 &plane1,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 boost::optional< boost::variant<typename K::Point_3,
                                 typename K::Line_3,
                                 typename K::Plane_3> >
-#endif
 intersection(const typename K::Plane_3 &plane1,
 	     const typename K::Plane_3 &plane2,
 	     const typename K::Plane_3 &plane3,
 	     const K& k)
 {
-    #if CGAL_INTERSECTION_VERSION > 1
     typedef 
       typename boost::optional< 
       boost::variant<typename K::Point_3,
                      typename K::Line_3,
                      typename K::Plane_3> > 
     result_type;
-    #endif
-
 
     typedef typename K::Point_3      Point_3;
     typedef typename K::Line_3       Line_3;
@@ -232,17 +222,9 @@ intersection(const typename K::Plane_3 &plane1,
           v = internal::intersection(plane3, *l, k);
         if(v) {
           if(const Point_3* p = intersect_get<Point_3>(v))
-            #if CGAL_INTERSECTION_VERSION < 2
-            return make_object(*p);
-            #else
             return result_type(*p);
-            #endif
           else if(const Line_3* l = intersect_get<Line_3>(v))
-            #if CGAL_INTERSECTION_VERSION < 2
-            return make_object(*l);
-            #else
             return result_type(*l);
-            #endif
         }
       } else if(const Plane_3 *pl = intersect_get<Plane_3>(o12)) {
         // either line or plane
@@ -250,26 +232,14 @@ intersection(const typename K::Plane_3 &plane1,
           v = internal::intersection(plane3, *pl, k);
         if(v) {
           if(const Plane_3* p = intersect_get<Plane_3>(v))
-            #if CGAL_INTERSECTION_VERSION < 2
-            return make_object(*p);
-            #else
             return result_type(*p);
-            #endif
           else if(const Line_3* l = intersect_get<Line_3>(v))
-            #if CGAL_INTERSECTION_VERSION < 2
-            return make_object(*l);
-            #else
             return result_type(*l);
-            #endif
         }
       }
     }
     
-    #if CGAL_INTERSECTION_VERSION < 2
-    return Object();
-    #else
     return result_type();
-    #endif
 }
 
 
@@ -338,10 +308,13 @@ intersection(const typename K::Line_3 &l1,
   const Point_3 p4 = p2 + v2;
   if(!K().coplanar_3_object()(p1,p2,p3,p4)) return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>();
   const Vector_3 v3 = p3 - p1;
- const Vector_3 v3v2 = cross_product(v3,v2);
+  const Vector_3 v3v2 = cross_product(v3,v2);
   const Vector_3 v1v2 = cross_product(v1,v2);
-  const FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) /
-               (v1v2.squared_length());
+  const FT sl = v1v2.squared_length();
+  if(certainly(sl == FT(0)))
+    return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>();
+  const FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) / sl;
+
   return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>(p1 + (v1 * t));
 }
 
@@ -444,16 +417,7 @@ intersection(const typename K::Segment_3 &s1,
     v = internal::intersection(s1.supporting_line(),s2.supporting_line(), K());
 
   if(v) {
-    #if CGAL_INTERSECTION_VERSION < 2
-    // abuse the visitor to do the visitation manually
-    L_p_visitor<K> visitor(s1, s2);
-    if(const typename K::Point_3* p = object_cast<typename K::Point_3>(&v))
-      return visitor(*p);
-    if(const typename K::Line_3* l = object_cast<typename K::Line_3>(&v))
-      return visitor(*l);
-    #else
     return apply_visitor(L_p_visitor<K>(s1, s2) , *v);
-    #endif
   }
   return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>();
 }
@@ -466,7 +430,7 @@ do_intersect(const typename K::Segment_3  &s1,
              const K & k)
 {
   CGAL_precondition(! s1.is_degenerate () && ! s2.is_degenerate () );
-  bool b=do_intersect(s1.supporting_line(),s2.supporting_line(),k);
+  bool b=internal::do_intersect(s1.supporting_line(),s2.supporting_line(),k);
   if (b)
   {
     //supporting_line intersects: points are coplanar
@@ -1114,7 +1078,7 @@ intersection(const typename K::Plane_3 &plane,
         else{
           pl_res v = internal::intersection(plane, k.construct_line_3_object()(tri.vertex(1),tri.vertex(2)), k);
           const typename K::Point_3* p = intersect_get<typename K::Point_3>(v);
-          CGAL_kernel_assertion(p!=NULL);
+          CGAL_kernel_assertion(p!=nullptr);
           return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
                                                                                      (*p,tri.vertex(0)));
         }
@@ -1131,7 +1095,7 @@ intersection(const typename K::Plane_3 &plane,
     else{
       pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(2)), k);
       const typename K::Point_3* p = intersect_get<typename K::Point_3>(v);
-      CGAL_kernel_assertion(p!=NULL);
+      CGAL_kernel_assertion(p!=nullptr);
       return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
                                                                                  (*p,tri.vertex(1)));      
     }
@@ -1143,7 +1107,7 @@ intersection(const typename K::Plane_3 &plane,
     else{
       pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(1)), k);
       const typename K::Point_3* p = intersect_get<typename K::Point_3>(v);
-      CGAL_kernel_assertion(p!=NULL);
+      CGAL_kernel_assertion(p!=nullptr);
       return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
                                                                                  (*p,tri.vertex(2)));      
     }
@@ -1155,19 +1119,19 @@ intersection(const typename K::Plane_3 &plane,
   if (or0!=or1){
     pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(1)), k);
     const typename K::Point_3* pt_ptr = intersect_get<typename K::Point_3>(v);
-    CGAL_kernel_assertion( pt_ptr!=NULL );    
+    CGAL_kernel_assertion( pt_ptr!=nullptr );    
     pts.push_back( *pt_ptr );
   }
   if (or0!=or2){
     pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(2)), k);
     const typename K::Point_3* pt_ptr = intersect_get<typename K::Point_3>(v);
-    CGAL_kernel_assertion( pt_ptr!=NULL );    
+    CGAL_kernel_assertion( pt_ptr!=nullptr );    
     pts.push_back( *pt_ptr );    
   }
   if (or1!=or2){
     pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(1),tri.vertex(2)), k);
     const typename K::Point_3* pt_ptr = intersect_get<typename K::Point_3>(v);
-    CGAL_kernel_assertion( pt_ptr!=NULL );    
+    CGAL_kernel_assertion( pt_ptr!=nullptr );    
     pts.push_back( *pt_ptr );
   }
   

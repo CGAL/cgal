@@ -39,7 +39,7 @@ CGAL_GENERATE_MEMBER_DETECTOR(resize);
 // Typical container
 template <class Container>
 void resize(Container& c, std::size_t size,
-            typename boost::enable_if_c<has_resize<Container>::value>::type* = NULL)
+            typename boost::enable_if_c<has_resize<Container>::value>::type* = nullptr)
 {
   c.resize(size);
 }
@@ -50,7 +50,7 @@ void resize(Container& CGAL_assertion_code(array), std::size_t CGAL_assertion_co
             typename boost::enable_if<
               boost::mpl::and_<
                 boost::mpl::not_<has_resize<Container> >,
-                                 has_size<Container> > >::type* = NULL)
+                                 has_size<Container> > >::type* = nullptr)
 {
   CGAL_assertion(array.size() == size);
 }
@@ -60,7 +60,7 @@ template <class Container>
 void resize(Container&, std::size_t,
             typename boost::disable_if<
               boost::mpl::or_<has_resize<Container>,
-                              has_size<Container> > >::type* = NULL)
+                              has_size<Container> > >::type* = nullptr)
 {
 }
 

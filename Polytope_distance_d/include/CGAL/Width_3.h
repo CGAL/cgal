@@ -777,7 +777,7 @@ class Width_3 {
 #endif
     DEBUGENDL(INITIAL_VF_PAIR,"Initial plane E1:",A<<" "<<B<<" "<<C<<" "<<K);
     DEBUGENDL(INITIAL_VF_PAIR,"Initial plane E2:",A<<" "<<B<<" "<<C<<" "<<D);
-    //set the list of antipodal vertices of f definitly
+    //set the list of antipodal vertices of f definitely
     dao.set_antipodal_vertices(f,apv);
 
     //All solutions

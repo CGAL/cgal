@@ -79,8 +79,8 @@ public:
 
   /*! Constructor. */
   Arr_inc_insertion_zone_visitor () :
-    p_arr (NULL),
-    geom_traits (NULL),
+    p_arr (nullptr),
+    geom_traits (nullptr),
     invalid_v (),
     invalid_he ()
   {}

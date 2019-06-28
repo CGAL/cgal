@@ -158,7 +158,7 @@ public:
     typedef CGAL::Cell_attribute_with_point< Refs > Vertex_attrib;
     typedef CGAL::Cell_attribute< Refs, Volume_info> Volume_attrib;
 
-    typedef CGAL::cpp11::tuple<Vertex_attrib,void,void,
+    typedef std::tuple<Vertex_attrib,void,void,
                                Volume_attrib> Attributes;
   };
 };

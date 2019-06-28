@@ -29,7 +29,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/_test_compare_dihedral_angle_3.h>
 
-#include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 
 using CGAL::internal::use;
 
@@ -157,8 +157,8 @@ test_new_3(const R& rep)
 
   typename R::Construct_segment_3 construct_segment
         = rep.construct_segment_3_object();
-  Segment_3 s1;
-  Segment_3 s2 = construct_segment(p2,p3);
+  Segment_3 s0; CGAL_USE(s0); // test default-construction
+  Segment_3 s2 = construct_segment(p2,p3), s1 = s2;
 
   typename R::Construct_ray_3 construct_ray =
         rep.construct_ray_3_object();
@@ -214,11 +214,10 @@ test_new_3(const R& rep)
   Sphere_3 sp8 = construct_sphere(p3);
   Sphere_3 sp9 = construct_sphere(p3,CLOCKWISE);
 
-
+  Triangle_3 t0; CGAL_USE(t0); // test the default-construction
   typename R::Construct_triangle_3 construct_triangle
         = rep.construct_triangle_3_object();
-  Triangle_3 t1;
-  Triangle_3 t2 = construct_triangle(p2,p3,p4);
+  Triangle_3 t1 = construct_triangle(p2,p3,p4), t2 = t1;
 
   typename R::Construct_tetrahedron_3 construct_tetrahedron
         = rep.construct_tetrahedron_3_object();

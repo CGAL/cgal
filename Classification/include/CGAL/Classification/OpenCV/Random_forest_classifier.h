@@ -72,7 +72,7 @@ public:
 /*!
   \brief Instantiates the classifier using the sets of `labels` and `features`.
 
-  Parameters documentation is copy-pasted from [the official documentation of OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html). For more details on this method, please refer to it.
+  Parameters documentation is copy-pasted from [the official documentation of OpenCV](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html). For more details on this method, please refer to it.
 
   \param labels label set used.
   \param features feature set used.
@@ -95,7 +95,7 @@ public:
       m_max_number_of_trees_in_the_forest (max_number_of_trees_in_the_forest),
       m_forest_accuracy (forest_accuracy)
 #if (CV_MAJOR_VERSION < 3)
-    , rtree (NULL)
+    , rtree (nullptr)
 #endif
   {  }
 
@@ -103,7 +103,7 @@ public:
   ~Random_forest_classifier ()
   {
 #if (CV_MAJOR_VERSION < 3)
-    if (rtree != NULL)
+    if (rtree != nullptr)
       delete rtree;
 #endif
   }
@@ -147,7 +147,7 @@ public:
   void train (const LabelIndexRange& ground_truth)
   {
 #if (CV_MAJOR_VERSION < 3)
-    if (rtree != NULL)
+    if (rtree != nullptr)
       delete rtree;
 #endif
 
@@ -286,7 +286,7 @@ public:
   void load_configuration (const char* filename)
   {
 #if (CV_MAJOR_VERSION < 3)
-    if (rtree != NULL)
+    if (rtree != nullptr)
       delete rtree;
     rtree = new CvRTrees;
     rtree->load(filename);

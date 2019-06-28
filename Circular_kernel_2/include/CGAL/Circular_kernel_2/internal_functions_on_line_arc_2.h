@@ -492,7 +492,7 @@ namespace CircularFunctors {
     if(!v) return res;
 
     const Point_2 *pt = CGAL::Intersections::internal::intersect_get<Point_2>(v);
-    if(pt == NULL) return res;
+    if(pt == nullptr) return res;
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
     //      (Root_for_circles_2_2(Root_of_2(pt->x()),Root_of_2(pt->y())));
 
@@ -536,18 +536,8 @@ namespace CircularFunctors {
 
     for (typename solutions_container::iterator it = solutions.begin();
 	 it != solutions.end(); ++it) {
-      #if CGAL_INTERSECTION_VERSION  < 2
-      if(const std::pair<typename CK::Circular_arc_point_2, unsigned>* p =
-         object_cast< std::pair< typename CK::Circular_arc_point_2, unsigned> >(& (*it))) {
-        Has_on_visitor<CK, typename CK::Line_arc_2> vis(&l);
-        if(vis(*p)) {
-	*res++ = *it;
-    }
-  }
-      #else
       if(boost::apply_visitor(Has_on_visitor<CK, typename CK::Line_arc_2>(&l), *it))
 	*res++ = *it;
-      #endif
     }
 
     return res;
@@ -700,26 +690,11 @@ namespace CircularFunctors {
     for (typename solutions_container::iterator it = solutions.begin();
 	 it != solutions.end(); ++it)
     {
-      #if CGAL_INTERSECTION_VERSION  < 2
-      if(const std::pair<typename CK::Circular_arc_point_2, unsigned>* p =
-         object_cast< std::pair< typename CK::Circular_arc_point_2, unsigned> >(& (*it)))
-      {
-        #ifdef CGAL_CK_TEST_BBOX_BEFORE_HAS_ON
-        Bbox_2 rb = p->first.bbox();
-        if(!do_overlap(l.bbox(), rb) || !do_overlap(c.bbox(),rb)) continue;
-        #endif
-        Has_on_visitor<CK, typename CK::Line_arc_2> vis1(&l);
-        Has_on_visitor<CK, typename CK::Circular_arc_2> vis2(&c);
-        if(vis1(*p) && vis2(*p))
-          *res++ = *it;
-      }
-      #else
       if(boost::apply_visitor(Has_on_visitor<CK, typename CK::Line_arc_2>(&l), *it) &&
          boost::apply_visitor(Has_on_visitor<CK, typename CK::Circular_arc_2>(&c), *it) )
       {
 	*res++ = *it;
       }
-      #endif
     }
     return res;
   }
@@ -792,7 +767,7 @@ namespace CircularFunctors {
 
     if(!v) return res;
     const Point_2 *pt = boost::get<Point_2>(&*v);
-    if(pt == NULL) return res;
+    if(pt == nullptr) return res;
 
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
 
@@ -824,16 +799,8 @@ namespace CircularFunctors {
 
     for (typename solutions_container::const_iterator it = solutions.begin();
 	 it != solutions.end(); ++it) {
-#if CGAL_INTERSECTION_VERSION < 2
-      typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-      const std::pair<Circular_arc_point_2, unsigned>* p =
-        object_cast<std::pair<Circular_arc_point_2, unsigned> >(& (*it));
-      Has_on_visitor<CK, Circular_arc_2> vis(&c);
-      if(vis(*p)) *res++ = *it;
-#else
       if(boost::apply_visitor(Has_on_visitor<CK, Circular_arc_2>(&c), *it))
         *res++ = *it;
-#endif
     }
     return res;
   }

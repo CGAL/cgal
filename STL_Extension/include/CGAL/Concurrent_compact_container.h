@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <vector>
 #include <cstring>
+#include <cstddef>
 
 #include <CGAL/Compact_container.h>
 
@@ -123,9 +124,9 @@ namespace CCC_internal {
 template< typename pointer, typename size_type, typename CCC >
 class Free_list {
 public:
-  Free_list() : m_head(NULL), m_size(0) {}
+  Free_list() : m_head(nullptr), m_size(0) {}
 
-  void init()                { m_head = NULL; m_size = 0; }
+  void init()                { m_head = nullptr; m_size = 0; }
   pointer head() const       { return m_head; }
   void set_head(pointer p)   { m_head = p; }
   size_type size() const     { return m_size; }
@@ -143,13 +144,13 @@ public:
 
   void merge(Free_list &other)
   {
-    if (m_head == NULL) {
+    if (m_head == nullptr) {
       *this = other;
     }
     else if (!other.empty())
     {
       pointer p = m_head;
-      while (CCC::clean_pointee(p) != NULL)
+      while (CCC::clean_pointee(p) != nullptr)
         p = CCC::clean_pointee(p);
       CCC::set_type(p, other.m_head, CCC::FREE);
       m_size += other.m_size;
@@ -306,7 +307,6 @@ public:
 
   // Special insert methods that construct the objects in place
   // (just forward the arguments to the constructor, to optimize a copy).
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template < typename... Args >
   iterator
   emplace(const Args&... args)
@@ -316,113 +316,12 @@ public:
     new (ret) value_type(args...);
     return finalize_insert(ret, fl);
   }
-#else
-  // inserts a default constructed item.
-  iterator emplace()
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type();
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1 >
-  iterator
-  emplace(const T1 &t1)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3, t4);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4, typename T5 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-    const T5 &t5)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3, t4, t5);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6, const T7 &t7)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7, typename T8 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
-    return finalize_insert(ret, fl);
-  }
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
   iterator insert(const T &t)
   {
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::construct(m_alloc, ret, t);
-#else
-    m_alloc.construct(ret, t);
-#endif
     return finalize_insert(ret, fl);
   }
 
@@ -449,11 +348,7 @@ private:
     CGAL_precondition(type(x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
 
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::destroy(m_alloc, &*x);
-#else
-    m_alloc.destroy(&*x);
-#endif
 
 /* WE DON'T DO THAT BECAUSE OF THE ERASE COUNTER
 #ifndef CGAL_NO_ASSERTIONS
@@ -592,7 +487,7 @@ private:
   pointer init_insert(FreeList * fl)
   {
     pointer fl2 = fl->head();
-    if (fl2 == NULL) {
+    if (fl2 == nullptr) {
       allocate_new_block(fl);
       fl2 = fl->head();
     }
@@ -628,20 +523,21 @@ private:
   //
   //                          value of the last 2 bits as "Type"
   // pointer part     0              1                2              3
-  //         NULL     user elt       unused           free_list end  start/end
-  //      != NULL     user elt       block boundary   free elt       unused
+  //         nullptr     user elt       unused           free_list end  start/end
+  //      != nullptr     user elt       block boundary   free elt       unused
   //
   // meaning of ptr : user stuff     next/prev block  free_list      unused
 
   enum Type { USED = 0, BLOCK_BOUNDARY = 1, FREE = 2, START_END = 3 };
 
   // The bit squatting is implemented by casting pointers to (char *), then
-  // subtracting to NULL, doing bit manipulations on the resulting integer,
+  // subtracting to nullptr, doing bit manipulations on the resulting integer,
   // and converting back.
 
   static char * clean_pointer(char * p)
   {
-    return ((p - (char *) NULL) & ~ (std::ptrdiff_t) START_END) + (char *) NULL;
+    return reinterpret_cast<char*>(reinterpret_cast<std::ptrdiff_t>(p) &
+                                   ~ (std::ptrdiff_t) START_END);
   }
 
   // Returns the pointee, cleaned up from the squatted bits.
@@ -654,20 +550,23 @@ private:
   static Type type(const_pointer ptr)
   {
     char * p = (char *) Traits::pointer(*ptr);
-    return (Type) (p - clean_pointer(p));
+    return (Type) (reinterpret_cast<std::ptrdiff_t>(p) -
+                   reinterpret_cast<std::ptrdiff_t>(clean_pointer(p)));
   }
 
-  static Type type(const_iterator ptr)
+  static Type type(const_iterator it)
   {
-    return type(&*ptr);
+    return type(it.operator->());
   }
 
   // Sets the pointer part and the type of the pointee.
-  static void set_type(pointer p_element, void * pointer, Type t)
+  static void set_type(pointer ptr, void * p, Type t)
   {
-    CGAL_precondition(0 <= t && (int) t < 4);
-    Traits::pointer(*p_element) =
-      (void *) ((clean_pointer((char *) pointer)) + (int) t);
+    // This out of range compare is always true and causes lots of
+    // unnecessary warnings.
+    // CGAL_precondition(0 <= t && t < 4);
+    Traits::pointer(*ptr) = reinterpret_cast<void *>
+      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t);
   }
 
   typedef tbb::queuing_mutex Mutex;
@@ -693,8 +592,8 @@ private:
       it_free_list->set_head(0);
       it_free_list->set_size(0);
     }
-    m_first_item = NULL;
-    m_last_item  = NULL;
+    m_first_item = nullptr;
+    m_last_item  = nullptr;
     m_all_items  = All_items();
     m_size = 0;
     m_time_stamper->reset();
@@ -751,10 +650,10 @@ void Concurrent_compact_container<T, Allocator>::merge(Self &d)
     it_free_list->merge(*it_free_list_d);
   }
   // Concatenate the blocks.
-  if (m_last_item == NULL) { // empty...
+  if (m_last_item == nullptr) { // empty...
     m_first_item = d.m_first_item;
     m_last_item  = d.m_last_item;
-  } else if (d.m_last_item != NULL) {
+  } else if (d.m_last_item != nullptr) {
     set_type(m_last_item, d.m_first_item, BLOCK_BOUNDARY);
     set_type(d.m_first_item, m_last_item, BLOCK_BOUNDARY);
     m_last_item = d.m_last_item;
@@ -802,11 +701,11 @@ void Concurrent_compact_container<T, Allocator>::
     m_capacity += old_block_size;
 
     // We insert this new block at the end.
-    if (m_last_item == NULL) // First time
+    if (m_last_item == nullptr) // First time
     {
         m_first_item = new_block;
         m_last_item  = new_block + old_block_size + 1;
-        set_type(m_first_item, NULL, START_END);
+        set_type(m_first_item, nullptr, START_END);
     }
     else
     {
@@ -814,7 +713,7 @@ void Concurrent_compact_container<T, Allocator>::
         set_type(new_block, m_last_item, BLOCK_BOUNDARY);
         m_last_item = new_block + old_block_size + 1;
     }
-    set_type(m_last_item, NULL, START_END);
+    set_type(m_last_item, nullptr, START_END);
     // Increase the m_block_size for the next time.
     m_block_size += CGAL_INCREMENT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE;
   }

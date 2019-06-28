@@ -1,4 +1,4 @@
-To compile, you need support for lapack
+To compile, you need support for Eigen
 
 Program Single_estimation
 --------------------- 

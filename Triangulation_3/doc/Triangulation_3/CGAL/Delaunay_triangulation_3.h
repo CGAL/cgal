@@ -128,7 +128,7 @@ Creates an empty Delaunay triangulation, possibly specifying a traits class
 must be provided if concurrency is enabled.
 */ 
 Delaunay_triangulation_3(const Geom_traits& traits = Geom_traits(),
-                         Lock_data_structure *lock_ds = NULL);
+                         Lock_data_structure *lock_ds = nullptr);
 
 /*!
 Copy constructor. 
@@ -145,7 +145,7 @@ If parallelism is enabled, the points will be inserted in parallel.
 template < class InputIterator > 
 Delaunay_triangulation_3 (InputIterator first, InputIterator last, 
                           const Geom_traits& traits = Geom_traits(),
-                          Lock_data_structure *lock_ds = NULL);
+                          Lock_data_structure *lock_ds = nullptr);
 
 /*! 
 Same as before, with last two parameters in reverse order.
@@ -176,13 +176,13 @@ is true, otherwise it is false and the return value is Vertex_handle()
 function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Point & p, 
-Cell_handle start = Cell_handle(), bool *could_lock_zone = NULL); 
+Cell_handle start = Cell_handle(), bool *could_lock_zone = nullptr); 
 
 /*!
 Same as above but uses `hint` as a starting place for the search. 
 */ 
 Vertex_handle insert(const Point & p, Vertex_handle hint,
-                     bool *could_lock_zone = NULL); 
+                     bool *could_lock_zone = nullptr); 
 
 /*!
 Inserts the point `p` in the triangulation and returns the corresponding
@@ -192,7 +192,7 @@ parameter the return values of a previous location query. See description of
 */ 
 Vertex_handle insert(const Point & p, Locate_type lt, 
 Cell_handle loc, int li, int lj,
-bool *could_lock_zone = NULL); 
+bool *could_lock_zone = nullptr); 
 
 /*!
 Inserts the points in the iterator range `[first,last)`. Returns the number of inserted points. 
@@ -209,7 +209,6 @@ std::ptrdiff_t
 insert(PointInputIterator first, PointInputIterator last); 
 
 /*!
-
 Inserts the points in the iterator range  `[first,last)`. 
 Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
@@ -447,7 +446,7 @@ class OutputIteratorCells>
 std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells> 
 find_conflicts(const Point& p, Cell_handle c,
                OutputIteratorBoundaryFacets bfit,
-               OutputIteratorCells cit, bool *could_lock_zone = NULL);
+               OutputIteratorCells cit, bool *could_lock_zone = nullptr);
 
 /*!
 Same as the other `find_conflicts()` function, except that it also 
@@ -486,7 +485,7 @@ find_conflicts(const Point& p, Cell_handle c,
                OutputIteratorBoundaryFacets bfit,
                OutputIteratorCells cit,
                OutputIteratorInternalFacets ifit,
-               bool *could_lock_zone = NULL);
+               bool *could_lock_zone = nullptr);
 
 /*!
 \deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 

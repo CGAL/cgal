@@ -244,7 +244,7 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/ )
 	}
     }
 
-    // certify non-existance of entering variable, if necessary
+    // certify non-existence of entering variable, if necessary
     if ( min_mu == this->nt0) {
 
 	// update row and column maxima
@@ -388,7 +388,7 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/ )
 	}
     }
 
-    // certify non-existance of entering variable, if necessary
+    // certify non-existence of entering variable, if necessary
     if ( min_j == -1) {
 
 	// update row and column maxima

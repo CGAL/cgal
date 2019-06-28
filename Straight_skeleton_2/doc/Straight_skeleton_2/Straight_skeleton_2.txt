@@ -304,7 +304,7 @@ roundoff in the coordinates of the output points will cause parallel
 edges that <I>almost</I> collapse-but not so-to become really
 collinear or even cross each other.
 
-Thus, it is neccessary to use a kernel with exact constructions if
+Thus, it is necessary to use a kernel with exact constructions if
 offset polygons must be simple, yet computing a straight skeleton
 using that kernel is very slow, much more than computing the offset
 polygons. To help with this, it is possible to construct the straight
@@ -411,7 +411,7 @@ Constructing the exterior skeleton of the outer contour is possible by means of 
 
 To construct exterior offset contours in the inside of each hole you just use the skeleton constructed in the interior, and, if required, revert the orientation of each resulting offset contour.
 
-Constructing exterior offset contours in the outside of the outer contour is just a little bit more involved: Since the contour is placed as a hole of a frame, you will always obtain 2 offset contours for any given distance; one is the offseted frame and the other is the offseted contour. Thus, from the resulting offset contour sequence, you always need to discard the offsetted frame, easily identified as the offset contour with the largest area.
+Constructing exterior offset contours in the outside of the outer contour is just a little bit more involved: Since the contour is placed as a hole of a frame, you will always obtain 2 offset contours for any given distance; one is the offsetted frame and the other is the offsetted contour. Thus, from the resulting offset contour sequence, you always need to discard the offsetted frame, easily identified as the offset contour with the largest area.
 
 It is necessary to place the frame sufficiently away from the contour. If it is not, it could occur that the outward offset contour collides and merges with the inward offset frame, resulting in 1 instead of 2 offset contours.
 
@@ -441,7 +441,7 @@ On the other hand, only reflex vertices (whose internal angle \f$ > \pi\f$)
 are the source of deviations of the bisectors from its center
 location. Therefore, for convex polygons, the straight skeleton, the
 medial axis and the Voronoi diagram are exactly equivalent,
-and, if a non-convex polygon contains only vertices of low
+and, if a non-convex polygon contains only vertices of lowfor f in *.txt ; do echo $f ; aspell list < $f | sort | uniq -c ; done
 reflexivity, the straight skeleton bisectors will be placed nearly
 equidistant to their defining edges, producing a straight skeleton
 pretty much alike a proper medial axis.

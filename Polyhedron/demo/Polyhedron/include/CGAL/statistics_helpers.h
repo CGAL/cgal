@@ -55,7 +55,7 @@ void compute_angles(Mesh* poly,Tester tester , double& mini, double& maxi, doubl
     features< tag::min, tag::max, tag::mean > > acc;
 
   VPMap vpmap = get(CGAL::vertex_point, *poly);
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(*poly))
+  for(halfedge_descriptor h : halfedges(*poly))
   {
     face_descriptor f = face(h, *poly);
     if (f == boost::graph_traits<Mesh>::null_face()
@@ -110,7 +110,7 @@ void edges_length(Mesh* poly, const Edge_range& range,
 
   VPMap vpmap = get(CGAL::vertex_point, *poly);
   nb_degen = 0;
-  BOOST_FOREACH(edge_descriptor e, range)
+  for(edge_descriptor e : range)
   {
     halfedge_descriptor h = halfedge(e, *poly);
     Point a = get(vpmap, source(h, *poly));
@@ -205,7 +205,7 @@ void faces_area(Mesh* poly, const Face_range& range,
     features< tag::min, tag::max, tag::mean , tag::median> > acc;
 
   VPMap vpmap = get(CGAL::vertex_point, *poly);
-  BOOST_FOREACH(face_descriptor f, range)
+  for(face_descriptor f : range)
   {
     halfedge_descriptor h = halfedge(f, *poly);
     Point a = get(vpmap, target(h, *poly));
@@ -244,7 +244,7 @@ void faces_aspect_ratio(Mesh* poly, const Face_range& range,
   min_altitude = std::numeric_limits<double>::infinity();
   typename boost::property_map<Mesh, CGAL::vertex_point_t>::type
     vpmap = get(CGAL::vertex_point, *poly);
-  BOOST_FOREACH(face_descriptor f, range)
+  for(face_descriptor f : range)
   {
     halfedge_descriptor h = halfedge(f, *poly);
     typename Traits::Point_3 points[3];

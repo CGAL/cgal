@@ -26,7 +26,7 @@
 #include <CGAL/internal/Hyperbolic_octagon_translation_matrix.h>
 #include <CGAL/internal/Hyperbolic_octagon_translation_word.h>
 #include <CGAL/internal/Exact_complex.h>
-#include <CGAL/CORE_Expr.h>
+#include <CGAL/Exact_algebraic.h>
 #include <CGAL/tss.h>
 
 #include <iostream>
@@ -34,7 +34,7 @@
 
 namespace CGAL {
 
-template <typename FT = CORE::Expr>
+template <typename FT = Exact_algebraic>
 class Hyperbolic_octagon_translation
 {
 public:

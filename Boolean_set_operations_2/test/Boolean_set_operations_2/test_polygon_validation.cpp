@@ -2,7 +2,6 @@
  * defined at Gps_polygon_validation.h
  */
 
-#include <CGAL/basic.h>
 #include <CGAL/assertions_behaviour.h>
 
 #include <CGAL/Exact_rational.h>

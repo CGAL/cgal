@@ -68,8 +68,8 @@ namespace CGAL {
   private:
     
     //int dim;
-    CGAL::cpp11::array<T,D::value> lower_;
-    CGAL::cpp11::array<T,D::value> upper_;
+    std::array<T,D::value> lower_;
+    std::array<T,D::value> upper_;
     int max_span_coord_;
     
   public:
@@ -352,7 +352,7 @@ namespace CGAL {
     inline FT 
     min_coord(int i) const 
     {
-      CGAL_assertion(coords_ != NULL);
+      CGAL_assertion(coords_ != nullptr);
       return lower()[i];
     }
     

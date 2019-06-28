@@ -212,11 +212,11 @@ Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > cons
         }
       }
       else{
-        CGAL_STSKEL_TRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existance is indeterminate." ) ;
+        CGAL_STSKEL_TRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existence is indeterminate." ) ;
       }
     }
     else{
-      CGAL_STSKEL_TRAITS_TRACE("\nEvent time overflowed, event existance is indeterminate." ) ;
+      CGAL_STSKEL_TRAITS_TRACE("\nEvent time overflowed, event existence is indeterminate." ) ;
     }
   }
   else
