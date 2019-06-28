@@ -477,7 +477,7 @@ public:
                             bool update_isclosed=true)
   {
     CGAL::Random& random=get_default_random();
-    extend_path_randomly(random, allow_half_turn, update_isclosed);
+    return extend_path_randomly(random, allow_half_turn, update_isclosed);
   }
 
   void generate_random_path(std::size_t length, CGAL::Random& random,

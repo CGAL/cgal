@@ -452,7 +452,7 @@ public:
     { return mmap.is_empty(); }
 
     size_type capacity() const
-    { CGAL::num_halfedges(mmap.get_fg()); }
+    { return CGAL::num_halfedges(mmap.get_fg()); }
 
     bool is_used(size_type i) const
     {
