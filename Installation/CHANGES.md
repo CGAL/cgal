@@ -6,12 +6,6 @@ Release 5.0
 
 Release date: September 2019
 
-### 2D and 3D Linear Geometry Kernel
- - Added `ComputeApproximateAngle_3` in the 2D/3D Kernel concept to compute
-   the approximate dihedral angle between 2 vectors. Corresponding functors
-   in the model (`Compute_approximate_angle_3`) and free function (`approximate_angle`)
-   are also added.
-
 ### 2D Triangulations
 
 -   **Breaking change**: Removed the functions `CGAL::Constrained_triangulation_plus_2::
@@ -73,6 +67,11 @@ Release date: September 2019
 ### 3D Boolean Operations on Nef Polyhedra
  -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_to_polygon_soup()`
 
+### 2D and 3D Linear Geometry Kernel
+ - Add `ComputeApproximateAngle_3` in the 2D/3D Kernel concept to compute
+   the approximate dihedral angle between 2 vectors. Corresponding functors
+   in the model (`Compute_approximate_angle_3`) and free function (`approximate_angle`)
+   are also added.
  - The following objects are now hashable and thus trivially usable
    with `std::unordered_set` and `std::unordered_map`:
    `CGAL::Aff_transformation_2`, `CGAL::Aff_transformation_3`,
