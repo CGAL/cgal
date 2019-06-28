@@ -28,6 +28,7 @@
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/Nef_3/SNC_iteration.h>
+#include <CGAL/circulator.h>
 #include <CGAL/Random.h>
 
 namespace CGAL {
@@ -58,6 +59,12 @@ class SimpleNefPolyhedronViewerQt : public Basic_viewer_qt
   typedef typename Nef_Polyhedron::SNC_const_decorator      SNC_const_decorator;
   typedef typename Nef_Polyhedron::SNC_structure            SNC_structure;
   typedef typename SNC_structure::Infi_box                     Infi_box;
+
+  typedef typename SNC_structure::Halffacet_cycle_const_iterator
+      Halffacet_cycle_const_iterator;
+
+  typedef typename SNC_structure::SHalfedge_around_facet_const_circulator
+      SHalfedge_around_facet_const_circulator;
 
   typedef typename Nef_Polyhedron::Shell_entry_const_iterator Shell_entry_const_iterator;
   typedef typename Nef_Polyhedron::SFace_const_handle SFace_const_handle;
@@ -118,8 +125,36 @@ protected:
       viewer.add_point(vh->point());
     }
 
+    void visit(Halffacet_const_handle opposite_facet)
+    {
+      SHalfedge_const_handle se;
+      Halffacet_cycle_const_iterator fc;
+
+      Halffacet_const_handle f = opposite_facet->twin();
+
+      SHalfedge_around_facet_const_circulator sfc1(f->facet_cycles_begin()),
+          sfc2(sfc1);
+//      if(++f->facet_cycles_begin() != f->facet_cycles_end() ||
+//         ++(++(++sfc1)) != sfc2)
+//      {
+//        ;
+//      } else
+//      {
+        viewer.face_begin();
+        fc = f->facet_cycles_begin();
+        se = SHalfedge_const_handle(fc);
+        CGAL_assertion(se!=0);
+        SHalfedge_around_facet_const_circulator hc_start(se);
+        SHalfedge_around_facet_const_circulator hc_end(hc_start);
+        CGAL_For_all(hc_start, hc_end)
+        {
+          viewer.add_point_in_face(hc_start->source()->center_vertex()->point());
+        }
+        viewer.face_end();
+//      }
+    }
+
     void visit(Halfedge_const_handle ) {}
-    void visit(Halffacet_const_handle ) {}
     void visit(SHalfedge_const_handle ) {}
     void visit(SHalfloop_const_handle ) {}
     void visit(SFace_const_handle ) {}
