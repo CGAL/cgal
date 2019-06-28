@@ -61,9 +61,9 @@ void test_implicit_constrained_devil(Mesh mesh)
   for(vertex_descriptor v : selected_vertices)
   {
     const Point p = get(vpmap, v);
-    CGAL_assertion(equal_doubles(p.x(), fixed_points[i].x(), 1e-10));
-    CGAL_assertion(equal_doubles(p.y(), fixed_points[i].y(), 1e-10));
-    CGAL_assertion(equal_doubles(p.z(), fixed_points[i].z(), 1e-10));
+    assert(equal_doubles(p.x(), fixed_points[i].x(), 1e-10));
+    assert(equal_doubles(p.y(), fixed_points[i].y(), 1e-10));
+    assert(equal_doubles(p.z(), fixed_points[i].z(), 1e-10));
     ++i;
   }
 
@@ -101,9 +101,9 @@ void test_implicit_constrained_elephant(Mesh mesh)
                     CGAL::parameters::vertex_is_constrained_map(vcmap)
                                      .number_of_iterations(1));
 
-  CGAL_assertion(equal_doubles(get(vpmap, *selected_vertices.begin()).x(), fixed_point.x(), 1e-14));
-  CGAL_assertion(equal_doubles(get(vpmap, *selected_vertices.begin()).y(), fixed_point.y(), 1e-14));
-  CGAL_assertion(equal_doubles(get(vpmap, *selected_vertices.begin()).z(), fixed_point.z(), 1e-14));
+  assert(equal_doubles(get(vpmap, *selected_vertices.begin()).x(), fixed_point.x(), 1e-14));
+  assert(equal_doubles(get(vpmap, *selected_vertices.begin()).y(), fixed_point.y(), 1e-14));
+  assert(equal_doubles(get(vpmap, *selected_vertices.begin()).z(), fixed_point.z(), 1e-14));
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("output_implicit_constrained_elephant.off");
