@@ -47,11 +47,11 @@ env:
     - PACKAGE='Subdivision_method_3 Surface_mesh Surface_mesh_approximation '
     - PACKAGE='Surface_mesh_deformation Surface_mesh_parameterization Surface_mesh_segmentation '
     - PACKAGE='Surface_mesh_shortest_path Surface_mesh_simplification Surface_mesh_skeletonization '
-    - PACKAGE='Surface_mesh_topology Surface_mesher Surface_sweep_2 TDS_2 '
-    - PACKAGE='TDS_3 Testsuite Three '
-    - PACKAGE='Triangulation Triangulation_2 Triangulation_3 '
-    - PACKAGE='Union_find Visibility_2 Voronoi_diagram_2 '
-    - PACKAGE='wininst '
+    - PACKAGE='Surface_mesh_topology Surface_mesher Surface_sweep_2 '
+    - PACKAGE='TDS_2 TDS_3 Testsuite '
+    - PACKAGE='Three Triangulation Triangulation_2 '
+    - PACKAGE='Triangulation_3 Union_find Visibility_2 '
+    - PACKAGE='Voronoi_diagram_2 wininst '
 compiler: clang
 install:
   - echo "$PWD"
