@@ -834,8 +834,8 @@ protected:
         if (m_map.is_dart_used(it) && m_map.is_marked(it, toremove))
         {
           erase_edge_from_associative_arrays(it, origin_to_copy, copy_to_origin);
-          // TODO LATER (?) OPTIMIZE AND REPLACE THE REMOVE_CELL CALL BY THE MODIFICATION BY HAND
-          // OR DEVELOP A SPECIALIZED VERSION OF REMOVE_CELL
+          // TODO later (?) optimize and replace the remove_cell call by the modification by hand
+          // or develop a specialized version of remove_cell
           m_map.template remove_cell<1>(it);
         }
       }

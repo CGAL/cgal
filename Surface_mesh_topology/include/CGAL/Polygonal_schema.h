@@ -66,20 +66,20 @@ namespace Surface_mesh_topology {
                        Dart_handle dart_opposite_label,
                        std::unordered_map<std::string, Dart_handle>& edge_label_to_dart)
       {
-        if (dart_same_label!=NULL && dart_opposite_label!=NULL)
+        if (dart_same_label!=nullptr && dart_opposite_label!=nullptr)
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
                    <<" and "<<internal::opposite_label(s)<<" are already added in the surface."
                    <<" This label can not be use anymore."<<std::endl;
-          return NULL;
+          return nullptr;
         }
         
-        if (dart_same_label!=NULL)
+        if (dart_same_label!=nullptr)
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"label "<<s
                    <<" is already added in the surface."
                    <<" Since the surface is orientable, this label can not be use anymore."<<std::endl;
-          return NULL;
+          return nullptr;
         }
         
         Dart_handle res=cmap.create_dart();
@@ -91,7 +91,7 @@ namespace Surface_mesh_topology {
         if (prev_dart!=cmap.null_handle)
         { cmap.template link_beta<1>(prev_dart, res); }
         
-        if (dart_opposite_label!=NULL)
+        if (dart_opposite_label!=nullptr)
         { cmap.template link_beta<2>(res, dart_opposite_label); }
         
         return res;
@@ -99,7 +99,7 @@ namespace Surface_mesh_topology {
       
       std::string get_label(CMap& cmap, Dart_handle dh) const
       {
-        CGAL_assertion(cmap.info(dh).m_label!=NULL);
+        CGAL_assertion(cmap.info(dh).m_label!=nullptr);
         return std::string(cmap.info(dh).m_label);
       }
     };
@@ -117,12 +117,12 @@ namespace Surface_mesh_topology {
                        Dart_handle dart_opposite_label,
                        std::unordered_map<std::string, Dart_handle>& edge_label_to_dart)
       {
-        if (dart_same_label!=NULL && dart_opposite_label!=NULL)
+        if (dart_same_label!=nullptr && dart_opposite_label!=nullptr)
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
                    <<" and "<<internal::opposite_label(s)<<" are already added in the surface."
                    <<" This label can not be use anymore."<<std::endl;
-          return NULL;
+          return nullptr;
         }
       
         Dart_handle res=gmap.create_dart();
@@ -132,8 +132,8 @@ namespace Surface_mesh_topology {
         if (prev_dart!=gmap.null_handle)
         { gmap.template link_alpha<1>(res, gmap.template alpha<0>(prev_dart)); }
 
-        if (dart_same_label!=NULL)
-        { // Here dart_same_label!=NULL
+        if (dart_same_label!=nullptr)
+        { // Here dart_same_label!=nullptr
           std::string s2=internal::opposite_label(s);
           edge_label_to_dart[s2]=dh2;
           gmap.info(dh2).m_label=new char[s2.size()+1];
@@ -142,12 +142,12 @@ namespace Surface_mesh_topology {
           gmap.template sew<2>(res, dart_same_label);
         }
         else
-        { // Here either dart_opposite_label!=NULL, or both are NULL
+        { // Here either dart_opposite_label!=nullptr, or both are nullptr
           edge_label_to_dart[s]=res;
           gmap.info(res).m_label=new char[s.size()+1];
           strncpy(gmap.info(res).m_label, s.c_str(), s.size()+1); // +1 to copy also the \0 char
 
-          if (dart_opposite_label!=NULL)
+          if (dart_opposite_label!=nullptr)
           {
             std::string s2=internal::opposite_label(s);
             edge_label_to_dart[s2]=res;
@@ -165,7 +165,7 @@ namespace Surface_mesh_topology {
       {
         char* label=gmap.info(dh).m_label;
 
-        if (label==NULL)
+        if (label==nullptr)
         {
           if (!gmap.is_free<2>(dh))
           { label=gmap.info(gmap.template alpha<2>(dh)).m_label; }
@@ -175,7 +175,7 @@ namespace Surface_mesh_topology {
               (std::string(gmap.info(gmap.template alpha<0>(dh))));
           }
         }
-        CGAL_assertion(label!=NULL);
+        CGAL_assertion(label!=nullptr);
         return std::string(label);
       }
     };
@@ -206,10 +206,10 @@ namespace Surface_mesh_topology {
     {
       for (auto it=this->darts().begin(), itend=this->darts().end(); it!=itend; ++it)
       {
-        if (this->info(it).m_label!=NULL)
+        if (this->info(it).m_label!=nullptr)
         {
           delete []this->info(it).m_label;
-          this->info(it).m_label=NULL;
+          this->info(it).m_label=nullptr;
         }
       }
     }
@@ -320,7 +320,7 @@ namespace Surface_mesh_topology {
         std::cerr<<"Polygonal_schema ERROR: "
                  <<"you try to end a facet"
                  <<" but the facet is not yet started."<<std::endl;
-        return NULL;
+        return nullptr;
       }
       CGAL_assertion( first_dart!=this->null_handle && prev_dart!=this->null_handle );
       this->set_next(prev_dart, first_dart);
@@ -329,12 +329,12 @@ namespace Surface_mesh_topology {
       return first_dart;
     }
 
-    /// @return dart with the given label, NULL if this dart does not exist.
+    /// @return dart with the given label, nullptr if this dart does not exist.
     Dart_handle get_dart_labeled(const std::string & s) const
     {
       auto ite=edge_label_to_dart.find(s);
       if (ite==edge_label_to_dart.end())
-      { return NULL; }
+      { return nullptr; }
 
       return ite->second;
     }

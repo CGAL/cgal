@@ -45,7 +45,7 @@ namespace Surface_mesh_topology {
       {
         char* m_label;
 
-        Info_for_darts() : m_label(NULL)
+        Info_for_darts() : m_label(nullptr)
         {}
       };
       

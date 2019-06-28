@@ -102,7 +102,7 @@ public:
   ///        usefull for very big object where this time could be long)
   Face_graph_with_path_viewer(QWidget* parent,
                               const Mesh& amesh,
-                              const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* paths=NULL,
+                              const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* paths=nullptr,
                               std::size_t amark=LCC::INVALID_MARK,
                               const char* title="", bool anofaces=false,
                               const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC()) :

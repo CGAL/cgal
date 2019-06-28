@@ -135,20 +135,20 @@ public:
   { return get_ith_dart(i); }
 
   /// @return the dart before the ith dart of the path,
-  ///          NULL if such a dart does not exist.
+  ///          nullptr if such a dart does not exist.
   Dart_const_handle get_prev_dart(std::size_t i) const
   {
     CGAL_assertion(i<m_path.size());
-    if (i==0 && !is_closed()) return NULL;
+    if (i==0 && !is_closed()) return nullptr;
     return m_path[prev_index(i)];
   }
 
   /// @return the dart after the ith dart of the path,
-  ///          NULL if such a dart does not exist.
+  ///          nullptr if such a dart does not exist.
   Dart_const_handle get_next_dart(std::size_t i) const
   {
     CGAL_assertion(i<m_path.size());
-    if (i==m_path.size()-1 && !is_closed()) return NULL;
+    if (i==m_path.size()-1 && !is_closed()) return nullptr;
     return m_path[next_index(i)];
   }
 
@@ -214,7 +214,7 @@ public:
   bool can_be_pushed_by_label(const std::string& e) const
   {
     Dart_const_handle dh=get_map().get_dart_labeled(e);
-    if (dh!=NULL) { return false; }
+    if (dh!=nullptr) { return false; }
     return can_be_pushed(dh);
   }
   
@@ -226,7 +226,7 @@ public:
     for (std::string e; std::getline(iss, e, ' '); )
     {
       Dart_const_handle dh=get_map().get_dart_labeled(e);
-      if (dh!=NULL) { push_back(dh); }    
+      if (dh!=nullptr) { push_back(dh); }    
     }
   }
   
@@ -682,7 +682,7 @@ public:
       /* This assert is long if (!m_map.darts().owns(m_path[i]))
       { return false; } */
 
-      if (m_path[i]==NULL || m_path[i]==m_map.null_dart_handle)
+      if (m_path[i]==nullptr || m_path[i]==m_map.null_dart_handle)
       { return false; }
 
       Dart_const_handle pend=m_map.other_extremity(m_path[i-1]);
