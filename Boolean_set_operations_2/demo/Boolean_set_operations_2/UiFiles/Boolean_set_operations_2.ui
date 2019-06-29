@@ -675,8 +675,8 @@
     <bool>true</bool>
    </property>
    <property name="checked" >
-    <bool>false</bool>
-   </property>	
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/insert_polygon.xpm</normaloff>:/cgal/icons/resources/insert_polygon.xpm</iconset>
@@ -692,9 +692,9 @@
    <property name="checkable" >
     <bool>true</bool>
    </property>
-   <property name="checked" >
+   <!--<property name="checked" >
     <bool>false</bool>
-   </property>
+   </property>-->
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/insert_circle.xpm</normaloff>:/cgal/icons/resources/insert_circle.xpm</iconset>
@@ -710,6 +710,9 @@
   
 
   <action name="actionComplement">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/comp_P.bmp</normaloff>:/cgal/icons/resources/comp_P.bmp</iconset>
@@ -722,6 +725,9 @@
    </property>
   </action>
   <action name="actionIntersection">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property> 
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/intersection.bmp</normaloff>:/cgal/icons/resources/intersection.bmp</iconset>
@@ -734,6 +740,9 @@
    </property>
   </action>
   <action name="actionUnion">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property> 
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/union.bmp</normaloff>:/cgal/icons/resources/union.bmp</iconset>
@@ -746,6 +755,9 @@
    </property>
   </action>
   <action name="actionDifference">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property> 
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/diff_PQ.bmp</normaloff>:/cgal/icons/resources/diff_PQ.bmp</iconset>
@@ -758,6 +770,9 @@
    </property>
   </action>
   <action name="actionSymmetric_Difference">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property> 
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/symm_diff.bmp</normaloff>:/cgal/icons/resources/symm_diff.bmp</iconset>
@@ -770,6 +785,9 @@
    </property>
   </action>
   <action name="actionMinkowski_Sum">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property> 
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/mink_sum.bmp</normaloff>:/cgal/icons/resources/mink_sum.bmp</iconset>
@@ -797,6 +815,9 @@
    </property>
   </action>
   <action name="actionPAN">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>  
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/hand.png</normaloff>:/cgal/icons/resources/hand.png</iconset>
@@ -890,9 +911,9 @@
    <property name="checkable" >
     <bool>true</bool>
    </property>
-   <property name="checked" >
+   <!--<property name="checked" >
     <bool>false</bool>
-   </property>
+   </property>-->
    <property name="icon" >
     <iconset resource="boolean_operations_2.qrc" >
      <normaloff>:/cgal/icons/resources/insert_bezier.xpm</normaloff>:/cgal/icons/resources/insert_bezier.xpm
