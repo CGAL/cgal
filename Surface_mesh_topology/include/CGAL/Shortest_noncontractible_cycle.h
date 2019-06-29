@@ -115,7 +115,7 @@ public:
     }
     static void set_weights(Generic_map& target, Gmap_origin& source, 
                             Origin_to_copy_map& origin_to_copy, const Weight& wf) {
-      for (auto it = source.halfedges().begin(), itend = source.halfedges().end(); it != itend; ++it) {
+      for (typename boost::graph_traits<Gmap_origin>::halfedge_iterator it = source.halfedges_begin(), itend = source.halfedges_end(); it != itend; ++it) {
         target.template info<1>(origin_to_copy[*it]) = wf(*it);
       }
     }
