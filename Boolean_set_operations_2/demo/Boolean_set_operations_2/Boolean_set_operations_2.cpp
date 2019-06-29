@@ -692,6 +692,7 @@ private:
 protected slots:
   void open(QString filename);//for file handling
 
+
 public slots:
   void processInput(CGAL::Object o);
   void on_actionNew_triggered();
@@ -702,9 +703,9 @@ public slots:
   void on_actionDifference_triggered();
   void on_actionSymmetric_Difference_triggered();
   void on_actionMinkowski_Sum_triggered();
-  void on_actionInsertLinear_triggered();
-  void on_actionInsertCircular_triggered();
-  void on_actionInsertBezier_triggered();
+  void on_actionInsertLinear_toggled(bool aChecked);
+  void on_actionInsertCircular_toggled(bool aChecked);
+  void on_actionInsertBezier_toggled(bool aChecked);
   void on_actionInsertConicCircle_triggered();
   void on_actionInsertConicEclipse_triggered();
   void on_actionOpenLinear_triggered();
@@ -733,7 +734,7 @@ public slots:
   void on_actionDeleteResult_triggered();
   void on_actionDelete_triggered();
   void on_actionDeleteAll_triggered();
-  void on_actionPAN_triggered();
+  void on_actionPAN_toggled(bool aChecked);
 
 signals:
   void changed();
@@ -950,6 +951,7 @@ private:
   bool ensure_bezier_mode();
 
   bool ensure_linear_mode();//see if it is need
+
 };
 
 MainWindow::MainWindow() :
@@ -1041,8 +1043,8 @@ MainWindow::MainWindow() :
                    SLOT(on_drawMagenta_toggled(bool)));
   QObject::connect(drawAqua , SIGNAL(toggled(bool)), this,
                    SLOT(on_drawAqua_toggled(bool)));
-  // QObject::connect(actionPAN,SIGNAL(triggered()), this,
-  // SLOT(on_actionPAN_triggered()));
+  QObject::connect(actionPAN,SIGNAL(triggered()), this,
+  				   SLOT(on_actionPAN_toggled(bool)));
   QObject::connect(showBlue, SIGNAL(toggled(bool)), this,
                    SLOT(on_showBlue_toggled(bool)));
   QObject::connect(showRed, SIGNAL(toggled(bool)), this,
@@ -1243,27 +1245,21 @@ void MainWindow::on_actionOpenBezier_triggered()
 /*Circular_polygon linearPart_2_circ(Circular_Linear_polygon const& pgn)
 {
   CGAL::Cartesian_converter<Kernel,Kernel> convert;
-
   Circular_polygon rCP;
-
   for (auto ei = pgn.edges_begin(); ei != pgn.edges_end(); ++ei) {
     if (ei->source() != ei->target())
       rCP.push_back(Circular_X_monotone_curve(convert(ei->source()),
                                               convert(ei->target())));
   }
-
   return rCP;
 }
-
 //for converting linear part of circular polygon with holes to circular part
 Circular_polygon_with_holes
 linearPart_2_circ(Circular_Linear_polygon_with_holes const& pwh)
 {
   Circular_polygon_with_holes rCP(linearPart_2_circ(pwh.outer_boundary()));
-
   for (auto hi = pwh.holes_begin(); hi != pwh.holes_end(); ++ hi)
     rCP.add_hole(linearPart_2_circ(*hi) );
-
   return rCP;
 }*/
 
@@ -1278,27 +1274,21 @@ linearPart_2_circ(Circular_Linear_polygon_with_holes const& pwh)
     if  ( ei->source() != ei->target() )
       rCP.push_back( Circular_X_monotone_curve( convert(ei->source()), convert(ei->target())) );
   }  
-
   return rCP;
 }
-
 Circular_polygon_with_holes linear_2_circ( Linear_polygon_with_holes const& pwh )
 {
   Circular_polygon_with_holes rCP( linear_2_circ(pwh.outer_boundary()) ) ;
   
   for( Linear_polygon_with_holes::Hole_const_iterator hi = pwh.holes_begin(); hi != pwh.holes_end(); ++ hi )
     rCP.add_hole( linear_2_circ(*hi)  );
-
   return rCP;
 }
-
-
 bool read_linear( QString aFileName, Circular_polygon_set& rSet, Circular_region_source_container& rSources )
 {
   bool rOK = false ;
   
   std::ifstream in_file (qPrintable(aFileName));
-
   if ( in_file )
   {
     unsigned int n_regions ;
@@ -1332,13 +1322,11 @@ bool read_linear( QString aFileName, Circular_polygon_set& rSet, Circular_region
   
   return rOK ;
 }
-
 bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, Circular_region_source_container& rSources )
 {
   bool rOK = false ;
   
   std::ifstream in_file (qPrintable(aFileName));
-
   if ( in_file )
   {
     CGAL::Dxf_bsop_reader<Gps_circular_kernel>   reader;
@@ -1353,11 +1341,8 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, Circular_region_s
           
     for ( std::vector<Circular_polygon>::iterator pit = circ_polygons.begin() ; pit != circ_polygons.end() ; ++ pit )
       circ_polygons_with_holes.push_back( Circular_polygon_with_holes(*pit) ) ;
-
     rSet.join( circ_polygons_with_holes.begin(), circ_polygons_with_holes.end() ) ;
-
     std::copy(circ_polygons_with_holes.begin(), circ_polygons_with_holes.end(), std::back_inserter(rSources) );
-
     rOK = true ;
   }
   
@@ -1390,7 +1375,6 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, Circular_region_s
       {
         Bezier_polygon_vector bezier_polygons ;
         Bezier_region_source  br_source ;
-
         // Read the number of bezier curves.
         unsigned int n_boundaries;
         in_file >> n_boundaries;
@@ -1419,7 +1403,6 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, Circular_region_s
             Bezier_traits::Make_x_monotone_2        make_x_monotone = traits.make_x_monotone_2_object();
         
             Bezier_curve b = read_bezier_curve(in_file, lDoubleFormat);
-
             if ( b.number_of_control_points() >= 2 )
             {
               bb_source.push_back(b);
@@ -1489,12 +1472,10 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, Circular_region_s
   
   return rOK ;
 }
-
 Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
 {
   // Read the number of control points.
   unsigned int  n;
-
   is >> n;
   
   // Read the control points.
@@ -1521,40 +1502,29 @@ Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
       ctrl_pts.push_back(p) ;
     }
   }
-
   std::vector<Bezier_rat_point> ctrl_pts2;
-
   typedef std::vector<Bezier_rat_point>::const_iterator cp_const_iterator ;
-
   cp_const_iterator beg  = ctrl_pts.begin();
   cp_const_iterator end  = ctrl_pts.end  ();
   cp_const_iterator last = end - 1 ;
-
   ctrl_pts2.push_back(*beg);
-
   if ( ctrl_pts.size() > 2 )
   {
     cp_const_iterator curr = beg ;
     cp_const_iterator next1 = curr  + 1 ;
     cp_const_iterator next2 = next1 + 1 ;
-
     do
     {
       CGAL::Orientation lOrient = orientation(*curr,*next1,*next2);
-
       if ( lOrient != CGAL::COLLINEAR )
         ctrl_pts2.push_back(*next1);
-
       ++ curr  ;
       ++ next1 ; 
       ++ next2 ;
-
     }
     while ( next2 != end ) ;
   }
-
   ctrl_pts2.push_back(*last);
-
   return Bezier_curve(ctrl_pts2.begin(),ctrl_pts2.end());
 }*/
 
@@ -1845,7 +1815,6 @@ void MainWindow::open(QString fileName)
 {
   /*if(! fileName.isEmpty()) {
     bool lRead = false;
-
     if(fileName.endsWith(".lps"))
     {
       if ( ensure_circular_mode() )
@@ -1856,7 +1825,6 @@ void MainWindow::open(QString fileName)
       if ( ensure_bezier_mode() )
         lRead = read_bezier(fileName,active_set().bezier(), active_bezier_sources() ) ;
     }
-
     if (lRead) {
       modelChanged();
       zoomToFit();
@@ -1875,24 +1843,49 @@ void MainWindow::on_actionInsertConicEclipse_triggered()
 {}
 
 
-void MainWindow::on_actionInsertCircular_triggered()
+void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
 {
-  this->graphicsView->setDragMode(QGraphicsView::NoDrag);
-  if(ensure_circular_mode()) m_scene.installEventFilter(m_circular_input);
-  //else
+	if(aChecked)
+	{
+	  this->graphicsView->setDragMode(QGraphicsView::NoDrag);
+	  if(ensure_circular_mode()) 
+	  {
+	  	actionPAN->setChecked(false);
+	  	actionInsertLinear->setChecked( false );
+		actionInsertBezier->setChecked( false ); 
+	  	m_scene.installEventFilter(m_circular_input);
+	  }
+	}
 }
 
-void MainWindow::on_actionInsertBezier_triggered()
+void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
 {
-  this->graphicsView->setDragMode(QGraphicsView::NoDrag);
-  if(ensure_bezier_mode()) m_scene.installEventFilter(m_bezier_input);
-  //else
+	if(aChecked)
+	{
+	  this->graphicsView->setDragMode(QGraphicsView::NoDrag);
+	  if(ensure_bezier_mode()) 
+	  {	
+	  	actionPAN->setChecked(false);
+	  	actionInsertLinear->setChecked( false );
+		actionInsertCircular->setChecked( false );
+	  	m_scene.installEventFilter(m_bezier_input);
+	  }
+	}
 }
 
-void MainWindow::on_actionInsertLinear_triggered()
+void MainWindow::on_actionInsertLinear_toggled(bool aChecked)
 {
-  this->graphicsView->setDragMode(QGraphicsView::NoDrag);
-  if (ensure_linear_mode()) m_scene.installEventFilter(m_linear_input);
+	if(aChecked)
+	{
+	  this->graphicsView->setDragMode(QGraphicsView::NoDrag);
+	  if (ensure_linear_mode())
+	  {
+	  	actionPAN->setChecked(false);
+	  	actionInsertCircular->setChecked( false );
+		actionInsertBezier->setChecked( false ); 
+	  	m_scene.installEventFilter(m_linear_input);
+	  }
+	}
 }
 
 void MainWindow::on_actionMinkowski_Sum_triggered()
@@ -1900,6 +1893,14 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
   bool lDone = false;
   QCursor old = this->cursor();
   this->setCursor(Qt::WaitCursor);
+
+  actionComplement->setChecked(false);
+  actionUnion->setChecked(false);
+  actionIntersection->setChecked(false);
+  actionDifference->setChecked(false); 
+  actionSymmetric_Difference->setChecked(false); 
+  //actionMinkowski_Sum->setChecked(false);
+
   if (!blue_set().is_empty()) lDone = true;
   this->setCursor(old);
   if (lDone) modelChanged();
@@ -1913,6 +1914,12 @@ void MainWindow::on_actionComplement_triggered()
   bool lDone = false;
   QCursor old = this->cursor();
   this->setCursor(Qt::WaitCursor);
+  //actionComplement->setChecked(false);
+  actionUnion->setChecked(false);
+  actionIntersection->setChecked(false);
+  actionDifference->setChecked(false); 
+  actionSymmetric_Difference->setChecked(false); 
+  actionMinkowski_Sum->setChecked(false);
   /*switch(m_circular_active)
   {
     case 0: if(!blue_set().is_empty()) {result_set().assign(QGraphicsRectItem(0,0,1124,664));result_set().difference(blue_set());} break;
@@ -1932,6 +1939,13 @@ void MainWindow::on_actionIntersection_triggered()
   bool lDone = false;
   QCursor old = this->cursor();
   this->setCursor(Qt::WaitCursor);
+
+  actionComplement->setChecked(false);
+  actionUnion->setChecked(false);
+  //actionIntersection->setChecked(false);
+  actionDifference->setChecked(false); 
+  actionSymmetric_Difference->setChecked(false); 
+  actionMinkowski_Sum->setChecked(false);
 
   if (!blue_set().is_empty()) result_set().assign(blue_set());
   else if (!red_set().is_empty()) result_set().assign(red_set());
@@ -1960,6 +1974,14 @@ void MainWindow::on_actionDifference_triggered()
   bool lDone = false;
   QCursor old = this->cursor();
   this->setCursor(Qt::WaitCursor);
+
+  actionComplement->setChecked(false);
+  actionUnion->setChecked(false);
+  actionIntersection->setChecked(false);
+  //actionDifference->setChecked(false); 
+  actionSymmetric_Difference->setChecked(false); 
+  actionMinkowski_Sum->setChecked(false);
+
   switch(m_color_active) {
     case 0: result_set().assign(red_set());result_set().join(black_set());result_set().join(brown_set());result_set().join(magenta_set());result_set().join(yellow_set());result_set().join(aqua_set());if(!result_set().is_empty())result_set().difference(blue_set());break;
     case 1: result_set().assign(blue_set());result_set().join(black_set());result_set().join(brown_set());result_set().join(magenta_set());result_set().join(yellow_set());result_set().join(aqua_set());if(!result_set().is_empty())result_set().difference(red_set());break;
@@ -1991,6 +2013,14 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
   bool lDone = false;
   QCursor old = this->cursor();
   this->setCursor(Qt::WaitCursor);
+
+  actionComplement->setChecked(false);
+  actionUnion->setChecked(false);
+  actionIntersection->setChecked(false);
+  actionDifference->setChecked(false); 
+  //actionSymmetric_Difference->setChecked(false); 
+  actionMinkowski_Sum->setChecked(false);
+
   if (!blue_set().is_empty()) result_set().assign(blue_set());
   else if (!red_set().is_empty()) result_set().assign(red_set());
   else if (!black_set().is_empty()) result_set().assign(black_set());
@@ -2015,6 +2045,14 @@ void MainWindow::on_actionUnion_triggered()
   bool lDone = false;
   QCursor old = this->cursor();
   this->setCursor(Qt::WaitCursor);
+
+  actionComplement->setChecked(false);
+  //actionUnion->setChecked(false);
+  actionIntersection->setChecked(false);
+  actionDifference->setChecked(false); 
+  actionSymmetric_Difference->setChecked(false); 
+  actionMinkowski_Sum->setChecked(false);
+
   result_set().clear();
 
   result_set().assign(red_set());
@@ -2025,7 +2063,6 @@ void MainWindow::on_actionUnion_triggered()
   result_set().join(yellow_set());
   result_set().join(aqua_set());
   lDone = true;
-
   this->setCursor(old);
 
   if (lDone) modelChanged();
@@ -2038,11 +2075,38 @@ void MainWindow::ToogleView(size_t aGROUP, bool a_check)
   else set(aGROUP).gi()->hide();
 }
 
-void MainWindow::on_actionPAN_triggered()
+void MainWindow::on_actionPAN_toggled(bool aChecked)
 {
-  if (!m_circular_active && !m_bezier_active) { m_scene.removeEventFilter(m_linear_input); this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); m_scene.installEventFilter(m_linear_input);}
-  else if(!m_bezier_active) { m_scene.removeEventFilter(m_circular_input); this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); m_scene.installEventFilter(m_circular_input);}
-  else { m_scene.removeEventFilter(m_bezier_input); this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); m_scene.installEventFilter(m_bezier_input);}
+	if(aChecked)
+	{
+	  if (!m_circular_active && !m_bezier_active) 
+	  	{
+	  		m_scene.removeEventFilter(m_linear_input); 
+	  		m_scene.removeEventFilter(m_bezier_input);
+	  		m_scene.removeEventFilter(m_circular_input);
+	  		actionInsertLinear->setChecked( false );
+	  		this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); 
+	  		//m_scene.installEventFilter(m_linear_input);
+	  	}
+	  else if(!m_bezier_active) 
+	  	{ 
+	  		m_scene.removeEventFilter(m_linear_input); 
+	  		m_scene.removeEventFilter(m_bezier_input);
+	  		m_scene.removeEventFilter(m_circular_input);
+	  		actionInsertCircular->setChecked( false );
+	  		this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); 
+	  		//m_scene.installEventFilter(m_circular_input);
+	  	}
+	  else 
+	  	{ 	
+	  		m_scene.removeEventFilter(m_linear_input); 
+	  		m_scene.removeEventFilter(m_bezier_input);
+	  		m_scene.removeEventFilter(m_circular_input);
+	  		actionInsertBezier->setChecked( false );
+	  		this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); 
+	  		//m_scene.installEventFilter(m_bezier_input);
+	  	}
+	}
   
 }
 
