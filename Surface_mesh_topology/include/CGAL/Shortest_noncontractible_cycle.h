@@ -27,7 +27,8 @@ public:
   
   struct Default_weight_functor {
     using Weight_t = unsigned int;
-    Weight_t operator() (...) const { return 1; }
+    template <class T>
+    Weight_t operator() (T) const { return 1; }
   };
 
   using Weight = typename Weight_functor_selector<std::is_same<WeightFunctor, void>::value,
