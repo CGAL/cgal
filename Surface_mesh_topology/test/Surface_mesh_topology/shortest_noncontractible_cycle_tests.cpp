@@ -189,11 +189,11 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
       std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: NULL dart handle found in cycle\n";
       return false;
     }
-  if (cycle1.size() != cycle2.size() || cycle1.size() != cycle3.size()) {
-    std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: Inconsistency in number of edges of the edge-width "
-              << "(" << cycle1.size() << ", " << cycle2.size() << ", " << cycle3.size() << ").\n";
-    return false;
-  }
+  // if (cycle1.size() != cycle2.size() || cycle1.size() != cycle3.size()) {
+  //   std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: Inconsistency in number of edges of the edge-width "
+  //             << "(" << cycle1.size() << ", " << cycle2.size() << ", " << cycle3.size() << ").\n";
+  //   return false;
+  // }
   if (cycle_length1 - cycle_length2 > 1e-5 || cycle_length1 - cycle_length3 > 1e-5) {
     std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: Inconsistency in the edge-width length"
               << std::fixed << std::setprecision(6)
