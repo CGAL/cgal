@@ -30,6 +30,7 @@
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Random.h>
+#include <unordered_map>
 
 namespace CGAL {
 
@@ -119,7 +120,8 @@ protected:
 //  }
   class Nef_Visitor {
   public:
-    Nef_Visitor(SimpleNefPolyhedronViewerQt &v) : viewer(v) {}
+    Nef_Visitor(SimpleNefPolyhedronViewerQt &v)
+        : viewer(v), done(), n_faces(0) {}
 
     void visit(Vertex_const_handle vh) {
       viewer.add_point(vh->point());
@@ -131,6 +133,12 @@ protected:
       Halffacet_cycle_const_iterator fc;
 
       Halffacet_const_handle f = opposite_facet->twin();
+
+      if (done.find(f) != done.end() ||
+          done.find(opposite_facet) != done.end())
+      {
+        return;
+      }
 
       SHalfedge_around_facet_const_circulator sfc1(f->facet_cycles_begin()),
           sfc2(sfc1);
@@ -151,6 +159,8 @@ protected:
           viewer.add_point_in_face(hc_start->source()->center_vertex()->point());
         }
         viewer.face_end();
+        done[f] = true;
+        n_faces++;
 //      }
     }
 
@@ -158,8 +168,9 @@ protected:
     void visit(SHalfedge_const_handle ) {}
     void visit(SHalfloop_const_handle ) {}
     void visit(SFace_const_handle ) {}
+    int n_faces;
   protected:
-
+    std::unordered_map<Halffacet_const_handle, bool> done;
     SimpleNefPolyhedronViewerQt& viewer;
   };
 
@@ -189,7 +200,7 @@ protected:
       {
         nef.visit_shell_objects(SFace_const_handle(it), V);
       }
-
+      std::cout << "Faces drawn: " << V.n_faces << std::endl;
     }
 //    for (typename Polyhedron_3::Halfedge_const_iterator e =
 //             poly.halfedges_begin();

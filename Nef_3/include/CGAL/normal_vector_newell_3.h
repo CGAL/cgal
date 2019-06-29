@@ -108,11 +108,11 @@ void normal_vector_newell_3( IC first, IC last, VertexPointMap vpm, Vector& n )
     IC prev = first;
     ++first;
     while( first != last) {
-      newell_single_step_3( get(vpm,*prev), get(vpm,*first), n);
+      CGAL::newell_single_step_3( get(vpm,*prev), get(vpm,*first), n);
         prev = first;
         ++first;
     }
-    newell_single_step_3( get(vpm,*prev), get(vpm,*start_point), n);
+    CGAL::newell_single_step_3( get(vpm,*prev), get(vpm,*start_point), n);
     CGAL_NEF_TRACEN("newell normal vector "<<n);
 }
 

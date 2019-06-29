@@ -1,35 +1,57 @@
-#include <CGAL/Exact_integer.h>
-#include <CGAL/Extended_homogeneous.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+//#include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/draw_nef_3.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/convert_nef_polyhedron_to_polygon_mesh.h>
+
 #include <fstream>
 #include <iostream>
 
-typedef CGAL::Exact_integer  NT;
-typedef CGAL::Extended_homogeneous<NT>  Kernel;
-typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
-typedef Nef_polyhedron::Plane_3  Plane_3;
-typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
+//typedef CGAL::Extended_homogeneous<NT> Kernel;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
+typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
+typedef Nef_polyhedron::Plane_3 Plane_3;
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
-int main(int argc, char* argv[]) {
-  Nef_polyhedron N1(Plane_3( 1, 0, 0,-1),Nef_polyhedron::INCLUDED);
-  Nef_polyhedron N2(Plane_3(-1, 0, 0,-1),Nef_polyhedron::INCLUDED);
-  Nef_polyhedron N3(Plane_3( 0, 1, 0,-1),Nef_polyhedron::INCLUDED);
-  Nef_polyhedron N4(Plane_3( 0,-1, 0,-1),Nef_polyhedron::INCLUDED);
-  Nef_polyhedron N5(Plane_3( 0, 0, 1,-1),Nef_polyhedron::INCLUDED);
-  Nef_polyhedron N6(Plane_3( 0, 0,-1,-1),Nef_polyhedron::INCLUDED);
-  Nef_polyhedron I1(!N1+!N2);
-  Nef_polyhedron I2(N3-!N4);
-  Nef_polyhedron I3(N5^N6);
-  Nef_polyhedron Cube1(I2 *!I1);
-  Cube1 *= !I3;
-  //Nef_polyhedron Cube2 = N1 * N2 * N3 * N4 * N5 * N6;
-  //CGAL_assertion (Cube1 == Cube2);
+int main(int argc, char *argv[])
+{
+  Polyhedron P;
+  std::ifstream ifs((argc > 1) ? argv[1] : "data/cross.off");
+  ifs >> P;
+  std::cout << "============== Polyhedron =============" << std::endl
+            << std::endl;
+  std::cout << P.size_of_vertices() << std::endl;
+  std::cout << P.size_of_halfedges() << std::endl;
+  std::cout << P.size_of_facets() << std::endl << std::endl;
 
-//  Polyhedron P;
-//  Cube1.convert_to_Polyhedron(P);
-//  std::cout << P;
+  Nef_polyhedron N(P);
 
-  CGAL::draw(Cube1);
+  std::cout << "================= Nef ==================" << std::endl
+            << std::endl;
+  std::cout << "Number of volumes: " << N.number_of_volumes() << std::endl;
+  std::cout << "Number of vertices: " << N.number_of_vertices() << std::endl;
+  std::cout << "Number of edges: " << N.number_of_edges() << std::endl;
+  std::cout << "Number of facets: " << N.number_of_facets() << std::endl
+            << std::endl;
+  std::cout << "Number of halfedges: " << N.number_of_halfedges() << std::endl;
+  std::cout << "Number of halffacets: " << N.number_of_halffacets() << std::endl
+            << std::endl;
+  std::cout << "Number of sfaces: " << N.number_of_sfaces() << std::endl;
+  std::cout << "Number of shalfedges : " << N.number_of_shalfedges()
+            << std::endl;
+  std::cout << "Number of shalfloops: " << N.number_of_shalfloops() << std::endl
+            << std::endl;
+
+  // output the result into a Surface_mesh
+  Surface_mesh output;
+  CGAL::convert_nef_polyhedron_to_polygon_mesh(N, output);
+  std::ofstream out;
+  out.open("out.off");
+  out << output;
+  out.close();
+
+  CGAL::draw(N);
 }
