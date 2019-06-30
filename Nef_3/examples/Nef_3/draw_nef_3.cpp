@@ -23,9 +23,10 @@ int main(int argc, char *argv[])
   ifs >> P;
   std::cout << "============== Polyhedron =============" << std::endl
             << std::endl;
-  std::cout << P.size_of_vertices() << std::endl;
-  std::cout << P.size_of_halfedges() << std::endl;
-  std::cout << P.size_of_facets() << std::endl << std::endl;
+  std::cout << "Number of vertices: " << P.size_of_vertices() << std::endl;
+  std::cout << "Number of halfedges: " << P.size_of_halfedges() << std::endl;
+  std::cout << "Number of facets: " << P.size_of_facets() << std::endl
+            << std::endl;
 
   Nef_polyhedron N(P);
 

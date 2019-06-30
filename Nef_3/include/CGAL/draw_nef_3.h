@@ -97,31 +97,10 @@ public:
     compute_elements();
   }
 protected:
-//  void compute_face(Facet_const_handle fh)
-//  {
-//    CGAL::Color c=m_fcolor.run(poly, fh);
-//    face_begin(c);
-//    Halfedge_const_handle he=fh->facet_begin();
-//    do
-//    {
-//      add_point_in_face(he->vertex()->point(),
-//                        get_vertex_normal(he));
-//      he=he->next();
-//    }
-//    while (he!=fh->facet_begin());
-//    face_end();
-//  }
-
-//  void compute_edge(Halfedge_const_handle he)
-//  {
-//    add_segment(he->vertex()->point(),
-//                he->opposite()->vertex()->point());
-//    // We can use add_segment(p1, p2, c) with c a CGAL::Color to add a colored segment
-//  }
   class Nef_Visitor {
   public:
     Nef_Visitor(SimpleNefPolyhedronViewerQt &v)
-        : viewer(v), done(), n_faces(0) {}
+        : viewer(v), facets_done(), n_faces(0), n_edges(0) {}
 
     void visit(Vertex_const_handle vh) {
       viewer.add_point(vh->point());
@@ -131,8 +110,8 @@ protected:
     {
       Halffacet_const_handle f = opposite_facet->twin();
 
-      if (done.find(f) != done.end() ||
-          done.find(opposite_facet) != done.end()) {
+      if (facets_done.find(f) != facets_done.end() ||
+          facets_done.find(opposite_facet) != facets_done.end()) {
         return;
       }
 
@@ -155,17 +134,33 @@ protected:
                                  viewer.get_vertex_normal(hc_start));
       }
       viewer.face_end();
-      done[f] = true;
+      facets_done[f] = true;
       n_faces++;
     }
 
-    void visit(Halfedge_const_handle ) {}
+    void visit(Halfedge_const_handle he)
+    {
+      Halfedge_const_handle twin = he->twin();
+      if (edges_done.find(he) != edges_done.end() ||
+          edges_done.find(twin) != edges_done.end())
+      {
+        // Edge already added
+        return;
+      }
+
+      viewer.add_segment(he->source()->point(), he->target()->point());
+      edges_done[he] = true;
+      n_edges++;
+    }
+
     void visit(SHalfedge_const_handle ) {}
     void visit(SHalfloop_const_handle ) {}
     void visit(SFace_const_handle ) {}
     int n_faces;
+    int n_edges;
   protected:
-    std::unordered_map<Halffacet_const_handle, bool> done;
+    std::unordered_map<Halffacet_const_handle, bool> facets_done;
+    std::unordered_map<Halfedge_const_handle, bool> edges_done;
     SimpleNefPolyhedronViewerQt& viewer;
   };
 
@@ -192,8 +187,10 @@ protected:
       {
         nef.visit_shell_objects(SFace_const_handle(it), V);
       }
-      std::cout << "Faces drawn: " << V.n_faces << std::endl;
     }
+
+    std::cout << "Total faces drawn: " << V.n_faces << std::endl;
+    std::cout << "Total edges drawn: " << V.n_edges << std::endl;
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
