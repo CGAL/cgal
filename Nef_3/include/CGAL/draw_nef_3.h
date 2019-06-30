@@ -41,8 +41,8 @@ struct DefaultColorFunctorNefPolyhedron
   static CGAL::Color run(const NefPolyhedron&,
                          typename NefPolyhedron::Halffacet_const_handle fh)
   {
-    if (fh==boost::graph_traits<NefPolyhedron>::null_face()) // use to get the mono color
-      return CGAL::Color(100, 125, 200); // R G B between 0-255
+    //if (fh==boost::graph_traits<NefPolyhedron>::null_face()) // use to get the mono color
+    //  return CGAL::Color(100, 125, 200); // R G B between 0-255
 
     CGAL::Random random((unsigned int)(std::size_t)(&(*fh)));
     return get_random_color(random);
@@ -55,12 +55,8 @@ class SimpleNefPolyhedronViewerQt : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt                                   Base;
   typedef typename Nef_Polyhedron::Kernel                   Kernel;
-  typedef typename Nef_Polyhedron::Vertex_const_iterator    Vertex_const_iterator;
   typedef typename Nef_Polyhedron::Vertex_const_handle      Vertex_const_handle;
-  typedef typename Nef_Polyhedron::SNC_const_decorator      SNC_const_decorator;
   typedef typename Nef_Polyhedron::SNC_structure            SNC_structure;
-  typedef typename SNC_structure::Infi_box                     Infi_box;
-
   typedef typename SNC_structure::Halffacet_cycle_const_iterator
       Halffacet_cycle_const_iterator;
 
@@ -71,12 +67,10 @@ class SimpleNefPolyhedronViewerQt : public Basic_viewer_qt
   typedef typename Nef_Polyhedron::SFace_const_handle SFace_const_handle;
   typedef typename Nef_Polyhedron::Volume_const_iterator Volume_const_iterator;
 
-  typedef typename Nef_Polyhedron::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Nef_Polyhedron::Halffacet_const_handle Halffacet_const_handle;
-  typedef typename Nef_Polyhedron::SHalfedge_const_handle SHalfedge_const_handle;
-  typedef typename Nef_Polyhedron::SHalfloop_const_handle SHalfloop_const_handle;
-  typedef typename Kernel::Point_3 Point_3;
-
+  typedef typename Nef_Polyhedron::Halfedge_const_handle     Halfedge_const_handle;
+  typedef typename Nef_Polyhedron::Halffacet_const_handle    Halffacet_const_handle;
+  typedef typename Nef_Polyhedron::SHalfedge_const_handle    SHalfedge_const_handle;
+  typedef typename Nef_Polyhedron::SHalfloop_const_handle    SHalfloop_const_handle;
 public:
   /// Construct the viewer
   /// @param anef the nef polyhedron to view
@@ -88,8 +82,8 @@ public:
                               const char* title="Basic Nef Polyhedron Viewer",
                               bool anofaces=false,
                               const ColorFunctor& fcolor=ColorFunctor()) :
-  //First draw: no vertex; edges, faces; mon-color; inverse normal
-    Base(parent, title, true, true, true, true, false),
+  //First draw: vertex; edges, faces; mon-color; inverse normal
+    Base(parent, title, true, true, true, false, false),
     nef(anef),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -97,6 +91,7 @@ public:
     compute_elements();
   }
 protected:
+  // Visitor class to iterate through shell objects
   class Nef_Visitor {
   public:
     Nef_Visitor(SimpleNefPolyhedronViewerQt &v)
@@ -125,7 +120,8 @@ protected:
         return;
       }
 
-      viewer.face_begin(CGAL::Color(yellow()));
+      CGAL::Color c = viewer.run_color(f);
+      viewer.face_begin(c);
 
       SHalfedge_around_facet_const_circulator hc_start(se);
       SHalfedge_around_facet_const_circulator hc_end(hc_start);
@@ -176,11 +172,9 @@ protected:
 
     Volume_const_iterator c;
 
-    int ic = 0;
     Nef_Visitor V(*this);
     CGAL_forall_volumes(c, nef)
     {
-      std::cout << "Volume " << ic++ << std::endl;
       int is = 0;
       Shell_entry_const_iterator it;
       CGAL_forall_shells_of(it, c)
@@ -191,6 +185,11 @@ protected:
 
     std::cout << "Total faces drawn: " << V.n_faces << std::endl;
     std::cout << "Total edges drawn: " << V.n_edges << std::endl;
+  }
+
+  CGAL::Color run_color(Halffacet_const_handle fh)
+  {
+    return m_fcolor.run(nef, fh);
   }
 
   virtual void keyPressEvent(QKeyEvent *e)

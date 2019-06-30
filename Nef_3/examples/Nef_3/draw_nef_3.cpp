@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+//#include <CGAL/Exact_integer.h>
 //#include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Polyhedron_3.h>
@@ -10,6 +11,7 @@
 #include <iostream>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
+//typedef CGAL::Exact_integer NT;
 //typedef CGAL::Extended_homogeneous<NT> Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
