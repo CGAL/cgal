@@ -129,39 +129,34 @@ protected:
 
     void visit(Halffacet_const_handle opposite_facet)
     {
-      SHalfedge_const_handle se;
-      Halffacet_cycle_const_iterator fc;
-
       Halffacet_const_handle f = opposite_facet->twin();
 
       if (done.find(f) != done.end() ||
-          done.find(opposite_facet) != done.end())
-      {
+          done.find(opposite_facet) != done.end()) {
         return;
       }
 
-      SHalfedge_around_facet_const_circulator sfc1(f->facet_cycles_begin()),
-          sfc2(sfc1);
-//      if(++f->facet_cycles_begin() != f->facet_cycles_end() ||
-//         ++(++(++sfc1)) != sfc2)
-//      {
-//        ;
-//      } else
-//      {
-        viewer.face_begin();
-        fc = f->facet_cycles_begin();
-        se = SHalfedge_const_handle(fc);
-        CGAL_assertion(se!=0);
-        SHalfedge_around_facet_const_circulator hc_start(se);
-        SHalfedge_around_facet_const_circulator hc_end(hc_start);
-        CGAL_For_all(hc_start, hc_end)
-        {
-          viewer.add_point_in_face(hc_start->source()->center_vertex()->point());
-        }
-        viewer.face_end();
-        done[f] = true;
-        n_faces++;
-//      }
+      SHalfedge_const_handle se;
+      Halffacet_cycle_const_iterator fc;
+      fc = f->facet_cycles_begin();
+
+      se = SHalfedge_const_handle(fc); // non-zero if shalfedge is returned
+      if(se == 0)
+      { //return if not-shalfedge
+        return;
+      }
+
+      viewer.face_begin(CGAL::Color(yellow()));
+
+      SHalfedge_around_facet_const_circulator hc_start(se);
+      SHalfedge_around_facet_const_circulator hc_end(hc_start);
+      CGAL_For_all(hc_start, hc_end) {
+        viewer.add_point_in_face(hc_start->source()->center_vertex()->point(),
+                                 viewer.get_vertex_normal(hc_start));
+      }
+      viewer.face_end();
+      done[f] = true;
+      n_faces++;
     }
 
     void visit(Halfedge_const_handle ) {}
@@ -184,10 +179,7 @@ protected:
   {
     clear();
 
-    Vertex_const_iterator vi;
     Volume_const_iterator c;
-    //SNC_structure sncp(nef.sncp());
-    //SNC_const_decorator scd;
 
     int ic = 0;
     Nef_Visitor V(*this);
@@ -202,24 +194,6 @@ protected:
       }
       std::cout << "Faces drawn: " << V.n_faces << std::endl;
     }
-//    for (typename Polyhedron_3::Halfedge_const_iterator e =
-//             poly.halfedges_begin();
-//         e != poly.halfedges_end(); ++e)
-//    {
-//      if (e < e->opposite())
-//      {
-//        compute_edge(e);
-//      }
-//    }
-
-//    {
-
-//    }
-
-//    for (Vertex_const_iterator vi = nef.vertices_begin();
-//         vi != nef.vertices_end(); vi++) {
-//      compute_vertex(vi);
-//    }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
@@ -239,47 +213,43 @@ protected:
   }
 
 protected:
-//  Local_vector get_face_normal(Halfedge_const_handle he)
-//  {
-//    Local_vector normal = CGAL::NULL_VECTOR;
-//    Halfedge_const_handle end = he;
-//    unsigned int nb = 0;
-//    do
-//    {
-//      internal::newell_single_step_3(
-//          internal::Geom_utils<Kernel>::get_local_point(he->vertex()->point()),
-//          internal::Geom_utils<Kernel>::get_local_point(
-//              he->next()->vertex()->point()),
-//          normal);
-//      ++nb;
-//      he = he->next();
-//    } while (he != end);
-//    assert(nb > 0);
-//    return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0 / nb));
-//  }
+  Local_vector get_face_normal(SHalfedge_around_facet_const_circulator he)
+  {
+    Local_vector normal = CGAL::NULL_VECTOR;
+    SHalfedge_around_facet_const_circulator end = he;
+    unsigned int nb = 0;
 
-//  Local_vector get_vertex_normal(Halfedge_const_handle he)
-//  {
-//    Local_vector normal = CGAL::NULL_VECTOR;
-//    Halfedge_const_handle end = he;
-//    do
-//    {
-//      if (!he->is_border())
-//      {
-//        Local_vector n = get_face_normal(he);
-//        normal = typename Local_kernel::Construct_sum_of_vectors_3()(normal, n);
-//      }
-//      he = he->next()->opposite();
-//    } while (he != end);
+    CGAL_For_all(he, end)
+    {
+      internal::newell_single_step_3(internal::Geom_utils<Kernel>::get_local_point(he->source()->center_vertex()->point()),
+                                     internal::Geom_utils<Kernel>::get_local_point(he->next()->source()->center_vertex()->point()),
+                                     normal);
+      ++nb;
+    }
 
-//    if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
-//    {
-//      normal = (typename Local_kernel::Construct_scaled_vector_3()(
-//          normal, 1.0 / CGAL::sqrt(normal.squared_length())));
-//    }
+    assert(nb > 0);
+    return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0 / nb));
+  }
 
-//    return normal;
-//  }
+  Local_vector get_vertex_normal(SHalfedge_around_facet_const_circulator he)
+  {
+    Local_vector normal = CGAL::NULL_VECTOR;
+    SHalfedge_around_facet_const_circulator end = he;
+
+    CGAL_For_all(he, end)
+    {
+      Local_vector n = get_face_normal(he);
+      normal = typename Local_kernel::Construct_sum_of_vectors_3()(normal, n);
+    }
+
+    if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
+    {
+      normal = (typename Local_kernel::Construct_scaled_vector_3()(
+          normal, 1.0 / CGAL::sqrt(normal.squared_length())));
+    }
+
+    return normal;
+  }
 
 protected:
   const Nef_Polyhedron &nef;
