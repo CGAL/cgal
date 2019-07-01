@@ -24,7 +24,16 @@ Release date: September 2019
     for all vertices, which enables to use C++11 for-loops.
 -   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_3` which takes
     a range of points as argument no longer performs a `spatial_sort()` of the points.
--   Add constructor and `insert()` function to `CGAL::Triangulation_3` that takes a range of points with info.  
+ -  Added constructor and `insert()` function to `CGAL::Triangulation_3` that takes a range of points with info.
+ - **breaking change** The graph traits enabling CGAL's 2D triangulations to be used as a parameter
+    for any graph-based algorithm of CGAL (or boost) have been improved to fully model the `FaceGraph` concept.
+    In addition, only the finite simplicies (those not incident to the infinite vertex) of the 2D triangulations
+    are now visibile through this scope. The complete triangulation can still be accessed as a graph,
+    by using the graph traits of the underlying triangulation data structure (usually,
+    `CGAL::Triangulation_data_structure_2`).
+ -  Introduced a new face base class, `Triangulation_face_base_with_id_2` which enables storing
+    user-defined integer IDs in the face of any 2D triangulation, a precondition to use some
+    BGL algorithms.
     
 ### Surface Mesh
  -   New functions to read and write using the PLY format,
@@ -42,6 +51,11 @@ Release date: September 2019
      Parameters.
 
 ### Polygon Mesh Processing
+ -   Introduced a wide range of new functions related to location of queries on a triangle mesh,
+     such as `CGAL::Polygon_mesh_processing::locate(Point, Mesh)`, . The location of a point on a triangle mesh
+     is expressed as the pair of a face and the barycentric coordinates of the point in this face,
+     enabling robust manipulation of locations (for example, intersections of two 3D segments living
+     within the same face).
  -   Added the function `CGAL::Polygon_mesh_processing::centroid()`, which computes
      the centroid of a closed triangle mesh.
 -    Added the functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()` and

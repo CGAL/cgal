@@ -130,7 +130,6 @@ public:
 
   typedef typename Tds::Face_iterator          All_faces_iterator;
   typedef typename Tds::Edge_iterator          All_edges_iterator;
-  typedef typename Tds::Halfedge_iterator      All_halfedges_iterator;
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
 
   class Perturbation_order
@@ -491,8 +490,6 @@ public:
   All_edges_iterator all_edges_end() const;
   All_edges all_edges() const;
   
-  All_halfedges_iterator all_halfedges_begin() const;
-  All_halfedges_iterator all_halfedges_end() const;
 
   //for compatibility with previous versions
   Face_iterator faces_begin() const {return finite_faces_begin();}
@@ -3348,22 +3345,6 @@ all_edges() const
   return _tds.edges();
 }
   
-template <class Gt, class Tds >
-typename Triangulation_2<Gt, Tds>::All_halfedges_iterator
-Triangulation_2<Gt, Tds>::
-all_halfedges_begin() const
-{
-  return _tds.halfedges_begin();
-}
-
-template <class Gt, class Tds >
-typename Triangulation_2<Gt, Tds>::All_halfedges_iterator
-Triangulation_2<Gt, Tds>::
-all_halfedges_end() const
-{
-  return _tds.halfedges_end();
-}
-
 template <class Gt, class Tds >
 inline
 typename Triangulation_2<Gt, Tds>::Face_circulator

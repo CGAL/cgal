@@ -1,8 +1,6 @@
 #ifndef CGAL_TEST_PREFIX_H
 #define CGAL_TEST_PREFIX_H
 
-#define CGAL_USE_SURFACE_MESH
-
 #include <vector>
 #include <fstream>
 
@@ -12,14 +10,34 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
+
 #include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
 
-#ifdef CGAL_USE_SURFACE_MESH
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
-#endif
+
+#include <CGAL/Constrained_triangulation_face_base_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
+#include <CGAL/Triangulation_data_structure_2.h>
+#include <CGAL/Triangulation_vertex_base_with_id_2.h>
+#include <CGAL/Triangulation_face_base_with_id_2.h>
+#include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
+#include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
+#include <CGAL/boost/graph/properties_Triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Triangulation_hierarchy_2.h>
+#include <CGAL/boost/graph/properties_Triangulation_hierarchy_2.h>
+#include <CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/properties_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Regular_triangulation_2.h>
+#include <CGAL/boost/graph/properties_Regular_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Constrained_triangulation_2.h>
+#include <CGAL/boost/graph/properties_Constrained_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/properties_Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Constrained_triangulation_plus_2.h>
+#include <CGAL/boost/graph/properties_Constrained_triangulation_plus_2.h>
 
 #include <CGAL/boost/graph/io.h>
 
@@ -37,10 +55,7 @@ typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
 typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
           <2, 3, MyTraits>::type LCC;
 
-
-#ifdef CGAL_USE_SURFACE_MESH
 typedef CGAL::Surface_mesh<Point_3> SM;
-#endif
 
 #if defined(CGAL_USE_OPENMESH)
 
@@ -54,6 +69,31 @@ typedef CGAL::Surface_mesh<Point_3> SM;
 
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OMesh;
 #endif
+
+typedef CGAL::Triangulation_vertex_base_with_id_2<Kernel>        Vbb;
+typedef CGAL::Triangulation_face_base_with_id_2<Kernel>          Fbb;
+
+typedef CGAL::Triangulation_2<Kernel,
+          CGAL::Triangulation_data_structure_2<Vbb, Fbb> >       Triangulation_2;
+typedef CGAL::Delaunay_triangulation_2<Kernel,
+          CGAL::Triangulation_data_structure_2<Vbb, Fbb> >       Delaunay_triangulation_2;
+
+typedef CGAL::Regular_triangulation_vertex_base_2<Kernel, Vbb>   RVb;
+typedef CGAL::Regular_triangulation_face_base_2<Kernel, Fbb>     RFb;
+typedef CGAL::Regular_triangulation_2<Kernel,
+          CGAL::Triangulation_data_structure_2<RVb, RFb> >       Regular_triangulation_2;
+
+typedef CGAL::Constrained_triangulation_face_base_2<Kernel, Fbb> CDFb;
+typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb>         CDVb;
+typedef CGAL::Constrained_triangulation_2<Kernel,
+          CGAL::Triangulation_data_structure_2<CDVb, CDFb> >     Constrained_triangulation_2;
+typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel,
+          CGAL::Triangulation_data_structure_2<CDVb, CDFb> >     Constrained_Delaunay_triangulation_2;
+
+typedef CGAL::Constrained_triangulation_plus_2<
+          Constrained_Delaunay_triangulation_2>                  CDT_P2;
+
+typedef CGAL::Triangulation_hierarchy_2<CDT_P2>                  Triangulation_hierarchy_2;
 
 #include <CGAL/boost/graph/helpers.h>
 
@@ -137,21 +177,46 @@ std::vector<T> t_data()
   return vs;
 }
 
-std::vector<Polyhedron> poly_data() 
-{ return t_data<Polyhedron>(); }
-
-#if defined(CGAL_USE_SURFACE_MESH)
-std::vector<SM> sm_data() 
-{ return t_data<SM>(); }
-#endif
+std::vector<Polyhedron> poly_data() { return t_data<Polyhedron>(); }
+std::vector<SM> sm_data() { return t_data<SM>(); }
+std::vector<LCC> lcc_data() { return t_data<LCC>(); }
 
 #if defined(CGAL_USE_OPENMESH)
-std::vector<OMesh> omesh_data() 
-{ return t_data<OMesh>(); }
+std::vector<OMesh> omesh_data() { return t_data<OMesh>(); }
 #endif
 
-std::vector<LCC> lcc_data()
-{ return t_data<LCC>(); }
+template <typename Tr>
+Tr build_dummy_triangulation()
+{
+  typedef typename Tr::Point                                       Point;
+  typedef typename boost::graph_traits<Tr>::vertex_descriptor      vertex_descriptor;
+  typedef typename boost::graph_traits<Tr>::face_descriptor        face_descriptor;
+
+  Tr t;
+  t.insert(Point(0.1,0));
+  t.insert(Point(1,0));
+  t.insert(Point(0.2,0.2));
+  t.insert(Point(0,1));
+  t.insert(Point(0,2));
+
+  int id = 0;
+  for(vertex_descriptor vd : vertices(t))
+    vd->id() = id++;
+
+  id = 0;
+  for(face_descriptor fd : faces(t))
+    fd->id() = id++;
+
+  return t;
+}
+
+Triangulation_2 t2_data() { return build_dummy_triangulation<Triangulation_2>(); }
+Delaunay_triangulation_2 dt2_data() { return build_dummy_triangulation<Delaunay_triangulation_2>(); }
+Regular_triangulation_2 rt2_data() { return build_dummy_triangulation<Regular_triangulation_2>(); }
+Constrained_triangulation_2 ct2_data() { return build_dummy_triangulation<Constrained_triangulation_2>(); }
+Constrained_Delaunay_triangulation_2 cdt2_data() { return build_dummy_triangulation<Constrained_Delaunay_triangulation_2>(); }
+CDT_P2 cdtp2_data() { return build_dummy_triangulation<CDT_P2>(); }
+Triangulation_hierarchy_2 t2h_data() { return build_dummy_triangulation<Triangulation_hierarchy_2>(); }
 
 template <typename Graph>
 struct Surface_fixture_1 {

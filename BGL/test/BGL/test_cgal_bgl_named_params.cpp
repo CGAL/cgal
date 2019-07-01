@@ -88,6 +88,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::require_same_orientation).v == 49);
   assert(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface).v == 50);
   assert(get_param(np, CGAL::internal_np::face_size_map).v == 52);
+  assert(get_param(np, CGAL::internal_np::snapping_tolerance).v == 57);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -169,6 +170,7 @@ void test(const NamedParameters& np)
   check_same_type<49>(get_param(np, CGAL::internal_np::require_same_orientation));
   check_same_type<50>(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface));
   check_same_type<52>(get_param(np, CGAL::internal_np::face_size_map));
+  check_same_type<57>(get_param(np, CGAL::internal_np::snapping_tolerance));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -254,6 +256,7 @@ int main()
                          .erase_all_duplicates(A<48>(48))
                          .require_same_orientation(A<49>(49))
                          .face_size_map(A<52>(52))
+                         .snapping_tolerance(A<57>(57))
        );
 
   return EXIT_SUCCESS;

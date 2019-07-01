@@ -390,6 +390,17 @@ if orientation should matter when determining whether two faces are duplicates.
 <b>Default:</b> `false`
 \cgalNPEnd
 
+\cgalNPBegin{snapping_tolerance} \anchor PMP_snapping_tolerance
+Parameter used in the function `locate_in_face()` to to snap barycentric coordinates. Depending on the geometric traits used,
+the computation of the barycentric coordinates might be an inexact construction, thus leading
+to sometimes surprising values (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle
+of an edge). The coordinates will be snapped towards `0` and `1` if the difference is smaller than the tolerance value, while
+still ensuring that the total sum of the coordinates is `1`.
+\n
+<b>Type:</b> `Kernel::FT` \n
+<b>Default:</b> `0`
+\cgalNPEnd
+
 \cgalNPBegin{face_size_map} \anchor PMP_face_size_map
 Parameter used in the functions `keep_large_connected_components()` and
 `keep_largest_connected_components()` to pass a property map that gives the size of a face when
