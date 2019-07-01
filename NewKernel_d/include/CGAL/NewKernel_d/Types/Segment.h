@@ -35,7 +35,7 @@ template <class R_> class Segment {
 	public:
 	//typedef Segmentd<R_> Segment;
 #ifdef CGAL_CXX11
-	//FIXME: don't forward directly, piecewise_constuct should call the point construction functor (I guess? or is it unnecessary?)
+	//FIXME: don't forward directly, piecewise_construct should call the point construction functor (I guess? or is it unnecessary?)
 	template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Segment>>::value>::type>
 	Segment(U&&...u):data(std::forward<U>(u)...){}
 #else
@@ -89,11 +89,11 @@ template<class R_> struct Construct_segment : Store_kernel<R_> {
 	}
 	// T should only be std::piecewise_construct_t, but we shouldn't fail if it doesn't exist.
 	template<class T,class U,class V>
-	result_type operator()(CGAL_FORWARDABLE(T),CGAL_FORWARDABLE(U) u,CGAL_FORWARDABLE(V) v)const{
+	result_type operator()(T&&, U&& u, V&& v)const{
 		CP cp(this->kernel());
 		result_type r = {{
-			call_on_tuple_elements<Point>(cp, CGAL_FORWARD(U,u)),
-			call_on_tuple_elements<Point>(cp, CGAL_FORWARD(V,v)) }};
+			call_on_tuple_elements(cp, std::forward<U>(u)),
+			call_on_tuple_elements(cp, std::forward<V>(v)) }};
 		return r;
 	}
 };

@@ -26,10 +26,6 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#ifndef CGAL_CXX11
-#include <boost/preprocessor/repetition.hpp>
-#endif
-#include <boost/utility/result_of.hpp>
 
 namespace CGAL {
 namespace Wrap {
@@ -67,7 +63,6 @@ public:
 
   typedef          R_                       R;
 
-#ifdef CGAL_CXX11
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Sphere_d> >::value>::type> explicit Sphere_d(U&&...u)
 	  : Rep(CSBase()(std::forward<U>(u)...)){}
 
@@ -89,30 +84,6 @@ public:
   Sphere_d(Rep& v) : Rep(static_cast<Rep const&>(v)) {}
   Sphere_d(Rep&& v) : Rep(std::move(v)) {}
 
-#else
-
-  Sphere_d() : Rep(CSBase()()) {}
-
-  Sphere_d(Rep const& v) : Rep(v) {} // try not to use it
-
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  explicit Sphere_d(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(CSBase()( \
-	BOOST_PP_ENUM_PARAMS(N,t))) {} \
-  \
-  template<class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Sphere_d(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(f(BOOST_PP_ENUM_PARAMS(N,t))) {}
-  /*
-  template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Point_d(Eval_functor,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(Eval_functor(), BOOST_PP_ENUM_PARAMS(N,t)) {}
-  */
-
-  BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-
-#endif
 
     //TODO: if COSBase returns a reference to a base point, cast it to a
     //reference to a wrapper point. Ugly but should be safe.

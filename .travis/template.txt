@@ -19,7 +19,7 @@ before_script:
   - sudo chmod +x /usr/bin/doxygen
   - mkdir -p build
   - cd build
-  - /usr/bin/time -f 'Spend time of %C -- %E (real)' cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON ..
+  - /usr/bin/time -f 'Spend time of %C -- %E (real)' cmake -DCMAKE_CXX_FLAGS="-std=c++1y" -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON ..
   - /usr/bin/time -f 'Spend time of %C -- %E (real)' make
   - /usr/bin/time -f 'Spend time of %C -- %E (real)' sudo make install &>/dev/null
   - cd ..

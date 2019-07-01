@@ -53,12 +53,7 @@ class transforming_pair_iterator_helper
 			::type iterator_category;
 
 	typedef typename Default::Get<Ref,
-#ifdef CGAL_CXX11
 		decltype(std::declval<F>()(std::declval<typename std::iterator_traits<It1>::reference>(),std::declval<typename std::iterator_traits<It2>::reference>()))
-#else
-		typename boost::result_of<F(typename std::iterator_traits<It1>::value_type,typename std::iterator_traits<It2>::value_type)>::type
-	// should be reference instead of value_type
-#endif
 			>::type reference;
 
 	typedef typename Default::Get<Val,typename boost::remove_cv<typename boost::remove_reference<reference>::type>::type>::type value_type;

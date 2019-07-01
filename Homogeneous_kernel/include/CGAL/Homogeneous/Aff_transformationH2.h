@@ -453,14 +453,12 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
 
     virtual  Direction_2
              transform(const Direction_2 & d) const
-             { return transform( Vector_2(d) ).direction(); }
+             { return transform( d.vector() ).direction(); }
 
     virtual  Aff_transformationH2<R>
              inverse() const
              {
-               return Aff_transformationH2<R>(
-                   static_cast< Aff_transformation_rep_baseH2<R>* >
-                   ( const_cast< Reflection_repH2<R>*> (this) )  );
+               return Aff_transformationH2<R>(REFLECTION, l);
              }
 
     virtual  bool

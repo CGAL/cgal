@@ -1,9 +1,9 @@
 # Created by the script cgal_create_cmake_script.
 # This is the CMake script for compiling a CGAL application.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project(Shape_detection_Tests)
 
-cmake_minimum_required(VERSION 2.8.10)
 set(CMAKE_CXX_STANDARD 11)
 
 find_package(CGAL QUIET COMPONENTS Core)
