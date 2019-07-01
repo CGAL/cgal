@@ -560,9 +560,15 @@ public:
         ++epp_it;
     }
     BOOST_FOREACH(edge_descriptor ed, inter_edges_to_remove1)
+    {
+      put(marks_on_input_edges.ecm1, ed, false);
       intersection_edges1.erase(ed);
+    }
     BOOST_FOREACH(edge_descriptor ed, inter_edges_to_remove2)
+    {
+      put(marks_on_input_edges.ecm2, ed, false);
       intersection_edges2.erase(ed);
+    }
 
     // (1) Assign a patch id to each facet indicating in which connected
     // component limited by intersection edges of the surface they are.
