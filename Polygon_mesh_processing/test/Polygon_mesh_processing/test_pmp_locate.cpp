@@ -536,7 +536,10 @@ struct Locate_with_AABB_tree_Tester // 2D case
 
     Face_location loc = PMP::locate_with_AABB_tree(p_a, tree_a, g);
 
-    // assert(PMP::is_on_vertex(loc, v, g)); // might fail du to precision issues...
+    // sanitize otherwise some test platforms fail
+    PMP::internal::snap_location_to_border<G>(loc, 1e-7);
+
+    assert(PMP::is_on_vertex(loc, v, g)); // might fail du to precision issues...
     assert(is_equal(loc.second[CGAL::vertex_index_in_face(v, loc.first, g)], FT(1)));
     assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g)+1)%3], FT(0)));
     assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g)+2)%3], FT(0)));
