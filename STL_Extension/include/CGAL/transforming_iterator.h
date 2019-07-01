@@ -62,12 +62,7 @@ class transforming_iterator_helper
 	typedef std::iterator_traits<Iter> Iter_traits;
 	typedef typename Iter_traits::reference Iter_ref;
 	typedef typename Default::Get<Ref,
-#ifdef CGAL_CXX11
 		decltype(std::declval<F>()(std::declval<Iter_ref>()))
-#else
-		typename boost::result_of<F(typename Iter_traits::value_type)>::type
-	// should be reference instead of value_type
-#endif
 			>::type reference_;
 
 	typedef typename Default::Get<Val,typename boost::remove_cv<typename boost::remove_reference<reference_>::type>::type>::type value_type;

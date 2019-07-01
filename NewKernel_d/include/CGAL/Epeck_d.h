@@ -26,19 +26,18 @@
 #include <CGAL/NewKernel_d/Cartesian_base.h>
 #include <CGAL/NewKernel_d/Wrapper/Cartesian_wrap.h>
 #include <CGAL/NewKernel_d/Kernel_d_interface.h>
+#include <CGAL/NewKernel_d/Lazy_cartesian.h>
+#include <CGAL/NewKernel_d/KernelD_converter.h>
 #include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/NewKernel_d/Types/Weighted_point.h>
 
-
+// TODO: add static filters somewhere
 namespace CGAL {
-#define CGAL_BASE \
-    Cartesian_base_d<internal::Exact_field_selector<double>::Type, Dim>
-template<class Dim>
-struct Epeck_d_help1
-: CGAL_BASE
-{
-  CGAL_CONSTEXPR Epeck_d_help1(){}
-  CGAL_CONSTEXPR Epeck_d_help1(int d):CGAL_BASE(d){}
-};
+#define CGAL_KA Cartesian_base_d<Interval_nt_advanced,Dim>
+#define CGAL_KE Cartesian_base_d<internal::Exact_field_selector<double>::Type, Dim>
+template<class Dim> using Epeck_d_help1 = Lazy_cartesian<CGAL_KE, CGAL_KA, KernelD_converter<CGAL_KE, CGAL_KA>>;
+#undef CGAL_KE
+#undef CGAL_KA
 #undef CGAL_BASE
 #define CGAL_BASE \
   Kernel_d_interface< \
@@ -49,8 +48,8 @@ template<class Dim>
 struct Epeck_d
 : CGAL_BASE
 {
-  CGAL_CONSTEXPR Epeck_d(){}
-  CGAL_CONSTEXPR Epeck_d(int d):CGAL_BASE(d){}
+  constexpr Epeck_d(){}
+  constexpr Epeck_d(int d):CGAL_BASE(d){}
 };
 #undef CGAL_BASE
 }

@@ -210,7 +210,7 @@ type `LinearAlgebra`.
 \subsection Kernel_dEpickKernel Epick_d Kernel
 
 The kernel `Epick_d<DimensionTag>`, short for <em>Exact Predicates Inexact
-Constructions Kernel</em> is a kernel particularly useful when the dimension of
+Constructions %Kernel</em> is a kernel particularly useful when the dimension of
 the space is known at compile-time; The template parameter `DimensionTag` is then
 `Dimension_tag<d>` where `d` is an integer representing the dimension. It
 may also be used with parameter `Dynamic_dimension_tag`, in which case the
@@ -223,6 +223,24 @@ be exact.
 Note that it provides few interfaces in addition to those documented in the
 `Kernel_d` concept. In particular, the type of a point is only available as
 `Epick_d<DimensionTag>::%Point_d`, <B>not</B> `Point_d<Epick_d<DimensionTag>>`.
+
+\cgalModifBegin
+\subsection Kernel_dEpeckKernel Epeck_d Kernel
+
+The kernel `Epeck_d<DimensionTag>`, short for <em>Exact Predicates Exact
+Constructions %Kernel</em> is a kernel particularly useful when the dimension of
+the space is known at compile-time; The template parameter `DimensionTag` is then
+`Dimension_tag<d>` where `d` is an integer representing the dimension. It
+may also be used with parameter `Dynamic_dimension_tag`, in which case the
+dimension does not need to be known at compile-time.
+It uses a %Cartesian representation and
+supports construction of points from `double` coordinates. It provides exact
+geometric predicates and constructions.
+
+Note that it provides few interfaces in addition to those documented in the
+`Kernel_d` concept. In particular, the type of a point is only available as
+`Epeck_d<DimensionTag>::%Point_d`, <B>not</B> `Point_d<Epeck_d<DimensionTag>>`.
+\cgalModifEnd
 
 
 \subsection Kernel_dNamingconventions Naming Conventions
@@ -538,7 +556,7 @@ evolution of the low-dimensional kernel. The kernel was revised
 based on suggestions by Herv&eacute; Br&ouml;nnimann, Michael Hoffmann, and
 Stefan Schirra.
 
-Epick_d was added by Marc Glisse in 2014.
+Marc Glisse added Epick_d in 2014 and Epeck_d in 2019.
 
 \subsection Kernel_dAcknowledgments Acknowledgments
 
