@@ -80,6 +80,9 @@ Release date: September 2019
    `CGAL::Sphere_3`, `CGAL::Vector_2`, `CGAL::Vector_3`,
    `CGAL::Weighted_point_2` and `CGAL::Weighted_point_3`.
 
+### dD Geometry Kernel
+- New exact kernel `Epeck_d`
+
 ### IO Streams
 -   Added new functions to support some parts of the WKT file format:
     - `CGAL::read_point_WKT()`
