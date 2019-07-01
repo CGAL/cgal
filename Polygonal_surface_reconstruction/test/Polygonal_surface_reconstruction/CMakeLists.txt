@@ -28,14 +28,6 @@ if ( NOT Boost_FOUND )
   return()  
 endif()
 
-
-# include for local directory
-
-# include for local package
-include_directories( BEFORE ../../include )
-include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
-
-
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
 
@@ -76,6 +68,6 @@ endif()
 if (NOT SCIP_FOUND AND NOT GLPK_FOUND)
 
   message(STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
-      "Please proivde either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
+      "Please provide either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
 
 endif()

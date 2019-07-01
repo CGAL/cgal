@@ -31,8 +31,6 @@ if ( NOT Boost_FOUND )
 
 endif()
 
-include_directories( BEFORE ../../include )
-
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
 
