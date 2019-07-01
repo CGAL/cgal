@@ -2035,8 +2035,6 @@ struct Vertex_collector
   std::map<vertex_descriptor, std::vector<vertex_descriptor> > collections;
 };
 
-} // end namespace internal
-
 template <typename PolygonMesh, typename VPM, typename ConstraintMap>
 typename boost::graph_traits<PolygonMesh>::vertex_descriptor
 create_new_vertex_for_sector(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor sector_begin_h,
@@ -2181,6 +2179,8 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
   return nb_new_vertices;
 }
 
+} // end namespace internal
+
 /// \ingroup PMP_repairing_grp
 /// collects the non-manifold vertices (if any) present in the mesh. A non-manifold vertex `v` is returned
 /// via one incident halfedge `h` such that `target(h, pm) = v` for all the umbrellas that `v` apppears in
@@ -2319,7 +2319,7 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
   if(!non_manifold_cones.empty())
   {
     for(halfedge_descriptor h : non_manifold_cones)
-      nb_new_vertices += make_umbrella_manifold(h, pm, dmap, np);
+      nb_new_vertices += internal::make_umbrella_manifold(h, pm, dmap, np);
 
     dmap.dump(out);
   }
