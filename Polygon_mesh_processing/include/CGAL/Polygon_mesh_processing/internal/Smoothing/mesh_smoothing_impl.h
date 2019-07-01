@@ -439,6 +439,7 @@ public:
     }
 
     ceres::Solver::Options options;
+    options.logging_type = ceres::SILENT;
 //    options.minimizer_progress_to_stdout = true;
     ceres::Solver::Summary summary;
     ceres::Solve(options, &problem, &summary);
