@@ -29,9 +29,12 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/type_traits/is_same.hpp>
+#include <boost/range/combine.hpp>
 
 #include <gr/algorithms/FunctorSuper4pcs.h>
 #include <gr/algorithms/PointPairFilter.h>
+
+#include "point_adapters.h"
 
 #include <Eigen/Dense>
 
@@ -39,14 +42,23 @@ namespace CGAL {
 
 namespace OpenGR {
 
-typedef gr::Match4pcsBase<gr::FunctorSuper4PCS,
+template<typename PointType>
+using Options = typename gr::Match4pcsBase<gr::FunctorSuper4PCS,
+                                           PointType,
+                                           gr::DummyTransformVisitor,
+                                           gr::AdaptivePointFilter,
+                                           gr::AdaptivePointFilter::Options>::OptionsType;
+
+/*typedef gr::Match4pcsBase<gr::FunctorSuper4PCS,
+                          gr::Point3D,
                           gr::DummyTransformVisitor,
                           gr::AdaptivePointFilter,
                           gr::AdaptivePointFilter::Options>::OptionsType Options;
-
+*/
 namespace internal {
 
 template <class Kernel,
+          class PointType,
           class PointRange1,
           class PointRange2,
           class PointMap1,
@@ -55,22 +67,35 @@ template <class Kernel,
           class VectorMap2>
 std::pair<typename Kernel::Aff_transformation_3, double>
 compute_registration_transformation(const PointRange1& range1,    const PointRange2& range2,
-                                    PointMap1 point_map1,   PointMap2 point_map2,
-                                    VectorMap1 vector_map1, VectorMap2 vector_map2,
-                                    Options& options)
+                                    const PointMap1& point_map1,  const PointMap2& point_map2,
+                                    const VectorMap1& vector_map1, const VectorMap2& vector_map2,
+                                    Options<PointType>& options)
 {
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
+
+  typedef PointAdapter<Kernel,
+                       PointRange1,
+                       PointRange2,
+                       PointMap1,
+                       PointMap2,
+                       VectorMap1,
+                       VectorMap2>  PointAdapterType;
+  
+//template<typename Kernel, typename Range1, typename Range2, typename PointMap1, typename PointMap2, typename VectorMap1, typename VectorMap2>
+//struct PointAdapter {
+
   namespace GR=gr;
 
-  std::vector<GR::Point3D> set1, set2;
-  std::vector<GR::Point3D::VectorType> normals1, normals2;
+//  std::vector<GR::Point3D> set1, set2;
+//  std::vector<GR::Point3D::VectorType> normals1, normals2;
 
   // TODO: see if should allow user to change those types
-  typedef Eigen::Matrix<gr::Point3D::Scalar, 4, 4> MatrixType;
+  typedef Eigen::Matrix<double/*PointAdapterType::Scalar*/, 4, 4> MatrixType;
   typedef gr::UniformDistSampler SamplerType;
   typedef gr::DummyTransformVisitor TrVisitorType;
   typedef gr::Match4pcsBase<gr::FunctorSuper4PCS,
+                            PointAdapterType /*gr::Point3D*/,
                             TrVisitorType,
                             gr::AdaptivePointFilter,
                             gr::AdaptivePointFilter::Options> MatcherType;
@@ -79,8 +104,19 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
   SamplerType sampler;
   TrVisitorType visitor;
 
+  // Do not copy the points but pass the ranges zipped with point and vector maps
+  // to be resolved at point adapter
+  std::vector<const PointMap1*> pmap1_ptrs(range1.size(), &point_map1);
+  std::vector<const VectorMap1*> vmap1_ptrs(range1.size(), &vector_map1);
+
+  std::vector<const PointMap2*> pmap2_ptrs(range2.size(), &point_map2);
+  std::vector<const VectorMap2*> vmap2_ptrs(range1.size(), &vector_map2);
+
+  auto range_pmap_vmap_1 = boost::combine(range1, pmap1_ptrs, vmap1_ptrs);
+  auto range_pmap_vmap_2 = boost::combine(range2, pmap2_ptrs, vmap2_ptrs);
+
   // copy points and normal
-  const std::size_t nbpt1 = range1.size();
+  /*const std::size_t nbpt1 = range1.size();
   set1.reserve(nbpt1);
   normals1.reserve(nbpt1);
   for (typename PointRange1::const_iterator it=range1.begin(),
@@ -103,14 +139,15 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
     set2.push_back(GR::Point3D(p.x(), p.y(), p.z()));
     normals2.push_back(GR::Point3D::VectorType(v.x(), v.y(), v.z()));
   }
-
+*/
   // logger
   GR::Utils::Logger logger(GR::Utils::NoLog);
 
   // matcher
   MatcherType matcher(options, logger);
   double score =
-    matcher.ComputeTransformation(set1, set2, mat, sampler, visitor);
+    matcher.ComputeTransformation(range_pmap_vmap_1, range_pmap_vmap_2, mat, sampler, visitor);
+    //matcher.ComputeTransformation(set1, set2, mat, sampler, visitor);
 
 #ifdef CGAL_OPENGR_VERBOSE
   std::cerr << "Transformation matrix: " << std::endl;
@@ -261,21 +298,37 @@ compute_registration_transformation (const PointRange1& point_set_1, const Point
 
   PointMap1 point_map1 = choose_param(get_param(np1, internal_np::point_map), PointMap1());
   NormalMap1 normal_map1 = choose_param(get_param(np1, internal_np::normal_map), NormalMap1());
-  PointMap1 point_map2 = choose_param(get_param(np2, internal_np::point_map), PointMap2());
+  PointMap2 point_map2 = choose_param(get_param(np2, internal_np::point_map), PointMap2()); // bugfix here
   NormalMap2 normal_map2 = choose_param(get_param(np2, internal_np::normal_map), NormalMap2());
 
-  Options options;
+  typedef typename internal::PointAdapter<Kernel,
+                       PointRange1,
+                       PointRange2,
+                       PointMap1,
+                       PointMap2,
+                       NormalMap1,
+                       NormalMap2> PointType;
+
+  Options<PointType> options;
   options.sample_size = choose_param(get_param(np1, internal_np::number_of_samples), 200);
   options.delta = choose_param(get_param(np1, internal_np::accuracy), 5.00);
   options.max_time_seconds = choose_param(get_param(np1, internal_np::maximum_running_time), 1000);
   bool overlap_ok = options.configureOverlap (choose_param(get_param(np1, internal_np::overlap), 0.20));
   CGAL_USE (overlap_ok);
-  CGAL_static_assertion_msg (overlap_ok, "Invalid overlap configuration.");
+  // TODO:
+  //CGAL_static_assertion_msg (overlap_ok, "Invalid overlap configuration.");
 
+/*
   return internal::compute_registration_transformation<Kernel>(point_set_1, point_set_2,
                                                                point_map1, point_map2,
                                                                normal_map1, normal_map2,
                                                                options);
+*/
+  return internal::compute_registration_transformation<Kernel, PointType>(point_set_1, point_set_2,
+                                                                          point_map1, point_map2,
+                                                                          normal_map1, normal_map2,
+                                                                          options);
+
 }
 
 // convenience overloads
