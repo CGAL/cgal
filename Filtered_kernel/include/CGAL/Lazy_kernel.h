@@ -164,7 +164,7 @@ public:
   typedef CGAL::Object Object_3;
 
 #define CGAL_Kernel_obj(X) \
-  typedef Lazy<typename Approximate_kernel::X, typename Exact_kernel::X, typename Exact_kernel::FT, E2A>  X;
+  typedef Lazy<typename Approximate_kernel::X, typename Exact_kernel::X, E2A>  X;
 
   CGAL_Kernel_obj(Data_accessor_2)
   CGAL_Kernel_obj(Conic_2)
@@ -325,7 +325,7 @@ public:
     FT operator()(const Weighted_point_2& p) const
     {
 
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
                          typename Exact_kernel::Weighted_point_2,
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
@@ -338,7 +338,7 @@ public:
             
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l2;
+        return std::get<2>(lr->l);
       }
       return BaseClass().compute_weight_2_object()(p);
     }
@@ -355,7 +355,7 @@ public:
     FT operator()(const Weighted_point_3& p) const
     {
 
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
                          typename Exact_kernel::Weighted_point_3,
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
@@ -368,7 +368,7 @@ public:
             
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l2;
+        return std::get<2>(lr->l);
       }
       return BaseClass().compute_weight_3_object()(p);
     }
@@ -403,7 +403,7 @@ public:
     
     Point_2 operator()(const Weighted_point_2& p) const
     {
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
                          typename Exact_kernel::Weighted_point_2,
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
@@ -413,7 +413,7 @@ public:
                          FT
                          > LR;
 
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
                          typename Exact_kernel::Weighted_point_2,
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
@@ -425,11 +425,11 @@ public:
 
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l1;
+        return std::get<1>(lr->l);
       } else {
         LRint* lrint = dynamic_cast<LRint*>(p.ptr());
         if(lrint && (! lrint->et)){
-          return lrint->l1;
+          return std::get<1>(lrint->l);
         }
       }
 
@@ -465,7 +465,7 @@ public:
     
     Point_3 operator()(const Weighted_point_3& p) const
     {
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
                          typename Exact_kernel::Weighted_point_3,
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
@@ -475,7 +475,7 @@ public:
                          FT
                          > LR;
       
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
                          typename Exact_kernel::Weighted_point_3,
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
@@ -488,11 +488,11 @@ public:
       
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l1;
+        return std::get<1>(lr->l);
       }else{
         LRint* lrint = dynamic_cast<LRint*>(p.ptr());
         if(lrint && (! lrint->et)){
-          return lrint->l1;
+          return std::get<1>(lrint->l);
         }
       }
       return BaseClass().construct_point_3_object()(p);

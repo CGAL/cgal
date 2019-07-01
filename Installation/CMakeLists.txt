@@ -4,14 +4,10 @@
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
 if(NOT PROJECT_NAME)
+  cmake_minimum_required(VERSION 3.1...3.15)
   project(CGAL CXX C)
 endif()
 
-# Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1)
-
-# Tested version:
-cmake_policy(VERSION 3.1)
 
 if(POLICY CMP0056)
   # https://cmake.org/cmake/help/v3.2/policy/CMP0056.html

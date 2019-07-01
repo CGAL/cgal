@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Algebraic_kernel_d_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 # CGAL and its components

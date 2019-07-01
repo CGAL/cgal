@@ -29,9 +29,8 @@ int main()
   CGAL_assertion( rt.number_of_vertices() == 6 );
 
   // check that the info was correctly set.
-  Regular::Finite_vertices_iterator vit;
-  for (vit = rt.finite_vertices_begin(); vit != rt.finite_vertices_end(); ++vit)
-    if( points[ vit->info() ].first != vit->point() ){
+  for (Regular::Vertex_handle v : rt.finite_vertex_handles())
+    if( points[ v->info() ].first != v->point() ){
       std::cerr << "Error different info" << std::endl;
       exit(EXIT_FAILURE);
     }

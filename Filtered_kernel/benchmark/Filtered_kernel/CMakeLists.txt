@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Filtered_kernel_test )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 add_executable(bench_simple_comparisons bench_simple_comparisons.cpp)

@@ -1,8 +1,8 @@
 # This is the CMake script for compiling this folder.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Poisson_surface_reconstruction_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 # Find CGAL
 find_package(CGAL QUIET)

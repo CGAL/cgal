@@ -35,9 +35,7 @@
 #include <CGAL/NewKernel_d/functor_properties.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <functional>
-#ifdef CGAL_CXX11
 #include <initializer_list>
-#endif
 
 namespace CGAL {
 namespace CartesianDKernelFunctors {
@@ -70,10 +68,9 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 		    // should we cache the coordinates of p0 in case they are computed?
 		  }
 		}
-		return R::LA::sign_of_determinant(CGAL_MOVE(m));
+		return R::LA::sign_of_determinant(std::move(m));
 	}
 
-#ifdef CGAL_CXX11
 	// Since the dimension is at least 2, there are at least 3 points and no ambiguity with iterators.
 	// template <class...U,class=typename std::enable_if<std::is_same<Dimension_tag<sizeof...(U)-1>,typename R::Default_ambient_dimension>::value>::type>
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
@@ -85,28 +82,8 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 	result_type operator()(std::initializer_list<P> l) const {
 		return operator()(l.begin(),l.end());
 	}
-#else
-	//should we make it template to avoid instantiation for wrong dim?
-	//or iterate outside the class?
-#define CGAL_VAR(Z,J,I) m(I,J)=c(p##I,J)-c(x,J);
-#define CGAL_VAR2(Z,I,N) BOOST_PP_REPEAT(N,CGAL_VAR,I)
-#define CGAL_CODE(Z,N,_) \
-	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
-		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
-		Matrix m(N,N); \
-		BOOST_PP_REPEAT(N,CGAL_VAR2,N) \
-		return R::LA::sign_of_determinant(CGAL_MOVE(m)); \
-	}
-
-BOOST_PP_REPEAT_FROM_TO(7, 10, CGAL_CODE, _ )
-	// No need to do it for <=6, since that uses a different code path
-#undef CGAL_CODE
-#undef CGAL_VAR2
-#undef CGAL_VAR
-#endif
 };
 
-#ifdef CGAL_CXX11
 template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
 	typedef R_ R;
@@ -114,7 +91,7 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 	typedef typename Get_type<R, Point_tag>::type Point;
 	typedef typename Get_type<R, Orientation_tag>::type result_type;
 	template<class>struct Help;
-	template<int...I>struct Help<Indices<I...> > {
+	template<std::size_t...I>struct Help<std::index_sequence<I...> > {
 		template<class C,class P,class T> result_type operator()(C const&c,P const&x,T&&t)const{
 			return sign_of_determinant<RT>(c(std::get<I/d>(t),I%d)-c(x,I%d)...);
 		}
@@ -122,7 +99,7 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 	template<class P0,class...P> result_type operator()(P0 const&x,P&&...p)const{
 		static_assert(d==sizeof...(P),"Wrong number of arguments");
 		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
-		return Help<typename N_increasing_indices<d*d>::type>()(c,x,std::forward_as_tuple(std::forward<P>(p)...));
+		return Help<std::make_index_sequence<d*d>>()(c,x,std::forward_as_tuple(std::forward<P>(p)...));
 	}
 
 
@@ -139,40 +116,6 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 		return help2(Dimension_tag<d+1>(),f,e);
 	}
 };
-#else
-#define CGAL_VAR(Z,J,I) c(p##I,J)-x##J
-#define CGAL_VAR2(Z,I,N) BOOST_PP_ENUM(N,CGAL_VAR,I)
-#define CGAL_VAR3(Z,N,_) Point const&p##N=*++f;
-#define CGAL_VAR4(Z,N,_) RT const&x##N=c(x,N);
-#define CGAL_CODE(Z,N,_) \
-template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : private Store_kernel<R_> { \
-	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points) \
-	typedef R_ R; \
-	typedef typename Get_type<R, RT_tag>::type RT; \
-	typedef typename Get_type<R, Point_tag>::type Point; \
-	typedef typename Get_type<R, Orientation_tag>::type result_type; \
-	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
-		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
-		BOOST_PP_REPEAT(N,CGAL_VAR4,) \
-		return sign_of_determinant<RT>(BOOST_PP_ENUM(N,CGAL_VAR2,N)); \
-	} \
-	template<class Iter> \
-	result_type operator()(Iter f, Iter CGAL_assertion_code(e))const{ \
-		Point const&x=*f; \
-		BOOST_PP_REPEAT(N,CGAL_VAR3,) \
-		CGAL_assertion(++f==e); \
-		return operator()(x,BOOST_PP_ENUM_PARAMS(N,p)); \
-	} \
-};
-
-	BOOST_PP_REPEAT_FROM_TO(2, 7, CGAL_CODE, _ )
-#undef CGAL_CODE
-#undef CGAL_VAR4
-#undef CGAL_VAR3
-#undef CGAL_VAR2
-#undef CGAL_VAR
-
-#endif
 
 template<class R_> struct Orientation_of_points<R_,Dimension_tag<1>,true> : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
@@ -208,8 +151,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
-		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
-		// FIXME: Uh? Using it on a vector ?!
+		typename Get_functor<R, Vector_dimension_tag>::type vd(this->kernel());
 		Vector const& v0=*f;
 		int d=vd(v0);
 		Matrix m(d,d);
@@ -222,10 +164,9 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 			m(i,j)=c(v,j);
 		}
 		}
-		return R::LA::sign_of_determinant(CGAL_MOVE(m));
+		return R::LA::sign_of_determinant(std::move(m));
 	}
 
-#ifdef CGAL_CXX11
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
 	result_type operator()(U&&...u) const {
 		return operator()({std::forward<U>(u)...});
@@ -235,13 +176,10 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	result_type operator()(std::initializer_list<V> l) const {
 		return operator()(l.begin(),l.end());
 	}
-#else
-	//TODO
-#endif
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Orientation_of_vectors_tag,(CartesianDKernelFunctors::Orientation_of_vectors<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Orientation_of_vectors_tag,(CartesianDKernelFunctors::Orientation_of_vectors<K>),(Vector_tag),(Vector_dimension_tag,Compute_vector_cartesian_coordinate_tag));
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Linear_rank : private Store_kernel<R_> {
@@ -255,11 +193,10 @@ template<class R_> struct Linear_rank : private Store_kernel<R_> {
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
-		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		typename Get_functor<R, Vector_dimension_tag>::type vd(this->kernel());
 		std::ptrdiff_t n=std::distance(f,e);
 		if (n==0) return 0;
 		Vector const& v0 = *f;
-		// FIXME: Uh? Using it on a vector ?!
 		int d=vd(v0);
 		Matrix m(d,n);
 		for(int j=0;j<d;++j){
@@ -271,12 +208,12 @@ template<class R_> struct Linear_rank : private Store_kernel<R_> {
 		    m(j,i)=c(v,j);
 		  }
 		}
-		return R::LA::rank(CGAL_MOVE(m));
+		return R::LA::rank(std::move(m));
 	}
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Linear_rank_tag,(CartesianDKernelFunctors::Linear_rank<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Linear_rank_tag,(CartesianDKernelFunctors::Linear_rank<K>),(Vector_tag),(Vector_dimension_tag,Compute_vector_cartesian_coordinate_tag));
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Linearly_independent : private Store_kernel<R_> {
@@ -286,9 +223,8 @@ template<class R_> struct Linearly_independent : private Store_kernel<R_> {
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
-		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		typename Get_functor<R, Vector_dimension_tag>::type vd(this->kernel());
 		std::ptrdiff_t n=std::distance(f,e);
-		// FIXME: Uh? Using it on a vector ?!
 		int d=vd(*f);
 		if (n>d) return false;
 		typename Get_functor<R, Linear_rank_tag>::type lr(this->kernel());
@@ -297,7 +233,7 @@ template<class R_> struct Linearly_independent : private Store_kernel<R_> {
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Linearly_independent_tag,(CartesianDKernelFunctors::Linearly_independent<K>),(Vector_tag),(Point_dimension_tag,Linear_rank_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Linearly_independent_tag,(CartesianDKernelFunctors::Linearly_independent<K>),(Vector_tag),(Vector_dimension_tag,Linear_rank_tag));
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Contained_in_linear_hull : private Store_kernel<R_> {
@@ -311,10 +247,9 @@ template<class R_> struct Contained_in_linear_hull : private Store_kernel<R_> {
 	template<class Iter,class V>
 	result_type operator()(Iter f, Iter e,V const&w)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
-		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		typename Get_functor<R, Vector_dimension_tag>::type vd(this->kernel());
 		std::ptrdiff_t n=std::distance(f,e);
 		if (n==0) return false;
-		// FIXME: Uh? Using it on a vector ?!
 		int d=vd(w);
 		Matrix m(d,n+1);
 		for(int i=0; f!=e; ++f,++i){
@@ -329,14 +264,14 @@ template<class R_> struct Contained_in_linear_hull : private Store_kernel<R_> {
 		int r1 = R::LA::rank(m);
 		// FIXME: Don't use eigen directly, go through an interface in LA...
 		m.conservativeResize(Eigen::NoChange, n);
-		int r2 = R::LA::rank(CGAL_MOVE(m));
+		int r2 = R::LA::rank(std::move(m));
 		return r1 == r2;
 		// TODO: This is very very far from optimal...
 	}
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Contained_in_linear_hull_tag,(CartesianDKernelFunctors::Contained_in_linear_hull<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Contained_in_linear_hull_tag,(CartesianDKernelFunctors::Contained_in_linear_hull<K>),(Vector_tag),(Vector_dimension_tag,Compute_vector_cartesian_coordinate_tag));
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Affine_rank : private Store_kernel<R_> {
@@ -363,7 +298,7 @@ template<class R_> struct Affine_rank : private Store_kernel<R_> {
 		    // TODO: cache p0[j] in case it is computed?
 		  }
 		}
-		return R::LA::rank(CGAL_MOVE(m));
+		return R::LA::rank(std::move(m));
 	}
 };
 }
@@ -428,8 +363,8 @@ template<class R_> struct Contained_in_simplex : private Store_kernel<R_> {
 		}
 		// If the simplex has full dimension, there must be a solution, only the signs need to be checked.
 		if (n == d+1)
-		  LA::solve(a,CGAL_MOVE(m),CGAL_MOVE(b));
-		else if (!LA::solve_and_check(a,CGAL_MOVE(m),CGAL_MOVE(b)))
+		  LA::solve(a,std::move(m),std::move(b));
+		else if (!LA::solve_and_check(a,std::move(m),std::move(b)))
 		  return false;
 		for(int i=0;i<n;++i){
 		  if (a[i]<0) return false;
@@ -462,14 +397,13 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 	typedef typename R::LA::Dynamic_matrix Matrix;
 
 	template<class Iter, class Oter>
-	result_type operator()(Iter f, Iter e, Oter&o)const{
+	result_type operator()(Iter f, Iter e, Oter o)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
-		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		typename Get_functor<R, Vector_dimension_tag>::type vd(this->kernel());
 		typename Get_functor<R, Construct_ttag<Vector_tag> >::type cv(this->kernel());
 		std::ptrdiff_t n=std::distance(f,e);
 		if (n==0) return;
 		Vector const& v0 = *f;
-		// FIXME: Uh? Using it on a vector ?!
 		int d=vd(v0);
 		Matrix m(d,n);
 		for(int j=0;j<d;++j){
@@ -481,15 +415,11 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 		    m(i,j)=c(v,j);
 		  }
 		}
-		Matrix b = R::LA::basis(CGAL_MOVE(m));
+		Matrix b = R::LA::basis(std::move(m));
 		for(int i=0; i < R::LA::columns(b); ++i){
 		  //*o++ = Vector(b.col(i));
 		  typedef
-#ifdef CGAL_CXX11
 		    decltype(std::declval<const Matrix>()(0,0))
-#else
-		    FT
-#endif
 		    Ref;
 		  typedef Iterator_from_indices<Matrix, FT, Ref,
 			  internal::Matrix_col_access<Ref> > IFI;
@@ -499,7 +429,7 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Linear_base_tag,(CartesianDKernelFunctors::Linear_base<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Linear_base_tag,(CartesianDKernelFunctors::Linear_base<K>),(Vector_tag),(Vector_dimension_tag,Compute_vector_cartesian_coordinate_tag));
 
 #if 0
 namespace CartesianDKernelFunctors {
@@ -569,7 +499,7 @@ template<class R_> struct Power_side_of_power_sphere_raw : private Store_kernel<
 	typedef typename LA::Square_matrix Matrix;
 
 	template<class IterP, class IterW, class Pt, class Wt>
-	result_type operator()(IterP f, IterP const& e, IterW fw, Pt const& p0, Wt const& w0) const {
+	result_type operator()(IterP f, IterP const& e, IterW fw, IterW const&/*ew*/, Pt const& p0, Wt const& w0) const {
 	  typedef typename Get_functor<R, Squared_distance_to_origin_tag>::type Sqdo;
 	  typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 	  typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
@@ -599,9 +529,9 @@ template<class R_> struct Power_side_of_power_sphere_raw : private Store_kernel<
 	    }
 	  }
 	  if(d%2)
-	    return -LA::sign_of_determinant(CGAL_MOVE(m));
+	    return -LA::sign_of_determinant(std::move(m));
 	  else
-	    return LA::sign_of_determinant(CGAL_MOVE(m));
+	    return LA::sign_of_determinant(std::move(m));
 	}
 };
 }
@@ -621,11 +551,13 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
 	typedef typename LA::Square_matrix Matrix;
 
+	/* Undocumented, removed
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e)const{
 	  Point const& p0=*f++; // *--e ?
 	  return this->operator()(f,e,p0);
 	}
+	*/
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e, Point const& p0) const {
@@ -657,12 +589,11 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	    }
 	  }
 	  if(d%2)
-	    return -LA::sign_of_determinant(CGAL_MOVE(m));
+	    return -LA::sign_of_determinant(std::move(m));
 	  else
-	    return LA::sign_of_determinant(CGAL_MOVE(m));
+	    return LA::sign_of_determinant(std::move(m));
 	}
 
-#ifdef CGAL_CXX11
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
 	result_type operator()(U&&...u) const {
 		return operator()({std::forward<U>(u)...});
@@ -672,9 +603,6 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	result_type operator()(std::initializer_list<P> l) const {
 		return operator()(l.begin(),l.end());
 	}
-#else
-	//TODO
-#endif
 };
 }
 
@@ -718,7 +646,7 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
       CGAL_assertion (i == d);
       Vec res = typename CVec::Dimension()(d);;
       //std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
-      LA::solve(res, CGAL_MOVE(m), CGAL_MOVE(b));
+      LA::solve(res, std::move(m), std::move(b));
       //std::cout << "Sol: " << res << std::endl;
       return cp(d,LA::vector_begin(res),LA::vector_end(res));
     }
@@ -762,7 +690,7 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
       for(j=0;j<k;++j) m(0,j)=1;
       b(0)=1;
 
-      LAd::solve(l,CGAL_MOVE(m),CGAL_MOVE(b));
+      LAd::solve(l,std::move(m),std::move(b));
 
       typename LA::Vector center=typename LA::Construct_vector::Dimension()(d);
       for(i=0;i<d;++i) center(i)=0;
@@ -821,7 +749,6 @@ template<class R_> struct Side_of_bounded_sphere : private Store_kernel<R_> {
 	  return enum_cast<Bounded_side> (sos (f, e, p0) * op (f, e));
 	}
 
-#ifdef CGAL_CXX11
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
 	result_type operator()(U&&...u) const {
 		return operator()({std::forward<U>(u)...});
@@ -831,9 +758,6 @@ template<class R_> struct Side_of_bounded_sphere : private Store_kernel<R_> {
 	result_type operator()(std::initializer_list<P> l) const {
 		return operator()(l.begin(),l.end());
 	}
-#else
-	//TODO
-#endif
 };
 }
 
@@ -1218,15 +1142,9 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 		CI c(this->kernel());
 
 
-#ifdef CGAL_CXX11
                 auto a_begin=c(a,Begin_tag());
                 auto b_begin=c(b,Begin_tag());
                 auto a_end=c(a,End_tag());
-#else
-                typename CI::result_type a_begin=c(a,Begin_tag());
-                typename CI::result_type b_begin=c(b,Begin_tag());
-                typename CI::result_type a_end=c(a,End_tag());
-#endif
 		result_type res;
 		// can't we do slightly better for Uncertain<*> ?
 		// after res=...; if(is_uncertain(res))return indeterminate<result_type>();
@@ -1290,15 +1208,9 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
 		CI c(this->kernel());
 
 
-#ifdef CGAL_CXX11
                 auto a_begin=c(a,Begin_tag());
                 auto b_begin=c(b,Begin_tag());
                 auto a_end=c(a,End_tag());
-#else
-                typename CI::result_type a_begin=c(a,Begin_tag());
-                typename CI::result_type b_begin=c(b,Begin_tag());
-                typename CI::result_type a_end=c(a,End_tag());
-#endif
 
 		result_type res = true;
 		// Is using CGAL::possibly for Uncertain really an optimization?
