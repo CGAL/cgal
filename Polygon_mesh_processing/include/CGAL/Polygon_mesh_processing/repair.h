@@ -1959,6 +1959,8 @@ bool remove_degenerate_faces(TriangleMesh& tmesh)
 /// @param v a vertex of `pm`
 /// @param pm a triangle mesh containing `v`
 ///
+/// \warning This function has linear runtime with respect to the size of the mesh.
+///
 /// \sa `duplicate_non_manifold_vertices()`
 ///
 /// \return `true` if the vertex is non-manifold, `false` otherwise.
