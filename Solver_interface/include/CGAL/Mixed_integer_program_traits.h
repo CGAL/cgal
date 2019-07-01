@@ -389,7 +389,7 @@ namespace CGAL {
 	//////////////////////////////////////////////////////////////////////////
 
 	// implementation
-
+#ifndef DOXYGEN_RUNNING
 	template<typename FT>
         FT Bound<FT>::infinity_ = 1e20;		// values larger than this value are considered infinity
 
@@ -452,7 +452,6 @@ namespace CGAL {
 		else
 			return solution_value_;
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////
 
@@ -553,7 +552,6 @@ namespace CGAL {
 		objective_->clear();
 	}
 
-	/// \cond SKIP_IN_MANUAL
 	namespace internal {
 		/**
 		* Converts an integer v to a string of specified 'width' by
@@ -566,7 +564,6 @@ namespace CGAL {
 			return string_stream.str();
 		}
 	}
-	/// \endcond
 
 	template<typename FT>
 	typename Mixed_integer_program_traits<FT>::Variable* Mixed_integer_program_traits<FT>::create_variable(
@@ -714,7 +711,7 @@ namespace CGAL {
 		std::size_t num = number_of_binary_variables();
 		return (num > 0) && (num == variables_.size());
 	}
-
+#endif
 } // namespace CGAL
 
 #endif // CGAL_MIXED_INTEGER_PROGRAM_TRAITS_H
