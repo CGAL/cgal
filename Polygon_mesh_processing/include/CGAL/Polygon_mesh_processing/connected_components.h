@@ -880,7 +880,7 @@ OutputIterator split_connected_components_impl(
         tm,
         pidmap,
         CGAL::parameters::face_index_map(fim.first)
-        .edge_is_constrained_map(ecm));
+        /*.edge_is_constrained_map(ecm)*/);
 
   for(int i=0; i<nb_patches; ++i)
   {
@@ -968,7 +968,8 @@ OutputIterator split_connected_components(PolygonMesh& pm,
           get_param(np, internal_np::vertex_index),
           CGAL::dynamic_vertex_property_t<std::size_t >(),
           VIM_def_tag(), pm),
-        ecm, out, pm);
+        ecm,
+        out, pm);
 
 }
 

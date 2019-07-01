@@ -32,7 +32,7 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
-
+#include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/iterator.h>
 
 #include <CGAL/AABB_triangle_primitive.h>
@@ -41,6 +41,7 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 
 #include <boost/property_map/property_map.hpp>
+
 
 #include <unordered_map>
 
@@ -726,6 +727,7 @@ source:
   }
 
   assert(is_valid(tm));
+  PMP::remove_isolated_vertices(tm);
   for(auto v : vertices(tm))
     assert(target(halfedge(v, tm), tm) == v);
 }
