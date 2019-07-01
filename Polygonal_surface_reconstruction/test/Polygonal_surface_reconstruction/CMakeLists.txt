@@ -28,8 +28,6 @@ if ( NOT Boost_FOUND )
   return()  
 endif()
 
-find_package( SCIP )
-
 
 # include for local directory
 
