@@ -6,8 +6,9 @@ Release 5.0
 
 Release date: September 2019
 
-### 2D Triangulations
-
+## 2D Triangulations
+-   Added range types and functions that return ranges, for example
+    for all vertices, which enables to use C++11 for-loops.
 -   **Breaking change**: Removed the functions `CGAL::Constrained_triangulation_plus_2::
     vertices_in_constraint_{begin/end}(Vertex_handle va, Vertex_handle vb) const;`,
     and `CGAL::Constrained_triangulation_plus_2::remove_constraint((Vertex_handle va, Vertex_handle vb)`,
@@ -19,6 +20,8 @@ Release date: September 2019
 -   Add constructor and `insert()` function to `CGAL::Triangulation_2` that takes a range of points with info.  
     
 ### 3D Triangulations
+-   Added range types and functions that return ranges, for example
+    for all vertices, which enables to use C++11 for-loops.
 -   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_3` which takes
     a range of points as argument no longer performs a `spatial_sort()` of the points.
 -   Add constructor and `insert()` function to `CGAL::Triangulation_3` that takes a range of points with info.  

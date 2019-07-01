@@ -377,6 +377,24 @@ forms a convex quadrilateral (see \cgalFigureRef{Triangulation_2D_fig_flip_bis})
 Flip.
 \cgalFigureEnd
 
+The triangulation defines iterator types such as `Triangulation_3::All_vertices_iterator`. They behave like
+a handle, in the sense that there is no need to dereference the iterator to obtain a handle.
+Wherever the API expects a handle the iterator can be passed as well.
+
+In order to write a \cpp 11 `for`-loop the triangulation calls also offers the range type
+`Triangulation_2::All_vertex_handles`, which has a nested type `Triangulation_2::All_vertex_handles::iterator`.
+The value type of this iterator is `Triangulation_2::Vertex_handle`.
+It is similar for the various iterators for vertices and cells.
+
+For the range `Triangulation_2::All_edges` it holds that `Triangulation_2::All_edges::iterator` `==`
+`Triangulation_2::All_edges_iterator`. It is similar for the various iterators for edges and points.
+
+Note that you only need the iterator type if you wish to combine pre \cpp 11 `for`-loops with the range class.
+
+
+\cgalExample{Triangulation_2/for_loop_2.cpp}
+
+
 \subsection Triangulation_2Implementation Implementation
 
 Locate is implemented by a stochastic walk \cgalCite{cgal:dpt-wt-02}.
@@ -1040,7 +1058,7 @@ The class `Constrained_triangulation_plus_2` additionally provides the means to
 - traverse all the constraints of the triangulation using an iterator of type `Constraint_iterator` the value type of which is `Constraint_id`,
 - obtain all constraints that induce a constrained edge or a subconstraint,
 - traverse the sequence of vertices of a constraint  using an iterator of type `Vertices_in_constraint_iterator`, the value type of which is `Vertex_handle` 
-- traverse the subconstraints in the triangulation  using an iterator of type `Subconstraint_iterator`,the value type of which is `Subconstraint`.
+- traverse the subconstraints in the triangulation  using an iterator of type `Subconstraint_iterator`, the value type of which is `Subconstraint`.
 
 Note that the `Constrained_edges_iterator` and the `Subconstraint_iterator` are quite similar.
 The `Constrained_edges_iterator` traverses all edges and skips those that are \em not constrained,

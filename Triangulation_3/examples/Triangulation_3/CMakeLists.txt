@@ -18,6 +18,7 @@ if(CGAL_Qt5_FOUND)
 endif()
 
 if ( CGAL_FOUND )
+  create_single_source_cgal_program( "for_loop.cpp" )
   create_single_source_cgal_program( "adding_handles_3.cpp" )
   create_single_source_cgal_program( "color.cpp" )
   create_single_source_cgal_program( "copy_triangulation_3.cpp" )
