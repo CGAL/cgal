@@ -7,6 +7,9 @@ DO_IGNORE=FALSE
 cd $1
 if [ ! -f "$2/package_info/$2/dependencies" ];then 
   echo "No dependencies found for $2"
+  bash Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
+  
+  
   exit 1
 fi
 LIST_OF_FILES=$(git diff --name-only origin/master... |cut -d/ -f1 |uniq |sort)
