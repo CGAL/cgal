@@ -819,11 +819,28 @@ get_map(boost::param_not_found, Default_tag t, Dynamic_tag , Mesh& m)
   return std::make_pair(get(t,m), boost::is_same<Default_tag, Dynamic_tag>::value) ;
 }
 
-template <class TriangleMesh, class OutputIterator, class FIMap, class VIMap, class HIMap >
+template <typename G>
+struct No_mark
+{
+  friend bool get(No_mark<G>,
+                  typename boost::graph_traits<G>::edge_descriptor)
+  {
+    return false;
+  }
+  friend void put(No_mark<G>,
+                  typename boost::graph_traits<G>::edge_descriptor, bool)
+  {}
+};
+
+
+template < class TriangleMesh, class OutputIterator,
+           class FIMap, class VIMap,
+           class HIMap, class Ecm >
 OutputIterator split_connected_components_impl(
     std::pair<FIMap, bool> fim,//pair(map, need_init)
     std::pair<HIMap, bool> him,//pair(map, need_init)
     std::pair<VIMap, bool> vim,//pair(map, need_init)
+    Ecm ecm,
     OutputIterator out,
     const TriangleMesh& tm
     )
@@ -852,10 +869,17 @@ OutputIterator split_connected_components_impl(
       put(vim.first, v, id++);
     }
   }
-  typename boost::template property_map<TriangleMesh, CGAL::dynamic_face_property_t<int > >::const_type
+
+  typename boost::template property_map<
+      TriangleMesh, CGAL::dynamic_face_property_t<int > >::const_type
       pidmap = get(CGAL::dynamic_face_property_t<int>(), tm);
 
-  int nb_patches = CGAL::Polygon_mesh_processing::connected_components(tm, pidmap, CGAL::parameters::face_index_map(fim.first));
+  int nb_patches =
+      CGAL::Polygon_mesh_processing::connected_components(
+        tm,
+        pidmap,
+        CGAL::parameters::face_index_map(fim.first)
+        .edge_is_constrained_map(ecm));
 
   for(int i=0; i<nb_patches; ++i)
   {
@@ -892,6 +916,15 @@ OutputIterator split_connected_components(TriangleMesh& tm,
         ,CGAL::dynamic_vertex_property_t<std::size_t >
         >::type VIM_def_tag; //or no _c ?
 
+  typedef typename boost::lookup_named_param_def <
+    internal_np::edge_is_constrained_t,
+    NamedParameters,
+    internal::No_mark<TriangleMesh>//default
+  > ::type Ecm;
+
+  Ecm ecm = boost::choose_param( boost::get_param(np, internal_np::edge_is_constrained),
+                                   internal::No_mark<TriangleMesh>() );
+
   return internal::split_connected_components_impl(
         internal::get_map(
           get_param(np, internal_np::face_index),
@@ -905,7 +938,7 @@ OutputIterator split_connected_components(TriangleMesh& tm,
           get_param(np, internal_np::vertex_index),
           CGAL::dynamic_vertex_property_t<std::size_t >(),
           VIM_def_tag(), tm),
-        out, tm);
+        ecm, out, tm);
 
 }
 
