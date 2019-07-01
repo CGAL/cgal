@@ -2180,6 +2180,71 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
 }
 
 /// \ingroup PMP_repairing_grp
+/// collects the non-manifold vertices (if any) present in the mesh.
+///
+/// @tparam PolygonMesh a model of `HalfedgeListGraph`
+/// @tparam OutputIterator a model of `OutputIterator` with value type `boost::graph_traits<PolygonMesh>::vertex_descriptor`
+///
+/// @param pm a triangle mesh containing `v`
+/// @param out the output iterator that collects the non-manifold vertices
+///
+/// \sa `is_non_manifold_vertex()`
+/// \sa `duplicate_non_manifold_vertices()`
+///
+/// \return the output iterator.
+template <typename PolygonMesh, typename OutputIterator>
+OutputIterator non_manifold_vertices(const PolygonMesh& pm,
+                                     OutputIterator out)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
+
+  // Non-manifoldness can appear either:
+  // - if 'pm' is pinched at a vertex. While traversing the incoming halfedges at this vertex,
+  //   we will meet strictly more than one border halfedge.
+  // - if there are multiple umbrellas around a vertex. In that case, we will find a non-visited
+  //   halfedge that has for target a vertex that is already visited.
+
+  std::set<vertex_descriptor> non_manifold_vertices;
+  boost::unordered_set<vertex_descriptor> vertices_visited;
+  boost::unordered_set<halfedge_descriptor> halfedges_handled;
+
+  for(halfedge_descriptor hd : halfedges(pm))
+  {
+    if(!halfedges_handled.insert(hd).second) // already treated this halfedge
+      continue;
+
+    vertex_descriptor vd = target(hd, pm);
+    bool is_vd_non_manifold = false;
+
+    // Check if we have already met this vertex before (necessarily in a different umbrella
+    // since we have never treated the halfedge 'hd')
+    if(!vertices_visited.insert(vd).second)
+      is_vd_non_manifold = true;
+
+    // walk hd's star
+    std::size_t border_halfedge_counter = 0;
+    halfedge_descriptor ihd = hd, done = ihd;
+    do
+    {
+      halfedges_handled.insert(ihd);
+      if(is_border(ihd, pm))
+        ++border_halfedge_counter;
+      ihd = opposite(next(ihd, pm), pm);
+    }
+    while(ihd != done);
+
+    if(border_halfedge_counter > 1)
+      is_vd_non_manifold = true;
+
+    if(is_vd_non_manifold && non_manifold_vertices.insert(vd).second)
+      *out++ = vd;
+  }
+
+  return out;
+}
+
+/// \ingroup PMP_repairing_grp
 /// duplicates all the non-manifold vertices of the input mesh.
 ///
 /// @tparam PolygonMesh a model of `HalfedgeListGraph` and `MutableHalfedgeGraph`
