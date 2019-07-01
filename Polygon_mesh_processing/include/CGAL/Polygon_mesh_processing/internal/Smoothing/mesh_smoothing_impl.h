@@ -435,7 +435,6 @@ public:
       ceres::CostFunction* cost_function =
         new ceres::AutoDiffCostFunction<Face_energy, 1, 1, 1, 1>(new Face_energy(vip, vjp, S_av));
 #endif
-      CGAL_USE(v);
       problem.AddResidualBlock(cost_function, NULL, &x, &y, &z);
     }
 
@@ -450,6 +449,7 @@ public:
 
     return Vector(x - initial_x, y - initial_y, z - initial_z);
 #else
+    CGAL_USE(v);
     return CGAL::NULL_VECTOR;
 #endif
   }

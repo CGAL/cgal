@@ -9,6 +9,7 @@
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 
 #include <CGAL/utility.h>
+#include <CGAL/use.h>
 
 #include <fstream>
 #include <iostream>
@@ -61,6 +62,7 @@ void test_implicit_constrained_devil(Mesh mesh)
   for(vertex_descriptor v : selected_vertices)
   {
     const Point p = get(vpmap, v);
+    CGAL_USE(p);
     assert(equal_doubles(p.x(), fixed_points[i].x(), 1e-10));
     assert(equal_doubles(p.y(), fixed_points[i].y(), 1e-10));
     assert(equal_doubles(p.z(), fixed_points[i].z(), 1e-10));
@@ -94,16 +96,26 @@ void test_implicit_constrained_elephant(Mesh mesh)
 
   CGAL::Boolean_property_map<std::set<vertex_descriptor> > vcmap(selected_vertices);
 
-  Point fixed_point = get(vpmap, *selected_vertices.begin());
+  std::vector<Point> fixed_points(selected_vertices.size());
+  std::size_t i = 0;
+  for(vertex_descriptor v : selected_vertices)
+    fixed_points[i++] = get(vpmap, v);
 
   const double time_step = 1.0;
   PMP::smooth_shape(mesh, time_step,
                     CGAL::parameters::vertex_is_constrained_map(vcmap)
                                      .number_of_iterations(1));
 
-  assert(equal_doubles(get(vpmap, *selected_vertices.begin()).x(), fixed_point.x(), 1e-14));
-  assert(equal_doubles(get(vpmap, *selected_vertices.begin()).y(), fixed_point.y(), 1e-14));
-  assert(equal_doubles(get(vpmap, *selected_vertices.begin()).z(), fixed_point.z(), 1e-14));
+  i = 0;
+  for(vertex_descriptor v : selected_vertices)
+  {
+    const Point p = get(vpmap, v);
+    CGAL_USE(p);
+    assert(equal_doubles(p.x(), fixed_points[i].x(), 1e-10));
+    assert(equal_doubles(p.y(), fixed_points[i].y(), 1e-10));
+    assert(equal_doubles(p.z(), fixed_points[i].z(), 1e-10));
+    ++i;
+  }
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("output_implicit_constrained_elephant.off");
