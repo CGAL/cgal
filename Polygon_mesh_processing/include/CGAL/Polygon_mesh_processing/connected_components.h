@@ -804,6 +804,7 @@ void keep_connected_components(PolygonMesh& pmesh
 
 
 namespace internal{
+
 template <class MapFromNP, class Default_tag, class Dynamic_tag, class Mesh>
 std::pair<MapFromNP , bool>
 get_map(MapFromNP m, Default_tag, Dynamic_tag, Mesh&)
@@ -833,7 +834,7 @@ struct No_mark
 };
 
 
-template < class TriangleMesh, class OutputIterator,
+template < class PolygonMesh, class OutputIterator,
            class FIMap, class VIMap,
            class HIMap, class Ecm >
 OutputIterator split_connected_components_impl(
@@ -842,7 +843,7 @@ OutputIterator split_connected_components_impl(
     std::pair<VIMap, bool> vim,//pair(map, need_init)
     Ecm ecm,
     OutputIterator out,
-    const TriangleMesh& tm
+    const PolygonMesh& tm
     )
 {
   if(fim.second)
@@ -871,7 +872,7 @@ OutputIterator split_connected_components_impl(
   }
 
   typename boost::template property_map<
-      TriangleMesh, CGAL::dynamic_face_property_t<int > >::const_type
+      PolygonMesh, CGAL::dynamic_face_property_t<int > >::const_type
       pidmap = get(CGAL::dynamic_face_property_t<int>(), tm);
 
   int nb_patches =
@@ -883,12 +884,12 @@ OutputIterator split_connected_components_impl(
 
   for(int i=0; i<nb_patches; ++i)
   {
-    CGAL::Face_filtered_graph<TriangleMesh, FIMap, VIMap, HIMap>
+    CGAL::Face_filtered_graph<PolygonMesh, FIMap, VIMap, HIMap>
         filter_graph(tm, i, pidmap,
                      CGAL::parameters::face_index_map(fim.first)
                      .halfedge_index_map(him.first)
                      .vertex_index_map(vim.first));
-    TriangleMesh new_graph;
+    PolygonMesh new_graph;
     CGAL::copy_face_graph(filter_graph, new_graph);
     *out++ = new_graph;
   }
@@ -896,22 +897,51 @@ OutputIterator split_connected_components_impl(
 }
 }//internal
 
-template <class TriangleMesh, class OutputIterator, class NamedParameters>
-OutputIterator split_connected_components(TriangleMesh& tm,
-                                OutputIterator out,
+/*!
+ * \ingroup keep_connected_components_grp
+ * for each connected component of `pm`, a new `PolygonMesh` containing it will be outputted to `out`.
+ *
+ *  \tparam PolygonMesh a model of `FaceListGraph`
+ * \tparam OutputIterator a model of `OutputIterator`
+ *  holding objects of type `PolygonMesh`.
+ *
+ *  \tparam NamedParameters a sequence of Named Parameters
+ *
+ * \param pm the polygon mesh
+ * \param out output iterator to be filled with extracted polygon meshes.
+ * \param np an optional sequence of Named Parameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pm` \cgalParamEnd
+ *   \cgalParamBegin{face_index_map}
+ *     a property map containing an index for each face initialized from 0 to `num_vertices(pm)`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{vertex_index_map}
+ *     a property map containing an index for each vertex initialized 0 to `num_vertices(pm)`
+ *   \cgalParamEnd
+ *   \cgalNPBegin{halfedge_index_map}
+ *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(pm)`
+ *   \cgalNPEnd
+ * \cgalNamedParamsEnd
+ *
+ * \returns `out`.
+ */
+template <class PolygonMesh, class OutputIterator, class NamedParameters>
+OutputIterator split_connected_components(PolygonMesh& pm,
+                                          OutputIterator out,
                                           const NamedParameters& np)
 {
-  typedef typename boost::mpl::if_c<CGAL::graph_has_property<TriangleMesh, CGAL::face_index_t>::value
+  typedef typename boost::mpl::if_c<CGAL::graph_has_property<PolygonMesh, CGAL::face_index_t>::value
         , CGAL::face_index_t
         ,CGAL::dynamic_face_property_t<std::size_t >
         >::type FIM_def_tag; //or no _c ?
 
-  typedef typename boost::mpl::if_c<CGAL::graph_has_property<TriangleMesh, CGAL::halfedge_index_t>::value
+  typedef typename boost::mpl::if_c<CGAL::graph_has_property<PolygonMesh, CGAL::halfedge_index_t>::value
         , CGAL::halfedge_index_t
         ,CGAL::dynamic_halfedge_property_t<std::size_t >
         >::type HIM_def_tag; //or no _c ?
 
-  typedef typename boost::mpl::if_c<CGAL::graph_has_property<TriangleMesh, boost::vertex_index_t>::value
+  typedef typename boost::mpl::if_c<CGAL::graph_has_property<PolygonMesh, boost::vertex_index_t>::value
         , boost::vertex_index_t
         ,CGAL::dynamic_vertex_property_t<std::size_t >
         >::type VIM_def_tag; //or no _c ?
@@ -919,26 +949,26 @@ OutputIterator split_connected_components(TriangleMesh& tm,
   typedef typename boost::lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
-    internal::No_mark<TriangleMesh>//default
+    internal::No_mark<PolygonMesh>//default
   > ::type Ecm;
 
   Ecm ecm = boost::choose_param( boost::get_param(np, internal_np::edge_is_constrained),
-                                   internal::No_mark<TriangleMesh>() );
+                                   internal::No_mark<PolygonMesh>() );
 
   return internal::split_connected_components_impl(
         internal::get_map(
           get_param(np, internal_np::face_index),
           CGAL::dynamic_face_property_t<std::size_t >(),
-          FIM_def_tag(), tm),
+          FIM_def_tag(), pm),
        internal::get_map(
           get_param(np, internal_np::halfedge_index),
           CGAL::dynamic_halfedge_property_t<std::size_t >(),
-          HIM_def_tag(), tm),
+          HIM_def_tag(), pm),
         internal::get_map(
           get_param(np, internal_np::vertex_index),
           CGAL::dynamic_vertex_property_t<std::size_t >(),
-          VIM_def_tag(), tm),
-        ecm, out, tm);
+          VIM_def_tag(), pm),
+        ecm, out, pm);
 
 }
 

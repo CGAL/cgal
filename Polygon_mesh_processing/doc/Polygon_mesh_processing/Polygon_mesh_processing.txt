@@ -715,6 +715,9 @@ enables the user to keep only the largest connected components. This feature can
 for example be useful for noisy data were small connected components
 should be discarded in favour of major connected components.
 
+Also, the function `CGAL::Polygon_mesh_processing::split_connected_components()`
+enables the user to split the connected components of a polygon mesh in as many
+polygon meshes.
 
 \subsection CCExample Connected Components Example
 

@@ -156,6 +156,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::connected_components()`
 - `CGAL::Polygon_mesh_processing::keep_large_connected_components()`
 - `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
+- `CGAL::Polygon_mesh_processing::split_connected_components()`
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::keep_connected_components()` \endlink
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::remove_connected_components()` \endlink
 
