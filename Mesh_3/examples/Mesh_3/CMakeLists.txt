@@ -52,7 +52,7 @@ if ( CGAL_FOUND )
     include( ${EIGEN3_USE_FILE} )
   endif()
   
-  find_package(VTK COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
+  find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
   if(VTK_FOUND)
     if(VTK_USE_FILE)
       include(${VTK_USE_FILE})
