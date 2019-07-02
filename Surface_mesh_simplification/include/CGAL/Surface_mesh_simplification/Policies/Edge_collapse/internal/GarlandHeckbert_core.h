@@ -74,7 +74,6 @@ struct GarlandHeckbertCore
         Row4 plane_mtr;
         FT norm = sqrt(plane.a() * plane.a() + plane.b() * plane.b() + plane.c() * plane.c());
         plane_mtr << plane.a() / norm, plane.b() / norm, plane.c() / norm, plane.d() / norm;
-      //  std::cout << plane_mtr << std::endl << std::endl;
         quadric += plane_mtr.transpose() * plane_mtr;
       }
     }
@@ -90,11 +89,6 @@ struct GarlandHeckbertCore
   */
   static Col4 optimal_point(const Matrix4x4& aQuadric, const Col4& aP0, const Col4& aP1) {
     Matrix4x4 X;
-
-    /*X.block(0, 0, 3, 4) = aQuadric.block(0,0,3,4);
-    X.block(3,0,1,3).setZero();
-    X(3,3) = 1;
-    */
     X << aQuadric.block(0, 0, 3, 4), 0, 0, 0, 1;
 
     Col4 opt_pt;
@@ -103,7 +97,6 @@ struct GarlandHeckbertCore
       // not invertible
       Col4 p1mp0 = std::move(aP1 - aP0);
       FT a = (p1mp0.transpose() * aQuadric * p1mp0)(0,0);
-      //FT b = (p1mp0.transpose() * aQuadric * aP0 + aP0.transpose() * aQuadric * p1mp0)(0,0);
       FT b = 2 * (aP0.transpose() * aQuadric * p1mp0)(0,0);
 
       if(a == 0) {
@@ -132,9 +125,10 @@ struct GarlandHeckbertCore
       }
     } else {
       // invertible
-      Col4 rhs;
-      rhs << 0, 0, 0, 1;
-      opt_pt = X.inverse() * rhs;
+      //Col4 rhs;
+      //rhs << 0, 0, 0, 1;
+      //opt_pt = X.inverse() * rhs;
+      opt_pt = X.inverse().col(3);
     }
     return opt_pt;
   }

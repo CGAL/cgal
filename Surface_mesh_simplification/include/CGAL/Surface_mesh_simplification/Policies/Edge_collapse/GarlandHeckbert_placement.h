@@ -45,8 +45,8 @@ public:
 
     const Col4 opt = std::move(GHC::optimal_point(combinedMatrix, p0, p1));
 
-    boost::optional<typename Profile::Point> pt;
-    pt = typename Profile::Point(opt(0) / opt(3), opt(1) / opt(3), opt(2) / opt(3));
+    boost::optional<typename Profile::Point> pt
+        = typename Profile::Point(opt(0) / opt(3), opt(1) / opt(3), opt(2) / opt(3));
 
     return pt;
   }
