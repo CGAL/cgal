@@ -825,6 +825,11 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 halfedge(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
          const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
+  if(!w.is_in_cc(v))
+  {
+    std::cout<<"is border : "<<is_border(halfedge(v, w.graph()), w.graph())<<std::endl;
+    std::cout<<"is valid: "<< (target(halfedge(v, w.graph()), w.graph()) == v )<<std::endl;
+  }
   CGAL_assertion(w.is_in_cc(v));
   typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h = halfedge(v, w.graph());
   typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor hcirc = h;

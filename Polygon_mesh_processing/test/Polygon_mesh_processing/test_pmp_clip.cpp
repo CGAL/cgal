@@ -295,11 +295,11 @@ void test_split_plane()
   Mesh tm1;
 
   std::ifstream input("data-coref/elephant.off");
-  //std::ifstream input("data/blobby_3cc.off");
   input >> tm1;
   input.close();
 
   PMP::split(tm1,K::Plane_3(0,0,1,0));
+  std::ofstream("out_ccs_plane.off") << std::setprecision(17) << tm1;
   std::vector<Mesh> meshes;
   PMP::split_connected_components(tm1,
                                   std::back_inserter(meshes),
