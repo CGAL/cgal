@@ -42,7 +42,7 @@ struct DefaultColorFunctorNefPolyhedron
                          typename NefPolyhedron::Halffacet_const_handle fh)
   {
     //if (fh==boost::graph_traits<NefPolyhedron>::null_face()) // use to get the mono color
-    //  return CGAL::Color(100, 125, 200); // R G B between 0-255
+      return CGAL::Color(100, 125, 200); // R G B between 0-255
 
     CGAL::Random random((unsigned int)(std::size_t)(&(*fh)));
     return get_random_color(random);
@@ -159,12 +159,6 @@ protected:
     std::unordered_map<Halfedge_const_handle, bool> edges_done;
     SimpleNefPolyhedronViewerQt& viewer;
   };
-
-  void compute_vertex(Vertex_const_handle vh)
-  {
-    add_point(vh->point());
-    // We can use add_point(p, c) with c a CGAL::Color to add a colored point
-  }
 
   void compute_elements()
   {
