@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 
 #else
 
-int main(int argc, char* argv[])
+int main(int , char**)
 {
     std::cerr << "This test requires either GLPK or SCIP.\n";
     return EXIT_SUCCESS;
