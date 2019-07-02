@@ -280,6 +280,14 @@ clip_to_bbox(const Plane_3& plane,
   return ON_ORIENTED_BOUNDARY;
 }
 
+
+template<class Mesh>
+struct Halfedge_and_vertices{
+  typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge; //halfedge wich opposite is the new border
+  typename boost::graph_traits<Mesh>::vertex_descriptor target; //target for halfedge
+  typename boost::graph_traits<Mesh>::vertex_descriptor opp_target; //target for opposite
+};
+
 template <class TriangleMesh, class Ecm,
           class VPMap1, class VPMap2>
 void split_along_edges(TriangleMesh& tm,
@@ -389,7 +397,7 @@ source:
     put(visited_vertices, v, false);
 
   std::size_t nb_shared_edges = shared_edges.size();
-  std::vector<halfedge_descriptor> new_patch_border;
+  std::vector<Halfedge_and_vertices<TriangleMesh> > new_patch_border;
   new_patch_border.reserve( nb_shared_edges );
 
   // now duplicate the edge and set its pointers
@@ -402,27 +410,38 @@ source:
     halfedge_descriptor new_hedge = halfedge(add_edge(tm), tm),
         new_opp = opposite(new_hedge,tm);
 
+    vertex_descriptor vt = target(h, tm);
+    vertex_descriptor vs = source(h, tm);
+
     //replace h with new_hedge
     set_next(new_hedge, next(h, tm), tm);
     set_next(prev(h, tm), new_hedge, tm);
     set_face(new_hedge, fh, tm);
     set_halfedge(face(h, tm), new_hedge, tm);
 
-    vertex_descriptor vd = target(h, tm);
-    set_target(new_hedge, vd, tm);
-
-    //set_target(new_hedge, vd, tm);
-    vd = source(h, tm);
-    set_target(new_opp, vd, tm);
-    //set_target(new_opp, vd, tm);
+    set_target(new_hedge, vt, tm);
+    set_target(new_opp, vs, tm);
 
     set_face(new_opp, GT::null_face(), tm);
     set_face(h, GT::null_face(), tm);
 
 
     //make new_opposite and h border hedges
-    new_patch_border.push_back(new_hedge);
-    new_patch_border.push_back(hopp);
+    Halfedge_and_vertices<TriangleMesh> hav;
+    hav.halfedge = new_hedge;
+    if(vertex_pool.find(vt) != vertex_pool.end())
+      hav.target = vertex_pool[vt];
+    else
+      hav.target = vt;
+    if(vertex_pool.find(vs) != vertex_pool.end())
+      hav.opp_target = vertex_pool[vs];
+    else
+      hav.opp_target = vs;
+    new_patch_border.push_back(hav);
+    hav.halfedge = hopp;
+    hav.target = vs;
+    hav.opp_target = vt;
+    new_patch_border.push_back(hav);
 
     CGAL_assertion( next(new_opp, tm)==GT::null_halfedge() );
     CGAL_assertion( prev(new_opp, tm)==GT::null_halfedge() );
@@ -430,8 +449,12 @@ source:
     CGAL_assertion( prev(next(new_hedge, tm), tm) == new_hedge );
   }
 
-  for(halfedge_descriptor h : new_patch_border)
+  for(auto hav: new_patch_border)
   {
+    halfedge_descriptor h = hav.halfedge;
+    vertex_descriptor vd = hav.target;
+    vertex_descriptor ovd = hav.opp_target;
+
    // std::cout<<tm.point(source(h, tm))<<" "<<tm.point(target(h, tm))<<std::endl;
     halfedge_descriptor h_opp = opposite(h, tm);
     //set next pointer
@@ -441,6 +464,7 @@ source:
       while ( !is_border(candidate, tm) )
         candidate = opposite(prev(candidate, tm), tm);
       set_next(h_opp, candidate, tm);
+      set_target(h_opp, ovd, tm);
     }
     CGAL_assertion( prev(next(h_opp, tm), tm)==h_opp );
 
@@ -453,23 +477,16 @@ source:
     }
 
     //set new target
-    vertex_descriptor vd = target(h, tm);
-    if(!get(visited_vertices, vd))
-    {
+    //if(!get(visited_vertices, vd))
+    //{
       halfedge_descriptor candidate = h;
-      set_halfedge(vertex_pool[vd], h, tm);
+      set_halfedge(vd, h, tm);
       do{
-        if(vertex_pool.find(vd) != vertex_pool.end())
-        {
-          set_target(candidate, vertex_pool[vd], tm);
-        }
-        candidate = opposite(next(candidate, tm), tm);
+          set_target(candidate, vd, tm);
+          candidate = opposite(next(candidate, tm), tm);
       }while(!is_border(candidate, tm));
-      //reset a valid halfedge for vd.
-      set_halfedge(vd, candidate, tm);
       assert(target(halfedge(vd, tm), tm) == vd);
-      put(visited_vertices, vd, true);
-    }
+      //put(visited_vertices, vd, true);
 
 
     CGAL_assertion( prev(next(h_opp, tm), tm) == h_opp );
@@ -492,7 +509,6 @@ source:
   for(auto v : vertices(tm))
     assert(target(halfedge(v, tm), tm) == v);
 }
-
 } // end of internal namespace
 
 /**
