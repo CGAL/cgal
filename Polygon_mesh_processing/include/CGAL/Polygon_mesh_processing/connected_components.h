@@ -68,7 +68,7 @@ namespace Polygon_mesh_processing{
       }
     };
 
-    // A property map 
+    // A property map
     template <typename G>
     struct No_constraint {
       friend bool get(No_constraint<G>, typename boost::graph_traits<G>::edge_descriptor)
@@ -184,7 +184,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  * \ingroup keep_connected_components_grp
  *  computes for each face the index of the corresponding connected component.
  *
- *  A property map for `CGAL::face_index_t` must be either available as an internal property map 
+ *  A property map for `CGAL::face_index_t` must be either available as an internal property map
  *  to `pmesh` or provided as one of the \ref pmp_namedparameters "Named Parameters".
  *
  *  \tparam PolygonMesh a model of `FaceListGraph`
@@ -267,10 +267,10 @@ void keep_connected_components(PolygonMesh& pmesh
 /*!
  * \ingroup keep_connected_components_grp
  *  removes the small connected components and all isolated vertices.
- *  Keep `nb_components_to_keep` largest connected components. 
+ *  Keep `nb_components_to_keep` largest connected components.
  *
  * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
- * must be either available as internal property maps 
+ * must be either available as internal property maps
  * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
@@ -353,7 +353,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *  removes connected components with less than a given number of faces.
  *
  * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
- * must be either available as internal property maps 
+ * must be either available as internal property maps
  * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
@@ -805,24 +805,28 @@ void keep_connected_components(PolygonMesh& pmesh
 
 namespace internal{
 
+//overloads used to select a default index map:
+// use the one passed in the named parameters (user must have initialized it)
 template <class MapFromNP, class Default_tag, class Dynamic_tag, class Mesh, class Range>
 MapFromNP
-get_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&, const Range&)
+get_index_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&, const Range&)
 {
   return m;
 }
 
+// use the one internal to the mesh (user must have initialized it)
 template <class Default_tag, class Dynamic_tag, class Mesh, class Range>
 typename boost::property_map<Mesh, Default_tag >::const_type
-get_map(boost::param_not_found, Default_tag t, Dynamic_tag , const Mesh& m, const Range& )
+get_index_map(boost::param_not_found, Default_tag t, Dynamic_tag , const Mesh& m, const Range& )
 {
 
   return get(t,m);
 }
 
+// create a dynamic property and initialize it
 template <class Dynamic_tag, class Mesh, class Range>
 typename boost::property_map<Mesh, Dynamic_tag >::const_type
-get_map(boost::param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m, const Range& r)
+get_index_map(boost::param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m, const Range& r)
 {
   typename boost::property_map<Mesh, Dynamic_tag >::const_type map = get(t,m);
 
@@ -888,17 +892,16 @@ void split_connected_components_impl(
 
 /*!
  * \ingroup keep_connected_components_grp
- * for each connected component of `pm`, a new `PolygonMesh` containing it will be outputted to `out`.
+ * identifies the connected components of `pm`, and pushes back a new `PolygonMesh` for each connected component in `cc_meshes`.
  *
  *  \tparam PolygonMesh a model of `FaceListGraph`
- *  \tparam PolygonMeshRange a model of `SequenceContainer`(that is, provide
- *  the functions: `push_back()` and `back()`) of `PolygonMesh`es.
+ *  \tparam PolygonMeshRange a model of `SequenceContainer` (providing
+ *  `void push_back()` and `PolygonMesh& back()`) with `PolygonMesh` as value type.
  *
  *  \tparam NamedParameters a sequence of Named Parameters
  *
  * \param pm the polygon mesh
- * \param range the output `PolygonMeshRange` that will be filled with the
- * extracted connected components.
+ * \param cc_meshes container that is filled with the extracted connected components.
  * \param np an optional sequence of Named Parameters among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -917,22 +920,22 @@ void split_connected_components_impl(
  */
 template <class PolygonMesh, class PolygonMeshRange, class NamedParameters>
 void split_connected_components(const PolygonMesh& pm,
-                                PolygonMeshRange& range,
+                                PolygonMeshRange& cc_meshes,
                                 const NamedParameters& np)
 {
   typedef typename boost::mpl::if_c<CGAL::graph_has_property<PolygonMesh, CGAL::face_index_t>::value
         , CGAL::face_index_t
-        ,CGAL::dynamic_face_property_t<std::size_t >
+        , CGAL::dynamic_face_property_t<std::size_t >
         >::type FIM_def_tag;
 
   typedef typename boost::mpl::if_c<CGAL::graph_has_property<PolygonMesh, CGAL::halfedge_index_t>::value
         , CGAL::halfedge_index_t
-        ,CGAL::dynamic_halfedge_property_t<std::size_t >
+        , CGAL::dynamic_halfedge_property_t<std::size_t >
         >::type HIM_def_tag;
 
   typedef typename boost::mpl::if_c<CGAL::graph_has_property<PolygonMesh, boost::vertex_index_t>::value
         , boost::vertex_index_t
-        ,CGAL::dynamic_vertex_property_t<std::size_t >
+        , CGAL::dynamic_vertex_property_t<std::size_t >
         >::type VIM_def_tag;
 
   typedef typename boost::lookup_named_param_def <
@@ -945,24 +948,31 @@ void split_connected_components(const PolygonMesh& pm,
                                    internal::No_mark<PolygonMesh>() );
 
   internal::split_connected_components_impl(
-        internal::get_map(
+        internal::get_index_map(
           get_param(np, internal_np::face_index),
           FIM_def_tag(),
           CGAL::dynamic_face_property_t<std::size_t >(),
           pm, faces(pm)),
-        internal::get_map(
+        internal::get_index_map(
           get_param(np, internal_np::halfedge_index),
           HIM_def_tag(),
           CGAL::dynamic_halfedge_property_t<std::size_t >(),
           pm, halfedges(pm)),
-        internal::get_map(
+        internal::get_index_map(
           get_param(np, internal_np::vertex_index),
           VIM_def_tag(),
           CGAL::dynamic_vertex_property_t<std::size_t >(),
           pm, vertices(pm)),
         ecm,
-        range, pm);
+        cc_meshes, pm);
 
+}
+
+template <class PolygonMesh, class PolygonMeshRange, class NamedParameters>
+void split_connected_components(const PolygonMesh& pm,
+                                PolygonMeshRange& cc_meshes)
+{
+  split_connected_components(pm, cc_meshes, parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing
