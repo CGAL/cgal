@@ -807,14 +807,14 @@ namespace internal{
 
 template <class MapFromNP, class Default_tag, class Dynamic_tag, class Mesh, class Range>
 MapFromNP
-get_map(MapFromNP m, Default_tag, Dynamic_tag, Mesh&, const Range&)
+get_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&, const Range&)
 {
   return m;
 }
 
 template <class Default_tag, class Dynamic_tag, class Mesh, class Range>
 typename boost::property_map<Mesh, Default_tag >::type
-get_map(boost::param_not_found, Default_tag t, Dynamic_tag , Mesh& m, const Range& )
+get_map(boost::param_not_found, Default_tag t, Dynamic_tag , const Mesh& m, const Range& )
 {
 
   return get(t,m);
@@ -822,7 +822,7 @@ get_map(boost::param_not_found, Default_tag t, Dynamic_tag , Mesh& m, const Rang
 
 template <class Dynamic_tag, class Mesh, class Range>
 typename boost::property_map<Mesh, Dynamic_tag >::type
-get_map(boost::param_not_found, Dynamic_tag t, Dynamic_tag , Mesh& m, const Range& r)
+get_map(boost::param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m, const Range& r)
 {
   typename boost::property_map<Mesh, Dynamic_tag >::type map = get(t,m);
 
@@ -890,14 +890,15 @@ void split_connected_components_impl(
  * \ingroup keep_connected_components_grp
  * for each connected component of `pm`, a new `PolygonMesh` containing it will be outputted to `out`.
  *
- *  \tparam PolygonMesh a model of `SequenceContainer`(that is, provide
-  ///         the functions: `push_back()` and `back()`) of `FaceListGraph`s
- *  \tparam PolygonMeshRange a model of `` of `PolygonMesh`es.
+ *  \tparam PolygonMesh a model of `FaceListGraph`
+ *  \tparam PolygonMeshRange a model of `SequenceContainer`(that is, provide
+ *  the functions: `push_back()` and `back()`) of `PolygonMesh`es.
  *
  *  \tparam NamedParameters a sequence of Named Parameters
  *
  * \param pm the polygon mesh
- * \param out output iterator to be filled with extracted polygon meshes.
+ * \param range the output `PolygonMeshRange` that will be filled with the
+ * extracted connected components.
  * \param np an optional sequence of Named Parameters among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -915,9 +916,9 @@ void split_connected_components_impl(
  *
  */
 template <class PolygonMesh, class PolygonMeshRange, class NamedParameters>
-void split_connected_components(PolygonMesh& pm,
-                                          PolygonMeshRange& range,
-                                          const NamedParameters& np)
+void split_connected_components(const PolygonMesh& pm,
+                                PolygonMeshRange& range,
+                                const NamedParameters& np)
 {
   typedef typename boost::mpl::if_c<CGAL::graph_has_property<PolygonMesh, CGAL::face_index_t>::value
         , CGAL::face_index_t
