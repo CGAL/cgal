@@ -813,7 +813,7 @@ get_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&, const Range&)
 }
 
 template <class Default_tag, class Dynamic_tag, class Mesh, class Range>
-typename boost::property_map<Mesh, Default_tag >::type
+typename boost::property_map<Mesh, Default_tag >::const_type
 get_map(boost::param_not_found, Default_tag t, Dynamic_tag , const Mesh& m, const Range& )
 {
 
@@ -821,10 +821,10 @@ get_map(boost::param_not_found, Default_tag t, Dynamic_tag , const Mesh& m, cons
 }
 
 template <class Dynamic_tag, class Mesh, class Range>
-typename boost::property_map<Mesh, Dynamic_tag >::type
+typename boost::property_map<Mesh, Dynamic_tag >::const_type
 get_map(boost::param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m, const Range& r)
 {
-  typename boost::property_map<Mesh, Dynamic_tag >::type map = get(t,m);
+  typename boost::property_map<Mesh, Dynamic_tag >::const_type map = get(t,m);
 
   std::size_t id =0;
   for(auto primitive : r)
