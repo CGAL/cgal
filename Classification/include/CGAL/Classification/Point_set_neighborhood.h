@@ -90,7 +90,7 @@ class Point_set_neighborhood
   typedef Search_traits_adapter <boost::uint32_t, My_point_property_map, SearchTraits_3> Search_traits;
   typedef Sliding_midpoint<Search_traits> Splitter;
   typedef Distance_adapter<boost::uint32_t, My_point_property_map, Euclidean_distance<SearchTraits_3> > Distance;
-  typedef Kd_tree<Search_traits, Splitter, Tag_true> Tree;
+  typedef Kd_tree<Search_traits, Splitter, Tag_true, Tag_true> Tree;
   typedef Fuzzy_sphere<Search_traits> Sphere;
   typedef Orthogonal_k_neighbor_search<Search_traits, Distance, Splitter, Tree> Knn;
 

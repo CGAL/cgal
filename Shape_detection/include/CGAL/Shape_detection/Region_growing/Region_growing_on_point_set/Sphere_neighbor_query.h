@@ -110,7 +110,7 @@ namespace Point_set {
     = CGAL::Fuzzy_sphere<Search_traits>;
       
     using Tree 
-    = CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true>;
+    = CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true, CGAL::Tag_true>;
     /// \endcond
                 
     /// @}
