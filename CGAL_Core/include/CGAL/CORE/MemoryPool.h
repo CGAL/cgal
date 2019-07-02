@@ -84,6 +84,10 @@ public:
         ::operator delete(blocks[i]);
       }
     }
+    // un-commenting the following line can help reproduce on Linux the
+    // assertion !blocks.empty() that is sometimes triggered with MSVC
+    // or AppleClang
+    // blocks.clear();
   }
 
 
