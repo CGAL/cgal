@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = PMP::parameters;
@@ -283,6 +284,46 @@ void test()
   assert(is_valid_polygon_mesh(tm1));
   CGAL::clear(tm1);
   CGAL::clear(tm2);
+
+  // non-manifold border vertices
+  std::stringstream ss;
+  ss << "OFF\n 5 2 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 0 1 4\n3 1 2 3\n";
+  ss >> tm1;
+  PMP::clip(tm1, K::Plane_3(-1,0,0,2));
+  assert(vertices(tm1).size()==3);
+  CGAL::clear(tm1);
+
+  ss = std::stringstream();
+  ss << "OFF\n 7 3 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 1 0\n 1 1 0\n3 0 1 4\n3 1 2 3\n3 1 5 6\n";
+  ss >> tm1;
+  PMP::clip(tm1, K::Plane_3(-1,0,0,2));
+  assert(vertices(tm1).size()==6);
+  CGAL::clear(tm1);
+
+  ss = std::stringstream();
+  ss << "OFF\n 9 4 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 1 0\n 1 1 0\n3 -1 0\n1 -1 0\n3 0 1 4\n3 1 2 3\n3 1 5 6\n3 1 8 7\n";
+  ss >> tm1;
+  PMP::clip(tm1, K::Plane_3(-1,0,0,2));
+  assert(vertices(tm1).size()==7);
+  CGAL::clear(tm1);
+
+  ss = std::stringstream();
+  ss << "OFF\n 9 4 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 1 0\n 1 1 0\n3 -1 0\n1 -1 0\n3 0 1 4\n3 1 2 3\n3 1 5 6\n3 1 8 7\n";
+  ss >> tm1;
+std::ofstream("in.off") << tm1;
+  PMP::clip(tm1, K::Plane_3(0,1,0,0));
+std::ofstream("out.off") << tm1;
+  assert(vertices(tm1).size()==3);
+  CGAL::clear(tm1);
+
+  ss = std::stringstream();
+  ss << "OFF\n 9 4 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 1 0\n 1 1 0\n3 -1 0\n1 -1 0\n3 0 1 4\n3 1 2 3\n3 1 5 6\n3 1 8 7\n";
+  ss >> tm1;
+std::ofstream("in.off") << tm1;
+  PMP::clip(tm1, K::Plane_3(0,-1,0,0));
+std::ofstream("out.off") << tm1;
+  assert(vertices(tm1).size()==7);
+  CGAL::clear(tm1);
 }
 
 int main()
