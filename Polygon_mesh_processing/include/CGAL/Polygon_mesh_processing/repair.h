@@ -2188,7 +2188,7 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
 /// using `hnext = prev(opposite(h, pm), pm)`, starting from `h`).
 ///
 /// @tparam PolygonMesh a model of `HalfedgeListGraph`
-/// @tparam OutputIterator a model of `OutputIterator` with value type `boost::graph_traits<PolygonMesh>::halfedge_descriptor`
+/// @tparam OutputIterator a model of `OutputIterator` holding objects of type `boost::graph_traits<PolygonMesh>::halfedge_descriptor`
 ///
 /// @param pm a triangle mesh
 /// @param out the output iterator that collects halfedges incident to `v`
