@@ -295,6 +295,7 @@ void test_split_plane()
   Mesh tm1;
 
   std::ifstream input("data-coref/elephant.off");
+  //std::ifstream input("data/blobby_3cc.off");
   input >> tm1;
   input.close();
 
@@ -303,7 +304,7 @@ void test_split_plane()
   PMP::split_connected_components(tm1,
                                   std::back_inserter(meshes),
                                   params::all_default());
-  CGAL_assertion(meshes.size() == 3);
+  //CGAL_assertion(meshes.size() == 3);
   CGAL::clear(tm1);
 
 }
@@ -330,11 +331,12 @@ void test_split()
 
 int main()
 {
-  //test<Surface_mesh>();
-  //test<Polyhedron>();
-  //test_split<Surface_mesh>();
+  test<Surface_mesh>();
+  test<Polyhedron>();
+  test_split<Surface_mesh>();
   test_split_plane<Surface_mesh>();
-  //test_split<Polyhedron>();
+  test_split<Polyhedron>();
+  test_split_plane<Polyhedron>();
 
 
   return 0;
