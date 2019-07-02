@@ -412,6 +412,7 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
         }
         filterMenuOperations(submenu, filter, keep);
         action->setVisible(!(submenu->isEmpty()));
+
       }
       else if(action->text().contains(filter, Qt::CaseInsensitive)){
         menu->addAction(action);
@@ -419,6 +420,28 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
       buffer.removeAll(action);
     }
   }
+  QList<QAction*> sorted_actions;
+  for(QAction* action : menu->actions())
+  {
+    if(action->isVisible())
+      sorted_actions.push_back(action);
+  }
+  std::sort(sorted_actions.begin(), sorted_actions.end(), [](QAction* a, QAction* b)->bool
+  {
+    QString atxt = a->text().remove("&"),
+        btxt = b->text().remove("&");
+    int i =0;
+    while(atxt[i] == btxt[i]
+          && i < a->text().size()
+          && i < b->text().size())
+      ++i;
+    bool res = (atxt[i] < btxt[i]);
+    return res;
+
+  });
+  menu->clear();
+  menu->addActions(sorted_actions);
+  qDebug()<<menu->menuAction()->text()<<" sorted.";
 }
 
 void MainWindow::filterOperations()
@@ -432,6 +455,7 @@ void MainWindow::filterOperations()
         menu->removeAction(action);
     }
   }
+
   Q_FOREACH(QAction* action, action_menu_map.keys())
   {
     action_menu_map[action]->addAction(action);
@@ -439,7 +463,7 @@ void MainWindow::filterOperations()
   QString filter=operationSearchBar.text();
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
-      action->setVisible( p.first->applicable(action) 
+      action->setVisible( p.first->applicable(action)
                           && (action->text().contains(filter, Qt::CaseInsensitive)
                               || action->property("subMenuName")
                               .toString().contains(filter, Qt::CaseInsensitive)));
@@ -447,6 +471,7 @@ void MainWindow::filterOperations()
   }
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   filterMenuOperations(ui->menuOperations, filter, false);
+
   operationSearchBar.setFocus();
 }
 
