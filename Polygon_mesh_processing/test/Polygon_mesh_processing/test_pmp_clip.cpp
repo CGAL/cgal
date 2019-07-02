@@ -302,7 +302,7 @@ void test_split_plane()
   std::ofstream("out_ccs_plane.off") << std::setprecision(17) << tm1;
   std::vector<Mesh> meshes;
   PMP::split_connected_components(tm1,
-                                  std::back_inserter(meshes),
+                                  meshes,
                                   params::all_default());
   //CGAL_assertion(meshes.size() == 3);
   CGAL::clear(tm1);

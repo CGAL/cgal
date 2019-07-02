@@ -849,15 +849,15 @@ struct No_mark
 };
 
 
-template < class PolygonMesh, class OutputIterator,
+template < class PolygonMesh, class PolygonMeshRange,
            class FIMap, class VIMap,
            class HIMap, class Ecm >
-OutputIterator split_connected_components_impl(
+void split_connected_components_impl(
     FIMap fim,
     HIMap him,
     VIMap vim,
     Ecm ecm,
-    OutputIterator out,
+    PolygonMeshRange& range,
     const PolygonMesh& tm
     )
 {
@@ -869,8 +869,8 @@ OutputIterator split_connected_components_impl(
       CGAL::Polygon_mesh_processing::connected_components(
         tm,
         pidmap,
-        CGAL::parameters::face_index_map(fim)/*
-        .edge_is_constrained_map(ecm)*/);
+        CGAL::parameters::face_index_map(fim)
+        .edge_is_constrained_map(ecm));
 
   for(int i=0; i<nb_patches; ++i)
   {
@@ -879,11 +879,10 @@ OutputIterator split_connected_components_impl(
                      CGAL::parameters::face_index_map(fim)
                      .halfedge_index_map(him)
                      .vertex_index_map(vim));
-    PolygonMesh new_graph;
+    range.push_back(PolygonMesh());
+    PolygonMesh& new_graph = range.back();
     CGAL::copy_face_graph(filter_graph, new_graph);
-    *out++ = new_graph;
   }
-  return out;
 }
 }//internal
 
@@ -891,9 +890,9 @@ OutputIterator split_connected_components_impl(
  * \ingroup keep_connected_components_grp
  * for each connected component of `pm`, a new `PolygonMesh` containing it will be outputted to `out`.
  *
- *  \tparam PolygonMesh a model of `FaceListGraph`
- * \tparam OutputIterator a model of `OutputIterator`
- *  holding objects of type `PolygonMesh`.
+ *  \tparam PolygonMesh a model of `SequenceContainer`(that is, provide
+  ///         the functions: `push_back()` and `back()`) of `FaceListGraph`s
+ *  \tparam PolygonMeshRange a model of `` of `PolygonMesh`es.
  *
  *  \tparam NamedParameters a sequence of Named Parameters
  *
@@ -914,11 +913,10 @@ OutputIterator split_connected_components_impl(
  *   \cgalNPEnd
  * \cgalNamedParamsEnd
  *
- * \returns `out`.
  */
-template <class PolygonMesh, class OutputIterator, class NamedParameters>
-OutputIterator split_connected_components(PolygonMesh& pm,
-                                          OutputIterator out,
+template <class PolygonMesh, class PolygonMeshRange, class NamedParameters>
+void split_connected_components(PolygonMesh& pm,
+                                          PolygonMeshRange& range,
                                           const NamedParameters& np)
 {
   typedef typename boost::mpl::if_c<CGAL::graph_has_property<PolygonMesh, CGAL::face_index_t>::value
@@ -945,13 +943,13 @@ OutputIterator split_connected_components(PolygonMesh& pm,
   Ecm ecm = boost::choose_param( boost::get_param(np, internal_np::edge_is_constrained),
                                    internal::No_mark<PolygonMesh>() );
 
-  return internal::split_connected_components_impl(
+  internal::split_connected_components_impl(
         internal::get_map(
           get_param(np, internal_np::face_index),
           FIM_def_tag(),
           CGAL::dynamic_face_property_t<std::size_t >(),
           pm, faces(pm)),
-       internal::get_map(
+        internal::get_map(
           get_param(np, internal_np::halfedge_index),
           HIM_def_tag(),
           CGAL::dynamic_halfedge_property_t<std::size_t >(),
@@ -962,7 +960,7 @@ OutputIterator split_connected_components(PolygonMesh& pm,
           CGAL::dynamic_vertex_property_t<std::size_t >(),
           pm, vertices(pm)),
         ecm,
-        out, pm);
+        range, pm);
 
 }
 
