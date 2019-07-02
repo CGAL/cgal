@@ -21,6 +21,9 @@
 #ifndef CGAL_ITERATORS_FOR_FACE_GRAPH_WRAPPER_H
 #define CGAL_ITERATORS_FOR_FACE_GRAPH_WRAPPER_H 1
 
+#include <boost/graph/graph_traits.hpp>
+#include <CGAL/boost/graph/helpers.h>
+
 namespace CGAL
 {
   

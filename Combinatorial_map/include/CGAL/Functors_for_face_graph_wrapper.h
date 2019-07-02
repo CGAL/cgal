@@ -21,11 +21,11 @@
 #ifndef CGAL_FUNCTORS_FOR_FACE_GRAPH_WRAPPER_H
 #define CGAL_FUNCTORS_FOR_FACE_GRAPH_WRAPPER_H 1
 
-#include <CGAL/Iterators_for_face_graph_wrapper.h>
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/Iterators_for_face_graph_wrapper.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 /** This file contains the following functors for Face_graph_wrapper:
