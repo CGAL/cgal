@@ -32,8 +32,13 @@ int main(int argc, char** argv)
 
   Surface_mesh surface_mesh;
 
-  std::ifstream is(argv[1]); is >> surface_mesh;
+  std::ifstream is(argv[1]);
+  assert(is);
+
+  is >> surface_mesh;
   double threshold = atof(argv[2]);
+
+  std::cout << num_vertices(surface_mesh) << " vertices and " << num_edges(surface_mesh) << " edges (input)" << std::endl;
 
   if(!CGAL::is_triangle_mesh(surface_mesh)){
     std::cerr << "Input geometry is not triangulated." << std::endl;
