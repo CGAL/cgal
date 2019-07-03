@@ -303,9 +303,27 @@ void split_along_edges(TriangleMesh& tm,
 
   typedef CGAL::dynamic_halfedge_property_t<bool> H_tag;
   typename boost::property_map<TriangleMesh, H_tag>::type
-    update_target = get(H_tag(), tm);
+    no_target_update = get(H_tag(), tm);
 
   std::vector< std::pair<halfedge_descriptor, vertex_descriptor> > vertices_to_duplicate;
+
+  //collect border halfedges having as target one of the edge endpoints
+  std::set<halfedge_descriptor> extra_border_hedges;
+  for (std::size_t k=0; k<nb_shared_edges; ++k)
+  {
+    for (halfedge_descriptor h : halfedges_around_target(target(shared_edges[k], tm), tm))
+      if (is_border(h, tm))
+        extra_border_hedges.insert(h);
+    for (halfedge_descriptor h : halfedges_around_target(source(shared_edges[k], tm), tm))
+      if (is_border(h, tm))
+        extra_border_hedges.insert(h);
+  }
+  for(halfedge_descriptor h : extra_border_hedges)
+  {
+    put(no_target_update, h, true);
+    set_halfedge(target(h, tm), h, tm);
+    hedges_to_update.push_back(h);
+  }
 
   // now duplicate the edge and set its pointers
   for(std::size_t k=0; k<nb_shared_edges; ++k)
@@ -334,26 +352,26 @@ void split_along_edges(TriangleMesh& tm,
 
     // handle vertices to duplicate
     halfedge_descriptor h_vt = halfedge(vt, tm);
-    if ( get(update_target, h_vt) )
+    if ( get(no_target_update, h_vt) )
       vertices_to_duplicate.push_back(std::make_pair(h, vt));
     else
       set_halfedge(vt, h, tm);
     halfedge_descriptor h_vs = halfedge(vs, tm);
-    if ( get(update_target, h_vs) )
+    if ( get(no_target_update, h_vs) )
       vertices_to_duplicate.push_back(std::make_pair(new_opp, vs));
     else
       set_halfedge(vs, new_opp, tm);
 
     hedges_to_update.push_back(h);
-    put(update_target, h, true);
+    put(no_target_update, h, true);
     hedges_to_update.push_back(new_opp);
-    put(update_target, new_opp, true);
+    put(no_target_update, new_opp, true);
 
     CGAL_assertion( next(prev(new_hedge, tm), tm) == new_hedge );
     CGAL_assertion( prev(next(new_hedge, tm), tm) == new_hedge );
   }
 
-  // update next/prev relationship (TODO: missing opened case)
+  // update next/prev relationship
   for(halfedge_descriptor h : hedges_to_update)
   {
     CGAL_assertion( is_border(h, tm) );

@@ -315,6 +315,7 @@ void test_split()
   // test with a clipper mesh
   TriangleMesh tm1, tm2;
 
+  //closed intersection curves
   std::ifstream input("data-coref/elephant.off");
   input >> tm1;
   input.close();
@@ -325,15 +326,32 @@ void test_split()
   CGAL::clear(tm1);
   CGAL::clear(tm2);
 
+  // open intersection curve
+  input.open("data-clip/split_A.off");
+  input >> tm1;
+  input.close();
+  input.open("data-clip/splitter.off");
+  input >> tm2;
+  input.close();
+  PMP::split(tm1, tm2);
+
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
 }
 
 int main()
 {
+  std::cout << "running test with Surface_mesh\n";
   test<Surface_mesh>();
+  std::cout << "running test with Polyhedron\n";
   test<Polyhedron>();
+  std::cout << "running test_split with Surface_mesh\n";
   test_split<Surface_mesh>();
+  std::cout << "running test_split_plane with Surface_mesh\n";
   test_split_plane<Surface_mesh>();
+  std::cout << "running test_split with Polyhedron\n";
   test_split<Polyhedron>();
+  std::cout << "running test_split_plane with Polyhedron\n";
   test_split_plane<Polyhedron>();
 
   return 0;
