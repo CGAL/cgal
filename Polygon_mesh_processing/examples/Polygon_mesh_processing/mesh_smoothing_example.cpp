@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 
   const unsigned int nb_iterations = (argc > 2) ? std::atoi(argv[2]) : 10;
 
-  std::cout << "Smoothing... (" << nb_iterations << " iterations)" << std::endl;
+  std::cout << "Smoothing mesh... (" << nb_iterations << " iterations)" << std::endl;
 
   // Smooth with both angle and area criteria + Delaunay flips
   PMP::smooth_mesh(mesh, PMP::parameters::number_of_iterations(nb_iterations)
