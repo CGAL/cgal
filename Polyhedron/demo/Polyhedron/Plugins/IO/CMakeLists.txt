@@ -31,13 +31,17 @@ target_link_libraries(surf_io_plugin PUBLIC scene_surface_mesh_item)
 find_package(VTK QUIET COMPONENTS
   vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML vtkFiltersCore vtkFiltersSources)
 if (VTK_FOUND)
-  include(${VTK_USE_FILE})
-  if ("${VTK_VERSION_MAJOR}" GREATER "5")
+  if(VTK_USE_FILE)
+    include(${VTK_USE_FILE})
+  endif()
+  if ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
+    if(TARGET VTK::CommonCore)
+      set(VTK_LIBRARIES VTK::CommonCore VTK::IOCore VTK::IOLegacy VTK::IOXML VTK::FiltersCore VTK::FiltersSources)
+    endif()
     if(VTK_LIBRARIES)
       polyhedron_demo_plugin(vtk_plugin VTK_io_plugin KEYWORDS IO Mesh_3)
       target_link_libraries(vtk_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_c3t3_item scene_points_with_normal_item
-                                       vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
-                                       vtkFiltersCore vtkFiltersSources)
+                                       ${VTK_LIBRARIES})
 
     else()
       message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")

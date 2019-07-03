@@ -97,14 +97,17 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${prj} )
 
-    set(VTK_LIBS "")
     find_package(VTK QUIET COMPONENTS vtkImagingGeneral  vtkIOImage NO_MODULE)
     if(VTK_FOUND)
-      include(${VTK_USE_FILE})
-      if ("${VTK_VERSION_MAJOR}" GREATER "5")
+      if(VTK_USE_FILE)
+        include(${VTK_USE_FILE})
+      endif()
+      if ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
         message(STATUS "VTK found")
         add_definitions(-DCGAL_USE_VTK)
-        set(VTK_LIBS vtkImagingGeneral vtkIOImage)
+        if(TARGET VTK::IOImage)
+          set(VTK_LIBRARIES VTK::IOImage VTK::ImagingGeneral)
+        endif()
       else()
         message(STATUS "Vtk must be at least Rel 6")
       endif()
@@ -115,7 +118,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
     target_link_libraries( ${prj} PRIVATE
       CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_ImageIO
       ${OPENGL_LIBRARIES}
-      ${VTK_LIBS} )
+      ${VTK_LIBRARIES} )
 
     include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
     cgal_add_compilation_test(${prj})
