@@ -69,6 +69,28 @@ public:
   std::shared_ptr<std::vector<std::size_t> > neighbors;
   /// \endcond
   
+  /// \cond SKIP_IN_MANUAL
+  class Point_idx_to_point_unary_function
+  {
+  public:
+    typedef std::size_t argument_type;
+    typedef typename ItemMap::reference result_type;
+    typedef boost::readable_property_map_tag category;
+
+    const ItemRange* m_range;
+    ItemMap m_item_map;
+
+    Point_idx_to_point_unary_function (const ItemRange* range, ItemMap item_map)
+      : m_range (range), m_item_map (item_map)
+    { }
+
+    result_type operator() (const argument_type& arg) const
+    {
+      return get (m_item_map, *(m_range->begin() + arg));
+    }
+  };
+  /// \endcond
+  
 private:
   const ItemRange* m_range;
   ItemMap m_item_map;
@@ -139,14 +161,12 @@ public:
   */
   const CGAL::Bbox_3& bbox() const
   {
-    auto transform = [&](const std::size_t& idx) -> typename ItemMap::reference
-                     {
-                       return get (m_item_map, *(m_range->begin() + idx));
-                     };
-    
     if (m_bounding_box == CGAL::Bbox_3())
+    {
+      Point_idx_to_point_unary_function transform (m_range, m_item_map);
       m_bounding_box = CGAL::bbox_3 (boost::make_transform_iterator (m_inliers->begin(), transform),
                                      boost::make_transform_iterator (m_inliers->end(), transform));
+    }
 
     return m_bounding_box;
   }
