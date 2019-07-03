@@ -337,7 +337,7 @@ class Polyhedron_demo_hole_filling_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "hole_filling_plugin.json")
 public:
   bool applicable(QAction*) const { return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex())) ||
         qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); }
