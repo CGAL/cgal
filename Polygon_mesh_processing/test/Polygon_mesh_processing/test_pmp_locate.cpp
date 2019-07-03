@@ -663,7 +663,7 @@ struct Locate_with_AABB_tree_Tester<3> // 3D
     assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, g), p3_a), FT(0)));
 
     // ---------------------------------------------------------------------------
-    loc = PMP::locate(p3_a, g);
+    loc = PMP::locate(p3_a, g, CGAL::parameters::snapping_tolerance(1e-7));
     assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, g), p3_a), FT(0)));
     assert(PMP::is_in_face(loc, g));
 
