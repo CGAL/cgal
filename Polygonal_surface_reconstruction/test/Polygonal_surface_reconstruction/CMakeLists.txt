@@ -35,39 +35,47 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "polygonal_surface_reconstruction_test.cpp" )
 
-find_package( SCIP QUIET)
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+if(EIGEN3_FOUND)
+  include( ${EIGEN3_USE_FILE} )
 
-if (SCIP_FOUND)
+  # Executables that require Eigen 3.1
+  find_package( SCIP QUIET)
 
-  include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
+  if (SCIP_FOUND)
 
-  target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${SCIP_LIBRARIES} )
+    include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
 
-  target_compile_definitions(polygonal_surface_reconstruction_test PRIVATE -DCGAL_USE_SCIP)
+    target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${SCIP_LIBRARIES} )
 
-  message("SCIP found and used")
+    target_compile_definitions(polygonal_surface_reconstruction_test PRIVATE -DCGAL_USE_SCIP)
 
-endif()
+    message("SCIP found and used")
 
-
-find_package( GLPK QUIET)
-
-    if (GLPK_FOUND)
-
-      include_directories( BEFORE ${GLPK_INCLUDE_DIR} )
-
-      target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${GLPK_LIBRARIES} )
-
-      target_compile_definitions(polygonal_surface_reconstruction_test PRIVATE -DCGAL_USE_GLPK)
-
-      message("GLPK found and used")
-
-endif()
+  endif()
 
 
-if (NOT SCIP_FOUND AND NOT GLPK_FOUND)
+  find_package( GLPK QUIET)
 
-  message(STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
+  if (GLPK_FOUND)
+
+    include_directories( BEFORE ${GLPK_INCLUDE_DIR} )
+
+    target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${GLPK_LIBRARIES} )
+
+    target_compile_definitions(polygonal_surface_reconstruction_test PRIVATE -DCGAL_USE_GLPK)
+
+    message("GLPK found and used")
+
+  endif()
+
+
+  if (NOT SCIP_FOUND AND NOT GLPK_FOUND)
+
+    message(STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
       "Please provide either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
 
+  endif()
+else()
+  message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
 endif()
