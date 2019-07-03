@@ -107,9 +107,6 @@ public:
 
   void mark_border_vertices(const VCMap vcmap, const Face_graph& pmesh) const
   {
-    for(vertex_descriptor v : vertices(pmesh))
-      put(vcmap, v, false);
-
     for(halfedge_descriptor h : halfedges(pmesh))
     {
       if(CGAL::is_border(h, pmesh))
