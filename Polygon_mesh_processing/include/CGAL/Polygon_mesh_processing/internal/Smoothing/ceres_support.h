@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#include <boost/config.hpp>
+
 // Ignore warnings on Windows of type
 // " class XXXX needs to have dll-interface to be used by clients of struct YYYY" in an interaction
 // between Ceres and Eigen, which doesn't make much sense as Eigen is header-only.
