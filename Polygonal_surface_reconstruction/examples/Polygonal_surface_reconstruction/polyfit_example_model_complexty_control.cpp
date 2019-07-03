@@ -86,14 +86,14 @@ int main()
 	// Model 1: more detail
 	Surface_mesh model;
 
-	std::cout << "Reconstructing with complexity 0.2...";
+	std::cout << "Reconstructing with complexity 0.05...";
 	t.reset();
-	if (!algo.reconstruct<MIP_Solver>(model, 0.43, 0.27, 0.2)) {
+	if (!algo.reconstruct<MIP_Solver>(model, 0.8, 0.15, 0.05)) {
 		std::cerr << " Failed: " << algo.error_message() << std::endl;
 		return EXIT_FAILURE;
 	}
 	else {
-       const std::string& output_file = "data/building_result-0.2.off";
+       const std::string& output_file = "data/building_result-0.05.off";
        std::ofstream output_stream(output_file.c_str());
        if (output_stream && CGAL::write_off(output_stream, model))
 			std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
@@ -104,14 +104,14 @@ int main()
 	}
 
 	// Model 2: a little less detail
-	std::cout << "Reconstructing with complexity 0.6...";
+	std::cout << "Reconstructing with complexity 0.5...";
 	t.reset();
-	if (!algo.reconstruct<MIP_Solver>(model, 0.43, 0.27, 0.6)) {
+	if (!algo.reconstruct<MIP_Solver>(model, 0.3, 0.2, 0.5)) {
 		std::cerr << " Failed: " << algo.error_message() << std::endl;
 		return EXIT_FAILURE;
 	}
 	else {
-       const std::string& output_file = "data/building_result-0.6.off";
+       const std::string& output_file = "data/building_result-0.5.off";
        std::ofstream output_stream(output_file.c_str());
        if (output_stream && CGAL::write_off(output_stream, model))
 			std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
@@ -122,14 +122,14 @@ int main()
 	}
 
 	// Model 3: more less detail
-	std::cout << "Reconstructing with complexity 1.5...";
+	std::cout << "Reconstructing with complexity 0.7...";
 	t.reset();
-	if (!algo.reconstruct<MIP_Solver>(model, 0.43, 0.27, 1.5)) {
+	if (!algo.reconstruct<MIP_Solver>(model, 0.2, 0.1, 0.7)) {
 		std::cerr << " Failed: " << algo.error_message() << std::endl;
 		return EXIT_FAILURE;
 	}
 	else {
-		const std::string& output_file = "data/building_result-1.5.off";
+		const std::string& output_file = "data/building_result-0.7.off";
 		std::ofstream output_stream(output_file.c_str());
 		if (output_stream && CGAL::write_off(output_stream, model))
 			std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
