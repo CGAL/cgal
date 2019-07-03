@@ -56,7 +56,7 @@ public:
                                                     typename Generic_map::Dart_handle>;
     
     static typename Generic_map::Dart_handle opposite(Generic_map& amap, typename Generic_map::Dart_handle dh) {
-      return amap.template opposite<2>(dh);
+      return amap.template alpha<2,0>(dh);
     }
     static void copy(Generic_map& target, Gmap_origin& source,
                      Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin) {
@@ -64,7 +64,7 @@ public:
     }
     static void set_weights(Generic_map& target, Gmap_origin& source, 
                             Origin_to_copy_map& origin_to_copy, const Weight& wf) {
-      // source.display_characteristics(std::cout);
+      // source.display_characteristics(std::cerr);
       for (auto it = source.darts().begin(), itend = source.darts().end(); it != itend; ++it) {
         target.template info<1>(origin_to_copy[it]) = wf(it);
       }
@@ -89,7 +89,7 @@ public:
     }
     static void set_weights(Generic_map& target, Gmap_origin& source, 
                             Origin_to_copy_map& origin_to_copy, const Weight& wf) {
-      // source.display_characteristics(std::cout);
+      // source.display_characteristics(std::cerr);
       for (auto it = source.darts().begin(), itend = source.darts().end(); it != itend; ++it) {
         target.template info<1>(origin_to_copy[it]) = wf(it);
       }
@@ -180,13 +180,18 @@ public:
     // Initialize 1-attributes
     Gmap_wrapper::set_weights(m_gmap, gmap, m_origin_to_copy, wf);
     // Count number of vertices
-    for (auto it = m_gmap.template one_dart_per_cell<0>().begin(), itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it) {
-      ++m_nb_of_vertices;
-      // m_gmap.template info<0>(it) = -1;
-    }
-    m_spanning_tree.reserve(m_nb_of_vertices-1);
-    m_distance_from_root.reserve(m_nb_of_vertices);
-    m_trace_index.reserve(m_nb_of_vertices-1);
+    for (auto it = m_gmap.template one_dart_per_cell<0>().begin(), 
+              itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it)
+      m_vertex_list.push_back(it);
+    for (auto it = m_gmap.template one_dart_per_cell<1>().begin(), 
+              itend = m_gmap.template one_dart_per_cell<1>().end(); it != itend; ++it)
+      m_edge_list.push_back(it);
+    for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), 
+              itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it)
+      m_face_list.push_back(it);
+    m_spanning_tree.reserve(-1 + m_vertex_list.size());
+    m_distance_from_root.reserve(m_vertex_list.size());
+    m_trace_index.reserve(-1 + m_vertex_list.size());
     // m_gmap.display_characteristics(std::cerr);
     // std::cerr << '\n';
   }
@@ -200,7 +205,7 @@ public:
     cycle.clear();
     bool first_check = true;
     Distance_type min_length = 0;
-    for (auto it = m_gmap.template one_dart_per_cell<0>().begin(), itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it) {
+    for (Dart_handle it : m_vertex_list) {
       Distance_type temp_length;
       if (first_check) {
         if (!find_cycle(it, cycle, &temp_length)) continue;
@@ -256,7 +261,9 @@ private:
       pq.pop();
       Dart_handle u = (u_index == 0) ? root : m_gmap.next(spanning_tree[u_index - 1]);
       CGAL_assertion(u_index == m_gmap.template info<0>(u));
-      for (auto it = m_gmap.template one_dart_per_incident_cell<1,0>(u).begin(), itend = m_gmap.template one_dart_per_incident_cell<1,0>(u).end(); it != itend; ++it) {
+      bool first_run = true;
+      for (Dart_handle it = u; first_run || it != u; it = m_gmap.next(Gmap_wrapper::opposite(m_gmap, it))) {
+        first_run = false;
         Dart_handle v = m_gmap.next(it);
         Distance_type w = m_gmap.template info<1>(it);
         if (!m_gmap.is_marked(v, vertex_visited)) {
@@ -278,6 +285,7 @@ private:
             pq.push(v_index);
           }
         }
+        // std::cerr << '.';
       }
     }
     m_gmap.free_mark(vertex_visited);
@@ -307,7 +315,9 @@ private:
       q.pop();
       Dart_handle u = (u_index == 0) ? root : m_gmap.next(spanning_tree[u_index - 1]);
       CGAL_assertion(u_index == m_gmap.template info<0>(u));
-      for (auto it = m_gmap.template one_dart_per_incident_cell<1,0>(u).begin(), itend = m_gmap.template one_dart_per_incident_cell<1,0>(u).end(); it != itend; ++it) {
+      bool first_run = true;
+      for (Dart_handle it = u; first_run || it != u; it = m_gmap.next(Gmap_wrapper::opposite(m_gmap, it))) {
+        first_run = false;
         Dart_handle v = m_gmap.next(it);
         if (!m_gmap.is_marked(v, vertex_visited)) {
           int v_index = ++vertex_index;
@@ -331,11 +341,14 @@ private:
 
   bool is_degree_one_face(Dart_handle dh_face, Dart_handle& dh_only_edge, size_type edge_deleted) {
     Dart_handle dh_edge = NULL;
-    for (auto dh = m_gmap.template one_dart_per_incident_cell<1,2>(dh_face).begin(), dhend = m_gmap.template one_dart_per_incident_cell<1,2>(dh_face).end(); dh != dhend; ++dh) {
+    bool first_run = true;
+    for (Dart_handle dh = dh_face; first_run || dh != dh_face; dh = m_gmap.next(dh)) {
+      first_run = false;
       if (!m_gmap.is_marked(dh, edge_deleted)) {
         if (dh_edge!=NULL) return false;
         dh_edge=dh;
       }
+      // std::cerr << '?';
     }
     if (dh_edge == NULL) return false;
     dh_only_edge = dh_edge;
@@ -358,14 +371,17 @@ private:
       std::cerr << "No more free mark, exit." << std::endl;
       exit(-1);
     }
-    for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it) {
-      if (m_gmap.template attribute<2>(it) == NULL) {
-        for (auto dh = m_gmap.template one_dart_per_incident_cell<1,2>(it).begin(), dhend = m_gmap.template one_dart_per_incident_cell<1,2>(it).end(); dh != dhend; ++dh) {
-          if (m_gmap.is_marked(dh, edge_deleted)) continue;
-          m_gmap.template mark_cell<1>(dh, edge_deleted);
+    for (Dart_handle dh_face : m_face_list) {
+      if (m_gmap.template attribute<2>(dh_face) == NULL) {
+        bool first_run = true;
+        for (Dart_handle it = dh_face; first_run || it != dh_face; it = m_gmap.next(it)) {
+          first_run = false;
+          if (m_gmap.is_marked(it, edge_deleted)) continue;
+          m_gmap.template mark_cell<1>(it, edge_deleted);
         }
-        m_gmap.template mark_cell<2>(it, face_deleted);
+        m_gmap.template mark_cell<2>(dh_face, face_deleted);
       }
+      // std::cerr << '!';
     }
     for (auto dh : spanning_tree) {
       if (m_gmap.is_marked(dh, edge_deleted)) continue;
@@ -373,7 +389,7 @@ private:
     }
     std::queue<Dart_handle> degree_one_faces;
     // Add to queue the degree-1 faces
-    for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it) {
+    for (Dart_handle it : m_face_list) {
       if (m_gmap.is_marked(it, face_deleted)) continue;
       Dart_handle dh_only_edge = NULL;
       if (is_degree_one_face(it, dh_only_edge, edge_deleted)) 
@@ -393,7 +409,7 @@ private:
       if (is_degree_one_face(dh_adj_face, dh_only_edge, edge_deleted))
         degree_one_faces.push(dh_only_edge);
     }
-    for (auto it = m_gmap.template one_dart_per_cell<1>().begin(), itend = m_gmap.template one_dart_per_cell<1>().end(); it != itend; ++it) {
+    for (Dart_handle it : m_edge_list) {
       if (m_gmap.template info<0>(it) >= 0 && !m_gmap.is_marked(it, edge_deleted)) {
         noncon_edges.push_back(it);
       }
@@ -414,7 +430,7 @@ private:
     m_spanning_tree.clear();
     m_distance_from_root.clear();
     m_trace_index.clear();
-    for (auto it = m_gmap.template one_dart_per_cell<0>().begin(), itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it)
+    for (Dart_handle it : m_vertex_list)
       m_gmap.template info<0>(it) = -1;
     find_spanning_tree(root, m_spanning_tree, m_distance_from_root, m_trace_index);
     find_noncon_edges(m_spanning_tree, m_noncon_edges);
@@ -461,7 +477,7 @@ private:
   typename Gmap_wrapper::Origin_to_copy_map m_origin_to_copy;
   typename Gmap_wrapper::Copy_to_origin_map m_copy_to_origin;
   unsigned int m_nb_of_vertices = 0;
-  Dart_container m_spanning_tree, m_noncon_edges;
+  Dart_container m_spanning_tree, m_noncon_edges, m_face_list, m_edge_list, m_vertex_list;
   std::vector<Distance_type> m_distance_from_root;
   std::vector<int> m_trace_index;
 };
