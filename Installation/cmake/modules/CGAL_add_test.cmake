@@ -89,6 +89,21 @@ function(cgal_add_compilation_test exe_name)
     COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
   set_property(TEST "compilation_of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
+  if(NOT TARGET cgal_check_build_system)
+    add_custom_target(cgal_check_build_system)
+  endif()
+  if(NOT TEST check_build_system)
+    add_test(NAME "check_build_system"
+      COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system")
+    if(POLICY CMP0066) # cmake 3.7 or later
+      set_property(TEST "check_build_system"
+        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
+    endif()
+  endif()
+  if(POLICY CMP0066) # cmake 3.7 or later
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+  endif()
 endfunction(cgal_add_compilation_test)
 
 function(cgal_setup_test_properties test_name)
