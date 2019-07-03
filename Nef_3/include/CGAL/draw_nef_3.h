@@ -41,7 +41,7 @@ struct DefaultColorFunctorNefPolyhedron
   static CGAL::Color run(const NefPolyhedron&,
                          typename NefPolyhedron::Halffacet_const_handle fh)
   {
-    //if (fh==boost::graph_traits<NefPolyhedron>::null_face()) // use to get the mono color
+    if (fh == nullptr) // use to get the mono color
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
     CGAL::Random random((unsigned int)(std::size_t)(&(*fh)));
@@ -55,22 +55,21 @@ class SimpleNefPolyhedronViewerQt : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt                                   Base;
   typedef typename Nef_Polyhedron::Kernel                   Kernel;
-  typedef typename Nef_Polyhedron::Vertex_const_handle      Vertex_const_handle;
-  typedef typename Nef_Polyhedron::SNC_structure            SNC_structure;
-  typedef typename SNC_structure::Halffacet_cycle_const_iterator
-      Halffacet_cycle_const_iterator;
 
-  typedef typename SNC_structure::SHalfedge_around_facet_const_circulator
-      SHalfedge_around_facet_const_circulator;
+  typedef typename Nef_Polyhedron::Halffacet_cycle_const_iterator            Halffacet_cycle_const_iterator;
+  typedef typename Nef_Polyhedron::SHalfedge_around_facet_const_circulator   SHalfedge_around_facet_const_circulator;
 
-  typedef typename Nef_Polyhedron::Shell_entry_const_iterator Shell_entry_const_iterator;
-  typedef typename Nef_Polyhedron::SFace_const_handle SFace_const_handle;
-  typedef typename Nef_Polyhedron::Volume_const_iterator Volume_const_iterator;
+  typedef typename Nef_Polyhedron::Shell_entry_const_iterator   Shell_entry_const_iterator;
+  typedef typename Nef_Polyhedron::SHalfedge_const_iterator     SHalfedge_const_iterator;
+  typedef typename Nef_Polyhedron::Volume_const_iterator        Volume_const_iterator;
 
+  typedef typename Nef_Polyhedron::Vertex_const_handle       Vertex_const_handle;
+  typedef typename Nef_Polyhedron::SFace_const_handle        SFace_const_handle;
   typedef typename Nef_Polyhedron::Halfedge_const_handle     Halfedge_const_handle;
   typedef typename Nef_Polyhedron::Halffacet_const_handle    Halffacet_const_handle;
   typedef typename Nef_Polyhedron::SHalfedge_const_handle    SHalfedge_const_handle;
   typedef typename Nef_Polyhedron::SHalfloop_const_handle    SHalfloop_const_handle;
+
 public:
   /// Construct the viewer
   /// @param anef the nef polyhedron to view
@@ -83,7 +82,7 @@ public:
                               bool anofaces=false,
                               const ColorFunctor& fcolor=ColorFunctor()) :
   //First draw: vertex; edges, faces; mon-color; inverse normal
-    Base(parent, title, true, true, true, false, false),
+    Base(parent, title, false, true, true, true, false),
     nef(anef),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -126,8 +125,9 @@ protected:
       SHalfedge_around_facet_const_circulator hc_start(se);
       SHalfedge_around_facet_const_circulator hc_end(hc_start);
       CGAL_For_all(hc_start, hc_end) {
-        viewer.add_point_in_face(hc_start->source()->center_vertex()->point(),
-                                 viewer.get_vertex_normal(hc_start));
+        Vertex_const_handle vh = hc_start->source()->center_vertex();
+        viewer.add_point_in_face(vh->point(),
+                                 viewer.get_vertex_normal(vh));
       }
       viewer.face_end();
       facets_done[f] = true;
@@ -177,8 +177,7 @@ protected:
       }
     }
 
-    std::cout << "Total faces drawn: " << V.n_faces << std::endl;
-    std::cout << "Total edges drawn: " << V.n_edges << std::endl;
+    negate_all_normals();
   }
 
   CGAL::Color run_color(Halffacet_const_handle fh)
@@ -203,16 +202,17 @@ protected:
   }
 
 protected:
-  Local_vector get_face_normal(SHalfedge_around_facet_const_circulator he)
+  Local_vector get_face_normal(SHalfedge_const_handle she)
   {
+    SHalfedge_around_facet_const_circulator he(she);
     Local_vector normal = CGAL::NULL_VECTOR;
     SHalfedge_around_facet_const_circulator end = he;
     unsigned int nb = 0;
 
     CGAL_For_all(he, end)
     {
-      internal::newell_single_step_3(internal::Geom_utils<Kernel>::get_local_point(he->source()->center_vertex()->point()),
-                                     internal::Geom_utils<Kernel>::get_local_point(he->next()->source()->center_vertex()->point()),
+      internal::newell_single_step_3(internal::Geom_utils<Kernel>::get_local_point(he->next()->source()->center_vertex()->point()),
+                                     internal::Geom_utils<Kernel>::get_local_point(he->source()->center_vertex()->point()),
                                      normal);
       ++nb;
     }
@@ -221,16 +221,17 @@ protected:
     return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0 / nb));
   }
 
-  Local_vector get_vertex_normal(SHalfedge_around_facet_const_circulator he)
+  Local_vector get_vertex_normal(Vertex_const_handle vh)
   {
     Local_vector normal = CGAL::NULL_VECTOR;
-    SHalfedge_around_facet_const_circulator end = he;
 
-    CGAL_For_all(he, end)
-    {
-      Local_vector n = get_face_normal(he);
+    SHalfedge_const_iterator it = vh->shalfedges_begin();
+    SHalfedge_const_handle end = it;
+    do {
+      Local_vector n = get_face_normal(it);
       normal = typename Local_kernel::Construct_sum_of_vectors_3()(normal, n);
-    }
+      it = it->snext();
+    } while( it != end );
 
     if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
     {
