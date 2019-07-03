@@ -385,11 +385,11 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 
 void addActionToMenu(QAction* action, QMenu* menu)
 {
-  auto it = menu->actions().begin();
-      for(;it != menu->actions().end();++it)
+  bool added = false;
+  for(QAction* it : menu->actions())
   {
     QString atxt = action->text().remove("&"),
-        btxt = (*it)->text().remove("&");
+        btxt = it->text().remove("&");
     int i = 0;
     while(atxt[i] == btxt[i]
           && i < atxt.size()
@@ -398,11 +398,12 @@ void addActionToMenu(QAction* action, QMenu* menu)
     bool res = (atxt[i] < btxt[i]);
     if (res)
     {
-      menu->insertAction(*it, action);
+      menu->insertAction(it, action);
+      added = true;
       break;
     }
   }
-  if(it==menu->actions().end())
+  if(!added)
     menu->addAction(action);
 }
 
@@ -445,28 +446,6 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
       buffer.removeAll(action);
     }
   }
-
-  /*QList<QAction*> sorted_actions;
-  for(QAction* action : menu->actions())
-  {
-    if(action->isVisible() && !action->objectName().isEmpty())
-      sorted_actions.push_back(action);
-  }
-  if(!sorted_actions.empty()){
-    std::sort(sorted_actions.begin(), sorted_actions.end(), [](QAction* a, QAction* b)->bool
-    {
-      QString atxt = a->text().remove("&"),
-          btxt = b->text().remove("&");
-      int i =0;
-      while(atxt[i] == btxt[i]
-            && i < atxt.size()
-            && i < btxt.size())
-        ++i;
-      bool res = (atxt[i] < btxt[i]);
-      return res;
-    });
-    menu->addActions(sorted_actions);
-  }*/
 }
 
 void MainWindow::filterOperations()
