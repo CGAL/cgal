@@ -384,13 +384,13 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
-void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
+void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here, QAction* searchAction)
 {
   QList<QAction*> buffer;
   Q_FOREACH(QAction* action, menu->actions())
     buffer.append(action);
+
   while(!buffer.isEmpty()){
-    
     Q_FOREACH(QAction* action, buffer) {
       if(QMenu* submenu = action->menu())
       {
@@ -410,7 +410,7 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
             menu->addAction(submenu->menuAction());
           }
         }
-        filterMenuOperations(submenu, filter, keep);
+        filterMenuOperations(submenu, filter, keep, searchAction);
         action->setVisible(!(submenu->isEmpty()));
 
       }
@@ -420,6 +420,7 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
       buffer.removeAll(action);
     }
   }
+
   QList<QAction*> sorted_actions;
   for(QAction* action : menu->actions())
   {
@@ -437,11 +438,9 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
       ++i;
     bool res = (atxt[i] < btxt[i]);
     return res;
-
   });
-  menu->clear();
+
   menu->addActions(sorted_actions);
-  qDebug()<<menu->menuAction()->text()<<" sorted.";
 }
 
 void MainWindow::filterOperations()
@@ -470,7 +469,7 @@ void MainWindow::filterOperations()
     }
   }
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
-  filterMenuOperations(ui->menuOperations, filter, false);
+  filterMenuOperations(ui->menuOperations, filter, false, searchAction);
 
   operationSearchBar.setFocus();
 }
