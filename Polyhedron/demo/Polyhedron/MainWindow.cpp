@@ -384,7 +384,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
-void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here, QAction* searchAction)
+void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
 {
   QList<QAction*> buffer;
   Q_FOREACH(QAction* action, menu->actions())
@@ -410,7 +410,7 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here, QAct
             menu->addAction(submenu->menuAction());
           }
         }
-        filterMenuOperations(submenu, filter, keep, searchAction);
+        filterMenuOperations(submenu, filter, keep);
         action->setVisible(!(submenu->isEmpty()));
 
       }
@@ -424,23 +424,24 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here, QAct
   QList<QAction*> sorted_actions;
   for(QAction* action : menu->actions())
   {
-    if(action->isVisible())
+    if(action->isVisible() && !action->objectName().isEmpty())
       sorted_actions.push_back(action);
   }
-  std::sort(sorted_actions.begin(), sorted_actions.end(), [](QAction* a, QAction* b)->bool
-  {
-    QString atxt = a->text().remove("&"),
-        btxt = b->text().remove("&");
-    int i =0;
-    while(atxt[i] == btxt[i]
-          && i < a->text().size()
-          && i < b->text().size())
-      ++i;
-    bool res = (atxt[i] < btxt[i]);
-    return res;
-  });
-
-  menu->addActions(sorted_actions);
+  if(!sorted_actions.empty()){
+    std::sort(sorted_actions.begin(), sorted_actions.end(), [](QAction* a, QAction* b)->bool
+    {
+      QString atxt = a->text().remove("&"),
+          btxt = b->text().remove("&");
+      int i =0;
+      while(atxt[i] == btxt[i]
+            && i < a->text().size()
+            && i < b->text().size())
+        ++i;
+      bool res = (atxt[i] < btxt[i]);
+      return res;
+    });
+    menu->addActions(sorted_actions);
+  }
 }
 
 void MainWindow::filterOperations()
@@ -469,7 +470,7 @@ void MainWindow::filterOperations()
     }
   }
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
-  filterMenuOperations(ui->menuOperations, filter, false, searchAction);
+  filterMenuOperations(ui->menuOperations, filter, false);
 
   operationSearchBar.setFocus();
 }
