@@ -19,9 +19,13 @@ Interval_support
 Kernel_23
 Kernel_d
 Linear_cell_complex
+Modifier
 Modular_arithmetic
 Number_types
+Polyhedron
+Polyhedron_IO
 Profiling_tools
 Property_map
 STL_Extension
 Stream_support
+Surface_mesh
