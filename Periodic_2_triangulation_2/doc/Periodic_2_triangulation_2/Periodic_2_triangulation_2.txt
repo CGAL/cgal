@@ -398,6 +398,8 @@ in the unit rectangle. The tests were done on an Intel i7 @ 2.67GHz.
 
 A 2D periodic triangulation can be visualized by calling the \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink function as shown in the following example. This function opens a new window showing the given Periodic Triangulation. Elements of the periodic triangulation can be viewed in four different modes:
 
+\cgalExample{Periodic_2_triangulation_2/draw_periodic_2_triangulation_2.cpp}
+
 - <B>STORED</B> Display all geometric primitives as they are stored in Triangulation_data_structure_2;
 - <B>UNIQUE</B> Display only one representative of each geometric primitive even if the triangulation is computed in multiply sheeted covering space;
 - <B>STORED_COVER_DOMAIN</B> Same as STORED but also display  all primitives whose intersection with the original domain of the current covering space is non-empty;
