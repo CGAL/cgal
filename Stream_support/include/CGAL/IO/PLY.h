@@ -375,6 +375,7 @@ public:
         t = property->buffer();
         return;
       }
+    t = {};
   }
 
   template <typename Type>
@@ -389,6 +390,7 @@ public:
         t = property->buffer();
         return;
       }
+    t = {};
   }
 
   void assign (double& t, const char* tag)
@@ -410,6 +412,7 @@ public:
           
         return;
       }
+    t = {};
   }
   
 };
