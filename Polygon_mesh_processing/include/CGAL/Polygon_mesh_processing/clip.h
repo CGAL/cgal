@@ -589,14 +589,10 @@ bool clip(      TriangleMesh& tm,
 
 /*!
   * \ingroup PMP_corefinement_grp
-  * splits `tm` along `splitter`.
-  * If `tm` is closed, the splitted parts can be closed too if the named parameter `clip_volume` is set to `true`.
-  * See subsection \ref coref_clip for more details.
-  * \attention With the current implementation, `splitter` will be modified (refined with the intersection with `tm`).
+  * corefines `tm` and `splitter` and duplicates edges in `tm` that are on the intersection with `splitter`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(splitter)` \endlink
-  * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(splitter)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *
@@ -612,10 +608,6 @@ bool clip(      TriangleMesh& tm,
 *     the property map with the points associated to the vertices of `tm` (`splitter`).
 *     If this parameter is omitted, an internal property map for
 *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-*   \cgalParamEnd
-*   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm` (`splitter`).
-*     Note that if the property map is writable, the indices of the faces
-*     of `tm` and `splitter` will be set after refining `tm` with the intersection with `splitter`.
 *   \cgalParamEnd
 *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
 *                            that is used to track the creation of new faces.
@@ -676,9 +668,7 @@ void split(      TriangleMesh& tm,
 
 /**
   * \ingroup PMP_corefinement_grp
-  * splits `tm` along `plane`.
-  * If `tm` is closed, the splitted parts can be closed too if the named parameter `clip_volume` is set to `true`.
-  * See subsection \ref coref_clip for more details.
+  * adds intersection edges of `plane` of `tm` in `tm` and duplicates those edges.
   *
   * \note In the current implementation it is not possible to set the vertex point map and the default will be used.
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
@@ -701,10 +691,6 @@ void split(      TriangleMesh& tm,
   *      the set of triangles closed to the intersection of `tm` and `plane` will be
   *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *      will be thrown if at least one is found.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the splitting will be done on
-  *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
-  *      (i.e. `tm` parts will be closed, and to do so vertices will be duplicated).
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
   */
