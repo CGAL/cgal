@@ -25,6 +25,10 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#ifdef CGAL_PMP_USE_CERES_SOLVER
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/ceres_support.h>
+#endif
+
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
@@ -42,10 +46,6 @@
 #include <CGAL/utils.h>
 
 #include <boost/graph/graph_traits.hpp>
-
-#ifdef CGAL_PMP_USE_CERES_SOLVER
-#include "ceres/ceres.h"
-#endif
 
 #include <algorithm>
 #include <cmath>
