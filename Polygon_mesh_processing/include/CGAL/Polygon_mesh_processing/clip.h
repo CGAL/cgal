@@ -280,135 +280,42 @@ clip_to_bbox(const Plane_3& plane,
   return ON_ORIENTED_BOUNDARY;
 }
 
-
-template<class Mesh>
-struct Halfedge_and_vertices{
-  typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge; //halfedge wich opposite is the new border
-  typename boost::graph_traits<Mesh>::vertex_descriptor target; //target for halfedge
-  typename boost::graph_traits<Mesh>::vertex_descriptor opp_target; //target for opposite
-};
-
 template <class TriangleMesh, class Ecm,
           class VPMap1, class VPMap2>
 void split_along_edges(TriangleMesh& tm,
-          Ecm ecm,
-          VPMap1 vpm_tm,
-          VPMap2 vpm_s
-          )
+                       Ecm ecm,
+                       VPMap1 vpm_tm,
+                       VPMap2 vpm_s)
 {
-
-  using boost::get_param;
-  using boost::choose_param;
-  namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = PMP::parameters;
-
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename VPMap1::value_type Point;
-  typedef CGAL::Face_filtered_graph<TriangleMesh> Filtered_graph;
   std::vector<edge_descriptor> shared_edges;
-  shared_edges.reserve( num_edges(tm));
-  for(const auto& e : edges(tm))
-  {
+  for(edge_descriptor e : edges(tm))
     if(get(ecm, e))
-    {
       shared_edges.push_back(e);
-    }
-  }
-
-  shared_edges.shrink_to_fit();
-  typedef CGAL::dynamic_halfedge_property_t<bool>                                  Halfedge_property_tag;
-  typedef typename boost::property_map<TriangleMesh, Halfedge_property_tag>::type  Visited_halfedge_map;
-  typedef CGAL::dynamic_vertex_property_t<bool>                                  Vertex_property_tag;
-  typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type  Visited_vertex_map;
-  Visited_vertex_map visited_vertices = get(Vertex_property_tag(), tm);
-  // Dynamic pmaps do not have default initialization values (yet)
-  for(vertex_descriptor v : vertices(tm))
-    put(visited_vertices, v, false);
-
-
-  std::unordered_map<vertex_descriptor, vertex_descriptor > vertex_pool;
-  //duplicate vertices
-  for(auto e : shared_edges)
-  {
-    halfedge_descriptor h = halfedge(e, tm);
-    vertex_descriptor vd = target(h, tm);
-    halfedge_descriptor ih = h, done = ih;
-    int border_counter = 0;
-    if(get(visited_vertices, vd)) // already seen this vertex, but not from this star
-    {
-      goto source;
-    }
-
-    put(visited_vertices, vd, true);
-
-    do
-    {
-      if(is_border(ih, tm) || get(ecm, edge(ih, tm)))
-      {
-        ++border_counter;
-      }
-
-      ih = prev(opposite(ih, tm), tm);
-    }while(ih != done);
-
-    if(border_counter > 1)
-    {
-      //duplicate
-      vertex_pool[vd]=add_vertex(tm);
-      put(vpm_tm, vertex_pool[vd], get(vpm_tm, vd));
-    }
-source:
-    //again with source
-    h = opposite(h, tm);
-    vd = target(h, tm);
-    if(get(visited_vertices, vd)) // already seen this vertex, but not from this star
-      continue;
-
-    put(visited_vertices, vd, true);
-
-    ih = h, done = ih;
-    border_counter = 0;
-    do
-    {
-      if(is_border(ih, tm) || get(ecm, edge(ih, tm)))
-      {
-        ++border_counter;
-      }
-
-      ih = prev(opposite(ih, tm), tm);
-    }while(ih != done);
-
-    if(border_counter > 1)
-    {
-      //duplicate
-      vertex_pool[vd]=add_vertex(tm);
-      put(vpm_tm, vertex_pool[vd], get(vpm_tm, vd));
-    }
-
-  }
-
-  //clear vertex_map for re-usability
-  for(vertex_descriptor v : vertices(tm))
-    put(visited_vertices, v, false);
 
   std::size_t nb_shared_edges = shared_edges.size();
-  std::vector<Halfedge_and_vertices<TriangleMesh> > new_patch_border;
-  new_patch_border.reserve( nb_shared_edges );
+  std::vector<halfedge_descriptor> hedges_to_update;
+
+  typedef CGAL::dynamic_halfedge_property_t<bool> H_tag;
+  typename boost::property_map<TriangleMesh, H_tag>::type
+    update_target = get(H_tag(), tm);
+
+  std::vector< std::pair<halfedge_descriptor, vertex_descriptor> > vertices_to_duplicate;
 
   // now duplicate the edge and set its pointers
   for(std::size_t k=0; k<nb_shared_edges; ++k)
   {
-    halfedge_descriptor h = halfedge(shared_edges[k], tm),
-        hopp = opposite(h, tm);
+    halfedge_descriptor h    = halfedge(shared_edges[k], tm),
+                        h_opp = opposite(h, tm);
     face_descriptor fh = face(h, tm);
     //add edge
     halfedge_descriptor new_hedge = halfedge(add_edge(tm), tm),
-        new_opp = opposite(new_hedge,tm);
+                        new_opp   = opposite(new_hedge,tm);
 
     vertex_descriptor vt = target(h, tm);
     vertex_descriptor vs = source(h, tm);
@@ -417,7 +324,7 @@ source:
     set_next(new_hedge, next(h, tm), tm);
     set_next(prev(h, tm), new_hedge, tm);
     set_face(new_hedge, fh, tm);
-    set_halfedge(face(h, tm), new_hedge, tm);
+    set_halfedge(fh, new_hedge, tm);
 
     set_target(new_hedge, vt, tm);
     set_target(new_opp, vs, tm);
@@ -425,90 +332,69 @@ source:
     set_face(new_opp, GT::null_face(), tm);
     set_face(h, GT::null_face(), tm);
 
-
-    //make new_opposite and h border hedges
-    Halfedge_and_vertices<TriangleMesh> hav;
-    hav.halfedge = new_hedge;
-    if(vertex_pool.find(vt) != vertex_pool.end())
-      hav.target = vertex_pool[vt];
+    // handle vertices to duplicate
+    halfedge_descriptor h_vt = halfedge(vt, tm);
+    if ( get(update_target, h_vt) )
+      vertices_to_duplicate.push_back(std::make_pair(h, vt));
     else
-      hav.target = vt;
-    if(vertex_pool.find(vs) != vertex_pool.end())
-      hav.opp_target = vertex_pool[vs];
+      set_halfedge(vt, h, tm);
+    halfedge_descriptor h_vs = halfedge(vs, tm);
+    if ( get(update_target, h_vs) )
+      vertices_to_duplicate.push_back(std::make_pair(new_opp, vs));
     else
-      hav.opp_target = vs;
-    new_patch_border.push_back(hav);
-    hav.halfedge = hopp;
-    hav.target = vs;
-    hav.opp_target = vt;
-    new_patch_border.push_back(hav);
+      set_halfedge(vs, new_opp, tm);
 
-    CGAL_assertion( next(new_opp, tm)==GT::null_halfedge() );
-    CGAL_assertion( prev(new_opp, tm)==GT::null_halfedge() );
+    hedges_to_update.push_back(h);
+    put(update_target, h, true);
+    hedges_to_update.push_back(new_opp);
+    put(update_target, new_opp, true);
+
     CGAL_assertion( next(prev(new_hedge, tm), tm) == new_hedge );
     CGAL_assertion( prev(next(new_hedge, tm), tm) == new_hedge );
   }
 
-  for(auto hav: new_patch_border)
+  // update next/prev relationship (TODO: missing opened case)
+  for(halfedge_descriptor h : hedges_to_update)
   {
-    halfedge_descriptor h = hav.halfedge;
-    vertex_descriptor vd = hav.target;
-    vertex_descriptor ovd = hav.opp_target;
-
-   // std::cout<<tm.point(source(h, tm))<<" "<<tm.point(target(h, tm))<<std::endl;
+    CGAL_assertion( is_border(h, tm) );
     halfedge_descriptor h_opp = opposite(h, tm);
-    //set next pointer
-    {
-      // we visit faces inside the patch we consider
-      halfedge_descriptor candidate = opposite(prev(h, tm), tm);
-      while ( !is_border(candidate, tm) )
-        candidate = opposite(prev(candidate, tm), tm);
-      set_next(h_opp, candidate, tm);
-      set_target(h_opp, ovd, tm);
-    }
+
+    // set next pointer of h, visiting faces inside the patch we consider
+    halfedge_descriptor candidate = opposite(prev(h_opp, tm), tm);
+    while ( !is_border(candidate, tm) )
+      candidate = opposite(prev(candidate, tm), tm);
+    set_next(h, candidate, tm);
     CGAL_assertion( prev(next(h_opp, tm), tm)==h_opp );
 
-    // set prev pointer
-    {
-      halfedge_descriptor candidate = opposite(next(h, tm), tm);
-      while ( !is_border(candidate, tm) )
-        candidate = opposite(next(candidate, tm), tm);
-      set_next(candidate, h_opp, tm);
-    }
-
-    //set new target
-    //if(!get(visited_vertices, vd))
-    //{
-      halfedge_descriptor candidate = h;
-      set_halfedge(vd, h, tm);
-      do{
-          set_target(candidate, vd, tm);
-          candidate = opposite(next(candidate, tm), tm);
-      }while(!is_border(candidate, tm));
-      assert(target(halfedge(vd, tm), tm) == vd);
-      //put(visited_vertices, vd, true);
-
-
-    CGAL_assertion( prev(next(h_opp, tm), tm) == h_opp );
-    CGAL_assertion( next(prev(h_opp, tm), tm) == h_opp );
-    CGAL_assertion( is_border(prev(h_opp, tm), tm) );
-    CGAL_assertion( is_border(next(h_opp, tm), tm) );
+    CGAL_assertion( prev(next(h, tm), tm) == h );
+    CGAL_assertion( is_border(next(h, tm), tm) );
   }
-  std::vector<halfedge_descriptor> border;
-  PMP::border_halfedges(faces(tm),
-                        tm,
-                        std::back_inserter(border));
-  for(auto h : border)
+
+  for(const std::pair<halfedge_descriptor, vertex_descriptor>& p : vertices_to_duplicate)
   {
-    assert(next(prev(h,tm),tm) == h);
-    assert(prev(next(h,tm),tm) == h);
+    vertex_descriptor nv = add_vertex(tm);
+    put(vpm_tm, nv, get(vpm_tm, p.second));
+    for(halfedge_descriptor h : halfedges_around_target(p.first, tm))
+      set_target(h, nv, tm);
+    set_halfedge(nv, p.first, tm);
+   }
+
+  CGAL_assertion_code( for(halfedge_descriptor h : hedges_to_update) )
+  {
+    CGAL_assertion( next(prev(h, tm), tm) == h );
+    CGAL_assertion( prev(next(h, tm), tm) == h );
   }
 
-  assert(is_valid(tm));
-  PMP::remove_isolated_vertices(tm);
-  for(auto v : vertices(tm))
-    assert(target(halfedge(v, tm), tm) == v);
+  for(halfedge_descriptor h : hedges_to_update)
+  {
+    for (halfedge_descriptor hh : halfedges_around_target(h, tm))
+        if (h!=hh)
+          set_target(hh, target(h, tm), tm);
+  }
+
+  CGAL_assertion( is_valid_polygon_mesh(tm) );
 }
+
 } // end of internal namespace
 
 /**
@@ -727,8 +613,8 @@ bool clip(      TriangleMesh& tm,
 template <class TriangleMesh,
           class NamedParameters1,
           class NamedParameters2>
-void split(TriangleMesh& tm,
-           TriangleMesh& splitter,
+void split(      TriangleMesh& tm,
+                 TriangleMesh& splitter,
            const NamedParameters1& np_tm,
            const NamedParameters2& np_s)
 {
@@ -807,12 +693,12 @@ void split(TriangleMesh& tm,
 template <class TriangleMesh,
           class NamedParameters>
 void split(      TriangleMesh& tm,
-          #ifdef DOXYGEN_RUNNING
-          const Plane_3& plane,
-          #else
-                 const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
-                 #endif
-                 const NamedParameters& np)
+           #ifdef DOXYGEN_RUNNING
+           const Plane_3& plane,
+           #else
+           const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
+           #endif
+           const NamedParameters& np)
 {
   using boost::get_param;
   using boost::choose_param;
@@ -877,7 +763,7 @@ template <class TriangleMesh,
 void
 split(      TriangleMesh& tm,
             TriangleMesh& splitter,
-            const NamedParameters1& np_tm)
+      const NamedParameters1& np_tm)
 {
   split(tm, splitter, np_tm, parameters::all_default());
 }
@@ -885,15 +771,15 @@ split(      TriangleMesh& tm,
 // convenience overload
 template <class TriangleMesh>
 void
-split(      TriangleMesh& tm,
-            TriangleMesh& splitter)
+split(TriangleMesh& tm,
+      TriangleMesh& splitter)
 {
   split(tm, splitter, parameters::all_default());
 }
 
 template <class TriangleMesh>
 void split(      TriangleMesh& tm,
-          const typename GetGeomTraits<TriangleMesh>::type::Plane_3& plane)
+           const typename GetGeomTraits<TriangleMesh>::type::Plane_3& plane)
 {
    split(tm, plane, parameters::all_default());
 }
