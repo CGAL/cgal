@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
-  double threshold = (argc > 2) ? std::atof(argv[2]) : 0.01;
+  double threshold = (argc > 2) ? std::atof(argv[2]) : 0.1;
 //  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(threshold);
   SMS::GarlandHeckbert_cost_stop_predicate<double> stop(threshold);
 
