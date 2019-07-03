@@ -30,12 +30,17 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
+  double stop_ratio = 0.1;
+  if(argc > 2) {
+    stop_ratio = std::stod(argv[2]);
+  }
+
   std::chrono::steady_clock::time_point start_time
     = std::chrono::steady_clock::now();
 
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
-  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(0.05);
+  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(stop_ratio);
 
   SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>::garland_heckbert_map_type map;
   SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh> vis(map);
@@ -59,7 +64,7 @@ int main(int argc, char** argv)
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
             << surface_mesh.number_of_edges() << " final edges.\n";
 
-  std::ofstream os(argc > 2 ? argv[2] : "out.off");
+  std::ofstream os(argc > 3 ? argv[3] : "out.off");
   os.precision(17);
   os << surface_mesh;
 

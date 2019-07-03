@@ -31,6 +31,7 @@ struct GarlandHeckbertCore
   typedef typename boost::property_traits<Vertex_point_pmap>::value_type        Point;
   typedef typename Kernel_traits<Point>::Kernel                                 Kernel;
   typedef typename Kernel::Plane_3                                              Plane_3;
+  typedef typename Kernel::Line_3                                               Line_3;
   typedef typename Kernel::FT                                                   FT;
   typedef typename Kernel::RT                                                   RT;
 
@@ -55,28 +56,66 @@ struct GarlandHeckbertCore
   }
 
   /*
+  * Returns true if the target of aHD is a discontinuity vertex in aTM
+  *
+  * Currently, only checks if vertex belongs to a border.
+  */
+  static bool is_discontinuity_vertex(const halfedge_descriptor& aHD, const TM& aTM) {
+    for(face_descriptor fd: faces_around_target(aHD, aTM)) {
+      if(fd == GraphTraits::null_face()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /*
   * fundamental error quadric for the target vertex of aHD in aTM
   */
-  static Matrix4x4 fundamental_error_quadric(const halfedge_descriptor& aHD, const TM& aTM) {
+  static Matrix4x4 fundamental_error_quadric(const halfedge_descriptor& aHD, const TM& aTM, FT aDiscontinuityMultiplier = 1.0) {
     Matrix4x4 quadric;
     quadric.setZero();
 
-    for(face_descriptor fd: faces_around_target(aHD, aTM)) {
+    vertex_descriptor target_vd = target(aHD, aTM);
+    const Point target_vertex_point = std::move(get(boost::vertex_point, aTM, target_vd));
+
+    bool discontinuity_vertex = is_discontinuity_vertex(aHD, aTM);
+
+    for(const halfedge_descriptor hd: halfedges_around_target(target_vd, aTM)) {
+      face_descriptor fd = face(hd, aTM);
       if(fd != GraphTraits::null_face()) {
-        halfedge_descriptor incident_hd = halfedge(fd, aTM);
         std::vector<vertex_descriptor> vds;
-        for(vertex_descriptor vd: vertices_around_face(incident_hd, aTM)) {
+        for(vertex_descriptor vd: vertices_around_face(hd, aTM)) {
           vds.push_back(vd);
         }
         Plane_3 plane(get(boost::vertex_point, aTM, vds[0]),
                       get(boost::vertex_point, aTM, vds[1]),
                       get(boost::vertex_point, aTM, vds[2]));
+
         Row4 plane_mtr;
         FT norm = sqrt(plane.a() * plane.a() + plane.b() * plane.b() + plane.c() * plane.c());
         plane_mtr << plane.a() / norm, plane.b() / norm, plane.c() / norm, plane.d() / norm;
         quadric += plane_mtr.transpose() * plane_mtr;
+
+        if(discontinuity_vertex) {
+          const vertex_descriptor source_vd = source(hd, aTM);
+          const Line_3 edge_line = Line_3(get(boost::vertex_point, aTM, source_vd),
+                                          target_vertex_point);
+
+          Plane_3 plane = edge_line.perpendicular_plane(target_vertex_point);
+
+          Row4 plane_mtr;
+          FT norm = sqrt(plane.a() * plane.a() + plane.b() * plane.b() + plane.c() * plane.c());
+          plane_mtr << plane.a() / norm, plane.b() / norm, plane.c() / norm, plane.d() / norm;
+          quadric += plane_mtr.transpose() * plane_mtr;
+        }
       }
     }
+
+    if(discontinuity_vertex) {
+      quadric *= aDiscontinuityMultiplier;
+    }
+    
     return quadric;
   }
 
