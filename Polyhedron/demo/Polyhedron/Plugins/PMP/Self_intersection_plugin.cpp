@@ -126,6 +126,7 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
       scene->addItem(selection_item);
       scene->itemChanged(poly_item);
       scene->itemChanged(selection_item);
+      selection_item->set_highlighting(false);
       found = true;
     }
   }
