@@ -34,7 +34,20 @@
 #  pragma warning(disable:4251)
 #endif
 
+
+// If a user is using minilog instead of glog, the verbosity cannot be controlled via ceres options...
+#ifdef MAX_LOG_LEVEL
+#  define MAX_LOG_LEVEL_WAS_PREVIOUSLY_DEFINED
+#else
+  #define MAX_LOG_LEVEL 0
+#endif
+
 #include "ceres/ceres.h"
+
+#ifndef MAX_LOG_LEVEL_WAS_PREVIOUSLY_DEFINED
+#  undef MAX_LOG_LEVEL
+#endif
+
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
