@@ -1,6 +1,18 @@
 Release History
 ===============
 
+Release 5.1
+-----------
+
+Release date: March 2020
+
+## Polygon Mesh Processing
+-  New function to split meshes along a mesh or a plane:
+   `CGAL::Polygon_mesh_processing::split()` 
+-  New function to split a single mesh containing several connected components into several meshes containing one connected component:
+   `CGAL::Polygon_mesh_processing::split_connected_components()`
+
+
 Release 5.0
 -----------
 
