@@ -11,14 +11,17 @@ extended or unextended nodes.
 \tparam Traits must be an implementation of the concept `SearchTraits`, 
 for example `Simple_cartesian<double>`. 
 
-\tparam Splitter must be a model of the 
+\tparam GeneralDistance must be a model of the 
 concept `GeneralDistance`. If `Traits` is
 `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
 the default type is `Distance_adapter<Key,PointPropertyMap,Euclidean_distance<BaseTraits> >`, 
 and `Euclidean_distance<Traits>` otherwise.
 
+\tparam Splitter must be a model of the concept `Splitter`.
+The default type is `Sliding_midpoint<Traits>`.
+
 \tparam SpatialTree must be an implementation of the concept `SpatialTree`. 
-The default type is `Kd_tree<Traits, Splitter, Tag_false>`. The 
+The default type is `Kd_tree<Traits, Splitter, Tag_false, Tag_false>`. The third
 template argument `Tag_false` makes that the tree is built with unextended nodes. 
 
 \sa `CGAL::Orthogonal_k_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>` 

@@ -41,6 +41,15 @@ Test whether the query item contains `p`.
 bool contains(Point_d p) const; 
 
 /*!
+Optional: must be defined when used with a `Kd_tree` where `EnablePointsCache`
+is set to `Tag_true`.
+Test whether the query item contains the point whose Cartesian coordinates
+are contained in the range [`begin`, `end`).
+*/
+template <typename Coord_iterator>
+bool contains_point_given_as_coordinates(Coord_iterator begin, Coord_iterator end) const;
+
+/*!
 Test whether the inner approximation of the spatial object intersects a rectangle 
 associated with a node of a tree. 
 */ 

@@ -17,7 +17,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>),
-//               : Waqar Khan <wkhan@mpi-inf.mpg.de>
+//               : Waqar Khan <wkhan@mpi-inf.mpg.de>,
+//                 Clement Jamin (clement.jamin.pro@gmail.com)
 
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H
@@ -46,7 +47,11 @@
 namespace CGAL {
 
 //template <class SearchTraits, class Splitter_=Median_of_rectangle<SearchTraits>, class UseExtendedNode = Tag_true >
-template <class SearchTraits, class Splitter_=Sliding_midpoint<SearchTraits>, class UseExtendedNode = Tag_true >
+template <
+  class SearchTraits,
+  class Splitter_=Sliding_midpoint<SearchTraits>,
+  class UseExtendedNode = Tag_true,
+  class EnablePointsCache = Tag_false>
 class Kd_tree {
 
 public:
@@ -56,11 +61,11 @@ public:
   typedef typename Splitter::Container Point_container;
 
   typedef typename SearchTraits::FT FT;
-  typedef Kd_tree_node<SearchTraits, Splitter, UseExtendedNode > Node;
-  typedef Kd_tree_leaf_node<SearchTraits, Splitter, UseExtendedNode > Leaf_node;
-  typedef Kd_tree_internal_node<SearchTraits, Splitter, UseExtendedNode > Internal_node;
-  typedef Kd_tree<SearchTraits, Splitter> Tree;
-  typedef Kd_tree<SearchTraits, Splitter,UseExtendedNode> Self;
+  typedef Kd_tree_node<SearchTraits, Splitter, UseExtendedNode, EnablePointsCache> Node;
+  typedef Kd_tree_leaf_node<SearchTraits, Splitter, UseExtendedNode, EnablePointsCache> Leaf_node;
+  typedef Kd_tree_internal_node<SearchTraits, Splitter, UseExtendedNode, EnablePointsCache> Internal_node;
+  typedef Kd_tree<SearchTraits, Splitter, UseExtendedNode, EnablePointsCache> Tree;
+  typedef Kd_tree<SearchTraits, Splitter, UseExtendedNode, EnablePointsCache> Self;
 
   typedef Node* Node_handle;
   typedef const Node* Node_const_handle;
@@ -77,6 +82,8 @@ public:
   typedef typename std::vector<Point_d>::size_type size_type;
 
   typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension D;
+
+  typedef EnablePointsCache Enable_points_cache;
 
 private:
   SearchTraits traits_;
@@ -97,12 +104,18 @@ private:
   Kd_tree_rectangle<FT,D>* bbox;
   std::vector<Point_d> pts;
 
+  // Store a contiguous copy of the point coordinates
+  // for faster queries (reduce the number of cache misses)
+  std::vector<FT> points_cache;
+
   // Instead of storing the points in arrays in the Kd_tree_node
   // we put all the data in a vector in the Kd_tree.
   // and we only store an iterator range in the Kd_tree_node.
   //
   std::vector<const Point_d*> data;
 
+  // Dimension of the points
+  int dim_;
 
   #ifdef CGAL_HAS_THREADS
   mutable CGAL_MUTEX building_mutex;//mutex used to protect const calls inducing build()
@@ -112,7 +125,7 @@ private:
 
   // protected copy constructor
   Kd_tree(const Tree& tree)
-    : traits_(tree.traits_),built_(tree.built_)
+    : traits_(tree.traits_),built_(tree.built_),dim_(-1)
   {};
 
 
@@ -267,13 +280,13 @@ public:
     CGAL_assertion(!removed_);
     const Point_d& p = *pts.begin();
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
-    int dim = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
+    dim_ = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
 
     data.reserve(pts.size());
     for(unsigned int i = 0; i < pts.size(); i++){
       data.push_back(&pts[i]);
     }
-    Point_container c(dim, data.begin(), data.end(),traits_);
+    Point_container c(dim_, data.begin(), data.end(),traits_);
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
@@ -284,9 +297,18 @@ public:
     //Reorder vector for spatial locality
     std::vector<Point_d> ptstmp;
     ptstmp.resize(pts.size());
-    for (std::size_t i = 0; i < pts.size(); ++i){
+    for (std::size_t i = 0; i < pts.size(); ++i)
       ptstmp[i] = *data[i];
+
+    // Cache?
+    if (Enable_points_cache::value)
+    {
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits_.construct_cartesian_const_iterator_d_object();
+      points_cache.reserve(dim_ * pts.size());
+      for (std::size_t i = 0; i < pts.size(); ++i)
+        points_cache.insert(points_cache.end(), construct_it(ptstmp[i]), construct_it(ptstmp[i], 0));
     }
+
     for(std::size_t i = 0; i < leaf_nodes.size(); ++i){
       std::ptrdiff_t tmp = leaf_nodes[i].begin() - pts.begin();
       leaf_nodes[i].data = ptstmp.begin() + tmp;
@@ -296,6 +318,12 @@ public:
     data.clear();
 
     built_ = true;
+  }
+
+  // Only correct when build() has been called
+  int dim() const
+  {
+    return dim_;
   }
 
 private:
@@ -472,7 +500,7 @@ public:
 	const_build();
       }
       Kd_tree_rectangle<FT,D> b(*bbox);
-      return tree_root->search(it,q,b);
+      return tree_root->search(it,q,b,begin(),cache_begin(),dim_);
     }
     return it;
   }
@@ -488,7 +516,7 @@ public:
 	const_build();
       }
       Kd_tree_rectangle<FT,D> b(*bbox);
-      return tree_root->search_any_point(q,b);
+      return tree_root->search_any_point(q,b,begin(),cache_begin(),dim_);
     }
     return boost::none;
   }
@@ -545,6 +573,13 @@ public:
       const_build();
     }
     return *bbox;
+  }
+
+
+  typename std::vector<FT>::const_iterator
+    cache_begin() const
+  {
+    return points_cache.begin();
   }
 
   const_iterator

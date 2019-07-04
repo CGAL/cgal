@@ -20,8 +20,8 @@ and `Euclidean_distance<Traits>` otherwise.
 The default type is `Sliding_midpoint<Traits>`. 
 
 \tparam SpatialTree must be a model of the concept `SpatialTree`. 
-The default type is `Kd_tree<Traits,Splitter,Tag_false>`. The 
-template argument `Tag_false` makes that the tree is built with unextended nodes. 
+The default type is `Kd_tree<Traits, Splitter, Tag_false, Tag_false>`. The 
+third template argument `Tag_false` makes that the tree is built with unextended nodes. 
 
 \sa `CGAL::Orthogonal_incremental_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>` 
 

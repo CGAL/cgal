@@ -129,6 +129,17 @@ namespace CGAL {
     return true;
   }
 
+  template <typename Coord_iterator>
+  bool contains_point_given_as_coordinates(Coord_iterator it_coord_begin, Coord_iterator /*unused*/) const {
+	  Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+	  Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
+		for (unsigned int i = 0; i < dim; ++i, ++it_coord_begin, ++minit, ++maxit) {
+			if ( ((*it_coord_begin) < (*minit)) || ((*it_coord_begin) > (*maxit)) )
+        return false;
+    }
+    return true;
+  }
+
   bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
     // test whether the box eroded by 'eps' intersects 'rectangle'
     Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
@@ -139,7 +150,6 @@ namespace CGAL {
     }
     return true;
   }
-
 
   bool outer_range_contains(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
     // test whether the box dilated by 'eps' contains 'rectangle'
