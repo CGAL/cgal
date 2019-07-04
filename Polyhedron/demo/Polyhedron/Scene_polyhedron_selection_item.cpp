@@ -1125,6 +1125,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
                   halfedge(v2, *mesh),
                   *mesh);
           }, this));
+          CGAL::Euler::join_face(halfedge(ed, *mesh), *mesh);
           compute_normal_maps();
           poly_item->invalidateOpenGLBuffers();
         }
