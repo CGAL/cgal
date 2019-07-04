@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -646,6 +647,119 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
 {
   orient_to_bound_a_volume(tm, parameters::all_default());
 }
+
+/*!
+ * \param tm
+ * \todo add namedparameters and fidmap management
+ */
+template <class TriangleMesh>
+void merge_reversible_connected_components(TriangleMesh& tm)
+{
+
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
+  typedef boost::graph_traits<TriangleMesh> GrT;
+  typedef typename GrT::face_descriptor face_descriptor;
+  typedef typename GrT::halfedge_descriptor halfedge_descriptor;
+
+  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t >::type Vpm;
+  typedef typename boost::property_traits<Vpm>::value_type Point_3;
+  Vpm vpm = get(CGAL::vertex_point, tm);
+
+  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_face_property_t<std::size_t> >::type Fidmap;
+  Fidmap fim = get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
+  std::size_t i=0;
+  for (face_descriptor f : faces(tm))
+    put(fim, f, i++);
+
+  Fidmap f_cc_ids = get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
+  std::size_t nb_cc = PMP::connected_components(tm, f_cc_ids, CGAL::parameters::face_index_map(fim));
+
+  std::vector<std::size_t> nb_faces_per_cc(nb_cc, 0);
+  for (face_descriptor f : faces(tm))
+    nb_faces_per_cc[ get(f_cc_ids, f) ]+=1;
+
+  std::map< std::pair<Point_3, Point_3>, std::vector<halfedge_descriptor> > border_hedges_map;
+  std::vector<halfedge_descriptor> border_hedges;
+  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_halfedge_property_t<std::size_t> >::type Hidmap;
+  Hidmap him = get(CGAL::dynamic_halfedge_property_t<std::size_t>(), tm);
+  const std::size_t DV(-1);
+
+  // fill endpoints -> hedges
+  for (halfedge_descriptor h : halfedges(tm))
+  {
+    if ( CGAL::is_border(h, tm) )
+    {
+      put(him, h, DV);
+      border_hedges_map[std::make_pair(get(vpm, source(h, tm)), get(vpm, target(h, tm)))].push_back(h);
+      border_hedges.push_back(h);
+    }
+  }
+
+  // set the id of boundary cc
+  std::size_t id=0;
+  for(halfedge_descriptor h : border_hedges)
+  {
+    if (get(him,h) == DV)
+    {
+      for (halfedge_descriptor hh : CGAL::halfedges_around_face(h, tm))
+      {
+        put(him, hh, id);
+      }
+      ++id;
+    }
+  }
+
+  // check boundary fully matching
+  std::vector<bool> border_cycle_handled(id, false);
+  std::set<std::size_t> ccs_to_reverse;
+  for ( const auto& p : border_hedges_map )
+  {
+    const std::vector<halfedge_descriptor>& hedges = p.second;
+    if ( hedges.size()==2 && !border_cycle_handled[ get(him, hedges[0]) ]
+                          && !border_cycle_handled[ get(him, hedges[1]) ] )
+    {
+      border_cycle_handled[ get(him, hedges[0]) ] = true;
+      border_cycle_handled[ get(him, hedges[1]) ] = true;
+
+      halfedge_descriptor h2=hedges[1];
+      bool did_break=false;
+      for(halfedge_descriptor h1 : CGAL::halfedges_around_face(hedges[0], tm))
+      {
+        if (get(vpm, target(h1,tm)) != get(vpm, target(h2,tm)))
+        {
+          did_break=true;
+          break;
+        }
+        h2=next(h2,tm);
+      }
+      if (!did_break && h2==hedges[1])
+      {
+        std::size_t cc_id1 = get(f_cc_ids, face(opposite(hedges[0], tm), tm)),
+                    cc_id2 = get(f_cc_ids, face(opposite(hedges[1], tm), tm));
+
+        if (cc_id1!=cc_id2)
+        {
+          if (ccs_to_reverse.count(cc_id1)==0 && ccs_to_reverse.count(cc_id2)==0)
+            ccs_to_reverse.insert( nb_faces_per_cc[cc_id1] < nb_faces_per_cc[cc_id2] ? cc_id1 : cc_id2 );
+        }
+      }
+    }
+  }
+
+  // reverse ccs and stitches boundaries
+  std::vector<face_descriptor> faces_to_reverse;
+  for (face_descriptor f : faces(tm))
+    if ( ccs_to_reverse.count( get(f_cc_ids, f) ) != 0 )
+      faces_to_reverse.push_back(f);
+
+  if ( !faces_to_reverse.empty() )
+  {
+    PMP::reverse_face_orientations(faces_to_reverse, tm);
+    PMP::stitch_borders(tm);
+  }
+}
+
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 #endif // CGAL_ORIENT_POLYGON_MESH_H
