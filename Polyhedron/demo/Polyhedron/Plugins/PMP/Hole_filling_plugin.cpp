@@ -164,9 +164,9 @@ void removeViewer(Viewer_interface *viewer)
   Scene_item_rendering_helper::removeViewer(viewer);
 }
   // filter events for selecting / activating holes with mouse input
-  bool eventFilter(QObject* target, QEvent *event)
+  bool eventFilter(QObject* , QEvent *event)
   {
-    Viewer_interface* viewer = qobject_cast<Viewer_interface*>(target);
+    Viewer_interface* viewer = CGAL::Three::Three::activeViewer();
     // This filter is both filtering events from 'viewer' and 'main window'
     Mouse_keyboard_state old_state = state;
     // key events
@@ -262,7 +262,7 @@ private:
 
     Face_graph& poly = *poly_item->polyhedron();
 
-    CGAL::QGLViewer* viewer = Three::mainViewer();
+    CGAL::QGLViewer* viewer = Three::currentViewer();
     CGAL::qglviewer::Camera* camera = viewer->camera();
 
     Polyline_data_list::const_iterator min_it;
@@ -270,15 +270,6 @@ private:
     Kernel::Point_2 xy(x,y);
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it)
     {
-#if 0
-      /* use center of polyline to measure distance - performance wise */
-      const CGAL::qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->position);
-      float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
-      if(dist < min_dist) {
-        min_dist = dist;
-        min_it = it;
-      }
-#else
       boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,poly);
       /* use polyline points to measure distance - might hurt performance for large holes */
       for(fg_halfedge_descriptor hf_around_facet : halfedges_around_face(it->halfedge,poly)){
@@ -287,14 +278,12 @@ private:
         const Point_3& p_2 = get(vpm,target(opposite(hf_around_facet,poly),poly));
         const CGAL::qglviewer::Vec& pos_it_2 = camera->projectedCoordinatesOf(CGAL::qglviewer::Vec(p_2.x(), p_2.y(), p_2.z()));
         Kernel::Segment_2 s(Kernel::Point_2(pos_it_1.x, pos_it_1.y), Kernel::Point_2(pos_it_2.x, pos_it_2.y));
-
         double dist = CGAL::squared_distance(s, xy);
         if(dist < min_dist) {
           min_dist = dist;
           min_it = it;
         }
       }
-#endif
     }
 
     if(min_it == active_hole) {
