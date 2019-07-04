@@ -96,6 +96,18 @@ _test_triangulation_iterator( const Triangulation &T )
   typedef typename Triangulation::Edge_iterator   Edge_iterator;
   typedef typename Triangulation::Vertex_iterator Vertex_iterator;
 
+  typedef typename Triangulation::Vertex_handle Vertex_handle;
+  
+  typedef typename Triangulation::All_vertex_handles All_vertex_handles;
+  typedef typename Triangulation::All_cell_handles All_cell_handles;
+  typedef typename Triangulation::All_edges All_edges;
+  typedef typename Triangulation::All_facets All_facets;
+  typedef typename Triangulation::Finite_vertex_handles Finite_vertex_handles;
+  typedef typename Triangulation::Finite_cell_handles Finite_cell_handles;
+  typedef typename Triangulation::Finite_edges Finite_edges;
+  typedef typename Triangulation::Finite_facets Finite_facets;
+  typedef typename Triangulation::Points Points;
+
   typedef typename Triangulation::Cell            Cell;
   typedef typename Triangulation::Facet           Facet;
   typedef typename Triangulation::Edge            Edge;
@@ -116,6 +128,62 @@ _test_triangulation_iterator( const Triangulation &T )
     (void) ch;
   }
   if (T.dimension()==3) {
+    {
+      All_vertex_handles range = T.all_vertex_handles();
+      Vertex_handle vh = *(range.first);
+      assert(vh == T.all_vertices_begin());
+      vh = *(range.second);
+      assert(vh == T.all_vertices_end());
+    }
+    {
+      All_cell_handles range = T.all_cell_handles();
+      Cell_handle vh = *(range.first);
+      assert(vh == T.all_cells_begin());
+      vh = *(range.second);
+      assert(vh == T.all_cells_end());
+    }
+    {
+      All_edges range = T.all_edges();
+      assert(range.first == T.all_edges_begin());
+      assert(range.second == T.all_edges_end());
+    }
+    {
+      All_facets range = T.all_facets();
+      assert(range.first == T.all_facets_begin());
+      assert(range.second == T.all_facets_end());
+    }
+    {
+      Finite_vertex_handles range = T.finite_vertex_handles();
+      Vertex_handle vh = *(range.first);
+      assert(vh == Vertex_handle(T.finite_vertices_begin()));
+      vh = *(range.second);
+      
+      assert(vh == Vertex_handle(T.finite_vertices_end()));
+    }
+    {
+      Finite_cell_handles range = T.finite_cell_handles();
+      Cell_handle ch = *(range.first);
+      assert(ch == Cell_handle(T.finite_cells_begin()));
+      ch = *(range.second);
+      assert(ch == Cell_handle(T.finite_cells_end()));
+    }
+    {
+      Finite_edges range = T.finite_edges();
+      assert(range.first == T.finite_edges_begin());
+      assert(range.second == T.finite_edges_end());
+    }
+    {
+      Finite_facets range = T.finite_facets();
+      assert(range.first == T.finite_facets_begin());
+      assert(range.second == T.finite_facets_end());
+    }
+    {
+      Points range = T.points();
+      assert(range.first == T.points_begin());
+      assert(range.second == T.points_end());
+    }
+
+    
   for (FCit = T.finite_cells_begin(); FCit != T.finite_cells_end(); ++FCit)
   {
      Cell_handle ch = FCit; // Test the conversion.

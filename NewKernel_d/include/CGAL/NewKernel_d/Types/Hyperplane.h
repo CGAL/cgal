@@ -33,6 +33,7 @@ template <class R_> class Hyperplane {
 	FT_ s_;
 
 	public:
+	Hyperplane(){}
 	Hyperplane(Vector_ const&v, FT_ const&s): v_(v), s_(s) {}
 	// TODO: Add a piecewise constructor?
 

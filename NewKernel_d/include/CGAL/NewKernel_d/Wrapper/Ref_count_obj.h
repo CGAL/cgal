@@ -29,10 +29,6 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#ifndef CGAL_CXX11
-#include <boost/preprocessor/repetition.hpp>
-#endif
-#include <boost/utility/result_of.hpp>
 
 // no need for a fancy interface here, people can use the Point_d wrapper on
 // top.
@@ -67,7 +63,6 @@ public:
     return CGAL::get_pointee_or_identity(data);
   }
 
-#ifdef CGAL_CXX11
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Ref_count_obj> >::value>::type> explicit Ref_count_obj(U&&...u)
 	  : data(Eval_functor(),CBase(),std::forward<U>(u)...){}
 
@@ -87,32 +82,6 @@ public:
 //    : data(Eval_functor(),CBase(),v) {}
 //  Ref_count_obj(Origin&& v)
 //    : data(Eval_functor(),CBase(),std::move(v)) {}
-
-#else
-
-  Ref_count_obj() : data(Eval_functor(),CBase()) {}
-
-  Ref_count_obj(Rep const& v) : data(v) {} // try not to use it
-
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  explicit Ref_count_obj(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : data(Eval_functor(),CBase(),BOOST_PP_ENUM_PARAMS(N,t)) {} \
-  \
-  template<class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Ref_count_obj(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : data(Eval_functor(),f,BOOST_PP_ENUM_PARAMS(N,t)) {}
-
-  BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-  template<class F>
-  Ref_count_obj(Eval_functor,F const& f)
-  : data(Eval_functor(),f) {}
-
-//  // this one should be implicit
-//  Ref_count_obj(Origin const& o)
-//    : data(Eval_functor(),CBase(),o) {}
-
-#endif
 
 };
 

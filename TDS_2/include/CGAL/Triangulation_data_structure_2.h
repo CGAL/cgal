@@ -98,6 +98,10 @@ public:
   typedef Triangulation_ds_vertex_circulator_2<Tds>  Vertex_circulator;
   typedef Triangulation_ds_edge_circulator_2<Tds>    Edge_circulator;
 
+  typedef Iterator_range<Prevent_deref<Vertex_iterator> > Vertex_handles;
+  typedef Iterator_range<Prevent_deref<Face_iterator> >   Face_handles;
+  typedef Iterator_range<Edge_iterator>                   Edges;
+    
   typedef Vertex_iterator                            Vertex_handle;
   typedef Face_iterator                              Face_handle;
 
@@ -172,12 +176,20 @@ public:
     return faces().end();
   }
 
+  Face_handles face_handles() const {
+    return make_prevent_deref_range(faces_begin(),faces_end());
+  }
+  
   Vertex_iterator vertices_begin() const  {
     return vertices().begin();
   }
 
   Vertex_iterator vertices_end() const {
     return vertices().end();
+  }
+
+  Vertex_handles vertex_handles() const {
+    return make_prevent_deref_range(vertices_begin(),vertices_end());
   }
   
   Edge_iterator edges_begin() const {
@@ -186,6 +198,10 @@ public:
 
   Edge_iterator edges_end() const {
     return Edge_iterator(this,1);
+  }
+
+  Edges edges() const {
+    return Edges(edges_begin(),edges_end());
   }
   
   Halfedge_iterator halfedges_begin() const {

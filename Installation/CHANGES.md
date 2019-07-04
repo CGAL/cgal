@@ -6,8 +6,9 @@ Release 5.0
 
 Release date: September 2019
 
-### 2D Triangulations
-
+## 2D Triangulations
+-   Added range types and functions that return ranges, for example
+    for all vertices, which enables to use C++11 for-loops.
 -   **Breaking change**: Removed the functions `CGAL::Constrained_triangulation_plus_2::
     vertices_in_constraint_{begin/end}(Vertex_handle va, Vertex_handle vb) const;`,
     and `CGAL::Constrained_triangulation_plus_2::remove_constraint((Vertex_handle va, Vertex_handle vb)`,
@@ -19,6 +20,8 @@ Release date: September 2019
 -   Add constructor and `insert()` function to `CGAL::Triangulation_2` that takes a range of points with info.  
     
 ### 3D Triangulations
+-   Added range types and functions that return ranges, for example
+    for all vertices, which enables to use C++11 for-loops.
 -   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_3` which takes
     a range of points as argument no longer performs a `spatial_sort()` of the points.
 -   Add constructor and `insert()` function to `CGAL::Triangulation_3` that takes a range of points with info.  
@@ -37,6 +40,13 @@ Release date: September 2019
      for optional parameters is now removed (it was deprecated since
      CGAL 4.12). The current (and now only) API uses ranges and Named
      Parameters.
+ -   Added the possibility to use the named parameter
+     `neighbor_radius` to use spherical neighbor queries instead of
+     K-nearest neighbors queries for the following functions:
+     `CGAL::bilateral_smooth_point_set()`,
+     `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
+     `CGAL::mst_orient_normals()`, `CGAL::pca_estimate_normals()` and
+     `CGAL::remove_outliers()`.
 
 ### Polygon Mesh Processing
  -   Added the function `CGAL::Polygon_mesh_processing::centroid()`, which computes
@@ -45,6 +55,11 @@ Release date: September 2019
      `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`, which can be used
      to try and merge together geometrically compatible but combinatorially different halfedges
      that belong to the same boundary cycle.
+-    It is now possible to pass a face-size property map to `CGAL::Polygon_mesh_processing::keep_large_connected_components()`
+     and `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`, enabling users to define
+     how the size of a face is computed (the size of the connected component is the sum of the sizes of its faces).
+     If no property map is passed, the behavior is unchanged to previous versions: the size
+     of a connected component is the number of faces it contains.
 
 ### IO Streams
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
@@ -63,6 +78,17 @@ Release date: September 2019
    the approximate dihedral angle between 2 vectors. Corresponding functors
    in the model (`Compute_approximate_angle_3`) and free function (`approximate_angle`)
    are also added.
+ - The following objects are now hashable and thus trivially usable
+   with `std::unordered_set` and `std::unordered_map`:
+   `CGAL::Aff_transformation_2`, `CGAL::Aff_transformation_3`,
+   `CGAL::Bbox_2`, `CGAL::Bbox_3`, `CGAL::Circle_2`,
+   `CGAL::Iso_cuboid_3`, `CGAL::Iso_rectangle_2`, `CGAL::Point_2`,
+   `CGAL::Point_3`, `CGAL::Segment_2`, `CGAL::Segment_3`,
+   `CGAL::Sphere_3`, `CGAL::Vector_2`, `CGAL::Vector_3`,
+   `CGAL::Weighted_point_2` and `CGAL::Weighted_point_3`.
+
+### dD Geometry Kernel
+- New exact kernel `Epeck_d`
 
 ### IO Streams
 -   Added new functions to support some parts of the WKT file format:

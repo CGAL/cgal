@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Triangulation_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -18,6 +18,7 @@ if(CGAL_Qt5_FOUND)
 endif()
 
 if ( CGAL_FOUND )
+  create_single_source_cgal_program( "for_loop.cpp" )
   create_single_source_cgal_program( "adding_handles_3.cpp" )
   create_single_source_cgal_program( "color.cpp" )
   create_single_source_cgal_program( "copy_triangulation_3.cpp" )

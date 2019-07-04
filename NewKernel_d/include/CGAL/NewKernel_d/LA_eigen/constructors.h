@@ -89,17 +89,16 @@ namespace CGAL {
 
     struct Iterator_and_last {
       template<typename Iter,typename T>
-	result_type operator()(int d,Iter const& f,Iter const& e,CGAL_FORWARDABLE(T) t) const {
+	result_type operator()(int d,Iter const& f,Iter const& e,T&& t) const {
 	  check_dim(d);
 	  CGAL_assertion(d==std::distance(f,e)+1);
 	  result_type a(d);
 	  std::copy(f,e,&a[0]);
-	  a[d-1]=CGAL_FORWARD(T,t);
+	  a[d-1]=std::forward<T>(t);
 	  return a;
 	}
     };
 
-#ifdef CGAL_CXX11
     struct Initializer_list {
       // Fix T==NT?
       template<class T>
@@ -107,7 +106,6 @@ namespace CGAL {
 	  return Iterator()(l.size(),l.begin(),l.end());
 	}
     };
-#endif
 
     struct Values {
 #ifdef CGAL_CXX11

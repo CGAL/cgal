@@ -710,14 +710,22 @@ enable the user to keep and remove only a selection of connected components,
 provided either as a range of faces that belong to the desired connected components
 or as a range of connected component ids (one or more per connected component).
 
-Finally, `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
-enables the user to keep only the largest connected components. This feature can
-for example be useful for noisy data were small connected components
-should be discarded in favour of major connected components.
+Finally, it can be useful to quickly remove some connected components, for example for noisy data
+where small connected components should be discarded in favor of major connected components.
+The function `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
+enables the user to keep only a given number from the largest connected components. The size
+of a connected component is given by the sum of the sizes of the faces it contains; by default,
+the size of a face is `1` and thus the size of a connected component is equal to the number of faces
+it contains. However, it is also possible to pass a face size map, such that the size of the face
+is its area, for example.
+Similarly to the previous function, the function
+`CGAL::Polygon_mesh_processing::keep_large_connected_components()` can be used to discard all connected
+components whose size is below a user-defined threshold.
 
 Also, the function `CGAL::Polygon_mesh_processing::split_connected_components()`
 enables the user to split the connected components of a polygon mesh in as many
 polygon meshes.
+
 
 \subsection CCExample Connected Components Example
 

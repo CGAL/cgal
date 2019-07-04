@@ -27,6 +27,7 @@
 #include <CGAL/MP_Float.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <cassert>
 
@@ -52,9 +53,12 @@
  
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
+template <typename Cls>
+void test();
 int
 main()
 {
+  CGAL::Set_ieee_double_precision double_precision_guard;
   typedef CGAL::Cartesian<double>                               Clsdb;
   typedef CGAL::Filtered_kernel<Clsdb>                          Clsd;
 
@@ -71,6 +75,17 @@ main()
   std::cout << "Testing IO with F_k<Cartesian<double>>:" << std::endl;
   _test_io( Clsd() );
 
+  std::cout << "Testing with Epeck:\n";
+  test<Cls>();
+  std::cout << "Testing with Epick:\n";
+  test<CGAL::Epick>();
+  std::cout << "Testing with Epick_without_intervals:\n";
+  test<CGAL::Epick_without_intervals>();
+  return 0;
+}
+
+template <typename Cls>
+void test() {
   std::cout << "Testing 2d :";
   std::cout << std::endl;
   _test_2( Cls() );
@@ -101,6 +116,4 @@ main()
   std::cout << "Testing 3d-2d :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
-  
-  return 0;
 }

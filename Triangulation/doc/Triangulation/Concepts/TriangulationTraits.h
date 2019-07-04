@@ -15,6 +15,7 @@ then optimized using spatial sorting.
 This is not required if the points are inserted one by one.
 
 \cgalHasModel `CGAL::Epick_d<Dim>`
+\cgalHasModel `CGAL::Epeck_d<Dim>`
 
 \sa `DelaunayTriangulationTraits`
 */

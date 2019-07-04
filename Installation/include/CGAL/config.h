@@ -554,6 +554,12 @@ using std::max;
 #  define CGAL_NORETURN
 #endif
 
+// Macro to specify [[no_unique_address]] if supported
+#if __has_cpp_attribute(no_unique_address)
+#  define CGAL_NO_UNIQUE_ADDRESS [[no_unique_address]]
+#else
+#  define CGAL_NO_UNIQUE_ADDRESS
+#endif
 
 // Macro CGAL_ASSUME
 // Call a builtin of the compiler to pass a hint to the compiler
