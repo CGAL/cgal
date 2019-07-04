@@ -1013,7 +1013,7 @@ void split_connected_components(const PolygonMesh& pm,
 
 }
 
-template <class PolygonMesh, class PolygonMeshRange, class NamedParameters>
+template <class PolygonMesh, class PolygonMeshRange>
 void split_connected_components(const PolygonMesh& pm,
                                 PolygonMeshRange& cc_meshes)
 {

@@ -51,7 +51,7 @@ public:
     actionJoinPolyhedra->setObjectName("actionJoinPolyhedra");
 
     actionSplitPolyhedra= new QAction(tr("Split Selected Polyhedra"), mainWindow);
-    actionSplitPolyhedra->setProperty("subMenuName", "Operations on Polyhedra");
+    actionSplitPolyhedra->setProperty("subMenuName", "Polygon Mesh Processing");
     actionSplitPolyhedra->setObjectName("actionSplitPolyhedra");
 
     actionColorConnectedComponents = new QAction(tr("Color Each Connected Component"), mainWindow);
@@ -130,9 +130,9 @@ struct Polyhedron_appender{
 };
 
 struct Compare{
-bool operator()(FaceGraph* mesh1, FaceGraph* mesh2)
+bool operator()(const FaceGraph& mesh1, const FaceGraph& mesh2)
 {
-  return num_faces(*mesh1) < num_faces(*mesh2);
+  return num_faces(mesh1) < num_faces(mesh2);
 }
 };
 
@@ -144,30 +144,16 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
     if(item)
     {
       QApplication::setOverrideCursor(Qt::WaitCursor);
-      std::list<FaceGraph*> new_polyhedra;
-      typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchIDMap;
-      PatchIDMap pidmap = get(CGAL::face_patch_id_t<int>(), *item->face_graph());
-      int nb_patches = item->property("NbPatchIds").toInt();
-       if(nb_patches == 0)
-         nb_patches = CGAL::Polygon_mesh_processing::connected_components(*item->face_graph(),
-                                                                          pidmap);
-
-      for(int i=0; i<nb_patches; ++i)
-      {
-        //std::vector<int> pids;
-        //pids.push_back(i);
-        CGAL::Face_filtered_graph<FaceGraph> filter_graph(*item->face_graph(), i, pidmap);
-        FaceGraph* new_graph = new FaceGraph();
-        CGAL::copy_face_graph(filter_graph, *new_graph);
-        new_polyhedra.push_back(new_graph);
-      }
+      std::vector<FaceGraph> new_polyhedra;
+      CGAL::Polygon_mesh_processing::split_connected_components(*item->face_graph(),
+                                                                new_polyhedra);
       //sort polyhedra by number of faces
-      new_polyhedra.sort(Compare());
+      std::sort(new_polyhedra.begin(), new_polyhedra.end(), Compare());
 
 
       if (new_polyhedra.size()==1)
       {
-        delete new_polyhedra.front();
+        new_polyhedra.front();
         CGAL::Three::Three::information( tr("%1 has only one connected component").arg(item->name()) );
         QApplication::restoreOverrideCursor();
         continue;
@@ -183,7 +169,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
         compute_color_map(item->color(), new_polyhedra.size(), std::back_inserter(color_map));
       Scene_group_item *group = new Scene_group_item("CC");
        scene->addItem(group);
-      for(FaceGraph* polyhedron_ptr : new_polyhedra)
+      for(FaceGraph polyhedron_ptr : new_polyhedra)
       {
         Scene_facegraph_item* new_item=new Scene_facegraph_item(polyhedron_ptr);
         new_item->setName(tr("%1 - CC %2").arg(item->name()).arg(cc));
