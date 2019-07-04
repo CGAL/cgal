@@ -277,8 +277,8 @@ namespace CGAL {
     bool contains(
       const FuzzyQueryItem& q,
       Point_d const& p,
-      typename std::vector<FT>::const_iterator it_coord_begin,
-      typename std::vector<FT>::const_iterator it_coord_end,
+      typename std::vector<FT>::const_iterator /*it_coord_begin*/,
+      typename std::vector<FT>::const_iterator /*it_coord_end*/,
       Tag_false /*has_contains_point_given_as_coordinates*/) const
     {
       return q.contains(p);
@@ -287,7 +287,7 @@ namespace CGAL {
     template <typename FuzzyQueryItem>
     bool contains(
       const FuzzyQueryItem& q,
-      Point_d const& p,
+      Point_d const& /*p*/,
       typename std::vector<FT>::const_iterator it_coord_begin,
       typename std::vector<FT>::const_iterator it_coord_end,
       Tag_true /*has_contains_point_given_as_coordinates*/) const
@@ -321,9 +321,9 @@ namespace CGAL {
     void search_in_leaf(
       Leaf_node_const_handle node,
       const FuzzyQueryItem &q,
-      typename Kdt::const_iterator tree_points_begin,
-      typename std::vector<FT>::const_iterator cache_begin,
-      int dim,
+      typename Kdt::const_iterator /*tree_points_begin*/,
+      typename std::vector<FT>::const_iterator /*cache_begin*/,
+      int /*dim*/,
       OutputIterator oit,
       Tag_false /*has_points_cache*/) const
     {
@@ -364,9 +364,9 @@ namespace CGAL {
     boost::optional<Point_d> search_any_point_in_leaf(
       Leaf_node_const_handle node,
       const FuzzyQueryItem &q,
-      typename Kdt::const_iterator tree_points_begin,
-      typename std::vector<FT>::const_iterator cache_begin,
-      int dim,
+      typename Kdt::const_iterator /*tree_points_begin*/,
+      typename std::vector<FT>::const_iterator /*cache_begin*/,
+      int /*dim*/,
       Tag_false /*has_points_cache*/) const
     {
       boost::optional<Point_d> result = boost::none;

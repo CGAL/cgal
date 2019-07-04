@@ -59,9 +59,6 @@ public:
   {
     if (tree.empty()) return;
 
-    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = 
-      m_tree.traits().construct_cartesian_const_iterator_d_object();
-
     compute_neighbors_general(tree.root(),tree.bounding_box());
     if (sorted) this->queue.sort();
   };

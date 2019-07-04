@@ -72,8 +72,8 @@ public:
   FT operator() (
     const Query_item& q,
     Point const& p,
-    typename std::vector<FT>::const_iterator it_coord_begin,
-    typename std::vector<FT>::const_iterator it_coord_end) const
+    typename std::vector<FT>::const_iterator /*it_coord_begin*/,
+    typename std::vector<FT>::const_iterator /*it_coord_end*/) const
   {
     return m_distance.transformed_distance(q, p);
   }
@@ -96,7 +96,7 @@ public:
 
   FT operator() (
     const Query_item& q,
-    Point const& p,
+    Point const& /*p*/,
     typename std::vector<FT>::const_iterator it_coord_begin,
     typename std::vector<FT>::const_iterator it_coord_end) const
   {
@@ -176,7 +176,7 @@ public:
 
   FT operator() (
     const Query_item& q,
-    Point const& p,
+    Point const& /*p*/,
     typename std::vector<FT>::const_iterator it_coord_begin,
     typename std::vector<FT>::const_iterator it_coord_end,
     FT stop_if_geq_to_this) const
