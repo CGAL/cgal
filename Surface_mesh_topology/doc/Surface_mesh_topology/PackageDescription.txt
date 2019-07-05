@@ -11,6 +11,8 @@
 /// \defgroup PkgDrawFaceGraphWithPaths Draw a Mesh with Paths
 /// \ingroup PkgSurfaceMeshTopology
 
+/// \defgroup PkgSurfaceMeshTopologyConcepts Concepts
+/// \ingroup PkgSurfaceMeshTopology
 
 /*!
 \addtogroup PkgSurfaceMeshTopology
@@ -34,6 +36,10 @@
 - `CGAL::Surface_mesh_topology::Homotopy_tester<Mesh>`
 - `CGAL::Surface_mesh_topology::Path_on_surface<Mesh>`
 - `CGAL::Surface_mesh_topology::Combinatorial_map_2_incremental_builder<Mesh>`
+- `CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<Mesh_, Weight_>`
+
+## Concepts ##
+- `WeightFunctor`
 
 \cgalCRPSubsection{Draw a Mesh with Paths}
 - `CGAL::draw<Mesh>`
