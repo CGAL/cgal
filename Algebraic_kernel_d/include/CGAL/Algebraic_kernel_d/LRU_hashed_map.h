@@ -283,9 +283,6 @@ public:
 
 
 protected:
-    //!\name private members
-    //!@{
-
     
     Algebraic_kernel_with_analysis_2* _m_kernel;
 
@@ -309,6 +306,7 @@ public:
     //! specified key was found
     typedef typename Base::Find_result Find_result;
     
+    //!@}
 
     //!\name constructors and access functions
     //!@{
@@ -342,6 +340,8 @@ public:
         }
         return (p.first)->second;
     }
+    
+    //!@}
 
 }; // class LRU_hashed_map_with_kernel
 

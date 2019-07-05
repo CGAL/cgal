@@ -678,8 +678,6 @@ public:
         return static_cast<std::size_t>(x.id());
     }
 
-    //!@}
-
 }; // class Xy_coordinate_2
 
 template < class AlgebraicCurveKernel_2, class Rep> 

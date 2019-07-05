@@ -229,7 +229,7 @@ public:
   };
 
 public:
-  /** @name Creation */ //@{
+  /** @name Creation */
   Periodic_3_regular_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
                                      const Geometric_traits& gt = Geometric_traits())
     : Tr_Base(domain, gt)
@@ -414,7 +414,7 @@ public:
       insert(*wpv_it++);
   }
 
-  /** @name Insertion */ //@{
+  /** @name Insertion */
   Vertex_handle insert(const Weighted_point& point,
                        Cell_handle start = Cell_handle())
   {
@@ -543,7 +543,6 @@ public:
 
     return number_of_vertices() - n;
   }
-//@}
 
   void remove(Vertex_handle v)
   {
@@ -607,7 +606,7 @@ public:
   }
 
 public:
-   /** @name Wrapping the traits */ //@{
+   /** @name Wrapping the traits */
   bool less_power_distance (const Bare_point &p, const Weighted_point &q, const Weighted_point &r)  const
   {
     return geom_traits().compare_power_distance_3_object()(p, q, r) == SMALLER;
@@ -787,7 +786,6 @@ public:
 
 public:
   /** @name Geometric access functions */
-  /// @{
   // The following functions change the position of a vertex.
   // They do not check the validity of the mesh.
   void set_point(const Vertex_handle v,
@@ -972,7 +970,6 @@ public:
   }
 
   // end of geometric functions
-  /// @}
 
 #define CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 #include <CGAL/internal/Periodic_3_regular_triangulation_dummy_288.h>
@@ -1315,7 +1312,7 @@ public:
                       geom_traits().construct_weighted_circumcenter_3_object());
   }
 
-  /** @name Voronoi diagram */ //@{
+  /** @name Voronoi diagram */
   // cell dual
   Bare_point dual(Cell_handle c) const {
     return Tr_Base::construct_point(periodic_weighted_circumcenter(c).first);
@@ -1377,7 +1374,6 @@ public:
     return Tr_Base::dual_centroid(
              v, geom_traits().construct_weighted_circumcenter_3_object());
   }
-//@}
 
   template <class OutputIteratorBoundaryFacets, class OutputIteratorCells>
   std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>

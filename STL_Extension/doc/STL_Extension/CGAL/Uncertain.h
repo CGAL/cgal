@@ -251,6 +251,8 @@ returns `v != u`.
 template <class T> 
 Uncertain<bool> operator!=(T u, Uncertain<T> v); 
 
+/// @}
+
 /*!
 \name Overloaded Operators for Uncertain<bool>
 

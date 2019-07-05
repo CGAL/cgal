@@ -997,7 +997,7 @@ be inserted is already known. They are also guaranteed to lead to a
 valid triangulation when they are applied on a valid triangulation.
 */
 
-// @{
+/// @{
 /*!
 Inserts the point `p` in the cell `c`. The cell `c` is split into 4
 tetrahedra. 
@@ -1555,8 +1555,6 @@ Writes the triangulation `t` into `os`.
 ostream& operator<< (ostream& os, const Triangulation_3 &t); 
 
 /// @}
-
-/// @} 
 
 /// \name Concurrency 
 /// @{

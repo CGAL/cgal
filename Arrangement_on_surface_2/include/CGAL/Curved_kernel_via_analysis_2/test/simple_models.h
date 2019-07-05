@@ -487,6 +487,8 @@ public:
         Base(rep) {  
     }
     
+    //!@}
+    
     Algebraic_real_1 x() const {
         return Algebraic_real_1();
     }
@@ -1019,6 +1021,8 @@ public:
     //! type of Coordinate_2
     typedef Algebraic_real_2 Coordinate_2;
 
+    //!@}
+
 public:
     //! \name types and functors for \c GPA_2< both >
     //!@{
@@ -1031,7 +1035,6 @@ public:
     
     //!@}
 
-    //!@}
     //! \name public functors and predicates
     //!@{
        

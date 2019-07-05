@@ -65,10 +65,10 @@ public:
   typedef Periodic_3_triangulation_3<Gt,Tds>                   Base;
 
 public:
-  /** @name Template parameter types */ //@{
+  /** @name Template parameter types */ 
   typedef Gt                                    Geometric_traits;
   typedef Tds                                   Triangulation_data_structure;
-  //@}
+
 
   ///Compatibility typedef:
   typedef Geometric_traits                      Geom_traits;
@@ -115,7 +115,6 @@ public:
   typedef typename Base::Covering_sheets        Covering_sheets;
   typedef typename Base::Periodic_segment_iterator  Periodic_segment_iterator;
   typedef typename Base::Periodic_tetrahedron_iterator  Periodic_tetrahedron_iterator;
-  //@}
 
   //Tag to distinguish Delaunay from Regular triangulations
   typedef Tag_false                             Weighted_tag;
@@ -221,7 +220,7 @@ private:
   };
 
 public:
-  /** @name Creation */ //@{
+  /** @name Creation */
   Periodic_3_Delaunay_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
                                       const Geometric_traits& gt = Geometric_traits())
     : Base(domain, gt), too_long_edge_counter(0)
@@ -322,7 +321,6 @@ public:
       }
     }
   }
-  //@}
 
   void create_initial_triangulation()
   {
@@ -473,7 +471,7 @@ public:
     return false;
   }
 
-  /** @name Insertion */ //@{
+  /** @name Insertion */
   Vertex_handle insert(const Point& p, Cell_handle start = Cell_handle())
   {
     Conflict_tester tester(p, this);
@@ -547,17 +545,16 @@ public:
 
     return number_of_vertices() - n;
   }
-  //@}
 
-  /** @name Point moving */ //@{
+  /** @name Point moving */
   // @todo should be deprecated and a function move() should be introduced
   // see what is done in /Triangulation_3
   // Also need to introduce move() for periodic regular triangulations
   Vertex_handle move_point(Vertex_handle v, const Point& p);
-  //@}
+
 
 public:
-  /** @name Removal */ //@{
+  /** @name Removal */
   void remove(Vertex_handle v);
 
   // Undocumented function that tries to remove 'v' but only does so if removal
@@ -575,10 +572,9 @@ public:
     }
     return n - number_of_vertices();
   }
-  //@}
 
 public:
-  /** @name Wrapping the traits */ //@{
+  /** @name Wrapping the traits */
   Oriented_side side_of_oriented_sphere(const Point& p, const Point& q,
                                         const Point& r, const Point& s,
                                         const Point& t) const {
@@ -603,19 +599,17 @@ public:
                                      const Offset& o_r) const {
     return geom_traits().compare_distance_3_object()(p, q, r, o_p, o_q, o_r);
   }
-  //@}
 
 private:
-  /** @name Query helpers */ //@{
+  /** @name Query helpers */
   Bounded_side _side_of_sphere(const Cell_handle& c, const Point& p,
       const Offset & offset = Offset(), bool perturb = false) const;
 
   Offset get_min_dist_offset(const Point& p, const Offset& o,
                              const Vertex_handle vh) const;
-  //@}
 
 public:
-  /** @name Queries */ //@{
+  /** @name Queries */
   Bounded_side side_of_sphere(const Cell_handle& c, const Point& p,
       const Offset & offset = Offset(), bool perturb = false) const{
     Bounded_side bs = ON_UNBOUNDED_SIDE;
@@ -666,10 +660,9 @@ public:
   bool is_Gabriel(const Edge& e) const {
     return is_Gabriel(e.first, e.second, e.third);
   }
-  //@}
 
 private:
-  /** @name Voronoi diagram helpers */ //@{
+  /** @name Voronoi diagram helpers */
   bool is_canonical(const Periodic_segment &ps) const
   {
     if(number_of_sheets() == make_array(1,1,1)) return true;
@@ -679,11 +672,9 @@ private:
                     (std::min)(o0.z(),o1.z()));
     return (cumm_off == Offset(0,0,0));
   }
-  //@}
 
 public:
   /** @name Geometric access functions */
-  /// @{
 
   Point point(const Periodic_point& pp) const
   {
@@ -705,14 +696,13 @@ public:
   }
 
   // end of geometric functions
-  /// @}
 
   Periodic_point periodic_circumcenter(Cell_handle c) const {
     return Base::periodic_circumcenter(c, geom_traits().construct_circumcenter_3_object());
   }
 
 public:
-  /** @name Voronoi diagram */ //@{
+  /** @name Voronoi diagram */
   // cell dual
   Point dual(Cell_handle c) const {
     return Base::construct_point(periodic_circumcenter(c).first);
@@ -771,12 +761,10 @@ public:
   Point dual_centroid(Vertex_handle v) const {
     return Base::dual_centroid(v, geom_traits().construct_circumcenter_3_object());
   }
-  //@}
 
-  /** @name Checking */ //@{
+  /** @name Checking */
   bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
-  //@}
 
 protected:
   // Protected, because inheritors(e.g. periodic triangulation for meshing)

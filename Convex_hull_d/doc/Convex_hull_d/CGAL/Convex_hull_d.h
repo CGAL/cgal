@@ -477,5 +477,7 @@ all facets of `C`.
 */
 std::list<Facet_handle> all_facets() ;
 
+/// @}
+
 }; /* end Convex_hull_d */
 } /* end namespace CGAL */

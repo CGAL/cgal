@@ -161,7 +161,7 @@ inside the face `f1`.
 void create_edge (Face_handle_A f1, 
 Halfedge_handle_B e2, 
 Halfedge_handle_R e) const; 
-
+/// @}
 /// \name Face Creation
 /// The following function is invoked whenever a new face is
 /// created. It is guaranteed that all halfedges along the face

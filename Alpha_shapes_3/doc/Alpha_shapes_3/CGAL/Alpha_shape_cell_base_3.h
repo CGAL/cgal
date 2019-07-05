@@ -29,8 +29,6 @@ template< typename Traits, typename Cb, typename ExactAlphaComparisonTag, typena
 class Alpha_shape_cell_base_3 : public Cb {
 public:
 
-/// @}
-
 }; /* end Alpha_shape_cell_base_3 */
 } /* end namespace CGAL */
 

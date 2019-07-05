@@ -1029,7 +1029,8 @@ public:
     return this->range<Vector> (m_normals);
   }
   
-
+  /// @}
+  
   /*!
     \name Push Property Maps and Inserters (Advanced)
 

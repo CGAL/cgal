@@ -325,6 +325,8 @@ public:
     ias >> BOOST_SERIALIZATION_NVP(*m_rfc);
   }
 
+/// @}
+
 };
 
 }

@@ -1588,6 +1588,8 @@ public:
         return false;
     }
 
+    //!@}
+
 protected:
     //!\name Trimming
     //!@{
@@ -3152,7 +3154,7 @@ public:
       return *(this->ptr()->_m_bbox);
     }
 
-    //!}
+    //!@}
 
 
 public:

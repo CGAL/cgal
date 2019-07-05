@@ -471,6 +471,7 @@ public Q_SLOTS:
   virtual void resize(int width, int height);
   /*! Sets the hasMouseTracking() value. */
   virtual void setMouseTracking(bool enable);
+  //@}
 #endif
 
   /*! @name Buffer to texture */

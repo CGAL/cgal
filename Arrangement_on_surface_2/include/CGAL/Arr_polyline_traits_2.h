@@ -136,7 +136,6 @@ public:
   {}
 
   /// \name Types and functors defined here.
-  //@{
 
   /* Functor to augment a polyline by either adding a vertex or a segment
    * at the back.

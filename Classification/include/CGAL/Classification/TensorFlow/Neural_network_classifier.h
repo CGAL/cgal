@@ -672,6 +672,8 @@ public:
     return out;
   }
 
+/// @}
+
 private:
 
   template<class BidiIter >

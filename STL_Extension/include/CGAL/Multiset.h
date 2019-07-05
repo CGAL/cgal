@@ -739,7 +739,6 @@ public:
    */
   iterator insert_before (iterator position,
                           const Type& object);
-  //@}
 
   /// \name Erasing functions.
   //@{

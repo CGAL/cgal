@@ -126,6 +126,8 @@ Before the release 4.3 of \cgal, the return type of this function used to be `bo
 */ 
 typedef unspecified_type Intersection; 
 
+/// @}
+
 /// \name Distance Queries
 /// The following predicates are required for each
 /// type `Query` for which the class `CGAL::AABB_tree<AABBTraits>` may receive a

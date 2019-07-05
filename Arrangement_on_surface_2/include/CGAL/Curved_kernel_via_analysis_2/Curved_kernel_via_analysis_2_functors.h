@@ -458,6 +458,8 @@ public:
         Arc_2 arc(x, c);
         return arc;
     }
+
+    //!@}
 };
 
 /*!\brief
@@ -2668,7 +2670,7 @@ public:
     
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-
+    //!@}
 //     typedef Curved_kernel_via_analysis_2_functors<
 //         CurvedKernelViaAnalysis_2 > Functor_base;
    

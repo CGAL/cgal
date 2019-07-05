@@ -86,6 +86,8 @@ public:
   typedef
     typename Intersection_list::const_iterator       Intersection_iter;
 
+  //@}
+  
 private:
 
   typedef std::map<Curve_id,

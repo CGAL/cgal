@@ -513,6 +513,7 @@ public:
     }
     pt = CGAL::ORIGIN + cv;
   }
+/// @}
 };
 
 // ======================================================================
@@ -618,6 +619,7 @@ public:
     ept2 = CGAL::ORIGIN + denom * ( 10.*sv + 16.*tv + next_tv );
     vpt = CGAL::ORIGIN + 1./27. * ( 4*prev_sv + 19*sv + 4*tv );
   }
+/// @}
 };
 
 } // namespace CGAL

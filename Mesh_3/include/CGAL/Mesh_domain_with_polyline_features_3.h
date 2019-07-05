@@ -840,6 +840,9 @@ public:
   template <typename InputIterator>
   Curve_index insert_edge(InputIterator first, InputIterator end);
   /// @endcond
+
+/// @}
+
 private:
   void compute_corners_incidences();
 
