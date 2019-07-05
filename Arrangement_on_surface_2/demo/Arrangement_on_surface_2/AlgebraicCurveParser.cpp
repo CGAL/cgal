@@ -12,7 +12,7 @@
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// Created by saurabh on 25/6/19.
+// Author(s)     : Saurabh Singh <ssingh@cs.iitr.ac.in>
 //
 
 #include "AlgebraicCurveParser.h"
@@ -198,5 +198,12 @@ bool AlgebraicCurveParser::signPresent(std::string &subExpression) {
 }
 
 bool AlgebraicCurveParser::validateExpression(const std::string &expression) {
-    return false;
+    //check for unwanted variables:
+    std::string expressionMutable = expression;
+    for (auto iterator = expressionMutable.begin(); iterator!=expressionMutable.end(); iterator++){
+        if (*iterator == 'x' || *iterator == 'y') continue;
+        if (*iterator == '+' || *iterator =='-') continue;
+        if (isdigit(*iterator) || isspace(*iterator)) continue;
+        return false;
+    }
 }

@@ -12,7 +12,7 @@
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// Created by saurabh on 25/6/19.
+// Author(s)     : Saurabh Singh <ssingh@cs.iitr.ac.in>
 //
 #include <string>
 #include <vector>
@@ -34,12 +34,13 @@ class AlgebraicCurveParser {
 public:
     AlgebraicCurveParser(std::string &expression);
 
+    bool validateExpression(const std::string &expression);
+
     TermsArray extractTerms();
 
     std::string expression;
 
 private:
-    bool validateExpression(const std::string &expression);
 
     AlgebraicTerm extractCoefficientAndExponent(std::string &subExpression);
 
