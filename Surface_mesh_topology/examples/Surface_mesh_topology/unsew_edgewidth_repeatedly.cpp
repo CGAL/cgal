@@ -28,9 +28,7 @@ private:
   const LCC_3& m_lcc;
 };
 
-
-// using SNC = CGAL::Shortest_noncontractible_cycle<LCC_3>;
-using SNC = CGAL::Shortest_noncontractible_cycle<LCC_3, Weight_functor>;
+using SNC = CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<LCC_3, Weight_functor>;
 
 struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC {
   Draw_functor(LCC_3::size_type am1, LCC_3::size_type am2) : is_root(am1),

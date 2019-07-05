@@ -8,6 +8,7 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 
 namespace CGAL {
+namespace Surface_mesh_topology {
 
 template <class GeneralizedMap, class WeightFunctor = void>
 class Shortest_noncontractible_cycle {
@@ -482,6 +483,7 @@ private:
   std::vector<int> m_trace_index;
 };
 
+}
 }
 
 #endif

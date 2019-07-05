@@ -11,7 +11,7 @@
 
 using LCC_3 = CGAL::Linear_cell_complex_for_combinatorial_map<2, 3>;
 using size_type = LCC_3::size_type;
-using SNC = CGAL::Shortest_noncontractible_cycle<LCC_3>;
+using SNC = CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<LCC_3>;
 
 LCC_3 lcc;
 

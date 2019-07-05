@@ -20,7 +20,7 @@ private:
   Mesh m_mesh;
 };
 
-using SNC = CGAL::Shortest_noncontractible_cycle<Mesh, Weight_functor>;
+using SNC = CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<Mesh, Weight_functor>;
 
 int main(int argc, char* argv[]) {
   std::cout << "Program edgewidth_surface_mesh started.\n";

@@ -81,8 +81,8 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
     std::cerr << "Fail find_cycle_in_unweighted_cmap_and_polyhedron: Cannot locate file data/3torus.off\n";
     return false;
   }
-  CGAL::Shortest_noncontractible_cycle<LCC_for_CMap_2> snc1(lcc);
-  CGAL::Shortest_noncontractible_cycle<LCC_for_CMap_2>::Path cycle1;
+  CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<LCC_for_CMap_2> snc1(lcc);
+  CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<LCC_for_CMap_2>::Path cycle1;
   unsigned int cycle_length1;
   LCC_for_CMap_2::Dart_handle root1 = lcc.darts().begin();
   Point R = lcc.point_of_vertex_attribute(lcc.vertex_attribute(root1));
@@ -101,8 +101,8 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
     std::cerr << "Fail find_cycle_in_unweighted_cmap_and_polyhedron: Cannot locate file data/3torus.off\n";
     return false;
   }
-  CGAL::Shortest_noncontractible_cycle<Polyhedron> snc2(p);
-  CGAL::Shortest_noncontractible_cycle<Polyhedron>::Path cycle2;
+  CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<Polyhedron> snc2(p);
+  CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<Polyhedron>::Path cycle2;
   unsigned int cycle_length2;
   boost::graph_traits<Polyhedron>::halfedge_iterator root2 = p.halfedges_begin(), endit = p.halfedges_end();
   for (; root2 != endit; ++root2) {
@@ -135,8 +135,8 @@ bool edge_width_in_unweighted_polyhedron() {
     std::cerr << "Fail edge_width_in_unweighted_polyhedron: Cannot locate file data/3torus.off\n";
     return false;
   }
-  CGAL::Shortest_noncontractible_cycle<Polyhedron> snc(p);
-  CGAL::Shortest_noncontractible_cycle<Polyhedron>::Path cycle;
+  CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<Polyhedron> snc(p);
+  CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<Polyhedron>::Path cycle;
   unsigned int cycle_length;
   snc.edge_width(cycle, &cycle_length);
   if (cycle.size() != cycle_length) {
@@ -166,9 +166,9 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
   Weight_functor_for_LCC<LCC_for_CMap_2> wf_cm(lcc_cm);
   Weight_functor_for_LCC<LCC_for_GMap_2> wf_gm(lcc_gm);
   Weight_functor_for_SM wf_sm(sm);
-  typedef CGAL::Shortest_noncontractible_cycle<LCC_for_CMap_2, Weight_functor_for_LCC<LCC_for_CMap_2> > SNC_1;
-  typedef CGAL::Shortest_noncontractible_cycle<LCC_for_GMap_2, Weight_functor_for_LCC<LCC_for_GMap_2> > SNC_2;
-  typedef CGAL::Shortest_noncontractible_cycle<Surface_mesh, Weight_functor_for_SM> SNC_3;
+  typedef CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<LCC_for_CMap_2, Weight_functor_for_LCC<LCC_for_CMap_2> > SNC_1;
+  typedef CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<LCC_for_GMap_2, Weight_functor_for_LCC<LCC_for_GMap_2> > SNC_2;
+  typedef CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<Surface_mesh, Weight_functor_for_SM> SNC_3;
   SNC_1 snc1(lcc_cm, wf_cm);
   SNC_2 snc2(lcc_gm, wf_gm);
   SNC_3 snc3(sm, wf_sm);
@@ -212,8 +212,8 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
   std::vector<unsigned int> cycle_lengths;
   unsigned int length;
   do {
-    CGAL::Shortest_noncontractible_cycle<LCC_for_GMap_2> snc(lcc_gm);
-    CGAL::Shortest_noncontractible_cycle<LCC_for_GMap_2>::Path cycle;
+    CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<LCC_for_GMap_2> snc(lcc_gm);
+    CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<LCC_for_GMap_2>::Path cycle;
     snc.edge_width(cycle, &length);
     for (auto e : cycle) {
       if (e == NULL) {
@@ -237,7 +237,8 @@ int main() {
       edge_width_in_unweighted_polyhedron() &&
       find_cycle_in_unweighted_gmap() &&
       edge_width_in_weighted_cmap_gmap_mesh() &&
-      unsew_edge_width_repeatedly_in_unweighted_gmap()) {
+      unsew_edge_width_repeatedly_in_unweighted_gmap())
+  {
     std::cout << "All tests passed\n";
     return EXIT_SUCCESS;
   } else return EXIT_FAILURE;
