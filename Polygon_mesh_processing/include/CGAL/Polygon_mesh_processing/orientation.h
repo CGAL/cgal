@@ -649,11 +649,31 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
 }
 
 /*!
- * \param tm
- * \todo add namedparameters and fidmap management
+ * look at connected components of `tm` having possibly compatible boundary cycles
+ * that could be merged if the orientation of one patch was reversed, and merge them.
+ *
+ * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+ *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
+ *                      as a named parameter, then it must be initialized.
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters
+ *
+ * @param tm a closed triangulated surface mesh
+ * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamBegin{vertex_point_map}
+ *     the property map with the points associated to the vertices of `tm`.
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{face_index_map}
+ *     a property map containing the index of each face of `tm`.
+ *   \cgalParamEnd
+ * \cgalNamedParamsEnd
  */
-template <class TriangleMesh>
-void merge_reversible_connected_components(TriangleMesh& tm)
+template <class TriangleMesh, class NamedParameters>
+void merge_reversible_connected_components(TriangleMesh& tm,
+                                           const NamedParameters& np)
 {
 
   namespace PMP = CGAL::Polygon_mesh_processing;
@@ -662,17 +682,23 @@ void merge_reversible_connected_components(TriangleMesh& tm)
   typedef typename GrT::face_descriptor face_descriptor;
   typedef typename GrT::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t >::type Vpm;
+  typedef typename Polygon_mesh_processing::
+      GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
-  Vpm vpm = get(CGAL::vertex_point, tm);
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(CGAL::vertex_point, tm));
 
-  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_face_property_t<std::size_t> >::type Fidmap;
-  Fidmap fim = get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
-  std::size_t i=0;
-  for (face_descriptor f : faces(tm))
-    put(fim, f, i++);
 
-  Fidmap f_cc_ids = get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
+  typedef typename Polygon_mesh_processing::
+      GetFaceIndexMap<TriangleMesh, NamedParameters>::type Fidmap;
+
+  Fidmap fim = boost::choose_param(get_param(np, internal_np::face_index),
+                                  get_const_property_map(CGAL::face_index, tm));
+
+  typedef CGAL::dynamic_face_property_t<std::size_t>                   Face_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Face_property_tag>::type   Face_cc_map;
+   Face_cc_map f_cc_ids  = get(Face_property_tag(), tm);
   std::size_t nb_cc = PMP::connected_components(tm, f_cc_ids, CGAL::parameters::face_index_map(fim));
 
   std::vector<std::size_t> nb_faces_per_cc(nb_cc, 0);
@@ -760,6 +786,11 @@ void merge_reversible_connected_components(TriangleMesh& tm)
   }
 }
 
+template <class TriangleMesh>
+void merge_reversible_connected_components(TriangleMesh& tm)
+{
+  merge_reversible_connected_components(tm, CGAL::parameters::all_default());
+}
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 #endif // CGAL_ORIENT_POLYGON_MESH_H

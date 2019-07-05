@@ -40,6 +40,9 @@
 #include <algorithm>
 #include <iostream>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#endif // CGAL_LINKED_WITH_TBB
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -537,7 +540,8 @@ duplicate_incompatible_edges_in_polygon_soup(PointRange& points,
  * \tparam Concurrency_tag enables sequential versus parallel orientation.
                         Possible values are `Sequential_tag` (the default) and
                         `Parallel_tag`.
- * \tparam Point_3 the point type of the soup.
+ * \tparam PointRange a model of the concepts `RandomAccessContainer`
+ * and `BackInsertionSequence` whose value type is the point type.
  * @tparam TriangleRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
  * whose value_type is `std::size_t`and of size 3.
@@ -547,34 +551,44 @@ duplicate_incompatible_edges_in_polygon_soup(PointRange& points,
  * \param points the points of the soup.
  * \param triangles the triangles of the soup.
  */
-template <class Concurrency_tag, class Point_3, class TriangleRange, class TriangleMesh>
+template <class Concurrency_tag, class PointRange, class TriangleRange,
+          class TriangleMesh, class NamedParameters>
 void
 orient_triangle_soup_with_reference_triangle_mesh(
   const TriangleMesh& tm_ref,
-  std::vector<Point_3>& points,
-  TriangleRange& triangles)
+  PointRange& points,
+  TriangleRange& triangles,
+    const NamedParameters& np)
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
   typedef boost::graph_traits<TriangleMesh> GrT;
   typedef typename GrT::face_descriptor face_descriptor;
+  typedef typename PointRange::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel K;
+  typedef typename Polygon_mesh_processing::
+      GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(CGAL::vertex_point, tm_ref));
+
+
   typedef std::function<bool(face_descriptor)> Face_predicate;
   Face_predicate is_not_deg =
-    [&tm_ref](face_descriptor f)
+    [&tm_ref, np](face_descriptor f)
     {
-      return !PMP::is_degenerate_triangle_face(f, tm_ref);
+      return !PMP::is_degenerate_triangle_face(f, tm_ref, np);
     };
 
   // build a tree filtering degenerate faces
-  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
+  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Vpm> Primitive;
   typedef CGAL::AABB_traits<K, Primitive> Tree_traits;
 
   boost::filter_iterator<Face_predicate, typename GrT::face_iterator>
     begin(is_not_deg, faces(tm_ref).begin(), faces(tm_ref).end()),
     end(is_not_deg, faces(tm_ref).end(), faces(tm_ref).end());
 
-  CGAL::AABB_tree<Tree_traits> tree(begin, end, tm_ref);
+  CGAL::AABB_tree<Tree_traits> tree(begin, end, tm_ref, vpm);
 
   // now orient the faces
   tree.build();
@@ -585,7 +599,7 @@ orient_triangle_soup_with_reference_triangle_mesh(
       const auto& p1 = points[triangles[fid][1]];
       const auto& p2 = points[triangles[fid][2]];
       const typename K::Point_3 mid = CGAL::centroid(p0, p1, p2);
-      std::pair<typename K::Point_3, face_descriptor> pt_and_f =
+      std::pair<Point_3, face_descriptor> pt_and_f =
         tree.closest_point_and_primitive(mid);
       auto face_ref_normal = PMP::compute_face_normal(pt_and_f.second, tm_ref);
       if(face_ref_normal * cross_product(p1-p0, p2-p0) < 0) {
@@ -607,6 +621,17 @@ orient_triangle_soup_with_reference_triangle_mesh(
       process_facet);
 }
 
+
+template <class Concurrency_tag, class PointRange, class TriangleRange,
+          class TriangleMesh>
+void
+orient_triangle_soup_with_reference_triangle_mesh(
+  const TriangleMesh& tm_ref,
+  PointRange& points,
+  TriangleRange& triangles)
+{
+  orient_triangle_soup_with_reference_triangle_mesh<Concurrency_tag>(tm_ref, points, triangles, CGAL::Polygon_mesh_processing::parameters::all_default());
+}
 } }//end namespace CGAL::Polygon_mesh_processing
 
 #include <CGAL/enable_warnings.h>
