@@ -671,7 +671,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *   \cgalParamEnd
  * *   \cgalParamBegin{maximum_number_of_faces}
  *     if not 0 (default), a connected component is considered reversible only
- *     if it has less than the given number of faces.
+ *     if it has not more faces than the value given.
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  */
@@ -687,8 +687,8 @@ void merge_reversible_connected_components(TriangleMesh& tm,
       GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
 
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
-                         get_const_property_map(vertex_point, tm));
+  Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                get_const_property_map(vertex_point, tm));
 
   typedef std::size_t F_CC_ID;
   typedef std::size_t B_CC_ID;
@@ -696,8 +696,8 @@ void merge_reversible_connected_components(TriangleMesh& tm,
   typedef typename Polygon_mesh_processing::
       GetFaceIndexMap<TriangleMesh, NamedParameters>::type Fidmap;
 
-  Fidmap fim = boost::choose_param(get_param(np, internal_np::face_index),
-                                  get_const_property_map(face_index, tm));
+  Fidmap fim = boost::choose_param(boost::get_param(np, internal_np::face_index),
+                                   get_const_property_map(face_index, tm));
 
   typedef dynamic_face_property_t<F_CC_ID>                   Face_property_tag;
   typedef typename boost::property_map<TriangleMesh, Face_property_tag>::type   Face_cc_map;
@@ -758,9 +758,8 @@ void merge_reversible_connected_components(TriangleMesh& tm,
   }
 
   // max nb of faces for a CC to be reversed
-  const std::size_t threshold = boost::choose_param(
-                                  boost::get_param(np, internal_np::maximum_number_of_faces),
-                                  0);
+  const std::size_t threshold =
+    boost::choose_param( boost::get_param(np, internal_np::maximum_number_of_faces), 0);
 
   std::vector<bool> border_cycle_to_ignore(bcc_id, false);
   std::vector<F_CC_ID> cycle_f_cc_id(bcc_id);
@@ -797,9 +796,10 @@ void merge_reversible_connected_components(TriangleMesh& tm,
     }
   }
 
+  // sort the connected components with potential matches using their number
+  // of faces (sorted by decreasing number of faces)
   std::set<F_CC_ID> ccs_to_reverse;
-  std::vector<bool> reversable(nb_cc, false);
-
+  std::vector<bool> reversible(nb_cc, false);
   std::set< F_CC_ID, std::function<bool(F_CC_ID,F_CC_ID)> > queue(
     [&nb_faces_per_cc](F_CC_ID i, F_CC_ID j)
     {return nb_faces_per_cc[i]==nb_faces_per_cc[j] ? i<j : nb_faces_per_cc[i]>nb_faces_per_cc[j];}
@@ -809,24 +809,25 @@ void merge_reversible_connected_components(TriangleMesh& tm,
   {
     if ( !border_cycle_to_ignore[i] )
     {
-      reversable[ cycle_f_cc_id[i] ] = true;
+      reversible[ cycle_f_cc_id[i] ] = true;
       queue.insert(cycle_f_cc_id[i]);
     }
   }
 
+  // consider largest CC selected and reverse the neighbor patches if
+  // not already reversed or not marked as reversible
   while( !queue.empty() )
   {
     F_CC_ID f_cc_id = *queue.begin();
     queue.erase( queue.begin() );
-    CGAL_assertion( reversable[f_cc_id] );
+    CGAL_assertion( reversible[f_cc_id] );
     for (F_CC_ID id : patch_neighbors[f_cc_id])
     {
-      // TODO: add threshold of CC to reverse
-      if (reversable[id] && (threshold==0 || threshold >= nb_faces_per_cc[id]))
+      if (reversible[id] && (threshold==0 || threshold >= nb_faces_per_cc[id]))
       {
         CGAL_assertion( nb_faces_per_cc[f_cc_id] >= nb_faces_per_cc[id] );
         ccs_to_reverse.insert(id);
-        reversable[id]=false;
+        reversible[id]=false;
         queue.erase(id);
       }
     }
