@@ -652,9 +652,9 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  * look at connected components of `tm` having possibly compatible boundary cycles
  * that could be merged if the orientation of one patch was reversed, and merge them.
  *
- * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
- *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
- *                      as a named parameter, then it must be initialized.
+ * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+ *                     If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+ *                     as a named parameter, then it must be initialized.
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
  * @param tm a closed triangulated surface mesh
@@ -664,7 +664,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *   \cgalParamBegin{vertex_point_map}
  *     the property map with the points associated to the vertices of `tm`.
  *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
+ *     `CGAL::vertex_point_t` must be available in `PolygonMesh`
  *   \cgalParamEnd
  *   \cgalParamBegin{face_index_map}
  *     a property map containing the index of each face of `tm`.
@@ -675,49 +675,49 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  */
-template <class TriangleMesh, class NamedParameters>
-void merge_reversible_connected_components(TriangleMesh& tm,
+template <class PolygonMesh, class NamedParameters>
+void merge_reversible_connected_components(PolygonMesh& pm,
                                            const NamedParameters& np)
 {
-  typedef boost::graph_traits<TriangleMesh> GrT;
+  typedef boost::graph_traits<PolygonMesh> GrT;
   typedef typename GrT::face_descriptor face_descriptor;
   typedef typename GrT::halfedge_descriptor halfedge_descriptor;
 
   typedef typename Polygon_mesh_processing::
-      GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+      GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
 
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
   Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
-                                get_const_property_map(vertex_point, tm));
+                                get_const_property_map(vertex_point, pm));
 
   typedef std::size_t F_CC_ID;
   typedef std::size_t B_CC_ID;
 
   typedef typename Polygon_mesh_processing::
-      GetFaceIndexMap<TriangleMesh, NamedParameters>::type Fidmap;
+      GetFaceIndexMap<PolygonMesh, NamedParameters>::type Fidmap;
 
   Fidmap fim = boost::choose_param(boost::get_param(np, internal_np::face_index),
-                                   get_const_property_map(face_index, tm));
+                                   get_const_property_map(face_index, pm));
 
   typedef dynamic_face_property_t<F_CC_ID>                   Face_property_tag;
-  typedef typename boost::property_map<TriangleMesh, Face_property_tag>::type   Face_cc_map;
-  Face_cc_map f_cc_ids  = get(Face_property_tag(), tm);
-  F_CC_ID nb_cc = connected_components(tm, f_cc_ids, parameters::face_index_map(fim));
+  typedef typename boost::property_map<PolygonMesh, Face_property_tag>::type   Face_cc_map;
+  Face_cc_map f_cc_ids  = get(Face_property_tag(), pm);
+  F_CC_ID nb_cc = connected_components(pm, f_cc_ids, parameters::face_index_map(fim));
 
   std::vector<std::size_t> nb_faces_per_cc(nb_cc, 0);
-  for (face_descriptor f : faces(tm))
+  for (face_descriptor f : faces(pm))
     nb_faces_per_cc[ get(f_cc_ids, f) ]+=1;
 
   std::map< std::pair<Point_3, Point_3>, std::vector<halfedge_descriptor> > border_hedges_map;
   std::vector<halfedge_descriptor> border_hedges;
-  typedef typename boost::property_map<TriangleMesh, dynamic_halfedge_property_t<B_CC_ID> >::type H_to_bcc_id;
-  H_to_bcc_id h_bcc_ids = get(dynamic_halfedge_property_t<B_CC_ID>(), tm);
+  typedef typename boost::property_map<PolygonMesh, dynamic_halfedge_property_t<B_CC_ID> >::type H_to_bcc_id;
+  H_to_bcc_id h_bcc_ids = get(dynamic_halfedge_property_t<B_CC_ID>(), pm);
   const B_CC_ID DV(-1);
   const B_CC_ID FILTERED_OUT(-2);
 
   // collect border halfedges
-  for (halfedge_descriptor h : halfedges(tm))
-    if ( is_border(h, tm) )
+  for (halfedge_descriptor h : halfedges(pm))
+    if ( is_border(h, pm) )
     {
       put(h_bcc_ids, h, DV);
       border_hedges.push_back(h);
@@ -731,13 +731,13 @@ void merge_reversible_connected_components(TriangleMesh& tm,
     {
       typedef std::map< std::pair<Point_3, Point_3>, halfedge_descriptor> Hmap;
       Hmap hmap;
-      for (halfedge_descriptor hh : halfedges_around_face(h, tm))
+      for (halfedge_descriptor hh : halfedges_around_face(h, pm))
       {
         std::pair< typename Hmap::iterator, bool > insert_res =
           hmap.insert(
             std::make_pair(
-              make_sorted_pair(get(vpm, source(hh, tm)),
-              get(vpm, target(hh,tm))), hh) );
+              make_sorted_pair(get(vpm, source(hh, pm)),
+              get(vpm, target(hh,pm))), hh) );
         if (insert_res.second)
           put(h_bcc_ids, hh, bcc_id);
         else
@@ -754,7 +754,7 @@ void merge_reversible_connected_components(TriangleMesh& tm,
   for (halfedge_descriptor h : border_hedges)
   {
     if ( get(h_bcc_ids, h) != FILTERED_OUT)
-      border_hedges_map[std::make_pair(get(vpm, source(h, tm)), get(vpm, target(h, tm)))].push_back(h);
+      border_hedges_map[std::make_pair(get(vpm, source(h, pm)), get(vpm, target(h, pm)))].push_back(h);
   }
 
   // max nb of faces for a CC to be reversed
@@ -775,8 +775,8 @@ void merge_reversible_connected_components(TriangleMesh& tm,
       break;
       case 2:
       {
-        F_CC_ID cc_id_0 = get(f_cc_ids, face(opposite(hedges[0], tm), tm)),
-                cc_id_1 = get(f_cc_ids, face(opposite(hedges[1], tm), tm));
+        F_CC_ID cc_id_0 = get(f_cc_ids, face(opposite(hedges[0], pm), pm)),
+                cc_id_1 = get(f_cc_ids, face(opposite(hedges[1], pm), pm));
 
         if (cc_id_0!=cc_id_1)
         {
@@ -834,21 +834,21 @@ void merge_reversible_connected_components(TriangleMesh& tm,
 
   // reverse ccs and stitches boundaries
   std::vector<face_descriptor> faces_to_reverse;
-  for (face_descriptor f : faces(tm))
+  for (face_descriptor f : faces(pm))
     if ( ccs_to_reverse.count( get(f_cc_ids, f) ) != 0 )
       faces_to_reverse.push_back(f);
 
   if ( !faces_to_reverse.empty() )
   {
-    reverse_face_orientations(faces_to_reverse, tm);
-    stitch_borders(tm);
+    reverse_face_orientations(faces_to_reverse, pm);
+    stitch_borders(pm);
   }
 }
 
-template <class TriangleMesh>
-void merge_reversible_connected_components(TriangleMesh& tm)
+template <class PolygonMesh>
+void merge_reversible_connected_components(PolygonMesh& pm)
 {
-  merge_reversible_connected_components(tm, parameters::all_default());
+  merge_reversible_connected_components(pm, parameters::all_default());
 }
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
