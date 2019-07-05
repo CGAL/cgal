@@ -183,9 +183,8 @@ int test_pipeline()
          connected_components(poly, fccmap,
                               CGAL::parameters::face_index_map(fim)) == 1);
   return 0;
-
-
 }
+
 int main()
 {
   assert(test_orient<Epic>(false) == 0);

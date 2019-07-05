@@ -679,9 +679,6 @@ template <class TriangleMesh, class NamedParameters>
 void merge_reversible_connected_components(TriangleMesh& tm,
                                            const NamedParameters& np)
 {
-
-  namespace PMP = CGAL::Polygon_mesh_processing;
-
   typedef boost::graph_traits<TriangleMesh> GrT;
   typedef typename GrT::face_descriptor face_descriptor;
   typedef typename GrT::halfedge_descriptor halfedge_descriptor;
@@ -691,19 +688,21 @@ void merge_reversible_connected_components(TriangleMesh& tm,
 
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, tm));
+                         get_const_property_map(vertex_point, tm));
 
+  typedef std::size_t F_CC_ID;
+  typedef std::size_t B_CC_ID;
 
   typedef typename Polygon_mesh_processing::
       GetFaceIndexMap<TriangleMesh, NamedParameters>::type Fidmap;
 
   Fidmap fim = boost::choose_param(get_param(np, internal_np::face_index),
-                                  get_const_property_map(CGAL::face_index, tm));
+                                  get_const_property_map(face_index, tm));
 
-  typedef CGAL::dynamic_face_property_t<std::size_t>                   Face_property_tag;
+  typedef dynamic_face_property_t<F_CC_ID>                   Face_property_tag;
   typedef typename boost::property_map<TriangleMesh, Face_property_tag>::type   Face_cc_map;
-   Face_cc_map f_cc_ids  = get(Face_property_tag(), tm);
-  std::size_t nb_cc = PMP::connected_components(tm, f_cc_ids, CGAL::parameters::face_index_map(fim));
+  Face_cc_map f_cc_ids  = get(Face_property_tag(), tm);
+  F_CC_ID nb_cc = connected_components(tm, f_cc_ids, parameters::face_index_map(fim));
 
   std::vector<std::size_t> nb_faces_per_cc(nb_cc, 0);
   for (face_descriptor f : faces(tm))
@@ -711,68 +710,124 @@ void merge_reversible_connected_components(TriangleMesh& tm,
 
   std::map< std::pair<Point_3, Point_3>, std::vector<halfedge_descriptor> > border_hedges_map;
   std::vector<halfedge_descriptor> border_hedges;
-  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_halfedge_property_t<std::size_t> >::type Hidmap;
-  Hidmap him = get(CGAL::dynamic_halfedge_property_t<std::size_t>(), tm);
-  const std::size_t DV(-1);
+  typedef typename boost::property_map<TriangleMesh, dynamic_halfedge_property_t<B_CC_ID> >::type H_to_bcc_id;
+  H_to_bcc_id h_bcc_ids = get(dynamic_halfedge_property_t<B_CC_ID>(), tm);
+  const B_CC_ID DV(-1);
+  const B_CC_ID FILTERED_OUT(-2);
 
-  // fill endpoints -> hedges
+  // collect border halfedges
   for (halfedge_descriptor h : halfedges(tm))
-  {
-    if ( CGAL::is_border(h, tm) )
+    if ( is_border(h, tm) )
     {
-      put(him, h, DV);
-      border_hedges_map[std::make_pair(get(vpm, source(h, tm)), get(vpm, target(h, tm)))].push_back(h);
+      put(h_bcc_ids, h, DV);
       border_hedges.push_back(h);
     }
-  }
 
-  // set the id of boundary cc
-  std::size_t id=0;
-  for(halfedge_descriptor h : border_hedges)
+  // compute the border cc id of all halfedges and mark those duplicated in their own cycle
+  B_CC_ID bcc_id=0;
+  for (halfedge_descriptor h : border_hedges)
   {
-    if (get(him,h) == DV)
+    if (get(h_bcc_ids,h) == DV)
     {
-      for (halfedge_descriptor hh : CGAL::halfedges_around_face(h, tm))
+      typedef std::map< std::pair<Point_3, Point_3>, halfedge_descriptor> Hmap;
+      Hmap hmap;
+      for (halfedge_descriptor hh : halfedges_around_face(h, tm))
       {
-        put(him, hh, id);
+        std::pair< typename Hmap::iterator, bool > insert_res =
+          hmap.insert(
+            std::make_pair(
+              make_sorted_pair(get(vpm, source(hh, tm)),
+              get(vpm, target(hh,tm))), hh) );
+        if (insert_res.second)
+          put(h_bcc_ids, hh, bcc_id);
+        else
+        {
+          put(h_bcc_ids, hh, FILTERED_OUT);
+          put(h_bcc_ids, insert_res.first->second, FILTERED_OUT);
+        }
       }
-      ++id;
+      ++bcc_id;
     }
   }
 
-  // check boundary fully matching
-  std::vector<bool> border_cycle_handled(id, false);
-  std::set<std::size_t> ccs_to_reverse;
-  for ( const auto& p : border_hedges_map )
+  // fill endpoints -> hedges
+  for (halfedge_descriptor h : border_hedges)
+  {
+    if ( get(h_bcc_ids, h) != FILTERED_OUT)
+      border_hedges_map[std::make_pair(get(vpm, source(h, tm)), get(vpm, target(h, tm)))].push_back(h);
+  }
+
+  // max nb of faces for a CC to be reversed
+  const std::size_t threshold = boost::choose_param(
+                                  boost::get_param(np, internal_np::maximum_number_of_faces),
+                                  0);
+
+  std::vector<bool> border_cycle_to_ignore(bcc_id, false);
+  std::vector<F_CC_ID> cycle_f_cc_id(bcc_id);
+  std::vector< std::vector<F_CC_ID> > patch_neighbors(nb_cc);
+
+  for (const auto& p : border_hedges_map)
   {
     const std::vector<halfedge_descriptor>& hedges = p.second;
-    if ( hedges.size()==2 && !border_cycle_handled[ get(him, hedges[0]) ]
-                          && !border_cycle_handled[ get(him, hedges[1]) ] )
+    switch(hedges.size())
     {
-      border_cycle_handled[ get(him, hedges[0]) ] = true;
-      border_cycle_handled[ get(him, hedges[1]) ] = true;
-
-      halfedge_descriptor h2=hedges[1];
-      bool did_break=false;
-      for(halfedge_descriptor h1 : CGAL::halfedges_around_face(hedges[0], tm))
+      case 1:
+        // isolated border hedge nothing to do
+      break;
+      case 2:
       {
-        if (get(vpm, target(h1,tm)) != get(vpm, target(h2,tm)))
+        F_CC_ID cc_id_0 = get(f_cc_ids, face(opposite(hedges[0], tm), tm)),
+                cc_id_1 = get(f_cc_ids, face(opposite(hedges[1], tm), tm));
+
+        if (cc_id_0!=cc_id_1 && next(next(hedges[0], tm), tm) != hedges[0]
+                             && next(next(hedges[1], tm), tm) != hedges[1])
         {
-          did_break=true;
+          cycle_f_cc_id[ get(h_bcc_ids, hedges[0]) ] = cc_id_0;
+          cycle_f_cc_id[ get(h_bcc_ids, hedges[1]) ] = cc_id_1;
+          // WARNING: we might have duplicates here but it is not important for our usage
+          patch_neighbors[cc_id_0].push_back(cc_id_1);
+          patch_neighbors[cc_id_1].push_back(cc_id_0);
           break;
         }
-        h2=next(h2,tm);
+        CGAL_FALLTHROUGH;
       }
-      if (!did_break && h2==hedges[1])
-      {
-        std::size_t cc_id1 = get(f_cc_ids, face(opposite(hedges[0], tm), tm)),
-                    cc_id2 = get(f_cc_ids, face(opposite(hedges[1], tm), tm));
+      default:
+        for (halfedge_descriptor h : hedges)
+          border_cycle_to_ignore[get(h_bcc_ids, h)]=true;
+    }
+  }
 
-        if (cc_id1!=cc_id2)
-        {
-          if (ccs_to_reverse.count(cc_id1)==0 && ccs_to_reverse.count(cc_id2)==0)
-            ccs_to_reverse.insert( nb_faces_per_cc[cc_id1] < nb_faces_per_cc[cc_id2] ? cc_id1 : cc_id2 );
-        }
+  std::set<F_CC_ID> ccs_to_reverse;
+  std::vector<bool> reversable(nb_cc, false);
+
+  std::set< F_CC_ID, std::function<bool(F_CC_ID,F_CC_ID)> > queue(
+    [&nb_faces_per_cc](F_CC_ID i, F_CC_ID j)
+    {return nb_faces_per_cc[i]==nb_faces_per_cc[j] ? i<j : nb_faces_per_cc[i]>nb_faces_per_cc[j];}
+  );
+
+  for (B_CC_ID i=0; i<bcc_id; ++i)
+  {
+    if ( !border_cycle_to_ignore[i] )
+    {
+      reversable[ cycle_f_cc_id[i] ] = true;
+      queue.insert(cycle_f_cc_id[i]);
+    }
+  }
+
+  while( !queue.empty() )
+  {
+    F_CC_ID f_cc_id = *queue.begin();
+    queue.erase( queue.begin() );
+    CGAL_assertion( reversable[f_cc_id] );
+    for (F_CC_ID id : patch_neighbors[f_cc_id])
+    {
+      // TODO: add threshold of CC to reverse
+      if (reversable[id] && (threshold==0 || threshold >= nb_faces_per_cc[id]))
+      {
+        CGAL_assertion( nb_faces_per_cc[f_cc_id] >= nb_faces_per_cc[id] );
+        ccs_to_reverse.insert(id);
+        reversable[id]=false;
+        queue.erase(id);
       }
     }
   }
@@ -785,15 +840,15 @@ void merge_reversible_connected_components(TriangleMesh& tm,
 
   if ( !faces_to_reverse.empty() )
   {
-    PMP::reverse_face_orientations(faces_to_reverse, tm);
-    PMP::stitch_borders(tm);
+    reverse_face_orientations(faces_to_reverse, tm);
+    stitch_borders(tm);
   }
 }
 
 template <class TriangleMesh>
 void merge_reversible_connected_components(TriangleMesh& tm)
 {
-  merge_reversible_connected_components(tm, CGAL::parameters::all_default());
+  merge_reversible_connected_components(tm, parameters::all_default());
 }
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
