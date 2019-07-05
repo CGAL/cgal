@@ -52,8 +52,6 @@
 #include <boost/unordered_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <CGAL/config.h>
 
@@ -69,6 +67,16 @@ _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
 #endif
 
 namespace CGAL {
+  // functions to allow the call to next/opposite by ADL
+  template <typename G, typename Desc>
+  auto CM_ADL_next(Desc&& d, G&& g) {
+    return next(std::forward<Desc>(d), std::forward<G>(g));
+  }
+
+  template <typename G, typename Desc>
+  auto CM_ADL_opposite(Desc&& d, G&& g) {
+    return opposite(std::forward<Desc>(d), std::forward<G>(g));
+  }
 
   /** @file Combinatorial_map.h
    * Definition of generic dD Combinatorial map.
@@ -493,15 +501,15 @@ namespace CGAL {
            ++dartmap_iter)
       {
         basic_link_beta(dartmap_iter->second,
-                        (*origin_to_copy)[CGAL::next(dartmap_iter->first, heg)],
+                        (*origin_to_copy)[CM_ADL_next(dartmap_iter->first, heg)],
             1);
         
-        if (!CGAL::is_border(CGAL::opposite(dartmap_iter->first, heg), heg) &&
-            (dartmap_iter->first)<CGAL::opposite(dartmap_iter->first, heg))
+        if (!CGAL::is_border(CM_ADL_opposite(dartmap_iter->first, heg), heg) &&
+            (dartmap_iter->first)<CM_ADL_opposite(dartmap_iter->first, heg))
         {
           basic_link_beta(dartmap_iter->second,
                           (*origin_to_copy)
-                          [CGAL::opposite(dartmap_iter->first, heg)], 2);
+                          [CM_ADL_opposite(dartmap_iter->first, heg)], 2);
         }
       }
 

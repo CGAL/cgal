@@ -1,6 +1,13 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Cell_attribute.h>
 #include "Combinatorial_map_test_iterators.h"
+#include <CGAL/HalfedgeDS_default.h>
+#if CGAL_USE_OPENMESH
+#  include <OpenMesh/Core/IO/MeshIO.hh>
+#  include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+#  include <CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h>
+  typedef OpenMesh::TriMesh_ArrayKernelT</* MyTraits*/> OpenMesh_mesh;
+#endif // CGAL_USE_OPENMESH
 
 #include <iostream>
 #include <fstream>
@@ -596,6 +603,15 @@ bool testImportFromHalfedge()
   Map2 map2; map2.import_from_halfedge_graph(hds);
   Map3 map3; map3.import_from_halfedge_graph(hds);
 
+#if CGAL_USE_OPENMESH
+  {
+    // test the compilation, with an empty mesh
+    OpenMesh_mesh hds;
+    Map1 map1; map1.import_from_halfedge_graph(hds);
+    Map2 map2; map2.import_from_halfedge_graph(hds);
+    Map3 map3; map3.import_from_halfedge_graph(hds);
+  }
+#endif // CGAL_USE_OPENMESH
   return res; // TODO compare number of darts/cells
 }
 

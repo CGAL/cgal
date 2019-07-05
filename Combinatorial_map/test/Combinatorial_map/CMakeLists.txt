@@ -16,6 +16,11 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "${cppfile}" )
   endforeach()
 
+  find_package( OpenMesh QUIET )
+  if (TARGET OpenMesh::OpenMesh)
+    target_link_libraries(Combinatorial_map_copy_test PRIVATE OpenMesh::OpenMesh)
+  endif()
+
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
