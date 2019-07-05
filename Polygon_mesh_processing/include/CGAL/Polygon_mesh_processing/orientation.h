@@ -778,8 +778,7 @@ void merge_reversible_connected_components(TriangleMesh& tm,
         F_CC_ID cc_id_0 = get(f_cc_ids, face(opposite(hedges[0], tm), tm)),
                 cc_id_1 = get(f_cc_ids, face(opposite(hedges[1], tm), tm));
 
-        if (cc_id_0!=cc_id_1 && next(next(hedges[0], tm), tm) != hedges[0]
-                             && next(next(hedges[1], tm), tm) != hedges[1])
+        if (cc_id_0!=cc_id_1)
         {
           cycle_f_cc_id[ get(h_bcc_ids, hedges[0]) ] = cc_id_0;
           cycle_f_cc_id[ get(h_bcc_ids, hedges[1]) ] = cc_id_1;
