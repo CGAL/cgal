@@ -13,6 +13,7 @@
 #include "ArrangementDemoPropertiesDialog.h"
 #include "ArrangementDemoTab.h"
 #include "Conic_reader.h"
+#include "AlgebraicCurveInputDialog.h"
 
 #include "DeleteCurveMode.h"
 #include "ArrangementGraphicsItem.h"
@@ -833,8 +834,8 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
 
       if ( newDialog->exec( ) == QDialog::Accepted )
       {
-        std::string poly_expr = newDialog->getLineEditText();
-        algCurveInputCallback->addNewAlgebraicCurve(poly_expr);
+        std::string algebraicExpression = newDialog->getLineEditText();
+        algCurveInputCallback->addAlgebraicCurve(algebraicExpression);
       }
 
       delete newDialog;

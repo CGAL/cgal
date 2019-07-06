@@ -202,8 +202,9 @@ bool AlgebraicCurveParser::validateExpression(const std::string &expression) {
     std::string expressionMutable = expression;
     for (auto iterator = expressionMutable.begin(); iterator!=expressionMutable.end(); iterator++){
         if (*iterator == 'x' || *iterator == 'y') continue;
-        if (*iterator == '+' || *iterator =='-') continue;
+        if (*iterator == '+' || *iterator =='-' || *iterator == '*' || *iterator == '^' ) continue;
         if (isdigit(*iterator) || isspace(*iterator)) continue;
-        return false;
+        else return false;
     }
+    return true;
 }

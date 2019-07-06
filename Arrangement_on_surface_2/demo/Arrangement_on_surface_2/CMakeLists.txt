@@ -50,10 +50,11 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
     set(EXPLICIT_INSTANTIATION_SRCS
         ArrangementPainterOstreamExplicitInstantiation.cpp
         # ArrangementGraphicsItemExplicitInstantiation.cpp
-        GraphicsViewCurveInputExplicitInstantiation.cpp
+        # GraphicsViewCurveInputExplicitInstantiation.cpp
         ArrangementPainterOstream.cpp
         # ArrangementGraphicsItem.cpp
-        GraphicsViewCurveInput.cpp)
+        # GraphicsViewCurveInput.cpp
+            )
   endif()
 
 
@@ -69,7 +70,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
                  SplitEdgeCallback.cpp
                  FillFaceCallback.cpp
                  GraphicsViewSegmentInput.cpp
-                 # GraphicsViewCurveInput.cpp
+                 GraphicsViewCurveInput.cpp
                  Utils.cpp
                  AlgebraicCurveExpressionParser.cpp
                  AlgebraicCurveParser.cpp
