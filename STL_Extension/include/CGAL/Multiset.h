@@ -236,13 +236,8 @@ protected:
   };
 
   // Rebind the allocator to the Node type:
-#ifdef CGAL_CXX11
   typedef std::allocator_traits<Allocator> Allocator_traits;
   typedef typename Allocator_traits::template rebind_alloc<Node> Node_allocator;
-#else
-  typedef typename Allocator::template rebind <Node>  Node_alloc_rebind;
-  typedef typename Node_alloc_rebind::other           Node_allocator;
-#endif
 
 public:
 
@@ -1451,11 +1446,7 @@ protected:
 	      color != Node::DUMMY_END);
 
       Node* new_node = node_alloc.allocate(1);
-#ifdef CGAL_CXX11
       std::allocator_traits<Node_allocator>::construct(node_alloc, new_node, beginNode);
-#else
-      node_alloc.construct(new_node, beginNode);
-#endif
       new_node->init(object, color);
       return (new_node);
   }
@@ -3983,11 +3974,7 @@ Multiset<Type, Compare, Allocator>::_allocate_node
                            color != Node::DUMMY_END);
 
   Node* new_node = node_alloc.allocate(1);
-#ifdef CGAL_CXX11
   std::allocator_traits<Node_allocator>::construct(node_alloc, new_node, beginNode);
-#else
-  node_alloc.construct(new_node, beginNode);
-#endif
   new_node->init(object, color);
   return (new_node);
 }
@@ -3999,11 +3986,7 @@ Multiset<Type, Compare, Allocator>::_allocate_node
 template <class Type, class Compare, typename Allocator>
 void Multiset<Type, Compare, Allocator>::_deallocate_node (Node* nodeP)
 {
-#ifdef CGAL_CXX11
   std::allocator_traits<Node_allocator>::destroy(node_alloc, nodeP);
-#else  
-  node_alloc.destroy (nodeP);
-#endif
   node_alloc.deallocate (nodeP, 1);
 
   return;

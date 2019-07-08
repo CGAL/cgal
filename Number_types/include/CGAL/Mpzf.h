@@ -228,15 +228,7 @@ inline int clz (boost::uint64_t x) {
 // In C++11, std::fill_n returns a pointer to the end, but in C++03,
 // it returns void.
 inline mp_limb_t* fill_n_ptr(mp_limb_t* p, int n, int c) {
-#if CGAL_CXX11
   return std::fill_n (p, n, c);
-#else
-  mp_limb_t* q = p + n;
-  std::fill (p, q, c);
-  //std::fill_n (p, n, c);
-  //memset (p, sizeof(mp_limb_t)*n, c);
-  return q;
-#endif
 }
 } // namespace Mpzf_impl
 

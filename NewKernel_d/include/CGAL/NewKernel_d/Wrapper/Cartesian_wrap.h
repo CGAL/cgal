@@ -65,25 +65,6 @@ template<class T> struct Is_wrapper_iterator<T,true> :
 { };
 
 struct Forward_rep {
-//TODO: make a good C++0X version with perfect forwarding
-//#ifdef CGAL_CXX11
-//template <class T,class=typename std::enable_if<!Is_wrapper<typename std::decay<T>::type>::value&&!Is_wrapper_iterator<typename std::decay<T>::type>::value>::type>
-//T&& operator()(typename std::remove_reference<T>::type&& t) const {return static_cast<T&&>(t);};
-//template <class T,class=typename std::enable_if<!Is_wrapper<typename std::decay<T>::type>::value&&!Is_wrapper_iterator<typename std::decay<T>::type>::value>::type>
-//T&& operator()(typename std::remove_reference<T>::type& t) const {return static_cast<T&&>(t);};
-//
-//template <class T,class=typename std::enable_if<Is_wrapper<typename std::decay<T>::type>::value>::type>
-//typename Type_copy_cvref<T,typename std::decay<T>::type::Rep>::type&&
-//operator()(T&& t) const {
-//	return static_cast<typename Type_copy_cvref<T,typename std::decay<T>::type::Rep>::type&&>(t.rep());
-//};
-//
-//template <class T,class=typename std::enable_if<Is_wrapper_iterator<typename std::decay<T>::type>::value>::type>
-//transforming_iterator<Forward_rep,typename std::decay<T>::type>
-//operator()(T&& t) const {
-//	return make_transforming_iterator(std::forward<T>(t),Forward_rep());
-//};
-//#else
 template <class T,bool=Is_wrapper<T>::value,bool=Is_wrapper_iterator<T>::value> struct result_;
 template <class T> struct result_<T,false,false>{typedef T const& type;};
 template <class T> struct result_<T,true,false>{typedef typename decay<T>::type::Rep const& type;};
@@ -97,7 +78,6 @@ template <class T> typename boost::disable_if<boost::mpl::or_<Is_wrapper<T>,Is_w
 template <class T> typename T::Rep const& operator()(T const& t, typename boost::enable_if<Is_wrapper<T> >::type* = 0) const {return t.rep();}
 
 template <class T> transforming_iterator<Forward_rep,typename boost::enable_if<Is_wrapper_iterator<T>,T>::type> operator()(T const& t) const {return make_transforming_iterator(t,Forward_rep());}
-//#endif
 };
 }
 

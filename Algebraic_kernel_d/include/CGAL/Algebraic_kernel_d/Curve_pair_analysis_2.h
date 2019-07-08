@@ -1435,13 +1435,9 @@ compute_event_x_coordinates_with_event_indices() const {
                 CGAL_ACK_DEBUG_PRINT << " one curve event" << std::endl;
 #endif
 */
-#if CGAL_CXX11
             // Fix a warning by using `emplace_back()` instead of
             // copying a non-initialized `optional
             this->ptr()->event_slices.emplace_back();
-#else
-            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
-#endif
             switch(*(one_curve_it++)) {
             case(CGAL::internal::ROOT_OF_FIRST_SET): {
                 event_indices.push_back(Event_indices(-1,f_count,-1));
@@ -1468,11 +1464,7 @@ compute_event_x_coordinates_with_event_indices() const {
             CGAL_ACK_DEBUG_PRINT << " two curve event" << std::endl;
 #endif
 */
-#if CGAL_CXX11
             this->ptr()->event_slices.emplace_back();
-#else
-            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
-#endif
             
             event_indices.push_back
                 (Event_indices(inter_count,-1,-1));
@@ -1486,12 +1478,7 @@ compute_event_x_coordinates_with_event_indices() const {
                                      << std::endl;
 #endif
 */
-#if CGAL_CXX11
             this->ptr()->event_slices.emplace_back();
-#else
-            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
-#endif
-            
             
             switch(*(one_curve_it++)) {
             case(CGAL::internal::ROOT_OF_FIRST_SET): {

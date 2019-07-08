@@ -108,49 +108,20 @@ namespace CGAL {
     };
 
     struct Values {
-#ifdef CGAL_CXX11
       // TODO avoid going through Initializer_list which may cause extra copies. Possibly use forward_as_tuple.
       template<class...U>
 	result_type operator()(U&&...u) const {
 	  check_dim(sizeof...(U)); // TODO: use static_assert
 	  return Initializer_list()({forward_safe<NT,U>(u)...});
 	}
-#else
-
-#define CGAL_CODE(Z,N,_) result_type operator()(BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
-  check_dim(N); \
-  result_type a(N); \
-  a << BOOST_PP_ENUM_PARAMS(N,t); \
-  return a; \
-}
-BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
-#undef CGAL_CODE
-
-#endif
     };
 
     struct Values_divide {
-#ifdef CGAL_CXX11
       template<class H,class...U>
 	result_type operator()(H const&h,U&&...u) const {
 	  check_dim(sizeof...(U)); // TODO: use static_assert
 	  return Initializer_list()({Rational_traits<NT>().make_rational(std::forward<U>(u),h)...});
 	}
-#else
-
-#define CGAL_VAR(Z,N,_) ( Rational_traits<NT>().make_rational( t##N ,h) )
-#define CGAL_CODE(Z,N,_) template <class H> result_type \
-  operator()(H const&h, BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
-    check_dim(N); \
-    result_type a(N); \
-    a << BOOST_PP_ENUM(N,CGAL_VAR,); \
-    return a; \
-  }
-  BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
-#undef CGAL_CODE
-#undef CGAL_VAR
-
-#endif
     };
   };
 }

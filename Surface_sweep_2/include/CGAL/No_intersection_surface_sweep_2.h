@@ -167,17 +167,9 @@ public:
                                                         Status_line;
   typedef typename Status_line::iterator                Status_line_iterator;
 
-#ifdef CGAL_CXX11
   typedef std::allocator_traits<Allocator> Allocator_traits;
   typedef typename Allocator_traits::template rebind_alloc<Event> Event_alloc;
   typedef typename Allocator_traits::template rebind_alloc<Subcurve> Subcurve_alloc;
-#else // not CGAL_CXX11
-  typedef typename Allocator::template rebind<Event>    Event_alloc_rebind;
-  typedef typename Event_alloc_rebind::other            Event_alloc;
-
-  typedef typename Allocator::template rebind<Subcurve> Subcurve_alloc_rebind;
-  typedef typename Subcurve_alloc_rebind::other         Subcurve_alloc;
-#endif // not CGAL_CXX11
   
 protected:
   /*! \struct
