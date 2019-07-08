@@ -49,7 +49,7 @@ namespace internal {
   {
     typename GT::FT norm = CGAL::approximate_sqrt(
         traits.compute_squared_length_3_object()(v));
-    //If the vector is small enough, approx_sqrt might return 0, and then we get nan values. 
+    //If the vector is small enough, approx_sqrt might return 0, and then we get nan values.
     //To avoid that, we check the resulted norm. If it is 0, we don't normalize.
     if(norm != 0)
     {
@@ -67,7 +67,7 @@ namespace internal {
       traits.construct_vector_3_object()(p1, p2),
       traits.construct_vector_3_object()(p1, p0));
 
-    //cross-product(AB, AC)'s norm is the area of the parallelogram 
+    //cross-product(AB, AC)'s norm is the area of the parallelogram
     //formed by these 2 vectors.
     //the triangle's area is half of it
     return traits.construct_scaled_vector_3_object()(n, 0.5);
@@ -159,6 +159,20 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
   return normal;
 }
 
+///\cond SKIP_IN_MANUAL
+
+// compute_face_normal overload
+template <typename PolygonMesh>
+typename GetGeomTraits<PolygonMesh>::type::Vector_3
+compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
+                    const PolygonMesh& pmesh)
+{
+  return compute_face_normal(f, pmesh,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+/// \endcond
+
 /**
 * \ingroup PMP_normal_grp
 * computes the outward unit vector normal for all faces of the polygon mesh.
@@ -197,6 +211,17 @@ compute_face_normals(const PolygonMesh& pmesh
     put(fnm, f, vec);
   }
 }
+
+///\cond SKIP_IN_MANUAL
+
+// compute_face_normals overload
+template <typename PolygonMesh, typename FaceNormalMap>
+void compute_face_normals(const PolygonMesh& pmesh, FaceNormalMap fnm)
+{
+  compute_face_normals(pmesh, fnm, CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+/// \endcond
 
 /**
 * \ingroup PMP_normal_grp
@@ -275,6 +300,19 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   return normal;
 }
 
+///\cond SKIP_IN_MANUAL
+
+// compute_vertex_normal overloads
+template <typename PolygonMesh>
+typename GetGeomTraits<PolygonMesh>::type::Vector_3
+compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
+                      const PolygonMesh& pmesh)
+{
+  return compute_vertex_normal(v, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+/// \endcond
+
 /**
 * \ingroup PMP_normal_grp
 * computes the outward unit vector normal for all vertices of the polygon mesh.
@@ -315,6 +353,17 @@ compute_vertex_normals(const PolygonMesh& pmesh
     put(vnm, v, vec);
   }
 }
+
+///\cond SKIP_IN_MANUAL
+
+// compute_vertex_normals overloads
+template <typename PolygonMesh, typename VertexNormalMap>
+void compute_vertex_normals(const PolygonMesh& pmesh, VertexNormalMap vnm)
+{
+  compute_vertex_normals(pmesh, vnm, CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+/// \endcond
 
 /**
 * \ingroup PMP_normal_grp
@@ -360,62 +409,19 @@ compute_normals(const PolygonMesh& pmesh
 }
 
 ///\cond SKIP_IN_MANUAL
-// compute_vertex_normal overloads
-template <typename PolygonMesh>
-typename CGAL::Kernel_traits< typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type>::Kernel::Vector_3
-compute_vertex_normal(
-  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-  const PolygonMesh& pmesh)
-{
-  return compute_vertex_normal(v, pmesh,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
-// compute_vertex_normals overloads
-template <typename PolygonMesh, typename VertexNormalMap>
-void
-compute_vertex_normals(const PolygonMesh& pmesh,
-                      VertexNormalMap vnm)
-{
-  compute_vertex_normals(pmesh, vnm,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
-// compute_face_normal overload
-template <typename PolygonMesh>
-typename CGAL::Kernel_traits < typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type>::Kernel::Vector_3
-compute_face_normal(
-  typename boost::graph_traits<PolygonMesh>::face_descriptor f,
-  const PolygonMesh& pmesh)
-{
-  return compute_face_normal(f, pmesh,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
-// compute_face_normals overload
-template <typename PolygonMesh, typename FaceNormalMap>
-void
-compute_face_normals(const PolygonMesh& pmesh, FaceNormalMap fnm)
-{
-  compute_face_normals(pmesh, fnm,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
 
 // compute_normals overload
 template <typename PolygonMesh, typename VertexNormalMap, typename FaceNormalMap>
-void
-compute_normals(const PolygonMesh& pmesh,
-                VertexNormalMap vnm,
-                FaceNormalMap fnm)
+void compute_normals(const PolygonMesh& pmesh,
+                     VertexNormalMap vnm,
+                     FaceNormalMap fnm)
 {
-  compute_normals(pmesh, vnm, fnm,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
+  compute_normals(pmesh, vnm, fnm, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 /// \endcond
 
-}
-
-} // end of namespace CGAL::Polygon_mesh_processing
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
