@@ -2300,7 +2300,6 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
   using boost::choose_param;
 
   typedef boost::graph_traits<PolygonMesh>                            GT;
-  typedef typename GT::vertex_descriptor                              vertex_descriptor;
   typedef typename GT::halfedge_descriptor                            halfedge_descriptor;
 
   typedef typename boost::lookup_named_param_def <
