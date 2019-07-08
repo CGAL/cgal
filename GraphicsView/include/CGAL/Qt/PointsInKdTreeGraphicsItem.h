@@ -160,8 +160,8 @@ PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter,
   Iso_rectangle_2 isor = convert(option->exposedRect);
   Fuzzy_iso_box range(isor.vertex(0), isor.vertex(2));
   painter->setPen(verticesPen());
-  QMatrix matrix = painter->matrix();
-  painter->resetMatrix();
+  QTransform matrix = painter->worldTransform();
+  painter->resetTransform();
   Draw<Traits> draw(painter, &matrix);
   kdtree->search(draw, range);
 }
