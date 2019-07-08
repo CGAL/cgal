@@ -25,22 +25,28 @@ using SNC = CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<Mesh, We
 int main(int argc, char* argv[]) {
   std::cout << "Program edgewidth_surface_mesh started.\n";
   Mesh sm;
-  std::ifstream in ((argc > 1) ? argv[1] : "data/3torus-smooth.off");
-  in >> sm;
+  std::ifstream inp ((argc > 1) ? argv[1] : "../../examples/Surface_mesh_topology/data/3torus-smooth.off");
+  if (inp.fail()) {
+    std::cout << "Cannot read file. Exiting program\n";
+    return EXIT_FAILURE;
+  }
+  inp >> sm;
   std::cout << "File loaded. Running the main program...\n";
-  Weight_functor wf(sm);
-  SNC snc(sm, wf);
-  SNC::Path cycle;
-  SNC::Distance_type x;
+
+  Weight_functor     wf(sm);
+  SNC                snc(sm, wf);
+  SNC::Path          cycle;
+  SNC::Distance_type cycle_length;
+  
   std::cout << "Finding edge-width of the mesh...\n";
-  snc.edge_width(cycle, &x);
+  snc.edge_width(cycle, &cycle_length);
   if (cycle.size() == 0) {
     std::cout << "  Cannot find edge-width. Stop.\n";
     return 0;
   }
   
   std::cout << "  Number of edges in cycle: " << cycle.size() << std::endl;
-  std::cout << "  Cycle length: " << x << std::endl;
+  std::cout << "  Cycle length: " << cycle_length << std::endl;
   std::cout << "  Root: " << sm.point(sm.vertex(sm.edge(cycle[0]), 0)) << std::endl;
 
   return EXIT_SUCCESS;
