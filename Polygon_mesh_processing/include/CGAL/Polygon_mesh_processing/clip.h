@@ -668,7 +668,7 @@ void split(      TriangleMesh& tm,
 
 /**
   * \ingroup PMP_corefinement_grp
-  * adds intersection edges of `plane` of `tm` in `tm` and duplicates those edges.
+  * adds intersection edges of `plane` and `tm` in `tm` and duplicates those edges.
   *
   * \note In the current implementation it is not possible to set the vertex point map and the default will be used.
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink

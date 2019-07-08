@@ -937,7 +937,8 @@ void split_connected_components_impl(
 
 /*!
  * \ingroup keep_connected_components_grp
- * identifies the connected components of `pm`, and pushes back a new `PolygonMesh` for each connected component in `cc_meshes`.
+ * identifies the connected components of `pm` and pushes back a new `PolygonMesh` for each connected component in `cc_meshes`.
+ *
  *
  *  \tparam PolygonMesh a model of `FaceListGraph`
  *  \tparam PolygonMeshRange a model of `SequenceContainer` (providing
@@ -952,7 +953,7 @@ void split_connected_components_impl(
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pm` \cgalParamEnd
  *   \cgalParamBegin{face_index_map}
- *     a property map containing an index for each face initialized from 0 to `num_vertices(pm)`
+ *     a property map containing an index for each face initialized from 0 to `num_faces(pm)`
  *   \cgalParamEnd
  *   \cgalParamBegin{vertex_index_map}
  *     a property map containing an index for each vertex initialized 0 to `num_vertices(pm)`
