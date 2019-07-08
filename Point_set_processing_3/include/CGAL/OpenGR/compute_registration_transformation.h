@@ -72,7 +72,7 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
   namespace GR=gr;
 
   // TODO: see if should allow user to change those types
-  typedef Eigen::Matrix<double/*PointAdapterType::Scalar*/, 4, 4> MatrixType; // TODO: double -> Kernel::Scalar?
+  typedef Eigen::Matrix<typename PointAdapterType::Scalar, 4, 4> MatrixType;
   typedef gr::UniformDistSampler SamplerType;
   typedef gr::DummyTransformVisitor TrVisitorType;
   typedef gr::Match4pcsBase<gr::FunctorSuper4PCS,

@@ -36,11 +36,12 @@ template<typename Kernel>
 struct PointAdapter {
   public:
     enum {Dim = 3};
-    typedef typename Kernel::FT Scalar; 
-    typedef Eigen::Matrix<Scalar, Dim, 1> VectorType; 
+    using Scalar = typename Kernel::FT;
+    using VectorType = typename Eigen::Matrix<Scalar, Dim, 1>;
   
   private:
-    gr::Point3D base; // TODO: Scalar of Point3D could be templated
+    using Base = typename gr::Point3D<Scalar>;
+    Base base;
     
   public:
     PointAdapter(const PointAdapter&) = default;
@@ -49,25 +50,23 @@ struct PointAdapter {
     //PointAdapter(const boost::tuple<RangeVal, PointMap, VectorMap> &t)
     template<typename RangePointVectorTuple>
     inline PointAdapter(const RangePointVectorTuple &t)
-          : base(  
-          static_cast<gr::Point3D::Scalar>(get(t.get<1>(), t.get<0>()).x()),
-          static_cast<gr::Point3D::Scalar>(get(t.get<1>(), t.get<0>()).y()),
-          static_cast<gr::Point3D::Scalar>(get(t.get<1>(), t.get<0>()).z())
-        ) // pos
+          : base( get(t.get<1>(), t.get<0>()).x(),
+                  get(t.get<1>(), t.get<0>()).y(),
+                  get(t.get<1>(), t.get<0>()).z() ) // pos
     {
-
+      using BaseVectorType = typename Base::VectorType;
+      
       // normal
       base.set_normal(
-        gr::Point3D::VectorType(
-          static_cast<gr::Point3D::Scalar>(get(t.get<2>(), t.get<0>()).x()),
-          static_cast<gr::Point3D::Scalar>(get(t.get<2>(), t.get<0>()).y()),
-          static_cast<gr::Point3D::Scalar>(get(t.get<2>(), t.get<0>()).z())
-        ) );
+        BaseVectorType( get(t.get<2>(), t.get<0>()).x(),
+                        get(t.get<2>(), t.get<0>()).y(),
+                        get(t.get<2>(), t.get<0>()).z() ) 
+                     );
     }
 
-    inline const VectorType  pos()    const { return base.pos().cast<Scalar>();    }  
-    inline const VectorType  normal() const { return base.normal().cast<Scalar>(); }
-    inline const VectorType  rgb()    const { return base.rgb().cast<Scalar>();    }
+    inline const VectorType  pos()    const { return base.pos();    }  
+    inline const VectorType  normal() const { return base.normal(); }
+    inline const VectorType  rgb()    const { return base.rgb();    }
     
 };
 
