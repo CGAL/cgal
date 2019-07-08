@@ -667,7 +667,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *     `CGAL::vertex_point_t` must be available in `PolygonMesh`
  *   \cgalParamEnd
  *   \cgalParamBegin{face_index_map}
- *     a property map containing the index of each face of `tm`.
+ *     a property map containing an index for each face initialized from 0 to num_faces(pm).
  *   \cgalParamEnd
  * *   \cgalParamBegin{maximum_number_of_faces}
  *     if not 0 (default), a connected component is considered reversible only
