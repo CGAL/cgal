@@ -526,7 +526,6 @@ class Polygon_2 {
     Traits_P traits;
 };
 
-} // CGAL
 
 /// \name Global Operators
 /// @{
