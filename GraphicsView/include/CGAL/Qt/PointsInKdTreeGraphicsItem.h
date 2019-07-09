@@ -57,10 +57,10 @@ class PointsInKdTreeGraphicsItem : public GraphicsItem
   class Draw
     : public CGAL::cpp98::iterator<std::output_iterator_tag, void, void, void, void> {
     QPainter* painter;
-    QMatrix* matrix;
+    QTransform* matrix;
     Converter<K> convert;
   public:
-    Draw(QPainter* painter, QMatrix* matrix)
+    Draw(QPainter* painter, QTransform* matrix)
       : painter(painter), matrix(matrix)
     {}
 
