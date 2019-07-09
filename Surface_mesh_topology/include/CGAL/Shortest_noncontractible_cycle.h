@@ -161,6 +161,8 @@ public:
   using Dart_handle_original       = typename Gmap_wrapper::Dart_handle_original;
   using Dart_const_handle_original = typename Gmap_wrapper::Dart_const_handle_original;
   using Dart_handle                = typename Gmap::Dart_handle;
+  using Attribute_handle_0         = typename Gmap::template Attribute_handle<0>::type;
+  using Attribute_handle_1         = typename Gmap::template Attribute_handle<1>::type;
   using size_type                  = typename Gmap::size_type;
   using Dart_container             = std::vector<Dart_handle>;
   using Path                       = std::vector<Dart_handle_original>; // Consider: CGAL::Path_on_surface<Gmap>;
@@ -186,18 +188,16 @@ public:
     // Initialize 1-attributes
     Gmap_wrapper::set_weights(m_gmap, gmap, m_origin_to_copy, wf);
     // Count number of vertices
+    int cnt = 0;
     for (auto it = m_gmap.template one_dart_per_cell<0>().begin(), 
               itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it)
-      m_vertex_list.push_back(it);
-    for (auto it = m_gmap.template one_dart_per_cell<1>().begin(), 
-              itend = m_gmap.template one_dart_per_cell<1>().end(); it != itend; ++it)
-      m_edge_list.push_back(it);
+      ++cnt;
     for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), 
               itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it)
       m_face_list.push_back(it);
-    m_spanning_tree.reserve(-1 + m_vertex_list.size());
-    m_distance_from_root.reserve(m_vertex_list.size());
-    m_trace_index.reserve(-1 + m_vertex_list.size());
+    m_spanning_tree.reserve(cnt - 1);
+    m_distance_from_root.reserve(cnt);
+    m_trace_index.reserve(cnt - 1);
     // m_gmap.display_characteristics(std::cerr);
     // std::cerr << '\n';
   }
@@ -213,7 +213,8 @@ public:
     cycle.clear();
     bool first_check = true;
     Distance_type min_length = 0;
-    for (Dart_handle it : m_vertex_list) {
+    for (Attribute_handle_0 att_it = m_gmap.template attributes<0>().begin(), att_itend = m_gmap.template attributes<0>().end(); att_it != att_itend; ++att_it) {
+      Dart_handle it = att_it->dart();
       Distance_type temp_length;
       if (first_check) {
         if (!find_cycle(it, cycle, &temp_length)) continue;
@@ -415,7 +416,8 @@ private:
       if (is_degree_one_face(dh_adj_face, dh_only_edge, edge_deleted))
         degree_one_faces.push(dh_only_edge);
     }
-    for (Dart_handle it : m_edge_list) {
+    for (Attribute_handle_1 att_it = m_gmap.template attributes<1>().begin(), att_itend = m_gmap.template attributes<1>().end(); att_it != att_itend; ++att_it) {
+      Dart_handle it = att_it->dart();
       if (m_gmap.template info<0>(it) >= 0 && !m_gmap.is_marked(it, edge_deleted)) {
         noncon_edges.push_back(it);
       }
@@ -437,8 +439,10 @@ private:
     m_spanning_tree.clear();
     m_distance_from_root.clear();
     m_trace_index.clear();
-    for (Dart_handle it : m_vertex_list)
+    for (Attribute_handle_0 att_it = m_gmap.template attributes<0>().begin(), att_itend = m_gmap.template attributes<0>().end(); att_it != att_itend; ++att_it) {
+      Dart_handle it = att_it->dart();
       m_gmap.template info<0>(it) = -1;
+    }
     find_spanning_tree(root, m_spanning_tree, m_distance_from_root, m_trace_index);
     find_noncon_edges(m_spanning_tree, m_noncon_edges);
     // std::cerr << "Done find_noncon_edges. noncon_edges.size() = " << m_noncon_edges.size() << '\n';
@@ -484,7 +488,7 @@ private:
   typename Gmap_wrapper::Origin_to_copy_map m_origin_to_copy;
   typename Gmap_wrapper::Copy_to_origin_map m_copy_to_origin;
   unsigned int m_nb_of_vertices = 0;
-  Dart_container m_spanning_tree, m_noncon_edges, m_face_list, m_edge_list, m_vertex_list;
+  Dart_container m_spanning_tree, m_noncon_edges, m_face_list;
   std::vector<Distance_type> m_distance_from_root;
   std::vector<int> m_trace_index;
 };
