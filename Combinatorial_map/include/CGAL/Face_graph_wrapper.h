@@ -23,6 +23,7 @@
 
 #include <CGAL/Functors_for_face_graph_wrapper.h>
 #include <CGAL/Iterators_for_face_graph_wrapper.h>
+#include <CGAL/internal/Combinatorial_map_internal_functors.h>
 
 namespace CGAL
 {
