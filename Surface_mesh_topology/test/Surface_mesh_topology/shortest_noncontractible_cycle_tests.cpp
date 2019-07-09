@@ -54,14 +54,14 @@ private:
 };
 
 bool get_data(Surface_mesh& sm) {
-  std::ifstream in("./data/3torus.off");
+  std::ifstream in("./data/3torus-smooth.off");
   if (in.fail()) return false;
   in >> sm;
   return true;
 }
 
 bool get_data(Polyhedron& sm) {
-  std::ifstream in("./data/3torus.off");
+  std::ifstream in("./data/3torus-smooth.off");
   if (in.fail()) return false;
   in >> sm;
   return true;
@@ -69,7 +69,7 @@ bool get_data(Polyhedron& sm) {
 
 template <class T>
 bool get_data(T& lcc) {
-  std::ifstream in("./data/3torus.off");
+  std::ifstream in("./data/3torus-smooth.off");
   if (in.fail()) return false;
   CGAL::load_off(lcc, in);
   return true;
@@ -179,21 +179,83 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
   snc1.edge_width(cycle1, &cycle_length1);
   snc2.edge_width(cycle2, &cycle_length2);
   snc3.edge_width(cycle3, &cycle_length3);
-  for (auto e : cycle1)
+  std::vector<Point> v1, v2, v3;
+  for (auto e : cycle1) {
     if (e == NULL) {
-      std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: NULL dart handle found in cycle\n";
+      std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: NULL dart handle found in cycle of lcc_cm\n";
       return false;
     }
-  for (auto e : cycle2)
+    Point a = lcc_cm.point_of_vertex_attribute(lcc_cm.vertex_attribute(e));
+    Point b = lcc_cm.point_of_vertex_attribute(lcc_cm.vertex_attribute(lcc_cm.next(e)));
+    if (v1.empty()) {
+      v1.push_back(a);
+      v1.push_back(b);
+    } else {
+      if (a == v1.back()) v1.push_back(b);
+      else if (b == v1.back()) v1.push_back(a);
+      else {
+        std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: The cycle of lcc_cm is ill-formed\n";
+        return false;
+      }
+    }
+  }
+  for (auto e : cycle2) {
     if (e == NULL) {
-      std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: NULL dart handle found in cycle\n";
+      std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: NULL dart handle found in cycle of lcc_gm\n";
       return false;
     }
-  // if (cycle1.size() != cycle2.size() || cycle1.size() != cycle3.size()) {
-  //   std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: Inconsistency in number of edges of the edge-width "
-  //             << "(" << cycle1.size() << ", " << cycle2.size() << ", " << cycle3.size() << ").\n";
-  //   return false;
-  // }
+    Point a = lcc_gm.point_of_vertex_attribute(lcc_gm.vertex_attribute(e));
+    Point b = lcc_gm.point_of_vertex_attribute(lcc_gm.vertex_attribute(lcc_gm.next(e)));
+    if (v2.empty()) {
+      v2.push_back(a);
+      v2.push_back(b);
+    } else {
+      if (a == v2.back()) v2.push_back(b);
+      else if (b == v2.back()) v2.push_back(a);
+      else {
+        std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: The cycle of lcc_gm is ill-formed\n";
+        return false;
+      }
+    }
+  }
+  // It is observed that reversing v2 will make it identical to v1 and v3
+  std::reverse(v2.begin(), v2.end());
+  for (auto e : cycle3) {
+    Point a = sm.point(sm.vertex(sm.edge(e), 0));
+    Point b = sm.point(sm.vertex(sm.edge(e), 1));
+    if (v3.empty()) {
+      v3.push_back(a);
+      v3.push_back(b);
+    } else {
+      if (a == v3.back()) v3.push_back(b);
+      else if (b == v3.back()) v3.push_back(a);
+      else {
+        std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: The cycle of sm is ill-formed\n";
+        return false;
+      }
+    }
+  }
+  // for (Point x : v1) std::cout << x << " --- ";
+  // std::cout << '\n';
+  // for (Point x : v2) std::cout << x << " --- ";
+  // std::cout << '\n';
+  // for (Point x : v3) std::cout << x << " --- ";
+  // std::cout << '\n';
+  if (v1.size() != v2.size() || v1.size() != v3.size()) {
+    std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: Inconsistency in number of edges of the edge-width "
+              << "(" << cycle1.size() << ", " << cycle2.size() << ", " << cycle3.size() << ").\n";
+    return false;
+  }
+  for (int i = 0; i < v1.size(); ++i) {
+    if (v1[i] != v2[i] || v1[i] != v3[i]) {
+      std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: Inconsistency in the vertex ordering";
+      return false;
+    }
+  }
+  if (v1[0] != v1.back()) {
+    std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: The path is not a cycle";
+    return false;
+  }
   if (cycle_length1 - cycle_length2 > 1e-5 || cycle_length1 - cycle_length3 > 1e-5) {
     std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: Inconsistency in the edge-width length"
               << std::fixed << std::setprecision(6)
