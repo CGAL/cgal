@@ -37,6 +37,10 @@
 #include <CGAL/Intersections_2/Circle_2_Iso_rectangle_2.h>
 #include <CGAL/Intersections_2/Circle_2_Line_2.h>
 #include <CGAL/Intersections_2/Circle_2_Point_2.h>
+#include <CGAL/Intersections_2/Circle_2_Segment_2.h>
+#include <CGAL/Intersections_2/Circle_2_Ray_2.h>
+#include <CGAL/Intersections_2/Circle_2_Triangle_2.h>
+
 
 #include <CGAL/Intersections_2/Iso_rectangle_2_Iso_rectangle_2.h>
 #include <CGAL/Intersections_2/Iso_rectangle_2_Line_2.h>

@@ -318,6 +318,43 @@ struct Test
     check_intersection<P>  (C(p( 0,  0), 25)                , p( 5, 0));
   }
 
+  void C_S()
+  {
+    std::cout << "Circle - Segment" << std::endl;
+
+    check_no_do_intersect  (C(p( 2, 8), 6), S(p(-3, -2), p( 2,  -4)));
+    check_no_do_intersect  (C(p( 2, 8), 6), S(p(-3, 22), p( 2, 34)));
+
+    check_do_intersect     (C(p( 3, 4), 0), S(p(-3,  8), p( 6,  2)));
+    check_do_intersect     (C(p( 4, 3), 4), S(p( 6, -7), p( 5, 2)));
+
+    check_do_intersect     (C(p(-3, 1), 7), S(p(-1, -3), p(-6,  7)));
+  }
+
+  void C_R()
+  {
+    std::cout << "Circle - Ray" << std::endl;
+
+    check_no_do_intersect  (C(p( 2, 8), 6), R(p(-3, -2), p( 2,  -4)));
+    check_no_do_intersect  (C(p( 2, 8), 6), R(p(-3, 22), p( 2, 34)));
+
+    check_do_intersect     (C(p( 3, 4), 0), R(p(-3,  8), p( 6,  2)));
+    check_do_intersect     (C(p( 4, 3), 4), R(p( 6, -7), p( 5, 2)));
+
+    check_do_intersect     (C(p(-3, 1), 7), R(p(-1, -3), p(-6,  7)));
+  }
+
+  void C_T()
+  {
+    std::cout << "Circle - Triangle" << std::endl;
+    check_no_do_intersect  (C(p( 2, 8), 6), T(p(6,0), p( 8, 0), p(8,2)));
+
+    check_do_intersect     (C(p( 3, 4), 0), T(p(-3,  8), p( 6,  2), p(4,6)));
+    check_do_intersect     (C(p( 4, 3), 4), T(p( 6, -7), p( 5, 2), p(2,-3)));
+
+    check_do_intersect     (C(p( 4, 3), 4), T(p( 6, -7), p( 4, 6), p(2,-3)));
+  }
+
   void L_L()
   {
     std::cout << "Line - Line" << std::endl;
@@ -761,6 +798,9 @@ struct Test
     C_Rec();
     C_L();
     C_P();
+    C_S();
+    C_R();
+    C_T();
 
     Rec_Rec();
     Rec_L();
