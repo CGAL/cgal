@@ -27,14 +27,13 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Iterator_range.h>
 
 #include <boost/type_traits/is_same.hpp>
-#include <boost/range/combine.hpp>
+#include <boost/range/iterator_range.hpp>
 
 #include <gr/algorithms/FunctorSuper4pcs.h>
 #include <gr/algorithms/PointPairFilter.h>
-
-#include "point_adapter.h"
 
 #include <Eigen/Dense>
 
@@ -44,12 +43,38 @@ namespace OpenGR {
 
 template<typename Kernel>
 using Options = typename gr::Match4pcsBase<gr::FunctorSuper4PCS,
-                                           internal::PointAdapter<Kernel>,
+                                           gr::Point3D<typename Kernel::FT>,
                                            gr::DummyTransformVisitor,
                                            gr::AdaptivePointFilter,
                                            gr::AdaptivePointFilter::Options>::OptionsType;
 
 namespace internal {
+
+template <typename Scalar, typename InputRange, typename PointMap, typename VectorMap>
+struct CGAL_range_and_pmaps_to_opengr_point3d_range
+{
+  typedef typename InputRange::const_iterator::value_type argument_type;
+  typedef gr::Point3D<Scalar> result_type;
+  typedef typename result_type::VectorType vector_type;
+
+  PointMap point_map;
+  VectorMap normal_map;
+
+  CGAL_range_and_pmaps_to_opengr_point3d_range (PointMap point_map, VectorMap normal_map)
+    : point_map (point_map), normal_map (normal_map)
+  { }
+
+  result_type operator() (const argument_type& arg) const
+  {
+    const auto& p = get (point_map, arg);
+    const auto& n = get (normal_map, arg);
+
+    result_type out (p.x(), p.y(), p.z());
+    out.set_normal ( vector_type(n.x(), n.y(), n.z()) );
+
+    return out;
+  }
+};
 
 template <class Kernel,
           class PointRange1,
@@ -67,16 +92,16 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
 
-  typedef PointAdapter<Kernel> PointAdapterType;
+  typedef gr::Point3D<typename Kernel::FT> PointType;
 
   namespace GR=gr;
 
   // TODO: see if should allow user to change those types
-  typedef Eigen::Matrix<typename PointAdapterType::Scalar, 4, 4> MatrixType;
+  typedef Eigen::Matrix<typename PointType::Scalar, 4, 4> MatrixType;
   typedef gr::UniformDistSampler SamplerType;
   typedef gr::DummyTransformVisitor TrVisitorType;
   typedef gr::Match4pcsBase<gr::FunctorSuper4PCS,
-                            PointAdapterType,
+                            PointType,
                             TrVisitorType,
                             gr::AdaptivePointFilter,
                             gr::AdaptivePointFilter::Options> MatcherType;
@@ -85,25 +110,28 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
   SamplerType sampler;
   TrVisitorType visitor;
 
-  // Do not copy the points but pass the ranges zipped with point and vector maps
-  // to be resolved at point adapter. Pass copies of point and vector maps as they are
-  // lightweight objects
-  std::vector<PointMap1> pmap1(range1.size(), point_map1);
-  std::vector<VectorMap1> vmap1(range1.size(), vector_map1);
+  // Unary functions that convert value_type of point ranges to gr::Point3D
+  CGAL_range_and_pmaps_to_opengr_point3d_range<typename Kernel::FT, PointRange1, PointMap1, VectorMap1> // TODO: remove deductible ones
+    unary_function_1 (point_map1, vector_map1);
 
-  std::vector<PointMap2> pmap2(range2.size(), point_map2);
-  std::vector<VectorMap2> vmap2(range2.size(), vector_map2);
+  CGAL_range_and_pmaps_to_opengr_point3d_range<typename Kernel::FT, PointRange2, PointMap2, VectorMap2> // TODO: remove deductible ones
+    unary_function_2 (point_map2, vector_map2);
 
-  auto range_pmap_vmap_1 = boost::combine(range1, pmap1, vmap1);
-  auto range_pmap_vmap_2 = boost::combine(range2, pmap2, vmap2);
-  
+  auto gr_point_range_1 = boost::make_iterator_range(
+    boost::make_transform_iterator (range1.begin(), unary_function_1),
+    boost::make_transform_iterator (range1.end(),   unary_function_1));
+
+  auto gr_point_range_2 = boost::make_iterator_range(
+    boost::make_transform_iterator (range2.begin(), unary_function_2),
+    boost::make_transform_iterator (range2.end(),   unary_function_2));
+
   // logger
   GR::Utils::Logger logger(GR::Utils::NoLog);
 
   // matcher
   MatcherType matcher(options, logger);
   double score =
-    matcher.ComputeTransformation(range_pmap_vmap_1, range_pmap_vmap_2, mat, sampler, visitor);
+    matcher.ComputeTransformation(gr_point_range_1, gr_point_range_2, mat, sampler, visitor);
 
 #ifdef CGAL_OPENGR_VERBOSE
   std::cerr << "Transformation matrix: " << std::endl;
