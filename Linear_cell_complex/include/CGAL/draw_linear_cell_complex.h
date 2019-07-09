@@ -25,6 +25,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Random.h>
 
 namespace CGAL

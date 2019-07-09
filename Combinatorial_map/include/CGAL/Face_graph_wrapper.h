@@ -23,17 +23,61 @@
 
 #include <CGAL/Functors_for_face_graph_wrapper.h>
 #include <CGAL/Iterators_for_face_graph_wrapper.h>
-#include <CGAL/Combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Generalized_map.h>
-#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_for_generalized_map.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polygonal_schema.h>
 
 namespace CGAL
 {
+  // Forward declarations of all classes model of Face_graph
+  template <unsigned int d, typename Refs, typename Items, typename Alloc,
+            typename Storage>
+  class Combinatorial_map_base;
+  
+  template <unsigned int d, typename Refs, typename Items, typename Alloc,
+            typename Storage>
+  class Generalized_map_base;
+  
+  template <unsigned int d, unsigned int d2, typename Traits, typename Items,
+            typename Alloc,
+            template<unsigned int,class,class,class,class>
+            class Map, typename Refs, typename Storage>
+  class Linear_cell_complex_base;
+
+  template <unsigned int d, typename Items, typename Alloc,
+            typename Storage>
+  class Combinatorial_map;
+
+  template <unsigned int d, typename Items, typename Alloc,
+            typename Storage>
+  class Generalized_map;
+
+  template <unsigned int d, unsigned int d2, typename Traits, typename Items,
+            typename Alloc,
+            template<unsigned int,class,class,class,class>
+            class Map, typename Storage>
+  class Linear_cell_complex_for_combinatorial_map;
+  
+  template <unsigned int d, unsigned int d2, typename Traits, typename Items,
+            typename Alloc,
+            template<unsigned int,class,class,class,class>
+            class Map, typename Storage>
+  class Linear_cell_complex_for_generalized_map;
+
+  template<class P>
+  class Surface_mesh;
+
+  template<class PolyhedronTraits_3,
+           class PolyhedronItems_3,
+           template<class T, class I, class A> class T_HDS,
+           class Alloc>
+  struct Polyhedron_3;
+
+  namespace Surface_mesh_topology
+  {
+    template <typename Items, typename Alloc, typename Storage>
+    class Polygonal_schema_with_combinatorial_map;
+
+    template <typename Items, typename Alloc, typename Storage>
+    class Polygonal_schema_with_generalized_map;
+  }
   
 ////////////////////////////////////////////////////////////////////////////////
 /** Class Face_graph_wrapper: to wrap any model of FaceGraph into a Combinatorial map.
