@@ -132,9 +132,20 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       std::cout << "treat needle: " << e << " (" << tmesh.point(source (e, tmesh)) << " --- " << tmesh.point(target(e, tmesh)) << ")" << std::endl;
       if(CGAL::Euler::does_satisfy_link_condition(e, tmesh))
       {
+        CGAL_assertion(!is_border(e, tmesh));
+
         vertex_descriptor v = Euler::collapse_edge(e, tmesh); // @todo move 'v' to the midpoint?
 
         edges_to_flip.erase(e);
+
+        // the following edges are removed by the collapse
+        edge_descriptor pe = edge(prev(halfedge(e, tmesh), tmesh), tmesh);
+        edge_descriptor poe = edge(prev(opposite(halfedge(e, tmesh), tmesh), tmesh), tmesh);
+
+        edges_to_collapse.erase(pe);
+        edges_to_collapse.erase(poe);
+        edges_to_flip.erase(pe);
+        edges_to_flip.erase(poe);
 
         // The geometry of all the faces incident to 'v' has changed and so we recompute their badness
         // @fixme nasty complexity, use tags or something...
@@ -153,7 +164,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
             edges_to_flip.erase(other_e);
           }
 
-          // adding directly to 'edges_to_flip'
+          // adding directly to 'edges_to_flip' because we're treating caps next
           internal::add_if_badly_shaped(face(inc_h, tmesh), tmesh, next_edges_to_collapse, edges_to_flip, np);
         }
       }
@@ -177,8 +188,19 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         std::cout << "Flippin!" << std::endl;
         Euler::flip_edge(h, tmesh);
 
+        // commented code below is not needed as long as you can't have both needle & caps but might become relevant later
+//        edges_to_flip.erase(edge(prev(h, tmesh), tmesh));
+//        edges_to_flip.erase(edge(next(h, tmesh), tmesh));
+//        edges_to_flip.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
+//        edges_to_flip.erase(edge(next(opposite(h, tmesh), tmesh), tmesh));
+
         internal::add_if_badly_shaped(face(h, tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
         internal::add_if_badly_shaped(face(opposite(h, tmesh), tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
+
+//        internal::add_if_badly_shaped(face(opposite(prev(h, tmesh), tmesh), tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
+//        internal::add_if_badly_shaped(face(opposite(next(h, tmesh), tmesh), tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
+//        internal::add_if_badly_shaped(face(opposite(prev(opposite(h, tmesh), tmesh), tmesh), tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
+//        internal::add_if_badly_shaped(face(opposite(next(opposite(h, tmesh), tmesh), tmesh), tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
       }
       else
       {
