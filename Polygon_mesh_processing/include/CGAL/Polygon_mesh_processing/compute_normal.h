@@ -482,9 +482,14 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
     incident_faces.push_back(fd);
   }
 
+  if(incident_faces.size() == 1)
+    return normalized_face_normals[incident_faces.front()];
+
   std::pair<Vector_3, bool> res = compute_most_visible_normal_2_points<PolygonMesh>(incident_faces, normalized_face_normals, traits);
   if(res.second)
     return res.first;
+
+  CGAL_assertion(incident_faces.size() > 2);
 
   return compute_most_visible_normal_3_points<PolygonMesh>(incident_faces, normalized_face_normals, traits);
 }
