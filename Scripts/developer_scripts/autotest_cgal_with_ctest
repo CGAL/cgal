@@ -36,6 +36,34 @@ export TESTSUITE_DIR=""
 USE_LATEST_UNZIPPED=""
 
 # ----------------------------------------------------------------------------------------
+# Logging functions
+# ----------------------------------------------------------------------------------------
+log()
+{
+  LOGFILE=${1}
+  shift
+  if [ -n "${CONSOLE_OUTPUT}" ]; then
+      printf "${*} ...\n"
+  fi
+  printf "\n-------------------------------------------------------\n" >> "${LOGFILE}"
+  printf "  ${*} ...\n"                                                >> "${LOGFILE}"
+  printf "\n-------------------------------------------------------\n" >> "${LOGFILE}"
+}
+
+log_done()
+{
+  if [ -n "${CONSOLE_OUTPUT}" ]; then
+      printf \
+      " done\n-------------------------------------------------------\n"
+  fi
+  printf "\n-------------------------------------------------------\n" >> "${1}"
+  printf "  **DONE**\n"                                                >> "${1}"
+  printf "\n-------------------------------------------------------\n" >> "${1}"
+}
+
+
+
+# ----------------------------------------------------------------------------------------
 # Downloads the file "LATEST" whose contents indicates which release to test
 # ----------------------------------------------------------------------------------------
 download_latest()
@@ -202,13 +230,6 @@ else
   exit 1
 fi
 
-if [ -n "${SCRIPTS_DIR}" ]; then
-  CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-git"`
-else
-  CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-I"`
-fi
-
-source "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/log.sh"
 LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
 LOCK_FILE="${CGAL_ROOT}/autotest_cgal_with_cmake.lock"
 
