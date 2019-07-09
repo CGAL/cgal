@@ -2212,22 +2212,35 @@ private: //------------------------------------------------------- private data
     std::vector<internal::PLY::Abstract_property_printer<FIndex>*> fprinters;
     internal::PLY::fill_header (os, sm, fprinters);
 
+    
     std::vector<internal::PLY::Abstract_property_printer<EIndex>*> eprinters;
     if (sm.template properties<EIndex>().size() > 1)
     {
-      os << "element edge " << sm.number_of_edges() << std::endl;
-      os << "property int v0" << std::endl;
-      os << "property int v1" << std::endl;
-      internal::PLY::fill_header (os, sm, eprinters);
+      std::ostringstream oss;
+      internal::PLY::fill_header (oss, sm, eprinters);
+
+      if (!eprinters.empty())
+      {
+        os << "element edge " << sm.number_of_edges() << std::endl;
+        os << "property int v0" << std::endl;
+        os << "property int v1" << std::endl;
+        os << oss.str();
+      }
     }
 
     std::vector<internal::PLY::Abstract_property_printer<HIndex>*> hprinters;
     if (sm.template properties<HIndex>().size() > 1)
     {
-      os << "element halfedge " << sm.number_of_halfedges() << std::endl;
-      os << "property int source" << std::endl;
-      os << "property int target" << std::endl;
-      internal::PLY::fill_header (os, sm, hprinters);
+      std::ostringstream oss;
+      internal::PLY::fill_header (oss, sm, hprinters);
+
+      if (!hprinters.empty())
+      {
+        os << "element halfedge " << sm.number_of_halfedges() << std::endl;
+        os << "property int source" << std::endl;
+        os << "property int target" << std::endl;
+        os << oss.str();
+      }
     }
 
     os << "end_header" << std::endl;  
