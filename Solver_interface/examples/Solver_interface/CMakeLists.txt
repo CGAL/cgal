@@ -50,7 +50,7 @@ if ( CGAL_FOUND )
 
       else()
 
-        message(STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
+        message(STATUS "NOTICE : This project requires either SCIP or GLPK, and will not be compiled. "
             "Please provide either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
 
       endif()
