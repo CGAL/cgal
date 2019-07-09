@@ -4,7 +4,7 @@ namespace Surface_mesh_topology {
 /*!
   \ingroup PkgSurfaceMeshTopologyClasses
   
-  The class `Shortest_noncontractible_cycle` provides methods to 
+  The class `Shortest_noncontractible_cycle` provides methods to find shortest non-contractible cycles on the surface. The input mesh can be `Combinatorial_map`, `Generalized_map`, `Surface_mesh`, `Polyhedron_3` or a linear cell complex. In the unweighted case, all edges have weight of 1. Otherwise, a weight functor must be provided. Often times, the functor measures the distance between two endpoints of the edge containing the given dart.
   
   \tparam Mesh_ a model of `GenericMap` or of `FaceGraph`
   \tparam Weight_ a model of `WeightFunctor`
@@ -37,10 +37,10 @@ public:
   /// If the template parameter `Mesh_` is a model of `GenericMap`, set as \link GenericMap::Dart_handle `Mesh::Dart_handle`\endlink ; otherwise set as `boost::graph_traits<Mesh_>::halfedge_descriptor`
   using Dart_handle_orig = unspecified_type;
 
-  /// The cycle type.
+  /// The cycle type is a container of dart handles of the original mesh.
   using Path = std::vector<Dart_handle_orig>;
   
-  /// Constructor
+  /// Constructor takes the input map and the weight functor. If not specified, the functor is default to its default constructor.
   Shortest_noncontractible_cycle(Mesh_& mesh, const Weight& wf = Weight());
   
   /// Find the shortest non-contractible cycle through a vertex.
