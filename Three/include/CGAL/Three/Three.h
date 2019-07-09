@@ -82,15 +82,31 @@ public:
    * in the plugin.
    */
   static void autoConnectActions(CGAL::Three::Polyhedron_demo_plugin_interface* plugin);
+  /*!
+   * Displays in the console a blue text preceded by the mention
+   * "INFO: ".
+   */
   static void information(QString);
   /*!
-   * Displays a blue text preceded by the mention "WARNING :".
+   * Displays in the console an orange text preceded by the mention "WARNING: ".
    */
   static void warning(QString);
   /*!
-   * Displays a red text preceded by the mention "ERROR :".
+   * Displays in the console a red text preceded by the mention "ERROR: ".
    */
   static void error(QString);
+  /*!
+   * Displays an information popup.
+   */
+  static void information(QString title, QString message);
+  /*!
+   * Displays a warning popup.
+   */
+  static void warning(QString title, QString message);
+  /*!
+   * Displays an error popup.
+   */
+  static void error(QString title, QString message);
 protected:
   static QMainWindow* s_mainwindow;
   static Viewer_interface* s_mainviewer;
