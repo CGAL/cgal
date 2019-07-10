@@ -116,10 +116,10 @@ ArcsGraphicsItem<CK>::paint(QPainter *painter,
     Line_arc_2 la;
 
     if(assign(cap_ui, *it)){
-      QMatrix matrix = painter->matrix();
-      painter->resetMatrix();
+      QTransform matrix = painter->worldTransform();
+      painter->resetTransform();
       painter->drawPoint(matrix.map(convert(cap_ui.first)));
-      painter->setMatrix(matrix);
+      painter->setWorldTransform(matrix);
     }if(assign(ca, *it)){
       painterostream << ca;
     } else if(assign(la, *it)){

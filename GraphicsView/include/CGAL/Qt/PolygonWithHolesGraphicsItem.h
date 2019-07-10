@@ -181,8 +181,8 @@ PolygonWithHolesGraphicsItem<P>::paint(QPainter *painter,
   if(drawVertices()) {
 
     painter->setPen(verticesPen());
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
     for(typename P::General_polygon_2::Vertex_iterator it = poly->outer_boundary().vertices_begin();
         it != poly->outer_boundary().vertices_end();
         it++){

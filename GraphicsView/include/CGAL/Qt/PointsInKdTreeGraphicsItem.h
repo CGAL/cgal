@@ -57,10 +57,10 @@ class PointsInKdTreeGraphicsItem : public GraphicsItem
   class Draw
     : public CGAL::cpp98::iterator<std::output_iterator_tag, void, void, void, void> {
     QPainter* painter;
-    QMatrix* matrix;
+    QTransform* matrix;
     Converter<K> convert;
   public:
-    Draw(QPainter* painter, QMatrix* matrix)
+    Draw(QPainter* painter, QTransform* matrix)
       : painter(painter), matrix(matrix)
     {}
 
@@ -160,8 +160,8 @@ PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter,
   Iso_rectangle_2 isor = convert(option->exposedRect);
   Fuzzy_iso_box range(isor.vertex(0), isor.vertex(2));
   painter->setPen(verticesPen());
-  QMatrix matrix = painter->matrix();
-  painter->resetMatrix();
+  QTransform matrix = painter->worldTransform();
+  painter->resetTransform();
   Draw<Traits> draw(painter, &matrix);
   kdtree->search(draw, range);
 }
