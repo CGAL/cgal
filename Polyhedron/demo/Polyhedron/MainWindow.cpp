@@ -383,14 +383,38 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   connect(ui->menuOperations, SIGNAL(aboutToShow()), this, SLOT(filterOperations()));
 }
 
+void addActionToMenu(QAction* action, QMenu* menu)
+{
+  bool added = false;
+  for(QAction* it : menu->actions())
+  {
+    QString atxt = action->text().remove("&"),
+        btxt = it->text().remove("&");
+    int i = 0;
+    while(atxt[i] == btxt[i]
+          && i < atxt.size()
+          && i < btxt.size())
+      ++i;
+    bool res = (atxt[i] < btxt[i]);
+    if (res)
+    {
+      menu->insertAction(it, action);
+      added = true;
+      break;
+    }
+  }
+  if(!added)
+    menu->addAction(action);
+}
+
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
 void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
 {
   QList<QAction*> buffer;
   Q_FOREACH(QAction* action, menu->actions())
     buffer.append(action);
+
   while(!buffer.isEmpty()){
-    
     Q_FOREACH(QAction* action, buffer) {
       if(QMenu* submenu = action->menu())
       {
@@ -407,14 +431,17 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
           }
           else
           {
-            menu->addAction(submenu->menuAction());
+            //menu->addAction(submenu->menuAction());
+            addActionToMenu(submenu->menuAction(), menu);
           }
         }
         filterMenuOperations(submenu, filter, keep);
         action->setVisible(!(submenu->isEmpty()));
+
       }
       else if(action->text().contains(filter, Qt::CaseInsensitive)){
-        menu->addAction(action);
+        //menu->addAction(action);
+        addActionToMenu(action, menu);
       }
       buffer.removeAll(action);
     }
@@ -432,14 +459,17 @@ void MainWindow::filterOperations()
         menu->removeAction(action);
     }
   }
+
   Q_FOREACH(QAction* action, action_menu_map.keys())
   {
-    action_menu_map[action]->addAction(action);
+    QMenu* menu = action_menu_map[action];
+    addActionToMenu(action, menu);
   }
+
   QString filter=operationSearchBar.text();
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
-      action->setVisible( p.first->applicable(action) 
+      action->setVisible( p.first->applicable(action)
                           && (action->text().contains(filter, Qt::CaseInsensitive)
                               || action->property("subMenuName")
                               .toString().contains(filter, Qt::CaseInsensitive)));
@@ -447,6 +477,7 @@ void MainWindow::filterOperations()
   }
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   filterMenuOperations(ui->menuOperations, filter, false);
+
   operationSearchBar.setFocus();
 }
 

@@ -7,6 +7,7 @@
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
+#include <CGAL/Three/Three.h>
 
 #include <QObject>
 #include <QApplication>
@@ -25,6 +26,8 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+
+#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE 1
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
 #include <CGAL/Polygon_2.h>
@@ -41,11 +44,14 @@
 #include <boost/accumulators/statistics/median.hpp>
 
 #include <map>
+#include <streambuf>
+
 using namespace CGAL::Three;
 typedef Viewer_interface Vi;
 typedef Triangle_container Tc;
 typedef Edge_container Ec;
 typedef Point_container Pc;
+
 struct Scene_polygon_soup_item_priv{
 
   typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
@@ -858,6 +864,8 @@ void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
         erase_all_duplicates(erase_dup)
         .require_same_orientation(req_same_orientation));
   QApplication::restoreOverrideCursor();
+
+ // CGAL::Three::Three::information(
 }
 
 CGAL::Three::Scene_item::Header_data Scene_polygon_soup_item::header() const

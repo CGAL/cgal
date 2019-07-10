@@ -58,7 +58,7 @@ void test();
 int
 main()
 {
-  CGAL::force_ieee_double_precision();
+  CGAL::Set_ieee_double_precision double_precision_guard;
   typedef CGAL::Cartesian<double>                               Clsdb;
   typedef CGAL::Filtered_kernel<Clsdb>                          Clsd;
 

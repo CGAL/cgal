@@ -2259,6 +2259,7 @@ void Scene_surface_mesh_item::computeElements()const
 {
   d->compute_elements(ALL);
   setBuffersFilled(true);
+  const_cast<Scene_surface_mesh_item*>(this)->itemChanged();
 }
 
 void 

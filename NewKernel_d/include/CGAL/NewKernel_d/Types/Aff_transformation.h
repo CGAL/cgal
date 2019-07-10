@@ -36,21 +36,8 @@ template<class R_> struct Construct_aff_transformation {
   CGAL_FUNCTOR_INIT_IGNORE(Construct_aff_transformation)
   typedef R_ R;
   typedef typename Get_type<R, Aff_transformation_tag>::type result_type;
-#ifdef CGAL_CXX11
   template<class...T>
   result_type operator()(T&&...)const{return result_type();}
-#else
-  result_type operator()()const{
-    return result_type();
-  }
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> \
-  result_type operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const& BOOST_PP_INTERCEPT))const{ \
-    return result_type(); \
-  }
-  BOOST_PP_REPEAT_FROM_TO(1, 9, CGAL_CODE, _ )
-#undef CGAL_CODE
-
-#endif
 };
 }
 CGAL_KD_DEFAULT_TYPE(Aff_transformation_tag,(CGAL::Aff_transformation<K>),(),());

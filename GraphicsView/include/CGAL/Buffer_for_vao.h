@@ -35,7 +35,7 @@
 #include <vector>
 #include <cstdlib>
 #include <queue>
-#include <boost/unordered_map.hpp>
+#include <map>
 
 namespace CGAL
 {
@@ -167,6 +167,9 @@ public:
     m_flat_normal_buffer(flat_normal),
     m_gouraud_normal_buffer(gouraud_normal),
     m_bb(bbox),
+    m_zero_x(true),
+    m_zero_y(true),
+    m_zero_z(true),
     m_face_started(false)
   {}
 
@@ -177,6 +180,10 @@ public:
     if (m_index_buffer!=nullptr)          { m_index_buffer->clear(); }
     if (m_flat_normal_buffer!=nullptr)    { m_flat_normal_buffer->clear(); }
     if (m_gouraud_normal_buffer!=nullptr) { m_gouraud_normal_buffer->clear(); }
+
+    m_zero_x=true;
+    m_zero_y=true;
+    m_zero_z=true;
   }
 
   bool is_empty() const
@@ -204,6 +211,15 @@ public:
   bool has_gouraud_normal() const
   { return m_gouraud_normal_buffer!=nullptr; }
 
+  bool has_zero_x() const
+  { return m_zero_x; }  
+
+  bool has_zero_y() const
+  { return m_zero_y; }  
+
+  bool has_zero_z() const
+  { return m_zero_z; }  
+
   // 1.1) Add a point, without color. Return the index of the added point.
   template<typename KPoint>
   std::size_t add_point(const KPoint& kp)
@@ -215,6 +231,10 @@ public:
 
     if (m_bb!=nullptr)
     { (*m_bb)=(*m_bb)+p.bbox(); }
+    
+    if (m_zero_x && p.x()!=0) { m_zero_x=false; }
+    if (m_zero_y && p.y()!=0) { m_zero_y=false; }
+    if (m_zero_z && p.z()!=0) { m_zero_z=false; }
 
     return m_pos_buffer->size()-3;
   }
@@ -660,8 +680,23 @@ public:
     {
       P_traits cdt_traits(normal);
       CDT cdt(cdt_traits);
-      
       bool with_vertex_normal=(m_vertex_normals_for_face.size()==m_points_of_face.size());
+      Local_point p1, p2;
+        
+      // For each point of the face, store the list of adjacent points and the number of time
+      // the edge is found in the face. For an edge p1, p2, store edge min(p1,p2)->max(p1,p2)
+      std::map<Local_point, std::map<Local_point, unsigned int> > edges;
+      for (unsigned int i=0; i<m_points_of_face.size(); ++i)
+      {
+        p1=m_points_of_face[i];
+        p2=m_points_of_face[i==0?m_points_of_face.size()-1:i-1];
+        if (p2<p1) { std::swap(p1, p2); }
+        
+        if (edges.count(p1)==0)
+        { std::map<Local_point, unsigned int> m; m[p2]=1; edges[p1]=m; }
+        else if (edges[p1].count(p2)==0) { edges[p1][p2]=1; }
+        else { ++(edges[p1][p2]); }
+      }
       
       // (1) We insert all the edges as contraint in the CDT.
       typename CDT::Vertex_handle previous=nullptr, first=nullptr;
@@ -680,12 +715,22 @@ public:
         { vh->info().index=m_indices_of_points_of_face[i]; }
         
         if(previous!=nullptr && previous!=vh)
-        { cdt.insert_constraint(previous, vh); }
+        {
+          p1=m_points_of_face[i]; p2=m_points_of_face[i-1];
+          if (p2<p1) { std::swap(p1, p2); }
+          if ((edges[p1][p2])%2==1) // odd number of time => constraint
+          { cdt.insert_constraint(previous, vh); }
+        }
         previous=vh;
       }
       
       if (previous!=nullptr && previous!=first)
-      { cdt.insert_constraint(previous, first); }
+      {
+        p1=m_points_of_face[m_points_of_face.size()-1]; p2=m_points_of_face[0];
+        if (p2<p1) std::swap(p1, p2);
+        if ((edges[p1][p2])%2==1) // odd number of time => constraint
+        { cdt.insert_constraint(previous, first); }
+      }
       
       // (2) We mark all external triangles
       // (2.1) We initialize is_external and is_process values 
@@ -837,6 +882,10 @@ protected:
   std::vector<BufferType>* m_gouraud_normal_buffer;
 
   CGAL::Bbox_3* m_bb;
+
+  bool m_zero_x; /// True iff all points have x==0
+  bool m_zero_y; /// True iff all points have y==0
+  bool m_zero_z; /// True iff all points have z==0
   
   // Local variables, used when we started a new face.
   bool m_face_started;

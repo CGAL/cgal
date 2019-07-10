@@ -408,7 +408,19 @@ public:
     }
     
 public: 
+    static auto initialize_poly_0() {
+      Polynomial_2 poly_0;
+      return poly_0;
+    }
     static Algebraic_curve_kernel_2& get_static_instance(){
+      // Useless reference to a `Polynomial_2` to force the creation
+      // of `CORE::MemoryPool<CORE::Bigfloat>` (and related type)
+      // before the static thread-local instance `ack_2_instance`.
+      // The issue is otherwise that the memory pool is created during
+      // the filling of the curves cache, and then destroyed too soon,
+      // before the destruction of `ack_2_instance`.
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE(Polynomial_2, poly_0, initialize_poly_0());
+      CGAL_USE(poly_0);
       // a default constructed ack_2 instance
       CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Algebraic_curve_kernel_2, ack_2_instance);
       return ack_2_instance;
