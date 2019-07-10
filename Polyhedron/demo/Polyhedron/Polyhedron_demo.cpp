@@ -8,6 +8,7 @@
 #include <QCommandLineOption>
 #include <QSurfaceFormat>
 #include <QOpenGLContext>
+#include <clocale>
 
 
 struct Polyhedron_demo_impl {
@@ -17,11 +18,34 @@ struct Polyhedron_demo_impl {
   Polyhedron_demo_impl() : catch_exceptions(true) {}
 }; // end struct Polyhedron_demo_impl
 
+int& code_to_call_before_creation_of_QCoreApplication(int& i) {
+  QSurfaceFormat fmt;
+
+  fmt.setVersion(4, 3);
+  fmt.setRenderableType(QSurfaceFormat::OpenGL);
+  fmt.setProfile(QSurfaceFormat::CoreProfile);
+  fmt.setOption(QSurfaceFormat::DebugContext);
+  QSurfaceFormat::setDefaultFormat(fmt);
+
+  //for windows
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
+  QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+#endif
+
+  //We set the locale to avoid any trouble with VTK
+  std::setlocale(LC_ALL, "C");
+  return i;
+}
+
 Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
                                  QString application_name,
                                  QString main_window_title,
                                  QStringList input_keywords)
-  : QApplication(argc, argv)
+  : QApplication(code_to_call_before_creation_of_QCoreApplication(argc),
+                 // This trick in the previous line ensure that code
+                 // is called before the creation of the QApplication
+                 // object.
+                 argv)
   , d_ptr_is_initialized(false)
   , d_ptr(new Polyhedron_demo_impl)
 {
@@ -29,11 +53,6 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   std::cerr.precision(17);
   std::cout.precision(17);
   std::clog.precision(17);
-
-  //for windows
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-  this->setAttribute(Qt::AA_UseDesktopOpenGL);
-#endif
 
   // Import resources from libCGAL (Qt5).
   CGAL_QT_INIT_RESOURCES;

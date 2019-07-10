@@ -25,6 +25,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Linear_cell_complex_base.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -371,49 +372,45 @@ protected:
   bool m_random_face_color;
   const DrawingFunctorLCC& m_drawing_functor;
 };
-  
-template<class LCC, class DrawingFunctorLCC>
-void draw(const LCC& alcc,
-          const char* title,
-          bool nofill,
-          const DrawingFunctorLCC& drawing_functor)
+
+// Specialization of draw function.
+#define CGAL_LCC_TYPE CGAL::Linear_cell_complex_base                    \
+  <d_, ambient_dim, Traits_, Items_, Alloc_, Map, Refs, Storage_>
+
+template < unsigned int d_, unsigned int ambient_dim,
+           class Traits_,
+           class Items_,
+           class Alloc_,
+           template<unsigned int,class,class,class,class>
+           class Map,
+           class Refs,
+           class Storage_>
+void draw(const CGAL_LCC_TYPE& alcc,
+          const char* title="LCC for CMap Basic Viewer",
+          bool nofill=false)
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
-
+  
   if (!cgal_test_suite)
   {
     int argc=1;
     const char* argv[2]={"lccviewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimpleLCCViewerQt<LCC, DrawingFunctorLCC> mainwindow(app.activeWindow(),
-                                                         &alcc,
-                                                         title,
-                                                         nofill,
-                                                         drawing_functor);
+    DefaultDrawingFunctorLCC fcolor;
+    SimpleLCCViewerQt<CGAL_LCC_TYPE, DefaultDrawingFunctorLCC>
+      mainwindow(app.activeWindow(), &alcc, title, nofill, fcolor);
     mainwindow.show();
     app.exec();
   }
 }
 
-template<class LCC>
-void draw(const LCC& alcc, const char* title, bool nofill)
-{
-  DefaultDrawingFunctorLCC f;
-  draw(alcc, title, nofill, f);
-}
-  
-template<class LCC>
-void draw(const LCC& alcc, const char* title)
-{ draw(alcc, title, false); }
-  
-template<class LCC>
-void draw(const LCC& alcc)
-{ draw(alcc, "Basic LCC Viewer"); }
-  
+// Todo a function taking a const DrawingFunctorLCC& drawing_functor as parameter
+#undef CGAL_LCC_TYPE
+
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER

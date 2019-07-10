@@ -557,7 +557,7 @@ removal of the first 100,000 vertices.
 \subsection Triangulation3Draw Draw a 3D Triangulation
 \anchor ssecDrawT3
 
-A 3D triangulation can be visualized by calling the `CGAL::draw()` function as shown in the following example. This function opens a new window showing the given 3D triangulation. The function is blocking, that is the program continues as soon as the user closes the window.
+A 3D triangulation can be visualized by calling the \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink function as shown in the following example. This function opens a new window showing the given 3D triangulation. A call to this function is blocking, that is the program continues as soon as the user closes the window.
 
 \cgalExample{Triangulation_3/draw_triangulation_3.cpp}
 

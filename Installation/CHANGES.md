@@ -40,6 +40,13 @@ Release date: September 2019
      for optional parameters is now removed (it was deprecated since
      CGAL 4.12). The current (and now only) API uses ranges and Named
      Parameters.
+ -   Added the possibility to use the named parameter
+     `neighbor_radius` to use spherical neighbor queries instead of
+     K-nearest neighbors queries for the following functions:
+     `CGAL::bilateral_smooth_point_set()`,
+     `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
+     `CGAL::mst_orient_normals()`, `CGAL::pca_estimate_normals()` and
+     `CGAL::remove_outliers()`.
 
 ### Polygon Mesh Processing
  -   Added the function `CGAL::Polygon_mesh_processing::centroid()`, which computes

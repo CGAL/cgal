@@ -1073,7 +1073,7 @@ void Polyhedron_demo_cut_plugin::apply(Item* item, QMap< QObject*, Facets_tree*>
     traits.set_shared_data(mesh, pmap); //Mandatory for SMesh. If not provided, mesh and PPmap are taken default, saying NULL in tree.traversal().
     connect(item, SIGNAL(item_is_about_to_be_changed()),
             this, SLOT(deleteTree()));
-    f_trees[item] = new Facets_tree(traits);
+    Facets_tree* new_tree = new Facets_tree(traits);
     //filter facets to ignore degenerated ones
 
     for(typename boost::graph_traits<Mesh>::face_iterator fit = faces(mesh).first,
@@ -1085,10 +1085,10 @@ void Polyhedron_demo_cut_plugin::apply(Item* item, QMap< QObject*, Facets_tree*>
           c(get(pmap, target(prev(halfedge(*fit, mesh), mesh), mesh)));
 
       if(!CGAL::collinear(a,b,c))
-        f_trees[item]->insert(typename Facets_tree::Primitive(fit, mesh, pmap));
+        new_tree->insert(typename Facets_tree::Primitive(fit, mesh, pmap));
     }
-
-    Scene_aabb_item* aabb_item = new Scene_aabb_item(*f_trees[item]);
+    Scene_aabb_item* aabb_item = new Scene_aabb_item(*new_tree);
+    f_trees[item] = new_tree;
     aabb_item->setName(tr("AABB tree of %1").arg(item->name()));
     aabb_item->setRenderingMode(Wireframe);
     aabb_item->setColor(Qt::black);

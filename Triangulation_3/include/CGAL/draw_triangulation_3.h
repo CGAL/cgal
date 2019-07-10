@@ -26,6 +26,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Triangulation_3.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -141,49 +142,35 @@ protected:
   bool m_nofaces;
   const ColorFunctor& m_fcolor;
 };
-  
-template<class T3, class ColorFunctor>
-void draw(const T3& at3,
-          const char* title,
-          bool nofill,
-          const ColorFunctor& fcolor)
-{
 
+// Specialization of draw function.
+#define CGAL_T3_TYPE CGAL::Triangulation_3<Gt, Tds, Lock_data_structure>
+
+template<class Gt, class Tds, class Lock_data_structure>
+void draw(const CGAL_T3_TYPE& at3,
+          const char* title="T3 Basic Viewer",
+          bool nofill=false)
+{
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
-
+  
   if (!cgal_test_suite)
   {
     int argc=1;
     const char* argv[2]={"t3_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(app.activeWindow(),
-                                                              at3,
-                                                              title,
-                                                              nofill,
-                                                              fcolor);
+    DefaultColorFunctorT3 fcolor;
+    SimpleTriangulation3ViewerQt<CGAL_T3_TYPE, DefaultColorFunctorT3>
+      mainwindow(app.activeWindow(), at3, title, nofill, fcolor);
     mainwindow.show();
     app.exec();
   }
 }
 
-template<class T3>
-void draw(const T3& at3, const char* title, bool nofill)
-{
-  DefaultColorFunctorT3 c;
-  draw(at3, title, nofill, c);
-}
-
-template<class T3>
-void draw(const T3& at3, const char* title)
-{ draw(at3, title, false); }
-
-template<class T3>
-void draw(const T3& at3)
-{ draw(at3, "Basic T3 Viewer"); }
+#undef CGAL_T3_TYPE
 
 } // End namespace CGAL
 
