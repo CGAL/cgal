@@ -7,7 +7,6 @@ Combinatorial_map
 Distance_2
 Distance_3
 Filtered_kernel
-Generalized_map
 HalfedgeDS
 Hash_map
 Homogeneous_kernel
@@ -17,7 +16,6 @@ Intersections_3
 Interval_support
 Kernel_23
 Kernel_d
-Linear_cell_complex
 Modifier
 Modular_arithmetic
 Number_types
@@ -28,4 +26,3 @@ Property_map
 STL_Extension
 Stream_support
 Surface_mesh
-Surface_mesh_topology
