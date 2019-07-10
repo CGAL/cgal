@@ -113,7 +113,7 @@ public :
     {
       menu->addAction(action);
     }
-    dock_widget = new GeneratorWidget("Basic Objets", mw);
+    dock_widget = new GeneratorWidget("Basic Objects", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     addDockWidget(dock_widget);
     connect(dock_widget->generateButton, &QAbstractButton::clicked,

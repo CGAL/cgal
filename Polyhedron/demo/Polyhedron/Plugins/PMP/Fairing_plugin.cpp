@@ -37,7 +37,7 @@ class Polyhedron_demo_fairing_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "fairing_plugin.json")
 public:
   bool applicable(QAction*) const { 
     return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()))

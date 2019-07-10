@@ -25,6 +25,8 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+
 #include <Scene.h>
 typedef Scene_surface_mesh_item Scene_face_graph_item;
 
@@ -125,17 +127,32 @@ public:
       return res;
   }
   
-  bool applicable(QAction*) const override {
-    return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()))
-        || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); 
+  bool applicable(QAction* action) const override {
+    if(action == actionSelfIntersection)
+      return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
+    else if(action == actionSelection)
+      return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()))
+          || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
+    return false;
   }
   void print_message(QString message) { CGAL::Three::Three::information(message); }
-  QList<QAction*> actions() const override { return QList<QAction*>() << actionSelection; }
+
+  QList<QAction*> actions() const override {
+    return QList<QAction*>() << actionSelection
+                             << actionSelfIntersection;
+  }
+
   using Polyhedron_demo_io_plugin_interface::init;
   virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) override{
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
+
+    actionSelfIntersection = new QAction(tr("Self-&Intersection Test"), mw);
+    actionSelfIntersection->setObjectName("actionSelfIntersection");
+    actionSelfIntersection->setProperty("subMenuName", "Polygon Mesh Processing");
+    connect(actionSelfIntersection, SIGNAL(triggered()), this, SLOT(on_actionSelfIntersection_triggered()));
+
     actionSelection = new QAction(
           QString("Surface Mesh Selection")
           , mw);
@@ -224,8 +241,10 @@ Q_SIGNALS:
   void save_handleType();
   void set_operation_mode(int);
   void set_highlighting(bool);
+
 public Q_SLOTS:
 
+  void on_actionSelfIntersection_triggered();
 
   void connectItem(Scene_polyhedron_selection_item* new_item)
   {
@@ -1057,6 +1076,7 @@ void filter_operations()
 private:
   Messages_interface* messages;
   QAction* actionSelection;
+  QAction *actionSelfIntersection;
 
   QDockWidget* dock_widget;
   Ui::Selection ui_widget;
@@ -1068,6 +1088,102 @@ typedef boost::unordered_map<Scene_face_graph_item*, Scene_polyhedron_selection_
   bool from_plugin;
 }; // end Polyhedron_demo_selection_plugin
 
+
+template<class Mesh>
+bool selfIntersect(Mesh* mesh, std::vector<std::pair<typename boost::graph_traits<Mesh>::face_descriptor,typename boost::graph_traits<Mesh>::face_descriptor> > &faces)
+{
+  if(!CGAL::is_triangle_mesh(*mesh))
+  {
+    CGAL::Three::Three::warning("%1 skipped because not triangulated.");
+    return false;
+  }
+  // compute self-intersections
+  CGAL::Polygon_mesh_processing::self_intersections
+    (*mesh, std::back_inserter(faces),
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, *mesh)));
+
+  std::cout << "ok (" << faces.size() << " triangle pair(s))" << std::endl;
+  return !faces.empty();
+}
+
+void Polyhedron_demo_selection_plugin::on_actionSelfIntersection_triggered()
+{
+  typedef boost::graph_traits<Face_graph>::face_descriptor Face_descriptor;
+  typedef boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor;
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  bool found = false;
+  std::vector<Scene_face_graph_item*> selected_polys;
+  Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
+  {
+    Scene_face_graph_item* poly_item =
+        qobject_cast<Scene_face_graph_item*>(scene->item(index));
+    if(poly_item)
+    {
+      selected_polys.push_back(poly_item);
+    }
+  }
+  Q_FOREACH(Scene_face_graph_item* poly_item, selected_polys)
+  {
+    Face_graph* mesh = poly_item->face_graph();
+    std::vector<std::pair<Face_descriptor, Face_descriptor> > faces;
+    // add intersecting triangles to a new Surface_mesh.
+    if(selfIntersect(mesh, faces))
+    {
+      Scene_polyhedron_selection_item* selection_item = nullptr;
+      bool should_add = true;
+      if(selection_item_map.find(poly_item) != selection_item_map.end())
+      {
+        QApplication::restoreOverrideCursor();
+        if(QMessageBox::question(mw, "Question", "Only one Selection Item can be associated to an item at once, "
+                                 "and one already exists. Would you like to replace it ? (If not, this item will be skipped.)")
+           == QMessageBox::Yes)
+        {
+          selection_item = selection_item_map.find(poly_item)->second;
+          selection_item->clear();
+          should_add = false;
+        }
+        else
+          continue;
+      }
+      else
+      {
+        selection_item = new Scene_polyhedron_selection_item(poly_item, mw);
+      }
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      //add the faces
+      for(std::vector<std::pair<Face_descriptor, Face_descriptor> >::iterator fb = faces.begin();
+          fb != faces.end(); ++fb) {
+        selection_item->selected_facets.insert(fb->first);
+        selection_item->selected_facets.insert(fb->second);
+
+        //add the edges
+        for(halfedge_descriptor he_circ : halfedges_around_face( halfedge(fb->first, *mesh), *mesh))
+        {
+          selection_item->selected_edges.insert(edge(he_circ, *mesh));
+        }
+        for(halfedge_descriptor he_circ : halfedges_around_face( halfedge(fb->second, *mesh), *mesh))
+        {
+          selection_item->selected_edges.insert(edge(he_circ, *mesh));
+        }
+      }
+
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->setName(tr("%1 (selection) (intersecting triangles)").arg(poly_item->name()));
+      if(should_add)
+        connectItem(selection_item);
+      poly_item->setRenderingMode(Wireframe);
+
+      scene->itemChanged(poly_item);
+
+      selection_item->set_highlighting(false);
+      found = true;
+    }
+  }
+  QApplication::restoreOverrideCursor();
+  if(!found)
+    QMessageBox::information(mw, tr("No self intersection"),
+                             tr("None of the selected surfaces self-intersect."));
+}
 //Q_EXPORT_PLUGIN2(Polyhedron_demo_selection_plugin, Polyhedron_demo_selection_plugin)
 
 #include "Selection_plugin.moc"
