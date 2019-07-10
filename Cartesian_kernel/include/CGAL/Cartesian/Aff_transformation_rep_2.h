@@ -63,6 +63,9 @@ public:
 
   virtual Aff_transformation_2 compose(
                        const Scaling_repC2<R> &t) const  = 0;
+  
+  virtual Aff_transformation_2 compose(
+                       const Reflection_repC2<R> &t) const  = 0;
 
   virtual Aff_transformation_2 inverse() const  = 0;
   virtual bool                 is_even() const  = 0;
@@ -86,6 +89,7 @@ public:
 friend class Translation_repC2<R>;
 friend class Rotation_repC2<R>;
 friend class Scaling_repC2<R>;
+friend class Reflection_repC2<R>;
 
   Aff_transformation_repC2()
   {}
@@ -131,6 +135,7 @@ friend class Scaling_repC2<R>;
   Aff_transformation_2 compose(const Translation_repC2<R> &t) const;
   Aff_transformation_2 compose(const Rotation_repC2<R> &t) const;
   Aff_transformation_2 compose(const Scaling_repC2<R> &t) const;
+  Aff_transformation_2 compose(const Reflection_repC2<R> &t) const;
 
   bool is_even() const
   {
@@ -250,6 +255,17 @@ compose(const Scaling_repC2<R> &t) const
                                t.scalefactor_ * t21,
                                t.scalefactor_ * t22,
                                t.scalefactor_ * t23);
+}
+
+template < class R >
+CGAL_KERNEL_LARGE_INLINE
+typename Aff_transformation_repC2<R>::Aff_transformation_2
+Aff_transformation_repC2<R>::
+compose(const Reflection_repC2<R> &r) const
+{
+  return Aff_transformation_2(
+        r.cosinus_*t11+r.sinus_*t21, r.cosinus_*t12+r.sinus_*t22, r.cosinus_*(t13-r.t.x())+r.sinus_*(t23-r.t.y())+r.t.x(),
+        r.sinus_*(t11)-r.cosinus_*(t21), r.sinus_*(t12)-r.cosinus_*(t22), r.sinus_*(t13-r.t.x())-r.cosinus_*(t23-r.t.y())+r.t.y());
 }
 
 } //namespace CGAL

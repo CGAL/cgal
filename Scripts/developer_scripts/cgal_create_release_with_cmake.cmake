@@ -10,7 +10,7 @@
 # GPL_PACKAGE_LIST=path to a file containing the list of GPL packages to include in the release. If not provided all of them are.
 # GENERATE_TARBALLS=[ON/OFF] indicates if release tarballs should be created as DESTINATION
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.1...3.15)
 
 function(process_package pkg)
   if(VERBOSE)

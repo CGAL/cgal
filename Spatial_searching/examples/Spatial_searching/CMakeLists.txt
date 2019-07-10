@@ -1,10 +1,10 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Spatial_searching_Examples )
 
 
-cmake_minimum_required(VERSION 3.1)
 
 
 # CGAL and its components

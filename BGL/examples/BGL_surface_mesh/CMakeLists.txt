@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project( BGL_surface_mesh_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 find_package( CGAL QUIET )
 

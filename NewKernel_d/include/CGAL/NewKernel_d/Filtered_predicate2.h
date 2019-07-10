@@ -55,12 +55,10 @@ class Filtered_predicate2
 //TODO: pack (at least use a tuple)
 //FIXME: is it better to store those, or just store enough to recreate them
 //(i.e. possibly references to the kernels)?
-  EP  ep;
-  AP  ap;
-  C2E c2e;
-  C2A c2a;
-
-  typedef typename AP::result_type  Ares;
+  CGAL_NO_UNIQUE_ADDRESS EP  ep;
+  CGAL_NO_UNIQUE_ADDRESS AP  ap;
+  CGAL_NO_UNIQUE_ADDRESS C2E c2e;
+  CGAL_NO_UNIQUE_ADDRESS C2A c2a;
 
 public:
 
@@ -81,7 +79,6 @@ public:
     : ep(k.exact_kernel()), ap(k.approximate_kernel()), c2e(k,k.exact_kernel()), c2a(k,k.approximate_kernel())
   {}
 
-#ifdef CGAL_CXX11
   template <typename... Args>
   result_type
   operator()(Args&&... args) const
@@ -93,7 +90,7 @@ public:
       try
 	{
 	  // No forward here, the arguments may still be needed
-	  Ares res = ap(c2a(args)...);
+	  auto res = ap(c2a(args)...);
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
@@ -103,34 +100,6 @@ public:
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(std::forward<Args>(args))...);
   }
-#else
-
-#define CGAL_VAR(Z,N,C) C(a##N)
-#define CGAL_CODE(Z,N,_) \
-  template <BOOST_PP_ENUM_PARAMS(N,class A)> \
-  result_type \
-  operator()(BOOST_PP_ENUM_BINARY_PARAMS(N, A, const& a)) const \
-  { \
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
-    { \
-      Protect_FPU_rounding<Protection> p; \
-      try \
-	{ \
-	  Ares res = ap(BOOST_PP_ENUM(N,CGAL_VAR,c2a)); \
-	  if (is_certain(res)) \
-	    return get_certain(res); \
-	} \
-      catch (Uncertain_conversion_exception&) {} \
-    } \
-    CGAL_BRANCH_PROFILER_BRANCH(tmp); \
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST); \
-    return ep(BOOST_PP_ENUM(N,CGAL_VAR,c2e)); \
-  }
-  BOOST_PP_REPEAT_FROM_TO(1, 10, CGAL_CODE, _ )
-#undef CGAL_CODE
-#undef CGAL_VAR
-
-#endif
 };
 
 } //namespace CGAL

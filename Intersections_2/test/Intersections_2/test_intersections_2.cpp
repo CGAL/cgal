@@ -798,9 +798,9 @@ int main()
 {
   CGAL::Set_ieee_double_precision pfr;
 
-  Test< CGAL::Simple_cartesian<typename CGAL::internal::Exact_field_selector<void*>::Type > >().run();
+  Test< CGAL::Simple_cartesian<CGAL::internal::Exact_field_selector<void*>::Type > >().run();
   Test< CGAL::Cartesian<double>   >().run();
-  Test< CGAL::Homogeneous<typename CGAL::internal::Exact_field_selector<void*>::Type > >().run();
+  Test< CGAL::Homogeneous<CGAL::internal::Exact_field_selector<void*>::Type > >().run();
   Test< CGAL::Exact_predicates_inexact_constructions_kernel >().run();
   Test< CGAL::Exact_predicates_exact_constructions_kernel >().run();
 }

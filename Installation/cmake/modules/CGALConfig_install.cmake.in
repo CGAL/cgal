@@ -12,6 +12,9 @@ get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
 
+include(CMakeFindDependencyMacro)
+find_dependency(Boost REQUIRED)
+
 # CGAL_DIR is the directory where this CGALConfig.cmake is installed
 string(REPLACE "/@CGAL_INSTALL_CMAKE_DIR@" "" CGAL_INSTALL_PREFIX "${CGAL_CONFIG_DIR}")
 

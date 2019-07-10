@@ -109,12 +109,12 @@ private:
   /// Returns a box enclosing image \c im
   Bbox_3 compute_bounding_box(const Image& im) const
   {
-    return Bbox_3(-im.vx(),
-                  -im.vy(),
-                  -im.vz(),
-                  double(im.xdim()+1)*im.vx(),
-                  double(im.ydim()+1)*im.vy(),
-                  double(im.zdim()+1)*im.vz());
+    return Bbox_3(-im.vx()+im.tx(),
+                  -im.vy()+im.ty(),
+                  -im.vz()+im.tz(),
+                  double(im.xdim()+1)*im.vx()+im.tx(),
+                  double(im.ydim()+1)*im.vy()+im.ty(),
+                  double(im.zdim()+1)*im.vz()+im.tz());
   }
 };  // end class Labeled_image_mesh_domain_3
 

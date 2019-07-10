@@ -579,12 +579,12 @@ public:
           if ( opposite(next(h1, tm1), tm1) == prev(opposite(h1, tm1), tm1) )
           {
             inter_edges_to_remove1.insert(edge(next(h1, tm1),tm1));
-            inter_edges_to_remove1.insert(edge(next(h2, tm2),tm2));
+            inter_edges_to_remove2.insert(edge(next(h2, tm2),tm2));
           }
           if ( opposite(prev(h1, tm1), tm1) == next(opposite(h1, tm1), tm1) )
           {
             inter_edges_to_remove1.insert(edge(prev(h1, tm1), tm1));
-            inter_edges_to_remove1.insert(edge(prev(h2, tm2), tm2));
+            inter_edges_to_remove2.insert(edge(prev(h2, tm2), tm2));
           }
         }
         // same but for h2
@@ -598,12 +598,12 @@ public:
           if ( opposite(next(h2, tm2), tm2) == prev(opposite(h2, tm2), tm2) )
           {
             inter_edges_to_remove1.insert(edge(next(h1, tm1),tm1));
-            inter_edges_to_remove1.insert(edge(next(h2, tm2),tm2));
+            inter_edges_to_remove2.insert(edge(next(h2, tm2),tm2));
           }
           if ( opposite(prev(h2, tm2), tm2) == next(opposite(h2, tm2), tm2) )
           {
             inter_edges_to_remove1.insert(edge(prev(h1, tm1), tm1));
-            inter_edges_to_remove1.insert(edge(prev(h2, tm2), tm2));
+            inter_edges_to_remove2.insert(edge(prev(h2, tm2), tm2));
           }
         }
       }
@@ -611,9 +611,15 @@ public:
         ++epp_it;
     }
     for(edge_descriptor ed : inter_edges_to_remove1)
+    {
+      put(marks_on_input_edges.ecm1, ed, false);
       intersection_edges1.erase(ed);
+    }
     for(edge_descriptor ed : inter_edges_to_remove2)
+    {
+      put(marks_on_input_edges.ecm2, ed, false);
       intersection_edges2.erase(ed);
+    }
 
     // (1) Assign a patch id to each facet indicating in which connected
     // component limited by intersection edges of the surface they are.

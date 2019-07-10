@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project( benchmark_for_closest_rotation )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET COMPONENTS Core )

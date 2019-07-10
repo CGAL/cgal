@@ -170,9 +170,9 @@ public:
       : enclosing(hc.enclosing), pos(hc.pos)
     {}
 
-    Vertex_it    vertices_begin() { return enclosing->skip_begin();}
-    Vertex_it    current() {return pos;}
-    Vertex_it    vertices_end() {return enclosing->skip_end();}
+    Vertex_it    vertices_begin()const { return enclosing->skip_begin();}
+    Vertex_it    current()const {return pos;}
+    Vertex_it    vertices_end()const {return enclosing->skip_end();}
     Constraint_id  id() { return enclosing; }
     std::size_t    number_of_vertices() const {return enclosing->skip_size(); }
   };                                           
@@ -742,13 +742,13 @@ Polyline_constraint_hierarchy_2<T,Compare,Data>::concatenate2(Constraint_id firs
   // now we really concatenate the vertex lists
   // Note that all iterators pointing into second remain valid.
   first.vl_ptr()->pop_back(); // because it is the same as second.front()
-  Vertex_it back_it = first.vl_ptr()->skip_end();
-  --back_it;
+  Vertex_it back_it = second.vl_ptr()->skip_begin();
+
   second.vl_ptr()->splice(second.vl_ptr()->skip_begin(), *(first.vl_ptr()), first.vl_ptr()->skip_begin(), first.vl_ptr()->skip_end());
 
   // Note that for VC8 with iterator debugging the iterators pointing into second
   // are NOT valid      So we have to update them
-  for(Vertex_it it = back_it, succ = it, end = first.vl_ptr()->skip_end(); 
+  for(Vertex_it it = second.vl_ptr()->skip_begin(), succ = it, end = back_it; 
       ++succ != end; 
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));

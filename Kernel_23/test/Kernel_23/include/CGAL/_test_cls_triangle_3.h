@@ -36,9 +36,6 @@ _test_cls_triangle_3(const R& )
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
 
- typename R::Triangle_3 it;
- CGAL::Triangle_3<R> t0(it);
-
  RT n0 =  0;
  RT n1 = 12;
  RT n2 = 16;
@@ -61,7 +58,10 @@ _test_cls_triangle_3(const R& )
  CGAL::Point_3<R> ps2( n0, n7, n0, n5); // (0, 3, 0)
  CGAL::Point_3<R> ps1( n7, n0, n0, n5); // (3, 0, 0)
 
+ typename R::Triangle_3 it; // test default-constructor
+
  const CGAL::Triangle_3<R> t1(p1,p2,p3);
+ CGAL::Triangle_3<R> t0(t1);
  CGAL::Triangle_3<R> t2(p4,p2,p3);
  CGAL::Triangle_3<R> t3(ps1,ps2,ps3);
  CGAL::Triangle_3<R> t4(ps2,ps1,ps3);
