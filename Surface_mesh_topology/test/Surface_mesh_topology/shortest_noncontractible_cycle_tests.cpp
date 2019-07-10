@@ -27,6 +27,17 @@ using Point = Kernel::Point_3;
 using Surface_mesh = CGAL::Surface_mesh<Point>;
 using Polyhedron = CGAL::Polyhedron_3<Kernel>;
 
+struct Weight_functor_for_GM {
+  using Weight_t = unsigned int;
+  Weight_functor_for_GM(const GMap_2& gm, GMap_2::size_type amark) : m_gm(gm), m_mark(amark) {}
+  unsigned int operator() (GMap_2::Dart_handle dh) const {
+    if (m_gm.is_marked(dh, m_mark)) return 3;
+    else return 4;
+  }
+private:
+  const GMap_2&     m_gm;
+  GMap_2::size_type m_mark;
+};
 
 struct Weight_functor_for_SM {
   using Weight_t = double;
@@ -37,7 +48,7 @@ struct Weight_functor_for_SM {
     return CGAL::sqrt(CGAL::squared_distance(A, B));
   }
 private:
-  Surface_mesh m_mesh;
+  const Surface_mesh& m_mesh;
 };
 
 template <class LCC_3>
@@ -151,7 +162,57 @@ bool edge_width_in_unweighted_polyhedron() {
   return true;
 }
 
-bool find_cycle_in_unweighted_gmap() { // Make a non-oriented case here
+bool find_cycle_in_nonorientable_gmap() { // Make a non-oriented case here
+  // Sewing the Petersen graph embedded in a Klein bottle surface
+  GMap_2 gm;
+  std::vector<GMap_2::Dart_handle> faces;
+  for (int i = 0; i < 6; ++i) faces.push_back(gm.make_combinatorial_polygon(5));
+  gm.sew<2>(faces[0], faces[1]); // 1-2
+  gm.sew<2>(gm.alpha<1>(faces[1]), gm.alpha<1>(faces[2])); // 1-6
+  gm.sew<2>(gm.alpha<1>(faces[0]), faces[2]); // 1-5
+  gm.sew<2>(gm.next(faces[0]), gm.next(faces[4])); // 2-3
+  gm.sew<2>(gm.next(faces[1]), gm.alpha<0>(faces[4])); // 2-7
+  gm.sew<2>(gm.alpha<1,0,1>(faces[1]), gm.alpha<0,1,0,1,0>(faces[3])); // 6-9
+  gm.sew<2>(gm.alpha<1,0,1>(faces[2]), gm.alpha<1,0,1,0>(faces[3])); // 6-8
+  gm.sew<2>(gm.alpha<1,0,1>(faces[0]), gm.alpha<1,0,1,0,1>(faces[5])); // 5-4
+  gm.sew<2>(gm.next(faces[2]), gm.alpha<1,0,1,0>(faces[5])); // 5-10
+  gm.sew<2>(gm.alpha<0,1,0,1>(faces[0]), faces[3]); // 3-4
+  gm.sew<2>(gm.alpha<0,1,0,1>(faces[1]), faces[5]); // 7-9
+  gm.sew<2>(gm.alpha<0,1,0,1,0>(faces[2]), gm.alpha<1,0,1,0>(faces[4])); // 8-10
+  gm.sew<2>(gm.alpha<1>(faces[4]), gm.alpha<1>(faces[5])); // 7-10
+  gm.sew<2>(gm.alpha<0,1,0,1>(faces[4]), gm.alpha<1>(faces[3])); // 3-8
+  gm.sew<2>(gm.alpha<0,1>(faces[5]), gm.alpha<0,1,0>(faces[3])); // 9-4
+
+  // gm.display_characteristics(std::cerr);
+  // std::cerr << '\n';
+
+  GMap_2::size_type chosen_cycle = gm.get_new_mark(), smallest_edge = gm.get_new_mark();
+  gm.mark_cell<1>(gm.alpha<0,1>(faces[5]), smallest_edge); // 9-4
+
+  typedef CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<GMap_2, Weight_functor_for_GM> SNC;
+
+  Weight_functor_for_GM wf (gm, smallest_edge);
+  SNC                   snc(gm, wf);
+  SNC::Path             cycle;
+  SNC::Distance_type    cycle_length;
+
+  snc.find_cycle(faces[0], cycle, &cycle_length);
+
+  gm.mark_cell<1>(gm.alpha<1>(faces[1]), chosen_cycle); // 1-6
+  gm.mark_cell<1>(gm.alpha<1,0,1>(faces[1]), chosen_cycle); // 6-9
+  gm.mark_cell<1>(gm.alpha<0,1>(faces[5]), chosen_cycle); // 9-4
+  gm.mark_cell<1>(gm.alpha<1,0,1,0>(faces[0]), chosen_cycle); // 4-5
+  gm.mark_cell<1>(gm.alpha<0>(faces[2]), chosen_cycle); // 5-1
+  
+  for (GMap_2::Dart_handle dh : cycle)
+    if (!gm.is_marked(dh, chosen_cycle)) {
+      std::cerr << "Fail find_cycle_in_nonorientable_gmap: Cycle found is not the same as expected cycle.\n";
+      return false;
+    }
+  if (cycle_length != 19) {
+    std::cerr << "Fail find_cycle_in_nonorientable_gmap: Cycle length (" << cycle_length << ") is not as expected (should be 19).\n";
+    return false;
+  }
   return true;
 }
 
@@ -182,7 +243,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
   std::vector<Point> v1, v2, v3;
   for (auto e : cycle1) {
     if (e == NULL) {
-      std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: NULL dart handle found in cycle of lcc_cm\n";
+      std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: NULL dart handle found in cycle\n";
       return false;
     }
     Point a = lcc_cm.point_of_vertex_attribute(lcc_cm.vertex_attribute(e));
@@ -194,14 +255,14 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
       if (a == v1.back()) v1.push_back(b);
       else if (b == v1.back()) v1.push_back(a);
       else {
-        std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: The cycle of lcc_cm is ill-formed\n";
+        std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: The cycle is ill-formed\n";
         return false;
       }
     }
   }
   for (auto e : cycle2) {
     if (e == NULL) {
-      std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: NULL dart handle found in cycle of lcc_gm\n";
+      std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: NULL dart handle found in cycle\n";
       return false;
     }
     Point a = lcc_gm.point_of_vertex_attribute(lcc_gm.vertex_attribute(e));
@@ -213,7 +274,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
       if (a == v2.back()) v2.push_back(b);
       else if (b == v2.back()) v2.push_back(a);
       else {
-        std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: The cycle of lcc_gm is ill-formed\n";
+        std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: The cycle is ill-formed\n";
         return false;
       }
     }
@@ -230,7 +291,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
       if (a == v3.back()) v3.push_back(b);
       else if (b == v3.back()) v3.push_back(a);
       else {
-        std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: The cycle of sm is ill-formed\n";
+        std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: The cycle is ill-formed\n";
         return false;
       }
     }
@@ -297,7 +358,7 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
 int main() {
   if (find_cycle_in_unweighted_cmap_and_polyhedron() &&
       edge_width_in_unweighted_polyhedron() &&
-      find_cycle_in_unweighted_gmap() &&
+      find_cycle_in_nonorientable_gmap() &&
       edge_width_in_weighted_cmap_gmap_mesh() &&
       unsew_edge_width_repeatedly_in_unweighted_gmap())
   {
