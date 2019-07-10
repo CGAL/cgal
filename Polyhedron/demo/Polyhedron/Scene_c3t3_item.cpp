@@ -1482,7 +1482,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& cell)
 
   typedef unsigned char UC;
   Tr::Cell_handle ch = cell.id();
-  QColor c = this->colors_subdomains[ch->subdomain_index()].light(50);
+  QColor c = this->colors_subdomains[ch->subdomain_index()].lighter(50);
 
   const Tr::Bare_point& pa = wp2p(ch->vertex(0)->point());
   const Tr::Bare_point& pb = wp2p(ch->vertex(1)->point());
