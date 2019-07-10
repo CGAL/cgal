@@ -2534,7 +2534,7 @@ protected:
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
-    const Polycurve_basic_traits_2& m_poly_traits;
+    const Polycurve_basic_traits_2 m_poly_traits;
 
     const Point_2& m_point;
 
