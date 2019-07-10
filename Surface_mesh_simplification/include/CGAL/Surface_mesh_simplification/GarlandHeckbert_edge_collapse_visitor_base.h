@@ -26,15 +26,16 @@ struct GarlandHeckbert_edge_collapse_visitor_base : Edge_collapse_visitor_base<T
 
   typedef typename internal::GarlandHeckbertCore<TM>::Matrix4x4 Matrix4x4;
   typedef typename internal::GarlandHeckbertCore<TM>::garland_heckbert_map_type garland_heckbert_map_type;
-
+  typedef typename internal::GarlandHeckbertCore<TM>::FT                        FT;
 
   garland_heckbert_map_type& mCostMatrices;
-
+  FT mDiscontinuityMultiplier;
 
   GarlandHeckbert_edge_collapse_visitor_base(
-    garland_heckbert_map_type& aCostMatrices)
+    garland_heckbert_map_type& aCostMatrices, FT aDiscontinuityMultiplier = 100.0)
     :
-    mCostMatrices(aCostMatrices) {
+    mCostMatrices(aCostMatrices),
+    mDiscontinuityMultiplier(aDiscontinuityMultiplier) {
 
   }
 
@@ -45,7 +46,7 @@ struct GarlandHeckbert_edge_collapse_visitor_base : Edge_collapse_visitor_base<T
       if(mCostMatrices.find(target_vertex) == mCostMatrices.end()) {
         mCostMatrices.emplace(
           target_vertex,
-          std::move(internal::GarlandHeckbertCore<TM>::fundamental_error_quadric(hd, aTM))
+          std::move(internal::GarlandHeckbertCore<TM>::fundamental_error_quadric(hd, aTM, mDiscontinuityMultiplier))
         );
       }
     }

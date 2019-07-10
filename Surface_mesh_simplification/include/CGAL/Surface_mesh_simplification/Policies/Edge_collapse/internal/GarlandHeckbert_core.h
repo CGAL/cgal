@@ -34,6 +34,7 @@ struct GarlandHeckbertCore
   typedef typename Kernel::Line_3                                               Line_3;
   typedef typename Kernel::FT                                                   FT;
   typedef typename Kernel::RT                                                   RT;
+  typedef typename Kernel::Vector_3                                             Vector_3;
 
   typedef typename Eigen::Matrix<FT, 4, 4> Matrix4x4;
   typedef typename Eigen::Matrix<FT, 1, 4> Row4;
@@ -60,13 +61,15 @@ struct GarlandHeckbertCore
   *
   * Currently, only checks if vertex belongs to a border.
   */
-  static bool is_discontinuity_vertex(const halfedge_descriptor& aHD, const TM& aTM) {
-    for(face_descriptor fd: faces_around_target(aHD, aTM)) {
-      if(fd == GraphTraits::null_face()) {
-        return true;
-      }
+  /*static bool is_discontinuity_vertex(const halfedge_descriptor& aHD, const TM& aTM) {
+    if(is_border(target(aHD, aTM), aTM)) {
+      return true;
     }
     return false;
+  }*/
+
+  static bool is_discontinuity_edge(const halfedge_descriptor& aHD, const TM& aTM) {
+    return is_border_edge(aHD, aTM);
   }
 
   /*
@@ -78,12 +81,21 @@ struct GarlandHeckbertCore
 
     vertex_descriptor target_vd = target(aHD, aTM);
     const Point target_vertex_point = std::move(get(boost::vertex_point, aTM, target_vd));
+    const Vector_3 target_vertex_vector(target_vertex_point.x(),
+                                        target_vertex_point.y(),
+                                        target_vertex_point.z());
 
-    bool discontinuity_vertex = is_discontinuity_vertex(aHD, aTM);
+  //std::cout << "point: " << target_vertex_point.x() << " "
+  //            << target_vertex_point.y() << " "
+  //            << target_vertex_point.z() << std::endl;
 
+    //bool discontinuity_vertex = is_discontinuity_vertex(aHD, aTM);
+
+    int i = 0;
     for(const halfedge_descriptor hd: halfedges_around_target(target_vd, aTM)) {
       face_descriptor fd = face(hd, aTM);
       if(fd != GraphTraits::null_face()) {
+        //std::cout << "face" << std::endl;
         std::vector<vertex_descriptor> vds;
         for(vertex_descriptor vd: vertices_around_face(hd, aTM)) {
           vds.push_back(vd);
@@ -96,8 +108,30 @@ struct GarlandHeckbertCore
         FT norm = sqrt(plane.a() * plane.a() + plane.b() * plane.b() + plane.c() * plane.c());
         plane_mtr << plane.a() / norm, plane.b() / norm, plane.c() / norm, plane.d() / norm;
         quadric += plane_mtr.transpose() * plane_mtr;
+        //std::cout << plane_mtr << std::endl;
 
-        if(discontinuity_vertex) {
+        if(is_discontinuity_edge(hd, aTM)) {
+          const vertex_descriptor source_vd = source(hd, aTM);
+          const Vector_3 p1p2(target_vertex_point, get(boost::vertex_point, aTM, source_vd));
+          const Vector_3 normal = cross_product(p1p2, plane.orthogonal_vector());
+          FT d = - normal * target_vertex_vector;
+          FT norm = sqrt(normal.x() * normal.x() + normal.y() * normal.y() + normal.z() * normal.z());
+          plane_mtr << normal.x() / norm, normal.y() / norm, normal.z() / norm, d / norm;
+          quadric += plane_mtr.transpose() * plane_mtr * aDiscontinuityMultiplier;
+        }
+
+        halfedge_descriptor shd = next(hd, aTM);
+        if(is_discontinuity_edge(shd, aTM)) {
+          const vertex_descriptor target_vd = target(shd, aTM);
+          const Vector_3 p1p2(target_vertex_point, get(boost::vertex_point, aTM, target_vd));
+          const Vector_3 normal = cross_product(p1p2, plane.orthogonal_vector());
+          FT d = - normal * target_vertex_vector;
+          FT norm = sqrt(normal.x() * normal.x() + normal.y() * normal.y() + normal.z() * normal.z());
+          plane_mtr << normal.x() / norm, normal.y() / norm, normal.z() / norm, d / norm;
+          quadric += plane_mtr.transpose() * plane_mtr * aDiscontinuityMultiplier;
+        }
+
+        /*if(discontinuity_vertex) {
           const vertex_descriptor source_vd = source(hd, aTM);
           const Line_3 edge_line = Line_3(get(boost::vertex_point, aTM, source_vd),
                                           target_vertex_point);
@@ -107,15 +141,15 @@ struct GarlandHeckbertCore
           Row4 plane_mtr;
           FT norm = sqrt(plane.a() * plane.a() + plane.b() * plane.b() + plane.c() * plane.c());
           plane_mtr << plane.a() / norm, plane.b() / norm, plane.c() / norm, plane.d() / norm;
+          std::cout << plane_mtr << std::endl;
           quadric += plane_mtr.transpose() * plane_mtr;
-        }
+        }*/
+      } else {
+        //std::cout << "null face." << std::endl;
       }
     }
 
-    if(discontinuity_vertex) {
-      quadric *= aDiscontinuityMultiplier;
-    }
-    
+    //std::cout << std::endl;
     return quadric;
   }
 
