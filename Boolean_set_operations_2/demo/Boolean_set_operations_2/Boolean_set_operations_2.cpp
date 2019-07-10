@@ -2405,6 +2405,8 @@ void MainWindow::on_actionNew_triggered()
   m_magenta_sym_diff = false; //default
   m_aqua_sym_diff = false; //default
 
+  drawBlue -> setChecked(true);
+
   showBlue->setChecked(true);
   showRed->setChecked(true);
   showBlack->setChecked(true);
