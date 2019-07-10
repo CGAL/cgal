@@ -174,8 +174,8 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
     Converter<Geom_traits> convert;
 
     painter->setPen(vertices_pen);
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
     for(typename T::All_vertices_iterator it = t->all_vertices_begin();
         it != t->all_vertices_end();
         it++){
@@ -191,10 +191,10 @@ TriangulationGraphicsItem<T>::paintVertex(typename T::Vertex_handle vh)
 {
   Converter<Geom_traits> convert;
   m_painter->setPen(vertices_pen);
-  QMatrix matrix = m_painter->matrix();
-  m_painter->resetMatrix();
+  QTransform matrix = m_painter->worldTransform();
+  m_painter->resetTransform();
   m_painter->drawPoint(matrix.map(convert(t->point(vh))));
-  m_painter->setMatrix(matrix);
+  m_painter->setWorldTransform(matrix);
 }
 
 template <typename T>
