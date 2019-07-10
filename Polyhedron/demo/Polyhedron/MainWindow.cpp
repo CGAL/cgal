@@ -183,7 +183,15 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
     shortcut = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_R), this);
     connect(shortcut, &QShortcut::activated,
             this, &MainWindow::recenterScene);
-
+    shortcut = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_T), this);
+    connect(shortcut, &QShortcut::activated,
+            this,
+            [this](){
+      Viewer* viewer = qobject_cast<Viewer*>(CGAL::Three::Three::activeViewer());
+      bool b = viewer->property("draw_two_sides").toBool();
+      viewer->setTwoSides(!b);
+    }
+            );
   }
 
   proxyModel = new QSortFilterProxyModel(this);
