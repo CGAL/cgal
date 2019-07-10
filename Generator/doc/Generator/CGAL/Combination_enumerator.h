@@ -1,7 +1,6 @@
 namespace CGAL {
 
-/// \addtogroup PkgGeneratorsRef
-/// @{
+/// \ingroup PkgGeneratorsRef
 
 /*!
   The class `Combination_enumerator` is used to enumerate all fixed-size combinations
@@ -53,7 +52,7 @@ const CombinationElement & operator[](int i);
 
 
 /// \name Access to the Enumeration
-///@{
+/// @{
 
 /*!
 Returns the size of the enumerated combinations (the parameter `k` from the class' constructor).
@@ -104,5 +103,3 @@ Combination_enumerator operator++(int);
 
 }; /*end of class Combination_enumerator*/
 } /* end namespace CGAL */
-
-/// @}

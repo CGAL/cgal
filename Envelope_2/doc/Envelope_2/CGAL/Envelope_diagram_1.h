@@ -22,7 +22,5 @@ template< typename Traits >
 class Envelope_diagram_1 {
 public:
 
-/// @}
-
 }; /* end Envelope_diagram_1 */
 } /* end namespace CGAL */

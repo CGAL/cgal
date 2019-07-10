@@ -404,7 +404,6 @@ bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename)
 }
 
 /// group io
-/// @}
 template <class P, class Writer>
 void
 generic_print_surface_mesh( std::ostream&   out,

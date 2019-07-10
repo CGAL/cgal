@@ -15,7 +15,5 @@ template< typename CircularKernel >
 class Arr_line_arc_traits_2 {
 public:
 
-/// @}
-
 }; /* end Arr_line_arc_traits_2 */
 } /* end namespace CGAL */

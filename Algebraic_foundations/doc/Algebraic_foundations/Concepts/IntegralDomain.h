@@ -33,7 +33,5 @@ Moreover, `CGAL::Algebraic_structure_traits< IntegralDomain >` is a model of
 class IntegralDomain {
 public:
 
-/// @}
-
 }; /* end IntegralDomain */
 

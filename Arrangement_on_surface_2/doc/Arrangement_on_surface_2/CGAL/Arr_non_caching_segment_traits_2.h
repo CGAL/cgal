@@ -45,7 +45,5 @@ class Arr_non_caching_segment_traits_2
  {
 public:
 
-/// @}
-
 }; /* end Arr_non_caching_segment_traits_2 */
 } /* end namespace CGAL */

@@ -38,7 +38,5 @@ template< typename Kernel >
 class Env_triangle_traits_3 : public Arr_segment_traits_2<Kernel> {
 public:
 
-/// @}
-
 }; /* end Env_triangle_traits_3 */
 } /* end namespace CGAL */

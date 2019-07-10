@@ -15,8 +15,6 @@ represents a general planar curve.
 class Curve_2 {
 public:
 
-/// @}
-
 }; /* end ArrTraits::Curve_2 */
 
 }

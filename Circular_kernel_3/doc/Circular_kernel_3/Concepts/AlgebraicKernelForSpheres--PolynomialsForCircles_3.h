@@ -17,7 +17,5 @@ capable of storing equations of circles.
 class AlgebraicKernelForSpheres::PolynomialsForCircles_3 {
 public:
 
-/// @}
-
 }; /* end AlgebraicKernelForSpheres::PolynomialsForCircles_3 */
 

@@ -20,7 +20,5 @@ coefficients are of a type that is a model of the concept
 class AlgebraicKernelForCircles::Polynomial_1_2 {
 public:
 
-/// @}
-
 }; /* end AlgebraicKernelForCircles::Polynomial_1_2 */
 

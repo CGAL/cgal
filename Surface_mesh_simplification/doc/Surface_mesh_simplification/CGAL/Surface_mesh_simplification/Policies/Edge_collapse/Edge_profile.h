@@ -19,8 +19,6 @@ template< typename TriangleMesh >
 class Edge_profile {
 public:
 
-/// @}
-
 }; /* end Surface_mesh_simplification::Edge_profile */
 } /* namespace Surface_mesh_simplification */
 } /* end namespace CGAL */

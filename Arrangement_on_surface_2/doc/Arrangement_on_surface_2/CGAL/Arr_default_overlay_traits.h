@@ -19,8 +19,6 @@ template< typename Arrangement >
 class Arr_default_overlay_traits {
 public:
 
-/// @}
-
 }; /* end Arr_default_overlay_traits */
 } /* end namespace CGAL */
 
@@ -54,8 +52,6 @@ object, in order to set the auxiliary data of the overlay face.
 template< typename Arr_A, typename Arr_B, typename Arr_R, typename OvlFaceData >
 class Arr_face_overlay_traits {
 public:
-
-/// @}
 
 }; /* end Arr_face_overlay_traits */
 } /* end namespace CGAL */

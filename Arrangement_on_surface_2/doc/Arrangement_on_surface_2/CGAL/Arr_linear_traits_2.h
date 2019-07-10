@@ -145,7 +145,7 @@ public:
 
   }; /* end Arr_linear_traits_2::Curve_2 */
 
-Class Trim_2{
+class Trim_2{
 public:
 /// \name Creation 
 /// @{

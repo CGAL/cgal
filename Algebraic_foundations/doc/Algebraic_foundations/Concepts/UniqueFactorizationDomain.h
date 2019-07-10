@@ -40,7 +40,5 @@ derived from `CGAL::Unique_factorization_domain_tag`
 class UniqueFactorizationDomain {
 public:
 
-/// @}
-
 }; /* end UniqueFactorizationDomain */
 

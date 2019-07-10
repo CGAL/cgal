@@ -21,7 +21,5 @@ A model of this concept represents a simple general polygon.
 class GpsTraitsGeneralPolygon_2 {
 public:
 
-/// @}
-
 }; /* end GpsTraitsGeneralPolygon_2 */
 

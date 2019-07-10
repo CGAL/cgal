@@ -16,7 +16,5 @@ It defines the same types as `CGAL::Spherical_kernel_3`.
 class Exact_spherical_kernel_3 {
 public:
 
-/// @}
-
 }; /* end Exact_spherical_kernel_3 */
 } /* end namespace CGAL */

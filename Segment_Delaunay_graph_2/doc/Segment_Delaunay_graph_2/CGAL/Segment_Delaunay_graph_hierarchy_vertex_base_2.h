@@ -25,7 +25,5 @@ template< typename Vbb >
 class Segment_Delaunay_graph_hierarchy_vertex_base_2 : public Vbb {
 public:
 
-/// @}
-
 }; /* end Segment_Delaunay_graph_hierarchy_vertex_base_2 */
 } /* end namespace CGAL */

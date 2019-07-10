@@ -33,7 +33,5 @@ struct Combinatorial_map_min_items
 template< unsigned int d >
 struct Combinatorial_map_min_items {
 
-/// @}
-
 }; /* end Combinatorial_map_min_items */
 } /* end namespace CGAL */

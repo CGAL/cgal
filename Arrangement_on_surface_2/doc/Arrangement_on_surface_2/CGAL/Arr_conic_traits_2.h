@@ -385,7 +385,7 @@ const Point_2& right() const;
 
 }; /* end Arr_conic_traits_2::X_monotone_curve_2 */
 
-Class Trim_2{
+class Trim_2{
 public:
 /// \name Creation 
 /// @{

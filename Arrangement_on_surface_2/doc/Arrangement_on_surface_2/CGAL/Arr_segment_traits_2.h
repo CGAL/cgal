@@ -64,8 +64,6 @@ template< typename Kernel >
 class Arr_segment_traits_2 {
 public:
 
-/// @}
-
 Class Trim_2{
 public:
 /// \name Creation 

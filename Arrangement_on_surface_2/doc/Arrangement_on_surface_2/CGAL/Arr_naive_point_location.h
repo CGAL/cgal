@@ -26,7 +26,5 @@ template< typename Arrangement >
 class Arr_naive_point_location {
 public:
 
-/// @}
-
 }; /* end Arr_naive_point_location */
 } /* end namespace CGAL */

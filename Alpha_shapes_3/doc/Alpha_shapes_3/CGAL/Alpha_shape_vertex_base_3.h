@@ -29,7 +29,6 @@ template< typename Traits, typename Vb, typename ExactAlphaComparisonTag, typena
 class Alpha_shape_vertex_base_3 : public Vb {
 public:
 
-/// @}
 
 }; /* end Alpha_shape_vertex_base_3 */
 } /* end namespace CGAL */

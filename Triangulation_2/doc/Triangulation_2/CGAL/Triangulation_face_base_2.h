@@ -31,7 +31,5 @@ template< typename Traits, typename Fb >
 class Triangulation_face_base_2 : public Fb {
 public:
 
-/// @}
-
 }; /* end Triangulation_face_base_2 */
 } /* end namespace CGAL */

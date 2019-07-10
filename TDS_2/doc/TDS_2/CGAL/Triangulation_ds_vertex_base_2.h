@@ -28,7 +28,5 @@ template< typename Tds >
 class Triangulation_ds_vertex_base_2 {
 public:
 
-/// @}
-
 }; /* end Triangulation_ds_vertex_base_2 */
 } /* end namespace CGAL */

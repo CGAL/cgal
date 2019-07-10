@@ -110,7 +110,7 @@ points. The value-type of `InputIterator` is `RatKernel::Point_2`.
 template <class InputIterator> 
 Curve_2 (InputIterator pts_begin, InputIterator pts_end); 
 
-/// @} 
+/// @}
 
 /// \name Access Functions 
 /// @{
@@ -282,7 +282,7 @@ std::pair<double, double> parameter_range () const;
 
 }; /* end Arr_Bezier_curve_traits_2::X_monotone_curve_2 */
 
-Class Trim_2{
+class Trim_2{
 public:
 /// \name Creation 
 /// @{

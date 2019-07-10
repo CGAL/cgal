@@ -27,7 +27,5 @@ template< typename Gt, typename Cb >
 class Surface_mesh_cell_base_3 : public Cb {
 public:
 
-/// @}
-
 }; /* end Surface_mesh_cell_base_3 */
 } /* end namespace CGAL */

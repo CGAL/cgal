@@ -36,7 +36,5 @@ template< typename Gt,  typename MD, typename Cb >
 class Mesh_cell_base_3 : public Cb {
 public:
 
-/// @}
-
 }; /* end Mesh_cell_base_3 */
 } /* end namespace CGAL */

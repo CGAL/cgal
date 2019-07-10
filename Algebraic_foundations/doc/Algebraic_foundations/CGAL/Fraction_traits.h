@@ -13,7 +13,5 @@ template< typename T >
 class Fraction_traits {
 public:
 
-/// @}
-
 }; /* end Fraction_traits */
 } /* end namespace CGAL */

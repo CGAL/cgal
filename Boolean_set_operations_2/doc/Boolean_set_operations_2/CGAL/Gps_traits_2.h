@@ -20,7 +20,5 @@ template< typename ArrTraits, typename GeneralPolygon_t >
 class Gps_traits_2 {
 public:
 
-/// @}
-
 }; /* end Gps_traits_2 */
 } /* end namespace CGAL */

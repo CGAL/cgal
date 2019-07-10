@@ -30,7 +30,5 @@ template< typename Gt,  typename MD, typename Tds = void >
 class Compact_mesh_cell_base_3 {
 public:
 
-/// @}
-
 }; /* end Compact_mesh_cell_base_3 */
 } /* end namespace CGAL */

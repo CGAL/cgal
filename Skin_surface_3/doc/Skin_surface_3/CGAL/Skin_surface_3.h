@@ -19,7 +19,5 @@ template< typename SkinSurfaceTraits_3 >
 class Skin_surface_3 {
 public:
 
-/// @}
-
 }; /* end Skin_surface_3 */
 } /* end namespace CGAL */

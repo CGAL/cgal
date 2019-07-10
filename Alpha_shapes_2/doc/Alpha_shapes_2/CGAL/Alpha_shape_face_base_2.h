@@ -26,7 +26,5 @@ template< typename Traits, typename Fb, typename ExactAlphaComparisonTag >
 class Alpha_shape_face_base_2 : public Fb {
 public:
 
-/// @}
-
 }; /* end Alpha_shape_face_base_2 */
 } /* end namespace CGAL */

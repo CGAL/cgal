@@ -29,7 +29,5 @@ template< typename Gt, typename Vb >
 class Surface_mesh_vertex_base_3 : public Vb {
 public:
 
-/// @}
-
 }; /* end Surface_mesh_vertex_base_3 */
 } /* end namespace CGAL */

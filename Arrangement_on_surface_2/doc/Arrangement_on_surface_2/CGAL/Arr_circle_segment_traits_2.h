@@ -354,7 +354,7 @@ Bbox_2 bbox() const;
 
 }; /* end Arr_circle_segment_traits_2::X_monotone_curve_2 */
 
-Class Trim_2{
+class Trim_2{
 public:
 /// \name Creation 
 /// @{

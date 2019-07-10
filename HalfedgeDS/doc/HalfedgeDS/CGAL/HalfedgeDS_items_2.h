@@ -76,7 +76,5 @@ typedef My_face<Refs> Face;
 class HalfedgeDS_items_2 {
 public:
 
-/// @}
-
 }; /* end HalfedgeDS_items_2 */
 } /* end namespace CGAL */

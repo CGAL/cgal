@@ -20,7 +20,5 @@ template< >
 class Periodic_3_triangulation_ds_cell_base_3 {
 public:
 
-/// @}
-
 }; /* end Periodic_3_triangulation_ds_cell_base_3 */
 } /* end namespace CGAL */

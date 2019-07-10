@@ -21,8 +21,6 @@ and hide a non-virtual method in the context of the static polymorphism used in 
 template< typename TriangleMesh >
 struct Edge_collapse_visitor_base {
 
-/// @}
-
 }; /* end Surface_mesh_simplification::Edge_collapse_visitor_base */
 
   } /* end namespace Surface_mesh_simplification */
