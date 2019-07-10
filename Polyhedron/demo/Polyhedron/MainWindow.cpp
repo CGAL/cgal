@@ -180,6 +180,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
     shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(toggleFullScreen()));
+    shortcut = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_R), this);
+    connect(shortcut, &QShortcut::activated,
+            this, &MainWindow::recenterScene);
+
   }
 
   proxyModel = new QSortFilterProxyModel(this);
@@ -2366,7 +2370,7 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
   viewer->setAddKeyFrameKeyboardModifiers(m);
 }
 
-void MainWindow::on_actionRecenterScene_triggered()
+void MainWindow::recenterScene()
 {
   //force the recomputaion of the bbox
   bbox_need_update = true;

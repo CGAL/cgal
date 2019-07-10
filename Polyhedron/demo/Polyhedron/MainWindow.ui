@@ -94,7 +94,6 @@
     </widget>
     <addaction name="actionAdd_Viewer"/>
     <addaction name="action_Organize_Viewers"/>
-    <addaction name="actionRecenterScene"/>
     <addaction name="menuDockWindows"/>
     <addaction name="separator"/>
    </widget>
@@ -454,14 +453,6 @@
     <string>&amp;Organize Viewers</string>
    </property>
   </action>
-  <action name="actionRecenterScene">
-   <property name="text">
-    <string>Recenter Scene</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+R</string>
-   </property>
-  </action>
   <action name="actionSa_ve_Scene_as_Script">
    <property name="text">
     <string>Sa&amp;ve the Scene as a Script File...</string>
@@ -474,8 +465,6 @@
   </action>
  </widget>
  <resources>
-  <include location="Polyhedron_3.qrc"/>
-  <include location="Polyhedron_3.qrc"/>
   <include location="Polyhedron_3.qrc"/>
   <include location="Polyhedron_3.qrc"/>
  </resources>

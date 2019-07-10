@@ -362,7 +362,7 @@ protected Q_SLOTS:
   //!menus.
   void filterOperations();
   //!Updates the bounding box and moves the camera to fits the scene.
-  void on_actionRecenterScene_triggered();
+  void recenterScene();
   //!Resizes the header of the scene view
   void resetHeader();
   //!apply an action named `name` to all selected items
