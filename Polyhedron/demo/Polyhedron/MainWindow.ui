@@ -93,7 +93,7 @@
      <addaction name="dummyAction"/>
     </widget>
     <addaction name="actionAdd_Viewer"/>
-    <addaction name="action_Organize_Viewers"/>
+    <addaction name="action_Rearrange_Viewers"/>
     <addaction name="menuDockWindows"/>
     <addaction name="separator"/>
    </widget>
@@ -448,9 +448,9 @@
     <string>Add &amp;Viewer</string>
    </property>
   </action>
-  <action name="action_Organize_Viewers">
+  <action name="action_Rearrange_Viewers">
    <property name="text">
-    <string>&amp;Organize Viewers</string>
+    <string>&amp;Rearrange Viewers</string>
    </property>
   </action>
   <action name="actionSa_ve_Scene_as_Script">

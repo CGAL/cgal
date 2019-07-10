@@ -463,7 +463,7 @@ private:
 
 private Q_SLOTS:
   void on_actionAdd_Viewer_triggered();
-  void on_action_Organize_Viewers_triggered();
+  void on_action_Rearrange_Viewers_triggered();
   void recenterViewer();
   
 private:
