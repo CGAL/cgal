@@ -161,6 +161,9 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
   param.manifold = manifold;
+  param.detect_connected_components = false; // to avoid random values
+                                             // in the debug displays
+
 
   typedef ::Mesh_function<Function_mesh_domain,
                           Mesh_fnt::Implicit_domain_tag> Mesh_function;
