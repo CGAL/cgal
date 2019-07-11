@@ -32,6 +32,7 @@
 #include <CGAL/Voronoi_diagram_2/Handle_adaptor.h>
 #include <CGAL/Voronoi_diagram_2/Vertex.h>
 #include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Accessor.h>
 
 namespace CGAL {
 
@@ -305,10 +306,18 @@ protected:
   const ColorFunctor &m_fcolor;
 };
 
-template <class V2, class ColorFunctor>
-void draw(const V2 &av2, const char *title, bool nofill,
-          bool draw_voronoi_vertices, bool draw_dual_vertices,
-          const ColorFunctor &fcolor) {
+// Specialization of draw function.
+#define CGAL_VORONOI_TYPE CGAL::Voronoi_diagram_2 <DG, AT, AP>
+
+template<class DG,
+         class AT,
+         class AP = Identity_policy_2<DG, AT>>
+void draw(const CGAL_VORONOI_TYPE &av2,
+          const char *title="Voronoi Diagram Basic Viewer",
+          bool nofill = false,
+          bool draw_voronoi_vertices = true,
+          bool draw_dual_vertices = true)
+{
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
@@ -317,41 +326,42 @@ void draw(const V2 &av2, const char *title, bool nofill,
 
   if (!cgal_test_suite) {
     int argc = 1;
-    const char *argv[2] = {"v2_viewer", "\0"};
+    const char *argv[2] = {"voronoi_2_viewer", "\0"};
     QApplication app(argc, const_cast<char **>(argv));
-    SimpleVoronoiDiagram2ViewerQt<V2, ColorFunctor> mainwindow(
-        app.activeWindow(), av2, title, nofill, draw_voronoi_vertices,
-        draw_dual_vertices, fcolor);
+    DefaultColorFunctorV2 fcolor;
+    SimpleVoronoiDiagram2ViewerQt<CGAL_VORONOI_TYPE, DefaultColorFunctorV2>
+        mainwindow(app.activeWindow(), av2, title, nofill,
+                   draw_voronoi_vertices, draw_dual_vertices, fcolor);
     mainwindow.show();
     app.exec();
   }
 }
 
-template <class V2>
-void draw(const V2 &av2, const char *title, bool nofill,
-          bool draw_voronoi_vertices, bool draw_dual_vertices) {
-  DefaultColorFunctorV2 c;
-  draw(av2, title, nofill, draw_voronoi_vertices, draw_dual_vertices, c);
-}
+//template <class V2>
+//void draw(const V2 &av2, const char *title, bool nofill,
+//          bool draw_voronoi_vertices, bool draw_dual_vertices) {
+//  DefaultColorFunctorV2 c;
+//  draw(av2, title, nofill, draw_voronoi_vertices, draw_dual_vertices, c);
+//}
 
-template <class V2>
-void draw(const V2 &av2, const char *title, bool nofill,
-          bool draw_voronoi_vertices) {
-  DefaultColorFunctorV2 c;
-  draw(av2, title, nofill, draw_voronoi_vertices, true);
-}
+//template <class V2>
+//void draw(const V2 &av2, const char *title, bool nofill,
+//          bool draw_voronoi_vertices) {
+//  DefaultColorFunctorV2 c;
+//  draw(av2, title, nofill, draw_voronoi_vertices, true);
+//}
 
-template <class V2> void draw(const V2 &av2, const char *title, bool nofill) {
-  draw(av2, title, nofill, true);
-}
+//template <class V2> void draw(const V2 &av2, const char *title, bool nofill) {
+//  draw(av2, title, nofill, true);
+//}
 
-template <class V2> void draw(const V2 &av2, const char *title) {
-  draw(av2, title, false);
-}
+//template <class V2> void draw(const V2 &av2, const char *title) {
+//  draw(av2, title, false);
+//}
 
-template <class V2> void draw(const V2 &av2) {
-  draw(av2, "Basic Voronoi Diagram Viewer");
-}
+//template <class V2> void draw(const V2 &av2) {
+//  draw(av2, "Basic Voronoi Diagram Viewer");
+//}
 
 } // End namespace CGAL
 
