@@ -1,14 +1,14 @@
-#include <iostream>
-#include <fstream>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
 
 #include <CGAL/IO/STL_reader.h>
+#include <CGAL/IO/PLY_reader.h>
 
 #include <CGAL/Surface_mesh_simplification/GarlandHeckbert_edge_collapse_visitor_base.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_cost_stop_predicate.h>
@@ -17,18 +17,21 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <chrono>
+#include <iostream>
+#include <fstream>
+#include <vector>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point_3;
-typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
+typedef CGAL::Simple_cartesian<double>                          Kernel;
+typedef Kernel::Point_3                                         Point_3;
+typedef CGAL::Surface_mesh<Point_3>                             Surface_mesh;
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 
-template <typename Kernel, typename Mesh>
+template <typename K, typename Mesh>
 void read_mesh(const char* filename,
                Mesh& sm)
 {
-  typedef typename Kernel::Point_3                                    Point;
+  typedef typename K::Point_3                                   Point;
 
   std::ifstream in(filename, std::ios::binary);
   if(!in.good())
@@ -49,13 +52,36 @@ void read_mesh(const char* filename,
 
     CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, faces, sm);
   }
-  else // off reading
+  else if(fn.substr(fn.find_last_of(".") + 1) == "off")
   {
     if(!in || !(in >> sm))
     {
-      std::cerr << "Error: cannot open mesh\n";
+      std::cerr << "Error: cannot OFF open mesh\n";
       return;
     }
+  }
+  else if(fn.substr(fn.find_last_of(".") + 1) == "ply")
+  {
+    std::vector<Point> points;
+    std::vector<std::vector<std::size_t> > polygons;
+    std::vector<CGAL::Color> fcolors;
+    std::vector<CGAL::Color> vcolors;
+
+    if(!(CGAL::read_PLY(in, points, polygons, fcolors, vcolors)))
+    {
+      std::cerr << "Error: cannot open PLY mesh\n";
+      return;
+    }
+
+    if(!CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons))
+      std::cerr << "W: File does not describe a polygon mesh" << std::endl;
+
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, sm);
+  }
+  else
+  {
+    std::cerr << "Unknown file type" << std::endl;
+    return;
   }
 }
 
@@ -72,41 +98,44 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  double stop_ratio = 0.1;
-  if(argc > 2) {
-    stop_ratio = std::stod(argv[2]);
-  }
-
-  std::chrono::steady_clock::time_point start_time
-    = std::chrono::steady_clock::now();
+  std::cout << "Input mesh: " << num_vertices(surface_mesh) << " nv "
+                              << num_edges(surface_mesh) << " ne "
+                              << num_faces(surface_mesh) << " nf" << std::endl;
 
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
-  double threshold = (argc > 2) ? std::atof(argv[2]) : 0.1;
-  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(threshold);
-  //SMS::GarlandHeckbert_cost_stop_predicate<double> stop(threshold);
+  const double stop_ratio = (argc > 2) ? std::stod(argv[2]) : 0.1;
+
+  std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
   SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>::garland_heckbert_map_type map;
+
+  // stop
+  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(stop_ratio);
+//  SMS::GarlandHeckbert_cost_stop_predicate<double> stop(stop_ratio);
+
+  // cost
+  SMS::GarlandHeckbert_cost<Surface_mesh> cost(map);
+
+  // placement
+  SMS::GarlandHeckbert_placement<Surface_mesh> gh_placement(map);
+  SMS::Bounded_normal_change_placement<SMS::GarlandHeckbert_placement<Surface_mesh> > placement(gh_placement);
+
+  // visitor
   SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh> vis(map);
 
   int r = SMS::edge_collapse(surface_mesh, stop,
-                             CGAL::parameters::get_cost(SMS::GarlandHeckbert_cost <Surface_mesh>(map))
-                                              .get_placement(SMS::GarlandHeckbert_placement<Surface_mesh>(map))
+                             CGAL::parameters::get_cost(cost)
+                                              .get_placement(placement)
                                               .visitor(vis));
 
-  std::chrono::steady_clock::time_point end_time
-    = std::chrono::steady_clock::now();
-
-
+  std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
 
   std::cout << "Time elapsed: "
-   << std::chrono::duration_cast<std::chrono::milliseconds>(
-         end_time - start_time
-       ).count() << "ms" << std::endl;
+            << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()
+            << "ms" << std::endl;
 
-
-  std::cout << "\nFinished...\n" << r << " edges removed.\n"
-            << surface_mesh.number_of_edges() << " final edges.\n";
+  std::cout << "\nFinished...\n" << r << " edges removed.\n" << surface_mesh.number_of_edges() << " final edges.\n";
 
   std::ofstream os(argc > 3 ? argv[3] : "out.off");
   os.precision(17);
