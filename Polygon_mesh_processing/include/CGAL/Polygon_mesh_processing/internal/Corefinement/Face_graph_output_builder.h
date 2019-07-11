@@ -1663,7 +1663,6 @@ public:
               std::vector< Hedge_pair> hedges_to_link;
               typename CGAL::Halfedge_around_target_iterator<TriangleMesh> hit, end;
               boost::tie(hit,end) = halfedges_around_target(vd, tm1);
-              halfedge_descriptor h_start=*hit;
               for(; hit!=end; ++hit)
               {
                 // look for a border halfedge incident to the non-manifold vertex that will not be
@@ -1683,7 +1682,6 @@ public:
                 do{
                   ++hit;
                   if (hit == end) break;
-                  //~ if ( *hit == h_start ){std::cout << "  break\n"; break;}
                   if ( is_border(*hit, tm1) )
                   {
                     if ( patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(*hit, tm1), tm1)) ] ) )
