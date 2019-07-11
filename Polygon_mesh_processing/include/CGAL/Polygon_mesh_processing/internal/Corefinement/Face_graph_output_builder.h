@@ -1656,47 +1656,58 @@ public:
               patches_of_tm1[pid].interior_vertices.erase(vd);
 
             // we now need to update the next/prev relationship induced by the future removal of patches
-            if (!id_p_rm.empty())
+            // that will not be updated after patch removal
+            if (!all_removed && !id_p_rm.empty())
             {
               typedef std::pair<halfedge_descriptor, halfedge_descriptor> Hedge_pair;
               std::vector< Hedge_pair> hedges_to_link;
-              BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(vd, tm1))
+              typename CGAL::Halfedge_around_target_iterator<TriangleMesh> hit, end;
+              boost::tie(hit,end) = halfedges_around_target(vd, tm1);
+              halfedge_descriptor h_start=*hit;
+              for(; hit!=end; ++hit)
               {
-                if ( is_border(h, tm1) &&
-                     !patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(h, tm1), tm1)) ] ) )
+                // look for a border halfedge incident to the non-manifold vertex that will not be
+                // removed.
+                if ( !is_border(*hit, tm1) ||
+                     patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(*hit, tm1), tm1)) ] ) )
                 {
-                  halfedge_descriptor start = h;
+                  continue;
+                }
+                // we have to fix only cases when the next halfedge is to be removed
+                halfedge_descriptor nh = next(*hit, tm1);
+                if ( !patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(nh, tm1), tm1)) ] ) )
+                  continue;
 
-                  do{
-                    halfedge_descriptor nh = next(h, tm1);
-                    CGAL_assertion( source(nh, tm1) == target(start, tm1) );
-                    if ( patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(nh, tm1), tm1)) ] ) )
+                halfedge_descriptor h = *hit;
+                // we are now looking for a potential next candidate halfedge
+                do{
+                  ++hit;
+                  if (hit == end) break;
+                  //~ if ( *hit == h_start ){std::cout << "  break\n"; break;}
+                  if ( is_border(*hit, tm1) )
+                  {
+                    if ( patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(*hit, tm1), tm1)) ] ) )
                     {
-                      // we need to find a new next for h
-                      do{
-                        nh = next( opposite( next(opposite(nh, tm1), tm1), tm1 ), tm1 );
-                        CGAL_assertion( source(nh, tm1) == target(start, tm1) );
+                      // we check if the next halfedge is a good next
+                      nh = next(*hit, tm1);
+                      if ( !patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(nh, tm1), tm1)) ] ) )
+                      {
+                        hedges_to_link.push_back( Hedge_pair(h, nh) );
+                        break;
                       }
-                      while ( !is_border(nh, tm1) ||
-                              !patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(nh, tm1), tm1)) ] ) );
-                      hedges_to_link.push_back( Hedge_pair(h, nh) );
                     }
-
-                    // look for the next hedge to proceed
-                    h = opposite( next( opposite(nh, tm1), tm1), tm1);
-                    CGAL_assertion( target(h, tm1) == target(start, tm1) );
-                    while( !is_border(h, tm1) ||
-                           patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(h, tm1), tm1)) ] ) )
+                    else
                     {
-                      h = opposite( next( h, tm1), tm1);
-                      CGAL_assertion( target(h, tm1) == target(start, tm1) );
+                      // we push-back the halfedge for the next round only if it was not the first
+                      if (h != *cpp11::prev(hit))
+                        --hit;
+                      break;
                     }
                   }
-                  while( h != start );
-                  break;
                 }
+                while(true);
+                if (hit == end) break;
               }
-
               BOOST_FOREACH ( const Hedge_pair& p, hedges_to_link)
                 set_next(p.first, p.second, tm1);
             }
