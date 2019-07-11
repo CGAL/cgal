@@ -419,6 +419,10 @@ public:
 
     ceres::Problem problem;
 
+    problem.AddParameterBlock(&x, 1);
+    problem.AddParameterBlock(&y, 1);
+    problem.AddParameterBlock(&z, 1);
+
     for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
     {
       CGAL_assertion(!is_border(h, mesh_));
