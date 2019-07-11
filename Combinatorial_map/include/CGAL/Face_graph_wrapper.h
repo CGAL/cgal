@@ -24,6 +24,8 @@
 #include <CGAL/Functors_for_face_graph_wrapper.h>
 #include <CGAL/Iterators_for_face_graph_wrapper.h>
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
+#include <CGAL/Polyhedron_3_fwd.h>
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
 namespace CGAL
 {
@@ -61,15 +63,6 @@ namespace CGAL
             template<unsigned int,class,class,class,class>
             class Map, typename Storage>
   class Linear_cell_complex_for_generalized_map;
-
-  template<class P>
-  class Surface_mesh;
-
-  template<class PolyhedronTraits_3,
-           class PolyhedronItems_3,
-           template<class T, class I, class A> class T_HDS,
-           class Alloc>
-  struct Polyhedron_3;
 
   namespace Surface_mesh_topology
   {
@@ -497,15 +490,15 @@ public:
     { return mmap.is_empty(); }
 
     size_type capacity() const
-    { return CGAL::num_halfedges(mmap.get_fg()); }
+    { return num_halfedges(mmap.get_fg()); }
 
     bool is_used(size_type i) const
     {
       for (typename boost::template graph_traits<typename Self::HEG>::halfedge_iterator
-           it=CGAL::halfedges(mmap.get_fg()).begin(),
-           itend=CGAL::halfedges(mmap.get_fg()).end(); it!=itend; ++it)
+           it=halfedges(mmap.get_fg()).begin(),
+           itend=halfedges(mmap.get_fg()).end(); it!=itend; ++it)
       {
-        if (i==0) { return !CGAL::is_border(*it, mmap.get_fg()); }
+        if (i==0) { return !is_border(*it, mmap.get_fg()); }
         --i;
       }
       return false;
@@ -550,8 +543,8 @@ public:
   {
     CGAL_assertion(darts().is_used(i));
     for (typename boost::template graph_traits<typename Self::HEG>::halfedge_iterator
-         it=CGAL::halfedges(get_fg()).begin(),
-         itend=CGAL::halfedges(get_fg()).end(); it!=itend; ++it)
+         it=halfedges(get_fg()).begin(),
+         itend=halfedges(get_fg()).end(); it!=itend; ++it)
     {
       if (i==0) { return *it; }
       --i;
@@ -563,8 +556,8 @@ public:
   {
     CGAL_assertion(darts().is_used(i));
     for (typename boost::template graph_traits<typename Self::HEG>::halfedge_iterator
-         it=CGAL::halfedges(get_fg()).begin(),
-         itend=CGAL::halfedges(get_fg()).end(); it!=itend; ++it)
+         it=halfedges(get_fg()).begin(),
+         itend=halfedges(get_fg()).end(); it!=itend; ++it)
     {
       if (i==0) { return *it; }
       --i;

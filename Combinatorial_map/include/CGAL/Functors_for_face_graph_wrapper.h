@@ -23,8 +23,6 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Iterators_for_face_graph_wrapper.h>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +49,7 @@ struct Is_free<HEG, 2>
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
   static bool value(const HEG& heg, Dart_const_handle dh) 
-  { return CGAL::is_border(CGAL::opposite(dh, heg), heg); }
+  { return is_border(opposite(dh, heg), heg); }
 };
 ////////////////////////////////////////////////////////////////////////////////
 /// Get_beta
@@ -72,14 +70,14 @@ struct Get_beta<HEG, 0>
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
   static Dart_const_handle value(const HEG& heg, Dart_const_handle dh) 
-  { return CGAL::prev(dh, heg); }
+  { return prev(dh, heg); }
 };
 template<typename HEG>
 struct Get_beta<HEG, 1>
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
   static Dart_const_handle value(const HEG& heg, Dart_const_handle dh) 
-  { return CGAL::next(dh, heg); }
+  { return next(dh, heg); }
 };
 template<typename HEG>
 struct Get_beta<HEG, 2>
@@ -88,7 +86,7 @@ struct Get_beta<HEG, 2>
   static Dart_const_handle value(const HEG& heg, Dart_const_handle dh) 
   {
     if (Is_free<HEG, 2>::value(heg, dh)) return Dart_const_handle();
-    return CGAL::opposite(dh, heg);
+    return opposite(dh, heg);
   }
 };
 ////////////////////////////////////////////////////////////////////////////////

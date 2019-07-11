@@ -45,17 +45,17 @@ namespace CGAL
     /// Main constructor.
     FGW_dart_iterator_basic_of_all(const Map& amap):
       mmap(amap),
-      m_it(CGAL::halfedges(amap.get_fg()).begin())
+      m_it(halfedges(amap.get_fg()).begin())
     {
-      if (m_it!=CGAL::halfedges(amap.get_fg()).end() &&
-          CGAL::is_border(*m_it, amap.get_fg()))
+      if (m_it!=halfedges(amap.get_fg()).end() &&
+          is_border(*m_it, amap.get_fg()))
       { operator++(0); }
     }
 
     /// Constructor with a dart in parameter (for end iterator).
     FGW_dart_iterator_basic_of_all(const Map& amap, Dart_handle /*adart*/):
       mmap(amap),
-      m_it(CGAL::halfedges(amap.get_fg()).end())
+      m_it(halfedges(amap.get_fg()).end())
     {}
 
     FGW_dart_iterator_basic_of_all(const FGW_dart_iterator_basic_of_all& other):
@@ -75,14 +75,14 @@ namespace CGAL
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(m_it!=CGAL::halfedges(this->mmap.get_fg()).end());
+      CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).end());
 
       do
       {
         ++m_it;
       }
-      while(m_it!=CGAL::halfedges(this->mmap.get_fg()).end() &&
-            CGAL::is_border(*m_it, this->mmap.get_fg()));
+      while(m_it!=halfedges(this->mmap.get_fg()).end() &&
+            is_border(*m_it, this->mmap.get_fg()));
       
       return *this;
     }
@@ -93,7 +93,7 @@ namespace CGAL
 
     Dart_handle operator*() const
     {
-      CGAL_assertion(m_it!=CGAL::halfedges(this->mmap.get_fg()).end());
+      CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).end());
       return *m_it;
     }
     
