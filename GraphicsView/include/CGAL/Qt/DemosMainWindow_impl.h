@@ -459,7 +459,13 @@ void DemosMainWindow::readState(QString groupname, Options /*what_to_save*/)
   resize(settings.value("size", this->size()).toSize());
 
   QPoint pos = settings.value("pos", this->pos()).toPoint();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   if(QGuiApplication::screenAt(pos)) {
+#else
+   QDesktopWidget* desktop = qApp->desktop();
+     if(desktop->availableGeometry(pos).contains(pos)) {
+#endif
+
     move(pos);
   }
   QByteArray mainWindowState = settings.value("state").toByteArray();
