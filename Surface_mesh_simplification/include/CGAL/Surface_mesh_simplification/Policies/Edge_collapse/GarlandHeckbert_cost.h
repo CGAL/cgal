@@ -35,6 +35,9 @@ public:
   operator()(const Profile& aProfile,
              const boost::optional<typename Profile::Point>& aPlacement) const
   {
+    if(!aPlacement)
+      return boost::optional<typename Profile::FT>();
+
     Matrix4x4 combinedMatrix = std::move(GHC::combine_matrices(
                   mCostMatrices.at(aProfile.v0()),
                   mCostMatrices.at(aProfile.v1())
