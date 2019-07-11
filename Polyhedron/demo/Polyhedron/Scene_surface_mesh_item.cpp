@@ -2281,3 +2281,361 @@ void Scene_surface_mesh_item::computeItemColorVectorAutomatically(bool b)
 {
   this->setProperty("recompute_colors",b);
 }
+
+void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
+{
+  typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
+
+  const CGAL::qglviewer::Vec offset =
+      static_cast<CGAL::Three::Viewer_interface*>(
+        CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  //gouraud
+  {
+    std::size_t id = vh;
+    QOpenGLBuffer *vbo = &(getTriangleContainer(0)->getVbo(Tri::Smooth_vertices)->vbo);
+    cgal_gl_data new_point[3];
+    Point_3 p = face_graph()->point(vh);
+    for(int i=0; i<3; ++i)
+      new_point[i]=p[i]+offset[i];
+
+
+    getTriangleContainer(0)->getVbo(Tri::Smooth_vertices)->bind();
+    vbo->write(3*sizeof(cgal_gl_data)*id,new_point,3*sizeof(cgal_gl_data));
+    getTriangleContainer(0)->getVbo(Tri::Smooth_vertices)->release();
+
+    vbo =&(getPointContainer(0)->getVbo(Pt::Vertices)->vbo);
+    getPointContainer(0)->getVbo(Pt::Vertices)->bind();
+    vbo->write(3*sizeof(cgal_gl_data)*id,new_point,3*sizeof(cgal_gl_data));
+    getPointContainer(0)->getVbo(Pt::Vertices)->release();
+
+    vbo =&(getEdgeContainer(0)->getVbo(Ed::Vertices)->vbo);
+    getEdgeContainer(0)->getVbo(Pt::Vertices)->bind();
+    vbo->write(3*sizeof(cgal_gl_data)*id,new_point,3*sizeof(cgal_gl_data));
+    getEdgeContainer(0)->getVbo(Pt::Vertices)->release();
+
+    for(auto v_it : CGAL::vertices_around_target(vh, *face_graph()))
+    {
+      EPICK::Vector_3 n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v_it, *face_graph());
+      for(int i=0; i<3; ++i)
+        new_point[i]=n[i];
+      id = v_it;
+      vbo =&(getTriangleContainer(0)->getVbo(Tri::Smooth_normals)->vbo);
+      getTriangleContainer(0)->getVbo(Tri::Smooth_normals)->bind();
+      vbo->write(3*sizeof(cgal_gl_data)*id,new_point,3*sizeof(cgal_gl_data));
+      getTriangleContainer(0)->getVbo(Tri::Smooth_normals)->release();
+    }
+  }
+  //flat
+  std::size_t size = 0;
+  if(CGAL::is_triangle_mesh(*face_graph()))
+  {
+    size = 3;
+  }
+  else if (CGAL::is_quad_mesh(*face_graph()))
+  {
+    size = 6;
+  }
+
+  for(auto f : CGAL::faces_around_target(halfedge(vh, *face_graph()), *face_graph()))
+  {
+    if(size == 0)
+    {
+      for(std::size_t i = 0; i < (std::size_t)f; ++i)
+      {
+        size += CGAL::degree(f, *face_graph());
+      }
+    }
+    EPICK::Vector_3 n = CGAL::Polygon_mesh_processing::compute_face_normal(f, *face_graph());
+    cgal_gl_data new_normal[3];
+    for(int i=0; i<3; ++i)
+      new_normal[i]=n[i];
+
+    std::size_t id = f;
+    std::size_t vid = 0;
+
+    if(is_triangle(halfedge(f,*face_graph()),*face_graph()))
+    {
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(f, *face_graph()),*face_graph()))
+      {
+        Point_3 p = face_graph()->point(source(hd, *face_graph()));
+        cgal_gl_data new_point[3];
+        for(int i=0; i<3; ++i)
+        {
+          new_point[i]=p[i]+offset[i];
+        }
+        QOpenGLBuffer *vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+        vid+=3;
+      }
+    }
+    else
+    {
+      std::vector<Point_3> facet_points;
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(f, *face_graph()),*face_graph()))
+      {
+        facet_points.push_back(face_graph()->point(target(hd, *face_graph())));
+      }
+      bool is_convex = CPF::is_facet_convex(facet_points, n);
+      if(is_convex && is_quad(halfedge(f,*face_graph()),*face_graph()))
+      {
+        //1st half
+        halfedge_descriptor hd = halfedge(f, *face_graph());
+        Point_3 p = face_graph()->point(source(hd, *face_graph()));
+        cgal_gl_data new_point[3];
+        for(int i=0; i<3; ++i)
+        {
+          new_point[i]=p[i]+offset[i];
+        }
+        QOpenGLBuffer *vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+        vid+=3;
+
+        hd = next(halfedge(f, *face_graph()),*face_graph());
+        p = face_graph()->point(source(hd, *face_graph()));
+        for(int i=0; i<3; ++i)
+        {
+          new_point[i]=p[i]+offset[i];
+        }
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+        vid+=3;
+
+        hd = next(next(halfedge(f, *face_graph()),*face_graph()), *face_graph());
+        p = face_graph()->point(source(hd, *face_graph()));
+        for(int i=0; i<3; ++i)
+        {
+          new_point[i]=p[i]+offset[i];
+        }
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+        vid+=3;
+
+        //2nd half
+        hd = halfedge(f, *face_graph());
+        p = face_graph()->point(source(hd, *face_graph()));
+        for(int i=0; i<3; ++i)
+        {
+          new_point[i]=p[i]+offset[i];
+        }
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+        vid+=3;
+
+        hd = next(next(halfedge(f, *face_graph()),*face_graph()), *face_graph());
+        p = face_graph()->point(source(hd, *face_graph()));
+        for(int i=0; i<3; ++i)
+        {
+          new_point[i]=p[i]+offset[i];
+        }
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+        vid+=3;
+
+        hd = prev(halfedge(f, *face_graph()), *face_graph());
+        p = face_graph()->point(source(hd, *face_graph()));
+        for(int i=0; i<3; ++i)
+        {
+          new_point[i]=p[i]+offset[i];
+        }
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+        vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+      }
+      else if(is_convex)
+      {
+        Point_3 p0,p1,p2;
+        SMesh::Halfedge_around_face_circulator he(halfedge(f, *face_graph()), *face_graph());
+        SMesh::Halfedge_around_face_circulator he_end = he;
+
+        while(next(*he, *face_graph()) != prev(*he_end, *face_graph()))
+        {
+          ++he;
+          vertex_descriptor v0(target(*he_end, *face_graph())),
+              v1(target(*he, *face_graph())),
+              v2(target(next(*he, *face_graph()), *face_graph()));
+          p0 = face_graph()->point(v0);
+          p1 = face_graph()->point(v1);
+          p2 = face_graph()->point(v2);
+          cgal_gl_data new_point[3];
+          QOpenGLBuffer *vbo =nullptr;
+          for(int i=0; i<3; ++i)
+          {
+            new_point[i]=p0[i]+offset[i];
+          }
+          vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+          vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+
+          for(int i=0; i<3; ++i)
+          {
+            new_point[i]=p1[i]+offset[i];
+          }
+          vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+          vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+
+          for(int i=0; i<3; ++i)
+          {
+            new_point[i]=p2[i]+offset[i];
+          }
+          vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+          vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+        }
+      }
+      else
+      {
+        //Computes the normal of the facet
+        if(n == CGAL::NULL_VECTOR)
+        {
+          boost::graph_traits<SMesh>::halfedge_descriptor start = prev(halfedge(f, *face_graph()), *face_graph());
+          boost::graph_traits<SMesh>::halfedge_descriptor hd = halfedge(f, *face_graph());
+          boost::graph_traits<SMesh>::halfedge_descriptor next_=next(hd, *face_graph());
+          do
+          {
+            const Point_3& pa = face_graph()->point(target(hd, *face_graph()));
+            const Point_3& pb = face_graph()->point(target(next_, *face_graph()));
+            const Point_3& pc = face_graph()->point(target(prev(hd, *face_graph()), *face_graph()));
+            if (!CGAL::collinear (pa, pb, pc))
+            {
+              n = CGAL::cross_product(pb-pa, pc -pa);
+              break;
+            }
+            next_ =next(next_, *face_graph());
+          }while(next_ != start);
+
+          if (n == CGAL::NULL_VECTOR) // No normal could be computed, return
+          {
+            qDebug()<<"Warning : normal is not valid. Facet not updated";
+            continue;
+          }
+        }
+        //check if normal contains NaN values
+        if (n.x() != n.x() || n.y() != n.y() || n.z() != n.z())
+        {
+          qDebug()<<"Warning : normal is not valid. Facet not displayed";
+          continue;
+        }
+
+        typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
+        EPICK::Vector_3 voffset(offset.x,offset.y,offset.z);
+       FT triangulation(f,n,face_graph(), voffset);
+        //iterates on the internal faces
+        for(FT::CDT::Finite_faces_iterator
+            ffit = triangulation.cdt->finite_faces_begin(),
+            end = triangulation.cdt->finite_faces_end();
+            ffit != end; ++ffit)
+        {
+          if(ffit->info().is_external)
+            continue;
+          Point_3 p = ffit->vertex(0)->point();
+          cgal_gl_data new_point[3];
+          for(int i=0; i<3; ++i)
+          {
+            new_point[i]=p[i];
+          }
+          QOpenGLBuffer *vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+          vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+          vid+=3;
+
+
+          p = ffit->vertex(1)->point();
+          for(int i=0; i<3; ++i)
+          {
+            new_point[i]=p[i];
+          }
+          vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+          vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+          vid+=3;
+
+          p=ffit->vertex(2)->point();
+          for(int i=0; i<3; ++i)
+          {
+            new_point[i]=p[i];
+          }
+          vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
+          vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
+          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
+          vid+=3;
+
+        }
+      }
+    }
+  }
+  invalidate_aabb_tree();
+  redraw();
+}

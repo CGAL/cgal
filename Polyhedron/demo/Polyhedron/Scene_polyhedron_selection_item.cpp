@@ -694,6 +694,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
 
 void Scene_polyhedron_selection_item::set_highlighting(bool b)
 {
+  setProperty("is_highlighting", b);
   k_ring_selector.setHighLighting(b);
 }
 void Scene_polyhedron_selection_item::set_operation_mode(int mode)
@@ -1012,6 +1013,12 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
         d->manipulated_frame->setPosition(p.x()+offset.x, p.y()+offset.y, p.z()+offset.z);
         viewer->setManipulatedFrame(d->manipulated_frame);
         connect(d->manipulated_frame, SIGNAL(modified()), this, SLOT(updateTick()));
+        if(property("is_highlighting").toBool())
+        {
+          setProperty("need_hl_restore", true);
+          set_highlighting(false);
+          qDebug()<<":coucou";
+        }
         invalidateOpenGLBuffers();
         Q_EMIT updateInstructions("Ctrl+Right-click to move the point. \nHit Ctrl+Z to leave the selection. (2/2)");
       }
@@ -1931,7 +1938,8 @@ void Scene_polyhedron_selection_item::moveVertex()
                          d->manipulated_frame->position().y-offset.y,
                          d->manipulated_frame->position().z-offset.z));
     invalidateOpenGLBuffers();
-    poly_item->invalidateOpenGLBuffers();
+    poly_item->updateVertex(vh);
+   // poly_item->invalidateOpenGLBuffers();
     d->ready_to_move = false;
   }
 }
@@ -1944,6 +1952,8 @@ void Scene_polyhedron_selection_item::validateMoveVertex()
   viewer->setManipulatedFrame(NULL);
   invalidateOpenGLBuffers();
   poly_item->itemChanged();
+  if(property("need_hl_restore").toBool())
+    set_highlighting(true);
   Q_EMIT updateInstructions("Select a vertex. (1/2)");
 }
 
