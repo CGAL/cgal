@@ -293,7 +293,11 @@ public:
       m_buffer_for_mono_segments.has_zero_x() &&
       m_buffer_for_colored_segments.has_zero_x() &&
       m_buffer_for_mono_faces.has_zero_x() &&
-      m_buffer_for_colored_faces.has_zero_x();
+      m_buffer_for_colored_faces.has_zero_x() &&
+      m_buffer_for_mono_rays.has_zero_x() &&
+      m_buffer_for_colored_rays.has_zero_x() &&
+      m_buffer_for_mono_lines.has_zero_x() &&
+      m_buffer_for_colored_lines.has_zero_x();
   }  
 
   bool has_zero_y() const
@@ -304,7 +308,11 @@ public:
       m_buffer_for_mono_segments.has_zero_y() &&
       m_buffer_for_colored_segments.has_zero_y() &&
       m_buffer_for_mono_faces.has_zero_y() &&
-      m_buffer_for_colored_faces.has_zero_y();
+      m_buffer_for_colored_faces.has_zero_y() &&
+      m_buffer_for_mono_rays.has_zero_y() &&
+      m_buffer_for_colored_rays.has_zero_y() &&
+      m_buffer_for_mono_lines.has_zero_y() &&
+      m_buffer_for_colored_lines.has_zero_y();
   }
   
   bool has_zero_z() const
@@ -315,7 +323,11 @@ public:
       m_buffer_for_mono_segments.has_zero_z() &&
       m_buffer_for_colored_segments.has_zero_z() &&
       m_buffer_for_mono_faces.has_zero_z() &&
-      m_buffer_for_colored_faces.has_zero_z();
+      m_buffer_for_colored_faces.has_zero_z() &&
+      m_buffer_for_mono_rays.has_zero_z() &&
+      m_buffer_for_colored_rays.has_zero_z() &&
+      m_buffer_for_mono_lines.has_zero_z() &&
+      m_buffer_for_colored_lines.has_zero_z();
   }
   
   template<typename KPoint>
