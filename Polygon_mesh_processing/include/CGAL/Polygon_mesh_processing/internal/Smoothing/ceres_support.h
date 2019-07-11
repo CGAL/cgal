@@ -37,21 +37,21 @@
 
 // If a user is using minilog instead of glog, the verbosity cannot be controlled via ceres options...
 // Since we really don't want to hear about it, override that value with '0'
-#ifdef MINILOG_MAX_LOG_LEVEL
-#  define MINILOG_MAX_LOG_LEVEL_WAS_DEFINED
-#  pragma push_macro("MINILOG_MAX_LOG_LEVEL")
-#  undef MINILOG_MAX_LOG_LEVEL
+#ifdef MINIGLOG_MAX_LOG_LEVEL
+#  define MINIGLOG_MAX_LOG_LEVEL_WAS_DEFINED
+#  pragma push_macro("MINIGLOG_MAX_LOG_LEVEL")
+#  undef MINIGLOG_MAX_LOG_LEVEL
 #endif
 
 #define MAX_LOG_LEVEL 0
 
 #include "ceres/ceres.h"
 
-#ifdef MINILOG_MAX_LOG_LEVEL_WAS_DEFINED
-#  pragma pop_macro("MINILOG_MAX_LOG_LEVEL")
-#  undef MINILOG_MAX_LOG_LEVEL_WAS_DEFINED
+#ifdef MINIGLOG_MAX_LOG_LEVEL_WAS_DEFINED
+#  pragma pop_macro("MINIGLOG_MAX_LOG_LEVEL")
+#  undef MINIGLOG_MAX_LOG_LEVEL_WAS_DEFINED
 #else
-#  undef MINILOG_MAX_LOG_LEVEL
+#  undef MINIGLOG_MAX_LOG_LEVEL
 #endif
 
 
