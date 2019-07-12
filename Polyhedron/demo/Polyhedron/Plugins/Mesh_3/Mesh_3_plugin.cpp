@@ -122,7 +122,17 @@ public Q_SLOTS:
   void set_defaults();
   void mesh_3_volume();
   void mesh_3_surface();
-  void mesh_3_surface_with_defaults() { mesh_3(Mesh_type::SURFACE_ONLY, Dialog_choice::NO_DIALOG); }
+  void mesh_3_surface_with_defaults() {
+    mesh_3(Mesh_type::SURFACE_ONLY, Dialog_choice::NO_DIALOG);
+  }
+  void mesh_3_volume_with_defaults() {
+    mesh_3(Mesh_type::VOLUME, Dialog_choice::NO_DIALOG);
+  }
+  void mesh_3(bool with_dialog) { // compatibility with old Qt Scripts
+    return mesh_3(
+        Mesh_type::VOLUME,
+        with_dialog ? Dialog_choice::DIALOG : Dialog_choice::NO_DIALOG);
+  }
   void splitPolylines();
   void meshing_done(Meshing_thread* t);
   void status_report(QString str);
