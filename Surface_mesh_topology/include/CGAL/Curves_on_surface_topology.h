@@ -82,8 +82,8 @@ public:
         new internal::Minimal_quadrangulation<Mesh>(m_original_map, display_time);
     }
 
-    return m_minimal_quadrangulation->are_freely_homotopic(p1, p2,
-                                                           display_time);
+    return m_minimal_quadrangulation->are_base_point_homotopic(p1, p2,
+                                                               display_time);
   }
 
   bool is_minimal_quadrangulation_computed() const
