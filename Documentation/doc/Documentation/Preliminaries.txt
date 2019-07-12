@@ -63,9 +63,9 @@ http://www.geometryfactory.com/.  License fees paid by commercial
 customers are reinvested in R\&D performed by the \cgal project partners,
 as well as in evolutive maintenance.
 
-\subsection licenseCheck License Checking 
+\subsection licenseCheck License Checking
 
-Users who have a commercial license for specific packages can check that 
+Users who have a commercial license for specific packages can check that
 they do not accidentally use packages for which they do not have a commercial
 license. The same holds for users who want to be sure that they only
 use packages of \cgal released under the \sc{Lgpl}.
@@ -155,7 +155,7 @@ to force its definition on the command line, and it is possible to prevent its d
 definition by setting `CGAL_HAS_NO_THREADS` from the command line.
 
 
-\section Preliminaries_cc0x C++11 Support 
+\section Preliminaries_cc0x C++11 Support
 
 \cgal is based on the \CC standard released in 1998 (and later refined in 2003).
 A new major version of this standard has been released, and is refered to as \cpp11.
@@ -182,7 +182,7 @@ return type of calling the functor with an argument of type
 
 Much of the \cgal code contains assert statements for preconditions, and postconditions of functions
 as well as in the code.  These assertions can be switched on and off per package
-and the user can change the error behaviour. For details see Section \ref secchecks 
+and the user can change the error behaviour. For details see Section \ref secchecks
 of Chapter \ref Chapter_STL_Extensions_for_CGAL.
 
 \section seccgal_version Identifying the Version of CGAL
@@ -208,7 +208,7 @@ public release 3.2.4 this number is 1030241000; for internal release
 3.2-I-30.
 </DD>
 <DT>`CGAL_VERSION_NUMBER(M,m,b)`</DT>
-<DD> 
+<DD>
 a function macro computing the version number macro from the
 M.m.b release version. Note that the internal release number is
 dropped here. Example: `CGAL_VERSION_NUMBER(3,2,4)` is equal to

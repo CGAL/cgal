@@ -1,0 +1,259 @@
+/*!
+
+\page thirdparty Essential and Optional Third Party Dependencies
+\cgalAutoToc
+\author %CGAL Editorial Board
+
+\section seccompilers Supported Compilers
+
+In order to build a program using \cgal, you need a \cpp compiler
+supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
+\cgal \cgalReleaseNumber is supported, that is continuously tested, for the following compilers/operating systems:
+
+| Operating System | Compiler |
+| :------- | :--------------- |
+| Linux | \sc{Gnu} `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
+|       | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 8.0.0 |
+| \sc{MS} Windows | \sc{Gnu} `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
+|                 | \sc{MS} Visual `C++` 14.0, 15.9, 16.0 (\sc{Visual Studio} 2015, 2017, and 2019)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} |
+| MacOS X | \sc{Gnu} `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
+|         | Apple `Clang` compiler versions 7.0.2 and 10.0.1 |
+
+It may work for older versions of the above listed compilers.
+
+\section seccmake CMake
+
+In order to configure and build the \cgal libraries, examples, and demos,
+you need CMake, a cross-platform "makefile generator".
+If CMake is not already installed you can obtain it from <A HREF="https://cmake.org/">`https://cmake.org/`</A>.
+CMake version 3.1 or higher is required.
+
+This manual explains only those features of
+CMake which are needed in order to build \cgal. Please refer to the
+CMake documentation at <A HREF="https://cmake.org/">`https://cmake.org/`</A> for further details.
+
+\section secessential3rdpartysoftware Essential Third Party Libraries
+
+The focus of \cgal is on geometry, and we rely on other
+highly specialized libraries and software for non-geometric issues,
+for instance, for numeric solvers, or visualization. We first list software
+that is essential to build (all) libraries of \cgal, that is,
+this software must be found during the configuration of \cgal for an
+actived library of \cgal (i.e.\ <TT>WITH_<library>=ON</TT>);
+see the page \ref configurationvariables to specify the location of 3rd
+party software.
+
+The libraries \stl (shipped with any compiler) and \sc{Boost} are essential to all components (i.e.\ libCGAL,
+libCGAL_Core, libCGAL_ImageIO, and libCGAL_Qt5).
+
+\subsection thirdpartystl Standard Template Library (STL)
+
+\cgal heavily uses the \stl, and in particular adopted
+many of its design ideas. You can find online
+documentation for the \stl at various web sites, for instance,
+<A HREF="https://en.cppreference.com/w/">`https://en.cppreference.com `</A>,
+or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`https://msdn.microsoft.com`</A>.
+
+The \stl comes with the compiler, so there is nothing to install.
+
+\subsection thirdpartyBoost Boost
+
+The \sc{Boost} libraries are a set of portable C++ source libraries. Most of
+\sc{Boost} libraries are header-only, but a few of them need to be compiled or
+installed as binaries.
+
+\cgal only requires the headers of the \sc{Boost} libraries, but some demos and examples depend on the binary library `Boost.Program_options`.
+
+As an exception, because of a bug in the \gcc compiler about the \cpp 11
+keyword `thread_local`, the `CGAL_Core` library always requires
+the binary library `Boost.Thread` if the \gcc compiler version 9.0 or
+earlier is used.
+
+In case the \sc{Boost} libraries are not installed on your system already, you
+can obtain them from <A HREF="https://www.boost.org/">`https://www.boost.org/`</A>. For Visual C++ you can download precompiled libraries
+from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`https://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
+
+As on Windows there is no canonical directory for where to find
+\sc{Boost}, we recommend that you define the environment variable
+`BOOST_ROOT` and set it to where you have installed \sc{Boost}, e.g.,
+<A HREF="C:\boost\boost_1_41_0">`C:\boost\boost_1_41_0`</A>.
+
+\subsection thirdpartyMPFR GMP and MPFR
+
+The components libCGAL, libCGAL_Core, and libCGAL_Qt5 require
+\sc{Gmp} and \sc{Mpfr} which are libraries for multi precision integers and rational numbers,
+and for multi precision floating point numbers.
+
+\cgal combines floating point arithmetic with exact arithmetic,
+in order to be efficient and reliable. \cgal has a built-in
+number type for that, but \sc{Gmp} and \sc{Mpfr} provide a faster
+solution, and we recommend to use them.
+
+Having \sc{Gmp} version 4.2 or higher and \sc{Mpfr} version 2.2.1 or higher
+installed is recommended. These libraries can be obtained from
+<A HREF="https://gmplib.org/">`https://gmplib.org/`</A> and <A HREF="https://www.mpfr.org/">`https://www.mpfr.org/`</A>, respectively.
+
+As Visual \cpp is not properly
+supported by the \sc{Gmp} and \sc{Mpfr} projects, we provide precompiled versions
+of \sc{Gmp} and \sc{Mpfr}, which can be downloaded with the installer
+`CGAL-\cgalReleaseNumber``-Setup.exe`.
+
+\subsection thirdpartyzlib zlib
+
+\sc{zlib} is a data compression library, and is essential for the component libCGAL_ImageIO.
+
+In \cgal this library is used in the examples of the \ref PkgSurfaceMesher3Ref package.
+
+If it is not already on your system,
+for instance, on Windows, you can download it from <A HREF="https://www.zlib.net/">`https://www.zlib.net/`</A>.
+
+\subsection thirdpartyQt Qt5
+
+Qt is a cross-platform application and UI framework.
+
+The component libCGAL_Qt5 requires \sc{Qt}5 installed on your system.
+In case \sc{Qt} is not yet installed on your system, you can download
+it from <A HREF="https://www.qt-project.org/">`https://www.qt-project.org/`</A>.
+
+The exhaustive list of \sc{Qt}5 components used in demos is:
+`Core`, `Gui`, `Help`, `OpenGL`, `Script`, `ScriptTools`, `Svg`, `Widgets`,
+`qcollectiongenerator` (with `sqlite` driver plugin) and `Xml`.
+
+\sc{Qt} version 5.9.0 or later is required.
+
+\section secoptional3rdpartysoftware Optional Third Party Libraries
+
+Optional 3rd party software can be used by \cgal for various reasons:
+Usually certain optional libraries are required to build examples and
+demos shipped with \cgal or to build your own project using \cgal.
+Another reason is to speed up basic tasks.
+
+\subsection thirdpartyLeda LEDA
+
+\leda is a library of efficient data structures and
+algorithms. Like \sc{Core}, \leda offers a real number data type.
+
+In \cgal this library is optional, and its number types can
+be used as an alternative to \sc{Gmp}, \sc{Mpfr}, and \sc{Core}.
+
+Free and commercial editions of \leda are available from <A HREF="https://www.algorithmic-solutions.com">`https://www.algorithmic-solutions.com`</A>.
+
+\subsection thirdpartyMPFI MPFI
+
+\sc{Mpfi} provides arbitrary precision interval arithmetic with intervals
+represented using \sc{Mpfr} reliable floating-point numbers.
+It is based on the libraries \sc{Gmp} and \sc{Mpfr}.
+In the setting of \cgal, this library is
+optional: it is used by some models of the
+\ref PkgAlgebraicKernelDRef "Algebraic Kernel".
+
+\sc{Mpfi} can be downloaded from <A HREF="https://mpfi.gforge.inria.fr/">`https://mpfi.gforge.inria.fr/`</A>. Version 1.4 or higher is recommended.
+
+\subsection thirdpartyRS3 RS and RS3
+
+\sc{Rs} (Real Solutions) is devoted to the study of the real roots of
+polynomial systems with a finite number of complex roots (including
+univariate polynomials). In \cgal, \sc{Rs} is used by one model of the
+\ref PkgAlgebraicKernelDRef "Algebraic Kernel".
+
+\sc{Rs} is freely distributable for non-commercial use. You can download it
+from <a href="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</a>. Actually, the \sc{Rs} package also includes \sc{Rs3}, the
+successor of \sc{Rs}, which is used in conjunction with it.
+
+The libraries \sc{Rs} and \sc{Rs3} need \sc{Mpfi}, which can be downloaded from
+<A HREF="https://mpfi.gforge.inria.fr/">`https://mpfi.gforge.inria.fr/`</A>.
+
+\subsection thirdpartyNTL NTL
+
+\sc{Ntl} provides data structures and algorithms for signed, arbitrary
+length integers, and for vectors, matrices, and polynomials over the
+integers and over finite fields. The optional library \sc{Ntl} is used by \cgal
+to speed up operations of the Polynomial package, such as GCDs. It is recommended to install \sc{Ntl} with support from \sc{Gmp}.
+
+\sc{Ntl} can be downloaded from <A HREF="https://www.shoup.net/ntl/">`https://www.shoup.net/ntl/`</A>. Version 5.1 or higher is recommended.
+
+\subsection thirdpartyEigen Eigen
+
+\sc{Eigen} is a `C++` template library for linear algebra. \sc{Eigen} supports all
+matrix sizes, various matrix decomposition methods and sparse linear solvers.
+
+In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgPoissonSurfaceReconstruction3Ref
+and the \ref PkgSurfaceMeshParameterizationRef packages.
+
+In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJetFitting3Ref
+and the \ref PkgRidges3Ref packages.
+
+The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org`</A>.
+
+\subsection thirdpartyESBTL ESBTL
+
+The \sc{Esbtl} (Easy Structural Biology Template Library) is a library that allows
+the handling of \sc{Pdb} data.
+
+In \cgal the \sc{Esbtl} is used in an example of the
+\ref PkgSkinSurface3Ref package.
+
+It can be downloaded from <A HREF="http://esbtl.sourceforge.net/">`http://esbtl.sourceforge.net/`</A>.
+
+\subsection thirdpartyTBB Intel TBB
+
+\sc{Tbb} (Threading Building Blocks) is a library developed by Intel Corporation for writing software
+programs that take advantage of multi-core processors.
+
+In \cgal, \sc{Tbb} is used by the packages that offer parallel code.
+
+The \sc{Tbb} web site is <A HREF="https://www.threadingbuildingblocks.org">`https://www.threadingbuildingblocks.org`</A>.
+
+\subsection thirdpartyLASlib LASlib
+
+\sc{LASlib} is a `C++` library for handling LIDAR data sets stored in
+the LAS format (or the compressed LAZ format).
+
+In \cgal, \sc{LASlib} is used to provide input and output functions in
+the \ref PkgPointSetProcessing3Ref package.
+
+The \sc{LASlib} web site is <a
+href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \sc{LASlib}
+is usually distributed along with LAStools: for simplicity, \cgal
+provides <a href="https://github.com/CGAL/LAStools">a fork with a
+CMake based install procedure</a>.
+
+\subsection thirdpartyOpenCV OpenCV
+
+\sc{OpenCV} (Open Computer Vision) is a library designed for computer
+vision, computer graphics and machine learning.
+
+In \cgal, \sc{OpenCV} is used by the \ref PkgClassificationRef package.
+
+The \sc{OpenCV} web site is <A HREF="https://opencv.org/">`https://opencv.org/`</A>.
+
+\subsection thirdpartyTensorFlow TensorFlow
+
+\sc{TensorFlow} is a library designed for machine learning and deep learning.
+
+In \cgal, the C++ API of \sc{TensorFlow} is used by the \ref
+PkgClassificationRef package for neural network. The C++ API can be
+compiled using CMake: it is distributed as part of the official
+package and is located in `tensorflow/contrib/cmake`. Be sure to
+enable and compile the following targets:
+
+- `tensorflow_BUILD_ALL_KERNELS`
+- `tensorflow_BUILD_PYTHON_BINDINGS`
+- `tensorflow_BUILD_SHARED_LIB`.
+
+The \sc{TensorFlow} web site is <A HREF="https://www.tensorflow.org/">`https://www.tensorflow.org/`</A>.
+
+\subsection thirdpartyMETIS METIS
+
+\sc{METIS} is a library developed by the <A HREF="http://glaros.dtc.umn.edu/gkhome/">Karypis Lab</A>
+and designed to partition graphs and produce fill-reducing matrix orderings.
+
+\cgal offers wrappers around some of the methods of the \sc{METIS} library
+to allow the partitioning of graphs that are models of the concepts of the
+<A HREF="https://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A>,
+and, by extension, of surface meshes (see Section \ref BGLPartitioning of the package \ref PkgBGL).
+
+More information is available on the METIS library
+at <A HREF="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">`http://glaros.dtc.umn.edu/gkhome/metis/metis/overview`</A>.
+
+*/

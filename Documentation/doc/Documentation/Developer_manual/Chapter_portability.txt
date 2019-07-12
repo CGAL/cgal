@@ -236,8 +236,8 @@ operating system and compiler that is defined as follows.
   quite compiler specific).
 </DL>
 
-Examples are <TT>mips_IRIX64-6.5_CC-n32-7.30</TT> or <TT>sparc_SunOS-5.6_g++-2.95</TT>. For more information, see the \cgal 
-\link installation installation guide \endlink.
+Examples are <TT>mips_IRIX64-6.5_CC-n32-7.30</TT> or <TT>sparc_SunOS-5.6_g++-2.95</TT>.
+For more information, see the \cgal \link usage usage guide \endlink.
 
 This platform-specific configuration file is created during
 
