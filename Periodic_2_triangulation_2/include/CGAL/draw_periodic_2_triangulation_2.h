@@ -250,16 +250,20 @@ protected:
   bool m_domain;
 };
 
-template<class P2T2, class ColorFunctor>
-void draw(const P2T2& ap2t2,
-          const char* title,
-          bool nofill,
-          const ColorFunctor& fcolor)
+// Specialization of draw function
+#define CGAL_P2T2_TYPE CGAL::Periodic_2_triangulation_2 \
+  <Gt, Tds >
+
+template < class Gt,
+           class Tds >
+void draw(const CGAL_P2T2_TYPE& ap2t2,
+          const char* title = "2D Periodic Triangulation Viewer",
+          bool nofill = false)
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
   if (!cgal_test_suite)
@@ -267,30 +271,14 @@ void draw(const P2T2& ap2t2,
     int argc=1;
     const char* argv[2]={"p2t2_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimplePeriodic2Triangulation2ViewerQt<P2T2, ColorFunctor> mainwindow(app.activeWindow(),
-                                                              ap2t2,
-                                                              title,
-                                                              nofill,
-                                                              fcolor);
+    DefaultColorFunctorP2T2 fcolor;
+    SimplePeriodic2Triangulation2ViewerQt<CGAL_P2T2_TYPE,
+                                          DefaultColorFunctorP2T2>
+        mainwindow(app.activeWindow(), ap2t2, title, nofill, fcolor);
     mainwindow.show();
     app.exec();
   }
 }
-
-template<class P2T2>
-void draw(const P2T2& ap2t2, const char* title, bool nofill)
-{
-  DefaultColorFunctorP2T2 c;
-  draw(ap2t2, title, nofill, c);
-}
-
-template<class P2T2>
-void draw(const P2T2& ap2t2, const char* title)
-{ draw(ap2t2, title, false); }
-
-template<class P2T2>
-void draw(const P2T2& ap2t2)
-{ draw(ap2t2, "Basic 2D Periodic Triangulation Viewer"); }
 
 } // namespace CGAL
 

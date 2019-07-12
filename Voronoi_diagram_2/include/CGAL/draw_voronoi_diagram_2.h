@@ -337,32 +337,6 @@ void draw(const CGAL_VORONOI_TYPE &av2,
   }
 }
 
-//template <class V2>
-//void draw(const V2 &av2, const char *title, bool nofill,
-//          bool draw_voronoi_vertices, bool draw_dual_vertices) {
-//  DefaultColorFunctorV2 c;
-//  draw(av2, title, nofill, draw_voronoi_vertices, draw_dual_vertices, c);
-//}
-
-//template <class V2>
-//void draw(const V2 &av2, const char *title, bool nofill,
-//          bool draw_voronoi_vertices) {
-//  DefaultColorFunctorV2 c;
-//  draw(av2, title, nofill, draw_voronoi_vertices, true);
-//}
-
-//template <class V2> void draw(const V2 &av2, const char *title, bool nofill) {
-//  draw(av2, title, nofill, true);
-//}
-
-//template <class V2> void draw(const V2 &av2, const char *title) {
-//  draw(av2, title, false);
-//}
-
-//template <class V2> void draw(const V2 &av2) {
-//  draw(av2, "Basic Voronoi Diagram Viewer");
-//}
-
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER
