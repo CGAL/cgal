@@ -20,6 +20,10 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 int main()
 {
   Mesh tm1, tm2;
+  // TODO Read real meshes and try method with it.
+  //      std::ofstream(argv[1]) >> tm1;
+  //      http://www.pmp-book.org/download/meshes/iphi_fullres.zip
+  //      https://doc.cgal.org/latest/Polygon_mesh_processing/group__PMP__meshing__grp.html#ga028a80dc84395650f67714fa7618ec53
 /*
   CGAL::make_tetrahedron(Point_3(.0,.0,.0),
                          Point_3(2,.0,.0),

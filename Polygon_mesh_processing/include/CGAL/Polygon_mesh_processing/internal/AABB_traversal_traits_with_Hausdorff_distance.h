@@ -125,7 +125,8 @@ namespace CGAL {
       Point_3 v0 = query.vertex(0);
       Point_3 v1 = query.vertex(1);
       Point_3 v2 = query.vertex(2);
-      // Compute the barycenter of the triangle
+      // Compute the centroid of the triangle
+      // TODO Use the centroid() method from the kernel here.
       Point_3 tri_center = Point_3( 0.3*(v0.x()+v1.x()+v2.x()), 0.3*(v0.y()+v1.y()+v2.y()),  0.3*(v0.z()+v1.z()+v2.z()) );
 
       // Compute the distance of the center to the closest point in tm2
@@ -249,9 +250,13 @@ namespace CGAL {
 
     // Determine whether child nodes will still contribute to a larger
     // Hausdorff distance and thus have to be entered
-    bool do_intersect(const Query& query, const Node& node) const
+    // TODO Document Query object, explain why I don't need it here.
+    bool do_intersect(const Query& /*query*/, const Node& node) const
     {
       /* Have reached a node, determine whether or not to enter it */
+
+      // TODO What's the closest distance of TM2 to the box given by node?
+      //      Can we have a sharper bound on this than the one implemented below?
 
       // Get the bounding box of the nodes
       Bounding_box bbox = node.bbox();

@@ -916,25 +916,23 @@ double bounded_error_Hausdorff_impl(
   tm2_tree.accelerate_distance_queries();
   std::pair<Point_3, face_descriptor> hint = tm2_tree.any_reference_point_and_id();
 
-  // Build traversal traits for tm1_tree and tm2_tree
+  // Build traversal traits for tm1_tree
   Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1( tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2 );
-  tm1_tree.traversal( Point_3(0,0,0), traversal_traits_tm1 );
+  // Find candidate triangles in TM1 which might realise the Hausdorff bound
+  tm1_tree.traversal( Point_3(0,0,0), traversal_traits_tm1 ); // dummy point given as query as not needed
 
   // TODO Implement the candidate_triangles set as Stack instead of Vector
+  //      check: https://www.boost.org/doc/libs/1_55_0/doc/html/heap.html
+  //      Can already build a sorted structure while collecting the candidates
   Candidate_set candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   Hausdorff_bounds global_bounds = traversal_traits_tm1.get_global_bounds();
 
   while ( (global_bounds.second - global_bounds.first > error_bound) && candidate_triangles.size() > 0 ) {
 
-    // TODO Why does it only stop because of triangles, not because of the global bound condition?
-    std::cout << "There are currently " << candidate_triangles.size()
-              << " candidates. Global bounds are: "
-              << global_bounds.first << ", " << global_bounds.second << std::endl;
-
     // Get the first triangle and its Hausdorff bounds from the candidate set
-    Candidate_triangle triangle_and_bound = candidate_triangles.front();
+    Candidate_triangle triangle_and_bound = candidate_triangles.back();
     // Remove it from the candidate set as it will be processed now
-    candidate_triangles.erase (candidate_triangles.begin(),candidate_triangles.begin()+1);
+    candidate_triangles.pop_back();
 
     // Only process the triangle if it can contribute to the Hausdorff distance,
     // i.e. if its Upper Bound is higher than the currently known best lower bound
@@ -960,6 +958,7 @@ double bounded_error_Hausdorff_impl(
       }
 
       // Subdivide the triangle into four smaller triangles
+      // TODO Use CGAL::midpoint here.
       Point_3 v01 = Point_3( (v0.x()+ v1.x())/2., (v0.y()+v1.y())/2., (v0.z()+v1.z())/2. );
       Point_3 v02 = Point_3( (v0.x()+ v2.x())/2., (v0.y()+v2.y())/2., (v0.z()+v2.z())/2. );
       Point_3 v12 = Point_3( (v1.x()+ v2.x())/2., (v1.y()+v2.y())/2., (v1.z()+v2.z())/2. );
@@ -996,6 +995,7 @@ double bounded_error_Hausdorff_impl(
         }
         global_bounds.second = std::max(current_max, local_bounds.second);
 
+        // TODO Additionally store the face descriptor of the parent from TM1 in the Candidate_triangle.
         // Add the subtriangle to the candidate list
         candidate_triangles.push_back(Candidate_triangle(sub_triangles[i], local_bounds));
 
@@ -1212,7 +1212,7 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
    Vpm2 vpm2 = choose_param(get_param(np2, internal_np::vertex_point),
                            get_const_property_map(vertex_point, tm2));
 
-   return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Geom_traits>(tm1, tm2, error_bound*error_bound, vpm1, vpm2);
+   return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Geom_traits>(tm1, tm2, error_bound, vpm1, vpm2);
 }
 
 template< class Concurrency_tag,
