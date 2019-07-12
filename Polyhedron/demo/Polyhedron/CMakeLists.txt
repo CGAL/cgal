@@ -122,8 +122,7 @@ else( CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3} )
   endif( LINK_WITH_TBB )
 endif()
 
-
-
+include(CGAL_setup_GuidelinesSupportLibrary)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
