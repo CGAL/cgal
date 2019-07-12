@@ -71,7 +71,7 @@ Release date: September 2019
  -   **Breaking change:** Shape_detection_3 namespace is renamed to Shape_detection.
 
 ### 3D Boolean Operations on Nef Polyhedra
- -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_to_polygon_soup()`
+ -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_polyhedron_to_polygon_soup()`
 
 ### 2D and 3D Linear Geometry Kernel
  - Add `ComputeApproximateAngle_3` in the 2D/3D Kernel concept to compute
