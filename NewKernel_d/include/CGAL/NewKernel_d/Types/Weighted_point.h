@@ -186,11 +186,10 @@ template <class R_> struct Power_center : Store_kernel<R_> {
     for(i=0; ++f!=e; ++i) {
       WPoint const& wp=*f;
       Point const& p=pdw(wp);
-      FT const& np = sdo(p) - pw(wp);
       for(int j=0;j<d;++j) {
 	m(i,j)=2*(c(p,j)-c(p0,j));
-	b[i] = np - n0;
       }
+      b[i] = sdo(p) - pw(wp) - n0;
     }
     CGAL_assertion (i == d);
     Vec res = typename CVec::Dimension()(d);;
