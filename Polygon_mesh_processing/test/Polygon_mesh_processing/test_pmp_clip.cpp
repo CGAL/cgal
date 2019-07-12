@@ -314,7 +314,8 @@ void test()
   ss << "OFF\n 9 7 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 1 0\n 1 1 0\n3 -1 0\n1 -1 0\n3 0 1 4\n3 1 2 3\n3 1 5 6\n3 1 8 7\n3 1 3 5\n3 1 6 4\n3 1 0 8\n";
   ss >> tm1;
   for (int i=0;i<3;++i)
-    CGAL::Euler::remove_face(halfedge(*CGAL::cpp11::prev(faces(tm1).end()),tm1),tm1);  PMP::clip(tm1, K::Plane_3(0,1,0,0));
+    CGAL::Euler::remove_face(halfedge(*CGAL::cpp11::prev(faces(tm1).end()),tm1),tm1);
+  PMP::clip(tm1, K::Plane_3(0,1,0,0));
   assert(vertices(tm1).size()==3);
   CGAL::clear(tm1);
 
@@ -322,7 +323,8 @@ void test()
   ss << "OFF\n 9 7 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 1 0\n 1 1 0\n3 -1 0\n1 -1 0\n3 0 1 4\n3 1 2 3\n3 1 5 6\n3 1 8 7\n3 1 3 5\n3 1 6 4\n3 1 0 8\n";
   ss >> tm1;
   for (int i=0;i<3;++i)
-    CGAL::Euler::remove_face(halfedge(*CGAL::cpp11::prev(faces(tm1).end()),tm1),tm1);  PMP::clip(tm1, K::Plane_3(0,-1,0,0));
+    CGAL::Euler::remove_face(halfedge(*CGAL::cpp11::prev(faces(tm1).end()),tm1),tm1);
+  PMP::clip(tm1, K::Plane_3(0,-1,0,0));
   assert(vertices(tm1).size()==7);
   CGAL::clear(tm1);
 }
