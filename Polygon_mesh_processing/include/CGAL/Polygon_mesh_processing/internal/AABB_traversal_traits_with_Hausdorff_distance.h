@@ -126,8 +126,7 @@ namespace CGAL {
       Point_3 v1 = query.vertex(1);
       Point_3 v2 = query.vertex(2);
       // Compute the centroid of the triangle
-      // TODO Use the centroid() method from the kernel here.
-      Point_3 tri_center = Point_3( 0.3*(v0.x()+v1.x()+v2.x()), 0.3*(v0.y()+v1.y()+v2.y()),  0.3*(v0.z()+v1.z()+v2.z()) );
+      Point_3 tri_center = centroid( query );
 
       // Compute the distance of the center to the closest point in tm2
       double dist = approximate_sqrt(squared_distance(bb_center, tri_center));
@@ -237,10 +236,6 @@ namespace CGAL {
       if (local_bounds.second > h_upper) {
         h_upper = local_bounds.second;
       }
-
-      std::cout << "Processed triangle: " << primitive.id()
-                << ", found bounds (low., up.): (" << local_bounds.first
-                << ", " << local_bounds.second << ")" << std::endl;
 
       // Store the triangle given as primitive here as candidate triangle
       // together with the local bounds it obtained to sind it to subdivision

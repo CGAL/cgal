@@ -958,10 +958,9 @@ double bounded_error_Hausdorff_impl(
       }
 
       // Subdivide the triangle into four smaller triangles
-      // TODO Use CGAL::midpoint here.
-      Point_3 v01 = Point_3( (v0.x()+ v1.x())/2., (v0.y()+v1.y())/2., (v0.z()+v1.z())/2. );
-      Point_3 v02 = Point_3( (v0.x()+ v2.x())/2., (v0.y()+v2.y())/2., (v0.z()+v2.z())/2. );
-      Point_3 v12 = Point_3( (v1.x()+ v2.x())/2., (v1.y()+v2.y())/2., (v1.z()+v2.z())/2. );
+      Point_3 v01 = midpoint( v0, v1 );
+      Point_3 v02 = midpoint( v0, v2 );
+      Point_3 v12 = midpoint( v1, v2 );
       std::array<Triangle_3,4> sub_triangles = {
         Triangle_3( v0, v01, v02), Triangle_3( v1, v01, v12),
         Triangle_3( v2, v02, v12), Triangle_3( v01, v02, v12)
