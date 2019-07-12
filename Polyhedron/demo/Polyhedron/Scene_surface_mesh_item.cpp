@@ -2300,17 +2300,17 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
 
 
     getTriangleContainer(0)->getVbo(Tri::Smooth_vertices)->bind();
-    vbo->write(3*sizeof(cgal_gl_data)*id,new_point,3*sizeof(cgal_gl_data));
+    vbo->write(static_cast<int>(3*sizeof(cgal_gl_data)*id),new_point,static_cast<int>(3*sizeof(cgal_gl_data)));
     getTriangleContainer(0)->getVbo(Tri::Smooth_vertices)->release();
 
     vbo =&(getPointContainer(0)->getVbo(Pt::Vertices)->vbo);
     getPointContainer(0)->getVbo(Pt::Vertices)->bind();
-    vbo->write(3*sizeof(cgal_gl_data)*id,new_point,3*sizeof(cgal_gl_data));
+    vbo->write(static_cast<int>(3*sizeof(cgal_gl_data)*id),new_point,static_cast<int>(3*sizeof(cgal_gl_data)));
     getPointContainer(0)->getVbo(Pt::Vertices)->release();
 
     vbo =&(getEdgeContainer(0)->getVbo(Ed::Vertices)->vbo);
     getEdgeContainer(0)->getVbo(Pt::Vertices)->bind();
-    vbo->write(3*sizeof(cgal_gl_data)*id,new_point,3*sizeof(cgal_gl_data));
+    vbo->write(static_cast<int>(3*sizeof(cgal_gl_data)*id),new_point,static_cast<int>(3*sizeof(cgal_gl_data)));
     getEdgeContainer(0)->getVbo(Pt::Vertices)->release();
 
     for(auto v_it : CGAL::vertices_around_target(vh, *face_graph()))
@@ -2321,7 +2321,7 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
       id = v_it;
       vbo =&(getTriangleContainer(0)->getVbo(Tri::Smooth_normals)->vbo);
       getTriangleContainer(0)->getVbo(Tri::Smooth_normals)->bind();
-      vbo->write(3*sizeof(cgal_gl_data)*id,new_point,3*sizeof(cgal_gl_data));
+      vbo->write(static_cast<int>(3*sizeof(cgal_gl_data)*id),new_point,static_cast<int>(3*sizeof(cgal_gl_data)));
       getTriangleContainer(0)->getVbo(Tri::Smooth_normals)->release();
     }
   }
@@ -2365,12 +2365,12 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
         }
         QOpenGLBuffer *vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
 
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
         vid+=3;
       }
@@ -2395,11 +2395,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
         }
         QOpenGLBuffer *vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
         vid+=3;
 
@@ -2411,11 +2411,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
         }
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
         vid+=3;
 
@@ -2427,11 +2427,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
         }
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
         vid+=3;
 
@@ -2444,11 +2444,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
         }
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
         vid+=3;
 
@@ -2460,11 +2460,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
         }
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
         vid+=3;
 
@@ -2476,11 +2476,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
         }
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
         vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-        vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+        vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, static_cast<int>(3*sizeof(cgal_gl_data)));
         getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
       }
       else if(is_convex)
@@ -2506,11 +2506,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
           }
           vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, static_cast<int>(3*sizeof(cgal_gl_data)));
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
           vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, static_cast<int>(3*sizeof(cgal_gl_data)));
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
 
           for(int i=0; i<3; ++i)
@@ -2519,11 +2519,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
           }
           vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, static_cast<int>(3*sizeof(cgal_gl_data)));
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
           vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, static_cast<int>(3*sizeof(cgal_gl_data)));
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
 
           for(int i=0; i<3; ++i)
@@ -2532,11 +2532,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
           }
           vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, static_cast<int>(3*sizeof(cgal_gl_data)));
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
           vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, static_cast<int>(3*sizeof(cgal_gl_data)));
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
         }
       }
@@ -2593,11 +2593,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
           }
           QOpenGLBuffer *vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, 3*sizeof(cgal_gl_data));
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
           vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, 3*sizeof(cgal_gl_data));
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
           vid+=3;
 
@@ -2609,11 +2609,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
           }
           vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, 3*sizeof(cgal_gl_data));
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
           vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, 3*sizeof(cgal_gl_data));
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
           vid+=3;
 
@@ -2624,11 +2624,11 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
           }
           vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_normals)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_normal, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_normal, 3*sizeof(cgal_gl_data));
           getTriangleContainer(1)->getVbo(Tri::Flat_normals)->release();
           vbo = &(getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->vbo);
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->bind();
-          vbo->write((3*size*id+vid)*sizeof(cgal_gl_data),new_point, 3*sizeof(cgal_gl_data));
+          vbo->write(static_cast<int>((3*size*id+vid)*sizeof(cgal_gl_data)),new_point, 3*sizeof(cgal_gl_data));
           getTriangleContainer(1)->getVbo(Tri::Flat_vertices)->release();
           vid+=3;
 
