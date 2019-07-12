@@ -248,10 +248,12 @@ protected:
   const ColorFunctor &m_fcolor;
 };
 
-template <class Nef_Polyhedron, class ColorFunctor>
-void draw(const Nef_Polyhedron &anef, const char *title, bool nofill,
-          const ColorFunctor &fcolor)
-{
+#define CGAL_NEF3_TYPE Nef_polyhedron_3<Kernel_, Items_, Mark_>
+
+template <typename Kernel_, typename Items_, typename Mark_>
+void draw(const CGAL_NEF3_TYPE &anef,
+          const char *title = "Nef Polyhedron Viewer",
+          bool nofill = false) {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
@@ -263,29 +265,13 @@ void draw(const Nef_Polyhedron &anef, const char *title, bool nofill,
     int argc = 1;
     const char *argv[2] = {"nef_polyhedron_viewer", "\0"};
     QApplication app(argc, const_cast<char **>(argv));
-    SimpleNefPolyhedronViewerQt<Nef_Polyhedron, ColorFunctor> mainwindow(
-        app.activeWindow(), anef, title, nofill, fcolor);
+    DefaultColorFunctorNefPolyhedron fcolor;
+    SimpleNefPolyhedronViewerQt<CGAL_NEF3_TYPE,
+                                DefaultColorFunctorNefPolyhedron>
+        mainwindow(app.activeWindow(), anef, title, nofill, fcolor);
     mainwindow.show();
     app.exec();
   }
-}
-
-template <class Nef_Polyhedron>
-void draw(const Nef_Polyhedron &anef, const char *title, bool nofill)
-{
-  DefaultColorFunctorNefPolyhedron c;
-  draw(anef, title, nofill, c);
-}
-
-template <class Nef_Polyhedron>
-void draw(const Nef_Polyhedron &anef, const char *title)
-{
-  draw(anef, title, false);
-}
-
-template <class Nef_Polyhedron> void draw(const Nef_Polyhedron &anef)
-{
-  draw(anef, "Basic Nef Polyhedron Viewer");
 }
 
 } // End namespace CGAL

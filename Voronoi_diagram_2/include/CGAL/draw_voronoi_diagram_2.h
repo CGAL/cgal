@@ -311,9 +311,9 @@ protected:
 
 template<class DG,
          class AT,
-         class AP = Identity_policy_2<DG, AT>>
+         class AP>
 void draw(const CGAL_VORONOI_TYPE &av2,
-          const char *title="Voronoi Diagram Basic Viewer",
+          const char *title="2D Voronoi Diagram Basic Viewer",
           bool nofill = false,
           bool draw_voronoi_vertices = true,
           bool draw_dual_vertices = true)
