@@ -2205,6 +2205,7 @@ private:
     CGAL_precondition(
         p.is_point() && q.is_point() && r.is_segment());
     CGAL_USE(l);
+    CGAL_USE(r);
 
     Comparison_result compare_p(EQUAL);
     Comparison_result compare_q(EQUAL);
@@ -2313,6 +2314,8 @@ private:
     CGAL_precondition(
         p.is_point() && q.is_segment() && r.is_segment());
     CGAL_USE(l);
+    CGAL_USE(q);
+    CGAL_USE(r);
 
     Comparison_result compare_p(EQUAL);
     Comparison_result compare_q(EQUAL);
@@ -2432,6 +2435,9 @@ private:
     CGAL_USE(vv);
     CGAL_USE(l);
     CGAL_USE(lref);
+    CGAL_USE(p);
+    CGAL_USE(q);
+    CGAL_USE(r);
 
     Comparison_result compare_p(EQUAL);
     Comparison_result compare_q(EQUAL);

@@ -51,7 +51,7 @@ class RS2_isolator_1{
 
 template <class Polynomial_,class Bound_>
 RS2_isolator_1<Polynomial_,Bound_>::
-RS2_isolator_1(const Polynomial_ &p){
+RS2_isolator_1(const Polynomial_ &){
         CGAL_error_msg("not implemented for these polynomial/bound types");
 }
 

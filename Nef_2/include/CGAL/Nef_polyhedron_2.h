@@ -38,6 +38,7 @@
 #include <CGAL/Nef_2/PM_overlayer.h>
 #include <CGAL/Nef_2/PM_point_locator.h>
 #include <CGAL/Nef_2/Bounding_box_2.h>
+#include <CGAL/use.h>
 #include <vector>
 #include <list>
 
@@ -454,6 +455,7 @@ public:
 		   Polygons, Operation op = JOIN) : Base(Nef_rep()) { 
 
     CGAL_assertion(op==JOIN);
+    CGAL_USE(op);
 
     typedef typename std::iterator_traits<Forward_iterator>::value_type
       iterator_pair;

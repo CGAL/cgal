@@ -40,7 +40,7 @@ int main(int argc, char** argv)
       CGAL::read_3mf(file_name, meshes);
   if(nb_meshes <0)
     return 1;
-  for(std::size_t i = 0; i< nb_meshes; ++i)
+  for(int i = 0; i< nb_meshes; ++i)
   {
     Mesh mesh = meshes[i];
     std::cout<<names[i]<<" is valid: "<<mesh.is_valid()<<std::endl;
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
   else
   {
     std::cout<<nb_polylines<<" polylines found, of ";
-    for(std::size_t i = 0; i< nb_polylines-1; ++i){
+    for(int i = 0; i< nb_polylines-1; ++i){
       std::cout<<all_points[i].size()<<", ";
     }
     std::cout<<all_points.back().size()<<" points."<<std::endl;
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
   else
   {
     std::cout<<nb_point_sets<<" point clouds found, of ";
-    for(std::size_t i = 0; i< nb_point_sets-1; ++i){
+    for(int i = 0; i< nb_point_sets-1; ++i){
       std::cout<<all_points[i].size()<<", ";
     }
     std::cout<<all_points.back().size()<<" points."<<std::endl;
@@ -149,17 +149,16 @@ int main(int argc, char** argv)
 
 
   //testing of point clouds
-  DWORD nErrorMessage;
-  LPCSTR pszErrorMessage;
+
   HRESULT hResult;
   NMR::PLib3MFModel * pModel;
   hResult = NMR::lib3mf_createmodel(&pModel);
   NMR::PLib3MFModelMeshObject* pMeshObject;
   if (hResult != LIB3MF_OK) {
     std::cout << "could not create model: " << std::hex << hResult << std::endl;
-    return false;
+    return 1;
   }
-  for(int i=0; i< names.size(); ++i)
+  for(std::size_t i=0; i< names.size(); ++i)
   {
     CGAL::write_mesh_to_model(all_points[i], all_polygons[i],
                               all_colors[i], names[i], &pMeshObject, pModel);
