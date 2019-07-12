@@ -777,6 +777,7 @@ public Q_SLOTS:
     case 0:
       Q_EMIT set_operation_mode(-1);
       on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
+      selection_item->polyhedron_item()->switchToGouraudPlusEdge(false);
       break;
       //Edition mode
     case 1:
@@ -812,7 +813,13 @@ public Q_SLOTS:
   {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(selection_item)
+    {
       selection_item->on_Ctrlz_pressed();
+      if(mode == 11)
+        selection_item->polyhedron_item()->switchToGouraudPlusEdge(true);
+      else
+        selection_item->polyhedron_item()->switchToGouraudPlusEdge(false);
+    }
     if(ui_widget.selectionOrEuler->currentIndex() == 0)
     {
       Q_EMIT set_operation_mode(-1);

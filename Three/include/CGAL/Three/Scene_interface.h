@@ -41,6 +41,7 @@ enum RenderingMode
   Flat, //!Renders only faces, with a lighting per face.
   FlatPlusEdges, //!Renders flat faces and edges.
   Gouraud, //!Renders only faces, with a lighting per vertex.
+  GouraudPlusEdges, //!Renders faces with a lighting per vertex, and edges.
   ShadedPoints, //!Renders only points with lighting.
   NumberOfRenderingMode //!Number of values in this enum.
 };

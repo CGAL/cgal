@@ -1017,7 +1017,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
         {
           setProperty("need_hl_restore", true);
           set_highlighting(false);
-          qDebug()<<":coucou";
         }
         invalidateOpenGLBuffers();
         Q_EMIT updateInstructions("Ctrl+Right-click to move the point. \nHit Ctrl+Z to leave the selection. (2/2)");
@@ -1028,6 +1027,11 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
         temp_selected_vertices.insert(vh);
         const Point_3& p = get(vpm,vh);
         d->manipulated_frame->setPosition(p.x()+offset.x, p.y()+offset.y, p.z()+offset.z);
+        if(property("is_highlighting").toBool())
+        {
+          setProperty("need_hl_restore", true);
+          set_highlighting(false);
+        }
         invalidateOpenGLBuffers();
       }
       break;
@@ -1827,6 +1831,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
 
 Scene_polyhedron_selection_item::~Scene_polyhedron_selection_item()
 {
+  poly_item->switchToGouraudPlusEdge(false);
   delete d;
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
     CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);

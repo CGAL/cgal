@@ -944,7 +944,7 @@ void Scene_edit_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) con
   Tc* tc = getTriangleContainer(Priv::Facets);
   tc->setColor(this->color());
   tc->draw(viewer, true);
-  drawEdges(viewer);
+  //drawEdges(viewer);
   draw_ROI_and_control_vertices(viewer);
   drawTransparent(viewer);
 }

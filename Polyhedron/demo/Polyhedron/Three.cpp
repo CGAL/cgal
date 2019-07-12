@@ -201,6 +201,8 @@ QString Three::modeName(RenderingMode mode) {
     return QObject::tr("Gouraud");
   case PointsPlusNormals:
     return QObject::tr("pts+normals");
+  case GouraudPlusEdges:
+    return QObject::tr("gouraud+edges");
   default:
     Q_ASSERT(false);
     return QObject::tr("unknown");

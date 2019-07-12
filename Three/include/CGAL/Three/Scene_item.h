@@ -377,6 +377,10 @@ public Q_SLOTS:
   void setPointsPlusNormalsMode(){
     setRenderingMode(PointsPlusNormals);
   }
+  //!Sets the RenderingMode to GouraudPlusEdges.
+  void setGouraudPlusEdgesMode(){
+    setRenderingMode(GouraudPlusEdges);
+  }
   
   //!Emits an aboutToBeDestroyed() signal.
   //!Override this function to delete what needs to be deleted on destruction.
