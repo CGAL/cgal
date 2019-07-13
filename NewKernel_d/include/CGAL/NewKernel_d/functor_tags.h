@@ -312,6 +312,7 @@ namespace CGAL {
 	CGAL_DECL_PREDICATE(Contained_in_simplex);
 	CGAL_DECL_PREDICATE(Power_side_of_power_sphere_raw);
 	CGAL_DECL_PREDICATE(Power_side_of_power_sphere);
+	CGAL_DECL_PREDICATE(Power_side_of_bounded_power_circumsphere);
 	CGAL_DECL_PREDICATE(In_flat_power_side_of_power_sphere_raw);
 	CGAL_DECL_PREDICATE(In_flat_power_side_of_power_sphere);
 #undef CGAL_DECL_PREDICATE

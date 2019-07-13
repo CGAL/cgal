@@ -178,29 +178,105 @@ template <class R_> struct Power_center : Store_kernel<R_> {
     WPoint const& wp0 = *f;
     Point const& p0 = pdw(wp0);
     int d = pd(p0);
-    FT const& n0 = sdo(p0) - pw(wp0);
-    Matrix m(d,d);
-    Vec b = typename CVec::Dimension()(d);
-    // Write the point coordinates in lines.
-    int i;
-    for(i=0; ++f!=e; ++i) {
-      WPoint const& wp=*f;
-      Point const& p=pdw(wp);
-      for(int j=0;j<d;++j) {
-	m(i,j)=2*(c(p,j)-c(p0,j));
+    int k = static_cast<int>(std::distance(f,e));
+    if (d+1 == k)
+    {
+      FT const& n0 = sdo(p0) - pw(wp0);
+      Matrix m(d,d);
+      Vec b = typename CVec::Dimension()(d);
+      // Write the point coordinates in lines.
+      int i;
+      for(i=0; ++f!=e; ++i) {
+	WPoint const& wp=*f;
+	Point const& p=pdw(wp);
+	for(int j=0;j<d;++j) {
+	  m(i,j)=2*(c(p,j)-c(p0,j));
+	}
+	b[i] = sdo(p) - pw(wp) - n0;
       }
-      b[i] = sdo(p) - pw(wp) - n0;
+      CGAL_assertion (i == d);
+      Vec res = typename CVec::Dimension()(d);;
+      //std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
+      LA::solve(res, std::move(m), std::move(b));
+      //std::cout << "Sol: " << res << std::endl;
+      Point center = cp(d,LA::vector_begin(res),LA::vector_end(res));
+      FT const& r2 = pdp (wp0, center);
+      return cwp(std::move(center), r2);
     }
-    CGAL_assertion (i == d);
-    Vec res = typename CVec::Dimension()(d);;
-    //std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
-    LA::solve(res, std::move(m), std::move(b));
-    //std::cout << "Sol: " << res << std::endl;
-    Point center = cp(d,LA::vector_begin(res),LA::vector_end(res));
-    FT const& r2 = pdp (wp0, center);
-    return cwp(std::move(center), r2);
+    else
+    {
+      /*
+       * Matrix P=(p1, p2, ...) (each point as a column)
+       * Matrix Q=2*t(p2-p1,p3-p1, ...) (each vector as a line)
+       * Matrix M: QP, adding a line of 1 at the top
+       * Vector B: (1, p2^2-p1^2, p3^2-p1^2, ...) plus weights
+       * Solve ML=B, the center of the sphere is PL
+       *
+       * It would likely be faster to write P then transpose, multiply,
+       * etc instead of doing it by hand.
+       */
+      // TODO: check for degenerate cases?
+
+      typedef typename R_::Max_ambient_dimension D2;
+      typedef typename R_::LA::template Rebind_dimension<Dynamic_dimension_tag,D2>::Other LAd;
+      typedef typename LAd::Square_matrix Matrix;
+      typedef typename LAd::Vector Vec;
+      typename Get_functor<R_, Scalar_product_tag>::type sp(this->kernel());
+      Matrix m(k,k);
+      Vec b(k);
+      Vec l(k);
+      int j,i=0;
+      for(Iter f2=f; f2!=e; ++f2,++i){
+	WPoint const& wp = *f2;
+	Point const& p = pdw(wp);
+        b(i) = m(i,i) = sdo(p) - pw(wp);
+        j=0;
+        for(Iter f3=f; f3!=e; ++f3,++j){
+	  // FIXME: scalar product of points ???
+          m(j,i) = m(i,j) = sp(pdw(*f2),pdw(*f3));
+        }
+      }
+      for(i=1;i<k;++i){
+        b(i)-=b(0);
+        for(j=0;j<k;++j){
+          m(i,j)=2*(m(i,j)-m(0,j));
+        }
+      }
+      for(j=0;j<k;++j) m(0,j)=1;
+      b(0)=1;
+
+      LAd::solve(l,std::move(m),std::move(b));
+
+      typename LA::Vector center=typename LA::Construct_vector::Dimension()(d);
+      for(i=0;i<d;++i) center(i)=0;
+      j=0;
+      for(Iter f2=f;f2!=e;++f2,++j){
+        for(i=0;i<d;++i){
+          center(i)+=l(j)*c(pdw(*f2),i);
+        }
+      }
+
+      Point c = cp(d, LA::vector_begin(center), LA::vector_end(center));
+      FT r2 = pdp (wp0, c);
+      return cwp(std::move(c), std::move(r2));
+    }
   }
 };
+template<class R_> struct Power_side_of_bounded_power_circumsphere : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(Power_side_of_bounded_power_circumsphere)
+        typedef typename Get_type<R_, Bounded_side_tag>::type result_type;
+
+        template<class Iter, class P>
+        result_type operator()(Iter f, Iter const& e, P const& p0) const {
+          // TODO: Special case when the dimension is full.
+          typename Get_functor<R_, Power_center_tag>::type pc(this->kernel());
+          typename Get_functor<R_, Power_distance_tag>::type pd(this->kernel());
+
+	  // ON_UNBOUNDED_SIDE = -1
+          return enum_cast<Bounded_side>(-CGAL::sign(pd(pc(f, e), p0)));
+        }
+};
+
 }
 CGAL_KD_DEFAULT_TYPE(Weighted_point_tag,(CGAL::KerD::Weighted_point<K>),(Point_tag),());
 CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Weighted_point_tag>,(CartesianDKernelFunctors::Construct_weighted_point<K>),(Weighted_point_tag,Point_tag),());
@@ -211,5 +287,6 @@ CGAL_KD_DEFAULT_FUNCTOR(In_flat_power_side_of_power_sphere_tag,(CartesianDKernel
 CGAL_KD_DEFAULT_FUNCTOR(Power_distance_tag,(CartesianDKernelFunctors::Power_distance<K>),(Weighted_point_tag,Point_tag),(Squared_distance_tag,Point_drop_weight_tag,Point_weight_tag));
 CGAL_KD_DEFAULT_FUNCTOR(Power_distance_to_point_tag,(CartesianDKernelFunctors::Power_distance_to_point<K>),(Weighted_point_tag,Point_tag),(Squared_distance_tag,Point_drop_weight_tag,Point_weight_tag));
 CGAL_KD_DEFAULT_FUNCTOR(Power_center_tag,(CartesianDKernelFunctors::Power_center<K>),(Weighted_point_tag,Point_tag),(Compute_point_cartesian_coordinate_tag,Construct_ttag<Point_tag>,Construct_ttag<Weighted_point_tag>,Point_dimension_tag,Squared_distance_to_origin_tag,Point_drop_weight_tag,Point_weight_tag,Power_distance_to_point_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Power_side_of_bounded_power_circumsphere_tag,(CartesianDKernelFunctors::Power_side_of_bounded_power_circumsphere<K>),(Weighted_point_tag),(Power_distance_tag,Power_center_tag));
 } // namespace CGAL
 #endif

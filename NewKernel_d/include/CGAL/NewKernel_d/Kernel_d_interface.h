@@ -67,6 +67,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Point_dimension_tag>::type Point_dimension_d;
 	typedef typename Get_functor<Base, Side_of_oriented_sphere_tag>::type Side_of_oriented_sphere_d;
 	typedef typename Get_functor<Base, Power_side_of_power_sphere_tag>::type Power_side_of_power_sphere_d;
+	typedef typename Get_functor<Base, Power_side_of_bounded_power_circumsphere_tag>::type Power_side_of_bounded_power_sphere_d;
 	typedef typename Get_functor<Base, Power_center_tag>::type Power_center_d;
 	typedef typename Get_functor<Base, Power_distance_tag>::type Power_distance_d;
 	typedef typename Get_functor<Base, Contained_in_affine_hull_tag>::type Contained_in_affine_hull_d;
@@ -175,6 +176,16 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	    return typename Get_functor<Base, Squared_circumradius_tag>::type(this->kernel())(b,e);
 	  }
 	};
+	struct Compute_squared_radius_smallest_orthogonal_sphere_d : private Store_kernel<Kernel> {
+	  typedef Kernel R_; // for the macro
+	  CGAL_FUNCTOR_INIT_STORE(Compute_squared_radius_smallest_orthogonal_sphere_d)
+	  typedef FT result_type;
+	  template<class I> FT operator()(I b, I e)const{
+	    typename Get_functor<Base, Point_weight_tag>::type pw(this->kernel());
+	    typename Get_functor<Base, Power_center_tag>::type pc(this->kernel());
+	    return pw(pc(b,e));
+	  }
+	};
 	typedef typename Construct_cartesian_const_iterator_d::result_type Cartesian_const_iterator_d;
 	typedef typename Get_functor<Base, Squared_distance_tag>::type Squared_distance_d;
 	typedef typename Get_functor<Base, Squared_length_tag>::type Squared_length_d;
@@ -219,6 +230,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Point_of_sphere_d point_of_sphere_d_object()const{ return Point_of_sphere_d(*this); }
 	Side_of_oriented_sphere_d side_of_oriented_sphere_d_object()const{ return Side_of_oriented_sphere_d(*this); }
 	Power_side_of_power_sphere_d power_side_of_power_sphere_d_object()const{ return Power_side_of_power_sphere_d(*this); }
+	Power_side_of_bounded_power_sphere_d power_side_of_bounded_power_sphere_d_object()const{ return Power_side_of_bounded_power_sphere_d(*this); }
 	Power_center_d power_center_d_object()const{ return Power_center_d(*this); }
 	Power_distance_d power_distance_d_object()const{ return Power_distance_d(*this); }
 	Side_of_bounded_sphere_d side_of_bounded_sphere_d_object()const{ return Side_of_bounded_sphere_d(*this); }
@@ -252,6 +264,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Construct_sphere_d construct_sphere_d_object()const{ return Construct_sphere_d(*this); }
 	Construct_hyperplane_d construct_hyperplane_d_object()const{ return Construct_hyperplane_d(*this); }
 	Compute_squared_radius_d compute_squared_radius_d_object()const{ return Compute_squared_radius_d(*this); }
+	Compute_squared_radius_smallest_orthogonal_sphere_d compute_squared_radius_smallest_orthogonal_sphere_d_object()const{ return Compute_squared_radius_smallest_orthogonal_sphere_d(*this); }
 	Squared_distance_d squared_distance_d_object()const{ return Squared_distance_d(*this); }
 	Squared_length_d squared_length_d_object()const{ return Squared_length_d(*this); }
 	Scalar_product_d scalar_product_d_object()const{ return Scalar_product_d(*this); }
