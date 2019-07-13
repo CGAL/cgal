@@ -39,7 +39,7 @@ the new `placement` computed for it.
 template <typename Profile>
 boost::optional<typename Profile::FT>
 operator()(const Profile& profile,
-           const boost::optional<typename Profile::Point>& placement) const
+           const boost::optional<typename Profile::Point>& placement) const;
 
 /// @}
 

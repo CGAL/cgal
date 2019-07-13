@@ -108,11 +108,13 @@ int main(int argc, char** argv)
 
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
+  // Garland&Heckbert simplification requires a state to be shared between cost,
+  // placement, and visitor function objects. This creates the state variable that is
+  // required.
   SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>::garland_heckbert_state_type state;
 
   // stop
   SMS::Count_ratio_stop_predicate<Surface_mesh> stop(stop_ratio);
-//  SMS::GarlandHeckbert_cost_stop_predicate<double> stop(stop_ratio);
 
   // cost
   SMS::GarlandHeckbert_cost<Surface_mesh> cost(state);
@@ -122,6 +124,7 @@ int main(int argc, char** argv)
   SMS::Bounded_normal_change_placement<SMS::GarlandHeckbert_placement<Surface_mesh> > placement(gh_placement);
 
   // visitor
+  // note that the use of Garland&Heckbert visitor is required for it to run.
   SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh> vis(state);
 
   int r = SMS::edge_collapse(surface_mesh, stop,

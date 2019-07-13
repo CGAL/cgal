@@ -66,7 +66,7 @@ create_single_source_cgal_program( "edge_collapse_all_short_edges.cpp" )
 create_single_source_cgal_program( "edge_collapse_bounded_normal_change.cpp" )
 create_single_source_cgal_program( "edge_collapse_visitor_surface_mesh.cpp" )
 create_single_source_cgal_program( "edge_collapse_garland_heckbert.cpp" )
-create_single_source_cgal_program( "edge_collapse_surface_mesh_garland_heckbert.cpp" )
+create_single_source_cgal_program( "edge_collapse_garland_heckbert_bounded_normal_change.cpp" )
 create_single_source_cgal_program( "edge_collapse_polyhedron_garland_heckbert.cpp" )
 
 if(OpenMesh_FOUND)
