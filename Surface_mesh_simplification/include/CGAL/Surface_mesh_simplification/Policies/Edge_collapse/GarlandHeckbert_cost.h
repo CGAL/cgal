@@ -18,7 +18,7 @@ public:
 
 
   typedef typename internal::GarlandHeckbertCore<TM> GHC;
-  typedef typename GHC::garland_heckbert_map_type    garland_heckbert_map_type;
+  typedef typename GHC::garland_heckbert_state_type    garland_heckbert_state_type;
   typedef typename GHC::Matrix4x4                    Matrix4x4;
   typedef typename GHC::Row4                         Row4;
   typedef typename GHC::Col4                         Col4;
@@ -26,7 +26,7 @@ public:
 
   typedef typename boost::optional<FT>               Optional_FT;
 
-  GarlandHeckbert_cost(const garland_heckbert_map_type& aCostMatrices)
+  GarlandHeckbert_cost(const garland_heckbert_state_type& aCostMatrices)
     : mCostMatrices(aCostMatrices) {
   }
 
@@ -51,7 +51,7 @@ public:
   }
 
 private:
-  const garland_heckbert_map_type& mCostMatrices;
+  const garland_heckbert_state_type& mCostMatrices;
 };
 
 } // namespace Surface_mesh_simplification

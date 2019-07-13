@@ -45,16 +45,15 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>::garland_heckbert_map_type map;
-  SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh> vis(map);
+  SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>::garland_heckbert_state_type state;
 
   int r = SMS::edge_collapse(surface_mesh,
                              CGAL::Surface_mesh_simplification::GarlandHeckbert_cost_stop_predicate<double>(threshold),
                              CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
                                               .halfedge_index_map(get(CGAL::halfedge_external_index  ,surface_mesh))
-                                              .get_cost(SMS::GarlandHeckbert_cost <Surface_mesh>(map))
-                                              .get_placement(SMS::GarlandHeckbert_placement<Surface_mesh>(map))
-                                              .visitor(vis));
+                                              .get_cost(SMS::GarlandHeckbert_cost <Surface_mesh>(state))
+                                              .get_placement(SMS::GarlandHeckbert_placement<Surface_mesh>(state))
+                                              .visitor(SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>(state)));
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n";

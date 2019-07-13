@@ -108,21 +108,21 @@ int main(int argc, char** argv)
 
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
-  SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>::garland_heckbert_map_type map;
+  SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>::garland_heckbert_state_type state;
 
   // stop
   SMS::Count_ratio_stop_predicate<Surface_mesh> stop(stop_ratio);
 //  SMS::GarlandHeckbert_cost_stop_predicate<double> stop(stop_ratio);
 
   // cost
-  SMS::GarlandHeckbert_cost<Surface_mesh> cost(map);
+  SMS::GarlandHeckbert_cost<Surface_mesh> cost(state);
 
   // placement
-  SMS::GarlandHeckbert_placement<Surface_mesh> gh_placement(map);
+  SMS::GarlandHeckbert_placement<Surface_mesh> gh_placement(state);
   SMS::Bounded_normal_change_placement<SMS::GarlandHeckbert_placement<Surface_mesh> > placement(gh_placement);
 
   // visitor
-  SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh> vis(map);
+  SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh> vis(state);
 
   int r = SMS::edge_collapse(surface_mesh, stop,
                              CGAL::parameters::get_cost(cost)

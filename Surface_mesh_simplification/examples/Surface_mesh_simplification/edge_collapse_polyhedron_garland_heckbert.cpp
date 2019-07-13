@@ -42,9 +42,8 @@ int main(int argc, char** argv)
   // left in the surface mesh drops below the specified number (1000)
   SMS::Count_stop_predicate<Surface_mesh> stop(1000);
 
-  SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>::garland_heckbert_map_type map;
-  SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh> vis(map);
-
+  SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>::garland_heckbert_state_type state;
+  
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
@@ -54,9 +53,9 @@ int main(int argc, char** argv)
             ,stop
              ,CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
                                .halfedge_index_map  (get(CGAL::halfedge_external_index, surface_mesh))
-                               .get_cost(SMS::GarlandHeckbert_cost<Surface_mesh>(map))
-                               .get_placement(SMS::GarlandHeckbert_placement<Surface_mesh>(map))
-                               .visitor(vis)
+                               .get_cost(SMS::GarlandHeckbert_cost<Surface_mesh>(state))
+                               .get_placement(SMS::GarlandHeckbert_placement<Surface_mesh>(state))
+                               .visitor(SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>(state))
            );
   std::chrono::steady_clock::time_point end_time
     = std::chrono::steady_clock::now();

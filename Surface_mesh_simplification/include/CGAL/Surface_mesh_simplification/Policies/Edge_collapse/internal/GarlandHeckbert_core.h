@@ -41,7 +41,7 @@ struct GarlandHeckbertCore
   typedef typename Eigen::Matrix<FT, 4, 1> Col4;
 
 
-  typedef std::unordered_map<vertex_descriptor, Matrix4x4> garland_heckbert_map_type;
+  typedef std::unordered_map<vertex_descriptor, Matrix4x4> garland_heckbert_state_type;
 
 
   static Col4 point_to_homogenous_column(const Point& pt) {
