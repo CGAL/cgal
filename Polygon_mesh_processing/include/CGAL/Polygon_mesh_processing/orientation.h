@@ -70,18 +70,18 @@ namespace internal{
                            const PolygonMesh& pmesh,
                            const NamedParameters& np)
   {
-    using boost::choose_param;
-    using boost::get_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
 
     CGAL_assertion(halfedge(v_max, pmesh)!=boost::graph_traits<PolygonMesh>::null_halfedge());
 
     //VertexPointMap
     typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
-    VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+    VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(vertex_point, pmesh));
     //Kernel
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-    GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+    GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
     //among the incoming edges of `v_max`, find one edge `e` with the minimal slope
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -183,16 +183,16 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   if (faces(pmesh).first == faces(pmesh).second)
     return true;
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
-  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   //find the vertex with maximal z coordinate
   internal::Compare_vertex_points_z_3<GT, VPMap> less_z(vpmap, gt);
@@ -483,16 +483,16 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
   CGAL_assertion(is_valid_polygon_mesh(tm));
   CGAL_assertion(is_closed(tm));
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  bool orient_outward = choose_param(
-                          get_param(np, internal_np::outward_orientation),true);
+  bool orient_outward = choose_parameter(
+                          get_parameter(np, internal_np::outward_orientation),true);
 
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = choose_param(get_param(np, internal_np::face_index),
+  Fid_map fid_map = choose_parameter(get_parameter(np, internal_np::face_index),
                                  get_const_property_map(boost::face_index, tm));
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
@@ -590,16 +590,16 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   if (!is_closed(tm)) return;
   if (!is_triangle_mesh(tm)) return;
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  bool orient_outward = choose_param(
-                          get_param(np, internal_np::outward_orientation),true);
+  bool orient_outward = choose_parameter(
+                          get_parameter(np, internal_np::outward_orientation),true);
 
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = choose_param(get_param(np, internal_np::face_index),
+  Fid_map fid_map = choose_parameter(get_parameter(np, internal_np::face_index),
                                  get_const_property_map(boost::face_index, tm));
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));

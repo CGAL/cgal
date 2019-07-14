@@ -429,7 +429,8 @@ write_ply_points(
   const PointRange& points,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
@@ -438,8 +439,8 @@ write_ply_points(
   bool has_normals = !(boost::is_same<NormalMap,
                        typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value);
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
   
   if (has_normals)
     return write_ply_points_with_properties(

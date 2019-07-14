@@ -105,9 +105,8 @@ int edge_collapse ( TM& aSurface
                   , cgal_bgl_named_params<P,T,R> const& aParams 
                   ) 
 {
-  using boost::choose_param ;
-  using boost::choose_const_pmap ;
-  using boost::get_param ;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   LindstromTurk_params lPolicyParams ;
   
@@ -115,13 +114,13 @@ int edge_collapse ( TM& aSurface
 
   return edge_collapse(aSurface
                       ,aShould_stop
-                      ,choose_const_pmap(get_param(aParams,internal_np::vertex_index),aSurface,boost::vertex_index)
-                      ,choose_pmap(get_param(aParams,internal_np::vertex_point),aSurface,boost::vertex_point)
-                      ,choose_const_pmap(get_param(aParams,internal_np::halfedge_index),aSurface,boost::halfedge_index)
-                       ,choose_param     (get_param(aParams,internal_np::edge_is_constrained),No_constrained_edge_map<TM>())
-                       ,choose_param     (get_param(aParams,internal_np::get_cost_policy), LindstromTurk_cost<TM>())
-                       ,choose_param     (get_param(aParams,internal_np::get_placement_policy), LindstromTurk_placement<TM>())
-                      ,choose_param     (get_param(aParams,vis), Dummy_visitor())
+                      ,choose_parameter(get_parameter(aParams,internal_np::vertex_index), get_const_property_map(boost::vertex_index, aSurface))
+                      ,choose_parameter(get_parameter(aParams,internal_np::vertex_point),get_property_map(vertex_point, aSurface))
+                      ,choose_parameter(get_parameter(aParams,internal_np::halfedge_index),get_const_property_map(boost::halfedge_index, aSurface))
+                      ,choose_parameter(get_parameter(aParams,internal_np::edge_is_constrained),No_constrained_edge_map<TM>())
+                      ,choose_parameter(get_parameter(aParams,internal_np::get_cost_policy), LindstromTurk_cost<TM>())
+                      ,choose_parameter(get_parameter(aParams,internal_np::get_placement_policy), LindstromTurk_placement<TM>())
+                      ,choose_parameter(get_parameter(aParams,vis), Dummy_visitor())
                       );
 
 }
@@ -131,9 +130,8 @@ int edge_collapse ( TM& aSurface
                   , cgal_bgl_named_params<P,T,R> const& aParams 
                   ) 
 {
-  using boost::choose_param ;
-  using boost::choose_const_pmap ;
-  using boost::get_param ;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   LindstromTurk_params lPolicyParams ;
   
@@ -141,13 +139,13 @@ int edge_collapse ( TM& aSurface
     
   return edge_collapse(aSurface
                       ,aShould_stop
-                      ,choose_const_pmap(get_param(aParams,internal_np::vertex_index),aSurface,boost::vertex_index)
-                      ,choose_const_pmap(get_param(aParams,internal_np::vertex_point),aSurface,boost::vertex_point)
-                      ,choose_const_pmap(get_param(aParams,internal_np::halfedge_index),aSurface,boost::halfedge_index)
-                      ,choose_param     (get_param(aParams,internal_np::edge_is_constrained),No_constrained_edge_map<TM>())
-                      ,choose_param     (get_param(aParams,internal_np::get_cost_policy), LindstromTurk_cost<TM>())
-                      ,choose_param     (get_param(aParams,internal_np::get_placement_policy), LindstromTurk_placement<TM>())
-                      ,choose_param     (get_param(aParams,vis), Dummy_visitor())
+                      ,choose_parameter(get_parameter(aParams,internal_np::vertex_index), get_const_property_map(boost::vertex_index, aSurface))
+                      ,choose_parameter(get_parameter(aParams,internal_np::vertex_point),get_property_map(vertex_point, aSurface))
+                      ,choose_parameter(get_parameter(aParams,internal_np::halfedge_index),get_const_property_map(boost::halfedge_index, aSurface))
+                      ,choose_parameter(get_parameter(aParams,internal_np::edge_is_constrained),No_constrained_edge_map<TM>())
+                      ,choose_parameter(get_parameter(aParams,internal_np::get_cost_policy), LindstromTurk_cost<TM>())
+                      ,choose_parameter(get_parameter(aParams,internal_np::get_placement_policy), LindstromTurk_placement<TM>())
+                      ,choose_parameter(get_parameter(aParams,vis), Dummy_visitor())
                       );
 
 }

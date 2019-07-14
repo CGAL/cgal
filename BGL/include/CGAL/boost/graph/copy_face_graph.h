@@ -244,7 +244,7 @@ boost::function_output_iterator<Output_iterator_functor<PMAP> > make_functor(PMA
   return boost::make_function_output_iterator(Output_iterator_functor<PMAP>(map));
 }
 
-inline Emptyset_iterator make_functor(const boost::param_not_found&)
+inline Emptyset_iterator make_functor(const internal_np::Param_not_found&)
 {
   return Emptyset_iterator();
 }
@@ -336,18 +336,19 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      #endif
                      )
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   internal::copy_face_graph(sm, tm,
                             CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
-                            choose_param(get_param(np1, internal_np::vertex_to_vertex_output_iterator),
-                                         impl::make_functor(get_param(np1, internal_np::vertex_to_vertex_map))),
-                            choose_param(get_param(np1, internal_np::halfedge_to_halfedge_output_iterator),
-                                         impl::make_functor(get_param(np1, internal_np::halfedge_to_halfedge_map))),
-                            choose_param(get_param(np1, internal_np::face_to_face_output_iterator),
-                                         impl::make_functor(get_param(np1, internal_np::face_to_face_map))),
-                            choose_param(get_param(np1, internal_np::vertex_point),
+                            choose_parameter(get_parameter(np1, internal_np::vertex_to_vertex_output_iterator),
+                                         impl::make_functor(get_parameter(np1, internal_np::vertex_to_vertex_map))),
+                            choose_parameter(get_parameter(np1, internal_np::halfedge_to_halfedge_output_iterator),
+                                         impl::make_functor(get_parameter(np1, internal_np::halfedge_to_halfedge_map))),
+                            choose_parameter(get_parameter(np1, internal_np::face_to_face_output_iterator),
+                                         impl::make_functor(get_parameter(np1, internal_np::face_to_face_map))),
+                            choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                          get(vertex_point, sm)),
-                            choose_param(get_param(np2, internal_np::vertex_point),
+                            choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                          get(vertex_point, tm)));
 }
 

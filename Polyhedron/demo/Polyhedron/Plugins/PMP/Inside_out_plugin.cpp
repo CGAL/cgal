@@ -137,9 +137,9 @@ void Polyhedron_demo_inside_out_plugin::on_actionOrientCC_triggered()
       Polyhedron* pMesh = poly_item->polyhedron();
       if(pMesh){
         if(is_closed(*pMesh))
-          CGAL::Polygon_mesh_processing::orient_to_bound_a_volume(*pMesh, item==items.first());
+          CGAL::Polygon_mesh_processing::orient_to_bound_a_volume(*pMesh);
         else
-          CGAL::Polygon_mesh_processing::orient(*pMesh, item==items.first());
+          CGAL::Polygon_mesh_processing::orient(*pMesh);
         poly_item->invalidateOpenGLBuffers();
       }
     }
@@ -147,9 +147,9 @@ void Polyhedron_demo_inside_out_plugin::on_actionOrientCC_triggered()
       SMesh* pMesh = sm_item->polyhedron();
       if(pMesh){
         if(is_closed(*pMesh))
-          CGAL::Polygon_mesh_processing::orient_to_bound_a_volume(*pMesh, item==items.first());
+          CGAL::Polygon_mesh_processing::orient_to_bound_a_volume(*pMesh);
         else
-          CGAL::Polygon_mesh_processing::orient(*pMesh, item==items.first());
+          CGAL::Polygon_mesh_processing::orient(*pMesh);
         sm_item->invalidateOpenGLBuffers();
       }
     }

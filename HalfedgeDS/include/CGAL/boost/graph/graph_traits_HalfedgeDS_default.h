@@ -22,6 +22,7 @@
 #define CGAL_GRAPH_TRAITS_HALFEDGEDS_DEFAULT_H
 
 #include <CGAL/boost/graph/graph_traits_HalfedgeDS.h>
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/HalfedgeDS_default.h>

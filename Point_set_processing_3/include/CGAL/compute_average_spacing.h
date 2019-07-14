@@ -196,7 +196,8 @@ compute_average_spacing(
   unsigned int k,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
@@ -204,8 +205,8 @@ compute_average_spacing(
 
   typedef typename Kernel::Point_3 Point;
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  const cpp11::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                cpp11::function<bool(double)>());
   
   // types for K nearest neighbors search structure

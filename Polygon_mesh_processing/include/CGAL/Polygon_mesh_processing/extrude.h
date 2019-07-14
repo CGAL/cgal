@@ -176,9 +176,12 @@ void extrude_mesh(const InputMesh& input,
   typedef typename GetVertexPointMap < OutputMesh, NamedParameters2>::type VPMap;
   typedef typename GetVertexPointMap < InputMesh, NamedParameters1>::const_type IVPMap;
 
-  VPMap output_vpm = choose_param(get_param(np_out, internal_np::vertex_point),
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  VPMap output_vpm = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
                                   get_property_map(vertex_point, output));
-  IVPMap input_vpm = choose_param(get_param(np_in, internal_np::vertex_point),
+  IVPMap input_vpm = choose_parameter(get_parameter(np_in, internal_np::vertex_point),
                                   get_const_property_map(vertex_point, input));
 
   std::vector<std::pair<input_vertex_descriptor, output_vertex_descriptor> > bottom_v2v;
@@ -269,7 +272,7 @@ void extrude_mesh(const InputMesh& input,
                   const NamedParameters2& np_out)
 {
   typedef typename GetVertexPointMap < OutputMesh, NamedParameters2>::type VPMap;
-  VPMap output_vpm = choose_param(get_param(np_out, internal_np::vertex_point),
+  VPMap output_vpm = parameters::choose_parameter(parameters::get_parameter(np_out, internal_np::vertex_point),
                                   get_property_map(vertex_point, output));
 
   extrude_impl::Const_dist_translation<

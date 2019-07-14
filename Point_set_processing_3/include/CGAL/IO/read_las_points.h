@@ -468,12 +468,13 @@ bool read_las_points(std::istream& stream,
                      const CGAL_BGL_NP_CLASS& np)
 #endif
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
   
   typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
   
   return read_las_points_with_properties (stream, output,
                                           make_las_point_reader (point_map));

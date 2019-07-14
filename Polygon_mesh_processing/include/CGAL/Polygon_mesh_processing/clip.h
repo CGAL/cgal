@@ -64,7 +64,7 @@ clip_open_impl(      TriangleMesh& tm,
   // vector of clipper triangles
   Clipper_triangles clipper_triangles;
   clipper_triangles.reserve( num_faces(clipper) );
-  Vpm vpm_c = boost::choose_param(boost::get_param(np_c, internal_np::vertex_point),
+  Vpm vpm_c = parameters::choose_parameter(parameters::get_parameter(np_c, internal_np::vertex_point),
                                   get_property_map(vertex_point, clipper));
   BOOST_FOREACH(face_descriptor f, faces(clipper))
   {
@@ -94,9 +94,9 @@ clip_open_impl(      TriangleMesh& tm,
   typedef typename GetFaceIndexMap<TriangleMesh,
                                    NamedParameters1>::type Fid_map;
 
-  Fid_map fid_map = boost::choose_param(boost::get_param(np_tm, internal_np::face_index),
+  Fid_map fid_map = parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::face_index),
                                         get_property_map(boost::face_index, tm));
-  Vpm vpm1 = boost::choose_param(boost::get_param(np_tm, internal_np::vertex_point),
+  Vpm vpm1 = parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::vertex_point),
                                  get_property_map(vertex_point, tm));
 
   typedef CGAL::dynamic_vertex_property_t<std::size_t> Vid_tag;
@@ -150,7 +150,7 @@ clip_open_impl(      TriangleMesh& tm,
   {
     // A patch with no vertex incident to a non-constrained edges
     //  is a coplanar patch: drop it or keep it!
-    if (!boost::choose_param(boost::get_param(np_tm, internal_np::use_compact_clipper), true))
+    if (!parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::use_compact_clipper), true))
     {
       for (std::size_t cc_id = cc_not_handled.find_first();
                        cc_id < cc_not_handled.npos;
@@ -201,7 +201,7 @@ clip_to_bbox(const Plane_3& plane,
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::type Vpm;
 
-  Vpm vpm_out = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+  Vpm vpm_out = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                     get_property_map(boost::vertex_point, tm_out));
 
 
@@ -451,7 +451,7 @@ clip(      TriangleMesh& tm,
      const NamedParameters2& np_c)
 {
   const bool close =
-    boost::choose_param(boost::get_param(np_tm, internal_np::clip_volume), false);
+    parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::clip_volume), false);
 
   if (close && is_closed(tm))
     return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c);

@@ -1070,7 +1070,7 @@ namespace internal {
 
     // PMP book :
     // "maps the vertices back to the surface"
-    void project_to_surface(boost::param_not_found)
+    void project_to_surface(internal_np::Param_not_found)
     {
       //todo : handle the case of boundary vertices
 #ifdef CGAL_PMP_REMESHING_VERBOSE
