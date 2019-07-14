@@ -29,7 +29,7 @@
 #include <CGAL/IO/print_OFF.h>
 #include <CGAL/IO/scan_OFF.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <iostream>
 
 namespace CGAL {

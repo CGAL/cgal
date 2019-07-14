@@ -31,7 +31,7 @@
 
 #include <CGAL/circulator.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Subdivision_method_3/internal/subdivision_hosts_impl_3.h>

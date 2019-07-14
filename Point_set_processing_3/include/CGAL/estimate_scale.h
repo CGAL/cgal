@@ -36,7 +36,7 @@
 #include <CGAL/random_simplify_point_set.h>
 #include <CGAL/Point_set_2.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <fstream>

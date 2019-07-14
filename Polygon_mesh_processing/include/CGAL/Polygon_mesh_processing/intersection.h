@@ -1609,7 +1609,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out,
                                          NamedParameters np)
 {
-  std::vector<cgal_bgl_named_params<bool, internal_np::all_default_t> >nps(
+  std::vector<Named_function_parameters<bool, internal_np::all_default_t> >nps(
     std::distance(range.begin(), range.end()), parameters::all_default());
   return intersecting_meshes(range, out, np, nps);
 }

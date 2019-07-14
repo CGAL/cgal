@@ -33,7 +33,7 @@
 #include <CGAL/function.h>
 #include <boost/functional/hash.hpp>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>

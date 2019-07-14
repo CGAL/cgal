@@ -19,7 +19,7 @@
 #ifndef CGAL_BOOST_GRAPH_NAMED_PARAMETERS_HELPERS_H
 #define CGAL_BOOST_GRAPH_NAMED_PARAMETERS_HELPERS_H
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Origin.h>
@@ -146,7 +146,7 @@ namespace CGAL {
   };
 
   template<typename PolygonMesh,
-           typename NamedParametersGT = cgal_bgl_named_params<bool, internal_np::all_default_t>,
+           typename NamedParametersGT = Named_function_parameters<bool, internal_np::all_default_t>,
            typename NamedParametersVPM = NamedParametersGT >
   class GetGeomTraits
   {
@@ -249,7 +249,7 @@ namespace CGAL {
     namespace parameters
     {
       template <typename PointRange>
-      cgal_bgl_named_params<bool, internal_np::all_default_t>
+      Named_function_parameters<bool, internal_np::all_default_t>
       inline all_default(const PointRange&)
       {
         return CGAL::parameters::all_default();

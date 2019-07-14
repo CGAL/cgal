@@ -29,7 +29,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <boost/unordered_map.hpp>
@@ -328,8 +328,8 @@ template <typename SourceMesh, typename TargetMesh,
           >
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      #ifndef DOXYGEN_RUNNING
-                     const CGAL::cgal_bgl_named_params<T1,Tag1,Base1>& np1,
-                     const CGAL::cgal_bgl_named_params<T2,Tag2,Base2>& np2
+                     const CGAL::Named_function_parameters<T1,Tag1,Base1>& np1,
+                     const CGAL::Named_function_parameters<T2,Tag2,Base2>& np2
                      #else
                      const NamedParameters1& np1,
                      const NamedParameters2& np2
@@ -361,7 +361,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm)
 template <typename SourceMesh, typename TargetMesh, 
           typename T, typename Tag, typename Base >
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, 
-                     const CGAL::cgal_bgl_named_params<T,Tag,Base>& np)
+                     const CGAL::Named_function_parameters<T,Tag,Base>& np)
 {
   copy_face_graph(sm, tm, np, parameters::all_default());
 }

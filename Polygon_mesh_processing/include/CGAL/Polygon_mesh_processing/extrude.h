@@ -28,7 +28,7 @@
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/boost/graph/Euler_operations.h>

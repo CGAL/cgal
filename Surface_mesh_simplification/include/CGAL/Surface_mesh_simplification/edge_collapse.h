@@ -24,7 +24,7 @@
 
 
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 #include <CGAL/Surface_mesh_simplification/Detail/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
@@ -102,7 +102,7 @@ struct Dummy_visitor
 template<class TM, class ShouldStop, class P, class T, class R>
 int edge_collapse ( TM& aSurface
                   , ShouldStop const& aShould_stop
-                  , cgal_bgl_named_params<P,T,R> const& aParams 
+                  , Named_function_parameters<P,T,R> const& aParams 
                   ) 
 {
   using parameters::choose_parameter;
@@ -127,7 +127,7 @@ int edge_collapse ( TM& aSurface
   template<class TM, class ShouldStop, class GT, class P, class T, class R>
 int edge_collapse ( TM& aSurface
                   , ShouldStop const& aShould_stop
-                  , cgal_bgl_named_params<P,T,R> const& aParams 
+                  , Named_function_parameters<P,T,R> const& aParams 
                   ) 
 {
   using parameters::choose_parameter;

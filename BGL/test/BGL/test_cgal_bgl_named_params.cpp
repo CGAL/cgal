@@ -1,4 +1,4 @@
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 
