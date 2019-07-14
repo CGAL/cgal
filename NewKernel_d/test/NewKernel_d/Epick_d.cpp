@@ -143,8 +143,9 @@ void test2(){
   typedef typename K1::Translated_point_d TP;
   typedef typename K1::Power_center_d PC;
   typedef typename K1::Power_distance_d PoD;
-  typedef typename K1::Weighted_point_d WP;
   typedef typename K1::Construct_weighted_point_d CWP;
+  typedef typename K1::Power_side_of_bounded_power_sphere_d PSBPS;
+  typedef typename K1::Compute_squared_radius_smallest_orthogonal_sphere_d CSRSOS;
   //typedef typename K1::Point_drop_weight_d PDW;
   typedef CP PDW;
   typedef typename K1::Compute_weight_d PW;
@@ -215,6 +216,8 @@ void test2(){
   PDW const& pdw = cp;
   PW pw Kinit(compute_weight_d_object);
   PoD pod Kinit(power_distance_d_object);
+  PSBPS psbps Kinit(power_side_of_bounded_power_sphere_d_object);
+  CSRSOS csrsos Kinit(compute_squared_radius_smallest_orthogonal_sphere_d_object);
 
   CGAL_USE(bc);
   CGAL_USE(pol);
@@ -378,7 +381,13 @@ void test2(){
   assert(pdw(xw)[0]>2.5);
   assert(pw(xw)<2.95);
   assert(pw(xw)>2.5);
-
+  assert(psbps(tw+0,tw+3,cwp(cp(5,0),1.499)) == CGAL::ON_UNBOUNDED_SIDE);
+  assert(psbps(tw+0,tw+3,cwp(cp(5,0),1.500)) == CGAL::ON_BOUNDARY);
+  assert(psbps(tw+0,tw+3,cwp(cp(5,0),1.501)) == CGAL::ON_BOUNDED_SIDE);
+  WP tw2[]={cwp(cp(-3,2),1),cwp(cp(5,2),2),cwp(cp(1,6),1)};
+  assert(psbps(tw2+0,tw2+2,tw2[2]) == CGAL::ON_UNBOUNDED_SIDE);
+  assert(abs(csrsos(tw2+0,tw2+2)-14.5039)<.0001);
+  assert(abs(csrsos(tw2+0,tw2+1)+1)<.0001);
 
   P tl=cp(2,5);
   P br=cp(4,-1);
