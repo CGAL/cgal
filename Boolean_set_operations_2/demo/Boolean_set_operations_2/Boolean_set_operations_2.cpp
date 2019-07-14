@@ -2913,7 +2913,7 @@ void MainWindow::on_actionNew_triggered()
   line6 -> setGeometry(QRect(530,0,7,65));
 
   
-  
+  modelChanged();
 }
 
 void MainWindow::on_actionDelete_triggered()
