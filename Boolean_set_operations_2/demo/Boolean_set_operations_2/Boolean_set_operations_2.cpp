@@ -678,6 +678,13 @@ private:
   bool m_magenta_sym_diff;
   bool m_aqua_sym_diff;
   
+
+  bool m_visible_black;
+  bool m_visible_brown;
+  bool m_visible_yellow;
+  bool m_visible_magenta;
+  bool m_visible_aqua;
+
   Curve_set_container m_curve_sets;
   //container for curves
   Circular_region_source_container m_blue_circular_sources;
@@ -741,6 +748,8 @@ public slots:
   void on_actionOpenDXF_triggered();
   void on_actionOpenBezier_triggered();
   void on_actionSaveResult_triggered();
+  void on_actionAddColor_triggered();
+  void on_actionMinusColor_triggered();
 
   void on_showBlue_toggled  (bool a_check);
   void on_showRed_toggled   (bool a_check);
@@ -807,6 +816,8 @@ public slots:
   void on_drawYellow_toggled (bool a_check);
   void on_drawMagenta_toggled (bool a_check);
   void on_drawAqua_toggled (bool a_check);
+
+
 
   //void on_actionAdd_new_polygon_triggered();
   void on_actionDeleteResult_triggered();
@@ -1061,7 +1072,54 @@ MainWindow::MainWindow() :
   m_brown_sym_diff(false), //default
   m_yellow_sym_diff(false), //default
   m_magenta_sym_diff(false), //default
-  m_aqua_sym_diff(false) //default
+  m_aqua_sym_diff(false), //default
+  m_visible_black(false), //default 
+  m_visible_brown(false), //default 
+  m_visible_yellow(false), //default 
+  m_visible_magenta(false), //default 
+  m_visible_aqua(false) //default 
+
+  // setting color rows to setVisible-> False 
+  /*showBlack->setVisible(false), //default
+  drawBlack->setVisible(false),  //default
+  showBlackComp->setVisible(false), //default
+  showBlackDiff->setVisible(false), //default
+  showBlackUnion->setVisible(false), //default
+  showBlackInt->setVisible(false), //default
+  showBlackSym_Diff->setVisible(false), //default
+  showBlackMink_Sum->setVisible(false), //default
+  showBrown->setVisible(false), //default
+  drawBrown->setVisible(false),  //default
+  showBrownComp->setVisible(false), //default
+  showBrownDiff->setVisible(false), //default
+  showBrownUnion->setVisible(false), //default
+  showBrownInt->setVisible(false), //default
+  showBrownSym_Diff->setVisible(false), //default
+  showBrownMink_Sum->setVisible(false), //default
+  showYellow->setVisible(false), //default
+  drawYellow->setVisible(false),  //default
+  showYellowComp->setVisible(false), //default
+  showYellowDiff->setVisible(false), //default
+  showYellowUnion->setVisible(false), //default
+  showYellowInt->setVisible(false), //default
+  showYellowSym_Diff->setVisible(false), //default
+  showYellowMink_Sum->setVisible(false), //default
+  showMagenta->setVisible(false), //default
+  drawMagenta->setVisible(false),  //default
+  showMagentaComp->setVisible(false), //default
+  showMagentaDiff->setVisible(false), //default
+  showMagentaUnion->setVisible(false), //default
+  showMagentaInt->setVisible(false), //default
+  showMagentaSym_Diff->setVisible(false), //default
+  showMagentaMink_Sum->setVisible(false), //default
+  showAqua->setVisible(false), //default
+  drawAqua->setVisible(false),  //default
+  showAquaComp->setVisible(false), //default
+  showAquaDiff->setVisible(false), //default
+  showAquaUnion->setVisible(false), //default
+  showAquaInt->setVisible(false), //default
+  showAquaSym_Diff->setVisible(false), //default
+  showAquaMink_Sum->setVisible(false), //default*/
 {
   CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);
@@ -2331,9 +2389,335 @@ void MainWindow::on_showAquaMink_Sum_toggled(bool aCheck)
 
 
 
+//////////###################### Add Color Plus Button ###########################////////////
+void MainWindow::on_actionAddColor_triggered()
+{
+	if(!m_visible_black)
+	{
+		m_visible_black = true;
+		showBlack ->setVisible(true);
+		drawBlack -> setVisible(true);
+		showBlackComp -> setVisible(true);
+		showBlackDiff -> setVisible(true);
+		showBlackUnion -> setVisible(true);
+		showBlackInt -> setVisible(true);
+		showBlackSym_Diff -> setVisible(true);
+		showBlackMink_Sum -> setVisible(true);
 
 
+		line11 -> setVisible(true);
 
+		line1 -> setGeometry(QRect(111,0,7,95));
+  		line2 -> setGeometry(QRect(200,0,7,95));
+  		line3 -> setGeometry(QRect(290,0,7,95));
+  		line4 -> setGeometry(QRect(345,0,7,95));
+  		line5 -> setGeometry(QRect(420,0,7,95));
+  		line6 -> setGeometry(QRect(530,0,7,95));
+
+  		actionMinusColor -> setText("Remove Black");
+	}
+
+	else if(!m_visible_brown)
+	{
+		m_visible_brown = true;
+		showBrown ->setVisible(true);
+		drawBrown -> setVisible(true);
+		showBrownComp -> setVisible(true);
+		showBrownDiff -> setVisible(true);
+		showBrownUnion -> setVisible(true);
+		showBrownInt -> setVisible(true);
+		showBrownSym_Diff -> setVisible(true);
+		showBrownMink_Sum -> setVisible(true);
+
+		line10 -> setVisible(true);
+
+		line1 -> setGeometry(QRect(111,0,7,125));
+  		line2 -> setGeometry(QRect(200,0,7,125));
+  		line3 -> setGeometry(QRect(290,0,7,125));
+  		line4 -> setGeometry(QRect(345,0,7,125));
+  		line5 -> setGeometry(QRect(420,0,7,125));
+  		line6 -> setGeometry(QRect(530,0,7,125));
+
+  		actionMinusColor -> setText("Remove Brown");
+	}
+
+	else if(!m_visible_yellow)
+	{
+		m_visible_yellow = true;
+		showYellow -> setVisible(true);
+		drawYellow -> setVisible(true);
+		showYellowComp -> setVisible(true);
+		showYellowDiff -> setVisible(true);
+		showYellowUnion -> setVisible(true);
+		showYellowInt -> setVisible(true);
+		showYellowSym_Diff -> setVisible(true);
+		showYellowMink_Sum -> setVisible(true);
+
+		line9 -> setVisible(true);
+
+		line1 -> setGeometry(QRect(111,0,7,155));
+  		line2 -> setGeometry(QRect(200,0,7,155));
+  		line3 -> setGeometry(QRect(290,0,7,155));
+  		line4 -> setGeometry(QRect(345,0,7,155));
+  		line5 -> setGeometry(QRect(420,0,7,155));
+  		line6 -> setGeometry(QRect(530,0,7,155));
+
+  		actionMinusColor -> setText("Remove Yellow");
+	}
+
+	else if(!m_visible_magenta)
+	{
+		m_visible_magenta = true;
+		showMagenta -> setVisible(true);
+		drawMagenta -> setVisible(true);
+		showMagentaComp -> setVisible(true);
+		showMagentaDiff -> setVisible(true);
+		showMagentaUnion -> setVisible(true);
+		showMagentaInt -> setVisible(true);
+		showMagentaSym_Diff -> setVisible(true);
+		showMagentaMink_Sum -> setVisible(true);
+
+		line8 -> setVisible(true);
+
+		line1 -> setGeometry(QRect(111,0,7,185));
+  		line2 -> setGeometry(QRect(200,0,7,185));
+  		line3 -> setGeometry(QRect(290,0,7,185));
+  		line4 -> setGeometry(QRect(345,0,7,185));
+  		line5 -> setGeometry(QRect(420,0,7,185));
+  		line6 -> setGeometry(QRect(530,0,7,185));
+
+  		actionMinusColor -> setText("Remove Magenta");
+	}
+
+	else if(!m_visible_aqua)
+	{
+		m_visible_aqua = true;
+		showAqua ->setVisible(true);
+		drawAqua -> setVisible(true);
+		showAquaComp -> setVisible(true);
+		showAquaDiff -> setVisible(true);
+		showAquaUnion -> setVisible(true);
+		showAquaInt -> setVisible(true);
+		showAquaSym_Diff -> setVisible(true);
+		showAquaMink_Sum -> setVisible(true);	
+
+		line7 -> setVisible(true);
+
+		line1 -> setGeometry(QRect(111,0,7,220));
+  		line2 -> setGeometry(QRect(200,0,7,220));
+  		line3 -> setGeometry(QRect(290,0,7,220));
+  		line4 -> setGeometry(QRect(345,0,7,220));
+  		line5 -> setGeometry(QRect(420,0,7,220));
+  		line6 -> setGeometry(QRect(530,0,7,220));
+
+  		actionMinusColor -> setText("Remove Aqua");
+	}
+
+	else
+	{
+		ask_user_yesno("Adding Color Error","Maximum Limit of Color has reached.\n");						
+	}
+
+}
+
+
+//////#########Remove Color Minus
+
+void MainWindow::on_actionMinusColor_triggered()
+{
+	if (!(m_visible_brown || m_visible_yellow || m_visible_magenta || m_visible_aqua))
+	{	
+		m_curve_sets[2].clear();
+		m_color_active = 1;
+
+		black_circular_sources().clear();
+		black_linear_sources().clear();
+		black_bezier_sources().clear();
+
+		m_visible_black = false;
+		showBlack ->setVisible(false);
+		drawBlack -> setVisible(false);
+		drawBlue -> setChecked(true);
+		showBlackComp -> setVisible(false);
+		showBlackDiff -> setVisible(false);
+		showBlackUnion -> setVisible(false);
+		showBlackInt -> setVisible(false);
+		showBlackSym_Diff -> setVisible(false);
+		showBlackMink_Sum -> setVisible(false);
+
+		
+
+
+		line11 -> setVisible(false);
+
+		line1 -> setGeometry(QRect(111,0,7,65));
+	  	line2 -> setGeometry(QRect(200,0,7,65));
+	  	line3 -> setGeometry(QRect(290,0,7,65));
+	  	line4 -> setGeometry(QRect(345,0,7,65));
+	  	line5 -> setGeometry(QRect(420,0,7,65));
+	  	line6 -> setGeometry(QRect(530,0,7,65));	
+
+	  	actionMinusColor -> setText("Color Removal Not Allowed");
+
+	  	modelChanged();
+
+	}
+
+	else if (!(m_visible_yellow || m_visible_magenta || m_visible_aqua))
+	{	
+		m_curve_sets[3].clear();
+		m_color_active = 2;
+
+		brown_circular_sources().clear();
+		brown_linear_sources().clear();
+		brown_bezier_sources().clear();
+
+		m_visible_brown = false;
+		showBrown ->setVisible(false);
+		drawBrown -> setVisible(false);
+		showBrownComp -> setVisible(false);
+		showBrownDiff -> setVisible(false);
+		showBrownUnion -> setVisible(false);
+		showBrownInt -> setVisible(false);
+		showBrownSym_Diff -> setVisible(false);
+		showBrownMink_Sum -> setVisible(false);
+		
+
+		drawBlue -> setChecked(true);
+
+
+		line10 -> setVisible(false);
+
+		line1 -> setGeometry(QRect(111,0,7,95));
+	  	line2 -> setGeometry(QRect(200,0,7,95));
+	  	line3 -> setGeometry(QRect(290,0,7,95));
+	  	line4 -> setGeometry(QRect(345,0,7,95));
+	  	line5 -> setGeometry(QRect(420,0,7,95));
+	  	line6 -> setGeometry(QRect(530,0,7,95));
+
+	  	actionMinusColor -> setText("Remove Black");
+
+	  	modelChanged();
+
+	 }
+
+
+	else if (!(m_visible_magenta || m_visible_aqua))
+	{	
+		m_curve_sets[4].clear();
+		m_color_active = 3;
+
+		yellow_circular_sources().clear();
+		yellow_linear_sources().clear();
+		yellow_bezier_sources().clear();
+
+		m_visible_yellow = false;
+		showYellow ->setVisible(false);
+		drawYellow -> setVisible(false);
+		showYellowComp -> setVisible(false);
+		showYellowDiff -> setVisible(false);
+		showYellowUnion -> setVisible(false);
+		showYellowInt -> setVisible(false);
+		showYellowSym_Diff -> setVisible(false);
+		showYellowMink_Sum -> setVisible(false);
+
+		
+
+
+		drawBlue -> setChecked(true);
+
+
+		line9 -> setVisible(false);
+
+		line1 -> setGeometry(QRect(111,0,7,125));
+	  	line2 -> setGeometry(QRect(200,0,7,125));
+	  	line3 -> setGeometry(QRect(290,0,7,125));
+	  	line4 -> setGeometry(QRect(345,0,7,125));
+	  	line5 -> setGeometry(QRect(420,0,7,125));
+	  	line6 -> setGeometry(QRect(530,0,7,125));
+
+	  	actionMinusColor -> setText("Remove Brown");	
+
+	  	modelChanged();
+	}
+
+	else if (! m_visible_aqua)
+	{	
+		m_curve_sets[5].clear();
+		m_color_active = 4;
+
+		magenta_circular_sources().clear();
+		magenta_linear_sources().clear();
+		magenta_bezier_sources().clear();
+
+		m_visible_magenta = false;
+		showMagenta ->setVisible(false);
+		drawMagenta -> setVisible(false);
+		showMagentaComp -> setVisible(false);
+		showMagentaDiff -> setVisible(false);
+		showMagentaUnion -> setVisible(false);
+		showMagentaInt -> setVisible(false);
+		showMagentaSym_Diff -> setVisible(false);
+		showMagentaMink_Sum -> setVisible(false);
+
+		
+
+		drawBlue -> setChecked(true);
+
+		line8 -> setVisible(false);
+
+		line1 -> setGeometry(QRect(111,0,7,155));
+	  	line2 -> setGeometry(QRect(200,0,7,155));
+	  	line3 -> setGeometry(QRect(290,0,7,155));
+	  	line4 -> setGeometry(QRect(345,0,7,155));
+	  	line5 -> setGeometry(QRect(420,0,7,155));
+	  	line6 -> setGeometry(QRect(530,0,7,155));	
+
+	  	actionMinusColor -> setText("Remove Yellow");
+
+	  	modelChanged();
+
+	}
+
+	else
+	{
+
+		m_curve_sets[6].clear();
+		m_color_active = 5;
+
+		aqua_circular_sources().clear();
+		aqua_linear_sources().clear();
+		aqua_bezier_sources().clear();
+
+
+		m_visible_aqua = false;
+		showAqua ->setVisible(false);
+		drawAqua -> setVisible(false);
+		showAquaComp -> setVisible(false);
+		showAquaDiff -> setVisible(false);
+		showAquaUnion -> setVisible(false);
+		showAquaInt -> setVisible(false);
+		showAquaSym_Diff -> setVisible(false);
+		showAquaMink_Sum -> setVisible(false);
+
+		
+
+		drawBlue -> setChecked(true);
+
+		line7 -> setVisible(false);
+
+		line1 -> setGeometry(QRect(111,0,7,185));
+	  	line2 -> setGeometry(QRect(200,0,7,185));
+	  	line3 -> setGeometry(QRect(290,0,7,185));
+	  	line4 -> setGeometry(QRect(345,0,7,185));
+	  	line5 -> setGeometry(QRect(420,0,7,185));
+	  	line6 -> setGeometry(QRect(530,0,7,185));	
+
+	  	actionMinusColor -> setText("Remove Magenta");
+
+	  	modelChanged();
+	}
+}
 
 
 //////////////#################################
@@ -2457,7 +2841,78 @@ void MainWindow::on_actionNew_triggered()
   showMagentaSym_Diff->setChecked(false);
   showAquaSym_Diff->setChecked(false);
 
-  modelChanged();
+  m_visible_black = false;
+  showBlack ->setVisible(false);
+  drawBlack -> setVisible(false);
+  showBlackComp -> setVisible(false);
+  showBlackDiff -> setVisible(false);
+  showBlackUnion -> setVisible(false);
+  showBlackInt -> setVisible(false);
+  showBlackSym_Diff -> setVisible(false);
+  showBlackMink_Sum -> setVisible(false);
+  
+
+  
+  m_visible_brown = false;
+  showBrown ->setVisible(false);
+  drawBrown -> setVisible(false);
+  showBrownComp -> setVisible(false);
+  showBrownDiff -> setVisible(false);
+  showBrownUnion -> setVisible(false);
+  showBrownInt -> setVisible(false);
+  showBrownSym_Diff -> setVisible(false);
+  showBrownMink_Sum -> setVisible(false);
+
+
+  m_visible_yellow = false;
+  showYellow ->setVisible(false);
+  drawYellow -> setVisible(false);
+  showYellowComp -> setVisible(false);
+  showYellowDiff -> setVisible(false);
+  showYellowUnion -> setVisible(false);
+  showYellowInt -> setVisible(false);
+  showYellowSym_Diff -> setVisible(false);
+  showYellowMink_Sum -> setVisible(false);
+
+
+  m_visible_magenta = false;
+  showMagenta ->setVisible(false);
+  drawMagenta -> setVisible(false);
+  showMagentaComp -> setVisible(false);
+  showMagentaDiff -> setVisible(false);
+  showMagentaUnion -> setVisible(false);
+  showMagentaInt -> setVisible(false);
+  showMagentaSym_Diff -> setVisible(false);
+  showMagentaMink_Sum -> setVisible(false);  
+  
+
+  m_visible_aqua = false;
+  showAqua ->setVisible(false);
+  drawAqua -> setVisible(false);
+  showAquaComp -> setVisible(false);
+  showAquaDiff -> setVisible(false);
+  showAquaUnion -> setVisible(false);
+  showAquaInt -> setVisible(false);
+  showAquaSym_Diff -> setVisible(false);
+  showAquaMink_Sum -> setVisible(false);
+  
+  actionMinusColor -> setText("Color Removal Not Allowed");
+
+  line7 -> setVisible(false);
+  line8 -> setVisible(false);
+  line9 -> setVisible(false);
+  line10 -> setVisible(false);
+  line11 -> setVisible(false);
+  
+
+  line1 -> setGeometry(QRect(111,0,7,65));
+  line2 -> setGeometry(QRect(200,0,7,65));
+  line3 -> setGeometry(QRect(290,0,7,65));
+  line4 -> setGeometry(QRect(345,0,7,65));
+  line5 -> setGeometry(QRect(420,0,7,65));
+  line6 -> setGeometry(QRect(530,0,7,65));
+
+  
   
 }
 
