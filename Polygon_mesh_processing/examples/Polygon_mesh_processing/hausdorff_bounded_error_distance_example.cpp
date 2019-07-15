@@ -61,16 +61,25 @@ int main(int argc, char** argv)
   std::ifstream input( argv[1] );
   input >> tm1;
   std::cout << "Read a mesh with " << tm1.number_of_faces() << " triangles." << std::endl;
+  std::ifstream input2( argv[2] );
+  input2 >> tm2;
+  std::cout << "Read a mesh with " << tm2.number_of_faces() << " triangles." << std::endl;
   // Copy the mesh and perturb it slightly
+/*
   tm2 = tm1;
   bool do_project = false;
   CGAL::Polygon_mesh_processing::random_perturbation( tm2.vertices(), tm2, 0.001, do_project );
   std::cout << "Perturbed the input mesh, now computing the Hausdorff distance." << std::endl;
+*/
 
 //      https://doc.cgal.org/latest/Polygon_mesh_processing/group__PMP__meshing__grp.html#ga028a80dc84395650f67714fa7618ec53
 
   std::cout << "Approximated Hausdorff distance: "
             << CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance
-                  <TAG>(tm1, tm2, 0.001)
+                  <TAG>(tm1, tm2, 0.01)
+            << std::endl;
+  std::cout << "Approximated Hausdorff distance (naive): "
+            << CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance_naive
+                  <TAG>(tm1, tm2, 0.01)
             << std::endl;
 }
