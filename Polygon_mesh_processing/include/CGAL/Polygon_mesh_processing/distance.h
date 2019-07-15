@@ -954,7 +954,9 @@ double bounded_error_Hausdorff_impl(
       if( (closest_triangle_v0.second == closest_triangle_v1.second) && (closest_triangle_v1.second == closest_triangle_v2.second)) {
         // The upper bound of this triangle is the actual Hausdorff distance of
         // the triangle to the second mesh. Use it as new global lower bound.
+        // TODO Update the reference to the realizing triangle here as this is the best current guess.
         global_bounds.first = triangle_bounds.second;
+        continue;
       }
 
       // Subdivide the triangle into four smaller triangles
@@ -992,7 +994,10 @@ double bounded_error_Hausdorff_impl(
         if (local_bounds.first > global_bounds.first) {
           global_bounds.first = local_bounds.first;
         }
-        global_bounds.second = std::max(current_max, local_bounds.second);
+        global_bounds.second = std::max(
+          std::max(current_max, local_bounds.second),
+          global_bounds.first
+        );
 
         // TODO Additionally store the face descriptor of the parent from TM1 in the Candidate_triangle.
         // Add the subtriangle to the candidate list
