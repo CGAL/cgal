@@ -46,6 +46,11 @@
 #include <tbb/scalable_allocator.h>
 #endif // CGAL_LINKED_WITH_TBB
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL {
 
 
@@ -184,24 +189,24 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 */
 template <typename ConcurrencyTag,
 	  typename PointRange,
-          typename NamedParameters
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
 >
 #ifdef DOXYGEN_RUNNING
   FT
 #else
-  typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel::FT
+  typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel::FT
 #endif
 compute_average_spacing(
   const PointRange& points,
   unsigned int k,
-  const NamedParameters& np)
+  const CGAL_BGL_NP_CLASS& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::const_type PointMap;
+  typedef typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel Kernel;
 
   typedef typename Kernel::Point_3 Point;
 
