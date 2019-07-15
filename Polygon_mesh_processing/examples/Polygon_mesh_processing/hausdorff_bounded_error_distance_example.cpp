@@ -74,12 +74,15 @@ int main(int argc, char** argv)
 
 //      https://doc.cgal.org/latest/Polygon_mesh_processing/group__PMP__meshing__grp.html#ga028a80dc84395650f67714fa7618ec53
 
+  double error_bound = 0.01;
+
   std::cout << "Approximated Hausdorff distance: "
             << CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance
-                  <TAG>(tm1, tm2, 0.01)
+                  <TAG>(tm1, tm2, error_bound)
             << std::endl;
   std::cout << "Approximated Hausdorff distance (naive): "
             << CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance_naive
-                  <TAG>(tm1, tm2, 0.01)
+                  <TAG>(tm1, tm2, error_bound)
+            << ", the actual distance is at most " << error_bound << " larger."
             << std::endl;
 }

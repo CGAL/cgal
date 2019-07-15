@@ -1013,7 +1013,7 @@ double bounded_error_Hausdorff_impl(
   std::cout << "Processing candidates finished, found distance (lower, upper): ("
             << global_bounds.first << ", " << global_bounds.second << ")" << std::endl;
 
-  // Return linear interpolation between found upper and lower bound
+  // Return linear interpolation between found lower and upper bound
   return (global_bounds.first + global_bounds.second) / 2.;
 
 #if !defined(CGAL_LINKED_WITH_TBB)
@@ -1160,13 +1160,16 @@ double recursive_hausdorff_subdivision(
   const TM2_tree& tm2_tree,
   const typename Kernel::FT& squared_error_bound)
 {
-//  std::cout << "Processing points " << v0 << ", " << v1 << ", " << v2 << std::endl;
-
-  // If any edge length of the triangle is larger than (error_bound * 1/sqrt(3)), subdivide the triangle and proceed recursively
-  double max_edge_length = std::max( std::max( squared_distance( v0, v1 ), squared_distance( v0, v2 )), squared_distance( v1, v2 ));
-//  std::cout << "Maximum edge lenght: " << max_edge_length << "; Squared error bound: " << squared_error_bound << std::endl;
-  if ( max_edge_length <  squared_error_bound ) {
-//    std::cout << "Maximum distance: " << std::max(std::max(squared_distance( v0, tm2_tree.closest_point(v0) ),squared_distance( v1, tm2_tree.closest_point(v1) ) ), squared_distance( v2, tm2_tree.closest_point(v2) ));
+  // If all edge lengths of the triangle are below the error_bound,
+  // return maximum of the distances of the three points to TM2 (via TM2_tree).
+  double max_squared_edge_length =
+  std::max(
+    std::max(
+      squared_distance( v0, v1 ),
+      squared_distance( v0, v2 )),
+    squared_distance( v1, v2 )
+  );
+  if ( max_squared_edge_length <  squared_error_bound ) {
     return std::max(
       std::max(
         squared_distance( v0, tm2_tree.closest_point(v0) ),
@@ -1175,7 +1178,7 @@ double recursive_hausdorff_subdivision(
     );
   }
 
-  // Else return maximum of the distances of the three points to TM2 (via TM2_tree).
+  // Else subdivide the triangle and proceed recursively
   Point_3 v01 = midpoint( v0, v1 );
   Point_3 v02 = midpoint( v0, v2 );
   Point_3 v12 = midpoint( v1, v2 );
@@ -1216,7 +1219,9 @@ double bounded_error_Hausdorff_naive_impl(
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
 
+  // Initially, no lower bound is known
   double squared_lower_bound = 0.;
+  // Work with squares in the following, only draw sqrt at the very end
   double squared_error_bound = error_bound * error_bound;
 
   // Build an AABB tree on tm2
@@ -1224,6 +1229,7 @@ double bounded_error_Hausdorff_naive_impl(
   tm2_tree.build();
   tm2_tree.accelerate_distance_queries();
 
+  // Build a map to obtain actual triangles from the face descriptors of tm1.
   Triangle_from_face_descriptor_map<TriangleMesh, VPM1> face_to_triangle_map( &tm1, vpm1 );
 
   // Iterate over the triangles of TM1.
@@ -1235,8 +1241,11 @@ double bounded_error_Hausdorff_naive_impl(
     Point_3 v1 = triangle.vertex(1);
     Point_3 v2 = triangle.vertex(2);
 
+    // Recursively process the current triangle to obtain a lower bound on
+    // its Hausdorff distance.
     double triangle_bound = recursive_hausdorff_subdivision<Point_3, TM2_tree, Kernel>( v0, v1, v2, tm2_tree, squared_error_bound );
 
+    // Store the largest lower bound.
     if( triangle_bound > squared_lower_bound ) {
       squared_lower_bound = triangle_bound;
     }
