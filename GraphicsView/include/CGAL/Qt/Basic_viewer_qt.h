@@ -991,6 +991,13 @@ protected:
         rendering_program_p_l.release();
     }
 
+    // Fix Z-fighting by drawing faces at a depth
+    GLfloat offset_factor;
+    GLfloat offset_units;
+    glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
+    glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
+    glPolygonOffset(0.1f, 0.9f);
+
     if (m_draw_faces)
     {
       rendering_program_face.bind();
@@ -1018,7 +1025,7 @@ protected:
       }
       glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(arrays[POS_COLORED_FACES].size()/3));
       vao[VAO_COLORED_FACES].release();
-
+      glPolygonOffset(offset_factor, offset_units);
       rendering_program_face.release();
     }
 
