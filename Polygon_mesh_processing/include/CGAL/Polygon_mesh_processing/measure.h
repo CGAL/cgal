@@ -562,8 +562,6 @@ volume(const TriangleMesh& tmesh)
   * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map of `tmesh`.
   *
-  * @warning
-  *
   */
 template<typename TriangleMesh,
          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
