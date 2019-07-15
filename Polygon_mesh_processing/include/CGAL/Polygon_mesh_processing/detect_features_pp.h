@@ -54,6 +54,10 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
+// Based on the paper
+// Identification of C^1 and C^2 Discontinuities for Surface Meshes in CAD
+// Xiangmin Jiao and Narasimha R. Bayyana
+
 template <typename PolygonMesh, typename VPM, typename GeomTraits, typename EIFMap>
 class Detector
 {
