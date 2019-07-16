@@ -554,7 +554,7 @@ struct Test {
 
 int main()
 {
-  Test< CGAL::Simple_cartesian<typename CGAL::internal::Exact_field_selector<void*>::Type > >().run();
+  Test< CGAL::Simple_cartesian<CGAL::internal::Exact_field_selector<void*>::Type > >().run();
   Test< CGAL::Cartesian<double>   >().run();
   Test< CGAL::Homogeneous<double> >().run();
   Test< CGAL::Exact_predicates_inexact_constructions_kernel >().run();
