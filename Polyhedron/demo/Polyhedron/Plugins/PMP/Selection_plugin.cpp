@@ -1117,7 +1117,7 @@ void Polyhedron_demo_selection_plugin::on_actionSelfIntersection_triggered()
 {
   typedef boost::graph_traits<Face_graph>::face_descriptor Face_descriptor;
   typedef boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor;
-  QApplication::setOverrideCursor(Qt::WaitCursor);
+  CGAL::Three::Three::CursorScopeGuard guard(QCursor(Qt::WaitCursor));
   bool found = false;
   std::vector<Scene_face_graph_item*> selected_polys;
   Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
