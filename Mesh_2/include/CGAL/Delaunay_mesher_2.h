@@ -175,7 +175,7 @@ public:
         for(Seeds_it sit=begin; sit!=end; ++sit)
           {
             Face_handle fh=tr.locate(*sit);
-            if(fh!=NULL)
+            if(fh!=nullptr)
               propagate_marks(fh, mark);
           }
 	propagate_marks(tr.infinite_face(), false);

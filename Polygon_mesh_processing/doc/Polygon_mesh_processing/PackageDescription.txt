@@ -133,6 +133,8 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::repair_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()`
+- `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`
 - `CGAL::Polygon_mesh_processing::stitch_borders()`
 - `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`

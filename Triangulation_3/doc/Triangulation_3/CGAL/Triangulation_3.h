@@ -115,6 +115,10 @@ typedef Triangulation_data_structure::Facet Facet;
 */ 
 typedef Triangulation_data_structure::Edge Edge;
 
+/*! 
+Concurrency tag (from the TDS).
+*/ 
+typedef Triangulation_data_structure::Concurrency_tag Concurrency_tag;
 
 /// @}
 
@@ -216,12 +220,66 @@ circulator over all facets incident to a given edge
 */ 
 typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
-/*! 
-Concurrency tag (from the TDS).
-*/ 
-typedef Triangulation_data_structure::Concurrency_tag Concurrency_tag;
+/// @}
 
-/// @} 
+/*! \name
+
+In order to write \cpp 11 `for`-loops we provide the following range types.
+
+*/
+/// @{
+  
+/*!
+range type for iterating over all cell handles (including infinite cells), with a nested type `iterator`
+that has as value type `Cell_handle`.
+*/ 
+  typedef Iterator_range<unspecified_type> All_cell_handles;
+  
+  
+/*!
+range type for iterating over facets.
+*/
+  typedef Iterator_range<All_facets_iterator> All_facets;
+  
+/*!
+range type for iterating over edges.
+*/
+  typedef Iterator_range<All_edges_iterator> All_edges;
+  
+/*!
+range type for iterating over all vertex handles, with a nested type `iterator`
+that has as value type `Vertex_handle`.
+*/ 
+  typedef Iterator_range<unspecified_type> All_vertex_handles;
+
+  /*!
+range type for iterating over finite cell handles, with a nested type `iterator`
+that has as value type `Cell_handle`.
+*/ 
+  typedef Iterator_range<unspecified_type> Finite_cell_handles;
+  
+  
+/*!
+range type for iterating over finite facets.
+*/
+  typedef Iterator_range<Finite_facets_iterator> Finite_facets;
+  
+/*!
+range type for iterating over finite edges.
+*/
+  typedef Iterator_range<Finite_edges_iterator> Finite_edges;
+  
+/*!
+range type for iterating over finite vertex handles, with a nested type `iterator`
+that has as value type `Vertex_handle`.
+*/ 
+  typedef Iterator_range<unspecified_type> Finite_vertex_handles;
+
+/*!
+  range type for iterating over the points of the finite vertices.
+ */
+  typedef Iterator_range<unspecified_type> Points;
+/// @}
 
 /// \name Creation 
 /// @{
@@ -233,12 +291,12 @@ infinite vertex.
 must be provided if concurrency is enabled.
 */ 
 Triangulation_3(const Geom_traits & traits = Geom_traits(),
-                Lock_data_structure *lock_ds = NULL);
+                Lock_data_structure *lock_ds = nullptr);
 
 /*! 
 Same as the previous one, but with parameters in reverse order.
 */ 
-Triangulation_3(Lock_data_structure *lock_ds = NULL,
+Triangulation_3(Lock_data_structure *lock_ds = nullptr,
                 const Geom_traits & traits = Geom_traits());
 
 /*!
@@ -255,7 +313,7 @@ traits class argument and calling `insert(first,last)`.
 template < class InputIterator> 
 Triangulation_3 (InputIterator first, InputIterator last, 
                  const Geom_traits & traits = Geom_traits(),
-                 Lock_data_structure *lock_ds = NULL);
+                 Lock_data_structure *lock_ds = nullptr);
 
 /// @} 
 
@@ -630,14 +688,14 @@ unlocked by `locate`, leaving this choice to the user.
 */ 
 Cell_handle 
 locate(const Point & query, Cell_handle start = Cell_handle(),
-       bool *could_lock_zone = NULL) const; 
+       bool *could_lock_zone = nullptr) const; 
 
 /*!
 Same as above but uses `hint` as the starting place for the search. 
 */ 
 Cell_handle 
 locate(const Point & query, Vertex_handle hint,
-       bool *could_lock_zone = NULL) const; 
+       bool *could_lock_zone = nullptr) const; 
 
 /*!
 Same as `locate()` but uses inexact predicates. 
@@ -683,7 +741,7 @@ unlocked by `locate`, leaving this choice to the user.
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Cell_handle start = Cell_handle(),
-bool *could_lock_zone = NULL ) const; 
+bool *could_lock_zone = nullptr ) const; 
 
 /*!
 Same as above but uses `hint` as the starting place for the search. 
@@ -691,7 +749,7 @@ Same as above but uses `hint` as the starting place for the search.
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Vertex_handle hint,
-bool *could_lock_zone = NULL) const; 
+bool *could_lock_zone = nullptr) const; 
 
 
 /*!
@@ -905,15 +963,30 @@ Vertex_handle insert(const Point & p, Locate_type lt,
 Cell_handle loc, int li, int lj); 
 
 /*!
-Inserts the points in the range `[first,last)`. Returns the number of inserted points. 
-Note that this function is not guaranteed to insert the points 
-following the order of `InputIterator`. 
-\tparam InputIterator must be an input iterator with value type `Point`. 
-*/ 
-template < class InputIterator > 
-std::ptrdiff_t 
-insert(InputIterator first, InputIterator last); 
+Inserts the points in the range `[first,last)` in the given order,
+and returns the number of inserted points. 
 
+*/ 
+template < class PointInputIterator > 
+std::ptrdiff_t 
+insert(PointInputIterator first, PointInputIterator last); 
+
+
+/*!
+Inserts the points in the iterator range  `[first,last)` in the given order,
+and returns the number of inserted points. 
+
+Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
+`v.point() == p` and `v.info() == i`. If several pairs have the same point, 
+only one vertex is created, and one of the objects of type `Vertex::Info` will be stored in the vertex. 
+\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_3`. 
+
+\tparam PointWithInfoInputIterator must be an input iterator with the value type `std::pair<Point,Vertex::Info>`. 
+
+*/ 
+template < class PointWithInfoInputIterator > 
+std::ptrdiff_t 
+insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last); 
 
 /// @} 
 
@@ -1031,8 +1104,7 @@ The following iterators allow the user to visit cells, facets, edges and vertice
 
 /*!
 Starts at an arbitrary finite vertex. Then `++` and `--` will 
-iterate over finite vertices. Returns `finite_vertices_end()` when 
-`t.number_of_vertices() == 0`. 
+iterate over finite vertices.
 */ 
 Finite_vertices_iterator finite_vertices_begin() const; 
 
@@ -1043,8 +1115,7 @@ Finite_vertices_iterator finite_vertices_end() const;
 
 /*!
 Starts at an arbitrary finite edge. Then `++` and `--` will 
-iterate over finite edges. Returns `finite_edges_end()` when 
-`t.dimension() < 1`. 
+iterate over finite edges.
 */ 
 Finite_edges_iterator finite_edges_begin() const; 
 
@@ -1078,9 +1149,7 @@ Past-the-end iterator
 Finite_cells_iterator finite_cells_end() const; 
 
 /*!
-Starts at an arbitrary vertex. Iterates over all vertices (even the infinite 
-one). Returns `vertices_end()` when 
-`t.number_of_vertices() == 0`. 
+Starts at an arbitrary vertex. Iterates over all vertices (even the infinite one). 
 */ 
 All_vertices_iterator all_vertices_begin() const; 
 
@@ -1136,6 +1205,82 @@ Point_iterator points_end() const;
 
 /// @} 
 
+/*! \name Ranges
+
+In order to write \cpp 11 `for`-loops we provide a range type and member functions to generate ranges.
+Note that vertex and cell ranges are special. See Section \ref Triangulation3secRanges in the User Manual.
+
+*/
+
+/// @{
+
+/*!
+  returns a range of iterators over all cells (even the infinite cells).
+  Returns an empty range when `t.number_of_cells() == 0`. 
+  \note While the value type of `All_cells_iterator` is `Cell`, the value type of 
+  `All_cell_handles::iterator` is `Cell_handle`.
+*/
+All_cell_handles all_cell_handles() const;
+
+ 
+  
+/*!
+  returns a range of iterators starting at an arbitrary facet.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+All_facets all_facets() const;
+ 
+/*!
+  returns a range of iterators starting at an arbitrary edge.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+All_edges all_edges() const;
+ 
+/*!
+  returns a range of iterators over all vertices (even the infinite one).
+  \note While the value type of `All_vertices_iterator` is `Vertex`, the value type of 
+  `All_vertex_handles::iterator` is `Vertex_handle`.
+*/
+All_vertex_handles all_vertex_handles() const;
+
+  
+/*!
+  returns a range of iterators over finite cells.
+  Returns an empty range when `t.number_of_cells() == 0`. 
+  \note While the value type of `Finite_cells_iterator` is `Cell`, the value type of 
+  `Finite_cell_handles::iterator` is `Cell_handle`.
+*/
+Finite_cell_handles finite_cell_handles() const;
+
+ 
+  
+/*!
+  returns a range of iterators starting at an arbitrary facet.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+Finite_facets finite_facets() const;
+ 
+/*!
+  returns a range of iterators starting at an arbitrary edge.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+Finite_edges finite_edges() const;
+ 
+/*!
+  returns a range of iterators over finite vertices.
+  \note While the value type of `Finite_vertices_iterator` is `Vertex`, the value type of 
+  `Finite_vertex_handles::iterator` is `Vertex_handle`.
+*/
+Finite_vertex_handles finite_vertex_handles() const;
+
+/*!
+  returns a range of iterators over the points of finite vertices.
+*/
+Points points() const;
+  
+ 
+/// @} 
+  
 /*!\name Cell and Facet Circulators 
 The following circulators respectively visit all cells or all facets incident to a given edge. They are non-mutable and bidirectional. They are invalidated by any modification of one of the cells traversed.  
 */

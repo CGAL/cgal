@@ -33,7 +33,7 @@ class Camera;
 
   This class defines the interface for the Constraints that can be applied to a
   Frame to limit its motion. Use Frame::setConstraint() to associate a
-  Constraint to a Frame (default is a \c NULL Frame::constraint()).
+  Constraint to a Frame (default is a \c nullptr Frame::constraint()).
 
   <h3>How does it work ?</h3>
 

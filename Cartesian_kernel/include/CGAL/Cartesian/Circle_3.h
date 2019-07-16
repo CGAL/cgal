@@ -91,11 +91,11 @@ public:
     // s1,s2 must intersect
     CGAL_kernel_precondition(!(obj.is_empty()));
     const typename R::Circle_3* circle_ptr=object_cast<typename R::Circle_3>(&obj);
-    if(circle_ptr!=NULL)
+    if(circle_ptr!=nullptr)
       base = Rep(circle_ptr->diametral_sphere(), circle_ptr->supporting_plane());
     else {
       const typename R::Point_3* point=object_cast<typename R::Point_3>(&obj);
-      CGAL_kernel_precondition(point!=NULL);
+      CGAL_kernel_precondition(point!=nullptr);
       CircleC3 circle = CircleC3(*point, FT(0), Vector_3(FT(1),FT(0),FT(0)));
       base = Rep(circle.diametral_sphere(), circle.supporting_plane());
     }
@@ -108,11 +108,11 @@ public:
     // s1,s2 must intersect
     CGAL_kernel_precondition(!(obj.is_empty()));
     const typename R::Circle_3* circle_ptr=object_cast<typename R::Circle_3>(&obj);
-    if(circle_ptr!=NULL)
+    if(circle_ptr!=nullptr)
       base = Rep(circle_ptr->diametral_sphere(), circle_ptr->supporting_plane());
     else {
       const typename R::Point_3* point=object_cast<typename R::Point_3>(&obj);
-      CGAL_kernel_precondition(point!=NULL);
+      CGAL_kernel_precondition(point!=nullptr);
       CircleC3 circle = CircleC3(*point, FT(0), Vector_3(FT(1),FT(0),FT(0)));
       base = Rep(circle.diametral_sphere(), circle.supporting_plane());
     }

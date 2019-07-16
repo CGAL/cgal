@@ -167,8 +167,8 @@ public:
       delete p_cache;
       delete p_inter_map;
     }
-    p_cache = NULL;
-    p_inter_map = NULL;
+    p_cache = nullptr;
+    p_inter_map = nullptr;
   }
   //@}
 

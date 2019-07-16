@@ -471,13 +471,13 @@ private:
    */
   template <bool pump_vertices_on_surfaces>
   bool pump_vertex(const Vertex_handle& v,
-                   bool *could_lock_zone = NULL);
+                   bool *could_lock_zone = nullptr);
 
   /**
    * Returns the best_weight of v
    */
   FT get_best_weight(const Vertex_handle& v,
-                     bool *could_lock_zone = NULL) const;
+                     bool *could_lock_zone = nullptr) const;
 
   /**
    * Initializes pre_star and criterion_values
@@ -515,7 +515,7 @@ private:
   template <bool pump_vertices_on_surfaces>
   bool update_mesh(const Weighted_point& new_point,
                    const Vertex_handle& old_vertex,
-                   bool *could_lock_zone = NULL);
+                   bool *could_lock_zone = nullptr);
 
   /**
    * Restores cells and boundary facets of conflict zone of new_vertex in c3t3_

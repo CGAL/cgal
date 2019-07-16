@@ -168,7 +168,7 @@ private:
            PointMap point_map,
            const Iso_cuboid_3& bbox, float voxel_size,
            std::size_t nb_scale,
-           Planimetric_grid* lower_grid = NULL)
+           Planimetric_grid* lower_grid = nullptr)
       : voxel_size (voxel_size)
     {
       CGAL::Real_timer t;
@@ -194,7 +194,7 @@ private:
       t.reset();
       t.start();
 
-      if (lower_grid == NULL)
+      if (lower_grid == nullptr)
         grid = new Planimetric_grid (range, point_map, bbox, this->voxel_size);
       else
         grid = new Planimetric_grid(lower_grid);
@@ -204,9 +204,9 @@ private:
     }
     ~Scale()
     {
-      if (neighborhood != NULL)
+      if (neighborhood != nullptr)
         delete neighborhood;
-      if (grid != NULL)
+      if (grid != nullptr)
         delete grid;
       delete eigen;
     }
@@ -214,11 +214,11 @@ private:
     void reduce_memory_footprint(bool delete_neighborhood)
     {
       delete grid;
-      grid = NULL;
+      grid = nullptr;
       if (delete_neighborhood)
       {
         delete neighborhood;
-        neighborhood = NULL;
+        neighborhood = nullptr;
       }
     }
 

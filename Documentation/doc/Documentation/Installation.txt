@@ -295,10 +295,10 @@ We next list the libraries and essential 3rd party software
 
 | Library   | CMake Variable | Functionality | Dependencies |
 | :-------- | :------------- | :------------ | :----------- |
-| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers), Boost.Thread and Boost.System (library) for compilers not supporting the keywords `thread_local` and the class `std::mutex` |
+| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers) |
 | `CGAL_Core` | `WITH_CGAL_Core`  | The CORE library for algebraic numbers.\cgalFootnote{CGAL_Core is not part of \cgal, but a custom version of the \sc{Core} library distributed by \cgal for the user convenience and it has it's own license.}  | \sc{Gmp} and \sc{Mpfr} |
-| `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \sc{OpenGL}, \sc{zlib}, \sc{Vtk}(optional) |
-| `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \sc{Qt}5-based demos | \sc{Qt}5 and \sc{OpenGL} |
+| `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \sc{zlib}, \sc{Vtk}(optional) |
+| `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \sc{Qt}5-based demos | \sc{Qt}5 |
 
 \subsection installation_debug Debug vs. Release
 
@@ -388,27 +388,16 @@ The \sc{Boost} libraries are a set of portable C++ source libraries. Most of
 \sc{Boost} libraries are header-only, but a few of them need to be compiled or
 installed as binaries.
 
-\cgal requires the \sc{Boost} libraries. In particular the header files
-and the threading library (`Boost.Thread` and
-`Boost.System` binaries). Version 1.48 (or higher) are needed
-for compilers not supporting the keyword `thread_local` and the class `std::mutex` (This is supported for \gcc 4.8 and later when using the \cpp 11 standard, and for Visual C++ starting with 2015, that is VC14).
+\cgal only requires the headers of the \sc{Boost} libraries, but some demos and examples depend on the binary library `Boost.Program_options`.
 
 As an exception, because of a bug in the \gcc compiler about the \cpp 11
 keyword `thread_local`, the `CGAL_Core` library always requires
-`Boost.Thread` if the \gcc compiler is used.
-
-On Windows, as auto-linking is used, you also need the binaries of
-`Boost.Serialization` and `Boost.DateTime`, but the
-dependency is artificial and used only at link-time: the \cgal libraries do
-not depend on the DLL's of those two libraries.
-
-In \cgal some demos and examples depend on `Boost.Program_options`.
+the binary library `Boost.Thread` if the \gcc compiler version 9.0 or
+earlier is used.
 
 In case the \sc{Boost} libraries are not installed on your system already, you
 can obtain them from <A HREF="https://www.boost.org/">`https://www.boost.org/`</A>. For Visual C++ you can download precompiled libraries
 from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`https://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
-For Visual C++ versions prior to 2015  `Boost.Thread` is required, so make sure to either install the precompiled 
-libraries for your compiler or build `libboost-thread` and `libboost-system`.
 
 As on Windows there is no canonical directory for where to find
 \sc{Boost}, we recommend that you define the environment variable
@@ -444,17 +433,6 @@ In \cgal this library is used in the examples of the \ref PkgSurfaceMesher3Ref p
 If it is not already on your system,
 for instance, on Windows, you can download it from <A HREF="http://www.zlib.net/">`http://www.zlib.net/`</A>.
 
-\subsection thirdpartyOpenGL OpenGL 
-
-\sc{OpenGL} (Open Graphics Library) provides an API for applications that
-produce 2D and 3D computer graphics.
-
-In \cgal the library is essential for the component
-libCGAL_Qt5, as well as libCGAL_ImageIO and for various demos.
-
-Typically, \sc{OpenGL} is preinstalled on systems; if not, it can be
-downloaded from <A HREF="http://www.opengl.org/">`http://www.opengl.org/`</A>.
-
 \subsection thirdpartyQt Qt5
 
 Qt is a cross-platform application and UI framework.
@@ -478,8 +456,8 @@ the \cgal libraries, unless you set the variables `WITH_examples=ON` and/or `WIT
 Nevertheless, even when configured with \cgal, they are not automatically built along with the libraries.
 You must build the `examples` or `demos` targets (or IDE projects) explicitly.
 
-If you do not plan to compile any demos, you might skip some of the essential libraries (as \sc{Qt} or
-\sc{OpenGL}), as the corresponding \cgal-libraries are not linked. But for
+If you do not plan to compile any demos, you might skip some of the essential libraries (as \sc{Qt}),
+as the corresponding \cgal-libraries are not linked. But for
 your own demos you might need these \cgal-libraries.
 
 \section secoptional3rdpartysoftware Optional Third Party Libraries 
@@ -488,11 +466,6 @@ Optional 3rd party software can be used by \cgal for various reasons:
 Usually certain optional libraries are required to build examples and
 demos shipped with \cgal or to build your own project using \cgal. 
 Another reason is to speed up basic tasks. 
-In order to support these goals, all optional libraries can be <i>prepared to be
-used with \cgal</I> while configuring \cgal, just in the same way as
-essential libraries are configured. Whenever building an example or a
-demo (or your own executable), these <I>preconfigured</I> libraries
-are available when using \cgal.
 
 \subsection thirdpartyLeda LEDA
 
@@ -842,8 +815,7 @@ If the parameter is not given, the script creates <B>one executable for each giv
 source file</B>.
 <DT><B>`-c com1:com2:...`</B><DD> Lists components ("com1",
 "com2") of \cgal to which the executable(s) should be linked. Valid components are \cgal's
-libraries (i.e.\ "Core", "ImageIO", and "Qt5") and all
-preconfigured 3rd party software, such as "MPFI", "RS3"). An example is `-c Core:GMP:RS3:MPFI`
+libraries (i.e.\ "Core", "ImageIO", and "Qt5"). An example is `-c Core`.
 
 <DT><B>`-b boost1:boost2:...`</B><DD> Lists components ("boost1",
 "boost2") of \sc{Boost} to which the executable(s) should be

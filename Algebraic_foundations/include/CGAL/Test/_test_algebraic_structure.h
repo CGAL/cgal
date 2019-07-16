@@ -417,7 +417,7 @@ void test_algebraic_structure_intern(
     assert( a !=  AS (0));
     assert( b !=  AS (0));
     assert( c !=  AS (0));
-    //  AS (0) == NULL of IntegralDomain
+    //  AS (0) == nullptr of IntegralDomain
     assert(a* AS (0)== AS (0));
     assert(a+ AS (0)==a);
     assert(b* AS (0)== AS (0));

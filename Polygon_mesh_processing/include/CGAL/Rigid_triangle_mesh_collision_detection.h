@@ -117,7 +117,7 @@ class Rigid_triangle_mesh_collision_detection
       m_id_pool.push_back(m_free_id);
       ++m_free_id;
       m_own_aabb_trees.resize(m_free_id);
-      m_aabb_trees.resize(m_free_id, NULL);
+      m_aabb_trees.resize(m_free_id, nullptr);
       m_is_closed.resize(m_free_id);
       m_points_per_cc.resize(m_free_id);
       m_traversal_traits.resize(m_free_id);
@@ -238,7 +238,7 @@ public:
                           get_const_property_map(boost::vertex_point, tm) );
   // now add the mesh
     std::size_t id = get_id_for_new_mesh();
-    CGAL_assertion( m_aabb_trees[id] == NULL );
+    CGAL_assertion( m_aabb_trees[id] == nullptr );
     m_is_closed[id] = is_closed(tm);
     m_own_aabb_trees[id] = true;
     Tree* t = new Tree(boost::begin(faces(tm)), boost::end(faces(tm)), tm, vpm);
@@ -282,7 +282,7 @@ public:
   std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm, const NamedParameters& np)
   {
     std::size_t id = get_id_for_new_mesh();
-    CGAL_assertion( m_aabb_trees[id] == NULL );
+    CGAL_assertion( m_aabb_trees[id] == nullptr );
     m_is_closed[id] = is_closed(tm);
     m_own_aabb_trees[id] = false ;
     m_aabb_trees[id] = const_cast<Tree*>(&tree);
@@ -296,7 +296,7 @@ public:
    */
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<K>& aff_trans)
   {
-    CGAL_assertion(m_aabb_trees[mesh_id] != NULL);
+    CGAL_assertion(m_aabb_trees[mesh_id] != nullptr);
     m_traversal_traits[mesh_id].set_transformation(aff_trans);
 #if CGAL_RMCD_CACHE_BOXES
     m_bboxes_is_invalid.set(mesh_id);
@@ -327,7 +327,7 @@ public:
   std::vector<std::size_t>
   get_all_intersections(std::size_t mesh_id, const MeshIdRange& ids) const
   {
-    CGAL_assertion(m_aabb_trees[mesh_id] != NULL);
+    CGAL_assertion(m_aabb_trees[mesh_id] != nullptr);
     CGAL::Interval_nt_advanced::Protector protector;
 #if CGAL_RMCD_CACHE_BOXES
     update_bboxes();
@@ -337,7 +337,7 @@ public:
     // TODO: use a non-naive version
     for(std::size_t k : ids)
     {
-      CGAL_assertion(m_aabb_trees[k] != NULL);
+      CGAL_assertion(m_aabb_trees[k] != nullptr);
       if(k==mesh_id) continue;
 
       if (does_A_intersect_B(mesh_id, k))
@@ -381,7 +381,7 @@ public:
   std::vector<std::pair<std::size_t, bool> >
   get_all_intersections_and_inclusions(std::size_t mesh_id, const MeshIdRange& ids) const
   {
-    CGAL_assertion(m_aabb_trees[mesh_id] != NULL);
+    CGAL_assertion(m_aabb_trees[mesh_id] != nullptr);
     CGAL::Interval_nt_advanced::Protector protector;
 #if CGAL_RMCD_CACHE_BOXES
     update_bboxes();
@@ -391,7 +391,7 @@ public:
     // TODO: use a non-naive version
     for(std::size_t k : ids)
     {
-      CGAL_assertion(m_aabb_trees[k] != NULL);
+      CGAL_assertion(m_aabb_trees[k] != nullptr);
       if(k==mesh_id) continue;
 
       if (does_A_intersect_B(mesh_id, k))
@@ -457,7 +457,7 @@ public:
 
     if (m_own_aabb_trees[mesh_id]) delete m_aabb_trees[mesh_id];
     m_points_per_cc[mesh_id].clear();
-    m_aabb_trees[mesh_id] = NULL;
+    m_aabb_trees[mesh_id] = nullptr;
     if (m_id_pool[m_free_id-1]!=mesh_id)
       std::swap(m_id_pool[m_free_id-1], *itf);
     --m_free_id;
@@ -487,7 +487,7 @@ public:
   bool is_valid_index(std::size_t mesh_id)
   {
     if (mesh_id >= m_id_pool.size()) return false;
-    return m_aabb_trees[mesh_id] != NULL;
+    return m_aabb_trees[mesh_id] != nullptr;
   }
 
 /// \name Helper Static Function
@@ -601,7 +601,7 @@ public:
                        const std::vector<Point_3>& points_per_cc)
   {
     std::size_t id = get_id_for_new_mesh();
-    CGAL_assertion( m_aabb_trees[id] == NULL );
+    CGAL_assertion( m_aabb_trees[id] == nullptr );
     m_is_closed[id] = is_closed;
     m_own_aabb_trees[id] = false ;
     m_aabb_trees[id] = const_cast<Tree*>(&tree);

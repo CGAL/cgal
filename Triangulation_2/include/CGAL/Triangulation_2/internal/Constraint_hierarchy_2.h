@@ -364,7 +364,7 @@ Constraint_hierarchy_2<T,Compare,Data>::
 number_of_enclosing_constraints(T va, T vb)
 {
   H_context_list* hcl = get_contexts(va, vb);
-  CGAL_triangulation_assertion(hcl != NULL);
+  CGAL_triangulation_assertion(hcl != nullptr);
   return hcl->size();
 }
 
@@ -433,7 +433,7 @@ insert_constraint(T va, T vb){
     // pointer to its fathers list. If the sub-constraint he is new,
     // std::make_pair(he, 0) is inserted in the map (that is what does
     // map::operator[]), 'fathers' will be a default-constructed pointer
-    // (that is the NULL pointer), and it will re-assigned to a newly
+    // (that is the nullptr pointer), and it will re-assigned to a newly
     // created context list.  As 'father' is a reference (to a pointer),
     // there is no need to modify the map after that.
     H_context_list*& fathers = sc_to_c_map[he];
@@ -573,9 +573,9 @@ remove_Steiner(T v, T va, T vb)
   CGAL_precondition(!is_constrained_vertex(v));
  
   H_context_list*  hcl1 = get_contexts(va, v);
-  CGAL_triangulation_assertion(hcl1 != NULL);
+  CGAL_triangulation_assertion(hcl1 != nullptr);
   H_context_list*  hcl2 = get_contexts(v, vb);
-  CGAL_triangulation_assertion(hcl2 != NULL);
+  CGAL_triangulation_assertion(hcl2 != nullptr);
 
   H_vertex_it      pos;
   for(H_context_iterator ctit=hcl1->begin(); ctit != hcl1->end(); ctit++){
@@ -609,7 +609,7 @@ void
 Constraint_hierarchy_2<T,Compare,Data>::
 add_Steiner(T va, T vb, T vc){
   H_context_list* hcl = get_contexts(va, vb);
-  CGAL_triangulation_assertion(hcl != NULL);
+  CGAL_triangulation_assertion(hcl != nullptr);
 
   H_context_list* hcl2 = new  H_context_list;
 
@@ -672,7 +672,7 @@ get_contexts(T va, T vb) const
 {
   H_sc_iterator sc_iter = sc_to_c_map.find(make_edge(va,vb));
   if ( sc_iter == sc_to_c_map.end() ) 
-    return NULL;
+    return nullptr;
   return (*sc_iter).second;
 }
 

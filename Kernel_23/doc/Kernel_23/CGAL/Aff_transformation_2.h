@@ -34,10 +34,13 @@ translation vector \f$ (v_0,\,v_1,\,1)\f$ appears in the last column of the
 matrix. The entries \f$ m_{20}\f$ and \f$ m_{21}\f$ are always zero and 
 therefore do not appear in the constructors. 
 
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+
 \sa `Identity_transformation`
 \sa `Rotation`
 \sa `Scaling`
 \sa `Translation` 
+\sa `Reflection` 
 \sa `rational_rotation_approximation_grp` 
 
 \cgalHeading{Example}
@@ -126,6 +129,12 @@ introduces a scaling by a scale factor \f$ s/hw\f$.
 Aff_transformation_2(const Scaling, 
 const Kernel::RT &s, 
 const Kernel::RT &hw = RT(1)); 
+
+/*!
+introduces a reflection by a line `l`. 
+*/ 
+Aff_transformation_2(const Reflection, 
+const Line_2<Kernel>& l); 
 
 /*!
 introduces a general affine transformation in the 

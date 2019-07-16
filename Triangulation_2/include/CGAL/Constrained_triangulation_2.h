@@ -120,6 +120,7 @@ public:
                                  typename Triangulation::All_edges_iterator>
                                                      Constrained_edges_iterator;
 
+  typedef Iterator_range<Constrained_edges_iterator> Constrained_edges;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Triangulation::number_of_vertices;
@@ -218,6 +219,11 @@ public:
                                       all_edges_end());
   }
 
+  Constrained_edges constrained_edges() const
+  {
+    return Constrained_edges(constrained_edges_begin(),constrained_edges_end());
+  }
+  
   // INSERTION
   Vertex_handle insert(const Point& p, 
 			       Face_handle start = Face_handle() );

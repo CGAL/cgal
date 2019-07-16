@@ -26,6 +26,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <cassert>
+#include <CGAL/use.h>
 
 template <class R>
 bool
@@ -35,9 +36,6 @@ _test_cls_iso_cuboid_3(const R& )
 
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
-
- typename R::Iso_cuboid_3 ir;
- CGAL::Iso_cuboid_3<R>  r0(ir);
 
  RT n1 =  1;
  RT n2 =  2;
@@ -64,6 +62,10 @@ _test_cls_iso_cuboid_3(const R& )
  CGAL::Point_3<R> p11(n2, n8, n2, n2);    // ( 1, 4, 1)
  CGAL::Point_3<R> p12(n1, n1, n3 );       // ( 1, 1, 3)
  CGAL::Point_3<R> p13(n4, n1, n3 );       // ( 4, 1, 3)
+
+ typename R::Iso_cuboid_3 ir0; CGAL_USE(ir0); // test default-construction
+ typename R::Iso_cuboid_3 ir( p1, p3);
+ CGAL::Iso_cuboid_3<R>  r0(ir);
 
  const CGAL::Iso_cuboid_3<R> r1( p1, p3);
  CGAL::Iso_cuboid_3<R> r1_( p1, p3, 0);

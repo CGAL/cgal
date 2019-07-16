@@ -1633,14 +1633,23 @@ void Scene_c3t3_item::show_intersection(bool b)
     d->intersection->setName("Intersection tetrahedra");
     d->intersection->setRenderingMode(renderingMode());
     connect(d->intersection, SIGNAL(destroyed()), this, SLOT(reset_intersection_item()));
-    scene->addItem(d->intersection);
-    scene->changeGroup(d->intersection, this);
-    lockChild(d->intersection);
+
     BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       d->are_intersection_buffers_filled[viewer] = false;
+      if(!d->areInterBufFilled(viewer))
+      {
+        //initGL
+        Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
+        ncthis->d->computeIntersections(viewer);
+        d->are_intersection_buffers_filled[viewer] = true;
+        ncthis->show_intersection(true);
+      }
     }
+    scene->addItem(d->intersection);
+    scene->changeGroup(d->intersection, this);
+    lockChild(d->intersection);
   }
   else if (!b && d->intersection!=NULL)
   {

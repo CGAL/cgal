@@ -198,6 +198,10 @@ struct Scene_polyhedron_selection_item_priv{
   };
   QUndoStack stack;
   CGAL::Face_filtered_graph<SMesh> *filtered_graph;
+
+  std::size_t num_faces;
+  std::size_t num_vertices;
+  std::size_t num_edges;
 };
 typedef Scene_polyhedron_selection_item_priv Priv;
 
@@ -1132,6 +1136,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
                   halfedge(v2, *mesh),
                   *mesh);
           }, this));
+          CGAL::Euler::join_face(halfedge(ed, *mesh), *mesh);
           compute_normal_maps();
           poly_item->invalidateOpenGLBuffers();
         }
@@ -1790,6 +1795,7 @@ void Scene_polyhedron_selection_item::common_constructor()
   d->are_temp_buffers_filled = false;
   d->poly = NULL;
   d->ready_to_move = false;
+  do_process = true;
   setProperty("no_picking", true);
   
   setPointContainer(3, 
@@ -2135,6 +2141,9 @@ void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMa
 {
   this->poly_item = poly_item;
   d->poly =poly_item->polyhedron();
+  d->num_faces = num_faces(*poly_item->polyhedron());
+  d->num_vertices = num_vertices(*poly_item->polyhedron());
+  d->num_edges = num_edges(*poly_item->polyhedron());
   connect(poly_item, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed()));
   //parameters type must be of the same name here and there, so they must be hardcoded.
   connect(&k_ring_selector, SIGNAL(selected(const std::set<fg_vertex_descriptor>&)), this,
@@ -2162,6 +2171,29 @@ void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMa
   connect(&k_ring_selector,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
    k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
   connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));
+  connect(poly_item, &Scene_surface_mesh_item::itemChanged, this, [this](){
+    std::size_t new_num_faces = num_faces(*this->poly_item->face_graph());
+    std::size_t new_num_vertices = num_vertices(*this->poly_item->face_graph());
+    std::size_t new_num_edges = num_edges(*this->poly_item->face_graph());
+
+    if(new_num_faces != d->num_faces)
+    {
+      selected_facets.clear();
+      d->num_faces = new_num_faces ;
+    }
+    if(new_num_vertices!= d->num_vertices)
+    {
+      selected_vertices.clear();
+      d->num_vertices = new_num_vertices ;
+    }
+    if(new_num_edges!= d->num_edges)
+    {
+      selected_edges.clear();
+      d->num_edges = new_num_edges ;
+    }
+    invalidateOpenGLBuffers();
+    redraw();
+  });
   d->manipulated_frame = new ManipulatedFrame();
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
     v->installEventFilter(this);

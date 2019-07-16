@@ -213,7 +213,7 @@ void Arr_transform_on_sphere(Arrangement & arr,
 		ind = ARR_MAX_END;
 
       // Check if it was already added.
-      if (topol_traits->discontinuity_vertex(havc->curve(), ind)== NULL &&
+      if (topol_traits->discontinuity_vertex(havc->curve(), ind)== nullptr &&
           topol_traits->south_pole() != &(*havc->target()) &&
           topol_traits->north_pole() != &(*havc->target()) )
       {

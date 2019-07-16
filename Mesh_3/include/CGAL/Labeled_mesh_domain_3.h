@@ -88,10 +88,10 @@ namespace internal {
   /// Returns a box enclosing image \c im
   inline Bbox_3 compute_bounding_box(const Image_3& im)
   {
-    return Bbox_3(-1,-1,-1,
-                  double(im.xdim())*im.vx()+1,
-                  double(im.ydim())*im.vy()+1,
-                  double(im.zdim())*im.vz()+1);
+    return Bbox_3(-1+im.tx(),-1+im.ty(),-1+im.tz(),
+                  double(im.xdim())*im.vx()+im.tx()+1,
+                  double(im.ydim())*im.vy()+im.ty()+1,
+                  double(im.zdim())*im.vz()+im.tz()+1);
   }
 
   template <typename Image_values_to_subdom_indices>
@@ -346,7 +346,7 @@ public:
                         const Sphere_3& bounding_sphere,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bounding_sphere,
                    error_bound,
                    construct_pair_functor(),
@@ -356,7 +356,7 @@ public:
                         const Bbox_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bbox,
                    error_bound,
                    construct_pair_functor(),
@@ -366,7 +366,7 @@ public:
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bbox, error_bound,
                    construct_pair_functor(),
                    null, p_rng)

@@ -32,8 +32,8 @@ template < typename Base_, typename FT_, typename LA_=CGAL::LA_eigen<FT_,typenam
 struct Cartesian_change_FT_base : public
 	Base_
 {
-    CGAL_CONSTEXPR Cartesian_change_FT_base(){}
-    CGAL_CONSTEXPR Cartesian_change_FT_base(int d):Base_(d){}
+    constexpr Cartesian_change_FT_base(){}
+    constexpr Cartesian_change_FT_base(int d):Base_(d){}
 
     typedef Cartesian_change_FT_base Self;
     typedef Base_ Kernel_base;
@@ -48,7 +48,7 @@ struct Cartesian_change_FT_base : public
     typedef transforming_iterator<FT_converter,typename Kernel_base::Vector_cartesian_const_iterator> Vector_cartesian_const_iterator;
     //FIXME: use Iterator_list!
     /*
-    template<class T,bool=CGAL_BOOSTD is_same<typename iterator_tag_traits<T>::value_tag,FT_tag>::value>
+    template<class T,bool= std::is_same<typename iterator_tag_traits<T>::value_tag,FT_tag>::value>
     struct Iterator : Get_type<Kernel_base,T> {};
     template<class T> struct Iterator<T,true> {
       typedef transforming_iterator<FT_converter,typename Get_type<Kernel_base,T>::type> type;
@@ -109,8 +109,8 @@ template < typename Base_, typename FT_>
 struct Cartesian_change_FT : public
 	Cartesian_change_FT_base<Base_,FT_>
 {
-    CGAL_CONSTEXPR Cartesian_change_FT(){}
-    CGAL_CONSTEXPR Cartesian_change_FT(int d):Cartesian_change_FT_base<Base_,FT_>(d){}
+    constexpr Cartesian_change_FT(){}
+    constexpr Cartesian_change_FT(int d):Cartesian_change_FT_base<Base_,FT_>(d){}
 };
 
 } //namespace CGAL

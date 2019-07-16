@@ -108,7 +108,7 @@ namespace internal {
 
     Border_constraint_pmap()
       : border_edges_ptr(new std::set<edge_descriptor>() )
-      , pmesh_ptr_(NULL)
+      , pmesh_ptr_(nullptr)
     {}
 
     template <class FaceRange>
@@ -129,7 +129,7 @@ namespace internal {
     friend bool get(const Border_constraint_pmap<PM, FIMap>& map,
                     const edge_descriptor& e)
     {
-      CGAL_assertion(map.pmesh_ptr_!=NULL);
+      CGAL_assertion(map.pmesh_ptr_!=nullptr);
       return map.border_edges_ptr->count(e)!=0;
     }
 
@@ -137,7 +137,7 @@ namespace internal {
                     const edge_descriptor& e,
                     const bool is)
     {
-      CGAL_assertion(map.pmesh_ptr_ != NULL);
+      CGAL_assertion(map.pmesh_ptr_ != nullptr);
       if (is)
         map.border_edges_ptr->insert(e);
       else
@@ -1142,7 +1142,7 @@ private:
     const Self* remesher_ptr_;
 
     Patch_id_property_map()
-      : remesher_ptr_(NULL) {}
+      : remesher_ptr_(nullptr) {}
     Patch_id_property_map(const Self& remesher)
       : remesher_ptr_(&remesher) {}
 

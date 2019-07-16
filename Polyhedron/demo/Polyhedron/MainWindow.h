@@ -87,11 +87,14 @@ public:
    @returns the IO plugin associated with `loader_name`*/
   CGAL::Three::Polyhedron_demo_io_plugin_interface* findLoader(const QString& loader_name) const;
 
-  /*! \brief Loads an item with a given loader.
+  /*! \brief Loads on or more item with a given loader.
    *
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
-  CGAL::Three::Scene_item* loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
+  QList<CGAL::Three::Scene_item *> loadItem(QFileInfo fileinfo,
+                                            CGAL::Three::Polyhedron_demo_io_plugin_interface*,
+                                            bool& ok,
+                                            bool add_to_scene=true);
   void computeViewerBBox(CGAL::qglviewer::Vec &min, CGAL::qglviewer::Vec &max);
   void updateViewerBbox(Viewer* vi, bool recenter, CGAL::qglviewer::Vec min, 
                         CGAL::qglviewer::Vec max);
@@ -346,7 +349,7 @@ protected Q_SLOTS:
   //!Opens a dialog to save selected item if able.
   void on_actionSaveAs_triggered(); 
   //!Calls the function save of the current plugin if able.
-  void save(QString filename, CGAL::Three::Scene_item* item);
+  void save(QString filename, QList<CGAL::Three::Scene_item*>& to_save);
   //!Calls the function saveSnapShot of the viewer.
   void on_actionSaveSnapshot_triggered();
   //!Opens a Dialog to choose a color and make it the background color.
@@ -456,7 +459,7 @@ private:
   bool bbox_need_update;
   QMap<QString, QPair<QStringList, QString> >plugin_metadata_map;
   QMap<QString, bool> ignored_map;
-  const QStringList& accepted_keywords;
+  QStringList accepted_keywords;
 
 private Q_SLOTS:
   void on_actionAdd_Viewer_triggered();

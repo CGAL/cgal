@@ -223,8 +223,8 @@ struct Curve_renderer_traits_base
         typedef Coeff result_type;
         
         Coeff operator()(const Coeff& x, 
-            bool *error_bounds = NULL) const { 
-            if(error_bounds != NULL)
+            bool *error_bounds = nullptr) const { 
+            if(error_bounds != nullptr)
                  *error_bounds = false;
             return x;
         }
@@ -309,13 +309,13 @@ struct Curve_renderer_traits<CGAL::Interval_nt<true>, CORE::BigRat > :
         typedef Float result_type;
         
         Float operator()(const Coeff& x, 
-                    bool *error_bounds = NULL) const { 
+                    bool *error_bounds = nullptr) const { 
             bool err_bnd;
 //             err_bnd = (CGAL_ABS(l) < 1E-15 || CGAL_ABS(u) < 1E-15) ||
 //                 ((l <= 0 && u >= 0));
             Float l = x.inf(), u = x.sup(), mid = (l+u)/2;
             err_bnd = ((l < 0 && u > 0)||(l == 0 && u == 0));
-            if(error_bounds != NULL)
+            if(error_bounds != nullptr)
                 *error_bounds = err_bnd;
 //! ATTENTION!!! if smth is screwed up try to uncomment the line below
 //! this is very crucial for performance & stability
@@ -456,13 +456,13 @@ struct Curve_renderer_traits<CGAL::Interval_nt<true>, leda::rational > :
         typedef Float result_type;
         
         Float operator()(const Coeff& x, 
-                    bool *error_bounds = NULL) const { 
+                    bool *error_bounds = nullptr) const { 
             bool err_bnd;
 //             err_bnd = (CGAL_ABS(l) < 1E-15 || CGAL_ABS(u) < 1E-15) ||
 //                 ((l <= 0 && u >= 0));
             Float l = x.inf(), u = x.sup(), mid = (l+u)/2;
             err_bnd = ((l < 0 && u > 0)||(l == 0 && u == 0));
-            if(error_bounds != NULL)
+            if(error_bounds != nullptr)
                 *error_bounds = err_bnd;
 //! ATTENTION!!! if smth is screwed up try to uncomment the line below
 //! this is very crucial for performance & stability

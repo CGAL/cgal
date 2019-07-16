@@ -879,8 +879,13 @@ protected:
     if(gen_event->type() == QEvent::Wheel)
     {
       QWheelEvent *event = static_cast<QWheelEvent*>(gen_event);
-      int steps = event->delta() / 120;
-      expand_or_reduce(steps);
+      int steps = event->angleDelta().y()/120;
+      if(do_process)
+      {
+        expand_or_reduce(steps);
+        do_process = false;
+        QTimer::singleShot(0,this, [this](){do_process = true;});
+      }
       return true;
     }
     return false;
@@ -997,6 +1002,7 @@ protected:
   Scene_facegraph_item_k_ring_selection k_ring_selector;
   // action state
   bool is_insert;
+  bool do_process;
 
 public:
 // selection

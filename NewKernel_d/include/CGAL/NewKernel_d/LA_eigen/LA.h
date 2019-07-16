@@ -58,11 +58,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 #if (EIGEN_WORLD_VERSION>=3)
 	typedef NT const* Vector_const_iterator;
 #else
-	typedef Iterator_from_indices<const type,const NT
-#ifndef CGAL_CXX11
-	  ,NT
-#endif
-	  > Vector_const_iterator;
+	typedef Iterator_from_indices<const type,const NT> Vector_const_iterator;
 #endif
 
 	template<class Vec_>static Vector_const_iterator vector_begin(Vec_ const&a){

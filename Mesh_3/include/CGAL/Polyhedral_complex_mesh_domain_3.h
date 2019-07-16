@@ -219,7 +219,7 @@ public:
     InputPairOfSubdomainIndicesIterator indices_begin,
     InputPairOfSubdomainIndicesIterator indices_end
 #ifndef DOXYGEN_RUNNING
-    , CGAL::Random* p_rng = NULL
+    , CGAL::Random* p_rng = nullptr
 #endif
     )
     : Base(p_rng)
@@ -256,7 +256,7 @@ public:
   /// @cond DEVELOPERS
   Polyhedral_complex_mesh_domain_3
     (
-    CGAL::Random* p_rng = NULL
+    CGAL::Random* p_rng = nullptr
     )
     : Base(p_rng)
     , borders_detected_(false)

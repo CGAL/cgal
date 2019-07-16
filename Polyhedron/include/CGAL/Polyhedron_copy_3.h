@@ -83,7 +83,7 @@ Polyhedron_copy_3<Poly,HDS,clear_target_before>::operator()(HDS& target) {
             Halfedge_around_facet_const_circulator;
         Halfedge_around_facet_const_circulator hc = fi->facet_begin();
         Halfedge_around_facet_const_circulator hc_end = hc;
-        CGAL_assertion( hc != NULL);
+        CGAL_assertion( hc != nullptr);
         do {
             B.add_vertex_to_facet( index[ hc->vertex()]);
             ++hc;

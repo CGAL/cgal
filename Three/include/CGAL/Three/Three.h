@@ -70,7 +70,7 @@ public:
   /*! \brief Gets an item of the templated type.
    * \returns the first `SceneType` item found in the scene's list of currently selected 
    * items;
-   * \returns NULL if there is no `SceneType` in the list.
+   * \returns nullptr if there is no `SceneType` in the list.
    */
   template<class SceneType>
   static SceneType* getSelectedItem();

@@ -8,7 +8,7 @@ namespace CGAL {
 
 
 \cgal provides several algorithms for processing point sets, ranging from
-\ref Chapter_Point_Set_Shape_Detection "Shape Detection" to
+\ref Chapter_Shape_Detection "Shape Detection" to
 \ref Chapter_Advancing_Front_Surface_Reconstruction "Surface Reconstruction"
 through standard \ref Chapter_Point_Set_Processing "Point Set Processing" tools.
 
@@ -91,7 +91,7 @@ The following example shows how to apply some algorithms from the
 
 - simplifying the point set with `CGAL::grid_simplify_point_set()`
 
-- detecting the sphere shape with `CGAL::Shape_detection_3::Efficient_RANSAC`
+- detecting the sphere shape with `CGAL::Shape_detection::Efficient_RANSAC`
 
 \cgalExample{Point_set_3/point_set_algo.cpp}
 
@@ -162,6 +162,18 @@ The following example shows how to read OFF point without using the
 overload provided for `CGAL::Point_set_3`:
 
 \cgalExample{Point_set_3/point_set_advanced.cpp}
+
+\subsection Point_set_3_Draw Draw a Point Set
+
+A 3D point set can be visualized by calling the \link PkgDrawPointSet3D CGAL::draw<PS>() \endlink function as shown in the following example. This function opens a new window showing the given point set. A call to this function is blocking, that is the program continues as soon as the user closes the window.
+
+\cgalExample{Point_set_3/draw_point_set_3.cpp}
+
+This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+
+\cgalFigureBegin{fig_draw_point_set,draw_point_set.png}
+Result of the run of the draw_point_set_3 program. A window shows the 3D points and allows to navigate through the 3D scene.
+\cgalFigureEnd
 
 \section Point_set_3_History History
 

@@ -143,7 +143,7 @@ public:
     }
 
     // Note : I don't see a way to make a useful move constructor, apart
-    //        from e.g. using NULL as a ptr value, but this is drastic.
+    //        from e.g. using nullptr as a ptr value, but this is drastic.
 
     Handle_for&
     operator=(Handle_for && h)

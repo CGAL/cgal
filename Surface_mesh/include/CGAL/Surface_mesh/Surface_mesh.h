@@ -477,7 +477,7 @@ private: //------------------------------------------------------ iterator types
                                         std::random_access_iterator_tag
                                         > Facade;
     public:
-        Index_iterator() : hnd_(), mesh_(NULL) {}
+        Index_iterator() : hnd_(), mesh_(nullptr) {}
         Index_iterator(const Index_& h, const Surface_mesh* m)
           : hnd_(h), mesh_(m) {
           if (mesh_ && mesh_->has_garbage()){
@@ -489,7 +489,7 @@ private: //------------------------------------------------------ iterator types
         void increment()
         {
             ++hnd_;
-            CGAL_assertion(mesh_ != NULL);
+            CGAL_assertion(mesh_ != nullptr);
 
             if(mesh_->has_garbage())
               while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) ++hnd_;
@@ -498,14 +498,14 @@ private: //------------------------------------------------------ iterator types
         void decrement()
         {
             --hnd_;
-            CGAL_assertion(mesh_ != NULL);
+            CGAL_assertion(mesh_ != nullptr);
             if(mesh_->has_garbage())
                while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) --hnd_;
         }
 
         void advance(std::ptrdiff_t n)
         {
-            CGAL_assertion(mesh_ != NULL);
+            CGAL_assertion(mesh_ != nullptr);
             
             if (mesh_->has_garbage())
             {
@@ -2122,8 +2122,9 @@ private: //------------------------------------------------------- private data
     reindex.resize(sm.num_vertices());
     int n = 0;
     for(Vertex_index v : sm.vertices()){
-      
-      os << get(vpm, v);
+
+      P p  = get(vpm, v);
+      os << p.x() << " " << p.y() << " " << p.z();
       if(has_vcolors)
       {
         CGAL::Color color = vcolors[v];
@@ -2231,7 +2232,7 @@ private: //------------------------------------------------------- private data
 
     os << "end_header" << std::endl;  
 
-    BOOST_FOREACH(VIndex vi, sm.vertices())
+    for(VIndex vi : sm.vertices())
     {
       for (std::size_t i = 0; i < vprinters.size(); ++ i)
       {
@@ -2245,11 +2246,11 @@ private: //------------------------------------------------------- private data
 
     std::vector<VIndex> polygon;
     
-    BOOST_FOREACH(FIndex fi, sm.faces())
+    for(FIndex fi : sm.faces())
     {
       // Get list of vertex indices
       polygon.clear();
-      BOOST_FOREACH(HIndex hi, halfedges_around_face(halfedge(fi, sm), sm))
+      for(HIndex hi : halfedges_around_face(halfedge(fi, sm), sm))
         polygon.push_back (sm.target(hi));
 
       if (get_mode (os) == IO::ASCII)
@@ -2282,7 +2283,7 @@ private: //------------------------------------------------------- private data
 
     if (!eprinters.empty())
     {
-      BOOST_FOREACH(EIndex ei, sm.edges())
+      for(EIndex ei : sm.edges())
       {
         if (get_mode (os) == IO::ASCII)
           os << int(sm.vertex(ei,0)) << " " << int(sm.vertex(ei,1)) << " ";
@@ -2308,7 +2309,7 @@ private: //------------------------------------------------------- private data
     
     if (!hprinters.empty())
     {
-      BOOST_FOREACH(HIndex hi, sm.halfedges())
+      for(HIndex hi : sm.halfedges())
       {
         if (get_mode (os) == IO::ASCII)
           os << int(sm.source(hi)) << " " << int(sm.target(hi)) << " ";
@@ -2404,7 +2405,7 @@ private: //------------------------------------------------------- private data
     }
     sm.reserve(sm.num_vertices()+n, sm.num_edges()+e, sm.num_faces()+f);
     std::vector<Vertex_index> vertexmap(n);
-    P p;
+
     Vector_3 v;
     typename Mesh::template Property_map<Vertex_index,CGAL::Color> vcolor;
     typename Mesh::template Property_map<Vertex_index,Vector_3> vnormal;
@@ -2419,10 +2420,11 @@ private: //------------------------------------------------------- private data
 
     for(int i=0; i < n; i++){
       is >> sm_skip_comments;
-      is >> p;
+      double x, y, z;
+      is >> iformat(x) >> iformat(y) >> iformat(z);
       
       Vertex_index vi = sm.add_vertex();
-      put(vpm, vi, p);
+      put(vpm, vi, P(x, y, z));
       
       
       vertexmap[i] = vi;

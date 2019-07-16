@@ -555,7 +555,7 @@ Regular_triangulation<Traits, TDS>
     maximal_dimension(),
     flat_orientation_ ?
     std::pair<int, const Flat_orientation_d *>(current_dimension(), flat_orientation_.get_ptr())
-    : std::pair<int, const Flat_orientation_d *>((std::numeric_limits<int>::max)(), NULL) );
+    : std::pair<int, const Flat_orientation_d *>((std::numeric_limits<int>::max)(), nullptr) );
 
   Dark_s_handle dark_s;
   Dark_v_handle dark_v;
