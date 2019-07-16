@@ -167,7 +167,8 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
   start_testing("assignment operator");
   sdg.insert(site_list.begin(), site_list.end());
 
-  sdg = sdg;
+  Segment_Delaunay_graph_2 tmp;
+  tmp = sdg;
   sdg2 = sdg;
 
   assert( sdg.is_valid() );
