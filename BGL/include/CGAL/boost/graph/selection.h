@@ -16,6 +16,8 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/unordered_set.hpp>
 
+#define CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
+#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
 
 namespace CGAL {
 
@@ -56,6 +58,7 @@ extract_selection_boundary(
   }
   return out;
 }
+
 } //end of namespace internal
 
 
@@ -201,6 +204,84 @@ reduce_face_selection(
     current_selection.swap(new_selection);
   }
   return out;
+}
+
+// TODO: document me
+template <class FaceRange, class FaceGraph, class IsFaceSelectedPMap, class VertexPointMap>
+void
+regularize_face_selection_borders(
+  const FaceRange& selection,
+  FaceGraph& fg,
+  IsFaceSelectedPMap is_selected,
+  VertexPointMap vertex_point_map,
+  double weight = 0.5,
+  bool prevent_deselection = true)
+{
+  typedef boost::graph_traits<FaceGraph> GT;
+  typedef typename GT::face_descriptor fg_face_descriptor;
+  typedef typename GT::edge_descriptor fg_edge_descriptor;
+  typedef typename GT::vertex_descriptor fg_vertex_descriptor;
+
+  std::vector<std::pair<std::size_t, std::size_t> > gedges;
+  std::vector<double> edge_weights;
+  std::vector<std::vector<double> > probability_matrix;
+  probability_matrix.resize(2);
+  std::vector<std::size_t> labels;
+
+  std::map<fg_face_descriptor, std::size_t> map_f2i;
+
+  std::size_t idx = 0;
+  std::size_t nb_selected = 0;
+  for(fg_face_descriptor fd : faces(fg))
+  {
+    if (get(is_selected,fd))
+    {
+      if (prevent_deselection)
+        probability_matrix[0].push_back(std::numeric_limits<double>::max());
+      else
+        probability_matrix[0].push_back(1.);
+      
+      probability_matrix[1].push_back(0.);
+      labels.push_back(1);
+      ++ nb_selected;
+    }
+    else
+    {
+      probability_matrix[0].push_back(0.0);
+      probability_matrix[1].push_back(1.0);
+      labels.push_back(0);
+    }
+    map_f2i.insert (std::make_pair (fd, idx ++));
+  }
+
+  for (fg_edge_descriptor ed : edges(fg))
+  {
+    if (is_border (ed, fg))
+      continue;
+
+    fg_vertex_descriptor esource = source(ed, fg);
+    fg_vertex_descriptor etarget = target(ed, fg);
+
+    fg_face_descriptor f0 = face (halfedge (ed, fg), fg);
+    fg_face_descriptor f1 = face (opposite(halfedge (ed, fg), fg), fg);
+    
+    std::size_t i0 = map_f2i[f0];
+    std::size_t i1 = map_f2i[f1];
+
+    // Weight
+    double w = weight * std::sqrt(CGAL::squared_distance (get (vertex_point_map, esource),
+                                                          get (vertex_point_map, etarget)));
+
+    gedges.push_back (std::make_pair (i0, i1));
+    edge_weights.push_back (w);
+  }
+
+  internal::Alpha_expansion_graph_cut_boost alpha_expansion;
+  alpha_expansion (gedges, edge_weights, probability_matrix, labels);
+
+
+  for (const auto& p : map_f2i)
+    put(is_selected, p.first, (labels[p.second] == 1));
 }
 
 

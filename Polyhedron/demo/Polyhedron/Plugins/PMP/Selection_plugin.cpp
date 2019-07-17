@@ -1,5 +1,6 @@
 #include <QtCore/qglobal.h>
 #include <QMessageBox>
+#include <QInputDialog>
 
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
@@ -187,6 +188,7 @@ public:
     connect(ui_widget.Select_all_NTButton,  SIGNAL(clicked()), this, SLOT(on_Select_all_NTButton_clicked()));
     connect(ui_widget.Select_boundaryButton,  SIGNAL(clicked()), this, SLOT(on_Select_boundaryButton_clicked()));
     connect(ui_widget.Add_to_selection_button,  SIGNAL(clicked()), this, SLOT(on_Add_to_selection_button_clicked()));
+    connect(ui_widget.Regularize_button,  SIGNAL(clicked()), this, SLOT(on_Regularize_button_clicked()));
     connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
     connect(ui_widget.Clear_all_button,  SIGNAL(clicked()), this, SLOT(on_Clear_all_button_clicked()));
     connect(ui_widget.Inverse_selection_button,  SIGNAL(clicked()), this, SLOT(on_Inverse_selection_button_clicked()));
@@ -368,6 +370,51 @@ public Q_SLOTS:
 
     selection_item->add_to_selection();
     filter_operations();
+  }
+  // Regularize selection using graph cut
+  void on_Regularize_button_clicked() {
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+    if(!selection_item) {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return; 
+    }
+
+    bool ok = false;
+    double weight = QInputDialog::getDouble((QWidget*)mw,
+                                            tr("Regularize Selection border"),
+                                            tr("Weight (higher values regularize more):"),
+                                            1.0, 0.0, 10000., 5, &ok);
+    if (!ok)
+      return;
+    
+    boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
+    int index = 0;
+    for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
+    {
+      if(selection_item->selected_facets.find(fh)
+         == selection_item->selected_facets.end())
+        is_selected_map[fh]=false;
+      else
+      {
+        is_selected_map[fh]=true;
+      }
+      ++index;
+    }
+    CGAL::regularize_face_selection_borders (selection_item->selected_facets,
+                                             *selection_item->polyhedron(),
+                                             boost::make_assoc_property_map(is_selected_map),
+                                             get(CGAL::vertex_point,*selection_item->polyhedron()),
+                                             weight);
+
+    selection_item->selected_facets.clear();
+    
+    for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
+    {
+      if (is_selected_map[fh])
+        selection_item->selected_facets.insert(fh);
+    }
+    selection_item->invalidateOpenGLBuffers();
+    selection_item->itemChanged();
   }
   // Clear selection
   void on_Clear_button_clicked() {
