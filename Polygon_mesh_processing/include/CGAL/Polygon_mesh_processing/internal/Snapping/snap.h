@@ -595,8 +595,8 @@ public:
   void intersection(const Point& query, const Primitive& primitive)
   {
     // skip the primitive if one of its endpoints is the query
-    typename Primitive::Datum s = primitive.datum(m_traits.shared_data());
-    if(s[0] == query || s[1] == query)
+    const typename Primitive::Datum& s = primitive.datum(m_traits.shared_data());
+    if(m_traits.equal_3_object()(s[0], query) || m_traits.equal_3_object()(s[1], query))
       return;
 
     if(!m_closest_point_initialized)
@@ -608,7 +608,7 @@ public:
     }
 
     Point new_closest_point = m_traits.closest_point_object()(query, primitive, m_closest_point);
-    if(new_closest_point != m_closest_point)
+    if(!m_traits.equal_3_object()(new_closest_point, m_closest_point))
     {
       m_closest_primitive = primitive.id();
       m_closest_point = new_closest_point;
