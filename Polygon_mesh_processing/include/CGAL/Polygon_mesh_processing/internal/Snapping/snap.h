@@ -583,9 +583,11 @@ class Projection_traits
   typedef CGAL::AABB_node<AABBTraits>                           Node;
 
 public:
-  explicit Projection_traits(const AABBTraits& traits)
+  explicit Projection_traits(const AABBTraits& traits,
+                             const FT sq_tolerance)
     : m_traits(traits),
-      m_closest_point_initialized(false)
+      m_closest_point_initialized(false),
+      m_sq_dist(sq_tolerance)
   {}
 
   bool go_further() const { return true; }
@@ -602,20 +604,21 @@ public:
       m_closest_point_initialized = true;
       m_closest_primitive = primitive.id();
       m_closest_point = primitive.reference_point(m_traits.shared_data());
+      m_sq_dist = m_traits.squared_distance_object()(query, m_closest_point);
     }
 
     Point new_closest_point = m_traits.closest_point_object()(query, primitive, m_closest_point);
     if(new_closest_point != m_closest_point)
     {
       m_closest_primitive = primitive.id();
-      m_closest_point = new_closest_point; // this effectively shrinks the sphere
+      m_closest_point = new_closest_point;
+      m_sq_dist = m_traits.squared_distance_object()(query, m_closest_point);
     }
   }
 
   bool do_intersect(const Point& query, const Node& node) const
   {
-    return !m_closest_point_initialized ||
-           m_traits.compare_distance_object()(query, node.bbox(), m_closest_point) == CGAL::SMALLER;
+    return m_traits.compare_distance_object()(query, node.bbox(), m_sq_dist) == CGAL::SMALLER;
   }
 
   Point closest_point() const { return m_closest_point; }
@@ -623,10 +626,12 @@ public:
   bool closest_point_initialized() const { return m_closest_point_initialized; }
 
 private:
+  bool m_closest_point_initialized;
   Point m_closest_point;
+  FT m_sq_dist;
+
   typename Primitive::Id m_closest_primitive;
   const AABBTraits& m_traits;
-  bool m_closest_point_initialized;
 };
 
 template <typename PolygonMesh, typename GeomTraits, typename VPM>
@@ -770,7 +775,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 #endif
 
     // use the current halfedge as hint
-    internal::Projection_traits<AABB_Traits> traversal_traits(aabb_tree.traits());
+    internal::Projection_traits<AABB_Traits> traversal_traits(aabb_tree.traits(), sq_tolerance);
     aabb_tree.traversal(query, traversal_traits);
 
     if(!traversal_traits.closest_point_initialized())
