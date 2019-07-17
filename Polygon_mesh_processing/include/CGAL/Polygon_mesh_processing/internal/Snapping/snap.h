@@ -713,7 +713,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 #endif
 
   // Collect border points that can be projected onto a border edge
-  typedef std::map<Point, FT>                       Unique_vertices_with_tolerance; // @todo test unordered
+  typedef std::map<Point, FT>                       Unique_vertices_with_tolerance;  // unordered map is empirically slower
   typedef std::pair<Point, FT>                      Point_with_tolerance;
 
   // If the point appears multiple times on the source border, use it only once to snap target edges
