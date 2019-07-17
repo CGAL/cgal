@@ -254,6 +254,8 @@ regularize_face_selection_borders(
     map_f2i.insert (std::make_pair (fd, idx ++));
   }
 
+  double normalization_factor = 0.;
+  
   for (fg_edge_descriptor ed : edges(fg))
   {
     if (is_border (ed, fg))
@@ -269,12 +271,18 @@ regularize_face_selection_borders(
     std::size_t i1 = map_f2i[f1];
 
     // Weight
-    double w = weight * std::sqrt(CGAL::squared_distance (get (vertex_point_map, esource),
-                                                          get (vertex_point_map, etarget)));
+    double edge_length = std::sqrt(CGAL::squared_distance (get (vertex_point_map, esource),
+                                                           get (vertex_point_map, etarget)));
+    normalization_factor += edge_length;
 
     gedges.push_back (std::make_pair (i0, i1));
-    edge_weights.push_back (w);
+    edge_weights.push_back (edge_length);
   }
+
+  normalization_factor = weight * edge_weights.size() / normalization_factor;
+
+  for (double& w : edge_weights)
+    w *= normalization_factor;
 
   internal::Alpha_expansion_graph_cut_boost alpha_expansion;
   alpha_expansion (gedges, edge_weights, probability_matrix, labels);
