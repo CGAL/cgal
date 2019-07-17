@@ -621,7 +621,7 @@ public:
     return m_traits.compare_distance_object()(query, node.bbox(), m_sq_dist) == CGAL::SMALLER;
   }
 
-  Point closest_point() const { return m_closest_point; }
+  const Point& closest_point() const { return m_closest_point; }
   typename Primitive::Id closest_primitive_id() const { return m_closest_primitive; }
   bool closest_point_initialized() const { return m_closest_point_initialized; }
 
@@ -674,10 +674,11 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor       edge_descriptor;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type   VPM;
+  typedef typename boost::property_traits<VPM>::value_type                  Point;
+  typedef typename boost::property_traits<VPM>::reference                   Point_ref;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       GT;
   typedef typename GT::FT                                                   FT;
-  typedef typename GT::Point_3                                              Point;
   typedef typename GT::Vector_3                                             Vector;
 
   typedef internal::Compare_points_along_edge<TriangleMesh, GT, VPM>        Point_along_edge_comparer;
@@ -881,9 +882,9 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
        *       opp
        */
 
-      const Point left_pt = get(vpmt, source(res, pmt));
-      const Point right_pt = get(vpmt, target(hd_to_split, pmt));
-      const Point opp = get(vpmt, target(next(opposite(res, pmt), pmt), pmt));
+      const Point_ref left_pt = get(vpmt, source(res, pmt));
+      const Point_ref right_pt = get(vpmt, target(hd_to_split, pmt));
+      const Point_ref opp = get(vpmt, target(next(opposite(res, pmt), pmt), pmt));
 
       // Check if 'p' is "visible" from 'opp' (i.e. its projection on the plane 'Pl(left, opp, right)'
       // falls in the cone with apex 'opp' and sides given by 'left' and 'right')
