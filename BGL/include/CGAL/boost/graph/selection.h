@@ -216,6 +216,8 @@ regularize_face_selection_borders(
   double weight = 0.5,
   bool prevent_deselection = true)
 {
+  CGAL_precondition (0.0 <= weight && weight < 1.0);
+  
   typedef boost::graph_traits<FaceGraph> GT;
   typedef typename GT::face_descriptor fg_face_descriptor;
   typedef typename GT::edge_descriptor fg_edge_descriptor;
@@ -278,6 +280,9 @@ regularize_face_selection_borders(
     edge_weights.push_back (edge_length);
   }
 
+  weight = -10. * std::log(1.0 - weight); // Internal cooking so that
+                                          // API weights are in [0:1[
+    
   normalization_factor = weight * edge_weights.size() / normalization_factor;
 
   for (double& w : edge_weights)

@@ -383,9 +383,13 @@ public Q_SLOTS:
     double weight = QInputDialog::getDouble((QWidget*)mw,
                                             tr("Regularize Selection border"),
                                             tr("Weight (higher values regularize more):"),
-                                            1.0, 0.0, 10000., 5, &ok);
+                                            0.5, 0.0, 1.0, 5, &ok);
     if (!ok)
       return;
+
+    // Weights in [0:1[
+    if (weight == 1.0)
+      weight = 0.99999999999;
     
     boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
     int index = 0;
