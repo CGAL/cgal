@@ -382,15 +382,11 @@ public Q_SLOTS:
     bool ok = false;
     double weight = QInputDialog::getDouble((QWidget*)mw,
                                             tr("Regularize Selection border"),
-                                            tr("Weight (higher values regularize more):"),
+                                            tr("Weight (higher values regularize more,\n 1.0 deactivates graphcut and does simple local regularization):"),
                                             0.5, 0.0, 1.0, 5, &ok);
     if (!ok)
       return;
 
-    // Weights in [0:1[
-    if (weight == 1.0)
-      weight = 0.99999999999;
-    
     boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
     int index = 0;
     for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
@@ -428,12 +424,17 @@ public Q_SLOTS:
         return out;
       };
 
+    if (weight == 1.0)
+      std::cerr << "[Selection Regularization] Using simple local algorithm" << std::endl;
+    else
+      std::cerr << "[Selection Regularization] Using global solve (graphcut) with weight = " << weight << std::endl;
+
     std::cerr << "Length of border before regularization = " << border_length() << std::endl;
         
     CGAL::regularize_face_selection_borders (*selection_item->polyhedron(),
                                              boost::make_assoc_property_map(is_selected_map),
                                              get(CGAL::vertex_point,*selection_item->polyhedron()),
-                                             weight);
+                                             weight, true, (weight != 1.0));
 
     std::cerr << "Length of border after regularization = " << border_length() << std::endl;
     

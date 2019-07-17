@@ -214,86 +214,217 @@ regularize_face_selection_borders(
   IsFaceSelectedPMap is_selected,
   VertexPointMap vertex_point_map,
   double weight = 0.5,
-  bool prevent_deselection = true)
+  bool prevent_deselection = true,
+  bool global_regularization = true)
 {
   CGAL_precondition (0.0 <= weight && weight < 1.0);
   
   typedef boost::graph_traits<FaceGraph> GT;
   typedef typename GT::face_descriptor fg_face_descriptor;
+  typedef typename GT::halfedge_descriptor fg_halfedge_descriptor;
   typedef typename GT::edge_descriptor fg_edge_descriptor;
   typedef typename GT::vertex_descriptor fg_vertex_descriptor;
 
-  std::vector<std::pair<std::size_t, std::size_t> > gedges;
-  std::vector<double> edge_weights;
-  std::vector<std::vector<double> > probability_matrix;
-  probability_matrix.resize(2);
-  std::vector<std::size_t> labels;
-
-  std::map<fg_face_descriptor, std::size_t> map_f2i;
-
-  std::size_t idx = 0;
-  std::size_t nb_selected = 0;
-  for(fg_face_descriptor fd : faces(fg))
+  if (global_regularization) // Use graphcut
   {
-    if (get(is_selected,fd))
+    std::vector<std::pair<std::size_t, std::size_t> > gedges;
+    std::vector<double> edge_weights;
+    std::vector<std::vector<double> > probability_matrix;
+    probability_matrix.resize(2);
+    std::vector<std::size_t> labels;
+
+    std::map<fg_face_descriptor, std::size_t> map_f2i;
+
+    std::size_t idx = 0;
+    std::size_t nb_selected = 0;
+    for(fg_face_descriptor fd : faces(fg))
     {
-      if (prevent_deselection)
-        probability_matrix[0].push_back(std::numeric_limits<double>::max());
-      else
-        probability_matrix[0].push_back(1.);
+      if (get(is_selected,fd))
+      {
+        if (prevent_deselection)
+          probability_matrix[0].push_back(std::numeric_limits<double>::max());
+        else
+          probability_matrix[0].push_back(1.);
       
-      probability_matrix[1].push_back(0.);
-      labels.push_back(1);
-      ++ nb_selected;
+        probability_matrix[1].push_back(0.);
+        labels.push_back(1);
+        ++ nb_selected;
+      }
+      else
+      {
+        probability_matrix[0].push_back(0.0);
+        probability_matrix[1].push_back(1.0);
+        labels.push_back(0);
+      }
+      map_f2i.insert (std::make_pair (fd, idx ++));
     }
-    else
-    {
-      probability_matrix[0].push_back(0.0);
-      probability_matrix[1].push_back(1.0);
-      labels.push_back(0);
-    }
-    map_f2i.insert (std::make_pair (fd, idx ++));
-  }
 
-  double normalization_factor = 0.;
+    double normalization_factor = 0.;
   
-  for (fg_edge_descriptor ed : edges(fg))
-  {
-    if (is_border (ed, fg))
-      continue;
+    for (fg_edge_descriptor ed : edges(fg))
+    {
+      if (is_border (ed, fg))
+        continue;
 
-    fg_vertex_descriptor esource = source(ed, fg);
-    fg_vertex_descriptor etarget = target(ed, fg);
+      fg_vertex_descriptor esource = source(ed, fg);
+      fg_vertex_descriptor etarget = target(ed, fg);
 
-    fg_face_descriptor f0 = face (halfedge (ed, fg), fg);
-    fg_face_descriptor f1 = face (opposite(halfedge (ed, fg), fg), fg);
+      fg_face_descriptor f0 = face (halfedge (ed, fg), fg);
+      fg_face_descriptor f1 = face (opposite(halfedge (ed, fg), fg), fg);
     
-    std::size_t i0 = map_f2i[f0];
-    std::size_t i1 = map_f2i[f1];
+      std::size_t i0 = map_f2i[f0];
+      std::size_t i1 = map_f2i[f1];
 
-    // Weight
-    double edge_length = std::sqrt(CGAL::squared_distance (get (vertex_point_map, esource),
-                                                           get (vertex_point_map, etarget)));
-    normalization_factor += edge_length;
+      // Weight
+      double edge_length = std::sqrt(CGAL::squared_distance (get (vertex_point_map, esource),
+                                                             get (vertex_point_map, etarget)));
+      normalization_factor += edge_length;
 
-    gedges.push_back (std::make_pair (i0, i1));
-    edge_weights.push_back (edge_length);
+      gedges.push_back (std::make_pair (i0, i1));
+      edge_weights.push_back (edge_length);
+    }
+
+    weight = -10. * std::log(1.0 - weight); // Internal cooking so that
+    // API weights are in [0:1[
+    
+    normalization_factor = weight * edge_weights.size() / normalization_factor;
+
+    for (double& w : edge_weights)
+      w *= normalization_factor;
+
+    internal::Alpha_expansion_graph_cut_boost alpha_expansion;
+    alpha_expansion (gedges, edge_weights, probability_matrix, labels);
+    
+    for (const auto& p : map_f2i)
+      put(is_selected, p.first, (labels[p.second] == 1));
+  }
+  else // No graphcut, use direct solve
+  {
+    // TODO: this is a quick and dirty version, the complexity is
+    // crazy and it should be easy to do better (with priority queues,
+    // for example)
+    
+    auto border_length =
+      [&]() -> double
+      {
+        double out = 0.;
+        for(fg_edge_descriptor ed : edges(fg))
+        {
+          fg_face_descriptor f0 = face (halfedge (ed, fg), fg);
+          fg_face_descriptor f1 = face (opposite(halfedge (ed, fg), fg), fg);
+          if (get(is_selected,f0) == get(is_selected,f1))
+            continue;
+          
+          fg_vertex_descriptor esource = source(ed, fg);
+          fg_vertex_descriptor etarget = target(ed, fg);
+
+          out += std::sqrt(CGAL::squared_distance (get (vertex_point_map, esource),
+                                                   get (vertex_point_map, etarget)));
+        }
+        return out;
+      };
+
+    // First: try edges
+    while (true)
+    {
+      fg_edge_descriptor chosen;
+      double length_before = border_length();
+      double shortest_length = length_before;
+      
+      for (fg_edge_descriptor ed : edges(fg))
+      {
+        fg_face_descriptor selected = face (halfedge (ed, fg), fg);
+        fg_face_descriptor unselected = face (opposite(halfedge (ed, fg), fg), fg);
+        if (get(is_selected,selected) == get(is_selected,unselected))
+          continue;
+
+        if (get(is_selected, unselected))
+          std::swap (selected, unselected);
+
+        put(is_selected, unselected, true);
+        double length_after = border_length();
+
+        if (length_after < shortest_length)
+        {
+          chosen = ed;
+          shortest_length = length_after;
+        }
+
+        // Cancel
+        put(is_selected, unselected, false);
+      }
+
+      if (shortest_length == length_before)
+        break;
+
+      fg_face_descriptor selected = face (halfedge (chosen, fg), fg);
+      fg_face_descriptor unselected = face (opposite(halfedge (chosen, fg), fg), fg);
+      if (get(is_selected,selected) == get(is_selected,unselected))
+        continue;
+
+      if (get(is_selected, unselected))
+        std::swap (selected, unselected);
+
+      put(is_selected, unselected, true);
+    }
+
+    // Second: try 1-ring of vertices
+    while (true)
+    {
+      fg_vertex_descriptor chosen;
+      double length_before = border_length();
+      double shortest_length = length_before;
+      
+      for (fg_vertex_descriptor vd : vertices(fg))
+      {
+        fg_halfedge_descriptor hd = halfedge(vd, fg);
+        bool adjacent_to_selected = false, adjacent_to_nonselected = false;
+        for (fg_face_descriptor fd : faces_around_target (hd, fg))
+        {
+          if (get(is_selected, fd))
+            adjacent_to_selected = true;
+          else
+            adjacent_to_nonselected = true;
+
+          if (adjacent_to_selected && adjacent_to_nonselected)
+            break;
+        }
+
+        if (!(adjacent_to_selected && adjacent_to_nonselected))
+          continue;
+
+        std::vector<fg_face_descriptor> newly_selected;
+        for (fg_face_descriptor fd : faces_around_target (hd, fg))
+        {
+          if (!get(is_selected, fd))
+          {
+            newly_selected.push_back (fd);
+            put(is_selected, fd, true);
+          }
+        }
+        double length_after = border_length();
+
+        if (length_after < shortest_length)
+        {
+          chosen = vd;
+          shortest_length = length_after;
+        }
+
+        // Cancel
+        for (fg_face_descriptor fd : newly_selected)
+          put(is_selected, fd, false);
+      }
+
+      if (shortest_length == length_before)
+        break;
+
+      fg_halfedge_descriptor hd = halfedge (chosen, fg);
+      
+      for (fg_face_descriptor fd : faces_around_target (hd, fg))
+        put(is_selected, fd, true);
+    }
   }
 
-  weight = -10. * std::log(1.0 - weight); // Internal cooking so that
-                                          // API weights are in [0:1[
-    
-  normalization_factor = weight * edge_weights.size() / normalization_factor;
-
-  for (double& w : edge_weights)
-    w *= normalization_factor;
-
-  internal::Alpha_expansion_graph_cut_boost alpha_expansion;
-  alpha_expansion (gedges, edge_weights, probability_matrix, labels);
-
-
-  for (const auto& p : map_f2i)
-    put(is_selected, p.first, (labels[p.second] == 1));
 }
 
 
