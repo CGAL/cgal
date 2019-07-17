@@ -400,12 +400,40 @@ public Q_SLOTS:
       }
       ++index;
     }
+
+    auto border_length =
+      [&]() -> double
+      {
+        double out = 0.;
+        for(Scene_polyhedron_selection_item::fg_edge_descriptor ed : edges(*selection_item->polyhedron()))
+        {
+          fg_face_descriptor f0 = face (halfedge (ed, *selection_item->polyhedron()),
+                                        *selection_item->polyhedron());
+          fg_face_descriptor f1 = face (opposite(halfedge (ed, *selection_item->polyhedron()),
+                                                 *selection_item->polyhedron()),
+                                        *selection_item->polyhedron());
+          if (is_selected_map[f0] == is_selected_map[f1])
+            continue;
+          
+          fg_vertex_descriptor esource = source(ed, *selection_item->polyhedron());
+          fg_vertex_descriptor etarget = target(ed, *selection_item->polyhedron());
+
+          out += std::sqrt(CGAL::squared_distance (get (get(CGAL::vertex_point,*selection_item->polyhedron()), esource),
+                                                   get (get(CGAL::vertex_point,*selection_item->polyhedron()), etarget)));
+        }
+        return out;
+      };
+
+    std::cerr << "Length of border before regularization = " << border_length() << std::endl;
+        
     CGAL::regularize_face_selection_borders (selection_item->selected_facets,
                                              *selection_item->polyhedron(),
                                              boost::make_assoc_property_map(is_selected_map),
                                              get(CGAL::vertex_point,*selection_item->polyhedron()),
                                              weight);
 
+    std::cerr << "Length of border after regularization = " << border_length() << std::endl;
+    
     selection_item->selected_facets.clear();
     
     for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
