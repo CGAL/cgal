@@ -36,12 +36,14 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QActionGroup>
+#include <QPen>
 #include <QtGui>
 #include <QString>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QPainter>
 #include <QSlider>
 #include <QProgressBar>
 #include <QMessageBox>
@@ -162,7 +164,7 @@ void error_handler(char const* what, char const* expr, char const* file,
 
 enum {
   BLUE_GROUP, RED_GROUP, BLACK_GROUP, BROWN_GROUP, YELLOW_GROUP,
-  MAGENTA_GROUP, AQUA_GROUP, RESULT_GROUP
+  MAGENTA_GROUP, AQUA_GROUP, RESULT_GROUP , UNIVERSAL_GROUP
 };
 
 //A way to maintain 3 category of polygons namely linear,circular
@@ -178,8 +180,10 @@ QPen sPens[] = {
   QPen(QColor(255,255,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin), //yellow
   QPen(QColor(255,0,255),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin), //magenta
   QPen(QColor(0,255,255),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin), //aqua
-  QPen(QColor(0,255,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin)    //green
+  QPen(QColor(0,255,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),    //green
+  QPen(Qt::gray,0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin)    //gray
 };
+
 
 QBrush sBrushes[] = {
   QBrush(QColor(0,0,255,32)),           //blue
@@ -189,7 +193,8 @@ QBrush sBrushes[] = {
   QBrush(QColor(255,255,0,32)),         //yellow
   QBrush(QColor(255,0,255,32)),         //magenta
   QBrush(QColor(0,255,255,32)),         //aqua
-  QBrush(QColor(0,255,0,220))           //green(reserved for result)
+  QBrush(QColor(0,255,0,220)),           //green(reserved for result)
+  QBrush(QColor(255,255,255,32))		//gray univerasal
 };
 //**************************************
 
@@ -516,6 +521,7 @@ public:
     m_rep->set_brush(m_brush);
   }
 
+  
   CGAL::Qt::GraphicsItem const* gi() const { return m_rep->gi(); }
   CGAL::Qt::GraphicsItem* gi() { return m_rep->gi(); }
 
@@ -694,6 +700,7 @@ private:
   Circular_region_source_container m_yellow_circular_sources;
   Circular_region_source_container m_magenta_circular_sources;
   Circular_region_source_container m_aqua_circular_sources;
+  Circular_region_source_container m_univ_circular_sources;
 
   Linear_region_source_container m_blue_linear_sources;
   Linear_region_source_container m_red_linear_sources;
@@ -702,6 +709,7 @@ private:
   Linear_region_source_container m_yellow_linear_sources;
   Linear_region_source_container m_magenta_linear_sources;
   Linear_region_source_container m_aqua_linear_sources;
+  Linear_region_source_container m_univ_linear_sources;
 
   Bezier_region_source_container m_blue_bezier_sources;
   Bezier_region_source_container m_red_bezier_sources;
@@ -710,6 +718,7 @@ private:
   Bezier_region_source_container m_yellow_bezier_sources;
   Bezier_region_source_container m_magenta_bezier_sources;
   Bezier_region_source_container m_aqua_bezier_sources;
+  Bezier_region_source_container m_univ_bezier_sources;
 
   //typedefs of classes used to draw circular and linear polygon
   CGAL::Qt::Graphics_view_linear_polygon_input<Kernel>* m_linear_input;
@@ -816,7 +825,7 @@ public slots:
   void on_drawYellow_toggled (bool a_check);
   void on_drawMagenta_toggled (bool a_check);
   void on_drawAqua_toggled (bool a_check);
-
+  void on_drawUniversalPolygon_toggled(bool a_check);
 
 
   //void on_actionAdd_new_polygon_triggered();
@@ -851,6 +860,7 @@ private:
   Curve_set& magenta_set() { return set(MAGENTA_GROUP); }
   Curve_set& aqua_set() { return set(AQUA_GROUP); }
   Curve_set& result_set() { return set(RESULT_GROUP); }
+  Curve_set& universal_set() {return set(UNIVERSAL_GROUP);}
 
   //gets which group is currently active now
   size_t active_group() const { return m_color_active; }
@@ -890,6 +900,9 @@ private:
   Circular_region_source_container& aqua_circular_sources()
   { return m_aqua_circular_sources; }
 
+  Circular_region_source_container& univ_circular_sources()
+  { return m_univ_circular_sources; }
+
   //returns linear containers
   // Linear_region_source_container const& blue_linear_sources() const
   // { return m_blue_linear_sources; }
@@ -917,6 +930,9 @@ private:
   Linear_region_source_container& aqua_linear_sources()
   { return m_aqua_linear_sources; }
 
+  Linear_region_source_container& univ_linear_sources()
+  { return m_univ_linear_sources; }
+
 //Same for Bezier 
 
   Bezier_region_source_container& blue_bezier_sources()
@@ -940,6 +956,9 @@ private:
   Bezier_region_source_container& aqua_bezier_sources()
   { return m_aqua_bezier_sources; }
 
+  Bezier_region_source_container& univ_bezier_sources()
+  { return m_univ_bezier_sources; }
+
 
   //returns active blue container
   // Circular_region_source_container const& active_circular_sources() const
@@ -958,6 +977,7 @@ private:
      case 4: return m_yellow_circular_sources;
      case 5: return m_magenta_circular_sources;
      case 6: return m_aqua_circular_sources;
+     case 8: return m_univ_circular_sources;
 
      default: break;
     }
@@ -981,6 +1001,7 @@ private:
      case 4: return m_yellow_linear_sources;
      case 5: return m_magenta_linear_sources;
      case 6: return m_aqua_linear_sources;
+     case 8: return m_univ_linear_sources;
 
      default: break;
     }
@@ -1000,6 +1021,7 @@ private:
      case 4: return m_yellow_bezier_sources;
      case 5: return m_magenta_bezier_sources;
      case 6: return m_aqua_bezier_sources;
+     case 8: return m_univ_bezier_sources;
 
      default: break;
     }
@@ -1124,7 +1146,7 @@ MainWindow::MainWindow() :
   CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);
 
-  setupUi(this);
+  setupUi(this);	
 
   setAcceptDrops(true);
   //default setups with Linear
@@ -1141,6 +1163,8 @@ MainWindow::MainWindow() :
   m_curve_sets.push_back(Curve_set(1, sPens[AQUA_GROUP], sBrushes[AQUA_GROUP]));
   m_curve_sets.push_back(Curve_set(1, sPens[RESULT_GROUP],
                                    sBrushes[RESULT_GROUP]));
+  m_curve_sets.push_back(Curve_set(1, sPens[UNIVERSAL_GROUP],
+                                   sBrushes[UNIVERSAL_GROUP]));
 
   for (auto si = m_curve_sets.begin(); si != m_curve_sets.end(); ++ si)
     link_GI(si->gi());
@@ -1204,6 +1228,8 @@ MainWindow::MainWindow() :
                    SLOT(on_drawMagenta_toggled(bool)));
   QObject::connect(drawAqua , SIGNAL(toggled(bool)), this,
                    SLOT(on_drawAqua_toggled(bool)));
+  QObject::connect(drawUniversalPolygon , SIGNAL(toggled(bool)), this,
+                   SLOT(on_drawUniversalPolygon_toggled(bool)));
   QObject::connect(actionPAN,SIGNAL(triggered()), this,
   				   SLOT(on_actionPAN_toggled(bool)));
   QObject::connect(showBlue, SIGNAL(toggled(bool)), this,
@@ -2528,6 +2554,7 @@ void MainWindow::on_actionMinusColor_triggered()
 	if (!(m_visible_brown || m_visible_yellow || m_visible_magenta || m_visible_aqua))
 	{	
 		m_curve_sets[2].clear();
+		m_curve_sets[7].clear();
 		m_color_active = 1;
 
 		black_circular_sources().clear();
@@ -2566,6 +2593,7 @@ void MainWindow::on_actionMinusColor_triggered()
 	else if (!(m_visible_yellow || m_visible_magenta || m_visible_aqua))
 	{	
 		m_curve_sets[3].clear();
+		m_curve_sets[7].clear();
 		m_color_active = 2;
 
 		brown_circular_sources().clear();
@@ -2605,6 +2633,7 @@ void MainWindow::on_actionMinusColor_triggered()
 	else if (!(m_visible_magenta || m_visible_aqua))
 	{	
 		m_curve_sets[4].clear();
+		m_curve_sets[7].clear();
 		m_color_active = 3;
 
 		yellow_circular_sources().clear();
@@ -2644,6 +2673,7 @@ void MainWindow::on_actionMinusColor_triggered()
 	else if (! m_visible_aqua)
 	{	
 		m_curve_sets[5].clear();
+		m_curve_sets[7].clear();
 		m_color_active = 4;
 
 		magenta_circular_sources().clear();
@@ -2683,6 +2713,7 @@ void MainWindow::on_actionMinusColor_triggered()
 	{
 
 		m_curve_sets[6].clear();
+		m_curve_sets[7].clear();
 		m_color_active = 5;
 
 		aqua_circular_sources().clear();
@@ -2733,6 +2764,7 @@ void MainWindow::on_actionNew_triggered()
   yellow_circular_sources().clear();
   magenta_circular_sources().clear();
   aqua_circular_sources().clear();
+  univ_circular_sources().clear();
 
   blue_linear_sources().clear();
   red_linear_sources().clear();
@@ -2741,6 +2773,7 @@ void MainWindow::on_actionNew_triggered()
   yellow_linear_sources().clear();
   magenta_linear_sources().clear();
   aqua_linear_sources().clear();
+  univ_linear_sources().clear();
 
   blue_bezier_sources().clear();
   red_bezier_sources().clear();
@@ -2749,6 +2782,7 @@ void MainWindow::on_actionNew_triggered()
   yellow_bezier_sources().clear();
   magenta_bezier_sources().clear();
   aqua_bezier_sources().clear();
+  univ_bezier_sources().clear();
     
   SetViewBlue  (true);
   SetViewRed   (true);
@@ -2763,6 +2797,15 @@ void MainWindow::on_actionNew_triggered()
   m_bezier_active = false;
   
   m_color_active = 0;
+
+  actionComplement -> setChecked(false);
+  actionUnion -> setChecked(false);
+  actionIntersection -> setChecked(false);
+  actionDifference -> setChecked(false);
+  actionSymmetric_Difference -> setChecked(false);
+  actionMinkowski_Sum -> setChecked(false);
+
+  actionInsertLinear -> setChecked(true);
 
   m_color_complement = 0; //default
   m_blue_int = true; //default
@@ -2843,7 +2886,7 @@ void MainWindow::on_actionNew_triggered()
 
   m_visible_black = false;
   showBlack ->setVisible(false);
-  drawBlack -> setVisible(false);
+  //drawBlack -> setVisible(false);
   showBlackComp -> setVisible(false);
   showBlackDiff -> setVisible(false);
   showBlackUnion -> setVisible(false);
@@ -2855,7 +2898,7 @@ void MainWindow::on_actionNew_triggered()
   
   m_visible_brown = false;
   showBrown ->setVisible(false);
-  drawBrown -> setVisible(false);
+  //drawBrown -> setVisible(false);
   showBrownComp -> setVisible(false);
   showBrownDiff -> setVisible(false);
   showBrownUnion -> setVisible(false);
@@ -2866,7 +2909,7 @@ void MainWindow::on_actionNew_triggered()
 
   m_visible_yellow = false;
   showYellow ->setVisible(false);
-  drawYellow -> setVisible(false);
+  //drawYellow -> setVisible(false);
   showYellowComp -> setVisible(false);
   showYellowDiff -> setVisible(false);
   showYellowUnion -> setVisible(false);
@@ -2877,7 +2920,7 @@ void MainWindow::on_actionNew_triggered()
 
   m_visible_magenta = false;
   showMagenta ->setVisible(false);
-  drawMagenta -> setVisible(false);
+  //drawMagenta -> setVisible(false);
   showMagentaComp -> setVisible(false);
   showMagentaDiff -> setVisible(false);
   showMagentaUnion -> setVisible(false);
@@ -2888,7 +2931,7 @@ void MainWindow::on_actionNew_triggered()
 
   m_visible_aqua = false;
   showAqua ->setVisible(false);
-  drawAqua -> setVisible(false);
+  //drawAqua -> setVisible(false);
   showAquaComp -> setVisible(false);
   showAquaDiff -> setVisible(false);
   showAquaUnion -> setVisible(false);
@@ -2936,6 +2979,7 @@ void MainWindow::on_actionDelete_triggered()
      case 4: yellow_set().clear();yellow_circular_sources().clear();yellow_bezier_sources().clear();yellow_linear_sources().clear();break;
      case 5: magenta_set().clear();magenta_circular_sources().clear();magenta_bezier_sources().clear();magenta_linear_sources().clear();break;
      case 6: aqua_set().clear();aqua_circular_sources().clear();aqua_bezier_sources().clear();aqua_linear_sources().clear();break;
+     case 8: universal_set().clear();univ_circular_sources().clear();univ_bezier_sources().clear();univ_linear_sources().clear();break;
 
      default: break;    //! \todo Handle default case.
     }
@@ -2957,6 +3001,7 @@ void MainWindow::on_actionDeleteAll_triggered()
     yellow_set().clear();yellow_circular_sources().clear();yellow_bezier_sources().clear();yellow_linear_sources().clear();
     magenta_set().clear();magenta_circular_sources().clear();magenta_bezier_sources().clear();magenta_linear_sources().clear();
     aqua_set().clear();aqua_circular_sources().clear();aqua_bezier_sources().clear();aqua_linear_sources().clear();
+    universal_set().clear();univ_circular_sources().clear();univ_bezier_sources().clear();univ_linear_sources().clear();
     //result_set().clear();
   }
   lDone = true;
@@ -2968,7 +3013,8 @@ void MainWindow::on_actionDeleteResult_triggered()
 {
     bool lDone  = false;
     bool lProceed = result_set().is_empty() ? true : ask_user_yesno("Store result","Result will be deleted\n continue anyway?\n");
-    if (lProceed){
+    if (lProceed)
+    {
       result_set().clear();
     }
     lDone = true;
@@ -2982,6 +3028,7 @@ void MainWindow::on_drawBrown_toggled(bool /* a_check */) { m_color_active = 3; 
 void MainWindow::on_drawYellow_toggled(bool /* a_check */) { m_color_active = 4; }
 void MainWindow::on_drawMagenta_toggled(bool /* a_check */) { m_color_active = 5; }
 void MainWindow::on_drawAqua_toggled(bool /* a_check */) { m_color_active = 6; }
+void MainWindow::on_drawUniversalPolygon_toggled(bool /* a_check */) { m_color_active = 8; } 
 
 //extra utilities
 void MainWindow::on_actionRecenter_triggered() { zoomToFit(); }
@@ -3500,6 +3547,7 @@ void MainWindow::switch_sets_type(int aType)
   switch_set_type(magenta_set(), aType);
   switch_set_type(aqua_set(), aType);
   switch_set_type(result_set(), aType);
+  switch_set_type(universal_set(), aType);
 }
 
 bool MainWindow::ensure_circular_mode()
@@ -3509,7 +3557,7 @@ bool MainWindow::ensure_circular_mode()
     bool lProceed = blue_set().is_empty() && red_set().is_empty() &&
       black_set().is_empty() && brown_set().is_empty() &&
       yellow_set().is_empty() && magenta_set().is_empty() &&
-      aqua_set().is_empty();
+      aqua_set().is_empty() && universal_set().is_empty();
 
     if (! lProceed)
       lProceed = ask_user_yesno("Circular mode switch",
@@ -3534,7 +3582,7 @@ bool MainWindow::ensure_bezier_mode()
     bool lProceed = blue_set().is_empty() && red_set().is_empty() &&
       black_set().is_empty() && brown_set().is_empty() &&
       yellow_set().is_empty() && magenta_set().is_empty() &&
-      aqua_set().is_empty();
+      aqua_set().is_empty() && universal_set().is_empty();
     
     if ( ! lProceed )
       lProceed = ask_user_yesno("Bezier mode switch"
@@ -3559,7 +3607,7 @@ bool MainWindow::ensure_linear_mode()
     bool lProceed = blue_set().is_empty() && red_set().is_empty() &&
       black_set().is_empty() && brown_set().is_empty() &&
       yellow_set().is_empty() && magenta_set().is_empty() &&
-      aqua_set().is_empty();
+      aqua_set().is_empty() && universal_set().is_empty();
 
     if (! lProceed)
       lProceed = ask_user_yesno("Linear/Circular mode switch",
@@ -3700,16 +3748,27 @@ void MainWindow::on_actionComplement_triggered()
   actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-  /*switch(m_color_complement)
+
+  if(!universal_set().is_empty()) 
   {
-    case 0: if(!blue_set().is_empty()) {result_set().assign(QGraphicsRectItem(0,0,1124,664));result_set().difference(blue_set());} break;
-    case 1: if(!red_set().is_empty()) {result_set().assign();result_set().difference(red_set());} break;
-    case 2: if(!black_set().is_empty()) {result_set().assign();result_set().difference(black_set());} break;
-    case 3: if(!brown_set().is_empty()) {result_set().assign();result_set().difference(brown_set());} break;
-    case 4: if(!yellow_set().is_empty()) {result_set().assign();result_set().difference(yellow_set());} break;
-    case 5: if(!magenta_set().is_empty()) {result_set().assign();result_set().difference(magenta_set());} break;
-    case 6: if(!aqua_set().is_empty()) {result_set().assign();result_set().difference(aqua_set());} break;
-  }*/
+	  switch(m_color_complement)
+	  {
+	    case 0: if(!blue_set().is_empty()) {result_set().assign(universal_set()); result_set().difference(blue_set());} break;
+	    case 1: if(!red_set().is_empty()) {result_set().assign(universal_set()); result_set().assign(result_set());result_set().difference(red_set());} break;
+	    case 2: if(!black_set().is_empty()) {result_set().assign(universal_set());  result_set().assign(result_set());result_set().difference(black_set());} break;
+	    case 3: if(!brown_set().is_empty()) {result_set().assign(universal_set());  result_set().assign(result_set());result_set().difference(brown_set());} break;
+	    case 4: if(!yellow_set().is_empty()) {result_set().assign(universal_set());  result_set().assign(result_set());result_set().difference(yellow_set());} break;
+	    case 5: if(!magenta_set().is_empty()) {result_set().assign(universal_set()); result_set().assign(result_set());result_set().difference(magenta_set());} break;
+	    case 6: if(!aqua_set().is_empty()) {result_set().assign(universal_set()); result_set().assign(result_set());result_set().difference(aqua_set());} break;
+	  }
+  }
+
+  else
+  {
+  	bool lProceed = ask_user_yesno("Complement Operation Error", "Universal Polygon Set Not Defined\nWould like to define Universal Polygon");
+  }
+
+  lDone = true;
   this->setCursor(old);
   if (lDone) modelChanged();
 }
@@ -3742,7 +3801,8 @@ void MainWindow::on_actionIntersection_triggered()
   if (!yellow_set().is_empty() && m_yellow_int) result_set().intersect(yellow_set());
   if (!magenta_set().is_empty() && m_magenta_int) result_set().intersect(magenta_set());
   if (!aqua_set().is_empty() && m_aqua_int) result_set().intersect(aqua_set());
-    lDone = true;
+    
+  lDone = true;
 
   this->setCursor(old);
   if (lDone) modelChanged();
@@ -3965,8 +4025,10 @@ void MainWindow::zoomToFit()
 {
   boost::optional<QRectF> lTotalRect;
 
-  for (auto si = m_curve_sets.begin(); si != m_curve_sets.end(); ++ si) {
-    if (!si->is_empty()) {
+  for (auto si = m_curve_sets.begin(); si != m_curve_sets.end(); ++ si) 
+  {
+    if (!si->is_empty()) 
+    {
       QRectF lRect = si->bounding_rect();
       if (lTotalRect) lTotalRect = *lTotalRect | lRect;
       else lTotalRect = lRect;
