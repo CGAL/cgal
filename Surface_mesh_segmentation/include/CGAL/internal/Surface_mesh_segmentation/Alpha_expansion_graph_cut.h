@@ -75,6 +75,84 @@ namespace CGAL
 namespace internal
 {
 
+struct Alpha_expansion_old_API_wrapper_graph
+{
+  typedef std::size_t vertex_descriptor;
+  typedef std::size_t edge_descriptor;
+  typedef boost::directed_tag directed_category;
+  typedef boost::disallow_parallel_edge_tag edge_parallel_category;
+  typedef boost::edge_list_graph_tag traversal_category;
+    
+  typedef boost::counting_iterator<std::size_t> counting_iterator;
+  typedef CGAL::Iterator_range<counting_iterator> counting_range;
+
+  typedef CGAL::Identity_property_map<std::size_t> Vertex_index_map;
+  typedef CGAL::Pointer_property_map<std::size_t>::type Vertex_label_map;
+
+  struct Vertex_label_probability_map
+  {
+    typedef std::size_t key_type;
+    typedef std::vector<double> value_type;
+    typedef value_type reference;
+    typedef boost::readable_property_map_tag category;
+      
+    const std::vector<std::vector<double> >* probability_matrix;
+
+    Vertex_label_probability_map (const std::vector<std::vector<double> >* probability_matrix)
+      : probability_matrix (probability_matrix)
+    { }
+
+    friend reference get (const Vertex_label_probability_map& pmap, key_type idx)
+    {
+      std::vector<double> out;
+      out.reserve (pmap.probability_matrix->size());
+      for (std::size_t i = 0; i < pmap.probability_matrix->size(); ++ i)
+        out.push_back ((*pmap.probability_matrix)[i][idx]);
+      return out;
+    }
+
+  };
+
+  typedef CGAL::Pointer_property_map<double>::const_type Edge_weight_map;
+    
+  const std::vector<std::pair<std::size_t, std::size_t> >& edges;
+  const std::vector<double>& edge_weights;
+  const std::vector<std::vector<double> >& probability_matrix;
+  std::vector<std::size_t>& labels;
+
+  Alpha_expansion_old_API_wrapper_graph (const std::vector<std::pair<std::size_t, std::size_t> >& edges,
+                                         const std::vector<double>& edge_weights,
+                                         const std::vector<std::vector<double> >& probability_matrix,
+                                         std::vector<std::size_t>& labels)
+    : edges (edges), edge_weights (edge_weights), probability_matrix (probability_matrix), labels (labels)
+  { }
+
+  friend counting_range vertices (const Alpha_expansion_old_API_wrapper_graph& graph)
+  {
+    return CGAL::make_range (boost::counting_iterator<std::size_t>(0),
+                             boost::counting_iterator<std::size_t>(graph.labels.size()));
+  }
+
+  friend std::size_t num_vertices (const Alpha_expansion_old_API_wrapper_graph& graph) { return graph.labels.size(); }
+
+  friend counting_range edges (const Alpha_expansion_old_API_wrapper_graph& graph)
+  {
+    return CGAL::make_range (boost::counting_iterator<std::size_t>(0),
+                             boost::counting_iterator<std::size_t>(graph.edges.size()));
+  }
+
+  friend vertex_descriptor source (edge_descriptor ed, const Alpha_expansion_old_API_wrapper_graph& graph)
+  { return graph.edges[ed].first; }
+  friend vertex_descriptor target (edge_descriptor ed, const Alpha_expansion_old_API_wrapper_graph& graph)
+  { return graph.edges[ed].second; }
+
+  Vertex_index_map vertex_index_map() const { return Vertex_index_map(); }
+  Vertex_label_map vertex_label_map() { return CGAL::make_property_map(labels); }
+  Vertex_label_probability_map vertex_label_probability_map() const
+  { return Vertex_label_probability_map(&probability_matrix); }
+  Edge_weight_map edge_weight_map() const { return CGAL::make_property_map(edge_weights); }
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////
 //   Comments about performance:
 //
@@ -182,6 +260,8 @@ private:
     return boost::make_tuple(v1_v2, v2_v1);
   }
 
+
+
 public:
   /**
    * Applies alpha-expansion graph-cut for energy minimization.
@@ -196,7 +276,33 @@ public:
                     edges,
                     const std::vector<double>& edge_weights,
                     const std::vector<std::vector<double> >& probability_matrix,
-                    std::vector<std::size_t>& labels) const {
+                    std::vector<std::size_t>& labels) const
+  {
+    Alpha_expansion_old_API_wrapper_graph graph (edges, edge_weights, probability_matrix, labels);
+
+    return (*this)(graph,
+                   graph.edge_weight_map(),
+                   graph.vertex_index_map(),
+                   graph.vertex_label_map(),
+                   graph.vertex_label_probability_map());
+  }
+
+  template <typename InputGraph,
+            typename Edge_weight_map,
+            typename Vertex_index_map,
+            typename Vertex_label_map,
+            typename Vertex_label_probability_map>
+  double operator()(const InputGraph& input_graph,
+                    Edge_weight_map edge_weight_map,
+                    Vertex_index_map vertex_index_map,
+                    Vertex_label_map vertex_label_map,
+                    Vertex_label_probability_map vertex_label_probability_map) const
+  {
+    typedef boost::graph_traits<InputGraph> GT;
+    typedef typename GT::edge_descriptor input_edge_descriptor;
+    typedef typename GT::vertex_descriptor input_vertex_descriptor;
+
+    // TODO: check this hardcoded parameter
     const double tolerance = 1e-10;
 
     double min_cut = (std::numeric_limits<double>::max)();
@@ -207,18 +313,18 @@ public:
     #endif
 
     std::vector<Vertex_descriptor> inserted_vertices;
-    inserted_vertices.resize(labels.size());
+    inserted_vertices.resize(num_vertices (input_graph));
+
+    std::size_t number_of_labels = get(vertex_label_probability_map, *std::begin(vertices(input_graph))).size();
 
     Graph graph;
 
     bool success;
     do {
       success = false;
-      std::size_t alpha = 0;
 
-      for(std::vector<std::vector<double> >::const_iterator it =
-            probability_matrix.begin();
-          it != probability_matrix.end(); ++it, ++alpha) {
+      for (std::size_t alpha = 0; alpha < number_of_labels; ++ alpha)
+      {
         graph.clear();
 
         Vertex_descriptor cluster_source = boost::add_vertex(graph);
@@ -230,16 +336,18 @@ public:
         #endif
 
         // For E-Data
-        // add every facet as a vertex to the graph, put edges to source & sink vertices
-        for(std::size_t vertex_i = 0; vertex_i < labels.size(); ++vertex_i) {
+        // add every input vertex as a vertex to the graph, put edges to source & sink vertices
+        for (input_vertex_descriptor vd : vertices(input_graph))
+        {
+          std::size_t vertex_i = get(vertex_index_map, vd);
           Vertex_descriptor new_vertex = boost::add_vertex(graph);
           inserted_vertices[vertex_i] = new_vertex;
-          double source_weight = probability_matrix[alpha][vertex_i];
+          double source_weight = get(vertex_label_probability_map, vd)[alpha];
           // since it is expansion move, current alpha labeled vertices will be assigned to alpha again,
           // making sink_weight 'infinity' guarantee this.
-          double sink_weight = (labels[vertex_i] == alpha) ?
-                               (std::numeric_limits<double>::max)()
-                               : probability_matrix[labels[vertex_i]][vertex_i];
+          double sink_weight = (get(vertex_label_map, vd) == alpha ?
+                                (std::numeric_limits<double>::max)()
+                                : get(vertex_label_probability_map, vd)[get(vertex_label_map, vd)]);
 
           add_edge_and_reverse(cluster_source, new_vertex, source_weight, 0.0, graph);
           add_edge_and_reverse(new_vertex, cluster_sink, sink_weight, 0.0, graph);
@@ -251,25 +359,32 @@ public:
 
         // For E-Smooth
         // add edge between every vertex,
-        std::vector<double>::const_iterator weight_it = edge_weights.begin();
-        for(std::vector<std::pair<std::size_t, std::size_t> >::const_iterator edge_it =
-              edges.begin(); edge_it != edges.end();
-            ++edge_it, ++weight_it) {
-          Vertex_descriptor v1 = inserted_vertices[edge_it->first],
-                            v2 = inserted_vertices[edge_it->second];
-          std::size_t label_1 = labels[edge_it->first], label_2 = labels[edge_it->second];
+        for (input_edge_descriptor ed : edges(input_graph))
+        {
+          input_vertex_descriptor vd1 = source(ed, input_graph);
+          input_vertex_descriptor vd2 = target(ed, input_graph);
+          std::size_t idx1 = get (vertex_index_map, vd1);
+          std::size_t idx2 = get (vertex_index_map, vd2);
+          
+          double weight = get (edge_weight_map, ed);
+          
+          Vertex_descriptor v1 = inserted_vertices[idx1],
+                            v2 = inserted_vertices[idx2];
+          
+          std::size_t label_1 = get (vertex_label_map, vd1);
+          std::size_t label_2 = get (vertex_label_map, vd2);
           if(label_1 == label_2) {
             if(label_1 != alpha) {
-              add_edge_and_reverse(v1, v2, *weight_it, *weight_it, graph);
+              add_edge_and_reverse(v1, v2, weight, weight, graph);
             }
           } else {
             Vertex_descriptor inbetween = boost::add_vertex(graph);
 
-            double w1 = (label_1 == alpha) ? 0 : *weight_it;
-            double w2 = (label_2 == alpha) ? 0 : *weight_it;
+            double w1 = (label_1 == alpha) ? 0 : weight;
+            double w2 = (label_2 == alpha) ? 0 : weight;
             add_edge_and_reverse(inbetween, v1, w1, w1, graph);
             add_edge_and_reverse(inbetween, v2, w2, w2, graph);
-            add_edge_and_reverse(inbetween, cluster_sink, *weight_it, 0.0, graph);
+            add_edge_and_reverse(inbetween, cluster_sink, weight, 0.0, graph);
           }
         }
         #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
@@ -302,12 +417,14 @@ public:
         min_cut = flow;
         success = true;
         //update labeling
-        for(std::size_t vertex_i = 0; vertex_i < inserted_vertices.size(); ++vertex_i) {
+        for (input_vertex_descriptor vd : vertices (input_graph))
+        {
+          std::size_t vertex_i = get (vertex_index_map, vd);
           boost::default_color_type color = boost::get(boost::vertex_color, graph,
                                             inserted_vertices[vertex_i]);
-          if(labels[vertex_i] != alpha
+          if(get (vertex_label_map, vd) != alpha
               && color == ColorTraits::white()) { //new comers (expansion occurs)
-            labels[vertex_i] = alpha;
+            put (vertex_label_map, vd, alpha);
           }
         }
       }
