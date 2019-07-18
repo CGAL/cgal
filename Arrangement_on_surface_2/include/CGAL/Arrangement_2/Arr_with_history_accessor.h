@@ -159,7 +159,10 @@ public:
     he->curve().data().insert (&cv);
   
     return;
-  }  
+  }
+
+  //@}
+
 };
 
 } //namespace CGAL

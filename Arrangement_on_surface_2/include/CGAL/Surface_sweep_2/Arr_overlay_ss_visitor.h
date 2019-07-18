@@ -349,6 +349,8 @@ protected:
    */
   void _create_edge(Subcurve* sc, Halfedge_handle res_he);
 
+  //@}
+
   /*! A visitor class to facilitate the call to create_vertex(). */
   class Create_vertex_visitor : public boost::static_visitor<> {
   private:

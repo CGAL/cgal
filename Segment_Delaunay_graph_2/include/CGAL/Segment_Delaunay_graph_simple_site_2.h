@@ -34,6 +34,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -141,11 +142,13 @@ public:
   }
 
   const Point_2& source_of_crossing_site(unsigned int i) const {
+    CGAL_USE(i);
     CGAL_precondition( is_segment() && !is_input(i) );
     return p_[0];
   }
 
   const Point_2& target_of_crossing_site(unsigned int i) const {
+    CGAL_USE(i);
     CGAL_precondition( is_segment() && !is_input(i) );
     return p_[0];
   }

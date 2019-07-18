@@ -507,7 +507,7 @@ returns the total number of elements that `cc` can hold without requiring
 reallocation. 
 */ 
 size_type capacity() const; 
-
+/// @}
 
 /// \name Access Member Functions 
 /// @{ 

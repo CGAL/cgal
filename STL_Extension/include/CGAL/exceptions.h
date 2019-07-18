@@ -73,7 +73,6 @@ namespace CGAL {
          \c CGAL_error_msg for an unconditional error message that cannot 
          be disabled with macros.
 */
-//@{
 
 // Failure types and exceptions
 // ============================

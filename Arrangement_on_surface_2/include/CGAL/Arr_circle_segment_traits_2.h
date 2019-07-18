@@ -751,6 +751,9 @@ public:
 
   /*! Obtain a Trim_2 functor object. */
   Trim_2 trim_2_object() const { return Trim_2(*this); }
+
+  // @}
+
 };
 
 } //namespace CGAL
