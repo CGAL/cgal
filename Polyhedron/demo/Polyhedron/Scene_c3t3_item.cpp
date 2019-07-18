@@ -137,13 +137,15 @@ public :
   {
     if(is_fast)
       return;
+
     if(!alphaSlider)
     {
       alphaSlider = new QSlider(::Qt::Horizontal);
       alphaSlider->setMinimum(0);
       alphaSlider->setMaximum(255);
       alphaSlider->setValue(255);
-    }    
+    }
+    viewer->makeCurrent();
     const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
     float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
     QVector4D cp(-plane.a(), -plane.b(), -plane.c(), -plane.d());
@@ -1605,10 +1607,10 @@ void Scene_c3t3_item::show_spheres(bool b)
       d->spheres->setRenderingMode(Gouraud);
       connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
       connect(d->spheres, SIGNAL(on_color_changed()), this, SLOT(on_spheres_color_changed()));
+      d->computeSpheres();
+      lockChild(d->spheres);
       scene->addItem(d->spheres);
       scene->changeGroup(d->spheres, this);
-      lockChild(d->spheres);
-      d->computeSpheres();
     }
     else if (!b && d->spheres!=NULL)
     {
@@ -1644,7 +1646,6 @@ void Scene_c3t3_item::show_intersection(bool b)
         Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
         ncthis->d->computeIntersections(viewer);
         d->are_intersection_buffers_filled[viewer] = true;
-        ncthis->show_intersection(true);
       }
     }
     scene->addItem(d->intersection);
