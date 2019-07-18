@@ -43,13 +43,7 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
 
-find_package( TBB )
 create_single_source_cgal_program( "hausdorff_distance_remeshing_example.cpp")
-if( TBB_FOUND )
-  CGAL_target_use_TBB(hausdorff_distance_remeshing_example)
-else()
-  message( STATUS "NOTICE: Intel TBB was not found. hausdorff_distance_example will use sequential code." )
-endif()
 
 if (EIGEN3_FOUND)
   # Executables that require Eigen 3.2
@@ -110,5 +104,11 @@ create_single_source_cgal_program( "triangulate_faces_example_OM.cpp")
 target_link_libraries( triangulate_faces_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif(OpenMesh_FOUND)
 
-
+find_package( TBB )
+if( TBB_FOUND )
+  CGAL_target_use_TBB(hausdorff_distance_remeshing_example)
+  CGAL_target_use_TBB(snap_example)
+else()
+  message( STATUS "NOTICE: Intel TBB was not found. Sequential code will be used." )
+endif()
 
