@@ -145,7 +145,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   sceneView = ui->sceneView;
   viewer = ui->viewer;
   // do not save the state of the viewer (anoying)
-  viewer->setStateFileName(QString::null);
+  viewer->setStateFileName(QString());
 
   // setup scene
   scene = new Scene(this);
@@ -677,7 +677,7 @@ void MainWindow::updateMenus()
   }
   // sort the operations menu by name
   as = ui->menuOperations->actions();
-  qSort(as.begin(), as.end(), actionsByName);
+  std::sort(as.begin(), as.end(), actionsByName);
   ui->menuOperations->clear();
   ui->menuOperations->addActions(as);
 }
@@ -1990,9 +1990,9 @@ void MainWindow::on_actionLoadPlugin_triggered()
 void MainWindow::recurseExpand(QModelIndex index)
 {
     int row = index.row();
-    if(index.child(0,0).isValid())
+    if(scene->index(0,0,index).isValid())
     {
-        recurseExpand(index.child(0,0));
+        recurseExpand(scene->index(0,0,index));
     }
         CGAL::Three::Scene_group_item* group =
                 qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
@@ -2171,10 +2171,17 @@ void MainWindow::resetHeader()
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().horizontalAdvance("_#_"));
+  sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
+  sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().horizontalAdvance(QString("_AB_")));
+  sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().horizontalAdvance(QString("_View_")));
+#else
   sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
+#endif
 }
 
 void MainWindow::reset_default_loaders()

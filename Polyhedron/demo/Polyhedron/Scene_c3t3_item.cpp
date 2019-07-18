@@ -1491,7 +1491,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
   Tr::Cell_handle ch = facet.id().first;
   if(intersected_cells.find(ch) == intersected_cells.end())
   {
-    QColor c = this->colors_subdomains[ch->subdomain_index()].light(50);
+    QColor c = this->colors_subdomains[ch->subdomain_index()].lighter(50);
 
     const Tr::Bare_point& pa = wp2p(ch->vertex(0)->point());
     const Tr::Bare_point& pb = wp2p(ch->vertex(1)->point());
@@ -1516,7 +1516,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
         const Tr::Bare_point& pc = wp2p(nh->vertex(2)->point());
         const Tr::Bare_point& pd = wp2p(nh->vertex(3)->point());
 
-        QColor c = this->colors_subdomains[nh->subdomain_index()].light(50);
+        QColor c = this->colors_subdomains[nh->subdomain_index()].lighter(50);
 
         CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 

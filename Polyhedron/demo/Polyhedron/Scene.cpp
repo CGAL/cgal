@@ -817,7 +817,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         QList<float> depths = picked_item_IDs.keys();
         if(!depths.isEmpty())
         {
-            qSort(depths);
+            std::sort(depths.begin(), depths.end());
             int id = picked_item_IDs[depths.first()];
             setSelectedItemIndex(id);
             viewer->setSelectedName(id);

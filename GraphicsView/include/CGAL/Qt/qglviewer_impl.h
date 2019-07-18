@@ -1606,7 +1606,7 @@ CGAL_INLINE_FUNCTION
 QString CGAL::QGLViewer::mouseActionString(qglviewer::MouseAction ma) {
   switch (ma) {
   case CGAL::qglviewer::NO_MOUSE_ACTION:
-    return QString::null;
+    return QString();
   case CGAL::qglviewer::ROTATE:
     return CGAL::QGLViewer::tr("Rotates", "ROTATE mouse action");
   case CGAL::qglviewer::ZOOM:
@@ -1632,14 +1632,14 @@ QString CGAL::QGLViewer::mouseActionString(qglviewer::MouseAction ma) {
   case CGAL::qglviewer::ZOOM_ON_REGION:
     return CGAL::QGLViewer::tr("Zooms on region for", "ZOOM_ON_REGION mouse action");
   }
-  return QString::null;
+  return QString();
 }
 
 CGAL_INLINE_FUNCTION
 QString CGAL::QGLViewer::clickActionString(CGAL::qglviewer::ClickAction ca) {
   switch (ca) {
   case CGAL::qglviewer::NO_CLICK_ACTION:
-    return QString::null;
+    return QString();
   case CGAL::qglviewer::ZOOM_ON_PIXEL:
     return CGAL::QGLViewer::tr("Zooms on pixel", "ZOOM_ON_PIXEL click action");
   case CGAL::qglviewer::ZOOM_TO_FIT:
@@ -1664,7 +1664,7 @@ QString CGAL::QGLViewer::clickActionString(CGAL::qglviewer::ClickAction ca) {
   case CGAL::qglviewer::ALIGN_CAMERA:
     return CGAL::QGLViewer::tr("Aligns camera", "ALIGN_CAMERA click action");
   }
-  return QString::null;
+  return QString();
 }
 
 static QString keyString(unsigned int key) {
@@ -1946,7 +1946,7 @@ void CGAL::QGLViewer::setKeyDescription(unsigned int key, QString description) {
 CGAL_INLINE_FUNCTION
 QString CGAL::QGLViewer::cameraPathKeysString() const {
   if (pathIndex_.isEmpty())
-    return QString::null;
+    return QString();
 
   QVector< ::Qt::Key> keys;
   keys.reserve(pathIndex_.count());
@@ -1954,7 +1954,7 @@ QString CGAL::QGLViewer::cameraPathKeysString() const {
                                                   endi = pathIndex_.end();
        i != endi; ++i)
     keys.push_back(i.key());
-  qSort(keys);
+  std::sort(keys.begin(), keys.end());
 
   QVector< ::Qt::Key>::const_iterator it = keys.begin(), end = keys.end();
   QString res = keyString(*it);
@@ -3544,7 +3544,7 @@ This is the name of the XML file where saveStateToFile() saves the viewer state
 restoreStateFromFile() to restore this state later (usually in your init()
 method).
 
-Setting this value to \c QString::null will disable the automatic state file
+Setting this value to \c QString() will disable the automatic state file
 saving that normally occurs on exit.
 
 If more than one viewer are created by the application, this function will
@@ -3576,7 +3576,7 @@ Use restoreStateFromFile() to restore this viewer state.
 
 This method is automatically called when a viewer is closed (using Escape or
 using the window's upper right \c x close button). setStateFileName() to \c
-QString::null to prevent this. */
+QString() to prevent this. */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::saveStateToFile() {
   QString name = stateFileName();
