@@ -60,12 +60,12 @@ public:
     bB.reserve(pB.size() - 1 );
     
     Iterator begin = pA.begin();
-    for(int j=0; j < pA.size()-1; j++){
+    for(std::size_t j=0; j < pA.size()-1; j++){
       Bbox_2 bb = pA[j].bbox() + pA[j+1].bbox();
       bA.push_back(Box(bb, begin+j));
     }
     begin = pB.begin();
-    for(int j=0; j < pB.size()-1; j++){
+    for(std::size_t j=0; j < pB.size()-1; j++){
       Bbox_2 bb = pB[j].bbox() + pB[j+1].bbox();
       bB.push_back(Box(bb, begin+j));
     }
