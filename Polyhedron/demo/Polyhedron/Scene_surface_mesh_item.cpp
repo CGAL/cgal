@@ -2301,9 +2301,9 @@ void write_in_vbo(Vbo* vbo, cgal_gl_data* data,
                std::size_t size)
 {
   vbo->bind();
-  vbo->vbo.write((3*size)*sizeof(cgal_gl_data),
+  vbo->vbo.write(static_cast<int>((3*size)*sizeof(cgal_gl_data)),
                  data,
-                 3*sizeof(cgal_gl_data));
+                 static_cast<int>(3*sizeof(cgal_gl_data)));
   vbo->release();
 }
 
