@@ -16,6 +16,10 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/unordered_set.hpp>
 
+#include <CGAL/boost/graph/Dual.h>
+#include <boost/graph/filtered_graph.hpp>
+#include <boost/iterator/filter_iterator.hpp>
+
 #define CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
 
@@ -58,6 +62,200 @@ extract_selection_boundary(
   }
   return out;
 }
+
+template <typename FaceGraph,
+          typename IsSelectedMap,
+          typename FaceIndexMap,
+          typename VertexPointMap>
+struct Regularization_graph
+{
+  typedef boost::graph_traits<FaceGraph> GT;
+  typedef typename GT::face_descriptor fg_face_descriptor;
+  typedef typename GT::face_iterator fg_face_iterator;
+  typedef typename GT::halfedge_descriptor fg_halfedge_descriptor;
+  typedef typename GT::edge_descriptor fg_edge_descriptor;
+  typedef typename GT::edge_iterator fg_edge_iterator;
+  typedef typename GT::vertex_descriptor fg_vertex_descriptor;
+  
+  typedef fg_face_descriptor vertex_descriptor;
+  typedef fg_face_iterator vertex_iterator;
+  typedef fg_edge_descriptor edge_descriptor;
+  typedef boost::undirected_tag directed_category;
+  typedef boost::disallow_parallel_edge_tag edge_parallel_category;
+  typedef boost::edge_list_graph_tag traversal_category;
+  
+  struct Filter_border_edges
+  {
+    FaceGraph* fg;
+    Filter_border_edges (FaceGraph& fg) : fg (&fg) { }
+    bool operator() (const fg_edge_descriptor ed) const
+    {
+      return !is_border (ed, *fg);
+    }
+  };
+
+  typedef boost::filter_iterator<Filter_border_edges, fg_edge_iterator> edge_iterator;
+
+  struct Vertex_label_map
+  {
+    typedef vertex_descriptor key_type;
+    typedef std::size_t value_type;
+    typedef std::size_t& reference;
+    typedef boost::lvalue_property_map_tag category;
+
+    std::vector<std::size_t>* labels;
+    FaceIndexMap face_index_map;
+
+    Vertex_label_map (std::vector<std::size_t>& labels, FaceIndexMap face_index_map)
+      : labels (&labels), face_index_map (face_index_map) { }
+
+    friend reference get (const Vertex_label_map& map, key_type k)
+    {
+      return (*map.labels)[get(map.face_index_map,k)];
+    }
+    friend void put (const Vertex_label_map& map, key_type k, const value_type& v)
+    {
+      (*map.labels)[get(map.face_index_map,k)] = v;
+    }
+  };
+
+  struct Vertex_label_probability_map
+  {
+    typedef vertex_descriptor key_type;
+    typedef std::vector<double> value_type;
+    typedef value_type reference;
+    typedef boost::readable_property_map_tag category;
+      
+    IsSelectedMap is_selected_map;
+    bool prevent_deselection;
+
+    Vertex_label_probability_map (IsSelectedMap is_selected_map,
+                                  bool prevent_deselection)
+      : is_selected_map (is_selected_map)
+      , prevent_deselection (prevent_deselection)
+    { }
+
+    friend reference get (const Vertex_label_probability_map& pmap, key_type fd)
+    {
+      std::vector<double> out(2);
+      if (get(pmap.is_selected_map, fd))
+      {
+        if (pmap.prevent_deselection)
+          out[0] = std::numeric_limits<double>::max();
+        else
+          out[0] = 1.;
+        out[1] = 0.;
+      }
+      else
+      {
+        out[0] = 0.;
+        out[1] = 1.;
+      }
+
+      return out;
+    }
+  };
+
+  struct Edge_weight_map
+  {
+    typedef edge_descriptor key_type;
+    typedef double value_type;
+    typedef value_type reference;
+    typedef boost::readable_property_map_tag category;
+
+    const FaceGraph* fg;
+    VertexPointMap vertex_point_map;
+    double normalization_factor;
+
+    Edge_weight_map (const FaceGraph& fg, VertexPointMap vertex_point_map,
+                     double normalization_factor)
+      : fg (&fg), vertex_point_map (vertex_point_map),
+        normalization_factor (normalization_factor) { }
+
+    friend reference get (const Edge_weight_map& pmap, key_type ed)
+    {
+      fg_vertex_descriptor esource = source(ed, *pmap.fg);
+      fg_vertex_descriptor etarget = target(ed, *pmap.fg);
+
+      // Weight
+      double edge_length = std::sqrt(CGAL::squared_distance (get (pmap.vertex_point_map, esource),
+                                                             get (pmap.vertex_point_map, etarget)));
+      return pmap.normalization_factor * edge_length;
+    }
+  };
+
+  FaceGraph& fg;
+  IsSelectedMap is_selected_map;
+  FaceIndexMap face_index_map;
+  VertexPointMap vertex_point_map;
+  double normalization_factor;
+  bool prevent_deselection;
+  std::vector<std::size_t> labels;
+
+  Regularization_graph (FaceGraph& fg,
+                        IsSelectedMap is_selected_map,
+                        FaceIndexMap face_index_map,
+                        VertexPointMap vertex_point_map,
+                        double normalization_factor,
+                        bool prevent_deselection)
+    : fg (fg),
+      is_selected_map (is_selected_map),
+      face_index_map (face_index_map),
+      vertex_point_map (vertex_point_map),
+      normalization_factor (normalization_factor),
+      prevent_deselection (prevent_deselection)
+  {
+    labels.reserve(num_faces(fg));
+    std::size_t nb_selected = 0;
+    for (fg_face_descriptor fd : faces(fg))
+    {
+      if (get(is_selected_map,fd))
+      {
+        labels.push_back(1);
+        ++ nb_selected;
+      }
+      else
+        labels.push_back(0);
+    }
+    std::cerr << nb_selected << " selected face(s)" << std::endl;
+  }
+
+  friend CGAL::Iterator_range<vertex_iterator>
+  vertices (const Regularization_graph& graph)
+  {
+    return faces (graph.fg);
+  }
+
+  friend std::size_t num_vertices (const Regularization_graph& graph) { return num_faces(graph.fg); }
+
+  friend CGAL::Iterator_range<edge_iterator>
+  edges (const Regularization_graph& graph)
+  {
+    return CGAL::make_range (boost::make_filter_iterator
+                             (Filter_border_edges(graph.fg),
+                              begin(edges(graph.fg)), end(edges(graph.fg))),
+                             boost::make_filter_iterator
+                             (Filter_border_edges(graph.fg),
+                              end(edges(graph.fg)), end(edges(graph.fg))));
+  }
+
+  friend vertex_descriptor source (edge_descriptor ed, const Regularization_graph& graph)
+  {
+    return face (halfedge (ed, graph.fg), graph.fg);
+  }
+                  
+  friend vertex_descriptor target (edge_descriptor ed, const Regularization_graph& graph)
+  {
+    return face (opposite(halfedge (ed, graph.fg), graph.fg), graph.fg);
+  }
+
+  Vertex_label_map vertex_label_map() { return Vertex_label_map(labels, face_index_map); }
+  Vertex_label_probability_map vertex_label_probability_map() const
+  { return Vertex_label_probability_map(is_selected_map, prevent_deselection); }
+  Edge_weight_map edge_weight_map() const
+  { return Edge_weight_map(fg, vertex_point_map, normalization_factor); }
+};
+
 
 } //end of namespace internal
 
@@ -207,11 +405,12 @@ reduce_face_selection(
 }
 
 // TODO: document me
-template <class FaceGraph, class IsFaceSelectedPMap, class VertexPointMap>
+template <class FaceGraph, class IsSelectedMap, class FaceIndexMap, class VertexPointMap>
 void
 regularize_face_selection_borders(
   FaceGraph& fg,
-  IsFaceSelectedPMap is_selected,
+  IsSelectedMap is_selected,
+  FaceIndexMap face_index_map,
   VertexPointMap vertex_point_map,
   double weight = 0.5,
   bool prevent_deselection = true,
@@ -227,76 +426,44 @@ regularize_face_selection_borders(
 
   if (global_regularization) // Use graphcut
   {
-    std::vector<std::pair<std::size_t, std::size_t> > gedges;
-    std::vector<double> edge_weights;
-    std::vector<std::vector<double> > probability_matrix;
-    probability_matrix.resize(2);
-    std::vector<std::size_t> labels;
-
-    std::map<fg_face_descriptor, std::size_t> map_f2i;
-
-    std::size_t idx = 0;
-    std::size_t nb_selected = 0;
-    for(fg_face_descriptor fd : faces(fg))
-    {
-      if (get(is_selected,fd))
-      {
-        if (prevent_deselection)
-          probability_matrix[0].push_back(std::numeric_limits<double>::max());
-        else
-          probability_matrix[0].push_back(1.);
-      
-        probability_matrix[1].push_back(0.);
-        labels.push_back(1);
-        ++ nb_selected;
-      }
-      else
-      {
-        probability_matrix[0].push_back(0.0);
-        probability_matrix[1].push_back(1.0);
-        labels.push_back(0);
-      }
-      map_f2i.insert (std::make_pair (fd, idx ++));
-    }
-
+    // Compute normalization factor
     double normalization_factor = 0.;
-  
+    std::size_t nb_edges = 0;
     for (fg_edge_descriptor ed : edges(fg))
     {
       if (is_border (ed, fg))
         continue;
-
       fg_vertex_descriptor esource = source(ed, fg);
       fg_vertex_descriptor etarget = target(ed, fg);
-
-      fg_face_descriptor f0 = face (halfedge (ed, fg), fg);
-      fg_face_descriptor f1 = face (opposite(halfedge (ed, fg), fg), fg);
-    
-      std::size_t i0 = map_f2i[f0];
-      std::size_t i1 = map_f2i[f1];
-
-      // Weight
       double edge_length = std::sqrt(CGAL::squared_distance (get (vertex_point_map, esource),
                                                              get (vertex_point_map, etarget)));
       normalization_factor += edge_length;
-
-      gedges.push_back (std::make_pair (i0, i1));
-      edge_weights.push_back (edge_length);
+      ++ nb_edges;
     }
 
     weight = -10. * std::log(1.0 - weight); // Internal cooking so that
-    // API weights are in [0:1[
-    
-    normalization_factor = weight * edge_weights.size() / normalization_factor;
+                                            // API weights are in [0:1[
+    normalization_factor = weight * nb_edges / normalization_factor;
 
-    for (double& w : edge_weights)
-      w *= normalization_factor;
 
-    internal::Alpha_expansion_graph_cut_boost alpha_expansion;
-    alpha_expansion (gedges, edge_weights, probability_matrix, labels);
+    internal::Regularization_graph<FaceGraph, IsSelectedMap, FaceIndexMap,
+                                   VertexPointMap>
+      graph (fg, is_selected,
+             face_index_map,
+             vertex_point_map,
+             normalization_factor,
+             prevent_deselection);
     
-    for (const auto& p : map_f2i)
-      put(is_selected, p.first, (labels[p.second] == 1));
+    internal::Alpha_expansion_graph_cut_boost alpha_expansion;    
+    alpha_expansion (graph,
+                     graph.edge_weight_map(),
+                     face_index_map,
+                     graph.vertex_label_map(),
+                     graph.vertex_label_probability_map());
+    
+    for (fg_face_descriptor fd : faces(fg))
+      put(is_selected, fd, graph.labels[get(face_index_map,fd)]);
+
   }
   else // No graphcut, use direct solve
   {
