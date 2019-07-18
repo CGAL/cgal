@@ -49,6 +49,9 @@ Release date: September 2019
      `CGAL::remove_outliers()`.
 
 ### Polygon Mesh Processing
+-    Added the function `CGAL::Polygon_mesh_processing::non_manifold_vertices()`,
+     which can be used to collect all the non-manifold vertices (i.e. pinched vertices,
+     or vertices appearing in multiple umbrellas) of a mesh.
  -   Added the function `CGAL::Polygon_mesh_processing::centroid()`, which computes
      the centroid of a closed triangle mesh.
 -    Added the functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()` and
