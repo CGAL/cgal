@@ -386,7 +386,7 @@ and `l` of the vertices `u`, `v`, `w` and `t` in
 */ 
 bool is_cell(Vertex_handle u, Vertex_handle v, Vertex_handle w, Vertex_handle t, 
 Cell_handle & c, int & i, int & j, int & k, int & l) const; 
-
+/// @}
 /// \name has_vertex
 /// There is a method `has_vertex` in the cell class. The analogous methods for facets are defined here. 
 /// @{

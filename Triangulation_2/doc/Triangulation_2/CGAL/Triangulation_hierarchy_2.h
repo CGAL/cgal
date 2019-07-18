@@ -61,8 +61,6 @@ template< typename Tr >
 class Triangulation_hierarchy_2 : public Tr {
 public:
 
-/// @}
-
 }; /* end Triangulation_hierarchy_2 */
 } /* end namespace CGAL */
 
@@ -100,8 +98,6 @@ vertex base with additional functionalities.
 template< typename Vb >
 class Triangulation_hierarchy_vertex_base_2 : public Vb {
 public:
-
-/// @}
 
 }; /* end Triangulation_hierarchy_vertex_base_2 */
 } /* end namespace CGAL */

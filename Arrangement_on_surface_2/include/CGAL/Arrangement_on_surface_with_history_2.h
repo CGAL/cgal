@@ -588,6 +588,7 @@ public:
    * \return true iff e1 and e2 are mergeable.
    */
   bool are_mergeable (Halfedge_const_handle e1, Halfedge_const_handle e2) const;
+  //@}
 
 protected:
 
