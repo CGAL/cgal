@@ -18,14 +18,7 @@ Release date: September 2019
 -   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_2` which takes
     a range of points as argument no longer performs a `spatial_sort()` of the points.
 -   Add constructor and `insert()` function to `CGAL::Triangulation_2` that takes a range of points with info.  
-    
-### 3D Triangulations
--   Added range types and functions that return ranges, for example
-    for all vertices, which enables to use C++11 for-loops.
--   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_3` which takes
-    a range of points as argument no longer performs a `spatial_sort()` of the points.
- -  Added constructor and `insert()` function to `CGAL::Triangulation_3` that takes a range of points with info.
- - **breaking change** The graph traits enabling CGAL's 2D triangulations to be used as a parameter
+ - **Breaking change**: The graph traits enabling CGAL's 2D triangulations to be used as a parameter
     for any graph-based algorithm of CGAL (or boost) have been improved to fully model the `FaceGraph` concept.
     In addition, only the finite simplicies (those not incident to the infinite vertex) of the 2D triangulations
     are now visibile through this scope. The complete triangulation can still be accessed as a graph,
@@ -34,7 +27,13 @@ Release date: September 2019
  -  Introduced a new face base class, `Triangulation_face_base_with_id_2` which enables storing
     user-defined integer IDs in the face of any 2D triangulation, a precondition to use some
     BGL algorithms.
-    
+### 3D Triangulations
+-   Added range types and functions that return ranges, for example
+    for all vertices, which enables to use C++11 for-loops.
+-   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_3` which takes
+    a range of points as argument no longer performs a `spatial_sort()` of the points.
+-   Add constructor and `insert()` function to `CGAL::Triangulation_3` that takes a range of points with info.  
+
 ### Surface Mesh
  -   New functions to read and write using the PLY format,
      `CGAL::read_ply()` and `CGAL::write_ply()`, allowing to save and
@@ -68,7 +67,7 @@ Release date: September 2019
      within the same face).
  -   Added the function `CGAL::Polygon_mesh_processing::centroid()`, which computes
      the centroid of a closed triangle mesh.
--    Added the functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()` and
+ -   Added the functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()` and
      `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`, which can be used
      to try and merge together geometrically compatible but combinatorially different halfedges
      that belong to the same boundary cycle.
@@ -77,6 +76,10 @@ Release date: September 2019
      how the size of a face is computed (the size of the connected component is the sum of the sizes of its faces).
      If no property map is passed, the behavior is unchanged to previous versions: the size
      of a connected component is the number of faces it contains.
+ -   Added the mesh smoothing function `smooth_mesh()`, which can be used to
+     improve the quality of triangle elements based on various geometric characteristics.
+ -   Added the shape smoothing function `smooth_shape()`, which can be used to
+     smooth the surface of a triangle mesh, using the mean curvature flow to perform noise removal.
 
 ### IO Streams
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
