@@ -631,12 +631,12 @@ public:
   bool closest_point_initialized() const { return m_closest_point_initialized; }
 
 private:
+  const AABBTraits& m_traits;
   bool m_closest_point_initialized;
   Point m_closest_point;
   FT m_sq_dist;
 
   typename Primitive::Id m_closest_primitive;
-  const AABBTraits& m_traits;
 };
 
 template <typename PolygonMesh, typename GeomTraits, typename VPM>
@@ -663,8 +663,8 @@ void find_splittable_edge(const std::pair<typename boost::property_traits<VPM>::
                                           typename GT::FT>& point_with_tolerance,
                           EdgeToSplitContainer& edges_to_split,
                           const AABBTree* aabb_tree_ptr,
-                          const TriangleMesh& pms,
-                          const VPM& vpms,
+                          const TriangleMesh& /* pms */,
+                          const VPM& /* vpms */,
                           const TriangleMesh& pmt,
                           const VPM& vpmt,
                           const GT& gt)
@@ -761,8 +761,8 @@ private:
   EdgeToSplitContainer& m_edges_to_split;
   const AABBTree* m_aabb_tree_ptr;
   const TriangleMesh& m_pms;
-  const TriangleMesh& m_pmt;
   const VPM m_vpms;
+  const TriangleMesh& m_pmt;
   const VPM m_vpmt;
   const GT& m_gt;
 };
@@ -786,7 +786,6 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor       edge_descriptor;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type   VPM;
   typedef typename boost::property_traits<VPM>::value_type                  Point;
@@ -816,7 +815,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 
   const GT gt = choose_param(get_param(nps, internal_np::geom_traits), GT());
 
-  const bool is_same_mesh = (&pms == &pmt);
+//  const bool is_same_mesh = (&pms == &pmt);
 
   // start by snapping vertices together to simplify things
   snapped_n = snap_vertex_range_onto_vertex_range(source_hrange, pms, target_hrange, pmt, tol_pmap, nps, npt);
@@ -829,7 +828,6 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 
   // Collect border points that can be projected onto a border edge
   typedef std::map<Point, FT>                       Unique_vertices_with_tolerance;  // unordered map is empirically slower
-  typedef std::pair<Point, FT>                      Point_with_tolerance;
 
   // If the point appears multiple times on the source border, use it only once to snap target edges
   // use the smallest tolerance from all source vertices
@@ -902,6 +900,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "Sequential find splittable edges!" << std::endl;
 #endif
+  typedef std::pair<Point, FT>                      Point_with_tolerance;
 
   std::vector<std::pair<Point, halfedge_descriptor> > edges_to_split;
   for(const Point_with_tolerance& point_with_tolerance : unique_source_vertices)

@@ -470,7 +470,7 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
     for(std::size_t i=0, polygon_size = polygon.size(); i<polygon_size; ++i)
     {
       polygon[i] = id_remapping[polygon[i]];
-      CGAL_postcondition(polygon[i] < points.size());
+      CGAL_postcondition(static_cast<std::size_t>(polygon[i]) < points.size());
     }
   }
 
