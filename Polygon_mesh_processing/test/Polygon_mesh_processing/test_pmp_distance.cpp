@@ -283,7 +283,7 @@ int main(int, char** argv)
   CGAL::Real_timer time;
   #if defined(CGAL_LINKED_WITH_TBB)
   time.start();
-   std::cout << "Distance between meshes (parallel) "
+   std::cout << "Hausdorff distance approximation between meshes (parallel) "
              << PMP::approximate_Hausdorff_distance<CGAL::Parallel_tag>(
                   m1,m2,PMP::parameters::number_of_points_per_area_unit(4000))
              << "\n";
@@ -293,9 +293,28 @@ int main(int, char** argv)
 
   time.reset();
   time.start();
-  std::cout << "Distance between meshes (sequential) "
+  std::cout << "Hausdorff distance approximation between meshes (sequential) "
             << PMP::approximate_Hausdorff_distance<CGAL::Sequential_tag>(
                  m1,m2,PMP::parameters::number_of_points_per_area_unit(4000))
+            << "\n";
+  time.stop();
+  std::cout << "done in " << time.time() << "s.\n";
+
+  time.reset();
+  time.start();
+  std::cout << "Lower bound on Hausdorff distance between meshes (sequential), "
+            << "the actual distance is at most " << 0.01 << " larger "
+            << PMP::bounded_error_Hausdorff_distance_naive<CGAL::Sequential_tag,Mesh>(
+                 m1,m2,0.01)
+            << "\n";
+  time.stop();
+  std::cout << "done in " << time.time() << "s.\n";
+
+  time.reset();
+  time.start();
+  std::cout << "Bounded Hausdorff distance between meshes (sequential), optimized implementation "
+            << PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag,Mesh>(
+                 m1,m2,0.01)
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";

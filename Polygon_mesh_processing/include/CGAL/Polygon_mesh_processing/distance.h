@@ -1015,8 +1015,10 @@ double bounded_error_Hausdorff_impl(
   }
 
   // Print result found
+/*
   std::cout << "Processing candidates finished, found distance (lower, upper): ("
             << global_bounds.first << ", " << global_bounds.second << ")" << std::endl;
+*/
 
   // Return linear interpolation between found lower and upper bound
   return (global_bounds.first + global_bounds.second) / 2.;
