@@ -463,6 +463,24 @@ This package offers a toolkit of functions to detect such undesirable elements.
 - `CGAL::Polygon_mesh_processing::is_cap_triangle_face()`
 - `CGAL::Polygon_mesh_processing::is_needle_triangle_face()`
 
+\subsection PMPLocationFunctions Surface Location Functions
+
+To ease the manipulation of points on a surface, \cgal offers a multitude of functions based upon
+a different representation of a point on a polygon mesh: the point is represented as a pair of
+a face of the polygon mesh and a triplet of barycentric coordinates. This definition enables
+a robust handling of polylines between points living in the same face: for example, two 3D segments
+created by four points within the same face that should intersect might not actually intersect due to
+inexact computations. However, manipulating these same points through their barycentric coordinates
+can instead be done, and intersections computed in the barycentric space will not suffer
+from the same issues. Furthermore, this definition is only dependent on the intrinsic dimension
+of the surface (i.e. 2) and not on the ambient dimension within which the surface is embedded.
+
+The functions of the group \ref PMP_locate_grp offer the following functionalities:
+location computations (`CGAL::Polygon_mesh_processing::locate()`, and similar) given a point,
+finding the nearest point on a mesh given a point or a ray
+(`CGAL::Polygon_mesh_processing::locate_with_AABB_tree()`, and similar), and location-based predicates
+(for example, `CGAL::Polygon_mesh_processing::is_on_face_border()`).
+
 ****************************************
 \section PMPOrientation Orientation
 
