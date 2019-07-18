@@ -6,5 +6,5 @@
 \example Box_intersection_d/proximity_custom_box_traits.cpp
 \example Box_intersection_d/triangle_self_intersect.cpp
 \example Box_intersection_d/triangle_self_intersect_pointers.cpp
-\example Box_intersection_d/polylines.cpp
+\example Box_intersection_d/box_d_do_intersect_polylines.cpp
 */
