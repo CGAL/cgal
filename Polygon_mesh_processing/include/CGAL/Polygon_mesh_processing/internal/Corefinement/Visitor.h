@@ -259,7 +259,7 @@ public:
 
       // update map vertex -> node_id
       Vertex_to_node_id& vertex_to_node_id = mesh_to_vertex_to_node_id[tm_ptr];
-      Node_to_target_of_hedge_map vertices_on_inter = mesh_to_vertices_on_inter[tm_ptr];
+      Node_to_target_of_hedge_map& vertices_on_inter = mesh_to_vertices_on_inter[tm_ptr];
 
       std::vector< std::pair<vertex_descriptor, Node_id> > vertices_to_add;
       for (const typename std::pair<const vertex_descriptor, Node_id>& vd_and_id
