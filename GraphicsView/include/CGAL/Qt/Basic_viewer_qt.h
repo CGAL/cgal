@@ -848,6 +848,11 @@ protected:
     rendering_program_p_l.release();
   }
 
+  // Returns true if the data structure can be viewed on a plane
+  bool is_two_dimensional() {
+    return (!is_empty() && (has_zero_x() || has_zero_y() || has_zero_z()));
+  }
+
   virtual void draw()
   {
     glEnable(GL_DEPTH_TEST);
@@ -994,9 +999,11 @@ protected:
     // Fix Z-fighting by drawing faces at a depth
     GLfloat offset_factor;
     GLfloat offset_units;
-    glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
-    glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-    glPolygonOffset(0.1f, 0.9f);
+    if (is_two_dimensional()) {
+      glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
+      glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
+      glPolygonOffset(0.1f, 0.9f);
+    }
 
     if (m_draw_faces)
     {
@@ -1025,11 +1032,14 @@ protected:
       }
       glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(arrays[POS_COLORED_FACES].size()/3));
       vao[VAO_COLORED_FACES].release();
-      glPolygonOffset(offset_factor, offset_units);
+
+      if (is_two_dimensional())
+        glPolygonOffset(offset_factor, offset_units);
+
       rendering_program_face.release();
     }
 
-    if (!is_empty() && (has_zero_x() || has_zero_y() || has_zero_z()))
+    if (is_two_dimensional())
     {
       camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
       //      Camera Constraint:
