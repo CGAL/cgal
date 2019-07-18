@@ -253,15 +253,14 @@ bool does_enclose_other_normals(const int i, const int j, const int k,
 }
 
 template <typename GT>
-typename GT::Vector_3 compute_normals_bisector(const typename GT::Vector_3 ni,
-                                               const typename GT::Vector_3 nj,
+typename GT::Vector_3 compute_normals_bisector(const typename GT::Vector_3& ni,
+                                               const typename GT::Vector_3& nj,
                                                const GT& traits)
 {
   if(ni == nj)
     return ni;
 
   typename GT::Vector_3 nb = traits.construct_sum_of_vectors_3_object()(ni, nj);
-  CGAL::Polygon_mesh_processing::internal::normalize(nb, traits); // prob not necessary @fixme
 
   return nb;
 }
