@@ -265,14 +265,14 @@ DelaunayMeshTriangulationGraphicsItem<T>::paintSeeds(QPainter *painter)
   {
     Converter<Geom_traits> convert;
     painter->setPen(this->seedsPen());
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
 
     typename std::list<Point>::iterator sit;
     for(sit = seeds_begin; sit != seeds_end; ++sit)
       painter->drawPoint(matrix.map(convert(*sit)));
 
-    painter->setMatrix(matrix);
+    painter->setWorldTransform(matrix);
   }
 }
 
