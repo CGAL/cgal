@@ -454,12 +454,11 @@ regularize_face_selection_borders(
              normalization_factor,
              prevent_deselection);
     
-    internal::Alpha_expansion_graph_cut_boost alpha_expansion;    
-    alpha_expansion (graph,
-                     graph.edge_weight_map(),
-                     face_index_map,
-                     graph.vertex_label_map(),
-                     graph.vertex_label_probability_map());
+    alpha_expansion_graph_cut (graph,
+                               graph.edge_weight_map(),
+                               face_index_map,
+                               graph.vertex_label_map(),
+                               graph.vertex_label_probability_map());
     
     for (fg_face_descriptor fd : faces(fg))
       put(is_selected, fd, graph.labels[get(face_index_map,fd)]);
