@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Boolean_set_operations_2</class>
-
  <widget class="QMainWindow" name="Boolean_set_operations_2">
   <property name="geometry">
    <rect>
@@ -118,7 +117,6 @@
    <addaction name="actionInsertCircular"/>
    <addaction name="actionInsertBezier" />
   </widget>
-
   <widget class="QToolBar" name="operationsToolBar" >
    <property name="windowTitle" >
     <string>Operation Tools</string>
@@ -472,10 +470,26 @@
             <bool>true</bool>
            </property>
           </widget>
+          <widget class="QRadioButton" name="drawUniversalPolygon">
+            <property name="Visible">
+              <bool>true</bool>
+            </property>
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>245</y>
+             <width>200</width>
+             <height>34</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Draw Universal Polygon</string>
+           </property>
+          </widget>
           <widget class="QCheckBox" name="showResult">
            <property name="geometry">
             <rect>
-             <x>180</x>
+             <x>250</x>
              <y>245</y>
              <width>334</width>
              <height>34</height>
