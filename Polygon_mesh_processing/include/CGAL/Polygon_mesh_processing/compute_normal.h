@@ -19,12 +19,10 @@
 //
 // Author(s)     : Jane Tournois
 
-
 #ifndef CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
 #define CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
 
 #include <CGAL/license/Polygon_mesh_processing/Compute_normal.h>
-
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
@@ -38,44 +36,39 @@
 
 #include <boost/type_traits.hpp>
 
-namespace CGAL{
-
-namespace Polygon_mesh_processing{
-
+namespace CGAL {
+namespace Polygon_mesh_processing {
 namespace internal {
 
-  template <class GT>
-  void normalize(typename GT::Vector_3& v, const GT& traits)
+template <class GT>
+void normalize(typename GT::Vector_3& v, const GT& traits)
+{
+  typename GT::FT norm = CGAL::approximate_sqrt(traits.compute_squared_length_3_object()(v));
+  //If the vector is small enough, approx_sqrt might return 0, and then we get nan values.
+  //To avoid that, we check the resulted norm. If it is 0, we don't normalize.
+  if(norm != 0)
   {
-    typename GT::FT norm = CGAL::approximate_sqrt(
-        traits.compute_squared_length_3_object()(v));
-    //If the vector is small enough, approx_sqrt might return 0, and then we get nan values.
-    //To avoid that, we check the resulted norm. If it is 0, we don't normalize.
-    if(norm != 0)
-    {
-      v = traits.construct_divided_vector_3_object()(v, norm );
-    }
-  }
-
-  template<typename Point
-         , typename GT>
-  typename GT::Vector_3
-  triangle_normal(const Point& p0, const Point& p1, const Point& p2
-                , const GT& traits)
-  {
-    typename GT::Vector_3 n = traits.construct_cross_product_vector_3_object()(
-      traits.construct_vector_3_object()(p1, p2),
-      traits.construct_vector_3_object()(p1, p0));
-
-    //cross-product(AB, AC)'s norm is the area of the parallelogram
-    //formed by these 2 vectors.
-    //the triangle's area is half of it
-    return traits.construct_scaled_vector_3_object()(n, 0.5);
+    v = traits.construct_divided_vector_3_object()(v, norm);
   }
 }
 
-template<typename Point, typename PM, typename VertexPointMap, typename Vector
-       , typename GT>
+template<typename Point, typename GT>
+typename GT::Vector_3
+triangle_normal(const Point& p0, const Point& p1, const Point& p2, const GT& traits)
+{
+  typename GT::Vector_3 n = traits.construct_cross_product_vector_3_object()(
+                              traits.construct_vector_3_object()(p1, p2),
+                              traits.construct_vector_3_object()(p1, p0));
+
+  //cross-product(AB, AC)'s norm is the area of the parallelogram
+  //formed by these 2 vectors.
+  //the triangle's area is half of it
+  return traits.construct_scaled_vector_3_object()(n, 0.5);
+}
+
+} // namespace internal
+
+template<typename Point, typename PM, typename VertexPointMap, typename Vector, typename GT>
 void sum_normals(const PM& pmesh,
                  typename boost::graph_traits<PM>::face_descriptor f,
                  VertexPointMap vpmap,
@@ -88,9 +81,9 @@ void sum_normals(const PM& pmesh,
   halfedge_descriptor he = halfedge(f, pmesh);
   vertex_descriptor v = source(he, pmesh);
   const Point& pv = get(vpmap, v);
-  while (v != target(next(he, pmesh), pmesh))
+  while(v != target(next(he, pmesh), pmesh))
   {
-    const Point& pvn  = get(vpmap, target(he, pmesh));
+    const Point& pvn = get(vpmap, target(he, pmesh));
     const Point& pvnn = get(vpmap, target(next(he, pmesh), pmesh));
 
     Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
@@ -133,9 +126,9 @@ Vector_3
 #else
 typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3
 #endif
-compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
-                    , const PolygonMesh& pmesh
-                    , const NamedParameters& np)
+compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
+                    const PolygonMesh& pmesh,
+                    const NamedParameters& np)
 {
   using boost::choose_param;
   using boost::get_param;
@@ -153,7 +146,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
   Vector normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
   sum_normals<Point>(pmesh, f, vpmap, normal, traits);
 
-  if (!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
+  if(!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
 
   return normal;
@@ -167,8 +160,7 @@ typename GetGeomTraits<PolygonMesh>::type::Vector_3
 compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
                     const PolygonMesh& pmesh)
 {
-  return compute_face_normal(f, pmesh,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
+  return compute_face_normal(f, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 /// \endcond
@@ -196,17 +188,15 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
 * will be done approximately.
 */
-template <typename PolygonMesh
-          , typename FaceNormalMap
-          , typename NamedParameters>
-void
-compute_face_normals(const PolygonMesh& pmesh
-                   , FaceNormalMap fnm
-                   , const NamedParameters& np)
+template <typename PolygonMesh, typename FaceNormalMap, typename NamedParameters>
+void compute_face_normals(const PolygonMesh& pmesh,
+                          FaceNormalMap fnm,
+                          const NamedParameters& np)
 {
   typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
 
-  for(typename boost::graph_traits<PolygonMesh>::face_descriptor f : faces(pmesh)){
+  for(typename boost::graph_traits<PolygonMesh>::face_descriptor f : faces(pmesh))
+  {
     typename Kernel::Vector_3 vec = compute_face_normal(f, pmesh, np);
     put(fnm, f, vec);
   }
@@ -226,17 +216,16 @@ void compute_face_normals(const PolygonMesh& pmesh, FaceNormalMap fnm)
 template <typename GT>
 bool almost_equal(const typename GT::Vector_3 v1, const typename GT::Vector_3 v2)
 {
-  return (CGAL::abs(1 - GT().compute_scalar_product_3_object()(v1, v2)) < 1e-10);
+  return (CGAL::abs(1 - GT().compute_scalar_product_3_object()(v1, v2)) < 1e-10); // @tolerance
 }
 
 template <typename PolygonMesh, typename FaceNormalVector, typename K>
-bool
-does_enclose_other_normals(const int i, const int j, const int k,
-                           const typename K::Vector_3& nb,
-                           const typename K::FT sp_bi,
-                           std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> incident_faces,
-                           const FaceNormalVector& normalized_face_normals,
-                           const K& traits)
+bool does_enclose_other_normals(const int i, const int j, const int k,
+                                const typename K::Vector_3& nb,
+                                const typename K::FT sp_bi,
+                                std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> incident_faces,
+                                const FaceNormalVector& normalized_face_normals,
+                                const K& traits)
 {
   typedef typename K::FT                                                  FT;
   typedef typename K::Vector_3                                            Vector_3;
@@ -490,7 +479,8 @@ void compute_most_visible_vertex_normals(VertexNormalMap& vertex_normal_map,
 }
 
 template<typename PolygonMesh, typename VertexNormalMap>
-void compute_most_visible_vertex_normals(VertexNormalMap& vertex_normal_map, const PolygonMesh& pmesh)
+void compute_most_visible_vertex_normals(VertexNormalMap& vertex_normal_map,
+                                         const PolygonMesh& pmesh)
 {
   return compute_most_visible_vertex_normals(vertex_normal_map, pmesh, CGAL::parameters::all_default());
 }
@@ -528,8 +518,7 @@ typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3
 #endif
 compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
                       const PolygonMesh& pmesh,
-                      const NamedParameters& np
-                      )
+                      const NamedParameters& np)
 {
   using boost::choose_param;
 
@@ -543,10 +532,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     NamedParameters,
     DefaultMap> ::type FaceNormalMap;
   FaceNormalMap fnmap = choose_param(get_param(np, internal_np::face_normal), DefaultMap());
-  bool fnmap_valid
-    = !boost::is_same<FaceNormalMap,
-                      DefaultMap
-                     >::value;
+  bool fnmap_valid = !boost::is_same<FaceNormalMap, DefaultMap>::value;
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
@@ -554,11 +540,11 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 
   halfedge_descriptor he = halfedge(v, pmesh);
   // handle isolated vertices
-  if (he==boost::graph_traits<PolygonMesh>::null_halfedge()) return normal;
+  if(he==boost::graph_traits<PolygonMesh>::null_halfedge()) return normal;
   halfedge_descriptor end = he;
   do
   {
-    if (!is_border(he, pmesh))
+    if(!is_border(he, pmesh))
     {
       Vector n = fnmap_valid ? get(fnmap, face(he, pmesh))
                              : compute_face_normal(face(he, pmesh), pmesh, np);
@@ -567,8 +553,9 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     he = opposite(next(he, pmesh), pmesh);
   } while (he != end);
 
-  if ( ! traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
+  if(!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
+
   return normal;
 }
 
@@ -608,19 +595,15 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
 * will be done approximately.
 */
-template <typename PolygonMesh
-          , typename VertexNormalMap
-          , typename NamedParameters
-          >
-void
-compute_vertex_normals(const PolygonMesh& pmesh
-                      , VertexNormalMap vnm
-                      , const NamedParameters& np
-                      )
+template <typename PolygonMesh, typename VertexNormalMap, typename NamedParameters>
+void compute_vertex_normals(const PolygonMesh& pmesh,
+                            VertexNormalMap vnm,
+                            const NamedParameters& np)
 {
   typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
 
-  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v : vertices(pmesh)){
+  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v : vertices(pmesh))
+  {
     typename Kernel::Vector_3 vec = compute_vertex_normal(v, pmesh, np);
     put(vnm, v, vec);
   }
@@ -664,17 +647,11 @@ void compute_vertex_normals(const PolygonMesh& pmesh, VertexNormalMap vnm)
 * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
 * will be done approximately.
 */
-template <typename PolygonMesh
-          , typename VertexNormalMap
-          , typename FaceNormalMap
-          , typename NamedParameters
-          >
-void
-compute_normals(const PolygonMesh& pmesh
-                , VertexNormalMap vnm
-                , FaceNormalMap fnm
-                , const NamedParameters& np
-                )
+template <typename PolygonMesh, typename VertexNormalMap, typename FaceNormalMap, typename NamedParameters>
+void compute_normals(const PolygonMesh& pmesh,
+                     VertexNormalMap vnm,
+                     FaceNormalMap fnm,
+                     const NamedParameters& np)
 {
   compute_face_normals(pmesh, fnm, np);
   compute_vertex_normals(pmesh, vnm, np.face_normal_map(fnm));
