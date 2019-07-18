@@ -927,7 +927,21 @@ double bounded_error_Hausdorff_impl(
   Candidate_set candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   Hausdorff_bounds global_bounds = traversal_traits_tm1.get_global_bounds();
 
+/*
+  std::cout << "Found " << candidate_triangles.size() << " candidates." << std::endl;
+  for (int i=0; i<candidate_triangles.size(); i++) {
+    std::cout << "Triangle " << i << " with bounds ("
+              << candidate_triangles[i].second.first << ", "
+              << candidate_triangles[i].second.second << ")" << std::endl;
+  }
+*/
+
+  double squared_error_bound = error_bound * error_bound;
+
   while ( (global_bounds.second - global_bounds.first > error_bound) && candidate_triangles.size() > 0 ) {
+
+    // std::cout << "Current number candidates: " << candidate_triangles.size() << std::endl;
+    // std::cout << "Current global bounds: (" << global_bounds.first << ", " << global_bounds.second << ")" << std::endl;
 
     // Get the first triangle and its Hausdorff bounds from the candidate set
     Candidate_triangle triangle_and_bound = candidate_triangles.back();
@@ -939,6 +953,9 @@ double bounded_error_Hausdorff_impl(
     // and the difference between the bounds to be obtained is larger than the
     // user given error.
     Hausdorff_bounds triangle_bounds = triangle_and_bound.second;
+
+    // std::cout << "Current triangle bounds: (" << triangle_bounds.first << ", " << triangle_bounds.second << ")" << std::endl;
+
     if ( (triangle_bounds.second > global_bounds.first) && (triangle_bounds.second - triangle_bounds.first > error_bound) ) {
       // Get the triangle that is to be subdivided and read its vertices
       Triangle_3 triangle_for_subdivision = triangle_and_bound.first;
@@ -957,6 +974,18 @@ double bounded_error_Hausdorff_impl(
         // TODO Update the reference to the realizing triangle here as this is the best current guess.
         global_bounds.first = triangle_bounds.second;
         continue;
+      }
+
+      // Check third stopping condition: All edge lengths of the triangle are
+      // smaller than the given error bound, cannot get results beyond this
+      // bound.
+      if (    squared_distance( v0, v1 ) < squared_error_bound
+          &&  squared_distance( v0, v2 ) < squared_error_bound
+          &&  squared_distance( v1, v2 ) < squared_error_bound ) {
+            // The upper bound of this triangle is within error tolerance of
+            // the actual upper bound, use it.
+            global_bounds.first = triangle_bounds.second;
+            continue;
       }
 
       // Subdivide the triangle into four smaller triangles

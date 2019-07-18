@@ -303,7 +303,7 @@ int main(int, char** argv)
   time.reset();
   time.start();
   std::cout << "Lower bound on Hausdorff distance between meshes (sequential), "
-            << "the actual distance is at most " << 0.01 << " larger "
+            << "the actual distance is at most " << 0.01 << " larger than "
             << PMP::bounded_error_Hausdorff_distance_naive<CGAL::Sequential_tag,Mesh>(
                  m1,m2,0.01)
             << "\n";

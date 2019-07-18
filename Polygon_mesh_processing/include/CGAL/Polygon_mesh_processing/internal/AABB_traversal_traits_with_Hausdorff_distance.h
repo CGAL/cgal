@@ -230,6 +230,10 @@ namespace CGAL {
 
       // Update global Hausdorff bounds according to the obtained local bounds
       Hausdorff_bounds local_bounds = traversal_traits_tm2.get_local_bounds();
+/*
+      std::cout << "Processed triangle " << primitive.id() << " with bounds ("
+                << local_bounds.first << ", " << local_bounds.second << ")" << std::endl;
+*/
       if (local_bounds.first > h_lower) {
         h_lower = local_bounds.first;
       }
