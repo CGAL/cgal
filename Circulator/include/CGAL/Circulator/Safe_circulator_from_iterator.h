@@ -33,6 +33,8 @@
 
 #include <boost/optional.hpp>
 
+#include <CGAL/use.h>
+
 namespace CGAL {
 
 
@@ -96,6 +98,7 @@ public:
 // OPERATIONS
 
     bool operator==( std::nullptr_t p) const {
+        CGAL_USE(p);
         CGAL_assertion( p == nullptr);
         return m_empty;
     }
