@@ -180,6 +180,18 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
     shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(toggleFullScreen()));
+    shortcut = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_R), this);
+    connect(shortcut, &QShortcut::activated,
+            this, &MainWindow::recenterScene);
+    shortcut = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_T), this);
+    connect(shortcut, &QShortcut::activated,
+            this,
+            [](){
+      Viewer* viewer = qobject_cast<Viewer*>(CGAL::Three::Three::activeViewer());
+      bool b = viewer->property("draw_two_sides").toBool();
+      viewer->setTwoSides(!b);
+    }
+            );
   }
 
   proxyModel = new QSortFilterProxyModel(this);
@@ -2397,7 +2409,7 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
   viewer->setAddKeyFrameKeyboardModifiers(m);
 }
 
-void MainWindow::on_actionRecenterScene_triggered()
+void MainWindow::recenterScene()
 {
   //force the recomputaion of the bbox
   bbox_need_update = true;
@@ -3000,7 +3012,7 @@ QObject* MainWindow::getDirectChild(QObject* widget)
   return getDirectChild(widget->parent());
 }
 
-void MainWindow::on_action_Organize_Viewers_triggered()
+void MainWindow::on_action_Rearrange_Viewers_triggered()
 {
   if(ui->mdiArea->subWindowList().size() == 1)
     ui->mdiArea->subWindowList().first()->showMaximized();
@@ -3051,7 +3063,7 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   actionCopyCamera->setObjectName("actionCopyCamera");
   QAction* actionPasteCamera = new QAction("&Paste Camera",this);
   actionPasteCamera->setObjectName("actionPasteCamera");
-  QMenu* cameraMenu = new QMenu("Camera", mw);
+  QMenu* cameraMenu = new QMenu("Ca&mera", mw);
   cameraMenu->addAction(actionDumpCamera);
   cameraMenu->addAction(actionCopyCamera);
   cameraMenu->addAction(actionPasteCamera);
@@ -3067,12 +3079,12 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   actionDrawTwoSide->setCheckable(true);
   actionDrawTwoSide->setChecked(false);
   viewMenu->addAction(actionDrawTwoSide);
-  QAction* actionQuick = new QAction("Quick Camera Mode",this);
+  QAction* actionQuick = new QAction("&Quick Camera Mode",this);
   actionQuick->setObjectName("actionQuick");
   actionQuick->setCheckable(true);
   actionQuick->setChecked(true);
   viewMenu->addAction(actionQuick);
-  QAction* actionOrtho = new QAction("Orthographic Projection",this);
+  QAction* actionOrtho = new QAction("&Orthographic Projection",this);
   actionOrtho->setObjectName("actionOrtho");
   actionOrtho->setCheckable(true);
   actionOrtho->setChecked(false);
@@ -3155,6 +3167,9 @@ void SubViewer::changeEvent(QEvent *event)
               //| Qt::WindowSystemMenuHint
               | Qt::WindowTitleHint
               );
+      QAction* action = mw->findChild<QAction*>("action_Rearrange_Viewers");
+      action->setVisible(false);
+      viewer->update();
     }
     else
     {
@@ -3170,6 +3185,10 @@ void SubViewer::changeEvent(QEvent *event)
               | Qt::WindowSystemMenuHint
               | Qt::WindowTitleHint
               );
+      QAction* action = mw->findChild<QAction*>("action_Rearrange_Viewers");
+      action->setVisible(true);
+      for(auto v : CGAL::QGLViewer::QGLViewerPool())
+        v->update();
     }
   }
 }
