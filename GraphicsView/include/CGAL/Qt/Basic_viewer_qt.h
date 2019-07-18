@@ -848,7 +848,7 @@ protected:
     rendering_program_p_l.release();
   }
 
-  // Returns true if the data structure can be viewed on a plane
+  // Returns true if the data structure lies on a plane
   bool is_two_dimensional() {
     return (!is_empty() && (has_zero_x() || has_zero_y() || has_zero_z()));
   }
