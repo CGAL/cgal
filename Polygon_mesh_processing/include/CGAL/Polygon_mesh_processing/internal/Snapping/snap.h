@@ -815,8 +815,6 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 
   const GT gt = choose_param(get_param(nps, internal_np::geom_traits), GT());
 
-//  const bool is_same_mesh = (&pms == &pmt);
-
   // start by snapping vertices together to simplify things
   snapped_n = snap_vertex_range_onto_vertex_range(source_hrange, pms, target_hrange, pmt, tol_pmap, nps, npt);
 
