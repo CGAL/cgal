@@ -1048,7 +1048,23 @@ void MainWindow::reloadItem() {
     if(!ok)
       return;
     QVariant varian = item->property("load_mates");
+    if(!varian.isValid()) //typically when a soup is oriented, the soup_item is deleted and thus the varain points to an unexisting item.
+    {
+      Scene_item* new_item = new_items.front();
+      new_item->setName(item->name());
+      new_item->setColor(item->color());
+      new_item->setRenderingMode(item->renderingMode());
+      new_item->setVisible(item->visible());
+      Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
+      scene->replaceItem(scene->item_id(item), new_item, true);
+      if(property_item)
+        property_item->copyProperties(item);
+      new_item->invalidateOpenGLBuffers();
+      item->deleteLater();
+      return;
+    }
     QSequentialIterable iterable = varian.value<QSequentialIterable>();
+
        // Can use foreach:
     int mate_id = 0;
     Q_FOREACH(const QVariant &v, iterable)
