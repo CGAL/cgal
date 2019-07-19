@@ -37,9 +37,9 @@ void dump_invalid_point_matcher_config_exception_msg(const PointMatcherSupport::
 	std::cerr << "   " << err.what() << std::endl;
 }
 
-template<typename Scalar, typename NamedParameters>
+template<typename Scalar, typename NamedParameters1, typename NamedParameters2>
 ICP<Scalar>
-construct_icp(const NamedParameters& np)
+construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
 {
   typedef PointMatcher<Scalar> PM;
 
@@ -53,8 +53,8 @@ construct_icp(const NamedParameters& np)
   ICP_config null_config { .name = "_null_config" };
   auto is_null_config = [&](const ICP_config& c) { return !c.name.compare(null_config.name); };
 
-  // ReadingDataPointsFilters
-  auto reading_data_points_filter_configs = choose_param(get_param(np, internal_np::pm_reading_data_points_filters), std::vector<ICP_config>());
+  // np1.point_set_filters -> PM::ReadingDataPointsFilters
+  auto reading_data_points_filter_configs = choose_param(get_param(np1, internal_np::point_set_filters), std::vector<ICP_config>());
   for(const auto& conf : reading_data_points_filter_configs)
   {
     std::cerr << "Reading data point filter found, name: " << conf.name << std::endl;
@@ -65,8 +65,8 @@ construct_icp(const NamedParameters& np)
     }
   }
 
-  // RefenceDataPointsFilters
-  auto reference_data_points_filter_configs = choose_param(get_param(np, internal_np::pm_reference_data_points_filters), std::vector<ICP_config>());
+  // np2.point_set_filters -> PM::ReferenceDataPointsFilter
+  auto reference_data_points_filter_configs = choose_param(get_param(np2, internal_np::point_set_filters), std::vector<ICP_config>());
   for(const auto& conf : reference_data_points_filter_configs)
   {
     std::cerr << "Reference data point filter found, name: " << conf.name << std::endl;
@@ -78,7 +78,7 @@ construct_icp(const NamedParameters& np)
   }
 
   // Matcher
-  auto matcher_config = choose_param(get_param(np, internal_np::pm_matcher), null_config);
+  auto matcher_config = choose_param(get_param(np1, internal_np::matcher), null_config);
   if(!is_null_config(matcher_config))
   {
     std::cerr << "Matcher found, setting matcher to: " << matcher_config.name << std::endl;
@@ -90,7 +90,7 @@ construct_icp(const NamedParameters& np)
   }
 
   // Outlier Filters
-  auto outlier_filters_config = choose_param(get_param(np, internal_np::pm_outlier_filters), std::vector<ICP_config>());
+  auto outlier_filters_config = choose_param(get_param(np1, internal_np::outlier_filters), std::vector<ICP_config>());
   for(const auto& conf : outlier_filters_config)
   {
     std::cerr << "Outlier filter found, name: " << conf.name << std::endl;
@@ -102,7 +102,7 @@ construct_icp(const NamedParameters& np)
   }
 
   // Error Minimizer
-  auto error_minimizer_config = choose_param(get_param(np, internal_np::pm_error_minimizer), null_config);
+  auto error_minimizer_config = choose_param(get_param(np1, internal_np::error_minimizer), null_config);
   if(!is_null_config(error_minimizer_config))
   {
     std::cerr << "Error minimizer found, setting to: " << error_minimizer_config.name << std::endl;
@@ -114,7 +114,7 @@ construct_icp(const NamedParameters& np)
   }
 
   // Transformation Checkers
-  auto transformation_checkers_config = choose_param(get_param(np, internal_np::pm_transformation_checkers), std::vector<ICP_config>());
+  auto transformation_checkers_config = choose_param(get_param(np1, internal_np::transformation_checkers), std::vector<ICP_config>());
   for(const auto& conf : transformation_checkers_config)
   {
     std::cerr << "Transformation checker found, name: " << conf.name << std::endl;
@@ -126,7 +126,7 @@ construct_icp(const NamedParameters& np)
   }
 
   // Inspector
-  auto inspector_config = choose_param(get_param(np, internal_np::pm_inspector), null_config);
+  auto inspector_config = choose_param(get_param(np1, internal_np::inspector), null_config);
   if(!is_null_config(error_minimizer_config))
   {
     std::cerr << "Inspector found, setting to: " << inspector_config.name << std::endl;
@@ -138,7 +138,7 @@ construct_icp(const NamedParameters& np)
   }
 
   // Logger
-  auto logger_config = choose_param(get_param(np, internal_np::pm_logger), null_config);
+  auto logger_config = choose_param(get_param(np1, internal_np::logger), null_config);
   if(!is_null_config(logger_config))
   {
     std::cerr << "Logger found, setting to: " << logger_config.name << std::endl;
@@ -247,7 +247,7 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
     std::cerr << "Cloud points nb: " << cloud.getNbPoints() << std::endl; // TODO: Remove
     std::cerr << "Ref Cloud points nb: " << ref_cloud.getNbPoints() << std::endl; // TODO: Remove
 		transform_params = icp(cloud, ref_cloud, prior);
-    // TODO: Convergence?
+    // TODO: Convergence? Can we return some sort of score?
     std::cerr << transform_params << std::endl; // TODO: Remove
 	}
 	catch (typename PM::ConvergenceError& error)
@@ -271,10 +271,11 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
 
 } // end of namespace internal
 
+// TODO: Document
 template <class PointRange1, class PointRange2,
           class NamedParameters1, class NamedParameters2>
 #ifdef DOXYGEN_RUNNING
-std::pair<geom_traits::Aff_transformation_3, double>
+geom_traits::Aff_transformation_3
 #else
 typename CGAL::Point_set_processing_3::GetK<PointRange1, NamedParameters1>
   ::Kernel::Aff_transformation_3
@@ -312,8 +313,33 @@ compute_registration_transformation (const PointRange1& point_set_1, const Point
   return internal::compute_registration_transformation<Kernel>(point_set_1, point_set_2,
                                                                point_map1, point_map2,
                                                                normal_map1, normal_map2,
-                                                               internal::construct_icp<Scalar>(np1));
+                                                               internal::construct_icp<Scalar>(np1, np2));
 }
+
+// convenience overloads
+template <class PointRange1, class PointRange2,
+          class NamedParameters1>
+typename CGAL::Point_set_processing_3::GetK<PointRange1, NamedParameters1>
+  ::Kernel::Aff_transformation_3
+compute_registration_transformation(const PointRange1& point_set_1, PointRange2& point_set_2,
+      const NamedParameters1& np1)
+{
+  namespace params = CGAL::Point_set_processing_3::parameters;
+  return compute_registration_transformation(point_set_1, point_set_2, np1, params::all_default(point_set_1));
+}
+
+template <class PointRange1, class PointRange2>
+typename CGAL::Point_set_processing_3::GetK<PointRange1,
+          cgal_bgl_named_params<bool, internal_np::all_default_t> >
+  ::Kernel::Aff_transformation_3
+compute_registration_transformation(const PointRange1& point_set_1, PointRange2& point_set_2)
+{
+  namespace params = CGAL::Point_set_processing_3::parameters;
+  return compute_registration_transformation(point_set_1, point_set_2,
+                                             params::all_default(point_set_1),
+                                             params::all_default(point_set_2));
+}
+
 
 } } // end of namespace CGAL::pointmatcher
 

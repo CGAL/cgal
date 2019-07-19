@@ -56,19 +56,17 @@ int main(int argc, const char** argv)
   //
   using CGAL::pointmatcher::ICP_config;
 
-  // TODO: Change naming convention of filters? (for example, reference data points filters -> reference point set filters)
-  // TODO: Get reference point set filters from np2?
   // TODO: Refer to https://github.com/ethz-asl/libpointmatcher/blob/master/doc/Configuration.md while doc
 
-  // Prepare reading data points filters
-  std::vector<ICP_config> reading_data_points_filters;
-  reading_data_points_filters.push_back( ICP_config { .name="MinDistDataPointsFilter"       , .params={ {"minDist", "0.5" }}  } );
-  reading_data_points_filters.push_back( ICP_config { .name="RandomSamplingDataPointsFilter", .params={ {"prob"   , "0.05"}}  } );
+  // Prepare point set 1 filters (PM::ReadingDataPointsFilters)
+  std::vector<ICP_config> point_set_1_filters;
+  point_set_1_filters.push_back( ICP_config { .name="MinDistDataPointsFilter"       , .params={ {"minDist", "0.5" }}  } );
+  point_set_1_filters.push_back( ICP_config { .name="RandomSamplingDataPointsFilter", .params={ {"prob"   , "0.05"}}  } );
 
-  // Prepare reference data points filters
-  std::vector<ICP_config> reference_data_points_filters;
-  reference_data_points_filters.push_back( ICP_config { .name="MinDistDataPointsFilter"       , .params={ {"minDist", "0.5" }}  } );
-  reference_data_points_filters.push_back( ICP_config { .name="RandomSamplingDataPointsFilter", .params={ {"prob"   , "0.05"}}  } );
+  // Prepare point set 2 filters (PM::ReferenceDataPointsFilters)
+  std::vector<ICP_config> point_set_2_filters;
+  point_set_2_filters.push_back( ICP_config { .name="MinDistDataPointsFilter"       , .params={ {"minDist", "0.5" }}  } );
+  point_set_2_filters.push_back( ICP_config { .name="RandomSamplingDataPointsFilter", .params={ {"prob"   , "0.05"}}  } );
 
 	// Prepare matcher function
   ICP_config matcher { .name="KDTreeMatcher", .params={ {"knn", "1"}, {"epsilon", "3.16"} } };
@@ -98,15 +96,15 @@ K::Aff_transformation_3 res =
   CGAL::pointmatcher::compute_registration_transformation
     (pwns1, pwns2, 
      params::point_map(Point_map()).normal_map(Normal_map())
-     .pm_reading_data_points_filters(reading_data_points_filters)
-     .pm_reference_data_points_filters(reference_data_points_filters)
-     .pm_matcher(matcher)
-     .pm_outlier_filters(outlier_filters)
-     .pm_error_minimizer(error_minimizer)
-     .pm_transformation_checkers(transformation_checkers)
-     .pm_inspector(inspector)
-     .pm_logger(logger),
-     params::point_map(Point_map()).normal_map(Normal_map()));
+     .point_set_filters(point_set_1_filters)
+     .matcher(matcher)
+     .outlier_filters(outlier_filters)
+     .error_minimizer(error_minimizer)
+     .transformation_checkers(transformation_checkers)
+     .inspector(inspector)
+     .logger(logger),
+     params::point_map(Point_map()).normal_map(Normal_map())
+     .point_set_filters(point_set_2_filters));
 
   std::ofstream out("pwns2_aligned.ply");
   if (!out ||
