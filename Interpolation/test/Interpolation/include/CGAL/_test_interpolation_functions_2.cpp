@@ -544,43 +544,30 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
     is_equal = test_barycenter<Dt>(coords.begin(), coords.end(), norm, points[j], tolerance);
     assert(is_equal);
 
-#ifdef CGAL_CXX11
-      assert(test_interpolation(coords.begin(), coords.end(), norm,
-                                points[j], exact_values[0][points[j]],
-                                [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[0].value, true); },
-                                [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[0].gradient, true); },
-                                Traits(), 0, tolerance));
+    assert(test_interpolation(coords.begin(), coords.end(), norm,
+                              points[j], exact_values[0][points[j]],
+                              [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[0].value, true); },
+                              [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[0].gradient, true); },
+                              Traits(), 0, tolerance));
 
 
-      // wrapping the lambda in a std function
-      std::function<std::pair<Coord_type, bool>(const Vertex_handle)> value_function_1 =
-        [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[1].value, true); };
+    // wrapping the lambda in a std function
+    std::function<std::pair<Coord_type, bool>(const Vertex_handle)> value_function_1 =
+      [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[1].value, true); };
 
-      std::function<std::pair<Vector, bool>(const Vertex_handle)> gradient_function_1 =
-        [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[1].gradient, true); };
+    std::function<std::pair<Vector, bool>(const Vertex_handle)> gradient_function_1 =
+      [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[1].gradient, true); };
 
-      assert(test_interpolation(coords.begin(), coords.end(), norm,
-                                points[j], exact_values[1][points[j]],
-                                value_function_1, gradient_function_1,
-                                Traits(), 1, tolerance));
+    assert(test_interpolation(coords.begin(), coords.end(), norm,
+                              points[j], exact_values[1][points[j]],
+                              value_function_1, gradient_function_1,
+                              Traits(), 1, tolerance));
 
-      assert(test_interpolation(coords.begin(), coords.end(), norm,
-                                points[j], exact_values[2][points[j]],
-                                [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[2].value, true); },
-                                [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[2].gradient, true); },
-                                Traits(), 2, tolerance));
-#else
-    for(int i=0; i<3; ++i)
-    {
-      Value_function<Vertex_handle, Coord_type> value_function(i);
-      Gradient_function<Vertex_handle, Vector> gradient_function(i);
-
-      assert(test_interpolation(coords.begin(), coords.end(), norm,
-                                points[j], exact_values[i][points[j]],
-                                value_function, gradient_function,
-                                Traits(), i, tolerance));
-    }
-#endif
+    assert(test_interpolation(coords.begin(), coords.end(), norm,
+                              points[j], exact_values[2][points[j]],
+                              [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[2].value, true); },
+                              [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[2].gradient, true); },
+                              Traits(), 2, tolerance));
 
     coords.clear();
   }
@@ -593,7 +580,6 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
 
   Point_vector_map approx_gradients[2];
 
-#ifdef CGAL_CXX11
   {
     CGAL::sibson_gradient_fitting_nn_2(T,
                                        std::inserter(approx_gradients[0], approx_gradients[0].begin()), // OutputIterator
@@ -612,22 +598,6 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
                                        value_function_1,
                                        GradTraits());
   }
-#else
-  Value_function<Vertex_handle, Coord_type> value_function_0(0);
-  Value_function<Vertex_handle, Coord_type> value_function_1(1);
-
-  CGAL::sibson_gradient_fitting_nn_2(T,
-                                     std::inserter(approx_gradients[0], approx_gradients[0].begin()), // OutputIterator
-                                     CGAL::Interpolation::internal::Extract_point_in_pair<Dt, Vector>(), // OutputFunctor
-                                     value_function_0,
-                                     GradTraits());
-
-  CGAL::sibson_gradient_fitting_nn_2(T,
-                                     std::inserter(approx_gradients[1], approx_gradients[1].begin()),
-                                     CGAL::Interpolation::internal::Extract_point_in_pair<Dt, Vector>(),
-                                     value_function_1,
-                                     GradTraits());
-#endif
 
   for(int j=0; j<n; ++j)
   {
@@ -668,7 +638,6 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
   ci++;
   assert(ci == coords.end());
 
-#ifdef CGAL_CXX11
   Value_function<Vertex_handle, Coord_type> value_function_0(0);
   Value_function<Vertex_handle, Coord_type> value_function_2(2);
 
@@ -695,18 +664,6 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
                             [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[2].value, true); },
                             [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[2].gradient, true); },
                             Traits(), 2, tolerance));
-#else
-  for(int j=0; j<3; ++j)
-  {
-    Value_function<Vertex_handle, Coord_type> value_function(j);
-    Gradient_function<Vertex_handle, Vector> gradient_function(j);
-
-    assert(test_interpolation(coords.begin(), coords.end(), norm,
-                              points[n/2], value_function(p_to_vh[points[n/2]]).first,
-                              value_function, gradient_function,
-                              Traits(), j, tolerance));
-  }
-#endif
 
   coords.clear();
 }

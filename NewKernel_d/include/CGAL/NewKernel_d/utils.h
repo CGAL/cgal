@@ -86,15 +86,6 @@ struct Has_type_different_from <T, No, true>
 		}
 	};
 	template<class NT,class T> struct Divide {
-#if !defined(CGAL_CXX11) || !defined(BOOST_RESULT_OF_USE_DECLTYPE)
-		// requires boost > 1.44
-		// shouldn't be needed with C++0X
-		//template<class> struct result;
-		//template<class FT> struct result<Divide(FT)> {
-		//	typedef FT type;
-		//};
-		typedef NT result_type;
-#endif
 		T const& scale;
 		Divide(T const& t):scale(t){}
 		template<class FT>

@@ -222,11 +222,7 @@ template <typename T, typename A>
 typename Union_find<T,A>::handle Union_find<T,A>::make_set(const T& x) {
     pointer tmp = m_first;
     m_first = alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator>::construct(alloc, m_first, tmp, x);
-#else
-    alloc.construct( m_first, Union_find_struct(tmp,x));
-#endif
     ++sets;
     ++values;
     return handle( m_first);
@@ -236,11 +232,7 @@ template <typename T, typename A>
 void Union_find<T,A>::clear() {
     while (m_first) { 
         pointer tmp = m_first->next;
-#ifdef CGAL_CXX11
         std::allocator_traits<allocator>::destroy(alloc, m_first);
-#else
-        alloc.destroy(m_first);
-#endif
         alloc.deallocate(m_first,1);
         m_first = tmp;
     }

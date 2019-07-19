@@ -42,11 +42,7 @@ typedef Kernel::Direction_2                                            Direction
  */
 typedef boost::adjacency_list<boost::listS,
                               boost::vecS,
-                              #ifdef CGAL_CXX11
                               boost::undirectedS,
-                              #else
-                              boost::directedS,
-                              #endif
                               Point_2
                              > Graph;
 
