@@ -683,7 +683,15 @@ private:
   bool m_yellow_sym_diff;
   bool m_magenta_sym_diff;
   bool m_aqua_sym_diff;
-  
+
+  bool m_blue_mink;
+  bool m_red_mink;
+  bool m_black_mink;
+  bool m_brown_mink;
+  bool m_yellow_mink;
+  bool m_magenta_mink;
+  bool m_aqua_mink;
+
 
   bool m_visible_black;
   bool m_visible_brown;
@@ -1095,6 +1103,13 @@ MainWindow::MainWindow() :
   m_yellow_sym_diff(false), //default
   m_magenta_sym_diff(false), //default
   m_aqua_sym_diff(false), //default
+  m_blue_mink(true), //default
+  m_red_mink(false), //default
+  m_black_mink(false), //default
+  m_brown_mink(false), //default
+  m_yellow_mink(false), //default
+  m_magenta_mink(false), //default
+  m_aqua_mink(false), //default
   m_visible_black(false), //default 
   m_visible_brown(false), //default 
   m_visible_yellow(false), //default 
@@ -2386,31 +2401,139 @@ void MainWindow::on_showAquaSym_Diff_toggled(bool aCheck)
 
 void MainWindow::on_showBlueMink_Sum_toggled(bool aCheck)
 {
+	if(aCheck)
+	{
+		size_t count = 0;
+		if (showRedMink_Sum->isChecked()) count++;
+		if (showBlackMink_Sum->isChecked()) count++;
+		if (showBrownMink_Sum->isChecked()) count++;
+		if (showYellowMink_Sum->isChecked()) count++;
+		if (showMagentaMink_Sum->isChecked()) count++;
+		if (showAquaMink_Sum->isChecked()) count++;
+
+		if (count >= 2)
+		{
+			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			showBlueMink_Sum->setChecked(false); 
+		}
+	}
 
 }
 void MainWindow::on_showRedMink_Sum_toggled(bool aCheck)
 {
+	if(aCheck)
+	{
+		size_t count =0 ;
+		if (showBlueMink_Sum->isChecked()) count++;
+		if (showBlackMink_Sum->isChecked()) count++;
+		if (showBrownMink_Sum->isChecked()) count++;
+		if (showYellowMink_Sum->isChecked()) count++;
+		if (showMagentaMink_Sum->isChecked()) count++;
+		if (showAquaMink_Sum->isChecked()) count++;
 
+		if (count >= 2)
+		{
+			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			showRedMink_Sum->setChecked(false); 
+		}
+	}
 }
 void MainWindow::on_showBlackMink_Sum_toggled(bool aCheck)
 {
+	if(aCheck)
+	{
+		size_t count = 0;
+		if (showRedMink_Sum->isChecked()) count++;
+		if (showBlueMink_Sum->isChecked()) count++;
+		if (showBrownMink_Sum->isChecked()) count++;
+		if (showYellowMink_Sum->isChecked()) count++;
+		if (showMagentaMink_Sum->isChecked()) count++;
+		if (showAquaMink_Sum->isChecked()) count++;
+
+		if (count >= 2)
+		{
+			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			showBlackMink_Sum->setChecked(false); 
+		}
+	}
 
 }
 void MainWindow::on_showBrownMink_Sum_toggled(bool aCheck)
 {
+	if(aCheck)
+	{
+		size_t count = 0;
+		if (showRedMink_Sum->isChecked()) count++;
+		if (showBlackMink_Sum->isChecked()) count++;
+		if (showBlueMink_Sum->isChecked()) count++;
+		if (showYellowMink_Sum->isChecked()) count++;
+		if (showMagentaMink_Sum->isChecked()) count++;
+		if (showAquaMink_Sum->isChecked()) count++;
 
+		if (count >= 2)
+		{
+			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			showBrownMink_Sum->setChecked(false); 
+		}
+	}
 }
 void MainWindow::on_showYellowMink_Sum_toggled(bool aCheck)
 {
+	if(aCheck)
+	{
+		size_t count = 0;
+		if (showRedMink_Sum->isChecked()) count++;
+		if (showBlackMink_Sum->isChecked()) count++;
+		if (showBrownMink_Sum->isChecked()) count++;
+		if (showBlueMink_Sum->isChecked()) count++;
+		if (showMagentaMink_Sum->isChecked()) count++;
+		if (showAquaMink_Sum->isChecked()) count++;
 
+		if (count >= 2)
+		{
+			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			showYellowMink_Sum->setChecked(false); 
+		}
+	}
 }
 void MainWindow::on_showMagentaMink_Sum_toggled(bool aCheck)
 {
+	if(aCheck)
+	{
+		size_t count = 0;
+		if (showRedMink_Sum->isChecked()) count++;
+		if (showBlackMink_Sum->isChecked()) count++;
+		if (showBrownMink_Sum->isChecked()) count++;
+		if (showYellowMink_Sum->isChecked()) count++;
+		if (showBlueMink_Sum->isChecked()) count++;
+		if (showAquaMink_Sum->isChecked()) count++;
+
+		if (count >= 2)
+		{
+			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			showMagentaMink_Sum->setChecked(false); 
+		}
+	}
 
 }
 void MainWindow::on_showAquaMink_Sum_toggled(bool aCheck)
 {
+	if(aCheck)
+	{
+		size_t count = 0;
+		if (showRedMink_Sum->isChecked()) count++;
+		if (showBlackMink_Sum->isChecked()) count++;
+		if (showBrownMink_Sum->isChecked()) count++;
+		if (showYellowMink_Sum->isChecked()) count++;
+		if (showMagentaMink_Sum->isChecked()) count++;
+		if (showBlueMink_Sum->isChecked()) count++;
 
+		if (count >= 2)
+		{
+			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			showAquaMink_Sum->setChecked(false); 
+		}
+	}
 }
 
 
@@ -2831,6 +2954,13 @@ void MainWindow::on_actionNew_triggered()
   m_yellow_sym_diff = false; //default
   m_magenta_sym_diff = false; //default
   m_aqua_sym_diff = false; //default
+  m_blue_mink = true; //default
+  m_red_mink = false; //default
+  m_black_mink = false; //default
+  m_brown_mink = false; //default
+  m_yellow_mink = false; //default
+  m_magenta_mink = false; //default
+  m_aqua_mink = false; //default
 
   drawBlue -> setChecked(true);
 
@@ -2868,13 +2998,13 @@ void MainWindow::on_actionNew_triggered()
   showMagentaUnion->setChecked(false);
   showAquaUnion->setChecked(false);
 
-  showBlueDiff->setChecked(true);
   showRedDiff->setChecked(false);
   showBlackDiff->setChecked(false);
   showBrownDiff->setChecked(false);
   showYellowDiff->setChecked(false);
   showMagentaDiff->setChecked(false);
   showAquaDiff->setChecked(false);
+  showBlueDiff->setChecked(true);
 
   showBlueSym_Diff->setChecked(true);
   showRedSym_Diff->setChecked(false);
@@ -2884,9 +3014,17 @@ void MainWindow::on_actionNew_triggered()
   showMagentaSym_Diff->setChecked(false);
   showAquaSym_Diff->setChecked(false);
 
+  showRedMink_Sum->setChecked(false);
+  showBlackMink_Sum->setChecked(false);
+  showBrownMink_Sum->setChecked(false);
+  showYellowMink_Sum->setChecked(false);
+  showMagentaMink_Sum->setChecked(false);
+  showAquaMink_Sum->setChecked(false);
+  showBlueMink_Sum->setChecked(true);
+
   m_visible_black = false;
   showBlack ->setVisible(false);
-  //drawBlack -> setVisible(false);
+  drawBlack -> setVisible(false);
   showBlackComp -> setVisible(false);
   showBlackDiff -> setVisible(false);
   showBlackUnion -> setVisible(false);
@@ -2898,7 +3036,7 @@ void MainWindow::on_actionNew_triggered()
   
   m_visible_brown = false;
   showBrown ->setVisible(false);
-  //drawBrown -> setVisible(false);
+  drawBrown -> setVisible(false);
   showBrownComp -> setVisible(false);
   showBrownDiff -> setVisible(false);
   showBrownUnion -> setVisible(false);
@@ -2909,7 +3047,7 @@ void MainWindow::on_actionNew_triggered()
 
   m_visible_yellow = false;
   showYellow ->setVisible(false);
-  //drawYellow -> setVisible(false);
+  drawYellow -> setVisible(false);
   showYellowComp -> setVisible(false);
   showYellowDiff -> setVisible(false);
   showYellowUnion -> setVisible(false);
@@ -2920,7 +3058,7 @@ void MainWindow::on_actionNew_triggered()
 
   m_visible_magenta = false;
   showMagenta ->setVisible(false);
-  //drawMagenta -> setVisible(false);
+  drawMagenta -> setVisible(false);
   showMagentaComp -> setVisible(false);
   showMagentaDiff -> setVisible(false);
   showMagentaUnion -> setVisible(false);
@@ -2931,7 +3069,7 @@ void MainWindow::on_actionNew_triggered()
 
   m_visible_aqua = false;
   showAqua ->setVisible(false);
-  //drawAqua -> setVisible(false);
+  drawAqua -> setVisible(false);
   showAquaComp -> setVisible(false);
   showAquaDiff -> setVisible(false);
   showAquaUnion -> setVisible(false);
@@ -3729,7 +3867,9 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
   actionSymmetric_Difference->setChecked(false); 
   //actionMinkowski_Sum->setChecked(false);
 
-  if (!blue_set().is_empty()) lDone = true;
+
+
+  lDone = true;
   this->setCursor(old);
   if (lDone) modelChanged();
 }
