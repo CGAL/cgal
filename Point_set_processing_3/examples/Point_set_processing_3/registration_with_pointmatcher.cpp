@@ -4,6 +4,8 @@
 #include <CGAL/IO/read_ply_points.h>
 #include <CGAL/IO/write_ply_points.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Aff_transformation_3.h>
+#include <CGAL/aff_transformation_tags.h>
 
 #include <CGAL/pointmatcher/compute_registration_transformation.h>
 #include <CGAL/pointmatcher/register_point_sets.h>
@@ -92,7 +94,9 @@ int main(int argc, const char** argv)
   // Prepare logger
   ICP_config logger { .name= "FileLogger" };
 
-  // EITHER call the ICP registration method pointmatcher to get the transformation to apply to pwns2 TODO: or pwns1?
+  const K::Aff_transformation_3 identity_transform = K::Aff_transformation_3(CGAL::Identity_transformation());
+
+  // EITHER call the ICP registration method pointmatcher to get the transformation to apply to pwns2
   K::Aff_transformation_3 res =
   CGAL::pointmatcher::compute_registration_transformation
     (pwns1, pwns2, 
@@ -105,7 +109,13 @@ int main(int argc, const char** argv)
      .inspector(inspector)
      .logger(logger),
      params::point_map(Point_map()).normal_map(Normal_map())
-     .point_set_filters(point_set_2_filters));
+     .point_set_filters(point_set_2_filters)
+     .transformation(identity_transform) /* initial transform for pwns2.
+                                          * default value is already identity transform.
+                                          * a proper initial transform could be given, for example,
+                                          * a transform returned from a coarse registration algorithm. 
+                                          * */
+     );
 
   // OR call the ICP registration method from pointmatcher and apply the transformation to pwn2
   CGAL::pointmatcher::register_point_sets
@@ -119,7 +129,11 @@ int main(int argc, const char** argv)
      .inspector(inspector)
      .logger(logger),
      params::point_map(Point_map()).normal_map(Normal_map())
-     .point_set_filters(point_set_2_filters));
+     .point_set_filters(point_set_2_filters)
+     .transformation(res) /* pass the above computed transformation as initial transformation.
+                           * as a result, the registration will require less iterations to converge.
+                           * */
+     );
 
   std::ofstream out("pwns2_aligned.ply");
   if (!out ||
