@@ -217,6 +217,8 @@ public:
     return tr->compare_y_at_x_right_2_object()
       (c1->last_curve(), c2->last_curve(), this->point()) == LARGER;
   }
+
+  std::vector< std::pair<Subcurve*, Subcurve*> > overlap_event_to_test;
 };
 
 } // namespace Surface_sweep_2
