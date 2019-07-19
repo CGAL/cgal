@@ -244,8 +244,6 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
   try 
   {
 		const PM_transform_params prior = transform_params;
-    std::cerr << "Cloud points nb: " << cloud.getNbPoints() << std::endl; // TODO: Remove
-    std::cerr << "Ref Cloud points nb: " << ref_cloud.getNbPoints() << std::endl; // TODO: Remove
 		transform_params = icp(cloud, ref_cloud, prior);
     // TODO: Convergence? Can we return some sort of score?
     std::cerr << transform_params << std::endl; // TODO: Remove
@@ -272,6 +270,8 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
 } // end of namespace internal
 
 // TODO: Document
+// TODO: Here, point_set_2 is the reference. Therefore, Aff_transformation_3 corresponds to the
+//       transformation that is suggested to be applied on point_set_1. Change the order?
 template <class PointRange1, class PointRange2,
           class NamedParameters1, class NamedParameters2>
 #ifdef DOXYGEN_RUNNING
@@ -286,7 +286,6 @@ compute_registration_transformation (const PointRange1& point_set_1, const Point
   using boost::choose_param;
   using boost::get_param;
 
-  // Parse named parameters in some other function to get it as pointmatcher parameters
   namespace PSP = CGAL::Point_set_processing_3;
 
   // property map types
