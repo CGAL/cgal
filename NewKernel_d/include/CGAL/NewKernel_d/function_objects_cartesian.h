@@ -640,8 +640,8 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
 	Point const& p=*f;
 	for(int j=0;j<d;++j) {
 	  m(i,j)=2*(c(p,j)-c(p0,j));
-	  b[i] = sdo(p) - n0;
 	}
+	b[i] = sdo(p) - n0;
       }
       CGAL_assertion (i == d);
       Vec res = typename CVec::Dimension()(d);;
