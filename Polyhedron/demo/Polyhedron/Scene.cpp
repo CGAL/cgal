@@ -543,7 +543,7 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
     }
     if(group ||item.visible())
     {
-      if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
+      if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud || item.renderingMode() == GouraudPlusEdges )
       {
         if(with_names) {
           viewer->glClearDepthf(1.0);
@@ -591,7 +591,8 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
      {
        if( group || (!with_names && item.renderingMode() == FlatPlusEdges )
           || item.renderingMode() == Wireframe
-          || item.renderingMode() == PointsPlusNormals)
+          || item.renderingMode() == PointsPlusNormals
+          || item.renderingMode() == GouraudPlusEdges)
        {
          viewer->setGlPointSize(2.f);
          item.drawEdges(viewer);
