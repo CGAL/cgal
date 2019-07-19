@@ -290,7 +290,7 @@ int main(int, char** argv)
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
   #endif
-/*
+
   time.reset();
   time.start();
   std::cout << "Hausdorff distance approximation between meshes (sequential) "
@@ -309,7 +309,7 @@ int main(int, char** argv)
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
-*/
+
   time.reset();
   time.start();
   std::cout << "Bounded Hausdorff distance between meshes (sequential), optimized implementation "
