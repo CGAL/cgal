@@ -788,7 +788,7 @@ centroid(InputIterator begin,
       it++)
   {
     const Tetrahedron& tetrahedron = *it;
-    FT unsigned_volume = tetrahedron.volume();
+    FT unsigned_volume = CGAL::abs(tetrahedron.volume());
     Point c = K().construct_centroid_3_object()(tetrahedron[0],tetrahedron[1],tetrahedron[2],tetrahedron[3]);
     v = v + unsigned_volume * (c - ORIGIN);
     sum_volumes += unsigned_volume;
