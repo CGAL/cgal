@@ -88,7 +88,7 @@ int main(int argc, const char** argv)
                                                 } );
   // Prepare inspector
   ICP_config inspector { .name="NullInspector" };
-
+// TODO: Do we really need to set logger through named parameters? (alternative: some other static method)
   // Prepare logger
   ICP_config logger { .name= "FileLogger" };
 
@@ -107,9 +107,7 @@ int main(int argc, const char** argv)
      params::point_map(Point_map()).normal_map(Normal_map())
      .point_set_filters(point_set_2_filters));
 
-  // OR call the ICP registration method from pointmatcher and apply the transformation to pwn1
-  // TODO: Check the latest convention on ref point cloud. Currently, point_set_2 is the ref, as in pointmatcher
-  //       Therefore, the transformation is applied on point_set_1
+  // OR call the ICP registration method from pointmatcher and apply the transformation to pwn2
   CGAL::pointmatcher::register_point_sets
     (pwns1, pwns2, 
      params::point_map(Point_map()).normal_map(Normal_map())

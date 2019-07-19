@@ -30,7 +30,7 @@ template <class Kernel,
           class VectorMap1,
           class VectorMap2>
 void // TODO: Can we return some sort of score?
-register_point_sets(PointRange1& range1, const PointRange2& range2, // TODO: Check which one is ref, currently range2
+register_point_sets(const PointRange1& range1, PointRange2& range2,
                     PointMap1 point_map1,   PointMap2 point_map2,
                     VectorMap1 vector_map1, VectorMap2 vector_map2,
                     ICP<typename Kernel::FT> icp)
@@ -42,13 +42,10 @@ register_point_sets(PointRange1& range1, const PointRange2& range2, // TODO: Che
                                                 icp);
 
   // update CGAL points
-  // TODO: Here, point_set_2 is the reference. Therefore, Aff_transformation_3 corresponds to the
-  //       transformation that is suggested to be applied on point_set_1. Check the latest convention
-  //       with compute_registration_transformation() method
-  for (typename PointRange1::iterator it=range1.begin(),
-                                      end=range1.end(); it!=end; ++it)
+  for (typename PointRange2::iterator it=range2.begin(),
+                                      end=range2.end(); it!=end; ++it)
   {
-    put(point_map1, *it, get(point_map1, *it).transform(res));
+    put(point_map2, *it, get(point_map2, *it).transform(res));
   }
 }
 
@@ -58,7 +55,7 @@ register_point_sets(PointRange1& range1, const PointRange2& range2, // TODO: Che
 template <class PointRange1, class PointRange2,
           class NamedParameters1, class NamedParameters2>
 void // TODO: Can we return some sort of score?
-register_point_sets (PointRange1& point_set_1, const PointRange2& point_set_2, // TODO: Check which one is ref, currently range2
+register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
                      const NamedParameters1& np1, const NamedParameters2& np2)
 {
   using boost::choose_param;
@@ -97,7 +94,7 @@ register_point_sets (PointRange1& point_set_1, const PointRange2& point_set_2, /
 template <class PointRange1, class PointRange2,
           class NamedParameters1>
 void // TODO: Can we return some sort of score?
-register_point_sets(PointRange1& point_set_1, const PointRange2& point_set_2, // TODO: Check which one is ref, currently range2
+register_point_sets(const PointRange1& point_set_1, PointRange2& point_set_2,
                     const NamedParameters1& np1)
 {
   namespace params = CGAL::Point_set_processing_3::parameters;
@@ -106,7 +103,7 @@ register_point_sets(PointRange1& point_set_1, const PointRange2& point_set_2, //
 
 template <class PointRange1, class PointRange2>
 void // TODO: Can we return some sort of score?
-register_point_sets(PointRange1& point_set_1, const PointRange2& point_set_2)  // TODO: Check which one is ref, currently range2
+register_point_sets(const PointRange1& point_set_1, PointRange2& point_set_2)
 {
   namespace params = CGAL::Point_set_processing_3::parameters;
   return register_point_sets(point_set_1, point_set_2,

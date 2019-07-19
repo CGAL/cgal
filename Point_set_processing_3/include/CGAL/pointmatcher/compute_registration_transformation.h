@@ -53,25 +53,29 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
   ICP_config null_config { .name = "_null_config" };
   auto is_null_config = [&](const ICP_config& c) { return !c.name.compare(null_config.name); };
 
-  // np1.point_set_filters -> PM::ReadingDataPointsFilters
-  auto reading_data_points_filter_configs = choose_param(get_param(np1, internal_np::point_set_filters), std::vector<ICP_config>());
-  for(const auto& conf : reading_data_points_filter_configs)
-  {
-    std::cerr << "Reading data point filter found, name: " << conf.name << std::endl;
-    try {
-      icp.readingDataPointsFilters.push_back( PM::get().DataPointsFilterRegistrar.create(conf.name, conf.params) );
-    } catch(typename PointMatcherSupport::InvalidElement& error) {
-      dump_invalid_point_matcher_config_exception_msg(error);
-    }
-  }
+  // In CGAL, point_set_1 is the reference while point_set_2 is the data
+  // However, in pointmatcher, the order is reverse: point_set_1 is the data while point_set_2 is the reference
+  // Therefore, filter params from np1 applies to reference data points while params from np2 applies to reading data points
 
-  // np2.point_set_filters -> PM::ReferenceDataPointsFilter
-  auto reference_data_points_filter_configs = choose_param(get_param(np2, internal_np::point_set_filters), std::vector<ICP_config>());
+  // np1.point_set_filters -> PM::ReferenceDataPointsFilter
+  auto reference_data_points_filter_configs = choose_param(get_param(np1, internal_np::point_set_filters), std::vector<ICP_config>());
   for(const auto& conf : reference_data_points_filter_configs)
   {
     std::cerr << "Reference data point filter found, name: " << conf.name << std::endl;
     try {
       icp.referenceDataPointsFilters.push_back( PM::get().DataPointsFilterRegistrar.create(conf.name, conf.params) );
+    } catch(typename PointMatcherSupport::InvalidElement& error) {
+      dump_invalid_point_matcher_config_exception_msg(error);
+    }
+  }
+
+  // np2.point_set_filters -> PM::ReadingDataPointsFilters
+  auto reading_data_points_filter_configs = choose_param(get_param(np2, internal_np::point_set_filters), std::vector<ICP_config>());
+  for(const auto& conf : reading_data_points_filter_configs)
+  {
+    std::cerr << "Reading data point filter found, name: " << conf.name << std::endl;
+    try {
+      icp.readingDataPointsFilters.push_back( PM::get().DataPointsFilterRegistrar.create(conf.name, conf.params) );
     } catch(typename PointMatcherSupport::InvalidElement& error) {
       dump_invalid_point_matcher_config_exception_msg(error);
     }
@@ -210,7 +214,9 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
   PM_matrix ref_points_normal_matrix = PM_matrix (3, nb_ref_points);
   PM_matrix points_pos_matrix    = PM_matrix (4, nb_points);
   PM_matrix points_normal_matrix = PM_matrix (3, nb_points);
-  
+
+  // In CGAL, point_set_1 is the reference while point_set_2 is the data
+
   // convert cgal points to pointmatcher points
   internal::copy_cgal_points_to_pm_matrix<Scalar>(range1,
                                                   point_map1,
@@ -244,6 +250,7 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
   try 
   {
 		const PM_transform_params prior = transform_params;
+    // In pointmatcher::icp, param1 is the data while param2 is the reference (in constrast to CGAL)
 		transform_params = icp(cloud, ref_cloud, prior);
     // TODO: Convergence? Can we return some sort of score?
     std::cerr << transform_params << std::endl; // TODO: Remove
@@ -270,8 +277,7 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
 } // end of namespace internal
 
 // TODO: Document
-// TODO: Here, point_set_2 is the reference. Therefore, Aff_transformation_3 corresponds to the
-//       transformation that is suggested to be applied on point_set_1. Change the order?
+// point_set_1 is reference while point_set_2 is data
 template <class PointRange1, class PointRange2,
           class NamedParameters1, class NamedParameters2>
 #ifdef DOXYGEN_RUNNING
@@ -320,7 +326,7 @@ template <class PointRange1, class PointRange2,
           class NamedParameters1>
 typename CGAL::Point_set_processing_3::GetK<PointRange1, NamedParameters1>
   ::Kernel::Aff_transformation_3
-compute_registration_transformation(const PointRange1& point_set_1, PointRange2& point_set_2,
+compute_registration_transformation(const PointRange1& point_set_1, const PointRange2& point_set_2,
       const NamedParameters1& np1)
 {
   namespace params = CGAL::Point_set_processing_3::parameters;
@@ -331,7 +337,7 @@ template <class PointRange1, class PointRange2>
 typename CGAL::Point_set_processing_3::GetK<PointRange1,
           cgal_bgl_named_params<bool, internal_np::all_default_t> >
   ::Kernel::Aff_transformation_3
-compute_registration_transformation(const PointRange1& point_set_1, PointRange2& point_set_2)
+compute_registration_transformation(const PointRange1& point_set_1, const PointRange2& point_set_2)
 {
   namespace params = CGAL::Point_set_processing_3::parameters;
   return compute_registration_transformation(point_set_1, point_set_2,
