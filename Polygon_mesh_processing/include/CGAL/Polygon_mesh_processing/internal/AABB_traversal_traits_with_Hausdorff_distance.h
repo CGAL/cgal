@@ -146,8 +146,15 @@ namespace CGAL {
         squared_distance(tri_center, v2)
       ));
 
-      // If triangles in the node can still lower the upper bound, enter it
-      if (tri_radius + bb_radius >= dist) {
+      // Find a lower bound on the distance of the triangle to the bounding box
+      // by taking the distance from the triangle center to the bbox center
+      // and subtracting the radii of both elements. Thereby, each triangle in
+      // the bounding box has at least distance
+      //   ( dist - triangle_radius - bbox_radius )
+      // to the query triangle. Only if this lower bound is lower than the
+      // current best known lower bound, we enter the node, trying to
+      // lower the lower bound further.
+      if ( (dist - tri_radius - bb_radius) <= h_local_lower) {
         return true;
       } else {
         return false;
@@ -230,10 +237,7 @@ namespace CGAL {
 
       // Update global Hausdorff bounds according to the obtained local bounds
       Hausdorff_bounds local_bounds = traversal_traits_tm2.get_local_bounds();
-/*
-      std::cout << "Processed triangle " << primitive.id() << " with bounds ("
-                << local_bounds.first << ", " << local_bounds.second << ")" << std::endl;
-*/
+
       if (local_bounds.first > h_lower) {
         h_lower = local_bounds.first;
       }
