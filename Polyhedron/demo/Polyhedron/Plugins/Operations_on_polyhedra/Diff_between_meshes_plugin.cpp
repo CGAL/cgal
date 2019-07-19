@@ -48,7 +48,8 @@ public Q_SLOTS:
 private:
   CGAL::Three::Scene_interface* scene;
   QAction* actionDiff;
-  SMesh* diff(SMesh* m1, SMesh* m2, bool compute_common= false);
+  SMesh* diff(SMesh* m1, SMesh* m2);
+  SMesh* common(SMesh* m1, SMesh* m2);
 
 }; // end Polyhedron_demo_diff_between_meshes_plugin
 
@@ -66,7 +67,7 @@ void Polyhedron_demo_diff_between_meshes_plugin::init(QMainWindow* mainWindow,
 QList<QAction*> Polyhedron_demo_diff_between_meshes_plugin::actions() const {
   return QList<QAction*>() << actionDiff;
 }
-SMesh* Polyhedron_demo_diff_between_meshes_plugin::diff(SMesh* m1, SMesh* m2, bool compute_common)
+SMesh* Polyhedron_demo_diff_between_meshes_plugin::diff(SMesh* m1, SMesh* m2)
 {
   //Collect points of both meshes in separate sets to easily detect if a point is
   // contained by a mesh or not.
@@ -96,7 +97,7 @@ std::set<Point_3> m2_verts;
         break;
       }
     }
-    if(take ^ compute_common) //XOR
+    if(take)
     {
       m1_faces.push_back(f);
       for(auto v : CGAL::vertices_around_face(halfedge(f, *m1), *m1))
@@ -128,6 +129,63 @@ std::set<Point_3> m2_verts;
   return m1_over_m2;
 }
 
+SMesh* Polyhedron_demo_diff_between_meshes_plugin::common(SMesh* m1, SMesh* m2)
+{
+  std::set<Point_3> m1_verts;
+  for(auto v : m1->vertices())
+  {
+    m1_verts.insert(m1->point(v));
+  }
+  std::set<Point_3> m2_verts;
+  for(auto v : m2->vertices())
+  {
+    m2_verts.insert(m2->point(v));
+  }
+
+  std::vector<Point_3> m1_points;
+
+  std::map<SMesh::Vertex_index, std::size_t> id_map;
+  std::size_t id = 0;
+  std::vector<SMesh::Face_index> m1_faces;
+  //take all faces of m1 whose points are all in m2
+  for(auto f : m1->faces())
+  {
+    for(auto v : CGAL::vertices_around_face(halfedge(f, *m1), *m1))
+    {
+      if(m2_verts.find(m1->point(v)) == m2_verts.end())
+      {
+        m1_faces.push_back(f);
+        break;
+      }
+    }
+  }
+  //take all faces of m2 whose points are all in m1
+  for(auto f : m2->faces())
+  {
+    for(auto v : CGAL::vertices_around_face(halfedge(f, *m2), *m2))
+    {
+    }
+  }
+
+
+  std::vector<std::vector<std::size_t> > polygons(m1_faces.size());
+  id = 0;
+  for(auto f : m1_faces)
+  {
+    for(auto v : vertices_around_face(halfedge(f, *m1),*m1))
+    {
+      polygons[id].push_back(id_map[v]);
+    }
+    ++id;
+  }
+
+  SMesh* m1_over_m2 = new SMesh();
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<SMesh>(
+    m1_points, polygons, *m1_over_m2);
+  return m1_over_m2;
+}
+
+
 void Polyhedron_demo_diff_between_meshes_plugin::diff()
 {
 
@@ -147,7 +205,7 @@ void Polyhedron_demo_diff_between_meshes_plugin::diff()
 
   SMesh* m1_over_m2 = diff(m1, m2);
   SMesh* m2_over_m1 = diff(m2, m1);
-  SMesh* common = diff(m2, m1, true);
+  SMesh* common = common(m2, m1);
 
   Scene_surface_mesh_item* m1_over_m2_item = new Scene_surface_mesh_item(m1_over_m2);
   m1_over_m2_item->setColor(QColor(Qt::blue));
