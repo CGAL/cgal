@@ -712,7 +712,9 @@ template <typename Vis>
 
       Point_2 left_end = this->m_traits->construct_min_vertex_2_object()(icv);
       // split the x-monotone curve at current event
-      if ( this->m_queueEventLess(left_end, event_for_overlap) == SMALLER)
+      // TODO handle unbounded curves?
+      // TODO: check event_for_overlap is still needed
+      if ( this->m_queueEventLess(left_end, event_for_overlap==NULL ? this->m_currentEvent : event_for_overlap) == SMALLER)
       {
         this->m_traits->split_2_object()(icv,
                                          event_for_overlap->point(),

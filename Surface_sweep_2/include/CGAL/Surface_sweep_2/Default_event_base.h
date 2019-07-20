@@ -172,7 +172,8 @@ public:
     Subcurve_iterator iter = this->right_curves_begin();
     for (Subcurve_iterator end = this->right_curves_end(); iter!=end; ++iter)
     {
-      if (*iter == curve)
+      // TODO refine the condition
+      if ( (*iter)->is_leaf(curve) || curve->is_leaf(*iter) || curve->has_common_leaf(*iter) )
         break;
     }
     CGAL_assertion( iter!=this->right_curves_end() );
