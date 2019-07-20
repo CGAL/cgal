@@ -32,12 +32,16 @@ Terms AlgebraicCurveParser::extractTerms() {
     if (*next == '+' || *next == '-' || next == expression.end()) {
       //find the term between the +/- and the previous +/-
       std::string subExpression = std::string(expression.begin() + termIndex, next);
-      AlgebraicCurveTerm term;
+      AlgebraicCurveTerm term{};
       bool result = parseTerm(subExpression.begin(), subExpression.end(), term);
-      algebraicTerms.push_back(term);
+      if (result){
+        algebraicTerms.push_back(term);
+      }
+
       termIndex = next - expression.begin();
     }
   }
+  return algebraicTerms;
 }
 
 template<typename Iterator>
@@ -51,26 +55,25 @@ bool AlgebraicCurveParser::parseTerm(Iterator first, Iterator last, AlgebraicCur
   phrase_parse(first, last,
           //Begin parser
                (
-               long_long[ref(coefficient)] = boost::spirit::qi::_1 >>
+          long_long[ref(coefficient) = boost::spirit::qi::_1]  >>
                  -("x^" >> long_long[ref(
-                 xExponent)] = boost::spirit::qi::_0)
+                 xExponent)= boost::spirit::qi::_1] )
                  >>
                  -("y^" >> long_long[ref(
-                 yExponent)] = boost::spirit::qi::_0)
+                 yExponent)= boost::spirit::qi::_1])
                |
                  "x^" >> long_long[ref(
-                 xExponent)] = boost::spirit::qi::_0 >>
+                 xExponent) = boost::spirit::qi::_1]  >>
                  -("y^"
-                 >> long_long[ref(
-                                                                                                                   yExponent)] = boost::spirit::qi::_0)
+                 >> long_long[ref(yExponent)= boost::spirit::qi::_1] )
                |
                   "y^" >> long_long[ref(
-                  yExponent)] =
-                  boost::spirit::qi::_0 >>
+                  yExponent) = boost::spirit::qi::_1]  >>
                   -("x^"
                   >> long_long[ref(
-                  xExponent)] = boost::spirit::qi::_0)
-               ),
+                  xExponent) = boost::spirit::qi::_1] )
+          )
+          ,
                boost::spirit::ascii::space
   );
   return false;
