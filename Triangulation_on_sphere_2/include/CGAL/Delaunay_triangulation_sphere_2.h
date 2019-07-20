@@ -21,8 +21,6 @@
 #ifndef CGAL_Delaunay_triangulation_sphere_2_H
 #define CGAL_Delaunay_triangulation_sphere_2_H
 
-#define HOLE_APPROACH
-
 #include <CGAL/Triangulation_sphere_2.h>
 #include <CGAL/Triangulation_face_base_sphere_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
