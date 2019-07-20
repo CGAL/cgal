@@ -149,14 +149,14 @@ public:
   typedef Filter_iterator<All_edges_iterator, Ghost_tester>   Solid_edges_iterator;  //Solid edges : both adjacent faces are solid
   typedef Filter_iterator<All_edges_iterator, Contour_tester> Contour_edges_iterator; //one solid and one ghost face adjacent to this face
 
-  enum Locate_type {VERTEX=0,
-                    EDGE, //1
-                    FACE, //2
-                    OUTSIDE_CONVEX_HULL, //3
-                    OUTSIDE_AFFINE_HULL,//4
-                    CONTOUR,//5
-                    NOT_ON_SPHERE,
-                    TOO_CLOSE};
+  enum Locate_type {VERTEX = 0,
+                    EDGE, // 1
+                    FACE, // 2
+                    OUTSIDE_CONVEX_HULL, // 3
+                    OUTSIDE_AFFINE_HULL,// 4
+                    CONTOUR,// 5
+                    NOT_ON_SPHERE, // 6
+                    TOO_CLOSE}; // 7
 protected:
   Gt _gt;
   Tds _tds;
@@ -219,7 +219,7 @@ public:
   Face_handle locate(const Point& p, Face_handle start) const;
   Face_handle locate_edge(const Point& p, Locate_type& lt, int& li, bool plane) const;
   void test_distance(const Point& p, Face_handle f, Locate_type &lt, int& li) const;
-  bool is_too_close(const Point& p, const Point& q) const;
+  bool is_too_close(const Point& p, const Point& q, Locate_type& lt) const;
 
   //------------------------------------------------------------------------PREDICATES--------------
   Orientation orientation(const Point& p, const Point& q, const Point& r) const;
@@ -521,9 +521,20 @@ is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle &fr) c
 template<class Gt, class Tds>
 inline bool
 Triangulation_sphere_2<Gt, Tds> ::
-is_too_close(const Point& p, const Point& q) const
+is_too_close(const Point& p, const Point& q, Locate_type& lt) const
 {
-  return squared_distance(p, q)<=_minDistSquared;
+  if(p == q)
+  {
+    lt = VERTEX;
+    return true;
+  }
+  else if(squared_distance(p, q) <= _minDistSquared)
+  {
+    lt = TOO_CLOSE;
+    return true;
+  }
+
+  return false;
 }
 
 /*
@@ -597,10 +608,9 @@ test_distance(const Point& p, Face_handle f, Locate_type& lt, int& li) const
   {
     case -1 :
     {
-      if(is_too_close(p, vertices_begin()->point()))
+      if(is_too_close(p, vertices_begin()->point(), lt))
       {
-        lt = TOO_CLOSE;
-        li=0;
+        li = 0;
         return;
       }
     } break;
@@ -611,9 +621,8 @@ test_distance(const Point& p, Face_handle f, Locate_type& lt, int& li) const
       All_vertices_iterator vi=vertices_begin();
       for(; vi!=vertices_end(); ++vi)
       {
-        if(is_too_close(vi->point(), p))
+        if(is_too_close(vi->point(), p, lt))
         {
-          lt = TOO_CLOSE;
           li = 1;
           return;
         }
@@ -623,26 +632,23 @@ test_distance(const Point& p, Face_handle f, Locate_type& lt, int& li) const
     case 2:
     {
       Vertex_handle v0 = f->vertex(0);
-      Vertex_handle v1= f->vertex(1);
+      Vertex_handle v1 = f->vertex(1);
       Vertex_handle v2 = f->vertex(2);
 
-      if(is_too_close(v0->point(), p))
+      if(is_too_close(v0->point(), p, lt))
       {
-        lt = TOO_CLOSE;
         li = 0;
         return;
       }
 
-      if(is_too_close(v1->point(), p))
+      if(is_too_close(v1->point(), p, lt))
       {
-        lt = TOO_CLOSE;
         li = 1;
         return;
       }
 
-      if(is_too_close(v2->point(), p))
+      if(is_too_close(v2->point(), p, lt))
       {
-        lt = TOO_CLOSE;
         li = 2;
         return;
       }
