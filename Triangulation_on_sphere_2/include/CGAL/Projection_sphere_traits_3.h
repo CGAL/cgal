@@ -155,7 +155,7 @@ public:
   double _radius;
   typedef Projection_sphere_traits_3<R>                   Self;
   typedef Delaunay_triangulation_sphere_traits_2<R>       Base;
-  typedef typename Projected_point<R>::Projected_point    Point_2;
+  typedef Projected_point<R>                              Point_2;
   typedef typename R::Point_3                             Base_point;
 
   typedef Point_2                                         result_type;

@@ -730,10 +730,10 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int li)
     {
       if(test_dim_up(p))
       {
-        Face_handle f = all_edges_begin()->first;
-        Vertex_handle v1 = f->vertex(0);
-        Vertex_handle v2 = f->vertex(1);
-        Vertex_handle v3 = f->neighbor(0)->vertex(1);
+//        Face_handle f = all_edges_begin()->first;
+//        Vertex_handle v1 = f->vertex(0);
+//        Vertex_handle v2 = f->vertex(1);
+//        Vertex_handle v3 = f->neighbor(0)->vertex(1);
         return insert_outside_affine_hull_regular(p);
       }
       else
