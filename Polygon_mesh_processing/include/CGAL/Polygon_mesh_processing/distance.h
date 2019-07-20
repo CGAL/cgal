@@ -927,6 +927,8 @@ double bounded_error_Hausdorff_impl(
   Candidate_set candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   Hausdorff_bounds global_bounds = traversal_traits_tm1.get_global_bounds();
 
+  // std::cout << "Culled " << traversal_traits_tm1.get_num_culled_triangles() << " out of " << tm1.num_faces() << std::endl;
+
 /*
   std::cout << "Found " << candidate_triangles.size() << " candidates." << std::endl;
   for (int i=0; i<candidate_triangles.size(); i++) {

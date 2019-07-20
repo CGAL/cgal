@@ -207,6 +207,8 @@ namespace CGAL {
         // Initialize the global bounds with 0., they will only grow.
         h_lower = 0.;
         h_upper = 0.;
+        // Initialize number of culled triangles
+        m_investigated_on_tm1 = 0;
       }
 
     // Explore the whole tree, i.e. always enter children if the methods
@@ -217,12 +219,16 @@ namespace CGAL {
     void intersection(const Query& query, const Primitive& primitive)
     {
       /* Have reached a single triangle, process it */
+      m_investigated_on_tm1++;
 
       // Map to transform faces of TM1 to actual triangles
       Triangle_from_face_descriptor_map<TriangleMesh, VPM1> m_face_to_triangle_map( &m_tm1, m_vpm1 );
       Triangle_3 candidate_triangle = get(m_face_to_triangle_map, primitive.id());
 
       // Call Culling on B with the single triangle found.
+      // TODO If we project the vertices of the triangle onto B and consider
+      //      the edge length of the triangle, can this give us better bounds
+      //      to initialize with here?
       Hausdorff_primitive_traits_tm2<
         Tree_traits, Triangle_3, Kernel, TriangleMesh, VPM2
       > traversal_traits_tm2(
@@ -298,6 +304,11 @@ namespace CGAL {
       return Hausdorff_bounds( h_lower, h_upper );
     }
 
+    int get_num_culled_triangles()
+    {
+      return (m_tm1.num_faces() - m_investigated_on_tm1);
+    }
+
   private:
     const AABBTraits& m_traits;
     // The two triangle meshes
@@ -313,6 +324,8 @@ namespace CGAL {
     double h_upper;
     // List of candidate triangles with their Hausdorff bounds attached
     Candidate_set m_candidiate_triangles;
+    // Number of triangles investigated in the procedure
+    int m_investigated_on_tm1;
   };
 }
 
