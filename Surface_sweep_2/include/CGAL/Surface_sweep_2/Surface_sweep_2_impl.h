@@ -249,7 +249,7 @@ void Surface_sweep_2<Vis>::_handle_right_curves()
   CGAL_SS_PRINT_EOL();
 
   const std::vector< std::pair<Subcurve*, Subcurve*> >& subcurve_pairs
-    = this->m_currentEvent->overlap_event_to_test;
+    = this->m_currentEvent->overlaps_on_right;
   std::size_t nb_p = subcurve_pairs.size();
   for (std::size_t i=0; i<nb_p; ++i)
     _intersect(static_cast<Subcurve*>(subcurve_pairs[i].first),
