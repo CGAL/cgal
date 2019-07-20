@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Steve OUDOT, Laurent Rineau
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_SURFACE_MESHER_STANDARD_CRITERIA_H
 #define CGAL_SURFACE_MESHER_STANDARD_CRITERIA_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <cmath>
 #include <vector>

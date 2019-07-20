@@ -1,11 +1,12 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Periodic_2_triangulation_filtered_traits_2.h>
+
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/IO/Color.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_2_triangulation_filtered_traits_2<K> GT;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K> GT;
 
 typedef CGAL::Periodic_2_triangulation_vertex_base_2<GT>    Vb;
 typedef CGAL::Triangulation_vertex_base_with_info_2<CGAL::Color, GT, Vb> VbInfo;
@@ -31,7 +32,7 @@ int main()
   PDT::Vertex_iterator vit;
   for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
     if (T.degree(vit) == 6)
-      vit->info() = CGAL::RED;
+      vit->info() = CGAL::red();
 
   return 0;
 }

@@ -12,7 +12,8 @@ from \f$ p_1\f$ to \f$ p_2\f$.
 will explicitly state where you can pass this constant as an argument 
 instead of a vector initialized with zeros. 
 
-\sa `Kernel::Vector_2` 
+\cgalModels `Kernel::Vector_2`
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
 */
 template< typename Kernel >
@@ -79,31 +80,13 @@ introduces a vector `v` initialized to `(x,y)`.
 */ 
 Vector_2(const Kernel::FT &x, const Kernel::FT &y); 
 
-/// @} 
-
-/// \name Operations 
-/// @{
-
-/*!
-Test for equality: two vectors are equal, iff their \f$ x\f$ and \f$ y\f$ 
-coordinates are equal. You can compare a vector with the 
-`NULL_VECTOR`. 
-*/ 
-bool operator==(const Vector_2<Kernel> &w) const; 
-
-/*!
-Test for inequality. You can compare a vector with the 
-`NULL_VECTOR`. 
-*/ 
-bool operator!=(const Vector_2<Kernel> &w) const; 
-
 /// @}
 
 /// \name Coordinate Access
 /// There are two sets of coordinate access functions, namely to the
 /// homogeneous and to the %Cartesian coordinates. They can be used
 /// independently from the chosen kernel model. Note that you do not
-/// loose information with the homogeneous representation, because the
+/// lose information with the homogeneous representation, because the
 /// `FieldNumberType` is a quotient.
 /// @{
 
@@ -142,13 +125,13 @@ Kernel::FT y() const;
 
 
 /*!
-returns the i'th homogeneous coordinate of `v`, starting with 0. 
+returns the i'th homogeneous coordinate of `v`.
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 Kernel::RT homogeneous(int i) const; 
 
 /*!
-returns the i'th Cartesian coordinate of `v`, starting at 0. 
+returns the i'th Cartesian coordinate of `v`.
 \pre \f$ 0\leq i \leq1\f$. 
 */ 
 Kernel::FT cartesian(int i) const; 
@@ -197,26 +180,39 @@ Vector_2<Kernel> perpendicular(const Orientation &o) const;
 /// \name Operators 
 /// @{
 
-/// \ingroup Kernel_operator_plus
-///@{
+/*!
+Test for equality: two vectors are equal, iff their \f$ x\f$ and \f$ y\f$
+coordinates are equal. You can compare a vector with the
+`NULL_VECTOR`.
+*/
+bool operator==(const Vector_2<Kernel> &w) const;
+
+/*!
+Test for inequality. You can compare a vector with the
+`NULL_VECTOR`.
+*/
+bool operator!=(const Vector_2<Kernel> &w) const;
 
 /*!
 Addition. 
 */ 
 Vector_2<Kernel> operator+(const Vector_2<Kernel> &w) const; 
 
-// @}
+/*!
+Addition.
+*/
+Vector_2<Kernel>& operator+=(const Vector_2<Kernel> &w);
 
-
-/// \ingroup Kernel_operator_minus
-///@{
 
 /*!
 Subtraction. 
 */ 
 Vector_2<Kernel> operator-(const Vector_2<Kernel> &w) const; 
 
-/// @}
+/*!
+Subtraction.
+*/
+Vector_2<Kernel>& operator-=(const Vector_2<Kernel> &w);
 
 /*!
 returns the opposite vector. 
@@ -231,14 +227,24 @@ Kernel::FT operator*(const Vector_2<Kernel> &w) const;
 /*!
 Division by a scalar. 
 */ 
-Vector_2<Kernel> operator/(const Kernel::RT &s) const; 
+Vector_2<Kernel> operator/(const Kernel::RT &s) const;
+
+/*!
+Division by a scalar.
+*/
+Vector_2<Kernel>& operator/=(const Kernel::RT &s);
+
+/*!
+Multiplication by a scalar.
+*/
+Vector_2<Kernel>& operator*=(const Kernel::RT &s);
+
+/// @}
 
 /*!
 returns the squared length of `v`. 
 */ 
 Kernel::FT squared_length() const; 
-
-/// @}
 
 }; /* end Vector_2 */
 

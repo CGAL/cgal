@@ -1,14 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
@@ -30,13 +26,13 @@ int main(int argc, char* argv[])
 
   // Incrementally fill the holes
   unsigned int nb_holes = 0;
-  BOOST_FOREACH(Halfedge_handle h, halfedges(poly))
+  for(Halfedge_handle h : halfedges(poly))
   {
     if(h->is_border())
     {
       std::vector<Facet_handle>  patch_facets;
       std::vector<Vertex_handle> patch_vertices;
-      bool success = CGAL::cpp11::get<0>(
+      bool success = std::get<0>(
         CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
                   poly,
                   h,

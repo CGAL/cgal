@@ -14,12 +14,12 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Christophe Delage (Christophe.Delage@sophia.inria.fr)
 
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 #include <iostream>
 #include <fstream>
@@ -33,18 +33,18 @@
 #include <CGAL/_test_types.h>
 //#include <CGAL/_test_cls_regular_3.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel FK;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<FK> bare_traits;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 int degeneracy_counter = 0;
 
 // This traits class counts the number of times a power_test has returned 0.
 // This gives a rough idea of how degenerate a data set is.
-struct traits : public bare_traits
+struct traits : public K
 {
-    struct Power_test_3 : public bare_traits::Power_test_3
+    struct Power_side_of_oriented_power_sphere_3 : public K::Power_side_of_oriented_power_sphere_3
     {
-        typedef bare_traits::Power_test_3 P3;
+      typedef K::Weighted_point_3 Weighted_point;
+        typedef K::Power_side_of_oriented_power_sphere_3 P3;
         Oriented_side operator() (const Weighted_point &p0,
                                   const Weighted_point &p) const
         {
@@ -81,8 +81,8 @@ struct traits : public bare_traits
         }
     };
 
-    Power_test_3 power_test_3_object() const
-    { return Power_test_3(); }
+    Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object() const
+    { return Power_side_of_oriented_power_sphere_3(); }
 };
 
 
@@ -92,8 +92,8 @@ template class CGAL::Regular_triangulation_3<traits>;
 
 typedef CGAL::Regular_triangulation_3<traits>                 Cls;
 
-typedef traits::Bare_point Point;
-typedef traits::Weighted_point Weighted_point;
+typedef K::Point_3 Point;
+typedef K::Weighted_point_3 Weighted_point;
 
 typedef Cls::Vertex_handle                         Vertex_handle;
 
@@ -322,9 +322,6 @@ bool test_case (std::istream &is)
 
 int main(int argc, char **argv)
 {
-    std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: "
-            << std::endl;
-
     // Test various data sets that crashed the code at some point in the past.
     // File format is:
     // number of points of first data set
@@ -346,10 +343,10 @@ int main(int argc, char **argv)
     boost::int32_t seed0 = 42, seed1 = 43, seed2 = 42, seed3 = 42;
 
     // You can also pass seeds on the command line.
-    if (argc > 1) std::sscanf (argv[1], "%d", &seed0);
-    if (argc > 2) std::sscanf (argv[2], "%d", &seed1);
-    if (argc > 3) std::sscanf (argv[3], "%d", &seed2);
-    if (argc > 4) std::sscanf (argv[4], "%d", &seed3);
+    if (argc > 1) { std::istringstream iss(argv[1]); iss >>seed0; }
+    if (argc > 2) { std::istringstream iss(argv[2]); iss >>seed1; }
+    if (argc > 3) { std::istringstream iss(argv[3]); iss >>seed2; }
+    if (argc > 4) { std::istringstream iss(argv[4]); iss >>seed3; }
     
     Cls T;
     point_set points;

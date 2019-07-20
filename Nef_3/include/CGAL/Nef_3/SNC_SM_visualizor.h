@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
@@ -22,6 +23,9 @@
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
 #ifndef CGAL_SNC_SM_VISUALIZOR_H
 #define CGAL_SNC_SM_VISUALIZOR_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Sphere_map.h>
@@ -44,11 +48,11 @@ class SNC_SM_BooleColor
   typedef typename Map_::Mark Mark;   
 public:
   Color color(SVertex_const_handle, Mark m) const
-  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  { return ( m ? CGAL::black() : CGAL::white() ); }
   Color color(SHalfedge_const_handle, Mark m) const
-  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  { return ( m ? CGAL::black() : CGAL::white() ); }
   Color color(SHalfloop_const_handle, Mark m) const
-  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  { return ( m ? CGAL::black() : CGAL::white() ); }
   Color color(SFace_const_handle, Mark m) const
   { return ( m ? CGAL_NEF_DGREY : CGAL_NEF_LGREY ); }
 };

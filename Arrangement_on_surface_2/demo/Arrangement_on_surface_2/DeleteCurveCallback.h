@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -108,7 +109,7 @@ void DeleteCurveCallback< Arr_ >::reset( )
 {
   this->highlightedCurve->clear( );
   this->removableHalfedge = Halfedge_handle( );
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >
@@ -221,7 +222,7 @@ highlightNearestCurve( QGraphicsSceneMouseEvent* event )
     this->highlightedCurve->insert( this->removableHalfedge->curve( ) );
   }
 
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 #endif // DELETE_CURVE_CALLBACK_H

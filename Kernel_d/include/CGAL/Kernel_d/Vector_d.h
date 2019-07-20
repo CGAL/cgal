@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Michael Seel
 
@@ -25,6 +26,7 @@
 #define CGAL_VECTOR_D_H
 
 #include <CGAL/Dimension.h>
+#include <CGAL/Origin.h>
 
 namespace CGAL {
  
@@ -67,9 +69,8 @@ class Vector_d : public pR::Vector_d_base
   Vector_d (int d, InputIterator first, InputIterator last, const RT& D)
     : Base (d, first, last, D) {}
 
-  Vector_d(const Self& v) : Base(v) {}
-  Vector_d(const Base& v) : Base(v) {}
-
+  Vector_d(const Base& v) : Base(v) {}  
+  
   Direction_d<R> direction() const { return Base::direction(); }
 
   FT operator* (const Self& w) const

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stéphane Tayeb
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
 #define CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -309,7 +313,7 @@ operator<<(std::ostream &os,
   for(int i = 0; i < 4; ++i)
   {
     if(is_ascii(os))
-      os << ' ' << c.surface_patch_index(i);
+      os << ' ' << oformat(c.surface_patch_index(i));
     else
       write(os, c.surface_patch_index(i));
   }

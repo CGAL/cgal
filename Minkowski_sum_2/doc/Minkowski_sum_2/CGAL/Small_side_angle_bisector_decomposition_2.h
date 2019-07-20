@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2
+\ingroup PkgMinkowskiSum2Ref
 
 The `Small_side_angle_bisector_decomposition_2` class implements a simple yet efficient heuristic for
 decomposing an input polygon into convex sub-polygons. It is based

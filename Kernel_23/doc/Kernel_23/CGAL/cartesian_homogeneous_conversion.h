@@ -102,5 +102,7 @@ Point_3< Homogeneous<RT> >
 quotient_cartesian_to_homogeneous(
 const Point_3< Cartesian< Quotient<RT> > >& cp);
 
+/// @}
+
 } /* namespace CGAL */
 

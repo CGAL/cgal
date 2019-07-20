@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumes
+\ingroup PkgBoundingVolumesRef
 
 An object of the class `Min_annulus_d` is the unique annulus (region between 
 two concentric spheres with radii \f$ r\f$ and \f$ R\f$, \f$ r \leq R\f$) enclosing a 

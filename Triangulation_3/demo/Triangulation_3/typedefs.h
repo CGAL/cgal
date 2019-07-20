@@ -89,14 +89,16 @@ private:
 typedef CGAL::Spatial_lock_grid_3<
   CGAL::Tag_priority_blocking>                        Lock_ds;
 typedef CGAL::Triangulation_data_structure_3< 
-  Vertex_base<Kernel>, 
-  CGAL::Triangulation_ds_cell_base_3<>, 
-  CGAL::Parallel_tag >	                              Tds;
+          Vertex_base<Kernel>,
+          CGAL::Delaunay_triangulation_cell_base_3<Kernel>,
+          CGAL::Parallel_tag >                        Tds;
 typedef CGAL::Delaunay_triangulation_3<
   Kernel, Tds, CGAL::Default, Lock_ds>	              DT3;
 
 #else
-typedef CGAL::Triangulation_data_structure_3< Vertex_base<Kernel> >	Tds;
+typedef CGAL::Triangulation_data_structure_3<
+          Vertex_base<Kernel>,
+          CGAL::Delaunay_triangulation_cell_base_3<Kernel> >        Tds;
 typedef CGAL::Delaunay_triangulation_3<
   Kernel, Tds/*, CGAL::Fast_location*/>	                            DT3;
 #endif

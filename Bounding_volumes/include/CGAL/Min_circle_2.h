@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
@@ -21,9 +22,13 @@
 #ifndef CGAL_MIN_CIRCLE_2_H
 #define CGAL_MIN_CIRCLE_2_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 // includes
 #  include <CGAL/Optimisation/basic.h>
 #  include <CGAL/Random.h>
+#  include <CGAL/algorithm.h>
 #  include <list>
 #  include <vector>
 #  include <algorithm>
@@ -317,7 +322,7 @@ class Min_circle_2 {
     
                     // shuffle points at random
                     std::vector<Point> v( first, last);
-                    std::random_shuffle( v.begin(), v.end(), random);
+                    CGAL::cpp98::random_shuffle( v.begin(), v.end(), random);
                     std::copy( v.begin(), v.end(),
                                std::back_inserter( points)); }
                 else

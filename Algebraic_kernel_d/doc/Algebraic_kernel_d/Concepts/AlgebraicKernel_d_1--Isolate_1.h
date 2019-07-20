@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKerneldConceptsUni
+\ingroup PkgAlgebraicKernelDConceptsUni
 \cgalConcept
 
 Computes an open isolating interval for an `AlgebraicKernel_d_1::Algebraic_real_1` 

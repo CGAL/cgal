@@ -22,6 +22,10 @@ int main(int argc, char** argv)
 	<< SHOW(vx)
 	<< SHOW(vy)
 	<< SHOW(vz)
+	<<"\nimage offset"
+	<< SHOW(tx)
+	<< SHOW(ty)
+	<< SHOW(tz)
 	<<"\nrotation vector"
 	<< SHOW(rx)
 	<< SHOW(ry)

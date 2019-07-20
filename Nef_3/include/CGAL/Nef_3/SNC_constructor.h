@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de> 
@@ -23,6 +24,9 @@
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_SNC_CONSTRUCTOR_H
 #define CGAL_SNC_CONSTRUCTOR_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/function_objects.h> 
 #include <CGAL/Circulator_project.h>
@@ -234,9 +238,9 @@ public:
     Vertex_handle v = this->sncp()->new_vertex(p , boundary);
     CGAL_NEF_TRACEN( v->point());
     SM_decorator SD(&*v);
-    Sphere_point sp[] = { Sphere_point(-x, 0, 0), 
-			  Sphere_point(0, -y, 0), 
-			  Sphere_point(0, 0, -z) };
+    Sphere_point sp[] = { Sphere_point(NT(-x), 0, 0),
+			  Sphere_point(0, NT(-y), 0),
+			  Sphere_point(0, 0, NT(-z)) };
     
   /* create box vertices */
     SVertex_handle sv[3];
@@ -1126,9 +1130,8 @@ public:
     std::list<Point_3> points;
     for(int dir=0; dir<3;++dir) {
 
-      NT cnst[3];
-      for(int i=0; i<3;++i)
-	cnst[i] = (i==dir? -h.d()[0] : 0);
+      NT cnst[3] = { 0, 0, 0 };
+      cnst[dir] = -h.d()[0];
       
       NT cross[4][4];
       cross[0][dir] = -orth_coords[(dir+1)%3]-orth_coords[(dir+2)%3];
@@ -1541,10 +1544,10 @@ public:
     
     CGAL_NEF_TRACEN("create corner frame point ");
     
-    RT vp[3];
-    vp[0] = -p.hx()[1];
-    vp[1] = -p.hy()[1];
-    vp[2] = -p.hz()[1];
+    RT vp[3] = {
+      static_cast<RT>(-p.hx()[1]),
+      static_cast<RT>(-p.hy()[1]),
+      static_cast<RT>(-p.hz()[1]) };
     
     CGAL_NEF_TRACEN("create spoints");
     Sphere_point SP[5];
@@ -1606,10 +1609,10 @@ public:
        (CGAL_NTS abs(vec.hy()) == CGAL_NTS abs(vec.hz()) && vec.hx() == 0) || 
        (CGAL_NTS abs(vec.hx()) == CGAL_NTS abs(vec.hz()) && vec.hy() == 0));
     
-    RT vp[3];
-    vp[0] = -p.hx()[1];
-    vp[1] = -p.hy()[1];
-    vp[2] = -p.hz()[1];
+    RT vp[3] = {
+      static_cast<RT>(-p.hx()[1]),
+      static_cast<RT>(-p.hy()[1]),
+      static_cast<RT>(-p.hz()[1]) };
     
     CGAL_NEF_TRACEN("create degenerate corner frame point ");
     

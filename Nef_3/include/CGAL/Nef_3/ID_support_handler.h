@@ -12,15 +12,20 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
-// $Id$ 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     :     Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
-#ifndef CGAL_ID_SUPPORT_HANDLER
-#define CGAL_ID_SUPPORT_HANDLER
+#ifndef CGAL_NEF_3_ID_SUPPORT_HANDLER
+#define CGAL_NEF_3_ID_SUPPORT_HANDLER
 
+#include <CGAL/license/Nef_3.h>
+
+
+#include <CGAL/Nef_S2/ID_support_handler.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Unique_hash_map.h>
 #include <map>
@@ -30,84 +35,6 @@
 #include <CGAL/Nef_2/debug.h>
 
 namespace CGAL {
-
-template<typename Items, typename Decorator>
-class ID_support_handler {
-
-  typedef typename Decorator::SVertex_handle SVertex_handle;
-  typedef typename Decorator::SHalfedge_handle SHalfedge_handle;
-  
-  typedef typename Decorator::SVertex_const_handle SVertex_const_handle;
-  typedef typename Decorator::SHalfedge_const_handle SHalfedge_const_handle;
-  typedef typename Decorator::SHalfloop_const_handle SHalfloop_const_handle;
-  
- public:
-  ID_support_handler() {}
-
-  int get_hash(int) { return 0; }
-  template<typename Handle> void initialize_hash(Handle /*h*/) {}
-  void initialize_hash(int /*i*/) {}
-  void handle_support(SVertex_handle , 
-		      SHalfedge_const_handle ,
-		      SHalfedge_const_handle ) {} 
-  
-  void handle_support(SVertex_handle ,
-		      SHalfloop_const_handle ,
-		      SHalfloop_const_handle ) {}
-  
-  void handle_support(SVertex_handle,
-		      SHalfloop_const_handle,
-		      SHalfedge_const_handle) {} 
-  
-  void handle_support(SVertex_handle,
-		      SHalfedge_const_handle,
-		      SHalfloop_const_handle) {}
-  
-  void handle_support(SVertex_handle,
-		      SHalfedge_const_handle,
-		      SVertex_const_handle) {}
-  
-  void handle_support(SVertex_handle,
-		      SVertex_const_handle,
-		      SHalfedge_const_handle) {}
-  
-  void handle_support(SVertex_handle,
-		      SVertex_const_handle,
-		      SVertex_const_handle) {}
-  
-  void handle_support(SVertex_handle,
-		      SVertex_const_handle) {}
-  
-  void handle_support(SVertex_handle,
-		      SVertex_const_handle,
-		      SHalfloop_const_handle) {}
-  
-  void handle_support(SVertex_handle,
-		      SHalfloop_const_handle,
-		      SVertex_const_handle) {}
-  
-  void handle_support(SHalfedge_handle,
-		      SHalfedge_const_handle,
-		      SHalfedge_const_handle) {}
-  
-  void handle_support(SHalfedge_handle,
-		      SHalfedge_const_handle) {}
-  
-  void handle_support(SHalfedge_handle,
-		      SHalfloop_const_handle) {}
-  
-  void handle_support(SHalfedge_handle,
-		      SHalfedge_const_handle,
-		      SHalfloop_const_handle) {}
-  
-  void handle_support(SHalfedge_handle,
-		      SHalfloop_const_handle,
-		      SHalfedge_const_handle) {}
-  
-  void handle_support(SHalfedge_handle,
-		      SHalfloop_const_handle,
-		      SHalfloop_const_handle) {}
-};
 
 template<typename Decorator>
 class ID_support_handler<SNC_indexed_items, Decorator> {
@@ -426,4 +353,4 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
 };
 
 } //namespace CGAL
-#endif // CGAL_ID_SUPPORT_HANDLER
+#endif // CGAL_NEF_3_ID_SUPPORT_HANDLER

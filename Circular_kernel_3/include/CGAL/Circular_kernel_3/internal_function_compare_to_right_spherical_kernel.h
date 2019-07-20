@@ -20,12 +20,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Sebastien Loriot
 
 
 #ifndef CGAL_SPHERICAL_KERNEL_PREDICATES_COMPARE_TO_RIGHT_H
 #define CGAL_SPHERICAL_KERNEL_PREDICATES_COMPARE_TO_RIGHT_H
+
+#include <CGAL/license/Circular_kernel_3.h>
+
 
 namespace CGAL {
   namespace SphericalFunctors {
@@ -66,7 +70,7 @@ struct Trait_for_cmp_tgt_theta_0{
   typename SK::FT 
   unsigned_tkz_coeff_normal( const typename SK::Point_3& C,const typename SK::FT& gamma_k) const
   {
-    return - CGAL_NTS sign(gamma_k)*C.y();
+    return - (int)CGAL_NTS sign(gamma_k)*C.y();
   }
 
   Tk_type

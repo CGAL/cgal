@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Geert-Jan Giezeman and Sven Schoenherr
@@ -26,6 +27,12 @@
 
 #ifndef CGAL_ASSERTIONS_BEHAVIOUR_H
 #define CGAL_ASSERTIONS_BEHAVIOUR_H
+
+// workaround against the definition of EXIT in <opencv2/core/internal.hpp>
+#ifdef EXIT
+#  undef EXIT
+#endif
+
 
 namespace CGAL {
 

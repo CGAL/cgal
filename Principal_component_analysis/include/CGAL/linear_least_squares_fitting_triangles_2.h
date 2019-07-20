@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez and Sylvain Pion and Ankit Gupta
 
 #ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_TRIANGLES_2_H
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_TRIANGLES_2_H
+
+#include <CGAL/license/Principal_component_analysis.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>
@@ -76,7 +80,7 @@ linear_least_squares_fitting_2(InputIterator first,
   FT temp[4] = {1/12.0, 1/24.0,
 		1/24.0, 1/12.0};
 
-  Matrix moment = init_matrix<Kernel>(2,temp);
+  Matrix moment = init_matrix<FT>(2,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -92,7 +96,7 @@ linear_least_squares_fitting_2(InputIterator first,
     FT delta[4] = {t[1].x() - x0, t[2].x() - x0,
 		   t[1].y() - y0, t[2].y() - y0};
 
-    Matrix transformation = init_matrix<Kernel>(2,delta);
+    Matrix transformation = init_matrix<FT>(2,delta);
     FT area = 0.5 * std::abs(LA::determinant(transformation));
     CGAL_assertion(area!=0);
 

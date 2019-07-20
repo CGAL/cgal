@@ -1,6 +1,5 @@
 
 namespace CGAL {
-
 /*!
 \ingroup PkgTriangulation3TriangulationClasses
 
@@ -27,51 +26,57 @@ the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
 A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres 
 of all simplices are regular. 
 
-\tparam  RegularTriangulationTraits_3 is the geometric traits class.
+\tparam Traits is the geometric traits class, and must be a model of `RegularTriangulationTraits_3`
 
-\tparam TriangulationDataStructure_3 is the triangulation data structure. 
-It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<RegularTriangulationTraits_3>, Regular_triangulation_cell_base_3<RegularTriangulationTraits_3> >`. 
-`Default` may be used.
+\tparam TDS is the triangulation data structure and must be a model of `TriangulationDataStructure_3`.
+`Default` may be used with default value `Triangulation_data_structure_3<Regular_triangulation_vertex_base_3<Traits>,
+                                                                         Regular_triangulation_cell_base_3<Traits> >`.
+Any custom type can be used instead of `Regular_triangulation_vertex_base_3`
+and `Regular_triangulation_cell_base_3`, provided that they are models of the
+concepts `RegularTriangulationVertexBase_3` and `RegularTriangulationCellBase_3`,
+respectively.
 
-\tparam SurjectiveLockDataStructure is an optional parameter to specify the type of the spatial lock data structure.
-        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
-        `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
+\tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
         It must be a model of the `SurjectiveLockDataStructure` concept,
         with `Object` being a `Point`.
+        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
+        `TDS::Concurrency_tag` is `Parallel_tag`).
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
         the triangulation data structure is concurrency-safe, and `void` otherwise.
         In order to use concurrent operations, the user must provide a
-        reference to a `SurjectiveLockDataStructure`
+        reference to a `SLDS`
         instance via the constructor or `Triangulation_3::set_lock_data_structure`.
         
-If `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`, some operations, 
+If `TDS::Concurrency_tag` is `Parallel_tag`, some operations,
 such as insertion/removal of a range of points, are performed in parallel. See 
 the documentation of the operations for more details.
 
-\sa `CGAL::Delaunay_triangulation_3` 
+\sa `CGAL::Triangulation_3`
+\sa `CGAL::Delaunay_triangulation_3`
+
 */
-template< typename RegularTriangulationTraits_3, typename TriangulationDataStructure_3, typename SurjectiveLockDataStructure >
-class Regular_triangulation_3 : public Triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3,SurjectiveLockDataStructure> {
+template< typename Traits, typename TDS, typename SLDS >
+class Regular_triangulation_3
+  : public Triangulation_3<Traits, TDS, SLDS> {
 public:
 
 /// \name Types 
 /// @{
 
 /*!
-The type for points 
-`p` of weighted points \f$ {p}^{(w)}=(p,w_p)\f$ 
+The type for points `p` of weighted points \f$ {p}^{(w)}=(p,w_p)\f$
 */ 
-typedef RegularTriangulationTraits_3::Bare_point Bare_point; 
+typedef Traits::Point_3 Bare_point;
+
+/*!
+The type for weighted points
+*/ 
+typedef Traits::Weighted_point_3 Weighted_point;
 
 /*!
 
 */ 
-typedef RegularTriangulationTraits_3::Weighted_point_3 Weighted_point; 
-
-/*!
-
-*/ 
-typedef SurjectiveLockDataStructure Lock_data_structure;
+typedef SLDS Lock_data_structure;
 
 /// @} 
 
@@ -83,37 +88,35 @@ Creates an empty regular triangulation, possibly specifying a traits class
 `traits`. 
 `lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
-*/ 
-Regular_triangulation_3 
-(const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3(), 
-Lock_data_structure *lock_ds = NULL); 
+*/
+Regular_triangulation_3(const Traits & traits = Traits(),
+                        Lock_data_structure *lock_ds = nullptr);
 
 /*!
 Copy constructor. 
 The pointer to the lock data structure is not copied. Thus, the copy won't be
 concurrency-safe as long as the user has not called `Triangulation_3::set_lock_data_structure`.
 */ 
-Regular_triangulation_3 
-(const Regular_triangulation_3 & rt1); 
+Regular_triangulation_3(const Regular_triangulation_3 & rt1);
 
 /*!
 Equivalent to constructing an empty triangulation with the optional 
 traits class argument and calling `insert(first,last)`. 
 If parallelism is enabled, the points will be inserted in parallel.
-\tparam InputIterator must be an input iterator with value type `Weighted_point`. 
+\tparam InputIterator must be an input iterator with value type \link Regular_triangulation_3::Weighted_point `Weighted_point` \endlink.
 */ 
 template < class InputIterator > 
-Regular_triangulation_3 (InputIterator first, InputIterator last, 
-const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3(), 
-Lock_data_structure *lock_ds = NULL); 
+Regular_triangulation_3 (InputIterator first, InputIterator last,
+                         const Traits& traits = Traits(),
+                         Lock_data_structure *lock_ds = nullptr);
 
 /*! 
 Same as before, with last two parameters in reverse order.
 */ 
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last, 
-Lock_data_structure *lock_ds, 
-const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3());
+                         Lock_data_structure *lock_ds,
+                         const Traits& traits = Traits());
 /// @} 
 
 /*!\name Insertion 
@@ -122,7 +125,7 @@ The following methods, which already exist in `Triangulation_3`, are overloaded 
 /// @{
 
 /*!
-Inserts weighted point `p` in the triangulation. The optional 
+Inserts the weighted point `p` in the triangulation. The optional
 argument `start` is used as a starting place for the search. 
 
 If this insertion creates a vertex, this vertex is returned. 
@@ -148,21 +151,21 @@ is true, otherwise it is false (and the point is not inserted). In any case,
 the locked cells are not unlocked by the function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Weighted_point & p, 
-Cell_handle start = Cell_handle(), bool *could_lock_zone = NULL); 
+Cell_handle start = Cell_handle(), bool *could_lock_zone = nullptr); 
 
 /*!
 Same as above but uses `hint` as a starting place for the search. 
 */ 
-Vertex_handle insert(const Weighted_point & p, Vertex_handle hint, bool *could_lock_zone = NULL); 
+Vertex_handle insert(const Weighted_point & p, Vertex_handle hint, bool *could_lock_zone = nullptr); 
 
 /*!
-Inserts weighted point `p` in the triangulation and returns the corresponding 
+Inserts the weighted point `p` in the triangulation and returns the corresponding
 vertex. Similar to the above `insert()` function, but takes as additional 
 parameter the return values of a previous location query. See description of 
 `Triangulation_3::locate()`. 
 */ 
 Vertex_handle insert(const Weighted_point & p, Locate_type lt, 
-Cell_handle loc, int li, int lj, bool *could_lock_zone = NULL); 
+Cell_handle loc, int li, int lj, bool *could_lock_zone = nullptr); 
 
 /*!
 Inserts the weighted points in the range `[first,last)`. 
@@ -173,7 +176,7 @@ following the order of `InputIterator`, as `spatial_sort()`
 is used to improve efficiency. 
 If parallelism is enabled, the points will be inserted in parallel.
 
-\tparam InputIterator must be an input iterator with value type `Weighted_point`. 
+\tparam InputIterator must be an input iterator with value type \link Regular_triangulation_3::Weighted_point `Weighted_point` \endlink.
 */ 
 template < class InputIterator > 
 std::ptrdiff_t 
@@ -225,16 +228,18 @@ of `p` and is stored in the new cell which contains it.
 \pre `rt`.`dimension()` \f$ \geq2\f$, the set of cells (resp. facets in dimension 2) is connected, not empty, its boundary is connected, and `p` lies inside the hole, which is star-shaped wrt `p`. 
 */ 
 template <class CellIt> 
-Vertex_handle insert_in_hole(Weighted_point p, CellIt cell_begin, CellIt cell_end, 
-Cell_handle begin, int i); 
+Vertex_handle insert_in_hole(const Weighted_point& p,
+                             CellIt cell_begin, CellIt cell_end,
+                             Cell_handle begin, int i);
 
 /*!
 Same as above, except that `newv` will be used as the new vertex, which 
 must have been allocated previously with, e.g.\ `create_vertex`. 
 */ 
 template <class CellIt> 
-Vertex_handle insert_in_hole(Weighted_point p, CellIt cell_begin, CellIt cell_end, 
-Cell_handle begin, int i, Vertex_handle newv); 
+Vertex_handle insert_in_hole(const Weighted_point& p,
+                             CellIt cell_begin, CellIt cell_end,
+                             Cell_handle begin, int i, Vertex_handle newv);
 
 /// @} 
 
@@ -287,7 +292,7 @@ int remove(InputIterator first, InputIterator beyond);
 Let us remark that \f$ \Pi({p}^{(w)}-{z}^{(w)}) > 0 \f$ is equivalent to `p` lies outside the sphere with center `z` and radius \f$ \sqrt{w_p^2+w_z^2}\f$. This remark helps provide an intuition about the following predicates.
 
 \anchor Triangulation3figsidedim2
-\image html sidedim2.png side_of_power_circle
+\image html sidedim2.svg side_of_power_circle
 \image latex sidedim2.png side_of_power_circle
 */
 
@@ -402,7 +407,7 @@ with respect to the power distance. This means that the power
 of the query point `p` with respect to the weighted point in 
 the returned vertex is smaller than the power of `p` 
 with respect to the weighted point 
-in any other vertex. Ties are broken arbitrarily. 
+for any other vertex. Ties are broken arbitrarily.
 The default constructed 
 handle is returned if the triangulation is empty. 
 The optional argument `c` is a hint 
@@ -410,8 +415,8 @@ specifying where to start the search.
 \pre `c` is a cell of `rt`. 
 
 */ 
-Vertex_handle nearest_power_vertex(Weighted_point p, 
-Cell_handle c = Cell_handle()); 
+Vertex_handle nearest_power_vertex(const Bare_point& p,
+                                   Cell_handle c = Cell_handle());
 
 /*!
 Returns the vertex of the cell `c` 
@@ -419,8 +424,8 @@ that is nearest to \f$ p\f$
 with respect to the power distance. 
 
 */ 
-Vertex_handle nearest_power_vertex_in_cell(Weighted_point p, 
-Cell_handle c); 
+Vertex_handle nearest_power_vertex_in_cell(const Bare_point& p,
+                                           Cell_handle c);
 
 
 /// @}
@@ -472,17 +477,16 @@ find_conflicts(const Weighted_point p, Cell_handle c,
 OutputIteratorBoundaryFacets bfit, 
 OutputIteratorCells cit, 
 OutputIteratorInternalFacets ifit,
-bool *could_lock_zone = NULL,
-const Facet *this_facet_must_be_in_the_cz = NULL,
-bool *the_facet_is_in_its_cz = NULL);
+bool *could_lock_zone = nullptr,
+const Facet *this_facet_must_be_in_the_cz = nullptr,
+bool *the_facet_is_in_its_cz = nullptr);
 
 /*!
 \deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
-vertices_in_conflict(Weighted_point p, Cell_handle c, 
-OutputIterator res); 
+vertices_in_conflict(const Weighted_point& p, Cell_handle c, OutputIterator res);
 
 /*!
 Similar to `find_conflicts()`, but reports the vertices which are on the 
@@ -493,8 +497,7 @@ Returns the resulting output iterator.
 */ 
 template <class OutputIterator> 
 OutputIterator 
-vertices_on_conflict_zone_boundary(Weighted_point p, Cell_handle c, 
-OutputIterator res); 
+vertices_on_conflict_zone_boundary(const Weighted_point& p, Cell_handle c, OutputIterator res);
 
 /*!
 Similar to `find_conflicts()`, but reports the vertices which are in 
@@ -507,7 +510,7 @@ Returns the resulting output iterator.
 */ 
 template <class OutputIterator> 
 OutputIterator 
-vertices_inside_conflict_zone(Weighted_point p, Cell_handle c, 
+vertices_inside_conflict_zone(const Weighted_point& p, Cell_handle c,
 OutputIterator res); 
 
 

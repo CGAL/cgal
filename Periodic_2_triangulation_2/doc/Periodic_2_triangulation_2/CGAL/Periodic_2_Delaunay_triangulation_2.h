@@ -184,6 +184,17 @@ public:
   Vertex_handle nearest_vertex(Point p,
                                Face_handle f = Face_handle());
 
+  /*!
+  Returns on which side of the circumcircle of face `f` lies
+  the point `p`. The circle is assumed to be counterclockwise
+  oriented, so its positive
+  side correspond to its bounded side.
+  This predicate is available only if the corresponding predicates on
+  points is provided in the geometric traits class.
+  */
+  Oriented_side
+  side_of_oriented_circle(Face_handle f, const Point & p);
+
 /// @}
 
 /// \name
@@ -240,6 +251,13 @@ public:
 /// @{
 
   /*!
+  Compute the circumcenter of the face pointed to by f. This function
+  is available only if the corresponding function is provided in the
+  geometric traits.
+  */
+  Point circumcenter(Face_handle f) const;
+
+  /*!
   Returns the center of the circle circumscribed to face `f`.
   */
   Point dual(const Face_handle &f) const;
@@ -287,6 +305,7 @@ public:
 /// @{
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Checks the combinatorial validity of the triangulation and the
   validity of its geometric embedding (see
@@ -301,6 +320,7 @@ public:
   is_valid(bool verbose = false) const;
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Checks the combinatorial and geometric validity of the cell (see
   Section \ref P2Triangulation2secintro). Also checks that the

@@ -37,6 +37,8 @@
  ** Nokia at qt-info@nokia.com.
  ** $QT_END_LICENSE$
  **
+ ** SPDX-License-Identifier: LGPL-2.1
+ **
  ****************************************************************************/
 
 #include <QtGui>
@@ -69,5 +71,5 @@ void ColorItemEditor::mousePressEvent(QMouseEvent* /* e */)
     this->setColor( selectedColor );
   }
 
-  emit confirmed();
+  Q_EMIT confirmed();
 }

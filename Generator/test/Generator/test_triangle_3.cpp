@@ -3,7 +3,6 @@
 #include <CGAL/Random.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/double.h>
-#include <CGAL/Triangle_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <cassert>
 
@@ -58,17 +57,17 @@ int main() {
 		Point_generator g3( g1 );
 
 		point_set.clear();
-		CGAL::cpp11::copy_n( g1, number_points,
+		std::copy_n( g1, number_points,
 		               std::back_inserter(point_set));
 		assert(inside_or_close_to_triangle(tri,point_set.begin(),point_set.end()));
 
 		point_set.clear();
-		CGAL::cpp11::copy_n( g2, number_points,
+		std::copy_n( g2, number_points,
 		               std::back_inserter(point_set));
 		assert(inside_or_close_to_triangle(tri,point_set.begin(),point_set.end()));
 
 		point_set.clear();
-		CGAL::cpp11::copy_n( g3, number_points,
+		std::copy_n( g3, number_points,
 		               std::back_inserter(point_set));
 		assert(inside_or_close_to_triangle(tri,point_set.begin(),point_set.end()));
 	}

@@ -145,16 +145,16 @@ template<typename Arithmetic_kernel> void test_routine() {
         assert(number_of_objects<Algebraic_kernel_d_2>(curve)==1);
         //assert(!curve.may_be_singular());
 
-        CGAL::Arr_parameter_space loc;
+        CGAL::Box_parameter_space_2 loc;
 
         assert(CGAL::assign
-               (loc,curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,0)));
-        assert( loc == CGAL::ARR_BOTTOM_BOUNDARY);
+               (loc,curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,0)));
+        assert( loc == CGAL::BOTTOM_BOUNDARY);
 
         assert(CGAL::assign
                (loc,
-                curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,0)));
-        assert( loc == CGAL::ARR_TOP_BOUNDARY);
+                curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,0)));
+        assert( loc == CGAL::TOP_BOUNDARY);
         
     }
     {
@@ -174,16 +174,16 @@ template<typename Arithmetic_kernel> void test_routine() {
                ==1);
         assert(event.number_of_branches_approaching_plus_infinity().first==1);
         assert(event.number_of_branches_approaching_plus_infinity().second==0);
-        CGAL::Arr_parameter_space loc;
+        CGAL::Box_parameter_space_2 loc;
 
         assert(CGAL::assign
-               (loc,curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,0)));
-        assert( loc == CGAL::ARR_BOTTOM_BOUNDARY);
+               (loc,curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,0)));
+        assert( loc == CGAL::BOTTOM_BOUNDARY);
 
         assert(CGAL::assign
                (loc,
-                curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,0)));
-        assert( loc == CGAL::ARR_TOP_BOUNDARY);
+                curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,0)));
+        assert( loc == CGAL::TOP_BOUNDARY);
 
     }
     {
@@ -235,62 +235,62 @@ template<typename Arithmetic_kernel> void test_routine() {
         assert(event.upper_bound(3) < Rational(201,100));
         assert(! event.is_event(0));
 
-        CGAL::Arr_parameter_space loc;
+        CGAL::Box_parameter_space_2 loc;
         Algebraic_real y_coor;
 
 
         assert(CGAL::assign
-               (loc,curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,0)));
-        assert( loc == CGAL::ARR_BOTTOM_BOUNDARY);
+               (loc,curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,0)));
+        assert( loc == CGAL::BOTTOM_BOUNDARY);
 
         assert(CGAL::assign
-               (loc,curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,1)));
-        assert( loc == CGAL::ARR_BOTTOM_BOUNDARY);
+               (loc,curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,1)));
+        assert( loc == CGAL::BOTTOM_BOUNDARY);
 
         assert(CGAL::assign
                (y_coor,
-                curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,2)));
+                curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,2)));
         assert( y_coor == Rational(0));
 
         assert(CGAL::assign
                (y_coor,
-                curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,3)));
+                curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,3)));
         assert( y_coor == Rational(2));
 
         assert(CGAL::assign
-               (loc,curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,4)));
-        assert( loc == CGAL::ARR_TOP_BOUNDARY);
+               (loc,curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,4)));
+        assert( loc == CGAL::TOP_BOUNDARY);
 
         assert(CGAL::assign
-               (loc,curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,5)));
-        assert( loc == CGAL::ARR_TOP_BOUNDARY);
+               (loc,curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,5)));
+        assert( loc == CGAL::TOP_BOUNDARY);
         
         
         assert(CGAL::assign
-               (loc,curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,0)));
-        assert( loc == CGAL::ARR_BOTTOM_BOUNDARY);
+               (loc,curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,0)));
+        assert( loc == CGAL::BOTTOM_BOUNDARY);
 
         assert(CGAL::assign
-               (loc,curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,1)));
-        assert( loc == CGAL::ARR_BOTTOM_BOUNDARY);
+               (loc,curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,1)));
+        assert( loc == CGAL::BOTTOM_BOUNDARY);
 
         assert(CGAL::assign
                (y_coor,
-                curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,2)));
+                curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,2)));
         assert( y_coor == Rational(0));
 
         assert(CGAL::assign
                (y_coor,
-                curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,3)));
+                curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,3)));
         assert( y_coor == Rational(2));
 
         assert(CGAL::assign
-               (loc,curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,4)));
-        assert( loc == CGAL::ARR_TOP_BOUNDARY);
+               (loc,curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,4)));
+        assert( loc == CGAL::TOP_BOUNDARY);
 
         assert(CGAL::assign
-               (loc,curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,5)));
-        assert( loc == CGAL::ARR_TOP_BOUNDARY);
+               (loc,curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,5)));
+        assert( loc == CGAL::TOP_BOUNDARY);
 
 
     }
@@ -469,62 +469,62 @@ template<typename Arithmetic_kernel> void test_routine() {
         assert(! event.is_event(0));
 
 
-        CGAL::Arr_parameter_space loc;
+        CGAL::Box_parameter_space_2 loc;
         Sqrt_algebraic_real y_coor;
 
 
         assert(CGAL::assign
-               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,0)));
-        assert( loc == CGAL::ARR_BOTTOM_BOUNDARY);
+               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,0)));
+        assert( loc == CGAL::BOTTOM_BOUNDARY);
 
         assert(CGAL::assign
-               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,1)));
-        assert( loc == CGAL::ARR_BOTTOM_BOUNDARY);
+               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,1)));
+        assert( loc == CGAL::BOTTOM_BOUNDARY);
 
         assert(CGAL::assign
                (y_coor,
-                sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,2)));
+                sqrt_curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,2)));
         assert( y_coor == Rational(0));
 
         assert(CGAL::assign
                (y_coor,
-                sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,3)));
+                sqrt_curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,3)));
         assert( y_coor == Rational(2));
 
         assert(CGAL::assign
-               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,4)));
-        assert( loc == CGAL::ARR_TOP_BOUNDARY);
+               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,4)));
+        assert( loc == CGAL::TOP_BOUNDARY);
 
         assert(CGAL::assign
-               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,5)));
-        assert( loc == CGAL::ARR_TOP_BOUNDARY);
+               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,5)));
+        assert( loc == CGAL::TOP_BOUNDARY);
         
         
         assert(CGAL::assign
-               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,0)));
-        assert( loc == CGAL::ARR_BOTTOM_BOUNDARY);
+               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,0)));
+        assert( loc == CGAL::BOTTOM_BOUNDARY);
 
         assert(CGAL::assign
-               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,1)));
-        assert( loc == CGAL::ARR_BOTTOM_BOUNDARY);
+               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,1)));
+        assert( loc == CGAL::BOTTOM_BOUNDARY);
 
         assert(CGAL::assign
                (y_coor,
-                sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,2)));
+                sqrt_curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,2)));
         assert( y_coor == Rational(0));
 
         assert(CGAL::assign
                (y_coor,
-                sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,3)));
+                sqrt_curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,3)));
         assert( y_coor == Rational(2));
 
         assert(CGAL::assign
-               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,4)));
-        assert( loc == CGAL::ARR_TOP_BOUNDARY);
+               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,4)));
+        assert( loc == CGAL::TOP_BOUNDARY);
 
         assert(CGAL::assign
-               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,5)));
-        assert( loc == CGAL::ARR_TOP_BOUNDARY);
+               (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,5)));
+        assert( loc == CGAL::TOP_BOUNDARY);
 
     }
 #endif

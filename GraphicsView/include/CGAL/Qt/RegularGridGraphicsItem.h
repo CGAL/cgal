@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_QT_REGULAR_GRID_GRAPHICS_ITEM_H
 #define CGAL_QT_REGULAR_GRID_GRAPHICS_ITEM_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Qt/PainterOstream.h>
@@ -176,8 +180,8 @@ void
 
   /*
   painter->setPen(this->verticesPen());
-  QMatrix matrix = painter->matrix();
-  painter->resetMatrix();
+  QTransform matrix = painter->worldTransform();
+  painter->resetTransform();
   for(int i = 0; i < nw; i++){
     for(int j = 0; j < nh; j++){
       painter->drawPoint(matrix.map(QPointF(i*dw, j*dh)));

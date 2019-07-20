@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Authors       : Hans Tangelder <hanst@cs.uu.nl>, Michael Hoffmann

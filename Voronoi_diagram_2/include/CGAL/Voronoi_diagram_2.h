@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -21,12 +22,15 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_H
 #define CGAL_VORONOI_DIAGRAM_2_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/iterator.h>
-#include <CGAL/Iterator_project.h>
 #include <CGAL/circulator.h>
 #include <CGAL/tags.h>
 #include <CGAL/use.h>
+#include <CGAL/assertions.h>
 
 #include <iostream>
 #include <iterator>
@@ -47,6 +51,7 @@
 #include <CGAL/Identity_policy_2.h>
 
 #include <boost/variant.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -252,18 +257,16 @@ class Voronoi_diagram_2
     typedef Face                                argument_type;
     typedef Site_2                              result_type;
 
-    Site_2& operator()(const Face& f) const {
-      static Site_2 s;
+    Site_2 operator()(const Face& f) const {
       // here we construct an adaptation traits; ideally we should get
       // the adaptation traits from the outer class
-      s = Adaptation_traits().access_site_2_object()(f.dual());
-      return s;
+      return Adaptation_traits().access_site_2_object()(f.dual());
     }
   };
 
  public:
-  typedef Iterator_project<Face_iterator,Project_site_2>
-  Site_iterator;
+
+  typedef boost::transform_iterator<Project_site_2, Face_iterator> Site_iterator;
 
   // ACCESSOR
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Accessor<Self>  Accessor;
@@ -625,14 +628,7 @@ public:
   //---------------
  private:
   Locate_result locate(const Point_2& , const Tag_false&) const {
-    static unsigned int i = 0;
-    if ( i == 0 ) {
-      i++;
-      std::cerr << "Point location is not supported..." << std::endl;
-    }
-
-    // to avoid warnings/errors...
-    //    Face_handle f;
+    CGAL_assertion_msg(false, "Point location is not supported");
     return Locate_result();
   }
 

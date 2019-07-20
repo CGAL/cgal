@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 #ifndef CGAL_CIRC_PAIR_H
 #define CGAL_CIRC_PAIR_H
+
+#include <CGAL/license/Partition_2.h>
+
 
 #include <CGAL/enum.h>
 

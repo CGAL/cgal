@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKerneldConceptsUni
+\ingroup PkgAlgebraicKernelDConceptsUni
 \cgalConcept
 
 Returns a square free part of a univariate polynomial. 

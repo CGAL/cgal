@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -21,6 +22,9 @@
    
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
+
+#include <CGAL/license/GraphicsView.h>
+
 #else
 #define CGAL_INLINE_FUNCTION
 #endif
@@ -68,13 +72,13 @@ namespace Qt {
   GraphicsViewNavigation::eventFilter(QObject *obj, QEvent *event)
   {
     QGraphicsView* v = qobject_cast<QGraphicsView*>(obj);
-    if(v == NULL) {
+    if(v == nullptr) {
       QWidget* viewport = qobject_cast<QWidget*>(obj);
-      if(viewport == NULL) {
+      if(viewport == nullptr) {
         return false;
       }
       v = qobject_cast<QGraphicsView*>(viewport->parent());
-      if(v == NULL) {
+      if(v == nullptr) {
         return false;
       }
     }
@@ -115,6 +119,7 @@ namespace Qt {
       case ::Qt::Key_Control:
         cursor_backup = v->cursor();
         v->setCursor(::Qt::CrossCursor);
+        CGAL_FALLTHROUGH;
       default:
         return false;
       }
@@ -183,7 +188,7 @@ namespace Qt {
       QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
       QPointF pos = v->mapToScene(mouseEvent->pos());
       QString xy = QString(" ") + QString::number(pos.x(),'g', 6) + " , " + QString::number(pos.y(),'g', 6) + " ";
-      emit mouseCoordinates(xy);
+      Q_EMIT mouseCoordinates(xy);
       if(rectItem->isVisible()) {
 	QPointF size = v->mapToScene(mouseEvent->pos());
 	size = size - rect_first_point;
@@ -297,7 +302,7 @@ namespace Qt {
       v->centerOn(new_center);
 
       // QGraphicsView::centerOn makes rounding errors.
-      // The following two "if" make them unnoticable when dx==0 or dy==0.
+      // The following two "if" make them unnoticeable when dx==0 or dy==0.
       if(dx == 0) {
         v->horizontalScrollBar()->setValue(horizontalScrollBarValue);
       }

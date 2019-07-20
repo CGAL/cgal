@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_SURFACE_MESHER_PROFILE_TIMER_H
 #define CGAL_SURFACE_MESHER_PROFILE_TIMER_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 #include <CGAL/Profile_timer.h>
 
 #ifdef CGAL_SURFACE_MESHER_PROFILE

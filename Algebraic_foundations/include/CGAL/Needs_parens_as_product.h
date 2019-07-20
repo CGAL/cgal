@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Michael Hemmer    <hemmer@mpi-inf.mpg.de>
@@ -22,6 +23,8 @@
 
 #ifndef CGAL_NEEDS_PARENTHESES_AS_PRODUCT_H
 #define CGAL_NEEDS_PARENTHESES_AS_PRODUCT_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/IO/io.h>
  
@@ -98,5 +101,7 @@ template <> struct Needs_parens_as_product<long double>{
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  //CGAL_NEEDS_PARENTHESES_AS_PRODUCT_H

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s) : Philipp Moeller
@@ -22,15 +23,26 @@
 #ifndef CGAL_AABB_RAY_INTERSECTION_H
 #define CGAL_AABB_RAY_INTERSECTION_H
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <functional>
 #include <boost/optional.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/variant/apply_visitor.hpp>
 #if BOOST_VERSION >= 105000
-#include <boost/heap/priority_queue.hpp>
+#  if defined(BOOST_MSVC)
+#    pragma warning(push)
+#    pragma warning(disable: 4996)
+#  endif
+#  include <boost/heap/priority_queue.hpp>
+#  if defined(BOOST_MSVC)
+#    pragma warning(pop)
+#  endif
 #else
-#include <queue>
+#  include <queue>
 #endif
+
 #include <CGAL/assertions.h>
 
 namespace CGAL {
@@ -176,25 +188,34 @@ private:
 
   struct as_ray_param_visitor {
     typedef FT result_type;
-    as_ray_param_visitor(const Ray* ray) : ray(ray) {}
+    as_ray_param_visitor(const Ray* ray)
+     : ray(ray), max_i(0)
+    {
+      typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
+      for (int i=1; i<3; ++i)
+        if( CGAL::abs(v[i]) > CGAL::abs(v[max_i]) )
+          max_i = i;
+    }
 
     template<typename T>
-    FT operator()(const T&)
-    { std::cout << "not handled" << std::endl; return FT(); }
+    FT operator()(const T& s)
+    {
+      // intersection is a segment, returns the min relative distance
+      // of its endpoints
+      FT r1 = this->operator()(s[0]);
+      FT r2 = this->operator()(s[1]);
+      return (std::min)(r1,r2);
+    }
 
     FT operator()(const Point& point) {
       typename AABB_traits::Geom_traits::Vector_3 x(ray->source(), point);
       typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
 
-      for(int i = 0; i < 3; ++i) {
-        if(v[0] != FT(0.)) {
-          return x[0] / v[0];
-        }
-      }
-      return FT(0.);
+      return x[max_i] / v[max_i];
     }
 
     const Ray* ray;
+    int max_i;
   };
 };
 

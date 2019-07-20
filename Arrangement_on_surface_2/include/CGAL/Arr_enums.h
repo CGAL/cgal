@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_ARR_ENUM_H
 #define CGAL_ARR_ENUM_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * Definition of the enumeration types for the arrangement package.
@@ -138,13 +143,18 @@ OutputStream& operator<<(
 /*! \enum The various surface parameter space options categorizing the
  * surface range according to the parameter domain.
  */
-enum Arr_parameter_space {
-  ARR_LEFT_BOUNDARY = 0,
-  ARR_RIGHT_BOUNDARY,
-  ARR_BOTTOM_BOUNDARY,
-  ARR_TOP_BOUNDARY,
-  ARR_INTERIOR
-};
+
+typedef Box_parameter_space_2 Arr_parameter_space;
+
+const Arr_parameter_space ARR_LEFT_BOUNDARY = LEFT_BOUNDARY;
+
+const Arr_parameter_space ARR_RIGHT_BOUNDARY = RIGHT_BOUNDARY;
+
+const Arr_parameter_space ARR_BOTTOM_BOUNDARY = BOTTOM_BOUNDARY;
+
+const Arr_parameter_space ARR_TOP_BOUNDARY = TOP_BOUNDARY;
+
+const Arr_parameter_space ARR_INTERIOR = INTERIOR;
 
 
 //! \brief prints parameter space (for debugging)
@@ -206,5 +216,7 @@ InputStream& operator>>(
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

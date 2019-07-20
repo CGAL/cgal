@@ -1,9 +1,16 @@
 #ifndef _COLOR_RAMP_H
 #define _COLOR_RAMP_H
 
+#include <QtCore/qglobal.h>
+#ifdef scene_color_ramp_EXPORTS
+#  define SCENE_COLOR_RAMP_EXPORT Q_DECL_EXPORT
+#else
+#  define SCENE_COLOR_RAMP_EXPORT Q_DECL_IMPORT
+#endif
+
 #include <list>
 
-class Color_component
+class SCENE_COLOR_RAMP_EXPORT Color_component
 {
   typedef std::list<std::pair<double,double> > Values;
   
@@ -26,11 +33,12 @@ private:
 };
 
 
-class Color_ramp
+class SCENE_COLOR_RAMP_EXPORT Color_ramp
 {
 public :
 	Color_ramp();
-	~Color_ramp() {}
+        Color_ramp(const double r0, const double r1, const double g0, const double g1,
+                   const double b0, const double b1);
 
 public :
   inline double r(double v) const;
@@ -39,6 +47,9 @@ public :
 
 	void build_red();
 	void build_blue();
+        void build_thermal();
+        void build_rainbow();
+
   void print() const;
 
 private :

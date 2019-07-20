@@ -73,7 +73,7 @@ The following example shows how to use a functor of the kernel.
 
 The first pieces of prototype code were comparisons of algebraic
 numbers of degree 2, written by Olivier Devillers
-\cgalCite{cgal:dfmt-amafe-00},cgal:dfmt-amafe-02.
+\cgalCite{cgal:dfmt-amafe-00},\cgalCite{cgal:dfmt-amafe-02}.
 
 Some work was then done in the direction of a "kernel" for
 \cgal.\cgalFootnote{Monique Teillaud, First Prototype of a \cgal Geometric Kernel with Circular Arcs, Technical Report ECG-TR-182203-01, 2002

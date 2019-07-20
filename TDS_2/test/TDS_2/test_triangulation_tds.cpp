@@ -21,7 +21,6 @@
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Triangulation_data_structure_2.h>

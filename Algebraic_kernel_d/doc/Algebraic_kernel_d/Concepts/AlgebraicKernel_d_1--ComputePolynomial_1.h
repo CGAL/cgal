@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKerneldConceptsUni
+\ingroup PkgAlgebraicKernelDConceptsUni
 \cgalConcept
 
 Computes a square free univariate polynomial \f$ p\f$, such that the given 

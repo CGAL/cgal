@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh2
+\ingroup PkgMesh2Ref
 
 The class `Delaunay_mesh_vertex_base_2` is a model for the concept 
 `DelaunayMeshVertexBase_2`. 
@@ -23,8 +23,6 @@ derives. It must be a model of the `TriangulationVertexBase_2` concept.
 template< typename Traits, typename Vb >
 class Delaunay_mesh_vertex_base_2 : Vb {
 public:
-
-/// @}
 
 }; /* end Delaunay_mesh_vertex_base_2 */
 } /* end namespace CGAL */

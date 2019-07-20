@@ -7,6 +7,8 @@ namespace CGAL {
 An object `b` of the class `Bbox_2` is a bounding 
 box in the two-dimensional Euclidean plane \f$ \E^2\f$. This class is not templated. 
 
+\cgalModels `Hashable`
+
 \sa `CGAL::Bbox_3` 
 
 */
@@ -95,6 +97,11 @@ updates `b` to be the bounding box of `b` and `c` and returns itself.
 */
 Bbox_2& operator+=(const Bbox_2 &c);
 
+/*!
+dilates the bounding box by a specified number of ULP.
+*/
+void dilate(int dist);
+  
 /// @}
 
 }; /* end Bbox_2 */

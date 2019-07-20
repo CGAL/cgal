@@ -30,6 +30,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifndef _CORE_BIGFLOATREP_H_
@@ -70,6 +71,7 @@ public:
 public:
   //  constructors
   BigFloatRep(int=0);           //inline
+  BigFloatRep(unsigned int);           //inline
   BigFloatRep(short);           //inline
   BigFloatRep(float);           //inline
   BigFloatRep(long);          //inline
@@ -148,7 +150,7 @@ private:
   std::string round(std::string inRep, long& L10, unsigned int width) const;
   DecimalOutput toDecimal(unsigned int width=get_static_defBigFloatOutputDigits(),
                           bool Scientific=false) const;
-  void fromString(const char *p, const extLong & prec = get_static_defBigFloatInputDigits());
+  void fromString(const char *p, extLong  prec = getBigFloatInputDigits());
 
   void dump() const;  //inline
   long adjustE(long E, BigInt M, long e) const;
@@ -246,6 +248,9 @@ inline BigFloatRep::BigFloatRep(float n)
 
 //  Chee (8/8/04) -- introduced constructor from int
 inline BigFloatRep::BigFloatRep(int n)
+  : m(n), err(0), exp(0) {}
+
+inline BigFloatRep::BigFloatRep(unsigned int n)
   : m(n), err(0), exp(0) {}
 
 //  Chee (8/8/04) -- introduced constructor from long
@@ -417,7 +422,7 @@ inline std::ostream& BigFloatRep::operator<<(std::ostream& o) const {
 
 /* Returns a std::string with precision and format specified
    Works as cout << with the exception that if the output
-   contains any error it returns a NULL
+   contains any error it returns a nullptr
    Joaquin Grech 31/5/03
    */
 inline std::string BigFloatRep::toString(long prec, bool sci) const {
@@ -429,7 +434,7 @@ inline std::string BigFloatRep::toString(long prec, bool sci) const {
     else
       return r.rep;
   }
-  return NULL;
+  return nullptr;
 }
 
 inline void BigFloatRep::dump() const {

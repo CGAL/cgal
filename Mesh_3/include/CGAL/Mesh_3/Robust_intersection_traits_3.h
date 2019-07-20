@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_MESH_3_ROBUST_INTERSECTION_TRAITS_3_H
 #define CGAL_MESH_3_ROBUST_INTERSECTION_TRAITS_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -316,17 +320,21 @@ ts_intersection(const typename K::Triangle_3 &t,
               && orientation(p,q,c,a) != POSITIVE )
           {
             // The intersection is a point
-#if CGAL_INTERSECTION_VERSION > 1
             return result_type( lp_intersection(p, q, a, b, c, k) );
-#else
-            return make_object( lp_intersection(p, q, a, b, c, k) );
-#endif
           }
           else
             return result_type();
 
         default: // coplanar
-          return result_type();
+          // q belongs to the triangle's supporting plane
+          // p sees the triangle in counterclockwise order
+          if(orientation(p,q,a,b) != POSITIVE
+             && orientation(p,q,b,c) != POSITIVE
+             && orientation(p,q,c,a) != POSITIVE)
+          {
+            return result_type(q);
+          }
+          else return result_type();
       }
     case NEGATIVE:
       switch ( abcq ) {
@@ -337,11 +345,7 @@ ts_intersection(const typename K::Triangle_3 &t,
             && orientation(q,p,c,a) != POSITIVE )
           {
             // The intersection is a point
-#if CGAL_INTERSECTION_VERSION > 1
             return result_type( lp_intersection(p, q, a, b, c, k) );
-#else
-            return make_object( lp_intersection(p, q, a, b, c, k) );
-#endif
           }
           else
             return result_type();
@@ -352,10 +356,49 @@ ts_intersection(const typename K::Triangle_3 &t,
           return result_type();
 
         default: // coplanar
-          return result_type();
+          // q belongs to the triangle's supporting plane
+          // p sees the triangle in clockwise order
+          if(orientation(q,p,a,b) != POSITIVE
+             && orientation(q,p,b,c) != POSITIVE
+             && orientation(q,p,c,a) != POSITIVE)
+          {
+            return result_type(q);
+          }
+          else return result_type();
       }
     default: // coplanar
-      return result_type();
+      switch ( abcq ) {
+      case POSITIVE:
+        // q sees the triangle in counterclockwise order
+        if(orientation(q,p,a,b) != POSITIVE
+           && orientation(q,p,b,c) != POSITIVE
+           && orientation(q,p,c,a) != POSITIVE)
+        {
+          return result_type(p);
+        } else
+          return result_type();
+      case NEGATIVE:
+        // q sees the triangle in clockwise order
+        if(orientation(p,q,a,b) != POSITIVE
+           && orientation(p,q,b,c) != POSITIVE
+           && orientation(p,q,c,a) != POSITIVE)
+        {
+          return result_type(p);
+        } else
+          return result_type();
+      case COPLANAR:
+        // the segment is coplanar with the triangle's supporting plane
+        // we test whether the segment intersects the triangle in the common
+        // supporting plane
+        //
+        // Laurent Rineau, 2016/10/10: this case is purposely ignored by
+        // Mesh_3, because if the intersection is not a point, it is
+        // ignored anyway.
+        return result_type();
+      default: // should not happen.
+        CGAL_kernel_assertion(false);
+        return result_type();
+      }
   }
 }
 
@@ -420,11 +463,7 @@ tr_intersection(const typename K::Triangle_3  &t,
   if ( orientation(p,q,a,b) != abcp
        && orientation(p,q,b,c) != abcp
        && orientation(p,q,c,a) != abcp )
-#if CGAL_INTERSECTION_VERSION > 1
     return result_type(lp_intersection(p, q, a, b, c, k));
-#else
-    return make_object(lp_intersection(p, q, a, b, c, k));
-#endif
   else
     return result_type();
 }

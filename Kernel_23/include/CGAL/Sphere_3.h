@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Stefan Schirra
@@ -38,7 +39,7 @@ template <class R_>
 class Sphere_3 : public R_::Kernel_base::Sphere_3
 {
   typedef typename R_::FT                    FT;
-// http://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
+// https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
   typedef typename R_::Point_3               Point_3_;
   typedef typename R_::Circle_3              Circle_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
@@ -289,7 +290,7 @@ std::istream&
 extract(std::istream& is, Sphere_3<R>& c, const Cartesian_tag&)
 {
     typename R::Point_3 center;
-    typename R::FT squared_radius;
+    typename R::FT squared_radius(0);
     int o=0;
     switch(get_mode(is)) {
     case IO::ASCII :
@@ -301,6 +302,7 @@ extract(std::istream& is, Sphere_3<R>& c, const Cartesian_tag&)
         is >> o;
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
@@ -317,7 +319,7 @@ extract(std::istream& is, Sphere_3<R>& c, const Homogeneous_tag&)
 {
     typename R::Point_3 center;
     typename R::FT squared_radius;
-    int o;
+    int o=0;
     switch(get_mode(is)) {
     case IO::ASCII :
         is >> center >> squared_radius >> o;
@@ -328,6 +330,7 @@ extract(std::istream& is, Sphere_3<R>& c, const Homogeneous_tag&)
         is >> o;
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;

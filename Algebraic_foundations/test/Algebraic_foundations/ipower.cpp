@@ -12,14 +12,15 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://hemmer@scm.gforge.inria.fr/svn/cgal/trunk/Algebraic_foundations/test/Algebraic_foundations/extended_euclidean_algorithm.cpp $
-// $Id: extended_euclidean_algorithm.cpp 47265 2008-12-08 06:26:27Z hemmer $
+// $URL$
+// $Id$
+//
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Michael Hemmer
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/ipower.h>
 

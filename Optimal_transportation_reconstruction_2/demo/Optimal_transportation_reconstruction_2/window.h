@@ -95,12 +95,14 @@ public:
   void on_actionReconstruction_100_steps_triggered();
   void on_actionReconstruction_1000_steps_triggered();
   void on_actionReconstruction_until_triggered();
+  void on_actionReconstruction_Wasserstein_tolerance_triggered();
   void on_actionRelocate_vertices_triggered();
   void on_actionReconstruction_reinit_triggered();
   void on_actionOutput_console_triggered();
 
   // view
   void on_actionView_points_toggled();
+  void on_actionView_tolerance_toggled();
   void on_actionView_vertices_toggled();
   void on_actionView_edges_toggled();
   void on_actionView_ghost_toggled();

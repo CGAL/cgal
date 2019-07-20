@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -25,8 +26,14 @@
 #ifndef CGAL_MESH_3_MESH_CONSTANT_DOMAIN_FIELD_3_H
 #define CGAL_MESH_3_MESH_CONSTANT_DOMAIN_FIELD_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <map>
 #include <utility>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/identity.hpp>
 
 namespace CGAL {
 
@@ -35,7 +42,11 @@ class Mesh_constant_domain_field_3
 {
 public:
   typedef typename Gt::FT         FT;
-  typedef typename Gt::Point_3    Point_3;
+    typedef typename boost::mpl::eval_if_c<
+      internal::Has_nested_type_Bare_point<Gt>::value,
+      typename internal::Bare_point_type<Gt>,
+      boost::mpl::identity<typename Gt::Point_3>
+    >::type                       Point_3;
   typedef Index_                  Index;
   
 private:

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -26,7 +27,7 @@
 #ifndef CGAL_ORIGIN_H
 #define CGAL_ORIGIN_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 namespace CGAL {
 

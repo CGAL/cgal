@@ -16,11 +16,9 @@ the `Box_parameter` type required in the
 `Box_parameter` to be of type `const B&`, while for the other 
 cases it just uses the pointer type. 
 
-<UL> 
-<LI>`BoxHandle`: either a class type `B`, a pointer `B*`, or a 
-const-pointer `const B*`, where `B` is a model of the 
-`BoxIntersectionBox_d` concept. 
-</UL> 
+\tparam BoxHandle is either a class type `B`, a pointer `B*`, or a
+                  const-pointer `const B*`, where `B` is a model of the
+                  `BoxIntersectionBox_d` concept.
 
 \cgalModels `BoxIntersectionTraits_d`
 
@@ -33,8 +31,7 @@ const-pointer `const B*`, where `B` is a model of the
 
 */
 template< typename BoxHandle >
-class Box_traits_d {
-public:
+struct Box_traits_d {
 
 /// \name Creation 
 /// @{

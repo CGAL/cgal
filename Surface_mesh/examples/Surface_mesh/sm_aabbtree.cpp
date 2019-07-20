@@ -5,8 +5,6 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
 typedef CGAL::Simple_cartesian<double> K;

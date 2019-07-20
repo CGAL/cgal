@@ -28,7 +28,5 @@ template< typename Traits, typename Items, typename Alloc >
 class Straight_skeleton_2 : public HalfedgeDS_vector<Traits,Items,Alloc> {
 public:
 
-/// @}
-
 }; /* end Straight_skeleton_2 */
 } /* end namespace CGAL */

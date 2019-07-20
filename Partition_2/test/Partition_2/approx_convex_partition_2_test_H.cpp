@@ -26,14 +26,14 @@
 // implementation: Testing of convex partitioning functions
 // ============================================================================
 
-#include <CGAL/Homogeneous.h>
+#include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/partition_2.h>
 #include <list>
 #include <cassert>
 
 typedef double                        NT;
-typedef CGAL::Homogeneous<NT>         K;
+typedef CGAL::Simple_homogeneous<NT>         K;
 typedef K::Point_2                    Point_2;
 typedef std::list<Point_2>            Container;
 typedef CGAL::Polygon_2<K, Container> Polygon_2;

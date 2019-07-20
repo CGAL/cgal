@@ -24,8 +24,7 @@ manipulation of algebraic curves.
 
 */
 template< typename Kernel, typename AlgebraicKernelForCircles >
-class Circular_kernel_2 : public Kernel {
-public:
+struct Circular_kernel_2 : public Kernel {
 
 /// \name Types 
 /// The circular kernel uses basic number types of the algebraic

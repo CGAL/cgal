@@ -1,20 +1,18 @@
+include(CGAL_SetupCGAL_CoreDependencies)
+
 message("Configuring libCGAL_Core")
- 
-use_essential_libs()
+if(CGAL_Core_FOUND)
 
-include_directories (SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS})
+  collect_cgal_library(CGAL_Core "")
 
-add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
+  if(CGAL_HEADER_ONLY)
+    set(keyword INTERFACE)
+  else()
+    set(keyword PUBLIC)
+  endif()
 
-link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
+  CGAL_setup_CGAL_Core_dependencies(CGAL_Core ${keyword})
 
-collect_cgal_library(CGAL_Core "")
- 
-# CGAL_Core does not depend on CGAL in either DEBUG or RELEASE, but we
-# still link it.
-target_link_libraries( CGAL_Core CGAL ${CGAL_3RD_PARTY_LIBRARIES} )
-
-add_dependencies( CGAL_Core CGAL )
-
-message("libCGAL_Core is configured")
+  message("libCGAL_Core is configured")
+endif()
 

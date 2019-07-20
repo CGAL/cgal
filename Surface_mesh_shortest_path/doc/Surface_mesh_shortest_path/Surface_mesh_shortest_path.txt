@@ -23,6 +23,11 @@ Given a triangulated surface mesh \f$\cal{M}\f$, a set of source points \f$S\f$ 
 
 The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, a fast and practical algorithm for exact computation of geodesic shortest paths. It is an extension of earlier results by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
 
+This package is related to the package \ref PkgHeatMethod. Both deal with geodesic distances.
+The geodesic shortest path package computes the exact shortest path between any two points on the surface.
+The heat method package computes for every vertex of a mesh an approximate distance to one or several source vertices.
+
+
 \section Surface_mesh_shortest_pathHowToUse  User Interface Description
 
 \subsection Surface_mesh_shortest_pathClass Surface Mesh Shortest Path Class
@@ -38,7 +43,8 @@ of the input surface mesh.
 
 For efficiency reason, index property maps for vertices, halfedges and faces are internally used. For each simplex
 type the property map must provide an index between 0 and the number of simplices. We recommend to use
-the class `CGAL::Polyhedron_3` as model of `FaceListGraph` with the item class `CGAL::Polyhedron_items_with_id_3`,
+the class `CGAL::Surface_mesh` as model of `FaceListGraph`. 
+If you use the class `CGAL::Polyhedron_3`, you should use it with the item class `CGAL::Polyhedron_items_with_id_3`,
 for which default property maps are provided.
 This item class associates to each simplex an index that provides a \f$O(1)\f$ time access to the indices.
 Note that the initialization of the property maps requires a call to `set_halfedgeds_items_id()`.
@@ -53,8 +59,8 @@ If the traits class used holds some local state, it must also be passed to the c
 
 The set of source points for shortest path queries can be populated one by one or using a range.
 A source point can be specified using either a vertex of the input surface mesh or a face of the input surface mesh
-with some barycentric coordinate.
-Given a point \f$p\f$ that lies inside a triangle face \f$(A,B,C)\f$, its barycentric coordinate is a weight triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$, and \f$b_0 + b_1 + b_2 = 1\f$.
+with some barycentric coordinates.
+Given a point \f$p\f$ that lies inside a triangle face \f$(A,B,C)\f$, its barycentric coordinates are a weight triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$, and \f$b_0 + b_1 + b_2 = 1\f$.
 
 \subsubsection Surface_mesh_shortest_pathClassBuild Building the Internal Sequence Tree
 
@@ -69,7 +75,7 @@ Note that it can also be built manually by a call to `Surface_mesh_shortest_path
 
 As for specifying the source points, the target point for a shortest path query
 can be specified using either a vertex of the input surface mesh or a face of the input surface mesh
-and a barycentric coordinate.
+and some barycentric coordinates.
 
 There are three different kinds of query functions that can be called using the class `Surface_mesh_shortest_path`.
 Given a target point, all these functions compute the shortest path between that target point and the set of
@@ -82,8 +88,8 @@ source points:
 \subsubsection Surface_mesh_shortest_pathClassMore Additional Convenience Functionalities
 
 Some convenience functions are provided to compute:
-- the point on the input surface mesh specified as a face of the input surface mesh and a barycentric coordinate.
-- the closest point on the input surface mesh (specified as a face of the input surface mesh and a barycentric coordinate) to a given 3D point. Those function are using the class `CGAL::AABB_tree`.
+- the point on the input surface mesh specified as a face of the input surface mesh and some barycentric coordinates.
+- the closest point on the input surface mesh (specified as a face of the input surface mesh and some barycentric coordinates) to a given 3D point. Those function are using the class `CGAL::AABB_tree`.
 
 \subsection Surface_mesh_shortest_pathKernelRecommendataions Kernel Recommendations
 In short, we recommend to use a \cgal kernel with exact predicates such as `CGAL::Exact_predicates_inexact_constructions_kernel`.
@@ -99,6 +105,13 @@ but it will be extremely slow. Indeed, in order to compute the distance along th
 \section Surface_mesh_shortest_pathExamples Examples
 
 \subsection Surface_mesh_shortest_pathSimpleExample Simple Example
+
+The following example shows how to get the shortest path to every vertex from an arbitrary source point on a surface.  
+The shortest path class needs to have an index associated to each vertex, halfedge and face, which is naturally given for the class `Surface_mesh`. 
+
+\cgalExample{Surface_mesh_shortest_path/shortest_paths.cpp}
+
+\subsection Surface_mesh_shortest_pathExampleWithId Example Using Polyhedron_3
 
 The following example shows how to get the shortest path to every vertex from an arbitrary source point on the surface.  Note that this example uses the `Polyhedron_items_with_id_3` item class.  The shortest path class needs to have an index associated to each vertex, halfedge and face. Using this item class provide an efficient direct access to the required indices.
 

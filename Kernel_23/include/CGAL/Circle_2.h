@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -31,6 +32,8 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/result_of.h>
 
 namespace CGAL {
 
@@ -269,8 +272,8 @@ std::istream&
 extract(std::istream& is, Circle_2<R>& c)
 {
     typename R::Point_2 center;
-    typename R::FT squared_radius;
-    int o;
+    typename R::FT squared_radius(0);
+    int o=0;
     switch(get_mode(is)) {
     case IO::ASCII :
         is >> center >> iformat(squared_radius) >> o;
@@ -281,6 +284,7 @@ extract(std::istream& is, Circle_2<R>& c)
         is >> o;
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;

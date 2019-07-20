@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
@@ -55,7 +56,7 @@ class RS23_k_isolator_1{
 
 template <class Polynomial_,class Bound_>
 RS23_k_isolator_1<Polynomial_,Bound_>::
-RS23_k_isolator_1(const Polynomial_ &p){
+RS23_k_isolator_1(const Polynomial_ &){
         CGAL_error_msg("not implemented for these polynomial/bound types");
 }
 
@@ -80,6 +81,7 @@ RS23_k_isolator_1(const CGAL::Polynomial<CGAL::Gmpz> &p):_polynomial(p){
         for(int j=0;j<numsols;++j){
                 Gmpfr left(intervals[j].inf());
                 Gmpfr right(intervals[j].sup());
+                CGAL_assertion(left<=right);
                 KRefiner()(p,left,right,53);
                 _real_roots.push_back(intervals[j]);
         }

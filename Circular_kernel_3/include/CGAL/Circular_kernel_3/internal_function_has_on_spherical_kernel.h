@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
 //             Sebastien Loriot
@@ -24,6 +25,13 @@
 
 #ifndef CGAL_SPHERICAL_KERNEL_PREDICATES_HAS_ON_3_H
 #define CGAL_SPHERICAL_KERNEL_PREDICATES_HAS_ON_3_H
+
+#include <CGAL/license/Circular_kernel_3.h>
+
+
+#include <CGAL/Circular_kernel_3/internal_functions_on_sphere_3.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/int.h>
 
 namespace CGAL {
   namespace SphericalFunctors {

@@ -1,5 +1,6 @@
 #include <CGAL/Exact_rational.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Polyhedron_3.h>
 
 #include <fstream>
 #include <vector>
@@ -11,9 +12,9 @@
 
 
 typedef CGAL::Exact_rational Exact_rational;
-typedef CGAL::Cartesian< Exact_rational >     R;
+typedef CGAL::Simple_cartesian<Exact_rational>  R;
 typedef CGAL::Convex_hull_traits_3<R>           Traits;
-typedef Traits::Polyhedron_3                    Polyhedron_3;
+typedef Traits::Polygon_mesh                    Polyhedron_3;
 
 typedef R::Point_2				Point_2;
 typedef R::Point_3				Point_3;
@@ -131,7 +132,7 @@ void test_collinear()
 
   // generate 100 points on the segment with endpoints (0,0) and (1,0)
   CGAL::Random_points_on_segment_2<Point_2>    g(Point_2(0,0), Point_2(1,0));
-  CGAL::cpp11::copy_n(g, 100, std::back_inserter(point_2_list));
+  std::copy_n(g, 100, std::back_inserter(point_2_list));
 
   std::list<Point_2>::iterator point_it = point_2_list.begin();
   point_3_list.push_back(Point_3(0,0,0));
@@ -150,6 +151,9 @@ void test_collinear()
   assert(ch_seg == orig_seg || ch_seg == orig_seg.opposite() );
 
 }
+
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+
 
 int main()
 {

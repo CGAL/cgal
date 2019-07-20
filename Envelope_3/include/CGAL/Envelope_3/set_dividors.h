@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_ENVELOPE_SET_DIVIDORS_H
 #define CGAL_ENVELOPE_SET_DIVIDORS_H
+
+#include <CGAL/license/Envelope_3.h>
+
 
 #include <CGAL/Random.h>
 
@@ -104,7 +108,7 @@ public:
     while (begin != end)
     {
       
-      if (CGAL::default_random.get_bool())
+      if (CGAL::get_default_random().get_bool())
         *set1++ = *begin++;
       else
         *set2++ = *begin++;

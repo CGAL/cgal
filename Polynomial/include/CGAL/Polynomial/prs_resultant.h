@@ -14,6 +14,7 @@
 
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
@@ -134,7 +135,10 @@ NT prs_resultant_ufd(Polynomial<NT> A, Polynomial<NT> B) {
     delta = A.degree();
     g = B.lcoeff();
     internal::hgdelta_update(h, g, delta);
-    h = signflip ? -(t*h) : t*h;
+    if (signflip)
+      h = -(t*h);
+    else
+      h = t*h;
     typename Algebraic_structure_traits<NT>::Simplify simplify;
     simplify(h);
     return h;

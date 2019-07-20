@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 // Author(s): Efi Fogel         <efif@post.tau.ac.il>
 //            Naama mayer       <naamamay@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_H
 #define CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Spherical_gaussian_map is a data dtructure that represents a Gaussinal map
@@ -42,11 +46,7 @@
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 
 #if defined(CGAL_USE_LEDA)
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/rational.h>
-#else
 #include <LEDA/numbers/rational.h>
-#endif
 #endif
 
 namespace CGAL {
@@ -70,7 +70,7 @@ public:
    * nothing.
    * \param p the point which coordinates are to be normalized
    */ 
-  void operator()(Point_2 & p) {}
+  void operator()(Point_2 &) {}
 };
 
 #if defined(CGAL_USE_LEDA)
@@ -356,7 +356,7 @@ public:
 
   /*! Copy Constructor */
   Arr_spherical_gaussian_map_3
-  (const Arr_spherical_gaussian_map_3 & gaussian_map)
+  (const Arr_spherical_gaussian_map_3 &)
   {
     // Not implemented yet!
     CGAL_error();

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
@@ -28,10 +29,13 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/result_of.h>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 
@@ -39,7 +43,7 @@ template <class R_>
 class Vector_3 : public R_::Kernel_base::Vector_3
 {
   typedef typename R_::RT                    RT;
-// http://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
+// https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
   typedef typename R_::FT                    FT_;
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Ray_3                 Ray_3;
@@ -118,9 +122,21 @@ public:
     return R().construct_difference_of_vectors_3_object()(*this,v);
   }
 
+  Vector_3& operator-=(const Vector_3& v)
+  {
+    *this = R().construct_difference_of_vectors_3_object()(*this,v);
+    return *this;
+  }
+
   Vector_3 operator+(const Vector_3& v) const
   {
     return R().construct_sum_of_vectors_3_object()(*this,v);
+  }
+
+  Vector_3& operator+=(const Vector_3& v)
+  {
+    *this = R().construct_sum_of_vectors_3_object()(*this,v);
+    return *this;
   }
 
   Vector_3 operator/(const RT& c) const
@@ -128,9 +144,33 @@ public:
    return R().construct_divided_vector_3_object()(*this,c);
   }
 
+  Vector_3& operator/=(const RT& c)
+  {
+    *this = R().construct_divided_vector_3_object()(*this,c);
+    return *this;
+  }
+
   Vector_3 operator/(const typename First_if_different<FT_,RT>::Type & c) const
   {
    return R().construct_divided_vector_3_object()(*this,c);
+  }
+
+  Vector_3& operator/=(const typename First_if_different<FT_,RT>::Type & c)
+  {
+    *this = R().construct_divided_vector_3_object()(*this,c);
+    return *this;
+  }
+
+  Vector_3& operator*=(const RT& c)
+  {
+    *this = R().construct_scaled_vector_3_object()(*this,c);
+    return *this;
+  }
+
+  Vector_3& operator*=(const typename First_if_different<FT_,RT>::Type & c)
+  {
+    *this = R().construct_scaled_vector_3_object()(*this,c);
+    return *this;
   }
 
   typename cpp11::result_of<typename R::Compute_x_3(Vector_3)>::type
@@ -276,7 +316,7 @@ template <class R >
 std::istream&
 extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&) 
 {
-  typename R::FT x, y, z;
+  typename R::FT x(0), y(0), z(0);
   switch(get_mode(is)) {
     case IO::ASCII :
       is >> iformat(x) >> iformat(y) >> iformat(z);
@@ -287,6 +327,7 @@ extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
       read(is, z);
       break;
     default:
+      is.setstate(std::ios::failbit);
       std::cerr << "" << std::endl;
       std::cerr << "Stream must be in ascii or binary mode" << std::endl;
       break;
@@ -313,6 +354,7 @@ extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&)
         read(is, hw);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;

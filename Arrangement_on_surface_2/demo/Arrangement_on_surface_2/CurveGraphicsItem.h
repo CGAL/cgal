@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -116,7 +117,7 @@ public: // methods
     this->updateBoundingBox( );
   }
 
-public slots:
+public Q_SLOTS:
   void modelChanged( )
   {
     if ( this->curves.size( ) == 0 )
@@ -303,7 +304,7 @@ public: // methods
     }
   }
 
-public slots:
+public Q_SLOTS:
   void modelChanged( )
   {
     if ( this->curves.size( ) == 0 )

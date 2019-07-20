@@ -12,9 +12,18 @@
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Ilker O. Yaz
 
 
 #define CGAL_SURFACE_MESH_SEGMENTATION_SDF_CALCULATION_H
+
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -204,9 +213,9 @@ public:
                                           cone_angle, true, disk_samples);
 
       if(sdf_value) {
-        sdf_values[*facet_begin] = *sdf_value;
+        put(sdf_values, *facet_begin, *sdf_value);
       } else          {
-        sdf_values[*facet_begin] = -1.0;
+        put(sdf_values, *facet_begin, -1.0);
       }
     }
   }

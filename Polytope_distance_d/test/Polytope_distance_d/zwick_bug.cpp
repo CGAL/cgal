@@ -1,5 +1,7 @@
+#include <CGAL/Polytope_distance_d.h>
+#include <CGAL/Polytope_distance_d_traits_2.h>
+#include <CGAL/Simple_cartesian.h>
 #include <iostream>
-#include <CGAL/basic.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 typedef CGAL::Gmpzf ET;
@@ -7,9 +9,6 @@ typedef CGAL::Gmpzf ET;
 #include <CGAL/MP_Float.h>
 typedef CGAL::MP_Float ET;
 #endif
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Polytope_distance_d.h>
-#include <CGAL/Polytope_distance_d_traits_2.h>
 
 typedef CGAL::Simple_cartesian<double>    K;  
 typedef K::Point_2                        Point;

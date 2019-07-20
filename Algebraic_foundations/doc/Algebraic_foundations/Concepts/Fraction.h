@@ -16,7 +16,5 @@ denominator type are provided by `CGAL::Fraction_traits`.
 class Fraction {
 public:
 
-/// @}
-
 }; /* end Fraction */
 

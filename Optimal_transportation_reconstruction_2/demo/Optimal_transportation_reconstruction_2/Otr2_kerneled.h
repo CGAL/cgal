@@ -14,6 +14,7 @@
 //Qt
 #include <QColor>
 
+class GlViewer;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point;
 typedef K::FT FT;
@@ -39,7 +40,8 @@ public:
   Optimal_transportation_reconstruction_kerneled_2(const InputRange& input_range,
       Point_property_map point_pmap, Mass_property_map mass_pmap) :
       Otr_2(input_range, point_pmap,
-          mass_pmap) {
+          mass_pmap),
+      viewer(NULL){
   }
 
   Optimal_transportation_reconstruction_kerneled_2() :
@@ -149,5 +151,8 @@ public:
 
   void save_one_edge(std::ofstream& ofs, const Edge& edge);
 
+  void setViewer(GlViewer* vi) { viewer = vi; }
+protected:
+  GlViewer* viewer;
 };
 #endif

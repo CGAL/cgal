@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -22,6 +23,8 @@
 
 #ifndef CGAL__TEST_CLS_VECTOR_3_H
 #define CGAL__TEST_CLS_VECTOR_3_H
+
+#include <CGAL/use.h>
 
 template <class R>
 bool
@@ -36,7 +39,7 @@ _test_cls_vector_3(const R& )
  typedef typename R::Vector_3::Cartesian_const_iterator CCI;
 
  CGAL::Vector_3<R>  v1;
- CGAL::Vector_3<R>  v2(iv);
+ CGAL::Vector_3<R>  v2(iv); CGAL_USE(v2);
  CGAL::Vector_3<R>  v0(CGAL::NULL_VECTOR);
 
  RT  n1( 12 );
@@ -155,6 +158,23 @@ _test_cls_vector_3(const R& )
   it2 = it - 1;
   it2++;
   assert(it == it2);
+
+  // test arithmetic operators
+  CGAL::Vector_3<R> v_1(2, 4, 6);
+  const CGAL::Vector_3<R> v_1_const=v_1;
+  CGAL::Vector_3<R> v_2(1, 2, 3);
+
+  v_1*=FT(2);
+  assert(v_1==v_1_const * FT(2));
+  v_1=v_1_const;
+  v_1/=FT(2);
+  assert(v_1==v_1_const / FT(2));
+  v_1=v_1_const;
+  v_1+=v_2;
+  assert(v_1==v_1_const + v_2);
+  v_1=v_1_const;
+  v_1-=v_2;
+  assert(v_1==v_1_const - v_2);
 
  std::cout << "done" << std::endl;
  return true;

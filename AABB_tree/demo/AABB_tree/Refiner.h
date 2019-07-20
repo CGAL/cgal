@@ -68,7 +68,7 @@ class Refiner
 	typedef typename Polyhedron::Edge_iterator   Edge_iterator;
 	typedef std::priority_queue<Edge,
 		std::vector<Edge>,
-		less<Edge> > PQueue;
+		::less<Edge> > PQueue;
 	// data
 	PQueue m_queue;
 	Polyhedron* m_pMesh;

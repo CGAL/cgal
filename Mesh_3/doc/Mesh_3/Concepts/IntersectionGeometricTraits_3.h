@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3SecondaryConcepts
+\ingroup PkgMesh3SecondaryConcepts
 \cgalConcept
 
 The concept `IntersectionGeometricTraits_3` provides types and functors 

@@ -61,15 +61,13 @@ void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input poi
 
    //Run algorithm 
   CGAL::edge_aware_upsample_point_set<Concurrency_tag>(
-            points.begin(), 
-            points.end(), 
-            std::back_inserter(points),
-            CGAL::First_of_pair_property_map<PointVectorPair>(),
-            CGAL::Second_of_pair_property_map<PointVectorPair>(),
-            sharpness_sigma, 
-            edge_sensitivity,
-            neighbor_radius,
-            points.size() * times_of_output_points);
+    points, std::back_inserter(points),
+    CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+    normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()).
+    sharpness_angle(sharpness_sigma).
+    edge_sensitivity(edge_sensitivity).
+    neighbor_radius(neighbor_radius).
+    number_of_output_points(points.size() * times_of_output_points));
 
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
@@ -130,11 +128,11 @@ int main(int argc, char * argv[])
     // If XYZ file format:
     std::ifstream stream(input_filename.c_str());
    if(stream &&
-       CGAL::read_xyz_points_and_normals
+       CGAL::read_xyz_points
        (stream,                                     
         std::back_inserter(points),
-        CGAL::First_of_pair_property_map<PointVectorPair>(),
-        CGAL::Second_of_pair_property_map<PointVectorPair>()))
+        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+        normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }

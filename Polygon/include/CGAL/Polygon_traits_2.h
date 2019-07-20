@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
@@ -27,7 +28,7 @@
 
 // For backward compatibility only.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 namespace CGAL {
 

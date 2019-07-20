@@ -121,7 +121,7 @@ struct Is_on_positive_side_of_plane_3<Kernel,2>{
     try{
       return ck_plane.has_on_positive_side(to_CK(s));
     }
-    catch (Uncertain_conversion_exception){
+    catch (Uncertain_conversion_exception&){
       std::cerr << "ERROR Interval filtering failure\n";
       exit(EXIT_FAILURE);
     }
@@ -157,7 +157,7 @@ int main()
   points.reserve(nb_pts);
   
   K::Point_3 p=*gen++,q=*gen++,r=*gen++;
-  CGAL::cpp11::copy_n(gen,nb_pts,std::back_inserter(points));
+  std::copy_n(gen,nb_pts,std::back_inserter(points));
   
   std::vector<bool> res0; res0.reserve(nb_pts);
   std::vector<bool> res1; res1.reserve(nb_pts);

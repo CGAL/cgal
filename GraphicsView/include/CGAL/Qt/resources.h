@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
 #ifndef CGAL_QT_RESOURCES_H
 #define CGAL_QT_RESOURCES_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/export/Qt.h>
 

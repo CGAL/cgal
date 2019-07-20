@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s) : Jane Tournois, Pierre Alliez
@@ -23,7 +24,11 @@
 #ifndef CGAL_MESH_2_MESH_SIZING_FIELD_H
 #define CGAL_MESH_2_MESH_SIZING_FIELD_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <CGAL/Mesh_2/Sizing_field_2.h>
+#include <CGAL/squared_distance_2.h>
 
 namespace CGAL {
 

@@ -14,7 +14,5 @@ template< typename FT >
 class Polynomial_for_circles_2_2 {
 public:
 
-/// @}
-
 }; /* end Polynomial_for_circles_2_2 */
 } /* end namespace CGAL */

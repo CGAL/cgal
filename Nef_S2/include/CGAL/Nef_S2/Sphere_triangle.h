@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_SPHERE_TRIANGLE_H
 #define CGAL_SPHERE_TRIANGLE_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
@@ -32,8 +36,8 @@ template <class R_> class Sphere_triangle_rep
   typedef Sphere_circle<R_> Circle;
   typedef Sphere_triangle_rep<R_> Rep;
 
-  cpp11::array<Point,3>  points_; 
-  cpp11::array<Circle,3> circles_;
+  std::array<Point,3>  points_; 
+  std::array<Circle,3> circles_;
 
   friend class Sphere_triangle<R_>;
  

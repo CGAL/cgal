@@ -225,7 +225,7 @@ all objects, predicates and constructions with using offsets.
 The class
 `Periodic_2_Delaunay_triangulation_traits_2<Traits,Periodic_2Offset_2>`
 provides the required functionality. It expects two template
-parameters: A model of the concept `DelaunayTriangulationTraits_2`
+parameters: a model of the concept `DelaunayTriangulationTraits_2`
 and a model of the concept `Periodic_2Offset_2`. Since the concept
 `TriangulationTraits_2` refines the concept
 `DelaunayTriangulationTraits_2`, the class
@@ -234,7 +234,7 @@ is also a model for the concept `TriangulationTraits_2`.
 
 The kernels `Cartesian`, `Homogeneous`,
 `Simple_cartesian`, `Simple_homogeneous` and
-`Filtered_kernel` can all be used as \cgalModels for
+`Filtered_kernel` can all be used as models for
 `Traits`. `Periodic_2_triangulation_traits_2` provides exact
 predicates and exact constructions if `Traits` does. It provides
 exact predicates but not exact constructions if

@@ -1,8 +1,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
@@ -34,6 +32,9 @@ int main(int argc, char* argv[])
   std::cout << "\t Number of vertices  :\t" << mesh.size_of_vertices() << std::endl;
   std::cout << "\t Number of halfedges :\t" << mesh.size_of_halfedges() << std::endl;
   std::cout << "\t Number of facets    :\t" << mesh.size_of_facets() << std::endl;
+
+  std::ofstream output("mesh_stitched.off");
+  output << std::setprecision(17) << mesh;
 
   return 0;
 }

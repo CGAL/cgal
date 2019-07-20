@@ -10,6 +10,8 @@ range search queries in a model of `SpatialTree`.
 
 \cgalHasModel `CGAL::Cartesian_d<FT>` 
 \cgalHasModel `CGAL::Homogeneous_d<RT>` 
+\cgalHasModel `CGAL::Epick_d<DimensionTag>`
+\cgalHasModel `CGAL::Epeck_d<DimensionTag>`
 \cgalHasModel `CGAL::Search_traits_2<Kernel>` 
 \cgalHasModel `CGAL::Search_traits_3<Kernel>` 
 
@@ -49,7 +51,7 @@ typedef unspecified_type Construct_center_d;
 Functor with operator to compute 
 the squared radius of a an object of type `Sphere_d`. 
 */ 
-typedef unspecified_type Construct_squared_radius_d; 
+typedef unspecified_type Compute_squared_radius_d;
 
 /*!
 Functor with operator to construct 

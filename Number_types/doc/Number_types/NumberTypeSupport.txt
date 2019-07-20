@@ -16,7 +16,7 @@ requirements, such that they can be successfully used in \cgal code.
 In general they are expected to be a model of an algebraic structure
 concepts and in case they model a subring of the real numbers they are
 also a model of `RealEmbeddable`. For an overview of the algebraic
-structure concepts see Section \ref PkgAlgebraicFoundations.
+structure concepts see Section \ref PkgAlgebraicFoundationsRef.
 
 \section Number_typesBuilt Built-in Number Types
 

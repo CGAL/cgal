@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -23,10 +24,15 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <iostream>
 #include <vector>
 #include <list>
 #include <set>
+#include <stack>
 #include <map>
 #include <algorithm>
 #include <boost/tuple/tuple.hpp>
@@ -40,17 +46,20 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/in_place_edge_list.h>
-#include <CGAL/Segment_Delaunay_graph_2/edge_list.h>
+#include <CGAL/internal/TDS_2/edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/Traits_wrapper_2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 
-#include <CGAL/Iterator_project.h>
 #include <CGAL/utility.h>
+#include <CGAL/tss.h>
 
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/assertions.h>
+
+#include <CGAL/boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 /*
   Conventions:
@@ -99,12 +108,11 @@ namespace Internal {
     typedef Node                   argument_type;
     typedef typename Node::Site_2  Site;
     typedef Site                   result_type;
-    Site& operator()(const Node& x) const { 
-      static Site s;
-      s = x.site();
-      return s;
+
+    Site operator()(const Node& x) const {
+      return x.site();
     }
-    //    const Site& operator()(const Node& x) const { return x.site(); }
+
   };
 
   template < class Node, class Site_t >
@@ -112,18 +120,15 @@ namespace Internal {
     typedef Node                   argument_type;
     typedef Site_t                 Site;
     typedef Site                   result_type;
-    Site& operator()(const Node& x) const {
-      static Site s;
+
+    Site operator()(const Node& x) const {
       if ( boost::tuples::get<2>(x) /*x.third*/ ) { // it is a point
-	//	s = Site::construct_site_2(*x.first);
-	s = Site::construct_site_2( *boost::tuples::get<0>(x) );
-      } else {
-	//	s = Site::construct_site_2(*x.first, *x.second);
-	s = Site::construct_site_2
-	  (*boost::tuples::get<0>(x), *boost::tuples::get<1>(x));
+	return Site::construct_site_2( *boost::tuples::get<0>(x) );
       }
-      return s;
+      return Site::construct_site_2
+        (*boost::tuples::get<0>(x), *boost::tuples::get<1>(x));
     }
+
   };
 
   template<typename T, typename U>
@@ -267,11 +272,11 @@ protected:
   Handle_map;
 
 public:
-  typedef Iterator_project<All_inputs_iterator, Proj_input_to_site>
+  typedef boost::transform_iterator<Proj_input_to_site, All_inputs_iterator>
   Input_sites_iterator;
-
-  typedef Iterator_project<Finite_vertices_iterator, 
-                           Proj_site>            Output_sites_iterator;
+  
+  typedef boost::transform_iterator<Proj_site, Finite_vertices_iterator>
+  Output_sites_iterator;
 protected:
   // LOCAL VARIABLE(S)
   //------------------
@@ -339,7 +344,7 @@ private:
   }
 
   void setup_if_intersecting_pointer_with_tag(Tag_false) {
-    insert_point_on_segment_ptr = NULL;
+    insert_point_on_segment_ptr = nullptr;
   }
 
   void setup_if_intersecting_pointer_with_tag(Tag_true) {
@@ -582,18 +587,16 @@ public:
                                IndicesIterator indices_first,
                                IndicesIterator indices_beyond )
   {
-    typedef std::vector<std::ptrdiff_t> Vertex_indices;
+    typedef std::vector<std::size_t> Vertex_indices;
     typedef std::vector<Vertex_handle> Vertices;
 
-    Vertex_indices vertex_indices;
-    vertex_indices.resize(points.size());
-
-    std::copy(boost::counting_iterator<std::ptrdiff_t>(0),
-              boost::counting_iterator<std::ptrdiff_t>(points.size()),
-              std::back_inserter(vertex_indices));
+    Vertex_indices vertex_indices(boost::counting_iterator<std::size_t>(0),
+                                  boost::counting_iterator<std::size_t>(points.size()));
 
     size_type n = this->number_of_vertices();
-    Spatial_sort_traits_adapter_2<Gt,const Point_2*> sort_traits(&(points[0]));
+    Spatial_sort_traits_adapter_2<Gt,
+                                  typename Pointer_property_map<Point_2>::const_type >
+      sort_traits(make_property_map(points));
 
     spatial_sort(vertex_indices.begin(), vertex_indices.end(), sort_traits);
 
@@ -705,7 +708,7 @@ public:
                           segment_indices.begin(),
                           segment_indices.end() );
     //insert non-input sites
-    std::random_shuffle( non_input_segments.begin(), non_input_segments.end() );
+    CGAL::cpp98::random_shuffle( non_input_segments.begin(), non_input_segments.end() );
     n += insert(non_input_segments.begin(),
                 non_input_segments.end(), Tag_false() );
     return n;
@@ -966,11 +969,11 @@ protected:
 			std::map<Vertex_handle,Vertex_handle>& vmap,
 			List& l) const;
 
-  void expand_conflict_region_remove(const Face_handle& f,
-				     const Site_2& t,
-				     const Storage_site_2& ss,
-				     List& l, Face_map& fm,
-				     Sign_map& sign_map);
+  void expand_conflict_region_remove(const Face_handle& in_f,
+                                     const Site_2& t,
+                                     List& l,
+                                     Face_map& fm,
+                                     Sign_map& sign_map);
 
   void find_conflict_region_remove(const Vertex_handle& v,
 				   const Vertex_handle& vnearest,
@@ -1423,20 +1426,6 @@ public:
 protected:
   void print_error_message() const;
 
-  void print_error_message(const Tag_false&) const
-  {
-    static int i = 0;
-
-    if ( i == 0 ) {
-      i++;
-      std::cerr << "SDG::Insert aborted: intersecting segments found"
-		<< std::endl;
-    }
-  }
-
-  void print_error_message(const Tag_true&) const {}
-
-  //protected:
 public:
   // wrappers for constructions
   inline Point_2 circumcenter(const Face_handle& f) const {
@@ -1460,16 +1449,22 @@ protected:
   std::pair<Face_handle,Face_handle>
   find_faces_to_split(const Vertex_handle& v, const Site_2& t) const;
 
-  void expand_conflict_region(const Face_handle& f, const Site_2& t,
-			      const Storage_site_2& ss,
-#ifdef CGAL_SDG_NO_FACE_MAP
-			      List& l,
-#else
-			      List& l, Face_map& fm,
-			      std::map<Face_handle,Sign>& sign_map,
+  bool check_unregistered_face(const Face_handle& n,
+                               const Site_2& t,
+                               List& l,
+#ifndef CGAL_SDG_NO_FACE_MAP
+                               Face_map& fm,
 #endif
-			      Triple<bool, Vertex_handle,
-			      Arrangement_type>& vcross);
+                               Triple<bool, Vertex_handle, Arrangement_type>& vcross);
+
+  void expand_conflict_region(const Face_handle& in_f,
+                              const Site_2& t,
+                              List& l,
+#ifndef CGAL_SDG_NO_FACE_MAP
+                              Face_map& fm,
+                              std::map<Face_handle, Sign>& sign_map,
+#endif
+                              Triple<bool, Vertex_handle, Arrangement_type>& vcross);
 
   Vertex_handle add_bogus_vertex(Edge e, List& l);
   Vertex_list   add_bogus_vertices(List& l);
@@ -2039,5 +2034,6 @@ std::ostream& operator<<(std::ostream& os,
 
 #include <CGAL/Segment_Delaunay_graph_2/Segment_Delaunay_graph_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_H

@@ -24,11 +24,10 @@ main() {
   Tree tree;
   Random_points_iterator rpg;
 
-  //inserting N points one-by-one, thus the use of "reserve" is recommended, and thus we use it
-
+  //inserting N points one-by-one, thus the use of "reserve" is recommended, and we use it
   tree.reserve(N);
 
-  //to test wether the tree.capacity() function works properly.
+  //to test whether the tree.capacity() function works properly.
   if( tree.capacity() < N)
   {
     std::cerr << "ERROR: Something is wrong with allocating points memory." << std::endl;
@@ -47,7 +46,7 @@ main() {
   Point_d q(0.7, 0.7);
 
   // Searching an exact range
-  // using default value 0.0 for epsilon fuzziness paramater
+  // using default value 0.0 for epsilon fuzziness parameter
   // Fuzzy_box exact_range(r); replaced by
   Fuzzy_iso_box exact_range(p,q);
   std::cout << "tree.search(..)" << std::endl;
@@ -64,7 +63,7 @@ main() {
   Fuzzy_iso_box approximate_range(p, q, 0.1);
   tree.search(std::back_inserter( result ), approximate_range);
   std::cout << "The points in the fuzzy box [<0.1-0.3>,<0.6-0.9>]x[<0.1-0.3>,<0.6-0.9>] are: "
-	    << std::endl;
+            << std::endl;
   std::copy (result.begin(), result.end(), std::ostream_iterator<Point_d>(std::cout,"\n") );
   std::cout << std::endl;
   return 0;

@@ -27,7 +27,5 @@ public:
   /// the cell type which is model of `::SurfaceMeshCellBase_3`.
   typedef unspecified_type Cell;  
 
-/// @}
-
 }; /* end Surface_mesh_default_triangulation_3 */
 } /* end namespace CGAL */

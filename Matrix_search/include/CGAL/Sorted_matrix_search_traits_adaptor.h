@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
 #ifndef CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H
 #define CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H 1
+
+#include <CGAL/license/Matrix_search.h>
+
 
 #include <functional>
 

@@ -17,7 +17,7 @@ This class can be used directly or can serve as a base to derive other classes
 with some additional attributes tuned for a specific application. 
 
 
-\tparam TriangulationDataStructure must be a model of the 
+\tparam `TriangulationDataStructure_` must be a model of the 
 `TriangulationDataStructure` concept. 
 
 \tparam TriangulationDSFullCellStoragePolicy indicates whether or not 
@@ -43,24 +43,24 @@ See the user manual for how to choose the second option.
 
 \cgalModels `TriangulationDSFullCell`
 
-Rebind mechanism 
--------------- 
+\cgalHeading{Rebind mechanism}
 
 In case of derivation from that class, the nested class 
 `Rebind_TDS` need to be provided in the derived class. 
 
-\sa `Triangulation_ds_vertex<TriangulationDataStructure>` 
-\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>>` 
+\sa `Triangulation_ds_vertex<TriangulationDataStructure_>` 
+\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>` 
 
 */
-template< typename TriangulationDataStructure, typename TriangulationDSFullCellStoragePolicy >
+template< typename TriangulationDataStructure_, typename TriangulationDSFullCellStoragePolicy >
 class Triangulation_ds_full_cell {
 public:
 
 /// \name Validity Check 
 /// @{
 
-/*! 
+/*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Implements the validity checks required by the concept 
 `TriangulationDSFullCell`.

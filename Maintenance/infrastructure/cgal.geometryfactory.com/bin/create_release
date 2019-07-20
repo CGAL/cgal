@@ -77,5 +77,5 @@ ln -s "$1" "$HOME/CGAL/last-release-branch"
 # "$HOME/bin/update_manual_tools"
 
 # Launch create_new_release, from the branch itself
-[ -z "$DRY_RUN" ] && exec "$HOME/CGAL/last-release-branch/Scripts/developer_scripts/create_new_release" --no-scm-update "$@"
+[ -z "$DRY_RUN" ] && exec bash -$- "$HOME/CGAL/last-release-branch/Scripts/developer_scripts/create_new_release" --no-scm-update "$@"
 #                       --no-scm-update because branches have already been updated

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ilker O. Yaz
@@ -21,9 +22,13 @@
 #ifndef CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H
 #define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H
 
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
+
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h>
+#ifdef CGAL_PMP_HOLE_FILLING_DEBUG
 #include <CGAL/Timer.h>
-#include <CGAL/trace.h>
+#endif
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <vector>
@@ -108,7 +113,9 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
   typedef std::map<vertex_descriptor, int>    Vertex_map;
   typedef typename Vertex_map::iterator       Vertex_map_it;
 
+  #ifdef CGAL_PMP_HOLE_FILLING_DEBUG
   CGAL::Timer timer; timer.start();
+  #endif
 
   std::vector<Point_3>         P, Q;
   std::vector<halfedge_descriptor> P_edges;
@@ -117,8 +124,8 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
   int id = 0;
   Hedge_around_face_circulator circ(border_halfedge,pmesh), done(circ);
   do{
-    P.push_back(vpmap[target(*circ, pmesh)]);
-    Q.push_back(vpmap[target(next(opposite(next(*circ,pmesh),pmesh),pmesh),pmesh)]);
+    P.push_back(get(vpmap, target(*circ, pmesh)));
+    Q.push_back(get(vpmap, target(next(opposite(next(*circ,pmesh),pmesh),pmesh),pmesh)));
     P_edges.push_back(*circ);
     if(!vertex_map.insert(std::make_pair(target(*circ,pmesh), id++)).second) {
       #ifndef CGAL_TEST_SUITE
@@ -183,7 +190,9 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
 #endif
   ;
 
-  CGAL_TRACE_STREAM << "Hole filling: " << timer.time() << " sc." << std::endl; timer.reset();
+  #ifdef CGAL_PMP_HOLE_FILLING_DEBUG
+  std:cerr << "Hole filling: " << timer.time() << " sc." << std::endl; timer.reset();
+  #endif
   return std::make_pair(tracer.out, weight);
 }
 

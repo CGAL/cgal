@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSegmentDelaunayGraph2
+\ingroup PkgSegmentDelaunayGraph2Ref
 
 The class `Segment_Delaunay_graph_vertex_base_2` provides a model for the 
 `SegmentDelaunayGraphVertexBase_2` concept which is the vertex 
@@ -33,8 +33,6 @@ indicates that the simple storage site is to be used.
 template< typename Gt, typename SSTag >
 class Segment_Delaunay_graph_vertex_base_2 {
 public:
-
-/// @}
 
 }; /* end Segment_Delaunay_graph_vertex_base_2 */
 } /* end namespace CGAL */

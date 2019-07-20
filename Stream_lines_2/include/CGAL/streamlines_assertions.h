@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Geert-Jan Giezeman, Sven Schoenherr, Abdelkrim Mebarki
@@ -39,6 +40,9 @@
 #if defined(CGAL_STREAMLINES_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || defined(NDEBUG)
 #  define CGAL_streamlines_assertion(EX) (static_cast<void>(0))
+
+#include <CGAL/license/Stream_lines_2.h>
+
 #  define CGAL_streamlines_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_streamlines_assertion_code(CODE)
 #else

@@ -43,6 +43,16 @@ int main()
       std::cout<<"PB new emplace element is not used (2)."<<std::endl;
       return EXIT_FAILURE;
     }
+    if ( c1.index(it)!=nb )
+    {
+      std::cout<<"PB index of new emplace element is not correct."<<std::endl;
+      return EXIT_FAILURE;
+    }
+    if ( &(c1[nb])!=&*it )
+    {
+      std::cout<<"PB operator[] gives a wrong result."<<std::endl;
+      return EXIT_FAILURE;
+    }
   }
 
   nb=0;

@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgHDSConcepts
+\ingroup PkgHalfedgeDSConcepts
 \cgalConcept
 
 The concept of a halfedge data structure (abbreviated as `HalfedgeDS`, or 
@@ -143,7 +143,7 @@ iterators are assignable to the respective handle types. Wherever the
 handles appear in function parameter lists, the corresponding 
 iterators can be used as well. \note The handle types must have 
 a default constructor that creates a unique and always the same handle 
-value. It will be used in analogy to `NULL` for pointers. 
+value. It will be used in analogy to `nullptr` for pointers. 
 */
 /// @{
 

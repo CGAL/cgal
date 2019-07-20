@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
 #ifndef CGAL_SNC_LIST_H
 #define CGAL_SNC_LIST_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/Nef_S2/SM_list.h>
 #include <CGAL/Unique_hash_map.h>
@@ -35,6 +39,7 @@ public:
     //    typedef typename Vertex::Vertex_handle       Vertex_handle;
     //    typedef typename Vertex::Vertex_const_handle Vertex_const_handle;
     SNC_in_place_list_sm() {}
+    SNC_in_place_list_sm(const Self&)=default;
     SNC_in_place_list_sm(const Sphere_map& sm)   // down cast
         : Sphere_map(sm) {}
     Self& operator=( const Self& sm) {
@@ -56,6 +61,7 @@ public:
     SNC_in_place_list_halffacet() {}
     SNC_in_place_list_halffacet(const Halffacet& v)   // down cast
         : Halffacet(v) {}
+    SNC_in_place_list_halffacet(const Self&)=default;
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
@@ -75,6 +81,7 @@ public:
     SNC_in_place_list_volume() {}
     SNC_in_place_list_volume(const Volume& v)   // down cast
         : Volume(v) {}
+    SNC_in_place_list_volume(const Self&)=default;
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
@@ -94,6 +101,7 @@ public:
     SNC_in_place_list_shalfloop() {}
     SNC_in_place_list_shalfloop(const SHalfloop& v)   // down cast
         : SHalfloop(v) {}
+    SNC_in_place_list_shalfloop(const Self&)=default;
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.

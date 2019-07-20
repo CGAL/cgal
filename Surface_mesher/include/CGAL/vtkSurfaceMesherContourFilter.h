@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_VTK_SURFACE_MESHER_CONTOUR_FILTER_H
 #define CGAL_VTK_SURFACE_MESHER_CONTOUR_FILTER_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #ifdef CGAL_USE_VTK
 

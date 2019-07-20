@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Mariette Yvinec
@@ -21,7 +22,10 @@
 #ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_2_H
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_2_H
 
-#include <CGAL/basic.h>
+#include <CGAL/license/TDS_2.h>
+
+
+#include <CGAL/config.h>
 #include <iostream>
 #include <list>
 #include <map>
@@ -57,8 +61,7 @@ class Triangulation_data_structure_2
   typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex_base;
   typedef typename Fb::template Rebind_TDS<Tds>::Other  Face_base;
 
-  friend class Triangulation_ds_edge_iterator_2<Tds,false>;
-  friend class Triangulation_ds_edge_iterator_2<Tds,true>;
+  friend class Triangulation_ds_edge_iterator_2<Tds>;
   friend class Triangulation_ds_face_circulator_2<Tds>;
   friend class Triangulation_ds_edge_circulator_2<Tds>;
   friend class Triangulation_ds_vertex_circulator_2<Tds>;
@@ -86,18 +89,19 @@ public:
 
   typedef typename Face_range::iterator              Face_iterator;
   typedef typename Vertex_range::iterator            Vertex_iterator;
-
   typedef Triangulation_ds_edge_iterator_2<Tds>      Edge_iterator;
-  typedef Triangulation_ds_edge_iterator_2<Tds,false> Halfedge_iterator;
 
   typedef Triangulation_ds_face_circulator_2<Tds>    Face_circulator;
   typedef Triangulation_ds_vertex_circulator_2<Tds>  Vertex_circulator;
   typedef Triangulation_ds_edge_circulator_2<Tds>    Edge_circulator;
 
+  typedef Iterator_range<Prevent_deref<Vertex_iterator> > Vertex_handles;
+  typedef Iterator_range<Prevent_deref<Face_iterator> >   Face_handles;
+  typedef Iterator_range<Edge_iterator>                   Edges;
+    
   typedef Vertex_iterator                            Vertex_handle;
   typedef Face_iterator                              Face_handle;
-
-  typedef std::pair<Face_handle,int> Edge;
+  typedef std::pair<Face_handle, int>                Edge;
 
   typedef std::list<Edge> List_edges;
 
@@ -168,12 +172,20 @@ public:
     return faces().end();
   }
 
+  Face_handles face_handles() const {
+    return make_prevent_deref_range(faces_begin(),faces_end());
+  }
+  
   Vertex_iterator vertices_begin() const  {
     return vertices().begin();
   }
 
   Vertex_iterator vertices_end() const {
     return vertices().end();
+  }
+
+  Vertex_handles vertex_handles() const {
+    return make_prevent_deref_range(vertices_begin(),vertices_end());
   }
   
   Edge_iterator edges_begin() const {
@@ -183,15 +195,11 @@ public:
   Edge_iterator edges_end() const {
     return Edge_iterator(this,1);
   }
-  
-  Halfedge_iterator halfedges_begin() const {
-    return Halfedge_iterator(this);
+
+  Edges edges() const {
+    return Edges(edges_begin(),edges_end());
   }
 
-  Halfedge_iterator halfedges_end() const {
-    return Halfedge_iterator(this,1);
-  }
-  
   Face_circulator incident_faces(Vertex_handle v, 
 				 Face_handle f =  Face_handle()) const{
     return Face_circulator(v,f);
@@ -292,9 +300,11 @@ public:
 // 		  FaceIt face_begin,
 // 		  FaceIt face_end);
   
-  Vertex_handle create_vertex(const Vertex &v = Vertex());
+  Vertex_handle create_vertex();
+  Vertex_handle create_vertex(const Vertex &v);
   Vertex_handle create_vertex(Vertex_handle v); //calls copy constructor 
-  Face_handle create_face(const Face& f = Face());
+  Face_handle create_face();
+  Face_handle create_face(const Face& f);
   Face_handle create_face(Face_handle f); //calls copy constructor 
 
  Face_handle create_face(Face_handle f1, int i1, 
@@ -428,6 +438,106 @@ public:
 
   // template members definition
 public:
+
+  /************* START OF MODIFICATIONS ***************/
+
+  template< class FaceIt >
+  Vertex_handle insert_in_hole(FaceIt face_begin, FaceIt face_end) 
+  {
+    Vertex_handle newv = create_vertex();
+    insert_in_hole(newv, face_begin, face_end);
+    return newv;
+  }
+
+
+  template< class FaceIt >
+  void insert_in_hole(Vertex_handle v, FaceIt face_begin, FaceIt face_end) 
+  {
+
+    CGAL_triangulation_precondition(dimension() == 2);
+
+    std::vector<Face_handle>  new_faces;
+    std::vector<Edge>         bdry_edges;
+
+    Face_handle fh = *face_begin;
+    int ii = 0;
+    bool found_boundary = false;
+    do {
+      if (std::find(face_begin, face_end, fh->neighbor(ii)) == face_end) {
+        bdry_edges.push_back(Edge(fh, ii));
+        found_boundary = true;
+      } else {
+        int newi = fh->neighbor(ii)->index(fh->vertex(ccw(ii)));
+        fh = fh->neighbor(ii);
+        ii = newi;
+      }
+    } while(!found_boundary);
+    // Now we have found ONE edge on the boundary. 
+    // From that one edge we must walk on the boundary 
+    // of the hole until we've covered the whole thing.
+
+    bool complete_walk = false;
+    do {
+      Face_handle nh = fh->neighbor(ccw(ii));
+      if (std::find(face_begin, face_end, nh) == face_end) {
+        ii = ccw(ii);
+        Edge new_edge(fh, ii);
+        if (std::find(bdry_edges.begin(), bdry_edges.end(), new_edge) == bdry_edges.end()) {
+          bdry_edges.push_back(Edge(fh, ii));
+        } else {
+          complete_walk = true;
+        }
+      } else {
+        int newi = cw(nh->index(fh->vertex(ii)));
+        fh = nh;
+        ii = newi;
+      }
+    } while (!complete_walk);
+    // At this point, bdry_edges contains the edges that define
+    // the boundary of the hole with a specific ordering: for any
+    // two consecutive edges in the vector e1 = (f1, i1), 
+    // e2 = (f2, i2) it holds that 
+    //      f1->vertex(cw(i1)) == f2->vertex(ccw(i2))
+
+    for (unsigned int jj = 0; jj < bdry_edges.size(); jj++) {
+      Face_handle fh = bdry_edges[jj].first;
+      int idx = bdry_edges[jj].second;
+      
+      Vertex_handle v1 = fh->vertex(ccw(idx));
+      Vertex_handle v2 = fh->vertex(cw(idx));
+
+      Face_handle nf = fh->neighbor(idx);
+      int jdx = mirror_index(fh, idx);
+
+      Face_handle new_f = create_face(v, v1, v2);
+      v1->set_face(new_f);
+      set_adjacency(new_f, 0, nf, jdx);
+      new_faces.push_back(new_f);
+    }
+    // At this point we have created all the new faces of the triangulation,
+    // and we have set adjacency relationships with the faces on the border
+    // of the hole.
+
+    for (unsigned int i = 0; i < new_faces.size() - 1; i++) {
+      set_adjacency(new_faces[i], 1, new_faces[i+1], 2);
+    }
+    set_adjacency(new_faces[0], 2, new_faces[new_faces.size()-1], 1);
+    // Now we have also set adjacency relationships between the new faces.
+
+    for (FaceIt it = face_begin; it != face_end; it++) {
+      delete_face(*it);
+    }
+    // The old faces that were in conflict are now deleted.
+
+    v->set_face(new_faces[0]);
+    // Set the pointer of the new vertex to one of the new faces.
+  }
+
+
+
+  /************* END OF MODIFICATIONS ***************/
+
+
   template< class EdgeIt>
   Vertex_handle star_hole(EdgeIt edge_begin, EdgeIt edge_end)
   // creates a new vertex 
@@ -894,7 +1004,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
   // a vertex  v which is outside the affine  hull of Tds
   // The triangulation will be starred from  v and w 
   // ( geometrically w=  // the infinite vertex )
-  // w=NULL for first and second insertions
+  // w=nullptr for first and second insertions
   // orient governs the orientation of the resulting triangulation
 
   Vertex_handle v = create_vertex();
@@ -1248,6 +1358,14 @@ make_hole(Vertex_handle v, List_edges& hole)
   return;
 }
 
+template <class Vb, class Fb>
+inline
+typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
+Triangulation_data_structure_2<Vb,Fb>::
+create_vertex()
+{
+  return vertices().emplace();
+}
 
 template <class Vb, class Fb>
 inline
@@ -1265,6 +1383,14 @@ Triangulation_data_structure_2<Vb,Fb>::
 create_vertex(Vertex_handle vh)
 {
   return vertices().insert(*vh);
+}
+
+template <class Vb, class Fb>
+typename Triangulation_data_structure_2<Vb,Fb>::Face_handle
+Triangulation_data_structure_2<Vb,Fb>::
+create_face()
+{
+  return faces().emplace();
 }
 
 template <class Vb, class Fb>
@@ -1635,7 +1761,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
   if ( v1->face() == f || v1->face() == g ) v1->set_face(tl);
 
 
-#ifndef CGAL_NO_ASSERTIONS
+#if ! defined(CGAL_TRIANGULATION_NO_ASSERTIONS) && ! defined(CGAL_NO_ASSERTIONS)
   for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit) {
     int id;
     CGAL_triangulation_assertion( !fit->has_vertex(v2, id) );
@@ -1897,7 +2023,7 @@ namespace internal { namespace TDS_2{
   struct Default_vertex_converter
   {
     Vertex_tgt operator()(const Vertex_src& src) const {
-      return Vertex_src( src.point() );
+      return Vertex_tgt( src.point() );
     }
     
     void operator()(const Vertex_src&,Vertex_tgt&) const {}
@@ -1952,7 +2078,7 @@ Triangulation_data_structure_2<Vb,Fb>::
 file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
 {
   // ouput to a file
-  // if non NULL, v is the vertex to be output first
+  // if non nullptr, v is the vertex to be output first
   // if skip_first is true, the point in the first vertex is not output
   // (it may be for instance the infinite vertex of the triangulation)
   
@@ -2089,7 +2215,7 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
 {
   // ouput to a vrml file style
   // Point are assumed to be 3d points with a stream oprator <<
-  // if non NULL, v is the vertex to be output first
+  // if non nullptr, v is the vertex to be output first
   // if skip_inf is true, the point in the first vertex is not output
   // and the faces incident to v are not output
   // (it may be for instance the infinite vertex of the terrain)

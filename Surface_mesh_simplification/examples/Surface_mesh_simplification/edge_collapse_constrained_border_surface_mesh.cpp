@@ -1,12 +1,8 @@
 #include <iostream>
 #include <fstream>
-#include <map>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-
 
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -27,7 +23,7 @@ typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor;
 
-namespace SMS = CGAL::Surface_mesh_simplification ;
+namespace SMS = CGAL::Surface_mesh_simplification;
 
 //
 // BGL property map which indicates whether an edge is marked as non-removable
@@ -59,24 +55,28 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh;
 
   if (argc!=2){
-    std::cerr<< "Usage: " << argv[0] << " input.off\n";
-    return 1;
+    std::cerr << "Usage: " << argv[0] << " input.off\n";
+    return EXIT_FAILURE;
   }
 
   std::ifstream is(argv[1]);
   if(!is){
-    std::cerr<< "Filename provided is invalid\n";
-    return 1;
+    std::cerr << "Filename provided is invalid\n";
+    return EXIT_FAILURE;
   }
 
-  is >> surface_mesh  ;
-  
+  is >> surface_mesh ;
+  if (!CGAL::is_triangle_mesh(surface_mesh)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Surface_mesh::Property_map<halfedge_descriptor,std::pair<Point_3, Point_3> > constrained_halfedges;
 
   constrained_halfedges = surface_mesh.add_property_map<halfedge_descriptor,std::pair<Point_3, Point_3> >("h:vertices").first;
 
   std::size_t nb_border_edges=0;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges(surface_mesh)){
+  for(halfedge_descriptor hd : halfedges(surface_mesh)){
     if(CGAL::is_border(hd,surface_mesh)){
       constrained_halfedges[hd] = std::make_pair(surface_mesh.point(source(hd,surface_mesh)),
                                                  surface_mesh.point(target(hd,surface_mesh)));
@@ -99,12 +99,14 @@ int main( int argc, char** argv )
             );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
-            << surface_mesh.number_of_edges() << " final edges.\n" ;
+            << surface_mesh.number_of_edges() << " final edges.\n";
 
-  std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
+  std::ofstream os( argc > 2 ? argv[2] : "out.off" );
+  os.precision(17);
+  os << surface_mesh;
 
   // now check!
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges(surface_mesh)){
+  for(halfedge_descriptor hd : halfedges(surface_mesh)){
     if(CGAL::is_border(hd,surface_mesh)){
       --nb_border_edges;
       if(constrained_halfedges[hd] != std::make_pair(surface_mesh.point(source(hd,surface_mesh)),
@@ -116,5 +118,5 @@ int main( int argc, char** argv )
   }
   assert( nb_border_edges==0 );
 
-  return 0 ;
+  return EXIT_SUCCESS;
 }

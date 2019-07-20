@@ -291,7 +291,7 @@ is a class that fulfills the requirements of the concept.
 Let's have a look at the following function.
 
 \code{.cpp}
-template <T>
+template <typename T>
 T
 duplicate(T t)
 {
@@ -308,17 +308,17 @@ Another example is the function
 
 \code{.cpp}
 template <typename T> 
-T& std::min(const T& a, constT& b)
+T& std::min(const T& a, const T& b)
 {
   return (a<b)?a:b;
 } 
 \endcode
 
-This function only compiles if the `operator<<(..)` is defined for the type used as `T`,
+This function only compiles if the `operator<(..)` is defined for the type used as `T`,
 and we say that the type must be a model of `LessThanComparable`.
 
 An example for a concept with required free functions is the `HalfedgeListGraph` in the
-\cgal package \ref PkgBGLSummary. In order to be a model of `HalfedgeListGraph` a class `G` 
+\cgal package \ref PkgBGL. In order to be a model of `HalfedgeListGraph` a class `G` 
 there must be a global function `halfedges(const G&)`, etc.
 
 An example for a concept with a required traits class is `InputIterator`.
@@ -335,7 +335,7 @@ and its notion of *concepts* and *models*.
 
 Other resources for \cgal are the rest of the \ref tutorials "tutorials" 
  and the user support page at
-http://www.cgal.org/.
+https://www.cgal.org/.
 
 */
 } /* namespace CGAL */

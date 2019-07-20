@@ -1,69 +1,69 @@
-/// \defgroup PkgArrangement2 2D Arrangement Reference
+/// \defgroup PkgArrangementOnSurface2Ref 2D Arrangement Reference
 
-/// \defgroup PkgArrangement2Concepts Concepts
-/// \ingroup PkgArrangement2
+/// \defgroup PkgArrangementOnSurface2Concepts Concepts
+/// \ingroup PkgArrangementOnSurface2Ref
 
 /// \cgalConceptNamespace
 /// The namespace containing concepts specific to Arrangements.
 namespace ArrTraits {}
 
-/// \defgroup PkgArrangement2ConceptsDCEL DCEL Concepts
-/// \ingroup PkgArrangement2Concepts
+/// \defgroup PkgArrangementOnSurface2ConceptsDCEL DCEL Concepts
+/// \ingroup PkgArrangementOnSurface2Concepts
 
-/// \defgroup PkgArrangement2ConceptsGeometricObjects Geometric Object Concepts
-/// \ingroup PkgArrangement2Concepts
+/// \defgroup PkgArrangementOnSurface2ConceptsGeometricObjects Geometric Object Concepts
+/// \ingroup PkgArrangementOnSurface2Concepts
 
-/// \defgroup PkgArrangement2ConceptsFunctionObjects Function Object Concepts
-/// \ingroup PkgArrangement2Concepts
+/// \defgroup PkgArrangementOnSurface2ConceptsFunctionObjects Function Object Concepts
+/// \ingroup PkgArrangementOnSurface2Concepts
 
-/// \defgroup PkgArrangement2ConceptsTraits Traits Concepts
-/// \ingroup PkgArrangement2Concepts
+/// \defgroup PkgArrangementOnSurface2ConceptsTraits Traits Concepts
+/// \ingroup PkgArrangementOnSurface2Concepts
 
-/// \defgroup PkgArrangement2TraitsClasses Traits Classes
-/// \ingroup PkgArrangement2
+/// \defgroup PkgArrangementOnSurface2TraitsClasses Traits Classes
+/// \ingroup PkgArrangementOnSurface2Ref
 
-/// \defgroup PkgArrangement2DCEL DCEL
-/// \ingroup PkgArrangement2
+/// \defgroup PkgArrangementOnSurface2DCEL DCEL
+/// \ingroup PkgArrangementOnSurface2Ref
 
-/// \defgroup PkgArrangement2IO I/O
-/// \ingroup PkgArrangement2
+/// \defgroup PkgArrangementOnSurface2IO I/O
+/// \ingroup PkgArrangementOnSurface2Ref
 
-/// \defgroup PkgArrangement2op_left_shift operator<<
-/// \ingroup PkgArrangement2IO
+/// \defgroup PkgArrangementOnSurface2op_left_shift operator<<
+/// \ingroup PkgArrangementOnSurface2IO
 
-/// \defgroup PkgArrangement2op_right_shift operator>>
-/// \ingroup PkgArrangement2IO
+/// \defgroup PkgArrangementOnSurface2op_right_shift operator>>
+/// \ingroup PkgArrangementOnSurface2IO
 
-/// \defgroup PkgArrangement2PointLocation Point Location
-/// \ingroup PkgArrangement2
+/// \defgroup PkgArrangementOnSurface2PointLocation Point Location
+/// \ingroup PkgArrangementOnSurface2Ref
 
-/// \defgroup PkgArrangement2Overlay Overlay
-/// \ingroup PkgArrangement2
+/// \defgroup PkgArrangementOnSurface2Overlay Overlay
+/// \ingroup PkgArrangementOnSurface2Ref
 
-/// \defgroup PkgArrangement2Funcs Free Functions
-/// \ingroup PkgArrangement2
+/// \defgroup PkgArrangementOnSurface2Funcs Free Functions
+/// \ingroup PkgArrangementOnSurface2Ref
 
-/// \defgroup PkgArrangement2Insert CGAL::insert()
-/// \ingroup PkgArrangement2Funcs
+/// \defgroup PkgArrangementOnSurface2Insert CGAL::insert()
+/// \ingroup PkgArrangementOnSurface2Funcs
 
-/// \defgroup PkgArrangement2Tags Tags
-/// \ingroup PkgArrangement2
+/// \defgroup PkgArrangementOnSurface2Tags Tags
+/// \ingroup PkgArrangementOnSurface2Ref
 
-/// \defgroup PkgArrangement2Macros Macros
-/// \ingroup PkgArrangement2
+/// \defgroup PkgArrangementOnSurface2Macros Macros
+/// \ingroup PkgArrangementOnSurface2Ref
 
-/// \defgroup PkgArrangement2Enums Enumerations
-/// \ingroup PkgArrangement2
+/// \defgroup PkgArrangementOnSurface2Enums Enumerations
+/// \ingroup PkgArrangementOnSurface2Ref
 
 /*!
-\addtogroup PkgArrangement2
+\addtogroup PkgArrangementOnSurface2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Arrangements,PkgArrangement2Summary}
+\cgalPkgDescriptionBegin{2D Arrangements,PkgArrangementOnSurface2}
 \cgalPkgPicture{Arrangement_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Ron Wein, Eric Berberich, Efi Fogel, Dan Halperin, Michael Hemmer, Oren Salzman, and Baruch Zukerman}
 \cgalPkgDesc{This package can be used to construct, maintain, alter, and display arrangements in the plane. Once an arrangement is constructed, the package can be used to obtain results of various queries on the arrangement, such as point location. The package also includes generic implementations of two algorithmic frameworks, that are, computing the zone of an arrangement, and line-sweeping the plane, the arrangements is embedded on. These frameworks are used in turn in the implementations of other operations on arrangements. Computing the overlay of two arrangements, for example, is based on the sweep-line framework.   Arrangements and arrangement components can also be extended to store additional data. An important extension stores the construction history of the arrangement, such that it is possible to obtain the originating curve of an arrangement subcurve.}
-\cgalPkgManuals{Chapter_2D_Arrangements,PkgArrangement2}
+\cgalPkgManuals{Chapter_2D_Arrangements,PkgArrangementOnSurface2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.1}
@@ -87,18 +87,18 @@ implemented as peripheral classes or as free (global) functions.
 
 \cgalClassifedRefPages
 
-## Enumerations ##
+\cgalCRPSection{Enumerations}
 
 - `CGAL::Arr_parameter_space`
 - `CGAL::Arr_curve_end`
 - `CGAL::Arr_halfedge_direction`
 
-## Tags ##
+\cgalCRPSection{Tags}
 
 - `CGAL::Arr_oblivious_side_tag`
 - `CGAL::Arr_open_side_tag`
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `ArrangementDcel`
 - `ArrangementDcelWithRebind`
@@ -119,13 +119,13 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementPointLocation_2`
 - `ArrangementVerticalRayShoot_2`
 
-## Geometric Object Concepts ##
+\cgalCRPSection{Geometric Object Concepts}
 
 - `ArrTraits::Point_2`
 - `ArrTraits::XMonotoneCurve_2`
 - `ArrTraits::Curve_2`
 
-## Function Object Concepts ##
+\cgalCRPSection{Function Object Concepts}
 
 - `ArrTraits::CompareX_2`
 - `ArrTraits::CompareXy_2`
@@ -149,7 +149,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::Approximate_2`
 - `ArrTraits::ConstructXMonotoneCurve_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Arrangement_2<Traits,Dcel>`
 - `CGAL::Arr_accessor<Arrangement>`
@@ -188,10 +188,10 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_face_index_map<Arrangement>`
 - `CGAL::Arr_point_location_result<Arrangement>`
 
-## Macros ##
+\cgalCRPSection{Macros}
 - \link CGAL_ARR_POINT_LOCATION_VERSION `CGAL_ARR_POINT_LOCATION_VERSION` \endlink
 
-## Functions ##
+\cgalCRPSection{Functions}
 
 - `CGAL::is_valid()`
 - `CGAL::insert()`
@@ -206,7 +206,7 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::read()`
 - `CGAL::write()`
 - `CGAL::remove_curve()`
-- \link PkgArrangement2op_left_shift `CGAL::operator<<` \endlink
-- \link PkgArrangement2op_right_shift `CGAL::operator<<` \endlink
+- \link PkgArrangementOnSurface2op_left_shift `CGAL::operator<<` \endlink
+- \link PkgArrangementOnSurface2op_right_shift `CGAL::operator<<` \endlink
 
 */

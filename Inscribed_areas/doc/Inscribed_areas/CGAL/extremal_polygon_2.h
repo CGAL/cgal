@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgInscribedAreas
+\ingroup PkgInscribedAreasRef
 
 computes a maximal (as specified by `t`) inscribed `k`-gon of 
 the convex polygon described by [`points_begin`, 
@@ -49,7 +49,7 @@ const Traits& t);
 
 
 /*!
-\ingroup PkgInscribedAreas
+\ingroup PkgInscribedAreasRef
 
 
 \brief computes a maximum area inscribed `k`-gon of the convex polygon 
@@ -116,7 +116,7 @@ OutputIterator o);
 namespace CGAL {
 
 /*!
-\ingroup PkgInscribedAreas
+\ingroup PkgInscribedAreasRef
 
 \brief computes a maximum perimeter inscribed `k`-gon of the convex polygon 
 described by `[points_begin, points_end)`, writes its 

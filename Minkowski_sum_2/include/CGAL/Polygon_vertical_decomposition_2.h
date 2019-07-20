@@ -12,19 +12,30 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s) : Efi Fogel   <efifogel@gmail.com>
 
 #ifndef CGAL_POLYGON_VERTICAL_DECOMPOSITION_2_H
 #define CGAL_POLYGON_VERTICAL_DECOMPOSITION_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Arr_vertical_decomposition_2.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Gps_segment_traits_2.h>
 
 #include <vector>
 #include <list>
 
 namespace CGAL {
+
 
 /*!
  * \class
@@ -100,7 +111,7 @@ private:
 public:
   /*! Default constructor. */
   Polygon_vertical_decomposition_2() :
-    m_traits(NULL),
+    m_traits(nullptr),
     m_own_traits(false)
   { init(); }
 
@@ -114,7 +125,7 @@ public:
   void init()
   {
     // Allocate the traits if not provided.
-    if (m_traits == NULL) {
+    if (m_traits == nullptr) {
       m_traits = new Traits_2;
       m_own_traits = true;
     }
@@ -132,7 +143,7 @@ public:
     if (m_own_traits) {
       if (m_traits) {
         delete m_traits;
-        m_traits = NULL;
+        m_traits = nullptr;
       }
       m_own_traits = false;
     }

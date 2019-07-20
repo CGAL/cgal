@@ -1,0 +1,13 @@
+#!/bin/zsh
+
+# Should be run in the directory with the release files, and named after
+# the release name, like "CGAL-4.9.1".
+
+# Use github-release from
+#   https://github.com/aktau/github-release
+
+source $HOME/private/github-token.txt
+
+for f in *.(zip|xz|txt|exe); do
+    github-release upload -u CGAL -r cgal -t releases/${PWD:t} --name $f -f $f;
+done

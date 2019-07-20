@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2Concepts
+\ingroup PkgArrangementOnSurface2Concepts
 \cgalConcept
 
 A model of the `ArrangementVerticalRayShoot_2` concept can answer vertical ray-shooting

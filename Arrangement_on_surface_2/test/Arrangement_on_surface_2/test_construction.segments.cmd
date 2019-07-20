@@ -45,3 +45,6 @@
 ./data/test_construction/segments/test45.txt
 ./data/test_construction/segments/test46.txt
 ./data/test_construction/segments/test47.txt
+./data/test_construction/segments/test48.txt
+./data/test_construction/segments/test49.txt
+./data/test_construction/segments/test50.txt

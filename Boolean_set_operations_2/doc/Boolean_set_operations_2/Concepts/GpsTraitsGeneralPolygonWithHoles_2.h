@@ -20,7 +20,5 @@ A model of this concept represents a general polygon with holes.
 class GpsTraitsGeneralPolygonWithHoles_2 {
 public:
 
-/// @}
-
 }; /* end GpsTraitsGeneralPolygonWithHoles_2 */
 

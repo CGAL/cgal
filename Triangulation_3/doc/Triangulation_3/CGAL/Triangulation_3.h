@@ -7,34 +7,36 @@ namespace CGAL {
 The class `Triangulation_3` represents a 3-dimensional tetrahedralization 
 of points. 
 
-\tparam TriangulationTraits_3 is the geometric traits class.
+\tparam Traits is the geometric traits class and must be a model of `TriangulationTraits_3`.
 
-\tparam TriangulationDataStructure_3 is the triangulation data structure.
-It has the default value `Triangulation_data_structure_3< Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> >`. 
-`Default` may be used.
+\tparam TDS is the triangulation data structure and must be a model of `TriangulationDataStructure_3`.
+`Default` may be used, with default type `Triangulation_data_structure_3<Triangulation_vertex_base_3<Traits>,
+                                                                         Triangulation_cell_base_3<Traits> >`.
+Any custom type can be used instead of `Triangulation_vertex_base_3`
+and `Triangulation_cell_base_3`, provided that they are models of the
+concepts `TriangulationVertexBase_3` and `TriangulationCellBase_3`,
+respectively.
 
-\tparam SurjectiveLockDataStructure is an optional parameter to specify the type of the spatial lock data structure.
+\tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
+        It must be a model of the `SurjectiveLockDataStructure` concept,
+        with `Object` being a `Point` (as defined below).
         It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
         `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
-        It must be a model of the `SurjectiveLockDataStructure` concept,
-        with `Object` being a `Point`.
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
         the triangulation data structure is concurrency-safe, and `void` otherwise.
         In order to use concurrent operations, the user must provide a
-        reference to a `SurjectiveLockDataStructure`
-        instance via the constructor or `Triangulation_3::set_lock_data_structure`.
+        reference to a SLDS instance via the constructor or `Triangulation_3::set_lock_data_structure`.
 
 \cgalHeading{Traversal of the Triangulation}
 
 The triangulation class provides several iterators and circulators 
 that allow one to traverse it (completely or partially). 
 
-\sa `TriangulationDataStructure_3::Vertex` 
-\sa `TriangulationDataStructure_3::Cell` 
+\sa `CGAL::Delaunay_triangulation_3`
+\sa `CGAL::Regular_triangulation_3`
 
 */
-template< typename TriangulationTraits_3, typename TriangulationDataStructure_3,
-          typename SurjectiveLockDataStructure >
+template< typename Traits, typename TDS, typename SLDS >
 class Triangulation_3 : public Triangulation_utils_3 {
 public:
 
@@ -52,38 +54,38 @@ public:
 
 /*!
 
-*/ 
-typedef TriangulationDataStructure_3 Triangulation_data_structure; 
+*/
+typedef Traits Geom_traits;
 
 /*!
 
 */ 
-typedef SurjectiveLockDataStructure Lock_data_structure; 
+typedef TDS Triangulation_data_structure;
 
 /*!
 
 */ 
-typedef TriangulationTraits_3 Geom_traits; 
+typedef SLDS Lock_data_structure;
 
 /*!
 
 */ 
-typedef TriangulationTraits_3::Point_3 Point; 
+typedef Triangulation_data_structure::Vertex::Point Point;
 
 /*!
 
 */ 
-typedef TriangulationTraits_3::Segment_3 Segment; 
+typedef Geom_traits::Segment_3 Segment;
 
 /*!
 
 */ 
-typedef TriangulationTraits_3::Triangle_3 Triangle; 
+typedef Geom_traits::Triangle_3 Triangle;
 
 /*!
 
 */ 
-typedef TriangulationTraits_3::Tetrahedron_3 Tetrahedron; 
+typedef Geom_traits::Tetrahedron_3 Tetrahedron;
 
 /// @}
 
@@ -96,23 +98,27 @@ Only vertices (0-faces) and cells (3-faces) are stored. Edges (1-faces) and face
 /*!
 
 */ 
-typedef TriangulationDataStructure_3::Vertex Vertex; 
+typedef Triangulation_data_structure::Vertex Vertex;
 
 /*!
 
 */ 
-typedef TriangulationDataStructure_3::Cell Cell; 
+typedef Triangulation_data_structure::Cell Cell;
 
 /*!
 
 */ 
-typedef TriangulationDataStructure_3::Facet Facet; 
+typedef Triangulation_data_structure::Facet Facet;
 
 /*!
 
 */ 
-typedef TriangulationDataStructure_3::Edge Edge; 
+typedef Triangulation_data_structure::Edge Edge;
 
+/*! 
+Concurrency tag (from the TDS).
+*/ 
+typedef Triangulation_data_structure::Concurrency_tag Concurrency_tag;
 
 /// @}
 
@@ -136,12 +142,12 @@ in containers such as `std::map` and `boost::unordered_map`.
 /*!
 handle to a vertex 
 */ 
-typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle; 
+typedef Triangulation_data_structure::Vertex_handle Vertex_handle;
 
 /*!
 handle to a cell 
 */ 
-typedef TriangulationDataStructure_3::Cell_handle Cell_handle; 
+typedef Triangulation_data_structure::Cell_handle Cell_handle;
 
 /*!
 Reference to a simplex (vertex, edge, facet or cell) of the triangulation 
@@ -151,32 +157,32 @@ typedef Triangulation_simplex_3<Self> Simplex;
 /*!
 Size type (an unsigned integral type) 
 */ 
-typedef TriangulationDataStructure_3::size_type size_type; 
+typedef Triangulation_data_structure::size_type size_type;
 
 /*!
 Difference type (a signed integral type) 
 */ 
-typedef TriangulationDataStructure_3::difference_type difference_type; 
+typedef Triangulation_data_structure::difference_type difference_type;
 
 /*!
 iterator over cells 
 */ 
-typedef TriangulationDataStructure_3::Cell_iterator All_cells_iterator; 
+typedef Triangulation_data_structure::Cell_iterator All_cells_iterator;
 
 /*!
 iterator over facets 
 */ 
-typedef TriangulationDataStructure_3::Facet_iterator All_facets_iterator; 
+typedef Triangulation_data_structure::Facet_iterator All_facets_iterator;
 
 /*!
 iterator over edges 
 */ 
-typedef TriangulationDataStructure_3::Edge_iterator All_edges_iterator; 
+typedef Triangulation_data_structure::Edge_iterator All_edges_iterator;
 
 /*!
 iterator over vertices 
 */ 
-typedef TriangulationDataStructure_3::Vertex_iterator All_vertices_iterator; 
+typedef Triangulation_data_structure::Vertex_iterator All_vertices_iterator;
 
 /*!
 iterator over finite cells 
@@ -207,19 +213,73 @@ typedef unspecified_type Point_iterator;
 /*!
 circulator over all cells incident to a given edge 
 */ 
-typedef TriangulationDataStructure_3::Cell_circulator Cell_circulator; 
+typedef Triangulation_data_structure::Cell_circulator Cell_circulator;
 
 /*!
 circulator over all facets incident to a given edge 
 */ 
-typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator; 
+typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
-/*! 
-Concurrency tag (from the TDS).
+/// @}
+
+/*! \name
+
+In order to write \cpp 11 `for`-loops we provide the following range types.
+
+*/
+/// @{
+  
+/*!
+range type for iterating over all cell handles (including infinite cells), with a nested type `iterator`
+that has as value type `Cell_handle`.
 */ 
-typedef TriangulationDataStructure_3::Concurrency_tag Concurrency_tag;
+  typedef Iterator_range<unspecified_type> All_cell_handles;
+  
+  
+/*!
+range type for iterating over facets.
+*/
+  typedef Iterator_range<All_facets_iterator> All_facets;
+  
+/*!
+range type for iterating over edges.
+*/
+  typedef Iterator_range<All_edges_iterator> All_edges;
+  
+/*!
+range type for iterating over all vertex handles, with a nested type `iterator`
+that has as value type `Vertex_handle`.
+*/ 
+  typedef Iterator_range<unspecified_type> All_vertex_handles;
 
-/// @} 
+  /*!
+range type for iterating over finite cell handles, with a nested type `iterator`
+that has as value type `Cell_handle`.
+*/ 
+  typedef Iterator_range<unspecified_type> Finite_cell_handles;
+  
+  
+/*!
+range type for iterating over finite facets.
+*/
+  typedef Iterator_range<Finite_facets_iterator> Finite_facets;
+  
+/*!
+range type for iterating over finite edges.
+*/
+  typedef Iterator_range<Finite_edges_iterator> Finite_edges;
+  
+/*!
+range type for iterating over finite vertex handles, with a nested type `iterator`
+that has as value type `Vertex_handle`.
+*/ 
+  typedef Iterator_range<unspecified_type> Finite_vertex_handles;
+
+/*!
+  range type for iterating over the points of the finite vertices.
+ */
+  typedef Iterator_range<unspecified_type> Points;
+/// @}
 
 /// \name Creation 
 /// @{
@@ -230,16 +290,14 @@ infinite vertex.
 `lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
 */ 
-Triangulation_3 
-(const TriangulationTraits_3 & traits = TriangulationTraits_3(), 
- Lock_data_structure *lock_ds = NULL);
+Triangulation_3(const Geom_traits & traits = Geom_traits(),
+                Lock_data_structure *lock_ds = nullptr);
 
 /*! 
 Same as the previous one, but with parameters in reverse order.
 */ 
-Triangulation_3 
-(Lock_data_structure *lock_ds = NULL,
- const TriangulationTraits_3 & traits = TriangulationTraits_3());
+Triangulation_3(Lock_data_structure *lock_ds = nullptr,
+                const Geom_traits & traits = Geom_traits());
 
 /*!
 Copy constructor. All vertices and faces are duplicated. 
@@ -254,8 +312,8 @@ traits class argument and calling `insert(first,last)`.
 */ 
 template < class InputIterator> 
 Triangulation_3 (InputIterator first, InputIterator last, 
-const TriangulationTraits_3 & traits = TriangulationTraits_3(),
-Lock_data_structure *lock_ds = NULL); 
+                 const Geom_traits & traits = Geom_traits(),
+                 Lock_data_structure *lock_ds = nullptr);
 
 /// @} 
 
@@ -307,12 +365,12 @@ bool operator!=(const Triangulation_3<GT, Tds1> & t1, const Triangulation_3<GT, 
 /*!
 Returns a const reference to the geometric traits object. 
 */ 
-const TriangulationTraits_3 & geom_traits() const; 
+const Geom_traits & geom_traits() const;
 
 /*!
 Returns a const reference to the triangulation data structure. 
 */ 
-const TriangulationDataStructure_3 & tds() const; 
+const Triangulation_data_structure & tds() const;
 
 
 /*!
@@ -322,7 +380,7 @@ This method is mainly a help for users implementing their own triangulation algo
 The responsibility of keeping a valid triangulation belongs to the user when using advanced operations allowing a direct manipulation of the `tds`.
 \cgalAdvancedEnd
 */
-TriangulationDataStructure_3 & tds(); 
+Triangulation_data_structure & tds();
 
 /*!
 Returns the dimension of the affine hull. 
@@ -630,14 +688,14 @@ unlocked by `locate`, leaving this choice to the user.
 */ 
 Cell_handle 
 locate(const Point & query, Cell_handle start = Cell_handle(),
-       bool *could_lock_zone = NULL) const; 
+       bool *could_lock_zone = nullptr) const; 
 
 /*!
 Same as above but uses `hint` as the starting place for the search. 
 */ 
 Cell_handle 
 locate(const Point & query, Vertex_handle hint,
-       bool *could_lock_zone = NULL) const; 
+       bool *could_lock_zone = nullptr) const; 
 
 /*!
 Same as `locate()` but uses inexact predicates. 
@@ -683,7 +741,7 @@ unlocked by `locate`, leaving this choice to the user.
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Cell_handle start = Cell_handle(),
-bool *could_lock_zone = NULL ) const; 
+bool *could_lock_zone = nullptr ) const; 
 
 /*!
 Same as above but uses `hint` as the starting place for the search. 
@@ -691,7 +749,7 @@ Same as above but uses `hint` as the starting place for the search.
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Vertex_handle hint,
-bool *could_lock_zone = NULL) const; 
+bool *could_lock_zone = nullptr) const; 
 
 
 /*!
@@ -862,7 +920,7 @@ void flip_flippable(Cell_handle c, int i);
 /// @{
 
 /*!
-Inserts point `p` in the triangulation and returns the corresponding 
+Inserts the point `p` in the triangulation and returns the corresponding
 vertex. 
 
 If point `p` coincides with an already existing vertex, this 
@@ -896,7 +954,7 @@ Same as above but uses `hint` as the starting place for the search.
 Vertex_handle insert(const Point & p, Vertex_handle hint); 
 
 /*!
-Inserts point `p` in the triangulation and returns the corresponding 
+Inserts the point `p` in the triangulation and returns the corresponding
 vertex. Similar to the above `insert()` function, but takes as additional 
 parameter the return values of a previous location query. See description of 
 <I>locate()</I> above. 
@@ -905,15 +963,30 @@ Vertex_handle insert(const Point & p, Locate_type lt,
 Cell_handle loc, int li, int lj); 
 
 /*!
-Inserts the points in the range `[first,last)`. Returns the number of inserted points. 
-Note that this function is not guaranteed to insert the points 
-following the order of `InputIterator`. 
-\tparam InputIterator must be an input iterator with value type `Point`. 
-*/ 
-template < class InputIterator > 
-std::ptrdiff_t 
-insert(InputIterator first, InputIterator last); 
+Inserts the points in the range `[first,last)` in the given order,
+and returns the number of inserted points. 
 
+*/ 
+template < class PointInputIterator > 
+std::ptrdiff_t 
+insert(PointInputIterator first, PointInputIterator last); 
+
+
+/*!
+Inserts the points in the iterator range  `[first,last)` in the given order,
+and returns the number of inserted points. 
+
+Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
+`v.point() == p` and `v.info() == i`. If several pairs have the same point, 
+only one vertex is created, and one of the objects of type `Vertex::Info` will be stored in the vertex. 
+\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_3`. 
+
+\tparam PointWithInfoInputIterator must be an input iterator with the value type `std::pair<Point,Vertex::Info>`. 
+
+*/ 
+template < class PointWithInfoInputIterator > 
+std::ptrdiff_t 
+insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last); 
 
 /// @} 
 
@@ -924,16 +997,16 @@ be inserted is already known. They are also guaranteed to lead to a
 valid triangulation when they are applied on a valid triangulation.
 */
 
-// @{
+/// @{
 /*!
-Inserts point `p` in cell `c`. Cell `c` is split into 4 
+Inserts the point `p` in the cell `c`. The cell `c` is split into 4
 tetrahedra. 
 \pre `t.dimension() == 3` and `p` lies strictly inside cell `c`. 
 */ 
 Vertex_handle insert_in_cell(const Point & p, Cell_handle c); 
 
 /*!
-Inserts point `p` in facet `f`. In dimension 3, the 2 
+Inserts the point `p` in the facet `f`. In dimension 3, the 2
 neighboring cells are split into 3 tetrahedra; in dimension 2, the facet 
 is split into 3 triangles. 
 \pre `t.dimension()` \f$ \geq2\f$ and `p` lies strictly inside face `f`. 
@@ -941,14 +1014,14 @@ is split into 3 triangles.
 Vertex_handle insert_in_facet(const Point & p, const Facet & f); 
 
 /*!
-As above, insertion in facet `(c,i)`. 
+As above, insertion in the facet `(c,i)`.
 \pre As above and \f$ i \in\{0,1,2,3\}\f$ in dimension 3, \f$ i = 3\f$ in dimension 2. 
 */ 
 Vertex_handle insert_in_facet(const Point & p, 
 Cell_handle c, int i); 
 
 /*!
-Inserts `p` in edge `e`. In dimension 3, 
+Inserts `p` in the edge `e`. In dimension 3,
 all the cells having this edge are split into 2 tetrahedra; in 
 dimension 2, the 2 neighboring facets are split into 2 triangles; in 
 dimension 1, the edge is split into 2 edges. 
@@ -957,10 +1030,10 @@ dimension 1, the edge is split into 2 edges.
 Vertex_handle insert_in_edge(const Point & p, const Edge & e); 
 
 /*!
-As above, inserts `p` in edge \f$ (i, j)\f$ of `c`. 
+As above, inserts `p` in the edge \f$ (i, j)\f$ of `c`.
 \pre As above and \f$ i\neq j\f$. Moreover \f$ i,j \in\{0,1,2,3\}\f$ in dimension 3, \f$ i,j \in\{0,1,2\}\f$ in dimension 2, \f$ i,j \in\{0,1\}\f$ in dimension 1. 
 */ 
-Vertex_handle insert_in_edge(Point p, Cell_handle c, int i, int j); 
+Vertex_handle insert_in_edge(const Point& p, Cell_handle c, int i, int j);
 
 /*!
 The cell `c` must be an infinite cell containing `p`. 
@@ -1011,16 +1084,16 @@ This operation is equivalent to calling
 \pre `t.dimension()` \f$ \geq2\f$, the set of cells (resp. facets in dimension 2) is connected, its boundary is connected, and `p` lies inside the hole, which is star-shaped wrt `p`. 
 */ 
 template <class CellIt> 
-Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end, 
-Cell_handle begin, int i); 
+Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end,
+                             Cell_handle begin, int i);
 
 /*!
 Same as above, except that `newv` will be used as the new vertex, which 
 must have been allocated previously with e.g.\ `create_vertex`. 
 */ 
 template <class CellIt> 
-Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end, 
-Cell_handle begin, int i, Vertex_handle newv); 
+Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end,
+                             Cell_handle begin, int i, Vertex_handle newv);
 
 /// @} 
 
@@ -1031,8 +1104,7 @@ The following iterators allow the user to visit cells, facets, edges and vertice
 
 /*!
 Starts at an arbitrary finite vertex. Then `++` and `--` will 
-iterate over finite vertices. Returns `finite_vertices_end()` when 
-`t.number_of_vertices() == 0`. 
+iterate over finite vertices.
 */ 
 Finite_vertices_iterator finite_vertices_begin() const; 
 
@@ -1043,8 +1115,7 @@ Finite_vertices_iterator finite_vertices_end() const;
 
 /*!
 Starts at an arbitrary finite edge. Then `++` and `--` will 
-iterate over finite edges. Returns `finite_edges_end()` when 
-`t.dimension() < 1`. 
+iterate over finite edges.
 */ 
 Finite_edges_iterator finite_edges_begin() const; 
 
@@ -1078,9 +1149,7 @@ Past-the-end iterator
 Finite_cells_iterator finite_cells_end() const; 
 
 /*!
-Starts at an arbitrary vertex. Iterates over all vertices (even the infinite 
-one). Returns `vertices_end()` when 
-`t.number_of_vertices() == 0`. 
+Starts at an arbitrary vertex. Iterates over all vertices (even the infinite one). 
 */ 
 All_vertices_iterator all_vertices_begin() const; 
 
@@ -1136,6 +1205,82 @@ Point_iterator points_end() const;
 
 /// @} 
 
+/*! \name Ranges
+
+In order to write \cpp 11 `for`-loops we provide a range type and member functions to generate ranges.
+Note that vertex and cell ranges are special. See Section \ref Triangulation3secRanges in the User Manual.
+
+*/
+
+/// @{
+
+/*!
+  returns a range of iterators over all cells (even the infinite cells).
+  Returns an empty range when `t.number_of_cells() == 0`. 
+  \note While the value type of `All_cells_iterator` is `Cell`, the value type of 
+  `All_cell_handles::iterator` is `Cell_handle`.
+*/
+All_cell_handles all_cell_handles() const;
+
+ 
+  
+/*!
+  returns a range of iterators starting at an arbitrary facet.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+All_facets all_facets() const;
+ 
+/*!
+  returns a range of iterators starting at an arbitrary edge.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+All_edges all_edges() const;
+ 
+/*!
+  returns a range of iterators over all vertices (even the infinite one).
+  \note While the value type of `All_vertices_iterator` is `Vertex`, the value type of 
+  `All_vertex_handles::iterator` is `Vertex_handle`.
+*/
+All_vertex_handles all_vertex_handles() const;
+
+  
+/*!
+  returns a range of iterators over finite cells.
+  Returns an empty range when `t.number_of_cells() == 0`. 
+  \note While the value type of `Finite_cells_iterator` is `Cell`, the value type of 
+  `Finite_cell_handles::iterator` is `Cell_handle`.
+*/
+Finite_cell_handles finite_cell_handles() const;
+
+ 
+  
+/*!
+  returns a range of iterators starting at an arbitrary facet.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+Finite_facets finite_facets() const;
+ 
+/*!
+  returns a range of iterators starting at an arbitrary edge.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+Finite_edges finite_edges() const;
+ 
+/*!
+  returns a range of iterators over finite vertices.
+  \note While the value type of `Finite_vertices_iterator` is `Vertex`, the value type of 
+  `Finite_vertex_handles::iterator` is `Vertex_handle`.
+*/
+Finite_vertex_handles finite_vertex_handles() const;
+
+/*!
+  returns a range of iterators over the points of finite vertices.
+*/
+Points points() const;
+  
+ 
+/// @} 
+  
 /*!\name Cell and Facet Circulators 
 The following circulators respectively visit all cells or all facets incident to a given edge. They are non-mutable and bidirectional. They are invalidated by any modification of one of the cells traversed.  
 */
@@ -1358,7 +1503,7 @@ is_valid(bool verbose = false) const;
 \cgalDebugFunction
 \cgalDebugBegin
 Checks the combinatorial validity of the cell by calling the 
-`is_valid` method of the `TriangulationDataStructure_3` cell class. Also checks the 
+`is_valid` method of the cell class. Also checks the
 geometric validity of `c`, if `c` is finite. (See 
 Section \ref Triangulation3secintro.) 
 
@@ -1410,8 +1555,6 @@ Writes the triangulation `t` into `os`.
 ostream& operator<< (ostream& os, const Triangulation_3 &t); 
 
 /// @}
-
-/// @} 
 
 /// \name Concurrency 
 /// @{

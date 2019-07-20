@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
@@ -21,6 +22,9 @@
 #ifndef CGAL_POLYHEDRON_3_H
 #define CGAL_POLYHEDRON_3_H 1
 
+#include <CGAL/license/Polyhedron.h>
+
+#include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/basic.h>
 #include <algorithm>
 #include <cstddef>
@@ -461,10 +465,10 @@ public:
 
 
 template < class PolyhedronTraits_3,
-           class PolyhedronItems_3 = Polyhedron_items_3,
+           class PolyhedronItems_3,
            template < class T, class I, class A>
-           class T_HDS = HalfedgeDS_default,
-           class Alloc = CGAL_ALLOCATOR(int)>
+           class T_HDS,
+           class Alloc>
 class Polyhedron_3 {
     //
     // DEFINITION
@@ -549,11 +553,15 @@ public:
     typedef Iterator_project<Face_const_iterator, Proj_plane,
         const Plane_3&, const Plane_3*>           Plane_const_iterator;
 
+  typedef typename HDS::Edge_iterator Edge_iterator;
+    typedef typename HDS::Edge_const_iterator Edge_const_iterator;
+  /*
     typedef N_step_adaptor_derived<Halfedge_iterator, 2>
                                                   Edge_iterator;
     typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
                                                   Edge_const_iterator;
-
+  */
+  
     // All face related types get a related facet type name.
     typedef Face                                  Facet;
     typedef Face_handle                           Facet_handle;
@@ -1415,7 +1423,7 @@ public:
         // number of border halfedges. An edge with no incident facet
         // counts as two border halfedges. Precondition: `normalize_border
         // ()' has been called and no halfedge insertion or removal and no
-        // change in border status of the halfedges have occured since
+        // change in border status of the halfedges have occurred since
         // then.
         return hds_.size_of_border_halfedges();
     }
@@ -1426,7 +1434,7 @@ public:
         // facet on one side and to a hole on the other side.
         // Precondition: `normalize_border()' has been called and no
         // halfedge insertion or removal and no change in border status of
-        // the halfedges have occured since then.
+        // the halfedges have occurred since then.
         return hds_.size_of_border_edges();
     }
 
@@ -1437,7 +1445,7 @@ public:
         // halfedges_end()') denotes all border edges. Precondition:
         // `normalize_border()' has been called and no halfedge insertion
         // or removal and no change in border status of the halfedges have
-        // occured since then.
+        // occurred since then.
         return hds_.border_halfedges_begin();
     }
     Halfedge_const_iterator border_halfedges_begin() const {
@@ -1537,9 +1545,7 @@ public:
 
 } //namespace CGAL
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#endif
 
 #include <CGAL/IO/Polyhedron_iostream.h>
 

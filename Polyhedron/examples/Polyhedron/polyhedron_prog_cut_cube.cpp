@@ -1,5 +1,4 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/polyhedron_cut_plane_3.h>
 #include <iostream>

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -59,12 +60,12 @@ public:
 
   Circulator  current_circulator() const { return nt;}
 
-  bool operator==( Nullptr_t p) const {
+  bool operator==( std::nullptr_t p) const {
     CGAL_assertion( p == 0);
     CGAL_USE(p);
     return ( nt == 0);                                    //###//
   }
-  bool operator!=( Nullptr_t p) const {
+  bool operator!=( std::nullptr_t p) const {
     return !(*this == p);
   }
   bool operator==( const Self& i) const {

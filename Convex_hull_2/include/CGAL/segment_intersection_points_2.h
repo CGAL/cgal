@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra 
 
 #ifndef CGAL_SEGMENT_INTERSECTION_POINTS_2_H
 #define CGAL_SEGMENT_INTERSECTION_POINTS_2_H
+
+#include <CGAL/license/Convex_hull_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h>
@@ -28,7 +32,7 @@
 namespace CGAL {
 
 /*
-#include <CGAL/Segment_2_Segment_2_intersection.h>
+#include <CGAL/Intersections_2/Segment_2_Segment_2.h>
 template <class ForwardIterator, class OutputIterator, class R>
 OutputIterator
 si_brute_force(ForwardIterator first, ForwardIterator last,
@@ -62,7 +66,7 @@ si_brute_force_II(ForwardIterator first, ForwardIterator last,
   Orientation orientation = traits.orientation_2_object();
 
   for ( ForwardIterator outer = first; outer != last; ++outer)
-    for ( ForwardIterator inner = cpp11::next(outer); inner != last; ++inner)
+    for ( ForwardIterator inner = std::next(outer); inner != last; ++inner)
       {
           Point s1 = (*outer).source();
           Point e1 = (*outer).target();

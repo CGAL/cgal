@@ -11,7 +11,7 @@ namespace CGAL {
 
 This chapter presents the \cgal interface to Geomview \cgalFootnote{http://www.geomview.org/}, which is a
 viewer for three-dimensional objects, originally developed at the Geometry
-Center in Minneapolis \cgalFootnote{http://www.geom.umn.edu/}.
+Center in Minneapolis \cgalFootnote{http://www.geom.uiuc.edu/}.
 
 <B>Note:</B> The functionality described in this chapter is not available on Windows.
 

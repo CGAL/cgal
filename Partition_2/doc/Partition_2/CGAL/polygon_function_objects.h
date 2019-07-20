@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolygonPartitioning2FunctionObjectClasses
+\ingroup PkgPartition2FunctionObjectClasses
 
 Function object class for testing if a sequence of points represents 
 a convex polygon or not. 
@@ -51,7 +51,7 @@ bool operator()(InputIterator first, InputIterator beyond);
 namespace CGAL {
 
 /*!
-\ingroup PkgPolygonPartitioning2FunctionObjectClasses
+\ingroup PkgPartition2FunctionObjectClasses
 
 Function object class that indicates all sequences of points are valid. 
 
@@ -98,7 +98,7 @@ bool operator()(InputIterator first, InputIterator beyond);
 namespace CGAL {
 
 /*!
-\ingroup PkgPolygonPartitioning2FunctionObjectClasses
+\ingroup PkgPartition2FunctionObjectClasses
 
 Function object class that tests whether a sequence of points represents 
 a \f$ y\f$-monotone polygon or not. 

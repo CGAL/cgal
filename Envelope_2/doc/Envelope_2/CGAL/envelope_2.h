@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope2
+\ingroup PkgEnvelope2Ref
 
 Computes the lower envelope of a set of curves in \f$ \mathbb{R}^2\f$,
 as given by the range `[begin, end)`. The lower envelope is
@@ -19,7 +19,7 @@ EnvelopeDiagram& diag);
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope2
+\ingroup PkgEnvelope2Ref
 
 Computes the lower envelope of a set of \f$ x\f$-monotone curves in 
 \f$ \mathbb{R}^2\f$, as given by the range `[begin, end)`. The lower 
@@ -38,7 +38,7 @@ EnvelopeDiagram& diag);
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope2
+\ingroup PkgEnvelope2Ref
 
 Computes the upper envelope of a set of curves in \f$ \mathbb{R}^2\f$,
 as given by the range `[begin, end)`. The upper envelope is
@@ -56,7 +56,7 @@ EnvelopeDiagram& diag);
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope2
+\ingroup PkgEnvelope2Ref
 
 Computes the upper envelope of a set of \f$ x\f$-monotone curves in 
 \f$ \mathbb{R}^2\f$, as given by the range `[begin, end)`. The upper 

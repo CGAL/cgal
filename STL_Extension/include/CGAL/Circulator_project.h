@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -64,11 +65,11 @@ public:
     return &(fct(*nt));
   }
 
-  bool operator==( Nullptr_t CGAL_assertion_code(p) ) const {
+  bool operator==( std::nullptr_t CGAL_assertion_code(p) ) const {
     CGAL_assertion( p == 0);
     return ( nt == 0);
   }
-  bool  operator!=( Nullptr_t p) const { return !(*this == p); }
+  bool  operator!=( std::nullptr_t p) const { return !(*this == p); }
   bool  operator==( const Self& i) const { return ( nt == i.nt); }
   bool  operator!=( const Self& i) const { return !(*this == i); }
   Ref   operator*()  const { return *ptr(); }

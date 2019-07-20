@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTDS2
+\ingroup PkgTDS2Ref
 
 The class `Triangulation_ds_vertex_base_2` can be used as the base vertex 
 for a `Triangulation_data_structure_2`, it is a model of the concept 
@@ -27,8 +27,6 @@ and `Triangulation_ds_vertex_base_2` cannot be plugged in.
 template< typename Tds >
 class Triangulation_ds_vertex_base_2 {
 public:
-
-/// @}
 
 }; /* end Triangulation_ds_vertex_base_2 */
 } /* end namespace CGAL */

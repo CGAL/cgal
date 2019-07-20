@@ -1,5 +1,5 @@
 #include <iostream>
-#include <CGAL/basic.h>
+
 #include <CGAL/LEDA_arithmetic_kernel.h>
 
 #ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL

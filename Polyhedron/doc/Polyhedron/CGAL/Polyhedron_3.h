@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgPolyhedron
+  \ingroup PkgPolyhedronRef
 
   A polyhedral surface `Polyhedron_3` consists of vertices `V`, 
   edges `E`, facets `F` and an incidence relation on them. Each edge is 
@@ -114,7 +114,7 @@ class Polyhedron_3 {
 public:
 
   /*!
-    \ingroup PkgPolyhedron
+    \ingroup PkgPolyhedronRef
 
     A halfedge is an oriented edge 
     between two vertices. It is always paired with a halfedge pointing in 
@@ -423,7 +423,7 @@ public:
   }; /* end Halfedge */
 
   /*!
-    \ingroup PkgPolyhedron
+    \ingroup PkgPolyhedronRef
 
     A facet optionally stores a plane equation, and a reference to an 
     incident halfedge that points to the facet. Type tags indicate whether 
@@ -600,7 +600,7 @@ public:
   }; /* end Facet */
 
   /*!
-    \ingroup PkgPolyhedron
+    \ingroup PkgPolyhedronRef
 
     A vertex optionally stores a point and a reference to an incident 
     halfedge that points to the vertex. Type tags indicate whether these 
@@ -1238,12 +1238,12 @@ public:
     facet removed and the time to compute `h->%prev()`. 
     \pre The degree of both vertices incident to `h` is at least three (no antennas). 
 
-    `Supports_removal` must be `CGAL::Tag_true`.
+    \pre `Supports_removal` must be `CGAL::Tag_true`.
 
     \image html euler_facet.png
     \image latex euler_facet.png
 
-n  */ 
+  */ 
   Halfedge_handle join_facet( Halfedge_handle h); 
 
   /*!
@@ -1284,7 +1284,7 @@ n  */
     the time to compute `h->%prev()` and `h->%opposite()->%prev()`. 
     \pre The size of both facets incident to `h` is at least four (no multi-edges). 
 
-    `Supports_removal` must be `CGAL::Tag_true`.
+    \pre `Supports_removal` must be `CGAL::Tag_true`.
 
     \image html euler_vertex.png
     \image latex euler_vertex.png
@@ -1338,7 +1338,7 @@ n  */
     The time is proportional to the sum of the size of all incident facets. 
     \pre None of the incident facets of `g->vertex()` is a hole. There are at least two distinct facets incident to the facets that are incident to `g->vertex()`. (This prevents the operation from collapsing a volume into two facets glued together with opposite orientations, such as would happen with any vertex of a tetrahedron.) 
 
-    `Supports_removal` must be `CGAL::Tag_true`.
+    \pre `Supports_removal` must be `CGAL::Tag_true`.
 
     \image html euler_center.png
     \image latex euler_center.png
@@ -1373,9 +1373,8 @@ n  */
     by `g` gets removed. Both facets may be holes. The invariant 
     `join_loop( h, split_loop( h, i, j))` returns `h` and keeps the 
     polyhedron unchanged. 
-    \pre The facets denoted by `h` and `g` are different and have equal degree (i.e., number of edges). 
-
-    `Supports_removal` must be `CGAL::Tag_true`.
+    \pre The facets denoted by `h` and `g` are different and have equal degree (i.e., number of edges).
+    \pre `Supports_removal` must be `CGAL::Tag_true`.
 
     \image html euler_loop.png
     \image latex euler_loop.png
@@ -1395,7 +1394,7 @@ n  */
     See `erase_facet(h)` for a more generalized variant. 
     \pre None of the incident halfedges of the facet is a border edge. 
 
-    `Supports_removal` must be `CGAL::Tag_true`.
+    \pre `Supports_removal` must be `CGAL::Tag_true`.
   */ 
   Halfedge_handle make_hole( Halfedge_handle h); 
 
@@ -1448,9 +1447,9 @@ n  */
     polyhedral surface if they were already border edges. 
     If this creates isolated vertices they get removed as well. 
     See `make_hole(h)` for a more specialized variant. 
-    \pre `h->is_border() == false`. 
 
-    `Supports_removal` must be `CGAL::Tag_true`
+    \pre `h->is_border() == false`. 
+    \pre `Supports_removal` must be `CGAL::Tag_true`
 
     \image html add_facet1.png
     \image latex add_facet1.png
@@ -1464,7 +1463,7 @@ n  */
     removes the vertices, halfedges, and facets that belong to the 
     connected component of `h`. 
 
-    `Supports_removal` must be `CGAL::Tag_true`.
+    \pre `Supports_removal` must be `CGAL::Tag_true`.
   */ 
   void erase_connected_component( Halfedge_handle h); 
 
@@ -1474,6 +1473,11 @@ n  */
     Returns the number of connected components erased (ignoring isolated vertices). 
 
     The polyhedron type must support vertices, halfedges, and removal operations.
+
+    Note that a stronger version of this function is offered by the package \ref PkgPolygonMeshProcessing :
+    \link Polygon_mesh_processing::keep_largest_connected_components() `CGAL::Polygon_mesh_processing::keep_largest_connected_components()` \endlink, which can be called
+    since the class `Polyhedron_3` is a model of the required concepts `FaceListGraph` and `MutableFaceGraph`
+    (see \ref BGLPolyhedral for more information).
   */ 
   unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep); 
 
@@ -1595,7 +1599,11 @@ n  */
   */ 
   void delegate( CGAL::Modifier_base<HDS>& m); 
 
+  
   /// @}
 
 }; /* end Polyhedron_3 */
+
+
+
 } /* end namespace CGAL */

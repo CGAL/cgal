@@ -9,7 +9,8 @@ to the default traits class for these functions.
 
 \cgalModels `ConvexHullTraits_2`
 
-\sa `CGAL::Convex_hull_constructive_traits_2<R>` 
+\sa `CGAL::Convex_hull_constructive_traits_2<R>`
+\sa `CGAL::Convex_hull_traits_adapter_2<R,P>`
 \sa `CGAL::Projection_traits_xy_3<K>`
 \sa `CGAL::Projection_traits_yz_3<K>`
 \sa `CGAL::Projection_traits_xz_3<K>`
@@ -58,6 +59,11 @@ typedef R::Left_turn_2 Left_turn_2;
 */ 
 typedef R::Equal_2 Equal_2; 
 
+/*!
+
+*/
+typedef R::Orientation_2 Orientation_2;
+
 /// @} 
 
 /// \name Creation 
@@ -103,6 +109,11 @@ Left_turn_2 left_turn_2_object();
 
 */ 
 Equal_2 equal_2_object(); 
+
+/*!
+
+*/
+Orientation_2 orientation_2_object();
 
 /// @}
 

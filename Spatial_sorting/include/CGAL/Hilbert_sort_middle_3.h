@@ -14,13 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     :  Olivier Devillers
 
 #ifndef CGAL_HILBERT_SORT_MIDDLE_3_H
 #define CGAL_HILBERT_SORT_MIDDLE_3_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <functional>
 #include <cstddef>
 #include <CGAL/Hilbert_sort_middle_base.h>
@@ -32,8 +33,8 @@ namespace internal {
 
     template <class K, int x>
     struct Fixed_hilbert_cmp_3<K,x,true>
-        : public std::binary_function<typename K::Point_3,
-                                      typename K::Point_3, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_3,
+                                              typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;
         K k;
@@ -47,8 +48,8 @@ namespace internal {
 
     template <class K>
     struct Fixed_hilbert_cmp_3<K,0,false>
-        : public std::binary_function<typename K::Point_3,
-                                      typename K::Point_3, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_3,
+                                              typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;
         K k;
@@ -62,8 +63,8 @@ namespace internal {
 
     template <class K>
     struct Fixed_hilbert_cmp_3<K,1,false>
-        : public std::binary_function<typename K::Point_3,
-                                      typename K::Point_3, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_3,
+                                              typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;
         K k;
@@ -77,8 +78,8 @@ namespace internal {
 
     template <class K>
     struct Fixed_hilbert_cmp_3<K,2,false>
-        : public std::binary_function<typename K::Point_3,
-                                      typename K::Point_3, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_3,
+                                              typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;
         K k;
@@ -141,14 +142,22 @@ public:
 	  internal::fixed_hilbert_split (m6, m8, Cmp< z, !upz> (zmed,_k));
 
 
-        sort<z, upz, upx, upy> (m0, m1, zmin, xmin, ymin, zmed, xmed, ymed);
-        sort<y, upy, upz, upx> (m1, m2, ymin, zmed, xmin, ymed, zmax, xmed);
-        sort<y, upy, upz, upx> (m2, m3, ymed, zmed, xmin, ymax, zmax, xmed);
-        sort<x, upx,!upy,!upz> (m3, m4, xmin, ymax, zmed, xmed, ymed, zmin);
-        sort<x, upx,!upy,!upz> (m4, m5, xmed, ymax, zmed, xmax, ymed, zmin);
-        sort<y,!upy, upz,!upx> (m5, m6, ymax, zmed, xmax, ymed, zmax, xmed);
-        sort<y,!upy, upz,!upx> (m6, m7, ymed, zmed, xmax, ymin, zmax, xmed);
-        sort<z,!upz,!upx, upy> (m7, m8, zmed, xmax, ymin, zmin, xmed, ymed);
+        if (m1!=m8)
+          sort<z, upz, upx, upy> (m0, m1, zmin, xmin, ymin, zmed, xmed, ymed);
+        if (m1!=m0 || m2!=m8)
+          sort<y, upy, upz, upx> (m1, m2, ymin, zmed, xmin, ymed, zmax, xmed);
+        if (m2!=m0 || m3!=m8)
+          sort<y, upy, upz, upx> (m2, m3, ymed, zmed, xmin, ymax, zmax, xmed);
+        if (m3!=m0 || m4!=m8)
+          sort<x, upx,!upy,!upz> (m3, m4, xmin, ymax, zmed, xmed, ymed, zmin);
+        if (m4!=m0 || m5!=m8)
+          sort<x, upx,!upy,!upz> (m4, m5, xmed, ymax, zmed, xmax, ymed, zmin);
+        if (m5!=m0 || m6!=m8)
+          sort<y,!upy, upz,!upx> (m5, m6, ymax, zmed, xmax, ymed, zmax, xmed);
+        if (m6!=m0 || m7!=m8)
+          sort<y,!upy, upz,!upx> (m6, m7, ymed, zmed, xmax, ymin, zmax, xmed);
+        if (m7!=m0)
+          sort<z,!upz,!upx, upy> (m7, m8, zmed, xmax, ymin, zmin, xmed, ymed);
     }
 
     template <class RandomAccessIterator>

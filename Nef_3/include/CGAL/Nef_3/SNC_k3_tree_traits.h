@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
 #ifndef CGAL_NEF_SNC_K3_TREE_TRAITS_H
 #define CGAL_NEF_SNC_K3_TREE_TRAITS_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/Nef_3/Bounding_box_3.h>
 #include <CGAL/Lazy_kernel.h>
@@ -413,7 +417,6 @@ Side_of_plane<SNC_decorator>::operator()
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   }
 #endif
-  CGAL_error_msg( "should not be reached");
 }
 
 /* 

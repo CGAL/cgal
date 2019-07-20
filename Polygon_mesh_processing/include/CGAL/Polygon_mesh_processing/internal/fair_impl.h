@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Jane Tournois
@@ -21,12 +22,16 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_FAIR_POLYHEDRON_3_H
 #define CGAL_POLYGON_MESH_PROCESSING_FAIR_POLYHEDRON_3_H
 
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
+
 #include <map>
 #include <set>
 #include <CGAL/assertions.h>
 #include <CGAL/Polygon_mesh_processing/Weights.h>
+#ifdef CGAL_PMP_FAIR_DEBUG
 #include <CGAL/Timer.h>
-#include <CGAL/trace.h>
+#endif
 #include <iterator>
 
 namespace CGAL {
@@ -92,7 +97,7 @@ private:
         matrix.add_coef(row_id, col_id, multiplier);
       }
       else { 
-        typename boost::property_traits<VertexPointMap>::reference p = ppmap[v];
+        typename boost::property_traits<VertexPointMap>::reference p = get(ppmap, v);
         x += multiplier * - to_double(p.x());
         y += multiplier * - to_double(p.y());
         z += multiplier * - to_double(p.z());
@@ -130,7 +135,9 @@ public:
                                                   boost::end(vertices));
     if(interior_vertices.empty()) { return true; }
 
+    #ifdef CGAL_PMP_FAIR_DEBUG
     CGAL::Timer timer; timer.start();
+    #endif
     const std::size_t nb_vertices = interior_vertices.size();
     Solver_vector X(nb_vertices), Bx(nb_vertices);
     Solver_vector Y(nb_vertices), By(nb_vertices);
@@ -138,7 +145,7 @@ public:
 
     std::map<vertex_descriptor, std::size_t> vertex_id_map;
     std::size_t id = 0;
-    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    for(vertex_descriptor vd : interior_vertices)
     {
       if( !vertex_id_map.insert(std::make_pair(vd, id)).second ) {
         CGAL_warning(!"Duplicate vertex is found!");
@@ -149,12 +156,14 @@ public:
 
     Solver_matrix A(nb_vertices);
 
-    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    for(vertex_descriptor vd : interior_vertices)
     {
       int v_id = static_cast<int>(vertex_id_map[vd]);
       compute_row(vd, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, depth);
     }
-    CGAL_TRACE_STREAM << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
+    #ifdef CGAL_PMP_FAIR_DEBUG
+    std:cerr << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
+    #endif
 
     // factorize
     double D;
@@ -163,7 +172,9 @@ public:
       CGAL_warning(!"pre_factor failed!");
       return false;
     }
-    CGAL_TRACE_STREAM << "**Timer** System factorization: " << timer.time() << std::endl; timer.reset();
+    #ifdef CGAL_PMP_FAIR_DEBUG
+    std::cerr << "**Timer** System factorization: " << timer.time() << std::endl; timer.reset();
+    #endif
 
     // solve
     bool is_all_solved = solver.linear_solver(Bx, X) && solver.linear_solver(By, Y) && solver.linear_solver(Bz, Z);
@@ -171,7 +182,9 @@ public:
       CGAL_warning(!"linear_solver failed!"); 
       return false; 
     }
-    CGAL_TRACE_STREAM << "**Timer** System solver: " << timer.time() << std::endl; timer.reset();
+    #ifdef CGAL_PMP_FAIR_DEBUG
+    std::cerr << "**Timer** System solver: " << timer.time() << std::endl; timer.reset();
+    #endif
 
     
     /* This relative error is to large for cases that the results are not good */ 
@@ -186,7 +199,7 @@ public:
 
     // update 
     id = 0;
-    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    for(vertex_descriptor vd : interior_vertices)
     {
       put(ppmap, vd, Point_3(X[id], Y[id], Z[id]));
       ++id;

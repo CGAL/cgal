@@ -122,7 +122,7 @@ private:
   is >> n;
   assert(n == 40);
   is >> r;
- NT1 x(cx),y(cy),gr(r);
+  NT1 x(cx), y(cy), gr(r*r);
   os<<"Circle_2 ("<<"Point_2("<<"Rational(" <<x.numerator()<< ", "<<x.denominator()<<")"<< ", "<<"Rational(" <<y.numerator()<< ", "<<y.denominator()<<")""),"<<"Rational(" <<gr.numerator()<< ", "<<gr.denominator()<<")"<<")"<<std::endl;
 //  circ = typename K::Construct_circle_2()(Point_2(cx,cy), r*r);
 }

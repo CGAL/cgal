@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_VORONOI_DIAGRAM_2_REGULAR_TRIANGULATION_DEGENERACY_TESTERS_H
 #define CGAL_VORONOI_DIAGRAM_2_REGULAR_TRIANGULATION_DEGENERACY_TESTERS_H 1
+
+#include <CGAL/license/Voronoi_diagram_2.h>
+
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_base_2.h>
@@ -77,7 +81,7 @@ class Regular_triangulation_edge_tester_2
     Site_2 s3 = v3->point();
     Site_2 s4 = v4->point();
     Oriented_side os =
-      dual.geom_traits().power_test_2_object()(s1,s2,s3,s4);
+      dual.geom_traits().power_side_of_oriented_power_circle_2_object()(s1,s2,s3,s4);
     return os == ON_ORIENTED_BOUNDARY;
   }
 

@@ -14,11 +14,10 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Mariette Yvinec, Sylvain Pion
-
-#define CGAL_NO_DEPRECATION_WARNINGS
 
 #include <CGAL/Delaunay_triangulation_3.h>
 

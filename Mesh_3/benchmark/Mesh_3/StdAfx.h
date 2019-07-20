@@ -29,7 +29,7 @@
 #include <boost/iterator/iterator_categories.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/iterator_traits.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/always.hpp>
 #include <boost/mpl/and.hpp>
@@ -172,7 +172,6 @@
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/function_objects.h>
-#include <CGAL/gl.h>
 #include <CGAL/Hilbert_policy_tags.h>
 #include <CGAL/hilbert_sort.h>
 #include <CGAL/Hilbert_sort_2.h>
@@ -192,7 +191,7 @@
 #include <CGAL/internal/info_check.h>
 //#include <CGAL/internal/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h>
-#include <CGAL/internal/Static_filters/Power_test_3.h>
+#include <CGAL/internal/Static_filters/Power_side_of_oriented_power_sphere_3.h>
 //#include <CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/internal/Static_filters/tools.h>
@@ -214,7 +213,6 @@
 //#include <CGAL/Mesher_level_visitors.h>
 //#include <CGAL/Meshes/Filtered_multimap_container.h>
 //#include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
-//#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 //#include <CGAL/Mesh_3/global_parameters.h>
 //#include <CGAL/Mesh_3/Mesher_3.h>
 //#include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
@@ -225,7 +223,6 @@
 //#include <CGAL/Mesh_3/Refine_facets_3.h>
 //#include <CGAL/Mesh_3/Refine_tets_visitor.h>
 //#include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
-//#include <CGAL/Mesh_3/Robust_weighted_circumcenter_filtered_traits_3.h>
 //#include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
 //#include <CGAL/Mesh_3/utilities.h>
 //#include <CGAL/Mesh_cell_base_3.h>
@@ -249,7 +246,6 @@
 //#include <CGAL/predicates/Regular_triangulation_rtH3.h>
 //#include <CGAL/Profile_counter.h>
 //#include <CGAL/Regular_triangulation_cell_base_3.h>
-//#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Robust_construction.h>
 #include <CGAL/Simple_cartesian.h>
@@ -262,7 +258,6 @@
 //#include <CGAL/Triangulation_3.h>
 //#include <CGAL/triangulation_assertions.h>
 //#include <CGAL/Triangulation_cell_base_3.h>
-//#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
 //#include <CGAL/Triangulation_data_structure_3.h>
 //#include <CGAL/Triangulation_ds_cell_base_3.h>
 //#include <CGAL/Triangulation_ds_vertex_base_3.h>
@@ -274,7 +269,7 @@
 #include <CGAL/tuple.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/utility.h>
-#include <CGAL/Weighted_point.h>
+//#include <CGAL/Weighted_point.h>
 
 // Mesh_3
 /*#include <CGAL_demo/Viewer.h>

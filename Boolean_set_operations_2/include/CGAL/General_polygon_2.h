@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_GENERAL_POLYGON_2_H
 #define CGAL_GENERAL_POLYGON_2_H
+
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <list>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
@@ -191,7 +196,7 @@ std::ostream
 {
   typename General_polygon_2<Traits>::Curve_const_iterator i;
 
-  switch(os.iword(IO::mode)) {
+  switch(get_mode(os)) {
     case IO::ASCII :
       os << p.size() << ' ';
       for (i = p.curves_begin(); i != p.curves_end(); ++i) {
@@ -217,5 +222,7 @@ std::ostream
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

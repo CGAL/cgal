@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Surface_Subdivision_Methods
 \anchor chapterSubdivision
 \cgalAutoToc
@@ -9,499 +9,501 @@ namespace CGAL {
 \author Le-Jeng Andy Shiue
 
 \image html subdivision-teaser.jpg
-\image latex subdivision-teaser.jpg
 
-\section sectionSubIntro Introduction 
+\section sectionSubIntro Introduction
 
-Subdivision methods are simple yet powerful ways to 
-generate smooth surfaces from arbitrary polyhedral meshes. 
-Unlike spline-based surfaces (e.g NURBS) or other numeric-based 
+Subdivision methods are simple yet powerful ways to
+generate smooth surfaces from arbitrary polygonal meshes.
+Unlike spline-based surfaces (e.g NURBS) or other numeric-based
 modeling techniques, users of subdivision
-methods do not need the mathematical knowledge of 
-the subdivision methods. 
-The natural intuition of the geometry suffices to control the 
+methods do not need the mathematical knowledge of
+the subdivision methods.
+The natural intuition of the geometry suffices to control the
 subdivision methods.
 
-`Subdivision_method_3`, designed to work on the class 
-`Polyhedron_3`, aims to be easy to use and to extend.
-`Subdivision_method_3` is not a class, but a namespace 
+`Subdivision_method_3` works for the classes
+`Polyhedron_3` and `Surface_mesh`, as they are models of the concept
+`MutableFaceGraph`, and it aims to be easy to use and to extend.
+`Subdivision_method_3` is not a class, but a namespace
 which contains four popular subdivision methods and their refinement
-functions. These include Catmull-Clark, Loop, Doo-Sabin and 
-\f$ \sqrt{3}\f$ subdivisions. Variations of these methods can be easily 
+functions. These include Catmull-Clark, Loop, Doo-Sabin and
+\f$ \sqrt{3}\f$ subdivisions. Variations of these methods can be easily
 extended by substituting the geometry computation of the refinement
 host.
 
-\section secSubAlgo Subdivision Method 
+\section secSubAlgo Subdivision Method
 
-In this chapter, we explain some fundamentals of 
-subdivision methods. We focus only on the topics that help you 
-to understand the design of the package. \cgalCite{cgal:ww-smgd-02} 
-has details on subdivision methods.
+In this chapter, we explain some fundamentals of
+subdivision methods. We focus only on the topics that help you
+understand the design of the package. Details on subdivision methods
+can be found in \cgalCite{cgal:ww-smgd-02}.
 Some terminology introduced in this section will be used again
-in later sections. If you are only interested in using a 
-specific subdivision method, Section \ref secFirstSub 
-gives a quick tutorial on Catmull-Clark subdivision.
+in later sections. If you are only interested in using a
+specific subdivision method, Section \ref secFirstSub
+gives a quick tutorial on using a Catmull-Clark subdivision.
 
-A subdivision method recursively refines a coarse mesh and 
+A subdivision method recursively refines a coarse mesh and
 generates an ever closer approximation to a smooth surface.
-The coarse mesh can have arbitrary shape, but it has to 
-be a 2-manifold. In a 2-manifold, every interior point has 
+The coarse mesh can have arbitrary shape, but it has to
+be a 2-manifold. In a 2-manifold, every interior point has
 a neighborhood homeomorphic to a 2D disk. Subdivision methods
 on non-manifolds have been developed, but are not considered
-in `Subdivision_method_3`. 
-The chapter teaser shows the steps of Catmull-Clark 
-subdivision on a CAD model. The coarse mesh is repeatedly refined 
-by a quadrisection pattern, and new points are generated 
+in `Subdivision_method_3`.
+The chapter teaser shows the steps of Catmull-Clark
+subdivision on a CAD model. The coarse mesh is repeatedly refined
+by a quadrisection pattern, and new points are generated
 to approximate a smooth surface.
 
-Many refinement patterns are used in practice. 
-`Subdivision_method_3` supports the four most popular 
-patterns, and each of them is used by 
-Catmull-Clark\cgalCite{cgal:cc-rgbss-78}, Loop, Doo-Sabin 
-and \f$ \sqrt{3}\f$ subdivision (left to right in the 
-figure). We name these patterns by their topological
-characteristics instead of the associated subdivision methods. 
-PQQ indicates the <I>P</I>rimal <I>Q</I>uadtrateral <I>Q</I>uadrisection. 
-PTQ indicates the <I>P</I>rimal <I>T</I>riangle <I>Q</I>uadrisection. 
+Many refinement patterns are used in practice.
+`Subdivision_method_3` supports the four most popular
+patterns, and each of them is used by
+Catmull-Clark\cgalCite{cgal:cc-rgbss-78}, Loop\cgalCite{cloop:mthesis},
+Doo-Sabin\cgalCite{doo1978behaviour} and
+\f$ \sqrt{3}\f$ subdivision\cgalCite{cgal:k-s-00}
+(left to right in the figure below). We name these patterns by their topological
+characteristics instead of the associated subdivision methods.
+PQQ indicates the <I>P</I>rimal <I>Q</I>uadtrateral <I>Q</I>uadrisection.
+PTQ indicates the <I>P</I>rimal <I>T</I>riangle <I>Q</I>uadrisection.
 DQQ indicates the <I>D</I>ual <I>Q</I>uadtrateral <I>Q</I>uadrisection.
 \f$ \sqrt{3}\f$ indicates the converging speed of the triangulation toward
 the subdivision surface.
 
-\image html RefSchemes.png
-\image latex RefSchemes.png
+\image html RefSchemes.svg
 
-The figure demonstrates these four refinement patterns on 
-the 1-disk of a valence-5 vertex/facet.
-Refined meshes are shown below the source meshes. 
+The figure demonstrates these four refinement patterns on
+the 1-disk of a valence-5 vertex/face.
+Refined meshes are shown below the source meshes.
 Points on the refined mesh are generated by averaging
-neighbor points on the source mesh. A graph, called <I>stencil</I>, 
-determines the source neighborhood whose points contribute to the 
-position of a refined point. A refinement pattern usually defines 
+neighbor points on the source mesh. A graph, called <I>stencil</I>,
+determines the source neighborhood whose points contribute to the
+position of a refined point. A refinement pattern usually defines
 more than one stencil.
 For example, the PQQ
-refinement has a vertex-node stencil, 
-which defines the 1-ring of an input vertex; an edge-node stencil, 
-which defines the 1-ring of an input edge; and a facet-node stencil, 
-which defines an input facet. The stencils of the PQQ refinement are
-shown in the following figure. The blue neighborhoods in the 
-top row indicate the corresponding stencils of the refined nodes 
+refinement has a vertex-node stencil,
+which defines the 1-ring of an input vertex; an edge-node stencil,
+which defines the 1-ring of an input edge; and a face-node stencil,
+which defines an input face. The stencils of the PQQ refinement are
+shown in the following figure. The blue neighborhoods in the
+top row indicate the corresponding stencils of the refined nodes
 in red.
 
-\image html PQQStencil.png
-\image latex PQQStencil.png
+\image html PQQStencil.svg
+
 
 Stencils with weights are called <I>geometry masks</I>.
-A subdivision method defines a geometry mask for each stencil, and 
+A subdivision method defines a geometry mask for each stencil, and
 generates new points by averaging source points weighted by the mask.
-Geometry masks are carefully chosen to meet requirements of 
+Geometry masks are carefully chosen to meet requirements of
 certain surface smoothness and shape quality.
 The geometry masks of Catmull-Clark subdivision are shown
 below.
 
-\image html cc_mask.png
-\image latex cc_mask.png
+\image html cc_mask.svg
 
-The weights shown here are unnormalized, and \f$ n\f$ is the valence 
+The weights shown here are unnormalized, and \f$ n\f$ is the valence
 of the vertex. The generated point, in red, is computed by a summation
-of the weighted points. For example, a Catmull-Clark facet-node is 
+of the weighted points. For example, a Catmull-Clark face-node is
 computed by the summation of \f$ 1/4\f$ of each point on its stencil.
 
-A stencil can have an unlimited number of geometry masks. For example, 
-a facet-node of PQQ refinement may be computed by 
+A stencil can have an unlimited number of geometry masks. For example,
+a face-node of PQQ refinement may be computed by
 the summation of \f$ 1/5\f$ of each stencil node instead of \f$ 1/4\f$.
-Although it is legal in `Subdivision_method_3` to have 
-any kind of geometry mask, the result surfaces may be odd, 
-not smooth, or not even exist. \cgalCite{cgal:ww-smgd-02} explains the 
+Although it is legal in `Subdivision_method_3` to have
+any kind of geometry mask, the result surfaces may be odd,
+not smooth, or not even exist. \cgalCite{cgal:ww-smgd-02} explains the
 details on designing masks for a quality subdivision surface.
 
-\section secFirstSub A Quick Example: Catmull-Clark Subdivision 
+\section secFirstSub A Quick Example: Catmull-Clark Subdivision
 
-Assuming you are familiar with `Polyhedron_3`,
-you can integrate `Subdivision_method_3` into your program 
+Assuming that you are familiar with `Surface_mesh`,
+you can integrate `Subdivision_method_3` into your program
 without much effort.
 
 \cgalExample{Subdivision_method_3/CatmullClark_subdivision.cpp}
 
 This example demonstrates the use of the Catmull-Clark subdivision method
-on a `Polyhedron_3`. The polyhedron is restricted in the %Cartesian
-space, where most subdivision applications are designed to work.
+on a `Surface_mesh`.
 There is only one line deserving a detailed explanation:
 
 \code{.cpp}
 
-Subdivision_method_3::CatmullClark_subdivision(P,d);
+Subdivision_method_3::CatmullClark_subdivision(pmesh, params::number_of_iterations(d));
 
 \endcode
 
-`Subdivision_method_3` specifies the namespace of our
-subdivision functions. `CatmullClark_subdivision(P,d)` computes the 
-Catmull-Clark subdivision surface of the polyhedron `P` after
-`d` iterations of the refinements. The polyhedron `P` is 
-passed by reference, and is modified (i.e.\ subdivided) by the 
+`Subdivision_method_3` specifies the namespace of the
+subdivision functions. `CatmullClark_subdivision(P, params::number_of_iterations(d))` computes the
+Catmull-Clark subdivision surface of the polygon mesh `pmesh` after
+`d` iterations of the refinements. The polygon mesh  `pmesh` is
+passed by reference, and is modified (i.e.\ subdivided) by the
 subdivision function.
 
-This example shows how to subdivide a simple `Polyhedron_3`
+This example shows how to subdivide a `Surface_mesh`
 with `Subdivision_method_3`.
-An application-defined polyhedron might use a specialized kernel and/or
-a specialized internal container. There are two major restrictions on the 
-application-defined polyhedron to work with 
-`Subdivision_method_3`.
-<UL>
-<LI>`Point_3` is type-defined by the kernel. Without `Point_3` 
-and the associated operations being defined, `Subdivision_method_3` 
-can not know how to compute and store the new vertex points.
-<LI>The primitives (such as vertices, halfedges and facets) 
-in the internal container are sequentially ordered (e.g. 
+An application-defined polygon mesh might use a specialized kernel and/or
+a specialized internal container. There is one major restriction on the
+application-defined polygon mesh to work with
+`Subdivision_method_3`:
+The primitives (such as vertices, halfedges and faces)
+in the internal container are sequentially ordered (e.g.
 `std::vector` and `std::list`).
-This implies that the iterators traverse the primitives in 
+This implies that the iterators traverse the primitives in
 the order of their creations/insertions.
-</UL>
 
-Section \ref secRefHost gives detailed explanations on those 
+Section \ref secRefHost gives detailed explanations on this
 two restrictions.
 
-\section secCC Catmull-Clark Subdivision 
+\section secCC Catmull-Clark Subdivision
 
-`Subdivision_method_3` is designed to allow customization of 
+`Subdivision_method_3` is designed to allow customization of
 the subdivision methods. This section explains the implementation
 of the Catmull-Clark subdivision function in `Subdivision_method_3`.
-The implementation demonstrates the customization of the PQQ refinement 
+The implementation demonstrates the customization of the PQQ refinement
 to Catmull-Clark subdivision.
 
-When a subdivision method is developed, a refinement pattern is 
-chosen, and then a set of geometry masks are developed to 
-position the new points. There are three key components 
-to implement a subdivision method: 
+When a subdivision method is developed, a refinement pattern is
+chosen, and then a set of geometry masks is developed to
+position the new points. There are three key components
+to implement a subdivision method:
 <UL>
-<LI>a mesh data structure that can represent arbitrary 2-manifolds, 
-<LI>a process that refines the mesh data structure, 
+<LI>a mesh data structure that can represent arbitrary 2-manifolds,
+<LI>a process that refines the mesh data structure,
 <LI>and the geometry masks that compute the new points.
 </UL>
 
-E. Catmull and J. Clark picked the
+E. Catmull and J. Clark chose the
 PQQ refinement for their subdivision method,
-and developed a set of geometry masks to generate (or more 
-precisely, to approximate) the B-spline surface from 
+and developed a set of geometry masks to generate (or more
+precisely, to approximate) the B-spline surface from
 the control mesh.
-`Subdivision_method_3` provides a function that glues all 
+`Subdivision_method_3` provides a function that glues all
 three components of the Catmull-Clark subdivision method.
 
 \code{.cpp}
 
-template <class Polyhedron_3, template <typename> class Mask>
-void PQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int depth)
+template <class PolygonMesh, class Mask, class NamedParameters>
+void PQQ(PolygonMesh& p, Mask mask, NamedParameters np)
 
 \endcode
 
-`Polyhedron_3` is a generic mesh data structure for 
-arbitrary 2-manifolds. `PQQ()`, which refines the control mesh 
+`PolygonMesh` must be an instantiation of `Polyhedron_3`,
+`Surface_mesh`, or any other model of the concept `MutableFaceGraph`.
+It is a generic mesh data structure for
+arbitrary 2-manifolds. `PQQ()`, which refines the control mesh
 `p`, is a <I>refinement host</I> that uses a policy class
-`Mask<Polyhedron_3>` as part of it geometry computation. 
+`Mask<PolygonMesh>` as part of it geometry computation.
 During the refinement, `PQQ()` computes and assigns
-new points by cooperating with the `mask`. 
+new points by cooperating with the `mask`.
 To implement Catmull-Clark subdivision,
-`Mask`, the <I>geometry policy</I>, has to realize the 
-geometry masks of Catmull-Clark subdivision. 
-`depth` specifies the iterations of the refinement 
-on the control mesh. 
+`Mask`, the <I>geometry policy</I>, has to realize the
+geometry masks of Catmull-Clark subdivision.
+The number of iterations as well as the vertex point map can be specified using the named parameter `np`.
 
-To implement the geometry masks, we need to know how 
-a refinement host communicates with its geometry masks. 
-The PQQ refinement defines three stencils, and hence 
+To implement the geometry masks, we need to know how
+a refinement host communicates with its geometry masks.
+The PQQ refinement defines three stencils, and hence
 three geometry masks are required for Catmull-Clark subdivision.
-The following class defines the interfaces of the stencils 
+The following class defines the interfaces of the stencils
 for the PQQ refinement.
 
 \code{.cpp}
 
-template <class Polyhedron_3>
-class PQQ_stencil_3 {
-  void facet_node(Facet_handle facet, Point_3& pt);
-  void edge_node(Halfedge_handle edge, Point_3& pt);
-  void vertex_node(Vertex_handle vertex, Point_3& pt);
+template <class PolygonMesh>
+class PQQMask_3 {
+  void face_node(boost::graph_traits<PolygonMesh>::face_descriptor face, Point_3& pt);
+  void edge_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor edge, Point_3& pt);
+  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor vertex, Point_3& pt);
 };
 
 \endcode
 
-Each class function in `PQQ_stencil_3` 
-computes a new point based on the neighborhood of the primitive 
-handle, and assigns the new point to `Point_3& pt`.
+Each class function in `PQQMask_3`
+computes a new point based on the neighborhood of the primitive
+descriptor, and assigns the new point to `Point_3& pt`.
 
-We realize each class function with the geometry masks of 
+We realize each class function with the geometry masks of
 Catmull-Clark subdivision.
 
 \code{.cpp}
 
-template <class Polyhedron_3>
+template <class PolygonMesh>
 class CatmullClark_mask_3 {
-  void facet_node(Facet_handle facet, Point_3& pt) {
-    Halfedge_around_facet_circulator hcir = facet->facet_begin();
+
+  typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef boost::property_traits<VertexPointMap>::value_type Point_3;
+
+  Polygonmesh pmesh;
+  VertexPointMap vpm;
+
+  CatmullClark_mask_3(PolygonMesh &pmesh, VertexPointMap vpm)
+  : pmesh(pmesh, vpm(vpm)
+  {}
+
+  void face_node(face_descriptor face, Point_3& pt) {
     int n = 0;
     Point_3 p(0,0,0);
-    do {
-      p = p + (hcir->vertex()->point() - ORIGIN);
+    for(halfedge_descriptor hd : halfedges_around_face(face,pmesh)){
+      p = p + get(vpm, (target(hd,pmesh)) - ORIGIN);
       ++n;
-    } while (++hcir != facet->facet_begin());
+    }
     pt = ORIGIN + (p - ORIGIN)/FT(n);
   }
-  
-  void edge_node(Halfedge_handle edge, Point_3& pt) {
-    Point_3 p1 = edge->vertex()->point();
-    Point_3 p2 = edge->opposite()->vertex()->point();
+};
+
+  void edge_node(halfedge_descriptor edge, Point_3& pt) {
+    Point_3 p1 = get(vpm,target(edge, pmesh));
+    Point_3 p2 = get(vpm,source(edge, pmesh));
     Point_3 f1, f2;
-    facet_node(edge->facet(), f1);
-    facet_node(edge->opposite()->facet(), f2);
+    face_node(face(edge,pmesh), f1);
+    face_node(face(opposite(edge,pmesh),pmesh), f2);
     pt = Point_3((p1[0]+p2[0]+f1[0]+f2[0])/4,
                  (p1[1]+p2[1]+f1[1]+f2[1])/4,
                  (p1[2]+p2[2]+f1[2]+f2[2])/4 );
   }
-  
-  void vertex_node(Vertex_handle vertex, Point_3& pt) {
-    Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
-    int n = circulator_size(vcir); 
-  
+
+  void vertex_node(vertex_descriptor vertex, Point_3& pt) {
+    Halfedge_around_target_circulator<PolygonMesh> vcir(vertex,pmesh);
+    typename boost::graph_traits<PolygonMesh>::degree_size_type n = degree(vertex,pmesh);
+
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
-    Point_3& S = vertex->point();
-  
+    Point_3 S = get(vpm,vertex);
+
     Point_3 q;
     for (int i = 0; i < n; i++, ++vcir) {
-      Point_3& p2 = vcir->opposite()->vertex()->point();
+      Point_3 p2 = get(vpm, target(opposite(*vcir,pmesh),pmesh));
       R[0] += (S[0]+p2[0])/2;
       R[1] += (S[1]+p2[1])/2;
       R[2] += (S[2]+p2[2])/2;
-      facet_node(vcir->facet(), q);
-      Q[0] += q[0]; 
-      Q[1] += q[1]; 
+      face_node(face(*vcir,pmesh), q);
+      Q[0] += q[0];
+      Q[1] += q[1];
       Q[2] += q[2];
     }
-    R[0] /= n; R[1] /= n; R[2] /= n;
-    Q[0] /= n; Q[1] /= n; Q[2] /= n;
-  
+    R[0] /= n;    R[1] /= n;    R[2] /= n;
+    Q[0] /= n;    Q[1] /= n;    Q[2] /= n;
+
     pt = Point_3((Q[0] + 2*R[0] + S[0]*(n-3))/n,
                  (Q[1] + 2*R[1] + S[1]*(n-3))/n,
                  (Q[2] + 2*R[2] + S[2]*(n-3))/n );
   }
+
 };
 
 \endcode
 
-This example shows the default implementation of Catmull-Clark 
-masks in `Subdivision_method_3`.
-This default implementation assumes the <I>types</I> 
-(such as `Point_3` and `Facet_handle`) are defined 
-within `Polyhedron_3`. `CatmullClark_mask_3` 
-is designed to work on a `Polyhedron_3` with the %Cartesian
-kernel. You may need to rewrite the geometry computation
-to match the kernel geometry of your application.
+
 
 To invoke the Catmull-Clark subdivision method, we
-call `PQQ()` with the Catmull-Clark masks we just defined.
+call `PQQ()` with the Catmull-Clark masks that we have just defined.
 
 \code{.cpp}
 
-PQQ(p, CatmullClark_mask_3<Polyhedron_3>(), depth);
+PQQ(pmesh, CatmullClark_mask_3(pmesh), params::number_of_iterations(depth));
 
 \endcode
 
-Loop, Doo-Sabin and \f$ \sqrt{3}\f$ subdivisions are implemented 
-in the similar process: pick a refinement host and implement 
-the geometry policy. The key of developing your own 
-subdivision method is implementing the right combination of 
-the refinement host and the geometry policy. It is 
+Loop, Doo-Sabin and \f$ \sqrt{3}\f$ subdivisions are implemented
+using a similar process: pick a refinement host and implement
+the geometry policy. The key of developing your own
+subdivision method is implementing the right combination of
+the refinement host and the geometry policy. It is
 explained in the next two sections.
 
-\section secRefHost Refinement Host 
+\section secRefHost Refinement Host
 
-A refinement host is a template function of 
-a polyhedron class and a geometry mask class. It refines
-the input polyhedron, and computes new points through the geometry masks.
+A refinement host is a template function of
+a polygon mesh class and a geometry mask class. It refines
+the input polygon mesh, and computes new points through the geometry masks.
 `Subdivision_method_3` supports four refinement hosts:
-primal quadrilateral quadrisection (PQQ), 
-primal triangle quadrisection (PTQ), dual quadrilateral 
+primal quadrilateral quadrisection (PQQ),
+primal triangle quadrisection (PTQ), dual quadrilateral
 quadrisection (DQQ) and \f$ \sqrt{3}\f$ triangulation.
-Respectively, they are used by Catmull-Clark, Loop, Doo-Sabin 
+Respectively, they are used by Catmull-Clark, Loop, Doo-Sabin
 and \f$ \sqrt{3}\f$ subdivision.
 
-\image html RefSchemes.png
-\image latex RefSchemes.png
+\image html RefSchemes.svg
+
 
 \code{.cpp}
 
 namespace Subdivision_method_3 {
-template <class Polyhedron_3, template <typename> class Mask>
-void PQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step);
+template <class PolygonMesh, class Mask, class NamedParameters>
+void PQQ(PolygonMesh& pmesh, Mask mask, NamedParameters np);
 
-template <class Polyhedron_3, template <typename> class Mask>
-void PTQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step);
+template <class PolygonMesh, class Mask, class NamedParameters>
+void PTQ(PolygonMesh& pmesh, Mask mask, NamedParameters np);
 
-template <class Polyhedron_3, template <typename> class Mask>
-void DQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step)
+template <class PolygonMesh,  class Mask, class NamedParameters>
+void DQQ(PolygonMesh& pmesh, Mask mask, NamedParameters np)
 
-template <class Polyhedron_3, template <typename> class Mask>
-void Sqrt3(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step)
+template <class PolygonMesh,  class Mask, class NamedParameters>
+void Sqrt3(PolygonMesh& pmesh, Mask mask, NamedParameters np)
 }
 
 \endcode
 
-The polyhedron class is a specialization of
-`Polyhedron_3`, and the mask is a policy 
-class realizing the geometry masks of the subdivision 
-method.
+The mesh class must be a model of
+`MutableFaceGraph` and it must be a triangle mesh or a polygon mesh,
+and the mask is a policy class realizing the geometry masks of the
+subdivision method.
 
-A refinement host refines the input polyhedron, maintains 
-the stencils (i.e., the mapping between the control mesh 
+A refinement host refines the input polygon mesh, maintains
+the stencils (i.e., the mapping between the control mesh
 and the refined mesh), and calls the geometry masks
-to compute the new points. 
+to compute the new points.
 In `Subdivision_method_3`, refinements are implemented
 as a sequence of connectivity operations (mainly Euler operations).
 The order of the connectivity operations plays a key role when maintaining
-stencils. By matching the order of the source submeshes to the refined 
-vertices, no flag in the primitives is required to register the stencils. 
-It avoids the data dependency of the refinement host on the polyhedron class. 
-To make the ordering trick work, the polyhedron class must 
+stencils. By matching the order of the source submeshes to the refined
+vertices, no flag in the primitives is required to register the stencils.
+It avoids the data dependency of the refinement host on the polygon mesh class.
+To make the ordering trick work, the polygon mesh class must
 have a sequential container, such as a vector or a linked-list, as
-the internal storage. 
-A sequential container guarantees that the iterators of the 
-polyhedron always traverse the primitives in the order of their 
-insertions. Non-sequential structures such as 
+the internal storage.
+A sequential container guarantees that the iterators of the
+polygon mesh always traverse the primitives in the order of their
+insertions. Non-sequential structures such as
 trees or maps do not provide the required ordering, and hence
-can not be used with `Subdivision_method_3`.
+cannot be used with `Subdivision_method_3`.
 
 Although `Subdivision_method_3` does not require flags
 to support the refinements and the stencils, it
 still needs to know how to compute and store the geometry
-data (i.e.\ the points). `Subdivision_method_3` 
-expects that the typename `Point_3` is 
-defined in the geometry kernel of the polyhedron
-(i.e.\ the `Polyhedron_3::Traits::Kernel`). 
-A point of the type `Point_3` is returned by the geometry 
-policy and is then assigned to the new vertex. 
-The geometry policy is explained in next section.
+data (i.e.\ the points). The classes of `Subdivision_method_3`
+have as optional template argument a vertex property map
+that provides a mapping between vertices and points.
 
-Refinement hosts `PQQ` and `DQQ` work on a general 
-polyhedron, and `PTQ` and `Sqrt3` work on a triangulated
-polyhedron. The result of `PTQ` and `Sqrt3` on a non-triangulated
-polyhedron is undefined. `Subdivision_method_3` does not verify
+
+Refinement hosts `PQQ` and `DQQ` work on a general
+polygon mesh, and `PTQ` and `Sqrt3` work on a triangulated
+polygon mesh. The result of `PTQ` and `Sqrt3` on a non-triangulated
+polygon mesh is undefined. `Subdivision_method_3` does not verify
 the precondition of the mesh characteristics before the refinement.
 
-For details of the refinement implementation, 
+For details of the refinement implementation,
 interested users should refer to \cgalCite{cgal:sp-mrbee-05}.
 
 \section Subdivision_method_3Geometry Geometry Policy
 
-A geometry policy defines a set of geometry masks. 
+A geometry policy defines a set of geometry masks.
 Each geometry mask is realized as a member function
-that computes new points of the subdivision surface. 
+that computes new points of the subdivision surface.
 
-Each geometry mask receives a primitive handle 
-(e.g. `Halfedge_handle`) of the control mesh, 
-and returns a `Point_3` to the subdivided vertex. 
-The function collects the vertex neighbors of the primitive handle 
-(i.e.\ nodes on the stencil), and computes the new point 
+Each geometry mask receives a primitive descriptor
+(e.g. `halfedge_descriptor`) of the control mesh,
+and returns a `Point_3` to the subdivided vertex.
+The function collects the vertex neighbors of the primitive descriptor
+(i.e.\ nodes on the stencil), and computes the new point
 based on the neighbors and the mask (i.e.\ the stencil weights).
 
-\image html cc_mask.png
-\image latex cc_mask.png
+\image html cc_mask.svg
+
 
 This figure shows the geometry masks of
-Catmull-Clark subdivision. The weights shown here are unnormalized, 
-and \f$ n\f$ is the valence of the vertex. The new points are 
+Catmull-Clark subdivision. The weights shown here are unnormalized,
+and \f$ n\f$ is the valence of the vertex. The new points are
 computed by the summation of the weighted points on their stencils.
-Following codes show an implementation of the geometry mask of 
-the facet-node. The complete listing
+Following codes show an implementation of the geometry mask of
+the face-node. The complete listing
 of a Catmull-Clark geometry policy is in the Section \ref secCC.
 
 \code{.cpp}
 
-template <class Polyhedron_3>
+template <class PolygonMesh, class VertexPointMap>
 class CatmullClark_mask_3 {
-  void facet_node(Facet_handle facet, Point_3& pt) {
-    Halfedge_around_facet_circulator hcir = facet->facet_begin();
+
+  typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef boost::property_traits<VertexPointMap>::value_type Point_3;
+
+  CatmullClark_mask_3(PolygonMesh &pmesh, VertexPointMap vpm);
+
+  void face_node(face_descriptor face, Point_3& pt) {
     int n = 0;
     Point_3 p(0,0,0);
-    do {
-      p = p + (hcir->vertex()->point() - ORIGIN);
+    for(halfedge_descriptor hd : halfedges_around_face(face,pmesh)){
+      p = p + get(vpm, (target(hd,pmesh)) - ORIGIN);
       ++n;
-    } while (++hcir != facet->facet_begin());
+    }
     pt = ORIGIN + (p - ORIGIN)/FT(n);
   }
 };
 
 \endcode
 
+
 In this example, the computation is based on the assumption that
-the `Point_3` is the `CGAL::Point_3`. It is an assumption, 
+the `Point_3` is the `CGAL::Point_3`. It is an assumption,
 but not a restriction.
 You are allowed to use any point class as long as it is
-defined as the `Point_3` in your polyhedron.
+defined as the `Point_3` in your polygon mesh.
 You may need to modify the geometry policy to support the computation
-and the assignment of the specialized point. This extension is not unusual 
+and the assignment of the specialized point. This extension is not unusual
 in graphics applications. For example, you might want to subdivide the
-texture coordinates for your subdivision surface. 
+texture coordinates for your subdivision surface.
 
 The refinement host of Catmull-Clark subdivision
-requires three geometry masks for 
-polyhedrons without open boundaries: a vertex-node 
-mask, an edge-node mask, and a facet-node mask. 
-To support polyhedrons with boundaries, a border-node mask is 
+requires three geometry masks for
+polygon meshes without open boundaries: a vertex-node
+mask, an edge-node mask, and a face-node mask.
+To support polygon meshes with boundaries, a border-node mask is
 also required. The border-node mask for Catmull-Clark subdivision
-is listed below, where `ept` returns the new point splitting 
+is listed below, where `ept` returns the new point splitting
 `edge` and `vpt` returns the new point on the vertex pointed by
 `edge`.
 
 \code{.cpp}
 
-void border_node(Halfedge_handle edge, Point_3& ept, Point_3& vpt) {
-  Point_3& ep1 = edge->vertex()->point();
-  Point_3& ep2 = edge->opposite()->vertex()->point();
-  ept = Point_3((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
+  void border_node(halfedge_descriptor edge, Point_3& ept, Point_3& vpt) {
+    Point_3 ep1 = get(vpm, target(edge, pmesh));
+    Point_3 ep2 = get(vpm, target(opposite(edge, pmesh), pmesh));
+    ept = Point_3((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-  Halfedge_around_vertex_circulator vcir = edge->vertex_begin();
-  Point_3& vp1 = vcir->opposite()->vertex()->point();
-  Point_3& vp0 = vcir->vertex()->point();
-  Point_3& vp_1 = (--vcir)->opposite()->vertex()->point();
-  vpt = Point_3((vp_1[0] + 6*vp0[0] + vp1[0])/8,
-                (vp_1[1] + 6*vp0[1] + vp1[1])/8,
-                (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
-}
+    Halfedge_around_target_circulator<Poly> vcir(edge, pmesh);
+    Point_3 vp1  = get(vpm,target(opposite(*vcir, pmesh ), pmesh));
+    Point_3 vp0  = get(vpm, target(*vcir, pmesh));
+    --vcir;
+    Point_3 vp_1 = get(vpm, target(opposite(*vcir, pmesh), pmesh));
+    vpt = Point_3((vp_1[0] + 6*vp0[0] + vp1[0])/8,
+                  (vp_1[1] + 6*vp0[1] + vp1[1])/8,
+                  (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
+  }
 
 \endcode
 
 The mask interfaces of all four refinement hosts are listed below.
-`DQQ_stencil_3` and `Sqrt3_stencil_3` 
-do not have the border-node stencil because the refinement hosts of
-DQQ and \f$ \sqrt{3}\f$ refinements do not support global boundaries in the 
-current release. This might be changed in the future releases.
+`DQQMask_3` does not have the border-node stencil because the refinement host of
+the DQQ refinement does not support global boundaries in the
+current release. This might change in future releases.
 
 \code{.cpp}
 
-template <class Polyhedron_3>
-class PQQ_stencil_3 {
-  void facet_node(Facet_handle, Point_3&);
-  void edge_node(Halfedge_handle, Point_3&);
-  void vertex_node(Vertex_handle, Point_3&);
+template <class PolygonMesh>
+class PQQMask_3 {
+  void face_node(boost::graph_traits<PolygonMesh>::face_descriptor, Point_3&);
+  void edge_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point_3&);
+  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor, Point_3&);
 
-  void border_node(Halfedge_handle, Point_3&, Point_3&);
+  void border_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point_3&, Point_3&);
 };
 
-template <class Polyhedron_3>
-class PTQ_stencil_3 {
-  void edge_node(Halfedge_handle, Point_3&);
-  void vertex_node(Vertex_handle, Point_3&);
+template <class PolygonMesh>
+class PTQMask_3 {
+  void edge_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point_3&);
+  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor, Point_3&);
 
-  void border_node(Halfedge_handle, Point_3&, Point_&);
+  void border_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point_3&, Point_3_&);
 };
 
-template <class Polyhedron_3>
-class DQQ_stencil_3 {
+template <class PolygonMesh>
+class DQQMask_3 {
 public:
-  void corner_node(Halfedge_handle edge, Point_3& pt);
+  void corner_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor edge, Point_3& pt);
 };
 
-template <class Polyhedron_3>
-class Sqrt3_stencil_3 {
+template <class PolygonMesh>
+class Sqrt3Mask_3 {
 public:
-  void vertex_node(Vertex_handle vertex, Point_3& pt);
+  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor vertex, Point_3& pt);
 };
 
 \endcode
@@ -512,51 +514,49 @@ the best sources of learning these stencil interfaces.
 
 \section Subdivision_method_3The The Four Subdivision Methods
 
-`Subdivision_method_3` supports Catmull-Clark, Loop, 
+`Subdivision_method_3` supports Catmull-Clark, Loop,
 Doo-Sabin and \f$ \sqrt{3}\f$ subdivisions by specializing
-their respective refinement hosts. 
-They are designed to work on a `Polyhedron_3`. If your application 
-uses a polyhedron with a specialized geometry kernel, you need to 
-specialize the refinement host with a geometry policy 
+their respective refinement hosts.
+They are designed to work on any model of a `MutableFaceGraph`
+such as `Polyhedron_3` and `Surface_mesh`. If your application
+uses a polygon mesh with a specialized geometry kernel, you need to
+specialize the refinement host with a geometry policy
 based on that kernel.
 
 \code{.cpp}
 
 namespace Subdivision_method_3 {
-  template <class Polyhedron_3>
-  void CatmullClark_subdivision(Polyhedron_3& p, int step = 1) {
-    PQQ(p, CatmullClark_mask_3<Polyhedron_3>(), step);
+  template <class PolygonMesh, class NamedParameters>
+  void CatmullClark_subdivision(PolygonMesh& pmesh, NamedParameters np) {
+    PQQ(pmesh, CatmullClark_mask_3<PolygonMesh>(pmesh), np);
   }
 
-  template <class Polyhedron_3>
-  void Loop_subdivision(Polyhedron_3& p, int step = 1) {
-    PTQ(p, Loop_mask_3<Polyhedron_3>() , step);
+  template <class PolygonMesh, class NamedParameters>
+  void Loop_subdivision(PolygonMesh& pmesh, NamedParameters np) {
+    PTQ(pmesh, Loop_mask_3<PolygonMesh>(pmesh) , np);
   }
 
-  template <class Polyhedron_3>
-  void DooSabin_subdivision(Polyhedron_3& p, int step = 1) {
-    DQQ(p, DooSabin_mask_3<Polyhedron_3>(), step);
+  template <class PolygonMesh, class NamedParameters>
+  void DooSabin_subdivision(PolygonMesh& pmesh, NamedParameters np) {
+    DQQ(pmesh, DooSabin_mask_3<PolygonMesh>(pmesh), np);
   }
 
-  template <class Polyhedron_3>
-  void Sqrt3_subdivision(Polyhedron_3& p, int step = 1) {
-    Sqrt3(p, Sqrt3_mask_3<Polyhedron_3>(), step);
+  template <class PolygonMesh, class NamedParameters>
+  void Sqrt3_subdivision(PolygonMesh& pmesh, NamedParameters np) {
+    Sqrt3(pmesh, Sqrt3_mask_3<PolygonMesh>(pmesh), np);
   }
 }
 
 \endcode
 
-The following example demonstrates the use of Doo-Sabin subdivision 
-on a polyhedral mesh.
-\cgalExample{Subdivision_method_3/DooSabin_subdivision.cpp}
 
-\section Subdivision_method_3Other Other Subdivision Methods
+\section Subdivision_method_3Other Example: Customizing a Subdivision Method
 
 `Subdivision_method_3` supports four practical subdivision methods on a
 `Polyhedron_3` with points with %Cartesian coordinates. More subdivision methods can be supported
-through the specialization of refinement hosts with custom geometry masks. 
-The following example develops a subdivision method 
-generating an improved Loop subdivision surface. 
+through the specialization of refinement hosts with custom geometry masks.
+The following example develops a subdivision method
+generating an improved Loop subdivision surface.
 
 \cgalExample{Subdivision_method_3/Customized_subdivision.cpp}
 
@@ -564,13 +564,20 @@ The points generated by the geometry mask are semantically
 required to converge to a smooth surface. This is the requirement
 imposed by the theory of the subdivision surface.
 `Subdivision_method_3` does not enforce this requirement, nor will
-it verify the smoothness of the subdivided mesh. 
-`Subdivision_method_3` guarantees the topological properties of 
+it verify the smoothness of the subdivided mesh.
+`Subdivision_method_3` guarantees the topological properties of
 the subdivided mesh. A genus-\f$ n\f$ 2-manifold is assured to be subdivided
 into a genus-\f$ n\f$ 2-manifold. But when specialized with ill-designed
-geometry masks, `Subdivision_method_3` may generate a surface that is 
-odd, not smooth, or not even exist.
+geometry masks, `Subdivision_method_3` may generate a surface that is
+odd, not smooth, or that does not even exist.
 
-*/ 
+
+
+\section Subdivision_method_3History Implementation History
+
+This package was initially developed by  Le-Jeng Andy Shiue.  For \cgal 4.11 it was generalized
+to work on any model of a `MutableFaceGraph` by Andreas Fabri and Mael Rouxel-Labbé.
+
+*/
 } /* namespace CGAL */
 

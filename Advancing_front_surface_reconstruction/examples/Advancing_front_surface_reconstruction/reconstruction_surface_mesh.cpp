@@ -5,8 +5,9 @@
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/array.h>
+#include <CGAL/disable_warnings.h>
 
-typedef CGAL::cpp11::array<std::size_t,3> Facet;
+typedef std::array<std::size_t,3> Facet;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3  Point_3;

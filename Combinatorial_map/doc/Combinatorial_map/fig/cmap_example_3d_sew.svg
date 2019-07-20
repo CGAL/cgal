@@ -1,0 +1,1549 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: fig2dev Version 3.2.6 -->
+<!-- CreationDate: Mon Nov 21 08:43:35 2016 -->
+<!-- Magnification: 1.050 -->
+<svg	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	width="10.3in" height="3.3in"
+	viewBox="3 -337 12339 3975">
+<g style="stroke-width:.025in; fill:none">
+<!-- Line -->
+<polyline points="1262,1677
+2769,2015
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 1262 1677 - 2833 2029-->
+<polyline points="2609 2075
+2815 2025
+2651 1890
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="8532,1794
+10145,2156
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 8532 1794 - 10209 2170-->
+<polyline points="9986 2216
+10192 2165
+10028 2031
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="1241,121
+1262,1643
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 1241 121 - 1262 1708-->
+<polyline points="1165 1501
+1262 1689
+1354 1498
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="8509,130
+8532,1759
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 8509 130 - 8532 1824-->
+<polyline points="8434 1617
+8532 1805
+8623 1614
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="2743,2225
+1231,1871
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 2743 2225 - 1167 1857-->
+<polyline points="1390 1812
+1185 1861
+1346 1995
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10114,2380
+8495,2001
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10114 2380 - 8431 1987-->
+<polyline points="8654 1942
+8449 1991
+8611 2125
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="1068,1707
+1030,178
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 1068 1707 - 1029 113-->
+<polyline points="1128 318
+1029 132
+939 323
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="8324,1825
+8284,187
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 8324 1825 - 8283 122-->
+<polyline points="8382 327
+8283 141
+8193 332
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="1198,1864
+348,2635
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 1198 1864 - 300 2679-->
+<polyline points="389 2469
+313 2666
+516 2608
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="8462,1994
+7551,2819
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 8462 1994 - 7503 2864-->
+<polyline points="7592 2654
+7517 2851
+7719 2793
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="174,2478
+1042,1729
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 174 2478 - 1091 1686-->
+<polyline points="996 1892
+1078 1698
+872 1750
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="7366,2650
+8298,1847
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 7366 2650 - 8347 1804-->
+<polyline points="8251 2011
+8333 1817
+8128 1868
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="2803,2023
+2897,417
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 2803 2023 - 2900 352-->
+<polyline points="2982 564
+2899 371
+2793 554
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10179,2163
+10280,445
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10179 2163 - 10283 380-->
+<polyline points="10365 592
+10282 398
+10176 581
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="2899,384
+1275,125
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 2899 384 - 1210 116-->
+<polyline points="1429 55
+1229 119
+1400 242
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10282,411
+8542,134
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10282 411 - 8477 124-->
+<polyline points="8697 64
+8496 128
+8667 250
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="3001,462
+2898,2072
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 3001 462 - 2893 2170-->
+<polyline points="2771 1841
+2895 2133
+3054 1859
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10391,494
+10281,2220
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10391 494 - 10276 2318-->
+<polyline points="10154 1989
+10278 2281
+10436 2007
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="1166,15
+2817,272
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 1166 15 - 2882 282-->
+<polyline points="2662 343
+2864 279
+2690 156
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="8428,16
+10196,291
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 8428 16 - 10261 301-->
+<polyline points="10040 362
+10242 298
+10069 175
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="4094,599
+3962,2230
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 4094 599 - 3956 2296-->
+<polyline points="3878 2080
+3958 2277
+4067 2095
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10848,554
+10706,2301
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10848 554 - 10701 2366-->
+<polyline points="10622 2151
+10702 2347
+10811 2165
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="3780,2282
+3902,657
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 3780 2282 - 3909 559-->
+<polyline points="4026 889
+3906 596
+3743 868
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10513,2353
+10642,613
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10513 2353 - 10649 515-->
+<polyline points="10766 845
+10646 552
+10483 824
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="2039,3134
+2722,2251
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 2039 3134 - 2762 2200-->
+<polyline points="2709 2422
+2750 2215
+2559 2306
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="9362,3352
+10093,2406
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 9362 3352 - 10133 2354-->
+<polyline points="10080 2576
+10121 2369
+9930 2460
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="1030,144
+83,718
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 1030 144 - 28 751-->
+<polyline points="156 562
+44 742
+254 724
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="8284,154
+7268,768
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 8284 154 - 7212 802-->
+<polyline points="7340 613
+7228 792
+7438 774
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="2896,2123
+2238,2990
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 2896 2123 - 2178 3067-->
+<polyline points="2260 2726
+2201 3038
+2485 2897
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10279,2271
+9573,3200
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10279 2271 - 9513 3277-->
+<polyline points="9595 2936
+9537 3248
+9820 3107
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="3977,2452
+3351,3363
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 3977 2452 - 3314 3417-->
+<polyline points="3353 3191
+3324 3401
+3509 3298
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="197,596
+1137,32
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 197 596 - 1192 0-->
+<polyline points="1062 186
+1176 9
+965 25
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10723,2535
+10052,3512
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10723 2535 - 10015 3566-->
+<polyline points="10054 3340
+10026 3550
+10211 3447
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="7392,638
+8398,33
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 7392 638 - 8454 0-->
+<polyline points="8325 186
+8438 9
+8227 25
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="3122,3206
+3750,2323
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 3122 3206 - 3807 2243-->
+<polyline points="3736 2586
+3785 2274
+3505 2422
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="9808,3342
+10482,2394
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 9808 3342 - 10540 2314-->
+<polyline points="10469 2658
+10518 2345
+10238 2493
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="324,2658
+2006,3125
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 324 2658 - 2069 3143-->
+<polyline points="1843 3177
+2051 3138
+1893 2996
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="7527,2843
+9329,3342
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 7527 2843 - 9392 3360-->
+<polyline points="9166 3395
+9374 3355
+9216 3213
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="3960,2265
+5398,2206
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 3960 2265 - 5463 2204-->
+<polyline points="5258 2307
+5444 2205
+5251 2118
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10704,2335
+12245,2272
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10704 2335 - 12310 2270-->
+<polyline points="12106 2373
+12291 2271
+12098 2184
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="5450,2417
+4011,2451
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 5450 2417 - 3946 2452-->
+<polyline points="4151 2352
+3965 2452
+4156 2541
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="12298,2499
+10756,2534
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 12298 2499 - 10691 2535-->
+<polyline points="10896 2436
+10710 2535
+10900 2624
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="55,735
+172,2444
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 55 735 - 176 2509-->
+<polyline points="67 2307
+175 2490
+256 2295
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="7239,786
+7364,2616
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 7239 786 - 7369 2681-->
+<polyline points="7259 2479
+7367 2662
+7448 2467
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="1970,3078
+256,2604
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 1970 3078 - 193 2587-->
+<polyline points="417 2552
+211 2593
+367 2733
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="9289,3291
+7453,2785
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 9289 3291 - 7390 2768-->
+<polyline points="7614 2732
+7407 2773
+7564 2914
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="223,2596
+109,860
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 223 2596 - 106 795-->
+<polyline points="213 996
+107 814
+24 1008
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="7420,2776
+7297,918
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 7420 2776 - 7294 853-->
+<polyline points="7401 1054
+7295 872
+7212 1066
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="5433,2206
+4115,624
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 5433 2206 - 4073 574-->
+<polyline points="4278 672
+4085 588
+4133 793
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="12280,2272
+10869,579
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 12280 2272 - 10827 529-->
+<polyline points="11032 627
+10838 543
+10887 748
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="4113,512
+5447,2111
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 4113 512 - 5489 2161-->
+<polyline points="5283 2061
+5478 2146
+5428 1941
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10868,461
+12297,2173
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10868 461 - 12339 2223-->
+<polyline points="12133 2123
+12327 2208
+12278 2003
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="2267,1167
+2963,497
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 2267 1167 - 3035 429-->
+<polyline points="2900 753
+3007 455
+2704 549
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="9606,1248
+10353,529
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 9606 1248 - 10425 460-->
+<polyline points="10290 785
+10397 487
+10094 580
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="2852,278
+2116,929
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 2852 278 - 2067 972-->
+<polyline points="2159 763
+2080 959
+2284 904
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10230,297
+9442,995
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10230 297 - 9393 1038-->
+<polyline points="9485 829
+9406 1025
+9610 971
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="3906,606
+3241,1290
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 3906 606 - 3173 1361-->
+<polyline points="3295 1032
+3200 1334
+3498 1229
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10646,562
+9933,1295
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10646 562 - 9865 1366-->
+<polyline points="9987 1037
+9891 1339
+10190 1234
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="3332,3392
+5419,2431
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 3332 3392 - 5479 2404-->
+<polyline points="5330 2576
+5462 2411
+5250 2404
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10033,3541
+12266,2513
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10033 3541 - 12326 2486-->
+<polyline points="12177 2658
+12309 2493
+12097 2486
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="3424,1224
+4089,536
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 3424 1224 - 4134 489-->
+<polyline points="4057 703
+4121 502
+3922 572
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10132,1222
+10844,486
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10132 1222 - 10889 438-->
+<polyline points="10812 653
+10876 452
+10677 521
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="5395,2331
+3277,3308
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 5395 2331 - 3217 3335-->
+<polyline points="3365 3162
+3234 3328
+3445 3334
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="12239,2407
+9972,3451
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 12239 2407 - 9912 3479-->
+<polyline points="10060 3306
+9929 3471
+10140 3478
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="2207,3030
+2265,1217
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 2207 3030 - 2268 1120-->
+<polyline points="2400 1445
+2267 1158
+2116 1436
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="9543,3240
+9604,1298
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 9543 3240 - 9607 1201-->
+<polyline points="9738 1526
+9606 1238
+9455 1517
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="2091,952
+229,601
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 2091 952 - 165 590-->
+<polyline points="386 534
+183 593
+351 720
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="9417,1018
+7424,643
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 9417 1018 - 7360 632-->
+<polyline points="7581 576
+7378 635
+7546 762
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="2007,1205
+1970,3043
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 2007 1205 - 1969 3108-->
+<polyline points="1878 2898
+1969 3089
+2067 2901
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="9328,1289
+9289,3256
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 9328 1289 - 9288 3321-->
+<polyline points="9196 3111
+9288 3302
+9385 3114
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="3207,1328
+3123,3154
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 3207 1328 - 3119 3252-->
+<polyline points="2992 2924
+3121 3214
+3275 2937
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="9899,1333
+9809,3291
+" style="stroke:#000000;stroke-width:32;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 9899 1333 - 9805 3388-->
+<polyline points="9678 3061
+9807 3351
+9962 3074
+" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="108,827
+1973,1198
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 108 827 - 2037 1210-->
+<polyline points="1815 1262
+2019 1207
+1851 1077
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="7296,885
+9294,1282
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 7296 885 - 9358 1294-->
+<polyline points="9135 1346
+9340 1291
+9172 1161
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="3247,3322
+3336,1458
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 3247 3322 - 3339 1393-->
+<polyline points="3423 1605
+3338 1412
+3234 1595
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="9942,3466
+10037,1470
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 9942 3466 - 10040 1405-->
+<polyline points="10124 1617
+10039 1424
+9935 1608
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="5469,2137
+3455,1236
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 5469 2137 - 3395 1210-->
+<polyline points="3623 1208
+3412 1217
+3545 1380
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="12319,2199
+10162,1234
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 12319 2199 - 10102 1208-->
+<polyline points="10330 1206
+10119 1215
+10253 1378
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="3338,1424
+5363,2318
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 3338 1424 - 5423 2344-->
+<polyline points="5194 2346
+5406 2337
+5271 2174
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10039,1437
+12207,2393
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:round; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10039 1437 - 12267 2419-->
+<polyline points="12038 2422
+12250 2412
+12115 2249
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="1836,117
+1634,403
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="1440,833
+1545,609
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="1975,510
+2476,604
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="2236,1962
+2412,1687
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="2594,2529
+2584,1685
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="2754,1513
+2954,1358
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="2580,1471
+2645,818
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3505,2676
+3555,1947
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3590,1721
+3556,969
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3678,1722
+3829,1551
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="4435,1273
+4591,1079
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="4385,1653
+4426,1476
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="1354,488
+794,236
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3744,880
+4255,1275
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3171,2076
+3281,1911
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9167,125
+8966,424
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="8744,892
+8859,642
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9271,545
+9853,646
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="8621,512
+8054,253
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10145,1667
+10049,1194
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10549,789
+11000,1212
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="11154,1682
+11100,1436
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="11238,1217
+11312,988
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10144,2460
+10137,1898
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10485,1892
+10544,2057
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10329,1486
+10244,1674
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9991,1675
+9682,1183
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9582,1975
+9984,1769
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10365,2561
+10368,1895
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9872,2026
+9990,1888
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arc -->
+<path style="stroke:#000000;stroke-width:16;stroke-linecap:butt;"
+d="M 4157,283 A 4361 4361  0  0  1  7370  330 " />
+<!-- Arrowhead on XXXpoint 7067 218 - 7370 330-->
+<polygon points="6936 335
+7359 326
+7045 41
+7064 216
+6936 335
+
+" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
+fill:white;"/>
+<!-- Arc -->
+<path style="stroke:#000000;stroke-width:16;stroke-linecap:butt;"
+d="M 7511,2929 A 2905 2905  0  0  1  4724  2881 " />
+<!-- Arrowhead on XXXpoint 5013 3025 - 4724 2881-->
+<polygon points="5154 2920
+4733 2887
+5015 3202
+5014 3026
+5154 2920
+
+" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
+fill:white;"/>
+<!-- Text -->
+<text xml:space="preserve" x="3425" y="3025" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">7</text>
+<!-- Text -->
+<text xml:space="preserve" x="3886" y="1322" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">8</text>
+<!-- Text -->
+<text xml:space="preserve" x="3414" y="977" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">5</text>
+<!-- Text -->
+<text xml:space="preserve" x="3003" y="2184" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">6</text>
+<!-- Text -->
+<text xml:space="preserve" x="2400" y="892" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">1</text>
+<!-- Text -->
+<text xml:space="preserve" x="3018" y="929" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">2</text>
+<!-- Text -->
+<text xml:space="preserve" x="2796" y="2471" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">3</text>
+<!-- Text -->
+<text xml:space="preserve" x="2061" y="2377" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">4</text>
+<!-- Text -->
+<text xml:space="preserve" x="10625" y="1318" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">8</text>
+<!-- Text -->
+<text xml:space="preserve" x="9709" y="1805" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">6</text>
+<!-- Text -->
+<text xml:space="preserve" x="10281" y="2912" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">7</text>
+<!-- Text -->
+<text xml:space="preserve" x="10414" y="660" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">5</text>
+<!-- Text -->
+<text xml:space="preserve" x="9433" y="1899" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">4</text>
+<!-- Text -->
+<text xml:space="preserve" x="9783" y="956" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">1</text>
+<!-- Text -->
+<text xml:space="preserve" x="10383" y="1225" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="202" text-anchor="start">2</text>
+<!-- Text -->
+<text xml:space="preserve" x="10005" y="2833" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="177" text-anchor="start">3</text>
+<!-- Text -->
+<text xml:space="preserve" x="5007" y="-94" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">cm.sew&#60;3&#62;(1,5)</text>
+<!-- Text -->
+<text xml:space="preserve" x="5433" y="3543" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">cm.unsew&#60;3&#62;(1)</text>
+<!-- Line -->
+<polyline points="4640,2194
+4647,2462
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="4269,2803
+4370,2970
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3150,2160
+3310,2214
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="4313,1596
+4188,1845
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="4663,1337
+4781,1261
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3802,1498
+4050,1547
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3415,2723
+3755,2838
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3555,942
+3704,935
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="1369,804
+1222,1100
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="585,2066
+844,2235
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="1930,1785
+1870,2066
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="2351,2670
+2491,2670
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="1228,2840
+1058,2885
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="1900,108
+1981,278
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="2498,558
+2706,816
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="769,240
+769,278
+769,313
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="75,1577
+112,1592
+135,1630
+171,1645
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="1020,885
+1241,824
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="1965,1996
+2291,2006
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3733,2738
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="2793,1290
+2979,1311
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="11432,2260
+11439,2546
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="11035,2911
+11143,3089
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9838,2223
+10009,2281
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="11083,1620
+10949,1887
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10536,1514
+10802,1568
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10121,2825
+10485,2950
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10271,921
+10432,913
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="11457,1343
+11582,1262
+" style="stroke:#9f9f9f;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="8644,859
+8487,1175
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="7807,2209
+8082,2389
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9245,1909
+9182,2209
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9695,2855
+9845,2855
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="8494,3038
+8312,3085
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9213,115
+9300,297
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9853,597
+10075,873
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="8004,257
+8004,297
+8004,335
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="7261,1687
+7300,1702
+7325,1743
+7364,1759
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="8272,946
+8509,881
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9282,2135
+9632,2145
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="11173,2928
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10169,1379
+10367,1402
+" style="stroke:#9f9f9f;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="1335" y="377" width="690" height="208" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+fill:#ffffff;
+"/>
+<!-- Line: box -->
+<rect x="2097" y="1471" width="703" height="209" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+fill:#ffffff;
+"/>
+<!-- Line: box -->
+<rect x="4241" y="1275" width="707" height="195" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+fill:#ffffff;
+"/>
+<!-- Line: box -->
+<rect x="3247" y="1727" width="690" height="207" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+fill:#ffffff;
+"/>
+<!-- Line: box -->
+<rect x="10834" y="1213" width="762" height="239" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+fill:#ffffff;
+"/>
+<!-- Line: box -->
+<rect x="9901" y="1672" width="745" height="223" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+fill:#ffffff;
+"/>
+<!-- Line: box -->
+<rect x="8578" y="427" width="697" height="223" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+fill:#ffffff;
+"/>
+<!-- Text -->
+<text xml:space="preserve" x="1363" y="551" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">#ff0000</text>
+<!-- Text -->
+<text xml:space="preserve" x="2124" y="1649" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">#00ff00</text>
+<!-- Text -->
+<text xml:space="preserve" x="4258" y="1449" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">#82a0ff</text>
+<!-- Text -->
+<text xml:space="preserve" x="3272" y="1901" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">#ff0000</text>
+<!-- Text -->
+<text xml:space="preserve" x="10858" y="1406" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">#82a0ff</text>
+<!-- Text -->
+<text xml:space="preserve" x="9932" y="1857" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">#00ff00</text>
+<!-- Text -->
+<text xml:space="preserve" x="8601" y="613" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">#ff0000</text>
+<!-- Line -->
+<polyline points="10007,848
+10283,942
+" style="stroke:#0000ff;stroke-width:32;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9587,2222
+9866,2244
+" style="stroke:#0000ff;stroke-width:32;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10020,2596
+10253,2720
+" style="stroke:#0000ff;stroke-width:32;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10344,1475
+10579,1513
+" style="stroke:#0000ff;stroke-width:32;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+</g>
+</svg>

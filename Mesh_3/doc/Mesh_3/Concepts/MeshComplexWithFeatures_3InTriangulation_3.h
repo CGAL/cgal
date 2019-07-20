@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3Concepts
+\ingroup PkgMesh3Concepts
 \cgalConcept
 
 The concept `MeshComplexWithFeatures_3InTriangulation_3` describes a data structure 
@@ -16,7 +16,7 @@ faces of the triangulation,
 we call 
 respectively <I>subdomains</I>, 
 <I>surface patches</I> 
-<I>curve segments</I> and <I>corners</I> the faces 
+<I>curves</I> and <I>corners</I> the faces
 of the complex with respective dimensions \f$ 3\f$, \f$ 2\f$, \f$ 1\f$ and \f$ 0\f$. 
 The triangulations faces are called respectively 
 cells, facets, edges and vertices. 
@@ -24,9 +24,9 @@ cells, facets, edges and vertices.
 Each subdomain of the embedded 3D complex is a union of 
 triangulation cells. 
 Likewise, each surface patch is a union of 
-triangulation facets and each curve segment is a union of triangulation edges. 
+triangulation facets and each curve is a union of triangulation edges.
 The corners form a subset of the triangulation vertices. 
-Note that subdomains, surface patches and and curved segments are not 
+Note that subdomains, and surface patches are not
 necessarily connected. Likewise each corner may be related to several 
 mesh vertices. 
 Triangulation facets that belong to some 
@@ -35,7 +35,7 @@ surface patch are called surface facets.
 The concept `MeshComplexWithFeatures_3InTriangulation_3` allows us to mark and retrieve the 
 cells of the triangulation belonging to the subdomains, 
 the facets of the triangulation belonging to surface patches, 
-the edges belonging to curve segments and the vertices that are corners of the embedded complex. 
+the edges belonging to curves and the vertices that are corners of the embedded complex.
 
 Within the mesh generation functions, 
 the concept `MeshComplexWithFeatures_3InTriangulation_3` is the concept describing 
@@ -43,12 +43,12 @@ the data structure used to maintain the current approximation of the input domai
 At the end of the meshing process, the data structure encodes the resulting mesh. 
 In particular, each subdomain (resp. surface patch) of the input domain 
 is then approximated by a subdomain (resp. a surface patch) of the embedded complex 
-while the curve segments and corners represent the \f$ 1\f$ and \f$ 0\f$-dimensional features 
+while the curves and corners represent the \f$ 1\f$ and \f$ 0\f$-dimensional features
 of the input complex. 
 
 \cgalRefines `MeshComplex_3InTriangulation_3` 
 
-\cgalHasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>`
+\cgalHasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 
 \sa `MeshComplex_3InTriangulation_3` 
 \sa `MeshDomainWithFeatures_3` 
@@ -62,11 +62,11 @@ public:
 /// @{
 
 /*!
-A type for indexes of curve segment. The type must match the type 
-`MeshDomainWithFeatures_3::Curve_segment_index` 
+A type for indexes of curve. The type must match the type
+`MeshDomainWithFeatures_3::Curve_index`
 when the concept is used for mesh generation. 
 */ 
-typedef unspecified_type Curve_segment_index; 
+typedef unspecified_type Curve_index;
 
 /*!
 A type for indexes of corners. 
@@ -78,9 +78,9 @@ typedef unspecified_type Corner_index;
 
 /*!
 An iterator type to visit the edges 
-of the triangulation belonging to curve segments. 
+of the triangulation belonging to curves.
 */ 
-typedef unspecified_type Edges_in_complex_iterator; 
+typedef unspecified_type Edges_in_complex_iterator;
 
 /*!
 An iterator type to visit the vertices 
@@ -95,16 +95,16 @@ typedef unspecified_type Vertices_in_complex_iterator;
 
 /*!
 
-Adds edge `e` as an element of the curve segment with index `index`. 
+Adds edge `e` as an element of the curve with index `index`.
 */ 
-void add_to_complex(Edge e, const Curve_segment_index& index); 
+void add_to_complex(Edge e, const Curve_index& index);
 
 /*!
 
 Same as above with `e=(v1,v2)`. 
 */ 
 void add_to_complex(const Vertex_handle& v1, 
-const Vertex_handle& v2, const Curve_segment_index& index); 
+const Vertex_handle& v2, const Curve_index& index);
 
 /*!
 
@@ -139,15 +139,9 @@ void remove_from_complex(const Vertex_handle& v);
 
 /*!
 
-Returns the number of edges which belong to curve segments. 
+Returns the number of edges which belong to curves.
 */ 
 size_type number_of_edges() const; 
-
-/*!
-
-Returns the number of edges which belong to curve segment with index `index`. 
-*/ 
-size_type number_of_edges(Curve_segment_index index) const; 
 
 /*!
 
@@ -156,14 +150,8 @@ Returns the number of vertices which are corners of the complex.
 size_type number_of_corners() const; 
 
 /*!
-
-Returns the number of vertices which are corners of the complex with index `index`. 
-*/ 
-size_type number_of_corners(Corner_index index) const; 
-
-/*!
 Returns `true` 
-iff edge `e` belongs to some curve segment. 
+iff edge `e` belongs to some curve.
 */ 
 bool is_in_complex(const Edge& e) const; 
 
@@ -182,16 +170,16 @@ bool is_in_complex(const Vertex_handle& v) const;
 
 /*!
 
-Returns `Curve_segment_index` of edge `e`. The default `Curve_segment_index` 
-value is returned if edge `e` does not belong to any curve segment. 
+Returns `Curve_index` of edge `e`. The default `Curve_index`
+value is returned if edge `e` does not belong to any curve.
 */ 
-Curve_segment_index curve_segment_index(const Edge& e); 
+Curve_index curve_index(const Edge& e);
 
 /*!
 
 Same as above with `e=(v1,v2)`. 
 */ 
-Curve_segment_index curve_segment_index(const Vertex_handle& v1, const Vertex_handle& v2); 
+Curve_index curve_index(const Vertex_handle& v1, const Vertex_handle& v2);
 
 /*!
 
@@ -207,7 +195,7 @@ Corner_index corner_index(const Vertex_handle& v);
 
 /*!
 
-Returns an `Edges_in_complex_iterator` to visit the edges of the triangulation belonging to curve segments. 
+Returns an `Edges_in_complex_iterator` to visit the edges of the triangulation belonging to curves. 
 */ 
 Edges_in_complex_iterator edges_in_complex_begin() const; 
 
@@ -215,26 +203,26 @@ Edges_in_complex_iterator edges_in_complex_begin() const;
 
 Returns the past-the-end iterator for the above iterator. 
 */ 
-Edge_in_complex_iterator edges_in_complex_end() const; 
+Edges_in_complex_iterator edges_in_complex_end() const; 
 
 /*!
 
-Returns an `Edges_in_complex_iterator` to visit the edges of the triangulation belonging to curve segments 
+Returns an `Edges_in_complex_iterator` to visit the edges of the triangulation belonging to curves 
 of index `index`. 
 */ 
-Edges_in_complex_iterator edges_in_complex_begin(Curve_segment_index index) const; 
+Edges_in_complex_iterator edges_in_complex_begin(Curve_index index) const;
 
 /*!
 
 Returns the past-the-end iterator for the above iterator. 
 */ 
-Edge_in_complex_iterator edges_in_complex_end(Curve_segment_index index) const; 
+Edges_in_complex_iterator edges_in_complex_end(Curve_index index) const;
 
 /*!
 
 Fills `out` with the vertices of the triangulation that are adjacent to vertex `v` 
-through an edge belonging to some curve segment. 
-The value type of `out` must be `std::pair<Vertex_handle,Curve_segment_index>`. 
+through an edge belonging to some curve.
+The value type of `out` must be `std::pair<Vertex_handle,Curve_index>`.
 \pre `c3t3.in_dimension(v) < 2` 
 */ 
 template <typename OutputIterator> 

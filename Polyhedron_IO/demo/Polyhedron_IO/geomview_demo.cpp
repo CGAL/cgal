@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Lutz Kettner
@@ -46,7 +47,7 @@ int main() {
     Polyhedron P;
     P.make_tetrahedron( p,q,r,s);
     CGAL::Geomview_stream geo;
-    geo << CGAL::GREEN << P;
+    geo << CGAL::green() << P;
 
     // wait for a mouse click.
     Point click;

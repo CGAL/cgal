@@ -7,6 +7,7 @@ The concept `SurfaceMeshShortestPathTraits` describes the types,
 predicates, and constructions required by the traits class parameter of
 `CGAL::Surface_mesh_shortest_path`.
 
+\cgalRefines `CopyConstructible` and `Assignable`
 \cgalHasModel `CGAL::Surface_mesh_shortest_path_traits<K,P>`
 
 */
@@ -43,7 +44,7 @@ public:
   typedef unspecified_type Triangle_2;
 
   /// An ordered triple to specify barycentric coordinates in triangles.
-  typedef unspecified_type Barycentric_coordinate;
+  typedef unspecified_type Barycentric_coordinates;
 
   /// The 3-dimensional point type
   typedef unspecified_type Point_3;
@@ -247,31 +248,31 @@ public:
 
   /*!
   Function object type that provides
-  `Barycentric_coordinate operator()(FT a, FT b, FT c)`
-  to introduce a new triangular barycentric coordinate.
+  `Barycentric_coordinates operator()(FT a, FT b, FT c)`
+  to introduce new triangular barycentric coordinates.
   */
-  typedef unspecified_type Construct_barycentric_coordinate;
+  typedef unspecified_type Construct_barycentric_coordinates;
 
   /*!
   Function object type that provides
-  `FT operator(Barycentric_coordinate b, std::size_t i)`
-  to get the `i`th weight of barycentric coordinate `b`.
+  `FT operator(Barycentric_coordinates b, std::size_t i)`
+  to get the `i`th weight of barycentric coordinates `b`.
   */
-  typedef unspecified_type Construct_barycentric_coordinate_weight;
+  typedef unspecified_type Construct_barycentric_coordinates_weight;
 
   /*!
   Function object type that provides
-  `Barycentric_coordinate operator()(Triangle_2 t, Point_2 p)`
+  `Barycentric_coordinates operator()(Triangle_2 t, Point_2 p)`
   which computes the Barycentric location of `p` in `t`.
   */
-  typedef unspecified_type Construct_barycentric_coordinate_in_triangle_2;
+  typedef unspecified_type Construct_barycentric_coordinates_in_triangle_2;
 
   /*!
   Function object type that provides
-  `Barycentric_coordinate operator()(Triangle_3 t, Point_3 p)`
+  `Barycentric_coordinates operator()(Triangle_3 t, Point_3 p)`
   which computes the Barycentric location of `p` in `t`.
   */
-  typedef unspecified_type Construct_barycentric_coordinate_in_triangle_3;
+  typedef unspecified_type Construct_barycentric_coordinates_in_triangle_3;
 
 /// @}
 
@@ -280,17 +281,17 @@ public:
 
   /*!
   Function object type that provides
-  `std::pair<CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type,std::size_t> operator()(Barycentric_coordinate b)`,
-  which computes the classification and the associated edge (if applicable) of the coordinate `b`
-  \details Returns the pair (`type`, `i`), such that `type` is one of the values of `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type`
-  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX`, `i` is the index of that vertex
-  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDARY`, `i` is the index of the non-zero edge
+  `std::pair<CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type,std::size_t> operator()(Barycentric_coordinates b)`,
+  which computes the classification and the associated edge (if applicable) of the coordinates `b`
+  \details Returns the pair (`type`, `i`), such that `type` is one of the values of `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type`
+  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX`, `i` is the index of that vertex
+  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_BOUNDARY`, `i` is the index of the non-zero edge
     - 0 if (0,1) are the non-zero coordinates
     - 1 if (1,2) are the non-zero coordinates
     - 2 if (2,0) are the non-zero coordinates
   - Otherwise, the value of `i` is undefined.
   */
-  typedef unspecified_type Classify_barycentric_coordinate;
+  typedef unspecified_type Classify_barycentric_coordinates;
 
   /*!
   Function object type that provides
@@ -330,19 +331,11 @@ public:
 
 /// @}
 
-/// \name Creation
-/// @{
-  /*!
-  */
-  SurfaceMeshShortestPathTraits(SurfaceMeshShortestPathTraits& copy);
-
-/// @}
-
 /// \name Operations
 /// For all of the above predicate and construction types, e.g. `Func_obj_type`, a function must exist with the name `func_obj_type_object()` that creates an instance of the construction or predicate object type.
 /// For example:
 /// @{
-
+  /// returns the point construction functor.
   Construct_point_2 construct_point_2_object();
 
 /// @}

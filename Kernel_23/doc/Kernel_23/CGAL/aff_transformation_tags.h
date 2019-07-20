@@ -18,8 +18,6 @@ Tag class for affine transformations.
 class Identity_transformation {
 public:
 
-/// @}
-
 }; /* end Identity_transformation */
 } /* end namespace CGAL */
 
@@ -41,8 +39,6 @@ Tag class for affine transformations.
 
 class Reflection {
 public:
-
-/// @}
 
 }; /* end Reflection */
 } /* end namespace CGAL */
@@ -66,8 +62,6 @@ Tag class for affine transformations.
 class Rotation {
 public:
 
-/// @}
-
 }; /* end Rotation */
 } /* end namespace CGAL */
 
@@ -90,8 +84,6 @@ Tag class for affine transformations.
 class Scaling {
 public:
 
-/// @}
-
 }; /* end Scaling */
 } /* end namespace CGAL */
 
@@ -113,8 +105,6 @@ Tag class for affine transformations.
 
 class Translation {
 public:
-
-/// @}
 
 }; /* end Translation */
 } /* end namespace CGAL */

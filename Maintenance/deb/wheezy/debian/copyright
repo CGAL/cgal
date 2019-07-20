@@ -1,7 +1,7 @@
 This package was debianized by Joachim Reichel <reichel@debian.org> on
 Thu, 29 Apr 2004 18:43:18 +0200.
 
-It was downloaded from http://www.cgal.org/download/index.html.
+It was downloaded from https://www.cgal.org/download/index.html.
 
 The Debian packaging is Copyright (c) 2004, 2005, 2006, 2007, 2008, 2009,
 2010, 2011, 2012 Joachim Reichel <reichel@debian.org> and is licensed
@@ -176,7 +176,7 @@ Copyright (from upstream file LICENSE)
    exact license text can be found in the file LICENSE.FREE_USE.
 
    More information on the CGAL license can be found at
-   http://www.cgal.org/license.html
+   https://www.cgal.org/license.html
 
 
 

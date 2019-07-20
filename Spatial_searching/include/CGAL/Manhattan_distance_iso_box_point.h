@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -22,9 +23,13 @@
 #ifndef CGAL_MANHATTAN_DISTANCE_ISO_BOX_POINT_H
 #define CGAL_MANHATTAN_DISTANCE_ISO_BOX_POINT_H
 
+#include <CGAL/license/Spatial_searching.h>
+
+
 #include <CGAL/result_of.h>
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/internal/Get_dimension_tag.h>
+#include <vector>
 
 namespace CGAL {
 

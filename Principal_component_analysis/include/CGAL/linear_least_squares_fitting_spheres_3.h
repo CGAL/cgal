@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez and Sylvain Pion and Ankit Gupta
 
 #ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_SPHERES_3_H
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_SPHERES_3_H
+
+#include <CGAL/license/Principal_component_analysis.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>
@@ -54,7 +58,7 @@ linear_least_squares_fitting_3(InputIterator first,
 
   // assemble covariance matrix
   typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0., 0., 0., 0. }};
-  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag, diagonalize_traits);
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) nullptr,tag, diagonalize_traits);
   
   // compute fitting plane
   return fitting_plane_3(covariance,c,plane,k,diagonalize_traits);
@@ -85,7 +89,7 @@ linear_least_squares_fitting_3(InputIterator first,
 
   // assemble covariance matrix
   typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0., 0., 0., 0. }};
-  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag, diagonalize_traits);
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) nullptr,tag, diagonalize_traits);
   
   // compute fitting plane
   return fitting_plane_3(covariance,c,plane,k,diagonalize_traits);
@@ -117,7 +121,7 @@ linear_least_squares_fitting_3(InputIterator first,
   
   // assemble covariance matrix
   typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0., 0., 0., 0. }};
-  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag, diagonalize_traits);
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) nullptr,tag, diagonalize_traits);
 
 
   // compute fitting line
@@ -149,7 +153,7 @@ linear_least_squares_fitting_3(InputIterator first,
   
   // assemble covariance matrix
   typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0., 0., 0., 0. }};
-  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag, diagonalize_traits);
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) nullptr,tag, diagonalize_traits);
 
   // compute fitting line
   return fitting_line_3(covariance,c,line,k,diagonalize_traits);

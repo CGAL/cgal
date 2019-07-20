@@ -7,7 +7,7 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 
 
 typedef CGAL::Simple_cartesian<double> Kernel;

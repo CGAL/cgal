@@ -174,7 +174,7 @@ the following properties:
 \note The current implementation executes fine on meshes that do not match
 some of these properties but may produce unreliable or meaningless segmentations.
 
-The current implementation of the computation of the SDF values relies on the \ref PkgAABB_treeSummary package.
+The current implementation of the computation of the SDF values relies on the \ref PkgAABBTree package.
 This operation is reliable when the `AABBTraits` model provided has exact predicates.
 `::CGAL::Exact_predicates_inexact_constructions_kernel` is recommended as geometric traits for this algorithm.
 
@@ -199,6 +199,18 @@ a polyhedron type with a facet type storing an extra ID field, together with a v
 The main advantage is to decrease from log to constant the complexity for accessing the data associated to facets.
 
 \cgalExample{Surface_mesh_segmentation/segmentation_with_facet_ids_example.cpp}
+
+
+\subsection Surface_mesh_segmentationUsingSM Using a Surface_mesh
+When using a `Surface_mesh`, you can use the built-in property mechanism. 
+
+\cgalExample{Surface_mesh_segmentation/segmentation_from_sdf_values_SM_example.cpp}
+
+\subsection Surface_mesh_segmentationIndependentmeshpersegment Independent TriangleMesh per Segment
+ It is possible to consider each segment as an independent triangle mesh, like in the following example, where the area of each segment is computed.
+
+\cgalExample{Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp}
+
 <BR>
 \section Performances Performances
 <!-- \subsection SMSRuntime Runtime of the functions sdf_values() and segmentation_from_sdf_values() -->
@@ -268,7 +280,7 @@ A comparison with biased and uniform sampling of points can be seen in \cgalFigu
 The mesh segmentation problem being ill-posed, the mesh segmentation community have proposed some benchmarks to evaluate the
 quality of a given algorithm. A benchmark is composed of a set of models and a software responsible for scoring
 the results. On a particular benchmark \cite Chen2009SegmentationBenchmark, the current implementation obtains the
-score of XXX. The code used in the benchmark is provided as an exemple XXX.
+score of XXX. The code used in the benchmark is provided as an example XXX.
 \todo Add the score and the source code used for the benchmark
 -->
 

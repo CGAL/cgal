@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_NEF_K3_TREE_H
 #define CGAL_NEF_K3_TREE_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
@@ -585,7 +589,7 @@ else {
       
 inline 
 const Node* get_child_by_side( const Node* node, Oriented_side side) {
-  CGAL_assertion( node != NULL);
+  CGAL_assertion( node != nullptr);
   CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
   if( side == ON_NEGATIVE_SIDE) {
     return node->left();
@@ -752,7 +756,7 @@ class Objects_around_box {
       
     inline 
     const Node* get_child_by_side( const Node* node, Oriented_side side) {
-      CGAL_assertion( node != NULL);
+      CGAL_assertion( node != nullptr);
       CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
       if( side == ON_NEGATIVE_SIDE) {
 	return node->left();
@@ -783,7 +787,7 @@ public:
     typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator;
     typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator;
 
-    CGAL_assertion( W != NULL);
+    CGAL_assertion( W != nullptr);
     Object_list objects;
     Vertex_iterator v;
     Halfedge_iterator e;
@@ -1167,7 +1171,6 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
     CGAL_NEF_TRACEN("build_kdtree: splitting plane not found");
     //    if(depth > max_depth)
     return new Node( parent, 0, 0, Plane_3(), O);
-    non_efective_split = true;
   } else {
     CGAL_NEF_TRACEN("Sizes " << O1.size() << ", " << O2.size() << ", " << O.size());
     CGAL_assertion( O1.size() <= O.size() && O2.size() <= O.size());

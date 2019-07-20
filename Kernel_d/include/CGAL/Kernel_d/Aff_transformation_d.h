@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -25,6 +26,9 @@
 #define CGAL_AFF_TRANSFORMATION_D_H
 
 #include <CGAL/Dimension.h>
+#include <CGAL/Kernel_d/Vector_d.h>
+#include <CGAL/Kernel_d/Direction_d.h>
+#include <CGAL/aff_transformation_tags.h>
 
 namespace CGAL {
 

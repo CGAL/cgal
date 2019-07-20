@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -26,9 +27,9 @@
 namespace CGAL {
 
   /*!
-    \ingroup PkgStlExtension
+    \ingroup PkgSTLExtensionRef
     `CGAL::Iterator_range` encapsulates two iterators so they fulfill the `ForwardRange` concept. 
-    The class is essentially a clone of <A href="http://www.boost.org/doc/libs/1_55_0/libs/range/doc/html/range/reference/utilities/iterator_range.html">`boost::iterator_range`</A>,
+    The class is essentially a clone of <A href="https://www.boost.org/doc/libs/1_55_0/libs/range/doc/html/range/reference/utilities/iterator_range.html">`boost::iterator_range`</A>,
     and it additionally is derived from `std::pair`, so that one can apply `boost::tie`.
   */
   template <typename I>
@@ -62,10 +63,10 @@ namespace CGAL {
   }
 
   /// returns `std::distance(begin(), end())`
-  typename std::iterator_traits<I>::difference_type
+  std::size_t
   size() const
   {
-    return std::distance(begin(), end());
+    return static_cast<std::size_t>(std::distance(begin(), end()));
   }
 };
 
@@ -101,6 +102,8 @@ namespace CGAL {
   }  
 } // namespace CGAL
 
+#ifndef DOXYGEN_RUNNING
+
 namespace boost {
   
   template <typename X> 
@@ -130,5 +133,8 @@ namespace boost {
   {
     typedef T type;
   };
-}
+} // namespace boost
+
+#endif // DOXYGEN_RUNNING
+
 #endif // CGAL_ITERATOR_RANGE_H

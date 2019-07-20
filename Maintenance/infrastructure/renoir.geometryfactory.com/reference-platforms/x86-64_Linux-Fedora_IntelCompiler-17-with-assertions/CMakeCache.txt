@@ -127,7 +127,7 @@ CMAKE_BUILD_TYPE:STRING=Release
 CMAKE_COLOR_MAKEFILE:BOOL=ON
 
 //CXX compiler
-CMAKE_CXX_COMPILER:FILEPATH=/opt/intel/compilers_and_libraries_2017.0.042/linux/bin/intel64/icpc
+CMAKE_CXX_COMPILER:FILEPATH=/opt/intel/compilers_and_libraries_2017/linux/bin/intel64/icpc
 
 //User-defined flags
 CMAKE_CXX_FLAGS:STRING=-w1 -DDONT_USE_BOOST_PROGRAM_OPTIONS -fp-model strict
@@ -146,7 +146,7 @@ CMAKE_CXX_FLAGS_RELEASE:STRING=-O3
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
 //C compiler
-CMAKE_C_COMPILER:FILEPATH=/opt/intel/compilers_and_libraries_2017.0.042/linux/bin/intel64/icc
+CMAKE_C_COMPILER:FILEPATH=/opt/intel/compilers_and_libraries_2017/linux/bin/intel64/icc
 
 //Flags used by the compiler during all build types.
 CMAKE_C_FLAGS:STRING=
@@ -440,7 +440,7 @@ WITH_examples:BOOL=OFF
 WITH_tests:BOOL=OFF
 
 //Path to a program.
-XIAR:FILEPATH=/opt/intel/compilers_and_libraries_2017.0.042/linux/bin/intel64/xiar
+XIAR:FILEPATH=/opt/intel/compilers_and_libraries_2017/linux/bin/intel64/xiar
 
 //Path to a file.
 ZLIB_INCLUDE_DIR:PATH=/usr/include

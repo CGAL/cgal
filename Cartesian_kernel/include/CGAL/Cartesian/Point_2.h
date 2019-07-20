@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
@@ -34,7 +35,7 @@ class PointC2
 {
   typedef PointC2<R_>                       Self;
   typedef typename R_::FT                   FT;
-// http://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
+// https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
   typedef typename R_::Vector_2             Vector_2_;
   typedef typename R_::Point_2              Point_2;
 

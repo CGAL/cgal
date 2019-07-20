@@ -3,11 +3,11 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplification
+\ingroup PkgSurfaceMeshSimplificationRef
 
 The class `Edge_profile` provides a model for the `EdgeProfile` concept. 
 
-\tparam ECM is the type of surface mesh being simplified, and must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
+\tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 \cgalModels `EdgeProfile`
 
@@ -15,11 +15,9 @@ The class `Edge_profile` provides a model for the `EdgeProfile` concept.
 \sa `GetPlacement` 
 
 */
-template< typename ECM >
+template< typename TriangleMesh >
 class Edge_profile {
 public:
-
-/// @}
 
 }; /* end Surface_mesh_simplification::Edge_profile */
 } /* namespace Surface_mesh_simplification */

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU, Clement JAMIN
@@ -21,12 +22,17 @@
 #ifndef CGAL_MESH_3_MESHER_LEVEL_H
 #define CGAL_MESH_3_MESHER_LEVEL_H
 
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <string>
 
 #ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
+#include <CGAL/atomic.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
@@ -38,7 +44,6 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/task.h>
-# include <tbb/tbb.h>
 #endif
 
 #include <string>
@@ -145,6 +150,8 @@ public:
   typedef Tr Triangulation;
   /** Type of point that are inserted into the triangulation. */
   typedef typename Triangulation::Point Point;
+  /** Type of point with no weight */
+  typedef typename Triangulation::Bare_point Bare_point;
   /** Type of vertex handles that are returns by insertions into the
       triangulation. */
   typedef typename Triangulation::Vertex_handle Vertex_handle;
@@ -285,7 +292,7 @@ public:
     derived().pop_next_element_impl();
   }
 
-  Point circumcenter_of_element(const Element& e)
+  Bare_point circumcenter_of_element(const Element& e)
   {
     return derived().circumcenter_impl(e);
   }
@@ -305,7 +312,7 @@ public:
   }
 
   /** Gives the point that should be inserted to refine the element \c e */
-  Point refinement_point(const Element& e)
+  Bare_point refinement_point(const Element& e)
   {
     return derived().refinement_point_impl(e);
   }
@@ -419,7 +426,7 @@ public:
     for (int i = 0 ; i < 4 ; ++i)
       vertices[i] = e->vertex(i);
   }
-  // Among the 4 values, one of them will be Vertex_handle() (~= NULL)
+  // Among the 4 values, one of them will be Vertex_handle() (~= nullptr)
   void get_valid_vertices_of_element(const Facet &e, Vertex_handle vertices[4]) const
   {
     for (int i = 0 ; i < 4 ; ++i)
@@ -559,7 +566,9 @@ public:
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
-    const Point& p = this->refinement_point(e);
+    const Tr& tr = derived().triangulation_ref_impl();
+    const Point& p = tr.geom_traits().construct_weighted_point_3_object()(
+                       this->refinement_point(e));
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<
@@ -676,6 +685,9 @@ public:
   // Useless here
   void set_lock_ds(Lock_data_structure *) {}
   void set_worksharing_ds(WorksharingDataStructureType *) {}
+#ifndef CGAL_NO_ATOMIC
+  void set_stop_pointer(CGAL::cpp11::atomic<bool>*) {}
+#endif
 
 protected:
 };
@@ -746,6 +758,9 @@ public:
     , m_lock_ds(0)
     , m_worksharing_ds(0)
     , m_empty_root_task(0)
+#ifndef CGAL_NO_ATOMIC
+    , m_stop_ptr(0)
+#endif
   {
   }
 
@@ -828,7 +843,7 @@ public:
       previous_level.refine(visitor.previous_level());
       if(! no_longer_element_to_refine() )
       {
-        process_a_batch_of_elements(visitor);
+        refine_mesh_in_parallel(visitor);
       }
     }
   }
@@ -844,7 +859,7 @@ public:
   {
 
     CGAL_assertion_msg(triangulation().get_lock_data_structure() == 0,
-      "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be NULL");
+      "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be nullptr");
 
     while(! is_algorithm_done()
       && triangulation().number_of_vertices() < approx_max_num_mesh_vertices)
@@ -888,7 +903,7 @@ public:
     * it in parallel.
     */
   template <class Mesh_visitor>
-  void process_a_batch_of_elements(Mesh_visitor visitor)
+  void refine_mesh_in_parallel(Mesh_visitor visitor)
   {
     typedef typename Derived::Container::value_type Container_quality_and_element;
 
@@ -943,7 +958,9 @@ public:
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
-    const Point& p = this->refinement_point(e);
+    const Tr& tr = derived().triangulation_ref_impl();
+    const Point& p = tr.geom_traits().construct_weighted_point_3_object()(
+      this->refinement_point(e));
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<
@@ -1031,6 +1048,11 @@ public:
     {
       // Lock the element area on the grid
       Element element = derivd.extract_element_from_container_value(ce);
+
+      // This is safe to do with the concurrent compact container because even if the element `ce`
+      // gets removed from the TDS at this point, it is not actually deleted in the cells container and
+      // `ce->vertex(0-3)` still points to a vertex of the vertices container whose `.point()`
+      // can be safely accessed (even if that vertex has itself also been removed from the TDS).
       bool locked = derivd.try_lock_element(element, FIRST_GRID_LOCK_RADIUS);
 
       if( locked )
@@ -1110,6 +1132,8 @@ public:
    * Applies one step of the algorithm: tries to refine one element of
    * previous level or one element of this level. Return \c false iff
    * <tt> is_algorithm_done()==true </tt>.
+   * Note that when parallelism is activated, this is not "one step"
+   * but the full refinement.
    */
   template <class Mesh_visitor>
   bool one_step(Mesh_visitor visitor)
@@ -1118,7 +1142,7 @@ public:
       previous_level.one_step(visitor.previous_level());
     else if( ! no_longer_element_to_refine() )
     {
-      process_a_batch_of_elements(visitor);
+      refine_mesh_in_parallel(visitor);
     }
     return ! is_algorithm_done();
   }
@@ -1133,6 +1157,26 @@ public:
     m_worksharing_ds = p;
   }
 
+#ifndef CGAL_NO_ATOMIC
+  void set_stop_pointer(CGAL::cpp11::atomic<bool>* stop_ptr)
+  {
+    m_stop_ptr = stop_ptr;
+  }
+#endif
+
+  bool forced_stop() const {
+#ifndef CGAL_NO_ATOMIC
+    if(m_stop_ptr != 0 &&
+       m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+    {
+      CGAL_assertion(m_empty_root_task != 0);
+      m_empty_root_task->cancel_group_execution();
+      return true;
+    }
+#endif // not defined CGAL_NO_ATOMIC
+    return false;
+  }
+
 protected:
 
   // Member variables
@@ -1143,6 +1187,9 @@ protected:
   WorksharingDataStructureType *m_worksharing_ds;
 
   tbb::task *m_empty_root_task;
+#ifndef CGAL_NO_ATOMIC
+  CGAL::cpp11::atomic<bool>* m_stop_ptr;
+#endif
 
 private:
 
@@ -1177,6 +1224,10 @@ private:
       Mesher_level_conflict_status status;
       do
       {
+        if(m_mesher_level.forced_stop()) {
+          return;
+        }
+
         status = m_mesher_level.try_lock_and_refine_element(m_container_element, 
                                                             m_visitor);
       }
@@ -1210,5 +1261,7 @@ private:
 
 #include <CGAL/Mesher_level_visitors.h>
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_MESHER_LEVEL_H

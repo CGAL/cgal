@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -135,7 +136,7 @@ PointLocationCallback< Arr_ >::
 reset( )
 {
   this->highlightedCurves->clear( );
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >
@@ -158,7 +159,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
   typename Traits::Left_side_category category;
   this->highlightPointLocation( event, category );
 
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >

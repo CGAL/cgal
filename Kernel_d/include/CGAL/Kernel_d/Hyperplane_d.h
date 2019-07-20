@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel
@@ -26,6 +27,9 @@
 #define CGAL_HYPERPLANE_D_H
 
 #include <CGAL/Dimension.h>
+#include <CGAL/Kernel_d/Point_d.h>
+#include <CGAL/Kernel_d/Direction_d.h>
+#include <CGAL/enum.h>
 
 namespace CGAL {
 
@@ -55,7 +59,6 @@ public:
   Hyperplane_d(const Point_d<R>& p, const Direction_d<R>& dir) :
     Base(p,dir) {}
 
-  Hyperplane_d(const Hyperplane_d<R> &h) : Base(h) {}
   Hyperplane_d(const Base& p) : Base(p) {}
 
   template <class InputIterator>

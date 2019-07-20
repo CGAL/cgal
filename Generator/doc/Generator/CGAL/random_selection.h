@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
+\ingroup PkgGeneratorsRef
 \brief chooses `n` items at random from a random 
 access iterator range which is useful to produce degenerate input data 
 sets with multiple entries of identical items. 
@@ -22,6 +22,6 @@ template <class RandomAccessIterator, class Size,
 class OutputIterator, class Random>
 OutputIterator random_selection( RandomAccessIterator first,
 RandomAccessIterator last, 
-Size n, OutputIterator result, Random& rnd = default_random);
+Size n, OutputIterator result, Random& rnd = get_default_random());
 
 } /* namespace CGAL */

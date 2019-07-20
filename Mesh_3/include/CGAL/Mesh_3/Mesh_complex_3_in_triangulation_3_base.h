@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau, Stéphane Tayeb
@@ -26,6 +27,10 @@
 #ifndef CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H
 #define CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H
 
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Mesh_3/utilities.h>
@@ -33,13 +38,44 @@
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/File_maya.h>
 #include <CGAL/Bbox_3.h>
-#include <iostream>
-#include <fstream>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+
+#include <boost/functional/hash.hpp>
+#include <boost/unordered_map.hpp>
+
+#include <iostream>
+#include <fstream>
+
 
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/atomic.h>
+  #include <tbb/concurrent_hash_map.h>
+
+namespace CGAL {
+  template < class DSC, bool Const >
+  std::size_t tbb_hasher(const CGAL::internal::CC_iterator<DSC, Const>& it)
+  {
+    return CGAL::internal::hash_value(it);
+  }
+
+
+  // As Marc Glisse pointed out the TBB hash of a std::pair is
+  // simplistic and leads to the
+  // TBB Warning: Performance is not optimal because the hash function
+  //              produces bad randomness in lower bits in class
+  //              tbb::interface5::concurrent_hash_map
+  template < class DSC, bool Const >
+  std::size_t tbb_hasher(const std::pair<CGAL::internal::CC_iterator<DSC, Const>,
+                                         CGAL::internal::CC_iterator<DSC, Const> >& p)
+  {
+    return boost::hash<std::pair<CGAL::internal::CC_iterator<DSC, Const>,
+                                 CGAL::internal::CC_iterator<DSC, Const> > >()(p);
+  }
+
+
+}
 #endif
 
 namespace CGAL {
@@ -106,6 +142,8 @@ public:
   typedef typename Tr::Edge             Edge;
   typedef typename Tr::size_type        size_type;
 
+  typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
+
   // Indices types
   typedef typename Tr::Cell::Subdomain_index      Subdomain_index;
   typedef typename Tr::Cell::Surface_patch_index  Surface_patch_index;
@@ -167,9 +205,8 @@ public:
   void clear() {
     number_of_cells_ = 0;
     number_of_facets_ = 0;
+    clear_manifold_info();
     tr_.clear();
-    manifold_info_initialized_ = false;
-    edge_facet_counter_.clear();
   }
 
   /// Assignment operator
@@ -231,7 +268,11 @@ public:
     //test incident edges for REGULARITY and count BOUNDARY edges
     typename std::vector<Edge> edges;
     edges.reserve(64);
-    tr_.incident_edges(v, std::back_inserter(edges));
+    if(tr_.is_parallel()) {
+      tr_.incident_edges_threadsafe(v, std::back_inserter(edges));
+    } else {
+      tr_.incident_edges(v, std::back_inserter(edges));
+    }
     int number_of_boundary_incident_edges = 0; // could be a bool
     for (typename std::vector<Edge>::iterator
            eit=edges.begin(), end = edges.end();
@@ -244,7 +285,7 @@ public:
       default :
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         std::cerr << "singular edge...\n";
-        std::cerr << v->point() << std::endl;
+        std::cerr << tr_.point(v) << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         return SINGULAR;
       }
@@ -255,13 +296,13 @@ public:
     if(nb_components > 1) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       std::cerr << "singular vertex: nb_components=" << nb_components << std::endl;
-      std::cerr << v->point() << std::endl;
+      std::cerr << tr_.point(v) << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       return SINGULAR;
     }
     else { // REGULAR OR BOUNDARY
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-      std::cerr << "regular or boundary: " << v->point() << std::endl;
+      std::cerr << "regular or boundary: " << tr_.point(v) << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       if (number_of_boundary_incident_edges != 0)
         return BOUNDARY;
@@ -282,7 +323,15 @@ public:
   {
     if(!manifold_info_initialized_) init_manifold_info();
 
+#ifdef CGAL_LINKED_WITH_TBB
+    typename Edge_facet_counter::const_accessor accessor;
+    if(!edge_facet_counter_.find(accessor,
+				 this->make_ordered_pair(edge)))
+      return NOT_IN_COMPLEX;
+    switch(accessor->second)
+#else // not CGAL_LINKED_WITH_TBB
     switch(edge_facet_counter_[this->make_ordered_pair(edge)])
+#endif // not CGAL_LINKED_WITH_TBB
     {
     case 0: return NOT_IN_COMPLEX;
     case 1: return BOUNDARY;
@@ -424,9 +473,12 @@ public:
   template <typename InputIterator>
   void insert_surface_points(InputIterator first, InputIterator last)
   {
+    typename Tr::Geom_traits::Construct_weighted_point_3 cwp =
+      tr_.geom_traits().construct_weighted_point_3_object();
+
     while ( first != last )
     {
-      Vertex_handle vertex = tr_.insert((*first).first);
+      Vertex_handle vertex = tr_.insert(cwp((*first).first));
       vertex->set_index((*first).second);
       vertex->set_dimension(2);
       ++first;
@@ -447,9 +499,12 @@ public:
                              InputIterator last,
                              const Index& default_index)
   {
+    typename Tr::Geom_traits::Construct_weighted_point_3 cwp =
+      tr_.geom_traits().construct_weighted_point_3_object();
+
     while ( first != last )
     {
-      Vertex_handle vertex = tr_.insert(*first);
+      Vertex_handle vertex = tr_.insert(cwp(*first));
       vertex->set_index(default_index);
       vertex->set_dimension(2);
       ++first;
@@ -467,6 +522,29 @@ public:
   /// Returns bbox
   Bbox_3 bbox() const;
 
+  void clear_cells_and_facets_from_c3t3() {
+    for(typename Tr::Finite_cells_iterator
+          cit = this->triangulation().finite_cells_begin(),
+          end = this->triangulation().finite_cells_end();
+        cit != end; ++cit)
+    {
+      set_subdomain_index(cit, Subdomain_index());
+    }
+    this->number_of_cells_ = 0;
+    for(typename Tr::Finite_facets_iterator
+          fit = this->triangulation().finite_facets_begin(),
+          end = this->triangulation().finite_facets_end();
+        fit != end; ++fit)
+    {
+      Facet facet = *fit;
+      Facet mirror = tr_.mirror_facet(facet);
+      set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
+      set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
+    }
+    this->number_of_facets_ = 0;
+    clear_manifold_info();
+  }
+
   void clear_manifold_info() {
     edge_facet_counter_.clear();
     manifold_info_initialized_ = false;
@@ -479,7 +557,7 @@ private:
           end = triangulation().finite_vertices_end();
         vit != end; ++vit)
     {
-      vit->set_c2t3_cache(0, -1);
+      vit->set_c2t3_cache(0, (std::numeric_limits<size_type>::max)());
     }
 
     edge_facet_counter_.clear();
@@ -498,10 +576,19 @@ private:
           const int edge_index_vb = tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
           const Vertex_handle edge_va = cell->vertex(edge_index_va);
           const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
+#ifndef CGAL_LINKED_WITH_TBB
           ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+#else // CGAL_LINKED_WITH_TBB
+	  {
+	    typename Edge_facet_counter::accessor accessor;
+	    edge_facet_counter_.insert(accessor,
+				       this->make_ordered_pair(edge_va, edge_vb));
+	    ++accessor->second;
+	  }
+#endif // CGAL_LINKED_WITH_TBB
 
           const std::size_t n = edge_va->cached_number_of_incident_facets();
-          edge_va->set_c2t3_cache(n+1, -1);
+          edge_va->set_c2t3_cache(n+1, (std::numeric_limits<size_type>::max)());
         }
       }
     }
@@ -515,13 +602,17 @@ private:
     if( v->is_c2t3_cache_valid() )
     {
       const std::size_t n = v->cached_number_of_components();
-      if(n != std::size_t(-1)) return n;
+      if(n != (std::numeric_limits<size_type>::max)()) return n;
     }
 
     Union_find<Facet> facets;
     { // fill the union find
       std::vector<Facet> non_filtered_facets;
-      tr_.incident_facets(v, std::back_inserter(non_filtered_facets));
+      if(tr_.is_parallel()) {
+	tr_.incident_facets_threadsafe(v, std::back_inserter(non_filtered_facets));
+      } else {
+	tr_.incident_facets(v, std::back_inserter(non_filtered_facets));
+      }
 
       for(typename std::vector<Facet>::iterator
             fit = non_filtered_facets.begin(),
@@ -532,8 +623,9 @@ private:
       }
     }
 
-    typedef std::map<Vertex_handle,
-                     typename Union_find<Facet>::handle> Vertex_set_map;
+    typedef boost::unordered_map<Vertex_handle,
+                                 typename Union_find<Facet>::handle,
+                                 Hash_fct>    Vertex_set_map;
     typedef typename Vertex_set_map::iterator Vertex_set_map_iterator;
 
     Vertex_set_map vsmap;
@@ -778,7 +870,11 @@ private:
   Triangulation tr_;
 
   typedef typename Base::Pair_of_vertices Pair_of_vertices;
+#ifdef CGAL_LINKED_WITH_TBB
+  typedef tbb::concurrent_hash_map<Pair_of_vertices, int> Edge_facet_counter;
+#else // not CGAL_LINKED_WITH_TBB
   typedef std::map<Pair_of_vertices, int> Edge_facet_counter;
+#endif // not CGAL_LINKED_WITH_TBB
 
   mutable Edge_facet_counter edge_facet_counter_;
 
@@ -811,7 +907,16 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::add_to_complex(
         int edge_index_vb = tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
         Vertex_handle edge_va = cell->vertex(edge_index_va);
         Vertex_handle edge_vb = cell->vertex(edge_index_vb);
+#ifdef CGAL_LINKED_WITH_TBB
+	{
+	  typename Edge_facet_counter::accessor accessor;
+	  edge_facet_counter_.insert(accessor,
+				     this->make_ordered_pair(edge_va, edge_vb));
+	  ++accessor->second;
+	}
+#else // not CGAL_LINKED_WITH_TBB
         ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+#endif // not CGAL_LINKED_WITH_TBB
 
         const std::size_t n = edge_va->cached_number_of_incident_facets();
         const std::size_t m = edge_va->cached_number_of_components();
@@ -823,7 +928,7 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::add_to_complex(
         if (j != i) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           if(cell->vertex(j)->is_c2t3_cache_valid())
-            std::cerr << "(" << cell->vertex(j)->point() << ")->invalidate_c2t3_cache()\n";
+            std::cerr << "(" << tr_.point(cell, j) << ")->invalidate_c2t3_cache()\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           cell->vertex(j)->invalidate_c2t3_cache();
         }
@@ -852,7 +957,16 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::remove_from_complex(const Facet& 
         const int edge_index_vb = tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
         const Vertex_handle edge_va = cell->vertex(edge_index_va);
         const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
+#ifdef CGAL_LINKED_WITH_TBB
+	{
+	  typename Edge_facet_counter::accessor accessor;
+	  edge_facet_counter_.insert(accessor,
+				     this->make_ordered_pair(edge_va, edge_vb));
+	  --accessor->second;
+	}
+#else // not CGAL_LINKED_WITH_TBB
         --edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+#endif // not CGAL_LINKED_WITH_TBB
 
         const std::size_t n = edge_va->cached_number_of_incident_facets();
         CGAL_assertion(n>0);
@@ -865,7 +979,7 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::remove_from_complex(const Facet& 
         if (j != facet.second) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           if(cell->vertex(j)->is_c2t3_cache_valid())
-            std::cerr << "(" << cell->vertex(j)->point() << ")->invalidate_c2t3_cache()\n";
+            std::cerr << "(" << tr_.point(cell, j) << ")->invalidate_c2t3_cache()\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           cell->vertex(j)->invalidate_c2t3_cache();
         }
@@ -889,12 +1003,12 @@ bbox() const
   }
 
   typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
-  Bbox_3 result = (vit++)->point().bbox();
+  Bbox_3 result = tr_.point(vit++).bbox();
 
   for(typename Tr::Finite_vertices_iterator end = tr_.finite_vertices_end();
       vit != end ; ++vit)
   {
-    result = result + vit->point().bbox();
+    result = result + tr_.point(vit).bbox();
   }
 
   return result;
@@ -955,5 +1069,7 @@ rescan_after_load_of_triangulation() {
 
 }  // end namespace Mesh_3
 }  // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H

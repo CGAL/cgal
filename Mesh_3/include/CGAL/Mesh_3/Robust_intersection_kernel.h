@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: https://scm.gforge.inria.fr/svn/cgal/branches/features/Mesh_3-experimental-GF/Mesh_3/include/CGAL/Mesh_3/Robust_intersection_kernel.h $
-// $Id: Robust_intersection_kernel.h 67573 2012-02-02 14:54:51Z lrineau $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Stephane Tayeb
 //
@@ -24,6 +24,9 @@
 
 #ifndef CGAL_MESH_3_ROBUST_INTERSECTION_KERNEL_3_H
 #define CGAL_MESH_3_ROBUST_INTERSECTION_KERNEL_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

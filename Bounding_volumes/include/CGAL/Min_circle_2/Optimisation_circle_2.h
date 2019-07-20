@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
 #ifndef CGAL_OPTIMISATION_CIRCLE_2_H
 #define CGAL_OPTIMISATION_CIRCLE_2_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 // includes
 

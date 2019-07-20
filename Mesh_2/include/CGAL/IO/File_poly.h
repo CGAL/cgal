@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_FILE_POLY_H
 #define CGAL_FILE_POLY_H
+
+#include <CGAL/license/Mesh_2.h>
+
 
 namespace CGAL {
 

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -26,6 +27,7 @@
 #define CGAL_RANDOM_CONVEX_SET_TRAITS_2_H 1
 
 #include <CGAL/Point_2.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 
@@ -44,7 +46,7 @@ struct Random_convex_set_traits_2 : public Kernel {
   { return _origin; }
 
   struct Max_coordinate
-  : public std::unary_function< Point_2, FT >
+  : public CGAL::cpp98::unary_function< Point_2, FT >
   {
     FT
     operator()( const Point_2& p) const
@@ -54,7 +56,7 @@ struct Random_convex_set_traits_2 : public Kernel {
   };
 
   struct Sum
-  : public std::binary_function< Point_2, Point_2, Point_2 >
+  : public CGAL::cpp98::binary_function< Point_2, Point_2, Point_2 >
   {
     Point_2
     operator()( const Point_2& p, const Point_2& q) const
@@ -62,7 +64,7 @@ struct Random_convex_set_traits_2 : public Kernel {
   };
 
   struct Scale
-  : public std::binary_function< Point_2, FT, Point_2 >
+  : public CGAL::cpp98::binary_function< Point_2, FT, Point_2 >
   {
     Point_2
     operator()( const Point_2& p, const FT& k) const
@@ -70,7 +72,7 @@ struct Random_convex_set_traits_2 : public Kernel {
   };
 
   struct Angle_less
-  : public std::binary_function< Point_2, Point_2, bool >
+  : public CGAL::cpp98::binary_function< Point_2, Point_2, bool >
   {
     bool
     operator()( const Point_2& p, const Point_2& q) const

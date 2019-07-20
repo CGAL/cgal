@@ -1,3 +1,4 @@
+#include <QAction>
 #include <QApplication>
 #include <QMessageBox>
 #include <QMainWindow>
@@ -18,7 +19,7 @@ class Polyhedron_demo_features_detection_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   QAction* actionDetectFeatures;
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionDetectFeatures; }
@@ -26,6 +27,7 @@ public:
   {
     scene = scene_interface;
     actionDetectFeatures= new QAction(tr("VCM Features Estimation"), mainWindow);
+    actionDetectFeatures->setProperty("subMenuName","Point Set Processing");
     actionDetectFeatures->setObjectName("actionDetectFeatures");
     autoConnectActions();
   }
@@ -73,17 +75,16 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
     if(!dialog.exec())
       return;
 
-    typedef CGAL::cpp11::array<double,6> Covariance;
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    typedef std::array<double,6> Covariance;
     std::vector<Covariance> cov;
 
     std::cerr << "Compute VCM (offset_radius="
         << dialog.offsetRadius() << " and convolution radius=" << dialog.convolveRadius() << ")...\n";
 
     CGAL::Timer task_timer; task_timer.start();
-    CGAL::compute_vcm(points->begin(), points->end(),
-                      CGAL::make_identity_property_map(Point_set::value_type()),
-                      cov, dialog.offsetRadius(), dialog.convolveRadius(),
-                      Kernel());
+    CGAL::compute_vcm(*points, cov, dialog.offsetRadius(), dialog.convolveRadius(),
+                      points->parameters());
     task_timer.stop();
     std::cerr << "done: " << task_timer.time() << " seconds\n";
 
@@ -91,10 +92,10 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
     task_timer.reset(); task_timer.start();
     std::size_t i=0;
     std::cerr << "Select feature points (threshold=" << dialog.threshold() << ")...\n";
-    BOOST_FOREACH(const Point_set::value_type& p, *points)
+    for (Point_set::const_iterator it = points->begin(); it != points->end(); ++ it)
     {
       if (CGAL::vcm_is_on_feature_edge(cov[i], dialog.threshold()))
-          new_item->point_set()->push_back(p);
+        new_item->point_set()->insert(points->point(*it));
       ++i;
     }
     task_timer.stop();
@@ -109,6 +110,7 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
     }
     else
       delete new_item;
+    QApplication::restoreOverrideCursor();
   }
 
 }

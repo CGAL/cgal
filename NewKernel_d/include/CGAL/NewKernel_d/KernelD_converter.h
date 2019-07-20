@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Marc Glisse
 
@@ -80,7 +81,7 @@ class KernelD_converter_
 	typedef typename Get_type<K2,Tag_>::type K2_Obj;
 	typedef typename Get_functor<K1, Convert_ttag<Tag_> >::type K1_Conv;
 	typedef KO_converter<Tag_,K1,K2> KOC;
-	typedef CGAL_BOOSTD is_same<K1_Conv, Null_functor> no_converter;
+	typedef std::is_same<K1_Conv, Null_functor> no_converter;
 	typedef typename internal::Map_taglist_to_typelist<K1,Rest>::type::template contains<K1_Obj> duplicate;
 
 	// Disable the conversion in some cases:
@@ -97,11 +98,11 @@ class KernelD_converter_
 	//typedef typename KOC::argument_type K1_Obj;
 	//typedef typename KOC::result_type K2_Obj;
 	public:
-	using Base::operator(); // don't use directly, just make it accessible to the next level
-	K2_Obj helper(K1_Obj const& o,CGAL_BOOSTD true_type)const{
+  using Base::operator(); // don't use directly, just make it accessible to the next level
+	K2_Obj helper(K1_Obj const& o, std::true_type)const{
 		return KOC()(this->myself().kernel(),this->myself().kernel2(),this->myself(),o);
 	}
-	K2_Obj helper(K1_Obj const& o,CGAL_BOOSTD false_type)const{
+	K2_Obj helper(K1_Obj const& o, std::false_type)const{
 		return K1_Conv(this->myself().kernel())(this->myself().kernel2(),this->myself(),o);
 	}
 	K2_Obj operator()(argument_type const& o)const{

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 
@@ -21,6 +22,12 @@
 
 #ifndef CGAL_ENV_DEFAULT_DIAGRAM_1_H
 #define CGAL_ENV_DEFAULT_DIAGRAM_1_H
+
+#include <CGAL/license/Envelope_2.h>
+
+#define CGAL_DEPRECATED_HEADER "<CGAL/Env_default_diagram_1.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Envelope_diagram_1>"
+#include <CGAL/internal/deprecation_warning.h>
 
 #if (defined __GNUC__)
   #if !(defined __STRICT_ANSI__)

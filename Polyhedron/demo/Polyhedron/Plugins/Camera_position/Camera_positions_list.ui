@@ -43,7 +43,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="Polyhedron_3.qrc">
+         <iconset resource="../../Polyhedron_3.qrc">
           <normaloff>:/cgal/icons/plus</normaloff>:/cgal/icons/plus</iconset>
         </property>
        </widget>
@@ -54,7 +54,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="Polyhedron_3.qrc">
+         <iconset resource="../../Polyhedron_3.qrc">
           <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
         </property>
        </widget>
@@ -72,7 +72,7 @@
          <string>&amp;Up</string>
         </property>
         <property name="icon">
-         <iconset resource="Polyhedron_3.qrc">
+         <iconset resource="../../Polyhedron_3.qrc">
           <normaloff>:/cgal/icons/resources/up.png</normaloff>:/cgal/icons/resources/up.png</iconset>
         </property>
         <property name="shortcut">
@@ -86,7 +86,7 @@
          <string>&amp;Down</string>
         </property>
         <property name="icon">
-         <iconset resource="Polyhedron_3.qrc">
+         <iconset resource="../../Polyhedron_3.qrc">
           <normaloff>:/cgal/icons/resources/down.png</normaloff>:/cgal/icons/resources/down.png</iconset>
         </property>
         <property name="shortcut">
@@ -120,7 +120,7 @@
          <string>PushButton</string>
         </property>
         <property name="icon">
-         <iconset resource="Polyhedron_3.qrc">
+         <iconset resource="../../Polyhedron_3.qrc">
           <normaloff>:/cgal/icons/resources/front.png</normaloff>:/cgal/icons/resources/front.png</iconset>
         </property>
        </widget>
@@ -134,7 +134,7 @@
          <string>PushButton</string>
         </property>
         <property name="icon">
-         <iconset resource="Polyhedron_3.qrc">
+         <iconset resource="../../Polyhedron_3.qrc">
           <normaloff>:/cgal/icons/resources/back.png</normaloff>:/cgal/icons/resources/back.png</iconset>
         </property>
        </widget>
@@ -148,7 +148,7 @@
          <string>PushButton</string>
         </property>
         <property name="icon">
-         <iconset resource="Polyhedron_3.qrc">
+         <iconset resource="../../Polyhedron_3.qrc">
           <normaloff>:/cgal/icons/resources/top.png</normaloff>:/cgal/icons/resources/top.png</iconset>
         </property>
        </widget>
@@ -162,7 +162,7 @@
          <string>PushButton</string>
         </property>
         <property name="icon">
-         <iconset resource="Polyhedron_3.qrc">
+         <iconset resource="../../Polyhedron_3.qrc">
           <normaloff>:/cgal/icons/resources/bot.png</normaloff>:/cgal/icons/resources/bot.png</iconset>
         </property>
        </widget>
@@ -176,7 +176,7 @@
          <string>PushButton</string>
         </property>
         <property name="icon">
-         <iconset resource="Polyhedron_3.qrc">
+         <iconset resource="../../Polyhedron_3.qrc">
           <normaloff>:/cgal/icons/resources/left.png</normaloff>:/cgal/icons/resources/left.png</iconset>
         </property>
        </widget>
@@ -190,7 +190,7 @@
          <string>PushButton</string>
         </property>
         <property name="icon">
-         <iconset resource="Polyhedron_3.qrc">
+         <iconset resource="../../Polyhedron_3.qrc">
           <normaloff>:/cgal/icons/resources/right.png</normaloff>:/cgal/icons/resources/right.png</iconset>
         </property>
        </widget>
@@ -217,7 +217,7 @@
   </widget>
  </widget>
  <resources>
-  <include location="Polyhedron_3.qrc"/>
+  <include location="../../Polyhedron_3.qrc"/>
  </resources>
  <connections/>
 </ui>

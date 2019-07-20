@@ -31,7 +31,7 @@ public:
 
     typedef CGAL::Cell_attribute_with_point<LCC, LCCVector_3, CGAL::Tag_true> Vertex;
     typedef CGAL::Cell_attribute<LCC, LCCVector_3, CGAL::Tag_true> Face;
-    typedef CGAL::cpp0x::tuple<Vertex,void,Face> Attributes;
+    typedef std::tuple<Vertex,void,Face> Attributes;
   };
 };
 
@@ -50,7 +50,7 @@ public:
 
     typedef CGAL::Cell_attribute_for_index_with_point<LCC, LCCVector_3, CGAL::Tag_true> Vertex;
     typedef CGAL::Cell_attribute_for_index<LCC, LCCVector_3, CGAL::Tag_true> Face;
-    typedef CGAL::cpp0x::tuple<Vertex,void,Face> Attributes;
+    typedef std::tuple<Vertex,void,Face> Attributes;
   };
 };
 typedef CGAL::Linear_cell_complex_for_index<2, 3, MyTraitsLCC, MyItemsLCCWithIndex> LCC;

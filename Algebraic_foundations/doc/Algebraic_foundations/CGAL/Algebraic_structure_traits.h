@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 An instance of `Algebraic_structure_traits` is a model of `AlgebraicStructureTraits`, where <span class="textsc">T</span> is the associated type. 
 
@@ -17,7 +17,7 @@ class Algebraic_structure_traits {
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 Tag indicating that a type is a model of the 
 `EuclideanRing` concept. 
@@ -29,12 +29,12 @@ Tag indicating that a type is a model of the
 
 */
 
-class Euclidean_ring_tag : public Unique_factorization_domain_tag {
+struct Euclidean_ring_tag : public Unique_factorization_domain_tag {
 
 }; /* end Euclidean_ring_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 Tag indicating that a type is a model of the `Field` concept. 
 
@@ -45,12 +45,12 @@ Tag indicating that a type is a model of the `Field` concept.
 
 */
 
-class Field_tag : public Integral_domain_tag {
+struct Field_tag : public Integral_domain_tag {
 
 }; /* end Field_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 Tag indicating that a type is a model of the `FieldWithKthRoot` concept. 
 
@@ -61,12 +61,12 @@ Tag indicating that a type is a model of the `FieldWithKthRoot` concept.
 
 */
 
-class Field_with_kth_root_tag : public Field_with_sqrt_tag {
+struct Field_with_kth_root_tag : public Field_with_sqrt_tag {
 
 }; /* end Field_with_kth_root_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 Tag indicating that a type is a model of the `FieldWithRootOf` concept. 
 
@@ -77,12 +77,12 @@ Tag indicating that a type is a model of the `FieldWithRootOf` concept.
 
 */
 
-class Field_with_root_of_tag : public Field_with_kth_root_tag {
+struct Field_with_root_of_tag : public Field_with_kth_root_tag {
 
 }; /* end Field_with_root_of_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 Tag indicating that a type is a model of the `FieldWithSqrt` concept. 
 
@@ -93,12 +93,12 @@ Tag indicating that a type is a model of the `FieldWithSqrt` concept.
 
 */
 
-class Field_with_sqrt_tag : public Field_tag {
+struct Field_with_sqrt_tag : public Field_tag {
 
 }; /* end Field_with_sqrt_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 Tag indicating that a type is a model of the `IntegralDomain` concept. 
 
@@ -109,12 +109,12 @@ Tag indicating that a type is a model of the `IntegralDomain` concept.
 
 */
 
-class Integral_domain_tag : public Integral_domain_without_division_tag {
+struct Integral_domain_tag : public Integral_domain_without_division_tag {
 
 }; /* end Integral_domain_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 Tag indicating that a type is a model of the `IntegralDomainWithoutDivision` concept. 
 
@@ -124,12 +124,12 @@ Tag indicating that a type is a model of the `IntegralDomainWithoutDivision` con
 
 */
 
-class Integral_domain_without_division_tag {
+struct Integral_domain_without_division_tag {
 
 }; /* end Integral_domain_without_division_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 Tag indicating that a type is a model of the `UniqueFactorizationDomain` concept. 
 
@@ -140,7 +140,7 @@ Tag indicating that a type is a model of the `UniqueFactorizationDomain` concept
 
 */
 
-class Unique_factorization_domain_tag : public Integral_domain_tag {
+struct Unique_factorization_domain_tag : public Integral_domain_tag {
 
 }; /* end Unique_factorization_domain_tag */
 } /* end namespace CGAL */

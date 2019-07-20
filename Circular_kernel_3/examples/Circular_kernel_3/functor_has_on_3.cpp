@@ -1,5 +1,4 @@
 #include <CGAL/Exact_spherical_kernel_3.h>
-#include <CGAL/Random.h>
 
 typedef CGAL::Exact_spherical_kernel_3         Spherical_k;
 

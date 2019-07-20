@@ -19,7 +19,5 @@ template< typename TDS = void >
 class Triangulation_ds_cell_base_3 {
 public:
 
-/// @}
-
 }; /* end Triangulation_ds_cell_base_3 */
 } /* end namespace CGAL */

@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -26,6 +27,7 @@
 
 #include "CGAL/Precise_numbers.h"
 #include "CGAL/_test_cls_kernel.h"
+#define TEST_FILENAME "Test-Cartesian-IO.out"
 #include "CGAL/_test_io.h"
 #include "CGAL/_test_2.h"
 #include "CGAL/_test_3.h"

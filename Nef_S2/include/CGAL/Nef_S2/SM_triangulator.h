@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_SM_TRIANGULATOR_H
 #define CGAL_SM_TRIANGULATOR_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
@@ -79,18 +83,18 @@ void halfedge_below(Vertex_handle v, Halfedge_handle e) const
 { T.halfedge_below(v) = e; }
 
 /* the following operation associates segment support with
-   halfedges, we only update if non-NULL; this prevents 
-   artificial sphere subdivision segments that have NULL 
-   support to overwrite non-NULL support */
+   halfedges, we only update if non-nullptr; this prevents 
+   artificial sphere subdivision segments that have nullptr 
+   support to overwrite non-nullptr support */
 
 void supporting_segment(Halfedge_handle e, IT it) const
 { T.is_forward(e) = true; 
   if ( ! M[it].empty() ) T.support(e) = M[it]; }
 
 /* the following operation associate segment support with
-   vertices, we only update if non-NULL; this prevents 
-   artificial segments that have NULL support to overwrite
-   non-NULL support */
+   vertices, we only update if non-nullptr; this prevents 
+   artificial segments that have nullptr support to overwrite
+   non-nullptr support */
 
 void trivial_segment(Vertex_handle v, IT it) const
 { if ( ! M[it].empty() ) T.support(v) = M[it]; }

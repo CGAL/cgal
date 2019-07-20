@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sebastien Loriot
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_INTERNAL_CLASSIFICATION_TYPE_H
 #define CGAL_INTERNAL_CLASSIFICATION_TYPE_H
+
+#include <CGAL/license/Alpha_shapes_3.h>
+
 
 namespace CGAL{
   namespace internal{

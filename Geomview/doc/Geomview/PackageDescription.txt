@@ -1,13 +1,13 @@
-/// \defgroup PkgGeomview Geomview Reference
+/// \defgroup PkgGeomviewRef Geomview Reference
 /*!
-\addtogroup PkgGeomview
+\addtogroup PkgGeomviewRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Geomview,PkgGeomviewSummary}
+\cgalPkgDescriptionBegin{Geomview,PkgGeomview}
 \cgalPkgPicture{geomview.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri and Sylvain Pion}
 \cgalPkgDesc{This package implements an interface to Geomview, an interactive 3D viewing program,  originally developed at the Geometry Center in Minneapolis.}
-\cgalPkgManuals{Chapter_Geomview,PkgGeomview}
+\cgalPkgManuals{Chapter_Geomview,PkgGeomviewRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.0}
@@ -18,7 +18,7 @@
 
 \cgalClassifedRefPages
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Geomview_stream`
 
 */

@@ -48,7 +48,7 @@ int main(int argc, char** argv)
   
   CGAL::Random r(seed);
   CGAL::Random_points_in_disc_2<Point_2,Creator> g( 150.0,r);
-  CGAL::cpp11::copy_n( g, nbpts, std::back_inserter(points));
+  std::copy_n( g, nbpts, std::back_inserter(points));
   
   //the following code is for testing when there is only two extreme points, affine hull is 2D
   /*

@@ -9,8 +9,7 @@ A number type converter usable as default, for `Cartesian_converter` and `Homoge
 
 */
 template < class NT1, class NT2 >
-class NT_converter{
-public:
+struct NT_converter{
 
 /// \name Operations
 ///@{

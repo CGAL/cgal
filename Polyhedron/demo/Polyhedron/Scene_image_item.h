@@ -1,10 +1,9 @@
 #ifndef SCENE_IMAGE_ITEM_H
 #define SCENE_IMAGE_ITEM_H
 
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include "Image_type_fwd.h"
 #include "Scene_image_item_config.h"
-#include <CGAL/gl.h>
 
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
@@ -17,7 +16,7 @@ typedef CGAL::Image_3 Image;
 using namespace CGAL::Three;
 struct Scene_image_item_priv;
 class SCENE_IMAGE_ITEM_EXPORT Scene_image_item
-  : public Scene_item
+  : public Scene_item_rendering_helper
 {
   Q_OBJECT
 public:
@@ -45,11 +44,12 @@ public:
   const Image* image() const { return m_image; }
   bool isGray();
   Image* m_image;
+  void invalidateOpenGLBuffers();
+  void initializeBuffers(Viewer_interface *) const;
+  void computeElements() const;
 protected :
   friend struct Scene_image_item_priv;
   Scene_image_item_priv* d;
-public Q_SLOTS:
-    void changed();
 };
 
 #endif // SCENE_IMAGE_ITEM_H

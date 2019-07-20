@@ -57,13 +57,13 @@ int main()
 
   // use different colors, and put a few sleeps/clear.
 
-  gv << CGAL::BLUE;
+  gv << CGAL::blue();
   std::cout << "Drawing 2D Delaunay triangulation in wired mode.\n";
   gv.set_wired(true);
   gv << D;
 
 #if 1 // It's too slow !  Needs to use OFF for that.
-  gv << CGAL::RED;
+  gv << CGAL::red();
   std::cout << "Drawing its Voronoi diagram.\n";
   gv.set_wired(true);
   D.draw_dual(gv);

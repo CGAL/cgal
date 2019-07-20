@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
@@ -38,7 +39,7 @@ class TriangleC2
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Triangle_2           Triangle_2;
 
-  typedef cpp11::array<Point_2, 3>          Rep;
+  typedef std::array<Point_2, 3>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

@@ -9,8 +9,6 @@ ColorBackground {
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
 Viewpoint {
   type "ORTHOGONAL"
-  fieldOfView 2.96
-  # radiusScale 0.7
 }
 
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
@@ -56,7 +54,7 @@ DEF SNAP Snapshot {
 Transform {
   rotation 1 0 0 -1.5708
   bboxCenter 0 0 0
-  bboxSize 1.5 1.5 1.5
+  bboxSize 2 2 2
   children [
     Switch {
       whichChoice 0
@@ -98,13 +96,13 @@ Transform {
 #	        insertionStrategy "increment"
 		aosMarkedEdgeIndex 100
 		aosMarkedVertexIndex 0
-		coord DEF COORD ExactCoordinate {
-		  ratPoint [-1  0 -1,
-			    -2 -1  0,
-			    0  0  1,
-			    -2  1  0,
-			    0 1 0
-			    -1 1  0
+		coord DEF COORD EpecCoordinate {
+		  exactPoint [-1  0 -1,
+                              -2 -1  0,
+                              0  0  1,
+                              -2  1  0,
+                              0 1 0
+                              -1 1  0
 			   ]
 		}
 		# Pointindex [6 7]
@@ -137,7 +135,14 @@ Transform {
 	      }
 	    }
 	    Shape {
-	      appearance USE AXES_APP
+	      appearance DEF AXES_APP Appearance {
+                material Material {
+                  # ambientIntensity 1
+                  diffuseColor 0.4 0.4 0.4
+                  # specularColor 0.3 0.3 0.3
+                  # transparency 0.0001
+                }
+              }
 	      geometry Sphere {
     	        center 0 0 -1
 	        radius 0.05
@@ -199,20 +204,13 @@ Transform {
 	}
        ]
     }
-    
+
     # The axes:
     DEF AXES Transform {
       scale 0.1 0.1 0.1
       children [
 	Shape {
-	  appearance DEF AXES_APP Appearance {
-	    material Material {
-	      # ambientIntensity 1
-	      diffuseColor 0.4 0.4 0.4
-	      # specularColor 0.3 0.3 0.3
-	      # transparency 0.0001
-	    }
-	  }
+	  appearance USE AXES_APP
 	  geometry Sphere { radius 0.1 }
 	}
 	DEF CS_AXIS Transform {

@@ -4,10 +4,11 @@
   test for number type modul 
 */
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <cassert>
 #include <CGAL/Residue.h>
 #include <CGAL/FPU.h>
+#include <CGAL/Modular_traits.h>
 
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/number_utils.h>
@@ -102,7 +103,7 @@ int main()
 
         assert(mod_x == CGAL::modular_image(int_x));
         int_x -= int_x; int_x = CGAL::mod(int_x, prime);
-        mod_x -= mod_x; 
+        mod_x -= (CGAL::Residue&)mod_x; 
     }
     {
         CGAL::Residue::set_current_prime(67111043);

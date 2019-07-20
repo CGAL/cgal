@@ -9,6 +9,7 @@ typedef CGAL::Triangulation_vertex_base_with_info_2<unsigned, K>    Vb;
 typedef CGAL::Triangulation_data_structure_2<Vb>                    Tds;
 typedef CGAL::Delaunay_triangulation_2<K, Tds>                      Delaunay;
 typedef Delaunay::Point                                             Point;
+typedef Delaunay::Vertex_handle                                     Vertex_handle;
 
 int main()
 {
@@ -39,9 +40,9 @@ int main()
   
   
   // check that the info was correctly set.
-  Delaunay::Finite_vertices_iterator vit;
-  for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)
-    if( points[ vit->info() ] != vit->point() ){
+
+  for (Vertex_handle v : T.finite_vertex_handles())
+    if( points[ v->info() ] != v->point() ){
       std::cerr << "Error different info" << std::endl;
       exit(EXIT_FAILURE);
     }

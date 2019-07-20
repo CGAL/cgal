@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_SM_POINT_LOCATOR_H
 #define CGAL_SM_POINT_LOCATOR_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <vector>
 #include <CGAL/basic.h>
@@ -337,7 +341,7 @@ public:
   SVertex_/SHalfedge_/SHalfloop_/SFace_handle&)|.\\ The object
   returned is intersected by |d.circle()|, has minimal distance to
   |p|, and |M(h)| holds on the converted object. The operation returns
-  the null handle |NULL| if the ray shoot along |s| does not hit any
+  the null handle |nullptr| if the ray shoot along |s| does not hit any
   object |h| of |M| with |M(h)|.}*/
   { 
     Sphere_circle c(d.circle());

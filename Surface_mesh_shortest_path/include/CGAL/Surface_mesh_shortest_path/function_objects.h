@@ -14,23 +14,31 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Stephen Kiazyk
 
 #include <cstddef>
 
-#include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <boost/graph/graph_traits.hpp>
 #include <CGAL/result_of.h>
 #include <CGAL/assertions.h>
 
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
+#ifdef CGAL_SMSP_USE_ROBUST_TRAITS_CODE
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#endif
+#endif
+
+#include <CGAL/Cartesian_converter.h>
 
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
+
+#include <CGAL/license/Surface_mesh_shortest_path.h>
+
 
 namespace CGAL {
 
@@ -249,6 +257,8 @@ public:
   }
 };
 
+#ifdef CGAL_SMSP_USE_ROBUST_TRAITS_CODE
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 template<class K>
 class Robust_project_triangle_3_to_triangle_2
 {
@@ -278,6 +288,8 @@ public:
     return back_from_exact(ept3t2(to_exact(t3)));
   }
 };
+#endif
+#endif
 
 template<class K>
 class Construct_triangle_3_along_segment_2_flattening
@@ -351,7 +363,7 @@ public:
   {
   }
 
-  result_type operator() (const Triangle_3& t3, std::size_t edgeIndex, const Segment_2& segment) const
+  result_type operator() (const Triangle_3& t3, int edgeIndex, const Segment_2& segment) const
   {
     Point_3 projectedLocation3d(m_construct_projected_point_3(m_construct_line_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), m_construct_vertex_3(t3, edgeIndex + 2)));
     FT scalePoint = m_parametric_distance_along_segment_3(m_construct_segment_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), projectedLocation3d);
@@ -371,6 +383,8 @@ public:
   }
 };
 
+#ifdef CGAL_SMSP_USE_ROBUST_TRAITS_CODE
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 template<class K>
 class Robust_flatten_triangle_3_along_segment_2
 {
@@ -402,6 +416,8 @@ public:
     return back_from_exact(eft3as2(to_exact(t3), edgeIndex, to_exact(segment)));
   }
 };
+#endif
+#endif
 
 template <class K>
 class Compare_relative_intersection_along_segment_2

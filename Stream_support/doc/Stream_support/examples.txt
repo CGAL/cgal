@@ -1,0 +1,6 @@
+/*!
+\example Stream_support/Linestring_WKT.cpp
+\example Stream_support/Point_WKT.cpp
+\example Stream_support/Polygon_WKT.cpp
+\example Stream_support/read_xml.cpp
+*/

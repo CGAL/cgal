@@ -13,9 +13,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: https://scm.gforge.inria.fr/svn/cgal/branches/features/Mesh_3-experimental-GF/Mesh_3/include/CGAL/Mesh_vertex_base_3.h $
-// $Id: Mesh_vertex_base_3.h 69674 2012-06-18 09:34:06Z jtournoi $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Stéphane Tayeb, Andreas Fabri
 //
@@ -29,7 +29,10 @@
 #ifndef CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 #define CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 
-#include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/license/Mesh_3.h>
+
+
+#include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/internal/Mesh_3/get_index.h>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Has_timestamp.h>
@@ -99,7 +102,7 @@ protected:
 // to the 3D input complex.
 template<class GT,
          class MD,
-         class Vb = Triangulation_vertex_base_3<GT> >
+         class Vb = Regular_triangulation_vertex_base_3<GT> >
 class Mesh_vertex_base_3
 : public Vb,
   public Mesh_vertex_base_3_base<
@@ -133,7 +136,6 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif //CGAL_INTRUSIVE_LIST
-    , time_stamp_(-1)
   {}
 
   // Default copy constructor and assignment operator are ok
@@ -279,7 +281,7 @@ operator>>(std::istream &is, Mesh_vertex_base_3<GT,MD,Vb>& v)
   CGAL_assertion(v.in_dimension() >= -1);
   CGAL_assertion(v.in_dimension() < 4);
   typename Vertex::Index index =
-    internal::Mesh_3::Read_mesh_domain_index<MD>()(v.in_dimension(), is);
+    Mesh_3::internal::Read_mesh_domain_index<MD>()(v.in_dimension(), is);
   v.set_index(index);
   return is;
 }
@@ -300,7 +302,7 @@ operator<<(std::ostream &os, const Mesh_vertex_base_3<GT,MD,Vb>& v)
   } else {
     CGAL::write(os, v.in_dimension());
   }
-  internal::Mesh_3::Write_mesh_domain_index<MD>()(os, 
+  Mesh_3::internal::Write_mesh_domain_index<MD>()(os,
                                                   v.in_dimension(),
                                                   v.index());
   return os;

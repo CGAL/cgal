@@ -21,12 +21,12 @@
 // LiS_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-inf.mpg.de>
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/IO/io.h>
 #include <cassert>
 #include <iostream>

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -41,15 +42,12 @@ public:
   {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Side_of_oriented_circle_2", tmp);
 
-      Get_approx<Point_2> get_approx; // Identity functor for all points
-                                      // but lazy points.
-
       double px, py, qx, qy, rx, ry, tx, ty;
 
-      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-          fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-          fit_in_double(get_approx(r).x(), rx) && fit_in_double(get_approx(r).y(), ry) &&
-          fit_in_double(get_approx(t).x(), tx) && fit_in_double(get_approx(t).y(), ty))
+      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
+          fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty))
       {
 	  CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 

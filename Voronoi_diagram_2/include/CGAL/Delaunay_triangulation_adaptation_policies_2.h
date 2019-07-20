@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_DELAUNAY_TRIANGULATION_ADAPTATION_POLICIES_2_H
 #define CGAL_DELAUNAY_TRIANGULATION_ADAPTATION_POLICIES_2_H 1
+
+#include <CGAL/license/Voronoi_diagram_2.h>
+
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Delaunay_triangulation_degeneracy_testers.h>

@@ -1,0 +1,17 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Periodic Mesh Generation"
+EXAMPLE_PATH += ${CGAL_PACKAGE_INCLUDE_DIR}
+EXTRACT_ALL                =  false
+HIDE_UNDOC_CLASSES         =  true
+WARN_IF_UNDOCUMENTED       =  false
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/periodic_banner.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/periodic_copies.jpg \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/periodic_implicit_domain.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/periodic_implicit_spheres.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/periodic_implicit_interior_and_exterior.jpg \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/periodic_implicit_multi_domain.jpg \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/periodic_implicit_optimizers.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/periodic_implicit_protection.jpg \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/periodic_implicit_protection_bis.jpg \
+

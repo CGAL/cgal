@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ilker O. Yaz
@@ -21,19 +22,27 @@
 #ifndef CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 #define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 
-#include <CGAL/Mesh_3/dihedral_angle_3.h>
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
+
 #include <CGAL/value_type_traits.h>
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
+#endif
+#include <CGAL/utility.h>
 #include <CGAL/iterator.h>
-#include <CGAL/trace.h>
 #include <CGAL/use.h>
+#include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <vector>
 #include <stack>
 #include <map>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <boost/next_prior.hpp>
 #include <boost/unordered_set.hpp>
 
 namespace CGAL {
@@ -247,14 +256,14 @@ private:
       // check whether the edge is border
       if( (v0 + 1 == v1 || (v0 == n-1 && v1 == 0) ) && !Q.empty() ) {
         angle = 180 - CGAL::abs( 
-           to_double(CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],Q[v0])) );
+           to_double(CGAL::approximate_dihedral_angle(P[v0],P[v1],P[v_other],Q[v0])) );
       }
       else {
         if(e == 2) { continue; }
         if(lambda.get(v0, v1) != -1){
           const Point_3& p01 = P[lambda.get(v0, v1)];
           angle = 180 - CGAL::abs( 
-            to_double(CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],p01)) );
+            to_double(CGAL::approximate_dihedral_angle(P[v0],P[v1],P[v_other],p01)) );
         }
       }
       ang_max = (std::max)(ang_max, angle);
@@ -476,7 +485,7 @@ struct Tracer_polyline_incomplete {
       }
 
       CGAL_assertion(la >= 0 && la < n);
-      CGAL_assertion(r.first < la && r.second > la);
+      CGAL_assertion( (r.first < la) && (r.second > la) );
       *out++ = OutputIteratorValueType(r.first, la, r.second);
 
       ranges.push(std::make_pair(r.first, la));
@@ -726,6 +735,7 @@ template<
 >
 class Triangulate_hole_polyline;
 
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
 // By default Lookup_table_map is used, since Lookup_table requires n*n mem.
 // Performance decrease is nearly 2x (for n = 10,000, for larger n Lookup_table just goes out of mem) 
 template<
@@ -751,7 +761,8 @@ public:
   typedef std::vector<Point_3>                                Polyline_3;
 
   typedef Triangulation_vertex_base_with_info_3<int, Kernel>  VB_with_id;
-  typedef Triangulation_data_structure_3<VB_with_id>          TDS;
+  typedef Delaunay_triangulation_cell_base_3<Kernel>          CB;
+  typedef Triangulation_data_structure_3<VB_with_id, CB>      TDS;
   typedef Delaunay_triangulation_3<Kernel, TDS>               Triangulation;
 
   typedef typename Triangulation::Finite_edges_iterator       Finite_edges_iterator;
@@ -1096,9 +1107,10 @@ private:
     
     if(W.get(0, n-1) == Weight::NOT_VALID()) {
       #ifndef CGAL_TEST_SUITE
-      CGAL_warning(!"Returning no output. Filling hole with extra triangles is not successful!");
+      CGAL_warning(!"Returning no output using Delaunay triangulation.\n Falling back to the general Triangulation framework.");
       #else
-      std::cerr << "W: Returning no output. Filling hole with extra triangles is not successful!\n";
+      std::cerr << "W: Returning no output using Delaunay triangulation.\n"
+                << "Falling back to the general Triangulation framework.\n";
       #endif
       return Weight::NOT_VALID();
     }
@@ -1107,6 +1119,7 @@ private:
     return W.get(0, n-1);
   }
 }; // End of Triangulate_hole_polyline_DT
+#endif
 
 /************************************************************************
  * Triangulate hole by using all search space
@@ -1138,7 +1151,7 @@ public:
     
     triangulate_all(P, Q, WC, std::make_pair(0,n-1), W, lambda);
 
-    if(W.get(0,n-1) == Weight::NOT_VALID()) {
+    if(W.get(0,n-1) == Weight::NOT_VALID() || n <= 2) {
       #ifndef CGAL_TEST_SUITE
       CGAL_warning(!"Returning no output. No possible triangulation is found!");
       #else
@@ -1209,7 +1222,11 @@ triangulate_hole_polyline(const PointRange1& points,
 {
   typedef Kernel        K;
   typedef typename K::Point_3    Point_3;
+  #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
   typedef CGAL::internal::Triangulate_hole_polyline_DT<K, Tracer, WeightCalculator> Fill_DT;
+  #else
+  CGAL_USE(use_delaunay_triangulation);
+  #endif
   typedef CGAL::internal::Triangulate_hole_polyline<K, Tracer, WeightCalculator>    Fill;
 
   std::vector<Point_3> P(boost::begin(points), boost::end(points));
@@ -1222,10 +1239,21 @@ triangulate_hole_polyline(const PointRange1& points,
     }
   }
 
-  typename WeightCalculator::Weight w = use_delaunay_triangulation ?
-    Fill_DT().operator()(P,Q,tracer,WC) :
+  typename WeightCalculator::Weight w =
+  #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+    use_delaunay_triangulation ? Fill_DT().operator()(P,Q,tracer,WC) :
+  #endif
     Fill().operator()(P,Q,tracer,WC);
-  CGAL_TRACE_STREAM << w << std::endl;
+
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+  if (use_delaunay_triangulation
+      && w == WeightCalculator::Weight::NOT_VALID())
+    w = Fill().operator()(P, Q, tracer, WC);
+#endif
+
+  #ifdef CGAL_PMP_HOLE_FILLING_DEBUG
+  std::cerr << w << std::endl;
+  #endif
   return w;
 }
 

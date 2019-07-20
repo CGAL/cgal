@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
 #ifndef CGAL_QT_DELAUNAY_MESH_TRIANGULATION_GRAPHICS_ITEM_H
 #define CGAL_QT_DELAUNAY_MESH_TRIANGULATION_GRAPHICS_ITEM_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
@@ -261,14 +265,14 @@ DelaunayMeshTriangulationGraphicsItem<T>::paintSeeds(QPainter *painter)
   {
     Converter<Geom_traits> convert;
     painter->setPen(this->seedsPen());
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
 
     typename std::list<Point>::iterator sit;
     for(sit = seeds_begin; sit != seeds_end; ++sit)
       painter->drawPoint(matrix.map(convert(*sit)));
 
-    painter->setMatrix(matrix);
+    painter->setWorldTransform(matrix);
   }
 }
 

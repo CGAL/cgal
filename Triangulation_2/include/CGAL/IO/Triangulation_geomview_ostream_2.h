@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_IO_TRIANGULATION_GEOMVIEW_OSTREAM_2_H
 #define CGAL_IO_TRIANGULATION_GEOMVIEW_OSTREAM_2_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/Triangulation_2.h>

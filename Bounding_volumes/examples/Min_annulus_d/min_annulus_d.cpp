@@ -1,11 +1,11 @@
 // computes the smallest enclosing annulus of two point
 // sets on nested squares in R^2, using double
 // as input type and some internal EXACT floating point type
-#include <iostream>
-#include <cassert>
-#include <CGAL/Homogeneous.h>
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Min_sphere_annulus_d_traits_2.h>
+#include <CGAL/Homogeneous.h>
+#include <iostream>
+#include <cassert>
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>

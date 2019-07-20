@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Gael Guennebaud (gael.guennebaud@inria.fr), Hans Tangelder (<hanst@cs.uu.nl>)
 
 #ifndef CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H
 #define CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H
+
+#include <CGAL/license/Spatial_searching.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/internal/K_neighbor_search.h>
 
@@ -145,7 +150,7 @@ private:
       FT diff2 = val - node->upper_low_value();
       if ( (diff1 + diff2 >= FT(0.0)) ) 
       {
-          new_off = 2*val < node->upper_low_value()+node->upper_high_value() ?
+          new_off = node->upper_low_value()+node->upper_high_value() > val*2?
                     val - node->upper_high_value():
                     val - node->upper_low_value();
           bestChild = node->lower();
@@ -153,7 +158,7 @@ private:
       }
       else // compute new distance
       {
-          new_off = 2*val < node->lower_low_value()+node->lower_high_value() ?
+          new_off = node->lower_low_value()+node->lower_high_value() > val*2 ?
                     val - node->lower_high_value():
                     val - node->lower_low_value();
           bestChild = node->upper();
@@ -189,5 +194,7 @@ private:
 }; // class 
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H

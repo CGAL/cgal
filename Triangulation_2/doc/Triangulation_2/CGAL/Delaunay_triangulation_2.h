@@ -99,7 +99,7 @@ const Delaunay_triangulation_2<Traits,Tds> &tr);
 Equivalent to constructing an empty triangulation with the optional traits class argument and calling insert(first,last).
 */
 template < class InputIterator >
-Delaunay_triangulation_2<Traits,Tds> dt ( InputIterator first, InputIterator last, Traits gt = Traits());
+Delaunay_triangulation_2( InputIterator first, InputIterator last, Traits gt = Traits());
 
 
 /// @} 
@@ -156,7 +156,6 @@ std::ptrdiff_t
 insert(PointInputIterator first, PointInputIterator last); 
 
 /*!
-
 inserts the points in the iterator range `[first,last)`. Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
 following the order of `PointWithInfoInputIterator`, as `spatial_sort()` 

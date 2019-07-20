@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHDS_Items
+\ingroup PkgHalfedgeDS_Items
 
 The class `HalfedgeDS_min_items` is a model of the `HalfedgeDSItems` 
 concept. It defines types for vertices, halfedges, and faces that 
@@ -48,8 +48,6 @@ typedef CGAL::HalfedgeDS_face_min_base< Refs> Face;
 
 class HalfedgeDS_min_items {
 public:
-
-/// @}
 
 }; /* end HalfedgeDS_min_items */
 } /* end namespace CGAL */

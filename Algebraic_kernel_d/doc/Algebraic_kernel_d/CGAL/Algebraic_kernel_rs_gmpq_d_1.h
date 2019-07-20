@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicKerneldModels
+\ingroup PkgAlgebraicKernelDModels
 
 \anchor Algebraic_kernel_rs_gmpq_d_1 
 

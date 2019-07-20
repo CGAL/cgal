@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolyhedron
+\ingroup PkgPolyhedronRef
 
 The auxiliary class `Polyhedron_incremental_builder_3` supports the incremental 
 construction of polyhedral surfaces, which is for example convenient 

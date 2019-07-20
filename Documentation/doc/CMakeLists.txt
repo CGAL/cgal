@@ -1,8 +1,27 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project(Documentation NONE)
 
-option(BUILD_DOC "Build the doxygen documentation" OFF)
-if(NOT BUILD_DOC)
-  return()
+# Minimal version of CMake:
+
+# Check whether this cmake script is the top level one
+if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+  # decide if this is a branch build
+  if ( NOT EXISTS "${CMAKE_SOURCE_DIR}/../VERSION")
+    set(CGAL_BRANCH_BUILD ON CACHE INTERNAL "CGAL Branch build")
+  endif()
+
+  if (CGAL_BRANCH_BUILD)
+    set(CGAL_ROOT "${CMAKE_SOURCE_DIR}/../..")
+  else()
+    set(CGAL_ROOT "${CMAKE_SOURCE_DIR}/..")
+  endif()
+  get_filename_component(CGAL_ROOT ${CGAL_ROOT} REALPATH)
+else()
+  option(BUILD_DOC "Build the doxygen documentation" OFF)
+  if(NOT BUILD_DOC)
+    return()
+  endif()
+  set(CGAL_ROOT "${CMAKE_SOURCE_DIR}")
 endif()
 
 find_package(Doxygen)
@@ -11,6 +30,11 @@ find_package(PythonInterp 2.6.7)
 if(NOT DOXYGEN_FOUND)
   message(WARNING "Cannot build the documentation without Doxygen!")
   return()
+endif()
+
+#starting from cmake 3.9 the usage of DOXYGEN_EXECUTABLE is deprecated
+if(TARGET Doxygen::doxygen)
+  get_property(DOXYGEN_EXECUTABLE TARGET Doxygen::doxygen PROPERTY IMPORTED_LOCATION)
 endif()
 
 # Visual Studio users might appreciate this
@@ -29,9 +53,9 @@ endmacro()
 
 function(configure_doxygen_package CGAL_PACKAGE_NAME)
   if(CGAL_BRANCH_BUILD)
-    set(CGAL_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/${CGAL_PACKAGE_NAME})
+    set(CGAL_PACKAGE_DIR ${CGAL_ROOT}/${CGAL_PACKAGE_NAME})
   else()
-    set(CGAL_PACKAGE_DIR ${CMAKE_SOURCE_DIR})
+    set(CGAL_PACKAGE_DIR ${CGAL_ROOT})
   endif()
 
   set(CGAL_PACKAGE_DOC_DIR ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME})
@@ -59,13 +83,17 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
   if(EXISTS "${CGAL_PACKAGE_DIR}/examples")
     file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/examples\n")
   endif()
+  if(CGAL_GENERATE_XML)
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_XML = YES\n")
+  endif()
+
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_TAGFILE = ${CGAL_DOC_TAG_GEN_DIR}/${CGAL_PACKAGE_NAME}.tag\n")
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH = ${CGAL_PACKAGE_DOC_DIR}/\n")
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH = ${CGAL_PACKAGE_DOC_DIR}/\n")
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "ALIASES += \"cgalPkgDescriptionBegin{2}=\\details \"\n")
-  file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "ALIASES += \"cgalPkgManuals{2}=<BR>\"\n")
+  file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "ALIASES += \"cgalPkgManuals{2}=<div class=\\\"PkgManuals\\\"></div>\"\n")
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "INPUT = ${CGAL_PACKAGE_DOC_DIR}\n")
   if(NOT EXISTS "${CGAL_PACKAGE_DOC_DIR}/CGAL")
     # This package has in-source documentation.
@@ -93,9 +121,9 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       list(APPEND DEPENDENCIES ${PKG})
 
       if(CGAL_BRANCH_BUILD)
-        SET(IMG_DIR "${CMAKE_SOURCE_DIR}/${PKG}/doc/${PKG}/fig")
+        SET(IMG_DIR "${CGAL_ROOT}/${PKG}/doc/${PKG}/fig")
       else()
-        SET(IMG_DIR "${CMAKE_SOURCE_DIR}/doc/${PKG}/fig")
+        SET(IMG_DIR "${CGAL_ROOT}/doc/${PKG}/fig")
       endif()
 
       if(EXISTS ${IMG_DIR})
@@ -157,8 +185,11 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
 endfunction()
 
 # set up the directories and variables
-set(CGAL_DOC_MATHJAX_LOCATION "https://cdn.mathjax.org/mathjax/latest"
-    CACHE STRING "The location of MathJax to be used for the documentation.")
+if (CGAL_DOC_MATHJAX_LOCATION)
+  set(CGAL_DOC_MATHJAX_LOCATION_FULL_OPTION_LINE "MATHJAX_RELPATH = ${CGAL_DOC_MATHJAX_LOCATION}")
+else()
+  set(CGAL_DOC_MATHJAX_LOCATION "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2")
+endif()
 
 set(CGAL_DOC_OUTPUT_DIR "${CMAKE_BINARY_DIR}/doc_output")
 file(MAKE_DIRECTORY "${CGAL_DOC_OUTPUT_DIR}")
@@ -179,7 +210,17 @@ file(MAKE_DIRECTORY "${CGAL_DOC_TAG_DIR}")
 set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
 file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
-set(CGAL_DOC_RESOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/resources")
+#Setting the resource directory depending on the version of doxygen
+set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.8.14")
+
+#  first look if resources for the specific doxygen version is available, fallback
+#  on the default otherwise
+if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/resources/${DOXYGEN_VERSION}")
+  set(CGAL_DOC_RESOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/resources/${DOXYGEN_VERSION}")
+else()
+  set(CGAL_DOC_RESOURCE_DIR "${CGAL_DOC_RESOURCE_DIR_DEFAULT}")
+endif()
+
 set(CGAL_DOC_BIBLIO_DIR "${CMAKE_CURRENT_LIST_DIR}/biblio")
 set(CGAL_DOC_SCRIPT_DIR "${CMAKE_CURRENT_LIST_DIR}/scripts")
 
@@ -200,6 +241,25 @@ else()
   set(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}a")
 endif()
 
+if (NOT CGAL_CREATED_VERSION_NUM)
+  if (CGAL_BRANCH_BUILD)
+    file(STRINGS "${CGAL_ROOT}/Maintenance/release_building/MAJOR_NUMBER" CGAL_MAJOR_VERSION REGEX "[0-9]*")
+    file(STRINGS "${CGAL_ROOT}/Maintenance/release_building/MINOR_NUMBER" CGAL_MINOR_VERSION REGEX "[0-9]*")
+    file(STRINGS "${CGAL_ROOT}/Maintenance/release_building/BUGFIX_NUMBER" CGAL_BUGFIX_VERSION REGEX "[0-9]*")
+
+    if (CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
+      set(CGAL_CREATED_VERSION_NUM "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}")
+    else()
+      set(CGAL_CREATED_VERSION_NUM "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
+    endif()
+  else()
+    #read version.h and get the line with CGAL_VERSION
+    file(STRINGS "${CGAL_ROOT}/include/CGAL/version.h" CGAL_VERSION_LINE REGEX "CGAL_VERSION ")
+    #extract release id
+    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.?[0-9]*" CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_LINE}")
+  endif()
+endif()
+
 # Introduce our own version variable. This way we avoid tying this too
 # closely to the convoluted versioning code and can adapt without a
 # huge diff.
@@ -209,7 +269,7 @@ set(CGAL_DOC_VERSION ${CGAL_CREATED_VERSION_NUM})
 if(PYTHONINTERP_FOUND)
   execute_process(COMMAND ${PYTHON_EXECUTABLE}
                           ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
-                          ${CMAKE_SOURCE_DIR}
+                          ${CGAL_ROOT}
                           ${CMAKE_BINARY_DIR}
                           "${CGAL_BRANCH_BUILD}"
                   RESULT_VARIABLE GENERATE_HOW_TO_CITE_RESULT)
@@ -236,41 +296,46 @@ configure_file(${CGAL_DOC_SCRIPT_DIR}/pkglist_filter.py ${CMAKE_BINARY_DIR}/pkgl
 
 set(CGAL_DOC_PACKAGES "")
 if(CGAL_BRANCH_BUILD)
-  foreach(pkg ${CGAL_CONFIGURED_PACKAGES_NAMES} "Miscellany")
-    if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${pkg}/doc/${pkg})
-      list(APPEND CGAL_DOC_PACKAGES ${pkg})
+  file(GLOB CGAL_ALL_PACKAGES RELATIVE ${CGAL_ROOT} "${CGAL_ROOT}/*")
+  foreach (pkg ${CGAL_ALL_PACKAGES})
+    #detect packages with documentation to process
+    if (IS_DIRECTORY ${CGAL_ROOT}/${pkg})
+      if(EXISTS "${CGAL_ROOT}/${pkg}/doc/${pkg}/PackageDescription.txt")
+        list(APPEND CGAL_DOC_PACKAGES ${pkg})
+      endif()
     endif()
-    if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${pkg}/examples)
-      set(CGAL_${pkg}_EXAMPLE_DIR "${CMAKE_SOURCE_DIR}/${pkg}/examples")
+    #set up directories of packages
+    if(IS_DIRECTORY ${CGAL_ROOT}/${pkg}/examples)
+      set(CGAL_${pkg}_EXAMPLE_DIR "${CGAL_ROOT}/${pkg}/examples")
     endif()
-    if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${pkg}/include)
-      set(CGAL_${pkg}_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/${pkg}/include")
+    if(IS_DIRECTORY ${CGAL_ROOT}/${pkg}/include)
+      set(CGAL_${pkg}_INCLUDE_DIR "${CGAL_ROOT}/${pkg}/include")
     endif()
-    if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${pkg}/include)
-      set(CGAL_${pkg}_DEMO_DIR "${CMAKE_SOURCE_DIR}/${pkg}/demo")
+    if(IS_DIRECTORY ${CGAL_ROOT}/${pkg}/demo)
+      set(CGAL_${pkg}_DEMO_DIR "${CGAL_ROOT}/${pkg}/demo")
     endif()
   endforeach()
 else()
-  subdirlist(CGAL_DOC_PACKAGES_TMP ${CMAKE_SOURCE_DIR}/doc)
+  subdirlist(CGAL_DOC_PACKAGES_TMP ${CGAL_ROOT}/doc)
   set(CGAL_DOC_PACKAGES)
   foreach(package ${CGAL_DOC_PACKAGES_TMP})
-    if(EXISTS "${CMAKE_SOURCE_DIR}/doc/${package}/PackageDescription.txt")
+    if(EXISTS "${CGAL_ROOT}/doc/${package}/PackageDescription.txt")
       list(APPEND CGAL_DOC_PACKAGES "${package}")
     endif()
   endforeach()
 
-  subdirlist(CGAL_EXAMPLE_PACKAGES ${CMAKE_SOURCE_DIR}/examples)
-  subdirlist(CGAL_DEMO_PACKAGES ${CMAKE_SOURCE_DIR}/demo)
+  subdirlist(CGAL_EXAMPLE_PACKAGES ${CGAL_ROOT}/examples)
+  subdirlist(CGAL_DEMO_PACKAGES ${CGAL_ROOT}/demo)
   list(APPEND CGAL_EXAMPLE_PACKAGES "BGL") # manually add BGL to the list of packages
   foreach(pkg ${CGAL_EXAMPLE_PACKAGES})
-    set(CGAL_${pkg}_EXAMPLE_DIR "${CMAKE_SOURCE_DIR}/examples")
+    set(CGAL_${pkg}_EXAMPLE_DIR "${CGAL_ROOT}/examples")
     # This might not be entirely correct, but there is no reliable,
     # easy way to get a list of all package names when not in a
     # branch build.
-    set(CGAL_${pkg}_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
+    set(CGAL_${pkg}_INCLUDE_DIR "${CGAL_ROOT}/include")
   endforeach()
   foreach(pkg ${CGAL_DEMO_PACKAGES})
-    set(CGAL_${pkg}_DEMO_DIR "${CMAKE_SOURCE_DIR}/demo")
+    set(CGAL_${pkg}_DEMO_DIR "${CGAL_ROOT}/demo")
   endforeach()
 endif()
 

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope3
+\ingroup PkgEnvelope3Ref
 
 The traits class `Env_sphere_traits_3` models the `EnvelopeTraits_3` 
 concept, and is used for the construction of lower and upper envelopes 

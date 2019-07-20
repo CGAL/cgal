@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2ConceptsDCEL
+\ingroup PkgArrangementOnSurface2ConceptsDCEL
 \cgalConcept
 
 A vertex record in a <span class="textsc">Dcel</span> data structure. A vertex is always associated 

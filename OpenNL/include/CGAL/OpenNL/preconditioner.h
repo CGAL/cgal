@@ -31,6 +31,10 @@
  *  Laurent Saboret 2006: Changes for CGAL:
  *      - copied Jacobi preconditioner from Graphite 1.9 code
  *      - Added OpenNL namespace
+ *
+ * $URL$
+ * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  */
 
 #ifndef __OPENNL_PRECONDITIONER__
@@ -41,6 +45,7 @@
 #include <CGAL/OpenNL/full_vector.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/tss.h>
 
 namespace OpenNL {
 
@@ -199,7 +204,7 @@ SSOR_Preconditioner<T>::SSOR_Preconditioner(
 template <class T> 
 void mult(const SSOR_Preconditioner<T>& M, const FullVector<T>& x, FullVector<T>& y) {
 
-    static FullVector<T> work(0) ;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(FullVector<T>, work,0) ;
 
     const SparseMatrix<T>& A = M.A() ;
     int n = A.dimension() ;

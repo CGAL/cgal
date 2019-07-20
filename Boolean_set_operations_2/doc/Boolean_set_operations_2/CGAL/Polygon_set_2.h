@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBooleanSetOperations2
+\ingroup PkgBooleanSetOperations2Ref
 
 The class `Polygon_set_2` represents sets of linear polygons with holes. 
 The first two template parameters (`Kernel` and `Container`) 
@@ -25,8 +25,6 @@ and process it further.
 template< typename Kernel, typename Container, typename Dcel >
 class Polygon_set_2 : public General_polygon_set_2<Gps_segment_traits_2<Kernel,Container> > {
 public:
-
-/// @}
 
 }; /* end Polygon_set_2 */
 } /* end namespace CGAL */

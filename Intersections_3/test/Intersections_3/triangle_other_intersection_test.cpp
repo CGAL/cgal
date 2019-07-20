@@ -14,13 +14,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
 
 #include <string>
 
-#include <CGAL/intersections.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

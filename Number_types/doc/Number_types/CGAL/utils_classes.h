@@ -47,8 +47,7 @@ in case `std::less` is used.
 
 */
 template< typename T, typename Less >
-class Max {
-public:
+struct Max {
 
 /// \name Creation 
 /// @{
@@ -95,8 +94,7 @@ in case `std::less` is used.
 
 */
 template< typename T, typename Less >
-class Min {
-public:
+struct Min {
 
 /// \name Creation 
 /// @{

@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
@@ -18,9 +17,9 @@ int main(int argc, char* argv[])
   std::ifstream input(filename);
 
   Mesh mesh;
-  if (!input || !(input >> mesh))
+  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh))
   {
-    std::cerr << "Not a valid off file." << std::endl;
+    std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
 
@@ -32,9 +31,7 @@ int main(int argc, char* argv[])
     << std::endl;
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  PMP::self_intersections(mesh,
-    std::back_inserter(intersected_tris),
-    PMP::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)));
+  PMP::self_intersections(mesh, std::back_inserter(intersected_tris));
 
   std::cout << intersected_tris.size() << " pairs of triangles intersect." << std::endl;
   

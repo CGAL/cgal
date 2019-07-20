@@ -6,9 +6,9 @@
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <CGAL/Side_of_triangle_mesh.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 
 #include <CGAL/Timer.h>
-#include <boost/foreach.hpp>
 
 // this can produce false negatives
 // mesh should be pure triangle
@@ -35,12 +35,12 @@ void generate_near_boundary(const PolygonMesh& mesh,
   // put vertices
   vertex_descriptor vd;
 
-  BOOST_FOREACH(vertex_descriptor vb, vertices(mesh)) {
+  for(vertex_descriptor vb : vertices(mesh)) {
     points.push_back(ppmap[vb]);
     on_boundary.push_back(true);
   }
   // sample middle of edges
-  BOOST_FOREACH(edge_descriptor eb, edges(mesh)) {
+  for(edge_descriptor eb : edges(mesh)) {
     halfedge_descriptor hd = halfedge(eb, mesh);
     const Point& p0 = ppmap[target(hd, mesh)];
     const Point& p1 = ppmap[target(opposite(hd, mesh), mesh)];
@@ -58,7 +58,7 @@ void generate_near_boundary(const PolygonMesh& mesh,
     on_boundary.push_back(has_on);
   }
   // sample middle of facets
-  BOOST_FOREACH(face_descriptor fb, faces(mesh)) {
+  for(face_descriptor fb : faces(mesh)) {
     const Point& p0 = ppmap[target(halfedge(fb, mesh), mesh)];
     const Point& p1 = ppmap[target(next(halfedge(fb, mesh), mesh), mesh)];
     const Point& p2 = ppmap[target(prev(halfedge(fb, mesh), mesh), mesh)];
@@ -71,15 +71,12 @@ void generate_near_boundary(const PolygonMesh& mesh,
   }
 }
 
-template<typename PolygonMesh>
-CGAL::Bbox_3 bbox(const PolygonMesh& mesh);
-
 template<class Point, class OutputIterator, typename PolygonMesh>
 void random_points(const PolygonMesh& mesh,
                    int n,
                    OutputIterator out)
 {
-  CGAL::Bbox_3 bb = bbox(mesh);
+  CGAL::Bbox_3 bb = CGAL::Polygon_mesh_processing::bbox(mesh);
   CGAL::Random rg(1340818006); // seed some value for make it easy to debug
 
   double grid_dx = bb.xmax() - bb.xmin();
@@ -126,21 +123,6 @@ void inside_test(
   std::cerr << "  " << nb_boundary << " points boundary " << std::endl;
   std::cerr << "  " << points.size() - nb_inside - nb_boundary << " points outside " << std::endl;
   std::cerr << " Queries took " << timer.time() << " sec." << std::endl;
-}
-
-template<typename PolygonMesh>
-CGAL::Bbox_3 bbox(const PolygonMesh& mesh)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type
-      ppmap = get(boost::vertex_point, mesh);
-
-  CGAL::Bbox_3 bbox(ppmap[*vertices(mesh).first].bbox());
-  BOOST_FOREACH(vertex_descriptor vb, vertices(mesh))
-  {
-    bbox = bbox + ppmap[vb].bbox();
-  }
-  return bbox;
 }
 
 template<typename Point>

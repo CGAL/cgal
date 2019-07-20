@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -27,6 +28,7 @@
 
 #include <CGAL/Kernel_d/Vector__.h>
 #include <CGAL/use.h>
+#include <CGAL/tss.h>
 #include <new>
 #include <cstddef>                 // for std::size_t, std::ptrdiff_t
 
@@ -163,9 +165,13 @@ vector_pointer* v_; int dm_,dn_;
 
 NT& elem(int i, int j) const { return v_[i]->v_[j]; }
 
-typedef typename AL_::template rebind<vector_pointer>::other 
-        allocator_type;
-static allocator_type MM;
+  typedef typename std::allocator_traits<AL_>:: template rebind_alloc<vector_pointer> allocator_type;
+  
+allocator_type& allocator()
+{
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(allocator_type, MM);
+  return MM;
+}
 
 inline void allocate_mat_space(vector_pointer*& vi, int d)
 {
@@ -173,9 +179,9 @@ inline void allocate_mat_space(vector_pointer*& vi, int d)
      memory allocation scheme. There we first get an appropriate piece
      of memory and then initialize each cell by an inplace new. */
 
-  vi = MM.allocate(d); 
-  vector_pointer* p = vi + d - 1; 
-  while (p >= vi) { 
+  vi = allocator().allocate(d);
+  vector_pointer* p = vi + d - 1;
+  while (p >= vi) {
     new (p) vector_pointer*(0); p--;
   }
 }
@@ -184,7 +190,7 @@ inline void deallocate_mat_space(vector_pointer*& vi, int d)
 {
   /* deallocate memory via our AL_ object. */
 
-  MM.deallocate(vi,d);
+  allocator().deallocate(vi,d);
   vi = (vector_pointer*)0;
 }
 
@@ -812,9 +818,6 @@ std::istream&  operator>>(std::istream& is, Matrix_<NT_,AL_>& M)
   }
   return is;
 }
-
-template <class NT_, class AL_>
-typename Matrix_<NT_,AL_>::allocator_type Matrix_<NT_,AL_>::MM;
 
 
 /*{\Ximplementation 

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_VORONOI_DIAGRAM_2_DEFAULT_SITE_INSERTERS_H
 #define CGAL_VORONOI_DIAGRAM_2_DEFAULT_SITE_INSERTERS_H 1
+
+#include <CGAL/license/Voronoi_diagram_2.h>
+
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
@@ -71,7 +75,7 @@ public:
   typedef typename Delaunay_graph::Vertex_handle      result_type;
 
 public:
-  Default_caching_site_inserter(const Adaptation_traits* at = NULL) : at_(at) {}
+  Default_caching_site_inserter(const Adaptation_traits* at = nullptr) : at_(at) {}
 
   result_type operator()(Delaunay_graph& dg, const Site_2& t) const
   {

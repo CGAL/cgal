@@ -14,11 +14,16 @@
 
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_CREATE_OFFSET_POLYGONS_2_H
 #define CGAL_CREATE_OFFSET_POLYGONS_2_H
+
+#include <CGAL/license/Straight_skeleton_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
@@ -336,6 +341,7 @@ create_exterior_skeleton_and_offset_polygons_2 ( FT const& aOffset, Polygon cons
 
 } // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif
 // EOF //

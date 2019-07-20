@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_SM_OVERLAYER_H
 #define CGAL_SM_OVERLAYER_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Union_find.h>
@@ -35,7 +39,7 @@
 #include <CGAL/Nef_S2/SM_const_decorator.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_S2/SM_io_parser.h>
-#include <CGAL/Nef_3/ID_support_handler.h>
+#include <CGAL/Nef_S2/ID_support_handler.h>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 131
 #include <CGAL/Nef_2/debug.h>
@@ -2309,8 +2313,8 @@ void SM_overlayer<Map>::simplify()
   CGAL_NEF_TRACEN("simplifying"); 
 
   typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(NULL);
-  CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(NULL);
+  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
+  CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
   CGAL::Union_find< SFace_handle> UF;
   
   SFace_iterator f;
@@ -2372,7 +2376,7 @@ void SM_overlayer<Map>::simplify()
     vn=v; ++vn;
     if ( is_isolated(v) ) {
     
-      if(Vitem[v] != NULL) {
+      if(Vitem[v] != nullptr) {
 	set_face(v,*(UF.find(Vitem[v])));
 	CGAL_NEF_TRACEN("incident face of " << PH(v) << " set to " << &*(v->incident_sface()));
       }

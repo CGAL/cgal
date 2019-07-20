@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Parameterization</class>
+ <widget class="QDockWidget" name="Parameterization">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>UVMapping</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QGraphicsView" name="graphicsView">
+      <property name="mouseTracking">
+       <bool>true</bool>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="interactive">
+       <bool>false</bool>
+      </property>
+      <property name="renderHints">
+       <set>QPainter::Antialiasing</set>
+      </property>
+      <property name="dragMode">
+       <enum>QGraphicsView::NoDrag</enum>
+      </property>
+      <property name="transformationAnchor">
+       <enum>QGraphicsView::NoAnchor</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0">
+      <item>
+       <widget class="QPushButton" name="prevButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/left_arrow.png</normaloff>:/cgal/icons/resources/left_arrow.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="component_numberLabel">
+        <property name="text">
+         <string>Component </string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="nextButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/right_arrow.png</normaloff>:/cgal/icons/resources/right_arrow.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../../Polyhedron_3.qrc"/>
+ </resources>
+ <connections/>
+</ui>

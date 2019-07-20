@@ -12,12 +12,19 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Ron Wein  <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
 
 #ifndef CGAL_POLYCURVE_2_H
 #define CGAL_POLYCURVE_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Header file for the polyline classes used by the
@@ -228,7 +235,7 @@ public:
       m_cvP(cvP),
       m_index(index)
     {
-      m_num_pts = (m_cvP == NULL) ? 0 :
+      m_num_pts = (m_cvP == nullptr) ? 0 :
         ((m_cvP->number_of_subcurves() == 0) ?
          0 : (m_cvP->number_of_subcurves() + 1));
     }
@@ -239,7 +246,7 @@ public:
   public:
     /*! Default constructor. */
     Point_const_iterator() :
-      m_cvP(NULL),
+      m_cvP(nullptr),
       m_num_pts(0),
       m_index(std::numeric_limits<size_type>::max BOOST_PREVENT_MACRO_SUBSTITUTION ())
     {}
@@ -249,7 +256,7 @@ public:
      */
     const Point_type_2& operator*() const
     {
-      CGAL_assertion(m_cvP != NULL);
+      CGAL_assertion(m_cvP != nullptr);
       CGAL_assertion((is_index_valid()) && (m_index < m_num_pts));
 
       // First point is the source of the first subcurve.
@@ -266,28 +273,28 @@ public:
     /*! Increment operators. */
     Point_const_iterator& operator++()
     {
-      if ((m_cvP != NULL) && (m_index < m_num_pts)) ++m_index;
+      if ((m_cvP != nullptr) && (m_index < m_num_pts)) ++m_index;
       return (*this);
     }
 
     Point_const_iterator operator++(int)
     {
       Point_const_iterator temp = *this;
-      if ((m_cvP != NULL) && (m_index < m_num_pts)) ++m_index;
+      if ((m_cvP != nullptr) && (m_index < m_num_pts)) ++m_index;
       return temp;
     }
 
     /*! Decrement operators. */
     Point_const_iterator& operator--()
     {
-      if ((m_cvP != NULL) && (is_index_valid())) --m_index;
+      if ((m_cvP != nullptr) && (is_index_valid())) --m_index;
       return (*this);
     }
 
     Point_const_iterator operator--(int)
     {
       Point_const_iterator temp = *this;
-      if ((m_cvP != NULL) && (is_index_valid())) --m_index;
+      if ((m_cvP != nullptr) && (is_index_valid())) --m_index;
       return temp;
     }
 

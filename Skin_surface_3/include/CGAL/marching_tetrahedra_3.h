@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
 #ifndef CGAL_MARCHING_TETRAHEDRA_H
 #define CGAL_MARCHING_TETRAHEDRA_H
+
+#include <CGAL/license/Skin_surface_3.h>
+
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Modifier_base.h>
@@ -45,8 +49,11 @@ private:
   typedef Vertex_iterator                               T_Vertex_iterator;
   typedef Cell_iterator                                 T_Cell_iterator;
   typedef typename T_Cell_iterator::value_type          T_Cell;
-  typedef typename T_Cell::Vertex_handle                T_Vertex_handle;
   typedef typename T_Vertex_iterator::value_type        T_Vertex;
+
+  typedef typename T_Vertex::Cell_handle                T_Cell_handle;
+  typedef typename T_Cell::Vertex_handle                T_Vertex_handle;
+
   typedef typename T_Vertex_iterator::value_type *      T_Vertex_pointer;
   typedef typename T_Cell_iterator::value_type *        T_Cell_pointer;
 
@@ -134,7 +141,7 @@ public:
 
 
   bool is_inside(T_Cell_iterator ch, int i) {
-    CGAL_assertion(&*ch != NULL);
+    CGAL_assertion(ch.operator->() != nullptr);
     //return (traits.sign(ch,i) == POSITIVE);
     T_vertex_map_it it = triang_vertex_signs.find((ch->vertex(i)));
     
@@ -142,7 +149,7 @@ public:
       bool side = (traits.sign(ch,i) == POSITIVE);
       CGAL_assertion(triang_vertex_signs.find((ch->vertex(i))) ==
 		     triang_vertex_signs.end());
-      CGAL_assertion(&*ch != NULL);
+      CGAL_assertion(ch.operator->() != nullptr);
       triang_vertex_signs[(ch->vertex(i))] = side;
       CGAL_assertion(triang_vertex_signs.find((ch->vertex(i))) !=
 		     triang_vertex_signs.end());

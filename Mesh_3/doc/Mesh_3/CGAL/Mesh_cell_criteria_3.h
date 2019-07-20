@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
 The class `Mesh_cell_criteria_3` is a model of `MeshCellCriteria_3`. It provides, 
 for the mesh tetrahedra, 
@@ -44,19 +44,17 @@ for the circumradii of the tetrahedra in the mesh. See
 section \ref introsecparam for further details. 
 Note that if one parameter is set to 0, then its corresponding criteria is ignored. 
 */ 
-Mesh_cell_criteria_3( 
-FT radius_edge_bound, 
-FT radius_bound); 
+  Mesh_cell_criteria_3(const FT& radius_edge_bound,
+                       const FT& radius_bound);
 
 /*!
 Returns an object to serve as default criteria for facets. The type `SizingField` must 
 be a model of the concept `MeshDomainField_3`. The behavior and semantic of the arguments are the same 
 as above, except that the radius bound parameter is a functional instead of a constant. 
 */ 
-template<class SizingField> 
-Mesh_cell_criteria_3( 
-FT radius_edge_bound, 
-SizingField radius_bound); 
+  template<class SizingField>
+  Mesh_cell_criteria_3(const FT& radius_edge_bound,
+                       const SizingField& radius_bound);
 
 /// @}
 

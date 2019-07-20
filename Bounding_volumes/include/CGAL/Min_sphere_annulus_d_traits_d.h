@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
@@ -63,10 +64,6 @@ class Min_sphere_annulus_d_traits_d {
                                         Access_coordinates_begin_d;
 
     typedef  CGAL::_Construct_point_d<K>       Construct_point_d;
-
-    // creation
-    Min_sphere_annulus_d_traits_d( ) { }
-    Min_sphere_annulus_d_traits_d( const Min_sphere_annulus_d_traits_d<K_,ET_,NT_>&) {}
 
     // operations
     Access_dimension_d

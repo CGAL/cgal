@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #ifndef CGAL_IO_SCAN_OFF_H
 #define CGAL_IO_SCAN_OFF_H 1
+
+#include <CGAL/license/Polyhedron.h>
+
 
 #include <CGAL/IO/Polyhedron_scan_OFF.h>
 #include <CGAL/Polyhedron_3.h>

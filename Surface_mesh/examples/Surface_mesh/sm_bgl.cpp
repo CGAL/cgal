@@ -8,7 +8,6 @@
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
@@ -38,14 +37,14 @@ int main(int /* argc */, char* argv[])
     "      coord Coordinate {\n"
     "        point [ \n";
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices(sm)){
+  for(vertex_descriptor vd : vertices(sm)){
     std::cout <<  "        " << sm.point(vd) << "\n";
   }
   
   std::cout << "        ]\n"
     "     }\n"
     "      coordIndex [\n"; 
-  BOOST_FOREACH(vertex_descriptor vd, vertices(sm)){
+  for(vertex_descriptor vd : vertices(sm)){
     if(predecessor[vd]!=vd){
       std::cout << "      " << std::size_t(vd) << ", " << std::size_t(predecessor[vd]) <<  ", -1\n";
     }

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert
 
 #ifndef CGAL_CH_FUNCTION_OBJECTS_2_H
 #define CGAL_CH_FUNCTION_OBJECTS_2_H
+
+#include <CGAL/license/Convex_hull_2.h>
+
 
 #include <CGAL/enum.h>
 

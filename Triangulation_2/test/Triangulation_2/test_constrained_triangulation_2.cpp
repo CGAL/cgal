@@ -20,10 +20,8 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/_test_types.h>
 
-#include <CGAL/intersections.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/_test_cls_constrained_triangulation_2.h>
 

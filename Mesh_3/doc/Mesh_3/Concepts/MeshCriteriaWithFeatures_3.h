@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3Concepts
+\ingroup PkgMesh3Concepts
 \cgalConcept
 
 The concept `MeshCriteriaWithFeatures_3` refines the concept `MeshCriteria_3`. 

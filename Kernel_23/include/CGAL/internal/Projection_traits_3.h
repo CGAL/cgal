@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2010  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1997-2010, 2017  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -14,9 +14,9 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0+
 //
-// Author(s)     : Mariette Yvinec, Sebastien Loriot
+// Author(s)     : Mariette Yvinec, Sebastien Loriot, Mael Rouxel-Labbé
 
 #ifndef CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 #define CGAL_INTERNAL_PROJECTION_TRAITS_3_H
@@ -248,6 +248,8 @@ public:
   typedef typename R::Point_2   Point_2; 
   typedef typename R::Line_3    Line_3; 
   typedef typename R::Line_2    Line_2;
+  typedef typename R::Segment_3 Segment_3;
+  typedef typename R::Segment_2 Segment_2;
   typedef typename R::FT        RT;
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
@@ -269,6 +271,13 @@ public:
     Point_2 p2(project(p));
     Line_2 l2(project(l.point(0)), project(l.point(1)));
     return squared_distance(p2, l2);
+  }
+  
+  RT operator()(const Segment_3& s, const Point_3& p) const
+  {
+    Point_2 p2(project(p));
+    Segment_2 s2(project(s.source()), project(s.target()));
+    return squared_distance(p2, s2);
   }
 };
 
@@ -313,9 +322,9 @@ public:
     //We know that none of the segment is degenerate
     Object o = intersection(s1_2,s2_2);
     const Point_2* pi=CGAL::object_cast<Point_2>(&o);
-    if (pi==NULL) { //case of segment or empty
+    if (pi==nullptr) { //case of segment or empty
       const Segment_2* si=CGAL::object_cast<Segment_2>(&o);
-      if (si==NULL) return Object();
+      if (si==nullptr) return Object();
       FT src[3],tgt[3];
       //the third coordinate is the midpoint between the points on s1 and s2
       FT z1 = s1.source()[dim] + ( alpha(si->source(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
@@ -490,6 +499,272 @@ struct Angle_projected_3{
   }
 };
 
+// weighted functors
+template <class R, int dim>
+class Compare_power_distance_projected_3
+{
+public:
+  typedef typename R::Point_2                   Point_2;
+  typedef typename R::Weighted_point_2          Weighted_point_2;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Weighted_point_3          Weighted_point_3;
+  typedef typename R::FT                        FT;
+
+  FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Point_2 project(const Point_3& p) const
+  {
+    return Point_2(x(p), y(p));
+  }
+
+  Weighted_point_2 project(const Weighted_point_3& wp) const
+  {
+    Point_3 p = R().construct_point_3_object()(wp);
+    return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
+  }
+
+  Comparison_result operator()(const Point_3& p,
+                               const Weighted_point_3& wq, const Weighted_point_3& wr) const
+  {
+    Point_2 p2 = project(p);
+    Weighted_point_2 wq2 = project(wq);
+    Weighted_point_2 wr2 = project(wr);
+    return CGAL::compare_power_distance(p2, wq2, wr2);
+  }
+};
+
+template <class R, int dim>
+class Compute_power_product_projected_3
+{
+public:
+  typedef typename R::Point_2                   Point_2;
+  typedef typename R::Weighted_point_2          Weighted_point_2;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Weighted_point_3          Weighted_point_3;
+  typedef typename R::FT                        FT;
+
+  FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Weighted_point_2 project(const Weighted_point_3& wp) const
+  {
+    Point_3 p = R().construct_point_3_object()(wp);
+    return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
+  }
+
+  FT operator()(const Weighted_point_3& wp, const Weighted_point_3& wq) const
+  {
+    Weighted_point_2 wp2(project(wp));
+    Weighted_point_2 wq2(project(wq));
+    return CGAL::power_product(wp2, wq2);
+  }
+};
+
+template <class R, int dim>
+class Compute_squared_radius_smallest_orthogonal_circle_projected_3
+{
+public:
+  typedef typename R::Point_2                   Point_2;
+  typedef typename R::Weighted_point_2          Weighted_point_2;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Weighted_point_3          Weighted_point_3;
+  typedef typename R::FT                        FT;
+
+  FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Weighted_point_2 project(const Weighted_point_3& wp) const
+  {
+    Point_3 p = R().construct_point_3_object()(wp);
+    return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
+  }
+
+  FT operator()(const Weighted_point_3& wp1, const Weighted_point_3& wp2, const Weighted_point_3& wp3) const
+  {
+    return CGAL::squared_radius_smallest_orthogonal_circle( project(wp1), project(wp2), project(wp3) );
+  }
+
+  FT operator()(const Weighted_point_3& wp1, const Weighted_point_3& wp2) const
+  {
+    return CGAL::squared_radius_smallest_orthogonal_circle( project(wp1), project(wp2) );
+  }
+
+  FT operator()(const Weighted_point_3& wp1) const
+  {
+    return CGAL::squared_radius_smallest_orthogonal_circle( project(wp1) );
+  }
+};
+
+template <class R, int dim>
+class Construct_radical_axis_projected_3
+{
+public:
+  typedef typename R::Line_2                    Line_2;
+  typedef typename R::Line_3                    Line_3;
+  typedef typename R::Point_2                   Point_2;
+  typedef typename R::Weighted_point_2          Weighted_point_2;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Weighted_point_3          Weighted_point_3;
+  typedef typename R::FT                        FT;
+
+  FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Weighted_point_2 project(const Weighted_point_3& wp) const
+  {
+    Point_3 p = R().construct_point_3_object()(wp);
+    return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
+  }
+
+  Line_3 embed (const Line_2& l) const
+  {
+    Point_2 p0 = l.point(0);
+    Point_2 p1 = l.point(1);
+
+    FT coords_p0[3];
+    coords_p0[Projector<R,dim>::x_index] = p0.x();
+    coords_p0[Projector<R,dim>::y_index] = p0.y();
+    coords_p0[dim] = FT(0);
+
+    FT coords_p1[3];
+    coords_p1[Projector<R,dim>::x_index] = p1.x();
+    coords_p1[Projector<R,dim>::y_index] = p1.y();
+    coords_p1[dim] = FT(0);
+
+    return Line_3(Point_3(coords_p0[0], coords_p0[1], coords_p0[2]),
+                  Point_3(coords_p1[0], coords_p1[1], coords_p1[2]));
+  }
+
+public:
+  Line_3 operator() (const Weighted_point_3& wp1, const Weighted_point_3& wp2) const
+  {
+    return embed( CGAL::radical_axis(project(wp1), project(wp2)) );
+  }
+};
+
+template <class R, int dim>
+class Construct_weighted_circumcenter_projected_3
+{
+public:
+  typedef typename R::Point_2                   Point_2;
+  typedef typename R::Weighted_point_2          Weighted_point_2;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Weighted_point_3          Weighted_point_3;
+  typedef typename R::FT                        FT;
+
+  FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Weighted_point_2 project(const Weighted_point_3& wp) const
+  {
+    Point_3 p = R().construct_point_3_object()(wp);
+    return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
+  }
+
+  Point_3 embed (const Point_2& p) const
+  {
+    FT coords[3];
+    coords[Projector<R,dim>::x_index] = p.x();
+    coords[Projector<R,dim>::y_index] = p.y();
+    coords[dim] = FT(0);
+
+    return Point_3(coords[0], coords[1], coords[2]);
+  }
+
+public:
+  Point_3 operator()(const Weighted_point_3& wp1,
+                     const Weighted_point_3& wp2,
+                     const Weighted_point_3& wp3) const
+  {
+    return embed( CGAL::weighted_circumcenter(project(wp1), project(wp2), project(wp3)) );
+  }
+};
+
+template <class R, int dim>
+class Power_side_of_bounded_power_circle_projected_3
+{
+public:
+  typedef typename R::Point_2                   Point_2;
+  typedef typename R::Weighted_point_2          Weighted_point_2;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Weighted_point_3          Weighted_point_3;
+  typedef typename R::FT                        FT;
+
+  FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Weighted_point_2 project(const Weighted_point_3& wp) const
+  {
+    Point_3 p = R().construct_point_3_object()(wp);
+    return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
+  }
+
+  CGAL::Bounded_side operator()(const Weighted_point_3 &wp,
+                                const Weighted_point_3 &wq,
+                                const Weighted_point_3 &wr,
+                                const Weighted_point_3 &ws) const
+  {
+    return CGAL::power_side_of_bounded_power_circle(project(wp), project(wq),
+                                                    project(wr), project(ws));
+  }
+
+  CGAL::Bounded_side operator()(const Weighted_point_3 &wp,
+                                const Weighted_point_3 &wq,
+                                const Weighted_point_3 &wr) const
+  {
+    return CGAL::power_side_of_bounded_power_circle(project(wp), project(wq), project(wr));
+  }
+
+  CGAL::Bounded_side operator()(const Weighted_point_3 &wp,
+                                const Weighted_point_3 &wq) const
+  {
+    return CGAL::power_side_of_bounded_power_circle(project(wp), project(wq));
+  }
+};
+
+template <class R, int dim>
+class Power_side_of_oriented_power_circle_projected_3
+{
+public:
+  typedef typename R::Point_2                   Point_2;
+  typedef typename R::Weighted_point_2          Weighted_point_2;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Weighted_point_3          Weighted_point_3;
+  typedef typename R::FT                        FT;
+
+  FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Weighted_point_2 project(const Weighted_point_3& wp) const
+  {
+    Point_3 p = R().construct_point_3_object()(wp);
+    return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
+  }
+
+  CGAL::Oriented_side operator()(const Weighted_point_3 &wp,
+                                 const Weighted_point_3 &wq,
+                                 const Weighted_point_3 &wr,
+                                 const Weighted_point_3 &ws) const
+  {
+    return CGAL::power_side_of_oriented_power_circle(project(wp), project(wq),
+                                                     project(wr), project(ws));
+  }
+
+  CGAL::Oriented_side operator()(const Weighted_point_3 &wp,
+                                 const Weighted_point_3 &wq,
+                                 const Weighted_point_3 &wr) const
+  {
+    return CGAL::power_side_of_oriented_power_circle(project(wp), project(wq), project(wr));
+  }
+
+  CGAL::Oriented_side operator()(const Weighted_point_3 &wp,
+                                 const Weighted_point_3 &wq) const
+  {
+    return CGAL::power_side_of_oriented_power_circle(project(wp), project(wq));
+  }
+};
+
 template < class R, int dim >
 class Projection_traits_3 {
 public:
@@ -497,6 +772,7 @@ public:
   typedef R                                                   Rp;
   typedef typename R::FT                                      FT;
   typedef typename Rp::Point_3                                Point_2;
+  typedef typename Rp::Weighted_point_3                       Weighted_point_2;
   typedef typename Rp::Segment_3                              Segment_2;
   typedef typename Rp::Vector_3                               Vector_2;
   typedef typename Rp::Triangle_3                             Triangle_2;
@@ -519,6 +795,18 @@ public:
   typedef Compute_squared_radius_projected<Rp,dim>            Compute_squared_radius_2;
   typedef Compute_scalar_product_projected_3<Rp,dim>          Compute_scalar_product_2;
   typedef Compute_squared_length_projected_3<Rp,dim>          Compute_squared_length_2;
+
+  typedef Compare_power_distance_projected_3<Rp,dim>          Compare_power_distance_2;
+  typedef Compute_power_product_projected_3<Rp,dim>           Compute_power_product_2;
+  typedef Compute_squared_radius_smallest_orthogonal_circle_projected_3<Rp,dim>
+                                                              Compute_squared_radius_smallest_orthogonal_circle_2;
+  typedef Construct_radical_axis_projected_3<Rp,dim>          Construct_radical_axis_2;
+  typedef Construct_weighted_circumcenter_projected_3<Rp,dim> Construct_weighted_circumcenter_2;
+  typedef Power_side_of_bounded_power_circle_projected_3<Rp,dim> Power_side_of_bounded_power_circle_2;
+  typedef Power_side_of_oriented_power_circle_projected_3<Rp, dim> Power_side_of_oriented_power_circle_2;
+
+  typedef typename Rp::Construct_point_3                      Construct_point_2;
+  typedef typename Rp::Construct_weighted_point_3             Construct_weighted_point_2;
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
   typedef typename Rp::Construct_translated_point_3           Construct_translated_point_2;
   typedef typename Rp::Construct_midpoint_3                   Construct_midpoint_2;
@@ -526,6 +814,7 @@ public:
   typedef typename Rp::Construct_scaled_vector_3              Construct_scaled_vector_2;
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
+  typedef typename Rp::Construct_bbox_3                       Construct_bbox_2;
 
   struct Less_xy_2 {
     typedef bool result_type;
@@ -683,6 +972,12 @@ public:
     return Intersect_2();
   }
 
+  Construct_point_2 construct_point_2_object() const
+  { return Construct_point_2();}
+
+  Construct_weighted_point_2 construct_weighted_point_2_object() const
+  { return Construct_weighted_point_2();}
+
   Construct_segment_2  construct_segment_2_object() const
     {return Construct_segment_2();}
 
@@ -704,6 +999,9 @@ public:
   Construct_line_2  construct_line_2_object() const
     {return Construct_line_2();}
 
+  Construct_bbox_2  construct_bbox_2_object() const
+    {return Construct_bbox_2();}
+
   Compute_scalar_product_2 compute_scalar_product_2_object() const
     {return Compute_scalar_product_2();}
 
@@ -716,8 +1014,29 @@ public:
   Compute_squared_length_2 compute_squared_length_2_object() const
     {return Compute_squared_length_2();}
 
+  Compare_power_distance_2 compare_power_distance_2_object() const
+    {return Compare_power_distance_2();}
+
+  Compute_power_product_2 compute_power_product_2_object() const
+    {return Compute_power_product_2();}
+
+  Compute_squared_radius_smallest_orthogonal_circle_2
+  compute_squared_radius_smallest_orthogonal_circle_2_object() const
+    {return Compute_squared_radius_smallest_orthogonal_circle_2();}
+
+  Construct_radical_axis_2 construct_radical_axis_2_object() const
+    {return Construct_radical_axis_2();}
+
+  Construct_weighted_circumcenter_2 construct_weighted_circumcenter_2_object() const
+    {return Construct_weighted_circumcenter_2();}
+
+  Power_side_of_bounded_power_circle_2 power_side_of_bounded_power_circle_2_object() const
+    {return Power_side_of_bounded_power_circle_2();}
+
+  Power_side_of_oriented_power_circle_2 power_side_of_oriented_power_circle_2_object() const
+    {return Power_side_of_oriented_power_circle_2();}
 };
-  
+
 
 } } //namespace CGAL::internal
 

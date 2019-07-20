@@ -2,7 +2,7 @@
 // the QP below is the first nonnegative quadratic program example 
 // in the user manual
 #include <iostream>
-#include <CGAL/basic.h>
+
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 

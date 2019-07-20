@@ -23,7 +23,7 @@ void check_types(output out){
   CGAL_USE_TYPE(typename output::pointer);
   CGAL_USE_TYPE(typename output::reference);
   T1 tmp=out.get_iterator_tuple();
-  tmp=tmp;
+  tmp=(T1&)tmp;
 }
   
 template <class T1,class T2>
@@ -31,12 +31,12 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
 
   typedef 
   CGAL::Dispatch_output_iterator<
-    CGAL::cpp11::tuple<T1,T2 >,CGAL::cpp11::tuple< T1*,std::back_insert_iterator<std::vector<T2> > > 
+    std::tuple<T1,T2 >,std::tuple< T1*,std::back_insert_iterator<std::vector<T2> > > 
   > Dispatcher;
 
   typedef 
   CGAL::Dispatch_or_drop_output_iterator<
-    CGAL::cpp11::tuple<T1,T2 >,CGAL::cpp11::tuple< T1*,std::back_insert_iterator<std::vector<T2> > > 
+    std::tuple<T1,T2 >,std::tuple< T1*,std::back_insert_iterator<std::vector<T2> > > 
   > Dropper;
   
   assert(data1.size()==4);
@@ -69,19 +69,19 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
   check_types(disp);
   check_types(drop);
   
-  disp = disp;
-  drop = drop;
+  disp = (Dispatcher&)disp;
+  drop = (Dropper&)drop;
 
   std::back_insert_iterator<std::vector<T2> > bck_ins(cont_2);
   
   T1* d;
 
-  CGAL::cpp11::tie(d, bck_ins) = disp;
-  CGAL::cpp11::tie(d, bck_ins) = drop;
+  std::tie(d, bck_ins) = disp;
+  std::tie(d, bck_ins) = drop;
 
   //testing putting the tuple directly
-  CGAL::cpp11::tuple<T1,T2> tuple =
-    CGAL::cpp11::make_tuple(*data1.begin(), *data2.begin());
+  std::tuple<T1,T2> tuple =
+    std::make_tuple(*data1.begin(), *data2.begin());
 
   *disp++ = tuple;
   assert(cont_2.size()==2 * data2.size()+1);
@@ -97,11 +97,11 @@ void variant_test() {
   std::vector<double> b;
   std::vector<char> c;
   typedef CGAL::Dispatch_output_iterator< 
-    CGAL::cpp0x::tuple<int, double, char>,
-    CGAL::cpp0x::tuple<std::back_insert_iterator< std::vector<int> >,
-                       std::back_insert_iterator< std::vector<double> >,
-                       std::back_insert_iterator< std::vector<char> > 
-                       > > Dispatch;
+    std::tuple<int, double, char>,
+    std::tuple<std::back_insert_iterator< std::vector<int> >,
+               std::back_insert_iterator< std::vector<double> >,
+               std::back_insert_iterator< std::vector<char> > 
+                     > > Dispatch;
   Dispatch disp = CGAL::dispatch_output<int, double, char>(std::back_inserter(a),
                                                            std::back_inserter(b),
                                                            std::back_inserter(c));

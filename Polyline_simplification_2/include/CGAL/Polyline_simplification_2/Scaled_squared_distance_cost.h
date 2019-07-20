@@ -14,13 +14,18 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 //
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_2_SCALED_SQUARED_DISTANCE_COST_H
 #define CGAL_POLYLINE_SIMPLIFICATION_2_SCALED_SQUARED_DISTANCE_COST_H
 
+#include <CGAL/license/Polyline_simplification_2.h>
+
+
 #include <CGAL/algorithm.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
 
 namespace CGAL {
 
@@ -81,7 +86,7 @@ public:
       d1 = (std::max)(d1, compute_squared_distance( lP_R, *pp ) ) ;
 
     
-    FT d2;
+    FT d2=0;
     bool d2_uninitialized = true;
 
     Vertex_circulator vc = pct.incident_vertices(*vicq), done(vc);

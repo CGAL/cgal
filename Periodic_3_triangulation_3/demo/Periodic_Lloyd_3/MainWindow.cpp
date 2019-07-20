@@ -121,7 +121,7 @@ MainWindow::loadPoints()
     cy += dom[i].y();
     cy += dom[i].y();
   }
-  qglviewer::Vec center(cx/8.,cy/8.,cz/8.);
+  CGAL::qglviewer::Vec center(cx/8.,cy/8.,cz/8.);
   viewer->setSceneCenter(center);
   viewer->setSceneRadius(std::sqrt(
 	  ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
@@ -150,7 +150,7 @@ MainWindow::savePoints()
 
 void MainWindow::lloydStep() {
   scene.lloyd_step();
-  viewer->updateGL();
+  viewer->update();
   viewer->changed();
   }
 
@@ -190,7 +190,7 @@ MainWindow::newPoints(int n)
     cy += dom[i].y();
     cy += dom[i].y();
   }
-  qglviewer::Vec center(cx/8.,cy/8.,cz/8.);
+  CGAL::qglviewer::Vec center(cx/8.,cy/8.,cz/8.);
   viewer->setSceneCenter(center);
   viewer->setSceneRadius(std::sqrt(
 	  ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ----------------------------------------------------
 # ----------------------------------------------------
 # autotest_cgal: a script to automagically install and
@@ -525,7 +525,7 @@ export MAKE_CMD;
 export CGAL_BINARY_DIR;
 export CGAL_REFERENCE_CACHE_DIR;
 cd '${CGAL_BINARY_DIR}';
-cmake '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
+cmake \${INIT_FILE:+"-C\${INIT_FILE}"} '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
                            -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
                            VERBOSE=1 \\
                            ../../..;
@@ -900,14 +900,14 @@ lockfile -r 1 "$LOCK_FILE";
 if [ ${?} != 0 ]; then
   PID=`cat "$LOCK_FILE"`
   if kill -0 "$PID"; then 
-    log "${ACTUAL_LOGFILE}" "COULD NOT AQUIRE LOCK! LOCKING PROCESS PID=$PID";
+    log "${ACTUAL_LOGFILE}" "COULD NOT ACQUIRE LOCK! LOCKING PROCESS PID=$PID";
     exit 1;
   else
     # The locking process has died without erasing the lock file
     rm -f "$LOCK_FILE"
     lockfile -r 1 "$LOCK_FILE";
     if [ ${?} != 0 ]; then
-      log "${ACTUAL_LOGFILE}" "COULD NOT AQUIRE LOCK!";
+      log "${ACTUAL_LOGFILE}" "COULD NOT ACQUIRE LOCK!";
       exit 1
     fi
   fi

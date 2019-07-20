@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Constantinos Tsirogiannis , Pedro Machado
 
@@ -26,6 +27,9 @@
 
 #ifndef CGAL_BBOX_FILTERED_PREDICATES_H  
 #define CGAL_BBOX_FILTERED_PREDICATES_H  
+
+#include <CGAL/license/Circular_kernel_2.h>
+
 
 #include <CGAL/assertions.h>
 #include <CGAL/enum.h>

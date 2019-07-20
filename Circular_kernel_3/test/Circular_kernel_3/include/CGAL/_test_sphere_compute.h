@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -73,11 +74,11 @@ void _test_spherical_kernel_compute(SK sk)
   Root_for_spheres_2_3 rt[8];
 
   rt[0] = Root_for_spheres_2_3(0,1,0);
-  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)),0);
+  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)),0);
   rt[2] = Root_for_spheres_2_3(-1,0,0);
-  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1)/FT(2)),FT(2)),0);
+  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1)/FT(2)),FT(2)),0);
   rt[4] = Root_for_spheres_2_3(0,-1,0);
-  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1)/FT(2)),FT(2)),0);
+  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1)/FT(2)),FT(2)),0);
   rt[6] = Root_for_spheres_2_3(1,0,0);
   rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)),0);
 
@@ -86,7 +87,7 @@ void _test_spherical_kernel_compute(SK sk)
     cp[i] = theConstruct_circular_arc_point_3(rt[i]);
   }
 
-  const double pi = std::acos(-1.);
+  const double pi = CGAL_PI;
 
   const Polynomials_for_circle_3 pcc_test = 
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),

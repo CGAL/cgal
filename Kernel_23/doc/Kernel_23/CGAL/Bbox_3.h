@@ -7,6 +7,8 @@ namespace CGAL {
 An object `b` of the class `Bbox_3` is a bounding 
 box in the three-dimensional Euclidean space \f$ \E^3\f$. 
 
+\cgalModels `Hashable`
+
 \sa `CGAL::Bbox_2` 
 
 */
@@ -109,6 +111,10 @@ updates `b` to be the bounding box of `b` and `c` and returns itself.
 */
 Bbox_3& operator+=(const Bbox_3 &c);
 
+/*!
+dilates the bounding box by a specified number of ULP.
+*/
+void dilate(int dist);
 /// @}
 
 }; /* end Bbox_3 */

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
 The class `Mesh_criteria_3` is a model of both concepts `MeshCriteria_3` 
 and `MeshCriteriaWithFeatures_3`. 
@@ -52,7 +52,8 @@ Mesh_criteria_3<Tr> criteria (parameters::cell_radius_edge_ratio=2,
 
 */
 template< typename Tr >
-class Mesh_criteria_3 {
+class Mesh_criteria_3
+{
 public:
 
 /// \name Types 
@@ -61,14 +62,12 @@ public:
 /*!
 The criteria for edges. 
 */ 
-typedef Mesh_edge_criteria_3<Tr> 
-Edge_criteria; 
+typedef Mesh_edge_criteria_3<Tr> Edge_criteria;
 
 /*!
 The criteria for facets. 
 */ 
-typedef Mesh_facet_criteria_3<Tr> 
-Facet_criteria; 
+typedef Mesh_facet_criteria_3<Tr> Facet_criteria;
 
 /*!
 The 
@@ -85,17 +84,15 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
 Construction from facet and cell criteria. The edge criteria are ignored 
 in this case. 
 */ 
-Mesh_criteria_3( 
-Facet_criteria facet_criteria, 
-Cell_criteria cell_criteria); 
+Mesh_criteria_3(const Facet_criteria& facet_criteria,
+                const Cell_criteria& cell_criteria);
 
 /*!
 Construction from edge, facet and cell criteria. 
 */ 
-Mesh_criteria_3( 
-Edge_criteria edge_criteria, 
-Facet_criteria facet_criteria, 
-Cell_criteria cell_criteria); 
+Mesh_criteria_3(const Edge_criteria& edge_criteria,
+                const Facet_criteria& facet_criteria,
+                const Cell_criteria& cell_criteria);
 
 /*!
 \brief Construction from criteria parameters. This constructor uses named 
@@ -115,7 +112,7 @@ The description of each parameter is as follows:
 
 - `edge_size`: a scalar field (resp. a constant) providing a space varying 
 (resp. a uniform) 
-upper bound for the lengths of curve segment edges. This parameter has to be set to a positive 
+upper bound for the lengths of curve edges. This parameter has to be set to a positive 
 value when 1-dimensional features protection is used.
 
 - `facet_angle`: a lower bound for the angles (in degrees) of the 
@@ -125,7 +122,8 @@ surface mesh facets.
 a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls. 
 
 - `facet_distance`: a scalar field (resp. a constant) describing a space varying (resp. a uniform) 
-upper bound for the same distance. 
+upper bound for the distance between the facet circumcenter and the center of its surface
+Delaunay ball.
 
 - `facet_topology`: the set of topological constraints 
 which have to be verified by each surface facet. The default value is 
@@ -138,10 +136,10 @@ get all possible values.
 a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra. 
 
 Note that each size or distance parameter can be specified using two ways: either as 
-scalar field or as a numerical value when the field is uniform. 
+a scalar field or as a numerical value when the field is uniform. 
 
 Each parameter has a special default value `ignored` which means that the 
-corresponding criteria will be ignored. 
+corresponding criterion will be ignored. 
 Numerical sizing or distance values, as well as scalar fields 
 should be given in the unit used for coordinates of points in the mesh domain class 
 of the mesh generation process. 
@@ -149,14 +147,13 @@ of the mesh generation process.
 */ 
 template<typename FT, 
 typename ...Fieldi> 
-Mesh_criteria_3( 
-Field1 parameters::edge_size = ignored, 
-FT parameters::facet_angle = ignored, 
-Field2 parameters::facet_size = ignored, 
-Field3 parameters::facet_distance = ignored, 
-Mesh_facet_topology parameters::facet_topology = CGAL::FACET_VERTICES_ON_SURFACE, 
-FT parameters::cell_radius_edge_ratio = ignored, 
-Field4 parameters::cell_size = ignored); 
+Mesh_criteria_3(Field1 parameters::edge_size = ignored,
+                FT parameters::facet_angle = ignored,
+                Field2 parameters::facet_size = ignored,
+                Field3 parameters::facet_distance = ignored,
+                Mesh_facet_topology parameters::facet_topology = CGAL::FACET_VERTICES_ON_SURFACE,
+                FT parameters::cell_radius_edge_ratio = ignored,
+                Field4 parameters::cell_size = ignored);
 
 /// @}
 

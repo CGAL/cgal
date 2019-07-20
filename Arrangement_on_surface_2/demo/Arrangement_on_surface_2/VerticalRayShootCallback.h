@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -199,7 +200,7 @@ void VerticalRayShootCallback< Arr_ >::reset( )
   this->activeRay->setLine( 0, 0, 0, 0 );
   this->rayGraphicsItem.reset( );
   this->highlightedCurves->clear( );
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >
@@ -285,7 +286,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
     }
   }
 
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >

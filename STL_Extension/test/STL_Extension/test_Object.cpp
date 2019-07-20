@@ -2,6 +2,7 @@
 
 #include <CGAL/Object.h>
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>

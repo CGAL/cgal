@@ -1,6 +1,6 @@
 #include <iostream>
-#include <CGAL/basic.h>
 #include <cassert>
+
 #include <CGAL/Exponent_vector.h>
 #include <boost/concept_check.hpp>
 

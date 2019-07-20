@@ -11,20 +11,19 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Gray_image_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/read_vtk_image_data.h>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/functional.hpp>
 
 typedef short Image_word_type;
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3,K, 
-                                       Image_word_type,
-                                       std::binder1st< std::less<Image_word_type> > > Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -33,8 +32,16 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+class Less {
+  double iso;
+public:
+  Less(double iso): iso(iso) {}
+
+  template <typename T>
+  int operator()(T v) const {
+    return int(v < iso);
+  }
+};
 
 int main(int argc, char* argv[])
 {
@@ -71,9 +78,16 @@ int main(int argc, char* argv[])
     std::cerr << "could not create a CGAL::Image_3 from the vtk image\n";
     return 0;
   }
-  // Domain
-  Mesh_domain domain(image, std::bind1st(std::less<Image_word_type>(), iso), 0);
-  
+  /// [Domain creation]
+  // To avoid verbose function and named parameters call
+  using namespace CGAL::parameters;
+
+  Mesh_domain domain = Mesh_domain::create_gray_image_mesh_domain
+    (image,
+     image_values_to_subdomain_indices = Less(iso),
+     value_outside = 0);
+  /// [Domain creation]
+
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=fs, facet_distance=fd,
                          cell_radius_edge_ratio=3, cell_size=cs);

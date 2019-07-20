@@ -1,15 +1,15 @@
-/// \defgroup PkgTDS2 2D Triangulation Data Structure Reference
+/// \defgroup PkgTDS2Ref 2D Triangulation Data Structure Reference
 /// \defgroup PkgTDS2Concepts Concepts
-/// \ingroup PkgTDS2
+/// \ingroup PkgTDS2Ref
 /*!
-\addtogroup PkgTDS2
+\addtogroup PkgTDS2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Triangulation Data Structure,PkgTDS2Summary}
+\cgalPkgDescriptionBegin{2D Triangulation Data Structure,PkgTDS2}
 \cgalPkgPicture{tds_small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Sylvain Pion and Mariette Yvinec}
 \cgalPkgDesc{This package provides a data structure to store a two-dimensional triangulation that has the  topology of a two-dimensional sphere.  The package acts as a container for the vertices and faces of the triangulation  and provides basic  combinatorial operation on the triangulation. }
-\cgalPkgManuals{Chapter_2D_Triangulation_Data_Structure,PkgTDS2}
+\cgalPkgManuals{Chapter_2D_Triangulation_Data_Structure,PkgTDS2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.2}
@@ -49,7 +49,7 @@ These refining concepts and their models are described in Chapter
 \ref Chapter_2D_Triangulations "2D Triangulations".
 
 \cgalClassifedRefPages
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `TriangulationDataStructure_2`
 - `TriangulationDataStructure_2::Face`
 - `TriangulationDataStructure_2::Vertex`
@@ -57,7 +57,7 @@ These refining concepts and their models are described in Chapter
 - `TriangulationDSFaceBase_2`
 - `TriangulationDSVertexBase_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Triangulation_data_structure_2<Vb,Fb>`
 - `CGAL::Triangulation_ds_face_base_2<Tds>`
 - `CGAL::Triangulation_ds_vertex_base_2<Tds>`

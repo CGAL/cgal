@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_SDG_IN_PLACE_EDGE_LIST_FOR_SDG_H
 #define CGAL_SDG_IN_PLACE_EDGE_LIST_FOR_SDG_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
 
 namespace CGAL {
 
@@ -243,7 +247,7 @@ public:
 
   void remove(const Edge& e) {
     CGAL_precondition( is_in_list(e) );
-    static Edge SENTINEL_QUEUE_EDGE = Edge(Face_handle(), -1);
+    const Edge SENTINEL_QUEUE_EDGE = Edge(Face_handle(), -1);
 
     if ( is_singleton() ) {
       _front = SENTINEL_QUEUE_EDGE;

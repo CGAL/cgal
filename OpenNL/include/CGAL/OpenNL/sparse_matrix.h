@@ -31,6 +31,10 @@
  *  Laurent Saboret 01/2005: Change for CGAL:
  *      - Added OpenNL namespace
  *      - SparseMatrix is now a model of the SparseLinearAlgebraTraits_d::Matrix concept
+ *
+ * $URL$
+ * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
 */
 
 #ifndef __OPENNL_SPARSE_MATRIX__
@@ -159,7 +163,7 @@ public:
 
     ~SparseMatrix() {
         delete[] row_ ;
-        row_ = NULL ;
+        row_ = nullptr ;
     }
 
     //___________ access ________________________

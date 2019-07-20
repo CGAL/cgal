@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_MESH_3_TRIANGLE_ACCESSOR_PRIMITIVE_H
 #define CGAL_MESH_3_TRIANGLE_ACCESSOR_PRIMITIVE_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 
 namespace CGAL {

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_MIN_QUADRILATERAL_TRAITS_2_H
 #define CGAL_MIN_QUADRILATERAL_TRAITS_2_H 1
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
@@ -125,7 +129,7 @@ public:
 
   // new predicates
   struct Area_less_rectangle_2
-  : public std::binary_function< Rectangle_2, Rectangle_2, bool >
+  : public CGAL::cpp98::binary_function< Rectangle_2, Rectangle_2, bool >
   {
     RT
     area_numerator(const Rectangle_2& r, Cartesian_tag) const
@@ -166,7 +170,7 @@ public:
     }
   };
   struct Area_less_parallelogram_2
-  : public std::binary_function< Parallelogram_2,
+  : public CGAL::cpp98::binary_function< Parallelogram_2,
                                       Parallelogram_2,
                                       bool >
   {
@@ -211,7 +215,7 @@ public:
     }
   };
   struct Width_less_strip_2
-  : public std::binary_function< Strip_2, Strip_2, bool >
+  : public CGAL::cpp98::binary_function< Strip_2, Strip_2, bool >
   {
     RT
     width_numerator(const Strip_2& r, Cartesian_tag) const
@@ -253,7 +257,7 @@ public:
 
   // new constructions
   struct Construct_vector_from_direction_2
-  : public std::unary_function<Direction_2,Vector_2>
+  : public CGAL::cpp98::unary_function<Direction_2,Vector_2>
   {
     Vector_2 operator()(const Direction_2& d) const { return d.vector(); }
   };

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 
 #ifndef CGAL_ATOMIC_H
 #define CGAL_ATOMIC_H
@@ -30,7 +31,7 @@
 #      include <boost/atomic.hpp>
 #      define CGAL_ATOMIC_NS boost
 #    else // BOOST_VERSION < 105300
-#      define CGAL_NO_ATOMIC "Boost.Atomic was introduced in Boost-1.53"
+#      define CGAL_NO_ATOMIC "Boost.Atomic was introduced in Boost-1.53".
 #    endif // BOOST_VERSION < 105300
 #  endif // not CGAL_CAN_USE_CXX11_ATOMIC
 
@@ -50,7 +51,8 @@
      }
    }
 #  endif // CGAL_ATOMIC_NS
-
+#else
+#  define CGAL_NO_ATOMIC "No atomic because CGAL_NO_THREADS is defined."
 #endif // CGAL_HAS_THREADS
 
 #endif // CGAL_ATOMIC_H

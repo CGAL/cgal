@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_QT_GRAPHICS_VIEW_ISO_RECTANGLE_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_ISO_RECTANGLE_INPUT_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <QGraphicsView>
 #include <QRectF>
@@ -31,6 +35,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
+#include <QKeyEvent>
 
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/GraphicsViewInput.h>

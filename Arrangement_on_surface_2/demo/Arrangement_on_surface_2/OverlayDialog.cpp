@@ -12,6 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "OverlayDialog.h"
@@ -32,7 +34,7 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent,
   ui( new Ui::OverlayDialog )
 {
   // An extra parenthesis around QColor to avoid the
-  // http://en.wikipedia.org/wiki/Most_vexing_parse
+  // https://en.wikipedia.org/wiki/Most_vexing_parse
   // on clang
   QBrush segColor( ( QColor( ::Qt::red ) ) );
   QBrush polyColor( ( QColor( ::Qt::darkGreen ) ) );

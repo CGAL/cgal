@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_APOLLONIUS_GRAPH_2_ORIENTATION8_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_ORIENTATION8_C2_H
+
+#include <CGAL/license/Apollonius_graph_2.h>
+
 
 #include <CGAL/determinant.h>
 #include <CGAL/Apollonius_graph_2/Orientation_2.h>

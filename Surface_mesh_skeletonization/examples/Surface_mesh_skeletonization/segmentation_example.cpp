@@ -1,7 +1,5 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
 #include <CGAL/mesh_segmentation.h>
@@ -49,6 +47,11 @@ int main(int argc, char* argv[])
   std::ifstream input((argc>1)?argv[1]:"data/161.off");
   Polyhedron tmesh;
   input >> tmesh;
+  if (!CGAL::is_triangle_mesh(tmesh))
+  {
+    std::cout << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // extract the skeleton
   Skeleton skeleton;
@@ -59,10 +62,10 @@ int main(int argc, char* argv[])
 
   //for each input vertex compute its distance to the skeleton
   std::vector<double> distances(num_vertices(tmesh));
-  BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton) )
+  for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)) )
   {
     const Point& skel_pt = skeleton[v].point;
-    BOOST_FOREACH(vertex_descriptor mesh_v, skeleton[v].vertices)
+    for(vertex_descriptor mesh_v : skeleton[v].vertices)
     {
       const Point& mesh_pt = mesh_v->point();
       distances[mesh_v->id()] = std::sqrt(CGAL::squared_distance(skel_pt, mesh_pt));
@@ -74,10 +77,10 @@ int main(int argc, char* argv[])
   Facet_with_id_pmap<double> sdf_property_map(sdf_values);
 
   // compute sdf values with skeleton
-  BOOST_FOREACH(face_descriptor f, faces(tmesh))
+  for(face_descriptor f : faces(tmesh))
   {
     double dist = 0;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(f, tmesh), tmesh))
+    for(halfedge_descriptor hd : halfedges_around_face(halfedge(f, tmesh), tmesh))
       dist+=distances[target(hd, tmesh)->id()];
     sdf_property_map[f] = dist / 3.;
   }
@@ -93,6 +96,6 @@ int main(int argc, char* argv[])
   std::cout << "Number of segments: "
             << CGAL::segmentation_from_sdf_values(tmesh, sdf_property_map, segment_property_map) <<"\n";
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 

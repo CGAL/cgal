@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 A typedef to `Location_policy<Compact>`. 
 
@@ -18,7 +18,7 @@ A typedef to `Location_policy<Compact>`.
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 A typedef to `Location_policy<Fast>`. 
 
@@ -35,7 +35,7 @@ A typedef to `Location_policy<Fast>`.
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 
 
@@ -62,8 +62,7 @@ For example, passing `Location_policy<Compact>` as parameter to
 
 */
 template< typename Tag >
-class Location_policy {
-public:
+struct Location_policy {
 
 
 }; /* end Location_policy */

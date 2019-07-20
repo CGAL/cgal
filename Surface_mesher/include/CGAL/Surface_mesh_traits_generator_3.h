@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_SURFACE_MESH_TRAITS_GENERATOR_3_H
 #define CGAL_SURFACE_MESH_TRAITS_GENERATOR_3_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <CGAL/Surface_mesher/Sphere_oracle_3.h>
 

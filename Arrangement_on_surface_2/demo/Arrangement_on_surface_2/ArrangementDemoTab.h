@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -39,7 +40,7 @@ class ArrangementDemoTabBase : public QWidget
 {
   Q_OBJECT
 
-  signals:
+  Q_SIGNALS:
   void modelChanged( );
 
 public:
@@ -198,7 +199,7 @@ public:
     // TODO: Add a connection to update the demo window when the fill color
     //       changes
 
-    emit modelChanged( );
+    Q_EMIT modelChanged( );
   }
 
 protected:

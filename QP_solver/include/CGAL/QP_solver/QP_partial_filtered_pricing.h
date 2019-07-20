@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_QP_PARTIAL_FILTERED_PRICING_H
 #define CGAL_QP_PARTIAL_FILTERED_PRICING_H
+
+#include <CGAL/license/QP_solver.h>
+
 
 // MSVC detection
 #include <boost/config.hpp>
@@ -240,7 +244,7 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/ )
 	}
     }
 
-    // certify non-existance of entering variable, if necessary
+    // certify non-existence of entering variable, if necessary
     if ( min_mu == this->nt0) {
 
 	// update row and column maxima
@@ -384,7 +388,7 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/ )
 	}
     }
 
-    // certify non-existance of entering variable, if necessary
+    // certify non-existence of entering variable, if necessary
     if ( min_j == -1) {
 
 	// update row and column maxima

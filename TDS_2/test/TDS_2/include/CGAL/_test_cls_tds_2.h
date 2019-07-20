@@ -128,7 +128,6 @@ _test_cls_tds_2( const Tds &)
   assert(tds3.dimension()== 1);
   assert(tds3.number_of_vertices() == 4);
   assert(tds3.is_valid() );
-
  
   Vertex_handle w4 = tds4.insert_first();
   Vertex_handle v4_1 = tds4.insert_second();
@@ -186,6 +185,121 @@ _test_cls_tds_2( const Tds &)
   tds4.make_hole(u4, hole);
   u4 = tds4.star_hole(hole);
   tds4.remove_degree_3(u4);
+
+
+  // insert_in_hole
+  // Count also the faces with the vertex at infinity! 
+  //
+  //  1 |------| 3     1 |------| 3
+  //    |\     |         |\    /|
+  //    | \    |         | \ 4/ |
+  //    |  \   |   -->   |  \/  |
+  //    |   \  |         |  /\  |
+  //    |    \ |         | /  \ |
+  //    |     \|         |/    \|
+  //  2 |------| 0     2 |------| 0
+  // 
+  // 
+   
+  std::cout << "    insert_in_hole" << std::endl;
+  Tds td45;
+  Vertex_handle v045 = td45.insert_first();
+  Vertex_handle v145 = td45.insert_second();
+  Vertex_handle v245 = td45.insert_dim_up(v045, true);
+  Vertex_handle v345 = td45.insert_dim_up(v045, true);
+
+  assert(td45.is_valid() && td45.number_of_vertices() == 4 && td45.number_of_faces() == 4);
+
+  Face_handle f0_0 = td45.faces_begin();
+  Face_handle f0_1 = f0_0++;
+
+  Vertex_handle v445 = td45.insert_in_face(f0_0);
+  Vertex_handle v545 = td45.insert_in_face(f0_1);
+
+  Face_handle f1_0, f1_1, f1_2, f1_3, fcf_0, fcf_1;
+  Face_circulator fc1 = td45.incident_faces(v445), fc1e(fc1);
+  do {
+    int i = fc1->index(v445);
+    if (fc1->vertex((i+1)%3) == v345) {
+      f1_0 = fc1;
+    }
+    if (fc1->vertex((i+1)%3) == v145) {
+      f1_1 = fc1;
+    }
+    if (fc1->vertex((i+1)%3) == v245) {
+      fcf_0 = fc1;
+    }
+  } while(++fc1 != fc1e);
+
+
+  Face_circulator fc2 = td45.incident_faces(v545), fc2e(fc2);
+  do {
+    int i = fc2->index(v545);
+    if (fc2->vertex((i+1)%3) == v045) {
+      f1_2 = fc2;
+    }
+    if (fc2->vertex((i+1)%3) == v245) {
+      f1_3 = fc2;
+    }
+    if (fc2->vertex((i+1)%3) == v345) {
+      fcf_1 = fc2;
+    }
+  } while(++fc2 != fc2e);
+
+  Vertex_handle v645 = td45.insert_in_face(f1_0);
+  Vertex_handle v745 = td45.insert_in_face(f1_1);
+  Vertex_handle v845 = td45.insert_in_face(f1_2);
+  Vertex_handle v945 = td45.insert_in_face(f1_3);
+
+  Face_handle fcf_2, fcf_3, fcf_4, fcf_5;
+  Face_circulator fc6 = td45.incident_faces(v645), fc6e(fc6);
+  do {
+    int i = fc6->index(v645);
+    if (fc6->vertex((i+1)%3) == v445) {
+      fcf_2 = fc6;
+      break;
+    }
+  } while(++fc6 != fc6e);
+
+  Face_circulator fc7 = td45.incident_faces(v745), fc7e(fc7);
+  do {
+    int i = fc7->index(v745);
+    if (fc7->vertex((i+1)%3) == v245) {
+      fcf_3 = fc7;
+      break;
+    }
+  } while(++fc7 != fc7e);
+
+  Face_circulator fc8 = td45.incident_faces(v845), fc8e(fc8);
+  do {
+    int i = fc8->index(v845);
+    if (fc8->vertex((i+1)%3) == v345) {
+      fcf_4 = fc8;
+      break;
+    }
+  } while(++fc8 != fc8e);
+
+   Face_circulator fc9 = td45.incident_faces(v945), fc9e(fc9);
+  do {
+    int i = fc9->index(v945);
+    if (fc9->vertex((i+1)%3) == v545) {
+      fcf_5 = fc9;
+      break;
+    }
+  } while(++fc9 != fc9e);
+
+  std::vector<Face_handle> vhole;
+  vhole.push_back( fcf_0 );
+  vhole.push_back( fcf_1 );
+  vhole.push_back( fcf_2 );
+  vhole.push_back( fcf_3 );
+  vhole.push_back( fcf_4 );
+  vhole.push_back( fcf_5 );
+
+  assert(td45.is_valid() && td45.number_of_vertices() == 10 && td45.number_of_faces() == 16);
+
+  Vertex_handle nv45 = td45.insert_in_hole(vhole.begin(), vhole.end());
+  assert(nv45 != Vertex_handle() && td45.is_valid() && td45.number_of_vertices() == 11 && td45.number_of_faces() == 18);
 
   // dim_down
   std::cout << "    dim_down" << std::endl;

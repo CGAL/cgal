@@ -14,41 +14,44 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
+//
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
 #ifndef CGAL_SUBDIVIDE_SKIN_SURFACE_MESH_3_H
 #define CGAL_SUBDIVIDE_SKIN_SURFACE_MESH_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
 #include <CGAL/Skin_surface_refinement_policy_3.h>
 #include <CGAL/Polyhedron_3.h>
 
 namespace CGAL {
 
-// This code is based on the Polyhedron tutorial 
+// This code is based on the Polyhedron tutorial
 
 template <class SkinSurface_3,
-	  class Polyhedron_3,
-	  class SubdivisionPolicy_3>
+          class Polyhedron_3,
+          class SubdivisionPolicy_3>
 class Skin_surface_sqrt3
 {
   typedef Polyhedron_3                                      Polyhedron;
   typedef SkinSurface_3                                     Skin_surface_3;
   // Projects points to the skin surface:
   typedef SubdivisionPolicy_3                               Subdivision_policy;
-  
+
   typedef typename Polyhedron::Traits                       Kernel;
   typedef typename Kernel::Point_3                          Point;
   typedef typename Kernel::Vector_3                         Vector;
-	
+
   typedef typename Polyhedron::Vertex                       Vertex;
   typedef typename Polyhedron::Vertex_handle                Vertex_handle;
   typedef typename Polyhedron::Vertex_iterator              Vertex_iterator;
   typedef typename Polyhedron::Edge_iterator                Edge_iterator;
   typedef typename Polyhedron::Halfedge_handle              Halfedge_handle;
   typedef typename Polyhedron::Halfedge_iterator            Halfedge_iterator;
-  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator  
+  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
                                                             HV_circulator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator
                                                             HF_circulator;
@@ -58,10 +61,10 @@ class Skin_surface_sqrt3
   typedef typename Kernel::FT                               FT;
 
 public:
-  Skin_surface_sqrt3(const SkinSurface_3 &skin, 
-		     Polyhedron &P,
-		     const SubdivisionPolicy_3 &policy) 
-    : P(P), ss(skin), policy(policy) {}
+  Skin_surface_sqrt3(const SkinSurface_3 &skin,
+                     Polyhedron &P,
+                     const SubdivisionPolicy_3 &policy)
+    : P(P), ss(skin), policy(policy) { }
 
   //*********************************************
   // Subdivision
@@ -83,13 +86,12 @@ public:
   }
 
 private:
-	
+
   //*********************************************
   // Subdivide
   //*********************************************
   void do_subdivide()
   {
-
     // We use that new vertices/halfedges/facets are appended at the end.
     Vertex_iterator last_v = P.vertices_end();
     -- last_v;  // the last of the old vertices
@@ -103,7 +105,6 @@ private:
     do {
       split_halfedge(e);
     } while ( e++ != last_e);
-
 
     Vertex_iterator v = P.vertices_begin();
     do {
@@ -142,10 +143,9 @@ private:
 };
 
 template <class SkinSurface_3, class Polyhedron_3>
-void subdivide_skin_surface_mesh_3(
-          const SkinSurface_3 &skin,
-          Polyhedron_3 &p, 
-          int nSubdiv = 1) {
+void subdivide_skin_surface_mesh_3(const SkinSurface_3 &skin,
+                                   Polyhedron_3 &p,
+                                   int nSubdiv = 1) {
   while (nSubdiv > 0) {
     skin.subdivide_mesh_3(p);
     nSubdiv--;

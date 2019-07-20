@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
@@ -21,7 +22,11 @@
 #ifndef CGAL_ALBERAIC_POINT_D_1_H
 #define CGAL_ALBERAIC_POINT_D_1_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <ostream>
+#include <CGAL/tss.h>
 
 #include <CGAL/Arr_rat_arc/Base_rational_arc_ds_1.h>
 #include <CGAL/Arr_rat_arc/Cache.h>
@@ -84,6 +89,15 @@ public:
     _rational_function(rational_function),
     _x_coordinate(x_coordinate) {}
 
+  Algebraic_point_2_rep(const Algebraic_point_2_rep& other)
+  {
+    if (this != &other) // protect against invalid self-assignment
+    {
+      _rational_function = other._rational_function;
+      _x_coordinate = other._x_coordinate;
+    } 
+  }
+  
   //assignment oparator
   Algebraic_point_2_rep& operator=(const Algebraic_point_2_rep& other)
   {
@@ -345,15 +359,15 @@ public:
 private:
   static Self& get_default_instance()
   {
-    static Algebraic_kernel_d_1 kernel;
-    static typename Rational_function::Polynomial_1 numer(0);
-    static typename Rational_function::Polynomial_1 denom(1);
-    static Rational_function rational_function(numer, denom, &kernel);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Algebraic_kernel_d_1, kernel);
+    typedef typename Rational_function::Polynomial_1 Poly;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(Poly, numer,0);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(Poly, denom, 1);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_3(Rational_function, rational_function, numer, denom, &kernel);
     
-    static Algebraic_real_1 x_coordinate =
-      kernel.construct_algebraic_real_1_object()(Rational(0));
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(Algebraic_real_1, x_coordinate,kernel.construct_algebraic_real_1_object()(Rational(0)));
     
-    static Self default_instance(rational_function,x_coordinate); 
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Self, default_instance, rational_function, x_coordinate); 
     
     return default_instance;
 
@@ -368,10 +382,6 @@ public:
   
   Algebraic_point_2() :
     Base(static_cast<const Base &> (get_default_instance())) {}
-
-  // explicit copy-constructor, required by VC9
-  Algebraic_point_2 (const Self & p)
-    : Base(static_cast<const Base &> (p)) {}
 
   Comparison_result compare_xy_2(const Algebraic_point_2& other,
                                  const Cache& cache) const

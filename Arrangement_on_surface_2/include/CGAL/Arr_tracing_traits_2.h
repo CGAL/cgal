@@ -14,11 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Efi Fogel    <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_TRACING_TRAITS_H
 #define CGAL_ARR_TRACING_TRAITS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * A tracing traits-class for the arrangement package.
@@ -1269,5 +1274,7 @@ OutputStream & operator<<(OutputStream & os, Comparison_result cr)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

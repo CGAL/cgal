@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -25,8 +24,9 @@ int main(int argc, char* argv[])
   std::ifstream input(filename);
 
   Mesh mesh;
-  if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << "Not a valid off file." << std::endl;
+  if (!input || !(input >> mesh) || mesh.is_empty()
+             || !CGAL::is_triangle_mesh(mesh)) {
+    std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
 

@@ -13,7 +13,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$ 
-// $Id$ 
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // $Date$
 // 
 //
@@ -49,12 +50,13 @@ template <class AS>
 void
 _test_weighted_alpha_shape_3()
 {
-  typedef AS                 Alpha_shape_3;
+  typedef AS                                             Alpha_shape_3;
 
-  //typedef typename AS::Point Point;
-  typedef typename AS::Gt::Weighted_point Weighted_point;
-  typedef typename AS::Gt::Bare_point     Bare_point;
-  typedef typename AS::Alpha_iterator Alpha_iterator;
+  typedef typename AS::Triangulation::Weighted_point     Weighted_point;
+  typedef typename AS::Triangulation::Bare_point         Bare_point;
+
+  typedef typename AS::Alpha_iterator                    Alpha_iterator;
+
   std::list<Weighted_point> L;
   bool verbose = false;
   

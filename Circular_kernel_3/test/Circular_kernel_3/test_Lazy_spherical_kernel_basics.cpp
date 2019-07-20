@@ -13,9 +13,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://pmachado@scm.gforge.inria.fr/svn/cgal/trunk/Kernel_23/test/Kernel_23/Cartesian.cpp $
-// $Id: Cartesian.cpp 43806 2008-06-26 14:26:49Z pmachado $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sylvain Pion
  

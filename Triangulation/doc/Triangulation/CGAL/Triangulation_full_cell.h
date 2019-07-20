@@ -6,15 +6,15 @@ namespace CGAL {
 
 The class `Triangulation_full_cell` is a model of the concept `TriangulationFullCell`. It 
 is used by default for representing full cells in the class 
-`Triangulation<TriangulationTraits, TriangulationDataStructure>`. 
+`Triangulation<TriangulationTraits_, TriangulationDataStructure_>`. 
 
 A `Triangulation_full_cell` stores handles to the vertices of the cell as well as handles 
 to its adjacent cells.
 
 
-\tparam TriangulationTraits must be a model of the concept `TriangulationTraits`. It 
+\tparam `TriangulationTraits_` must be a model of the concept `TriangulationTraits`. It 
 provides geometric types and predicates for use in the 
-`Triangulation<TriangulationTraits, TriangulationDataStructure>` class. 
+`Triangulation<TriangulationTraits_, TriangulationDataStructure_>` class. 
 
 \tparam Data is an optional type of data to be stored in the full cell class. The 
 class template `Triangulation_full_cell` accepts that no second parameter be specified. In 
@@ -31,13 +31,13 @@ cases, `TriangulationDSFullCell_` defaults to `CGAL::Triangulation_ds_full_cell<
 `Triangulation_full_cell` provides the following types,
 constructors and methods:
 
-\sa `Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>` 
-\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>` 
-\sa `Triangulation<TriangulationTraits,TriangulationDataStructure>` 
-\sa `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` 
+\sa `Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>` 
+\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>` 
+\sa `Triangulation<TriangulationTraits_, TriangulationDataStructure_>` 
+\sa `Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>` 
 
 */
-template< typename TriangulationTraits, typename Data, typename TriangulationDSFullCell_ >
+template< typename TriangulationTraits_, typename Data, typename TriangulationDSFullCell_ >
 class Triangulation_full_cell : public TriangulationDSFullCell_ {
 public:
 

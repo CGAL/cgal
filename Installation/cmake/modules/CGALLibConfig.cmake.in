@@ -5,7 +5,7 @@ set(WITH_@LIBRARY_NAME@ "ON")
 # CMake<=2.8.11 (detected by the absence of CMP0024), the else()
 # condition is never used.
 if(NOT POLICY CMP0024 OR NOT CGAL_BUILDING_LIBS)
-  if(NOT MSVC)
+  if(NOT MSVC AND NOT CGAL_HEADER_ONLY)
     get_property(@LIBRARY_NAME@_LIBRARY TARGET CGAL::@LIBRARY_NAME@ PROPERTY LOCATION)
   else()
     set(@LIBRARY_NAME@_LIBRARY "")
@@ -16,7 +16,7 @@ else()
   # access the LOCATION property here to set lib_LIBRARY, since those
   # targets are not imported and this is disallowed by CMP0026. Just
   # set it to the target name.
-  if(TARGET @LIBRARY_NAME@ AND NOT TARGET CGAL::@LIBRARY_NAME@)
+  if(TARGET @LIBRARY_NAME@ AND NOT TARGET CGAL::@LIBRARY_NAME@ AND NOT CGAL_HEADER_ONLY)
     add_library(CGAL::@LIBRARY_NAME@ ALIAS @LIBRARY_NAME@)
     set(@LIBRARY_NAME@_LIBRARY CGAL::@LIBRARY_NAME@)
   else()

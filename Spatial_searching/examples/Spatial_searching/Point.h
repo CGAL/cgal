@@ -21,20 +21,6 @@ struct Point {
   bool  operator!=(const Point& p) const { return ! (*this == p); }
 }; //end of class
 
-
-
-namespace CGAL {
-
-  template <>
-  struct Kernel_traits<Point> {
-    struct Kernel {
-      typedef double FT;
-      typedef double RT;
-    };
-  };
-}
-
-
 struct Construct_coord_iterator {
   typedef  const double* result_type;
   const double* operator()(const Point& p) const

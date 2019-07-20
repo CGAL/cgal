@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -41,7 +42,7 @@ public:
   virtual void setEnvelopeVertexRadius( int radius ) = 0;
   virtual int getEnvelopeVertexRadius( ) const = 0;
 
-public slots:
+public Q_SLOTS:
   virtual void showLowerEnvelope( bool b ) = 0;
   virtual void showUpperEnvelope( bool b ) = 0;
 

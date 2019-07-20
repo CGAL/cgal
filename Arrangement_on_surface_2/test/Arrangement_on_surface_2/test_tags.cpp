@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+
 #include <cassert>
 #include <iostream>
 

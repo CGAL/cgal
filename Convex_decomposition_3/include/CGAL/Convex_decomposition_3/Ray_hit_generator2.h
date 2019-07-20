@@ -13,12 +13,16 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_CD3_RAY_HIT_GENERATOR2_H
 #define CGAL_CD3_RAY_HIT_GENERATOR2_H
+
+#include <CGAL/license/Convex_decomposition_3.h>
+
 
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>

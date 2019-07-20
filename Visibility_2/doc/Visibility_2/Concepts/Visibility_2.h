@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgVisibility_2Concepts
+\ingroup PkgVisibility2Concepts
 \cgalConcept
 
 A model of the `Visibility_2` concept can be attached to an `Arrangement_2` instance to 

@@ -159,16 +159,22 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       set ( ${LIB}_VERSION "unknown" )
 
-      try_run( ${LIB}_RUN_RES
-               ${LIB}_COMPILE_RES
-               "${CMAKE_BINARY_DIR}"
-               "${CGAL_INSTALLATION_PACKAGE_DIR}/config/support/print_${LIB}_version.cpp"
-               CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR};${${PKG}_DEPENDENCY_INCLUDE_DIR}"
-                           "-DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES};${${PKG}_DEPENDENCY_LIBRARIES}"
-                           "-DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARIES_DIR};${${PKG}_DEPENDENCY_LIBRARIES_DIR}"
-               OUTPUT_VARIABLE ${LIB}_OUTPUT
-            )
-
+      if(NOT CMAKE_CROSSCOMPILING)
+        if(EXISTS "${CGAL_MODULES_DIR}/config/support/print_${LIB}_version.cpp")
+          try_run( ${LIB}_RUN_RES
+                   ${LIB}_COMPILE_RES
+                   "${CMAKE_BINARY_DIR}"
+                   "${CGAL_MODULES_DIR}/config/support/print_${LIB}_version.cpp"
+                   CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR};${${PKG}_DEPENDENCY_INCLUDE_DIR}"
+                               "-DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES};${${PKG}_DEPENDENCY_LIBRARIES}"
+                               "-DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARIES_DIR};${${PKG}_DEPENDENCY_LIBRARIES_DIR}"
+                   OUTPUT_VARIABLE ${LIB}_OUTPUT
+                   )
+        endif()
+      else()
+        set(${LIB}_COMPILE_RES FALSE)
+        message(STATUS "CROSS-COMPILING!")
+      endif()
       if ( ${LIB}_COMPILE_RES )
 
         if ( ${LIB}_RUN_RES EQUAL "0" )
@@ -268,7 +274,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     message (STATUS "Requested component: ${component}")
 
     if(WITH_CGAL_${component})
-      if(TARGET CGAL_${component})
+      if(TARGET CGAL::CGAL_${component})
+        add_to_list( CGAL_LIBRARIES CGAL::CGAL_${component} )
+      elseif(TARGET CGAL_${component})
         add_to_list( CGAL_LIBRARIES CGAL_${component} )
       else()
         add_to_list( CGAL_LIBRARIES ${CGAL_${component}_LIBRARY} )
@@ -279,16 +287,12 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${component}_3RD_PARTY_DEFINITIONS}    )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${component}_3RD_PARTY_LIBRARIES_DIRS} )
 
-      # Nothing to add for Core
-
-      if (${component} STREQUAL "ImageIO")
-        find_package( OpenGL QUIET )
-        find_package( ZLIB QUIET )
-      endif()
-
-      if (${component} STREQUAL "Qt5")
-        find_package( OpenGL QUIET )
-        find_package( Qt5 QUIET COMPONENTS OpenGL Svg )
+      # To deal with imported targets of Qt5 and Boost, when CGAL
+      # targets are themselves imported by another project.
+      if(NOT CGAL_BUILDING_LIBS)
+        if (${component} STREQUAL "Qt5")
+          find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
+        endif()
       endif()
 
     else(WITH_CGAL_${component})
@@ -310,17 +314,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
         else()
 
-          ####message( STATUS "External library ${component} has not been preconfigured")
-          if (${component} STREQUAL "ImageIO")
-            find_package( OpenGL )
-            find_package( ZLIB )
-          endif()
-
-          if (${component} STREQUAL "Qt5")
-            set(CGAL_${component}_FOUND TRUE)
-            find_package( OpenGL )
-            find_package (Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools)
-          endif()
           ####message( STATUS "External library ${vlib} after find")
           if (${vlib}_FOUND)
             ####message( STATUS "External library ${vlib} about to be used")
@@ -399,8 +392,13 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   macro( create_CGALconfig_files )
 
+    include(CMakePackageConfigHelpers)
+
     # CGALConfig.cmake is platform specific so it is generated and stored in the binary folder.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in"  "${CMAKE_BINARY_DIR}/CGALConfig.cmake"        @ONLY)
+    write_basic_package_version_file("${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake"
+      VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}"
+      COMPATIBILITY SameMajorVersion)
 
     # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_install.cmake.in" "${CMAKE_BINARY_DIR}/config/CGALConfig.cmake" @ONLY)
@@ -449,7 +447,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
     endif()
   endmacro()
-
 
 ## All the following macros are probably unused. -- Laurent Rineau, 2011/07/21
 
@@ -685,6 +682,7 @@ function(process_CGAL_subdirectory entry subdir type_name)
   if(ADD_SUBDIR)
     message("\n-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
     if(EXISTS ${entry}/CMakeLists.txt)
+      set(source_dir ${entry})
       add_subdirectory( ${entry} ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME} )
     else()
       if(CGAL_CREATE_CMAKE_SCRIPT)
@@ -695,7 +693,8 @@ function(process_CGAL_subdirectory entry subdir type_name)
           RESULT_VARIABLE RESULT_VAR OUTPUT_QUIET)
         if(NOT RESULT_VAR)
 #          message("Subdir ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
-          add_subdirectory( "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+          set(source_dir "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+          add_subdirectory( "${source_dir}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
         endif()
       endif()
     endif()

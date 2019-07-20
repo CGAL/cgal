@@ -74,20 +74,44 @@ the triangulation using a sparse linear solver. Eventually, the \cgal
 surface mesh generator extracts an isosurface with function value set
 by default to be the median value of \f$ f\f$ at all input points.
 
-\subsection Poisson_surface_reconstruction_3Interface Interface
+\section Poisson_surface_reconstruction_3Function Reconstruction Function
 
-The class template declaration is `template<class Gt> class Poisson_reconstruction_function` wher
+A global function `poisson_surface_reconstruction_delaunay()` is
+provided. It takes points with normals as input and handles the whole
+reconstruction pipeline :
+
+- it computes the implicit function
+- it reconstructs the surface with a given precision using the \cgal
+surface mesh generator based on Delaunay refinement
+\cgalCite{cgal:ry-gsddrm-06} \cgalCite{cgal:bo-pgsms-05}
+- it outputs the result in a polygon mesh.
+
+This function aims at providing a quick and user-friendly API for
+Poisson reconstruction. Advanced users may be interested in using the
+class (see \ref Poisson_surface_reconstruction_3Class) which allows
+them, for example, to use another surface mesher or a different output
+structure.
+
+\subsection Poisson_surface_reconstruction_3Example_function Example
+
+The following example reads a point set and reconstructs a surface using Poisson reconstruction.
+
+\cgalExample{Poisson_surface_reconstruction_3/poisson_reconstruction_function.cpp}
+
+\section Poisson_surface_reconstruction_3Class Reconstruction Class
+
+The class template declaration is `template<class Gt> class Poisson_reconstruction_function` where
 `Gt` is a geometric traits class.
 
 For details see: `Poisson_reconstruction_function<GeomTraits>`
 
-\subsection Poisson_surface_reconstruction_3Example Example
+\subsection Poisson_surface_reconstruction_3Example_class Example
 
 The following example reads a point set, creates a Poisson implicit function and reconstructs a surface.
 
 \cgalExample{Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp}
 
-\section Poisson_surface_reconstruction_3Contouring Contouring
+\subsection Poisson_surface_reconstruction_3Contouring Contouring
 
 
 The computed implicit functions can be iso-contoured to reconstruct a
@@ -101,7 +125,7 @@ The parameter `Tag` affects the behavior of `make_surface_mesh()`:
 - `Manifold_with_boundary_tag`: the output mesh is guaranteed to be manifold and may have boundaries.
 - `Non_manifold_tag`: the output mesh has no guarantee and hence is outputted as a polygon soup.
 
-\section Poisson_surface_reconstruction_3Output Output
+\subsection Poisson_surface_reconstruction_3Output Output
 
 The surface reconstructed by `make_surface_mesh()` is required to be a
 model of the concept `SurfaceMeshComplex_2InTriangulation_3`, a data
@@ -206,7 +230,7 @@ contouring parameters:
 - Approximation distance: at least 0.25 times the average spacing.
 
 \cgalFigureBegin{Poisson_surface_reconstruction_3figcontouring_bad,contouring_bad.jpg}
-Left: surface reconstructed with approximation distance = 0.25 * average spacing. Right: surface reconstructed with approximation distance = 0.15 * average spacing. Notice the spurious cluster on the chick.
+Left: surface reconstructed with approximation distance = 0.25 * average spacing. Right: surface reconstructed with approximation distance = 0.15 * average spacing. Notice the spurious cluster on the cheek.
 \cgalFigureEnd
 
 \subsection Poisson_surface_reconstruction_3DegradedConditions Degraded Conditions

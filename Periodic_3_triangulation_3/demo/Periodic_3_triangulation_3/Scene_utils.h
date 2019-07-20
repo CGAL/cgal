@@ -6,6 +6,7 @@
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 
 #include <CGAL/point_generators_3.h>
+#include <CGAL/algorithm.h>
 
 // Making available the Periodic_3_Delaunay_triangulation_3 to be
 // drawn in the Scene.

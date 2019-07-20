@@ -1,9 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-// Halfedge adaptors for Polyhedron_3
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh_deformation.h>
 
@@ -39,17 +35,15 @@ int main()
 
   // Init the indices of the vertices from 0 to num_vertices(mesh)-1
   Vertex_id_map vertex_index_map;
-  vertex_iterator vb, ve;
   std::size_t counter = 0;
-  for(boost::tie(vb, ve) = vertices(mesh); vb != ve; ++vb, ++counter)
-    vertex_index_map[*vb]=counter;
+  for(vertex_descriptor v : vertices(mesh))
+    vertex_index_map[v]=counter++;
 
   // Init the indices of the halfedges from 0 to 2*num_edges(mesh)-1
   Hedge_id_map hedge_index_map;
   counter = 0;
-  halfedge_iterator eb, ee;
-  for(boost::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter)
-    hedge_index_map[*eb]=counter;
+  for(halfedge_descriptor h : halfedges(mesh))
+    hedge_index_map[h]=counter++;
 
   Surface_mesh_deformation deform_mesh( mesh,
                                         Vertex_id_pmap(vertex_index_map),

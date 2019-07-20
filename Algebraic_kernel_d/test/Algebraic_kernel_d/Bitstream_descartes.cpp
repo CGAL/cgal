@@ -19,7 +19,6 @@
 
 */
 
-#include <CGAL/basic.h>
 #include <cassert>
 
 // include these traits here by 'hand', since not in release 3.3

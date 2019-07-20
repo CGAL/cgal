@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_SPHERICAL_KERNEL_LINE_ARC_3_H
 #define CGAL_SPHERICAL_KERNEL_LINE_ARC_3_H
+
+#include <CGAL/license/Circular_kernel_3.h>
+
 
 #include <CGAL/Circular_kernel_3/internal_functions_on_sphere_3.h>
 #include <CGAL/Circular_kernel_3/Intersection_traits.h>
@@ -141,8 +145,8 @@ namespace CGAL {
          Intersection i2 = SK().intersect_3_object()(l, p2);
          const typename SK::Point_3* point1=boost::get<typename SK::Point_3>( & *i1 );
          const typename SK::Point_3* point2=boost::get<typename SK::Point_3>( & *i2 );
-         CGAL_assertion(point1!=NULL);
-         CGAL_assertion(point2!=NULL);
+         CGAL_assertion(point1!=nullptr);
+         CGAL_assertion(point2!=nullptr);
          // the source and target must be different
          CGAL_kernel_precondition(*point1 != *point2);
          *this = Line_arc_3(l, *point1, *point2);

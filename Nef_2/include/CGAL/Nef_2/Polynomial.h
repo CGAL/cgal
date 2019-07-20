@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -307,8 +308,6 @@ template <class pNT> class Polynomial :
   Polynomial(int n1, int n2)
     : Base(Polynomial_rep<NT>(NT(n1),NT(n2))) { reduce(); }
   // KILL int END
-
-  Polynomial(const Polynomial<NT>& p) : Base(p) {}
 
   //protected: // accessing coefficients internally:
   NT& coeff(unsigned int i) 
@@ -643,8 +642,6 @@ class Polynomial<int> :
     : Base(Polynomial_rep<int>(int(n1),int(n2))) { reduce(); }
   // KILL double END
 
-  Polynomial(const Polynomial<int>& p) : Base(p) {}
-
   //protected: // accessing coefficients internally:
   int& coeff(unsigned int i) 
   { CGAL_assertion(!this->is_shared() && i<(this->ptr()->coeff.size()));
@@ -735,14 +732,14 @@ class Polynomial<int> :
 
   /*{\Xtext \headerline{Static member functions}}*/
 
-  CGAL_EXPORT static Polynomial<int> gcd
+  static Polynomial<int> gcd
     (const Polynomial<int>& p1, const Polynomial<int>& p2);
   /*{\Xstatic returns the greatest common divisor of |p1| and |p2|.
   \textbf{Note} that |int=int| quickly leads to overflow errors when
   using this operation.  \precond Requires |int| to be a unique
   factorization domain, i.e. to provide a |gcd| operation.}*/
 
-  CGAL_EXPORT static void pseudo_div
+  static void pseudo_div
     (const Polynomial<int>& f, const Polynomial<int>& g, 
      Polynomial<int>& q, Polynomial<int>& r, int& D);
   /*{\Xstatic implements division with remainder on polynomials of 
@@ -750,7 +747,7 @@ class Polynomial<int> :
   factorization domain, i.e., there exists a |gcd| operation and an
   integral division operation on |int|.}*/
 
-  CGAL_EXPORT static void euclidean_div 
+  static void euclidean_div 
     (const Polynomial<int>& f, const Polynomial<int>& g, 
      Polynomial<int>& q, Polynomial<int>& r);
   /*{\Xstatic implements division with remainder on polynomials of 
@@ -944,8 +941,6 @@ determines the sign for the limit process $x \rightarrow \infty$.
     : Base(Polynomial_rep<double>(double(n1),double(n2))) { reduce(); }
   // KILL int END
 
-  Polynomial(const Polynomial<double>& p) : Base(p) {}
-
   //protected: // accessing coefficients internally:
   double& coeff(unsigned int i) 
   { CGAL_assertion(!this->is_shared() && i<(this->ptr()->coeff.size()));
@@ -1037,14 +1032,14 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   /*{\Xtext \headerline{Static member functions}}*/
 
-  CGAL_EXPORT static Polynomial<double> gcd
+  static Polynomial<double> gcd
     (const Polynomial<double>& p1, const Polynomial<double>& p2);
   /*{\Xstatic returns the greatest common divisor of |p1| and |p2|.
   \textbf{Note} that |double=int| quickly leads to overflow errors when
   using this operation.  \precond Requires |double| to be a unique
   factorization domain, i.e. to provide a |gdc| operation.}*/
 
-  CGAL_EXPORT static void pseudo_div
+  static void pseudo_div
     (const Polynomial<double>& f, const Polynomial<double>& g, 
      Polynomial<double>& q, Polynomial<double>& r, double& D);
   /*{\Xstatic implements division with remainder on polynomials of 
@@ -1052,7 +1047,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   factorization domain, i.e., there exists a |gcd| operation and an
   integral division operation on |double|.}*/
 
-  CGAL_EXPORT static void euclidean_div 
+  static void euclidean_div 
     (const Polynomial<double>& f, const Polynomial<double>& g, 
      Polynomial<double>& q, Polynomial<double>& r);
   /*{\Xstatic implements division with remainder on polynomials of 
@@ -1972,8 +1967,6 @@ using Nef::gcd;
 
 } //namespace CGAL
 
-#ifdef CGAL_HEADER_ONLY
 #include <CGAL/Nef_2/Polynomial_impl.h>
-#endif // CGAL_HEADER_ONLY
 
 #endif  // CGAL_NEF_2_POLYNOMIAL_H

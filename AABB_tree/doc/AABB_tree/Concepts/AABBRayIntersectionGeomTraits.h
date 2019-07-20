@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgAABB_treeConcepts
+\ingroup PkgAABBTreeConcepts
 \cgalConcept
 
 The concept `AABBRayIntersectionGeomTraits` is a refinement of the

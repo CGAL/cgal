@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -26,10 +27,11 @@
 #ifndef CGAL_HANDLE_HASH_FUNCTION_H
 #define CGAL_HANDLE_HASH_FUNCTION_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <cstddef>
 
 namespace CGAL {
+
 
 //mechanism to abuse Handle_hash_function which is the default
 //template parameter of Unique_hash_map

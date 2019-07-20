@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez
 
 #ifndef CGAL_OUTPUT_SURFACE_FACETS_TO_TRIANGLE_SOUP_H
 #define CGAL_OUTPUT_SURFACE_FACETS_TO_TRIANGLE_SOUP_H
+
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_polyhedron_builder.h>

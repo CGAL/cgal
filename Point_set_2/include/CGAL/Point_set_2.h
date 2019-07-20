@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Matthias Baesken
 
 #ifndef CGAL_POINT_SET_2_H
 #define CGAL_POINT_SET_2_H
+
+#include <CGAL/license/Point_set_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
@@ -122,7 +126,7 @@ public:
 
    Vertex_handle lookup(Point p) const
    { 
-     if (number_of_vertices() == 0) return NULL;   
+     if (number_of_vertices() == 0) return nullptr;   
      
      // locate ...
      Locate_type lt;
@@ -133,20 +137,20 @@ public:
         Face f = *fh;
 	return f.vertex(li);
      }
-     else return NULL;
+     else return nullptr;
    }
 
 
    Vertex_handle  nearest_neighbor(Point p)
     {
-     if (number_of_vertices() == 0) return NULL;
+     if (number_of_vertices() == 0) return nullptr;
      return nearest_vertex(p);
    }
      
 
    Vertex_handle  nearest_neighbor(Vertex_handle v) const
    {
-     if (number_of_vertices() <= 1) return NULL;    
+     if (number_of_vertices() <= 1) return nullptr;    
      Point p = v->point();
      
      Vertex_circulator vc = incident_vertices(v);
@@ -192,7 +196,7 @@ public:
     bool old_node = true;
     
     // we have to add a new vertex ...
-    if (vh == NULL){
+    if (vh == nullptr){
       vh = insert(p);
       old_node = false;
       k++;
@@ -247,7 +251,7 @@ public:
      Point p = v->point();
      
      // "unmark" the vertices ...
-     init_dfs();
+     init_search();
 
      MAP_TYPE                                        priority_number;              // here we save the priorities ...
      internal::compare_vertices<Vertex_handle,Numb_type,MAP_TYPE>    
@@ -290,7 +294,6 @@ public:
   } 
    
    
-  // dfs
   // for marking nodes in search procedures
   size_type cur_mark;
    
@@ -302,7 +305,7 @@ public:
      mark.clear();
   }
   
-  void init_dfs()
+  void init_search()
   {
      cur_mark++; 
      if (cur_mark == (std::numeric_limits<size_type>::max)()) init_vertex_marks();
@@ -321,27 +324,37 @@ public:
     return (mark[vh] == cur_mark);
   }
   
-  void dfs(Vertex_handle v,const Circle& C, std::list<Vertex_handle>& L)
+  void search(Vertex_handle v,const Circle& C, std::list<Vertex_handle>& L)
   {
-    L.push_back(v);
-    mark_vertex(v);
-    
-    // get incident vertices of v ...
-    Vertex_circulator vc = incident_vertices(v);
-    Vertex_circulator start =vc;
-     
-    Vertex_handle act;
-     
-    // go through the vertices ...
-    do {
-      act = vc;
- 
-       if (! is_infinite(act)) {
-        if (!is_marked(act) && ! (tr_circleptori(C,act->point())==ON_UNBOUNDED_SIDE) ) 
-           dfs(act,C,L);       
-       }             
-       vc++;
-    } while (vc != start);     
+    std::stack<Vertex_handle> todo;
+    todo.push(v);
+
+    while (!todo.empty())
+    {
+      Vertex_handle current = todo.top();
+      todo.pop();
+
+      if (is_marked(current))
+        continue;
+      
+      L.push_back(current);
+      mark_vertex(current);
+
+      // get incident vertices of v ...
+      Vertex_circulator vc = incident_vertices(current);
+      Vertex_circulator start =vc;
+      Vertex_handle act;
+      // go through the vertices ...
+      do {
+        act = vc;
+        
+        if (! is_infinite(act)) {
+          if (!is_marked(act) && ! (tr_circleptori(C,act->point())==ON_UNBOUNDED_SIDE) )
+            todo.push(act);
+        }             
+        vc++;
+      } while (vc != start);
+    }
   }
 
 
@@ -366,16 +379,16 @@ public:
      Vertex_handle v = lookup(p);  
      bool new_v = false;     
 
-     if ( v == NULL )
+     if ( v == nullptr )
      { 
        new_v = true;
        v = insert(p); 
      }
      
-     init_dfs();
+     init_search();
      
      std::list<Vertex_handle> L;
-     dfs(v,C,L);
+     search(v,C,L);
      
      if (new_v)
      { L.pop_front();   //first one was inserted in range_search ...

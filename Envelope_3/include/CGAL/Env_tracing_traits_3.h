@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s): Ophir Setter          <ophir.setter@post.tau.ac.il>
@@ -29,6 +30,9 @@
 
 #ifndef CGAL_ENV_TRACE_TRAITS_H
 #define CGAL_ENV_TRACE_TRAITS_H
+
+#include <CGAL/license/Envelope_3.h>
+
 
 /*! \file
  * This is the file containing a traits class used to trace other voronoi 

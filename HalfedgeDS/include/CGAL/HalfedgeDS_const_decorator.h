@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
@@ -260,7 +261,7 @@ is_valid( bool verb, int level) const {
         if ( begin->is_border())
             ++nb;
     }
-    verr << "summe border halfedges (2*nb) = " << 2 * nb << std::endl;
+    verr << "sum border halfedges (2*nb) = " << 2 * nb << std::endl;
     if ( valid && n != hds->size_of_halfedges())
         verr << "counting halfedges failed." << std::endl;
     if ( valid && level >= 4 && (nb != hds->size_of_border_halfedges()))

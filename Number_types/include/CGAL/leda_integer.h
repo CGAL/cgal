@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Michael Hemmer
@@ -33,13 +34,8 @@
 #include <CGAL/Interval_nt.h>
 
 #include <CGAL/LEDA_basic.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/integer.h>
-#include <LEDA/bigfloat.h>// for To_interval
-#else
 #include <LEDA/numbers/integer.h>
 #include <LEDA/numbers/bigfloat.h>// for To_interval
-#endif
 
 #include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
@@ -58,7 +54,7 @@ template <> class Algebraic_structure_traits< leda_integer >
                                                                  Is_square;
 
     class Gcd
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -111,30 +107,18 @@ template <> class Algebraic_structure_traits< leda_integer >
 
 //     typedef INTERN_AST::Div_per_operator< Type > Div;
 //     class Mod
-//       : public std::binary_function< Type, Type,
+//       : public CGAL::cpp98::binary_function< Type, Type,
 //                                 Type > {
 //       public:
 //         Type operator()( const Type& x, const Type& y ) const {
 //           Type m = x % y;
-// #if CGAL_LEDA_VERSION < 520
-//           // Fix wrong leda result
-//           if( x < 0 && m != 0 )
-//             m -= y;
-// #elif CGAL_LEDA_VERSION < 600
-//           // Fix another wrong leda result
-//           if( x < 0 && y > 0 && m != 0 )
-//             m -= y;
-// #else
-//           // Do nothing, it seems to work now!
-//           // TODO: be careful for future improvements of LEDA
-// #endif
 //           return m;
 //         }
 //         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
 //     };
 
     class Sqrt
-      : public std::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CGAL_LEDA_SCOPE::sqrt( x );
@@ -147,7 +131,7 @@ template <> class Real_embeddable_traits< leda_integer >
   public:
   
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
@@ -155,7 +139,7 @@ template <> class Real_embeddable_traits< leda_integer >
     };
 
     class Sgn
-      : public std::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
@@ -163,7 +147,7 @@ template <> class Real_embeddable_traits< leda_integer >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -174,7 +158,7 @@ template <> class Real_embeddable_traits< leda_integer >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
@@ -182,7 +166,7 @@ template <> class Real_embeddable_traits< leda_integer >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
       std::pair<double, double> operator()( const Type& x ) const {
         leda::bigfloat h(x);

@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -123,14 +124,14 @@ FillFaceCallback<Arr_>::FillFaceCallback(Arrangement* arr_, QObject* parent_):
 template < class Arr_ >
 void FillFaceCallback< Arr_ >::reset( )
 {
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < class Arr_ >
 void FillFaceCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
   this->fillFace( event );
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < class Arr_ >

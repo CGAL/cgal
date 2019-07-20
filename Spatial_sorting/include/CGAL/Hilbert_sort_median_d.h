@@ -14,16 +14,18 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     :  Olivier Devillers
 
 #ifndef CGAL_HILBERT_SORT_MEDIAN_d_H
 #define CGAL_HILBERT_SORT_MEDIAN_d_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <functional>
 #include <cstddef>
 #include <iterator>
+#include <vector>
 #include <CGAL/Hilbert_sort_base.h>
 
 namespace CGAL {
@@ -32,8 +34,8 @@ namespace internal {
 
     template <class K>
     struct Hilbert_cmp_d
-        : public std::binary_function<typename K::Point_d,
-                                      typename K::Point_d, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_d,
+                                              typename K::Point_d, bool>
     {
         typedef typename K::Point_d Point;
         K k;

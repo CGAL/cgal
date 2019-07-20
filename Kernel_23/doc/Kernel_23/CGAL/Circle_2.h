@@ -11,7 +11,8 @@ positive side is to the left of the boundary. The boundary also
 splits \f$ \E^2\f$ into a bounded and an unbounded side. Note that the 
 circle can be degenerated, i.e.\ the squared radius may be zero. 
 
-\sa `Kernel::Circle_2` 
+\cgalModels `Kernel::Circle_2`
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
 */
 template< typename Kernel >

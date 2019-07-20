@@ -275,6 +275,19 @@ are also marked in the program code.
 
 \cgalExample{Polyhedron/polyhedron_prog_cube.cpp}
 
+\subsection PolyhedronDraw Draw a Polyhedron
+\anchor ssecDrawPolyhedron
+
+A polyhedron can be visualized by calling the \link PkgDrawPolyhedron CGAL::draw<POLY>() \endlink function as shown in the following example. This function opens a new window showing the given polyhedron. A call to this function is blocking, that is the program continues as soon as the user closes the window.
+
+\cgalExample{Polyhedron/draw_polyhedron.cpp}
+
+This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+
+\cgalFigureBegin{fig_draw_polyhedron,draw_polyhedron.png}
+Result of the run of the draw_polyhedron program. A window shows the polyhedron and allows to navigate through the 3D scene.
+\cgalFigureEnd
+
 \section PolyhedronFile File I/O
 
 \anchor sectionPolyIO

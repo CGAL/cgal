@@ -8,3 +8,4 @@ Surface_mesh_skeletonization
 Surface_mesh_deformation
 Jet_fitting_3
 Poisson_surface_reconstruction_3
+Polygonal_surface_reconstruction

@@ -1,7 +1,6 @@
 #include <CGAL/Exact_integer.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <iostream>

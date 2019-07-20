@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
@@ -65,10 +66,6 @@ class Min_sphere_annulus_d_traits_3 {
     typedef  _Construct_point_3<K>       Construct_point_d;
     // this does not (yet) work:
     // typedef  typename K::Construct_point_3    Construct_point_d;
-
-    // creation
-    Min_sphere_annulus_d_traits_3( ) { }
-    Min_sphere_annulus_d_traits_3( const Min_sphere_annulus_d_traits_3<K_,ET_,NT_>&) {}
 
     // operations
     Access_dimension_d

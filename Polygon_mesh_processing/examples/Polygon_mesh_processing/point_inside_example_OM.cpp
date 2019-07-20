@@ -12,7 +12,6 @@
 #include <vector>
 #include <fstream>
 #include <limits>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -26,8 +25,8 @@ double max_coordinate(const Mesh& mesh)
   typedef boost::property_map<Mesh,CGAL::vertex_point_t>::type VPmap;
   VPmap vpmap = get(CGAL::vertex_point,mesh);
 
-  double max_coord = std::numeric_limits<double>::min();
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+  double max_coord = -std::numeric_limits<double>::infinity();
+  for(vertex_descriptor v : vertices(mesh))
   {
     Point p = get(vpmap, v);
     max_coord = (std::max)(max_coord, p.x());
@@ -43,6 +42,11 @@ int main(int argc, char* argv[])
 
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
+  if (!CGAL::is_triangle_mesh(mesh))
+  {
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
  
   CGAL::Side_of_triangle_mesh<Mesh, K> inside(mesh);
 
@@ -68,10 +72,10 @@ int main(int argc, char* argv[])
     if (res == CGAL::ON_BOUNDARY) { ++nb_boundary; }
   }
 
-  std::cerr << "Total query size: " << points.size() << std::endl;
-  std::cerr << "  " << nb_inside << " points inside " << std::endl;
-  std::cerr << "  " << nb_boundary << " points on boundary " << std::endl;
-  std::cerr << "  " << points.size() - nb_inside - nb_boundary << " points outside " << std::endl;
+  std::cout << "Total query size: " << points.size() << std::endl;
+  std::cout << "  " << nb_inside << " points inside " << std::endl;
+  std::cout << "  " << nb_boundary << " points on boundary " << std::endl;
+  std::cout << "  " << points.size() - nb_inside - nb_boundary << " points outside " << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }

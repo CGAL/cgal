@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
@@ -22,10 +23,15 @@
 #ifndef CGAL_BOX_INTERSECTION_D_BOX_D_H
 #define CGAL_BOX_INTERSECTION_D_BOX_D_H
 
+#include <CGAL/license/Box_intersection_d.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
+#include <CGAL/atomic.h>
+
 #include <algorithm>
 
 namespace CGAL {
@@ -36,14 +42,20 @@ namespace Box_intersection_d {
 template <class Dummy>
 struct Unique_numbers {
     typedef std::size_t ID;
-    Unique_numbers() : i(n++) {}
+    Unique_numbers() {
+#ifdef CGAL_NO_ATOMIC
+      static std::size_t n = 0;
+#else
+      static CGAL::cpp11::atomic<std::size_t> n; // initialized to 0
+#endif
+      i = n++;
+    }
     std::size_t id() const { return i; }
 private:
-    static std::size_t n;
+
     std::size_t i;
 };
-template <class Dummy>
-std::size_t Unique_numbers<Dummy>::n = 0;
+
 
 
 // Policies for id-number of boxes

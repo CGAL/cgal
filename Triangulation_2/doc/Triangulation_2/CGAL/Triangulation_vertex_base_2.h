@@ -34,7 +34,15 @@ template< typename Traits, typename Vb >
 class Triangulation_vertex_base_2 : public Vb {
 public:
 
-/// @}
+  /// \name Types
+  /// @{
+
+  /*!
+
+  */
+  typedef Traits::Point_2 Point;
+
+  /// @}
 
 }; /* end Triangulation_vertex_base_2 */
 } /* end namespace CGAL */

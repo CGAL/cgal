@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_QT_POINTS_GRAPHICS_ITEM_H
 #define CGAL_QT_POINTS_GRAPHICS_ITEM_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/bounding_box.h>
@@ -120,8 +124,8 @@ PointsGraphicsItem<P>::paint(QPainter *painter,
     Converter<Traits> convert;
 
     painter->setPen(verticesPen());
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
     for(typename P::iterator it = points->begin();
         it != points->end();
         it++){

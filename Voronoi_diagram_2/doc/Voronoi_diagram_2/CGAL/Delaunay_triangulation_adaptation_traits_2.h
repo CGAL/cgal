@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagramAdaptor2Points
+\ingroup PkgVoronoiDiagram2Points
 
 The class `Delaunay_triangulation_adaptation_traits_2` provides a model for the `AdaptationTraits_2` 
 concept. The template parameter of the `Delaunay_triangulation_adaptation_traits_2` class must be a 
@@ -18,8 +18,7 @@ the semantics of a 2D Delaunay triangulation.
 
 */
 template< typename DT2 >
-class Delaunay_triangulation_adaptation_traits_2 {
-public:
+struct Delaunay_triangulation_adaptation_traits_2 {
 
 /// \name Types 
 /// @{

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -28,6 +29,7 @@
 
 #include <CGAL/determinant.h>
 #include <CGAL/number_utils_classes.h>
+#include <CGAL/number_type_basic.h>
 
 namespace CGAL {
 

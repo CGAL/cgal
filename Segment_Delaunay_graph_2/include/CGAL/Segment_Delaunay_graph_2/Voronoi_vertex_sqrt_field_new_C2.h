@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -24,11 +25,18 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_VORONOI_VERTEX_SQRT_FIELD_NEW_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_VORONOI_VERTEX_SQRT_FIELD_NEW_C2_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 
 
 #include <CGAL/Segment_Delaunay_graph_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
+
+#ifdef CGAL_PROFILE
+#  include <fstream>
+#endif
 
 namespace CGAL {
 
@@ -975,11 +983,11 @@ private:
 
 #ifndef CGAL_DISABLE_AM_CODE
     // code added in previous version by Andreas + Monique -- start
-    Site_2 const *pp1 = NULL;
+    Site_2 const *pp1 = nullptr;
     if ( end_pt ) pp1 = &p;
     else if ( end_qt ) pp1 = &q;
     else if ( end_rt ) pp1 = &r;
-    if ( pp1 != NULL ) {
+    if ( pp1 != nullptr ) {
       // As the Voronoi circle and the segment t touch in p1,
       // it is enough to check that the center and the non-touching
       // point of the segment

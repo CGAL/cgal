@@ -14,13 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Christophe Delage
 
 #ifndef CGAL_SPATIAL_SORT_H
 #define CGAL_SPATIAL_SORT_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #include <CGAL/hilbert_sort.h>
 #include <CGAL/Multiscale_sort.h>
@@ -47,14 +48,12 @@ namespace internal {
 		       std::ptrdiff_t threshold_multiscale,
 		       double ratio)
     {
+      typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
+      typedef typename Iterator_traits::difference_type Diff_t;
       typedef Hilbert_sort_2<Kernel, Policy> Sort;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
-#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
-        CGAL::random_shuffle(begin,end,rng);
-#else
-        std::random_shuffle(begin,end,rng);
-#endif
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+        CGAL::cpp98::random_shuffle(begin,end,rng);
 
 	if (threshold_hilbert==0) threshold_hilbert=4;
 	if (threshold_multiscale==0) threshold_multiscale=16;
@@ -74,14 +73,12 @@ namespace internal {
 		       std::ptrdiff_t threshold_multiscale,
 		       double ratio)
     {
+      typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
+      typedef typename Iterator_traits::difference_type Diff_t;
       typedef Hilbert_sort_3<Kernel, Policy> Sort;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
-#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
-        CGAL::random_shuffle(begin,end, rng);
-#else
-        std::random_shuffle(begin,end, rng);
-#endif
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+        CGAL::cpp98::random_shuffle(begin,end, rng);
 
 	if (threshold_hilbert==0) threshold_hilbert=8;
 	if (threshold_multiscale==0) threshold_multiscale=64;
@@ -101,14 +98,12 @@ namespace internal {
 		       std::ptrdiff_t threshold_multiscale,
 		       double ratio)
     {
+      typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
+      typedef typename Iterator_traits::difference_type Diff_t;
       typedef Hilbert_sort_d<Kernel, Policy> Sort;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
-#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
-        CGAL::random_shuffle(begin,end, rng);
-#else
-        std::random_shuffle(begin,end, rng);
-#endif	
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+        CGAL::cpp98::random_shuffle(begin,end, rng);
 
 	if (threshold_hilbert==0) threshold_hilbert=10;
 	if (threshold_multiscale==0) threshold_multiscale=500;

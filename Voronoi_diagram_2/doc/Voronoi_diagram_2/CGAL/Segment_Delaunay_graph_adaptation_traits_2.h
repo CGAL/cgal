@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagramAdaptor2Segments
+\ingroup PkgVoronoiDiagram2Segments
 
 The class `Segment_Delaunay_graph_adaptation_traits_2` provides a model for the `AdaptationTraits_2` 
 concept. The template parameter of the `Segment_Delaunay_graph_adaptation_traits_2` class must be a 
@@ -19,8 +19,7 @@ the semantics of the 2D (triangulated) segment Delaunay graph.
 
 */
 template< typename SDG2 >
-class Segment_Delaunay_graph_adaptation_traits_2 {
-public:
+struct Segment_Delaunay_graph_adaptation_traits_2 {
 
 /// \name Types 
 /// @{

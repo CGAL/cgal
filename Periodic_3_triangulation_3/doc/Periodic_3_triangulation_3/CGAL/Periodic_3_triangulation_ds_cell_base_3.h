@@ -14,14 +14,11 @@ triangulation.
 \sa `CGAL::Periodic_3_triangulation_ds_vertex_base_3` 
 \sa `CGAL::Triangulation_cell_base_3` 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
-\sa `CGAL::Triangulation_cell_base_with_circumcenter_3` 
 
 */
 template< >
 class Periodic_3_triangulation_ds_cell_base_3 {
 public:
-
-/// @}
 
 }; /* end Periodic_3_triangulation_ds_cell_base_3 */
 } /* end namespace CGAL */

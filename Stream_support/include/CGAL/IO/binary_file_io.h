@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
@@ -26,7 +27,7 @@
 #ifndef CGAL_IO_BINARY_FILE_IO_H
 #define CGAL_IO_BINARY_FILE_IO_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <iostream>
 #include <boost/cstdint.hpp>
 

@@ -3,6 +3,8 @@
 \ingroup PkgApolloniusGraph2Concepts
 \cgalConcept
 
+\cgalRefines `TriangulationVertexBase_2`
+
 The concept `ApolloniusGraphVertexBase_2` describes the 
 requirements for the vertex base class of the 
 `ApolloniusGraphDataStructure_2` concept. A vertex stores an 

@@ -37,6 +37,8 @@
  ** Nokia at qt-info@nokia.com.
  ** $QT_END_LICENSE$
  **
+ ** SPDX-License-Identifier: LGPL-2.1
+ **
  ****************************************************************************/
 
 #ifndef COLOR_ITEM_EDITOR_H
@@ -60,7 +62,7 @@ public:
   QColor color( ) const;
   void setColor( QColor c );
 
-signals:
+Q_SIGNALS:
   void confirmed( );
 
 protected:

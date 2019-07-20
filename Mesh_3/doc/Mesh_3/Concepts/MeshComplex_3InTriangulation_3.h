@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3Concepts
+\ingroup PkgMesh3Concepts
 \cgalConcept
 
 The concept `MeshComplex_3InTriangulation_3` describes a data structure 
@@ -14,10 +14,10 @@ are more conveniently represented by the refined concept
 The data structure includes a 3D triangulation which is itself a 3D complex. 
 To distinguish the faces of the embedded 3D complex from the 
 faces of the triangulation, we call the faces of the embedded complex 
-respectively <I>subdomains</I>, for 3D faces 
-and <I>surface patches</I>, for 2D faces, 
+respectively <I>subdomains</I> for 3D faces
+and <I>surface patches</I> for 2D faces,
 while the triangulations faces are called respectively 
-cells, facets, edges and vertices. 
+cells, facets, edges, and vertices.
 
 Each subdomain of the embedded 3D complex is a union of 
 triangulation cells. Cells that belong to some subdomain are said to belong 
@@ -42,7 +42,7 @@ the current approximation of each subdomain
 and each boundary surface patch. 
 The data structure encodes the final mesh at the end of the meshing process. 
 
-\cgalHasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
+\cgalHasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>` 
 
 \sa `MeshDomain_3` 
 \sa `MeshComplexWithFeatures_3InTriangulation_3` 
@@ -61,7 +61,7 @@ The type of the
 embedding 3D triangulation. 
  It is required to be
   the nested type
-`CGAL::Mesh_triangulation_3::type`, provided by the meta functor 
+`CGAL::Mesh_triangulation_3::type`, provided by the class
 `CGAL::Mesh_triangulation_3<MD, GT, Concurrency_tag, Vertex_base, Cell_base>`
 where the Vertex_base and  Cell_base template parameters are respectively instantiated with models
 of the concepts `MeshVertexBase_3` and 

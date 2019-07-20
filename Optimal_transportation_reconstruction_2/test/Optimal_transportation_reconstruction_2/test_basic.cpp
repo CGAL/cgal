@@ -22,7 +22,10 @@ int main ()
 
   CGAL::Optimal_transportation_reconstruction_2<K> otr2(points);
 
-  otr2.run(100); //100 steps
-
+  if (otr2.run(100)) //100 steps
+    std::cerr << "All done." << std::endl;
+  else
+    std::cerr << "Premature ending." << std::endl;
+      
   otr2.print_stats_debug();
 }

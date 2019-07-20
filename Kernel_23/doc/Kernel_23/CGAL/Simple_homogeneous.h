@@ -28,8 +28,7 @@ that copy objects intensively, or slightly speed up others.
 
 */
 template< typename RingNumberType >
-class Simple_homogeneous {
-public:
+struct Simple_homogeneous {
 
 /// \name Types 
 /// @{

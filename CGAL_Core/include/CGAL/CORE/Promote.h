@@ -32,8 +32,9 @@
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
- * $Source: /home/exact/cvsroot/exact/corelib/inc/CORE/Promote.h,v $
- * $Revision$ $Date$
+ * $URL$
+ * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifndef __PROMOTE_H__

@@ -12,7 +12,7 @@ A typedef to a kernel which has the following properties:
 coordinates. 
 <LI>It provides both exact geometric predicates and exact geometric 
 constructions. 
-<LI>Its `FT` nested type is model of the 'FieldWithSqrt` concept. 
+<LI>Its `FT` nested type is model of the `FieldWithSqrt` concept.
 </UL> 
 
 Note that it requires CORE or LEDA installed. 
@@ -29,8 +29,6 @@ Note that it requires CORE or LEDA installed.
 
 class Exact_predicates_exact_constructions_kernel_with_sqrt {
 public:
-
-/// @}
 
 }; /* end Exact_predicates_exact_constructions_kernel_with_sqrt */
 } /* end namespace CGAL */

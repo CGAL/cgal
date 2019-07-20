@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -57,7 +58,7 @@ double Real_timer::get_real_time() const {
     // by the caller.
 #if   defined(_MSC_VER)
     struct _timeb  t;
-    _ftime(&t);
+    _ftime_s(&t);
     return double(t.time) + double(t.millitm) / 1000.0;
 #elif defined (__MINGW32__)
     struct timeb t;
@@ -65,7 +66,7 @@ double Real_timer::get_real_time() const {
     return double(t.time) + double(t.millitm) / 1000.0;
 #else // ! _MSC_VER && ! __MINGW32__//
     struct timeval t;
-    int ret = gettimeofday( &t, NULL);
+    int ret = gettimeofday( &t, nullptr);
     CGAL_warning_msg( ret == 0, "Call to gettimeofday() in class "
                       "CGAL::Real_timer failed - timings will be 0.");
     if ( ret == 0) {

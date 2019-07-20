@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Sebastien Loriot <sebastien.loriot@cgal.org>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_CONSTRAINED_PLACEMENT_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_CONSTRAINED_PLACEMENT_H
+
+#include <CGAL/license/Surface_mesh_simplification.h>
+
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
@@ -45,8 +49,8 @@ public:
   template <typename Profile> 
   optional<typename Profile::Point> operator()( Profile const& aProfile ) const
   {
-    typedef typename Profile::ECM                                ECM;
-    typedef typename CGAL::Halfedge_around_target_iterator<ECM>  in_edge_iterator;
+    typedef typename Profile::TM                                TM;
+    typedef typename CGAL::Halfedge_around_target_iterator<TM>  in_edge_iterator;
 
     in_edge_iterator eb, ee ;
     for ( boost::tie(eb,ee) = halfedges_around_target(aProfile.v0(),aProfile.surface_mesh());

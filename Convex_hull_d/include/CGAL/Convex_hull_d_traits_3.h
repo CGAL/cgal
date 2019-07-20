@@ -14,14 +14,19 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_CONVEX_HULL_D_TRAITS_3_H
 #define CGAL_CONVEX_HULL_D_TRAITS_3_H
+
+#include <CGAL/license/Convex_hull_d.h>
+
 #define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_d_traits_3.h>"
-#define CGAL_REPLACEMENT_HEADER "the Triangulation package (see http://doc.cgal.org/latest/Triangulation)"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The Triangulation package (see https://doc.cgal.org/latest/Triangulation) should be used instead."
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/Point_3.h>
@@ -33,6 +38,7 @@
 #include <CGAL/predicates_on_points_3.h>
 #include <CGAL/intersection_3.h>
 #include <vector>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -57,6 +63,9 @@ template <class R_> struct Convex_hull_d_traits_3
   struct Orientation_d {
     template <class I>
     Orientation operator()(I s, I e) {
+
+      CGAL_USE(e);
+
       Point_d A[4];
       CGAL_assertion(s != e);
       A[0] = *s;

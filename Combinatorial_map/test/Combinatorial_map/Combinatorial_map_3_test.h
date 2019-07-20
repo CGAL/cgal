@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -868,6 +869,7 @@ bool test3D()
         map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
       }
   }
+  std::cout<<"Size of map="<<map.bytes()<<std::endl;
   map.clear();
 
   cout << "***************************** TEST FACET REMOVAL 3D DONE."
@@ -986,28 +988,16 @@ bool test3D()
   cout << "***************************** TEST INSERT EDGE 3D:"
        << endl;
 
-  /*  d1 = map.create_dart();
-  d2 = map.create_dart();
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge1: " << flush; map.insert_cell_1_in_cell_2(d1, d2);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();*/
-
-  /*  d1 = map.make_edge(, );
-  map.template sew<1>(d1, d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge2: " << flush; map.insert_cell_1_in_cell_2(d1, d1->beta(2));
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();*/
-
-  d1 = map.make_edge();
-  d2 = map.make_edge();
+  d1 = map.make_edge(); map.template sew<1>(d1, map.make_edge());
+  d2 = map.make_edge(); map.template sew<0>(d2, map.make_edge());
+  map.template sew<0>(map.template beta<0>(d2), d2);
+  map.template sew<1>(map.template beta<1>(d1), d1);
   map.template sew<3>(d1, d2);
   map.template sew<3>(map.beta(d1,2), map.beta(d2,2));
-  map.template sew<1>(d1, d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  /*  cout << "insert edge3: " << flush; map.insert_cell_1_in_cell_2(d1, d1);
-      map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;*/
+  cout << "insert edge3: " << flush;
+  map.insert_cell_1_in_cell_2(d1, map.template beta<1>(d1));
+  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = map.make_combinatorial_polygon(4 );
@@ -1128,8 +1118,6 @@ bool test3D()
   d2 = map.make_combinatorial_hexahedron();
   map.template sew<3>(d1,d2);
   d3 = map.beta(d1, 2);
-  d4 = map.beta(d1, 1,3,1,2);
-  assert(d4==map.beta(d1,1,3,1,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "remove facet4: " << flush; map.template remove_cell<2>(d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -1137,6 +1125,60 @@ bool test3D()
   v.push_back(map.beta(v[1],1,2,1)); v.push_back(map.beta(v[2],1,2,1));
   cout << "insert facet4: " << flush; map.insert_cell_2_in_cell_3(v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+
+  Map map2;
+  d1 = map2.make_combinatorial_hexahedron();
+  d2 = map2.make_combinatorial_hexahedron();
+  map2.template sew<3>(d1,d2);
+  if ( !map.is_isomorphic_to(map2, false) )
+  {
+    std::cout<<"Error: map and map2 are not isomorphic (after insertion/removal).\n";
+    assert(false);
+    return false;
+  }
+
+  if (CGAL::degree<Map, 0>(map2, d1)!=4)
+  {
+    std::cout<<"Error: 0-degree is wrong: "<<CGAL::degree<Map, 0>(map2, d1)<<" instead of 4."<<std::endl;
+    assert(false);
+    return false;
+  }
+  
+  if (CGAL::degree<Map, 1>(map2, d1)!=3)
+  {
+    std::cout<<"Error: 1-degree is wrong: "<<CGAL::degree<Map, 1>(map2, d1)<<" instead of 3."<<std::endl;
+    assert(false);
+    return false;
+  }
+  
+  if (CGAL::degree<Map, 2>(map2, d1)!=2)
+  {
+    std::cout<<"Error: 2-degree is wrong: "<<CGAL::degree<Map, 2>(map2, d1)<<" instead of 2."<<std::endl;
+    assert(false);
+    return false;
+  }
+  
+  if (CGAL::codegree<Map, 1>(map2, d1)!=2)
+  {
+    std::cout<<"Error: 1-codegree is wrong: "<<CGAL::codegree<Map, 1>(map2, d1)<<" instead of 2."<<std::endl;
+    assert(false);
+    return false;
+  }
+  
+  if (CGAL::codegree<Map, 2>(map2, d1)!=4)
+  {
+    std::cout<<"Error: 2-codegree is wrong: "<<CGAL::codegree<Map, 2>(map2, d1)<<" instead of 4."<<std::endl;
+    assert(false);
+    return false;
+  }
+  
+  if (CGAL::codegree<Map, 3>(map2, d1)!=6)
+  {
+    std::cout<<"Error: 3-codegree is wrong: "<<CGAL::codegree<Map, 3>(map2, d1)<<" instead of 6."<<std::endl;
+    assert(false);
+    return false;
+  }
+
   map.clear(); v.clear();
 
   cout << "***************************** TEST INSERT FACET 3D DONE."

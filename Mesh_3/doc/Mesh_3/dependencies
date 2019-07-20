@@ -2,11 +2,14 @@ Manual
 Kernel_23
 STL_Extension
 Algebraic_foundations
+BGL
 Circulator
 Stream_support
 Surface_mesher
 Triangulation_3
+Periodic_3_triangulation_3
 TDS_3
 Polyhedron
 Miscellany
 Mesh_2
+Polygon_mesh_processing

@@ -2,8 +2,13 @@
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/IO/File_binary_mesh_3.h>
 
 #include <boost/variant.hpp>
+
+#include <string>
+
+#include <CGAL/disable_warnings.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -16,7 +21,7 @@ struct MD_homogeneous_types {
   typedef CGAL::Tag_false Has_features;
   typedef int Subdomain_index;
   typedef int Surface_patch_index;
-  typedef int Curve_segment_index;
+  typedef int Curve_index;
   typedef int Corner_index;
   typedef int Index;
 
@@ -24,10 +29,15 @@ struct MD_homogeneous_types {
   static Subdomain_index get_sub_domain_index_2() { return 2; }
   static Surface_patch_index get_surface_patch_index_1() { return 3; }
   static Surface_patch_index get_surface_patch_index_2() { return 4; }
-  static Curve_segment_index get_curve_segment_index_1() { return 5; }
-  static Curve_segment_index get_curve_segment_index_2() { return 6; }
+  static Curve_index get_curve_index_1() { return 5; }
+  static Curve_index get_curve_index_2() { return 6; }
   static Corner_index get_corner_index_1() { return 7; }
   static Corner_index get_corner_index_2() { return 8; }
+
+  static std::string reference_format_string()
+  {
+    return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+i),Cb(i+RTcb_3+(i)[4]))";
+  }
 };
 
 // One with heterogeneous index types
@@ -36,20 +46,25 @@ struct MD_heterogeneous_types {
   enum Subdomain_index_enum { Z = 0, A, B, C, D};
   typedef Subdomain_index_enum Subdomain_index;
   typedef std::pair<int, int> Surface_patch_index;
-  typedef int Curve_segment_index;
+  typedef int Curve_index;
   typedef double Corner_index;
   typedef boost::variant<Subdomain_index,
                          Surface_patch_index,
-                         Curve_segment_index,
+                         Curve_index,
                          Corner_index> Index;
   static Subdomain_index get_sub_domain_index_1() { return A; }
   static Subdomain_index get_sub_domain_index_2() { return B; }
   static Surface_patch_index get_surface_patch_index_1() { return std::make_pair(1, 2); }
   static Surface_patch_index get_surface_patch_index_2() { return std::make_pair(3, 4); }
-  static Curve_segment_index get_curve_segment_index_1() { return 5; }
-  static Curve_segment_index get_curve_segment_index_2() { return 6; }
+  static Curve_index get_curve_index_1() { return 5; }
+  static Curve_index get_curve_index_2() { return 6; }
   static Corner_index get_corner_index_1() { return 7.; }
   static Corner_index get_corner_index_2() { return 8.; }
+
+  static std::string reference_format_string()
+  {
+    return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+boost::variant<enum,std::pair<i,i>,i,d>),Cb(enum+RTcb_3+(std::pair<i,i>)[4]))";
+  }
 };
 
 //
@@ -188,7 +203,7 @@ template <typename Mesh_domain>
 struct Test_c3t3_io {
   typedef typename Mesh_domain::Subdomain_index Subdomain_index;
   typedef typename Mesh_domain::Surface_patch_index Surface_patch_index;
-  typedef typename Mesh_domain::Curve_segment_index Curve_segment_index;
+  typedef typename Mesh_domain::Curve_index Curve_index;
   typedef typename Mesh_domain::Corner_index Corner_index;
   typedef typename Mesh_domain::Index Index;
 
@@ -196,7 +211,7 @@ struct Test_c3t3_io {
   typedef CGAL::Mesh_complex_3_in_triangulation_3<
     Tr,
     Corner_index,
-    Curve_segment_index
+    Curve_index
     > C3t3;
 
   typedef typename Tr::Point Point;
@@ -303,13 +318,16 @@ struct Test_c3t3_io {
     return true;
   }
 
-  static bool test_io(const C3t3& c3t3, bool binary) {
+  static bool test_io(const C3t3& c3t3, const char* prefix, bool binary) {
+    std::string filename(prefix);
     std::cout << "test_io";
     std::ios_base::openmode mode = std::ios_base::in | std::ios_base::out;
     if(binary) {
+      filename += ".binary";
       std::cout << " in binary mode";
       mode |= std::ios_base::binary;
     }
+    filename += ".cgal";
     std::cout << std::endl;
     std::cout << "IO format: " << CGAL::Get_io_signature<C3t3>()() << std::endl;
     std::stringstream stream(mode);
@@ -332,14 +350,57 @@ struct Test_c3t3_io {
               << c3t3_bis
               << "\n******end******" << std::endl;
     assert(stream);
-    std::ostringstream ss_c3t3, ss_c3t3_bis;
-    ss_c3t3 << c3t3;
-    ss_c3t3_bis << c3t3_bis;
-    assert(ss_c3t3.str() == ss_c3t3_bis.str());
-    return check_equality(c3t3, c3t3_bis);
+
+    {
+      std::ostringstream ss_c3t3, ss_c3t3_bis;
+      ss_c3t3 << c3t3;
+      ss_c3t3_bis << c3t3_bis;
+      assert(ss_c3t3);
+      assert(ss_c3t3_bis);
+      assert(ss_c3t3.str() == ss_c3t3_bis.str());
+      if(!check_equality(c3t3, c3t3_bis)) return false;
+    }
+
+    c3t3_bis.clear();
+    {
+      std::stringstream ss(std::ios_base::out |
+                           ( binary ?
+                             (std::ios_base::in | std::ios_base::binary)
+                             : std::ios_base::in));
+      CGAL::Mesh_3::save_binary_file(ss, c3t3, binary);
+      assert(ss);
+      CGAL::Mesh_3::load_binary_file(ss, c3t3_bis);
+      assert(ss);
+    }
+    if(!check_equality(c3t3, c3t3_bis)) return false;
+
+#ifndef CGAL_LITTLE_ENDIAN
+    // skip binary I/O with the existing file for big endian
+    return true;
+#endif
+
+    if (sizeof(void*) != 8) {
+      // skip 32bits architectures as well
+      return true;
+    }
+
+    c3t3_bis.clear();
+    {
+      std::ifstream input(filename.c_str(),
+                          binary ? (std::ios_base::in | std::ios_base::binary)
+                          : std::ios_base::in);
+      assert(input);
+      CGAL::Mesh_3::load_binary_file(input, c3t3_bis);
+      assert(input);
+    }
+    if(!check_equality(c3t3, c3t3_bis)) return false;
+
+    return true;
   }
 
-  bool operator()() const {
+  bool operator()(const char* prefix) const {
+    CGAL::Get_io_signature<C3t3> get_io_signature; CGAL_USE(get_io_signature);
+    assert(get_io_signature() == Mesh_domain::reference_format_string());
     // Create a C3t3
     C3t3 c3t3;
     Tr& tr = c3t3.triangulation();
@@ -363,8 +424,8 @@ struct Test_c3t3_io {
     c3t3.add_to_complex(c2, Mesh_domain::get_sub_domain_index_2());
     c3t3.add_to_complex(f1, Mesh_domain::get_surface_patch_index_1());
     c3t3.add_to_complex(f2, Mesh_domain::get_surface_patch_index_2());
-    c3t3.add_to_complex(e1, Mesh_domain::get_curve_segment_index_1());
-    c3t3.add_to_complex(e2, Mesh_domain::get_curve_segment_index_2());
+    c3t3.add_to_complex(e1, Mesh_domain::get_curve_index_1());
+    c3t3.add_to_complex(e2, Mesh_domain::get_curve_index_2());
     c3t3.add_to_complex(v1, Mesh_domain::get_corner_index_1());
     c3t3.add_to_complex(v2, Mesh_domain::get_corner_index_2());
 
@@ -374,29 +435,29 @@ struct Test_c3t3_io {
     v2->set_dimension(0);
     v2->set_index(Mesh_domain::get_corner_index_2());
     v3->set_dimension(1);
-    v3->set_index(Mesh_domain::get_curve_segment_index_1());
+    v3->set_index(Mesh_domain::get_curve_index_1());
     v4->set_dimension(1);
-    v4->set_index(Mesh_domain::get_curve_segment_index_2());
+    v4->set_index(Mesh_domain::get_curve_index_2());
     v5->set_dimension(2);
     v5->set_index(Mesh_domain::get_surface_patch_index_1());
     v6->set_dimension(3);
     v6->set_index(Mesh_domain::get_sub_domain_index_1());
 
     // then test I/O
-    return test_io(c3t3, false) && test_io(c3t3, true);
+    return test_io(c3t3, prefix, false) && test_io(c3t3, prefix, true);
   }
 };
 
 int main()
 {
   std::cout << "First test I/O when all indices are integers" << std::endl;
-  bool ok = Test_c3t3_io<MD_homogeneous_types>()();
+  bool ok = Test_c3t3_io<MD_homogeneous_types>()("data/c3t3_io-homo");
   if(!ok) {
     std::cerr << "Error\n";
     return -1;
   }
   std::cout << "Then test I/O when all indices are different types" << std::endl;
-  ok = Test_c3t3_io<MD_heterogeneous_types>()();
+  ok = Test_c3t3_io<MD_heterogeneous_types>()("data/c3t3_io-hetero");
   if(!ok) {
     std::cerr << "Error\n";
     return -1;

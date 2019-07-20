@@ -6,7 +6,7 @@
 #include <string>
 #include <algorithm>
 
-#include <CGAL/basic.h>
+
 #include <CGAL/Timer.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_overlay_2.h>
@@ -209,7 +209,7 @@ protected:
 #endif
     }
 
-    /*! Create a vertex v that mathces v1, which lies of the edge e2. */
+    /*! Create a vertex v that matches v1, which lies of the edge e2. */
     virtual void create_vertex(Vertex_const_handle  v1,
                                Halfedge_const_handle e2,
                                Vertex_handle v) const
@@ -227,7 +227,7 @@ protected:
       }
     }
 
-    /*! Create a vertex v that mathces v1, contained in the face f2. */
+    /*! Create a vertex v that matches v1, contained in the face f2. */
     virtual void create_vertex(Vertex_const_handle v1, Face_const_handle f2,
                                Vertex_handle v) const
     {
@@ -244,7 +244,7 @@ protected:
       }
     }
 
-    /*! Create a vertex v that mathces v2, which lies of the edge e1. */
+    /*! Create a vertex v that matches v2, which lies of the edge e1. */
     virtual void create_vertex(Halfedge_const_handle e1, Vertex_const_handle v2,
                                Vertex_handle v) const
     {
@@ -261,7 +261,7 @@ protected:
       }
     }
 
-    /*! Create a vertex v that mathces v2, contained in the face f1. */
+    /*! Create a vertex v that matches v2, contained in the face f1. */
     virtual void create_vertex(Face_const_handle f1, Vertex_const_handle v2,
                                Vertex_handle v) const
     {
@@ -278,7 +278,7 @@ protected:
       }
     }
 
-    /*! Create a vertex v that mathces the intersection of the edges e1 and e2.
+    /*! Create a vertex v that matches the intersection of the edges e1 and e2.
      */
     virtual void create_vertex(Halfedge_const_handle e1,
                                Halfedge_const_handle e2,

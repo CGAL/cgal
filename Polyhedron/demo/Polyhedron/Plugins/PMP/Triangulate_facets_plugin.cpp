@@ -3,8 +3,8 @@
 #include <QAction>
 #include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
-#include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
+#include <CGAL/Three/Three.h>
+#include "Scene_surface_mesh_item.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 using namespace CGAL::Three;
@@ -14,7 +14,7 @@ class Polyhedron_demo_triangulate_facets_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "triangulate_facets_plugin.json")
 
 public:
 
@@ -30,112 +30,47 @@ public:
       connect(actionTriangulateFacets, SIGNAL(triggered()),
               this, SLOT(triangulate())); 
     }
-    actionUnTriangulateFacets = new QAction("Untriangulate Facets", mw);
-    actionUnTriangulateFacets->setProperty("subMenuName","Polygon Mesh Processing");
-    if(actionUnTriangulateFacets) {
-      connect(actionUnTriangulateFacets, SIGNAL(triggered()),
-              this, SLOT(untriangulate())); 
-    }
   };
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionTriangulateFacets
-                             << actionUnTriangulateFacets;
+    return QList<QAction*>() << actionTriangulateFacets;
   }
 
   bool applicable(QAction*) const {
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices()){
-      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(index)) )
+      if ( qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) )
         return true;
     }
     return false;
   }
 
 public Q_SLOTS:
-  void untriangulate() {
-    const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-    Scene_polyhedron_item* item = 
-      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-
-    if(item)
-    {
-      Polyhedron* pMesh = item->polyhedron();
-      if(!pMesh) return;
-
+   void triangulate() {
       QApplication::setOverrideCursor(Qt::WaitCursor);
-
-      for(Polyhedron::Edge_iterator 
-            eit = pMesh->edges_begin(),
-            end = pMesh->edges_end();
-          eit != end; /*increment is done manually*/)
-      {
-        // std::cerr << (void*)&*eit << std::endl;
-        Polyhedron::Edge_iterator eit_copy = eit++;
-        if(!eit_copy->is_border()) {
-          Polyhedron::Facet_handle fh1 = eit_copy->facet();
-          Polyhedron::Facet_handle fh2 = eit_copy->opposite()->facet();
-          if( fh1 != fh2 &&  
-              !eit_copy->vertex()->is_bivalent() && 
-              !eit_copy->opposite()->vertex()->is_bivalent())
-          {
-            Kernel::Vector_3 v1 =
-              CGAL::Polygon_mesh_processing::compute_face_normal(fh1, *pMesh);
-            Kernel::Vector_3 v2 =
-              CGAL::Polygon_mesh_processing::compute_face_normal(fh2, *pMesh);
-            if(v1 * v2 > 0.99) {
-              // std::cerr << "join\n";
-              // pMesh->is_valid(true);
-              pMesh->join_facet(eit_copy);
-            }
-          }
-        }
-      }
-      CGAL_assertion_code(pMesh->normalize_border());
-      // CGAL_assertion(pMesh->is_valid(true, 3));
-      item->invalidateOpenGLBuffers();
-      scene->itemChanged(item);
-      // default cursor
-      QApplication::restoreOverrideCursor();
-    }
-  }
-
-  void triangulate() {
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())  {
-
-    Scene_polyhedron_item* item = 
-      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-
-    if(item)
-    {
-      Polyhedron* pMesh = item->polyhedron();
+      
+      Scene_surface_mesh_item* sm_item =
+          qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+      SMesh* pMesh = sm_item->polyhedron();
       if(!pMesh) continue;
-      if(pMesh->is_pure_triangle()) {
-        messages->warning(tr("The polyhedron \"%1\" is already triangulated.")
-                          .arg(item->name()));
+      if(is_triangle_mesh(*pMesh)) {
+        CGAL::Three::Three::warning(tr("The polyhedron  \"%1\"  is already triangulated.")
+                          .arg(sm_item->name()) );
         continue;
       }
-
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-
       if(!CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh))
-        messages->warning(tr("Some facets could not be triangulated."));
+        CGAL::Three::Three::warning(tr("Some facets could not be triangulated."));
+      sm_item->resetColors();
+      sm_item->invalidateOpenGLBuffers();
+      scene->itemChanged(sm_item);
+    } // end of the loop on the selected items   
 
-      CGAL_assertion_code(pMesh->normalize_border());
-      CGAL_assertion(pMesh->is_valid(false, 3));
-
-      item->invalidateOpenGLBuffers();
-      scene->itemChanged(item);
-      // default cursor
-      QApplication::restoreOverrideCursor();
-    } // end of if(item)
-
-    } // end of the loop on the selected items
+    // default cursor
+    QApplication::restoreOverrideCursor();
   }
   
 private:
   QAction* actionTriangulateFacets;
-  QAction* actionUnTriangulateFacets;  
   Messages_interface* messages;
 };
 

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_MESH_3_DIHEDRAL_ANGLE_3_H
 #define CGAL_MESH_3_DIHEDRAL_ANGLE_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Kernel_traits.h>
@@ -40,27 +44,8 @@ dihedral_angle(const typename K::Point_3& a,
                const typename K::Point_3& d,
                K k = K())
 {
-  typename K::Construct_vector_3 vector = k.construct_vector_3_object();
-  typename K::Construct_cross_product_vector_3 cross_product =
-    k.construct_cross_product_vector_3_object();
-  typename K::Compute_squared_distance_3 sq_distance =
-    k.compute_squared_distance_3_object();
-  typename K::Compute_scalar_product_3 scalar_product =
-    k.compute_scalar_product_3_object();
-
-  typedef typename K::Vector_3 Vector_3;
-  typedef typename K::FT FT;
-
-  const Vector_3 ab = vector(a,b);
-  const Vector_3 ac = vector(a,c);
-  const Vector_3 ad = vector(a,d);
-
-  const Vector_3 abad = cross_product(ab,ad);
-  const double x = CGAL::to_double(scalar_product(cross_product(ab,ac), abad));
-  const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
-  const double y = l_ab * CGAL::to_double(scalar_product(ac,abad));
-
-  return FT(std::atan2(y, x) * 180 / CGAL_PI );
+  // Now in the CGAL kernels
+  return k.compute_approximate_dihedral_angle_3_object()(a, b, c, d);
 }
 
   
@@ -72,7 +57,9 @@ typename Kernel_traits<Point_3>::Kernel::FT
 dihedral_angle(const Point_3& a, const Point_3& b,
                const Point_3& c, const Point_3& d)
 {
-  return dihedral_angle(a, b, c, d, typename Kernel_traits<Point_3>::Kernel());
+  return
+    CGAL::Mesh_3::dihedral_angle(a, b, c, d,
+                                 typename Kernel_traits<Point_3>::Kernel());
 }
   
 } // end namespace Mesh_3

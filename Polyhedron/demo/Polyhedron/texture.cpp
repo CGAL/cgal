@@ -1076,17 +1076,17 @@ void Texture::GenerateLines(unsigned int width,
       m_pData[m_WidthByte32*j + i*3+2] = bb;
     }
 
-    // horizontal zebra
-    for(j=0;j<height;j++)
-    {
-      if((j/size)%2 == 0)
-	for(i=0;i<width;i++)
-	{
-	  m_pData[m_WidthByte32*j + i*3]   = r;
-	  m_pData[m_WidthByte32*j + i*3+1] = g;
-	  m_pData[m_WidthByte32*j + i*3+2] = b;
-	}
-    }
+  // horizontal zebra
+  for(j=0;j<height;j++)
+  {
+    if((j/size)%2 == 0)
+      for(i=0;i<width;i++)
+      {
+        m_pData[m_WidthByte32*j + i*3]   = r;
+        m_pData[m_WidthByte32*j + i*3+1] = g;
+        m_pData[m_WidthByte32*j + i*3+2] = b;
+      }
+  }
 }
 
 

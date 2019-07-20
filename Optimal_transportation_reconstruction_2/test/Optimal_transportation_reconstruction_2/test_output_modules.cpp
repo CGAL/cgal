@@ -109,7 +109,7 @@ void test_list_output(Otr_2& otr2)
     vertex_count++;
     std::cout << *it << std::endl;
   }
-  assert(vertex_count >= 10 && vertex_count <= 25);
+  assert(vertex_count >= 8 && vertex_count <= 25);
 
   int edge_count = 0;
   for (std::vector<Segment>::iterator it = edges.begin();

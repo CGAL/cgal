@@ -14,7 +14,5 @@ The class `Periodic_3_offset_3` is a model of the concept
 class Periodic_3_offset_3 {
 public:
 
-/// @}
-
 }; /* end Periodic_3_offset_3 */
 } /* end namespace CGAL */

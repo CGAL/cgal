@@ -15,8 +15,11 @@ void test_write_read()
   typedef CGAL::Polyhedron_3< Kernel >     Polyhedron;
   typedef typename Kernel::Point_3         Point;
 
-  typename Kernel::RT n( std::string("6369051672525773"));
-  typename Kernel::RT d( std::string("4503599627370496"));
+  typename Kernel::RT n, d;
+  std::istringstream str_n("6369051672525773");
+  str_n >> n;
+  std::istringstream str_d("4503599627370496");
+  str_d >> d;
 
   Point p(n, 0, 0, d);
   Point q(0, n, 0, d);

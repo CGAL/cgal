@@ -31,7 +31,5 @@ class Periodic_2_triangulation_vertex_base_2
 {
 public:
 
-/// @}
-
 }; /* end Periodic_2_triangulation_vertex_base_2 */
 } /* end namespace CGAL */

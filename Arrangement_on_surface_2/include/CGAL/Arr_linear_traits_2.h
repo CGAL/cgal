@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_ARR_LINEAR_TRAITS_2_H
 #define CGAL_ARR_LINEAR_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The traits-class for handling linear objects (lines, rays and segments)
@@ -1514,7 +1519,7 @@ public:
       // Check whether we have a single intersection point.
       const Point_2  *ip = object_cast<Point_2> (&obj);
 
-      if (ip != NULL)
+      if (ip != nullptr)
       {
         // Check whether the intersection point ip lies on both segments.
         const bool    ip_on_cv1 = cv1.is_vertical() ? cv1.is_in_y_range(*ip) :
@@ -2021,5 +2026,7 @@ InputStream& operator>> (InputStream& is, Arr_linear_object_2<Kernel>& lobj)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

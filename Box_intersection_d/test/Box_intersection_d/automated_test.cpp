@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
@@ -21,6 +22,14 @@
 
 // enable invariant checking
 #define CGAL_SEGMENT_TREE_CHECK_INVARIANTS 1
+
+#ifndef _CRT_SECURE_NO_DEPRECATE
+#define _CRT_SECURE_NO_DEPRECATE 1
+#endif
+
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS 1
+#endif
 
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Timer.h>

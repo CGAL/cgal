@@ -12,16 +12,24 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s) : Efi Fogel   <efifogel@gmail.com>
 
 #ifndef CGAL_POLYGON_TRIANGULATION_DECOMPOSITION_2_H
 #define CGAL_POLYGON_TRIANGULATION_DECOMPOSITION_2_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/General_polygon_set_2.h>
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
 #include <iostream>
 #include <vector>
 #include <list>

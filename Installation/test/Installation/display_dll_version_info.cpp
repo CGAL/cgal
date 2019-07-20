@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
   } else {
     std::cerr << "Usage:\n"
               << "  display_dll_version_info /path/to/a.dll\n";
-    return 0;
   }
+  return 0;
 }
 #endif

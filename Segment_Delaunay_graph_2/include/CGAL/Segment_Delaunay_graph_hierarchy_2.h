@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -22,6 +23,10 @@
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_HIERARCHY_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_HIERARCHY_2_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <map>
 
@@ -139,10 +144,7 @@ protected:
   typedef typename Base::Arrangement_type          Arrangement_type;
   typedef typename Base::AT2                       AT2;
 
-protected:
-  // LOCAL VARIABLES
-  //----------------
-  static const int UNDEFINED_LEVEL = -1;
+  enum { UNDEFINED_LEVEL = -1 };
 
   // here is the stack of triangulations which form the hierarchy
   Base*   hierarchy[sdg_hierarchy_2__maxlevel];
@@ -193,8 +195,11 @@ public:
       site_vec.push_back(Site_2(*it));
     }
 
-    boost::random_number_generator<boost::rand48> rng(random);
-    std::random_shuffle(site_vec.begin(), site_vec.end(),rng);
+    typedef std::iterator_traits<Input_iterator> Iterator_traits;
+    typedef typename Iterator_traits::difference_type Diff_t;
+
+    boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+    CGAL::cpp98::random_shuffle(site_vec.begin(), site_vec.end(),rng);
     return insert(site_vec.begin(), site_vec.end(), Tag_false());
   }
 
@@ -367,17 +372,7 @@ protected:
 				       const Site_2& ,
 				       Vertex_handle ,
 				       int , Tag_false /* itag */, Tag) {
-#if defined(__POWERPC__) && \
-  defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 4)
-    // hack to avoid nasty warning for G++ 3.4 on Darwin
-    static int i;
-#else
-    static int i = 0;
-#endif
-    if ( i == 0 ) {
-      i = 1;
-      print_error_message();
-    }
+    print_error_message();
     return Vertex_handle();
   }
 
@@ -503,5 +498,6 @@ std::ostream& operator<<(std::ostream& os,
 
 #include <CGAL/Segment_Delaunay_graph_2/Segment_Delaunay_graph_hierarchy_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_HIERARCHY_2_H

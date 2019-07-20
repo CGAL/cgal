@@ -20,7 +20,7 @@
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 // ============================================================================
-#include <CGAL/basic.h>
+
 #include <utility>
 #include <list>
 

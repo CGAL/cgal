@@ -1,6 +1,6 @@
 
 /*!
- * \ingroup PkgMeanCurvatureSkeleton3Concepts
+ * \ingroup PkgSurfaceMeshSkeletonizationConcepts
  * \cgalConcept
  *
  * Traits class concept defining the requirements of the class `CGAL::Mean_curvature_flow_skeletonization`.
@@ -127,45 +127,59 @@ typedef unspecified_type Compute_z_3;
 /// \name Access to Function Objects
 /// @{
 
+/// Function object creator
 Construct_point_3
 construct_point_3_object();
 
+/// Function object creator
 Construct_vector_3
 construct_vector_3_object();
 
+/// Function object creator
 Construct_scaled_vector_3
 construct_scaled_vector_3_object();
 
+/// Function object creator
 Construct_divided_vector_3
 construct_divided_vector_3_object();
 
+/// Function object creator
 Construct_cross_product_vector_3
 construct_cross_product_vector_3_object();
 
+/// Function object creator
 Construct_sum_of_vectors_3
 construct_sum_of_vectors_3_object();
 
+/// Function object creator
 Construct_midpoint_3
 construct_midpoint_3_object();
 
+/// Function object creator
 Compute_squared_distance_3
 compute_squared_distance_3_object();
 
+/// Function object creator
 Compute_squared_length_3
 compute_squared_length_3_object();
 
+/// Function object creator
 Compute_area_3
 compute_area_3_object();
 
+/// Function object creator
 Compute_scalar_product_3
 compute_scalar_product_3_object();
 
+/// Function object creator
 Compute_x_3
 compute_x_3_object();
 
+/// Function object creator
 Compute_y_3
 compute_y_3_object();
 
+/// Function object creator
 Compute_z_3
 compute_z_3_object();
 

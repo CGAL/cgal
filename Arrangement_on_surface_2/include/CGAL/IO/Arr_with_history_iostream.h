@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_WITH_HISTORY_IOSTREAM_H
 #define CGAL_ARR_WITH_HISTORY_IOSTREAM_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Definition of the I/O operators for the class-template

@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -89,6 +90,7 @@ _test_fct_vector_2(const R& )
  std::cout << '.';
 
  assert( v1 * v2 == FT(30) );
+ assert( CGAL::scalar_product(v1, v2) == FT(30) );
  assert( v1 * v0 == FT(0) );
  assert( v1.squared_length() == FT(40) );
  assert( CGAL::Vector_2<R>( n1, n2) == v1 * RT(2));

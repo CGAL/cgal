@@ -3,21 +3,21 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplification
+\ingroup PkgSurfaceMeshSimplificationRef
 
 The class `LindstromTurk_placement` provides a model for the `GetPlacement` concept. 
 It computes the placement, that is, the new position for the remaining vertex after 
 a halfedge-collapse, following the Lindstrom-Turk strategy 
 (Section \ref SurfaceMeshSimplificationLindstromTurkStrategy). 
 
-\tparam ECM is the type of surface mesh being simplified, and must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
+\tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 \cgalModels `GetPlacement`
 
-\sa `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>` 
+\sa `CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>` 
 
 */
-template< typename ECM >
+template< typename TriangleMesh >
 class LindstromTurk_placement {
 public:
 
@@ -28,7 +28,7 @@ public:
 Initializes the policy with the given <I>weighting unit factor</I>. 
 See \ref SurfaceMeshSimplificationLindstromTurkStrategy for details on the meaning of this factor. 
 */ 
-LindstromTurk_placement<ECM>( FT const& factor = FT(0.5) ); 
+LindstromTurk_placement<TriangleMesh>( FT const& factor = FT(0.5) ); 
 
 /// @} 
 

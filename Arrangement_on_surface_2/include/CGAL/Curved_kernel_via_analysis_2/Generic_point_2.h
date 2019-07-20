@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
@@ -130,10 +131,11 @@ public:
     /*!\brief
      * copy constructor
      */
+#ifdef DOXYGEN_RUNNING  
     Generic_point_2(const Self& p) :
             Base(static_cast<const Base&>(p)) {  
     }
-    
+#endif    
     /*!\brief
      * constructs an arc from a given represenation
      */

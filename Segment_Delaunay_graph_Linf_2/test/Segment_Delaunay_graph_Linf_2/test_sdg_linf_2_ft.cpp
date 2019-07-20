@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
@@ -10,17 +9,11 @@
 #include <fstream>
 #include <cassert>
 
+#include <CGAL/Exact_rational.h>
+
 // choose number type
-#ifdef CGAL_USE_GMP
-#  include <CGAL/Gmpq.h>
-typedef CGAL::Gmpq                     exact_ring_t;
-typedef CGAL::Gmpq                     exact_field_t;
-#else
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::MP_Float                 exact_ring_t;
-typedef CGAL::Quotient<exact_ring_t>   exact_field_t;
-#endif
+typedef CGAL::Exact_rational exact_ring_t;
+typedef CGAL::Exact_rational exact_field_t;
 
 #include <CGAL/Simple_cartesian.h>
 

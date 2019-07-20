@@ -10,7 +10,8 @@ namespace Kernel {
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Circle_2<Kernel>` 
+  \cgalHasModel `CGAL::Circle_2<Kernel>`
+
   \sa `Kernel::BoundedSide_2` 
   \sa `Kernel::ComputeSquaredRadius_2` 
   \sa `Kernel::ConstructCenter_2` 
@@ -41,7 +42,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Circle_3<Kernel>` 
+  \cgalHasModel `CGAL::Circle_3<Kernel>`
+
   \sa `Kernel::ComputeApproximateArea_3` 
   \sa `Kernel::ComputeApproximateSquaredLength_3` 
   \sa `Kernel::ComputeAreaDividedByPi_3` 
@@ -71,7 +73,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Direction_2<Kernel>` 
+  \cgalHasModel `CGAL::Direction_2<Kernel>`
+
   \sa `Kernel::CompareAngleWithXAxis_2` 
   \sa `Kernel::ComputeDx_2` 
   \sa `Kernel::ComputeDy_2` 
@@ -96,7 +99,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Direction_3<Kernel>` 
+  \cgalHasModel `CGAL::Direction_3<Kernel>`
+
   \sa `Kernel::ConstructDirection_3` 
   \sa `Kernel::ConstructOppositeDirection_3` 
   \sa `Kernel::Equal_2` 
@@ -117,7 +121,8 @@ A type representing isocuboids in three dimensions.
 \cgalRefines Assignable
 \cgalRefines DefaultConstructible
 
-\sa `CGAL::Iso_cuboid_3<Kernel>` 
+\cgalHasModel `CGAL::Iso_cuboid_3<Kernel>` 
+
 \sa `Kernel::BoundedSide_3` 
 \sa `Kernel::ComputeVolume_3` 
 \sa `Kernel::ConstructIsoCuboid_3` 
@@ -143,7 +148,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Iso_rectangle_2<Kernel>` 
+  \cgalHasModel `CGAL::Iso_rectangle_2<Kernel>`
+
   \sa `Kernel::ConstructIsoRectangle_2` 
   \sa `Kernel::ComputeXmin_2` 
   \sa `Kernel::ComputeXmax_2` 
@@ -176,7 +182,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Line_2<Kernel>` 
+  \cgalHasModel `CGAL::Line_2<Kernel>`
+
   \sa `Kernel::CompareXAtY_2` 
   \sa `Kernel::ComputeSquaredDistance_2` 
   \sa `Kernel::CompareYAtX_2` 
@@ -213,7 +220,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Line_3<Kernel>` 
+  \cgalHasModel `CGAL::Line_3<Kernel>`
+
   \sa `Kernel::ComputeSquaredDistance_3` 
   \sa `Kernel::ConstructDirection_3` 
   \sa `Kernel::ConstructLine_3` 
@@ -245,7 +253,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Object` 
+  \cgalHasModel `CGAL::Object`
+
   \sa `Kernel::Assign_2` 
   \sa `Kernel::ConstructObject_2` 
   \sa `Kernel::Intersect_2` 
@@ -267,7 +276,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Object` 
+  \cgalHasModel `CGAL::Object`
+
   \sa `Kernel::Assign_3` 
   \sa `Kernel::ConstructObject_3` 
   \sa `Kernel::Intersect_3` 
@@ -287,7 +297,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Plane_3<Kernel>` 
+  \cgalHasModel `CGAL::Plane_3<Kernel>` 
+
   \sa `Kernel::ComputeSquaredDistance_3` 
   \sa `Kernel::ConstructBaseVector_3` 
   \sa `Kernel::ConstructBisector_3` 
@@ -325,6 +336,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible 
 
+  \cgalHasModel `CGAL::Point_2<Kernel>`
+
   \sa `Kernel::Angle_2` 
   \sa `Kernel::AreOrderedAlongLine_2` 
   \sa `Kernel::AreStrictlyOrderedAlongLine_2` 
@@ -349,7 +362,7 @@ public:
   \sa `Kernel::ConstructLiftedPoint_3` 
   \sa `Kernel::ConstructMidpoint_2` 
   \sa `Kernel::ConstructPointOn_2` 
-  \sa `Kernel::ConstructPoint_2` 
+  \sa `Kernel::ConstructPoint_2`
   \sa `Kernel::ConstructProjectedPoint_2` 
   \sa `Kernel::ConstructProjectedXYPoint_2` 
   \sa `Kernel::ConstructTranslatedPoint_2` 
@@ -384,6 +397,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
+  \cgalHasModel `CGAL::Point_3<Kernel>`
+
   \sa `Kernel::Angle_3` 
   \sa `Kernel::AreOrderedAlongLine_3` 
   \sa `Kernel::AreStrictlyOrderedAlongLine_3` 
@@ -391,6 +406,7 @@ public:
   \sa `Kernel::CollinearAreOrderedAlongLine_3` 
   \sa `Kernel::CollinearAreStrictlyOrderedAlongLine_3` 
   \sa `Kernel::CompareDistance_3` 
+  \sa `Kernel::CompareSquaredRadius_3`
   \sa `Kernel::CompareXYZ_3` 
   \sa `Kernel::CompareXY_3` 
   \sa `Kernel::CompareX_3` 
@@ -444,7 +460,8 @@ A type representing rays in two dimensions.
 \cgalRefines Assignable
 \cgalRefines DefaultConstructible
 
-\sa `CGAL::Ray_2<Kernel>` 
+\cgalHasModel `CGAL::Ray_2<Kernel>`
+
 \sa `Kernel::CollinearHasOn_2` 
 \sa `Kernel::ComputeSquaredDistance_2` 
 \sa `Kernel::ConstructDirection_2` 
@@ -477,7 +494,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Ray_3<Kernel>` 
+  \cgalHasModel `CGAL::Ray_3<Kernel>`
+
   \sa `Kernel::ComputeSquaredDistance_3` 
   \sa `Kernel::ConstructDirection_3` 
   \sa `Kernel::ConstructLine_3` 
@@ -506,7 +524,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Segment_2<Kernel>` 
+  \cgalHasModel `CGAL::Segment_2<Kernel>`
+
   \sa `Kernel::CollinearHasOn_2` 
   \sa `Kernel::ComputeSquaredDistance_2` 
   \sa `Kernel::ComputeSquaredLength_2` 
@@ -541,7 +560,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Segment_3<Kernel>` 
+  \cgalHasModel `CGAL::Segment_3<Kernel>`
+
   \sa `Kernel::ComputeSquaredDistance_3` 
   \sa `Kernel::ComputeSquaredLength_3` 
   \sa `Kernel::ConstructDirection_3` 
@@ -572,7 +592,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Sphere_3<Kernel>` 
+  \cgalHasModel `CGAL::Sphere_3<Kernel>`
+
   \sa `Kernel::BoundedSide_3` 
   \sa `Kernel::ComputeSquaredRadius_3` 
   \sa `Kernel::ConstructCenter_3` 
@@ -603,7 +624,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Tetrahedron_3<Kernel>` 
+  \cgalHasModel `CGAL::Tetrahedron_3<Kernel>`
+
   \sa `Kernel::BoundedSide_3` 
   \sa `Kernel::ComputeVolume_3` 
   \sa `Kernel::ConstructCentroid_3` 
@@ -635,7 +657,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Triangle_2<Kernel>` 
+  \cgalHasModel `CGAL::Triangle_2<Kernel>`
+
   \sa `Kernel::BoundedSide_2` 
   \sa `Kernel::ComputeArea_2` 
   \sa `Kernel::ComputeSquaredDistance_2` 
@@ -669,7 +692,8 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Triangle_3<Kernel>` 
+  \cgalHasModel `CGAL::Triangle_3<Kernel>`
+
   \sa `Kernel::ComputeSquaredArea_3` 
   \sa `Kernel::ConstructCentroid_3` 
   \sa `Kernel::ConstructSupportingPlane_3` 
@@ -695,8 +719,11 @@ public:
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
 
-  \sa `CGAL::Vector_2<Kernel>` 
+  \cgalHasModel `CGAL::Vector_2<Kernel>`
+
   \sa `Kernel::ComputeDeterminant_2` 
+  \sa `Kernel::ComputeScalarProduct_2`
+  \sa `Kernel::ComputeSquaredLength_2`
   \sa `Kernel::ComputeX_2` 
   \sa `Kernel::ComputeY_2` 
   \sa `Kernel::ComputeHx_2` 
@@ -727,8 +754,12 @@ A type representing vectors in three dimensions.
 \cgalRefines Assignable
 \cgalRefines DefaultConstructible
 
-\sa `CGAL::Vector_3<Kernel>` 
-\sa `Kernel::ComputeDeterminant_3` 
+\cgalHasModel `CGAL::Vector_3<Kernel>`
+
+\sa `Kernel::CompareDihedralAngle_3`
+\sa `Kernel::ComputeDeterminant_3`
+\sa `Kernel::ComputeScalarProduct_3`
+\sa `Kernel::ComputeSquaredLength_3`
 \sa `Kernel::ComputeX_3` 
 \sa `Kernel::ComputeY_3` 
 \sa `Kernel::ComputeZ_3` 
@@ -749,5 +780,64 @@ class Vector_3 {
 public:
 
 }; /* end Kernel::Vector_3 */
+
+
+/*!
+  \ingroup PkgKernel23ConceptsGeomObject
+\cgalConcept
+
+A type representing weighted points in two dimensions.
+
+\cgalRefines CopyConstructible
+\cgalRefines Assignable
+\cgalRefines DefaultConstructible
+
+\cgalHasModel `CGAL::Weighted_point_2<Kernel>`
+
+\sa `Kernel::ConstructWeightedPoint_2`
+\sa `Kernel::ComputeWeight_2`
+\sa `Kernel::ComparePowerDistance_2`
+\sa `Kernel::ComputePowerProduct_2`
+\sa `Kernel::ComputeSquaredRadiusSmallestOrthogonalCircle_2`
+\sa `Kernel::ConstructRadicalAxis_2`
+\sa `Kernel::ConstructWeightedCircumcenter_2`
+\sa `Kernel::PowerSideOfBoundedPowerCircle_2`
+\sa `Kernel::PowerSideOfOrientedPowerCircle_2`
+
+*/
+class WeightedPoint_2 {
+public:
+
+}; /* end Kernel::WeightedPoint_2 */
+
+
+/*!
+  \ingroup PkgKernel23ConceptsGeomObject
+\cgalConcept
+
+A type representing weighted points in three dimensions. 
+
+\cgalRefines CopyConstructible
+\cgalRefines Assignable
+\cgalRefines DefaultConstructible
+
+\cgalHasModel `CGAL::Weighted_point_3<Kernel>`
+
+\sa `Kernel::ConstructWeightedPoint_3`
+\sa `Kernel::ComputeWeight_3`
+\sa `Kernel::ComparePowerDistance_3`
+\sa `Kernel::ComputePowerDistanceToPowerSphere_3`
+\sa `Kernel::ComputePowerProduct_3`
+\sa `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3`
+\sa `Kernel::ConstructWeightedCircumcenter_3`
+\sa `Kernel::PowerSideOfBoundedPowerSphere_3`
+\sa `Kernel::PowerSideOfOrientedPowerSphere_3`
+\sa `Kernel::CompareWeightedSquaredRadius_3`
+
+*/
+class WeightedPoint_3 {
+public:
+
+}; /* end Kernel::WeightedPoint_3 */
 
 } /* end namespace Kernel */

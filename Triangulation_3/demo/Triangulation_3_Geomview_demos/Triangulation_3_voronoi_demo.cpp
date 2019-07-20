@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -73,7 +74,7 @@ int main()
   gv << T;
 
   std::cout <<"          Visualizing the Voronoi edges" << std::endl;
-  gv << CGAL::RED;
+  gv << CGAL::red();
   T.draw_dual(gv);
 
   char ch;

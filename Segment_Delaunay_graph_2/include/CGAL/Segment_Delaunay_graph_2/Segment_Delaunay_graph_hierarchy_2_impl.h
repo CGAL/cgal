@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -179,7 +180,7 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 
   CGAL_assertion( vertex != Vertex_handle() );
 
-  if ( vertices != NULL ) { vertices[0] = vertex; }
+  if ( vertices != nullptr ) { vertices[0] = vertex; }
 
   // insert at other levels
   Vertex_handle previous = vertex;
@@ -236,7 +237,7 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 
     CGAL_assertion( vertex != Vertex_handle() );
 
-    if ( vertices != NULL ) { vertices[k] = vertex; }
+    if ( vertices != nullptr ) { vertices[k] = vertex; }
 
     vertex->set_down(previous); // link with other levels
     previous->set_up(vertex);
@@ -297,7 +298,7 @@ insert_point(const Site_2& t, const Storage_site_2& ss,
 
     CGAL_assertion( vertex != Vertex_handle() );
 
-    if ( vertices != NULL ) { vertices[k] = vertex; }
+    if ( vertices != nullptr ) { vertices[k] = vertex; }
 
     vertex->set_down(previous); // link with other levels
     previous->set_up(vertex);
@@ -352,7 +353,7 @@ insert_segment(const Point_2& p0, const Point_2& p1,
   Vertex_handle vertex;
 
   if ( hierarchy[0]->number_of_vertices() == 2 ) {
-    static Segments_in_hierarchy_tag stag;
+    Segments_in_hierarchy_tag stag;
 
     vertex = hierarchy[0]->insert_third(ss, vertices0[0], vertices1[0]);
     insert_segment_in_upper_levels(t, vertex->storage_site(),
@@ -382,8 +383,8 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // arrangement_type
 
   // the tags
-  static Intersections_tag          itag;
-  static Segments_in_hierarchy_tag  stag;
+  Intersections_tag          itag;
+  Segments_in_hierarchy_tag  stag;
 
   // find the first conflict
 
@@ -477,8 +478,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
     vcross(false, Vertex_handle(), AT2::DISJOINT);
 
   hierarchy[0]->initialize_conflict_region(start_f, l);
-  hierarchy[0]->expand_conflict_region(start_f, t, ss, l, fm,
-				       sign_map, vcross);
+  hierarchy[0]->expand_conflict_region(start_f, t, l, fm, sign_map, vcross);
 
   CGAL_assertion( vcross.third == AT2::DISJOINT ||
 		  vcross.third == AT2::CROSSING ||
@@ -489,7 +489,6 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   if ( vcross.first ) {
     if ( t.is_segment() ) {
       if ( vcross.third == AT2::CROSSING ) {
-	Intersections_tag itag;
 	return insert_intersecting_segment_with_tag(ss, t, vcross.second,
 						    level, itag, stag);
       } else if ( vcross.third == AT2::INTERIOR ) {
@@ -522,7 +521,7 @@ insert_segment_in_upper_levels(const Site_2& t, const Storage_site_2& ss,
 			       const Vertex_handle* vertices,
 			       int level, Tag_true /* stag */)
 {
-  CGAL_precondition( vertices != NULL );
+  CGAL_precondition( vertices != nullptr );
   CGAL_precondition( vbelow != Vertex_handle() );
 
   // insert at all upper levels
@@ -1003,15 +1002,19 @@ void
 Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 print_error_message() const
 {
-  std::cerr << std::endl;
-  std::cerr << "ATTENTION:" << std::endl;
-  std::cerr << "A segment-segment intersection was found."
-	    << std::endl;
-  std::cerr << "The Segment_Delaunay_graph_hierarchy_2 class is not"
-	    << " configured to handle this situation." << std::endl;
-  std::cerr << "Please look at the documentation on how to handle"
-	    << " this behavior." << std::endl;
-  std::cerr << std::endl;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, once, 0);
+  if(once == 0){
+    ++once;
+    std::cerr << std::endl;
+    std::cerr << "ATTENTION:" << std::endl;
+    std::cerr << "A segment-segment intersection was found."
+              << std::endl;
+    std::cerr << "The Segment_Delaunay_graph_hierarchy_2 class is not"
+              << " configured to handle this situation." << std::endl;
+    std::cerr << "Please look at the documentation on how to handle"
+              << " this behavior." << std::endl;
+    std::cerr << std::endl;
+  }
 }
 
 //---------------------------------------------------------------------------

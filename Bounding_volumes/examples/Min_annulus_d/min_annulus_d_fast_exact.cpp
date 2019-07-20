@@ -3,14 +3,14 @@
 // as input type and some internal EXACT floating point type;
 // the fast type double is also safely used for many of the
 // internal computations
-#include <iostream>
-#include <cassert>
-#include <CGAL/Homogeneous.h>
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Min_sphere_annulus_d_traits_2.h>
-
+#include <CGAL/Homogeneous.h>
 #include <CGAL/Exact_integer.h>
 typedef CGAL::Exact_integer ET;
+
+#include <iostream>
+#include <cassert>
 
 // use an inexact kernel...
 typedef CGAL::Homogeneous<double>                          K;

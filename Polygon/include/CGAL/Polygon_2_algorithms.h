@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
@@ -29,7 +30,7 @@
 #ifndef CGAL_POLYGON_2_ALGORITHMS_H
 #define CGAL_POLYGON_2_ALGORITHMS_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_2/polygon_assertions.h>
@@ -235,7 +236,7 @@ bool is_convex_2(ForwardIterator first,
 ///   - `orientation_2_object()`
 /// \tparam ForwardIterator must have `PolygonTraits::Point_2` as value type.
 /// 
-/// ### Implementation##
+/// \cgalHeading{Implementation}
 /// 
 /// The simplicity test is implemented by means of a plane sweep algorithm.
 /// The algorithm is quite robust when used with inexact number types.
@@ -298,7 +299,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
 ///   - `orientation_2_object()`
 /// \tparam ForwardIterator must have `Traits::Point_2` as value type.
 /// 
-/// ### Implementation ###
+/// \cgalHeading{Implementation}
 /// 
 /// The running time is linear in the number of vertices of the polygon.
 /// A horizontal ray is taken to count the number of intersections.

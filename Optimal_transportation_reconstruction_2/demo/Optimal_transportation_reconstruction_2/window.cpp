@@ -463,7 +463,7 @@ void MainWindow::on_actionDecimate_triggered()
 void MainWindow::set_scene_options()
 {
   m_scene->set_options(m_verbose, m_mchoice, m_use_flip,
-      m_relocation, m_relevance);
+      m_relocation, m_relevance, percentage());
 }
 
 void MainWindow::on_actionReconstruction_reinit_triggered()
@@ -527,6 +527,22 @@ void MainWindow::on_actionReconstruction_until_triggered()
   update();
 }
 
+void MainWindow::on_actionReconstruction_Wasserstein_tolerance_triggered()
+{
+  bool ok;
+  double tolerance = QInputDialog::getDouble(
+      this, tr("Wasserstein tolerance"), tr("Tolerance:"), 0.01, 0., 1000000., 5, &ok);
+  if (!ok) return;
+
+  set_scene_options();
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_scene->reconstruct_wasserstein_tolerance (tolerance);
+  QApplication::restoreOverrideCursor();
+
+  update();
+}
+
 void MainWindow::on_actionRelocate_vertices_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -552,6 +568,12 @@ void MainWindow::on_actionOutput_console_triggered()
 void MainWindow::on_actionView_points_toggled()
 {
   viewer->toggle_view_points();
+  update();
+}
+
+void MainWindow::on_actionView_tolerance_toggled()
+{
+  viewer->toggle_view_tolerance();
   update();
 }
 

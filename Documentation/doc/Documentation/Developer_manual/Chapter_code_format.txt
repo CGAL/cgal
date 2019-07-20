@@ -259,7 +259,7 @@ The first list of items are meant as rules, <I>i.e.</I>, you should follow them.
   #endif // CGAL_THIS_IS_AN_EXAMPLE_H
   \endcode
 - Support the
-  <A HREF="http://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</A>
+  <A HREF="https://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</A>
   protocol whenever your functors have more than one return type
   otherwise provide a `result_type` member typedef.
   An example for this is a C++03 style `identity` functor:
@@ -320,14 +320,13 @@ employing the authors) of this work,
 are allowed in \cgal), and a pointer to the file containing its text in the
 \cgal distribution,
 <LI>a disclaimer notice,
-<LI>then, there are 2 keywords, which are automatically expanded by SVN
-(there are options in SVN to suppress these expansions if you need):
+<LI>then, there are 2 keywords, which are automatically expanded at the creation of a new release:
 <UL>
-<LI>\$URL: \$ : the name of the source file in the repository, it also
-helps figuring out which package the file comes from,
-<LI>\$Id: \$ : the SVN revision number of the file, the date of this revision,
-and the author of the last commit.
+<LI>\$URL\$ : canonical path to the file on github,
+<LI>\$Id\$ : the release version the file is from.
 </UL>
+<LI> Then [SPDX license identifier](https://spdx.org/). For GPL-3+ it should be `SPDX-License-Identifier: GPL-3.0+`,
+and  `SPDX-License-Identifier: LGPL-3.0+` for LGPL-3+.
 <LI>Then the authors of (non-negligible parts of) this file are listed, with
 optional affiliation or e-mail address.
 </UL>
@@ -362,9 +361,9 @@ Here follows what this gives for a file under the GPL :
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://pmoeller@scm.gforge.inria.fr/svn/cgal/branches/features/doxy-port-pmoeller/Developers_manual/doc_tex/Developers_manual/code_format.tex $
-// $Id: code_format.tex 70968 2012-08-02 12:55:15Z pmoeller $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -392,9 +391,9 @@ Here follows what this gives for a file under the LGPL :
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://pmoeller@scm.gforge.inria.fr/svn/cgal/branches/features/doxy-port-pmoeller/Developers_manual/doc_tex/Developers_manual/code_format.tex $
-// $Id: code_format.tex 70968 2012-08-02 12:55:15Z pmoeller $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion
 \endcode

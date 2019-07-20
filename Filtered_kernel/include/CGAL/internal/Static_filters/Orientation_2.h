@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -65,11 +66,10 @@ public:
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_2", tmp);
 
       double px, py, qx, qy, rx, ry;
-      Get_approx<Point_2> get_approx;
 
-      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-          fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-          fit_in_double(get_approx(r).x(), rx) && fit_in_double(get_approx(r).y(), ry))
+      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry))
       {
           CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 

@@ -12,14 +12,21 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
-// $Id$ 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     :     Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
 #ifndef CGAL_NEF_SNC_INDEXED_ITEMS_H
 #define CGAL_NEF_SNC_INDEXED_ITEMS_H
+
+#include <CGAL/license/Nef_3.h>
+
+
+#include <CGAL/atomic.h>
+
 #include <CGAL/Nef_3/Vertex.h>
 #include <CGAL/Nef_3/Halfedge.h>
 #include <CGAL/Nef_3/Halffacet.h>
@@ -39,7 +46,13 @@ class Index_generator {
  public:
   static int get_unique_index()
   {
-    static int unique = 0;
+    // initialized with 0
+    // http://en.cppreference.com/w/cpp/language/zero_initialization
+#ifdef CGAL_NO_ATOMIC
+    static int unique;
+#else
+    static CGAL::cpp11::atomic<int> unique;
+#endif
     return unique++;
   }
 };

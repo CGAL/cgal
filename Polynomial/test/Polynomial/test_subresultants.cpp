@@ -10,7 +10,7 @@
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
 // ============================================================================
-#include <CGAL/basic.h>
+
 #include <CGAL/Polynomial/subresultants.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/CORE_arithmetic_kernel.h>

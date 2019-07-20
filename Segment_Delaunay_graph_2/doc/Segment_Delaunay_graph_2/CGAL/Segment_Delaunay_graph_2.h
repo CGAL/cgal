@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSegmentDelaunayGraph2
+\ingroup PkgSegmentDelaunayGraph2Ref
 
 The class `Segment_Delaunay_graph_2` represents the segment Delaunay graph (which is 
 the dual graph of the 2D segment Voronoi diagram). 
@@ -352,6 +352,7 @@ Past-the-end iterator.
 Finite_faces_iterator finite_faces_end() 
 const; 
 
+/// @}
 
 /// \name Infinite Face, Edge, and Vertex Iterators
 /// The following iterators allow respectively to visit all (both

@@ -20,6 +20,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion
@@ -29,6 +30,9 @@
 
 #ifndef CGAL_ALGEBRAIC_KERNEL_FOR_SPHERES_2_3_H
 #define CGAL_ALGEBRAIC_KERNEL_FOR_SPHERES_2_3_H
+
+#include <CGAL/license/Circular_kernel_3.h>
+
 
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Polynomials_2_3.h>

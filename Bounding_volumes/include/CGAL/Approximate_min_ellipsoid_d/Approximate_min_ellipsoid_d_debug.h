@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
 #ifndef CGAL_APPROX_MIN_ELL_D_DEBUG_H
 #define CGAL_APPROX_MIN_ELL_D_DEBUG_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 #include <cmath>
 #include <map>

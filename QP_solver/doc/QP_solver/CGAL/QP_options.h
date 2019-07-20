@@ -15,8 +15,7 @@ options referring to
 </OL> 
 The idea is that this list grows in the future. 
 
-Operations 
--------------- 
+\cgalHeading{Operations}
 
 Here we just have set/get pairs for any option type. 
 

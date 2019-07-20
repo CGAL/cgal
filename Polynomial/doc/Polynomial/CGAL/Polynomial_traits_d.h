@@ -13,7 +13,5 @@ template< typename Polynomial_d >
 class Polynomial_traits_d {
 public:
 
-/// @}
-
 }; /* end Polynomial_traits_d */
 } /* end namespace CGAL */

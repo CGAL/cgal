@@ -30,7 +30,7 @@ typedef FT (*Function)(const Point&);
 typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function>
                                                         Function_wrapper;
 typedef Function_wrapper::Function_vector Function_vector;
-typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Mesh_domain> Mesh_domain_with_features;
 
 // Triangulation

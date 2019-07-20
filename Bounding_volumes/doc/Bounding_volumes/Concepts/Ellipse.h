@@ -145,7 +145,7 @@ returns `true`, iff `ellipse` is degenerate, i.e.\ if
 */
 bool  is_degenerate( ) const;
 
-
+/// @}
 /// \name I/O 
 /// The following I/O operator is only needed, if the corresponding I/O
 /// operator of `CGAL::Min_ellipse_2` is used.

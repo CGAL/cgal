@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas, Sylvain Pion
@@ -42,6 +43,12 @@ class Epick
 #else
                true >
 #endif
+{};
+
+class Epick_without_intervals
+  : public Static_filters_base<
+      Type_equality_wrapper< Simple_cartesian<double>::Base<Epick_without_intervals>::Type,
+                             Epick_without_intervals > >
 {};
 
 typedef Epick Exact_predicates_inexact_constructions_kernel;

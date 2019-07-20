@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Christophe Delage
 //
@@ -21,7 +22,7 @@
 #ifndef CGAL_HILBERT_SORT_H
 #define CGAL_HILBERT_SORT_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #include <CGAL/Hilbert_policy_tags.h>
 #include <CGAL/Hilbert_sort_2.h>
@@ -46,13 +47,11 @@ namespace internal {
 		       Policy /*policy*/,
 		       typename Kernel::Point_2 *)
     {
+        typedef std::iterator_traits<RandomAccessIterator> ITraits;
+        typedef typename ITraits::difference_type Diff_t;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
-#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
-        CGAL::random_shuffle(begin,end, rng);
-#else
-        std::random_shuffle(begin,end, rng);
-#endif
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+        CGAL::cpp98::random_shuffle(begin,end, rng);
 	(Hilbert_sort_2<Kernel, Policy> (k))(begin, end);
     }
     
@@ -63,13 +62,11 @@ namespace internal {
 			 Policy /*policy*/,
 			 typename Kernel::Point_3 *)
     {
+        typedef std::iterator_traits<RandomAccessIterator> ITraits;
+        typedef typename ITraits::difference_type Diff_t;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
-#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
-        CGAL::random_shuffle(begin,end, rng);
-#else
-        std::random_shuffle(begin,end, rng);
-#endif
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+        CGAL::cpp98::random_shuffle(begin,end, rng);
         (Hilbert_sort_3<Kernel, Policy> (k))(begin, end);
     }
 
@@ -80,13 +77,11 @@ namespace internal {
 			 Policy /*policy*/,
 			 typename Kernel::Point_d *)
     {
+        typedef std::iterator_traits<RandomAccessIterator> ITraits;
+        typedef typename ITraits::difference_type Diff_t;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
-#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
-        CGAL::random_shuffle(begin,end, rng);
-#else
-        std::random_shuffle(begin,end, rng);
-#endif
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+        CGAL::cpp98::random_shuffle(begin,end, rng);
         (Hilbert_sort_d<Kernel, Policy> (k))(begin, end);
     }
 }

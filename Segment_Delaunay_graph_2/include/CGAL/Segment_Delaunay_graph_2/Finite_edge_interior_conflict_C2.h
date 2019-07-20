@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FINITE_EDGE_INTERIOR_CONFLICT_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_FINITE_EDGE_INTERIOR_CONFLICT_C2_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
 
 #include <CGAL/Segment_Delaunay_graph_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_C2.h>
@@ -419,12 +423,17 @@ private:
 #if 1
     CGAL_assertion( p.is_segment() || q.is_segment() );
 
-    Voronoi_vertex_2 vpqr(p, q, r);
-    Voronoi_vertex_2 vqps(q, p, s);
-
-    if ( vpqr.incircle_no_easy(s) == ZERO &&
-	 vqps.incircle_no_easy(r) == ZERO ) {
-      return false;
+    if ( !(r.is_point() && s.is_point() && r.point()==s.point() ) &&
+         !(r.is_segment() && s.is_segment() && r.source_of_supporting_site()==s.source_of_supporting_site()
+                                            && r.target_of_supporting_site()==s.target_of_supporting_site() ) )
+    {
+      Voronoi_vertex_2 vpqr(p, q, r);
+      Voronoi_vertex_2 vqps(q, p, s);
+      //check if the edge is degenerate
+      if ( vpqr.incircle_no_easy(s) == ZERO &&
+           vqps.incircle_no_easy(r) == ZERO ) {
+        return false;
+      }
     }
 
     if ( p.is_segment() && q.is_segment() ) {

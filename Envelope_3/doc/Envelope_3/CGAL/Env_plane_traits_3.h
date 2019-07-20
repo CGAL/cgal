@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope3
+\ingroup PkgEnvelope3Ref
 
 The traits class `Env_plane_traits_3` models the `EnvelopeTraits_3` concept, 
 and is used for the construction of lower and upper envelopes of planes 
@@ -34,8 +34,6 @@ determines which half is considered.
 template< typename Kernel >
 class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel> {
 public:
-
-/// @}
 
 }; /* end Env_plane_traits_3 */
 } /* end namespace CGAL */

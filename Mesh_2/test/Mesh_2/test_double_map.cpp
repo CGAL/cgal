@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Double_map.h>
 #include <utility>
 #include <CGAL/Random.h>
@@ -71,7 +70,7 @@ int main(int argc, char** argv)
   std::cerr << "Assignment f2=f...\n";
   f2 = f; // check the assignment 
   std::cerr << "Auto-assignment f=f...\n";
-  f2 = f2; // check the auto-assignment 
+  f2 = (Map&)f2; // check the auto-assignment 
   std::cerr << "Copy-construction...\n";
   Map f3(f); // check the copy constructor
 

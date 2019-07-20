@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez and Sylvain Pion and Ankit Gupta
 
 #ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_2_H
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_2_H
+
+#include <CGAL/license/Principal_component_analysis.h>
+
 
 #include <CGAL/basic.h>
 //#include <CGAL/Algebraic_structure_traits.h>
@@ -50,7 +54,7 @@ linear_least_squares_fitting_2(InputIterator first,
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return internal::linear_least_squares_fitting_2(first, beyond, line,
-						  centroid,(Value_type*)NULL,kernel,tag,
+						  centroid,(Value_type*)nullptr,kernel,tag,
 						  diagonalize_traits);
 }
 

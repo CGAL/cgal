@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolyhedron
+\ingroup PkgPolyhedronRef
 
 The class `Polyhedron_min_items_3` is a minimal model of the 
 `PolyhedronItems_3` concept. It provides definitions for vertices 

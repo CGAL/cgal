@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2008
+// Copyright (c) 1998-2019
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -18,14 +18,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Sylvain Pion, Marc Glisse
 
 #ifndef CGAL_FPU_H
 #define CGAL_FPU_H
 
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
+#include <cstring> // std::memcpy
 
 #ifndef __INTEL_COMPILER
 #include <cmath> // for HUGE_VAL
@@ -66,11 +69,7 @@ extern "C" {
 #  if defined CGAL_CFG_DENORMALS_COMPILE_BUG
      // For compilers crashing when dealing with denormalized values.
      // So we have to generate it at run time instead.
-#ifdef CGAL_HEADER_ONLY
 #    define CGAL_IA_MIN_DOUBLE (CGAL::internal::get_static_minimin())
-#else
-#    define CGAL_IA_MIN_DOUBLE (CGAL::internal::minimin)
-#endif // CGAL_HEADER_ONLY
 #  else
 #    define CGAL_IA_MIN_DOUBLE (5e-324)
 #  endif
@@ -110,6 +109,15 @@ extern "C" {
   || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) \
   || defined(_M_X64)
 #  include <emmintrin.h>
+#  if defined __SSE3__
+#    include <pmmintrin.h>
+#  endif
+#  if defined __SSE4_1__
+#    include <smmintrin.h>
+#  endif
+#  if defined __AVX__
+#    include <immintrin.h>
+#  endif
 #  define CGAL_HAS_SSE2 1
 #endif
 
@@ -120,28 +128,17 @@ extern "C" {
 #endif
 
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
+double& get_static_minimin(); // Defined in Interval_arithmetic_impl.h
+#endif
+
+namespace  CGAL {
 
 #ifdef CGAL_HEADER_ONLY
-#include <CGAL/Interval_arithmetic_impl.h> // To define get_static_minimin();
-#else // CGAL_HEADER_ONLY
-namespace CGAL {
-namespace internal {
-CGAL_EXPORT extern double minimin;
-}
-}
-#endif // CGAL_HEADER_ONLY
-
+// Defined in test_FPU_rounding_mode_impl.h
+struct Check_FPU_rounding_mode_is_restored;
+inline const Check_FPU_rounding_mode_is_restored&
+get_static_check_fpu_rounding_mode_is_restored();
 #endif
-
-namespace CGAL {
-namespace internal {
-#ifdef __INTEL_COMPILER
-const double infinity = std::numeric_limits<double>::infinity();
-#else
-const double infinity = HUGE_VAL;
-#endif
-
-} // namespace internal
 
 // Inline function to stop compiler optimizations that shouldn't happen with
 // pragma fenv on.
@@ -243,6 +240,58 @@ inline double IA_force_to_double(double x)
 #endif
 }
 
+#ifdef CGAL_USE_SSE2
+// Vector version of IA_opacify
+inline __m128d IA_opacify128(__m128d x)
+{
+# ifdef __GNUG__
+#  ifdef __llvm__
+  asm volatile ("":"+x"(x));
+#  else
+  asm volatile ("":"+xm"(x));
+#  endif
+  return x;
+# else
+  volatile __m128d e = x;
+#  ifdef _MSC_VER
+  // With VS, __m128d is a union, where volatile doesn't disappear automatically
+  // However, this version generates wrong code with clang, check before enabling it for more compilers.
+  std::memcpy(&x, (void*)&e, 16);
+  return x;
+#  else
+  return e;
+#  endif
+# endif
+}
+
+// Weaker version. It still blocks transformations like -(a-b) to b-a, but does not prevent migrating across fesetround. When an operation has 2 arguments and one uses IA_opacify128, the other one can stick to IA_opacify128_weak
+inline __m128d IA_opacify128_weak(__m128d x)
+{
+# ifdef __GNUG__
+#  ifdef __llvm__
+  asm ("":"+x"(x));
+#  else
+  asm ("":"+xm"(x));
+#  endif
+  return x;
+# else
+  return IA_opacify128(x);
+# endif
+}
+
+// _mm_shuffle_pd would work everywhere, but it is too opaque for some optimizations (yes, this is a thin line)
+inline __m128d swap_m128d(__m128d x){
+# ifdef __llvm__
+  return __builtin_shufflevector(x, x, 1, 0);
+# elif defined __GNUC__ && !defined __INTEL_COMPILER \
+  && __GNUC__ * 100 + __GNUC_MINOR__ >= 407
+  return __builtin_shuffle(x, (__m128i){ 1, 0 });
+# else
+  return _mm_shuffle_pd(x, x, 1);
+# endif
+}
+#endif
+
 // Interval arithmetic needs to protect against double-rounding effects
 // caused by excess FPU precision, even if it forces the 53bit mantissa
 // precision, because there is no way to fix the problem for the exponent
@@ -309,9 +358,12 @@ inline double IA_bug_sqrt(double d)
 // Use inline functions instead ?
 #define CGAL_IA_ADD(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)+CGAL_IA_STOP_CPROP(b))
 #define CGAL_IA_SUB(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)-(b))
-#define CGAL_IA_MUL(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)*CGAL_IA_STOP_CPROP(b))
-#define CGAL_IA_DIV(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)/CGAL_IA_STOP_CPROP(b))
-#define CGAL_IA_SQUARE(a) CGAL_IA_MUL(a,a)
+#define CGAL_IA_MUL(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)*CGAL_IA_STOP_CPROP(b))
+#define CGAL_IA_DIV(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)/CGAL_IA_STOP_CPROP(b))
+inline double CGAL_IA_SQUARE(double a){
+  double b = CGAL_IA_STOP_CPROP(a); // only once
+  return CGAL_IA_FORCE_TO_DOUBLE(b*b);
+}
 #define CGAL_IA_SQRT(a) \
         CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
 
@@ -396,6 +448,22 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_TOWARDZERO   _RC_CHOP
 #define CGAL_FE_UPWARD       _RC_UP
 #define CGAL_FE_DOWNWARD     _RC_DOWN
+# elif defined __VFP_FP__ && !defined __SOFTFP__
+#define CGAL_IA_SETFPCW(CW) asm volatile ("VMSR FPSCR, %0" : :"r" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("VMRS %0, FPSCR" : "=r" (CW)); CW &= CGAL_FE_TOWARDZERO
+typedef unsigned int FPU_CW_t;
+#define CGAL_FE_TONEAREST    (0x0)
+#define CGAL_FE_TOWARDZERO   (0xC00000)
+#define CGAL_FE_UPWARD       (0x400000)
+#define CGAL_FE_DOWNWARD     (0x800000)
+# elif defined  __aarch64__
+#define CGAL_IA_SETFPCW(CW) asm volatile ("MSR FPCR, %0" : :"r" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("MRS %0, FPCR" : "=r" (CW))
+typedef unsigned int FPU_CW_t;
+#define CGAL_FE_TONEAREST    (0x0)
+#define CGAL_FE_TOWARDZERO   (0xC00000)
+#define CGAL_FE_UPWARD       (0x400000)
+#define CGAL_FE_DOWNWARD     (0x800000)
 
 #else
 // This is a version following the ISO C99 standard, which aims at portability.
@@ -422,26 +490,12 @@ FPU_get_cw (void)
     return cw;
 }
 
-} // namespace CGAL
-
-#ifdef CGAL_HEADER_ONLY
-#include <CGAL/test_FPU_rounding_mode_impl.h>
-#endif // CGAL_HEADER_ONLY
-
-namespace CGAL {
-
 // User interface (cont):
 
 inline
 void
 FPU_set_cw (FPU_CW_t cw)
 {
-#ifndef CGAL_NDEBUG
-#ifdef CGAL_HEADER_ONLY
-  const Check_FPU_rounding_mode_is_restored & tmp = get_static_check_fpu_rounding_mode_is_restored();
-#endif
-#endif
-
   CGAL_IA_SETFPCW(cw);
 }
 
@@ -535,5 +589,9 @@ inline void force_ieee_double_precision()
 }
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/test_FPU_rounding_mode_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_FPU_H

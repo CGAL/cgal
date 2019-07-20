@@ -15,12 +15,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_VERTICES_ON_THE_SAME_PSC_ELEMENT_CRITERION_H
 #define CGAL_VERTICES_ON_THE_SAME_PSC_ELEMENT_CRITERION_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <CGAL/Surface_mesher/Standard_criteria.h>
 

@@ -1,12 +1,15 @@
 #include <fstream>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/WKT.h>
+#endif
 
 #include <CGAL/point_generators_2.h>
-
 // Qt headers
 #include <QtGui>
 #include <QString>
@@ -28,13 +31,12 @@
 #include <CGAL/Qt/DemosMainWindow.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_2 Point_2;
-typedef K::Point_2 Circle_2;
-typedef K::Iso_rectangle_2 Iso_rectangle_2;
+typedef K::Point_2                                          Point_2;
+typedef K::Weighted_point_2                                 Weighted_point_2;
+typedef K::Point_2                                          Circle_2;
+typedef K::Iso_rectangle_2                                  Iso_rectangle_2;
 
-typedef double Weight;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<K,Weight>  Gt;
-typedef CGAL::Regular_triangulation_2<Gt> Regular;
+typedef CGAL::Regular_triangulation_2<K>                    Regular;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -85,7 +87,7 @@ MainWindow::MainWindow()
 {
   setupUi(this);
 
-  // Add a GraphicItem for the Regular triangulation
+  // Add a GraphicItem for the regular triangulation
   dgi = new CGAL::Qt::RegularTriangulationGraphicsItem<Regular>(&dt);
 
   QObject::connect(this, SIGNAL(changed()),
@@ -168,7 +170,7 @@ MainWindow::processInput(CGAL::Object o)
 
 /* 
  *  Qt Automatic Connections
- *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
  * 
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
@@ -215,7 +217,8 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
   CGAL::Qt::Converter<K> convert;
   Iso_rectangle_2 isor = convert(rect);
-  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)()); 
+  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
+  CGAL::Random rnd(CGAL::get_default_random());
 
   const int number_of_points = 
     QInputDialog::getInt(this, 
@@ -224,10 +227,11 @@ MainWindow::on_actionInsertRandomPoints_triggered()
 
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  std::vector<Point_2> points;
+  std::vector<Weighted_point_2> points;
   points.reserve(number_of_points);
   for(int i = 0; i < number_of_points; ++i){
-    points.push_back(*pg++);
+    Weighted_point_2 wp(*pg++, rnd.get_double(0, 500));
+    points.push_back(wp);
   }
   dt.insert(points.begin(), points.end());
   // default cursor
@@ -241,14 +245,33 @@ MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Points file"),
-						  ".");
+                                                  ".",
+                                                  tr("Weighted Points (*.wpts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                   #endif
+                                                     "All (*)"));
+
   if(! fileName.isEmpty()){
     std::ifstream ifs(qPrintable(fileName));
-
-    Gt::Weighted_point_2 p;
-    std::vector<Gt::Weighted_point_2> points;
-    while(ifs >> p) {
-      points.push_back(p);
+    std::vector<Weighted_point_2> points;
+    if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
+    {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+      std::vector<K::Point_3> points_3;
+      CGAL::read_multi_point_WKT(ifs, points_3);
+      BOOST_FOREACH(const K::Point_3& p, points_3)
+      {
+        points.push_back(Weighted_point_2(K::Point_2(p.x(), p.y()), p.z()));
+      }
+#endif
+    }
+    else
+    {
+      Weighted_point_2 p;
+      while(ifs >> p) {
+        points.push_back(p);
+      }
     }
     dt.insert(points.begin(), points.end());
 
@@ -263,15 +286,39 @@ MainWindow::on_actionSavePoints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save points"),
-						  ".");
+                                                  ".reg.cgal",
+                                                  tr("Weighted Points (*.wpts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                   #endif
+                                                     "All (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Regular::Finite_vertices_iterator 
+    if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
+    {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+      std::vector<K::Point_3> points_3;
+      for(Regular::Finite_vertices_iterator 
           vit = dt.finite_vertices_begin(),
           end = dt.finite_vertices_end();
-        vit!= end; ++vit)
+          vit!= end; ++vit)
+      {
+        points_3.push_back(K::Point_3(vit->point().x(), 
+                                      vit->point().y(),
+                                      vit->point().weight()));
+      }
+      CGAL::write_multi_point_WKT(ofs, points_3);
+#endif
+    }
+    else
     {
-      ofs << vit->point() << std::endl;
+      for(Regular::Finite_vertices_iterator 
+          vit = dt.finite_vertices_begin(),
+          end = dt.finite_vertices_end();
+          vit!= end; ++vit)
+      {
+        ofs << vit->point() << std::endl;
+      }
     }
   }
 }

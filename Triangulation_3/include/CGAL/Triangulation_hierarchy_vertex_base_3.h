@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
 //                 Sylvain Pion
 
 #ifndef CGAL_TRIANGULATION_HIERARCHY_VERTEX_BASE_3_H
 #define CGAL_TRIANGULATION_HIERARCHY_VERTEX_BASE_3_H
+
+#include <CGAL/license/Triangulation_3.h>
+
 
 #include <CGAL/basic.h>
 

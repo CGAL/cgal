@@ -782,7 +782,7 @@ ability to answer such queries effectively.
 The `Arrangement_2` class template does not support point-location
 queries directly, as the arrangement representation is decoupled from
 the geometric algorithms that operate on it. The <I>2D Arrangements</I>
-package includes a set of classe templates that are capable of
+package includes a set of class templates that are capable of
 answering such queries; all are models of the concept
 `ArrangementPointLocation_2`. Each model employs a different
 algorithm or <I>strategy</I> for answering queries. A model of this
@@ -880,7 +880,7 @@ algorithms, each implemented by a separate class. All classes that implement
 the various algorithms are made interchangeable, letting the algorithm in use
 vary according to the user choice.} for answering queries:
 <UL>
-<LI> `Arr_naive_point_location<Arrangement>` employes the
+<LI> `Arr_naive_point_location<Arrangement>` employs the
   <I>naive</I> strategy. It locates the query point naively,
   exhaustively scanning all arrangement cells.
 
@@ -986,7 +986,7 @@ segments that form a pentagonal face, with a single isolated
 vertex in its interior, as depicted in \cgalFigureRef{arr_figex_5}.
 Notice that we use the same arrangement structure in the next
 three example programs. The arrangement construction is performed by
-the function `construct_segment_arr()` defined in the heade file
+the function `construct_segment_arr()` defined in the header file
 `point_location_utils.h`. (Its listing is omitted here.) The
 program employs the naive and the landmark strategies to issue
 several point-location queries on this arrangement.
@@ -2209,10 +2209,10 @@ representing line segments.
 
 A polyline can be constructed given one of the following inputs:
 
-- <b>A range of \a points</b>, where two succeeding points in the
+- <b>A range of <em>points</em></b>, where two succeeding points in the
   range represent the endpoints of a segment of the polyline.
 
-- <b>A range of \a segments</b>. Note that , if the types
+- <b>A range of <em>segments</em></b>. Note that , if the types
 `SubcurveTraits_2::Curve_2` and `SubcurveTraits_2::X_monotone_curve_2` are
 not the same, then when `Make_x_monotone_2` is invoked the segments
 that compose the polyline will be broken into \f$x\f$-monotone
@@ -2681,7 +2681,7 @@ manner whenever possible. Thus, it resorts to exact computations only when
 the approximate computation fails to produce an unambiguous result.
 Note that most arrangement vertices are therefore associated with approximated
 points. You cannot access the coordinates of such points and obtain them as
-algebraic numbers, and only access to the approximate coordinates in possible.
+algebraic numbers, and only access to the approximate coordinates is possible.
 See the Reference Manual for the exact interface of the `Point_2`,
 `Curve_2` and `X_monotone_curve_2` defined by the traits class.
 
@@ -3585,29 +3585,6 @@ the I/O format. The package contains a template called,
 an arrangement formatter class (see Section \ref arr_ssecarr_io_aux_data)
 and defines a simple textual input/output format.
 \cgalAdvancedEnd
-
-\subsection Arrangement_on_surface_2OutputQtwidgetStream Output Qt-widget Stream
-\anchor arr_ssecqt_stream
-You can display the drawings of arrangements in a graphical window
-powered by <span class="textsc">Qt</span> interactively. All you need to do is follow the
-guidelines for handling `Qt_widget` objects, and apply the
-<I>inserter</I>, which inserts an arrangement into a `Qt_widget`
-stream to complete the drawing.
-
-The ability to use this output operator, requires that the
-`Point_2` and `X_monotone_curve_2` types defined by the
-traits class both support the `<<` operator that inserts the
-respective geometric object into a `Qt_widget` stream. The
-`Arr_rational_function_traits_2` class (see
-Section \ref arr_ssectr_ratfunc) and the `Arr_linear_traits_2`
-class (see Section \ref arr_ssectr_segs) currently do not provide
-this operator for the geometric types they define. Thus, only
-arrangements of line segments, polylines, or conic ards can be written.
-The `<<` operator for polylines and conic arcs defined in
-`CGAL/IO/Qt_widget_Polyline_2.h` and
-`CGAL/IO/Qt_widget_Conic_arc_2.h`
-must be explicitly included, to insert polylines and conic arcs
-respectively into `Qt_widget` streams.
 
 \section arr_secbgl Adapting to Boost Graphs
 

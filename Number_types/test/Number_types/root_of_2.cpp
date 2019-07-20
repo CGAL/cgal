@@ -42,6 +42,8 @@
 #  include <CGAL/CORE_Expr.h>
 #endif
 
+#include <CGAL/disable_warnings.h>
+
 // We should put these in a nested namespace and use it.
 using CGAL::compare; // for double
 using CGAL::sign;    // for double
@@ -127,8 +129,8 @@ CGAL::Sqrt_extension<double,double,Tag1,Tag2> create_root_helper(RT a, RT b,CGAL
 template < class T, class RT,class Tag1, class Tag2 >
 CGAL::Sqrt_extension<T,T,Tag1,Tag2> create_root_helper(RT a, RT b, CGAL::Sqrt_extension<T,T,Tag1,Tag2> *)
 {
-  T t(a,b);
-  return CGAL::Sqrt_extension<T,T,Tag1,Tag2>( t );
+  typename CGAL::Fraction_traits<T>::Compose comp;
+  return CGAL::Sqrt_extension<T,T,Tag1,Tag2>( comp(a, b) );
 }
 
 template < class Root, class RT >
@@ -597,10 +599,8 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef CGAL_USE_GMPXX
-  std::cout << "Testing Sqrt_extension with Quotient mpz_class" << std::endl;
-  //no specialization of Get_arithmetic_kernel of mpz_class is available, the default is to suppose it is
-  //a ring type and make a field type using CGAL::Quotient.
-  result = result && test_root_of_g<CGAL::Sqrt_extension<CGAL::Quotient<mpz_class>,CGAL::Quotient<mpz_class>,CGAL::Tag_true,CGAL::Tag_true >,mpz_class,CGAL::Quotient<mpz_class> >();
+  std::cout << "Testing Sqrt_extension with mpq_class" << std::endl;
+  result = result && test_root_of<CGAL::Sqrt_extension<mpq_class,mpq_class,CGAL::Tag_true,CGAL::Tag_true > >();
 #endif
 
   if (result) {

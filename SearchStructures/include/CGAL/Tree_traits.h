@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Gabriele Neyer
 
 #ifndef CGAL_TREE_TRAITS_H
 #define CGAL_TREE_TRAITS_H
+
+#include <CGAL/license/SearchStructures.h>
+
 
 // Implementation of a minimal tree traits for CGAL trees, derived 
 // from Tree_base.h

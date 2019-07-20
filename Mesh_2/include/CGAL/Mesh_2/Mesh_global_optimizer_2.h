@@ -15,12 +15,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
-// Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez, Stéphane Tayeb
+// Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez, StÃ©phane Tayeb
 //
 
 #ifndef CGAL_MESH_2_MESH_GLOBAL_OPTIMIZER_2_H
 #define CGAL_MESH_2_MESH_GLOBAL_OPTIMIZER_2_H
+
+#include <CGAL/license/Mesh_2.h>
+
 
 #ifdef CGAL_MESH_2_VERBOSE
   #define CGAL_MESH_2_OPTIMIZER_VERBOSE 
@@ -30,6 +34,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
+#include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Constrained_voronoi_diagram_2.h>
 
 #include <vector>
@@ -141,7 +146,7 @@ public:
                                             moving_vertices.size()/100);
     big_moves_.resize(big_moves_size, FT(0));
 
-    std::size_t nb_vertices_moved = -1;
+    std::size_t nb_vertices_moved = (std::numeric_limits<std::size_t>::max)();
     bool convergence_stop = false;
 
     // Iterate
@@ -303,7 +308,7 @@ private:
     // Find the minimum value
     do
     {
-      if(face->is_in_domain())
+      if (!cdt_.is_infinite(face))
         min_sqr = (std::min)(min_sqr, sq_circumradius(face));
       face++;
     }

@@ -14,13 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_DIMENSION_H
 #define CGAL_DIMENSION_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Kernel_traits.h>
 #include <climits>
 #include <limits>
@@ -32,10 +33,8 @@ namespace CGAL {
 
 #ifdef CGAL_EIGEN3_ENABLED
 const int UNKNOWN_DIMENSION=Eigen::Dynamic;
-#elif defined CGAL_CXX11
-const int UNKNOWN_DIMENSION=std::numeric_limits<int>::max();
 #else
-const int UNKNOWN_DIMENSION=(unsigned)-1/2;
+const int UNKNOWN_DIMENSION=std::numeric_limits<int>::max();
 #endif
 
 // Check that dimension d1 is fine for a kernel of dimension d2.

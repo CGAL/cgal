@@ -10,7 +10,7 @@ needed to use the number type `bigfloat`.
 Rounding mode and precision (i.e.\ mantissa length) of 
 `leda_bigfloat` can be set. 
 
-For more details on the number types of \leda we refer to the \leda manual \cgalCite{cgal:mnsu-lum}. 
+For more details on the number types of \leda we refer to the \leda manual \cgalCite{cgal:as-lum}. 
 
 \cgalModels `FieldWithKthRoot` 
 \cgalModels `RealEmbeddable` 
@@ -20,8 +20,6 @@ For more details on the number types of \leda we refer to the \leda manual \cgal
 
 class leda_bigfloat {
 public:
-
-/// @}
 
 }; /* end leda_bigfloat */
 

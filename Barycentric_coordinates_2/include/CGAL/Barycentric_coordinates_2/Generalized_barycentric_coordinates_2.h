@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
@@ -23,6 +24,10 @@
 
 #ifndef CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_H
 #define CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_H
+
+#include <CGAL/license/Barycentric_coordinates_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 // CGAL headers.
 #include <CGAL/Polygon_2_algorithms.h>
@@ -40,10 +45,10 @@ namespace CGAL {
 // Barycentric coordinates namespace.
 namespace Barycentric_coordinates {
 
-// Examples: see the User Manual here - http://doc.cgal.org/latest/Manual/index.html.
+// Examples: see the User Manual here - https://doc.cgal.org/latest/Manual/index.html.
 
 /*!
- * \ingroup PkgBarycentric_coordinates_2
+ * \ingroup PkgBarycentricCoordinates2Ref
  * The class `Generalized_barycentric_coordinates_2` implements generalized barycentric coordinates along the polygon's boundary and provides a common interface for all coordinate classes.
  * This class is parameterized by a coordinate class `Coordinate_2`, and a traits class `Traits`.
 
@@ -591,5 +596,7 @@ private:
 } // namespace Barycentric_coordinates
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_H

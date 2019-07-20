@@ -4,12 +4,11 @@
 #  GMP_INCLUDE_DIR       - the GMP include directory
 #  GMP_LIBRARIES_DIR     - directory where the GMP libraries are located
 #  GMP_LIBRARIES         - Link these to use GMP
-#  GMP_IN_CGAL_AUXILIARY - TRUE if the GMP found is the one distributed with CGAL in the auxiliary folder
 
 # TODO: support MacOSX
 
 include(FindPackageHandleStandardArgs)
-include(CGAL_GeneratorSpecificSettings)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_GeneratorSpecificSettings.cmake)
 
 if(GMP_INCLUDE_DIR)
   set(GMP_in_cache TRUE)
@@ -21,11 +20,7 @@ if(NOT GMP_LIBRARIES)
 endif()
 
 # Is it already configured?
-if (GMP_in_cache)
-
-  set(GMP_FOUND TRUE)
-
-else()
+if( NOT GMP_in_cache )
 
   find_path(GMP_INCLUDE_DIR
             NAMES gmp.h
@@ -36,11 +31,7 @@ else()
   	        DOC "The directory containing the GMP header files"
            )
 
-  if ( GMP_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include" )
-    cache_set( GMP_IN_CGAL_AUXILIARY TRUE )
-  endif()
-
-  find_library(GMP_LIBRARIES NAMES gmp libgmp-10
+  find_library(GMP_LIBRARIES NAMES gmp libgmp-10 mpir
     HINTS ENV GMP_LIB_DIR
           ENV GMP_DIR
           ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib
@@ -57,6 +48,6 @@ else()
     include( GMPConfig OPTIONAL )
   endif()
 
-  find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_LIBRARIES GMP_INCLUDE_DIR)
-
 endif()
+
+find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_LIBRARIES GMP_INCLUDE_DIR)

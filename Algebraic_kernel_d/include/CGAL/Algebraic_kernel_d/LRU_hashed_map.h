@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
@@ -282,9 +283,6 @@ public:
 
 
 protected:
-    //!\name private members
-    //!@{
-
     
     Algebraic_kernel_with_analysis_2* _m_kernel;
 
@@ -308,13 +306,14 @@ public:
     //! specified key was found
     typedef typename Base::Find_result Find_result;
     
+    //!@}
 
     //!\name constructors and access functions
     //!@{
     
     //! \brief default constructor
     LRU_hashed_map_with_kernel(Algebraic_kernel_with_analysis_2* kernel,
-                               unsigned max_size = -1u) : 
+                               unsigned max_size = (std::numeric_limits<unsigned>::max)()) : 
         Base(max_size),
         _m_kernel(kernel)
     {  }
@@ -341,6 +340,8 @@ public:
         }
         return (p.first)->second;
     }
+    
+    //!@}
 
 }; // class LRU_hashed_map_with_kernel
 

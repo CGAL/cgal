@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Geert-Jan Giezeman, Andreas Fabri
@@ -31,8 +32,9 @@
 #include <CGAL/wmult.h>
 
 #include <CGAL/Point_3.h>
+#include <CGAL/Weighted_point_3.h>
 #include <CGAL/Vector_3.h>
-
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 
@@ -305,6 +307,35 @@ squared_distance(const Point_3<K> & pt1,
 {
   return internal::squared_distance(pt1,pt2, K());
 }
+
+
+template <class K>
+inline 
+typename K::FT
+squared_distance(const Weighted_point_3<K> & pt1,
+		 const Weighted_point_3<K> & pt2)
+{
+  return internal::squared_distance(pt1.point(),pt2.point(), K());
+}
+
+template <class K>
+inline 
+typename K::FT
+squared_distance(const Weighted_point_3<K> & pt1,
+		 const Point_3<K> & pt2)
+{
+  return internal::squared_distance(pt1.point(),pt2, K());
+}
+
+template <class K>
+inline 
+typename K::FT
+squared_distance(const Point_3<K> & pt1,
+		 const Weighted_point_3<K> & pt2)
+{
+  return internal::squared_distance(pt1,pt2.point(), K());
+}
+
 
 
 template <class K>

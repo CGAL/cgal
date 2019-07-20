@@ -9,29 +9,29 @@ of dimension \f$ d\leq D\f$ (`D` is the maximal dimension).
 
 
 \tparam Dimensionality can be either <UL> 
-<LI>CGAL::`Dimension_tag<D>` for some integer `D`. This 
+<LI>`CGAL::Dimension_tag<D>` for some integer `D`. This 
 indicates that the triangulation data structure can store simplices (full cells) of dimension at most 
 `D`. The maximal dimension `D` is known by the compiler, which 
 triggers some optimizations. Or 
-<LI>CGAL::`Dynamic_dimension_tag`. In this case, the maximum 
+<LI>`CGAL::Dynamic_dimension_tag`. In this case, the maximum 
 dimension of the simplices (full cells) is passed as an integer argument to an instance 
 constructor (see `TriangulationDataStructure`).</UL> 
 
-\tparam TriangulationDSVertex stands for a class to
+\tparam `TriangulationDSVertex_` stands for a class to
 be used as the base `Vertex` type in the triangulation data structure. 
 It must be a model of the concept 
 `TriangulationDSVertex`. The class template `Triangulation_data_structure` can be 
 defined by specifying 
 only the first parameter. It also accepts the tag `CGAL::Default` as 
-second parameter. In both cases, `TriangulationDSVertex` defaults to 
+second parameter. In both cases, `TriangulationDSVertex_` defaults to 
 `CGAL::Triangulation_ds_vertex<>`. 
 
-\tparam TriangulationDSFullCell stands for a class to
+\tparam `TriangulationDSFullCell_` stands for a class to
 be used as the base `Full_cell` type in the triangulation data structure. 
 It must be a model of the concept 
 `TriangulationDSFullCell`. The class template `Triangulation_data_structure` accepts that no 
 third parameter be specified. It also accepts the tag `CGAL::Default` as 
-third parameter. In both cases, `TriangulationDSFullCell` defaults to 
+third parameter. In both cases, `TriangulationDSFullCell_` defaults to 
 `CGAL::Triangulation_ds_full_cell<>`. 
 
 \cgalModels `TriangulationDataStructure`. In addition, the class
@@ -41,7 +41,7 @@ methods.
 \sa `Triangulation_ds_vertex`
 \sa `Triangulation_ds_full_cell`
 */
-template< typename Dimensionality, typename TriangulationDSVertex, typename TriangulationDSFullCell >
+template< typename Dimensionality, typename TriangulationDSVertex_, typename TriangulationDSFullCell_ >
 class Triangulation_data_structure {
 public:
 
@@ -74,6 +74,7 @@ bool is_valid(bool verbose = true) const;
 /// @{
 
 /*!
+\cgalAdvancedType
 \cgalAdvancedBegin
 This template class allows to get the type of a triangulation
 data structure that only changes the vertex type. It has to define a type
@@ -86,6 +87,7 @@ template <typename Vb2>
 using Rebind_vertex = unspecified_type;
 
 /*!
+\cgalAdvancedType
 \cgalAdvancedBegin
 This template class allows to get the type of a triangulation
 data structure that only changes the full cell type. It has to define a type
@@ -103,6 +105,7 @@ using Rebind_full_cell = unspecified_type;
 /// @{
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 A set `C` of full cells satisfying the same condition as in method 
 `Triangulation_data_structure::insert_in_hole()` is assumed to be marked. This 

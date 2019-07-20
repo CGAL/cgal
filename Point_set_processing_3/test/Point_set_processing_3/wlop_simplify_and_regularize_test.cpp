@@ -60,14 +60,12 @@ void test_wlop_simplify_and_regularize(
 
   output.clear();
   // Run algorithm 
-  CGAL::wlop_simplify_and_regularize_point_set<Concurrency_tag>(
-                                               points.begin(), 
-                                               points.end(), 
-                                               std::back_inserter(output),
-                                               retain_percentage, 
-                                               neighbor_radius,
-                                               iter_number,
-                                               need_compute_density);
+  CGAL::wlop_simplify_and_regularize_point_set<Concurrency_tag>
+    (points, std::back_inserter(output),
+     CGAL::parameters::select_percentage(retain_percentage). 
+     neighbor_radius(neighbor_radius).
+     number_of_iterations(iter_number).
+     require_uniform_sampling(need_compute_density));
 
   output.clear();
 

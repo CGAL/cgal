@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU, Stephane Tayeb
@@ -22,7 +23,18 @@
 #ifndef CGAL_MESH_CELL_CRITERIA_3_H
 #define CGAL_MESH_CELL_CRITERIA_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
+#include <CGAL/Mesh_3/Is_mesh_domain_field_3.h>
+
+#include <boost/config.hpp>
+#if BOOST_VERSION >= 106600
+#  include <boost/callable_traits/is_invocable.hpp>
+#endif
+
+#include <type_traits>
 
 namespace CGAL {
   
@@ -33,11 +45,11 @@ class Mesh_cell_criteria_3
 public:
   typedef Visitor_ Visitor;
   typedef typename Visitor::Cell_quality Cell_quality;
-  typedef typename Visitor::Cell_badness Cell_badness;
+  typedef typename Visitor::Is_cell_bad  Is_cell_bad;
 
+  typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
 private:
   typedef Mesh_3::Criteria<Tr,Visitor> Criteria;
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
   
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Geom_traits::FT FT;
@@ -61,13 +73,16 @@ public:
       init_radius_edge(radius_edge_bound);
   }
   
-  // Nb: SFINAE (dummy) to avoid wrong matches with built-in numerical types
+  // Nb: SFINAE to avoid wrong matches with built-in numerical types
   // as int.
   template <typename Sizing_field>
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const Sizing_field& radius_bound,
-                       typename Sizing_field::FT /*dummy*/ = 0)
-  { 
+                       typename std::enable_if<
+                         Mesh_3::Is_mesh_domain_field_3<Tr,Sizing_field>::value
+                       >::type* = 0
+                       )
+  {
     init_radius(radius_bound);
 
     if ( FT(0) != radius_edge_bound )
@@ -78,13 +93,13 @@ public:
   ~Mesh_cell_criteria_3() { }
   
   /**
-   * @brief returns the badness of cell \c cell
+   * @brief returns whether the cell \c cell is bad or not.
+   * @param tr the triangulation within which \c cell lives
    * @param cell the cell
-   * @return the badness of \c cell
    */
-  Cell_badness operator()(const Cell_handle& cell) const
+  Is_cell_bad operator()(const Tr& tr, const Cell_handle& cell) const
   {
-    return criteria_(cell);
+    return criteria_(tr, cell);
   }
 
   void add(Abstract_criterion* criterion)

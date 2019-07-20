@@ -1,11 +1,14 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <QtOpenGL/qgl.h>
+
 #include <iostream>
 #include <cmath>
-
+#include <QOpenGLShaderProgram>
+#include <QOpenGLBuffer>
+#include <QOpenGLVertexArrayObject>
 #include "types.h"
+class Viewer;
 
 class Scene
 {
@@ -27,6 +30,11 @@ private:
     Plane m_plane;
     Point m_centroid;
     Polyhedron *m_pPolyhedron;
+    QOpenGLShaderProgram rendering_program;
+    QOpenGLBuffer buffers[4];
+    QOpenGLVertexArrayObject vao[4];
+    bool is_gl_init;
+    void gl_init();
 
     // view options
     bool m_view_polyhedron;
@@ -47,11 +55,11 @@ public:
     void fit_triangles();
 
     // rendering
-    void draw(); 
-    void render_line();
-    void render_plane();
-    void render_centroid();
-    void render_polyhedron();
+    void draw(Viewer *viewer);
+    void render_line(Viewer *viewer);
+    void render_plane(Viewer* viewer);
+    void render_centroid(Viewer* viewer);
+    void render_polyhedron(Viewer* viewer);
 
 private:
 

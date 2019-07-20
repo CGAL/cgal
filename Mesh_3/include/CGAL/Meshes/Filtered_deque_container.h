@@ -12,15 +12,19 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Clement JAMIN
 
 #ifndef CGAL_MESHES_FILTERED_DEQUE_CONTAINER_H
 #define CGAL_MESHES_FILTERED_DEQUE_CONTAINER_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
+#include <CGAL/algorithm.h>
 #include <algorithm>
 #include <utility>
 #include <deque>
@@ -288,7 +292,7 @@ namespace Meshes {
     // Random shuffle
     void random_shuffle ()
     {
-      std::random_shuffle(container.begin(), container.end());
+      CGAL::cpp98::random_shuffle(container.begin(), container.end());
     }
 
     size_type size() const

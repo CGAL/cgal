@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
 #ifndef CGAL_AABB_TRAVERSAL_TRAITS_WITH_JOIN_H
 #define CGAL_AABB_TRAVERSAL_TRAITS_WITH_JOIN_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/Minkowski_sum_2/AABB_node_with_join.h>
 #include <boost/optional.hpp>
@@ -74,11 +78,7 @@ class First_intersection_traits
 
 public:
   typedef
-  #if CGAL_INTERSECTION_VERSION < 2
-  boost::optional<Object_and_primitive_id> 
-  #else
   boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
-  #endif
   Result;
 public:
   First_intersection_traits(const AABBTraits& traits)
@@ -133,11 +133,7 @@ public:
 
   void intersection(const Query& query, const Primitive& primitive)
   {
-    #if CGAL_INTERSECTION_VERSION < 2
-    boost::optional<Object_and_primitive_id>
-    #else
     boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
-    #endif
     intersection = m_traits.intersection_object()(query, primitive);
 
     if(intersection)

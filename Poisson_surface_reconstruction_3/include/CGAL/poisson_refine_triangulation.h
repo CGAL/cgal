@@ -14,14 +14,18 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent RINEAU, Laurent Saboret
 
 #ifndef CGAL_POISSON_REFINE_TRIANGULATION_H
 #define CGAL_POISSON_REFINE_TRIANGULATION_H
 
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
+
 // CGAL
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Poisson_refine_cells_3.h>
 #include <CGAL/Poisson_mesh_cell_criteria_3.h>

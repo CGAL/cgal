@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Michael Hemmer
@@ -37,19 +38,14 @@
 #include <limits>
 
 #include <CGAL/LEDA_basic.h>
-#if CGAL_LEDA_VERSION < 500
-#  include <LEDA/rational.h>
-#  include <LEDA/interval.h>
-#else
-#  include <LEDA/numbers/rational.h>
-#  if defined(  _MSC_VER )
-#    pragma push_macro("ERROR")  
-#    undef ERROR
-#  endif // _MSC_VER
-#  include <LEDA/numbers/interval.h>
-#  if defined(  _MSC_VER )
-#    pragma pop_macro("ERROR")  
-#  endif
+#include <LEDA/numbers/rational.h>
+#if defined(  _MSC_VER )
+#  pragma push_macro("ERROR")
+#  undef ERROR
+#endif // _MSC_VER
+#include <LEDA/numbers/interval.h>
+#if defined(  _MSC_VER )
+#  pragma pop_macro("ERROR")
 #endif
 
 #include <CGAL/leda_integer.h> // for GCD in Fraction_traits
@@ -68,7 +64,7 @@ template <> class Algebraic_structure_traits< leda_rational >
 //                                                                 Is_square;
 
     class Simplify
-      : public std::unary_function< Type&, void > {
+      : public CGAL::cpp98::unary_function< Type&, void > {
       public:
         void operator()( Type& x) const {
             x.normalize();
@@ -82,7 +78,7 @@ template <> class Real_embeddable_traits< leda_rational >
   public:
   
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
@@ -90,7 +86,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class Sgn
-      : public std::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
@@ -98,7 +94,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -109,7 +105,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
@@ -117,39 +113,16 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
-#if CGAL_LEDA_VERSION >= 501
           CGAL_LEDA_SCOPE::interval temp(x);
           std::pair<double, double> result(temp.lower_bound(),temp.upper_bound());
           CGAL_assertion_code( double infinity=std::numeric_limits<double>::infinity(); )
           CGAL_postcondition(result.first  == -infinity || Type(result.first)<=x);
           CGAL_postcondition(result.second ==  infinity || Type(result.second)>=x);
           return result;
-#else
-          CGAL_LEDA_SCOPE::bigfloat xnum = x.numerator();
-          CGAL_LEDA_SCOPE::bigfloat xden = x.denominator();
-          CGAL_LEDA_SCOPE::bigfloat xupp =
-                                    div(xnum,xden,53,CGAL_LEDA_SCOPE::TO_P_INF);
-          CGAL_LEDA_SCOPE::bigfloat xlow =
-                                    div(xnum,xden,53,CGAL_LEDA_SCOPE::TO_N_INF);
-
-          // really smallest positive double
-          double MinDbl = CGAL_LEDA_SCOPE::fp::compose_parts(0,0,0,1);
-
-          double low = xlow.to_double();
-          while(Type(low) > x) low = low - MinDbl;
-
-          double upp = xupp.to_double();
-          while(Type(upp) < x) upp = upp + MinDbl;
-
-          std::pair<double, double> result(low,upp);
-          CGAL_postcondition(Type(result.first)<=x);
-          CGAL_postcondition(Type(result.second)>=x);
-          return result;
-#endif
           // Original CGAL to_interval (seemed to be inferior)
           //  // There's no guarantee about the error of to_double(), so I add
           //  //  3 ulps...

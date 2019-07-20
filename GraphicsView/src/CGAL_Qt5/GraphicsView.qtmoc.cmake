@@ -6,4 +6,3 @@ qt5_wrap_cpp(mocfiles ../../include/CGAL/Qt/GraphicsViewNavigation.h
 
 # qrc files (resources files, that contain icons, at least)
 qt5_add_resources ( RESOURCE_FILES ../../demo/resources/CGAL.qrc ../../demo/icons/Input.qrc ../../demo/icons/File.qrc ../../demo/icons/Triangulation_2.qrc)
-

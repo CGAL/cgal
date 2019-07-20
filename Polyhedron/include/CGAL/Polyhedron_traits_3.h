@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
 
 #ifndef CGAL_POLYHEDRON_TRAITS_3_H
 #define CGAL_POLYHEDRON_TRAITS_3_H 1
+
+#include <CGAL/license/Polyhedron.h>
+
 
 #include <CGAL/basic.h>
 

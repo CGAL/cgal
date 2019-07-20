@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
@@ -251,9 +252,11 @@ public:
     /*!\brief
      * copy constructor
      */
+#ifdef DOXYGEN_RUNNING  
     Status_line_CA_1(const Self& p) : 
             Base(static_cast<const Base&>(p)) {  
     }
+#endif
 
     /*!\brief
      * constructs a status line over the \c i-th interval with x-coordinate

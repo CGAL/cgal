@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_SNC_SM_OVERLAYER_H
 #define CGAL_SNC_SM_OVERLAYER_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Union_find.h>
@@ -96,8 +100,8 @@ public:
     CGAL_NEF_TRACEN("simplifying"); 
     
     typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(NULL);
-    CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(NULL);
+    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
+    CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
     CGAL::Union_find< SFace_handle> UF;
     
     SFace_iterator f;
@@ -160,7 +164,7 @@ public:
     for(v = this->svertices_begin(); v != this->svertices_end(); v=vn) {
       vn=v; ++vn;
       if ( is_isolated(v) ) {
-	if(Vitem[v] != NULL) {
+	if(Vitem[v] != nullptr) {
 	  set_face(v,*(UF.find(Vitem[v])));
 	  CGAL_NEF_TRACEN("incident face of " << PH(v) << " set to " << &*(v->incident_sface()));
 	}
@@ -363,8 +367,8 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
     CGAL_NEF_TRACEN("simplifying"); 
     
     typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(NULL);
-    CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(NULL);
+    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
+    CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
     CGAL::Union_find< SFace_handle> UF;
     
     SFace_iterator f;
@@ -427,7 +431,7 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
     for(v = this->svertices_begin(); v != this->svertices_end(); v=vn) {
       vn=v; ++vn;
       if ( is_isolated(v) ) {
-	if(Vitem[v] != NULL) {
+	if(Vitem[v] != nullptr) {
 	  set_face(v,*(UF.find(Vitem[v])));
 	  CGAL_NEF_TRACEN("incident face of " << PH(v) << " set to " << &*(v->incident_sface()));
 	}

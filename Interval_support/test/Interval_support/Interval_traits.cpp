@@ -1,5 +1,4 @@
 
-#include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Test/_test_interval_traits.h>

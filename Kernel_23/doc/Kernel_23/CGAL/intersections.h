@@ -1,21 +1,5 @@
 /// \file intersections.h
 
-/*!
-\def CGAL_INTERSECTION_VERSION
-
-\ingroup intersection_grp
-
-The macro `CGAL_INTERSECTION_VERSION` can be used to configure
-which version of the \ref intersection_grp function should be used and
-enables the corresponding APIs in other \cgal packages. It should be
-defined before any \cgal header is included.
-
-- `CGAL_INTERSECTION_VERSION == 1` \ref intersection_grp uses `Object`
-- `CGAL_INTERSECTION_VERSION == 2` \ref intersection_grp uses `boost::optional< boost::variant< T... > >`
-
-*/
-#define CGAL_INTERSECTION_VERSION
-
 namespace CGAL {
 
 /*!
@@ -63,6 +47,7 @@ Also, `Type1` and `Type2` can be both of type
 In three-dimensional space, the types `Type1` and
 `Type2` can be any of the following:
 
+- `Point_3<Kernel>`
 - `Plane_3<Kernel>`
 - `Line_3<Kernel>`
 - `Ray_3<Kernel>`
@@ -92,20 +77,6 @@ bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
 \details Depending on which \cgal kernel is used, different overloads of this global
 function are available.
 
-\cgalHeading{Notes on Backward Compatibility}
-
-The \ref intersection_grp function used to return an `Object`, but starting with
-\cgal 4.2 the
-return type is determined by a metafunction defined by the kernel. To
-preserve backward compatibility `Object` can be
-constructed from the new return types implicitly, but switching to the
-new style is recommended. To enable the old style without any overhead,
-the macro \link CGAL_INTERSECTION_VERSION `CGAL_INTERSECTION_VERSION` \endlink must be defined to
-`1` before any \cgal header is included.
-
-\sa \ref upgrading_object
-\sa \ref do_intersect_grp
-\sa CGAL_INTERSECTION_VERSION
 */
 
 /*!
@@ -220,6 +191,9 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 </TABLE>
 </DIV>
 
+Additional overloads are provided for the type `Point_2` combined with any other type with the result type being 
+`boost::optional< boost::variant< Point_2 > >`.
+
 \cgalHeading{3D Intersections}
 
 The return type can be obtained through `CGAL::cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
@@ -319,6 +293,10 @@ p    <TD>Point_3, or Segment_3</TD>
 </TABLE>
 </DIV>
 
+Additional overloads are provided for the type `Point_3` combined with any other type with the result type being 
+`boost::optional< boost::variant< Point_3 > >`.
+
+
 \cgalHeading{Examples}
 
 The following examples demonstrate the most common use of
@@ -329,11 +307,11 @@ The result type can be obtained with `CGAL::cpp11::result_of`. It looks simpler
 if you use a C++ compiler which supports `auto`,
 but you must anyways know that the result type is a `boost::optional<boost::variant<..> >`, in order to unpack the point or segment.
 
-<A HREF="http://www.boost.org/libs/optional/">`boost::optional`</A> comes in
-as there might be no intersection. <A HREF="http://www.boost.org/libs/variant/">`boost::variant`</A> comes in
+<A HREF="https://www.boost.org/libs/optional/">`boost::optional`</A> comes in
+as there might be no intersection. <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A> comes in
 as, if there is an intersection, it is either a point or a segment.
 
-As explained in the boost manual pages for <A HREF="http://www.boost.org/libs/variant/">`boost::variant`</A>, there are two ways to access the variants. The first examples uses `boost::get`.
+As explained in the boost manual pages for <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A>, there are two ways to access the variants. The first examples uses `boost::get`.
 
 \cgalExample{Kernel_23/intersection_get.cpp}
 

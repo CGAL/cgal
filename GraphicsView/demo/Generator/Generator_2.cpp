@@ -172,7 +172,7 @@ MainWindow::MainWindow()
 
 /* 
  *  Qt Automatic Connections
- *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
  * 
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
@@ -233,7 +233,7 @@ MainWindow::on_actionGenerateSegments_triggered()
   typedef CGAL::Creator_uniform_2< Point_2, Segment_2> Seg_creator;
   typedef CGAL::Join_input_iterator_2< Rpos_generator, Rpoc_generator, Seg_creator> Seg_iterator;
   Seg_iterator g( rpos, rpoc);
-  CGAL::cpp11::copy_n( g, 200, std::back_inserter(segments));
+  std::copy_n( g, 200, std::back_inserter(segments));
   
   Q_EMIT( changed());
 }
@@ -339,7 +339,7 @@ int main(int argc, char **argv)
   app.setApplicationName("Generator_2 demo");
 
   // Import resources from libCGAL (Qt5).
-  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+  // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
   CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Generator_2);
 

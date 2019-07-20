@@ -14,13 +14,12 @@ int main()
 #else
 
 #include "./types.h"
-#include <CGAL/Delaunay_triangulation_2.h>
 
 #include <iostream>
 #include <fstream>
 
 #include <ctime>
-#include <algorithm>
+#include <CGAL/algorithm.h>
 
 const bool pre_run = false;
 const bool do_remove = true;
@@ -64,7 +63,7 @@ void test(const std::vector<Point> &input, T &t)
           vhs.push_back(it);
         }
 
-      std::random_shuffle(vhs.begin(), vhs.end());
+      CGAL::cpp98::random_shuffle(vhs.begin(), vhs.end());
       vhs.resize(vhs.size() / 2);
       for (size_t i = 0; i < vhs.size(); ++i)
         t.remove(vhs[i]);
@@ -82,13 +81,13 @@ bool test(const char *filename) {
     {
       // if (true) {
       //   if (pre_run) {
-      //     Delaunay_triangulation_2<Gt> t;
+      //     Delaunay_triangulation_2<P2DTT> t;
       //     test(pts, t);
       //   }
 
       //   std::clock_t total_start = std::clock();
       //   for (int i=0; i<n_runs; ++i) {
-      //     Delaunay_triangulation_2<Gt> t;
+      //     Delaunay_triangulation_2<P2DTT> t;
       //     test(pts, t);
       //   }
       //   double total_time = (std::clock()-total_start)/(double)CLOCKS_PER_SEC;
@@ -120,7 +119,7 @@ bool test(const char *filename) {
 
 int main(int argc, char * argv[])
 {
-  typedef Periodic_2_Delaunay_triangulation_2<Gt> T;
+  typedef Periodic_2_Delaunay_triangulation_2<P2DTT> T;
   srand(42);
 
   int result = 0;

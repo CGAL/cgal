@@ -5,4 +5,6 @@
 \example Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp
 \example Alpha_shapes_3/ex_periodic_alpha_shapes_3.cpp
 \example Alpha_shapes_3/ex_weighted_alpha_shapes_3.cpp
+\example Alpha_shapes_3/ex_weighted_periodic_alpha_shapes_3.cpp
+\example Alpha_shapes_2/ex_alpha_projection_traits.cpp
 */

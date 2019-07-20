@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBooleanSetOperations2
+\ingroup PkgBooleanSetOperations2Ref
 
 An instance of this template serves as a basis type for any face record
 of the <span class="textsc">Dcel</span> class used by instances of the
@@ -22,7 +22,7 @@ further.
 class Gps_face_base : public Arr_face_base {};
 
 /*!
-\ingroup PkgBooleanSetOperations2
+\ingroup PkgBooleanSetOperations2Ref
 
 An instance of this teplate serves as a basis type for any halfedge record
 of the <span class="textsc">Dcel</span> class used by instances of the
@@ -44,7 +44,7 @@ class Gps_halfedge_base : public Arr_halfedge_base<X_monotone_curve_2>
 {};
 
 /*!
-\ingroup PkgBooleanSetOperations2
+\ingroup PkgBooleanSetOperations2Ref
 
 The default <span class="textsc">Dcel</span> class template used by the
 `General_polygon_set_2` and `General_polygon_with_holes_2` class templates.

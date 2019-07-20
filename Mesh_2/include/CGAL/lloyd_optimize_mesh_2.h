@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 // Author(s) : Jane Tournois
 //
@@ -21,60 +22,38 @@
 #ifndef CGAL_LLOYD_OPTIMIZE_MESH_2_H
 #define CGAL_LLOYD_OPTIMIZE_MESH_2_H
 
+#include <CGAL/license/Mesh_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_2/Mesh_global_optimizer_2.h>
 #include <CGAL/Mesh_2/Lloyd_move_2.h>
 #include <CGAL/Mesh_2/Mesh_sizing_field.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/iterator.h>
+#include <CGAL/boost/parameter.h>
+#include <boost/parameter/preprocessor.hpp>
 
 #include <fstream>
 
-#if ( defined( __clang__ ) || (BOOST_GCC >= 40600 ) ) && (BOOST_VERSION < 106000)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
-#ifdef BOOST_PARAMETER_MAX_ARITY
-#  if (BOOST_PARAMETER_MAX_ARITY < 8)
-#    error "BOOST_PARAMETER_MAX_ARITY must be at least 8 for CGAL::lloyd_optimize_mesh_2()"
-#  endif
-#else
-#  define  BOOST_PARAMETER_MAX_ARITY 8
-#endif
-
-#include <boost/parameter.hpp>
-#include <boost/parameter/name.hpp>
-
-namespace CGAL
-{
-namespace parameters
-{
-  
-
-BOOST_PARAMETER_NAME( cdt )
-BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
-BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
-BOOST_PARAMETER_NAME( (time_limit, tag) time_limit_ )
-BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
-BOOST_PARAMETER_NAME( (seeds_begin, tag) seeds_begin_)
-BOOST_PARAMETER_NAME( (seeds_end, tag) seeds_end_)
-BOOST_PARAMETER_NAME( (mark, tag) mark_)
-
-}//end namespace parameters
-}//end namespace CGAL
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 
 namespace CGAL
 {
-  using namespace parameters;
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
 
   BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),
   lloyd_optimize_mesh_2,
-  tag,
+  parameters::tag,
   (required (in_out(cdt),*))
   (optional
     (max_iteration_number_, *, 0 )
@@ -96,6 +75,10 @@ namespace CGAL
                                       seeds_end_,
                                       mark_);
   }
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
   /**
   * this partial specialization is a workaround
@@ -168,11 +151,8 @@ namespace CGAL
 
 } //end namespace CGAL
 
-//CGAL_PRAGMA_DIAG_POP
-#if ( defined( __clang__ ) || (BOOST_GCC >= 40600 ) ) && (BOOST_VERSION < 106000)
-#pragma GCC diagnostic pop
-#endif
+CGAL_PRAGMA_DIAG_POP
 
-
+#include <CGAL/enable_warnings.h>
 
 #endif

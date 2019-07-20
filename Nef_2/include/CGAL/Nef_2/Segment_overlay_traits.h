@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_SEGMENT_OVERLAY_TRAITS_H
 #define CGAL_SEGMENT_OVERLAY_TRAITS_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 23
@@ -1035,7 +1039,7 @@ public:
       x2iso[&*event] = 0;
     }
     
-    ISegment next_seg;
+    ISegment next_seg = ISegment(); // to avoid /W4 warning
     seg_iterator next_it = SQ.begin();
     while ( next_it != SQ.end() && 
 	    ( next_seg = next_it->second, p_sweep == source(next_seg)) ) {

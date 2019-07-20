@@ -2,12 +2,12 @@ Subdivision Surfaces Package
 ---------------------------------------------------------------------
 
 - Subdivision_method_3.h
-  
-  Refinement hosts for subdivision surfaces on Polyhedron_3.
+
+  Refinement hosts for subdivision surfaces on Polygonal Meshes.
   Supported schemes: PQQ, PTQ, DQQ and Sqrt(3).
 
 - Subdivision_mask_3.h
 
-  Stencil policies for subdivision surfaces on Polyhedron_3.
+  Stencil policies for subdivision surfaces on Polygonal Meshes.
   Supported schemes: Averaging, Catmull-Clark, Loop, Doo-Sabin and
   Sqrt(3) subdivisions.

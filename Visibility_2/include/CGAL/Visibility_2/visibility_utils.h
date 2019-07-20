@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s):  Francisc Bungiu <fbungiu@gmail.com>
@@ -22,6 +23,10 @@
 #ifndef CGAL_VISIBILITY_UTILS_H
 #define CGAL_VISIBILITY_UTILS_H
 
+#include <CGAL/license/Visibility_2.h>
+
+
+#include <iostream>
 #include <vector>
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>

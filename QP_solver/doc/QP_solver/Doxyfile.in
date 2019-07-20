@@ -1,3 +1,5 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Linear and Quadratic Programming Solver"
+
+EXCLUDE = ${CGAL_PACKAGE_DOC_DIR}/fig_src

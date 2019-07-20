@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3Concepts
+\ingroup PkgMesh3Concepts
 \cgalConcept
 
 The concept `MeshDomain_3` describes the knowledge required on the
@@ -30,9 +30,7 @@ if it includes points which are strictly inside
 and strictly outside the domain (resp. the subdomain).
 
 \cgalHasModel `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
-\cgalHasModel `CGAL::Implicit_mesh_domain_3<Function,BGT>`
-\cgalHasModel `CGAL::Labeled_image_mesh_domain_3<Image,BGT>`
-\cgalHasModel `CGAL::Labeled_mesh_domain_3<LabelingFunction,BGT>`
+\cgalHasModel `CGAL::Labeled_mesh_domain_3<BGT>`
 
 \sa `MeshVertexBase_3`
 \sa `MeshCellBase_3`
@@ -113,7 +111,7 @@ Returns type of `Construct_intersection` queries.
 dimension of the lower dimensional face of the input complex on which the intersection
 point lies and `%Index` is the index of this face.
 */
-typedef CGAL::cpp11::tuple<Point_3, Index, int> Intersection;
+typedef std::tuple<Point_3, Index, int> Intersection;
 
 /*!
 A function object to construct

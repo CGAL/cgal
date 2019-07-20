@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_VORONOI_DIAGRAM_2_VALIDITY_TESTERS_H
 #define CGAL_VORONOI_DIAGRAM_2_VALIDITY_TESTERS_H 1
+
+#include <CGAL/license/Voronoi_diagram_2.h>
+
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <algorithm>
@@ -50,7 +54,7 @@ class Edge_validity_tester
   typedef typename VDA::Delaunay_graph::Vertex_handle  Delaunay_vertex_handle;
 
  public:
-  Edge_validity_tester(const VDA* vda = NULL) : vda_(vda) {}
+  Edge_validity_tester(const VDA* vda = nullptr) : vda_(vda) {}
 
   bool operator()(const Edges_iterator_base& eit) const {
     CGAL_assertion( !vda_->edge_rejector()(vda_->dual(), eit->dual()) );
@@ -92,7 +96,7 @@ class Vertex_validity_tester
   Delaunay_faces_iterator;
 
  public:
-  Vertex_validity_tester(const VDA* vda = NULL) : vda_(vda) {}
+  Vertex_validity_tester(const VDA* vda = nullptr) : vda_(vda) {}
 
   bool operator()(const Delaunay_faces_iterator& fit) const {
     Delaunay_face_handle f(fit);

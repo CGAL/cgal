@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -25,7 +26,7 @@
 #ifndef CGAL_KERNEL_MPL_H
 #define CGAL_KERNEL_MPL_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 // Some tools for basic template metaprogramming.
 // These bits should move to CGAL/mpl.h in STL_Extension, or taken from Boost.

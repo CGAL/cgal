@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr 
@@ -24,10 +25,13 @@
 #ifndef CGAL_QP__PARTIAL_BASE_H
 #define CGAL_QP__PARTIAL_BASE_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 // includes
 #include <CGAL/QP_solver/QP_pricing_strategy.h>
 #include <CGAL/Random.h>
-#include <algorithm>
+#include <CGAL/algorithm.h>
 #include <vector>
 #include <cmath>
 
@@ -138,7 +142,7 @@ init( )
     for ( int i = 0; i < w; ++i) {
 	if ( ! this->solver().is_basic( i)) N.push_back( i);
     }
-    if ( permute) std::random_shuffle( N.begin(), N.end(), rand_src);
+    if ( permute) CGAL::cpp98::random_shuffle( N.begin(), N.end(), rand_src);
 
     // initialize size of active set
     int  n = this->solver().number_of_variables();

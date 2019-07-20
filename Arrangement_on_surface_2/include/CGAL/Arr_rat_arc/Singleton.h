@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_SINGLETON_H_
 #define SINGLETON_H_
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/assertions.h>
 
@@ -35,14 +39,14 @@ public:
   {
     if(!m_pInstance) 
       m_pInstance = new T;
-    CGAL_assertion(m_pInstance !=NULL);
+    CGAL_assertion(m_pInstance !=nullptr);
     return m_pInstance;
   }
       
   static void DestroyInstance()
   {
     delete m_pInstance;
-    m_pInstance = NULL;
+    m_pInstance = nullptr;
   };
 private:
   Singleton();          // ctor hidden
@@ -51,7 +55,7 @@ private:
   static T* m_pInstance;
 };
 
-template <class T> T* Singleton<T>::m_pInstance=NULL;
+template <class T> T* Singleton<T>::m_pInstance=nullptr;
 
 }   // namespace Arr_rational_arc
 }   //namespace CGAL { 

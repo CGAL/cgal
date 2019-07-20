@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Julien Hazebrouck, Pedro Machado
 
@@ -26,6 +27,9 @@
 
 #ifndef CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_CIRCULAR_KERNEL_2_H
 #define CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_CIRCULAR_KERNEL_2_H
+
+#include <CGAL/license/Circular_kernel_2.h>
+
 
 // global functions
 

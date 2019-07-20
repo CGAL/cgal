@@ -1,5 +1,5 @@
 // #define CGAL_IDENTIFICATION_XY  2
-// #define CGAL_SL_VERBOSE 1
+// #define CGAL_SS_VERBOSE 1
 
 #include <string>
 #include <cstring>
@@ -86,27 +86,27 @@ public:
                              Vertex_handle v) const
   { v->set_data(v1->data() + v2->data()); }
 
-  /*! Create a vertex v that mathces v1, which lies of the edge e2. */
+  /*! Create a vertex v that matches v1, which lies of the edge e2. */
   virtual void create_vertex(Vertex_const_handle  v1, Halfedge_const_handle e2,
                              Vertex_handle v) const
   { v->set_data(v1->data() + e2->data()); }
 
-  /*! Create a vertex v that mathces v1, contained in the face f2. */
+  /*! Create a vertex v that matches v1, contained in the face f2. */
   virtual void create_vertex(Vertex_const_handle v1, Face_const_handle f2,
                              Vertex_handle v) const
   { v->set_data(v1->data() + f2->data());}
 
-  /*! Create a vertex v that mathces v2, which lies of the edge e1. */
+  /*! Create a vertex v that matches v2, which lies of the edge e1. */
   virtual void create_vertex(Halfedge_const_handle e1, Vertex_const_handle v2,
                              Vertex_handle v) const
   { v->set_data(e1->data() + v2->data()); }
 
-  /*! Create a vertex v that mathces v2, contained in the face f1. */
+  /*! Create a vertex v that matches v2, contained in the face f1. */
   virtual void create_vertex(Face_const_handle f1, Vertex_const_handle v2,
                              Vertex_handle v) const
   { v->set_data(f1->data() + v2->data()); }
 
-  /*! Create a vertex v that mathces the intersection of the edges e1 and e2. */
+  /*! Create a vertex v that matches the intersection of the edges e1 and e2. */
   virtual void create_vertex(Halfedge_const_handle e1, Halfedge_const_handle e2,
                              Vertex_handle v) const
   { v->set_data(e1->data() + e2->data()); }

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
 #ifndef CGAL_RATIONAL_ARC_CACHE
 #define CGAL_RATIONAL_ARC_CACHE
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/Arr_rat_arc/Base_rational_arc_ds_1.h>
 #include <CGAL/Arr_rat_arc/Rational_function.h>
@@ -104,7 +108,7 @@ public:
 
 public:
   Cache() :
-    _rat_func_map_watermark(128), _rat_pair_map_watermark(128), _ak_ptr(NULL){};
+    _rat_func_map_watermark(128), _rat_pair_map_watermark(128), _ak_ptr(nullptr){};
 
   void initialize(Algebraic_kernel_d_1* ak_ptr)
   {
@@ -161,7 +165,7 @@ public:
   const Rational_function& get_rational_function(const Polynomial_1& numer,
                                                  const Polynomial_1& denom) const
   {
-    CGAL_precondition (_ak_ptr != NULL);
+    CGAL_precondition (_ak_ptr != nullptr);
     Rational_function_key key  = get_key(numer,denom);
 
     //look if element exists in cache already
@@ -200,7 +204,7 @@ public:
   const Rational_function_pair get_rational_pair(const Rational_function& f, 
                                                  const Rational_function& g) const
   {
-    CGAL_precondition (_ak_ptr != NULL);
+    CGAL_precondition (_ak_ptr != nullptr);
     CGAL_precondition(!(f==g));
     Rational_function_canonicalized_pair_key key  = get_key(f,g);
     bool is_opposite = (f.id() < g.id()) ? false : true ; 
@@ -277,10 +281,9 @@ private:
     }
 
     //re-set watermark
-    _rat_func_map_watermark = (std::max)(
-        2*_rat_func_map.size(),
-        typename Rational_function_map::size_type(128));
-    
+    _rat_func_map_watermark
+      = static_cast<unsigned int>((std::max)(2* _rat_func_map.size(),
+                                             typename Rational_function_map::size_type(128)));
     return;
   }
   void rat_pair_map_clean_up() const 
@@ -307,8 +310,8 @@ private:
 
     //re-set watermark
     _rat_pair_map_watermark = 
-      (std::max)(2*_rat_pair_map.size(),
-          typename Rational_function_canonicalized_pair_map::size_type(128));
+      static_cast<unsigned int>((std::max)(2* _rat_pair_map.size(),
+                                           typename Rational_function_canonicalized_pair_map::size_type(128)));
   }
 
 private:

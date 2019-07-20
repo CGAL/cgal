@@ -14,11 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH
 #define CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH 1
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Compact_container.h>
 #include <queue>
@@ -154,9 +157,6 @@ namespace CGAL {
     /// test if adart->beta(ai) exists and is not marked for amark
     bool is_unmarked(Dart_handle adart, unsigned int ai, size_type amark) const
     { return
-#ifdef CGAL_CMAP_DEPRECATED
-        !mmap->is_free(adart,ai) && // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
         !mmap->is_marked(mmap->beta(adart,ai), amark);
     }
 
@@ -168,9 +168,6 @@ namespace CGAL {
     bool is_unmarked2(Dart_handle adart, unsigned int ai, unsigned int aj,
                       typename Map::size_type amark) const
     { return
-#ifdef CGAL_CMAP_DEPRECATED
-         exist_betaij(adart, ai, aj) && // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
         !mmap->is_marked(mmap->beta(adart, ai, aj), amark);
     }
 
@@ -271,9 +268,6 @@ namespace CGAL {
           this->mmap->mark((*this), mmark_number);
 
           if (
-#ifdef CGAL_CMAP_DEPRECATED
-        !this->mmap->is_free(*this, Bi) && // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
                !this->mmap->is_marked(this->mmap->beta(*this, Bi), mmark_number) )
           {
             mto_treat.push(this->mmap->beta(*this, Bi));
@@ -284,9 +278,6 @@ namespace CGAL {
       {
         this->mmap->mark((*this), mmark_number);
         if (
-#ifdef CGAL_CMAP_DEPRECATED
-        !this->mmap->is_free(*this, Bi) && // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
              !this->mmap->is_marked(this->mmap->beta(*this, Bi), mmark_number) )
         {
           mto_treat.push(this->mmap->beta(*this, Bi));
@@ -363,9 +354,6 @@ namespace CGAL {
         CGAL_assertion( this->mmap->is_marked(*this, this->mmark_number) );
 
         if (
-#ifdef CGAL_CMAP_DEPRECATED
-            !this->mmap->is_free(*this, Bi) && // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
             !this->mmap->is_marked(this->mmap->beta(*this, Bi), this->mmark_number) )
         {
           this->mto_treat.push(this->mmap->beta(*this, Bi));
@@ -611,6 +599,9 @@ namespace CGAL {
   };
   //****************************************************************************
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 //******************************************************************************
 #endif // CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH
 //******************************************************************************

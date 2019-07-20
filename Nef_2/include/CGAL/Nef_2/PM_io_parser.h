@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_PM_IO_PARSER_H
 #define CGAL_PM_IO_PARSER_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <CGAL/Nef_2/PM_decorator.h>
 #include <CGAL/Nef_2/Object_index.h>
@@ -122,8 +126,8 @@ to output |H| to |os|.}*/
   vn(Base::number_of_vertices()), 
   en(Base::number_of_halfedges()), 
   fn(Base::number_of_faces())
-{ verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
-             out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
+{ verbose = (get_mode(out) != CGAL::IO::ASCII &&
+             get_mode(out) != CGAL::IO::BINARY);
 }
 
 
@@ -135,8 +139,8 @@ PM_io_parser(std::ostream& os, const PMDEC& D)
   vn(Base::number_of_vertices()), 
   en(Base::number_of_halfedges()), 
   fn(Base::number_of_faces())
-{ verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
-             out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
+{ verbose = (get_mode(out) != CGAL::IO::ASCII &&
+             get_mode(out) != CGAL::IO::BINARY);
 }
 
 

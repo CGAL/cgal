@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -30,11 +31,7 @@
 #ifdef CGAL_USE_LEDA
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/leda_integer.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/rat_point.h>
-#else
 #include <LEDA/geo/rat_point.h>
-#endif
 #endif
 
 #include <CGAL/Point_2.h>

@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sylvain Pion
  
@@ -37,6 +38,16 @@ struct Default
     template <typename Value>
     struct Get <Default, Value> {
         typedef Value type;
+    };
+
+  template <typename Argument, typename Fct>
+    struct Lazy_get {
+        typedef Argument type;
+    };
+
+    template <typename Fct>
+    struct Lazy_get <Default, Fct> {
+        typedef typename Fct::type type;
     };
 };
 

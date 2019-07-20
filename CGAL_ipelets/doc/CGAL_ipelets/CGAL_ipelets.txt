@@ -9,7 +9,7 @@ namespace CGAL {
 
 \section CGAL_ipeletsIntroduction Introduction
 
-The Ipe extensible drawing editor (<A HREF="http://tclab.kaist.ac.kr/ipe/">http://tclab.kaist.ac.kr/ipe/</A>) \cgalCite{schwarzkopf1995ede}, \cgalCite{ipe:man-09}
+The Ipe extensible drawing editor (<A HREF="http://ipe.otfried.org">http://ipe.otfried.org</A>) \cgalCite{schwarzkopf1995ede}, \cgalCite{ipe:man-09}
 is a tool used by computational geometry researchers to produce 2D figures for inclusion in articles or presentations.
 The extensible adjective sheds a light on an important feature:
 the possibility for users to write small extensions (called <I>ipelets</I>)
@@ -103,6 +103,28 @@ draws the circle orthogonal to the primary
 selection belonging to the pencil defined by the two other circles.
 <li><b> Circle orthogonal to three circles</b>
 draws the circle orthogonal to the three selected circles.
+</ul>
+
+\subsection cone_spanners_ipelet Cone spanners
+
+The input selection must be a set of points. The value of k is asked
+in a dialog box.
+
+<ul>
+<li><b>Theta-k-graph:</b>
+Draws a theta-graph with k cones
+<li><b>Yao-k-graph:</b>
+Draws a Yao-graph with k cones
+<li><b>Half-theta-k-graph with even cones:</b>
+Draws an half-theta-graph with the even of k cones.
+<li><b>Half-Yao-k-graph with even cones:</b>
+Draws an half-Yao-graph with the even of k cones.
+<li><b>Half-theta-k-graph with odd cones:</b>
+Draws an half-theta-graph with the odd of k cones.
+<li><b>Half-Yao-k-graph with odd cones:</b>
+Draws an half-Yao-graph with the odd of k cones.
+<li><b>k cones:</b> For earch selected point.
+Draws the k cones around the point.
 </ul>
 
 \subsection diagrams_ipelet Diagrams
@@ -221,6 +243,10 @@ The Minkowski sum of the two polygons is computed and drawn.
 The input selection must be a circle and simple polygons.
 The Minkowski sum of the polygons with the circle is computed and drawn.
 </ul>
+
+\subsection mst_ipelet Minimum Spanning Tree
+The input selection must be a set of points. The Euclidean minimum spanning
+tree of the points is computed and drawn.
 
 \subsection multi_delaunay_ipelet k Order Delaunay
 The input selection must be a set of points.

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Gabriele Neyer
 
 #ifndef CGAL_SEGMENT_TREE_K_H
 #define CGAL_SEGMENT_TREE_K_H
+
+#include <CGAL/license/SearchStructures.h>
+
 
 // Predefined k-dimensional Segment Trees (k=1..4) 
 // The trees can either be templated with d arbitrary types

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #ifndef CGAL_IO_POLYHEDRON_VRML_2_OSTREAM_H
 #define CGAL_IO_POLYHEDRON_VRML_2_OSTREAM_H 1
+
+#include <CGAL/license/Polyhedron.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/IO/VRML_2_ostream.h>

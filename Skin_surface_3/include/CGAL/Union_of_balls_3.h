@@ -14,32 +14,37 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
+//
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
 #ifndef CGAL_UNION_OF_BALLS_3_H
 #define CGAL_UNION_OF_BALLS_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Skin_surface_base_3.h>
 #include <CGAL/triangulate_power_diagram_3.h>
 
-namespace CGAL { 
+namespace CGAL {
 
-template <class MixedComplexTraits_3> 
-class Union_of_balls_3 : public Skin_surface_base_3<MixedComplexTraits_3> {
-  typedef MixedComplexTraits_3            Gt;
-  typedef Union_of_balls_3<Gt>            Self;
-  typedef Skin_surface_base_3<Gt>         Base; 
+template <class MixedComplexTraits_3>
+class Union_of_balls_3
+    : public Skin_surface_base_3<MixedComplexTraits_3>
+{
+  typedef MixedComplexTraits_3                Gt;
+  typedef Union_of_balls_3<Gt>                Self;
+  typedef Skin_surface_base_3<Gt>             Base;
+
 public:
-  typedef MixedComplexTraits_3            Geometric_traits;
+  typedef MixedComplexTraits_3                 Geometric_traits;
 
-  typedef typename Gt::Weighted_point     Weighted_point;
-  typedef typename Gt::Bare_point         Bare_point;
-  typedef typename Gt::FT                 FT;
-  // For normal():
-  typedef typename Gt::Vector_3           Vector;
-
+  typedef typename Base::FT                    FT;
+  typedef typename Base::Bare_point            Bare_point;
+  typedef typename Base::Weighted_point        Weighted_point;
+  typedef typename Base::Vector                Vector;
 
   typedef typename Base::Regular               Regular;
   typedef typename Base::Vertex_handle         Vertex_handle;
@@ -68,12 +73,12 @@ private:
   using Base::geometric_traits;
   using Base::regular;
   using Base::triangulated_mixed_complex;
+
 public:
   template < class WP_iterator >
-  Union_of_balls_3(WP_iterator begin, WP_iterator end, 
-                 Gt gt_ = Gt(),
-                 bool _verbose = false
-                 );
+  Union_of_balls_3(WP_iterator begin, WP_iterator end,
+                   Gt gt_ = Gt(),
+                   bool _verbose = false);
 
   template <class Polyhedron_3>
   void mesh_skin_surface_3(Polyhedron_3 &p) const {
@@ -85,14 +90,14 @@ public:
   }
 };
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 template < class WP_iterator >
 Union_of_balls_3<MixedComplexTraits_3>::
-Union_of_balls_3(WP_iterator begin, WP_iterator end, 
+Union_of_balls_3(WP_iterator begin, WP_iterator end,
                  Gt gt_,
-                 bool _verbose) 
-  : Base(begin, end, 1, false, gt_, _verbose) {
-    
+                 bool _verbose)
+  : Base(begin, end, 1, false, gt_, _verbose)
+{
   // Construct the Triangulated_mixed_complex:
   Triangulated_mixed_complex_observer_3<TMC, Self> observer(shrink_factor());
   triangulate_power_diagram_3(regular(), triangulated_mixed_complex(), observer, _verbose);
@@ -101,7 +106,7 @@ Union_of_balls_3(WP_iterator begin, WP_iterator end,
 //   { // NGHK: debug code:
 //     CGAL_assertion(triangulated_mixed_complex().is_valid());
 //     std::vector<TMC_Vertex_handle> ch_vertices;
-//     triangulated_mixed_complex().incident_vertices(triangulated_mixed_complex().infinite_vertex(), 
+//     triangulated_mixed_complex().incident_vertices(triangulated_mixed_complex().infinite_vertex(),
 //                           std::back_inserter(ch_vertices));
 //     for (typename std::vector<TMC_Vertex_handle>::iterator
 //            vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
@@ -109,7 +114,6 @@ Union_of_balls_3(WP_iterator begin, WP_iterator end,
 //     }
 //   }
 }
-  
 
 } //namespace CGAL
 

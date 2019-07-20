@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     :  Camille Wormser, Pierre Alliez
@@ -21,8 +22,10 @@
 #ifndef CGAL_AABB_DRAWING_TRAITS_H
 #define CGAL_AABB_DRAWING_TRAITS_H
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <CGAL/Bbox_3.h>
-#include <CGAL/gl.h>
 #include <vector>
 
 namespace CGAL {
@@ -31,6 +34,7 @@ template<typename Primitive, typename Node>
 struct AABB_drawing_traits
 {
   std::vector<float> *v_edges;
+  double offset[3];
 
   typedef CGAL::Bbox_3 Bbox;
   bool go_further() { return true; }
@@ -83,13 +87,13 @@ struct AABB_drawing_traits
   void gl_draw_edge(double px, double py, double pz,
                            double qx, double qy, double qz)
   {
-      v_edges->push_back((float)px);
-      v_edges->push_back((float)py);
-      v_edges->push_back((float)pz);
+      v_edges->push_back((float)px+offset[0]);
+      v_edges->push_back((float)py+offset[1]);
+      v_edges->push_back((float)pz+offset[2]);
 
-      v_edges->push_back((float)qx);
-      v_edges->push_back((float)qy);
-      v_edges->push_back((float)qz);
+      v_edges->push_back((float)qx+offset[0]);
+      v_edges->push_back((float)qy+offset[1]);
+      v_edges->push_back((float)qz+offset[2]);
   }
 }; // AABB_drawing_traits
 

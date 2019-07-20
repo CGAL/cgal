@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel
@@ -57,7 +58,7 @@ class Direction_d : public pR::Direction_d_base
   Direction_d (int d, InputIterator first, InputIterator last)
     : Base(d, first, last) {}
 
-  Direction_d(const Direction_d<R> &d) : Base(d) {}
+
   Direction_d(const Vector_d<R> &v) : Base(v) {}
   Direction_d(int d, Base_direction, int i) : 
     Base(d,Base_direction(),i) {}

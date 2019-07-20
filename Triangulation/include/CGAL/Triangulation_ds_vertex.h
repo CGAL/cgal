@@ -14,11 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)    : Samuel Hornus
 
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_H
 #define CGAL_TRIANGULATION_DS_VERTEX_H
+
+#include <CGAL/license/Triangulation.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Compact_container.h>
 #include <CGAL/internal/Triangulation/Dummy_TDS.h>
@@ -61,7 +66,6 @@ public:
     /// Set 's' as an incident full_cell
     void set_full_cell(Full_cell_handle s) /* Concept */
     {
-        CGAL_precondition( Full_cell_handle() != s );
         full_cell_ = s;
     }
 
@@ -80,7 +84,7 @@ public:
             return false;
         }
         bool found(false);
-        // These two typename below are OK because TDS fullfils the
+        // These two typename below are OK because TDS fulfils the
         // TriangulationDataStructure concept.
         typename TDS::Full_cell::Vertex_handle_iterator vit(full_cell()->vertices_begin());
         typedef typename TDS::Vertex_handle Vertex_handle;
@@ -151,5 +155,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_DS_VERTEX_H

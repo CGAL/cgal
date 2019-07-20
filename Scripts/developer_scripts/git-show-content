@@ -1,0 +1,45 @@
+#!/bin/zsh
+
+zmodload zsh/stat
+set -e
+
+if [ "x$1" = "x--help" -o "x$1" = "x-h" ]; then
+    cat <<EOF
+Usage: $0
+ [HEAD] [BASE]
+
+List the commits in the range BASE..HEAD, with --first-parent
+and show for each the weight of the commit.
+
+[HEAD] is the head of the branch you want to display.
+Its default value is 'HEAD'.
+
+[BASE] is the base of the range. Its default value is 'cgal/master'.
+EOF
+    exit 0
+fi
+
+commit=${1:-HEAD}
+base=${2:-cgal/master}
+
+function reset() {
+    git update-ref -d refs/cgal/git-show-content
+    rm -f bundle.gz
+}
+
+trap reset ERR EXIT KILL TERM INT
+
+for c in $(git --no-pager log --pretty='%h' --first-parent ${base}..${commit}); do
+    git update-ref refs/cgal/git-show-content $c
+    git bundle create bundle ${c}^..refs/cgal/git-show-content > /dev/null 2>&1
+    gzip -f bundle
+    size=${(l:6:)$(( $(zstat +size bundle.gz) / 1024 ))}
+    git --no-pager show --no-patch --pretty='%C(auto)%h (SIZE: %C(auto)'"${size}kB)"'  %s <%an> %cD' $c
+    parents=(${(@)$(git rev-parse $c^@)})
+    if ! [ ${#${parents:1}[@]} -eq 0 ]; then
+        git --no-pager show --no-patch --pretty='  merge: %h%C(auto)% d' ${parents:1}
+    fi
+done
+last=$c
+
+[ -n "$last" ] && git --no-pager log -1 --pretty='Base commit: %C(auto)%h %d' ${last}'~'

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2PointLocation
+\ingroup PkgArrangementOnSurface2PointLocation
 
 \anchor arr_reflm_pl 
 
@@ -59,8 +59,6 @@ insertions of curves and not deletions of them.
 template< typename Arrangement, typename Generator >
 class Arr_landmarks_point_location {
 public:
-
-/// @}
 
 }; /* end Arr_landmarks_point_location */
 } /* end namespace CGAL */

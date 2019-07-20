@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -22,6 +23,8 @@
 
 #ifndef CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <vector>
 #include <set>
@@ -39,7 +42,6 @@
 #include <CGAL/Cache.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Handle_with_policy.h>
-#include <CGAL/Arr_enums.h>
 
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Interval_evaluate_1.h>
@@ -61,12 +63,6 @@
 
 #if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
 // put includes here
-#endif
-
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4290)
 #endif
 
 
@@ -112,7 +108,7 @@ template<typename Comparable>
 };
 
 template<typename Comparable> struct Compare_for_vert_line_map
-  : public std::binary_function<Comparable,Comparable,bool> {
+  : public CGAL::cpp98::binary_function<Comparable,Comparable,bool> {
     
   BOOST_MPL_HAS_XXX_TRAIT_DEF(T)
   BOOST_MPL_HAS_XXX_TRAIT_DEF(Handle_policy)
@@ -503,18 +499,18 @@ public:
                               const Polynomial_2& f,
                               CGAL::Degeneracy_strategy strategy
                                   = CGAL_ACK_DEFAULT_DEGENERACY_STRATEGY) 
-        throw(internal::Zero_resultant_exception<Polynomial_2>)
         : Base(Rep(kernel,f,strategy))
     {
 
     }
 
     //! \brief Copy constructor
+#ifdef DOXYGEN_RUNNING
     Curve_analysis_2(const Self& alg_curve)
         : Base(static_cast<const Base&>(alg_curve)) 
     {
     }
-
+#endif
 
     //!@}
 
@@ -694,14 +690,14 @@ public:
 #endif
         CGAL_precondition(has_defining_polynomial());
         typename Rep::Val_functor xval;
-        i = std::lower_bound(
+        i = static_cast<size_type>(std::lower_bound(
                 ::boost::make_transform_iterator(event_coordinates().begin(), 
                                                  xval),
                 ::boost::make_transform_iterator(event_coordinates().end(),
                                                  xval),
                 x
         ) - ::boost::make_transform_iterator(event_coordinates().begin(), 
-                                             xval);
+                                             xval));
         is_event = (i < static_cast<size_type>(event_coordinates().size()) && 
                     (event_coordinates()[i].val == x) );
     }
@@ -813,7 +809,7 @@ private:
     
     // Creates a status line for the curve's <tt>index</tt>th critical point
     Status_line_1 create_status_line_at_event(size_type index) const 
-        throw(CGAL::internal::Non_generic_position_exception) {
+      {
 
         Event_coordinate_1& event = event_coordinates()[index];
         
@@ -1447,7 +1443,7 @@ private:
 
     //! Returns the Sturm-Habicht sequence of the primitive part of f
     std::vector<Polynomial_2>& sturm_habicht_of_primitive() const 
-    throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         if(! this->ptr()->sturm_habicht_of_primitive) {
             compute_sturm_habicht_of_primitive();
         }  
@@ -1461,7 +1457,7 @@ public:
      * of the primitive part of the defining polynomial
      */
     Polynomial_2 sturm_habicht_of_primitive(size_type i) const 
-      throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         CGAL_assertion(i>=0 && 
                     i < static_cast<size_type>
                        (sturm_habicht_of_primitive().size()));
@@ -1475,7 +1471,7 @@ public:
      * of the primitive part of the defining polynomial
      */
     Polynomial_1 principal_sturm_habicht_of_primitive(size_type i) const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         CGAL_assertion(i>=0 && 
                     i < static_cast<size_type>
                        (sturm_habicht_of_primitive().size()));
@@ -1497,7 +1493,7 @@ public:
      * of <tt>y^{i-1}</tt> of the <tt>i</tt>th Sturm-Habicht polynomial
      */
     Polynomial_1 coprincipal_sturm_habicht_of_primitive(size_type i) const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         CGAL_assertion(i>=1 && 
                     i < static_cast<size_type>
                        (sturm_habicht_of_primitive().size()));
@@ -1524,7 +1520,7 @@ public:
     Principal_sturm_habicht_iterator principal_sturm_habicht_end() const {
         return boost::make_transform_iterator
             (boost::counting_iterator<size_type>
-                 (sturm_habicht_of_primitive().size()),
+             (static_cast<int>(sturm_habicht_of_primitive().size())),
              Stha_functor(this));
     }
 
@@ -1532,7 +1528,7 @@ private:
 
     // Internal method to compute the Sturm-Habicht sequence
     void compute_sturm_habicht_of_primitive() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "Compute Sturm-Habicht.." << std::flush;
@@ -1592,7 +1588,7 @@ private:
 
     //! Returns the resultant of the primitive part of f and its y-derivative
     Polynomial_1 resultant_of_primitive_and_derivative_y() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         if(! this->ptr()->resultant_of_primitive_and_derivative_y) {
             compute_resultant_of_primitive_and_derivative_y();
         }
@@ -1603,7 +1599,7 @@ private:
 
     //! Returns the resultant of the primitive part of f with its x-derivative
     Polynomial_1 resultant_of_primitive_and_derivative_x() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         if(! this->ptr()->resultant_of_primitive_and_derivative_x) {
             compute_resultant_of_primitive_and_derivative_x();
         }
@@ -1613,8 +1609,8 @@ private:
 private:
     // Computes <tt>res_y(f,f_y)</tt>, where \c f is the defining polynomial
     void compute_resultant_of_primitive_and_derivative_y() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
-        
+      {
+  
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "Compute resultant.." << std::flush;
 #endif
@@ -1665,7 +1661,7 @@ private:
     
     // Computes <tt>res_y(f,f_x)</tt>, where \c f is the defining polynomial
     void compute_resultant_of_primitive_and_derivative_x() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "Compute x-resultant.." << std::flush;
@@ -1724,7 +1720,7 @@ private:
 
     // Returns the critical event coordinates
     std::vector<Event_coordinate_1>& event_coordinates() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         if(! this->ptr()->event_coordinates) {
             compute_event_coordinates();
         }
@@ -1735,8 +1731,7 @@ private:
 
     // Returns the intermediate values for intervals between events
     std::vector<boost::optional<Bound> >& intermediate_values() const 
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
-        
+      {
         if(! this->ptr()->intermediate_values) {
             // This is created during event_coordiantes()
             event_coordinates();
@@ -1756,7 +1751,7 @@ private:
      * x-coordinates of the curve.
      */
     void compute_event_coordinates() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
          
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "compute events..." << std::flush;
@@ -1954,7 +1949,6 @@ public:
      * of the Algebraic_curve_kernel_2 yet.
      */
     Self& shear_primitive_part(Integer s) const
-        throw(CGAL::internal::Non_generic_position_exception)
     {
         CGAL_assertion(s!=0);
 #if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
@@ -2099,21 +2093,21 @@ public:
     /*!
      * \brief Returns the limit an infinite arc converges to
      *
-     * \pre <tt>loc==CGAL::ARR_LEFT_BOUNDARY || 
-     *          loc==CGAL::ARR_RIGHT_BOUNDARY</tt>
+     * \pre <tt>loc==CGAL::LEFT_BOUNDARY || 
+     *          loc==CGAL::RIGHT_BOUNDARY</tt>
      *
      * This method returns for the <tt>arcno</tt>th arc that goes to -infinity
      * or +infinity (depending on \c loc) the y-coordinate it converges to.
      * Possible values are either a \c Algebraic_real_1 object, or one of the
-     * values \c CGAL::ARR_TOP_BOUNDARY, \c CGAL::ARR_BOTTOM_BOUNDARY
+     * values \c CGAL::TOP_BOUNDARY, \c CGAL::BOTTOM_BOUNDARY
      * that denote that the arc is unbounded in y-direction. 
      * The result is wrapped into a \c CGAL::Object object.
      */
-    Asymptote_y asymptotic_value_of_arc(CGAL::Arr_parameter_space loc,
+    Asymptote_y asymptotic_value_of_arc(CGAL::Box_parameter_space_2 loc,
                                         size_type arcno) const {
         
-        CGAL_precondition(loc == CGAL::ARR_LEFT_BOUNDARY ||
-                          loc == CGAL::ARR_RIGHT_BOUNDARY);
+        CGAL_precondition(loc == CGAL::LEFT_BOUNDARY ||
+                          loc == CGAL::RIGHT_BOUNDARY);
 
 #if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
         if(CGAL::degree(polynomial_2(),1)==2) {
@@ -2121,7 +2115,7 @@ public:
         }
 #endif
         
-        if(loc == CGAL::ARR_LEFT_BOUNDARY) {
+        if(loc == CGAL::LEFT_BOUNDARY) {
             
             if(! this->ptr()->horizontal_asymptotes_left) {
                 compute_horizontal_asymptotes();
@@ -2131,7 +2125,7 @@ public:
             CGAL_precondition(arcno>=0 && 
                               arcno<static_cast<size_type>(asym_info.size()));
             return asym_info[arcno];
-        } // else loc == CGAL::ARR_RIGHT_BOUNDARY
+        } // else loc == CGAL::RIGHT_BOUNDARY
 
         if(! this->ptr()->horizontal_asymptotes_right) {
             compute_horizontal_asymptotes();
@@ -2210,7 +2204,7 @@ private:
         while(i<number_of_roots_at_left_end) {
             if(current_stripe==static_cast<size_type>(stripe_bounds.size())) {
                 asym_left_info.push_back( CGAL::make_object
-                                              (CGAL::ARR_TOP_BOUNDARY) );
+                                              (CGAL::TOP_BOUNDARY) );
                 i++;
                 continue;
             }
@@ -2221,7 +2215,7 @@ private:
             if(roots_at_left_end[i].high() < stripe_bounds[current_stripe]) {
                 if(current_stripe==0) {
                     asym_left_info.push_back(CGAL::make_object
-                                                 (CGAL::ARR_BOTTOM_BOUNDARY));
+                                                 (CGAL::BOTTOM_BOUNDARY));
                     i++;
                     continue;
                 } else {
@@ -2249,7 +2243,7 @@ private:
         while(i<number_of_roots_at_right_end) {
             if(current_stripe==static_cast<size_type>(stripe_bounds.size())) {
                 asym_right_info.push_back(CGAL::make_object
-                                              (CGAL::ARR_TOP_BOUNDARY) );
+                                              (CGAL::TOP_BOUNDARY) );
                 i++;
                 continue;
             }
@@ -2260,7 +2254,7 @@ private:
             if(roots_at_right_end[i].high() < stripe_bounds[current_stripe]) {
                 if(current_stripe==0) {
                     asym_right_info.push_back(CGAL::make_object
-                                                  (CGAL::ARR_BOTTOM_BOUNDARY));
+                                                  (CGAL::BOTTOM_BOUNDARY));
                     i++;
                     continue;
                 } else {
@@ -2387,7 +2381,7 @@ private:
         CGAL_error_msg("Implement me");
     }
 
-    Asymptote_y conic_asymptotic_value_of_arc(CGAL::Arr_parameter_space loc,
+    Asymptote_y conic_asymptotic_value_of_arc(CGAL::Box_parameter_space_2 loc,
                                               size_type arcno) const {
         CGAL_error_msg("Implement me");
         return Asymptote_y();
@@ -2443,19 +2437,19 @@ std::ostream& operator<< (
       for (size_type i = 0; i < curve.arcs_over_interval(0); i++) {
         
         const Asymptote_y& curr_asym_info_obj 
-          = curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,i);
+          = curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,i);
         typename Curve::Algebraic_real_1 curr_asym_info;
         bool is_finite = CGAL::assign(curr_asym_info,curr_asym_info_obj);
         if (!is_finite) {
           // Assignment to prevent compiler warning
-          CGAL::Arr_parameter_space loc = CGAL::ARR_LEFT_BOUNDARY;
+          CGAL::Box_parameter_space_2 loc = CGAL::LEFT_BOUNDARY;
           CGAL_assertion_code(bool is_valid = )
             CGAL::assign(loc, curr_asym_info_obj);
           CGAL_assertion(is_valid);
-          if (loc == CGAL::ARR_TOP_BOUNDARY) {
+          if (loc == CGAL::TOP_BOUNDARY) {
             out << "+infty " << std::flush;
           } else {
-            CGAL_assertion(loc == CGAL::ARR_BOTTOM_BOUNDARY);
+            CGAL_assertion(loc == CGAL::BOTTOM_BOUNDARY);
             out << "-infty " << std::flush;
           }
         } else { // is_finite
@@ -2485,19 +2479,19 @@ std::ostream& operator<< (
       for (size_type i = 0; i < curve.arcs_over_interval(no_events); i++) {
         
         const Asymptote_y& curr_asym_info_obj 
-          = curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,i);
+          = curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,i);
         typename Curve::Algebraic_real_1 curr_asym_info;
         bool is_finite = CGAL::assign(curr_asym_info,curr_asym_info_obj);
         if(! is_finite) {
           // Assignment to prevent compiler warning
-          CGAL::Arr_parameter_space loc = CGAL::ARR_LEFT_BOUNDARY;
+          CGAL::Box_parameter_space_2 loc = CGAL::LEFT_BOUNDARY;
           CGAL_assertion_code(bool is_valid = )
             CGAL::assign(loc, curr_asym_info_obj);
           CGAL_assertion(is_valid);
-          if(loc == CGAL::ARR_TOP_BOUNDARY) {
+          if(loc == CGAL::TOP_BOUNDARY) {
             out << "+infty " << std::flush;
           } else {
-            CGAL_assertion(loc == CGAL::ARR_BOTTOM_BOUNDARY);
+            CGAL_assertion(loc == CGAL::BOTTOM_BOUNDARY);
             out << "-infty " << std::flush;
           }
         } else { // is_finite
@@ -2551,9 +2545,6 @@ std::istream& operator>> (
 } //namespace CGAL
 
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
-
+#include <CGAL/enable_warnings.h>
 
 #endif // ALGEBRAIC_CURVE_2_H

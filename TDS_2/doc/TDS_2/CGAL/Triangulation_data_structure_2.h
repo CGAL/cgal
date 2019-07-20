@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTDS2
+\ingroup PkgTDS2Ref
 
 The class `Triangulation_data_structure_2` is a model 
 for the `TriangulationDataStructure_2` concept. 

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Olivier Devillers
 //                 Pedro Machado Manhaes de Castro
@@ -23,6 +24,8 @@
 
 #include <CGAL/Hilbert_sort_2.h>
 #include <CGAL/internal/Transform_coordinates_traits_3.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/double.h>
 #include <algorithm>
 #include <vector>
 

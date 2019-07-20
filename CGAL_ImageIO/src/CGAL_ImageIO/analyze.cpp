@@ -15,13 +15,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "analyze.h"
-#include "analyze_impl.h"
+#include <CGAL/ImageIO/analyze.h>
+#include <CGAL/ImageIO/analyze_impl.h>
 
 #endif // CGAL_HEADER_ONLY

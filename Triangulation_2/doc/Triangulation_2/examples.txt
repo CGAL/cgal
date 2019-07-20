@@ -1,4 +1,5 @@
 /*!
+\example Triangulation_2/for_loop_2.cpp
 \example Triangulation_2/adding_handles.cpp
 \example Triangulation_2/colored_face.cpp
 \example Triangulation_2/constrained.cpp
@@ -13,8 +14,10 @@
 \example Triangulation_2/print_cropped_voronoi.cpp
 \example Triangulation_2/regular.cpp
 \example Triangulation_2/terrain.cpp
+\example Triangulation_2/terrain_with_info.cpp
 \example Triangulation_2/triangulation_prog1.cpp
 \example Triangulation_2/voronoi.cpp
 \example Triangulation_2/copy_triangulation_2.cpp
 \example Triangulation_2/polylines_triangulation.cpp
+\example Triangulation_2/draw_triangulation_2.cpp
 */

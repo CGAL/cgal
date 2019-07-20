@@ -8,16 +8,22 @@ The concept `RegularTriangulationTraits_3` is the first template parameter of th
 segments...) forming the triangulation together with a few geometric
 predicates and constructions on these objects.
 
+We use here the same notation as in Section \ref
+Triangulation3secclassRegulartriangulation. To simplify notation, \f$
+p\f$ will often denote in the sequel either the point \f$ p\in\mathbb{R}^3\f$
+or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
+
 \cgalRefines `TriangulationTraits_3`
+
+\cgalHasModel All models of `Kernel`.
+
+\sa `CGAL::Regular_triangulation_3`
 
 In addition to the requirements described for the traits class of
   `CGAL::Triangulation_3`, the geometric traits class of
   `CGAL::Regular_triangulation_3` must fulfill the following requirements.
 
-\cgalHasModel CGAL::Regular_triangulation_euclidean_traits_3 
-
 */
-
 class RegularTriangulationTraits_3 {
 public:
 
@@ -44,29 +50,18 @@ The ray type.
 */ 
 typedef unspecified_type Ray_3; 
 
-
-/// @}
-
-/*! \name
-We use here the same notation as in Section \ref
-Triangulation3secclassRegulartriangulation. To simplify notation, \f$
-p\f$ will often denote in the sequel either the point \f$ p\in\mathbb{R}^3\f$
-or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
-*/
-/// @{
-
 /*!
-The weighted point type. 
+The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_3`.
+
+\note The unweighted point type `Point_3` is requested by the concept
+`TriangulationTraits_3`, which this concept refines.
 */ 
 typedef unspecified_type Weighted_point_3; 
 
 /*!
-The (un-weighted) point type. 
-*/ 
-typedef unspecified_type Bare_point; 
-
-/*!
-A predicate object which must provide the following function operators: 
+A predicate object,
+model of `Kernel::PowerSideOfOrientedPowerSphere_3`,
+that must provide the following function operators: 
 
 `Oriented_side operator()( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r, 			 Weighted_point_3 s, 			 Weighted_point_3 t)`, 
 
@@ -80,14 +75,14 @@ Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points
 
 - `ON_NEGATIVE_SIDE` if `t` lies outside the oriented sphere of 
   center \f$ z(p,q,r,s)\f$ and radius \f$ \sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }\f$ 
-  (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0\f$)), 
+  (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)}) >0\f$), 
 
 - `ON_POSITIVE_SIDE` if `t` lies inside this oriented sphere. 
 
 \pre `p, q, r, s` are not coplanar. 
 Note that with this definition, if all the points have a weight equal 
 to 0, then 
-`power_test_3(p,q,r,s,t)` = `side_of_oriented_sphere(p,q,r,s,t)`. 
+`power_side_of_oriented_power_sphere_3(p,q,r,s,t)` = `side_of_oriented_sphere(p,q,r,s,t)`. 
 
 <HR WIDTH=50%>
 
@@ -98,7 +93,7 @@ definition analogous to the previous method, for coplanar points,
 with the power circle \f$ {z(p,q,r)}^{(w)}\f$. 
 \pre `p, q, r` are not collinear and `p, q, r, t` are coplanar. 
 If all the points have a weight equal to 0, then 
-`power_test_3(p,q,r,t)` = `side_of_oriented_circle(p,q,r,t)`. 
+`power_side_of_oriented_power_sphere_3(p,q,r,t)` = `side_of_oriented_circle(p,q,r,t)`. 
 
 <HR WIDTH=50%>
 
@@ -108,7 +103,7 @@ which is the same for collinear points, where \f$ {z(p,q)}^{(w)}\f$ is the
 power segment of `p` and `q`. 
 \pre `p` and `q` have different bare points, and `p, q, t` are collinear. 
 If all points have a weight equal to 0, then 
-`power_test_3(p,q,t)` gives the same answer as the kernel predicate 
+`power_side_of_oriented_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate 
 `s(p,q).has_on(t)` would give, where `s(p,q)` denotes the 
 segment with endpoints `p` and `q`. 
 
@@ -116,17 +111,18 @@ segment with endpoints `p` and `q`.
 
 `Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q)`, 
 
-which is the same for equal points, that is when `p` and `q` 
-have equal coordinates, then it returns the comparison of the weights 
+which is the same for equal bare points, then it returns the comparison of the weights 
 (`ON_POSITIVE_SIDE` when `q` is heavier than `p`). 
 \pre `p` and `q` have equal bare points.
 
 */ 
-typedef unspecified_type Power_test_3; 
+typedef unspecified_type Power_side_of_oriented_power_sphere_3; 
 
 
 /*!
-A predicate object that must provide the function operator 
+A predicate object,
+model of `Kernel::ComparePowerDistance_3`,
+that must provide the function operator 
 
 `Comparison_result operator()(Point_3 p, Weighted_point_3 q, Weighted_point_3 r)`, 
 
@@ -135,17 +131,28 @@ to the power distance
 between `p` and `r`. 
 
 \note This predicate is required if a call to
-`nearest_power_vertex` or `nearest_power_vertex_in_cell` is
+`nearest_power_vertex()` or `nearest_power_vertex_in_cell()` is
 issued.
 */ 
 typedef unspecified_type Compare_power_distance_3; 
 
 /*!
-A constructor type. The `operator()` constructs the bare point 
+A constructor type,
+model of `Kernel::ConstructPoint_3`.
+The `operator()` extracts the bare point from a weighted point.
+
+`Point_3 operator() ( Weighted_point_3 p);`
+*/
+typedef unspecified_type Construct_point_3;
+
+/*!
+A constructor type,
+model of `Kernel::ConstructWeightedCircumcenter_3`.
+The `operator()` constructs the bare point 
 which is the center of the smallest orthogonal sphere to the input 
 weighted points. 
 
-`Bare_point operator() ( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r, 			 Weighted_point_3 s);` 
+`Point_3 operator() ( Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s);` 
 
 
 \note Only required when the dual operations are used.
@@ -203,19 +210,51 @@ typedef unspecified_type Construct_ray_3;
 
 /// @} 
 
+/// \name
+/// When `is_Gabriel` functions are used, the traits class must
+/// in addition provide the following predicate object:
+/// @{
+
+/*!
+A predicate object that must provide the function operators
+
+`Bounded_side operator()(Weighted_point_3 p, Weighted_point_3 t)`,
+
+which returns the sign of the power test of `t` with respect to the smallest
+sphere orthogonal to `p` (which is the sphere with center `p` and squared
+radius `-w_p` with `w_p` the weight of `p`),
+
+`Bounded_side operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 t)`,
+
+which returns the sign of the power test of `t` with respect to the smallest
+sphere orthogonal to `p` and `q`,
+
+`Bounded_side operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 t)`,
+
+which returns the sign of the power test of `t` with respect to the smallest
+sphere orthogonal to `p`, `q`, and `r`.
+*/
+typedef unspecified_type Power_side_of_bounded_power_sphere_3;
+
+/// @}
+
 /// \name Operations 
 /// @{
 
 /*!
 
 */ 
-Power_test_3 power_test_3_object(); 
+Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object(); 
 
 /*!
 
 */
 Compare_power_distance_3 compare_power_distance_3_object();
 
+/*!
+
+*/
+Construct_point_3 construct_point_3_object();
 
 /// @}
 

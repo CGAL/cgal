@@ -9,6 +9,7 @@
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include "Messages_interface.h"
 #include "ui_Smoother_dialog.h"
@@ -79,7 +80,7 @@ class Mesh_3_optimization_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "optimization_plugin.json")
 
   typedef Polyhedron_demo_plugin_interface Base;
 public:
@@ -90,7 +91,7 @@ public:
   bool applicable(QAction* a) const {
     Scene_c3t3_item* item
       = qobject_cast<Scene_c3t3_item*>(scene->item(scene->mainSelectionIndex()));
-    if (NULL == item)
+    if (NULL == item || !item->is_valid())
       return false;
 
     if (a == actionOdt || a == actionLloyd)
@@ -226,8 +227,9 @@ Mesh_3_optimization_plugin::odt()
   QDialog dialog(mw);
   Ui::Smoother_dialog ui;
   ui.setupUi(&dialog);
-  dialog.setWindowTitle(tr("Odt-smoothing parameters"));
-  
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
+  dialog.setWindowTitle(tr("ODT-smoothing parameters"));
+
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()),
@@ -293,6 +295,7 @@ Mesh_3_optimization_plugin::lloyd()
   QDialog dialog(mw);
   Ui::Smoother_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Lloyd-smoothing parameters"));
   
   connect(ui.buttonBox, SIGNAL(accepted()),
@@ -359,6 +362,7 @@ Mesh_3_optimization_plugin::perturb()
   QDialog dialog(mw);
   Ui::LocalOptim_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Sliver perturbation parameters"));
   
   connect(ui.buttonBox, SIGNAL(accepted()),
@@ -423,6 +427,7 @@ Mesh_3_optimization_plugin::exude()
   QDialog dialog(mw);
   Ui::LocalOptim_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Sliver exudation parameters"));
   
   connect(ui.buttonBox, SIGNAL(accepted()),
@@ -558,7 +563,7 @@ optimization_done(Optimizer_thread* thread)
     str.append(QString("( %1 )<br>").arg(param));
   }
   
-  msg->information(qPrintable(str));
+  CGAL::Three::Three::information(qPrintable(str));
   
   // Treat new c3t3 item
   Scene_c3t3_item* result_item = thread->item();

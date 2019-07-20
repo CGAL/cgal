@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau, Stephane Tayeb
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_MESH_CELL_BASE_3_H
 #define CGAL_MESH_CELL_BASE_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 // #define CGAL_DEPRECATED_HEADER "<CGAL/Mesh_cell_base_3.h>"
 // #define CGAL_REPLACEMENT_HEADER "<CGAL/Compact_mesh_cell_base_3.h>"
@@ -146,7 +150,6 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
-    , time_stamp_(-1)
   {}
   
   Mesh_cell_base_3 (Vertex_handle v0,
@@ -161,7 +164,6 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
-    , time_stamp_(-1)
   {}
   
   Mesh_cell_base_3 (Vertex_handle v0,
@@ -180,7 +182,6 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
-    , time_stamp_(-1)
   {}
   
   // Default copy constructor and assignment operator are ok

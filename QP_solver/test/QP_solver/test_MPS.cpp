@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
@@ -21,7 +22,7 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifndef CGAL_USE_GMP
 #include <CGAL/MP_Float.h>

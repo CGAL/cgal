@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_QT_REGULAR_TRIANGULATION_GRAPHICS_ITEM_H
 #define CGAL_QT_REGULAR_TRIANGULATION_GRAPHICS_ITEM_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/apply_to_range.h>
@@ -205,8 +209,8 @@ RegularTriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
     }
 
 
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
     for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
         it != t->finite_vertices_end();
         it++){
@@ -221,12 +225,13 @@ void
 RegularTriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
 {
   Converter<K> convert;
+  typename T::Bare_point p = t->geom_traits().construct_point_2_object()(point);
 
   m_painter->setPen(this->verticesPen());
-  QMatrix matrix = m_painter->matrix();
-  m_painter->resetMatrix();
-  m_painter->drawPoint(matrix.map(convert(point)));
-  m_painter->setMatrix(matrix);
+  QTransform matrix = m_painter->worldTransform();
+  m_painter->resetTransform();
+  m_painter->drawPoint(matrix.map(convert(p)));
+  m_painter->setWorldTransform(matrix);
 }
 
 template <typename T>

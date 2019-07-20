@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2ConceptsDCEL
+\ingroup PkgArrangementOnSurface2ConceptsDCEL
 \cgalConcept
 
 A face record in a <span class="textsc">Dcel</span> data structure. A face may either be unbounded, 
@@ -72,7 +72,7 @@ bool is_unbounded() const;
 
 /*!
 returns an incident halfedge along the outer boundary of the face. 
-If `f` has no outer boundary, the function returns `NULL`. 
+If `f` has no outer boundary, the function returns `nullptr`. 
 */ 
 Halfedge* halfedge(); 
 

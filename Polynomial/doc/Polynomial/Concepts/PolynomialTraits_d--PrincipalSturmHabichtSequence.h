@@ -3,8 +3,6 @@
 \ingroup PkgPolynomialConcepts
 \cgalConcept
 
-<B>Note:</B> This functor is optional! 
-
 Computes the principal leading coefficients of the Sturm-Habicht sequence 
 of a polynomials \f$ f\f$ of type `PolynomialTraits_d::Polynomial_d` 
 with respect a certain variable \f$ x_i\f$. 
@@ -18,6 +16,8 @@ necessarily give the leading coefficient of the Sturm-Habicht polynomials.
 In case that `PolynomialTraits_d::Coefficient_type` is `RealEmbeddable`, the function `CGAL::number_of_real_roots` can be used 
 on the resulting sequence to count the number of distinct real roots of 
 the polynomial \f$ f\f$. 
+
+\note This functor is optional.
 
 \cgalRefines `AdaptableBinaryFunction` 
 \cgalRefines `CopyConstructible` 

@@ -154,10 +154,10 @@ TriangulationArrangementGraphicsItem<T>::paintVertex(typename T::Vertex_handle v
     } else {
       this->m_painter->setPen(this->verticesPen());
     }
-    QMatrix matrix = this->m_painter->matrix();
-    this->m_painter->resetMatrix();
+    QTransform matrix = this->m_painter->worldTransform();
+    this->m_painter->resetTransform();
     this->m_painter->drawPoint(matrix.map(convert(vh->point())));
-    this->m_painter->setMatrix(matrix);
+    this->m_painter->setWorldTransform(matrix);
   }
 }
 
@@ -170,8 +170,8 @@ TriangulationArrangementGraphicsItem<T>::paintVertices(QPainter *painter)
   {
     Converter<Geom_traits> convert;
 
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
     for(typename T::Finite_vertices_iterator it = this->t->finite_vertices_begin();
         it != this->t->finite_vertices_end();
         it++)

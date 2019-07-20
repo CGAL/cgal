@@ -37,6 +37,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifdef CGAL_HEADER_ONLY
@@ -51,19 +52,19 @@ namespace CORE {
 
 CGAL_INLINE_FUNCTION
 const extLong& extLong::getNaNLong() {
-  static extLong NaNLong(true);
+  static const extLong NaNLong(true);
   return NaNLong;
 }
 
 CGAL_INLINE_FUNCTION
 const extLong& extLong::getPosInfty() {
-  static extLong posInfty(EXTLONG_MAX);
+  static const extLong posInfty(EXTLONG_MAX);
   return posInfty;
 }
 
 CGAL_INLINE_FUNCTION
 const extLong& extLong::getNegInfty() {
-  static extLong negInfty(EXTLONG_MIN);
+  static const extLong negInfty(EXTLONG_MIN);
   return negInfty;
 }
 

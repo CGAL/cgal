@@ -1,7 +1,9 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
+#include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/edge_aware_upsample_point_set.h>
@@ -33,11 +35,13 @@ class Polyhedron_demo_point_set_upsampling_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   
   QAction* actionEdgeAwareUpsampling;
-
+  Messages_interface* message_interface;
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* mi) {
+    message_interface = mi;
     scene = scene_interface;
-    actionEdgeAwareUpsampling = new QAction(tr("Point Set Edge Aware Upsampling"), mainWindow);
+    actionEdgeAwareUpsampling = new QAction(tr("Edge Aware Upsampling"), mainWindow);
+    actionEdgeAwareUpsampling->setProperty("subMenuName","Point Set Processing");
     actionEdgeAwareUpsampling->setObjectName("actionEdgeAwareUpsampling");
     autoConnectActions();
   }
@@ -83,7 +87,7 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
     {
       if (!(item->has_normals ()))
 	{
-	  std::cerr << "Error: upsampling algorithm requires point set with normals." << std::endl;
+          CGAL::Three::Three::error("Error: upsampling algorithm requires point set with normals.");
 	  return;
 	}
       
@@ -110,24 +114,25 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
       CGAL::Timer task_timer; task_timer.start();
 
       // Computes average spacing
-      double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
-                                      points->begin(), points->end(),
-                                      6 /* knn = 1 ring */);
-
+      double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(*points, 6);
+      
+      std::size_t nb_selected = points->nb_selected_points();
+      
       std::vector<std::pair<Point_set::Point, Point_set::Vector> > new_points;
-      CGAL::edge_aware_upsample_point_set<Concurrency_tag>(points->begin(), 
-					  points->end(), 
+      CGAL::edge_aware_upsample_point_set<Concurrency_tag>(points->all_or_selection_if_not_empty(),
 					  std::back_inserter(new_points),
-					  CGAL::make_identity_property_map(Point_set::value_type()),
-					  CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
-					  dialog.sharpness_angle(), 
-					  dialog.edge_sensitivity(),
-					  dialog.neighborhood_radius() * average_spacing,
-					  output_size);
-
+                                          points->parameters().
+                                          sharpness_angle (dialog.sharpness_angle()).
+                                          edge_sensitivity (dialog.edge_sensitivity()).
+                                          neighbor_radius (dialog.neighborhood_radius() * average_spacing).
+                                          number_of_output_points (output_size));
+      nb_selected += new_points.size();
+      
       for (unsigned int i = 0; i < new_points.size (); ++ i)
-	points->push_back (Point_set::Point_with_normal (new_points[i].first,
-							 new_points[i].second));
+	points->insert (new_points[i].first, new_points[i].second);
+
+      if (nb_selected != new_points.size())
+        points->set_first_selected (points->end() - nb_selected);
       
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << task_timer.time() << " seconds, "

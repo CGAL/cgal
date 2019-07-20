@@ -1,0 +1,295 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: fig2dev Version 3.2.6 -->
+<!-- CreationDate: Mon Nov 21 08:46:35 2016 -->
+<!-- Magnification: 1.050 -->
+<svg	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	width="15.0in" height="3.0in"
+	viewBox="-4737 5042 18050 3568">
+<g style="stroke-width:.025in; fill:none">
+<!-- Line -->
+<polyline points="4251,6141
+8173,6141
+" style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="4251" y="5055" width="3921" height="1275" rx="0" 
+style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="4251,5385
+8173,5385
+" style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="-188,5763
+3448,5763
+" style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="-188,6377
+3448,6377
+" style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="-188" y="5385" width="3637" height="1228" rx="0" 
+style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9448,7606
+12566,7606
+" style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="9448" y="7228" width="3118" height="803" rx="0" 
+style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9448,7889
+12566,7889
+" style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="-4724,5763
+-1086,5763
+" style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="-4724,6377
+-1086,6377
+" style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="-4724" y="5385" width="3637" height="1228" rx="0" 
+style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9070,5622
+11244,5622
+" style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="9070,6000
+11244,6000
+" style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="9070" y="5244" width="2173" height="897" rx="0" 
+style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="-4440,7748
+850,7748
+" style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="-4440,8362
+850,8362
+" style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="-4440" y="7370" width="5291" height="1228" rx="0" 
+style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="1889,7653
+7511,7653
+" style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="1889,8267
+7511,8267
+" style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="1889" y="7275" width="5622" height="1228" rx="0" 
+style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10110,7228
+10110,6361
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 10110 7228 - 10110 6110-->
+<polygon points="10220 6348
+10110 6128
+10000 6348
+10220 6348
+
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+fill:white;"/>
+<!-- Line -->
+<polyline points="9448,7700
+8645,7700
+8645,6000
+7984,6000
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+stroke-dasharray:62 62;"/>
+<!-- Line -->
+<polyline points="8645,5995
+9070,6000
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+stroke-dasharray:62 62;"/>
+<!-- Line -->
+<polyline points="3874,7275
+3874,6992
+2740,6992
+2740,6833
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 2740 6992 - 2740 6582-->
+<polygon points="2850 6820
+2740 6600
+2629 6820
+2850 6820
+
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+fill:white;"/>
+<!-- Line -->
+<polyline points="-2031,7370
+-2031,6992
+-2929,6992
+-2929,6833
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint -2929 6992 - -2929 6582-->
+<polygon points="-2818 6820
+-2929 6600
+-3039 6820
+-2818 6820
+
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+fill:white;"/>
+<!-- Text -->
+<text xml:space="preserve" x="4771" y="5291" fill="#000000"  font-family="Times" font-style="italic" font-weight="bold" font-size="202" text-anchor="start">LinearCellComplexItems</text>
+<!-- Text -->
+<text xml:space="preserve" x="4346" y="5574" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">+ Type Traits</text>
+<!-- Text -->
+<text xml:space="preserve" x="4346" y="5811" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">+ Type Dart_wrapper&#60;LCC&#62;::Dart_info</text>
+<!-- Text -->
+<text xml:space="preserve" x="4346" y="6047" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">+ Types Dart_wrapper&#60;LCC&#62;::Attributes</text>
+<!-- Text -->
+<text xml:space="preserve" x="94" y="5669" fill="#707070"  font-family="Times" font-style="normal" font-weight="bold" font-size="202" text-anchor="start">Combinatorial_map</text>
+<!-- Text -->
+<text xml:space="preserve" x="-94" y="6000" fill="#707070"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">+ typedef Items::Dart_info Dart_info</text>
+<!-- Text -->
+<text xml:space="preserve" x="-94" y="6236" fill="#707070"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">+ typedef Items::Attributes Attributes</text>
+<!-- Text -->
+<text xml:space="preserve" x="9543" y="7559" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="202" text-anchor="start">Cell_attribute_with_point</text>
+<!-- Text -->
+<text xml:space="preserve" x="9543" y="7795" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">- LCC:Point mpoint;</text>
+<!-- Text -->
+<text xml:space="preserve" x="-4440" y="5669" fill="#707070"  font-family="Times" font-style="normal" font-weight="bold" font-size="202" text-anchor="start">Generalized_map</text>
+<!-- Text -->
+<text xml:space="preserve" x="-4629" y="6000" fill="#707070"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">+ typedef Items::Dart_info Dart_info</text>
+<!-- Text -->
+<text xml:space="preserve" x="-4629" y="6236" fill="#707070"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">+ typedef Items::Attributes Attributes</text>
+<!-- Text -->
+<text xml:space="preserve" x="9165" y="5905" fill="#707070"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">- Info info</text>
+<!-- Text -->
+<text xml:space="preserve" x="9212" y="5574" fill="#707070"  font-family="Times" font-style="normal" font-weight="bold" font-size="202" text-anchor="start">Cell_attribute</text>
+<!-- Text -->
+<text xml:space="preserve" x="-4393" y="7653" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="202" text-anchor="start">Linear_cell_complex_for_generalized_map</text>
+<!-- Text -->
+<text xml:space="preserve" x="1937" y="7559" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="202" text-anchor="start">Linear_cell_complex_for_combinatorial_map</text>
+<!-- Text -->
+<g transform="translate(8173,5716) rotate(-315.00073661)" >
+<text xml:space="preserve" x="0" y="0" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">&#60;&#60;instances Of&#62;&#62;</text>
+</g><!-- Text -->
+<text xml:space="preserve" x="-1606" y="6897" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">&#60;&#60;instance Of&#62;&#62;</text>
+<!-- Text -->
+<text xml:space="preserve" x="6614" y="6708" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="152" text-anchor="start">&#60;&#60;instance Of&#62;&#62;</text>
+<!-- Line: box -->
+<rect x="2598" y="5196" width="1086" height="283" rx="0" 
+style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+stroke-dasharray:41 41;fill:#ffffff;
+"/>
+<!-- Line: box -->
+<rect x="10440" y="7039" width="2314" height="283" rx="0" 
+style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+stroke-dasharray:41 41;fill:#ffffff;
+"/>
+<!-- Line: box -->
+<rect x="-1937" y="5196" width="1086" height="283" rx="0" 
+style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+stroke-dasharray:41 41;fill:#ffffff;
+"/>
+<!-- Line: box -->
+<rect x="10062" y="5055" width="2314" height="283" rx="0" 
+style="stroke:#707070;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+stroke-dasharray:41 41;fill:#ffffff;
+"/>
+<!-- Line: box -->
+<rect x="-1370" y="7181" width="2078" height="283" rx="0" 
+style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+stroke-dasharray:41 41;fill:#ffffff;
+"/>
+<!-- Line: box -->
+<rect x="5291" y="7086" width="2078" height="283" rx="0" 
+style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+stroke-dasharray:41 41;fill:#ffffff;
+"/>
+<!-- Text -->
+<text xml:space="preserve" x="2645" y="5385" fill="#707070"  font-family="Times" font-style="italic" font-weight="normal" font-size="126" text-anchor="start">d, Items, Alloc</text>
+<!-- Text -->
+<text xml:space="preserve" x="10488" y="7228" fill="#000000"  font-family="Times" font-style="italic" font-weight="normal" font-size="126" text-anchor="start">LCC,Info_,Tag,OnMerge,OnSplit</text>
+<!-- Text -->
+<text xml:space="preserve" x="-1889" y="5385" fill="#707070"  font-family="Times" font-style="italic" font-weight="normal" font-size="126" text-anchor="start">d, Items, Alloc</text>
+<!-- Text -->
+<text xml:space="preserve" x="10110" y="5244" fill="#707070"  font-family="Times" font-style="italic" font-weight="normal" font-size="126" text-anchor="start">Map,Info_,Tag,OnMerge,OnSplit</text>
+<!-- Text -->
+<text xml:space="preserve" x="-1322" y="7370" fill="#000000"  font-family="Times" font-style="italic" font-weight="normal" font-size="126" text-anchor="start">d, d2, Traits_, Items_, Alloc_</text>
+<!-- Text -->
+<text xml:space="preserve" x="5291" y="7275" fill="#000000"  font-family="Times" font-style="italic" font-weight="normal" font-size="126" text-anchor="start">d, d2, Traits_, Items_, Alloc_</text>
+<!-- Line -->
+<polyline points="-47,7228
+-47,6850
+5763,6850
+5763,6330
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+stroke-dasharray:62 62;"/>
+<!-- Line -->
+<polyline points="6661,7181
+6661,6850
+7228,6850
+7228,6330
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+stroke-dasharray:62 62;"/>
+</g>
+</svg>

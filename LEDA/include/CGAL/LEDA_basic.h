@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Matthias Baesken
@@ -33,11 +34,7 @@
 // The following is needed for LEDA 4.4 due to min/max problems...
 #  define LEDA_NO_MIN_MAX_TEMPL
 
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/basic.h>
-#else
 #include <LEDA/system/basic.h>
-#endif
 
 #ifdef LEDA_NAMESPACE
 #  define CGAL_LEDA_SCOPE  leda

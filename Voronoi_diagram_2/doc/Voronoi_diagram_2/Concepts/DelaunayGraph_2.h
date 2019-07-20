@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgVoronoiDiagramAdaptor2Concepts
+\ingroup PkgVoronoiDiagram2Concepts
 \cgalConcept
 
 The concept `DelaunayGraph_2` defines the requirements for the 

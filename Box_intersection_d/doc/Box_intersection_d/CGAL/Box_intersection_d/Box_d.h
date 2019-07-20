@@ -12,15 +12,14 @@ need to provide a unique `id`-number. The policy parameter
 `IdPolicy` offers several choices. The template parameters have to 
 comply with the following requirements: 
 
-<UL> 
-<LI>`NT`: number type for the box boundaries, needs to be a model 
-of the `Assignable` and the `LessThanComparable` concept. 
-<LI>`int D`: the dimension of the box. 
-<LI>`IdPolicy`: specifies how the `id`-number will be 
-provided. Can be one of the following types, where 
+\tparam NT is the number type for the box boundaries. It must meet the requierements
+of the concepts `Assignable` and `LessThanComparable`.
+\tparam D is an integer and the dimension of the box.
+\tparam IdPolicy specifies how the `id`-number will be
+provided and can be one of the following types, where
 `ID_EXPLICIT` is the default for this parameter: 
 <UL> 
-<LI>`ID_NONE`: no `id`-number is provided. Can be useful 
+<LI>`ID_NONE`: no `id`-number is provided. This can be useful
 if `Box_d` is used as a base class for a different 
 implementation of `id`-numbers than the ones provided 
 here. 
@@ -32,15 +31,14 @@ the old one, which is the behavior needed by the
 `box_self_intersection_d()` algorithm. This is therefore 
 the safe default implementation. 
 <LI>`ID_FROM_BOX_ADDRESS`: casts the address of the box into a 
-`std::ptrdiff_t` to create the `id`-number. Works fine 
+`std::ptrdiff_t` to create the `id`-number. This works fine
 if the intersection algorithms work effectively with pointers 
 to boxes, but not in the case where the algorithms work with 
 box values, because the algorithms modify the order of the 
 boxes, and the `box_self_intersection_d()` algorithm 
 creates copies of the boxes that would not have identical 
 `id`-numbers. 
-</UL> 
-</UL> 
+</UL>
 
 \cgalModels `BoxIntersectionBox_d`
 

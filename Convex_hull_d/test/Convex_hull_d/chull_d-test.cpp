@@ -1,6 +1,5 @@
-#define CGAL_NO_DEPRECATION_WARNINGS
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
-#include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Convex_hull_d_traits_3.h>

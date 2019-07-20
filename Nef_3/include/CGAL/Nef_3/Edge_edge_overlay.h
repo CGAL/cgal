@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
 #ifndef CGAL_EDGE_EDGE_OVERLAY_H
 #define CGAL_EDGE_EDGE_OVERLAY_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Nef_3/SNC_decorator.h>

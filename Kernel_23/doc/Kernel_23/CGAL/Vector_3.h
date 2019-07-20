@@ -12,7 +12,9 @@ from \f$ p_1\f$ to \f$ p_2\f$.
 will explicitly state where you can pass this constant as an argument 
 instead of a vector initialized with zeros. 
 
-\sa `Kernel::Vector_3` 
+\cgalModels `Kernel::Vector_3`
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+
 \sa `cross_product_grp` 
 \sa `determinant_grp` 
 
@@ -82,29 +84,11 @@ Vector_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);
 
 /// @} 
 
-/// \name Operations 
-/// @{
-
-/*!
-Test for equality: two vectors are equal, iff their \f$ x\f$, \f$ y\f$ 
-and \f$ z\f$ coordinates are equal. You can compare a vector with the 
-`NULL_VECTOR`. 
-*/ 
-bool operator==(const Vector_3<Kernel> &w) const; 
-
-/*!
-Test for inequality. You can compare a vector with the 
-`NULL_VECTOR`. 
-*/ 
-bool operator!=(const Vector_3<Kernel> &w) const; 
-
-/// @}
-
 /// \name Coordinate Access
 /// There are two sets of coordinate access functions, namely to the
 /// homogeneous and to the %Cartesian coordinates. They can be used
 /// independently from the chosen kernel model. Note that you do not
-/// loose information with the homogeneous representation, because the
+/// lose information with the homogeneous representation, because the
 /// `FieldNumberType` is a quotient.
 /// @{
 
@@ -152,13 +136,13 @@ Kernel::FT z() const;
 /// @{
 
 /*!
-returns the i'th homogeneous coordinate of `v`, starting with 0. 
+returns the i'th homogeneous coordinate of `v`.
 \pre \f$ 0\leq i \leq3\f$. 
 */ 
 Kernel::RT homogeneous(int i) const; 
 
 /*!
-returns the i'th %Cartesian coordinate of `v`, starting at 0. 
+returns the i'th %Cartesian coordinate of `v`.
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 Kernel::FT cartesian(int i) const; 
@@ -201,25 +185,38 @@ Direction_3<Kernel> direction() const;
 /// \name Operators 
 /// @{
 
-/// \ingroup Kernel_operator_plus
-///@{
+/*!
+Test for equality: two vectors are equal, iff their \f$ x\f$, \f$ y\f$
+and \f$ z\f$ coordinates are equal. You can compare a vector with the
+`NULL_VECTOR`.
+*/
+bool operator==(const Vector_3<Kernel> &w) const;
+
+/*!
+Test for inequality. You can compare a vector with the
+`NULL_VECTOR`.
+*/
+bool operator!=(const Vector_3<Kernel> &w) const;
 
 /*!
 Addition. 
 */ 
 Vector_3<Kernel> operator+(const Vector_3<Kernel> &w) const; 
 
-/// @}
-
-/// \ingroup Kernel_operator_minus
-///@{
+/*!
+Addition.
+*/
+Vector_3<Kernel>& operator+=(const Vector_3<Kernel> &w);
 
 /*!
 Subtraction. 
 */ 
 Vector_3<Kernel> operator-(const Vector_3<Kernel> &w) const; 
 
-/// @}
+/*!
+Subtraction.
+*/
+Vector_3<Kernel>& operator-=(const Vector_3<Kernel> &w);
 
 /*!
 Returns the opposite vector. 
@@ -232,16 +229,26 @@ Division by a scalar.
 Vector_3<Kernel> operator/(const Kernel::RT &s) const; 
 
 /*!
-returns the squared length of `v`. 
-*/ 
-Kernel::FT squared_length() const; 
+Division by a scalar.
+*/
+Vector_3<Kernel>& operator/=(const Kernel::RT &s);
 
 /*!
 returns the scalar product (= inner product) of the two vectors. 
 */ 
 Kernel::FT operator*(const Vector_3<Kernel> &w) const;
 
+/*!
+Multiplication by a scalar.
+*/
+Vector_3<Kernel>& operator*=(const Kernel::FT &s);
+
 /// @}
+
+/*!
+returns the squared length of `v`.
+*/
+Kernel::FT squared_length() const;
 
 }; /* end Vector_3 */
 

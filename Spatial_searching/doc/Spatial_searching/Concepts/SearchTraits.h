@@ -6,7 +6,9 @@ The concept `SearchTraits` defines the requirements for the template
 parameter of the search classes. 
 
 \cgalHasModel `CGAL::Cartesian_d<FT>` 
-\cgalHasModel `CGAL::Homogeneous_d<RT>` 
+\cgalHasModel `CGAL::Homogeneous_d<RT>`
+\cgalHasModel `CGAL::Epick_d<DimensionTag>`
+\cgalHasModel `CGAL::Epeck_d<DimensionTag>`
 \cgalHasModel `CGAL::Search_traits_2<Kernel>` 
 \cgalHasModel `CGAL::Search_traits_3<Kernel>`
 \cgalHasModel `CGAL::Search_traits_d<Kernel,Dim>`
@@ -30,8 +32,7 @@ or `CGAL::Dynamic_dimension_tag`.
 typedef unspecified_type Dimension;
 
 /*!
-Point type. `CGAL::Kernel_traits` has to be 
-specialized for this type. 
+Point type.
 */ 
 typedef unspecified_type Point_d; 
 

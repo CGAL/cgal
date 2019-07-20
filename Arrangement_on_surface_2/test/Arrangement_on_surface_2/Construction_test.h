@@ -6,13 +6,15 @@
 #include <string>
 #include <algorithm>
 
-#include <CGAL/basic.h>
+
 #include <CGAL/Timer.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 
 #include "utils.h"
 #include "IO_base_test.h"
+
+#include <CGAL/disable_warnings.h>
 
 /*! Construction test */
 template <typename T_Geom_traits, typename T_Topol_traits>
@@ -225,9 +227,19 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
               << m_num_faces << ")" << std::endl;
   }
 
-  if (m_arr->number_of_vertices() != m_num_vertices) return false;
-  if (m_arr->number_of_edges() != m_num_edges) return false;
-  if (m_arr->number_of_faces() != m_num_faces) return false;
+  if ((m_arr->number_of_vertices() != m_num_vertices) ||
+      (m_arr->number_of_edges() != m_num_edges) ||
+      (m_arr->number_of_faces() != m_num_faces)) {
+    std::cout << "# vertices, edge, faces obtained: ("
+              << m_arr->number_of_vertices() << ","
+              << m_arr->number_of_edges() << ","
+              << m_arr->number_of_faces() << ")"
+              << ", expected: ("
+              << m_num_vertices << ","
+              << m_num_edges << ","
+              << m_num_faces << ")" << std::endl;
+    return false;
+  }
 
   Point_container points_res(m_num_vertices);
   typename Point_container::iterator pit = points_res.begin();
@@ -239,33 +251,49 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
   std::sort(points_res.begin(), pit, pt_compare);
 
   if (m_verbose_level > 2) {
-    std::copy(points_res.begin(), pit,
+    std::copy(points_res.begin(), points_res.end(),
               std::ostream_iterator<Point_2>(std::cout, "\n"));
   }
 
   Point_equal point_eq(m_geom_traits);
-  if (! std::equal(points_res.begin(), pit, m_points.begin(), point_eq))
+  if (! std::equal(points_res.begin(), pit, m_points.begin(), point_eq)) {
+    std::cout << "Expected: " << std::endl;
+    std::copy(m_points.begin(), m_points.end(),
+              std::ostream_iterator<Point_2>(std::cout, "\n"));
+    std::cout << "Obtained: " << std::endl;
+    std::copy(points_res.begin(), points_res.end(),
+              std::ostream_iterator<Point_2>(std::cout, "\n"));
     return false;
+  }
 
   std::vector<X_monotone_curve_2> curves_res(m_arr->number_of_edges());
   typename Xcurve_container::iterator xcit = curves_res.begin();
 
   Edge_const_iterator eit;
-  for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) {
-    if (is_interior(eit->source()) && is_interior(eit->target()))
-      *xcit++ = eit->curve();
-  }
+  for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit)
+    *xcit++ = eit->curve();
+
   Curve_compare<Geom_traits> curve_compare(m_geom_traits);
   std::sort(curves_res.begin(), xcit, curve_compare);
 
   if (m_verbose_level > 2) {
-    std::copy(curves_res.begin(), xcit,
-              std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
+    for (typename Xcurve_container::iterator it = curves_res.begin();
+         it != curves_res.end(); ++it)
+      std::cout << *it << " " << it->data() << std::endl;
   }
 
   Curve_equal curve_eq(m_geom_traits);
-  if (! std::equal(curves_res.begin(), xcit, m_xcurves.begin(), curve_eq))
+  if (! std::equal(curves_res.begin(), xcit, m_xcurves.begin(), curve_eq)) {
+    std::cout << "Expected: " << std::endl;
+    for (typename Xcurve_container::iterator it = m_xcurves.begin();
+         it != m_xcurves.end(); ++it)
+      std::cout << *it << " " << it->data() << std::endl;
+    std::cout << "Obtained: " << std::endl;
+    for (typename Xcurve_container::iterator it = curves_res.begin();
+         it != curves_res.end(); ++it)
+      std::cout << *it << " " << it->data() << std::endl;
     return false;
+  }
 
   if (m_arr->number_of_faces() == 1) {
     Face_const_iterator fit = m_arr->faces_begin();
@@ -647,5 +675,7 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::perform()
   if (! test9()) return false;
   return true;
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif

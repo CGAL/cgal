@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 #ifndef CGAL_PARTITION_H
 #define CGAL_PARTITION_H
+
+#include <CGAL/license/Partition_2.h>
+
 
 #include <CGAL/Partition_2/partition_greene_approx_convex_2.h>
 #include <CGAL/Partition_2/partition_optimal_convex_2.h>

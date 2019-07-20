@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <andreas.fabri@geometryfactory.com>
 
 #ifndef CGAL_NEF_DEFAULT_ITEMS_H
 #define CGAL_NEF_DEFAULT_ITEMS_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/Nef_3/SNC_items.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>

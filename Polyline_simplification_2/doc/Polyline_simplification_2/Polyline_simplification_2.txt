@@ -46,7 +46,7 @@ true, for instance, upon reaching a desired number of vertices or
 reaching a maximum simplification error.
 
 The polyline simplification algorithm operates on a triangulation
-class from Chapter \ref PkgTriangulation2Summary, namely
+class from Chapter \ref PkgTriangulation2, namely
 `Constrained_triangulation_plus_2`.  This data structure allows to
 remove vertices of a polyline constraint, while keeping the points of
 the removed vertices of the polyline constraint. The fact that it is a
@@ -196,6 +196,12 @@ At the end we remove the points that were kept from the constraints.
 
 \cgalExample{Polyline_simplification_2/points_and_vertices.cpp}
 
+\subsection Subsection_PolylineSimplification_Terrain Simplification of a Terrain
+
+It is possible to use the class `Projection_traits_xy_3` in order to simplify polylines in space.
+Note that the segment length is computed in the xy-plane, and the polyline must not have any vertical segment.
+
+\cgalExample{Polyline_simplification_2/simplify_terrain.cpp}
 
 \section Section_PolylineSimplification_History Design and Implementation History
 

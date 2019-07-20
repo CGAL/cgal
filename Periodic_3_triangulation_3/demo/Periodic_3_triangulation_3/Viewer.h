@@ -1,9 +1,9 @@
 #ifndef VIEWER_H
 #define VIEWER_H
+#include <QMap>
+#include <CGAL/Qt/qglviewer.h>
 
-#include <QGLViewer/qglviewer.h>
-
-class Viewer : public QGLViewer{
+class Viewer : public CGAL::QGLViewer{
     Q_OBJECT
 
   public:

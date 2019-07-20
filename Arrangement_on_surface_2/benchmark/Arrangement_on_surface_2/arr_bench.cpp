@@ -48,11 +48,7 @@ enum MaxFilesNumber {
 // Stream:
 #if BENCH_KERNEL == LEDA_KERNEL || BENCH_KERNEL == MY_KERNEL
 #if defined(USE_CGAL_WINDOW)
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/rat_window.h>
-#else
 #include <LEDA/graphics/rat_window.h>
-#endif
 #else
 #include <CGAL/IO/Qt_widget_Leda_rat.h>
 #endif
@@ -281,11 +277,11 @@ inline std::ostream & operator<<(std::ostream & os, const Arr::Vertex & vertex)
 inline Window_stream & operator<<(Window_stream & ws, Arr & arr)
 {
   Arr::Edge_iterator ei;
-  ws << CGAL::BLUE;
+  ws << CGAL::blue();
   for (ei = arr.edges_begin(); ei != arr.edges_end(); ++ei)
     ws << (*ei).curve();
   Arr::Vertex_iterator vi;
-  ws << CGAL::RED;
+  ws << CGAL::red();
   for (vi = arr.vertices_begin(); vi != arr.vertices_end(); ++vi)
     ws << (*vi).point();
   return ws;
@@ -478,7 +474,7 @@ public:
     m_window->flush();
 #else
     m_window->lock();
-    *m_window << CGAL::BackgroundColor(CGAL::WHITE) << CGAL::RED;
+    *m_window << CGAL::BackgroundColor(CGAL::white()) << CGAL::red();
     (*m_window) << arr;
     m_window->unlock();
     App->flush();
@@ -494,9 +490,9 @@ public:
       ps_stream.set_line_width(1);
       CGAL::Arr_drawer<Arr, CGAL::Postscript_file_stream> drawer(ps_stream);
       // drawer.draw_faces(arr.faces_begin(), arr.faces_end());
-      ps_stream << CGAL::BLUE;
+      ps_stream << CGAL::blue();
       drawer.draw_halfedges(arr.halfedges_begin(), arr.halfedges_end());
-      ps_stream << CGAL::RED;
+      ps_stream << CGAL::red();
       drawer.draw_vertices(arr.vertices_begin(), arr.vertices_end());
 
       // draw_arr(arr, drawer, ps_stream);

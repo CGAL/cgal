@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
 
@@ -25,6 +26,7 @@
 #define CGAL_AFF_TRANSFORMATION_3_H
 
 #include <CGAL/Dimension.h>
+#include <CGAL/aff_transformation_tags.h>
 
 namespace CGAL {
 

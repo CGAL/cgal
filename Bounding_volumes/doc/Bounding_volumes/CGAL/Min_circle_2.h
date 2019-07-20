@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumes
+\ingroup PkgBoundingVolumesRef
 
 An object of the class `Min_circle_2` is the unique circle of smallest area 
 enclosing a finite (multi)set of points in two-dimensional Euclidean 
@@ -130,7 +130,7 @@ template < class InputIterator >
 Min_circle_2( InputIterator first, 
 InputIterator last, 
 bool randomize, 
-Random& random = CGAL::default_random, 
+Random& random = CGAL::get_default_random(),
 const Traits& traits = Traits() ); 
 
 /*!

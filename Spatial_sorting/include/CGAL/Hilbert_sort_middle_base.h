@@ -14,13 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     :  Olivier Devillers
 
 #ifndef CGAL_HILBERT_SORT_MIDDLE_BASE_H
 #define CGAL_HILBERT_SORT_MIDDLE_BASE_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <algorithm>
 
 namespace CGAL {

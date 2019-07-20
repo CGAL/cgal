@@ -48,10 +48,10 @@ int main()
   ch->set_subdomain_index(sub_index);
   
   // Init facet
-  Tr::Point facet_circum =
+  Tr::Bare_point facet_circum =
     tr.geom_traits().construct_weighted_circumcenter_3_object()(
-      ch->vertex(k+1)->point(), ch->vertex(k+2)->point(), ch->vertex(k+3)->point());
-  
+      tr.point(ch, k+1), tr.point(ch, k+2), tr.point(ch, k+3));
+
   ch->set_surface_patch_index(k,surf_index);
   ch->set_facet_surface_center(k,facet_circum);
   ch->set_facet_surface_center_index(k,index);
@@ -70,67 +70,72 @@ int main()
   // -----------------------------------
   // Test edge criteria
   // -----------------------------------
+  Tr::Bare_point bp1 = tr.geom_traits().construct_point_3_object()(p1);
+
   Mc ec1(edge_size = 1);
-  assert( ec1.edge_criteria_object().sizing_field(p1,1,index) == 1 );
+  assert( ec1.edge_criteria_object().sizing_field(bp1,1,index) == 1 );
   
   Mc ec2(edge_sizing_field = Esf(2));
-  assert( ec2.edge_criteria_object().sizing_field(p1,1,index) == 2 );
+  assert( ec2.edge_criteria_object().sizing_field(bp1,1,index) == 2 );
 
   Mc ec3(edge_sizing_field = 3.);
-  assert( ec3.edge_criteria_object().sizing_field(p1,1,index) == 3 );
+  assert( ec3.edge_criteria_object().sizing_field(bp1,1,index) == 3 );
   
   Mc ec4(edge_size = 4.1,
          edge_sizing_field = Esf(4.2));
-  assert( ec4.edge_criteria_object().sizing_field(p1,1,index) == 4.1 );
+  assert( ec4.edge_criteria_object().sizing_field(bp1,1,index) == 4.1 );
   
   Mc ec5(sizing_field = 5.);
-  assert( ec5.edge_criteria_object().sizing_field(p1,1,index) == 5 );
+  assert( ec5.edge_criteria_object().sizing_field(bp1,1,index) == 5 );
   
   Mc ec6(sizing_field = 6.1,
          edge_sizing_field = 6.2);
-  assert( ec6.edge_criteria_object().sizing_field(p1,1,index) == 6.2 );
+  assert( ec6.edge_criteria_object().sizing_field(bp1,1,index) == 6.2 );
   
   Mc ec7(sizing_field = 7.1,
          edge_size = 7.2);
-  assert( ec7.edge_criteria_object().sizing_field(p1,1,index) == 7.2 );
+  assert( ec7.edge_criteria_object().sizing_field(bp1,1,index) == 7.2 );
   
   
   // -----------------------------------
   // Test facet criteria
   // -----------------------------------
   typedef Tr::Geom_traits::FT FT;
-  FT radius_facet = CGAL::sqrt(CGAL::squared_radius(ch->vertex(k+1)->point(),
-                                                    ch->vertex(k+2)->point(),
-                                                    ch->vertex(k+3)->point()));
-  
+  Tr::Geom_traits::Compute_squared_radius_3 squared_radius = tr.geom_traits().compute_squared_radius_3_object();
+  Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+
+  FT radius_facet = CGAL::sqrt(squared_radius(cp(tr.point(ch, k+1)),
+                                              cp(tr.point(ch, k+2)),
+                                              cp(tr.point(ch, k+3))));
+
   FT facet_size_ok = radius_facet*FT(10);
   FT facet_size_nok = radius_facet/FT(10);
 
   Mc fc1(facet_size = facet_size_ok);
-  assert( ! fc1.facet_criteria_object()(f) );
-  
+  assert( ! fc1.facet_criteria_object()(tr, f) );
+
   Mc fc2(facet_sizing_field = facet_size_ok);
-  assert( ! fc2.facet_criteria_object()(f) );
+  assert( ! fc2.facet_criteria_object()(tr, f) );
 
   Mc fc3(facet_sizing_field = Fsf(facet_size_ok));
-  assert( ! fc3.facet_criteria_object()(f) );
+  assert( ! fc3.facet_criteria_object()(tr, f) );
 
   Mc fc4(facet_sizing_field = facet_size_nok,
          facet_size = facet_size_ok);
-  assert( ! fc4.facet_criteria_object()(f) );
-  
+  assert( ! fc4.facet_criteria_object()(tr, f) );
+
   Mc fc5(sizing_field = facet_size_ok);
-  assert( ! fc5.facet_criteria_object()(f) );
-  
+  assert( ! fc5.facet_criteria_object()(tr, f) );
+
   Mc fc6(facet_size = facet_size_ok,
          facet_sizing_field = facet_size_nok,
          sizing_field = facet_size_nok);
-  assert( ! fc6.facet_criteria_object()(f) );
-  
+  assert( ! fc6.facet_criteria_object()(tr, f) );
+
   Mc fc7(facet_sizing_field = Fsf(facet_size_ok),
          sizing_field = facet_size_nok);
-  assert( ! fc7.facet_criteria_object()(f) );
-  
+  assert( ! fc7.facet_criteria_object()(tr, f) );
+
   Mc fc8(facet_distance = 8.);
   Mc fc9(facet_angle = 9.);
   Mc fc10(facet_angle = 10.1,
@@ -146,47 +151,47 @@ int main()
   
   // Test topological criterion creation
   Mc fc14(facet_topology = CGAL::FACET_VERTICES_ON_SURFACE);
-  assert( ! fc14.facet_criteria_object()(f) );
+  assert( ! fc14.facet_criteria_object()(tr, f) );
   
   Mc fc15(facet_topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
-  assert( fc15.facet_criteria_object()(f) );
+  assert( fc15.facet_criteria_object()(tr, f) );
   
   // -----------------------------------
   // Test cell criteria
   // -----------------------------------
-  FT radius_cell = CGAL::sqrt(CGAL::squared_radius(ch->vertex(0)->point(),
-                                                   ch->vertex(1)->point(),
-                                                   ch->vertex(2)->point(),
-                                                   ch->vertex(3)->point()));
-  
+  FT radius_cell = CGAL::sqrt(squared_radius(cp(tr.point(ch, 0)),
+                                             cp(tr.point(ch, 1)),
+                                             cp(tr.point(ch, 2)),
+                                             cp(tr.point(ch, 3))));
+
   FT cell_size_ok = radius_cell*FT(10);
   FT cell_size_nok = radius_cell/FT(10);
-  
+
   Mc cc1(cell_size = cell_size_ok);
-  assert( ! cc1.cell_criteria_object()(ch) );
-  
+  assert( ! cc1.cell_criteria_object()(tr, ch) );
+
   Mc cc2(cell_sizing_field = cell_size_ok);
-  assert( ! cc2.cell_criteria_object()(ch) );
-  
+  assert( ! cc2.cell_criteria_object()(tr, ch) );
+
   Mc cc3(cell_sizing_field = Fsf(cell_size_ok));
-  assert( ! cc3.cell_criteria_object()(ch) );
-  
+  assert( ! cc3.cell_criteria_object()(tr, ch) );
+
   Mc cc4(cell_sizing_field = cell_size_nok,
          cell_size = cell_size_ok);
-  assert( ! cc4.cell_criteria_object()(ch) );
+  assert( ! cc4.cell_criteria_object()(tr, ch) );
   
   Mc cc5(sizing_field = cell_size_ok);
-  assert( ! cc5.cell_criteria_object()(ch) );
-  
+  assert( ! cc5.cell_criteria_object()(tr, ch) );
+
   Mc cc6(cell_size = cell_size_ok,
          cell_sizing_field = cell_size_nok,
          sizing_field = cell_size_nok);
-  assert( ! cc6.cell_criteria_object()(ch) );
-  
+  assert( ! cc6.cell_criteria_object()(tr, ch) );
+
   Mc cc7(cell_sizing_field = Csf(cell_size_ok),
          sizing_field = cell_size_nok);
-  assert( ! cc7.cell_criteria_object()(ch) );
-  
+  assert( ! cc7.cell_criteria_object()(tr, ch) );
+
   Mc cc8(cell_radius_edge_ratio = 8.);
   Mc cc9(cell_radius_edge_ratio = 9.1,
          sizing_field = Csf(9.2) );

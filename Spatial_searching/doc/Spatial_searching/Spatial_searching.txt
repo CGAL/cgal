@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_dD_Spatial_Searching
 \anchor ChapterUserSpatialSearching
 \cgalAutoToc
@@ -92,14 +92,14 @@ neighbor must not be smaller than \f$ r/(1+\epsilon)\f$. Obviously, for
 the less exact the result.
 
 While searching the nearest neighbor the algorithm descends the kd-tree
-and has to decide two things for each node : Which child node should be visited 
-first and could there be possible nearest neighbors in the other child. This 
+and has to decide two things for each node : Which child node should be visited
+first and could there be possible nearest neighbors in the other child. This
 basically comes down to computing the distance to the further child, because the
-distance to the closer child is the same as the one to the parent. There are 
+distance to the closer child is the same as the one to the parent. There are
 two options now:<br>
 -# In general, we compute the distance with the given metric. This is the
 <I>k-neighbor search</I> with a <I>general distance</I> class.
--# For point queries we can "update" the distance, because it is only 
+-# For point queries we can "update" the distance, because it is only
 changed in one dimension at a time. This is the <I>orthogonal k-neighbor search</I>
 with an <I>orthogonal distance</I> class.
 The following example shows the orthogonal distance computation in detail:
@@ -110,15 +110,15 @@ Orthogonal distance computation technique
 
 Assume we are searching the nearest neighbor, descending the kd-tree, with \f$ R_{p} \f$
 as the parent rectangle and \f$ R_{lo} \f$ and \f$ R_{hi}\f$ as its childs in the current step.
-Further assume \f$ R_{lo} \f$ is closer to query point \f$q\f$. Let \f$cd\f$ denote the cutting dimension and let 
+Further assume \f$ R_{lo} \f$ is closer to query point \f$q\f$. Let \f$cd\f$ denote the cutting dimension and let
 \f$cv\f$ denote the cutting value. At this point we already know the distance \f$rd_{p}\f$
-to the parent rectangle and need to check if \f$R_{hi}\f$ could contain 
+to the parent rectangle and need to check if \f$R_{hi}\f$ could contain
 nearest neighbors. Because \f$R_{lo}\f$ is the closer rectangle, its distance
-to \f$q\f$, \f$rd_{lo}\f$, is the same as \f$rd_{p}\f$. 
-Notice that for each dimension \f$i \neq cd \f$, \f$ \mathrm{dists}_{lo}[i] = \mathrm{dists}_{hi}[i]\f$, 
-since these coordinates are not affected by the current cut. So the new distance along the 
+to \f$q\f$, \f$rd_{lo}\f$, is the same as \f$rd_{p}\f$.
+Notice that for each dimension \f$i \neq cd \f$, \f$ \mathrm{dists}_{lo}[i] = \mathrm{dists}_{hi}[i]\f$,
+since these coordinates are not affected by the current cut. So the new distance along the
 cutting dimension is \f$ \mathrm{dists}_{hi}[cd] = cv - q[cd]\f$. Now we can compute \f$rd_{hi}\f$
-in constant time (independent of dimension) with 
+in constant time (independent of dimension) with
 \f$rd_{hi} = rd_{p} - \mathrm{dists}_{lo}[cd]^2 + (cv - q[cd])^2\f$.<br>
 This strategy can be used if and only if the distance changes only in one dimension at a time,
 which is the case for point queries.
@@ -126,53 +126,57 @@ which is the case for point queries.
 
 The following two classes implement the standard
 search strategy for orthogonal distances like the weighted Minkowski
-distance. The second one is a specialization for incremental neighbor 
+distance. The second one is a specialization for incremental neighbor
 searching and distance browsing. Both require extendes nodes.
 
 `Orthogonal_k_neighbor_search<Traits,
-OrthogonalDistance, Splitter, SpatialTree>` 
+OrthogonalDistance, Splitter, SpatialTree>`
 
 `Orthogonal_incremental_neighbor_search<Traits,
-OrthogonalDistance, Splitter, SpatialTree>` 
+OrthogonalDistance, Splitter, SpatialTree>`
 
 The other two classes implement the standard search strategy for
 general distances like the Manhattan distance for iso-rectangle queries.
-Again, the second one is a specialization for incremental neighbor 
+Again, the second one is a specialization for incremental neighbor
 searching and distance browsing .
 
 `K_neighbor_search<Traits, GeneralDistance,
-Splitter, SpatialTree>` 
+Splitter, SpatialTree>`
 
 `Incremental_neighbor_search<Traits,
-GeneralDistance, Splitter, SpatialTree>` 
+GeneralDistance, Splitter, SpatialTree>`
 
 \subsection Spatial_searchingRangeSearching Range Searching
 
-<I>Exact range searching</I> and <I>approximate range searching</I> is
+<I>Exact range searching</I> and <I>approximate range searching</I> are
 supported using exact or fuzzy `d`-dimensional objects enclosing a
 region. The fuzziness of the query object is specified by a parameter
-\f$ \epsilon\f$ denoting a maximal allowed distance to the boundary of a
-query object. If the distance to the boundary is at least
-\f$ \epsilon\f$, points inside the object are always reported and points
-outside the object are never reported. Points within distance
-\f$ \epsilon\f$ to the boundary may be or may be not reported. For exact
-range searching the fuzziness parameter \f$ \epsilon\f$ is set to zero.
+\f$ \epsilon\f$ used to define <em>inner</em> and <em>outer</em>
+approximations of the object. For example, in the class `Fuzzy_sphere`,
+the \f$ \epsilon\f$-inner and outer approximations of a sphere of radius \f$ r\f$
+are defined as the spheres of radius \f$ r-\epsilon\f$ and \f$ r+\epsilon\f$, respectively.
+When using fuzzy items, queries are reported as follows:
+- Points that are within the inner approximation are always reported.
+- Points that are within the outer approximation but not within the inner approximation
+might or might not be reported.
+- Points thare not within the outer approximation are never reported.
+
+For exact range searching the fuzziness parameter \f$ \epsilon\f$ is set to zero.
 
 The class `Kd_tree` implements range searching in the method `search`,
 which is a template method with an output iterator and a model of the
-concept `FuzzyQueryItem` as `Fuzzy_iso_box` 
-or `Fuzzy_sphere`. 
-For range searching of large data sets the user may set the parameter `bucket_size` 
-used in building the `kd` tree to a large value (e.g. 100), 
-because in general the query time will be less then using the default value.
+concept `FuzzyQueryItem` such as `Fuzzy_iso_box` or `Fuzzy_sphere`.
+For range searching of large data sets, the user may set the parameter `bucket_size`
+used in building the `kd` tree to a large value (e.g. 100),
+because in general the query time will be less than using the default value.
 
-\section Spatial_SearchingSplitting_rule_section Splitting Rules 
+\section Spatial_SearchingSplitting_rule_section Splitting Rules
 
 Instead of using the default splitting rule `Sliding_midpoint` described below,
-a user may, depending upon the data, select 
+a user may, depending upon the data, select
 one from the following splitting rules,
-which determine how a separating hyperplane is computed. Every splitter has 
-degenerated worst cases, which may lead to a linear tree and a stack overflow. 
+which determine how a separating hyperplane is computed. Every splitter has
+degenerated worst cases, which may lead to a linear tree and a stack overflow.
 Switching the splitting rule to one of a different kind will solve the problem.
 
 <DL>
@@ -220,7 +224,7 @@ along this dimension.
 </DL>
 
 
-The tree can become linear for the median rules, if many points are collinear in a dimension 
+The tree can become linear for the median rules, if many points are collinear in a dimension
 which is not the cutting dimension.
 \cgalFigureBegin{Spatial_searchingmedianworstcase, Median_worst_case.jpg}
 Median worst case point set in 2d.\n
@@ -267,7 +271,7 @@ generate empty cells.
 \section Spatial_searchingExample Example Programs
 
 We give seven examples. The first example illustrates k nearest neighbor
-searching, and the second example incremental neighbor searching. 
+searching, and the second example incremental neighbor searching.
 The third is an example of approximate furthest neighbor searching
 using a `d`-dimensional iso-rectangle as an query object. Approximate
 range searching is illustrated by the fourth example. The fifth
@@ -281,10 +285,10 @@ scenarios for different splitter types.
 The first example illustrates k neighbor searching with an Euclidean
 distance and 2-dimensional points. The generated random
 data points are inserted in a search tree. We then initialize
-the k neighbor search object with the origin as query. Finally, we 
+the k neighbor search object with the origin as query. Finally, we
 obtain the result of the computation in the form of an iterator
 range. The value of the iterator is a pair of a point and its square
-distance to the query point. We use square distances, or <I>transformed distances</I> for other distance classes, as they are 
+distance to the query point. We use square distances, or <I>transformed distances</I> for other distance classes, as they are
 computationally cheaper.
 
 \cgalExample{Spatial_searching/nearest_neighbor_searching.cpp}
@@ -309,7 +313,7 @@ This example program illustrates approximate nearest and furthest
 neighbor searching using 4-dimensional %Cartesian coordinates. Five
 approximate furthest neighbors of the query rectangle
 \f$ [0.1,0.2]^4\f$ are computed. Because the query object is a rectangle
-we cannot use the orthogonal neighbor search. As in the previous 
+we cannot use the orthogonal neighbor search. As in the previous
 examples we first initialize a search tree, create the search object
 with the query, and obtain the result of the search as iterator range.
 
@@ -328,18 +332,18 @@ The range queries are member functions of the `kd` tree class.
 
 The neighbor searching works with all \cgal kernels, as well as with
 user defined points and distance classes.
-In this example we assume that the user provides the following 3-dimensional 
+In this example we assume that the user provides the following 3-dimensional
 points class.
 
 \cgalExample{Spatial_searching/Point.h}
 
-We have put the glue layer in this file as well, that is a class that allows to 
+We have put the glue layer in this file as well, that is a class that allows to
 iterate over the %Cartesian coordinates of the point, and a class to construct
 such an iterator for a point. We next need a distance class
 \cgalExample{Spatial_searching/Distance.h}
 
 We are ready to put the pieces together.
-The class `Search_traits<..>` ,which you see in the next file, is a mere 
+The class `Search_traits<..>` ,which you see in the next file, is a mere
 wrapper for all our defined types. The searching itself works exactly as for \cgal kernels.
 
 \cgalExample{Spatial_searching/user_defined_point_and_distance.cpp}
@@ -348,7 +352,7 @@ wrapper for all our defined types. The searching itself works exactly as for \cg
 
 The following four example programs illustrate how to use the classes `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` and
 `Distance_adapter<Key,PointPropertyMap,Base_distance>` to store in the kd-tree objects of an arbitrary key type. Points are
-accessed through a point <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
+accessed through a point <A HREF="https://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
 This enables to associate information to a point or to reduce the size of the search structure.
 
 \subsubsection Spatial_searchingUsingaPointandanInteger Using a Point and an Integer as Key Type
@@ -374,7 +378,7 @@ Points are read from a `std::map`. The search tree stores integers of type `std:
 
 \subsubsection Spatial_searchingUsingSurfaceMesh Using a Point Property Map of a Polygonal Mesh
 
-This example programs shows how to search the closest vertices of a `Surface_mesh` or, quite similar, of a 
+This example programs shows how to search the closest vertices of a `Surface_mesh` or, quite similar, of a
 `Polyhedron_3`.
 Points are stored in the polygonal mesh. The search tree stores vertex descriptors.
 The value type of the iterator of the neighbor searching algorithm is \link  BGLSMGT `boost::graph_traits<Surface_mesh>::vertex_descriptor` \endlink.
@@ -387,19 +391,19 @@ The value type of the iterator of the neighbor searching algorithm is \link  BGL
 
 This example program illustrates selecting a splitting rule and
 setting the maximal allowed bucket size. The only differences with
-the first example are the declaration of the <I>Fair</I> 
+the first example are the declaration of the <I>Fair</I>
 splitting rule, needed to set the maximal allowed bucket size.
 
 \cgalExample{Spatial_searching/using_fair_splitting_rule.cpp}
 
 \subsection Spatial_searchingExampleforWorstCaseScenarios Example for Worst-Case Scenarios for Different Splitters
 
-This example program has two 2-dimensional data sets: The first one containing 
+This example program has two 2-dimensional data sets: The first one containing
 collinear points with exponential increasing distances and the second
 one with collinear points in the firstdimension and one point with a distance
-exceeding the spread of the other points in the second dimension. These are 
-the worst cases for the midpoint/median rules and can also occur in 
-higher dimensions. 
+exceeding the spread of the other points in the second dimension. These are
+the worst cases for the midpoint/median rules and can also occur in
+higher dimensions.
 
 \cgalExample{Spatial_searching/splitter_worst_cases.cpp}
 
@@ -407,11 +411,11 @@ higher dimensions.
 
 \subsection OrthogonalPerfomance Performance of the Orthogonal Search
 
-We took the gargoyle data set (Surface) from aim\@shape, and generated the same number of random points in the bbox of the gargoyle (Random). 
+We took the gargoyle data set (Surface) from aim\@shape, and generated the same number of random points in the bbox of the gargoyle (Random).
 We then consider three scenarios as data/queries.
-The data set contains 800K points. For each query point we compute the K=10,20,30 closest points, with the default splitter and for the bucket size 10 (default) and 20. 
+The data set contains 800K points. For each query point we compute the K=10,20,30 closest points, with the default splitter and for the bucket size 10 (default) and 20.
 
-The results were produced with the release 4.6 of \cgal, on an Intel i7 2.7 Ghz 
+The results were produced with the release 4.6 of \cgal, on an Intel i7 2.7 Ghz
 laptop with 16 GB RAM, compiled with Visual C++ 2012 with the /O2 option.
 
 The values are the average of ten tests each.
@@ -420,12 +424,12 @@ The values are the average of ten tests each.
 <center>
 k | bucket size | Surface/Surface  | Surface/Random | Random/Random
 --|------------:|-----------------:|---------------:|----------------:
-10|       10    |        0.89      |     11.48      |     2.63         
-10|       20    |        0.89      |      9.80      |     2.25         
-20|       10    |        1.60      |     13.41      |     4.06          
-20|       20    |        1.59      |     11.62      |     3.46         
-30|       10    |        2.35      |     15.52      |     5.42          
-30|       20    |        2.33      |     13.50      |     4.61         
+10|       10    |        0.89      |     11.48      |     2.63
+10|       20    |        0.89      |      9.80      |     2.25
+20|       10    |        1.60      |     13.41      |     4.06
+20|       20    |        1.59      |     11.62      |     3.46
+30|       10    |        2.35      |     15.52      |     5.42
+30|       20    |        2.33      |     13.50      |     4.61
 </center>
 
 \cgalFigureBegin{Spatial_searchingfigbenchmark,gargoyle.png}
@@ -435,7 +439,7 @@ Blue: Gargoyle surface. Green: Gargoyle bbox random.
 
 \section Spatial_searchingSoftware Software Design
 
-\subsection Kd_tree_subsection The kd Tree 
+\subsection Kd_tree_subsection The kd Tree
 
 Bentley \cgalCite{b-mbstu-75} introduced the `kd` tree as a
 generalization of the binary search tree in higher dimensions. `kd`
@@ -505,6 +509,6 @@ The initial implementation of this package was done by Hans Tangelder and
 Andreas Fabri. It was optimized in speed and memory consumption by Markus
 Overtheil during an internship at GeometryFactory in 2014.
 
-*/ 
+*/
 } /* namespace CGAL */
 

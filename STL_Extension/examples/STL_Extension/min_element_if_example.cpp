@@ -2,28 +2,20 @@
 #include <CGAL/function_objects.h>
 #include <vector>
 #include <iostream>
-#include <functional>
+#include <boost/functional.hpp>
 
-using std::vector;
-using std::cout;
-using std::endl;
-using std::modulus;
-using std::greater;
-using std::bind2nd;
-using CGAL::compose1_1;
-using CGAL::min_element_if;
 
 int main()
 {
-  vector< int > v;
+  std::vector< int > v;
   v.push_back(3);
   v.push_back(5);
   v.push_back(2);
-  cout << "min_odd = "
-       << *min_element_if(v.begin(),
-			  v.end(),
-			  compose1_1(bind2nd(greater< int >(), 0),
-				     bind2nd(modulus< int >(), 2)))
-       << endl;
+  std::cout << "min_odd = "
+            << *CGAL::min_element_if(v.begin(),
+                                     v.end(),
+                                     CGAL::compose1_1(boost::bind2nd(std::greater< int >(), 0),
+                                                      boost::bind2nd(std::modulus< int >(), 2)))
+            << std::endl;
   return 0;
 }

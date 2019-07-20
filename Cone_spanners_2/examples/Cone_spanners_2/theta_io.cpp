@@ -15,16 +15,12 @@ typedef Kernel::Point_2                   Point_2;
 typedef Kernel::Direction_2               Direction_2;
 /* Note: due to a bug in the boost library, using a directed graph
  * will cause a compilation error with g++ and clang++ when using c++11 standard.
- * See http://lists.boost.org/Archives/boost/2016/05/229458.php.
+ * See https://lists.boost.org/Archives/boost/2016/05/229458.php.
  */
 // define the graph type
 typedef boost::adjacency_list<boost::listS,
                               boost::vecS,
-                              #ifdef CGAL_CXX11
                               boost::undirectedS,
-                              #else
-                              boost::directedS,
-                              #endif
                               Point_2
                              > Graph;
 
@@ -70,7 +66,7 @@ int main(int argc, char ** argv)
   theta(input_begin, input_end, g);
 
   // obtain the number of vertices in the constructed graph
-  unsigned int n = boost::num_vertices(g);
+  boost::graph_traits<Graph>::vertices_size_type n = boost::num_vertices(g);
   // generate gnuplot files for plotting this graph
   std::string file_prefix = "t" + boost::lexical_cast<std::string>(k) + "n" + boost::lexical_cast<std::string>(n);
   CGAL::gnuplot_output_2(g, file_prefix);

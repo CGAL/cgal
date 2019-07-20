@@ -13,10 +13,12 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author: Marc Glisse
 
-#include <CGAL/basic.h>
+#include <CGAL/int.h>
+#include <CGAL/long_long.h>
 
 int main(){
   unsigned int  a = 42;

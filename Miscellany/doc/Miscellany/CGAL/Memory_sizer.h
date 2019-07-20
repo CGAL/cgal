@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgProfilingTools
+\ingroup MiscellanyRef
 
 The class `Memory_sizer` allows to measure the memory size used by the process. 
 Both the virtual memory size and the resident size are available (the resident 
@@ -18,8 +18,7 @@ two member functions return 0.
 
 */
 
-class Memory_sizer {
-public:
+struct Memory_sizer {
 
 /// \name Types 
 /// @{

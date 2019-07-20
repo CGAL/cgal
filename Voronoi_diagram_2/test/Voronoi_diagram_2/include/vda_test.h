@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -21,7 +22,6 @@
 #ifndef VDA_TEST_H
 #define VDA_TEST_H 1
 
-#include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Timer.h>
 #include <iostream>

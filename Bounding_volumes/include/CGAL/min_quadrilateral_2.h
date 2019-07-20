@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_MIN_QUADRILATERAL_2_H
 #define CGAL_MIN_QUADRILATERAL_2_H 1
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
@@ -292,7 +296,7 @@ namespace Optimisation {
     
     template < class Kernel >
     class Rdbmop
-    : public std::binary_function< Direction_2, int, Direction_2 >
+    : public CGAL::cpp98::binary_function< Direction_2, int, Direction_2 >
     {
       typename Kernel::Construct_perpendicular_vector_2   cperpvec;
       typename Kernel::Construct_vector_from_direction_2  cvec;

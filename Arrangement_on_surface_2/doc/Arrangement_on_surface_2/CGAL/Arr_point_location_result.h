@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgArrangement2PointLocation
+\ingroup PkgArrangementOnSurface2PointLocation
 
 The macro `CGAL_ARR_POINT_LOCATION_VERSION` can be used to configure
 the point-location query API. In particular, it determines which version
@@ -24,7 +24,7 @@ is included.
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2PointLocation
+\ingroup PkgArrangementOnSurface2PointLocation
 
 A unary metafunction to determine the return type of a point-location
 or vertical ray-shoot query.
@@ -40,9 +40,8 @@ or vertical ray-shoot query.
 \sa `CGAL_ARR_POINT_LOCATION_VERSION`
 */
 template <class Arrangement>
-class Arr_point_location_result
+struct Arr_point_location_result
 {
-public:
   /*! The type of the arrangement feature that is the result of a
    * point-location query or a vertical ray-shoot query, namely,
    * `boost::variant<Arrangement::Vertex_const_handle, Arrangement::Halfedge_const_handle, Arrangement::Face_const_handle>`

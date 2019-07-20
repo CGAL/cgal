@@ -1,10 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-// HalfedgeGraph adapters for Polyhedron_3
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-
 #include <CGAL/Surface_mesh_deformation.h>
 
 #include <fstream>
@@ -52,10 +47,9 @@ int main()
 
   std::map<halfedge_descriptor, double> weight_map;
   // Store all the weights
-  halfedge_iterator eb, ee;
-  for(boost::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb)
+  for(halfedge_descriptor h : halfedges(mesh))
   {
-    weight_map[*eb] = 1.0; // store some precomputed weights
+    weight_map[h] = 1.0; // store some precomputed weights
   }
 
   // Create and initialize the vertex index map
@@ -63,16 +57,16 @@ int main()
   Vertex_index_map vertex_index_map(internal_vertex_index_map);
   vertex_iterator vb, ve;
   std::size_t counter = 0;
-  for(boost::tie(vb, ve) = vertices(mesh); vb != ve; ++vb, ++counter) {
-    put(vertex_index_map, *vb, counter);
+  for(vertex_descriptor v : vertices(mesh)) {
+    put(vertex_index_map, v, counter++);
   }
 
   // Create and initialize the halfedge index map
   Internal_hedge_map internal_hedge_index_map;
   Hedge_index_map hedge_index_map(internal_hedge_index_map);
   counter = 0;
-  for(boost::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter) {
-    put(hedge_index_map, *eb, counter);
+  for(halfedge_descriptor h : halfedges(mesh)) {
+    put(hedge_index_map, h, counter++);
   }
   Surface_mesh_deformation deform_mesh(mesh,
                                        vertex_index_map,

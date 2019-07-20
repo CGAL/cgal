@@ -12,15 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://balasmic@scm.gforge.inria.fr/svn/cgal/branches/features/Arrangement_on_surface_2-RIC_pl_for_unbounded-balasmic/Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_active_edge.h $
-// $Id: Td_active_edge.h 65793 2011-10-10 17:04:38Z balasmic $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
 //               updated by: Michal Balas <balasmic@post.tau.ac.il>
 
 #ifndef CGAL_TD_ACTIVE_EDGE_H
 #define CGAL_TD_ACTIVE_EDGE_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Defintion of the Td_active_edge<Td_traits> class.
@@ -197,8 +200,8 @@ public:
   {
     
     PTR = new Data
-      (Traits::empty_he_handle(), Td_map_item(0), NULL);
-    //m_dag_node = NULL;
+      (Traits::empty_he_handle(), Td_map_item(0), nullptr);
+    //m_dag_node = nullptr;
   }
    /*! Constructor given Vertex & Halfedge handles. */
   Td_active_edge (Halfedge_const_handle he ,

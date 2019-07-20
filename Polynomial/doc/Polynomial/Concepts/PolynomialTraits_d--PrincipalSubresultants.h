@@ -3,8 +3,6 @@
 \ingroup PkgPolynomialConcepts
 \cgalConcept
 
-<B>Note:</B> This functor is optional! 
-
 Computes the principal subresultant of two polynomials \f$ p\f$ and \f$ q\f$ of 
 type `PolynomialTraits_d::Coefficient_type` 
 with respect to the outermost variable. 
@@ -18,6 +16,8 @@ The result is written in an output range, starting with the \f$ 0\f$-th
 principal subresultant \f$ \mathrm{sres}_0(p,q)\f$ 
 ,aka as the resultant of \f$ p\f$ and \f$ q\f$. 
 (Note that \f$ \mathrm{sres}_0(p,q)=\mathrm{Sres}_0(p,q)\f$ by definition) 
+
+\note This functor is optional.
 
 \cgalRefines `AdaptableBinaryFunction` 
 \cgalRefines `CopyConstructible` 

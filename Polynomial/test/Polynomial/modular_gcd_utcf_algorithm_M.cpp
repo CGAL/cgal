@@ -21,6 +21,7 @@
 // CGAL_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$ 
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Dominik Hülse <dominik.huelse@gmx.de>
 //                 Michael Hemmer <hemmer@mpi-inf.mpg.de>
@@ -33,7 +34,7 @@
 
 #define MY_FUNCTION_CALL modular_gcd_utcf_algorithm_M
  
-#include <CGAL/basic.h>
+
 #include <CGAL/Arithmetic_kernel.h> 
 #include <CGAL/CORE_arithmetic_kernel.h>
 #include <CGAL/LEDA_arithmetic_kernel.h>

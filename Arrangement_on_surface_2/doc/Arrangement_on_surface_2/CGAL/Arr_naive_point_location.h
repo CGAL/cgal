@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2PointLocation
+\ingroup PkgArrangementOnSurface2PointLocation
 
 \anchor arr_refnaive_pl 
 
@@ -25,8 +25,6 @@ time-consuming process when applied to dense arrangements.
 template< typename Arrangement >
 class Arr_naive_point_location {
 public:
-
-/// @}
 
 }; /* end Arr_naive_point_location */
 } /* end namespace CGAL */

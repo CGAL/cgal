@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
@@ -23,6 +24,9 @@
 //                 Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_NEF_SFACE_H
 #define CGAL_NEF_SFACE_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <string>
 #include <sstream>
@@ -121,9 +125,9 @@ class SFace_base {
       verr << "begin CGAL::SNC_items<...>::SFace_base::is_valid( verb=true, "
 	"level = " << level << "):" << std::endl;
 
-      bool valid =(center_vertex_ != Vertex_handle() && center_vertex_ != NULL);
+      bool valid =(center_vertex_ != Vertex_handle() && center_vertex_ != nullptr);
       valid = valid && (volume_ != Volume_handle() &&
-			volume_ != NULL);
+			volume_ != nullptr);
 
       if(boundary_entry_objects_.empty()) {
 	valid = valid && 

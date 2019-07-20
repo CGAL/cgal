@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -21,9 +22,11 @@
 #ifndef CGAL_NEF_2_GENINFO_H
 #define CGAL_NEF_2_GENINFO_H
 
+#include <CGAL/license/Nef_2.h>
 
-//This file is deprecated and something like boost::any or boost::variant should 
-//be used instead
+#define CGAL_DEPRECATED_HEADER "<CGAL/Nef_2/geninfo.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "Something like boost::any or boost::variant should be used instead."
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/config.h>

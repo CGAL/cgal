@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/Root_of_traits.h>
 
 template <class T, class RootOf1, class RootOf2>
 void test_root_of_traits(){

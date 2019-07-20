@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_COMPUTE_OUTER_FRAME_MARGIN_H
 #define CGAL_COMPUTE_OUTER_FRAME_MARGIN_H
+
+#include <CGAL/license/Straight_skeleton_2.h>
+
 
 #include <vector>
 #include <algorithm>
@@ -54,14 +58,14 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
   
   FT lMaxSDist(0.0) ;
   
-  ForwardPointIterator lLast = CGAL::cpp11::prev(aEnd) ;
+  ForwardPointIterator lLast = std::prev(aEnd) ;
   
   bool lOverflow = false ;
 
   for ( ForwardPointIterator lCurr = aBegin ; lCurr != aEnd ; ++ lCurr )
   {
-    ForwardPointIterator lPrev = ( lCurr == aBegin ? lLast  : CGAL::cpp11::prev  (lCurr) ) ;
-    ForwardPointIterator lNext = ( lCurr == lLast  ? aBegin : CGAL::cpp11::next  (lCurr) ) ;
+    ForwardPointIterator lPrev = ( lCurr == aBegin ? lLast  : std::prev  (lCurr) ) ;
+    ForwardPointIterator lNext = ( lCurr == lLast  ? aBegin : std::next  (lCurr) ) ;
     
     if ( !equal(*lPrev,*lCurr) && !equal(*lCurr,*lNext) && !collinear(*lPrev,*lCurr,*lNext) )
     {

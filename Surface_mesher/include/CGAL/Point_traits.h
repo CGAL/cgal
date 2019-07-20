@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
@@ -21,19 +22,20 @@
 #ifndef CGAL_POINT_TRAITS_H
 #define CGAL_POINT_TRAITS_H
 
-#include <CGAL/Weighted_point.h>
-#include <boost/config.hpp>
-#include <boost/mpl/bool.hpp>
+#include <CGAL/license/Surface_mesher.h>
+
+
+#include <CGAL/Weighted_point_3.h>
 #include <CGAL/assertions.h>
 
 namespace CGAL {
 
   template <class P>
-  struct Is_weighted : public ::boost::mpl::false_ {} ;
+  struct Is_weighted : public Tag_false {} ;
   
-  template <class P, typename FT>
-  struct Is_weighted< ::CGAL::Weighted_point<P, FT> > :
-    public ::boost::mpl::true_ {} ;
+  template <typename K>
+  struct Is_weighted< ::CGAL::Weighted_point_3<K> > :
+    public Tag_true {} ;
   
   namespace details {
 
@@ -48,7 +50,8 @@ namespace CGAL {
     {
       typedef P Point;
       typedef P Bare_point;
-      typedef typename ::CGAL::Weighted_point<Bare_point, FT> Weighted_point;
+      typedef typename Kernel_traits<P>::type K;
+      typedef typename ::CGAL::Weighted_point_3<K> Weighted_point;
       typedef Tag_false Is_weighted;
      
       const Bare_point& bare_point(const Point& bp)

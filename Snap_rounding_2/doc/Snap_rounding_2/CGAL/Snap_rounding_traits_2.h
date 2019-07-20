@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSnapRounding2
+\ingroup PkgSnapRounding2Ref
 
 The class `Snap_rounding_traits_2<Kernel>` is a model of the 
 `SnapRoundingTraits_2` concept, and is the only traits class supplied 
@@ -33,8 +33,6 @@ half-the width-of-a-pixel.
 template< typename Kernel >
 class Snap_rounding_traits_2 {
 public:
-
-/// @}
 
 }; /* end Snap_rounding_traits_2 */
 } /* end namespace CGAL */

@@ -81,7 +81,7 @@ compatibility all functionality is also
 accessible through global functions defined within namespace `CGAL`, 
 e.g., \link sqrt `CGAL::sqrt(x)` \endlink. This is realized via function templates using
 the according functor of the traits class. For an overview see 
-Section \ref PkgAlgebraicFoundations in the reference manual.
+Section \ref PkgAlgebraicFoundationsRef in the reference manual.
 
 \subsection Algebraic_foundationsTagsinAlgebraicStructure Tags in Algebraic Structure Traits
 
@@ -145,7 +145,7 @@ but does not provide any arithmetic operations.
 
 As for algebraic structures this concept is also traits class oriented.
 The main functionality related to `RealEmbeddable` is gathered in 
-the class `Real_embeddable_traits`. In particular, it porivdes the boolean 
+the class `Real_embeddable_traits`. In particular, it provides the boolean 
 tag `Is_real_embeddable` indicating whether a type is a model of 
 `RealEmbeddable`. The comparison operators are required to be realized via 
 \cpp operator overloading. 

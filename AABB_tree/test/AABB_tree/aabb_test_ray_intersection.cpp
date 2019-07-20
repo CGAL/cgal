@@ -12,7 +12,6 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Timer.h>
@@ -110,8 +109,8 @@ int main()
   const double r = max_extent / 2;
   // Generate NB_RAYS*2 points that lie on a sphere of radius r, centered around bbox_center
   CGAL::Random rand = CGAL::Random(23); // fix the seed to yield the same results each run
-  CGAL::cpp11::copy_n(CGAL::Random_points_on_sphere_3<Point>(r, rand), NB_RAYS, std::back_inserter(v1));
-  CGAL::cpp11::copy_n(CGAL::Random_points_on_sphere_3<Point>(r, rand), NB_RAYS, std::back_inserter(v2));
+  std::copy_n(CGAL::Random_points_on_sphere_3<Point>(r, rand), NB_RAYS, std::back_inserter(v1));
+  std::copy_n(CGAL::Random_points_on_sphere_3<Point>(r, rand), NB_RAYS, std::back_inserter(v2));
 
   for(std::vector<Point>::iterator it = v1.begin(); it != v1.end(); ++it) {
     *it = *it + bbox_center;

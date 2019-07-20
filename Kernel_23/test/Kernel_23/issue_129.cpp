@@ -12,6 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: LGPL-2.1
+//
 // Author(s)     : Philipp Moeller
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -26,7 +28,7 @@
 int main()
 {
   try {
-    CGAL::Point_3<CGAL::Epick> a, b, c, d;
+    CGAL::Point_3<CGAL::Epick> a(CGAL::ORIGIN), b(a), c(a), d(a);
     CGAL::squared_radius(a, b, c, d);
   } catch(...) {}
   return EXIT_SUCCESS;

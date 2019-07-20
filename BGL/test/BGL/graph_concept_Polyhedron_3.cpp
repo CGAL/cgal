@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_concepts.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
@@ -20,8 +20,6 @@ void concept_check_polyhedron() {
   boost::function_requires< boost::IncidenceGraphConcept<Polyhedron> >();
   boost::function_requires< boost::AdjacencyMatrixConcept<Polyhedron> >();
   boost::function_requires< boost::BidirectionalGraphConcept<Polyhedron> >();
-  // no longer the case
-  // boost::function_requires< boost::MutableGraphConcept<Polyhedron> >();
   boost::function_requires< CGAL::HalfedgeGraphConcept<Polyhedron> >();
   boost::function_requires< CGAL::HalfedgeListGraphConcept<Polyhedron> >();
   boost::function_requires< CGAL::FaceGraphConcept<Polyhedron> >();
@@ -39,8 +37,6 @@ void concept_check_polyhedron() {
     Polyhedron, vertex_descriptor, CGAL::vertex_point_t> >();
   boost::function_requires< boost::concepts::PropertyGraph<
     Polyhedron, vertex_descriptor, boost::vertex_index_t> >();
-  // boost::function_requires< boost::concepts::ReadablePropertyGraph<
-  //   Polyhedron, vertex_descriptor, boost::vertex_is_border_t> >();
   boost::function_requires< boost::concepts::PropertyGraph<
     Polyhedron, face_descriptor, CGAL::face_index_t> >();
 
@@ -56,14 +52,11 @@ void concept_check_polyhedron() {
 
   // null
   boost::graph_traits<Polyhedron>::null_vertex();
+  boost::graph_traits<Polyhedron>::null_halfedge();
   boost::graph_traits<Polyhedron>::null_face();
 }
 
-
-
-
-int
-main()
+int main()
 {
   concept_check_polyhedron<Polyhedron>();
 

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Herve Bronnimann
@@ -161,28 +162,28 @@ public:
               case 0: return t11;
               case 1: return t12;
               case 2: return t13;
-              case 3: return t14;
+              default: return t14;
             }
     case 1: switch (j)
             {
               case 0: return t21;
               case 1: return t22;
               case 2: return t23;
-              case 3: return t24;
+              default: return t24;
             }
     case 2: switch (j)
             {
               case 0: return t31;
               case 1: return t32;
               case 2: return t33;
-              case 3: return t34;
+              default: return t34;
             }
     case 3: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(0);
-              case 3: return FT(1);
+              default: return FT(1);
             }
     }
   return FT(0);

@@ -45,6 +45,12 @@ vertex of the triangulation or a hidden vertex.
 class RegularTriangulationVertexBase_2 {
 public:
 
+/*!
+Must be the same as the point type `RegularTriangulationTraits_2::Weighted_point_2`
+defined by the geometric traits class of the triangulation.
+*/
+typedef unspecified_type Point;
+
 /// \name Access Functions 
 /// @{
 

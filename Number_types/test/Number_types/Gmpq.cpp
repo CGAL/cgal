@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifdef CGAL_USE_GMP
 
@@ -34,6 +34,20 @@ void test_overflow_to_interval(const NT&)
     assert(CGAL::is_valid(minter));
     assert(CGAL_NTS is_finite(minter.sup()));
   }
+}
+
+template<class NT>
+void test_underflow_to_interval(const NT&)
+{
+  NT q0 = std::numeric_limits<double>::denorm_min();
+  NT q1 = q0 / 2;
+  NT q2 = q1 * 3;
+  CGAL::Interval_nt<> i1 = CGAL::to_interval(q1);
+  CGAL::Interval_nt<> i2 = CGAL::to_interval(q2);
+  assert(i1.inf() <= q1);
+  assert(i1.sup() >= q1);
+  assert(i2.inf() <= q2);
+  assert(i2.sup() >= q2);
 }
 
 void test_overflow_to_double()
@@ -263,10 +277,12 @@ int main() {
   test_overflow_to_double();
   test_overflow_to_interval(Gmpz());
   test_overflow_to_interval(Gmpq());
+  test_underflow_to_interval(Gmpq());
 
 #ifdef CGAL_USE_GMPXX
   test_overflow_to_interval(mpz_class());
   test_overflow_to_interval(mpq_class());
+  test_underflow_to_interval(mpq_class());
 #endif
 
   // test operators Gmpq/Gmpfr (added by Luis)

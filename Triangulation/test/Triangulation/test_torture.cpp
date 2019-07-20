@@ -1,4 +1,5 @@
-#if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
+#include <CGAL/config.h>
+#if defined(BOOST_GCC) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
 
 #include <iostream>
 int main()
@@ -82,11 +83,7 @@ void test(const int D, const int d, const int N, bool no_transform)
             for( int j = 0; j < d; ++j )
                 coords[i] = coords[i] + (*pit)[j] * aff[j][i];
         }
-#ifdef USE_NEW_KERNEL
-        points.push_back(Point(coords)); // this is for New_kernel_d
-#else
-        points.push_back(Point(D, coords.begin(), coords.end())); // this is for Old_kernel_d
-#endif
+        points.push_back(Point(D, coords.begin(), coords.end()));
     }
     assert( dc.is_valid() );
     cout << " Inserting " << points.size() << " points.";
@@ -100,7 +97,7 @@ void test(const int D, const int d, const int N, bool no_transform)
         assert( 2 * dc.number_of_vertices() == dc.number_of_full_cells() + 2 );
     if( dc.current_dimension() > 3 )
     {
-        std::random_shuffle(points.begin(), points.end());
+        CGAL::cpp98::random_shuffle(points.begin(), points.end());
         if (points.size() > 100)
           points.resize(100);
     }

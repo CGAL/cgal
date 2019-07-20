@@ -1,4 +1,6 @@
 function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
+
+  if (NOT CGAL_HEADER_ONLY)
   # IMPORTANT: First delete all_files.cpp
   if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp)
     file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp)
@@ -24,6 +26,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
       file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp "\#include \"${source}\"\n")
     endif()
   endforeach()
+  endif()
 
   if(CGAL_BUILD_SHARED_LIBS)
     set(CGAL_LIB_PREFIX "")
@@ -31,8 +34,8 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     set(CGAL_LIB_PREFIX "lib")
   endif()
 
-  set(RELEASE_MANGLED_NAME        "${CGAL_LIB_PREFIX}${LIBRARY_NAME}-${CGAL_TOOLSET}-mt-${CGAL_FULL_VERSION}" ) 
-  set(DEBUG_MANGLED_NAME          "${CGAL_LIB_PREFIX}${LIBRARY_NAME}-${CGAL_TOOLSET}-mt-gd-${CGAL_FULL_VERSION}" ) 
+  set(RELEASE_MANGLED_NAME        "${CGAL_LIB_PREFIX}${LIBRARY_NAME}-${CGAL_TOOLSET}-mt-${CGAL_FULL_VERSION}" )
+  set(DEBUG_MANGLED_NAME          "${CGAL_LIB_PREFIX}${LIBRARY_NAME}-${CGAL_TOOLSET}-mt-gd-${CGAL_FULL_VERSION}" )
 
   if(CGAL_BUILD_SHARED_LIBS AND WIN32)
     configure_file(${CGAL_INSTALLATION_PACKAGE_DIR}/src/CGAL_libs_verinfo.rc.in ${LIBRARY_NAME}_verinfo.rc @ONLY)
@@ -41,45 +44,68 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     set(rc_file )
   endif()
 
-  add_library (${LIBRARY_NAME}
-    ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp 
-    ${rc_file}
-    ${ADDITIONAL_FILES})
-  if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
-    set_target_properties(${LIBRARY_NAME} PROPERTIES 
-      VERSION "${CGAL_SOVERSION}" 
-      SOVERSION "${CGAL_SONAME_VERSION}")
+  if (NOT CGAL_HEADER_ONLY)
+    add_library (${LIBRARY_NAME}
+      ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp
+      ${rc_file}
+      ${ADDITIONAL_FILES})
+    #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${rc_file} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
+    if(${LIBRARY_NAME}_SOVERSION AND ${LIBRARY_NAME}_SONAME_VERSION)
+      set_target_properties(${LIBRARY_NAME} PROPERTIES
+        VERSION "${${LIBRARY_NAME}_SOVERSION}"
+        SOVERSION "${${LIBRARY_NAME}_SONAME_VERSION}")
+    elseif(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
+      set_target_properties(${LIBRARY_NAME} PROPERTIES
+        VERSION "${CGAL_SOVERSION}"
+        SOVERSION "${CGAL_SONAME_VERSION}")
+    endif()
+  else()
+    if(${LIBRARY_NAME}_LIB_DEPENDS)
+      # Fix a bug when CGAL is configured first without `CGAL_HEADER_ONLY`
+      # and then `CGAL_HEADER_ONLY` is set without cleaning the cache.
+      unset(${LIBRARY_NAME}_LIB_DEPENDS CACHE)
+    endif()
+    add_library(${LIBRARY_NAME} INTERFACE)
   endif()
 
+  # Add an alias with the prefix `CGAL::`, so that consumer
+  # CMakeLists.txt can be the target like if it was an imported
+  # target.
+  add_library(CGAL::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+
   if(CGAL_AUTO_LINK_ENABLED)
-    set_target_properties( ${LIBRARY_NAME} PROPERTIES 
-      OUTPUT_NAME_DEBUG          "${DEBUG_MANGLED_NAME}" 
-      OUTPUT_NAME_RELEASE        "${RELEASE_MANGLED_NAME}" 
-      OUTPUT_NAME_MINSIZEREL     "${RELEASE_MANGLED_NAME}" 
-      OUTPUT_NAME_RELWITHDEBINFO "${RELEASE_MANGLED_NAME}" 
-      )
-    
-    if ( HAS_CFG_INTDIR )
-      add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).dll\" copy /Y \"$(TargetDir)$(TargetName).dll\" \"$(TargetDir)..\" )
-      add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).pdb\" copy /Y \"$(TargetDir)$(TargetName).pdb\" \"$(TargetDir)..\" )
-      add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" copy /Y \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" \"$(SolutionDir)lib\" )
+    if (NOT CGAL_HEADER_ONLY)
+      set_target_properties( ${LIBRARY_NAME} PROPERTIES
+        OUTPUT_NAME_DEBUG          "${DEBUG_MANGLED_NAME}"
+        OUTPUT_NAME_RELEASE        "${RELEASE_MANGLED_NAME}"
+        OUTPUT_NAME_MINSIZEREL     "${RELEASE_MANGLED_NAME}"
+        OUTPUT_NAME_RELWITHDEBINFO "${RELEASE_MANGLED_NAME}"
+        )
+
+      if ( HAS_CFG_INTDIR )
+        add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).dll\" copy /Y \"$(TargetDir)$(TargetName).dll\" \"$(TargetDir)..\" )
+        add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).pdb\" copy /Y \"$(TargetDir)$(TargetName).pdb\" \"$(TargetDir)..\" )
+        add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" copy /Y \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" \"$(SolutionDir)lib\" )
+      endif()
     endif()
   endif()
 
-  install(TARGETS ${LIBRARY_NAME} EXPORT ${LIBRARY_NAME}Exports
-    RUNTIME DESTINATION "${CGAL_INSTALL_BIN_DIR}"
-    LIBRARY DESTINATION "${CGAL_INSTALL_LIB_DIR}"
-    ARCHIVE DESTINATION "${CGAL_INSTALL_LIB_DIR}")
-  install(EXPORT ${LIBRARY_NAME}Exports
-    DESTINATION "${CGAL_INSTALL_CMAKE_DIR}"
-    NAMESPACE CGAL::)
+  if (NOT CGAL_HEADER_ONLY)
+    install(TARGETS ${LIBRARY_NAME} EXPORT ${LIBRARY_NAME}Exports
+      RUNTIME DESTINATION "${CGAL_INSTALL_BIN_DIR}"
+      LIBRARY DESTINATION "${CGAL_INSTALL_LIB_DIR}"
+      ARCHIVE DESTINATION "${CGAL_INSTALL_LIB_DIR}")
+    install(EXPORT ${LIBRARY_NAME}Exports
+      DESTINATION "${CGAL_INSTALL_CMAKE_DIR}"
+      NAMESPACE CGAL::)
 
-  # We have to call configure_file twice to force double expansion of variables.
-  configure_file("${CGAL_MODULES_DIR}/CGALLibConfig.cmake.in"
-    "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
-  configure_file("${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake"
-    "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
-  install(FILES "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
+    # We have to call configure_file twice to force double expansion of variables.
+    configure_file("${CGAL_MODULES_DIR}/CGALLibConfig.cmake.in"
+      "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
+    configure_file("${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake"
+      "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
+    install(FILES "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
+  endif()
 endfunction()
 
 function( configure_component DIR COMPONENT )
@@ -113,7 +139,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CGAL_RUNTIME_DIR})
 
 # TODO: Seems useless, because it is called again in ../CMakeLists.txt
 #       Should probably be removed. -- Laurent Rineau, 2014/07/22
-create_CGALconfig_files()
+if(NOT CGAL_HEADER_ONLY)
+  create_CGALconfig_files()
+endif()
 
 set(CGAL_DIR ${CMAKE_BINARY_DIR})
 
@@ -121,8 +149,8 @@ add_subdirectory(CGAL)
 
 # search libs
 set(CGAL_CONFIGURED_LIBRARIES "")
- 
-foreach(package ${CGAL_CONFIGURED_PACKAGES}) 
+
+foreach(package ${CGAL_CONFIGURED_PACKAGES})
   file(GLOB CONFIGURED_LIBS_IN_PACKAGE ${package}/src/CGAL_*/CMakeLists.txt)
   list(SORT CONFIGURED_LIBS_IN_PACKAGE)
   foreach (libconfigfile ${CONFIGURED_LIBS_IN_PACKAGE})
@@ -139,8 +167,8 @@ foreach(package ${CGAL_CONFIGURED_PACKAGES})
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_DEFINITIONS    "" )
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_INCLUDE_DIRS   "" )
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES      "" )
-      cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES_DIRS "" ) 
-      if (${CGAL_CONFIGURED_LIBRARY_NAME} STREQUAL "CGAL_Core") 
+      cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES_DIRS "" )
+      if (${CGAL_CONFIGURED_LIBRARY_NAME} STREQUAL "CGAL_Core")
         if (NOT CGAL_NO_CORE)
           configure_component( ${package}/src/${CGAL_CONFIGURED_LIBRARY_NAME} ${CGAL_CONFIGURED_LIBRARY_NAME})
         else(NOT CGAL_NO_CORE)
@@ -155,17 +183,17 @@ foreach(package ${CGAL_CONFIGURED_PACKAGES})
      cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_DEFINITIONS   )
      cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_INCLUDE_DIRS  )
      cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES     )
-     cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES_DIRS) 
+     cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES_DIRS)
 
-    else() 
- 
+    else()
+
       list(APPEND CGAL_CONFIGURED_LIBRARIES CGAL)
 
     endif()
   endforeach()
 endforeach()
 
-if (NOT CGAL_CONFIGURED_LIBRARIES) 
+if (NOT CGAL_CONFIGURED_LIBRARIES)
    message(FATAL_ERROR "No component library in configured packages found. Please fix package-file.")
 endif()
 
@@ -191,7 +219,11 @@ CGAL_add_if_target(CGAL_Core)
 CGAL_add_if_target(CGAL_ImageIO)
 CGAL_add_if_target(CGAL_Qt5)
 
-export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")
+cache_set(CGAL_ACTUAL_CONFIGURED_LIBRARIES "${CGAL_ACTUAL_CONFIGURED_LIBRARIES}")
+
+if (NOT CGAL_HEADER_ONLY)
+  export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")
+endif()
 
 message(STATUS "Sources for CGAL component libraries '${CGAL_CONFIGURED_LIBRARIES}' detected")
 

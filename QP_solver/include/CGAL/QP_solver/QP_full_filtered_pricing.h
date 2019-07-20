@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_QP_FULL_FILTERED_PRICING_H
 #define CGAL_QP_FULL_FILTERED_PRICING_H
+
+#include <CGAL/license/QP_solver.h>
+
 
 // includes
 #include <CGAL/QP_solver/QP__filtered_base.h>
@@ -140,7 +144,7 @@ pricing_helper(int& /*direction*/, Tag_true ) // standard form
 	}
     }
 
-    // certify non-existance of entering variable, if necessary
+    // certify non-existence of entering variable, if necessary
     if ( min_j < 0) {
 
 	// update row and column maxima

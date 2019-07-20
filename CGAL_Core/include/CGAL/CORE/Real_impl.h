@@ -33,6 +33,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifdef CGAL_HEADER_ONLY
@@ -41,9 +42,11 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
+#include <CGAL/disable_warnings.h>
+
 #include <ctype.h>
 #include <CGAL/CORE/Real.h>
-
+#include <CGAL/tss.h>
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/CORE/BigFloat.h> // for FiveTo
 #endif
@@ -52,7 +55,7 @@ namespace CORE {
 
 CGAL_INLINE_FUNCTION
 const Real& Real::getZero() {
-  static Real Zero(0);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Real, Zero, 0);
   return Zero;
 }
 
@@ -65,7 +68,7 @@ BigInt floor(const Real& r, Real &sub) {
     ++sub, --f;
   if (sub>=1)
     --sub, ++f;
-  assert(sub >=0 && sub<1);
+  CGAL_assertion(sub >=0 && sub<1);
   return f;
 }
 
@@ -131,7 +134,7 @@ void Real::constructFromString(const char *str, const extLong& prec )
   //		Moreover, the value of prec is ignored (basically
   //		assumed to be infinity).
 
-  if (std::strchr(str, '/') != NULL) {	// this is a rational number
+  if (std::strchr(str, '/') != nullptr) {	// this is a rational number
     rep = new RealBigRat(BigRat(str));
     return;
   }
@@ -139,13 +142,13 @@ void Real::constructFromString(const char *str, const extLong& prec )
   const char *e = std::strchr(str, 'e');
   int dot = 0;
   long e10 = 0;
-  if (e != NULL)
+  if (e != nullptr)
     e10 = std::atol(e+1);	// e10 is decimal precision of the input string
   // i.e., input is A/10^{e10}.
   else {
     e = str + std::strlen(str);
 #ifdef CORE_DEBUG
-    assert(*e == '\0');
+    CGAL_assertion(*e == '\0');
 #endif
   }
 
@@ -246,7 +249,7 @@ std::istream& operator >>(std::istream& i, Real& x) {
       size *= 2;
     }
 #ifdef CORE_DEBUG
-    assert((p-str) < size);
+    CGAL_assertion((p-str) < size);
 #endif
 
     *p++ = c;
@@ -267,7 +270,7 @@ std::istream& operator >>(std::istream& i, Real& x) {
   }
   // chenli: make sure that the p is still in the range
   if (p - str >= size) {
-    int len = p - str;
+    std::ptrdiff_t len = p - str;
     char *t = str;
     str = new char[len + 1];
     std::memcpy(str, t, len);
@@ -276,7 +279,7 @@ std::istream& operator >>(std::istream& i, Real& x) {
   }
 
 #ifdef CORE_DEBUG
-  assert(p - str < size);
+  CGAL_assertion(p - str < size);
 #endif
 
   *p = '\0';
@@ -290,3 +293,5 @@ std::istream& operator >>(std::istream& i, Real& x) {
 
 
 } //namespace CORE
+
+#include <CGAL/enable_warnings.h>

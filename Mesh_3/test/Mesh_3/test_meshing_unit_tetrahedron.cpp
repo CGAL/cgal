@@ -26,7 +26,7 @@ struct Polyhedron_tester : public Tester<K>
       Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr,
       typename Mesh_domain::Corner_index,
-      typename Mesh_domain::Curve_segment_index> C3t3;
+      typename Mesh_domain::Curve_index> C3t3;
 
     // Criteria
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;

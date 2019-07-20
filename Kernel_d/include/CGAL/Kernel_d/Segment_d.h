@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel
@@ -26,8 +27,11 @@
 #define CGAL_SEGMENT_D_H 
 
 #include <CGAL/Kernel_d/Pair_d.h> 
+#include <CGAL/Kernel_d/Point_d.h> 
+#include <CGAL/Kernel_d/Segment_d.h> 
 #include <CGAL/Kernel_d/Line_d.h> 
 #include <CGAL/Kernel_d/Ray_d.h>
+#include <CGAL/Kernel_d/Aff_transformation_d.h>
 #include <CGAL/Dimension.h>
 
 namespace CGAL {
@@ -91,7 +95,7 @@ Segment_d(const Point_d<R>& p, const Vector_d<R>& v)
 is initialized to the segment |(p,p+v)|. }*/
  : Base( Pair(p,p+v) ) {}
 
-Segment_d(const Segment_d<R>& s) : Base(s) {}     
+
 
 /*{\Moperations 3 3}*/
 

@@ -29,6 +29,8 @@ In three-dimensional space we have a \f$ 4\times 4\f$ matrix
 \f$ m_{32}\f$ are always zero and therefore do not appear in the 
 constructors. 
 
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+
 \sa `CGAL::Aff_transformation_2<Kernel>` 
 \sa `CGAL::Identity_transformation` 
 \sa `CGAL::Reflection` 
@@ -115,7 +117,7 @@ const Kernel::RT &hw = RT(1));
 \name Operations 
 
 The main thing to do with transformations is to apply them on
-geometric objects. Each class `Class_2<Kernel>` representing a
+geometric objects. Each class `Class_3<Kernel>` representing a
 geometric object has a member function: 
 
 \code
@@ -178,6 +180,12 @@ operator*(const Aff_transformation_3<Kernel> &s) const;
 gives the inverse transformation. 
 */ 
 Aff_transformation_3<Kernel> inverse() const; 
+
+/*!
+compares two affine transformations. 
+*/ 
+bool operator==(const Aff_transformation_3<Kernel> &s) const; 
+
 
 /*!
 returns `true`, if the transformation is not reflecting, 

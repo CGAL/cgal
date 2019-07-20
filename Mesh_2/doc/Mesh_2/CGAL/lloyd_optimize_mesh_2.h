@@ -101,13 +101,13 @@ lloyd_optimize_mesh_2(cdt,
 
 \endcode
 
-\sa `Mesh_optimization_return_code` 
+\sa `CGAL::Mesh_optimization_return_code` 
 \sa `CGAL::refine_Delaunay_mesh_2()`
 
 */
 
 template<typename CDT, typename PointIterator>
-Mesh_optimization_return_code
+CGAL::Mesh_optimization_return_code
 lloyd_optimize_mesh_2(CDT& cdt,
   double parameters::time_limit=0,
   std::size_t parameters::max_iteration_number=0,

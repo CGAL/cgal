@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_INTERNAL_AABB_TREE_HAS_NESTED_TYPE_SHARED_DATA_H
 #define CGAL_INTERNAL_AABB_TREE_HAS_NESTED_TYPE_SHARED_DATA_H
+
+#include <CGAL/license/AABB_tree.h>
+
 
 #include <boost/mpl/has_xxx.hpp>
 #include <CGAL/tags.h>
@@ -62,13 +66,13 @@ struct Cstr_shared_data<Graph, Base, ObjectPropertyMap, PointPropertyMap, ::CGAL
   typedef void* Shared_data;
   static Shared_data construct_shared_data(Graph&)
   {
-    return NULL;
+    return nullptr;
   }
 
   template <class VertexPmap>
   static Shared_data construct_shared_data(Graph&, VertexPmap)
   {
-    return NULL;
+    return nullptr;
   }
 };
 

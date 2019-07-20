@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgSTLExtensionRef
 
 
 \anchor classcgal_multimap 

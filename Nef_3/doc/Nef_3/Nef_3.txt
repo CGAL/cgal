@@ -57,7 +57,7 @@ generality. Starting from halfspaces (and also directly from oriented
 2-manifolds), we can work with set union, set intersection, set
 difference, set complement, interior, exterior, boundary, closure, and
 regularization operations (see Section \ref sectoinRegularized 
-for an explaination of regularized
+for an explanation of regularized
 set operations). In essence, we can evaluate a CSG-tree with
 halfspaces as primitives and convert it into a B-rep representation.
 
@@ -400,6 +400,15 @@ the (<TT>.off</TT>), OpenInventor (<TT>.iv</TT>), VRML 1.0 and 2.0 (<TT>.wrl</TT
 see Section \ref sectionPolyIO.
 
 \cgalExample{Nef_3/interface_polyhedron.cpp}
+
+\subsection Nef_3NeftoPolygonMesh Conversion of Nef_polyhedron_3 to Polygon Mesh
+
+\anchor subsectionNef_3PolygonMesh
+
+Conversion to models of `MutableFaceGraph` are possible using the function `convert_nef_polyhedron_to_polygon_mesh()`.
+The following example shows how to output a simple `Nef_polyhedron_3` into a `Surface_mesh`.
+
+\cgalExample{Nef_3/nef_3_to_surface_mesh.cpp}
 
 \subsection Nef_3UsinganExtendedKernel Using an Extended Kernel
 

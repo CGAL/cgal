@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -22,6 +23,10 @@
 
 #ifndef CGAL_BOOLEAN_SET_OPERATIONS_H
 #define CGAL_BOOLEAN_SET_OPERATIONS_H
+
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -1253,5 +1258,7 @@ Oriented_side oriented_side(const typename Polygon_::Point_2& p,
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

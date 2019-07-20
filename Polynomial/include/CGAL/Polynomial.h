@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
@@ -33,13 +34,15 @@
 #ifndef CGAL_POLYNOMIAL_H
 #define CGAL_POLYNOMIAL_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <cstdarg>
 #include <cctype>
 #include <vector>
 #include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/mpl/if.hpp>
 #include <CGAL/Flattening_iterator.h>
 
@@ -48,11 +51,7 @@
 #include <CGAL/assertions.h>
 
 #ifdef CGAL_USE_LEDA
-#if CGAL_LEDA_VERSION >= 500
-#include <LEDA/core/array.h>
-#else
-#include <LEDA/array.h>
-#endif
+#  include <LEDA/core/array.h>
 #endif // CGAL_USE_LEDA
 
 #include <CGAL/Polynomial/fwd.h>
@@ -73,6 +72,8 @@
 
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/polynomial_utils.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_POLYNOMIAL_H
 

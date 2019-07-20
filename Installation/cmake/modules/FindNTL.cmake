@@ -10,7 +10,7 @@ if( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
 
 else( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
 
-  include( CGAL_VersionUtils )
+  include( ${CMAKE_CURRENT_LIST_DIR}/CGAL_VersionUtils.cmake )
 
   get_dependency_version( GMP )
 

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
 #ifndef CGAL_SM_LIST_H
 #define CGAL_SM_LIST_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_S2/SM_items.h>
@@ -55,6 +59,7 @@ public:
     //    typedef typename SVertex::SVertex_handle       SVertex_handle;
     //    typedef typename SVertex::SVertex_const_handle SVertex_const_handle;
     SNC_in_place_list_svertex() {}
+  SNC_in_place_list_svertex(const SNC_in_place_list_svertex& other)=default;
     SNC_in_place_list_svertex(const SVertex& v)   // down cast
         : SVertex(v) {}
     Self& operator=( const Self& v) {
@@ -74,6 +79,7 @@ public:
     //    typedef typename SHalfedge::SHalfedge_handle       SHalfedge_handle;
     //    typedef typename SHalfedge::SHalfedge_const_handle SHalfedge_const_handle;
     SNC_in_place_list_shalfedge() {}
+    SNC_in_place_list_shalfedge(const SNC_in_place_list_shalfedge& other)=default;
     SNC_in_place_list_shalfedge(const SHalfedge& v)   // down cast
         : SHalfedge(v) {}
     Self& operator=( const Self& v) {
@@ -93,6 +99,7 @@ public:
     //    typedef typename SFace::SFace_handle       SFace_handle;
     //    typedef typename SFace::SFace_const_handle SFace_const_handle;
     SNC_in_place_list_sface() {}
+    SNC_in_place_list_sface(const SNC_in_place_list_sface& other)=default;
     SNC_in_place_list_sface(const SFace& v)   // down cast
         : SFace(v) {}
     Self& operator=( const Self& v) {

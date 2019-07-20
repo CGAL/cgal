@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s) : Steve Oudot,
@@ -28,10 +29,15 @@
 #ifndef CGAL_SURFACE_MESHER_SURFACE_MESHER_H
 #define CGAL_SURFACE_MESHER_SURFACE_MESHER_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 #include <CGAL/Double_map.h>
 #include <CGAL/Timer.h>
+#include <CGAL/Object.h>
 #include <list>
 #include <string>
 #include <sstream>
@@ -790,5 +796,6 @@ namespace CGAL {
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESHER_SURFACE_MESHER_H

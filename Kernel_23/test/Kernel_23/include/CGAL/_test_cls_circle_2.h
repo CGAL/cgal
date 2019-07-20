@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Stefan Schirra
@@ -25,6 +26,8 @@
 
 #include <CGAL/Bbox_2.h>
 #include <cassert>
+
+#include <boost/type_traits/is_same.hpp>
 
 template <class K>
 void _test_construct_radical_line(const K &k) {
@@ -81,6 +84,8 @@ _test_cls_circle_2(const R& )
 
  typename R::Circle_2  ic;
  CGAL::Circle_2<R> c0;
+
+ const bool nonexact = boost::is_same<FT, double>::value;
 
  RT n0 =  0;
  RT n1 = 16;
@@ -193,9 +198,9 @@ _test_cls_circle_2(const R& )
          == CGAL::ON_POSITIVE_SIDE );
  assert( c10.oriented_side(CGAL::ORIGIN + v1 + vx*n2 ) \
          == CGAL::ON_NEGATIVE_SIDE );
- assert( c10.oriented_side(p9 ) == CGAL::ON_ORIENTED_BOUNDARY );
- assert( c10.has_on_boundary(p9) );
- assert( c10.has_on_boundary(p4 + v1) );
+ assert( c10.oriented_side(p9 ) == CGAL::ON_ORIENTED_BOUNDARY || nonexact);
+ assert( c10.has_on_boundary(p9) || nonexact);
+ assert( c10.has_on_boundary(p4 + v1) || nonexact );
  CGAL::Point_2<R> p11( n4, n4, n3) ; // (2.5, 2.5)
  CGAL::Point_2<R> p12( n5, n5, n3) ; // ( 5 ,  5 )
  assert( c10.has_on_bounded_side( p11 ) );
@@ -205,8 +210,8 @@ _test_cls_circle_2(const R& )
  assert( c10.has_on_negative_side( p12 ) );
  assert( c10.opposite().has_on_negative_side( p11 ) );
  assert( c10.opposite().has_on_positive_side( p12 ) );
- assert( c10.has_on_boundary( p6 ) );
- assert( c10.has_on_boundary( p8 ) );
+ assert( c10.has_on_boundary( p6 ) || nonexact);
+ assert( c10.has_on_boundary( p8 ) || nonexact);
 
  std::cout << '.';
 

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 #ifndef CGAL_POINT_PAIR_LESS_XY_2_H
 #define CGAL_POINT_PAIR_LESS_XY_2_H
+
+#include <CGAL/license/Partition_2.h>
+
 
 #include <utility>
 
@@ -38,7 +42,7 @@ class Point_pair_less_xy_2
    typedef typename Traits::Less_xy_2         Less_xy_2;
 
    public:
-     Point_pair_less_xy_2() : _less_xy_2(Traits().less_xy_2_object())
+     Point_pair_less_xy_2(const Traits& traits) : _less_xy_2(traits.less_xy_2_object())
      { }
      
 

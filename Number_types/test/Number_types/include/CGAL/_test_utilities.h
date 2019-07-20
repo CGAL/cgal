@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann, Sylvain Pion
@@ -22,7 +23,6 @@
 #ifndef CGAL_TEST_UTILITIES_H
 #define CGAL_TEST_UTILITIES_H
 
-#include <CGAL/basic.h>
 #include <CGAL/use.h>
 #include <cassert>
 #include <iostream>
@@ -151,10 +151,10 @@ template < class NT >
 bool
 test_integral_division(const NT&, CGAL::Integral_domain_tag)
 {
-    return (CGAL_NTS integral_division(NT(6),NT(3)) == NT(2));
+    return (CGAL_NTS integral_division(NT(6),NT(3)) == NT(2))
     //mixed ops with int 
-    return (CGAL_NTS integral_division(6,NT(3)) == NT(2));
-    return (CGAL_NTS integral_division(NT(6),3) == NT(2));
+      && (CGAL_NTS integral_division(6,NT(3)) == NT(2))
+    &&  (CGAL_NTS integral_division(NT(6),3) == NT(2));
 }
 
 template < class NT >

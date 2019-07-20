@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Jocelyn Meyron
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_CONVEX_HULL_TRAITS_DUAL_3_H
 #define CGAL_CONVEX_HULL_TRAITS_DUAL_3_H
+
+#include <CGAL/license/Convex_hull_3.h>
+
 
 #include <CGAL/Convex_hull_3/dual/predicates.h>
 #include <CGAL/Convex_hull_3/dual/Convex_hull_traits_dual_2.h>
@@ -68,6 +72,15 @@ namespace CGAL
           typedef typename CGAL::Convex_hull_3::Traits_xz_dual<R> Traits_xz_3;
 
           // Construct objects
+          //Traits
+          Traits_xy_3 construct_traits_xy_3_object()const
+          {return Traits_xy_3();}
+          
+          Traits_yz_3 construct_traits_yz_3_object()const
+          {return Traits_yz_3();}
+          
+          Traits_xz_3 construct_traits_xz_3_object()const
+          {return Traits_xz_3();}
           // Segment_3
           class Construct_segment_3 {
             public:

@@ -14,11 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_MULTI_SURFACE_3_H
 #define CGAL_MULTI_SURFACE_3_H
+
+#include <CGAL/license/Surface_mesher.h>
+
+#include <CGAL/disable_warnings.h>
 
 namespace CGAL {
 
@@ -69,5 +74,7 @@ namespace CGAL {
     typedef Type type; // Boost meta-programming compatibility
   };
 } // end namespace CGAL, second occurrence.
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MULTI_SURFACE_3_H

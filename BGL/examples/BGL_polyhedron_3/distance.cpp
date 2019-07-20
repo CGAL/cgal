@@ -1,8 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 #include <boost/graph/breadth_first_search.hpp>
 
@@ -16,11 +14,10 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 
 
-
-int main(int, char** argv) {
+int main(int argc, char** argv) {
 
   Polyhedron P;  
-  std::ifstream in(argv[1]);
+  std::ifstream in((argc>1)?argv[1]:"cube.off");
   in >> P ;
   
   // associate indices to the vertices using the "id()" field of the vertex.

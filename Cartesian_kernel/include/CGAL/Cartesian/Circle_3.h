@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 // Author(s)     : Monique Teillaud, Pedro Machado, Sebastien Loriot
 
@@ -37,7 +38,14 @@ class CircleC3 {
   typedef typename R_::Direction_3              Direction_3;
   typedef typename R_::FT                       FT;
 
-  typedef std::pair<Sphere_3, Plane_3>             Rep;
+  struct Rep
+  {
+    Sphere_3 first;
+    Plane_3 second;
+    Rep () : first(), second() { }
+    Rep (const Sphere_3& s, const Plane_3& p) : first(s), second(p) { }
+  };
+
   typedef typename R_::template Handle<Rep>::type  Base;
   Base base;  
 
@@ -73,7 +81,7 @@ public:
     CGAL_kernel_assertion((p.a() * center.x() +
                            p.b() * center.y() +
                            p.c() * center.z() +
-                           p.d()) == CGAL::ZERO);
+                           p.d()) == 0);
     CGAL_kernel_assertion(squared_r >= FT(0));
     base = Rep(Sphere_3(center,squared_r), p);
   }
@@ -83,11 +91,11 @@ public:
     // s1,s2 must intersect
     CGAL_kernel_precondition(!(obj.is_empty()));
     const typename R::Circle_3* circle_ptr=object_cast<typename R::Circle_3>(&obj);
-    if(circle_ptr!=NULL)
+    if(circle_ptr!=nullptr)
       base = Rep(circle_ptr->diametral_sphere(), circle_ptr->supporting_plane());
     else {
       const typename R::Point_3* point=object_cast<typename R::Point_3>(&obj);
-      CGAL_kernel_precondition(point!=NULL);
+      CGAL_kernel_precondition(point!=nullptr);
       CircleC3 circle = CircleC3(*point, FT(0), Vector_3(FT(1),FT(0),FT(0)));
       base = Rep(circle.diametral_sphere(), circle.supporting_plane());
     }
@@ -100,11 +108,11 @@ public:
     // s1,s2 must intersect
     CGAL_kernel_precondition(!(obj.is_empty()));
     const typename R::Circle_3* circle_ptr=object_cast<typename R::Circle_3>(&obj);
-    if(circle_ptr!=NULL)
+    if(circle_ptr!=nullptr)
       base = Rep(circle_ptr->diametral_sphere(), circle_ptr->supporting_plane());
     else {
       const typename R::Point_3* point=object_cast<typename R::Point_3>(&obj);
-      CGAL_kernel_precondition(point!=NULL);
+      CGAL_kernel_precondition(point!=nullptr);
       CircleC3 circle = CircleC3(*point, FT(0), Vector_3(FT(1),FT(0),FT(0)));
       base = Rep(circle.diametral_sphere(), circle.supporting_plane());
     }

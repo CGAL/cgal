@@ -1,15 +1,27 @@
 #include <cstdlib>
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
-#define CGAL_NO_DEPRECATION_WARNINGS 1
+#define CGAL_CMAP_DART_DEPRECATED 1
 
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Combinatorial_map_operations.h>
+#include <CGAL/Combinatorial_map_insertions.h>
 #include <CGAL/Cell_attribute.h>
 
-typedef CGAL::Combinatorial_map<3> CMap;
+struct My_items
+{
+  /// Dart_wrapper defines the type of darts used, and enabled attributes.
+  template < class Refs >
+  struct Dart_wrapper
+  {
+    typedef CGAL::Dart< 3, Refs > Dart;
+    typedef std::tuple<> Attributes;
+  };
+};
+
+typedef CGAL::Combinatorial_map<3, My_items> CMap;
 
 bool test()
 {
@@ -75,12 +87,3 @@ int main()
   std::cout<<" Success."<<std::endl;
   return EXIT_SUCCESS;
 }
-
-#else // CGAL_NO_DEPRECATED_CODE
-
-int main()
-{
-  return EXIT_SUCCESS;
-}
-
-#endif // CGAL_NO_DEPRECATED_CODE

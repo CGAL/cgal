@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumes
+\ingroup PkgBoundingVolumesRef
 
 The class `Approximate_min_ellipsoid_d_traits_d` is a traits class for 
 `CGAL::Approximate_min_ellipsoid_d<Traits>` using the 
@@ -26,8 +26,7 @@ number-type are `MP_Float`, `CORE::Expr`, and `Gmpq`.)
 
 */
 template< typename K, typename ET >
-class Approximate_min_ellipsoid_d_traits_d {
-public:
+struct Approximate_min_ellipsoid_d_traits_d {
 
 /// \name Types 
 /// @{

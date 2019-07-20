@@ -25,11 +25,9 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  Surface_mesh::Property_map<face_descriptor, Vector> fnormals =
-    mesh.add_property_map<face_descriptor, Vector>
+  auto fnormals = mesh.add_property_map<face_descriptor, Vector>
       ("f:normals", CGAL::NULL_VECTOR).first;
-  Surface_mesh::Property_map<vertex_descriptor, Vector> vnormals =
-    mesh.add_property_map<vertex_descriptor, Vector>
+  auto vnormals = mesh.add_property_map<vertex_descriptor, Vector>
       ("v:normals", CGAL::NULL_VECTOR).first;
 
   CGAL::Polygon_mesh_processing::compute_normals(mesh,
@@ -39,11 +37,11 @@ int main(int argc, char* argv[])
         geom_traits(K()));
 
   std::cout << "Face normals :" << std::endl;
-  BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+  for(face_descriptor fd: faces(mesh)){
     std::cout << fnormals[fd] << std::endl;
   }
   std::cout << "Vertex normals :" << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+  for(vertex_descriptor vd: vertices(mesh)){
     std::cout << vnormals[vd] << std::endl;
   }
   return 0;

@@ -1,7 +1,7 @@
-#include <CGAL/basic.h>
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/IO/io.h>
 #include <vector>
+#include <CGAL/number_utils.h>
 
 template <class Fraction>
 std::vector<typename CGAL::Fraction_traits<Fraction>::Numerator_type >

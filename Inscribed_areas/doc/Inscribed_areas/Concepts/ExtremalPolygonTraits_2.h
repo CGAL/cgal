@@ -3,6 +3,7 @@
 \ingroup PkgInscribedAreasConcepts
 \cgalConcept
 
+\cgalAdvancedConcept
 \cgalAdvancedBegin
 The concept `ExtremalPolygonTraits_2` provides the types and
 operations needed to compute a maximal \f$ k\f$-gon that can be

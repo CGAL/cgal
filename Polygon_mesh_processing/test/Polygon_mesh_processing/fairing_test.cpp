@@ -1,8 +1,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/Polygon_mesh_processing/fair.h>
 
@@ -16,7 +14,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 
 template <typename K>
-void test_polyhedron(const char* filename, const K&)
+void test_polyhedron(const char* filename, const K&, const bool save_output)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
 
@@ -43,6 +41,9 @@ void test_polyhedron(const char* filename, const K&)
 
   assert(nbv == nbv2);
 
+  if (!save_output)
+    return;
+
   std::ofstream faired_off("faired.off");
   faired_off << poly;
   faired_off.close();
@@ -51,9 +52,10 @@ void test_polyhedron(const char* filename, const K&)
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+  const bool save_output = (argc > 2) ? true : false;
 
-  test_polyhedron(filename, Epic());
-  test_polyhedron(filename, Epec());
+  test_polyhedron(filename, Epic(), save_output);
+  test_polyhedron(filename, Epec(), save_output);
 
   std::cerr << "All done." << std::endl;
 

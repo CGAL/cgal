@@ -13,12 +13,16 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_CONVEX_DECOMPOSITION_3_H
 #define CGAL_CONVEX_DECOMPOSITION_3_H
+
+#include <CGAL/license/Convex_decomposition_3.h>
+
 
 #include <CGAL/Convex_decomposition_3/Single_wall_creator.h>
 #include <CGAL/Convex_decomposition_3/Single_wall_creator2.h>
@@ -40,7 +44,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgConvexDecomposition3
+\ingroup PkgConvexDecomposition3Ref
 
 The function `convex_decomposition_3()` inserts additional facets 
 into the given `Nef_polyhedron_3` `N`, such that each bounded 

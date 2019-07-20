@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Sylvain Pion
@@ -37,8 +38,6 @@
 
 #ifndef CGAL_GMPXX_H
 #define CGAL_GMPXX_H
-
-#include <CGAL/number_type_basic.h>
 
 #include <cstring> // needed by GMP 4.1.4 since <gmpxx.h> misses it.
 #include <gmpxx.h>
@@ -60,5 +59,7 @@ class Real_embeddable_traits< ::__gmp_expr<T,U> >
     : public Real_embeddable_traits< ::__gmp_expr<T,T> >{};
 
 } //namespace CGAL
+
+#include <CGAL/GMPXX_arithmetic_kernel.h>
 
 #endif // CGAL_GMPXX_H

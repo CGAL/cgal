@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://odevil@scm.gforge.inria.fr/svn/cgal/trunk/Spatial_sorting/include/CGAL/Hilbert_sort_d.h $
-// $Id: Hilbert_sort_d.h 51456 2009-08-24 17:10:04Z spion $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Olivier Devillers
 

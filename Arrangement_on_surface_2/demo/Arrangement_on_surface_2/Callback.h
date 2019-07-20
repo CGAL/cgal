@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -41,10 +42,10 @@ public:
   Callback( QObject* parent );
   virtual void reset( );
 
-public slots:
+public Q_SLOTS:
   virtual void slotModelChanged( );
 
-signals:
+Q_SIGNALS:
   void modelChanged( );
 
 protected:

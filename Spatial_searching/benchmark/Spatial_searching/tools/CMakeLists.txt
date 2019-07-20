@@ -2,19 +2,15 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( tools_ )
-
-cmake_minimum_required(VERSION 2.8.11)
 
 
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
+  include(${CGAL_USE_FILE})
   include_directories (BEFORE "../include")
 
   create_single_source_cgal_program( "points_in_bbox.cpp" )

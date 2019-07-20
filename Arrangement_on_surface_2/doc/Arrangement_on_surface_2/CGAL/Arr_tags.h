@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2Tags
+\ingroup PkgArrangementOnSurface2Tags
 
 The categories `Left_side_category`, `Right_side_category`, 
 `Bottom_side_category`, and `Top_side_category`, 
@@ -16,10 +16,7 @@ arrangement.
 
 */
 
-class Arr_oblivious_side_tag {
-public:
-
-/// @}
+struct Arr_oblivious_side_tag {
 
 }; /* end Arr_oblivious_side_tag */
 } /* end namespace CGAL */
@@ -27,7 +24,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2Tags
+\ingroup PkgArrangementOnSurface2Tags
 
 All the four types `Left_side_category`, 
 `Right_side_category`, `Bottom_side_category`, 
@@ -44,10 +41,7 @@ functions based on type of curves that induce the arrangement.
 
 */
 
-class Arr_open_side_tag {
-public:
-
-/// @}
+struct Arr_open_side_tag {
 
 }; /* end Arr_open_side_tag */
 } /* end namespace CGAL */

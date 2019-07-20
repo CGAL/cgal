@@ -3,6 +3,7 @@ Kernel_d
 Polygon
 Convex_hull_2
 Triangulation_2
+Mesh_2
 Number_types
 Algebraic_foundations
 Circular_kernel_2

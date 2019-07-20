@@ -14,12 +14,12 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Michael Hemmer, Dominik Hülse
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <cassert>

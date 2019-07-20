@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)    : Samuel Hornus (Well... `copy, paste and hack' of Monique Teillaud's work)
 
 #ifndef CGAL_INTERNAL_TRIANGULATION_TRIANGULATION_DS_ITERATORS_H
 #define CGAL_INTERNAL_TRIANGULATION_TRIANGULATION_DS_ITERATORS_H
+
+#include <CGAL/license/Triangulation.h>
+
 
 namespace CGAL {
 
@@ -28,6 +32,7 @@ namespace Triangulation {
 template< typename TDS >
 class Triangulation_ds_facet_iterator
 {
+public:
     typedef typename TDS::Full_cell_handle  Full_cell_handle;
     typedef typename TDS::Facet             Facet;
 
@@ -44,7 +49,6 @@ class Triangulation_ds_facet_iterator
     Facet ft_;
     const int cur_dim_;
 
-public:
     Triangulation_ds_facet_iterator(TDS & tds)
     : tds_(tds), ft_(tds.full_cells_begin(), 0), cur_dim_(tds.current_dimension())
     {

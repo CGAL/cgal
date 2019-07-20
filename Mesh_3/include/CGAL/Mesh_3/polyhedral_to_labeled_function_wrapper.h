@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stéphane Tayeb
@@ -26,11 +27,16 @@
 #ifndef CGAL_MESH_3_POLYHEDRAL_TO_LABELED_FUNCTION_WRAPPER_H
 #define CGAL_MESH_3_POLYHEDRAL_TO_LABELED_FUNCTION_WRAPPER_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/AABB_polyhedron_segment_primitive.h>
+
+#include <CGAL/point_generators_3.h>
 
 namespace CGAL {
 

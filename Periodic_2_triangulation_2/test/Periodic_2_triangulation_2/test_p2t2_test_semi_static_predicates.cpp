@@ -7,11 +7,11 @@ const int N = 10;
 
 void test_orientation()
 {
-  Gt traits;
-  traits.set_domain(Gt::Iso_rectangle_2(0, 0, 1, 1));
+  P2TT traits;
+  traits.set_domain(Iso_rectangle(0, 0, 1, 1));
 
-  Gt::Offset_2 o0(0, 0);
-  Gt::Offset_2 o1(0, 1);
+  P2TT::Periodic_2_offset_2 o0(0, 0);
+  P2TT::Periodic_2_offset_2 o1(0, 1);
 
   /// Near degenerate points, which cause the predicate to fail if not filtered
   Point p0(0.5 + (0.4999 / N) * 2, 0.5 + (0.4999 / N) * -5);
@@ -54,11 +54,11 @@ void test_orientation()
 
 void test_in_circle()
 {
-  Gt traits;
-  traits.set_domain(Gt::Iso_rectangle_2(0, 0, 1, 1));
+  P2DTT traits;
+  traits.set_domain(Iso_rectangle(0, 0, 1, 1));
 
-  Gt::Offset_2 o0(0, 0);
-  Gt::Offset_2 o1(0, 1);
+  P2DTT::Periodic_2_offset_2 o0(0, 0);
+  P2DTT::Periodic_2_offset_2 o1(0, 1);
 
   /// Near degenerate points, which cause the predicate to fail if not filtered
   /// On the circle with center (0.4999, 0.4999) and radius 5

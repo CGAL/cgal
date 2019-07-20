@@ -91,7 +91,7 @@ _test_line_face_circulator( const Tri & )
  typename std::vector<Point>::iterator mit;
  typename std::vector<Point>::iterator tit;
  int i; 
- Locate_type(lt);
+ Locate_type lt;
 
  // insert points p - create Vertex_handle vector
  std::vector<Vertex_handle> v;

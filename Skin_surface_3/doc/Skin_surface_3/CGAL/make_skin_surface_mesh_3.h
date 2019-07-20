@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSkinSurface3
+\ingroup PkgSkinSurface3Ref
 
 constructs a mesh of the skin surface defined
 by the weighted points and the shrink factor. 

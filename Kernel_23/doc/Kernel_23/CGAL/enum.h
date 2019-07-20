@@ -124,6 +124,19 @@ const CGAL::Orientation DEGENERATE = ZERO;
 
 /*!
 \ingroup kernel_enums
+*/
+enum Box_parameter_space_2
+     {
+        LEFT_BOUNDARY = 0,
+        RIGHT_BOUNDARY,
+        BOTTOM_BOUNDARY,
+        TOP_BOUNDARY,
+        INTERIOR,
+        EXTERIOR
+     };
+
+/*!
+\ingroup kernel_enums
 
 A symbolic constant used to construct zero length vectors.
 

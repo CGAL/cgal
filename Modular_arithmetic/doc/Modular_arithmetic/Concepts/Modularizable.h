@@ -39,7 +39,5 @@ The following types are `Modularizable` iff their template arguments are.
 class Modularizable {
 public:
 
-/// @}
-
 }; /* end Modularizable */
 

@@ -14,13 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Christophe Delage
 
 #ifndef CGAL_HILBERT_SORT_BASE_H
 #define CGAL_HILBERT_SORT_BASE_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <algorithm>
 #include <CGAL/algorithm.h>
 

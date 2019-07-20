@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 #ifndef CGAL_PARTITION_2_IS_VALID_TRAITS_H
 #define CGAL_PARTITION_2_IS_VALID_TRAITS_H
+
+#include <CGAL/license/Partition_2.h>
+
 
 namespace CGAL {
 
@@ -34,7 +38,14 @@ public:
    typedef typename Traits::Orientation_2   Orientation_2;
 
    typedef PolygonIsValid                   Is_valid;
-   
+
+  Partition_is_valid_traits_2()
+  {}
+
+  Partition_is_valid_traits_2(const Traits& traits)
+    : Traits(traits)
+  {}
+public:   
    Is_valid
    is_valid_object(const Traits& traits) const
    {  return Is_valid(traits); }

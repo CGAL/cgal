@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 #ifndef CGAL_SEGMENT_LESS_YX_2_H
 #define CGAL_SEGMENT_LESS_YX_2_H
+
+#include <CGAL/license/Partition_2.h>
+
 
 #include <utility>
 #include <CGAL/Partition_2/Turn_reverser.h>
@@ -46,11 +50,11 @@ class Segment_less_yx_2
    typedef Turn_reverser<Point_2, Left_turn_2>   Right_turn_2;
 
    public:
-     Segment_less_yx_2() : 
-       _less_xy_2(Traits().less_xy_2_object()),
-       _compare_x_2(Traits().compare_x_2_object()),
-       _compare_y_2(Traits().compare_y_2_object()),
-       _left_turn_2(Traits().left_turn_2_object()),
+     Segment_less_yx_2(const Traits& traits) : 
+       _less_xy_2(traits.less_xy_2_object()),
+       _compare_x_2(traits.compare_x_2_object()),
+       _compare_y_2(traits.compare_y_2_object()),
+       _left_turn_2(traits.left_turn_2_object()),
        _right_turn_2(Right_turn_2(_left_turn_2))
      { }
      

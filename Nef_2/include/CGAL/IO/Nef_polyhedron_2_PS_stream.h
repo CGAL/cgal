@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -21,19 +22,16 @@
 #ifndef CGAL_NEF_POLYHEDRON_2_PS_STREAM_H
 #define CGAL_NEF_POLYHEDRON_2_PS_STREAM_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/Nef_polyhedron_2.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/gen_polygon.h>
-#include <LEDA/ps_file.h>
-#include <LEDA/color.h>
-#else
 #include <LEDA/geo/gen_polygon.h>
 #include <LEDA/graphics/ps_file.h>
 #include <LEDA/graphics/color.h>
-#endif
 
 namespace CGAL {
-static int frame_default = 100;
+static const int frame_default = 100;
 
 template <typename CIRC>
 leda_list<leda_point>

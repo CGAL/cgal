@@ -2,11 +2,8 @@
 #include <CGAL/Fixed_alpha_shape_cell_base_3.h>
 #include <CGAL/Fixed_alpha_shape_vertex_base_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#ifndef CGAL_NO_DEPRECATED_CODE
-#  include <CGAL/Weighted_alpha_shape_euclidean_traits_3.h>
-#endif
+
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <iostream>
 #include <fstream>
@@ -16,56 +13,51 @@
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 
-//#include "Filtered_weighted_alpha_shape_euclidean_traits_3.h"
+typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
+typedef K::Point_3                                                  Point_3;
+typedef K::Weighted_point_3                                         Weighted_point_3;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel                                     Kernel;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<Kernel>                                  WFixed_Gt;
-typedef WFixed_Gt                                                                               Gt;
-//typedef CGAL::Filtered_weighted_alpha_shape_euclidean_traits_3<Kernel,true>                     Gt;
+typedef CGAL::Regular_triangulation_vertex_base_3<K>                Vbb;
+typedef CGAL::Regular_triangulation_cell_base_3<K>                  Cbb;
 
+typedef CGAL::Fixed_alpha_shape_vertex_base_3<K,Vbb>                WFixed_Vb;
+typedef CGAL::Fixed_alpha_shape_cell_base_3<K,Cbb>                  WFixed_Cb;
+typedef CGAL::Triangulation_data_structure_3<WFixed_Vb,WFixed_Cb>   WFixed_TDS;
+typedef CGAL::Regular_triangulation_3<K,WFixed_TDS>                 WFixed_DT;
+typedef CGAL::Fixed_alpha_shape_3< WFixed_DT >                      WFixed_AS;
 
-typedef CGAL::Weighted_point<Kernel::Point_3,Kernel::FT>                                        Weighted_point;
-typedef CGAL::Fixed_alpha_shape_vertex_base_3<WFixed_Gt>                                        WFixed_Vb;
-typedef CGAL::Fixed_alpha_shape_cell_base_3<WFixed_Gt>                                          WFixed_Cb;
-typedef CGAL::Triangulation_data_structure_3<WFixed_Vb,WFixed_Cb>                               WFixed_TDS;
-typedef CGAL::Regular_triangulation_3<WFixed_Gt,WFixed_TDS>                                     WFixed_DT;
-typedef CGAL::Fixed_alpha_shape_3< WFixed_DT >                                                  WFixed_AS;
-
-
-typedef CGAL::Alpha_shape_vertex_base_3<Gt>                                                     WVb;
-typedef CGAL::Alpha_shape_cell_base_3<Gt>                                                       WCb;
-typedef CGAL::Triangulation_data_structure_3<WVb,WCb>                                           WTDS;
-typedef CGAL::Regular_triangulation_3<Gt,WTDS>                                                  WDT;
-typedef CGAL::Alpha_shape_3< WDT >                                                              WAS;
+typedef CGAL::Alpha_shape_vertex_base_3<K,Vbb>                      WVb;
+typedef CGAL::Alpha_shape_cell_base_3<K,Cbb>                        WCb;
+typedef CGAL::Triangulation_data_structure_3<WVb,WCb>               WTDS;
+typedef CGAL::Regular_triangulation_3<K,WTDS>                       WDT;
+typedef CGAL::Alpha_shape_3< WDT >                                  WAS;
 
 //Unweighted stuff
-typedef CGAL::Fixed_alpha_shape_vertex_base_3<Kernel>                                           Fixed_Vb;
-typedef CGAL::Fixed_alpha_shape_cell_base_3<Kernel>                                             Fixed_Cb;
-typedef CGAL::Triangulation_data_structure_3<Fixed_Vb,Fixed_Cb>                                 Fixed_TDS;
-typedef CGAL::Delaunay_triangulation_3<Kernel,Fixed_TDS>                                        Fixed_DT;
-typedef CGAL::Fixed_alpha_shape_3<Fixed_DT>                                                     Fixed_AS;
+typedef CGAL::Fixed_alpha_shape_vertex_base_3<K>                    Fixed_Vb;
+typedef CGAL::Fixed_alpha_shape_cell_base_3<K>                      Fixed_Cb;
+typedef CGAL::Triangulation_data_structure_3<Fixed_Vb,Fixed_Cb>     Fixed_TDS;
+typedef CGAL::Delaunay_triangulation_3<K,Fixed_TDS>                 Fixed_DT;
+typedef CGAL::Fixed_alpha_shape_3<Fixed_DT>                         Fixed_AS;
 
-typedef CGAL::Alpha_shape_vertex_base_3<Kernel>                                                 Vb;
-typedef CGAL::Alpha_shape_cell_base_3<Kernel>                                                   Fb;
-typedef CGAL::Triangulation_data_structure_3<Vb,Fb>                                             TDS;
-typedef CGAL::Delaunay_triangulation_3<Kernel,TDS>                                              DT;
-typedef CGAL::Alpha_shape_3<DT>                                                                 AS;
+typedef CGAL::Alpha_shape_vertex_base_3<K>                          Vb;
+typedef CGAL::Alpha_shape_cell_base_3<K>                            Fb;
+typedef CGAL::Triangulation_data_structure_3<Vb,Fb>                 TDS;
+typedef CGAL::Delaunay_triangulation_3<K,TDS>                       DT;
+typedef CGAL::Alpha_shape_3<DT>                                     AS;
 
-
-
-template <class Object>
-void fill_wp_lists(const char* file_path,std::list<Object>& Ls,double rw=0){
+void fill_lists(const char* file_path,
+                std::list<Point_3>& lst, std::list<Weighted_point_3>& wlst,
+                double rw = 0)
+{
   double x,y,z,r;
   std::ifstream input(file_path);
  
-  while(input){
-    input >> x;
-    if (!input) break;
-    input >> y >> z >> r;
-    Ls.push_back(Object(Kernel::Point_3(x,y,z),(r+rw)*(r+rw)));
+  while(input >> x >> y >> z >> r){
+    Point_3 p(x,y,z);
+    lst.push_back(p);
+    wlst.push_back(Weighted_point_3(p,(r+rw)*(r+rw)));
   }
 }
-
 
 template <class Iterator,class Alpha_shape_3>
 void print_simplices_classif(Iterator begin,Iterator end, const Alpha_shape_3& As){
@@ -200,19 +192,19 @@ void compare_all(const AS1& as1, const AS2& as2,bool debug=false)
   compare_classif(as1.finite_vertices_begin(),as1.finite_vertices_end(),as1,as2.finite_vertices_begin(),as2,"Vertices",debug); 
 }
   
-void test_dynamic_insert(const std::list<Weighted_point >& lst)
+void test_dynamic_insert(const std::list<Weighted_point_3 >& wlst)
 {
-  typedef std::list<Weighted_point >::const_iterator Iterator;
-  Iterator min_it=lst.begin();
+  typedef std::list<Weighted_point_3 >::const_iterator Iterator;
+  Iterator min_it=wlst.begin();
   WFixed_AS dynamic_as;
   
-  while(min_it!=lst.end() && dynamic_as.dimension() != 3)
+  while(min_it!=wlst.end() && dynamic_as.dimension() != 3)
   {
     dynamic_as.insert(*min_it);
     ++min_it;
   }
 //  int k=0;  
-  for (Iterator it=min_it ;it!=lst.end(); ++it)
+  for (Iterator it=min_it ;it!=wlst.end(); ++it)
   {
 //    std::cout << ++k << " " << std::flush;    
     dynamic_as.insert(*it);
@@ -224,9 +216,9 @@ void test_dynamic_insert(const std::list<Weighted_point >& lst)
   std::cout << "done"<< std::endl;
 }
 
-void test_dynamic_remove(const std::list<Weighted_point >& lst)
+void test_dynamic_remove(const std::list<Weighted_point_3 >& wlst)
 {
-   WFixed_AS dynamic_as(lst.begin(),lst.end());
+   WFixed_AS dynamic_as(wlst.begin(),wlst.end());
   
 //  int k=0;
   while (dynamic_as.dimension() == 3)
@@ -245,24 +237,26 @@ void test_dynamic_remove(const std::list<Weighted_point >& lst)
 
 void make_one_run(const char* filename){
   std::cout << "== testing with "  << filename << " ==\n";
-//read weighted points
-  std::list<Weighted_point > lst;
-  fill_wp_lists(filename,lst);
+
+  //read weighted points
+  std::list<Weighted_point_3 > wlst;
+  std::list<Point_3> lst;
+  fill_lists(filename,lst,wlst);
 
   //---Test weighted alpha shape
 //build regular triangulation
-  WFixed_DT T(lst.begin(),lst.end());
-  if (lst.size()!=T.number_of_vertices())
-    std::cout << lst.size()-T.number_of_vertices() << " hidden vertices.\n";
+  WFixed_DT T(wlst.begin(),wlst.end());
+  if (wlst.size()!=T.number_of_vertices())
+    std::cout << wlst.size()-T.number_of_vertices() << " hidden vertices.\n";
   
   std::cout << "Build Fixed weighted alpha complex" << std::endl;
   WFixed_AS wfixed_as(T);
  
-  
-//copy triangulation for familly alpha-shape
+//copy triangulation for family alpha-shape
   WDT T1;
   T1.set_infinite_vertex( T1.tds().copy_tds( wfixed_as.tds(),wfixed_as.infinite_vertex() ) );
-  std::cout << "Build familly weighted alpha complex" << std::endl;
+  std::cout << "Build family weighted alpha complex" << std::endl;
+
   WAS w_as(T1,0,WAS::GENERAL);
   
 
@@ -281,7 +275,7 @@ void make_one_run(const char* filename){
 
   std::cout << "Build Fixed alpha complex" << std::endl;
   Fixed_AS fixed_as(delaunay0);
-  std::cout << "Build familly alpha complex" << std::endl;
+  std::cout << "Build family alpha complex" << std::endl;
   AS as(delaunay1,0,AS::GENERAL); 
   std::cout << "Compare both.... ";
   compare_all(fixed_as,as);
@@ -289,10 +283,10 @@ void make_one_run(const char* filename){
   
 //test dynamic version
   std::cout << "Test dynamic remove \n";
-  test_dynamic_remove(lst);
+  test_dynamic_remove(wlst);
 
   std::cout << "Test dynamic insert \n";
-  test_dynamic_insert(lst);
+  test_dynamic_insert(wlst);
 }
 
 int main(int argc, char** argv){

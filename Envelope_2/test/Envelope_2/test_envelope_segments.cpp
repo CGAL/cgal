@@ -92,7 +92,7 @@ bool read_segments (const char* filename,
 /*!
  * Check if a $x$-monotone curve with the same associated data as the input
  * curve is in the given range.
- * \param begin The begining of the range.
+ * \param begin The beginning of the range.
  * \param end Passed-the-end iterator.
  * \param c The curve, the data of which we are searching.
  * \return True if we found an $x$-monotone curve with the same data.
@@ -310,9 +310,9 @@ int main (int argc, char *argv[])
     // Determine the input format.
     Coord_input_format   format = F_RATIONAL;
     
-    if (strcmp (argv[2*i + 2], "-i") || strcmp (argv[2*i + 2], "-I"))
+    if (strcmp (argv[2*i + 2], "-i") == 0 || strcmp (argv[2*i + 2], "-I") == 0)
       format = F_INTEGER;
-    else if (strcmp (argv[2*i + 2], "-d") || strcmp (argv[2*i + 2], "-D"))
+    else if (strcmp (argv[2*i + 2], "-d") == 0 || strcmp (argv[2*i + 2], "-D") == 0)
       format = F_DOUBLE;
     
     // Read the input segments.

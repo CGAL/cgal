@@ -14,13 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Marc Glisse
 
 #ifndef CGAL_KD_TYPE_SPHERE_H
 #define CGAL_KD_TYPE_SPHERE_H
 #include <CGAL/NewKernel_d/store_kernel.h>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 namespace CGAL {
 template <class R_> class Sphere {
 	typedef typename Get_type<R_, FT_tag>::type FT_;
@@ -29,6 +30,7 @@ template <class R_> class Sphere {
 	FT_ r2_;
 
 	public:
+	Sphere(){}
 	Sphere(Point_ const&p, FT_ const&r2): c_(p), r2_(r2) {}
 	// TODO: Add a piecewise constructor?
 
@@ -48,18 +50,24 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
   // Not really needed
   result_type operator()()const{
     typename Get_functor<R_, Construct_ttag<Point_tag> >::type cp(this->kernel());
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(push)
+#  pragma warning(disable: 4309)
+#endif  
     return result_type(cp(),0);
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(pop)
+#endif
   }
   template <class Iter>
   result_type operator()(Iter f, Iter e)const{
-    typedef typename Get_type<R_, Point_tag>::type	Point;
     typename Get_functor<R_, Construct_circumcenter_tag>::type cc(this->kernel());
     typename Get_functor<R_, Squared_distance_tag>::type sd(this->kernel());
 
     // It should be possible to avoid copying the center by moving this code to a constructor.
     Point center = cc(f, e);
     FT const& r2 = sd(center, *f);
-    return this->operator()(CGAL_MOVE(center), r2);
+    return this->operator()(std::move(center), r2);
   }
 };
 
@@ -104,7 +112,7 @@ template<class R_> struct Point_of_sphere : private Store_kernel<R_> {
   typedef Point result_type;
   typedef Sphere first_argument_type;
   typedef int second_argument_type;
-  struct Trans : std::binary_function<FT,int,FT> {
+  struct Trans : CGAL::cpp98::binary_function<FT,int,FT> {
     FT const& r_; int idx; bool sgn;
     Trans (int n, FT const& r, bool b) : r_(r), idx(n), sgn(b) {}
     FT operator()(FT const&x, int i)const{

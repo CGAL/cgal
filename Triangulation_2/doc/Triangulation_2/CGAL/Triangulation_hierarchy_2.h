@@ -32,7 +32,8 @@ when it is built for Delaunay triangulations.
 However it can be used as well for other triangulations. 
 
 
-\tparam Tr may be any of the \cgal triangulation classes. 
+\tparam Tr may be any of the \cgal triangulation classes. The vertex of the triangulation must
+           be a model of the concept `TriangulationHierarchyVertexBase_2`.
 
 \cgalHeading{Types}
 
@@ -60,8 +61,6 @@ whose efficiency will be that of an ordinary triangulation.
 template< typename Tr >
 class Triangulation_hierarchy_2 : public Tr {
 public:
-
-/// @}
 
 }; /* end Triangulation_hierarchy_2 */
 } /* end namespace CGAL */
@@ -100,8 +99,6 @@ vertex base with additional functionalities.
 template< typename Vb >
 class Triangulation_hierarchy_vertex_base_2 : public Vb {
 public:
-
-/// @}
 
 }; /* end Triangulation_hierarchy_vertex_base_2 */
 } /* end namespace CGAL */

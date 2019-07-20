@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_POINT_WITH_SURFACE_INDEX_GEOM_TRAITS_H
 #define CGAL_POINT_WITH_SURFACE_INDEX_GEOM_TRAITS_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <CGAL/Point_with_surface_index.h>
 

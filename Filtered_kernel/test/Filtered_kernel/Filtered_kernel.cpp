@@ -25,7 +25,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #if 1
-struct K : public CGAL::Filtered_kernel<CGAL::Cartesian<double> > {};
+typedef CGAL::Filtered_kernel<CGAL::Cartesian<double> > K;
 #else
 typedef CGAL::Homogeneous<int> K1;
 typedef CGAL::Homogeneous<CGAL::MP_Float> K2;
@@ -43,7 +43,7 @@ int my_rand()
 {
   int res;
   do {
-    res = int(CGAL::default_random.get_double()*(1<<31));
+    res = int(CGAL::get_default_random().get_double()*(1<<31));
   } while(res == 0);
 
   return res;

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Philipp Möller
@@ -71,8 +72,8 @@ struct ForwardCirculator
     BOOST_CONCEPT_ASSERT((boost::SignedInteger<difference_type>)) CGAL_UNUSED;
     BOOST_CONCEPT_ASSERT((boost::Convertible<iterator_category, CGAL::Forward_circulator_tag>)) CGAL_UNUSED;
     
-    boost::require_boolean_expr(a == NULL);
-    boost::require_boolean_expr(a != NULL);
+    boost::require_boolean_expr(a == nullptr);
+    boost::require_boolean_expr(a != nullptr);
     ++a;
     a++;
     (void)*a; // suppress unused warning, don't check the return type

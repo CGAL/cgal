@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Geert-Jan Giezeman,
@@ -27,14 +28,20 @@
 #define CGAL_COUNTED_NUMBER_H
 
 #include <CGAL/number_type_basic.h>
-#include <boost/iterator/transform_iterator.hpp> // for Root_of_selector
+#include <CGAL/atomic.h>
+#include <CGAL/boost/iterator/transform_iterator.hpp> // for Root_of_selector
 #include <iostream>
 
 namespace CGAL {
 
 template <class NT>
 class Counted_number {
-    static unsigned long s_neg_count, s_add_count, s_sub_count,
+#ifdef CGAL_NO_ATOMIC
+    static unsigned long
+#else
+    static CGAL::cpp11::atomic<unsigned long>
+#endif
+                         s_neg_count, s_add_count, s_sub_count,
                          s_mul_count, s_div_count,
                   			 s_eq_count, s_comp_count,
                          s_simplify_count,
@@ -220,6 +227,7 @@ class Counted_number {
     }
 };
 
+#ifdef CGAL_NO_ATOMIC
 template <class NT>
 unsigned long Counted_number<NT>::s_neg_count=0;
 
@@ -279,6 +287,68 @@ unsigned long Counted_number<NT>::s_div_mod_count = 0;
 
 template< class NT >
 unsigned long Counted_number<NT>::s_mod_count = 0;
+#else 
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_neg_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_add_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_sub_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_mul_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_div_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_eq_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_comp_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_simplify_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_unit_part_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_is_zero_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_is_one_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_square_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_integral_division_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_is_square_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_sqrt_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_kth_root_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_root_of_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_gcd_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_div_mod_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_mod_count;
+#endif
+
 
 //unary +
 template <class NT> Counted_number<NT>
@@ -375,7 +445,7 @@ operator>=(Counted_number<NT> const &n1, Counted_number<NT> const &n2)
 
 template <class NT>
 class Is_valid< Counted_number<NT> >
-  : public std::unary_function< Counted_number<NT>, bool > {
+  : public CGAL::cpp98::unary_function< Counted_number<NT>, bool > {
   public:
     bool operator()( const Counted_number<NT>& x ) {
       return is_valid( x.rep() );
@@ -445,7 +515,7 @@ namespace INTERN_COUNTED_NUMBER{
 
 template< class NT, class Functor >
 struct Simplify_selector {
-  struct Simplify : public std::unary_function<NT&, void> {
+  struct Simplify : public CGAL::cpp98::unary_function<NT&, void> {
     void operator()( NT& x ) const {
       x.simplify();
     }
@@ -459,7 +529,7 @@ struct Simplify_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Unit_part_selector {
-  struct Unit_part : public std::unary_function<NT, NT > {
+  struct Unit_part : public CGAL::cpp98::unary_function<NT, NT > {
     NT operator()( const NT& x ) const {
       return x.unit_part();
     }
@@ -473,7 +543,7 @@ struct Unit_part_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_zero_selector {
-  struct Is_zero : public std::unary_function<NT, bool > {
+  struct Is_zero : public CGAL::cpp98::unary_function<NT, bool > {
     bool operator()( const NT& x ) const {
       return x.is_zero();
     }
@@ -487,7 +557,7 @@ struct Is_zero_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_one_selector {
-  struct Is_one : public std::unary_function<NT, bool > {
+  struct Is_one : public CGAL::cpp98::unary_function<NT, bool > {
     bool operator()( const NT& x ) const {
       return x.is_one();
     }
@@ -501,7 +571,7 @@ struct Is_one_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Square_selector {
-  struct Square : public std::unary_function<NT, NT > {
+  struct Square : public CGAL::cpp98::unary_function<NT, NT > {
     NT operator()( const NT& x ) const {
       return x.square();
     }
@@ -515,7 +585,7 @@ struct Square_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Integral_division_selector {
-  struct Integral_division : public std::binary_function<NT, NT, NT > {
+  struct Integral_division : public CGAL::cpp98::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.integral_division( y );
     }
@@ -529,7 +599,7 @@ struct Integral_division_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_square_selector {
-  struct Is_square : public std::binary_function<NT, NT&, bool > {
+  struct Is_square : public CGAL::cpp98::binary_function<NT, NT&, bool > {
       bool operator()( const NT& x, NT& y ) const {
           return x.is_square( y );
       }
@@ -548,7 +618,7 @@ struct Is_square_selector< NT, Null_functor > {
 
 template <class NT, class AlgebraicStructureTag>
 struct Sqrt_selector{
-    struct Sqrt : public std::unary_function<NT,NT> {
+    struct Sqrt : public CGAL::cpp98::unary_function<NT,NT> {
         NT operator ()(const NT& x) const {
             return x.sqrt();
         }
@@ -561,7 +631,7 @@ struct Sqrt_selector<NT,Null_functor> {
 
 template< class NT, class Functor >
 struct Kth_root_selector {
-  struct Kth_root : public std::binary_function<int, NT, NT > {
+  struct Kth_root : public CGAL::cpp98::binary_function<int, NT, NT > {
     NT operator()( int k, const NT& x ) const {
       return x.kth_root( k );
     }
@@ -617,7 +687,7 @@ struct Root_of_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Gcd_selector {
-  struct Gcd : public std::binary_function<NT, NT, NT > {
+  struct Gcd : public CGAL::cpp98::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.gcd( y );
     }
@@ -631,7 +701,7 @@ struct Gcd_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Div_selector {
-  struct Div : public std::binary_function<NT, NT, NT > {
+  struct Div : public CGAL::cpp98::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.div( y );
     }
@@ -645,7 +715,7 @@ struct Div_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Mod_selector {
-  struct Mod : public std::binary_function<NT, NT, NT > {
+  struct Mod : public CGAL::cpp98::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.mod( y );
     }
@@ -748,20 +818,20 @@ public:
     <Counted_number<NT>, typename RET_NT::Is_zero > ::Is_zero Is_zero;
 
     class Is_finite
-      : public std::unary_function< Counted_number<NT>, bool > {
+      : public CGAL::cpp98::unary_function< Counted_number<NT>, bool > {
       public:
         bool operator()( const Counted_number<NT>& x ) const {
           return CGAL_NTS is_finite( x.rep() );
         }
     };
 
-    struct To_double : public std::unary_function< Counted_number<NT>, double > {
+    struct To_double : public CGAL::cpp98::unary_function< Counted_number<NT>, double > {
         double operator()(const Counted_number<NT>& x) const {
             return x.to_double();
         }
     };
 
-    struct To_interval: public std::unary_function< Counted_number<NT>, std::pair<double,double> > {
+    struct To_interval: public CGAL::cpp98::unary_function< Counted_number<NT>, std::pair<double,double> > {
         std::pair<double,double>
         operator()(const Counted_number<NT>& x) const {
             return x.to_interval();

@@ -23,11 +23,11 @@ COMPILERS_localhost=
 #COMPILERS_localhost="$COMPILERS_localhost x86-64_Linux-Fedora19_g++-4.8_CXXDEBUG"
 #COMPILERS_localhost="$COMPILERS_localhost x86-64_Linux-Fedora19_IntelCompiler-14.0-with-g++-4.8-STL"
 #COMPILERS_localhost="$COMPILERS_localhost x86-64_Linux-Fedora19_IntelCompiler-14.0-with-g++-4.8-STL_strict-ansi"
-COMPILERS_localhost="$COMPILERS_localhost x86-64_Linux-Fedora19_llvm-clang-with-g++-4.8"
+#COMPILERS_localhost="$COMPILERS_localhost x86-64_Linux-Fedora19_llvm-clang-with-g++-4.8"
 #COMPILERS_localhost="$COMPILERS_localhost x86-64_Linux-Fedora19_g++-4.8_ansi"
 #COMPILERS_localhost="$COMPILERS_localhost x86-64_Linux-Fedora19_g++-4.8_m32"
-COMPILERS_localhost="$COMPILERS_localhost x86-64_Linux-Fedora_IntelCompiler-17"
-COMPILERS_localhost="$COMPILERS_localhost x86-64_Linux-Fedora_IntelCompiler-17-with-assertions"
+#COMPILERS_localhost="$COMPILERS_localhost x86-64_Linux-Fedora_IntelCompiler-17"
+#COMPILERS_localhost="$COMPILERS_localhost x86-64_Linux-Fedora_IntelCompiler-17-with-assertions"
 
 BUILD_ON_localhost=all
 

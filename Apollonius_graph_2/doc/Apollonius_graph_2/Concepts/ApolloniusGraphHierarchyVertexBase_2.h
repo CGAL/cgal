@@ -63,7 +63,7 @@ ApolloniusGraphHierarchyVertexBase_2(Site_2 s, Face_handle f).;
 /*!
 Returns a handle to the corresponding 
 vertex of the next level Apollonius graph. If such a vertex does not 
-exist `Vertex_handle(NULL)` is returned. 
+exist `Vertex_handle(nullptr)` is returned. 
 */ 
 Vertex_handle up(); 
 

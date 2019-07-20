@@ -74,6 +74,6 @@ Gray_level_image_3(const char* filename, FT iso_value);
 /*! Returns the sign of  \f$ f(p)\f$  - `iso_value`. 
  */
   FT operator(const Point& p) const;
-/// @
+/// @}
 }; /* end Gray_level_image_3 */
 } /* end namespace CGAL */

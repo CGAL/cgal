@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sebastien Loriot
 // This predicates was generated using the fpg tool written by Andreas Meyer.
@@ -24,7 +25,6 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
-#include <CGAL/internal/Static_filters/tools.h>
 #include <cmath>
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
@@ -59,23 +59,18 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     ) const {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_squared_radius_3 with 4 points", tmp);
 
-      Get_approx<Point_3> get_approx; // Identity functor for all points
-                                      // but lazy ones.
-      Get_approx<FT> get_approx_ft; // Identity functor for all FT
-                                    // but Lazy ones.
-
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, alpha;
       init_double(px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, alpha, (FT*)(0));
 
-      if( fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py)      &&
-          fit_in_double(get_approx(p).z(), pz) && 
-          fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy)      &&
-          fit_in_double(get_approx(q).z(), qz) && 
-          fit_in_double(get_approx(r).x(), rx) && fit_in_double(get_approx(r).y(), ry)      &&
-          fit_in_double(get_approx(r).z(), rz) && 
-          fit_in_double(get_approx(s).x(), sx) && fit_in_double(get_approx(s).y(), sy)      &&
-          fit_in_double(get_approx(s).z(), sz) && 
-          fit_in_double(get_approx_ft(w), alpha)
+      if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)      &&
+          fit_in_double(p.z(), pz) &&
+          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)      &&
+          fit_in_double(q.z(), qz) &&
+          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry)      &&
+          fit_in_double(r.z(), rz) &&
+          fit_in_double(s.x(), sx) && fit_in_double(s.y(), sy)      &&
+          fit_in_double(s.z(), sz) &&
+          fit_in_double(w, alpha)
         )
       {
         CGAL_BRANCH_PROFILER_BRANCH_1(tmp);

@@ -42,7 +42,5 @@ the smallest positive remainder \f$ r\f$.
 class EuclideanRing {
 public:
 
-/// @}
-
 }; /* end EuclideanRing */
 

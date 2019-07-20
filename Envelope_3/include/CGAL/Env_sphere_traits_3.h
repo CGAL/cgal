@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
@@ -23,12 +24,16 @@
 #ifndef CGAL_ENV_SPHERE_TRAITS_3_H
 #define CGAL_ENV_SPHERE_TRAITS_3_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Sphere_3.h>
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
+#include <CGAL/int.h>
 
 namespace CGAL {
 
@@ -241,7 +246,7 @@ public:
           
           Algebraic  ys[2];
           Algebraic *ys_end;
-          int   n_ys;
+          std::ptrdiff_t   n_ys;
 
           ys_end = nt_traits.solve_quadratic_equation(A, B, C, ys);
           n_ys = ys_end - ys;
@@ -322,7 +327,7 @@ public:
           
           Algebraic  xs[2];
           Algebraic *xs_end;
-          int   n_xs;
+          std::ptrdiff_t n_xs;
 
           xs_end = nt_traits.solve_quadratic_equation(D, E, F, xs);
           n_xs = xs_end - xs;
@@ -508,7 +513,7 @@ public:
         // with the conic
         //    R*x^2 + S*y^2 + T*xy + U*x + V*y + W = 0
         Alg_point_2 source, target, pmid;
-        int n_inter_points;
+        std::ptrdiff_t n_inter_points;
         if (CGAL_NTS compare(lb, zero) != EQUAL)
         {
           // Find the x-coordinates of the intersection points of the conic 
@@ -692,7 +697,7 @@ public:
         // If the mid-point forms a left-turn with the source and the target
         // points, the orientation is positive (going counterclockwise).
         // Otherwise, it is negative (going clockwise).
-        static Alg_kernel k;
+        Alg_kernel k;
         typename Alg_kernel::Orientation_2 orient_f = k.orientation_2_object();
         Orientation orient;
         if (orient_f(source, pmid, target) == LEFT_TURN)
@@ -1089,7 +1094,7 @@ public:
     
     Algebraic  zs[2];
     Algebraic *zs_end;
-    int   n_zs;
+    std::ptrdiff_t n_zs;
 
     Nt_traits nt_traits;
     zs_end = nt_traits.solve_quadratic_equation(A, B, C, zs);

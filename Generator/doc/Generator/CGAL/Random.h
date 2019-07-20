@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
+\ingroup PkgGeneratorsRef
 The class `Random` is a random numbers generator. It generates 
 uniformly distributed random `bool`, `int` and `double`. 
 It can be used as the random number generating function object in the 
@@ -18,12 +18,15 @@ It can be very useful, e.g. for debugging, to reproduce a sequence of
 random numbers. This can be done by either initialising with a fixed 
 seed, or by using the state functions as described below. 
 
+\note A `Random` object is not deterministic when used by several threads at 
+the same time, even if a fixed seed has been chosen.
+
 \cgalHeading{Implementation}
 
 We use the boost random library function `boost::rand48` to generate the random 
 numbers. 
 
-\sa `CGAL::default_random` 
+\sa `CGAL::get_default_random` 
 
 */
 
@@ -177,9 +180,18 @@ bool operator == ( Random const& random2) const;
 }; /* end Random */
 
 /*!
-  \ingroup PkgGenerators
-  The variable `default_random` is the default random numbers generator used for
-  the generator functions and classes.
+  \ingroup PkgGeneratorsRef
+  The global function `get_default_random()` returns the default random 
+  numbers generator used for the generator functions and classes.
+  The returned generator is thread local.
+*/
+Random &get_default_random();
+
+/*!
+  \ingroup PkgGeneratorsRef
+  \deprecated The variable `default_random` was the default random
+  numbers generator used for the generator functions and
+  classes. Deprecated. Use `get_default_random()` instead.
 */
 extern CGAL::Random default_random;
 

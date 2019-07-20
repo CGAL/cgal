@@ -23,8 +23,7 @@ can be passed  as parameter to
 
 */
 template< typename Tag >
-class Hilbert_policy {
-public:
+struct Hilbert_policy {
 
 
 
@@ -76,8 +75,7 @@ as parameter to
 
 */
 
-class Median {
-public:
+struct Median {
 
 
 }; /* end Median */
@@ -104,8 +102,7 @@ as parameter to
 
 */
 
-class Middle {
-public:
+struct Middle {
 
 
 }; /* end Middle */

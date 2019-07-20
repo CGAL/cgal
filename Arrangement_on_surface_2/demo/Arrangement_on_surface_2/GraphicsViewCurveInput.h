@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -145,7 +146,7 @@ protected:
       }
       this->pointsGraphicsItem.clear( );
       Curve_2 res( this->p1, this->p2 );
-      emit generate( CGAL::make_object( res ) );
+      Q_EMIT generate( CGAL::make_object( res ) );
     }
   }
 
@@ -243,7 +244,7 @@ protected:
           construct_poly( this->points.begin( ), this->points.end( ) );
         this->points.clear( );
 
-        emit generate( CGAL::make_object( res ) );
+        Q_EMIT generate( CGAL::make_object( res ) );
       }
       else
       { // start the next segment
@@ -440,7 +441,7 @@ protected:
         this->points.clear( );
         this->pointsGraphicsItem.clear( );
 
-        emit generate( CGAL::make_object( res ) );
+        Q_EMIT generate( CGAL::make_object( res ) );
       }
       else if ( this->conicType == CONIC_CIRCLE )
       {
@@ -460,7 +461,7 @@ protected:
 
         this->points.clear( );
         this->pointsGraphicsItem.clear( );
-        emit generate( CGAL::make_object( res ) );
+        Q_EMIT generate( CGAL::make_object( res ) );
       }
       else if ( this->conicType == CONIC_ELLIPSE )
       {
@@ -494,7 +495,7 @@ protected:
         Curve_2 res = Curve_2( r, s, t, u, v, ww );
         this->points.clear( );
         this->pointsGraphicsItem.clear( );
-        emit generate( CGAL::make_object( res ) );
+        Q_EMIT generate( CGAL::make_object( res ) );
       }
       else if ( this->conicType == CONIC_THREE_POINT )
       {
@@ -510,7 +511,7 @@ protected:
           if ( ! ker.collinear_2_object()( p1, p2, p3 ) )
           {
             Curve_2 res( p1, p2, p3 );
-            emit generate( CGAL::make_object( res ) );
+            Q_EMIT generate( CGAL::make_object( res ) );
           }
           else
           {
@@ -543,7 +544,7 @@ protected:
             Curve_2 res( p1, p2, p3, p4, p5 );
             if ( res.is_valid( ) )
             {
-              emit generate( CGAL::make_object( res ) );
+              Q_EMIT generate( CGAL::make_object( res ) );
             }
             else
             {
@@ -715,7 +716,7 @@ protected: // methods
         res = Curve_2( Line_2( this->p1, this->p2 ) );
       }
 
-      emit generate( CGAL::make_object( res ) );
+      Q_EMIT generate( CGAL::make_object( res ) );
     }
   }
 
@@ -802,13 +803,13 @@ protected:
         {
           Curve_2 res( circle, pp1, pp3 );
           // std::cout << res << std::endl;
-          emit generate( CGAL::make_object( res ) );
+          Q_EMIT generate( CGAL::make_object( res ) );
         }
         else
         {
           Curve_2 res( circle, pp3, pp1 );
           // std::cout << res << std::endl;
-          emit generate( CGAL::make_object( res ) );
+          Q_EMIT generate( CGAL::make_object( res ) );
         }
       }
       else

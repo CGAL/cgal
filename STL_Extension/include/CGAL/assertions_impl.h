@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Geert-Jan Giezeman and Sven Schönherr
@@ -89,7 +90,7 @@ _standard_error_handler(
          << "File       : " << file << std::endl
          << "Line       : " << line << std::endl
          << "Explanation: " << msg << std::endl
-         << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html"
+         << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html"
 	 << std::endl;
 }
 
@@ -114,7 +115,7 @@ _standard_warning_handler( const char *,
          << "File       : " << file << std::endl
          << "Line       : " << line << std::endl
          << "Explanation: " << msg << std::endl
-         << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html"
+         << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html"
 	 << std::endl;
 }
 

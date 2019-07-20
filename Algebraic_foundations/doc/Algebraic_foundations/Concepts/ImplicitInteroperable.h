@@ -28,7 +28,5 @@ is `CGAL::Tag_true`.
 class ImplicitInteroperable {
 public:
 
-/// @}
-
 }; /* end ImplicitInteroperable */
 

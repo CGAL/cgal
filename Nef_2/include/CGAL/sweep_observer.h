@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_SWEEP_OBSERVER_H
 #define CGAL_SWEEP_OBSERVER_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <list>
 

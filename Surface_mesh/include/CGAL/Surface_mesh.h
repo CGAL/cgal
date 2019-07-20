@@ -14,10 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Phlipp Moeller
 #ifndef CGAL_TOP_LEVEL_SURFACE_MESH_H
 #define CGAL_TOP_LEVEL_SURFACE_MESH_H
+
+#include <CGAL/license/Surface_mesh.h>
+
 
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>

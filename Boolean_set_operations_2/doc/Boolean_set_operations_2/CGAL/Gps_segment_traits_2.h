@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBooleanSetOperations2
+\ingroup PkgBooleanSetOperations2Ref
 
 \cgalModels `GeneralPolygonSetTraits_2`
 

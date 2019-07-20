@@ -1,5 +1,5 @@
 #include <iostream>
-#include <CGAL/basic.h>
+
 #include <CGAL/Arithmetic_kernel.h>
 
 #if defined(CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL)

@@ -25,7 +25,6 @@
 // A test for the CGAL::Multiset container.
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/Multiset.h>
 #include <string>
 #include <vector>

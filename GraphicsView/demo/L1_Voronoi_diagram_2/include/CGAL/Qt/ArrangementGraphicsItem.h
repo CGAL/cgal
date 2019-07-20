@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://ophirset@scm.gforge.inria.fr/svn/cgal/trunk/GraphicsView/include/CGAL/Qt/ArrangementGraphicsItem.h $
-// $Id: ArrangementGraphicsItem.h 45924 2008-10-01 09:19:53Z afabri $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Ophir Setter <ophirset@post.tau.ac.il>
 //                 

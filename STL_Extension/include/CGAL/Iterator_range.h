@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -21,13 +22,13 @@
 #define CGAL_ITERATOR_RANGE_H
 
 #include <CGAL/tuple.h>
-#include <utility>
 #include <boost/foreach.hpp>
+#include <utility>
 
 namespace CGAL {
 
   /*!
-\ingroup PkgStlExtension
+\ingroup PkgSTLExtensionRef
   /// `CGAL::Iterator_range` is a...
   */
   template <typename I>
@@ -65,17 +66,29 @@ namespace CGAL {
   }
 
   /// returns `std::distance(begin(), end())`
-  typename std::iterator_traits<I>::difference_type
+  std::size_t
   size() const
   {
-    return std::distance(begin(), end());
+    return static_cast<std::size_t>(std::distance(begin(), end()));
   }
 
   /// returns `std::distance(begin(), end())==0`
   bool empty() const
   {
-    return std::distance(begin(), end())==0;
+    return begin()==end();
   }
+#ifndef CGAL_CFG_NO_CPP0X_TUPLE
+
+  operator std::tuple<I&, I&>()
+  {
+    return std::tuple<I&, I&>{this->first, this->second};
+  }
+
+  operator std::tuple<const I&, const I&>() const 
+  {
+    return std::tuple<const I&, const I&>{this->first, this->second};
+  }
+#endif
 
 };
 

@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
 //                 Guy Zucker <guyzucke@post.tau.ac.il>
@@ -19,6 +23,10 @@
 
 #ifndef CGAL_GPS_ON_SURFACE_BASE_2_H
 #define CGAL_GPS_ON_SURFACE_BASE_2_H
+
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
@@ -38,13 +46,12 @@
 #include <CGAL/Boolean_set_operations_2/Ccb_curve_iterator.h>
 #include <CGAL/Union_find.h>
 
-#include <boost/foreach.hpp>
 
 /*!
   \file   Gps_on_surface_base_2.h
   \brief  A class that allows Boolean set operations.
   This class is the base class for General_polygon_set_on_surface_2 and
-  recieves extra template parameter which allows different validation
+  receives extra template parameter which allows different validation
   policies. If you do not want validation then use the default validation
   policy. A different validation policy example can be found in
   General_polygon_set_on_surface_2.
@@ -68,7 +75,7 @@ namespace Boolean_set_operation_2_internal
 
 //! General_polygon_set_on_surface_2
 /*! This class is the base class for General_polygon_set_on_surface_2 and
-    recieves extra template parameter which allows different validation
+    receives extra template parameter which allows different validation
     policies. If you do not want validation then use the default validation
     policy. A different validation policy example can be found in
     General_polygon_set_on_surface_2.
@@ -1085,7 +1092,7 @@ protected:
 
       // update halfedge flag according to the flag of the twin halfedge
       // or if the outer ccb of the cc was set
-      BOOST_FOREACH(Halfedge_handle h, halfedges_that_was_on_an_outer_ccb)
+      for(Halfedge_handle h : halfedges_that_was_on_an_outer_ccb)
       {
         if (h->flag()!=NOT_VISITED) continue;
         std::size_t face_master_id=(*uf_faces.find(face_handles[h->face()->id()]))->id();
@@ -1104,6 +1111,15 @@ protected:
       }
     }
     while(something_was_updated);
+    // last loop, if some tags are not set it means that they are the only ccb
+    // of the face and that they have to be the outer ccb
+    for(Halfedge_handle h : halfedges_that_was_on_an_outer_ccb)
+    {
+      if (h->flag()!=NOT_VISITED) continue;
+      std::size_t face_master_id=(*uf_faces.find(face_handles[h->face()->id()]))->id();
+      set_flag_of_halfedges_of_final_argt(h,ON_OUTER_CCB);
+      face_outer_ccb_set[face_master_id]=true;
+    }
     // at this position there might be some bits in face_outer_ccb_set not set
     // but they are corresponding to the unbounded face
   // End tagging ccbs
@@ -1174,9 +1190,9 @@ protected:
       }
 
       //collect for reuse/removal all inner and outer ccbs
-      BOOST_FOREACH(void* ptr, (*it)->_outer_ccbs())
+      for(void* ptr : (*it)->_outer_ccbs())
         outer_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->outer_ccb() );
-      BOOST_FOREACH(void* ptr, (*it)->_inner_ccbs())
+      for(void* ptr : (*it)->_inner_ccbs())
         inner_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->inner_ccb() );
       (*it)->_outer_ccbs().clear();
       (*it)->_inner_ccbs().clear();
@@ -1184,10 +1200,18 @@ protected:
 
     // accessor for  low-level arrangement fonctionalities
     CGAL::Arr_accessor<Aos_2> accessor(*arr);
+    // the face field of outer and inner ccb are used in the loop to access the old face an halfedge
+    // used to contribute to. These two vectors are used to delay the association to the new face to
+    // avoid overwriting a field that is still needed
+    typedef std::pair<typename Aos_2::Dcel::Outer_ccb*, typename Aos_2::Dcel::Face*> Outer_ccb_and_face;
+    typedef std::pair<typename Aos_2::Dcel::Inner_ccb*, typename Aos_2::Dcel::Face*> Inner_ccb_and_face;
+    std::vector<Outer_ccb_and_face> outer_ccb_and_new_face_pairs;
+    std::vector<Inner_ccb_and_face> inner_ccb_and_new_face_pairs;
     // update halfedge ccb pointers
     for (Halfedge_iterator itr = arr->halfedges_begin(); itr != arr->halfedges_end(); ++itr)
     {
       Halfedge_handle h = itr;
+      CGAL_assertion(h->face() != Face_handle());
       if (h->face()->id_not_set()) continue;
       CGAL_assertion(h->flag()!=NOT_VISITED);
 
@@ -1205,11 +1229,12 @@ protected:
         f = *(face_handles[
                 (*uf_faces.find(face_handles[f->id()]))->id()
               ]);
-        if (h->flag()==ON_INNER_CCB || h->flag()==NOT_VISITED)
+        if (h->flag()==ON_INNER_CCB)
         {
-          typename Aos_2::Dcel::Inner_ccb* inner_ccb = inner_ccbs_to_remove.empty()?
+          bool reuse_inner_ccb = !inner_ccbs_to_remove.empty();
+          typename Aos_2::Dcel::Inner_ccb* inner_ccb = !reuse_inner_ccb?
             accessor.new_inner_ccb():inner_ccbs_to_remove.back();
-          if ( !inner_ccbs_to_remove.empty() ) inner_ccbs_to_remove.pop_back();
+          if ( reuse_inner_ccb ) inner_ccbs_to_remove.pop_back();
 
           Halfedge_handle hstart=h;
           do{
@@ -1219,12 +1244,23 @@ protected:
           }while(hstart!=h);
           f->add_inner_ccb(inner_ccb,_halfedge(h));
           inner_ccb->set_halfedge(_halfedge(h));
-          inner_ccb->set_face(f);
+          if (!reuse_inner_ccb)
+            inner_ccb->set_face(f);
+          else
+            inner_ccb_and_new_face_pairs.push_back( std::make_pair(inner_ccb, f) );
         }
         else{
-          CGAL_assertion(!outer_ccbs_to_remove.empty());
-          typename Aos_2::Dcel::Outer_ccb* outer_ccb = outer_ccbs_to_remove.back();
-          outer_ccbs_to_remove.pop_back();
+          // create a new outer ccb if none is available
+          typename Aos_2::Dcel::Outer_ccb* outer_ccb;
+          if (!outer_ccbs_to_remove.empty())
+          {
+            outer_ccb = outer_ccbs_to_remove.back();
+            outer_ccbs_to_remove.pop_back();
+          }
+          else{
+            outer_ccb = accessor.new_outer_ccb();
+            outer_ccb->set_face(f);
+          }
           Halfedge_handle hstart=h;
           do{
             _halfedge(h)->set_outer_ccb(outer_ccb);
@@ -1233,10 +1269,16 @@ protected:
           }while(hstart!=h);
           f->add_outer_ccb(outer_ccb,_halfedge(h));
           outer_ccb->set_halfedge(_halfedge(h));
-          outer_ccb->set_face(f);
+          outer_ccb_and_new_face_pairs.push_back( std::make_pair(outer_ccb, f) );
         }
       }
     }
+
+    // now set the new face for all ccbs
+    for(Outer_ccb_and_face& ccb_and_face : outer_ccb_and_new_face_pairs)
+      ccb_and_face.first->set_face(ccb_and_face.second);
+    for(Inner_ccb_and_face& ccb_and_face : inner_ccb_and_new_face_pairs)
+      ccb_and_face.first->set_face(ccb_and_face.second);
 
     //remove no longer used edges, vertices and faces
     accessor.delete_vertices( vertices_to_remove );
@@ -1730,8 +1772,10 @@ protected:
   }
 };
 
+} //namespace CGAL
+
 #include <CGAL/Boolean_set_operations_2/Gps_on_surface_base_2_impl.h>
 
-} //namespace CGAL
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_GPS_ON_SURFACE_BASE_2_H

@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3GeometricConcepts
+\ingroup PkgCircularKernel3GeometricConcepts
 \cgalConcept
 
 Testing equality between objects.

@@ -1,7 +1,6 @@
 #ifndef CGAL_POINT_LOCATION_DYNAMIC_TEST_H
 #define CGAL_POINT_LOCATION_DYNAMIC_TEST_H
 
-#include <CGAL/basic.h>
 
 #include "Point_location_test.h"
 
@@ -132,7 +131,7 @@ read_perform_opts(std::istream& is)
       rc = false;
       continue;
     }
-    if (cmd == 'i') insert(*(this->m_arr), this->m_xcurves[id]);
+    if (cmd == 'i') CGAL::insert(*(this->m_arr), this->m_xcurves[id]);
 
     if (cmd == 'd') {
       if (!remove(this->m_xcurves[id])) rc = false;

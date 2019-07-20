@@ -1,10 +1,9 @@
-#include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial.h>
 
 template<class AK>
 void test_get_arithmetic_kernel(){
-  typedef typename AK::Integer Integer;
+  CGAL_assertion_code(typedef typename AK::Integer Integer);
   {
     CGAL_assertion_code(typedef CGAL::Polynomial<Integer> POLY;)
     CGAL_assertion_code(typedef typename CGAL::Get_arithmetic_kernel<POLY>::Arithmetic_kernel AK_;)

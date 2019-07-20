@@ -2,7 +2,7 @@
 
 #include "test_configuration.h"
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #if ((TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS) ||	\
      (TEST_GEOM_TRAITS == BEZIER_GEOM_TRAITS) ||	\

@@ -14,11 +14,18 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s):      Thijs van Lankveld
 
 
 #ifndef CGAL_INTERNAL_AUTO_COUNT_H
 #define CGAL_INTERNAL_AUTO_COUNT_H
+
+#include <CGAL/license/Scale_space_reconstruction_3.h>
+
 
 #include <functional>
 #include <utility>
@@ -36,7 +43,7 @@ namespace internal {
  */
 template < class T, class C = unsigned int >
 class Auto_count
-: public std::unary_function< const T&, std::pair< T, C > > {
+: public CGAL::cpp98::unary_function< const T&, std::pair< T, C > > {
     mutable C i; // Note, not thread-safe.
 public:
 /// \name Constructors

@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -22,6 +23,8 @@
 
 #ifndef CGAL__TEST_CLS_LINE_2_H
 #define CGAL__TEST_CLS_LINE_2_H
+
+#include <CGAL/use.h>
 
 template <class R>
 bool
@@ -46,7 +49,8 @@ _test_cls_line_2(const R& )
  CGAL::Point_2<R> p3(-n6, n6, n3 );   // (-2, 2 )
  CGAL::Point_2<R> p4( n8, n4, n2 );   // ( 4, 2 )
 
- typename R::Line_2 il;
+ typename R::Line_2 il0; CGAL_USE(il0); // test default-construction
+ typename R::Line_2 il(p1, p2);
  CGAL::Line_2<R>  l0(il);
  CGAL::Line_2<R>  l12( p1, p2 );
  CGAL::Line_2<R>  l21( p2, p1 );

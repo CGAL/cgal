@@ -3,8 +3,6 @@
 \ingroup PkgPolynomialConcepts
 \cgalConcept
 
-<B>Note:</B> This functor is optional! 
-
 Computes the Sturm-Habicht sequence 
 (aka the signed subresultant sequence) 
 of a polynomial \f$ f\f$ of type 
@@ -26,6 +24,8 @@ as in the concept `PolynomialTraits_d::PolynomialSubresultants`.
 The result is written in an output range, 
 starting with the \f$ 0\f$-th Sturm-Habicht polynomial (which is equal to 
 the discriminant of \f$ f\f$ up to a multiple of the leading coefficient). 
+
+\note This functor is optional.
 
 \cgalRefines `AdaptableBinaryFunction` 
 \cgalRefines `CopyConstructible` 

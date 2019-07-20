@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s) : Pierre Alliez, Camille Wormser
 
 #ifndef CGAL_AABB_SEARCH_TREE_H
 #define CGAL_AABB_SEARCH_TREE_H
+
+#include <CGAL/license/AABB_tree.h>
+
 
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
@@ -61,6 +65,7 @@ namespace CGAL
                           m_id = rhs.m_id;
                     }
 
+                  Decorated_point& operator=(const Decorated_point&)=default;
                 private:
                     Id m_id;
 
@@ -102,7 +107,7 @@ namespace CGAL
         public:
                 template <class ConstPointIterator>
                 AABB_search_tree(ConstPointIterator begin, ConstPointIterator beyond)
-                    : m_p_tree(NULL)
+                    : m_p_tree(nullptr)
                 {
                         typedef typename Add_decorated_point<Traits, typename Traits::Primitive::Id>::Point_3 Decorated_point;
                         std::vector<Decorated_point> points;
@@ -112,7 +117,7 @@ namespace CGAL
                                 ++begin;
                         }
                         m_p_tree = new Tree(points.begin(), points.end());
-                        if(m_p_tree != NULL)
+                        if(m_p_tree != nullptr)
                                 m_p_tree->build();
                         else
                                 std::cerr << "unable to build the search tree!" << std::endl;

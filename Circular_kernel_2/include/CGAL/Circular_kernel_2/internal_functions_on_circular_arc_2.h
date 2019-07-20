@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -26,10 +27,13 @@
 #ifndef CGAL_CIRCULAR_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 #define CGAL_CIRCULAR_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 #include <CGAL/Circular_kernel_2/internal_functions_on_circle_2.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Circular_kernel_2/Circular_arc_2.h>
-
+#include <CGAL/int.h>
 namespace CGAL {
 namespace CircularFunctors {
   

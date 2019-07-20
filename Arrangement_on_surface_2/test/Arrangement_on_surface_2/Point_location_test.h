@@ -1,7 +1,21 @@
 #ifndef CGAL_POINT_LOCATION_TEST_H
 #define CGAL_POINT_LOCATION_TEST_H
 
-#include <CGAL/basic.h>
+#define NAIVE_PL_ENABLED 1
+#define SIMPLE_PL_ENABLED 1
+#define WALK_PL_ENABLED 1
+#define LM_PL_ENABLED 1
+#define LM_RANDOM_PL_ENABLED 1
+#define LM_GRID_PL_ENABLED 1
+#define LM_HALTON_PL_ENABLED 1
+#define LM_MIDDLE_EDGES_PL_ENABLED 1
+#define LM_SPECIFIED_POINTS_PL_ENABLED 1
+#define TRIANGULATION_PL_ENABLED 1
+#define TRAPEZOID_RIC_PL_ENABLED 1
+#define TRAPEZOID_RIC_NO_GUARANTEE_PL_ENABLED 1
+
+#include <vector>
+
 #include <CGAL/Timer.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -17,14 +31,16 @@
 #include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arr_triangulation_point_location.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include "IO_test.h"
 
 /*! Point location test */
-template <typename Geom_traits_T, typename Topol_traits_T>
-class Point_location_test : public IO_test<Geom_traits_T> {
+template <typename GeomTraits, typename TopolTraits>
+class Point_location_test : public IO_test<GeomTraits> {
 public:
-  typedef Geom_traits_T                                 Geom_traits;
-  typedef Topol_traits_T                                Topol_traits;
+  typedef GeomTraits                                    Geom_traits;
+  typedef TopolTraits                                   Topol_traits;
   typedef IO_test<Geom_traits>                          Base;
 
   typedef typename Base::Point_2                        Point_2;
@@ -62,43 +78,44 @@ public:
 
 protected:
   typedef typename CGAL::Arr_naive_point_location<Arrangement>
-                                                    Naive_point_location;
+                                                    Naive_pl;
   typedef typename CGAL::Arr_simple_point_location<Arrangement>
-                                                    Simple_point_location;
+                                                    Simple_pl;
   typedef typename CGAL::Arr_walk_along_line_point_location<Arrangement>
-                                                    Walk_point_location;
+                                                    Walk_pl;
   typedef typename CGAL::Arr_landmarks_point_location<Arrangement>
-                                                    Lm_point_location;
+                                                    Lm_pl;
   typedef typename CGAL::Arr_random_landmarks_generator<Arrangement>
                                                     Random_lm_generator;
   typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
                                                       Random_lm_generator>
-                                                    Lm_random_point_location;
+                                                    Lm_random_pl;
   typedef typename CGAL::Arr_grid_landmarks_generator<Arrangement>
                                                     Grid_lm_generator;
   typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
                                                       Grid_lm_generator>
-                                                    Lm_grid_point_location;
+                                                    Lm_grid_pl;
   typedef typename CGAL::Arr_halton_landmarks_generator<Arrangement>
                                                     Halton_lm_generator;
   typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
                                                       Halton_lm_generator>
-                                                    Lm_halton_point_location;
+                                                    Lm_halton_pl;
   typedef typename CGAL::Arr_middle_edges_landmarks_generator<Arrangement>
                                                     Middle_edges_generator;
   typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
                                                       Middle_edges_generator>
-    Lm_middle_edges_point_location;
+    Lm_middle_edges_pl;
   typedef typename CGAL::Arr_landmarks_specified_points_generator<Arrangement>
     Specified_points_generator;
   typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
                                                       Specified_points_generator>
-    Lm_specified_points_point_location;
-  typedef typename CGAL::Arr_trapezoid_ric_point_location<Arrangement>
-    Trapezoid_ric_point_location;
+    Lm_specified_points_pl;
 
   typedef CGAL::Arr_triangulation_point_location<Arrangement>
-    Triangulation_point_location;
+    Triangulation_pl;
+
+  typedef typename CGAL::Arr_trapezoid_ric_point_location<Arrangement>
+    Trapezoid_ric_pl;
 
   // ===> Add new point location type here <===
 
@@ -115,33 +132,65 @@ protected:
   /*! The query points */
   Points_vector m_query_points;
 
-  Naive_point_location* m_naive_pl;                              // 0
-  Simple_point_location* m_simple_pl;                            // 1
-  Walk_point_location* m_walk_pl;                                // 2
-  Lm_point_location* m_lm_pl;                                    // 3
-  Lm_random_point_location* m_random_lm_pl;                      // 4
-  Lm_grid_point_location* m_grid_lm_pl;                          // 5
-  Lm_halton_point_location* m_halton_lm_pl;                      // 6
-  Lm_middle_edges_point_location* m_middle_edges_lm_pl;          // 7
-  Lm_specified_points_point_location* m_specified_points_lm_pl;  // 8
-  Triangulation_point_location* m_triangulation_pl;              // 9
-  Trapezoid_ric_point_location* m_trapezoid_ric_pl;              // 10
-  Trapezoid_ric_point_location* m_trapezoid_ric_no_grnt_pl;      // 11
+  enum Pl_strategy {
+    NAIVE_PL = 0,
+    SIMPLE_PL,
+    WALK_PL,
+    LM_PL,
+    LM_RANDOM_PL,
+    LM_GRID_PL,
+    LM_HALTON_PL,
+    LM_MIDDLE_EDGES_PL,
+    LM_SPECIFIED_POINTS_PL,
+    TRIANGULATION_PL,
+    TRAPEZOID_RIC_PL,
+    TRAPEZOID_RIC_NO_GUARANTEE_PL,
+    NUM_PL_STRATEGIES
+  };
 
+  typedef boost::variant<Naive_pl*,
+                         Simple_pl*,
+                         Walk_pl*,
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
+                         Lm_pl*,
+                         Lm_random_pl*,
+                         Lm_grid_pl*,
+                         Lm_halton_pl*,
+                         Lm_middle_edges_pl*,
+                         Lm_specified_points_pl*,
+#endif
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
+                         Triangulation_pl*,
+#endif
+                         Trapezoid_ric_pl*>       Pl_variant;
+
+  struct Locator {
+    Pl_variant m_variant;
+
+    //! The name of the locator.
+    std::string m_name;
+
+    bool m_active;
+  };
+
+  std::vector<Locator> m_locators;
+
+  // Landmark point-location generators
   Random_lm_generator* m_random_g;
   Grid_lm_generator* m_grid_g;
   Halton_lm_generator* m_halton_g;
   Middle_edges_generator* m_middle_edges_g;
   Specified_points_generator* m_specified_points_g;
 
-  // // ===> Change the number of point-location startegies
-  // //      when a new point location is added. <===
-  #define MAX_NUM_POINT_LOCATION_STRATEGIES 12
-
-  int verify(Objects_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
+  /*! Verify the results (old version).
+   */
+  int verify(Objects_vector objs[NUM_PL_STRATEGIES],
              size_t size, size_t pls_num);
 
-  int verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
+  /*! Verify the results (new version).
+   */
+  int verify(Variants_vector objs[NUM_PL_STRATEGIES],
              size_t size, size_t pls_num);
 
 public:
@@ -159,13 +208,13 @@ public:
   void set_filenames(const char* points_filename, const char* xcurves_filename,
                      const char* curves_filename, const char* queries_filename);
 
-  /*! Initialize the data structures */
+  //! Initialize the data structures.
   virtual bool init();
 
-  /*! Perform the test */
+  //! Perform the test.
   virtual bool perform();
 
-  /*! Clear the data structures */
+  //! Clear the data structures.
   virtual void clear();
 
   bool allocate_arrangement();
@@ -189,63 +238,481 @@ public:
   void query(Point_location& pl, const char* type,
              InputIterator begin, InputIterator end, OutputIterator oi)
   {
-    typedef InputIterator                       Input_iterator;
-
+    typedef InputIterator               Input_iterator;
     CGAL::Timer timer;
     timer.reset(); timer.start();
-    Input_iterator piter;
-    for (piter = begin; piter != end; ++piter) {
-      Point_2 q = (*piter);
-      *oi++ = pl.locate(q);
-    }
+    for (Input_iterator piter = begin; piter != end; ++piter)
+      *oi++ = pl.locate(*piter);
     timer.stop();
     std::cout << type << " location took " << timer.time() << std::endl;
   }
+
+private:
+  //! Initialize point location.
+  template <typename Strategy, Pl_strategy id>
+  void init_pl(const std::string& name)
+  {
+    m_locators[id].m_variant = static_cast<Strategy*>(NULL);
+    m_locators[id].m_name = name;
+    m_locators[id].m_active = true;
+  }
+
+  //! Allocate point location.
+  template <typename Strategy, Pl_strategy id>
+  void allocate_pl()
+  {
+    Strategy* locator = new Strategy();
+    CGAL_assertion(locator);
+    m_locators[id].m_variant = locator;
+  }
+
+  //! Construct point location.
+  template <typename Strategy, Pl_strategy id>
+  bool construct_pl()
+  {
+    Strategy* locator = new Strategy(*m_arr);
+    if (! locator) return false;
+    m_locators[id].m_variant = locator;
+    return true;
+  }
+
+  //! Construct landmark point-location with a generator.
+  template <typename Strategy, Pl_strategy id, typename Generator>
+  bool construct_pl(Generator* generator)
+  {
+    Strategy* locator = new Strategy(*m_arr, generator);
+    if (! locator) return false;
+    m_locators[id].m_variant = locator;
+    return true;
+  }
+
+  //! Delete point location.
+  template <typename Strategy, Pl_strategy id>
+  void deallocate_pl()
+  {
+    Strategy* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
+    if (strategy) {
+      delete strategy;
+      m_locators[id].m_variant = static_cast<Strategy*>(NULL);
+    }
+  }
+
+  //! Attach point location.
+  template <typename Strategy, Pl_strategy id>
+  void attach_pl()
+  {
+    if (! m_locators[id].m_active) return;
+    Strategy* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
+    strategy->attach(*m_arr);
+  }
+
+  //! Attach landmark point location with a generator.
+  template <typename Strategy, Pl_strategy id, typename Generator>
+  void attach_pl(Generator* generator)
+  {
+    if (! m_locators[id].m_active) return;
+    Strategy* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
+    strategy->attach(*m_arr, generator);
+  }
+
+  //! Query using point location.
+  template <typename Strategy, Pl_strategy id, typename T>
+  void query_pl(T& objs)
+  {
+    if (! m_locators[id].m_active) return;
+    const std::string& name = m_locators[id].m_name;
+    Strategy* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
+    query(*strategy, name.c_str(), m_query_points.begin(), m_query_points.end(),
+          std::back_inserter(objs));
+  }
+
+  //! Measure the time consumption of an operation
+  template <Pl_strategy id, typename Timer, typename UnaryOperation>
+  void measure(Timer& timer, UnaryOperation op)
+  {
+    if (! m_locators[id].m_active) return;
+    const std::string& name = m_locators[id].m_name;
+    timer.reset();
+    timer.start();
+    op();
+    timer.stop();
+    std::cout << name.c_str() << " took " << timer.time() << std::endl;
+  }
 };
 
-/*!
- * Constructor.
- */
-template <typename Geom_traits_T, typename Topol_traits_T>
-Point_location_test<Geom_traits_T, Topol_traits_T>::
+// Naive
+#if (NAIVE_PL_ENABLED)
+#define INIT_PL_NATIVE()        init_pl<Naive_pl, NAIVE_PL>("Naive")
+#define ALLOCATE_PL_NATIVE()    allocate_pl<Naive_pl, NAIVE_PL>()
+#define CONSTRUCT_PL_NATIVE()   construct_pl<Naive_pl, NAIVE_PL>()
+#define DEALLOCATE_PL_NATIVE()  deallocate_pl<Naive_pl, NAIVE_PL>()
+#define ATTACH_PL_NATIVE()      attach_pl<Naive_pl, NAIVE_PL>()
+#define QUERY_PL_NATIVE(obj)    query_pl<Naive_pl, NAIVE_PL>(obj)
+#else
+#define INIT_PL_NATIVE()
+#define ALLOCATE_PL_NATIVE()
+#define CONSTRUCT_PL_NATIVE()
+#define DEALLOCATE_PL_NATIVE()
+#define ATTACH_PL_NATIVE()
+#define QUERY_PL_NATIVE(obj)
+#endif
+
+// Simple
+#if (SIMPLE_PL_ENABLED)
+#define INIT_PL_SIMPLE()        init_pl<Simple_pl, SIMPLE_PL>("Simple")
+#define ALLOCATE_PL_SIMPLE()    allocate_pl<Simple_pl, SIMPLE_PL>()
+#define CONSTRUCT_PL_SIMPLE()   construct_pl<Simple_pl, SIMPLE_PL>()
+#define DEALLOCATE_PL_SIMPLE()  deallocate_pl<Simple_pl, SIMPLE_PL>()
+#define ATTACH_PL_SIMPLE()      attach_pl<Simple_pl, SIMPLE_PL>()
+#define QUERY_PL_SIMPLE(obj)    query_pl<Simple_pl, SIMPLE_PL>(obj)
+#else
+#define INIT_PL_SIMPLE()
+#define ALLOCATE_PL_SIMPLE()
+#define CONSTRUCT_PL_SIMPLE()
+#define DEALLOCATE_PL_SIMPLE()
+#define ATTACH_PL_SIMPLE()
+#define QUERY_PL_SIMPLE(obj)
+#endif
+
+// Walk
+#if (WALK_PL_ENABLED)
+#define INIT_PL_WALK()          init_pl<Walk_pl, WALK_PL>("Walk")
+#define ALLOCATE_PL_WALK()      allocate_pl<Walk_pl, WALK_PL>()
+#define CONSTRUCT_PL_WALK()     construct_pl<Walk_pl, WALK_PL>()
+#define DEALLOCATE_PL_WALK()    deallocate_pl<Walk_pl, WALK_PL>()
+#define ATTACH_PL_WALK()        attach_pl<Walk_pl, WALK_PL>()
+#define QUERY_PL_WALK(obj)      query_pl<Walk_pl, WALK_PL>(obj)
+#else
+#define INIT_PL_WALK()
+#define ALLOCATE_PL_WALK()
+#define CONSTRUCT_PL_WALK()
+#define DEALLOCATE_PL_WALK()
+#define ATTACH_PL_WALK()
+#define QUERY_PL_WALK(obj)
+#endif
+
+// Landmarks (vertices)
+#if (LM_PL_ENABLED)
+#define INIT_PL_LM()            init_pl<Lm_pl, LM_PL>("Landmarks (vertices)");
+#define ALLOCATE_PL_LM()        allocate_pl<Lm_pl, LM_PL>()
+#define CONSTRUCT_PL_LM()       construct_pl<Lm_pl, LM_PL>()
+#define DEALLOCATE_PL_LM()      deallocate_pl<Lm_pl, LM_PL>()
+#define ATTACH_PL_LM()          attach_pl<Lm_pl, LM_PL>()
+#define QUERY_PL_LM(obj)        query_pl<Lm_pl, LM_PL>(obj)
+#else
+#define INIT_PL_LM()
+#define ALLOCATE_PL_LM()
+#define CONSTRUCT_PL_LM()
+#define DEALLOCATE_PL_LM()
+#define ATTACH_PL_LM()
+#define QUERY_PL_LM(obj)
+#endif
+
+// Landmarks random
+#if (LM_RANDOM_PL_ENABLED)
+#define INIT_PL_LM_RANDOM()       \
+  init_pl<Lm_random_pl, LM_RANDOM_PL>("Landmarks random");
+#define ALLOCATE_PL_LM_RANDOM()   \
+  allocate_pl<Lm_random_pl, LM_RANDOM_PL>()
+
+#define CONSTRUCT_PL_LM_RANDOM()                \
+  m_random_g = new Random_lm_generator(*m_arr); \
+  construct_pl<Lm_random_pl, LM_RANDOM_PL>(m_random_g)
+
+#define DEALLOCATE_PL_LM_RANDOM()               \
+  if (m_random_g) {                             \
+    delete m_random_g;                          \
+    m_random_g = NULL;                          \
+  }                                             \
+  deallocate_pl<Lm_random_pl, LM_RANDOM_PL>()
+
+#define ATTACH_PL_LM_RANDOM()                   \
+  m_random_g = new Random_lm_generator(*m_arr); \
+  attach_pl<Lm_random_pl, LM_RANDOM_PL>(m_random_g)
+
+#define QUERY_PL_LM_RANDOM(obj)   query_pl<Lm_random_pl, LM_RANDOM_PL>(obj)
+#else
+#define INIT_PL_LM_RANDOM()
+#define ALLOCATE_PL_LM_RANDOM()
+#define CONSTRUCT_PL_LM_RANDOM()
+#define DEALLOCATE_PL_LM_RANDOM()
+#define ATTACH_PL_LM_RANDOM()
+#define QUERY_PL_LM_RANDOM(obj)
+#endif
+
+// Landmarks grid
+#if (LM_GRID_PL_ENABLED)
+#define INIT_PL_LM_GRID()       init_pl<Lm_grid_pl, LM_GRID_PL>("Landmarks grid")
+#define ALLOCATE_PL_LM_GRID()   allocate_pl<Lm_grid_pl, LM_GRID_PL>()
+
+#define CONSTRUCT_PL_LM_GRID()              \
+  m_grid_g = new Grid_lm_generator(*m_arr); \
+  construct_pl<Lm_grid_pl, LM_GRID_PL>(m_grid_g)
+
+#define DEALLOCATE_PL_LM_GRID() \
+  if (m_grid_g) {               \
+    delete m_grid_g;            \
+    m_grid_g = NULL;            \
+  }                             \
+  deallocate_pl<Lm_grid_pl, LM_GRID_PL>()
+
+#define ATTACH_PL_LM_GRID()                 \
+  m_grid_g = new Grid_lm_generator(*m_arr); \
+  attach_pl<Lm_grid_pl, LM_GRID_PL>(m_grid_g)
+
+#define QUERY_PL_LM_GRID(obj)   query_pl<Lm_grid_pl, LM_GRID_PL>(obj)
+#else
+#define INIT_PL_LM_GRID()
+#define ALLOCATE_PL_LM_GRID()
+#define CONSTRUCT_PL_LM_GRID()
+#define DEALLOCATE_PL_LM_GRID()
+#define ATTACH_PL_LM_GRID()
+#define QUERY_PL_LM_GRID(obj)
+#endif
+
+// Landmarks Halton
+#if (LM_HALTON_PL_ENABLED)
+#define INIT_PL_LM_HALTON()       \
+  init_pl<Lm_halton_pl, LM_HALTON_PL>("Landmarks Halton")
+#define ALLOCATE_PL_LM_HALTON()   allocate_pl<Lm_halton_pl, LM_HALTON_PL>()
+
+#define CONSTRUCT_PL_LM_HALTON()                \
+  m_halton_g = new Halton_lm_generator(*m_arr); \
+  construct_pl<Lm_halton_pl, LM_HALTON_PL>(m_halton_g)
+
+#define DEALLOCATE_PL_LM_HALTON() \
+    if (m_halton_g) {             \
+    delete m_halton_g;            \
+    m_halton_g = NULL;            \
+  }                               \
+  deallocate_pl<Lm_halton_pl, LM_HALTON_PL>()
+
+#define ATTACH_PL_LM_HALTON()                   \
+  m_halton_g = new Halton_lm_generator(*m_arr); \
+  attach_pl<Lm_halton_pl, LM_HALTON_PL>(m_halton_g)
+
+#define QUERY_PL_LM_HALTON(obj)   query_pl<Lm_halton_pl, LM_HALTON_PL>(obj)
+#else
+#define INIT_PL_LM_HALTON()
+#define ALLOCATE_PL_LM_HALTON()
+#define CONSTRUCT_PL_LM_HALTON()
+#define DEALLOCATE_PL_LM_HALTON()
+#define ATTACH_PL_LM_HALTON()
+#define QUERY_PL_LM_HALTON(obj)
+#endif
+
+// Landmarks middle edges
+#if (LM_MIDDLE_EDGES_PL_ENABLED)
+#define INIT_PL_LM_MIDDLE_EDGES()       \
+  init_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>("Landmarks middle edges")
+#define ALLOCATE_PL_LM_MIDDLE_EDGES()   \
+  allocate_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>()
+
+#define CONSTRUCT_PL_LM_MIDDLE_EDGES()                   \
+  m_middle_edges_g = new Middle_edges_generator(*m_arr); \
+  construct_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>(m_middle_edges_g)
+
+#define DEALLOCATE_PL_LM_MIDDLE_EDGES() \
+  if (m_middle_edges_g) {               \
+    delete m_middle_edges_g;            \
+    m_middle_edges_g = NULL;            \
+  }                                     \
+  deallocate_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>()
+
+#define ATTACH_PL_LM_MIDDLE_EDGES()                      \
+  m_middle_edges_g = new Middle_edges_generator(*m_arr); \
+  attach_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>(m_middle_edges_g)
+
+#define QUERY_PL_LM_MIDDLE_EDGES(obj)   \
+  query_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>(obj)
+#else
+#define INIT_PL_LM_MIDDLE_EDGES()
+#define ALLOCATE_PL_LM_MIDDLE_EDGES()
+#define CONSTRUCT_PL_LM_MIDDLE_EDGES()
+#define DEALLOCATE_PL_LM_MIDDLE_EDGES()
+#define ATTACH_PL_LM_MIDDLE_EDGES()
+#define QUERY_PL_LM_MIDDLE_EDGES(obj)
+#endif
+
+// Landmarks specified points
+#if (LM_SPECIFIED_POINTS_PL_ENABLED)
+#define INIT_PL_LM_SPECIFIED_POINTS()       \
+  init_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>("Landmarks specified points");
+#define ALLOCATE_PL_LM_SPECIFIED_POINTS()   \
+  allocate_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>()
+
+#define CONSTRUCT_PL_LM_SPECIFIED_POINTS()                       \
+  m_specified_points_g = new Specified_points_generator(*m_arr); \
+  construct_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>(m_specified_points_g)
+
+#define DEALLOCATE_PL_LM_SPECIFIED_POINTS() \
+  if (m_specified_points_g) {               \
+    delete m_specified_points_g;            \
+    m_specified_points_g = NULL;            \
+  }                                         \
+  deallocate_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>()
+
+#define ATTACH_PL_LM_SPECIFIED_POINTS()                          \
+  m_specified_points_g = new Specified_points_generator(*m_arr); \
+  attach_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>(m_specified_points_g)
+
+#define QUERY_PL_LM_SPECIFIED_POINTS(obj)   \
+  query_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>(obj)
+#else
+#define INIT_PL_LM_SPECIFIED_POINTS()
+#define ALLOCATE_PL_LM_SPECIFIED_POINTS()
+#define CONSTRUCT_PL_LM_SPECIFIED_POINTS()
+#define DEALLOCATE_PL_LM_SPECIFIED_POINTS()
+#define ATTACH_PL_LM_SPECIFIED_POINTS()
+#define QUERY_PL_LM_SPECIFIED_POINTS(obj)
+#endif
+
+// Triangulation_pl
+#if (TRIANGULATION_PL_ENABLED)
+#define INIT_PL_TRIANGULATION_PL()       \
+  init_pl<Triangulation_pl, TRIANGULATION_PL>("Triangulation")
+#define ALLOCATE_PL_TRIANGULATION_PL()   \
+  allocate_pl<Triangulation_pl, TRIANGULATION_PL>()
+#define CONSTRUCT_PL_TRIANGULATION_PL()  \
+  construct_pl<Triangulation_pl, TRIANGULATION_PL>()
+#define DEALLOCATE_PL_TRIANGULATION_PL() \
+  deallocate_pl<Triangulation_pl, TRIANGULATION_PL>()
+#define ATTACH_PL_TRIANGULATION_PL()     \
+  attach_pl<Triangulation_pl, TRIANGULATION_PL>()
+#define QUERY_PL_TRIANGULATION_PL(obj)   \
+  query_pl<Triangulation_pl, TRIANGULATION_PL>(obj);
+#else
+#define INIT_PL_TRIANGULATION_PL()
+#define ALLOCATE_PL_TRIANGULATION_PL()
+#define CONSTRUCT_PL_TRIANGULATION_PL()
+#define DEALLOCATE_PL_TRIANGULATION_PL()
+#define ATTACH_PL_TRIANGULATION_PL()
+#define QUERY_PL_TRIANGULATION_PL(obj)
+#endif
+
+// Trapezoidal RIC
+#if (TRAPEZOID_RIC_PL_ENABLED)
+#define INIT_PL_TRAPEZOID_RIC_PL()       \
+  init_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>("Trapezoidal RIC")
+#define ALLOCATE_PL_TRAPEZOID_RIC_PL()   \
+  allocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>()
+#define CONSTRUCT_PL_TRAPEZOID_RIC_PL()  \
+  construct_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>()
+#define DEALLOCATE_PL_TRAPEZOID_RIC_PL() \
+  deallocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>()
+#define ATTACH_PL_TRAPEZOID_RIC_PL()     \
+  attach_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>()
+#define QUERY_PL_TRAPEZOID_RIC_PL(obj)   \
+  query_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>(obj)
+#else
+#define INIT_PL_TRAPEZOID_RIC_PL()
+#define ALLOCATE_PL_TRAPEZOID_RIC_PL()
+#define CONSTRUCT_PL_TRAPEZOID_RIC_PL()
+#define DEALLOCATE_PL_TRAPEZOID_RIC_PL()
+#define ATTACH_PL_TRAPEZOID_RIC_PL()
+#define QUERY_PL_TRAPEZOID_RIC_PL(obj)
+#endif
+
+#if (TRAPEZOID_RIC_NO_GUARANTEE_PL_ENABLED)
+#define INIT_PL_TRAPEZOID_RIC_NO_GUARANTEE()       \
+  init_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>("Trapezoidal RIC without guarantees")
+#define ALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE()   \
+  allocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>()
+#define CONSTRUCT_PL_TRAPEZOID_RIC_NO_GUARANTEE()  \
+  construct_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>()
+#define DEALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE() \
+  deallocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>()
+
+#define ATTACH_PL_TRAPEZOID_RIC_NO_GUARANTEE()                           \
+  Pl_variant& var = m_locators[TRAPEZOID_RIC_NO_GUARANTEE_PL].m_variant; \
+  Trapezoid_ric_pl* strategy = boost::get<Trapezoid_ric_pl*>(var);       \
+  strategy->with_guarantees(false);                                      \
+  attach_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>()
+
+#define QUERY_PL_TRAPEZOID_RIC_NO_GUARANTEE(obj)   \
+  query_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>(obj)
+#else
+#define INIT_PL_TRAPEZOID_RIC_NO_GUARANTEE()
+#define ALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE()
+#define CONSTRUCT_PL_TRAPEZOID_RIC_NO_GUARANTEE()
+#define DEALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE()
+#define ATTACH_PL_TRAPEZOID_RIC_NO_GUARANTEE()
+#define QUERY_PL_TRAPEZOID_RIC_NO_GUARANTEE(obj)
+#endif
+
+#define MEASURE_NAIVE_PL(timer, op) measure<NAIVE_PL>(timer, [&](){ op; });
+#define MEASURE_SIMPLE_PL(timer, op) measure<SIMPLE_PL>(timer, [&](){ op; });
+#define MEASURE_WALK_PL(timer, op) measure<WALK_PL>(timer, [&](){ op; });
+#define MEASURE_LM_PL(timer, op) measure<LM_PL>(timer, [&](){ op; });
+#define MEASURE_LM_RANDOM_PL(timer, op) \
+  measure<LM_RANDOM_PL>(timer, [&](){ op; });
+#define MEASURE_LM_GRID_PL(timer, op) \
+  measure<LM_GRID_PL>(timer, [&](){ op; });
+#define MEASURE_LM_HALTON_PL(timer, op) \
+  measure<LM_HALTON_PL>(timer, [&](){ op; });
+#define MEASURE_LM_MIDDLE_EDGES_PL(timer, op) \
+  measure<LM_MIDDLE_EDGES_PL>(timer, [&](){ op; });
+#define MEASURE_LM_SPECIFIED_POINTS_PL(timer, op) \
+  measure<LM_SPECIFIED_POINTS_PL>(timer, [&](){ op; });
+#define MEASURE_TRIANGULATION_PL(timer, op) \
+  measure<TRIANGULATION_PL>(timer, [&](){ op; });
+#define MEASURE_TRAPEZOID_RIC_PL(timer, op) \
+  measure<TRAPEZOID_RIC_PL>(timer, [&](){ op; });
+#define MEASURE_TRAPEZOID_RIC_NO_GUARANTEE_PL(timer, op) \
+  measure<TRAPEZOID_RIC_NO_GUARANTEE_PL>(timer, [&](){ op; });
+
+//! Constructor.
+template <typename GeomTraits, typename TopolTraits>
+Point_location_test<GeomTraits, TopolTraits>::
 Point_location_test(const Geom_traits& geom_traits) :
   Base(geom_traits),
   m_geom_traits(geom_traits),
   m_arr(NULL),
-  m_naive_pl(NULL),
-  m_simple_pl(NULL),
-  m_walk_pl(NULL),
-  m_lm_pl(NULL),
-  m_random_lm_pl(NULL),
-  m_grid_lm_pl(NULL),
-  m_halton_lm_pl(NULL),
-  m_middle_edges_lm_pl(NULL),
-  m_specified_points_lm_pl(NULL),
-  m_triangulation_pl(NULL),
-  m_trapezoid_ric_pl(NULL),
-  m_trapezoid_ric_no_grnt_pl(NULL),
   m_random_g(NULL),
   m_grid_g(NULL),
   m_halton_g(NULL),
   m_middle_edges_g(NULL),
   m_specified_points_g(NULL)
-{}
+{
+  m_locators.resize(NUM_PL_STRATEGIES);
 
-/*! Set the file names */
-template <typename Geom_traits_T, typename Topol_traits_T>
-void Point_location_test<Geom_traits_T, Topol_traits_T>::
-set_filenames(const char* points_filename,
-              const char* xcurves_filename,
-              const char* curves_filename,
-              const char* queries_filename)
+  INIT_PL_NATIVE();
+  INIT_PL_SIMPLE();
+  INIT_PL_WALK();
+
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
+
+  INIT_PL_LM();
+  INIT_PL_LM_RANDOM();
+  INIT_PL_LM_GRID();
+  INIT_PL_LM_HALTON();
+  INIT_PL_LM_MIDDLE_EDGES();
+  INIT_PL_LM_SPECIFIED_POINTS();
+
+#endif
+
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
+  INIT_PL_TRIANGULATION_PL();
+#endif
+
+  INIT_PL_TRAPEZOID_RIC_PL();
+  INIT_PL_TRAPEZOID_RIC_NO_GUARANTEE();
+}
+
+//! Set the file names.
+template <typename GeomTraits, typename TopolTraits>
+void Point_location_test<GeomTraits, TopolTraits>::
+set_filenames(const char* points_filename, const char* xcurves_filename,
+              const char* curves_filename, const char* queries_filename)
 {
   Base::set_filenames(points_filename, xcurves_filename, curves_filename);
   m_filename_queries.assign(queries_filename);
 }
 
-/*! Initialize the data structures */
-template <typename Geom_traits_T, typename Topol_traits_T>
-bool Point_location_test<Geom_traits_T, Topol_traits_T>::init()
+//! Initialize the data structures.
+template <typename GeomTraits, typename TopolTraits>
+bool Point_location_test<GeomTraits, TopolTraits>::init()
 {
   if (!Base::init()) return false;
 
@@ -256,109 +723,52 @@ bool Point_location_test<Geom_traits_T, Topol_traits_T>::init()
   return true;
 }
 
-/*! Clear the data structures */
-template <typename Geom_traits_T, typename Topol_traits_T>
-void Point_location_test<Geom_traits_T, Topol_traits_T>::clear()
+//! Clear the data structures.
+template <typename GeomTraits, typename TopolTraits>
+void Point_location_test<GeomTraits, TopolTraits>::clear()
 {
   Base::clear();
   m_query_points.clear();
   m_filename_queries.clear();
 }
 
-/*! Clear the data structures */
-template <typename Geom_traits_T, typename Topol_traits_T>
-void Point_location_test<Geom_traits_T, Topol_traits_T>::
-deallocate_pl_strategies()
+//! Clear the data structures.
+template <typename GeomTraits, typename TopolTraits>
+void Point_location_test<GeomTraits, TopolTraits>::deallocate_pl_strategies()
 {
-  if (m_naive_pl) {
-    delete m_naive_pl;
-    m_naive_pl = NULL;
-  }
-  if (m_simple_pl) {
-    delete m_simple_pl;
-    m_simple_pl = NULL;
-  }
-  if (m_walk_pl) {
-    delete m_walk_pl;
-    m_walk_pl = NULL;
-  }
+  DEALLOCATE_PL_NATIVE();
+  DEALLOCATE_PL_SIMPLE();
+  DEALLOCATE_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
-  if (m_lm_pl) {
-    delete m_lm_pl;
-    m_lm_pl = NULL;
-  }
-  if (m_random_lm_pl) {
-    delete m_random_lm_pl;
-    m_random_lm_pl = NULL;
-  }
-  if (m_grid_lm_pl) {
-    delete m_grid_lm_pl;
-    m_grid_lm_pl = NULL;
-  }
-  if (m_halton_lm_pl) {
-    delete m_halton_lm_pl;
-    m_halton_lm_pl = NULL;
-  }
-  if (m_middle_edges_lm_pl) {
-    delete m_middle_edges_lm_pl;
-    m_middle_edges_lm_pl = NULL;
-  }
-  if (m_specified_points_lm_pl) {
-    delete m_specified_points_lm_pl;
-    m_specified_points_lm_pl = NULL;
-  }
 
-  // Free Generators
-  if (m_random_g) {
-    delete m_random_g;
-    m_random_g = NULL;
-  }
-  if (m_grid_g) {
-    delete m_grid_g;
-    m_grid_g = NULL;
-  }
-  if (m_halton_g) {
-    delete m_halton_g;
-    m_halton_g = NULL;
-  }
-  if (m_middle_edges_g) {
-    delete m_middle_edges_g;
-    m_middle_edges_g = NULL;
-  }
-  if (m_specified_points_g) {
-    delete m_specified_points_g;
-    m_specified_points_g = NULL;
-  }
+  DEALLOCATE_PL_LM();
+  DEALLOCATE_PL_LM_RANDOM();
+  DEALLOCATE_PL_LM_GRID();
+  DEALLOCATE_PL_LM_HALTON();
+  DEALLOCATE_PL_LM_MIDDLE_EDGES();
+  DEALLOCATE_PL_LM_SPECIFIED_POINTS();
+
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  if (m_triangulation_pl) {
-    delete m_triangulation_pl;
-    m_triangulation_pl = NULL;
-  }
+  DEALLOCATE_PL_TRIANGULATION_PL();
 #endif
 
-  if (m_trapezoid_ric_pl) {
-    delete m_trapezoid_ric_pl;
-    m_trapezoid_ric_pl = NULL;
-  }
-  if (m_trapezoid_ric_no_grnt_pl) {
-    delete m_trapezoid_ric_no_grnt_pl;
-    m_trapezoid_ric_no_grnt_pl = NULL;
-  }
+  DEALLOCATE_PL_TRAPEZOID_RIC_PL();
+  DEALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE();
 }
 
-template <typename Geom_traits_T, typename Topol_traits_T>
-bool Point_location_test<Geom_traits_T, Topol_traits_T>::allocate_arrangement()
+template <typename GeomTraits, typename TopolTraits>
+bool Point_location_test<GeomTraits, TopolTraits>::allocate_arrangement()
 {
   if (!(m_arr = new Arrangement(&m_geom_traits))) return false;
   return true;
 }
 
-template <typename Geom_traits_T, typename Topol_traits_T>
-void Point_location_test<Geom_traits_T, Topol_traits_T>::
+template <typename GeomTraits, typename TopolTraits>
+void Point_location_test<GeomTraits, TopolTraits>::
 deallocate_arrangement()
 {
   if (m_arr) {
@@ -367,8 +777,8 @@ deallocate_arrangement()
   }
 }
 
-template <typename Geom_traits_T, typename Topol_traits_T>
-bool Point_location_test<Geom_traits_T, Topol_traits_T>::
+template <typename GeomTraits, typename TopolTraits>
+bool Point_location_test<GeomTraits, TopolTraits>::
 construct_arrangement()
 {
   // Insert all into the arrangement
@@ -384,213 +794,118 @@ construct_arrangement()
   return true;
 }
 
-template <typename Geom_traits_T, typename Topol_traits_T>
-void Point_location_test<Geom_traits_T, Topol_traits_T>::clear_arrangement()
-{
-  if (m_arr) m_arr->clear();
-}
+template <typename GeomTraits, typename TopolTraits>
+void Point_location_test<GeomTraits, TopolTraits>::clear_arrangement()
+{ if (m_arr) m_arr->clear(); }
 
-template <typename Geom_traits_T, typename Topol_traits_T>
-bool Point_location_test<Geom_traits_T, Topol_traits_T>::
-allocate_pl_strategies()
+template <typename GeomTraits, typename TopolTraits>
+bool Point_location_test<GeomTraits, TopolTraits>::allocate_pl_strategies()
 {
   // Allocate all point location strategies.
-  if (!(m_naive_pl = new Naive_point_location())) return false;
-  if (!(m_simple_pl = new Simple_point_location())) return false;
-  if (!(m_walk_pl = new Walk_point_location())) return false;
+  ALLOCATE_PL_NATIVE();
+  ALLOCATE_PL_SIMPLE();
+  ALLOCATE_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  if (!(m_lm_pl = new Lm_point_location())) return false;
-  if (!(m_random_lm_pl = new Lm_random_point_location())) return false;
-  if (!(m_grid_lm_pl = new Lm_grid_point_location())) return false;
-  if (!(m_halton_lm_pl = new Lm_halton_point_location())) return false;
-  if (!(m_middle_edges_lm_pl = new Lm_middle_edges_point_location()))
-    return false;
-  if (!(m_specified_points_lm_pl = new Lm_specified_points_point_location()))
-    return false;
+  ALLOCATE_PL_LM();
+  ALLOCATE_PL_LM_RANDOM();
+  ALLOCATE_PL_LM_GRID();
+  ALLOCATE_PL_LM_HALTON();
+  ALLOCATE_PL_LM_MIDDLE_EDGES();
+  ALLOCATE_PL_LM_SPECIFIED_POINTS();
+
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  if (!(m_triangulation_pl = new Triangulation_point_location())) return false;
+  ALLOCATE_PL_TRIANGULATION_PL();
 #endif
 
-  if (!(m_trapezoid_ric_pl = new Trapezoid_ric_point_location())) return false;
-  if (!(m_trapezoid_ric_no_grnt_pl = new Trapezoid_ric_point_location()))
-    return false;
+  ALLOCATE_PL_TRAPEZOID_RIC_PL();
+  ALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE();
 
-  // ===> Add new point location instance here. <===
   return true;
 }
 
-template <typename Geom_traits_T, typename Topol_traits_T>
-bool Point_location_test<Geom_traits_T, Topol_traits_T>::
-construct_pl_strategies()
+template <typename GeomTraits, typename TopolTraits>
+bool Point_location_test<GeomTraits, TopolTraits>::construct_pl_strategies()
 {
   // Initialize all point location strategies.
   CGAL::Timer timer;
 
-  m_naive_pl = new Naive_point_location(*m_arr);                        // 0
-  m_simple_pl = new Simple_point_location(*m_arr);                      // 1
-  m_walk_pl = new Walk_point_location(*m_arr);                          // 2
+  CONSTRUCT_PL_NATIVE();
+  CONSTRUCT_PL_SIMPLE();
+  CONSTRUCT_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  timer.reset(); timer.start();
-  m_lm_pl = new Lm_point_location(*m_arr);                              // 3
-  timer.stop();
-  std::cout << "Lm (vert) construction took " << timer.time() << std::endl;
+  MEASURE_LM_PL(timer, CONSTRUCT_PL_LM());
+  MEASURE_LM_RANDOM_PL(timer, CONSTRUCT_PL_LM_RANDOM());
+  MEASURE_LM_GRID_PL(timer, CONSTRUCT_PL_LM_GRID());
+  MEASURE_LM_HALTON_PL(timer, CONSTRUCT_PL_LM_HALTON());
+  MEASURE_LM_MIDDLE_EDGES_PL(timer, CONSTRUCT_PL_LM_MIDDLE_EDGES());
+  MEASURE_LM_SPECIFIED_POINTS_PL(timer, CONSTRUCT_PL_LM_SPECIFIED_POINTS());
 
-  timer.reset(); timer.start();
-  m_random_g = new Random_lm_generator(*m_arr);
-  m_random_lm_pl = new Lm_random_point_location(*m_arr, m_random_g);    // 4
-  timer.stop();
-  std::cout << "Random lm construction took " << timer.time() << std::endl;
-
-  timer.reset(); timer.start();
-  m_grid_g = new Grid_lm_generator(*m_arr);
-  m_grid_lm_pl = new Lm_grid_point_location(*m_arr, m_grid_g);          // 5
-  timer.stop();
-  std::cout << "Grid lm construction took " << timer.time() << std::endl;
-
-  timer.reset(); timer.start();
-  m_halton_g = new Halton_lm_generator(*m_arr);
-  m_halton_lm_pl = new Lm_halton_point_location(*m_arr, m_halton_g);    // 6
-  timer.stop();
-  std::cout << "Halton lm construction took " << timer.time() << std::endl;
-
-  timer.reset(); timer.start();
-  m_middle_edges_g = new Middle_edges_generator(*m_arr);
-  m_middle_edges_lm_pl =
-    new Lm_middle_edges_point_location(*m_arr, m_middle_edges_g);       // 7
-  timer.stop();
-  std::cout << "Middle edges lm construction took " << timer.time()
-            << std::endl;
-
-  timer.reset(); timer.start();
-  m_specified_points_g = new Specified_points_generator(*m_arr);
-  m_specified_points_lm_pl =
-    new Lm_specified_points_point_location(*m_arr, m_specified_points_g); // 8
-  timer.stop();
-  std::cout << "Specified_points lm construction took "
-            << timer.time() << std::endl;
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  timer.reset(); timer.start();
-  m_triangulation_pl = new Triangulation_point_location(*m_arr);        // 9
-  timer.stop();
-  std::cout << "Triangulation lm construction took "
-            << timer.time() << std::endl;
+  MEASURE_TRIANGULATION_PL(timer, CONSTRUCT_PL_TRIANGULATION_PL());
 #endif
 
-  timer.reset(); timer.start();
-  m_trapezoid_ric_pl = new Trapezoid_ric_point_location(*m_arr);        // 10
-  timer.stop();
-  std::cout << "Trapezoid RIC construction took " << timer.time() << std::endl;
-
-  timer.reset(); timer.start();
-  m_trapezoid_ric_no_grnt_pl =
-    new Trapezoid_ric_point_location(*m_arr, false);                    // 11
-  timer.stop();
-  std::cout << "Trapezoid RIC without-guarantees construction took "
-            << timer.time() << std::endl;
+  MEASURE_TRAPEZOID_RIC_PL(timer, CONSTRUCT_PL_TRAPEZOID_RIC_PL());
+  MEASURE_TRAPEZOID_RIC_NO_GUARANTEE_PL(timer,
+                                        CONSTRUCT_PL_TRAPEZOID_RIC_NO_GUARANTEE());
 
   std::cout << std::endl;
 
-  // ===> Add new point location instance here. <===
   return true;
 }
 
-template <typename Geom_traits_T, typename Topol_traits_T>
-bool Point_location_test<Geom_traits_T, Topol_traits_T>::attach_pl_strategies()
+template <typename GeomTraits, typename TopolTraits>
+bool Point_location_test<GeomTraits, TopolTraits>::attach_pl_strategies()
 {
   // Initialize all point location strategies.
   CGAL::Timer timer;
 
-  m_naive_pl->attach(*m_arr);
-  m_simple_pl->attach(*m_arr);
-  m_walk_pl->attach(*m_arr);
+  ATTACH_PL_NATIVE();
+  ATTACH_PL_SIMPLE();
+  ATTACH_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  timer.reset(); timer.start();
-  m_lm_pl->attach(*m_arr);
-  timer.stop();
-  std::cout << "Lm (vert) construction took " << timer.time() << std::endl;
-
-  timer.reset(); timer.start();
-  m_random_g = new Random_lm_generator(*m_arr);
-  m_random_lm_pl->attach(*m_arr, m_random_g);
-  timer.stop();
-  std::cout << "Random lm construction took " << timer.time() << std::endl;
-
-  timer.reset(); timer.start();
-  m_grid_g = new Grid_lm_generator(*m_arr);
-  m_grid_lm_pl->attach(*m_arr, m_grid_g);
-  timer.stop();
-  std::cout << "Grid lm construction took " << timer.time() << std::endl;
-
-  timer.reset(); timer.start();
-  m_halton_g = new Halton_lm_generator(*m_arr);
-  m_halton_lm_pl->attach(*m_arr, m_halton_g);
-  timer.stop();
-  std::cout << "Halton lm construction took " << timer.time() << std::endl;
-
-  timer.reset(); timer.start();
-  m_middle_edges_g = new Middle_edges_generator(*m_arr);
-  m_middle_edges_lm_pl->attach(*m_arr, m_middle_edges_g);
-  timer.stop();
-  std::cout << "Middle edges lm construction took " << timer.time()
-            << std::endl;
-
-  timer.reset(); timer.start();
-  m_specified_points_g = new Specified_points_generator(*m_arr);
-  m_specified_points_lm_pl->attach(*m_arr, m_specified_points_g);
-  timer.stop();
-  std::cout << "Specified_points lm construction took "
-            << timer.time() << std::endl;
+  MEASURE_LM_PL(timer, ATTACH_PL_LM());
+  MEASURE_LM_RANDOM_PL(timer, ATTACH_PL_LM_RANDOM());
+  MEASURE_LM_GRID_PL(timer, ATTACH_PL_LM_GRID());
+  MEASURE_LM_HALTON_PL(timer, ATTACH_PL_LM_HALTON());
+  MEASURE_LM_MIDDLE_EDGES_PL(timer, ATTACH_PL_LM_MIDDLE_EDGES());
+  MEASURE_LM_SPECIFIED_POINTS_PL(timer, ATTACH_PL_LM_SPECIFIED_POINTS());
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  timer.reset(); timer.start();
-  m_triangulation_pl->attach(*m_arr);
-  timer.stop();
-  std::cout << "Triangulation lm construction took "
-            << timer.time() << std::endl;
+  MEASURE_TRIANGULATION_PL(timer, ATTACH_PL_TRIANGULATION_PL());
 #endif
 
-  timer.reset(); timer.start();
-  m_trapezoid_ric_pl->attach(*m_arr);
-  timer.stop();
-  std::cout << "Trapezoid RIC construction took " << timer.time() << std::endl;
-
-  timer.reset(); timer.start();
-  m_trapezoid_ric_no_grnt_pl->with_guarantees(false);
-  m_trapezoid_ric_no_grnt_pl->attach(*m_arr);
-
-  timer.stop();
-  std::cout << "Trapezoid RIC without-guarantees construction took "
-            << timer.time() << std::endl;
+  MEASURE_TRAPEZOID_RIC_PL(timer, ATTACH_PL_TRAPEZOID_RIC_PL());
+  MEASURE_TRAPEZOID_RIC_NO_GUARANTEE_PL(timer,
+                                        ATTACH_PL_TRAPEZOID_RIC_NO_GUARANTEE());
 
   std::cout << std::endl;
 
-  // ===> Add new point location instance here. <===
   return true;
 }
 
 // Perform the test
-template <typename Geom_traits_T, typename Topol_traits_T>
-bool Point_location_test<Geom_traits_T, Topol_traits_T>::perform()
+template <typename GeomTraits, typename TopolTraits>
+bool Point_location_test<GeomTraits, TopolTraits>::perform()
 {
 #if ((CGAL_ARR_POINT_LOCATION_VERSION < 2) || \
      defined(CGAL_ARR_POINT_LOCATION_CONVERSION))
-  Objects_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES];
+  Objects_vector objs[NUM_PL_STRATEGIES];
 #else
-  Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES];
+  Variants_vector objs[NUM_PL_STRATEGIES];
 #endif
 
   // Locate the points in the list using all point location strategies.
@@ -600,61 +915,29 @@ bool Point_location_test<Geom_traits_T, Topol_traits_T>::perform()
 
   size_t pl_index = 0;
 
-  query(*m_naive_pl, "Naive", m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));  // Naive
-
-  query(*m_simple_pl, "Simple", m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));  // Simple
-
-  query(*m_walk_pl, "Walk", m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));  // Walk
+  QUERY_PL_NATIVE(objs[pl_index++]);
+  QUERY_PL_SIMPLE(objs[pl_index++]);
+  QUERY_PL_WALK(objs[pl_index++]);
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  query(*m_lm_pl, "Landmarks (vertices)",
-        m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));  // Landmarks (vertices)
-
-  query(*m_random_lm_pl, "Landmarks random",
-        m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));  // Landmarks random
-
-  query(*m_grid_lm_pl, "Landmarks grid",
-        m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));  // Landmarks grid
-
-  query(*m_halton_lm_pl, "Landmarks Halton",
-        m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));  // Landmarks Halton
-
-  query(*m_middle_edges_lm_pl, "Landmarks middle edges",
-        m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));  // Landmarks middle edges
-
-  query(*m_specified_points_lm_pl, "Landmarks specified points",
-        m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));  // Landmarks specified points
+  QUERY_PL_LM(objs[pl_index++]);
+  QUERY_PL_LM_RANDOM(objs[pl_index++]);
+  QUERY_PL_LM_GRID(objs[pl_index++]);
+  QUERY_PL_LM_HALTON(objs[pl_index++]);
+  QUERY_PL_LM_MIDDLE_EDGES(objs[pl_index++]);
+  QUERY_PL_LM_SPECIFIED_POINTS(objs[pl_index++]);
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  query(*m_triangulation_pl, "Triangulation",
-        m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));  // Triangulation
+  QUERY_PL_TRIANGULATION_PL(objs[pl_index++]);
 #endif
 
-  query(*m_trapezoid_ric_pl, "Trapezoidal RIC",
-        m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));  // Trapezoidal RIC
-
-  // Trapezoidal RIC without guarantees
-  query(*m_trapezoid_ric_no_grnt_pl, "Trapezoidal RIC without guarantees",
-        m_query_points.begin(), m_query_points.end(),
-        std::back_inserter(objs[pl_index++]));
+  QUERY_PL_TRAPEZOID_RIC_PL(objs[pl_index++]);
+  QUERY_PL_TRAPEZOID_RIC_NO_GUARANTEE(objs[pl_index++]);
 
   std::cout << std::endl;
-
-  // ===> Add a call to operate the new point location. <===
 
   // Number of point location strategies used.
   size_t pls_num = pl_index;
@@ -681,11 +964,10 @@ bool Point_location_test<Geom_traits_T, Topol_traits_T>::perform()
   return (result == 0);
 }
 
-// Verify the results
-template <typename Geom_traits_T, typename Topol_traits_T>
-int Point_location_test<Geom_traits_T, Topol_traits_T>::
-verify(Objects_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
-       size_t size, size_t pls_num)
+//! Verify the results
+template <typename GeomTraits, typename TopolTraits>
+int Point_location_test<GeomTraits, TopolTraits>::
+verify(Objects_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
 {
   Vertex_const_handle vh_ref, vh_cur;
   Halfedge_const_handle hh_ref, hh_cur;
@@ -797,29 +1079,20 @@ verify(Objects_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
 }
 
 // Verify the results
-template <typename Geom_traits_T, typename Topol_traits_T>
-int Point_location_test<Geom_traits_T, Topol_traits_T>::
-verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
-       size_t size, size_t pls_num)
+template <typename GeomTraits, typename TopolTraits>
+int Point_location_test<GeomTraits, TopolTraits>::
+verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
 {
-  const Vertex_const_handle* vh_ref;
-  const Halfedge_const_handle* hh_ref;
-  const Face_const_handle* fh_ref;
-
-  const Vertex_const_handle* vh_cur;
-  const Halfedge_const_handle* hh_cur;
-  const Face_const_handle* fh_cur;
-
   int result = 0;
 
   // Assign and check results
-  size_t qi; //qi is the query point index
-  for (qi = 0; qi < size; ++qi) {
+  for (size_t qi = 0; qi < size; ++qi) {
     // Assign object to a face
-    fh_ref = boost::get<Face_const_handle>(&(objs[0][qi]));
+    Face_const_handle* fh_ref = boost::get<Face_const_handle>(&(objs[0][qi]));
     if (fh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]));
+	Face_const_handle* fh_cur =
+          boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           if ((*fh_cur) != (*fh_ref)) {
             std::cout << "Error: point location number " << pl << std::endl;
@@ -833,12 +1106,14 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
         std::cout << "Error: point location number " << pl << std::endl;
         std::cout << "Expected: a face." << std::endl;
         result += -1;
-	hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
+	Halfedge_const_handle* hh_cur =
+          boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
 	if (hh_cur) {
           std::cout << "Actual: a halfedge." << std::endl;
           continue;
         }
-	vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]));
+	Vertex_const_handle* vh_cur =
+          boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           std::cout << "Actual: a vertex." << std::endl;
           continue;
@@ -853,10 +1128,12 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
     }
 
     // Assign object to a halfedge
-    hh_ref = boost::get<Halfedge_const_handle>(&(objs[0][qi]));
+    Halfedge_const_handle* hh_ref =
+      boost::get<Halfedge_const_handle>(&(objs[0][qi]));
     if (hh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
+	Halfedge_const_handle* hh_cur =
+          boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
         if (hh_cur) {
           if (((*hh_cur) != (*hh_ref)) && ((*hh_cur)->twin() != (*hh_ref))) {
             std::cout << "Error: point location number " << pl << std::endl;
@@ -872,12 +1149,14 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
         std::cout << "Expected: a halfedge, " << (*hh_ref)->curve()
                   << std::endl;
         result += -1;
-	fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]));
+	Face_const_handle* fh_cur =
+          boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           std::cout << "Actual: a face." << std::endl;
           continue;
         }
-	vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]));
+	Vertex_const_handle* vh_cur =
+          boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           std::cout << "Actual: a vertex." << std::endl;
           continue;
@@ -888,10 +1167,12 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
     }
 
     // Assign object to a vertex
-    vh_ref = boost::get<Vertex_const_handle>(&(objs[0][qi]));
+    Vertex_const_handle* vh_ref =
+      boost::get<Vertex_const_handle>(&(objs[0][qi]));
     if (vh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]));
+	Vertex_const_handle* vh_cur =
+          boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           if ((*vh_cur) != (*vh_ref)) {
             std::cout << "Error: point location number " << pl << std::endl;
@@ -906,12 +1187,14 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
         std::cout << "Error: point location number " << pl << std::endl;
         std::cout << "Expected: a vertex: "<< (*vh_ref)->point() << std::endl;
         result += -1;
-	fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]));
+	Face_const_handle* fh_cur =
+          boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           std::cout << "Actual: a face." << std::endl;
           continue;
         }
-	hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
+	Halfedge_const_handle* hh_cur =
+          boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
         if (hh_cur) {
           std::cout << "Actual: a halfedge." << std::endl;
           continue;
@@ -926,5 +1209,7 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
   }
   return result;
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif

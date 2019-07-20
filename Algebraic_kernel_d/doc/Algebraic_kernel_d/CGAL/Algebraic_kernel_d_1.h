@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicKerneldModels
+\ingroup PkgAlgebraicKernelDModels
 
 The class represents an algebraic real root by a square free polynomial and an 
 isolating interval that uniquely defines the root. 

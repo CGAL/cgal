@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -25,6 +26,7 @@
 #ifndef CGAL_KERNEL_TRAITS_H
 #define CGAL_KERNEL_TRAITS_H
 
+#include <CGAL/Kernel_traits_fwd.h>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/if.hpp>
 

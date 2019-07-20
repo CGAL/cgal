@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent Rineau, Stéphane Tayeb
 
 #ifndef CGAL_MESH_3_REFINE_CELLS_3_H
 #define CGAL_MESH_3_REFINE_CELLS_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -27,8 +31,11 @@
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 #ifdef CGAL_LINKED_WITH_TBB
-  #include <tbb/tbb.h>
+  #include <tbb/enumerable_thread_specific.h>
+  #include <tbb/blocked_range.h>
+  #include <tbb/parallel_for.h>
 #endif
+#include <CGAL/atomic.h>
 
 #include <CGAL/Meshes/Filtered_deque_container.h>
 #include <CGAL/Meshes/Filtered_multimap_container.h>
@@ -48,35 +55,6 @@
 namespace CGAL {
 
 namespace Mesh_3 {
-
-// Helper meta-programming functions, to allow backward compatibility.
-//
-//   - Has_Is_cell_bad and Had_Cell_badness are used to detect if a model
-//     of the MeshCellCriteria_3 concept follows the specifications of
-//     CGAL-3.7 (with Cell_badness) or later (with Is_cell_bad).
-//
-//   - Then the meta-function Get_Is_cell_bad is used to get the actual
-//     type, either Cell_criteria::Cell_badness or
-//      Cell_criteria::Is_cell_bad.
-
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Is_cell_bad, Is_cell_bad, true)
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Cell_badness, Cell_badness, false)
-
-// template class, used when use_cell_badness = false
-template <typename Cell_criteria,
-          bool use_cell_badness = (!Has_Is_cell_bad<Cell_criteria>::value) &&
-                                    Has_Cell_badness<Cell_criteria>::value >
-struct Get_Is_cell_bad {
-  typedef typename Cell_criteria::Is_cell_bad Type;
-  typedef Type type; // compatibility with Boost
-};
-
-// partial specialization when use_cell_badness == true
-template <typename Cell_criteria>
-struct Get_Is_cell_bad<Cell_criteria, true> {
-  typedef typename Cell_criteria::Cell_badness Type;
-  typedef Type type;
-};
 
 // Predicate to know if a cell in a refinement queue is a zombie
 template<typename Cell_handle>
@@ -297,7 +275,7 @@ private:
   typedef typename Tr::Lock_data_structure Lock_data_structure;
   typedef typename MeshDomain::Subdomain_index  Subdomain_index;
   typedef typename MeshDomain::Index  Index;
-  typedef typename Get_Is_cell_bad<Criteria>::Type Is_cell_bad;
+  typedef typename Criteria::Is_cell_bad Is_cell_bad;
 
   // Self
   typedef Refine_cells_3<Tr,
@@ -331,7 +309,8 @@ public:
 
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
-  typedef typename Tr::Point Point;
+  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Cell Cell;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -339,14 +318,19 @@ public:
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
   typedef Complex3InTriangulation3 C3T3;
 
-
+public:
   // Constructor
   // For sequential
   Refine_cells_3(Tr& triangulation,
                  const Criteria& criteria,
                  const MeshDomain& oracle,
                  Previous_& previous,
-                 C3T3& c3t3);
+                 C3T3& c3t3,
+                 std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                );
   // For parallel
   Refine_cells_3(Tr& triangulation,
                  const Criteria& criteria,
@@ -354,7 +338,12 @@ public:
                  Previous_& previous,
                  C3T3& c3t3,
                  Lock_data_structure *lock_ds,
-                 WorksharingDataStructureType *worksharing_ds);
+                 WorksharingDataStructureType *worksharing_ds,
+                 std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                );
 
   // Destructor
   virtual ~Refine_cells_3() { }
@@ -368,7 +357,7 @@ public:
 
   int number_of_bad_elements_impl();
 
-  Point circumcenter_impl(const Cell_handle& cell) const
+  Bare_point circumcenter_impl(const Cell_handle& cell) const
   {
     return r_tr_.dual(cell);
   }
@@ -387,8 +376,27 @@ public:
     return this->extract_element_from_container_value(Container_::get_next_element_impl());
   }
 
+  // Tells if the refinement process of cells is currently finished
+  bool no_longer_element_to_refine_impl()
+  {
+#ifndef CGAL_NO_ATOMIC
+    if(m_stop_ptr != 0 &&
+       m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+    {
+      return true;
+    }
+#endif
+    if(m_maximal_number_of_vertices_ !=0 &&
+       triangulation_ref_impl().number_of_vertices() >=
+       m_maximal_number_of_vertices_)
+    {
+      return true;
+    }
+    return Container_::no_longer_element_to_refine_impl();
+  }
+
   // Gets the point to insert from the element to refine
-  Point refinement_point_impl(const Cell_handle& cell) const
+  Bare_point refinement_point_impl(const Cell_handle& cell) const
   {
     this->set_last_vertex_index(
       r_oracle_.index_from_subdomain_index(cell->subdomain_index()) );
@@ -399,16 +407,16 @@ public:
   }
 
   // Returns the conflicts zone
-  Zone conflicts_zone_impl(const Point& point
+  Zone conflicts_zone_impl(const Weighted_point& point
                            , const Cell_handle& cell
                            , bool &facet_is_in_its_cz) const;
-  Zone conflicts_zone_impl(const Point& point
+  Zone conflicts_zone_impl(const Weighted_point& point
                            , const Cell_handle& cell
                            , bool &facet_is_in_its_cz
                            , bool &could_lock_zone) const;
 
   // Job to do before insertion
-  void before_insertion_impl(const Cell_handle&, const Point&, Zone& zone)
+  void before_insertion_impl(const Cell_handle&, const Weighted_point&, Zone& zone)
   {
     before_insertion_handle_cells_in_conflict_zone(zone);
   }
@@ -422,7 +430,7 @@ public:
 #endif
 
   // Insertion implementation ; returns the inserted vertex
-  Vertex_handle insert_impl(const Point& p, const Zone& zone);
+  Vertex_handle insert_impl(const Weighted_point& p, const Zone& zone);
 
   // Updates cells incident to vertex, and add them to queue if needed
   void update_star(const Vertex_handle& vertex);
@@ -471,10 +479,10 @@ public:
   {
     std::stringstream sstr;
     sstr << "Cell { " << std::endl
-    << "  - " << *ch->vertex(0)  << std::endl
-    << "  - " << *ch->vertex(1)  << std::endl
-    << "  - " << *ch->vertex(2)  << std::endl
-    << "  - " << *ch->vertex(3)  << std::endl
+    << "  " << *ch->vertex(0) << std::endl
+    << "  " << *ch->vertex(1) << std::endl
+    << "  " << *ch->vertex(2) << std::endl
+    << "  " << *ch->vertex(3) << std::endl
     << "}" << std::endl;
 
     return sstr.str();
@@ -526,8 +534,8 @@ private:
   // -----------------------------------
   // -----------------------------------
 
-  /// Computes badness and add to queue if needed
-  void compute_badness(const Cell_handle& cell);
+  /// Check whether the cell is bad or not, and add it to the queue if needed
+  void is_bad(const Cell_handle& cell);
 
   // Updates cells incident to vertex, and add them to queue if needed
   void update_star_self(const Vertex_handle& vertex);
@@ -554,7 +562,7 @@ private:
   }
 
   /// Get mirror facet
-  Facet mirror_facet(const Facet& f) const { return r_tr_.mirror_facet(f); };
+  Facet mirror_facet(const Facet& f) const { return r_tr_.mirror_facet(f); }
   Facet mirror_facet(const Cell_handle& c, const int i) const
   { return mirror_facet(std::make_pair(c,i)); }
 
@@ -568,6 +576,13 @@ private:
   /// The mesh result
   C3T3& r_c3t3_;
 
+  /// Maximal allowed number of vertices
+  std::size_t m_maximal_number_of_vertices_;
+
+#ifndef CGAL_NO_ATOMIC
+  /// Pointer to the atomic Boolean that can stop the process
+  CGAL::cpp11::atomic<bool>* const m_stop_ptr;
+#endif
 private:
   // Disabled copy constructor
   Refine_cells_3(const Self& src);
@@ -585,7 +600,12 @@ Refine_cells_3(Tr& triangulation,
                const Cr& criteria,
                const MD& oracle,
                P_& previous,
-               C3T3& c3t3)
+               C3T3& c3t3,
+               std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+               , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+               )
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct >(previous)
   , C_()
@@ -596,6 +616,10 @@ Refine_cells_3(Tr& triangulation,
   , r_criteria_(criteria)
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
+  , m_maximal_number_of_vertices_(maximal_number_of_vertices)
+#ifndef CGAL_NO_ATOMIC
+  , m_stop_ptr(stop_ptr)
+#endif
 {
 }
 
@@ -609,7 +633,12 @@ Refine_cells_3(Tr& triangulation,
                P_& previous,
                C3T3& c3t3,
                Lock_data_structure *lock_ds,
-               WorksharingDataStructureType *worksharing_ds)
+               WorksharingDataStructureType *worksharing_ds,
+               std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+               , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+               )
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct >(previous, lock_ds, worksharing_ds)
   , C_()
@@ -620,6 +649,10 @@ Refine_cells_3(Tr& triangulation,
   , r_criteria_(criteria)
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
+  , m_maximal_number_of_vertices_(maximal_number_of_vertices)
+#ifndef CGAL_NO_ATOMIC
+  , m_stop_ptr(stop_ptr)
+#endif
 {
 }
 
@@ -739,7 +772,7 @@ number_of_bad_elements_impl()
     const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell_it));
     if ( subdomain )
     {
-      const Is_cell_bad is_cell_bad = r_criteria_(cell_it);
+      const Is_cell_bad is_cell_bad = r_criteria_(r_tr_, cell_it);
       if( is_cell_bad )
         ++count;
     }
@@ -754,7 +787,7 @@ number_of_bad_elements_impl()
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-conflicts_zone_impl(const Point& point
+conflicts_zone_impl(const Weighted_point& point
                     , const Cell_handle& cell
                     , bool &facet_is_in_its_cz) const
 {
@@ -778,7 +811,7 @@ conflicts_zone_impl(const Point& point
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-conflicts_zone_impl(const Point& point
+conflicts_zone_impl(const Weighted_point& point
                     , const Cell_handle& cell
                     , bool &facet_is_in_its_cz
                     , bool &could_lock_zone
@@ -889,7 +922,7 @@ update_star_self(const Vertex_handle& vertex)
     set_cell_in_domain(*cell_it, cells_subdomain);
 
     // Add to queue
-    compute_badness(*cell_it);
+    is_bad(*cell_it);
   }
 }
 
@@ -908,7 +941,7 @@ treat_new_cell(const Cell_handle& cell)
     set_cell_in_domain(cell, *subdomain);
 
     // Add to refinement queue if needed
-    compute_badness(cell);
+    is_bad(cell);
   }
   else
   {
@@ -919,9 +952,9 @@ treat_new_cell(const Cell_handle& cell)
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-compute_badness(const Cell_handle& cell)
+is_bad(const Cell_handle& cell)
 {
-  const Is_cell_bad is_cell_bad = r_criteria_(cell);
+  const Is_cell_bad is_cell_bad = r_criteria_(r_tr_, cell);
   if( is_cell_bad )
   {
     this->add_bad_element(this->from_cell_to_refinement_queue_element(cell), *is_cell_bad);
@@ -931,7 +964,7 @@ compute_badness(const Cell_handle& cell)
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Vertex_handle
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-insert_impl(const Point& point,
+insert_impl(const Weighted_point& point,
             const Zone& zone)
 {
   // TODO: look at this

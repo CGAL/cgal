@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s):  Francisc Bungiu <fbungiu@gmail.com>
@@ -22,7 +23,6 @@
 #ifndef CGAL_TEST_MODEL_METHODS_H
 #define CGAL_TEST_MODEL_METHODS_H
 
-#include <CGAL/basic.h>
 #include <CGAL/test_utils.h>
 #include <cassert>
 #include <vector>

@@ -5,7 +5,6 @@
 
 #include "surface.h"
 #include "viewer.h"
-#include <CGAL/gl.h>
 
 #include <map>
 #include <utility>

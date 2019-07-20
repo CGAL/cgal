@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSegmentDelaunayGraph2
+\ingroup PkgSegmentDelaunayGraph2Ref
 
 The class `Segment_Delaunay_graph_hierarchy_vertex_base_2` provides a model for the 
 `SegmentDelaunayGraphHierarchyVertexBase_2` concept, which is the 
@@ -24,8 +24,6 @@ vertex base required by the
 template< typename Vbb >
 class Segment_Delaunay_graph_hierarchy_vertex_base_2 : public Vbb {
 public:
-
-/// @}
 
 }; /* end Segment_Delaunay_graph_hierarchy_vertex_base_2 */
 } /* end namespace CGAL */

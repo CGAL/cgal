@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3SecondaryConcepts
+\ingroup PkgMesh3SecondaryConcepts
 \cgalConcept
 
 The concept `BisectionGeometricTraits_3` describes a geometric traits class 
@@ -20,8 +20,7 @@ of the segment.
 
 \sa `ImplicitSurfaceTraits_3` 
 \sa `IntersectionGeometricTraits_3` 
-\sa `CGAL::Implicit_mesh_domain_3<Function,BGT>` 
-\sa `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` 
+\sa `CGAL::Labeled_mesh_domain_3<BGT>`
 
 */
 

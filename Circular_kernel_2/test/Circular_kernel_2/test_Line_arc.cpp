@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -29,7 +30,6 @@
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Circular_kernel_2/function_objects_polynomial_circular.h>
 #include <CGAL/Circular_kernel_2/Circular_arc_2.h>
 #include <CGAL/Circular_kernel_2/Line_arc_2.h>
 #include <CGAL/Exact_circular_kernel_2.h>
@@ -832,7 +832,7 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
      do{
        p_random4 = Point_2(theRandom.get_int(random_min, random_max),
 			   theRandom.get_int(random_min, random_max));
-     }while(p_random4 == center_circle_random1);
+     } while (p_random4 == center_circle_random1 || (p_random3 == p_random4));
    
      std::vector< CGAL::Object > 
        vector_for_intersection_random3;

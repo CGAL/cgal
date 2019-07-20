@@ -14,14 +14,19 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Laurent Saboret
 
 #ifndef CGAL_RADIAL_ORIENT_NORMALS_H
 #define CGAL_RADIAL_ORIENT_NORMALS_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Origin.h>
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 
@@ -71,6 +76,8 @@ radial_orient_normals(
     typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
+    typedef typename boost::property_traits<PointPMap>::reference Point_ref;
+    typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
     typedef typename Kernel::FT FT;
 
     // Precondition: at least one element in the container.
@@ -83,7 +90,7 @@ radial_orient_normals(
     int nb_points = 0;
     for (ForwardIterator it = first; it != beyond; it++)
     {
-      Point point = get(point_pmap, *it);
+      Point_ref point = get(point_pmap, *it);
       sum = sum + (point - CGAL::ORIGIN);
       nb_points++;
     }
@@ -94,13 +101,13 @@ radial_orient_normals(
     std::deque<Enriched_point> oriented_points, unoriented_points;
     for (ForwardIterator it = first; it != beyond; it++)
     {
-      Point point = get(point_pmap, *it);
+      Point_ref point = get(point_pmap, *it);
 
       // Radial vector towards exterior of the point set
       Vector vec1 = point - barycenter;
 
       // Point's normal
-      Vector vec2 = get(normal_pmap, *it);
+      Vector_ref vec2 = get(normal_pmap, *it);
       
       //         ->               ->
       // Orients vec2 parallel to vec1
@@ -174,5 +181,7 @@ radial_orient_normals(
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_RADIAL_ORIENT_NORMALS_H

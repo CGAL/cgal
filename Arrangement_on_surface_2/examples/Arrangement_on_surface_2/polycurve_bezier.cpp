@@ -1,6 +1,6 @@
 // Constructing a arrangement of Bezier polycurves.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifndef CGAL_USE_CORE
 

@@ -29,10 +29,10 @@ int main() {
 	Point_generator_ii g_ii(tet);
 	
 	// get 100 random points in tri
-	CGAL::cpp11::copy_n(g_i, 100, std::back_inserter(points_in_tri));
+	std::copy_n(g_i, 100, std::back_inserter(points_in_tri));
 	
 	// get 100 random points in tet
-	CGAL::cpp11::copy_n(g_ii, 100, std::back_inserter(points_in_tet));
+	std::copy_n(g_ii, 100, std::back_inserter(points_in_tet));
 	
 	// Check that we have really created 100 points.
 	assert( points_in_tri.size() == 100);

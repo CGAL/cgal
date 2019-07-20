@@ -5,6 +5,7 @@
 #include <vector>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Construct_theta_graph_2.h>
+#include <CGAL/property_map.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -82,14 +83,14 @@ int main(int argc, char ** argv)
   }
 
   // calculating the distances from v0 to other vertices
-  unsigned int n = num_vertices(g);
+  boost::graph_traits<Graph>::vertices_size_type n = num_vertices(g);
   // vector for storing the results
   std::vector<double> distances(n);
   // Calling the Dijkstra's algorithm implementation from boost.
   boost::dijkstra_shortest_paths(g,
                                  v0,
                                  boost::weight_map(get(&Edge_property::euclidean_length, g)).
-                                 distance_map(&distances[0]) );
+                                 distance_map(CGAL::make_property_map(distances)) );
 
   std::cout << "distances are:" << std::endl;
   for (unsigned int i=0; i < n; ++i) {

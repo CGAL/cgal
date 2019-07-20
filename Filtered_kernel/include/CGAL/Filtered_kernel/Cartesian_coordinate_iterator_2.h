@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
@@ -54,7 +55,7 @@ public:
   typedef const value_type*               pointer;
 
   Cartesian_coordinate_iterator_2()
-    : var((const P*) NULL), index(0) {}
+    : var((const P*) nullptr), index(0) {}
 
   Cartesian_coordinate_iterator_2(const P * const p, int _index = 0)
     : var(p), index(_index) {}

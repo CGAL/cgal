@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgNef3
+  \ingroup PkgNef3Ref
 
   A 3D Nef polyhedron is a subset of the 3-dimensional space that is the 
   result of forming complements and intersections starting from a finite 
@@ -59,7 +59,7 @@ public:
 /// @{
 
 /*!
-  \ingroup PkgNef3
+  \ingroup PkgNef3Ref
 
   A Halfedge has a double meaning. In the global incidence structure of a 
   `Nef_polyhedron_3` it is an oriented edge going from one vertex to another. 
@@ -185,7 +185,7 @@ public:
   }; /* end Halfedge */
 
 /*!
-  \ingroup PkgNef3
+  \ingroup PkgNef3Ref
 
   The type `Halffacet_cycle_iterator` iterates over a list of 
   `Object_handles`. Each item of that list can either be assigned 
@@ -255,7 +255,7 @@ public:
 
 
 /*!
-  \ingroup PkgNef3
+  \ingroup PkgNef3Ref
 
   A halffacet is an oriented, rectilinear bounded part of a plane. The following 
   figure depicts the incidences to halfedges, vertices and the notion of facet 
@@ -361,7 +361,7 @@ public:
   }; /* end Halffacet */
 
 /*!
-  \ingroup PkgNef3
+  \ingroup PkgNef3Ref
 
   The type `SFace_cycle_iterator` iterates over a list of 
   `Object_handles`. Each item of that list can either be assigned 
@@ -447,7 +447,7 @@ public:
   }; /* end SFace_cycle_iterator */
 
 /*!
-  \ingroup PkgNef3
+  \ingroup PkgNef3Ref
 
   An sface is described by its boundaries.
  Figures \ref figureNef3HalfedgeIncidences 
@@ -542,7 +542,7 @@ public:
   }; /* end SFace */
 
 /*!
-  \ingroup PkgNef3
+  \ingroup PkgNef3Ref
 
   A shalfedge is a great arc on a sphere map. 
   Figure \ref figureNef3HalfedgeIncidences 
@@ -728,7 +728,7 @@ public:
   }; /* end SHalfedge */
 
 /*!
-  \ingroup PkgNef3
+  \ingroup PkgNef3Ref
 
   A shalfloop is a great circle on a sphere map. 
   Figure \ref figureNef3HalfloopIncidences 
@@ -825,7 +825,7 @@ public:
   }; /* end SHalfloop */
 
 /*!
-  \ingroup PkgNef3
+  \ingroup PkgNef3Ref
 
   A vertex is a point in the 3-dimensional space. Its incidence 
   structure can be accessed creating a sphere map of the vertex. 
@@ -877,7 +877,7 @@ public:
   }; /* end Vertex */
 
 /*!
-  \ingroup PkgNef3
+  \ingroup PkgNef3Ref
 
   A volume is a full-dimensional connected point set in \f$ \mathbb{R}^3\f$. It is 
   bounded by several shells, i.e.\ a connected part of the boundary incident 
@@ -1186,6 +1186,26 @@ public:
   the polyhedral surface `P` does. 
 */ 
   Nef_polyhedron_3(Polyhedron& P); 
+
+/*!
+  creates a Nef polyhedron, which represents the same point set as
+  the polyhedral surface `pm` does. `him` and `fim` must be both initialized
+  so that halfedges and faces are indexed in `[0, num_halfedges(pm)[`
+  and `[0, num_faces(pm)[` respectively. If `PolygonMesh` has an internal
+  halfedge index map and an internal face index map, the last two parameters
+  can be omitted.
+  \tparam PolygonMesh a model of `FaceListGraph` and `VertexListGraph`.
+  \tparam HalfedgeIndexMap a class model of `ReadablePropertyMap` with
+          `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` as key type
+           a value type convertible to `std::size_t`
+  \tparam FaceIndexMap a class model of `ReadablePropertyMap` with
+          `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
+           a value type convertible to `std::size_t`
+*/
+ template <class PolygonMesh, class HalfedgeIndexMap, class FaceIndexMap>
+ explicit Nef_polyhedron_3(const PolygonMesh& pm,
+                           const HalfedgeIndexMap& him,
+                           const FaceIndexMap& fim);
 
 /*!
   creates a Nef polyhedron consisting of a single polygon 
@@ -1501,7 +1521,9 @@ public:
   void transform(const Aff_transformation_3& aff); 
 
 /*!
-  converts `N` into a Polyhedron. \pre `N` is simple. 
+  converts `N` into a triangulated Polyhedron.
+  For conversion to other types, see `convert_nef_polyhedron_to_polygon_mesh()`.
+  \pre `N` is simple.
 */ 
   void convert_to_polyhedron(Polyhedron& P) const; 
 

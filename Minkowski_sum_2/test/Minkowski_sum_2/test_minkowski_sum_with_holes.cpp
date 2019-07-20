@@ -1,5 +1,3 @@
-#include <CGAL/basic.h>
-
 #include <CGAL/minkowski_sum_2.h>
 #include <CGAL/Polygon_vertical_decomposition_2.h>
 #include <CGAL/Polygon_triangulation_decomposition_2.h>
@@ -48,14 +46,14 @@ Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_with_holes_2& p,
 {
   switch (strategy) {
    case REDUCED_CONVOLUTION:
-    {
      return CGAL::minkowski_sum_by_reduced_convolution_2(p, q);
-    }
+
    case VERTICAL_DECOMPOSITION:
     {
      CGAL::Polygon_vertical_decomposition_2<Kernel> decomp;
      return CGAL::minkowski_sum_2(p, q, decomp);
     }
+
    case TRIANGULATION_DECOMPOSITION:
     {
      CGAL::Polygon_triangulation_decomposition_2<Kernel> decomp;
@@ -65,72 +63,58 @@ Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_with_holes_2& p,
    case VERTICAL_AND_ANGLE_BISECTOR_DECOMPOSITION:
     {
      typedef CGAL::Small_side_angle_bisector_decomposition_2<Kernel>
-       No_holes_decomposition;
+                                                No_holes_decomposition;
      typedef CGAL::Polygon_vertical_decomposition_2<Kernel>
-       With_holes_decomposition;
+                                                With_holes_decomposition;
 
      if (0 == p.number_of_holes()) {
        const Polygon_2& pnh = p.outer_boundary();
        No_holes_decomposition decomp_no_holes;
        if  (0 == q.number_of_holes()) {
          const Polygon_2& qnh = q.outer_boundary();
-         return CGAL::minkowski_sum_2(pnh, qnh,
-                                      decomp_no_holes, decomp_no_holes);
+         return CGAL::minkowski_sum_2(pnh, qnh, decomp_no_holes, decomp_no_holes);
        }
-       else {
-         With_holes_decomposition decomp_with_holes;
-         return
-           CGAL::minkowski_sum_2(pnh, q, decomp_no_holes, decomp_with_holes);
-       }
-     }
-     else {
+
        With_holes_decomposition decomp_with_holes;
-       if  (0 == q.number_of_holes()) {
-         const Polygon_2& qnh = q.outer_boundary();
-         No_holes_decomposition decomp_no_holes;
-         return
-           CGAL::minkowski_sum_2(p, qnh, decomp_with_holes, decomp_no_holes);
-       }
-       else {
-         return
-           CGAL::minkowski_sum_2(p, q, decomp_with_holes, decomp_with_holes);
-       }
+       return CGAL::minkowski_sum_2(pnh, q, decomp_no_holes, decomp_with_holes);
      }
+
+     With_holes_decomposition decomp_with_holes;
+     if (0 == q.number_of_holes()) {
+       const Polygon_2& qnh = q.outer_boundary();
+       No_holes_decomposition decomp_no_holes;
+       return CGAL::minkowski_sum_2(p, qnh, decomp_with_holes, decomp_no_holes);
+     }
+
+     return CGAL::minkowski_sum_2(p, q, decomp_with_holes, decomp_with_holes);
     }
 
    case TRIANGULATION_AND_ANGLE_BISECTOR_DECOMPOSITION:
     {
      typedef CGAL::Small_side_angle_bisector_decomposition_2<Kernel>
-       No_holes_decomposition;
+                                                No_holes_decomposition;
      typedef CGAL::Polygon_triangulation_decomposition_2<Kernel>
-       With_holes_decomposition;
+                                                With_holes_decomposition;
      if (0 == p.number_of_holes()) {
        const Polygon_2& pnh = p.outer_boundary();
        No_holes_decomposition decomp_no_holes;
-       if  (0 == q.number_of_holes()) {
+       if (0 == q.number_of_holes()) {
          const Polygon_2& qnh = q.outer_boundary();
-         return CGAL::minkowski_sum_2(pnh, qnh,
-                                      decomp_no_holes, decomp_no_holes);
+         return CGAL::minkowski_sum_2(pnh, qnh, decomp_no_holes, decomp_no_holes);
        }
-       else {
-         With_holes_decomposition decomp_with_holes;
-         return
-           CGAL::minkowski_sum_2(pnh, q, decomp_no_holes, decomp_with_holes);
-       }
-     }
-     else {
+
        With_holes_decomposition decomp_with_holes;
-       if  (0 == q.number_of_holes()) {
-         const Polygon_2& qnh = q.outer_boundary();
-         No_holes_decomposition decomp_no_holes;
-         return
-           CGAL::minkowski_sum_2(p, qnh, decomp_with_holes, decomp_no_holes);
-       }
-       else {
-         return
-           CGAL::minkowski_sum_2(p, q, decomp_with_holes, decomp_with_holes);
-       }
+       return CGAL::minkowski_sum_2(pnh, q, decomp_no_holes, decomp_with_holes);
      }
+
+     With_holes_decomposition decomp_with_holes;
+     if (0 == q.number_of_holes()) {
+       const Polygon_2& qnh = q.outer_boundary();
+       No_holes_decomposition decomp_no_holes;
+       return CGAL::minkowski_sum_2(p, qnh, decomp_with_holes, decomp_no_holes);
+     }
+
+     return CGAL::minkowski_sum_2(p, q, decomp_with_holes, decomp_with_holes);
     }
 
    case OPTIMAL_DECOMPOSITION:
@@ -151,7 +135,7 @@ Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_with_holes_2& p,
 int main(int argc, char* argv[])
 {
   if (argc < 2) {
-    std::cerr << "Usage: " << argv[0] << " [method flag] [polygon files]..."
+    std::cerr << "Usage: " << argv[0] << " [-method flag] [polygon files]..."
               << std::endl;
     std::cerr << "For the method flag, use a subset of the letters 'rfsohg'."
               << std::endl;
@@ -165,40 +149,34 @@ int main(int argc, char* argv[])
   boost::timer timer;
 
   std::list<Strategy> strategies;
-  for (std::size_t i = 0; i < strlen(argv[1]); ++i) {
-    switch (argv[1][i]) {
-      case 'r':
-        strategies.push_back(REDUCED_CONVOLUTION);
-        break;
 
-      case 'v':
-        strategies.push_back(VERTICAL_DECOMPOSITION);
-        break;
+  int i(1);
+  while (i < argc) {
+    if (argv[i][0] == '-') {
+      strategies.clear();
+      for (std::size_t j = 1; j < strlen(argv[i]); ++j) {
+        switch (argv[i][j]) {
+         case 'r': strategies.push_back(REDUCED_CONVOLUTION); break;
+         case 'v': strategies.push_back(VERTICAL_DECOMPOSITION); break;
+         case 't': strategies.push_back(TRIANGULATION_DECOMPOSITION); break;
+         case 'w':
+          strategies.push_back(VERTICAL_AND_ANGLE_BISECTOR_DECOMPOSITION);
+          break;
 
-      case 't':
-        strategies.push_back(TRIANGULATION_DECOMPOSITION);
-        break;
+         case 'u':
+          strategies.push_back(TRIANGULATION_AND_ANGLE_BISECTOR_DECOMPOSITION);
+          break;
 
-      case 'w':
-        strategies.push_back(VERTICAL_AND_ANGLE_BISECTOR_DECOMPOSITION);
-        break;
-
-      case 'u':
-        strategies.push_back(TRIANGULATION_AND_ANGLE_BISECTOR_DECOMPOSITION);
-        break;
-
-      case 'd':
-        strategies.push_back(OPTIMAL_DECOMPOSITION);
-        break;
-
-     default:
-        std::cerr << "Unknown flag '" << argv[1][i] << "'" << std::endl;
-        return 1;
+         case 'd': strategies.push_back(OPTIMAL_DECOMPOSITION); break;
+         default:
+          std::cerr << "Unknown flag '" << argv[i][j] << "'" << std::endl;
+          return -1;
+        }
+      }
+      ++i;
+      continue;
     }
-  }
 
-  int i = 2;
-  while (i+1 < argc) {
     std::cout << "Testing " << argv[i] << " + " << argv[i+1] << std::endl;
     if (!read_polygon(argv[i], p)) return -1;
     if (!read_polygon(argv[i+1], q)) return -1;

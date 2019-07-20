@@ -25,10 +25,10 @@
 // implementation: test program for polytope distance (2D traits class)
 // ============================================================================
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Homogeneous.h>
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Polytope_distance_d_traits_2.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 typedef CGAL::Gmpzf RT;

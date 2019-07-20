@@ -19,7 +19,5 @@ in `d` dimensions.
 class Kernel_d::CartesianConstIterator_d {
 public:
 
-/// @}
-
 }; /* end Kernel_d::CartesianConstIterator_d */
 

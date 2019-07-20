@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Iddo Hanniel <iddoh@cs.technion.ac.il>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_BEZIER_BOUNDING_RATIONAL_TRAITS_H
 #define CGAL_BEZIER_BOUNDING_RATIONAL_TRAITS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Definition of the Bezier_bounding_rational_traits<Kernel> class.
@@ -1166,7 +1170,7 @@ private:
       return;
     }
 
-    // Consturct bounding boxes for the two curves and check whether they
+    // Construct bounding boxes for the two curves and check whether they
     // overlap.
     Bez_point_bbox      bbox1;
     Bez_point_bbox      bbox2;

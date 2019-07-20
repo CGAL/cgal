@@ -43,7 +43,7 @@ int main(int argc,char** argv)
   if (argc==1){
     CGAL::Random_points_in_sphere_3<Point_3, PointCreator> gen(1.0);
     int nbpt=1000000;
-    CGAL::cpp11::copy_n( gen, nbpt, std::back_inserter(points) );
+    std::copy_n( gen, nbpt, std::back_inserter(points) );
     std::cout << "Using " << 1000000 << " random points in the unit ball\n";
   }
   else{

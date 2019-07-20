@@ -13,13 +13,17 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
 #ifndef CGAL_CD3_INSERT_VERTEX_INTO_EDGE_H
 #define CGAL_CD3_INSERT_VERTEX_INTO_EDGE_H
+
+#include <CGAL/license/Convex_decomposition_3.h>
+
 
 #include <CGAL/Nef_3/SNC_constructor.h>
 

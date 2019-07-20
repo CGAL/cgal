@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-inf.mpg.de>
 //                 Michael Hemmer <hemmer@mpi-inf.mpg.de>
@@ -22,8 +23,6 @@
 
 //    \brief provides test functions for the \c RealEmbeddable concept of
 //    number types.
-
-#include <CGAL/basic.h>
 
 #include <cstddef>
 #include <CGAL/assertions.h>

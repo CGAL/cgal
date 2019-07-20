@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3AlgebraicConcepts
+\ingroup PkgCircularKernel3AlgebraicConcepts
 \cgalConcept
 
 \sa `AlgebraicKernelForSpheres::CompareX`

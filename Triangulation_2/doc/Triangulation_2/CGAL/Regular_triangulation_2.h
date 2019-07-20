@@ -1,21 +1,5 @@
 
 namespace CGAL {
-
-
-/*!
-\ingroup PkgTriangulation2
-Helper class used by `Regular_trangulation_2` to pass a weighted point as a point
-to its based class `Triangulation_2`.
-\tparam Traits must be a model of the concept `RegularTriangulationTraits_2`
-*/
-template < typename Traits >
-struct Weighted_point_mapper_2
-  :   public Traits
-{
-  typedef typename Traits::Weighted_point_2 Point_2;
-};
-
-
 /*!
 \ingroup PkgTriangulation2TriangulationClasses
 
@@ -127,7 +111,7 @@ points hidden by this facet are reinserted in the triangulation.
 The concept `RegularTriangulationTraits_2` refines the 
 concept `TriangulationTraits_2` by adding the type 
 `Weighted_point_2` to describe weighted points 
-and the type `Power_test_2` to perform 
+and the type `Power_side_of_oriented_power_circle_2` to perform 
 power tests on weighted points. 
 
 \tparam Tds  must be a model of `TriangulationDataStructure_2`. 
@@ -149,7 +133,7 @@ instantiation for the `Tds` parameter by the class
 
 */
 template< typename Traits, typename Tds >
-class Regular_triangulation_2 : public Triangulation_2<Weighted_point_mapper_2<Traits>,Tds> {
+class Regular_triangulation_2 : public Triangulation_2<Traits,Tds> {
 public:
 
 /// \name Types 
@@ -173,12 +157,12 @@ typedef Traits::Ray Ray;
 /*!
 
 */ 
-typedef Traits::Bare_point Bare_point; 
+typedef Traits::Point_2 Bare_point; 
 
 /*!
 
 */ 
-typedef Traits::Weighted_point Weighted_point; 
+typedef Traits::Weighted_point_2 Weighted_point; 
 
 /*!
 An iterator that allows to enumerate the 
@@ -258,7 +242,7 @@ before the insertions (it may be negative due to hidden points).
 Note that this function is not guaranteed to insert the weighted points 
 following the order of `InputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
-\tparam InputIterator must be an input iterator with the value type `Weighted_point`. 
+\tparam InputIterator must be an input iterator with the value type \link Regular_triangulation_2::Weighted_point `Weighted_point` \endlink.
 */ 
 template < class InputIterator > 
 std::ptrdiff_t 
@@ -276,8 +260,8 @@ Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is
 only one vertex is created, one of the objects of type `Vertex::Info` will be stored in the vertex. 
 \pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_2`. 
 
-\tparam WeightedPointWithInfoInputIterator must be an input iterator with value type `std::pair<Weighted_point,Vertex::Info>`. 
-
+\tparam WeightedPointWithInfoInputIterator must be an input iterator with value type
+`std::pair<%Weighted_point,Vertex::Info>`.
 */ 
 template < class WeightedPointWithInfoInputIterator > 
 std::ptrdiff_t 

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_SURFACE_MESHER_EDGES_LEVEL_H
 #define CGAL_SURFACE_MESHER_EDGES_LEVEL_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <CGAL/Mesh_2/Output_stream.h>
 
@@ -29,6 +33,7 @@
 #include <CGAL/iterator.h> // for CGAL::inserter
 #include <CGAL/circulator.h> // for CGAL::Circulator_from_container<C>
 #include <CGAL/use.h>
+#include <CGAL/number_utils.h> // for CGAL::sqrt
 
 #include <sstream>
 #include <set>
