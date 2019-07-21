@@ -898,12 +898,18 @@ double bounded_error_Hausdorff_impl(
   typedef typename boost::property_map<TriangleMesh, Face_property_tag>::const_type Triangle_hausdorff_bounds;
 
   typedef std::pair<double, double> Hausdorff_bounds;
-  typedef std::pair<Triangle_3, Hausdorff_bounds> Candidate_triangle;
-  typedef typename std::vector<Candidate_triangle> Candidate_set;
 
   typename Kernel::Compute_squared_distance_3 squared_distance;
   typename Kernel::Construct_projected_point_3 project_point;
   typename Kernel::FT dist;
+
+  typedef
+  #if BOOST_VERSION >= 105000
+        boost::heap::priority_queue< Candidate_triangle<Kernel>, boost::heap::compare< std::greater<Candidate_triangle<Kernel> > > >
+  #else
+        std::priority_queue< Candidate_triangle<Kernel> >
+  #endif
+        Heap_type;
 
   // Build an AABB tree on tm1
   TM1_tree tm1_tree( faces(tm1).begin(), faces(tm1).end(), tm1, vpm1 );
@@ -924,7 +930,7 @@ double bounded_error_Hausdorff_impl(
   // TODO Implement the candidate_triangles set as Stack instead of Vector
   //      check: https://www.boost.org/doc/libs/1_55_0/doc/html/heap.html
   //      Can already build a sorted structure while collecting the candidates
-  Candidate_set candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
+  Heap_type candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   Hausdorff_bounds global_bounds = traversal_traits_tm1.get_global_bounds();
 
   // std::cout << "Culled " << traversal_traits_tm1.get_num_culled_triangles() << " out of " << tm1.num_faces() << std::endl;
@@ -940,27 +946,27 @@ double bounded_error_Hausdorff_impl(
 
   double squared_error_bound = error_bound * error_bound;
 
-  while ( (global_bounds.second - global_bounds.first > error_bound) && candidate_triangles.size() > 0 ) {
+  while ( (global_bounds.second - global_bounds.first > error_bound) && !candidate_triangles.empty() ) {
 
     // std::cout << "Current number candidates: " << candidate_triangles.size() << std::endl;
     // std::cout << "Current global bounds: (" << global_bounds.first << ", " << global_bounds.second << ")" << std::endl;
 
     // Get the first triangle and its Hausdorff bounds from the candidate set
-    Candidate_triangle triangle_and_bound = candidate_triangles.back();
+    Candidate_triangle<Kernel> triangle_and_bound = candidate_triangles.top();
     // Remove it from the candidate set as it will be processed now
-    candidate_triangles.pop_back();
+    candidate_triangles.pop();
 
     // Only process the triangle if it can contribute to the Hausdorff distance,
     // i.e. if its Upper Bound is higher than the currently known best lower bound
     // and the difference between the bounds to be obtained is larger than the
     // user given error.
-    Hausdorff_bounds triangle_bounds = triangle_and_bound.second;
+    Hausdorff_bounds triangle_bounds = triangle_and_bound.m_bounds;
 
     // std::cout << "Current triangle bounds: (" << triangle_bounds.first << ", " << triangle_bounds.second << ")" << std::endl;
 
     if ( (triangle_bounds.second > global_bounds.first) && (triangle_bounds.second - triangle_bounds.first > error_bound) ) {
       // Get the triangle that is to be subdivided and read its vertices
-      Triangle_3 triangle_for_subdivision = triangle_and_bound.first;
+      Triangle_3 triangle_for_subdivision = triangle_and_bound.m_triangle;
       Point_3 v0 = triangle_for_subdivision.vertex(0);
       Point_3 v1 = triangle_for_subdivision.vertex(1);
       Point_3 v2 = triangle_for_subdivision.vertex(2);
@@ -1012,27 +1018,17 @@ double bounded_error_Hausdorff_impl(
         );
         tm2_tree.traversal(sub_triangles[i], traversal_traits_tm2);
 
-        // Get the highest current bound from all candidate triangles
-        double current_max = 0.;
-        for(auto&& ct: candidate_triangles) {
-          if (ct.second.second > current_max) {
-            current_max = ct.second.second;
-          }
-        }
-
-        // Update global Hausdorff bounds according to the obtained local bounds
+        // Update global lower Hausdorff bound according to the obtained local bounds
         Hausdorff_bounds local_bounds = traversal_traits_tm2.get_local_bounds();
         if (local_bounds.first > global_bounds.first) {
           global_bounds.first = local_bounds.first;
         }
-        global_bounds.second = std::max(
-          std::max(current_max, local_bounds.second),
-          global_bounds.first
-        );
 
         // TODO Additionally store the face descriptor of the parent from TM1 in the Candidate_triangle.
         // Add the subtriangle to the candidate list
-        candidate_triangles.push_back(Candidate_triangle(sub_triangles[i], local_bounds));
+        candidate_triangles.push(
+          Candidate_triangle<Kernel>(sub_triangles[i], local_bounds)
+        );
 
         // std::cout << "Split triangle (" << v0 << ", " << v1 << ", " << v2
         //           << ") with bounds: (" << triangle_bounds.first << ", "
@@ -1042,6 +1038,10 @@ double bounded_error_Hausdorff_impl(
         //           << local_bounds.first << ", " << local_bounds.second << "), gobal bounds are: ("
         //           << global_bounds.first << ", " << global_bounds.second << ")" << std::endl;
       }
+
+      // Update global upper Hausdorff bound after subdivision
+      double current_max = candidate_triangles.top().m_bounds.second;
+      global_bounds.second = std::max(current_max, global_bounds.first);
     }
   }
 

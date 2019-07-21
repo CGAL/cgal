@@ -30,6 +30,28 @@ namespace CGAL {
   typedef std::pair<double, double> Hausdorff_bounds;
 
   /**
+   * @struct Candidate_triangle
+   */
+  template<typename Kernel>
+  struct Candidate_triangle {
+    typedef typename Kernel::Triangle_3 Triangle_3;
+
+    Candidate_triangle(const Triangle_3& triangle, const Hausdorff_bounds& bounds)
+      : m_triangle(triangle), m_bounds(bounds) {}
+
+    Triangle_3 m_triangle;
+    Hausdorff_bounds m_bounds;
+
+    #if BOOST_VERSION >= 105000
+        bool operator<(const Candidate_triangle& other) const { return m_bounds.second < other.m_bounds.second; }
+        bool operator>(const Candidate_triangle& other) const { return m_bounds.second > other.m_bounds.second; }
+    #else
+        bool operator>(const Candidate_triangle& other) const { return m_bounds.second < other.m_bounds.second; }
+        bool operator<(const Candidate_triangle& other) const { return m_bounds.second > other.m_bounds.second; }
+    #endif
+  };
+
+  /**
    * @class Hausdorff_primitive_traits_tm2
    */
   template<typename AABBTraits, typename Query, typename Kernel, typename TriangleMesh, typename VPM2>
@@ -252,11 +274,17 @@ namespace CGAL {
     typedef typename Kernel::Point_3 Point_3;
     typedef typename Kernel::Vector_3 Vector_3;
     typedef typename Kernel::Triangle_3 Triangle_3;
-    typedef std::pair<Triangle_3, Hausdorff_bounds> Candidate_triangle;
-    typedef typename std::vector<Candidate_triangle> Candidate_set;
+    typedef typename std::vector<Candidate_triangle<Kernel>> Candidate_set;
     typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+    typedef
+    #if BOOST_VERSION >= 105000
+          boost::heap::priority_queue< Candidate_triangle<Kernel>, boost::heap::compare< std::greater<Candidate_triangle<Kernel> > > >
+    #else
+          std::priority_queue< Candidate_triangle<Kernel> >
+    #endif
+          Heap_type;
 
   public:
     Hausdorff_primitive_traits_tm1(const AABBTraits& traits, const TM2_tree& tree, const TriangleMesh& tm1, const TriangleMesh& tm2 , const VPM1& vpm1, const VPM2& vpm2 )
@@ -311,7 +339,8 @@ namespace CGAL {
       // Store the triangle given as primitive here as candidate triangle
       // together with the local bounds it obtained to sind it to subdivision
       // later
-      m_candidiate_triangles.push_back(Candidate_triangle(candidate_triangle, local_bounds));
+      m_candidiate_triangles.push( Candidate_triangle<Kernel>(candidate_triangle, local_bounds) );
+      pq.push( Candidate_triangle<Kernel>(candidate_triangle, local_bounds) );
     }
 
     // Determine whether child nodes will still contribute to a larger
@@ -381,7 +410,7 @@ namespace CGAL {
 
     // Return those triangles from TM1 which are candidates for including a
     // point realizing the Hausdorff distance
-    Candidate_set get_candidate_triangles() {
+    Heap_type get_candidate_triangles() {
       return m_candidiate_triangles;
     }
 
@@ -410,7 +439,9 @@ namespace CGAL {
     double h_lower;
     double h_upper;
     // List of candidate triangles with their Hausdorff bounds attached
-    Candidate_set m_candidiate_triangles;
+    Heap_type m_candidiate_triangles;
+    // Heap of candidate triangles with their Hausdorff bounds attached
+    Heap_type pq;
     // Number of triangles investigated in the procedure
     int m_investigated_on_tm1;
   };

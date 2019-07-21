@@ -300,12 +300,14 @@ int main(int, char** argv)
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
 
+  double error_bound = 0.001;
+
   time.reset();
   time.start();
   std::cout << "Lower bound on Hausdorff distance between meshes (sequential), "
-            << "the actual distance is at most " << 0.01 << " larger than "
+            << "the actual distance is at most " << error_bound << " larger than "
             << PMP::bounded_error_Hausdorff_distance_naive<CGAL::Sequential_tag,Mesh>(
-                 m1,m2,0.01)
+                 m1,m2,error_bound)
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
@@ -314,7 +316,7 @@ int main(int, char** argv)
   time.start();
   std::cout << "Bounded Hausdorff distance between meshes (sequential), optimized implementation "
             << PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag,Mesh>(
-                 m1,m2,0.01)
+                 m1,m2,error_bound)
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
