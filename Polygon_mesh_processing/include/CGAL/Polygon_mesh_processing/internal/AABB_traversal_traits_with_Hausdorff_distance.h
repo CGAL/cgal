@@ -40,6 +40,7 @@ namespace CGAL {
     typedef typename AABBTraits::Bounding_box Bounding_box;
     typename Kernel::Construct_projected_point_3 project_point;
     typedef typename Kernel::Point_3 Point_3;
+    typedef typename Kernel::Vector_3 Vector_3;
 
   public:
     Hausdorff_primitive_traits_tm2(
@@ -112,6 +113,7 @@ namespace CGAL {
     {
       /* Have reached a node, determine whether or not to enter it */
 
+      /*
       // Get the bounding box of the nodes
       Bounding_box bbox = node.bbox();
       // Compute its center
@@ -159,6 +161,60 @@ namespace CGAL {
       } else {
         return false;
       }
+      */
+
+      // Get the bounding box of the nodes
+      Bounding_box bbox = node.bbox();
+      // Get the vertices of the query triangle
+      Point_3 v0 = query.vertex(0);
+      Point_3 v1 = query.vertex(1);
+      Point_3 v2 = query.vertex(2);
+      // Find the axis aligned bbox of the triangle
+      Point_3 tri_min = Point_3 (
+        std::min(std::min( v0.x(), v1.x()), v2.x() ),
+        std::min(std::min( v0.y(), v1.y()), v2.y() ),
+        std::min(std::min( v0.z(), v1.z()), v2.z() )
+      );
+      Point_3 tri_max = Point_3 (
+        std::max(std::max( v0.x(), v1.x()), v2.x() ),
+        std::max(std::max( v0.y(), v1.y()), v2.y() ),
+        std::max(std::max( v0.z(), v1.z()), v2.z() )
+      );
+
+      // Compute distance of the bounding boxes
+      // Distance along the x-axis
+      double dist_x = 0.;
+      if ( tri_max.x() < bbox.min(0) ) {
+        dist_x = bbox.min(0) - tri_max.x();
+      } else if ( bbox.max(0) < tri_min.x() ) {
+        dist_x = tri_min.x() - bbox.max(0);
+      }
+      // Distance along the y-axis
+      double dist_y = 0.;
+      if ( tri_max.y() < bbox.min(1) ) {
+        dist_y = bbox.min(1) - tri_max.y();
+      } else if ( bbox.max(1) < tri_min.y() ) {
+        dist_y = tri_min.y() - bbox.max(1);
+      }
+      // Distance along the y-axis
+      double dist_z = 0.;
+      if ( tri_max.z() < bbox.min(2) ) {
+        dist_z = bbox.min(2) - tri_max.z();
+      } else if ( bbox.max(2) < tri_min.z() ) {
+        dist_z = tri_min.z() - bbox.max(2);
+      }
+
+      // Lower bound on the distance between the two bounding boxes is given
+      // as the length of the diagonal of the bounding box between them
+      double dist = approximate_sqrt( Vector_3(dist_x,dist_y,dist_z).squared_length() );
+
+      // Check whether investigating the bbox can still lower the Hausdorff
+      // distance. If so, enter the box.
+      if ( dist <= h_local_lower) {
+        return true;
+      } else {
+        return false;
+      }
     }
 
     // Return the local Hausdorff bounds computed for the passed query triangle
@@ -194,6 +250,7 @@ namespace CGAL {
     typedef typename AABBTraits::Bounding_box Bounding_box;
     typedef ::CGAL::AABB_node<AABBTraits> Node;
     typedef typename Kernel::Point_3 Point_3;
+    typedef typename Kernel::Vector_3 Vector_3;
     typedef typename Kernel::Triangle_3 Triangle_3;
     typedef std::pair<Triangle_3, Hausdorff_bounds> Candidate_triangle;
     typedef typename std::vector<Candidate_triangle> Candidate_set;
@@ -263,10 +320,7 @@ namespace CGAL {
     bool do_intersect(const Query& /*query*/, const Node& node) const
     {
       /* Have reached a node, determine whether or not to enter it */
-
-      // TODO What's the closest distance of TM2 to the box given by node?
-      //      Can we have a sharper bound on this than the one implemented below?
-
+/*
       // Get the bounding box of the nodes
       Bounding_box bbox = node.bbox();
       // Compute its center
@@ -286,6 +340,39 @@ namespace CGAL {
       )/2.;
       // If the distance is larger than the global lower bound, enter the node, i.e. return true.
       if (dist + radius > h_lower) {
+          return true;
+      } else {
+        return false;
+      }
+*/
+      // Get the bounding box of the nodes
+      Bounding_box bbox = node.bbox();
+      // Compute its center
+      Point_3 center = Point_3(
+        (bbox.min(0) + bbox.max(0)) / 2,
+        (bbox.min(1) + bbox.max(1)) / 2,
+        (bbox.min(2) + bbox.max(2)) / 2);
+      // Find the point from TM2 closest to the center
+      // TODO Insert a hint here to accelerate the query
+      Point_3 closest = m_tm2_tree.closest_point(center);
+      // Compute the difference vector between the bbox center and the closest
+      // point in tm2
+      Vector_3 difference = Vector_3( closest, center );
+      // Shift the vector to be the difference between the farthest corner
+      // of the bounding box away from the closest point on TM2
+      double diff_x = (bbox.max(0) - bbox.min(0)) / 2;
+      if (difference.x() < 0) diff_x = diff_x * -1.;
+      double diff_y = (bbox.max(1) - bbox.min(1)) / 2;
+      if (difference.y() < 0) diff_y = diff_y * -1.;
+      double diff_z = (bbox.max(2) - bbox.min(2)) / 2;
+      if (difference.z() < 0) diff_z = diff_z * -1.;
+      difference = difference + Vector_3( diff_x, diff_y, diff_z );
+      // Compute distance from the farthest corner of the bbox to the closest
+      // point in TM2
+      double dist = approximate_sqrt( difference.squared_length() );
+
+      // If the distance is larger than the global lower bound, enter the node, i.e. return true.
+      if (dist > h_lower) {
           return true;
       } else {
         return false;
