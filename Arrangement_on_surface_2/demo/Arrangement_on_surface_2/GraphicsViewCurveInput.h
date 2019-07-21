@@ -936,12 +936,16 @@ public:
       Polynomial_2 y = CGAL::shift(Polynomial_2(1),1,1);
 
       //extracting coefficients and power
-      for (auto iterator = terms.begin(); iterator != terms.end(); iterator++)
+      for (auto & term : terms)
       {
-          polynomial += (*iterator).coefficient
-                        *CGAL::ipower(x , (long) (*iterator).xExponent)
-                        *CGAL::ipower(y , (long) (*iterator).yExponent);
-          qDebug()<< (*iterator).coefficient;
+          polynomial += term.coefficient
+                        *CGAL::ipower(x , (long) term.xExponent)
+                        *CGAL::ipower(y , (long) term.yExponent);
+          qDebug()<< "Coefficient: "<<term.coefficient;
+          qDebug()<< "X "<<term.xExponent;
+          qDebug()<< "Y "<<term.yExponent;
+          if (term.isPositive) qDebug()<< "positive";
+          else qDebug()<<"negative";
       }
 
       //adding curve to the arrangement

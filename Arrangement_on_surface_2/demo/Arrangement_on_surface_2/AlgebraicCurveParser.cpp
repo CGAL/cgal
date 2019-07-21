@@ -33,6 +33,7 @@ Terms AlgebraicCurveParser::extractTerms() {
       //find the term between the +/- and the previous +/-
       std::string subExpression = std::string(expression.begin() + termIndex, next);
       AlgebraicCurveTerm term{};
+      
       bool result = parseTerm(subExpression.begin(), subExpression.end(), term);
       if (result){
         algebraicTerms.push_back(term);
@@ -52,10 +53,15 @@ bool AlgebraicCurveParser::parseTerm(Iterator first, Iterator last, AlgebraicCur
   long long xExponent = 0;
   long long yExponent = 0;
   long long coefficient = 1;
-  phrase_parse(first, last,
+  bool isPositive = true;
+  if (this->signPresent(std::string(first, last))){
+    isPositive = this -> extractSign(std::string(first, last));
+    first++;
+  }
+  bool r = phrase_parse(first, last,
           //Begin parser
                (
-          long_long[ref(coefficient) = boost::spirit::qi::_1]  >>
+                long_long[ref(coefficient) = boost::spirit::qi::_1]  >>
                  -("x^" >> long_long[ref(
                  xExponent)= boost::spirit::qi::_1] )
                  >>
@@ -76,5 +82,41 @@ bool AlgebraicCurveParser::parseTerm(Iterator first, Iterator last, AlgebraicCur
           ,
                boost::spirit::ascii::space
   );
-  return false;
+  if (!r || first != last) return false;
+  term.coefficient = coefficient;
+  term.xExponent = xExponent;
+  term.yExponent = yExponent;
+  term.isPositive = isPositive;
+  return r;
+}
+
+bool AlgebraicCurveParser::extractSign(std::string subExpression) {
+    bool positiveSign;
+    switch (*subExpression.begin()) {
+        case '+':
+            positiveSign = true;
+            break;
+        case '-':
+            positiveSign = false;
+            break;
+        default:
+            positiveSign = true;
+    }
+    return positiveSign;
+}
+
+bool AlgebraicCurveParser::signPresent(std::string subExpression) {
+
+    bool signPresent;
+    switch (*subExpression.begin()) {
+        case '+':
+            signPresent = true;
+            break;
+        case '-':
+            signPresent = true;
+            break;
+        default:
+            signPresent = false;
+    }
+    return signPresent;
 }

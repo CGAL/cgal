@@ -23,6 +23,10 @@ public:
 private:
     template <typename Iterator>
     bool parseTerm(Iterator first, Iterator last, AlgebraicCurveTerm& term);
+    bool extractSign(std::string subExpression);
+    bool signPresent(std::string subExpression);
+
+
 };
 
 
