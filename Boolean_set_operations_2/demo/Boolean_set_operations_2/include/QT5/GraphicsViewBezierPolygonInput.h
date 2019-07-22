@@ -268,7 +268,7 @@ namespace Qt {
 
     
     
-  private:
+  public:
 
     Bezier_curve const* ongoing_piece() const { return mOngoingPieceCtr.size() == 1 ? &mOngoingPieceCtr[0] : NULL ; }
     
@@ -462,7 +462,7 @@ namespace Qt {
       }  
     }
     
-  private:
+  public:
   
     QGraphicsScene*    mScene ;
     GI*                mBezierGI ; 

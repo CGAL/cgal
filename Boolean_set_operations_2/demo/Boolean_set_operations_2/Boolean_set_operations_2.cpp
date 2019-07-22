@@ -83,11 +83,13 @@
 #include <CGAL/IO/Dxf_bsop_reader.h>
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
+#include "QT5/MinkowskiSum.h"
 #include "QT5/Circular_polygons.h"
 #include "QT5/Linear_polygons.h"
 #include "QT5/Graphics_view_circular_polygon_input.h"
 #include "QT5/Graphics_view_linear_polygon_input.h"
 #include "QT5/Graphics_view_linear_polygon_input.h"
+#include "QT5/Graphics_view_minkowski_input.h"
 #include "QT5/General_polygon_2.h"
 #include "QT5/General_polygon_set_2.h"
 #include "QT5/General_polygon_set_on_surface_2.h"
@@ -164,7 +166,7 @@ void error_handler(char const* what, char const* expr, char const* file,
 
 enum {
   BLUE_GROUP, RED_GROUP, BLACK_GROUP, BROWN_GROUP, YELLOW_GROUP,
-  MAGENTA_GROUP, AQUA_GROUP, RESULT_GROUP , UNIVERSAL_GROUP
+  MAGENTA_GROUP, AQUA_GROUP, RESULT_GROUP , UNIVERSAL_GROUP 
 };
 
 //A way to maintain 3 category of polygons namely linear,circular
@@ -626,7 +628,7 @@ public:
   bool is_circular() const { return m_rep->type() == 2; }
   bool is_bezier  () const { return m_rep->type() == 3; }
   bool is_linear() const { return m_rep->type() == 1; }
-  bool is_mink() const { return m_rep->type() == 4; }
+  //bool is_mink() const { return m_rep->type() == 4; }
 
   //to get rep for circualr polygons
   const Circular_rep* get_circular_rep() const
@@ -690,7 +692,7 @@ private:
   //keep it intact for now check it out
   bool m_circular_active;
   bool m_bezier_active;
-  bool m_mink_active;
+  //bool m_mink_active;
   //which type is currently active now
   //bool m_blue_active;
   size_t m_color_active;
@@ -711,8 +713,8 @@ private:
   bool m_magenta_union;
   bool m_aqua_union;
 
-  size_t m_color_diff_A;
-  size_t m_color_diff_B;
+  //size_t m_color_diff_A;
+  //size_t m_color_diff_B;
 
   bool m_blue_sym_diff;
   bool m_red_sym_diff;
@@ -770,7 +772,7 @@ private:
   CGAL::Qt::Graphics_view_linear_polygon_input<Kernel>* m_linear_input;
   CGAL::Qt::Graphics_view_circular_polygon_input<Kernel>* m_circular_input;
   CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>* m_bezier_input ;
-
+  //CGAL::Qt::Graphics_view_minkowski_input<Kernel>* m_mink_input;
   //
 
 public:
@@ -799,7 +801,7 @@ public slots:
   void on_actionInsertLinear_toggled(bool aChecked);
   void on_actionInsertCircular_toggled(bool aChecked);
   void on_actionInsertBezier_toggled(bool aChecked);
-  void on_actionInsertMink_Polygon_toggled(bool aChecked);
+  //void on_actionInsertMink_Polygon_toggled(bool aChecked);
   void on_showColorBucket_toggled(bool aChecked);
   void on_showConsole_toggled(bool aChecked);
   void on_showInfo_toggled(bool aChecked);
@@ -865,17 +867,17 @@ public slots:
   void on_showMagentaSym_Diff_toggled(bool aCheck);
   void on_showAquaSym_Diff_toggled(bool aCheck);
 
-  void on_blueMinkPol_toggled(bool aCheck);
+  /*void on_blueMinkPol_toggled(bool aCheck);
   void on_redMinkPol_toggled(bool aCheck);
-  void on_showMinkResult_toggled(bool aCheck);
+  void on_showMinkResult_toggled(bool aCheck);*/
 
-  /*void on_showBlueMink_Sum_toggled(bool aCheck);
+  void on_showBlueMink_Sum_toggled(bool aCheck);
   void on_showRedMink_Sum_toggled(bool aCheck);
   void on_showBlackMink_Sum_toggled(bool aCheck);
   void on_showBrownMink_Sum_toggled(bool aCheck);
   void on_showYellowMink_Sum_toggled(bool aCheck);
   void on_showMagentaMink_Sum_toggled(bool aCheck);
-  void on_showAquaMink_Sum_toggled(bool aCheck);*/
+  void on_showAquaMink_Sum_toggled(bool aCheck);
 
   void on_drawBlue_toggled(bool a_check);
   void on_drawRed_toggled (bool a_check);
@@ -1097,7 +1099,7 @@ private:
   void SetViewMagenta(bool a_check) { showMagenta->setChecked(a_check); }
   void SetViewAqua(bool a_check) { showAqua->setChecked(a_check); }
   void SetViewResult(bool a_check) { showResult->setChecked(a_check); }
-  void SetViewMinkResult(bool a_check) { showMinkResult -> setChecked(a_check); }
+  //void SetViewMinkResult(bool a_check) { showMinkResult -> setChecked(a_check); }
 
   //changes the set of polygons of a specific type
   //void ToogleView(size_t aGROUP, bool a_check);
@@ -1124,7 +1126,7 @@ private:
 
   bool ensure_linear_mode();//see if it is need
 
-  bool ensure_mink_mode();
+  //bool ensure_mink_mode();
 
 };
 
@@ -1132,7 +1134,7 @@ MainWindow::MainWindow() :
   DemosMainWindow(),
   m_bezier_active(false), //default
   m_circular_active(false), //default
-  m_mink_active(false), //default
+  //m_mink_active(false), //default
   m_color_active(0),    //default
   m_color_complement(0), //default
   m_blue_int(true), //default
@@ -1149,8 +1151,8 @@ MainWindow::MainWindow() :
   m_yellow_union(false), //default
   m_magenta_union(false), //default
   m_aqua_union(false), //default
-  m_color_diff_A(0), //default
-  m_color_diff_B(0), //default
+  //m_color_diff_A(0), //default
+  //m_color_diff_B(0), //default
   m_blue_sym_diff(true), //default
   m_red_sym_diff(false), //default
   m_black_sym_diff(false), //default
@@ -1158,13 +1160,13 @@ MainWindow::MainWindow() :
   m_yellow_sym_diff(false), //default
   m_magenta_sym_diff(false), //default
   m_aqua_sym_diff(false), //default
-  /*m_blue_mink(true), //default
+  m_blue_mink(true), //default
   m_red_mink(false), //default
   m_black_mink(false), //default
   m_brown_mink(false), //default
   m_yellow_mink(false), //default
   m_magenta_mink(false), //default
-  m_aqua_mink(false), //default*/
+  m_aqua_mink(false), //default
   m_visible_black(false), //default 
   m_visible_brown(false), //default 
   m_visible_yellow(false), //default 
@@ -1269,6 +1271,7 @@ MainWindow::MainWindow() :
   m_bezier_input = new CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>(this, &m_scene);
   m_linear_input = new CGAL::Qt::Graphics_view_linear_polygon_input<Kernel>(this, &m_scene);
   m_circular_input = new CGAL::Qt::Graphics_view_circular_polygon_input<Kernel>(this, &m_scene);
+  //m_mink_input = new CGAL::Qt::Graphics_view_minkowski_input<Kernel>(this,&m_scene);
 
   //connecting GUI and the code base
   QObject::connect(m_linear_input, SIGNAL(generate(CGAL::Object)), this,
@@ -1277,6 +1280,8 @@ MainWindow::MainWindow() :
                    SLOT(processInput(CGAL::Object)));
   QObject::connect(m_bezier_input, SIGNAL(generate(CGAL::Object)), this,
                    SLOT(processInput(CGAL::Object)));
+  //QObject::connect(m_mink_input, SIGNAL(generate(CGAL::Object)), this,
+                  // SLOT(processInput(CGAL::Object)));
   
   m_scene.installEventFilter(m_linear_input);
 
@@ -1422,13 +1427,13 @@ MainWindow::MainWindow() :
 
 
 
-  QObject::connect(blueMinkPol, SIGNAL(toggled(bool)), this,
+  /*QObject::connect(blueMinkPol, SIGNAL(toggled(bool)), this,
                    SLOT(on_blueMinkPol_toggled(bool)));
   QObject::connect(redMinkPol, SIGNAL(toggled(bool)), this,
                    SLOT(on_redMinkPol_toggled(bool)));
   QObject::connect(showMinkResult, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showMinkResult_toggled(bool)));
-  /*QObject::connect(showBlueMink_Sum, SIGNAL(toggled(bool)), this,
+                   SLOT(on_showMinkResult_toggled(bool)));*/
+  QObject::connect(showBlueMink_Sum, SIGNAL(toggled(bool)), this,
                    SLOT(on_showBlueMink_Sum_toggled(bool)));
   QObject::connect(showRedMink_Sum, SIGNAL(toggled(bool)), this,
                    SLOT(on_showRedMink_Sum_toggled(bool)));
@@ -1441,7 +1446,7 @@ MainWindow::MainWindow() :
   QObject::connect(showMagentaMink_Sum, SIGNAL(toggled(bool)), this,
                    SLOT(on_showMagentaMink_Sum_toggled(bool)));
   QObject::connect(showAquaMink_Sum, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showAquaMink_Sum_toggled(bool)));*/
+                   SLOT(on_showAquaMink_Sum_toggled(bool)));
 
 }
 
@@ -1781,6 +1786,22 @@ void MainWindow::on_showBlueDiff_toggled(bool aCheck)
 {
 	if(aCheck)
 	{
+		size_t count = 0;
+		if (showRedDiff->isChecked()) count++;
+		if (showBlackDiff->isChecked()) count++;
+		if (showBrownDiff->isChecked()) count++;
+		if (showYellowDiff->isChecked()) count++;
+		if (showMagentaDiff->isChecked()) count++;
+		if (showAquaDiff->isChecked()) count++;
+
+		if (count >= 2)
+		{
+			ask_user_yesno("Difference Operation Error","Maximum Limit of Color has reached.\n");
+			showBlueDiff->setChecked(false); 
+		}
+	}
+	/*if(aCheck)
+	{
 		size_t checkCount = 0;
 
 		if(showAquaDiff->isChecked()) checkCount++;
@@ -1824,11 +1845,27 @@ void MainWindow::on_showBlueDiff_toggled(bool aCheck)
 		if(m_color_diff_B ==4) m_color_diff_A =4;
 		if(m_color_diff_B ==5) m_color_diff_A =5;
 		if(m_color_diff_B ==6) m_color_diff_A =6;
-	}
+	}*/
 }
 void MainWindow::on_showRedDiff_toggled(bool aCheck)
 {
 	if(aCheck)
+	{
+		size_t count =0 ;
+		if (showBlueDiff->isChecked()) count++;
+		if (showBlackDiff->isChecked()) count++;
+		if (showBrownDiff->isChecked()) count++;
+		if (showYellowDiff->isChecked()) count++;
+		if (showMagentaDiff->isChecked()) count++;
+		if (showAquaDiff->isChecked()) count++;
+
+		if (count >= 2)
+		{
+			ask_user_yesno("Difference Operation Error","Maximum Limit of Color has reached.\n");
+			showRedDiff->setChecked(false); 
+		}
+	}
+	/*if(aCheck)
 	{
 		size_t checkCount = 0;
 
@@ -1892,11 +1929,27 @@ void MainWindow::on_showRedDiff_toggled(bool aCheck)
 		if(m_color_diff_B == 4) m_color_diff_A = 4;
 		if(m_color_diff_B == 5) m_color_diff_A = 5;
 		if(m_color_diff_B == 6) m_color_diff_A = 6;
-	}
+	}*/
 }
 void MainWindow::on_showBlackDiff_toggled(bool aCheck)
 {
 	if(aCheck)
+	{
+		size_t count = 0;
+		if (showRedDiff->isChecked()) count++;
+		if (showBlueDiff->isChecked()) count++;
+		if (showBrownDiff->isChecked()) count++;
+		if (showYellowDiff->isChecked()) count++;
+		if (showMagentaDiff->isChecked()) count++;
+		if (showAquaDiff->isChecked()) count++;
+
+		if (count >= 2)
+		{
+			ask_user_yesno("Difference Operation Error","Maximum Limit of Color has reached.\n");
+			showBlackDiff->setChecked(false); 
+		}
+	}
+	/*if(aCheck)
 	{
 		size_t checkCount = 0;
 
@@ -1983,11 +2036,27 @@ void MainWindow::on_showBlackDiff_toggled(bool aCheck)
 		if(m_color_diff_B == 4) m_color_diff_A =4;
 		if(m_color_diff_B == 5) m_color_diff_A =5;
 		if(m_color_diff_B == 6) m_color_diff_A =6;
-	}	
+	}*/	
 }
 void MainWindow::on_showBrownDiff_toggled(bool aCheck)
 {
 	if(aCheck)
+	{
+		size_t count = 0;
+		if (showRedDiff->isChecked()) count++;
+		if (showBlackDiff->isChecked()) count++;
+		if (showBlueDiff->isChecked()) count++;
+		if (showYellowDiff->isChecked()) count++;
+		if (showMagentaDiff->isChecked()) count++;
+		if (showAquaDiff->isChecked()) count++;
+
+		if (count >= 2)
+		{
+			ask_user_yesno("Difference Operation Error","Maximum Limit of Color has reached.\n");
+			showBrownDiff->setChecked(false); 
+		}
+	}
+	/*if(aCheck)
 	{
 		size_t checkCount = 0;
 
@@ -2094,11 +2163,27 @@ void MainWindow::on_showBrownDiff_toggled(bool aCheck)
 		if(m_color_diff_B == 4) m_color_diff_A =4;
 		if(m_color_diff_B == 5) m_color_diff_A =5;
 		if(m_color_diff_B == 6) m_color_diff_A =6;
-	}	
+	}*/	
 }
 void MainWindow::on_showYellowDiff_toggled(bool aCheck)
 {
 	if(aCheck)
+	{
+		size_t count = 0;
+		if (showRedDiff->isChecked()) count++;
+		if (showBlackDiff->isChecked()) count++;
+		if (showBrownDiff->isChecked()) count++;
+		if (showBlueDiff->isChecked()) count++;
+		if (showMagentaDiff->isChecked()) count++;
+		if (showAquaDiff->isChecked()) count++;
+
+		if (count >= 2)
+		{
+			ask_user_yesno("Difference Operation Error","Maximum Limit of Color has reached.\n");
+			showYellowDiff->setChecked(false); 
+		}
+	}
+	/*if(aCheck)
 	{
 		size_t checkCount = 0;
 
@@ -2227,11 +2312,27 @@ void MainWindow::on_showYellowDiff_toggled(bool aCheck)
 		if(m_color_diff_A == 3) m_color_diff_B =3;
 		if(m_color_diff_B == 5) m_color_diff_A =5;
 		if(m_color_diff_B == 6) m_color_diff_A =6;
-	}
+	}*/
 }
 void MainWindow::on_showMagentaDiff_toggled(bool aCheck)
 {
 	if(aCheck)
+	{
+		size_t count = 0;
+		if (showRedDiff->isChecked()) count++;
+		if (showBlackDiff->isChecked()) count++;
+		if (showBrownDiff->isChecked()) count++;
+		if (showYellowDiff->isChecked()) count++;
+		if (showBlueDiff->isChecked()) count++;
+		if (showAquaDiff->isChecked()) count++;
+
+		if (count >= 2)
+		{
+			ask_user_yesno("Difference Operation Error","Maximum Limit of Color has reached.\n");
+			showMagentaDiff->setChecked(false); 
+		}
+	}
+	/*if(aCheck)
 	{
 		size_t checkCount = 0;
 
@@ -2368,11 +2469,27 @@ void MainWindow::on_showMagentaDiff_toggled(bool aCheck)
 		if(m_color_diff_A == 3) m_color_diff_B =3;
 		if(m_color_diff_A == 4) m_color_diff_B =4;
 		if(m_color_diff_B == 6) m_color_diff_A =6;
-	}
+	}*/
 }
 void MainWindow::on_showAquaDiff_toggled(bool aCheck)
 {
 	if(aCheck)
+	{
+		size_t count = 0;
+		if (showRedDiff->isChecked()) count++;
+		if (showBlackDiff->isChecked()) count++;
+		if (showBrownDiff->isChecked()) count++;
+		if (showYellowDiff->isChecked()) count++;
+		if (showMagentaDiff->isChecked()) count++;
+		if (showBlueDiff->isChecked()) count++;
+
+		if (count >= 2)
+		{
+			ask_user_yesno("Difference Operation Error","Maximum Limit of Color has reached.\n");
+			showAquaDiff->setChecked(false); 
+		}
+	}
+	/*if(aCheck)
 	{
 		size_t checkCount = 0;
 
@@ -2416,7 +2533,7 @@ void MainWindow::on_showAquaDiff_toggled(bool aCheck)
 		if(m_color_diff_A == 3) m_color_diff_B =3;
 		if(m_color_diff_A == 4) m_color_diff_B =4;
 		if(m_color_diff_A == 5) m_color_diff_B =5;
-	}
+	}*/
 
 }
 
@@ -2508,7 +2625,7 @@ void MainWindow::on_showAquaSym_Diff_toggled(bool aCheck)
 
 
 
-/*void MainWindow::on_showBlueMink_Sum_toggled(bool aCheck)
+void MainWindow::on_showBlueMink_Sum_toggled(bool aCheck)
 {
 	if(aCheck)
 	{
@@ -2522,13 +2639,13 @@ void MainWindow::on_showAquaSym_Diff_toggled(bool aCheck)
 
 		if (count >= 2)
 		{
-			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			ask_user_yesno("Minkowski Sum Error","Maximum Limit of Color has reached.\n");
 			showBlueMink_Sum->setChecked(false); 
 		}
 	}
 
 }
-/*void MainWindow::on_showRedMink_Sum_toggled(bool aCheck)
+void MainWindow::on_showRedMink_Sum_toggled(bool aCheck)
 {
 	if(aCheck)
 	{
@@ -2542,7 +2659,7 @@ void MainWindow::on_showAquaSym_Diff_toggled(bool aCheck)
 
 		if (count >= 2)
 		{
-			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			ask_user_yesno("Minkowski Sum Error","Maximum Limit of Color has reached.\n");
 			showRedMink_Sum->setChecked(false); 
 		}
 	}
@@ -2561,7 +2678,7 @@ void MainWindow::on_showBlackMink_Sum_toggled(bool aCheck)
 
 		if (count >= 2)
 		{
-			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			ask_user_yesno("Minkowski Sum Error","Maximum Limit of Color has reached.\n");
 			showBlackMink_Sum->setChecked(false); 
 		}
 	}
@@ -2581,7 +2698,7 @@ void MainWindow::on_showBrownMink_Sum_toggled(bool aCheck)
 
 		if (count >= 2)
 		{
-			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			ask_user_yesno("Minkowski Sum Error","Maximum Limit of Color has reached.\n");
 			showBrownMink_Sum->setChecked(false); 
 		}
 	}
@@ -2600,7 +2717,7 @@ void MainWindow::on_showYellowMink_Sum_toggled(bool aCheck)
 
 		if (count >= 2)
 		{
-			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			ask_user_yesno("Minkowski Sum Error","Maximum Limit of Color has reached.\n");
 			showYellowMink_Sum->setChecked(false); 
 		}
 	}
@@ -2619,7 +2736,7 @@ void MainWindow::on_showMagentaMink_Sum_toggled(bool aCheck)
 
 		if (count >= 2)
 		{
-			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			ask_user_yesno("Minkowski Sum Error","Maximum Limit of Color has reached.\n");
 			showMagentaMink_Sum->setChecked(false); 
 		}
 	}
@@ -2639,11 +2756,11 @@ void MainWindow::on_showAquaMink_Sum_toggled(bool aCheck)
 
 		if (count >= 2)
 		{
-			ask_user_yesno("MInkowski Sum Error","Maximum Limit of Color has reached.\n");
+			ask_user_yesno("Minkowski Sum Error","Maximum Limit of Color has reached.\n");
 			showAquaMink_Sum->setChecked(false); 
 		}
 	}
-}*/
+}
 
 
 
@@ -2660,7 +2777,7 @@ void MainWindow::on_actionAddColor_triggered()
 		showBlackUnion -> setVisible(true);
 		showBlackInt -> setVisible(true);
 		showBlackSym_Diff -> setVisible(true);
-		//showBlackMink_Sum -> setVisible(true);
+		showBlackMink_Sum -> setVisible(true);
 
 
 		line11 -> setVisible(true);
@@ -2685,7 +2802,7 @@ void MainWindow::on_actionAddColor_triggered()
 		showBrownUnion -> setVisible(true);
 		showBrownInt -> setVisible(true);
 		showBrownSym_Diff -> setVisible(true);
-		//showBrownMink_Sum -> setVisible(true);
+		showBrownMink_Sum -> setVisible(true);
 
 		line10 -> setVisible(true);
 
@@ -2709,7 +2826,7 @@ void MainWindow::on_actionAddColor_triggered()
 		showYellowUnion -> setVisible(true);
 		showYellowInt -> setVisible(true);
 		showYellowSym_Diff -> setVisible(true);
-		//showYellowMink_Sum -> setVisible(true);
+		showYellowMink_Sum -> setVisible(true);
 
 		line9 -> setVisible(true);
 
@@ -2733,7 +2850,7 @@ void MainWindow::on_actionAddColor_triggered()
 		showMagentaUnion -> setVisible(true);
 		showMagentaInt -> setVisible(true);
 		showMagentaSym_Diff -> setVisible(true);
-		//showMagentaMink_Sum -> setVisible(true);
+		showMagentaMink_Sum -> setVisible(true);
 
 		line8 -> setVisible(true);
 
@@ -2757,7 +2874,7 @@ void MainWindow::on_actionAddColor_triggered()
 		showAquaUnion -> setVisible(true);
 		showAquaInt -> setVisible(true);
 		showAquaSym_Diff -> setVisible(true);
-		//showAquaMink_Sum -> setVisible(true);	
+		showAquaMink_Sum -> setVisible(true);	
 
 		line7 -> setVisible(true);
 
@@ -2802,7 +2919,7 @@ void MainWindow::on_actionMinusColor_triggered()
 		showBlackUnion -> setVisible(false);
 		showBlackInt -> setVisible(false);
 		showBlackSym_Diff -> setVisible(false);
-		//showBlackMink_Sum -> setVisible(false);
+		showBlackMink_Sum -> setVisible(false);
 
 		
 
@@ -2840,7 +2957,7 @@ void MainWindow::on_actionMinusColor_triggered()
 		showBrownUnion -> setVisible(false);
 		showBrownInt -> setVisible(false);
 		showBrownSym_Diff -> setVisible(false);
-		//showBrownMink_Sum -> setVisible(false);
+		showBrownMink_Sum -> setVisible(false);
 		
 
 		drawBlue -> setChecked(true);
@@ -2880,7 +2997,7 @@ void MainWindow::on_actionMinusColor_triggered()
 		showYellowUnion -> setVisible(false);
 		showYellowInt -> setVisible(false);
 		showYellowSym_Diff -> setVisible(false);
-		//showYellowMink_Sum -> setVisible(false);
+		showYellowMink_Sum -> setVisible(false);
 
 		
 
@@ -2920,7 +3037,7 @@ void MainWindow::on_actionMinusColor_triggered()
 		showMagentaUnion -> setVisible(false);
 		showMagentaInt -> setVisible(false);
 		showMagentaSym_Diff -> setVisible(false);
-		//showMagentaMink_Sum -> setVisible(false);
+		showMagentaMink_Sum -> setVisible(false);
 
 		
 
@@ -2961,7 +3078,7 @@ void MainWindow::on_actionMinusColor_triggered()
 		showAquaUnion -> setVisible(false);
 		showAquaInt -> setVisible(false);
 		showAquaSym_Diff -> setVisible(false);
-		//showAquaMink_Sum -> setVisible(false);
+		showAquaMink_Sum -> setVisible(false);
 
 		
 
@@ -3024,11 +3141,16 @@ void MainWindow::on_actionNew_triggered()
   SetViewMagenta (true);
   SetViewAqua (true);
   SetViewResult(true);
-  SetViewMinkResult(true);
+  //SetViewMinkResult(true);
   
   m_circular_active = false ;
   m_bezier_active = false;
-  m_mink_active = false;
+  //m_mink_active = false;
+
+  m_linear_input->Reset();
+  m_circular_input->Reset();
+  m_bezier_input->Reset();
+  //m_mink_input->Reset();
   
   m_color_active = 0;
 
@@ -3049,7 +3171,7 @@ void MainWindow::on_actionNew_triggered()
 
   actionInsertLinear -> setChecked(true);
 
-  blueMinkPol -> setChecked(true);
+  //blueMinkPol -> setChecked(true);
 
   m_color_complement = 0; //default
   m_blue_int = true; //default
@@ -3066,8 +3188,8 @@ void MainWindow::on_actionNew_triggered()
   m_yellow_union = false; //default
   m_magenta_union = false; //default
   m_aqua_union = false; //default
-  m_color_diff_A = 0; //default
-  m_color_diff_B = 0; //default
+  //m_color_diff_A = 0; //default
+  //m_color_diff_B = 0; //default
   m_blue_sym_diff = true; //default
   m_red_sym_diff = false; //default
   m_black_sym_diff = false; //default
@@ -3075,13 +3197,13 @@ void MainWindow::on_actionNew_triggered()
   m_yellow_sym_diff = false; //default
   m_magenta_sym_diff = false; //default
   m_aqua_sym_diff = false; //default
-  /*m_blue_mink = true; //default
+  m_blue_mink = true; //default
   m_red_mink = false; //default
   m_black_mink = false; //default
   m_brown_mink = false; //default
   m_yellow_mink = false; //default
   m_magenta_mink = false; //default
-  m_aqua_mink = false; //default*/
+  m_aqua_mink = false; //default
 
   drawBlue -> setChecked(true);
 
@@ -3135,13 +3257,13 @@ void MainWindow::on_actionNew_triggered()
   showMagentaSym_Diff->setChecked(false);
   showAquaSym_Diff->setChecked(false);
 
-  /*showRedMink_Sum->setChecked(false);
+  showRedMink_Sum->setChecked(false);
   showBlackMink_Sum->setChecked(false);
   showBrownMink_Sum->setChecked(false);
   showYellowMink_Sum->setChecked(false);
   showMagentaMink_Sum->setChecked(false);
   showAquaMink_Sum->setChecked(false);
-  showBlueMink_Sum->setChecked(true);*/
+  showBlueMink_Sum->setChecked(true);
 
   m_visible_black = false;
   showBlack ->setVisible(false);
@@ -3151,7 +3273,7 @@ void MainWindow::on_actionNew_triggered()
   showBlackUnion -> setVisible(false);
   showBlackInt -> setVisible(false);
   showBlackSym_Diff -> setVisible(false);
-  //showBlackMink_Sum -> setVisible(false);
+  showBlackMink_Sum -> setVisible(false);
   
 
   
@@ -3163,7 +3285,7 @@ void MainWindow::on_actionNew_triggered()
   showBrownUnion -> setVisible(false);
   showBrownInt -> setVisible(false);
   showBrownSym_Diff -> setVisible(false);
-  //showBrownMink_Sum -> setVisible(false);
+  showBrownMink_Sum -> setVisible(false);
 
 
   m_visible_yellow = false;
@@ -3174,7 +3296,7 @@ void MainWindow::on_actionNew_triggered()
   showYellowUnion -> setVisible(false);
   showYellowInt -> setVisible(false);
   showYellowSym_Diff -> setVisible(false);
-  //showYellowMink_Sum -> setVisible(false);
+  showYellowMink_Sum -> setVisible(false);
 
 
   m_visible_magenta = false;
@@ -3185,7 +3307,7 @@ void MainWindow::on_actionNew_triggered()
   showMagentaUnion -> setVisible(false);
   showMagentaInt -> setVisible(false);
   showMagentaSym_Diff -> setVisible(false);
-  //showMagentaMink_Sum -> setVisible(false);  
+  showMagentaMink_Sum -> setVisible(false);  
   
 
   m_visible_aqua = false;
@@ -3196,7 +3318,7 @@ void MainWindow::on_actionNew_triggered()
   showAquaUnion -> setVisible(false);
   showAquaInt -> setVisible(false);
   showAquaSym_Diff -> setVisible(false);
-  //showAquaMink_Sum -> setVisible(false);
+  showAquaMink_Sum -> setVisible(false);
   
   actionMinusColor -> setText("Color Removal Not Allowed");
 
@@ -3289,22 +3411,6 @@ void MainWindow::on_drawYellow_toggled(bool /* a_check */) { m_color_active = 4;
 void MainWindow::on_drawMagenta_toggled(bool /* a_check */) { m_color_active = 5; }
 void MainWindow::on_drawAqua_toggled(bool /* a_check */) { m_color_active = 6; }
 void MainWindow::on_drawUniversalPolygon_toggled(bool /* a_check */) { m_color_active = 8; } 
-
-void MainWindow::on_blueMinkPol_toggled(bool /*a_check*/)
-{
-
-}
-
-
-void MainWindow::on_redMinkPol_toggled(bool /*a_check*/)
-{
-	
-}
-
-void MainWindow::on_showMinkResult_toggled(bool /*a_check*/)
-{
-	
-}
 
 
 //extra utilities
@@ -3845,8 +3951,11 @@ bool MainWindow::ensure_circular_mode()
 
     if (lProceed) {
       switch_sets_type(2);
+      m_linear_input->Reset();
+      m_bezier_input->Reset();
+      //m_mink_input->Reset();
       m_circular_active = true;
-      m_mink_active = false;
+      //m_mink_active = false;
       m_bezier_active  = false;
     }
   }
@@ -3872,9 +3981,12 @@ bool MainWindow::ensure_bezier_mode()
     if ( lProceed )
     {
       switch_sets_type(3);
+      m_circular_input->Reset();
+      m_linear_input->Reset();
+      //m_mink_input->Reset();
       m_bezier_active = true;
       m_circular_active = false;
-      m_mink_active = false;
+      //m_mink_active = false;
     }
   }
   return m_bezier_active ;
@@ -3897,16 +4009,19 @@ bool MainWindow::ensure_linear_mode()
 
     if (lProceed) {
       switch_sets_type(1);
+      m_circular_input->Reset();
+      m_bezier_input->Reset();
+      //m_mink_input->Reset();
       m_circular_active = false;
       m_bezier_active = false;
-      m_mink_active = false;
+      //m_mink_active = false;
     }
   }
   return !m_circular_active;
 }
 
 
-bool MainWindow::ensure_mink_mode()
+/*bool MainWindow::ensure_mink_mode()
 {
 	if (! m_mink_active )
   {
@@ -3925,13 +4040,16 @@ bool MainWindow::ensure_mink_mode()
     if ( lProceed )
     {
       switch_sets_type(4);
-      m_mink_active = true;
+      m_circular_input->Reset();
+      m_bezier_input->Reset();
+      m_linear_input->Reset();
+      //m_mink_active = true;
       m_bezier_active = false;
       m_circular_active = false;
     }
   }
   return m_mink_active;
-}
+}*/
 //check out
 //bool read_linear(QString /* aFileName */, Linear_polygon_set& /* rSet */,
 //                 Linear_region_source_container& /* rSources */)
@@ -3978,7 +4096,7 @@ void MainWindow::on_actionInsertConicEclipse_triggered()
 {}
 
 
-void MainWindow::on_actionInsertMink_Polygon_toggled(bool aChecked)
+/*void MainWindow::on_actionInsertMink_Polygon_toggled(bool aChecked)
 {
 	if(aChecked)
 	{
@@ -3989,10 +4107,10 @@ void MainWindow::on_actionInsertMink_Polygon_toggled(bool aChecked)
 		  	actionInsertLinear->setChecked( false );
 		  	actionInsertCircular->setChecked( false );
 			actionInsertBezier->setChecked( false );
-			//m_scene.installEventFilter(m_linear_input);
+			//m_scene.installEventFilter(m_mink_input);
 		}
 	}
-}
+}*/
 
 void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
 {
@@ -4004,7 +4122,7 @@ void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
 	  	actionPAN->setChecked(false);
 	  	actionInsertLinear->setChecked( false );
 		actionInsertBezier->setChecked( false ); 
-		actionInsertMink_Polygon -> setChecked(false);
+		//actionInsertMink_Polygon -> setChecked(false);
 	  	m_scene.installEventFilter(m_circular_input);
 	  }
 	}
@@ -4020,7 +4138,7 @@ void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
 	  	actionPAN->setChecked(false);
 	  	actionInsertLinear->setChecked( false );
 		actionInsertCircular->setChecked( false );
-		actionInsertMink_Polygon -> setChecked(false);
+		//actionInsertMink_Polygon -> setChecked(false);
 	  	m_scene.installEventFilter(m_bezier_input);
 	  }
 	}
@@ -4036,7 +4154,7 @@ void MainWindow::on_actionInsertLinear_toggled(bool aChecked)
 	  	actionPAN->setChecked(false);
 	  	actionInsertCircular->setChecked( false );
 		actionInsertBezier->setChecked( false ); 
-		actionInsertMink_Polygon -> setChecked(false);
+		//actionInsertMink_Polygon -> setChecked(false);
 	  	m_scene.installEventFilter(m_linear_input);
 	  }
 	}
@@ -4048,82 +4166,91 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
   QCursor old = this->cursor();
   this->setCursor(Qt::WaitCursor);
 
-  actionComplement->setChecked(false);
-  actionUnion->setChecked(false);
-  actionIntersection->setChecked(false);
-  actionDifference->setChecked(false); 
-  actionSymmetric_Difference->setChecked(false); 
-  //actionMinkowski_Sum->setChecked(false);
-
-  /*size_t count = 0;
-  if (showRedMink_Sum->isChecked()) count++;
-  if (showBlackMink_Sum->isChecked()) count++;
-  if (showBrownMink_Sum->isChecked()) count++;
-  if (showYellowMink_Sum->isChecked()) count++;
-  if (showMagentaMink_Sum->isChecked()) count++;
-  if (showAquaMink_Sum->isChecked()) count++;
-
-  if(count == 2)
+  if(!m_circular_active && !m_bezier_active)
   {
-	  size_t color1 = 111;
-	  size_t color2 = 1111;
+	  actionComplement->setChecked(false);
+	  actionUnion->setChecked(false);
+	  actionIntersection->setChecked(false);
+	  actionDifference->setChecked(false); 
+	  actionSymmetric_Difference->setChecked(false); 
+	  //actionMinkowski_Sum->setChecked(false);
 
-	  if (showBlueMink_Sum -> isChecked()) color1 = 0;
-	  if (showRedMink_Sum -> isChecked()) 
+	  size_t count = 0;
+	  if (showBlueMink_Sum -> isChecked()) count++;
+	  if (showRedMink_Sum->isChecked()) count++;
+	  if (showBlackMink_Sum->isChecked()) count++;
+	  if (showBrownMink_Sum->isChecked()) count++;
+	  if (showYellowMink_Sum->isChecked()) count++;
+	  if (showMagentaMink_Sum->isChecked()) count++;
+	  if (showAquaMink_Sum->isChecked()) count++;
+
+	  if(count == 2)
 	  {
-	  	if(color1 < 1) color2 = 1;
-	  	else color1 = 1;
+		  size_t color1 = 111;
+		  size_t color2 = 1111;
+
+		  if (showBlueMink_Sum -> isChecked()) color1 = 0;
+		  if (showRedMink_Sum -> isChecked()) 
+		  {
+		  	if(color1 < 1) color2 = 1;
+		  	else color1 = 1;
+		  }
+		  if (showBlackMink_Sum -> isChecked()) 
+		  {
+		  	if(color1 < 2) color2 = 2;
+		  	else color1 = 2;
+		  }
+
+		  if (showBrownMink_Sum -> isChecked()) 
+		  {
+		  	if(color1 < 3) color2 = 3;
+		  	else color1 = 3;
+		  }
+
+		  if (showYellowMink_Sum -> isChecked()) 
+		  {
+		  	if(color1 < 4) color2 = 4;
+		  	else color1 = 4;
+		  }
+
+		  if (showMagentaMink_Sum -> isChecked()) 
+		  {
+		  	if(color1 < 5) color2 = 5;
+		  	else color1 = 5;
+		  }
+
+		  if (showAquaMink_Sum -> isChecked())
+		  {
+		  	color2 = 6;
+		  }
+
+		  /*if(color1 == 0) result_set().assign(blue_set());
+		  else if(color1 == 1) result_set().assign(red_set());
+		  else if(color1 == 2) result_set().assign(black_set());
+		  else if(color1 == 3) result_set().assign(brown_set());
+		  else if(color1 == 4) result_set().assign(yellow_set());
+		  else if(color1 == 5) result_set().assign(magenta_set());
+
+		  if (color2 == 1) result_set().minkowski_sum_2(red_set());
+		  else if (color2 == 2) result_set().minkowski_sum_2(black_set());
+		  else if (color2 == 3) result_set().minkowski_sum_2(brown_set());
+		  else if (color2 == 4) result_set().minkowski_sum_2(yellow_set());
+		  else if (color2 == 5) result_set().minkowski_sum_2(magenta_set());
+		  else if (color2 == 6) result_set().minkowski_sum_2(aqua_set());*/
 	  }
-	  if (showBlackMink_Sum -> isChecked()) 
+
+	  else 
 	  {
-	  	if(color1 < 2) color2 = 2;
-	  	else color1 = 2;
+	  	ask_user_yesno("Minkowski Sum Operation Error", "Please add one more colored polygon set\n");
 	  }
 
-	  if (showBrownMink_Sum -> isChecked()) 
-	  {
-	  	if(color1 < 3) color2 = 3;
-	  	else color1 = 3;
-	  }
-
-	  if (showYellowMink_Sum -> isChecked()) 
-	  {
-	  	if(color1 < 4) color2 = 4;
-	  	else color1 = 4;
-	  }
-
-	  if (showMagentaMink_Sum -> isChecked()) 
-	  {
-	  	if(color1 < 5) color2 = 5;
-	  	else color1 = 5;
-	  }
-
-	  if (showAquaMink_Sum -> isChecked())
-	  {
-	  	color2 = 6;
-	  }
-
-	  if(color1 == 0) result_set().assign(blue_set());
-	  else if(color1 == 1) result_set().assign(red_set());
-	  else if(color1 == 2) result_set().assign(black_set());
-	  else if(color1 == 3) result_set().assign(brown_set());
-	  else if(color1 == 4) result_set().assign(yellow_set());
-	  else if(color1 == 5) result_set().assign(magenta_set());
-
-	  if (color2 == 1) result_set().minkowski_sum_2(red_set());
-	  else if (color2 == 2) result_set().minkowski_sum_2(black_set());
-	  else if (color2 == 3) result_set().minkowski_sum_2(brown_set());
-	  else if (color2 == 4) result_set().minkowski_sum_2(yellow_set());
-	  else if (color2 == 5) result_set().minkowski_sum_2(magenta_set());
-	  else if (color2 == 6) result_set().minkowski_sum_2(aqua_set());
+	  lDone = true;
   }
-
-  else 
+  else
   {
-  	ask_user_yesno("Minkowski Sum Operation Error", "Please add one more colored polygon set\n");
+  	 bool askLinear = ask_user_yesno("Minkowski Sum Operation Error", "This operation works only for Linear Polygons while Circular or Bezier Curves are loaded\n Would like to switch to Linear Mode");
+	 if(askLinear) ensure_linear_mode();  	 
   }
-
-  lDone = true;*/
   this->setCursor(old);
   if (lDone) modelChanged();
 }
@@ -4239,7 +4366,7 @@ void MainWindow::on_actionDifference_triggered()
   }*/
 
 
-  bool lProceed;
+  /*bool lProceed;
   if(m_color_diff_A == m_color_diff_B)
   {
    	lProceed =  ask_user_yesno("Difference Operation Error", "Single colorued polygon set is not supported by this operation. If you want to proceed further, please select one more coloured polygon set.\nWould you select one more color polygon set?\n");
@@ -4307,7 +4434,78 @@ void MainWindow::on_actionDifference_triggered()
   		{
   			result_set().difference(aqua_set());
   		}
+  }*/
+
+  size_t count = 0;
+  if (showBlueDiff ->isChecked()) count++;
+  if (showRedDiff->isChecked()) count++;
+  if (showBlackDiff->isChecked()) count++;
+  if (showBrownDiff->isChecked()) count++;
+  if (showYellowDiff->isChecked()) count++;
+  if (showMagentaDiff->isChecked()) count++;
+  if (showAquaDiff->isChecked()) count++;
+
+  if(count == 2)
+  {
+	  size_t color1 = 111;
+	  size_t color2 = 1111;
+
+	  if (showBlueDiff -> isChecked()) color1 = 0;
+	  if (showRedDiff -> isChecked()) 
+	  {
+	  	if(color1 < 1) color2 = 1;
+	  	else color1 = 1;
+	  }
+	  if (showBlackDiff -> isChecked()) 
+	  {
+	  	if(color1 < 2) color2 = 2;
+	  	else color1 = 2;
+	  }
+
+	  if (showBrownDiff -> isChecked()) 
+	  {
+	  	if(color1 < 3) color2 = 3;
+	  	else color1 = 3;
+	  }
+
+	  if (showYellowDiff -> isChecked()) 
+	  {
+	  	if(color1 < 4) color2 = 4;
+	  	else color1 = 4;
+	  }
+
+	  if (showMagentaDiff -> isChecked()) 
+	  {
+	  	if(color1 < 5) color2 = 5;
+	  	else color1 = 5;
+	  }
+
+	  if (showAquaDiff -> isChecked())
+	  {
+	  	color2 = 6;
+	  }
+
+	  if(color1 == 0) result_set().assign(blue_set());
+	  else if(color1 == 1) result_set().assign(red_set());
+	  else if(color1 == 2) result_set().assign(black_set());
+	  else if(color1 == 3) result_set().assign(brown_set());
+	  else if(color1 == 4) result_set().assign(yellow_set());
+	  else if(color1 == 5) result_set().assign(magenta_set());
+
+	  if (color2 == 1) result_set().difference(red_set());
+	  else if (color2 == 2) result_set().difference(black_set());
+	  else if (color2 == 3) result_set().difference(brown_set());
+	  else if (color2 == 4) result_set().difference(yellow_set());
+	  else if (color2 == 5) result_set().difference(magenta_set());
+	  else if (color2 == 6) result_set().difference(aqua_set());
   }
+
+  else 
+  {
+  	ask_user_yesno("Difference Operation Error", "Please add one more colored polygon set\n");
+  }
+
+
   lDone = true;
   this->setCursor(old);
   if (lDone) modelChanged();
@@ -4386,27 +4584,42 @@ void MainWindow::on_actionPAN_toggled(bool aChecked)
 	{
 	  if (!m_circular_active && !m_bezier_active) 
 	  	{
+	  		//m_scene.removeEventFilter(m_mink_input);
 	  		m_scene.removeEventFilter(m_linear_input); 
 	  		m_scene.removeEventFilter(m_bezier_input);
 	  		m_scene.removeEventFilter(m_circular_input);
+			m_linear_input->Reset();
+			m_circular_input->Reset();
+			m_bezier_input->Reset();
+			//m_mink_input->Reset();
 	  		actionInsertLinear->setChecked( false );
 	  		this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); 
 	  		//m_scene.installEventFilter(m_linear_input);
 	  	}
 	  else if(!m_bezier_active) 
-	  	{ 
+	  	{
+	  		//m_scene.removeEventFilter(m_mink_input); 
 	  		m_scene.removeEventFilter(m_linear_input); 
 	  		m_scene.removeEventFilter(m_bezier_input);
 	  		m_scene.removeEventFilter(m_circular_input);
+			m_linear_input->Reset();
+			m_circular_input->Reset();
+			m_bezier_input->Reset();
+			//m_mink_input->Reset();
 	  		actionInsertCircular->setChecked( false );
 	  		this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); 
 	  		//m_scene.installEventFilter(m_circular_input);
 	  	}
 	  else 
 	  	{ 	
+	  		//m_scene.removeEventFilter(m_mink_input);
 	  		m_scene.removeEventFilter(m_linear_input); 
 	  		m_scene.removeEventFilter(m_bezier_input);
 	  		m_scene.removeEventFilter(m_circular_input);
+			m_linear_input->Reset();
+			m_circular_input->Reset();
+			m_bezier_input->Reset();
+			//m_mink_input->Reset();
 	  		actionInsertBezier->setChecked( false );
 	  		this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); 
 	  		//m_scene.installEventFilter(m_bezier_input);

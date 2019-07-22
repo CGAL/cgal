@@ -31,7 +31,9 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
-
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Boolean_set_operations_2.h>
+#include <list>
 #include "Typedefs.h"
 #include "QT5/Linear_polygons.h"
 
@@ -41,6 +43,14 @@ namespace Qt {
 template <typename Kernel_>
 class Graphics_view_linear_polygon_input : public GraphicsViewInput {
 public:
+
+  typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel1;
+  typedef Kernel1::Point_2                            Point_2;
+  typedef CGAL::Polygon_2<Kernel1>                    Polygon_2;
+  typedef CGAL::Polygon_with_holes_2<Kernel1>         Polygon_with_holes_2;
+  typedef std::list<Polygon_with_holes_2>             Pgn_with_holes_2_container;
+
+
   typedef Kernel_                                 Kernel;
 
   typedef Linear_traits                           Gps_traits;
@@ -175,6 +185,7 @@ protected:
   {
     bool rHandled = false;
     Point lP = cvt(aEvent->scenePos());
+    QPointF const& aP = aEvent->scenePos();	
     if (aEvent->button() == ::Qt::LeftButton) {
       switch (mState) {
        case PieceStarted:
@@ -191,6 +202,7 @@ protected:
 
        default: break; //! \todo handle default case
       }
+      mink_polygon.push_back(Point_2(aP.x(),aP.y()));
     }
     else if (aEvent->button() == ::Qt::RightButton) {
       switch (mState) {
@@ -217,11 +229,13 @@ protected:
         (aEvent->key() == ::Qt::Key_Backspace))
     {
       RemoveLastPiece();
+      mink_polygon.erase(mink_polygon.vertices_end());
       mState = (mLinearPolygonPieces.size() > 0) ? PieceEnded : Start;
       rHandled = true;
     }
     else if (aEvent->key() == ::Qt::Key_Escape) {
       Reset();
+      mink_polygon.clear();
       mState = Start;
       rHandled = true;
     }
@@ -229,7 +243,10 @@ protected:
     return rHandled;
   }
 
-private:
+public:
+  Polygon_2 getMinkPolygon()
+  { return mink_polygon; }
+
   Linear_curve const* ongoing_piece() const
   { return (mOngoingPieceCtr.size() == 1) ? &mOngoingPieceCtr[0] : NULL; }
 
@@ -356,7 +373,7 @@ private:
     }
   }
 
-private:
+public:
   QGraphicsScene* mScene;
   GI* mLinearGI;
   GI* mOngoingPieceGI;
@@ -370,6 +387,8 @@ private:
   Linear_curve_vector mOngoingPieceCtr;
 
   int mState;
+  
+  Polygon_2 mink_polygon;
 
   Point mP0;
   Point mP1;
