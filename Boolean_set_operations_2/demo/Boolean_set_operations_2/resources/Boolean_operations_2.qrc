@@ -1,0 +1,102 @@
+<!-- cnnot take .xmp files -->
+<RCC>
+    <qresource prefix="/cgal/icons">
+        <file>resources/cgal_logo.xpm</file>
+        <file>resources/boolean-union.png</file>
+        <file>resources/kernel.png</file>
+	<file>resources/insert_bezier.bmp</file>
+    <file>resources/check-off.png</file>
+    <file>resources/delete.xpm</file>
+	<file>resources/insert_circle.xpm</file>
+    <file>resources/P.xpm</file>   
+    <file>resources/Q.xpm</file>   
+    <file>resources/Minkowski_sum_2.png</file>
+	<file>resources/demo_conic_circle.xpm</file>
+    <file>resources/insert_bezier.xpm</file>
+	<file>resources/intersection.bmp</file>
+	<file>resources/mink_sum.bmp</file>
+	<file>resources/union.bmp</file>
+	<file>resources/symm_diff.bmp</file>
+	<file>resources/comp_P.bmp</file>
+    <file>resources/PQ.xpm</file>
+	<file>resources/diff_PQ.bmp</file>
+	<file>resources/del_P.bmp</file>
+	<file>resources/insert_polygon.bmp</file>
+    <file>resources/insert_polygon.xpm</file>
+    <file>resources/fit-page-32.png</file>
+        <file>resources/boolean-diff.png</file>
+        <file>resources/boolean-intersection.png</file>
+        <file alias="convex-hull.png">resources/convex-hull.png</file>
+        <file alias="simplification.png">resources/simplification.png</file>
+        <file alias="duplicate">resources/editcopy.png</file>
+        <file alias="check-on.png">resources/check-on.png</file>
+        <file alias="plus">resources/plus.png</file>
+        <file alias="check-off.png">resources/check-off.png</file>
+        <file alias="minus">resources/minus.png</file>
+        <file>resources/back.png</file>
+	<file>resources/hand.png</file>
+        <file>resources/front.png</file>
+        <file>resources/top.png</file>
+        <file>resources/bot.png</file>
+        <file>resources/left.png</file>
+        <file>resources/right.png</file>
+        <file>resources/up.png</file>
+        <file>resources/down.png</file>
+        <file>resources/left_arrow.png</file>
+        <file>resources/right_arrow.png</file>
+        <file>resources/pss_rectangle.png</file>
+        <file>resources/pss_freeform.png</file>
+        <file>resources/pss_region.png</file>
+        <file>resources/pss_box.png</file>
+        <file>resources/pss_new.png</file>
+        <file>resources/pss_union.png</file>
+        <file>resources/pss_inter.png</file>
+        <file>resources/pss_diff.png</file>
+        <file>resources/help_button.png</file>
+    </qresource>
+    <qresource prefix="/cgal">
+        <file alias="about.html">resources/about.html</file>
+        <file>resources/shader_with_light.v</file>
+        <file>resources/shader_with_light.f</file>
+        <file>resources/shader_without_light.f</file>
+        <file>resources/shader_without_light.v</file>
+        <file>resources/shader_with_texture.f</file>
+        <file>resources/shader_with_textured_edges.f</file>
+        <file>resources/shader_with_textured_edges.v</file>
+        <file>resources/shader_with_texture.v</file>
+        <file>resources/shader_instanced.v</file>
+        <file>resources/shader_no_light_no_selection.f</file>
+        <file>resources/shader_c3t3_spheres.v</file>
+        <file>resources/shader_c3t3_edges.v</file>
+        <file>resources/shader_c3t3_edges.f</file>
+        <file>resources/shader_c3t3.v</file>
+        <file>resources/shader_c3t3.f</file>
+        <file>resources/shader_plane_two_faces.f</file>
+        <file>resources/shader_spheres.v</file>
+        <file>resources/general_collapse.png</file>
+        <file>resources/add_facet1.png</file>
+        <file>resources/add_facet2.png</file>
+        <file>resources/euler_center.png</file>
+        <file>resources/euler_facet.png</file>
+        <file>resources/euler_vertex.png</file>
+
+        <file>resources/shader_flat.f</file>
+        <file>resources/hexahedron.png</file>
+        <file>resources/icosphere.png</file>
+        <file>resources/tetrahedron.png</file>
+        <file>resources/grid.png</file>
+        <file>resources/prism.png</file>
+        <file>resources/prism-open.png</file>
+        <file>resources/pyramid.png</file>
+        <file>resources/pyramid-open.png</file>
+        <file>resources/no_interpolation_shader.f</file>
+        <file>resources/no_interpolation_shader.g</file>
+        <file>resources/no_interpolation_shader.v</file>
+        <file>resources/shader_flat.g</file>
+        <file>resources/shader_flat.v</file>
+        <file>resources/shader_old_flat.f</file>
+    </qresource>
+    <qresource prefix="/cgal/cursors">
+        <file>resources/rotate_around_cursor.png</file>
+    </qresource>
+</RCC>
