@@ -4249,7 +4249,11 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
   else
   {
   	 bool askLinear = ask_user_yesno("Minkowski Sum Operation Error", "This operation works only for Linear Polygons while Circular or Bezier Curves are loaded\n Would like to switch to Linear Mode");
-	 if(askLinear) ensure_linear_mode();  	 
+	 if(askLinear) 
+	 {
+	 	ensure_linear_mode();  	 
+	 	actionInsertLinear -> setChecked(true);
+	 }
   }
   this->setCursor(old);
   if (lDone) modelChanged();
