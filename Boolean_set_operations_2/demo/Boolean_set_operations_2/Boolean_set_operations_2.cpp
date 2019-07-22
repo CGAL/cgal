@@ -3944,7 +3944,7 @@ bool MainWindow::ensure_circular_mode()
 
     if (! lProceed)
       lProceed = ask_user_yesno("Circular mode switch",
-                                "You are about to load a circular poygon, but there are circular/minkowski/bezier curves already loaded.\n" \
+                                "You are about to load a circular poygon, but there are circular/bezier curves already loaded.\n" \
                                 "Both types are not interoperable. In order to proceed, the polygons must be removed first.\n" \
                                 "Yes to remove and proceed?\n"
                               );
@@ -3973,7 +3973,7 @@ bool MainWindow::ensure_bezier_mode()
     
     if ( ! lProceed )
       lProceed = ask_user_yesno("Bezier mode switch"
-                               ,"You are about to load a Bezier curve, but there are circular/minkowski/bezier polygons already loaded.\n" \
+                               ,"You are about to load a Bezier curve, but there are circular/bezier polygons already loaded.\n" \
                                 "Both types are not interoperable. In order to proceed, the polygons must be removed first.\n" \
                                 "Yes to remove and proceed?\n"
                                ) ;
@@ -4002,7 +4002,7 @@ bool MainWindow::ensure_linear_mode()
 
     if (! lProceed)
       lProceed = ask_user_yesno("Linear/Circular mode switch",
-                                "You are about to load a linear poygon, but there are circular/minkowski/bezier polygons already loaded.\n" \
+                                "You are about to load a linear poygon, but there are circular/bezier polygons already loaded.\n" \
                                 "Both types are not interoperable. In order to proceed, the polygons must be removed first.\n" \
                                 "Yes to remove and proceed?\n"
                               );
