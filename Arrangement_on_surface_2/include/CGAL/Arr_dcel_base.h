@@ -908,7 +908,6 @@ protected:
   typedef In_place_list<Inner_ccb, false>        Inner_ccb_list;
   typedef In_place_list<Isolated_vertex, false>  Iso_vert_list;
 
-#ifdef CGAL_CXX11
     typedef std::allocator_traits<Allocator> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Vertex>          Vertex_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Halfedge>        Halfedge_allocator;
@@ -916,32 +915,6 @@ protected:
     typedef typename Allocator_traits::template rebind_alloc<Outer_ccb>       Outer_ccb_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Inner_ccb>       Inner_ccb_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Isolated_vertex> Iso_vert_allocator;
-#else // not CGAL_CXX11
-  // Vertex allocator.
-  typedef typename Allocator::template rebind<Vertex>    Vertex_alloc_rebind;
-  typedef typename Vertex_alloc_rebind::other            Vertex_allocator;
-
-  // Halfedge allocator.
-  typedef typename Allocator::template rebind<Halfedge>  Halfedge_alloc_rebind;
-  typedef typename Halfedge_alloc_rebind::other          Halfedge_allocator;
-
-  // Face allocator.
-  typedef typename Allocator::template rebind<Face>      Face_alloc_rebind;
-  typedef typename Face_alloc_rebind::other              Face_allocator;
-
-  // Outer CCB allocator.
-  typedef typename Allocator::template rebind<Outer_ccb> Out_ccb_alloc_rebind;
-  typedef typename Out_ccb_alloc_rebind::other           Outer_ccb_allocator;
-
-  // Inner CCB allocator.
-  typedef typename Allocator::template rebind<Inner_ccb> In_ccb_alloc_rebind;
-  typedef typename In_ccb_alloc_rebind::other            Inner_ccb_allocator;
-
-  // Isolated vertex allocator.
-  typedef typename Allocator::template rebind<Isolated_vertex>
-                                                         Iso_vert_alloc_rebind;
-  typedef typename Iso_vert_alloc_rebind::other          Iso_vert_allocator;
-#endif // not CGAL_CXX11
 
 public:
   typedef typename Halfedge_list::size_type              Size;
@@ -1089,11 +1062,7 @@ public:
   Vertex* new_vertex()
   {
     Vertex* v = vertex_alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Vertex_allocator>::construct(vertex_alloc,v);
-#else
-    vertex_alloc.construct(v, Vertex());
-#endif
     vertices.push_back(*v);
     return v;
   }
@@ -1116,11 +1085,7 @@ public:
   Face* new_face()
   {
     Face* f = face_alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Face_allocator>::construct(face_alloc, f);
-#else
-    face_alloc.construct(f, Face());
-#endif
     faces.push_back (*f);
     return(f);
   }
@@ -1129,11 +1094,7 @@ public:
   Outer_ccb* new_outer_ccb()
   {
     Outer_ccb* oc = out_ccb_alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Outer_ccb_allocator>::construct(out_ccb_alloc, oc);
-#else
-    out_ccb_alloc.construct(oc, Outer_ccb());
-#endif
     out_ccbs.push_back(*oc);
     return (oc);
   }
@@ -1142,11 +1103,7 @@ public:
   Inner_ccb* new_inner_ccb()
   {
     Inner_ccb* ic = in_ccb_alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Inner_ccb_allocator>::construct(in_ccb_alloc, ic);
-#else
-    in_ccb_alloc.construct(ic, Inner_ccb());
-#endif
     in_ccbs.push_back(*ic);
     return (ic);
   }
@@ -1155,11 +1112,7 @@ public:
   Isolated_vertex* new_isolated_vertex()
   {
     Isolated_vertex* iv = iso_vert_alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Iso_vert_allocator>::construct(iso_vert_alloc, iv);
-#else
-    iso_vert_alloc.construct(iv, Isolated_vertex());
-#endif
     iso_verts.push_back(*iv);
     return (iv);
   }
@@ -1171,11 +1124,7 @@ public:
   void delete_vertex(Vertex* v)
   {
     vertices.erase(v);
-#ifdef CGAL_CXX11
     std::allocator_traits<Vertex_allocator>::destroy(vertex_alloc, v);
-#else
-    vertex_alloc.destroy(v);
-#endif
     vertex_alloc.deallocate(v,1);
   }
 
@@ -1191,11 +1140,7 @@ public:
   void delete_face(Face* f)
   {
     faces.erase(f);
-#ifdef CGAL_CXX11
     std::allocator_traits<Face_allocator>::destroy(face_alloc, f);
-#else
-    face_alloc.destroy(f);
-#endif
     face_alloc.deallocate(f, 1);
   }
 
@@ -1203,11 +1148,7 @@ public:
   void delete_outer_ccb(Outer_ccb* oc)
   {
     out_ccbs.erase(oc);
-#ifdef CGAL_CXX11
     std::allocator_traits<Outer_ccb_allocator>::destroy(out_ccb_alloc, oc);
-#else
-    out_ccb_alloc.destroy(oc);
-#endif
     out_ccb_alloc.deallocate(oc, 1);
   }
 
@@ -1215,11 +1156,7 @@ public:
   void delete_inner_ccb(Inner_ccb* ic)
   {
     in_ccbs.erase(ic);
-#ifdef CGAL_CXX11
     std::allocator_traits<Inner_ccb_allocator>::destroy(in_ccb_alloc, ic);
-#else
-    in_ccb_alloc.destroy(ic);
-#endif
     in_ccb_alloc.deallocate(ic, 1);
   }
 
@@ -1227,11 +1164,7 @@ public:
   void delete_isolated_vertex(Isolated_vertex* iv)
   {
     iso_verts.erase(iv);
-#ifdef CGAL_CXX11
     std::allocator_traits<Iso_vert_allocator>::destroy(iso_vert_alloc, iv);
-#else
-    iso_vert_alloc.destroy(iv);
-#endif
     iso_vert_alloc.deallocate(iv, 1);
   }
 
@@ -1492,11 +1425,7 @@ protected:
   Halfedge* _new_halfedge()
   {
     Halfedge* h = halfedge_alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Halfedge_allocator>::construct(halfedge_alloc, h);
-#else
-    halfedge_alloc.construct(h, Halfedge());
-#endif
     halfedges.push_back(*h);
     return (h);
   }
@@ -1505,11 +1434,7 @@ protected:
   void _delete_halfedge(Halfedge* h)
   {
     halfedges.erase(h);
-#ifdef CGAL_CXX11
     std::allocator_traits<Halfedge_allocator>::destroy(halfedge_alloc,h);
-#else
-    halfedge_alloc.destroy(h);
-#endif
     halfedge_alloc.deallocate(h, 1);
   }
 };

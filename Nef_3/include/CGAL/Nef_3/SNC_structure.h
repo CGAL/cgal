@@ -1045,133 +1045,77 @@ public:
   Vertex_alloc vertex_allocator;
   Vertex* get_vertex_node( const Vertex& ) {
     Vertex* p = vertex_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Vertex_alloc>::construct(vertex_allocator, p);
-#else
-    vertex_allocator.construct( p, Vertex());
-#endif
     return p;
   }
   void put_vertex_node( Vertex* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<Vertex_alloc>::destroy(vertex_allocator,p);
-#else
-    vertex_allocator.destroy(p);
-#endif
     vertex_allocator.deallocate( p, 1);
   }
 
   Halfedge_alloc halfedge_allocator;
   Halfedge* get_halfedge_node( const Halfedge&) {
     Halfedge* p = halfedge_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Halfedge_alloc>::construct(halfedge_allocator, p);
-#else
-    halfedge_allocator.construct( p, Halfedge());
-#endif
     return p;
   }
   void put_halfedge_node( Halfedge* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<Halfedge_alloc>::destroy(halfedge_allocator,p);
-#else
-    halfedge_allocator.destroy(p);
-#endif
     halfedge_allocator.deallocate( p, 1);
   }
 
   Halffacet_alloc halffacet_allocator;
   Halffacet* get_halffacet_node( const Halffacet& ) {
     Halffacet* p = halffacet_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Halffacet_alloc>::construct(halffacet_allocator, p);
-#else
-    halffacet_allocator.construct( p, Halffacet());
-#endif
     return p;
   }
   void put_halffacet_node( Halffacet* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<Halffacet_alloc>::destroy(halffacet_allocator,p);
-#else
-    halffacet_allocator.destroy(p);
-#endif
     halffacet_allocator.deallocate( p, 1);
   }
 
   Volume_alloc volume_allocator;
   Volume* get_volume_node( const Volume& ) {
     Volume* p = volume_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Volume_alloc>::construct(volume_allocator, p);
-#else
-    volume_allocator.construct( p, Volume());
-#endif
     return p;
   }
   void put_volume_node( Volume* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<Volume_alloc>::destroy(volume_allocator,p);
-#else
-    volume_allocator.destroy(p);
-#endif
     volume_allocator.deallocate( p, 1);
   }
 
   SHalfedge_alloc shalfedge_allocator;
   SHalfedge* get_shalfedge_node( const SHalfedge& ) {
     SHalfedge* p = shalfedge_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<SHalfedge_alloc>::construct(shalfedge_allocator, p);
-#else
-    shalfedge_allocator.construct( p, SHalfedge());
-#endif
     return p;
   }
   void put_shalfedge_node( SHalfedge* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<SHalfedge_alloc>::destroy(shalfedge_allocator,p);
-#else
-    shalfedge_allocator.destroy(p);
-#endif
     shalfedge_allocator.deallocate( p, 1);
   }
 
   SHalfloop_alloc shalfloop_allocator;
   SHalfloop* get_shalfloop_node( const SHalfloop& ) {
     SHalfloop* p = shalfloop_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<SHalfloop_alloc>::construct(shalfloop_allocator, p);
-#else
-    shalfloop_allocator.construct( p, SHalfloop());
-#endif
     return p;
   }
   void put_shalfloop_node( SHalfloop* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<SHalfloop_alloc>::destroy(shalfloop_allocator,p);
-#else
-    shalfloop_allocator.destroy(p);
-#endif
     shalfloop_allocator.deallocate( p, 1);
   }
 
   SFace_alloc sface_allocator;
   SFace* get_sface_node( const SFace& ) {
     SFace* p = sface_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<SFace_alloc>::construct(sface_allocator, p);
-#else
-    sface_allocator.construct( p, SFace());
- #endif
     return p;
   }
   void put_sface_node( SFace* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<SFace_alloc>::destroy(sface_allocator,p);
-#else
-    sface_allocator.destroy(p);
-#endif
     sface_allocator.deallocate( p, 1);
   }
 

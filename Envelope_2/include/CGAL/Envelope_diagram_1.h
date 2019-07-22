@@ -278,21 +278,11 @@ public:
 private:
 
   // Vertex allocator.
-#ifdef CGAL_CXX11
-    typedef std::allocator_traits<Allocator> Allocator_traits;
-    typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
-#else
-  typedef typename Allocator::template rebind<Vertex>    Vertex_alloc_rebind;
-  typedef typename Vertex_alloc_rebind::other            Vertex_allocator;
-#endif
+  typedef std::allocator_traits<Allocator> Allocator_traits;
+  typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
 
   // Halfedge allocator.
-#ifdef CGAL_CXX11
-    typedef typename Allocator_traits::template rebind_alloc<Edge> Edge_allocator;
-#else
-  typedef typename Allocator::template rebind<Edge>      Edge_alloc_rebind;
-  typedef typename Edge_alloc_rebind::other              Edge_allocator;
-#endif
+  typedef typename Allocator_traits::template rebind_alloc<Edge> Edge_allocator;
 
   Edge* _leftmostP;                   // The leftmost edge of the diagram
                                       // (representing the range from -oo).
@@ -384,11 +374,7 @@ public:
   Vertex_handle new_vertex (const Point_2& p)
   {
     Vertex* v = vertex_alloc.allocate (1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Vertex_allocator>::construct(vertex_alloc, v, p);
-#else
-    vertex_alloc.construct (v, Vertex(p));
-#endif
     return (v);
   }
 
@@ -396,33 +382,21 @@ public:
   Edge_handle new_edge ()
   {
     Edge* e = edge_alloc.allocate (1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Edge_allocator>::construct(edge_alloc, e);
-#else
-    edge_alloc.construct (e, Edge());
-#endif
     return (e);
   }
    
   /*! Delete an existing vertex. */
   void delete_vertex (Vertex_handle v)
   {
-#ifdef CGAL_CXX11
     std::allocator_traits<Vertex_allocator>::destroy(vertex_alloc, v);
-#else
-    vertex_alloc.destroy (v);
-#endif
     vertex_alloc.deallocate (v, 1);
   }
   
   /*! Delete an existing edge. */
   void delete_edge (Edge_handle e)
   {
-#ifdef CGAL_CXX11
     std::allocator_traits<Edge_allocator>::destroy(edge_alloc, e);
-#else
-    edge_alloc.destroy (e);
-#endif
     edge_alloc.deallocate (e, 1);
   }
   

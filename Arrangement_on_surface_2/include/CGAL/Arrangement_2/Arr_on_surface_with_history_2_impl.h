@@ -113,11 +113,7 @@ assign(const Self& arr)
     dup_c = m_curves_alloc.allocate (1);
     
     p_cv = &(*ocit);
-#ifdef CGAL_CXX11
     std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, dup_c, *p_cv);
-#else
-    m_curves_alloc.construct(dup_c, *p_cv);
-#endif
     m_curves.push_back (*dup_c);
     
     // Assign a map entry.
@@ -185,11 +181,7 @@ void Arrangement_on_surface_with_history_2<GeomTr,TopTr>::clear ()
     ++cit;
     
     m_curves.erase (p_cv);
-#ifdef CGAL_CXX11
     std::allocator_traits<Curves_alloc>::destroy(m_curves_alloc,p_cv);
-#else
-    m_curves_alloc.destroy (p_cv);
-#endif
     m_curves_alloc.deallocate (p_cv, 1);
   }
   m_curves.destroy();

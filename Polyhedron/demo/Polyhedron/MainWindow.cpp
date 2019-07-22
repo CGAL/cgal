@@ -180,6 +180,18 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
     shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(toggleFullScreen()));
+    shortcut = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_R), this);
+    connect(shortcut, &QShortcut::activated,
+            this, &MainWindow::recenterScene);
+    shortcut = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_T), this);
+    connect(shortcut, &QShortcut::activated,
+            this,
+            [](){
+      Viewer* viewer = qobject_cast<Viewer*>(CGAL::Three::Three::activeViewer());
+      bool b = viewer->property("draw_two_sides").toBool();
+      viewer->setTwoSides(!b);
+    }
+            );
   }
 
   proxyModel = new QSortFilterProxyModel(this);
@@ -769,7 +781,7 @@ void MainWindow::updateMenus()
   }
   // sort the operations menu by name
   as = ui->menuOperations->actions();
-  qSort(as.begin(), as.end(), actionsByName);
+  std::sort(as.begin(), as.end(), actionsByName);
   ui->menuOperations->clear();
   ui->menuOperations->addAction(searchAction);
   ui->menuOperations->addActions(as);
@@ -2397,7 +2409,7 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
   viewer->setAddKeyFrameKeyboardModifiers(m);
 }
 
-void MainWindow::on_actionRecenterScene_triggered()
+void MainWindow::recenterScene()
 {
   //force the recomputaion of the bbox
   bbox_need_update = true;
@@ -2427,9 +2439,9 @@ void MainWindow::on_actionLoadPlugin_triggered()
 void MainWindow::recurseExpand(QModelIndex index)
 {
   int row = index.row();
-  if(index.child(0,0).isValid())
+  if(scene->index(0,0,index).isValid())
   {
-    recurseExpand(index.child(0,0));
+    recurseExpand(scene->index(0,0,index));
   }
   CGAL::Three::Scene_group_item* group =
       qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
@@ -2609,10 +2621,17 @@ void MainWindow::resetHeader()
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().horizontalAdvance("_#_"));
+  sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
+  sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().horizontalAdvance(QString("_AB_")));
+  sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().horizontalAdvance(QString("_View_")));
+#else
   sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
+#endif
 }
 
 void MainWindow::reset_default_loaders()
@@ -2852,7 +2871,7 @@ void MainWindow::setDefaultSaveDir()
 void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
 {
   // do not save the state of the viewer (anoying)
-  viewer->setStateFileName(QString::null);
+  viewer->setStateFileName(QString());
   viewer->textRenderer()->setScene(scene);
   viewer->setScene(scene);
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
@@ -3000,7 +3019,7 @@ QObject* MainWindow::getDirectChild(QObject* widget)
   return getDirectChild(widget->parent());
 }
 
-void MainWindow::on_action_Organize_Viewers_triggered()
+void MainWindow::on_action_Rearrange_Viewers_triggered()
 {
   if(ui->mdiArea->subWindowList().size() == 1)
     ui->mdiArea->subWindowList().first()->showMaximized();
@@ -3051,7 +3070,7 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   actionCopyCamera->setObjectName("actionCopyCamera");
   QAction* actionPasteCamera = new QAction("&Paste Camera",this);
   actionPasteCamera->setObjectName("actionPasteCamera");
-  QMenu* cameraMenu = new QMenu("Camera", mw);
+  QMenu* cameraMenu = new QMenu("Ca&mera", mw);
   cameraMenu->addAction(actionDumpCamera);
   cameraMenu->addAction(actionCopyCamera);
   cameraMenu->addAction(actionPasteCamera);
@@ -3067,12 +3086,12 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   actionDrawTwoSide->setCheckable(true);
   actionDrawTwoSide->setChecked(false);
   viewMenu->addAction(actionDrawTwoSide);
-  QAction* actionQuick = new QAction("Quick Camera Mode",this);
+  QAction* actionQuick = new QAction("&Quick Camera Mode",this);
   actionQuick->setObjectName("actionQuick");
   actionQuick->setCheckable(true);
   actionQuick->setChecked(true);
   viewMenu->addAction(actionQuick);
-  QAction* actionOrtho = new QAction("Orthographic Projection",this);
+  QAction* actionOrtho = new QAction("&Orthographic Projection",this);
   actionOrtho->setObjectName("actionOrtho");
   actionOrtho->setCheckable(true);
   actionOrtho->setChecked(false);
@@ -3155,6 +3174,9 @@ void SubViewer::changeEvent(QEvent *event)
               //| Qt::WindowSystemMenuHint
               | Qt::WindowTitleHint
               );
+      QAction* action = mw->findChild<QAction*>("action_Rearrange_Viewers");
+      action->setVisible(false);
+      viewer->update();
     }
     else
     {
@@ -3170,6 +3192,10 @@ void SubViewer::changeEvent(QEvent *event)
               | Qt::WindowSystemMenuHint
               | Qt::WindowTitleHint
               );
+      QAction* action = mw->findChild<QAction*>("action_Rearrange_Viewers");
+      action->setVisible(true);
+      for(auto v : CGAL::QGLViewer::QGLViewerPool())
+        v->update();
     }
   }
 }

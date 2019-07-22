@@ -24,6 +24,8 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/IO/io.h>
 
+#include <CGAL/property_map.h>
+
 #include <tuple>
 #include <iostream>
 #include <sstream>
@@ -375,6 +377,7 @@ public:
         t = property->buffer();
         return;
       }
+    t = {};
   }
 
   template <typename Type>
@@ -389,6 +392,7 @@ public:
         t = property->buffer();
         return;
       }
+    t = {};
   }
 
   void assign (double& t, const char* tag)
@@ -410,6 +414,7 @@ public:
           
         return;
       }
+    t = {};
   }
   
 };

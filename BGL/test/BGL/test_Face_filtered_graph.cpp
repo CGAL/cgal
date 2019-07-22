@@ -467,7 +467,7 @@ int main()
   //Make a tetrahedron and test the adapter for a patch that only contains 2 faces
   typedef CGAL::Face_filtered_graph<SM> SM_Adapter;
   typedef SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> SM_FCCMap;
-  SM* sm = new SM();
+  auto sm = std::make_unique<SM>();
   CGAL::make_tetrahedron(
         Point_3(1,1,1),
         Point_3(0,0,0),
@@ -499,7 +499,7 @@ int main()
   typedef boost::property_map<Polyhedron, CGAL::vertex_external_index_t>::type VIMap;
   typedef boost::property_map<Polyhedron, CGAL::halfedge_external_index_t>::type HIMap;
   typedef CGAL::Face_filtered_graph<Polyhedron, FIMap, VIMap, HIMap> Poly_Adapter;
-  Polyhedron *poly = new Polyhedron();
+  auto poly = std::make_unique<Polyhedron>();
   CGAL::make_tetrahedron(
         Point_3(1,1,1),
         Point_3(0,0,0),

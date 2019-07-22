@@ -414,6 +414,7 @@ public:
     return Intersect_2();
   }
 
+  //@}
 };
 
 } //namespace CGAL
