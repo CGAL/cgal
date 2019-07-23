@@ -8,6 +8,7 @@
 
 #include <CGAL/IO/read_3mf.h>
 #include <CGAL/IO/write_3mf.h>
+#include <QFileDialog>
 
 #include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"

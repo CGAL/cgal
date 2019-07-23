@@ -79,8 +79,7 @@ main()
   test<Cls>();
   std::cout << "Testing with Epick:\n";
   test<CGAL::Epick>();
-  std::cout << "Testing with Epick_without_intervals:\n";
-  test<CGAL::Epick_without_intervals>();
+
   return 0;
 }
 

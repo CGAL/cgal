@@ -372,6 +372,8 @@ public:
     }
   }
 
+  // @}
+
 protected:
   /*! Locate the arrangement feature containing the given point in the
    * unbounded face(s).

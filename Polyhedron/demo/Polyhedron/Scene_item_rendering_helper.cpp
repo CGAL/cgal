@@ -116,7 +116,7 @@ void Scene_item_rendering_helper::initGL(CGAL::Three::Viewer_interface* viewer) 
     if(!pc->isGLInit(viewer))
       pc->initGL(viewer);
   }
-  if(!isInit(viewer))
+  if(!getBuffersFilled())
   {
     Gl_data_names flags;
     flags = (ALL);
@@ -128,6 +128,7 @@ void Scene_item_rendering_helper::initGL(CGAL::Three::Viewer_interface* viewer) 
 void Scene_item_rendering_helper::processData(Gl_data_names )const
 {
   computeElements();
+  priv->are_buffers_filled = true;
 }
 
 

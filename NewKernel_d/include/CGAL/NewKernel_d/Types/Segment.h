@@ -34,16 +34,9 @@ template <class R_> class Segment {
 	Data_ data;
 	public:
 	//typedef Segmentd<R_> Segment;
-#ifdef CGAL_CXX11
 	//FIXME: don't forward directly, piecewise_construct should call the point construction functor (I guess? or is it unnecessary?)
 	template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Segment>>::value>::type>
 	Segment(U&&...u):data(std::forward<U>(u)...){}
-#else
-	Segment(){}
-	Segment(Point_ const&a, Point_ const&b): data(a,b) {}
-	//template<class A,class T1,class T2>
-	  //Segment(A const&,T1 const&t1,T2 const&t2)
-#endif
 	Point_ source()const{return data.first;}
 	Point_ target()const{return data.second;}
 	Point_ operator[](int i)const{
@@ -110,13 +103,11 @@ template<class R_> struct Segment_extremity {
 		CGAL_assertion(i==1);
 		return s.target();
 	}
-#ifdef CGAL_CXX11
 	result_type operator()(Segment &&s, int i)const{
 		if(i==0) return std::move(s.source());
 		CGAL_assertion(i==1);
 		return std::move(s.target());
 	}
-#endif
 };
 } // CartesianDKernelFunctors
 
