@@ -1302,13 +1302,11 @@ bool remove_degenerate_faces(const FaceRange& face_range,
 
     for(vertex_descriptor vd : vertices_to_remove)
     {
-      halfedge_descriptor hd=halfedge(vd, tmesh);
-      for(halfedge_descriptor hd2 : halfedges_around_target(hd, tmesh))
-        if (!is_border(hd2, tmesh))
-          degenerate_face_set.erase( face(hd2, tmesh) );
+      for(halfedge_descriptor hd2 : halfedges_around_target(vd, tmesh))
+        degenerate_face_set.erase( face(hd2, tmesh) );
 
       // remove the central vertex and check if the new face is degenerated
-      hd=CGAL::Euler::remove_center_vertex(hd, tmesh);
+      halfedge_descriptor hd = CGAL::Euler::remove_center_vertex(halfedge(vd, tmesh), tmesh);
       if (is_degenerate_triangle_face(face(hd, tmesh), tmesh, np))
       {
         degenerate_face_set.insert( face(hd, tmesh) );
