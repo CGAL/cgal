@@ -238,7 +238,7 @@ protected:
     return rHandled;
   }
 
-private:
+public:
   Circular_curve const* ongoing_piece() const
   { return (mOngoingPieceCtr.size() == 1) ? &mOngoingPieceCtr[0] : NULL; }
 
@@ -395,7 +395,7 @@ private:
     //cout<<"generated circular polygon"<<endl;
   }
 
-private:
+public:
   QGraphicsScene* mScene;
   GI* mCircularGI;
   GI* mOngoingPieceGI;
