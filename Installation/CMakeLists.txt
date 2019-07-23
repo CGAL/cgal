@@ -1084,7 +1084,9 @@ ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} \
 ${CGAL_DEFINITIONS}"
       )
     message("COMPILATION OPTIONS ARE :  ${compile_options}")
-
+    if(CGAL_HEADER_ONLY)
+      set(compile_options "${compile_options} -DCGAL_HEADER_ONLY=1")
+    endif()
     if(NOT RS_FOUND AND NOT RS3_FOUND)
       set(compile_options "${compile_options} \
 -DCGAL_ALGEBRAIC_KERNEL_RS_GMPZ_D_1=1 \

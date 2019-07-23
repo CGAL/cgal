@@ -23,7 +23,10 @@ set(list_of_whitelisted_headers_txt [=[
   CGAL/Three/Scene_item.h
   CGAL/Three/Scene_transparent_interface.h
   CGAL/Three/Viewer_config.h
-
-]=])
+  CGAL/Three/Edge_container.h
+  CGAL/Three/Point_container.h
+  CGAL/Three/Primitive_container.h
+  CGAL/Three/Triangle_container.h
+  ]=])
 
 separate_arguments(list_of_whitelisted_headers UNIX_COMMAND ${list_of_whitelisted_headers_txt})
