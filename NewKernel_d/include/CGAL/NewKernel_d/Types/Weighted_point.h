@@ -187,12 +187,12 @@ template <class R_> struct Power_center : Store_kernel<R_> {
       // Write the point coordinates in lines.
       int i;
       for(i=0; ++f!=e; ++i) {
-	WPoint const& wp=*f;
-	Point const& p=pdw(wp);
-	for(int j=0;j<d;++j) {
-	  m(i,j)=2*(c(p,j)-c(p0,j));
-	}
-	b[i] = sdo(p) - pw(wp) - n0;
+        WPoint const& wp=*f;
+        Point const& p=pdw(wp);
+        for(int j=0;j<d;++j) {
+          m(i,j)=2*(c(p,j)-c(p0,j));
+        }
+        b[i] = sdo(p) - pw(wp) - n0;
       }
       CGAL_assertion (i == d);
       Vec res = typename CVec::Dimension()(d);;
@@ -227,12 +227,12 @@ template <class R_> struct Power_center : Store_kernel<R_> {
       Vec l(k);
       int j,i=0;
       for(Iter f2=f; f2!=e; ++f2,++i){
-	WPoint const& wp = *f2;
-	Point const& p = pdw(wp);
+        WPoint const& wp = *f2;
+        Point const& p = pdw(wp);
         b(i) = m(i,i) = sdo(p) - pw(wp);
         j=0;
         for(Iter f3=f; f3!=e; ++f3,++j){
-	  // FIXME: scalar product of points ???
+          // FIXME: scalar product of points ???
           m(j,i) = m(i,j) = sp(pdw(*f2),pdw(*f3));
         }
       }
@@ -272,7 +272,7 @@ template<class R_> struct Power_side_of_bounded_power_circumsphere : private Sto
           typename Get_functor<R_, Power_center_tag>::type pc(this->kernel());
           typename Get_functor<R_, Power_distance_tag>::type pd(this->kernel());
 
-	  // ON_UNBOUNDED_SIDE = -1
+          // ON_UNBOUNDED_SIDE = -1
           return enum_cast<Bounded_side>(-CGAL::sign(pd(pc(f, e), p0)));
         }
 };
