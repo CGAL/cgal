@@ -490,19 +490,19 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
    \tparam InputGraph a model of `Graph`
 
    \tparam EdgeWeightMap a model of `ReadablePropertyMap` with
-   `boost::graph_traits<Graph>::%edge_descriptor` as key and `double`
+   `boost::graph_traits<InputGraph>::%edge_descriptor` as key and `double`
    as value.
 
    \tparam VertexIndexMap a model of `ReadablePropertyMap` with
-   `boost::graph_traits<Graph>::%vertex_descriptor` as key and
+   `boost::graph_traits<InputGraph>::%vertex_descriptor` as key and
    `std::size_t` as value.
 
    \tparam VertexLabelCostMap a model of `ReadablePropertyMap`
-   with `boost::graph_traits<Graph>::%vertex_descriptor` as key and
+   with `boost::graph_traits<InputGraph>::%vertex_descriptor` as key and
    `std::vector<double>` as value.
 
    \tparam VertexLabelMap a model of `ReadWritePropertyMap` with 
-   `boost::graph_traits<Graph>::%vertex_descriptor` as key and
+   `boost::graph_traits<InputGraph>::%vertex_descriptor` as key and
    `std::size_t` as value.
 
    \tparam AlphaExpansionImplementationTag optional tag used to select
@@ -513,11 +513,10 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
    - `CGAL::Alpha_expansion_boost_compressed_sparse_row_tag`
    - `CGAL::Alpha_expansion_MaxFlow_tag`
 
-   \note The `MaxFlow` implementation is provided separately under a
-   GPL license (whereas the rest of the package including this
-   function is under LGPL). The header
-   `<CGAL/boost/graph/alpha_shape_graphcut_maxflow_gpl.h>` should be
-   included if users want to use this implementation.
+   \note The `MaxFlow` implementation is provided by the \ref PkgSurfaceMeshSegmentationRef
+   under GPL license. The header
+   `<CGAL/boost/graph/alpha_shape_graphcut_maxflow.h>`
+   should be included if users want to use this implementation.
 
    \param input_graph the input graph.
 

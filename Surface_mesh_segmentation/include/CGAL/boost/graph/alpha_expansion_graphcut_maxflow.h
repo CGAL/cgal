@@ -1,4 +1,4 @@
-#ifndef CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_MAXFLOW_GPL_H
+#ifndef CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_MAXFLOW_H
 // Copyright (c) 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -19,7 +19,11 @@
 //
 // Author(s)     : Ilker O. Yaz, Simon Giraudot
 
-#define CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_MAXFLOW_GPL_H
+#define CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_MAXFLOW_H
+
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
+/// \cond SKIP_IN_MANUAL
 
 #include <CGAL/boost/graph/alpha_expansion_graphcut.h>
 
@@ -94,4 +98,6 @@ public:
 
 }//namespace CGAL
 
-#endif //CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_MAXFLOW_GPL_H
+/// \endcond
+
+#endif //CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_MAXFLOW_H

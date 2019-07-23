@@ -676,7 +676,9 @@ using one of the following tags:
 
 - `CGAL::Alpha_expansion_boost_adjacency_list_tag` (default)
 - `CGAL::Alpha_expansion_boost_compressed_sparse_raw_tag`
-- `CGAL::Alpha_expansion_boost_MaxFlow_tag`
+- `CGAL::Alpha_expansion_boost_MaxFlow_tag`, released under GPL
+  license and provided by the \ref PkgSurfaceMeshSegmentationRef
+  package
 
 All these implementation produce the exact same result but behave
 differently in terms of timing and memory (see
