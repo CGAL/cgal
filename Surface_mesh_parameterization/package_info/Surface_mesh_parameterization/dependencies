@@ -3,6 +3,7 @@ BGL
 Box_intersection_d
 Circulator
 Distance_2
+Distance_3
 Filtered_kernel
 Hash_map
 Installation
@@ -24,4 +25,3 @@ Stream_support
 Surface_mesh_parameterization
 TDS_2
 Triangulation_2
-Distance_3
