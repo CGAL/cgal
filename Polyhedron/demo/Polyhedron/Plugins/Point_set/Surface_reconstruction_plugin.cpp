@@ -28,9 +28,11 @@ SMesh* advancing_front (const Point_set& points,
                         double longest_edge,
                         double radius_ratio_bound,
                         double beta,
-                        bool structuring);
+                        bool structuring,
+                        double sampling);
 
 SMesh* poisson_reconstruct (Point_set& points,
+                            bool marching_tets,
                             Kernel::FT sm_angle, // Min triangle angle (degrees).
                             Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
                             Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
@@ -66,13 +68,13 @@ public:
   void disable_poisson()
   {
     tabWidget->setTabEnabled(1, false);
-    tabWidget->setTabText(1, QString("Poisson (requires oriented normals)"));
+    tabWidget->setTabToolTip(1, QString("Poisson requires oriented normal, please estimate normals first"));
   }
 
-  void enable_structuring()
+  void disable_structuring()
   {
-    m_use_structuring->setEnabled(true);
-    m_use_structuring->setText(QString("Use Point Set Structuring"));
+    m_use_structuring->setEnabled(false);
+    m_use_structuring->setToolTip(QString("Point Set Structuring requires detected planes, please detect shapes first"));
   }
   
   // Advancing front
@@ -80,6 +82,7 @@ public:
   double radius_ratio_bound () const { return m_radiusRatioBound->value (); }
   double beta_angle () const { return m_betaAngle->value (); }
   bool structuring() const { return m_use_structuring->isChecked(); }
+  double sampling () const { return m_sampling->value (); }
 
   // Scale Space
   bool scalespace_js() const { return m_scalespace_jet->isChecked(); }
@@ -98,6 +101,7 @@ public:
   bool force_manifold () const { return m_forceManifold->isChecked (); }
 
   // Poisson
+  bool marching_tets() const { return m_marching_tets->isChecked(); }
   double angle () const { return m_inputAngle->value (); }
   double radius () const { return m_inputRadius->value (); }
   double distance () const { return m_inputDistance->value (); }
@@ -162,8 +166,8 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
 
       if (!pts_item->point_set()->has_normal_map())
         dialog.disable_poisson();
-      if (pts_item->point_set()->has_property_map<int> ("shape"))
-        dialog.enable_structuring();
+      if (!pts_item->point_set()->has_property_map<int> ("shape"))
+        dialog.disable_structuring();
       
       if(!dialog.exec())
         return;
@@ -212,7 +216,8 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
                                      dialog.longest_edge(),
                                      dialog.radius_ratio_bound(),
                                      CGAL_PI * dialog.beta_angle() / 180.,
-                                     dialog.structuring());
+                                     dialog.structuring(),
+                                     dialog.sampling());
       if (mesh)
       {
         // Add polyhedron to scene
@@ -321,6 +326,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
       Point_set* points = point_set_item->point_set();
       if(!points) return;
 
+      bool marching_tets = dialog.marching_tets();
       const double sm_angle     = dialog.angle ();
       const double sm_radius    = dialog.radius ();
       const double sm_distance  = dialog.distance ();
@@ -331,14 +337,15 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       // Reconstruct point set as a polyhedron
-      SMesh* mesh = poisson_reconstruct (*points, sm_angle, sm_radius, sm_distance,
+      SMesh* mesh = poisson_reconstruct (*points, marching_tets,
+                                         sm_angle, sm_radius, sm_distance,
                                          conjugate_gradient, use_two_passes,
                                          do_not_fill_holes);
       if (mesh)
       {
         // Add polyhedron to scene
         Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(mesh);
-        new_item->setName(tr("%1 Poisson").arg(point_set_item->name()));
+        new_item->setName(tr("%1 (poisson)").arg(point_set_item->name()));
         new_item->setColor(Qt::lightGray);
         scene->addItem(new_item);
 

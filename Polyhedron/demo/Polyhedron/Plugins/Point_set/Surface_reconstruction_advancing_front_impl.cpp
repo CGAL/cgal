@@ -144,6 +144,7 @@ void get_planes_from_shape_map (const Point_set& points,
 
   std::size_t nb_planes = shape_map[sorted_indices.back()] + 1;
   planes.reserve (nb_planes);
+  std::cerr << nb_planes << " found in the shape map" << std::endl;
 
   std::vector<Point_set::Index>::iterator begin = sorted_indices.end();
   int plane_idx = shape_map[sorted_indices.front()];
@@ -184,7 +185,8 @@ SMesh* advancing_front (const Point_set& points,
                         double longest_edge,
                         double radius_ratio_bound,
                         double beta,
-                        bool structuring)
+                        bool structuring,
+                        double sampling)
 {
   SMesh* mesh = new SMesh;
 
@@ -199,7 +201,7 @@ SMesh* advancing_front (const Point_set& points,
     get_planes_from_shape_map (points, shape_map, planes);
     Structuring structuring
       (points, planes,
-       longest_edge,
+       sampling,
        points.parameters().
        plane_map(CGAL::Identity_property_map<Plane_3>()).
        plane_index_map(shape_map));
@@ -208,12 +210,13 @@ SMesh* advancing_front (const Point_set& points,
     structured.reserve (structuring.size());
     for (std::size_t i = 0; i < structuring.size(); ++ i)
       structured.push_back (structuring.point(i));
+    std::cerr << structured.size() << " structured point(s) generated" << std::endl;
     
     Priority_with_structure_coherence<Structuring> priority
-      (structuring, longest_edge);
+      (structuring, 10. * sampling);
     Construct construct(*mesh, structured);
-    CGAL::advancing_front_surface_reconstruction(points.points().begin(),
-                                                 points.points().end(),
+    CGAL::advancing_front_surface_reconstruction(structured.begin(),
+                                                 structured.end(),
                                                  construct,
                                                  priority,
                                                  radius_ratio_bound,
