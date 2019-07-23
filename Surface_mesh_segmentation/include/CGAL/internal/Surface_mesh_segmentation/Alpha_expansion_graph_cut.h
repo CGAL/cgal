@@ -809,5 +809,52 @@ public:
 #endif //CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 }//namespace internal
 /// @endcond
+
+struct Alpha_expansion_boost_adjacency_list { };
+struct Alpha_expansion_boost_compressed_sparse_row { };
+struct Alpha_expansion_MaxFlow { };
+  
+
+template <typename InputGraph,
+          typename Edge_weight_map,
+          typename Vertex_index_map,
+          typename Vertex_label_map,
+          typename Vertex_label_probability_map,
+          typename AlphaExpansionImplementation>
+double alpha_expansion_graph_cut (const InputGraph& input_graph,
+                                  Edge_weight_map edge_weight_map,
+                                  Vertex_index_map vertex_index_map,
+                                  Vertex_label_map vertex_label_map,
+                                  Vertex_label_probability_map vertex_label_probability_map,
+                                  const AlphaExpansionImplementation& = AlphaExpansionImplementation())
+{
+  if (std::is_same<AlphaExpansionImplementation,  Alpha_expansion_boost_adjacency_list>::value)
+    return internal::Alpha_expansion_graph_cut_boost()(input_graph,
+                                                       edge_weight_map,
+                                                       vertex_index_map,
+                                                       vertex_label_map,
+                                                       vertex_label_probability_map);
+}
+
+template <typename InputGraph,
+          typename Edge_weight_map,
+          typename Vertex_index_map,
+          typename Vertex_label_map,
+          typename Vertex_label_probability_map>
+double alpha_expansion_graph_cut (const InputGraph& input_graph,
+                                  Edge_weight_map edge_weight_map,
+                                  Vertex_index_map vertex_index_map,
+                                  Vertex_label_map vertex_label_map,
+                                  Vertex_label_probability_map vertex_label_probability_map)
+{
+  return alpha_expansion_graph_cut<InputGraph,
+                                   Edge_weight_map,
+                                   Vertex_index_map,
+                                   Vertex_label_map,
+                                   Vertex_label_probability_map,
+                                   Alpha_expansion_boost_adjacency_list>
+    (input_graph, edge_weight_map, vertex_index_map, vertex_label_map, vertex_label_probability_map);
+}
+
 }//namespace CGAL
 #endif //CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
