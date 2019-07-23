@@ -710,6 +710,7 @@ user might encounter.
 \cgalCRPSection{Partitioning Methods}
 - `CGAL::METIS::partition_graph()`
 - `CGAL::METIS::partition_dual_graph()`
+- `CGAL::alpha_expansion_graphcut()`
 
 \cgalCRPSection{I/O Functions}
 - \link PkgBGLIOFct CGAL::read_off() \endlink

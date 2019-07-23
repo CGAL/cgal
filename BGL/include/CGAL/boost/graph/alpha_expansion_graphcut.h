@@ -1,4 +1,4 @@
-#ifndef CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
+#ifndef CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_H
 // Copyright (c) 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -15,32 +15,13 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0+
 //
-// Author(s)     : Ilker O. Yaz
+// Author(s)     : Ilker O. Yaz, Simon Giraudot
 
-#define CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
+#define CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_H
 
-#include <CGAL/license/Surface_mesh_segmentation.h>
-
-
-/// @cond CGAL_DOCUMENT_INTERNAL
-
-/**
- * @file Alpha_expansion_graph_cut.h
- * @brief This file contains 3 graph-cut algorithms, which can be used as a template parameter for CGAL::internal::Surface_mesh_segmentation.
- *
- * Main differences between implementations are underlying max-flow algorithm and graph type (i.e. results are the same, performance differs).
- *
- * By default, we use MAXFLOW and the class Alpha_expansion_graph_cut_boykov_kolmogorov.
- * For deactivating MAXFLOW software and using boost implementation instead, define CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE.
- * It deactivates Alpha_expansion_graph_cut_boykov_kolmogorov, activate boost versions
- * and makes CGAL::internal::Surface_mesh_segmentation using Alpha_expansion_graph_cut_boost
- * as default implementation for the graph-cut.
- *
- * Also algorithms can be used by their-own for applying alpha-expansion graph-cut on any graph.
- *
- */
+#include <CGAL/Iterator_range.h>
 #include <CGAL/assertions.h>
 #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
 #include <CGAL/Timer.h>
@@ -50,13 +31,6 @@
 #include <CGAL/boost/graph/named_function_params.h>
 
 #include <boost/version.hpp>
-
-#ifndef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
-namespace MaxFlow
-{
-#include <CGAL/internal/auxiliary/graph.h>
-}
-#endif
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/compressed_sparse_row_graph.hpp>
@@ -74,6 +48,8 @@ namespace MaxFlow
 
 namespace CGAL
 {
+
+/// \cond SKIP_IN_MANUAL
 namespace internal
 {
 
@@ -91,25 +67,25 @@ struct Alpha_expansion_old_API_wrapper_graph
   typedef CGAL::Identity_property_map<std::size_t> Vertex_index_map;
   typedef CGAL::Pointer_property_map<std::size_t>::type Vertex_label_map;
 
-  struct Vertex_label_probability_map
+  struct Vertex_label_cost_map
   {
     typedef std::size_t key_type;
     typedef std::vector<double> value_type;
     typedef value_type reference;
     typedef boost::readable_property_map_tag category;
       
-    const std::vector<std::vector<double> >* probability_matrix;
+    const std::vector<std::vector<double> >* cost_matrix;
 
-    Vertex_label_probability_map (const std::vector<std::vector<double> >* probability_matrix)
-      : probability_matrix (probability_matrix)
+    Vertex_label_cost_map (const std::vector<std::vector<double> >* cost_matrix)
+      : cost_matrix (cost_matrix)
     { }
 
-    friend reference get (const Vertex_label_probability_map& pmap, key_type idx)
+    friend reference get (const Vertex_label_cost_map& pmap, key_type idx)
     {
       std::vector<double> out;
-      out.reserve (pmap.probability_matrix->size());
-      for (std::size_t i = 0; i < pmap.probability_matrix->size(); ++ i)
-        out.push_back ((*pmap.probability_matrix)[i][idx]);
+      out.reserve (pmap.cost_matrix->size());
+      for (std::size_t i = 0; i < pmap.cost_matrix->size(); ++ i)
+        out.push_back ((*pmap.cost_matrix)[i][idx]);
       return out;
     }
 
@@ -119,14 +95,14 @@ struct Alpha_expansion_old_API_wrapper_graph
     
   const std::vector<std::pair<std::size_t, std::size_t> >& edges;
   const std::vector<double>& edge_weights;
-  const std::vector<std::vector<double> >& probability_matrix;
+  const std::vector<std::vector<double> >& cost_matrix;
   std::vector<std::size_t>& labels;
 
   Alpha_expansion_old_API_wrapper_graph (const std::vector<std::pair<std::size_t, std::size_t> >& edges,
                                          const std::vector<double>& edge_weights,
-                                         const std::vector<std::vector<double> >& probability_matrix,
+                                         const std::vector<std::vector<double> >& cost_matrix,
                                          std::vector<std::size_t>& labels)
-    : edges (edges), edge_weights (edge_weights), probability_matrix (probability_matrix), labels (labels)
+    : edges (edges), edge_weights (edge_weights), cost_matrix (cost_matrix), labels (labels)
   { }
 
   friend counting_range vertices (const Alpha_expansion_old_API_wrapper_graph& graph)
@@ -150,8 +126,8 @@ struct Alpha_expansion_old_API_wrapper_graph
 
   Vertex_index_map vertex_index_map() const { return Vertex_index_map(); }
   Vertex_label_map vertex_label_map() { return CGAL::make_property_map(labels); }
-  Vertex_label_probability_map vertex_label_probability_map() const
-  { return Vertex_label_probability_map(&probability_matrix); }
+  Vertex_label_cost_map vertex_label_cost_map() const
+  { return Vertex_label_cost_map(&cost_matrix); }
   Edge_weight_map edge_weight_map() const { return CGAL::make_property_map(edge_weights); }
 };
 
@@ -206,7 +182,7 @@ struct Alpha_expansion_old_API_wrapper_graph
  * For representing graph, it uses adjacency_list with OutEdgeList = vecS, VertexList = listS.
  * Also no pre-allocation is made for vertex-list.
  */
-class Alpha_expansion_boost_adjacency_list
+class Alpha_expansion_boost_adjacency_list_tag
 {
 private:
   typedef boost::adjacency_list_traits<boost::vecS, boost::listS, boost::directedS>
@@ -295,15 +271,6 @@ public:
       put (vertex_label_map, vd, alpha);
   }
   
-  /**
-   * Adds two directional edges between @a v1 and @a v2
-   * @param v1 first vertex
-   * @param v2 second vertex
-   * @param w1 weight for edge from v1 to v2 (v1->v2)
-   * @param w2 weight for edge from v2 to v1 (v2->v1)
-   * @param graph to be added
-   * @return pair of added edges, first: v1->v2 and second: v2->v1
-   */
   void add_edge (Vertex_descriptor& v1, Vertex_descriptor& v2, double w1, double w2)
   {
     Edge_descriptor v1_v2, v2_v1;
@@ -327,7 +294,7 @@ public:
 // another implementation using compressed_sparse_row_graph
 // for now there is a performance problem while setting reverse edges
 // if that can be solved, it is faster than Alpha_expansion_graph_cut_boost
-class Alpha_expansion_boost_compressed_sparse_row
+class Alpha_expansion_boost_compressed_sparse_row_tag
 {
 private:
   // CSR only accepts bundled props
@@ -475,97 +442,122 @@ public:
 
 };
 
-#ifndef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
-/**
- * @brief Implements alpha-expansion graph cut algorithm.
- *
- * For underlying max-flow algorithm, it uses the MAXFLOW software implemented by Boykov & Kolmogorov.
- *  Also no pre-allocation is made.
- */
-class Alpha_expansion_MaxFlow
-{
-public:
-
-  typedef MaxFlow::Graph::node_id Vertex_descriptor;
-  
-private:
-  
-  MaxFlow::Graph graph;
-
-public:
-
-  void clear_graph()
-  {
-    graph = MaxFlow::Graph();
-  }
-
-  Vertex_descriptor add_vertex()
-  {
-    return graph.add_node();
-  }
-
-  void add_tweight (Vertex_descriptor& v, double w1, double w2)
-  {
-    graph.add_tweights(v, w1, w2);
-  }
-
-  void init_vertices()
-  {
-  }
-
-  double max_flow()
-  {
-    return graph.maxflow();
-  }
-
-  template <typename VertexLabelMap, typename InputVertexDescriptor>
-  void update(VertexLabelMap vertex_label_map,
-              const std::vector<Vertex_descriptor>& inserted_vertices,
-              InputVertexDescriptor vd,
-              std::size_t vertex_i,
-              std::size_t alpha)
-  {
-    if(get(vertex_label_map, vd) != alpha
-       && graph.what_segment(inserted_vertices[vertex_i]) == MaxFlow::Graph::SINK)
-      put(vertex_label_map, vd, alpha);
-  }
-  
-  /**
-   * Adds two directional edges between @a v1 and @a v2
-   * @param v1 first vertex
-   * @param v2 second vertex
-   * @param w1 weight for edge from v1 to v2 (v1->v2)
-   * @param w2 weight for edge from v2 to v1 (v2->v1)
-   * @param graph to be added
-   * @return pair of added edges, first: v1->v2 and second: v2->v1
-   */
-  void add_edge (Vertex_descriptor& v1, Vertex_descriptor& v2, double w1, double w2)
-  {
-    graph.add_edge(v1, v2, w1, w2);
-  }
-};
-#endif //CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
-/// @endcond
-
+// Default version using boost adjacency list
 template <typename InputGraph,
-          typename Edge_weight_map,
-          typename Vertex_index_map,
-          typename Vertex_label_map,
-          typename Vertex_label_probability_map,
-          typename AlphaExpansionImplementation>
-double alpha_expansion_graph_cut (const InputGraph& input_graph,
-                                  Edge_weight_map edge_weight_map,
-                                  Vertex_index_map vertex_index_map,
-                                  Vertex_label_map vertex_label_map,
-                                  Vertex_label_probability_map vertex_label_probability_map,
-                                  AlphaExpansionImplementation alpha_expansion = AlphaExpansionImplementation())
+          typename EdgeWeightMap,
+          typename VertexIndexMap,
+          typename VertexLabelCostMap,
+          typename VertexLabelMap>
+double alpha_expansion_graphcut (const InputGraph& input_graph,
+                                 EdgeWeightMap edge_weight_map,
+                                 VertexIndexMap vertex_index_map,
+                                 VertexLabelCostMap vertex_label_cost_map,
+                                 VertexLabelMap vertex_label_map)
+{
+  return alpha_expansion_graphcut
+    (input_graph, edge_weight_map, vertex_index_map, vertex_label_cost_map, vertex_label_map,
+     Alpha_expansion_boost_adjacency_list_tag());
+}
+
+/// \endcond
+
+// NOTE: latest performances check (2019-07-22)
+//
+// Using a random graph with 50000 vertices, 100000 edges and 30 labels:
+//
+// METHOD                 TIMING           MEMORY
+// Boost Adjacency list   49s              122MiB
+// Boost CSR              187s             77MiB
+// MaxFlow                12s              717MiB
+
+/**
+   \ingroup PkgBGLPartition
+
+   Regularizes a partition of a graph into `n` labels using the Alpha
+   Expansion algorithm \cgalCite{Boykov2001FastApproximate}.
+
+   For a graph \f$(V,E)\f$, this function seeks for the partioning `f`
+   that minimizes the following energy:
+
+   \f[
+   \mathrm{E}(f) = \sum_{\{v0,v1\} \in E} W(v0,v1) + \sum_{v \in V} C(f_v)
+   \f]
+
+   where \f$W(v0,v1)\f$ is the weight associated to the edge
+   \f$\{v0,v1\}\f$ and \f$C(f_v)\f$ is the cost of assigning the
+   vertex \f$v\f$ to the labeling \f$f\f$.
+
+   \tparam InputGraph a model of `Graph`
+
+   \tparam EdgeWeightMap a model of `ReadablePropertyMap` with
+   `boost::graph_traits<Graph>::%edge_descriptor` as key and `double`
+   as value.
+
+   \tparam VertexIndexMap a model of `ReadablePropertyMap` with
+   `boost::graph_traits<Graph>::%vertex_descriptor` as key and
+   `std::size_t` as value.
+
+   \tparam VertexLabelCostMap a model of `ReadablePropertyMap`
+   with `boost::graph_traits<Graph>::%vertex_descriptor` as key and
+   `std::vector<double>` as value.
+
+   \tparam VertexLabelMap a model of `ReadWritePropertyMap` with 
+   `boost::graph_traits<Graph>::%vertex_descriptor` as key and
+   `std::size_t` as value.
+
+   \tparam AlphaExpansionImplementationTag optional tag used to select
+   which implementation of the Alpha Expansion should be
+   used. Available implementation tags are:
+
+   - `CGAL::Alpha_expansion_boost_adjacency_list` (default)
+   - `CGAL::Alpha_expansion_boost_compressed_sparse_row_tag`
+   - `CGAL::Alpha_expansion_MaxFlow_tag`
+
+   \note The `MaxFlow` implementation is provided separately under a
+   GPL license (whereas the rest of the package including this
+   function is under LGPL). The header
+   `<CGAL/boost/graph/alpha_shape_graphcut_maxflow_gpl.h>` should be
+   included if users want to use this implementation.
+
+   \param input_graph the input graph.
+
+   \param edge_weight_map a property map providing the weight of each
+   edge.
+
+   \param vertex_index_map a property map providing the index of each
+   vertex.
+
+   \param vertex_label_map a property map providing the label of each
+   vertex. This map will be updated by the algorithm with the
+   regularized version of the partitioning.
+
+   \param vertex_label_cost_map a property_map providing, for each
+   vertex, an `std::vector` containing the cost of this vertex to
+   belong to each label. For example,
+   `get(vertex_label_cost_map, vd)[label_idx]` returns the cost
+   of vertex `vd` to belong to the label `label_idx`.
+*/
+template <typename InputGraph,
+          typename EdgeWeightMap,
+          typename VertexIndexMap,
+          typename VertexLabelCostMap,
+          typename VertexLabelMap,
+          typename AlphaExpansionImplementationTag>
+double alpha_expansion_graphcut (const InputGraph& input_graph,
+                                 EdgeWeightMap edge_weight_map,
+                                 VertexIndexMap vertex_index_map,
+                                 VertexLabelCostMap vertex_label_cost_map,
+                                 VertexLabelMap vertex_label_map,
+                                 const AlphaExpansionImplementationTag&)
 {
   typedef boost::graph_traits<InputGraph> GT;
   typedef typename GT::edge_descriptor input_edge_descriptor;
   typedef typename GT::vertex_descriptor input_vertex_descriptor;
 
-  typedef AlphaExpansionImplementation Alpha_expansion;
+  typedef AlphaExpansionImplementationTag Alpha_expansion;
   typedef typename Alpha_expansion::Vertex_descriptor Vertex_descriptor;
+
+  Alpha_expansion alpha_expansion;
 
   // TODO: check this hardcoded parameter
   const double tolerance = 1e-10;
@@ -580,7 +572,7 @@ double alpha_expansion_graph_cut (const InputGraph& input_graph,
   std::vector<Vertex_descriptor> inserted_vertices;
   inserted_vertices.resize(num_vertices (input_graph));
 
-  std::size_t number_of_labels = get(vertex_label_probability_map, *std::begin(vertices(input_graph))).size();
+  std::size_t number_of_labels = get(vertex_label_cost_map, *std::begin(vertices(input_graph))).size();
 
   bool success;
   do {
@@ -602,12 +594,12 @@ double alpha_expansion_graph_cut (const InputGraph& input_graph,
         std::size_t vertex_i = get(vertex_index_map, vd);
         Vertex_descriptor new_vertex = alpha_expansion.add_vertex();
         inserted_vertices[vertex_i] = new_vertex;
-        double source_weight = get(vertex_label_probability_map, vd)[alpha];
+        double source_weight = get(vertex_label_cost_map, vd)[alpha];
         // since it is expansion move, current alpha labeled vertices will be assigned to alpha again,
         // making sink_weight 'infinity' guarantee this.
         double sink_weight = (get(vertex_label_map, vd) == alpha ?
                               (std::numeric_limits<double>::max)()
-                              : get(vertex_label_probability_map, vd)[get(vertex_label_map, vd)]);
+                              : get(vertex_label_cost_map, vd)[get(vertex_label_map, vd)]);
 
         alpha_expansion.add_tweight(new_vertex, source_weight, sink_weight);
       }
@@ -686,40 +678,41 @@ double alpha_expansion_graph_cut (const InputGraph& input_graph,
   return min_cut;
 }
 
-template <typename InputGraph,
-          typename Edge_weight_map,
-          typename Vertex_index_map,
-          typename Vertex_label_map,
-          typename Vertex_label_probability_map>
-double alpha_expansion_graph_cut (const InputGraph& input_graph,
-                                  Edge_weight_map edge_weight_map,
-                                  Vertex_index_map vertex_index_map,
-                                  Vertex_label_map vertex_label_map,
-                                  Vertex_label_probability_map vertex_label_probability_map)
+
+/// \cond SKIP_IN_MANUAL
+// Old API
+inline double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t, std::size_t> >& edges,
+                                        const std::vector<double>& edge_weights,
+                                        const std::vector<std::vector<double> >& cost_matrix,
+                                        std::vector<std::size_t>& labels)
 {
-  return alpha_expansion_graph_cut<InputGraph,
-                                   Edge_weight_map,
-                                   Vertex_index_map,
-                                   Vertex_label_map,
-                                   Vertex_label_probability_map,
-                                   Alpha_expansion_boost_adjacency_list>
-    (input_graph, edge_weight_map, vertex_index_map, vertex_label_map, vertex_label_probability_map);
+  internal::Alpha_expansion_old_API_wrapper_graph graph (edges, edge_weights, cost_matrix, labels);
+  
+  return alpha_expansion_graphcut(graph,
+                                  graph.edge_weight_map(),
+                                  graph.vertex_index_map(),
+                                  graph.vertex_label_cost_map(),
+                                  graph.vertex_label_map());
 }
 
-// Old API
-inline double alpha_expansion_graph_cut (const std::vector<std::pair<std::size_t, std::size_t> >& edges,
-                                         const std::vector<double>& edge_weights,
-                                         const std::vector<std::vector<double> >& probability_matrix,
-                                         std::vector<std::size_t>& labels)
+template <typename AlphaExpansionImplementationTag>
+double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t, std::size_t> >& edges,
+                                 const std::vector<double>& edge_weights,
+                                 const std::vector<std::vector<double> >& cost_matrix,
+                                 std::vector<std::size_t>& labels,
+                                 const AlphaExpansionImplementationTag&)
 {
-  internal::Alpha_expansion_old_API_wrapper_graph graph (edges, edge_weights, probability_matrix, labels);
+  internal::Alpha_expansion_old_API_wrapper_graph graph (edges, edge_weights, cost_matrix, labels);
   
-  return alpha_expansion_graph_cut(graph,
-                                   graph.edge_weight_map(),
-                                   graph.vertex_index_map(),
-                                   graph.vertex_label_map(),
-                                   graph.vertex_label_probability_map());
+  return alpha_expansion_graphcut(graph,
+                                  graph.edge_weight_map(),
+                                  graph.vertex_index_map(),
+                                  graph.vertex_label_cost_map(),
+                                  graph.vertex_label_map(),
+                                  AlphaExpansionImplementationTag());
 }
+/// \endcond
+
 
 }//namespace CGAL
-#endif //CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
+#endif //CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_H
