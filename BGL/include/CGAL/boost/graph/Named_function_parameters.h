@@ -204,8 +204,7 @@ get_parameter(const Named_function_parameters<T, Tag, Base>& np, Query_tag tag)
 }
 
 template <typename D>
-const D&
-choose_parameter(const internal_np::Param_not_found&, const D& d)
+D choose_parameter(const internal_np::Param_not_found&, const D& d)
 {
   return d;
 }
