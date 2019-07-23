@@ -1185,10 +1185,12 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
   file(GLOB example_files RELATIVE "${CMAKE_SOURCE_DIR}/" "${CMAKE_SOURCE_DIR}/*/examples/*/*.cpp")
   find_program(AWK awk)
-  set(awk_arguments [=[{ match($0, /# *include *(&lt;|[<"])(CGAL\/[^>&"]*)([>"]|&gt;)/,arr); if(arr[2]!="") print arr[2] }]=])
   message("listing headers from html files")
   foreach(f ${html_files})
-    execute_process(COMMAND "${AWK}" "${awk_arguments}" "${DOC_DIR}/doc_output/${f}"
+    execute_process(COMMAND
+        "${AWK}"
+        -f "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/documented_headers.awk"
+        "${DOC_DIR}/doc_output/${f}"
       OUTPUT_VARIABLE tmp_list)
     if (NOT "${tmp_list}" STREQUAL "")
       string(REPLACE "\n" ";" tmp_list ${tmp_list})
@@ -1197,7 +1199,10 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   endforeach()
   message("listing headers from examples files")
   foreach(f ${example_files})
-    execute_process(COMMAND "${AWK}" "${awk_arguments}" "${CMAKE_SOURCE_DIR}/${f}"
+    execute_process(COMMAND
+        "${AWK}"
+        -f "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/documented_headers.awk"
+        "${CMAKE_SOURCE_DIR}/${f}"
       OUTPUT_VARIABLE tmp_list)
     if (NOT "${tmp_list}" STREQUAL "")
       string(REPLACE "\n" ";" tmp_list ${tmp_list})
