@@ -14,9 +14,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
-#include <CGAL/Search_traits_3.h>
-#include <CGAL/squared_distance_3.h>
-#include <CGAL/compute_average_spacing.h>
+#include <CGAL/Real_timer.h>
 
 #include "ui_Surface_reconstruction_plugin.h"
 #include "CGAL/Kernel_traits.h"
@@ -51,6 +49,12 @@ void scale_space (const Point_set& points,
                   double longest_edge, double radius_ratio_bound, double beta_angle,
                   bool separate_shells, bool force_manifold);
 
+SMesh* polygonal_reconstruct (const Point_set& points,
+                              double data_fitting,
+                              double data_coverage,
+                              double model_complexity,
+                              const QString& solver_name);
+
 class Polyhedron_demo_surface_reconstruction_plugin_dialog : public QDialog, private Ui::SurfaceReconstructionDialog
 {
   Q_OBJECT
@@ -58,6 +62,18 @@ public:
   Polyhedron_demo_surface_reconstruction_plugin_dialog(QWidget* /*parent*/ = 0)
   {
     setupUi(this);
+#if !defined(CGAL_USE_GLPK) && !defined(CGAL_USE_SCIP)
+    tabWidget->removeTab(3); // If no MIP solver is available, Polygonal method is disabled
+#endif
+
+#if defined(CGAL_USE_SCIP)
+    m_solver->addItem("SCIP");
+#endif
+    
+#if defined(CGAL_USE_GLPK)
+    m_solver->addItem("GLPK");
+#endif
+
   }
 
   unsigned int method () const
@@ -68,8 +84,15 @@ public:
   void disable_poisson()
   {
     tabWidget->setTabEnabled(1, false);
-    tabWidget->setTabToolTip(1, QString("Poisson requires oriented normal, please estimate normals first"));
+    tabWidget->setTabToolTip(1, QString("Poisson requires oriented normals, please estimate normals first"));
   }
+
+  void disable_polygonal()
+  {
+    tabWidget->setTabEnabled(3, false);
+    tabWidget->setTabToolTip(3, QString("Polygonal requires normals, please estimate normals first"));
+  }
+  
 
   void disable_structuring()
   {
@@ -108,6 +131,12 @@ public:
   bool conjugate_gradient() const { return m_conjugate_gradient->isChecked(); }
   bool two_passes () const { return m_inputTwoPasses->isChecked (); }
   bool do_not_fill_holes () const { return m_doNotFillHoles->isChecked (); }
+
+  // Polygonal
+  double data_fitting() const { return m_data_fitting->value(); }
+  double data_coverage() const { return m_data_coverage->value(); }
+  double model_complexity() const { return m_model_complexity->value(); }
+  QString solver_name() const { return m_solver->currentText(); }
   
 };
 
@@ -134,6 +163,7 @@ public:
   void advancing_front_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
   void scale_space_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
   void poisson_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
+  void polygonal_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
   
   //! Applicate for Point_sets with normals.
   bool applicable(QAction*) const {
@@ -165,13 +195,21 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
       dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
 
       if (!pts_item->point_set()->has_normal_map())
+      {
         dialog.disable_poisson();
+        dialog.disable_polygonal();
+      }
       if (!pts_item->point_set()->has_property_map<int> ("shape"))
+      {
         dialog.disable_structuring();
+        dialog.disable_polygonal();
+      }
       
       if(!dialog.exec())
         return;
 
+      CGAL::Real_timer t;
+      t.start();
       unsigned int method = dialog.method ();
       switch (method)
         {
@@ -184,11 +222,14 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
         case 2:
           scale_space_reconstruction (dialog);
           break;
+        case 3:
+          polygonal_reconstruction (dialog);
+          break;
         default:
           std::cerr << "Error: unkown method." << std::endl;
           return;
         }
-      
+      std::cerr << "Reconstruction achieved in " << t.time() << "s" << std::endl;
 
     }
 }
@@ -223,7 +264,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
         // Add polyhedron to scene
         Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(mesh);
         new_item->setName(tr("%1 (advancing front)").arg(pts_item->name()));
-        new_item->setColor(Qt::lightGray);
+        new_item->setColor(Qt::darkGray);
         new_item->invalidateOpenGLBuffers();
         scene->addItem(new_item);
 
@@ -346,7 +387,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
         // Add polyhedron to scene
         Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(mesh);
         new_item->setName(tr("%1 (poisson)").arg(point_set_item->name()));
-        new_item->setColor(Qt::lightGray);
+        new_item->setColor(Qt::darkGray);
         scene->addItem(new_item);
 
         // Hide point set
@@ -356,6 +397,61 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
 
       QApplication::restoreOverrideCursor();
     }
+}
+
+void Polyhedron_demo_surface_reconstruction_plugin::polygonal_reconstruction
+(const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
+{
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Scene_points_with_normal_item* point_set_item =
+    qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+
+  if(point_set_item)
+  {
+    // Gets point set
+    Point_set* points = point_set_item->point_set();
+    if(!points) return;
+
+    double data_fitting = dialog.data_fitting();
+    double data_coverage = dialog.data_coverage();
+    double model_complexity = dialog.model_complexity();
+    QString solver_name = dialog.solver_name();
+
+    double sum = data_fitting + data_coverage + model_complexity;
+    data_fitting /= sum;
+    data_coverage /= sum;
+    model_complexity /= sum;
+
+    std::cerr << "Polygonal reconstruction using:" << std::endl
+              << " * data fitting term = " << data_fitting << std::endl
+              << " * data coverage term = " << data_coverage << std::endl
+              << " * model complexity term = " << model_complexity << std::endl
+              << " * solver = " << solver_name.toStdString() << std::endl;
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    // Reconstruct point set as a polyhedron
+    SMesh* mesh = polygonal_reconstruct (*points,
+                                         data_fitting,
+                                         data_coverage,
+                                         model_complexity,
+                                         solver_name);
+    if (mesh)
+    {
+      // Add polyhedron to scene
+      Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(mesh);
+      new_item->setName(tr("%1 (polygonal)").arg(point_set_item->name()));
+      new_item->setColor(Qt::darkGray);
+      scene->addItem(new_item);
+
+      // Hide point set
+      point_set_item->setVisible(false);
+      scene->itemChanged(index);
+    }
+
+    QApplication::restoreOverrideCursor();
+  }
 }
 
 #include "Surface_reconstruction_plugin.moc"
