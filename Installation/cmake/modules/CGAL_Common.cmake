@@ -61,5 +61,6 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   # set use-file for Eigen3 (needed to have default solvers)
   set(EIGEN3_USE_FILE "UseEigen3")
 
-
+  set(TBB_USE_FILE "UseTBB")
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_TBB.cmake)
 endif()
