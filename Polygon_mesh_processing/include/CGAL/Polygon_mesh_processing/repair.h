@@ -2889,14 +2889,13 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np)
   if (verbose)
     std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tm)? " << is_valid_polygon_mesh(tm) << "\n";
 
-  // first handle the removal of degenerate faces
-  remove_degenerate_faces(tm, np);
+  CGAL_precondition_code(std::set<face_descriptor> degenerate_face_set;)
+  CGAL_precondition_code(degenerate_faces(face_range, tmesh,
+                                          std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);)
+  CGAL_precondition(degenerate_face_set.empty());
 
   if (!preserve_genus)
     duplicate_non_manifold_vertices(tm, np);
-
-  if (verbose)
-    std::cout << "DEBUG: After degenerate faces removal, is_valid(tm)? " << is_valid_polygon_mesh(tm) << "\n";
 
   // Look for self-intersections in the polyhedron and remove them
   int step=-1;
