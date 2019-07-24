@@ -189,49 +189,49 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
 
   if(pts_item)
+  {
+    //generate the dialog box to set the options
+    Polyhedron_demo_surface_reconstruction_plugin_dialog dialog;
+    dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
+
+    if (!pts_item->point_set()->has_normal_map())
     {
-      //generate the dialog box to set the options
-      Polyhedron_demo_surface_reconstruction_plugin_dialog dialog;
-      dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
-
-      if (!pts_item->point_set()->has_normal_map())
-      {
-        dialog.disable_poisson();
-        dialog.disable_polygonal();
-      }
-      if (!pts_item->point_set()->has_property_map<int> ("shape"))
-      {
-        dialog.disable_structuring();
-        dialog.disable_polygonal();
-      }
-      
-      if(!dialog.exec())
-        return;
-
-      CGAL::Real_timer t;
-      t.start();
-      unsigned int method = dialog.method ();
-      switch (method)
-        {
-        case 0:
-          advancing_front_reconstruction (dialog);
-          break;
-        case 1:
-          poisson_reconstruction (dialog);
-          break;
-        case 2:
-          scale_space_reconstruction (dialog);
-          break;
-        case 3:
-          polygonal_reconstruction (dialog);
-          break;
-        default:
-          std::cerr << "Error: unkown method." << std::endl;
-          return;
-        }
-      std::cerr << "Reconstruction achieved in " << t.time() << "s" << std::endl;
-
+      dialog.disable_poisson();
+      dialog.disable_polygonal();
     }
+    if (!pts_item->point_set()->has_property_map<int> ("shape"))
+    {
+      dialog.disable_structuring();
+      dialog.disable_polygonal();
+    }
+      
+    if(!dialog.exec())
+      return;
+
+    CGAL::Real_timer t;
+    t.start();
+    unsigned int method = dialog.method ();
+    switch (method)
+    {
+      case 0:
+        advancing_front_reconstruction (dialog);
+        break;
+      case 1:
+        poisson_reconstruction (dialog);
+        break;
+      case 2:
+        scale_space_reconstruction (dialog);
+        break;
+      case 3:
+        polygonal_reconstruction (dialog);
+        break;
+      default:
+        std::cerr << "Error: unkown method." << std::endl;
+        return;
+    }
+    std::cerr << "Reconstruction achieved in " << t.time() << "s" << std::endl;
+
+  }
 }
 
 void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstruction
@@ -243,38 +243,38 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
 
   if(pts_item)
-    {
-      // Gets point set
-      Point_set* points = pts_item->point_set();
+  {
+    // Gets point set
+    Point_set* points = pts_item->point_set();
 
-      // wait cursor
-      QApplication::setOverrideCursor(Qt::WaitCursor);
+    // wait cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      std::cerr << "Advancing front reconstruction... ";
+    std::cerr << "Advancing front reconstruction... ";
       
-      // Reconstruct point set as a polyhedron
-      SMesh* mesh = advancing_front (*points,
-                                     dialog.longest_edge(),
-                                     dialog.radius_ratio_bound(),
-                                     CGAL_PI * dialog.beta_angle() / 180.,
-                                     dialog.structuring(),
-                                     dialog.sampling());
-      if (mesh)
-      {
-        // Add polyhedron to scene
-        Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(mesh);
-        new_item->setName(tr("%1 (advancing front)").arg(pts_item->name()));
-        new_item->setColor(Qt::darkGray);
-        new_item->invalidateOpenGLBuffers();
-        scene->addItem(new_item);
+    // Reconstruct point set as a polyhedron
+    SMesh* mesh = advancing_front (*points,
+                                   dialog.longest_edge(),
+                                   dialog.radius_ratio_bound(),
+                                   CGAL_PI * dialog.beta_angle() / 180.,
+                                   dialog.structuring(),
+                                   dialog.sampling());
+    if (mesh)
+    {
+      // Add polyhedron to scene
+      Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(mesh);
+      new_item->setName(tr("%1 (advancing front)").arg(pts_item->name()));
+      new_item->setColor(Qt::darkGray);
+      new_item->invalidateOpenGLBuffers();
+      scene->addItem(new_item);
 
-        // Hide point set
-        pts_item->setVisible(false);
-        scene->itemChanged(index);
-      }
-
-      QApplication::restoreOverrideCursor();
+      // Hide point set
+      pts_item->setVisible(false);
+      scene->itemChanged(index);
     }
+
+    QApplication::restoreOverrideCursor();
+  }
 }
 
 
@@ -287,69 +287,69 @@ void Polyhedron_demo_surface_reconstruction_plugin::scale_space_reconstruction
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
 
   if(pts_item)
-    {
-      // Gets point set
-      Point_set* points = pts_item->point_set();
+  {
+    // Gets point set
+    Point_set* points = pts_item->point_set();
 
-      // wait cursor
-      QApplication::setOverrideCursor(Qt::WaitCursor);
+    // wait cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      std::cout << "Scale scape surface reconstruction...";
+    std::cout << "Scale scape surface reconstruction...";
       
-      std::vector<Scene_polygon_soup_item*> reco_items;
+    std::vector<Scene_polygon_soup_item*> reco_items;
 
-      scale_space (*points, reco_items,
-                   dialog.scalespace_js(),
-                   dialog.iterations(),
-                   dialog.neighbors(), dialog.fitting(), dialog.monge(),
-                   dialog.neighborhood_size (), dialog.samples(),
-                   dialog.scalespace_af(),
-                   dialog.generate_smoothed (),
-                   dialog.longest_edge_2(), dialog.radius_ratio_bound_2(),
-                   CGAL_PI * dialog.beta_angle_2 () / 180.,
-                   dialog.separate_shells (), dialog.force_manifold ());
+    scale_space (*points, reco_items,
+                 dialog.scalespace_js(),
+                 dialog.iterations(),
+                 dialog.neighbors(), dialog.fitting(), dialog.monge(),
+                 dialog.neighborhood_size (), dialog.samples(),
+                 dialog.scalespace_af(),
+                 dialog.generate_smoothed (),
+                 dialog.longest_edge_2(), dialog.radius_ratio_bound_2(),
+                 CGAL_PI * dialog.beta_angle_2 () / 180.,
+                 dialog.separate_shells (), dialog.force_manifold ());
 
-      for (std::size_t i = 0; i < reco_items.size (); ++ i)
+    for (std::size_t i = 0; i < reco_items.size (); ++ i)
+    {
+      if (!(dialog.scalespace_af()))
+      {
+        if (dialog.force_manifold () && i > reco_items.size () - 3)
         {
-          if (!(dialog.scalespace_af()))
+          if (dialog.generate_smoothed () && i % 2)
+            reco_items[i]->setName(tr("%1 (scale space smooth garbage)").arg(scene->item(index)->name()));
+          else
+            reco_items[i]->setName(tr("%1 (scale space garbage)").arg(scene->item(index)->name()));
+        }
+        else
+        {
+          if (dialog.generate_smoothed ())
           {
-            if (dialog.force_manifold () && i > reco_items.size () - 3)
-            {
-              if (dialog.generate_smoothed () && i % 2)
-                reco_items[i]->setName(tr("%1 (scale space smooth garbage)").arg(scene->item(index)->name()));
-              else
-                reco_items[i]->setName(tr("%1 (scale space garbage)").arg(scene->item(index)->name()));
-            }
+            if (i % 2)
+              reco_items[i]->setName(tr("%1 (scale space smooth shell %2)").arg(scene->item(index)->name()).arg((i+1)/2));
             else
-            {
-              if (dialog.generate_smoothed ())
-                {
-                  if (i % 2)
-                    reco_items[i]->setName(tr("%1 (scale space smooth shell %2)").arg(scene->item(index)->name()).arg((i+1)/2));
-                  else
-                    reco_items[i]->setName(tr("%1 (scale space shell %2)").arg(scene->item(index)->name()).arg(((i+1)/2)+1));
-                }
-              else
-                reco_items[i]->setName(tr("%1 (scale space shell %2)").arg(scene->item(index)->name()).arg(i+1));
-            }
+              reco_items[i]->setName(tr("%1 (scale space shell %2)").arg(scene->item(index)->name()).arg(((i+1)/2)+1));
           }
           else
-          {
-            if (dialog.generate_smoothed ())
-            {
-              if (i % 2)
-                reco_items[i]->setName(tr("%1 (scale space smooth)").arg(scene->item(index)->name()));
-              else
-                reco_items[i]->setName(tr("%1 (scale space)").arg(scene->item(index)->name()));
-            }
-            else
-              reco_items[i]->setName(tr("%1 (scale space)").arg(scene->item(index)->name()));
-          }
-          scene->addItem (reco_items[i]);
+            reco_items[i]->setName(tr("%1 (scale space shell %2)").arg(scene->item(index)->name()).arg(i+1));
         }
-
-      QApplication::restoreOverrideCursor();
+      }
+      else
+      {
+        if (dialog.generate_smoothed ())
+        {
+          if (i % 2)
+            reco_items[i]->setName(tr("%1 (scale space smooth)").arg(scene->item(index)->name()));
+          else
+            reco_items[i]->setName(tr("%1 (scale space)").arg(scene->item(index)->name()));
+        }
+        else
+          reco_items[i]->setName(tr("%1 (scale space)").arg(scene->item(index)->name()));
+      }
+      scene->addItem (reco_items[i]);
     }
+
+    QApplication::restoreOverrideCursor();
+  }
 }
 
 
@@ -362,41 +362,41 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
 
   if(point_set_item)
+  {
+    // Gets point set
+    Point_set* points = point_set_item->point_set();
+    if(!points) return;
+
+    bool marching_tets = dialog.marching_tets();
+    const double sm_angle     = dialog.angle ();
+    const double sm_radius    = dialog.radius ();
+    const double sm_distance  = dialog.distance ();
+    bool conjugate_gradient = dialog.conjugate_gradient();
+    bool use_two_passes = dialog.two_passes();
+    bool do_not_fill_holes = dialog.do_not_fill_holes();
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    // Reconstruct point set as a polyhedron
+    SMesh* mesh = poisson_reconstruct (*points, marching_tets,
+                                       sm_angle, sm_radius, sm_distance,
+                                       conjugate_gradient, use_two_passes,
+                                       do_not_fill_holes);
+    if (mesh)
     {
-      // Gets point set
-      Point_set* points = point_set_item->point_set();
-      if(!points) return;
+      // Add polyhedron to scene
+      Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(mesh);
+      new_item->setName(tr("%1 (poisson)").arg(point_set_item->name()));
+      new_item->setColor(Qt::darkGray);
+      scene->addItem(new_item);
 
-      bool marching_tets = dialog.marching_tets();
-      const double sm_angle     = dialog.angle ();
-      const double sm_radius    = dialog.radius ();
-      const double sm_distance  = dialog.distance ();
-      bool conjugate_gradient = dialog.conjugate_gradient();
-      bool use_two_passes = dialog.two_passes();
-      bool do_not_fill_holes = dialog.do_not_fill_holes();
-
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-
-      // Reconstruct point set as a polyhedron
-      SMesh* mesh = poisson_reconstruct (*points, marching_tets,
-                                         sm_angle, sm_radius, sm_distance,
-                                         conjugate_gradient, use_two_passes,
-                                         do_not_fill_holes);
-      if (mesh)
-      {
-        // Add polyhedron to scene
-        Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(mesh);
-        new_item->setName(tr("%1 (poisson)").arg(point_set_item->name()));
-        new_item->setColor(Qt::darkGray);
-        scene->addItem(new_item);
-
-        // Hide point set
-        point_set_item->setVisible(false);
-        scene->itemChanged(index);
-      }
-
-      QApplication::restoreOverrideCursor();
+      // Hide point set
+      point_set_item->setVisible(false);
+      scene->itemChanged(index);
     }
+
+    QApplication::restoreOverrideCursor();
+  }
 }
 
 void Polyhedron_demo_surface_reconstruction_plugin::polygonal_reconstruction
