@@ -1,4 +1,6 @@
 set(list_of_whitelisted_headers_txt [=[
+  CGAL/draw_polygon_2.h
+  CGAL/draw_polygon_with_holes_2.h
   CGAL/SCIP_mixed_integer_program_traits.h
   CGAL/GLPK_mixed_integer_program_traits.h
   CGAL/Classification/TensorFlow/Neural_network_classifier.h
