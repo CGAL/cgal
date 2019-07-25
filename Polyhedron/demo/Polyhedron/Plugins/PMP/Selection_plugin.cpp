@@ -432,12 +432,17 @@ public Q_SLOTS:
       std::cerr << "[Selection Regularization] Using global solve (graphcut) with weight = " << weight << std::endl;
 
     std::cerr << "Length of border before regularization = " << border_length() << std::endl;
-        
-    CGAL::regularize_face_selection_borders (*selection_item->polyhedron(),
-                                             boost::make_assoc_property_map(is_selected_map),
-                                             boost::make_assoc_property_map(face_index_map),
-                                             get(CGAL::vertex_point,*selection_item->polyhedron()),
-                                             weight, true, (weight != 1.0));
+
+    if (weight == 1.0)
+      CGAL::regularize_face_selection_borders (*selection_item->polyhedron(),
+                                               boost::make_assoc_property_map(is_selected_map),
+                                               get(CGAL::vertex_point,*selection_item->polyhedron()));
+    else
+      CGAL::regularize_face_selection_borders (*selection_item->polyhedron(),
+                                               boost::make_assoc_property_map(is_selected_map),
+                                               boost::make_assoc_property_map(face_index_map),
+                                               get(CGAL::vertex_point,*selection_item->polyhedron()),
+                                               weight, true);
 
     std::cerr << "Length of border after regularization = " << border_length() << std::endl;
     
