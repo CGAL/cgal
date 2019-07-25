@@ -437,8 +437,13 @@ regularize_face_selection_borders(
     ++ nb_edges;
   }
 
-  weight = -10. * std::log(1.0 - weight); // Internal cooking so that
+  // Internal cooking so that
   // API weights are in [0:1[
+  if (prevent_deselection)
+    weight = -10. * std::log(1.0 - weight);
+  else
+    weight = - std::log(1.0 - weight);
+   
   normalization_factor = weight * nb_edges / normalization_factor;
 
 
