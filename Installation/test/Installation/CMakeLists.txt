@@ -23,7 +23,9 @@ macro(create_link_to_program COMPONENT )
   else()
     target_link_libraries(link_to_${COMPONENT} CGAL::${COMPONENT} ${CGAL_3RD_PARTY_LIBRARIES} ${${COMPONENT}_3RD_PARTY_LIBRARIES} )
   endif()
-  
+
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS link_to_${COMPONENT} )
+
 endmacro()
 
 find_package(CGAL QUIET COMPONENTS Core)
