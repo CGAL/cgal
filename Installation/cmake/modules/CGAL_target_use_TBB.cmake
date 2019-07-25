@@ -3,6 +3,8 @@ if (CGAL_target_use_TBB_included)
 endif()
 set(CGAL_target_use_TBB_included TRUE)
 
+set(TBB_USE_FILE "UseTBB")
+
 function(CGAL_target_use_TBB target)
   if(NOT TARGET Threads::Threads)
     find_package(Threads REQUIRED)
