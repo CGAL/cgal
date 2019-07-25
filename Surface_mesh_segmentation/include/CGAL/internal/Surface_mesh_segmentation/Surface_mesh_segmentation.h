@@ -31,7 +31,7 @@
 
 #include <CGAL/boost/graph/alpha_expansion_graphcut.h>
 #ifndef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
-#include <CGAL/boost/graph/alpha_expansion_graphcut_maxflow.h>
+#include <CGAL/boost/graph/Alpha_expansion_MaxFlow_tag.h>
 #endif
 
 #include <CGAL/Kernel/global_functions_3.h>

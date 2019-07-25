@@ -19,7 +19,7 @@
 //
 // Author(s)     : Ilker O. Yaz, Simon Giraudot
 
-#define CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_MAXFLOW_H
+#define CGAL_BOOST_GRAPH_ALPHA_EXPANSION_MAXFLOW_TAG_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
@@ -100,4 +100,4 @@ public:
 
 /// \endcond
 
-#endif //CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_MAXFLOW_H
+#endif //CGAL_BOOST_GRAPH_ALPHA_EXPANSION_MAXFLOW_TAG_H

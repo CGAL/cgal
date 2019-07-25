@@ -530,7 +530,8 @@ both in term of time and memory.
 \addtogroup PkgBGLPartition
 
 Methods to split a mesh into subdomains, using the library
-<a href="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">METIS</a>.
+<a href="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">METIS</a> or a graphcut
+implementation.
 */
 
 /*!
@@ -713,9 +714,9 @@ user might encounter.
 - `CGAL::alpha_expansion_graphcut()`
 
 \cgalCRPSection{I/O Functions}
-- \link PkgBGLIOFct CGAL::read_off() \endlink
-- \link PkgBGLIOFct CGAL::write_off() \endlink
-- \link PkgBGLIOFct CGAL::write_wrl() \endlink
+- \link PkgBGLIOFct `CGAL::read_off()` \endlink
+- \link PkgBGLIOFct `CGAL::write_off()` \endlink
+- \link PkgBGLIOFct `CGAL::write_wrl()` \endlink
 - `CGAL::write_vtp()`
 
 */

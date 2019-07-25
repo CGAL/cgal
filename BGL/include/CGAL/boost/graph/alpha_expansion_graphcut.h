@@ -2,10 +2,10 @@
 // Copyright (c) 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -491,19 +491,19 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 
    \tparam EdgeWeightMap a model of `ReadablePropertyMap` with
    `boost::graph_traits<InputGraph>::%edge_descriptor` as key and `double`
-   as value.
+   as value
 
    \tparam VertexIndexMap a model of `ReadablePropertyMap` with
    `boost::graph_traits<InputGraph>::%vertex_descriptor` as key and
-   `std::size_t` as value.
+   `std::size_t` as value
 
    \tparam VertexLabelCostMap a model of `ReadablePropertyMap`
    with `boost::graph_traits<InputGraph>::%vertex_descriptor` as key and
-   `std::vector<double>` as value.
+   `std::vector<double>` as value
 
    \tparam VertexLabelMap a model of `ReadWritePropertyMap` with 
    `boost::graph_traits<InputGraph>::%vertex_descriptor` as key and
-   `std::size_t` as value.
+   `std::size_t` as value
 
    \tparam AlphaExpansionImplementationTag optional tag used to select
    which implementation of the Alpha Expansion should be
@@ -515,8 +515,8 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 
    \note The `MaxFlow` implementation is provided by the \ref PkgSurfaceMeshSegmentationRef
    under GPL license. The header
-   `<CGAL/boost/graph/alpha_shape_graphcut_maxflow.h>`
-   should be included if users want to use this implementation.
+   `<CGAL/boost/graph/Alpha_expansion_MaxFlow_tag.h>`
+   must be included if users want to use this implementation.
 
    \param input_graph the input graph.
 
@@ -530,7 +530,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
    vertex. This map will be updated by the algorithm with the
    regularized version of the partitioning.
 
-   \param vertex_label_cost_map a property_map providing, for each
+   \param vertex_label_cost_map a property map providing, for each
    vertex, an `std::vector` containing the cost of this vertex to
    belong to each label. For example,
    `get(vertex_label_cost_map, vd)[label_idx]` returns the cost
