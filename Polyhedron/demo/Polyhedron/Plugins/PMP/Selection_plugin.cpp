@@ -389,7 +389,6 @@ public Q_SLOTS:
 
     
     boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
-    boost::unordered_map<fg_face_descriptor, std::size_t> face_index_map;
     std::size_t index = 0;
     for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
     {
@@ -400,7 +399,6 @@ public Q_SLOTS:
       {
         is_selected_map[fh]=true;
       }
-      face_index_map[fh] = index ++;
     }
 
     auto border_length =
@@ -439,8 +437,8 @@ public Q_SLOTS:
                                                get(CGAL::vertex_point,*selection_item->polyhedron()));
     else
       CGAL::regularize_face_selection_borders (*selection_item->polyhedron(),
+                                               CGAL::Identity_property_map<fg_face_descriptor>(),
                                                boost::make_assoc_property_map(is_selected_map),
-                                               boost::make_assoc_property_map(face_index_map),
                                                get(CGAL::vertex_point,*selection_item->polyhedron()),
                                                weight, true);
 

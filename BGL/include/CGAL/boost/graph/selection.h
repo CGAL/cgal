@@ -404,12 +404,12 @@ reduce_face_selection(
 }
 
 // TODO: document me
-template <class FaceGraph, class IsSelectedMap, class FaceIndexMap, class VertexPointMap>
+template <class FaceGraph, class FaceIndexMap, class IsSelectedMap, class VertexPointMap>
 void
 regularize_face_selection_borders(
   FaceGraph& fg,
-  IsSelectedMap is_selected,
   FaceIndexMap face_index_map,
+  IsSelectedMap is_selected,
   VertexPointMap vertex_point_map,
   double weight = 0.5,
   bool prevent_deselection = true)
