@@ -1,4 +1,22 @@
-// TODO: Copyright info
+// Copyright (c) 2019  GeometryFactory(France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s) : Necip Fazil Yildiran
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/read_ply_points.h>
@@ -51,22 +69,21 @@ int main(int argc, const char** argv)
     return EXIT_FAILURE;
   }
   input.close();
-
-  // TODO: Another example with default settings, refering to default settings in doc
   
   //
   // Prepare ICP config
   //
   using CGAL::pointmatcher::ICP_config;
 
-  // TODO: Refer to https://github.com/ethz-asl/libpointmatcher/blob/master/doc/Configuration.md while doc
+  // Possible config modules/components: https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain
+  // See documentation of optional named parameters for CGAL PM ICP configuration / pointmatcher config module mapping
 
-  // Prepare point set 1 filters (PM::ReadingDataPointsFilters)
+  // Prepare point set 1 filters (PM::ReferenceDataPointsFilters)
   std::vector<ICP_config> point_set_1_filters;
   point_set_1_filters.push_back( ICP_config { .name="MinDistDataPointsFilter"       , .params={ {"minDist", "0.5" }}  } );
   point_set_1_filters.push_back( ICP_config { .name="RandomSamplingDataPointsFilter", .params={ {"prob"   , "0.05"}}  } );
 
-  // Prepare point set 2 filters (PM::ReferenceDataPointsFilters)
+  // Prepare point set 2 filters (PM::ReadingDataPointsFilters)
   std::vector<ICP_config> point_set_2_filters;
   point_set_2_filters.push_back( ICP_config { .name="MinDistDataPointsFilter"       , .params={ {"minDist", "0.5" }}  } );
   point_set_2_filters.push_back( ICP_config { .name="RandomSamplingDataPointsFilter", .params={ {"prob"   , "0.05"}}  } );
@@ -90,14 +107,14 @@ int main(int argc, const char** argv)
                                                 } );
   // Prepare inspector
   ICP_config inspector { .name="NullInspector" };
-// TODO: Do we really need to set logger through named parameters? (alternative: some other static method)
+
   // Prepare logger
   ICP_config logger { .name= "FileLogger" };
 
   const K::Aff_transformation_3 identity_transform = K::Aff_transformation_3(CGAL::Identity_transformation());
 
   // EITHER call the ICP registration method pointmatcher to get the transformation to apply to pwns2
-  K::Aff_transformation_3 res =
+  std::pair<K::Aff_transformation_3, bool> res =
   CGAL::pointmatcher::compute_registration_transformation
     (pwns1, pwns2, 
      params::point_map(Point_map()).normal_map(Normal_map())
@@ -118,6 +135,7 @@ int main(int argc, const char** argv)
      );
 
   // OR call the ICP registration method from pointmatcher and apply the transformation to pwn2
+  bool converged =
   CGAL::pointmatcher::register_point_sets
     (pwns1, pwns2, 
      params::point_map(Point_map()).normal_map(Normal_map())
@@ -130,9 +148,9 @@ int main(int argc, const char** argv)
      .logger(logger),
      params::point_map(Point_map()).normal_map(Normal_map())
      .point_set_filters(point_set_2_filters)
-     .transformation(res) /* pass the above computed transformation as initial transformation.
-                           * as a result, the registration will require less iterations to converge.
-                           * */
+     .transformation(res.first) /* pass the above computed transformation as initial transformation.
+                                * as a result, the registration will require less iterations to converge.
+                                * */
      );
 
   std::ofstream out("pwns2_aligned.ply");
