@@ -87,6 +87,7 @@ if ( CGAL_FOUND )
     add_executable(test_gmp_mpfr_dll test_gmp_mpfr_dll.cpp)
     target_link_libraries(test_gmp_mpfr_dll version)
     CGAL_add_test(test_gmp_mpfr_dll)
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS test_gmp_mpfr_dll )
   endif()
 
   find_package( LEDA QUIET)
