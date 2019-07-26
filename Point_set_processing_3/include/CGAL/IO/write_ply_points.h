@@ -115,15 +115,15 @@ namespace internal {
     stream << "undefined_type";
   }
 
-  template <> void property_header_type<char> (std::ostream& stream) { stream << "char"; }
-  template <> void property_header_type<signed char> (std::ostream& stream) { stream << "char"; }
-  template <> void property_header_type<unsigned char> (std::ostream& stream) { stream << "uchar"; }
-  template <> void property_header_type<short> (std::ostream& stream) { stream << "short"; }
-  template <> void property_header_type<unsigned short> (std::ostream& stream) { stream << "ushort"; }
-  template <> void property_header_type<int> (std::ostream& stream) { stream << "int"; }
-  template <> void property_header_type<unsigned int> (std::ostream& stream) { stream << "uint"; }
-  template <> void property_header_type<float> (std::ostream& stream) { stream << "float"; }
-  template <> void property_header_type<double> (std::ostream& stream) { stream << "double"; }
+  template <> inline void property_header_type<char> (std::ostream& stream) { stream << "char"; }
+  template <> inline void property_header_type<signed char> (std::ostream& stream) { stream << "char"; }
+  template <> inline void property_header_type<unsigned char> (std::ostream& stream) { stream << "uchar"; }
+  template <> inline void property_header_type<short> (std::ostream& stream) { stream << "short"; }
+  template <> inline void property_header_type<unsigned short> (std::ostream& stream) { stream << "ushort"; }
+  template <> inline void property_header_type<int> (std::ostream& stream) { stream << "int"; }
+  template <> inline void property_header_type<unsigned int> (std::ostream& stream) { stream << "uint"; }
+  template <> inline void property_header_type<float> (std::ostream& stream) { stream << "float"; }
+  template <> inline void property_header_type<double> (std::ostream& stream) { stream << "double"; }
     
   template <typename T>
   void property_header (std::ostream& stream, const PLY_property<T>& prop)
@@ -216,9 +216,9 @@ namespace internal {
 
   template <typename T>
   T no_char_character (const T& t) { return t; }
-  int no_char_character (const char& t) { return int(t); }
-  int no_char_character (const signed char& t) { return int(t); }
-  int no_char_character (const unsigned char& t) { return int(t); }
+  inline int no_char_character (const char& t) { return int(t); }
+  inline int no_char_character (const signed char& t) { return int(t); }
+  inline int no_char_character (const unsigned char& t) { return int(t); }
 
   template <typename ForwardIterator,
             typename PropertyMap,
