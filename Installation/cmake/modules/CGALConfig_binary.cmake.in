@@ -183,6 +183,7 @@ include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
 
 # Temporary? Change the CMAKE module path
 cgal_setup_module_path()
