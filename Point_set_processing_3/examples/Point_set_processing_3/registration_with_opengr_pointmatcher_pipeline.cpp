@@ -1,6 +1,3 @@
-// TODO: Copyright info
-// TODO: Requires both OpenGR and PointMatcher wrappers.
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/read_ply_points.h>
 #include <CGAL/IO/write_ply_points.h>
