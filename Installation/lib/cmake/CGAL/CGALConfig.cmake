@@ -144,6 +144,7 @@ include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
 cgal_setup_module_path()
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
 
 include("${CGAL_MODULES_DIR}/CGAL_parse_version_h.cmake")
 cgal_parse_version_h( "${CGAL_INSTALLATION_PACKAGE_DIR}/include/CGAL/version.h"
