@@ -3098,7 +3098,16 @@ namespace HomogeneousKernelFunctors {
     }
 
     Point_2
-    operator()(const Line_2& l, const FT i) const
+    operator()(const Line_2& l, const RT& i) const
+    {
+      Point_2 p = K().construct_point_2_object()(l);
+      Vector_2 v = K().construct_vector_2_object()(l);
+      return K().construct_translated_point_2_object()
+                 (p, K().construct_scaled_vector_2_object()(v, i));
+    }
+
+    Point_2
+    operator()(const Line_2& l, const FT& i) const
     {
       Point_2 p = K().construct_point_2_object()(l);
       Vector_2 v = K().construct_vector_2_object()(l);
