@@ -211,7 +211,7 @@ public:
   }
 
   Point_2
-  point(int i) const
+  point(const FT i) const
   {
     return R().construct_point_2_object()(*this,i);
   }
