@@ -316,7 +316,17 @@ points in the domain.
 
 \section Point_set_processing_3Registration Registration
 
-\cgal provides two wrappers for the \ref thirdpartylibpointmatcher library :
+\cgal provides two wrappers for the \ref thirdpartyOpenGR library
+\cgalCite{cgal:m-ogr-17}, and two wrappers for the \ref thirdpartylibpointmatcher
+library :
+
+- `CGAL::OpenGR::compute_registration_transformation()` computes the
+registration of one point set w.r.t. another in the form of a
+`CGAL::Aff_transformation_3` object, using the Super4PCS algorithm
+\cgalCite{cgal:mam-sffgp-14};
+
+- `CGAL::OpenGR::register_point_sets()` computes the registration of
+one point set w.r.t. another and directly aligns it to it.
 
 - `CGAL::pointmatcher::compute_registration_transformation()` computes the
 registration of one point set w.r.t. another in the form of a
@@ -328,10 +338,23 @@ one point set w.r.t. another and directly aligns it to it.
 
 \subsection Point_set_processing_3Example_registration Example
 
-The following example reads two point sets and aligns them using the
-\ref thirdpartylibpointmatcher library:
+The following example reads two point sets and aligns them using the 
+\ref thirdpartyOpenGR library, using the Super4PCS algorithm :
+\cgalExample{Point_set_processing_3/registration_with_OpenGR.cpp}
+
+The following example reads two point sets and aligns them using the 
+\ref thirdpartylibpointmatcher library, using the ICP algorithm. It also shows how
+to customize ICP algorithm by configurations:
 \cgalExample{Point_set_processing_3/registration_with_pointmatcher.cpp}
 
+The following example reads two point sets and aligns them by using both
+\ref thirdpartyOpenGR and \ref thirdpartylibpointmatcher libraries, respectively.
+It depicts a use case where a coarse estimation of a registration transformation
+is done using the Super4PCS algorithm. Then, a fine registration from this coarse
+registration using the ICP algorithm. 
+\cgalExample{Point_set_processing_3/registration_with_pointmatcher.cpp}
+
+registration_with_opengr_pointmatcher_pipeline
 \section Point_set_processing_3OutlierRemoval Outlier Removal
 
 Function `remove_outliers()` deletes a user-specified fraction

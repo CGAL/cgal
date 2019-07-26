@@ -150,3 +150,8 @@ CGAL_add_named_parameter(proxies_t, proxies, proxies)
 CGAL_add_named_parameter(anchors_t, anchors, anchors)
 CGAL_add_named_parameter(triangles_t, triangles, triangles)
 
+CGAL_add_named_parameter(number_of_samples_t, number_of_samples, number_of_samples)
+CGAL_add_named_parameter(accuracy_t, accuracy, accuracy)
+CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_running_time)
+CGAL_add_named_parameter(overlap_t, overlap, overlap)
+
