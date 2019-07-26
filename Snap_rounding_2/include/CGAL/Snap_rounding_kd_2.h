@@ -591,7 +591,6 @@ public:
     iter->first->search(std::back_inserter(result), b);
 
     // create result
-    result_list.empty();
 
     for( Point_with_hot_pixel_history_saved_iter my_point_iter = result.begin();    my_point_iter != result.end();   ++my_point_iter )
       result_list.push_back(my_point_iter->object);
