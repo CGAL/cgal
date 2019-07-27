@@ -215,6 +215,17 @@ public:
   typedef typename Kernel::FT CoordinateType;
 };
 
+template < class RatKernel, class AlgKernel, class NtTraits >
+class ArrTraitsAdaptor< CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel,
+                                                  NtTraits > >
+{
+public:
+  typedef CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel, NtTraits > ArrTraits;
+  typedef AlgKernel Kernel;
+  typedef typename ArrTraits::Point_2 Point_2;
+  typedef typename Kernel::FT CoordinateType;
+};
+
 template < class Coefficient_ >
 class ArrTraitsAdaptor< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
 {
