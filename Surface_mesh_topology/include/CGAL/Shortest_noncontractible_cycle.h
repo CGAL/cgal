@@ -6,43 +6,30 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Path_on_surface.h>
 
 namespace CGAL {
 namespace Surface_mesh_topology {
 
-template <class Mesh_, class Weight_ = void>
+template <class Mesh_>
 class Shortest_noncontractible_cycle {
 
 public:
 
   using Mesh_original = Mesh_;
 
-  template <class T>
-  struct Weight_functor { using Weight = T; };
-
-  template <bool, class T, class>
-  struct Weight_functor_selector : Weight_functor<T> { };
-
-  template <class T, class F>
-  struct Weight_functor_selector<false, T, F> : Weight_functor<F> { }; 
-  
   struct Default_weight_functor {
     using Weight_t = unsigned int;
     template <class T>
     Weight_t operator() (T) const { return 1; }
   };
 
-  using Weight = typename Weight_functor_selector<std::is_same<Weight_, void>::value,
-                                                  Default_weight_functor,
-                                                  Weight_>::Weight;
-  using Distance_type = typename Weight::Weight_t;
-
   struct Attributes {
     template <class GenericMap>
     struct Dart_wrapper {
       using Vertex_attribute = CGAL::Cell_attribute<GenericMap, int>;
-      using Edge_attribute   = CGAL::Cell_attribute<GenericMap, Distance_type>;
-      using Face_attribute   = CGAL::Cell_attribute<GenericMap, void>;
+      using Edge_attribute   = void;
+      using Face_attribute   = void;
       using Attributes       = CGAL::cpp11::tuple<Vertex_attribute, Edge_attribute, Face_attribute>;
     };
   };
@@ -55,23 +42,11 @@ public:
                                                             Dart_handle_original>;
     using Origin_to_copy_map         = boost::unordered_map<Dart_handle_original, 
                                                             typename Generic_map::Dart_handle>;
-    
-    static typename Generic_map::Dart_handle opposite(Generic_map& amap, typename Generic_map::Dart_handle dh)
-    {
-      return amap.template alpha<2,0>(dh);
-    }
 
     static void copy(Generic_map& target, Mesh_original& source,
                      Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin)
     {
       target.copy(source, &origin_to_copy, &copy_to_origin);
-    }
-    
-    static void set_weights(Generic_map& target, Mesh_original& source, 
-                            Origin_to_copy_map& origin_to_copy, const Weight& wf)
-    {
-      for (auto it = source.darts().begin(), itend = source.darts().end(); it != itend; ++it)
-        target.template info<1>(origin_to_copy[it]) = wf(it);
     }
   };
 
@@ -83,23 +58,11 @@ public:
                                                             Dart_handle_original>;
     using Origin_to_copy_map         = boost::unordered_map<Dart_handle_original, 
                                                             typename Generic_map::Dart_handle>;
-    
-    static typename Generic_map::Dart_handle opposite(Generic_map& amap, typename Generic_map::Dart_handle dh)
-    {
-      return amap.opposite(dh);
-    }
 
     static void copy(Generic_map& target, Mesh_original& source,
                      Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin)
     {
       target.copy(source, &origin_to_copy, &copy_to_origin);
-    }
-
-    static void set_weights(Generic_map& target, Mesh_original& source, 
-                            Origin_to_copy_map& origin_to_copy, const Weight& wf)
-    {
-      for (auto it = source.darts().begin(), itend = source.darts().end(); it != itend; ++it)
-        target.template info<1>(origin_to_copy[it]) = wf(it);
     }
   };
 
@@ -112,23 +75,11 @@ public:
                                                             Dart_handle_original>;
     using Origin_to_copy_map         = boost::unordered_map<Dart_handle_original, 
                                                             typename Generic_map::Dart_handle>;
-    
-    static typename Generic_map::Dart_handle opposite(Generic_map& amap, typename Generic_map::Dart_handle dh)
-    {
-      return amap.opposite(dh);
-    }
 
     static void copy(Generic_map& target, Mesh_original& source,
                      Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin)
     {
       target.import_from_halfedge_graph(source, &origin_to_copy, &copy_to_origin);
-    }
-    
-    static void set_weights(Generic_map& target, Mesh_original& source, 
-                            Origin_to_copy_map& origin_to_copy, const Weight& wf)
-    {
-      for (typename boost::graph_traits<Mesh_original>::halfedge_iterator it = source.halfedges_begin(), itend = source.halfedges_end(); it != itend; ++it)
-        target.template info<1>(origin_to_copy[*it]) = wf(*it);
     }
   };
 
@@ -162,84 +113,93 @@ public:
   using Dart_const_handle_original = typename Gmap_wrapper::Dart_const_handle_original;
   using Dart_handle                = typename Gmap::Dart_handle;
   using Attribute_handle_0         = typename Gmap::template Attribute_handle<0>::type;
-  using Attribute_handle_1         = typename Gmap::template Attribute_handle<1>::type;
   using size_type                  = typename Gmap::size_type;
   using Dart_container             = std::vector<Dart_handle>;
-  using Path                       = std::vector<Dart_handle_original>; // Consider: CGAL::Path_on_surface<Gmap>;
+  using Path                       = Path_on_surface<Mesh_original>;
   
-  Shortest_noncontractible_cycle(Mesh_original& gmap, const Weight& wf = Weight())
+  Shortest_noncontractible_cycle(Mesh_original& gmap) : m_cycle(gmap)
   {
     Gmap_wrapper::copy(m_gmap, gmap, m_origin_to_copy, m_copy_to_origin);
     // m_gmap.display_characteristics(std::cerr);
     // std::cerr << '\n';
-    // Initialize 2-attributes
+    // Initialize m_is_hole
+    m_is_hole = m_gmap.get_new_mark();
     for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it) {
-      if (m_gmap.template attribute<2>(it)==NULL)
-      { m_gmap.template set_attribute<2>(it, m_gmap.template create_attribute<2>()); }
+      if (!m_gmap.is_marked(it, m_is_hole))
+        m_gmap.mark(it, m_is_hole);
     }
     // Remove all boundary by adding faces
     m_gmap.template close<2>();
+    m_gmap.negate_mark(m_is_hole);
+
     for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it) {
-      if (m_gmap.template attribute<1>(it)==NULL)
-      { m_gmap.template set_attribute<1>(it, m_gmap.template create_attribute<1>()); }
       if (m_gmap.template attribute<0>(it)==NULL)
       { m_gmap.template set_attribute<0>(it, m_gmap.template create_attribute<0>()); }
     }
-    // Initialize 1-attributes
-    Gmap_wrapper::set_weights(m_gmap, gmap, m_origin_to_copy, wf);
-    // Count number of vertices
-    int cnt = 0;
-    for (auto it = m_gmap.template one_dart_per_cell<0>().begin(), 
-              itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it)
-      ++cnt;
     for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), 
               itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it)
       m_face_list.push_back(it);
-    m_spanning_tree.reserve(cnt - 1);
-    m_distance_from_root.reserve(cnt);
-    m_trace_index.reserve(cnt - 1);
+    for (auto it = m_gmap.template one_dart_per_cell<1>().begin(), 
+              itend = m_gmap.template one_dart_per_cell<1>().end(); it != itend; ++it)
+      m_edge_list.push_back(it);
     // m_gmap.display_characteristics(std::cerr);
     // std::cerr << '\n';
   }
-  
-  bool find_cycle(Dart_handle_original root_vertex, Path& cycle, Distance_type* length = NULL)
+
+  ~Shortest_noncontractible_cycle()
   {
+    m_gmap.free_mark(m_is_hole);
+  }
+  
+  template <class WeightFunctor>
+  Path compute_cycle(Dart_handle_original root_vertex, typename WeightFunctor::Weight_t* length = NULL,
+                  const WeightFunctor& wf = Default_weight_functor())
+  {
+    m_cycle.clear();
     Dart_handle root = m_origin_to_copy[root_vertex];
-    return this->find_cycle(root, cycle, length);
+    this->compute_cycle(root, m_cycle, length, NULL, wf);
+    return m_cycle;
   }
 
-  void edge_width(Path& cycle, Distance_type* length = NULL)
+  template <class WeightFunctor>
+  Path edge_width(typename WeightFunctor::Weight_t* length = NULL,
+                  const WeightFunctor& wf = Default_weight_functor())
   {
-    cycle.clear();
+    m_cycle.clear();
     bool first_check = true;
-    Distance_type min_length = 0;
+    typename WeightFunctor::Weight_t min_length = 0;
     for (Attribute_handle_0 att_it = m_gmap.template attributes<0>().begin(), att_itend = m_gmap.template attributes<0>().end(); att_it != att_itend; ++att_it) {
       Dart_handle it = att_it->dart();
-      Distance_type temp_length;
+      typename WeightFunctor::Weight_t temp_length;
       if (first_check) {
-        if (!find_cycle(it, cycle, &temp_length)) continue;
+        if (!compute_cycle(it, m_cycle, &temp_length, NULL, wf)) continue;
         min_length = temp_length;
         first_check = false;
       } else {
-        if (find_cycle(it, cycle, &temp_length, &min_length))
+        if (compute_cycle(it, m_cycle, &temp_length, &min_length, wf))
           min_length = temp_length;
       }
     }
     if (length != NULL) *length = min_length;
+    return m_cycle;
   }
 
 private:
 
-  void find_spanning_tree(Dart_handle root, Dart_container& spanning_tree,
-                          std::vector<Distance_type>& distance_from_root, std::vector<int>& trace_index)
+  template <class WeightFunctor, class Distance_>
+  void compute_spanning_tree(Dart_handle root, Dart_container& spanning_tree,
+                          std::vector<Distance_>& distance_from_root, std::vector<int>& trace_index,
+                          const WeightFunctor& wf = Default_weight_functor())
   {
-    if (std::is_same<Weight_, void>::value)
-      find_BFS_tree(root, spanning_tree, distance_from_root, trace_index);
+    if (std::is_same<WeightFunctor, Default_weight_functor>::value)
+      compute_BFS_tree(root, spanning_tree, distance_from_root, trace_index, wf);
     else
-      find_Dijkstra_tree(root, spanning_tree, distance_from_root, trace_index);
+      compute_Dijkstra_tree(root, spanning_tree, distance_from_root, trace_index, wf);
   }
 
+  template <class Distance_>
   struct Dijkstra_comparator {
+    using Distance_type = Distance_;
     Dijkstra_comparator(const std::vector<Distance_type>& distance_from_root) : m_distance(distance_from_root) {}
     bool operator()(const int x, const int y) const { return m_distance[x] > m_distance[y]; }
   private:
@@ -247,12 +207,14 @@ private:
   };
 
   /// Create a spanning tree using Dijkstra
-  void find_Dijkstra_tree(Dart_handle root, Dart_container& spanning_tree,
-                          std::vector<Distance_type>& distance_from_root, std::vector<int>& trace_index)
+  template <class WeightFunctor, class Distance_>
+  void compute_Dijkstra_tree(Dart_handle root, Dart_container& spanning_tree,
+                          std::vector<Distance_>& distance_from_root, std::vector<int>& trace_index,
+                          const WeightFunctor& wf = Default_weight_functor())
   {
     // Preparation
-    Dijkstra_comparator dc (distance_from_root);
-    std::priority_queue<int, std::vector<int>, Dijkstra_comparator> pq(dc);
+    Dijkstra_comparator<Distance_> dc (distance_from_root);
+    std::priority_queue<int, std::vector<int>, Dijkstra_comparator<Distance_> > pq(dc);
     int vertex_index = 0;
     size_type vertex_visited;
     try {
@@ -273,10 +235,10 @@ private:
       Dart_handle u = (u_index == 0) ? root : m_gmap.next(spanning_tree[u_index - 1]);
       CGAL_assertion(u_index == m_gmap.template info<0>(u));
       bool first_run = true;
-      for (Dart_handle it = u; first_run || it != u; it = m_gmap.next(Gmap_wrapper::opposite(m_gmap, it))) {
+      for (Dart_handle it = u; first_run || it != u; it = m_gmap.next(m_gmap.opposite2(it))) {
         first_run = false;
         Dart_handle v = m_gmap.next(it);
-        Distance_type w = m_gmap.template info<1>(it);
+        Distance_ w = wf(m_copy_to_origin[nonhole_dart_of_same_edge(it)]);
         if (!m_gmap.is_marked(v, vertex_visited)) {
           int v_index = ++vertex_index;
           CGAL_assertion(v_index == distance_from_root.size());
@@ -304,8 +266,10 @@ private:
   }
 
   /// Create a spanning tree using BFS
-  void find_BFS_tree(Dart_handle root, Dart_container& spanning_tree,
-                     std::vector<Distance_type>& distance_from_root, std::vector<int>& trace_index)
+  template <class WeightFunctor, class Distance_>
+  void compute_BFS_tree(Dart_handle root, Dart_container& spanning_tree,
+                     std::vector<Distance_>& distance_from_root, std::vector<int>& trace_index,
+                     const WeightFunctor& wf = Default_weight_functor())
   {
     // Preparation
     std::queue<int> q;
@@ -328,7 +292,7 @@ private:
       Dart_handle u = (u_index == 0) ? root : m_gmap.next(spanning_tree[u_index - 1]);
       CGAL_assertion(u_index == m_gmap.template info<0>(u));
       bool first_run = true;
-      for (Dart_handle it = u; first_run || it != u; it = m_gmap.next(Gmap_wrapper::opposite(m_gmap, it))) {
+      for (Dart_handle it = u; first_run || it != u; it = m_gmap.next(m_gmap.opposite2(it))) {
         first_run = false;
         Dart_handle v = m_gmap.next(it);
         if (!m_gmap.is_marked(v, vertex_visited)) {
@@ -367,7 +331,7 @@ private:
   }
 
   /// Find E_nc
-  void find_noncon_edges(const Dart_container& spanning_tree, Dart_container& noncon_edges)
+  void compute_noncon_edges(const Dart_container& spanning_tree, Dart_container& noncon_edges)
   {
     noncon_edges.clear();
     size_type face_deleted, edge_deleted;
@@ -379,7 +343,7 @@ private:
       exit(-1);
     }
     for (Dart_handle dh_face : m_face_list) {
-      if (m_gmap.template attribute<2>(dh_face) == NULL) {
+      if (m_gmap.is_marked(dh_face, m_is_hole)) {
         bool first_run = true;
         for (Dart_handle it = dh_face; first_run || it != dh_face; it = m_gmap.next(it)) {
           first_run = false;
@@ -410,14 +374,13 @@ private:
         m_gmap.template mark_cell<2>(dh_face, face_deleted);
       if (!m_gmap.is_marked(dh_face, edge_deleted))
         m_gmap.template mark_cell<1>(dh_face, edge_deleted);
-      Dart_handle dh_adj_face = Gmap_wrapper::opposite(m_gmap, dh_face);
+      Dart_handle dh_adj_face = m_gmap.opposite2(dh_face);
       if (m_gmap.is_marked(dh_adj_face, face_deleted)) continue;
       Dart_handle dh_only_edge = NULL;
       if (is_degree_one_face(dh_adj_face, dh_only_edge, edge_deleted))
         degree_one_faces.push(dh_only_edge);
     }
-    for (Attribute_handle_1 att_it = m_gmap.template attributes<1>().begin(), att_itend = m_gmap.template attributes<1>().end(); att_it != att_itend; ++att_it) {
-      Dart_handle it = att_it->dart();
+    for (Dart_handle it : m_edge_list) {
       if (m_gmap.template info<0>(it) >= 0 && !m_gmap.is_marked(it, edge_deleted)) {
         noncon_edges.push_back(it);
       }
@@ -426,36 +389,59 @@ private:
     m_gmap.free_mark(face_deleted);
   }
 
+  Dart_handle nonhole_dart_of_same_edge(Dart_handle dh) {
+    CGAL_assertion(dh != NULL);
+    if (m_gmap.is_marked(dh, m_is_hole))
+      dh = m_gmap.opposite2(dh);
+    CGAL_assertion(!m_gmap.is_marked(dh, m_is_hole));
+    // std::cerr << m_gmap.template info<0>(dh) << std::endl;
+    return dh;
+  }
+
   void add_to_cycle(Dart_handle dh, Path& cycle)
   {
     CGAL_assertion(dh != NULL);
-    if (m_gmap.template attribute<2>(dh) == NULL)
-      dh = Gmap_wrapper::opposite(m_gmap, dh);
-    CGAL_assertion(m_gmap.template attribute<2>(dh) != NULL);
-    cycle.push_back(m_copy_to_origin[dh]);
+    if (m_gmap.is_marked(dh, m_is_hole))
+      dh = m_gmap.opposite2(dh);
+    CGAL_assertion(!m_gmap.is_marked(dh, m_is_hole));
+    Dart_const_handle_original dh_original = m_copy_to_origin[dh];
+    // std::cerr << '-';
+    if (cycle.can_be_pushed(dh_original)) {
+      cycle.push_back(dh_original);
+      // std::cerr << '?';
+    }
+    else {
+      cycle.push_back(m_copy_to_origin[m_gmap.opposite2(dh)]);
+      // std::cerr << '!';
+    }
+    // std::cerr << '+';
   }
 
-  bool find_cycle(Dart_handle root, Path& cycle, Distance_type* length = NULL, const Distance_type* max_length = NULL) {
+  template <class WeightFunctor>
+  bool compute_cycle(Dart_handle root, Path& cycle, typename WeightFunctor::Weight_t* length = NULL,
+                  const typename WeightFunctor::Weight_t* max_length = NULL,
+                  const WeightFunctor& wf = Default_weight_functor())
+  {
+    std::vector<typename WeightFunctor::Weight_t> distance_from_root;
     m_spanning_tree.clear();
-    m_distance_from_root.clear();
     m_trace_index.clear();
     for (Attribute_handle_0 att_it = m_gmap.template attributes<0>().begin(), att_itend = m_gmap.template attributes<0>().end(); att_it != att_itend; ++att_it) {
       Dart_handle it = att_it->dart();
       m_gmap.template info<0>(it) = -1;
     }
-    find_spanning_tree(root, m_spanning_tree, m_distance_from_root, m_trace_index);
-    find_noncon_edges(m_spanning_tree, m_noncon_edges);
-    // std::cerr << "Done find_noncon_edges. noncon_edges.size() = " << m_noncon_edges.size() << '\n';
+    compute_spanning_tree(root, m_spanning_tree, distance_from_root, m_trace_index, wf);
+    compute_noncon_edges(m_spanning_tree, m_noncon_edges);
+    // std::cerr << "Done compute_noncon_edges. noncon_edges.size() = " << m_noncon_edges.size() << '\n';
 
     bool first_check = true;
-    Distance_type min_distance = 0;
+    typename WeightFunctor::Weight_t min_distance = 0;
     Dart_handle min_noncon_edge;
     int min_a = -1, min_b = -1;
     for (auto dh : m_noncon_edges) {
       Dart_handle a = dh, b = m_gmap.next(dh);
       int index_a = m_gmap.template info<0>(a), index_b = m_gmap.template info<0>(b);
-      Distance_type sum_distance = m_distance_from_root[index_a] + m_distance_from_root[index_b] 
-                                   + m_gmap.template info<1>(dh);
+      typename WeightFunctor::Weight_t sum_distance = distance_from_root[index_a] + distance_from_root[index_b] 
+                                   + wf(m_copy_to_origin[nonhole_dart_of_same_edge(dh)]);
       if (first_check || min_distance > sum_distance) {
         min_distance = sum_distance;
         min_noncon_edge = dh;
@@ -468,17 +454,18 @@ private:
     if (length != NULL) *length = min_distance < 0 ? 0 : min_distance;
     if (max_length != NULL)
       if (min_distance >= *max_length) return false; // abort
-
+    // std::cerr << ".\n";
     cycle.clear();
     // Trace back the path from `a` to root
-    for (int ind = min_a - 1; ind != -1; ind = m_trace_index[ind])
+    for (int ind = min_a - 1; ind != -1; ind = m_trace_index[ind]) 
       add_to_cycle(m_spanning_tree[ind], cycle);
     // Reverse: now it is the path from root to `a`
-    std::reverse(cycle.begin(), cycle.end());
+    cycle.reverse();
+    // std::cerr << "Done reverse\n";
     add_to_cycle(min_noncon_edge, cycle);
     // Trace back the path from `b` to root
     for (int ind = min_b - 1; ind != -1; ind = m_trace_index[ind])
-      add_to_cycle(Gmap_wrapper::opposite(m_gmap, m_spanning_tree[ind]), cycle);
+      add_to_cycle(m_gmap.opposite2(m_spanning_tree[ind]), cycle);
     // CGAL_assertion(cycle.is_closed());
 
     return true;
@@ -488,9 +475,10 @@ private:
   typename Gmap_wrapper::Origin_to_copy_map m_origin_to_copy;
   typename Gmap_wrapper::Copy_to_origin_map m_copy_to_origin;
   unsigned int m_nb_of_vertices = 0;
-  Dart_container m_spanning_tree, m_noncon_edges, m_face_list;
-  std::vector<Distance_type> m_distance_from_root;
+  Dart_container m_spanning_tree, m_noncon_edges, m_face_list, m_edge_list;
   std::vector<int> m_trace_index;
+  size_type m_is_hole;
+  Path m_cycle;
 };
 
 } // namespace Surface_mesh_topology

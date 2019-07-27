@@ -774,8 +774,8 @@ public:
     }
     if (m_path.size()%2==1)
     {
-      m_path[m_path.size()/2+1]=
-          m_map.opposite2(m_path[m_path.size()/2+1]);
+      m_path[m_path.size()/2]=
+          m_map.opposite2(m_path[m_path.size()/2]);
     }
   }
 
