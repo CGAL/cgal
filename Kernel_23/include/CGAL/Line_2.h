@@ -218,13 +218,14 @@ public:
   }
 
   Point_2
-  point(const RT& i) const
+  point(const typename First_if_different<RT, int, 1>::Type& i) const
   {
     return R().construct_point_2_object()(*this,i);
   }
 
   Point_2
-  point(const typename First_if_different<FT, RT>::Type& i) const
+  point(const typename First_if_different<
+                const typename First_if_different<FT, RT, 2>::Type, int>::Type& i) const
   {
     return R().construct_point_2_object()(*this,i);
   }
