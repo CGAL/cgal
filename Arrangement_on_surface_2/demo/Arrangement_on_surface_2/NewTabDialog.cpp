@@ -37,6 +37,8 @@ NewTabDialog::NewTabDialog( QWidget* parent, Qt::WindowFlags f ) :
 								ArrangementDemoWindow::CIRCULAR_ARC_TRAITS );
   this->buttonGroup->addButton( this->ui->algebraicRadioButton,
 								ArrangementDemoWindow::ALGEBRAIC_TRAITS );
+  this->buttonGroup->addButton( this->ui->bezierRadioButton,
+                                ArrangementDemoWindow::BEZIER_TRAITS );
 }
 
 //!	returns the ID of the checked radio button
