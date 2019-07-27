@@ -19,6 +19,7 @@
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_circular_arc_traits_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
+#include <CGAL/Arr_Bezier_curve_traits_2.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
@@ -964,6 +965,16 @@ protected:
   std::string algebraicExpression;
 };
 
+/**
+   Specialization of GraphicsViewCurveInput for Arr_bezier; handles
+   user-defined generation of algebraic curves.
+  */
+template < typename RatKernel, typename AlgKernel, typename NtTraits >
+class GraphicsViewCurveInput< CGAL::Arr_Bezier_curve_traits_2<
+                                RatKernel, AlgKernel, NtTraits > >:
+        public GraphicsViewCurveInputBase {
+
+};
 } // namespace Qt
 } // namespace CGAL
 
