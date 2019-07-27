@@ -22,6 +22,7 @@
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
+#include <CGAL/Arr_Bezier_curve_traits_2.h>
 
 #include "Utils.h"
 
@@ -597,6 +598,17 @@ protected:
   
 };
 
+template < typename RatKernel, class AlgKernel, class NtTraits >
+class ArrangementPainterOstream< CGAL::Arr_Bezier_curve_traits_2< RatKernel,
+                                                                  AlgKernel,
+                                                                  NtTraits> >:
+  public ArrangementPainterOstreamBase< CGAL::Arr_Bezier_curve_traits_2<
+                                                                  RatKernel,
+                                                                  AlgKernel,
+                                                                  NtTraits > > {
+    
+    
+};
 } // namespace Qt
 } // namespace CGAL
 

@@ -26,6 +26,7 @@
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
+#include <CGAL/Arr_Bezier_curve_traits_2.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_trapezoid_ric_point_location.h>
@@ -62,6 +63,7 @@ typedef CGAL::Polygon_2<Coord_kernel> My_polygon;
 //typedef CGAL::Cartesian<NT>                           Kernel;
 // workaround for VC++
 struct Kernel : public CGAL::Cartesian<NT> {};
+
 
 class Face_with_color : public CGAL::Arr_face_base
 {
@@ -160,6 +162,27 @@ typedef CGAL::Arr_walk_along_line_point_location<Pol_arr>
 typedef CGAL::Arr_landmarks_point_location<Pol_arr>
   Pol_lanmarks_point_location;
 
+// Bezier Curves typedefs
+
+#ifdef CGAL_USE_CORE
+
+#include <CGAL/CORE_algebraic_number_traits.h>
+
+typedef CGAL::CORE_algebraic_number_traits            Bezier_nt_traits;
+typedef Bezier_nt_traits::Rational                    Bezier_rational;
+typedef Bezier_nt_traits::Algebraic                   Bezier_algebraic;
+typedef CGAL::Cartesian<Bezier_rational>              Bezier_rat_kernel;
+typedef CGAL::Cartesian<Bezier_algebraic>             Bezier_alg_kernel;
+typedef CGAL::Arr_Bezier_curve_traits_2<Bezier_rat_kernel, Bezier_alg_kernel, Bezier_nt_traits >
+                                                      Bezier_traits;
+typedef Bezier_rat_kernel::Point_2                    Bezier_rat_point;
+typedef Bezier_traits::Curve_2                        Bezier_curve;
+typedef Bezier_traits::X_monotone_curve_2             Bezier_X_monotone_curve;
+typedef Bezier_traits::Point_2                        Bezier_point;
+typedef Dcel<Bezier_traits>                           Bezier_dcel;
+typedef CGAL::Arrangement_with_history_2<Bezier_traits, Bezier_dcel>
+                                                      Bezier_arr;
+#endif
 
 // Conics
 
