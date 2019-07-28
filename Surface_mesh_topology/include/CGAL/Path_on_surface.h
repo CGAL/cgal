@@ -134,6 +134,13 @@ public:
     CGAL_assertion(i<m_path.size());
     return m_path[i];
   }
+
+  /// @return true iff the ith dart is flipped
+  bool get_ith_flip(std::size_t i) const
+  {
+    CGAL_assertion(i<m_path.size());
+    return m_flip[i];
+  }
   
   /// @return the ith dart of the path.
   Dart_const_handle operator[] (std::size_t i) const

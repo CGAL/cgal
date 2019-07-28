@@ -130,7 +130,7 @@ public:
     if (m_shortest_noncontractible_cycle==nullptr) 
     { m_shortest_noncontractible_cycle = new Shortest_noncontractible_cycle(m_original_map); }
 
-    return m_shortest_noncontractible_cycle->compute_cycle(dh, NULL);
+    return m_shortest_noncontractible_cycle->compute_cycle(dh);
   }
 
 protected:
