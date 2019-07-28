@@ -564,7 +564,7 @@ corefine_and_compute_boolean_operations(
         vpm_out_tuple, ecms_out, uv, output);
 
   // special case used for clipping open meshes
-  if (  boost::choose_param( boost::get_param(np1, internal_np::use_bool_op_to_clip_surface),
+  if (  parameters::choose_parameter( parameters::get_parameter(np1, internal_np::use_bool_op_to_clip_surface),
                              false) )
   {
     CGAL_assertion(output[Corefinement::INTERSECTION] != boost::none);
@@ -572,7 +572,7 @@ corefine_and_compute_boolean_operations(
     CGAL_assertion(output[Corefinement::TM1_MINUS_TM2] == boost::none);
     CGAL_assertion(output[Corefinement::TM2_MINUS_TM1] == boost::none);
     const bool use_compact_clipper =
-      boost::choose_param( boost::get_param(np1, internal_np::use_compact_clipper),
+      parameters::choose_parameter( parameters::get_parameter(np1, internal_np::use_compact_clipper),
                            true);
     ob.setup_for_clipping_a_surface(use_compact_clipper);
   }

@@ -163,7 +163,7 @@ void isotropic_remeshing(const FaceRange& faces
     parameters::is_default_parameter(get_parameter(np, internal_np::projection_functor));
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -341,7 +341,7 @@ void split_long_edges(const EdgeRange& edges
   using parameters::get_parameter;
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),

@@ -1784,18 +1784,18 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
+  VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                     get_property_map(vertex_point, pm));
 
-  typedef typename boost::lookup_named_param_def<internal_np::vertex_is_constrained_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
                                                  NamedParameters,
                                                  Constant_property_map<vertex_descriptor, bool> // default (no constraint pmap)
                                                  >::type                  VerticesMap;
-  VerticesMap cmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+  VerticesMap cmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                                   Constant_property_map<vertex_descriptor, bool>(false));
 
   std::size_t nb_new_vertices = 0;
@@ -1916,20 +1916,20 @@ template <typename PolygonMesh, typename NamedParameters>
 std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
                                             const NamedParameters& np)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef boost::graph_traits<PolygonMesh> GT;
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::output_iterator_t,
     NamedParameters,
     Emptyset_iterator
   > ::type Output_iterator;
   Output_iterator out
-    = choose_param(get_param(np, internal_np::output_iterator),
+    = choose_parameter(get_parameter(np, internal_np::output_iterator),
                    Emptyset_iterator());
 
   internal::Vertex_collector<PolygonMesh> dmap;

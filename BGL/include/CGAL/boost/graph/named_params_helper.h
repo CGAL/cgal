@@ -331,7 +331,7 @@ namespace CGAL {
       >::Kernel Default_kernel;
 
     public:
-      typedef typename boost::lookup_named_param_def <
+      typedef typename internal_np::Lookup_named_param_def <
         internal_np::geom_traits_t,
         NamedParameters,
         Default_kernel
@@ -421,7 +421,7 @@ namespace CGAL {
 
     public:
       typedef DummyConstrainedMap NoMap;
-      typedef typename boost::lookup_named_param_def <
+      typedef typename internal_np::Lookup_named_param_def <
         internal_np::point_is_constrained_t,
         NamedParameters,
         DummyConstrainedMap //default

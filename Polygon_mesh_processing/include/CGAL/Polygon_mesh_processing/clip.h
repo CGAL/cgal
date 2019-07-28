@@ -334,7 +334,7 @@ clip(      TriangleMesh& tm,
      const NamedParameters2& np_c)
 {
   const bool clip_volume =
-    boost::choose_parameter(boost::get_parameter(np_tm, internal_np::clip_volume), false);
+    parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::clip_volume), false);
 
   if (clip_volume && is_closed(tm))
     return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c);
