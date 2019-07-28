@@ -108,6 +108,7 @@ public:
   void clear()
   {
     m_path.clear();
+    m_flip.clear();
     m_is_closed=false;
   }
 
@@ -174,25 +175,26 @@ public:
   { return get_map().darts().index(back()); }
   
   /// @return true iff df can be added at the end of the path.
-  bool can_be_pushed(Dart_const_handle dh) const
+  bool can_be_pushed(Dart_const_handle dh, bool flip=false) const
   {
     // This assert is too long CGAL_assertion(m_map.darts().owns(dh));
 
     if (is_empty()) return true;
 
-    return m_map.template belong_to_same_cell<0>(m_map.other_extremity(back()),
-                                                 dh);
+    return m_map.template belong_to_same_cell<0>(m_flip.back() ? back() : m_map.other_extremity(back()),
+                                                 flip ? m_map.other_extremity(dh) : dh);
   }
 
   /// Add the given dart at the end of this path.
   /// @pre can_be_pushed(dh)
-  void push_back(Dart_const_handle dh, bool update_isclosed=true)
+  void push_back(Dart_const_handle dh, bool update_isclosed=true, bool flip=false)
   {
     CGAL_assertion(dh!=Map::null_handle);
     /* This assert is too long, it is tested in the is_valid method. */
     //  CGAL_assertion(can_be_pushed(dh)); 
 
     m_path.push_back(dh);
+    m_flip.push_back(flip);
     if (update_isclosed) { update_is_closed(); }
   }
 
@@ -936,6 +938,7 @@ protected:
   const typename Get_map<Mesh, Mesh>::storage_type m_map; // The underlying map
   std::vector<Dart_const_handle> m_path; /// The sequence of darts
   bool m_is_closed;                      /// True iff the path is a cycle
+  std::vector<bool> m_flip;
 };
 
 } // namespace Surface_mesh_topology

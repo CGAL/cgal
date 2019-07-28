@@ -398,20 +398,18 @@ private:
     return dh;
   }
 
-  void add_to_cycle(Dart_handle dh, Path& cycle)
+  void add_to_cycle(Dart_handle dh, Path& cycle, bool flip=false)
   {
-    CGAL_assertion(dh != NULL);
-    if (m_gmap.is_marked(dh, m_is_hole))
-      dh = m_gmap.opposite2(dh);
-    CGAL_assertion(!m_gmap.is_marked(dh, m_is_hole));
+    dh = nonhole_dart_of_same_edge(dh);
     Dart_const_handle_original dh_original = m_copy_to_origin[dh];
     // std::cerr << '-';
-    if (cycle.can_be_pushed(dh_original)) {
-      cycle.push_back(dh_original);
+    if (cycle.can_be_pushed(dh_original, flip)) {
+      cycle.push_back(dh_original, true, flip);
       // std::cerr << '?';
     }
     else {
-      cycle.push_back(m_copy_to_origin[m_gmap.opposite2(dh)]);
+      CGAL_assertion(cycle.can_be_pushed(dh_original, !flip));
+      cycle.push_back(dh_original, true, !flip);
       // std::cerr << '!';
     }
     // std::cerr << '+';
@@ -458,7 +456,7 @@ private:
     cycle.clear();
     // Trace back the path from `a` to root
     for (int ind = min_a - 1; ind != -1; ind = m_trace_index[ind]) 
-      add_to_cycle(m_spanning_tree[ind], cycle);
+      add_to_cycle(m_spanning_tree[ind], cycle, true);
     // Reverse: now it is the path from root to `a`
     cycle.reverse();
     // std::cerr << "Done reverse\n";
@@ -467,6 +465,7 @@ private:
     for (int ind = min_b - 1; ind != -1; ind = m_trace_index[ind])
       add_to_cycle(m_gmap.opposite2(m_spanning_tree[ind]), cycle);
     // CGAL_assertion(cycle.is_closed());
+    // std::cerr << "----\n";
 
     return true;
   }
