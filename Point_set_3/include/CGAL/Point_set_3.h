@@ -31,7 +31,7 @@
 
 #include <CGAL/demangle.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 
@@ -959,13 +959,13 @@ public:
 #ifdef DOXYGEN_RUNNING
   unspecified_type
 #else
-  cgal_bgl_named_params
+  Named_function_parameters
   <typename Kernel_traits<Point>::Kernel,
    internal_np::geom_traits_t,
-   cgal_bgl_named_params
+   Named_function_parameters
    <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Vector>,
     internal_np::normal_t,
-    cgal_bgl_named_params
+    Named_function_parameters
     <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Point>,
      internal_np::point_t> > >
 #endif
@@ -1303,13 +1303,13 @@ namespace Point_set_processing_3
   namespace parameters
   {
     template <typename Point, typename Vector>
-    cgal_bgl_named_params
+    Named_function_parameters
     <typename Kernel_traits<Point>::Kernel,
      internal_np::geom_traits_t,
-     cgal_bgl_named_params
+     Named_function_parameters
      <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Vector>,
       internal_np::normal_t,
-      cgal_bgl_named_params
+      Named_function_parameters
       <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Point>,
        internal_np::point_t> > >
     inline all_default(const CGAL::Point_set_3<Point, Vector>& ps)
