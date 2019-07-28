@@ -4,7 +4,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Aff_transformation_3.h>
 
-#include <CGAL/pointmatcher/compute_registration_transformation.h>
+#include <CGAL/pointmatcher/register_point_sets.h>
 
 #include <CGAL/OpenGR/compute_registration_transformation.h>
 
@@ -63,14 +63,13 @@ int main(int argc, const char** argv)
   std::cout << "Computing registration transformation using PointMatcher ICP, "
             << "taking transformation computed by OpenGR Super4PCS as initial transformation.." << std::endl;
   // Then, compute registration transformation using PointMatcher ICP, taking transformation computed
-  // by OpenGR as initial transformation
-  res =
-    CGAL::pointmatcher::compute_registration_transformation
+  // by OpenGR as initial transformation, and apply the transformation to pwns2
+  // bool converged =
+    CGAL::pointmatcher::register_point_sets
       (pwns1, pwns2, 
        params::point_map(Point_map()).normal_map(Normal_map()),
        params::point_map(Point_map()).normal_map(Normal_map())
-       .transformation(res)
-      );
+       .transformation(res));
 
   std::ofstream out("pwns2_aligned.ply");
   if (!out ||
