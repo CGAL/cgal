@@ -98,7 +98,7 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
 
   // TODO: see if should allow user to change those types
   typedef Eigen::Matrix<typename PointType::Scalar, 4, 4> MatrixType;
-  typedef gr::UniformDistSampler SamplerType;
+  typedef gr::UniformDistSampler<PointType> SamplerType;
   typedef gr::DummyTransformVisitor TrVisitorType;
   typedef gr::Match4pcsBase<gr::FunctorSuper4PCS,
                             PointType,
