@@ -34,7 +34,7 @@
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/function.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -212,7 +212,8 @@ jet_estimate_normals(
   unsigned int k,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   CGAL_TRACE("Calls jet_estimate_normals()\n");
 
@@ -229,10 +230,10 @@ jet_estimate_normals(
                               typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-  unsigned int degree_fitting = choose_param(get_param(np, internal_np::degree_fitting), 2);
-  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+  unsigned int degree_fitting = choose_parameter(get_parameter(np, internal_np::degree_fitting), 2);
+  const cpp11::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                cpp11::function<bool(double)>());
 
   typedef typename Kernel::Point_3 Point;

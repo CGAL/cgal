@@ -88,14 +88,14 @@ namespace Polygon_mesh_processing {
               OutputIterator out,
               const NamedParameters& np)
   {
-    using boost::choose_param;
-    using boost::get_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
 
     bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
       false;
 #else
-      choose_param(get_param(np, internal_np::use_delaunay_triangulation), true);
+      choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 #endif
 
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());
@@ -103,9 +103,9 @@ namespace Polygon_mesh_processing {
     return internal::triangulate_hole_polygon_mesh(pmesh,
       border_halfedge,
       out,
-      choose_param(get_param(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
+      choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
       use_dt3,
-      choose_param(get_param(np, internal_np::geom_traits), typename GetGeomTraits<PolygonMesh,NamedParameters>::type()))
+      choose_parameter(get_parameter(np, internal_np::geom_traits), typename GetGeomTraits<PolygonMesh,NamedParameters>::type()))
       .first;
   }
 
@@ -333,14 +333,14 @@ namespace Polygon_mesh_processing {
                             OutputIterator out,
                             const NamedParameters& np)
   {
-    using boost::choose_param;
-    using boost::get_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
 
     bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
       false;
 #else
-      choose_param(get_param(np, internal_np::use_delaunay_triangulation), true);
+      choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 #endif
 
     typedef CGAL::internal::Weight_min_max_dihedral_and_area      Weight;
@@ -360,7 +360,7 @@ namespace Polygon_mesh_processing {
 
     triangulate_hole_polyline(points, third_points, tracer, WC(),
       use_dt3,
-      choose_param(get_param(np, internal_np::geom_traits),
+      choose_parameter(get_parameter(np, internal_np::geom_traits),
         typename CGAL::Kernel_traits<Point>::Kernel()));
 
     CGAL_assertion(holes.empty());

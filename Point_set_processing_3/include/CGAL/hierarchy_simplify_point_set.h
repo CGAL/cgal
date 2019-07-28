@@ -41,7 +41,7 @@
 #include <CGAL/Iterator_range.h>
 #include <CGAL/function.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
@@ -161,7 +161,8 @@ namespace CGAL {
   hierarchy_simplify_point_set (PointRange& points,
                                 const NamedParameters& np)
   {
-    using boost::choose_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
   
     // basic geometric types
     typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
@@ -172,10 +173,10 @@ namespace CGAL {
     typedef typename Kernel::Vector_3 Vector;
     typedef typename Kernel::FT FT;
 
-    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-    unsigned int size = choose_param(get_param(np, internal_np::size), 10);
-    double var_max = choose_param(get_param(np, internal_np::maximum_variation), 1./3.);
-    const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+    unsigned int size = choose_parameter(get_parameter(np, internal_np::size), 10);
+    double var_max = choose_parameter(get_parameter(np, internal_np::maximum_variation), 1./3.);
+    const cpp11::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  cpp11::function<bool(double)>());
 
     typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Input_type;
