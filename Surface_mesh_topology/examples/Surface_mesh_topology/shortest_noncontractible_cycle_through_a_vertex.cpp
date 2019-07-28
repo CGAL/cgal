@@ -3,14 +3,14 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <CGAL/Shortest_noncontractible_cycle.h>
-#include <CGAL/IO/Color.h>
-#include <CGAL/draw_linear_cell_complex.h>
+#include <CGAL/Curves_on_surface_topology.h>
+#include <CGAL/Path_on_surface.h>
 #include <CGAL/squared_distance_3.h>
-#define CGAL_USE_BASIC_VIEWER 1
 
 using LCC_3             = CGAL::Linear_cell_complex_for_generalized_map<2, 3>;
 using Dart_const_handle = LCC_3::Dart_const_handle;
+using Path_on_surface   = CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
+using CST               = CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
 
 struct Weight_functor {
   Weight_functor(const LCC_3& lcc) : m_lcc(lcc) { }
@@ -23,8 +23,6 @@ struct Weight_functor {
 private:
   const LCC_3& m_lcc;
 };
-
-using SNC = CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<LCC_3, Weight_functor>;
 
 LCC_3 lcc;
 
@@ -41,20 +39,21 @@ int main(int argc, char* argv[])
   CGAL::load_off(lcc, inp);
   std::cout << "File loaded. Running the main program...\n";
 
-  Weight_functor     wf(lcc);
-  SNC                snc(lcc, wf);
-  SNC::Path          cycle;
-  SNC::Distance_type cycle_length;
+  CST cst(lcc);
+  Weight_functor wf(lcc);
 
   /// Change the value of `root` to test the algorithm at another vertex
   auto root = lcc.darts().begin();
   std::cout << "Finding the shortest noncontractible cycle...\n";
-  snc.find_cycle(root, cycle, &cycle_length);
-  if (cycle.size() == 0) {
+  Path_on_surface cycle = cst.compute_shortest_noncontractible_cycle_with_basepoint(root, wf);
+  if (cycle.length() == 0) {
     std::cout << "  Cannot find such cycle. Stop.\n";
     return 0;
   }
-  std::cout << "  Number of edges in cycle: " << cycle.size() << std::endl;
+  double cycle_length = 0;
+  for (int i = 0; i < cycle.length(); ++i)
+    cycle_length += wf(cycle[i]);
+  std::cout << "  Number of edges in cycle: " << cycle.length() << std::endl;
   std::cout << "  Cycle length: " << cycle_length << std::endl;
   std::cout << "  Root: " << lcc.point_of_vertex_attribute(lcc.vertex_attribute(root)) << std::endl;
 }

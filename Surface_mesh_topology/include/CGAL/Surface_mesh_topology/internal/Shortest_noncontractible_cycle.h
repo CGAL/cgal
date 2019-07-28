@@ -152,7 +152,7 @@ public:
     m_gmap.free_mark(m_is_hole);
   }
   
-  template <class WeightFunctor>
+  template <class WeightFunctor=Default_weight_functor>
   Path compute_cycle(Dart_handle_original root_vertex, typename WeightFunctor::Weight_t* length = NULL,
                   const WeightFunctor& wf = Default_weight_functor())
   {
@@ -162,7 +162,7 @@ public:
     return m_cycle;
   }
 
-  template <class WeightFunctor>
+  template <class WeightFunctor=Default_weight_functor>
   Path compute_edgewidth(typename WeightFunctor::Weight_t* length = NULL,
                          const WeightFunctor& wf = Default_weight_functor())
   {

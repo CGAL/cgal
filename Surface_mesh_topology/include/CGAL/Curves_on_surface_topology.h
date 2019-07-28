@@ -107,6 +107,32 @@ public:
     return m_shortest_noncontractible_cycle->compute_edgewidth(NULL, wf);
   }
 
+  Path_on_surface<Mesh> compute_edgewidth() const
+  {
+    if (m_shortest_noncontractible_cycle==nullptr) 
+    { m_shortest_noncontractible_cycle = new Shortest_noncontractible_cycle(m_original_map); }
+
+    return m_shortest_noncontractible_cycle->compute_edgewidth();
+  }
+
+  template <class DartHandle, class WeightFunctor>
+  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(DartHandle dh, const WeightFunctor& wf) const
+  {
+    if (m_shortest_noncontractible_cycle==nullptr) 
+    { m_shortest_noncontractible_cycle = new Shortest_noncontractible_cycle(m_original_map); }
+
+    return m_shortest_noncontractible_cycle->compute_cycle(dh, NULL, wf);
+  }
+
+  template <class DartHandle>
+  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(DartHandle dh) const
+  {
+    if (m_shortest_noncontractible_cycle==nullptr) 
+    { m_shortest_noncontractible_cycle = new Shortest_noncontractible_cycle(m_original_map); }
+
+    return m_shortest_noncontractible_cycle->compute_cycle(dh, NULL);
+  }
+
 protected:
   Mesh& m_original_map;
   mutable internal::Minimal_quadrangulation<Mesh>* m_minimal_quadrangulation;
