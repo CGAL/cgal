@@ -54,6 +54,7 @@ public:
 
   Path_on_surface(const internal::Path_on_surface_with_rle<Mesh>& apath) :
     m_map(apath.get_map()),
+    m_flip(apath.get_flip()),
     m_is_closed(apath.is_closed())
   {
     for (auto it=apath.m_path.begin(), itend=apath.m_path.end(); it!=itend; ++it)
@@ -103,6 +104,9 @@ public:
   /// @return the combinatorial map supporting this path.
   const Map& get_map() const
   { return m_map; }
+
+  const std::vector<bool>& get_flip() const
+  { return m_flip; }
 
   /// clear the path.
   void clear()

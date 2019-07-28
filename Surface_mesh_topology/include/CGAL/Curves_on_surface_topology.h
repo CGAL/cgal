@@ -24,6 +24,7 @@
 #include <CGAL/license/Surface_mesh_topology.h>
 
 #include <CGAL/Surface_mesh_topology/internal/Minimal_quadrangulation.h>
+#include <CGAL/Surface_mesh_topology/internal/Shortest_noncontractible_cycle.h>
 #include <CGAL/Face_graph_wrapper.h>
 
 namespace CGAL {
@@ -34,10 +35,12 @@ class Curves_on_surface_topology
 {
 public:
   typedef typename internal::CMap_for_minimal_quadrangulation CMap_for_minimal_quadrangulation;
+  typedef typename internal::Shortest_noncontractible_cycle<Mesh> Shortest_noncontractible_cycle;
   
-  Curves_on_surface_topology(const Mesh& amap, bool /* display_time */=false) :
+  Curves_on_surface_topology(Mesh& amap, bool /* display_time */=false) :
     m_original_map(amap),
-    m_minimal_quadrangulation(nullptr)
+    m_minimal_quadrangulation(nullptr),
+    m_shortest_noncontractible_cycle(nullptr)
   {}
     
   ~Curves_on_surface_topology()
@@ -93,11 +96,21 @@ public:
   {
     CGAL_assertion(is_minimal_quadrangulation_computed());
     return m_minimal_quadrangulation->get_map();
-  } 
+  }
+
+  template <class WeightFunctor>
+  Path_on_surface<Mesh> compute_edgewidth(const WeightFunctor& wf) const
+  {
+    if (m_shortest_noncontractible_cycle==nullptr) 
+    { m_shortest_noncontractible_cycle = new Shortest_noncontractible_cycle(m_original_map); }
+
+    return m_shortest_noncontractible_cycle->compute_edgewidth(NULL, wf);
+  }
 
 protected:
-  const Mesh& m_original_map;
+  Mesh& m_original_map;
   mutable internal::Minimal_quadrangulation<Mesh>* m_minimal_quadrangulation;
+  mutable Shortest_noncontractible_cycle* m_shortest_noncontractible_cycle;
 };
 
 } // namespace Surface_mesh_topology

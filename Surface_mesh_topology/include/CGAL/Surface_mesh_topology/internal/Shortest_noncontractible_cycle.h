@@ -10,6 +10,7 @@
 
 namespace CGAL {
 namespace Surface_mesh_topology {
+namespace internal {
 
 template <class Mesh_>
 class Shortest_noncontractible_cycle {
@@ -115,13 +116,13 @@ public:
   using Attribute_handle_0         = typename Gmap::template Attribute_handle<0>::type;
   using size_type                  = typename Gmap::size_type;
   using Dart_container             = std::vector<Dart_handle>;
-  using Path                       = Path_on_surface<Mesh_original>;
+  using Path                       = CGAL::Surface_mesh_topology::Path_on_surface<Mesh_original>;
   
   Shortest_noncontractible_cycle(Mesh_original& gmap) : m_cycle(gmap)
   {
-    Gmap_wrapper::copy(m_gmap, gmap, m_origin_to_copy, m_copy_to_origin);
     // m_gmap.display_characteristics(std::cerr);
     // std::cerr << '\n';
+    Gmap_wrapper::copy(m_gmap, gmap, m_origin_to_copy, m_copy_to_origin);
     // Initialize m_is_hole
     m_is_hole = m_gmap.get_new_mark();
     for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it) {
@@ -162,13 +163,14 @@ public:
   }
 
   template <class WeightFunctor>
-  Path edge_width(typename WeightFunctor::Weight_t* length = NULL,
-                  const WeightFunctor& wf = Default_weight_functor())
+  Path compute_edgewidth(typename WeightFunctor::Weight_t* length = NULL,
+                         const WeightFunctor& wf = Default_weight_functor())
   {
     m_cycle.clear();
     bool first_check = true;
     typename WeightFunctor::Weight_t min_length = 0;
     for (Attribute_handle_0 att_it = m_gmap.template attributes<0>().begin(), att_itend = m_gmap.template attributes<0>().end(); att_it != att_itend; ++att_it) {
+      // std::cerr << '.';
       Dart_handle it = att_it->dart();
       typename WeightFunctor::Weight_t temp_length;
       if (first_check) {
@@ -181,6 +183,7 @@ public:
       }
     }
     if (length != NULL) *length = min_length;
+    // std::cerr << "====\n";
     return m_cycle;
   }
 
@@ -480,6 +483,7 @@ private:
   Path m_cycle;
 };
 
+} // namespace internal
 } // namespace Surface_mesh_topology
 } // namespace CGAL
 

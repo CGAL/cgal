@@ -1,6 +1,7 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Shortest_noncontractible_cycle.h>
+#include <CGAL/Curves_on_surface_topology.h>
+#include <CGAL/Path_on_surface.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/squared_distance_3.h>
@@ -15,6 +16,7 @@ using Dart_handle = LCC_3::Dart_handle;
 using Dart_const_handle = LCC_3::Dart_const_handle;
 using Dart_container = std::vector<Dart_handle>;
 using Point = LCC_3::Point;
+using Path_on_surface = CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
 
 struct Weight_functor {
   Weight_functor(const LCC_3& lcc) : m_lcc(lcc) { }
@@ -28,7 +30,7 @@ private:
   const LCC_3& m_lcc;
 };
 
-using SNC = CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<LCC_3, Weight_functor>;
+using CST = CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
 
 struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC {
   Draw_functor(LCC_3::size_type am1, LCC_3::size_type am2) : is_root(am1),
@@ -84,45 +86,40 @@ int main(int argc, char* argv[]) {
   for (int loop = 1; ; ++loop) {
     std::cout << "Finding #" << loop << " edge-width:\n";
     Weight_functor wf(lcccopy);
-    SNC snc(lcccopy, wf);
-    SNC::Path cycle;
-    SNC::Distance_type x;
-    snc.edge_width(cycle, &x);
-    if (cycle.size() == 0) {
+    CST cst(lcccopy);
+    Path_on_surface cycle = cst.compute_edgewidth(wf);
+    if (cycle.length() == 0) {
       std::cout << "  Cannot find edge-width. Stop.\n";
       break;
     }
 
-    for (LCC_3::Dart_of_cell_range<0>::iterator it=lcccopy.darts_of_cell<0>(cycle[0]).begin(),
-           itend=lcccopy.darts_of_cell<0>(cycle[0]).end(); it!=itend; ++it)
-    {
-      if (copy_to_origin.count(it)>0 &&
-          !lccoriginal.is_marked(copy_to_origin[it], is_root))
-      {
-        lccoriginal.mark_cell<0>(copy_to_origin[it], is_root);
-        break;
-      }
+    LCC_3::size_type is_root_copy = lcccopy.get_new_mark();
+    LCC_3::size_type belong_to_cycle_copy = lcccopy.get_new_mark();
+
+    lcccopy.mark_cell<0>(cycle[0], is_root_copy);
+    double x = 0;
+    for (int i = 0; i < cycle.length(); ++i) {
+      x += wf(cycle[i]);
+      if (!lcccopy.is_marked(cycle[i], belong_to_cycle_copy))
+        lcccopy.mark_cell<1>(cycle[i], belong_to_cycle_copy);
     }
-    
-    for (auto e : cycle)
-    {
-      for (auto it=lcccopy.darts_of_cell<1>(e).begin(),
-             itend=lcccopy.darts_of_cell<1>(e).end(); it!=itend; ++it)
-      {
-        if (copy_to_origin.count(it)>0 &&
-            !lccoriginal.is_marked(copy_to_origin[it], belong_to_cycle))
-          {
-            lccoriginal.mark_cell<1>(copy_to_origin[it], belong_to_cycle);
-            break;
-          }
-      }
-      if (!lcccopy.is_free<2>(e)) 
-      { lcccopy.unsew<2>(e); }
+
+    for (auto dh = lcccopy.darts().begin(), dhend = lcccopy.darts().end(); dh != dhend; ++dh) {
+      if (lcccopy.is_marked(dh, is_root_copy) && !lccoriginal.is_marked(copy_to_origin[dh], is_root))
+        lccoriginal.mark(copy_to_origin[dh], is_root);
+      if (lcccopy.is_marked(dh, belong_to_cycle_copy) && !lccoriginal.is_marked(copy_to_origin[dh], belong_to_cycle))
+        lccoriginal.mark(copy_to_origin[dh], belong_to_cycle);
+      if (lcccopy.is_marked(dh, belong_to_cycle_copy) && !lcccopy.is_free<2>(dh))
+        lcccopy.unsew<2>(dh);
     }
+
+    lcccopy.free_mark(belong_to_cycle_copy);
+    lcccopy.free_mark(is_root_copy);
     
-    std::cout << "  Number of edges in cycle: " << cycle.size() << std::endl;
+    std::cout << "  Number of edges in cycle: " << cycle.length() << std::endl;
     std::cout << "  Cycle length: " << x << std::endl;
     std::cout << "  Root: " << lcccopy.point_of_vertex_attribute(lcccopy.vertex_attribute(cycle[0])) << std::endl;
+
   }
 
 
