@@ -118,7 +118,7 @@ SMesh* Polyhedron_demo_diff_between_meshes_plugin::diff(SMesh* m1, SMesh* m2, bo
       ids.push_back(m2_vertex_id[(std::size_t)v]);
     }
     std::sort(ids.begin(), ids.end());
-    if(!(m1_faces.find(ids) != m1_faces.end() ^ compute_common))
+    if(!((m1_faces.find(ids) != m1_faces.end()) ^ compute_common))
     {
       common_faces.push_back(f);
       for(auto v : CGAL::vertices_around_face(halfedge(f, *m2), *m2))
