@@ -587,7 +587,7 @@ protected:
    Specialization of GraphicsViewCurveInput for Arr_linear_traits_2; handles
    user-guided generation of line segment curves.
 */
-template < typename Kernel_ >-
+template < typename Kernel_ >
 class GraphicsViewCurveInput< CGAL::Arr_linear_traits_2< Kernel_ > >:
   public GraphicsViewCurveInputBase
 {
@@ -993,6 +993,7 @@ public: //constructor
 protected:
     void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
     {
+        //currently no use
     }
 
     void mousePressEvent ( QGraphicsSceneMouseEvent* event )
@@ -1000,6 +1001,19 @@ protected:
         Point_2 clickedPoint = this->snapPoint ( event );
         this->points.push_back( clickedPoint );
         this->pointsGraphicsItem.insert( clickedPoint );
+
+        if (this->points.size() == 3)
+        {
+            QPointF qp1 = this->convert( this->points[ 0 ] );
+            QPointF qp2 = this->convert( this->points[ 1 ] );
+            QPointF qp3 = this->convert( this->points[ 2 ] );
+            Rat_point_2 p1 = Rat_point_2( qp1.x( ), qp1.y( ) );
+            Rat_point_2 p2 = Rat_point_2( qp2.x( ), qp2.y( ) );
+            Rat_point_2 p3 = Rat_point_2( qp3.x( ), qp3.y( ) );
+
+            Curve_2 res( p1, p2, p3 );
+            Q_EMIT generate( CGAL::make_object( res ) );
+        }
     }
     virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
     {
