@@ -629,9 +629,9 @@ mst_orient_normals(
 
     PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
     NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
-    typename Kernel::FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius),
+    typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
                                                        typename Kernel::FT(0));
-    ConstrainedMap constrained_map = choose_param(get_param(np, internal_np::point_is_constrained), ConstrainedMap());
+    ConstrainedMap constrained_map = choose_parameter(get_parameter(np, internal_np::point_is_constrained), ConstrainedMap());
     Kernel kernel;
 
   // Bring private stuff to scope

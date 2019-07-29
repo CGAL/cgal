@@ -313,13 +313,13 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                         get_property_map(boost::face_index, pmesh));
 
   // FaceSizeMap
-  typedef typename boost::lookup_named_param_def<internal_np::face_size_map_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::face_size_map_t,
                                                  NamedParameters,
                                                  Constant_property_map<face_descriptor, std::size_t> // default
                                                 >::type                  FaceSizeMap;
   typedef typename boost::property_traits<FaceSizeMap>::value_type       Face_size;
 
-  FaceSizeMap face_size_pmap = choose_param(get_param(np, internal_np::face_size_map),
+  FaceSizeMap face_size_pmap = choose_parameter(get_parameter(np, internal_np::face_size_map),
                                                 Constant_property_map<face_descriptor, std::size_t>(1));
 
   // vector_property_map
@@ -419,7 +419,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
   FaceIndexMap fim = choose_parameter(get_parameter(np, internal_np::face_index),
                                       get_property_map(boost::face_index, pmesh));
 
-  typedef typename boost::lookup_named_param_def<internal_np::face_size_map_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::face_size_map_t,
                                                  NamedParameters,
                                                  Constant_property_map<face_descriptor, std::size_t> // default
                                                 >::type                   FaceSizeMap;
@@ -427,7 +427,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
 
   CGAL_static_assertion((std::is_convertible<ThresholdValueType, Face_size>::value));
 
-  FaceSizeMap face_size_pmap = choose_param(get_param(np, internal_np::face_size_map),
+  FaceSizeMap face_size_pmap = choose_parameter(get_parameter(np, internal_np::face_size_map),
                                            Constant_property_map<face_descriptor, std::size_t>(1));
 
   // vector_property_map

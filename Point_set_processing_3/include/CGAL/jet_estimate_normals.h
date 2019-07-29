@@ -230,7 +230,7 @@ jet_estimate_normals(
   unsigned int degree_fitting = choose_parameter(get_parameter(np, internal_np::degree_fitting), 2);
   FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), FT(0));
   
-  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                std::function<bool(double)>());
 
   typedef typename Kernel::Point_3 Point;

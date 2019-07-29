@@ -601,7 +601,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   bool all_removed=false;
   bool some_removed=true;
 
-  bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
+  bool preserve_genus = parameters::choose_parameter(parameters::get_parameter(np, internal_np::preserve_genus), true);
 
   // collect edges of length 0
   while(some_removed && !all_removed)
@@ -2297,19 +2297,19 @@ template <typename PolygonMesh, typename NamedParameters>
 std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
                                             const NamedParameters& np)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef boost::graph_traits<PolygonMesh>                            GT;
   typedef typename GT::halfedge_descriptor                            halfedge_descriptor;
 
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::output_iterator_t,
     NamedParameters,
     Emptyset_iterator
   > ::type                                                            Output_iterator;
 
-  Output_iterator out = choose_param(get_param(np, internal_np::output_iterator), Emptyset_iterator());
+  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
 
   std::vector<halfedge_descriptor> non_manifold_cones;
   non_manifold_vertices(pm, std::back_inserter(non_manifold_cones));

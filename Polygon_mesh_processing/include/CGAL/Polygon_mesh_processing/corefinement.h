@@ -255,7 +255,7 @@ bool does_bound_a_volume(const TriangleMesh& tm)
     Corefinement::No_mark<TriangleMesh> \
   > ::type Ecm_out_##I; \
     Ecm_out_##I ecm_out_##I = \
-      internal_np::choose_parameter( internal_np::get_parameter(std::get<I>(nps_out), internal_np::edge_is_constrained),  \
+      parameters::choose_parameter( parameters::get_parameter(std::get<I>(nps_out), internal_np::edge_is_constrained),  \
                                      Corefinement::No_mark<TriangleMesh>() );
 
 
