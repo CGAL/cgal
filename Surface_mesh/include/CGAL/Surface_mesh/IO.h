@@ -434,9 +434,9 @@ generic_print_surface_mesh( std::ostream&   out,
   }
   typedef typename boost::property_traits<VPmap>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel K;
-  typename Surface_mesh<P>::template Property_map<vertex_descriptor, typename K::Vector_3 > vnormals;
+  typename Surface_mesh<P>::template Property_map<typename Surface_mesh<P>::vertex_descriptor, typename K::Vector_3 > vnormals;
   bool has_normals = false;
-  boost::tie(vnormals, has_normals) = M.template property_map<typename Surface_mesh<P>::vertex_index, typename K::Vector_3>("v:normal");
+  boost::tie(vnormals, has_normals) = M.template property_map<typename Surface_mesh<P>::vertex_descriptor, typename K::Vector_3>("v:normal");
   if(has_normals)
   {
     for( VCI vi = vertices(M).begin(); vi != vertices(M).end(); ++vi) {
