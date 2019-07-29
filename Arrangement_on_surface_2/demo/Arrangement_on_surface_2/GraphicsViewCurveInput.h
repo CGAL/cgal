@@ -587,7 +587,7 @@ protected:
    Specialization of GraphicsViewCurveInput for Arr_linear_traits_2; handles
    user-guided generation of line segment curves.
 */
-template < typename Kernel_ >
+template < typename Kernel_ >-
 class GraphicsViewCurveInput< CGAL::Arr_linear_traits_2< Kernel_ > >:
   public GraphicsViewCurveInputBase
 {
@@ -972,7 +972,19 @@ protected:
 template < typename RatKernel, typename AlgKernel, typename NtTraits >
 class GraphicsViewCurveInput< CGAL::Arr_Bezier_curve_traits_2<
                                 RatKernel, AlgKernel, NtTraits > >:
-        public GraphicsViewCurveInputBase {
+  public GraphicsViewCurveInputBase {
+public: // typedefs
+  typedef GraphicsViewCurveInputBase Superclass;
+  typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits >
+                                                          Traits;
+  typedef typename Traits::Curve_2 Curve_2;
+  typedef typename Traits::Point_2 Point_2;
+  typedef AlgKernel                                     Kernel;
+  typedef typename Kernel::Segment_2                    Segment_2;
+  typedef typename RatKernel::FT                        Rat_FT;
+  typedef typename RatKernel::Point_2                   Rat_point_2;
+  typedef typename RatKernel::Segment_2                 Rat_segment_2;
+  typedef typename RatKernel::Circle_2                  Rat_circle_2;
 
 };
 } // namespace Qt
