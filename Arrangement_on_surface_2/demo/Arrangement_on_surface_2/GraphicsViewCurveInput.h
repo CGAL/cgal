@@ -974,18 +974,43 @@ class GraphicsViewCurveInput< CGAL::Arr_Bezier_curve_traits_2<
                                 RatKernel, AlgKernel, NtTraits > >:
   public GraphicsViewCurveInputBase {
 public: // typedefs
-  typedef GraphicsViewCurveInputBase Superclass;
-  typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits >
+    typedef GraphicsViewCurveInputBase Superclass;
+    typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits >
                                                           Traits;
-  typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::Point_2 Point_2;
-  typedef AlgKernel                                     Kernel;
-  typedef typename Kernel::Segment_2                    Segment_2;
-  typedef typename RatKernel::FT                        Rat_FT;
-  typedef typename RatKernel::Point_2                   Rat_point_2;
-  typedef typename RatKernel::Segment_2                 Rat_segment_2;
-  typedef typename RatKernel::Circle_2                  Rat_circle_2;
+    typedef typename Traits::Curve_2 Curve_2;
+    typedef typename Traits::Point_2 Point_2;
+    typedef AlgKernel                                     Kernel;
+    typedef typename Kernel::Segment_2                    Segment_2;
+    typedef typename RatKernel::FT                        Rat_FT;
+    typedef typename RatKernel::Point_2                   Rat_point_2;
+    typedef typename RatKernel::Segment_2                 Rat_segment_2;
+    typedef typename RatKernel::Circle_2                  Rat_circle_2;
+public: //constructor
+    GraphicsViewCurveInput ( QObject* parent) :
+        GraphicsViewCurveInputBase (parent)
+    { }
 
+protected:
+    void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+    {
+    }
+
+    void mousePressEvent ( QGraphicsSceneMouseEvent* event )
+    {
+        Point_2 clickedPoint = this->snapPoint ( event );
+        this->points.push_back( clickedPoint );
+        this->pointsGraphicsItem.insert( clickedPoint );
+    }
+    virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
+    {
+      Point_2 clickedPoint = this->convert( event->scenePos( ) );
+      return clickedPoint;
+    }
+
+    Converter< Kernel > convert;
+    std::vector< Point_2 > points;
+    std::vector< QGraphicsLineItem* > polylineGuide;
+    Traits traits;
 };
 } // namespace Qt
 } // namespace CGAL
