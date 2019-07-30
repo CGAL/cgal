@@ -281,17 +281,38 @@ Triangle_2_Triangle_2_pair<K>::vertex(int n) const
     return cur->point;
 }
 
+//algorithm taken from here : https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
+template <typename K>
+bool is_cw(std::vector<typename K::Point_2> ps)
+{
+  typename K::FT res(0);
+  std::size_t length = ps.size();
+  for(std::size_t i = 0; i<length; ++i)
+  {
+    res += (ps[(i+1)%length].x() - ps[i].x())*(ps[(i+1)%length].y()+ps[i].y());
+  }
+  return res > 0;
+}
+
 template <class K>
 typename K::Triangle_2
 Triangle_2_Triangle_2_pair<K>::intersection_triangle() const
 {
   typedef typename K::Triangle_2 Triangle_2;
-    if (!_known)
-        intersection_type();
-    CGAL_kernel_assertion(_result == TRIANGLE);
-    return Triangle_2(_pointlist.first->point,
-		      _pointlist.first->next->point,
-		      _pointlist.first->next->next->point);
+  if (!_known)
+    intersection_type();
+  CGAL_kernel_assertion(_result == TRIANGLE);
+  std::vector<typename K::Point_2> res;
+  res.push_back(_pointlist.first->point);
+  res.push_back(_pointlist.first->next->point);
+  res.push_back(_pointlist.first->next->next->point);
+  if(!is_cw<K>(res))
+  {
+    return Triangle_2(res[0], res[1], res[2]);
+  }
+  else {
+    return Triangle_2(res[0], res[2], res[1]);
+  }
 }
 
 template <class K>
@@ -342,6 +363,15 @@ intersection(const typename K::Triangle_2 &tr1,
         Container points(ispair.vertex_count());
         for (int i =0; i < ispair.vertex_count(); i++) {
             points[i] = ispair.vertex(i);
+        }
+        if(is_cw<K>(points))
+        {
+          std::size_t length = points.size();
+
+          for(std::size_t i = 0; i< length/2; ++i)
+          {
+            std::swap(points[i], points[length-i-1]);
+          }
         }
         return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(points);
     }

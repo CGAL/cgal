@@ -98,12 +98,22 @@ struct Test
   {
     if (p.size() != q.size())
       return false;
-
+    if (CGAL::Intersections::internal::is_cw<K>(p))
+      return false;
     for(typename Pol::const_iterator itp = p.begin(), itq = q.begin(); itp != p.end(); ++itp, ++itq)
       if (!approx_equal(*itp, *itq))
         return false;
 
     return true;
+  }
+
+  bool approx_equal(const T & p, const T & q)
+  {
+    std::vector<P> vec(3);
+    for(int i=0; i<3; ++i){vec[i]=p[i];}
+    if (CGAL::Intersections::internal::is_cw<K>(vec))
+      return false;
+    return p == q;
   }
 
   template <typename O1, typename O2>
@@ -515,18 +525,12 @@ struct Test
 
     // polygon intersection
     Pol pol0;
-    pol0.push_back(P(-6, -4));
-    pol0.push_back(P( -5.11111, -0.222222 ));
-    pol0.push_back(P( 0, 10 ));
     pol0.push_back(P( 8, 4 ));
+    pol0.push_back(P( 0, 10 ));
+    pol0.push_back(P( -5.11111, -0.222222 ));
+    pol0.push_back(P(-6, -4));
     check_intersection     (T(p(   0, 10), p(-10, -10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol0, false);
-
-    Pol pol1;
-    pol1.push_back(P( 8,  4));
-    pol1.push_back(P( 0, 10 ));
-    pol1.push_back(P( -5.11111, -0.222222 ));
-    pol1.push_back(P(-6, -4));
-    check_intersection     (T(p( -10,-10), p(  0,  10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol1, false);
+    check_intersection     (T(p( -10,-10), p(  0,  10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol0, false);
 
     Pol pol2;
     pol2.push_back(P( 10.2222, 2.33333 ));
