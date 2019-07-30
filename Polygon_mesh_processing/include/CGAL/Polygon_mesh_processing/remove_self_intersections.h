@@ -585,9 +585,8 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
   return std::make_pair(all_fixed, topology_issue);
 }
 
-template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
-bool remove_self_intersections(const FaceRange& face_range,
-                               TriangleMesh& tmesh,
+template <typename TriangleMesh, typename NamedParameters>
+bool remove_self_intersections(TriangleMesh& tmesh,
                                const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh>                                 graph_traits;
@@ -606,18 +605,18 @@ bool remove_self_intersections(const FaceRange& face_range,
     std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tmesh)? " << is_valid_polygon_mesh(tmesh) << "\n";
 
   CGAL_precondition_code(std::set<face_descriptor> degenerate_face_set;)
-  CGAL_precondition_code(degenerate_faces(face_range, tmesh,
-                                          std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);)
+  CGAL_precondition_code(degenerate_faces(tmesh, std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);)
   CGAL_precondition(degenerate_face_set.empty());
 
   if(!preserve_genus)
     duplicate_non_manifold_vertices(tmesh, np);
 
-  // Look for self-intersections in the polyhedron and remove them
+  // Look for self-intersections in the mesh and remove them
   int step = -1;
   bool all_fixed = true; // indicates if the filling of all created holes went fine
   bool topology_issue = false; // indicates if some boundary cycles of edges are blocking the fixing
   std::set<face_descriptor> faces_to_remove;
+
   while(++step<max_steps)
   {
     if(faces_to_remove.empty()) // the previous round might have been blocked due to topological constraints
@@ -626,7 +625,7 @@ bool remove_self_intersections(const FaceRange& face_range,
       std::vector<Face_pair> self_inter;
       // TODO : possible optimization to reduce the range to check with the bbox
       // of the previous patches or something.
-      self_intersections(face_range, tmesh, std::back_inserter(self_inter));
+      self_intersections(tmesh, std::back_inserter(self_inter));
 
       for(const Face_pair& fp : self_inter)
       {
@@ -644,6 +643,7 @@ bool remove_self_intersections(const FaceRange& face_range,
 
     std::tie(all_fixed, topology_issue) =
         remove_self_intersections_one_step(tmesh, faces_to_remove, vpm, step, preserve_genus, verbose);
+
     if(all_fixed && topology_issue)
     {
       if(verbose)
@@ -656,24 +656,10 @@ bool remove_self_intersections(const FaceRange& face_range,
   return step < max_steps;
 }
 
-template <typename FaceRange, typename TriangleMesh>
-bool remove_self_intersections(const FaceRange& face_range,
-                               TriangleMesh& tmesh)
-{
-  return remove_self_intersections(face_range, tmesh, parameters::all_default());
-}
-
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-bool remove_self_intersections(TriangleMesh& tmesh,
-                               const CGAL_PMP_NP_CLASS& np)
-{
-  return remove_self_intersections(faces(tmesh), tmesh, np);
-}
-
 template <typename TriangleMesh>
 bool remove_self_intersections(TriangleMesh& tmesh)
 {
-  return remove_self_intersections(faces(tmesh), tmesh, parameters::all_default());
+  return remove_self_intersections(tmesh, parameters::all_default());
 }
 
 /// \endcond
