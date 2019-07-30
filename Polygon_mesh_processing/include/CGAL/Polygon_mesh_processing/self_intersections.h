@@ -78,6 +78,7 @@ struct Intersect_facets
     OutputIterator* m_iterator;
     bool* m_intersected;
   };
+
 // typedefs
   typedef typename Kernel::Segment_3    Segment;
   typedef typename Kernel::Triangle_3   Triangle;

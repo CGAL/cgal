@@ -64,6 +64,14 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
               << " with " << faces_to_remove.size() << " intersecting faces\n";
   }
 
+  if(!does_self_intersect(faces_to_remove, tmesh, parameters::vertex_point_map(vpmap)))
+  {
+    if(verbose)
+      std::cout << "DEBUG: Range has no self-intersections\n";
+
+    return std::make_pair(true, false);
+  }
+
   CGAL_assertion(tmesh.is_valid());
 
   typedef boost::graph_traits<TriangleMesh>                       graph_traits;
@@ -660,6 +668,184 @@ template <typename TriangleMesh>
 bool remove_self_intersections(TriangleMesh& tmesh)
 {
   return remove_self_intersections(tmesh, parameters::all_default());
+}
+
+template <typename FaceContainer, typename TriangleMesh, typename SICCContainer>
+int identify_self_intersecting_ccs(const FaceContainer& all_intersecting_faces,
+                                   TriangleMesh& mesh,
+                                   SICCContainer& self_intersecting_ccs)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor            face_descriptor;
+
+  typedef CGAL::dynamic_face_property_t<bool>                                    Face_bool_tag;
+  typedef typename boost::property_map<TriangleMesh, Face_bool_tag>::type        Is_self_intersecting_face_map;
+
+  typedef CGAL::dynamic_face_property_t<int>                                     Face_color_tag;
+  typedef typename boost::property_map<TriangleMesh, Face_color_tag>::type       SI_CC_face_map;
+
+  std::list<face_descriptor> si_faces(all_intersecting_faces.begin(), all_intersecting_faces.end());
+
+  Is_self_intersecting_face_map is_si_fmap = get(Face_bool_tag(), mesh);
+  SI_CC_face_map colors = get(Face_color_tag(), mesh);
+
+  // multiple iterations means we must reset properties
+  for(face_descriptor f : faces(mesh))
+  {
+    put(is_si_fmap, f, false);
+    put(colors, f, 0);
+  }
+
+  for(face_descriptor f : si_faces)
+    put(is_si_fmap, f, true);
+
+  int color = 0;
+  while(!si_faces.empty())
+  {
+    face_descriptor seed_f = si_faces.front();
+    si_faces.pop_front();
+
+    if(get(colors, seed_f) != 0) // 'seed_f' is already colored, nothing to do
+      continue;
+    put(colors, seed_f, ++color);
+
+    std::stack<face_descriptor> to_color;
+    to_color.push(seed_f);
+
+    while(!to_color.empty())
+    {
+      face_descriptor f = to_color.top();
+      to_color.pop();
+
+      // add neighbors to stack @todo should this be vertex-neighbors and not edge neighbors
+      for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
+      {
+        halfedge_descriptor opp_h = opposite(h, mesh);
+        face_descriptor opp_f = face(opp_h, mesh);
+
+        if(is_border(opp_h, mesh) || !get(is_si_fmap, opp_f))
+          continue;
+
+        // 'f' is already colored; nothing to do
+        if(get(colors, opp_f) != 0) {
+          CGAL_assertion(get(colors, opp_f) == color);
+        } else {
+          put(colors, opp_f, color);
+          to_color.push(opp_f);
+        }
+      }
+    }
+  }
+
+  self_intersecting_ccs.resize(color);
+  for(face_descriptor f : all_intersecting_faces)
+  {
+    CGAL_assertion(get(is_si_fmap, f));
+    CGAL_assertion(0 < get(colors, f) && get(colors, f) <= color);
+    self_intersecting_ccs[get(colors, f) - 1].insert(f); // -1 because colors start at '1'
+  }
+
+  return color;
+}
+
+template <typename TriangleMesh, typename NamedParameters>
+bool remove_self_intersections_locally(TriangleMesh& tmesh,
+                                       const NamedParameters& np)
+{
+  typedef boost::graph_traits<TriangleMesh>                                 graph_traits;
+  typedef typename graph_traits::face_descriptor                            face_descriptor;
+
+  // named parameter extraction
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type   VertexPointMap;
+  VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                           get_property_map(vertex_point, tmesh));
+
+  const int max_steps = boost::choose_param(boost::get_param(np, internal_np::number_of_iterations), 7);
+  bool verbose = boost::choose_param(boost::get_param(np, internal_np::verbosity_level), 0) > 0;
+  bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
+
+  if(verbose)
+    std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tmesh)? " << is_valid_polygon_mesh(tmesh) << "\n";
+
+  CGAL_precondition_code(std::set<face_descriptor> degenerate_face_set;)
+  CGAL_precondition_code(degenerate_faces(tmesh, std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);)
+  CGAL_precondition(degenerate_face_set.empty());
+
+  if(!preserve_genus)
+    duplicate_non_manifold_vertices(tmesh, np);
+
+  // Look for self-intersections in the mesh and remove them
+  int step = -1;
+  bool all_fixed = false; // indicates if the filling of all created holes went fine
+  bool topology_issue = false; // indicates if some boundary cycles of edges are blocking the fixing
+  std::set<face_descriptor> all_intersecting_faces;
+
+  while(++step < max_steps)
+  {
+    if(all_fixed)
+    {
+      if(verbose)
+        std::cout << "DEBUG: Fixed all local self-intersections!" << std::endl;
+      break;
+    }
+
+    if(all_intersecting_faces.empty()) // the previous round might have been blocked due to topological constraints
+    {
+      typedef std::pair<face_descriptor, face_descriptor> Face_pair;
+      std::vector<Face_pair> self_inter;
+      // TODO : possible optimization to reduce the range to check with the bbox
+      // of the previous patches or something.
+      self_intersections(tmesh, std::back_inserter(self_inter));
+
+      for(const Face_pair& fp : self_inter)
+      {
+        all_intersecting_faces.insert(fp.first);
+        all_intersecting_faces.insert(fp.second);
+      }
+    }
+
+    if(verbose)
+      std::cout << all_intersecting_faces.size() << " faces part of self-intersections" << std::endl;
+
+    if(all_intersecting_faces.empty())
+    {
+      if(verbose)
+        std::cout << "DEBUG: There is no more face to remove." << std::endl;
+      break;
+    }
+
+    std::vector<std::set<face_descriptor> > faces_to_remove_ccs;
+    identify_self_intersecting_ccs(all_intersecting_faces, tmesh, faces_to_remove_ccs);
+    std::cout << faces_to_remove_ccs.size() << " CCs to handle" << std::endl;
+
+    all_fixed = true;
+
+    for(std::set<face_descriptor>& cc : faces_to_remove_ccs)
+    {
+      bool local_fixed;
+      std::tie(local_fixed, topology_issue) =
+          remove_self_intersections_one_step(tmesh, cc, vpm, step, preserve_genus, verbose);
+
+      if(topology_issue)
+      {
+        if(verbose)
+          std::cout << "DEBUG: Process stopped because of boundary cycles"
+                       " of boundary edges involved in self-intersections.\n";
+
+        return false;
+      }
+
+      all_fixed = (all_fixed && local_fixed);
+    }
+  }
+
+  return step < max_steps;
+}
+
+template <typename TriangleMesh>
+bool remove_self_intersections_locally(TriangleMesh& tmesh)
+{
+  return remove_self_intersections_locally(tmesh, parameters::all_default());
 }
 
 /// \endcond
