@@ -37,56 +37,56 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent,
 
   for ( unsigned int i = 0; i < labels.size( ); ++i )
   {
-	QListWidgetItem* item =
-	  new QListWidgetItem( this->ui->arrangementsListWidget );
-	item->setText( labels[ i ] );
-	item->setData( ARRANGEMENT, QVariant::fromValue( arrangements[ i ] ) );
-	QIcon icon;
-	Seg_arr* seg;
-	Pol_arr* pol;
+    QListWidgetItem* item =
+      new QListWidgetItem( this->ui->arrangementsListWidget );
+    item->setText( labels[ i ] );
+    item->setData( ARRANGEMENT, QVariant::fromValue( arrangements[ i ] ) );
+    QIcon icon;
+    Seg_arr* seg;
+    Pol_arr* pol;
 
 #ifdef CGAL_USE_CORE
-	Conic_arr* conic;
+    Conic_arr* conic;
 #endif
 
-	Lin_arr* lin;
-	Arc_arr* arc;
-	// Alg_seg_arr* alg;
-	if ( CGAL::assign( seg, arrangements[ i ] ) )
-	{
-	  icon.addFile(QString::fromUtf8(":/icons/green_icon.xpm"), QSize(),
-				   QIcon::Normal, QIcon::Off);
-	}
-	else if ( CGAL::assign( pol, arrangements[ i ] ) )
-	{
-	  icon.addFile(QString::fromUtf8(":/icons/yellow_icon.xpm"), QSize(),
-				   QIcon::Normal, QIcon::Off);
-	}
+    Lin_arr* lin;
+    Arc_arr* arc;
+    // Alg_seg_arr* alg;
+    if ( CGAL::assign( seg, arrangements[ i ] ) )
+    {
+      icon.addFile(QString::fromUtf8(":/icons/green_icon.xpm"), QSize(),
+                   QIcon::Normal, QIcon::Off);
+    }
+    else if ( CGAL::assign( pol, arrangements[ i ] ) )
+    {
+      icon.addFile(QString::fromUtf8(":/icons/yellow_icon.xpm"), QSize(),
+                   QIcon::Normal, QIcon::Off);
+    }
 
 #ifdef CGAL_USE_CORE
-	else if ( CGAL::assign( conic, arrangements[ i ] ) )
-	{
-	  icon.addFile(QString::fromUtf8(":/icons/red_icon.xpm"), QSize(),
-				   QIcon::Normal, QIcon::Off);
-	}
+    else if ( CGAL::assign( conic, arrangements[ i ] ) )
+    {
+      icon.addFile(QString::fromUtf8(":/icons/red_icon.xpm"), QSize(),
+                   QIcon::Normal, QIcon::Off);
+    }
 #endif
 
-	else if ( CGAL::assign( lin, arrangements[ i ] ) )
-	{
-	  icon.addFile(QString::fromUtf8(":/icons/blue_icon.xpm"), QSize(),
-				   QIcon::Normal, QIcon::Off);
-	}
-	else if ( CGAL::assign( arc, arrangements[ i ] ) )
-	{
-	  icon.addFile(QString::fromUtf8(":/icons/green_icon.xpm"), QSize(),
-				   QIcon::Normal, QIcon::Off);
-	}
-	// else if ( CGAL::assign( alg, arrangements[ i ] ) )
-	// {
-	//   icon.addFile(QString::fromUtf8(":/icons/yellow_icon.xpm"), QSize(),
-	//                QIcon::Normal, QIcon::Off);
-	// }
-	item->setIcon( icon );
+    else if ( CGAL::assign( lin, arrangements[ i ] ) )
+    {
+      icon.addFile(QString::fromUtf8(":/icons/blue_icon.xpm"), QSize(),
+                   QIcon::Normal, QIcon::Off);
+    }
+    else if ( CGAL::assign( arc, arrangements[ i ] ) )
+    {
+      icon.addFile(QString::fromUtf8(":/icons/green_icon.xpm"), QSize(),
+                   QIcon::Normal, QIcon::Off);
+    }
+    // else if ( CGAL::assign( alg, arrangements[ i ] ) )
+    // {
+    //   icon.addFile(QString::fromUtf8(":/icons/yellow_icon.xpm"), QSize(),
+    //                QIcon::Normal, QIcon::Off);
+    // }
+    item->setIcon( icon );
   }
 }
 
@@ -96,10 +96,10 @@ OverlayDialog::selectedArrangements( ) const
   std::vector< CGAL::Object > res;
   for ( int i = 0; i < this->ui->overlayListWidget->count( ); ++i )
   {
-	QListWidgetItem* item = this->ui->overlayListWidget->item( i );
-	QVariant data = item->data( ARRANGEMENT );
-	CGAL::Object arr = data.value< CGAL::Object >( );
-	res.push_back( arr );
+    QListWidgetItem* item = this->ui->overlayListWidget->item( i );
+    QVariant data = item->data( ARRANGEMENT );
+    CGAL::Object arr = data.value< CGAL::Object >( );
+    res.push_back( arr );
   }
   return res;
 }
@@ -167,106 +167,105 @@ void OverlayDialog::restrictSelection( QListWidgetItem* item )
 
   Lin_arr* lin;
   Arc_arr* arc;
-  Alg_seg_arr* alg;
-  
+
   if ( CGAL::assign( seg, o ) )
   {
-	for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
-	{
-	  QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
-	  CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
-	  bool enabled = CGAL::assign( seg, o2 );
-	  Qt::ItemFlags flags = otherItem->flags( );
-	  if ( ! enabled )
-	  {
-		flags &= ~( Qt::ItemIsEnabled );
-	  }
-	  else
-	  {
-		flags |= Qt::ItemIsEnabled;
-	  }
-	  otherItem->setFlags( flags );
-	}
+    for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
+    {
+      QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+      CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
+      bool enabled = CGAL::assign( seg, o2 );
+      Qt::ItemFlags flags = otherItem->flags( );
+      if ( ! enabled )
+      {
+        flags &= ~( Qt::ItemIsEnabled );
+      }
+      else
+      {
+        flags |= Qt::ItemIsEnabled;
+      }
+      otherItem->setFlags( flags );
+    }
   }
   else if ( CGAL::assign( pol, o ) )
   {
-	for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
-	{
-	  QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
-	  CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
-	  bool enabled = CGAL::assign( pol, o2 );
-	  Qt::ItemFlags flags = otherItem->flags( );
-	  if ( ! enabled )
-	  {
-		flags &= ~( Qt::ItemIsEnabled );
-	  }
-	  else
-	  {
-		flags |= Qt::ItemIsEnabled;
-	  }
-	  otherItem->setFlags( flags );
-	}
+    for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
+    {
+      QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+      CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
+      bool enabled = CGAL::assign( pol, o2 );
+      Qt::ItemFlags flags = otherItem->flags( );
+      if ( ! enabled )
+      {
+        flags &= ~( Qt::ItemIsEnabled );
+      }
+      else
+      {
+        flags |= Qt::ItemIsEnabled;
+      }
+      otherItem->setFlags( flags );
+    }
   }
 
 #ifdef CGAL_USE_CORE
   else if ( CGAL::assign( conic, o ) )
   {
-	for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
-	{
-	  QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
-	  CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
-	  bool enabled = CGAL::assign( conic, o2 );
-	  Qt::ItemFlags flags = otherItem->flags( );
-	  if ( ! enabled )
-	  {
-		flags &= ~( Qt::ItemIsEnabled );
-	  }
-	  else
-	  {
-		flags |= Qt::ItemIsEnabled;
-	  }
-	  otherItem->setFlags( flags );
-	}
+    for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
+    {
+      QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+      CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
+      bool enabled = CGAL::assign( conic, o2 );
+      Qt::ItemFlags flags = otherItem->flags( );
+      if ( ! enabled )
+      {
+        flags &= ~( Qt::ItemIsEnabled );
+      }
+      else
+      {
+        flags |= Qt::ItemIsEnabled;
+      }
+      otherItem->setFlags( flags );
+    }
   }
 #endif
 
   else if ( CGAL::assign( lin, o ) )
   {
-	for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
-	{
-	  QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
-	  CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
-	  bool enabled = CGAL::assign( lin, o2 );
-	  Qt::ItemFlags flags = otherItem->flags( );
-	  if ( ! enabled )
-	  {
-		flags &= ~( Qt::ItemIsEnabled );
-	  }
-	  else
-	  {
-		flags |= Qt::ItemIsEnabled;
-	  }
-	  otherItem->setFlags( flags );
-	}
+    for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
+    {
+      QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+      CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
+      bool enabled = CGAL::assign( lin, o2 );
+      Qt::ItemFlags flags = otherItem->flags( );
+      if ( ! enabled )
+      {
+        flags &= ~( Qt::ItemIsEnabled );
+      }
+      else
+      {
+        flags |= Qt::ItemIsEnabled;
+      }
+      otherItem->setFlags( flags );
+    }
   }
   else if ( CGAL::assign( arc, o ) )
   {
-	for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
-	{
-	  QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
-	  CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
-	  bool enabled = CGAL::assign( arc, o2 );
-	  Qt::ItemFlags flags = otherItem->flags( );
-	  if ( ! enabled )
-	  {
-		flags &= ~( Qt::ItemIsEnabled );
-	  }
-	  else
-	  {
-		flags |= Qt::ItemIsEnabled;
-	  }
-	  otherItem->setFlags( flags );
-	}
+    for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
+    {
+      QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+      CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
+      bool enabled = CGAL::assign( arc, o2 );
+      Qt::ItemFlags flags = otherItem->flags( );
+      if ( ! enabled )
+      {
+        flags &= ~( Qt::ItemIsEnabled );
+      }
+      else
+      {
+        flags |= Qt::ItemIsEnabled;
+      }
+      otherItem->setFlags( flags );
+    }
   }
 }
 
@@ -274,9 +273,9 @@ void OverlayDialog::unrestrictSelection( )
 {
   for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
   {
-	QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
-	Qt::ItemFlags flags = otherItem->flags( );
-	flags |= Qt::ItemIsEnabled;
-	otherItem->setFlags( flags );
+    QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+    Qt::ItemFlags flags = otherItem->flags( );
+    flags |= Qt::ItemIsEnabled;
+    otherItem->setFlags( flags );
   }
 }

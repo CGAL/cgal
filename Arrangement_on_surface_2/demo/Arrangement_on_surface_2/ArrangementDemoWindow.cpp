@@ -5,7 +5,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
 
 #include "ArrangementDemoWindow.h"
 #include "NewTabDialog.h"
@@ -153,7 +153,7 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab( TraitsType tt )
 
   QVector<QGraphicsItem *> items = view->scene()->items().toVector();
   QGraphicsLineItem line;
-  
+
   for (int i = 0; i < items.size(); i++)
   {
     if (items[i] && items[i]->type() == line.type())
@@ -759,7 +759,7 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
   bool isLinearArr =
     CGAL::assign( lin_arr,
                   this->arrangements[ this->ui->tabWidget->currentIndex( ) ] );
-  
+
   Alg_seg_arr* alg_seg_arr;
   bool isAlgSegArr =
     CGAL::assign( alg_seg_arr,
@@ -828,7 +828,7 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
         AlgSegCurveInputCallback;
       AlgSegCurveInputCallback* algCurveInputCallback =
         ( AlgSegCurveInputCallback* ) activeTab->getCurveInputCallback( );
-      
+
       AlgebraicCurveInputDialog* newDialog = new AlgebraicCurveInputDialog;
       newDialog->getUi()->lineEdit->setFocus();
 
@@ -894,7 +894,7 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered( )
       ArrFormatter;
     ArrFormatter                                        arrFormatter;
     CGAL::write( *lin, ofs, arrFormatter );
-  }  
+  }
   else if ( CGAL::assign( arc, arr ) )
   {
     typedef CGAL::Arr_text_formatter<Arc_arr>           Arc_text_formatter;
@@ -1002,9 +1002,11 @@ void ArrangementDemoWindow::on_actionOpen_triggered( )
   }
 
   ArrangementDemoTabBase* currentTab = this->tabs[ index ];
+#if 0
   CGAL::Qt::ArrangementGraphicsItemBase* agi =
     currentTab->getArrangementGraphicsItem( );
   QRectF bb = agi->boundingRect( );
+#endif
   QGraphicsView* view = currentTab->getView( );
   // std::cout << bb.left( ) << " " << bb.bottom( ) << ", " << bb.right( )
   //           << " " << bb.top( ) << std::endl;
@@ -1194,7 +1196,7 @@ void ArrangementDemoWindow::on_tabWidget_currentChanged( )
 
     this->conicTypeGroup->setEnabled( true );
   }
-  
+
   activeTab->getVerticalRayShootCallback()->reset();
   activeTab->getPointLocationCallback()->reset();
   this->ui->actionInsert->setChecked(true);

@@ -5,7 +5,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
 
 #ifndef CGAL_ARRANGEMENTS_DEMO_UTILS_H
 #define CGAL_ARRANGEMENTS_DEMO_UTILS_H
@@ -137,14 +137,14 @@ protected: // fields
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF( Approximate_2 )
 
-template < class Arr_, bool b = has_Approximate_2< Arr_ >::value >
+template <typename Arr_, bool b = has_Approximate_2< Arr_ >::value>
 struct Supports_landmarks
 {
   typedef CGAL::Boolean_tag< b > Tag;
   struct LandmarksType { };
 };
 
-template < class Arr_ >
+template <typename Arr_>
 struct Supports_landmarks< Arr_, true >
 {
   typedef CGAL::Tag_true Tag;
@@ -160,11 +160,11 @@ struct Supports_landmarks< Arr_, true >
    * Point_2 - the point type used in the particular arrangement
    * CoordinateType - the coordinate type used by the point type
    */
-template < class ArrTraits >
+template <typename ArrTraits>
 class ArrTraitsAdaptor
 { };
 
-template < class Kernel_ >
+template <typename Kernel_>
 class ArrTraitsAdaptor< CGAL::Arr_segment_traits_2< Kernel_ > >
 {
 public:
@@ -174,7 +174,7 @@ public:
   typedef typename Kernel::FT CoordinateType;
 };
 
-template < class Kernel_ >
+template <typename Kernel_>
 class ArrTraitsAdaptor< CGAL::Arr_linear_traits_2< Kernel_ > >
 {
 public:
@@ -184,7 +184,7 @@ public:
   typedef typename Kernel::FT CoordinateType;
 };
 
-template < class SegmentTraits >
+template <typename SegmentTraits>
 class ArrTraitsAdaptor< CGAL::Arr_polyline_traits_2< SegmentTraits > >
 {
 public:
@@ -194,7 +194,7 @@ public:
   typedef typename Kernel::FT CoordinateType;
 };
 
-template < class CircularKernel >
+template <typename CircularKernel >
 class ArrTraitsAdaptor< CGAL::Arr_circular_arc_traits_2< CircularKernel > >
 {
 public:
@@ -204,7 +204,7 @@ public:
   typedef typename Kernel::Root_of_2 CoordinateType;
 };
 
-template < class RatKernel, class AlgKernel, class NtTraits >
+template <typename RatKernel, typename AlgKernel, typename NtTraits >
 class ArrTraitsAdaptor< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel,
                                                   NtTraits > >
 {
@@ -227,7 +227,7 @@ public:
 };
 
 template < class Coefficient_ >
-class ArrTraitsAdaptor< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
+  class ArrTraitsAdaptor< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
 {
 public:
   typedef Coefficient_ Coefficient;
@@ -239,7 +239,7 @@ public:
   //typedef typename ArrTraits::CKvA_2                  Kernel;
 };
 
-template < class ArrTraits >
+template <typename ArrTraits >
 class Arr_compute_y_at_x_2 : public QGraphicsSceneMixin
 {
 public:
@@ -276,7 +276,7 @@ public:
   }
 
 protected:
-  template < class TTraits >
+  template <typename TTraits >
   CoordinateType operator() ( const X_monotone_curve_2& curve,
                               const CoordinateType& x, TTraits traits_,
                               CGAL::Arr_oblivious_side_tag )
@@ -307,7 +307,7 @@ protected:
     return res;
   }
 
-  template < class TTraits >
+  template <typename TTraits >
   CoordinateType operator() ( const X_monotone_curve_2& curve,
                               const CoordinateType& x, TTraits traits_,
                               CGAL::Arr_open_side_tag )
@@ -343,7 +343,7 @@ protected:
   Intersect_2 intersectCurves;
 };
 
-template < class CircularKernel >
+template <typename CircularKernel>
 class Arr_compute_y_at_x_2< CGAL::Arr_circular_arc_traits_2<CircularKernel> > :
   public QGraphicsSceneMixin
 {
@@ -415,7 +415,7 @@ protected:
   Intersect_2 intersectCurves;
 };
 
-template < class Coefficient_ >
+template <typename Coefficient_>
 class Arr_compute_y_at_x_2< CGAL::Arr_algebraic_segment_traits_2<
                               Coefficient_ > > : public QGraphicsSceneMixin
 {
@@ -488,7 +488,7 @@ protected:
   Traits traits;
 };
 
-template < class ArrTraits >
+template <typename ArrTraits>
 class Compute_squared_distance_2_base : public QGraphicsSceneMixin
 {
 public:
@@ -500,7 +500,7 @@ public:
 
 public: // methods
 
-  template < class T1, class T2 >
+  template <typename T1, typename T2>
   double operator() ( const T1& t1, const T2& t2 )
   {
     return this->squaredDistance( t1, t2 );
@@ -511,12 +511,12 @@ protected: // fields
   InexactKernel::Compute_squared_distance_2 squaredDistance;
 };
 
-template < class ArrTraits >
+template <typename ArrTraits >
 class Compute_squared_distance_2 :
   public Compute_squared_distance_2_base< ArrTraits >
 { };
 
-template < class Kernel_ >
+template <typename Kernel_ >
 class Compute_squared_distance_2< CGAL::Arr_segment_traits_2< Kernel_ > > :
   public Compute_squared_distance_2_base<CGAL::Arr_segment_traits_2<Kernel_> >
 {
@@ -539,7 +539,7 @@ public:
   }
 };
 
-template < class Kernel_ >
+template <typename Kernel_ >
 class Compute_squared_distance_2< CGAL::Arr_linear_traits_2< Kernel_ > > :
   public Compute_squared_distance_2_base<CGAL::Arr_linear_traits_2<Kernel_> >
 {
@@ -579,7 +579,7 @@ public:
   }
 };
 
-template < class Kernel_ >
+template <typename Kernel_ >
 class Compute_squared_distance_2< CGAL::Arr_polyline_traits_2< Kernel_ > > :
   public Compute_squared_distance_2_base<CGAL::Arr_polyline_traits_2<Kernel_> >
 {
@@ -618,7 +618,7 @@ public:
   }
 };
 
-template < class CircularKernel >
+template <typename CircularKernel >
 class Compute_squared_distance_2< CGAL::Arr_circular_arc_traits_2<
                                     CircularKernel > > :
   public Compute_squared_distance_2_base< CGAL::Arr_circular_arc_traits_2<
@@ -686,7 +686,7 @@ public: // methods
       for ( x = x_max; x > x_min; x-=DRAW_FACTOR )
       {
         curr_x = this->toScene( x );
-        if (curr_x < CGAL::to_double(c.left().x()) 
+        if (curr_x < CGAL::to_double(c.left().x())
           || curr_x > CGAL::to_double(c.right().x()))
         {
           continue;
@@ -711,7 +711,7 @@ public: // methods
   }
 };
 
-template < class RatKernel, class AlgKernel, class NtTraits >
+template <typename RatKernel, typename AlgKernel, typename NtTraits>
 class Compute_squared_distance_2< CGAL::Arr_conic_traits_2< RatKernel,
                                                             AlgKernel,
                                                             NtTraits > > :
@@ -807,7 +807,7 @@ public: // methods
   }
 };
 
-template < class Coefficient_ >
+template <typename Coefficient_ >
 class Compute_squared_distance_2< CGAL::Arr_algebraic_segment_traits_2<
                                     Coefficient_ > > :
   public Compute_squared_distance_2_base< CGAL::Arr_algebraic_segment_traits_2<
@@ -817,7 +817,7 @@ public:
   typedef Coefficient_                                  Coefficient;
   typedef CGAL::Arr_algebraic_segment_traits_2<Coefficient>
                                                         Traits;
-  typedef typename Traits::Bound                        FT; // unused
+  typedef typename Traits::Bound                        FT;
   typedef typename ArrTraitsAdaptor<Traits>::Kernel     Kernel;
   typedef typename Kernel::Point_2                      Point_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
@@ -836,11 +836,11 @@ public:
 
     QGraphicsView* view = this->scene->views( ).first( );
     int height = view->height();
-    int width = view->width();
+    // int width = view->width();
 
     QRectF viewport = this->viewportRect( );
     CGAL::Bbox_2 bbox = this->convert( viewport ).bbox( );
-    Facade::setup(bbox, view->width(), view->height());    
+    Facade::setup(bbox, view->width(), view->height());
 
     Facade::instance().draw( c, points, &p1, &p2 );
     if(points.empty())
@@ -880,7 +880,7 @@ protected:
 #undef SUBCURVE_1
 
 // TODO: Make Construct_x_monotone_subcurve_2 more generic
-template < class ArrTraits >
+template <typename ArrTraits>
 class Construct_x_monotone_subcurve_2
 {
 public:
@@ -957,7 +957,7 @@ protected:
   Construct_max_vertex_2 construct_max_vertex_2;
 }; // class Construct_x_monotone_subcurve_2
 
-template < class CircularKernel >
+template <typename CircularKernel>
 class Construct_x_monotone_subcurve_2< CGAL::Arr_circular_arc_traits_2<
                                          CircularKernel > >
 {
@@ -1037,7 +1037,7 @@ protected:
  * This specialization for conic traits makes use of X_monotone_curve_2::trim,
  * which is not necessarily available.
  */
-template < class RatKernel, class AlgKernel, class NtTraits >
+template <typename RatKernel, typename AlgKernel, typename NtTraits>
 class Construct_x_monotone_subcurve_2< CGAL::Arr_conic_traits_2< RatKernel,
                                                                  AlgKernel,
                                                                  NtTraits > >
@@ -1075,7 +1075,7 @@ public:
   }
 }; // class Construct_x_monotone_subcurve_2 for Arr_conic_traits_2
 
-template < class Kernel_ >
+template <typename Kernel_ >
 class Construct_x_monotone_subcurve_2< CGAL::Arr_linear_traits_2< Kernel_ > >
 {
 public: // typedefs
@@ -1151,7 +1151,7 @@ protected:
   Arr_compute_y_at_x_2<ArrTraits> arr_compute_y_at_x_2;
 };
 
-template < class Coefficient_ >
+template <typename Coefficient_ >
 class Construct_x_monotone_subcurve_2< CGAL::Arr_algebraic_segment_traits_2<
                                          Coefficient_ > >
 {
@@ -1179,7 +1179,7 @@ protected:
 };
 
 // FIXME: return Traits::Point_2 instead of Kernel::Point_2
-template < class ArrTraits >
+template <typename ArrTraits >
 class SnapStrategy : public QGraphicsSceneMixin
 {
 public:
@@ -1192,14 +1192,14 @@ protected:
   SnapStrategy( QGraphicsScene* scene_ );
 }; // class SnapStrategy
 
-template < class ArrTraits >
+template <typename ArrTraits >
 SnapStrategy< ArrTraits >::SnapStrategy( QGraphicsScene* scene_ )
 {
   this->scene = scene_;
 }
 
-template < class ArrTraits >
-class SnapToGridStrategy : public SnapStrategy< ArrTraits >
+template < typename ArrTraits>
+class SnapToGridStrategy : public SnapStrategy<ArrTraits>
 {
 public:
   typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
@@ -1226,7 +1226,7 @@ public:
     return this->snapPoint( event, ArrTraits( ) );
   }
 
-  template < class TTraits >
+  template <typename TTraits>
   Point_2 snapPoint(QGraphicsSceneMouseEvent* event, TTraits /* traits */)
   {
     QPointF clickedPoint = event->scenePos( );
@@ -1269,7 +1269,7 @@ public:
     return res;
   }
 
-  template < class CircularKernel >
+  template <typename CircularKernel>
   Point_2 snapPoint(QGraphicsSceneMouseEvent* event,
                     CGAL::Arr_circular_arc_traits_2<CircularKernel>
                     /* traits */)
@@ -1324,7 +1324,7 @@ protected:
   CGAL::Qt::Converter< Kernel > convert;
 }; // class SnapToGridStrategy
 
-template < class Arr_ >
+template <typename Arr_>
 class SnapToArrangementVertexStrategy:
   public SnapStrategy< typename Arr_::Geometry_traits_2 >
 {
@@ -1356,7 +1356,7 @@ public:
     return this->snapPoint( clickedPoint, Traits( ) );
   }
 
-  template < class TTraits >
+  template <typename TTraits>
   Point_2 snapPoint(const Kernel_point_2& clickedPoint, TTraits /* traits */)
   {
     Point_2 initialPoint( CGAL::to_double(clickedPoint.x()),
@@ -1396,7 +1396,7 @@ public:
     }
   }
 
-  template < class CircularKernel >
+  template <typename CircularKernel>
   Point_2 snapPoint(const Kernel_point_2& clickedPoint,
                     CGAL::Arr_circular_arc_traits_2<CircularKernel>
                     /* traits */)
@@ -1456,7 +1456,7 @@ protected:
 
    The conversion is not necessarily exact.
 */
-template < class ArrTraits >
+template <typename ArrTraits>
 class Arr_construct_point_2
 {
   typedef typename ArrTraits::Point_2                            Point_2;
@@ -1470,14 +1470,14 @@ public:
     return (*this)( pt.x(), pt.y() );
   }
 
-  template < class T >
+  template <typename T >
   Point_2 operator()( const T& x, const T& y )
   {
     return (*this)( x, y, ArrTraits( ) );
   }
 
 protected:
-  template < class T, class TTraits >
+  template <typename T, typename TTraits >
   Point_2 operator()(const T& x, const T& y, TTraits /* traits */)
   {
     CoordinateType xx( x );
@@ -1486,7 +1486,7 @@ protected:
     return res;
   }
 
-  template < class T, class CircularKernel >
+  template <typename T, typename CircularKernel >
   Point_2 operator()(const T& x, const T& y,
                      CGAL::Arr_circular_arc_traits_2<CircularKernel>
                      /* traits */)
@@ -1507,7 +1507,7 @@ public:
   virtual ~Find_nearest_edge_base() {}
 };
 
-template < class Arr_, class ArrTraits = typename Arr_::Geometry_traits_2 >
+template <typename Arr_, typename ArrTraits = typename Arr_::Geometry_traits_2>
 class Find_nearest_edge : public Find_nearest_edge_base
 {
 public: // typedefs
@@ -1649,7 +1649,7 @@ protected: // member fields
 }; // class Find_nearest_edge
 
 
-template < class Arr_, class Coefficient_ >
+template <typename Arr_, typename Coefficient_>
 class Find_nearest_edge<Arr_, CGAL::Arr_algebraic_segment_traits_2<
                                 Coefficient_> >: public Find_nearest_edge_base
 {
@@ -1657,7 +1657,7 @@ public: // typedefs
   typedef Arr_ Arrangement;
   typedef typename CGAL::Arr_algebraic_segment_traits_2<
                                 Coefficient_>   ArrTraits;
-                                
+
   typedef Compute_squared_distance_2< ArrTraits > Point_curve_distance;
   typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
   typedef CGAL::Arr_walk_along_line_point_location< Arrangement >
@@ -1788,22 +1788,22 @@ protected: // member fields
   Arrangement* arr;
   Point_curve_distance pointCurveDistance;
   Point_location_strategy pointLocationStrategy;
-  Arr_construct_point_2< ArrTraits > toArrPoint;
+  Arr_construct_point_2<ArrTraits> toArrPoint;
 
 }; // class Find_nearest_edge
 
-template < class Arr_, class Kernel_ >
+template <typename Arr_, typename Kernel_ >
 class Find_nearest_edge< Arr_, CGAL::Arr_linear_traits_2< Kernel_ > > :
   public Find_nearest_edge_base
 {
 public: // typedefs
   typedef Arr_ Arrangement;
   typedef typename Arrangement::Geometry_traits_2       ArrTraits;
-  typedef Compute_squared_distance_2< ArrTraits >       Point_curve_distance;
+  typedef Compute_squared_distance_2<ArrTraits>         Point_curve_distance;
   typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
-  typedef CGAL::Arr_walk_along_line_point_location< Arrangement >
+  typedef CGAL::Arr_walk_along_line_point_location<Arrangement>
                                                         Point_location_strategy;
-  typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
+  typedef typename ArrTraitsAdaptor<ArrTraits>::Kernel  Kernel;
   typedef typename Kernel::Point_2                      Point_2;
   typedef typename Arrangement::Face_const_handle       Face_const_handle;
   typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
