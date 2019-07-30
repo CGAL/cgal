@@ -58,7 +58,7 @@ void test();
 int
 main()
 {
-  CGAL::force_ieee_double_precision();
+  CGAL::Set_ieee_double_precision double_precision_guard;
   typedef CGAL::Cartesian<double>                               Clsdb;
   typedef CGAL::Filtered_kernel<Clsdb>                          Clsd;
 
@@ -79,8 +79,7 @@ main()
   test<Cls>();
   std::cout << "Testing with Epick:\n";
   test<CGAL::Epick>();
-  std::cout << "Testing with Epick_without_intervals:\n";
-  test<CGAL::Epick_without_intervals>();
+
   return 0;
 }
 

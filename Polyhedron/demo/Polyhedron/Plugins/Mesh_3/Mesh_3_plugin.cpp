@@ -462,7 +462,9 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   if (!sm_items.empty())
   {
     QList<const SMesh*> polyhedrons;
-    sm_items.removeAll(bounding_sm_item);
+    if(!surface_only) {
+      sm_items.removeAll(bounding_sm_item);
+    }
     std::transform(sm_items.begin(), sm_items.end(),
                    std::back_inserter(polyhedrons),
                    [](Scene_surface_mesh_item* item) {

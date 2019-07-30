@@ -147,6 +147,8 @@ public:
    */
   int default_dxf_color () const { return mDefaultDxfColor ; }
   
+  // @}
+  
   /// \name Set the drawing properties.
   //@{
 
@@ -255,6 +257,7 @@ public:
     mWriter.add_polyline_2( pgn.begin(), pgn.end(), true, mLayer, mDxfColor ) ;
   }
 
+  //@}
 
   /// \name Setting the draw properties via the << operator.
   //@{
@@ -277,6 +280,7 @@ public:
     return (*this);
   }
 
+  //@}
 
   /// \name Drawing objects via the << operator.
   //@{

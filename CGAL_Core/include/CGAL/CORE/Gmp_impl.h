@@ -46,15 +46,14 @@ MA 02110-1301, USA. */
 #include <string>
 #include <cstdio>
 
-using namespace std;
-
 namespace CORE { 
 
 CGAL_INLINE_FUNCTION
 int
-__gmp_istream_set_base (istream &i, char &c, bool &zero, bool &showbase)
+__gmp_istream_set_base (std::istream &i, char &c, bool &zero, bool &showbase)
 {
   int base;
+  using std::ios;
 
   zero = showbase = false;
   switch (i.flags() & ios::basefield)
@@ -96,7 +95,7 @@ __gmp_istream_set_base (istream &i, char &c, bool &zero, bool &showbase)
 
 CGAL_INLINE_FUNCTION
 void
-__gmp_istream_set_digits (string &s, istream &i, char &c, bool &ok, int base)
+__gmp_istream_set_digits (std::string &s, std::istream &i, char &c, bool &ok, int base)
 {
   switch (base)
     {
@@ -131,13 +130,14 @@ __gmp_istream_set_digits (string &s, istream &i, char &c, bool &ok, int base)
 }
 
 CGAL_INLINE_FUNCTION
-istream &
-//operator>> (istream &i, mpz_ptr z)
-io_read (istream &i, mpz_ptr z)
+std::istream &
+//operator>> (std::istream &i, mpz_ptr z)
+io_read (std::istream &i, mpz_ptr z)
 {
+  using namespace std;
   int base;
   char c = 0;
-  string s;
+  std::string s;
   bool ok = false, zero, showbase;
 
   i.get(c); // start reading
@@ -175,13 +175,14 @@ io_read (istream &i, mpz_ptr z)
 }
 
 CGAL_INLINE_FUNCTION
-istream &
-//operator>> (istream &i, mpq_ptr q)
-io_read (istream &i, mpq_ptr q)
+std::istream &
+//operator>> (std::istream &i, mpq_ptr q)
+io_read (std::istream &i, mpq_ptr q)
 {
+  using namespace std;
   int base;
   char c = 0;
-  string s;
+  std::string s;
   bool ok = false, zero, showbase;
 
   i.get(c); // start reading
@@ -253,9 +254,9 @@ io_read (istream &i, mpq_ptr q)
 }
 
 CGAL_INLINE_FUNCTION
-ostream&
-//operator<< (ostream &o, mpz_srcptr z)
-io_write (ostream &o, mpz_srcptr z)
+std::ostream&
+//operator<< (std::ostream &o, mpz_srcptr z)
+io_write (std::ostream &o, mpz_srcptr z)
 { 
   char *str = new char [mpz_sizeinbase(z,10) + 2];
   str = mpz_get_str(str, 10, z);
@@ -265,9 +266,9 @@ io_write (ostream &o, mpz_srcptr z)
 }
 
 CGAL_INLINE_FUNCTION
-ostream&
-//operator<< (ostream &o, mpq_srcptr q)
-io_write (ostream &o, mpq_srcptr q)
+std::ostream&
+//operator<< (std::ostream &o, mpq_srcptr q)
+io_write (std::ostream &o, mpq_srcptr q)
 { 
   // size according to GMP documentation
   char *str = new char [mpz_sizeinbase(mpq_numref(q), 10) +

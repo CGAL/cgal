@@ -66,20 +66,10 @@ public:
     typedef typename Vertex_wrapper::Vertex            Vertex;
     typedef typename Halfedge_wrapper::Halfedge        Halfedge;
     typedef typename Face_wrapper::Face                Face;
-#ifdef CGAL_CXX11
     typedef std::allocator_traits<Allocator> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Halfedge> Halfedge_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Face> Face_allocator;
-#else // not CGAL_CXX11
-    typedef typename Allocator::template rebind< Vertex> Vertex_alloc_rebind;
-    typedef typename Vertex_alloc_rebind::other        Vertex_allocator;
-    typedef typename Allocator::template rebind< Halfedge>
-                                                       Halfedge_alloc_rebind;
-    typedef typename Halfedge_alloc_rebind::other      Halfedge_allocator;
-    typedef typename Allocator::template rebind< Face> Face_alloc_rebind;
-    typedef typename Face_alloc_rebind::other          Face_allocator;
-#endif // not CGAL_CXX11
 
 #ifdef CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR
     typedef internal::vector<Vertex, Vertex_allocator> Vertex_vector;
@@ -534,14 +524,8 @@ public:
             return;
 
         // An array of pointers to update the changed halfedge pointers.
-#ifdef CGAL_CXX11
         typedef std::allocator_traits<Allocator> Allocator_traits;
         typedef typename Allocator_traits::template rebind_alloc<Halfedge_I> HI_allocator;
-#else
-        typedef typename Allocator::template rebind< Halfedge_I>
-                                                      HI_alloc_rebind;
-        typedef typename HI_alloc_rebind::other       HI_allocator;
-#endif
         typedef std::vector<Halfedge_I, HI_allocator> HVector;
         typedef typename HVector::iterator Hiterator;
         HVector hvector;

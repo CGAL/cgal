@@ -209,7 +209,7 @@ public:
 
     return make_array(H,S,V);
   }
-  
+  /// @}
   /// \name Modification 
   /// @{
 

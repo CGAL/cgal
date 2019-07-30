@@ -200,8 +200,8 @@ SegmentDelaunayGraphLinfGraphicsItem<T>::drawAll(QPainter *painter, const QStyle
     }
     {
     m_painter->setPen(this->verticesPen());
-    QMatrix matrix = m_painter->matrix();
-    m_painter->resetMatrix();
+    QTransform matrix = m_painter->worldTransform();
+    m_painter->resetTransform();
     Converter<Kern> convert;
       typename T::Finite_vertices_iterator vit;
       for (vit = t->finite_vertices_begin();

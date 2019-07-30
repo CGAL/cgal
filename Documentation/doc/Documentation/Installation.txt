@@ -4,51 +4,39 @@
 \authors Eric Berberich, Joachim Reichel, and Fernando Cacciola
 
 \section installation_introduction Introduction
- 
-This document describes how to install \cgal on Windows, Unix-like systems, and MacOS X.
 
-Ideally, setting up \cgal amounts to:
+Since \cgal version 5.0, \cgal is header-only be default, which means
+that there is no need to compile and install anything before it can be
+used. The dependencies of \cgal still have to be installed.
 
-<PRE>
-cd CGAL-\cgalReleaseNumber # go to \cgal directory
-cmake . # configure \cgal
-make # build the \cgal libraries
-</PRE>
+Ideally, compiling an example or a demo shipped with \cgal is
+as simple as:
 
-Compiling an example or a demo shipped with \cgal is similarly simple:
-
-<PRE>
-cd examples/Triangulation_2 # go to an example directory
-cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the examples
-make # build the examples 
-</PRE>
-
-<PRE>
-cd demo/Triangulation_2 # go to a demo directory
-cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the demos
-make # build the demos 
-</PRE>
+    cd examples/Triangulation_2 # go to an example directory
+    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the examples
+    make # build the examples
+    
+    cd demo/Triangulation_2 # go to a demo directory
+    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the demos
+    make # build the demos
 
 Compiling an own non-shipped program is also close:
 
-<PRE>
-cd /path/to/program 
-cgal_create_CMakeLists -s executable 
-cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . 
-make
-</PRE>
+    cd /path/to/program
+    cgal_create_CMakeLists -s executable
+    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber .
+    make
 
 where the second line creates a `CMakeLists.txt` file (check
 its options in Section \ref seccreate_cgal_CMakeLists for various details).
 
 
-In a less ideal world, you probably have to install CMake, a makefile
-generator, and third party libraries. That is what this manual is about.
+In a less ideal world, you probably have to install required tools, and third party libraries. That is what this manual is about.
 
 \section secprerequisites Prerequisites 
 
-Installing \cgal requires a few components to be installed ahead: a
-supported compiler (see Section \ref seccompilers, CMake, \sc{Boost}, and at least \sc{Gmp}, and \sc{Mpfr}; see 
+Using \cgal requires a few components to be installed ahead: a
+supported compiler (see Section \ref seccompilers), \sc{Boost}, \sc{Gmp}, and \sc{Mpfr}; see 
 Section \ref secessential3rdpartysoftware for more details on
 essential third party software.
 
@@ -59,35 +47,21 @@ essential third party software through the manager,
 for instance, Mac OS X, or some Linux distribution (e.g. Debian).
 For Windows, an installer is provided.
 
-\subsection sseccgalmacosxe CGAL on MAC OS X 
+\subsection sseccgalmacosxe CGAL on macOS
 
-For instance, use macports in the following way:
+The \cgal project recommends the use of <a href="https://brew.sh/">Homebrew</a>, in the following way:
 
-<PRE>
-sudo port install cgal
-</PRE>
-
-or if Qt5 are desired
-
-<PRE>
-sudo port install cgal +qt5 +universal +demos
-</PRE>
-
-The setup is similar for <a href="https://brew.sh/"><tt>homebrew</tt></a> .
+    brew install cgal
 
 \subsection sseccgaldebian CGAL on Linux 
 
-For instance in debian/Ubuntu, use apt-get in the following way:
+For instance in Debian/Ubuntu, use apt-get in the following way:
 
-<PRE>
-sudo apt-get install libcgal-dev
-</PRE>
+    sudo apt-get install libcgal-dev
 
 To get the demos use
 
-<PRE>
-sudo apt-get install libcgal-demo
-</PRE>
+    sudo apt-get install libcgal-demo
 
 Check the \cgal-FAQ for source repository of newest releases.
 
@@ -95,7 +69,7 @@ On other distributions, please consult your package manager documentation.
 
 \subsection sseccgalwindows CGAL on Windows
 
-You can download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from https://www.cgal.org/download.html.
+You can download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from https://www.cgal.org/download/windows.html.
 It is a self extracting executable that installs the \cgal source, and that allows you
 to select and download some precompiled third party libraries. However, you will need to compile
 the library using your favorite compiler.
@@ -122,17 +96,17 @@ In both cases the directory `CGAL-\cgalReleaseNumber` will be created. This dire
 contains the following subdirectories:
 
 
-| Directory   | Contents   | 
-| :-----------| :----------|
-| `auxiliary`  | precompiled \sc{Gmp} and \sc{Mpfr} for Windows |
+| Directory       | Contents   | 
+| :-----------    | :----------|
+| `auxiliary`     | precompiled \sc{Gmp} and \sc{Mpfr} for Windows |
 | `cmake/modules` | modules for finding and using libraries |
-| `config` |configuration files for install script |
-| `demo` | demo programs (most of them need \sc{Qt}, geomview or other third-party products) |
-| `doc_html` |documentation (HTML) | 
-| `examples` | example programs |
-| `include`  | header files |
-| `scripts`  | some useful scripts (e.g. for creating CMakeLists.txt files) |
-| `src`      | source files |
+| `config`        | configuration files for install script |
+| `demo`          | demo programs (most of them need \sc{Qt}, geomview or other third-party products) |
+| `doc_html`      | documentation (HTML) | 
+| `examples`      | example programs |
+| `include`       | header files |
+| `scripts`       | some useful scripts (e.g. for creating CMakeLists.txt files) |
+| `src`           | source files |
 
 
 The directories `include/CGAL/CORE` and `src/CGALCore` contain a
@@ -151,17 +125,18 @@ installation manual. The \cgal manual must be downloaded separately from
 
 \section seccompilers Supported Compilers 
 
-In order to build the \cgal libraries, you need a \cpp compiler. 
+In order to build a program using \cgal, you need a \cpp compiler
+supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
 \cgal \cgalReleaseNumber is supported, that is continuously tested, for the following compilers/operating systems:
 
 
 | Compiler | Operating System |
 | :------- | :--------------- |
-|\sc{Gnu} `g++` 4.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
+|\sc{Gnu} `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
 |          | \sc{MS} Windows | 
-|\sc{MS} Visual `C++` 12.0, 14.0, 15.9 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} | \sc{MS} Windows |
-| `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 7.0.1 | Linux  |
-| Apple `Clang` compiler version 7.0.2 | MacOS X |
+|\sc{MS} Visual `C++` 14.0, 15.9, 16.0 (\sc{Visual Studio} 2015, 2017, and 2019)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} | \sc{MS} Windows |
+| `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 8.0.0 | Linux  |
+| Apple `Clang` compiler versions 7.0.2 and 10.0.1 | MacOS X |
 
 It may work for older versions of the above listed compilers.
 
@@ -176,7 +151,7 @@ This manual explains only those features of
 CMake which are needed in order to build \cgal. Please refer to the 
 CMake documentation at <A HREF="https://cmake.org/">`https://cmake.org/`</A> for further details.
 
-Before building \cgal you have to choose the compiler/linker, 
+Before building anything using \cgal you have to choose the compiler/linker, 
 set compiler and linker flags, specify which
 third-party libraries you want to use and where they can be found, and 
 which \cgal libraries you want to build. Gathering
@@ -285,7 +260,7 @@ purpose of this file is explained below.
 
 \section seclibraries CGAL Libraries 
 
-\cgal is split into five libraries. During configuration, you can select the libraries that 
+\cgal is split into four libraries. During configuration, you can select the libraries that 
 you would like to build by setting a CMake variable of the form <TT>WITH_<library></TT>. By default all 
 are switched `ON`. All activated libraries are build after
 configuration; see \ref secbuilding
@@ -295,7 +270,7 @@ We next list the libraries and essential 3rd party software
 
 | Library   | CMake Variable | Functionality | Dependencies |
 | :-------- | :------------- | :------------ | :----------- |
-| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers), Boost.Thread and Boost.System (library) for compilers not supporting the keywords `thread_local` and the class `std::mutex` |
+| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers) |
 | `CGAL_Core` | `WITH_CGAL_Core`  | The CORE library for algebraic numbers.\cgalFootnote{CGAL_Core is not part of \cgal, but a custom version of the \sc{Core} library distributed by \cgal for the user convenience and it has it's own license.}  | \sc{Gmp} and \sc{Mpfr} |
 | `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \sc{zlib}, \sc{Vtk}(optional) |
 | `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \sc{Qt}5-based demos | \sc{Qt}5 |
@@ -321,7 +296,7 @@ variable `BUILD_SHARED_LIBS` to `FALSE`. If you use
 
 \subsubsection subsection_headeronly_withconfiguration Header-only with CMake Configuration
 
-Since \cgal 4.9, \cgal can be used in header-only mode, i.e. without compiling the \cgal libraries and linking with these libraries when compiling examples, tests and demos. This possibility can be enabled by setting the value of the CMake variable `CGAL_HEADER_ONLY` to `ON`. CMake version 3.0.0 or higher is required to use this option.
+Since \cgal 4.9, \cgal can be used in header-only mode, i.e. without compiling the \cgal libraries and linking with these libraries when compiling examples, tests and demos. This possibility can be enabled by setting the value of the CMake variable `CGAL_HEADER_ONLY` to `ON`.
 
 One advantage of using \cgal in header-only mode is that you do not need to compile and install \cgal libraries before compiling a given example or demo. Note that even in header-only mode we still need to run CMake on \cgal in order to generate different configuration files. So, setting up \cgal becomes now:
 
@@ -388,27 +363,16 @@ The \sc{Boost} libraries are a set of portable C++ source libraries. Most of
 \sc{Boost} libraries are header-only, but a few of them need to be compiled or
 installed as binaries.
 
-\cgal requires the \sc{Boost} libraries. In particular the header files
-and the threading library (`Boost.Thread` and
-`Boost.System` binaries). Version 1.48 (or higher) are needed
-for compilers not supporting the keyword `thread_local` and the class `std::mutex` (This is supported for \gcc 4.8 and later when using the \cpp 11 standard, and for Visual C++ starting with 2015, that is VC14).
+\cgal only requires the headers of the \sc{Boost} libraries, but some demos and examples depend on the binary library `Boost.Program_options`.
 
 As an exception, because of a bug in the \gcc compiler about the \cpp 11
 keyword `thread_local`, the `CGAL_Core` library always requires
-`Boost.Thread` if the \gcc compiler is used.
-
-On Windows, as auto-linking is used, you also need the binaries of
-`Boost.Serialization` and `Boost.DateTime`, but the
-dependency is artificial and used only at link-time: the \cgal libraries do
-not depend on the DLL's of those two libraries.
-
-In \cgal some demos and examples depend on `Boost.Program_options`.
+the binary library `Boost.Thread` if the \gcc compiler version 9.0 or
+earlier is used.
 
 In case the \sc{Boost} libraries are not installed on your system already, you
 can obtain them from <A HREF="https://www.boost.org/">`https://www.boost.org/`</A>. For Visual C++ you can download precompiled libraries
 from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`https://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
-For Visual C++ versions prior to 2015  `Boost.Thread` is required, so make sure to either install the precompiled 
-libraries for your compiler or build `libboost-thread` and `libboost-system`.
 
 As on Windows there is no canonical directory for where to find
 \sc{Boost}, we recommend that you define the environment variable
@@ -605,6 +569,32 @@ and, by extension, of surface meshes (see Section \ref BGLPartitioning of the pa
 
 More information is available on the METIS library
 at <A HREF="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">`http://glaros.dtc.umn.edu/gkhome/metis/metis/overview`</A>.
+
+\subsection thirdpartyCeres Ceres Solver
+
+\sc{Ceres} is an open source C++ library for modeling and solving large, complicated optimization problems.
+
+In \cgal, \sc{Ceres} is used by the \ref PkgPolygonMeshProcessingRef package for mesh smoothing, which
+requires solving complex non-linear least squares problems.
+
+Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>
+for more information.
+
+\subsection thirdpartyGLPK GLPK
+
+\sc{GLPK} (GNU Linear Programming Kit) is a library for solving linear programming (LP), mixed integer programming (MIP), and other related problems.
+
+In \cgal, \sc{GLPK} provides an optional linear integer program solver in the \ref PkgPolygonalSurfaceReconstruction package.
+
+The \sc{GLPK} web site is <A HREF="https://www.gnu.org/software/glpk/">`https://www.gnu.org/software/glpk/`</A>.
+
+\subsection thirdpartySCIP SCIP 
+
+\sc{SCIP} (Solving Constraint Integer Programs) is currently one of the fastest open source solvers for mixed integer programming (MIP) and mixed integer nonlinear programming (MINLP).
+
+In \cgal, \sc{SCIP} provides an optional linear integer program solver in the \ref PkgPolygonalSurfaceReconstruction package.
+
+The \sc{SCIP} web site is <A HREF="http://scip.zib.de/">`http://scip.zib.de/`</A>.
 
 \section secbuilding Building CGAL 
 
@@ -863,40 +853,6 @@ libCGAL_ImageIO (<i>ImageIO</i>), and libCGAL_Qt5
 (<i>Qt5</i>) or optional 3rd party software such as <i>MPFI</i>, <i>RS3</i>.
 A user is free to create the `CMakeLists.txt`
 without calling the script (manual creation).
-
-\subsection installation_custom Custom Flags in the Programs Using CGAL
-
-Normally, programs linked with \cgal must be compiled with the same flags
-used by the compilation of \cgal libraries. For this reason, the <I>very first</I> time
-a program is configured, all the flags given by the CMake variables `CMAKE_*_FLAGS`
-are <I>locked</I> in the sense that the values recorded in `CGALConfig.cmake` 
-are used to override any values given by CMake itself or yourself.
-
-This does not apply to the additional flags that can be given via `CGAL_*_FLAGS`.
-
-Such <I>inherited</I> values are then recorded in the current CMake cache for the program.
-The flags are then <I>unlocked</I> in the sense that at any subsequent configuration you can
-provide your own flags and this time they will not be overridden.
-
-When using the interactive `cmake-gui` the first press on `Configure` unlocks
-the flags, so that you can edit them as needed.
-
-\cgalAdvancedBegin
-The locking of flags is controlled by the variable
-`CGAL_DONT_OVERRIDE_CMAKE_FLAGS` which starts out FALSE and is
-toggled right after the flags have been loaded from
-`CGALConfig.cmake`.
-
-If you use the command line tool you can specify flags <I>directly</I> by setting the
-controlling variable right up front:
-
-<PRE>
-cd CGAL-\cgalReleaseNumber
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-g .
-cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
-cmake -DCGAL_DIR=CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
-</PRE>
-\cgalAdvancedEnd
 
 \section installation_summary Summary of CGAL's Configuration Variables
 
@@ -1236,10 +1192,5 @@ The file `CGAL/compiler_config.h` is included from
 `<CGAL/config.h>`.
 which is included by all \cgal header files.
 
-\section seccompileroptimisations Compiler Optimizations 
-
-By default CMake generates makefiles for Release mode, with 
-optimization flags switched on, and vcproj files for Release
-and Debug modes.
 
 */ 

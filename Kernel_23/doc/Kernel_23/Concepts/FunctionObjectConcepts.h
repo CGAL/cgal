@@ -3100,6 +3100,7 @@ public:
     returns the weight of the weighted point.
   */
   Kernel::FT operator()(const Kernel::WeightedPoint_2& p) const; 
+  /// @}
 
 }; /* end Kernel::ComputeWeight_2 */
 
@@ -3121,6 +3122,8 @@ public:
     returns the weight of the weighted point.
   */
   Kernel::FT operator()(const Kernel::WeightedPoint_3& p) const; 
+
+  /// @}
 
 }; /* end Kernel::ComputeWeight_3 */
 
@@ -3299,7 +3302,7 @@ public:
   Kernel::FT operator()(const Kernel::Line_2& l, 
                         const Kernel::FT &x) const; 
 
-  // @}
+  /// @}
 
 }; /* end Kernel::ComputeYAtX_2 */
 
@@ -3424,6 +3427,8 @@ public:
   */ 
   Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const; 
 
+  /// @}
+
 }; /* end Kernel::ComputeYmin_2 */
 
 /*!
@@ -3444,6 +3449,8 @@ public:
     returns the smallest \f$ y\f$-coordinate of the iso-cuboid.
   */
   Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
+
+  /// @}
 
 }; /* end Kernel::ComputeYmin_3 */
 
@@ -3493,7 +3500,7 @@ public:
     returns the largest \f$ z\f$-coordinate of the iso-cuboid.
   */
   Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
-
+  /// @}
 }; /* end Kernel::ComputeZmax_3 */
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -3513,7 +3520,7 @@ public:
     returns the smallest \f$ z\f$-coordinate of the iso-cuboid.
   */
   Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
-
+  /// @}
 }; /* end Kernel::ComputeZmin_3 */
 
 /*!
@@ -7122,7 +7129,7 @@ public:
   Kernel::Point_2 operator()(const Kernel::Weighted_point_2& p,
                              const Kernel::Weighted_point_2& q,
                              const Kernel::Weighted_point_2& s);
-
+  /// @}
 }; /* end Kernel::ConstructWeightedCircumcenter_2 */
 
 /*!
@@ -7148,7 +7155,7 @@ public:
                              const Kernel::Weighted_point_3& q,
                              const Kernel::Weighted_point_3& r,
                              const Kernel::Weighted_point_3& s);
-
+  /// @}
 }; /* end Kernel::ConstructWeightedCircumcenter_3 */
 
 /*!

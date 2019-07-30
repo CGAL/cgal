@@ -163,6 +163,11 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_nt_rep<ET>
   {
     this->et = new ET(e);
   }
+  Lazy_exact_Ex_Cst (ET&& e)
+      : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e))
+  {
+    this->et = new ET(std::move(e));
+  }
 
   void update_exact() const { CGAL_error(); }
 };
@@ -342,14 +347,14 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 // The real number type, handle class
 template <typename ET_>
 class Lazy_exact_nt
-  : public Lazy<Interval_nt<false>, ET_, Lazy_exact_nt<ET_>, To_interval<ET_> >
+  : public Lazy<Interval_nt<false>, ET_, To_interval<ET_> >
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, int >
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, double >
 {
 public:
 
   typedef Lazy_exact_nt<ET_> Self;
-  typedef Lazy<Interval_nt<false>, ET_, Self, To_interval<ET_> > Base;
+  typedef Lazy<Interval_nt<false>, ET_, To_interval<ET_> > Base;
   typedef typename Base::Self_rep  Self_rep;
 
   typedef typename Base::ET ET; // undocumented
@@ -374,6 +379,8 @@ public :
 
   Lazy_exact_nt (const ET & e)
     : Base(new Lazy_exact_Ex_Cst<ET>(e)){}
+  Lazy_exact_nt (ET&& e)
+    : Base(new Lazy_exact_Ex_Cst<ET>(std::move(e))){}
 
   template <class ET1>
   Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,

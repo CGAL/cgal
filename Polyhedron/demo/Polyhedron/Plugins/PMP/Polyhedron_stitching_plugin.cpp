@@ -40,7 +40,7 @@ class Polyhedron_demo_polyhedron_stitching_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "polyhedron_stitching_plugin.json")
 
   QAction* actionDetectBorders;
   QAction* actionStitchBorders;

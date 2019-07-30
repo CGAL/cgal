@@ -89,6 +89,7 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
       ::add<Hyperplane_tag>::type
       ::add<Sphere_tag>::type
       ::add<Weighted_point_tag>::type
+      ::add<Iso_box_tag>::type
       Object_list;
 
     typedef typeset< Point_cartesian_const_iterator_tag>::type
@@ -170,8 +171,8 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 	    typedef CartesianDVectorBase::Identity_functor<Self> type;
     };
 
-    CGAL_CONSTEXPR Cartesian_LA_base_d(){}
-    CGAL_CONSTEXPR Cartesian_LA_base_d(int d):Dimension_base<Dim_>(d){}
+    constexpr Cartesian_LA_base_d(){}
+    constexpr Cartesian_LA_base_d(int d):Dimension_base<Dim_>(d){}
 };
 
 } //namespace CGAL

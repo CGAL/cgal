@@ -24,7 +24,7 @@ class Polyhedron_demo_repair_polyhedron_plugin :
 {
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "repair_polyhedron_plugin.json")
 
 public:
 

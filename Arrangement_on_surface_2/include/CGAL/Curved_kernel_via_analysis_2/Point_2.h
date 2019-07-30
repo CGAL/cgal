@@ -242,6 +242,8 @@ public:
         }
     };
     
+    //!@}
+    
 public:
     //!\name Standard constructors
     //!@{
@@ -610,7 +612,7 @@ public:
       return *(this->ptr()->_m_doubles);
     }
   
-    //!}
+    //!@}
 
 
 public:
@@ -783,8 +785,7 @@ public:
     *this = Point_2< Curved_kernel_via_analysis_2, Rep >(rep);
   }
   
-  //!@}
-  
+  //! @}
     // friends ////////////////////////////////////////////////////////////////
 
     //! befriending arc classes

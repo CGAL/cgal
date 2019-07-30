@@ -30,10 +30,6 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#ifndef CGAL_CXX11
-#include <boost/preprocessor/repetition.hpp>
-#endif
-#include <boost/utility/result_of.hpp>
 
 namespace CGAL {
 namespace Wrap {
@@ -76,7 +72,6 @@ public:
 
   typedef          R_                       R;
 
-#ifdef CGAL_CXX11
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(push)
 #  pragma warning(disable: 4309)
@@ -115,47 +110,19 @@ public:
   Point_d(Origin&& v)
     : Rep(CPBase()(std::move(v))) {}
 
-#else
 
-  Point_d() : Rep(CPBase()()) {}
-
-  Point_d(Rep const& v) : Rep(v) {} // try not to use it
-
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  explicit Point_d(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(CPBase()( \
-	BOOST_PP_ENUM_PARAMS(N,t))) {} \
-  \
-  template<class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Point_d(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(f(BOOST_PP_ENUM_PARAMS(N,t))) {}
-  /*
-  template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Point_d(Eval_functor,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(Eval_functor(), BOOST_PP_ENUM_PARAMS(N,t)) {}
-  */
-
-  BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-
-  // this one should be implicit
-  Point_d(Origin const& o)
-    : Rep(CPBase()(o)) {}
-
-#endif
-
-  typename boost::result_of<CCBase(Rep,int)>::type cartesian(int i)const{
+  decltype(auto) cartesian(int i)const{
 	  return CCBase()(rep(),i);
   }
-  typename boost::result_of<CCBase(Rep,int)>::type operator[](int i)const{
+  decltype(auto) operator[](int i)const{
 	  return CCBase()(rep(),i);
   }
 
-  typename boost::result_of<CPI(Rep,Begin_tag)>::type cartesian_begin()const{
+  decltype(auto) cartesian_begin()const{
 	  return CPI()(rep(),Begin_tag());
   }
 
-  typename boost::result_of<CPI(Rep,End_tag)>::type cartesian_end()const{
+  decltype(auto) cartesian_end()const{
 	  return CPI()(rep(),End_tag());
   }
 
@@ -164,159 +131,68 @@ public:
     return PDBase()(rep());
   }
 
-  /*
-  Direction_d direction() const
-  {
-    return R().construct_direction_d_object()(*this);
+  friend auto operator==(Point_d const&p, Point_d const&q) {
+    typedef typename Get_functor<Kbase, Equal_points_tag>::type EPBase;
+    return EPBase()(p.rep(), q.rep());
   }
 
-  Vector_d transform(const Aff_transformation_d &t) const
+  friend auto operator!=(Point_d const&p, Point_d const&q) { return !(p==q); }
+
+  friend std::ostream& operator <<(std::ostream& os, const Point_d& p)
   {
-    return t.transform(*this);
+    auto b = p.cartesian_begin();
+    auto e = p.cartesian_end();
+    if(is_ascii(os))
+    {
+      os << p.dimension();
+      for(; b != e; ++b){
+	os << " " << *b;
+      }
+    }
+    else
+    {
+      write(os, p.dimension());
+      for(; b != e; ++b){
+	write(os, *b);
+      }
+    }
+    return os;
   }
 
-  Vector_d operator/(const RT& c) const
+  // TODO: test if the stream is binary or text?
+  friend std::istream& operator>>(std::istream &is, Point_d & p)
   {
-   return R().construct_divided_vector_d_object()(*this,c);
-  }
+    int dim;
+    if( is_ascii(is) )
+      is >> dim;
+    else
+    {
+      read(is, dim);
+    }
 
-  Vector_d operator/(const typename First_if_different<FT_,RT>::Type & c) const
-  {
-   return R().construct_divided_vector_d_object()(*this,c);
-  }
+    if(!is) return is;
+    std::vector<FT_> coords(dim);
+    if(is_ascii(is))
+    {
+      for(int i=0;i<dim;++i)
+	is >> iformat(coords[i]);
+    }
+    else
+    {
+      for(int i=0;i<dim;++i)
+	read(is, coords[i]);
+    }
 
-  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
-  x() const
-  {
-    return R().compute_x_3_object()(*this);
+    // FIXME: with Epeck_d, currently, this stores pointers to coords which will soon be dead.
+    if(is)
+      p = Point_d(coords.begin(), coords.end());
+    return is;
   }
-
-  typename Qualified_result_of<typename R::Compute_y_3, Vector_3>::type
-  y() const
-  {
-    return R().compute_y_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_z_3, Vector_3>::type
-  z() const
-  {
-    return R().compute_z_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hx_3, Vector_3>::type
-  hx() const
-  {
-    return R().compute_hx_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hy_3, Vector_3>::type
-  hy() const
-  {
-    return R().compute_hy_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hz_3, Vector_3>::type
-  hz() const
-  {
-    return R().compute_hz_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hw_3, Vector_3>::type
-  hw() const
-  {
-    return R().compute_hw_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
-  cartesian(int i) const
-  {
-    CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
-    if (i==0) return x();
-    if (i==1) return y();
-    return z();
-  }
-
-  typename Qualified_result_of<typename R::Compute_hw_3, Vector_3>::type
-  homogeneous(int i) const
-  {
-    CGAL_kernel_precondition( (i >= 0) || (i <= 3) );
-    if (i==0) return hx();
-    if (i==1) return hy();
-    if (i==2) return hz();
-    return hw();
-  }
-
-  typename Qualified_result_of<typename R::Compute_squared_length_3, Vector_3>::type
-  squared_length() const
-  {
-    return R().compute_squared_length_3_object()(*this);
-  }
-*/
 };
 #if 0
 template <class R_> Point_d<R_>::Point_d(Point_d &)=default;
 #endif
 
-template <class R_>
-std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
-{
-  typedef typename R_::Kernel_base Kbase;
-  typedef typename Get_functor<Kbase, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CPI;
-  // Should just be "auto"...
-  typename CGAL::decay<typename boost::result_of<
-        CPI(typename Point_d<R_>::Rep,Begin_tag)
-      >::type>::type
-    b = p.cartesian_begin(),
-      e = p.cartesian_end();
-  if(is_ascii(os))
-  {
-    os << p.dimension();
-    for(; b != e; ++b){
-      os << " " << *b;
-    }
-  }
-  else
-  {
-    write(os, p.dimension());
-    for(; b != e; ++b){
-      write(os, *b);
-    }
-  }
-  return os;
-}
-
-// TODO: test if the stream is binary or text?
-template<typename K>
-std::istream &
-operator>>(std::istream &is, Point_d<K> & p)
-{
-  typedef typename Get_type<K, Point_tag>::type P;
-  typedef typename Get_type<K, FT_tag>::type   FT;
-  int dim;
-  if( is_ascii(is) )
-    is >> dim;
-  else
-  {
-    read(is, dim);
-  }
-  
-  if(!is) return is;
-  std::vector<FT> coords(dim);
-  if(is_ascii(is))
-  {
-    for(int i=0;i<dim;++i)
-      is >> iformat(coords[i]);
-  }
-  else
-  {
-    for(int i=0;i<dim;++i)
-      read(is, coords[i]);
-  }
-  
-  if(is)
-    p = P(coords.begin(), coords.end());
-  return is;
-}
 
 //template <class R_>
 //Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w) const

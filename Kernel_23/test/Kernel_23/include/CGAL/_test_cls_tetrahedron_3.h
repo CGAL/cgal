@@ -36,9 +36,6 @@ _test_cls_tetrahedron_3(const R& )
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
 
- typename R::Tetrahedron_3 it;
- CGAL::Tetrahedron_3<R>  t0(it);
-
  RT n0 =  0;
  RT n1 = 12;
  RT n2 = 16;
@@ -59,6 +56,10 @@ _test_cls_tetrahedron_3(const R& )
  CGAL::Point_3<R> ps2( n0, n7, n0, n5); // (0, 3, 0)
  CGAL::Point_3<R> ps1( n7, n0, n0, n5); // (3, 0, 0)
  CGAL::Point_3<R> ps0( CGAL::ORIGIN );  // (0, 0, 0)
+
+ typename R::Tetrahedron_3 it0; // check the default-constructor
+ typename R::Tetrahedron_3 it(p1,p2,p3,p4);
+ CGAL::Tetrahedron_3<R>  t0(it);
 
  const CGAL::Tetrahedron_3<R> t1(p1,p2,p3,p4);
  CGAL::Tetrahedron_3<R> t2(p2,p1,p3,p4);

@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Mesh_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
@@ -52,19 +52,22 @@ if ( CGAL_FOUND )
     include( ${EIGEN3_USE_FILE} )
   endif()
   
- set(VTK_LIBS "")
-      find_package(VTK QUIET COMPONENTS vtkImagingGeneral  vtkIOImage NO_MODULE)
-      if(VTK_FOUND)
-          include(${VTK_USE_FILE})
-          if ("${VTK_VERSION_MAJOR}" GREATER "5")
-            message(STATUS "VTK found")
-            set( VTK_LIBS vtkImagingGeneral vtkIOImage )
-          else()
-            message(STATUS "VTK version 6.0 or greater is required")
-          endif()
-      else()
-        message(STATUS "VTK was not found")
+  find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
+  if(VTK_FOUND)
+    if(VTK_USE_FILE)
+      include(${VTK_USE_FILE})
+    endif()
+    if ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
+      message(STATUS "VTK found")
+      if(TARGET VTK::IOImage)
+        set(VTK_LIBRARIES VTK::ImagingGeneral VTK::IOImage)
       endif()
+    else()
+      message(STATUS "VTK version 6.0 or greater is required")
+      endif()
+    else()
+      message(STATUS "VTK was not found")
+    endif()
 
 
     # Compilable examples
@@ -87,9 +90,10 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "mesh_polyhedral_complex.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_complex_sm.cpp" )
     if( WITH_CGAL_ImageIO )
-      if( VTK_FOUND AND "${VTK_VERSION_MAJOR}" GREATER "5" )
+      if( VTK_FOUND AND ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5) )
         add_executable ( mesh_3D_gray_vtk_image mesh_3D_gray_vtk_image.cpp )
-        target_link_libraries(  mesh_3D_gray_vtk_image ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${VTK_LIBS}) 
+        target_link_libraries(  mesh_3D_gray_vtk_image ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${VTK_LIBRARIES})
+        cgal_add_test( mesh_3D_gray_vtk_image )
       endif()
  
       create_single_source_cgal_program( "mesh_3D_gray_image.cpp" )

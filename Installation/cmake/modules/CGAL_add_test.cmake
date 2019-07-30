@@ -98,7 +98,24 @@ function(cgal_add_compilation_test exe_name)
     COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
   set_property(TEST "compilation_of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
+  if(NOT TARGET cgal_check_build_system)
+    add_custom_target(cgal_check_build_system)
+  endif()
+  if(NOT TEST check_build_system)
+    add_test(NAME "check_build_system"
+      COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system")
+    if(POLICY CMP0066) # cmake 3.7 or later
+      set_property(TEST "check_build_system"
+        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
+    endif()
+  endif()
+  if(POLICY CMP0066) # cmake 3.7 or later
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+  endif()
 endfunction(cgal_add_compilation_test)
+
+option(CGAL_TEST_DRAW_FUNCTIONS "If set, the ctest command will not skip the tests of the draw functions.")
 
 function(cgal_setup_test_properties test_name)
   if(ARGC GREATER 1)
@@ -109,6 +126,11 @@ function(cgal_setup_test_properties test_name)
   #      message(STATUS "  working dir: ${CMAKE_CURRENT_SOURCE_DIR}")
   set_property(TEST "${test_name}"
     PROPERTY WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  if(NOT CGAL_TEST_DRAW_FUNCTIONS)
+    set_property(TEST "${test_name}"
+      APPEND PROPERTY ENVIRONMENT CGAL_TEST_SUITE=1)
+  endif()
+
   if(exe_name)
     set_property(TEST "${test_name}"
       APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")

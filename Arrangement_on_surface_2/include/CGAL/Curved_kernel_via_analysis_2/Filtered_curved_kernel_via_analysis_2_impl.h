@@ -712,7 +712,9 @@ public:
 
     //! type of curve analysis
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
-    
+
+    //!@}
+
 public:
     //!\name embedded types  for \c Arrangement_2 package
     //!@{

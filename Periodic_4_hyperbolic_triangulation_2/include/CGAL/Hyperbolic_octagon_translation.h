@@ -59,15 +59,8 @@ private:
 
   Word _wrd;
 
-
-
-  static const Matrix& gmap(const std::string& s)
-  {
-    typedef std::map<std::string, Matrix>  M;
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(M, m);
-
-    if(m.empty()){
-
+  static auto initialize_gmap() {
+    std::map<std::string, Matrix> m;
     std::vector<Matrix> g;
     Matrix::generators(g);
 
@@ -128,7 +121,30 @@ private:
     m["7"] = g[D];
     m["72"] = g[D]*g[C];
     m["725"] = g[D]*g[C]*g[B];
+
+    { // This block abuses `operator<<` of numbers, to a null stream.
+      // That ensures that the following memory pool are correctly
+      // initialized:
+      //   - `CORE::MemoryPool<CORE::Realbase_for<long, 1024>`
+      //   - `CORE::MemoryPool<CORE::Realbase_for<double, 1024>`
+      //   - `CORE::MemoryPool<CORE::BigFloatRep, 1024>`
+      //   - `CORE::MemoryPool<CORE::BigIntRep, 1024>`
+      // otherwise, there is an assertion during the destruction of
+      // static (or `thread_local`) objects
+      struct NullBuffer : public std::streambuf {
+        int overflow(int c) { return c; }
+      };
+      NullBuffer null_buffer;
+      std::ostream null_stream(&null_buffer);
+      for(auto& pair: m) null_stream << pair.second;
     }
+    return m;
+  }
+
+  static const Matrix& gmap(const std::string& s)
+  {
+    typedef std::map<std::string, Matrix>  M;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(M, m, initialize_gmap());
     return m[s];
   }
 

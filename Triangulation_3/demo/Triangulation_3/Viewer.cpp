@@ -1766,7 +1766,7 @@ void Viewer::endSelection(const QPoint& p)
   QList<float> depths = picked_IDs.keys();
   if(!depths.isEmpty())
   {
-      qSort(depths);
+      std::sort(depths.begin(), depths.end());
       id = picked_IDs[depths.first()];
       picked = true;
   }
@@ -2267,7 +2267,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
     else if( m_curMode == SELECT
              && event->key()==Qt::Key_Delete && modifiers==Qt::NoButton ) {
         // sort selected id's in descending order
-        qSort(m_vidSeled.begin(), m_vidSeled.end(), qGreater<int>());
+        std::sort(m_vidSeled.begin(), m_vidSeled.end(), std::greater<int>());
         for(QList<int>::iterator vit=m_vidSeled.begin(); vit<m_vidSeled.end(); ++vit) {
             // remove the selected point from DT and vertex_handle_array
             // note: QList::takeAt will removes the item at index position i and returns it.
