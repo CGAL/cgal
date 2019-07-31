@@ -4,5 +4,5 @@ set -e
 
 path=@CGAL_MODULES_DIR@/dependencies_graph
 
-bash ${path}/deps_to_graphiz.sh | ${path}/filter.sed         | tred | dot -Txdot | gvpr -c -f ${path}/filter.gvpr | dot -Tsvg -o package_info/html/deps.svg
-bash ${path}/deps_to_graphiz.sh | ${path}/minimal_filter.sed | tred | dot -Txdot | gvpr -c -f ${path}/filter.gvpr | dot -Tsvg -o package_info/html/deps-unfiltered.svg
+bash ${path}/deps_to_graphiz.sh | sed -f ${path}/filter.sed         | tred | dot -Txdot | gvpr -c -f ${path}/filter.gvpr | dot -Tsvg -o package_info/html/deps.svg
+bash ${path}/deps_to_graphiz.sh | sed -f ${path}/minimal_filter.sed | tred | dot -Txdot | gvpr -c -f ${path}/filter.gvpr | dot -Tsvg -o package_info/html/deps-unfiltered.svg
