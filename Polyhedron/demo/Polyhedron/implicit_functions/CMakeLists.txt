@@ -1,7 +1,5 @@
 # This is the CMake script for compiling the CGAL Mesh_3 demo implicit functions.
 
-project( Mesh_3_implicit_functions )
-
 include( polyhedron_demo_macros )
 
 cmake_minimum_required(VERSION 3.1)

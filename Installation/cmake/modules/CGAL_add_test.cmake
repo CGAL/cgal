@@ -104,6 +104,8 @@ function(cgal_add_compilation_test exe_name)
   if(NOT TEST check_build_system)
     add_test(NAME "check_build_system"
       COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system")
+    set_property(TEST "check_build_system"
+      APPEND PROPERTY LABELS "Installation")
     if(POLICY CMP0066) # cmake 3.7 or later
       set_property(TEST "check_build_system"
         PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
