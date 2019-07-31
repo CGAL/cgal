@@ -248,6 +248,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   connect(sceneView->selectionModel(),
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
+  // setup menu filtering
+  connect(sceneView->selectionModel(),
+          SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
+          this, SLOT(filterOperations()));
 
   sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
@@ -390,9 +394,6 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   }
   // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
 #endif
-
-  // setup menu filtering
-  connect(ui->menuOperations, SIGNAL(aboutToShow()), this, SLOT(filterOperations()));
 }
 
 void addActionToMenu(QAction* action, QMenu* menu)
@@ -443,7 +444,6 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
           }
           else
           {
-            //menu->addAction(submenu->menuAction());
             addActionToMenu(submenu->menuAction(), menu);
           }
         }
@@ -462,6 +462,9 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
 
 void MainWindow::filterOperations()
 {
+  //on some platforms editing an open menu slows everything like hell,
+  //so we hide it for the time of the process.
+  ui->menuOperations->hide();
   //return actions to their true menu
   Q_FOREACH(QMenu* menu, action_menu_map.values())
   {
@@ -471,7 +474,6 @@ void MainWindow::filterOperations()
         menu->removeAction(action);
     }
   }
-
   Q_FOREACH(QAction* action, action_menu_map.keys())
   {
     QMenu* menu = action_menu_map[action];
@@ -489,7 +491,7 @@ void MainWindow::filterOperations()
   }
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   filterMenuOperations(ui->menuOperations, filter, false);
-
+  ui->menuOperations->show();
   operationSearchBar.setFocus();
 }
 
