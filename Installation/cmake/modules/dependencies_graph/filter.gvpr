@@ -1,0 +1,6 @@
+#!/usr/bin/gvpr -c
+
+N[outdegree==0]{color="orange"}
+N[indegree==0]{color="green"}
+N[outdegree==0 && indegree==0]{color="blue"}
+E[$.tail.X > $.head.X] {color="red"}
