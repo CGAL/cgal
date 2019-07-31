@@ -40,6 +40,7 @@ TermsArray AlgebraicCurveParserOld::extractTerms() {
             termIndex = next - expression.begin();
         }
     }
+    return algebraicTerms;
 }
 
 AlgebraicTerm AlgebraicCurveParserOld::extractCoefficientAndExponent(std::string &subExpression) {
