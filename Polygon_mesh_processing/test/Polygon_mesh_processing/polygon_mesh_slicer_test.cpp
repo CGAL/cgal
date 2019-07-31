@@ -14,7 +14,6 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polygon_2.h>
-#include <boost/foreach.hpp>
 #include <CGAL/use.h>
 
 #include <fstream>

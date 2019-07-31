@@ -88,7 +88,7 @@ namespace CGAL {
     //  : boost::true_type {};
     // Advertise somehow that the sign_of_determinant* are exact?
 
-    typedef cpp0x::array<NT1,2> Vector;
+    typedef std::array<NT1,2> Vector;
     struct Construct_vector {
       struct Dimension {
 	Vector operator()(unsigned d) const {

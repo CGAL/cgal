@@ -384,10 +384,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm
     = get(CGAL::vertex_point,*smesh);
 
-  BOOST_FOREACH(boost::graph_traits<Skeleton>::vertex_descriptor v, vertices(item->skeleton_curve) )
+  for(boost::graph_traits<Skeleton>::vertex_descriptor v : CGAL::make_range(vertices(item->skeleton_curve)) )
   {
     const Point& skel_pt = item->skeleton_curve[v].point;
-    BOOST_FOREACH(vertex_descriptor mesh_v, item->skeleton_curve[v].vertices)
+    for(vertex_descriptor mesh_v : item->skeleton_curve[v].vertices)
     {
       const Point& mesh_pt = get(vpm,mesh_v);
       distances[get(vimap,mesh_v)] = std::sqrt(CGAL::squared_distance(skel_pt, mesh_pt));
@@ -399,10 +399,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   Facet_with_id_pmap<Face_graph,double> sdf_property_map(*item->input_triangle_mesh, sdf_values);
 
   // compute sdf values with skeleton
-  BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor f, faces(*item->input_triangle_mesh))
+  for(boost::graph_traits<Face_graph>::face_descriptor f : faces(*item->input_triangle_mesh))
   {
     double dist = 0;
-    BOOST_FOREACH(boost::graph_traits<Face_graph>::halfedge_descriptor hd, halfedges_around_face(halfedge(f, *item->input_triangle_mesh), *item->input_triangle_mesh))
+    for(boost::graph_traits<Face_graph>::halfedge_descriptor hd : halfedges_around_face(halfedge(f, *item->input_triangle_mesh), *item->input_triangle_mesh))
       dist+=distances[get(vimap,target(hd, *item->input_triangle_mesh))];
     sdf_property_map[f] = dist / 3.;
   }
@@ -425,7 +425,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   typedef boost::property_map<Face_graph, CGAL::face_patch_id_t<int> >::type Fpim;
   Fpim fpim = get(CGAL::face_patch_id_t<int>(), *segmented_polyhedron);
   int nb_segment=0;
-  BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*segmented_polyhedron))
+  for(boost::graph_traits<Face_graph>::face_descriptor fd : faces(*segmented_polyhedron))
   {
     int segment = static_cast<int>(segment_ids[i++]);
     if(segment > nb_segment)

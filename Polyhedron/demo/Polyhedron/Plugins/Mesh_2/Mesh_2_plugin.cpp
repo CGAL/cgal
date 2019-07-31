@@ -120,7 +120,7 @@ void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm, int constant_coordinat
                                            fit!=fit_end; ++fit)
   {
     if (!fit->is_in_domain()) continue;
-    CGAL::cpp11::array<vertex_descriptor,3> vds;
+    std::array<vertex_descriptor,3> vds;
     for(int i=0; i<3; ++i)
     {
       typename Map::iterator it;

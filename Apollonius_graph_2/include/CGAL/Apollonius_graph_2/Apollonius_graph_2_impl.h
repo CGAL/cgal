@@ -689,7 +689,7 @@ insert(const Site_2& p, Vertex_handle vnear)
   // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
-  expand_conflict_region(start_f, p, l, fm, vm, NULL);
+  expand_conflict_region(start_f, p, l, fm, vm, nullptr);
 
   //  retriangulate_conflict_region(v, l, fm, vm);
   Vertex_handle v = retriangulate_conflict_region(p, l, fm, vm);
@@ -882,7 +882,7 @@ expand_conflict_region(const Face_handle& in_f,
 
       l.remove(e);
 
-      if ( fe != NULL )
+      if ( fe != nullptr )
       {
         Vh_triple* vhq = new Vh_triple[1];
 

@@ -307,10 +307,10 @@ public:
     {}
 
     ~Point_data() {
-      if(right_tent != NULL){
+      if(right_tent != nullptr){
         delete right_tent;
       }
-      if (left_tent != NULL){
+      if (left_tent != nullptr){
         delete left_tent;
       }
     }

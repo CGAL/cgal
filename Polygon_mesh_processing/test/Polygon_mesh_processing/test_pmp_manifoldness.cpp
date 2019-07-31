@@ -125,7 +125,7 @@ void test_unpinched_mesh(const Vertices_to_merge_container& all_merges,
   const std::size_t ini_vertices_size = num_vertices(mesh);
 
   // this is a nice, smooth, surface initially
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+  for(vertex_descriptor vd : vertices(mesh)) {
     assert(!CGAL::Polygon_mesh_processing::is_non_manifold_vertex(vd, mesh));
   }
 
@@ -205,7 +205,7 @@ void test_pinched_triangles(const char* filename,
 
   // in the triangles, the second (id==1) vertex is non-manifold because it is pinched
   int id = 0;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+  for(vertex_descriptor vd : vertices(mesh)) {
     if(id++ == 1) {
       assert(CGAL::Polygon_mesh_processing::is_non_manifold_vertex(vd, mesh));
     } else {

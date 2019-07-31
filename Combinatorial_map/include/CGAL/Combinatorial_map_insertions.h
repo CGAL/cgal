@@ -33,7 +33,7 @@ namespace CGAL
 
 /** Insert a vertex in a given edge.
  * @param amap the used combinatorial map.
- * @param adart a dart of the edge (!=NULL && !=null_dart_handle).
+ * @param adart a dart of the edge (!=nullptr && !=null_dart_handle).
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new vertex.
@@ -67,7 +67,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
 }
 /** Insert a dangling edge in a 2-cell between given by a dart.
  * @param amap the used combinatorial map.
- * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
+ * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new edge, not incident to the vertex of adart1.
@@ -100,8 +100,8 @@ CGAL_DEPRECATED bool is_insertable_cell_1_in_cell_2
 
 /** Insert an edge in a 2-cell between two given darts.
  * @param amap the used combinatorial map.
- * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
- * @param adart2 a second dart of the facet. If NULL insert a dangling edge.
+ * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
+ * @param adart2 a second dart of the facet. If nullptr insert a dangling edge.
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new edge, and not incident to the
@@ -121,7 +121,7 @@ insert_cell_1_in_cell_2(CMap& amap,
 /** Test if a 2-cell can be inserted onto a given 3-cell along
  * a path of edges.
  * @param amap the used combinatorial map.
- * @param afirst iterator on the begining of the path.
+ * @param afirst iterator on the beginning of the path.
  * @param alast  iterator on the end of the path.
  * @return true iff a 2-cell can be inserted along the path.
  */
@@ -134,7 +134,7 @@ CGAL_DEPRECATED bool is_insertable_cell_2_in_cell_3
 
 /** Insert a 2-cell in a given 3-cell along a path of darts.
  * @param amap the used combinatorial map.
- * @param afirst iterator on the begining of the path.
+ * @param afirst iterator on the beginning of the path.
  * @param alast  iterator on the end of the path.
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())

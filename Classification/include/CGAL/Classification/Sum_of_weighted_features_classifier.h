@@ -32,7 +32,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
@@ -744,7 +743,7 @@ public:
     boost::property_tree::ptree tree;
     boost::property_tree::read_xml(input, tree);
 
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.features"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.features"))
     {
       std::string name = v.second.get<std::string>("name");
       std::map<std::string, std::size_t>::iterator
@@ -759,7 +758,7 @@ public:
       }
     }
 
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.labels"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.labels"))
     {
       std::string label_name = v.second.get<std::string>("name");
       std::map<std::string, std::size_t>::iterator
@@ -775,7 +774,7 @@ public:
         continue;
       }
         
-      BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, v.second)
+      for(boost::property_tree::ptree::value_type& v2 : v.second)
       {
         if (v2.first == "name")
           continue;

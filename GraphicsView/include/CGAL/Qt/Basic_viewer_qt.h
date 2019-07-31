@@ -55,6 +55,7 @@
 
 #include <CGAL/Buffer_for_vao.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
+#include <CGAL/Qt/constraint.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -185,31 +186,31 @@ public:
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
     m_are_buffers_initialized(false),
     m_buffer_for_mono_points(&arrays[POS_MONO_POINTS],
-                             NULL,
+                             nullptr,
                              &m_bounding_box,
-                             NULL, NULL, NULL),
+                             nullptr, nullptr, nullptr),
     m_buffer_for_colored_points(&arrays[POS_COLORED_POINTS],
-                                NULL,
+                                nullptr,
                                 &m_bounding_box,
                                 &arrays[COLOR_POINTS],
-                                NULL, NULL),
+                                nullptr, nullptr),
     m_buffer_for_mono_segments(&arrays[POS_MONO_SEGMENTS],
-                               NULL,
+                               nullptr,
                                &m_bounding_box,
-                               NULL, NULL, NULL),
+                               nullptr, nullptr, nullptr),
     m_buffer_for_colored_segments(&arrays[POS_COLORED_SEGMENTS],
-                                  NULL,
+                                  nullptr,
                                   &m_bounding_box,
                                   &arrays[COLOR_SEGMENTS],
-                                  NULL, NULL),
+                                  nullptr, nullptr),
     m_buffer_for_mono_faces(&arrays[POS_MONO_FACES],
-                            NULL,
+                            nullptr,
                             &m_bounding_box,
-                            NULL,
+                            nullptr,
                             &arrays[FLAT_NORMAL_MONO_FACES],
                             &arrays[SMOOTH_NORMAL_MONO_FACES]),
     m_buffer_for_colored_faces(&arrays[POS_COLORED_FACES],
-                               NULL,
+                               nullptr,
                                &m_bounding_box,
                                &arrays[COLOR_FACES], 
                                &arrays[FLAT_NORMAL_COLORED_FACES],
@@ -253,6 +254,39 @@ public:
   const CGAL::Bbox_3& bounding_box() const
   { return m_bounding_box; }
 
+  bool has_zero_x() const
+  {
+    return
+      m_buffer_for_mono_points.has_zero_x() && 
+      m_buffer_for_colored_points.has_zero_x() &&
+      m_buffer_for_mono_segments.has_zero_x() &&
+      m_buffer_for_colored_segments.has_zero_x() &&
+      m_buffer_for_mono_faces.has_zero_x() &&
+      m_buffer_for_colored_faces.has_zero_x();
+  }  
+
+  bool has_zero_y() const
+  {
+    return
+      m_buffer_for_mono_points.has_zero_y() && 
+      m_buffer_for_colored_points.has_zero_y() &&
+      m_buffer_for_mono_segments.has_zero_y() &&
+      m_buffer_for_colored_segments.has_zero_y() &&
+      m_buffer_for_mono_faces.has_zero_y() &&
+      m_buffer_for_colored_faces.has_zero_y();
+  }
+  
+  bool has_zero_z() const
+  {
+    return
+      m_buffer_for_mono_points.has_zero_z() && 
+      m_buffer_for_colored_points.has_zero_z() &&
+      m_buffer_for_mono_segments.has_zero_z() &&
+      m_buffer_for_colored_segments.has_zero_z() &&
+      m_buffer_for_mono_faces.has_zero_z() &&
+      m_buffer_for_colored_faces.has_zero_z();
+  }
+  
   template<typename KPoint>
   void add_point(const KPoint& p)
   { m_buffer_for_mono_points.add_point(p); }
@@ -732,6 +766,23 @@ protected:
 
       rendering_program_face.release();
     }
+
+    if (!is_empty() && (has_zero_x() || has_zero_y() || has_zero_z()))
+    {
+      camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
+      //      Camera Constraint:
+      constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
+      constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
+
+      double cx=0., cy=0., cz=0.;
+      if (has_zero_x())      { cx=1.; }
+      else if (has_zero_y()) { cy=1.; }
+      else                   { cz=1.; }
+    
+      camera()->setViewDirection(CGAL::qglviewer::Vec(-cx,-cy,-cz));
+      constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(cx, cy, cz));
+      camera()->frame()->setConstraint(&constraint);
+    }
   }
 
   virtual void redraw()
@@ -775,7 +826,7 @@ protected:
     glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 
     compile_shaders();
-
+      
     CGAL::Bbox_3 bb;
     if (bb==bounding_box()) // Case of "empty" bounding box
     {    
@@ -1000,7 +1051,10 @@ protected:
 
   bool m_are_buffers_initialized;
   CGAL::Bbox_3 m_bounding_box;
-  
+
+  // CGAL::qglviewer::LocalConstraint constraint;
+  CGAL::qglviewer::WorldConstraint constraint;
+
   // The following enum gives the indices of different elements of arrays vectors.
   enum
   {
@@ -1059,36 +1113,14 @@ protected:
 
 #else // CGAL_USE_BASIC_VIEWER
 
-namespace CGAL 
+namespace CGAL
 {
 
-template<class T, class ColorFunctor>
-void draw(const T&, const char*, bool, const ColorFunctor&)
-{
-  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
-  
-template<class T>
-void draw(const T&, const char*, bool)
-{
-  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
-  
-template<class T>
-void draw(const T&, const char*)
-{
-  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
-  
-template<class T>
-void draw(const T&)
-{
-  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
+  template<class T>
+  void draw(const T&, const char* ="", bool=false)
+  { 
+    std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
+  }
 
 } // End namespace CGAL
 

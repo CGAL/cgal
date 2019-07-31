@@ -29,7 +29,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
 
-#include <boost/foreach.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -237,7 +236,7 @@ public:
     bool seam;
     const Self* mesh_;
 
-    halfedge_iterator() : hd(), end(), seam(false), mesh_(NULL) { }
+    halfedge_iterator() : hd(), end(), seam(false), mesh_(nullptr) { }
 
     halfedge_iterator(const Iterator_range<TM_halfedge_iterator>& ir, const Self* m)
       : hd(ir.first), end(ir.second), seam(false), mesh_(m)
@@ -350,7 +349,7 @@ public:
 
   public:
     /// Constructors
-    vertex_iterator() : hd(), end(), mesh_(NULL) { }
+    vertex_iterator() : hd(), end(), mesh_(nullptr) { }
 
     vertex_iterator(const Iterator_range<TM_halfedge_iterator>& ir, const Self* m)
       : hd(ir.first), end(ir.second), mesh_(m)
@@ -433,7 +432,7 @@ public:
 #endif
 
     edge_descriptor()
-      : mesh_(NULL)
+      : mesh_(nullptr)
     {}
 
     edge_descriptor(const halfedge_descriptor& hd, const Self* m)
@@ -470,7 +469,7 @@ public:
     const Self* mesh_;
 
   public:
-    edge_iterator() : hd(), end(), seam(false), mesh_(NULL) { }
+    edge_iterator() : hd(), end(), seam(false), mesh_(nullptr) { }
 
     edge_iterator(const Iterator_range<TM_halfedge_iterator>& ir, const Self* m)
       : hd(ir.first), end(ir.second), seam(false), mesh_(m)

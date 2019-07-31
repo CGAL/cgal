@@ -391,7 +391,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
           CGAL::is_triangle_mesh(*poly_item->face_graph()))
       {
         bool is_valid = true;
-        BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*poly_item->face_graph()))
+        for(boost::graph_traits<Face_graph>::face_descriptor fd : faces(*poly_item->face_graph()))
         {
           if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd, *poly_item->face_graph()))
           {
@@ -566,7 +566,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
   }
   edit_item->invalidateOpenGLBuffers();
   selection_item->setVisible(false);
-  (*CGAL::QGLViewer::QGLViewerPool().begin())->update();
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    v->update();
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_facegraph_item* target)

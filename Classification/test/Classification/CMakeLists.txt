@@ -1,10 +1,10 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Classification_Tests )
 
 
-cmake_minimum_required(VERSION 3.1)
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -97,14 +97,6 @@ if(TARGET test_classification_point_set)
   target_link_libraries(test_classification_point_set PUBLIC ${classification_linked_libraries})
   if (TBB_FOUND)
     CGAL_target_use_TBB( test_classification_point_set )
-  endif()
-endif()
-
-create_single_source_cgal_program( "deprecated_test_classification_point_set.cpp" CXX_FEATURES ${needed_cxx_features} )
-if(TARGET deprecated_test_classification_point_set)
-  target_link_libraries(deprecated_test_classification_point_set PUBLIC ${classification_linked_libraries})
-  if (TBB_FOUND)
-    CGAL_target_use_TBB( deprecated_test_classification_point_set )
   endif()
 endif()
 

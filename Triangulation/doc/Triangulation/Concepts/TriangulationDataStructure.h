@@ -556,8 +556,8 @@ This method does exactly the opposite of
 `insert_increase_dimension()`:
 `v` is removed,
 full cells not containing `star` are removed,
-full cells containing `star` but not `v` loose vertex `star`,
-full cells containing `star` and `v` loose vertex `v`
+full cells containing `star` but not `v` lose vertex `star`,
+full cells containing `star` and `v` lose vertex `v`
 (see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
 \pre All cells contain either `star` or `v`.
 Edge `star-v` exists in the triangulation

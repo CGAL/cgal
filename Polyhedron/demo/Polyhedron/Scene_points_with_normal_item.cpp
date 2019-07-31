@@ -9,6 +9,8 @@
 
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/Three/Point_container.h>
+#include <CGAL/Three/Edge_container.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
@@ -37,8 +39,19 @@
 
 const std::size_t limit_fast_drawing = 300000; //arbitraty large value
 
+typedef CGAL::Three::Point_container Pc;
+typedef CGAL::Three::Edge_container Ec;
+typedef CGAL::Three::Viewer_interface VI;
+typedef Scene_points_with_normal_item_priv Priv;
 struct Scene_points_with_normal_item_priv
 {
+  enum Point_container_id{
+    Points =0,
+    Shaded_points,
+    Selected_points,
+    Selected_shaded_points
+  };
+
   void init_values(Scene_points_with_normal_item* parent)
   {
     item = parent;
@@ -52,6 +65,17 @@ struct Scene_points_with_normal_item_priv
     point_Slider->setMinimum(1);
     point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
     point_Slider->setMaximum(25);
+    item->setPointContainer(Priv::Selected_shaded_points, new Pc(VI::PROGRAM_WITH_LIGHT,
+                                                 false));
+    item->setPointContainer(Priv::Selected_points, new Pc(VI::PROGRAM_NO_SELECTION,
+                                                 false));
+    item->setPointContainer(Priv::Shaded_points, new Pc(VI::PROGRAM_WITH_LIGHT,
+                                                 false));
+    item->setPointContainer(Priv::Points, new Pc(VI::PROGRAM_NO_SELECTION,
+                                                 false));
+    item->setEdgeContainer(0, new Ec(VI::PROGRAM_NO_SELECTION,
+                                                 false));
+
   }
   Scene_points_with_normal_item_priv(Scene_points_with_normal_item* parent)
     :m_points(new Point_set)
@@ -94,23 +118,7 @@ struct Scene_points_with_normal_item_priv
   bool isPointSliderMoving() { return is_point_slider_moving; }
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices() const;
-  enum VAOs {
-      Edges=0,
-      ThePoints,
-      TheShadedPoints,
-      Selected_points,
-      Selected_shaded_points,
-      NbOfVaos
-  };
-  enum VBOs {
-      Edges_vertices = 0,
-      Points_vertices,
-      Points_normals,
-      Points_colors,
-      Selected_points_vertices,
-      Selected_points_normals,
-      NbOfVbos
-  };
+
   Point_set* m_points;
   std::string m_comments;
   QAction* actionDeleteSelection;
@@ -204,7 +212,6 @@ public:
 
 
 Scene_points_with_normal_item::Scene_points_with_normal_item()
-    : Scene_item(Scene_points_with_normal_item_priv::NbOfVbos,Scene_points_with_normal_item_priv::NbOfVaos)
 {
     setRenderingMode(Points);
     is_selected = true;
@@ -213,7 +220,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item()
 
 // Copy constructor
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy)
-    :Scene_item(Scene_points_with_normal_item_priv::NbOfVbos,Scene_points_with_normal_item_priv::NbOfVaos)
 {
 
   d = new Scene_points_with_normal_item_priv(toCopy, this);
@@ -227,13 +233,13 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
     setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
     is_selected = true;
   }
+  
   invalidateOpenGLBuffers();
 }
 
 // Converts polyhedron to point set
 
 Scene_points_with_normal_item::Scene_points_with_normal_item(const SMesh& input_mesh)
-    : Scene_item(Scene_points_with_normal_item_priv::NbOfVbos,Scene_points_with_normal_item_priv::NbOfVaos)
 {
   // Converts Polyhedron vertices to point set.
   // Computes vertices normal from connectivity.
@@ -250,164 +256,39 @@ Scene_points_with_normal_item::~Scene_points_with_normal_item()
 
 
 
-void Scene_points_with_normal_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
+void Scene_points_with_normal_item_priv::
+initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
 {
-    compute_normals_and_vertices();
-    //vao for the edges
-    if(item->has_normals())
-    {
-        program = item->getShaderProgram(Scene_points_with_normal_item::PROGRAM_NO_SELECTION, viewer);
-        program->bind();
+  item->getEdgeContainer(0)->initializeBuffers(viewer);
+  item->getPointContainer(Priv::Points)->initializeBuffers(viewer);
+  item->getPointContainer(Priv::Shaded_points)->initializeBuffers(viewer);
+  item->getPointContainer(Priv::Selected_points)->initializeBuffers(viewer);
+  item->getPointContainer(Priv::Selected_shaded_points)->initializeBuffers(viewer);
 
-        item->vaos[Edges]->bind();
-        item->buffers[Edges_vertices].bind();
-        item->buffers[Edges_vertices].allocate(positions_lines.data(),
-                            static_cast<int>(positions_lines.size()*sizeof(CGAL_data_type)));
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",CGAL_GL_data_type,0,3);
-        item->buffers[Edges_vertices].release();
+  ////Clean-up
+  item->getPointContainer(Priv::Points)->setFlatDataSize(nb_points - nb_selected_points);
+  item->getPointContainer(Priv::Shaded_points)->setFlatDataSize(nb_points - nb_selected_points);
+  item->getPointContainer(Priv::Selected_points)->setFlatDataSize(nb_selected_points);
+  item->getPointContainer(Priv::Selected_shaded_points)->setFlatDataSize(nb_selected_points);
+  item->getEdgeContainer(0)->setFlatDataSize(nb_lines);
 
-        if (!(colors_points.empty()))
-        {
-          item->buffers[Points_colors].bind();
-          item->buffers[Points_colors].allocate (colors_points.data(),
-                                                 static_cast<int>(colors_points.size()*sizeof(CGAL_data_type)));
-          program->enableAttributeArray("colors");
-          program->setAttributeBuffer("colors",CGAL_GL_data_type,0,3);
-          item->buffers[Points_colors].release();
-        }
-        else
-          program->disableAttributeArray("colors");
+  positions_lines             .resize(0);
+  normals                     .resize(0);
+  positions_normals           .resize(0);
+  positions_selected_normals  .resize(0);
+  colors_points               .resize(0);
 
-        item->vaos[Edges]->release();
-
-        nb_lines = positions_lines.size();
-        program->release();
-    }
-    //vao for the points
-    {
-        program = item->getShaderProgram(Scene_points_with_normal_item::PROGRAM_NO_SELECTION, viewer);
-        program->bind();
-
-        item->vaos[ThePoints]->bind();
-        item->buffers[Edges_vertices].bind();
-        if(!item->has_normals()) {
-          item->buffers[Edges_vertices].allocate(positions_lines.data(),
-                              static_cast<int>(positions_lines.size()*sizeof(CGAL_data_type)));
-        }
-        program->enableAttributeArray("vertex");
-        if(item->has_normals())
-          program->setAttributeBuffer("vertex",CGAL_GL_data_type,0,3,
-                                      static_cast<int>(6*sizeof(CGAL_GL_data_type)));
-        else
-          program->setAttributeBuffer("vertex",CGAL_GL_data_type,0,3);
-        item->buffers[Edges_vertices].release();
-        if (!(colors_points.empty()))
-        {
-          item->buffers[Points_colors].bind();
-          item->buffers[Points_colors].allocate (colors_points.data(),
-                                                 static_cast<int>(colors_points.size()*sizeof(CGAL_data_type)));
-          program->enableAttributeArray("colors");
-          program->setAttributeBuffer("colors",CGAL_GL_data_type,0,3,6*sizeof(CGAL_data_type));
-          item->buffers[Points_colors].release();
-          colors_points.resize(0);
-          std::vector<CGAL_data_type>(colors_points).swap(colors_points);
-        }
-        else
-          program->disableAttributeArray("colors");
-        item->vaos[ThePoints]->release();
-        program->release();
-
-        if(item->has_normals())
-        {
-          program = item->getShaderProgram(Scene_points_with_normal_item::PROGRAM_WITH_LIGHT, viewer);
-          program->bind();
-          item->vaos[TheShadedPoints]->bind();
-          item->buffers[Edges_vertices].bind();
-          program->enableAttributeArray("vertex");
-          program->setAttributeBuffer("vertex",CGAL_GL_data_type,0,3,
-                                      static_cast<int>(6*sizeof(CGAL_GL_data_type)));
-          item->buffers[Edges_vertices].release();
-          item->buffers[Points_normals].bind();
-          item->buffers[Points_normals].allocate(positions_normals.data(),
-                                                 static_cast<int>(positions_normals.size()*sizeof(CGAL_data_type)));
-          program->enableAttributeArray("normals");
-          program->setAttributeBuffer("normals",CGAL_GL_data_type,0,3);
-          item->buffers[Points_normals].release();
-          positions_normals.resize(0);
-          std::vector<CGAL_data_type>(positions_normals).swap(positions_normals);
-          item->vaos[TheShadedPoints]->release();
-          program->release();
-        }
-
-
-        if(item->has_normals())
-          nb_points = positions_lines.size()/2;
-        else
-          nb_points = positions_lines.size();
-    }
-    //vao for the selected points
-    {
-      program = item->getShaderProgram(Scene_points_with_normal_item::PROGRAM_NO_SELECTION, viewer);
-      program->bind();
-
-      item->vaos[Selected_points]->bind();
-      item->buffers[Edges_vertices].bind();
-      program->enableAttributeArray("vertex");
-      if(!item->has_normals())
-      {
-        program->setAttributeBuffer("vertex",CGAL_GL_data_type,
-                                    static_cast<int>( 3*(m_points->size()-m_points->nb_selected_points())*sizeof(CGAL_data_type) ),
-                                    3,
-                                    0);
-      }
-      else
-      {
-        program->setAttributeBuffer("vertex",CGAL_GL_data_type,
-                                    static_cast<int>( 6*(m_points->size()-m_points->nb_selected_points())*sizeof(CGAL_data_type) ),
-                                    3,
-                                    static_cast<int>(6*sizeof(CGAL_GL_data_type)));
-      }
-      item->buffers[Edges_vertices].release();
-      program->disableAttributeArray("colors");
-      item->vaos[Selected_points]->release();
-      program->release();
-      if(item->has_normals())
-      {
-        program = item->getShaderProgram(Scene_points_with_normal_item::PROGRAM_WITH_LIGHT, viewer);
-        program->bind();
-        item->vaos[Selected_shaded_points]->bind();
-        item->buffers[Edges_vertices].bind();
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",CGAL_GL_data_type,
-                                    static_cast<int>( 6*(m_points->size()-m_points->nb_selected_points())*sizeof(CGAL_data_type) ),
-                                    3,
-                                    static_cast<int>(6*sizeof(CGAL_GL_data_type)));
-
-        item->buffers[Edges_vertices].release();
-        program->disableAttributeArray("colors");
-        item->buffers[Selected_points_normals].bind();
-        item->buffers[Selected_points_normals].allocate(positions_selected_normals.data(),
-                                                        static_cast<int>(positions_selected_normals.size()*sizeof(CGAL_data_type)));
-        program->enableAttributeArray("normals");
-        program->setAttributeBuffer("normals",CGAL_GL_data_type,0,3);
-        item->buffers[Selected_points_normals].release();
-        positions_selected_normals.resize(0);
-        std::vector<CGAL_data_type>(positions_selected_normals).swap(positions_selected_normals);
-
-        item->vaos[Selected_shaded_points]->release();
-        program->release();
-      }
-      nb_selected_points = 3*m_points->nb_selected_points();
-    }
-    positions_lines.resize(0);
-    positions_lines.shrink_to_fit();
-    item->are_buffers_filled = true;
+  positions_lines             .shrink_to_fit();
+  normals                     .shrink_to_fit();
+  positions_normals           .shrink_to_fit();
+  positions_selected_normals  .shrink_to_fit();
+  colors_points               .shrink_to_fit();
 }
 
 void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 {
-    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(
+          CGAL::QGLViewer::QGLViewerPool().first())->offset();
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_lines.resize(0);
     normals.resize(0);
@@ -440,7 +321,8 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
       
       // we can't afford computing real average spacing just for display, 0.5% of bbox will do
       average_spacing = 0.005 * item->diagonalBbox(); 
-      normal_length = (std::min)(average_spacing, std::sqrt(region_of_interest.squared_radius() / 1000.));
+      normal_length = (std::min)(average_spacing, std::sqrt(
+                                   region_of_interest.squared_radius() / 1000.));
       length_factor = 10.0/100*normal_Slider->value();
     }
     else
@@ -484,6 +366,98 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
         }
     }
         
+    nb_lines = positions_lines.size();
+    if(item->has_normals())
+      nb_points = positions_lines.size()/2;
+    else
+      nb_points = positions_lines.size();
+    nb_selected_points = m_points->nb_selected_points() * 3;
+    //edges
+    if(item->has_normals())
+    {
+      item->getEdgeContainer(0)->allocate(Ec::Vertices, positions_lines.data(),
+                                       static_cast<int>(nb_lines*sizeof(CGAL_data_type)));
+      if (!(colors_points.empty()))
+      {
+        item->getEdgeContainer(0)->allocate(Ec::Colors, colors_points.data(),
+                                            static_cast<int>(colors_points.size()
+                                                             *sizeof(CGAL_data_type)));
+      }
+      //shaded points
+      item->getPointContainer(Priv::Shaded_points)->setStride(Pc::Vertices,
+                                           static_cast<int>(6*sizeof(CGAL_GL_data_type)));
+      item->getPointContainer(Priv::Shaded_points)->allocate(Pc::Vertices,  positions_lines.data(),
+                                       static_cast<int>(nb_lines*sizeof(CGAL_data_type)));
+      item->getPointContainer(Priv::Shaded_points)->allocate(Pc::Normals, positions_normals.data(),
+                                           static_cast<int>(positions_normals.size()
+                                                            *sizeof(CGAL_data_type)));
+    }
+    //points
+    if(!item->has_normals()) {
+      item->getPointContainer(Priv::Points)->setStride(Pc::Vertices,
+                                            0);
+    }
+    else{
+      item->getPointContainer(Priv::Points)->setStride(Pc::Vertices,
+                                            static_cast<int>(6*sizeof(CGAL_GL_data_type)));
+    }
+    item->getPointContainer(Priv::Points)->allocate(Pc::Vertices, positions_lines.data(),
+                                         static_cast<int>(positions_lines.size()
+                                                          *sizeof(CGAL_data_type)));
+    if (!(colors_points.empty()))
+    {
+      item->getPointContainer(Priv::Points)->setStride(Pc::Colors,6*sizeof(CGAL_data_type));
+      item->getPointContainer(Priv::Points)->allocate(Pc::Colors, colors_points.data(),
+                                           static_cast<int>(colors_points.size()
+                                                            *sizeof(CGAL_data_type)));
+    }
+    //selected points
+    if(!item->has_normals()) {
+      item->getPointContainer(Priv::Selected_points)->setStride(Pc::Vertices,
+                                            0);
+      item->getPointContainer(Priv::Selected_points)->setOffset(Pc::Vertices,
+                                            static_cast<int>(
+                                              3*
+                                              (m_points->size()
+                                               -m_points->nb_selected_points())
+                                              *sizeof(CGAL_data_type) ));
+    }
+    else{
+      item->getPointContainer(Priv::Selected_points)->setStride(Pc::Vertices,
+                                            static_cast<int>(6*sizeof(CGAL_GL_data_type)));
+      item->getPointContainer(Priv::Selected_points)->setOffset(Pc::Vertices,
+                                            static_cast<int>(
+                                              6*
+                                              (m_points->size()
+                                               -m_points->nb_selected_points())
+                                              *sizeof(CGAL_data_type) ));
+      item->getPointContainer(Priv::Selected_shaded_points)->setStride(Pc::Vertices,
+                                            static_cast<int>(6*sizeof(CGAL_GL_data_type)));
+      item->getPointContainer(Priv::Selected_shaded_points)->setOffset(Pc::Vertices,
+                                            static_cast<int>(
+                                              6*
+                                              (m_points->size()
+                                               -m_points->nb_selected_points())
+                                              *sizeof(CGAL_data_type) ));
+      item->getPointContainer(Priv::Selected_shaded_points)->allocate(Pc::Vertices,
+                                                                      positions_lines.data(),
+                                           static_cast<int>(positions_lines.size()
+                                                            *sizeof(CGAL_data_type)));
+      item->getPointContainer(Priv::Selected_shaded_points)->allocate(Pc::Normals,
+                                                                      positions_selected_normals.data(),
+                                           static_cast<int>(positions_selected_normals.size()
+                                                            *sizeof(CGAL_data_type)));
+    }
+    item->getPointContainer(Priv::Selected_points)->allocate(Pc::Vertices, positions_lines.data(),
+                                         static_cast<int>(positions_lines.size()
+                                                          *sizeof(CGAL_data_type)));
+    if (!(colors_points.empty()))
+    {
+      item->getPointContainer(Priv::Points)->setStride(Pc::Colors,6*sizeof(CGAL_data_type));
+      item->getPointContainer(Priv::Points)->allocate(Pc::Colors, colors_points.data(),
+                                           static_cast<int>(colors_points.size()
+                                                            *sizeof(CGAL_data_type)));
+    }
     QApplication::restoreOverrideCursor();
 }
 
@@ -570,7 +544,6 @@ void Scene_points_with_normal_item::selectDuplicates()
   Q_EMIT itemChanged();
 }
 
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 #ifdef CGAL_LINKED_WITH_LASLIB
 // Loads point set from .LAS file
 bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
@@ -620,7 +593,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   d->m_points->clear();
 
   bool ok = stream &&
-    CGAL::read_ply_point_set (stream, *(d->m_points), &(d->m_comments)) &&
+    CGAL::read_ply_point_set (stream, *(d->m_points), d->m_comments) &&
             !isEmpty();
     d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   std::cerr << d->m_points->info();
@@ -654,12 +627,10 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
   if (binary)
     CGAL::set_binary_mode (stream);
 
-  CGAL::write_ply_point_set (stream, *(d->m_points), &(d->m_comments));
+  CGAL::write_ply_point_set (stream, *(d->m_points), d->m_comments);
 
   return true;
 }
-
-#endif // CXX11
 
 // Loads point set from .OFF file
 bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
@@ -746,80 +717,84 @@ void Scene_points_with_normal_item::drawEdges(CGAL::Three::Viewer_interface* vie
     if (viewer->inFastDrawing () &&
         (d->nb_lines/6 > limit_fast_drawing)) // arbitrary large value
       ratio_displayed = 6 * limit_fast_drawing / (double)(d->nb_lines);
+    if(!isInit(viewer))
+      initGL(viewer);
+    if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
+    {
+      d->initializeBuffers(viewer);
+      setBuffersInit(viewer, true);
+    }
+    if(!d->m_points->has_colors())
+      getEdgeContainer(0)->setColor(color());
+    std::size_t real_size =
+        getEdgeContainer(0)->getFlatDataSize();
+    getEdgeContainer(0)->setFlatDataSize(ratio_displayed * real_size);
+    getEdgeContainer(0)->draw( viewer, !d->m_points->has_colors());
+    getEdgeContainer(0)->setFlatDataSize(real_size);
 
-    if(!are_buffers_filled)
-        d->initializeBuffers(viewer);
-    vaos[Scene_points_with_normal_item_priv::Edges]->bind();
-    d->program=getShaderProgram(PROGRAM_NO_SELECTION);
-    attribBuffers(viewer,PROGRAM_NO_SELECTION);
-    d->program->bind();
-    d->program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_LINES, 0,
-                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * double(d->nb_lines))/3)));
-    vaos[Scene_points_with_normal_item_priv::Edges]->release();
-    d->program->release();
 }
-void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
+void Scene_points_with_normal_item::
+drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
-    if(!are_buffers_filled)
-        d->initializeBuffers(viewer);
-    GLfloat point_size;
-    viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
-    viewer->setGlPointSize(GLfloat(d->point_Slider->value()));
-    double ratio_displayed = 1.0;
-    if ((viewer->inFastDrawing () || d->isPointSliderMoving())
-        &&((d->nb_points )/3 > limit_fast_drawing)) // arbitrary large value
-      ratio_displayed = 3 * limit_fast_drawing / (double)(d->nb_points);
 
-    // POINTS
-    if(has_normals() && renderingMode() == ShadedPoints)
-    {
-      vaos[Scene_points_with_normal_item_priv::TheShadedPoints]->bind();
-      d->program=getShaderProgram(PROGRAM_WITH_LIGHT);
-      attribBuffers(viewer,PROGRAM_WITH_LIGHT);
-    }
-    else
-    {
-      vaos[Scene_points_with_normal_item_priv::ThePoints]->bind();
-      d->program=getShaderProgram(PROGRAM_NO_SELECTION);
-      attribBuffers(viewer,PROGRAM_NO_SELECTION);
-    }
-    d->program->bind();
-    if (!(d->m_points->has_colors()) || renderingMode() == ShadedPoints)
-      d->program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_POINTS, 0,
-                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * double(d->nb_points - d->nb_selected_points))/3)));
+  GLfloat point_size;
+  viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
+  viewer->setGlPointSize(GLfloat(d->point_Slider->value()));
+  double ratio_displayed = 1.0;
+  if ((viewer->inFastDrawing () || d->isPointSliderMoving())
+      &&((d->nb_points )/3 > limit_fast_drawing)) // arbitrary large value
+    ratio_displayed = 3 * limit_fast_drawing / (double)(d->nb_points);
 
-    if(has_normals() && renderingMode() == ShadedPoints)
-      vaos[Scene_points_with_normal_item_priv::TheShadedPoints]->release();
-    else
-      vaos[Scene_points_with_normal_item_priv::ThePoints]->release();
-    d->program->release();
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+     ! getBuffersInit(viewer))
+  {
+    d->initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
+  {
+    computeElements();
+    d->initializeBuffers(viewer);
+  }
 
-    // SELECTED POINTS
-    if(has_normals() && renderingMode() == ShadedPoints)
-    {
-      vaos[Scene_points_with_normal_item_priv::Selected_shaded_points]->bind();
-      d->program=getShaderProgram(PROGRAM_WITH_LIGHT);
-      attribBuffers(viewer,PROGRAM_WITH_LIGHT);
-    }
-    else
-    {
-      vaos[Scene_points_with_normal_item_priv::Selected_points]->bind();
-      d->program=getShaderProgram(PROGRAM_NO_SELECTION);
-      attribBuffers(viewer,PROGRAM_NO_SELECTION);
-    }
-    d->program->bind();
-    d->program->setAttributeValue("colors", QColor(Qt::red));
-    viewer->glDrawArrays(GL_POINTS, 0,
-                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * d->nb_selected_points)/3)));
+  if(has_normals() && renderingMode() == ShadedPoints)
+  {
+    getPointContainer(Priv::Shaded_points)->setColor(color());
+    std::size_t real_size =
+        getPointContainer(Priv::Shaded_points)->getFlatDataSize();
+    getPointContainer(Priv::Shaded_points)->setFlatDataSize(ratio_displayed * real_size);
+    getPointContainer(Priv::Shaded_points)->draw( viewer, true);
+    getPointContainer(Priv::Shaded_points)->setFlatDataSize(real_size);
 
-    if(has_normals() && renderingMode() == ShadedPoints)
-      vaos[Scene_points_with_normal_item_priv::Selected_shaded_points]->release();
-    else
-      vaos[Scene_points_with_normal_item_priv::Selected_points]->release();
-    d->program->release();
-    viewer->setGlPointSize(point_size);
+    real_size =
+        getPointContainer(Priv::Selected_shaded_points)->getFlatDataSize();
+    getPointContainer(Priv::Selected_shaded_points)->setColor(QColor(Qt::red));
+    getPointContainer(Priv::Selected_shaded_points)->setFlatDataSize(ratio_displayed * real_size);
+    getPointContainer(Priv::Selected_shaded_points)->draw( viewer, true);
+    getPointContainer(Priv::Selected_shaded_points)->setFlatDataSize(real_size);
+  }
+  else
+  {
+    if(!d->m_points->has_colors())
+      getPointContainer(Priv::Points)->setColor(color());
+    std::size_t real_size =
+        getPointContainer(Priv::Points)->getFlatDataSize();
+    getPointContainer(Priv::Points)->setFlatDataSize(ratio_displayed * real_size);
+    getPointContainer(Priv::Points)->setFlatDataSize(real_size);
+    getPointContainer(Priv::Points)->draw( viewer, !d->m_points->has_colors());
+
+    real_size =
+        getPointContainer(Priv::Selected_points)->getFlatDataSize();
+    getPointContainer(Priv::Selected_points)->setColor(QColor(Qt::red));
+    getPointContainer(Priv::Selected_points)->setFlatDataSize(ratio_displayed * real_size);
+    getPointContainer(Priv::Selected_points)->setFlatDataSize(real_size);
+    getPointContainer(Priv::Selected_points)->draw( viewer, true);
+  }
+
+  viewer->setGlPointSize(point_size);
 }
 // Gets wrapped point set
 Point_set* Scene_points_with_normal_item::point_set()
@@ -851,13 +826,13 @@ Scene_points_with_normal_item::isEmpty() const
 }
 
 void
-Scene_points_with_normal_item::compute_bbox() const
+Scene_points_with_normal_item::compute_bbox()const
 {
   Q_ASSERT(d->m_points != NULL);
 
   Kernel::Iso_cuboid_3 bbox = d->m_points->bounding_box();
-  _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-              bbox.xmax(),bbox.ymax(),bbox.zmax());
+  setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+              bbox.xmax(),bbox.ymax(),bbox.zmax()));
 }
 
 void Scene_points_with_normal_item::computes_local_spacing(int k)
@@ -973,8 +948,20 @@ bool Scene_points_with_normal_item::has_normals() const { return d->m_points->ha
 
 void Scene_points_with_normal_item::invalidateOpenGLBuffers()
 {
-    are_buffers_filled = false;
-    compute_bbox();
+    setBuffersFilled(false);
+    getPointContainer(Priv::Points)->reset_vbos(Scene_item_rendering_helper::ALL);
+    getPointContainer(Priv::Selected_points)->reset_vbos(Scene_item_rendering_helper::ALL);
+    getPointContainer(Priv::Selected_shaded_points)->reset_vbos(Scene_item_rendering_helper::ALL);
+    getPointContainer(Priv::Shaded_points)->reset_vbos(Scene_item_rendering_helper::ALL);
+    getEdgeContainer(0)->reset_vbos(Scene_item_rendering_helper::ALL);
+    
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+      if(viewer == NULL)
+        continue;
+      setBuffersInit(viewer, false);
+    }
 }
 
 void Scene_points_with_normal_item::pointSliderPressed()
@@ -1085,4 +1072,16 @@ void Scene_points_with_normal_item::resetColors()
   d->m_points->remove_colors();
   invalidateOpenGLBuffers();
   redraw();
+}
+
+void Scene_points_with_normal_item::computeElements()const
+{
+  d->compute_normals_and_vertices();
+  setBuffersFilled(true);
+
+}
+
+void Scene_points_with_normal_item::initializeBuffers(Viewer_interface * v) const
+{
+  d->initializeBuffers(v);
 }

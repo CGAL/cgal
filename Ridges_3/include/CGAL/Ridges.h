@@ -32,7 +32,6 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/foreach.hpp>
 #include <CGAL/Bbox_3.h>
 
 namespace CGAL {
@@ -239,7 +238,7 @@ class Ridge_approximation
  protected:
   const TriangleMesh& P;
   FT squared_model_size;//squared radius of the smallest enclosing sphere of the TriangleMesh
-		//used to make the sharpness scale independant and iso indep
+		//used to make the sharpness scale independent and iso indep
   Ridge_order tag_order;
 
   typedef std::map<face_descriptor, bool> Facet2bool_map_type;
@@ -352,7 +351,7 @@ Ridge_approximation(const TriangleMesh &p,
   CGAL_precondition( is_triangle_mesh(p) );
 
   std::vector<Point_3> points;
-  BOOST_FOREACH(vertex_descriptor v, vertices(p)){
+  for(vertex_descriptor v : vertices(p)){
     points.push_back(get(vpm,v));
   }
 
@@ -438,7 +437,7 @@ compute_ridges(Ridge_interrogation_type r_type, OutputIterator ridge_lines_it, R
       Ridge_type cur_ridge_type = facet_ridge_type(f,h1,h2,r_type);
       if ( cur_ridge_type == NO_RIDGE ) continue;
       
-      //a ridge_line is begining and stored
+      //a ridge_line is beginning and stored
       Ridge_line* cur_ridge_line = new Ridge_line(P);
       init_ridge_line(cur_ridge_line, h1, h2, cur_ridge_type);
       *ridge_lines_it++ = cur_ridge_line;

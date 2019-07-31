@@ -150,9 +150,14 @@ public :
     pen.setWidth(0);
     painter->setPen(pen);
     painter->setBrush(brush);
-    SMesh::Property_map<halfedge_descriptor,std::pair<float, float> > uv;
-    uv = graph->add_property_map<halfedge_descriptor,std::pair<float, float> >
-        ("h:uv",std::make_pair(0.0f,0.0f)).first;
+    SMesh::Property_map<halfedge_descriptor, float> u;
+    SMesh::Property_map<halfedge_descriptor, float> v;
+    
+    u = graph->add_property_map<halfedge_descriptor, float>
+        ("h:u", 0.0f).first;
+    v = graph->add_property_map<halfedge_descriptor, float>
+        ("h:v", 0.0f).first;
+    
     for( Component::iterator
          fi = component->begin();
          fi != component->end();
@@ -161,11 +166,11 @@ public :
       boost::graph_traits<SMesh>::face_descriptor f(*fi);
       QPointF points[3];
       boost::graph_traits<SMesh>::halfedge_descriptor h = halfedge(f, *graph);;
-      points[0] = QPointF(get(uv, h).first, -get(uv, h).second);
+      points[0] = QPointF(get(u, h), -get(v, h));
       h = next(halfedge(f, *graph), *graph);
-      points[1] = QPointF(get(uv, h).first, -get(uv, h).second);
+      points[1] = QPointF(get(u, h), -get(v, h));
       h = next(next(halfedge(f, *graph), *graph), *graph);
-      points[2] = QPointF(get(uv, h).first, -get(uv, h).second);
+      points[2] = QPointF(get(u, h), -get(v, h));
       painter->drawPolygon(points,3);
     }
     
@@ -575,10 +580,10 @@ public Q_SLOTS:
         * EPICK::Aff_transformation_2(CGAL::TRANSLATION,
                                       EPICK::Vector_2(-(xmax-xmin)/2-xmin,
                                                       -(ymax-ymin)/2-ymin));
-    BOOST_FOREACH(const std::vector<EPICK::Point_2>& polyline, polylines)
+    for(const std::vector<EPICK::Point_2>& polyline : polylines)
     {
       visu_item->polylines.push_back(std::vector<Point_3>());
-      BOOST_FOREACH(const EPICK::Point_2& p, polyline)
+      for(const EPICK::Point_2& p : polyline)
       {
         EPICK::Point_2 p_2 = transfo.transform(p);
         
@@ -605,9 +610,12 @@ public Q_SLOTS:
       {
         component->insert(*bfit);
       }
-      SMesh::Property_map<halfedge_descriptor,std::pair<float, float> > uv;
-      uv = sm->add_property_map<halfedge_descriptor,std::pair<float, float> >(
-            "h:uv",std::make_pair(0.0f,0.0f)).first;
+      SMesh::Property_map<halfedge_descriptor, float> umap;
+      SMesh::Property_map<halfedge_descriptor, float> vmap;
+      umap = sm->add_property_map<halfedge_descriptor, float>
+        ("h:u", 0.0f).first;
+      vmap = sm->add_property_map<halfedge_descriptor, float>
+        ("h:v", 0.0f).first;
       SMesh::Halfedge_iterator it;
       SMesh::Property_map<SMesh::Vertex_index, EPICK::Point_2> uv_map =
           sm->property_map<SMesh::Vertex_index, EPICK::Point_2>("v:uv").first;
@@ -618,7 +626,8 @@ public Q_SLOTS:
         halfedge_descriptor hd(*it);
         EPICK::FT u = uv_map[target(hd, *sm)].x();
         EPICK::FT v = uv_map[target(hd, *sm)].y();
-        put(uv, *it, std::make_pair(static_cast<float>(u),static_cast<float>(v)));
+        put(umap, *it, static_cast<float>(u));
+        put(vmap, *it, static_cast<float>(v));
       }
       
       //ParamItem does not take ownership of text_mesh_bottom
@@ -712,12 +721,12 @@ public Q_SLOTS:
         CGAL::Face_filtered_graph<SMesh> fmesh(text_mesh_bottom, 
                                                static_cast<int>(cc),
                                                fcmap);
-        BOOST_FOREACH(vertex_descriptor vd, vertices(fmesh))
+        for(vertex_descriptor vd : vertices(fmesh))
         {
           normal += CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, fmesh);
         }
         normal /= CGAL::sqrt(normal.squared_length());
-        BOOST_FOREACH(vertex_descriptor vd, vertices(fmesh))
+        for(vertex_descriptor vd : vertices(fmesh))
         {
           put(vnormals, vd, normal);
         }
@@ -864,7 +873,7 @@ private:
          fit!=fit_end; ++fit)
     {
       if (!fit->info().in_domain()) continue;
-      CGAL::cpp11::array<vertex_descriptor,3> vds;
+      std::array<vertex_descriptor,3> vds;
       for(int i=0; i<3; ++i)
       {
         typename Map::iterator it;

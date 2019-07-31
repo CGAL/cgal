@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
   
   double d = CGAL::Polygon_mesh_processing::is_outward_oriented(mesh)?-1:1;
 
-  BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+  for(face_descriptor fd : faces(mesh)){
     halfedge_descriptor hd = halfedge(fd,mesh);
     Point p = CGAL::centroid(mesh.point(source(hd,mesh)),
                              mesh.point(target(hd,mesh)),

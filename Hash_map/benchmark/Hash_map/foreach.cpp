@@ -2,7 +2,6 @@
 #include <vector>
 
 #include<boost/range/iterator_range.hpp> 
-#include <boost/foreach.hpp>
 
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Timer.h>
@@ -21,7 +20,7 @@ int main()
   for(int k=0; k < N; k++){
     boost::iterator_range<std::vector<int>::iterator> bir(V.begin(), V.end());
     int j = 0;
-    BOOST_FOREACH(int i, bir){
+    for(int i : bir){
       V2[j++] = i;
     }
   }
@@ -32,7 +31,7 @@ int main()
   t.start();
   for(int k=0; k < N; k++){
        int j = 0;
-    BOOST_FOREACH(int i, CGAL::make_range(V.begin(), V.end())){
+    for(int i : CGAL::make_range(V.begin(), V.end())){
       V2[j++] = i;
     }
   }

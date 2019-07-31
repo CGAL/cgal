@@ -32,7 +32,7 @@
   test for computing the gcd for polynomials
 */
 
-#include <CGAL/basic.h>
+
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
 #include <CGAL/LEDA_arithmetic_kernel.h>

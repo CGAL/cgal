@@ -122,10 +122,10 @@ void detect_identical_mergeable_vertices(
   if (hedges_with_identical_point_target.empty()) return;
   std::set< std::pair<std::size_t, std::size_t> >::iterator it1 = intervals.begin(),
                                                             end2 = intervals.end(),
-                                                            end1 = cpp11::prev(end2),
+                                                            end1 = std::prev(end2),
                                                             it2;
   for (; it1!=end1; ++it1)
-    for(it2=cpp11::next(it1); it2!= end2; ++it2 )
+    for(it2=std::next(it1); it2!= end2; ++it2 )
     {
       CGAL_assertion(it1->first<it2->first);
       CGAL_assertion(it1->first < it1->second && it2->first < it2->second);
@@ -161,13 +161,13 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
 
   std::vector<vertex_descriptor> vertices_to_rm;
 
-  BOOST_FOREACH(halfedge_descriptor in_h_rm, sorted_hedges)
+  for(halfedge_descriptor in_h_rm : sorted_hedges)
   {
     vertex_descriptor vd = target(in_h_rm, pm);
     if (vd==v_kept) continue; // skip identical vertices (in particular this skips the first halfedge)
     if (edge(vd, v_kept, pm).second) continue; // skip null edges
     bool shall_continue=false;
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v_kept, pm))
+    for(halfedge_descriptor h : halfedges_around_target(v_kept, pm))
     {
       if (edge(vd, source(h, pm), pm).second)
       {
@@ -186,7 +186,7 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
     out_h_kept=out_h_rm;
   }
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices_to_rm)
+  for(vertex_descriptor vd : vertices_to_rm)
     remove_vertex(vd, pm);
 }
 
@@ -234,7 +234,7 @@ void merge_duplicated_vertices_in_boundary_cycle(
   std::vector< std::vector<halfedge_descriptor> > hedges_with_identical_point_target;
   internal::detect_identical_mergeable_vertices(cycle_hedges, hedges_with_identical_point_target, pm, vpm);
 
-  BOOST_FOREACH(const std::vector<halfedge_descriptor>& hedges,
+  for(const std::vector<halfedge_descriptor>& hedges :
                 hedges_with_identical_point_target)
   {
     start=hedges.front();
@@ -270,7 +270,7 @@ void merge_duplicated_vertices_in_boundary_cycles(      PolygonMesh& pm,
   std::vector<halfedge_descriptor> cycles;
   extract_boundary_cycles(pm, std::back_inserter(cycles));
 
-  BOOST_FOREACH(halfedge_descriptor h, cycles)
+  for(halfedge_descriptor h : cycles)
     merge_duplicated_vertices_in_boundary_cycle(h, pm, np);
 }
 

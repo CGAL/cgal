@@ -36,7 +36,7 @@ namespace Corefinement{
 
 
 template<class TriangleMesh,class Point_3>
-cpp11::tuple<Intersection_type,
+std::tuple<Intersection_type,
              typename boost::graph_traits<TriangleMesh>::halfedge_descriptor,
              bool,bool>
 find_intersection(const Point_3& p, const Point_3& q,  //segment
@@ -47,7 +47,7 @@ find_intersection(const Point_3& p, const Point_3& q,  //segment
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef cpp11::tuple<Intersection_type,halfedge_descriptor,bool,bool> result_type;
+  typedef std::tuple<Intersection_type,halfedge_descriptor,bool,bool> result_type;
 
   Orientation ab=orientation(p,q,a,b);
   Orientation bc=orientation(p,q,b,c);
@@ -88,7 +88,7 @@ find_intersection(const Point_3& p, const Point_3& q,  //segment
 
 
 template<class TriangleMesh, class VertexPointMap>
-cpp11::tuple<Intersection_type,
+std::tuple<Intersection_type,
              typename boost::graph_traits<TriangleMesh>::halfedge_descriptor,
              bool,bool>
 intersection_type(
@@ -101,7 +101,7 @@ intersection_type(
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef cpp11::tuple<Intersection_type,halfedge_descriptor,bool,bool> result_type;
+  typedef std::tuple<Intersection_type,halfedge_descriptor,bool,bool> result_type;
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;

@@ -87,9 +87,9 @@ protected:
 public:
   /*! Default constructor. */
   Arr_walk_along_line_point_location() : 
-    p_arr(NULL),
-    geom_traits(NULL),
-    top_traits(NULL)
+    p_arr(nullptr),
+    geom_traits(nullptr),
+    top_traits(nullptr)
   {}
         
   /*! Constructor given an arrangement. */
@@ -113,9 +113,9 @@ public:
   /*! Detach from the current arrangement object. */
   void detach()
   {
-    p_arr = NULL;
-    geom_traits = NULL;
-    top_traits = NULL;
+    p_arr = nullptr;
+    geom_traits = nullptr;
+    top_traits = nullptr;
   }
  
   /*!

@@ -95,7 +95,7 @@ public:
     m_collinear_functor = traits.collinear_3_object();
 
     // construct internal face normal & area map
-    BOOST_FOREACH(face_descriptor f, faces(tm)) {
+    for(face_descriptor f : faces(tm)) {
       const halfedge_descriptor he = halfedge(f, tm);
       const Point_3 &p0 = vpmap[source(he, tm)];
       const Point_3 &p1 = vpmap[target(he, tm)];
@@ -136,7 +136,7 @@ public:
 
     // fitting normal
     Vector_3 norm = CGAL::NULL_VECTOR;
-    BOOST_FOREACH(const face_descriptor f, faces) {
+    for(const face_descriptor f : faces) {
       norm = m_sum_functor(norm,
         m_scale_functor(get(m_fnmap, f), get(m_famap, f)));
     }

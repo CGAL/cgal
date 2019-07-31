@@ -109,9 +109,7 @@ public:
     Point_handle (p)
   {}
 
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   _One_root_point_2& operator=(const _One_root_point_2&)=default;
-#endif
   
   /*! Constructor of a point with one-root coefficients.
      This constructor of a point can also be used with rational coefficients
@@ -1189,7 +1187,7 @@ public:
    */
   template <class OutputIterator>
   OutputIterator intersect (const Self& cv, OutputIterator oi,
-                            Intersection_map *inter_map = NULL) const
+                            Intersection_map *inter_map = nullptr) const
   {
     // First check whether the two arcs have the same supporting curve.
     if (has_same_supporting_curve (cv))
@@ -1234,7 +1232,7 @@ public:
     Intersection_list            inter_list;
     bool                         invalid_ids = false;
 
-    if (inter_map != NULL && _index() != 0 && cv._index() != 0)
+    if (inter_map != nullptr && _index() != 0 && cv._index() != 0)
     {
       if (_index() < cv._index())
         id_pair = Curve_id_pair (_index(), cv._index());
@@ -1247,12 +1245,12 @@ public:
     {
       // In case one of the IDs is invalid, we do not look in the map neither
       // we cache the results.
-      if (inter_map != NULL)
+      if (inter_map != nullptr)
         map_iter = inter_map->end();
       invalid_ids = true;
     }
 
-    if (inter_map == NULL || map_iter == inter_map->end())
+    if (inter_map == nullptr || map_iter == inter_map->end())
     {
       // Compute the intersections points between the two supporting curves.
       if (is_linear())

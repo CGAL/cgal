@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2008
+// Copyright (c) 1998-2019
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -21,13 +21,14 @@
 // SPDX-License-Identifier: LGPL-3.0+
 //
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Sylvain Pion, Marc Glisse
 
 #ifndef CGAL_FPU_H
 #define CGAL_FPU_H
 
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
+#include <cstring> // std::memcpy
 
 #ifndef __INTEL_COMPILER
 #include <cmath> // for HUGE_VAL
@@ -108,6 +109,15 @@ extern "C" {
   || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) \
   || defined(_M_X64)
 #  include <emmintrin.h>
+#  if defined __SSE3__
+#    include <pmmintrin.h>
+#  endif
+#  if defined __SSE4_1__
+#    include <smmintrin.h>
+#  endif
+#  if defined __AVX__
+#    include <immintrin.h>
+#  endif
 #  define CGAL_HAS_SSE2 1
 #endif
 
@@ -230,6 +240,58 @@ inline double IA_force_to_double(double x)
 #endif
 }
 
+#ifdef CGAL_USE_SSE2
+// Vector version of IA_opacify
+inline __m128d IA_opacify128(__m128d x)
+{
+# ifdef __GNUG__
+#  ifdef __llvm__
+  asm volatile ("":"+x"(x));
+#  else
+  asm volatile ("":"+xm"(x));
+#  endif
+  return x;
+# else
+  volatile __m128d e = x;
+#  ifdef _MSC_VER
+  // With VS, __m128d is a union, where volatile doesn't disappear automatically
+  // However, this version generates wrong code with clang, check before enabling it for more compilers.
+  std::memcpy(&x, (void*)&e, 16);
+  return x;
+#  else
+  return e;
+#  endif
+# endif
+}
+
+// Weaker version. It still blocks transformations like -(a-b) to b-a, but does not prevent migrating across fesetround. When an operation has 2 arguments and one uses IA_opacify128, the other one can stick to IA_opacify128_weak
+inline __m128d IA_opacify128_weak(__m128d x)
+{
+# ifdef __GNUG__
+#  ifdef __llvm__
+  asm ("":"+x"(x));
+#  else
+  asm ("":"+xm"(x));
+#  endif
+  return x;
+# else
+  return IA_opacify128(x);
+# endif
+}
+
+// _mm_shuffle_pd would work everywhere, but it is too opaque for some optimizations (yes, this is a thin line)
+inline __m128d swap_m128d(__m128d x){
+# ifdef __llvm__
+  return __builtin_shufflevector(x, x, 1, 0);
+# elif defined __GNUC__ && !defined __INTEL_COMPILER \
+  && __GNUC__ * 100 + __GNUC_MINOR__ >= 407
+  return __builtin_shuffle(x, (__m128i){ 1, 0 });
+# else
+  return _mm_shuffle_pd(x, x, 1);
+# endif
+}
+#endif
+
 // Interval arithmetic needs to protect against double-rounding effects
 // caused by excess FPU precision, even if it forces the 53bit mantissa
 // precision, because there is no way to fix the problem for the exponent
@@ -296,9 +358,12 @@ inline double IA_bug_sqrt(double d)
 // Use inline functions instead ?
 #define CGAL_IA_ADD(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)+CGAL_IA_STOP_CPROP(b))
 #define CGAL_IA_SUB(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)-(b))
-#define CGAL_IA_MUL(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)*CGAL_IA_STOP_CPROP(b))
-#define CGAL_IA_DIV(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)/CGAL_IA_STOP_CPROP(b))
-#define CGAL_IA_SQUARE(a) CGAL_IA_MUL(a,a)
+#define CGAL_IA_MUL(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)*CGAL_IA_STOP_CPROP(b))
+#define CGAL_IA_DIV(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)/CGAL_IA_STOP_CPROP(b))
+inline double CGAL_IA_SQUARE(double a){
+  double b = CGAL_IA_STOP_CPROP(a); // only once
+  return CGAL_IA_FORCE_TO_DOUBLE(b*b);
+}
 #define CGAL_IA_SQRT(a) \
         CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
 

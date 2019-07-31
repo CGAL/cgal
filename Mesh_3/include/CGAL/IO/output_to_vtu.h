@@ -33,7 +33,6 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/IO/write_vtk.h>
 #include <boost/variant.hpp>
-#include <boost/type_traits/is_floating_point.hpp>
 
 //todo try to factorize with functors
 namespace CGAL{
@@ -234,7 +233,7 @@ write_attribute_tag(std::ostream& os,
 {
   std::string format = binary ? "appended" : "ascii";
   std::string type = "";
-  if(boost::is_floating_point<T>::value)
+  if(std::is_floating_point<T>::value)
   {
     type = (sizeof(T) == 8) ? "Float64" : "Float32";
   }

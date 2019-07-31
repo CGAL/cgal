@@ -22,8 +22,8 @@
 #define CGAL_ITERATOR_RANGE_H
 
 #include <CGAL/tuple.h>
-#include <utility>
 #include <boost/foreach.hpp>
+#include <utility>
 
 namespace CGAL {
 

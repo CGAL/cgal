@@ -23,6 +23,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/assertions.h>
 #include <CGAL/NewKernel_d/utils.h>
+#include <CGAL/use.h>
 namespace CGAL {
 struct Store_dimension_base {
 	//TODO: add some assertions
@@ -43,7 +44,10 @@ struct Dimension_base<Dimension_tag<dim_> > {
 	Dimension_base(){}
 	Dimension_base(int CGAL_assertion_code(dim)){CGAL_assertion(dim_==dim);}
 	int dimension()const{return dim_;}
-	void set_dimension(int dim){CGAL_assertion(dim_==dim);}
+	void set_dimension(int dim){
+	  CGAL_assertion(dim_==dim);
+	  CGAL_USE(dim);
+	}
 };
 }
 #endif

@@ -28,11 +28,9 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/assertions.h>
-#include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/foreach.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/range/has_range_iterator.hpp>
@@ -286,12 +284,12 @@ struct Face_filtered_graph
     selected_faces.reset();
     selected_vertices.reset();
     selected_halfedges.reset();
-    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
+    for(face_descriptor fd : faces(_graph) )
     {
       if(get(face_patch_index_map, fd) == face_patch_id)
       {
         selected_faces.set(get(fimap, fd));
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, _graph), _graph))
         {
           selected_halfedges.set(get(himap, hd));
           selected_halfedges.set(get(himap, opposite(hd, _graph)));
@@ -325,12 +323,12 @@ struct Face_filtered_graph
     boost::unordered_set<Patch_index> pids(boost::begin(selected_face_patch_indices),
                                            boost::end(selected_face_patch_indices));
 
-    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
+    for(face_descriptor fd : faces(_graph) )
     {
       if(pids.count(get(face_patch_index_map, fd)) != 0)
       {
         selected_faces.set(get(fimap, fd));
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, _graph), _graph))
         {
           selected_halfedges.set(get(himap, hd));
           selected_halfedges.set(get(himap, opposite(hd, _graph)));
@@ -353,10 +351,10 @@ struct Face_filtered_graph
     selected_faces.reset();
     selected_vertices.reset();
     selected_halfedges.reset();
-    BOOST_FOREACH(face_descriptor fd, selection)
+    for(face_descriptor fd : selection)
     {
       selected_faces.set(get(fimap, fd));
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, _graph), _graph))
       {
         selected_halfedges.set(get(himap, hd));
         selected_halfedges.set(get(himap, opposite(hd, _graph)));
@@ -372,12 +370,12 @@ struct Face_filtered_graph
     {}
 
     Is_simplex_valid()
-      :adapter(NULL)
+      :adapter(nullptr)
     {}
     template<typename Simplex>
     bool operator()(Simplex s)
     {
-      CGAL_assertion(adapter!=NULL);
+      CGAL_assertion(adapter!=nullptr);
       return (adapter->is_in_cc(s));
     }
     const Self* adapter;
@@ -479,7 +477,7 @@ struct Face_filtered_graph
     boost::unordered_set<vertex_descriptor> vertices_visited;
     boost::unordered_set<halfedge_descriptor> halfedges_handled;
 
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(*this))
+    for(halfedge_descriptor hd : halfedges(*this))
     {
       CGAL_assertion(is_in_cc(hd));
 

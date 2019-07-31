@@ -13,7 +13,7 @@ Branch Build of CGAL
 The cmake script at the root of the repository is the one to use to
 build the CGAL library from a branch. It will collect the list of packages
 of the branch and will append their include folder to the include path.
-This is main noticable difference with a build using a regular *flat* release.
+This is main noticeable difference with a build using a regular *flat* release.
 
 Here is an example of how to build the library in Debug:
 ``` {.bash}

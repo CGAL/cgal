@@ -1029,7 +1029,8 @@ public:
     return this->range<Vector> (m_normals);
   }
   
-
+  /// @}
+  
   /*!
     \name Push Property Maps and Inserters (Advanced)
 
@@ -1109,8 +1110,8 @@ public:
     Property* prop;
     mutable Index ind;
 
-    Push_property_map(Point_set* ps = NULL,
-                      Property* prop = NULL,
+    Push_property_map(Point_set* ps = nullptr,
+                      Property* prop = nullptr,
                       Index ind=Index())
       : ps(ps), prop(prop), ind(ind) {}
 

@@ -114,7 +114,7 @@ protected:
   };
 
   Extra_data    *_extra_data_P;  // The extra data stored with the arc
-                                 // (may be NULL).
+                                 // (may be nullptr).
 
 public:
 
@@ -128,7 +128,7 @@ public:
     _r(0), _s(0), _t(0), _u(0), _v(0), _w(0),
     _orient (COLLINEAR),
     _info (0),
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {}
 
   /*!
@@ -142,10 +142,10 @@ public:
     _source(arc._source),
     _target(arc._target)
   {
-    if (arc._extra_data_P != NULL)
+    if (arc._extra_data_P != nullptr)
       _extra_data_P = new Extra_data (*(arc._extra_data_P));
     else
-      _extra_data_P = NULL;
+      _extra_data_P = nullptr;
   }
 
   /*!
@@ -155,7 +155,7 @@ public:
    */
   _Conic_arc_2 (const Rational& r, const Rational& s, const Rational& t,
                 const Rational& u, const Rational& v, const Rational& w) :
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Make sure the given curve is an ellipse (4rs - t^2 should be positive).
     CGAL_precondition (CGAL::sign (4*r*s - t*t) == POSITIVE);
@@ -189,7 +189,7 @@ public:
     _orient (orient),
     _source (source),
     _target (target),
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Make sure that the source and the taget are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (source,
@@ -214,7 +214,7 @@ public:
    */
   _Conic_arc_2 (const Rat_segment_2& seg) :
     _orient (COLLINEAR),
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Set the source and target.
     Rat_kernel        ker;
@@ -271,7 +271,7 @@ public:
    */
   _Conic_arc_2 (const Rat_circle_2& circ) :
     _orient (CLOCKWISE),
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Get the circle properties.
     Rat_kernel        ker;
@@ -316,7 +316,7 @@ public:
     _orient(orient),
     _source(source),
     _target(target),
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Make sure that the source and the taget are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (source,
@@ -378,7 +378,7 @@ public:
   _Conic_arc_2 (const Rat_point_2& p1,
                 const Rat_point_2& p2,
                 const Rat_point_2& p3):
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Set the source and target.
     Rational          x1 = p1.x();
@@ -467,7 +467,7 @@ public:
 		const Rat_point_2& p3,
 		const Rat_point_2& p4,
 		const Rat_point_2& p5) :
-    _extra_data_P(NULL)
+    _extra_data_P(nullptr)
   {
     // Make sure that no three points are collinear.
     Rat_kernel                         ker;
@@ -574,7 +574,7 @@ public:
 		const Rational& r_2, const Rational& s_2, const Rational& t_2,
 		const Rational& u_2, const Rational& v_2, const Rational& w_2):
     _orient(orient),
-    _extra_data_P(NULL)
+    _extra_data_P(nullptr)
   {
     // Create the integer coefficients of the base conic.
     Rational          rat_coeffs [6];
@@ -753,7 +753,7 @@ public:
    */
   virtual ~_Conic_arc_2 ()
   {
-    if (_extra_data_P != NULL)
+    if (_extra_data_P != nullptr)
       delete _extra_data_P;
   }
 
@@ -767,7 +767,7 @@ public:
       return (*this);
 
     // Free any existing data.
-    if (_extra_data_P != NULL)
+    if (_extra_data_P != nullptr)
       delete _extra_data_P;
 
     // Copy the arc's attributes.
@@ -784,10 +784,10 @@ public:
     _target = arc._target;
 
     // Duplicate the extra data, if necessary.
-    if (arc._extra_data_P != NULL)
+    if (arc._extra_data_P != nullptr)
       _extra_data_P = new Extra_data (*(arc._extra_data_P));
     else
-      _extra_data_P = NULL;
+      _extra_data_P = nullptr;
 
     return (*this);
   }
@@ -1204,7 +1204,7 @@ private:
       return;
     }
 
-    _extra_data_P = NULL;
+    _extra_data_P = nullptr;
 
     // Check whether we have a degree 2 curve.
     if ((CGAL::sign (_r) != ZERO ||
@@ -1339,7 +1339,7 @@ private:
     CGAL_assertion (is_ellipse);
 
     // We do not have to store any extra data with the arc.
-    _extra_data_P = NULL;
+    _extra_data_P = nullptr;
 
     // Mark that this arc is a full conic curve.
     if (is_ellipse)
@@ -1470,9 +1470,9 @@ protected:
   Sign _sign_of_extra_data (const Algebraic& px,
 			    const Algebraic& py) const
   {
-    CGAL_assertion (_extra_data_P != NULL);
+    CGAL_assertion (_extra_data_P != nullptr);
 
-    if (_extra_data_P == NULL)
+    if (_extra_data_P == nullptr)
       return (ZERO);
 
     Algebraic         val = (_extra_data_P->a*px + _extra_data_P->b*py +
@@ -1542,7 +1542,7 @@ protected:
       return (true);
 
     // Check if we have extra data available.
-    if (_extra_data_P != NULL)
+    if (_extra_data_P != nullptr)
     {
       if (_extra_data_P->side != ZERO)
       {

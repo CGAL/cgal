@@ -40,6 +40,8 @@
 #include <boost/any.hpp>
 #endif
 
+#include <CGAL/use.h>
+
 namespace CGAL {
 
 template <typename Iter, typename Move>
@@ -492,6 +494,9 @@ check_integrity_and_topological_planarity(bool faces) const
   std::size_t e_num = number_of_edges();
   std::size_t c_num = number_of_connected_components() - iso_vert_num;
   std::size_t f_num = number_of_face_cycles() - c_num + 1;
+  CGAL_USE(v_num);
+  CGAL_USE(e_num);
+  CGAL_USE(f_num);
   CGAL_NEF_TRACEV(fc_num);CGAL_NEF_TRACEV(iv_num);CGAL_NEF_TRACEV(iso_vert_num);
   CGAL_NEF_TRACEV(v_num);CGAL_NEF_TRACEV(e_num);CGAL_NEF_TRACEV(c_num);CGAL_NEF_TRACEV(f_num);
   // CGAL_assertion(fc_num == f_num && iv_num == iso_vert_num);

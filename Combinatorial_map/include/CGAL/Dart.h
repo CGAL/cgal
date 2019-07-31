@@ -186,7 +186,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_handles);
     }
     template<int i>
@@ -194,7 +194,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_handles);
     }
 
@@ -299,7 +299,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_handles);
     }
     template<int i>
@@ -307,7 +307,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_handles);
     }
   };

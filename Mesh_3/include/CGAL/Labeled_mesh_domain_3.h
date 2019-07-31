@@ -41,7 +41,7 @@
 #include <CGAL/Origin.h>
 
 #include <CGAL/result_of.h>
-#include <CGAL/function.h>
+#include <functional>
 
 #include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
 #include <CGAL/internal/Mesh_3/indices_management.h>
@@ -228,18 +228,18 @@ protected:
   {}
 
   /// The function which answers subdomain queries
-  typedef CGAL::cpp11::function<Subdomain_index(const Point_3&)> Function;
+  typedef std::function<Subdomain_index(const Point_3&)> Function;
   Function function_;
   /// The bounding box
   const Iso_cuboid_3 bbox_;
 
-  typedef CGAL::cpp11::function<
+  typedef std::function<
     Surface_patch_index(Subdomain_index,
                         Subdomain_index)> Construct_surface_patch_index;
   Construct_surface_patch_index cstr_s_p_index;
   /// The functor that decides which sub-domain indices correspond to the
   /// outside of the domain.
-  typedef CGAL::cpp11::function<bool(Subdomain_index)> Null;
+  typedef std::function<bool(Subdomain_index)> Null;
   Null null;
   /// The random number generator used by Construct_initial_points
   CGAL_Random_share_ptr_t p_rng_;
@@ -314,7 +314,7 @@ public:
   // access Function type from inherited class
   typedef Function Fct;
 
-  typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
+  typedef std::tuple<Point_3,Index,int> Intersection;
 
 
   typedef typename BGT::FT FT;
@@ -346,7 +346,7 @@ public:
                         const Sphere_3& bounding_sphere,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bounding_sphere,
                    error_bound,
                    construct_pair_functor(),
@@ -356,7 +356,7 @@ public:
                         const Bbox_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bbox,
                    error_bound,
                    construct_pair_functor(),
@@ -366,7 +366,7 @@ public:
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bbox, error_bound,
                    construct_pair_functor(),
                    null, p_rng)
@@ -603,13 +603,8 @@ public:
         clipped = CGAL::intersection(query, r_domain_.bbox_);
 
       if(clipped)
-#if CGAL_INTERSECTION_VERSION > 1
         if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
           return this->operator()(*s);
-#else
-        if(const Segment_3* s = object_cast<Segment_3>(&clipped))
-          return this->operator()(*s);
-#endif
 
       return Surface_patch();
     }
@@ -738,13 +733,8 @@ public:
         clipped = CGAL::intersection(query, r_domain_.bbox_);
 
       if(clipped)
-#if CGAL_INTERSECTION_VERSION > 1
         if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
           return this->operator()(*s);
-#else
-        if(const Segment_3* s = object_cast<Segment_3>(&clipped))
-          return this->operator()(*s);
-#endif
 
       return Intersection();
     }
@@ -989,7 +979,7 @@ Construct_initial_points::operator()(OutputIterator pts,
     Surface_patch surface = r_domain_.do_intersect_surface_object()(random_seg);
     if ( surface )
     {
-      const Point_3 intersect_pt = CGAL::cpp11::get<0>(
+      const Point_3 intersect_pt = std::get<0>(
           r_domain_.construct_intersection_object()(random_seg));
       *pts++ = std::make_pair(intersect_pt,
                               r_domain_.index_from_surface_patch_index(*surface));

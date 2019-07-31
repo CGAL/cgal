@@ -36,7 +36,6 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 
-#include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/dynamic_bitset.hpp>
 namespace CGAL {
@@ -89,7 +88,7 @@ namespace internal{
     CGAL_assertion(v_max == target(min_slope_he, pmesh));
 
     typename GT::Compare_slope_3 compare_slope = gt.compare_slope_3_object();
-    BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(v_max, pmesh))
+    for(halfedge_descriptor he : halfedges_around_target(v_max, pmesh))
     {
       CGAL_assertion(v_max == target(min_slope_he, pmesh));
       CGAL_assertion(v_max == target(he, pmesh));
@@ -198,7 +197,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   internal::Compare_vertex_points_z_3<GT, VPMap> less_z(vpmap, gt);
   typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max = *(vertices(pmesh).first);
   for (typename boost::graph_traits<PolygonMesh>::vertex_iterator
-          vit=cpp11::next(vertices(pmesh).first), vit_end = vertices(pmesh).second;
+          vit=std::next(vertices(pmesh).first), vit_end = vertices(pmesh).second;
           vit!=vit_end; ++vit)
   {
     // skip isolated vertices
@@ -264,7 +263,7 @@ void reverse_face_orientations(PolygonMesh& pmesh)
 {
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(face_descriptor fd, faces(pmesh)){
+  for(face_descriptor fd : faces(pmesh)){
     reverse_orientation(halfedge(fd,pmesh),pmesh);
   }
   // Note: A border edge is now parallel to its opposite edge.
@@ -272,7 +271,7 @@ void reverse_face_orientations(PolygonMesh& pmesh)
   // reorient the associated hole and search again until no border
   // edge with that property exists any longer. Then, all holes are
   // reoriented.
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh)){
+  for(halfedge_descriptor h : halfedges(pmesh)){
     if ( is_border(h,pmesh) &&
          target(h,pmesh) == target(opposite(h,pmesh),pmesh)){
       reverse_orientation(h, pmesh);
@@ -292,22 +291,22 @@ void reverse_face_orientations_of_mesh_with_polylines(PolygonMesh& pmesh)
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
   // reverse the orientation of each face
-  BOOST_FOREACH(face_descriptor fd, faces(pmesh))
+  for(face_descriptor fd : faces(pmesh))
     reverse_orientation(halfedge(fd,pmesh),pmesh);
 
   //extract all border cycles
   boost::unordered_set<halfedge_descriptor> already_seen;
   std::vector<halfedge_descriptor> border_cycles;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
+  for(halfedge_descriptor h : halfedges(pmesh))
     if ( is_border(h,pmesh) && already_seen.insert(h).second )
     {
       border_cycles.push_back(h);
-      BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h,pmesh))
+      for(halfedge_descriptor h2 : halfedges_around_face(h,pmesh))
         already_seen.insert(h2);
     }
 
   // now reverse the border cycles
-  BOOST_FOREACH(halfedge_descriptor h, border_cycles)
+  for(halfedge_descriptor h : border_cycles)
     reverse_orientation(h, pmesh);
 }
 
@@ -326,7 +325,7 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 {
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(face_descriptor fd, face_range){
+  for(face_descriptor fd : face_range){
     reverse_orientation(halfedge(fd,pmesh),pmesh);
   }
 
@@ -335,8 +334,8 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
   // reorient the associated hole and search again until no border
   // edge with that property exists any longer. Then, all holes are
   // reoriented.
-  BOOST_FOREACH(face_descriptor fd, face_range)
-    BOOST_FOREACH(halfedge_descriptor hd,
+  for(face_descriptor fd : face_range)
+    for(halfedge_descriptor hd :
                   halfedges_around_face(halfedge(fd, pmesh), pmesh))
     {
       halfedge_descriptor ohd = opposite(hd, pmesh);
@@ -363,7 +362,7 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
   std::vector<face_descriptor> cc_faces;
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  for(face_descriptor fd : faces(tm))
   {
     if(face_cc[get(fid_map, fd)]==xtrm_cc_id)
       cc_faces.push_back(fd);
@@ -504,7 +503,7 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
 
   // extract a vertex with max z coordinate for each connected component
   std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
-  BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+  for(vertex_descriptor vd : vertices(tm))
   {
     halfedge_descriptor test_hd = halfedge(vd, tm);
     if(test_hd == Graph_traits::null_halfedge())
@@ -521,7 +520,7 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
         xtrm_vertices[cc_id]=vd;
   }
   std::vector<std::vector<face_descriptor> > ccs(nb_cc);
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  for(face_descriptor fd : faces(tm))
   {
     ccs[face_cc[get(fid_map,fd)]].push_back(fd);
   }
@@ -622,7 +621,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
 
   // extract a vertex with max z coordinate for each connected component
   std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
-  BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+  for(vertex_descriptor vd : vertices(tm))
   {
     std::size_t cc_id = face_cc[get(fid_map, face(halfedge(vd, tm), tm))];
     if (xtrm_vertices[cc_id]==Graph_traits::null_vertex())

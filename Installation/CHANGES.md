@@ -1,6 +1,145 @@
 Release History
 ===============
 
+Release 5.0
+-----------
+
+Release date: September 2019
+
+### Polygonal Surface Reconstruction (new package)
+
+-   This package provides a method for piecewise planar object reconstruction from point clouds. 
+    The method takes as input an unordered point set sampled from a piecewise planar object 
+    and outputs a compact and watertight surface mesh interpolating the input point set. 
+    The method assumes that all necessary major planes are provided (or can be extracted from 
+    the input point set using the shape detection method described in Point Set Shape Detection, 
+    or any other alternative methods).The method can handle arbitrary piecewise planar objects 
+    and is capable of recovering sharp features and is robust to noise and outliers.
+    
+### Solver Interface
+
+ - Added concepts and models for solving Mixed Integer Programming (MIP) problems with or without constraints. 
+      
+## 2D Triangulations
+-   Added range types and functions that return ranges, for example
+    for all vertices, which enables to use C++11 for-loops.
+-   **Breaking change**: Removed the functions `CGAL::Constrained_triangulation_plus_2::
+    vertices_in_constraint_{begin/end}(Vertex_handle va, Vertex_handle vb) const;`,
+    and `CGAL::Constrained_triangulation_plus_2::remove_constraint((Vertex_handle va, Vertex_handle vb)`,
+    that is a pair of vertex handles is no longer a key for a polyline constraint.
+    Users must use a version prior to 5.0 if they need this functionality.
+-   **Breaking change**: Removed the deprecated classes `CGAL::Regular_triangulation_euclidean_traits_2`, `CGAL::Regular_triangulation_filtered_traits_2`.   Users must use a version prior to 5.0 if they need these classes.
+-   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_2` which takes
+    a range of points as argument no longer performs a `spatial_sort()` of the points.
+-   Add constructor and `insert()` function to `CGAL::Triangulation_2` that takes a range of points with info.  
+ - **Breaking change**: The graph traits enabling CGAL's 2D triangulations to be used as a parameter
+    for any graph-based algorithm of CGAL (or boost) have been improved to fully model the `FaceGraph` concept.
+    In addition, only the finite simplicies (those not incident to the infinite vertex) of the 2D triangulations
+    are now visibile through this scope. The complete triangulation can still be accessed as a graph,
+    by using the graph traits of the underlying triangulation data structure (usually,
+    `CGAL::Triangulation_data_structure_2`).
+ -  Introduced a new face base class, `Triangulation_face_base_with_id_2` which enables storing
+    user-defined integer IDs in the face of any 2D triangulation, a precondition to use some
+    BGL algorithms.
+### 3D Triangulations
+-   Added range types and functions that return ranges, for example
+    for all vertices, which enables to use C++11 for-loops.
+-   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_3` which takes
+    a range of points as argument no longer performs a `spatial_sort()` of the points.
+-   Add constructor and `insert()` function to `CGAL::Triangulation_3` that takes a range of points with info.  
+
+### Surface Mesh
+ -   New functions to read and write using the PLY format,
+     `CGAL::read_ply()` and `CGAL::write_ply()`, allowing to save and
+     load additional property maps of the surface mesh.
+
+### 3D Point Set
+ -   The PLY IO functions now take an additional optional parameter to
+     read/write comments from/in the PLY header.
+
+### Point Set Processing
+ -   **Breaking change**: the old API using iterators and overloads
+     for optional parameters is now removed (it was deprecated since
+     CGAL 4.12). The current (and now only) API uses ranges and Named
+     Parameters.
+ -   Added the possibility to use the named parameter
+     `neighbor_radius` to use spherical neighbor queries instead of
+     K-nearest neighbors queries for the following functions:
+     `CGAL::bilateral_smooth_point_set()`,
+     `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
+     `CGAL::mst_orient_normals()`, `CGAL::pca_estimate_normals()` and
+     `CGAL::remove_outliers()`.
+
+### Polygon Mesh Processing
+-    Added the function `CGAL::Polygon_mesh_processing::non_manifold_vertices()`,
+     which can be used to collect all the non-manifold vertices (i.e. pinched vertices,
+     or vertices appearing in multiple umbrellas) of a mesh.
+ -   Introduced a wide range of new functions related to location of queries on a triangle mesh,
+     such as `CGAL::Polygon_mesh_processing::locate(Point, Mesh)`, . The location of a point on a triangle mesh
+     is expressed as the pair of a face and the barycentric coordinates of the point in this face,
+     enabling robust manipulation of locations (for example, intersections of two 3D segments living
+     within the same face).
+ -   Added the function `CGAL::Polygon_mesh_processing::centroid()`, which computes
+     the centroid of a closed triangle mesh.
+ -   Added the functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()` and
+     `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`, which can be used
+     to try and merge together geometrically compatible but combinatorially different halfedges
+     that belong to the same boundary cycle.
+-    It is now possible to pass a face-size property map to `CGAL::Polygon_mesh_processing::keep_large_connected_components()`
+     and `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`, enabling users to define
+     how the size of a face is computed (the size of the connected component is the sum of the sizes of its faces).
+     If no property map is passed, the behavior is unchanged to previous versions: the size
+     of a connected component is the number of faces it contains.
+ -   Added the mesh smoothing function `smooth_mesh()`, which can be used to
+     improve the quality of triangle elements based on various geometric characteristics.
+ -   Added the shape smoothing function `smooth_shape()`, which can be used to
+     smooth the surface of a triangle mesh, using the mean curvature flow to perform noise removal.
+
+### IO Streams
+ -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
+
+### Shape Detection
+ -   Added a new generic implementation of region growing.
+ -   New region growing can be launched on points in 2D and 3D and on a face graph.
+ -   **Breaking change:** ShapeDetectionTraits is renamed to EfficientRANSACTraits.
+ -   **Breaking change:** Shape_detection_3 namespace is renamed to Shape_detection.
+
+### 3D Boolean Operations on Nef Polyhedra
+ -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_polyhedron_to_polygon_soup()`
+
+### 2D and 3D Linear Geometry Kernel
+ - Add `ComputeApproximateAngle_3` in the 2D/3D Kernel concept to compute
+   the approximate dihedral angle between 2 vectors. Corresponding functors
+   in the model (`Compute_approximate_angle_3`) and free function (`approximate_angle`)
+   are also added.
+ - The following objects are now hashable and thus trivially usable
+   with `std::unordered_set` and `std::unordered_map`:
+   `CGAL::Aff_transformation_2`, `CGAL::Aff_transformation_3`,
+   `CGAL::Bbox_2`, `CGAL::Bbox_3`, `CGAL::Circle_2`,
+   `CGAL::Iso_cuboid_3`, `CGAL::Iso_rectangle_2`, `CGAL::Point_2`,
+   `CGAL::Point_3`, `CGAL::Segment_2`, `CGAL::Segment_3`,
+   `CGAL::Sphere_3`, `CGAL::Vector_2`, `CGAL::Vector_3`,
+   `CGAL::Weighted_point_2` and `CGAL::Weighted_point_3`.
+
+### dD Geometry Kernel
+- New exact kernel `Epeck_d`
+
+### IO Streams
+-   Added new functions to support some parts of the WKT file format:
+    - `CGAL::read_point_WKT()`
+    - `CGAL::read_multi_point_WKT()`
+    - `CGAL::read_linestring_WKT()`
+    - `CGAL::read_multi_linestring_WKT()`
+    - `CGAL::read_polygon_WKT()`
+    - `CGAL::read_multi_polygon_WKT()`
+    - `CGAL::write_point_WKT()`
+    - `CGAL::write_polygon_WKT()`
+    - `CGAL::write_linestring_WKT()`
+    - `CGAL::write_multi_point_WKT()`
+    - `CGAL::write_multi_polygon_WKT()`
+    - `CGAL::write_multi_linestring_WKT()`
+    - `CGAL:read_WKT()`
+
 Release 4.14
 ------------
 
@@ -3735,7 +3874,7 @@ static runtime (/ML).
     algorithm for placing streamlines in 2D vector fields. It generates
     a list of streamlines corresponding to an input flow using a
     specified separating distance. The algorithm uses a Delaunay
-    triangulation to model objects and adress different queries, and
+    triangulation to model objects and address different queries, and
     relies on choosing the centers of the biggest empty circles to start
     the integration of the streamlines.
 -   Kinetic Data Structures (new package)

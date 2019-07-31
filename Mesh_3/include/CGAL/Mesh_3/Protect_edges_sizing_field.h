@@ -310,7 +310,7 @@ private:
                       Curve_index curve_index) const;
 
   /// Walk along the edge from \c start, following the direction \c start to
-  /// \c next, and fills \c out with the vertices which do not fullfill
+  /// \c next, and fills \c out with the vertices which do not fulfill
   /// the sampling conditions.
   ///
   /// \param orientation Orientation of the curve segment between \c v1 and
@@ -943,7 +943,7 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_balls_on_edges()
 {
   // Get features
-  typedef CGAL::cpp11::tuple<Curve_index,
+  typedef std::tuple<Curve_index,
                              std::pair<Bare_point,Index>,
                              std::pair<Bare_point,Index> >    Feature_tuple;
   typedef std::vector<Feature_tuple>                          Input_features;
@@ -956,17 +956,17 @@ insert_balls_on_edges()
        end = input_features.end() ; fit != end ; ++fit )
   {
     if(forced_stop()) break;
-    const Curve_index& curve_index = CGAL::cpp11::get<0>(*fit);
+    const Curve_index& curve_index = std::get<0>(*fit);
     if ( ! is_treated(curve_index) )
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "** treat curve #" << curve_index << std::endl;
 #endif
-      const Bare_point& p = CGAL::cpp11::get<1>(*fit).first;
-      const Bare_point& q = CGAL::cpp11::get<2>(*fit).first;
+      const Bare_point& p = std::get<1>(*fit).first;
+      const Bare_point& q = std::get<2>(*fit).first;
 
-      const Index& p_index = CGAL::cpp11::get<1>(*fit).second;
-      const Index& q_index = CGAL::cpp11::get<2>(*fit).second;
+      const Index& p_index = std::get<1>(*fit).second;
+      const Index& q_index = std::get<2>(*fit).second;
 
       Vertex_handle vp,vq;
       if ( ! domain_.is_loop(curve_index) )

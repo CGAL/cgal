@@ -169,7 +169,7 @@ public:
   //@{
 
   /*! Constructor given Vertex & Halfedge handles. */
-  Td_inactive_vertex (Vertex_const_handle v_before_rem, Dag_node* node = NULL)
+  Td_inactive_vertex (Vertex_const_handle v_before_rem, Dag_node* node = nullptr)
   {
     PTR = new Data(v_before_rem->point(), node);
   }

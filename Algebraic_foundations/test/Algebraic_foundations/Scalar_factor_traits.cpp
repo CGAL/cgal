@@ -1,5 +1,5 @@
-#include <CGAL/basic.h>
 #include <CGAL/use.h>
+#include <CGAL/int.h>
 #include <CGAL/Scalar_factor_traits.h>
 #include <cassert>
 

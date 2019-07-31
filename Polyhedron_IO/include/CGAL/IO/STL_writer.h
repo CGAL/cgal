@@ -24,7 +24,6 @@
 #include <CGAL/boost/graph/properties.h>
 
 #include <boost/cstdint.hpp>
-#include <boost/foreach.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 
@@ -50,7 +49,7 @@ write_STL(const TriangleMesh& tm, std::ostream& out)
     const boost::uint32_t N32 = static_cast<boost::uint32_t>(faces(tm).size());
     out.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
-    BOOST_FOREACH(face_descriptor f, faces(tm))
+    for(face_descriptor f : faces(tm))
     {
       halfedge_descriptor h = halfedge(f, tm);
       Point_3_ref p = get(vpm, target(h, tm));
@@ -74,7 +73,7 @@ write_STL(const TriangleMesh& tm, std::ostream& out)
   else
   {
     out << "solid\n";
-    BOOST_FOREACH(face_descriptor f, faces(tm))
+    for(face_descriptor f : faces(tm))
     {
       halfedge_descriptor h = halfedge(f, tm);
       Point_3_ref p = get(vpm, target(h, tm));

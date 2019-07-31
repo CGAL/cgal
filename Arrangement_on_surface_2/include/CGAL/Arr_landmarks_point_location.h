@@ -114,9 +114,9 @@ protected:
 public:
   /*! Default constructor. */
   Arr_landmarks_point_location() :
-    p_arr(NULL),
-    m_traits(NULL),
-    lm_gen(NULL),
+    p_arr(nullptr),
+    m_traits(nullptr),
+    lm_gen(nullptr),
     own_gen(false)
   {}
 
@@ -141,25 +141,25 @@ public:
   {
     if (own_gen) {
       delete lm_gen;
-      lm_gen = NULL;
+      lm_gen = nullptr;
     }
   }
 
  /*! Attach an arrangement object (and a generator, if supplied). */
-  void attach(const Arrangement_2& arr, Generator* gen = NULL)
+  void attach(const Arrangement_2& arr, Generator* gen = nullptr)
   {
     // Keep a pointer to the associated arrangement.
     p_arr = &arr;
     m_traits = static_cast<const Traits_adaptor_2*>(p_arr->geometry_traits());
 
     // Update the landmarks generator.
-    if (gen != NULL) {
+    if (gen != nullptr) {
       // In case a generator is given, keep a pointer to it.
-      CGAL_assertion(lm_gen == NULL);
+      CGAL_assertion(lm_gen == nullptr);
       lm_gen = gen;
       own_gen = false;
     }
-    else if (lm_gen != NULL) {
+    else if (lm_gen != nullptr) {
       // In case a generator exists internally, make sure it is attached to
       // the given arrangement.
       Arrangement_2& non_const_arr = const_cast<Arrangement_2&>(*p_arr);
@@ -175,10 +175,10 @@ public:
   /*! Detach the instance from the arrangement object. */
   void detach()
   {
-    p_arr = NULL;
-    m_traits = NULL;
+    p_arr = nullptr;
+    m_traits = nullptr;
 
-    CGAL_assertion(lm_gen != NULL);
+    CGAL_assertion(lm_gen != nullptr);
     if (lm_gen)
       lm_gen->detach();
   }

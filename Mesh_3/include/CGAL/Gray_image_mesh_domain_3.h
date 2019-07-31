@@ -72,7 +72,7 @@ public:
                            const Image_word_type iso_value,
                            const Image_word_type value_outside = 0.,
                            const FT& error_bound = FT(1e-3),
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : Base(Wrapper(image, 
                    Transform(iso_value),
                    Transform(iso_value)(value_outside)),
@@ -87,7 +87,7 @@ public:
                            const Transform& transform,
                            const Image_word_type value_outside = 0.,
                            const FT& error_bound = FT(1e-3),
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : Base(Wrapper(image, transform, transform(value_outside)),
            Mesh_3::internal::compute_bounding_box(image),
            error_bound,

@@ -61,8 +61,7 @@ class Triangulation_data_structure_2
   typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex_base;
   typedef typename Fb::template Rebind_TDS<Tds>::Other  Face_base;
 
-  friend class Triangulation_ds_edge_iterator_2<Tds,false>;
-  friend class Triangulation_ds_edge_iterator_2<Tds,true>;
+  friend class Triangulation_ds_edge_iterator_2<Tds>;
   friend class Triangulation_ds_face_circulator_2<Tds>;
   friend class Triangulation_ds_edge_circulator_2<Tds>;
   friend class Triangulation_ds_vertex_circulator_2<Tds>;
@@ -90,18 +89,19 @@ public:
 
   typedef typename Face_range::iterator              Face_iterator;
   typedef typename Vertex_range::iterator            Vertex_iterator;
-
   typedef Triangulation_ds_edge_iterator_2<Tds>      Edge_iterator;
-  typedef Triangulation_ds_edge_iterator_2<Tds,false> Halfedge_iterator;
 
   typedef Triangulation_ds_face_circulator_2<Tds>    Face_circulator;
   typedef Triangulation_ds_vertex_circulator_2<Tds>  Vertex_circulator;
   typedef Triangulation_ds_edge_circulator_2<Tds>    Edge_circulator;
 
+  typedef Iterator_range<Prevent_deref<Vertex_iterator> > Vertex_handles;
+  typedef Iterator_range<Prevent_deref<Face_iterator> >   Face_handles;
+  typedef Iterator_range<Edge_iterator>                   Edges;
+    
   typedef Vertex_iterator                            Vertex_handle;
   typedef Face_iterator                              Face_handle;
-
-  typedef std::pair<Face_handle,int> Edge;
+  typedef std::pair<Face_handle, int>                Edge;
 
   typedef std::list<Edge> List_edges;
 
@@ -172,12 +172,20 @@ public:
     return faces().end();
   }
 
+  Face_handles face_handles() const {
+    return make_prevent_deref_range(faces_begin(),faces_end());
+  }
+  
   Vertex_iterator vertices_begin() const  {
     return vertices().begin();
   }
 
   Vertex_iterator vertices_end() const {
     return vertices().end();
+  }
+
+  Vertex_handles vertex_handles() const {
+    return make_prevent_deref_range(vertices_begin(),vertices_end());
   }
   
   Edge_iterator edges_begin() const {
@@ -187,15 +195,11 @@ public:
   Edge_iterator edges_end() const {
     return Edge_iterator(this,1);
   }
-  
-  Halfedge_iterator halfedges_begin() const {
-    return Halfedge_iterator(this);
+
+  Edges edges() const {
+    return Edges(edges_begin(),edges_end());
   }
 
-  Halfedge_iterator halfedges_end() const {
-    return Halfedge_iterator(this,1);
-  }
-  
   Face_circulator incident_faces(Vertex_handle v, 
 				 Face_handle f =  Face_handle()) const{
     return Face_circulator(v,f);
@@ -1000,7 +1004,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
   // a vertex  v which is outside the affine  hull of Tds
   // The triangulation will be starred from  v and w 
   // ( geometrically w=  // the infinite vertex )
-  // w=NULL for first and second insertions
+  // w=nullptr for first and second insertions
   // orient governs the orientation of the resulting triangulation
 
   Vertex_handle v = create_vertex();
@@ -2074,7 +2078,7 @@ Triangulation_data_structure_2<Vb,Fb>::
 file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
 {
   // ouput to a file
-  // if non NULL, v is the vertex to be output first
+  // if non nullptr, v is the vertex to be output first
   // if skip_first is true, the point in the first vertex is not output
   // (it may be for instance the infinite vertex of the triangulation)
   
@@ -2211,7 +2215,7 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
 {
   // ouput to a vrml file style
   // Point are assumed to be 3d points with a stream oprator <<
-  // if non NULL, v is the vertex to be output first
+  // if non nullptr, v is the vertex to be output first
   // if skip_inf is true, the point in the first vertex is not output
   // and the faces incident to v are not output
   // (it may be for instance the infinite vertex of the terrain)

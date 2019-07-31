@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Installation_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 macro(create_link_to_program COMPONENT )
@@ -73,9 +73,6 @@ if ( CGAL_FOUND )
     find_package(Qt5 QUIET)
     if( Qt5_FOUND )
       create_link_to_program(CGAL_Qt5)
-      if (CGAL_HEADER_ONLY)
-        qt5_use_modules(link_to_CGAL_Qt5)
-      endif()
     endif()
   endif()
 

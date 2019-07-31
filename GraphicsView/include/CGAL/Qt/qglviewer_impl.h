@@ -91,14 +91,9 @@ See the project main page for details on the project and installation steps. */
 
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::defaultConstructor() {
-  
-  int poolIndex = CGAL::QGLViewer::QGLViewerPool().indexOf(NULL);
   setFocusPolicy(::Qt::StrongFocus);
 
-  if (poolIndex >= 0)
-    CGAL::QGLViewer::QGLViewerPool().replace(poolIndex, this);
-  else
-    CGAL::QGLViewer::QGLViewerPool().append(this);
+  CGAL::QGLViewer::QGLViewerPool().append(this);
   camera_ = new qglviewer::Camera(this);
   setCamera(camera());
 
@@ -116,15 +111,15 @@ void CGAL::QGLViewer::defaultConstructor() {
   // setFullScreen(true)
 
   // #CONNECTION# default values in initFromDOMElement()
-  manipulatedFrame_ = NULL;
+  manipulatedFrame_ = nullptr;
   manipulatedFrameIsACamera_ = false;
   mouseGrabberIsAManipulatedFrame_ = false;
   mouseGrabberIsAManipulatedCameraFrame_ = false;
   displayMessage_ = false;
   connect(&messageTimer_, SIGNAL(timeout()), SLOT(hideMessage()));
   messageTimer_.setSingleShot(true);
-  helpWidget_ = NULL;
-  setMouseGrabber(NULL);
+  helpWidget_ = nullptr;
+  setMouseGrabber(nullptr);
 
   setSceneRadius(1.0);
   showEntireScene();
@@ -144,7 +139,7 @@ void CGAL::QGLViewer::defaultConstructor() {
   stopAnimation();
   setAnimationPeriod(40); // 25Hz
 
-  selectBuffer_ = NULL;
+  selectBuffer_ = nullptr;
   setSelectBufferSize(4 * 1000);
   setSelectRegionWidth(3);
   setSelectRegionHeight(3);
@@ -163,7 +158,10 @@ void CGAL::QGLViewer::defaultConstructor() {
   axisIsDrawn_ = true;
 
   _offset = CGAL::qglviewer::Vec(0,0,0);
-  stored_fbo = NULL;
+  stored_fbo = nullptr;
+  is_sharing = false;
+  is_linked = false;
+  shared_context = nullptr;
 }
 
 CGAL_INLINE_FUNCTION
@@ -172,10 +170,18 @@ CGAL::QGLViewer::QGLViewer(QWidget *parent,
     : QOpenGLWidget(parent, flags) {
   defaultConstructor();
 }
+CGAL_INLINE_FUNCTION
+CGAL::QGLViewer::QGLViewer(QOpenGLContext* context, QWidget *parent,
+                   ::Qt::WindowFlags flags)
+  : QOpenGLWidget(parent, flags) {
+  defaultConstructor();
+  shared_context = context;
+  is_sharing = true;
+}
 
 /*! Virtual destructor.
 
-The viewer is replaced by \c NULL in the QGLViewerPool() (in order to preserve
+The viewer is replaced by \c nullptr in the QGLViewerPool() (in order to preserve
 other viewer's indexes) and allocated memory is released. The camera() is
 deleted and should be copied before if it is shared by an other viewer. */
 CGAL_INLINE_FUNCTION
@@ -185,8 +191,7 @@ CGAL::QGLViewer::~QGLViewer() {
   // if virtual domElement() has been overloaded ! if (parent())
   // saveStateToFileForAllViewers();
 
-  CGAL::QGLViewer::QGLViewerPool().replace(CGAL::QGLViewer::QGLViewerPool().indexOf(this),
-                                    NULL);
+  CGAL::QGLViewer::QGLViewerPool().removeAll(this);
 
   camera()->deleteLater();
   delete[] selectBuffer_;
@@ -209,35 +214,47 @@ If a 4.3 context could not be set, a ES 2.0 context will be used instead.
 */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::initializeGL() {
-  QSurfaceFormat format = context()->format();
-  context()->format().setOption(QSurfaceFormat::DebugContext);
-  if ( !context()->isValid()
-    || format.majorVersion() != 4
-    || QCoreApplication::arguments().contains(QStringLiteral("--old")))
-
+  if(!is_sharing)
   {
-    format.setDepthBufferSize(24);
-    format.setStencilBufferSize(8);
-    format.setVersion(2,0);
-    format.setRenderableType(QSurfaceFormat::OpenGLES);
-    format.setSamples(0);
-    format.setOption(QSurfaceFormat::DebugContext);
-    QSurfaceFormat::setDefaultFormat(format);
-              
-    needNewContext();
-    qDebug()<<"GL 4.3 context initialization failed. ";
-    is_ogl_4_3 = false;
+    QSurfaceFormat format = context()->format();
+    context()->format().setOption(QSurfaceFormat::DebugContext);
+    if ( !context()->isValid()
+         || format.majorVersion() != 4
+         || QCoreApplication::arguments().contains(QStringLiteral("--old")))
+      
+    {
+      format.setDepthBufferSize(24);
+      format.setStencilBufferSize(8);
+      format.setVersion(2,0);
+      format.setRenderableType(QSurfaceFormat::OpenGLES);
+      format.setSamples(0);
+      format.setOption(QSurfaceFormat::DebugContext);
+      QSurfaceFormat::setDefaultFormat(format);
+      
+      needNewContext();
+      qDebug()<<"GL 4.3 context initialization failed. ";
+      is_ogl_4_3 = false;
+    }
+    else
+    {
+      is_ogl_4_3 = true;
+    }
+    
+    QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
+    const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";
+    qDebug()<<"Using context "
+           <<cur_f.majorVersion()<<"."<<cur_f.minorVersion()
+          << rt;
   }
   else
   {
-    is_ogl_4_3 = true;
+    context()->setFormat(shared_context->format());
+    context()->setShareContext(shared_context);
+    context()->create();
+    makeCurrent();
   }
-
-  QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
-  const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";
-  qDebug()<<"Using context "
-         <<cur_f.majorVersion()<<"."<<cur_f.minorVersion()
-        << rt;
+  connect(context(), &QOpenGLContext::aboutToBeDestroyed,
+          this, &CGAL::QGLViewer::contextIsDestroyed);
   QOpenGLFunctions::initializeOpenGLFunctions();
   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
   // Default colors
@@ -259,7 +276,7 @@ void CGAL::QGLViewer::initializeGL() {
   {
     vbos[i].create();
   }
-  //program without light
+  if(!is_linked)
   {
     //Vertex source code
     const char v_s[] =
@@ -345,9 +362,6 @@ void CGAL::QGLViewer::initializeGL() {
     {
       qDebug() << rendering_program.log();
     }
-  }
-  //program with light
-  {
     //Vertex source code
     const char vertex_source[] =
     {
@@ -460,8 +474,6 @@ void CGAL::QGLViewer::initializeGL() {
     //It is said in the doc that a QOpenGLShader is 
     // only destroyed with the QOpenGLShaderProgram 
     //it has been linked with.
-    QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
-    QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
     if(is_ogl_4_3)
     {
       if(!vertex_shader.compileSourceCode(vertex_source))
@@ -500,7 +512,7 @@ void CGAL::QGLViewer::initializeGL() {
       qDebug() << rendering_program_light.log();
     }
   }
-
+  is_linked = true;
   // Give time to glInit to finish and then call setFullScreen().
   if (isFullScreen())
     QTimer::singleShot(100, this, SLOT(delayedFullScreen()));
@@ -775,7 +787,7 @@ It you simply want to save and restore Camera positions, use
 CGAL::qglviewer::Camera::addKeyFrameToPath() and CGAL::qglviewer::Camera::playPath()
 instead.
 
-This method silently ignores \c NULL \p camera pointers. The calling method is
+This method silently ignores \c nullptr \p camera pointers. The calling method is
 responsible for deleting the previous camera pointer in order to prevent memory
 leaks if needed.
 
@@ -1400,7 +1412,7 @@ void CGAL::QGLViewer::mouseMoveEvent(QMouseEvent *e) {
       else
         mouseGrabber()->mouseMoveEvent(e, camera());
     else
-      setMouseGrabber(NULL);
+      setMouseGrabber(nullptr);
     update();
   }
 
@@ -1451,7 +1463,7 @@ void CGAL::QGLViewer::mouseReleaseEvent(QMouseEvent *e) {
       mouseGrabber()->mouseReleaseEvent(e, camera());
     mouseGrabber()->checkIfGrabsMouse(e->x(), e->y(), camera());
     if (!(mouseGrabber()->grabsMouse()))
-      setMouseGrabber(NULL);
+      setMouseGrabber(nullptr);
     // update();
   } else
       //#CONNECTION# mouseMoveEvent has the same structure
@@ -1585,9 +1597,9 @@ void CGAL::QGLViewer::setMouseGrabber(qglviewer::MouseGrabber *mouseGrabber) {
   mouseGrabber_ = mouseGrabber;
 
   mouseGrabberIsAManipulatedFrame_ =
-      (dynamic_cast<qglviewer::ManipulatedFrame *>(mouseGrabber) != NULL);
+      (dynamic_cast<qglviewer::ManipulatedFrame *>(mouseGrabber) != nullptr);
   mouseGrabberIsAManipulatedCameraFrame_ =
-      ((dynamic_cast<qglviewer::ManipulatedCameraFrame *>(mouseGrabber) != NULL) &&
+      ((dynamic_cast<qglviewer::ManipulatedCameraFrame *>(mouseGrabber) != nullptr) &&
        (mouseGrabber != camera()->frame()));
   Q_EMIT mouseGrabberChanged(mouseGrabber);
 }
@@ -2125,13 +2137,13 @@ void CGAL::QGLViewer::help() {
                             tr("&About", "Help window about title")};
 
   if (!helpWidget()) {
-    // Qt4 requires a NULL parent...
-    helpWidget_ = new QTabWidget(NULL);
+    // Qt4 requires a nullptr parent...
+    helpWidget_ = new QTabWidget(nullptr);
     helpWidget()->setWindowTitle(tr("Help", "Help window title"));
 
     resize = true;
     for (int i = 0; i < 4; ++i) {
-      QTextEdit *tab = new QTextEdit(NULL);
+      QTextEdit *tab = new QTextEdit(nullptr);
       tab->setReadOnly(true);
 
       helpWidget()->insertTab(i, tab, label[i]);
@@ -2272,7 +2284,7 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
           camera()->deletePath(index);
         }
       } else {
-        bool nullBefore = (camera()->keyFrameInterpolator(index) == NULL);
+        bool nullBefore = (camera()->keyFrameInterpolator(index) == nullptr);
         camera()->addKeyFrameToPath(index);
         if (nullBefore)
           connect(camera()->keyFrameInterpolator(index), SIGNAL(interpolated()),
@@ -3072,7 +3084,7 @@ void CGAL::QGLViewer::setManipulatedFrame(qglviewer::ManipulatedFrame *frame) {
 
   manipulatedFrameIsACamera_ =
       ((manipulatedFrame() != camera()->frame()) &&
-       (dynamic_cast<qglviewer::ManipulatedCameraFrame *>(manipulatedFrame()) != NULL));
+       (dynamic_cast<qglviewer::ManipulatedCameraFrame *>(manipulatedFrame()) != nullptr));
 
   if (manipulatedFrame()) {
     // Prevent multiple connections, that would result in useless display
@@ -3964,7 +3976,7 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
       setBackgroundColor(c);
     }
     else
-      return NULL;
+      return nullptr;
     break;
   }
 
@@ -4017,7 +4029,7 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
                          "Unable to create resulting image",
                          QMessageBox::Ok, QMessageBox::NoButton);
     setBackgroundColor(previousBGColor);
-    return NULL;
+    return nullptr;
   }
 
   qreal scaleX = subSize.width() / static_cast<qreal>(finalSize.width());
@@ -4078,21 +4090,27 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
   if(background_color !=0)
     setBackgroundColor(previousBGColor);
   camera()->setFrustum(frustum);
-  stored_fbo = NULL;
+  stored_fbo = nullptr;
   return image;
 }
 
 CGAL_INLINE_FUNCTION
-QOpenGLFramebufferObject* CGAL::QGLViewer::getStoredFrameBuffer()
+QOpenGLFramebufferObject* CGAL::QGLViewer::getStoredFrameBuffer() const
 {
   return stored_fbo;
+}
+
+CGAL_INLINE_FUNCTION
+void CGAL::QGLViewer::setStoredFrameBuffer(QOpenGLFramebufferObject *fbo)
+{
+  stored_fbo = fbo;
 }
 
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::saveSnapshot()
 {
   qreal aspectRatio = width() / static_cast<qreal>(height());
-  static ImageInterface* imageInterface = NULL;
+  static ImageInterface* imageInterface = nullptr;
 
   if (!imageInterface)
     imageInterface = new ImageInterface(this, aspectRatio);
@@ -4119,4 +4137,10 @@ void CGAL::QGLViewer::saveSnapshot()
   }
 }
 
+}
+
+CGAL_INLINE_FUNCTION
+bool CGAL::QGLViewer::isSharing() const
+{
+  return is_sharing;
 }

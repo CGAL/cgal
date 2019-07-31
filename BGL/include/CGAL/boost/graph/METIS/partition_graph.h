@@ -129,11 +129,11 @@ void partition_graph(const TriangleMesh& tm,
 
   // partition info for the nodes
   idx_t* npart = (idx_t*) calloc(num_vertices(tm), sizeof(idx_t));
-  CGAL_assertion(npart != NULL);
+  CGAL_assertion(npart != nullptr);
 
   // partition info for the elements
   idx_t* epart = (idx_t*) calloc(num_faces(tm), sizeof(idx_t));
-  CGAL_assertion(epart != NULL);
+  CGAL_assertion(epart != nullptr);
 
   // do not support Fortran-style arrays
   CGAL_assertion((*options)[METIS_OPTION_NUMBERING] == -1 || // default initialization is '-1'
@@ -141,9 +141,9 @@ void partition_graph(const TriangleMesh& tm,
 
   CGAL_assertion_code(int ret =)
     METIS_PartMeshNodal(&ne, &nn, eptr, eind,
-                        NULL /* nodes weights */, NULL /* nodes sizes */,
+                        nullptr /* nodes weights */, nullptr /* nodes sizes */,
                         &nparts,
-                        NULL /* partitions weights */,
+                        nullptr /* partitions weights */,
                         *options,
                         &objval, epart, npart);
 

@@ -233,7 +233,7 @@ public:
       {
         base_pt = object_cast<std::pair<Base_Point_2, Multiplicity> >(&(*oi));
 
-        if (base_pt != NULL)
+        if (base_pt != nullptr)
         {
           Point_data pt_data(m_self_tr->invalid_index());
           Point_2 point_plus (base_pt->first, pt_data); // the extended point
@@ -244,7 +244,7 @@ public:
         {
           overlap_cv = object_cast<Base_X_monotone_curve_2> (&(*oi));
 
-          if (overlap_cv != NULL)
+          if (overlap_cv != nullptr)
           {
             unsigned int ov_bc;
             unsigned int ov_twin_bc;

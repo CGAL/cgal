@@ -40,7 +40,6 @@
 
 #include <boost/unordered_map.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
-#include <boost/foreach.hpp>
 #include <deque>
 
 namespace CGAL
@@ -86,7 +85,7 @@ namespace CGAL
               size_t n = 0;
 
               // First, computing the primal vertices
-              BOOST_FOREACH (Facet_const_handle fd, faces(_dual)){               
+              for(Facet_const_handle fd : faces(_dual)){               
                 Halfedge_const_descriptor h = fd->halfedge();
                 // Build the dual plane corresponding to the current facet
                 Plane_3 p1 = h->vertex()->point();
@@ -108,7 +107,7 @@ namespace CGAL
                 result_inter result = CGAL::intersection(pp1, pp2, pp3);
                 CGAL_assertion_msg(bool(result),
                                    "halfspace_intersection_3: no intersection");
-                CGAL_assertion_msg(boost::get<Point_3>(& *result) != NULL,
+                CGAL_assertion_msg(boost::get<Point_3>(& *result) != nullptr,
                                    "halfspace_intersection_3: intersection is not a point");
 
                 const Point_3* pp = boost::get<Point_3>(& *result);
@@ -128,9 +127,9 @@ namespace CGAL
               // To do this, for each dual vertex, we circulate around this vertex
               // and we add an edge between each facet we encounter
 
-              BOOST_FOREACH (Vertex_const_descriptor vd, vertices( _dual)) {
+              for(Vertex_const_descriptor vd : vertices( _dual)) {
                 std::deque<vertex_descriptor> vertices;
-                BOOST_FOREACH(Halfedge_const_descriptor hd, halfedges_around_target(vd, _dual)){
+                for(Halfedge_const_descriptor hd : halfedges_around_target(vd, _dual)){
                   vertices.push_front(primal_vertices[face(hd, _dual)]);
                 }
                 Euler::add_face(vertices,primal);
@@ -147,7 +146,7 @@ namespace CGAL
             
             typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpmap  = get(CGAL::vertex_point, P);
 
-            BOOST_FOREACH(face_descriptor fd, faces(P))
+            for(face_descriptor fd : faces(P))
                 {
                   halfedge_descriptor h = halfedge(fd,P), done(h);
                   Point const& p1 = get(vpmap, target(h,P));
@@ -210,7 +209,7 @@ namespace CGAL
 
                 // Look for two non-parallel planes
                 PlaneIterator plane1_it = planes.begin();
-                PlaneIterator plane2_it = cpp11::next(planes.begin());
+                PlaneIterator plane2_it = std::next(planes.begin());
 
                 while (plane2_it != planes.end() &&
                        collinear_plane(*plane1_it, *plane2_it)) {
@@ -219,7 +218,7 @@ namespace CGAL
 
                 if (plane2_it == planes.end()) return false;
 
-                PlaneIterator plane3_it = cpp11::next(plane2_it);
+                PlaneIterator plane3_it = std::next(plane2_it);
 
                 // Look for a triple of planes intersecting in a point
                 while (plane3_it != planes.end() &&

@@ -121,7 +121,7 @@ protected:
     {
       if (current_dimension() == preset_flat_orientation_.first)
       {
-        CGAL_assertion(preset_flat_orientation_.second != NULL);
+        CGAL_assertion(preset_flat_orientation_.second != nullptr);
         flat_orientation_ = *preset_flat_orientation_.second;
       }
       else
@@ -244,26 +244,26 @@ public:
     // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
     // the two "covertices" around the sub-simplex. Useful for traversing the
     // boundary of a hole. NOT DOCUMENTED
-    typedef cpp11::tuple<Full_cell_handle, int, int>    Rotor;
+    typedef std::tuple<Full_cell_handle, int, int>    Rotor;
 
     // Commented out because it was causing "internal compiler error" in MSVC
     /*Full_cell_handle full_cell(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<0>(r);
+        return std::get<0>(r);
     }
     int index_of_covertex(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<1>(r);
+        return std::get<1>(r);
     }
     int index_of_second_covertex(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<2>(r);
+        return std::get<2>(r);
     }*/
     Rotor rotate_rotor(Rotor & r) // NOT DOCUMENTED...
     {
-        int opposite = cpp11::get<0>(r)->mirror_index(cpp11::get<1>(r));
-        Full_cell_handle s = cpp11::get<0>(r)->neighbor(cpp11::get<1>(r));
-        int new_second = s->index(cpp11::get<0>(r)->vertex(cpp11::get<2>(r)));
+        int opposite = std::get<0>(r)->mirror_index(std::get<1>(r));
+        Full_cell_handle s = std::get<0>(r)->neighbor(std::get<1>(r));
+        int new_second = s->index(std::get<0>(r)->vertex(std::get<2>(r)));
         return Rotor(s, new_second, opposite);
     }
     
@@ -274,7 +274,7 @@ public:
         , kernel_(k)
         , infinity_()
         , preset_flat_orientation_((std::numeric_limits<int>::max)(),
-                                   (Flat_orientation_d*) NULL)
+                                   (Flat_orientation_d*) nullptr)
         , rng_((long)0)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
@@ -309,14 +309,14 @@ public:
         , kernel_(t2.kernel_)
         , infinity_()
         , preset_flat_orientation_((std::numeric_limits<int>::max)(), 
-                                   (Flat_orientation_d*) NULL)
+                                   (Flat_orientation_d*) nullptr)
         , rng_(t2.rng_)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(t2.walk_size_)
 #endif
     {
         // We find the vertex at infinity by scanning the vertices of both
-        // triangulations. This works because Compact_container garantees that
+        // triangulations. This works because Compact_container guarantees that
         // the vertices in the copy (*this) are stored in the same order as in
         // the original triangulation (t2)
         infinity_ = vertices_begin();

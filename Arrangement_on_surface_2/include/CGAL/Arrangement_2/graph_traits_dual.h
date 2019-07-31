@@ -247,7 +247,7 @@ public:
   typedef Face_neighbor_iterator            Incident_edge_iterator;
 
   /*! Default constructor. */
-  Dual_arrangement_on_surface() : p_arr(NULL) {}
+  Dual_arrangement_on_surface() : p_arr(nullptr) {}
 
   /*! Constructor from an arrangement. */
   Dual_arrangement_on_surface(const Arrangement& arr) :

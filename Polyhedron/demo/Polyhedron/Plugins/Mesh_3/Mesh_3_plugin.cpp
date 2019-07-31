@@ -488,8 +488,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  protect_borders,
                                  sharp_edges_angle,
                                  manifold,
-                                 surface_only,
-                                 scene);
+                                 surface_only);
   }
   // Image
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -510,8 +509,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  edge_size,
                                  radius_edge,
                                  manifold,
-                                 surface_only,
-                                 scene);
+                                 surface_only);
   }
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
@@ -537,7 +535,6 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  protect_features,
                                  manifold,
                                  surface_only,
-                                 scene,
                                  detect_connected_components,
                                  image_item->isGray(),
                                  iso_value,

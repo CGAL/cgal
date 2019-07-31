@@ -20,7 +20,6 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <CGAL/basic.h>
 #include <CGAL/double.h>
 #include <CGAL/Regular_triangulation_2.h>
 

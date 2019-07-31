@@ -159,16 +159,16 @@ class Halfedge_base
 	verr << "begin CGAL::SNC_items<...>::Halfedge_base::is_valid( verb=true, "
 	  "level = " << level << "):" << std::endl;
 
-	bool valid = (center_vertex_ != NULL && center_vertex_ != Vertex_handle());
-	valid = valid && (twin_ != NULL && twin_ != SVertex_handle() &&
+	bool valid = (center_vertex_ != nullptr && center_vertex_ != Vertex_handle());
+	valid = valid && (twin_ != nullptr && twin_ != SVertex_handle() &&
 			  twin_ != SVertex_handle());
-	//      valid = valid && (out_sedge_ != NULL);
+	//      valid = valid && (out_sedge_ != nullptr);
 	//      valid = valid && (incident_sface_ != SFace_handle());
       
-	//      valid = valid &&((out_sedge_ != NULL && incident_sface_ == NULL) ||
-	//		       (out_sedge_ == NULL && incident_sface_ != NULL));
+	//      valid = valid &&((out_sedge_ != nullptr && incident_sface_ == nullptr) ||
+	//		       (out_sedge_ == nullptr && incident_sface_ != nullptr));
       
-	valid = valid && (out_sedge_ != NULL || incident_sface_ != NULL);
+	valid = valid && (out_sedge_ != nullptr || incident_sface_ != nullptr);
 
 	verr << "end of CGAL::SNC_items<...>::Halfedge_base::is_valid(): structure is "
 	     << ( valid ? "valid." : "NOT VALID.") << std::endl;

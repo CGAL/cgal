@@ -324,9 +324,9 @@ CGAL_IMAGEIO_EXPORT _image *_createImage(int x, int y, int z, int v,
                                          WORD_KIND wk, SIGN sgn);
 
 
-/** Reads an image from a file and returns an image descriptor or NULL if<br>
+/** Reads an image from a file and returns an image descriptor or nullptr if<br>
     reading failed.<br>
-    Reads from stdin if image name is NULL.
+    Reads from stdin if image name is nullptr.
     The image data field points to a xdim * ydim * zdim * vdim buffer
     containing voxels in order:
     (Z1, Y1, X1, V1) (Z1, Y1, X1, V2), ... , (Z1, Y1, X1, Vt),
@@ -354,12 +354,12 @@ CGAL_IMAGEIO_EXPORT _image *_createImage(int x, int y, int z, int v,
     http://www.gzip.org/zlib/
     
 
-   @param name image file name or NULL for stdin */
+   @param name image file name or nullptr for stdin */
 CGAL_IMAGEIO_EXPORT _image* _readImage(const char *name);
 
-/** Reads an image from a file and returns an image descriptor or NULL if<br>
+/** Reads an image from a file and returns an image descriptor or nullptr if<br>
     reading failed.<br>
-    Reads from stdin if image name is NULL.
+    Reads from stdin if image name is nullptr.
     If the image is vectorial, it is uninterlaced, i.e. the image data
     field points to a xdim * ydim * zdim * vdim buffer containing voxels
     in order:
@@ -372,7 +372,7 @@ CGAL_IMAGEIO_EXPORT _image* _readImage(const char *name);
      (V2, Z1, Y1, X1) ...         ...       , (V2, Z1, Y1, Xn),
      ...
                       ...         ...       , (Vt, Zl, Ym, Xn)
-   @param name image file name or NULL */
+   @param name image file name or nullptr */
 CGAL_IMAGEIO_EXPORT _image* _readNonInterlacedImage(const char *name);
 
 /** Read an image from a file. The word type is supposed to be unsigned
@@ -393,15 +393,15 @@ CGAL_IMAGEIO_EXPORT _image* _readImage_raw(const char *name,
 
 /** Writes given image in file 'name'.<br>
     If name ends with '.gz', file is gzipped.<br>
-    If name is NULL, image is sent to stdout.
+    If name is nullptr, image is sent to stdout.
     @param im image descriptor 
-    @param name file name to store image or NULL */
+    @param name file name to store image or nullptr */
 CGAL_IMAGEIO_EXPORT int _writeImage(_image *im, const char *name);
 
 /** Read one slice of given image whose header has already been read.<br>
     File descriptor is let at the beginning of next slice and closed<br>
     when end of file is encountered.<br>
-    If data buffer is NULL, it is allocated for one slice only.<br>
+    If data buffer is nullptr, it is allocated for one slice only.<br>
     This funtion is dedicated to read huge inrimages.
     @param im image descriptor */
 CGAL_IMAGEIO_EXPORT void _getNextSlice(_image *im);
@@ -420,8 +420,8 @@ CGAL_IMAGEIO_EXPORT PTRIMAGE_FORMAT firstImageFormat();
 /** Reads header from an image file<br>
     If file is an inrimage, only header is read. Otherwise, whole image<br>
     is read and image file descriptor is closed.<br>
-    If name is NULL, header is read from STDIN
-    @param name image file name or NULL */
+    If name is nullptr, header is read from STDIN
+    @param name image file name or nullptr */
 CGAL_IMAGEIO_EXPORT _image* _readImageHeader(const char *name);
 CGAL_IMAGEIO_EXPORT _image *_readImageHeaderAndGetError( const char *name, int *error );
 
@@ -445,13 +445,13 @@ CGAL_IMAGEIO_EXPORT int _readNonInterlacedFileData(_image *im);
 
 
 /** given an initialized file descriptor and a file name, open file
-   from stdout (if name == NULL), a gziped pipe (if file is gziped)
+   from stdout (if name == nullptr), a gziped pipe (if file is gziped)
    or a standard file otherwise.
    @param im initialized image descriptor
    @param name image file name */
 CGAL_IMAGEIO_EXPORT void _openWriteImage(_image* im, const char *name) ;
    
-/** open an image file from stdin (if name == NULL), from a pipe
+/** open an image file from stdin (if name == nullptr), from a pipe
    (piped with gzip if image was compressed) or from a standard file
    @param im initialized image descriptor
    @param name image file name */

@@ -77,11 +77,11 @@ int main(int argc, char* argv[])
   // collect faces incident to a constrained edge
   std::vector<face_descriptor> selected_faces;
   std::vector<bool> is_selected(num_faces(mesh1), false);
-  BOOST_FOREACH(edge_descriptor e, edges(mesh1))
+  for(edge_descriptor e : edges(mesh1))
     if (is_constrained_map[e])
     {
       // insert all faces incident to the target vertex
-      BOOST_FOREACH(halfedge_descriptor h,
+      for(halfedge_descriptor h :
                     halfedges_around_target(halfedge(e,mesh1),mesh1))
       {
         if (!is_border(h, mesh1) )

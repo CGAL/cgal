@@ -33,7 +33,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/tags.h>
 
-#include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 
 #include <iterator>
@@ -94,7 +93,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
   int i=0;
   boost::unordered_map<vertex_descriptor,int> v_index;
-  BOOST_FOREACH(vertex_descriptor vh, p_vertices){
+  for(vertex_descriptor vh : p_vertices){
     v_index[vh]= i++;
   }
 
@@ -104,7 +103,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
     mask.face_node(*fitr, face_point_buffer[i]);
   {
     std::size_t i = 0;
-    BOOST_FOREACH(edge_descriptor ed, p_edges){
+    for(edge_descriptor ed : p_edges){
       if(is_border(ed,p)){
         halfedge_descriptor h=halfedge(ed,p);
         if (is_border(h,p)) h=opposite(h,p);
@@ -214,14 +213,14 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
   int i=0;
   boost::unordered_map<vertex_descriptor,int> v_index;
-  BOOST_FOREACH(vertex_descriptor vh, p_vertices){
+  for(vertex_descriptor vh : p_vertices){
     v_index[vh]= i++;
   }
   std::vector<bool> v_onborder(num_v);
 
   {
     std::size_t i = 0;
-    BOOST_FOREACH(edge_descriptor ed, p_edges){
+    for(edge_descriptor ed : p_edges){
       if(! is_border(ed,p)){
         mask.edge_node(halfedge(ed,p), edge_point_buffer[i]);
       } else{
@@ -303,7 +302,7 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   std::size_t num_f = p_faces.size();
 
   std::vector<halfedge_descriptor> border_halfedges;
-  BOOST_FOREACH(edge_descriptor ed, p_edges){
+  for(edge_descriptor ed : p_edges){
     if(is_border(ed,p)){
       border_halfedges.push_back(halfedge(ed,p));
     }
@@ -314,8 +313,8 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   int pi = 0;
   int vi=0;
   std::vector<bool> is_border_vertex(num_v, false);
-  BOOST_FOREACH(vertex_descriptor vd, p_vertices){
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vd,p)){
+  for(vertex_descriptor vd : p_vertices){
+    for(halfedge_descriptor hd : halfedges_around_target(vd,p)){
       if (! is_border(hd,p)){
         mask.corner_node(hd, point_buffer[pi++]);
       }
@@ -380,7 +379,7 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   }
 
 
-  BOOST_FOREACH(halfedge_descriptor eeh, border_halfedges){
+  for(halfedge_descriptor eeh : border_halfedges){
     halfedge_descriptor eh = eeh;
     if (is_border(eh,p)){
       eh = opposite(eh,p);
@@ -436,7 +435,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   // reserve enough size for the new points
   std::size_t new_pts_size = num_f;
   if(refine_border) {
-    BOOST_FOREACH(edge_descriptor ed, p_edges){
+    for(edge_descriptor ed : p_edges){
       if(is_border(ed, p))
         ++new_pts_size;
     }
@@ -455,10 +454,10 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   // compute the positions of new points
   std::size_t i = 0;
   std::size_t face_id = 0;
-  BOOST_FOREACH (face_descriptor fd, p_faces) {
+  for(face_descriptor fd : p_faces) {
     //ASSERTION_MSG(circulator_size(fitr->facet_begin())==3, "(ERROR) Non-triangle facet!");
     if(refine_border) {
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, p), p)) {
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, p), p)) {
         if(is_border(opposite(hd, p),p)) {
           face_halfedge_border[face_id] = hd;
           Point vpt;
@@ -482,7 +481,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   }
 
   // smooth the position of existing vertices
-  BOOST_FOREACH(vertex_descriptor vd, p_vertices){
+  for(vertex_descriptor vd : p_vertices){
     Point pt;
     if(!is_border(vd, p)) {
       mask.vertex_node(vd, pt);

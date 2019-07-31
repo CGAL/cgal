@@ -268,7 +268,7 @@ namespace CGAL
   typename Map::size_type degree(const Map & amap, 
                                  typename Map::Dart_const_handle adart)
   {
-    CGAL_assertion(adart != NULL);
+    CGAL_assertion(adart != nullptr);
   
     typename Map::size_type nbIncident = 0;
     typename Map::size_type mark;
@@ -317,7 +317,7 @@ namespace CGAL
   typename Map::size_type codegree(const Map & amap, 
                                    typename Map::Dart_const_handle adart)
   {
-    CGAL_assertion(adart != NULL);
+    CGAL_assertion(adart != nullptr);
   
     typename Map::size_type nbIncident = 0;
     typename Map::size_type mark;

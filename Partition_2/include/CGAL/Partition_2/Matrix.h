@@ -19,8 +19,8 @@
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
-#ifndef   CGAL_MATRIX_H
-#define   CGAL_MATRIX_H
+#ifndef   CGAL_PARTITION_MATRIX_H
+#define   CGAL_PARTITION_MATRIX_H
 
 #include <CGAL/license/Partition_2.h>
 
@@ -67,4 +67,4 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& m)
 
 }
 
-#endif // CGAL_MATRIX_H
+#endif // CGAL_PARTITION_MATRIX_H

@@ -215,7 +215,7 @@ public:
                     const Iso_cuboid_3& bbox,
                     float grid_resolution)
     : m_points (&input), m_point_map (point_map)
-    , m_bbox (bbox), m_resolution (grid_resolution), m_lower_scale(NULL), m_current_scale(0)
+    , m_bbox (bbox), m_resolution (grid_resolution), m_lower_scale(nullptr), m_current_scale(0)
   {
     m_width = (std::size_t)((bbox.xmax() - bbox.xmin()) / grid_resolution) + 1;
     m_height = (std::size_t)((bbox.ymax() - bbox.ymin()) / grid_resolution) + 1;
@@ -349,7 +349,7 @@ public:
   */
   std::size_t x(std::size_t index) const
   {
-    if (m_lower_scale == NULL)
+    if (m_lower_scale == nullptr)
     {
       const Point_3& p = get(m_point_map, *(m_points->begin()+index));
       return (std::size_t)((p.x() - m_bbox.xmin()) / m_resolution);
@@ -363,7 +363,7 @@ public:
   */
   std::size_t y(std::size_t index) const
   {
-    if (m_lower_scale == NULL)
+    if (m_lower_scale == nullptr)
     {
       const Point_3& p = get(m_point_map, *(m_points->begin()+index));
       return (std::size_t)((p.y() - m_bbox.ymin()) / m_resolution);

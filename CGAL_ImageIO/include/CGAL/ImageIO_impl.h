@@ -80,13 +80,13 @@ struct Remove_supported_file_format {
 
 inline PTRIMAGE_FORMAT & get_static_firstFormat()
 {
-  static PTRIMAGE_FORMAT firstFormat = NULL;
+  static PTRIMAGE_FORMAT firstFormat = nullptr;
   return firstFormat;
 }
 
 inline PTRIMAGE_FORMAT & get_static_inrimageFormat()
 {
-  static PTRIMAGE_FORMAT inrimageFormat = NULL;
+  static PTRIMAGE_FORMAT inrimageFormat = nullptr;
   return inrimageFormat;
 }
 
@@ -102,14 +102,14 @@ CGAL_UNUSED static Remove_supported_file_format &rsff_dummy_ref = get_static_rsf
 #else // not header-only
 
 /** the first file format is initialized to null */
-static PTRIMAGE_FORMAT firstFormat = NULL;
+static PTRIMAGE_FORMAT firstFormat = nullptr;
 inline PTRIMAGE_FORMAT & get_static_firstFormat()
 {
   return firstFormat;
 }
 
 /** the Inrimage file format (default format) is initialized to null */
-static PTRIMAGE_FORMAT InrimageFormat = NULL;
+static PTRIMAGE_FORMAT InrimageFormat = nullptr;
 inline PTRIMAGE_FORMAT & get_static_inrimageFormat()
 {
   return InrimageFormat;
@@ -294,11 +294,11 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
 CGAL_INLINE_FUNCTION
 char *ImageIO_gets( const _image *im, char *str, int size )
 {
-  char *ret = NULL;
+  char *ret = nullptr;
   switch(im->openMode) {
   default :
   case OM_CLOSE :
-    return NULL;
+    return nullptr;
   case OM_STD :
 #ifdef CGAL_USE_ZLIB
     ret = (char *) gzgets(im->fd, str, size );
@@ -401,7 +401,7 @@ int ImageIO_close( _image* im )
 #endif
   }
   
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
   
   return ret;
@@ -414,7 +414,7 @@ int ImageIO_close( _image* im )
 
 
 /* given an initialized file descriptor and a file name, 
-   open file from stdin (if name == NULL, or name == "-", or name == "<"), 
+   open file from stdin (if name == nullptr, or name == "-", or name == "<"), 
    or a standard/gzipped file otherwise (gzipped files are handled assuming
    that it is compiled and linked with zlib). 
    openMode will have one of the following value:
@@ -426,7 +426,7 @@ void _openReadImage(_image* im, const char *name) {
   if(im->openMode == OM_CLOSE) {
 
     /* open from stdin */
-    if( name == NULL || name[0] == '\0' 
+    if( name == nullptr || name[0] == '\0' 
 	|| (name[0] == '-' && name[1] == '\0') 
 	|| (name[0] == '<' && name[1] == '\0') ) {
 #ifdef CGAL_USE_ZLIB      
@@ -456,7 +456,7 @@ void _openReadImage(_image* im, const char *name) {
 
 
 /* given an initialized file descriptor and a file name, 
-   open file from stdout (if name == NULL, or name == "-", or name == ">"), 
+   open file from stdout (if name == nullptr, or name == "-", or name == ">"), 
    a gzipped pipe (if name got the extension ".gz")
    or a standard file otherwise.
    openMode will have one of the following value:
@@ -469,7 +469,7 @@ void _openWriteImage(_image* im, const char *name)
 {
   im->openMode = OM_CLOSE;
 
-  if( name == NULL || name[0] == '\0' 
+  if( name == nullptr || name[0] == '\0' 
       || (name[0] == '-' && name[1] == '\0') 
       || (name[0] == '>' && name[1] == '\0') ) {
 
@@ -529,8 +529,8 @@ void _openWriteImage(_image* im, const char *name)
 CGAL_INLINE_FUNCTION
 void setImageIOAllocationRoutines(ALLOCATION_FUNCTION alloc,
 				  DEALLOCATION_FUNCTION del) {
-  if(alloc != NULL) allocRoutine = alloc;
-  if(del != NULL) deleteRoutine = del;
+  if(alloc != nullptr) allocRoutine = alloc;
+  if(del != nullptr) deleteRoutine = del;
 }
 
 
@@ -575,7 +575,7 @@ _image *_initImage() {
   _image *im;
 
   im = (_image *) ImageIO_alloc(sizeof(_image));
-  if ( im == NULL ) return( im );
+  if ( im == nullptr ) return( im );
 
   /* default image size is 1*1*1 */
   im->xdim = im->ydim = im->zdim = im->vdim = 1;
@@ -592,10 +592,10 @@ _image *_initImage() {
   im->rx = im->ry = im->rz = 0.0;
 
   /* no data yet */
-  im->data = NULL;
+  im->data = nullptr;
 
   /* no file associated to image */
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
   im->endianness = END_UNKNOWN;
 
@@ -605,7 +605,7 @@ _image *_initImage() {
   im->dataMode = DM_BINARY;
 
   /* no user string */
-  im->user = NULL;
+  im->user = nullptr;
   im->nuser = 0;
 
   /* unknown word kind */
@@ -613,10 +613,10 @@ _image *_initImage() {
   im->wordKind = WK_UNKNOWN;
   im->vectMode = VM_SCALAR;
   im->sign = SGN_UNKNOWN;
-  im->imageFormat = NULL;
+  im->imageFormat = nullptr;
 
   /** eventually initializes the supported file formats */
-  if (get_static_firstFormat()==NULL)
+  if (get_static_firstFormat()==nullptr)
     initSupportedFileFormat();
   /* return image descriptor */
   return im;
@@ -630,7 +630,7 @@ _image *_createImage(int x, int y, int z, int v,
   _image *im;
   
   im = (_image *) ImageIO_alloc(sizeof(_image));
-  if ( im == NULL ) return( im );
+  if ( im == nullptr ) return( im );
   
   im->xdim = x;
   im->ydim = y;
@@ -653,7 +653,7 @@ _image *_createImage(int x, int y, int z, int v,
   im->data = ImageIO_alloc(std::size_t(x)*std::size_t(y)*std::size_t(z)*std::size_t(v)*std::size_t(w));
 
   /* no file associated to image */
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
   im->endianness = END_UNKNOWN;
 
@@ -663,7 +663,7 @@ _image *_createImage(int x, int y, int z, int v,
   im->dataMode = DM_BINARY;
 
   /* no user string */
-  im->user = NULL;
+  im->user = nullptr;
   im->nuser = 0;
 
   /* unknown word kind */
@@ -671,10 +671,10 @@ _image *_createImage(int x, int y, int z, int v,
   im->wordKind = wk;
   im->vectMode = VM_SCALAR;
   im->sign = sgn;
-  im->imageFormat = NULL;
+  im->imageFormat = nullptr;
 
   /** eventually initializes the supported file formats */
-  if (get_static_firstFormat()==NULL)
+  if (get_static_firstFormat()==nullptr)
     initSupportedFileFormat();
   /* return image descriptor */
   return im;
@@ -698,23 +698,23 @@ CGAL_INLINE_FUNCTION
 void _freeImage(_image *im) {
   unsigned int i;
 
-  if ( im == NULL ) return;
+  if ( im == nullptr ) return;
 
   /* close image if opened */
   if(im->openMode != OM_CLOSE) ImageIO_close(im);
 
   /* free data if any */
-  if(im->data != NULL) ImageIO_free(im->data);
-  im->data = NULL;
+  if(im->data != nullptr) ImageIO_free(im->data);
+  im->data = nullptr;
 
   /* free user string array if any */
-  if( (im->nuser > 0) && (im->user != NULL) ) {
+  if( (im->nuser > 0) && (im->user != nullptr) ) {
     for(i = 0; i < im->nuser; i++)
-      if ( im->user[i] != NULL ) ImageIO_free(im->user[i]);
+      if ( im->user[i] != nullptr ) ImageIO_free(im->user[i]);
     ImageIO_free(im->user);
   }
   im->nuser = 0;
-  im->user = NULL;
+  im->user = nullptr;
 
   /* free given descriptor */
   ImageIO_free(im);
@@ -724,9 +724,9 @@ void _freeImage(_image *im) {
 
 
 
-/* Reads an image from a file and returns an image descriptor or NULL if
+/* Reads an image from a file and returns an image descriptor or nullptr if
    reading failed.
-   Reads from stdin if image name is NULL. */
+   Reads from stdin if image name is nullptr. */
 CGAL_INLINE_FUNCTION
 _image* _readImage(const char *name) {
   _image *im;
@@ -735,13 +735,13 @@ _image* _readImage(const char *name) {
   /* read header */
   im = _readImageHeader( name );
 
-  if(im != NULL && im->openMode != OM_CLOSE) {
+  if(im != nullptr && im->openMode != OM_CLOSE) {
     /* read body */
     if(_readImageData(im) < 0) {
       fprintf(stderr, "_readImage: error: invalid data encountered in \'%s\'\n",
 	      name);
       _freeImage(im);
-      return NULL;
+      return nullptr;
     }
     ImageIO_close(im);
   }
@@ -764,10 +764,10 @@ _image* _readImage_raw(const char *name,
                        SIGN sgned
                        )
 {
-  _image *im = NULL;
+  _image *im = nullptr;
   im = (_image *) ImageIO_alloc(sizeof(_image));
-  if ( im == NULL )
-    return NULL;
+  if ( im == nullptr )
+    return nullptr;
 
   im->xdim = rx;
   im->ydim = ry;
@@ -787,14 +787,14 @@ _image* _readImage_raw(const char *name,
   im->rx = im->ry = im->rz = 0.0;
 
 
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
   im->endianness = END_UNKNOWN;
 
   im->dataMode = DM_BINARY;
 
   // no user string
-  im->user = NULL;
+  im->user = nullptr;
   im->nuser = 0;
 
   // word type (unsigned byte)
@@ -802,14 +802,14 @@ _image* _readImage_raw(const char *name,
   im->wordKind = wk;
   im->vectMode = VM_SCALAR;
   im->sign = sgned;
-  im->imageFormat = NULL;
+  im->imageFormat = nullptr;
 
   // read file
   ::_openReadImage(im, name);
   if(!im->fd) {
     fprintf(stderr, "_readImage_raw: error: unable to open file \'%s\'\n", name);
     _freeImage(im);
-    return NULL;
+    return nullptr;
   }
 
   // read offset
@@ -820,8 +820,8 @@ _image* _readImage_raw(const char *name,
   }
   // allocate memory
   im->data = ImageIO_alloc(rx*ry*rz*wdim);
-  if(im->data == NULL)
-    return NULL;
+  if(im->data == nullptr)
+    return nullptr;
 
   // read
   ImageIO_read(im, im->data, rx*ry*rz*wdim);
@@ -844,9 +844,9 @@ _image* _readImage_raw(const char *name,
   return im;
 }
 
-/* Reads an image from a file and returns an image descriptor or NULL if<br>
+/* Reads an image from a file and returns an image descriptor or nullptr if<br>
    reading failed.<br>
-   Reads from stdin if image name is NULL.
+   Reads from stdin if image name is nullptr.
    If the image is vectorial, it is uninterlaced. */
 CGAL_INLINE_FUNCTION
 _image* _readNonInterlacedImage(const char *name) {
@@ -862,7 +862,7 @@ _image* _readNonInterlacedImage(const char *name) {
 	fprintf(stderr, "_readImage: error: invalid data encountered in \'%s\'\n",
 		name);
 	_freeImage(im);
-	return NULL;
+	return nullptr;
       }
     }
     /* read vectorial image body */
@@ -872,7 +872,7 @@ _image* _readNonInterlacedImage(const char *name) {
 	fprintf(stderr, "_readImage: error: invalid data encountered in \'%s\'\n",
 		name);
 	_freeImage(im);
-	return NULL;
+	return nullptr;
       }
     }
     ImageIO_close(im);
@@ -893,23 +893,23 @@ _image* _readNonInterlacedImage(const char *name) {
 
 /* Write inrimage given in inr in file name. If file name's suffix is
    .gz, the image is gziped. If file name's suffix is .hdr, the image
-   is written in ANALYZE format. If file name is NULL, image is written
+   is written in ANALYZE format. If file name is nullptr, image is written
    on stdout */
 CGAL_INLINE_FUNCTION
 int _writeImage(_image *im, const char *name_to_be_written ) {
   int r = ImageIO_NO_ERROR;
   std::size_t length = 0;
-  char *name = NULL;
-  char *baseName = NULL;
+  char *name = nullptr;
+  char *baseName = nullptr;
 
-  if ( im == NULL ) return -1;
+  if ( im == nullptr ) return -1;
 
   /* different conventions for the standard input
    */
-  if ( name_to_be_written == NULL || name_to_be_written[0] == '\0' 
+  if ( name_to_be_written == nullptr || name_to_be_written[0] == '\0' 
        || (name_to_be_written[0] == '-' && name_to_be_written[1] == '\0') 
        || (name_to_be_written[0] == '>' && name_to_be_written[1] == '\0') ) {
-    name = NULL;
+    name = nullptr;
   }
   else {
     name = strdup( name_to_be_written );
@@ -919,7 +919,7 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
 
   /* what is the wanted format
    */
-  if ( name == NULL ) {
+  if ( name == nullptr ) {
     im->imageFormat = get_static_inrimageFormat();
   } else {
     std::size_t i,extLength;
@@ -929,10 +929,10 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
     
     
     /* scan all formats; */
-    im->imageFormat=NULL;
+    im->imageFormat=nullptr;
     length=strlen(name);
 
-    for(f=get_static_firstFormat();(f!=NULL)&& (im->imageFormat==NULL);f=f->next) {
+    for(f=get_static_firstFormat();(f!=nullptr)&& (im->imageFormat==nullptr);f=f->next) {
       /* scan all extensions for that format */
       ptr=&f->fileExtension[0];
 
@@ -960,7 +960,7 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
 	    baseName[i]='\0';
 	}
 
-      } while (((*ptr)!='\0') && (im->imageFormat==NULL));
+      } while (((*ptr)!='\0') && (im->imageFormat==nullptr));
     }
 
     if (!im->imageFormat) { 
@@ -978,15 +978,15 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
 
   if(!im->fd) {
      fprintf(stderr, "_writeImage: error: open failed\n");
-     if ( name != NULL ) free( name );
-     if ( baseName != NULL ) free( baseName );
+     if ( name != nullptr ) free( name );
+     if ( baseName != nullptr ) free( baseName );
      return ImageIO_OPENING;
   }
   */
 
   if (im->imageFormat) {
 
-    if (im->imageFormat->writeImage==NULL) {
+    if (im->imageFormat->writeImage==nullptr) {
       im->imageFormat=get_static_inrimageFormat();
     }
 
@@ -1008,11 +1008,11 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
   /* close file descriptor */
   ImageIO_close( im );
 
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
 
-  if ( baseName != NULL ) free( baseName );
-  if ( name != NULL ) free( name );
+  if ( baseName != nullptr ) free( baseName );
+  if ( name != nullptr ) free( name );
  
   return r;
 }
@@ -1058,7 +1058,7 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
 {
   _image *im;
   char magic[5];
-  char *name = NULL;
+  char *name = nullptr;
   PTRIMAGE_FORMAT f;
   int res;
 
@@ -1066,10 +1066,10 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
   
   /* open image file */
   im = _initImage();
-  if ( name_to_be_read == NULL || name_to_be_read[0] == '\0' 
+  if ( name_to_be_read == nullptr || name_to_be_read[0] == '\0' 
        || (name_to_be_read[0] == '-' && name_to_be_read[1] == '\0') 
        || (name_to_be_read[0] == '<' && name_to_be_read[1] == '\0') ) {
-    name = NULL;
+    name = nullptr;
   }
   else {
     name = strdup( name_to_be_read );
@@ -1079,15 +1079,15 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
   _openReadImage(im, name);	
 
   if(!im->fd) {
-    if(name == NULL) {
-      fprintf(stderr, "_readImageHeaderAndGetError: error: NULL file name\n");
+    if(name == nullptr) {
+      fprintf(stderr, "_readImageHeaderAndGetError: error: nullptr file name\n");
     }  else {
       fprintf(stderr, "_readImageHeaderAndGetError: error: unable to open file \'%s\'\n", name);
     }
     _freeImage(im);
     *error = ImageIO_OPENING;
-    if ( name != NULL ) free( name );
-    return NULL;
+    if ( name != nullptr ) free( name );
+    return nullptr;
   }
 
   initSupportedFileFormat();
@@ -1105,7 +1105,7 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
     magic[4] = '\0';
     ImageIO_seek(im, 0L, SEEK_SET);
     /** test each format */
-    for(f=get_static_firstFormat();(f!=NULL)&& (im->imageFormat==NULL);f=f->next) {
+    for(f=get_static_firstFormat();(f!=nullptr)&& (im->imageFormat==nullptr);f=f->next) {
       /* test if it is the correct format based on magic and file extension */
       if (((*f->testImageFormat)(magic, name)) >=0) {
 	im->imageFormat=f;
@@ -1113,13 +1113,13 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
     }
   }
 
-  if ( im->imageFormat == NULL ) {
+  if ( im->imageFormat == nullptr ) {
     fprintf(stderr, "_readImageHeaderAndGetError: does not find image format for \'%s\'\n", name);
     ImageIO_close( im );
     _freeImage(im);
     *error = ImageIO_UNKNOWN_TYPE;
-    if ( name != NULL ) free( name );
-    return NULL;
+    if ( name != nullptr ) free( name );
+    return nullptr;
   }
 
   /* now tests if the header can be read correctly */
@@ -1127,19 +1127,19 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
   res=(*(im->imageFormat)->readImageHeader)(name,im);
   /* could read header only */ 
   if (res == 0) {
-    if ( name != NULL ) free( name );
+    if ( name != nullptr ) free( name );
     return( im );
   } 
   /* could read header and data */
   else if ( res > 0 ) {
     ImageIO_close(im);
-    if ( name != NULL ) free( name );
+    if ( name != nullptr ) free( name );
     return im;
   }  
 
   /* could not read error : throw error */
   fprintf(stderr, "_readImageHeaderAndGetError: an error occurs when reading image\n" );
-  if ( name == NULL || im->openMode == OM_STD) {
+  if ( name == nullptr || im->openMode == OM_STD) {
     fprintf(stderr, "\t from \'standard input\'" );
   }
   else {
@@ -1149,8 +1149,8 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
   ImageIO_close( im );
   _freeImage(im);
   *error = ImageIO_READING_HEADER;
-  if ( name != NULL ) free( name );
-  return NULL;
+  if ( name != nullptr ) free( name );
+  return nullptr;
 
 }
 
@@ -1243,7 +1243,7 @@ static void _swapImageData( _image *im )
 
 
 /* Read data of an inrimage.
-   If im->data is not NULL, assume that the buffer was previously allocated
+   If im->data is not nullptr, assume that the buffer was previously allocated
    Swap bytes depending on the endianness and the current architecture  */
 CGAL_INLINE_FUNCTION
 int _readImageData(_image *im) {
@@ -1280,7 +1280,7 @@ int _readImageData(_image *im) {
 
 /* Read data of a vectorial inrimage, making the resulting buffer non-
    inerlaced.
-   If im->data is not NULL, assume that the buffer was previously allocated
+   If im->data is not nullptr, assume that the buffer was previously allocated
    Swap bytes depending on the endianness and the current architecture. */
 CGAL_INLINE_FUNCTION
 int _readNonInterlacedImageData(_image *im) {
@@ -1472,7 +1472,7 @@ PTRIMAGE_FORMAT imageType(const char *fileName) {
 #endif
   }
 
-  if(!f) return NULL;
+  if(!f) return nullptr;
   
 #ifdef CGAL_USE_ZLIB
   gzread( f, (void *) magic, 4);
@@ -1489,10 +1489,10 @@ PTRIMAGE_FORMAT imageType(const char *fileName) {
   if(fileName) fclose( f );
 #endif
 
-  if (get_static_firstFormat()==NULL)
+  if (get_static_firstFormat()==nullptr)
     initSupportedFileFormat();
 
-  for(format=get_static_firstFormat();(format!=NULL);format=format->next) {
+  for(format=get_static_firstFormat();(format!=nullptr);format=format->next) {
     /* test if it is the correct header based on magic and file extension */
     if (((*format->testImageFormat)(magic,fileName)) >=0) {
       return format;
@@ -1550,13 +1550,13 @@ int addImageFormatAtEnd( PTRIMAGE_FORMAT format)
        (strlen(format->fileExtension)>0) &&
        (strlen(format->realName)>0) ) {
 
-    format->next = NULL;
+    format->next = nullptr;
     
-    if (get_static_firstFormat() == NULL) {
+    if (get_static_firstFormat() == nullptr) {
       get_static_firstFormat()=format;
     }
     else {
-      for(f=get_static_firstFormat();(f->next!=NULL);f=f->next)
+      for(f=get_static_firstFormat();(f->next!=nullptr);f=f->next)
 	;
       f->next=format;    
     }
@@ -1577,7 +1577,7 @@ CGAL_INLINE_FUNCTION
 void initSupportedFileFormat() 
 {
   PTRIMAGE_FORMAT f;
-  if ( get_static_inrimageFormat() == NULL ) {
+  if ( get_static_inrimageFormat() == nullptr ) {
     f = createAnalyzeFormat();
     addImageFormatAtEnd( f );
     f = createBMPFormat();
@@ -1616,7 +1616,7 @@ void printSupportedFileFormat() {
 
   initSupportedFileFormat();
 
-  for(i=0, f=get_static_firstFormat();(f!=NULL);i++, f=f->next) {
+  for(i=0, f=get_static_firstFormat();(f!=nullptr);i++, f=f->next) {
     if ( (f->testImageFormat) &&
 	 (f->readImageHeader) &&
 	 (strlen(f->fileExtension)>0) &&
@@ -1638,12 +1638,12 @@ CGAL_INLINE_FUNCTION
 void removeSupportedFileFormat() {    
   PTRIMAGE_FORMAT f=get_static_firstFormat();
   
-  while( f != NULL) {
+  while( f != nullptr) {
     PTRIMAGE_FORMAT f_old = f;
     f = f->next;
     ImageIO_free( f_old);
   }
-  get_static_inrimageFormat()=NULL;
+  get_static_inrimageFormat()=nullptr;
 
 }
 
@@ -1727,7 +1727,7 @@ void convertImageTypeToFloat(_image* image){
   const std::size_t dimz = image->zdim;
   
   float * array = (float*)ImageIO_alloc (dimx * dimy * dimz *sizeof(float));
-  if (array == NULL ) {
+  if (array == nullptr ) {
     fprintf ( stderr, "allocation error\n" );
     return;
   }

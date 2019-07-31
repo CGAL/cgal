@@ -144,7 +144,7 @@ pricing_helper(int& /*direction*/, Tag_true ) // standard form
 	}
     }
 
-    // certify non-existance of entering variable, if necessary
+    // certify non-existence of entering variable, if necessary
     if ( min_j < 0) {
 
 	// update row and column maxima

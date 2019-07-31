@@ -64,7 +64,7 @@ void surface_mesh_cache_bbox(const char* fname)
   t.start();
   Bbox_pmap bb = tmesh.add_property_map<face_descriptor,Bbox_3>("f:bbox",Bbox_3()).first;
  
-  BOOST_FOREACH(face_descriptor fd, faces(tmesh)){
+  for(face_descriptor fd : faces(tmesh)){
     put(bb, fd, bbox(fd,tmesh));
   }
   Traits traits(bb);

@@ -45,16 +45,8 @@
 #include <cmath>
 #include <limits>
 
-#if !defined CGAL_CFG_NO_CPP0X_ISFINITE
-  #define CGAL_CORE_finite(x)	std::isfinite(x)
-  #define CGAL_CORE_ilogb(x)	ilogb(x)
-#elif defined (_MSC_VER) || defined (__MINGW32__) // add support for MinGW
-  #define CGAL_CORE_finite(x)	_finite(x)
-  #define CGAL_CORE_ilogb(x)	(int)_logb(x)
-#else
-  #define CGAL_CORE_finite(x)	finite(x)
-  #define CGAL_CORE_ilogb(x)	ilogb(x)
-#endif
+#define CGAL_CORE_finite(x)	std::isfinite(x)
+#define CGAL_CORE_ilogb(x)	ilogb(x)
 
 #if defined(sun) || defined(__sun)
   #include <ieeefp.h>

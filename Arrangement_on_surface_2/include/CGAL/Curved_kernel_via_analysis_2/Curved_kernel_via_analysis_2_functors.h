@@ -93,7 +93,7 @@ public:
     Curved_kernel_via_analysis_2_functor_base(
             Curved_kernel_via_analysis_2 *kernel) :
         _m_curved_kernel(kernel) {
-        CGAL_precondition(kernel != NULL);
+        CGAL_precondition(kernel != nullptr);
     }
 
     //!@}
@@ -458,6 +458,8 @@ public:
         Arc_2 arc(x, c);
         return arc;
     }
+
+    //!@}
 };
 
 /*!\brief
@@ -2668,7 +2670,7 @@ public:
     
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-
+    //!@}
 //     typedef Curved_kernel_via_analysis_2_functors<
 //         CurvedKernelViaAnalysis_2 > Functor_base;
    

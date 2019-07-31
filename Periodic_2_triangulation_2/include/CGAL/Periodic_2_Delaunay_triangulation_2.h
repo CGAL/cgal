@@ -57,17 +57,17 @@ public:
 
   typedef typename Gt::Periodic_2_offset_2     Offset;
   typedef typename Gt::Iso_rectangle_2         Iso_rectangle;
-  typedef array<int, 2>                        Covering_sheets;
+  typedef std::array<int, 2>                   Covering_sheets;
 
   typedef typename Gt::FT                      FT;
   typedef typename Gt::Point_2                 Point;
   typedef typename Gt::Segment_2               Segment;
   typedef typename Gt::Triangle_2              Triangle;
 
-  typedef std::pair<Point, Offset>              Periodic_point;
-  typedef array< std::pair<Point, Offset>, 2>   Periodic_segment;
-  typedef array< std::pair<Point, Offset>, 3>   Periodic_triangle;
-  typedef array< std::pair<Point, Offset>, 4>   Periodic_tetrahedron;
+  typedef std::pair<Point, Offset>                   Periodic_point;
+  typedef std::array< std::pair<Point, Offset>, 2>   Periodic_segment;
+  typedef std::array< std::pair<Point, Offset>, 3>   Periodic_triangle;
+  typedef std::array< std::pair<Point, Offset>, 4>   Periodic_tetrahedron;
 
   typedef typename Base::size_type              size_type;
   typedef typename Base::Locate_type            Locate_type;
@@ -153,9 +153,7 @@ public:
     insert(first, last);
   }
   
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   Periodic_2_Delaunay_triangulation_2& operator=(const Periodic_2_Delaunay_triangulation_2&)=default;
-#endif
   // \}
 
   /// \name Methods regarding the covering
@@ -222,7 +220,7 @@ public:
          boost::is_convertible <
          typename std::iterator_traits<InputIterator>::value_type,
          Point
-         > >::type* = NULL)
+         > >::type* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t
@@ -434,7 +432,7 @@ public:
           boost::is_convertible <
           typename std::iterator_traits<InputIterator>::value_type,
           std::pair<Point, typename internal::Info_check<typename Tds::Vertex>::type>
-          > >::type* = NULL
+          > >::type* = nullptr
         )
   {
     return insert_with_info< std::pair<Point, typename internal::Info_check<typename Tds::Vertex>::type> >(first, last, is_large_point_set);
@@ -449,7 +447,7 @@ public:
           boost::mpl::and_ <
           boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
           boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-          > >::type* = NULL)
+          > >::type* = nullptr)
   {
     return insert_with_info< boost::tuple<Point, typename internal::Info_check<typename Tds::Vertex>::type> >(first, last, is_large_point_set);
   }
@@ -5242,7 +5240,7 @@ void Periodic_2_Delaunay_triangulation_2<Gt, Tds>::fill_hole_delaunay(std::list<
       typename Hole::iterator cut_after(hit);
 
       // if tested vertex is c with respect to the vertex opposite
-      // to NULL neighbor,
+      // to nullptr neighbor,
       // stop at the before last face;
       hdone--;
       while( hit != hdone)
@@ -5418,7 +5416,7 @@ void Periodic_2_Delaunay_triangulation_2<Gt, Tds>::fill_hole_delaunay(
       typename Hole::iterator cut_after(hit);
 
       // if tested vertex is c with respect to the vertex opposite
-      // to NULL neighbor,
+      // to nullptr neighbor,
       // stop at the before last face;
       hdone--;
       while( hit != hdone)

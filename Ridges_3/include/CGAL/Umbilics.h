@@ -89,7 +89,7 @@ operator<<(std::ostream& out_stream, const Umbilic<TriangleMesh>& umbilic)
     case CGAL::NON_GENERIC_UMBILIC: out_stream << "non generic" << std::endl; break;
     case CGAL::ELLIPTIC_UMBILIC: out_stream << "elliptic" << std::endl; break;
     case CGAL::HYPERBOLIC_UMBILIC: out_stream << "hyperbolic" << std::endl; break;
-    default : out_stream << "Something wrong occured for sure..." << std::endl; break;
+    default : out_stream << "Something wrong occurred for sure..." << std::endl; break;
     }
   return out_stream;
 }

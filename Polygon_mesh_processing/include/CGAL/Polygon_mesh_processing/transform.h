@@ -57,7 +57,7 @@ void transform(const Transformation& transformation,
   VPMap vpm = choose_param(get_param(np, internal_np::vertex_point),
                            get_property_map(vertex_point, mesh));
   
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd, vertices(mesh))
+  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd : vertices(mesh))
   {
     put(vpm, vd, transformation(get(vpm, vd)));
   }

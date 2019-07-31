@@ -31,7 +31,6 @@ CGAL packages, some are only needed for demos.
 
    * Boost (>= 1.48)
      Required for building CGAL and for applications using CGAL
-     Required compiled Boost library: Boost.Thread, Boost.System
      Optional compiled Boost library: Boost.Program_options
      http://www.boost.org/   or   http://www.boostpro.com/products/free/
      You need the former if you plan to compile the boost libraries yourself,
@@ -75,14 +74,6 @@ CGAL packages, some are only needed for demos.
        * Planar Parameterization of Triangulated Surface Meshes
        * Surface Reconstruction from Point Sets
        http://eigen.tuxfamily.org/index.php?title=Main_Page
-
-     - BLAS, LAPACK, ATLAS
-       Required by the packages (if EIGEN is not available):
-       * Estimation of Local Differential Properties of Point-Sampled Surfaces
-       * Approximation of Ridges and Umbilics on Triangulated Surface Meshes
-       * Planar Parameterization of Triangulated Surface Meshes
-       http://www.netlib.org/blas/, http://www.netlib.org/lapack/
-       or precompiled version that can be downloaded with CGAL-x.y-Setup.exe
 
      - MPFI
        Required by the package:

@@ -261,7 +261,7 @@ public:
        Traits::empty_vtx_handle(),
        Traits::empty_he_handle(),
        Traits::empty_he_handle(),
-       Td_map_item(0), Td_map_item(0) , Td_map_item(0) , Td_map_item(0), NULL);
+       Td_map_item(0), Td_map_item(0) , Td_map_item(0) , Td_map_item(0), nullptr);
    
     //m_dag_node = 0;
   }

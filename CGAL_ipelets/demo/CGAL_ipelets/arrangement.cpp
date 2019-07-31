@@ -96,11 +96,11 @@ void ArrPolyIpelet::protected_run(int fn){
 
   for (std::list<Circular_arc_2>::iterator it=arc_list.begin();it!=arc_list.end();++it)
     input_curves.push_back(
-      Curve_2( CGAL::cpp11::get<0>(*it).center(),
-               sqrt(CGAL::to_double(CGAL::cpp11::get<0>(*it).squared_radius())),
-               CGAL::cpp11::get<3>(*it),
-               Traits::Point_2(CGAL::cpp11::get<1>(*it).x(),CGAL::cpp11::get<1>(*it).y()),
-               Traits::Point_2(CGAL::cpp11::get<2>(*it).x(),CGAL::cpp11::get<2>(*it).y())
+      Curve_2( std::get<0>(*it).center(),
+               sqrt(CGAL::to_double(std::get<0>(*it).squared_radius())),
+               std::get<3>(*it),
+               Traits::Point_2(std::get<1>(*it).x(),std::get<1>(*it).y()),
+               Traits::Point_2(std::get<2>(*it).x(),std::get<2>(*it).y())
              )
       );
 

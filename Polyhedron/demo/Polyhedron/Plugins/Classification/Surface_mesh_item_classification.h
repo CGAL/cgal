@@ -70,7 +70,7 @@ public:
   }
   void reset_training_set (std::size_t label)
   {
-    BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+    for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
       if (m_training[fd] == label)
         m_training[fd] = std::size_t(-1);
     if (m_index_color == 1 || m_index_color == 2)
@@ -93,7 +93,7 @@ public:
   
   void reset_training_sets()
   {
-    BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+    for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
       m_training[fd] = std::size_t(-1);
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
@@ -170,7 +170,7 @@ protected:
     }
     
     std::vector<std::size_t> ground_truth(num_faces(*(m_mesh->polyhedron())), std::size_t(-1));
-    BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+    for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
     {
       m_classif[fd] = indices[fd];
       ground_truth[fd] = m_training[fd];

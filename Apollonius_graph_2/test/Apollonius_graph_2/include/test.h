@@ -1,7 +1,6 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_TEST_H
 #define CGAL_APOLLONIUS_GRAPH_2_TEST_H
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/enum.h>
 #include <CGAL/use.h>

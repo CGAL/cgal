@@ -83,11 +83,11 @@ plane_centered_circumcenterC3(const RT &ax, const RT &ay, const RT &az,
   //precondition: p,q,r aren't collinear.
   //method:
   // - tranlation of p to the origin.
-  plane_centered_circumcenter_translateC3(ax-px, ay-py, az-pz,
-                                          nx, ny, nz,
-                                          qx-px, qy-py,qz-pz,
-                                          rx-px, ry-py,rz-pz,
-                                          x, y, z);
+  plane_centered_circumcenter_translateC3<RT>(ax-px, ay-py, az-pz,
+                                              nx, ny, nz,
+                                              qx-px, qy-py,qz-pz,
+                                              rx-px, ry-py,rz-pz,
+                                              x, y, z);
   x+=px;
   y+=py;
   z+=pz;

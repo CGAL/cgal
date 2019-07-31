@@ -35,7 +35,6 @@
 #include <CGAL/Convex_hull_3/dual/interior_polyhedron_3.h>
 #include <CGAL/internal/Exact_type_selector.h>
 
-#include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 #include <list>
 #include <vector>
@@ -63,7 +62,7 @@ namespace CGAL
         // from primal faces
         boost::unordered_map<face_descriptor, vertex_descriptor> extreme_points;
 
-        BOOST_FOREACH (face_descriptor fd , faces( primal)){
+        for(face_descriptor fd : faces( primal)){
           halfedge_descriptor h = halfedge(fd,primal);
           Plane_3 p (get(vpm_primal, target(h, primal)),
                      get(vpm_primal, target(next(h, primal), primal)),
@@ -79,11 +78,11 @@ namespace CGAL
         }
         
         // build faces
-        BOOST_FOREACH (vertex_descriptor vd , vertices(primal)) {
+        for(vertex_descriptor vd : vertices(primal)) {
           //CGAL_assertion (it->is_bivalent() == false);
           
           std::list<vertex_descriptor> vertices;
-          BOOST_FOREACH(face_descriptor fd, faces_around_target(halfedge(vd,primal),primal)){
+          for(face_descriptor fd : faces_around_target(halfedge(vd,primal),primal)){
             vertices.push_front(extreme_points[fd]);
           }
         Euler::add_face(vertices,dual);

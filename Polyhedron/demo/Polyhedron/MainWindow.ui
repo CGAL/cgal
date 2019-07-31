@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>978</width>
-    <height>594</height>
+    <width>1503</width>
+    <height>984</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,14 +20,21 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="Viewer" name="viewer" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="hl" stretch="0">
+      <item>
+       <widget class="QMdiArea" name="mdiArea">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="tabPosition">
+         <enum>QTabWidget::South</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -36,7 +43,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>978</width>
+     <width>1503</width>
      <height>20</height>
     </rect>
    </property>
@@ -85,20 +92,9 @@
      </property>
      <addaction name="dummyAction"/>
     </widget>
-    <widget class="QMenu" name="menuCamera">
-     <property name="title">
-      <string>Ca&amp;mera</string>
-     </property>
-     <addaction name="actionDumpCamera"/>
-     <addaction name="actionCopyCamera"/>
-     <addaction name="actionPasteCamera"/>
-    </widget>
-    <addaction name="actionRecenterScene"/>
-    <addaction name="actionLookAt"/>
-    <addaction name="actionDrawTwoSides"/>
-    <addaction name="actionSwitchProjection"/>
+    <addaction name="actionAdd_Viewer"/>
+    <addaction name="action_Rearrange_Viewers"/>
     <addaction name="menuDockWindows"/>
-    <addaction name="menuCamera"/>
     <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
@@ -294,7 +290,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>541</width>
+            <width>843</width>
             <height>176</height>
            </rect>
           </property>
@@ -414,48 +410,9 @@
     <string>Set Facegraph B</string>
    </property>
   </action>
-  <action name="actionDrawTwoSides">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Draw &amp;Two Sides</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+T</string>
-   </property>
-  </action>
-  <action name="actionRecenterScene">
-   <property name="text">
-    <string>Re&amp;center Scene</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+R</string>
-   </property>
-  </action>
-  <action name="actionLookAt">
-   <property name="text">
-    <string>&amp;Look at...</string>
-   </property>
-  </action>
   <action name="actionSaveSnapshot">
    <property name="text">
     <string>Save Snapshot</string>
-   </property>
-  </action>
-  <action name="actionDumpCamera">
-   <property name="text">
-    <string>&amp;Dump Camera Coordinates</string>
-   </property>
-  </action>
-  <action name="actionCopyCamera">
-   <property name="text">
-    <string>&amp;Copy Camera</string>
-   </property>
-  </action>
-  <action name="actionPasteCamera">
-   <property name="text">
-    <string>&amp;Paste Camera</string>
    </property>
   </action>
   <action name="actionSelectAllItems">
@@ -481,17 +438,19 @@
     <string>Load Plugin</string>
    </property>
   </action>
-  <action name="actionSwitchProjection">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Orthographic Projection</string>
-   </property>
-  </action>
   <action name="actionColorItems">
    <property name="text">
     <string>Set Different Colors for Selected Items</string>
+   </property>
+  </action>
+  <action name="actionAdd_Viewer">
+   <property name="text">
+    <string>Add &amp;Viewer</string>
+   </property>
+  </action>
+  <action name="action_Rearrange_Viewers">
+   <property name="text">
+    <string>&amp;Rearrange Viewers</string>
    </property>
   </action>
   <action name="actionSa_ve_Scene_as_Script">
@@ -505,16 +464,7 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>Viewer</class>
-   <extends>QWidget</extends>
-   <header>Viewer.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
-  <include location="Polyhedron_3.qrc"/>
-  <include location="Polyhedron_3.qrc"/>
   <include location="Polyhedron_3.qrc"/>
   <include location="Polyhedron_3.qrc"/>
  </resources>

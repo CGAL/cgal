@@ -262,8 +262,8 @@ public:
         class Allocator >
     inline void draw(const Arc_2& arc, 
             Container< std::vector< Coord_2 >, Allocator >& pts,
-            boost::optional< Coord_2 > *end_pt1 = NULL, 
-            boost::optional< Coord_2 > *end_pt2 = NULL) {
+            boost::optional< Coord_2 > *end_pt1 = nullptr, 
+            boost::optional< Coord_2 > *end_pt2 = nullptr) {
 
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         Bbox_2 bbox;
