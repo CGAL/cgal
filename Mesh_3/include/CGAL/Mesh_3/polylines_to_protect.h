@@ -682,6 +682,7 @@ case_4:
               // Diagonal, but the wrong one.
               // Vertical swap
               std::swap(square[0][1], square[0][0]);
+              std::swap(square[1][1], square[1][0]);
             }
             if(square[0][1].domain == square[1][0].domain) {
               // diagonal case 1-2-1
