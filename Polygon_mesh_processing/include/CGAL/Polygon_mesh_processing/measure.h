@@ -335,11 +335,12 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   halfedge_descriptor hd = halfedge(f, tmesh);
   halfedge_descriptor nhd = next(hd, tmesh);
 
-  typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type traits;
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type GT;
+  GT traits = choose_param(get_param(np, internal_np::vertex_point), GT());
 
-  return approximate_sqrt(traits.compute_squared_area_3_object()(get(vpm, source(hd, tmesh)),
-                                                                 get(vpm, target(hd, tmesh)),
-                                                                 get(vpm, target(nhd, tmesh))));
+  return traits.compute_area_3_object()(get(vpm, source(hd, tmesh)),
+                                        get(vpm, target(hd, tmesh)),
+                                        get(vpm, target(nhd, tmesh)));
 }
 
 template<typename TriangleMesh>
