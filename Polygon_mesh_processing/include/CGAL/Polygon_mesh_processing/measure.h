@@ -338,9 +338,9 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type GT;
   GT traits = choose_param(get_param(np, internal_np::geom_traits), GT());
 
-  return traits.compute_area_3_object()(get(vpm, source(hd, tmesh)),
-                                        get(vpm, target(hd, tmesh)),
-                                        get(vpm, target(nhd, tmesh)));
+  return approximate_sqrt(traits.compute_squared_area_3_object()(get(vpm, source(hd, tmesh)),
+                                                                 get(vpm, target(hd, tmesh)),
+                                                                 get(vpm, target(nhd, tmesh))));
 }
 
 template<typename TriangleMesh>
