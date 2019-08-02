@@ -174,6 +174,7 @@ remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 
   return ccs_to_remove.size();
 }
+
 template <typename TriangleMesh>
 std::size_t
 remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
