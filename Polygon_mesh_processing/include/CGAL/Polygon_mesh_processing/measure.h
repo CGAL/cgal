@@ -336,7 +336,7 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   halfedge_descriptor nhd = next(hd, tmesh);
 
   typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type GT;
-  GT traits = choose_param(get_param(np, internal_np::vertex_point), GT());
+  GT traits = choose_param(get_param(np, internal_np::geom_traits), GT());
 
   return traits.compute_area_3_object()(get(vpm, source(hd, tmesh)),
                                         get(vpm, target(hd, tmesh)),
