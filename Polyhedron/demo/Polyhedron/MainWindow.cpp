@@ -250,8 +250,8 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
           this, SLOT(selectionChanged()));
   // setup menu filtering
   connect(sceneView->selectionModel(),
-          SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
-          this, SLOT(filterOperations()));
+          qOverload<const QItemSelection & , const QItemSelection &>(&QItemSelectionModel::selectionChanged),
+          this, [=](){filterOperations(false);});
 
   sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
@@ -355,7 +355,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   operationSearchBar.setPlaceholderText("Filter...");
   searchAction->setDefaultWidget(&operationSearchBar);  
   connect(&operationSearchBar, &QLineEdit::textChanged,
-          this, &MainWindow::filterOperations);
+          this, [=](){filterOperations(true);});
   loadPlugins();
   accepted_keywords.clear();
 
@@ -460,11 +460,14 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
   }
 }
 
-void MainWindow::filterOperations()
+void MainWindow::filterOperations(bool hide)
 {
   //on some platforms editing an open menu slows everything like hell,
   //so we hide it for the time of the process.
-  ui->menuOperations->hide();
+#ifdef Q_OS_WIN
+  if(hide)
+    ui->menuOperations->hide();
+#endif()
   //return actions to their true menu
   Q_FOREACH(QMenu* menu, action_menu_map.values())
   {
@@ -491,7 +494,10 @@ void MainWindow::filterOperations()
   }
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   filterMenuOperations(ui->menuOperations, filter, false);
-  ui->menuOperations->show();
+#ifdef Q_OS_WIN
+  if(hide)
+    ui->menuOperations->show();
+#endif
   operationSearchBar.setFocus();
 }
 
