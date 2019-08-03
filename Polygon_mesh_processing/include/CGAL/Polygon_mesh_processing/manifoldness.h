@@ -275,7 +275,7 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
       }
       else
       {
-        // Ensure that halfedge(old_v, pm) stays valid
+        // We are in the first sector and first star, ensure that halfedge(old_v, pm) stays valid
         set_halfedge(old_v, sector_start_h, pm);
       }
 
