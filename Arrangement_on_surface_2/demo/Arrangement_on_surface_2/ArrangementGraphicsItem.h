@@ -514,6 +514,156 @@ protected:
 
 #endif
 
+#ifdef CGAL_USE_CORE
+  template <typename RatKernel, typename AlgKernel, typename NtTraits >
+  void
+  paintFace( Face_handle f, QPainter* painter,
+             CGAL::Arr_Bezier_curve_traits_2 <RatKernel, AlgKernel, NtTraits > ) {
+    if (! f->is_unbounded())  // f is not the unbounded face
+    {
+      QVector< QPointF > pts; // holds the points of the polygon
+      /* running with around the outer of the face and generate from it
+       * polygon
+       */
+      Ccb_halfedge_circulator cc=f->outer_ccb();
+      do
+      {
+        if (this->antenna(cc))
+        {
+          continue;
+        }
+
+        Halfedge_handle he = cc;
+        X_monotone_curve_2 c = he->curve();
+        // Get the co-ordinates of the curve's source and target.
+        double sx = CGAL::to_double(he->source()->point().x()),
+          sy = CGAL::to_double(he->source()->point().y()),
+          tx = CGAL::to_double(he->target()->point().x()),
+          ty = CGAL::to_double(he->target()->point().y());
+
+        QPointF coord_source(sx, sy);
+        QPointF coord_target(tx, ty);
+
+        // Transform the point coordinates from general coordinate system to
+        // Qt scene coordinate system
+        QPoint coord_source_viewport = this->fromScene( coord_source );
+        QPoint coord_target_viewport = this->fromScene( coord_target );
+
+        if (c.orientation() == CGAL::COLLINEAR)
+        {
+          pts.push_back(coord_source );
+        }
+        else
+        {
+          // If the curve is monotone, than its source and its target has the
+          // extreme x co-ordinates on this curve.
+          bool is_source_left = (sx < tx);
+          int  x_min = is_source_left ?
+            coord_source_viewport.x( ) : coord_target_viewport.x( );
+          int  x_max = is_source_left ?
+            coord_target_viewport.x( ) : coord_source_viewport.x( );
+          double curr_x, curr_y;
+          int x;
+
+          Bezier_point px;
+
+          pts.push_back(coord_source );
+
+          // Draw the curve as pieces of small segments
+          const int DRAW_FACTOR = 5;
+          if (is_source_left)
+          {
+            for ( x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR )
+            {
+              //= COORD_SCALE)
+              curr_x = this->toScene( x );
+              Alg_kernel   ker;
+              Bezier_point curr_p(curr_x, 0);
+
+              // If curr_x > x_max or curr_x < x_min
+              if (!(ker.compare_x_2_object()(curr_p, c.left()) !=
+                    CGAL::SMALLER &&
+                    ker.compare_x_2_object()(curr_p, c.right()) !=
+                    CGAL::LARGER))
+              {
+                continue;
+              }
+
+              px = c.point_at_x (curr_p);
+              curr_y = CGAL::to_double(px.y());
+              QPointF curr( curr_x, curr_y );
+              pts.push_back( curr );
+            }// for
+          }
+          else
+          {
+            for ( x = x_max; x > x_min; x-=DRAW_FACTOR )
+            {
+              curr_x = this->toScene( x );
+              Alg_kernel   ker;
+              Bezier_point curr_p(curr_x, 0);
+              if (!(ker.compare_x_2_object() (curr_p, c.left()) !=
+                    CGAL::SMALLER &&
+                    ker.compare_x_2_object() (curr_p, c.right()) !=
+                    CGAL::LARGER))
+              {
+                continue;
+              }
+
+              px = c.point_at_x (curr_p);
+              curr_y = CGAL::to_double(px.y());
+              QPointF curr( curr_x, curr_y );
+              pts.push_back( curr );
+            }// for
+          }// else
+          pts.push_back(coord_target );
+        }
+        //created from the outer boundary of the face
+      } while (++cc != f->outer_ccb());
+
+      // make polygon from the outer ccb of the face 'f'
+      QPolygonF pgn( pts );
+
+      // fill the face according to its color (stored at any of her
+      // incidents curves)
+      QBrush oldBrush = painter->brush( );
+      QColor def_bg_color = this->backgroundColor;
+      if (! f->color().isValid())
+      {
+        painter->setBrush( def_bg_color );
+      }
+      else
+      {
+        painter->setBrush( f->color( ) );
+      }
+
+      QPen pen = painter->pen();
+      pen.setCosmetic(true);
+      painter->setPen(pen);
+
+      painter->drawPolygon( pgn );
+      painter->setBrush( oldBrush );
+    }
+    else
+    {
+      QRectF rect = this->viewportRect( );
+
+      QColor color = this->backgroundColor;
+      if ( f->color().isValid() )
+      {
+        color = f->color();
+      }
+      QBrush oldBrush = painter->brush( );
+      QPen pen = painter->pen();
+      pen.setCosmetic(true);
+      painter->setPen(pen);
+      painter->setBrush( color );
+      painter->drawRect(rect);
+      painter->setBrush( oldBrush );
+
+    }
+  }
+
   template < typename CircularKernel >
   void paintFace(Face_handle f, QPainter* painter,
                  CGAL::Arr_circular_arc_traits_2<CircularKernel> /* traits */);
