@@ -1012,7 +1012,7 @@ protected:
             Rat_point_2 p2 = Rat_point_2( qp2.x( ), qp2.y( ) );
             Rat_point_2 p3 = Rat_point_2( qp3.x( ), qp3.y( ) );
 
-            Curve_2 res( p1, p2, p3 );
+            Curve_2 res(points.begin(), points().end());
             Q_EMIT generate( CGAL::make_object( res ) );
         }
     }

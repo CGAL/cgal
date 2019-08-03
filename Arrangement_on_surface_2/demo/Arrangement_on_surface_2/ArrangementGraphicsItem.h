@@ -850,7 +850,7 @@ protected:
 
     }
   }
-
+#endif
 #if 0
   void drawDiagnosticArc( QPointF c, QPointF s, QPointF t, QPainter* qp )
   {
