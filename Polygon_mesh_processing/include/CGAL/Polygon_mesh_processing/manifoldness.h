@@ -104,6 +104,11 @@ struct Vertex_collector
   typedef typename boost::graph_traits<G>::vertex_descriptor      vertex_descriptor;
 
   bool has_old_vertex(const vertex_descriptor v) const { return collections.count(v) != 0; }
+  void tag_old_vertex(const vertex_descriptor v)
+  {
+    CGAL_precondition(!has_old_vertex(v));
+    collections[v];
+  }
 
   void collect_vertices(vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -204,16 +209,25 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
   while(ih != done);
 
   bool is_non_manifold_within_umbrella = (border_counter > 1);
-
-  // if there is a single sector, then simply move the full umbrella to a new vertex, and we're done
   if(!is_non_manifold_within_umbrella)
   {
-    // note that since this is marked as a non-manifold vertex, we necessarily need to create
-    // a new vertex for this umbrella (the main umbrella is not marked as non-manifold)
-    halfedge_descriptor last_h = opposite(next(h, pm), pm);
-    vertex_descriptor new_v = create_new_vertex_for_sector(h, last_h, pm, vpm, cmap);
-    dmap.collect_vertices(old_v, new_v);
-    nb_new_vertices = 1;
+    const bool first_time_meeting_v = !dmap.has_old_vertex(old_v);
+    if(first_time_meeting_v)
+    {
+      // The star is manifold, so if it is the first time we have met that vertex,
+      // there is nothing to do, we just keep the same vertex.
+      set_halfedge(old_v, h, pm); // to ensure halfedge(old_v, pm) stays valid
+      dmap.tag_old_vertex(old_v); // so that we know we have met old_v already, next time, we'll have to duplicate
+    }
+    else
+    {
+      // This is not the canonical star associated to 'v'.
+      // Create a new vertex, and move the whole star to that new vertex
+      halfedge_descriptor last_h = opposite(next(h, pm), pm);
+      vertex_descriptor new_v = create_new_vertex_for_sector(h, last_h, pm, vpm, cmap);
+      dmap.collect_vertices(old_v, new_v);
+      nb_new_vertices = 1;
+    }
   }
   // if there is more than one sector, look at each sector and split them away from the main one
   else
@@ -246,8 +260,8 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
       halfedge_descriptor next_start_h = prev(opposite(sector_last_h, pm), pm);
 
       // there are multiple CCs incident to this particular vertex, and we should create a new vertex
-      // if it's not the first umbrella around 'old_v' or not the first sector, but not if it's
-      // the first umbrella and first sector.
+      // if it's not the first umbrella around 'old_v' or not the first sector, but only not if it's
+      // both the first umbrella and first sector.
       bool must_create_new_vertex = (!is_main_sector || dmap.has_old_vertex(old_v));
 
       // In any case, we must set up the next pointer correctly
@@ -258,6 +272,11 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
         vertex_descriptor new_v = create_new_vertex_for_sector(sector_start_h, sector_last_h, pm, vpm, cmap);
         dmap.collect_vertices(old_v, new_v);
         ++nb_new_vertices;
+      }
+      else
+      {
+        // Ensure that halfedge(old_v, pm) stays valid
+        set_halfedge(old_v, sector_start_h, pm);
       }
 
       is_main_sector = false;
@@ -302,17 +321,25 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                  vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                halfedge_descriptor;
 
-  typedef CGAL::dynamic_vertex_property_t<bool>                                         Vertex_property_tag;
-  typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::const_type    Visited_vertex_map;
+  typedef CGAL::dynamic_vertex_property_t<bool>                                         Vertex_bool_tag;
+  typedef typename boost::property_map<PolygonMesh, Vertex_bool_tag>::const_type        Known_manifold_vertex_map;
+  typedef CGAL::dynamic_vertex_property_t<halfedge_descriptor>                          Vertex_halfedge_tag;
+  typedef typename boost::property_map<PolygonMesh, Vertex_halfedge_tag>::const_type    Visited_vertex_map;
   typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
   typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
 
-  Visited_vertex_map visited_vertices = get(Vertex_property_tag(), pm);
+  Known_manifold_vertex_map known_nm_vertices = get(Vertex_bool_tag(), pm);
+  Visited_vertex_map visited_vertices = get(Vertex_halfedge_tag(), pm);
   Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm);
+
+  halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
 
   // Dynamic pmaps do not have default initialization values (yet)
   for(vertex_descriptor v : vertices(pm))
-    put(visited_vertices, v, false);
+  {
+    put(known_nm_vertices, v, false);
+    put(visited_vertices, v, null_h);
+  }
   for(halfedge_descriptor h : halfedges(pm))
     put(visited_halfedges, h, false);
 
@@ -326,11 +353,22 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
       put(visited_halfedges, h, true);
       bool is_non_manifold = false;
 
-      vertex_descriptor vd = target(h, pm);
-      if(get(visited_vertices, vd)) // already seen this vertex, but not from this star
+      vertex_descriptor v = target(h, pm);
+
+      if(get(visited_vertices, v) != null_h) // already seen this vertex, but not from this star
+      {
         is_non_manifold = true;
 
-      put(visited_vertices, vd, true);
+        // if this is the second time we visit that vertex and the first star was manifold, we have
+        // never reported the first star, but we must now
+        if(!get(known_nm_vertices, v))
+          *out++ = get(visited_vertices, v); // that's a halfedge of the first star we've seen 'v' in
+      }
+      else
+      {
+        // first time we meet this vertex, just mark it so, and keep the halfedge we found the vertex with in memory
+        put(visited_vertices, v, h);
+      }
 
       // While walking the star of this halfedge, if we meet a border halfedge more than once,
       // it means the mesh is pinched and we are also in the case of a non-manifold situation
@@ -350,7 +388,10 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
         is_non_manifold = true;
 
       if(is_non_manifold)
+      {
         *out++ = h;
+        put(known_nm_vertices, v, true);
+      }
     }
   }
 
