@@ -115,7 +115,8 @@ namespace CGAL {
   namespace Polygon_mesh_processing
   {
 
-  template<typename PolygonMesh, typename NamedParameters>
+  template<typename PolygonMesh,
+           typename NamedParameters = cgal_bgl_named_params<bool, internal_np::all_default_t> >
   class GetVertexPointMap
   {
     typedef typename property_map_selector<PolygonMesh, boost::vertex_point_t>::const_type
