@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
+//                 Saurabh Singh <ssingh@cs.iitr.ac.in>
 
 #ifndef CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_H
 #define CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_H
