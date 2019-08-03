@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>,
+//                 Saurabh Singh <ssingh@cs.iitr.ac.in>
 
 #ifndef CGAL_QT_GRAPHICS_VIEW_CURVE_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_CURVE_INPUT_H

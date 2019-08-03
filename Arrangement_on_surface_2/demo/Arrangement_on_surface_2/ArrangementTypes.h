@@ -7,6 +7,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Alex Tsui <alextsui05@gmail.com>
+//                 Saurabh Singh <ssingh@cs.iitr.ac.in>
 
 #ifndef ARRANGEMENT_DEMO_TYPES_H
 #define ARRANGEMENT_DEMO_TYPES_H
