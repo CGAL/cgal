@@ -13,5 +13,5 @@ if(is_clipbox_on)
      dist[4]>0.0 ||
      dist[5]>0.0)
     discard;
-  gl_FragColor = highp vec4(color.xyz, alpha); 
+  gl_FragColor = vec4(color.xyz, alpha);
 }  
