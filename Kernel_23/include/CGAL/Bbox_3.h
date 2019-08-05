@@ -40,7 +40,7 @@ struct Simple_cartesian;
 
 class Bbox_3
 {
-  cpp11::array<double, 6>   rep;
+  std::array<double, 6>   rep;
 
 public:
 

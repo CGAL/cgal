@@ -67,7 +67,7 @@ public:
 };
 
 // a refined halfedge with a general tag and 
-// a binary tag to indicate wether it belongs 
+// a binary tag to indicate whether it belongs 
 // to the control mesh or not
 template <class Refs, class Tprev, class Tvertex, class Tface, class Norm>
 class Enriched_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
@@ -380,7 +380,7 @@ public :
     return CGAL::circulator_size(pVertex->vertex_begin());
   }
 
-  // check wether a vertex is on a boundary or not
+  // check whether a vertex is on a boundary or not
   static bool is_border(Vertex_handle pVertex)
   {
     Halfedge_around_vertex_circulator pHalfEdge = pVertex->vertex_begin();

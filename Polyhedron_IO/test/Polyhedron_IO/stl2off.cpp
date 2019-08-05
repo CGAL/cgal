@@ -42,11 +42,11 @@ int main(int, char**)
   std::cout.precision(17);
 
   // bunch of types to test
-  typedef CGAL::cpp11::array<double, 3>                               Point_type_1;
+  typedef std::array<double, 3>                               Point_type_1;
   typedef CGAL::Exact_predicates_exact_constructions_kernel::Point_3  Point_type_2;
   typedef std::basic_string<double>                                   Point_type_3;
 
-  typedef CGAL::cpp11::array<int, 3>                                  Polygon_type_1;
+  typedef std::array<int, 3>                                  Polygon_type_1;
   typedef std::vector<int>                                            Polygon_type_2;
   typedef std::basic_string<int>                                      Polygon_type_3;
 

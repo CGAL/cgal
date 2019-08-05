@@ -27,7 +27,7 @@ main() {
   //inserting N points one-by-one, thus the use of "reserve" is recommended, and we use it
   tree.reserve(N);
 
-  //to test wether the tree.capacity() function works properly.
+  //to test whether the tree.capacity() function works properly.
   if( tree.capacity() < N)
   {
     std::cerr << "ERROR: Something is wrong with allocating points memory." << std::endl;

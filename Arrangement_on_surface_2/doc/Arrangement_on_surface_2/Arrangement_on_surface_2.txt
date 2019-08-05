@@ -782,7 +782,7 @@ ability to answer such queries effectively.
 The `Arrangement_2` class template does not support point-location
 queries directly, as the arrangement representation is decoupled from
 the geometric algorithms that operate on it. The <I>2D Arrangements</I>
-package includes a set of classe templates that are capable of
+package includes a set of class templates that are capable of
 answering such queries; all are models of the concept
 `ArrangementPointLocation_2`. Each model employs a different
 algorithm or <I>strategy</I> for answering queries. A model of this

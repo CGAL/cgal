@@ -108,7 +108,7 @@ public:
 
 public:
   Cache() :
-    _rat_func_map_watermark(128), _rat_pair_map_watermark(128), _ak_ptr(NULL){};
+    _rat_func_map_watermark(128), _rat_pair_map_watermark(128), _ak_ptr(nullptr){};
 
   void initialize(Algebraic_kernel_d_1* ak_ptr)
   {
@@ -165,7 +165,7 @@ public:
   const Rational_function& get_rational_function(const Polynomial_1& numer,
                                                  const Polynomial_1& denom) const
   {
-    CGAL_precondition (_ak_ptr != NULL);
+    CGAL_precondition (_ak_ptr != nullptr);
     Rational_function_key key  = get_key(numer,denom);
 
     //look if element exists in cache already
@@ -204,7 +204,7 @@ public:
   const Rational_function_pair get_rational_pair(const Rational_function& f, 
                                                  const Rational_function& g) const
   {
-    CGAL_precondition (_ak_ptr != NULL);
+    CGAL_precondition (_ak_ptr != nullptr);
     CGAL_precondition(!(f==g));
     Rational_function_canonicalized_pair_key key  = get_key(f,g);
     bool is_opposite = (f.id() < g.id()) ? false : true ; 

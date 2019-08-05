@@ -1,10 +1,10 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Surface_mesh_simplification_Examples )
 
 
-cmake_minimum_required(VERSION 3.1)
 
 
 
@@ -54,6 +54,7 @@ create_single_source_cgal_program( "edge_collapse_linear_cell_complex.cpp" )
 create_single_source_cgal_program( "edge_collapse_constrained_border_surface_mesh.cpp" )
 create_single_source_cgal_program( "edge_collapse_all_short_edges.cpp" )
 create_single_source_cgal_program( "edge_collapse_bounded_normal_change.cpp" )
+create_single_source_cgal_program( "edge_collapse_visitor_surface_mesh.cpp" )
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "edge_collapse_OpenMesh.cpp" )

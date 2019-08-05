@@ -81,7 +81,7 @@ public:
 
   // CONSTRUCTORS
   //-------------
-  Halfedge(const VDA* vda = NULL)
+  Halfedge(const VDA* vda = nullptr)
     : vda_(vda), f_(Delaunay_face_handle()), i_(-1),
       v1_(Delaunay_vertex_handle()), v2_(Delaunay_vertex_handle()) {}
   Halfedge(const VDA* vda, Delaunay_face_handle f, int i)
@@ -272,7 +272,7 @@ public:
   // VALIDITY TESTING
   //-----------------
   bool is_valid() const {
-    if ( vda_ == NULL ) { return true; }
+    if ( vda_ == nullptr ) { return true; }
 
     bool valid = true;
 
@@ -309,8 +309,8 @@ public:
   // COMPARISON OPERATORS
   //---------------------
   bool operator==(const Self& other) const {
-    if ( vda_ == NULL ) { return other.vda_ == NULL; }
-    if ( other.vda_ == NULL ) { return vda_ == NULL; }
+    if ( vda_ == nullptr ) { return other.vda_ == nullptr; }
+    if ( other.vda_ == nullptr ) { return vda_ == nullptr; }
 
     if ( vda_->dual().dimension() == 1 ) {
       return ( vda_ == other.vda_ && v1_ == other.v1_ && v2_ == other.v2_ );
@@ -324,8 +324,8 @@ public:
   }
 
   bool operator<(const Self& other) const {
-    if ( vda_ == NULL ) { return other.vda_ != NULL; }
-    if ( other.vda_ == NULL ) { return false; }
+    if ( vda_ == nullptr ) { return other.vda_ != nullptr; }
+    if ( other.vda_ == nullptr ) { return false; }
 
     if ( vda_ != other.vda_ ) { return vda_ < other.vda_; }
     if ( vda_->dual().dimension() == 1 ) {

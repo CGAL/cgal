@@ -228,18 +228,18 @@ class SHalfedge_base  {
 	"level = " << level << "):" << std::endl;
 
       bool valid = (source_ != SVertex_handle() &&
-		    source_ != NULL &&
+		    source_ != nullptr &&
 		    source_ != Halfedge_handle());
-      valid = valid && (twin_  != SHalfedge_handle() && twin_  != NULL);
-      valid = valid && (sprev_ != SHalfedge_handle() && sprev_ != NULL);
-      valid = valid && (snext_ != SHalfedge_handle() && snext_ != NULL);
-      valid = valid && (prev_  != SHalfedge_handle() && prev_  != NULL);
-      valid = valid && (next_  != SHalfedge_handle() && next_  != NULL);
+      valid = valid && (twin_  != SHalfedge_handle() && twin_  != nullptr);
+      valid = valid && (sprev_ != SHalfedge_handle() && sprev_ != nullptr);
+      valid = valid && (snext_ != SHalfedge_handle() && snext_ != nullptr);
+      valid = valid && (prev_  != SHalfedge_handle() && prev_  != nullptr);
+      valid = valid && (next_  != SHalfedge_handle() && next_  != nullptr);
       
       valid = valid && (incident_sface_ != SFace_handle() && 
-			incident_sface_ != NULL);
+			incident_sface_ != nullptr);
       valid = valid && (facet_ != Halffacet_handle() &&
-			facet_ != NULL);
+			facet_ != nullptr);
       valid = valid && (circle_.d() == 0);
       valid = valid && (circle_.a() != 0 || circle_.b() != 0 || circle_.c() !=0);
       

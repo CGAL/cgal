@@ -47,7 +47,7 @@ class Bounded_face_tester
   Delaunay_vertex_circulator;
 
  public:
-  Bounded_face_tester(const VDA* vda = NULL) : vda_(vda) {}
+  Bounded_face_tester(const VDA* vda = nullptr) : vda_(vda) {}
 
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return false; }
@@ -83,7 +83,7 @@ class Unbounded_face_tester
   Delaunay_vertex_circulator;
 
  public:
-  Unbounded_face_tester(const VDA* vda = NULL) : vda_(vda) {}
+  Unbounded_face_tester(const VDA* vda = nullptr) : vda_(vda) {}
 
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return true; }

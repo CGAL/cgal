@@ -123,8 +123,8 @@ class Halffacet_base  {
 	verr << "begin CGAL::SNC_items<...>::Halffacet_base::is_valid( verb=true, "
 	  "level = " << level << "):" << std::endl;
 
-	bool valid = (twin_ != NULL && twin_ != Halffacet_handle());
-	valid = valid && (volume_ != NULL && volume_ != Volume_handle());
+	bool valid = (twin_ != nullptr && twin_ != Halffacet_handle());
+	valid = valid && (volume_ != nullptr && volume_ != Volume_handle());
       
 	valid = valid && (supporting_plane_.a() != 0 || 
 			  supporting_plane_.b() != 0 ||

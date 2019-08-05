@@ -79,7 +79,7 @@ read_off(std::istream& in,
       typedef typename boost::graph_traits<Polyhedron_3<Traits,Items,HDS,Alloc> >::vertex_descriptor Vertex;
       typename property_map_selector<Polyhedron_3<Traits,Items,HDS,Alloc>, boost::vertex_point_t>::type
           def_vpm = get_property_map(CGAL::vertex_point, P);
-      BOOST_FOREACH(Vertex v, vertices(P))
+      for(Vertex v : vertices(P))
       {
         put(vpm, v, get(def_vpm, v));
       }

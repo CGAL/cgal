@@ -1766,7 +1766,7 @@ void Viewer::endSelection(const QPoint& p)
   QList<float> depths = picked_IDs.keys();
   if(!depths.isEmpty())
   {
-      qSort(depths);
+      std::sort(depths.begin(), depths.end());
       id = picked_IDs[depths.first()];
       picked = true;
   }
@@ -2267,7 +2267,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
     else if( m_curMode == SELECT
              && event->key()==Qt::Key_Delete && modifiers==Qt::NoButton ) {
         // sort selected id's in descending order
-        qSort(m_vidSeled.begin(), m_vidSeled.end(), qGreater<int>());
+        std::sort(m_vidSeled.begin(), m_vidSeled.end(), std::greater<int>());
         for(QList<int>::iterator vit=m_vidSeled.begin(); vit<m_vidSeled.end(); ++vit) {
             // remove the selected point from DT and vertex_handle_array
             // note: QList::takeAt will removes the item at index position i and returns it.
@@ -2370,7 +2370,7 @@ void Viewer::toggleIncremental(bool on) {
             /* start play */
             if( m_pScene->m_dt.number_of_vertices() == 0 ) {
                 CGAL::Random_points_in_cube_3<Point_3> pts_generator(1.0);
-                CGAL::cpp11::copy_n( pts_generator, 100, std::back_inserter(m_incrementalPts) );
+                std::copy_n( pts_generator, 100, std::back_inserter(m_incrementalPts) );
             } else {
                 for(QList<Vertex_handle>::iterator vit = m_pScene->m_vhArray.begin();
                     vit < m_pScene->m_vhArray.end(); ++vit) {

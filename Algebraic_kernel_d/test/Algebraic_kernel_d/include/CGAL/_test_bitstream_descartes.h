@@ -24,8 +24,6 @@
 
 // #include <CGAL/Algebraic_curve_kernel_2/flags.h>
 
-#include <CGAL/basic.h>
-
 #include <sstream>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>

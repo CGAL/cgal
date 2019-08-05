@@ -56,25 +56,24 @@ function(use_CGAL_GMP_support target)
     return()
   endif()
 
-  if(NOT GMP_IN_CGAL_AUXILIARY)
+  if(NOT GMP_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include")
     target_include_directories(${target} SYSTEM ${keyword} ${GMP_INCLUDE_DIR})
   else()
     target_include_directories(${target} SYSTEM ${keyword}
       $<BUILD_INTERFACE:${GMP_INCLUDE_DIR}>
       $<INSTALL_INTERFACE:include>)
   endif()
-  target_link_libraries(${target} ${keyword} ${GMP_LIBRARIES})
-  if(NOT MPFR_IN_CGAL_AUXILIARY)
+  if(NOT MPFR_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include")
     target_include_directories(${target} SYSTEM ${keyword} ${MPFR_INCLUDE_DIR})
   else()
     target_include_directories(${target} SYSTEM ${keyword}
       $<BUILD_INTERFACE:${MPFR_INCLUDE_DIR}>
       $<INSTALL_INTERFACE:include>)
   endif()
-  target_link_libraries(${target} ${keyword} ${MPFR_LIBRARIES})
   if(WITH_GMPXX OR CGAL_WITH_GMPXX)
     target_include_directories(${target} SYSTEM ${keyword}  ${GMPXX_INCLUDE_DIR})
     target_link_libraries(${target}  ${keyword} ${GMPXX_LIBRARIES})
     target_compile_definitions(${target} ${keyword} CGAL_USE_GMPXX=1)
   endif()
+  target_link_libraries(${target} ${keyword} ${MPFR_LIBRARIES} ${GMP_LIBRARIES})
 endfunction()

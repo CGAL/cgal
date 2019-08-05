@@ -554,6 +554,12 @@ using std::max;
 #  define CGAL_NORETURN
 #endif
 
+// Macro to specify [[no_unique_address]] if supported
+#if __has_cpp_attribute(no_unique_address)
+#  define CGAL_NO_UNIQUE_ADDRESS [[no_unique_address]]
+#else
+#  define CGAL_NO_UNIQUE_ADDRESS
+#endif
 
 // Macro CGAL_ASSUME
 // Call a builtin of the compiler to pass a hint to the compiler
@@ -615,9 +621,48 @@ using std::max;
 #  define CGAL_PRAGMA_DIAG_POP
 #endif
 
+//
+// Compatibility with CGAL-4.14.
+//
+// That is temporary, and will be replaced by a namespace alias, as
+// soon as we can remove cpp11::result_of, and <CGAL/atomic.h> and
+// <CGAL/thread.h>.
+//
+#  include <iterator>
+#  include <array>
+#  include <utility>
+#  include <type_traits>
+#  include <unordered_set>
+#  include <unordered_map>
+#  include <functional>
+//
+namespace CGAL {
+//
+  namespace cpp11 {
+    using std::next;
+    using std::prev;
+    using std::copy_n;
+    using std::array;
+    using std::function;
+    using std::tuple;
+    using std::make_tuple;
+    using std::tie;
+    using std::get;
+    using std::tuple_size;
+    using std::tuple_element;
+    using std::is_enum;
+    using std::unordered_set;
+    using std::unordered_map;
+  }
+//
+  namespace cpp0x = cpp11;
+  using cpp11::array;
+  using cpp11::copy_n;
+} // end of the temporary compatibility with CGAL-4.14
+
 namespace CGAL {
 
-// Typedef for the type of NULL.
+// Typedef for the type of nullptr.
 typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 
 } //namespace CGAL
@@ -686,6 +731,7 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 /// @}
 
 /// Macro `CGAL_pragma_warning`.
+/// @{
 #ifdef BOOST_MSVC
 #  define CGAL_pragma_warning(desc) __pragma(CGAL_WARNING(desc))
 #else // not BOOST_MSVC

@@ -28,10 +28,10 @@
 
 // within this file AS ^= Type
 
-#include <CGAL/basic.h>
 #include <CGAL/Algebraic_structure_traits.h>
 //#include <CGAL/Real_embeddable_traits.h>
 
+#include <CGAL/number_utils.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 #include <boost/type_traits.hpp>
@@ -417,7 +417,7 @@ void test_algebraic_structure_intern(
     assert( a !=  AS (0));
     assert( b !=  AS (0));
     assert( c !=  AS (0));
-    //  AS (0) == NULL of IntegralDomain
+    //  AS (0) == nullptr of IntegralDomain
     assert(a* AS (0)== AS (0));
     assert(a+ AS (0)==a);
     assert(b* AS (0)== AS (0));

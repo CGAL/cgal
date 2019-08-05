@@ -28,11 +28,9 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/assertions.h>
-#include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/foreach.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/range/has_range_iterator.hpp>
@@ -286,12 +284,12 @@ struct Face_filtered_graph
     selected_faces.reset();
     selected_vertices.reset();
     selected_halfedges.reset();
-    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
+    for(face_descriptor fd : faces(_graph) )
     {
       if(get(face_patch_index_map, fd) == face_patch_id)
       {
         selected_faces.set(get(fimap, fd));
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, _graph), _graph))
         {
           selected_halfedges.set(get(himap, hd));
           selected_halfedges.set(get(himap, opposite(hd, _graph)));
@@ -325,12 +323,12 @@ struct Face_filtered_graph
     boost::unordered_set<Patch_index> pids(boost::begin(selected_face_patch_indices),
                                            boost::end(selected_face_patch_indices));
 
-    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
+    for(face_descriptor fd : faces(_graph) )
     {
       if(pids.count(get(face_patch_index_map, fd)) != 0)
       {
         selected_faces.set(get(fimap, fd));
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, _graph), _graph))
         {
           selected_halfedges.set(get(himap, hd));
           selected_halfedges.set(get(himap, opposite(hd, _graph)));
@@ -353,10 +351,10 @@ struct Face_filtered_graph
     selected_faces.reset();
     selected_vertices.reset();
     selected_halfedges.reset();
-    BOOST_FOREACH(face_descriptor fd, selection)
+    for(face_descriptor fd : selection)
     {
       selected_faces.set(get(fimap, fd));
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, _graph), _graph))
       {
         selected_halfedges.set(get(himap, hd));
         selected_halfedges.set(get(himap, opposite(hd, _graph)));
@@ -372,12 +370,12 @@ struct Face_filtered_graph
     {}
 
     Is_simplex_valid()
-      :adapter(NULL)
+      :adapter(nullptr)
     {}
     template<typename Simplex>
     bool operator()(Simplex s)
     {
-      CGAL_assertion(adapter!=NULL);
+      CGAL_assertion(adapter!=nullptr);
       return (adapter->is_in_cc(s));
     }
     const Self* adapter;
@@ -465,64 +463,57 @@ struct Face_filtered_graph
 
   /// returns `true` if around any vertex of a selected face,
   /// there is at most one connected set of selected faces.
-  bool is_selection_valid()
+  bool is_selection_valid() const
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices(*this) )
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor      vertex_descriptor;
+    typedef typename boost::graph_traits<Graph>::halfedge_descriptor    halfedge_descriptor;
+
+    // Non-manifoldness can appear either:
+    // - if 'pm' is pinched at a vertex. While traversing the incoming halfedges at this vertex,
+    //   we will meet strictly more than one border halfedge.
+    // - if there are multiple umbrellas around a vertex. In that case, we will find a non-visited
+    //   halfedge that has for target a vertex that is already visited.
+
+    boost::unordered_set<vertex_descriptor> vertices_visited;
+    boost::unordered_set<halfedge_descriptor> halfedges_handled;
+
+    for(halfedge_descriptor hd : halfedges(*this))
     {
-      face_descriptor first_selected = boost::graph_traits<Graph>::null_face();
-      bool first_unselected_found(false),
-           second_unselected_found(false);
+      CGAL_assertion(is_in_cc(hd));
 
-      //find an unselected face, then find the first selected face.
-      //Find another unselected face, the next selected face must be the first;
-      //else this is not valid.
-      halfedge_descriptor hd = halfedge(vd, _graph);
-      face_descriptor first_tested = boost::graph_traits<Graph>::null_face();
-      while(1) //will break if valid, return false if not valid
+      if(!halfedges_handled.insert(hd).second) // already treated this halfedge
+        continue;
+
+      vertex_descriptor vd = target(hd, *this);
+      CGAL_assertion(is_in_cc(vd));
+
+      // Check if we have already met this vertex before (necessarily in a different umbrella
+      // since we have never treated the halfedge 'hd')
+      if(!vertices_visited.insert(vd).second)
+        return false;
+
+      std::size_t border_halfedge_counter = 0;
+
+      // Can't simply call halfedges_around_target(vd, *this) because 'halfedge(vd)' is not necessarily 'hd'
+      halfedge_descriptor ihd = hd;
+      do
       {
-        face_descriptor fd = face(hd, _graph);
+        halfedges_handled.insert(ihd);
+        if(is_border(ihd, *this))
+          ++border_halfedge_counter;
 
-        if(first_tested == boost::graph_traits<Graph>::null_face())
-          first_tested = fd;
-        else if(fd == first_tested )
+        do
         {
-          //if there is no unselected face, break
-          if(selected_faces[get(fimap, fd)] && !first_unselected_found)
-          break;
-          //if there is no selected face, break
-          else if(!selected_faces[get(fimap, fd)] &&
-             first_selected == boost::graph_traits<Graph>::null_face())
-          break;
+          ihd = prev(opposite(ihd, _graph), _graph);
         }
-
-        if(fd != boost::graph_traits<Graph>::null_face())
-        {
-          if(selected_faces[get(fimap, fd)])
-          {
-            if(first_unselected_found &&
-               first_selected == boost::graph_traits<Graph>::null_face())
-            {
-              first_selected = fd;
-            }
-            else if(second_unselected_found)
-            {
-              if(fd == first_selected)
-                break;
-              else
-                return false;
-            }
-          }
-          else
-          {
-            if(first_selected == boost::graph_traits<Graph>::null_face())
-              first_unselected_found = true;
-            else
-              second_unselected_found = true;
-          }
-        }
-        hd = next(opposite(hd, _graph), _graph);
+        while(!is_in_cc(ihd) && ihd != hd);
       }
+      while(ihd != hd);
+
+      if(border_halfedge_counter > 1)
+        return false;
     }
+
     return true;
   }
 

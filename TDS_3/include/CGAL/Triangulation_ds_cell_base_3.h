@@ -57,7 +57,6 @@ public:
 
   Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                                Vertex_handle v2, Vertex_handle v3)
-#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : V{v0, v1, v2, v3}
   {
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
@@ -65,32 +64,12 @@ public:
     mark2 = -1;
 #endif
   }
-#else
-  {
-    set_vertices(v0, v1, v2, v3);
-#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
-    mark = -1;
-    mark2 = -1;
-#endif
-  }
-#endif
 
   Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                                Vertex_handle v2, Vertex_handle v3,
                                Cell_handle   n0, Cell_handle   n1,
                                Cell_handle   n2, Cell_handle   n3)
-#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : N{n0, n1, n2, n3}, V{v0, v1, v2, v3} {}
-#else
-  {
-    set_neighbors(n0, n1, n2, n3);
-    set_vertices(v0, v1, v2, v3);
-#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
-    mark = -1;
-    mark2 = -1;
-#endif
-  }
-#endif
 
   // ACCESS FUNCTIONS
 

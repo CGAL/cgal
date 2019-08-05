@@ -27,6 +27,7 @@
 #ifndef CGAL_SCALAR_FACTOR_TRAITS_H
 #define CGAL_SCALAR_FACTOR_TRAITS_H
 
+#include <CGAL/assertions.h>
 #include <CGAL/Algebraic_structure_traits.h>
 
 /*! \file NiX/Scalar_factor_traits.h

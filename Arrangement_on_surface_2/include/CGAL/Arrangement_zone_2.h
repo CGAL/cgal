@@ -186,7 +186,7 @@ public:
     m_invalid_he()
   {
     m_geom_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
-    CGAL_assertion(visitor != NULL);
+    CGAL_assertion(visitor != nullptr);
 
     // Initialize the visitor.
     visitor->init(&arr);

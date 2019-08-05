@@ -87,7 +87,6 @@ public:
     Mesh_criteria criteria(facet_angle = 30,
                            facet_size = 6,
                            facet_distance = 2,
-                           facet_topology = CGAL::MANIFOLD,
                            cell_radius_edge_ratio = 3,
                            cell_size = 8);
 

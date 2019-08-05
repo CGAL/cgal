@@ -40,10 +40,8 @@ public:
   Object_handle(const CGAL::Object& o) : Base(o) {}
   Object_handle(const Object_handle& h) : Base(h) {}
   
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   Object_handle&
   operator=(const Object_handle& v)=default;
-#endif
 };
  
 Object_handle return_obj()

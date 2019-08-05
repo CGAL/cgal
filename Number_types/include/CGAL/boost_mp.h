@@ -29,7 +29,7 @@
 // easy solution.
 // TODO: MSVC has trouble with versions <= 1.69, reenable once 1.70 has been
 // tested. https://github.com/boostorg/multiprecision/issues/98
-#if !defined CGAL_DO_NOT_USE_BOOST_MP && BOOST_VERSION >= 106300 && !defined _MSC_VER
+#if !defined CGAL_DISABLE_GMP && !defined CGAL_DO_NOT_USE_BOOST_MP && BOOST_VERSION >= 106300 && !defined _MSC_VER
 #define CGAL_USE_BOOST_MP 1
 
 #include <CGAL/functional.h> // *ary_function

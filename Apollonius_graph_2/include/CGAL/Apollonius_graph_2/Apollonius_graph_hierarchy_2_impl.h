@@ -269,7 +269,7 @@ insert(const Site_2 &p)
   }
 
   initialize_conflict_region(start_f, l);
-  expand_conflict_region(start_f, p, l, fm, v_hidden, NULL);
+  expand_conflict_region(start_f, p, l, fm, v_hidden, nullptr);
   n_hidden = v_hidden.size();
 
   if ( n_hidden != 0 ) {

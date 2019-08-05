@@ -79,7 +79,7 @@ void make_x_monotone(CurveInputIter begin, CurveInputIter end,
   for (i = 0 ; i < object_vec.size() ; ++i) {
     xcv = object_cast<X_monotone_curve_2> (&(object_vec[i]));
 
-    if (xcv != NULL) {
+    if (xcv != nullptr) {
       // The object is an x-monotone curve.
       *x_curves = *xcv;
       ++x_curves;
@@ -87,7 +87,7 @@ void make_x_monotone(CurveInputIter begin, CurveInputIter end,
     else {
       // The object is an isolated point.
       pt = object_cast<Point_2> (&(object_vec[i]));
-      CGAL_assertion (pt != NULL);
+      CGAL_assertion (pt != nullptr);
 
       *iso_points = *pt;
       ++iso_points;

@@ -31,7 +31,6 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_C2.h>
 
-#include <CGAL/Parabola_2.h>
 #include <CGAL/Parabola_segment_2.h>
 
 

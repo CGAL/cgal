@@ -32,10 +32,6 @@
 #include <utility>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_svd.h>
-#else
-#ifdef CGAL_LAPACK_ENABLED
-#include <CGAL/Lapack_svd.h>
-#endif
 #endif
 
 namespace CGAL {
@@ -51,11 +47,7 @@ unsigned int fact(unsigned int n){
 #ifdef CGAL_EIGEN3_ENABLED
 template < class DataKernel, class LocalKernel = Simple_cartesian<double>, class SvdTraits = Eigen_svd >
 #else
-#ifdef CGAL_LAPACK_ENABLED
-template < class DataKernel, class LocalKernel = Simple_cartesian<double>, class SvdTraits = Lapack_svd>  
-#else
 template < class DataKernel, class LocalKernel, class SvdTraits >  
-#endif
 #endif
   class Monge_via_jet_fitting {
  public:
@@ -369,9 +361,9 @@ compute_PCA(InputIterator begin, InputIterator end)
   // 0 1 2
   //   3 4
   //     5
-  CGAL::cpp11::array<FT, 6> covariance = {{ xx,xy,xz,yy,yz,zz }};
-  CGAL::cpp11::array<FT, 3> eigen_values = {{ 0., 0., 0. }};
-  CGAL::cpp11::array<FT, 9> eigen_vectors = {{ 0., 0., 0. }};
+  std::array<FT, 6> covariance = {{ xx,xy,xz,yy,yz,zz }};
+  std::array<FT, 3> eigen_values = {{ 0., 0., 0. }};
+  std::array<FT, 9> eigen_vectors = {{ 0., 0., 0. }};
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order, 
@@ -532,9 +524,9 @@ compute_Monge_basis(const FT* A, Monge_form& monge_form)
   weingarten = inv *(1/det) * weingarten * change_XuXv2YZ;
   
   // diagonalization of weingarten
-  CGAL::cpp11::array<FT,3> W = {{ weingarten(0,0), weingarten(1,0), weingarten(1,1) }};
-  CGAL::cpp11::array<FT,2> eval = {{ 0., 0. }};
-  CGAL::cpp11::array<FT,4> evec = {{ 0., 0., 0., 0. }};
+  std::array<FT,3> W = {{ weingarten(0,0), weingarten(1,0), weingarten(1,1) }};
+  std::array<FT,2> eval = {{ 0., 0. }};
+  std::array<FT,4> evec = {{ 0., 0., 0., 0. }};
 
   //eval in increasing order
   CGAL::Default_diagonalize_traits<FT,2>::diagonalize_selfadjoint_covariance_matrix

@@ -46,7 +46,7 @@ namespace RandomForest {
 /*
 template <typename T>
 class X : Y<X> {}
--> http://en.wikipedia.org/wiki/Curiously_recurring_template_pattern#Static_polymorphism
+-> https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern#Static_polymorphism
 */
 
 template <typename Splitter>

@@ -185,7 +185,7 @@ template<typename GT,
                  VNFEMap vnfe)
 {
   // Initialize vertices
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
+  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd :
                 vertices(pmesh))
   {
     put(vnfe, vd, 0);
@@ -193,7 +193,7 @@ template<typename GT,
   FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
 
   // Detect sharp edges
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed, edges(pmesh))
+  for(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed : edges(pmesh))
   {
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor he = halfedge(ed,pmesh);
     if(is_border_edge(he,pmesh)
@@ -224,7 +224,7 @@ template<typename GT,
   FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
 
   // Detect sharp edges
-  BOOST_FOREACH(edge_descriptor ed, edges(pmesh))
+  for(edge_descriptor ed : edges(pmesh))
   {
     halfedge_descriptor he = halfedge(ed,pmesh);
     if(is_border_edge(he,pmesh)
@@ -299,7 +299,7 @@ void detect_sharp_edges(PolygonMesh& pmesh,
  * collects the surface patches of the faces incident to each vertex of the input polygon mesh.
  *
  * \tparam PolygonMesh a model of `HalfedgeListGraph`
- * \tparam PatchIdMap a model of `ReadPropertyMap` with
+ * \tparam PatchIdMap a model of `ReadablePropertyMap` with
    `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
    and the desired patch id, model of `CopyConstructible` as value type.
  * \tparam VertexIncidentPatchesMap a model of mutable `LvaluePropertyMap` with
@@ -307,7 +307,7 @@ void detect_sharp_edges(PolygonMesh& pmesh,
    must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
    A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
    inserted several times.
- * \tparam EdgeIsFeatureMap a model of `ReadPropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ * \tparam EdgeIsFeatureMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *  as key type and `bool` as value type.
  * \param pmesh the polygon mesh
  * \param patch_id_map the property map containing the surface patch ids for the faces of `pmesh`. It must be already filled.
@@ -327,7 +327,7 @@ void detect_vertex_incident_patches(PolygonMesh& pmesh,
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
 
-  BOOST_FOREACH(vertex_descriptor vit,vertices(pmesh))
+  for(vertex_descriptor vit :vertices(pmesh))
   {
     // Look only at feature vertices
     if( ! get(edge_is_feature_map, edge(halfedge(vit, pmesh), pmesh) ))
@@ -336,7 +336,7 @@ void detect_vertex_incident_patches(PolygonMesh& pmesh,
     // Loop on incident facets of vit
     typename VertexIncidentPatchesMap::value_type&
       id_set = vertex_incident_patches_map[vit];
-    BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(vit,pmesh))
+    for(halfedge_descriptor he : halfedges_around_target(vit,pmesh))
     {
       if( ! is_border(he,pmesh) )
       {

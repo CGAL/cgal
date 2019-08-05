@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Three_Demo )
 
-cmake_minimum_required(VERSION 3.1)
 
 set(CMAKE_CXX_STANDARD 14)
 

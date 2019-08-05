@@ -70,7 +70,7 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
 
 // get all cc that are inside xtrm_cc_id
   std::vector<face_descriptor> cc_faces;
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  for(face_descriptor fd : faces(tm))
   {
     if(face_cc[get(fid_map, fd)]==xtrm_cc_id)
       cc_faces.push_back(fd);
@@ -213,7 +213,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
 
   // extract a vertex with max z coordinate for each connected component
   std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
-  BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+  for(vertex_descriptor vd : vertices(tm))
   {
     std::size_t cc_id = face_cc[get(fid_map, face(halfedge(vd, tm), tm))];
     if (xtrm_vertices[cc_id]==GT::null_vertex())
@@ -255,7 +255,7 @@ bool does_bound_a_volume(const TriangleMesh& tm)
     Corefinement::No_mark<TriangleMesh> \
   > ::type Ecm_out_##I; \
     Ecm_out_##I ecm_out_##I = \
-      boost::choose_param( boost::get_param(cpp11::get<I>(nps_out), internal_np::edge_is_constrained),  \
+      boost::choose_param( boost::get_param(std::get<I>(nps_out), internal_np::edge_is_constrained),  \
                            Corefinement::No_mark<TriangleMesh>() );
 
 
@@ -348,14 +348,14 @@ template <class TriangleMesh,
           class NamedParametersOut1,
           class NamedParametersOut2,
           class NamedParametersOut3>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
+  const std::array< boost::optional<TriangleMesh*>,4>& output,
   const NamedParameters1& np1,
   const NamedParameters2& np2,
-  const cpp11::tuple<NamedParametersOut0,
+  const std::tuple<NamedParametersOut0,
                      NamedParametersOut1,
                      NamedParametersOut2,
                      NamedParametersOut3>& nps_out)
@@ -386,29 +386,29 @@ corefine_and_compute_boolean_operations(
   // that is not requested, the default vpm does not have the same value type as the
   // input map, a dummy default vpm is used so that calls to get/put can be compiled
   // (even if not used).
-  typedef cpp11::tuple<
+  typedef std::tuple<
     Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut0, TriangleMesh>,
     Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut1, TriangleMesh>,
     Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut2, TriangleMesh>,
     Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut3, TriangleMesh>
   > Vpm_out_tuple_helper;
 
-  typedef cpp11::tuple<
-    boost::optional< typename cpp11::tuple_element<0, Vpm_out_tuple_helper>::type::type >,
-    boost::optional< typename cpp11::tuple_element<1, Vpm_out_tuple_helper>::type::type >,
-    boost::optional< typename cpp11::tuple_element<2, Vpm_out_tuple_helper>::type::type >,
-    boost::optional< typename cpp11::tuple_element<3, Vpm_out_tuple_helper>::type::type >
+  typedef std::tuple<
+    boost::optional< typename std::tuple_element<0, Vpm_out_tuple_helper>::type::type >,
+    boost::optional< typename std::tuple_element<1, Vpm_out_tuple_helper>::type::type >,
+    boost::optional< typename std::tuple_element<2, Vpm_out_tuple_helper>::type::type >,
+    boost::optional< typename std::tuple_element<3, Vpm_out_tuple_helper>::type::type >
   > Vpm_out_tuple;
 
   Vpm_out_tuple vpm_out_tuple(
-    Corefinement::get_vpm<Point_3>(cpp11::get<0>(nps_out), output[0],
-                                   typename cpp11::tuple_element<0, Vpm_out_tuple_helper>::type::Use_default_tag()),
-    Corefinement::get_vpm<Point_3>(cpp11::get<1>(nps_out), output[1],
-                                   typename cpp11::tuple_element<1, Vpm_out_tuple_helper>::type::Use_default_tag()),
-    Corefinement::get_vpm<Point_3>(cpp11::get<2>(nps_out), output[2],
-                                   typename cpp11::tuple_element<2, Vpm_out_tuple_helper>::type::Use_default_tag()),
-    Corefinement::get_vpm<Point_3>(cpp11::get<3>(nps_out), output[3],
-                                   typename cpp11::tuple_element<3, Vpm_out_tuple_helper>::type::Use_default_tag())
+    Corefinement::get_vpm<Point_3>(std::get<0>(nps_out), output[0],
+                                   typename std::tuple_element<0, Vpm_out_tuple_helper>::type::Use_default_tag()),
+    Corefinement::get_vpm<Point_3>(std::get<1>(nps_out), output[1],
+                                   typename std::tuple_element<1, Vpm_out_tuple_helper>::type::Use_default_tag()),
+    Corefinement::get_vpm<Point_3>(std::get<2>(nps_out), output[2],
+                                   typename std::tuple_element<2, Vpm_out_tuple_helper>::type::Use_default_tag()),
+    Corefinement::get_vpm<Point_3>(std::get<3>(nps_out), output[3],
+                                   typename std::tuple_element<3, Vpm_out_tuple_helper>::type::Use_default_tag())
   );
 
   if (&tm1==&tm2)
@@ -421,13 +421,13 @@ corefine_and_compute_boolean_operations(
         copy_face_graph(tm1,
             *(*output[Corefinement::UNION]),
                         parameters::vertex_point_map(vpm1),
-                        parameters::vertex_point_map(*cpp11::get<Corefinement::UNION>(vpm_out_tuple)));
+                        parameters::vertex_point_map(*std::get<Corefinement::UNION>(vpm_out_tuple)));
     if (output[Corefinement::INTERSECTION] != boost::none)
       if (&tm1 != *output[Corefinement::INTERSECTION])
         copy_face_graph(tm1,
                         *(*output[Corefinement::INTERSECTION]),
                         parameters::vertex_point_map(vpm1),
-                        parameters::vertex_point_map(*cpp11::get<Corefinement::INTERSECTION>(vpm_out_tuple)));
+                        parameters::vertex_point_map(*std::get<Corefinement::INTERSECTION>(vpm_out_tuple)));
 
     if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
       if (&tm1 == *output[Corefinement::TM1_MINUS_TM2])
@@ -456,7 +456,7 @@ corefine_and_compute_boolean_operations(
         copy_face_graph(tm2,
                         *(*output[Corefinement::UNION]),
                         parameters::vertex_point_map(vpm2),
-                        parameters::vertex_point_map(*cpp11::get<Corefinement::UNION>(vpm_out_tuple)));
+                        parameters::vertex_point_map(*std::get<Corefinement::UNION>(vpm_out_tuple)));
     if (output[Corefinement::INTERSECTION] != boost::none)
       clear(*(*output[Corefinement::INTERSECTION]));
     if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
@@ -466,7 +466,7 @@ corefine_and_compute_boolean_operations(
         copy_face_graph(tm2,
                         *(*output[Corefinement::TM2_MINUS_TM1]),
                         parameters::vertex_point_map(vpm2),
-                        parameters::vertex_point_map(*cpp11::get<Corefinement::TM2_MINUS_TM1>(vpm_out_tuple)));
+                        parameters::vertex_point_map(*std::get<Corefinement::TM2_MINUS_TM1>(vpm_out_tuple)));
     return CGAL::make_array(true, true, true, true);
   }
   else
@@ -478,7 +478,7 @@ corefine_and_compute_boolean_operations(
           copy_face_graph(tm1,
                           *(*output[Corefinement::UNION]),
                           parameters::vertex_point_map(vpm1),
-                          parameters::vertex_point_map(*cpp11::get<Corefinement::UNION>(vpm_out_tuple)));
+                          parameters::vertex_point_map(*std::get<Corefinement::UNION>(vpm_out_tuple)));
       if (output[Corefinement::INTERSECTION] != boost::none)
         clear(*(*output[Corefinement::INTERSECTION]));
       if (output[Corefinement::TM2_MINUS_TM1] != boost::none)
@@ -488,7 +488,7 @@ corefine_and_compute_boolean_operations(
           copy_face_graph(tm1,
                           *(*output[Corefinement::TM1_MINUS_TM2]),
                           parameters::vertex_point_map(vpm1),
-                          parameters::vertex_point_map(*cpp11::get<Corefinement::TM1_MINUS_TM2>(vpm_out_tuple)));
+                          parameters::vertex_point_map(*std::get<Corefinement::TM1_MINUS_TM2>(vpm_out_tuple)));
       return CGAL::make_array(true, true, true, true);
     }
 
@@ -520,7 +520,7 @@ corefine_and_compute_boolean_operations(
   CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(3)
 
   // In the current version all types must be the same so an array would be fine
-  typedef cpp11::tuple<Ecm_out_0, Ecm_out_1, Ecm_out_2, Ecm_out_3>
+  typedef std::tuple<Ecm_out_0, Ecm_out_1, Ecm_out_2, Ecm_out_3>
                                                             Edge_mark_map_tuple;
 
 // Face index point maps
@@ -589,47 +589,47 @@ corefine_and_compute_boolean_operations(
 }
 
 template <class TriangleMesh>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output)
+  const std::array< boost::optional<TriangleMesh*>,4>& output)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return corefine_and_compute_boolean_operations(tm1, tm2, output,
                                                  all_default(), all_default(),
-                                                 cpp11::make_tuple(all_default(), all_default(),
+                                                 std::make_tuple(all_default(), all_default(),
                                                                    all_default(), all_default()));
 }
 
 template <class TriangleMesh, class NamedParameters1>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
+  const std::array< boost::optional<TriangleMesh*>,4>& output,
   const NamedParameters1& np1)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return corefine_and_compute_boolean_operations(tm1, tm2, output,
                                                  np1, all_default(),
-                                                 cpp11::make_tuple(all_default(), all_default(),
+                                                 std::make_tuple(all_default(), all_default(),
                                                                    all_default(), all_default()));
 }
 
 template <class TriangleMesh, class NamedParameters1, class NamedParameters2>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
+  const std::array< boost::optional<TriangleMesh*>,4>& output,
   const NamedParameters1& np1,
   const NamedParameters2& np2)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return corefine_and_compute_boolean_operations(tm1, tm2, output,
                                                  np1, np2,
-                                                 cpp11::make_tuple(all_default(), all_default(),
+                                                 std::make_tuple(all_default(), all_default(),
                                                                    all_default(), all_default()));
 }
 
@@ -715,12 +715,12 @@ corefine_and_compute_union(      TriangleMesh& tm1,
                            const NamedParametersOut& np_out)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
-  cpp11::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< boost::optional<TriangleMesh*>,4> output;
   output[Corefinement::UNION]=&tm_out;
 
   return
    corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
-                                           cpp11::make_tuple(np_out,
+                                           std::make_tuple(np_out,
                                                              all_default(),
                                                              all_default(),
                                                              all_default()))
@@ -747,12 +747,12 @@ corefine_and_compute_intersection(      TriangleMesh& tm1,
                                   const NamedParametersOut& np_out)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
-  cpp11::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< boost::optional<TriangleMesh*>,4> output;
   output[Corefinement::INTERSECTION]=&tm_out;
 
   return
     corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
-                                            cpp11::make_tuple(all_default(),
+                                            std::make_tuple(all_default(),
                                                               np_out,
                                                               all_default(),
                                                               all_default()))
@@ -780,12 +780,12 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   using namespace CGAL::Polygon_mesh_processing::Corefinement;
-  cpp11::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< boost::optional<TriangleMesh*>,4> output;
   output[TM1_MINUS_TM2]=&tm_out;
 
   return
     corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
-                                            cpp11::make_tuple(all_default(),
+                                            std::make_tuple(all_default(),
                                                               all_default(),
                                                               np_out,
                                                               all_default()))

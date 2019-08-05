@@ -38,7 +38,7 @@ public:
 protected:
     // error handling
     int          m_mode;          // Error_mode or'ed together
-    bool         m_error;         // flags if an error has occured
+    bool         m_error;         // flags if an error has occurred
     std::string  m_error_message; // error message kept from last error
     virtual void error_handler( std::string s);
 

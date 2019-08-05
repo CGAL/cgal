@@ -19,7 +19,6 @@
 \cgalPkgSince{2.3}
 \cgalPkgBib{cgal:h-pp2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{2D Polygon Partition,partition_2.zip,Operations on Polygons,polygon.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -75,14 +74,13 @@ original polygon).
 - `PartitionTraits_2`
 - `PartitionIsValidTraits_2`
 - `YMonotonePartitionIsValidTraits_2`
-- `YMonotonePartitionTraits_2`
 
 \cgalCRPSection{Function Object Concepts}
 - `PolygonIsValid`
 
 \cgalCRPSection{Classes}
 - `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>`
-- `CGAL::Partition_traits_2<R>`
+- `CGAL::Partition_traits_2<R,P>`
 
 
 \cgalCRPSection{Function Object Classes}

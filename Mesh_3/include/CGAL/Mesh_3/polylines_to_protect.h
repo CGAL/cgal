@@ -35,7 +35,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Labeled_mesh_domain_3.h> // for CGAL::Null_subdomain_index
 #include <boost/utility.hpp> // for boost::prior
-#include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 
 #include <CGAL/Search_traits_3.h>
@@ -208,7 +207,6 @@ private:
       v_int = g_manip.get_vertex(inter_p, false);
       g_manip.try_add_edge(old, v_int);
 
-#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
       CGAL_assertion_msg(max_squared_distance == 0 ||
                          CGAL::squared_distance(g_manip.g[old].point,
                                                 g_manip.g[v_int].point) <
@@ -220,19 +218,11 @@ private:
                            << this->g_manip.g[v_int].point << ")";
                          return s.str();
                        }().c_str()));
-#else // no C++ lamdbas
-      CGAL_assertion(max_squared_distance == 0 ||
-                     CGAL::squared_distance(g_manip.g[old].point,
-                                            g_manip.g[v_int].point) <
-                     max_squared_distance);
-#endif // no C++ lamdbas
-
       old = v_int;
     }
     if(null_vertex != v_int) {
       // v_int can be null if the curve is degenerated into one point.
       g_manip.try_add_edge(v_int, end_v);
-#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
       CGAL_assertion_msg(max_squared_distance == 0 ||
                          CGAL::squared_distance(g_manip.g[end_v].point,
                                                 g_manip.g[v_int].point) <
@@ -244,13 +234,6 @@ private:
                              << this->g_manip.g[v_int].point << ")";
                            return s.str();
                          }().c_str()));
-#else // no C++ lamdbas
-      CGAL_assertion(max_squared_distance == 0 ||
-                     CGAL::squared_distance(g_manip.g[end_v].point,
-                                            g_manip.g[v_int].point) <
-                     max_squared_distance);                   
-#endif // no C++ lamdbas
-
     }
   }
 };
@@ -283,10 +266,10 @@ struct Polyline_visitor
 #if CGAL_MESH_3_PROTECTION_DEBUG > 1
     std::ofstream og("polylines_graph.polylines.txt");
     og.precision(17);
-    BOOST_FOREACH(const std::vector<P>& poly, polylines)
+    for(const std::vector<P>& poly : polylines)
     {
       og << poly.size() << " ";
-      BOOST_FOREACH(const P& p, poly)
+      for(const P& p : poly)
         og << p << " ";
       og << std::endl;
     }
@@ -384,8 +367,8 @@ void snap_graph_vertices(Graph& graph,
   }
   if(tree.size() == 0) return;
 
-  BOOST_FOREACH(typename boost::graph_traits<Graph>::vertex_descriptor v,
-                vertices(graph))
+  for(typename boost::graph_traits<Graph>::vertex_descriptor v :
+                make_range(vertices(graph)))
   {
     const typename K::Point_3 p = graph[v].point;
     NN_search nn(tree, p);
@@ -508,9 +491,9 @@ polylines_to_protect
         for(int k = 0; k < zdim; k+= (axis == 2 ? (std::max)(1, zdim-1) : 1 ) )
         {
 
-          using CGAL::cpp11::array;
-          using CGAL::cpp11::tuple;
-          using CGAL::cpp11::get;
+          using std::array;
+          using std::tuple;
+          using std::get;
 
           typedef array<int, 3> Pixel;
 

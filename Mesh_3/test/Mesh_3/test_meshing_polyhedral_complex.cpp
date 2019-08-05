@@ -106,7 +106,7 @@ struct Polyhedral_complex_tester : public Tester<K>
       true /*nonlinear_growth_of_balls*/);
     domain.add_vertices_to_c3t3_on_patch_without_feature_edges(c3t3);
 
-    CGAL::refine_mesh_3<C3t3>(c3t3, domain, criteria);
+    CGAL::refine_mesh_3(c3t3, domain, criteria);
 
     CGAL::remove_far_points_in_mesh_3(c3t3);
 

@@ -11,6 +11,7 @@ int main()
 
 //#define BOOST_RESULT_OF_USE_DECLTYPE 1
 #include <CGAL/Epick_d.h>
+#include <CGAL/Epeck_d.h>
 #include <typeinfo>
 
 #include <CGAL/NewKernel_d/Cartesian_base.h>
@@ -121,7 +122,6 @@ void test2(){
   typedef typename K1::Oriented_side_d OS;
   typedef typename K1::Orthogonal_vector_d OV;
   typedef typename K1::Point_dimension_d PD;
-  typedef typename K1::Point_of_sphere_d PS;
   typedef typename K1::Point_to_vector_d PV;
   typedef typename K1::Vector_to_point_d VP;
   typedef typename K1::Barycentric_coordinates_d BC;
@@ -190,7 +190,6 @@ void test2(){
   OS os Kinit(oriented_side_d_object);
   OV ov Kinit(orthogonal_vector_d_object);
   PD pd Kinit(point_dimension_d_object);
-  PS ps Kinit(point_of_sphere_d_object);
   PV pv Kinit(point_to_vector_d_object);
   VP vp Kinit(vector_to_point_d_object);
   BC bc Kinit(barycentric_coordinates_d_object);
@@ -356,6 +355,8 @@ void test2(){
 #endif
   P z0=cp( 0+2,5-3);
   P z1=cp(-5+2,0-3);
+  assert(abs(sd(z0,z1)-50)<.0001);
+  assert(ed(z0,z0) && !ed(z0,z1));
   P z2=cp( 3+2,4-3);
   P tabz[]={z0,z1,z2};
   Sp sp = csp(tabz+0,tabz+3);
@@ -366,18 +367,6 @@ void test2(){
   assert(abs(cent1[0]-2)<.0001);
   assert(abs(cent1[1]+3)<.0001);
   assert(abs(sp.squared_radius()-25)<.0001);
-#if 1
-  // Fails for an exact kernel
-  P psp0=ps(sp,0);
-  P psp1=ps(sp,1);
-  P psp2=ps(sp,2);
-  assert(!ed(psp0,psp1));
-  assert(!ed(psp0,psp2));
-  assert(!ed(psp2,psp1));
-  assert(abs(sd(cent0,psp0)-25)<.0001);
-  assert(abs(sd(cent0,psp1)-25)<.0001);
-  assert(abs(sd(cent0,psp2)-25)<.0001);
-#endif
   P x2py1 = tp(x2,y1);
   assert(x2py1[1]==-2);
   WP tw[]={cwp(cp(5,0),1.5),cwp(cp(2,std::sqrt(3)),1),cwp(cp(2,-std::sqrt(3)),1)};
@@ -411,6 +400,47 @@ void test2(){
   L un8; CGAL_USE(un8);
   R un9; CGAL_USE(un9);
   D un10; CGAL_USE(un10);
+}
+
+// Fails for an exact kernel, so I split it here
+template<class Ker>
+void test2i(){
+  typedef Ker K1;
+  typedef typename K1::Point_d P;
+  typedef typename K1::Sphere_d Sp;
+  typedef typename K1::Point_of_sphere_d PS;
+  typedef typename K1::Construct_point_d CP;
+  typedef typename K1::Construct_sphere_d CSp;
+  typedef typename K1::Equal_d E;
+  typedef typename K1::Squared_distance_d SD;
+  typedef typename K1::Center_of_sphere_d COS;
+  Ker k
+#if 0
+    (2)
+#endif
+    ;
+  CP cp Kinit(construct_point_d_object);
+  PS ps Kinit(point_of_sphere_d_object);
+  CSp csp Kinit(construct_sphere_d_object);
+  E ed Kinit(equal_d_object);
+  SD sd Kinit(squared_distance_d_object);
+  COS cos Kinit(center_of_sphere_d_object);
+  P z0=cp( 0+2,5-3);
+  P z1=cp(-5+2,0-3);
+  P z2=cp( 3+2,4-3);
+  P tabz[]={z0,z1,z2};
+  Sp sp = csp(tabz+0,tabz+3);
+  P cent0=cos(sp);
+  P psp0=ps(sp,0);
+  P psp1=ps(sp,1);
+  P psp2=ps(sp,2);
+  assert(!ed(psp0,psp1));
+  assert(!ed(psp0,psp2));
+  assert(!ed(psp2,psp1));
+  using std::abs;
+  assert(abs(sd(cent0,psp0)-25)<.0001);
+  assert(abs(sd(cent0,psp1)-25)<.0001);
+  assert(abs(sd(cent0,psp2)-25)<.0001);
 }
 
 #if defined(BOOST_MSVC)
@@ -531,7 +561,7 @@ void test3(){
   assert(abs(sd(e,a)-32)<.0001);
   P tab[]={a,b,c,d,e};
   std::cout << po (&tab[0],tab+4) << ' ';
-  std::cout << sos(&tab[0],tab+5) << ' ';
+  std::cout << sos(&tab[1],tab+5,tab[0]) << ' ';
   std::cout << sbs(tab+1,tab+5,tab[0]) << std::endl;
   FO fo=cfo(&tab[0],tab+3);
   std::cout << fo;
@@ -564,13 +594,13 @@ void test3(){
   std::cout << ifsos(fo3,yy+0,yy+3,yy[3]) << ' ';
   std::cout << ifsos(fo3,yy+1,yy+4,yy[0]) << '\n';
   P buf[]={cp(100,900,0),y[0],y[1],y[2],y[3]};
-  std::cout << sos(buf+0,buf+5) << ' ';
+  std::cout << sos(buf+1,buf+5,buf[0]) << ' ';
   buf[1]=y[1];buf[2]=y[2];buf[3]=y[3];buf[4]=y[0];
-  std::cout << sos(buf+0,buf+5) << ' ';
+  std::cout << sos(buf+1,buf+5,buf[0]) << ' ';
   buf[1]=yy[0];buf[2]=yy[1];buf[3]=yy[2];buf[4]=yy[3];
-  std::cout << sos(buf+0,buf+5) << ' ';
+  std::cout << sos(buf+1,buf+5,buf[0]) << ' ';
   buf[1]=yy[1];buf[2]=yy[2];buf[3]=yy[3];buf[4]=yy[0];
-  std::cout << sos(buf+0,buf+5) << '\n';
+  std::cout << sos(buf+1,buf+5,buf[0]) << '\n';
   assert(cah(y+0,y+3,y[3]));
   assert(!cah(y+0,y+3,buf[0]));
   assert(cl(a,a)==CGAL::EQUAL);
@@ -687,9 +717,14 @@ CGAL_static_assertion((boost::is_same<CGAL::Dimension_tag<3>,CGAL::Ambient_dimen
 int main(){
   //Broken with Linear_base_d (output iterator)
   //test2<CGAL::Kernel_d_interface<KK> >();
-  test2<Ker2>();
+  test2<Ker2>(); test2i<Ker2>();
   test3<Ker3>();
   test3<Kerd>();
+#if !defined _MSC_VER || _MSC_VER >= 1910
+  test2<CGAL::Epeck_d<CGAL::Dimension_tag<2>>>();
+  test3<CGAL::Epeck_d<CGAL::Dimension_tag<3>>>();
+  test3<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
+#endif
 }
 
 #endif

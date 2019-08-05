@@ -21,6 +21,7 @@
 #define CGAL_IO_OBJ_READER_H
 
 #include <istream>
+#include <sstream>
 #include <vector>
 
 
@@ -48,9 +49,20 @@ read_OBJ( std::istream& input,
       faces.push_back( std::vector<std::size_t>() );
       while(iss >> i)
       {
-        faces.back().push_back(i-1);
+        if(i < 1)
+        {
+          faces.back().push_back(points.size()+i);//negative indices are relative references
+        }
+        else {
+          faces.back().push_back(i-1);
+        }
         iss.ignore(256, ' ');
       }
+    }
+    else
+    {
+      //std::cerr<<"ERROR : Cannnot read line beginning with "<<line[0]<<std::endl;
+     continue;
     }
   }
   return true;

@@ -555,7 +555,7 @@ Regular_triangulation<Traits, TDS>
     maximal_dimension(),
     flat_orientation_ ?
     std::pair<int, const Flat_orientation_d *>(current_dimension(), flat_orientation_.get_ptr())
-    : std::pair<int, const Flat_orientation_d *>((std::numeric_limits<int>::max)(), NULL) );
+    : std::pair<int, const Flat_orientation_d *>((std::numeric_limits<int>::max)(), nullptr) );
 
   Dark_s_handle dark_s;
   Dark_v_handle dark_v;
@@ -751,16 +751,16 @@ Regular_triangulation<Traits, TDS>
       Rotor light_r(light_s, li, light_i);
       typename Dark_triangulation::Rotor dark_r(dark_s, di, dark_i);
 
-      while( simps.contains(cpp11::get<0>(light_r)->neighbor(cpp11::get<1>(light_r))) )
+      while( simps.contains(std::get<0>(light_r)->neighbor(std::get<1>(light_r))) )
         light_r = rotate_rotor(light_r);
 
-      while( conflict_zone.contains(cpp11::get<0>(dark_r)->neighbor(cpp11::get<1>(dark_r))) )
+      while( conflict_zone.contains(std::get<0>(dark_r)->neighbor(std::get<1>(dark_r))) )
         dark_r = dark_side.rotate_rotor(dark_r);
 
-      Dark_s_handle dark_ns = cpp11::get<0>(dark_r);
-      int dark_ni = cpp11::get<1>(dark_r);
-      Full_cell_handle light_ns = cpp11::get<0>(light_r);
-      int light_ni = cpp11::get<1>(light_r);
+      Dark_s_handle dark_ns = std::get<0>(dark_r);
+      int dark_ni = std::get<1>(dark_r);
+      Full_cell_handle light_ns = std::get<0>(light_r);
+      int light_ni = std::get<1>(light_r);
       // mark dark_r as visited:
       // TODO try by marking with Dark_v_handle (vertex)
       Dark_s_handle outside = dark_ns->neighbor(dark_ni);

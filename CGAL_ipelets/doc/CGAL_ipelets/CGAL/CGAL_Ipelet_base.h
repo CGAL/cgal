@@ -198,7 +198,7 @@ The returned output iterator will accept assignments from objects of types
 `Polygon_2` or `Segment_2` or `Point_2`, it decomposes them in 
 objects of type `Point_2` and assigns them to `it`. 
 For more details on the returned output iterator refer to the Boost library 
-<A HREF="http://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html">documentation</A>. 
+<A HREF="https://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html">documentation</A>. 
 
 */ 
 template<class OutputIterator> 
@@ -211,7 +211,7 @@ The returned output iterator will accept assignments from objects of types
 `Polygon_2` or `Segment_2`, it decomposes them in objects of type `Segment_2` 
 and assigns them to `it`. 
 For more details on the returned output iterator refer to the Boost library 
-<A HREF="http://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html">documentation</A>. 
+<A HREF="https://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html">documentation</A>. 
 
 */ 
 template<class OutputIterator> 

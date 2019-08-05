@@ -6,7 +6,6 @@
 #include <iostream>
 
 #include <boost/unordered_map.hpp>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
@@ -33,7 +32,7 @@ int main(int argc, char* argv[])
                                                    source) ;
 
   std::cout << "Source vertex at: " << source->point() << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd , vertices(tm)){
+  for(vertex_descriptor vd : vertices(tm)){
     std::cout << vd->point() << "  is at distance " << vertex_distance[vd] << std::endl;
   }
 

@@ -75,7 +75,7 @@ public:
   typedef typename Delaunay_graph::Vertex_handle      result_type;
 
 public:
-  Default_caching_site_inserter(const Adaptation_traits* at = NULL) : at_(at) {}
+  Default_caching_site_inserter(const Adaptation_traits* at = nullptr) : at_(at) {}
 
   result_type operator()(Delaunay_graph& dg, const Site_2& t) const
   {

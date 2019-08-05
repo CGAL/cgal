@@ -9,10 +9,13 @@
 #include <QMenu>
 #include <QApplication>
 #include <QtPlugin>
+#include <QThread>
 #include "Scene_surface_mesh_item.h"
-#include "Scene_polygon_soup_item.h"
+#include "Scene_polygon_soup_item.h" 
 #include <QInputDialog>
 #include <QStringList>
+#include <QMessageBox>
+#include <QAbstractButton>
 
 #include "C3t3_type.h"
 
@@ -28,6 +31,7 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
 
@@ -201,7 +205,6 @@ public:
 
 } //end of CGAL namespace
 
-
 Scene_surface_mesh_item* make_item(SMesh* sm)
 {
   return new Scene_surface_mesh_item(sm);
@@ -235,10 +238,20 @@ CGAL::Bbox_3 bbox(Mesh* mesh_ptr) {
 CGAL::Bbox_3 bbox(Scene_polygon_soup_item* item) {
   return item->bbox();
 }
-
+class MeshGuard{
+  SMesh* mesh;
+  bool done;
+public:
+  MeshGuard(SMesh* mesh):mesh(mesh), done(false){}
+  void setDone(){done = true;}
+  ~MeshGuard(){
+    if(!done)
+      delete mesh;
+  }
+};
 // declare the CGAL function
 template<class Mesh>
-CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
+SMesh* cgal_off_meshing(QWidget*,
                                           Mesh* tm_ptr,
                                           const double offset_value,
                                           const double angle,
@@ -297,18 +310,68 @@ CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
     typedef typename Result_type<Mesh>::type Result_mesh;
     // add remesh as new polyhedron
     Result_mesh *pRemesh = new Result_mesh;
+    //if the thread is interrupted before the mesh is returned, delete it.
+    MeshGuard guard(pRemesh);
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, *pRemesh);
+    guard.setDone();
     if(CGAL::is_closed(*pRemesh)
        && ! CGAL::Polygon_mesh_processing::is_outward_oriented(*pRemesh))
     {
       CGAL::Polygon_mesh_processing::reverse_face_orientations(*pRemesh);
     }
     
-    return make_item(pRemesh);
+    return pRemesh;
   }
   else
-    return 0;
+    return nullptr;
 }
+
+struct Mesher_thread:public QThread{
+  Q_OBJECT
+  
+private:
+  SMesh* sMesh;
+  Scene_polygon_soup_item* soup_item;
+  const double offset_value;
+  const double angle;
+  const double sizing;
+  const double approx;
+  int tag_index;
+public:
+  Mesher_thread( SMesh* tm_ptr,
+                 Scene_polygon_soup_item* soup_item,
+                 const double offset_value,
+                 const double angle,
+                 const double sizing,
+                 const double approx,
+                 int tag)
+    :sMesh(tm_ptr), soup_item(soup_item),
+      offset_value(offset_value), angle(angle),
+      sizing(sizing), approx(approx), tag_index(tag){
+  }
+  void run() override {
+    SMesh* new_mesh= nullptr;
+    if(soup_item)
+      new_mesh = cgal_off_meshing(CGAL::Three::Three::mainWindow(),
+                                  soup_item,
+                                  offset_value,
+                                  angle,
+                                  sizing,
+                                  approx,
+                                  tag_index);
+    else
+      new_mesh = cgal_off_meshing(CGAL::Three::Three::mainWindow(),
+                                  sMesh,
+                                  offset_value,
+                                  angle,
+                                  sizing,
+                                  approx,
+                                  tag_index);
+    Q_EMIT resultReady(new_mesh);
+  }
+Q_SIGNALS:
+  void resultReady(SMesh *new_mesh);
+};
 
 using namespace CGAL::Three;
 class Polyhedron_demo_offset_meshing_plugin :
@@ -360,16 +423,25 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
       qobject_cast<Scene_polygon_soup_item*>(item);
 
   SMesh* sMesh = NULL;
-if(sm_item)
+  double diag = 0;
+  Scene_item::Bbox box;
+  if(sm_item)
   {
     sMesh = sm_item->face_graph();
     if(!sMesh)
       return;
+    box = bbox(sMesh);
+  }
+  else if(soup_item != 0)
+  {
+    box = bbox(soup_item);
   }
   else if(soup_item == 0)
     return;
-
-  double diag = scene->len_diagonal();
+  double X=box.max(0)-box.min(0),
+      Y = box.max(1)-box.min(1),
+      Z = box.max(2)-box.min(2);
+  diag = CGAL::sqrt(X*X+Y*Y+Z*Z);
   double offset_value = QInputDialog::getDouble(mw,
                                                 QString("Choose Offset Value"),
                                                 QString("Offset Value (use negative number for inset)"),
@@ -416,25 +488,32 @@ if(sm_item)
             << "\n  tag=" << tag_index
             << std::boolalpha
             << std::endl;
-  CGAL::Three::Scene_item* new_item;
+  Mesher_thread* worker = nullptr;
   if(soup_item)
-    new_item = cgal_off_meshing(mw,
-                                soup_item,
-                                offset_value,
-                                angle,
-                                sizing,
-                                approx,
-                                tag_index);
+    worker = new Mesher_thread(nullptr,
+                               soup_item,
+                               offset_value,
+                               angle,
+                               sizing,
+                               approx,
+                               tag_index);
   else
-    new_item = cgal_off_meshing(mw,
-                                sMesh,
-                                offset_value,
-                                angle,
-                                sizing,
-                                approx,
-                                tag_index);
-  if(new_item)
-  {
+    worker = new Mesher_thread(sMesh,
+                               nullptr,
+                               offset_value,
+                               angle,
+                               sizing,
+                               approx,
+                               tag_index);
+  connect(worker, &QThread::finished, worker, &QObject::deleteLater);
+  connect(worker, &Mesher_thread::resultReady, this, 
+          [item, angle, sizing, approx, offset_value, index]
+          (SMesh *new_mesh){
+    QApplication::restoreOverrideCursor();
+    if(!new_mesh){
+      return;
+    }
+    Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(new_mesh);
     new_item->setName(tr("%1 offset %5 (%2 %3 %4)")
                       .arg(item->name())
                       .arg(angle)
@@ -443,13 +522,33 @@ if(sm_item)
                       .arg(offset_value));
     new_item->setColor(Qt::magenta);
     new_item->setRenderingMode(item->renderingMode());
-    
-    scene->addItem(new_item);
+    CGAL::Three::Three::scene()->addItem(new_item);
     item->setVisible(false);
-    scene->itemChanged(index);
-  }
+    CGAL::Three::Three::scene()->itemChanged(index);
+    QApplication::restoreOverrideCursor();
+    
+  });
+  QMessageBox* message_box = new QMessageBox(QMessageBox::NoIcon,
+                                             "Meshing",
+                                             "Offset meshing in progress...",
+                                             QMessageBox::Cancel,
+                                             mw);
+  message_box->setDefaultButton(QMessageBox::Cancel);
+  QAbstractButton* cancelButton = message_box->button(QMessageBox::Cancel);
+  cancelButton->setText(tr("Stop"));
+
+  connect(cancelButton, &QAbstractButton::clicked,
+          this, [worker](){
+    worker->terminate();
+    QApplication::restoreOverrideCursor();//waitcursor
+    QApplication::restoreOverrideCursor();//busycursor
+  });
+  connect(worker, &Mesher_thread::finished,
+          message_box, &QMessageBox::close);
+  message_box->open();
   
-  QApplication::restoreOverrideCursor();
+  QApplication::setOverrideCursor(Qt::BusyCursor);
+  worker->start();
 }
 
 #include "Offset_meshing_plugin.moc"

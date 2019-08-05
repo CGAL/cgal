@@ -42,7 +42,6 @@
 #include <CGAL/Eigen_solver_traits.h>
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -244,12 +243,12 @@ public:
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
     boost::unordered_set<vertex_descriptor> main_border;
 
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(bhd,mesh)){
+    for(vertex_descriptor v : vertices_around_face(bhd,mesh)){
       main_border.insert(v);
     }
 
     int count = 0;
-    BOOST_FOREACH(vertex_descriptor v, vertices){
+    for(vertex_descriptor v : vertices){
       // inner vertices only
       if(main_border.find(v) == main_border.end()){
         // Compute the line i of matrix A for i inner vertex
@@ -278,7 +277,7 @@ public:
     CGAL_assertion(Dv == 1.0);
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
-    BOOST_FOREACH(vertex_descriptor v, vertices)
+    for(vertex_descriptor v : vertices)
     {
       // inner vertices only
       if(main_border.find(v) == main_border.end()){
@@ -329,7 +328,7 @@ protected:
                                           VertexUVmap uvmap,
                                           VertexIndexMap vimap) const
   {
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)){
+    for(halfedge_descriptor hd : halfedges_around_face(bhd, mesh)){
       // Get vertex index in sparse linear system
       int index = get(vimap, target(hd, mesh));
       // Write a diagonal coefficient of A

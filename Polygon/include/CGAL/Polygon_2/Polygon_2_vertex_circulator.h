@@ -56,7 +56,7 @@ private:
 public:
 // CREATION
 
-    Polygon_circulator() : ctnr(NULL) {}
+    Polygon_circulator() : ctnr(nullptr) {}
     Polygon_circulator( const Ctnr* c)
         : ctnr(c), i(c->begin()) {}
     Polygon_circulator( const Ctnr* c, iterator j)
@@ -68,15 +68,15 @@ public:
 
 // OPERATIONS
 
-  bool operator==( Nullptr_t CGAL_assertion_code(p)) const {
-        CGAL_assertion( p == NULL);
-        return (ctnr == NULL) || (ctnr->begin() == ctnr->end());
+  bool operator==( std::nullptr_t CGAL_assertion_code(p)) const {
+        CGAL_assertion( p == nullptr);
+        return (ctnr == nullptr) || (ctnr->begin() == ctnr->end());
     }
-    bool operator!=( Nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const { return i == c.i; }
     bool operator!=( const Self& c) const { return !(*this == c); }
     reference  operator*() const {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( current_iterator() != ctnr->end());
         return *i;
     }
@@ -91,12 +91,12 @@ private:
 public:
 
     pointer  operator->() const {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( current_iterator() != ctnr->end());
         return deref(i);
     }
     Self& operator++() {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( current_iterator() != ctnr->end());
         ++i;
         if ( current_iterator() == ctnr->end())
@@ -109,7 +109,7 @@ public:
         return tmp;
     }
     Self& operator--() {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( current_iterator() != ctnr->end());
         if ( current_iterator() == ctnr->begin())
             i = const_cast<Container*>(ctnr)->end();
@@ -122,7 +122,7 @@ public:
         return tmp;
     }
     Self& operator+=( difference_type n) {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( current_iterator() != ctnr->end());
         typename Ctnr::difference_type j = current_iterator() - ctnr->begin();
         typename Ctnr::difference_type size = ctnr->size();
@@ -144,8 +144,8 @@ public:
         return tmp += -n;
     }
     difference_type operator-( const Self& c) const {
-        CGAL_assertion( ctnr != NULL);
-        CGAL_assertion( c.ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
+        CGAL_assertion( c.ctnr != nullptr);
         return i - c.i;
     }
     reference  operator[]( difference_type n) const {

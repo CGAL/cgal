@@ -336,8 +336,8 @@ private:
         // Following section 4.2 from [2] we denote P_j = r_j*r_{j+1} + dot_product(d_j, d_{j+1}).
         // Vector s_i from [1] corresponds to that one with the name d_i in [2].
         for(int j = 0; j < n-1; ++j)
-            P[j] = (CGAL::max)(r[j]*r[j+1] + scalar_product_2(s[j], s[j+1]), FT(0));
-        P[n-1] = (CGAL::max)(r[n-1]*r[0] + scalar_product_2(s[n-1], s[0]), FT(0));
+            P[j] = CGAL::max<FT>(r[j]*r[j+1] + scalar_product_2(s[j], s[j+1]), 0);
+        P[n-1] = CGAL::max<FT>(r[n-1]*r[0] + scalar_product_2(s[n-1], s[0]), 0);
 
         // Compute mean value weights using the formula (16) from [2].
         // Since the formula (16) always gives positive values, we have to add a proper sign to all the weight functions.

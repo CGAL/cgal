@@ -24,6 +24,4 @@ bidirected LEDA graph `G`.
 template <class R> 
 void d3_surface_map(const Convex_hull_d<R>& C, GRAPH< typename Convex_hull_d<R>::Point_d ,int>& G); 
 
-/// @}
-
 } /* end namespace CGAL */

@@ -22,11 +22,6 @@
 #ifndef CGAL_LAZY_EXACT_NT_H
 #define CGAL_LAZY_EXACT_NT_H
 
-#define CGAL_int(T)    typename First_if_different<int,    T>::Type
-#define CGAL_double(T) typename First_if_different<double, T>::Type
-#define CGAL_To_interval(T) To_interval<T>
-
-
 #include <CGAL/number_type_basic.h>
 #include <CGAL/assertions.h>
 
@@ -53,6 +48,9 @@
 
 #include <CGAL/IO/io.h>
 
+#define CGAL_int(T)    typename First_if_different<int,    T>::Type
+#define CGAL_double(T) typename First_if_different<double, T>::Type
+#define CGAL_To_interval(T) To_interval<T>
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
@@ -164,6 +162,11 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e))
   {
     this->et = new ET(e);
+  }
+  Lazy_exact_Ex_Cst (ET&& e)
+      : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e))
+  {
+    this->et = new ET(std::move(e));
   }
 
   void update_exact() const { CGAL_error(); }
@@ -344,14 +347,14 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 // The real number type, handle class
 template <typename ET_>
 class Lazy_exact_nt
-  : public Lazy<Interval_nt<false>, ET_, Lazy_exact_nt<ET_>, To_interval<ET_> >
+  : public Lazy<Interval_nt<false>, ET_, To_interval<ET_> >
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, int >
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, double >
 {
 public:
 
   typedef Lazy_exact_nt<ET_> Self;
-  typedef Lazy<Interval_nt<false>, ET_, Self, To_interval<ET_> > Base;
+  typedef Lazy<Interval_nt<false>, ET_, To_interval<ET_> > Base;
   typedef typename Base::Self_rep  Self_rep;
 
   typedef typename Base::ET ET; // undocumented
@@ -370,12 +373,14 @@ public :
   // Also check that ET and AT are constructible from T?
   template<class T>
   Lazy_exact_nt (T i, typename boost::enable_if<boost::mpl::and_<
-      boost::mpl::or_<boost::is_arithmetic<T>, cpp11::is_enum<T> >,
+      boost::mpl::or_<boost::is_arithmetic<T>, std::is_enum<T> >,
       boost::mpl::not_<boost::is_same<T,ET> > >,void*>::type=0)
     : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 
   Lazy_exact_nt (const ET & e)
     : Base(new Lazy_exact_Ex_Cst<ET>(e)){}
+  Lazy_exact_nt (ET&& e)
+    : Base(new Lazy_exact_Ex_Cst<ET>(std::move(e))){}
 
   template <class ET1>
   Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,

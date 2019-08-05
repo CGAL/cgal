@@ -87,7 +87,7 @@ public:
   template <typename PointRange, typename VectorMap>
   Verticality (const PointRange& input,
                VectorMap normal_map)
-    : vertical (0., 0., 1.), eigen(NULL)
+    : vertical (0., 0., 1.), eigen(nullptr)
   {
     this->set_name ("verticality");
     for (std::size_t i = 0; i < input.size(); i++)
@@ -102,7 +102,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t pt_index)
   {
-    if (eigen != NULL)
+    if (eigen != nullptr)
     {
       typename GeomTraits::Vector_3 normal = eigen->normal_vector<GeomTraits>(pt_index);
       normal = normal / CGAL::sqrt (normal * normal);

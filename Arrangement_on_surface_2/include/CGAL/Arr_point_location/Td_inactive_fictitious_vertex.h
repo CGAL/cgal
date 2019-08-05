@@ -190,7 +190,7 @@ public:
   //@{
 
   /*! Constructor given Vertex & Halfedge handles. */
-  Td_inactive_fictitious_vertex (Vertex_const_handle v_before_rem, Dag_node* node = NULL)
+  Td_inactive_fictitious_vertex (Vertex_const_handle v_before_rem, Dag_node* node = nullptr)
   {
     Curve_end v_ce(vtx_to_ce(v_before_rem));
    

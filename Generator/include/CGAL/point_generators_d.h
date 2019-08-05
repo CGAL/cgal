@@ -28,6 +28,7 @@
 #include <CGAL/generators.h>
 #include <CGAL/number_type_basic.h>
 #include <cmath>
+#include <vector>
 
 namespace CGAL {
 

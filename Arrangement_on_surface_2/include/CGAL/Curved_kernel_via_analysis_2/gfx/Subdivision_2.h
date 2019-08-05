@@ -243,7 +243,7 @@ private:
 template <class NT, class Algebraic_curve_2_>
 void Subdivision_2<NT, Algebraic_curve_2_>::draw(QPainter *painter_)
 {
-	if(!initialized||!polynomial_set||painter_==NULL)
+	if(!initialized||!polynomial_set||painter_==nullptr)
 		return;
 	painter = painter_;
 	//std::cout << " P(x(y)): " << coeffs_x << std::endl; 

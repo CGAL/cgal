@@ -112,7 +112,7 @@ public:
     mWriter          (out)
    ,mDefaultDxfColor (255)
    ,mDxfColor        (255)
-   ,mCgalColor       (WHITE)
+    ,mCgalColor       (white())
    ,mLayer           ("0")
   {
     setup_initial_color_table();
@@ -146,6 +146,8 @@ public:
    * Get the current DXF color.
    */
   int default_dxf_color () const { return mDefaultDxfColor ; }
+  
+  // @}
   
   /// \name Set the drawing properties.
   //@{
@@ -255,6 +257,7 @@ public:
     mWriter.add_polyline_2( pgn.begin(), pgn.end(), true, mLayer, mDxfColor ) ;
   }
 
+  //@}
 
   /// \name Setting the draw properties via the << operator.
   //@{
@@ -277,6 +280,7 @@ public:
     return (*this);
   }
 
+  //@}
 
   /// \name Drawing objects via the << operator.
   //@{
@@ -305,15 +309,15 @@ protected:
 
   void setup_initial_color_table()
   {
-    define_color(BLACK,0);
-    define_color(RED,1);
-    define_color(YELLOW,2);
-    define_color(GREEN,3);
-    define_color(PURPLE,4);
-    define_color(BLUE,5);
-    define_color(VIOLET,6);
-    define_color(WHITE,7);
-    define_color(GRAY,8);
+    define_color(black(),0);
+    define_color(red(),1);
+    define_color(yellow(),2);
+    define_color(green(),3);
+    define_color(purple(),4);
+    define_color(blue(),5);
+    define_color(violet(),6);
+    define_color(white(),7);
+    define_color(gray(),8);
   }
   
 };

@@ -110,7 +110,7 @@ public:
   void face_node(face_descriptor facet, Point& pt) {
     int n = 0;
     Point p(0,0,0);
-    BOOST_FOREACH(vertex_descriptor vd,
+    for(vertex_descriptor vd :
                   vertices_around_face(halfedge(facet, *(this->pmesh)), *(this->pmesh)))
     {
       p = p + ( get(this->vpmap,vd) - ORIGIN);
@@ -513,6 +513,7 @@ public:
     }
     pt = CGAL::ORIGIN + cv;
   }
+/// @}
 };
 
 // ======================================================================
@@ -618,6 +619,7 @@ public:
     ept2 = CGAL::ORIGIN + denom * ( 10.*sv + 16.*tv + next_tv );
     vpt = CGAL::ORIGIN + 1./27. * ( 4*prev_sv + 19*sv + 4*tv );
   }
+/// @}
 };
 
 } // namespace CGAL

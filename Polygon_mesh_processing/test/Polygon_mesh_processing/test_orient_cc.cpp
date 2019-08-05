@@ -37,7 +37,7 @@ bool test_orientation(TriangleMesh& tm, bool is_positive, const NamedParameters&
 
   // extract a vertex with max z coordinate for each connected component
   std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
-  BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+  for(vertex_descriptor vd : vertices(tm))
   {
     face_descriptor test_face = face(halfedge(vd, tm), tm);
     if(test_face == Graph_traits::null_face())
@@ -50,7 +50,7 @@ bool test_orientation(TriangleMesh& tm, bool is_positive, const NamedParameters&
         xtrm_vertices[cc_id]=vd;
   }
   std::vector<std::vector<face_descriptor> > ccs(nb_cc);
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  for(face_descriptor fd : faces(tm))
   {
     ccs[face_cc[get(fid_map,fd)]].push_back(fd);
   }

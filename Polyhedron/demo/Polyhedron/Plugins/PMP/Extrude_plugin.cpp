@@ -7,8 +7,10 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Three.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Triangle_container.h>
 
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Polygon_mesh_processing/extrude.h>
@@ -28,6 +30,8 @@ typedef Scene_surface_mesh_item Scene_face_graph_item;
 typedef Scene_face_graph_item::Face_graph Face_graph;
 typedef CGAL::qglviewer::Vec Vec;
 using namespace CGAL::Three;
+typedef Viewer_interface Vi;
+typedef Triangle_container Tc;
 //use frame to get dist and dir.
 //fix frame in translation and use mousewheel to choose dist
 //finding frame's position : first try at the center of the item's bbox
@@ -37,19 +41,19 @@ typedef Kernel::Plane_3 Plane;
 typedef Kernel::Triangle_3 Triangle;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-class Scene_arrow_item : public Scene_item
+class Scene_arrow_item : public Scene_item_rendering_helper
 {
   Q_OBJECT
 public :
   Scene_arrow_item(Vec center_, double r, double length_)
-    :Scene_item(2, 1), center_(center_), length_(length_), R(r),
+    :center_(center_), length_(length_), R(r),
        frame(new Scene_item::ManipulatedFrame())
   {
-    const CGAL::qglviewer::Vec offset = static_cast<Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
         frame->setPosition( center_+offset);
-    nb_pos = 0;
     tick = length_/10.0f;
     ctrl_pressing = false;
+    setTriangleContainer(0, new Tc(Vi::PROGRAM_WITH_LIGHT, false));
   }
   // Indicates if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE {
@@ -58,44 +62,46 @@ public :
   //Displays the item
   void draw(Viewer_interface* viewer) const Q_DECL_OVERRIDE
   {
-    if(!are_buffers_filled)
+    if(!isInit(viewer))
+      initGL(viewer);
+    if (! getBuffersInit(viewer))
     {
       initializeBuffers(viewer);
+      setBuffersInit(viewer, true);
     }
-    vaos[0]->bind();
-    program = getShaderProgram(PROGRAM_WITH_LIGHT);
     GLdouble d_mat[16];
-    QMatrix4x4 mvp_mat;
     GLdouble matrix[16];
     QMatrix4x4 f_matrix;
     frame->getMatrix(matrix);
     for (int i=0; i<16; ++i)
       f_matrix.data()[i] = (float)matrix[i];
     viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    for (int i=0; i<16; ++i)
-      mvp_mat.data()[i] = GLfloat(d_mat[i]);
-    mvp_mat = mvp_mat*f_matrix;
     QMatrix4x4 mv_mat;
     viewer->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
       mv_mat.data()[i] = GLfloat(d_mat[i]);
     mv_mat = mv_mat*f_matrix;
-    attribBuffers(viewer, PROGRAM_WITH_LIGHT);
-    program->bind();
-    program->setUniformValue("mvp_matrix", mvp_mat);
-    program->setUniformValue("mv_matrix", mv_mat);
-    program->setUniformValue("is_clipbox_on", false);
-    program->setAttributeValue("radius",0.01*diagonalBbox());
-    program->setAttributeValue("colors", QColor(Qt::red));
-    program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_pos/3));
-    vaos[0]->release();
-    program->release();
+    
+    Tc* tc = getTriangleContainer(0);
+    tc->setMvMatrix(mv_mat);
+    tc->setFrameMatrix(f_matrix);
+    tc->setClipping(false);
+    tc->setColor(this->color());
+    tc->draw(viewer, true);
   }
   void invalidateOpenGLBuffers() Q_DECL_OVERRIDE
   {
-    are_buffers_filled = false;
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      CGAL::Three::Viewer_interface* viewer = 
+          static_cast<CGAL::Three::Viewer_interface*>(v);
+      if(viewer == NULL)
+        continue;
+      setBuffersInit(viewer, false);
+    }
+    getTriangleContainer(0)->reset_vbos(ALL);
   }
+  void compute_bbox() const Q_DECL_OVERRIDE {}
   Scene_item* clone() const Q_DECL_OVERRIDE {return 0;}
   QString toolTip() const Q_DECL_OVERRIDE {return QString();}
   Vec center()const { return center_; }
@@ -124,7 +130,7 @@ public :
   double length()const { return length_; }
 private:
   //make an arrow showing the length and direction of the transformation for the extrusion. 
-  void initializeBuffers(Viewer_interface *viewer)const
+  void initializeBuffers(Viewer_interface *viewer)const Q_DECL_OVERRIDE 
   {
     std::vector<float> vertices;
     std::vector<float> normals;
@@ -240,25 +246,17 @@ private:
     
     //fill buffers
     //vao containing the data for the facets
-    program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
-    program->bind();
-    vaos[0]->bind();
-    buffers[0].bind();
-    buffers[0].allocate(vertices.data(),
-                        static_cast<GLsizei>(vertices.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[0].release();
-    buffers[1].bind();
-    buffers[1].allocate(normals.data(),
-                        static_cast<GLsizei>(normals.size()*sizeof(float)));
-    program->enableAttributeArray("normals");
-    program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-    buffers[1].release();
-    vaos[0]->release();
-    program->release();
-    //once the buffers are filled, we can empty the vectors to optimize memory consumption
-    nb_pos = vertices.size();
+    Tc* tc = getTriangleContainer(0);
+    tc->allocate(Tc::Flat_vertices,
+                 vertices.data(),
+                 static_cast<GLsizei>(vertices.size()*sizeof(float)));
+ 
+    tc->allocate(Tc::Flat_normals,
+                 normals.data(),
+                 static_cast<GLsizei>(normals.size()*sizeof(float)));
+    tc->initializeBuffers(viewer);
+    tc->setFlatDataSize(vertices.size());
+    
     _bbox = Bbox(0,0,0,0,0,0);
     for(std::size_t i = 0; i< vertices.size(); i+=3)
     {
@@ -266,17 +264,15 @@ private:
                      vertices[i+1],
                      vertices[i+2]).bbox();
     }
-    
-    are_buffers_filled = true;
+    setBbox(_bbox);
+    setBuffersInit(viewer, true);
   }
   
-  mutable std::size_t nb_pos;
   Vec center_;
   double length_;
   double tick;
   double R;
   bool ctrl_pressing;
-  mutable QOpenGLShaderProgram *program;
   Scene_item::ManipulatedFrame* frame;
 }; //end of class Scene_arrow_item
 
@@ -288,7 +284,7 @@ CGAL::Bbox_3 triangles(const TriangleMesh& mesh,
   CGAL::Bbox_3 bb;
   typename boost::property_map<TriangleMesh,CGAL::vertex_point_t>::const_type vpm =
       get(CGAL::vertex_point, mesh);
-  BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor fd, faces(mesh)){
+  for(typename boost::graph_traits<TriangleMesh>::face_descriptor fd : faces(mesh)){
     typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd = halfedge(fd,mesh);
     Triangle t(get(vpm,source(hd,mesh)),
                get(vpm,target(hd,mesh)),
@@ -303,7 +299,7 @@ Vector estimate_normals(const std::vector<Triangle>& tris)
 {
   Vector moy(0,0,0);
   
-  BOOST_FOREACH(const Triangle& tri, tris)
+  for(const Triangle& tri : tris)
   {
     Vector norm = CGAL::Polygon_mesh_processing::internal::triangle_normal(
           tri[0], tri[1], tri[2], Kernel());
@@ -320,7 +316,7 @@ class ExtrudePlugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "extrude_plugin.json")
 public:
  
   bool applicable(QAction* action) const Q_DECL_OVERRIDE
@@ -358,8 +354,18 @@ public:
     connect(actionExtrude, SIGNAL(triggered()),
             this, SLOT(do_extrude()));
     _actions << actionExtrude;
+    connect(mw, SIGNAL(newViewerCreated(QObject*)),
+            this, SLOT(connectNewViewer(QObject*)));
   }
 private Q_SLOTS:
+  void connectNewViewer(QObject* o)
+  {
+    for(int i=0; i<scene->numberOfEntries(); ++i)
+    {
+      if(oliver_queen)
+        o->installEventFilter(oliver_queen);
+    }
+  }
   void createItem()
   {
     Scene_item * item = scene->item(scene->mainSelectionIndex());
@@ -413,8 +419,8 @@ private Q_SLOTS:
     oliver_queen->manipulatedFrame()->setConstraint(&constraint);
     oliver_queen->setColor(QColor(Qt::green));
     oliver_queen->setName("Extrude item");
-    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
-    viewer->installEventFilter(oliver_queen);
+    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+      viewer->installEventFilter(oliver_queen);
     mw->installEventFilter(oliver_queen);
     scene->addItem(oliver_queen);
     target = fg_item;

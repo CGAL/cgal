@@ -463,7 +463,6 @@ private:
 
 } // end namespace internal
 
-//template<typename Kernel = CGAL::Cartesian<CORE::Expr> >
 
 template<typename Kernel = Exact_predicates_exact_constructions_kernel_with_sqrt>
 class Hyperbolic_Delaunay_triangulation_traits_2

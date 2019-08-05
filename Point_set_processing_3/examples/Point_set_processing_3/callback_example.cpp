@@ -25,7 +25,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 
 
-// instance of CGAL::cpp11::function<bool(double)>
+// instance of std::function<bool(double)>
 struct Progress_to_std_cerr_callback
 {
   mutable std::size_t nb;
@@ -74,7 +74,7 @@ int main (int argc, char* argv[])
   std::vector<Point> points;
   points.reserve (N);
   Generator generator(100.);
-  CGAL::cpp11::copy_n (generator, N, std::back_inserter(points));
+  std::copy_n (generator, N, std::back_inserter(points));
 
   // Compute average spacing
   FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>

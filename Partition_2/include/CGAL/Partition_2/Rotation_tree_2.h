@@ -57,6 +57,7 @@ public:
    typedef typename Traits::Point_2                Point_2;
 
    using internal::vector< Rotation_tree_node_2<Traits_> >::push_back;
+      using internal::vector< Rotation_tree_node_2<Traits_> >::back;
 
    class Greater {
       typename Traits::Less_xy_2 less;
@@ -70,24 +71,33 @@ public:
       }
    };
 
+   struct Equal {
+      bool operator()(const Point_2& p, const Point_2& q) const
+      {
+         return p == q;
+      }
+   };
+   
    // constructor
    template<class ForwardIterator>
-   Rotation_tree_2(ForwardIterator first, ForwardIterator beyond)
+   Rotation_tree_2(ForwardIterator first, ForwardIterator beyond, const Traits& traits)
    {
       for (ForwardIterator it = first; it != beyond; it++)
          push_back(*it);
 
-      Greater greater (Traits().less_xy_2_object());
+      Greater greater (traits.less_xy_2_object());
+      Equal equal;
       std::sort(this->begin(), this->end(), greater);
-      std::unique(this->begin(), this->end());
+      std::unique(this->begin(), this->end(),equal);
    
       // front() is the point with the largest x coordinate
-   
+
+      // Add two auxiliary points that have a special role and whose coordinates are not used
       // push the point p_minus_infinity; the coordinates should never be used
-      push_back(Point_2( 1, -1));
+      push_back(back());
 
       // push the point p_infinity; the coordinates should never be used
-      push_back(Point_2(1, 1));
+      push_back(back());
    
       _p_inf = this->end();  // record the iterators to these extreme points
       _p_inf--;

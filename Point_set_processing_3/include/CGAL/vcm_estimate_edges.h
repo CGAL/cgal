@@ -53,11 +53,11 @@ namespace CGAL {
 ///
 template <class FT, class VCMTraits>
 bool
-vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
+vcm_is_on_feature_edge (std::array<FT,6> &cov,
                         double threshold,
                         VCMTraits)
 {
-    cpp11::array<double,3> eigenvalues;
+    std::array<double,3> eigenvalues;
     if (!VCMTraits::
           diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues) )
     {
@@ -76,7 +76,7 @@ vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
 
 template <class FT>
 bool
-vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
+vcm_is_on_feature_edge (std::array<FT,6> &cov,
                         double threshold)
 {
   return vcm_is_on_feature_edge(cov, threshold,

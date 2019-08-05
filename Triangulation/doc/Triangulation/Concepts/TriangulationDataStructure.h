@@ -450,6 +450,7 @@ All vertices of cells of \f$ C\f$ are on \f$ \partial H\f$.
 \cgalFigureBegin{triangulationfiginserthole,insert-in-hole.png}
 Insertion in a hole, \f$ d=2\f$
 \cgalFigureEnd
+\cgalAdvancedEnd
 */
 template< class ForwardIterator > Vertex_handle
 insert_in_hole(ForwardIterator start, ForwardIterator end, Facet f);
@@ -555,8 +556,8 @@ This method does exactly the opposite of
 `insert_increase_dimension()`:
 `v` is removed,
 full cells not containing `star` are removed,
-full cells containing `star` but not `v` loose vertex `star`,
-full cells containing `star` and `v` loose vertex `v`
+full cells containing `star` but not `v` lose vertex `star`,
+full cells containing `star` and `v` lose vertex `v`
 (see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
 \pre All cells contain either `star` or `v`.
 Edge `star-v` exists in the triangulation

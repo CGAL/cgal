@@ -31,6 +31,7 @@ template <class R_> class Weighted_point {
 	FT_ w_;
 
 	public:
+	Weighted_point(){}
 	Weighted_point(Point_ const&p, FT_ const&w): c_(p), w_(w) {}
 	// TODO: Add a piecewise constructor?
 
@@ -124,6 +125,7 @@ template<class R_> struct Power_side_of_power_sphere : private Store_kernel<R_> 
 	  make_transforming_iterator (f, pdw),
 	  make_transforming_iterator (e, pdw),
 	  make_transforming_iterator (f, pw),
+	  make_transforming_iterator (e, pw),
 	  pdw (p0),
 	  pw (p0));
     }
@@ -144,6 +146,7 @@ template<class R_> struct In_flat_power_side_of_power_sphere : private Store_ker
 	  make_transforming_iterator (f, pdw),
 	  make_transforming_iterator (e, pdw),
 	  make_transforming_iterator (f, pw),
+	  make_transforming_iterator (e, pw),
 	  pdw (p0),
 	  pw (p0));
     }
@@ -183,20 +186,19 @@ template <class R_> struct Power_center : Store_kernel<R_> {
     for(i=0; ++f!=e; ++i) {
       WPoint const& wp=*f;
       Point const& p=pdw(wp);
-      FT const& np = sdo(p) - pw(wp);
       for(int j=0;j<d;++j) {
 	m(i,j)=2*(c(p,j)-c(p0,j));
-	b[i] = np - n0;
       }
+      b[i] = sdo(p) - pw(wp) - n0;
     }
     CGAL_assertion (i == d);
     Vec res = typename CVec::Dimension()(d);;
     //std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
-    LA::solve(res, CGAL_MOVE(m), CGAL_MOVE(b));
+    LA::solve(res, std::move(m), std::move(b));
     //std::cout << "Sol: " << res << std::endl;
     Point center = cp(d,LA::vector_begin(res),LA::vector_end(res));
     FT const& r2 = pdp (wp0, center);
-    return cwp(CGAL_MOVE(center), r2);
+    return cwp(std::move(center), r2);
   }
 };
 }

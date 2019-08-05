@@ -4,9 +4,12 @@
 #include <QVector>
 #include <QDockWidget>
 
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
+#include <CGAL/Three/Three.h>
+#include <CGAL/Three/Point_container.h>
+#include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -65,8 +68,12 @@ typedef Alpha_shape_3::Edge_iterator  Edge_iterator;
 typedef Alpha_shape_3::Coord_type Coord_type;
 typedef Alpha_shape_3::Alpha_iterator Alpha_iterator;
 
+using namespace CGAL::Three;
+typedef Viewer_interface Vi;
+typedef Triangle_container Tc;
+typedef Point_container Pc;
 
-class Scene_alpha_shape_item : public CGAL::Three::Scene_item
+class Scene_alpha_shape_item : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
 public :
@@ -77,11 +84,12 @@ public :
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void drawPoints(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
-  void computeElements() const ;
+  void computeElements() const Q_DECL_OVERRIDE;
   Scene_item* clone() const Q_DECL_OVERRIDE{return 0;}
   QString toolTip() const Q_DECL_OVERRIDE{return QString();}
   bool isEmpty() const Q_DECL_OVERRIDE{ return false;}
   bool isFinite() const Q_DECL_OVERRIDE{ return true;}
+  void compute_bbox() const Q_DECL_OVERRIDE {}
   Alpha_shape_3 alpha_shape;
   void createPolygonSoup(std::vector<Kernel::Point_3>& points,
                          std::vector<std::vector<std::size_t> >& polys) const;
@@ -91,10 +99,7 @@ public Q_SLOTS:
 private:
   mutable std::vector<float> vertices;
   mutable std::vector<unsigned int> indices;
-  mutable QOpenGLShaderProgram *program;
-  mutable QOpenGLShaderProgram facet_program;
-  using CGAL::Three::Scene_item::initializeBuffers;
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const Q_DECL_OVERRIDE;
   Point_set point_set;
 }; //end of class Scene_alpha_shape_item
 
@@ -225,11 +230,11 @@ public Q_SLOTS:
     as_item->createPolygonSoup(points, polys);
     Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
     new_item->init_polygon_soup(points.size(), polys.size());
-    BOOST_FOREACH(const Kernel::Point_3& p, points)
+    for(const Kernel::Point_3& p : points)
     {
       new_item->new_vertex(p.x(), p.y(), p.z());
     }
-    BOOST_FOREACH(const std::vector<std::size_t>& poly, polys)
+    for(const std::vector<std::size_t>& poly : polys)
     {
       new_item->new_triangle(poly[0], poly[1], poly[2]);
     }
@@ -275,12 +280,13 @@ private:
  ***********************************/
 #include <CGAL/Timer.h>
 Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *point_set_item, int alpha)
-  : Scene_item(1, 1), point_set(*point_set_item->point_set())
+  : point_set(*point_set_item->point_set())
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  _bbox = point_set_item->bbox();
-  CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
-  const CGAL::qglviewer::Vec offset = viewer->offset();
+  setBbox(point_set_item->bbox());
+  setTriangleContainer(0, new Tc( Vi::PROGRAM_OLD_FLAT, true));
+  setPointContainer(0, new Pc(Vi::PROGRAM_NO_SELECTION, false));
+  const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
   vertices.reserve(point_set.size() * 3);
   CGAL::Timer timer;
   timer.start();
@@ -299,121 +305,72 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
     vertices.push_back(it->point().y()+offset.y);
     vertices.push_back(it->point().z()+offset.z);
   }
-    const char vertex_source[] =
-    {
-      "#version 150 \n"
-      "in vec4 vertex;\n"
-      "in vec3 colors;\n"
-      "uniform  mat4 mvp_matrix;\n"
-      "uniform  mat4 mv_matrix; \n"
-      "uniform  float point_size; \n"
-      "out  vec4 fP; \n"
-      "out  vec4 color; \n"
-      "void main(void)\n"
-      "{\n"
-      "   gl_PointSize = point_size; \n"
-      "   color = vec4(colors, 1.0); \n"
-      "   fP = mv_matrix * vertex; \n"
-      "   gl_Position = mvp_matrix * vertex;\n"
-      "}"
-    };
-    const char vertex_source_comp[] =
-    {
-      "attribute highp vec4 vertex;\n"
-      "attribute highp vec3 colors;\n"
-      "uniform highp mat4 mvp_matrix;\n"
-      "uniform highp mat4 mv_matrix; \n"
-      "uniform highp float point_size; \n"
-      "varying highp vec4 fP; \n"
-      "varying highp vec4 color; \n"
-      "void main(void)\n"
-      "{\n"
-      "   gl_PointSize = point_size; \n"
-      "   color = vec4(colors, 1.0); \n"
-      "   fP = mv_matrix * vertex; \n"
-      "   gl_Position = mvp_matrix * vertex;\n"
-      "}"
-    };
-  if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
+  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
   {
-    facet_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_source);
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+    if(!isInit(viewer))
+      initGL(viewer);
   }
-  else
-  {
-    facet_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_source_comp);
-  }
-  facet_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_old_flat.frag");
-  facet_program.link();
+  getPointContainer(0)->allocate(Pc::Vertices,
+                                 vertices.data(),
+                                 static_cast<GLsizei>(vertices.size()*sizeof(float)));
+  getTriangleContainer(0)->allocate(Tc::Vertex_indices,
+               indices.data(),
+               static_cast<GLsizei>(indices.size()*sizeof(unsigned int)));
   invalidateOpenGLBuffers();
   alpha_changed(alpha);
   QApplication::restoreOverrideCursor();
 }
 void Scene_alpha_shape_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!are_buffers_filled)
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
+  {
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
   {
     computeElements();
     initializeBuffers(viewer);
   }
-  QMatrix4x4 mvp_mat;
-  QMatrix4x4 mv_mat;
-  GLdouble d_mat[16];
-  viewer->camera()->getModelViewMatrix(d_mat);
-  for (int i=0; i<16; ++i)
-    mv_mat.data()[i] = GLfloat(d_mat[i]);
-  viewer->camera()->getModelViewProjectionMatrix(d_mat);
-  for (int i=0; i<16; ++i)
-    mvp_mat.data()[i] = GLfloat(d_mat[i]);
-  QVector4D position(0.0f,0.0f,1.0f, 1.0f );
-  QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
-  // Diffuse
-  QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
-  // Specular
-  QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
-  program = &facet_program;
-  program->bind();
-  program->setUniformValue("mvp_matrix", mvp_mat);
-  program->setUniformValue("mv_matrix", mv_mat);
-  program->setUniformValue("light_pos", position);
-  program->setUniformValue("light_diff",diffuse);
-  program->setUniformValue("light_spec", specular);
-  program->setUniformValue("light_amb", ambient);
-  program->setUniformValue("spec_power", 51.8f);
-  program->setUniformValue("is_two_side", viewer->property("draw_two_sides").toBool());
-  program->setUniformValue("is_selected", false);
-
-  vaos[0]->bind();
-
-  program->setAttributeValue("colors", this->color());
-  viewer->glDrawElements(GL_TRIANGLES, static_cast<GLuint>(indices.size()),
-                         GL_UNSIGNED_INT, indices.data());
-  program->release();
-  vaos[0]->release();
-
+  Tc* tc = getTriangleContainer(0);
+  tc->setColor(this->color());
+  tc->draw(viewer, true);
   drawPoints(viewer);
 }
 
 void Scene_alpha_shape_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
-{
-  if(!are_buffers_filled)
+{ 
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
+  {
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
   {
     computeElements();
     initializeBuffers(viewer);
   }
 
-  vaos[0]->bind();
-  attribBuffers(viewer, PROGRAM_NO_SELECTION);
-  program = getShaderProgram(PROGRAM_NO_SELECTION);
-  program->bind();
-  program->setAttributeValue("colors", QColor(255,0,0));
-  viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(point_set.size()));
-  program->release();
-  vaos[0]->release();
+  Pc* pc = getPointContainer(0);
+  pc->setColor(QColor(255,0,0));
+  pc->draw(viewer, true);
 }
 
 void Scene_alpha_shape_item::invalidateOpenGLBuffers()
 {
-  are_buffers_filled = false;
+  getTriangleContainer(0)->reset_vbos(ALL);
+  setBuffersFilled(false);
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    Viewer_interface* viewer = static_cast<Viewer_interface*>(v);
+    if(viewer == NULL)
+      continue;
+    setBuffersInit(viewer, false);
+    viewer->update();
+  }
 }
 
 void Scene_alpha_shape_item::computeElements() const
@@ -436,33 +393,26 @@ void Scene_alpha_shape_item::computeElements() const
 
     indices.push_back(a); indices.push_back(b); indices.push_back(c);
   }
+  Tc* tc = getTriangleContainer(0);
+  tc->allocate(Tc::Smooth_vertices,
+               vertices.data(),
+               static_cast<GLsizei>(vertices.size()*sizeof(float)));
+  tc->allocate(Tc::Vertex_indices,
+               indices.data(),
+               static_cast<GLsizei>(indices.size()*sizeof(unsigned int)));
+  setBuffersFilled(true);
   QApplication::restoreOverrideCursor();
 }
 
 void Scene_alpha_shape_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
 {
-  program = &facet_program;
-  program->bind();
-  vaos[0]->bind();
-  buffers[0].bind();
-  buffers[0].allocate(vertices.data(),
-                      static_cast<GLsizei>(vertices.size()*sizeof(float)));
-  program->enableAttributeArray("vertex");
-  program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  buffers[0].release();
-  vaos[0]->release();
-  program->release();
-
-  program = viewer->getShaderProgram(PROGRAM_NO_SELECTION);
-  program->bind();
-  vaos[0]->bind();
-  buffers[0].bind();
-  program->enableAttributeArray("vertex");
-  program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  buffers[0].release();
-  vaos[0]->release();
-  program->release();
-  are_buffers_filled = true;
+  Pc* pc = getPointContainer(0);
+  pc->initializeBuffers(viewer);
+  pc->setFlatDataSize(vertices.size());
+ 
+  Tc* tc = getTriangleContainer(0);
+  tc->initializeBuffers(viewer);
+  tc->setIdxSize(indices.size());
 }
 
 void Scene_alpha_shape_item::alpha_changed(int i)

@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/simple_transformations_d.h>

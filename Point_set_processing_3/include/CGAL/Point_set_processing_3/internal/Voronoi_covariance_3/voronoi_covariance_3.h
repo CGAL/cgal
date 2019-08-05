@@ -49,7 +49,7 @@ namespace CGAL {
                 covariance_matrix_tetrahedron (FT ax, FT ay, FT az,
                                                FT bx, FT by, FT bz,
                                                FT cx, FT cy, FT cz,
-                                               cpp11::array<FT,6> &R)
+                                               std::array<FT,6> &R)
                 {
                     const FT det = (ax*cz*by - ax*bz*cy - ay*bx*cz +
                                     ay*cx*bz + az*bx*cy - az*cx*by) / 60.0;
@@ -77,7 +77,7 @@ namespace CGAL {
                 class Covariance_accumulator_3
                 {
                     public:
-                        typedef cpp11::array<FT, 6> Result_type;
+                        typedef std::array<FT, 6> Result_type;
 
                     private:
                         Result_type _result;
@@ -178,10 +178,10 @@ namespace CGAL {
                        boost::make_optional(Point(CGAL::ORIGIN)));
 
                     // apply f to the triangles on the boundary of P
-                    BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::face_descriptor fd, faces(P))
+                    for(typename boost::graph_traits<Polyhedron>::face_descriptor fd : faces(P))
                     {
                       Halfedge_around_face_circulator<Polyhedron>
-                        h0(halfedge(fd,P),P), hf = h0--, hs = cpp11::next(hf);
+                        h0(halfedge(fd,P),P), hf = h0--, hs = std::next(hf);
 
                         while(hs != h0)
                         {
@@ -207,7 +207,7 @@ namespace CGAL {
             }
 
         template <class DT, class Sphere>
-            array<typename DT::Geom_traits::FT, 6>
+            std::array<typename DT::Geom_traits::FT, 6>
             voronoi_covariance_3 (const DT &dt,
                                   typename DT::Vertex_handle v,
                                   const Sphere &sphere)

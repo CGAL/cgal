@@ -99,9 +99,13 @@ function(CGAL_setup_CGAL_dependencies target)
   if (CGAL_HEADER_ONLY)
     target_compile_definitions(${target} ${keyword} CGAL_HEADER_ONLY=1)
   endif()
-  if (RUNNING_CGAL_AUTO_TEST)
+  if (RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     target_compile_definitions(${target} ${keyword} CGAL_TEST_SUITE=1)
   endif()
+
+  # CGAL now requires C++14. `decltype(auto)` is used as a marker of
+  # C++14.
+  target_compile_features(${target} ${keyword} cxx_decltype_auto)
 
   use_CGAL_Boost_support(${target} ${keyword})
 

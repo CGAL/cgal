@@ -67,11 +67,11 @@ namespace CGAL{
     typedef typename CGAL::Polygon_2<Kernel>              Polygon_2;
   
     typedef typename Kernel::Circle_2                                         Circle_2;
-    typedef CGAL::cpp11::tuple<Circle_2,Point_2,Point_2,CGAL::Sign>           Circular_arc_2;
+    typedef std::tuple<Circle_2,Point_2,Point_2,CGAL::Sign>           Circular_arc_2;
   
   
     Ipelet_base(const std::string NameS,const std::string SubLabS[],const std::string HMsgS[])
-      :SubLab(&SubLabS[0]),HMsg(&HMsgS[0]),Name(NameS),_page(NULL),_helper(NULL){};
+      :SubLab(&SubLabS[0]),HMsg(&HMsgS[0]),Name(NameS),_page(nullptr),_helper(nullptr){};
     
     
     IpePage* get_IpePage() const {return _page;}
@@ -89,7 +89,7 @@ namespace CGAL{
         protected_run(i);
       }
       catch(...){
-        helper->MessageBox("Error : Save your page in a file and submit it to \n https://www.cgal.org/bug_report.html","OK",NULL,NULL);
+        helper->MessageBox("Error : Save your page in a file and submit it to \n https://www.cgal.org/bug_report.html","OK",nullptr,nullptr);
       }
     };
 
@@ -112,7 +112,7 @@ namespace CGAL{
           hmsg=hmsg+"<li><i>"+SubLab[i]+"</i>: "+HMsg[i]+"</li>";
       else
         hmsg=hmsg+"<li>"+HMsg[0]+"</li>";
-      _helper->MessageBox(&hmsg[0],"OK",NULL,NULL);
+      _helper->MessageBox(&hmsg[0],"OK",nullptr,nullptr);
       return;
     }
 
@@ -338,7 +338,7 @@ public:
           SSP_ipe->SetClosed(true);
         return SSP_ipe;
       }
-      return NULL;
+      return nullptr;
     }
     
     
@@ -352,10 +352,10 @@ public:
                                       typename std::iterator_traits<iterator>::value_type,
                                       Point_2
                                     > 
-                                  >::type* =NULL) const 
+                                  >::type* =nullptr) const 
     {
       IpeSegmentSubPath* SSP_ipe=create_polyline(first,last,setclose);
-      if (SSP_ipe!=NULL){
+      if (SSP_ipe!=nullptr){
         IpePath* obj_ipe = new IpePath(_helper->Attributes());
         obj_ipe->AddSubPath(SSP_ipe);
         if (blackfill)
@@ -364,7 +364,7 @@ public:
         if (deselect_all) (--_page->end())->SetSelect(IpePgObject::ENone);
         return obj_ipe;
       }
-      return NULL;  
+      return nullptr;  
     }
     
     void draw_in_ipe(const Circle_2& C,bool deselect_all=false) const {
@@ -411,15 +411,15 @@ public:
     draw_in_ipe(const Circular_arc_2& arc,bool deselect_all=false) const 
     {
       IpeSegmentSubPath* SSP_ipe = new IpeSegmentSubPath;
-      IpeVector ipeS=IpeVector( CGAL::to_double(CGAL::cpp11::get<1>(arc).x()),
-                                CGAL::to_double(CGAL::cpp11::get<1>(arc).y()));//convert ot ipe format
-      IpeVector ipeT=IpeVector( CGAL::to_double(CGAL::cpp11::get<2>(arc).x()),
-                                CGAL::to_double(CGAL::cpp11::get<2>(arc).y()));//convert ot ipe format
-      SSP_ipe->AppendArc(IpeMatrix(sqrt(CGAL::to_double(CGAL::cpp11::get<0>(arc).squared_radius())),0,
-                                   0,(CGAL::cpp11::get<3>(arc)==CGAL::COUNTERCLOCKWISE?1:-1)*
-                                     sqrt(CGAL::to_double(CGAL::cpp11::get<0>(arc).squared_radius())),
-                                   CGAL::to_double(CGAL::cpp11::get<0>(arc).center().x()),
-                                   CGAL::to_double(CGAL::cpp11::get<0>(arc).center().y())),
+      IpeVector ipeS=IpeVector( CGAL::to_double(std::get<1>(arc).x()),
+                                CGAL::to_double(std::get<1>(arc).y()));//convert ot ipe format
+      IpeVector ipeT=IpeVector( CGAL::to_double(std::get<2>(arc).x()),
+                                CGAL::to_double(std::get<2>(arc).y()));//convert ot ipe format
+      SSP_ipe->AppendArc(IpeMatrix(sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),0,
+                                   0,(std::get<3>(arc)==CGAL::COUNTERCLOCKWISE?1:-1)*
+                                     sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),
+                                   CGAL::to_double(std::get<0>(arc).center().x()),
+                                   CGAL::to_double(std::get<0>(arc).center().y())),
                                    ipeS,ipeT);
       IpePath* obj_ipe = new IpePath(_helper->Attributes());
       obj_ipe->AddSubPath(SSP_ipe);
@@ -482,17 +482,17 @@ public:
     draw_in_ipe(const Circular_arc_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const 
     {
       std::vector<Circular_arc_2> arc_list;
-      const Circle_2& circle=CGAL::cpp11::get<0>(object);
+      const Circle_2& circle=std::get<0>(object);
       restrict_circle_to_bbox(circle,bbox,std::back_inserter(arc_list));
       if (arc_list.empty() && bbox.has_on_bounded_side(circle.center()) ){
         draw_in_ipe(object,deselect_all);
         return;
       }
       
-      const Point_2* source=(CGAL::cpp11::get<3>(object)==CGAL::COUNTERCLOCKWISE)?
-                            &CGAL::cpp11::get<1>(object):&CGAL::cpp11::get<2>(object);
-      const Point_2* target=(CGAL::cpp11::get<3>(object)==CGAL::COUNTERCLOCKWISE)?
-                            &CGAL::cpp11::get<2>(object):&CGAL::cpp11::get<1>(object);
+      const Point_2* source=(std::get<3>(object)==CGAL::COUNTERCLOCKWISE)?
+                            &std::get<1>(object):&std::get<2>(object);
+      const Point_2* target=(std::get<3>(object)==CGAL::COUNTERCLOCKWISE)?
+                            &std::get<2>(object):&std::get<1>(object);
       std::multimap<double,std::pair<Type_circ_arc,const Point_2*> > map_theta;
       typedef  typename std::multimap<double,std::pair<Type_circ_arc,const Point_2*> >::iterator Map_theta_iterator;
       Map_theta_iterator s_it=map_theta.insert(
@@ -501,10 +501,10 @@ public:
                                 std::make_pair(get_theta(*target,circle),std::make_pair(OTRG,target)));
       
       for (typename std::vector<Circular_arc_2>::iterator it_arc=arc_list.begin();it_arc!=arc_list.end();++it_arc){
-        const Point_2* arc_s=(CGAL::cpp11::get<3>(*it_arc)==CGAL::COUNTERCLOCKWISE)?
-                             &CGAL::cpp11::get<1>(*it_arc):&CGAL::cpp11::get<2>(*it_arc);
-        const Point_2* arc_t=(CGAL::cpp11::get<3>(*it_arc)==CGAL::COUNTERCLOCKWISE)?
-                             &CGAL::cpp11::get<2>(*it_arc):&CGAL::cpp11::get<1>(*it_arc);        
+        const Point_2* arc_s=(std::get<3>(*it_arc)==CGAL::COUNTERCLOCKWISE)?
+                             &std::get<1>(*it_arc):&std::get<2>(*it_arc);
+        const Point_2* arc_t=(std::get<3>(*it_arc)==CGAL::COUNTERCLOCKWISE)?
+                             &std::get<2>(*it_arc):&std::get<1>(*it_arc);        
         map_theta.insert( std::make_pair(get_theta(*arc_s,circle),std::make_pair(SRC,arc_s) ) );
         map_theta.insert( std::make_pair(get_theta(*arc_t,circle),std::make_pair(TRG,arc_t) ) );
       }
@@ -651,7 +651,7 @@ public:
                                  boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ,
                                                   boost::is_same<typename std::iterator_traits<iterator>::value_type,Polygon_2>
                                                 > > > >
-                    >::type* = NULL) const
+                    >::type* = nullptr) const
     {
       for (iterator it=begin;it!=end;++it)
         draw_in_ipe(*it,bbox);
@@ -773,9 +773,9 @@ public:
       Circle_2 approx_circle=conv(exact_circle);  
       if (!sign_known){
         CGAL::Sign sign = (CGAL::orientation(sd,td,center)==CGAL::LEFT_TURN)?CGAL::POSITIVE:CGAL::NEGATIVE;
-        return CGAL::cpp11::make_tuple(approx_circle,sd,td,sign);
+        return std::make_tuple(approx_circle,sd,td,sign);
       }
-      return CGAL::cpp11::make_tuple(approx_circle,sd,td,CGAL::POSITIVE);
+      return std::make_tuple(approx_circle,sd,td,CGAL::POSITIVE);
     }
 
     void 

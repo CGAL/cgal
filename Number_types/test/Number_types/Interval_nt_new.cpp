@@ -1,5 +1,6 @@
 #include <iostream>
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/Interval_nt.h>
 #include <cassert>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>

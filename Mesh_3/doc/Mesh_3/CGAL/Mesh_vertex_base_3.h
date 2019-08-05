@@ -28,7 +28,5 @@ template< typename Gt, typename MD, typename Vb >
 class Mesh_vertex_base_3 : public Vb {
 public:
 
-/// @}
-
 }; /* end Mesh_vertex_base_3 */
 } /* end namespace CGAL */

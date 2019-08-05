@@ -161,7 +161,7 @@ public:
   }
 
   bool operator<( const Self& i) const {
-    CGAL_assertion( m_anchor  != NULL);
+    CGAL_assertion( m_anchor  != nullptr);
     CGAL_assertion( m_anchor  == i.m_anchor);
     return (     (m_winding < i.m_winding)
                  || (    (m_winding == i.m_winding)

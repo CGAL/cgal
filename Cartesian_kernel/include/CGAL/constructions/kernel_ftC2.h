@@ -64,7 +64,7 @@ circumcenter_translateC2(const FT &dqx, const FT &dqy,
   CGAL_kernel_assertion ( ! CGAL_NTS is_zero(den) );
 
   // One possible optimization here is to precompute 1/den, to avoid one
-  // division.  However, we loose precision, and it's maybe not worth it (?).
+  // division.  However, we lose precision, and it's maybe not worth it (?).
   dcx =   determinant (dry, dqy, r2, q2) / den;
   dcy = - determinant (drx, dqx, r2, q2) / den;
 }
@@ -440,7 +440,7 @@ weighted_circumcenter_translateC2(const RT &dqx, const RT &dqy, const RT &dqw,
   CGAL_assertion ( den != RT(0) );
 
   // One possible optimization here is to precompute 1/den, to avoid one
-  // division.  However, we loose precision, and it's maybe not worth it (?).
+  // division.  However, we lose precision, and it's maybe not worth it (?).
   dcx =   determinant (dry, dqy, r2, q2) / den;
   dcy = - determinant (drx, dqx, r2, q2) / den;
 }
