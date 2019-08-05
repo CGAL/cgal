@@ -137,6 +137,10 @@ CGAL_add_named_parameter(with_dihedral_angle_t, with_dihedral_angle, with_dihedr
 CGAL_add_named_parameter(optimize_anchor_location_t, optimize_anchor_location, optimize_anchor_location)
 CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
 
+// tetrahedral remeshing parameters
+CGAL_add_named_parameter(protect_boundaries_t, protect_boundaries, protect_boundaries)
+CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_selector)
+
 // output parameters
 CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)
 CGAL_add_named_parameter(proxies_t, proxies, proxies)
