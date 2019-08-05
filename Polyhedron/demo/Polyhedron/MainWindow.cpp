@@ -250,7 +250,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
           this, SLOT(selectionChanged()));
   // setup menu filtering
   connect(sceneView->selectionModel(),
-          qOverload<const QItemSelection & , const QItemSelection &>(&QItemSelectionModel::selectionChanged),
+          QOverload<const QItemSelection & , const QItemSelection &>::of(&QItemSelectionModel::selectionChanged),
           this, [=](){filterOperations(false);});
 
   sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -467,7 +467,7 @@ void MainWindow::filterOperations(bool hide)
 #ifdef Q_OS_WIN
   if(hide)
     ui->menuOperations->hide();
-#endif()
+#endif
   //return actions to their true menu
   Q_FOREACH(QMenu* menu, action_menu_map.values())
   {
