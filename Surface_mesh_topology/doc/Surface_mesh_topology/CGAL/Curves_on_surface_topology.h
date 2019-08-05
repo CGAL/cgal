@@ -32,7 +32,25 @@ namespace Surface_mesh_topology {
     /*! returns `true` if the closed path `p` is contractible.
      *  @pre `p` must be a closed path on `amesh`.
      */
-    bool is_contractible(const Path_on_surface<Mesh>& p) const;    
+    bool is_contractible(const Path_on_surface<Mesh>& p) const;
+
+    /*! returns the edgewidth of the unweighted mesh
+     */
+    Path_on_surface<Mesh> compute_edgewidth() const;
+
+    /*! returns the edgewidth of the weighted mesh
+     */
+    template <class WeightFunctor>
+    Path_on_surface<Mesh> compute_edgewidth(const WeightFunctor& wf) const;
+
+    /*! returns the shortest noncontractible cycle containing the 0-cell of `dh` on the unweighted mesh
+     */
+    Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(Dart_handle dh) const;
+
+    /*! returns the shortest noncontractible cycle containing the 0-cell of `dh` on the weighted mesh
+     */
+    template <class WeightFunctor>
+    Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(Dart_handle dh, const WeightFunctor& wf) const;
   };
 
 }
