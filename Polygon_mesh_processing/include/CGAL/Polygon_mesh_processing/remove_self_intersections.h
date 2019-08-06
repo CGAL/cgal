@@ -24,12 +24,17 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
-#include <CGAL/Polygon_mesh_processing/remove_degeneracies.h>
+#include <CGAL/Polygon_mesh_processing/remove_degeneracies.h> // only for the preconditions
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/selection.h>
@@ -40,22 +45,434 @@
 #include <iterator>
 #include <map>
 #include <set>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
+namespace internal {
 
-/// \cond SKIP_IN_MANUAL
-template <typename TriangleMesh, typename face_descriptor, typename VertexPointMap>
-std::pair<bool, bool>
-remove_self_intersections_one_step(TriangleMesh& tmesh,
-                                   std::set<face_descriptor>& faces_to_remove,
-                                   VertexPointMap& vpmap,
-                                   int step,
-                                   bool preserve_genus,
-                                   bool verbose)
+// @TMP
+template <typename FaceContainer, typename TriangleMesh>
+void dump_cc(const FaceContainer& cc_faces,
+             const TriangleMesh& mesh,
+             const std::string filename)
 {
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
+
+  std::ofstream out(filename);
+  out.precision(17);
+
+  out << "OFF\n";
+  out << 3*cc_faces.size() << " " << cc_faces.size() << " 0\n";
+
+  for(const face_descriptor f : cc_faces)
+  {
+    out << mesh.point(source(halfedge(f, mesh), mesh)) << "\n";
+    out << mesh.point(target(halfedge(f, mesh), mesh)) << "\n";
+    out << mesh.point(target(next(halfedge(f, mesh), mesh), mesh)) << "\n";
+  }
+
+  int id = 0;
+  for(const face_descriptor f : cc_faces)
+  {
+    CGAL_USE(f);
+    out << "3 " << id << " " << id+1 << " " << id+2 << "\n";
+    id += 3;
+  }
+
+  out.close();
+}
+
+template <typename PolygonMesh, typename VPM, typename Point>
+void replace_face_range_with_patch(const std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& border_vertices,
+                                   const std::set<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& interior_vertices,
+                                   const std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>& border_hedges,
+                                   const std::set<typename boost::graph_traits<PolygonMesh>::edge_descriptor>& interior_edges,
+                                   const std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& pol_faces,
+                                   const std::vector<std::vector<Point> >& patch,
+                                   PolygonMesh& pmesh,
+                                   VPM& vpm,
+                                   const bool verbose)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor        edge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor        face_descriptor;
+
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM>::value_type, Point>::value));
+
+  typedef std::vector<Point>                                                Point_face;
+  typedef std::vector<vertex_descriptor>                                    Vertex_face;
+
+  // To be used to create new elements
+  std::vector<vertex_descriptor> vertex_stack(interior_vertices.begin(), interior_vertices.end());
+  std::vector<edge_descriptor> edge_stack(interior_edges.begin(), interior_edges.end());
+  std::vector<face_descriptor> face_stack(pol_faces.begin(), pol_faces.end());
+
+  // Introduce new vertices, convert the patch in vertex patches
+  std::vector<Vertex_face> vertex_patch;
+  vertex_patch.reserve(patch.size());
+
+  std::map<Point, vertex_descriptor> point_to_vs;
+
+  // first, add those for which the vertex will not change
+  for(const vertex_descriptor v : border_vertices)
+    point_to_vs[get(vpm, v)] = v;
+
+  // now build a correspondence map and the faces with vertices
+  const vertex_descriptor null_v = boost::graph_traits<PolygonMesh>::null_vertex();
+  for(const Point_face& face : patch)
+  {
+    Vertex_face vface;
+    vface.reserve(face.size());
+
+    for(const Point& p : face)
+    {
+      bool success;
+      typename std::map<Point, vertex_descriptor>::iterator it;
+      std::tie(it, success) = point_to_vs.insert(std::make_pair(p, null_v));
+      vertex_descriptor& v = it->second;
+
+      if(success) // first time we meet that point, means it's an interior point and we need to make a new vertex
+      {
+        if(vertex_stack.empty())
+        {
+          v = add_vertex(pmesh);;
+        }
+        else
+        {
+          v = vertex_stack.back();
+          vertex_stack.pop_back();
+        }
+
+        put(vpm, v, p);
+      }
+
+      vface.push_back(v);
+    }
+
+    vertex_patch.push_back(vface);
+  }
+
+  typedef std::pair<vertex_descriptor, vertex_descriptor>                        Vertex_pair;
+  typedef std::map<Vertex_pair, halfedge_descriptor>                             Vertex_pair_halfedge_map;
+
+  Vertex_pair_halfedge_map halfedge_map;
+
+  // register border halfedges
+  int i = 0;
+  for(halfedge_descriptor h : border_hedges)
+  {
+    const vertex_descriptor vs = source(h, pmesh);
+    const vertex_descriptor vt = target(h, pmesh);
+    halfedge_map.insert(std::make_pair(std::make_pair(vs, vt), h));
+
+    set_halfedge(target(h, pmesh), h, pmesh); // update vertex halfedge pointer
+    ++i;
+  }
+
+  face_descriptor f = boost::graph_traits<PolygonMesh>::null_face();
+
+  for(const Vertex_face& vface : vertex_patch)
+  {
+    if(face_stack.empty())
+    {
+      f = add_face(pmesh);
+    }
+    else
+    {
+      f = face_stack.back();
+      face_stack.pop_back();
+    }
+
+    std::vector<halfedge_descriptor> hedges;
+    hedges.reserve(vface.size());
+
+    for(std::size_t i=0, n=vface.size(); i<n; ++i)
+    {
+      const vertex_descriptor vi = vface[i];
+      const vertex_descriptor vj = vface[(i+1)%n];
+
+      // get the corresponding halfedge (either a new one or an already created)
+      bool success;
+      typename Vertex_pair_halfedge_map::iterator it;
+      std::tie(it, success) = halfedge_map.insert(std::make_pair(std::make_pair(vi, vj),
+                                                  boost::graph_traits<PolygonMesh>::null_halfedge()));
+      halfedge_descriptor& h = it->second;
+
+      if(success) // this halfedge is an interior halfedge
+      {
+        if(edge_stack.empty())
+        {
+          h = halfedge(add_edge(pmesh), pmesh);
+        }
+        else
+        {
+          h = halfedge(edge_stack.back(), pmesh);
+          edge_stack.pop_back();
+        }
+
+        halfedge_map[std::make_pair(vj, vi)] = opposite(h, pmesh);
+      }
+
+      hedges.push_back(h);
+    }
+
+    CGAL_assertion(vface.size() == hedges.size());
+
+    // update halfedge connections + face pointers
+    for(int i=0, n=vface.size(); i<n; ++i)
+    {
+      set_next(hedges[i], hedges[(i+1)%n], pmesh);
+      set_face(hedges[i], f, pmesh);
+
+      set_target(hedges[i], vface[(i+1)%n], pmesh);
+      set_halfedge(vface[(i+1)%n], hedges[i], pmesh);
+    }
+
+    set_halfedge(f, hedges[0], pmesh);
+  }
+
+  // now remove the remaining superfluous vertices, edges, faces
+  for(vertex_descriptor v : vertex_stack)
+    remove_vertex(v, pmesh);
+  for(edge_descriptor e : edge_stack)
+    remove_edge(e, pmesh);
+  for(face_descriptor f : face_stack)
+    remove_face(f, pmesh);
+
+  if(verbose)
+    std::cout << "  DEBUG: " << pol_faces.size() << " triangles removed, " << patch.size() << " created\n";
+
+  CGAL_postcondition(pmesh.is_valid());
+  CGAL_postcondition(is_valid_polygon_mesh(pmesh));
+}
+
+template <typename PolygonMesh, typename VPM, typename Point>
+void replace_face_range_with_patch(const std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& faces,
+                                   const std::vector<std::vector<Point> >& patch,
+                                   PolygonMesh& pmesh,
+                                   VPM& vpm,
+                                   const bool verbose)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor     vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor       edge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor       face_descriptor;
+
+  std::vector<vertex_descriptor> border_vertices;
+  std::set<vertex_descriptor> interior_vertices;
+  std::vector<halfedge_descriptor> border_hedges;
+  std::set<edge_descriptor> interior_edges;
+
+  for(face_descriptor fh : faces)
+  {
+    for(halfedge_descriptor h : halfedges_around_face(halfedge(fh, pmesh), pmesh))
+    {
+      if(halfedge(target(h, pmesh), pmesh) == h) // limit the number of insertions
+        interior_vertices.insert(target(h, pmesh));
+    }
+  }
+
+  for(face_descriptor fh : faces)
+  {
+    for(halfedge_descriptor h : halfedges_around_face(halfedge(fh, pmesh), pmesh))
+    {
+      CGAL_assertion(!is_border(h, pmesh));
+
+      const edge_descriptor e = edge(h, pmesh);
+      const halfedge_descriptor opp_h = opposite(h, pmesh);
+      const face_descriptor opp_f = face(opp_h, pmesh);
+
+      if(is_border(opp_h, pmesh) || faces.count(opp_f) == 0)
+      {
+        vertex_descriptor v = target(h, pmesh);
+        interior_vertices.erase(v);
+        border_hedges.push_back(h);
+        border_vertices.push_back(v);
+      }
+      else
+      {
+        interior_edges.insert(e);
+      }
+    }
+  }
+
+  return replace_face_range_with_patch(border_vertices, interior_vertices,
+                                       border_hedges, interior_edges, faces, patch,
+                                       pmesh, vpm, verbose);
+}
+
+template <typename TriangleMesh>
+bool is_new_patch_close_enough_to_initial_patch(const TriangleMesh& old_patch,
+                                                const TriangleMesh& new_patch)
+{
+#if defined(CGAL_LINKED_WITH_TBB)
+  typedef CGAL::Parallel_tag                                        Tag
+#else
+  typedef CGAL::Sequential_tag                                      Tag;
+#endif
+
+  double d = Polygon_mesh_processing::approximate_Hausdorff_distance<Tag>(
+               old_patch, new_patch, parameters::number_of_points_per_area_unit(4000));
+
+  std::cout << "d: " << d << std::endl;
+  return (d <= 0.1); // @fixme hardcoded
+}
+
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& faces,
+                                              const bool constrain_sharp_edges,
+                                              TriangleMesh& tmesh,
+                                              VertexPointMap& vpmap,
+                                              const GeomTraits& gt,
+                                              const bool verbose)
+{
+  std::cout << "       - -- -- - - - -- -" << std::endl;
+  std::cout << "repair with smoothing..." << std::endl;
+  std::cout << "constraining sharp edges: " << std::boolalpha << constrain_sharp_edges << std::endl;
+
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor       edge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor       face_descriptor;
+
+  typedef typename GeomTraits::FT                                           FT;
+  typedef typename boost::property_traits<VertexPointMap>::value_type       Point;
+  typedef typename GeomTraits::Vector_3                                     Vector;
+
+  typedef CGAL::Face_filtered_graph<TriangleMesh>                           Filtered_graph;
+
+  CGAL_precondition(does_self_intersect(faces, tmesh));
+
+  // keep in memory the face patch so that we can restore if smoothing fails
+  std::vector<std::vector<Point> > patch;
+  patch.reserve(faces.size());
+  for(const face_descriptor f : faces)
+  {
+    std::vector<Point> face_points;
+    for(const halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, tmesh), tmesh))
+      face_points.push_back(get(vpmap, target(h, tmesh)));
+
+    patch.push_back(face_points);
+  }
+
+  // also extract the full mesh because we need to compute the Hausdorff distance
+  Filtered_graph ffg(tmesh, faces);
+  TriangleMesh patch_mesh;
+  CGAL::copy_face_graph(ffg, patch_mesh, parameters::vertex_point_map(vpmap));
+
+  typedef typename boost::property_map<TriangleMesh, CGAL::edge_is_feature_t>::type  EIFMap;
+  EIFMap eif = get(CGAL::edge_is_feature, tmesh);
+
+  std::map<edge_descriptor, bool> is_border_of_selection;
+  for(face_descriptor f : faces)
+  {
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, tmesh), tmesh))
+    {
+      // meet it once --> switch to 'true'; meet it twice --> switch back to 'false'
+      const edge_descriptor e = edge(h, tmesh);
+      is_border_of_selection[e] = !(is_border_of_selection[e]);
+    }
+  }
+
+  const double bound = 60.; // @fixme hardcoded
+  const double cos_angle = std::cos(bound * CGAL_PI / 180.);
+
+  for(const auto& ep : is_border_of_selection)
+  {
+    bool flag = ep.second;
+    if(constrain_sharp_edges && !flag)
+    {
+      const halfedge_descriptor h = halfedge(ep.first, tmesh);
+      const face_descriptor f1 = face(h, tmesh);
+      const face_descriptor f2 = face(opposite(h, tmesh), tmesh);
+
+      const Vector n1 = compute_face_normal(f1, tmesh, parameters::vertex_point_map(vpmap).geom_traits(gt));
+      const Vector n2 = compute_face_normal(f2, tmesh, parameters::vertex_point_map(vpmap).geom_traits(gt));
+      const FT cos = n1 * n2;
+
+      // do not mark as sharp edges with a dihedral angle that is almost 'pi' because this is likely
+      // due to a foldness on the mesh rather than a sharp edge that we wish to preserve
+      // (Ideally this would be pre-treated as part of the flatness treatment)
+      flag = (cos <= cos_angle && cos >= -cos_angle);
+    }
+
+    put(eif, ep.first, flag);
+  }
+
+  // TMP OUTPUT ------------------------------------------------------------------------------------
+  std::ofstream out_sel("results/constrained_edges.selection.txt");
+  out_sel << std::endl << std::endl; // edge selection is on the third line
+
+  int counter = 0;
+  std::map<vertex_descriptor, int> vid;
+  for(vertex_descriptor v : vertices(tmesh))
+    vid[v] = counter++;
+
+  counter = 0;
+  for(const auto& ep : is_border_of_selection)
+  {
+    edge_descriptor e = ep.first;
+    if(get(eif, e))
+    {
+//      std::cout << e << " is constrained" << std::endl;
+      ++counter;
+      out_sel << vid[source(e, tmesh)] << " " << vid[target(e, tmesh)] << " ";
+    }
+  }
+  out_sel.close();
+  std::cout << "total : " << counter << " constrained edges" << std::endl;
+  // TMP OUTPUT ------------------------------------------------------------------------------------
+
+  smooth_mesh(faces, tmesh, CGAL::parameters::edge_is_constrained_map(eif)
+                                             .number_of_iterations(100) // @todo something more sensible?
+                                             .use_safety_constraints(false));
+
+  std::ofstream out1("results/post_smooth.off");
+  out1 << std::setprecision(17) << tmesh;
+  out1.close();
+
+  Filtered_graph ffg_post(tmesh, faces);
+  TriangleMesh patch_mesh_post;
+  CGAL::copy_face_graph(ffg_post, patch_mesh_post, parameters::vertex_point_map(vpmap));
+
+  bool is_acceptable = (!does_self_intersect(faces, tmesh) &&
+                        is_new_patch_close_enough_to_initial_patch(patch_mesh, patch_mesh_post));
+  std::cout << "is_acceptable: " << std::boolalpha << is_acceptable << std::endl;
+  if(!is_acceptable) // restore the patch
+  {
+    replace_face_range_with_patch(faces, patch, tmesh, vpmap, verbose);
+
+    std::ofstream out2("results/post_fixup.off");
+    out2 << std::setprecision(17) << tmesh;
+    out2.close();
+  }
+
+  return is_acceptable;
+}
+
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+std::pair<bool, bool>
+remove_self_intersections_one_step(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& faces_to_remove,
+                                   TriangleMesh& tmesh,
+                                   VertexPointMap& vpmap,
+                                   const GeomTraits& gt,
+                                   const int step,
+                                   const bool preserve_genus,
+                                   const bool treat_only_local_self_intersections,
+                                   const bool verbose)
+{
+  typedef boost::graph_traits<TriangleMesh>                               graph_traits;
+  typedef typename graph_traits::vertex_descriptor                        vertex_descriptor;
+  typedef typename graph_traits::halfedge_descriptor                      halfedge_descriptor;
+  typedef typename graph_traits::edge_descriptor                          edge_descriptor;
+  typedef typename graph_traits::face_descriptor                          face_descriptor;
+
+  typedef typename boost::property_traits<VertexPointMap>::value_type     Point;
+
   std::set<face_descriptor> faces_to_remove_copy = faces_to_remove;
 
   if(verbose)
@@ -64,20 +481,7 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
               << " with " << faces_to_remove.size() << " intersecting faces\n";
   }
 
-  if(!does_self_intersect(faces_to_remove, tmesh, parameters::vertex_point_map(vpmap)))
-  {
-    if(verbose)
-      std::cout << "DEBUG: Range has no self-intersections\n";
-
-    return std::make_pair(true, false);
-  }
-
   CGAL_assertion(tmesh.is_valid());
-
-  typedef boost::graph_traits<TriangleMesh>                       graph_traits;
-  typedef typename graph_traits::vertex_descriptor                vertex_descriptor;
-  typedef typename graph_traits::halfedge_descriptor              halfedge_descriptor;
-  typedef typename graph_traits::edge_descriptor                  edge_descriptor;
 
   bool something_was_done = false; // indicates if a region was successfully remeshed
   bool all_fixed = true; // indicates if all removal went well
@@ -96,6 +500,8 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
   {
     while(!faces_to_remove.empty())
     {
+      std::cout << faces_to_remove.size() << " to remove" << std::endl;
+
       // Process a connected component of faces to remove.
       // collect all the faces from the connected component
       std::set<face_descriptor> cc_faces;
@@ -117,6 +523,12 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
 
           h = next(h, tmesh);
         }
+      }
+
+      if(verbose)
+      {
+        std::cout << "  DEBUG: " << cc_faces.size() << " faces in CC\n";
+        dump_cc(cc_faces, tmesh, "results/cc_ini.off");
       }
 
       // expand the region to be filled
@@ -164,12 +576,60 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
         }
       }
 
+      if(treat_only_local_self_intersections)
+      {
+        if(!does_self_intersect(cc_faces, tmesh, parameters::vertex_point_map(vpmap).geom_traits(gt)))
+        {
+          if(verbose)
+            std::cout << "  DEBUG: No self-intersection in CC\n";
+
+          for(face_descriptor f : cc_faces)
+            faces_to_remove.erase(f);
+
+          continue;
+        }
+      }
+
+      if(verbose)
+      {
+        std::cout << "  DEBUG: " << cc_faces.size() << " faces in expanded CC\n";
+        dump_cc(cc_faces, tmesh, "results/cc_expanded.off");
+      }
+
+      if(cc_faces.size() == 1) // it is a triangle nothing better can be done
+        continue;
+
+      // First, try to smooth if only care about local self-intersections
+      // Two different approaches:
+      // - First, try to constrain edges that are in the zone to smooth and whose dihedral angle is large,
+      //   but not too large (we don't want to constrain edges that are due to foldings)
+      // - If that fails, try to smooth without any constraints, but make sure that the deviation from
+      //   the first zone is small
+
+      // @todo is here the correct position? Probably want to do it before manifoldness shenanigans
+      // @todo actually, would like to extract manifoldness shenanigans from that
+
+      bool fixed_by_smoothing = false;
+      if(treat_only_local_self_intersections)
+      {
+        fixed_by_smoothing = remove_self_intersections_with_smoothing(cc_faces, true, tmesh, vpmap, gt, verbose);
+        if(!fixed_by_smoothing) // try again, but without constraining sharp edges
+          fixed_by_smoothing = remove_self_intersections_with_smoothing(cc_faces, false, tmesh, vpmap, gt, verbose);
+      }
+
+      std::ofstream out2("results/post_fixup.off");
+      out2 << std::setprecision(17) << tmesh;
+      out2.close();
+
       // remove faces from the set to process
       for(face_descriptor f : cc_faces)
         faces_to_remove.erase(f);
 
-      if(cc_faces.size() == 1)
-        continue; // it is a triangle nothing better can be done
+      if(fixed_by_smoothing)
+      {
+        something_was_done = true;
+        continue;
+      }
 
       //Check for non-manifold vertices in the selection and remove them by selecting all incident faces:
       //  extract the set of halfedges that is on the boundary of the holes to be
@@ -250,7 +710,7 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
         halfedge_descriptor h = halfedge(fd, tmesh);
         for(int i=0; i<3;++i)
         {
-          if(is_border(opposite(h, tmesh), tmesh) || cc_faces.count(face(opposite(h, tmesh), tmesh))== 0)
+          if(is_border(opposite(h, tmesh), tmesh) || cc_faces.count(face(opposite(h, tmesh), tmesh)) == 0)
             cc_border_hedges.push_back(h);
 
           h = next(h, tmesh);
@@ -332,9 +792,10 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
 
             do
             {
-              typename std::map<vertex_descriptor, vertex_descriptor>::iterator
-                  it_find = bhs.find(top.second);
-              if(it_find == bhs.end()) break;
+              typename std::map<vertex_descriptor, vertex_descriptor>::iterator it_find = bhs.find(top.second);
+              if(it_find == bhs.end())
+                break;
+
               top = *it_find;
               bhs.erase(it_find);
             }
@@ -414,13 +875,13 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
       std::vector<Point> hole_points, third_points;
       hole_points.reserve(cc_border_hedges.size());
       third_points.reserve(cc_border_hedges.size());
-      std::vector<vertex_descriptor> border_vertices;
+      std::vector<vertex_descriptor> cc_border_vertices;
 
       for(halfedge_descriptor h : cc_border_hedges)
       {
         vertex_descriptor v = source(h, tmesh);
         hole_points.push_back(get(vpmap, v));
-        border_vertices.push_back(v);
+        cc_border_vertices.push_back(v);
         third_points.push_back(get(vpmap, target(next(opposite(h, tmesh), tmesh), tmesh))); // TODO fix me for mesh border edges
       }
 
@@ -464,10 +925,10 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
         {
           int vi=edges[2*k], vj=edges[2*k+1];
           // ignore boundary edges
-          if(vi+1==vj || (vj==0 && static_cast<std::size_t>(vi)==border_vertices.size()-1))
+          if(vi+1==vj || (vj==0 && static_cast<std::size_t>(vi) == cc_border_vertices.size()-1))
             continue;
 
-          halfedge_descriptor h = halfedge(border_vertices[vi], border_vertices[vj], tmesh).first;
+          halfedge_descriptor h = halfedge(cc_border_vertices[vi], cc_border_vertices[vj], tmesh).first;
           if(h != boost::graph_traits<TriangleMesh>::null_halfedge() &&
               cc_interior_edges.count(edge(h, tmesh)) == 0)
           {
@@ -489,93 +950,23 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
         continue;
       }
 
-      // plug the new triangles in the mesh, reusing previous edges and faces
-      std::vector<edge_descriptor> edge_stack(cc_interior_edges.begin(), cc_interior_edges.end());
-      std::vector<face_descriptor> face_stack(cc_faces.begin(), cc_faces.end());
-
-      std::map<std::pair<int, int>, halfedge_descriptor> halfedge_map;
-      int i = 0;
-
-      // register border halfedges
-      for(halfedge_descriptor h : cc_border_hedges)
-      {
-        int j = static_cast<int>(std::size_t(i+1)%cc_border_hedges.size());
-        halfedge_map.insert(std::make_pair(std::make_pair(i, j), h));
-        set_halfedge(target(h, tmesh), h, tmesh); // update vertex halfedge pointer
-        CGAL_assertion(border_vertices[i] == source(h, tmesh) && border_vertices[j] == target(h, tmesh));
-        ++i;
-      }
-
-      std::vector<halfedge_descriptor> hedges;
-      hedges.reserve(4);
-      face_descriptor f = boost::graph_traits<TriangleMesh>::null_face();
-      for(const Face_indices& triangle : patch)
-      {
-        // get the new face
-        if(face_stack.empty())
-        {
-          f = add_face(tmesh);
-        }
-        else
-        {
-          f = face_stack.back();
-          face_stack.pop_back();
-        }
-
-        std::array<int, 4> indices = make_array(triangle.first, triangle.second, triangle.third, triangle.first);
-        for(int i=0; i<3; ++i)
-        {
-          // get the corresponding halfedge (either a new one or an already created)
-          typename std::map<std::pair<int, int>, halfedge_descriptor >::iterator insert_res =
-              halfedge_map.insert(std::make_pair(std::make_pair(indices[i], indices[i+1]),
-                                  boost::graph_traits<TriangleMesh>::null_halfedge())).first;
-
-          if(insert_res->second == boost::graph_traits<TriangleMesh>::null_halfedge())
-          {
-            if(edge_stack.empty())
-            {
-              insert_res->second = halfedge(add_edge(tmesh), tmesh);
-            }
-            else
-            {
-              insert_res->second = halfedge(edge_stack.back(), tmesh);
-              edge_stack.pop_back();
-            }
-
-            halfedge_map[std::make_pair(indices[i+1], indices[i])] = opposite(insert_res->second, tmesh);
-          }
-
-          hedges.push_back(insert_res->second);
-        }
-
-        hedges.push_back(hedges.front());
-
-        // update halfedge connections + face pointers
-        for(int i=0; i<3;++i)
-        {
-          set_next(hedges[i], hedges[i+1], tmesh);
-          set_face(hedges[i], f, tmesh);
-          set_target(hedges[i], border_vertices[indices[i+1]], tmesh);
-        }
-
-        set_halfedge(f, hedges[0], tmesh);
-        hedges.clear();
-      }
-
-      // now remove remaining edges,
-      for(edge_descriptor e : edge_stack)
-        remove_edge(e, tmesh);
-
-      // vertices,
-      for(vertex_descriptor vh : cc_interior_vertices)
-        remove_vertex(vh, tmesh);
-
-      // and remaning faces
-      for(face_descriptor f : face_stack)
-        remove_face(f, tmesh);
-
       if(verbose)
-        std::cout << "  DEBUG: " << cc_faces.size() << " triangles removed, " << patch.size() << " created\n";
+        std::cout << "  DEBUG: Plugging new triangles in...\n";
+
+      // plug the new triangles in the mesh, reusing previous edges and faces
+      std::vector<std::vector<Point> > point_patch;
+      point_patch.reserve(patch.size());
+      for(const Face_indices& face : patch)
+      {
+        std::vector<Point> point_face = { hole_points[face.first],
+                                          hole_points[face.second],
+                                          hole_points[face.third] };
+        point_patch.push_back(point_face);
+      }
+
+      replace_face_range_with_patch(cc_border_vertices, cc_interior_vertices,
+                                    cc_border_hedges, cc_interior_edges,
+                                    cc_faces, point_patch, tmesh, vpmap, verbose);
 
       CGAL_assertion(is_valid_polygon_mesh(tmesh));
 
@@ -593,6 +984,10 @@ remove_self_intersections_one_step(TriangleMesh& tmesh,
   return std::make_pair(all_fixed, topology_issue);
 }
 
+} // namespace internal
+
+/// \cond SKIP_IN_MANUAL
+
 template <typename TriangleMesh, typename NamedParameters>
 bool remove_self_intersections(TriangleMesh& tmesh,
                                const NamedParameters& np)
@@ -605,9 +1000,14 @@ bool remove_self_intersections(TriangleMesh& tmesh,
   VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                            get_property_map(vertex_point, tmesh));
 
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       GeomTraits;
+  GeomTraits gt = boost::choose_param(boost::get_param(np, internal_np::geom_traits), GeomTraits());
+
   const int max_steps = boost::choose_param(boost::get_param(np, internal_np::number_of_iterations), 7);
   bool verbose = boost::choose_param(boost::get_param(np, internal_np::verbosity_level), 0) > 0;
   bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
+  verbose = true;
+  const bool treat_self_intersections_locally_only = true;
 
   if(verbose)
     std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tmesh)? " << is_valid_polygon_mesh(tmesh) << "\n";
@@ -650,14 +1050,13 @@ bool remove_self_intersections(TriangleMesh& tmesh,
     }
 
     std::tie(all_fixed, topology_issue) =
-        remove_self_intersections_one_step(tmesh, faces_to_remove, vpm, step, preserve_genus, verbose);
+      internal::remove_self_intersections_one_step(faces_to_remove, tmesh, vpm, gt, step, preserve_genus,
+                                                   treat_self_intersections_locally_only, verbose);
 
     if(all_fixed && topology_issue)
     {
       if(verbose)
-        std::cout<< "DEBUG: Process stopped because of boundary cycles"
-                    " of boundary edges involved in self-intersections.\n";
-      return false;
+        std::cout << "DEBUG: boundary cycles of boundary edges involved in self-intersections.\n";
     }
   }
 
@@ -668,184 +1067,6 @@ template <typename TriangleMesh>
 bool remove_self_intersections(TriangleMesh& tmesh)
 {
   return remove_self_intersections(tmesh, parameters::all_default());
-}
-
-template <typename FaceContainer, typename TriangleMesh, typename SICCContainer>
-int identify_self_intersecting_ccs(const FaceContainer& all_intersecting_faces,
-                                   TriangleMesh& mesh,
-                                   SICCContainer& self_intersecting_ccs)
-{
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor            face_descriptor;
-
-  typedef CGAL::dynamic_face_property_t<bool>                                    Face_bool_tag;
-  typedef typename boost::property_map<TriangleMesh, Face_bool_tag>::type        Is_self_intersecting_face_map;
-
-  typedef CGAL::dynamic_face_property_t<int>                                     Face_color_tag;
-  typedef typename boost::property_map<TriangleMesh, Face_color_tag>::type       SI_CC_face_map;
-
-  std::list<face_descriptor> si_faces(all_intersecting_faces.begin(), all_intersecting_faces.end());
-
-  Is_self_intersecting_face_map is_si_fmap = get(Face_bool_tag(), mesh);
-  SI_CC_face_map colors = get(Face_color_tag(), mesh);
-
-  // multiple iterations means we must reset properties
-  for(face_descriptor f : faces(mesh))
-  {
-    put(is_si_fmap, f, false);
-    put(colors, f, 0);
-  }
-
-  for(face_descriptor f : si_faces)
-    put(is_si_fmap, f, true);
-
-  int color = 0;
-  while(!si_faces.empty())
-  {
-    face_descriptor seed_f = si_faces.front();
-    si_faces.pop_front();
-
-    if(get(colors, seed_f) != 0) // 'seed_f' is already colored, nothing to do
-      continue;
-    put(colors, seed_f, ++color);
-
-    std::stack<face_descriptor> to_color;
-    to_color.push(seed_f);
-
-    while(!to_color.empty())
-    {
-      face_descriptor f = to_color.top();
-      to_color.pop();
-
-      // add neighbors to stack @todo should this be vertex-neighbors and not edge neighbors
-      for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
-      {
-        halfedge_descriptor opp_h = opposite(h, mesh);
-        face_descriptor opp_f = face(opp_h, mesh);
-
-        if(is_border(opp_h, mesh) || !get(is_si_fmap, opp_f))
-          continue;
-
-        // 'f' is already colored; nothing to do
-        if(get(colors, opp_f) != 0) {
-          CGAL_assertion(get(colors, opp_f) == color);
-        } else {
-          put(colors, opp_f, color);
-          to_color.push(opp_f);
-        }
-      }
-    }
-  }
-
-  self_intersecting_ccs.resize(color);
-  for(face_descriptor f : all_intersecting_faces)
-  {
-    CGAL_assertion(get(is_si_fmap, f));
-    CGAL_assertion(0 < get(colors, f) && get(colors, f) <= color);
-    self_intersecting_ccs[get(colors, f) - 1].insert(f); // -1 because colors start at '1'
-  }
-
-  return color;
-}
-
-template <typename TriangleMesh, typename NamedParameters>
-bool remove_self_intersections_locally(TriangleMesh& tmesh,
-                                       const NamedParameters& np)
-{
-  typedef boost::graph_traits<TriangleMesh>                                 graph_traits;
-  typedef typename graph_traits::face_descriptor                            face_descriptor;
-
-  // named parameter extraction
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type   VertexPointMap;
-  VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
-                                           get_property_map(vertex_point, tmesh));
-
-  const int max_steps = boost::choose_param(boost::get_param(np, internal_np::number_of_iterations), 7);
-  bool verbose = boost::choose_param(boost::get_param(np, internal_np::verbosity_level), 0) > 0;
-  bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
-
-  if(verbose)
-    std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tmesh)? " << is_valid_polygon_mesh(tmesh) << "\n";
-
-  CGAL_precondition_code(std::set<face_descriptor> degenerate_face_set;)
-  CGAL_precondition_code(degenerate_faces(tmesh, std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);)
-  CGAL_precondition(degenerate_face_set.empty());
-
-  if(!preserve_genus)
-    duplicate_non_manifold_vertices(tmesh, np);
-
-  // Look for self-intersections in the mesh and remove them
-  int step = -1;
-  bool all_fixed = false; // indicates if the filling of all created holes went fine
-  bool topology_issue = false; // indicates if some boundary cycles of edges are blocking the fixing
-  std::set<face_descriptor> all_intersecting_faces;
-
-  while(++step < max_steps)
-  {
-    if(all_fixed)
-    {
-      if(verbose)
-        std::cout << "DEBUG: Fixed all local self-intersections!" << std::endl;
-      break;
-    }
-
-    if(all_intersecting_faces.empty()) // the previous round might have been blocked due to topological constraints
-    {
-      typedef std::pair<face_descriptor, face_descriptor> Face_pair;
-      std::vector<Face_pair> self_inter;
-      // TODO : possible optimization to reduce the range to check with the bbox
-      // of the previous patches or something.
-      self_intersections(tmesh, std::back_inserter(self_inter));
-
-      for(const Face_pair& fp : self_inter)
-      {
-        all_intersecting_faces.insert(fp.first);
-        all_intersecting_faces.insert(fp.second);
-      }
-    }
-
-    if(verbose)
-      std::cout << all_intersecting_faces.size() << " faces part of self-intersections" << std::endl;
-
-    if(all_intersecting_faces.empty())
-    {
-      if(verbose)
-        std::cout << "DEBUG: There is no more face to remove." << std::endl;
-      break;
-    }
-
-    std::vector<std::set<face_descriptor> > faces_to_remove_ccs;
-    identify_self_intersecting_ccs(all_intersecting_faces, tmesh, faces_to_remove_ccs);
-    std::cout << faces_to_remove_ccs.size() << " CCs to handle" << std::endl;
-
-    all_fixed = true;
-
-    for(std::set<face_descriptor>& cc : faces_to_remove_ccs)
-    {
-      bool local_fixed;
-      std::tie(local_fixed, topology_issue) =
-          remove_self_intersections_one_step(tmesh, cc, vpm, step, preserve_genus, verbose);
-
-      if(topology_issue)
-      {
-        if(verbose)
-          std::cout << "DEBUG: Process stopped because of boundary cycles"
-                       " of boundary edges involved in self-intersections.\n";
-
-        return false;
-      }
-
-      all_fixed = (all_fixed && local_fixed);
-    }
-  }
-
-  return step < max_steps;
-}
-
-template <typename TriangleMesh>
-bool remove_self_intersections_locally(TriangleMesh& tmesh)
-{
-  return remove_self_intersections_locally(tmesh, parameters::all_default());
 }
 
 /// \endcond
