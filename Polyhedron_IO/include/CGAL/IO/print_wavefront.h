@@ -24,33 +24,14 @@
 
 #include <CGAL/license/Polyhedron.h>
 
+#include <CGAL/disable_warnings.h>
 
-#include <CGAL/IO/File_writer_wavefront.h>
-#include <CGAL/IO/generic_print_polyhedron.h>
-#include <CGAL/Polyhedron_3.h>
-#include <iostream>
+#define CGAL_DEPRECATED_HEADER "<CGAL/IO/print_wavefront.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/IO/OBJ/print_wavefront.h>"
+#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/IO/OBJ/print_wavefront.h>
+#include <CGAL/enable_warnings.h>
 
-namespace CGAL {
 
-template <class Polyhedron>
-void print_polyhedron_wavefront( std::ostream& out, const Polyhedron& P) {
-    File_writer_wavefront  writer;
-    generic_print_polyhedron( out, P, writer);
-}
-
-// Deprecated global functions, replaced with functions above
-
-template < class Traits,
-           class Items,
-           template < class T, class I, class A>
-           class HDS, class Alloc>
-void
-print_wavefront( std::ostream& out, 
-                 const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
-    File_writer_wavefront  writer;
-    generic_print_polyhedron( out, P, writer);
-}
-
-} //namespace CGAL
 #endif // CGAL_IO_PRINT_WAVEFRONT_H //
 // EOF //
