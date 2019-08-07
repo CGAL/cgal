@@ -100,6 +100,11 @@ public:
     Queue_iterator iter = queue_by_time().begin();
     Event out = *iter;
     m_queue.erase(iter);
+    if (queue_by_time().begin()->m_time == out.m_time)
+      std::cerr << "WARNING: next Event is happening at the same time" << std::endl;
+    else if (std::abs(queue_by_time().begin()->m_time - out.m_time) < 1e-15)
+      std::cerr << "WARNING: next Event is happening at almost the same time" << std::endl;
+    
     return out;
   }
 

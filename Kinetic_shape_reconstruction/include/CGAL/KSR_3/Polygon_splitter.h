@@ -96,6 +96,7 @@ class Polygon_splitter
   Data& m_data;
   CDTP m_cdt;
   std::map<Cid, IEdge> m_map_intersections;
+  std::set<PVertex> m_input;
   
 public:
 
@@ -108,6 +109,7 @@ public:
     {
       Vertex_handle vh = m_cdt.insert (m_data.point_2 (pvertex));
       vh->info().pvertex = pvertex;
+      m_input.insert (pvertex);
     }
 
     std::vector<std::vector<Point_2> > original_faces;
@@ -355,6 +357,48 @@ public:
       
       CGAL_assertion (neighbors.first != Data::null_pvertex() && neighbors.second != Data::null_pvertex());
 
+      bool first_okay = (m_input.find(neighbors.first) != m_input.end());
+      PVertex latest = pvertex;
+      PVertex current = neighbors.first;
+      while (!first_okay)
+      {
+        PVertex next, ignored;
+        std::tie (next, ignored) = m_data.border_prev_and_next (current);
+
+        if (next == latest)
+          std::swap (next, ignored);
+        CGAL_assertion (ignored == latest);
+
+        latest = current;
+        current = next;
+        if (m_input.find (current) != m_input.end())
+        {
+          neighbors.first = current;
+          first_okay = true;
+        }
+      }
+      
+      bool second_okay = (m_input.find(neighbors.second) != m_input.end());
+      latest = pvertex;
+      current = neighbors.second;
+      while (!second_okay)
+      {
+        PVertex next, ignored;
+        std::tie (next, ignored) = m_data.border_prev_and_next (current);
+
+        if (next == latest)
+          std::swap (next, ignored);
+        CGAL_assertion (ignored == latest);
+
+        latest = current;
+        current = next;
+        if (m_input.find (current) != m_input.end())
+        {
+          neighbors.second = current;
+          second_okay = true;
+        }
+      }
+      
       Line_2 future_line (m_data.point_2 (neighbors.first, 1),
                           m_data.point_2 (neighbors.second, 1));
 

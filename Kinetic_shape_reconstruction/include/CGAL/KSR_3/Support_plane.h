@@ -85,6 +85,11 @@ private:
     F_index_map input_map;
     F_uint_map k_map;
     std::set<IEdge> iedges;
+
+#ifdef CGAL_KSR_DEBUG
+    Mesh dbg_mesh;
+    V_vector_map dbg_direction;
+#endif
   };
 
   std::shared_ptr<Data> m_data;
@@ -126,12 +131,24 @@ public:
       ("f:input", KSR::no_element()).first;
     m_data->k_map = m_data->mesh.template add_property_map<Face_index, unsigned int>
       ("f:k", 0).first;
+
+#ifdef CGAL_KSR_DEBUG
+    m_data->dbg_direction = m_data->dbg_mesh.template add_property_map<Vertex_index, Vector_2>("v:direction", CGAL::NULL_VECTOR).first;
+#endif
   }
 
   const Plane_3& plane() const { return m_data->plane; }
 
   const Mesh& mesh() const { return m_data->mesh; }
   Mesh& mesh() { return m_data->mesh; }
+
+#ifdef CGAL_KSR_DEBUG
+  const Mesh& dbg_mesh() const { return m_data->dbg_mesh; }
+  Point_2 dbg_point_2 (const Vertex_index& vertex_index, FT time) const
+  { return m_data->dbg_mesh.point(vertex_index) + time * m_data->dbg_direction[vertex_index]; }
+  Point_3 dbg_point_3 (const Vertex_index& vertex_index, FT time) const
+  { return to_3d (dbg_point_2 (vertex_index, time)); }
+#endif
 
   void set_point (const Vertex_index& vertex_index, const Point_2& point)
   {
@@ -309,16 +326,32 @@ public:
   {
     std::vector<Vertex_index> vertices;
     vertices.reserve (points.size());
+
+#ifdef CGAL_KSR_DEBUG
+    std::vector<Vertex_index> dbg_vertices;
+    dbg_vertices.reserve (points.size());
+#endif
+    
     for (const Point_2& p : points)
     {
       Vertex_index vi = m_data->mesh.add_vertex(p);
       m_data->direction[vi] = KSR::normalize (Vector_2 (centroid, p));
       vertices.push_back (vi);
+
+#ifdef CGAL_KSR_DEBUG
+      Vertex_index dbg_vi = m_data->dbg_mesh.add_vertex(p);
+      m_data->dbg_direction[dbg_vi] = KSR::normalize (Vector_2 (centroid, p));
+      dbg_vertices.push_back (dbg_vi);
+#endif
     }
     
     Face_index fi = m_data->mesh.add_face (vertices);
     m_data->input_map[fi] = input_idx;
 
+#ifdef CGAL_KSR_DEBUG
+    m_data->dbg_mesh.add_face (dbg_vertices);
+#endif
+    
     return KSR::size_t(fi);
   }
 

@@ -440,19 +440,23 @@ private:
     }
     else // Unconstrained vertex
     {
+      PVertex prev = m_data.prev(pvertex);
+      PVertex next = m_data.next(pvertex);
+      
       // Test all intersection edges
       for (std::size_t j = 0; j < iedges.size(); ++ j)
       {
         const IEdge& iedge = iedges[j];
 
-        if (m_data.iedge(pvertex) == iedge)
+        if (m_data.iedge(prev) == iedge ||
+            m_data.iedge(next) == iedge)
           continue;
         if (!m_data.is_active(iedge))
           continue;
 
         if (!CGAL::do_overlap (sv_bbox, segment_bboxes[j]))
           continue;
-
+          
         Point_2 point;
         if (!KSR::intersection_2 (sv, segments_2[j], point))
           continue;
@@ -497,18 +501,21 @@ private:
       CGAL_KSR_CERR(2) << "* Applying " << iter << ": " << ev << std::endl;
       
       m_data.update_positions (current_time + 0.01);
-      dump (m_data, "shifted_" + std::to_string(iter));
+      dump (m_data, "shifted_before" + std::to_string(iter));
       m_data.update_positions (current_time);
       
       ++ iter;
       
-      if (iter == 27)
+      if (iter == 80)
       {
         exit(0);
       }
       
       apply(ev);
-              
+      CGAL_assertion(check_integrity(true));   
+      m_data.update_positions (current_time + 0.01);
+      dump (m_data, "shifted_after" + std::to_string(iter - 1));
+      m_data.update_positions (current_time);
       ++ iterations;
     }
   }
@@ -532,34 +539,84 @@ private:
       }
       else // One constrained vertex meets a free vertex
       {
-        m_data.transfer_vertex (pvertex, pother);
-        compute_events_of_vertices (std::array<PVertex,2>{pvertex, pother});
+        if (m_data.transfer_vertex (pvertex, pother))
+          compute_events_of_vertices (std::array<PVertex,2>{pvertex, pother});
+        else
+          compute_events_of_vertices (std::array<PVertex,1>{pvertex});
       }
     }
     else if (ev.is_pvertex_to_iedge())
     {
-      remove_events (pvertex);
-      
+      PVertex prev = m_data.prev(pvertex);      
+      PVertex next = m_data.next(pvertex);
       IEdge iedge = ev.iedge();
-
       PFace pface = m_data.pface_of_pvertex (pvertex);
-      bool collision, bbox_reached;
-      std::tie (collision, bbox_reached)
-        = m_data.collision_occured (pvertex, iedge);
-      if (collision && m_data.k(pface) > 1)
-        m_data.k(pface) --;
-      if (bbox_reached)
-        m_data.k(pface) = 1;
       
-      if (m_data.k(pface) == 1) // Polygon stops
+      Segment_2 seg_edge = m_data.segment_2 (pvertex.first, iedge);
+
+      bool done = false;
+      for (const PVertex& pother : { prev, next })
       {
-        PVertex pvnew = m_data.crop_polygon (pvertex, iedge);
-        compute_events_of_vertices (std::array<PVertex,2>{pvertex, pvnew});
+        Segment_2 seg (m_data.point_2(pother, ev.time()),
+                       m_data.point_2(pvertex, ev.time()));
+        CGAL_assertion (seg.squared_length() != 0);
+
+        if (CGAL::parallel (seg, seg_edge))
+        {
+          remove_events (pvertex);
+          remove_events (pother);
+
+          bool collision, bbox_reached;
+          std::tie (collision, bbox_reached)
+            = m_data.collision_occured (pvertex, iedge);
+          bool collision_other;
+          collision_other
+            = m_data.collision_occured (pother, iedge).first;
+          
+          if ((collision || collision_other) && m_data.k(pface) > 1)
+            m_data.k(pface) --;
+          if (bbox_reached)
+            m_data.k(pface) = 1;
+          
+          if (m_data.k(pface) == 1) // Polygon stops
+          {
+            m_data.crop_polygon (pvertex, pother, iedge);
+            compute_events_of_vertices (std::array<PVertex,2>{pvertex, pother});
+          }
+          else // Polygon continues beyond the edge
+          {
+            PVertex pv0, pv1;
+            std::tie (pv0, pv1) = m_data.propagate_polygon (pvertex, pother, iedge);
+            compute_events_of_vertices (std::array<PVertex, 4> {pvertex, pother, pv0, pv1});
+          }
+          
+          done = true;
+          break;
+        }
       }
-      else // Polygon continues beyond the edge
+      
+      if (!done)
       {
-        std::array<PVertex, 3> pvnew = m_data.propagate_polygon (pvertex, iedge);
-        compute_events_of_vertices (std::array<PVertex,3>{pvnew[0], pvnew[1], pvnew[2]});
+        remove_events (pvertex);
+      
+        bool collision, bbox_reached;
+        std::tie (collision, bbox_reached)
+          = m_data.collision_occured (pvertex, iedge);
+        if (collision && m_data.k(pface) > 1)
+          m_data.k(pface) --;
+        if (bbox_reached)
+          m_data.k(pface) = 1;
+      
+        if (m_data.k(pface) == 1) // Polygon stops
+        {
+          PVertex pvnew = m_data.crop_polygon (pvertex, iedge);
+          compute_events_of_vertices (std::array<PVertex,2>{pvertex, pvnew});
+        }
+        else // Polygon continues beyond the edge
+        {
+          std::array<PVertex, 3> pvnew = m_data.propagate_polygon (pvertex, iedge);
+          compute_events_of_vertices (pvnew);
+        }
       }
     }
     else if (ev.is_pvertex_to_ivertex())
@@ -568,13 +625,20 @@ private:
       std::vector<PVertex> pvertices
         = m_data.pvertices_around_ivertex (ev.pvertex(), ev.ivertex());
 
-      CGAL_assertion_msg (pvertices.size() > 1, "Isolated PVertex reaching an IVertex");
+      for (auto& pv: pvertices)
+        std::cerr << m_data.point_3(pv) << " ";
+      std::cerr << std::endl;
+      
+      CGAL_assertion_msg (pvertices.size() > 3, "Isolated PVertex reaching an IVertex");
       
       std::cerr << "Found " << pvertices.size() << " pvertices ready to be merged" << std::endl;
 
       // Remove associated events
       for (const PVertex pvertex : pvertices)
         remove_events (pvertex);
+      
+//      for (std::size_t i = 0; i < pvertices.size() - 1; ++ i)
+//        remove_events (pvertices[i]);
 
       // Merge them and get the newly created vertices
       std::vector<PVertex> new_pvertices

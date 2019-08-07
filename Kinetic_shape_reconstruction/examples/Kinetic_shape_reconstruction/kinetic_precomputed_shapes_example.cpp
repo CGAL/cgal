@@ -3,6 +3,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #define CGAL_KSR_VERBOSE_LEVEL 4
+#define CGAL_KSR_DEBUG
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
 
 #include <CGAL/IO/PLY_reader.h>
@@ -49,6 +50,7 @@ int main (int argc, char** argv)
     return EXIT_FAILURE;
   }
 
+  std::cerr.precision(18);
   Reconstruction reconstruction;
 
   reconstruction.partition (facets, My_polygon_map (vertices));
