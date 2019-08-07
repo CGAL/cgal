@@ -573,10 +573,8 @@ double approximate_Hausdorff_distance(
    VertexPointMap vpm_2)
 {
     std::vector<typename Kernel::Point_3> sample_points;
-    sample_triangle_mesh(
-                tm1,
-                std::back_inserter(sample_points),
-                np);
+    sample_triangle_mesh(tm1,std::back_inserter(sample_points),np);
+
     return approximate_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, tm2, vpm_2);
 }
 
