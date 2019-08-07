@@ -30,7 +30,7 @@
 #endif
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>

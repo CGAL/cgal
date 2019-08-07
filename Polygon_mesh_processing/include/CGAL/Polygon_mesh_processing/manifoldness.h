@@ -25,16 +25,16 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
-#include <CGAL/algorithm.h>
-#include <CGAL/assertions.h>
-#include <CGAL/Dynamic_property_map.h>
-#include <CGAL/property_map.h>
-
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <fstream>
-#include <iostream>
+#include <CGAL/algorithm.h>
+#include <CGAL/assertions.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Dynamic_property_map.h>
+#include <CGAL/property_map.h>
+
+#include <iterator>
 #include <map>
 #include <utility>
 #include <vector>
