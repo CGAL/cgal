@@ -19,20 +19,23 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
-#ifndef CGAL_IO_PRINT_VRML_1_H
-#define CGAL_IO_PRINT_VRML_1_H 1
+#ifndef CGAL_IO_PRINT_WAVEFRONT_H
+#define CGAL_IO_PRINT_WAVEFRONT_H 1
 
 #include <CGAL/license/Polyhedron.h>
 
 
-#include <CGAL/IO/Polyhedron_VRML_1_ostream.h>
+#include <CGAL/IO/OBJ/File_writer_wavefront.h>
+#include <CGAL/IO/generic_print_polyhedron.h>
+#include <CGAL/Polyhedron_3.h>
+#include <iostream>
 
 namespace CGAL {
 
 template <class Polyhedron>
-void print_polyhedron_VRML_1( std::ostream& out, const Polyhedron& P) {
-    VRML_1_ostream os( out);
-    os << P;
+void print_polyhedron_wavefront( std::ostream& out, const Polyhedron& P) {
+    File_writer_wavefront  writer;
+    generic_print_polyhedron( out, P, writer);
 }
 
 // Deprecated global functions, replaced with functions above
@@ -42,12 +45,12 @@ template < class Traits,
            template < class T, class I, class A>
            class HDS, class Alloc>
 void
-print_VRML_1( std::ostream& out, 
-              const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
-    VRML_1_ostream os( out);
-    os << P;
+print_wavefront( std::ostream& out, 
+                 const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
+    File_writer_wavefront  writer;
+    generic_print_polyhedron( out, P, writer);
 }
 
 } //namespace CGAL
-#endif // CGAL_IO_PRINT_VRML_1_H //
+#endif // CGAL_IO_PRINT_WAVEFRONT_H //
 // EOF //
