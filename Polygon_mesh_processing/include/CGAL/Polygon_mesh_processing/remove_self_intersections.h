@@ -53,38 +53,6 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
-// @TMP
-template <typename FaceContainer, typename TriangleMesh>
-void dump_cc(const FaceContainer& cc_faces,
-             const TriangleMesh& mesh,
-             const std::string filename)
-{
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
-
-  std::ofstream out(filename);
-  out.precision(17);
-
-  out << "OFF\n";
-  out << 3*cc_faces.size() << " " << cc_faces.size() << " 0\n";
-
-  for(const face_descriptor f : cc_faces)
-  {
-    out << mesh.point(source(halfedge(f, mesh), mesh)) << "\n";
-    out << mesh.point(target(halfedge(f, mesh), mesh)) << "\n";
-    out << mesh.point(target(next(halfedge(f, mesh), mesh), mesh)) << "\n";
-  }
-
-  int id = 0;
-  for(const face_descriptor f : cc_faces)
-  {
-    CGAL_USE(f);
-    out << "3 " << id << " " << id+1 << " " << id+2 << "\n";
-    id += 3;
-  }
-
-  out.close();
-}
-
 template <typename PolygonMesh, typename VPM, typename Point, typename FaceOutputIterator>
 FaceOutputIterator replace_face_range_with_patch(const std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& border_vertices,
                                                  const std::set<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& interior_vertices,
@@ -335,11 +303,12 @@ bool is_new_patch_close_enough_to_initial_patch(const TriangleMesh& old_patch,
   typedef CGAL::Sequential_tag                                      Tag;
 #endif
 
-  double d = Polygon_mesh_processing::approximate_Hausdorff_distance<Tag>(
-               old_patch, new_patch, parameters::number_of_points_per_area_unit(4000));
+  double d = Polygon_mesh_processing::approximate_Hausdorff_distance<Tag>( // @todo should it be symmetric?
+               new_patch, old_patch, parameters::number_of_points_on_edges(10)
+                                                .number_of_points_on_faces(100));
 
   std::cout << "d: " << d << std::endl;
-  return (d <= 0.1); // @fixme hardcoded
+  return (d <= 0.1); // @fixme hardcoded, must depend on local edge length
 }
 
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
@@ -350,9 +319,11 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
                                               const GeomTraits& gt,
                                               const bool verbose)
 {
-  std::cout << "       - -- -- - - - -- -" << std::endl;
-  std::cout << "repair with smoothing..." << std::endl;
-  std::cout << "constraining sharp edges: " << std::boolalpha << constrain_sharp_edges << std::endl;
+  if(verbose)
+  {
+    std::cout << "  DEBUG: repair with smoothing... (constraining sharp edges: ";
+    std::cout << std::boolalpha << constrain_sharp_edges << ")" << std::endl;
+  }
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
@@ -423,37 +394,10 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
     put(eif, ep.first, flag);
   }
 
-  // TMP OUTPUT ------------------------------------------------------------------------------------
-  std::ofstream out_sel("results/constrained_edges.selection.txt");
-  out_sel << std::endl << std::endl; // edge selection is on the third line
-
-  int counter = 0;
-  std::map<vertex_descriptor, int> vid;
-  for(vertex_descriptor v : vertices(tmesh))
-    vid[v] = counter++;
-
-  counter = 0;
-  for(const auto& ep : is_border_of_selection)
-  {
-    edge_descriptor e = ep.first;
-    if(get(eif, e))
-    {
-//      std::cout << e << " is constrained" << std::endl;
-      ++counter;
-      out_sel << vid[source(e, tmesh)] << " " << vid[target(e, tmesh)] << " ";
-    }
-  }
-  out_sel.close();
-  std::cout << "total : " << counter << " constrained edges" << std::endl;
-  // TMP OUTPUT ------------------------------------------------------------------------------------
-
+  // @todo choice of number of iterations? Till convergence && max of 100?
   smooth_mesh(faces, tmesh, CGAL::parameters::edge_is_constrained_map(eif)
-                                             .number_of_iterations(100) // @todo something more sensible?
+                                             .number_of_iterations(10)
                                              .use_safety_constraints(false));
-
-  std::ofstream out1("results/post_smooth.off");
-  out1 << std::setprecision(17) << tmesh;
-  out1.close();
 
   Filtered_graph ffg_post(tmesh, faces);
   TriangleMesh patch_mesh_post;
@@ -461,19 +405,13 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
 
   bool is_acceptable = (!does_self_intersect(faces, tmesh) &&
                         is_new_patch_close_enough_to_initial_patch(patch_mesh, patch_mesh_post));
-  std::cout << "is_acceptable: " << std::boolalpha << is_acceptable << std::endl;
-  if(!is_acceptable) // restore the patch
-  {
+  if(!is_acceptable)
     replace_face_range_with_patch(faces, patch, tmesh, vpmap, verbose);
-
-    std::ofstream out2("results/post_fixup.off");
-    out2 << std::setprecision(17) << tmesh;
-    out2.close();
-  }
 
   return is_acceptable;
 }
 
+// the parameter 'step' controls how many extra layers of faces we take around the range 'faces_to_remove'
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
 std::pair<bool, bool>
 remove_self_intersections_one_step(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& faces_to_remove,
@@ -515,14 +453,13 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     std::cout << "  DEBUG: is_valid in one_step(tmesh)? ";
     std::cout.flush();
     std::cout << is_valid_polygon_mesh(tmesh) << "\n";
+    std::cout << "  DEBUG: " << faces_to_remove.empty() << " faces to remove" << std::endl;
   }
 
   if(!faces_to_remove.empty())
   {
     while(!faces_to_remove.empty())
     {
-      std::cout << faces_to_remove.size() << " to remove" << std::endl;
-
       // Process a connected component of faces to remove.
       // collect all the faces from the connected component
       std::set<face_descriptor> cc_faces;
@@ -547,10 +484,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
       }
 
       if(verbose)
-      {
         std::cout << "  DEBUG: " << cc_faces.size() << " faces in CC\n";
-        dump_cc(cc_faces, tmesh, "results/cc_ini.off");
-      }
 
       // expand the region to be filled
       if(step > 0)
@@ -612,10 +546,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
       }
 
       if(verbose)
-      {
         std::cout << "  DEBUG: " << cc_faces.size() << " faces in expanded CC\n";
-        dump_cc(cc_faces, tmesh, "results/cc_expanded.off");
-      }
 
       //Check for non-manifold vertices in the selection and remove them by selecting all incident faces:
       //  extract the set of halfedges that is on the boundary of the holes to be
@@ -1064,7 +995,7 @@ bool remove_self_intersections(const FaceRange& face_range,
   bool topology_issue = false; // indicates if some boundary cycles of edges are blocking the fixing
   std::set<face_descriptor> faces_to_remove;
 
-  while(++step<max_steps)
+  while(++step < max_steps)
   {
     if(faces_to_remove.empty()) // the previous round might have been blocked due to topological constraints
     {

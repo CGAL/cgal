@@ -56,6 +56,7 @@
 #include <CGAL/Polygon_mesh_processing/merge_border_vertices.h>
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
+#include <CGAL/Polygon_mesh_processing/manifoldness.h>
 
 // the named parameter header being not documented the doc is put here for now
 #ifdef DOXYGEN_RUNNING
