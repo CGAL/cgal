@@ -34,13 +34,13 @@
 #include <boost/geometry/io/wkt/read.hpp>
 #include <boost/geometry/io/wkt/write.hpp>
 
-#include <CGAL/IO/traits_point.h>
-#include <CGAL/IO/traits_point_3.h>
-#include <CGAL/IO/traits_linestring.h>
-#include <CGAL/IO/traits_polygon.h>
-#include <CGAL/IO/traits_multipoint.h>
-#include <CGAL/IO/traits_multilinestring.h>
-#include <CGAL/IO/traits_multipolygon.h>
+#include <CGAL/IO/WKT/traits_point.h>
+#include <CGAL/IO/WKT/traits_point_3.h>
+#include <CGAL/IO/WKT/traits_linestring.h>
+#include <CGAL/IO/WKT/traits_polygon.h>
+#include <CGAL/IO/WKT/traits_multipoint.h>
+#include <CGAL/IO/WKT/traits_multilinestring.h>
+#include <CGAL/IO/WKT/traits_multipolygon.h>
 
 
 namespace CGAL{

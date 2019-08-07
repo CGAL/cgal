@@ -3,7 +3,7 @@
 #include "Kernel_type.h"
 #include "Scene.h"
 #include "SMesh_type.h"
-#include <CGAL/gocad_io.h>
+#include <CGAL/IO/GOCAD.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>

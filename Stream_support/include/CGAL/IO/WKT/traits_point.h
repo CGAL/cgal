@@ -18,8 +18,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef CGAL_IO_TRAITS_POINT_H
-#define CGAL_IO_TRAITS_POINT_H
+#ifndef CGAL_IO_WKT_TRAITS_POINT_H
+#define CGAL_IO_WKT_TRAITS_POINT_H
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/number_utils.h>
 #include <CGAL/Point_2.h>

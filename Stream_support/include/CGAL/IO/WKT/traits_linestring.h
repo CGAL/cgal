@@ -17,10 +17,10 @@
 // SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Maxime Gimeno
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 
-#ifndef CGAL_IO_TRAITS_LINESTRING_H
-#define CGAL_IO_TRAITS_LINESTRING_H
+#ifndef CGAL_IO_WKT_TRAITS_LINESTRING_H
+#define CGAL_IO_WKT_TRAITS_LINESTRING_H
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/internal/Geometry_container.h>
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
@@ -35,5 +35,5 @@ template< typename R> struct tag<CGAL::internal::Geometry_container<R, linestrin
 
 }}} //end namespaces
 
-#endif // TRAITS_LINESTRING_H
 #endif
+#endif // TRAITS_LINESTRING_H

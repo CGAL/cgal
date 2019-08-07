@@ -18,8 +18,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef CGAL_IO_TRAITS_MULTILINESTRING_H
-#define CGAL_IO_TRAITS_MULTILINESTRING_H
+#ifndef CGAL_IO_WKT_TRAITS_MULTIPOINT_H
+#define CGAL_IO_WKT_TRAITS_MULTIPOINT_H
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/internal/Geometry_container.h>
 #include <boost/geometry/io/wkt/write.hpp>
@@ -28,13 +28,13 @@
 namespace boost{
 namespace geometry{
 namespace traits{
-// WKT traits for MultiLinestring
+// WKT traits for MultiPoint
 template< typename R >
-struct tag<CGAL::internal::Geometry_container<R, multi_linestring_tag> >
-{ typedef multi_linestring_tag type; };
+struct tag<CGAL::internal::Geometry_container<R, multi_point_tag > >
+{ typedef multi_point_tag type; };
 
 }//end traits
 }//end geometry
 }//end boost
-#endif // TRAITS_MULTILINESTRING_H
+#endif // TRAITS_MULTIPOINT_H
 #endif
