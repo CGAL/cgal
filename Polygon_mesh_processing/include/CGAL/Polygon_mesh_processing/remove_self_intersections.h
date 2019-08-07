@@ -85,16 +85,17 @@ void dump_cc(const FaceContainer& cc_faces,
   out.close();
 }
 
-template <typename PolygonMesh, typename VPM, typename Point>
-void replace_face_range_with_patch(const std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& border_vertices,
-                                   const std::set<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& interior_vertices,
-                                   const std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>& border_hedges,
-                                   const std::set<typename boost::graph_traits<PolygonMesh>::edge_descriptor>& interior_edges,
-                                   const std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& pol_faces,
-                                   const std::vector<std::vector<Point> >& patch,
-                                   PolygonMesh& pmesh,
-                                   VPM& vpm,
-                                   const bool verbose)
+template <typename PolygonMesh, typename VPM, typename Point, typename FaceOutputIterator>
+FaceOutputIterator replace_face_range_with_patch(const std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& border_vertices,
+                                                 const std::set<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& interior_vertices,
+                                                 const std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>& border_hedges,
+                                                 const std::set<typename boost::graph_traits<PolygonMesh>::edge_descriptor>& interior_edges,
+                                                 const std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& pol_faces,
+                                                 const std::vector<std::vector<Point> >& patch,
+                                                 PolygonMesh& pmesh,
+                                                 VPM& vpm,
+                                                 FaceOutputIterator out,
+                                                 const bool verbose)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
@@ -180,11 +181,13 @@ void replace_face_range_with_patch(const std::vector<typename boost::graph_trait
     if(face_stack.empty())
     {
       f = add_face(pmesh);
+      *out++ = f;
     }
     else
     {
       f = face_stack.back();
       face_stack.pop_back();
+      *out++ = f;
     }
 
     std::vector<halfedge_descriptor> hedges;
@@ -244,18 +247,24 @@ void replace_face_range_with_patch(const std::vector<typename boost::graph_trait
     remove_face(f, pmesh);
 
   if(verbose)
-    std::cout << "  DEBUG: " << pol_faces.size() << " triangles removed, " << patch.size() << " created\n";
+  {
+    std::cout << "  DEBUG: Replacing range with patch: ";
+    std::cout << pol_faces.size() << " triangles removed, " << patch.size() << " created\n";
+  }
 
   CGAL_postcondition(pmesh.is_valid());
   CGAL_postcondition(is_valid_polygon_mesh(pmesh));
+
+  return out;
 }
 
-template <typename PolygonMesh, typename VPM, typename Point>
-void replace_face_range_with_patch(const std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& faces,
-                                   const std::vector<std::vector<Point> >& patch,
-                                   PolygonMesh& pmesh,
-                                   VPM& vpm,
-                                   const bool verbose)
+template <typename PolygonMesh, typename VPM, typename Point, typename FaceOutputIterator>
+FaceOutputIterator replace_face_range_with_patch(const std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& faces,
+                                                 const std::vector<std::vector<Point> >& patch,
+                                                 PolygonMesh& pmesh,
+                                                 VPM& vpm,
+                                                 FaceOutputIterator out,
+                                                 const bool verbose)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor     vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
@@ -302,7 +311,18 @@ void replace_face_range_with_patch(const std::set<typename boost::graph_traits<P
 
   return replace_face_range_with_patch(border_vertices, interior_vertices,
                                        border_hedges, interior_edges, faces, patch,
-                                       pmesh, vpm, verbose);
+                                       pmesh, vpm, out, verbose);
+}
+
+template <typename PolygonMesh, typename VPM, typename Point>
+void replace_face_range_with_patch(const std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& faces,
+                                   const std::vector<std::vector<Point> >& patch,
+                                   PolygonMesh& pmesh,
+                                   VPM& vpm,
+                                   const bool verbose = false)
+{
+  CGAL::Emptyset_iterator out;
+  replace_face_range_with_patch(faces, patch, pmesh, vpm, out, verbose);
 }
 
 template <typename TriangleMesh>
@@ -457,12 +477,13 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
 std::pair<bool, bool>
 remove_self_intersections_one_step(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& faces_to_remove,
+                                   std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& working_face_range,
                                    TriangleMesh& tmesh,
                                    VertexPointMap& vpmap,
                                    const GeomTraits& gt,
                                    const int step,
                                    const bool preserve_genus,
-                                   const bool treat_only_local_self_intersections,
+                                   const bool only_treat_self_intersections_locally,
                                    const bool verbose)
 {
   typedef boost::graph_traits<TriangleMesh>                               graph_traits;
@@ -576,7 +597,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
         }
       }
 
-      if(treat_only_local_self_intersections)
+      if(only_treat_self_intersections_locally)
       {
         if(!does_self_intersect(cc_faces, tmesh, parameters::vertex_point_map(vpmap).geom_traits(gt)))
         {
@@ -594,41 +615,6 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
       {
         std::cout << "  DEBUG: " << cc_faces.size() << " faces in expanded CC\n";
         dump_cc(cc_faces, tmesh, "results/cc_expanded.off");
-      }
-
-      if(cc_faces.size() == 1) // it is a triangle nothing better can be done
-        continue;
-
-      // First, try to smooth if only care about local self-intersections
-      // Two different approaches:
-      // - First, try to constrain edges that are in the zone to smooth and whose dihedral angle is large,
-      //   but not too large (we don't want to constrain edges that are due to foldings)
-      // - If that fails, try to smooth without any constraints, but make sure that the deviation from
-      //   the first zone is small
-
-      // @todo is here the correct position? Probably want to do it before manifoldness shenanigans
-      // @todo actually, would like to extract manifoldness shenanigans from that
-
-      bool fixed_by_smoothing = false;
-      if(treat_only_local_self_intersections)
-      {
-        fixed_by_smoothing = remove_self_intersections_with_smoothing(cc_faces, true, tmesh, vpmap, gt, verbose);
-        if(!fixed_by_smoothing) // try again, but without constraining sharp edges
-          fixed_by_smoothing = remove_self_intersections_with_smoothing(cc_faces, false, tmesh, vpmap, gt, verbose);
-      }
-
-      std::ofstream out2("results/post_fixup.off");
-      out2 << std::setprecision(17) << tmesh;
-      out2.close();
-
-      // remove faces from the set to process
-      for(face_descriptor f : cc_faces)
-        faces_to_remove.erase(f);
-
-      if(fixed_by_smoothing)
-      {
-        something_was_done = true;
-        continue;
       }
 
       //Check for non-manifold vertices in the selection and remove them by selecting all incident faces:
@@ -716,6 +702,49 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
           h = next(h, tmesh);
         }
       }
+
+      if(cc_faces.size() == 1) // it is a triangle nothing better can be done
+        continue;
+
+      working_face_range.insert(cc_faces.begin(), cc_faces.end());
+
+      // Now, we have a proper selection that we can work on.
+
+      // First, try to smooth if we only care about local self-intersections
+      // Two different approaches:
+      // - First, try to constrain edges that are in the zone to smooth and whose dihedral angle is large,
+      //   but not too large (we don't want to constrain edges that are created by foldings)
+      // - If that fails, try to smooth without any constraints, but make sure that the deviation from
+      //   the first zone is small
+      //
+      // If smoothing fails, geometry / combinatoris are restored to pre-smoothing state.
+      //
+      // Note that there is no need to update the working range because smoothing doesn't change
+      // the number of faces (and old faces are re-used).
+      bool fixed_by_smoothing = false;
+      if(only_treat_self_intersections_locally)
+      {
+        fixed_by_smoothing = remove_self_intersections_with_smoothing(cc_faces, true, tmesh, vpmap, gt, verbose);
+        if(!fixed_by_smoothing) // try again, but without constraining sharp edges
+          fixed_by_smoothing = remove_self_intersections_with_smoothing(cc_faces, false, tmesh, vpmap, gt, verbose);
+      }
+
+      std::ofstream out2("results/post_fixup.off");
+      out2 << std::setprecision(17) << tmesh;
+      out2.close();
+
+      // remove faces from the set to process
+      for(face_descriptor f : cc_faces)
+        faces_to_remove.erase(f);
+
+      if(fixed_by_smoothing)
+      {
+        something_was_done = true;
+        continue;
+      }
+
+      if(verbose)
+        std::cout << "  DEBUG: Could not be solved via smoothing, trying hole-filling based approach\n";
 
       if(!is_selection_a_topological_disk(cc_faces, tmesh))
       {
@@ -964,11 +993,18 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
         point_patch.push_back(point_face);
       }
 
+      // Could renew the range directly within the patch replacement function
+      // to avoid erasing and re-adding the same face
+      for(const face_descriptor f : cc_faces)
+        working_face_range.erase(f);
+
       replace_face_range_with_patch(cc_border_vertices, cc_interior_vertices,
                                     cc_border_hedges, cc_interior_edges,
-                                    cc_faces, point_patch, tmesh, vpmap, verbose);
+                                    cc_faces, point_patch, tmesh, vpmap,
+                                    std::inserter(working_face_range, working_face_range.end()),
+                                    verbose);
 
-      CGAL_assertion(is_valid_polygon_mesh(tmesh));
+      CGAL_postcondition(is_valid_polygon_mesh(tmesh));
 
       something_was_done = true;
     }
@@ -988,8 +1024,9 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename TriangleMesh, typename NamedParameters>
-bool remove_self_intersections(TriangleMesh& tmesh,
+template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
+bool remove_self_intersections(const FaceRange& face_range,
+                               TriangleMesh& tmesh,
                                const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh>                                 graph_traits;
@@ -1007,13 +1044,15 @@ bool remove_self_intersections(TriangleMesh& tmesh,
   bool verbose = boost::choose_param(boost::get_param(np, internal_np::verbosity_level), 0) > 0;
   bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
   verbose = true;
-  const bool treat_self_intersections_locally_only = true;
+  const bool only_treat_self_intersections_locally = true;
+
+  std::set<face_descriptor> working_face_range(face_range.begin(), face_range.end());
 
   if(verbose)
     std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tmesh)? " << is_valid_polygon_mesh(tmesh) << "\n";
 
   CGAL_precondition_code(std::set<face_descriptor> degenerate_face_set;)
-  CGAL_precondition_code(degenerate_faces(tmesh, std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);)
+  CGAL_precondition_code(degenerate_faces(working_face_range, tmesh, std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);)
   CGAL_precondition(degenerate_face_set.empty());
 
   if(!preserve_genus)
@@ -1033,7 +1072,7 @@ bool remove_self_intersections(TriangleMesh& tmesh,
       std::vector<Face_pair> self_inter;
       // TODO : possible optimization to reduce the range to check with the bbox
       // of the previous patches or something.
-      self_intersections(tmesh, std::back_inserter(self_inter));
+      self_intersections(working_face_range, tmesh, std::back_inserter(self_inter));
 
       for(const Face_pair& fp : self_inter)
       {
@@ -1050,8 +1089,9 @@ bool remove_self_intersections(TriangleMesh& tmesh,
     }
 
     std::tie(all_fixed, topology_issue) =
-      internal::remove_self_intersections_one_step(faces_to_remove, tmesh, vpm, gt, step, preserve_genus,
-                                                   treat_self_intersections_locally_only, verbose);
+      internal::remove_self_intersections_one_step(
+          faces_to_remove, working_face_range, tmesh, vpm, gt,
+          step, preserve_genus, only_treat_self_intersections_locally, verbose);
 
     if(all_fixed && topology_issue)
     {
@@ -1061,6 +1101,18 @@ bool remove_self_intersections(TriangleMesh& tmesh,
   }
 
   return step < max_steps;
+}
+
+template <typename FaceRange, typename TriangleMesh>
+bool remove_self_intersections(const FaceRange& face_range, TriangleMesh& tmesh)
+{
+  return remove_self_intersections(face_range, tmesh, parameters::all_default());
+}
+
+template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+bool remove_self_intersections(TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
+{
+  return remove_self_intersections(faces(tmesh), tmesh, np);
 }
 
 template <typename TriangleMesh>
