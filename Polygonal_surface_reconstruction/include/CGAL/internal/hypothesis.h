@@ -1022,7 +1022,7 @@ namespace CGAL {
 				}
 
 				const Plane* plane = face_supporting_planes[face];
-				CGAL_assertion(plane);
+				CGAL_assertion(plane != nullptr);
 				if (do_intersect(mesh, f, plane))
 					intersecting_faces.insert(f);
 			}
