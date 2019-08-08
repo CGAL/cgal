@@ -116,8 +116,8 @@ namespace internal {
             const VertexRange& vertices,
             const NamedParameters& np)
   {
-    using boost::get_param;
-    using boost::choose_param;
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
 
     CGAL_precondition(is_triangle_mesh(tmesh));
 
@@ -149,13 +149,13 @@ namespace internal {
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<TriangleMesh, VPMap>
       Default_Weight_calculator;
 
-    VPMap vpmap_ = choose_param(get_param(np, internal_np::vertex_point),
+    VPMap vpmap_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                 get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
-      choose_param(get_param(np, internal_np::sparse_linear_solver), Default_solver()),
-      choose_param(get_param(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
-      choose_param(get_param(np, internal_np::fairing_continuity), 1),
+      choose_parameter(get_parameter(np, internal_np::sparse_linear_solver), Default_solver()),
+      choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
+      choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1),
       vpmap_
       );
   }

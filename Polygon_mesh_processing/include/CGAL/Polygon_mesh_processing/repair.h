@@ -581,8 +581,8 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
   CGAL_assertion(CGAL::is_valid_polygon_mesh(tmesh));
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TriangleMesh> GT;
@@ -592,7 +592,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
 
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
@@ -601,7 +601,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   bool all_removed=false;
   bool some_removed=true;
 
-  bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
+  bool preserve_genus = parameters::choose_parameter(parameters::get_parameter(np, internal_np::preserve_genus), true);
 
   // collect edges of length 0
   while(some_removed && !all_removed)
@@ -1109,8 +1109,8 @@ bool remove_degenerate_faces(const FaceRange& face_range,
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TriangleMesh> GT;
@@ -1120,10 +1120,10 @@ bool remove_degenerate_faces(const FaceRange& face_range,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
@@ -2078,18 +2078,18 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
+  VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                     get_property_map(vertex_point, pm));
 
-  typedef typename boost::lookup_named_param_def<internal_np::vertex_is_constrained_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
                                                  NamedParameters,
                                                  Constant_property_map<vertex_descriptor, bool> // default (no constraint pmap)
                                                  >::type                  VerticesMap;
-  VerticesMap cmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+  VerticesMap cmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                                   Constant_property_map<vertex_descriptor, bool>(false));
 
   std::size_t nb_new_vertices = 0;
@@ -2297,19 +2297,19 @@ template <typename PolygonMesh, typename NamedParameters>
 std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
                                             const NamedParameters& np)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef boost::graph_traits<PolygonMesh>                            GT;
   typedef typename GT::halfedge_descriptor                            halfedge_descriptor;
 
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::output_iterator_t,
     NamedParameters,
     Emptyset_iterator
   > ::type                                                            Output_iterator;
 
-  Output_iterator out = choose_param(get_param(np, internal_np::output_iterator), Emptyset_iterator());
+  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
 
   std::vector<halfedge_descriptor> non_manifold_cones;
   non_manifold_vertices(pm, std::back_inserter(non_manifold_cones));
@@ -2881,12 +2881,12 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np)
 
   // named parameter extraction
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+  VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                            get_property_map(vertex_point, tm));
 
-  const int max_steps = boost::choose_param(boost::get_param(np, internal_np::number_of_iterations), 7);
-  bool verbose = boost::choose_param(boost::get_param(np, internal_np::verbosity_level), 0) > 0;
-  bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
+  const int max_steps = parameters::choose_parameter(parameters::get_parameter(np, internal_np::number_of_iterations), 7);
+  bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbosity_level), 0) > 0;
+  bool preserve_genus = parameters::choose_parameter(parameters::get_parameter(np, internal_np::preserve_genus), true);
 
   if (verbose)
     std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tm)? " << is_valid_polygon_mesh(tm) << "\n";

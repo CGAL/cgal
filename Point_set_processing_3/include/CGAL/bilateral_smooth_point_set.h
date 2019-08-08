@@ -34,7 +34,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <functional>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -404,7 +404,8 @@ bilateral_smooth_point_set(
   unsigned int k,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
@@ -419,9 +420,9 @@ bilateral_smooth_point_set(
   typedef typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> > Pwns;
   typedef typename Kernel::FT FT;
   
-  double sharpness_angle = choose_param(get_param(np, internal_np::sharpness_angle), 30.);
-  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
-                                                               std::function<bool(double)>());
+  double sharpness_angle = choose_parameter(get_parameter(np, internal_np::sharpness_angle), 30.);
+  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
+                                                                 std::function<bool(double)>());
   
   CGAL_point_set_processing_precondition(points.begin() != points.end());
   CGAL_point_set_processing_precondition(k > 1);
@@ -433,9 +434,9 @@ bilateral_smooth_point_set(
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-  FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius), FT(0));
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+  FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), FT(0));
   
   // copy points and normals
   Pwns pwns;

@@ -73,8 +73,8 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& hrange,
                                                    PolygonMesh& mesh,
                                                    const SourceNamedParameters& snp)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor              halfedge_descriptor;
@@ -83,9 +83,9 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& hrange,
   typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
   typedef typename GT::FT                                                             FT;
 
-  GT gt = choose_param(get_param(snp, internal_np::geom_traits), GT());
-  SVPM svpm = choose_param(get_param(snp, internal_np::vertex_point),
-                           get_property_map(vertex_point, mesh));
+  GT gt = choose_parameter(get_parameter(snp, internal_np::geom_traits), GT());
+  SVPM svpm = choose_parameter(get_parameter(snp, internal_np::vertex_point),
+                               get_property_map(vertex_point, mesh));
 
   for(halfedge_descriptor hd : hrange)
   {
@@ -121,7 +121,7 @@ template <typename HalfedgeRange,
           typename PolygonMesh>
 void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& hrange,
                                                    ToleranceMap& tol_pmap,
-                                                   const typename GetGeomTraits<PolygonMesh, internal_np::all_default_t>::type::FT tolerance,
+                                                   const typename GetGeomTraits<PolygonMesh>::type::FT tolerance,
                                                    PolygonMesh& mesh)
 {
   return assign_tolerance_with_local_edge_length_bound(hrange, tol_pmap, tolerance, mesh, CGAL::parameters::all_default());
@@ -291,8 +291,8 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
                                                 const SourceNamedParameters& snp,
                                                 const TargetNamedParameters& tnp)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
@@ -312,12 +312,12 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
 
   CGAL_static_assertion((std::is_same<Point, typename GT::Point_3>::value));
 
-  GT gt = choose_param(get_param(snp, internal_np::geom_traits), GT());
+  GT gt = choose_parameter(get_parameter(snp, internal_np::geom_traits), GT());
 
-  SVPM svpm = choose_param(get_param(snp, internal_np::vertex_point),
-                           get_property_map(vertex_point, smesh));
-  TVPM tvpm = choose_param(get_param(tnp, internal_np::vertex_point),
-                           get_const_property_map(vertex_point, tmesh));
+  SVPM svpm = choose_parameter(get_parameter(snp, internal_np::vertex_point),
+                               get_property_map(vertex_point, smesh));
+  TVPM tvpm = choose_parameter(get_parameter(tnp, internal_np::vertex_point),
+                               get_const_property_map(vertex_point, tmesh));
 
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "Snapping vertices to vertices. Range sizes: "
@@ -683,8 +683,8 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
   typedef CGAL::AABB_traits<GT, Primitive>                                  AABB_Traits;
   typedef CGAL::AABB_tree<AABB_Traits>                                      AABB_tree;
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   // Need to have a triangle mesh to ensure that the refinement point of a border edge 'e' has visibility
   // of the third p oint of the face 'f' incident to 'e'
@@ -692,10 +692,10 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 
   std::size_t snapped_n = 0;
 
-  VPM vpms = choose_param(get_param(nps, internal_np::vertex_point), get_property_map(vertex_point, pms));
-  VPM vpmt = choose_param(get_param(npt, internal_np::vertex_point), get_property_map(vertex_point, pmt));
+  VPM vpms = choose_parameter(get_parameter(nps, internal_np::vertex_point), get_property_map(vertex_point, pms));
+  VPM vpmt = choose_parameter(get_parameter(npt, internal_np::vertex_point), get_property_map(vertex_point, pmt));
 
-  const GT gt = choose_param(get_param(nps, internal_np::geom_traits), GT());
+  const GT gt = choose_parameter(get_parameter(nps, internal_np::geom_traits), GT());
 
   const bool is_same_mesh = (&pms == &pmt); // @todo probably not optimal
 

@@ -34,7 +34,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <functional>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -210,7 +210,8 @@ jet_smooth_point_set(
   unsigned int k,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
@@ -221,12 +222,12 @@ jet_smooth_point_set(
                               typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  typename Kernel::FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius),
-                                                     typename Kernel::FT(0));
-  unsigned int degree_fitting = choose_param(get_param(np, internal_np::degree_fitting), 2);
-  unsigned int degree_monge = choose_param(get_param(np, internal_np::degree_monge), 2);
-  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
+                                                         typename Kernel::FT(0));
+  unsigned int degree_fitting = choose_parameter(get_parameter(np, internal_np::degree_fitting), 2);
+  unsigned int degree_monge = choose_parameter(get_parameter(np, internal_np::degree_monge), 2);
+  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                std::function<bool(double)>());
 
   typedef typename Kernel::Point_3 Point;
