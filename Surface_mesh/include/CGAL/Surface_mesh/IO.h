@@ -432,6 +432,19 @@ generic_print_surface_mesh( std::ostream&   out,
 
     hint = index_map.insert(hint, std::make_pair(*vi, id++));
   }
+  typedef typename boost::property_traits<VPmap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel K;
+  typename Surface_mesh<P>::template Property_map<typename Surface_mesh<P>::Vertex_index, typename K::Vector_3 > vnormals;
+  bool has_normals = false;
+  boost::tie(vnormals, has_normals) = M.template property_map<typename Surface_mesh<P>::Vertex_index, typename K::Vector_3>("v:normal");
+  if(has_normals)
+  {
+    for( VCI vi = vertices(M).begin(); vi != vertices(M).end(); ++vi) {
+      writer.write_vertex_normal( ::CGAL::to_double( get(vnormals, *vi).x()),
+                                  ::CGAL::to_double( get(vnormals, *vi).y()),
+                                  ::CGAL::to_double( get(vnormals, *vi).z()));
+    }
+  }
 
   writer.write_facet_header();
   for( FCI fi = faces(M).begin(); fi != faces(M).end(); ++fi) {
