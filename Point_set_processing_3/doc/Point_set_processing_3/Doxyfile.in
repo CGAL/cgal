@@ -14,4 +14,6 @@ ALIASES += "cgalNPTableBegin=<dl class=\"params\"><dt></dt><dd> <table class=\"p
 ALIASES += "cgalNPTableEnd=</table> </dd> </dl>"
 ALIASES += "cgalNPBegin{1}=<tr><td class=\"paramname\">\1 </td><td>"
 ALIASES += "cgalNPEnd=</td></tr>"
-            
+
+EXPAND_AS_DEFINED      = CGAL_BGL_NP_TEMPLATE_PARAMETERS \
+                        CGAL_BGL_NP_CLASS

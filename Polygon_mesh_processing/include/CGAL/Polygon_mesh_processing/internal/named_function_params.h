@@ -25,7 +25,7 @@
 #include <CGAL/license/Polygon_mesh_processing/core.h>
 
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS CGAL_BGL_NP_TEMPLATE_PARAMETERS
 #define CGAL_PMP_NP_CLASS CGAL_BGL_NP_CLASS

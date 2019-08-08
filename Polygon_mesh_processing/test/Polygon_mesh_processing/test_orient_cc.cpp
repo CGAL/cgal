@@ -22,11 +22,14 @@ bool test_orientation(TriangleMesh& tm, bool is_positive, const NamedParameters&
   typedef typename CGAL::Polygon_mesh_processing::GetFaceIndexMap<TriangleMesh,
       NamedParameters>::const_type Fid_map;
 
-  Vpm vpm = boost::choose_param(get_param(np, CGAL::internal_np::vertex_point),
-                                CGAL::get_const_property_map(boost::vertex_point, tm));
+  using CGAL::parameters::choose_parameter;
+  using CGAL::parameters::get_parameter;
+  
+  Vpm vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point),
+                             CGAL::get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = boost::choose_param(get_param(np, CGAL::internal_np::face_index),
-                                        CGAL::get_const_property_map(boost::face_index, tm));
+  Fid_map fid_map = choose_parameter(get_parameter(np, CGAL::internal_np::face_index),
+                                     CGAL::get_const_property_map(boost::face_index, tm));
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 

@@ -218,8 +218,11 @@ void merge_duplicated_vertices_in_boundary_cycle(
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameter>::const_type Vpm;
 
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
-                         get_const_property_map(vertex_point, pm));
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(vertex_point, pm));
 
   // collect all the halfedges of the cycle
   std::vector< std::pair<halfedge_descriptor, std::size_t> > cycle_hedges;

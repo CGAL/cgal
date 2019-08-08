@@ -38,7 +38,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Fuzzy_sphere.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Default_diagonalize_traits.h>
@@ -265,12 +265,14 @@ compute_vcm (const PointRange& points,
              double convolution_radius,
              const NamedParameters& np)
 {
-    using boost::choose_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
     // basic geometric types
     typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
     typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
-    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
     Kernel kernel;
     
     // First, compute the VCM for each point
@@ -345,7 +347,9 @@ vcm_estimate_normals_internal (PointRange& points,
                                int nb_neighbors_convolve = -1 ///< number of neighbors used during the convolution.
 )
 {
-    using boost::choose_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
     // basic geometric types
     typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
     typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
@@ -356,8 +360,8 @@ vcm_estimate_normals_internal (PointRange& points,
                                 typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                               "Error: no normal map");
 
-    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-    NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
+    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
     
     typedef cpp11::array<double, 6> Covariance;
     
