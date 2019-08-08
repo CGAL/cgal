@@ -25,44 +25,112 @@
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_3.h>
-#include <CGAL/Default.h>
 
 #include <CGAL/Tetrahedral_remeshing/Remeshing_cell_base.h>
 #include <CGAL/Tetrahedral_remeshing/Remeshing_vertex_base.h>
 
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Cartesian_converter.h>
+
+#include <boost/static_assert.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
   template<typename K,
-           typename Info,
-           typename Input_tr = CGAL::Default,
+           typename Info = void,
            typename Cb = CGAL::Triangulation_cell_base_3<K> >
   class Remeshing_triangulation_3
     : public CGAL::Triangulation_3<K,
         CGAL::Triangulation_data_structure_3<
           Remeshing_vertex_base<K>,
-          Remeshing_cell_base<K,
-            Info,
-            typename CGAL::Default::Get<Input_tr, CGAL::Triangulation_3<K> >::type::Cell,
-            Cb
-          >
+          Remeshing_cell_base<K, Info, Cb>
         >
       >
   {
     typedef Remeshing_vertex_base<K>                       RVb;
-
-    typedef typename CGAL::Default::Get<Input_tr,
-      CGAL::Triangulation_3<K> >::type                     Input_tr;
-    typedef typename Input_tr::Cell                        Input_cell;
-    typedef Remeshing_cell_base<K, Info, Input_cell, Cb>   RCb;
+    typedef Remeshing_cell_base<K, Info, Cb>               RCb;
 
   public:
     typedef CGAL::Triangulation_data_structure_3<RVb, RCb> Tds;
     typedef CGAL::Triangulation_3<K, Tds>                  Self;
     typedef Self                                           type;
   };
+
+  namespace internal
+  {
+    template<typename TDS_src, typename TDS_tgt>
+    struct Vertex_converter
+    {
+      //This operator is used to create the vertex from v_src.
+      typename TDS_tgt::Vertex operator()(const typename TDS_src::Vertex& v_src) const
+      {
+        typedef typename CGAL::Kernel_traits<
+          typename TDS_src::Vertex::Point>::Kernel GT_src;
+        typedef typename CGAL::Kernel_traits<
+          typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
+        CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
+
+        typename TDS_tgt::Vertex v_tgt;
+        v_tgt.set_point(conv(v_src.point()));
+        v_tgt.set_time_stamp(-1);
+        v_tgt.set_dimension(3);//-1 if unset, 0,1,2, or 3 if set
+        return v_tgt;
+      }
+      //This operator is meant to be used in case heavy data should transferred to v_tgt.
+      void operator()(const typename TDS_src::Vertex& v_src,
+        typename TDS_tgt::Vertex& v_tgt) const
+      {
+        typedef typename CGAL::Kernel_traits<
+          typename TDS_src::Vertex::Point>::Kernel GT_src;
+        typedef typename CGAL::Kernel_traits<
+          typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
+        CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
+
+        v_tgt.set_point(conv(v_src.point()));
+        v_tgt.set_dimension(3);//v_src.info());
+      }
+    };
+
+    template<typename TDS_src, typename TDS_tgt>
+    struct Cell_converter
+    {
+      //This operator is used to create the cell from c_src.
+      typename TDS_tgt::Cell operator()(const typename TDS_src::Cell& c_src) const
+      {
+        typename TDS_tgt::Cell c_tgt;
+//        c_tgt.info() = c_src.info();
+        c_tgt.set_time_stamp(-1);
+        return c_tgt;
+      }
+      //This operator is meant to be used in case heavy data should transferred to c_tgt.
+      void operator()(const typename TDS_src::Cell& c_src,
+                      typename TDS_tgt::Cell& c_tgt) const
+      {
+//        c_tgt.info() = c_src.info();
+      }
+    };
+
+  }
+
+  template<typename T3, typename K, typename Info>
+  void build_remeshing_triangulation(const T3& tr,
+                                     Remeshing_triangulation_3<K, Info>& remeshing_tr)
+  {
+    typedef typename T3::Triangulation_data_structure Tds;
+    typedef Remeshing_triangulation_3<K, Info>::Tds   RTds;
+
+    remeshing_tr.clear();
+
+    remeshing_tr.set_infinite_vertex(
+      remeshing_tr.tds().copy_tds(
+        tr.tds(),
+        tr.infinite_vertex(),
+        internal::Vertex_converter<Tds, RTds>(),
+        internal::Cell_converter<Tds, RTds>()));
+  }
 
 
 }//end namespace Tetrahedral_remeshing

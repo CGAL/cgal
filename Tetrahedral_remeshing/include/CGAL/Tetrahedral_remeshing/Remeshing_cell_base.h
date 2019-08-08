@@ -34,7 +34,6 @@ namespace Tetrahedral_remeshing
 {
   template<typename K,
            typename Info,
-           typename Input_cell,
            typename Cb = CGAL::Triangulation_cell_base_3<K> >
   class Remeshing_cell_base
     : public CGAL::Triangulation_cell_base_with_info_3<Info, K, Cb>
@@ -55,7 +54,6 @@ namespace Tetrahedral_remeshing
         //  1 to n for subdomains
         // n + 1 for imaginary cells
     std::size_t time_stamp_;
-    Input_cell input_cell_;//cell of input mesh, before remeshing
 
   public:
     // To get correct cell type in TDS
@@ -63,7 +61,7 @@ namespace Tetrahedral_remeshing
     struct Rebind_TDS
     {
       typedef typename Cb::template Rebind_TDS<TDS2>::Other Cb2;
-      typedef Remeshing_cell_base<K, Info, Input_cell, Cb2> Other;
+      typedef Remeshing_cell_base<K, Info, Cb2> Other;
     };
 
     Remeshing_cell_base()
@@ -127,9 +125,6 @@ namespace Tetrahedral_remeshing
     void set_time_stamp(const std::size_t& ts) {
       time_stamp_ = ts;
     }
-
-    Input_cell& input_cell()             { return input_cell_; }
-    const Input_cell& input_cell() const { return input_cell_; }
   };
 }//end namespace Tetrahedral_remeshing
 }//end namespace CGAL
