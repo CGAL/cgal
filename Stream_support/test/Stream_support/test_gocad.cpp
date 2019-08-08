@@ -8,37 +8,16 @@
 #include <CGAL/IO/GOCAD.h>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 template<class FaceGraph, class Point>
 bool test_io()
 {
   FaceGraph fg;
-  /*const char* tet = "GOCAD TSurf 1                   \n"
-                    "HEADER {                        \n"
-                    "name:Tetrahedron                \n"
-                    "*border:on                      \n"
-                    "*border*bstone:on               \n"
-                    "}                               \n"
-                    "GOCAD_ORIGINAL_COORDINATE_SYSTEM\n"
-                    "NAME Default                    \n"
-                    "AXIS_NAME \"X\" \"Y\" \"Z\"     \n"
-                    "AXIS_UNIT \"m\" \"m\" \"m\"     \n"
-                    "ZPOSITIVE Elevation             \n"
-                    "END_ORIGINAL_COORDINATE_SYSTEM  \n"
-                    "TFACE                           \n"
-                    "VRTX 0 0 0 0                    \n"
-                    "VRTX 1 1 0 0                    \n"
-                    "VRTX 2 0 1 0                    \n"
-                    "VRTX 3 0 0 1                    \n"
-                    "TRGL 0 2 1                      \n"
-                    "TRGL 2 0 3                      \n"
-                    "TRGL 1 2 3                      \n"
-                    "TRGL 0 1 3                      \n"
-                    "END                             \n";*/
   CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
                          Point(2, 0, 1), Point(3, 0, 0), fg);
   std::ostringstream out;
-  out << fg;
+  CGAL::write_gocad(fg, out, "tetrahedron");
   if(out.fail())
   {
     std::cerr<<"Tetrahedron writing failed."<<std::endl;
@@ -46,17 +25,30 @@ bool test_io()
   }
   FaceGraph fg2;
   std::istringstream in( out.str());
-  in >> fg2;
+  std::string name, color;
+  CGAL::read_gocad(fg2, in, name, color);
+  if(name != "tetrahedron"){
+    std::cerr<<"reading error: tetrahedron != "<<name<<std::endl;
+    return 1;
+  }
+  if( !color.empty()){
+    std::cerr<<"reading error: there should be no color."<<std::endl;
+    return 1;
+  }
 
   if(in.fail()){
     std::cerr<<"Tetrahedron reading failed."<<std::endl;
     return false;
   }
 
-  if(num_vertices(fg2) != 4
-     || num_faces(fg2) != 4)
+  if(num_vertices(fg2) != 4){
+    std::cerr<<"Wrong number of vertices: 4 != "<<num_vertices(fg2)<<std::endl;
+    return false;
+  }
+
+   if(num_faces(fg2) != 4)
   {
-    std::cerr<<"Facegraph construction failed."<<std::endl;
+    std::cerr<<"Wrong number of faces: 4 != "<<num_faces(fg2)<<std::endl;
     return false;
   }
 

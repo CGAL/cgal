@@ -55,14 +55,22 @@ public:
   void operator()( Facegraph& graph) {
     read(is, meshPoints, mesh);
 
+    typedef typename boost::graph_traits<Facegraph>::vertex_descriptor
+        vertex_descriptor;
+
+    std::vector<vertex_descriptor> vertices(meshPoints.size());
+    for(std::size_t id = 0; id < meshPoints.size(); ++id)
+    {
+      vertices[id] = add_vertex( meshPoints[id], graph);
+    }
 //    graph.begin_surface( meshPoints.size(), mesh.size());
     typedef typename Points_3::size_type size_type;
 
     for(size_type i=0; i < mesh.size(); i++){
-      std::array<typename boost::graph_traits<Facegraph>::vertex_descriptor, 3> face;
-      face[0] = add_vertex( meshPoints[mesh[i].template get<0>()],graph);
-      face[1] = add_vertex( meshPoints[mesh[i].template get<1>()],graph);
-      face[2] = add_vertex( meshPoints[mesh[i].template get<2>()],graph);
+      std::array<vertex_descriptor, 3> face;
+      face[0] = vertices[mesh[i].template get<0>()];
+      face[1] = vertices[mesh[i].template get<1>()];
+      face[2] = vertices[mesh[i].template get<2>()];
 
       CGAL::Euler::add_face(face, graph);
     }
