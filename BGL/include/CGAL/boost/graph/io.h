@@ -33,7 +33,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 namespace CGAL {
 /*!
@@ -59,8 +59,11 @@ bool write_off(std::ostream& os,
   typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
   typedef typename boost::graph_traits<FaceGraph>::faces_size_type faces_size_type;
 
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  
   typename Polygon_mesh_processing::GetVertexPointMap<FaceGraph, NamedParameters>::const_type
-      vpm = choose_param(get_param(np, internal_np::vertex_point),
+      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(CGAL::vertex_point, g));
   vertices_size_type nv = static_cast<vertices_size_type>(std::distance(vertices(g).first, vertices(g).second));
   faces_size_type nf = static_cast<faces_size_type>(std::distance(faces(g).first, faces(g).second));
@@ -175,6 +178,8 @@ bool read_off(std::istream& is,
               NamedParameters np)
 {
   using namespace internal::read_off_tools;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
@@ -183,7 +188,7 @@ bool read_off(std::istream& is,
   typedef typename Polygon_mesh_processing::GetVertexPointMap<FaceGraph, NamedParameters>::type Vpm;
   typedef  typename boost::property_traits<Vpm>::value_type Point_3;
   
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, g));
   vertices_size_type nv, nvf;
   faces_size_type nf;
@@ -286,7 +291,10 @@ bool write_inp(std::ostream& os,
   typedef typename Polygon_mesh_processing::GetVertexPointMap<FaceGraph, NamedParameters>::const_type VPM;
   typedef typename boost::property_traits<VPM>::value_type Point_3;
 
-  VPM vpm = choose_param(get_param(np, internal_np::vertex_point),
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(CGAL::vertex_point, g));
 
   os << "*Part, name=" << name << "\n*Node\n";

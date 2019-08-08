@@ -147,11 +147,11 @@ detect_surface_patches(PolygonMesh& p,
 {
   //extract types from NPs
   typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
-          fimap = boost::choose_param(get_param(np, internal_np::face_index),
+          fimap = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
                                       get_const_property_map(boost::face_index, p));
 
   int offset = static_cast<int>(
-          boost::choose_param(get_param(np, internal_np::first_index),
+          parameters::choose_parameter(parameters::get_parameter(np, internal_np::first_index),
           1));
 
   internal::PatchIdMapWrapper<PatchIdMap,
@@ -214,7 +214,7 @@ template<typename GT,
  void sharp_call(PolygonMesh& pmesh,
                  FT& angle_in_deg,
                  EIFMap edge_is_feature_map,
-                 const boost::param_not_found&)
+                 const internal_np::Param_not_found&)
 {
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor     edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -284,10 +284,10 @@ void detect_sharp_edges(PolygonMesh& pmesh,
 {
   //extract types from NPs
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  typedef typename GetGeomTraits<PolygonMesh, GT>::type::FT          FT;
+  typedef typename GT::FT          FT;
 
   internal::sharp_call<GT, FT>(pmesh, angle_in_deg, edge_is_feature_map,
-                               get_param(np, internal_np::vertex_feature_degree));
+                               parameters::get_parameter(np, internal_np::vertex_feature_degree));
 }
 
 
@@ -363,7 +363,7 @@ namespace internal
   template<typename PolygonMesh,
            typename PIDMap,
            typename EIFMap>
-  void vip_call(PolygonMesh&, PIDMap, const boost::param_not_found&, EIFMap)
+  void vip_call(PolygonMesh&, PIDMap, const internal_np::Param_not_found&, EIFMap)
   {
     //do nothing when the parameter is not given
   }
@@ -438,7 +438,7 @@ sharp_edges_segmentation(PolygonMesh& pmesh,
       internal::detect_surface_patches(pmesh, patch_id_map, edge_is_feature_map, np);
 
     internal::vip_call(pmesh, patch_id_map,
-      get_param(np, internal_np::vertex_incident_patches), edge_is_feature_map);
+      parameters::get_parameter(np, internal_np::vertex_incident_patches), edge_is_feature_map);
 
     return result;
 }

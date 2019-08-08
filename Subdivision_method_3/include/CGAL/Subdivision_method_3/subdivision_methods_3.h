@@ -29,7 +29,7 @@
 
 #include <CGAL/circulator.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Subdivision_method_3/subdivision_hosts_3.h>
@@ -125,13 +125,13 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, int step = 1) {
  **/
 template <class PolygonMesh, class NamedParameters>
 void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   CatmullClark_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
   for(unsigned int i = 0; i < step; i++)
@@ -170,13 +170,13 @@ void Loop_subdivision(PolygonMesh& pmesh, int step = 1) {
  **/
 template <class PolygonMesh, class NamedParameters>
 void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   Loop_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
   for(unsigned int i = 0; i < step; i++)
@@ -215,13 +215,13 @@ void DooSabin_subdivision(PolygonMesh& pmesh, int step = 1) {
  **/
 template <class PolygonMesh, class NamedParameters>
 void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   DooSabin_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
   for(unsigned int i = 0; i < step; i++)
@@ -265,13 +265,13 @@ void Sqrt3_subdivision(PolygonMesh& pmesh, int step = 1) {
  **/
 template <class PolygonMesh, class NamedParameters>
 void Sqrt3_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   Sqrt3_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
   for(unsigned int i = 0; i < step; i++)

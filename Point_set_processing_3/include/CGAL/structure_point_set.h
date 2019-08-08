@@ -42,7 +42,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/iterator/counting_iterator.hpp>
@@ -235,7 +235,8 @@ public:
              double epsilon,
              const NamedParameters& np)
   {
-    using boost::choose_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
 
     // basic geometric types
     typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
@@ -250,11 +251,11 @@ public:
                                 typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
                               "Error: no plane index map");
 
-    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-    NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-    PlaneMap plane_map = choose_param(get_param(np, internal_np::plane_map), PlaneMap());
-    PlaneIndexMap index_map = choose_param(get_param(np, internal_np::plane_index_map), PlaneIndexMap());
-    double attraction_factor = choose_param(get_param(np, internal_np::attraction_factor), 3.);
+    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+    PlaneMap plane_map = choose_parameter(get_parameter(np, internal_np::plane_map), PlaneMap());
+    PlaneIndexMap index_map = choose_parameter(get_parameter(np, internal_np::plane_index_map), PlaneIndexMap());
+    double attraction_factor = choose_parameter(get_parameter(np, internal_np::attraction_factor), 3.);
     
     m_points.reserve(points.size());
     m_normals.reserve(points.size());
@@ -1553,7 +1554,8 @@ structure_point_set (const PointRange& points,
                      double epsilon,
                      const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 

@@ -206,8 +206,8 @@ boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
 get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
 {
   if (boost::none == opm) return boost::none;
-  return boost::choose_param(
-           boost::get_param(np, internal_np::vertex_point),
+  return parameters::choose_parameter(
+           parameters::get_parameter(np, internal_np::vertex_point),
            get_property_map(boost::vertex_point, *(*opm)) );
 }
 

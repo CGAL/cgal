@@ -177,14 +177,14 @@ collect_duplicated_stitchable_boundary_edges
   Face_cc_map cc;
   std::size_t num_component = 0;
   std::vector<std::vector<halfedge_descriptor> > border_edges_per_cc;
-  bool per_cc = boost::choose_param(get_param(np, internal_np::apply_per_connected_component),
-                                       false);
+  bool per_cc = parameters::choose_parameter(parameters::get_parameter(np, internal_np::apply_per_connected_component),
+                                             false);
   if(per_cc)
   {
     cc = get(Face_property_tag(), pmesh);
     typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::const_type FIMap;
-    FIMap fim = boost::choose_param(get_param(np, internal_np::face_index),
-                             get_const_property_map(face_index, pmesh));
+    FIMap fim = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
+                                             get_const_property_map(face_index, pmesh));
     num_component = num_component_wrapper(pmesh, cc, fim);
     border_edges_per_cc.resize(num_component);
   }
@@ -591,8 +591,8 @@ template <typename PolygonMesh,
 void stitch_borders(PolygonMesh& pmesh,
                     const HalfedgePairsRange& hedge_pairs_to_stitch)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   internal::stitch_borders_impl(pmesh, hedge_pairs_to_stitch);
 }
@@ -626,15 +626,15 @@ void stitch_borders(PolygonMesh& pmesh,
 template <typename PolygonMesh, class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
     halfedge_descriptor;
   std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
 
   typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type VPMap;
-  VPMap vpm = choose_param(get_param(np, internal_np::vertex_point),
+  VPMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(vertex_point, pmesh));
 
   internal::collect_duplicated_stitchable_boundary_edges(pmesh,

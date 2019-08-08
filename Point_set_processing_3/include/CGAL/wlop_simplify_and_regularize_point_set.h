@@ -32,7 +32,7 @@
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/compute_average_spacing.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/algorithm.h>
 #include <iterator>
@@ -472,18 +472,19 @@ wlop_simplify_and_regularize_point_set(
   const NamedParameters& np
 )
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  double select_percentage = choose_param(get_param(np, internal_np::select_percentage), 5.);
-  double radius = choose_param(get_param(np, internal_np::neighbor_radius), -1);
-  unsigned int iter_number = choose_param(get_param(np, internal_np::number_of_iterations), 35);
-  bool require_uniform_sampling = choose_param(get_param(np, internal_np::require_uniform_sampling), false);
-  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  double select_percentage = choose_parameter(get_parameter(np, internal_np::select_percentage), 5.);
+  double radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), -1);
+  unsigned int iter_number = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 35);
+  bool require_uniform_sampling = choose_parameter(get_parameter(np, internal_np::require_uniform_sampling), false);
+  const cpp11::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                cpp11::function<bool(double)>());
 
   typedef typename Kernel::Point_3   Point;

@@ -31,7 +31,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/function.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -162,16 +162,17 @@ remove_outliers(
   unsigned int k,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   // geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  double threshold_percent = choose_param(get_param(np, internal_np::threshold_percent), 10.);
-  double threshold_distance = choose_param(get_param(np, internal_np::threshold_distance), 0.);
-  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  double threshold_percent = choose_parameter(get_parameter(np, internal_np::threshold_percent), 10.);
+  double threshold_distance = choose_parameter(get_parameter(np, internal_np::threshold_distance), 0.);
+  const cpp11::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                cpp11::function<bool(double)>());
   
   typedef typename Kernel::FT FT;

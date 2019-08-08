@@ -32,7 +32,7 @@
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/compute_average_spacing.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -328,7 +328,8 @@ edge_aware_upsample_point_set(
   OutputIterator output,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
@@ -344,12 +345,12 @@ edge_aware_upsample_point_set(
   typedef typename Kernel::FT FT;
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-  double sharpness_angle = choose_param(get_param(np, internal_np::sharpness_angle), 30.);
-  double edge_sensitivity = choose_param(get_param(np, internal_np::edge_sensitivity), 1);
-  double neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius), -1);
-  std::size_t number_of_output_points = choose_param(get_param(np, internal_np::number_of_output_points), 1000);
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+  double sharpness_angle = choose_parameter(get_parameter(np, internal_np::sharpness_angle), 30.);
+  double edge_sensitivity = choose_parameter(get_parameter(np, internal_np::edge_sensitivity), 1);
+  double neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), -1);
+  std::size_t number_of_output_points = choose_parameter(get_parameter(np, internal_np::number_of_output_points), 1000);
 
   std::cerr << sharpness_angle << " " << edge_sensitivity << " " << neighbor_radius
             << " " << number_of_output_points << std::endl;

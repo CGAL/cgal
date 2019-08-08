@@ -36,7 +36,7 @@
 #include <CGAL/random_simplify_point_set.h>
 #include <CGAL/Point_set_2.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <fstream>
@@ -494,15 +494,17 @@ estimate_local_k_neighbor_scales(
   OutputIterator output,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
   typedef typename Point_set_processing_3::GetQueryPointMap<QueryPointRange, NamedParameters>::const_type QueryPointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
   typedef typename boost::property_traits<PointMap>::value_type Point_d;
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  QueryPointMap query_point_map = choose_param(get_param(np, internal_np::query_point_map), QueryPointMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  QueryPointMap query_point_map = choose_parameter(get_parameter(np, internal_np::query_point_map), QueryPointMap());
 
   // Build multi-scale KD-tree
   internal::Quick_multiscale_approximate_knn_distance<Kernel, Point_d> kdtree (points.begin(),
@@ -570,9 +572,11 @@ estimate_global_k_neighbor_scale(
   const PointRange& points,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
   std::vector<std::size_t> scales;
   estimate_local_k_neighbor_scales (points, points, std::back_inserter (scales), np.query_point_map(point_map));
   std::sort (scales.begin(), scales.end());
@@ -643,15 +647,17 @@ estimate_local_range_scales(
   OutputIterator output,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
   typedef typename Point_set_processing_3::GetQueryPointMap<QueryPointRange, NamedParameters>::const_type QueryPointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
   typedef typename boost::property_traits<PointMap>::value_type Point_d;
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  QueryPointMap query_point_map = choose_param(get_param(np, internal_np::query_point_map), QueryPointMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  QueryPointMap query_point_map = choose_parameter(get_parameter(np, internal_np::query_point_map), QueryPointMap());
 
   // Build multi-scale KD-tree
   internal::Quick_multiscale_approximate_knn_distance<Kernel, Point_d> kdtree (points.begin(),
@@ -726,10 +732,12 @@ estimate_global_range_scale(
   const PointRange& points,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   std::vector<double> scales;
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
   estimate_local_range_scales (points, points, std::back_inserter (scales), np.query_point_map(point_map));
   std::sort (scales.begin(), scales.end());
   return std::sqrt (scales[scales.size() / 2]);

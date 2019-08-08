@@ -26,7 +26,7 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/assertions.h>
@@ -51,8 +51,8 @@ void partition_dual_graph(const TriangleMesh& tm,
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
   CGAL_precondition_msg(nparts > 1, ("Partitioning requires a number of parts > 1"));
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -60,7 +60,7 @@ void partition_dual_graph(const TriangleMesh& tm,
 
   // vertex index map
   typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<TriangleMesh, NamedParameters>::type Indices;
-  Indices indices = choose_param(get_param(np, internal_np::vertex_index),
+  Indices indices = choose_parameter(get_parameter(np, internal_np::vertex_index),
                                  get_const_property_map(boost::vertex_index, tm));
 
   idx_t nn = static_cast<idx_t>(num_vertices(tm));
@@ -119,8 +119,8 @@ void partition_dual_graph(const TriangleMesh& tm,
 
   Output_vertex_partition_ids vo;
   Output_face_partition_ids fo;
-  vo(tm, indices, npart, get_param(np, internal_np::vertex_partition_id));
-  fo(tm, epart, get_param(np, internal_np::face_partition_id));
+  vo(tm, indices, npart, get_parameter(np, internal_np::vertex_partition_id));
+  fo(tm, epart, get_parameter(np, internal_np::face_partition_id));
 
   delete[] eptr;
   delete[] eind;
@@ -131,7 +131,7 @@ void partition_dual_graph(const TriangleMesh& tm,
 
 template<typename TriangleMesh, typename NamedParameters>
 void partition_dual_graph(const TriangleMesh& tm, int nparts,
-                          const boost::param_not_found, // no METIS options were passed
+                          const internal_np::Param_not_found, // no METIS options were passed
                           const NamedParameters& np)
 {
   idx_t options[METIS_NOPTIONS];
@@ -180,9 +180,9 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
 template<typename TriangleMesh, typename NamedParameters>
 void partition_dual_graph(const TriangleMesh& tm, int nparts, const NamedParameters& np)
 {
-  using boost::get_param;
+  using parameters::get_parameter;
 
-  return partition_dual_graph(tm, nparts, get_param(np, internal_np::METIS_options), np);
+  return partition_dual_graph(tm, nparts, get_parameter(np, internal_np::METIS_options), np);
 }
 
 template<typename TriangleMesh>

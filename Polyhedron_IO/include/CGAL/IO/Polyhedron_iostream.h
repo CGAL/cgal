@@ -29,7 +29,7 @@
 #include <CGAL/IO/print_OFF.h>
 #include <CGAL/IO/scan_OFF.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <iostream>
 
 namespace CGAL {
@@ -41,11 +41,14 @@ template < class Traits,
            class HDS, class Alloc, class NamedParameters>
 bool
 write_off( std::ostream& out, const Polyhedron_3<Traits,Items,HDS,Alloc>& P, const NamedParameters& np){
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   // writes P to `out' in PRETTY, ASCII or BINARY format
     // as the stream indicates.
     File_header_OFF header( is_binary( out), ! is_pretty( out), false);
     typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Polyhedron_3<Traits,Items,HDS,Alloc>, NamedParameters>::const_type 
-        vpm = choose_param(get_param(np, internal_np::vertex_point),
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, P));
     CGAL::print_polyhedron_with_header_OFF( out, P, header, vpm);
     return out.good();
@@ -70,11 +73,14 @@ read_off(std::istream& in,
          Polyhedron_3<Traits,Items,HDS,Alloc>& P,
          NamedParameters np) {
     // reads a polyhedron from `in' and appends it to P.
-  typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Polyhedron_3<Traits,Items,HDS,Alloc>, NamedParameters>::type Vpm;
-      Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
-                               get_property_map(CGAL::vertex_point, P));
+    typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Polyhedron_3<Traits,Items,HDS,Alloc>, NamedParameters>::type Vpm;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                           get_property_map(CGAL::vertex_point, P));
     CGAL::scan_OFF( in, P);
-    if(!boost::is_default_param(get_param(np, internal_np::vertex_point)))
+    if(!parameters::is_default_parameter(get_parameter(np, internal_np::vertex_point)))
     {
       typedef typename boost::graph_traits<Polyhedron_3<Traits,Items,HDS,Alloc> >::vertex_descriptor Vertex;
       typename property_map_selector<Polyhedron_3<Traits,Items,HDS,Alloc>, boost::vertex_point_t>::type
