@@ -5,7 +5,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/boost/graph/helpers.h>
 
-#include <CGAL/IO/GOCAD.h>
+#include <CGAL/boost/graph/io.h>
 #include <iostream>
 #include <sstream>
 #include <string>

@@ -34,6 +34,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/IO/write_vtk.h>
+#include <CGAL/IO/GOCAD/Build_from_gocad.h>
 
 namespace CGAL {
   /*!
@@ -673,6 +674,113 @@ void write_vtp(std::ostream& os,
   write_vtp(os, mesh, CGAL::parameters::all_default());
 }
 
+namespace GOCAD_internal{
+//Use CRTP to gain access to the protected members without getters/setters.
+template <class Facegraph, class P>
+class GOCAD_builder : public Build_from_gocad<Facegraph, P, GOCAD_builder<Facegraph, P> >
+{
+  typedef GOCAD_builder<Facegraph, P> Self;
+  typedef Build_from_gocad<Facegraph, P, Self> Base;
+  typedef typename Base::Point_3 Point_3;
+  typedef typename Base::Points_3 Points_3;
+  typedef typename Base::Facet Facet;
+  typedef typename Base::Surface Surface;
+public:
+  GOCAD_builder(std::istream& is_)
+    :Base(is_){}
+  void do_construct(Facegraph& graph)
+  {
+    typedef typename boost::graph_traits<Facegraph>::vertex_descriptor
+        vertex_descriptor;
+
+    std::vector<vertex_descriptor> vertices(this->meshPoints.size());
+    for(std::size_t id = 0; id < this->meshPoints.size(); ++id)
+    {
+      vertices[id] = add_vertex( this->meshPoints[id], graph);
+    }
+    //    graph.begin_surface( meshPoints.size(), mesh.size());
+    typedef typename Points_3::size_type size_type;
+
+    for(size_type i=0; i < this->mesh.size(); i++){
+      std::array<vertex_descriptor, 3> face;
+      face[0] = vertices[this->mesh[i].template get<0>()];
+      face[1] = vertices[this->mesh[i].template get<1>()];
+      face[2] = vertices[this->mesh[i].template get<2>()];
+
+      CGAL::Euler::add_face(face, graph);
+    }
+  }
+};
+}//end GOCAD_internal
+
+template <typename FaceGraph>
+bool
+read_gocad(FaceGraph& polyhedron, std::istream& in, std::string& name, std::string& color)
+{
+  //typedef typename Polyhedron::HalfedgeDS HDS;
+  typedef typename boost::property_traits<typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>::value_type Point_3;
+
+  GOCAD_internal::GOCAD_builder<FaceGraph, Point_3> builder(in);
+  builder(polyhedron);
+  name=builder.name;
+  color=builder.color;
+
+  return in.good() && polyhedron.is_valid();
+}
+
+template <typename FaceGraph>
+bool
+write_gocad(FaceGraph& polyhedron, std::ostream& os, const std::string& name)
+{
+  os << "GOCAD TSurf 1\n"
+    "HEADER {\n"
+    "name:";
+  os << name << std::endl;
+  os << "*border:on\n"
+    "*border*bstone:on\n"
+    "}\n"
+    "GOCAD_ORIGINAL_COORDINATE_SYSTEM\n"
+    "NAME Default\n"
+    "AXIS_NAME \"X\" \"Y\" \"Z\"\n"
+    "AXIS_UNIT \"m\" \"m\" \"m\"\n"
+    "ZPOSITIVE Elevation\n"
+    "END_ORIGINAL_COORDINATE_SYSTEM\n"
+    "TFACE\n";
+
+  os.precision(16);
+  typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type VPMap;
+  VPMap vpmap = get(CGAL::vertex_point, polyhedron);
+  std::map<typename boost::graph_traits<FaceGraph>::vertex_descriptor, int> id_map;
+  {
+    typename boost::graph_traits<FaceGraph>::vertex_iterator it, end;
+    it = vertices(polyhedron).begin();
+    end = vertices(polyhedron).end();
+    int i=0;
+    for(; it != end; ++it){
+      id_map[*it] = i;
+      os << "VRTX " << i << " " << get(vpmap, *it) << "\n";
+      ++i;
+    }
+  }
+
+  {
+    typename boost::graph_traits<FaceGraph>::face_iterator it, end;
+    it = faces(polyhedron).begin();
+    end = faces(polyhedron).end();
+    for(; it != end; ++it){
+      os << "TRGL " << id_map[target(prev(halfedge(*it, polyhedron), polyhedron), polyhedron)] << " "
+         << id_map[target(halfedge(*it, polyhedron), polyhedron)] << " "
+         << id_map[target(next(halfedge(*it, polyhedron), polyhedron), polyhedron)] << "\n";
+    }
+  }
+
+  os << "END" << std::endl;
+
+  return true;
+}
+
+
 } // namespace CGAL
+
 
 #endif // CGAL_BOOST_GRAPH_IO_H
