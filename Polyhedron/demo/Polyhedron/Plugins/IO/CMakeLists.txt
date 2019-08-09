@@ -44,7 +44,7 @@ if (VTK_FOUND)
       polyhedron_demo_plugin(vtk_plugin VTK_io_plugin KEYWORDS IO Mesh_3)
       target_link_libraries(vtk_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_c3t3_item scene_points_with_normal_item
                                        ${VTK_LIBRARIES})
-      add_definitions(-DCGAL_USE_VTK)
+      target_compile_definitions(vtk_plugin  PRIVATE -DCGAL_USE_VTK)
     else()
       message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")
     endif()

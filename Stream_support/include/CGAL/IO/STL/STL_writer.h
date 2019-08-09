@@ -21,40 +21,35 @@
 #define CGAL_IO_STL_STL_WRITER_H
 
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/boost/graph/properties.h>
+#include <CGAL/Kernel/global_functions.h>
 
 #include <boost/cstdint.hpp>
-#include <boost/graph/graph_traits.hpp>
 
 
 
 namespace CGAL{
 
-template <class TriangleMesh>
+template <class Point, class Triangle>
 std::ostream&
-write_STL(const TriangleMesh& tm, std::ostream& out)
+write_STL(const std::vector<Point>& points,
+          const std::vector<Triangle>& facets,
+          std::ostream& out)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type Vpm;
-  typedef typename boost::property_traits<Vpm>::reference Point_3_ref;
-  typedef typename boost::property_traits<Vpm>::value_type Point_3;
-  typedef typename Kernel_traits<Point_3>::Kernel::Vector_3 Vector_3;
+  typedef typename CGAL::Kernel_traits<Point>::Kernel K;
+  typedef typename K::Vector_3 Vector_3;
 
-  Vpm vpm = get(boost::vertex_point, tm);
 
   if (get_mode(out) == IO::BINARY)
   {
     out << "FileType: Binary                                                                ";
-    const boost::uint32_t N32 = static_cast<boost::uint32_t>(faces(tm).size());
+    const boost::uint32_t N32 = static_cast<boost::uint32_t>(facets.size());
     out.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
-    for(face_descriptor f : faces(tm))
+    for(auto face : facets)
     {
-      halfedge_descriptor h = halfedge(f, tm);
-      Point_3_ref p = get(vpm, target(h, tm));
-      Point_3_ref q = get(vpm, target(next(h, tm), tm));
-      Point_3_ref r = get(vpm, source(h, tm));
+      const Point& p = points[face[0]];
+      const Point& q = points[face[1]];
+      const Point& r = points[face[2]];
 
       Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0):
                                       unit_normal(p,q,r);
@@ -73,12 +68,11 @@ write_STL(const TriangleMesh& tm, std::ostream& out)
   else
   {
     out << "solid\n";
-    for(face_descriptor f : faces(tm))
+    for(auto face : facets)
     {
-      halfedge_descriptor h = halfedge(f, tm);
-      Point_3_ref p = get(vpm, target(h, tm));
-      Point_3_ref q = get(vpm, target(next(h, tm), tm));
-      Point_3_ref r = get(vpm, source(h, tm));
+      const Point& p = points[face[0]];
+      const Point& q = points[face[1]];
+      const Point& r = points[face[2]];
 
       Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0):
                                       unit_normal(p,q,r);
