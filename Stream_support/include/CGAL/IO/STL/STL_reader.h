@@ -34,19 +34,22 @@
 
 namespace CGAL {
 
-template <class Point, class Triangle>
+template <class PointRange, class TriangleRange, typename IndexMap>
 bool read_ASCII_facet(std::istream& input,
-                      std::vector<Point>& points,
-                      std::vector<Triangle>& facets,
+                      PointRange& points,
+                      TriangleRange& facets,
                       int& index,
-                      std::map<Point, int >& index_map,
+                      IndexMap& index_map,
                       bool verbose = false)
 {
+  typedef typename PointRange::value_type Point;
+  typedef typename TriangleRange::value_type Triangle;
+
   // Here, we have already read the word 'facet' and are looking to read till 'endfacet'
 
   std::string s;
   std::string vertex("vertex"),
-              endfacet("endfacet");
+      endfacet("endfacet");
 
   int count = 0;
   double x,y,z;
@@ -113,12 +116,14 @@ bool read_ASCII_facet(std::istream& input,
   return false;
 }
 
-template <class Point, class Triangle>
+template <class PointRange, class TriangleRange>
 bool parse_ASCII_STL(std::istream& input,
-                     std::vector<Point>& points,
-                     std::vector<Triangle>& facets,
+                     PointRange& points,
+                     TriangleRange& facets,
                      bool verbose = false)
 {
+  typedef typename PointRange::value_type Point;
+  typedef typename TriangleRange::value_type Triangle;
   if(verbose)
     std::cout << "Parsing ASCII file..." << std::endl;
 
@@ -162,12 +167,15 @@ bool parse_ASCII_STL(std::istream& input,
   return true;
 }
 
-template <typename Point, typename Triangle>
+template <class PointRange, class TriangleRange>
 bool parse_binary_STL(std::istream& input,
-                      std::vector<Point>& points,
-                      std::vector<Triangle>& facets,
+                      PointRange& points,
+                      TriangleRange& facets,
                       bool verbose = false)
 {
+  typedef typename PointRange::value_type Point;
+  typedef typename TriangleRange::value_type Triangle;
+
   if(verbose)
     std::cout << "Parsing binary file..." << std::endl;
 
@@ -301,10 +309,10 @@ bool parse_binary_STL(std::istream& input,
 // Although the STL file format uses triangles, it is convenient to be able to use vectors
 // and other models of the `SequenceContainer` (instead of arrays) for the face type,
 // to avoid having to convert the to apply polygon soup reparation algorithms.
-template <class Point, class Triangle>
+template <class PointRange, class TriangleRange>
 bool read_STL(std::istream& input,
-              std::vector<Point>& points,
-              std::vector<Triangle>& facets,
+              PointRange& points,
+              TriangleRange& facets,
               bool verbose = false)
 {
   int pos = 0;

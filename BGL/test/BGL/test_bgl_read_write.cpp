@@ -162,22 +162,65 @@ bool test_gocad()
   return true;
 }
 
+template<class FaceGraph>
+bool test_STL()
+{
+  FaceGraph fg;
+  CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
+                         Point(2, 0, 1), Point(3, 0, 0), fg);
+  std::ostringstream out;
+  CGAL::write_STL(fg, out);
+  if(out.fail())
+  {
+    std::cerr<<"Tetrahedron writing failed."<<std::endl;
+    return false;
+  }
+  FaceGraph fg2;
+  std::istringstream in( out.str());
+  if(!CGAL::read_STL(fg2, in)){
+    std::cerr<<"Tetrahedron reading failed."<<std::endl;
+    return false;
+  }
+
+  if(num_vertices(fg2) != 4){
+    std::cerr<<"Wrong number of vertices: 4 != "<<num_vertices(fg2)<<std::endl;
+    return false;
+  }
+
+   if(num_faces(fg2) != 4)
+  {
+    std::cerr<<"Wrong number of faces: 4 != "<<num_faces(fg2)<<std::endl;
+    return false;
+  }
+
+  return true;
+}
+
 int main(int argc, char** argv)
 {
   const char* filename=(argc>1)?argv[1]:"data/prim.off";
-
+  //OFF
   test_bgl_read_write<Polyhedron>(filename);
   test_bgl_read_write<SM>(filename);
   test_bgl_read_write<LCC>(filename);
+#ifdef CGAL_USE_OPENMESH
+  test_bgl_read_write<OMesh>(filename);
+#endif
+  //GOCAD
   if(!test_gocad<Polyhedron>())
     return 1;
   if(!test_gocad<SM>())
     return 1;
   if(!test_gocad<LCC>())
     return 1;
-#ifdef CGAL_USE_OPENMESH
-  test_bgl_read_write<OMesh>(filename);
-#endif
+  //STL
+  if(!test_STL<Polyhedron>())
+    return 1;
+  if(!test_STL<SM>())
+    return 1;
+  if(!test_STL<LCC>())
+    return 1;
+  //VTP
 #ifdef CGAL_USE_VTK
   if(!test_bgl_vtp<Polyhedron>())
     return 1;

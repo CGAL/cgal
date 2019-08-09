@@ -39,7 +39,8 @@
 #include <CGAL/IO/VTK/vtk_internals.h>
 #endif
 #include <CGAL/IO/write_vtk.h>
-#include <CGAL/IO/GOCAD/Build_from_gocad.h>
+#include <CGAL/internal/Generic_facegraph_builder.h>
+#include <CGAL/IO/STL/STL_reader.h>
 
 namespace CGAL {
   /*!
@@ -411,10 +412,10 @@ bool write_inp(std::ostream& os,
 namespace GOCAD_internal{
 //Use CRTP to gain access to the protected members without getters/setters.
 template <class Facegraph, class P>
-class GOCAD_builder : public Build_from_gocad<Facegraph, P, GOCAD_builder<Facegraph, P> >
+class GOCAD_builder : public CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, GOCAD_builder<Facegraph, P> >
 {
   typedef GOCAD_builder<Facegraph, P> Self;
-  typedef Build_from_gocad<Facegraph, P, Self> Base;
+  typedef CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, Self> Base;
   typedef typename Base::Point_3 Point_3;
   typedef typename Base::Points_3 Points_3;
   typedef typename Base::Facet Facet;
@@ -437,13 +438,64 @@ public:
 
     for(size_type i=0; i < this->mesh.size(); i++){
       std::array<vertex_descriptor, 3> face;
-      face[0] = vertices[this->mesh[i].template get<0>()];
-      face[1] = vertices[this->mesh[i].template get<1>()];
-      face[2] = vertices[this->mesh[i].template get<2>()];
+      face[0] = vertices[this->mesh[i][0]];
+      face[1] = vertices[this->mesh[i][1]];
+      face[2] = vertices[this->mesh[i][2]];
 
       CGAL::Euler::add_face(face, graph);
     }
   }
+
+  void
+  read(std::istream& input, Points_3& points, Surface& surface)
+  {
+    int offset = 0;
+    char c;
+    std::string s, tface("TFACE");
+    int i,j,k;
+    Point_3 p;
+    bool vertices_read = false;
+    while(input >> s){
+      if(s == tface){
+        break;
+      }
+      std::string::size_type idx;
+
+      if((idx = s.find("name")) != std::string::npos){
+        std::istringstream str(s.substr(idx+5));
+        str >> this->name;
+      }
+      if((idx = s.find("color")) != std::string::npos){
+        std::istringstream str(s.substr(idx+6));
+        str >> this->color;
+      }
+    }
+    std::getline(input, s);
+
+    while(input.get(c)){
+      if((c == 'V')||(c == 'P')){
+        input >> s >> i >> p;
+        if(! vertices_read){
+          vertices_read = true;
+          offset -= i; // Some files start with index 0 others with 1
+        }
+
+        points.push_back(p);
+
+      } else if(vertices_read && (c == 'T')){
+        input >> c >> c >> c >>  i >> j >> k;
+        typename Base::Facet new_face(3);
+        new_face[0] = offset+i;
+        new_face[1] = offset+j;
+        new_face[2] = offset+k;
+        surface.push_back(new_face);
+      } else if(c == 'E'){
+        break;
+      }
+      std::getline(input, s);
+    }
+  }
+
 };
 }//end GOCAD_internal
 
@@ -910,6 +962,67 @@ write_STL(const TriangleMesh& tm, std::ostream& out)
     out << "endsolid\n";
   }
   return out;
+}
+
+
+namespace STL_internal
+{
+//Use CRTP to gain access to the protected members without getters/setters.
+template <class Facegraph, class P>
+class STL_builder : public CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, STL_builder<Facegraph, P> >
+{
+  typedef STL_builder<Facegraph, P> Self;
+  typedef CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, Self> Base;
+  typedef typename Base::Point_3 Point_3;
+  typedef typename Base::Points_3 Points_3;
+  typedef typename Base::Facet Facet;
+  typedef typename Base::Surface Surface;
+public:
+  STL_builder(std::istream& is_)
+    :Base(is_){}
+  void do_construct(Facegraph& graph)
+  {
+    typedef typename boost::graph_traits<Facegraph>::vertex_descriptor
+        vertex_descriptor;
+
+    std::vector<vertex_descriptor> vertices(this->meshPoints.size());
+    for(std::size_t id = 0; id < this->meshPoints.size(); ++id)
+    {
+      vertices[id] = add_vertex( this->meshPoints[id], graph);
+    }
+    //    graph.begin_surface( meshPoints.size(), mesh.size());
+    typedef typename Points_3::size_type size_type;
+
+    for(size_type i=0; i < this->mesh.size(); i++){
+      std::array<vertex_descriptor, 3> face;
+      face[0] = vertices[this->mesh[i][0]];
+      face[1] = vertices[this->mesh[i][1]];
+      face[2] = vertices[this->mesh[i][2]];
+
+      CGAL::Euler::add_face(face, graph);
+    }
+  }
+
+  void
+  read(std::istream& input, Points_3& points, Surface& surface)
+  {
+    read_STL(input, points, surface);
+  }
+
+};
+} // end STL_internal
+template <class TriangleMesh>
+bool
+read_STL(TriangleMesh& tm, std::istream& in)
+{
+  //typedef typename Polyhedron::HalfedgeDS HDS;
+  typedef typename boost::property_traits<typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type>::value_type Point_3;
+
+  STL_internal::STL_builder<TriangleMesh, Point_3> builder(in);
+  builder(tm);
+  bool ok = in.good() || in.eof();
+  ok &= tm.is_valid();
+  return ok;
 }
 
 } // namespace CGAL
