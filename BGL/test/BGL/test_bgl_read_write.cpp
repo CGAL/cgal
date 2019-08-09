@@ -116,6 +116,51 @@ bool test_bgl_vtp<Polyhedron>()
 }
 #endif
 
+template<class FaceGraph>
+bool test_gocad()
+{
+  FaceGraph fg;
+  CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
+                         Point(2, 0, 1), Point(3, 0, 0), fg);
+  std::ostringstream out;
+  CGAL::write_gocad(fg, out, "tetrahedron");
+  if(out.fail())
+  {
+    std::cerr<<"Tetrahedron writing failed."<<std::endl;
+    return false;
+  }
+  FaceGraph fg2;
+  std::istringstream in( out.str());
+  std::string name, color;
+  CGAL::read_gocad(fg2, in, name, color);
+  if(name != "tetrahedron"){
+    std::cerr<<"reading error: tetrahedron != "<<name<<std::endl;
+    return 1;
+  }
+  if( !color.empty()){
+    std::cerr<<"reading error: there should be no color."<<std::endl;
+    return 1;
+  }
+
+  if(in.fail()){
+    std::cerr<<"Tetrahedron reading failed."<<std::endl;
+    return false;
+  }
+
+  if(num_vertices(fg2) != 4){
+    std::cerr<<"Wrong number of vertices: 4 != "<<num_vertices(fg2)<<std::endl;
+    return false;
+  }
+
+   if(num_faces(fg2) != 4)
+  {
+    std::cerr<<"Wrong number of faces: 4 != "<<num_faces(fg2)<<std::endl;
+    return false;
+  }
+
+  return true;
+}
+
 int main(int argc, char** argv)
 {
   const char* filename=(argc>1)?argv[1]:"data/prim.off";
@@ -123,7 +168,12 @@ int main(int argc, char** argv)
   test_bgl_read_write<Polyhedron>(filename);
   test_bgl_read_write<SM>(filename);
   test_bgl_read_write<LCC>(filename);
-
+  if(!test_gocad<Polyhedron>())
+    return 1;
+  if(!test_gocad<SM>())
+    return 1;
+  if(!test_gocad<LCC>())
+    return 1;
 #ifdef CGAL_USE_OPENMESH
   test_bgl_read_write<OMesh>(filename);
 #endif
