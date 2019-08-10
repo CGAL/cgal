@@ -25,6 +25,8 @@
 
 #include <CGAL/Surface_mesh_topology/internal/Minimal_quadrangulation.h>
 #include <CGAL/Surface_mesh_topology/internal/Shortest_noncontractible_cycle.h>
+#include <CGAL/Surface_mesh_topology/internal/Facewidth.h>
+#include <CGAL/Surface_mesh_topology/internal/Generic_map_selector.h>
 #include <CGAL/Face_graph_wrapper.h>
 
 namespace CGAL {
@@ -36,11 +38,17 @@ class Curves_on_surface_topology
 public:
   typedef typename internal::CMap_for_minimal_quadrangulation CMap_for_minimal_quadrangulation;
   typedef typename internal::Shortest_noncontractible_cycle<Mesh> Shortest_noncontractible_cycle;
+  typedef typename internal::Facewidth<Mesh> Facewidth;
+
+  using Gmap_wrapper               = internal::Generic_map_selector<Mesh>;
+  using Gmap                       = typename Gmap_wrapper::Generic_map;
+
   
   Curves_on_surface_topology(Mesh& amap, bool /* display_time */=false) :
     m_original_map(amap),
     m_minimal_quadrangulation(nullptr),
-    m_shortest_noncontractible_cycle(nullptr)
+    m_shortest_noncontractible_cycle(nullptr),
+    m_facewidth(nullptr)
   {}
     
   ~Curves_on_surface_topology()
@@ -133,10 +141,32 @@ public:
     return m_shortest_noncontractible_cycle->compute_cycle(dh);
   }
 
+  Path_on_surface<Mesh> compute_facewidth() const
+  {
+    if (m_facewidth==nullptr) 
+    { m_facewidth = new Facewidth(m_original_map); }
+
+    return m_facewidth->compute_facewidth();
+  }
+
+  void update_shortest_noncontractible_cycle_pointer()
+  {
+    m_shortest_noncontractible_cycle = new Shortest_noncontractible_cycle(m_original_map);
+  }
+
+  void update_facewidth_pointer()
+  {
+    m_facewidth = new Facewidth(m_original_map);
+  }
+
 protected:
   Mesh& m_original_map;
+  mutable Gmap m_radial_map;
   mutable internal::Minimal_quadrangulation<Mesh>* m_minimal_quadrangulation;
   mutable Shortest_noncontractible_cycle* m_shortest_noncontractible_cycle;
+  mutable Facewidth* m_facewidth;
+  typename Gmap_wrapper::Origin_to_copy_map m_origin_to_copy;
+  typename Gmap_wrapper::Copy_to_origin_map m_copy_to_origin;
 };
 
 } // namespace Surface_mesh_topology

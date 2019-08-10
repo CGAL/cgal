@@ -731,10 +731,13 @@ public:
     if (is_empty()) { m_is_closed=false; }
     else
     {
-      Dart_const_handle pend=m_map.other_extremity(back());
+      Dart_const_handle pend= m_flip.back() ? back() : m_map.other_extremity(back());
       if (pend==Map::null_handle) { m_is_closed=false; }
       else
-      { m_is_closed=m_map.template belong_to_same_cell<0>(m_path[0], pend); }
+      { 
+        Dart_const_handle pbegin = m_flip[0] ? m_map.other_extremity(m_path[0]) : m_path[0];
+        m_is_closed=m_map.template belong_to_same_cell<0>(pbegin, pend);
+      }
     }
   }
 
@@ -777,13 +780,13 @@ public:
   /// Reverse the path (i.e. negate its orientation).
   void reverse()
   {
-    std::vector<Dart_const_handle> new_path(m_path.size());
     for (std::size_t i=0; i<m_path.size()/2; ++i)
     {
       m_path[m_path.size()-1-i]=
           m_map.opposite2(m_path[m_path.size()-1-i]);
       m_path[i]=m_map.opposite2(m_path[i]);
       std::swap(m_path[i], m_path[m_path.size()-1-i]);
+      std::swap(m_flip[i], m_flip[m_flip.size()-1-i]);
     }
     if (m_path.size()%2==1)
     {

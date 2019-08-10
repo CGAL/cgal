@@ -7,6 +7,7 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Path_on_surface.h>
+#include <CGAL/Surface_mesh_topology/internal/Generic_map_selector.h>
 
 namespace CGAL {
 namespace Surface_mesh_topology {
@@ -25,95 +26,11 @@ public:
     Weight_t operator() (T) const { return 1; }
   };
 
-  struct Attributes {
-    template <class GenericMap>
-    struct Dart_wrapper {
-      using Vertex_attribute = CGAL::Cell_attribute<GenericMap, int>;
-      using Edge_attribute   = void;
-      using Face_attribute   = void;
-      using Attributes       = CGAL::cpp11::tuple<Vertex_attribute, Edge_attribute, Face_attribute>;
-    };
-  };
-
-  struct SNC_for_generalized_map {
-    using Generic_map                = CGAL::Generalized_map<2, Attributes>;
-    using Dart_handle_original       = typename Mesh_original::Dart_handle;
-    using Dart_const_handle_original = typename Mesh_original::Dart_const_handle;
-    using Copy_to_origin_map         = boost::unordered_map<typename Generic_map::Dart_handle, 
-                                                            Dart_handle_original>;
-    using Origin_to_copy_map         = boost::unordered_map<Dart_handle_original, 
-                                                            typename Generic_map::Dart_handle>;
-
-    static void copy(Generic_map& target, Mesh_original& source,
-                     Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin)
-    {
-      target.copy(source, &origin_to_copy, &copy_to_origin);
-    }
-  };
-
-  struct SNC_for_combinatorial_map {
-    using Generic_map                = CGAL::Combinatorial_map<2, Attributes>;
-    using Dart_handle_original       = typename Mesh_original::Dart_handle;
-    using Dart_const_handle_original = typename Mesh_original::Dart_const_handle;
-    using Copy_to_origin_map         = boost::unordered_map<typename Generic_map::Dart_handle, 
-                                                            Dart_handle_original>;
-    using Origin_to_copy_map         = boost::unordered_map<Dart_handle_original, 
-                                                            typename Generic_map::Dart_handle>;
-
-    static void copy(Generic_map& target, Mesh_original& source,
-                     Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin)
-    {
-      target.copy(source, &origin_to_copy, &copy_to_origin);
-    }
-  };
-
-  template <class>
-  struct Generic_map_selector {
-    using Generic_map                = CGAL::Combinatorial_map<2, Attributes>;
-    using Dart_handle_original       = typename boost::graph_traits<Mesh_original>::halfedge_descriptor;
-    using Dart_const_handle_original = typename boost::graph_traits<Mesh_original>::halfedge_descriptor;
-    using Copy_to_origin_map         = boost::unordered_map<typename Generic_map::Dart_handle, 
-                                                            Dart_handle_original>;
-    using Origin_to_copy_map         = boost::unordered_map<Dart_handle_original, 
-                                                            typename Generic_map::Dart_handle>;
-
-    static void copy(Generic_map& target, Mesh_original& source,
-                     Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin)
-    {
-      target.import_from_halfedge_graph(source, &origin_to_copy, &copy_to_origin);
-    }
-  };
-
-  template <unsigned int d, class Items, class Alloc, class Storage>
-  struct Generic_map_selector< CGAL::Generalized_map<d, Items, Alloc, Storage> > : SNC_for_generalized_map {};
-
-  template <unsigned int d, class Refs, class Items, class Alloc, class Storage>
-  struct Generic_map_selector< CGAL::Generalized_map_base
-                                <d, Refs, Items, Alloc, Storage> > : SNC_for_generalized_map {};
-
-  template <unsigned int d, unsigned int d2, class Traits, class Items,
-            class Alloc, template<unsigned int,class,class,class,class> class Map, class Storage>
-  struct Generic_map_selector< CGAL::Linear_cell_complex_for_generalized_map
-                              <d, d2, Traits, Items, Alloc, Map, Storage> > : SNC_for_generalized_map {};
-
-  template <unsigned int d, class Items, class Alloc, class Storage>
-  struct Generic_map_selector< CGAL::Combinatorial_map<d, Items, Alloc, Storage> > : SNC_for_combinatorial_map {};
-
-  template <unsigned int d, class Refs, class Items, class Alloc, class Storage>
-  struct Generic_map_selector< CGAL::Combinatorial_map_base
-                                <d, Refs, Items, Alloc, Storage> > : SNC_for_combinatorial_map {};
-
-  template <unsigned int d, unsigned int d2, class Traits, class Items,
-            class Alloc, template<unsigned int,class,class,class,class> class Map, class Storage>
-  struct Generic_map_selector< CGAL::Linear_cell_complex_for_combinatorial_map
-                              <d, d2, Traits, Items, Alloc, Map, Storage> > : SNC_for_combinatorial_map {};
-
-  using Gmap                       = typename Generic_map_selector<Mesh_original>::Generic_map;
-  using Gmap_wrapper               = Generic_map_selector<Mesh_original>;
+  using Gmap_wrapper               = internal::Generic_map_selector<Mesh_original>;
+  using Gmap                       = typename Gmap_wrapper::Generic_map;
   using Dart_handle_original       = typename Gmap_wrapper::Dart_handle_original;
   using Dart_const_handle_original = typename Gmap_wrapper::Dart_const_handle_original;
   using Dart_handle                = typename Gmap::Dart_handle;
-  using Attribute_handle_0         = typename Gmap::template Attribute_handle<0>::type;
   using size_type                  = typename Gmap::size_type;
   using Dart_container             = std::vector<Dart_handle>;
   using Path                       = CGAL::Surface_mesh_topology::Path_on_surface<Mesh_original>;
@@ -125,10 +42,7 @@ public:
     Gmap_wrapper::copy(m_gmap, gmap, m_origin_to_copy, m_copy_to_origin);
     // Initialize m_is_hole
     m_is_hole = m_gmap.get_new_mark();
-    for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it) {
-      if (!m_gmap.is_marked(it, m_is_hole))
-        m_gmap.mark(it, m_is_hole);
-    }
+    m_gmap.negate_mark(m_is_hole);
     // Remove all boundary by adding faces
     m_gmap.template close<2>();
     m_gmap.negate_mark(m_is_hole);
@@ -136,13 +50,19 @@ public:
     for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it) {
       if (m_gmap.template attribute<0>(it)==NULL)
       { m_gmap.template set_attribute<0>(it, m_gmap.template create_attribute<0>()); }
+      // if (m_gmap.template attribute<1>(it)==NULL) // For debug purpose only
+      // { m_gmap.template set_attribute<1>(it, m_gmap.template create_attribute<1>()); }
     }
+    // std::cerr << '\n';
     for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), 
               itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it)
       m_face_list.push_back(it);
     for (auto it = m_gmap.template one_dart_per_cell<1>().begin(), 
               itend = m_gmap.template one_dart_per_cell<1>().end(); it != itend; ++it)
+    {
+      // m_gmap.template info<1>(it) = m_edge_list.size(); // For debug purpose only
       m_edge_list.push_back(it);
+    }
     // m_gmap.display_characteristics(std::cerr);
     // std::cerr << '\n';
   }
@@ -169,9 +89,9 @@ public:
     m_cycle.clear();
     bool first_check = true;
     typename WeightFunctor::Weight_t min_length = 0;
-    for (Attribute_handle_0 att_it = m_gmap.template attributes<0>().begin(), att_itend = m_gmap.template attributes<0>().end(); att_it != att_itend; ++att_it) {
-      // std::cerr << '.';
-      Dart_handle it = att_it->dart();
+    for (auto it = m_gmap.template one_dart_per_cell<0>().begin(),
+              itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it) 
+    {
       typename WeightFunctor::Weight_t temp_length;
       if (first_check) {
         if (!compute_cycle(it, m_cycle, &temp_length, NULL, wf)) continue;
@@ -183,7 +103,6 @@ public:
       }
     }
     if (length != NULL) *length = min_length;
-    // std::cerr << "====\n";
     return m_cycle;
   }
 
@@ -261,7 +180,6 @@ private:
             pq.push(v_index);
           }
         }
-        // std::cerr << '.';
       }
     }
     m_gmap.free_mark(vertex_visited);
@@ -355,7 +273,6 @@ private:
         }
         m_gmap.template mark_cell<2>(dh_face, face_deleted);
       }
-      // std::cerr << '!';
     }
     for (auto dh : spanning_tree) {
       if (m_gmap.is_marked(dh, edge_deleted)) continue;
@@ -392,12 +309,12 @@ private:
     m_gmap.free_mark(face_deleted);
   }
 
-  Dart_handle nonhole_dart_of_same_edge(Dart_handle dh) {
+  Dart_handle nonhole_dart_of_same_edge(Dart_handle dh)
+  {
     CGAL_assertion(dh != NULL);
     if (m_gmap.is_marked(dh, m_is_hole))
       dh = m_gmap.opposite2(dh);
     CGAL_assertion(!m_gmap.is_marked(dh, m_is_hole));
-    // std::cerr << m_gmap.template info<0>(dh) << std::endl;
     return dh;
   }
 
@@ -405,17 +322,15 @@ private:
   {
     dh = nonhole_dart_of_same_edge(dh);
     Dart_const_handle_original dh_original = m_copy_to_origin[dh];
-    // std::cerr << '-';
-    if (cycle.can_be_pushed(dh_original, flip)) {
+    if (cycle.can_be_pushed(dh_original, flip))
+    {
       cycle.push_back(dh_original, true, flip);
-      // std::cerr << '?';
     }
-    else {
+    else 
+    {
       CGAL_assertion(cycle.can_be_pushed(dh_original, !flip));
       cycle.push_back(dh_original, true, !flip);
-      // std::cerr << '!';
     }
-    // std::cerr << '+';
   }
 
   template <class WeightFunctor>
@@ -426,13 +341,13 @@ private:
     std::vector<typename WeightFunctor::Weight_t> distance_from_root;
     m_spanning_tree.clear();
     m_trace_index.clear();
-    for (Attribute_handle_0 att_it = m_gmap.template attributes<0>().begin(), att_itend = m_gmap.template attributes<0>().end(); att_it != att_itend; ++att_it) {
-      Dart_handle it = att_it->dart();
+    for (auto it = m_gmap.template one_dart_per_cell<0>().begin(),
+                     itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it) 
+    {
       m_gmap.template info<0>(it) = -1;
     }
     compute_spanning_tree(root, m_spanning_tree, distance_from_root, m_trace_index, wf);
     compute_noncon_edges(m_spanning_tree, m_noncon_edges);
-    // std::cerr << "Done compute_noncon_edges. noncon_edges.size() = " << m_noncon_edges.size() << '\n';
 
     bool first_check = true;
     typename WeightFunctor::Weight_t min_distance = 0;
@@ -453,22 +368,19 @@ private:
     }
     if (first_check) return false; // no cycle found
     if (length != NULL) *length = min_distance < 0 ? 0 : min_distance;
-    if (max_length != NULL)
-      if (min_distance >= *max_length) return false; // abort
-    // std::cerr << ".\n";
+    if (max_length != NULL && min_distance >= *max_length) return false; // abort
     cycle.clear();
     // Trace back the path from `a` to root
     for (int ind = min_a - 1; ind != -1; ind = m_trace_index[ind]) 
       add_to_cycle(m_spanning_tree[ind], cycle, true);
     // Reverse: now it is the path from root to `a`
     cycle.reverse();
-    // std::cerr << "Done reverse\n";
     add_to_cycle(min_noncon_edge, cycle);
     // Trace back the path from `b` to root
     for (int ind = min_b - 1; ind != -1; ind = m_trace_index[ind])
       add_to_cycle(m_gmap.opposite2(m_spanning_tree[ind]), cycle);
-    // CGAL_assertion(cycle.is_closed());
-    // std::cerr << "----\n";
+    
+    CGAL_assertion(cycle.is_closed());
 
     return true;
   }
