@@ -45,7 +45,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QDragEnterEvent>
-#include <QDropEvent>
+#include <QDropEvent> 
 #include <QPainter>
 #include <QSlider>
 #include <QProgressBar>
@@ -905,6 +905,8 @@ public slots:
   //void on_actionSaveResult_triggered();
   void on_actionAddColor_triggered();
   void on_actionMinusColor_triggered();
+
+  bool stop_result_operation(size_t m_color_result_active, size_t op_number);
 
   void on_showBlue_toggled  (bool a_check);
   void on_showRed_toggled   (bool a_check);
@@ -2488,7 +2490,7 @@ void MainWindow::on_showBlueDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count >= 2)
+		if (count > 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showBlueDiff->setChecked(false); 
@@ -2512,7 +2514,7 @@ void MainWindow::on_showRedDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count >= 2)
+		if (count > 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showRedDiff->setChecked(false); 
@@ -2536,7 +2538,7 @@ void MainWindow::on_showBlackDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count >= 2)
+		if (count > 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showBlackDiff->setChecked(false); 
@@ -2560,7 +2562,7 @@ void MainWindow::on_showBrownDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count >= 2)
+		if (count > 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showBrownDiff->setChecked(false); 
@@ -2584,7 +2586,7 @@ void MainWindow::on_showYellowDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count >= 2)
+		if (count > 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showYellowDiff->setChecked(false); 
@@ -2608,7 +2610,7 @@ void MainWindow::on_showMagentaDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count >= 2)
+		if (count > 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showMagentaDiff->setChecked(false); 
@@ -2632,7 +2634,7 @@ void MainWindow::on_showAquaDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count >= 2)
+		if (count > 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
       showAquaDiff->setChecked(false); 
@@ -2658,7 +2660,7 @@ void MainWindow::on_showCompResultDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-    if (count >= 2)
+    if (count > 2)
     {
       ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
       showCompResultDiff->setChecked(false); 
@@ -2683,7 +2685,7 @@ void MainWindow::on_showIntResultDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-    if (count >= 2)
+    if (count > 2)
     {
       ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
       showIntResultDiff->setChecked(false); 
@@ -2708,7 +2710,7 @@ void MainWindow::on_showUnionResultDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-    if (count >= 2)
+    if (count > 2)
     {
       ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
       showUnionResultDiff->setChecked(false); 
@@ -2733,7 +2735,7 @@ void MainWindow::on_showDiffResultDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-    if (count >= 2)
+    if (count > 2)
     {
       ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
       showDiffResultDiff->setChecked(false); 
@@ -2758,7 +2760,7 @@ void MainWindow::on_showSymDiffResultDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-    if (count >= 2)
+    if (count > 2)
     {
       ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
       showSymDiffResultDiff->setChecked(false); 
@@ -4038,6 +4040,7 @@ void MainWindow::on_actionNew_triggered()
   on_actionMinkMode_toggled(false);
   on_showColorBucket_toggled(true);
   actionDelete->setVisible(true);
+  Minkowksi_Sum -> setChecked(false);
   
   m_circular_active = false ;
   m_bezier_active = false;
@@ -4443,6 +4446,11 @@ void MainWindow::on_actionDeleteAll_triggered()
     aqua_set().clear();aqua_circular_sources().clear();aqua_bezier_sources().clear();aqua_linear_sources().clear();
     olive_set().clear();olive_linear_sources().clear();
     hotpink_set().clear();hotpink_linear_sources().clear();
+    universal_set().clear();
+    universal_set1().clear();
+    universal_set2().clear();
+    universal_set3().clear();
+    universal_set4().clear();
   }
   lDone = true;
 
@@ -4543,65 +4551,65 @@ void MainWindow::on_actionClearResult_triggered()
   	if(m_clear_blue)
     { 
       blue_res_set().clear();
-      if(color_comp == 0) {color_comp = 111;ResultComplement->setText("");}
-      if(color_int == 0) {color_int = 111;ResultIntersection->setText("");}
-      if(color_union == 0) {color_union = 111;ResultUnion->setText("");}
-      if(color_diff == 0) {color_diff = 111;ResultDiff->setText("");}
-      if(color_sym_diff == 0) {color_sym_diff = 111;ResultSym_Diff->setText("");}
+      if(color_comp == 0) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
+      if(color_int == 0) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
+      if(color_union == 0) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
+      if(color_diff == 0) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
+      if(color_sym_diff == 0) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
     }
   	if(m_clear_red)
     {
       red_res_set().clear();
-      if(color_comp == 1) {color_comp = 111;ResultComplement->setText("");}
-      if(color_int == 1) {color_int = 111;ResultIntersection->setText("");}
-      if(color_union == 1) {color_union = 111;ResultUnion->setText("");}
-      if(color_diff == 1) {color_diff = 111;ResultDiff->setText("");}
-      if(color_sym_diff == 1) {color_sym_diff = 111;ResultSym_Diff->setText("");}
+      if(color_comp == 1) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
+      if(color_int == 1) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
+      if(color_union == 1) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
+      if(color_diff == 1) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
+      if(color_sym_diff == 1) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
     }
   	if(m_clear_black)
       { 
         black_res_set().clear();
-      if(color_comp == 2) {color_comp = 111;ResultComplement->setText("");}
-      if(color_int == 2) {color_int = 111;ResultIntersection->setText("");}
-      if(color_union == 2) {color_union = 111;ResultUnion->setText("");}
-      if(color_diff == 2) {color_diff = 111;ResultDiff->setText("");}
-      if(color_sym_diff == 2) {color_sym_diff = 111;ResultSym_Diff->setText("");}
+      if(color_comp == 2) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
+      if(color_int == 2) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
+      if(color_union == 2) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
+      if(color_diff == 2) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
+      if(color_sym_diff == 2) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
       }
   	if(m_clear_brown)
       { 
         brown_res_set().clear();
-      if(color_comp == 3) {color_comp = 111;ResultComplement->setText("");}
-      if(color_int == 3) {color_int = 111;ResultIntersection->setText("");}
-      if(color_union == 3) {color_union = 111;ResultUnion->setText("");}
-      if(color_diff == 3) {color_diff = 111;ResultDiff->setText("");}
-      if(color_sym_diff == 3) {color_sym_diff = 111;ResultSym_Diff->setText("");}
+      if(color_comp == 3) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
+      if(color_int == 3) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
+      if(color_union == 3) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
+      if(color_diff == 3) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
+      if(color_sym_diff == 3) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
       }
   	if(m_clear_yellow)
       { 
         yellow_res_set().clear();
-      if(color_comp == 4) {color_comp = 111;ResultComplement->setText("");}
-      if(color_int == 4) {color_int = 111;ResultIntersection->setText("");}
-      if(color_union == 4) {color_union = 111;ResultUnion->setText("");}
-      if(color_diff == 4) {color_diff = 111;ResultDiff->setText("");}
-      if(color_sym_diff == 4) {color_sym_diff = 111;ResultSym_Diff->setText("");}
+      if(color_comp == 4) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
+      if(color_int == 4) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
+      if(color_union == 4) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
+      if(color_diff == 4) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
+      if(color_sym_diff == 4) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
       }
   	if(m_clear_magenta)
       { 
         magenta_res_set().clear();
-      if(color_comp == 5) {color_comp = 111;ResultComplement->setText("");}
-      if(color_int == 5) {color_int = 111;ResultIntersection->setText("");}
-      if(color_union == 5) {color_union = 111;ResultUnion->setText("");}
-      if(color_diff == 5) {color_diff = 111;ResultDiff->setText("");}
-      if(color_sym_diff == 5) {color_sym_diff = 111;ResultSym_Diff->setText("");}
+      if(color_comp == 5) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
+      if(color_int == 5) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
+      if(color_union == 5) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
+      if(color_diff == 5) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
+      if(color_sym_diff == 5) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
       }
   	if(m_clear_aqua)
       { 
         aqua_res_set().clear();
-      if(color_comp == 6) {color_comp = 111;ResultComplement->setText("");}
-      if(color_int == 6) {color_int = 111;ResultIntersection->setText("");}
-      if(color_union == 6) {color_union = 111;ResultUnion->setText("");}
-      if(color_diff == 6) {color_diff = 111;ResultDiff->setText("");}
-      if(color_sym_diff == 6) {color_sym_diff = 111;ResultSym_Diff->setText("");}
+      if(color_comp == 6) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
+      if(color_int == 6) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
+      if(color_union == 6) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
+      if(color_diff == 6) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
+      if(color_sym_diff == 6) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
       }
     hotpink_set().clear();hotpink_linear_sources().clear();
     olive_set().clear();olive_linear_sources().clear();
@@ -5613,6 +5621,132 @@ void MainWindow::on_ResultSym_Diff_toggled(bool aChecked)
   
 }
 
+bool MainWindow::stop_result_operation(size_t m_color_result_active , size_t op_number)
+{
+  switch(op_number)
+  {
+    case 0:
+      if(color_int == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_union == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_diff == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_sym_diff == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      else return true;
+      break;
+
+    case 1:
+      if(color_comp == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_union == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_diff == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_sym_diff == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      else return true;
+      break;
+
+    case 2:
+      if(color_int == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_comp == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_diff == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_sym_diff == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      else return true;
+      break;
+
+    case 3:
+      if(color_int == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_union == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_comp == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_sym_diff == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      else return true;
+      break;
+
+    case 5:
+      if(color_int == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_union == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_diff == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_comp == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      else return true;
+      break;
+  }
+}
+
 void MainWindow::on_actionComplement_triggered()
 {
   bool lDone = false;
@@ -5629,9 +5763,22 @@ void MainWindow::on_actionComplement_triggered()
 
   minkowksi_sum_operated = false;
 
+  if(color_comp != 111)
+  {
+    if(color_comp = 0) blue_res_set().clear();
+    else if(color_comp = 1) red_res_set().clear();
+    else if(color_comp = 2) black_res_set().clear();
+    else if(color_comp = 3) brown_res_set().clear();
+    else if(color_comp = 4) yellow_res_set().clear();
+    else if(color_comp = 5) magenta_res_set().clear();
+    else if(color_comp = 6) aqua_res_set().clear();
+  }
+
   switch(m_color_result_active)
   {
- 		case 0:switch(m_color_complement)
+ 		case 0:if(stop_result_operation(0,0))
+    {
+      switch(m_color_complement)
 	  	{
 	  				case 0: if(!blue_set().is_empty()) {blue_res_set().assign(blue_set()); blue_res_set().complement();} break;
 				    case 1: if(!red_set().is_empty()) {blue_res_set().assign(red_set()); blue_res_set().complement();} break;
@@ -5650,9 +5797,16 @@ void MainWindow::on_actionComplement_triggered()
     ResultComplement -> setText("Blue");
     color_comp = 0;
     break;
+  }
+  else{
+    break;
+  }
 	
   
-  		case 1:switch(m_color_complement)
+  		case 1:if(stop_result_operation(1,0))
+    {
+
+      switch(m_color_complement)
 	  	{		case 0: if(!blue_set().is_empty()) {red_res_set().assign(blue_set()); red_res_set().complement();} break;
 			    case 1: if(!red_set().is_empty()) {red_res_set().assign(red_set()); red_res_set().complement();} break;
 			    case 2: if(!black_set().is_empty()) {red_res_set().assign(black_set()); red_res_set().complement();} break;
@@ -5671,8 +5825,15 @@ void MainWindow::on_actionComplement_triggered()
     ResultComplement -> setText("Red");
     color_comp = 1;
     break;
+  }
 
-		case 2:switch(m_color_complement)
+  else{
+    break;
+  }
+
+		case 2:if(stop_result_operation(2,0))
+    {
+      switch(m_color_complement)
 	  	{
 	  			case 0: if(!blue_set().is_empty()) {black_res_set().assign(blue_set()); black_res_set().complement();} break;
 			    case 1: if(!red_set().is_empty()) {black_res_set().assign(red_set()); black_res_set().complement();} break;
@@ -5691,9 +5852,16 @@ void MainWindow::on_actionComplement_triggered()
     ResultComplement -> setText("Black");
     color_comp = 2;
     break;
+  }
+  else
+  {
+    break;
+  }
   
   
-  	case 3:switch(m_color_complement)
+  	case 3:if(stop_result_operation(3,0))
+    {
+      switch(m_color_complement)
 	  	{
 	  			case 0: if(!blue_set().is_empty()) {brown_res_set().assign(blue_set()); brown_res_set().complement();} break;
 			    case 1: if(!red_set().is_empty()) {brown_res_set().assign(red_set()); brown_res_set().complement();} break;
@@ -5712,9 +5880,16 @@ void MainWindow::on_actionComplement_triggered()
     ResultComplement -> setText("Brown");
     color_comp = 3;
     break;
+  }
+  else
+  {
+    break;
+  }
 
 
-    case 4:switch(m_color_complement)
+    case 4:if(stop_result_operation(4,0))
+    {
+      switch(m_color_complement)
 	  	{
 	  			case 0: if(!blue_set().is_empty()) {yellow_res_set().assign(blue_set()); yellow_res_set().complement();} break;
 			    case 1: if(!red_set().is_empty()) {yellow_res_set().assign(red_set()); yellow_res_set().complement();} break;
@@ -5733,11 +5908,18 @@ void MainWindow::on_actionComplement_triggered()
     ResultComplement -> setText("Yellow");
     color_comp = 4;
     break;
+  }
+  else
+  {
+    break;
+  }
 
   
  
 
- 		case 5:switch(m_color_complement)
+ 		case 5:if(stop_result_operation(5,0))
+    {
+      switch(m_color_complement)
 	  	{		case 0: if(!blue_set().is_empty()) {magenta_res_set().assign(blue_set()); magenta_res_set().complement();} break;
 			    case 1: if(!red_set().is_empty()) {magenta_res_set().assign(red_set()); magenta_res_set().complement();} break;
 			    case 2: if(!black_set().is_empty()) {magenta_res_set().assign(black_set()); magenta_res_set().complement();} break;
@@ -5755,9 +5937,16 @@ void MainWindow::on_actionComplement_triggered()
     ResultComplement -> setText("Magenta");
     color_comp = 5;
     break;
+  }
+  else
+  {
+    break;
+  }
 
   
-  	case 6:switch(m_color_complement)
+  	case 6:if(stop_result_operation(6,0))
+    {
+      switch(m_color_complement)
 	  	{       case 0: if(!blue_set().is_empty()) {aqua_res_set().assign(blue_set()); aqua_res_set().complement();} break;
 			    case 1: if(!red_set().is_empty()) {aqua_res_set().assign(red_set()); aqua_res_set().complement();} break;
 			    case 2: if(!black_set().is_empty()) {aqua_res_set().assign(black_set()); aqua_res_set().complement();} break;
@@ -5775,6 +5964,11 @@ void MainWindow::on_actionComplement_triggered()
     ResultComplement -> setText("Aqua");
     color_comp = 6;
     break;
+  }
+  else
+  {
+    break;
+  }
 
 		default : break;
   }
@@ -5801,9 +5995,23 @@ void MainWindow::on_actionIntersection_triggered()
 
   minkowksi_sum_operated = false;
 
+  if(color_int != 111)
+  {
+    if(color_int = 0) blue_res_set().clear();
+    else if(color_int = 1) red_res_set().clear();
+    else if(color_int = 2) black_res_set().clear();
+    else if(color_int = 3) brown_res_set().clear();
+    else if(color_int = 4) yellow_res_set().clear();
+    else if(color_int = 5) magenta_res_set().clear();
+    else if(color_int = 6) aqua_res_set().clear();
+  }
+
+
   switch(m_color_result_active)	  
 	{
-  		 case 0:if (!blue_set().is_empty() && m_blue_int) blue_res_set().assign(blue_set());
+  		 case 0:if(stop_result_operation(0,1))
+    {
+       if (!blue_set().is_empty() && m_blue_int) blue_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_int) blue_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_int) blue_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_int) blue_res_set().assign(brown_set());
@@ -5832,11 +6040,18 @@ void MainWindow::on_actionIntersection_triggered()
       ResultIntersection -> setText("Blue");
       color_int = 0;
       break;
+    }
+    else
+    {
+      break;
+    }
 
 
 
 
-		  case 1:if (!blue_set().is_empty() && m_blue_int) red_res_set().assign(blue_set());
+		  case 1:if(stop_result_operation(1,1))
+    {
+      if (!blue_set().is_empty() && m_blue_int) red_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_int) red_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_int) red_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_int) red_res_set().assign(brown_set());
@@ -5865,10 +6080,17 @@ void MainWindow::on_actionIntersection_triggered()
       ResultIntersection -> setText("Red");
       color_int = 1;
       break;
+    }
+    else
+    {
+      break;
+    }
 
 		  
 
-		  case 2:if (!blue_set().is_empty() && m_blue_int) black_res_set().assign(blue_set());
+		  case 2:if(stop_result_operation(2,1))
+    {
+      if (!blue_set().is_empty() && m_blue_int) black_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_int) black_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_int) black_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_int) black_res_set().assign(brown_set());
@@ -5897,9 +6119,16 @@ void MainWindow::on_actionIntersection_triggered()
       ResultIntersection -> setText("Black");
       color_int = 2;
       break;
+    }
+    else
+    {
+      break;
+    }
 
 
-		  case 3:if (!blue_set().is_empty() && m_blue_int) brown_res_set().assign(blue_set());
+		  case 3:if(stop_result_operation(3,1))
+    {
+      if (!blue_set().is_empty() && m_blue_int) brown_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_int) brown_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_int) brown_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_int) brown_res_set().assign(brown_set());
@@ -5928,9 +6157,16 @@ void MainWindow::on_actionIntersection_triggered()
       ResultIntersection -> setText("Brown");
       color_int = 3;
       break;
+    }
+    else
+    {
+      break;
+    }
 		  
 
-		  case 4:if (!blue_set().is_empty() && m_blue_int) yellow_res_set().assign(blue_set());
+		  case 4:if(stop_result_operation(4,1))
+    {
+      if (!blue_set().is_empty() && m_blue_int) yellow_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_int) yellow_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_int) yellow_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_int) yellow_res_set().assign(brown_set());
@@ -5959,8 +6195,15 @@ void MainWindow::on_actionIntersection_triggered()
       ResultIntersection -> setText("Yellow");
       color_int = 4;
       break;
+    }
+    else
+    {
+      break;
+    }
 
-		  case 5: if (!blue_set().is_empty() && m_blue_int) magenta_res_set().assign(blue_set());
+		  case 5: if(stop_result_operation(0,1))
+    {
+      if (!blue_set().is_empty() && m_blue_int) magenta_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_int) magenta_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_int) magenta_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_int) magenta_res_set().assign(brown_set());
@@ -5989,8 +6232,15 @@ void MainWindow::on_actionIntersection_triggered()
       ResultIntersection -> setText("Magenta");
       color_int = 5;
       break;
+    }
+    else
+    {
+      break;
+    }
 
-  		  case 6:if (!blue_set().is_empty() && m_blue_int) aqua_res_set().assign(blue_set());
+  		  case 6:if(stop_result_operation(0,1))
+    {
+      if (!blue_set().is_empty() && m_blue_int) aqua_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_int) aqua_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_int) aqua_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_int) aqua_res_set().assign(brown_set());
@@ -6019,6 +6269,11 @@ void MainWindow::on_actionIntersection_triggered()
       ResultIntersection -> setText("Aqua");
       color_int = 6;
       break;
+    }
+    else
+    {
+      break;
+    }
 
 		  default: break;
 	}
@@ -6133,12 +6388,27 @@ void MainWindow::on_actionDifference_triggered()
       color2 = 11;
     }
 
+
+
+  if(color_diff != 111)
+  {
+    if(color_diff = 0) blue_res_set().clear();
+    else if(color_diff = 1) red_res_set().clear();
+    else if(color_diff = 2) black_res_set().clear();
+    else if(color_diff = 3) brown_res_set().clear();
+    else if(color_diff = 4) yellow_res_set().clear();
+    else if(color_diff = 5) magenta_res_set().clear();
+    else if(color_diff = 6) aqua_res_set().clear();
+  }
+
 	  
 
 switch(m_color_result_active)
 {  
 
-			  case 0:if(color1 == 0) blue_res_set().assign(blue_set());
+			  case 0:if(stop_result_operation(0,3))
+    {
+      if(color1 == 0) blue_res_set().assign(blue_set());
 			  else if(color1 == 1) blue_res_set().assign(red_set());
 			  else if(color1 == 2) blue_res_set().assign(black_set());
 			  else if(color1 == 3) blue_res_set().assign(brown_set());
@@ -6165,9 +6435,16 @@ switch(m_color_result_active)
         ResultDiff -> setText("Blue");
         color_diff = 0;
         break;
+      }
+      else
+      {
+        break;
+      }
 
 
-			  case 1:if(color1 == 0) red_res_set().assign(blue_set());
+			  case 1:if(stop_result_operation(1,3))
+    {
+      if(color1 == 0) red_res_set().assign(blue_set());
 			  else if(color1 == 1) red_res_set().assign(red_set());
 			  else if(color1 == 2) red_res_set().assign(black_set());
 			  else if(color1 == 3) red_res_set().assign(brown_set());
@@ -6194,9 +6471,16 @@ switch(m_color_result_active)
         ResultDiff -> setText("Red");
         color_diff = 1;
         break;
+      }
+      else
+      {
+        break;
+      }
 
 
-			  case 2:if(color1 == 0) black_res_set().assign(blue_set());
+			  case 2:if(stop_result_operation(2,3))
+    {
+      if(color1 == 0) black_res_set().assign(blue_set());
 			  else if(color1 == 1) black_res_set().assign(red_set());
 			  else if(color1 == 2) black_res_set().assign(black_set());
 			  else if(color1 == 3) black_res_set().assign(brown_set());
@@ -6223,9 +6507,16 @@ switch(m_color_result_active)
         ResultDiff -> setText("Black");
         color_diff = 2;
         break;
+      }
+      else
+      {
+        break;
+      }
 
 
-			  case 3:if(color1 == 0) brown_res_set().assign(blue_set());
+			  case 3:if(stop_result_operation(3,3))
+    {
+        if(color1 == 0) brown_res_set().assign(blue_set());
 			  else if(color1 == 1) brown_res_set().assign(red_set());
 			  else if(color1 == 2) brown_res_set().assign(black_set());
 			  else if(color1 == 3) brown_res_set().assign(brown_set());
@@ -6253,8 +6544,15 @@ switch(m_color_result_active)
         ResultDiff -> setText("Brown");
         color_diff = 3;
         break;
+      }
+      else
+      {
+        break;
+      }
 
-			  case 4:if(color1 == 0) yellow_res_set().assign(blue_set());
+			  case 4:if(stop_result_operation(4,3))
+    {
+        if(color1 == 0) yellow_res_set().assign(blue_set());
 			  else if(color1 == 1) yellow_res_set().assign(red_set());
 			  else if(color1 == 2) yellow_res_set().assign(black_set());
 			  else if(color1 == 3) yellow_res_set().assign(brown_set());
@@ -6281,9 +6579,16 @@ switch(m_color_result_active)
         ResultDiff -> setText("Yellow");
         color_diff = 4;
         break;
+      }
+      else
+      {
+        break;
+      }
 
 
-			  case 5:if(color1 == 0) magenta_res_set().assign(blue_set());
+			  case 5:if(stop_result_operation(5,3))
+    {
+        if(color1 == 0) magenta_res_set().assign(blue_set());
 			  else if(color1 == 1) magenta_res_set().assign(red_set());
 			  else if(color1 == 2) magenta_res_set().assign(black_set());
 			  else if(color1 == 3) magenta_res_set().assign(brown_set());
@@ -6310,8 +6615,15 @@ switch(m_color_result_active)
         ResultDiff -> setText("Magenta");
         color_diff = 5;
         break;
+      }
+      else
+      {
+        break;
+      }
 
-			  case 6:if(color1 == 0) aqua_res_set().assign(blue_set());
+			  case 6:if(stop_result_operation(6,3))
+    {
+      if(color1 == 0) aqua_res_set().assign(blue_set());
 			  else if(color1 == 1) aqua_res_set().assign(red_set());
 			  else if(color1 == 2) aqua_res_set().assign(black_set());
 			  else if(color1 == 3) aqua_res_set().assign(brown_set());
@@ -6338,6 +6650,11 @@ switch(m_color_result_active)
         ResultDiff -> setText("Aqua");
         color_diff = 6;
         break;
+      }
+      else
+      {
+        break;
+      }
   	  
 	}
 	lDone = true;
@@ -6345,7 +6662,7 @@ switch(m_color_result_active)
 
   else 
   {
-  	ask_user_ok("Difference Operation Error", "Please add one more colored polygon set\n");
+  	ask_user_ok("Difference Operation Error", "Operation valid for 2 colored polygon set\n");
   }
 
 
@@ -6369,10 +6686,23 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
 
   minkowksi_sum_operated = false;
 
+  if(color_sym_diff != 111)
+  {
+    if(color_sym_diff = 0) blue_res_set().clear();
+    else if(color_sym_diff = 1) red_res_set().clear();
+    else if(color_sym_diff = 2) black_res_set().clear();
+    else if(color_sym_diff = 3) brown_res_set().clear();
+    else if(color_sym_diff = 4) yellow_res_set().clear();
+    else if(color_sym_diff = 5) magenta_res_set().clear();
+    else if(color_sym_diff = 6) aqua_res_set().clear();
+  }
+
   switch(m_color_result_active)
    {
 
-   		  case 0: if (!blue_set().is_empty() && m_blue_sym_diff) blue_res_set().assign(blue_set());
+   		  case 0:if(stop_result_operation(0,4))
+    {
+     if (!blue_set().is_empty() && m_blue_sym_diff) blue_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_sym_diff) blue_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_sym_diff) blue_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_sym_diff) blue_res_set().assign(brown_set());
@@ -6400,8 +6730,15 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
       ResultSym_Diff -> setText("Blue");
       color_sym_diff = 0;
       break;
+    }
+    else
+    {
+      break;
+    }
 
-          case 1:if (!blue_set().is_empty() && m_blue_sym_diff) red_res_set().assign(blue_set());
+          case 1:if(stop_result_operation(1,4))
+    { 
+      if (!blue_set().is_empty() && m_blue_sym_diff) red_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_sym_diff) red_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_sym_diff) red_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_sym_diff) red_res_set().assign(brown_set());
@@ -6429,9 +6766,15 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
       ResultSym_Diff -> setText("Red");
       color_sym_diff = 1;
       break;
+    }
+    else
+    {
+      break;
+    }
 
 
-          case 2: if (!blue_set().is_empty() && m_blue_sym_diff) black_res_set().assign(blue_set());
+          case 2:if(stop_result_operation(2,4))
+    { if (!blue_set().is_empty() && m_blue_sym_diff) black_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_sym_diff) black_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_sym_diff) black_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_sym_diff) black_res_set().assign(brown_set());
@@ -6459,9 +6802,16 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
       ResultSym_Diff -> setText("Black");
       color_sym_diff = 2;
       break;
+    }
+    else
+    {
+      break;
+    }
 
 
-		  case 3:if (!blue_set().is_empty() && m_blue_sym_diff) brown_res_set().assign(blue_set());
+		  case 3:if(stop_result_operation(3,4))
+    {
+      if (!blue_set().is_empty() && m_blue_sym_diff) brown_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_sym_diff) brown_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_sym_diff) brown_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_sym_diff) brown_res_set().assign(brown_set());
@@ -6489,9 +6839,16 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
       ResultSym_Diff -> setText("Brown");
       color_sym_diff = 3;
       break;
+    }
+    else
+    {
+      break;
+    }
 
 
-		  case 4:if (!blue_set().is_empty() && m_blue_sym_diff) yellow_res_set().assign(blue_set());
+		  case 4:if(stop_result_operation(4,4))
+    {
+      if (!blue_set().is_empty() && m_blue_sym_diff) yellow_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_sym_diff) yellow_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_sym_diff) yellow_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_sym_diff) yellow_res_set().assign(brown_set());
@@ -6519,9 +6876,16 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
       ResultSym_Diff -> setText("Yellow");
       color_sym_diff = 4;
       break;
+    }
+    else
+    {
+      break;
+    }
 
 
-		  case 5:if (!blue_set().is_empty() && m_blue_sym_diff) magenta_res_set().assign(blue_set());
+		  case 5:if(stop_result_operation(5,4))
+    {
+      if (!blue_set().is_empty() && m_blue_sym_diff) magenta_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_sym_diff) magenta_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_sym_diff) magenta_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_sym_diff) magenta_res_set().assign(brown_set());
@@ -6549,8 +6913,15 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
       ResultSym_Diff -> setText("Magenta");
       color_sym_diff = 5;
       break;
+    }
+    else
+    {
+      break;
+    }
 
-		  case 6: if (!blue_set().is_empty() && m_blue_sym_diff) aqua_res_set().assign(blue_set());
+		  case 6:if(stop_result_operation(6,4))
+    {
+      if (!blue_set().is_empty() && m_blue_sym_diff) aqua_res_set().assign(blue_set());
 		  else if (!red_set().is_empty() && m_red_sym_diff) aqua_res_set().assign(red_set());
 		  else if (!black_set().is_empty() && m_black_sym_diff) aqua_res_set().assign(black_set());
 		  else if (!brown_set().is_empty() && m_brown_sym_diff) aqua_res_set().assign(brown_set());
@@ -6578,6 +6949,9 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
       ResultSym_Diff -> setText("Aqua");
       color_sym_diff = 6;
       break;
+    }
+    else
+      {break;}
 	}
 
   	  lDone = true;
@@ -6602,10 +6976,24 @@ void MainWindow::on_actionUnion_triggered()
 
   minkowksi_sum_operated = false;
 
+
+  if(color_union != 111)
+  {
+    if(color_union = 0) blue_res_set().clear();
+    else if(color_union = 1) red_res_set().clear();
+    else if(color_union = 2) black_res_set().clear();
+    else if(color_union = 3) brown_res_set().clear();
+    else if(color_union = 4) yellow_res_set().clear();
+    else if(color_union = 5) magenta_res_set().clear();
+    else if(color_union = 6) aqua_res_set().clear();
+  }
+
   //result_set().clear();
   switch(m_color_result_active)  
   {
-  		case 0:blue_res_set().clear();
+  		case 0:if(stop_result_operation(0,2))
+    {
+      blue_res_set().clear();
       if(m_red_union) blue_res_set().assign(red_set());
 		  if(m_blue_union) blue_res_set().join(blue_set());
 		  if(m_black_union) blue_res_set().join(black_set());
@@ -6622,8 +7010,15 @@ void MainWindow::on_actionUnion_triggered()
       ResultUnion -> setText("Blue");
       color_union = 0;
       break;
+    }
+    else
+    {
+      break;
+    }
 
-		case 1:if(m_red_union) red_res_set().assign(red_set());
+		case 1:if(stop_result_operation(1,2))
+    {
+      if(m_red_union) red_res_set().assign(red_set());
 		  if(m_blue_union) red_res_set().join(blue_set());
 		  if(m_black_union) red_res_set().join(black_set());
 		  if(m_brown_union) red_res_set().join(brown_set());
@@ -6639,9 +7034,16 @@ void MainWindow::on_actionUnion_triggered()
       ResultUnion -> setText("Red");
       color_union = 1;
       break;
+    }
+    else
+    {
+      break;
+    }
   	 		
 
-		case 2:if(m_red_union) black_res_set().assign(red_set());
+		case 2:if(stop_result_operation(2,2))
+    {
+      if(m_red_union) black_res_set().assign(red_set());
 		  if(m_blue_union) black_res_set().join(blue_set());
 		  if(m_black_union) black_res_set().join(black_set());
 		  if(m_brown_union) black_res_set().join(brown_set());
@@ -6657,8 +7059,15 @@ void MainWindow::on_actionUnion_triggered()
       ResultUnion -> setText("Black");
       color_union = 2;
       break;
+    }
+    else
+    {
+      break;
+    }
 
-  		case 3:if(m_red_union) brown_res_set().assign(red_set());
+  		case 3:if(stop_result_operation(3,2))
+    {
+      if(m_red_union) brown_res_set().assign(red_set());
 		  if(m_blue_union) brown_res_set().join(blue_set());
 		  if(m_black_union) brown_res_set().join(black_set());
 		  if(m_brown_union) brown_res_set().join(brown_set());
@@ -6674,8 +7083,15 @@ void MainWindow::on_actionUnion_triggered()
       ResultUnion -> setText("Brown");
       color_union = 3;
       break;
+    }
+    else
+    {
+      break;
+    }
 
-  		case 4:if(m_red_union) yellow_res_set().assign(red_set());
+  		case 4:if(stop_result_operation(4,2))
+    {
+       if(m_red_union) yellow_res_set().assign(red_set());
 		  if(m_blue_union) yellow_res_set().join(blue_set());
 		  if(m_black_union) yellow_res_set().join(black_set());
 		  if(m_brown_union) yellow_res_set().join(brown_set());
@@ -6691,8 +7107,15 @@ void MainWindow::on_actionUnion_triggered()
       ResultUnion -> setText("Yellow");
       color_union = 4;
       break;
+    }
+    else
+    {
+      break;
+    }
 
-		case 5:if(m_red_union) magenta_res_set().assign(red_set());
+		case 5:if(stop_result_operation(5,2))
+    {
+      if(m_red_union) magenta_res_set().assign(red_set());
 		  if(m_blue_union) magenta_res_set().join(blue_set());
 		  if(m_black_union) magenta_res_set().join(black_set());
 		  if(m_brown_union) magenta_res_set().join(brown_set());
@@ -6708,8 +7131,15 @@ void MainWindow::on_actionUnion_triggered()
       ResultUnion -> setText("Magenta");
       color_union = 5;
       break;
+    }
+    else
+    {
+      break;
+    }
 
-		case 6:if(m_red_union) aqua_res_set().assign(red_set());
+		case 6:if(stop_result_operation(6,2))
+    {
+      if(m_red_union) aqua_res_set().assign(red_set());
 		  if(m_blue_union) aqua_res_set().join(blue_set());
 		  if(m_black_union) aqua_res_set().join(black_set());
 		  if(m_brown_union) aqua_res_set().join(brown_set());
@@ -6725,7 +7155,11 @@ void MainWindow::on_actionUnion_triggered()
       ResultUnion -> setText("Aqua");
       color_union = 6;
       break;
-		  
+    }
+    else
+    {
+      break;
+    }
 
 	}
 
@@ -6792,7 +7226,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 		    m_pathTrack.addPolygon(poly);
 
 			QBrush brush;
-			brush.setColor(QColor(0,0,0,255));
+			brush.setColor(QColor(0,0,0,150));
 			brush.setStyle(Qt::SolidPattern);
 			QPen pen(Qt::white);
 			pathItem = m_scene.addPath(m_pathTrack,pen,brush);
@@ -6834,6 +7268,7 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
   		  //CGAL_assertion(mink_sum_res.number_of_holes() == 0);
 		  if (!mink_sum_res.is_unbounded()) get_MinkowskiSum_result(mink_sum_res);
 		  else ask_user_ok("Minkowski Sum Operation Error", "resultant polygon is unbounded\n");	
+      zoomToFit();
 		  lDone = true;
       minkowksi_sum_operated = true;
 	 
