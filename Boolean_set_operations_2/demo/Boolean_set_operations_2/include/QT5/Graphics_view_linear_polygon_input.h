@@ -185,7 +185,7 @@ protected:
   {
     bool rHandled = false;
     Point lP = cvt(aEvent->scenePos());
-    QPointF const& aP = aEvent->scenePos();	
+    QPointF const& aP = aEvent ->scenePos();
     if (aEvent->button() == ::Qt::LeftButton) {
       switch (mState) {
        case PieceStarted:
