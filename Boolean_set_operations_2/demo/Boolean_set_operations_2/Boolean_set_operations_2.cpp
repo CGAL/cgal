@@ -800,11 +800,11 @@ private:
   size_t color_sym_diff;
 
   Polygon_with_holes_2 mink_sum_res;
-
+  bool minkowksi_sum_operated;
 
   QGraphicsPathItem* pathItem;
 
-  Polygon_2 p0,p1,p2,p3,p4,p5,p6,p7;
+  Polygon_2 p0,p1;
 
   Curve_set_container m_curve_sets;
   //container for curves
@@ -1397,6 +1397,7 @@ MainWindow::MainWindow() :
   m_color_active_mink(1), //default
   m_color_complement(111), //default
   m_blue_int(false), //default
+  minkowksi_sum_operated(false), //default
   m_red_int(false), //default
   m_black_int(false), //default
   m_brown_int(false), //default
@@ -3969,7 +3970,9 @@ void MainWindow::on_actionNew_triggered()
   for( Curve_set_iterator si = m_curve_sets.begin(); si != m_curve_sets.end() ; ++ si )
     si->clear();
   
-  m_scene.removeItem(pathItem);
+  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+
+  minkowksi_sum_operated = false;
 
   blue_circular_sources().clear();
   red_circular_sources().clear();
@@ -4620,7 +4623,8 @@ void MainWindow::on_actionDeleteResult_triggered()
 
     if (lProceed)
     {
-      m_scene.removeItem(pathItem);	
+      if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+      minkowksi_sum_operated = false;
       //result_set().clear();
       blue_res_set().clear();
       red_res_set().clear();
@@ -5621,7 +5625,9 @@ void MainWindow::on_actionComplement_triggered()
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
 
-  m_scene.removeItem(pathItem);	
+  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+
+  minkowksi_sum_operated = false;
 
   switch(m_color_result_active)
   {
@@ -5791,7 +5797,9 @@ void MainWindow::on_actionIntersection_triggered()
   actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-  m_scene.removeItem(pathItem);
+  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+
+  minkowksi_sum_operated = false;
 
   switch(m_color_result_active)	  
 	{
@@ -6036,7 +6044,9 @@ void MainWindow::on_actionDifference_triggered()
   actionMinkowski_Sum->setChecked(false);
 
   
-  m_scene.removeItem(pathItem);
+  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+
+  minkowksi_sum_operated = false;
 
   size_t count = 0;
   if (showBlueDiff ->isChecked()) count++;
@@ -6355,7 +6365,9 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
   actionDifference->setChecked(false); 
   //actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-  m_scene.removeItem(pathItem);
+  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+
+  minkowksi_sum_operated = false;
 
   switch(m_color_result_active)
    {
@@ -6586,7 +6598,9 @@ void MainWindow::on_actionUnion_triggered()
   actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-  m_scene.removeItem(pathItem);
+  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+
+  minkowksi_sum_operated = false;
 
   //result_set().clear();
   switch(m_color_result_active)  
@@ -6806,7 +6820,8 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
 
 		  Polygon_2 lp1,lp2;
 
-		  m_scene.removeItem(pathItem);
+		  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+      minkowksi_sum_operated = false;
 
 		  typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 		  typedef Kernel::Point_2                            Point_2;
@@ -6820,6 +6835,7 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
 		  if (!mink_sum_res.is_unbounded()) get_MinkowskiSum_result(mink_sum_res);
 		  else ask_user_ok("Minkowski Sum Operation Error", "resultant polygon is unbounded\n");	
 		  lDone = true;
+      minkowksi_sum_operated = true;
 	 
    }
 
