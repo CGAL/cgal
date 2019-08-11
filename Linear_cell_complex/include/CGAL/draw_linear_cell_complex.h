@@ -384,10 +384,12 @@ template < unsigned int d_, unsigned int ambient_dim,
            template<unsigned int,class,class,class,class>
            class Map,
            class Refs,
-           class Storage_>
+           class Storage_,
+           class DrawingFunctorLCC=DefaultDrawingFunctorLCC>
 void draw(const CGAL_LCC_TYPE& alcc,
           const char* title="LCC for CMap Basic Viewer",
-          bool nofill=false)
+          bool nofill=false,
+          const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC())
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
@@ -400,9 +402,8 @@ void draw(const CGAL_LCC_TYPE& alcc,
     int argc=1;
     const char* argv[2]={"lccviewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    DefaultDrawingFunctorLCC fcolor;
-    SimpleLCCViewerQt<CGAL_LCC_TYPE, DefaultDrawingFunctorLCC>
-      mainwindow(app.activeWindow(), &alcc, title, nofill, fcolor);
+    SimpleLCCViewerQt<CGAL_LCC_TYPE, DrawingFunctorLCC>
+      mainwindow(app.activeWindow(), &alcc, title, nofill, drawing_functor);
     mainwindow.show();
     app.exec();
   }
