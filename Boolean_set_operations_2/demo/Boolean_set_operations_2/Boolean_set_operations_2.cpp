@@ -1278,6 +1278,8 @@ private:
      case 4: return m_yellow_circular_sources;
      case 5: return m_magenta_circular_sources;
      case 6: return m_aqua_circular_sources;
+
+
      default: break;
     }
 
@@ -3486,6 +3488,10 @@ void MainWindow::on_actionMinusColor_triggered()
 		black_linear_sources().clear();
 		black_bezier_sources().clear();
 
+    black_res_linear_sources().clear();
+    black_res_circular_sources().clear();
+    black_res_bezier_sources().clear();
+
 		m_visible_black = false;
 		showBlack ->setVisible(false);
 		drawBlack -> setVisible(false);
@@ -3580,6 +3586,10 @@ void MainWindow::on_actionMinusColor_triggered()
 		brown_circular_sources().clear();
 		brown_linear_sources().clear();
 		brown_bezier_sources().clear();
+
+    brown_res_linear_sources().clear();
+    brown_res_circular_sources().clear();
+    brown_res_bezier_sources().clear();
 
 		m_visible_brown = false;
 		showBrown ->setVisible(false);
@@ -3681,6 +3691,10 @@ void MainWindow::on_actionMinusColor_triggered()
 		yellow_linear_sources().clear();
 		yellow_bezier_sources().clear();
 
+    yellow_res_linear_sources().clear();
+    yellow_res_circular_sources().clear();
+    yellow_res_bezier_sources().clear();
+
 		m_visible_yellow = false;
 		showYellow ->setVisible(false);
 		drawYellow -> setVisible(false);
@@ -3777,6 +3791,10 @@ void MainWindow::on_actionMinusColor_triggered()
 		magenta_circular_sources().clear();
 		magenta_linear_sources().clear();
 		magenta_bezier_sources().clear();
+
+    magenta_res_linear_sources().clear();
+    magenta_res_circular_sources().clear();
+    magenta_res_bezier_sources().clear();
 
 		m_visible_magenta = false;
 		showMagenta ->setVisible(false);
@@ -3876,6 +3894,10 @@ void MainWindow::on_actionMinusColor_triggered()
 		aqua_circular_sources().clear();
 		aqua_linear_sources().clear();
 		aqua_bezier_sources().clear();
+
+    aqua_res_linear_sources().clear();
+    aqua_res_circular_sources().clear();
+    aqua_res_bezier_sources().clear();
 
 
 		m_visible_aqua = false;
@@ -4043,6 +4065,8 @@ void MainWindow::on_actionNew_triggered()
   actionDelete->setVisible(true);
   Minkowksi_Sum -> setChecked(false);
   actionClearResult -> setVisible(true);
+  actionMinkowski_Sum->setVisible(false);
+  minkToolBar -> setVisible(false);
   
   m_circular_active = false ;
   m_bezier_active = false;
@@ -4552,7 +4576,7 @@ void MainWindow::on_actionClearResult_triggered()
   {
   	if(m_clear_blue)
     { 
-      blue_res_set().clear();
+      blue_res_set().clear();blue_res_linear_sources().clear();blue_res_circular_sources().clear();blue_res_bezier_sources().clear();
       if(color_comp == 0) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 0) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 0) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4561,7 +4585,7 @@ void MainWindow::on_actionClearResult_triggered()
     }
   	if(m_clear_red)
     {
-      red_res_set().clear();
+      red_res_set().clear();red_res_linear_sources().clear();red_res_circular_sources().clear();red_res_bezier_sources().clear();
       if(color_comp == 1) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 1) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 1) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4570,7 +4594,7 @@ void MainWindow::on_actionClearResult_triggered()
     }
   	if(m_clear_black)
       { 
-        black_res_set().clear();
+        black_res_set().clear();black_res_linear_sources().clear();black_res_circular_sources().clear();black_res_bezier_sources().clear();
       if(color_comp == 2) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 2) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 2) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4579,7 +4603,7 @@ void MainWindow::on_actionClearResult_triggered()
       }
   	if(m_clear_brown)
       { 
-        brown_res_set().clear();
+        brown_res_set().clear();brown_res_linear_sources().clear();brown_res_circular_sources().clear();brown_res_bezier_sources().clear();
       if(color_comp == 3) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 3) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 3) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4588,7 +4612,7 @@ void MainWindow::on_actionClearResult_triggered()
       }
   	if(m_clear_yellow)
       { 
-        yellow_res_set().clear();
+        yellow_res_set().clear();yellow_res_linear_sources().clear();yellow_res_circular_sources().clear();yellow_res_bezier_sources().clear();
       if(color_comp == 4) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 4) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 4) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4597,7 +4621,7 @@ void MainWindow::on_actionClearResult_triggered()
       }
   	if(m_clear_magenta)
       { 
-        magenta_res_set().clear();
+        magenta_res_set().clear();magenta_res_linear_sources().clear();magenta_res_circular_sources().clear();magenta_res_bezier_sources().clear();
       if(color_comp == 5) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 5) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 5) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4606,7 +4630,7 @@ void MainWindow::on_actionClearResult_triggered()
       }
   	if(m_clear_aqua)
       { 
-        aqua_res_set().clear();
+        aqua_res_set().clear();aqua_res_linear_sources().clear();aqua_res_circular_sources().clear();aqua_res_bezier_sources().clear();
       if(color_comp == 6) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 6) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 6) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -5346,6 +5370,13 @@ void MainWindow::switch_sets_type(int aType)
   switch_set_type(yellow_set(), aType);
   switch_set_type(magenta_set(), aType);
   switch_set_type(aqua_set(), aType);
+  switch_set_type(blue_res_set(),aType);
+  switch_set_type(red_res_set(),aType);
+  switch_set_type(black_res_set(),aType);
+  switch_set_type(brown_res_set(),aType);
+  switch_set_type(yellow_res_set(),aType);
+  switch_set_type(magenta_res_set(),aType);
+  switch_set_type(aqua_res_set(),aType);
   switch_set_type(universal_set(), aType);
   switch_set_type(universal_set1(), aType);
   switch_set_type(universal_set2(), aType);
@@ -5546,6 +5577,7 @@ void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
 		actionInsertBezier->setChecked( false ); 
 		//actionInsertMink_Polygon -> setChecked(false);
 	  	m_scene.installEventFilter(m_circular_input);
+      on_actionDeleteResult_triggered();
 	  }
 	}
 }
@@ -5562,6 +5594,7 @@ void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
 		actionInsertCircular->setChecked( false );
 		//actionInsertMink_Polygon -> setChecked(false);
 	  	m_scene.installEventFilter(m_bezier_input);
+      on_actionDeleteResult_triggered();
 	  }
 	}
 }
@@ -5593,6 +5626,8 @@ void MainWindow::on_actionMinkMode_toggled(bool aChecked)
     on_showColorBucket_toggled(false);
     actionDelete->setVisible(false);
     actionClearResult -> setVisible(false);
+    actionMinkowski_Sum->setVisible(true);
+    minkToolBar -> setVisible(true);
   }
   else
   {
@@ -5604,6 +5639,8 @@ void MainWindow::on_actionMinkMode_toggled(bool aChecked)
     on_actionDeleteAll_triggered();
     actionMinkowski_Sum -> setChecked(false);
     actionClearResult -> setVisible(true);
+    actionMinkowski_Sum->setVisible(false);
+    minkToolBar -> setVisible(false);
   }
     modelChanged();
 }

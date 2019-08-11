@@ -155,7 +155,22 @@
    <addaction name="actionDifference"/>
    <addaction name="actionSymmetric_Difference"/>
   </widget>
+  <widget class="QToolBar" name="minkToolBarDummy" >
+   <property name="windowTitle" >
+    <string>Operation Tools</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="Minkowksi_Sum"/>
+  </widget>
   <widget class="QToolBar" name="minkToolBar" >
+   <property name="Visible">
+    <bool>false</bool>
+   </property>
    <property name="windowTitle" >
     <string>Operation Tools</string>
    </property>
@@ -198,7 +213,6 @@
     </property>
    </widget>
    <addaction name="actionMinkowski_Sum" />
-   <addaction name="Minkowksi_Sum"/>
   </widget>
   <widget class="QToolBar" name="viewToolBar" >
    <property name="windowTitle" >
@@ -3051,7 +3065,7 @@
   </action>
   <action name="actionMinkowski_Sum">
     <property name="Visible">
-      <bool>true</bool>
+      <bool>false</bool>
     </property>
    <property name="checkable" >
     <bool>true</bool>
