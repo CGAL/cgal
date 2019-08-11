@@ -3972,9 +3972,10 @@ void MainWindow::on_actionNew_triggered()
   for( Curve_set_iterator si = m_curve_sets.begin(); si != m_curve_sets.end() ; ++ si )
     si->clear();
   
-  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+  if(minkowksi_sum_operated) 
+    {m_scene.removeItem(pathItem);
 
-  minkowksi_sum_operated = false;
+  minkowksi_sum_operated = false;}
 
   blue_circular_sources().clear();
   red_circular_sources().clear();
@@ -4041,6 +4042,7 @@ void MainWindow::on_actionNew_triggered()
   on_showColorBucket_toggled(true);
   actionDelete->setVisible(true);
   Minkowksi_Sum -> setChecked(false);
+  actionClearResult -> setVisible(true);
   
   m_circular_active = false ;
   m_bezier_active = false;
@@ -4629,10 +4631,13 @@ void MainWindow::on_actionDeleteResult_triggered()
       bool lProceed = ask_user_yesno("Store result","Result will be deleted\n continue anyway?\n");
     }*/
 
-    if (lProceed)
+    if (true)
     {
-      if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
-      minkowksi_sum_operated = false;
+      if(minkowksi_sum_operated) 
+      {
+        m_scene.removeItem(pathItem);
+        minkowksi_sum_operated = false;
+      }
       //result_set().clear();
       blue_res_set().clear();
       red_res_set().clear();
@@ -5587,6 +5592,7 @@ void MainWindow::on_actionMinkMode_toggled(bool aChecked)
     actionInsertCircular -> setVisible(false);
     on_showColorBucket_toggled(false);
     actionDelete->setVisible(false);
+    actionClearResult -> setVisible(false);
   }
   else
   {
@@ -5596,7 +5602,10 @@ void MainWindow::on_actionMinkMode_toggled(bool aChecked)
     actionDelete->setVisible(true);
     on_actionDeleteResult_triggered();
     on_actionDeleteAll_triggered();
+    actionMinkowski_Sum -> setChecked(false);
+    actionClearResult -> setVisible(true);
   }
+    modelChanged();
 }
 
 //only blue complement
@@ -5759,9 +5768,10 @@ void MainWindow::on_actionComplement_triggered()
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
 
-  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+  if(minkowksi_sum_operated) 
+    {m_scene.removeItem(pathItem);
 
-  minkowksi_sum_operated = false;
+  minkowksi_sum_operated = false;}
 
   if(color_comp != 111)
   {
@@ -5991,9 +6001,10 @@ void MainWindow::on_actionIntersection_triggered()
   actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+  if(minkowksi_sum_operated) 
+    {m_scene.removeItem(pathItem);
 
-  minkowksi_sum_operated = false;
+  minkowksi_sum_operated = false;}
 
   if(color_int != 111)
   {
@@ -6299,9 +6310,10 @@ void MainWindow::on_actionDifference_triggered()
   actionMinkowski_Sum->setChecked(false);
 
   
-  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+  if(minkowksi_sum_operated) 
+    {m_scene.removeItem(pathItem);
 
-  minkowksi_sum_operated = false;
+  minkowksi_sum_operated = false;}
 
   size_t count = 0;
   if (showBlueDiff ->isChecked()) count++;
@@ -6682,9 +6694,10 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
   actionDifference->setChecked(false); 
   //actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+  if(minkowksi_sum_operated) 
+    {m_scene.removeItem(pathItem);
 
-  minkowksi_sum_operated = false;
+  minkowksi_sum_operated = false;}
 
   if(color_sym_diff != 111)
   {
@@ -6972,9 +6985,10 @@ void MainWindow::on_actionUnion_triggered()
   actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
+  if(minkowksi_sum_operated) 
+    {m_scene.removeItem(pathItem);
 
-  minkowksi_sum_operated = false;
+  minkowksi_sum_operated = false;}
 
 
   if(color_union != 111)
@@ -7174,24 +7188,6 @@ void MainWindow::on_actionUnion_triggered()
 
 void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 {
-	/*QPainter painter(this);
-
-	QPen myPen(Qt::green, 2, Qt::SolidLine, Qt::RoundCap);
-    painter.setPen(myPen);
-    painter.setBrush(QBrush(Qt::green, Qt::SolidPattern));
-
-	QPolygon qpol;
-
-	typename Polygon_2::Vertex_const_iterator  vit;
-	Point_2 pt;
-
-  	for (vit = polygon.vertices_begin(); vit != polygon.vertices_end(); ++vit)
-  	{
-  		pt =  *vit;
-  		qpol << QPoint(CGAL::to_double(pt.x()),CGAL::to_double(pt.y()));
-  	}
-
-	painter.drawPolygon(qpol);*/
 
 	QPolygonF poly;
 
@@ -7207,7 +7203,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
   	m_pathTrack.addPolygon(poly);
 
 	QBrush brush;
-	brush.setColor(QColor(0,255,0,255));
+	brush.setColor(QColor(0,255,0,150));
 	brush.setStyle(Qt::SolidPattern);
 	QPen pen(Qt::green);
 	pathItem = m_scene.addPath(m_pathTrack,pen,brush);
@@ -7254,8 +7250,9 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
 
 		  Polygon_2 lp1,lp2;
 
-		  if(minkowksi_sum_operated) m_scene.removeItem(pathItem);
-      minkowksi_sum_operated = false;
+		  if(minkowksi_sum_operated) 
+        {m_scene.removeItem(pathItem);
+      minkowksi_sum_operated = false;}
 
 		  typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 		  typedef Kernel::Point_2                            Point_2;
