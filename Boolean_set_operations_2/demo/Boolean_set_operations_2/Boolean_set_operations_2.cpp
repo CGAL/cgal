@@ -4682,6 +4682,11 @@ void MainWindow::on_actionDeleteResult_triggered()
       color_diff = 111;
       color_sym_diff = 111;
 
+      ResultComplement -> setText("");
+      ResultIntersection -> setText("");
+      ResultUnion -> setText("");
+      ResultDiff -> setText("");
+      ResultSym_Diff -> setText("");
 
     	lDone = true;
     }
@@ -5628,6 +5633,10 @@ void MainWindow::on_actionMinkMode_toggled(bool aChecked)
     actionClearResult -> setVisible(false);
     actionMinkowski_Sum->setVisible(true);
     minkToolBar -> setVisible(true);
+    actionInsertLinear -> setChecked(true);
+    actionAddColor->setVisible(false);
+    actionMinusColor->setVisible(false);
+    operationsToolBar -> setVisible(false);
   }
   else
   {
@@ -5641,6 +5650,9 @@ void MainWindow::on_actionMinkMode_toggled(bool aChecked)
     actionClearResult -> setVisible(true);
     actionMinkowski_Sum->setVisible(false);
     minkToolBar -> setVisible(false);
+    actionAddColor->setVisible(true);
+    actionMinusColor->setVisible(true);
+    operationsToolBar -> setVisible(true);
   }
     modelChanged();
 }
