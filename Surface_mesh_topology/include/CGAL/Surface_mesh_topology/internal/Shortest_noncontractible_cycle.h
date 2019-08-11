@@ -324,12 +324,12 @@ private:
     Dart_const_handle_original dh_original = m_copy_to_origin[dh];
     if (cycle.can_be_pushed(dh_original, flip))
     {
-      cycle.push_back(dh_original, true, flip);
+      cycle.push_back(dh_original, flip);
     }
     else 
     {
       CGAL_assertion(cycle.can_be_pushed(dh_original, !flip));
-      cycle.push_back(dh_original, true, !flip);
+      cycle.push_back(dh_original, !flip);
     }
   }
 

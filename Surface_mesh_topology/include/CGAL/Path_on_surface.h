@@ -198,7 +198,7 @@ public:
 
   /// Add the given dart at the end of this path.
   /// @pre can_be_pushed(dh)
-  void push_back(Dart_const_handle dh, bool update_isclosed=true, bool flip=false)
+  void push_back(Dart_const_handle dh, bool flip=false, bool update_isclosed=true)
   {
     CGAL_assertion(dh!=Map::null_handle);
     /* This assert is too long, it is tested in the is_valid method. */
