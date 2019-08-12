@@ -156,7 +156,7 @@ sharp edges in the final model.
 The method assumes that all necessary planes can be extracted from the input point set. The following examples
 first extract planes from the input point cloud and then reconstruct the surface model. In the first example,
 the \ref Shape_detection_RANSAC "Efficient RANSAC approach" is used to extract planes. It is very fast,
-but not deterministic, oppose to the \ref Shape_detection_RegionGrowing "region growing approach" from the second example 
+but not deterministic, as opposed to the \ref Shape_detection_RegionGrowing "region growing approach" from the second example 
 that is slower, but more precise and always returns the same result for the same given parameters.
 
 \cgalExample{Polygonal_surface_reconstruction/polyfit_example_without_input_planes.cpp}
