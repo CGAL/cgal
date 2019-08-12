@@ -1604,95 +1604,18 @@ private:
                               const double& sq_low,
                               const bool collapse_constraints)
     {
-      CGAL_assertion_code(std::size_t nb_done = 0);
-
-      boost::unordered_set<halfedge_descriptor> degenerate_faces;
-      for(halfedge_descriptor h :
-          halfedges_around_target(halfedge(v, mesh_), mesh_))
+      boost::unordered_set<face_descriptor> faces;
+      for (halfedge_descriptor h :
+           halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
-        if(!is_border(h, mesh_) &&
-           is_degenerate_triangle_face(face(h, mesh_), mesh_,
-                                       parameters::vertex_point_map(vpmap_)
-                                                   .geom_traits(gt_)))
-          degenerate_faces.insert(h);
+        if (!is_border(h, mesh_))
+          faces.insert(face(h, mesh_));
       }
+      CGAL::Polygon_mesh_processing::remove_degenerate_faces(faces,
+        mesh_,
+        parameters::vertex_point_map(vpmap_)
+        .geom_traits(gt_));
 
-      while(!degenerate_faces.empty())
-      {
-        halfedge_descriptor h = *(degenerate_faces.begin());
-        degenerate_faces.erase(degenerate_faces.begin());
-
-        if (!is_degenerate_triangle_face(face(h, mesh_), mesh_,
-                                         parameters::vertex_point_map(vpmap_)
-                                                    .geom_traits(gt_)))
-          //this can happen when flipping h has consequences further in the mesh
-          continue;
-
-        //check that opposite is not also degenerate
-        degenerate_faces.erase(opposite(h, mesh_));
-
-        if(is_border(h, mesh_))
-          continue;
-
-        for(halfedge_descriptor hf :
-            halfedges_around_face(h, mesh_))
-        {
-          if(face(opposite(hf, mesh_), mesh_) == boost::graph_traits<PM>::null_face())
-            continue;
-
-          vertex_descriptor vc = target(hf, mesh_);
-          vertex_descriptor va = target(next(hf, mesh_), mesh_);
-          vertex_descriptor vb = target(next(next(hf, mesh_), mesh_), mesh_);
-          Vector_3 ab(get(vpmap_,va), get(vpmap_,vb));
-          Vector_3 ac(get(vpmap_,va), get(vpmap_,vc));
-          if (ab * ac < 0)
-          {
-            halfedge_descriptor hfo = opposite(hf, mesh_);
-            halfedge_descriptor h_ab = prev(hf, mesh_);
-            halfedge_descriptor h_ca = next(hf, mesh_);
-
-            short_edges.left.erase(hf);
-            short_edges.left.erase(hfo);
-            CGAL_assertion( is_flip_topologically_allowed(edge(hf, mesh_)) );
-            CGAL_assertion( !get(ecmap_, edge(hf, mesh_)) );
-            CGAL::Euler::flip_edge(hf, mesh_);
-            CGAL_assertion_code(++nb_done);
-
-            //update status
-            set_status(h_ab, merge_status(h_ab, hf, hfo));
-            set_status(h_ca, merge_status(h_ca, hf, hfo));
-            if (is_on_patch(h_ca) || is_on_patch_border(h_ca))
-            {
-              set_status(hf, PATCH);
-              set_status(hfo, PATCH);
-            }
-#ifdef CGAL_PMP_REMESHING_DEBUG
-            debug_status_map();
-#endif
-
-            //insert new edges in 'short_edges'
-            if (is_collapse_allowed(edge(hf, mesh_), collapse_constraints))
-            {
-              double sqlen = sqlength(hf);
-              if (sqlen < sq_low)
-                short_edges.insert(typename Bimap::value_type(hf, sqlen));
-            }
-
-            if(!is_border(hf, mesh_) &&
-               is_degenerate_triangle_face(face(hf, mesh_), mesh_,
-                                           parameters::vertex_point_map(vpmap_)
-                                                      .geom_traits(gt_)))
-              degenerate_faces.insert(hf);
-            if(!is_border(hfo, mesh_) &&
-               is_degenerate_triangle_face(face(hfo, mesh_), mesh_,
-                                           parameters::vertex_point_map(vpmap_)
-                                                      .geom_traits(gt_)))
-              degenerate_faces.insert(hfo);
-
-            break;
-          }
-        }
-      }
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
 #endif
