@@ -32,8 +32,8 @@ void main(void)
   vec3 V = -fs_in.fP.xyz;
 
   vec3 N;
-  if(fs_in.normal == highp vec3(0.0,0.0,0.0))
-       N = highp vec3(0.0,0.0,0.0);
+  if(fs_in.normal == vec3(0.0,0.0,0.0))
+       N = vec3(0.0,0.0,0.0);
    else
        N = fs_in.normal;
   L = normalize(L);
