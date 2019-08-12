@@ -308,7 +308,7 @@ compute_most_visible_normal_2_points(std::vector<typename boost::graph_traits<Po
 
 template <typename PolygonMesh, typename FaceNormalVector, typename GT>
 typename GT::Vector_3
-compute_most_visible_normal_3_points(std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> incident_faces,
+compute_most_visible_normal_3_points(const std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
                                      const FaceNormalVector& normalized_face_normals,
                                      const GT& traits)
 {
@@ -463,7 +463,7 @@ void compute_most_visible_vertex_normals(VertexNormalMap& vertex_normal_map,
     normalized_face_normals[fd] = en;
   }
 
-  std::ofstream out("computed_normals.cgal.polylines.txt");
+  // std::ofstream out("computed_normals.cgal.polylines.txt");
 
   // we start by evaluating the translation normal for each vertex
   for(vertex_descriptor vd : vertices(pmesh))
@@ -473,7 +473,7 @@ void compute_most_visible_vertex_normals(VertexNormalMap& vertex_normal_map,
     CGAL::Polygon_mesh_processing::internal::normalize(n, traits);
     vertex_normal_map[vd] = n;
 
-    out << "2 " << pmesh.point(vd) << " " << pmesh.point(vd) + n << std::endl;
+    // out << "2 " << pmesh.point(vd) << " " << pmesh.point(vd) + n << std::endl;
   }
 }
 
