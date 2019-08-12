@@ -214,7 +214,7 @@ void compute_face_normals(const PolygonMesh& pmesh, FaceNormalMap fnm)
 /// \endcond
 
 template <typename GT>
-bool almost_equal(const typename GT::Vector_3 v1, const typename GT::Vector_3 v2)
+bool almost_equal(const typename GT::Vector_3& v1, const typename GT::Vector_3& v2)
 {
   return (CGAL::abs(1 - GT().compute_scalar_product_3_object()(v1, v2)) < 1e-10); // @tolerance
 }
@@ -223,7 +223,7 @@ template <typename PolygonMesh, typename FaceNormalVector, typename K>
 bool does_enclose_other_normals(const int i, const int j, const int k,
                                 const typename K::Vector_3& nb,
                                 const typename K::FT sp_bi,
-                                std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> incident_faces,
+                                const std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
                                 const FaceNormalVector& normalized_face_normals,
                                 const K& traits)
 {
