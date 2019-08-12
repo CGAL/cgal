@@ -95,6 +95,11 @@ public:
   Queue_by_pvertex_idx& queue_by_pvertex_idx() { return m_queue.template get<1>(); }
   Queue_by_pother_idx& queue_by_pother_idx() { return m_queue.template get<2>(); }
 
+  Event next ()
+  {
+    return *queue_by_time().begin();
+  }
+  
   Event pop ()
   {
     Queue_iterator iter = queue_by_time().begin();
@@ -102,7 +107,7 @@ public:
     m_queue.erase(iter);
     if (queue_by_time().begin()->m_time == out.m_time)
       std::cerr << "WARNING: next Event is happening at the same time" << std::endl;
-    else if (std::abs(queue_by_time().begin()->m_time - out.m_time) < 1e-15)
+    else if (CGAL::abs(queue_by_time().begin()->m_time - out.m_time) < 1e-15)
       std::cerr << "WARNING: next Event is happening at almost the same time" << std::endl;
     
     return out;

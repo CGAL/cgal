@@ -1,6 +1,7 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+//#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #define CGAL_KSR_VERBOSE_LEVEL 4
 #define CGAL_KSR_DEBUG
@@ -10,6 +11,7 @@
 #include <CGAL/IO/PLY_writer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+//typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point_3;
 typedef std::vector<std::size_t> Polygon;
 

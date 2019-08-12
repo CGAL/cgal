@@ -216,22 +216,22 @@ void dump_polygon_borders (const DS& data, const std::string& tag = std::string(
     for (const typename DS::PEdge pedge : data.pedges(i))
       out << "2 " << data.segment_3 (pedge) << std::endl;
 
-  {
-    std::string filename = (tag != std::string() ? tag + "_" : "") + "polygon_borders_perturbated.polylines.txt";
-    std::ofstream out (filename);
+  // {
+  //   std::string filename = (tag != std::string() ? tag + "_" : "") + "polygon_borders_perturbated.polylines.txt";
+  //   std::ofstream out (filename);
   
-    CGAL::Random r;
-    for (KSR::size_t i = 6; i < data.number_of_support_planes(); ++ i)
-      for (const typename DS::PEdge pedge : data.pedges(i))
-      {
-        typename DS::Kernel::Point_3 s = data.segment_3 (pedge).source ();
-        s = s + typename DS::Kernel::Vector_3 (r.get_double(-0.01, 0.01),r.get_double(-0.01, 0.01),r.get_double(-0.01, 0.01));
-        typename DS::Kernel::Point_3 t = data.segment_3 (pedge).target ();
-        CGAL::Random rt (t.x() * t.y() * t.z());
-        t = t + typename DS::Kernel::Vector_3 (r.get_double(-0.01, 0.01),r.get_double(-0.01, 0.01),r.get_double(-0.01, 0.01));
-        out << "2 " <<  s << " " << t << std::endl;
-      }
-  }
+  //   CGAL::Random r;
+  //   for (KSR::size_t i = 6; i < data.number_of_support_planes(); ++ i)
+  //     for (const typename DS::PEdge pedge : data.pedges(i))
+  //     {
+  //       typename DS::Kernel::Point_3 s = data.segment_3 (pedge).source ();
+  //       s = s + typename DS::Kernel::Vector_3 (r.get_double(-0.01, 0.01),r.get_double(-0.01, 0.01),r.get_double(-0.01, 0.01));
+  //       typename DS::Kernel::Point_3 t = data.segment_3 (pedge).target ();
+  //       CGAL::Random rt (t.x() * t.y() * t.z());
+  //       t = t + typename DS::Kernel::Vector_3 (r.get_double(-0.01, 0.01),r.get_double(-0.01, 0.01),r.get_double(-0.01, 0.01));
+  //       out << "2 " <<  s << " " << t << std::endl;
+  //     }
+  // }
 }
 
 template <typename DS, typename Event>
@@ -280,7 +280,7 @@ template <typename DS>
 void dump (const DS& data, const std::string& tag = std::string())
 {
   dump_intersection_edges (data, tag);
-  dump_constrained_edges (data, tag);
+//  dump_constrained_edges (data, tag);
   dump_polygon_borders (data, tag);
   dump_polygons (data, tag);
 }

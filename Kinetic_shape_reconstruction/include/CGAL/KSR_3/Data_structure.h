@@ -819,55 +819,74 @@ public:
     PVertex previous;
     PVertex pvertex;
     bool front;
+    bool previous_was_free;
 
-    Queue_element (const PVertex& previous, const PVertex& pvertex, bool front)
-      : previous (previous), pvertex (pvertex), front (front) { }
+    Queue_element (const PVertex& previous, const PVertex& pvertex, bool front,
+                   bool previous_was_free)
+      : previous (previous), pvertex (pvertex), front (front),
+        previous_was_free(previous_was_free) { }
   };
 
   std::vector<PVertex> pvertices_around_ivertex (const PVertex& pvertex, const IVertex& ivertex) const
   {
+    
     std::deque<PVertex> vertices;
     vertices.push_back (pvertex);
     
     std::queue<Queue_element> todo;
     PVertex prev, next;
     std::tie (prev, next) = border_prev_and_next (pvertex);
-    todo.push (Queue_element (pvertex, prev, true));
-    todo.push (Queue_element (pvertex, next, false));
+    todo.push (Queue_element (pvertex, prev, true, false));
+    todo.push (Queue_element (pvertex, next, false, false));
 
     while (!todo.empty())
     {
       PVertex previous = todo.front().previous;
       PVertex current = todo.front().pvertex;
       bool front = todo.front().front;
+      bool previous_was_free = todo.front().previous_was_free;
       todo.pop();
 
       IEdge iedge = this->iedge (current);
-      if (iedge == null_iedge())
+      bool is_free = (iedge == null_iedge());
+
+      if (!is_free && source(iedge) != ivertex && target(iedge) != ivertex)
+        is_free = true;
+
+      if (!is_free)
       {
-        std::cerr << str(current) << " has no iedge" << std::endl;
+        IVertex other = source(iedge);
+        if (other == ivertex)
+          other = target(iedge);
+        else
+          CGAL_assertion (target(iedge) == ivertex);
+
+        // Filter backwards vertex
+        if (direction (current) * Vector_2 (point_2 (current.first, other),
+                                            point_2 (current.first, ivertex))
+            < 0)
+        {
+          std::cerr << str(current) << " is backwards" << std::endl;
+          is_free = true;
+        }
+      }
+      
+      if (previous_was_free && is_free)
+      {
+        std::cerr << str(current) << " has no iedge, stopping there" << std::endl;
         continue;
       }
-
-      std::cerr << str(current) << " has iedge " << str(iedge)
-                << " from " << str(source(iedge)) << " to " << str(target(iedge)) << std::endl;
-
-      if (source(iedge) != ivertex && target(iedge) != ivertex)
-        continue;
-
-      IVertex other = source(iedge);
-      if (other == ivertex)
-        other = target(iedge);
-      else
-        CGAL_assertion (target(iedge) == ivertex);
-
-      // Filter backwards vertex
-      if (direction (current) * Vector_2 (point_2 (current.first, other),
-                                          point_2 (current.first, ivertex))
-          < 0)
+      
+      if (is_free)
       {
-        std::cerr << str(current) << " is backwards" << std::endl;
-        continue;
+        std::cerr << str(current) << " has no iedge" << std::endl;
+
+      }
+      else
+      {
+        std::cerr << str(current) << " has iedge " << str(iedge)
+                  << " from " << str(source(iedge)) << " to " << str(target(iedge)) << std::endl;
+
       }
 
       if (front)
@@ -880,24 +899,12 @@ public:
       if (prev == previous)
       {
         CGAL_assertion (next != previous);
-        todo.push (Queue_element (current, next, front));
+        todo.push (Queue_element (current, next, front, is_free));
       }
       else
-        todo.push (Queue_element (current, prev, front));
+        todo.push (Queue_element (current, prev, front, is_free));
     }
 
-    // Get prev and next along border
-    PVertex ignored;
-    std::tie (prev, ignored) = border_prev_and_next (vertices.front());
-    if (prev == vertices[1])
-      std::swap (prev, ignored);
-    vertices.push_front(prev);
-
-    std::tie (next, ignored) = border_prev_and_next (vertices.back());
-    if (next == vertices[vertices.size() - 2])
-      std::swap (next, ignored);
-    vertices.push_back(next);
-    
     std::vector<PVertex> out;
     out.reserve (vertices.size());
     std::copy (vertices.begin(), vertices.end(),
@@ -909,7 +916,7 @@ public:
     CGAL_KSR_CERR(3) << std::endl;
     return out;
   }
-
+  
   /*******************************
    * Conversions
    *******************************/
@@ -1163,7 +1170,7 @@ public:
       support_plane(pother).set_point (pother.second,
                                        pinit - direction(pother) * m_current_time);
 
-      std::cerr << "Disconnect " << str(pother) << " to " << str(iedge) << std::endl;
+      std::cerr << "Connect " << str(pother) << " to " << str(iedge) << std::endl;
       connect (pother, iedge);
     }
     

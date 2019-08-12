@@ -500,21 +500,19 @@ private:
 
       CGAL_KSR_CERR(2) << "* Applying " << iter << ": " << ev << std::endl;
       
-      m_data.update_positions (current_time + 0.01);
-      dump (m_data, "shifted_before" + std::to_string(iter));
-      m_data.update_positions (current_time);
-      
       ++ iter;
       
-      if (iter == 80)
+      if (iter == 43)
       {
         exit(0);
       }
       
       apply(ev);
-      CGAL_assertion(check_integrity(true));   
-      m_data.update_positions (current_time + 0.01);
-      dump (m_data, "shifted_after" + std::to_string(iter - 1));
+
+      CGAL_assertion(check_integrity(true));
+      
+      m_data.update_positions (0.5 * (current_time + m_queue.next().time()));
+      dump (m_data, "after_" + std::to_string(iter - 1));
       m_data.update_positions (current_time);
       ++ iterations;
     }
@@ -629,7 +627,7 @@ private:
         std::cerr << m_data.point_3(pv) << " ";
       std::cerr << std::endl;
       
-      CGAL_assertion_msg (pvertices.size() > 3, "Isolated PVertex reaching an IVertex");
+//      CGAL_assertion_msg (pvertices.size() > 3, "Isolated PVertex reaching an IVertex");
       
       std::cerr << "Found " << pvertices.size() << " pvertices ready to be merged" << std::endl;
 
