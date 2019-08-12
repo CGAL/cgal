@@ -83,7 +83,7 @@ class TriangulationDataStructure {
 public:
 
 /// \name Types
-// @{
+/// @{
 
 /*!
 The vertex type, requirements for this type are described 
@@ -122,6 +122,7 @@ typedef unspecified_type Face;
 /// Vertices and full cells are manipulated via
 /// <I>handles</I>. Handles support the usual two dereference
 /// operators and `operator->`. 
+/// @{
 
 /*!
 Handle to a `Vertex`.

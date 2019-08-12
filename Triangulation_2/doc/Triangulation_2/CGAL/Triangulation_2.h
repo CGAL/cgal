@@ -378,8 +378,6 @@ specifies which case occurs when locating a point in the triangulation.
                      OUTSIDE_AFFINE_HULL /*!< when the point is outside the affine hull of the current triangulation. */
 }; 
 
-/// @} 
-
 /// \name Creation 
 /// @{
 
