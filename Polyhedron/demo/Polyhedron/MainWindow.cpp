@@ -460,7 +460,11 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
   }
 }
 
+#ifdef Q_OS_WIN
 void MainWindow::filterOperations(bool hide)
+#else
+void MainWindow::filterOperations(bool)
+#endif
 {
   //on some platforms editing an open menu slows everything like hell,
   //so we hide it for the time of the process.
