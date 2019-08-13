@@ -39,7 +39,7 @@ namespace Surface_mesh_topology {
     /// clears this path.
     void clear();
     
-    /// returns `true` iff `hd` can be added at the end of this path. If `flip` is true, `hd`'d direction is reversed before checking
+    /// returns `true` iff `hd` can be added at the end of this path. If `flip` is true, `hd`'s direction is reversed before checking
     bool can_be_pushed(halfedge_descriptor hd, bool flip=false) const;
   
     /// adds `hd` at the end of this path. If `flip` is true, the reverse of `hd` is considered.

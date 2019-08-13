@@ -28,6 +28,7 @@
 #include <CGAL/Surface_mesh_topology/internal/Facewidth.h>
 #include <CGAL/Surface_mesh_topology/internal/Generic_map_selector.h>
 #include <CGAL/Face_graph_wrapper.h>
+#include <memory>
 
 namespace CGAL {
 namespace Surface_mesh_topology {
@@ -110,7 +111,7 @@ public:
   Path_on_surface<Mesh> compute_edgewidth(const WeightFunctor& wf) const
   {
     if (m_shortest_noncontractible_cycle==nullptr) 
-    { m_shortest_noncontractible_cycle = new Shortest_noncontractible_cycle(m_original_map); }
+    { update_shortest_noncontractible_cycle_pointer(); }
 
     return m_shortest_noncontractible_cycle->compute_edgewidth(NULL, wf);
   }
@@ -118,7 +119,7 @@ public:
   Path_on_surface<Mesh> compute_edgewidth() const
   {
     if (m_shortest_noncontractible_cycle==nullptr) 
-    { m_shortest_noncontractible_cycle = new Shortest_noncontractible_cycle(m_original_map); }
+    { update_shortest_noncontractible_cycle_pointer(); }
 
     return m_shortest_noncontractible_cycle->compute_edgewidth();
   }
@@ -127,7 +128,7 @@ public:
   Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(DartHandle dh, const WeightFunctor& wf) const
   {
     if (m_shortest_noncontractible_cycle==nullptr) 
-    { m_shortest_noncontractible_cycle = new Shortest_noncontractible_cycle(m_original_map); }
+    { update_shortest_noncontractible_cycle_pointer(); }
 
     return m_shortest_noncontractible_cycle->compute_cycle(dh, NULL, wf);
   }
@@ -136,7 +137,7 @@ public:
   Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(DartHandle dh) const
   {
     if (m_shortest_noncontractible_cycle==nullptr) 
-    { m_shortest_noncontractible_cycle = new Shortest_noncontractible_cycle(m_original_map); }
+    { update_shortest_noncontractible_cycle_pointer(); }
 
     return m_shortest_noncontractible_cycle->compute_cycle(dh);
   }
@@ -144,27 +145,27 @@ public:
   Path_on_surface<Mesh> compute_facewidth() const
   {
     if (m_facewidth==nullptr) 
-    { m_facewidth = new Facewidth(m_original_map); }
+    { update_facewidth_pointer(); }
 
     return m_facewidth->compute_facewidth();
   }
 
-  void update_shortest_noncontractible_cycle_pointer()
+  void update_shortest_noncontractible_cycle_pointer() const
   {
-    m_shortest_noncontractible_cycle = new Shortest_noncontractible_cycle(m_original_map);
+    m_shortest_noncontractible_cycle = std::make_unique<Shortest_noncontractible_cycle>(m_original_map);
   }
 
-  void update_facewidth_pointer()
+  void update_facewidth_pointer() const
   {
-    m_facewidth = new Facewidth(m_original_map);
+    m_facewidth = std::make_unique<Facewidth>(m_original_map);
   }
 
 protected:
   Mesh& m_original_map;
   mutable Gmap m_radial_map;
   mutable internal::Minimal_quadrangulation<Mesh>* m_minimal_quadrangulation;
-  mutable Shortest_noncontractible_cycle* m_shortest_noncontractible_cycle;
-  mutable Facewidth* m_facewidth;
+  mutable std::unique_ptr<Shortest_noncontractible_cycle> m_shortest_noncontractible_cycle;
+  mutable std::unique_ptr<Facewidth> m_facewidth;
   typename Gmap_wrapper::Origin_to_copy_map m_origin_to_copy;
   typename Gmap_wrapper::Copy_to_origin_map m_copy_to_origin;
 };

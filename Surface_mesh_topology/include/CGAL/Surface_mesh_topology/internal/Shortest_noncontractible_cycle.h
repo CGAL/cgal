@@ -69,6 +69,7 @@ public:
 
   ~Shortest_noncontractible_cycle()
   {
+    // std::cerr << "Destructor...\n"; // For testing unique_ptr
     m_gmap.free_mark(m_is_hole);
   }
   
