@@ -4305,7 +4305,7 @@ void MainWindow::on_actionNew_triggered()
   clearMagentaRes -> setChecked(false);
   clearAquaRes -> setChecked(false);
 
-  ResultComplement->setChecked(false);
+  ResultComplement->setChecked(true);
   showCompResultComp->setChecked(false);
   showCompResultInt->setChecked(false);
   showCompResultUnion->setChecked(false);
@@ -4314,7 +4314,7 @@ void MainWindow::on_actionNew_triggered()
   showCompResultMink_Sum->setChecked(false);
 
 
-  		ResultIntersection->setChecked(false);
+  		ResultIntersection->setChecked(true);
   		showIntResultComp->setChecked(false);
   		showIntResultInt->setChecked(false);
   		showIntResultUnion->setChecked(false);
@@ -4322,7 +4322,7 @@ void MainWindow::on_actionNew_triggered()
   		showIntResultSym_Diff->setChecked(false);
   		showIntResultMink_Sum->setChecked(false);
 
-  		ResultUnion->setChecked(false);
+  		ResultUnion->setChecked(true);
   		showUnionResultComp->setChecked(false);
   		showUnionResultInt->setChecked(false);
   		showUnionResultUnion->setChecked(false);
@@ -4330,7 +4330,7 @@ void MainWindow::on_actionNew_triggered()
   		showUnionResultSym_Diff->setChecked(false);
   		showUnionResultMink_Sum->setChecked(false);
 
-  		ResultDiff->setChecked(false);
+  		ResultDiff->setChecked(true);
   		showDiffResultComp->setChecked(false);
   		showDiffResultInt->setChecked(false);
   		showDiffResultUnion->setChecked(false);
@@ -4338,7 +4338,7 @@ void MainWindow::on_actionNew_triggered()
   		showDiffResultSym_Diff->setChecked(false);
   		showDiffResultMink_Sum->setChecked(false);
 
-  		ResultSym_Diff->setChecked(false);
+  		ResultSym_Diff->setChecked(true);
   		showSymDiffResultComp->setChecked(false);
   		showSymDiffResultInt->setChecked(false);
   		showSymDiffResultUnion->setChecked(false);
