@@ -43,7 +43,6 @@
 
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Polygon_2.h>
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <list>
 #include <CGAL/Boolean_set_operations_2.h>
@@ -59,6 +58,10 @@
 //#include <CGAL/Gps_circle_segment_traits_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel        Kernel;
+typedef Kernel::Point_2                            Point_2;
+typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
+typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
+typedef std::list<Polygon_with_holes_2>            Pgn_with_holes_2_container;
 
 typedef CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<Kernel> > Linear_traits;
 typedef Linear_traits::General_polygon_with_holes_2   Linear_polygon_with_holes;

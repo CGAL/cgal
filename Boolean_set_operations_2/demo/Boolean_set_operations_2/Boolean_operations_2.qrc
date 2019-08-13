@@ -10,7 +10,6 @@
 	<file>resources/insert_circle.xpm</file>
     <file>resources/P.xpm</file>   
     <file>resources/Q.xpm</file>   
-    <file>resources/Minkowski_sum_2.png</file>
 	<file>resources/demo_conic_circle.xpm</file>
     <file>resources/insert_bezier.xpm</file>
 	<file>resources/intersection.bmp</file>
@@ -18,7 +17,9 @@
 	<file>resources/union.bmp</file>
 	<file>resources/symm_diff.bmp</file>
 	<file>resources/comp_P.bmp</file>
+    <file>resources/clear.png</file>
     <file>resources/PQ.xpm</file>
+    <file>resources/Minkowski_sum_2.png</file>
 	<file>resources/diff_PQ.bmp</file>
 	<file>resources/del_P.bmp</file>
 	<file>resources/insert_polygon.bmp</file>
