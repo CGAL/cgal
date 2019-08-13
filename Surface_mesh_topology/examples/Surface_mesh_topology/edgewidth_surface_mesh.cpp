@@ -26,7 +26,7 @@ private:
 int main(int argc, char* argv[]) {
   std::cout << "Program edgewidth_surface_mesh started.\n";
   Mesh sm;
-  std::ifstream inp ((argc > 1) ? argv[1] : "../../examples/Surface_mesh_topology/data/3torus.off");
+  std::ifstream inp ((argc > 1) ? argv[1] : "data/3torus.off");
   if (inp.fail()) {
     std::cout << "Cannot read file. Exiting program\n";
     return EXIT_FAILURE;

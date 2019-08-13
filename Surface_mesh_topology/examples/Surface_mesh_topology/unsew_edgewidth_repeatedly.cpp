@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
   std::cout << "Program unsew_edgewidth_repeatedly started.\n";
   LCC_3 lccoriginal, lcccopy;
   std::ifstream inp;
-  if (argc == 1) inp = std::ifstream("../../examples/Surface_mesh_topology/data/3torus.off");
+  if (argc == 1) inp = std::ifstream("data/3torus.off");
   else inp = std::ifstream(argv[1]);
   CGAL::load_off(lccoriginal, inp);
 
