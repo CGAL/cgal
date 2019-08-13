@@ -78,7 +78,7 @@ register_point_sets(const PointRange1& range1,    PointRange2& range2,
    applies it.
 
    Registration is computed using the Super4PCS algorithm
-   \cgalCite{cgal:mam-sffgp-14}. Parameters documentation is copy-pasted from [the official documentation of OpenCR](https://storm-irit.github.io/OpenGR/a00012.html). For more details on this method, please refer to it.
+   \cgalCite{cgal:mam-sffgp-14}. Parameters documentation is copy-pasted from [the official documentation of OpenGR](https://storm-irit.github.io/OpenGR/a00012.html). For more details on this method, please refer to it.
 
    \note This function requires the \ref thirdpartyOpenGR library.
 
