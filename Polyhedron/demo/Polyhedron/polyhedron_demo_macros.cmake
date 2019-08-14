@@ -27,7 +27,11 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
       PROPERTY LIBRARY_OUTPUT_DIRECTORY
       "${CGAL_POLYHEDRON_DEMO_PLUGINS_DIR}")
     cgal_add_compilation_test(${plugin_name})
-
+    if(BUILD_TESTING)
+      set_tests_properties(
+          compilation_of__${plugin_name}
+        PROPERTIES DEPENDS compilation__of_demo_framework)
+    endif()
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt
     target_link_libraries( ${plugin_name} PUBLIC ${QT_LIBRARIES} )

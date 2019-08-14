@@ -192,6 +192,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     )
+  cgal_add_compilation_test(demo_framework)
   # Let's define `three_EXPORT` during the compilation of `demo_framework`,
   # in addition of `demo_framework_EXPORT` (defined automatically by
   # CMake). That is to deal with the visibility of symbols of
@@ -226,6 +227,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
       PUBLIC demo_framework ${CGAL_LIBRARIES}
       Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
     cgal_add_compilation_test(${item_name})
+    if(BUILD_TESTING)
+      set_tests_properties(
+          compilation_of__${item_name}
+        PROPERTIES DEPENDS compilation__of_demo_framework)
+    endif()
   endmacro(add_item)
 
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
