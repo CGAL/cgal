@@ -447,7 +447,7 @@ namespace CGAL {
 		void Hypothesis<Kernel>::construct_bbox_mesh(Polygon_mesh& mesh) {
 			const typename Point_set_with_planes::Point_map& points = point_set_->point_map();
 
-			typedef CGAL::Iso_cuboid_3<Kernel> BBox;
+			typedef typename Kernel::Iso_cuboid_3 BBox;
 			const BBox& box = CGAL::bounding_box(points.begin(), points.end());
 
 			FT dx = box.xmax() - box.xmin();
@@ -1022,7 +1022,7 @@ namespace CGAL {
 				}
 
 				const Plane* plane = face_supporting_planes[face];
-				CGAL_assertion(plane);
+				CGAL_assertion(plane != nullptr);
 				if (do_intersect(mesh, f, plane))
 					intersecting_faces.insert(f);
 			}
