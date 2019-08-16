@@ -1,9 +1,11 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
+
+# Minimal version of CMake:
+cmake_minimum_required(VERSION 3.1)
+
 message( "== CMake setup ==" )
 project(CGAL CXX C)
 export(PACKAGE CGAL)
-# Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1)
 
 set( CGAL_BRANCH_BUILD ON CACHE INTERNAL "Create CGAL from a Git branch" FORCE)
 

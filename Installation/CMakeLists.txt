@@ -3,12 +3,13 @@
 # refer to the root source directory of the project as ${CMAKE_SOURCE_DIR} or
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
-if(NOT PROJECT_NAME)
-  project(CGAL CXX C)
-endif()
 
 # Minimal version of CMake:
 cmake_minimum_required(VERSION 3.1)
+
+if(NOT PROJECT_NAME)
+  project(CGAL CXX C)
+endif()
 
 # Tested version:
 cmake_policy(VERSION 3.1)
