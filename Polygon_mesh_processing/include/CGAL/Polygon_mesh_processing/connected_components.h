@@ -232,9 +232,19 @@ connected_components(const PolygonMesh& pmesh,
   FiniteDual finite_dual(dual,
     internal::No_border<PolygonMesh, EdgeConstraintMap>(pmesh, ecmap));
 
-  typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
-    fimap = choose_parameter(get_parameter(np, internal_np::face_index),
-                         get_const_property_map(boost::face_index, pmesh));
+  typedef CGAL::Polygon_mesh_processing::GetMapFromNP<boost::face_index_t,
+      CGAL::dynamic_face_property_t<int>,
+      PolygonMesh, NamedParameters, internal_np::face_index_t> MapGetter;
+
+  MapGetter get_map(boost::face_index_t(),
+                    CGAL::dynamic_face_property_t<int>(),
+                    pmesh, np, internal_np::face_index);
+
+  typename MapGetter::PropertyMapType fimap = get_map.property_map();
+
+  //typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
+  //  fimap = choose_parameter(get_parameter(np, internal_np::face_index),
+  //                       get_const_property_map(boost::face_index, pmesh));
 
   return boost::connected_components(finite_dual,
     fcm,

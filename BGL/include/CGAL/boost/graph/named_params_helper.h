@@ -28,6 +28,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
+#include <CGAL/Dynamic_property_map.h>
 
 #include <boost/type_traits/is_same.hpp>
 
@@ -112,8 +113,80 @@ namespace CGAL {
     typedef typename boost::property_traits<PMap>::value_type type;
   };
 
+  namespace internal_np
+  {
+  //overloads used to select a default map:
+  // use the one passed in the named parameters (user must have initialized it)
+  template <class MapFromNP, class Default_tag, class Dynamic_tag, class Mesh>
+  MapFromNP
+  get_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&)
+  {
+    return m;
+  }
+
+  // use the one internal to the mesh (user must have initialized it)
+  template <class Default_tag, class Dynamic_tag, class Mesh>
+  typename boost::property_map<Mesh, Default_tag >::const_type
+  get_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m)
+  {
+    return get(t,m);
+  }
+
+  // create a dynamic property and initialize it
+  template <class Dynamic_tag, class Mesh>
+  typename boost::property_map<Mesh, Dynamic_tag >::const_type
+  get_map(CGAL::internal_np::Param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m)
+  {
+    return get(t,m);
+  }
+
+  }//end of internal_np
+
   namespace Polygon_mesh_processing
   {
+  template<typename Tag, typename Dynamic_tag, typename Mesh, typename NamedParameters, typename Parameter>
+  class GetMapFromNP {
+  private :
+    const Tag tag;
+    const Dynamic_tag dtag;
+    const Mesh& m;
+    const NamedParameters& np;
+    const Parameter p;
+
+  public:
+    //get the Default tag :
+    //if Mesh has an internal property map for Tag, use Tag, else use the Dynamic_tag.
+    typedef typename boost::mpl::if_c<CGAL::graph_has_property<Mesh, Tag>::value
+    , Tag
+    , Dynamic_tag
+    >::type Final_tag;
+
+    //If Parameter is in NamedParameters, take the NP map.
+    //Else, take the default map.
+    typedef typename internal_np::Lookup_named_param_def<
+    Parameter,
+    NamedParameters,
+    typename boost::property_map<Mesh, Final_tag >::const_type
+    > ::type  PropertyMapType;
+
+
+    GetMapFromNP(const Tag tag,
+                 const Dynamic_tag dtag,
+                 const Mesh& m,
+                 const NamedParameters& np,
+                 const Parameter p)
+      : tag(tag), dtag(dtag), m(m), np(np), p(p) {}
+
+
+    PropertyMapType property_map()
+    {
+      return internal_np::get_map(
+            parameters::get_parameter(np, p),
+            tag,
+            dtag,
+            m);
+    }
+  };
 
   template<typename PolygonMesh, typename NamedParameters>
   class GetVertexPointMap
