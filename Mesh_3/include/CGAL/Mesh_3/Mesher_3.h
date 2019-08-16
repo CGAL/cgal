@@ -678,9 +678,17 @@ initialize()
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
+    if (r_c3t3_.number_of_far_points() == 0 &&
+        r_c3t3_.number_of_facets() == 0 &&
+        (r_c3t3_.triangulation().dimension() < 3
 #ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-    if (r_c3t3_.number_of_far_points() == 0 && r_c3t3_.number_of_facets() == 0)
-    {
+         || true // in sequential mode, one wants the far points only
+                 // if the macro
+                 // `CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE`
+                 // is defined, or if the dimension of the
+                 // triangulation is 2.
+#endif
+         )) {
       const Bbox_3 &bbox = r_oracle_.bbox();
 
       // Compute radius for far sphere
@@ -706,7 +714,6 @@ initialize()
       std::cerr << "done." << std::endl;
 # endif
     }
-#endif // CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
 #ifdef CGAL_MESH_3_PROFILING
     double init_time = t.elapsed();
