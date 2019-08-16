@@ -38,12 +38,13 @@
 
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
-#include<CGAL/Mesh_3/Refine_facets_3.h>
-#include<CGAL/Mesh_3/Refine_facets_manifold_base.h>
-#include<CGAL/Mesh_3/Refine_cells_3.h>
+#include <CGAL/Mesh_3/Refine_facets_3.h>
+#include <CGAL/Mesh_3/Refine_facets_manifold_base.h>
+#include <CGAL/Mesh_3/Refine_cells_3.h>
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>
 #include <CGAL/Mesher_level_visitors.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/point_generators_3.h>
 #include <CGAL/atomic.h>
 
 #ifdef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
