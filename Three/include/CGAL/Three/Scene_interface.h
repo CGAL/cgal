@@ -79,6 +79,8 @@ public:
   //!Adds an item to the Geometric Objects list.
   //!@returns the index of the new item.
   virtual Item_id addItem(CGAL::Three::Scene_item* item) = 0;
+  //!Adds a CGAL::Three::Scene_item* to the list of children.
+  virtual void addChild(Scene_item* item)=0;
   //! \brief Replaces an item by a new one in the scene.
   //! The item which id is `id` is replaced by `item`.
   //! The first one is deleted and gives its index to the second one.

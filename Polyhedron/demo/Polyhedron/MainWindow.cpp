@@ -248,6 +248,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   connect(sceneView->selectionModel(),
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
+  // setup menu filtering
+  connect(sceneView->selectionModel(),
+          QOverload<const QItemSelection & , const QItemSelection &>::of(&QItemSelectionModel::selectionChanged),
+          this, [=](){filterOperations(false);});
 
   sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
@@ -351,7 +355,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   operationSearchBar.setPlaceholderText("Filter...");
   searchAction->setDefaultWidget(&operationSearchBar);  
   connect(&operationSearchBar, &QLineEdit::textChanged,
-          this, &MainWindow::filterOperations);
+          this, [=](){filterOperations(true);});
   loadPlugins();
   accepted_keywords.clear();
 
@@ -390,9 +394,6 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   }
   // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
 #endif
-
-  // setup menu filtering
-  connect(ui->menuOperations, SIGNAL(aboutToShow()), this, SLOT(filterOperations()));
 }
 
 void addActionToMenu(QAction* action, QMenu* menu)
@@ -443,7 +444,6 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
           }
           else
           {
-            //menu->addAction(submenu->menuAction());
             addActionToMenu(submenu->menuAction(), menu);
           }
         }
@@ -460,8 +460,18 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
   }
 }
 
-void MainWindow::filterOperations()
+#ifdef Q_OS_WIN
+void MainWindow::filterOperations(bool hide)
+#else
+void MainWindow::filterOperations(bool)
+#endif
 {
+  //on some platforms editing an open menu slows everything like hell,
+  //so we hide it for the time of the process.
+#ifdef Q_OS_WIN
+  if(hide)
+    ui->menuOperations->hide();
+#endif
   //return actions to their true menu
   Q_FOREACH(QMenu* menu, action_menu_map.values())
   {
@@ -471,7 +481,6 @@ void MainWindow::filterOperations()
         menu->removeAction(action);
     }
   }
-
   Q_FOREACH(QAction* action, action_menu_map.keys())
   {
     QMenu* menu = action_menu_map[action];
@@ -489,7 +498,10 @@ void MainWindow::filterOperations()
   }
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   filterMenuOperations(ui->menuOperations, filter, false);
-
+#ifdef Q_OS_WIN
+  if(hide)
+    ui->menuOperations->show();
+#endif
   operationSearchBar.setFocus();
 }
 
@@ -1048,7 +1060,23 @@ void MainWindow::reloadItem() {
     if(!ok)
       return;
     QVariant varian = item->property("load_mates");
+    if(!varian.isValid()) //typically when a soup is oriented, the soup_item is deleted and thus the varain points to an unexisting item.
+    {
+      Scene_item* new_item = new_items.front();
+      new_item->setName(item->name());
+      new_item->setColor(item->color());
+      new_item->setRenderingMode(item->renderingMode());
+      new_item->setVisible(item->visible());
+      Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
+      scene->replaceItem(scene->item_id(item), new_item, true);
+      if(property_item)
+        property_item->copyProperties(item);
+      new_item->invalidateOpenGLBuffers();
+      item->deleteLater();
+      return;
+    }
     QSequentialIterable iterable = varian.value<QSequentialIterable>();
+
        // Can use foreach:
     int mate_id = 0;
     Q_FOREACH(const QVariant &v, iterable)
