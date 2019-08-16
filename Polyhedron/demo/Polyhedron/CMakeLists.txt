@@ -232,6 +232,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
           compilation_of__${item_name}
         PROPERTIES DEPENDS compilation__of_demo_framework)
     endif()
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${item_name} )
   endmacro(add_item)
 
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
