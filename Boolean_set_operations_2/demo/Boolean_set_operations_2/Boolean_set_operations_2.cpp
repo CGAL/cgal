@@ -804,7 +804,7 @@ private:
 
   QGraphicsPathItem* pathItem;
 
-  Polygon_2 p0,p1;
+  Polygon_2 p0,p1,p2,p3,p4,p5,p6;
 
   Curve_set_container m_curve_sets;
   //container for curves
@@ -895,7 +895,7 @@ public slots:
   void on_actionInsertLinear_toggled(bool aChecked);
   void on_actionInsertCircular_toggled(bool aChecked);
   void on_actionInsertBezier_toggled(bool aChecked);
-  void on_actionMinkMode_toggled(bool aChecked);
+  //void on_actionMinkMode_toggled(bool aChecked);
   void on_showColorBucket_toggled(bool aChecked);
   void on_showConsole_toggled(bool aChecked);
   void on_showInfo_toggled(bool aChecked);
@@ -956,8 +956,8 @@ public slots:
   void on_showMagentaSym_Diff_toggled(bool aCheck);
   void on_showAquaSym_Diff_toggled(bool aCheck);
 
-  void on_blueMinkPol_toggled(bool aCheck);
-  void on_redMinkPol_toggled(bool aCheck);
+  //void on_blueMinkPol_toggled(bool aCheck);
+  //void on_redMinkPol_toggled(bool aCheck);
   //void on_showMinkResult_toggled(bool aCheck);
 
   void on_showBlueMink_Sum_toggled(bool aCheck);
@@ -1622,8 +1622,8 @@ MainWindow::MainWindow() :
 
   QObject::connect(actionPAN,SIGNAL(toggled(bool)), this,
   				   SLOT(on_actionPAN_toggled(bool)));
-  QObject::connect(Minkowksi_Sum,SIGNAL(toggled(bool)), this,
-             SLOT(on_actionMinkMode_toggled(bool)));
+  //QObject::connect(Minkowksi_Sum,SIGNAL(toggled(bool)), this,
+    //         SLOT(on_actionMinkMode_toggled(bool)));
   QObject::connect(showBlue, SIGNAL(toggled(bool)), this,
                    SLOT(on_showBlue_toggled(bool)));
   QObject::connect(showRed, SIGNAL(toggled(bool)), this,
@@ -1733,10 +1733,10 @@ MainWindow::MainWindow() :
 
   //minkowski_sum
 
-  QObject::connect(p_mink, SIGNAL(toggled(bool)), this,
+  /*QObject::connect(p_mink, SIGNAL(toggled(bool)), this,
                    SLOT(on_blueMinkPol_toggled(bool)));
   QObject::connect(q_mink, SIGNAL(toggled(bool)), this,
-                   SLOT(on_redMinkPol_toggled(bool)));
+                   SLOT(on_redMinkPol_toggled(bool)));*/
   //QObject::connect(showMinkResult, SIGNAL(toggled(bool)), this,
     //               SLOT(on_showMinkResult_toggled(bool)));
   QObject::connect(showBlueMink_Sum, SIGNAL(toggled(bool)), this,
@@ -3062,21 +3062,21 @@ void MainWindow::on_actionAddColor_triggered()
 		showBlackUnion -> setVisible(true);
 		showBlackInt -> setVisible(true);
 		showBlackSym_Diff -> setVisible(true);
-		//showBlackMink_Sum -> setVisible(true);
+		showBlackMink_Sum -> setVisible(true);
 
 
 		line11 -> setVisible(true);
 
-		line1 -> setGeometry(QRect(111,0,7,275));
-  		line2 -> setGeometry(QRect(155,0,7,275));
-  		line3 -> setGeometry(QRect(200,0,7,275));
-  		line4 -> setGeometry(QRect(245,0,7,275));
-  		line5 -> setGeometry(QRect(290,0,7,275));
-  		line6 -> setGeometry(QRect(335,0,7,275));
-  		//line06 -> setGeometry(QRect(380,0,7,275));
-  		line006 -> setGeometry(QRect(395,0,7,275));
+		line1 -> setGeometry(QRect(111,0,7,125));
+  		line2 -> setGeometry(QRect(155,0,7,125));
+  		line3 -> setGeometry(QRect(200,0,7,125));
+  		line4 -> setGeometry(QRect(245,0,7,125));
+  		line5 -> setGeometry(QRect(290,0,7,125));
+  		line6 -> setGeometry(QRect(335,0,7,125));
+  		line06 -> setGeometry(QRect(380,0,7,125));
+  		line006 -> setGeometry(QRect(440,0,7,125));
 
-  		line07 -> setGeometry(QRect(0,155,640,7));
+  		/*line07 -> setGeometry(QRect(0,155,640,7));
   		line08 -> setGeometry(QRect(0,185,640,7));
   		line09 -> setGeometry(QRect(0,215,640,7));
   		line010 -> setGeometry(QRect(0,245,640,7));
@@ -3126,7 +3126,7 @@ void MainWindow::on_actionAddColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,250,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,250,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,250,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,250,101,22));
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,250,101,22));*/
 
 
   		actionMinusColor -> setText("Remove Black");
@@ -3145,20 +3145,20 @@ void MainWindow::on_actionAddColor_triggered()
 		showBrownUnion -> setVisible(true);
 		showBrownInt -> setVisible(true);
 		showBrownSym_Diff -> setVisible(true);
-		//showBrownMink_Sum -> setVisible(true);
+		showBrownMink_Sum -> setVisible(true);
 
 		line10 -> setVisible(true);
 
-		line1 -> setGeometry(QRect(111,0,7,305));
-  		line2 -> setGeometry(QRect(155,0,7,305));
-  		line3 -> setGeometry(QRect(200,0,7,305));
-  		line4 -> setGeometry(QRect(245,0,7,305));
-  		line5 -> setGeometry(QRect(290,0,7,305));
-  		line6 -> setGeometry(QRect(335,0,7,305));
-  		//line06 -> setGeometry(QRect(380,0,7,305));
-  		line006 -> setGeometry(QRect(395,0,7,305));
+		line1 -> setGeometry(QRect(111,0,7,155));
+  		line2 -> setGeometry(QRect(155,0,7,155));
+  		line3 -> setGeometry(QRect(200,0,7,155));
+  		line4 -> setGeometry(QRect(245,0,7,155));
+  		line5 -> setGeometry(QRect(290,0,7,155));
+  		line6 -> setGeometry(QRect(335,0,7,155));
+  		line06 -> setGeometry(QRect(380,0,7,155));
+  		line006 -> setGeometry(QRect(440,0,7,155));
 
-  		line07 -> setGeometry(QRect(0,185,640,7));
+  		/*line07 -> setGeometry(QRect(0,185,640,7));
   		line08 -> setGeometry(QRect(0,215,640,7));
   		line09 -> setGeometry(QRect(0,245,640,7));
   		line010 -> setGeometry(QRect(0,275,640,7));
@@ -3208,7 +3208,7 @@ void MainWindow::on_actionAddColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,280,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,280,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,280,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,280,101,22));
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,280,101,22));*/
 
   		actionMinusColor -> setText("Remove Brown");
 
@@ -3227,20 +3227,20 @@ void MainWindow::on_actionAddColor_triggered()
 		showYellowUnion -> setVisible(true);
 		showYellowInt -> setVisible(true);
 		showYellowSym_Diff -> setVisible(true);
-		//showYellowMink_Sum -> setVisible(true);
+		showYellowMink_Sum -> setVisible(true);
 
 		line9 -> setVisible(true);
 
-		line1 -> setGeometry(QRect(111,0,7,335));
-  		line2 -> setGeometry(QRect(155,0,7,335));
-  		line3 -> setGeometry(QRect(200,0,7,335));
-  		line4 -> setGeometry(QRect(245,0,7,335));
-  		line5 -> setGeometry(QRect(290,0,7,335));
-  		line6 -> setGeometry(QRect(335,0,7,335));
-  		//line06 -> setGeometry(QRect(380,0,7,335));
-  		line006 -> setGeometry(QRect(395,0,7,335));
+		line1 -> setGeometry(QRect(111,0,7,185));
+  		line2 -> setGeometry(QRect(155,0,7,185));
+  		line3 -> setGeometry(QRect(200,0,7,185));
+  		line4 -> setGeometry(QRect(245,0,7,185));
+  		line5 -> setGeometry(QRect(290,0,7,185));
+  		line6 -> setGeometry(QRect(335,0,7,185));
+  		line06 -> setGeometry(QRect(380,0,7,185));
+  		line006 -> setGeometry(QRect(440,0,7,185));
 
-  		line07 -> setGeometry(QRect(0,215,640,7));
+  		/*line07 -> setGeometry(QRect(0,215,640,7));
   		line08 -> setGeometry(QRect(0,245,640,7));
   		line09 -> setGeometry(QRect(0,275,640,7));
   		line010 -> setGeometry(QRect(0,305,640,7));
@@ -3290,7 +3290,7 @@ void MainWindow::on_actionAddColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,310,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,310,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,310,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,310,101,22));
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,310,101,22));*/
 
   		actionMinusColor -> setText("Remove Yellow");
 
@@ -3310,20 +3310,20 @@ void MainWindow::on_actionAddColor_triggered()
 		showMagentaUnion -> setVisible(true);
 		showMagentaInt -> setVisible(true);
 		showMagentaSym_Diff -> setVisible(true);
-		//showMagentaMink_Sum -> setVisible(true);
+		showMagentaMink_Sum -> setVisible(true);
 
 		line8 -> setVisible(true);
 
-		line1 -> setGeometry(QRect(111,0,7,365));
-  		line2 -> setGeometry(QRect(155,0,7,365));
-  		line3 -> setGeometry(QRect(200,0,7,365));
-  		line4 -> setGeometry(QRect(245,0,7,365));
-  		line5 -> setGeometry(QRect(290,0,7,365));
-  		line6 -> setGeometry(QRect(335,0,7,365));
-  		//line06 -> setGeometry(QRect(380,0,7,365));
-  		line006 -> setGeometry(QRect(395,0,7,365));
+		line1 -> setGeometry(QRect(111,0,7,215));
+  		line2 -> setGeometry(QRect(155,0,7,215));
+  		line3 -> setGeometry(QRect(200,0,7,215));
+  		line4 -> setGeometry(QRect(245,0,7,215));
+  		line5 -> setGeometry(QRect(290,0,7,215));
+  		line6 -> setGeometry(QRect(335,0,7,215));
+  		line06 -> setGeometry(QRect(380,0,7,215));
+  		line006 -> setGeometry(QRect(440,0,7,215));
 
-  		line07 -> setGeometry(QRect(0,245,640,7));
+  		/*line07 -> setGeometry(QRect(0,245,640,7));
   		line08 -> setGeometry(QRect(0,275,640,7));
   		line09 -> setGeometry(QRect(0,305,640,7));
   		line010 -> setGeometry(QRect(0,335,640,7));
@@ -3373,7 +3373,7 @@ void MainWindow::on_actionAddColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,340,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,340,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,340,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,340,101,22));
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,340,101,22));*/
 
   		actionMinusColor -> setText("Remove Magenta");
 
@@ -3391,20 +3391,20 @@ void MainWindow::on_actionAddColor_triggered()
 		showAquaUnion -> setVisible(true);
 		showAquaInt -> setVisible(true);
 		showAquaSym_Diff -> setVisible(true);
-		//showAquaMink_Sum -> setVisible(true);	
+		showAquaMink_Sum -> setVisible(true);	
 
 		line7 -> setVisible(true);
 
-		line1 -> setGeometry(QRect(111,0,7,400));
-  		line2 -> setGeometry(QRect(155,0,7,400));
-  		line3 -> setGeometry(QRect(200,0,7,400));
-  		line4 -> setGeometry(QRect(245,0,7,400));
-  		line5 -> setGeometry(QRect(290,0,7,400));
-  		line6 -> setGeometry(QRect(335,0,7,400));
-  		//line06 -> setGeometry(QRect(380,0,7,400));
-  		line006 -> setGeometry(QRect(395,0,7,400));
+		line1 -> setGeometry(QRect(111,0,7,245));
+  		line2 -> setGeometry(QRect(155,0,7,245));
+  		line3 -> setGeometry(QRect(200,0,7,245));
+  		line4 -> setGeometry(QRect(245,0,7,245));
+  		line5 -> setGeometry(QRect(290,0,7,245));
+  		line6 -> setGeometry(QRect(335,0,7,245));
+  		line06 -> setGeometry(QRect(380,0,7,245));
+  		line006 -> setGeometry(QRect(440,0,7,245));
 
-  		line07 -> setGeometry(QRect(0,280,640,7));
+  		/*line07 -> setGeometry(QRect(0,280,640,7));
   		line08 -> setGeometry(QRect(0,310,640,7));
   		line09 -> setGeometry(QRect(0,340,640,7));
   		line010 -> setGeometry(QRect(0,370,640,7));
@@ -3454,7 +3454,7 @@ void MainWindow::on_actionAddColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,375,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,375,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,375,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,375,101,22));
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,375,101,22));*/
 
   		actionMinusColor -> setText("Remove Aqua");
 
@@ -3501,20 +3501,20 @@ void MainWindow::on_actionMinusColor_triggered()
 		showBlackUnion -> setVisible(false);
 		showBlackInt -> setVisible(false);
 		showBlackSym_Diff -> setVisible(false);
-		//showBlackMink_Sum -> setVisible(false);
+		showBlackMink_Sum -> setVisible(false);
 
 		line11 -> setVisible(false);
 
-		line1 -> setGeometry(QRect(111,0,7,245));
-	  	line2 -> setGeometry(QRect(155,0,7,245));
-	  	line3 -> setGeometry(QRect(200,0,7,245));
-	  	line4 -> setGeometry(QRect(245,0,7,245));
-	  	line5 -> setGeometry(QRect(290,0,7,245));
-	  	line6 -> setGeometry(QRect(335,0,7,245));
-  		//line06 -> setGeometry(QRect(380,0,7,245));
-  		line006 -> setGeometry(QRect(395,0,7,245));
+		line1 -> setGeometry(QRect(111,0,7,95));
+	  	line2 -> setGeometry(QRect(155,0,7,95));
+	  	line3 -> setGeometry(QRect(200,0,7,95));
+	  	line4 -> setGeometry(QRect(245,0,7,95));
+	  	line5 -> setGeometry(QRect(290,0,7,95));
+	  	line6 -> setGeometry(QRect(335,0,7,95));
+  		line06 -> setGeometry(QRect(380,0,7,95));
+  		line006 -> setGeometry(QRect(440,0,7,95));
 
-  		line07 -> setGeometry(QRect(0,125,640,7));
+  		/*line07 -> setGeometry(QRect(0,125,640,7));
   		line08 -> setGeometry(QRect(0,155,640,7));
   		line09 -> setGeometry(QRect(0,185,640,7));
   		line010 -> setGeometry(QRect(0,215,640,7));
@@ -3564,7 +3564,7 @@ void MainWindow::on_actionMinusColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,220,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,220,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,220,101,22));
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,220,101,22));*/
 
 	  	actionMinusColor -> setText("Color Removal Not Allowed");
 
@@ -3599,7 +3599,7 @@ void MainWindow::on_actionMinusColor_triggered()
 		showBrownUnion -> setVisible(false);
 		showBrownInt -> setVisible(false);
 		showBrownSym_Diff -> setVisible(false);
-		//showBrownMink_Sum -> setVisible(false);
+		showBrownMink_Sum -> setVisible(false);
 		
 
 		drawBlue -> setChecked(true);
@@ -3607,16 +3607,16 @@ void MainWindow::on_actionMinusColor_triggered()
 
 		line10 -> setVisible(false);
 
-		line1 -> setGeometry(QRect(111,0,7,275));
-  		line2 -> setGeometry(QRect(155,0,7,275));
-  		line3 -> setGeometry(QRect(200,0,7,275));
-  		line4 -> setGeometry(QRect(245,0,7,275));
-  		line5 -> setGeometry(QRect(290,0,7,275));
-  		line6 -> setGeometry(QRect(335,0,7,275));
-  		//line06 -> setGeometry(QRect(380,0,7,275));
-  		line006 -> setGeometry(QRect(395,0,7,275));
+		line1 -> setGeometry(QRect(111,0,7,125));
+  		line2 -> setGeometry(QRect(155,0,7,125));
+  		line3 -> setGeometry(QRect(200,0,7,125));
+  		line4 -> setGeometry(QRect(245,0,7,125));
+  		line5 -> setGeometry(QRect(290,0,7,125));
+  		line6 -> setGeometry(QRect(335,0,7,125));
+  		line06 -> setGeometry(QRect(380,0,7,125));
+  		line006 -> setGeometry(QRect(440,0,7,125));
 
-  		line07 -> setGeometry(QRect(0,155,640,7));
+  		/*line07 -> setGeometry(QRect(0,155,640,7));
   		line08 -> setGeometry(QRect(0,185,640,7));
   		line09 -> setGeometry(QRect(0,215,640,7));
   		line010 -> setGeometry(QRect(0,245,640,7));
@@ -3666,7 +3666,7 @@ void MainWindow::on_actionMinusColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,250,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,250,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,250,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,250,101,22));
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,250,101,22));*/
 
 	  	actionMinusColor -> setText("Remove Black");
 
@@ -3703,23 +3703,23 @@ void MainWindow::on_actionMinusColor_triggered()
 		showYellowUnion -> setVisible(false);
 		showYellowInt -> setVisible(false);
 		showYellowSym_Diff -> setVisible(false);
-		//showYellowMink_Sum -> setVisible(false);
+		showYellowMink_Sum -> setVisible(false);
 
 		drawBlue -> setChecked(true);
 
 
 		line9 -> setVisible(false);
 
-		line1 -> setGeometry(QRect(111,0,7,305));
-  		line2 -> setGeometry(QRect(155,0,7,305));
-  		line3 -> setGeometry(QRect(200,0,7,305));
-  		line4 -> setGeometry(QRect(245,0,7,305));
-  		line5 -> setGeometry(QRect(290,0,7,305));
-  		line6 -> setGeometry(QRect(335,0,7,305));
-  		//line06 -> setGeometry(QRect(380,0,7,305));
-  		line006 -> setGeometry(QRect(395,0,7,305));
+		line1 -> setGeometry(QRect(111,0,7,155));
+  		line2 -> setGeometry(QRect(155,0,7,155));
+  		line3 -> setGeometry(QRect(200,0,7,155));
+  		line4 -> setGeometry(QRect(245,0,7,155));
+  		line5 -> setGeometry(QRect(290,0,7,155));
+  		line6 -> setGeometry(QRect(335,0,7,155));
+  		line06 -> setGeometry(QRect(380,0,7,155));
+  		line006 -> setGeometry(QRect(440,0,7,155));
 
-  		line07 -> setGeometry(QRect(0,185,640,7));
+  		/*line07 -> setGeometry(QRect(0,185,640,7));
   		line08 -> setGeometry(QRect(0,215,640,7));
   		line09 -> setGeometry(QRect(0,245,640,7));
   		line010 -> setGeometry(QRect(0,275,640,7));
@@ -3769,7 +3769,7 @@ void MainWindow::on_actionMinusColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,280,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,280,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,280,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,280,101,22));
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,280,101,22));*/
 
 	  	showResYellow ->setVisible(false);
   		showResYellow->setChecked(false);
@@ -3804,22 +3804,22 @@ void MainWindow::on_actionMinusColor_triggered()
 		showMagentaUnion -> setVisible(false);
 		showMagentaInt -> setVisible(false);
 		showMagentaSym_Diff -> setVisible(false);
-		//showMagentaMink_Sum -> setVisible(false);
+		showMagentaMink_Sum -> setVisible(false);
 
 		drawBlue -> setChecked(true);
 
 		line8 -> setVisible(false);
 
-		line1 -> setGeometry(QRect(111,0,7,335));
-  		line2 -> setGeometry(QRect(155,0,7,335));
-  		line3 -> setGeometry(QRect(200,0,7,335));
-  		line4 -> setGeometry(QRect(245,0,7,335));
-  		line5 -> setGeometry(QRect(290,0,7,335));
-  		line6 -> setGeometry(QRect(335,0,7,335));
-  		//line06 -> setGeometry(QRect(380,0,7,335));
-  		line006 -> setGeometry(QRect(395,0,7,335));
+		line1 -> setGeometry(QRect(111,0,7,185));
+  		line2 -> setGeometry(QRect(155,0,7,185));
+  		line3 -> setGeometry(QRect(200,0,7,185));
+  		line4 -> setGeometry(QRect(245,0,7,185));
+  		line5 -> setGeometry(QRect(290,0,7,185));
+  		line6 -> setGeometry(QRect(335,0,7,185));
+  		line06 -> setGeometry(QRect(380,0,7,185));
+  		line006 -> setGeometry(QRect(440,0,7,185));
 
-  		line07 -> setGeometry(QRect(0,215,640,7));
+  		/*line07 -> setGeometry(QRect(0,215,640,7));
   		line08 -> setGeometry(QRect(0,245,640,7));
   		line09 -> setGeometry(QRect(0,275,640,7));
   		line010 -> setGeometry(QRect(0,305,640,7));
@@ -3869,7 +3869,7 @@ void MainWindow::on_actionMinusColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,310,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,310,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,310,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,310,101,22));
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,310,101,22));*/
 
 
 	  	showResMagenta ->setVisible(false);
@@ -3908,22 +3908,22 @@ void MainWindow::on_actionMinusColor_triggered()
 		showAquaUnion -> setVisible(false);
 		showAquaInt -> setVisible(false);
 		showAquaSym_Diff -> setVisible(false);
-		//showAquaMink_Sum -> setVisible(false);
+		showAquaMink_Sum -> setVisible(false);
 
 		drawBlue -> setChecked(true);
 
 		line7 -> setVisible(false);
 
-		line1 -> setGeometry(QRect(111,0,7,365));
-  		line2 -> setGeometry(QRect(155,0,7,365));
-  		line3 -> setGeometry(QRect(200,0,7,365));
-  		line4 -> setGeometry(QRect(245,0,7,365));
-  		line5 -> setGeometry(QRect(290,0,7,365));
-  		line6 -> setGeometry(QRect(335,0,7,365));
-  		//line06 -> setGeometry(QRect(380,0,7,365));
-  		line006 -> setGeometry(QRect(395,0,7,365));
+		line1 -> setGeometry(QRect(111,0,7,215));
+  		line2 -> setGeometry(QRect(155,0,7,215));
+  		line3 -> setGeometry(QRect(200,0,7,215));
+  		line4 -> setGeometry(QRect(245,0,7,215));
+  		line5 -> setGeometry(QRect(290,0,7,215));
+  		line6 -> setGeometry(QRect(335,0,7,215));
+  		line06 -> setGeometry(QRect(380,0,7,215));
+  		line006 -> setGeometry(QRect(440,0,7,215));
 
-  		line07 -> setGeometry(QRect(0,245,640,7));
+  		/*line07 -> setGeometry(QRect(0,245,640,7));
   		line08 -> setGeometry(QRect(0,275,640,7));
   		line09 -> setGeometry(QRect(0,305,640,7));
   		line010 -> setGeometry(QRect(0,335,640,7));
@@ -3973,7 +3973,7 @@ void MainWindow::on_actionMinusColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,340,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,340,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,340,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,340,101,22));
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,340,101,22));*/
 
   		showResAqua->setVisible(false);
   		showResAqua->setChecked(false);
@@ -4060,13 +4060,8 @@ void MainWindow::on_actionNew_triggered()
   SetViewResUnion(true);
   SetViewResSymDiff(true);
 
-  on_actionMinkMode_toggled(false);
-  on_showColorBucket_toggled(true);
   actionDelete->setVisible(true);
-  Minkowksi_Sum -> setChecked(false);
   actionClearResult -> setVisible(true);
-  actionMinkowski_Sum->setVisible(false);
-  minkToolBar -> setVisible(false);
   
   m_circular_active = false ;
   m_bezier_active = false;
@@ -4101,7 +4096,8 @@ void MainWindow::on_actionNew_triggered()
   actionSymmetric_Difference -> setChecked(false);
   actionMinkowski_Sum -> setChecked(false);
 
-  actionInsertLinear -> setChecked(true);
+  actionInsertLinear -> setChecked(true); 
+  actionMinkowski_Sum -> setVisible(true);
 
   m_color_complement = 111; //default
   m_blue_int = false; //default
@@ -4305,7 +4301,7 @@ void MainWindow::on_actionNew_triggered()
   clearMagentaRes -> setChecked(false);
   clearAquaRes -> setChecked(false);
 
-  ResultComplement->setChecked(true);
+  /*ResultComplement->setChecked(true);
   showCompResultComp->setChecked(false);
   showCompResultInt->setChecked(false);
   showCompResultUnion->setChecked(false);
@@ -4344,18 +4340,18 @@ void MainWindow::on_actionNew_triggered()
   		showSymDiffResultUnion->setChecked(false);
   		showSymDiffResultDiff->setChecked(false);
   		showSymDiffResultSym_Diff->setChecked(false);
-  		showSymDiffResultMink_Sum->setChecked(false);
+  		showSymDiffResultMink_Sum->setChecked(false);*/
 
 
 
   
   actionMinusColor -> setText("Color Removal Not Allowed");
 
-  ResultComplement -> setText("");
+  /*ResultComplement -> setText("");
   ResultIntersection -> setText("");
   ResultUnion -> setText("");
   ResultDiff -> setText("");
-  ResultSym_Diff -> setText("");
+  ResultSym_Diff -> setText("");*/
 
 
   line7 -> setVisible(false);
@@ -4364,16 +4360,16 @@ void MainWindow::on_actionNew_triggered()
   line10 -> setVisible(false);
   line11 -> setVisible(false);
 
-		line1 -> setGeometry(QRect(111,0,7,245));
-	  	line2 -> setGeometry(QRect(155,0,7,245));
-	  	line3 -> setGeometry(QRect(200,0,7,245));
-	  	line4 -> setGeometry(QRect(245,0,7,245));
-	  	line5 -> setGeometry(QRect(290,0,7,245));
-	  	line6 -> setGeometry(QRect(335,0,7,245));
-  		//line06 -> setGeometry(QRect(380,0,7,245));
-  		line006 -> setGeometry(QRect(395,0,7,245));
+		line1 -> setGeometry(QRect(111,0,7,95));
+	  	line2 -> setGeometry(QRect(155,0,7,95));
+	  	line3 -> setGeometry(QRect(200,0,7,95));
+	  	line4 -> setGeometry(QRect(245,0,7,95));
+	  	line5 -> setGeometry(QRect(290,0,7,95));
+	  	line6 -> setGeometry(QRect(335,0,7,95));
+  		line06 -> setGeometry(QRect(380,0,7,95));
+  		line006 -> setGeometry(QRect(440,0,7,95));
 
-  		line07 -> setGeometry(QRect(0,125,640,7));
+  		/*line07 -> setGeometry(QRect(0,125,640,7));
   		line08 -> setGeometry(QRect(0,155,640,7));
   		line09 -> setGeometry(QRect(0,185,640,7));
   		line010 -> setGeometry(QRect(0,215,640,7));
@@ -4423,7 +4419,7 @@ void MainWindow::on_actionNew_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,220,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,220,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,220,101,22));
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,220,101,22));*/
 
   zoomToFit();
 
@@ -4700,8 +4696,8 @@ void MainWindow::on_drawBrown_toggled(bool /* a_check */) { m_color_active = 3; 
 void MainWindow::on_drawYellow_toggled(bool /* a_check */) { m_color_active = 4; }
 void MainWindow::on_drawMagenta_toggled(bool /* a_check */) { m_color_active = 5; }
 void MainWindow::on_drawAqua_toggled(bool /* a_check */) { m_color_active = 6; }
-void MainWindow::on_blueMinkPol_toggled(bool /* a_check */) { m_color_active_mink = 1; }
-void MainWindow::on_redMinkPol_toggled(bool /* a_check */) { m_color_active_mink = 2; }
+//void MainWindow::on_blueMinkPol_toggled(bool /* a_check */) { m_color_active_mink = 1; }
+//void MainWindow::on_redMinkPol_toggled(bool /* a_check */) { m_color_active_mink = 2; }
 
 
 void MainWindow::on_showResBlue_toggled(bool aCheck)
@@ -5340,7 +5336,6 @@ bool save_bezier_sources ( QString aFileName, Bezier_region_source_container con
       show_error("Cannot save bezier polygon set.");
     }
   }
-
   else 
   {
     if ( !save_linear(QFileDialog::getSaveFileName(this, tr("Save Result Linear Polygon Set"), "../data", tr("Linear Curve files (*.lps)") ) 
@@ -5351,8 +5346,6 @@ bool save_bezier_sources ( QString aFileName, Bezier_region_source_container con
       show_error("Cannot save circular polygon set.");
     }
   }
-
-
 }
 */
 
@@ -5548,8 +5541,6 @@ void MainWindow::open(QString fileName)
 
 /*void MainWindow::on_actionInsertConicCircle_triggered()
 {}
-
-
 void MainWindow::on_actionInsertConicEclipse_triggered()
 {}*/
 
@@ -5583,6 +5574,7 @@ void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
 		//actionInsertMink_Polygon -> setChecked(false);
 	  	m_scene.installEventFilter(m_circular_input);
       on_actionDeleteResult_triggered();
+      	actionMinkowski_Sum -> setVisible(false);
 	  }
 	}
 }
@@ -5600,6 +5592,7 @@ void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
 		//actionInsertMink_Polygon -> setChecked(false);
 	  	m_scene.installEventFilter(m_bezier_input);
       on_actionDeleteResult_triggered();
+      	actionMinkowski_Sum -> setVisible(false);
 	  }
 	}
 }
@@ -5617,11 +5610,12 @@ void MainWindow::on_actionInsertLinear_toggled(bool aChecked)
 		//actionInsertMink_Polygon -> setChecked(false);
 	  	m_scene.installEventFilter(m_linear_input);
       on_actionDeleteResult_triggered();
+      	actionMinkowski_Sum -> setVisible(true);
 	  }
 	}
 }
 
-void MainWindow::on_actionMinkMode_toggled(bool aChecked)
+/*void MainWindow::on_actionMinkMode_toggled(bool aChecked)
 {
   if (aChecked)
   {
@@ -5655,7 +5649,7 @@ void MainWindow::on_actionMinkMode_toggled(bool aChecked)
     operationsToolBar -> setVisible(true);
   }
     modelChanged();
-}
+}*/
 
 //only blue complement
 void MainWindow::on_ResultComplement_toggled(bool a_check)
@@ -7252,10 +7246,35 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
   	m_pathTrack.addPolygon(poly);
 
 	QBrush brush;
-	brush.setColor(QColor(0,255,0,150));
+	QPen pen;
+	switch(m_color_result_active)
+	{
+		case 0: brush.setColor(QColor(0,0,255,200)); pen.setColor((QColor(0,0,255,200))); break; //blue
+
+		case 1: brush.setColor(QColor(255,0,0,200)); pen.setColor((QColor(255,0,0,200))); break; //red
+
+		case 2: brush.setColor(QColor(0,0,0,200)); pen.setColor((QColor(0,0,0,200))); break;	//black
+
+		case 3: brush.setColor(QColor(210,105,30,200)); pen.setColor((QColor(210,105,30,200))); break; //brown
+
+		case 4: brush.setColor(QColor(255,255,0,200)); pen.setColor((QColor(255,255,0,200))); break; // yellow
+
+		case 5: brush.setColor(QColor(255,0,255,200)); pen.setColor((QColor(255,0,255,200))); break;  //magenta
+
+		case 6: brush.setColor(QColor(0,255,255,200)); pen.setColor((QColor(0,255,255,200))); break;	//aqua
+	}
+
+
 	brush.setStyle(Qt::SolidPattern);
-	QPen pen(Qt::green);
 	pathItem = m_scene.addPath(m_pathTrack,pen,brush);
+
+	boost::optional<QRectF> lTotalRect = poly.boundingRect();
+
+    if (lTotalRect) 
+    {
+	    this->graphicsView->setSceneRect(*lTotalRect);
+	    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
+	}
 
 	if (polygon.number_of_holes() >= 0)
 	{	
@@ -7297,27 +7316,131 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
 	  actionSymmetric_Difference->setChecked(false); 
 	  //actionMinkowski_Sum->setChecked(false);
 
-		  Polygon_2 lp1,lp2;
+	  actionComplement->setChecked(false);
+	  actionUnion->setChecked(false);
+	  actionIntersection->setChecked(false);
+	  actionDifference->setChecked(false); 
+	  actionSymmetric_Difference->setChecked(false); 
+	  //actionMinkowski_Sum->setChecked(false);
+
+	  size_t count = 0;
+	  if (showBlueMink_Sum -> isChecked()) count++;
+	  if (showRedMink_Sum->isChecked()) count++;
+	  if (showBlackMink_Sum->isChecked()) count++;
+	  if (showBrownMink_Sum->isChecked()) count++;
+	  if (showYellowMink_Sum->isChecked()) count++;
+	  if (showMagentaMink_Sum->isChecked()) count++;
+	  if (showAquaMink_Sum->isChecked()) count++;
+
+	  if(count == 2)
+	  {
+		  size_t color1 = 111;
+		  size_t color2 = 1111;
+
+		  if (showBlueMink_Sum -> isChecked()) color1 = 0;
+		  if (showRedMink_Sum -> isChecked()) 
+		  {
+		  	if(color1 < 1) color2 = 1;
+		  	else color1 = 1;
+		  }
+		  if (showBlackMink_Sum -> isChecked()) 
+		  {
+		  	if(color1 < 2) color2 = 2;
+		  	else color1 = 2;
+		  }
+
+		  if (showBrownMink_Sum -> isChecked()) 
+		  {
+		  	if(color1 < 3) color2 = 3;
+		  	else color1 = 3;
+		  }
+
+		  if (showYellowMink_Sum -> isChecked()) 
+		  {
+		  	if(color1 < 4) color2 = 4;
+		  	else color1 = 4;
+		  }
+
+		  if (showMagentaMink_Sum -> isChecked()) 
+		  {
+		  	if(color1 < 5) color2 = 5;
+		  	else color1 = 5;
+		  }
+
+		  if (showAquaMink_Sum -> isChecked())
+		  {
+		  	color2 = 6;
+		  }
+
+		  
 
 		  if(minkowksi_sum_operated) 
-        {m_scene.removeItem(pathItem);
-      minkowksi_sum_operated = false;}
+	      { 
+	      	m_scene.removeItem(pathItem);
+	      	minkowksi_sum_operated = false;
+	      }
 
 		  typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 		  typedef Kernel::Point_2                            Point_2;
-		  typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
-		  typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
+	      typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
+	      typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
 		  typedef std::list<Polygon_with_holes_2>            Pgn_with_holes_2_container;
 
-		  CGAL::Small_side_angle_bisector_decomposition_2<Kernel>  ssab_decomp;
-		  mink_sum_res  = CGAL::minkowski_sum_2(p0, p1);
-  		  //CGAL_assertion(mink_sum_res.number_of_holes() == 0);
+	      Polygon_2 lp1,lp2;
+
+		  if(color1 == 0 && !blue_set().is_empty()) 
+		  {
+		  	if(color2 == 1 && !red_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p1);
+		  else if(color2 == 2 && !black_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p2);
+		  else if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p3);
+		  else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p4);
+		  else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p5);
+		  else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p6);
+		  }
+		  else if(color1 == 1 && !red_set().is_empty()) 
+		  {
+		   if(color2 == 2 && !black_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p2);
+		  else if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p3);
+		  else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p4);
+		  else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p5);
+		  else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p6);
+		  }
+		  else if(color1 == 2 && !black_set().is_empty()) 
+		  {
+		  	if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p3);
+		  else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p4);
+		  else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p5);
+		  else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p6);
+		  }
+		  else if(color1 == 3 && !brown_set().is_empty()) 
+		  {
+		   if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3, p4);
+		  else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3, p5);
+		  else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3,p6);
+		  }
+		  else if(color1 == 4 && !yellow_set().is_empty())
+		  {
+		  	if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p4, p5);
+		  else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p4, p6);
+		  }
+		  else if(color1 == 5 && !magenta_set().is_empty())
+		  {
+		  	if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p5, p6);
+		  }
+
+		  
+
+		  
+	  	  //CGAL_assertion(mink_sum_res.number_of_holes() == 0);
 		  if (!mink_sum_res.is_unbounded()) get_MinkowskiSum_result(mink_sum_res);
-		  else ask_user_ok("Minkowski Sum Operation Error", "resultant polygon is unbounded\n");	
-      zoomToFit();
-		  lDone = true;
-      minkowksi_sum_operated = true;
-	 
+		  else ask_user_ok("Minkowski Sum Operation Error", "resultant polygon is unbounded\n");
+	      lDone = true;
+	      minkowksi_sum_operated = true;
+	  }
+	  else
+	  {
+	  	 ask_user_ok("Minkowski Sum Operation Error", "Function supports 2 polygon as input\n");	
+	  }
    }
 
   this->setCursor(old);
@@ -7430,31 +7553,26 @@ void MainWindow::processInput(CGAL::Object o)
 
     if (CGAL::assign(lLI, o)) 
     {
-      if (ensure_linear_mode()) {
+      if (ensure_linear_mode()) 
+      {
         CGAL::Orientation orient = lLI.orientation();
         if (orient == CGAL::CLOCKWISE) 
           lLI.reverse_orientation();
         Linear_polygon_with_holes lCPWH(lLI);
-
-        if(!Minkowksi_Sum -> isChecked())
+        active_set().linear().join(lCPWH);
+        active_linear_sources().push_back(lCPWH);
+        switch(m_color_active)
         {
-          active_set().linear().join(lCPWH);
-          active_linear_sources().push_back(lCPWH);
+          	case 0: p0 = m_linear_input -> getMinkPolygon();
+          	case 1: p1 = m_linear_input -> getMinkPolygon();
+          	case 2: p2 = m_linear_input -> getMinkPolygon();
+          	case 3: p3 = m_linear_input -> getMinkPolygon();
+          	case 4: p4 = m_linear_input -> getMinkPolygon();
+          	case 5: p5 = m_linear_input -> getMinkPolygon();
+          	case 6: p6 = m_linear_input -> getMinkPolygon();
         }
-
-        else
-        {  
-
-          active_set_mink().linear().join(lCPWH);
-          active_linear_sources_mink().push_back(lCPWH);
-          switch(m_color_active_mink)
-          {
-          	case 1: p0 = m_linear_input -> getMinkPolygon();
-          	case 2: p1 = m_linear_input -> getMinkPolygon();
-          }
-        }
+      }
     }
-  }
 
 
 
