@@ -979,8 +979,10 @@ public: // typedefs
     typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits >
                                                           Traits;
     typedef typename Traits::Curve_2 Curve_2;
-    typedef typename Traits::Point_2 Point_2;
-    typedef AlgKernel                                     Kernel;
+    //typedef typename Traits::Point_2 Point_2;
+    typedef typename ArrTraitsAdaptor<Traits>::Kernel     Kernel;
+    typedef typename Traits::Point_2                      Point_2;
+    typedef typename Kernel::Point_2                      Alg_point_2;
     typedef typename Kernel::Segment_2                    Segment_2;
     typedef typename RatKernel::FT                        Rat_FT;
     typedef typename RatKernel::Point_2                   Rat_point_2;
@@ -1005,24 +1007,26 @@ protected:
 
         if (this->points.size() == 3)
         {
-            QPointF qp1 = this->convert( this->points[ 0 ] );
-            QPointF qp2 = this->convert( this->points[ 1 ] );
-            QPointF qp3 = this->convert( this->points[ 2 ] );
-            Rat_point_2 p1 = Rat_point_2( qp1.x( ), qp1.y( ) );
-            Rat_point_2 p2 = Rat_point_2( qp2.x( ), qp2.y( ) );
-            Rat_point_2 p3 = Rat_point_2( qp3.x( ), qp3.y( ) );
+//            QPointF qp1 = this->convert( this->points[ 0 ] );
+//            QPointF qp2 = this->convert( this->points[ 1 ] );
+//            QPointF qp3 = this->convert( this->points[ 2 ] );
+//            Rat_point_2 p1 = Rat_point_2( qp1.x( ), qp1.y( ) );
+//            Rat_point_2 p2 = Rat_point_2( qp2.x( ), qp2.y( ) );
+//            Rat_point_2 p3 = Rat_point_2( qp3.x( ), qp3.y( ) );
 
-            Curve_2 res(points.begin(), points().end());
+            Curve_2 res(points.begin(), points.end());
             Q_EMIT generate( CGAL::make_object( res ) );
         }
     }
     virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
     {
-      Point_2 clickedPoint = this->convert( event->scenePos( ) );
-      return clickedPoint;
+      Alg_point_2 clickedPoint = this->convert( event->scenePos( ) );
+      Point_2 res = this->toArrPoint( clickedPoint );
+      return res;
     }
 
     Converter< Kernel > convert;
+    Arr_construct_point_2< Traits > toArrPoint;
     std::vector< Point_2 > points;
     std::vector< QGraphicsLineItem* > polylineGuide;
     Traits traits;
