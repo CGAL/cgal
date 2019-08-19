@@ -4107,8 +4107,8 @@ void MainWindow::on_actionNew_triggered()
   actionMinkowski_Sum -> setVisible(true);
 
   m_color_complement = 111; //default
-  m_blue_int = false; //default
-  m_red_int = false ; //default
+  m_blue_int = true; //default
+  m_red_int = true ; //default
   m_black_int = false; //default
   m_brown_int = false; //default
   m_yellow_int = false; //default
@@ -4120,8 +4120,8 @@ void MainWindow::on_actionNew_triggered()
   m_diff_result_int = false;// default
   m_sym_diff_result_int = false;// default
 
-  m_blue_union = false; //default
-  m_red_union = false; //default
+  m_blue_union = true; //default
+  m_red_union = true; //default
   m_black_union = false; //default
   m_brown_union = false; //default
   m_yellow_union = false; //default
@@ -4136,8 +4136,8 @@ void MainWindow::on_actionNew_triggered()
 
   //m_color_diff_A = 0; //default
   //m_color_diff_B = 0; //default
-  m_blue_sym_diff = false; //default
-  m_red_sym_diff = false; //default
+  m_blue_sym_diff = true; //default
+  m_red_sym_diff = true; //default
   m_black_sym_diff = false; //default
   m_brown_sym_diff = false; //default
   m_yellow_sym_diff = false; //default
@@ -4149,8 +4149,8 @@ void MainWindow::on_actionNew_triggered()
   m_diff_result_sym_diff = false;// default
   m_sym_diff_result_sym_diff = false;// default
 
-  m_blue_mink = false; //default
-  m_red_mink = false; //default
+  m_blue_mink = true; //default
+  m_red_mink = true; //default
   m_black_mink = false; //default
   m_brown_mink = false; //default
   m_yellow_mink = false; //default
