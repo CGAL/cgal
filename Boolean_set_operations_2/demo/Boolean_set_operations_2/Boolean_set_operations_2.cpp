@@ -4076,7 +4076,7 @@ void MainWindow::on_actionNew_triggered()
   //m_mink_input->Reset();
   
   m_color_active = 0;
-  m_color_result_active = 0;
+  m_color_result_active = 2;
 
   m_linear_input -> mOngoingPieceGI -> setPen(sPens[0]);
   m_linear_input -> mLinearGI -> setPen(sPens[0]);
