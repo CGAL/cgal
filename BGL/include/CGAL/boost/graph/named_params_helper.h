@@ -119,24 +119,27 @@ namespace CGAL {
   // use the one passed in the named parameters (user must have initialized it)
   template <class MapFromNP, class Default_tag, class Dynamic_tag, class Mesh>
   MapFromNP
-  get_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&)
+  get_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&, bool& need_init)
   {
+    need_init = false;
     return m;
   }
 
   // use the one internal to the mesh (user must have initialized it)
   template <class Default_tag, class Dynamic_tag, class Mesh>
   typename boost::property_map<Mesh, Default_tag >::const_type
-  get_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m)
+  get_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m, bool& need_init)
   {
+    need_init = false;
     return get(t,m);
   }
 
   // create a dynamic property and initialize it
   template <class Dynamic_tag, class Mesh>
   typename boost::property_map<Mesh, Dynamic_tag >::const_type
-  get_map(CGAL::internal_np::Param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m)
+  get_map(CGAL::internal_np::Param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m, bool& need_init)
   {
+    need_init = true;
     return get(t,m);
   }
 
@@ -178,13 +181,13 @@ namespace CGAL {
       : tag(tag), dtag(dtag), m(m), np(np), p(p) {}
 
 
-    PropertyMapType property_map()
+    PropertyMapType property_map(bool& need_init)
     {
       return internal_np::get_map(
             parameters::get_parameter(np, p),
             tag,
             dtag,
-            m);
+            m, need_init);
     }
   };
 
