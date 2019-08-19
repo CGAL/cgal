@@ -327,6 +327,8 @@ _test_cls_constrained_triangulation(const Triang &)
   _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(3, 3), Point(0, 0), true); // ^
   _test_cdt_throwing<Triang>(Point(0, 0), Point(3, 3), Point(1, 1), Point(2, 2), true); // contains
   _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(1, 1), Point(2, 2), true); // ^
+  _test_cdt_throwing<Triang>(Point(1, 1), Point(2, 2), Point(3, 3), Point(0, 0), true); // ^
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(1, 1), Point(3, 3), Point(0, 0), true); // ^
   _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(0, 0), Point(3, 3), true); // same constraint
   _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(1, 1), Point(1, 1), true); // degenerate entry
   _test_cdt_throwing<Triang>(Point(0, 0), Point(0, 0), Point(0, 0), Point(0, 0), false); // degenerate same entry
