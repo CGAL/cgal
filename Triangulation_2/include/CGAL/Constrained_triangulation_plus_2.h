@@ -30,6 +30,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polyline_constraint_hierarchy_2.h>
 #include <boost/tuple/tuple.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Default.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -941,7 +942,11 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
-  if ( lt == Triangulation::EDGE && loc->is_constrained(li) ){
+  if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
+  {
+    if(boost::is_same<typename Tr::Itag, No_intersection_tag>::value)
+      throw typename Tr::Intersection_of_constraints_exception();
+
     insert_in_constrained_edge = true;
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
