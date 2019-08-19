@@ -24,6 +24,32 @@
 
 #include <list>
 #include <CGAL/_test_cls_triangulation_short_2.h>
+#include <boost/type_traits/is_same.hpp>
+
+template <class Triang, class Pt>
+void
+_test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3, const bool intersect)
+{
+  std::cout << "test_cdt_throwing [" << p0 << "] - [" << p1 << "] || [" << p2 << "] - [" << p3 << "]" << std::endl;
+
+  try
+  {
+    Triang tr;
+    tr.insert_constraint(p0, p1);
+    tr.insert_constraint(p2, p3);
+  }
+  catch (typename Triang::Intersection_of_constraints_exception& e)
+  {
+    std::cout << "threw, expected it? " << std::boolalpha << intersect << std::endl;
+    assert(intersect);
+    assert((boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value));
+    return;
+  }
+
+  if(intersect) {
+    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value));
+  }
+}
 
 template <class Triang>
 void 
@@ -134,7 +160,7 @@ _test_cls_constrained_triangulation(const Triang &)
    // between constrained and Constrained Delaunay
    Triang T2_5;
    for (int j=0; j < 20; j++) T2_5.insert(lpt[j]);
-   T2_5.insert( Point(1,0.5), Point(2.5, 3.5));
+   T2_5.insert_constraint( Point(1,0.5), Point(2.5, 3.5));
    T2_5.is_valid();
 
 
@@ -220,8 +246,9 @@ _test_cls_constrained_triangulation(const Triang &)
   assert(T1_2.is_edge(vha,vhb, fh, ih));
   assert(fh->is_constrained(ih));
   T1_2.remove_constrained_edge(fh,ih);
+  assert(!fh->is_constrained(ih));
   assert(T1_2.is_valid());
-  T1_2.insert(Point(0,0),Point(3,2));
+  T1_2.insert_constraint(Point(0,0),Point(3,2));
   fh  =  T1_2.locate(Point(3,2),lt,li); assert( lt == Triang::VERTEX );
   vhb =  fh->vertex(li);
   assert(T1_2.are_there_incident_constraints(vhb));
@@ -241,7 +268,6 @@ _test_cls_constrained_triangulation(const Triang &)
   assert(ic_edges.size() == 1); 
   T1_2.remove(vha);
   assert(T1_2.is_valid());
-  
 
    // remove_constraint and remove 2 dim
   std::cout << "remove_constrained_edge and remove 2-dim " << std::endl;
@@ -290,4 +316,26 @@ _test_cls_constrained_triangulation(const Triang &)
 
   T2_6.insert_constraint(Point(1,0.1), Point(2,0.2));
   assert(std::distance(T2_6.constrained_edges_begin(),  T2_6.constrained_edges_end()) == 1);
+
+  // test throwing/not throwing on intersecting constraints
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(1, 1), Point(2, 2), Point(2, 3), false /*no intersection*/);
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(1, 1), Point(1, 1), Point(2, 2), false); // common point
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(2, 2), Point(3, 3), false); // ^
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 2), Point(1, 1), Point(3, 3), true); // overlapping
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(1, 1), Point(3, 3), true); // ^
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(0, 0), Point(3, 3), true); // ^
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(3, 3), Point(0, 0), true); // ^
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(3, 3), Point(1, 1), Point(2, 2), true); // contains
+  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(1, 1), Point(2, 2), true); // ^
+  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(0, 0), Point(3, 3), true); // same constraint
+  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(1, 1), Point(1, 1), true); // degenerate entry
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(0, 0), Point(0, 0), Point(0, 0), false); // degenerate same entry
+
+  // non aligned
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(3, 3), Point(1, 0), Point(4, 0), false);
+  _test_cdt_throwing<Triang>(Point(0, 2), Point(2, 2), Point(1, 0), Point(1, 3), true); // generic intersection
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 2), Point(1, 3), Point(1, 0), true);
+
+  // extremity on the interior of another segment
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 0), Point(1, 0), Point(1, 4), true);
 }

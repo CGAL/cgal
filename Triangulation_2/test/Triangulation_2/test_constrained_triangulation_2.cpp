@@ -20,6 +20,8 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+#define CGAL_NO_CDT_2_WARNING
+
 #include <CGAL/basic.h>
 #include <CGAL/_test_types.h>
 
