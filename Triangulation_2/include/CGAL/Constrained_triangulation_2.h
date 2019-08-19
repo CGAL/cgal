@@ -672,9 +672,15 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   }
 
   va = Triangulation::insert(a,lt,loc,li);
-  if (insert_in_constrained_edge) update_constraints_incident(va, v1,v2);
-  else if(lt != Triangulation::VERTEX) clear_constraints_incident(va);
-  if (dimension() == 2) update_constraints_opposite(va);
+
+  if (insert_in_constrained_edge)
+    update_constraints_incident(va, v1,v2);
+  else if(lt != Triangulation::VERTEX)
+    clear_constraints_incident(va);
+
+  if (dimension() == 2)
+    update_constraints_opposite(va);
+
   return va;
 }
 
@@ -759,7 +765,6 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       
     List_faces intersected_faces;
     List_edges conflict_boundary_ab, conflict_boundary_ba;
-     
     bool intersection  = find_intersected_faces( vaa, vbb,
                                                  intersected_faces,
                                                  conflict_boundary_ab,

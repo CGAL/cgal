@@ -946,6 +946,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
   }
+
   Vertex_handle va = Triangulation::insert(a,lt,loc,li);
   // update the hierarchy
   if (insert_in_constrained_edge) {
