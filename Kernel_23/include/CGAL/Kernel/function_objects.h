@@ -2068,6 +2068,7 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Construct_point_on_2
   {
+    typedef typename K::FT         FT;
     typedef typename K::Point_2    Point_2;
     typedef typename K::Segment_2  Segment_2;
     typedef typename K::Line_2     Line_2;
@@ -2076,7 +2077,7 @@ namespace CommonKernelFunctors {
     typedef Point_2          result_type;
 
     Point_2
-    operator()( const Line_2& l, int i) const
+    operator()( const Line_2& l, const FT i) const
     { return l.point(i); }
 
     Point_2
@@ -2084,13 +2085,14 @@ namespace CommonKernelFunctors {
     { return s.point(i); }
 
     Point_2
-    operator()( const Ray_2& r, int i) const
+    operator()( const Ray_2& r, const FT i) const
     { return r.point(i); }
   };
 
   template <typename K>
   class Construct_point_on_3
   {
+    typedef typename K::FT         FT;
     typedef typename K::Point_3    Point_3;
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Line_3     Line_3;
@@ -2100,7 +2102,7 @@ namespace CommonKernelFunctors {
     typedef Point_3          result_type;
 
     Point_3
-    operator()( const Line_3& l, int i) const
+    operator()( const Line_3& l, const FT i) const
     { return l.rep().point(i); }
 
     Point_3
@@ -2108,7 +2110,7 @@ namespace CommonKernelFunctors {
     { return s.point(i); }
 
     Point_3
-    operator()( const Ray_3& r, int i) const
+    operator()( const Ray_3& r, const FT i) const
     { return r.rep().point(i); }
 
     Point_3

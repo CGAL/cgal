@@ -34,6 +34,8 @@ _test_cls_line_3(const R& )
  std::cout << "Testing class Line_3" ;
 
  typedef typename  R::RT    RT;
+ typedef typename  R::FT    FT;
+
  const bool nonexact = boost::is_same<RT, double>::value;
 
  typename R::Line_3 il;
@@ -102,6 +104,8 @@ _test_cls_line_3(const R& )
  std::cout << '.';
 
  assert( l4.point(2) - l4.point(1) == l4.point(1) - l4.point(0) );
+ assert( (l4.point(FT(1)/FT(3)) - l4.point(0) == l4.point(1+FT(1)/FT(3)) - l4.point(1)) || nonexact );
+
  CGAL::Point_3<R> p1l4proj = l4.projection(p1);
  assert( l4.has_on( p1l4proj ) || nonexact );
  assert( l4.perpendicular_plane( p1l4proj ).has_on( p1l4proj ) || nonexact );
