@@ -233,13 +233,11 @@ protected:
   template < typename Kernel_>
   void updateBoundingBox(CGAL::Arr_linear_traits_2<Kernel_> traits);
 
-#if 0
   template < typename RatKernel, class AlgKernel, class NtTraits >
   void updateBoundingBox(CGAL::Arr_Bezier_curve_traits_2<
                          RatKernel,
                          AlgKernel,
                          NtTraits > traits);
-#endif
   template < typename Coefficient_>
   void updateBoundingBox(CGAL::Arr_algebraic_segment_traits_2<Coefficient_>
                          traits);
@@ -1358,7 +1356,6 @@ updateBoundingBox(TTraits /* traits */)
   }
 }
 
-#if 0
 template <typename Arr_, typename ArrTraits >
 template < typename RatKernel, class AlgKernel, class NtTraits >
 void
@@ -1366,8 +1363,7 @@ ArrangementGraphicsItem< Arr_, ArrTraits >::
 updateBoundingBox(CGAL::Arr_Bezier_curve_traits_2<
                   RatKernel,
                   AlgKernel,
-                  NtTraits > /* traits */)
-{
+                  NtTraits > /* traits */) {
   this->prepareGeometryChange( );
   QRectF clipRect = this->viewportRect( );
   this->convert = Converter<Kernel>( clipRect );
@@ -1384,6 +1380,15 @@ updateBoundingBox(CGAL::Arr_Bezier_curve_traits_2<
     this->bb_initialized = true;
   }
 
+//  int curve_cnt = 0;
+//  for ( Edge_iterator it = this->arr->edges_begin( );
+//        it != this->arr->edges_end( ); ++it )
+//  {
+//    X_monotone_curve_2 curve = it->curve( );
+//    this->bb = this->bb + curve.bbox( );
+//    curve_cnt++;
+//  }
+#if 0
   for ( Curve_iterator it = this->arr->curves_begin( );
         it != this->arr->curves_end( );
         ++it )
@@ -1405,8 +1410,8 @@ updateBoundingBox(CGAL::Arr_Bezier_curve_traits_2<
       this->bb = this->bb + clippedLine.bbox( );
     }
   }
-}
 #endif
+}
 
 template < typename Arr_, typename ArrTraits >
 template < typename Kernel_ >

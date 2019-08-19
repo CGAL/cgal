@@ -496,14 +496,15 @@ public: // typedefs
   typedef typename Superclass::Circle_2                 Circle_2;
   typedef typename Traits::Curve_2                      Curve_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits::Construct_x_monotone_curve_2
-    Construct_x_monotone_curve_2;
+//  typedef typename Traits::Construct_x_monotone_curve_2
+//    Construct_x_monotone_curve_2;
   typedef typename Traits::Point_2                      Intersection_point_2;
   typedef typename Traits::Intersect_2                  Intersect_2;
   typedef typename Traits::Multiplicity                 Multiplicity;
   typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
   typedef typename Kernel::FT                           FT;
 
+#if 0
 public: // inner classes
   // utility class to use with std::sort on an Intersect_2 result set.
   class Compare_intersection_point_result
@@ -518,14 +519,12 @@ public: // inner classes
       return ( p1.x( ) < p2.x( ) );
     }
   };
-
+#endif
 public:
   /*! Constructor */
   ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()) :
-    Superclass( p, clippingRectangle ),
-    construct_x_monotone_curve_2(this->
-                                 traits.construct_x_monotone_curve_2_object())
-  { }
+    Superclass( p, clippingRectangle )
+    { }
 
   /*! Destructor (virtual) */
   virtual ~ArrangementPainterOstream() {}
@@ -543,7 +542,7 @@ public: // methods
     (*(static_cast< Superclass* >(this)) << p);
     return *this;
   }
-
+#if 0
 protected: // methods
   // Returns subcurves of curve that are actually visible in the view.
   // Assumes that clippingRect is valid.
@@ -717,11 +716,11 @@ protected: // methods
       }
     }
   }
-
+#endif
 protected: // members
   Traits traits;
   //Intersect_2 intersect_2;
-  Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
+  //Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
 };
 
 template < typename Kernel_ >
