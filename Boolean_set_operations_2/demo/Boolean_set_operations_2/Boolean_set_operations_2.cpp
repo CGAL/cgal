@@ -7737,13 +7737,13 @@ void MainWindow::processInput(CGAL::Object o)
         active_linear_sources().push_back(lCPWH);
         switch(m_color_active)
         {
-          	case 0: p0 = m_linear_input -> getMinkPolygon();
-          	case 1: p1 = m_linear_input -> getMinkPolygon();
-          	case 2: p2 = m_linear_input -> getMinkPolygon();
-          	case 3: p3 = m_linear_input -> getMinkPolygon();
-          	case 4: p4 = m_linear_input -> getMinkPolygon();
-          	case 5: p5 = m_linear_input -> getMinkPolygon();
-          	case 6: p6 = m_linear_input -> getMinkPolygon();
+          	case 0: p0 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon(); break;
+          	case 1: p1 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon(); break;
+          	case 2: p2 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon(); break;
+          	case 3: p3 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon(); break;
+          	case 4: p4 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon();  break;
+          	case 5: p5 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon();  break;
+          	case 6: p6 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon();  break;
         }
       }
     }
