@@ -5819,7 +5819,7 @@ public:
     to `point(j)`, for all `i < j`. 
   */ 
   Kernel::Point_2 operator()(const Kernel::Line_2& l, 
-                             int i); 
+                             const Kernel::FT i);
 
   /*!
     returns a point on `r`. `point(0)` is the source, 
@@ -5827,7 +5827,7 @@ public:
     source. \pre `i>= 0`. 
   */ 
   Kernel::Point_2 operator()(const Kernel::Ray_2& r, 
-                             int i); 
+                             const Kernel::FT i);
 
   /*!
     returns source or target of `s`: `point(0)` returns 
@@ -5869,7 +5869,7 @@ public:
     to `point(j)`, for all `i < j`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Line_3& l, 
-                             int i); 
+                             const Kernel::FT i);
 
   /*!
     returns an arbitrary point on `h`. 
@@ -5882,7 +5882,7 @@ public:
     source. \pre `i >= 0`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Ray_3& r, 
-                             int i); 
+                             const Kernel::FT i);
 
   /*!
     returns source or target of `s`: `point(0)` returns 

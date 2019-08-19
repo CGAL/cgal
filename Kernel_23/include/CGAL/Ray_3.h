@@ -39,7 +39,7 @@ namespace CGAL {
 template <class R_>
 class Ray_3 : public R_::Kernel_base::Ray_3
 {
-  typedef typename R_::RT                    RT;
+  typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Direction_3           Direction_3;
   typedef typename R_::Vector_3              Vector_3;
@@ -108,8 +108,8 @@ public:
   bool        collinear_has_on(const Point_3 &p) const;
 */
 
-  typename cpp11::result_of<typename R::Construct_point_on_3(Ray_3, int)>::type
-  point(int i) const // TODO : use Qrt
+  typename cpp11::result_of<typename R::Construct_point_on_3(Ray_3, FT)>::type
+  point(const FT i) const
   {
     return R().construct_point_on_3_object()(*this, i);
   }

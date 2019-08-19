@@ -74,7 +74,7 @@ public:
   {
       return get_pointee_or_identity(base)[1];
   }
-  Point_3     point(int i) const;
+  Point_3     point(const FT i) const;
 
   Direction_3 direction() const;
   Vector_3    to_vector() const;
@@ -107,12 +107,12 @@ RayC3<R>::operator!=(const RayC3<R> &r) const
 template < class R >
 CGAL_KERNEL_INLINE
 typename RayC3<R>::Point_3
-RayC3<R>::point(int i) const
+RayC3<R>::point(const FT i) const
 {
-  CGAL_kernel_precondition( i >= 0 );
-  if (i == 0) return source();
-  if (i == 1) return second_point();
-  return source() + FT(i) * (second_point() - source());
+  CGAL_kernel_precondition( i >= FT(0) );
+  if (i == FT(0)) return source();
+  if (i == FT(1)) return second_point();
+  return source() + i * to_vector();
 }
 
 template < class R >

@@ -31,6 +31,7 @@ _test_cls_ray_new_2(const R& )
  std::cout << "Testing class Ray_2";
 
  typedef typename  R::RT    RT;
+ typedef typename  R::FT    FT;
 
  typedef typename  R::Point_2 Point_2;
  typedef typename  R::Vector_2 Vector_2;
@@ -121,6 +122,7 @@ _test_cls_ray_new_2(const R& )
  assert( ! r0.has_on( construct_point( n8, n5, n8 )) );
  assert( r4.has_on( r4.point(7)) );
  assert( r3.collinear_has_on( r3.point(7)) );
+ assert( r3.collinear_has_on( r3.point(FT(42)/FT(13))) );
  assert( r1.collinear_has_on( p3) );
  assert( ! r3.collinear_has_on( p1 ) );
 
