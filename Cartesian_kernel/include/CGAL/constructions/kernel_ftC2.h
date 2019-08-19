@@ -279,7 +279,7 @@ line_y_at_xC2(const FT &a, const FT &b, const FT &c, const FT &x)
 template < class FT > 
 inline
 void
-line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
+line_get_pointC2(const FT &a, const FT &b, const FT &c, const FT &i,
                  FT &x, FT &y)
 {
   if (CGAL_NTS is_zero(b))
