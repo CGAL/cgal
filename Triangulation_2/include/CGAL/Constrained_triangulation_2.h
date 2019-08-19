@@ -43,6 +43,7 @@
 
 #include <boost/utility/result_of.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 
@@ -301,7 +302,21 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
 
   Face_handle fr;
   int i;
-  if(includes_edge(vaa,vbb,vi,fr,i)) {
+  if(includes_edge(vaa,vbb,vi,fr,i))
+  {
+    // if the segment (or a subpart of the segment) that we are trying to constraint is already
+    // present in the triangulation and is already marked as constrained,
+    // then this is an intersection
+    if(boost::is_same<Itag, No_intersection_tag>::value) {
+      if(dimension() == 1) {
+        if(fr->is_constrained(2))
+          throw Intersection_of_constraints_exception();
+      } else {
+        if(fr->is_constrained(i))
+          throw Intersection_of_constraints_exception();
+      }
+    }
+
     mark_constraint(fr,i);
     if (vi != vbb)  {
       insert_constraint(vi,vbb,out);
@@ -720,7 +735,21 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
 
     Face_handle fr;
     int i;
-    if(includes_edge(vaa,vbb,vi,fr,i)) {
+    if(includes_edge(vaa,vbb,vi,fr,i))
+    {
+      // if the segment (or a subpart of the segment) that we are trying to constraint is already
+      // present in the triangulation and is already marked as constrained,
+      // then this is an intersection
+      if(boost::is_same<Itag, No_intersection_tag>::value) {
+        if(dimension() == 1) {
+          if(fr->is_constrained(2))
+            throw Intersection_of_constraints_exception();
+        } else {
+          if(fr->is_constrained(i))
+            throw Intersection_of_constraints_exception();
+        }
+      }
+
       mark_constraint(fr,i);
       if (vi != vbb)  {
         stack.push(std::make_pair(vi,vbb));
