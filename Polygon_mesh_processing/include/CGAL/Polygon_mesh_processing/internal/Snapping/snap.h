@@ -669,6 +669,7 @@ void find_splittable_edge(const std::pair<typename boost::property_traits<VPM>::
                           const VPM& vpmt,
                           const GT& gt)
 {
+  CGAL_USE(vpmt);
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor       edge_descriptor;
 
