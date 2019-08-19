@@ -270,7 +270,7 @@
    <property name="minimumSize" >
     <size>
       <width>500</width>
-      <height>450</height>
+      <height>200</height>
     </size>
    </property>
    <property name="sizePolicy">
@@ -323,7 +323,7 @@
               </rect>
              </property>
              <property name="text">
-              <string>Blue</string>
+              <string>Red</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -339,7 +339,7 @@
               </rect>
              </property>
              <property name="text">
-              <string>Red</string>
+              <string>Green</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -552,7 +552,7 @@
             </widget>
             <widget class="QCheckBox" name="showBlack">
               <property name="Visible">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
              <property name="geometry">
               <rect>
@@ -563,7 +563,7 @@
               </rect>
              </property>
              <property name="text">
-              <string>Black</string>
+              <string>Blue</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -676,7 +676,7 @@
             </widget>
             <widget class="QRadioButton" name="drawBlack">
               <property name="Visible">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
              <property name="geometry">
               <rect>
@@ -767,7 +767,7 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showBlueInt">
@@ -783,7 +783,7 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showBlueUnion">
@@ -799,7 +799,7 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showBlueDiff">
@@ -815,7 +815,7 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showBlueSym_Diff">
@@ -831,7 +831,7 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showBlueMink_Sum">
@@ -850,7 +850,7 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showRedComp">
@@ -882,7 +882,7 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showRedUnion">
@@ -898,7 +898,7 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showRedDiff">
@@ -914,7 +914,7 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showRedSym_Diff">
@@ -930,7 +930,7 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showRedMink_Sum">
@@ -949,12 +949,12 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showBlackComp">
               <property name="Visible">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
              <property name="geometry">
               <rect>
@@ -973,7 +973,7 @@
             </widget>
             <widget class="QCheckBox" name="showBlackInt">
               <property name="Visible">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
              <property name="geometry">
               <rect>
@@ -992,7 +992,7 @@
             </widget>
             <widget class="QCheckBox" name="showBlackUnion">
               <property name="Visible">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
              <property name="geometry">
               <rect>
@@ -1011,7 +1011,7 @@
             </widget>
             <widget class="QCheckBox" name="showBlackDiff">
               <property name="Visible">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
              <property name="geometry">
               <rect>
@@ -1030,7 +1030,7 @@
             </widget>
             <widget class="QCheckBox" name="showBlackSym_Diff">
               <property name="Visible">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
              <property name="geometry">
               <rect>
@@ -1049,7 +1049,7 @@
             </widget>
             <widget class="QCheckBox" name="showBlackMink_Sum">
               <property name="Visible">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
              <property name="geometry">
               <rect>
@@ -2111,7 +2111,7 @@
                 <x>111</x>
                 <y>0</y>
                 <width>7</width>
-                <height>95</height>
+                <height>125</height>
                 </rect>
               </property>
               <property name="orientation">
@@ -2124,7 +2124,7 @@
                 <x>155</x>
                 <y>0</y>
                 <width>7</width>
-                <height>95</height>
+                <height>125</height>
                 </rect>
               </property>
               <property name="orientation">
@@ -2137,7 +2137,7 @@
                 <x>200</x>
                 <y>0</y>
                 <width>7</width>
-                <height>95</height>
+                <height>125</height>
                 </rect>
               </property>
               <property name="orientation">
@@ -2150,7 +2150,7 @@
                 <x>245</x>
                 <y>0</y>
                 <width>7</width>
-                <height>95</height>
+                <height>125</height>
                 </rect>
               </property>
               <property name="orientation">
@@ -2163,7 +2163,7 @@
                 <x>290</x>
                 <y>0</y>
                 <width>7</width>
-                <height>95</height>
+                <height>125</height>
                 </rect>
               </property>
               <property name="orientation">
@@ -2176,7 +2176,7 @@
                 <x>335</x>
                 <y>0</y>
                 <width>7</width>
-                <height>95</height>
+                <height>125</height>
                 </rect>
               </property>
               <property name="orientation">
@@ -2192,7 +2192,7 @@
                 <x>380</x>
                 <y>0</y>
                 <width>7</width>
-                <height>95</height>
+                <height>125</height>
                 </rect>
               </property>
               <property name="orientation">
@@ -2205,7 +2205,7 @@
                 <x>440</x>
                 <y>0</y>
                 <width>7</width>
-                <height>95</height>
+                <height>125</height>
                 </rect>
               </property>
               <property name="orientation">
@@ -2358,7 +2358,7 @@
             </widget>
             <widget class="Line" name="line11">
               <property name="Visible">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
               <property name="geometry">
                 <rect>
@@ -2607,7 +2607,7 @@
               <string></string>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
             <widget class="QCheckBox" name="showResRed">
@@ -2631,10 +2631,10 @@
             </widget>
             <widget class="QCheckBox" name="showResBlack">
               <property name="checked">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
               <property name="Visible">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
              <property name="geometry">
               <rect>
@@ -2772,7 +2772,7 @@
               <string></string>
              </property>
              <property name="Visible">
-                <bool>false</bool>
+                <bool>true</bool>
               </property>
             </widget>
             <widget class="QCheckBox" name="clearBrownRes">
@@ -3212,6 +3212,9 @@
     <property name="icon">
       <iconset resource="Boolean_operations_2.qrc">
       <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
+    </property>
+    <property name="text">
+      <string>Color Removal Not Allowed</string>
     </property>
   </action>
   <action name="actionDeleteAll">

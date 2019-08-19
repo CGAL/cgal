@@ -179,16 +179,16 @@ enum {
 
 //dawing tools
 QPen sPens[] = {
-  QPen(QColor(0,0,255),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),   //blue
-  QPen(QColor(255,0,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),   //red
-  QPen(QColor(0,0,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),     //black
+  QPen(QColor(255,0,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),   //blue
+  QPen(QColor(0,255,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),   //red
+  QPen(QColor(0,0,255),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),     //black
   QPen(QColor(210,105,30),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),//brown
   QPen(QColor(255,255,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin), //yellow
   QPen(QColor(255,0,255),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin), //magenta
   QPen(QColor(0,255,255),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin), //aqua
-  QPen(QColor(0,0,255),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),   //blue Result
-  QPen(QColor(255,0,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),   //red Result
-  QPen(QColor(0,0,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),     //black Result
+  QPen(QColor(255,0,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),   //blue Result
+  QPen(QColor(0,255,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),   //red Result
+  QPen(QColor(0,0,255),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),     //black Result
   QPen(QColor(210,105,30),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin),//brown Result
   QPen(QColor(255,255,0),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin), //yellow Result
   QPen(QColor(255,0,255),0,Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin), //magenta Result
@@ -204,16 +204,16 @@ QPen sPens[] = {
 
 
 QBrush sBrushes[] = {
-  QBrush(QColor(0,0,255,32)),           //blue
-  QBrush(QColor(255,0,0,32)),           //red
-  QBrush(QColor(0,0,0,32)),             //black
+  QBrush(QColor(255,0,0,32)),           //blue
+  QBrush(QColor(0,255,0,32)),           //red
+  QBrush(QColor(0,0,255,32)),             //black
   QBrush(QColor(210,105,30,32)),        //brown
   QBrush(QColor(255,255,0,32)),         //yellow
   QBrush(QColor(255,0,255,32)),         //magenta
   QBrush(QColor(0,255,255,32)),         //aqua
-  QBrush(QColor(0,0,255,200)),           //blue Result
-  QBrush(QColor(255,0,0,200)),           //red Result
-  QBrush(QColor(0,0,0,200)),             //black Result
+  QBrush(QColor(255,0,0,200)),           //blue Result
+  QBrush(QColor(0,255,0,200)),           //red Result
+  QBrush(QColor(0,0,255,200)),             //black Result
   QBrush(QColor(210,105,30,200)),        //brown Result
   QBrush(QColor(255,255,0,200)),         //yellow Result
   QBrush(QColor(255,0,255,200)),         //magenta Result
@@ -1397,12 +1397,12 @@ MainWindow::MainWindow() :
   m_circular_active(false), //default
   //m_mink_active(false), //default
   m_color_active(0),    //default
-  m_color_result_active(0), //default
+  m_color_result_active(2), //default
   m_color_active_mink(1), //default
-  m_color_complement(111), //default
-  m_blue_int(false), //default
+  m_color_complement(0), //default
+  m_blue_int(true), //default
   minkowksi_sum_operated(false), //default
-  m_red_int(false), //default
+  m_red_int(true), //default
   m_black_int(false), //default
   m_brown_int(false), //default
   m_yellow_int(false), //default
@@ -1413,8 +1413,8 @@ MainWindow::MainWindow() :
   m_union_result_int(false), //default
   m_diff_result_int(false), //default
   m_sym_diff_result_int(false), //default
-  m_blue_union(false), //default
-  m_red_union(false), //default
+  m_blue_union(true), //default
+  m_red_union(true), //default
   m_black_union(false), //default
   m_brown_union(false), //default
   m_yellow_union(false), //default
@@ -1427,8 +1427,8 @@ MainWindow::MainWindow() :
   m_sym_diff_result_union(false), //default
   //m_color_diff_A(0), //default
   //m_color_diff_B(0), //default
-  m_blue_sym_diff(false), //default
-  m_red_sym_diff(false), //default
+  m_blue_sym_diff(true), //default
+  m_red_sym_diff(true), //default
   m_black_sym_diff(false), //default
   m_brown_sym_diff(false), //default
   m_yellow_sym_diff(false), //default
@@ -1439,14 +1439,14 @@ MainWindow::MainWindow() :
   m_union_result_sym_diff(false), //default
   m_diff_result_sym_diff(false), //default
   m_sym_diff_result_sym_diff(false), //default
-  m_blue_mink(false), //default
-  m_red_mink(false), //default
+  m_blue_mink(true), //default
+  m_red_mink(true), //default
   m_black_mink(false), //default
   m_brown_mink(false), //default
   m_yellow_mink(false), //default
   m_magenta_mink(false), //default
   m_aqua_mink(false), //default
-  m_visible_black(false), //default 
+  m_visible_black(true), //default 
   m_visible_brown(false), //default 
   m_visible_yellow(false), //default 
   m_visible_magenta(false), //default 
@@ -1851,6 +1851,9 @@ MainWindow::MainWindow() :
 
 
 
+	m_linear_input -> mOngoingPieceGI -> setPen(sPens[0]);
+	m_linear_input -> mLinearGI -> setPen(sPens[0]);
+	m_linear_input -> mHandleGI -> setPen(sPens[0]);
 }
 
 void MainWindow::on_showBlue_toggled(bool a_check)
@@ -1898,18 +1901,18 @@ void MainWindow::on_showBlueComp_toggled(bool aCheck)
 {
 	if(aCheck)
 	{
-		m_color_complement = 0;
+		m_color_complement = 0 ;
 		showRedComp->setChecked(false);
 		showBlackComp->setChecked(false);
 		showBrownComp->setChecked(false);
 		showYellowComp->setChecked(false);
 		showMagentaComp->setChecked(false);
 		showAquaComp->setChecked(false);
-    showCompResultComp->setChecked(false);
-    showIntResultComp->setChecked(false);
-    showUnionResultComp->setChecked(false);
-    showDiffResultComp->setChecked(false);
-    showSymDiffResultComp->setChecked(false);
+    	showCompResultComp->setChecked(false);
+    	showIntResultComp->setChecked(false);
+    	showUnionResultComp->setChecked(false);
+    	showDiffResultComp->setChecked(false);
+    	showSymDiffResultComp->setChecked(false);
 	} 
 
 	else
@@ -2492,7 +2495,7 @@ void MainWindow::on_showBlueDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count > 2)
+		if (count >= 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showBlueDiff->setChecked(false); 
@@ -2516,7 +2519,7 @@ void MainWindow::on_showRedDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count > 2)
+		if (count >= 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showRedDiff->setChecked(false); 
@@ -2540,7 +2543,7 @@ void MainWindow::on_showBlackDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count > 2)
+		if (count >= 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showBlackDiff->setChecked(false); 
@@ -2564,7 +2567,7 @@ void MainWindow::on_showBrownDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count > 2)
+		if (count >= 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showBrownDiff->setChecked(false); 
@@ -2588,7 +2591,7 @@ void MainWindow::on_showYellowDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count > 2)
+		if (count >= 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showYellowDiff->setChecked(false); 
@@ -2612,7 +2615,7 @@ void MainWindow::on_showMagentaDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count > 2)
+		if (count >= 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
 			showMagentaDiff->setChecked(false); 
@@ -2636,7 +2639,7 @@ void MainWindow::on_showAquaDiff_toggled(bool aCheck)
     if (showDiffResultDiff->isChecked()) count++;
     if (showSymDiffResultDiff->isChecked()) count++;
 
-		if (count > 2)
+		if (count >= 2)
 		{
 			ask_user_ok("Difference Operation Error","Maximum Limit of Color has reached, only 2 allowed.\n");
       showAquaDiff->setChecked(false); 
@@ -3052,7 +3055,7 @@ void MainWindow::on_showAquaMink_Sum_toggled(bool aCheck)
 //////////###################### Add Color Plus Button ###########################////////////
 void MainWindow::on_actionAddColor_triggered()
 {
-	if(!m_visible_black)
+	/*if(!m_visible_black)
 	{
 		m_visible_black = true;
 		showBlack ->setVisible(true);
@@ -3076,7 +3079,7 @@ void MainWindow::on_actionAddColor_triggered()
   		line06 -> setGeometry(QRect(380,0,7,125));
   		line006 -> setGeometry(QRect(440,0,7,125));
 
-  		/*line07 -> setGeometry(QRect(0,155,640,7));
+  		line07 -> setGeometry(QRect(0,155,640,7));
   		line08 -> setGeometry(QRect(0,185,640,7));
   		line09 -> setGeometry(QRect(0,215,640,7));
   		line010 -> setGeometry(QRect(0,245,640,7));
@@ -3126,16 +3129,16 @@ void MainWindow::on_actionAddColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,250,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,250,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,250,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,250,101,22));*/
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,250,101,22));
 
 
   		actionMinusColor -> setText("Remove Black");
 
   		showResBlack ->setVisible(true);
   		clearBlackRes -> setVisible(true);
-	}
+	}*/
 
-	else if(!m_visible_brown)
+	if(!m_visible_brown)
 	{
 		m_visible_brown = true;
 		showBrown ->setVisible(true);
@@ -3477,7 +3480,7 @@ void MainWindow::on_actionAddColor_triggered()
 
 void MainWindow::on_actionMinusColor_triggered()
 {
-	if (!(m_visible_brown || m_visible_yellow || m_visible_magenta || m_visible_aqua))
+	/*if (!(m_visible_brown || m_visible_yellow || m_visible_magenta || m_visible_aqua))
 	{	
 		m_curve_sets[2].clear();
 		//m_curve_sets[7].clear();
@@ -3514,7 +3517,7 @@ void MainWindow::on_actionMinusColor_triggered()
   		line06 -> setGeometry(QRect(380,0,7,95));
   		line006 -> setGeometry(QRect(440,0,7,95));
 
-  		/*line07 -> setGeometry(QRect(0,125,640,7));
+  		line07 -> setGeometry(QRect(0,125,640,7));
   		line08 -> setGeometry(QRect(0,155,640,7));
   		line09 -> setGeometry(QRect(0,185,640,7));
   		line010 -> setGeometry(QRect(0,215,640,7));
@@ -3564,7 +3567,7 @@ void MainWindow::on_actionMinusColor_triggered()
   		showSymDiffResultUnion->setGeometry(QRect(215,220,101,22));
   		showSymDiffResultDiff->setGeometry(QRect(260,220,101,22));
   		showSymDiffResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,220,101,22));*/
+  		showSymDiffResultMink_Sum->setGeometry(QRect(350,220,101,22));
 
 	  	actionMinusColor -> setText("Color Removal Not Allowed");
 
@@ -3574,9 +3577,9 @@ void MainWindow::on_actionMinusColor_triggered()
 	  	clearBlackRes -> setVisible(false);
 
 	  	//modelChanged();
-	}
+	}*/
 
-	else if (!(m_visible_yellow || m_visible_magenta || m_visible_aqua))
+	if (!(m_visible_yellow || m_visible_magenta || m_visible_aqua))
 	{	
 		m_curve_sets[3].clear();
 		//m_curve_sets[7].clear();
@@ -4075,6 +4078,10 @@ void MainWindow::on_actionNew_triggered()
   m_color_active = 0;
   m_color_result_active = 0;
 
+  m_linear_input -> mOngoingPieceGI -> setPen(sPens[0]);
+  m_linear_input -> mLinearGI -> setPen(sPens[0]);
+  m_linear_input -> mHandleGI -> setPen(sPens[0]);
+
   color_comp = 111;
   color_int = 111;
   color_union = 111;
@@ -4159,7 +4166,7 @@ void MainWindow::on_actionNew_triggered()
   m_clear_aqua = false;
 
   drawBlue -> setChecked(true);
-  showResBlue -> setChecked(true);
+  showResBlue -> setChecked(false);
 
   showBlue->setChecked(true);
   showRed->setChecked(true);
@@ -4170,7 +4177,7 @@ void MainWindow::on_actionNew_triggered()
   showMagenta->setChecked(true);
   showAqua->setChecked(true);
 
-  showBlueComp->setChecked(false);
+  showBlueComp->setChecked(true);
   showRedComp->setChecked(false);
   showBlackComp->setChecked(false);
   showBrownComp->setChecked(false);
@@ -4178,55 +4185,55 @@ void MainWindow::on_actionNew_triggered()
   showMagentaComp->setChecked(false);
   showAquaComp->setChecked(false);
 
-  showBlueInt->setChecked(false);
-  showRedInt->setChecked(false);
+  showBlueInt->setChecked(true);
+  showRedInt->setChecked(true);
   showBlackInt->setChecked(false);
   showBrownInt->setChecked(false);
   showYellowInt->setChecked(false);
   showMagentaInt->setChecked(false);
   showAquaInt->setChecked(false);
 
-  showBlueUnion->setChecked(false);
-  showRedUnion->setChecked(false);
+  showBlueUnion->setChecked(true);
+  showRedUnion->setChecked(true);
   showBlackUnion->setChecked(false);
   showBrownUnion->setChecked(false);
   showYellowUnion->setChecked(false);
   showMagentaUnion->setChecked(false);
   showAquaUnion->setChecked(false);
 
-  showRedDiff->setChecked(false);
+  showRedDiff->setChecked(true);
   showBlackDiff->setChecked(false);
   showBrownDiff->setChecked(false);
   showYellowDiff->setChecked(false);
   showMagentaDiff->setChecked(false);
   showAquaDiff->setChecked(false);
-  showBlueDiff->setChecked(false);
+  showBlueDiff->setChecked(true);
 
-  showBlueSym_Diff->setChecked(false);
-  showRedSym_Diff->setChecked(false);
+  showBlueSym_Diff->setChecked(true);
+  showRedSym_Diff->setChecked(true);
   showBlackSym_Diff->setChecked(false);
   showBrownSym_Diff->setChecked(false);
   showYellowSym_Diff->setChecked(false);
   showMagentaSym_Diff->setChecked(false);
   showAquaSym_Diff->setChecked(false);
 
-  showRedMink_Sum->setChecked(false);
+  showRedMink_Sum->setChecked(true);
   showBlackMink_Sum->setChecked(false);
   showBrownMink_Sum->setChecked(false);
   showYellowMink_Sum->setChecked(false);
   showMagentaMink_Sum->setChecked(false);
   showAquaMink_Sum->setChecked(false);
-  showBlueMink_Sum->setChecked(false);
+  showBlueMink_Sum->setChecked(true);
 
-  m_visible_black = false;
-  showBlack ->setVisible(false);
-  drawBlack -> setVisible(false);
-  showBlackComp -> setVisible(false);
-  showBlackDiff -> setVisible(false);
-  showBlackUnion -> setVisible(false);
-  showBlackInt -> setVisible(false);
-  showBlackSym_Diff -> setVisible(false);
-  showBlackMink_Sum -> setVisible(false);
+  m_visible_black = true;
+  showBlack ->setVisible(true);
+  drawBlack -> setVisible(true);
+  showBlackComp -> setVisible(true);
+  showBlackDiff -> setVisible(true);
+  showBlackUnion -> setVisible(true);
+  showBlackInt -> setVisible(true);
+  showBlackSym_Diff -> setVisible(true);
+  showBlackMink_Sum -> setVisible(true);
   
 
   
@@ -4274,19 +4281,19 @@ void MainWindow::on_actionNew_triggered()
   showAquaMink_Sum -> setVisible(false);
 
   showResRed -> setChecked(false);
-  showResBlack -> setChecked(false);
+  showResBlack -> setChecked(true);
   showResBrown -> setChecked(false);
   showResYellow -> setChecked(false);
   showResMagenta -> setChecked(false);
   showResAqua -> setChecked(false);
 
-  showResBlack -> setVisible(false);
+  showResBlack -> setVisible(true);
   showResBrown -> setVisible(false);
   showResYellow -> setVisible(false);
   showResMagenta -> setVisible(false);
   showResAqua -> setVisible(false);
 
-  clearBlackRes -> setVisible(false);
+  clearBlackRes -> setVisible(true);
   clearBrownRes -> setVisible(false);
   clearYellowRes -> setVisible(false);
   clearMagentaRes -> setVisible(false);
@@ -4358,16 +4365,16 @@ void MainWindow::on_actionNew_triggered()
   line8 -> setVisible(false);
   line9 -> setVisible(false);
   line10 -> setVisible(false);
-  line11 -> setVisible(false);
+  line11 -> setVisible(true);
 
-		line1 -> setGeometry(QRect(111,0,7,95));
-	  	line2 -> setGeometry(QRect(155,0,7,95));
-	  	line3 -> setGeometry(QRect(200,0,7,95));
-	  	line4 -> setGeometry(QRect(245,0,7,95));
-	  	line5 -> setGeometry(QRect(290,0,7,95));
-	  	line6 -> setGeometry(QRect(335,0,7,95));
-  		line06 -> setGeometry(QRect(380,0,7,95));
-  		line006 -> setGeometry(QRect(440,0,7,95));
+		line1 -> setGeometry(QRect(111,0,7,125));
+	  	line2 -> setGeometry(QRect(155,0,7,125));
+	  	line3 -> setGeometry(QRect(200,0,7,125));
+	  	line4 -> setGeometry(QRect(245,0,7,125));
+	  	line5 -> setGeometry(QRect(290,0,7,125));
+	  	line6 -> setGeometry(QRect(335,0,7,125));
+  		line06 -> setGeometry(QRect(380,0,7,125));
+  		line006 -> setGeometry(QRect(440,0,7,125));
 
   		/*line07 -> setGeometry(QRect(0,125,640,7));
   		line08 -> setGeometry(QRect(0,155,640,7));
@@ -4422,7 +4429,6 @@ void MainWindow::on_actionNew_triggered()
   		showSymDiffResultMink_Sum->setGeometry(QRect(350,220,101,22));*/
 
   zoomToFit();
-
   modelChanged();
 }
 
@@ -4689,13 +4695,170 @@ void MainWindow::on_actionDeleteResult_triggered()
     if (lDone) modelChanged();
 }
 
-void MainWindow::on_drawBlue_toggled(bool /* a_check */) { m_color_active = 0; }
-void MainWindow::on_drawRed_toggled(bool /* a_check */) { m_color_active = 1; }
-void MainWindow::on_drawBlack_toggled(bool /* a_check */) { m_color_active = 2; }
-void MainWindow::on_drawBrown_toggled(bool /* a_check */) { m_color_active = 3; }
-void MainWindow::on_drawYellow_toggled(bool /* a_check */) { m_color_active = 4; }
-void MainWindow::on_drawMagenta_toggled(bool /* a_check */) { m_color_active = 5; }
-void MainWindow::on_drawAqua_toggled(bool /* a_check */) { m_color_active = 6; }
+void MainWindow::on_drawBlue_toggled(bool /* a_check */) 
+{ 
+	m_color_active = 0; 
+	if(blue_set().is_linear())
+	{
+		m_linear_input -> mOngoingPieceGI -> setPen(sPens[0]);
+		m_linear_input -> mLinearGI -> setPen(sPens[0]);
+		m_linear_input -> mHandleGI -> setPen(sPens[0]);
+	}
+	else if (blue_set().is_circular())
+	{
+		m_circular_input -> mOngoingPieceGI -> setPen(sPens[0]);
+		m_circular_input -> mCircularGI -> setPen(sPens[0]);
+		m_circular_input -> mHandleGI -> setPen(sPens[0]);
+	}
+	else
+	{
+		m_bezier_input -> mOngoingPieceGI -> setPen(sPens[0]);
+		m_bezier_input -> mBezierGI -> setPen(sPens[0]);
+		m_bezier_input -> mHandle0GI -> setPen(sPens[0]);
+		m_bezier_input -> mHandle1GI -> setPen(sPens[0]);
+	}
+}
+void MainWindow::on_drawRed_toggled(bool /* a_check */) 
+{ 
+	m_color_active = 1; 
+
+	if(red_set().is_linear())
+	{
+		m_linear_input -> mOngoingPieceGI -> setPen(sPens[1]);
+		m_linear_input -> mLinearGI -> setPen(sPens[1]);
+		m_linear_input -> mHandleGI -> setPen(sPens[1]);
+	}
+	else if (red_set().is_circular())
+	{
+		m_circular_input -> mOngoingPieceGI -> setPen(sPens[1]);
+		m_circular_input -> mCircularGI -> setPen(sPens[1]);
+		m_circular_input -> mHandleGI -> setPen(sPens[1]);
+	}
+	else
+	{
+		m_bezier_input -> mOngoingPieceGI -> setPen(sPens[1]);
+		m_bezier_input -> mBezierGI -> setPen(sPens[1]);
+		m_bezier_input -> mHandle0GI -> setPen(sPens[1]);
+		m_bezier_input -> mHandle1GI -> setPen(sPens[1]);
+	}
+}
+void MainWindow::on_drawBlack_toggled(bool /* a_check */) 
+{
+	m_color_active = 2;
+
+	if(black_set().is_linear())
+	{
+		m_linear_input -> mOngoingPieceGI -> setPen(sPens[2]);
+		m_linear_input -> mLinearGI -> setPen(sPens[2]);
+		m_linear_input -> mHandleGI -> setPen(sPens[2]);
+	}
+	else if (black_set().is_circular())
+	{
+		m_circular_input -> mOngoingPieceGI -> setPen(sPens[2]);
+		m_circular_input -> mCircularGI -> setPen(sPens[2]);
+		m_circular_input -> mHandleGI -> setPen(sPens[2]);
+	}
+	else
+	{
+		m_bezier_input -> mOngoingPieceGI -> setPen(sPens[2]);
+		m_bezier_input -> mBezierGI -> setPen(sPens[2]);
+		m_bezier_input -> mHandle0GI -> setPen(sPens[2]);
+		m_bezier_input -> mHandle1GI -> setPen(sPens[2]);
+	} 
+}
+void MainWindow::on_drawBrown_toggled(bool /* a_check */) 
+{ 
+	m_color_active = 3; 
+	if(brown_set().is_linear())
+	{
+		m_linear_input -> mOngoingPieceGI -> setPen(sPens[3]);
+		m_linear_input -> mLinearGI -> setPen(sPens[3]);
+		m_linear_input -> mHandleGI -> setPen(sPens[3]);
+	}
+	else if (brown_set().is_circular())
+	{
+		m_circular_input -> mOngoingPieceGI -> setPen(sPens[3]);
+		m_circular_input -> mCircularGI -> setPen(sPens[3]);
+		m_circular_input -> mHandleGI -> setPen(sPens[3]);
+	}
+	else
+	{
+		m_bezier_input -> mOngoingPieceGI -> setPen(sPens[3]);
+		m_bezier_input -> mBezierGI -> setPen(sPens[3]);
+		m_bezier_input -> mHandle0GI -> setPen(sPens[3]);
+		m_bezier_input -> mHandle1GI -> setPen(sPens[3]);
+	}
+}
+void MainWindow::on_drawYellow_toggled(bool /* a_check */) 
+{ 
+	m_color_active = 4; 
+	if(yellow_set().is_linear())
+	{
+		m_linear_input -> mOngoingPieceGI -> setPen(sPens[4]);
+		m_linear_input -> mLinearGI -> setPen(sPens[4]);
+		m_linear_input -> mHandleGI -> setPen(sPens[4]);
+	}
+	else if (yellow_set().is_circular())
+	{
+		m_circular_input -> mOngoingPieceGI -> setPen(sPens[4]);
+		m_circular_input -> mCircularGI -> setPen(sPens[4]);
+		m_circular_input -> mHandleGI -> setPen(sPens[4]);
+	}
+	else
+	{
+		m_bezier_input -> mOngoingPieceGI -> setPen(sPens[4]);
+		m_bezier_input -> mBezierGI -> setPen(sPens[4]);
+		m_bezier_input -> mHandle0GI -> setPen(sPens[4]);
+		m_bezier_input -> mHandle1GI -> setPen(sPens[4]);
+	}
+}
+void MainWindow::on_drawMagenta_toggled(bool /* a_check */) 
+{ 
+	m_color_active = 5; 
+	if(magenta_set().is_linear())
+	{
+		m_linear_input -> mOngoingPieceGI -> setPen(sPens[5]);
+		m_linear_input -> mLinearGI -> setPen(sPens[5]);
+		m_linear_input -> mHandleGI -> setPen(sPens[5]);
+	}
+	else if (magenta_set().is_circular())
+	{
+		m_circular_input -> mOngoingPieceGI -> setPen(sPens[5]);
+		m_circular_input -> mCircularGI -> setPen(sPens[5]);
+		m_circular_input -> mHandleGI -> setPen(sPens[5]);
+	}
+	else
+	{
+		m_bezier_input -> mOngoingPieceGI -> setPen(sPens[5]);
+		m_bezier_input -> mBezierGI -> setPen(sPens[5]);
+		m_bezier_input -> mHandle0GI -> setPen(sPens[5]);
+		m_bezier_input -> mHandle1GI -> setPen(sPens[5]);
+	}
+}
+void MainWindow::on_drawAqua_toggled(bool /* a_check */) 
+{ 
+	m_color_active = 6; 
+
+	if(aqua_set().is_linear())
+	{
+		m_linear_input -> mOngoingPieceGI -> setPen(sPens[6]);
+		m_linear_input -> mLinearGI -> setPen(sPens[6]);
+		m_linear_input -> mHandleGI -> setPen(sPens[6]);
+	}
+	else if (aqua_set().is_circular())
+	{
+		m_circular_input -> mOngoingPieceGI -> setPen(sPens[6]);
+		m_circular_input -> mCircularGI -> setPen(sPens[6]);
+		m_circular_input -> mHandleGI -> setPen(sPens[6]);
+	}
+	else
+	{
+		m_bezier_input -> mOngoingPieceGI -> setPen(sPens[6]);
+		m_bezier_input -> mBezierGI -> setPen(sPens[6]);
+		m_bezier_input -> mHandle0GI -> setPen(sPens[6]);
+		m_bezier_input -> mHandle1GI -> setPen(sPens[6]);
+	}
+}
 //void MainWindow::on_blueMinkPol_toggled(bool /* a_check */) { m_color_active_mink = 1; }
 //void MainWindow::on_redMinkPol_toggled(bool /* a_check */) { m_color_active_mink = 2; }
 
@@ -5575,8 +5738,14 @@ void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
 	  	m_scene.installEventFilter(m_circular_input);
       on_actionDeleteResult_triggered();
       	actionMinkowski_Sum -> setVisible(false);
+
+		m_circular_input -> mOngoingPieceGI -> setPen(sPens[m_color_active]);
+		m_circular_input -> mCircularGI -> setPen(sPens[m_color_active]);
+		m_circular_input -> mHandleGI -> setPen(sPens[m_color_active]);
 	  }
+	
 	}
+	
 }
 
 void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
@@ -5593,6 +5762,11 @@ void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
 	  	m_scene.installEventFilter(m_bezier_input);
       on_actionDeleteResult_triggered();
       	actionMinkowski_Sum -> setVisible(false);
+
+      	m_bezier_input -> mOngoingPieceGI -> setPen(sPens[m_color_active]);
+		m_bezier_input -> mBezierGI -> setPen(sPens[m_color_active]);
+		m_bezier_input -> mHandle0GI -> setPen(sPens[m_color_active]);
+		m_bezier_input -> mHandle1GI -> setPen(sPens[m_color_active]);
 	  }
 	}
 }
@@ -7249,11 +7423,11 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 	QPen pen;
 	switch(m_color_result_active)
 	{
-		case 0: brush.setColor(QColor(0,0,255,200)); pen.setColor((QColor(0,0,255,200))); break; //blue
+		case 0: brush.setColor(QColor(255,0,0,200)); pen.setColor((QColor(255,0,0,200))); break; //blue
 
-		case 1: brush.setColor(QColor(255,0,0,200)); pen.setColor((QColor(255,0,0,200))); break; //red
+		case 1: brush.setColor(QColor(0,255,0,200)); pen.setColor((QColor(0,255,0,200))); break; //red
 
-		case 2: brush.setColor(QColor(0,0,0,200)); pen.setColor((QColor(0,0,0,200))); break;	//black
+		case 2: brush.setColor(QColor(0,0,255,200)); pen.setColor((QColor(0,0,255,200))); break;	//black
 
 		case 3: brush.setColor(QColor(210,105,30,200)); pen.setColor((QColor(210,105,30,200))); break; //brown
 
