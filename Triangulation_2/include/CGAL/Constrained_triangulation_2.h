@@ -928,7 +928,7 @@ intersect(Face_handle f, int i,
   "would avoid cascading intersection computation\n"
   " and be much more efficient\n"
   "This message is shown only if CGAL_NO_CDT_2_WARNING"
-  "is not defined.\n");
+  " is not defined.\n");
 #endif
   const Point& pa = vaa->point();
   const Point& pb = vbb->point();
