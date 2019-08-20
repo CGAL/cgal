@@ -798,11 +798,26 @@ private:
   size_t color_union;
   size_t color_diff;
   size_t color_sym_diff;
+  size_t color_mink;
 
   Polygon_with_holes_2 mink_sum_res;
   bool minkowksi_sum_operated;
 
-  QGraphicsPathItem* pathItem;
+  QGraphicsPathItem* pathItem0;
+  QGraphicsPathItem* pathItem1;
+  QGraphicsPathItem* pathItem2;
+  QGraphicsPathItem* pathItem3;
+  QGraphicsPathItem* pathItem4;
+  QGraphicsPathItem* pathItem5;
+  QGraphicsPathItem* pathItem6;
+
+  bool pathItem0_exists;
+  bool pathItem1_exists;
+  bool pathItem2_exists;
+  bool pathItem3_exists;
+  bool pathItem4_exists;
+  bool pathItem5_exists;
+  bool pathItem6_exists;
 
   Polygon_2 p0,p1,p2,p3,p4,p5,p6;
 
@@ -915,6 +930,15 @@ public slots:
   void on_showYellow_toggled   (bool a_check);
   void on_showMagenta_toggled   (bool a_check);
   void on_showAqua_toggled   (bool a_check);
+
+
+  void on_outputVisibleBlue_toggled  (bool a_check);
+  void on_outputVisibleRed_toggled   (bool a_check);
+  void on_outputVisibleBlack_toggled   (bool a_check);
+  void on_outputVisibleBrown_toggled   (bool a_check);
+  void on_outputVisibleYellow_toggled   (bool a_check);
+  void on_outputVisibleMagenta_toggled   (bool a_check);
+  void on_outputVisibleAqua_toggled   (bool a_check);
 
   void on_showBlueComp_toggled(bool aCheck);
   void on_showRedComp_toggled(bool aCheck);
@@ -1462,7 +1486,15 @@ MainWindow::MainWindow() :
   color_int(111), //default
   color_union(111), //default
   color_diff(111), //default
-  color_sym_diff(111) //default
+  color_sym_diff(111), //default
+  color_mink(111),
+  pathItem0_exists(false),
+  pathItem1_exists(false),
+  pathItem2_exists(false),
+  pathItem3_exists(false),
+  pathItem4_exists(false),
+  pathItem5_exists(false),
+  pathItem6_exists(false)
   //radiusOffIn->setValidator(new QDoubleValidator(0.0, 100.0, 2,this)); 
 
   // setting color rows to setVisible-> False 
@@ -1644,6 +1676,22 @@ MainWindow::MainWindow() :
                    SLOT(on_showConsole_toggled(bool)));
   QObject::connect(showInfo, SIGNAL(toggled(bool)), this,
                    SLOT(on_showInfo_toggled(bool))); 
+
+
+  QObject::connect(visibleBlueRes, SIGNAL(toggled(bool)), this,
+                   SLOT(on_outputVisibleBlue_toggled(bool)));
+  QObject::connect(visibleRedRes, SIGNAL(toggled(bool)), this,
+                   SLOT(on_outputVisibleRed_toggled(bool)));
+  QObject::connect(visibleBlackRes, SIGNAL(toggled(bool)), this,
+                   SLOT(on_outputVisibleBlack_toggled(bool)));
+  QObject::connect(visibleBrownRes, SIGNAL(toggled(bool)), this,
+                   SLOT(on_outputVisibleBrown_toggled(bool)));
+  QObject::connect(visibleYellowRes, SIGNAL(toggled(bool)), this,
+                   SLOT(on_outputVisibleYellow_toggled(bool)));
+  QObject::connect(visibleMagentaRes, SIGNAL(toggled(bool)), this,
+                   SLOT(on_outputVisibleMagenta_toggled(bool)));
+  QObject::connect(visibleAquaRes, SIGNAL(toggled(bool)), this,
+                   SLOT(on_outputVisibleAqua_toggled(bool)));
 
 
   //for the colour buckets
@@ -1876,6 +1924,99 @@ void MainWindow::on_showMagenta_toggled(bool a_check)
 
 void MainWindow::on_showAqua_toggled(bool a_check)
 { ToogleView(AQUA_GROUP, a_check); }
+
+
+
+void MainWindow::on_outputVisibleBlue_toggled(bool a_check)
+{ 
+	ToogleView(BLUE_RESGROUP, a_check); 
+	if(!a_check)
+	{
+		if (pathItem0_exists) m_scene.removeItem(pathItem0);
+	}
+	else
+	{
+		if (pathItem0_exists) m_scene.addItem(pathItem0);
+	}
+}
+
+void MainWindow::on_outputVisibleRed_toggled(bool a_check)
+{ 
+	ToogleView(RED_RESGROUP, a_check);
+	if(!a_check)
+	{
+		if (pathItem1_exists) m_scene.removeItem(pathItem1);
+	} 
+	else
+	{
+		if (pathItem1_exists) m_scene.addItem(pathItem1);
+	}
+}
+
+void MainWindow::on_outputVisibleBlack_toggled(bool a_check)
+{ 
+	ToogleView(BLACK_RESGROUP, a_check); 
+	if(!a_check)
+	{
+		if (pathItem2_exists) m_scene.removeItem(pathItem2);
+	}
+	else
+	{
+		if (pathItem2_exists) m_scene.addItem(pathItem2);
+	}
+}
+
+void MainWindow::on_outputVisibleBrown_toggled(bool a_check)
+{ 
+	ToogleView(BROWN_RESGROUP, a_check); 
+	if(!a_check)
+	{
+		if (pathItem3_exists) m_scene.removeItem(pathItem3);
+	}
+	else
+	{
+		if (pathItem3_exists) m_scene.addItem(pathItem3);
+	}
+}
+
+void MainWindow::on_outputVisibleYellow_toggled(bool a_check)
+{ 
+	ToogleView(YELLOW_RESGROUP, a_check); 
+	if(!a_check)
+	{
+		if (pathItem4_exists) m_scene.removeItem(pathItem4);
+	}
+	else
+	{
+		if (pathItem4_exists) m_scene.addItem(pathItem4);
+	}
+}
+
+void MainWindow::on_outputVisibleMagenta_toggled(bool a_check)
+{ 
+	ToogleView(MAGENTA_RESGROUP, a_check); 
+	if(!a_check)
+	{
+		if (pathItem5_exists) m_scene.removeItem(pathItem5);
+	}
+	else
+	{
+		if (pathItem5_exists) m_scene.addItem(pathItem5);
+	}
+}
+
+void MainWindow::on_outputVisibleAqua_toggled(bool a_check)
+{ 
+	ToogleView(AQUA_RESGROUP, a_check); 
+	if(!a_check)
+	{
+		if (pathItem6_exists) m_scene.removeItem(pathItem6);
+	}
+	else
+	{
+		if (pathItem6_exists) m_scene.addItem(pathItem6);
+	}
+}
 
 
 void MainWindow::on_showColorBucket_toggled(bool a_check)
@@ -3160,6 +3301,11 @@ void MainWindow::on_actionAddColor_triggered()
   		line6 -> setGeometry(QRect(335,0,7,155));
   		line06 -> setGeometry(QRect(380,0,7,155));
   		line006 -> setGeometry(QRect(440,0,7,155));
+  		line0006 -> setGeometry(QRect(485,0,7,155));
+
+  		actionMinusColor -> setVisible(true);
+
+  		visibleBrownRes -> setVisible(true);
 
   		/*line07 -> setGeometry(QRect(0,185,640,7));
   		line08 -> setGeometry(QRect(0,215,640,7));
@@ -3242,6 +3388,9 @@ void MainWindow::on_actionAddColor_triggered()
   		line6 -> setGeometry(QRect(335,0,7,185));
   		line06 -> setGeometry(QRect(380,0,7,185));
   		line006 -> setGeometry(QRect(440,0,7,185));
+  		line0006 -> setGeometry(QRect(485,0,7,185));
+
+  		visibleYellowRes -> setVisible(true);
 
   		/*line07 -> setGeometry(QRect(0,215,640,7));
   		line08 -> setGeometry(QRect(0,245,640,7));
@@ -3325,6 +3474,9 @@ void MainWindow::on_actionAddColor_triggered()
   		line6 -> setGeometry(QRect(335,0,7,215));
   		line06 -> setGeometry(QRect(380,0,7,215));
   		line006 -> setGeometry(QRect(440,0,7,215));
+  		line0006 -> setGeometry(QRect(485,0,7,215));
+
+  		visibleMagentaRes -> setVisible(true);
 
   		/*line07 -> setGeometry(QRect(0,245,640,7));
   		line08 -> setGeometry(QRect(0,275,640,7));
@@ -3406,6 +3558,11 @@ void MainWindow::on_actionAddColor_triggered()
   		line6 -> setGeometry(QRect(335,0,7,245));
   		line06 -> setGeometry(QRect(380,0,7,245));
   		line006 -> setGeometry(QRect(440,0,7,245));
+  		line0006 -> setGeometry(QRect(485,0,7,245));
+
+
+  		visibleAquaRes -> setVisible(true);
+
 
   		/*line07 -> setGeometry(QRect(0,280,640,7));
   		line08 -> setGeometry(QRect(0,310,640,7));
@@ -3603,6 +3760,8 @@ void MainWindow::on_actionMinusColor_triggered()
 		showBrownInt -> setVisible(false);
 		showBrownSym_Diff -> setVisible(false);
 		showBrownMink_Sum -> setVisible(false);
+
+  		visibleBrownRes -> setVisible(false);
 		
 
 		drawBlue -> setChecked(true);
@@ -3618,6 +3777,7 @@ void MainWindow::on_actionMinusColor_triggered()
   		line6 -> setGeometry(QRect(335,0,7,125));
   		line06 -> setGeometry(QRect(380,0,7,125));
   		line006 -> setGeometry(QRect(440,0,7,125));
+  		line0006 -> setGeometry(QRect(485,0,7,125));
 
   		/*line07 -> setGeometry(QRect(0,155,640,7));
   		line08 -> setGeometry(QRect(0,185,640,7));
@@ -3678,6 +3838,8 @@ void MainWindow::on_actionMinusColor_triggered()
   		brown_res_set().clear();
 	  	clearBrownRes -> setVisible(false);
 
+  		actionMinusColor -> setVisible(false);
+
 	  	//modelChanged();
 
 	 }
@@ -3710,6 +3872,8 @@ void MainWindow::on_actionMinusColor_triggered()
 
 		drawBlue -> setChecked(true);
 
+  		visibleYellowRes -> setVisible(false);
+
 
 		line9 -> setVisible(false);
 
@@ -3721,6 +3885,7 @@ void MainWindow::on_actionMinusColor_triggered()
   		line6 -> setGeometry(QRect(335,0,7,155));
   		line06 -> setGeometry(QRect(380,0,7,155));
   		line006 -> setGeometry(QRect(440,0,7,155));
+  		line0006 -> setGeometry(QRect(485,0,7,155));
 
   		/*line07 -> setGeometry(QRect(0,185,640,7));
   		line08 -> setGeometry(QRect(0,215,640,7));
@@ -3811,6 +3976,8 @@ void MainWindow::on_actionMinusColor_triggered()
 
 		drawBlue -> setChecked(true);
 
+  		visibleMagentaRes -> setVisible(false);
+
 		line8 -> setVisible(false);
 
 		line1 -> setGeometry(QRect(111,0,7,185));
@@ -3821,6 +3988,7 @@ void MainWindow::on_actionMinusColor_triggered()
   		line6 -> setGeometry(QRect(335,0,7,185));
   		line06 -> setGeometry(QRect(380,0,7,185));
   		line006 -> setGeometry(QRect(440,0,7,185));
+  		line0006 -> setGeometry(QRect(485,0,7,185));
 
   		/*line07 -> setGeometry(QRect(0,215,640,7));
   		line08 -> setGeometry(QRect(0,245,640,7));
@@ -3913,6 +4081,8 @@ void MainWindow::on_actionMinusColor_triggered()
 		showAquaSym_Diff -> setVisible(false);
 		showAquaMink_Sum -> setVisible(false);
 
+  		visibleAquaRes -> setVisible(false);
+
 		drawBlue -> setChecked(true);
 
 		line7 -> setVisible(false);
@@ -3925,6 +4095,7 @@ void MainWindow::on_actionMinusColor_triggered()
   		line6 -> setGeometry(QRect(335,0,7,215));
   		line06 -> setGeometry(QRect(380,0,7,215));
   		line006 -> setGeometry(QRect(440,0,7,215));
+  		line0006 -> setGeometry(QRect(485,0,7,215));
 
   		/*line07 -> setGeometry(QRect(0,245,640,7));
   		line08 -> setGeometry(QRect(0,275,640,7));
@@ -3997,10 +4168,13 @@ void MainWindow::on_actionNew_triggered()
   for( Curve_set_iterator si = m_curve_sets.begin(); si != m_curve_sets.end() ; ++ si )
     si->clear();
   
-  if(minkowksi_sum_operated) 
-    {m_scene.removeItem(pathItem);
-
-  minkowksi_sum_operated = false;}
+  if (pathItem0_exists) m_scene.removeItem(pathItem0);
+  if (pathItem1_exists) m_scene.removeItem(pathItem1);
+  if (pathItem2_exists) m_scene.removeItem(pathItem2);
+  if (pathItem3_exists) m_scene.removeItem(pathItem3);
+  if (pathItem4_exists) m_scene.removeItem(pathItem4);
+  if (pathItem5_exists) m_scene.removeItem(pathItem5);
+  if (pathItem6_exists) m_scene.removeItem(pathItem6);
 
   blue_circular_sources().clear();
   red_circular_sources().clear();
@@ -4065,6 +4239,8 @@ void MainWindow::on_actionNew_triggered()
 
   actionDelete->setVisible(true);
   actionClearResult -> setVisible(true);
+
+  actionMinusColor -> setVisible(false);
   
   m_circular_active = false ;
   m_bezier_active = false;
@@ -4087,6 +4263,7 @@ void MainWindow::on_actionNew_triggered()
   color_union = 111;
   color_diff = 111;
   color_sym_diff = 111;
+  color_mink = 111;
 
   sceneDockWidget -> setVisible(true);
   consoleDockWidget -> setVisible(true);
@@ -4185,45 +4362,59 @@ void MainWindow::on_actionNew_triggered()
   showMagentaComp->setChecked(false);
   showAquaComp->setChecked(false);
 
-  showBlueInt->setChecked(true);
-  showRedInt->setChecked(true);
   showBlackInt->setChecked(false);
   showBrownInt->setChecked(false);
   showYellowInt->setChecked(false);
   showMagentaInt->setChecked(false);
   showAquaInt->setChecked(false);
+  showBlueInt->setChecked(true);
+  showRedInt->setChecked(true);
 
-  showBlueUnion->setChecked(true);
-  showRedUnion->setChecked(true);
   showBlackUnion->setChecked(false);
   showBrownUnion->setChecked(false);
   showYellowUnion->setChecked(false);
   showMagentaUnion->setChecked(false);
   showAquaUnion->setChecked(false);
+  showBlueUnion->setChecked(true);
+  showRedUnion->setChecked(true);
 
-  showRedDiff->setChecked(true);
   showBlackDiff->setChecked(false);
   showBrownDiff->setChecked(false);
   showYellowDiff->setChecked(false);
   showMagentaDiff->setChecked(false);
   showAquaDiff->setChecked(false);
   showBlueDiff->setChecked(true);
+  showRedDiff->setChecked(true);
 
-  showBlueSym_Diff->setChecked(true);
-  showRedSym_Diff->setChecked(true);
   showBlackSym_Diff->setChecked(false);
   showBrownSym_Diff->setChecked(false);
   showYellowSym_Diff->setChecked(false);
   showMagentaSym_Diff->setChecked(false);
   showAquaSym_Diff->setChecked(false);
+  showBlueSym_Diff->setChecked(true);
+  showRedSym_Diff->setChecked(true);
 
-  showRedMink_Sum->setChecked(true);
+
   showBlackMink_Sum->setChecked(false);
   showBrownMink_Sum->setChecked(false);
   showYellowMink_Sum->setChecked(false);
   showMagentaMink_Sum->setChecked(false);
   showAquaMink_Sum->setChecked(false);
   showBlueMink_Sum->setChecked(true);
+  showRedMink_Sum->setChecked(true);
+
+  visibleBrownRes -> setVisible(false);
+  visibleYellowRes -> setVisible(false);
+  visibleMagentaRes -> setVisible(false);
+  visibleAquaRes -> setVisible(false);
+
+  visibleBlueRes -> setChecked(true);
+  visibleRedRes -> setChecked(true);
+  visibleBlackRes -> setChecked(true);
+  visibleBrownRes -> setChecked(true);
+  visibleYellowRes -> setChecked(true);
+  visibleMagentaRes -> setChecked(true);
+  visibleAquaRes -> setChecked(true);
 
   m_visible_black = true;
   showBlack ->setVisible(true);
@@ -4375,6 +4566,7 @@ void MainWindow::on_actionNew_triggered()
 	  	line6 -> setGeometry(QRect(335,0,7,125));
   		line06 -> setGeometry(QRect(380,0,7,125));
   		line006 -> setGeometry(QRect(440,0,7,125));
+  		line0006 -> setGeometry(QRect(485,0,7,125));
 
   		/*line07 -> setGeometry(QRect(0,125,640,7));
   		line08 -> setGeometry(QRect(0,155,640,7));
@@ -4579,6 +4771,10 @@ void MainWindow::on_actionClearResult_triggered()
   	if(m_clear_blue)
     { 
       blue_res_set().clear();blue_res_linear_sources().clear();blue_res_circular_sources().clear();blue_res_bezier_sources().clear();
+
+
+  	  if (pathItem0_exists) m_scene.removeItem(pathItem0);
+
       if(color_comp == 0) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 0) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 0) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4588,6 +4784,10 @@ void MainWindow::on_actionClearResult_triggered()
   	if(m_clear_red)
     {
       red_res_set().clear();red_res_linear_sources().clear();red_res_circular_sources().clear();red_res_bezier_sources().clear();
+
+
+  	  if (pathItem1_exists) m_scene.removeItem(pathItem1);
+
       if(color_comp == 1) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 1) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 1) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4597,6 +4797,10 @@ void MainWindow::on_actionClearResult_triggered()
   	if(m_clear_black)
       { 
         black_res_set().clear();black_res_linear_sources().clear();black_res_circular_sources().clear();black_res_bezier_sources().clear();
+
+
+  	  if (pathItem2_exists) m_scene.removeItem(pathItem2);
+  	  
       if(color_comp == 2) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 2) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 2) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4606,6 +4810,10 @@ void MainWindow::on_actionClearResult_triggered()
   	if(m_clear_brown)
       { 
         brown_res_set().clear();brown_res_linear_sources().clear();brown_res_circular_sources().clear();brown_res_bezier_sources().clear();
+
+
+  	  if (pathItem3_exists) m_scene.removeItem(pathItem3);
+  	  
       if(color_comp == 3) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 3) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 3) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4615,6 +4823,10 @@ void MainWindow::on_actionClearResult_triggered()
   	if(m_clear_yellow)
       { 
         yellow_res_set().clear();yellow_res_linear_sources().clear();yellow_res_circular_sources().clear();yellow_res_bezier_sources().clear();
+
+
+  	  if (pathItem4_exists) m_scene.removeItem(pathItem4);
+  	  
       if(color_comp == 4) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 4) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 4) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4624,6 +4836,10 @@ void MainWindow::on_actionClearResult_triggered()
   	if(m_clear_magenta)
       { 
         magenta_res_set().clear();magenta_res_linear_sources().clear();magenta_res_circular_sources().clear();magenta_res_bezier_sources().clear();
+
+
+  	  if (pathItem5_exists) m_scene.removeItem(pathItem5);
+  	  
       if(color_comp == 5) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 5) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 5) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4633,6 +4849,10 @@ void MainWindow::on_actionClearResult_triggered()
   	if(m_clear_aqua)
       { 
         aqua_res_set().clear();aqua_res_linear_sources().clear();aqua_res_circular_sources().clear();aqua_res_bezier_sources().clear();
+
+
+  	  if (pathItem6_exists) m_scene.removeItem(pathItem6);
+  	  
       if(color_comp == 6) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
       if(color_int == 6) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
       if(color_union == 6) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
@@ -4659,11 +4879,6 @@ void MainWindow::on_actionDeleteResult_triggered()
 
     if (true)
     {
-      if(minkowksi_sum_operated) 
-      {
-        m_scene.removeItem(pathItem);
-        minkowksi_sum_operated = false;
-      }
       //result_set().clear();
       blue_res_set().clear();
       red_res_set().clear();
@@ -4689,6 +4904,14 @@ void MainWindow::on_actionDeleteResult_triggered()
       ResultUnion -> setText("");
       ResultDiff -> setText("");
       ResultSym_Diff -> setText("");
+
+	  if (pathItem0_exists) m_scene.removeItem(pathItem0);
+	  if (pathItem1_exists) m_scene.removeItem(pathItem1);
+	  if (pathItem2_exists) m_scene.removeItem(pathItem2);
+	  if (pathItem3_exists) m_scene.removeItem(pathItem3);
+	  if (pathItem4_exists) m_scene.removeItem(pathItem4);
+	  if (pathItem5_exists) m_scene.removeItem(pathItem5);
+	  if (pathItem6_exists) m_scene.removeItem(pathItem6);
 
     	lDone = true;
     }
@@ -5872,6 +6095,12 @@ bool MainWindow::stop_result_operation(size_t m_color_result_active , size_t op_
         ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
         return false; 
       }
+      if(color_mink == m_color_result_active)
+      {
+      	ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+
       else return true;
       break;
 
@@ -5896,6 +6125,12 @@ bool MainWindow::stop_result_operation(size_t m_color_result_active , size_t op_
         ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
         return false; 
       }
+      if(color_mink == m_color_result_active)
+      {
+      	ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+
       else return true;
       break;
 
@@ -5920,6 +6155,12 @@ bool MainWindow::stop_result_operation(size_t m_color_result_active , size_t op_
         ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
         return false; 
       }
+      if(color_mink == m_color_result_active)
+      {
+      	ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+
       else return true;
       break;
 
@@ -5942,6 +6183,41 @@ bool MainWindow::stop_result_operation(size_t m_color_result_active , size_t op_
       if(color_sym_diff == m_color_result_active) 
       {
         ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_mink == m_color_result_active)
+      {
+      	ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+
+      else return true;
+      break;
+
+    case 4:
+      if(color_int == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_union == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_diff == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_comp == m_color_result_active) 
+      {
+        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
+      if(color_mink == m_color_result_active)
+      {
+      	ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
         return false; 
       }
       else return true;
@@ -5968,9 +6244,15 @@ bool MainWindow::stop_result_operation(size_t m_color_result_active , size_t op_
         ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
         return false; 
       }
+      if(color_sym_diff == m_color_result_active)
+      {
+      	ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
+        return false; 
+      }
       else return true;
       break;
   }
+	return true;
 }
 
 void MainWindow::on_actionComplement_triggered()
@@ -5984,11 +6266,6 @@ void MainWindow::on_actionComplement_triggered()
   actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-
-  if(minkowksi_sum_operated) 
-    {m_scene.removeItem(pathItem);
-
-  minkowksi_sum_operated = false;}
 
   if(color_comp != 111)
   {
@@ -6218,10 +6495,6 @@ void MainWindow::on_actionIntersection_triggered()
   actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-  if(minkowksi_sum_operated) 
-    {m_scene.removeItem(pathItem);
-
-  minkowksi_sum_operated = false;}
 
   if(color_int != 111)
   {
@@ -6525,12 +6798,6 @@ void MainWindow::on_actionDifference_triggered()
   //actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-
-  
-  if(minkowksi_sum_operated) 
-    {m_scene.removeItem(pathItem);
-
-  minkowksi_sum_operated = false;}
 
   size_t count = 0;
   if (showBlueDiff ->isChecked()) count++;
@@ -6911,10 +7178,7 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
   actionDifference->setChecked(false); 
   //actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-  if(minkowksi_sum_operated) 
-    {m_scene.removeItem(pathItem);
-
-  minkowksi_sum_operated = false;}
+  
 
   if(color_sym_diff != 111)
   {
@@ -7202,10 +7466,8 @@ void MainWindow::on_actionUnion_triggered()
   actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
-  if(minkowksi_sum_operated) 
-    {m_scene.removeItem(pathItem);
+  
 
-  minkowksi_sum_operated = false;}
 
 
   if(color_union != 111)
@@ -7403,6 +7665,7 @@ void MainWindow::on_actionUnion_triggered()
 }
 
 
+
 void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 {
 
@@ -7423,55 +7686,307 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 	QPen pen;
 	switch(m_color_result_active)
 	{
-		case 0: brush.setColor(QColor(255,0,0,200)); pen.setColor((QColor(255,0,0,200))); break; //blue
+			case 0: if(stop_result_operation(0,5))
+				{
+					brush.setColor(QColor(255,0,0,200)); pen.setColor((QColor(255,0,0,200)));
+					brush.setStyle(Qt::SolidPattern);
+					if (pathItem0_exists) m_scene.removeItem(pathItem0);
+					pathItem0 = m_scene.addPath(m_pathTrack,pen,brush);
+					pathItem0_exists = true;
 
-		case 1: brush.setColor(QColor(0,255,0,200)); pen.setColor((QColor(0,255,0,200))); break; //red
+					/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
 
-		case 2: brush.setColor(QColor(0,0,255,200)); pen.setColor((QColor(0,0,255,200))); break;	//black
+				    if (lTotalRect) 
+				    {
+					    this->graphicsView->setSceneRect(*lTotalRect);
+					    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
+					}
 
-		case 3: brush.setColor(QColor(210,105,30,200)); pen.setColor((QColor(210,105,30,200))); break; //brown
+					if (polygon.number_of_holes() >= 0)
+					{	
+						typename Polygon_with_holes_2::Hole_const_iterator hit;
+						for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
+						{
+				  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
+				  			 {
+				  			 	QPolygonF poly;
+						  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
+				  			 }
 
-		case 4: brush.setColor(QColor(255,255,0,200)); pen.setColor((QColor(255,255,0,200))); break; // yellow
+						    m_pathTrack.addPolygon(poly);
 
-		case 5: brush.setColor(QColor(255,0,255,200)); pen.setColor((QColor(255,0,255,200))); break;  //magenta
+							QBrush brush;
+							brush.setColor(QColor(0,0,0,150));
+							brush.setStyle(Qt::SolidPattern);
+							QPen pen(Qt::white);
+							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
+						}
+					}*/
+					zoomToFit();
+					modelChanged(); 
 
-		case 6: brush.setColor(QColor(0,255,255,200)); pen.setColor((QColor(0,255,255,200))); break;	//aqua
+				color_mink = 0;
+				}
+				break; //blue
+
+		case 1: if(stop_result_operation(1,5))
+				{
+					brush.setColor(QColor(0,255,0,200)); pen.setColor((QColor(0,255,0,200))); 
+				brush.setStyle(Qt::SolidPattern);
+  				if (pathItem1_exists) m_scene.removeItem(pathItem1);
+				pathItem1 = m_scene.addPath(m_pathTrack,pen,brush);
+				pathItem1_exists =true;
+
+				/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
+
+			    if (lTotalRect) 
+			    {
+				    this->graphicsView->setSceneRect(*lTotalRect);
+				    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
+				}
+
+				if (polygon.number_of_holes() >= 0)
+				{	
+					typename Polygon_with_holes_2::Hole_const_iterator hit;
+					for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
+					{
+			  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
+			  			 {
+			  			 	QPolygonF poly;
+					  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
+			  			 }
+
+					    m_pathTrack.addPolygon(poly);
+
+						QBrush brush;
+						brush.setColor(QColor(0,0,0,150));
+						brush.setStyle(Qt::SolidPattern);
+						QPen pen(Qt::white);
+						pathItem = m_scene.addPath(m_pathTrack,pen,brush);
+					}
+				}*/
+				zoomToFit();
+				modelChanged(); 
+				color_mink = 1;
+			}
+				break; //red
+
+			case 2:if(stop_result_operation(2,5))
+				{
+					 brush.setColor(QColor(0,0,255,200)); pen.setColor((QColor(0,0,255,200))); 
+					brush.setStyle(Qt::SolidPattern);
+	  				if (pathItem2_exists) m_scene.removeItem(pathItem2);
+					pathItem2 = m_scene.addPath(m_pathTrack,pen,brush);
+					pathItem2_exists =true;
+
+					/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
+
+				    if (lTotalRect) 
+				    {
+					    this->graphicsView->setSceneRect(*lTotalRect);
+					    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
+					}
+
+					if (polygon.number_of_holes() >= 0)
+					{	
+						typename Polygon_with_holes_2::Hole_const_iterator hit;
+						for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
+						{
+				  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
+				  			 {
+				  			 	QPolygonF poly;
+						  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
+				  			 }
+
+						    m_pathTrack.addPolygon(poly);
+
+							QBrush brush;
+							brush.setColor(QColor(0,0,0,150));
+							brush.setStyle(Qt::SolidPattern);
+							QPen pen(Qt::white);
+							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
+						}
+					}*/
+					zoomToFit();
+					modelChanged();
+					color_mink = 2;
+				}
+
+				break;	//black
+
+		case 3: if(stop_result_operation(3,5))
+				{   brush.setColor(QColor(210,105,30,200)); pen.setColor((QColor(210,105,30,200))); 
+					brush.setStyle(Qt::SolidPattern);
+	  				if (pathItem3_exists) m_scene.removeItem(pathItem3);
+					pathItem3 = m_scene.addPath(m_pathTrack,pen,brush);
+					pathItem3_exists = true;
+
+					/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
+
+				    if (lTotalRect) 
+				    {
+					    this->graphicsView->setSceneRect(*lTotalRect);
+					    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
+					}
+
+					if (polygon.number_of_holes() >= 0)
+					{	
+						typename Polygon_with_holes_2::Hole_const_iterator hit;
+						for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
+						{
+				  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
+				  			 {
+				  			 	QPolygonF poly;
+						  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
+				  			 }
+
+						    m_pathTrack.addPolygon(poly);
+
+							QBrush brush;
+							brush.setColor(QColor(0,0,0,150));
+							brush.setStyle(Qt::SolidPattern);
+							QPen pen(Qt::white);
+							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
+						}
+					}*/
+					zoomToFit();
+					modelChanged();
+					color_mink = 3;
+				}
+
+				break; //brown
+
+			case 4: if(stop_result_operation(4,5))
+				{
+					brush.setColor(QColor(255,255,0,200)); pen.setColor((QColor(255,255,0,200))); 
+
+					brush.setStyle(Qt::SolidPattern);
+	  				if (pathItem4_exists) m_scene.removeItem(pathItem4);
+					pathItem4 = m_scene.addPath(m_pathTrack,pen,brush);
+					pathItem4_exists =true;
+
+					/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
+
+				    if (lTotalRect) 
+				    {
+					    this->graphicsView->setSceneRect(*lTotalRect);
+					    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
+					}
+
+					if (polygon.number_of_holes() >= 0)
+					{	
+						typename Polygon_with_holes_2::Hole_const_iterator hit;
+						for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
+						{
+				  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
+				  			 {
+				  			 	QPolygonF poly;
+						  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
+				  			 }
+
+						    m_pathTrack.addPolygon(poly);
+
+							QBrush brush;
+							brush.setColor(QColor(0,0,0,150));
+							brush.setStyle(Qt::SolidPattern);
+							QPen pen(Qt::white);
+							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
+						}
+					}*/
+					zoomToFit();
+					modelChanged();
+					color_mink = 4;
+				}
+				break; // yellow
+
+		case 5: if(stop_result_operation(5,5))
+				{ 
+						brush.setColor(QColor(255,0,255,200)); pen.setColor((QColor(255,0,255,200))); 
+					brush.setStyle(Qt::SolidPattern);
+	  				if (pathItem5_exists) m_scene.removeItem(pathItem5);
+					pathItem5 = m_scene.addPath(m_pathTrack,pen,brush);
+					pathItem5_exists =true;
+
+					/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
+
+				    if (lTotalRect) 
+				    {
+					    this->graphicsView->setSceneRect(*lTotalRect);
+					    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
+					}
+
+					if (polygon.number_of_holes() >= 0)
+					{	
+						typename Polygon_with_holes_2::Hole_const_iterator hit;
+						for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
+						{
+				  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
+				  			 {
+				  			 	QPolygonF poly;
+						  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
+				  			 }
+
+						    m_pathTrack.addPolygon(poly);
+
+							QBrush brush;
+							brush.setColor(QColor(0,0,0,150));
+							brush.setStyle(Qt::SolidPattern);
+							QPen pen(Qt::white);
+							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
+						}
+					}*/
+					zoomToFit();
+					modelChanged();
+					color_mink = 5;
+				}
+
+				break;  //magenta
+
+		case 6: if(stop_result_operation(6,5))
+				{
+					brush.setColor(QColor(0,255,255,200)); pen.setColor((QColor(0,255,255,200))); 
+					brush.setStyle(Qt::SolidPattern);
+					if (pathItem6_exists) m_scene.removeItem(pathItem6);
+					pathItem6 = m_scene.addPath(m_pathTrack,pen,brush);
+					pathItem6_exists = true;
+
+					/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
+
+				    if (lTotalRect) 
+				    {
+					    this->graphicsView->setSceneRect(*lTotalRect);
+					    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
+					}
+
+					if (polygon.number_of_holes() >= 0)
+					{	
+						typename Polygon_with_holes_2::Hole_const_iterator hit;
+						for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
+						{
+				  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
+				  			 {
+				  			 	QPolygonF poly;
+						  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
+				  			 }
+
+						    m_pathTrack.addPolygon(poly);
+
+							QBrush brush;
+							brush.setColor(QColor(0,0,0,150));
+							brush.setStyle(Qt::SolidPattern);
+							QPen pen(Qt::white);
+							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
+						}
+					}*/
+					zoomToFit();
+					modelChanged();
+					color_mink = 6;
+				}
+				break;	//aqua
 	}
 
 
-	brush.setStyle(Qt::SolidPattern);
-	pathItem = m_scene.addPath(m_pathTrack,pen,brush);
-
-	boost::optional<QRectF> lTotalRect = poly.boundingRect();
-
-    if (lTotalRect) 
-    {
-	    this->graphicsView->setSceneRect(*lTotalRect);
-	    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
-	}
-
-	if (polygon.number_of_holes() >= 0)
-	{	
-		typename Polygon_with_holes_2::Hole_const_iterator hit;
-		for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
-		{
-  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
-  			 {
-  			 	QPolygonF poly;
-		  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
-  			 }
-
-		    m_pathTrack.addPolygon(poly);
-
-			QBrush brush;
-			brush.setColor(QColor(0,0,0,150));
-			brush.setStyle(Qt::SolidPattern);
-			QPen pen(Qt::white);
-			pathItem = m_scene.addPath(m_pathTrack,pen,brush);
-		}
-	}
-
-	modelChanged();
+	
 }
 
 
@@ -7548,11 +8063,6 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
 
 		  
 
-		  if(minkowksi_sum_operated) 
-	      { 
-	      	m_scene.removeItem(pathItem);
-	      	minkowksi_sum_operated = false;
-	      }
 
 		  typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 		  typedef Kernel::Point_2                            Point_2;
@@ -7693,6 +8203,57 @@ void MainWindow::zoomToFit()
     }
   }
 
+  if (pathItem0_exists) 
+  {
+      QRectF lRect = pathItem0->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem1_exists) 
+  {
+      QRectF lRect = pathItem1->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem2_exists) 
+  {
+      QRectF lRect = pathItem2->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem3_exists) 
+  {
+      QRectF lRect = pathItem3->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem4_exists) 
+  {
+      QRectF lRect = pathItem4->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem5_exists) 
+  {
+      QRectF lRect = pathItem5->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem6_exists) 
+  {
+      QRectF lRect = pathItem6->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+
+				
   if (lTotalRect) {
     this->graphicsView->setSceneRect(*lTotalRect);
     this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);

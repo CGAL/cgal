@@ -269,7 +269,7 @@
   <widget class="QDockWidget" name="sceneDockWidget">
    <property name="minimumSize" >
     <size>
-      <width>500</width>
+      <width>560</width>
       <height>200</height>
     </size>
    </property>
@@ -2212,6 +2212,19 @@
                <enum>Qt::Vertical</enum>
               </property>
             </widget>
+            <widget class="Line" name="line0006">
+              <property name="geometry">
+                <rect>
+                <x>485</x>
+                <y>0</y>
+                <width>7</width>
+                <height>125</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
             <widget class="Line" name="line07">
               <property name="Visible">
                 <bool>false</bool>
@@ -2594,6 +2607,25 @@
                <string>Clear</string>
               </property>
             </widget>
+            <widget class="QLabel" name="VisibleHeader" >
+              <property name="geometry">
+                <rect>
+                  <x>490</x>
+                  <y>0</y>
+                  <width>101</width>
+                  <height>40</height>  
+                </rect>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text" >
+               <string>Visible</string>
+              </property>
+            </widget>
             <widget class="QCheckBox" name="showResBlue">
              <property name="geometry">
               <rect>
@@ -2839,6 +2871,134 @@
              <property name="geometry">
               <rect>
                <x>455</x>
+               <y>220</y>
+               <width>120</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="Visible">
+                <bool>false</bool>
+              </property>
+            </widget>
+
+            <widget class="QCheckBox" name="visibleBlueRes">
+              <property name="checked">
+              <bool>true</bool>
+             </property>
+             <property name="geometry">
+              <rect>
+               <x>500</x>
+               <y>40</y>
+               <width>120</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="visibleRedRes">
+              <property name="checked">
+              <bool>true</bool>
+             </property>
+             <property name="geometry">
+              <rect>
+               <x>500</x>
+               <y>70</y>
+               <width>120</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="visibleBlackRes">
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+             <property name="geometry">
+              <rect>
+               <x>500</x>
+               <y>100</y>
+               <width>120</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="Visible">
+                <bool>true</bool>
+              </property>
+            </widget>
+            <widget class="QCheckBox" name="visibleBrownRes">
+              <property name="checked">
+              <bool>true</bool>
+             </property>
+             <property name="geometry">
+              <rect>
+               <x>500</x>
+               <y>130</y>
+               <width>120</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="Visible">
+                <bool>false</bool>
+              </property>
+            </widget>
+            <widget class="QCheckBox" name="visibleYellowRes">
+              <property name="checked">
+              <bool>true</bool>
+             </property>
+             <property name="geometry">
+              <rect>
+               <x>500</x>
+               <y>160</y>
+               <width>120</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="Visible">
+                <bool>false</bool>
+              </property>
+            </widget>
+            <widget class="QCheckBox" name="visibleMagentaRes">
+              <property name="checked">
+              <bool>true</bool>
+             </property>
+             <property name="geometry">
+              <rect>
+               <x>500</x>
+               <y>190</y>
+               <width>120</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="Visible">
+                <bool>false</bool>
+              </property>
+            </widget>
+            <widget class="QCheckBox" name="visibleAquaRes">
+              <property name="checked">
+              <bool>true</bool>
+             </property>
+             <property name="geometry">
+              <rect>
+               <x>500</x>
                <y>220</y>
                <width>120</width>
                <height>22</height>
@@ -3205,7 +3365,10 @@
     <string>&amp;Add Color</string>
    </property>
   </action>
-  <action name="actionMinusColor">  
+  <action name="actionMinusColor">
+    <property name="Visible"  >
+      <bool>false</bool>
+    </property>
     <property name="checkable" >
      <bool>false</bool>
     </property>
