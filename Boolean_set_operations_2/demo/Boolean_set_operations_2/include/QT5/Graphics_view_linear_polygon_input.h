@@ -245,7 +245,14 @@ protected:
 
 public:
   Polygon_2 getMinkPolygon()
-  { return mink_polygon; }
+  { 
+    return mink_polygon; 
+  }
+
+  void clearMinkPolygon()
+  {
+      mink_polygon.clear();
+  }
 
   Linear_curve const* ongoing_piece() const
   { return (mOngoingPieceCtr.size() == 1) ? &mOngoingPieceCtr[0] : NULL; }
