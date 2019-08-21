@@ -204,7 +204,7 @@ inserts the fixed alpha shape `A` into the stream `os`.
 An overlaoad of `operator<<` must be available for `GT::Point`.
 \relates Fixed_alpha_shape_3 
 */ 
-ostream& operator<<(ostream& os, const Fixed_alpha_shape_3<Dt>& A); 
+  std::ostream& operator<<(std::ostream& os, const Fixed_alpha_shape_3<Dt>& A); 
 
 
 } /* end namespace CGAL */
