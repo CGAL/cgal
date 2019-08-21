@@ -41,19 +41,6 @@ public:
     Gmap_wrapper::copy(m_radial_map, gmap, origin_to_radial, m_copy_to_origin);
     m_copy_to_origin.clear();
     Gmap_wrapper::copy(m_gmap, gmap, m_origin_to_copy, m_copy_to_origin);
-    // Initialize 0-attributes for m_gmap
-    for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it) {
-      if (m_gmap.template attribute<0>(it)==NULL)
-      { m_gmap.template set_attribute<0>(it, m_gmap.template create_attribute<0>()); }
-    }
-    // Assign values
-    int counter = 0;
-    for (auto it = m_gmap.template one_dart_per_cell<0>().begin(),
-              itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it)
-    {
-      m_gmap.template info<0>(it) = counter;
-      ++counter;
-    }
 
     // m_face_list contains dart handles of m_gmap
     for (auto it = m_gmap.template one_dart_per_cell<2>().begin(),
@@ -100,22 +87,6 @@ public:
       }
     }
 
-    // Initialize 0-attributes of m_radial_map
-    for (auto it = m_radial_map.darts().begin(), itend = m_radial_map.darts().end(); it != itend; ++it) {
-      if (m_radial_map.template attribute<0>(it)==NULL)
-      { m_radial_map.template set_attribute<0>(it, m_radial_map.template create_attribute<0>()); }
-    }
-    for (auto it = m_radial_map.darts().begin(), itend = m_radial_map.darts().end(); it != itend; ++it) {
-      m_radial_map.template info<0>(it) = -1;
-    }
-    typedef typename Gmap::template Attribute_handle<0>::type Attribute_handle_0;
-    for (Attribute_handle_0 att_it = m_gmap.template attributes<0>().begin(), 
-                            att_itend = m_gmap.template attributes<0>().end(); att_it != att_itend; ++att_it)
-    {
-      auto it_radial = origin_to_radial[m_copy_to_origin[att_it->dart()]];
-      m_radial_map.template info<0>(it_radial) = att_it->info();
-    }
-
     // Remove the marked edges of m_radial_map
     for (auto dh : edge_list) 
     {
@@ -134,22 +105,16 @@ public:
     // Find edgewidth of the radial map
     SNC snc_to_find_facewidth(m_radial_map);
     Path_on_surface<Gmap> edgewidth_of_radial_map = snc_to_find_facewidth.compute_edgewidth();
-
-    int last_vertex_index = -1, first_vertex_index = -1;
+    
     int last_face_index = -1;
     for (int i = 0, n = edgewidth_of_radial_map.length(); i <= n; i++)
     {
       Dart_const_handle dh = edgewidth_of_radial_map[i % n];
       int face_index = m_radial_map.template info<1>(dh);
-      // if (m_radial_map.template info<0>(dh) == -1) dh = m_radial_map.next(dh);
-      // CGAL_assertion(m_radial_map.template info<0>(dh) != -1);
-      // int vertex_index = m_radial_map.template info<0>(dh);
       
       if (last_face_index == face_index)
       { m_cycle.push_back(m_copy_to_origin[m_face_list[face_index]]); }
 
-      // if (first_vertex_index == -1) first_vertex_index = vertex_index;
-      // last_vertex_index = vertex_index;
       last_face_index = face_index;
     }
     return m_cycle;
