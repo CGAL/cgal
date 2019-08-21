@@ -20,8 +20,8 @@
 // Author(s)     : Sebastien Loriot
 //                 Mael Rouxel-Labbé
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_STITCH_POLYGON_MESH_H
-#define CGAL_POLYGON_MESH_PROCESSING_STITCH_POLYGON_MESH_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_STITCH_BORDERS_H
+#define CGAL_POLYGON_MESH_PROCESSING_STITCH_BORDERS_H
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
@@ -940,4 +940,4 @@ void stitch_borders(PolygonMesh& pmesh)
 
 #include <CGAL/enable_warnings.h>
 
-#endif //CGAL_POLYGON_MESH_PROCESSING_STITCH_POLYGON_MESH_H
+#endif //CGAL_POLYGON_MESH_PROCESSING_STITCH_BORDERS_H
