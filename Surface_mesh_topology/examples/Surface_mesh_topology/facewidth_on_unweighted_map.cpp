@@ -12,6 +12,7 @@
 using LCC_3 = CGAL::Linear_cell_complex_for_combinatorial_map<2, 3>;
 using CST = CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
 using Path_on_surface = CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
+using Dart_handle = LCC_3::Dart_handle;
 
 struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC {
   Draw_functor(LCC_3::size_type amark1, LCC_3::size_type amark2) : m_belong_to_cycle(amark1), m_belong_to_facewidth(amark2)
@@ -62,37 +63,35 @@ int main(int argc, char* argv[])
   CGAL::load_off(lcc, inp);
   std::cout << "File loaded. Running the main program...\n";
   
-  CST                cst(lcc);
-  Path_on_surface cycle = cst.compute_facewidth();
+  CST cst(lcc);
+  std::vector<Dart_handle> cycle = cst.compute_facewidth();
   std::cout << "Finding the facewidth...\n";
 
-  if (cycle.length() == 0) {
+  if (cycle.size() == 0) {
     std::cout << "  Cannot find such cycle. Stop.\n";
     return 0;
   }
   LCC_3::size_type belong_to_cycle = lcc.get_new_mark();
   LCC_3::size_type belong_to_facewidth = lcc.get_new_mark();
-  int nb_faces = 1;
-  for (int i = 0; i < cycle.length(); ++i) {
+  for (int i = 0; i < cycle.size(); ++i) {
+    // Color the edges of the face
     for (auto dh = lcc.one_dart_per_incident_cell<1,2>(cycle[i]).begin(),
               dhend = lcc.one_dart_per_incident_cell<1,2>(cycle[i]).end(); dh != dhend; ++dh)
     {
       if (!lcc.is_marked(dh, belong_to_cycle))
         lcc.mark_cell<1>(dh, belong_to_cycle);
     }
+    // Color the face
     for (auto dh = lcc.darts_of_cell<2>(cycle[i]).begin(),
               dhend = lcc.darts_of_cell<2>(cycle[i]).end(); dh != dhend; ++dh)
     {
       if (!lcc.is_marked(dh, belong_to_facewidth))
         lcc.mark(dh, belong_to_facewidth);
     }
-    if (i > 0 && !lcc.belong_to_same_cell<2>(cycle[i], cycle[i-1])) ++nb_faces;
   }
+  
+  std::cout << "  Number of faces: " << cycle.size() << std::endl;
 
-  std::cout << "  Number of edges in cycle: " << nb_faces << std::endl;
-  // for (int i = 0; i < cycle.length(); ++i)
-  //   std::cout << lcc.point(cycle[i]) << " ---- ";
-  // std::cout << lcc.point(lcc.next(cycle.back()));
   Draw_functor df(belong_to_cycle, belong_to_facewidth);
   CGAL::draw(lcc, "Hello", false, df);
 

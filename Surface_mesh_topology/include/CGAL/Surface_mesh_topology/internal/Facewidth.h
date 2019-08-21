@@ -35,7 +35,7 @@ public:
   using Path                       = CGAL::Surface_mesh_topology::Path_on_surface<Mesh_original>;
   using SNC                        = Shortest_noncontractible_cycle<Gmap>;
   
-  Facewidth(Mesh_original& gmap) : m_cycle(gmap)
+  Facewidth(Mesh_original& gmap)
   {
     typename Gmap_wrapper::Origin_to_copy_map origin_to_radial;
     Gmap_wrapper::copy(m_radial_map, gmap, origin_to_radial, m_copy_to_origin);
@@ -128,7 +128,7 @@ public:
   {
   }
   
-  Path compute_facewidth()
+  std::vector<Dart_handle_original> compute_facewidth()
   {
     m_cycle.clear();
     // Find edgewidth of the radial map
@@ -137,57 +137,28 @@ public:
 
     int last_vertex_index = -1, first_vertex_index = -1;
     int last_face_index = -1;
-    // Debug: Print the face indices
-    for (int i = 0; i < edgewidth_of_radial_map.length(); ++i)
-    {
-      auto dh = edgewidth_of_radial_map[i];
-      if (edgewidth_of_radial_map.get_ith_flip(i)) 
-      { dh = m_radial_map.opposite2(dh); }
-    }
     for (int i = 0, n = edgewidth_of_radial_map.length(); i <= n; i++)
     {
       Dart_const_handle dh = edgewidth_of_radial_map[i % n];
       int face_index = m_radial_map.template info<1>(dh);
-      if (m_radial_map.template info<0>(dh) == -1) dh = m_radial_map.next(dh);
-      CGAL_assertion(m_radial_map.template info<0>(dh) != -1);
-      int vertex_index = m_radial_map.template info<0>(dh);
+      // if (m_radial_map.template info<0>(dh) == -1) dh = m_radial_map.next(dh);
+      // CGAL_assertion(m_radial_map.template info<0>(dh) != -1);
+      // int vertex_index = m_radial_map.template info<0>(dh);
       
-      if (last_vertex_index != -1 && last_face_index == face_index)
-      { add_to_cycle(m_cycle, last_vertex_index, vertex_index, face_index); }
+      if (last_face_index == face_index)
+      { m_cycle.push_back(m_copy_to_origin[m_face_list[face_index]]); }
 
-      if (first_vertex_index == -1) first_vertex_index = vertex_index;
-      last_vertex_index = vertex_index;
+      // if (first_vertex_index == -1) first_vertex_index = vertex_index;
+      // last_vertex_index = vertex_index;
       last_face_index = face_index;
     }
-    CGAL_assertion(m_cycle.is_closed());
     return m_cycle;
-  }
-private:
-  void add_to_cycle(Path& cycle, int start_vertex_index, int finish_vertex_index, int face_index)
-  {
-    Dart_handle dh_current = m_face_list[face_index];
-    for (Dart_handle it = m_gmap.template darts_of_cell<2>(dh_current).begin(),
-                     itend = m_gmap.template darts_of_cell<2>(dh_current).end();
-                     it != itend; ++it)
-    {
-      if (m_gmap.template info<0>(it) == start_vertex_index)
-      {
-        dh_current = it;
-        break;
-      }
-    }
-    do
-    {
-      CGAL_assertion(cycle.can_be_pushed(m_copy_to_origin[dh_current]));
-      cycle.push_back(m_copy_to_origin[dh_current]);
-      dh_current = m_gmap.next(dh_current);
-    } while (m_gmap.template info<0>(dh_current) != finish_vertex_index);
   }
 
 private:
   Gmap m_gmap, m_radial_map;
-  Path m_cycle;
   std::vector<Dart_handle> m_face_list;
+  std::vector<Dart_handle_original> m_cycle;
   typename Gmap_wrapper::Origin_to_copy_map m_origin_to_copy;
   typename Gmap_wrapper::Copy_to_origin_map m_copy_to_origin;
 };

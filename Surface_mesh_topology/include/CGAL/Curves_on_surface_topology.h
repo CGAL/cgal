@@ -37,12 +37,13 @@ template<typename Mesh>
 class Curves_on_surface_topology
 {
 public:
-  typedef typename internal::CMap_for_minimal_quadrangulation CMap_for_minimal_quadrangulation;
-  typedef typename internal::Shortest_noncontractible_cycle<Mesh> Shortest_noncontractible_cycle;
-  typedef typename internal::Facewidth<Mesh> Facewidth;
 
-  using Gmap_wrapper               = internal::Generic_map_selector<Mesh>;
-  using Gmap                       = typename Gmap_wrapper::Generic_map;
+  using CMap_for_minimal_quadrangulation = typename internal::CMap_for_minimal_quadrangulation;
+  using Shortest_noncontractible_cycle   = typename internal::Shortest_noncontractible_cycle<Mesh>;
+  using Facewidth                        = typename internal::Facewidth<Mesh>; 
+  using Gmap_wrapper                     = internal::Generic_map_selector<Mesh>;
+  using Gmap                             = typename Gmap_wrapper::Generic_map;
+  using Dart_handle                      = typename Gmap_wrapper::Dart_handle_original;
 
   
   Curves_on_surface_topology(Mesh& amap, bool /* display_time */=false) :
@@ -124,8 +125,8 @@ public:
     return m_shortest_noncontractible_cycle->compute_edgewidth();
   }
 
-  template <class DartHandle, class WeightFunctor>
-  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(DartHandle dh, const WeightFunctor& wf) const
+  template <class WeightFunctor>
+  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(Dart_handle dh, const WeightFunctor& wf) const
   {
     if (m_shortest_noncontractible_cycle==nullptr) 
     { update_shortest_noncontractible_cycle_pointer(); }
@@ -133,8 +134,7 @@ public:
     return m_shortest_noncontractible_cycle->compute_cycle(dh, NULL, wf);
   }
 
-  template <class DartHandle>
-  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(DartHandle dh) const
+  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(Dart_handle dh) const
   {
     if (m_shortest_noncontractible_cycle==nullptr) 
     { update_shortest_noncontractible_cycle_pointer(); }
@@ -142,7 +142,7 @@ public:
     return m_shortest_noncontractible_cycle->compute_cycle(dh);
   }
 
-  Path_on_surface<Mesh> compute_facewidth() const
+  std::vector<Dart_handle> compute_facewidth() const
   {
     if (m_facewidth==nullptr) 
     { update_facewidth_pointer(); }

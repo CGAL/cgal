@@ -46,7 +46,6 @@
 - `CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map<Items,Alloc>`
 - `CGAL::Surface_mesh_topology::Polygonal_schema_min_items`
 - `CGAL::Surface_mesh_topology::Combinatorial_map_2_incremental_builder<Mesh>`
-- `CGAL::Surface_mesh_topology::Shortest_noncontractible_cycle<Mesh_, Weight_>`
 
 ## Concepts ##
 - `WeightFunctor`
