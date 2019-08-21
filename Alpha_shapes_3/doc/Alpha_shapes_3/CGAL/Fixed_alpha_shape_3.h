@@ -77,7 +77,7 @@ Fixed_alpha_shape_3(FT alpha = 0);
 /*!
 Builds a fixed alpha shape from the triangulation `dt`, 
 and sets the alpha value to `alpha`. 
-\attention This operation destroys the triangulation. 
+\attention This operation swaps `*this` and `dt`, that is `dt` is an empty triangulation once the fixed alpha shape is built.
 */ 
 Fixed_alpha_shape_3(Dt& dt,FT alpha = 0); 
 
