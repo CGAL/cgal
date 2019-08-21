@@ -355,7 +355,8 @@ namespace internal {
    \cgalRequiresCPP11
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+   its iterator is the key type of the `PropertyMap` objects provided
+   within the `PropertyHandler` parameter.
    \tparam PropertyHandler handlers to recover properties.
 
    \return `true` on success.
