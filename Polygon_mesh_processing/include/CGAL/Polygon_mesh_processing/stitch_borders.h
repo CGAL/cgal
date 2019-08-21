@@ -423,9 +423,10 @@ void run_stitch_borders(PM& pmesh,
   }
 }
 
-template <class PM, typename HalfedgePairsRange>
-void stitch_borders_impl(PM& pmesh,
-                         const HalfedgePairsRange& to_stitch)
+template <class PM, typename HalfedgePairsRange, typename VertexPointMap>
+std::size_t stitch_borders_impl(PM& pmesh,
+                                const HalfedgePairsRange& to_stitch,
+                                const VertexPointMap& vpm)
 {
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
@@ -565,10 +566,14 @@ void stitch_borders_impl(PM& pmesh,
       uf_join_vertices(src1, tgt2, uf_vertices, uf_handles);
     }
 
-    run_stitch_borders(pmesh, to_stitch_filtered, uf_vertices, uf_handles);
+    run_stitch_borders(pmesh, to_stitch_filtered, vpm, uf_vertices, uf_handles);
+    return to_stitch_filtered.size();
   }
   else
-    run_stitch_borders(pmesh, to_stitch, uf_vertices, uf_handles);
+  {
+    run_stitch_borders(pmesh, to_stitch, vpm, uf_vertices, uf_handles);
+    return to_stitch.size();
+  }
 }
 
 } //end of namespace internal
@@ -621,64 +626,128 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   //   v0 --- v1(v13) === v2(v12)     v5(v9) === v6(v8) --- v7
   //                         |          |
   //                        v3 ------- v4
-  // so we mark which edges have been stitched
-  std::unordered_set<halfedge_descriptor> stitched_hedges;
+  //
+  // As long as we find vertices on the boundary with both halfedges being geometrically equal,
+  // we zip it up as much as we can.
 
-  std::vector<halfedge_descriptor> stitching_starting_points;
-  halfedge_descriptor hn = next(h, pm);
-  while(hn != h)
+  // not everything is always stitchable
+  std::set<halfedge_descriptor> unstitchable_halfedges;
+
+  halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
+  halfedge_descriptor bh = h;
+  for(;;) // until there is nothing to stitch anymore
   {
-    if((get(vpm, source(hn, pm)) == get(vpm, target(next(hn, pm), pm))) &&
-       (get(vpm, source(hn, pm)) != get(vpm, target(hn, pm)))) // ignore degenerate edges
-      stitching_starting_points.push_back(hn);
+    if(bh == null_h) // the complete border is stitched
+      break;
 
-    hn = next(hn, pm);
-  }
-
-  for(std::size_t i=0, end=stitching_starting_points.size(); i<end; ++i)
-  {
-    halfedge_descriptor h = stitching_starting_points[i];
-
-    if(stitched_hedges.count(h) > 0) // already treated
-      continue;
-
-    std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > hedges_to_stitch;
-
-    halfedge_descriptor hn = next(h, pm);
-    bool do_stitching = true;
-    do
-    {
-      // Don't want to create an invalid polygon mesh, even if the geometry allows it
-      if(face(opposite(h, pm), pm) == face(opposite(hn, pm), pm))
-        break;
-
-      hedges_to_stitch.push_back(std::make_pair(h, hn));
-
-#ifdef CGAL_PMP_STITCHING_DEBUG
-      std::cout << "Stitch halfegdes: "
-                << h << "(" << get(vpm, source(h, pm)) << ") - (" << get(vpm, target(h, pm)) << ") and "
-                << hn << "(" << get(vpm, source(hn, pm)) << ") - (" << get(vpm, target(hn, pm)) << ")" << std::endl;
+#ifdef CGAL_PMP_STITCHING_DEBUG_PP
+    std::cout << "Walking border from halfedge: " << edge(bh, pm) << std::endl;
 #endif
 
-      stitched_hedges.insert(h);
-      stitched_hedges.insert(hn);
+    CGAL_assertion(is_border(bh, pm));
 
-      if(next(hn, pm) == h)
-        break;
+    halfedge_descriptor hn = next(bh, pm), start_h = null_h;
+    do
+    {
+      halfedge_descriptor hnn = next(hn, pm);
+      CGAL_assertion(get(vpm, target(hn, pm)) == get(vpm, source(hnn, pm)));
 
-      h = prev(h, pm);
-      hn = next(hn, pm);
+      if(get(vpm, source(hn, pm)) == get(vpm, target(hnn, pm)) &&
+         !is_degenerate_edge(edge(hn, pm), pm, parameters::vertex_point_map(vpm)))
+      {
+        if(unstitchable_halfedges.count(hn) == 0)
+        {
+          start_h = hn;
+          break;
+        }
+      }
 
-      if((get(vpm, source(h, pm)) != get(vpm, target(hn, pm))) ||
-         (get(vpm, source(hn, pm)) == get(vpm, target(hn, pm)))) // ignore degenerate edges
-        do_stitching = false;
+      hn = hnn;
     }
-    while(do_stitching);
+    while(hn != bh);
+
+    if(start_h == null_h) // nothing to be stitched on this boundary cycle
+      break;
+
+#ifdef CGAL_PMP_STITCHING_DEBUG_PP
+    std::cout << "Starting stitching from halfedge: " << edge(start_h, pm) << std::endl;
+#endif
+
+    CGAL_assertion(is_border(start_h, pm));
+
+    // Associate as many consecutive halfedge pairs as possible ("zipping")
+    std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > hedges_to_stitch;
+
+    halfedge_descriptor curr_h = start_h;
+    halfedge_descriptor curr_hn = next(curr_h, pm);
+    for(;;) // while we can expand the zipping range
+    {
+      // Don't create an invalid polygon mesh, even if the geometry allows it
+      if(face(opposite(curr_h, pm), pm) == face(opposite(curr_hn, pm), pm))
+      {
+        unstitchable_halfedges.insert(curr_h);
+        bh = curr_hn;
+        break;
+      }
+
+      CGAL_assertion(is_border(curr_h, pm));
+      CGAL_assertion(is_border(curr_hn, pm));
+
+      hedges_to_stitch.push_back(std::make_pair(curr_h, curr_hn));
+
+#ifdef CGAL_PMP_STITCHING_DEBUG_PP
+      std::cout << "expand zip with:\n"
+                << edge(curr_h, pm) << "\n\t" << source(curr_h, pm) << "\t(" << get(vpm, source(curr_h, pm)) << ")"
+                                    << "\n\t" << target(curr_h, pm) << "\t(" << get(vpm, target(curr_h, pm)) << ")\n"
+                << edge(curr_hn, pm) << "\n\t" << source(curr_hn, pm) << "\t(" << get(vpm, source(curr_hn, pm)) << ")"
+                                     << "\n\t" << target(curr_hn, pm) << "\t(" << get(vpm, target(curr_hn, pm)) << ")" << std::endl;
+#endif
+
+      // check if we have reached the end of the cycle
+      if(curr_h == curr_hn || curr_h == next(curr_hn, pm))
+      {
+        bh = null_h;
+        break;
+      }
+
+      curr_h = prev(curr_h, pm);
+      curr_hn = next(curr_hn, pm);
+
+      // check if the next two halfedges are no longer geometrically compatible
+      if(get(vpm, source(curr_h, pm)) != get(vpm, target(curr_hn, pm)) ||
+         is_degenerate_edge(edge(curr_hn, pm), pm, parameters::vertex_point_map(vpm)))
+      {
+        bh = curr_hn;
+        break;
+      }
+    }
+
+    // bh must be a boundary halfedge on the border that will not be impacted by any stitching
+    CGAL_assertion_code(if(bh != null_h) {)
+    CGAL_assertion_code(  for(const auto& hp : hedges_to_stitch) {)
+    CGAL_assertion(         bh != hp.first && bh != hp.second);
+    CGAL_assertion_code(}})
 
     if(!hedges_to_stitch.empty())
     {
-      internal::stitch_borders_impl(pm, hedges_to_stitch);
-      stitched_boundary_cycles_n += hedges_to_stitch.size();
+#ifdef CGAL_PMP_STITCHING_DEBUG
+      std::cout << "Halfedges to stitch on border containing:\n"
+                << edge(h, pm) << "\n\t" << source(h, pm) << "\t(" << get(vpm, source(h, pm)) << ")"
+                               << "\n\t" << target(h, pm) << "\t(" << get(vpm, target(h, pm)) << ")" << std::endl;
+#endif
+
+      std::size_t local_stitches = internal::stitch_borders_impl(pm, hedges_to_stitch, vpm);
+      stitched_boundary_cycles_n += local_stitches;
+
+      if(local_stitches == 0) // refused to stitch this halfedge pair range due to manifold issue
+      {
+#ifdef CGAL_PMP_STITCHING_DEBUG
+        std::cout << "Failed to stitch this range!" << std::endl;
+#endif
+
+        for(const auto& hp : hedges_to_stitch)
+          unstitchable_halfedges.insert(hp.first);
+      }
     }
   }
 
