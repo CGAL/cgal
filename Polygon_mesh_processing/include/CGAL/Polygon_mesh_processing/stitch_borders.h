@@ -704,7 +704,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 #endif
 
       // check if we have reached the end of the cycle
-      if(curr_h == curr_hn || curr_h == next(curr_hn, pm))
+      if(prev(curr_h, pm) == curr_hn || prev(curr_h, pm) == next(curr_hn, pm))
       {
         bh = null_h;
         break;
