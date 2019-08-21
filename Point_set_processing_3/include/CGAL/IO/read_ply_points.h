@@ -722,7 +722,7 @@ namespace internal {
   /// \endcond
   
 
-/*
+/**
   \ingroup PkgPointSetProcessingIOPly
 
   Reads user-selected points properties from a .ply stream (ASCII or
