@@ -663,7 +663,7 @@ double approximate_symmetric_Hausdorff_distance(
  * \ingroup PMP_distance_grp
  * returns the distance to `tm` of the point from `points`
  * that is the furthest from `tm`.
- * @tparam PointRange a range of `Point_3`, model of `Range`.
+ * @tparam PointRange a range of `Point_3`, model of `Range`. Its iterator type is `RandomAccessIterator`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  * @param points the range of points of interest
