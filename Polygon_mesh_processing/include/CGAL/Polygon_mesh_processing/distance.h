@@ -81,17 +81,19 @@ triangle_grid_sampling( const typename Kernel::Point_3& p0,
 }
 
 #if defined(CGAL_LINKED_WITH_TBB)
-template <class AABB_tree, class Point_3>
+template <class AABB_tree, class PointRange>
 struct Distance_computation{
+  typedef typename PointRange::const_iterator::value_type Point_3;
+  
   const AABB_tree& tree;
-  const std::vector<Point_3>& sample_points;
+  const PointRange& sample_points;
   Point_3 initial_hint;
   tbb::atomic<double>* distance;
 
   Distance_computation(
           const AABB_tree& tree,
           const Point_3& p,
-          const std::vector<Point_3>& sample_points,
+          const PointRange& sample_points,
           tbb::atomic<double>* d)
     : tree(tree)
     , sample_points(sample_points)
@@ -106,9 +108,9 @@ struct Distance_computation{
     double hdist = 0;
     for( std::size_t i = range.begin(); i != range.end(); ++i)
     {
-      hint = tree.closest_point(sample_points[i], hint);
+      hint = tree.closest_point(*(sample_points.begin() + i), hint);
       typename Kernel_traits<Point_3>::Kernel::Compute_squared_distance_3 squared_distance;
-      double d = to_double(CGAL::approximate_sqrt( squared_distance(hint,sample_points[i]) ));
+      double d = to_double(CGAL::approximate_sqrt( squared_distance(hint,*(sample_points.begin() + i)) ));
       if (d>hdist) hdist=d;
     }
 
@@ -139,7 +141,7 @@ double approximate_Hausdorff_distance_impl(
   {
     tbb::atomic<double> distance;
     distance=0;
-    Distance_computation<AABBTree, typename Kernel::Point_3> f(tree, hint, sample_points, &distance);
+    Distance_computation<AABBTree, PointRange> f(tree, hint, sample_points, &distance);
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
     return distance;
   }
