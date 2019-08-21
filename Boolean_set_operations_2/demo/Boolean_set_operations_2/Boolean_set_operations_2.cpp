@@ -723,6 +723,7 @@ private:
   //bool m_mink_active;
   //which type is currently active now
   //bool m_blue_active;
+
   size_t m_color_active;
   size_t m_color_active_mink;
   size_t m_color_result_active;
@@ -7722,7 +7723,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
 						}
 					}*/
-					zoomToFit();
+					//zoomToFit();
 					modelChanged(); 
 
 				color_mink = 0;
@@ -7765,7 +7766,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 						pathItem = m_scene.addPath(m_pathTrack,pen,brush);
 					}
 				}*/
-				zoomToFit();
+				//zoomToFit();
 				modelChanged(); 
 				color_mink = 1;
 			}
@@ -7807,7 +7808,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
 						}
 					}*/
-					zoomToFit();
+					//zoomToFit();
 					modelChanged();
 					color_mink = 2;
 				}
@@ -7849,7 +7850,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
 						}
 					}*/
-					zoomToFit();
+					//zoomToFit();
 					modelChanged();
 					color_mink = 3;
 				}
@@ -7893,7 +7894,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
 						}
 					}*/
-					zoomToFit();
+					//zoomToFit();
 					modelChanged();
 					color_mink = 4;
 				}
@@ -7935,7 +7936,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
 						}
 					}*/
-					zoomToFit();
+					//zoomToFit();
 					modelChanged();
 					color_mink = 5;
 				}
@@ -7978,7 +7979,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
 						}
 					}*/
-					zoomToFit();
+					//zoomToFit();
 					modelChanged();
 					color_mink = 6;
 				}
@@ -8116,7 +8117,78 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
 
 		  
 	  	  //CGAL_assertion(mink_sum_res.number_of_holes() == 0);
-		  if (!mink_sum_res.is_unbounded()) get_MinkowskiSum_result(mink_sum_res);
+		  if (!mink_sum_res.is_unbounded()) 
+      {
+        get_MinkowskiSum_result(mink_sum_res);
+        boost::optional<QRectF> lTotalRect;
+
+  for (auto si = m_curve_sets.begin(); si != m_curve_sets.end(); ++ si) 
+  {
+    if (!si->is_empty()) 
+    {
+      QRectF lRect = si->bounding_rect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+    }
+  }
+
+  if (pathItem0_exists) 
+  {
+      QRectF lRect = pathItem0->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem1_exists) 
+  {
+      QRectF lRect = pathItem1->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem2_exists) 
+  {
+      QRectF lRect = pathItem2->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem3_exists) 
+  {
+      QRectF lRect = pathItem3->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem4_exists) 
+  {
+      QRectF lRect = pathItem4->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem5_exists) 
+  {
+      QRectF lRect = pathItem5->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+  if (pathItem6_exists) 
+  {
+      QRectF lRect = pathItem6->boundingRect();
+      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
+      else lTotalRect = lRect;
+  }
+
+
+        
+  if (lTotalRect) 
+  {
+    if(ask_user_yesno("Recenter Needed","Output polygon caused some polygons to go out of view\n Would you like to recenter the view"))
+      zoomToFit();
+  }
+      }
 		  else ask_user_ok("Minkowski Sum Operation Error", "resultant polygon is unbounded\n");
 	      lDone = true;
 	      minkowksi_sum_operated = true;
@@ -8133,7 +8205,7 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
 
 
 //to change which polygons to see on the screen
-void MainWindow::ToogleView(size_t aGROUP, bool a_check)
+void MainWindow::ToogleView(size_t aGROUP, bool a_check) 
 {
   if (a_check) set(aGROUP).gi()->show();
   else set(aGROUP).gi()->hide();
@@ -8292,19 +8364,63 @@ void MainWindow::processInput(CGAL::Object o)
       {
         CGAL::Orientation orient = lLI.orientation();
         if (orient == CGAL::CLOCKWISE) 
+        {
           lLI.reverse_orientation();
+        }
         Linear_polygon_with_holes lCPWH(lLI);
         active_set().linear().join(lCPWH);
         active_linear_sources().push_back(lCPWH);
         switch(m_color_active)
         {
-          	case 0: p0 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon(); break;
-          	case 1: p1 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon(); break;
-          	case 2: p2 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon(); break;
-          	case 3: p3 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon(); break;
-          	case 4: p4 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon();  break;
-          	case 5: p5 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon();  break;
-          	case 6: p6 = m_linear_input -> getMinkPolygon();  m_linear_input -> clearMinkPolygon();  break;
+          	case 0: p0 = m_linear_input -> getMinkPolygon();  
+                    m_linear_input -> clearMinkPolygon(); 
+                    if (p0.orientation() == CGAL::CLOCKWISE) 
+                    { 
+                      p0.reverse_orientation();
+                    }
+                    break;
+          	case 1: p1 = m_linear_input -> getMinkPolygon();  
+                    m_linear_input -> clearMinkPolygon(); 
+                    if (p1.orientation() == CGAL::CLOCKWISE) 
+                    { 
+                      p1.reverse_orientation();
+                    }
+                    break;
+          	case 2: p2 = m_linear_input -> getMinkPolygon();  
+                    m_linear_input -> clearMinkPolygon(); 
+                    if (p2.orientation() == CGAL::CLOCKWISE) 
+                    { 
+                      p2.reverse_orientation();
+                    }
+                    break;
+          	case 3: p3 = m_linear_input -> getMinkPolygon();
+                    m_linear_input -> clearMinkPolygon(); 
+                    if (p3.orientation() == CGAL::CLOCKWISE) 
+                    { 
+                      p3.reverse_orientation();
+                    }
+                    break;
+          	case 4: p4 = m_linear_input -> getMinkPolygon();
+                    m_linear_input -> clearMinkPolygon();
+                    if (p4.orientation() == CGAL::CLOCKWISE) 
+                    { 
+                      p4.reverse_orientation();
+                    }
+                    break;
+          	case 5: p5 = m_linear_input -> getMinkPolygon();
+                    m_linear_input -> clearMinkPolygon();  
+                    if (p5.orientation() == CGAL::CLOCKWISE) 
+                    { 
+                      p5.reverse_orientation();
+                    }
+                    break;
+          	case 6: p6 = m_linear_input -> getMinkPolygon();
+                    m_linear_input -> clearMinkPolygon(); 
+                    if (p6.orientation() == CGAL::CLOCKWISE) 
+                    { 
+                      p6.reverse_orientation();
+                    }
+                    break;
         }
       }
     }
