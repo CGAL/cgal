@@ -633,7 +633,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   // not everything is always stitchable
   std::set<halfedge_descriptor> unstitchable_halfedges;
 
-  halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
+  const halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
   halfedge_descriptor bh = h;
   for(;;) // until there is nothing to stitch anymore
   {
