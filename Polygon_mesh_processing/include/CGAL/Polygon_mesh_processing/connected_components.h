@@ -433,10 +433,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
   // vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
   std::size_t num = connected_components(pmesh, face_cc, np);
-  std::vector<Face_size> component_size(num);
-
-  for(std::size_t i=0; i<num; ++i)
-    component_size[i] = Face_size(0);
+  std::vector<Face_size> component_size(num, 0);
 
   for(face_descriptor f : faces(pmesh))
     component_size[face_cc[f]] += get(face_size_pmap, f);

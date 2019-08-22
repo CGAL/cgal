@@ -40,6 +40,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -64,6 +65,129 @@
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
+
+template <typename TriangleMesh,
+          typename NamedParameters>
+std::size_t
+remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
+#ifdef DOXYGEN_RUNNING
+                                               const FT ratio,
+#else
+                                               const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::FT ratio,
+#endif
+                                               const NamedParameters& np)
+{
+  using boost::choose_param;
+  using boost::get_param;
+
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor          halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor              face_descriptor;
+
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
+  typedef typename GT::FT                                                          FT;
+  const GT traits = choose_param(get_param(np, internal_np::vertex_point), GT());
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    VPM;
+  typedef typename boost::property_traits<VPM>::value_type                         Point_3;
+  const VPM vpm = choose_param(get_param(np, internal_np::vertex_point),
+                               get_const_property_map(CGAL::vertex_point, tmesh));
+
+  typedef typename GetFaceIndexMap<TriangleMesh, NamedParameters>::type            FaceIndexMap;
+  FaceIndexMap fim = choose_param(get_param(np, internal_np::face_index),
+                                  get_property_map(boost::face_index, tmesh));
+
+  // Compute the connected components only once
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  std::size_t num = connected_components(tmesh, face_cc, np);
+
+  std::cout << num << " different connected components" << std::endl;
+
+  // Compute CC-wide and total areas/volumes
+  FT total_area = 0;
+  std::vector<FT> component_areas(num, 0);
+  for(face_descriptor f : faces(tmesh))
+  {
+    const FT fa = face_area(f, tmesh, np);
+    component_areas[face_cc[f]] += fa;
+    total_area += fa;
+  }
+
+  // Volumes make no sense for CCs that are not closed
+  std::vector<bool> cc_closeness(num, true);
+  for(halfedge_descriptor h : halfedges(tmesh))
+  {
+    if(is_border(h, tmesh))
+      cc_closeness[face_cc[face(opposite(h, tmesh), tmesh)]] = false;
+  }
+
+  std::vector<FT> component_volumes(num);
+  typename GT::Compute_volume_3 cv3 = traits.compute_volume_3_object();
+  Point_3 origin(0, 0, 0);
+
+  for(face_descriptor f : faces(tmesh))
+  {
+    const std::size_t i = face_cc[f];
+    if(!cc_closeness[i])
+      continue;
+
+      const FT fv = cv3(origin,
+                        get(vpm, target(halfedge(f, tmesh), tmesh)),
+                        get(vpm, target(next(halfedge(f, tmesh), tmesh), tmesh)),
+                        get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
+
+    component_volumes[i] += fv;
+  }
+
+  // negative volume means the CC was oriented inward
+  FT total_volume = 0;
+  for(std::size_t i=0; i<num; ++i)
+  {
+    component_volumes[i] = CGAL::abs(component_volumes[i]);
+    total_volume += component_volumes[i];
+  }
+
+  // @todo define area/volume min values as a % of bbox instead? Right now, you could have a giant
+  // area and only a single CC with decent area but zero volume and it would not be cleaned since
+  // it is the sole volume in the mesh
+  const FT area_threshold_value = ratio * total_area;
+  const FT volume_threshold_value = ratio * total_volume;
+
+  std::cout << "total area: " << total_area << std::endl;
+  std::cout << "total volume: " << total_volume << std::endl;
+
+  std::vector<std::size_t> ccs_to_remove;
+  for(std::size_t i=0; i<num; ++i)
+  {
+    std::cout << "this CC has area: " << component_areas[i]
+                   << " and volume: " << component_volumes[i] << std::endl;
+    if((cc_closeness[i] && component_volumes[i] <= volume_threshold_value) ||
+       component_areas[i] <= area_threshold_value)
+    {
+      std::cout << "removin' it!" << std::endl;
+      ccs_to_remove.push_back(i);
+    }
+  }
+
+  std::cout << "Removing " << ccs_to_remove.size() << " CCs" << std::endl;
+
+  remove_connected_components(tmesh, ccs_to_remove, face_cc, np);
+
+  return ccs_to_remove.size();
+}
+
+template <typename TriangleMesh>
+std::size_t
+remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
+#ifdef DOXYGEN_RUNNING
+                                               const FT ratio
+#else
+                                               const typename GetGeomTraits<TriangleMesh>::type::FT ratio
+#endif
+                                               )
+{
+  return remove_connected_components_of_negligible_size(tmesh, ratio, parameters::all_default());
+}
+
 namespace debug{
 
   template <class TriangleMesh, class VertexPointMap>

@@ -2,6 +2,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
@@ -15,10 +16,7 @@
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel     EPICK;
-
-typedef CGAL::Surface_mesh<EPICK::Point_3>                      Surface_mesh;
-typedef CGAL::Polyhedron_3<EPICK>                               Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel             EPICK;
 
 template <typename K, typename EdgeRange, typename FaceRange, typename Mesh>
 void detect_degeneracies(const EdgeRange& edge_range,
@@ -119,17 +117,17 @@ bool remove_dfaces(const std::vector<std::size_t>& faces_selection_ids,
 }
 
 template <typename K, typename Mesh>
-void test(const char* filename,
-          const std::vector<std::size_t>& edges_selection_ids,
-          const std::vector<std::size_t>& faces_selection_ids,
-          const std::size_t expected_all_degen_edges_n,
-          const std::size_t expected_all_degen_faces_n,
-          const std::size_t expected_partial_degen_edges_n,
-          const std::size_t expected_partial_degen_faces_n,
-          const std::size_t expected_post_removal_degen_edges_n,
-          const std::size_t expected_post_removal_degen_faces_n)
+void remove_degeneracies(const char* filename,
+                         const std::vector<std::size_t>& edges_selection_ids,
+                         const std::vector<std::size_t>& faces_selection_ids,
+                         const std::size_t expected_all_degen_edges_n,
+                         const std::size_t expected_all_degen_faces_n,
+                         const std::size_t expected_partial_degen_edges_n,
+                         const std::size_t expected_partial_degen_faces_n,
+                         const std::size_t expected_post_removal_degen_edges_n,
+                         const std::size_t expected_post_removal_degen_faces_n)
 {
-  std::cout << "  test file: " << filename << std::endl;
+  std::cout << "  remove_degeneracies, file: " << filename << std::endl;
 
   std::ifstream input(filename);
   Mesh mesh;
@@ -179,69 +177,123 @@ void test(const char* filename,
   std::cout << "  Done" << std::endl;
 }
 
+template <typename Mesh>
+void initialize_IDs(const Mesh& mesh) { }
+
+template <typename Kernel>
+void initialize_IDs(const CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>& mesh)
+{
+  typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Mesh;
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor         vertex_descriptor;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor           face_descriptor;
+
+  int i=0;
+  for(vertex_descriptor v : vertices(mesh))
+    v->id() = i++;
+
+  i=0;
+  for(face_descriptor f : faces(mesh))
+    f->id() = i++;
+}
+
+template <typename K, typename Mesh>
+void remove_negligible_connected_components(const char* filename)
+{
+  std::cout << "  remove negligible CCs, file: " << filename << std::endl;
+
+  std::ifstream input(filename);
+  Mesh mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty())
+  {
+    std::cerr << filename << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  initialize_IDs(mesh);
+
+  std::cout << "before: " << num_vertices(mesh) << " nv & " << num_faces(mesh) << " nf" << std::endl;
+  PMP::remove_connected_components_of_negligible_size(mesh, 1e-3);
+  std::cout << "after: " << vertices(mesh).size() << " nv & " << faces(mesh).size() << " nf" << std::endl;
+
+//  std::ofstream("out.off") << std::setprecision(17) << mesh;
+}
+
 template <typename K, typename Mesh>
 void test()
 {
-  test<K, Mesh>("data_degeneracies/degtri_2dt_1edge_split_twice.off",
-                std::initializer_list<std::size_t>({0, 1, 4, 3}), // edge selection
-                std::initializer_list<std::size_t>({0}), // face selection
-                0, 2, // expected number of degenerate edges/faces in the complete mesh
-                0, 1, // expected number of degenerate edges/faces in the selection
-                0, 0); // expected number of degenerate edges/faces in the mesh after partial removal
+  remove_degeneracies<K, Mesh>("data_degeneracies/degtri_2dt_1edge_split_twice.off",
+                               std::initializer_list<std::size_t>({0, 1, 4, 3}), // edge selection
+                               std::initializer_list<std::size_t>({0}), // face selection
+                               0, 2, // expected number of degenerate edges/faces in the complete mesh
+                               0, 1, // expected number of degenerate edges/faces in the selection
+                               0, 0); // expected number of degenerate edges/faces in the mesh after partial removal
 
-  test<K, Mesh>("data_degeneracies/degtri_four.off",
-                std::initializer_list<std::size_t>({1}),
-                std::initializer_list<std::size_t>({3}),
-                0, 1, 0, 0, 0, 1);
+  remove_degeneracies<K, Mesh>("data_degeneracies/degtri_four.off",
+                               std::initializer_list<std::size_t>({1}),
+                               std::initializer_list<std::size_t>({3}),
+                               0, 1, 0, 0, 0, 1);
 
-  test<K, Mesh>("data_degeneracies/degtri_four-2.off",
-                std::initializer_list<std::size_t>({2}),
-                std::initializer_list<std::size_t>({3}),
-                0, 1, 0, 0, 0, 1);
+  remove_degeneracies<K, Mesh>("data_degeneracies/degtri_four-2.off",
+                               std::initializer_list<std::size_t>({2}),
+                               std::initializer_list<std::size_t>({3}),
+                               0, 1, 0, 0, 0, 1);
 
-  test<K, Mesh>("data_degeneracies/degtri_on_border.off",
-                std::initializer_list<std::size_t>({2}),
-                std::initializer_list<std::size_t>({0}),
-                0, 1, 0, 1, 0, 0);
+  remove_degeneracies<K, Mesh>("data_degeneracies/degtri_on_border.off",
+                               std::initializer_list<std::size_t>({2}),
+                               std::initializer_list<std::size_t>({0}),
+                               0, 1, 0, 1, 0, 0);
 
-  test<K, Mesh>("data_degeneracies/degtri_three.off",
-                std::initializer_list<std::size_t>({2}),
-                std::initializer_list<std::size_t>({1}),
-                0, 1, 0, 0, 0, 1);
+  remove_degeneracies<K, Mesh>("data_degeneracies/degtri_three.off",
+                               std::initializer_list<std::size_t>({2}),
+                               std::initializer_list<std::size_t>({1}),
+                               0, 1, 0, 0, 0, 1);
 
-  test<K, Mesh>("data_degeneracies/degtri_single.off",
-                std::initializer_list<std::size_t>({0, 1, 2}),
-                std::initializer_list<std::size_t>({0}),
-                0, 1, 0, 1, 0, 0);
+  remove_degeneracies<K, Mesh>("data_degeneracies/degtri_single.off",
+                               std::initializer_list<std::size_t>({0, 1, 2}),
+                               std::initializer_list<std::size_t>({0}),
+                               0, 1, 0, 1, 0, 0);
 
-  test<K, Mesh>("data_degeneracies/degtri_nullface.off",
-                std::initializer_list<std::size_t>({3, 6, 7}),
-                std::initializer_list<std::size_t>({0, 1, 2}),
-                3, 4, 1, 2, 0, 0);
+  remove_degeneracies<K, Mesh>("data_degeneracies/degtri_nullface.off",
+                               std::initializer_list<std::size_t>({3, 6, 7}),
+                               std::initializer_list<std::size_t>({0, 1, 2}),
+                               3, 4, 1, 2, 0, 0);
 
-  test<K, Mesh>("data_degeneracies/trihole.off",
-                std::initializer_list<std::size_t>({12}),
-                std::initializer_list<std::size_t>({4, 5}),
-                1, 3, 1, 2, 0, 0);
+  remove_degeneracies<K, Mesh>("data_degeneracies/trihole.off",
+                               std::initializer_list<std::size_t>({12}),
+                               std::initializer_list<std::size_t>({4, 5}),
+                               1, 3, 1, 2, 0, 0);
 
-  test<K, Mesh>("data_degeneracies/degtri_sliding.off",
-                std::initializer_list<std::size_t>({2}),
-                std::initializer_list<std::size_t>({2, 4}),
-                0, 4, 0, 2, 0, 0);
+  remove_degeneracies<K, Mesh>("data_degeneracies/degtri_sliding.off",
+                               std::initializer_list<std::size_t>({2}),
+                               std::initializer_list<std::size_t>({2, 4}),
+                               0, 4, 0, 2, 0, 0);
 
-  test<K, Mesh>("data_degeneracies/fused_vertices.off",
-                std::initializer_list<std::size_t>({5, 10, 13, 15, 27, 45}),
-                std::initializer_list<std::size_t>({1, 3, 5, 10, 19}),
-                6, 7, 2, 4, 3, 3);
+  remove_degeneracies<K, Mesh>("data_degeneracies/fused_vertices.off",
+                               std::initializer_list<std::size_t>({5, 10, 13, 15, 27, 45}),
+                               std::initializer_list<std::size_t>({1, 3, 5, 10, 19}),
+                               6, 7, 2, 4, 3, 3);
+
+  remove_negligible_connected_components<K, Mesh>("data_degeneracies/fused_vertices.off");
 }
 
-int main()
+template <typename Kernel>
+void test()
 {
+  typedef typename Kernel::Point_3                                      Point_3;
+  typedef CGAL::Surface_mesh<Point_3>                                   Surface_mesh;
+  typedef CGAL::Polyhedron_3<Kernel>                                    Polyhedron;
+  typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Polyhedron_with_ID;
+
   std::cout << "EPICK SM TESTS" << std::endl;
-  test<EPICK, Surface_mesh>();
+  test<Kernel, Surface_mesh>();
 
   std::cout << "EPICK POLYHEDRON TESTS" << std::endl;
-  test<EPICK, Polyhedron>();
+  test<Kernel, Polyhedron_with_ID>();
+}
+
+int main(int /*argc*/, char** /*argv*/)
+{
+  test<EPICK>();
 
   return EXIT_SUCCESS;
 }
