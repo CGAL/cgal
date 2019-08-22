@@ -267,6 +267,7 @@ void test_concept()
   general_tests<CK>(m1,m2);
 }
 
+
 int main(int, char** argv)
 {
   Mesh m1,m2;

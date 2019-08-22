@@ -658,6 +658,17 @@ public:
   }
 };
 
+class Dumdum
+{
+public:
+  template<typename T>
+  const T& operator()(const T t) const
+  {
+    return t;
+  }
+};
+
+
 template<class A>
 struct Address_of {
   typedef const A* result_type;

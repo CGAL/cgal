@@ -697,6 +697,45 @@ struct Random_points_in_triangles_3
   }
 };
 
+template <class Point_3,
+          class Triangle_3=typename Kernel_traits<Point_3>::Kernel::Triangle_3,
+          class Creator = Creator_uniform_3<
+                            typename Kernel_traits< Point_3 >::Kernel::RT,
+                            Point_3 >
+         >
+struct Random_points_in_triangles_3_bis
+    : public Generic_random_point_generator<const Triangle_3,
+    internal::Dumdum,
+    Random_points_in_triangle_3<Point_3, Creator>,
+    Point_3>
+{
+  typedef Generic_random_point_generator<const Triangle_3,
+                                         internal::Dumdum,
+                                         Random_points_in_triangle_3<Point_3, Creator>,
+                                         Point_3>            Base;
+  typedef const Triangle_3*                                         Id;
+  typedef Point_3                                                   result_type;
+  typedef Random_points_in_triangles_3_bis<Point_3, Triangle_3, Creator>  This;
+
+  template<typename TriangleRange>
+  Random_points_in_triangles_3_bis( const TriangleRange& triangles, Random& rnd = get_default_random())
+    : Base(triangles,
+           internal::Dumdum(),
+           internal::Apply_approx_sqrt<typename Kernel_traits<Point_3>::Kernel::Compute_squared_area_3>()
+           ,rnd )
+  {
+  }
+  This& operator++() {
+    Base::generate_point();
+    return *this;
+  }
+  This operator++(int) {
+    This tmp = *this;
+    ++(*this);
+    return tmp;
+  }
+};
+
 } //namespace CGAL
 
 #include <CGAL/enable_warnings.h>
