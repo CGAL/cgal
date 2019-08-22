@@ -439,17 +439,17 @@ template <typename RatKernel, typename AlgKernel, typename NtTraits>
 class CurveGraphicsItem< CGAL::Arr_Bezier_curve_traits_2<
                     RatKernel,
                     AlgKernel,
-                    NtTraits> :
+                    NtTraits>> :
     public GraphicsItem, public QGraphicsSceneMixin {
 public:
   // known curve types
   typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
                                                         Traits;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
-  typedef typename Traits::Curve_2                      Curve_2;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits::Point_2                      Point_2;
-  typedef typename Kernel::Point_2                      Kernel_point_2;
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
+  typedef typename Traits::Curve_2 Curve_2;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Traits::Point_2 Point_2;
+  typedef typename Kernel::Point_2 Kernel_point_2;
 
 public: // ctors
   CurveGraphicsItem( ):

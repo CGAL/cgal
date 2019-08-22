@@ -74,8 +74,9 @@ bool AlgebraicCurveParser::parseTerm(Iterator first, Iterator last, AlgebraicCur
     first++;
   }
   bool r = phrase_parse(first, last,
-          //Begin parser
+          // Begin parser
                (
+                // For terms
                 long_long[ref(coefficient) = boost::spirit::qi::_1]  >>
                  -("x^" >> long_long[ref(
                  xExponent)= boost::spirit::qi::_1] )
@@ -93,6 +94,7 @@ bool AlgebraicCurveParser::parseTerm(Iterator first, Iterator last, AlgebraicCur
                   -("x^"
                   >> long_long[ref(
                   xExponent) = boost::spirit::qi::_1] )
+
           )
           ,
                boost::spirit::ascii::space
