@@ -40,6 +40,12 @@ int main()
   _test_cls_constrained_triangulation(Ct());
 
   std::cout << "Testing constrained_triangulation "<< std::endl;
+  std::cout << " with No_intersection_requiring_constructions_tag : " << std::endl;
+  typedef CGAL::No_intersection_requiring_constructions_tag              CItag;
+  typedef CGAL::Constrained_triangulation_2<TestK, CGAL::Default, CItag> Ctwoc;
+  _test_cls_constrained_triangulation(Ctwoc());
+
+  std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with Exact_predicates_tag : " << std::endl;
   typedef CGAL::Triangulation_vertex_base_2<TestK>                 Vb;
   typedef CGAL::Constrained_triangulation_face_base_2<TestK>       Fb;

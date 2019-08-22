@@ -26,9 +26,16 @@
 #include <CGAL/_test_cls_triangulation_short_2.h>
 #include <boost/type_traits/is_same.hpp>
 
+enum Intersection_type {
+  NO_INTERSECTION = 0,
+  INTERSECTION_WITHOUT_CONSTRUCTION,
+  INTERSECTION
+};
+
 template <class Triang, class Pt>
 void
-_test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3, const bool intersect)
+_test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3,
+                   const Intersection_type& intersection_type)
 {
   std::cout << "test_cdt_throwing [" << p0 << "] - [" << p1 << "] || [" << p2 << "] - [" << p3 << "]" << std::endl;
 
@@ -40,14 +47,29 @@ _test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3, const
   }
   catch (typename Triang::Intersection_of_constraints_exception& e)
   {
-    std::cout << "threw, expected it? " << std::boolalpha << intersect << std::endl;
-    assert(intersect);
-    assert((boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value));
+    std::cout << "threw, expected: " << intersection_type << std::endl;
+
+    // There must have been an intersection
+    assert(intersection_type != NO_INTERSECTION);
+
+    // If the intersection requires no construction, then only 'no_intersection_tag' throws
+    if(intersection_type == INTERSECTION_WITHOUT_CONSTRUCTION) {
+      assert((boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value));
+    } else {
+      assert(intersection_type == INTERSECTION);
+      assert((boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) ||
+             (boost::is_same<typename Triang::Itag, CGAL::No_intersection_requiring_constructions_tag>::value));
+    }
+
     return;
   }
 
-  if(intersect) {
+  if(intersection_type == INTERSECTION_WITHOUT_CONSTRUCTION) {
+    // Even with an intersection without construction, 'No_intersection_tag' should throw
     assert(!(boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value));
+  } else if(intersection_type == INTERSECTION) {
+    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) &&
+           !(boost::is_same<typename Triang::Itag, CGAL::No_intersection_requiring_constructions_tag>::value));
   }
 }
 
@@ -318,26 +340,26 @@ _test_cls_constrained_triangulation(const Triang &)
   assert(std::distance(T2_6.constrained_edges_begin(),  T2_6.constrained_edges_end()) == 1);
 
   // test throwing/not throwing on intersecting constraints
-  _test_cdt_throwing<Triang>(Point(0, 0), Point(1, 1), Point(2, 2), Point(2, 3), false /*no intersection*/);
-  _test_cdt_throwing<Triang>(Point(0, 0), Point(1, 1), Point(1, 1), Point(2, 2), false); // common point
-  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(2, 2), Point(3, 3), false); // ^
-  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 2), Point(1, 1), Point(3, 3), true); // overlapping
-  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(1, 1), Point(3, 3), true); // ^
-  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(0, 0), Point(3, 3), true); // ^
-  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(3, 3), Point(0, 0), true); // ^
-  _test_cdt_throwing<Triang>(Point(0, 0), Point(3, 3), Point(1, 1), Point(2, 2), true); // contains
-  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(1, 1), Point(2, 2), true); // ^
-  _test_cdt_throwing<Triang>(Point(1, 1), Point(2, 2), Point(3, 3), Point(0, 0), true); // ^
-  _test_cdt_throwing<Triang>(Point(2, 2), Point(1, 1), Point(3, 3), Point(0, 0), true); // ^
-  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(0, 0), Point(3, 3), true); // same constraint
-  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(1, 1), Point(1, 1), true); // degenerate entry
-  _test_cdt_throwing<Triang>(Point(0, 0), Point(0, 0), Point(0, 0), Point(0, 0), false); // degenerate same entry
-
-  // non aligned
-  _test_cdt_throwing<Triang>(Point(0, 0), Point(3, 3), Point(1, 0), Point(4, 0), false);
-  _test_cdt_throwing<Triang>(Point(0, 2), Point(2, 2), Point(1, 0), Point(1, 3), true); // generic intersection
-  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 2), Point(1, 3), Point(1, 0), true);
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(1, 1), Point(2, 2), Point(2, 3), NO_INTERSECTION);
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(1, 1), Point(1, 1), Point(2, 2), NO_INTERSECTION); // common point
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(2, 2), Point(3, 3), NO_INTERSECTION); // ^
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 2), Point(1, 1), Point(3, 3), INTERSECTION_WITHOUT_CONSTRUCTION); // overlapping
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(1, 1), Point(3, 3), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(0, 0), Point(3, 3), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(3, 3), Point(0, 0), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(3, 3), Point(1, 1), Point(2, 2), INTERSECTION_WITHOUT_CONSTRUCTION); // contains
+  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(1, 1), Point(2, 2), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(1, 1), Point(2, 2), Point(3, 3), Point(0, 0), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(1, 1), Point(3, 3), Point(0, 0), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(0, 0), Point(3, 3), INTERSECTION_WITHOUT_CONSTRUCTION); // same constraint
+  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(1, 1), Point(1, 1), INTERSECTION_WITHOUT_CONSTRUCTION); // degenerate entry
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(0, 0), Point(0, 0), Point(0, 0), NO_INTERSECTION); // degenerate same entry
 
   // extremity on the interior of another segment
-  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 0), Point(1, 0), Point(1, 4), true);
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 0), Point(1, 0), Point(1, 4), INTERSECTION_WITHOUT_CONSTRUCTION);
+
+  // non aligned
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(3, 3), Point(1, 0), Point(4, 0), NO_INTERSECTION);
+  _test_cdt_throwing<Triang>(Point(0, 2), Point(2, 2), Point(1, 0), Point(1, 3), INTERSECTION); // generic intersection
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 2), Point(1, 3), Point(1, 0), INTERSECTION);
 }
