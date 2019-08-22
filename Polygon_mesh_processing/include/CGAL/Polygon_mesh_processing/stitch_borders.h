@@ -808,6 +808,9 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm)
 }
 
 ///\cond SKIP_IN_MANUAL
+// The VPM is only used here for debugging info purposes as in this overload, the halfedges
+// to stitch are already provided and all further checks are combinatorial and not geometrical.
+// There is thus nothing interesting to pass via named parameters and this overload is not documented.
 template <typename PolygonMesh,
           typename HalfedgePairsRange,
           typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
@@ -842,6 +845,8 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 *
 * @param pmesh the polygon mesh to be modified by stitching
 * @param hedge_pairs_to_stitch a range of `std::pair` of halfedges to be stitched together
+*
+* @return the number of pairs of halfedges that were stitched.
 *
 */
 template <typename PolygonMesh,
@@ -878,7 +883,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 /// \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// @return the number of pairs of halfedges that were stitched
+/// @return the number of pairs of halfedges that were stitched.
 ///
 /// @sa `stitch_boundary_cycle()`
 /// @sa `stitch_boundary_cycles()`
