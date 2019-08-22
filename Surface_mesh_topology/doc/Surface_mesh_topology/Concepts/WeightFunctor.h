@@ -3,8 +3,6 @@
 \cgalConcept
 
 The concept `WeightFunctor` defines a functor to calculate the weight of an edge
-
-\cgalHasModel \link CGAL::Surface_mesh_topology::internal::Shortest_noncontractible_cycle::Default_weight_functor `Default_weight_functor` \endlink
 */
 
 class WeightFunctor {

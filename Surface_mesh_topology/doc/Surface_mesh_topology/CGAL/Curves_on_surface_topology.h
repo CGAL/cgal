@@ -13,6 +13,9 @@ namespace Surface_mesh_topology {
   {
   public:
 
+    /// Dart handle type of Mesh
+    using Dart_handle = unspecified_type;
+
     /*! creates a `Curves_on_surface_topology` object using `amesh` as input.
      */
     Curves_on_surface_topology(const Mesh& amesh);
@@ -43,14 +46,26 @@ namespace Surface_mesh_topology {
     template <class WeightFunctor>
     Path_on_surface<Mesh> compute_edgewidth(const WeightFunctor& wf) const;
 
-    /*! returns the shortest noncontractible cycle containing the 0-cell of `dh` on the unweighted mesh
+    /*! returns the shortest non-contractible cycle going through the source vertex of `dh` of the unweighted mesh
      */
     Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(Dart_handle dh) const;
 
-    /*! returns the shortest noncontractible cycle containing the 0-cell of `dh` on the weighted mesh
+    /*! returns the shortest non-contractible cycle going through the source vertex of `dh` of the weighted mesh
      */
     template <class WeightFunctor>
     Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(Dart_handle dh, const WeightFunctor& wf) const;
+
+    /*! returns a list of one dart per face of the facewidth
+     */
+    std::vector<Dart_handle> compute_facewidth() const;
+
+    /*! update the instance of the internal class to compute shortest non-contractible cycle or edge-width
+     */
+    void update_shortest_noncontractible_cycle_pointer() const;
+
+    /*! update the instance of the internal class to compute face-width
+     */
+    void update_facewidth_pointer() const;
   };
 
 }

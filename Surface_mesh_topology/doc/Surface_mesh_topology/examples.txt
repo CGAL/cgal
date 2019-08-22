@@ -7,5 +7,6 @@
 \example Surface_mesh_topology/shortest_noncontractible_cycle_through_a_vertex.cpp
 \example Surface_mesh_topology/shortest_noncontractible_cycle_using_BFS.cpp
 \example Surface_mesh_topology/edgewidth_surface_mesh.cpp
+\example Surface_mesh_topology/facewidth_on_unweighted_map.cpp
 \example Surface_mesh_topology/unsew_edgewidth_repeatedly.cpp
 */
