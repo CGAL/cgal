@@ -227,7 +227,7 @@ public:
     PolygonMesh& out)
   {
     CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
-                          "Input soup needs to be a polygon mesh!");
+                          "Input soup needs to define a valid polygon mesh! See is_polygon_soup_a_polygon_mesh() for further information.");
 
     internal::Polygon_soup_to_polygon_mesh<PolygonMesh, PointRange, PolygonRange>
       converter(points, polygons);
