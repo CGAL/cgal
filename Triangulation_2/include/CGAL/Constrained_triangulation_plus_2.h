@@ -626,6 +626,10 @@ public:
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  No_intersection_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          No_intersection_requiring_constructions_tag);
   Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
@@ -973,16 +977,24 @@ intersect(Face_handle f, int i,
 template <class Tr>
 typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
 Constrained_triangulation_plus_2<Tr>::
-
-intersect(Face_handle , int , 
-	  Vertex_handle ,
-	  Vertex_handle ,
-	  No_intersection_tag)
+intersect(Face_handle, int,
+          Vertex_handle,
+          Vertex_handle,
+          No_intersection_tag)
 {
-  std::cerr << " sorry, this triangulation does not deal with" 
-	    <<    std::endl
-	    << " intersecting constraints" << std::endl;
-  CGAL_triangulation_assertion(false);
+  throw typename Tr::Intersection_of_constraints_exception();
+  return Vertex_handle();
+}
+
+template <class Tr>
+typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle
+Constrained_triangulation_plus_2<Tr>::
+intersect(Face_handle, int,
+          Vertex_handle,
+          Vertex_handle,
+          No_intersection_requiring_constructions_tag)
+{
+  throw typename Tr::Intersection_of_constraints_exception();
   return Vertex_handle();
 }
 

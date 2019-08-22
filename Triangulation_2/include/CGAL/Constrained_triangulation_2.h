@@ -48,6 +48,7 @@
 namespace CGAL {
 
 struct No_intersection_tag{};
+struct No_intersection_requiring_constructions_tag{};
 struct Exact_intersections_tag{}; // to be used with an exact number type
 struct Exact_predicates_tag{}; // to be used with filtered exact number
 
@@ -113,7 +114,7 @@ public:
   {
     const char* what() const throw ()
     {
-      return "Intersection of constraints while using No_intersection_tag";
+      return "Unauthorized intersections of constraints";
     }
   };
 
@@ -471,6 +472,10 @@ protected:
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  No_intersection_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          No_intersection_requiring_constructions_tag);
   Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
@@ -912,7 +917,18 @@ intersect(Face_handle , int ,
           Vertex_handle ,
           No_intersection_tag)
 {
+  throw Intersection_of_constraints_exception();
+  return Vertex_handle() ;
+}
 
+template <class Gt, class Tds, class Itag >
+typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
+Constrained_triangulation_2<Gt,Tds,Itag>::
+intersect(Face_handle , int ,
+          Vertex_handle ,
+          Vertex_handle ,
+          No_intersection_requiring_constructions_tag)
+{
   throw Intersection_of_constraints_exception();
   return Vertex_handle() ;
 }
@@ -1459,7 +1475,20 @@ intersection(const Gt& ,
 {
   return false;
 }
-	     
+
+template<class Gt>
+bool
+intersection(const Gt& ,
+             const typename Gt::Point_2& ,
+             const typename Gt::Point_2& ,
+             const typename Gt::Point_2& ,
+             const typename Gt::Point_2& ,
+             typename Gt::Point_2& ,
+             No_intersection_requiring_constructions_tag)
+{
+  return false;
+}
+
 template<class Gt>
 bool
 intersection(const Gt& gt,
@@ -1575,6 +1604,18 @@ limit_intersection(const Gt& ,
 		   const typename Gt::Point_2& , 
 		   const typename Gt::Point_2& ,
 		   No_intersection_tag)
+{
+  return 0;
+}
+
+template<class Gt>
+int
+limit_intersection(const Gt& ,
+       const typename Gt::Point_2& ,
+       const typename Gt::Point_2& ,
+       const typename Gt::Point_2& ,
+       const typename Gt::Point_2& ,
+       No_intersection_requiring_constructions_tag)
 {
   return 0;
 }
