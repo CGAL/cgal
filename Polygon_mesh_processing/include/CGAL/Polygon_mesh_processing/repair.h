@@ -68,6 +68,37 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /// \ingroup PMP_repairing_grp
+/// removes the isolated vertices from any polygon mesh.
+/// A vertex is considered isolated if it is not incident to any simplex
+/// of higher dimension.
+///
+/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+///
+/// @param pmesh the polygon mesh to be repaired
+///
+/// @return number of removed isolated vertices
+///
+template <class PolygonMesh>
+std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  std::vector<vertex_descriptor> to_be_removed;
+
+  for(vertex_descriptor v : vertices(pmesh))
+  {
+    if (CGAL::halfedges_around_target(v, pmesh).first
+      == CGAL::halfedges_around_target(v, pmesh).second)
+      to_be_removed.push_back(v);
+  }
+  std::size_t nb_removed = to_be_removed.size();
+  for(vertex_descriptor v : to_be_removed)
+  {
+    remove_vertex(v, pmesh);
+  }
+  return nb_removed;
+}
+
+/// \ingroup PMP_repairing_grp
 ///
 /// removes connected components whose area or volume is under a certain threshold value.
 ///
@@ -173,7 +204,11 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
   std::size_t num = connected_components(tmesh, face_cc, np);
 
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << num << " different connected components" << std::endl;
+#endif
+
+  CGAL::Polygon_mesh_processing::remove_isolated_vertices(tmesh);
 
   // Compute CC-wide and total areas/volumes
   FT total_area = 0;
@@ -2524,37 +2559,6 @@ template <class PolygonMesh>
 std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm)
 {
   return duplicate_non_manifold_vertices(pm, parameters::all_default());
-}
-
-/// \ingroup PMP_repairing_grp
-/// removes the isolated vertices from any polygon mesh.
-/// A vertex is considered isolated if it is not incident to any simplex
-/// of higher dimension.
-///
-/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-///
-/// @param pmesh the polygon mesh to be repaired
-///
-/// @return number of removed isolated vertices
-///
-template <class PolygonMesh>
-std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  std::vector<vertex_descriptor> to_be_removed;
-
-  for(vertex_descriptor v : vertices(pmesh))
-  {
-    if (CGAL::halfedges_around_target(v, pmesh).first
-      == CGAL::halfedges_around_target(v, pmesh).second)
-      to_be_removed.push_back(v);
-  }
-  std::size_t nb_removed = to_be_removed.size();
-  for(vertex_descriptor v : to_be_removed)
-  {
-    remove_vertex(v, pmesh);
-  }
-  return nb_removed;
 }
 
 /// \cond SKIP_IN_MANUAL
