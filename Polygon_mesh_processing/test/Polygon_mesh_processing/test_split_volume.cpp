@@ -70,6 +70,7 @@ int main()
   // create a self-intersection
   Surface_mesh::Halfedge_index h = *tmp.halfedges().begin();
   h = CGAL::Euler::split_edge(h, tmp);
+  tmp.point( target(h, tmp) ) = tmp.point( target( tmp.next(h), tmp) );
   CGAL::Euler::split_face(h, next( next(h, tmp), tmp), tmp);
   h = opposite(h, tmp);
   CGAL::Euler::split_face(h, next( next(h, tmp), tmp), tmp);
