@@ -76,13 +76,15 @@ void sum_normals(const PM& pmesh,
   typedef typename boost::graph_traits<PM>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
 
+  typedef boost::property_traits<VertexPointMap>::reference     Point_ref;
+
   halfedge_descriptor he = halfedge(f, pmesh);
   vertex_descriptor v = source(he, pmesh);
-  const Point& pv = get(vpmap, v);
+  const Point_ref pv = get(vpmap, v);
   while(v != target(next(he, pmesh), pmesh))
   {
-    const Point& pvn = get(vpmap, target(he, pmesh));
-    const Point& pvnn = get(vpmap, target(next(he, pmesh), pmesh));
+    const Point_ref pvn = get(vpmap, target(he, pmesh));
+    const Point_ref pvnn = get(vpmap, target(next(he, pmesh), pmesh));
 
     Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
     sum = traits.construct_sum_of_vectors_3_object()(sum, n);
