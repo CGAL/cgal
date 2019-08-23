@@ -66,8 +66,6 @@ triangle_normal(const Point& p0, const Point& p1, const Point& p2, const GT& tra
   return traits.construct_scaled_vector_3_object()(n, 0.5);
 }
 
-} // namespace internal
-
 template<typename Point, typename PM, typename VertexPointMap, typename Vector, typename GT>
 void sum_normals(const PM& pmesh,
                  typename boost::graph_traits<PM>::face_descriptor f,
@@ -92,6 +90,8 @@ void sum_normals(const PM& pmesh,
     he = next(he, pmesh);
   }
 }
+
+} // namespace internal
 
 /**
 * \ingroup PMP_normal_grp
@@ -143,7 +143,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
   typedef typename GT::Vector_3 Vector;
 
   Vector normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
-  sum_normals<Point>(pmesh, f, vpmap, normal, traits);
+  internal::sum_normals<Point>(pmesh, f, vpmap, normal, traits);
 
   if(!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
@@ -201,6 +201,8 @@ void compute_face_normals(const PolygonMesh& pmesh, FaceNormalMap fnm)
 {
   compute_face_normals(pmesh, fnm, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
+
+namespace internal {
 
 template <typename GT>
 bool almost_equal(const typename GT::Vector_3& v1, const typename GT::Vector_3& v2)
@@ -466,12 +468,7 @@ void compute_most_visible_vertex_normals(VertexNormalMap& vertex_normal_map,
   }
 }
 
-template<typename PolygonMesh, typename VertexNormalMap>
-void compute_most_visible_vertex_normals(VertexNormalMap& vertex_normal_map,
-                                         const PolygonMesh& pmesh)
-{
-  return compute_most_visible_vertex_normals(vertex_normal_map, pmesh, CGAL::parameters::all_default());
-}
+} // end namespace internal
 
 /**
 * \ingroup PMP_normal_grp
