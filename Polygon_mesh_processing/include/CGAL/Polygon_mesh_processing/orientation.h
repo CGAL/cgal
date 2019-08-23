@@ -778,36 +778,13 @@ void set_f_cc_id(const std::vector<std::size_t>&,
 
 } // internal
 
-namespace Volume_cc
-{
-
-template<class TriangleMesh, class FaceCCIdMap, class Vpm>
-void self_intersections_amongst_cc(const TriangleMesh& tm, FaceCCIdMap f_scc_id, const Vpm& vpm,
-                                   std::set< std::pair<std::size_t, std::size_t> >& self_intersecting_ccs)
-{
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::face_descriptor face_descriptor;
-
-  typedef std::pair<face_descriptor, face_descriptor> Face_pair;
-  std::vector<Face_pair> si_faces;
-
-  self_intersections(tm, std::back_inserter(si_faces), parameters::vertex_point_map(vpm));
-  for(const Face_pair& fp : si_faces)
-  {
-    std::size_t first_cc_id  = get(f_scc_id, fp.first);
-    std::size_t second_cc_id = get(f_scc_id, fp.second);
-    self_intersecting_ccs.insert( make_sorted_pair(first_cc_id, second_cc_id) );
-  }
-}
-
-} // end of Volume_cc namespace
 
 /*!
  * \ingroup PMP_orientation_grp
  * assigns to each face of `tm` an id corresponding to the volume connected component
  * it contributes to define.
  *
- * Using the adjacency relation of two faces along an edge, a triangle mesh can be decomposed
+ * Using the adjacency relation of two faces along an edge, a triangle mesh can be split
  * into connected components (*surface components* in the following).
  * A surface component without boundary separates the 3D space into an infinite and
  * a finite volume. We say that the finite volume is <i>enclosed</i> by this surface
@@ -973,28 +950,31 @@ volume_connected_components(const TriangleMesh& tm,
   }
 
 // Handle self-intersecting connected components
-  std::vector<bool> is_involved_in_self_intersection(nb_cc, false);
-  std::set< std::pair<std::size_t, std::size_t> > self_intersecting_ccs; // due to self-intersections
+  typedef std::pair<face_descriptor, face_descriptor> Face_pair;
+  std::vector<Face_pair> si_faces;
+  std::set< std::pair<std::size_t, std::size_t> > self_intersecting_cc; // due to self-intersections
   if (do_self_intersection_tests)
+    self_intersections(tm, std::back_inserter(si_faces));
+  std::vector<bool> is_involved_in_self_intersection(nb_cc, false);
+  for(const Face_pair& fp : si_faces)
   {
-    Volume_cc::self_intersections_amongst_cc(
-      tm, bind_property_maps(fid_map,make_property_map(face_cc)), vpm, self_intersecting_ccs);
-    for(const std::pair<std::size_t, std::size_t>& p : self_intersecting_ccs)
+    std::size_t first_cc_id = face_cc[ get(fid_map, fp.first) ];
+    std::size_t second_cc_id = face_cc[ get(fid_map, fp.second) ];
+
+    if (first_cc_id==second_cc_id)
     {
-      if (p.first==p.second)
+      if ( !cc_handled.test(first_cc_id) )
       {
-        if ( !cc_handled.test(p.first) )
-        {
-          cc_handled.set(p.first);
-          cc_volume_ids[p.first]=next_volume_id++;
-          error_codes.push_back(SURFACE_SELF_INTERSECTION);
-        }
+        cc_handled.set(first_cc_id);
+        cc_volume_ids[first_cc_id]=next_volume_id++;
+        error_codes.push_back(SURFACE_SELF_INTERSECTION);
       }
-      else
-      {
-        is_involved_in_self_intersection[p.first] = true;
-        is_involved_in_self_intersection[p.second] = true;
-      }
+    }
+    else
+    {
+      is_involved_in_self_intersection[first_cc_id] = true;
+      is_involved_in_self_intersection[second_cc_id] = true;
+      self_intersecting_cc.insert( make_sorted_pair(first_cc_id, second_cc_id) );
     }
   }
 
@@ -1094,7 +1074,7 @@ volume_connected_components(const TriangleMesh& tm,
                           id != cc_to_handle.npos;
                           id  = cc_to_handle.find_next(id))
           {
-            if (self_intersecting_ccs.count( make_sorted_pair(xtrm_cc_id, id) )!= 0)
+            if (self_intersecting_cc.count( make_sorted_pair(xtrm_cc_id, id) )!= 0)
             {
               cc_intersecting.push_back(id);
               continue; // to not dot inclusion test for intersecting CCs
@@ -1118,7 +1098,7 @@ volume_connected_components(const TriangleMesh& tm,
             Side_of_tm side_of_cc(aabb_tree);
             for(std::size_t ncc_id : nested_cc_per_cc[xtrm_cc_id])
             {
-              if (self_intersecting_ccs.count( make_sorted_pair(ncc_id, id) )!= 0)
+              if (self_intersecting_cc.count( make_sorted_pair(ncc_id, id) )!= 0)
                 continue;
               if (side_of_cc(get(vpm,xtrm_vertices[ncc_id]))==ON_BOUNDED_SIDE)
                 nested_cc_per_cc_shared[id].push_back(ncc_id);
