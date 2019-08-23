@@ -38,6 +38,7 @@
 #include <CGAL/boost/graph/selection.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
@@ -68,33 +69,68 @@ namespace Polygon_mesh_processing {
 
 template <typename TriangleMesh,
           typename NamedParameters>
-std::size_t
-remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
-#ifdef DOXYGEN_RUNNING
-                                               const FT ratio,
-#else
-                                               const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::FT ratio,
-#endif
-                                               const NamedParameters& np)
+std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
+                                                           const NamedParameters& np)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
 
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor          halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor              face_descriptor;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
   typedef typename GT::FT                                                          FT;
-  const GT traits = choose_param(get_param(np, internal_np::vertex_point), GT());
+  const GT traits = choose_parameter(get_parameter(np, internal_np::vertex_point), GT());
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    VPM;
   typedef typename boost::property_traits<VPM>::value_type                         Point_3;
-  const VPM vpm = choose_param(get_param(np, internal_np::vertex_point),
-                               get_const_property_map(CGAL::vertex_point, tmesh));
+  const VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                   get_const_property_map(CGAL::vertex_point, tmesh));
 
   typedef typename GetFaceIndexMap<TriangleMesh, NamedParameters>::type            FaceIndexMap;
-  FaceIndexMap fim = choose_param(get_param(np, internal_np::face_index),
-                                  get_property_map(boost::face_index, tmesh));
+  FaceIndexMap fim = choose_parameter(get_parameter(np, internal_np::face_index),
+                                      get_property_map(boost::face_index, tmesh));
+
+  FT area_threshold = choose_parameter(get_parameter(np, internal_np::area_threshold), -1.);
+  FT volume_threshold = choose_parameter(get_parameter(np, internal_np::volume_threshold), -1.);
+
+  // If no threshold is provided, compute it as a % of the bbox
+  const bool is_default_area_threshold = is_default_parameter(get_parameter(np, internal_np::area_threshold));
+  const bool is_default_volume_threshold = is_default_parameter(get_parameter(np, internal_np::volume_threshold));
+
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+  std::cout << "default threshold? " << is_default_area_threshold << " " << is_default_volume_threshold << std::endl;
+#endif
+
+  FT bbox_diagonal = FT(0), threshold_value = FT(0);
+
+  if(is_default_area_threshold || is_default_volume_threshold)
+  {
+    if(is_empty(tmesh))
+      return 0;
+
+    const Bbox_3 bb = bbox(tmesh, np);
+
+    bbox_diagonal = FT(CGAL::sqrt(CGAL::square(bb.xmax() - bb.xmin()) +
+                                  CGAL::square(bb.ymax() - bb.ymin()) +
+                                  CGAL::square(bb.zmax() - bb.zmin())));
+    threshold_value = bbox_diagonal / FT(100); // default filter is 1%
+
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+    std::cout << "bb: " << bb.xmin() << " " << bb.xmax() << std::endl;
+    std::cout << "bb: " << bb.ymin() << " " << bb.ymax() << std::endl;
+    std::cout << "bb: " << bb.zmin() << " " << bb.zmax() << std::endl;
+    std::cout << "bbox_diagonal: " << bbox_diagonal << std::endl;
+    std::cout << "threshold_value: " << threshold_value << std::endl;
+#endif
+  }
+
+  if(is_default_area_threshold)
+    area_threshold = CGAL::square(threshold_value);
+
+  if(is_default_volume_threshold)
+    volume_threshold = CGAL::square(threshold_value);
 
   // Compute the connected components only once
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
@@ -146,46 +182,42 @@ remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     total_volume += component_volumes[i];
   }
 
-  // @todo define area/volume min values as a % of bbox instead? Right now, you could have a giant
-  // area and only a single CC with decent area but zero volume and it would not be cleaned since
-  // it is the sole volume in the mesh
-  const FT area_threshold_value = ratio * total_area;
-  const FT volume_threshold_value = ratio * total_volume;
-
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+  std::cout << "area threshold: " << area_threshold << std::endl;
+  std::cout << "volume threshold: " << volume_threshold << std::endl;
   std::cout << "total area: " << total_area << std::endl;
   std::cout << "total volume: " << total_volume << std::endl;
+#endif
 
   std::vector<std::size_t> ccs_to_remove;
   for(std::size_t i=0; i<num; ++i)
   {
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
     std::cout << "this CC has area: " << component_areas[i]
-                   << " and volume: " << component_volumes[i] << std::endl;
-    if((cc_closeness[i] && component_volumes[i] <= volume_threshold_value) ||
-       component_areas[i] <= area_threshold_value)
+              << " and volume: " << component_volumes[i] << std::endl;
+#endif
+
+    if((cc_closeness[i] && component_volumes[i] <= volume_threshold) ||
+       component_areas[i] <= area_threshold)
     {
-      std::cout << "removin' it!" << std::endl;
       ccs_to_remove.push_back(i);
     }
   }
 
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << "Removing " << ccs_to_remove.size() << " CCs" << std::endl;
+#endif
 
   remove_connected_components(tmesh, ccs_to_remove, face_cc, np);
+  CGAL_postcondition(is_valid_polygon_mesh(tmesh));
 
   return ccs_to_remove.size();
 }
 
 template <typename TriangleMesh>
-std::size_t
-remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
-#ifdef DOXYGEN_RUNNING
-                                               const FT ratio
-#else
-                                               const typename GetGeomTraits<TriangleMesh>::type::FT ratio
-#endif
-                                               )
+std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh)
 {
-  return remove_connected_components_of_negligible_size(tmesh, ratio, parameters::all_default());
+  return remove_connected_components_of_negligible_size(tmesh, parameters::all_default());
 }
 
 namespace debug{
