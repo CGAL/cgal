@@ -943,7 +943,7 @@ volume_connected_components(const TriangleMesh& tm,
   {
     error_codes.push_back(SINGLE_CONNECTED_COMPONENT);
 
-    BOOST_FOREACH(face_descriptor fd, faces(tm))
+    for(face_descriptor fd : faces(tm))
       put(volume_id_map, fd, 0);
 
     internal::copy_error_codes(error_codes, boost::get_param(np, internal_np::error_codes));
@@ -1003,7 +1003,7 @@ volume_connected_components(const TriangleMesh& tm,
   {
   // extract a vertex with max z coordinate for each connected component
     std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
-    BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+    for(vertex_descriptor vd : vertices(tm))
     {
       std::size_t cc_id = face_cc[get(fid_map, face(halfedge(vd, tm), tm))];
       if (cc_handled.test(cc_id)) continue;
@@ -1033,7 +1033,7 @@ volume_connected_components(const TriangleMesh& tm,
   //collect faces per CC
     std::vector< std::vector<face_descriptor> > faces_per_cc(nb_cc);
     std::vector< std::size_t > nb_faces_per_cc(nb_cc, 0);
-    BOOST_FOREACH(face_descriptor fd, faces(tm))
+    for(face_descriptor fd : faces(tm))
     {
       std::size_t cc_id = face_cc[ get(fid_map, fd) ];
       ++nb_faces_per_cc[ cc_id ];
@@ -1041,7 +1041,7 @@ volume_connected_components(const TriangleMesh& tm,
     for (std::size_t i=0; i<nb_cc; ++i)
       if (!cc_handled.test(i))
         faces_per_cc[i].reserve( nb_faces_per_cc[i] );
-    BOOST_FOREACH(face_descriptor fd, faces(tm))
+    for(face_descriptor fd : faces(tm))
     {
       std::size_t cc_id = face_cc[ get(fid_map, fd) ];
       if (!cc_handled.test(cc_id))
@@ -1063,7 +1063,7 @@ volume_connected_components(const TriangleMesh& tm,
     while (!level_k_nestings.empty())
     {
       std::vector < boost::dynamic_bitset<> > level_k_plus_1_nestings;
-      BOOST_FOREACH(boost::dynamic_bitset<> cc_to_handle, level_k_nestings)
+      for(boost::dynamic_bitset<> cc_to_handle : level_k_nestings)
       {
         CGAL_assertion( cc_to_handle.any() );
         while(cc_to_handle.any())
@@ -1110,13 +1110,13 @@ volume_connected_components(const TriangleMesh& tm,
           }
 
         //for each CC intersecting xtrm_cc_id, find the CCs included in both
-          BOOST_FOREACH(std::size_t id, cc_intersecting)
+          for(std::size_t id : cc_intersecting)
           {
             typename Side_of_tm::AABB_tree aabb_tree(faces_per_cc[id].begin(),
                                                      faces_per_cc[id].end(),
                                                      tm, vpm);
             Side_of_tm side_of_cc(aabb_tree);
-            BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[xtrm_cc_id])
+            for(std::size_t ncc_id : nested_cc_per_cc[xtrm_cc_id])
             {
               if (self_intersecting_ccs.count( make_sorted_pair(ncc_id, id) )!= 0)
                 continue;
@@ -1192,7 +1192,7 @@ volume_connected_components(const TriangleMesh& tm,
       if (is_involved_in_self_intersection[cc_id])
       {
         error_codes.push_back(VOLUME_INTERSECTION);
-        BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
+        for(std::size_t ncc_id : nested_cc_per_cc[cc_id])
         {
           cc_handled.set(ncc_id);
           cc_volume_ids[ncc_id] = next_volume_id++;
@@ -1203,7 +1203,7 @@ volume_connected_components(const TriangleMesh& tm,
       else
         error_codes.push_back(VALID_VOLUME);
 
-      BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
+      for(std::size_t ncc_id : nested_cc_per_cc[cc_id])
       {
         if ( nesting_levels[ncc_id]==nesting_levels[cc_id]+1 )
         {
@@ -1216,7 +1216,7 @@ volume_connected_components(const TriangleMesh& tm,
               // we dump it and all included surface components as independant volumes.
               cc_volume_ids[ncc_id] = next_volume_id++;
               error_codes.push_back(INCOMPATIBLE_ORIENTATION);
-              BOOST_FOREACH(std::size_t nncc_id, nested_cc_per_cc[ncc_id])
+              for(std::size_t nncc_id : nested_cc_per_cc[ncc_id])
               {
                 cc_handled.set(nncc_id);
                 cc_volume_ids[nncc_id] = next_volume_id++;
@@ -1229,7 +1229,7 @@ volume_connected_components(const TriangleMesh& tm,
           {
               cc_volume_ids[ncc_id] = next_volume_id++;
               error_codes.push_back(VOLUME_INTERSECTION);
-              BOOST_FOREACH(std::size_t nncc_id, nested_cc_per_cc[ncc_id])
+              for(std::size_t nncc_id : nested_cc_per_cc[ncc_id])
               {
                 if (cc_handled.test(nncc_id))
                 {
@@ -1261,7 +1261,7 @@ volume_connected_components(const TriangleMesh& tm,
   // extract direct nested parent (more than one in case of self-intersection)
     for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
     {
-      BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
+      for(std::size_t ncc_id : nested_cc_per_cc[cc_id])
       {
         if (nesting_levels[cc_id]+1 == nesting_levels[ncc_id])
           nesting_parents[ncc_id].push_back(cc_id);
@@ -1271,13 +1271,13 @@ volume_connected_components(const TriangleMesh& tm,
   // update volume id map
     for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
     {
-      BOOST_FOREACH(face_descriptor fd, faces_per_cc[cc_id])
+      for(face_descriptor fd : faces_per_cc[cc_id])
       put(volume_id_map, fd, cc_volume_ids[cc_id]);
     }
   }
   else
   {
-    BOOST_FOREACH(face_descriptor fd, faces(tm))
+    for(face_descriptor fd : faces(tm))
     {
       std::size_t cc_id = face_cc[ get(fid_map, fd) ];
       put(volume_id_map, fd, cc_volume_ids[cc_id]);
