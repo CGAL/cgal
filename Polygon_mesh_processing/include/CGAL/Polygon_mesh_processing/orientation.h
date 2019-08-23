@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s)     : Ilker O. Yaz
+// Author(s)     : Sebastien Loriot and Ilker O. Yaz
 
 
 #ifndef CGAL_ORIENT_POLYGON_MESH_H
@@ -1019,11 +1019,13 @@ volume_connected_components(const TriangleMesh& tm,
       ++nb_faces_per_cc[ cc_id ];
     }
     for (std::size_t i=0; i<nb_cc; ++i)
-      faces_per_cc[i].reserve( nb_faces_per_cc[i] );
+      if (!cc_handled.test(i))
+        faces_per_cc[i].reserve( nb_faces_per_cc[i] );
     BOOST_FOREACH(face_descriptor fd, faces(tm))
     {
       std::size_t cc_id = face_cc[ get(fid_map, fd) ];
-      faces_per_cc[ cc_id ].push_back(fd);
+      if (!cc_handled.test(cc_id))
+        faces_per_cc[ cc_id ].push_back(fd);
     }
 
   // init the main loop
