@@ -729,9 +729,11 @@ which enables to treat one or several connected components as a face graph.
 \cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
 
 
-\section PMPDistance Approximate Hausdorff Distance
+\section PMPDistance (Approximate) Hausdorff Distance
 
 This package provides methods to compute (approximate) distances between meshes and point sets.
+
+\subsection Approximate Hausdorff Distance
 
 The function \link approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
 computes an approximation of the Hausdorff distance from a mesh `tm1` to a mesh `tm2`. Given a
@@ -757,12 +759,12 @@ computes an approximation of the Hausdorff distance from a mesh to a point set.
 For each triangle, a lower and upper bound of the Hausdorff distance to the point set are computed.
 Triangles are refined until the difference between the bounds is lower than a user-defined precision threshold.
 
-\subsection AHDExample Approximate Hausdorff Distance Example
+\subsubsection AHDExample Approximate Hausdorff Distance Example
 In the following example, a mesh is isotropically remeshed and the approximate distance between the input and the output is computed.
 
 \cgalExample{Polygon_mesh_processing/hausdorff_distance_remeshing_example.cpp}
 
-\subsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
+\subsubsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
 In \ref Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp,
 a triangulated surface mesh is constructed from a point set using the
 \link PkgPoissonSurfaceReconstruction3 Poisson reconstruction algorithm \endlink,
@@ -770,6 +772,14 @@ and the distance between the point set and the reconstructed surface is computed
 with the following code:
 
 \snippet Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp PMP_distance_snippet
+
+\subsection Bounded Hausdorff Distance
+
+The function \link bounded_error_Hausdorff_distance() `bounded_error_Hausdorff_distance()`\endlink
+computes an estimate of the Hausdorff distance of two triangle meshes which is
+bounded by a user-given error bound.
+
+\cgalExample{POlygon_mesh_processing/hausdorff_bounded_error_distance_example.cpp}
 
 \section PMPDetectFeatures Feature Detection
 
