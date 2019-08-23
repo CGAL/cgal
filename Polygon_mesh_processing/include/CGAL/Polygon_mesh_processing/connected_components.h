@@ -36,14 +36,13 @@
 #include <boost/graph/connected_components.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 
+#include <CGAL/assertions.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
-
-#include <CGAL/assertions.h>
-#include <CGAL/tuple.h>
 #include <CGAL/boost/graph/Dual.h>
-#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Default.h>
+#include <CGAL/Dynamic_property_map.h>
+#include <CGAL/tuple.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -96,7 +95,7 @@ namespace internal {
       EdgeConstraintMap ecm;
     };
 
-}// namespace internal
+} // namespace internal
 
 /*!
  * \ingroup keep_connected_components_grp
@@ -247,11 +246,8 @@ typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(const PolygonMesh& pmesh,
                      FaceComponentMap fcm)
 {
-
-  return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
+  return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm, CGAL::parameters::all_default());
 }
-
 
 template <typename PolygonMesh
         , typename ComponentRange
@@ -261,6 +257,50 @@ void keep_connected_components(PolygonMesh& pmesh
                               , const ComponentRange& components_to_keep
                               , const FaceComponentMap& fcm
                               , const NamedParameters& np);
+
+namespace internal {
+
+//  /*!
+//  * \ingroup keep_connected_components_grp
+//  *  returns the number of connected components in the mesh.
+//  *
+//  *  A property map for `CGAL::face_index_t` must be either available as an internal property map
+//  *  to `pmesh` or provided as one of the \ref pmp_namedparameters "Named Parameters".
+//  *
+//  *  \tparam PolygonMesh a model of `FaceGraph`
+//  *  \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+//  *
+//  *  \param pmesh the polygon mesh
+//  *  \param np optional \ref pmp_namedparameters "Named Parameters" described below
+//  *
+//  * \cgalNamedParamsBegin
+//  *  \cgalParamBegin{edge_is_constrained_map}  a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+//  *  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+//  * \cgalNamedParamsEnd
+//  *
+//  * \returns the output iterator.
+//  *
+//  */
+template <typename PolygonMesh,
+          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+std::size_t number_of_connected_components(const PolygonMesh& pmesh,
+                                           const CGAL_PMP_NP_CLASS& np)
+{
+  typedef CGAL::dynamic_face_property_t<std::size_t>                                Face_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Face_property_tag >::const_type Patch_ids_map;
+
+  Patch_ids_map patch_ids_map = get(Face_property_tag(), pmesh);
+
+  return CGAL::Polygon_mesh_processing::connected_components(pmesh, patch_ids_map, np);
+}
+
+template <typename PolygonMesh>
+std::size_t number_of_connected_components(const PolygonMesh& pmesh)
+{
+  return internal::number_of_connected_components(pmesh, CGAL::parameters::all_default());
+}
+
+} // end namespace internal
 
 /*!
  * \ingroup keep_connected_components_grp
