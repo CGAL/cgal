@@ -775,11 +775,11 @@ with the following code:
 
 \subsection Bounded Hausdorff Distance
 
-The function \link bounded_error_Hausdorff_distance() `bounded_error_Hausdorff_distance()`\endlink
+The function `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
 computes an estimate of the Hausdorff distance of two triangle meshes which is
 bounded by a user-given error bound.
 
-\cgalExample{POlygon_mesh_processing/hausdorff_bounded_error_distance_example.cpp}
+\cgalExample{Polygon_mesh_processing/hausdorff_bounded_error_distance_example.cpp}
 
 \section PMPDetectFeatures Feature Detection
 

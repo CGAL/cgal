@@ -1110,7 +1110,8 @@ double bounded_error_Hausdorff_naive_impl(
 
 } //end of namespace internal
 
-/*
+/**
+ * \ingroup PMP_distance_grp
  * Implementation of Bounded Hausdorff distance computation using AABBTree
  * culling.
  */
