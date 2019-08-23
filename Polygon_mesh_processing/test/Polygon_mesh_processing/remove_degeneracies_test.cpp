@@ -4,6 +4,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <iostream>
@@ -178,7 +179,7 @@ void remove_degeneracies(const char* filename,
 }
 
 template <typename Mesh>
-void initialize_IDs(const Mesh& mesh) { }
+void initialize_IDs(const Mesh&) { }
 
 template <typename Kernel>
 void initialize_IDs(const CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>& mesh)
@@ -202,20 +203,53 @@ void remove_negligible_connected_components(const char* filename)
   std::cout << "  remove negligible CCs, file: " << filename << std::endl;
 
   std::ifstream input(filename);
-  Mesh mesh;
+  Mesh mesh, mesh_cpy;
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
     std::cerr << filename << " is not a valid off file.\n";
     exit(1);
   }
 
+  mesh_cpy = mesh;
+
   initialize_IDs(mesh);
+  initialize_IDs(mesh_cpy);
 
-  std::cout << "before: " << num_vertices(mesh) << " nv & " << num_faces(mesh) << " nf" << std::endl;
-  PMP::remove_connected_components_of_negligible_size(mesh, 1e-3);
-  std::cout << "after: " << vertices(mesh).size() << " nv & " << faces(mesh).size() << " nf" << std::endl;
+  std::size_t ini_nv = num_vertices(mesh);
+  std::size_t ini_nf = num_faces(mesh);
 
-//  std::ofstream("out.off") << std::setprecision(17) << mesh;
+  std::cout << "before: " << ini_nv << " nv & " << ini_nf << " nf" << std::endl;
+
+  // threshold too small, doesn't remove anything
+  std::cout << "---------\ntiny threshold, nothing happens..." << std::endl;
+  PMP::remove_connected_components_of_negligible_size(mesh, CGAL::parameters::area_threshold(1e-15)
+                                                                             .volume_threshold(1e-15));
+  assert(PMP::internal::number_of_connected_components(mesh) == 4);
+  assert(num_vertices(mesh) == ini_nv);
+  assert(num_faces(mesh) == ini_nf);
+
+  // that removes the CCs with small volumes
+  std::cout << "---------\nremove small volumes..." << std::endl;
+  PMP::remove_connected_components_of_negligible_size(mesh, CGAL::parameters::area_threshold(1e-15)
+                                                                             .volume_threshold(0.1));
+  initialize_IDs(mesh);
+  assert(PMP::internal::number_of_connected_components(mesh) == 2);
+
+  // that removes the open CC with a small area
+  std::cout << "---------\nremove small areas..." << std::endl;
+  PMP::remove_connected_components_of_negligible_size(mesh, CGAL::parameters::area_threshold(20));
+  initialize_IDs(mesh);
+  assert(PMP::internal::number_of_connected_components(mesh) == 1);
+
+  // Remove everything with a large value
+  std::cout << "---------\nremove everything..." << std::endl;
+  PMP::remove_connected_components_of_negligible_size(mesh, CGAL::parameters::area_threshold(1e15));
+  assert(is_empty(mesh));
+
+  // Could also have used default paramaters, which does the job by itself
+  std::cout << "---------\ndefault values..." << std::endl;
+  PMP::remove_connected_components_of_negligible_size(mesh_cpy);
+  assert(PMP::internal::number_of_connected_components(mesh_cpy) == 1);
 }
 
 template <typename K, typename Mesh>
@@ -273,7 +307,7 @@ void test()
                                std::initializer_list<std::size_t>({1, 3, 5, 10, 19}),
                                6, 7, 2, 4, 3, 3);
 
-  remove_negligible_connected_components<K, Mesh>("data_degeneracies/fused_vertices.off");
+  remove_negligible_connected_components<K, Mesh>("data_degeneracies/small_ccs.off");
 }
 
 template <typename Kernel>
@@ -281,7 +315,6 @@ void test()
 {
   typedef typename Kernel::Point_3                                      Point_3;
   typedef CGAL::Surface_mesh<Point_3>                                   Surface_mesh;
-  typedef CGAL::Polyhedron_3<Kernel>                                    Polyhedron;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Polyhedron_with_ID;
 
   std::cout << "EPICK SM TESTS" << std::endl;
@@ -294,6 +327,8 @@ void test()
 int main(int /*argc*/, char** /*argv*/)
 {
   test<EPICK>();
+
+  std::cout << "Done" << std::endl;
 
   return EXIT_SUCCESS;
 }
