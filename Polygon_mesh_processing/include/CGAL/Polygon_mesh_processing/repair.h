@@ -64,9 +64,46 @@
 #include <utility>
 #include <vector>
 
-namespace CGAL{
+namespace CGAL {
 namespace Polygon_mesh_processing {
 
+/// \ingroup PMP_repairing_grp
+///
+/// removes connected components whose area or volume is under a certain threshold value.
+///
+/// Thresholds are provided via \ref pmp_namedparameters "Named Parameters". (see below).
+/// If thresholds are not provided by the user, default values are computed as follows:
+/// - the area threshold is taken as the square of one percent of the length of the diagonal
+///   of the bounding box of the mesh.
+/// - the volume threshold is taken as the third power of one percent of the length of the diagonal
+///   of the bounding box of the mesh.
+///
+/// Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
+/// must be either available as internal property maps
+/// to `tmesh` or provided as \ref pmp_namedparameters "Named Parameters".
+///
+/// \tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// \param tmesh the triangulated polygon mesh
+/// \param nb_components_to_keep the number of components to be kept
+/// \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamBegin{area_threshold} a fixed value such that only connected components whose area is
+///                                   larger than this value are kept \cgalParamEnd
+///   \cgalParamBegin{volume_threshold} a fixed value such that only connected components whose volume is
+///                                    larger than this value are kept (only applies to closed connected components) \cgalParamEnd
+///   \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+///   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tmesh` \cgalParamEnd
+///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
+///                                     If this parameter is omitted, an internal property map for
+///                                     `CGAL::vertex_point_t` should be available in `TriangleMesh` \cgalParamEnd
+///    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel` \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+///  \return the number of connected components removed (ignoring isolated vertices).
+///
 template <typename TriangleMesh,
           typename NamedParameters>
 std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
