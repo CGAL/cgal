@@ -1,8 +1,13 @@
+#include <CGAL/Aff_transformation_3.h>
+#include <CGAL/aff_transformation_tags.h>
+#include <CGAL/Bbox_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/random_perturbation.h>
+#include <CGAL/Polygon_mesh_processing/transform.h>
 #include <CGAL/Real_timer.h>
 
 #if defined(CGAL_LINKED_WITH_TBB)
@@ -14,6 +19,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point_3;
 typedef K::Triangle_3 Triangle_3;
+typedef K::Vector_3 Vector_3;
 typedef CGAL::Surface_mesh<Point_3> Mesh;
 typedef Mesh::Vertex_index Vertex_index;
 
@@ -28,29 +34,41 @@ int main(int argc, char** argv)
   CGAL::Real_timer time;
 
   // Set an error bound
-  double error_bound = 0.01;
+  double error_bound = 0.0001;
 
-/*
-  // Easy Example
+// ----------------------------------------------------------------------------
+
+  // Easy Example of a tetrahedron and a remeshed version of itself
+
+  // Create the Tetrahedron
   CGAL::make_tetrahedron(Point_3(.0,.0,.0),
                          Point_3(2,.0,.0),
                          Point_3(1,1,1),
                          Point_3(1,.0,2),
                          tm1);
+  // Copy it and remesh it
   tm2=tm1;
-  CGAL::Polygon_mesh_processing::isotropic_remeshing(tm2.faces(),.05, tm2);
-*/
+  PMP::isotropic_remeshing(tm2.faces(),.05, tm2);
+  // Compute the Hausdorff distance
+  time.reset();
+  time.start();
+  std::cout << "Approximated Hausdorff distance: "
+            << PMP::bounded_error_Hausdorff_distance
+                  <TAG>(tm1, tm2, error_bound)
+            << std::endl;
+  time.stop();
+  std::cout << "Processing took " << time.time() << "s." << std::endl;
+
 // ----------------------------------------------------------------------------
-/*
+
   // Example with point realizing the Hausdorff distance strictly lying in the
+
   // interior of a triangle
   tm1 = Mesh();
   tm1.add_vertex( Point_3(-1.,1.,1.) );
   tm1.add_vertex( Point_3(0.,-1.,1.) );
   tm1.add_vertex( Point_3(1.,1.,1.) );
   tm1.add_face( tm1.vertices() );
-
-  std::cout << "TM1 is valid: " << (tm1.is_valid() ? "true" : "false") << std::endl;
 
   tm2 = Mesh();
   Vertex_index w0 = tm2.add_vertex( Point_3(-1.,1.,0.) );
@@ -63,82 +81,71 @@ int main(int argc, char** argv)
   tm2.add_face( w1, w4, w5 );
   tm2.add_face( w2, w5, w3 );
 
-  std::cout << "TM2 is valid: " << (tm2.is_valid() ? "true" : "false") << std::endl;
-*/
+  // Compute the Hausdorff distance
+  time.reset();
+  time.start();
+  std::cout << "Approximated Hausdorff distance: "
+            << PMP::bounded_error_Hausdorff_distance
+                  <TAG>(tm1, tm2, error_bound)
+            << std::endl;
+  time.stop();
+  std::cout << "Processing took " << time.time() << "s." << std::endl;
+
 // ----------------------------------------------------------------------------
-/*
-  // Read a real mesh given by the user
+
+  // Read a real meshes given by the user, perturb it slightly and compute the
+  // Hausdorff distance between the original mesh and its pertubation
+
   std::ifstream input( argv[1] );
   input >> tm1;
+  std::cout << "Read a mesh with " << tm1.number_of_faces() << " triangles." << std::endl;
+
+  // Copy the mesh and perturb it slightly
+  tm2 = tm1;
+  bool do_project = false;
+  PMP::random_perturbation( tm2.vertices(), tm2, 0.1, do_project );
+  std::cout << "Perturbed the input mesh, now computing the Hausdorff distance." << std::endl;
+
+  // Compute the Hausdorff distance
+  time.reset();
+  time.start();
+  std::cout << "Approximated Hausdorff distance: "
+            << PMP::bounded_error_Hausdorff_distance
+                  <TAG>(tm1, tm2, error_bound)
+            << std::endl;
+  time.stop();
+  std::cout << "Processing took " << time.time() << "s." << std::endl;
+
+// ----------------------------------------------------------------------------
+
+  // Read two meshes given by the user, initially place them at their originally
+  // given position. Move the second mesh in 300 steps away from the first one.
+  // Print how the Hausdorff distance changes.
+
+  std::ifstream input1( argv[1] );
+  input1 >> tm1;
   std::cout << "Read a mesh with " << tm1.number_of_faces() << " triangles." << std::endl;
 
   std::ifstream input2( argv[2] );
   input2 >> tm2;
   std::cout << "Read a mesh with " << tm2.number_of_faces() << " triangles." << std::endl;
 
-  // Copy the mesh and perturb it slightly
-  tm2 = tm1;
-  bool do_project = false;
-  CGAL::Polygon_mesh_processing::random_perturbation( tm2.vertices(), tm2, 0.1, do_project );
-  std::cout << "Perturbed the input mesh, now computing the Hausdorff distance." << std::endl;
-*/
-// ----------------------------------------------------------------------------
+  CGAL::Bbox_3 bb = PMP::bbox(tm2);
+  double dist = CGAL::approximate_sqrt( Vector_3(bb.xmax() - bb.xmin(), bb.ymax() - bb.ymin(), bb.zmax() - bb.zmin()).squared_length() );
 
-  // Pairwise computation on a set of benchmark models
-  std::vector<std::string> models = {"80","102","128","162","204","256","320","402","504","632","792","992","1242"};
-  int num_models = models.size();
-  std::string prefix = "/home/martin/Downloads/bunnies/bunny_";
-  std::string postfix = ".off";
-  std::vector<double> error_bounds = { 0.1, 0.01, 0.001, 0.0001 };
-
-  std::ifstream input(prefix + models[0] + postfix);
-  // input >> tm1;
-  // input >> tm2;
-  // std::cout << "Initialized with a mesh at " << (prefix + models[0] + postfix) << " with " << tm1.number_of_faces() << " triangles." << std::endl;
-
-  for(int i=0; i<num_models; i++) {
-
-    input.close();
-    input.open(prefix + models[i] + postfix);
-    tm1 = Mesh();
-    input >> tm1;
-    // std::cout << "Read a mesh at " << (prefix + models[i] + postfix) << " with " << tm1.number_of_faces() << " faces." << std::endl;
-
-    for(int j=0; j<num_models; j++) {
-      if (i == j) continue;
-      input.close();
-      input.open(prefix + models[j] + postfix);
-      tm2 = Mesh();
-      input >> tm2;
-      // std::cout << "Read a mesh at " << (prefix + models[j] + postfix) << " with " << tm2.number_of_faces() << " faces." << std::endl;
-      //
-      // std::cout << "Read two meshes with " << tm1.number_of_faces() << ", " << tm2.number_of_faces() << " triangles respectively." << std::endl;
-
-      for (int k=0; k<error_bounds.size(); k++) {
-        time.reset();
-        time.start();
-        double h_dist = CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance<TAG>(tm1, tm2, error_bounds[k]);
-        time.stop();
-        std::cout << models[i] << " " << models[j] << " " << time.time() << " " << error_bounds[k] << " " << h_dist << std::endl;
-      }
-    }
+  for (int i=0; i<300; i++) {
+    PMP::transform(
+       CGAL::Aff_transformation_3<K> ( CGAL::Translation(), Vector_3( 0.01*dist, 0.01*dist, 0.01*dist ) ),
+       tm2
+     );
+    time.reset();
+    time.start();
+    std::cout << "Position: " << i << std::endl;
+    std::cout << "Approximated Hausdorff distance: "
+              << PMP::bounded_error_Hausdorff_distance
+                    <TAG>(tm1, tm2, error_bound)
+              << std::endl;
+    time.stop();
+    std::cout << "Processing took " << time.time() << "s." << std::endl;
   }
-
-
-/*
-  time.start();
-  std::cout << "Approximated Hausdorff distance: "
-            << CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance
-                  <TAG>(tm1, tm2, error_bound)
-            << std::endl;
-  time.stop();
-  std::cout << "Processing took " << time.time() << "s." << std::endl;
-*/
-/*
-  std::cout << "Approximated Hausdorff distance (naive): "
-            << CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance_naive
-                  <TAG>(tm1, tm2, error_bound)
-            << ", the actual distance is at most " << error_bound << " larger."
-            << std::endl;
-*/
 }
