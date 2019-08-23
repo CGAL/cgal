@@ -816,49 +816,7 @@ double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
 ////////////////////////////////////////////////////////////////////////
 
 namespace internal {
-/*
-#if defined(CGAL_LINKED_WITH_TBB)
-template <class AABB_tree, class Point_3>
-struct Distance_computation{
-  const AABB_tree& tree;
-  const std::vector<Point_3>& sample_points;
-  Point_3 initial_hint;
-  tbb::atomic<double>* distance;
 
-  Distance_computation(
-          const AABB_tree& tree,
-          const Point_3& p,
-          const std::vector<Point_3>& sample_points,
-          tbb::atomic<double>* d)
-    : tree(tree)
-    , sample_points(sample_points)
-    , initial_hint(p)
-    , distance(d)
-  {}
-
-  void
-  operator()(const tbb::blocked_range<std::size_t>& range) const
-  {
-    Point_3 hint = initial_hint;
-    double hdist = 0;
-    for( std::size_t i = range.begin(); i != range.end(); ++i)
-    {
-      hint = tree.closest_point(sample_points[i], hint);
-      typename Kernel_traits<Point_3>::Kernel::Compute_squared_distance_3 squared_distance;
-      double d = to_double(CGAL::approximate_sqrt( squared_distance(hint,sample_points[i]) ));
-      if (d>hdist) hdist=d;
-    }
-
-    // update max value stored in distance
-    double current_value = *distance;
-    while( current_value < hdist )
-    {
-      current_value = distance->compare_and_swap(hdist, current_value);
-    }
-  }
-};
-#endif
-*/
 template <class Concurrency_tag,
           class Kernel,
           class TriangleMesh,
@@ -923,26 +881,16 @@ double bounded_error_Hausdorff_impl(
   std::pair<Point_3, face_descriptor> hint = tm2_tree.any_reference_point_and_id();
 
   // Build traversal traits for tm1_tree
-  Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1( tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2 );
+  Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1( tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, hint.first );
   // Find candidate triangles in TM1 which might realise the Hausdorff bound
   tm1_tree.traversal( Point_3(0,0,0), traversal_traits_tm1 ); // dummy point given as query as not needed
 
-  // TODO Implement the candidate_triangles set as Stack instead of Vector
-  //      check: https://www.boost.org/doc/libs/1_55_0/doc/html/heap.html
-  //      Can already build a sorted structure while collecting the candidates
+  // TODO Is there a better/faster data structure than the Heap used here?
+  // Can already build a sorted structure while collecting the candidates
   Heap_type candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   Hausdorff_bounds global_bounds = traversal_traits_tm1.get_global_bounds();
 
-  // std::cout << "Culled " << traversal_traits_tm1.get_num_culled_triangles() << " out of " << tm1.num_faces() << std::endl;
-
-/*
-  std::cout << "Found " << candidate_triangles.size() << " candidates." << std::endl;
-  for (int i=0; i<candidate_triangles.size(); i++) {
-    std::cout << "Triangle " << i << " with bounds ("
-              << candidate_triangles[i].second.first << ", "
-              << candidate_triangles[i].second.second << ")" << std::endl;
-  }
-*/
+  std::cout << "Culled " << traversal_traits_tm1.get_num_culled_triangles() << " out of " << tm1.num_faces() << std::endl;
 
   double squared_error_bound = error_bound * error_bound;
 
@@ -1029,14 +977,6 @@ double bounded_error_Hausdorff_impl(
         candidate_triangles.push(
           Candidate_triangle<Kernel>(sub_triangles[i], local_bounds)
         );
-
-        // std::cout << "Split triangle (" << v0 << ", " << v1 << ", " << v2
-        //           << ") with bounds: (" << triangle_bounds.first << ", "
-        //           << triangle_bounds.second << "), sub-triangle " << i
-        //           << " (" << sub_triangles[i].vertex(0) << ", " << sub_triangles[i].vertex(1) << ", " << sub_triangles[i].vertex(2)
-        //           << ") has bounds: ("
-        //           << local_bounds.first << ", " << local_bounds.second << "), gobal bounds are: ("
-        //           << global_bounds.first << ", " << global_bounds.second << ")" << std::endl;
       }
 
       // Update global upper Hausdorff bound after subdivision
@@ -1045,12 +985,6 @@ double bounded_error_Hausdorff_impl(
     }
   }
 
-  // Print result found
-/*
-  std::cout << "Processing candidates finished, found distance (lower, upper): ("
-            << global_bounds.first << ", " << global_bounds.second << ")" << std::endl;
-*/
-
   // Return linear interpolation between found lower and upper bound
   return (global_bounds.first + global_bounds.second) / 2.;
 
@@ -1058,134 +992,8 @@ double bounded_error_Hausdorff_impl(
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
-  // TODO implement parallelized version of the below here.
-  // if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
-  // {
-  //   tbb::atomic<double> distance;
-  //   distance=0;
-  //   Distance_computation<AABBTree, typename Kernel::Point_3> f(tm2_tree
-  // , hint, sample_points, &distance);
-  //   tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
-  //   return distance;
-  // }
-  // else
+  // TODO implement parallelized version of the above here.
 #endif
-/*
-  {
-    // Store all vertices of tm1 in a vector
-    std::vector<vertex_descriptor> tm1_vertices;
-    tm1_vertices.reserve(num_vertices(tm1));
-    tm1_vertices.insert(tm1_vertices.end(),vertices(tm1).begin(),vertices(tm1).end());
-
-    // Sort vertices along a Hilbert curve
-    spatial_sort( tm1_vertices.begin(),
-                  tm1_vertices.end(),
-                  Search_traits_3(vpm1) );
-
-    // For each vertex in tm1, store the distance to the closest triangle of tm2
-    Vertex_closest_triangle_map vctm  = get(Vertex_property_tag(), tm1);
-    // For each triangle in tm1, sotre its respective local lower and upper bound
-    // on the Hausdorff measure
-    Triangle_hausdorff_bounds thb = get(Face_property_tag(), tm1);
-
-    // For each vertex in the first mesh, find the closest triangle in the
-    // second mesh, store it and also store the distance to this triangle
-    // in a dynamic vertex property
-    for(vertex_descriptor vd : tm1_vertices)
-    {
-      // Get the point represented by the vertex
-      typename boost::property_traits<VPM1>::reference pt = get(vpm1, vd);
-      // Use the AABB tree to find the closest point and face in tm2
-      hint = tm2_tree.closest_point_and_primitive(pt, hint);
-      // Compute the distance of the point to the closest point in tm2
-      dist = squared_distance(hint.first, pt);
-      double d = to_double(dist);
-      // Store the distance and the closest triangle in the corresponding map
-      put(vctm, vd, std::make_pair(d, hint.second));
-    }
-
-    // Maps the faces of tm2 to actual triangles
-    Triangle_from_face_descriptor_map<TriangleMesh, VPM2> face_to_triangle_map(&tm2, vpm2);
-    // Initialize global bounds on the Hausdorff measure
-    double h_lower = 0.;
-    double h_upper = 0.;
-    // Initialize an array of candidate triangles in A to be procesed in the
-    // following
-    std::vector<face_descriptor> candidate_triangles;
-
-    // For each triangle in the first mesh, initialize its local upper and
-    // lower bound and store these in a dynamic face property for furture
-    // reference
-    for(face_descriptor fd : faces(tm1))
-    {
-      // Initialize the local bounds for the current face fd
-      double h_triangle_lower = 0.;
-      double h_triangle_upper = std::numeric_limits<double>::infinity();
-
-      // Create a halfedge descriptor for the current face and store the vertices
-      halfedge_descriptor hd = halfedge(fd, tm1);
-      std::array<vertex_descriptor,3> face_vertices = {source(hd,tm1), target(hd,tm1), target(next(hd, tm1),tm1)};
-
-      // Get the distance and closest triangle in tm2 for each vertex of fd
-      std::array<std::pair<double, face_descriptor>,3> vertex_properties = {
-          get(vctm, face_vertices[0]),
-          get(vctm, face_vertices[1]),
-          get(vctm, face_vertices[2])};
-
-      // Convert the closest faces of tm2 to triangles
-      std::array<typename Kernel::Triangle_3,3> triangles_in_B = {
-          get(face_to_triangle_map, vertex_properties[0].second),
-          get(face_to_triangle_map, vertex_properties[1].second),
-          get(face_to_triangle_map, vertex_properties[2].second)};
-
-      for(int i=0; i<3; ++i)
-      {
-        // Iterate over the vertices by i, the distance to the closest point in
-        // tm2 computed above is a lower bound for the local triangle
-        h_triangle_lower = (std::max)(h_triangle_lower, vertex_properties[i].first);
-
-        // Iterate over the triangles by i, if the triangles are the same, we do
-        // not need to compute the distance, only compute it if the triangles
-        // differ
-        double face_distance_1 = vertex_properties[i].second==vertex_properties[(i+1)%3].second
-                               ? vertex_properties[(i+1)%3].first
-                               : squared_distance(project_point(triangles_in_B[i], get(vpm1, face_vertices[(i+1)%3])), get(vpm1, face_vertices[(i+1)%3]));
-        double face_distance_2 = vertex_properties[i].second==vertex_properties[(i+2)%3].second
-                               ? vertex_properties[(i+2)%3].first
-                               : squared_distance(project_point(triangles_in_B[i], get(vpm1, face_vertices[(i+2)%3])), get(vpm1, face_vertices[(i+2)%3]));
-
-        // Update the local lower bound of the triangle
-        h_triangle_upper = (std::min)(
-          (std::max)(
-            (std::max)(face_distance_1, face_distance_2),
-            vertex_properties[i].first),
-          h_triangle_upper);
-      }
-
-      // Store the computed lower and upper bound in a dynamic face property
-      put(thb, fd, Hausdorff_bounds(h_triangle_lower, h_triangle_upper));
-      h_lower = (std::max)(h_lower, h_triangle_lower);
-      h_upper = (std::max)(h_upper, h_triangle_upper);
-
-      // Only process the triangle further if it can still contribute to a
-      // Hausdorff distance
-      if (h_triangle_upper > h_lower) {
-
-        // TODO culling on B
-
-        candidate_triangles.push_back(fd);
-      }
-    }
-
-
-
-    // TODO Iterate over candidate_triangles and kill those which cannot contribute anymore
-
-    // TODO Send the remaining triangles to the Subdivision
-
-    return (CGAL::approximate_sqrt(h_lower)+CGAL::approximate_sqrt(h_upper))/2.;
-  }
-*/
 }
 
 template <class Point_3,
@@ -1301,42 +1109,6 @@ double bounded_error_Hausdorff_naive_impl(
 }
 
 } //end of namespace internal
-
-/**
- * \ingroup PMP_distance_grp
- * computes the approximate Hausdorff distance from `tm1` to `tm2` by returning
- * the distance of the farthest point from `tm2` amongst a sampling of `tm1`
- * generated with the function `sample_triangle_mesh()` with
- * `tm1` and `np1` as parameter.
- *
- * A parallel version is provided and requires the executable to be
- * linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
- * To control the number of threads used, the user may use the `tbb::task_scheduler_init` class.
- * See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
- * for more details.
- *
- * @tparam Concurrency_tag enables sequential versus parallel algorithm.
- *                         Possible values are `Sequential_tag`
- *                         and `Parallel_tag`.
- * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm1`
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm2`
- *
- * @param tm1 the triangle mesh that will be sampled
- * @param tm2 the triangle mesh to compute the distance to
- * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" for `tm1` passed to `sample_triangle_mesh()`.
- *
- * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" for `tm2` among the ones listed below
- *
- * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm2`
- *      If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `TriangleMesh`
- *      and in all places where `vertex_point_map` is used.
- *    \cgalParamEnd
- * \cgalNamedParamsEnd
- * The function `CGAL::parameters::all_default()` can be used to indicate to use the default values for
- * `np1` and specify custom values for `np2`
- */
 
 /*
  * Implementation of Bounded Hausdorff distance computation using AABBTree

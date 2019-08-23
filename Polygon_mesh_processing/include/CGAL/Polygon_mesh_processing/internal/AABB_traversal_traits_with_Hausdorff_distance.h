@@ -133,58 +133,6 @@ namespace CGAL {
     // Hausdorff distance and thus have to be entered
     bool do_intersect(const Query& query, const Node& node) const
     {
-      /* Have reached a node, determine whether or not to enter it */
-
-      /*
-      // Get the bounding box of the nodes
-      Bounding_box bbox = node.bbox();
-      // Compute its center
-      Point_3 bb_center = Point_3(
-        (bbox.min(0) + bbox.max(0)) / 2,
-        (bbox.min(1) + bbox.max(1)) / 2,
-        (bbox.min(2) + bbox.max(2)) / 2);
-
-      // Get the center of the query triangle
-      // The query object is a triangle from TM1, get its vertices
-      Point_3 v0 = query.vertex(0);
-      Point_3 v1 = query.vertex(1);
-      Point_3 v2 = query.vertex(2);
-      // Compute the centroid of the triangle
-      Point_3 tri_center = centroid( query );
-
-      // Compute the distance of the center to the closest point in tm2
-      double dist = approximate_sqrt(squared_distance(bb_center, tri_center));
-
-      // Compute the radius of the circumsphere of the bounding boxes
-      double bb_radius = approximate_sqrt(squared_distance(
-        Point_3(bbox.min(0),bbox.min(1),bbox.min(2)),
-        Point_3(bbox.max(0),bbox.max(1),bbox.max(2)))
-      )/2.;
-
-      // Compute the radius of the circumcircle of the triangle
-      double tri_radius = approximate_sqrt( std::max(
-        std::max(
-          squared_distance(tri_center, v0),
-          squared_distance(tri_center, v1)
-        ),
-        squared_distance(tri_center, v2)
-      ));
-
-      // Find a lower bound on the distance of the triangle to the bounding box
-      // by taking the distance from the triangle center to the bbox center
-      // and subtracting the radii of both elements. Thereby, each triangle in
-      // the bounding box has at least distance
-      //   ( dist - triangle_radius - bbox_radius )
-      // to the query triangle. Only if this lower bound is lower than the
-      // current best known lower bound, we enter the node, trying to
-      // lower the lower bound further.
-      if ( (dist - tri_radius - bb_radius) <= h_local_lower) {
-        return true;
-      } else {
-        return false;
-      }
-      */
-
       // Get the bounding box of the nodes
       Bounding_box bbox = node.bbox();
       // Get the vertices of the query triangle
@@ -287,8 +235,12 @@ namespace CGAL {
           Heap_type;
 
   public:
-    Hausdorff_primitive_traits_tm1(const AABBTraits& traits, const TM2_tree& tree, const TriangleMesh& tm1, const TriangleMesh& tm2 , const VPM1& vpm1, const VPM2& vpm2 )
-      : m_traits(traits), m_tm2_tree(tree), m_tm1(tm1), m_tm2(tm2), m_vpm1(vpm1), m_vpm2(vpm2) {
+    Hausdorff_primitive_traits_tm1(
+      const AABBTraits& traits, const TM2_tree& tree, const TriangleMesh& tm1,
+      const TriangleMesh& tm2 , const VPM1& vpm1, const VPM2& vpm2,
+      const Point_3 hint )
+      : m_traits(traits), m_tm2_tree(tree), m_tm1(tm1), m_tm2(tm2),
+      m_vpm1(vpm1), m_vpm2(vpm2) {
         // Initialize the global bounds with 0., they will only grow.
         h_lower = 0.;
         h_upper = 0.;
@@ -310,10 +262,11 @@ namespace CGAL {
       Triangle_from_face_descriptor_map<TriangleMesh, VPM1> m_face_to_triangle_map( &m_tm1, m_vpm1 );
       Triangle_3 candidate_triangle = get(m_face_to_triangle_map, primitive.id());
 
+      // TODO Can we initialize the bounds here, s.t. we don't start with infty?
+      // Can we initialize the bounds depending on the closest points in tm2
+      // seen from the three vertices?
+
       // Call Culling on B with the single triangle found.
-      // TODO If we project the vertices of the triangle onto B and consider
-      //      the edge length of the triangle, can this give us better bounds
-      //      to initialize with here?
       Hausdorff_primitive_traits_tm2<
         Tree_traits, Triangle_3, Kernel, TriangleMesh, VPM2
       > traversal_traits_tm2(
@@ -349,7 +302,6 @@ namespace CGAL {
     bool do_intersect(const Query& /*query*/, const Node& node) const
     {
       /* Have reached a node, determine whether or not to enter it */
-/*
       // Get the bounding box of the nodes
       Bounding_box bbox = node.bbox();
       // Compute its center
@@ -358,31 +310,6 @@ namespace CGAL {
         (bbox.min(1) + bbox.max(1)) / 2,
         (bbox.min(2) + bbox.max(2)) / 2);
       // Find the point from TM2 closest to the center
-      // TODO Insert a hint here to accelerate the query
-      Point_3 closest = m_tm2_tree.closest_point(center);
-      // Compute the distance of the center to the closest point in tm2
-      double dist = approximate_sqrt(squared_distance(center, closest));
-      // Compute the radius of the circumsphere of the bounding boxes
-      double radius = approximate_sqrt(squared_distance(
-        Point_3(bbox.min(0),bbox.min(1),bbox.min(2)),
-        Point_3(bbox.max(0),bbox.max(1),bbox.max(2)))
-      )/2.;
-      // If the distance is larger than the global lower bound, enter the node, i.e. return true.
-      if (dist + radius > h_lower) {
-          return true;
-      } else {
-        return false;
-      }
-*/
-      // Get the bounding box of the nodes
-      Bounding_box bbox = node.bbox();
-      // Compute its center
-      Point_3 center = Point_3(
-        (bbox.min(0) + bbox.max(0)) / 2,
-        (bbox.min(1) + bbox.max(1)) / 2,
-        (bbox.min(2) + bbox.max(2)) / 2);
-      // Find the point from TM2 closest to the center
-      // TODO Insert a hint here to accelerate the query
       Point_3 closest = m_tm2_tree.closest_point(center);
       // Compute the difference vector between the bbox center and the closest
       // point in tm2
