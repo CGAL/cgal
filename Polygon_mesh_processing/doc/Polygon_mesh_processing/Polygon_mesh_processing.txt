@@ -780,10 +780,11 @@ computes an estimate of the Hausdorff distance of two triangle meshes which is
 bounded by a user-given error bound. Given two meshes tm1 and tm2, it follows
 the procedure given by \cgalCite{tang2009interactive}. Namely, an AABB tree is
 built on tm1 and tm2 respectively. The tree on tm1 is used to iterate over all
-triangles in tm1. For each triangle t in tm1, by traversing the tree on tm2,
-by keeping track of current global bounds on the distance, it
-is estimated whether this triangle can still contribute to the actual
-Hausdorff distance. From this process, a set of candidate triangles is selected.
+triangles in tm1. Throughout the traversal, the procedure keeps track of a global
+lower and upper bound on the Hausdorff distance respectively. For each triangle
+t in tm1, by traversing the tree on tm2, it is estimated via the global bounds
+whether t can still contribute to the actual Hausdorff distance. From this
+process, a set of candidate triangles is selected.
 
 The candidate triangles are subsequently subdivided and for each smaller
 triangle, the tree on tm2 is traversed again. This is repeated until the
