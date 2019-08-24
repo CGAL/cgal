@@ -130,7 +130,7 @@ We define the *plausibility* grade \f$ p(t) \f$ as \f$ 1/r_t \f$, if
 
 Let's have a look at the figure below.
 \cgalFigureBegin{figAFSRplausible,wedges.png}
-Plausibility. Triangle `t'` and incident triangles sharing edge `e` seen from the side.
+Plausibility. Triangle ``t'`` and incident triangles sharing edge `e` seen from the side.
 \cgalFigureEnd
 
  \f$ \alpha_\mathrm{sliver}\f$ corresponds to the red wedge. The algorithm will never select triangle `t1`
@@ -140,7 +140,7 @@ even if it is the only candidate triangle.
 the one with the smallest radius is the most plausible.
 
 If there is no candidate triangle in the green wedge, the triangle with the smallest
-angle between its normal and the normal of `t'` is chosen.  In the figure above
+angle between its normal and the normal of ``t'`` is chosen.  In the figure above
 this would be triangle `t4`.
 
 \subsection AFSR_Boundaries Dealing with Multiple Components, Boundaries and Sharp Edges
@@ -173,8 +173,8 @@ is specified by the user and is set by default to 5.
 
 For the example given in  \cgalFigureRef{figAFSRplausible}, we said that if there
 was no triangle `t3` in the green wedge, triangle `t4` would be chosen as it has
-the smallest angle between its normal and the normal of triangle `t'`.
-However, in case its radius was \f$\mathrm{radius\_ratio\_bound}\f$ times larger than the radius of triangle `t'`,
+the smallest angle between its normal and the normal of triangle ``t'``.
+However, in case its radius was \f$\mathrm{radius\_ratio\_bound}\f$ times larger than the radius of triangle ``t'``,
 triangle `t2` would be chosen, assuming that its radius is not  \f$\mathrm{radius\_ratio\_bound}\f$ times larger.
 
 
