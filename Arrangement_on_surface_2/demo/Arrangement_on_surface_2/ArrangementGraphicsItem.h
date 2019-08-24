@@ -1745,10 +1745,14 @@ paintFace( Face_handle f, QPainter* painter,
 
     // FIXME: get the bg color
     QColor color = this->backgroundColor;
+    if ( f->color().isValid() )
+    {
+      color = f->color();
+    }
     QBrush oldBrush = painter->brush( );
-    QPen pen = painter->pen();
-    pen.setCosmetic(true);
-    painter->setPen(pen);
+//    QPen pen = painter->pen();
+//    pen.setCosmetic(true);
+//    painter->setPen(pen);
     painter->setBrush( color );
     painter->drawPolygon( pgn );
     painter->setBrush( oldBrush );
@@ -1763,11 +1767,12 @@ paintFace( Face_handle f, QPainter* painter,
       color = f->color();
     }
     QBrush oldBrush = painter->brush( );
-    QPen pen = painter->pen();
-    pen.setCosmetic(true);
-    painter->setPen(pen);
+//    QPen pen = painter->pen();
+//    pen.setCosmetic(true);
+//    painter->setPen(pen);
     painter->setBrush( color );
     painter->drawRect(rect);
+    painter->fillRect(rect, color);
     painter->setBrush( oldBrush );
 
   }
