@@ -1122,8 +1122,15 @@ double bounded_error_Hausdorff_naive_impl(
  * @param tm2 a second triangle mesh
  * @param error_bound Maximum bound by which the Hausdorff distance estimate is
  *                    allowed to deviate from the actual Hausdorff distance.
- * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters"
- * @param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters"
+ * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points
+ *      associated to the vertices of `tm`. If this parameter is omitted,
+ *      an internal property map for `CGAL::vertex_point_t`
+ *      must be available for `TriangleMesh`.
+ *    \cgalParamEnd
+ * \cgalNamedParamsEnd
  */
 template< class Concurrency_tag,
           class TriangleMesh,
@@ -1167,7 +1174,14 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
  * @param tm2 a second triangle mesh
  * @param error_bound Maximum bound by which the Hausdorff distance estimate is
  *                    allowed to deviate from the actual Hausdorff distance.
- * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters"
+ * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points
+ *      associated to the vertices of `tm`. If this parameter is omitted,
+ *      an internal property map for `CGAL::vertex_point_t`
+ *      must be available for `TriangleMesh`.
+ *    \cgalParamEnd
+ * \cgalNamedParamsEnd
  */
 template< class Concurrency_tag,
           class TriangleMesh,
