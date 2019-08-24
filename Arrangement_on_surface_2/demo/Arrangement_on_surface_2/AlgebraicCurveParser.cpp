@@ -39,6 +39,29 @@ Terms AlgebraicCurveParser::extractTerms() {
   if (!this->validateExpression(expression)) return algebraicTerms;
   this->expression.erase(remove_if(expression.begin(), expression.end(), isspace), this->expression.end());
 
+
+  using boost::spirit::ascii::space;
+  typedef std::string::const_iterator iterator_type;
+  typedef polynomial_parser<iterator_type> polynomial_parser;
+  polynomial_parser pparser;
+
+  std::vector<AlgebraicCurveTerm> poly;
+  AlgebraicCurveTerm term;
+  std::string::const_iterator iter = expression.begin();
+  std::string::const_iterator end = expression.end();
+  bool r = phrase_parse(iter, end, pparser, space, algebraicTerms);
+
+  if (r && iter == end)
+  {
+      std::cout<< "Parsing Successful";
+      return algebraicTerms;
+  }
+  else
+  {
+      std::cout<<"Parsing Failed";
+      return algebraicTerms;
+  }
+#if 0
   long termIndex = 0;
 
   //iterate through the string
@@ -58,8 +81,9 @@ Terms AlgebraicCurveParser::extractTerms() {
     }
   }
   return algebraicTerms;
+#endif
 }
-
+#if 0
 template<typename Iterator>
 bool AlgebraicCurveParser::parseTerm(Iterator first, Iterator last, AlgebraicCurveTerm &term) {
   using boost::spirit::qi::long_long;
@@ -137,3 +161,4 @@ bool AlgebraicCurveParser::signPresent(std::string subExpression) {
     }
     return signPresent;
 }
+#endif

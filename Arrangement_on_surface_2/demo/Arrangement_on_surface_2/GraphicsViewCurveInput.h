@@ -940,13 +940,16 @@ public:
       //extracting coefficients and power
       for (auto & term : terms)
       {
-          polynomial += term.coefficient
-                        *CGAL::ipower(x , (long) term.xExponent)
-                        *CGAL::ipower(y , (long) term.yExponent);
-          qDebug()<< "Coefficient: "<<term.coefficient;
-          qDebug()<< "X "<<term.xExponent;
-          qDebug()<< "Y "<<term.yExponent;
-          if (term.isPositive) qDebug()<< "positive";
+          long xExp = (term.xExponent)? *term.xExponent: 0;
+          long yExp = (term.yExponent)? *term.yExponent: 0;
+          long coeff = (term.coefficient)? * term.coefficient : 1;
+          polynomial += coeff
+                        *CGAL::ipower(x , xExp)
+                        *CGAL::ipower(y , yExp);
+          qDebug()<< "Coefficient: "<<coeff;
+          qDebug()<< "X "<<xExp;
+          qDebug()<< "Y "<<yExp;
+          if (coeff>=0) qDebug()<< "positive";
           else qDebug()<<"negative";
       }
 
