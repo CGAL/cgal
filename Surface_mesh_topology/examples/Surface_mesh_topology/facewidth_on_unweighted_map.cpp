@@ -15,20 +15,19 @@ using Path_on_surface = CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
 using Dart_handle = LCC_3::Dart_handle;
 
 struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC {
-  Draw_functor(LCC_3::size_type amark1, LCC_3::size_type amark2) : m_belong_to_cycle(amark1), m_belong_to_facewidth(amark2)
+  Draw_functor(LCC_3::size_type amark1, LCC_3::size_type amark2) : m_vertex_mark(amark1), m_face_mark(amark2)
   {}
 
   template<typename LCC>
   bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_handle dh) const 
-  { return false; }
+  { return alcc.is_marked(dh, m_vertex_mark); }
   
   template<typename LCC>
   CGAL::Color vertex_color(const LCC& /* alcc */, typename LCC::Dart_const_handle /* dh */) const
-  { return CGAL::Color(0,255,0); }
+  { return CGAL::Color(0, 255, 0); }
 
   template<typename LCC>
-  bool colored_edge(const LCC& alcc, typename LCC::Dart_const_handle dh) const
-  { return alcc.is_marked(dh, m_belong_to_cycle); }
+  bool colored_edge(const LCC& alcc, typename LCC::Dart_const_handle dh) const { return false; }
 
   template<typename LCC>
   CGAL::Color edge_color(const LCC& /* alcc*/, typename LCC::Dart_const_handle /* dh */) const
@@ -39,13 +38,12 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC {
 
   template<typename LCC>
   CGAL::Color face_color(const LCC& alcc, typename LCC::Dart_const_handle dh) const
-  // {return CGAL::Color(211, 211, 211);}
-  {return alcc.is_marked(dh, m_belong_to_facewidth) ? CGAL::Color(255, 0, 0) : CGAL::Color(211, 211, 211);}
+  { return alcc.is_marked(dh, m_face_mark) ? CGAL::Color(255, 0, 0) : CGAL::Color(211, 211, 211); }
 
   template<typename LCC>
   bool colored_volume(const LCC& /* alcc */, typename LCC::Dart_const_handle /* dh */) const { return false; }
   
-  LCC_3::size_type m_belong_to_cycle, m_belong_to_facewidth;
+  LCC_3::size_type m_vertex_mark, m_face_mark;
 };
 
 LCC_3 lcc;
@@ -71,30 +69,37 @@ int main(int argc, char* argv[])
     std::cout << "  Cannot find such cycle. Stop.\n";
     return 0;
   }
-  LCC_3::size_type belong_to_cycle = lcc.get_new_mark();
-  LCC_3::size_type belong_to_facewidth = lcc.get_new_mark();
-  for (int i = 0; i < cycle.size(); ++i) {
-    // Color the edges of the face
-    for (auto dh = lcc.one_dart_per_incident_cell<1,2>(cycle[i]).begin(),
-              dhend = lcc.one_dart_per_incident_cell<1,2>(cycle[i]).end(); dh != dhend; ++dh)
+  LCC_3::size_type vertex_mark = lcc.get_new_mark();
+  LCC_3::size_type face_mark = lcc.get_new_mark();
+  for (int i = 0; i < cycle.size(); ++i)
+  {
+    if (i % 2 == 0)
     {
-      if (!lcc.is_marked(dh, belong_to_cycle))
-        lcc.mark_cell<1>(dh, belong_to_cycle);
-    }
-    // Color the face
-    for (auto dh = lcc.darts_of_cell<2>(cycle[i]).begin(),
-              dhend = lcc.darts_of_cell<2>(cycle[i]).end(); dh != dhend; ++dh)
+      // Color the edges of the face
+      for (auto dh = lcc.darts_of_cell<0>(cycle[i]).begin(),
+                dhend = lcc.darts_of_cell<0>(cycle[i]).end(); dh != dhend; ++dh)
+      {
+        if (!lcc.is_marked(dh, vertex_mark))
+          lcc.mark(dh, vertex_mark);
+      }
+    } 
+    else 
     {
-      if (!lcc.is_marked(dh, belong_to_facewidth))
-        lcc.mark(dh, belong_to_facewidth);
+      // Color the face
+      for (auto dh = lcc.darts_of_cell<2>(cycle[i]).begin(),
+                dhend = lcc.darts_of_cell<2>(cycle[i]).end(); dh != dhend; ++dh)
+      {
+        if (!lcc.is_marked(dh, face_mark))
+          lcc.mark(dh, face_mark);
+      }
     }
   }
-  
-  std::cout << "  Number of faces: " << cycle.size() << std::endl;
 
-  Draw_functor df(belong_to_cycle, belong_to_facewidth);
+  std::cout << "  Number of faces: " << cycle.size()/2 << std::endl;
+
+  Draw_functor df(vertex_mark, face_mark);
   CGAL::draw(lcc, "Hello", false, df);
 
-  lcc.free_mark(belong_to_cycle);
-  lcc.free_mark(belong_to_facewidth);
+  lcc.free_mark(vertex_mark);
+  lcc.free_mark(face_mark);
 }
