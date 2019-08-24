@@ -43,122 +43,22 @@ Terms AlgebraicCurveParser::extractTerms() {
   using boost::spirit::ascii::space;
   typedef std::string::const_iterator iterator_type;
   typedef polynomial_parser<iterator_type> polynomial_parser;
-  polynomial_parser pparser;
 
-  std::vector<AlgebraicCurveTerm> poly;
-  AlgebraicCurveTerm term;
+  polynomial_parser pparser;
   std::string::const_iterator iter = expression.begin();
   std::string::const_iterator end = expression.end();
+
+  //parsing goes on here
   bool r = phrase_parse(iter, end, pparser, space, algebraicTerms);
 
   if (r && iter == end)
   {
-      std::cout<< "Parsing Successful";
-      return algebraicTerms;
+    std::cout<< "Parsing Successful";
+    return algebraicTerms;
   }
   else
   {
-      std::cout<<"Parsing Failed";
-      return algebraicTerms;
+    std::cout<<"Parsing Failed";
+    return algebraicTerms;
   }
-#if 0
-  long termIndex = 0;
-
-  //iterate through the string
-  for (auto iterator = expression.begin(); iterator != expression.end(); iterator++) {
-    auto next = iterator + 1;
-    if (*next == '+' || *next == '-' || next == expression.end()) {
-      //find the term between the +/- and the previous +/-
-      std::string subExpression = std::string(expression.begin() + termIndex, next);
-      AlgebraicCurveTerm term{};
-      
-      bool result = parseTerm(subExpression.begin(), subExpression.end(), term);
-      if (result){
-        algebraicTerms.push_back(term);
-      }
-
-      termIndex = next - expression.begin();
-    }
-  }
-  return algebraicTerms;
-#endif
 }
-#if 0
-template<typename Iterator>
-bool AlgebraicCurveParser::parseTerm(Iterator first, Iterator last, AlgebraicCurveTerm &term) {
-  using boost::spirit::qi::long_long;
-  using boost::spirit::qi::phrase_parse;
-  using boost::phoenix::ref;
-  long long xExponent = 0;
-  long long yExponent = 0;
-  long long coefficient = 1;
-  bool isPositive = true;
-  if (this->signPresent(std::string(first, last))){
-    isPositive = this -> extractSign(std::string(first, last));
-    first++;
-  }
-  bool r = phrase_parse(first, last,
-          // Begin parser
-               (
-                // For terms
-                long_long[ref(coefficient) = boost::spirit::qi::_1]  >>
-                 -("x^" >> long_long[ref(
-                 xExponent)= boost::spirit::qi::_1] )
-                 >>
-                 -("y^" >> long_long[ref(
-                 yExponent)= boost::spirit::qi::_1])
-               |
-                 "x^" >> long_long[ref(
-                 xExponent) = boost::spirit::qi::_1]  >>
-                 -("y^"
-                 >> long_long[ref(yExponent)= boost::spirit::qi::_1] )
-               |
-                  "y^" >> long_long[ref(
-                  yExponent) = boost::spirit::qi::_1]  >>
-                  -("x^"
-                  >> long_long[ref(
-                  xExponent) = boost::spirit::qi::_1] )
-
-          )
-          ,
-               boost::spirit::ascii::space
-  );
-  if (!r || first != last) return false;
-  term.coefficient = coefficient;
-  term.xExponent = xExponent;
-  term.yExponent = yExponent;
-  term.isPositive = isPositive;
-  return r;
-}
-
-bool AlgebraicCurveParser::extractSign(std::string subExpression) {
-    bool positiveSign;
-    switch (*subExpression.begin()) {
-        case '+':
-            positiveSign = true;
-            break;
-        case '-':
-            positiveSign = false;
-            break;
-        default:
-            positiveSign = true;
-    }
-    return positiveSign;
-}
-
-bool AlgebraicCurveParser::signPresent(std::string subExpression) {
-
-    bool signPresent;
-    switch (*subExpression.begin()) {
-        case '+':
-            signPresent = true;
-            break;
-        case '-':
-            signPresent = true;
-            break;
-        default:
-            signPresent = false;
-    }
-    return signPresent;
-}
-#endif

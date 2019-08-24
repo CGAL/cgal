@@ -37,7 +37,6 @@ namespace ascii = boost::spirit::ascii;
 typedef std::vector<struct AlgebraicCurveTerm> Terms;
 struct AlgebraicCurveTerm {
     boost::optional<long long> xExponent, yExponent, coefficient;
-    //bool isPositive;
 };
 
 template <typename Iterator>
@@ -105,11 +104,6 @@ public:
     bool validateExpression(const std::string &expression);
     Terms extractTerms();
     std::string expression;
-private:
-//    template <typename Iterator>
-//    bool parseTerm(Iterator first, Iterator last, AlgebraicCurveTerm& term);
-//    bool extractSign(std::string subExpression);
-//    bool signPresent(std::string subExpression);
 };
 
 
