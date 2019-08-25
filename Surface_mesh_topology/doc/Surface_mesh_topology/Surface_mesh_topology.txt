@@ -102,16 +102,7 @@ The functions above return an instance of \link Surface_mesh_topology::Path_on_s
 
 Facewidth is a non-contractible series of faces with smallest amount of faces, in which two consecutive faces share at least one vertex, and the first face also shares at least one vertex with the last face in the series.
 
-The function \link Surface_mesh_topology::Curves_on_surface_topology::compute_facewidth `compute_facewidth()` \endlink computes the series of faces as described above and returns an `std::vector` of dart handles, each dart represents the face to which this dart belongs.
-
-\subsection SMTopology_Updating_functions Update computing instances
-
-When the function \link Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle_with_basepoint `compute_shortest_noncontractible_cycle_with_basepoint` \endlink or \link Surface_mesh_topology::Curves_on_surface_topology::compute_edgewidth `compute_edgewidth` \endlink is called, a private instance of an internal computing class is initialized. There is also an internal class to compute face-width and this also applies when \link Surface_mesh_topology::Curves_on_surface_topology::compute_facewidth `compute_facewidth` \endlink is called the first time.
-
-Outside the scope of Curves_on_surface_topology, the mesh can be modified and the computing instances need to be refreshed to give a correct result. One can also request to update these instances by calling:
-
-- \link Surface_mesh_topology::Curves_on_surface_topology::update_shortest_noncontractible_cycle_pointer `update_shortest_noncontractible_cycle_pointer()` \endlink: update the computing instances for the functions \link Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle_with_basepoint `compute_shortest_noncontractible_cycle_with_basepoint` \endlink and \link Surface_mesh_topology::Curves_on_surface_topology::compute_edgewidth `compute_edgewidth` \endlink.
-- \link Surface_mesh_topology::Curves_on_surface_topology::update_facewidth_pointer `update_facewidth_pointer()` \endlink: update the computing instance for the function \link Surface_mesh_topology::Curves_on_surface_topology::compute_facewidth `compute_facewidth` \endlink.
+The function \link Surface_mesh_topology::Curves_on_surface_topology::compute_facewidth `compute_facewidth()` \endlink computes the series of faces as described above and returns an `std::vector` of dart handles, where the 0th, 2nd, 4th, ... (even-indexed) darts are the vertices and the 1st, 3rd, 5th, ... (odd-indexed) darts are the faces. As a result, the faces represented by the 1st and 3rd darts of the sequence share a vertex represented by the 2nd dart, and so on. The returned vector always has an even size.
 
 \section SMTopology_Examples Examples
 \subsection SMTopology_Example_I Simple Example
@@ -252,7 +243,7 @@ The reader is highly recommended to read the section \ref SMTopology_SNC before 
 
 Face-width is the minimum number of common points, among all non-contractible cycles of \f$\Sigma\f$ (these cycles do not necessarily follow the edges of \f$G\f$), between the cycle and \f$G\f$.
 
-As a result, the face-width of \f$G\f$ is half the edge-width of \f$R(G)\f$, where \f$R(G)\f$ denotes the radial graph of \f$G\f$. The radial graph of \f$G\f$ is constructed as follows. Start with a radial graph exactly the same as the original graph. For every face of the radial graph, add a vertex and connect this vertex to all the vertices of the face. After doing for all faces, remove all edges that are copied from the original graph.
+As a result, the face-width of \f$G\f$ is half the edge-width of \f$R(G)\f$, where \f$R(G)\f$ denotes the radial graph of \f$G\f$. The radial graph of \f$G\f$ is a bipartite graph, constructed as follows. Start with a radial graph exactly the same as the original graph. For every face of the radial graph, add a vertex and connect this vertex to all the vertices of the face. After doing for all faces, remove all edges that are copied from the original graph.
 
 \section Implementation History
 
