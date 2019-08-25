@@ -776,6 +776,46 @@ void set_f_cc_id(const std::vector<std::size_t>&,
                  const TriangleMesh&)
 {}
 
+template <class RefToVector>
+void copy_cc_to_volume_id(
+  std::vector<std::size_t>& cc_volume_ids,
+  RefToVector ref_to_vector)
+{
+  ref_to_vector.get().swap( cc_volume_ids );
+}
+
+inline void copy_cc_to_volume_id(
+  const std::vector<std::size_t>&,
+  boost::param_not_found)
+{}
+
+template <class RefToBitset>
+void copy_orientation_bitset(
+  const std::vector<bool>& is_cc_outward_oriented,
+  RefToBitset ref_to_bs)
+{
+  ref_to_bs.get() = is_cc_outward_oriented;
+}
+
+inline void copy_orientation_bitset(
+  const boost::dynamic_bitset<>&,
+  boost::param_not_found)
+{}
+
+template <class OutputIterator>
+void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std::size_t> >& self_intersecting_cc,
+                               OutputIterator out)
+{
+  for (const std::pair<std::size_t, std::size_t>& p : self_intersecting_cc)
+  {
+    *out++=p;
+  }
+}
+
+inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std::size_t> >&,
+                                      boost::param_not_found)
+{}
+
 } // internal
 
 
@@ -867,6 +907,21 @@ void set_f_cc_id(const std::vector<std::size_t>&,
  *     if `true`, the input might contain some self-intersections and a test is done
  *     prior to the volume decomposition.
  *   \cgalParamEnd
+ *   \cgalParamBegin{connected_component_id_to_volume_id}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to an object of type `std::vector< std::size_t >`.
+ *     The size of the vector is exactly the number of connected components.
+ *     For each connected component identified using its id `ccid`, the id of the volume it contributes
+ *     to describe is the value at the position `ccid` in the parameter vector.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{is_cc_outward_oriented}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to an object of type `std::vector<bool>`.
+ *     The size of the vector is exactly the number of connected components.
+ *     For each connected component identified using its id `ccid`, the output of `is_outward_oriented`
+ *     called on the submesh corresponding to this connected component
+ *     is the value at the position `ccid` in the parameter vector.
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * \return the number of volume components defined by `tm`
@@ -913,8 +968,13 @@ volume_connected_components(const TriangleMesh& tm,
   const bool do_self_intersection_tests =
         boost::choose_param(boost::get_param(np, internal_np::do_self_intersection_tests),
                             false);
+  const bool ignore_orientation_of_cc =
+    !boost::choose_param(boost::get_param(np, internal_np::do_orientation_tests),
+                         true);
 
   std::vector<Volume_error_code> error_codes;
+  std::vector<bool> is_cc_outward_oriented;
+  std::vector<std::size_t> cc_volume_ids(nb_cc, -1);
 
   if (nb_cc == 1)
   {
@@ -926,11 +986,17 @@ volume_connected_components(const TriangleMesh& tm,
     internal::copy_error_codes(error_codes, boost::get_param(np, internal_np::error_codes));
     // nested_cc_per_cc is empty and used to clear the vector passed in case it was not empty
     internal::copy_nested_parents(nested_cc_per_cc, boost::get_param(np, internal_np::volume_inclusions));
+    if (!ignore_orientation_of_cc &&
+        !boost::is_default_param(get_param(np, internal_np::connected_component_id_to_volume_id)))
+    {
+      is_cc_outward_oriented.push_back(is_outward_oriented(tm, np));
+      internal::copy_orientation_bitset(is_cc_outward_oriented, boost::get_param(np, internal_np::is_cc_outward_oriented));
+    }
+    internal::copy_cc_to_volume_id(cc_volume_ids, boost::get_param(np, internal_np::connected_component_id_to_volume_id));
     return 1;
   }
 
   boost::dynamic_bitset<> cc_handled(nb_cc, 0);
-  std::vector<std::size_t> cc_volume_ids(nb_cc, -1);
 
   std::size_t next_volume_id = 0;
 // Handle open connected components
@@ -994,12 +1060,7 @@ volume_connected_components(const TriangleMesh& tm,
           xtrm_vertices[cc_id]=vd;
     }
 
-    const bool ignore_orientation_of_cc =
-      !boost::choose_param(boost::get_param(np, internal_np::do_orientation_tests),
-                           true);
-
   // fill orientation vector for each surface CC
-    boost::dynamic_bitset<> is_cc_outward_oriented;
     if (!ignore_orientation_of_cc)
     {
       is_cc_outward_oriented.resize(nb_cc);
@@ -1267,6 +1328,10 @@ volume_connected_components(const TriangleMesh& tm,
   CGAL_assertion(next_volume_id == error_codes.size());
   internal::copy_error_codes(error_codes, boost::get_param(np, internal_np::error_codes));
   internal::copy_nested_parents(nesting_parents, boost::get_param(np, internal_np::volume_inclusions));
+  internal::copy_cc_to_volume_id(cc_volume_ids, boost::get_param(np, internal_np::connected_component_id_to_volume_id));
+  internal::copy_orientation_bitset(is_cc_outward_oriented, boost::get_param(np, internal_np::is_cc_outward_oriented));
+  //internal::set_cc_intersecting_pairs
+
   return next_volume_id;
 }
 

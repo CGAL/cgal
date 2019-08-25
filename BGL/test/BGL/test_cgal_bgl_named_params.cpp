@@ -166,6 +166,8 @@ void test(const NamedParameters& np)
   check_same_type<49>(get_param(np, CGAL::internal_np::error_codes));
   check_same_type<50>(get_param(np, CGAL::internal_np::volume_inclusions));
   check_same_type<51>(get_param(np, CGAL::internal_np::face_connected_component_map));
+  check_same_type<52>(get_param(np, CGAL::internal_np::connected_component_id_to_volume_id));
+  check_same_type<53>(get_param(np, CGAL::internal_np::is_cc_outward_oriented));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -248,6 +250,8 @@ int main()
                          .error_codes(A<49>(49))
                          .volume_inclusions(A<50>(50))
                          .face_connected_component_map(A<51>(51))
+                         .connected_component_id_to_volume_id(A<52>(52))
+                         .is_cc_outward_oriented(A<53>(53))
        );
 
   return EXIT_SUCCESS;
