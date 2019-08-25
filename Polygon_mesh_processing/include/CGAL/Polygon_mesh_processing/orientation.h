@@ -785,7 +785,7 @@ void copy_cc_to_volume_id(
 }
 
 inline void copy_cc_to_volume_id(
-  const std::vector<std::size_t>&,
+  std::vector<std::size_t>&,
   boost::param_not_found)
 {}
 
@@ -798,7 +798,7 @@ void copy_orientation_bitset(
 }
 
 inline void copy_orientation_bitset(
-  const boost::dynamic_bitset<>&,
+  const std::vector<bool>&,
   boost::param_not_found)
 {}
 
@@ -921,6 +921,11 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *     For each connected component identified using its id `ccid`, the output of `is_outward_oriented`
  *     called on the submesh corresponding to this connected component
  *     is the value at the position `ccid` in the parameter vector.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{intersecting_volume_pairs_output_iterator}
+ *     Output iterator into which pairs of ids (id must be convertible to `std::size_t`) can be put.
+ *     Each pair of connected components intersecting will be reported using their ids.
+ *    If `do_self_intersection_tests` named parameter is not set to `true`, nothing will be reported.
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
@@ -1330,7 +1335,7 @@ volume_connected_components(const TriangleMesh& tm,
   internal::copy_nested_parents(nesting_parents, boost::get_param(np, internal_np::volume_inclusions));
   internal::copy_cc_to_volume_id(cc_volume_ids, boost::get_param(np, internal_np::connected_component_id_to_volume_id));
   internal::copy_orientation_bitset(is_cc_outward_oriented, boost::get_param(np, internal_np::is_cc_outward_oriented));
-  //internal::set_cc_intersecting_pairs
+  internal::set_cc_intersecting_pairs(self_intersecting_cc, boost::get_param(np, internal_np::intersecting_volume_pairs_output_iterator));
 
   return next_volume_id;
 }

@@ -83,9 +83,9 @@ CGAL_add_named_parameter(do_self_intersection_tests_t, do_self_intersection_test
 CGAL_add_named_parameter(error_codes_t, error_codes, error_codes)
 CGAL_add_named_parameter(volume_inclusions_t, volume_inclusions, volume_inclusions)
 CGAL_add_named_parameter(face_cc_map_t, face_connected_component_map, face_connected_component_map)
-
 CGAL_add_named_parameter(ccid_to_vid_vector_t, connected_component_id_to_volume_id, connected_component_id_to_volume_id)
 CGAL_add_named_parameter(is_cc_outward_oriented_bs_t, is_cc_outward_oriented, is_cc_outward_oriented);
+CGAL_add_named_parameter(intersecting_volume_pairs_t, intersecting_volume_pairs_output_iterator, intersecting_volume_pairs_output_iterator);
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
