@@ -41,7 +41,12 @@ public:
     // std::cerr << '\n';
     Gmap_wrapper::copy(m_gmap, gmap, m_origin_to_copy, m_copy_to_origin);
     // Initialize m_is_hole
-    m_is_hole = m_gmap.get_new_mark();
+    try {
+      m_is_hole = m_gmap.get_new_mark();
+    } catch (typename Gmap::Exception_no_more_available_mark) {
+      std::cerr << "No more free mark, exit." << std::endl;
+      exit(-1);
+    }
     m_gmap.negate_mark(m_is_hole);
     // Remove all boundary by adding faces
     m_gmap.template close<2>();
@@ -264,17 +269,10 @@ private:
       std::cerr << "No more free mark, exit." << std::endl;
       exit(-1);
     }
-    for (Dart_handle dh_face : m_face_list) {
-      if (m_gmap.is_marked(dh_face, m_is_hole)) {
-        bool first_run = true;
-        for (Dart_handle it = dh_face; first_run || it != dh_face; it = m_gmap.next(it)) {
-          first_run = false;
-          if (m_gmap.is_marked(it, edge_deleted)) continue;
-          m_gmap.template mark_cell<1>(it, edge_deleted);
-        }
+    for (Dart_handle dh_face : m_face_list)
+      if (m_gmap.is_marked(dh_face, m_is_hole))
         m_gmap.template mark_cell<2>(dh_face, face_deleted);
-      }
-    }
+
     for (auto dh : spanning_tree) {
       if (m_gmap.is_marked(dh, edge_deleted)) continue;
       m_gmap.template mark_cell<1>(dh, edge_deleted);
@@ -319,9 +317,20 @@ private:
     return dh;
   }
 
+  Dart_handle nonhole_dart_of_same_edge(Dart_handle dh, bool& flip)
+  {
+    CGAL_assertion(dh != NULL);
+    if (m_gmap.is_marked(dh, m_is_hole)) {
+      dh = m_gmap.opposite2(dh);
+      flip = !flip;
+    }
+    CGAL_assertion(!m_gmap.is_marked(dh, m_is_hole));
+    return dh;
+  }
+
   void add_to_cycle(Dart_handle dh, Path& cycle, bool flip=false)
   {
-    dh = nonhole_dart_of_same_edge(dh);
+    dh = nonhole_dart_of_same_edge(dh, flip);
     Dart_const_handle_original dh_original = m_copy_to_origin[dh];
     if (cycle.can_be_pushed(dh_original, flip))
     {
@@ -379,8 +388,7 @@ private:
     add_to_cycle(min_noncon_edge, cycle);
     // Trace back the path from `b` to root
     for (int ind = min_b - 1; ind != -1; ind = m_trace_index[ind])
-      add_to_cycle(m_gmap.opposite2(m_spanning_tree[ind]), cycle);
-    
+      add_to_cycle(m_spanning_tree[ind], cycle, true);
     CGAL_assertion(cycle.is_closed());
 
     return true;

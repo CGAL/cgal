@@ -202,6 +202,8 @@ bool find_cycle_in_nonorientable_gmap() { // Make a non-oriented case here
     std::cerr << "Fail find_cycle_in_nonorientable_gmap: Cycle length (" << cycle_length << ") is not as expected (should be 19).\n";
     return false;
   }
+  gm.free_mark(chosen_cycle);
+  gm.free_mark(smallest_edge);
   return true;
 }
 
@@ -346,7 +348,9 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
     for (auto dh = lcc_gm.darts().begin(), dhend = lcc_gm.darts().end(); dh != dhend; ++dh)
       if (lcc_gm.is_marked(dh, belong_to_cycle))
         lcc_gm.unsew<2>(dh);
+    lcc_gm.close<2>();
     cycle_lengths.push_back(length);
+    lcc_gm.free_mark(belong_to_cycle);
   } while (length != 0);
   for (int i = 1; i < cycle_lengths.size(); ++i)
     if (cycle_lengths[i] > cycle_lengths[i-1]) {

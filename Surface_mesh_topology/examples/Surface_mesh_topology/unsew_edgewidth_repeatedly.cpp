@@ -75,8 +75,8 @@ int main(int argc, char* argv[]) {
   else inp = std::ifstream(argv[1]);
   CGAL::load_off(lccoriginal, inp);
 
-  boost::unordered_map<Dart_handle, Dart_handle> copy_to_origin;
-  lcccopy.copy(lccoriginal, NULL, &copy_to_origin);
+  boost::unordered_map<Dart_handle, Dart_handle> origin_to_copy;
+  lcccopy.copy(lccoriginal, &origin_to_copy, NULL);
 
   LCC_3::size_type is_root=lccoriginal.get_new_mark();
   LCC_3::size_type belong_to_cycle=lccoriginal.get_new_mark();
@@ -104,14 +104,15 @@ int main(int argc, char* argv[]) {
         lcccopy.mark_cell<1>(cycle[i], belong_to_cycle_copy);
     }
 
-    for (auto dh = lcccopy.darts().begin(), dhend = lcccopy.darts().end(); dh != dhend; ++dh) {
-      if (lcccopy.is_marked(dh, is_root_copy) && !lccoriginal.is_marked(copy_to_origin[dh], is_root))
-        lccoriginal.mark(copy_to_origin[dh], is_root);
-      if (lcccopy.is_marked(dh, belong_to_cycle_copy) && !lccoriginal.is_marked(copy_to_origin[dh], belong_to_cycle))
-        lccoriginal.mark(copy_to_origin[dh], belong_to_cycle);
-      if (lcccopy.is_marked(dh, belong_to_cycle_copy) && !lcccopy.is_free<2>(dh))
-        lcccopy.unsew<2>(dh);
+    for (auto dh = lccoriginal.darts().begin(), dhend = lccoriginal.darts().end(); dh != dhend; ++dh) {
+      if (lcccopy.is_marked(origin_to_copy[dh], is_root_copy) && !lccoriginal.is_marked(dh, is_root))
+        lccoriginal.mark(dh, is_root);
+      if (lcccopy.is_marked(origin_to_copy[dh], belong_to_cycle_copy) && !lccoriginal.is_marked(dh, belong_to_cycle))
+        lccoriginal.mark(dh, belong_to_cycle);
+      if (lcccopy.is_marked(origin_to_copy[dh], belong_to_cycle_copy) && !lcccopy.is_free<2>(origin_to_copy[dh]))
+        lcccopy.unsew<2>(origin_to_copy[dh]);
     }
+    lcccopy.close<2>();
 
     lcccopy.free_mark(belong_to_cycle_copy);
     lcccopy.free_mark(is_root_copy);
