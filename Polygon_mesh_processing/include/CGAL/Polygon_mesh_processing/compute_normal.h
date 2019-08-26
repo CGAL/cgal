@@ -218,10 +218,16 @@ void compute_face_normals(const PolygonMesh& pmesh,
 template <typename PolygonMesh, typename Face_normal_map>
 void compute_face_normals(const PolygonMesh& pmesh, Face_normal_map face_normals)
 {
-  compute_face_normals(pmesh, face_normals, CGAL::Polygon_mesh_processing::parameters::all_default());
+  compute_face_normals(pmesh, face_normals, CGAL::parameters::all_default());
 }
 
 namespace internal {
+
+enum Vertex_normal_type {
+  NO_WEIGHT = 0,
+  SIN_WEIGHT,
+  MOST_VISIBLE
+};
 
 template <typename GT>
 bool almost_equal(const typename GT::Vector_3& v1, const typename GT::Vector_3& v2,
@@ -493,28 +499,62 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   return compute_most_visible_normal_3_points<PolygonMesh>(incident_faces, face_normals, traits);
 }
 
-template <typename PolygonMesh, typename FaceNormalVector, typename GT>
+template <typename PolygonMesh, typename FaceNormalVector, typename VertexPointMap, typename GT>
 typename GT::Vector_3
-compute_vertex_normal_as_weighted_sum_of_face_normals(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-                                                      const FaceNormalVector& face_normals,
-                                                      const PolygonMesh& pmesh,
-                                                      const GT& traits)
+compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
+                                                 const Vertex_normal_type& vn_type,
+                                                 const FaceNormalVector& face_normals,
+                                                 const VertexPointMap& vpmap,
+                                                 const PolygonMesh& pmesh,
+                                                 const GT& traits)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor          face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
 
+  typedef typename GT::FT                                                     FT;
   typedef typename GT::Vector_3                                               Vector_3;
   typedef typename boost::property_traits<FaceNormalVector>::reference        Vector_ref;
 
-  Vector_3 normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
+  typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
+  typename GT::Compute_squared_length_3 csl_3 = traits.compute_squared_length_3_object();
 
-  for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
+  Vector_3 normal = cv_3(CGAL::NULL_VECTOR);
+
+  halfedge_descriptor h = halfedge(v, pmesh);
+  if(h == boost::graph_traits<PolygonMesh>::null_halfedge())
+    return normal;
+
+  halfedge_descriptor end = h;
+  do
   {
-    if(f == boost::graph_traits<PolygonMesh>::null_face())
-      continue;
+    if(!is_border(h, pmesh))
+    {
+      if(vn_type == NO_WEIGHT)
+      {
+        const Vector_ref n = get(face_normals, face(h, pmesh));
+        normal = traits.construct_sum_of_vectors_3_object()(normal, n);
+      }
+      else if(vn_type == SIN_WEIGHT)
+      {
+        const Vector_3 v1 = cv_3(get(vpmap, v), get(vpmap, source(h, pmesh)));
+        const Vector_3 v2 = cv_3(get(vpmap, v), get(vpmap, target(next(h, pmesh), pmesh)));
 
-    const Vector_ref n = get(face_normals, f);
-    normal = traits.construct_sum_of_vectors_3_object()(normal, n);
+        //v(i) and v(i+1) must me seen in ccw order, from v, so we reverse v1 and v2
+        Vector_3 n = traits.construct_cross_product_vector_3_object()(v2, v1);
+        n = traits.construct_scaled_vector_3_object()(n, CGAL::approximate_sqrt(FT(1)/(csl_3(v1) * csl_3(v2))));
+
+        normal = traits.construct_sum_of_vectors_3_object()(normal, n);
+      }
+      else
+      {
+        std::cerr << "Error: unknown vertex normal type" << std::endl;
+        CGAL_assertion(false);
+        return CGAL::NULL_VECTOR;
+      }
+    }
+
+    h = opposite(next(h, pmesh), pmesh);
   }
+  while(h != end);
 
   return normal;
 }
@@ -609,7 +649,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
     std::cout << "Failed to find most visible normal, use weighted sum of normals" << std::endl;
 #endif
-    normal = internal::compute_vertex_normal_as_weighted_sum_of_face_normals(v, face_normals, pmesh, traits);
+    normal = internal::compute_vertex_normal_as_sum_of_weighted_normals(v, internal::SIN_WEIGHT, face_normals, vpmap, pmesh, traits);
   }
 
   if(!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
