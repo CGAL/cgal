@@ -297,17 +297,21 @@ typename GT::Vector_3 compute_normals_bisector(const typename GT::Vector_3& ni,
   return traits.construct_sum_of_vectors_3_object()(ni, nj); // not normalized
 }
 
-// @FIXME Handle the case of ni, nj and nk giving 3 points on a great circle
 template <typename GT>
 typename GT::Vector_3 compute_normals_bisector(const typename GT::Vector_3& ni,
                                                const typename GT::Vector_3& nj,
                                                const typename GT::Vector_3& nk,
                                                const GT& traits)
 {
+  typedef typename GT::FT                                                  FT;
   typedef typename GT::Point_3                                             Point_3;
   typedef typename GT::Vector_3                                            Vector_3;
 
-  Vector_3 nb = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
+  typename GT::Construct_scaled_vector_3 cslv_3 = traits.construct_scaled_vector_3_object();
+  typename GT::Construct_sum_of_vectors_3 csv_3 = traits.construct_sum_of_vectors_3_object();
+  typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
+
+  Vector_3 nb = cv_3(CGAL::NULL_VECTOR);
 
   if(almost_equal(ni, nj, traits))
   {
@@ -329,27 +333,28 @@ typename GT::Vector_3 compute_normals_bisector(const typename GT::Vector_3& ni,
     CGAL_assertion(ni != nj);
     CGAL_assertion(ni != nk);
     CGAL_assertion(nj != nk);
-    CGAL_assertion(!traits.collinear_3_object()(CGAL::ORIGIN + ni,
-                                                CGAL::ORIGIN + nj,
-                                                CGAL::ORIGIN + nk));
+    CGAL_assertion(!traits.collinear_3_object()(CGAL::ORIGIN + ni, CGAL::ORIGIN + nj, CGAL::ORIGIN + nk));
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
     std::cout << "Triplet: ni[" << ni << "] nj[" << nj << "] nk[" << nk << "]" << std::endl;
 #endif
 
-    const Point_3 c = traits.construct_circumcenter_3_object()(CGAL::ORIGIN + ni,
-                                                               CGAL::ORIGIN + nj,
-                                                               CGAL::ORIGIN + nk);
-    CGAL_assertion(c != CGAL::ORIGIN);
+    const Point_3 c = traits.construct_circumcenter_3_object()(CGAL::ORIGIN + ni, CGAL::ORIGIN + nj, CGAL::ORIGIN + nk);
+    if(c == CGAL::ORIGIN)
+    {
+      // will happen if the three vectors live in the same plan, return some weighted sum
+      const FT third = FT(1)/FT(3);
+      return csv_3(csv_3(cslv_3(ni, third), cslv_3(nj, third)), cslv_3(nk, third));
+    }
 
-    nb = traits.construct_vector_3_object()(CGAL::ORIGIN, c); // note that this isn't normalized
+    nb = cv_3(CGAL::ORIGIN, c); // note that this isn't normalized
   }
 
   return nb;
 }
 
 template <typename PolygonMesh, typename FaceNormalVector, typename GT>
-std::pair<typename GT::Vector_3, bool>
+typename GT::Vector_3
 compute_most_visible_normal_2_points(std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
                                      const FaceNormalVector& face_normals,
                                      const GT& traits)
@@ -358,14 +363,15 @@ compute_most_visible_normal_2_points(std::vector<typename boost::graph_traits<Po
   typedef typename GT::Vector_3                                            Vector_3;
   typedef typename boost::property_traits<FaceNormalVector>::reference     Vector_ref;
 
-  typename GT::Compute_scalar_product_3 sp = traits.compute_scalar_product_3_object();
+  typename GT::Compute_scalar_product_3 sp_3 = traits.compute_scalar_product_3_object();
+  typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::cout << "Trying to find enclosing normal with 2 normals" << std::endl;
 #endif
 
   FT min_sp = -1;
-  Vector_3 n = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
+  Vector_3 n = cv_3(CGAL::NULL_VECTOR);
 
   const std::size_t nif = incident_faces.size();
   for(int i=0; i<nif; ++i)
@@ -377,12 +383,11 @@ compute_most_visible_normal_2_points(std::vector<typename boost::graph_traits<Po
 
       const Vector_3 nb = compute_normals_bisector(ni, nj, traits);
 
-      // Degeneracies like ni == -nj or a numerical error in the construction of 'nb'
-      // can happen. In that case, we can't compute a most visible normal
+      // Degeneracies like ni == -nj or a numerical error in the construction of 'nb' can happen.
       if(traits.equal_3_object()(nb, CGAL::NULL_VECTOR))
-        return std::make_pair(CGAL::NULL_VECTOR, false);
+        return CGAL::NULL_VECTOR;
 
-      const FT sp_bi = sp(nb, ni);
+      const FT sp_bi = sp_3(nb, ni);
 
       CGAL_assertion(sp_bi >= 0);
       if(sp_bi <= min_sp)
@@ -396,8 +401,7 @@ compute_most_visible_normal_2_points(std::vector<typename boost::graph_traits<Po
     }
   }
 
-  // note that 'n' can be NULL_VECTOR here if the min circle is a diametric cycle
-  return std::make_pair(n, true);
+  return n;
 }
 
 template <typename PolygonMesh, typename FaceNormalVector, typename GT>
@@ -409,9 +413,6 @@ compute_most_visible_normal_3_points(const std::vector<typename boost::graph_tra
   typedef typename GT::FT                                                  FT;
   typedef typename GT::Vector_3                                            Vector_3;
   typedef typename boost::property_traits<FaceNormalVector>::reference     Vector_ref;
-
-  typename GT::Compute_scalar_product_3 sp = traits.compute_scalar_product_3_object();
-  typename GT::Construct_sum_of_vectors_3 csv = traits.construct_sum_of_vectors_3_object();
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::cout << "Trying to find enclosing normal with 3 normals" << std::endl;
@@ -437,7 +438,7 @@ compute_most_visible_normal_3_points(const std::vector<typename boost::graph_tra
         if(traits.equal_3_object()(nb, CGAL::NULL_VECTOR))
           return nb;
 
-        FT sp_bi = sp(nb, ni);
+        FT sp_bi = traits.compute_scalar_product_3_object()(nb, ni);
         if(sp_bi < FT(0))
         {
           nb = traits.construct_opposite_vector_3_object()(nb);
@@ -488,11 +489,10 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   if(incident_faces.size() == 1)
     return get(face_normals, incident_faces.front());
 
-  std::pair<Vector_3, bool> res = compute_most_visible_normal_2_points<PolygonMesh>(incident_faces, face_normals, traits);
+  Vector_3 res = compute_most_visible_normal_2_points<PolygonMesh>(incident_faces, face_normals, traits);
 
-  if(!res.second || // won't be able to find a most visible normal
-     (res.second && res.first != CGAL::NULL_VECTOR)) // found a valid normal through 2 point min circle
-    return res.first;
+  if(res != CGAL::NULL_VECTOR) // found a valid normal through 2 point min circle
+    return res;
 
   CGAL_assertion(incident_faces.size() > 2);
 
