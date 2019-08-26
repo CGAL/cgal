@@ -11,7 +11,7 @@ in a nearest neighbor search algorithm, this class must be used as distance.
 
 \tparam Key is a type that is associated to a point of type `Base_distance::Point_d`. 
 
-\tparam PointPropertyMap is a model of `LvaluePropertyMap`
+\tparam PointPropertyMap is a model of `ReadablePropertyMap`
 with `Key` as  key type  and `Base_distance::Point_d` as  value type. 
 
 \tparam Base_distance is a model of either `GeneralDistance` or `OrthogonalDistance`. 
