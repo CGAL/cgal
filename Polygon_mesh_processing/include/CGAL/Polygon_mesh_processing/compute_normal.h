@@ -464,7 +464,7 @@ compute_most_visible_normal_3_points(const std::vector<typename boost::graph_tra
   return n;
 }
 
-// Complexity is high, but valence is usually low, so that's ok
+// Inspired by Aubry et al. On the most 'normal' normal
 template <typename PolygonMesh, typename FaceNormalVector, typename GT>
 typename GT::Vector_3
 compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
