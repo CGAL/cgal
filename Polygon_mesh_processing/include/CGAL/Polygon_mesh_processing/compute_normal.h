@@ -175,7 +175,7 @@ typename GetGeomTraits<PolygonMesh>::type::Vector_3
 compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
                     const PolygonMesh& pmesh)
 {
-  return compute_face_normal(f, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+  return compute_face_normal(f, pmesh, CGAL::parameters::all_default());
 }
 
 /**
@@ -607,19 +607,20 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   typedef typename GT::Vector_3                                               Vector_3;
   GT traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type     VPMap;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
 
   typedef std::map<face_descriptor, Vector_3>                                 Face_vector_map;
   typedef boost::associative_property_map<Face_vector_map>                    Default_map;
 
-  typedef typename internal_np::Lookup_named_param_def <internal_np::face_normal_t,
-                                                        NamedParameters,
-                                                        Default_map>::type    Face_normal_map;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::face_normal_t,
+                                                       NamedParameters,
+                                                       Default_map>::type     Face_normal_map;
+  Face_vector_map default_fvmap;
   Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal),
-                                                  Default_map());
-  const bool fnmap_valid = is_default_parameter(get_parameter(np, internal_np::face_normal));
+                                                  Default_map(default_fvmap));
+  const bool must_compute_face_normals = is_default_parameter(get_parameter(np, internal_np::face_normal));
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::cout << std::endl << std::endl;
@@ -632,7 +633,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   if(he == boost::graph_traits<PolygonMesh>::null_halfedge())
     return CGAL::NULL_VECTOR;
 
-  if(!fnmap_valid)
+  if(must_compute_face_normals) // if vertex normal type is sin-based weights, we don't need to compute normals
   {
     for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
     {
@@ -663,16 +664,17 @@ typename GetGeomTraits<PolygonMesh>::type::Vector_3
 compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
                       const PolygonMesh& pmesh)
 {
-  return compute_vertex_normal(v, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+  return compute_vertex_normal(v, pmesh, CGAL::parameters::all_default());
 }
 
 /**
 * \ingroup PMP_normal_grp
 * computes the outward unit vector normal for all vertices of the polygon mesh.
+*
 * @tparam PolygonMesh a model of `FaceListGraph`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
-    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-    the return type of `compute_vertex_normal()` as value type.
+*                         `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+*                         the return type of `compute_vertex_normal()` as value type.
 *
 * @param pmesh the polygon mesh
 * @param vnm the property map in which the normals are written
@@ -698,22 +700,30 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor         vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor           vertex_descriptor;
 
-  typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type            GT;
-  typedef typename GT::Vector_3                                                Vector_3;
+  typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type              GT;
+  typedef typename GT::Vector_3                                                  Vector_3;
 
-  typedef CGAL::dynamic_face_property_t<Vector_3>                              Face_normal_tag;
-  typedef typename boost::property_map<PolygonMesh, Face_normal_tag>::type     Face_normal_dmap;
+  typedef CGAL::dynamic_face_property_t<Vector_3>                                Face_normal_tag;
+  typedef typename boost::property_map<PolygonMesh, Face_normal_tag>::const_type Face_normal_dmap;
+
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+  GT traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type   VPMap;
+  VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                 get_const_property_map(vertex_point, pmesh));
+#endif
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::face_normal_t,
                                                        NamedParameters,
-                                                       Face_normal_dmap>::type Face_normal_map;
+                                                       Face_normal_dmap>::type   Face_normal_map;
   Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal),
                                                   get(Face_normal_tag(), pmesh));
-  const bool fnmap_valid = is_default_parameter(get_parameter(np, internal_np::face_normal));
+  const bool must_compute_face_normals = is_default_parameter(get_parameter(np, internal_np::face_normal));
 
-  if(!fnmap_valid)
+  if(must_compute_face_normals)
     compute_face_normals(pmesh, face_normals, np);
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
@@ -745,13 +755,14 @@ void compute_vertex_normals(const PolygonMesh& pmesh, VertexNormalMap vertex_nor
 /**
 * \ingroup PMP_normal_grp
 * computes the outward unit vector normal for all vertices and faces of the polygon mesh.
+*
 * @tparam PolygonMesh a model of `FaceListGraph`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
-    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-    `Kernel::Vector_3` as value type.
+*    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+*    `Kernel::Vector_3` as value type.
 * @tparam FaceNormalMap a model of `ReadWritePropertyMap` with
-    `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-    `Kernel::Vector_3` as value type.
+*    `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+*    `Kernel::Vector_3` as value type.
 *
 * @param pmesh the polygon mesh
 * @param vertex_normals the property map in which the vertex normals are written
