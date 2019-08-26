@@ -259,7 +259,7 @@ bool does_enclose_other_normals(const int i, const int j, const int k,
 
   typename K::Compute_scalar_product_3 sp = traits.compute_scalar_product_3_object();
 
-  const FT nbn = CGAL::sqrt(traits.compute_squared_length_3_object()(nb));
+  const FT nbn = CGAL::approximate_sqrt(traits.compute_squared_length_3_object()(nb));
 
   // check that this min circle defined by the diameter contains the other points
   const std::size_t nif = incident_faces.size();
