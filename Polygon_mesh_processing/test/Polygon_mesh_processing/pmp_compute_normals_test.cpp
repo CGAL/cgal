@@ -140,11 +140,11 @@ void test(const char* filename)
 
 int main()
 {
-  test("../data/elephant.off");
-  test("../data/folded_star.off");
-  test("../data/joint_refined.off");
-  test("../data/mannequin-devil.off");
-  test("../data/U.off");
+  test("data/elephant.off");
+  test("data/folded_star.off");
+  test("data/joint_refined.off");
+  test("data/mannequin-devil.off");
+  test("data/U.off");
 
   std::cerr << "All done." << std::endl;
   return EXIT_SUCCESS;
