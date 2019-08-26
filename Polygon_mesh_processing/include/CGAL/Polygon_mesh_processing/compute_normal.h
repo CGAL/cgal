@@ -38,9 +38,16 @@
 #include <utility>
 #include <vector>
 
-// @tmp
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+# ifndef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+#  define CGAL_PMP_COMPUTE_NORMAL_DEBUG
+# endif
+#endif
+
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
 #include <fstream>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -596,9 +603,6 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     }
   }
 
-#if 0 // old approach @tmp
-  Vector_3 normal = internal::compute_vertex_normal_as_weighted_sum_of_face_normals(v, face_normals, pmesh, traits);
-#else
   Vector_3 normal = internal::compute_vertex_normal_most_visible_min_circle(v, face_normals, pmesh, traits);
   if(traits.equal_3_object()(normal, CGAL::NULL_VECTOR)) // can't always find a most visible normal
   {
@@ -607,7 +611,6 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 #endif
     normal = internal::compute_vertex_normal_as_weighted_sum_of_face_normals(v, face_normals, pmesh, traits);
   }
-#endif
 
   if(!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
@@ -673,19 +676,23 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
   if(!fnmap_valid)
     compute_face_normals(pmesh, face_normals, np);
 
-  // @tmp ----
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
   std::ofstream out("computed_normals.cgal.polylines.txt");
   const Bbox_3 bb = bbox(pmesh, np);
   const typename GT::FT bbox_diagonal = CGAL::sqrt(CGAL::square(bb.xmax() - bb.xmin()) +
                                                    CGAL::square(bb.ymax() - bb.ymin()) +
                                                    CGAL::square(bb.zmax() - bb.zmin()));
-  // ------
+#endif
 
   for(vertex_descriptor v : vertices(pmesh))
   {
     const Vector_3 n = compute_vertex_normal(v, pmesh, np.face_normal_map(face_normals));
-    out << "2 " << pmesh.point(v) << " " << pmesh.point(v) + 0.1 * bbox_diagonal * n << std::endl;
     put(vertex_normals, v, n);
+
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+    out << "2 " << get(vpmap, v) << " "
+                << get(vpmap, v) + traits.construct_scaled_vector_3_object()(n, 0.1 * bbox_diagonal) << "\n";
+#endif
   }
 }
 
