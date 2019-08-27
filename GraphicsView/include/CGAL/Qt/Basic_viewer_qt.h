@@ -102,18 +102,18 @@ const char fragment_source_color[] =
 
     "void main(void) { \n"
 
-     "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
-     "   highp vec3 V = -fP.xyz; \n"
+    "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
+    "   highp vec3 V = -fP.xyz; \n"
 
-     "   highp vec3 N = normalize(fN); \n"
-     "   L = normalize(L); \n"
-     "   V = normalize(V); \n"
+    "   highp vec3 N = normalize(fN); \n"
+    "   L = normalize(L); \n"
+    "   V = normalize(V); \n"
 
-     "   highp vec3 R = reflect(-L, N); \n"
-     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
-     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+    "   highp vec3 R = reflect(-L, N); \n"
+    "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
+    "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
-     "gl_FragColor = light_amb*fColor + diffuse  ; \n"
+    "gl_FragColor = light_amb*fColor + diffuse  ; \n"
     "} \n"
     "\n"
   };
