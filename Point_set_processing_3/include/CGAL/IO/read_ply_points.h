@@ -100,8 +100,8 @@ namespace CGAL {
   make_ply_normal_reader(VectorMap normal_map);
 #endif // DOXYGEN_RUNNING
 
-/*
-  \ingroup PkgPointSetProcessing3IOPly
+/**
+  \ingroup PkgPointSetProcessingIOPly
 
   Reads user-selected points properties from a .ply stream (ASCII or
   binary).
