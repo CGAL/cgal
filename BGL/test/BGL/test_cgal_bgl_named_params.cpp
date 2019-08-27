@@ -169,6 +169,7 @@ void test(const NamedParameters& np)
   check_same_type<52>(get_param(np, CGAL::internal_np::connected_component_id_to_volume_id));
   check_same_type<53>(get_param(np, CGAL::internal_np::is_cc_outward_oriented));
   check_same_type<54>(get_param(np, CGAL::internal_np::intersecting_volume_pairs_output_iterator));
+  check_same_type<55>(get_param(np, CGAL::internal_np::i_used_as_a_predicate));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -254,6 +255,7 @@ int main()
                          .connected_component_id_to_volume_id(A<52>(52))
                          .is_cc_outward_oriented(A<53>(53))
                          .intersecting_volume_pairs_output_iterator(A<54>(54))
+                         .i_used_as_a_predicate(A<55>(55))
        );
 
   return EXIT_SUCCESS;
