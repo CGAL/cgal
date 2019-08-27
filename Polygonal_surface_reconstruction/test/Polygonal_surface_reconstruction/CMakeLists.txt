@@ -72,7 +72,7 @@ if(EIGEN3_FOUND)
 
   if (NOT SCIP_FOUND AND NOT GLPK_FOUND)
 
-    message(STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
+    message(STATUS "NOTICE: This project requires either SCIP or GLPK, some functions will not be tested. "
       "Please provide either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
 
   endif()

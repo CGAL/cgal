@@ -11,6 +11,34 @@
 
 #include <string>
 
+template <typename Reconstruction, typename SMesh, typename MIP_Solver>
+int reconstruct (Reconstruction& algo, SMesh& model, const MIP_Solver&)
+{
+	CGAL::Timer t;
+	t.start();
+  if (!algo.template reconstruct<MIP_Solver>(model)) {
+		std::cerr << " Failed: " << algo.error_message() << std::endl;
+		return EXIT_FAILURE;
+	}
+  std::cout << " Done. Time: " << t.time() << " sec. ";
+
+	if (model.is_valid()) {
+    std::cout << "\tReconstructed model has " << model.number_of_faces() << " faces" << std::endl;
+    return EXIT_SUCCESS;
+	}
+	else {
+    std::cout << "\tReconstructed model is not valid. Reconstruction maybe failed?" << std::endl;
+    return EXIT_FAILURE;
+	}
+}
+
+template <typename Reconstruction, typename SMesh>
+int reconstruct (Reconstruction&, SMesh&, const int&)
+{
+  std::cout << " No solver. Nothing happened." << std::endl;
+  return EXIT_SUCCESS;
+}
+
 
 // This function enables to run the Polygonal Surface Reconstruction algorithm with different 
 //    - kernels(Simple_cartesian, EPICK)
@@ -144,23 +172,8 @@ int reconstruct(const std::string& input_file, bool force_extract_planes)
 	Surface_mesh model;
 
 	std::cout << "\t\t\tReconstructing...";
-	t.reset();
 
-    if (!algo.template reconstruct<MIP_Solver>(model)) {
-		std::cerr << " Failed: " << algo.error_message() << std::endl;
-		return EXIT_FAILURE;
-	}
-    std::cout << " Done. Time: " << t.time() << " sec. ";
-
-	if (model.is_valid()) {
-        std::cout << "\tReconstructed model has " << model.number_of_faces() << " faces" << std::endl;
-        return EXIT_SUCCESS;
-	}
-	else {
-        std::cout << "\tReconstructed model is not valid. Reconstruction maybe failed?" << std::endl;
-        return EXIT_FAILURE;
-	}
-
+  return reconstruct (algo, model, MIP_Solver());
 }
 
 

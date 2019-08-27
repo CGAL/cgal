@@ -44,7 +44,7 @@
 #include <boost/graph/subgraph.hpp>
 #include <boost/optional.hpp>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <vector>
@@ -322,17 +322,17 @@ public:
    */
   template <typename NamedParameters>
   std::size_t initialize_seeds(const NamedParameters &np) {
-    using boost::get_param;
-    using boost::choose_param;
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
 
-    const Surface_mesh_approximation::Seeding_method method = choose_param(
-      get_param(np, internal_np::seeding_method), Surface_mesh_approximation::HIERARCHICAL);
-    std::size_t max_nb_proxies = choose_param(
-      get_param(np, internal_np::max_number_of_proxies), 0);
-    FT min_error_drop = choose_param(
-      get_param(np, internal_np::min_error_drop), FT(0.0));
-    const std::size_t nb_relaxations = choose_param(
-      get_param(np, internal_np::number_of_relaxations), 5);
+    const Surface_mesh_approximation::Seeding_method method = choose_parameter(
+      get_parameter(np, internal_np::seeding_method), Surface_mesh_approximation::HIERARCHICAL);
+    std::size_t max_nb_proxies = choose_parameter(
+      get_parameter(np, internal_np::max_number_of_proxies), 0);
+    FT min_error_drop = choose_parameter(
+      get_parameter(np, internal_np::min_error_drop), FT(0.0));
+    const std::size_t nb_relaxations = choose_parameter(
+      get_parameter(np, internal_np::number_of_relaxations), 5);
 
     // adjust parameters
     if (max_nb_proxies < (m_nb_of_faces / 3) && max_nb_proxies > 0) {
@@ -797,14 +797,14 @@ public:
    */
   template <typename NamedParameters>
   bool extract_mesh(const NamedParameters &np) {
-    using boost::get_param;
-    using boost::choose_param;
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
 
-    const FT subdivision_ratio = choose_param(get_param(np, internal_np::subdivision_ratio), FT(5.0));
-    const bool relative_to_chord = choose_param(get_param(np, internal_np::relative_to_chord), false);
-    const bool with_dihedral_angle = choose_param(get_param(np, internal_np::with_dihedral_angle), false);
-    const bool optimize_anchor_location = choose_param(get_param(np, internal_np::optimize_anchor_location), true);
-    const bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
+    const FT subdivision_ratio = choose_parameter(get_parameter(np, internal_np::subdivision_ratio), FT(5.0));
+    const bool relative_to_chord = choose_parameter(get_parameter(np, internal_np::relative_to_chord), false);
+    const bool with_dihedral_angle = choose_parameter(get_parameter(np, internal_np::with_dihedral_angle), false);
+    const bool optimize_anchor_location = choose_parameter(get_parameter(np, internal_np::optimize_anchor_location), true);
+    const bool pca_plane = choose_parameter(get_parameter(np, internal_np::pca_plane), false);
 
     // compute averaged edge length, used in chord subdivision
     m_average_edge_length = compute_averaged_edge_length(*m_ptm, m_vpoint_map);
@@ -860,19 +860,19 @@ public:
    */
   template <typename NamedParameters>
   void output(const NamedParameters &np) const {
-    using boost::get_param;
-    using boost::choose_param;
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
 
     // get proxy map
-    proxy_map( get_param(np, internal_np::face_proxy_map) );
+    proxy_map( get_parameter(np, internal_np::face_proxy_map) );
     // get proxies
-    proxies( get_param(np, internal_np::proxies) );
+    proxies( get_parameter(np, internal_np::proxies) );
 
     // get anchor points
-    anchor_points( get_param(np, internal_np::anchors) );
+    anchor_points( get_parameter(np, internal_np::anchors) );
 
     // get indexed triangles
-    indexed_triangles( get_param(np, internal_np::triangles) );
+    indexed_triangles( get_parameter(np, internal_np::triangles) );
   }
 
   /*!
@@ -896,7 +896,7 @@ public:
   /*!
    * @brief dummy function for named parameters.
    */
-  void proxy_map(boost::param_not_found) const {}
+  void proxy_map(internal_np::Param_not_found) const {}
 
   /*!
    * @brief gets the face region of the specified proxy.
@@ -928,7 +928,7 @@ public:
   /*!
    * @brief dummy function for named parameters.
    */
-  void proxies(boost::param_not_found) const {}
+  void proxies(internal_np::Param_not_found) const {}
 
   /*!
    * @brief gets the wrapped proxies.
@@ -955,7 +955,7 @@ public:
   /*!
    * @brief dummy function for named parameters.
    */
-  void anchor_points(boost::param_not_found) const {}
+  void anchor_points(internal_np::Param_not_found) const {}
 
   /*!
    * @brief gets the anchor vertices.
@@ -983,7 +983,7 @@ public:
   /*!
    * @brief dummy function for named parameters.
    */
-  void indexed_triangles(boost::param_not_found) const {}
+  void indexed_triangles(internal_np::Param_not_found) const {}
 
   /*!
    * @brief gets the indexed boundary polygon approximation.

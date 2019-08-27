@@ -32,7 +32,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/version.hpp>
@@ -157,47 +157,47 @@ namespace internal {
 
   namespace LAS {
 
-  void get_value(const LASpoint& r, double& v, LAS_property::X&)
+  inline void get_value(const LASpoint& r, double& v, LAS_property::X&)
   { v = r.get_x(); }
-  void get_value(const LASpoint& r, double& v, LAS_property::Y&)
+  inline void get_value(const LASpoint& r, double& v, LAS_property::Y&)
   { v = r.get_y(); }
-  void get_value(const LASpoint& r, double& v, LAS_property::Z&)
+  inline void get_value(const LASpoint& r, double& v, LAS_property::Z&)
   { v = r.get_z(); }
-  void get_value(const LASpoint& r, unsigned short& v, LAS_property::Intensity&)
+  inline void get_value(const LASpoint& r, unsigned short& v, LAS_property::Intensity&)
   { v = r.get_intensity(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS_property::Return_number&)
+  inline void get_value(const LASpoint& r, unsigned char& v, LAS_property::Return_number&)
   { v = r.get_return_number(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS_property::Number_of_returns&)
+  inline void get_value(const LASpoint& r, unsigned char& v, LAS_property::Number_of_returns&)
   { v = r.get_number_of_returns(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS_property::Scan_direction_flag&)
+  inline void get_value(const LASpoint& r, unsigned char& v, LAS_property::Scan_direction_flag&)
   { v = r.get_scan_direction_flag(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS_property::Edge_of_flight_line&)
+  inline void get_value(const LASpoint& r, unsigned char& v, LAS_property::Edge_of_flight_line&)
   { v = r.get_edge_of_flight_line(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS_property::Classification&)
+  inline void get_value(const LASpoint& r, unsigned char& v, LAS_property::Classification&)
   { v = r.get_classification(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS_property::Synthetic_flag&)
+  inline void get_value(const LASpoint& r, unsigned char& v, LAS_property::Synthetic_flag&)
   { v = r.get_synthetic_flag(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS_property::Keypoint_flag&)
+  inline void get_value(const LASpoint& r, unsigned char& v, LAS_property::Keypoint_flag&)
   { v = r.get_keypoint_flag(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS_property::Withheld_flag&)
+  inline void get_value(const LASpoint& r, unsigned char& v, LAS_property::Withheld_flag&)
   { v = r.get_withheld_flag(); }
-  void get_value(const LASpoint& r, float& v, LAS_property::Scan_angle&)
+  inline void get_value(const LASpoint& r, float& v, LAS_property::Scan_angle&)
   { v = r.get_scan_angle(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS_property::User_data&)
+  inline void get_value(const LASpoint& r, unsigned char& v, LAS_property::User_data&)
   { v = r.get_user_data(); }
-  void get_value(const LASpoint& r, unsigned short& v, LAS_property::Point_source_ID&)
+  inline void get_value(const LASpoint& r, unsigned short& v, LAS_property::Point_source_ID&)
   { v = r.get_point_source_ID(); }
-  void get_value(const LASpoint& r, unsigned int& v, LAS_property::Deleted_flag&)
+  inline void get_value(const LASpoint& r, unsigned int& v, LAS_property::Deleted_flag&)
   { v = r.get_deleted_flag(); }
-  void get_value(const LASpoint& r, double& v, LAS_property::GPS_time&)
+  inline void get_value(const LASpoint& r, double& v, LAS_property::GPS_time&)
   { v = r.get_gps_time(); }
-  void get_value(const LASpoint& r, unsigned short& v, LAS_property::R&)
+  inline void get_value(const LASpoint& r, unsigned short& v, LAS_property::R&)
   { v = r.get_R(); }
-  void get_value(const LASpoint& r, unsigned short& v, LAS_property::G&)
+  inline void get_value(const LASpoint& r, unsigned short& v, LAS_property::G&)
   { v = r.get_G(); }
-  void get_value(const LASpoint& r, unsigned short& v, LAS_property::B&)
+  inline void get_value(const LASpoint& r, unsigned short& v, LAS_property::B&)
   { v = r.get_B(); }
-  void get_value(const LASpoint& r, unsigned short& v, LAS_property::I&)
+  inline void get_value(const LASpoint& r, unsigned short& v, LAS_property::I&)
   { v = r.get_I(); }
 
   
@@ -465,12 +465,13 @@ bool read_las_points(std::istream& stream,
                      const CGAL_BGL_NP_CLASS& np)
 #endif
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
   
   typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
   
   return read_las_points_with_properties (stream, output,
                                           make_las_point_reader (point_map));

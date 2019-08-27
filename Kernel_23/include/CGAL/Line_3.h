@@ -38,7 +38,7 @@ namespace CGAL {
 template <class R_>
 class Line_3 : public R_::Kernel_base::Line_3
 {
-  typedef typename R_::RT                    RT;
+  typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Ray_3                 Ray_3;
   typedef typename R_::Segment_3             Segment_3;
@@ -116,7 +116,7 @@ public:
     return R().construct_point_on_3_object()(*this, 0);
   }
 
-  Point_3 point(int i) const
+  Point_3 point(const FT i) const
   { 
     return R().construct_point_on_3_object()(*this, i);
   }

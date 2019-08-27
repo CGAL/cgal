@@ -1174,7 +1174,8 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
         //check preconditions
       if(boost::distance(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()),*polyhedron())) == 3 
          && 
-         boost::distance(CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron())) == 3)
+         boost::distance(CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron())) == 3
+        && !CGAL::is_border(ed, *polyhedron()))
       {
         SMesh* mesh = polyhedron();
         halfedge_descriptor h = halfedge(ed, *mesh);

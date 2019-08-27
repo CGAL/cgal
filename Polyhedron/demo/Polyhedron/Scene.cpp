@@ -1106,7 +1106,7 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
           if(item->parentGroup())
           {
             item->parentGroup()->removeChild(item);
-            children.push_back(item_id(item));
+            addChild(item);
           }
         }
         redraw_model();
@@ -1923,4 +1923,9 @@ void Scene::callDraw(){
 void Scene::enableVisibilityRecentering(bool b)
 {
   visibility_recentering_enabled = b;
+}
+
+void Scene::addChild(Scene_item *item)
+{
+  children.push_back(item_id(item));
 }

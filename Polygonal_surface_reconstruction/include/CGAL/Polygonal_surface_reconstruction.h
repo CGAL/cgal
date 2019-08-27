@@ -310,7 +310,7 @@ namespace CGAL {
 			++idx;
 		}
 
-		typedef typename CGAL::Iso_cuboid_3<GeomTraits>		Box;
+		typedef typename GeomTraits::Iso_cuboid_3		Box;
 
 		const Box& box = CGAL::bounding_box(vertices.begin(), vertices.end());
 		FT dx = box.xmax() - box.xmin();

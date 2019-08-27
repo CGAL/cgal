@@ -153,11 +153,14 @@ sharp edges in the final model.
 
 \subsection subsecExampleNoInputPlane Reconstruction from Point Clouds
 
-The method assumes that all necessary planes can be extracted from the input point set. The following example
-first extracts planes from the input point cloud and then reconstructs the surface model.
+The method assumes that all necessary planes can be extracted from the input point set. The following examples
+first extract planes from the input point cloud and then reconstruct the surface model. In the first example,
+the \ref Shape_detection_RANSAC "Efficient RANSAC approach" is used to extract planes. It is very fast,
+but not deterministic, as opposed to the \ref Shape_detection_RegionGrowing "region growing approach" from the second example 
+that is slower, but more precise and always returns the same result for the same given parameters.
 
 \cgalExample{Polygonal_surface_reconstruction/polyfit_example_without_input_planes.cpp}
-
+\cgalExample{Polygonal_surface_reconstruction/polyfit_example_with_region_growing.cpp}
 
 
 
@@ -201,7 +204,7 @@ may result in an extremely large number of candidate faces, and thus a huge inte
 to be solved.
 
 The reconstruction time of a single object with moderate complexity is typically within a few seconds.
-Among the three steps, the face selection step deminates the reconstruction pipeline when the number
+Among the three steps, the face selection step dominates the reconstruction pipeline when the number
 of candidate faces is large (e.g., more than 5,000).
 
 
