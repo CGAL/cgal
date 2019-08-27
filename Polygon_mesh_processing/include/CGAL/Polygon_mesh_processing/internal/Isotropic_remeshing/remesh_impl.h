@@ -779,6 +779,7 @@ namespace internal {
 
           //perform collapse
           CGAL_assertion(target(halfedge(e, mesh_), mesh_) == vb);
+          CGAL_assertion(!collapse_would_invert_face(he));
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_, ecmap_);
           CGAL_assertion(is_valid(mesh_));
           CGAL_assertion(vkept == vb);//is the constrained point still here
@@ -789,6 +790,8 @@ namespace internal {
                          (is_va_constrained || is_vb_constrained || is_va_on_constrained_polyline || is_vb_on_constrained_polyline));
           if (fix_degenerate_faces(vkept, short_edges, sq_low, collapse_constraints))
           {
+            //fix_degenerate_faces() returns true when it has changed connectivity
+            // and however it has managed to fix all degeneracies
 #ifdef CGAL_PMP_REMESHING_DEBUG
             debug_status_map();
             CGAL_assertion(!incident_to_degenerate(halfedge(vkept, mesh_)));
@@ -802,6 +805,12 @@ namespace internal {
                 short_edges.insert(short_edge(ht, sqlen));
             }
           }
+
+#ifdef CGAL_PMP_REMESHING_DEBUG
+          else
+            std::cout << "Degenerate faces left" << std::endl;
+          debug_self_intersections(vkept);
+#endif
         }//end if(collapse_ok)
       }
 
@@ -1198,7 +1207,25 @@ private:
     void dump(const char* filename) const
     {
       std::ofstream out(filename);
+      out.precision(17);
       out << mesh_;
+      out.close();
+    }
+
+    void dump(const face_descriptor& f, const char* filename) const
+    {
+      std::ofstream out(filename);
+      out.precision(17);
+      out << "OFF" << std::endl;
+      out << "3 1 0" << std::endl;
+
+      halfedge_descriptor h = halfedge(f, mesh_);
+      out << get(vpmap_, target(h, mesh_))
+        << " " << get(vpmap_, target(next(h, mesh_), mesh_))
+        << " " << get(vpmap_, target(next(next(h, mesh_), mesh_), mesh_))
+        << std::endl;
+      out << "3 0 1 2" << std::endl;
+
       out.close();
     }
 
@@ -1599,6 +1626,13 @@ private:
       // else keep current status for en and eno
     }
 
+    double squared_area(const halfedge_descriptor h) const
+    {
+      return triangle(face(h, mesh_)).squared_area();
+    }
+
+    // returns true when it has changed connectivity
+    // and however it has managed to fix all degeneracies
     template<typename Bimap>
     bool fix_degenerate_faces(const vertex_descriptor& v,
                               Bimap& short_edges,
@@ -1608,28 +1642,54 @@ private:
       CGAL_assertion_code(std::size_t nb_done = 0);
 
       boost::unordered_set<halfedge_descriptor> degenerate_faces;
-      for(halfedge_descriptor h :
-          halfedges_around_target(halfedge(v, mesh_), mesh_))
+      boost::unordered_map<halfedge_descriptor, double> sq_areas;
+
+      double sum_sq_areas = 0;
+      for (halfedge_descriptor h :
+           halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
-        if(!is_border(h, mesh_) &&
-           is_degenerate_triangle_face(face(h, mesh_), mesh_,
-                                       parameters::vertex_point_map(vpmap_)
-                                                   .geom_traits(gt_)))
+        if (is_border(h, mesh_))
+          continue;
+
+        else if(is_degenerate_triangle_face(face(h, mesh_), mesh_,
+                                         parameters::vertex_point_map(vpmap_)
+                                        .geom_traits(gt_)))
+        {
           degenerate_faces.insert(h);
+          sq_areas[h] = 0;
+        }
+        else
+        {
+          double sqa = squared_area(h);
+          sum_sq_areas += sqa;
+          sq_areas[h] = sqa;
+        }
       }
 
-      if(degenerate_faces.empty())
-        return true;
+      //now collect almost degenerate faces
+      const double sq_max_ratio = 1e-4;
+      const double limit_sq_area = sq_max_ratio * sum_sq_areas / sq_areas.size();
+      if (degenerate_faces.empty())
+      {
+        for (halfedge_descriptor h :
+             halfedges_around_target(halfedge(v, mesh_), mesh_))
+        {
+          if (is_border(h, mesh_))
+            continue;
 
-      bool done = false;
+          if(sq_areas[h] < limit_sq_area)
+            degenerate_faces.insert(h);
+        }
+      }
+
+      unsigned int loop_id = 0;
+
       while(!degenerate_faces.empty())
       {
         halfedge_descriptor h = *(degenerate_faces.begin());
         degenerate_faces.erase(degenerate_faces.begin());
 
-        if (!is_degenerate_triangle_face(face(h, mesh_), mesh_,
-                                         parameters::vertex_point_map(vpmap_)
-                                                    .geom_traits(gt_)))
+        if (squared_area(h) >= limit_sq_area)
           //this can happen when flipping h has consequences further in the mesh
           continue;
 
@@ -1666,7 +1726,7 @@ private:
 
             CGAL::Euler::flip_edge(hf, mesh_);
             CGAL_assertion_code(++nb_done);
-            done = true;
+            ++loop_id;
 
             //update status
             set_status(h_ab, merge_status(h_ab, hf, hfo));
@@ -1688,16 +1748,19 @@ private:
                 short_edges.insert(typename Bimap::value_type(hf, sqlen));
             }
 
-            if(!is_border(hf, mesh_) &&
-               is_degenerate_triangle_face(face(hf, mesh_), mesh_,
-                                           parameters::vertex_point_map(vpmap_)
-                                                      .geom_traits(gt_)))
+            if (!is_border(hf, mesh_) && squared_area(h) < limit_sq_area)
               degenerate_faces.insert(hf);
-            if(!is_border(hfo, mesh_) &&
-               is_degenerate_triangle_face(face(hfo, mesh_), mesh_,
-                                           parameters::vertex_point_map(vpmap_)
-                                                      .geom_traits(gt_)))
+            if (!is_border(hfo, mesh_) && squared_area(hfo) < limit_sq_area)
               degenerate_faces.insert(hfo);
+
+            //there are some configurations that this function is not able to fix :
+            // sometimes, flipping an edge to fix a degenerate face creates a new
+            // degenerate face. And flipping an edge to fix it comes back to the
+            // initial configuration.
+            // After 10 attempts around `v`, we give up and just return true
+            // because the mesh has been modified
+            if(loop_id > 10)
+              return true;
 
             break;
           }
@@ -1706,7 +1769,7 @@ private:
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
 #endif
-      return done;
+      return degenerate_faces.empty();
     }
 
     bool incident_to_degenerate(const halfedge_descriptor& he)
@@ -1862,7 +1925,11 @@ private:
                               std::back_inserter(facets),
                               PMP::parameters::vertex_point_map(vpmap_)
                                               .geom_traits(gt_));
-      //CGAL_assertion(facets.empty());
+      if (!facets.empty())
+      {
+        dump("mesh_with_self_intersections.off");
+        CGAL_assertion(false);
+      }
       std::cout << "done ("<< facets.size() <<" facets)." << std::endl;
     }
 
@@ -1875,7 +1942,11 @@ private:
                               std::back_inserter(facets),
                               PMP::parameters::vertex_point_map(vpmap_)
                                               .geom_traits(gt_));
-      //CGAL_assertion(facets.empty());
+      if (!facets.empty())
+      {
+        dump("mesh_with_self_intersections.off");
+        CGAL_assertion(false);
+      }
       std::cout << "done ("<< facets.size() <<" facets)." << std::endl;
     }
 #endif
