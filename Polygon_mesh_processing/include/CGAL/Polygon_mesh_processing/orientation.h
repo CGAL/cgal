@@ -758,6 +758,7 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *
  * \return the number of volume components defined by `tm`
  *
+ * \todo Use this function as the implementation of orient_to_bound_a_volume and remove recursive_orient_volume_ccs
  */
 template <class TriangleMesh, class FaceIndexMap, class NamedParameters>
 std::size_t
