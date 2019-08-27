@@ -345,6 +345,9 @@ self_intersections( const FaceRange& face_range,
 
   for(face_descriptor f : face_range)
   {
+    if(f == boost::graph_traits<TriangleMesh>::null_face())
+      continue;
+
     typename boost::property_traits<VertexPointMap>::reference
       p = get(vpmap, target(halfedge(f,tmesh),tmesh)),
       q = get(vpmap, target(next(halfedge(f, tmesh), tmesh), tmesh)),
