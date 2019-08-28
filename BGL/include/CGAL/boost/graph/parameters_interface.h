@@ -136,6 +136,7 @@ CGAL_add_named_parameter(error_minimizer_t, error_minimizer, error_minimizer)
 CGAL_add_named_parameter(transformation_checkers_t, transformation_checkers, transformation_checkers)
 CGAL_add_named_parameter(inspector_t, inspector, inspector)
 CGAL_add_named_parameter(logger_t, logger, logger)
+CGAL_add_named_parameter(pointmatcher_config_t, pointmatcher_config, pointmatcher_config)
 
 // List of named parameters used in Surface_mesh_approximation package
 CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)

@@ -89,6 +89,14 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
   const std::vector<ICP_config> null_config_chain { null_config };
   auto is_null_config = [&](const ICP_config& c) { return !c.name.compare(null_config.name); };
 
+  // Config file
+  std::istream* pointmatcher_config = choose_parameter(get_parameter(np1, internal_np::pointmatcher_config), nullptr);
+  if(pointmatcher_config != nullptr)
+  {
+    icp.loadFromYaml(*pointmatcher_config);
+    return icp;
+  }
+  
   // In CGAL, point_set_1 is the reference while point_set_2 is the data
   // However, in pointmatcher, the order is reverse: point_set_1 is the data while point_set_2 is the reference
   // Therefore, filter params from np1 applies to reference data points while params from np2 applies to reading data points
