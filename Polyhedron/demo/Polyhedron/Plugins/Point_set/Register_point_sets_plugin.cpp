@@ -3,8 +3,17 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
+#ifdef CGAL_LINKED_WITH_OPENGR
 #define CGAL_OPENGR_VERBOSE
 #include <CGAL/OpenGR/register_point_sets.h>
+#endif
+
+#ifdef CGAL_LINKED_WITH_POINTMATCHER
+#include <CGAL/pointmatcher/register_point_sets.h>
+#endif
+
+#include <sstream>
+
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -20,10 +29,70 @@
 #include <QSpinBox>
 #include <QDoubleSpinBox>
 
-#include <QMultipleInputDialog.h>
+#include "ui_Register_point_sets_plugin.h"
 
 
 using namespace CGAL::Three;
+
+
+class Point_set_demo_register_dialog : public QDialog, private Ui::RegisterPointSetsDialog
+{
+  Q_OBJECT
+public:
+  Point_set_demo_register_dialog(const std::vector<Scene_points_with_normal_item*>& items,
+                                 QWidget* /*parent*/ = 0)
+  {
+    setupUi(this);
+    
+    for (std::size_t i = 0; i < items.size(); ++ i)
+    {
+      QRadioButton* button = new QRadioButton(items[i]->name().toStdString().c_str(), this);
+      buttons.push_back (button);
+      pointSets->addRow (button);
+      if (i == 0)
+        button->setChecked(true);
+    }
+
+#ifndef CGAL_LINKED_WITH_OPENGR
+    coarseRegistration->setText("Coarse registration (disabled, requires OpenGR)");
+    coarseRegistration->setChecked(false);
+    coarseRegistration->setEnabled(false);
+    opengr_frame->setEnabled(false);
+#endif
+#ifndef CGAL_LINKED_WITH_POINTMATCHER
+    fineRegistration->setText("Fine registration (disabled, requires libpointmatcher)");
+    fineRegistration->setChecked(false);
+    fineRegistration->setEnabled(false);
+    pointmatcher_frame->setEnabled(false);
+#endif
+  }
+
+  std::size_t ref_index() const
+  {
+    for (std::size_t i = 0; i < buttons.size(); ++ i)
+      if (buttons[i]->isChecked())
+        return i;
+    return std::size_t(-1);
+  }
+
+  bool coarse_registration() const { return coarseRegistration->isChecked(); }
+  bool fine_registration() const { return fineRegistration->isChecked(); }
+
+  int nb_samples() const { return numberOfSamplesSpinBox->value(); }
+  double accuracy() const { return accuracyDoubleSpinBox->value(); }
+  double overlap() const { return double(overlapSpinBox->value()) / 100.0; }
+  int max_time() const { return maximumRunningTimeSpinBox->value(); }
+
+  std::string pointmatcher_config() const { return config->toPlainText().toStdString(); }
+
+private:
+
+  std::vector<QRadioButton*> buttons;
+
+};
+
+
+
 class Polyhedron_demo_register_point_sets_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -77,78 +146,73 @@ void Polyhedron_demo_register_point_sets_plugin::on_actionRegisterPointSets_trig
 {
   std::vector<Scene_points_with_normal_item*> items = get_point_set_items();
 
-  QMultipleInputDialog dialog ("Register point sets", mw);
-
-  QSpinBox* nb_samples = dialog.add<QSpinBox>("Number of samples:");
-  nb_samples->setRange (3, 100000000);
-  nb_samples->setValue (200);
-
-  QDoubleSpinBox* accuracy = dialog.add<QDoubleSpinBox>("Accuracy:");
-  accuracy->setDecimals (5);
-  accuracy->setRange (0.00001, 100000.0);
-  accuracy->setValue (0.05);
-  accuracy->setSingleStep (0.1);
-  
-  QDoubleSpinBox* overlap = dialog.add<QDoubleSpinBox>("Overlap:");
-  overlap->setDecimals (2);
-  overlap->setRange (0.01, 1.0);
-  overlap->setValue (0.2);
-  overlap->setSingleStep (0.1);
-  
-  QSpinBox* max_time = dialog.add<QSpinBox>("Maximum running time:");
-  max_time->setRange (1, 36000);
-  max_time->setValue (60);
-  max_time->setSuffix (QString(" s"));
-  
-  dialog.add<QLabel>("Which point set is the reference? (others will be altered)");
-  std::vector<QRadioButton*> buttons;
-  for (std::size_t i = 0; i < items.size(); ++ i)
-  {
-    buttons.push_back (dialog.add<QRadioButton> (items[i]->name().toStdString().c_str()));
-    if (i == 0)
-      buttons.back()->setChecked(true);
-  }
-
-  if (!dialog.exec())
+  Point_set_demo_register_dialog dialog(items);
+  if(!dialog.exec())
     return;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  std::size_t ref = 0;
-  for (std::size_t i = 0; i < items.size(); ++ i)
-    if (buttons[i]->isChecked())
-    {
-      ref = i;
-      break;
-    }
+  std::size_t ref = dialog.ref_index();
 
   for (std::size_t i = 0; i < items.size(); ++ i)
   {
     if (i == ref)
       continue;
     
-    CGAL::Timer task_timer; task_timer.start();
     std::cerr << "Registering " << items[i]->name().toStdString() << " with " << items[ref]->name().toStdString() << std::endl;
 
     Point_set& ps1 = *(items[ref]->point_set());
     Point_set& ps2 = *(items[i]->point_set());
+
+#ifdef CGAL_LINKED_WITH_OPENGR
+    if (dialog.coarse_registration())
+    {
+      std::cerr << "* Coarse registration:" << std::endl;
+      CGAL::Timer task_timer; task_timer.start();
+      double score =
+        CGAL::OpenGR::register_point_sets(ps1, ps2,
+                                          CGAL::parameters::point_map(ps1.point_map())
+                                          .normal_map(ps1.normal_map())
+                                          .number_of_samples(dialog.nb_samples())
+                                          .maximum_running_time(dialog.max_time())
+                                          .accuracy(dialog.accuracy())
+                                          .overlap(dialog.overlap()),
+                                          CGAL::parameters::point_map(ps2.point_map())
+                                          .normal_map(ps2.normal_map()));
     
-    double score =
-      CGAL::OpenGR::register_point_sets(ps1, ps2,
-                                        CGAL::parameters::point_map(ps1.point_map())
-                                        .normal_map(ps1.normal_map())
-                                        .number_of_samples(nb_samples->value())
-                                        .maximum_running_time(max_time->value())
-                                        .accuracy(accuracy->value())
-                                        .overlap(overlap->value()),
-                                        CGAL::parameters::point_map(ps2.point_map())
-                                        .normal_map(ps2.normal_map()));
+      std::size_t memory = CGAL::Memory_sizer().virtual_size();
+      std::cerr << " -> Registration score = " << score << " ("
+                << task_timer.time() << " seconds, "
+                << (memory>>20) << " Mb allocated)"
+                << std::endl;
+    }
+#endif
+#ifdef CGAL_LINKED_WITH_POINTMATCHER
+    if (dialog.fine_registration())
+    {
+      std::cerr << "* Fine registration: " << std::endl;
+
+      std::istringstream ss (dialog.pointmatcher_config());
+      
+      CGAL::Timer task_timer; task_timer.start();
+      if (CGAL::pointmatcher::register_point_sets(ps1, ps2,
+                                            CGAL::parameters::point_map(ps1.point_map())
+                                            .normal_map(ps1.normal_map())
+                                            .pointmatcher_config(&ss),
+                                            CGAL::parameters::point_map(ps2.point_map())
+                                            .normal_map(ps2.normal_map())))
+        std::cerr << " -> Success";
+      else
+        std::cerr << " -> Failure";
     
-    std::size_t memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Registration score: " << score << " ("
-              << task_timer.time() << " seconds, "
-              << (memory>>20) << " Mb allocated)"
-              << std::endl;
+      std::size_t memory = CGAL::Memory_sizer().virtual_size();
+      std::cerr << " ("
+                << task_timer.time() << " seconds, "
+                << (memory>>20) << " Mb allocated)"
+                << std::endl;
+    }
+#endif
+    
   }
   
   for (std::size_t i = 0; i < items.size(); ++ i)
