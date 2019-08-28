@@ -25,7 +25,7 @@
 
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/OpenGR/compute_registration_transformation.h>
@@ -173,8 +173,8 @@ register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
 {
   namespace PSP = CGAL::Point_set_processing_3;
   namespace GR = gr;
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   // property map types
   typedef typename PSP::GetPointMap<PointRange1, NamedParameters1>::type PointMap1;
@@ -191,16 +191,16 @@ register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
 
   typedef typename PSP::GetK<PointRange1, NamedParameters1>::Kernel Kernel;
 
-  PointMap1 point_map1 = choose_param(get_param(np1, internal_np::point_map), PointMap1());
-  NormalMap1 normal_map1 = choose_param(get_param(np1, internal_np::normal_map), NormalMap1());
-  PointMap1 point_map2 = choose_param(get_param(np2, internal_np::point_map), PointMap2());
-  NormalMap2 normal_map2 = choose_param(get_param(np2, internal_np::normal_map), NormalMap2());
+  PointMap1 point_map1 = choose_parameter(get_parameter(np1, internal_np::point_map), PointMap1());
+  NormalMap1 normal_map1 = choose_parameter(get_parameter(np1, internal_np::normal_map), NormalMap1());
+  PointMap1 point_map2 = choose_parameter(get_parameter(np2, internal_np::point_map), PointMap2());
+  NormalMap2 normal_map2 = choose_parameter(get_parameter(np2, internal_np::normal_map), NormalMap2());
 
   Options<Kernel> options;
-  options.sample_size = choose_param(get_param(np1, internal_np::number_of_samples), 200);
-  options.delta = choose_param(get_param(np1, internal_np::accuracy), 5.00);
-  options.max_time_seconds = choose_param(get_param(np1, internal_np::maximum_running_time), 1000);
-  bool overlap_ok = options.configureOverlap (choose_param(get_param(np1, internal_np::overlap), 0.20));
+  options.sample_size = choose_parameter(get_parameter(np1, internal_np::number_of_samples), 200);
+  options.delta = choose_parameter(get_parameter(np1, internal_np::accuracy), 5.00);
+  options.max_time_seconds = choose_parameter(get_parameter(np1, internal_np::maximum_running_time), 1000);
+  bool overlap_ok = options.configureOverlap (choose_parameter(get_parameter(np1, internal_np::overlap), 0.20));
   CGAL_USE (overlap_ok);
   // TODO: non-constant condition for static assertion, the value of ‘overlap_ok’ is not usable in a constant expression
   // CGAL_static_assertion_msg (overlap_ok, "Invalid overlap configuration.");

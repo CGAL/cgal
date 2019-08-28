@@ -25,7 +25,7 @@
 
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/pointmatcher/compute_registration_transformation.h>
@@ -236,8 +236,8 @@ bool
 register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
                      const NamedParameters1& np1, const NamedParameters2& np2)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   namespace PSP = CGAL::Point_set_processing_3;
   typedef typename PSP::GetK<PointRange1, NamedParameters1>::Kernel Kernel;
@@ -248,7 +248,7 @@ register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
 
   // property map type of point_set_2 
   typedef typename PSP::GetPointMap<PointRange2, NamedParameters2>::type PointMap2;
-  PointMap2 point_map2 = choose_param(get_param(np2, internal_np::point_map), PointMap2());
+  PointMap2 point_map2 = choose_parameter(get_parameter(np2, internal_np::point_map), PointMap2());
 
   // update CGAL points
   for (typename PointRange2::iterator it=point_set_2.begin(),

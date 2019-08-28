@@ -25,7 +25,7 @@
 
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/aff_transformation_tags.h>
 
@@ -78,8 +78,8 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
 {
   typedef PointMatcher<Scalar> PM;
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   ICP<Scalar> icp;
 
@@ -94,7 +94,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
   // Therefore, filter params from np1 applies to reference data points while params from np2 applies to reading data points
 
   // np1.point_set_filters -> PM::ReferenceDataPointsFilter
-  auto reference_data_points_filter_configs = choose_param(get_param(np1, internal_np::point_set_filters), null_config_chain);
+  auto reference_data_points_filter_configs = choose_parameter(get_parameter(np1, internal_np::point_set_filters), null_config_chain);
   if(!reference_data_points_filter_configs.empty() && is_null_config(*reference_data_points_filter_configs.cbegin())) {
     // No config provided: use default values as been set above, do nothing
     ;
@@ -112,7 +112,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
     }
   }
   // np2.point_set_filters -> PM::ReadingDataPointsFilters
-  auto reading_data_points_filter_configs = choose_param(get_param(np2, internal_np::point_set_filters), null_config_chain);
+  auto reading_data_points_filter_configs = choose_parameter(get_parameter(np2, internal_np::point_set_filters), null_config_chain);
   if(!reading_data_points_filter_configs.empty() && is_null_config(*reading_data_points_filter_configs.cbegin())) {
     // No config provided: use default values as been set above, do nothing
     ;
@@ -131,7 +131,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
   }
 
   // Matcher
-  auto matcher_config = choose_param(get_param(np1, internal_np::matcher), null_config);
+  auto matcher_config = choose_parameter(get_parameter(np1, internal_np::matcher), null_config);
   if(!is_null_config(matcher_config))
   {
     try {
@@ -142,7 +142,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
   }
 
   // Outlier Filters
-  auto outlier_filters_config = choose_param(get_param(np1, internal_np::outlier_filters), null_config_chain);
+  auto outlier_filters_config = choose_parameter(get_parameter(np1, internal_np::outlier_filters), null_config_chain);
   if(!outlier_filters_config.empty() && is_null_config(*outlier_filters_config.cbegin())) {
     // No config provided: use default values as been set above, do nothing
     ;
@@ -161,7 +161,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
   }
 
   // Error Minimizer
-  auto error_minimizer_config = choose_param(get_param(np1, internal_np::error_minimizer), null_config);
+  auto error_minimizer_config = choose_parameter(get_parameter(np1, internal_np::error_minimizer), null_config);
   if(!is_null_config(error_minimizer_config))
   {
     try {
@@ -172,7 +172,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
   }
 
   // Transformation Checkers
-  auto transformation_checkers_config = choose_param(get_param(np1, internal_np::transformation_checkers), null_config_chain);
+  auto transformation_checkers_config = choose_parameter(get_parameter(np1, internal_np::transformation_checkers), null_config_chain);
   if(!transformation_checkers_config.empty() && is_null_config(*transformation_checkers_config.cbegin())) {
     // No config provided: use default values as been set above, do nothing
     ;
@@ -191,7 +191,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
   }
 
   // Inspector
-  auto inspector_config = choose_param(get_param(np1, internal_np::inspector), null_config);
+  auto inspector_config = choose_parameter(get_parameter(np1, internal_np::inspector), null_config);
   if(!is_null_config(error_minimizer_config))
   {
     try {
@@ -202,7 +202,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
   }
 
   // Logger
-  auto logger_config = choose_param(get_param(np1, internal_np::logger), null_config);
+  auto logger_config = choose_parameter(get_parameter(np1, internal_np::logger), null_config);
   if(!is_null_config(logger_config))
   {
     try {
@@ -554,8 +554,8 @@ std::pair<typename CGAL::Point_set_processing_3::GetK<PointRange1, NamedParamete
 compute_registration_transformation (const PointRange1& point_set_1, const PointRange2& point_set_2,
                                      const NamedParameters1& np1, const NamedParameters2& np2)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   namespace PSP = CGAL::Point_set_processing_3;
 
@@ -576,14 +576,14 @@ compute_registration_transformation (const PointRange1& point_set_1, const Point
   typedef typename Kernel::FT Scalar;
   typedef typename Kernel::Aff_transformation_3 Transformation;
 
-  PointMap1 point_map1 = choose_param(get_param(np1, internal_np::point_map), PointMap1());
-  NormalMap1 normal_map1 = choose_param(get_param(np1, internal_np::normal_map), NormalMap1());
-  PointMap2 point_map2 = choose_param(get_param(np2, internal_np::point_map), PointMap2());
-  NormalMap2 normal_map2 = choose_param(get_param(np2, internal_np::normal_map), NormalMap2());
+  PointMap1 point_map1 = choose_parameter(get_parameter(np1, internal_np::point_map), PointMap1());
+  NormalMap1 normal_map1 = choose_parameter(get_parameter(np1, internal_np::normal_map), NormalMap1());
+  PointMap2 point_map2 = choose_parameter(get_parameter(np2, internal_np::point_map), PointMap2());
+  NormalMap2 normal_map2 = choose_parameter(get_parameter(np2, internal_np::normal_map), NormalMap2());
 
   // initial transformation
   Transformation initial_transformation
-    = choose_param(get_param(np2, internal_np::transformation), Transformation(Identity_transformation()));
+    = choose_parameter(get_parameter(np2, internal_np::transformation), Transformation(Identity_transformation()));
 
   return internal::compute_registration_transformation<Kernel>(point_set_1, point_set_2,
                                                                point_map1, point_map2,
@@ -606,7 +606,7 @@ compute_registration_transformation(const PointRange1& point_set_1, const PointR
 
 template <class PointRange1, class PointRange2>
 std::pair<typename CGAL::Point_set_processing_3::GetK<PointRange1,
-          cgal_bgl_named_params<bool, internal_np::all_default_t> >
+          Named_function_parameters<bool, internal_np::all_default_t> >
   ::Kernel::Aff_transformation_3, bool>
 compute_registration_transformation(const PointRange1& point_set_1, const PointRange2& point_set_2)
 {
