@@ -1,7 +1,6 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Path_on_surface.h>
-#include <CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h>
 
 #include <iostream>
 
@@ -91,65 +90,58 @@ bool basic_tests()
     res=false;
   }
 
-  internal::Path_on_surface_with_rle<CMap> p7(p6);
-  if (!p7.is_valid() || p7.size_of_list()!=2)
+  Path_on_surface<CMap> p7(p6);
+  if (!p7.is_valid() || p6!=p7 || !p6.are_paths_equals(p7))
   {
-    std::cerr<<"path_tests ERROR: !p7.is_valid() || size_of_list()!=2."<<std::endl;
+    std::cerr<<"path_tests ERROR: !p7.is_valid() || p6!=p7 || !p7.are_paths_equals(p7)."<<std::endl;
     res=false;
   }
 
-  Path_on_surface<CMap> p8(p7);
+  Path_on_surface<CMap> p8(cmap);
+  p8.push_back(p1.front());
+  if (!p8.can_be_pushed(cmap.beta<1,2,1>(p8.back()))) // 1st
+  {
+    std::cerr<<"path_tests ERROR: 1st !p8.can_be_pushed."<<std::endl;
+    res=false;
+  }
+  else
+  { p8.push_back(cmap.beta<1,2,1>(p8.back())); }
+
+  if (!p8.can_be_pushed(cmap.beta<1,2,1>(p8.back()))) // 2nd
+  {
+    std::cerr<<"path_tests ERROR: 2nd !p8.can_be_pushed."<<std::endl;
+    res=false;
+  }
+  else
+  { p8.push_back(cmap.beta<1,2,1>(p8.back())); }
+
+  if (!p8.can_be_pushed(cmap.beta<1>(p8.back()))) // 3rd
+  {
+    std::cerr<<"path_tests ERROR: 3rd !p8.can_be_pushed."<<std::endl;
+    res=false;
+  }
+  else
+  { p8.push_back(cmap.beta<1>(p8.back())); }
+
+  if (!p8.can_be_pushed(cmap.beta<1,2,1>(p8.back()))) // 4th
+  {
+    std::cerr<<"path_tests ERROR: 4th !p8.can_be_pushed."<<std::endl;
+    res=false;
+  }
+  else
+  { p8.push_back(cmap.beta<1,2,1>(p8.back())); }
+
+  if (!p8.can_be_pushed(cmap.beta<1,2,1>(p8.back()))) // 5th
+  {
+    std::cerr<<"path_tests ERROR: 5th !p8.can_be_pushed."<<std::endl;
+    res=false;
+  }
+  else
+  { p8.push_back(cmap.beta<1,2,1>(p8.back())); }
+
   if (!p8.is_valid() || p6!=p8 || !p6.are_paths_equals(p8))
   {
     std::cerr<<"path_tests ERROR: !p8.is_valid() || p6!=p8 || !p6.are_paths_equals(p8)."<<std::endl;
-    res=false;
-  }
-
-  Path_on_surface<CMap> p9(cmap);
-  p9.push_back(p1.front());
-  if (!p9.can_be_pushed(cmap.beta<1,2,1>(p9.back()))) // 1st
-  {
-    std::cerr<<"path_tests ERROR: 1st !p9.can_be_pushed."<<std::endl;
-    res=false;
-  }
-  else
-  { p9.push_back(cmap.beta<1,2,1>(p9.back())); }
-
-  if (!p9.can_be_pushed(cmap.beta<1,2,1>(p9.back()))) // 2nd
-  {
-    std::cerr<<"path_tests ERROR: 2nd !p9.can_be_pushed."<<std::endl;
-    res=false;
-  }
-  else
-  { p9.push_back(cmap.beta<1,2,1>(p9.back())); }
-
-  if (!p9.can_be_pushed(cmap.beta<1>(p9.back()))) // 3rd
-  {
-    std::cerr<<"path_tests ERROR: 3rd !p9.can_be_pushed."<<std::endl;
-    res=false;
-  }
-  else
-  { p9.push_back(cmap.beta<1>(p9.back())); }
-
-  if (!p9.can_be_pushed(cmap.beta<1,2,1>(p9.back()))) // 4th
-  {
-    std::cerr<<"path_tests ERROR: 4th !p9.can_be_pushed."<<std::endl;
-    res=false;
-  }
-  else
-  { p9.push_back(cmap.beta<1,2,1>(p9.back())); }
-
-  if (!p9.can_be_pushed(cmap.beta<1,2,1>(p9.back()))) // 5th
-  {
-    std::cerr<<"path_tests ERROR: 5th !p9.can_be_pushed."<<std::endl;
-    res=false;
-  }
-  else
-  { p9.push_back(cmap.beta<1,2,1>(p9.back())); }
-
-  if (!p9.is_valid() || p6!=p9 || !p6.are_paths_equals(p9))
-  {
-    std::cerr<<"path_tests ERROR: !p9.is_valid() || p6!=p9 || !p6.are_paths_equals(p9)."<<std::endl;
     res=false;
   }
 

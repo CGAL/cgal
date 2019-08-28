@@ -8,14 +8,18 @@ if(CGAL_Qt5_FOUND)
 endif()
 
 if ( CGAL_FOUND )
-  # create a target per cppfile
-  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-  foreach(cppfile ${cppfiles})
-    create_single_source_cgal_program( "${cppfile}" )
-  endforeach()
+  create_single_source_cgal_program("path_tests.cpp")
+  create_single_source_cgal_program("tests_path_on_surface.cpp")
+  create_single_source_cgal_program("test_homotopy.cpp")
+  create_single_source_cgal_program("fundamental_group_of_the_circle.cpp")
+  create_single_source_cgal_program("homotopy_big_cylinder.cpp")
+  create_single_source_cgal_program("homotopy_double_torus_with_holes.cpp")
+  create_single_source_cgal_program("homotopy_rond_point_saucisse.cpp")
+  create_single_source_cgal_program("homotopy_small_cylinder.cpp")
+  # create_single_source_cgal_program(path_with_rle_deformation_tests.cpp) # TODO 
 
   if(CGAL_Qt5_FOUND)
-    target_link_libraries(path_with_rle_deformation_tests PUBLIC CGAL::CGAL_Qt5)
+    # target_link_libraries(path_with_rle_deformation_tests PUBLIC CGAL::CGAL_Qt5)
     target_link_libraries(test_homotopy PUBLIC CGAL::CGAL_Qt5)
   endif()
 
