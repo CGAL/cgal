@@ -17,12 +17,12 @@ using namespace CGAL::Surface_mesh_topology;
   std::cout<<"usage: "<<argv[0]<<" file [-draw] [-L l1 l2] [-D d1 d2] "
            <<" [-N n] [-seed S] [-time]"<<std::endl
            <<"   Load the given off file, compute one random path, deform it "
-           <<"into a second path and test that the two paths are isotopic."
+           <<"into a second path and test that the two paths are homotopic."
            <<std::endl
            <<"   -draw: draw mesh and the two paths." <<std::endl
            <<"   -L l1 l2: create a path of length >= l: a random number between [l1, l2] (by default [10, 100])."<<std::endl
            <<"   -D d1 d2: use d deformations to generate the second path: d is a random number between [d1, d2] (by default [10, 100]."<<std::endl
-           <<"   -N n: do n tests of isotopy (using 2*n random paths) (by default 1)."<<std::endl
+           <<"   -N n: do n tests of homotopy (using 2*n random paths) (by default 1)."<<std::endl
            <<"   -seed S: uses S as seed of random generator. Otherwise use a different seed at each run (based on time)."<<std::endl
            <<"   -time: display computation times."<<std::endl
            <<std::endl;
