@@ -489,6 +489,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
   void ms_edges_sample(std::size_t nb_points_per_edge,
                        double nb_pts_l_u)
   {
+    typename Geom_traits::Compute_squared_distance_3 squared_distance = this->geomtraits.compute_squared_distance_3_object();
     if (nb_points_per_edge == 0 && nb_pts_l_u == 0)
       nb_pts_l_u = 1. / min_edge_length_;
     BOOST_FOREACH(edge_descriptor ed, edges(tm))
