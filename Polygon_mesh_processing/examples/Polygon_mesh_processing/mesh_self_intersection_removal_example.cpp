@@ -69,12 +69,15 @@ int main(int argc, char* argv[])
 
   Mesh mesh;
   read_mesh<K>(filename, mesh);
+  std::cout << num_vertices(mesh) << " vertices and " << num_faces(mesh) << " faces" << std::endl;
 
   PMP::remove_degenerate_faces(mesh);
 
   std::ofstream("in.off") << std::setprecision(17) << mesh;
   PMP::remove_self_intersections(mesh);
   std::ofstream("out.off") << std::setprecision(17) << mesh;
+
+  std::cout << "Success? " << !PMP::does_self_intersect(mesh) << std::endl;
 
   return 0;
 }
