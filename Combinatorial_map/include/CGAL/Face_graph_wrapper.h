@@ -787,6 +787,9 @@ protected:
     typedef Face_graph_wrapper<HEG> type;
     typedef const Face_graph_wrapper<HEG> storage_type;
     Get_map(const HEG& heg): m_map(heg) {}
+    static const HEG& get_mesh(const storage_type& amap)
+    { return amap.get_fg(); }
+
     storage_type m_map;
   };
 
@@ -797,7 +800,9 @@ protected:
     typedef Map type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
-    storage_type m_map;
+     static const Map& get_mesh(const storage_type& amap)
+    { return amap; }
+   storage_type m_map;
   };
 
   template <unsigned int d, typename Refs, typename Items, typename Alloc,
@@ -807,6 +812,8 @@ protected:
     typedef Map type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
+    static const Map& get_mesh(const storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -819,6 +826,8 @@ protected:
     typedef LCC type;
     typedef const LCC& storage_type;
     Get_map(const LCC& heg): m_map(heg) {}
+     static const LCC& get_mesh(const storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -829,6 +838,8 @@ protected:
     typedef Map type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
+     static const Map& get_mesh(const storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -839,7 +850,9 @@ protected:
     typedef Map type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
-    storage_type m_map;
+     static const Map& get_mesh(const storage_type& amap)
+    { return amap; }
+   storage_type m_map;
   };
 
   template <unsigned int d, typename Items, typename Alloc,
@@ -849,6 +862,8 @@ protected:
     typedef Map type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
+    static const Map& get_mesh(const storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -859,6 +874,8 @@ protected:
     typedef Map type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
+    static const Map& get_mesh(const storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -872,6 +889,8 @@ protected:
     typedef LCC type;
     typedef const LCC& storage_type;
     Get_map(const LCC& heg): m_map(heg) {}
+    static const LCC& get_mesh(const storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -885,6 +904,8 @@ protected:
     typedef LCC type;
     typedef const LCC& storage_type;
     Get_map(const LCC& heg): m_map(heg) {}
+    static const LCC& get_mesh(const storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 

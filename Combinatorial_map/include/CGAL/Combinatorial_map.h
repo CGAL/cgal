@@ -803,6 +803,8 @@ namespace CGAL {
     template<unsigned int dim>
     bool is_opposite_exist(Dart_const_handle ADart) const
     { return !this->template is_free<dim>(ADart); }
+    bool is_border(Dart_handle& ADart)
+    { return false; }// is_border is a method of Polygonal_schema
 
     Dart_handle previous(Dart_handle ADart)
     { return this->template beta<0>(ADart); }
