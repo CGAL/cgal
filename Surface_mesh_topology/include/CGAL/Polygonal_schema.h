@@ -191,6 +191,7 @@ namespace Surface_mesh_topology {
   {
   public:
     typedef BaseModel                       Base;
+    typedef Polygonal_schema_base           Self;
     typedef BaseModel                       Map; // Either a GMap or a CMap
     typedef typename Map::Dart_handle       Dart_handle;
     typedef typename Map::Dart_const_handle Dart_const_handle;
@@ -199,7 +200,8 @@ namespace Surface_mesh_topology {
     Polygonal_schema_base() : Base(),
       first_dart(this->null_handle),
       prev_dart(this->null_handle),
-      facet_started(false)
+      facet_started(false),
+      mark_border(this->get_new_mark())
     {}
 
     ~Polygonal_schema_base()
@@ -341,6 +343,159 @@ namespace Surface_mesh_topology {
 
     std::string get_label(Dart_handle dh) const
     { return internal::Polygonal_schema_tools<Map>::get_label(dh); }
+
+    /// marks the whole facet containing dh as a border
+    /// @return the number of darts of the marked face
+    unsigned int set_facet_to_border(Dart_handle dh)
+    {
+      if (this->is_marked(dh, mark_border))
+      {// maybe there is no need to put an error message, someone may want to set a facet to border without knowing if it is already the case
+        std::cerr<<"Polygonal_schema ERROR: "
+                 <<"you try to set a facet to border"
+                 <<" but the facet is already a border."<<std::endl;
+        return 0;
+      }
+      
+      return CGAL::mark_cell<Self, 2>(*this, dh, mark_border);
+    }
+
+    /// same fonciton but using a label
+    unsigned int set_facet_to_border(const std::string & s)
+    {
+      auto ite=edge_label_to_dart.find(s);
+      if (ite==edge_label_to_dart.end())
+      {// maybe there is no need to put an error message, someone may want to set a facet to border without knowing if it is already the case
+        std::cerr<<"Polygonal_schema ERROR: "
+                 <<"you try to label "<<s<<" to be a border"
+                 <<" but this label does not exist yet."<<std::endl;
+        return 0;
+      }
+
+      return set_facet_to_border(ite->second);
+    }
+
+    /// remove the border marks from the whole facet
+    /// @return the number of darts of the unmarked face
+    unsigned int set_facet_to_non_border(Dart_handle dh)
+    {
+      if (!this->is_marked(dh, mark_border))
+      {// maybe there is no need to put an error message, someone may want to set a facet to border without knowing if it is already the case
+        std::cerr<<"Polygonal_schema ERROR: "
+                 <<"you try to set a facet to non border"
+                 <<" but the facet is already a non border."<<std::endl;
+        return 0;
+      }
+      
+      unsigned res=0;
+      for (auto it=this->template darts_of_cell<2>(dh).begin(),
+             itend=this->template darts_of_cell<2>(dh).end();
+               it!=itend; ++it)
+      {
+        this->unmark(it, mark_border);
+        ++res;
+      }
+      return res;
+    }
+
+    /// same fonciton but using a label
+    unsigned int set_facet_to_non_border(const std::string & s)
+    {
+      auto ite=edge_label_to_dart.find(s);
+      if (ite==edge_label_to_dart.end())
+      {// maybe there is no need to put an error message, someone may want to set a facet to border without knowing if it is already the case
+        std::cerr<<"Polygonal_schema ERROR: "
+                 <<"you try to label "<<s<<" to be a non border"
+                 <<" but this label does not exist yet."<<std::endl;
+        return 0;
+      }
+
+      return set_facet_to_non_border(ite->second);
+    }
+
+    /// @return true iff dh is a border
+    bool is_border(Dart_handle dh)
+    {
+      return this->is_marked(dh, mark_border);
+    }
+
+    /// same thing but using a label instead of a dart
+    bool is_border(const std::string & s)
+    {
+      auto ite=edge_label_to_dart.find(s);
+      if (ite==edge_label_to_dart.end())
+      {// maybe there is no need to put an error message, someone may want to set a facet to border without knowing if it is already the case
+        std::cerr<<"Polygonal_schema ERROR: "
+                 <<"you ask if label "<<s<<" represents a dart border"
+                 <<" but this label does not exist yet."<<std::endl;
+        return false;
+      }
+
+      return is_border(ite->second);
+    }
+
+    /// @return true iff dh is i-free
+    template<unsigned int i>
+    bool is_free(Dart_const_handle dh) const
+    {
+      if(i==2)
+      {
+        return Base::template is_free<2>(dh)
+            || this->is_marked(this->template beta<2>(dh), mark_border);
+      }
+      return Base::template is_free<i>(dh);
+    }
+
+    /// same thing but using a label instead of a dart
+    template<unsigned int i>
+    bool is_free(const std::string & s) const
+    {
+      auto ite=edge_label_to_dart.find(s);
+      if (ite==edge_label_to_dart.end())
+      {// maybe there is no need to put an error message, someone may want to set a facet to border without knowing if it is already the case
+        std::cerr<<"Polygonal_schema ERROR: "
+                 <<"you ask if label "<<s<<" represents a dart border"
+                 <<" but this label does not exist yet."<<std::endl;
+        return false;
+      }
+
+      return Self::template is_free<i>(ite->second);
+    }
+
+    /// Non templated versions
+    /// @return true iff dh is i-free
+    bool is_free(Dart_const_handle dh, unsigned int i) const
+    {
+      if(i==2)
+      {
+        return Base::is_free(dh, 2)
+            || this->is_marked(this->template beta<2>(dh), mark_border);
+      }
+      return Base::is_free(dh, i);
+    }
+
+    /// same thing but using a label instead of a dart
+    bool is_free(const std::string & s, unsigned int i) const
+    {
+      auto ite=edge_label_to_dart.find(s);
+      if (ite==edge_label_to_dart.end())
+      {// maybe there is no need to put an error message, someone may want to set a facet to border without knowing if it is already the case
+        std::cerr<<"Polygonal_schema ERROR: "
+                 <<"you ask if label "<<s<<" represents a dart border"
+                 <<" but this label does not exist yet."<<std::endl;
+        return false;
+      }
+
+      return is_free(ite->second, i);
+    }
+
+    void display_borders()
+    {
+      std::cout<<"labels is_free<2> is_border"<<std::endl;
+      for (auto it=edge_label_to_dart.begin(), itend=edge_label_to_dart.end(); it!=itend; ++it)
+      {
+        std::cout<<it->first<<" "<<Self::template is_free<2>(it->second)<<" "<<is_border(it->second)<<std::endl;
+      }
+    }
     
   protected:
     // For each edge label, its corresponding dart. Stores both association a -a, to allow
@@ -350,6 +505,7 @@ namespace Surface_mesh_topology {
     Dart_handle first_dart;
     Dart_handle prev_dart;
     bool        facet_started;
+    std::size_t mark_border;
   };
 
   template <class Items_=Polygonal_schema_min_items,

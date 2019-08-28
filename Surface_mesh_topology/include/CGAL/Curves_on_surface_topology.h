@@ -88,6 +88,15 @@ public:
 
   bool is_minimal_quadrangulation_computed() const
   { return m_minimal_quadrangulation!=nullptr; }
+
+  void compute_minimal_quadrangulation(bool display_time=true)
+  {
+    if (m_minimal_quadrangulation==nullptr)
+    {
+      m_minimal_quadrangulation=
+        new internal::Minimal_quadrangulation<Mesh>(m_original_map, display_time);
+    }
+  }
   
   const CMap_for_minimal_quadrangulation& get_minimal_quadrangulation() const
   {
