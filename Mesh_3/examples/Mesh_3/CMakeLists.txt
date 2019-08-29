@@ -118,7 +118,8 @@ if ( CGAL_FOUND )
 #    create_single_source_cgal_program( "mesh_polyhedral_surface_tolerance_region.cpp" )
 #    create_single_source_cgal_program( "mesh_polyhedral_edge_tolerance_region.cpp" )
 
-    foreach(target
+    if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TBB_FOUND AND TARGET ${target})
+      foreach(target
         mesh_3D_image_with_features
         mesh_3D_image
         mesh_polyhedral_domain
@@ -134,10 +135,9 @@ if ( CGAL_FOUND )
         mesh_polyhedral_complex
         mesh_polyhedral_domain_with_features
         mesh_3D_image_variable_size)
-      if(TBB_FOUND AND TARGET ${target})
         CGAL_target_use_TBB(${target})
-      endif()
-    endforeach()
+      endforeach()
+    endif()
 
 else()
   message(STATUS "This program requires the CGAL library, and will not be compiled.")
