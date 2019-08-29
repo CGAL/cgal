@@ -21,6 +21,8 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel       EPECK;
 void test_stitch_boundary_cycles(const char* fname,
                                  const std::size_t expected_n)
 {
+  std::cout << "Testing boundary cycles " << fname << "..." << std::flush;
+
   typedef CGAL::Surface_mesh<EPICK::Point_3>                    Mesh;
 
   std::ifstream input(fname);
@@ -135,7 +137,7 @@ void bug_test()
 
 int main()
 {
-  test_stitch_boundary_cycles("data_stitching/boundary_cycle.off", 5);
+  test_stitch_boundary_cycles("data_stitching/boundary_cycle.off", 4);
   test_stitch_boundary_cycles("data_stitching/boundary_cycle_2.off", 2);
 
   test_polyhedron<EPECK>("data_stitching/full_border.off");
