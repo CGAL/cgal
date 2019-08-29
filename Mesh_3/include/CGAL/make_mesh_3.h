@@ -530,7 +530,7 @@ void make_mesh_3_impl(C3T3& c3t3,
             with_features,
             mesh_options);
 
-  CGAL_assertion( c3t3.triangulation().dimension() == 3 );
+  CGAL_assertion( c3t3.triangulation().dimension() >= 2 );
 
   // Build mesher and launch refinement process
   // Don't reset c3t3 as we just created it
