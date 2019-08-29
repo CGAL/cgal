@@ -8753,7 +8753,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`` (with four arguments)
+  \cgalRefines `AdaptableFunctor` (with four arguments)
 
   \sa `has_smaller_signed_distance_to_line_grp`
 
