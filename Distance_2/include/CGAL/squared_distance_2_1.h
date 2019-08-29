@@ -281,8 +281,7 @@ namespace internal {
 	min1 = (dm == SMALLER) ?
 	  internal::squared_distance(seg1.source(), seg2, k):
 	  internal::squared_distance(seg1.target(), seg2, k);
-	dm = compare_signed_distance_to_line(seg1.source(), seg1.target(),
-                                             seg2.source(), seg2.target());
+	dm = compare(c2s,c2e);
         
 	if (dm == EQUAL)  // should not happen.
 	  return internal::squared_distance_parallel(seg1, seg2, k);
