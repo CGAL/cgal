@@ -723,6 +723,7 @@ template <typename Vis>
   const std::pair<Point_2, Multiplicity>* xp_point;
 
   // Efi: why not skipping in a loop?check only one (that is, why not in a loop)?
+  // SL: curves are split and no event strictly before the current event should be reported
   if (vi != vi_end) {
     xp_point = object_cast<std::pair<Point_2, Multiplicity> >(&(*vi));
     if (xp_point != NULL) {
@@ -736,6 +737,7 @@ template <typename Vis>
     }
   }
 
+  bool first_i = true;
   for (; vi != vi_end; ++vi) {
     unsigned int multiplicity = 0;
 
@@ -753,8 +755,10 @@ template <typename Vis>
 
       CGAL_SS_PRINT_TEXT("Found an overlap");
       CGAL_SS_PRINT_EOL();
-      _create_overlapping_curve(icv, c1 , c2, all_leaves_diff, first_parent, NULL); // TODO: improve NULL
+      _create_overlapping_curve(icv, c1 , c2, all_leaves_diff, first_parent,
+                                first_i ? event_for_overlap:NULL); // event_for_overlap is only valid for the first intersection
     }
+    first_i = false;
   }
 
   CGAL_SS_PRINT_END_EOL("computing intersection");
