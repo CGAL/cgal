@@ -1281,31 +1281,9 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   boost::dynamic_bitset<> cc_to_reverse(nb_cc, 0);
   for(std::size_t i=0; i<nb_cc; ++i)
   {
-    if (orient_outward)
+    if ( ((nesting_levels[i]%2==0) == orient_outward) != is_cc_outward_oriented[i] )
     {
-      if (nesting_levels[i]%2==0)
-      {
-        if (!is_cc_outward_oriented[i])
-          cc_to_reverse.set(i);
-      }
-      else
-      {
-        if (is_cc_outward_oriented[i])
-          cc_to_reverse.set(i);
-      }
-    }
-    else
-    {
-      if (nesting_levels[i]%2==0)
-      {
-        if (is_cc_outward_oriented[i])
-          cc_to_reverse.set(i);
-      }
-      else
-      {
-        if (!is_cc_outward_oriented[i])
-          cc_to_reverse.set(i);
-      }
+      cc_to_reverse.set(i);
     }
   }
 

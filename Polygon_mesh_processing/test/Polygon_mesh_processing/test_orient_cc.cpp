@@ -76,12 +76,13 @@ int main()
 
   std::ifstream input("data-coref/nested_cubes_invalid_volume.off");
   assert(input);
-  SMesh sm1, sm2, sm3, sm4, volume;
+  SMesh sm1, sm2, sm3, sm4, volume, volume_copy;
   input >> sm1;
   sm2 = sm1;
   sm3 = sm1;
   sm4 = sm1;
   volume = sm1;
+  volume_copy = volume;
   PMP::orient(sm1);
   if(!test_orientation(sm1, true, PMP::parameters::all_default()))
     return 1;
@@ -134,8 +135,8 @@ int main()
     return 1;
   }
 
-  PMP::orient_to_bound_a_volume(volume);
-  if( !PMP::does_bound_a_volume(volume, CGAL::parameters::outward_orientation(false)) )
+  PMP::orient_to_bound_a_volume(volume_copy, CGAL::parameters::outward_orientation(false));
+  if( !PMP::does_bound_a_volume(volume_copy) )
   {
     std::cerr << "ERROR for test6\n";
     return 1;
