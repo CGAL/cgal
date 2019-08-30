@@ -187,7 +187,7 @@ public:
     for (Subcurve_iterator iter = this->left_curves_begin();
          iter != this->left_curves_end(); ++iter)
     {
-      if ((curve == *iter) || curve->are_all_leaves_contained(*iter)) {
+      if ((curve == *iter)) {
         this->left_curves_erase(iter);
         return;
       }
