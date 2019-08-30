@@ -119,10 +119,25 @@ int main()
     return 1;
   }
 
+  assert(!PMP::does_bound_a_volume(volume));
   PMP::orient_to_bound_a_volume(volume);
   if( !PMP::does_bound_a_volume(volume))
   {
     std::cerr << "ERROR for test4\n";
+    return 1;
+  }
+
+  PMP::orient_to_bound_a_volume(volume);
+  if( !PMP::does_bound_a_volume(volume))
+  {
+    std::cerr << "ERROR for test5\n";
+    return 1;
+  }
+
+  PMP::orient_to_bound_a_volume(volume);
+  if( !PMP::does_bound_a_volume(volume, CGAL::parameters::outward_orientation(false)) )
+  {
+    std::cerr << "ERROR for test6\n";
     return 1;
   }
 

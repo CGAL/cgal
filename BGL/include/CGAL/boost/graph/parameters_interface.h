@@ -87,6 +87,8 @@ CGAL_add_named_parameter(ccid_to_vid_vector_t, connected_component_id_to_volume_
 CGAL_add_named_parameter(is_cc_outward_oriented_bs_t, is_cc_outward_oriented, is_cc_outward_oriented);
 CGAL_add_named_parameter(intersecting_volume_pairs_t, intersecting_volume_pairs_output_iterator, intersecting_volume_pairs_output_iterator);
 CGAL_add_named_parameter(i_used_as_a_predicate_t, i_used_as_a_predicate, i_used_as_a_predicate);
+CGAL_add_named_parameter(nesting_levels_t, nesting_levels, nesting_levels);
+CGAL_add_named_parameter(i_used_for_volume_orientation_t, i_used_for_volume_orientation, i_used_for_volume_orientation);
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

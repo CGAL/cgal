@@ -349,97 +349,6 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
       }
     }
 }
-namespace internal {
-
-template <class Kernel, class TriangleMesh, class VD, class Fid_map, class Vpm>
-void recursive_orient_volume_ccs( TriangleMesh& tm,
-                                  Vpm& vpm,
-                                  Fid_map& fid_map,
-                                  const std::vector<VD>& xtrm_vertices,
-                                  boost::dynamic_bitset<>& cc_handled,
-                                  const std::vector<std::size_t>& face_cc,
-                                  std::size_t xtrm_cc_id,
-                                  bool is_parent_outward_oriented)
-{
-  typedef boost::graph_traits<TriangleMesh> Graph_traits;
-  typedef typename Graph_traits::face_descriptor face_descriptor;
-  typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
-  std::vector<face_descriptor> cc_faces;
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
-  {
-    if(face_cc[get(fid_map, fd)]==xtrm_cc_id)
-      cc_faces.push_back(fd);
-  }
-// first check that the orientation of the current cc is consistant with its
-// parent cc containing it
-  bool new_is_parent_outward_oriented = internal::is_outward_oriented(
-         xtrm_vertices[xtrm_cc_id], tm, parameters::vertex_point_map(vpm));
-  if (new_is_parent_outward_oriented==is_parent_outward_oriented)
-  {
-    Polygon_mesh_processing::reverse_face_orientations(cc_faces, tm);
-    new_is_parent_outward_oriented = !new_is_parent_outward_oriented;
-  }
-  cc_handled.set(xtrm_cc_id);
-
-  std::size_t nb_cc = cc_handled.size();
-
-// get all cc that are inside xtrm_cc_id
-
-  typename Side_of_tm::AABB_tree aabb_tree(cc_faces.begin(), cc_faces.end(),
-                                           tm, vpm);
-  Side_of_tm side_of_cc(aabb_tree);
-
-  std::vector<std::size_t> cc_inside;
-  for(std::size_t id=0; id<nb_cc; ++id)
-  {
-    if (cc_handled.test(id)) continue;
-    if (side_of_cc(get(vpm,xtrm_vertices[id]))==ON_BOUNDED_SIDE)
-      cc_inside.push_back(id);
-  }
-
-// check whether we need another recursion for cc inside xtrm_cc_id
-  if (!cc_inside.empty())
-  {
-    std::size_t new_xtrm_cc_id = cc_inside.front();
-    boost::dynamic_bitset<> new_cc_handled(nb_cc,0);
-    new_cc_handled.set();
-    new_cc_handled.reset(new_xtrm_cc_id);
-    cc_handled.set(new_xtrm_cc_id);
-
-    std::size_t nb_candidates = cc_inside.size();
-    for (std::size_t i=1;i<nb_candidates;++i)
-    {
-      std::size_t candidate = cc_inside[i];
-      if(get(vpm,xtrm_vertices[candidate]).z() >
-         get(vpm,xtrm_vertices[new_xtrm_cc_id]).z()) new_xtrm_cc_id=candidate;
-      new_cc_handled.reset(candidate);
-      cc_handled.set(candidate);
-    }
-
-    internal::recursive_orient_volume_ccs<Kernel>(
-           tm, vpm, fid_map, xtrm_vertices, new_cc_handled, face_cc,
-           new_xtrm_cc_id, new_is_parent_outward_oriented);
-  }
-
-// now explore remaining cc included in the same cc as xtrm_cc_id
-  boost::dynamic_bitset<> cc_not_handled = ~cc_handled;
-  std::size_t new_xtrm_cc_id = cc_not_handled.find_first();
-  if (new_xtrm_cc_id == cc_not_handled.npos) return ;
-
-  for (std::size_t candidate = cc_not_handled.find_next(new_xtrm_cc_id);
-                   candidate < cc_not_handled.npos;
-                   candidate = cc_not_handled.find_next(candidate))
-  {
-     if(get(vpm,xtrm_vertices[candidate]).z() > get(vpm,xtrm_vertices[new_xtrm_cc_id]).z())
-        new_xtrm_cc_id = candidate;
-  }
-
-  internal::recursive_orient_volume_ccs<Kernel>(
-            tm, vpm, fid_map, xtrm_vertices, cc_handled, face_cc,
-            new_xtrm_cc_id, is_parent_outward_oriented);
-}
-
-}//end internal
 
 /**
 * \ingroup PMP_orientation_grp
@@ -616,6 +525,19 @@ inline void copy_cc_to_volume_id(
   boost::param_not_found)
 {}
 
+template <class RefToVector>
+void copy_nesting_levels(
+  std::vector<std::size_t>& nesting_levels,
+  RefToVector ref_to_vector)
+{
+  ref_to_vector.get().swap( nesting_levels );
+}
+
+inline void copy_nesting_levels(
+  std::vector<std::size_t>&,
+  boost::param_not_found)
+{}
+
 template <class RefToBitset>
 void copy_orientation_bitset(
   const std::vector<bool>& is_cc_outward_oriented,
@@ -741,6 +663,13 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *     For each connected component identified using its id `ccid`, the id of the volume it contributes
  *     to describe is the value at the position `ccid` in the parameter vector.
  *   \cgalParamEnd
+ *   \cgalParamBegin{nesting_levels}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to an object of type `std::vector< std::size_t >`.
+ *     The size of the vector is exactly the number of connected components.
+ *     For each connected component identified using its id `ccid`, the vector contains the number of
+ *     connected components containing on its bounded side this component.
+ *   \cgalParamEnd
  *   \cgalParamBegin{is_cc_outward_oriented}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
  *     a reference to an object of type `std::vector<bool>`.
@@ -757,8 +686,6 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  * \cgalNamedParamsEnd
  *
  * \return the number of volume components defined by `tm`
- *
- * \todo Use this function as the implementation of orient_to_bound_a_volume and remove recursive_orient_volume_ccs
  */
 template <class TriangleMesh, class FaceIndexMap, class NamedParameters>
 std::size_t
@@ -814,6 +741,7 @@ volume_connected_components(const TriangleMesh& tm,
   std::vector<Volume_error_code> error_codes;
   std::vector<bool> is_cc_outward_oriented;
   std::vector<std::size_t> cc_volume_ids(nb_cc, -1);
+  std::vector < std::size_t > nesting_levels(nb_cc, 0); // indicates for each CC its nesting level
 
   if (nb_cc == 1)
   {
@@ -939,7 +867,6 @@ volume_connected_components(const TriangleMesh& tm,
     // another container to not more than once the inclusion testing (in case a CC is
     // included by more than 2 CC) + associate such CC to only one volume
     std::vector<std::vector<std::size_t> > nested_cc_per_cc_shared(nb_cc);
-    std::vector < std::size_t > nesting_levels(nb_cc, 0); // indicates for each CC its nesting level
     std::vector < boost::dynamic_bitset<> > level_k_nestings; // container containing CCs in the same volume (one bitset per volume) at level k
     level_k_nestings.push_back( ~cc_handled );
 
@@ -1017,6 +944,15 @@ volume_connected_components(const TriangleMesh& tm,
       ++k;
       level_k_nestings.swap(level_k_plus_1_nestings);
     }
+
+    // early return for orient_to_bound_a_volume
+    if (boost::choose_param(boost::get_param(np, internal_np::i_used_for_volume_orientation),false))
+    {
+      internal::copy_nesting_levels(nesting_levels, boost::get_param(np, internal_np::nesting_levels));
+      internal::copy_orientation_bitset(is_cc_outward_oriented, boost::get_param(np, internal_np::is_cc_outward_oriented));
+      return 0;
+    }
+
   // detect inconsistencies of the orientation at the level 0
   // and check if all CC at level 0 are in the same volume
     std::size_t ref_cc_id = nb_cc;
@@ -1193,6 +1129,7 @@ volume_connected_components(const TriangleMesh& tm,
   CGAL_assertion(next_volume_id == error_codes.size());
   internal::copy_error_codes(error_codes, boost::get_param(np, internal_np::error_codes));
   internal::copy_nested_parents(nesting_parents, boost::get_param(np, internal_np::volume_inclusions));
+  internal::copy_nesting_levels(nesting_levels, boost::get_param(np, internal_np::nesting_levels));
   internal::copy_cc_to_volume_id(cc_volume_ids, boost::get_param(np, internal_np::connected_component_id_to_volume_id));
   internal::copy_orientation_bitset(is_cc_outward_oriented, boost::get_param(np, internal_np::is_cc_outward_oriented));
   internal::set_cc_intersecting_pairs(self_intersecting_cc, boost::get_param(np, internal_np::intersecting_volume_pairs_output_iterator));
@@ -1235,10 +1172,10 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   if (!is_closed(tm)) return false;
   if (!is_triangle_mesh(tm)) return false;
 
-  Static_property_map<face_descriptor, std::size_t> vidmap(0);
+  Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
   std::size_t res =
     volume_connected_components(tm, vidmap, np.do_orientation_tests(true)
-                                            .i_used_as_a_predicate(true));
+                                              .i_used_as_a_predicate(true));
   CGAL_assertion(res==0 || res==1);
 
   return res!=0;
@@ -1295,13 +1232,11 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
                                         const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
-  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename GetVertexPointMap<TriangleMesh,
       NamedParameters>::const_type Vpm;
   typedef typename GetFaceIndexMap<TriangleMesh,
       NamedParameters>::const_type Fid_map;
-  typedef typename Kernel_traits<
-      typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
   if (!is_closed(tm)) return;
   if (!is_triangle_mesh(tm)) return;
 
@@ -1320,48 +1255,66 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
 
+  std::vector<std::size_t> nesting_levels;
+  std::vector<bool> is_cc_outward_oriented;
+  Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
+
+  volume_connected_components(tm, vidmap,
+                              parameters::vertex_point_map(vpm)
+                                          .nesting_levels(boost::ref(nesting_levels))
+                                          .face_connected_component_map(bind_property_maps(fid_map,make_property_map(face_cc)))
+                                          .i_used_for_volume_orientation(true)
+                                          .do_orientation_tests(true)
+                                          .is_cc_outward_oriented(boost::ref(is_cc_outward_oriented))
+                                          );
+
   // set the connected component id of each face
-  std::size_t nb_cc = connected_components(tm,
-                                           bind_property_maps(fid_map,make_property_map(face_cc)),
-                                           parameters::face_index_map(fid_map));
+  std::size_t nb_cc = nesting_levels.size();
 
   if (nb_cc == 1)
   {
-    if( orient_outward != is_outward_oriented(tm))
+    if( orient_outward != is_cc_outward_oriented[0])
       reverse_face_orientations(faces(tm), tm);
     return ;
   }
 
-
-  boost::dynamic_bitset<> cc_handled(nb_cc, 0);
-
-  // extract a vertex with max z coordinate for each connected component
-  std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
-  BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+  boost::dynamic_bitset<> cc_to_reverse(nb_cc, 0);
+  for(std::size_t i=0; i<nb_cc; ++i)
   {
-    std::size_t cc_id = face_cc[get(fid_map, face(halfedge(vd, tm), tm))];
-    if (xtrm_vertices[cc_id]==Graph_traits::null_vertex())
-      xtrm_vertices[cc_id]=vd;
+    if (orient_outward)
+    {
+      if (nesting_levels[i]%2==0)
+      {
+        if (!is_cc_outward_oriented[i])
+          cc_to_reverse.set(i);
+      }
+      else
+      {
+        if (is_cc_outward_oriented[i])
+          cc_to_reverse.set(i);
+      }
+    }
     else
-      if (get(vpm, vd).z()>get(vpm,xtrm_vertices[cc_id]).z())
-        xtrm_vertices[cc_id]=vd;
+    {
+      if (nesting_levels[i]%2==0)
+      {
+        if (is_cc_outward_oriented[i])
+          cc_to_reverse.set(i);
+      }
+      else
+      {
+        if (!is_cc_outward_oriented[i])
+          cc_to_reverse.set(i);
+      }
+    }
   }
 
-  //extract a vertex with max z amongst all components
-  std::size_t xtrm_cc_id=0;
-  for(std::size_t id=1; id<nb_cc; ++id)
-    if (get(vpm, xtrm_vertices[id]).z()>get(vpm,xtrm_vertices[xtrm_cc_id]).z())
-      xtrm_cc_id=id;
+  std::vector<face_descriptor> faces_to_reverse;
+  for (face_descriptor f : faces(tm))
+    if ( cc_to_reverse.test( face_cc[get(fid_map, f)] ) )
+      faces_to_reverse.push_back(f);
 
-  bool is_parent_outward_oriented =
-      ! orient_outward;
-
-  internal::recursive_orient_volume_ccs<Kernel>(tm, vpm, fid_map,
-                                                xtrm_vertices,
-                                                cc_handled,
-                                                face_cc,
-                                                xtrm_cc_id,
-                                                is_parent_outward_oriented);
+  reverse_face_orientations(faces_to_reverse, tm);
 }
 
 template <class TriangleMesh>
