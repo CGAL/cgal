@@ -103,7 +103,7 @@ int main(int argc, char** argv)
   // Copy the mesh and perturb it slightly
   tm2 = tm1;
   bool do_project = false;
-  PMP::random_perturbation( tm2.vertices(), tm2, 0.1, do_project );
+  PMP::random_perturbation( tm2.vertices(), tm2, 0.1, CGAL::parameters::do_project(do_project));
   std::cout << "Perturbed the input mesh, now computing the Hausdorff distance." << std::endl;
 
   // Compute the Hausdorff distance
