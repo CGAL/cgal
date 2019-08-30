@@ -246,7 +246,7 @@ bool almost_equal(const typename GT::Vector_3& v1, const typename GT::Vector_3& 
 }
 
 template <typename PolygonMesh, typename FaceNormalVector, typename K>
-bool does_enclose_other_normals(const int i, const int j, const int k,
+bool does_enclose_other_normals(const std::size_t i, const std::size_t j, const std::size_t k,
                                 const typename K::Vector_3& nb,
                                 const typename K::FT sp_bi,
                                 const std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
@@ -254,7 +254,6 @@ bool does_enclose_other_normals(const int i, const int j, const int k,
                                 const K& traits)
 {
   typedef typename K::FT                                                   FT;
-  typedef typename K::Vector_3                                             Vector_3;
   typedef typename boost::property_traits<FaceNormalVector>::reference     Vector_ref;
 
   typename K::Compute_scalar_product_3 sp = traits.compute_scalar_product_3_object();
@@ -263,7 +262,7 @@ bool does_enclose_other_normals(const int i, const int j, const int k,
 
   // check that this min circle defined by the diameter contains the other points
   const std::size_t nif = incident_faces.size();
-  for(int l=0; l<nif; ++l)
+  for(std::size_t l=0; l<nif; ++l)
   {
     if(l == i || l == j || l == k)
       continue;
@@ -374,9 +373,9 @@ compute_most_visible_normal_2_points(std::vector<typename boost::graph_traits<Po
   Vector_3 n = cv_3(CGAL::NULL_VECTOR);
 
   const std::size_t nif = incident_faces.size();
-  for(int i=0; i<nif; ++i)
+  for(std::size_t i=0; i<nif; ++i)
   {
-    for(int j=i+1; j<nif; ++j)
+    for(std::size_t j=i+1; j<nif; ++j)
     {
       const Vector_ref ni = get(face_normals, incident_faces[i]);
       const Vector_ref nj = get(face_normals, incident_faces[j]);
@@ -423,12 +422,11 @@ compute_most_visible_normal_3_points(const std::vector<typename boost::graph_tra
   Vector_3 n = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
 
   const std::size_t nif = incident_faces.size();
-
-  for(int i=0; i<nif; ++i)
+  for(std::size_t i=0; i<nif; ++i)
   {
-    for(int j=i+1; j<nif; ++j)
+    for(std::size_t j=i+1; j<nif; ++j)
     {
-      for(int k=j+1; k<nif; ++k)
+      for(std::size_t k=j+1; k<nif; ++k)
       {
         const Vector_ref ni = get(face_normals, incident_faces[i]);
         const Vector_ref nj = get(face_normals, incident_faces[j]);
@@ -474,7 +472,6 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
 {
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor       face_descriptor;
 
-  typedef typename GT::FT                                                  FT;
   typedef typename GT::Vector_3                                            Vector_3;
 
   std::vector<face_descriptor> incident_faces;
