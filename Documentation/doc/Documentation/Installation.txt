@@ -377,7 +377,7 @@ from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`htt
 As on Windows there is no canonical directory for where to find
 \sc{Boost}, we recommend that you define the environment variable
 `BOOST_ROOT` and set it to where you have installed \sc{Boost}, e.g.,
-<A HREF="C:\boost\boost_1_41_0">`C:\boost\boost_1_41_0`</A>.
+`C:\boost\boost_1_41_0`.
 
 \subsection thirdpartyMPFR GMP and MPFR
 
@@ -679,8 +679,8 @@ typing `make help | grep <package>`.
 
 On many platforms, library pieces such as headers, docs and binaries
 are expected to be placed in specific locations. A typical example
-being <A HREF="/usr/include">`/usr/include`</A> and <A HREF="/usr/lib">`/usr/lib`</A> on \sc{Unix}-like
-operating systems or <A HREF="C:/Program Files/">`C:/Program Files/`</A> on Windows. The process
+being `/usr/include` and `/usr/lib` on \sc{Unix}-like
+operating systems or `C:/Program Files/` on Windows. The process
 of placing or copying the library elements into its standard location
 is sometimes referred to as <I>Installation</I> and it is a
 postprocessing step after the build step.
@@ -705,7 +705,7 @@ If you use a generator that produces IDE files (for Visual Studio for instance) 
 \cgalAdvancedBegin
 The files are copied into a directory tree relative to the <I>installation directory</I> determined by the 
 CMake variable `CMAKE_INSTALL_PREFIX`. This variable defaults to `/usr/local` under \sc{Unix}-like operating systems
-and <A HREF="C:\ProgramFiles">`C:\Program Files`</A> under Windows. If you want to install to a different location, you must override that CMake
+and `C:\Program Files` under Windows. If you want to install to a different location, you must override that CMake
 variable explicitly <I>at the configuration time</I> and not when executing the install step.
 \cgalAdvancedEnd
 
