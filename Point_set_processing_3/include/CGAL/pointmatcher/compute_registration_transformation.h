@@ -401,9 +401,9 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
      of descriptive information to the points such as a surface normal vector, 
      or the direction from the point to the sensor.
 
-     Corresponds to `readingDataPointsFilters` configuration module of \ref thirdpartylibpointmatcher
+     Corresponds to `referenceDataPointsFilters` configuration module of \ref thirdpartylibpointmatcher
      library. The filters should be chosen and set from possible components of
-     the `readingDataPointsFilters` configuration module. 
+     the `referenceDataPointsFilters` configuration module. 
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
@@ -529,9 +529,9 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
      of descriptive information to the points such as a surface normal vector, 
      or the direction from the point to the sensor.
 
-     Corresponds to `referenceDataPointsFilters` configuration module of \ref thirdpartylibpointmatcher
+     Corresponds to `readingDataPointsFilters` configuration module of \ref thirdpartylibpointmatcher
      library. The filters should be chosen and set from possible components of
-     the `referenceDataPointsFilters` configuration module. 
+     the `readingDataPointsFilters` configuration module. 
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 

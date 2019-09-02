@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s) : Sebastien Loriot
+// Author(s) : Sebastien Loriot, Necip Fazil Yildiran
 
 #ifndef CGAL_OPENGR_COMPUTE_REGISTRATION_TRANSFORMATION_H
 #define CGAL_OPENGR_COMPUTE_REGISTRATION_TRANSFORMATION_H
@@ -210,7 +210,7 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
      Largest Common Pointset (LCP), the metric used to verify how much the
      clouds are aligned. For each transformation matrix produced by Super4PCS,
      we compute the LCP measure by considering a shell around the reference
-     cloud, and count the % of points of the target cloud lying in the
+     cloud, and count the percentage of points of the target cloud lying in the
      shell. The thickness of the shell is defined by the parameter
      delta.\cgalParamEnd
 
