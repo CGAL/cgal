@@ -165,15 +165,12 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
   item->setName(fileinfo.completeBaseName());
   std::size_t isolated_v = 0;
-  std::size_t nm_v = 0;
   for(vertex_descriptor v : vertices(*surface_mesh))
   {
     if(surface_mesh->is_isolated(v))
     {
       ++isolated_v;
     }
-    if(CGAL::Polygon_mesh_processing::is_non_manifold_vertex(v, *surface_mesh))
-      ++nm_v;
   }
   if(isolated_v >0)
   {
@@ -185,15 +182,19 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
                          tr("%1 isolated vertices found")
                          .arg(item->getNbIsolatedvertices()));
   }
-  if(nm_v >0)
+  typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
+  try{
+    CGAL::Polygon_mesh_processing::non_manifold_vertices(*surface_mesh, OutputIterator());
+  }
+  catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
   {
-    //needs two restore, it's not a typo
+
     QApplication::restoreOverrideCursor();
     QMessageBox::warning((QWidget*)NULL,
                          tr("Non Manifold Vertices"),
-                         tr("%1 non-manifold vertices found")
-                         .arg(nm_v));
+                         tr("Non-manifold vertices have been found"));
   }
+
   if(item->isItemMulticolor())
     item->computeItemColorVectorAutomatically(true);
   return item;
