@@ -8,7 +8,7 @@
 
 #include "Creation_of_test_cases_for_paths.h"
 
-/* If you want to use a viewer, you can use qglviewer. */
+// If you want to use a viewer, you can use qglviewer.
 #ifdef CGAL_USE_BASIC_VIEWER
 #include <CGAL/draw_face_graph_with_paths.h>
 #endif
@@ -44,30 +44,6 @@ enum Transformation // enum for the type of transformations
 
 using namespace CGAL::Surface_mesh_topology;
 
-template<class Map__>
-class Toto
-{
-public:
-  typedef Map__ Map_;
-  typedef Map_  Mesh;
-  typedef typename Map_::Dart_const_handle Dart_const_handle;
-  
-  Toto(const Map_& m): m_map(m)
-  {}
-  
-  const Map_& get_map() const
-  { return m_map; }
-
-  std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
-  { return m_map.positive_turn(d1, d2); }
-
-  std::size_t negative_turn(Dart_const_handle d1, Dart_const_handle d2) const
-  { return m_map.negative_turn(d1, d2); }
-  
-protected:
-  const Map_& m_map;
-};
-
 ///////////////////////////////////////////////////////////////////////////////
 void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
                     bool use_only_positive,
@@ -85,15 +61,24 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
   }
 #endif // CGAL_USE_BASIC_VIEWER
 
+  internal::Light_MQ<LCC_3_cmap> lmq(path.get_map());
+  Path_on_surface<LCC_3_cmap> prepp(path.get_map());
   Path_on_surface<LCC_3_cmap> prevp=path;
-  internal::Path_on_surface_with_rle<Toto<LCC_3_cmap> > curp(path.get_map());
+  internal::Path_on_surface_with_rle<internal::Light_MQ<LCC_3_cmap> >curp(lmq);  
   std::size_t nb=0;
   bool modified=false;
   do
   {
-    curp=internal::Path_on_surface_with_rle<Toto<LCC_3_cmap> >(prevp,
-                                                        use_only_positive,
-                                                        use_only_negative);
+
+    internal::Path_on_surface_with_rle<internal::Light_MQ<LCC_3_cmap> > toto(lmq,prevp);
+    curp=toto;//internal::Path_on_surface_with_rle<internal::Light_MQ<LCC_3_cmap> >(prevp);
+
+    Path_on_surface<LCC_3_cmap> toto2(toto);
+    assert(toto2==prevp);
+
+
+    curp.set_m_use_only_positive(use_only_positive);
+    curp.set_m_use_only_negative(use_only_negative);
     modified=false;
     /* curp->display_negative_turns();
     std::cout<<"  "; curp->display_positive_turns();

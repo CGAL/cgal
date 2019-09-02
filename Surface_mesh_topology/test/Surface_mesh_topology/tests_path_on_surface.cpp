@@ -36,7 +36,7 @@ bool test_constructions()
   p1.extend_straight_positive(5);
   p1.extend_straight_negative(5);
   if (!p1.is_valid())
-  { std::cout<<"Path p1 NOT is valid, test failed"<<std::endl; res=false; }
+  { std::cout<<"ERROR: Path p1 NOT is valid, test failed"<<std::endl; res=false; }
 
   p2.push_back_by_index(2);
   p2.extend_positive_turn(1);
@@ -49,8 +49,8 @@ bool test_constructions()
   p2.extend_negative_turn(1);
   p2.extend_straight_positive(5);
   p2.extend_straight_negative(5);
-  if (!p2.is_valid())
-  { std::cout<<"Path p2 is NOT valid, test sucessful"<<std::endl; res=false; }
+  if (p2.is_valid())
+  { std::cout<<"ERROR: Path p2 is valid, test failed"<<std::endl; res=false; }
 
   return res;
 }
@@ -72,18 +72,18 @@ bool test_random_path()
 
   p1.generate_random_path(100, random, true);
   if (!p1.is_valid())
-  { std::cout<<"Path p1 is NOT valid, test failed."<<std::endl; res=false; }
+  { std::cout<<"ERROR: Path p1 is NOT valid, test failed."<<std::endl; res=false; }
 
   p3.generate_random_path(100, random, false);
   if (!p3.is_valid())
-  { std::cout<<"Path p3 is NOT valid, test failed."<<std::endl; res=false; }
+  { std::cout<<"ERROR: Path p3 is NOT valid, test failed."<<std::endl; res=false; }
 
   p2.generate_random_closed_path(100, random);
   p2.update_is_closed();
   if (!p2.is_valid())
-  { std::cout<<"Path p2 is NOT valid, test failed."<<std::endl; res=false; }
+  { std::cout<<"ERROR: Path p2 is NOT valid, test failed."<<std::endl; res=false; }
   if (!p2.is_closed())
-  { std::cout<<"Path p2 is NOT closed, test failed."<<std::endl; res=false; }
+  { std::cout<<"ERROR: Path p2 is NOT closed, test failed."<<std::endl; res=false; }
 
   if (!res)
   { std::cout<<"Wrong seed="<<random.get_seed()<<std::endl; }
@@ -97,6 +97,7 @@ int main()
   success=test_constructions() && success;
   for (unsigned i=0; i<1000; ++i)
   { success=test_random_path() && success; }
+
   std::cout<<"tests_path_on_surface "<<(success?"OK":"failed") <<std::endl;
 
   return success;

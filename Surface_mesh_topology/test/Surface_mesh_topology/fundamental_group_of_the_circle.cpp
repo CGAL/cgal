@@ -1,3 +1,18 @@
+/*
+FUNDAMENTAL GROUP OF THE CIRCLE
+
+We know that the fundamental group of the torus is Z
+Hence we can choose a path on a circle by choosing an integer
+
+The test generates all pairs of integer (i, j) between -10 and 10 and the associated paths pi and pj with two different basepoints
+Then it verify that
+-> pi is contractible iff i==0
+-> pj is contractible iff j==0
+-> pi is homotopic to himself
+-> pj is homotopic to himself
+-> pi and pj are homotopic iff pj and pi are
+-> pi and pj are homotopic iff i==j
+*/
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
@@ -126,6 +141,10 @@ int main()
       { std::cout<<"FAILURE : a path associated with int "<<i<<" is not contractible"<<std::endl; test_valid=false; }
       else if (i!=0 && c1)
       { std::cout<<"FAILURE : a path associated with int "<<i<<" is contractible"<<std::endl; test_valid=false; }
+      if (j==0 && !c2)
+      { std::cout<<"FAILURE : a path associated with int "<<j<<" is not contractible"<<std::endl; test_valid=false; }
+      else if (j!=0 && c2)
+      { std::cout<<"FAILURE : a path associated with int "<<j<<" is contractible"<<std::endl; test_valid=false; }
 
       if (!h11)
       { std::cout<<"FAILURE : a path associated with int "<<i<<" is not homotopic to himself"<<std::endl; test_valid=false; }

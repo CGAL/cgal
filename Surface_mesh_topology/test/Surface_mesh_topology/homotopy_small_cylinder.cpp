@@ -41,26 +41,43 @@ int main()
   create_path_1(p1);
   create_path_2(p2);
 
-  bool res1=cst.is_contractible(p1);
-  std::cout<<"Path p1 (pink) "<<(res1?"IS":"IS NOT")
-           <<" contractible"<<std::endl;
-  std::cout<<(res1?"FAILURE":"SUCCESS")<<std::endl;
+  bool res=true;
+  
+  if (cst.is_contractible(p1))
+  {
+    std::cout<<"ERROR homotopy_small_cylinder test1: "
+             <<"Path p1 should not be contractible"
+             <<std::endl;
+    res=false;
+  }
 
-  bool res2=cst.is_contractible(p2);
-  std::cout<<"Path p2 (green) "<<(res2?"IS":"IS NOT")
-          <<" contractible"<<std::endl;
-  std::cout<<(res2?"FAILURE":"SUCCESS")<<std::endl;
+  if (cst.is_contractible(p2))
+  {
+    std::cout<<"ERROR homotopy_small_cylinder test2: "
+             <<"Path p2 should not be contractible"
+             <<std::endl;
+    res=false;
+  }
 
-  bool res3=cst.is_contractible(p3);
-  std::cout<<"Path p3 (orange) "<<(res3?"IS":"IS NOT")
-          <<" contractible"<<std::endl;
-  std::cout<<(res3?"SUCESS":"FAILURE")<<std::endl;
+  if (!cst.is_contractible(p3))
+  {
+    std::cout<<"ERROR homotopy_small_cylinder test3: "
+             <<"Path p3 should be contractible"
+             <<std::endl;
+    res=false;
+  }
 
-  bool res4=cst.are_freely_homotopic(p1, p2);
-  std::cout<<"Path p1 (pink) "<<(res4?"IS":"IS NOT")
-          <<" freely_homotopic with p2 (green)"<<std::endl;
-  std::cout<<(res4?"FAILURE":"SUCCESS")<<std::endl;
+  if (cst.are_freely_homotopic(p1, p2))
+  {
+    std::cout<<"ERROR homotopy_big_cylinder test4: "
+             <<"Path p1 should not be freely homotopic with path p2."
+             <<std::endl;
+    res=false;
+  }
 
-  return (!res1 && !res2 && res3 && !res4);
+  if (res)
+  { std::cout<<"SUCCESS homotopy_small_cylinder; all tests ok."<<std::endl; }
+
+  return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
