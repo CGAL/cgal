@@ -62,7 +62,7 @@ public:
 
      SMesh *surface_mesh = new SMesh();
      in >> *surface_mesh;
-     if(!in || surface_mesh->is_empty())
+     if(!in || surface_mesh->is_empty() || ~CGAL::is_valid_polygon_mesh(*surface_mesh))
      {
        delete surface_mesh;
        in.close();
