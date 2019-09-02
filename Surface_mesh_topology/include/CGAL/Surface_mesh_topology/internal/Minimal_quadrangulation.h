@@ -284,7 +284,7 @@ public:
     get_map().free_mark(m_mark_hole);
   }
 
-  /// @return true iff 'path' is contractible.
+  /// @return true iff 'p' is contractible.
   bool is_contractible(const Path_on_surface<Mesh>& p,
                        bool display_time=false) const
   {
@@ -333,7 +333,7 @@ public:
     return res;
   }
 
-  /// @return true iff 'path1' and 'path2' are freely homotopic.
+  /// @return true iff 'p1' and 'p2' are freely homotopic.
   bool are_freely_homotopic(const Path_on_surface<Mesh>& p1,
                             const Path_on_surface<Mesh>& p2,
                             bool display_time=false) const
@@ -403,7 +403,7 @@ public:
     return res;
   }
 
-  /// @return true iff 'path1' and 'path2' are base point freely homotopic.
+  /// @return true iff 'p1' and 'p2' are base point freely homotopic.
   bool are_base_point_homotopic(const Path_on_surface<Mesh>& p1,
                                 const Path_on_surface<Mesh>& p2,
                                 bool display_time=false) const
@@ -543,7 +543,7 @@ protected:
   (const Path_on_surface<CMap_for_minimal_quadrangulation>& path,
    int& a, int& b) const
   {
-    CGAL_assertion(get_map().number_of_darts()==4);
+    CGAL_assertion(m_map_is_a_torus_quadrangulation());
       
     Dart_const_handle dha=get_map().darts().begin();
     Dart_const_handle dhb=get_map().template beta<1>(dha);

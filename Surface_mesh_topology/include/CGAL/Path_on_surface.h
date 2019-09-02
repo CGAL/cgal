@@ -52,9 +52,9 @@ template<typename Mesh>
 class Path_on_surface
 {
 public:
-  typedef Path_on_surface<Mesh>           Self;
+  typedef Path_on_surface<Mesh>              Self;
   typedef typename Get_map<Mesh, Mesh>::type Map;
-  typedef typename Map::Dart_const_handle Dart_const_handle;
+  typedef typename Map::Dart_const_handle    Dart_const_handle;
 
   Path_on_surface(const Mesh& amap) : m_map(amap), m_is_closed(false)
   {}
@@ -72,7 +72,7 @@ public:
       else if (it->length<0)
       { extend_straight_negative(-(it->length), false); }
     }
-    CGAL_assertion(is_valid());
+    CGAL_assertion(is_valid(true));
   }
 
   void swap(Self& p2)
@@ -81,6 +81,7 @@ public:
     
     CGAL_assertion(&m_map==&(p2.m_map));
     m_path.swap(p2.m_path);
+    m_flip.swap(p2.m_flip);
     std::swap(m_is_closed, p2.m_is_closed);
   }
 
@@ -90,6 +91,7 @@ public:
     if (this!=&other)
     {
       m_path=other.m_path;
+      m_flip=other.m_flip;
       m_is_closed=other.m_is_closed;
     }
     return *this;
@@ -368,9 +370,9 @@ public:
     update_is_closed();
   }
 
-  void display_failed_extention(const std::string& name_of_function)
+  void display_failed_extention(const std::string& /*name_of_function*/)
   {
-    std::cout<<"Cant extend the path this way ("<<name_of_function<<")"<<std::endl;
+    // std::cout<<"Cant extend the path this way ("<<name_of_function<<")"<<std::endl;
   }
 
   void extend_straight_positive(std::size_t nb=1, bool update_isclosed=true)
@@ -382,10 +384,12 @@ public:
     for (unsigned int i=0; i<nb; ++i)
     {
       dh=back();
-      if(back_flip() && get_map().template is_free<2>(dh))
+      if(!back_flip() && get_map().template is_free<2>(dh))
       { display_failed_extention("extend_straight_positive"); return; }
-    
-      dh=back_flip()?get_map().template beta<2, 1>(dh):get_map().template beta<1>(dh);
+
+      dh=back_flip()?get_map().template beta<2,1>(dh):
+                     get_map().template beta<1>(dh);
+
       if (get_map().template is_free<2>(dh))
       { display_failed_extention("extend_straight_positive"); return; }
 
@@ -408,7 +412,8 @@ public:
       if(!back_flip() && get_map().template is_free<2>(dh))
       { display_failed_extention("extend_straight_negative"); return; }
     
-      dh=back_flip()?get_map().template beta<0>(dh):get_map().template beta<2, 0>(dh);
+      dh=back_flip()?get_map().template beta<0>(dh):
+                     get_map().template beta<2, 0>(dh);
       if (get_map().template is_free<2>(dh))
       { display_failed_extention("extend_straight_negative"); return; }
 
@@ -425,7 +430,7 @@ public:
     if (is_empty() || back()==dend || (is_dend_flipped && get_map().template is_free<2>(dend)))
     { display_failed_extention("extend_straight_positive_until"); return; }
 
-    Dart_const_handle dh=back();//the next 6 lines are the same than in extend_straight_positive
+    Dart_const_handle dh=back();
     if(back_flip() && get_map().template is_free<2>(dh))
     { display_failed_extention("extend_straight_positive_until"); return; }
     dh=back_flip()?get_map().template beta<2, 1>(dh):get_map().template beta<1>(dh);
@@ -751,7 +756,21 @@ public:
     update_path_randomly(random, update_isclosed);
   }
 
-  /// @Return true if this path is equal to other path, identifying dart 0 of
+  /// @return true iff the i-th dart of the path and the j-th dart of the other
+  /// are the same (taking into account the flips !)
+  bool are_same_step(std::size_t i, const Self& other, std::size_t j) const
+  {
+    if (get_ith_flip(i)==other.get_ith_flip(j))
+    { return get_ith_dart(i)==other[j]; }
+
+    if (get_map().template is_free<2>(get_ith_dart(i)) ||
+        get_map().template is_free<2>(other[j]))
+    { return false; }
+
+    return get_ith_dart(i)==get_map().template beta<2>(other[j]);
+  }
+
+  /// @return true if this path is equal to other path, identifying dart 0 of
   ///          this path with dart start in other path.
   bool are_same_paths_from(const Self& other, std::size_t start) const
   {
@@ -761,8 +780,7 @@ public:
 
     for(std::size_t i=0; i<length(); ++i)
     {
-      if (get_ith_dart(i)!=other.get_ith_dart(start) ||
-          get_ith_flip(i)!=other.get_ith_flip(start))
+      if (!are_same_step(i, other, start))
       { return false; }
       start=next_index(start);
     }
@@ -865,7 +883,7 @@ public:
 
   /// @return true iff the path is valid; i.e. a sequence of edges two by
   ///              two adjacent.
-  bool is_valid() const
+  bool is_valid(bool display_error=false) const
   {
     if (is_empty()) { return !is_closed(); } // an empty past is not closed
     Dart_const_handle last_vertex;
@@ -880,14 +898,16 @@ public:
 
       last_vertex=m_flip[i-1]?m_path[i-1]:get_map().template beta<1>(m_path[i-1]);
       if (last_vertex==Map::null_handle)
-      { 
-        std::cout<<"Unvalid path : one of the vertices doesn't exist"<<std::endl;
+      {
+        if (display_error)
+        { std::cout<<"Invalid path: one of the vertices doesn't exist"<<std::endl; }
         return false;
       }
 
       if (!m_map.template belong_to_same_cell<0>(m_flip[i]?get_map().template beta<1>(m_path[i]):m_path[i], last_vertex))
       {
-        std::cout<<"Unvalid path : dart "<<i-1<<" and dart "<<i<<" are not adjacents"<<std::endl;
+        if (display_error)
+        { std::cout<<"Invalid path: dart "<<i-1<<" and dart "<<i<<" are not adjacents"<<std::endl; }
         return false;
       }
     }
@@ -896,12 +916,14 @@ public:
     {
       if (last_vertex==Map::null_handle)
       {
-        std::cout<<"Unvalid path : one of the vertices doesn't exist"<<std::endl;
+        if (display_error)
+        { std::cout<<"Invalid path: one of the vertices doesn't exist"<<std::endl; }
         return false;
       }
       if (!m_map.template belong_to_same_cell<0>(front_flip()?get_map().template beta<1>(front()):front(), last_vertex))
       {
-        std::cout<<"Unvalid path : m_is_closed is true but the path is not closed"<<std::endl;
+        if (display_error)
+        { std::cout<<"Invalid path: m_is_closed is true but the path is not closed"<<std::endl; }
         return false;
       }
     }
@@ -909,12 +931,14 @@ public:
     {
       if (last_vertex==Map::null_handle)
       {
-        std::cout<<"Unvalid path : one of the vertices doesn't exist"<<std::endl;
+        if (display_error)
+        { std::cout<<"Invalid path: one of the vertices doesn't exist"<<std::endl; }        
         return false;
       }
       if (m_map.template belong_to_same_cell<0>(front_flip()?get_map().template beta<1>(front()):front(), last_vertex))
       {
-        std::cout<<"Unvalid path :m_is_closed is false but the path is closed"<<std::endl;
+        if (display_error)
+        { std::cout<<"Invalid path: m_is_closed is false but the path is closed"<<std::endl; }
         return false;
       }
     }
@@ -983,19 +1007,10 @@ public:
   /// Reverse the path (i.e. negate its orientation).
   void reverse()
   {
-    /* Dart_const_handle dh_temp;
-    bool flip_temp; */
     for (unsigned int i=0; i<length()/2; ++i)
     {
       std::swap(m_path[i], m_path[length()-1-i]);
-      /* dh_temp=m_path[i];
-      m_path[i]=m_path[length()-1-i];
-      m_path[length()-1-i]=dh_temp; */
-
       std::swap(m_flip[i], m_flip[length()-1-i]);
-      /* flip_temp=m_flip[i];
-      m_flip[i]=m_flip[length()-1-i];
-      m_flip[length()-1-i]=flip_temp; */
     }
 
     for (unsigned int i=0; i<length(); ++i)

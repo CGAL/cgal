@@ -78,6 +78,30 @@ public:
   int length; // Length of the flat, positive flat if >0, negative flat if <0
 };
 
+template<class Map__>
+class Light_MQ
+{
+public:
+  typedef Map__                             Map_;
+  typedef Map_                              Mesh;
+  typedef typename Map_::Dart_const_handle  Dart_const_handle;
+  
+  Light_MQ(const Map_& m): m_map(m)
+  {}
+  
+  const Map_& get_map() const
+  { return m_map; }
+
+  std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
+  { return m_map.positive_turn(d1, d2); }
+
+  std::size_t negative_turn(Dart_const_handle d1, Dart_const_handle d2) const
+  { return m_map.negative_turn(d1, d2); }
+  
+protected:
+  const Map_& m_map;
+};
+
 template<typename MQ>
 class Path_on_surface_with_rle
 {
@@ -92,7 +116,7 @@ public:
   typedef typename List_of_flats::iterator                   List_iterator;
   // TODO typedef typename List_of_dart_length::const_iterator List_const_iterator;
 
-  friend Path_on_surface<Map>;
+  friend class Path_on_surface<Map>;
 
   struct List_iterator_hash
   {
@@ -123,6 +147,41 @@ public:
     , m_darts_ids(darts_ids)
   #endif //CGAL_PWRLE_TURN_V2
   {}
+
+  /// Creates a Path_on_surface_with_rle from a Path_on_surface.
+  /// If use_only_positive, consider only positive flats and not negative ones.
+  /// If use_only_negative, consider only negative flats and not positive ones.
+  /// If both are false, consider both positive and negative flats.
+  /// Both cannot be true at the same time.
+  /// Note that for a minimal surface of genus>=2, we cannot have both -2 and
+  /// +2 as turn, and thus these parameters are useless.
+  /// However, this case can occured for our unit tests on the cube, this is
+  /// the reason of these parameters.
+  Path_on_surface_with_rle(const MQ& aMQ, const Path_on_surface<Map>& p)
+  : m_MQ(aMQ),
+    m_is_closed(false),
+    m_length(0),
+    m_use_only_positive(false),
+    m_use_only_negative(false)
+  {
+    for (std::size_t i=0; i<p.length(); ++i)
+    {
+      push_back(p.get_ith_flip(i)?get_map().template beta<2>(p[i]):p[i]);
+    }
+  }
+
+  /* Path_on_surface_with_rle(const Path_on_surface<Map>& p)
+  : m_MQ(Light_MQ<Map>(p.get_map())),
+    m_is_closed(false),
+    m_length(0),
+    m_use_only_positive(false),
+    m_use_only_negative(false)
+  {
+    for (std::size_t i=0; i<p.length(); ++i)
+    {
+      push_back(p.get_ith_flip(i)?get_map().template beta<2>(p[i]):p[i]);
+    }
+    } */
 
   void swap(Self& p2)
   {
@@ -1478,6 +1537,12 @@ public:
     p.display();
     return os;
   }
+
+  void set_m_use_only_positive(bool UOP)
+  { m_use_only_positive=UOP; }
+
+  void set_m_use_only_negative(bool UON)
+  { m_use_only_negative=UON; }
 
 protected:
   const MQ& m_MQ; // The underlying map (a minimal quadrangulation)
