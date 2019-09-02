@@ -85,7 +85,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
 
   icp.setDefault();
 
-  const ICP_config null_config { .name = "_null_pm_config_in_cgal" };
+  const ICP_config null_config { "_null_pm_config_in_cgal" };
   const std::vector<ICP_config> null_config_chain { null_config };
   auto is_null_config = [&](const ICP_config& c) { return !c.name.compare(null_config.name); };
 
