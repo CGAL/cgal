@@ -78,6 +78,36 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "jet_smoothing_example.cpp" )
     create_single_source_cgal_program( "normal_estimation.cpp" )
     create_single_source_cgal_program( "edges_example.cpp" )
+    
+    # Executables that require libpointmatcher
+    find_package(libpointmatcher)
+    if (libpointmatcher_FOUND)
+      include_directories(SYSTEM ${libpointmatcher_INCLUDE_DIR})
+      create_single_source_cgal_program( "registration_with_pointmatcher.cpp" )
+      target_link_libraries(registration_with_pointmatcher PRIVATE ${libpointmatcher_LIBRARIES})
+    else()
+      message(STATUS "NOTICE : the registration_with_pointmatcher test requires libpointmatcher and will not be compiled.")
+    endif()
+    
+    # Executables that require OpenGR
+    find_package(OpenGR)
+    if (OpenGR_FOUND)
+      include_directories(SYSTEM ${OpenGR_INCLUDE_DIR})
+      create_single_source_cgal_program( "registration_with_OpenGR.cpp" )
+    else()
+      message(STATUS "NOTICE: registration_with_OpenGR requires OpenGR, and will not be compiled.")
+    endif()
+
+    # Executables that require both libpointmatcher and OpenGR
+    if (libpointmatcher_FOUND AND OpenGR_FOUND)
+      # include_directories(SYSTEM ${libpointmatcher_INCLUDE_DIR}) 
+      # include_directories(SYSTEM ${OpenGR_INCLUDE_DIR})
+      create_single_source_cgal_program( "registration_with_opengr_pointmatcher_pipeline.cpp" )
+      target_link_libraries(registration_with_opengr_pointmatcher_pipeline PRIVATE ${libpointmatcher_LIBRARIES})
+    else()
+      message(STATUS "NOTICE: registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled.")
+    endif()
+
   else()
 
     message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
