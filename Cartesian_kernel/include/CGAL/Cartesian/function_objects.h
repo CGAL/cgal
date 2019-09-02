@@ -542,7 +542,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Line_2    Line_2;
     typedef typename K::Equal_2   Equal_2;
   public:
-    typedef typename Comparison_result   result_type;
+    typedef Comparison_result   result_type;
 
     result_type
     operator()(const Point_2& a, const Point_2& b,
