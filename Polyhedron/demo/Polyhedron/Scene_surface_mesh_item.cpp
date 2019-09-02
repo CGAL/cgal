@@ -260,6 +260,7 @@ struct Scene_surface_mesh_item_priv{
   double volume, area;
   unsigned int number_of_null_length_edges;
   unsigned int number_of_degenerated_faces;
+  unsigned int number_of_nm_vertices;
   int genus;
   bool self_intersect;
   mutable QSlider* alphaSlider;
@@ -1515,6 +1516,7 @@ invalidate_stats()
 {
   number_of_degenerated_faces = (unsigned int)(-1);
   number_of_null_length_edges = (unsigned int)(-1);
+  number_of_nm_vertices = (unsigned int)(-1);
   volume = -std::numeric_limits<double>::infinity();
   area = -std::numeric_limits<double>::infinity();
   self_intersect = false;
@@ -1568,11 +1570,25 @@ QString Scene_surface_mesh_item::computeStats(int type)
     }
     faces_aspect_ratio(d->smesh_, min_altitude, min_ar, max_ar, mean_ar);
   }
+  if(type == NB_NM_VERTICES)
+  {
 
+    d->number_of_nm_vertices = 0;
+    for(SMesh::Vertex_index v : d->smesh_->vertices())
+    {
+      if(CGAL::Polygon_mesh_processing::is_non_manifold_vertex(v, *d->smesh_))
+        ++d->number_of_nm_vertices;
+    }
+  }
   switch(type)
   {
   case NB_VERTICES:
     return QString::number(num_vertices(*d->smesh_));
+  case NB_NM_VERTICES:
+  {
+
+  return QString::number(d->number_of_nm_vertices);
+  }
 
   case NB_FACETS:
     return QString::number(num_faces(*d->smesh_));
@@ -1721,14 +1737,15 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   CGAL::Three::Scene_item::Header_data data;
   //categories
 
-  data.categories.append(std::pair<QString,int>(QString("Properties"),9));
+  data.categories.append(std::pair<QString,int>(QString("Properties"),11));
   data.categories.append(std::pair<QString,int>(QString("Faces"),10));
-  data.categories.append(std::pair<QString,int>(QString("Edges"),7));
-  data.categories.append(std::pair<QString,int>(QString("Angles"),2));
+  data.categories.append(std::pair<QString,int>(QString("Edges"),6));
+  data.categories.append(std::pair<QString,int>(QString("Angles"),3));
 
 
   //titles
   data.titles.append(QString("#Vertices"));
+  data.titles.append(QString("#Non-manifold Vertices"));
   data.titles.append(QString("#Connected Components"));
   data.titles.append(QString("#Border Edges"));
   data.titles.append(QString("Pure Triangle"));

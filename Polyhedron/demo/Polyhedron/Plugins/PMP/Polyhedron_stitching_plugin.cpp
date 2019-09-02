@@ -71,30 +71,6 @@ public Q_SLOTS:
 }; // end Polyhedron_demo_polyhedron_stitching_plugin
 
 
-template <typename Poly>
-struct Polyline_visitor
-{
-  Scene_polylines_item* new_item;
-  typename boost::property_map<Poly, CGAL::vertex_point_t>::const_type vpm;
-
-  Polyline_visitor(const Poly& poly, Scene_polylines_item* new_item)
-    : new_item(new_item), vpm(get(CGAL::vertex_point,poly))
-  {}
-
-  void start_new_polyline()
-  {
-    new_item->polylines.push_back( Scene_polylines_item::Polyline() );
-  }
-
-  void add_node(typename boost::graph_traits<Poly>::vertex_descriptor vd)
-  {
-    
-    new_item->polylines.back().push_back(get(vpm,vd));
-  }
-
-  void end_polyline(){}
-};
-
 
 template <typename Item>
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_triggered(Scene_interface::Item_id index)
