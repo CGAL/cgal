@@ -60,36 +60,36 @@ int main(int argc, const char** argv)
 
   // Prepare point set 1 filters (PM::ReferenceDataPointsFilters)
   std::vector<ICP_config> point_set_1_filters;
-  point_set_1_filters.push_back( ICP_config { .name="MinDistDataPointsFilter"       , .params={ {"minDist", "0.5" }}  } );
-  point_set_1_filters.push_back( ICP_config { .name="RandomSamplingDataPointsFilter", .params={ {"prob"   , "0.05"}}  } );
+  point_set_1_filters.push_back( ICP_config { /*.name=*/"MinDistDataPointsFilter"       , /*.params=*/{ {"minDist", "0.5" }}  } );
+  point_set_1_filters.push_back( ICP_config { /*.name=*/"RandomSamplingDataPointsFilter", /*.params=*/{ {"prob"   , "0.05"}}  } );
 
   // Prepare point set 2 filters (PM::ReadingDataPointsFilters)
   std::vector<ICP_config> point_set_2_filters;
-  point_set_2_filters.push_back( ICP_config { .name="MinDistDataPointsFilter"       , .params={ {"minDist", "0.5" }}  } );
-  point_set_2_filters.push_back( ICP_config { .name="RandomSamplingDataPointsFilter", .params={ {"prob"   , "0.05"}}  } );
+  point_set_2_filters.push_back( ICP_config { /*.name=*/"MinDistDataPointsFilter"       , /*.params=*/{ {"minDist", "0.5" }}  } );
+  point_set_2_filters.push_back( ICP_config { /*.name=*/"RandomSamplingDataPointsFilter", /*.params=*/{ {"prob"   , "0.05"}}  } );
 
 	// Prepare matcher function
-  ICP_config matcher { .name="KDTreeMatcher", .params={ {"knn", "1"}, {"epsilon", "3.16"} } };
+  ICP_config matcher { /*.name=*/"KDTreeMatcher", /*.params=*/{ {"knn", "1"}, {"epsilon", "3.16"} } };
 
   // Prepare outlier filters
   std::vector<ICP_config> outlier_filters;
-  outlier_filters.push_back( ICP_config { .name="TrimmedDistOutlierFilter", .params={ {"ratio", "0.75" }}  } );
+  outlier_filters.push_back( ICP_config { /*.name=*/"TrimmedDistOutlierFilter", /*.params=*/{ {"ratio", "0.75" }}  } );
 
   // Prepare error minimizer
-  ICP_config error_minimizer { .name = "PointToPointErrorMinimizer"};
+  ICP_config error_minimizer { /*.name=*/"PointToPointErrorMinimizer"};
 
   // Prepare transformation checker
   std::vector<ICP_config> transformation_checkers;
-  transformation_checkers.push_back( ICP_config { .name="CounterTransformationChecker", .params={ {"maxIterationCount", "150" }}  } );
-  transformation_checkers.push_back( ICP_config { .name="DifferentialTransformationChecker", .params={ {"minDiffRotErr"  , "0.001" },
+  transformation_checkers.push_back( ICP_config { /*.name=*/"CounterTransformationChecker", /*.params=*/{ {"maxIterationCount", "150" }}  } );
+  transformation_checkers.push_back( ICP_config { /*.name=*/"DifferentialTransformationChecker", /*.params=*/{ {"minDiffRotErr"  , "0.001" },
                                                                                                        {"minDiffTransErr", "0.01"  },
                                                                                                        {"smoothLength"   , "4"     } }  
                                                 } );
   // Prepare inspector
-  ICP_config inspector { .name="NullInspector" };
+  ICP_config inspector { /*.name=*/"NullInspector" };
 
   // Prepare logger
-  ICP_config logger { .name= "FileLogger" };
+  ICP_config logger { /*.name=*/"FileLogger" };
 
   const K::Aff_transformation_3 identity_transform = K::Aff_transformation_3(CGAL::Identity_transformation());
 
