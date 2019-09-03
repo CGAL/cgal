@@ -221,16 +221,20 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   target_link_libraries(point_dialog
     PUBLIC Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
 
+  if(BUILD_TESTING)
+    add_custom_target(test_items)
+    cgal_add_compilation_test(test_items)
+    set_property(TEST compilation_of__test_items
+      APPEND PROPERTY DEPENDS compilation_of__demo_framework)
+  endif(BUILD_TESTING)
+
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
     target_link_libraries(${item_name}
       PUBLIC demo_framework ${CGAL_LIBRARIES}
       Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
-    cgal_add_compilation_test(${item_name})
     if(BUILD_TESTING)
-      set_tests_properties(
-          compilation_of__${item_name}
-        PROPERTIES DEPENDS compilation__of_demo_framework)
+      add_dependencies(test_items ${item_name})
     endif()
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${item_name} )
   endmacro(add_item)
@@ -322,7 +326,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     CGAL_target_use_TBB(scene_points_with_normal_item)
   endif()
 
-
   foreach( lib 
       demo_framework
       scene_basic_objects
@@ -345,7 +348,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
   target_link_libraries( Polyhedron_3 PRIVATE polyhedron_demo )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
-  cgal_add_compilation_test(polyhedron_demo)
 
   if( POLYHEDRON_QTSCRIPT_DEBUGGER )
     if(TARGET Qt5::ScriptTools)
