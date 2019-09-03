@@ -81,7 +81,7 @@ The following example shows how to create a very simple `Surface_mesh`
 by adding 2 faces, and how to check that a face is correctly added
 to the mesh.
 
-\cgalExample{Surface_mesh/sm_check_wrong_orientation.cpp}
+\cgalExample{Surface_mesh/check_orientation.cpp}
 \section sectionSurfaceMeshConnectivity Connectivity 
 
 A surface mesh is an edge-centered data structure capable of
