@@ -1,6 +1,3 @@
-#include <vector>
-
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
