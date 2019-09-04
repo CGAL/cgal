@@ -182,6 +182,8 @@ namespace pointmatcher {
      If this parameter is omitted, `NullLogger` is used.
      \cgalParamEnd
 
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class,
+     model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
    \param np2 optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.

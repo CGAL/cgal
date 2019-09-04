@@ -499,6 +499,9 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
 
      If this parameter is omitted, `NullLogger` is used.
      \cgalParamEnd
+     
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class,
+     model of `Kernel`\cgalParamEnd
 
    \cgalNamedParamsEnd
 

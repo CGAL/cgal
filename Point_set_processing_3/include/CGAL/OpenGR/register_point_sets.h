@@ -144,8 +144,8 @@ register_point_sets(const PointRange1& range1,    PointRange2& range2,
      \cgalParamBegin{maximum_running_time} maximum number of seconds after
      which the algorithm stops. Super4PCS explores the transformation space to
      align the two input clouds. Since the exploration is performed randomly,
-     it is recommended to use a large time value to explore the whole space
-     (e.g., 1000).\cgalParamEnd
+     it is recommended to use a large time value to explore the whole space.
+     \cgalParamEnd
 
      \cgalParamBegin{geom_traits} an instance of a geometric traits class,
      model of `Kernel`\cgalParamEnd

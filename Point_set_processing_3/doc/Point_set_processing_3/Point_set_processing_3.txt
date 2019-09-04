@@ -409,8 +409,7 @@ reduce the accuracy of the result.
 
 Maximum number of seconds after which the algorithm stops. Super4PCS explores the
 transformation space to align the two input clouds. Since the exploration is performed
-randomly, it is recommended to use a large time value to explore the whole space
-(e.g., 1000).
+randomly, it is recommended to use a large time value to explore the whole space.
 
 \subsection Point_set_processing_3Examples_registration_PointMatcher PointMatcher Example
 
