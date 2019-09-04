@@ -63,8 +63,6 @@ public:
   */
   Geomview_stream& operator<<(const Color& c);
 
-/// @}
-
   /*!
     Changes the background color. Returns the old value.
   */

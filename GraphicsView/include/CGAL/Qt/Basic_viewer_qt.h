@@ -93,24 +93,24 @@ const char fragment_source_color[] =
     "varying highp vec4 fP; \n"
     "varying highp vec3 fN; \n"
     "varying highp vec4 fColor; \n"
-    "uniform vec4 light_pos;  \n"
-    "uniform vec4 light_diff; \n"
-    "uniform vec4 light_spec; \n"
-    "uniform vec4 light_amb;  \n"
+    "uniform highp vec4 light_pos;  \n"
+    "uniform highp vec4 light_diff; \n"
+    "uniform highp vec4 light_spec; \n"
+    "uniform highp vec4 light_amb;  \n"
     "uniform float spec_power ; \n"
     
     "void main(void) { \n"
     
-    "   vec3 L = light_pos.xyz - fP.xyz; \n"
-    "   vec3 V = -fP.xyz; \n"
+    "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
+    "   highp vec3 V = -fP.xyz; \n"
     
-    "   vec3 N = normalize(fN); \n"
+    "   highp vec3 N = normalize(fN); \n"
     "   L = normalize(L); \n"
     "   V = normalize(V); \n"
     
-    "   vec3 R = reflect(-L, N); \n"
-    "   vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
-    "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+    "   highp vec3 R = reflect(-L, N); \n"
+    "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
+    "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
     
     "gl_FragColor = light_amb*fColor + diffuse  ; \n"
     "} \n"
@@ -142,6 +142,93 @@ const char fragment_source_p_l[] =
     "} \n"
     "\n"
   };
+
+//------------------------------------------------------------------------------
+//  compatibility shaders
+
+const char vertex_source_color_comp[] =
+  {
+    "attribute highp vec4 vertex;\n"
+    "attribute highp vec3 normal;\n"
+    "attribute highp vec3 color;\n"
+    
+    "uniform highp mat4 mvp_matrix;\n"
+    "uniform highp mat4 mv_matrix; \n"
+    
+    "varying highp vec4 fP; \n"
+    "varying highp vec3 fN; \n"
+    "varying highp vec4 fColor; \n"
+    
+    "uniform highp float point_size; \n"
+    "void main(void)\n"
+    "{\n"
+    "   fP = mv_matrix * vertex; \n"
+    "   highp mat3 mv_matrix_3; \n"
+    "   mv_matrix_3[0] = mv_matrix[0].xyz; \n"
+    "   mv_matrix_3[1] = mv_matrix[1].xyz; \n"
+    "   mv_matrix_3[2] = mv_matrix[2].xyz; \n"
+    "   fN = mv_matrix_3* normal;  \n"
+    "   fColor = vec4(color, 1.0); \n"
+    "   gl_PointSize = point_size;\n"
+    "   gl_Position = mvp_matrix * vertex;\n"
+    "}"
+  };
+
+const char fragment_source_color_comp[] =
+  {
+    "varying highp vec4 fP; \n"
+    "varying highp vec3 fN; \n"
+    "varying highp vec4 fColor; \n"
+    "uniform highp vec4 light_pos;  \n"
+    "uniform highp vec4 light_diff; \n"
+    "uniform highp vec4 light_spec; \n"
+    "uniform highp vec4 light_amb;  \n"
+    "uniform highp float spec_power ; \n"
+    
+    "void main(void) { \n"
+    
+    "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
+    "   highp vec3 V = -fP.xyz; \n"
+    
+    "   highp vec3 N = normalize(fN); \n"
+    "   L = normalize(L); \n"
+    "   V = normalize(V); \n"
+    
+    "   highp vec3 R = reflect(-L, N); \n"
+    "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
+    "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+    
+    "gl_FragColor = light_amb*fColor + diffuse  ; \n"
+    "} \n"
+    "\n"
+  };
+
+const char vertex_source_p_l_comp[] =
+  {
+    "attribute highp vec4 vertex;\n"
+    "attribute highp vec3 color;\n"
+    "uniform highp mat4 mvp_matrix;\n"
+    "varying highp vec4 fColor; \n"
+    "uniform highp float point_size; \n"
+    "void main(void)\n"
+    "{\n"
+    "   gl_PointSize = point_size;\n"
+    "   fColor = vec4(color, 1.0); \n"
+    "   gl_Position = mvp_matrix * vertex;\n"
+    "}"
+  };
+
+const char fragment_source_p_l_comp[] =
+  {
+    "varying highp vec4 fColor; \n"
+    "void main(void) { \n"
+    "gl_FragColor = fColor; \n"
+    "} \n"
+    "\n"
+  };
+
+
+
 //------------------------------------------------------------------------------
 inline CGAL::Color get_random_color(CGAL::Random& random)
 {
@@ -378,12 +465,21 @@ protected:
     }
     
     // Vertices and segments shader
+    
+    const char* source_ = isOpenGL_4_3() 
+        ? vertex_source_p_l
+        : vertex_source_p_l_comp;
+    
     QOpenGLShader *vertex_shader_p_l = new QOpenGLShader(QOpenGLShader::Vertex);
-    if(!vertex_shader_p_l->compileSourceCode(vertex_source_p_l))
+    if(!vertex_shader_p_l->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
+    source_ = isOpenGL_4_3() 
+        ? fragment_source_p_l
+        : fragment_source_p_l_comp;
+    
     QOpenGLShader *fragment_shader_p_l= new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!fragment_shader_p_l->compileSourceCode(fragment_source_p_l))
+    if(!fragment_shader_p_l->compileSourceCode(source_))
     { std::cerr<<"Compiling fragmentsource FAILED"<<std::endl; }
 
     if(!rendering_program_p_l.addShader(vertex_shader_p_l))
@@ -394,12 +490,21 @@ protected:
     { std::cerr<<"linking Program FAILED"<<std::endl; }
 
     // Faces shader
+    
+    source_ = isOpenGL_4_3() 
+            ? vertex_source_color
+            : vertex_source_color_comp;
+    
     QOpenGLShader *vertex_shader_face = new QOpenGLShader(QOpenGLShader::Vertex);
-    if(!vertex_shader_face->compileSourceCode(vertex_source_color))
+    if(!vertex_shader_face->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
+    source_ = isOpenGL_4_3() 
+            ? fragment_source_color
+            : fragment_source_color_comp;
+    
     QOpenGLShader *fragment_shader_face= new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!fragment_shader_face->compileSourceCode(fragment_source_color))
+    if(!fragment_shader_face->compileSourceCode(source_))
     { std::cerr<<"Compiling fragmentsource FAILED"<<std::endl; }
 
     if(!rendering_program_face.addShader(vertex_shader_face))

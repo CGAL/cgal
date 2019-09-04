@@ -30,7 +30,7 @@ public:
   /// @{
     typedef Gt                                          Geom_traits;
     typedef Tds                                         Triangulation_data_structure;
-  /// \name 
+  /// @}
   
 
   /// \name

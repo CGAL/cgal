@@ -71,7 +71,7 @@ clip_to_bbox(const Plane_3& plane,
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::type Vpm;
 
-  Vpm vpm_out = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+  Vpm vpm_out = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                     get_property_map(boost::vertex_point, tm_out));
 
 
@@ -334,7 +334,7 @@ clip(      TriangleMesh& tm,
      const NamedParameters2& np_c)
 {
   const bool clip_volume =
-    boost::choose_param(boost::get_param(np_tm, internal_np::clip_volume), false);
+    parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::clip_volume), false);
 
   if (clip_volume && is_closed(tm))
     return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c);

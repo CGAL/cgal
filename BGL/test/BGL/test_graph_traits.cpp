@@ -1,11 +1,11 @@
-
-
 #include "test_Prefix.h"
-#include <boost/numeric/conversion/cast.hpp>
-#include <boost/unordered_set.hpp>
+
 #include <CGAL/use.h>
 
-typedef boost::unordered_set<std::size_t> id_map;
+#include <boost/numeric/conversion/cast.hpp>
+#include <boost/unordered_set.hpp>
+
+typedef boost::unordered_set<std::size_t>                        id_map;
 
 template <typename Graph>
 void test_isolated_vertex()
@@ -59,6 +59,29 @@ void test_halfedge_around_face_iterator(const Graph& g)
 }
 
 template<typename G>
+void test_halfedge_iterators(const G& g)
+{
+  typedef boost::graph_traits< G > Traits;
+  typedef typename Traits::halfedge_iterator halfedge_iterator;
+  typedef typename Traits::halfedges_size_type halfedges_size_type;
+
+  // do we iterate as many as that?
+  halfedge_iterator hb, he;
+  boost::tie(hb, he) = halfedges(g);
+  assert(boost::numeric_cast<halfedges_size_type>(std::distance(hb, he)) == num_halfedges(g));
+
+  id_map ids;
+  unsigned int count = 0;
+  for(boost::tie(hb, he) = halfedges(g); hb != he; ++hb) {
+    std::pair<id_map::iterator, bool> r = ids.insert(get(boost::halfedge_index, g, *hb));
+    // unique?
+    assert(r.second);
+    ++count;
+  }
+  assert(count == num_halfedges(g));
+}
+
+template<typename G>
 void test_edge_iterators(const G& g)
 {
   typedef boost::graph_traits< G > Traits;
@@ -86,7 +109,7 @@ void test_edge_iterators(const G& g)
 }
 
 template<typename G>
-void test_vertex_iterators(G& g)
+void test_vertex_iterators(const G& g)
 {
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;
@@ -203,6 +226,41 @@ void test_in_out_edges(const G& g)
   }
 }
 
+template<typename G>
+void test_adjacent_vertices(const G& g)
+{
+  typedef boost::graph_traits< G > Traits;
+  typedef typename Traits::vertex_descriptor vertex_descriptor;
+  typedef typename Traits::edge_descriptor edge_descriptor;
+  typedef typename Traits::in_edge_iterator in_edge_iterator;
+  typedef typename Traits::out_edge_iterator out_edge_iterator;
+  typedef typename Traits::adjacency_iterator adjacency_iterator;
+  typedef std::pair<edge_descriptor, bool>   ret;
+
+  vertex_descriptor v = *(vertices(g).begin());
+
+  adjacency_iterator vb, ve;
+  boost::tie(vb, ve) = adjacent_vertices(v, g);
+
+  in_edge_iterator ieb, iee;
+  boost::tie(ieb, iee) = in_edges(v, g);
+
+  out_edge_iterator oeb, oee;
+  boost::tie(oeb, oee) = out_edges(v, g);
+
+  assert(std::distance(vb, ve) == std::distance(ieb, iee));
+  assert(std::distance(vb, ve) == std::distance(oeb, oee));
+
+  for(; vb != ve; ++vb)
+  {
+    vertex_descriptor s = *vb;
+    assert(s != v);
+    assert(s != Traits::null_vertex());
+    ret found = edge(s, v, g);
+    assert(found.second);
+  }
+}
+
 // check that every edge can be found through edge(u, v, g)
 template<typename G>
 void test_edge_find(const G& g)
@@ -256,39 +314,56 @@ void test_read(const G& g)
   assert(CGAL::is_valid_polygon_mesh(g));
 }
 
-
 template <typename Graph>
-void
-test(const std::vector<Graph>& graphs)
+void test_const_graph(const Graph& g)
 {
-  for(const Graph& p : graphs){
-    test_edge_iterators(p);
-    test_read(p);
-    test_vertex_iterators(p);
-    test_out_edges(p);
-    test_in_edges(p);
-    test_in_out_edges(p);
-    test_edge_find(p);
-    test_faces(p);
-    test_halfedge_around_vertex_iterator(p);
-    test_halfedge_around_face_iterator(p);
-  }
-  test_isolated_vertex<Graph>();
+  test_vertex_iterators(g);
+  test_halfedge_iterators(g);
+  test_edge_iterators(g);
+  test_read(g);
+  test_out_edges(g);
+  test_in_edges(g);
+  test_in_out_edges(g);
+//  test_adjacent_vertices(g);
+  test_edge_find(g);
+  test_faces(g);
+  test_halfedge_around_vertex_iterator(g);
+  test_halfedge_around_face_iterator(g);
 }
 
-int
-main()
+template <typename Graph>
+void test_graph_range(const std::vector<Graph>& graphs)
 {
-  test(poly_data());
+  for(const Graph& g : graphs)
+  {
+    test_const_graph(g);
+    test_isolated_vertex<Graph>();
+  }
+}
 
-  test(lcc_data());
+int main()
+{
+  std::cout << "Test polyhedron data..." << std::endl;
+  test_graph_range(poly_data());
 
-#if defined(CGAL_USE_SURFACE_MESH)
-  test(sm_data());
-#endif
+  std::cout << "Test LCC data..." << std::endl;
+  test_graph_range(lcc_data());
+
+  std::cout << "Test Surface_mesh data..." << std::endl;
+  test_graph_range(sm_data());
+
+  std::cout << "Test T2 data..." << std::endl;
+  test_const_graph(t2_data());
+  test_const_graph(dt2_data());
+  test_const_graph(rt2_data());
+  test_const_graph(ct2_data());
+  test_const_graph(cdt2_data());
+  test_const_graph(cdtp2_data());
+  test_const_graph(t2h_data());
 
 #if defined(CGAL_USE_OPENMESH)
-  test(omesh_data());
+  std::cout << "Test OpenMesh data..." << std::endl;
+  test_graph_range(omesh_data());
 #endif
 
   std::cerr << "done" << std::endl;

@@ -440,6 +440,8 @@ public:
 
     connect(dock_widget->sourcePointsButton, SIGNAL(toggled(bool)),
             this, SLOT(on_sourcePointsButton_toggled(bool)));
+    connect(dock_widget->deleteButton, &QPushButton::clicked,
+            this, &DisplayPropertyPlugin::delete_group);
 
     connect(dock_widget->resetButton, &QPushButton::pressed,
             this, &DisplayPropertyPlugin::resetRampExtremas);
@@ -920,11 +922,17 @@ private Q_SLOTS:
     else
     {
       group = new Scene_group_item("Heat Visualization");
+      group->setProperty("heat_group", true);
       scene->addItem(group);
       scene->changeGroup(item, group);
       scene->changeGroup(source_points, group);
       group->lockChild(item);
       group->lockChild(source_points);
+      dock_widget->deleteButton->setEnabled(true);
+      connect(group, &Scene_group_item::aboutToBeDestroyed,
+              this, [this](){
+        this->dock_widget->deleteButton->setEnabled(false);
+      });
     }
     mesh_heat_item_map[item] = new Scene_heat_item(item);
     mesh_heat_item_map[item]->setName(tr("%1 heat").arg(item->name()));
@@ -1067,6 +1075,27 @@ private Q_SLOTS:
     default:
       break;
     }
+  }
+
+  void delete_group()
+  {
+    Scene_item* item = scene->item(scene->selectionIndices().first());
+    Scene_group_item* group = qobject_cast<Scene_group_item*>(item);
+    if(!group || !group->property("heat_group").toBool())
+      return;
+    for(auto child_id : group->getChildren())
+    {
+      if(Scene_surface_mesh_item* child = qobject_cast<Scene_surface_mesh_item*>(scene->item(child_id))){
+        group->unlockChild(child);
+         group->removeChild(child);
+         scene->addChild(child);
+         child->setVisible(true);
+         child->resetColors();
+        break;
+      }
+    }
+    scene->erase(scene->item_id(group));
+
   }
 
   void on_sourcePointsButton_toggled(bool b)

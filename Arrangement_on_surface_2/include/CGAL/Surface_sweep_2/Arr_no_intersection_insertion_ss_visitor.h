@@ -174,7 +174,6 @@ public:
    */
   virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
                                                Status_line_iterator iter);
-  //@}
 
   /// \name Edge-split functions (to be overridden by the child visitor).
   //@{

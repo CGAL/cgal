@@ -28,7 +28,7 @@ include(GNUInstallDirs)
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" FALSE)
+option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" TRUE)
 
 #--------------------------------------------------------------------------------------------------
 #

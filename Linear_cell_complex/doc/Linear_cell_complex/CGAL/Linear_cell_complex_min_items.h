@@ -34,8 +34,6 @@ struct Linear_cell_complex_min_items
 */
 struct Linear_cell_complex_min_items {
 
-/// @}
-
 }; /* end Linear_cell_complex_min_items */
 
 } /* end namespace CGAL */

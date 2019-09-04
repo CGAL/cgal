@@ -221,7 +221,9 @@ The polylines are reported using a visitor.
         - <code>void start_new_polyline()</code>
           called when starting the description of a polyline.
         - <code>void add_node(typename boost::graph_traits<Graph>::%vertex_descriptor v)</code>
-          called for each vertex `v` of the polyline currently described.
+          called for each vertex `v` of the polyline currently described. If the polyline is closed
+          this function will be called twice for the first vertex of the cycle picked (once after
+          calling `start_new_polyline()` and once before the call to `end_polyline()`.
         - <code>void end_polyline()</code>
           called when the description of a polyline is finished.
 \tparam IsTerminal A functor providing `bool operator()(boost::graph_traits<Graph>::%vertex_descriptor v, const Graph& g) const`

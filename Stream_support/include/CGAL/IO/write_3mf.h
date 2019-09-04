@@ -375,8 +375,6 @@ bool write_triangle_soups_to_3mf(const std::string& file_name,
                         const PolygonRanges& all_polygons,
                         const std::vector<std::string>& names)
 {
-  DWORD nErrorMessage;
-  LPCSTR pszErrorMessage;
   HRESULT hResult;
 
     // Create Model Instance

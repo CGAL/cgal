@@ -854,7 +854,7 @@ namespace CGAL {
     /*! 
       Number of points not assigned to a shape.
     */ 
-    std::size_t number_of_unassigned_points() {
+    std::size_t number_of_unassigned_points() const {
       return m_num_available_points;
     }
     

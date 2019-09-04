@@ -33,7 +33,7 @@ _test_cls_line_2(const R& )
  std::cout << "Testing class Line_2";
 
  typedef typename  R::RT    RT;
- typedef typename  R::FT    gnuFT;
+ typedef typename  R::FT    FT;
 
  RT n0 =  0;
  RT n1 =  1;
@@ -114,6 +114,7 @@ _test_cls_line_2(const R& )
  assert( l43.has_on( l43.point(0) ) );
  assert( lr21.has_on( lr21.point(1) ) );
  assert( ld21.has_on( ld21.point(-2) ) );
+ assert( ld21.has_on( ld21.point(FT(1)/FT(2)) ) );
  assert( lr21.has_on( r21.source() ) );
  assert( labc.has_on( labc.point(0) ) );
 
@@ -123,16 +124,16 @@ _test_cls_line_2(const R& )
  assert( CGAL::Line_2<R>( n0, n2, n3 ).is_horizontal() );
  assert( ! lr21.is_horizontal() );
 
- assert( ld12.y_at_x( gnuFT(3) ) == gnuFT( 4) );
- assert( lr21.y_at_x( gnuFT(3) ) == gnuFT( 4) );
- assert( ld12.y_at_x( gnuFT(1) ) == gnuFT( 2) );
- assert( l12.y_at_x( gnuFT(5) ) == gnuFT( 6) );
- assert( l34.y_at_x( gnuFT(8) ) == gnuFT( 2) );
+ assert( ld12.y_at_x( FT(3) ) == FT( 4) );
+ assert( lr21.y_at_x( FT(3) ) == FT( 4) );
+ assert( ld12.y_at_x( FT(1) ) == FT( 2) );
+ assert( l12.y_at_x( FT(5) ) == FT( 6) );
+ assert( l34.y_at_x( FT(8) ) == FT( 2) );
 
- assert( l12.x_at_y( gnuFT(0) ) == gnuFT( -1 ) );
- assert( ls12.x_at_y( gnuFT(4) ) == gnuFT( 3 ) );
- assert( l21.x_at_y( gnuFT(6) ) == gnuFT( 5 ) );
- assert( ld21.x_at_y( gnuFT(2) ) == gnuFT( 1 ) );
+ assert( l12.x_at_y( FT(0) ) == FT( -1 ) );
+ assert( ls12.x_at_y( FT(4) ) == FT( 3 ) );
+ assert( l21.x_at_y( FT(6) ) == FT( 5 ) );
+ assert( ld21.x_at_y( FT(2) ) == FT( 1 ) );
 
  CGAL::Direction_2<R> up( n0, n1 );
  CGAL::Aff_transformation_2<R> rot90(CGAL::ROTATION, up, n1, RT(100) );

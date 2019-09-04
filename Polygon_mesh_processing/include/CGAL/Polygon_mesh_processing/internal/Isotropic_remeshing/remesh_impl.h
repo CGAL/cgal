@@ -1059,7 +1059,7 @@ namespace internal {
 
     // PMP book :
     // "maps the vertices back to the surface"
-    void project_to_surface(boost::param_not_found)
+    void project_to_surface(internal_np::Param_not_found)
     {
       //todo : handle the case of boundary vertices
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -1637,6 +1637,9 @@ private:
         for(halfedge_descriptor hf :
             halfedges_around_face(h, mesh_))
         {
+          if(face(opposite(hf, mesh_), mesh_) == boost::graph_traits<PM>::null_face())
+            continue;
+
           vertex_descriptor vc = target(hf, mesh_);
           vertex_descriptor va = target(next(hf, mesh_), mesh_);
           vertex_descriptor vb = target(next(next(hf, mesh_), mesh_), mesh_);

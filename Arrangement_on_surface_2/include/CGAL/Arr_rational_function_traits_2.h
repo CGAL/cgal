@@ -984,8 +984,6 @@ public:
     return Merge_2(this);
   }
 
-  //@}
-
   /// \name Functor definitions to handle boundaries
   //@{
 

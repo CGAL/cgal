@@ -32,7 +32,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/IO/write_vtk.h>
 
 namespace CGAL {
@@ -54,10 +54,13 @@ bool write_wrl(std::ostream& os,
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
+
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
   
   typename Polygon_mesh_processing::GetVertexPointMap<FaceGraph, NamedParameters>::const_type
-      vpm = choose_param(get_param(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, g));
+      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, g));
 
   boost::container::flat_map<vertex_descriptor,vertices_size_type> reindex;
   int n = 0;
@@ -142,9 +145,12 @@ bool write_off(std::ostream& os,
   typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
   typedef typename boost::graph_traits<FaceGraph>::faces_size_type faces_size_type;
 
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  
   typename Polygon_mesh_processing::GetVertexPointMap<FaceGraph, NamedParameters>::const_type
-      vpm = choose_param(get_param(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, g));
+      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, g));
   vertices_size_type nv = static_cast<vertices_size_type>(std::distance(vertices(g).first, vertices(g).second));
   faces_size_type nf = static_cast<faces_size_type>(std::distance(faces(g).first, faces(g).second));
 
@@ -258,6 +264,8 @@ bool read_off(std::istream& is,
               NamedParameters np)
 {
   using namespace internal::read_off_tools;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
@@ -266,8 +274,8 @@ bool read_off(std::istream& is,
   typedef typename Polygon_mesh_processing::GetVertexPointMap<FaceGraph, NamedParameters>::type Vpm;
   typedef  typename boost::property_traits<Vpm>::value_type Point_3;
   
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
-                         get_property_map(CGAL::vertex_point, g));
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_property_map(CGAL::vertex_point, g));
   vertices_size_type nv, nvf;
   faces_size_type nf;
   int ignore;
@@ -369,8 +377,11 @@ bool write_inp(std::ostream& os,
   typedef typename Polygon_mesh_processing::GetVertexPointMap<FaceGraph, NamedParameters>::const_type VPM;
   typedef typename boost::property_traits<VPM>::value_type Point_3;
 
-  VPM vpm = choose_param(get_param(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, g));
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, g));
 
   os << "*Part, name=" << name << "\n*Node\n";
   boost::container::flat_map<vertex_descriptor,vertices_size_type> reindex;
@@ -416,8 +427,10 @@ write_polys(std::ostream& os,
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Mesh>::face_iterator face_iterator;
   typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<Mesh, NamedParameters>::type Vimap;
-  Vimap V = choose_param(get_param(np, CGAL::internal_np::vertex_index),
-                           get_const_property_map(CGAL::internal_np::vertex_index, mesh));
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+  Vimap V = choose_parameter(get_parameter(np, internal_np::vertex_index),
+                             get_const_property_map(boost::vertex_index, mesh));
 
   std::vector<std::size_t> connectivity_table;
   std::vector<std::size_t> offsets;
@@ -451,8 +464,10 @@ write_polys_tag(std::ostream& os,
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Mesh>::face_iterator face_iterator;
   typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<Mesh, NamedParameters>::type Vimap;
-  Vimap V = choose_param(get_param(np, CGAL::internal_np::vertex_index),
-                           get_const_property_map(CGAL::internal_np::vertex_index, mesh));
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+  Vimap V = choose_parameter(get_parameter(np, internal_np::vertex_index),
+                             get_const_property_map(boost::vertex_index, mesh));
 
   std::string formatattribute =
     binary ? " format=\"appended\"" : " format=\"ascii\"";
@@ -540,8 +555,10 @@ write_points_tag(std::ostream& os,
 {
   typedef typename boost::graph_traits<Mesh>::vertex_iterator vertex_iterator;
   typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Mesh, NamedParameters>::const_type Vpmap;
-  Vpmap vpm = choose_param(get_param(np, CGAL::vertex_point),
-                           get_const_property_map(CGAL::vertex_point, mesh));
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+  Vpmap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                               get_const_property_map(CGAL::vertex_point, mesh));
   typedef typename boost::property_traits<Vpmap>::value_type Point_t;
   typedef typename CGAL::Kernel_traits<Point_t>::Kernel Gt;
   typedef typename Gt::FT FT;
@@ -583,8 +600,10 @@ write_polys_points(std::ostream& os,
 {
   typedef typename boost::graph_traits<Mesh>::vertex_iterator vertex_iterator;
   typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Mesh, NamedParameters>::const_type Vpmap;
-  Vpmap vpm = choose_param(get_param(np, CGAL::vertex_point),
-                           get_const_property_map(CGAL::vertex_point, mesh));
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+  Vpmap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                               get_const_property_map(CGAL::vertex_point, mesh));
   typedef typename boost::property_traits<Vpmap>::value_type Point_t;
   typedef typename CGAL::Kernel_traits<Point_t>::Kernel Gt;
   typedef typename Gt::FT FT;
@@ -653,7 +672,7 @@ void write_vtp(std::ostream& os,
   os << "  <Piece NumberOfPoints=\"" << num_vertices(mesh)
      << "\" NumberOfPolys=\"" << num_faces(mesh) << "\">\n";
   std::size_t offset = 0;
-  const bool binary = boost::choose_param(boost::get_param(np, internal_np::use_binary_mode), true);
+  const bool binary = parameters::choose_parameter(parameters::get_parameter(np, internal_np::use_binary_mode), true);
   internal::write_vtp::write_points_tag(os,mesh,binary,offset, np);
   internal::write_vtp::write_polys_tag(os,mesh,binary,offset, np);
   os << "   </Piece>\n"

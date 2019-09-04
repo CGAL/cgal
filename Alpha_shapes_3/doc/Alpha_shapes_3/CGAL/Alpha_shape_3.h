@@ -477,7 +477,7 @@ Defined in `CGAL/IO/io.h`
 \pre The insert operator must be defined for `Point`. 
 \relates Alpha_shape_3 
 */ 
-  ostream& operator<<(std::ostream& os, 
+std::ostream& operator<<(std::ostream& os, 
 const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A); 
 
 /*!
