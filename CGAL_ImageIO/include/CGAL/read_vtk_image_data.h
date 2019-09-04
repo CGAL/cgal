@@ -72,9 +72,9 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
   image->vx = spacing[0];
   image->vy = spacing[1];
   image->vz = spacing[2];
-  image->tx = offset[0];
-  image->ty = offset[1];
-  image->tz = offset[2];
+  image->tx = static_cast<float>(offset[0]);
+  image->ty = static_cast<float>(offset[1]);
+  image->tz = static_cast<float>(offset[2]);
   image->endianness = ::_getEndianness();
   int vtk_type = vtk_image->GetScalarType();
   if(vtk_type == VTK_SIGNED_CHAR) vtk_type = VTK_CHAR;
