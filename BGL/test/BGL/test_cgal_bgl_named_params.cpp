@@ -175,17 +175,17 @@ void test(const NamedParameters& np)
   check_same_type<54>(get_parameter(np, CGAL::internal_np::use_area_smoothing));
   check_same_type<55>(get_parameter(np, CGAL::internal_np::use_Delaunay_flips));
   check_same_type<56>(get_parameter(np, CGAL::internal_np::use_safety_constraints));
-  check_same_type<58>(get_param(np, CGAL::internal_np::do_self_intersection_tests));
-  check_same_type<59>(get_param(np, CGAL::internal_np::do_orientation_tests));
-  check_same_type<60>(get_param(np, CGAL::internal_np::error_codes));
-  check_same_type<61>(get_param(np, CGAL::internal_np::volume_inclusions));
-  check_same_type<62>(get_param(np, CGAL::internal_np::face_connected_component_map));
-  check_same_type<63>(get_param(np, CGAL::internal_np::connected_component_id_to_volume_id));
-  check_same_type<64>(get_param(np, CGAL::internal_np::is_cc_outward_oriented));
-  check_same_type<65>(get_param(np, CGAL::internal_np::intersecting_volume_pairs_output_iterator));
-  check_same_type<66>(get_param(np, CGAL::internal_np::i_used_as_a_predicate));
-  check_same_type<67>(get_param(np, CGAL::internal_np::nesting_levels));
-  check_same_type<68>(get_param(np, CGAL::internal_np::i_used_for_volume_orientation));
+  check_same_type<58>(get_parameter(np, CGAL::internal_np::do_self_intersection_tests));
+  check_same_type<59>(get_parameter(np, CGAL::internal_np::do_orientation_tests));
+  check_same_type<60>(get_parameter(np, CGAL::internal_np::error_codes));
+  check_same_type<61>(get_parameter(np, CGAL::internal_np::volume_inclusions));
+  check_same_type<62>(get_parameter(np, CGAL::internal_np::face_connected_component_map));
+  check_same_type<63>(get_parameter(np, CGAL::internal_np::connected_component_id_to_volume_id));
+  check_same_type<64>(get_parameter(np, CGAL::internal_np::is_cc_outward_oriented));
+  check_same_type<65>(get_parameter(np, CGAL::internal_np::intersecting_volume_pairs_output_iterator));
+  check_same_type<66>(get_parameter(np, CGAL::internal_np::i_used_as_a_predicate));
+  check_same_type<67>(get_parameter(np, CGAL::internal_np::nesting_levels));
+  check_same_type<68>(get_parameter(np, CGAL::internal_np::i_used_for_volume_orientation));
 
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
