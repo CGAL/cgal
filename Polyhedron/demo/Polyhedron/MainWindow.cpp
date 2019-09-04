@@ -675,12 +675,17 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       bool init2 = initIOPlugin(obj);
       if (!init1 && !init2)
       {
-        //qdebug << "not for this program";
         pluginsStatus_map[name] = QString("Not for this program.");
       }
-      else
-        //qdebug << "success";
+      else{
+#ifdef QT_SCRIPT_LIB
+        QScriptValue objectValue =
+            script_engine->newQObject(obj);
+        script_engine->globalObject().setProperty(obj->objectName(), objectValue);
+        evaluate_script_quiet(QString("plugins.push(%1);").arg(obj->objectName()));
+#endif
         pluginsStatus_map[name] = QString("success");
+      }
     }
     else if(!do_load)
     {
@@ -688,7 +693,6 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       ignored_map[name] = true;
     }
     else{
-      //qdebug << "error: " << qPrintable(loader.errorString());
       pluginsStatus_map[name] = loader.errorString();
       
     }
@@ -819,12 +823,6 @@ bool MainWindow::initPlugin(QObject* obj)
     obj->setParent(this);
     plugin->init(this, this->scene, this);
     plugins << qMakePair(plugin, obj->objectName());
-#ifdef QT_SCRIPT_LIB
-    QScriptValue objectValue =
-        script_engine->newQObject(obj);
-    script_engine->globalObject().setProperty(obj->objectName(), objectValue);
-    evaluate_script_quiet(QString("plugins.push(%1);").arg(obj->objectName()));
-#endif
 
     Q_FOREACH(QAction* action, plugin->actions()) {
       // If action does not belong to the menus, add it to "Operations" menu
