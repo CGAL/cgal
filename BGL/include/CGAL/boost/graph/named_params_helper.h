@@ -150,7 +150,6 @@ namespace CGAL {
   template<typename Tag, typename Dynamic_tag, typename Mesh, typename NamedParameters, typename Parameter>
   class GetMapFromNP {
   private :
-    const Tag tag;
     const Dynamic_tag dtag;
     const Mesh& m;
     const NamedParameters& np;
@@ -173,19 +172,19 @@ namespace CGAL {
     > ::type  PropertyMapType;
 
 
-    GetMapFromNP(const Tag tag,
+    GetMapFromNP(const Tag,
                  const Dynamic_tag dtag,
                  const Mesh& m,
                  const NamedParameters& np,
                  const Parameter p)
-      : tag(tag), dtag(dtag), m(m), np(np), p(p) {}
+      : dtag(dtag), m(m), np(np), p(p) {}
 
 
     PropertyMapType property_map(bool& need_init)
     {
       return internal_np::get_map(
             parameters::get_parameter(np, p),
-            tag,
+            Final_tag(),
             dtag,
             m, need_init);
     }

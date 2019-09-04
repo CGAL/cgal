@@ -317,9 +317,20 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   using parameters::get_parameter;
 
   // FaceIndexMap
-  typedef typename GetFaceIndexMap<PM, NamedParameters>::type            FaceIndexMap;
-  FaceIndexMap fimap = choose_parameter(get_parameter(np, internal_np::face_index),
-                                        get_property_map(boost::face_index, pmesh));
+  typedef CGAL::Polygon_mesh_processing::GetMapFromNP<boost::face_index_t,
+      CGAL::dynamic_face_property_t<int>,
+      PolygonMesh, NamedParameters, internal_np::face_index_t> MapGetter;
+
+  typedef typename MapGetter::PropertyMapType FaceIndexMap;
+
+  MapGetter get_map(boost::face_index_t(),
+                    CGAL::dynamic_face_property_t<int>(),
+                    pmesh, np, internal_np::face_index);
+
+  bool need_init = false;
+  FaceIndexMap fimap = get_map.property_map(need_init);
+  if(need_init)
+    CGAL::helpers::init_face_indices(pmesh, fimap);
 
   // FaceSizeMap
   typedef typename internal_np::Lookup_named_param_def<internal_np::face_size_map_t,
