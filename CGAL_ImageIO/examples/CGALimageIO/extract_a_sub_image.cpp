@@ -23,12 +23,12 @@ int main(int argc, char **argv) {
   assert(ymax < image->ydim);
   assert(zmax < image->zdim);
 
-  const int new_xdim = xmax + 1 - xmin;
-  const int new_ydim = ymax + 1 - ymin;
-  const int new_zdim = zmax + 1 - zmin;
+  const auto new_xdim = xmax + 1 - xmin;
+  const auto new_ydim = ymax + 1 - ymin;
+  const auto new_zdim = zmax + 1 - zmin;
 
-  auto *new_image = ::_createImage(new_xdim, new_ydim, new_zdim, image->vx,
-                                   image->vx, image->vx, image->vz, image->wdim,
+  auto *new_image = ::_createImage(new_xdim, new_ydim, new_zdim, 1,
+                                   image->vx, image->vy, image->vz, image->wdim,
                                    image->wordKind, image->sign);
   const auto* const data = static_cast<char*>(image->data);
   auto* new_data = static_cast<char*>(new_image->data);
