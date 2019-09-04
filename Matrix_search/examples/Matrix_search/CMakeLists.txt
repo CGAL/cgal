@@ -2,19 +2,13 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Matrix_search_Examples )
 
-cmake_minimum_required(VERSION 2.8.10)
 
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
 
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)

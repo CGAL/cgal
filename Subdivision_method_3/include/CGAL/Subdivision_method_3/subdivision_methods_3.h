@@ -29,7 +29,7 @@
 
 #include <CGAL/circulator.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Subdivision_method_3/subdivision_hosts_3.h>
@@ -41,7 +41,7 @@ namespace CGAL {
 namespace Subdivision_method_3 {
 
 /*!
-\addtogroup PkgSurfaceSubdivisionMethods3Functions
+\addtogroup PkgSurfaceSubdivisionMethod3Functions
 
 A subdivision method recursively refines a coarse mesh and
 generates an ever closer approximation to a smooth surface.
@@ -95,10 +95,13 @@ namespace parameters = CGAL::parameters;
 
 #ifndef DOXYGEN_RUNNING
 // Backward compatibility
+#ifndef CGAL_NO_DEPRECATED_CODE
 template <class PolygonMesh>
-void CatmullClark_subdivision(PolygonMesh& pmesh, int step = 1) {
+CGAL_DEPRECATED_MSG("you are using the deprecated API of CatmullClark_subdivision(), please update your code")
+void CatmullClark_subdivision(PolygonMesh& pmesh, int step) {
   PQQ(pmesh, CatmullClark_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)), step);
 }
+#endif  
 #endif
 
 /*!
@@ -125,27 +128,35 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, int step = 1) {
  **/
 template <class PolygonMesh, class NamedParameters>
 void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   CatmullClark_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
   for(unsigned int i = 0; i < step; i++)
     internal::PQQ_1step(pmesh, vpm, mask);
 }
 
+template <class PolygonMesh>
+void CatmullClark_subdivision(PolygonMesh& pmesh)
+{
+  CatmullClark_subdivision(pmesh, CGAL::parameters::all_default());
+}
 // -----------------------------------------------------------------------------
 
 #ifndef DOXYGEN_RUNNING
 // backward compatibility
+#ifndef CGAL_NO_DEPRECATED_CODE
 template <class PolygonMesh>
-void Loop_subdivision(PolygonMesh& pmesh, int step = 1) {
+CGAL_DEPRECATED_MSG("you are using the deprecated API of Loop_subdivision(), please update your code")
+void Loop_subdivision(PolygonMesh& pmesh, int step) {
   PTQ(pmesh, Loop_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)) , step);
 }
+#endif  
 #endif
 
 /*!
@@ -170,27 +181,35 @@ void Loop_subdivision(PolygonMesh& pmesh, int step = 1) {
  **/
 template <class PolygonMesh, class NamedParameters>
 void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   Loop_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
   for(unsigned int i = 0; i < step; i++)
     internal::PTQ_1step(pmesh, vpm, mask);
 }
 
+template <class PolygonMesh>
+void Loop_subdivision(PolygonMesh& pmesh)
+{
+  Loop_subdivision(pmesh, CGAL::parameters::all_default());
+}
 // -----------------------------------------------------------------------------
 
 #ifndef DOXYGEN_RUNNING
 // backward compatibility
+#ifndef CGAL_NO_DEPRECATED_CODE
 template <class PolygonMesh>
-void DooSabin_subdivision(PolygonMesh& pmesh, int step = 1) {
+CGAL_DEPRECATED_MSG("you are using the deprecated API of DooSabin_subdivision(), please update your code")
+void DooSabin_subdivision(PolygonMesh& pmesh, int step) {
   DQQ(pmesh, DooSabin_mask_3<PolygonMesh>(&pmesh, get(vertex_point, pmesh)), step);
 }
+#endif
 #endif
 
 /*!
@@ -215,27 +234,35 @@ void DooSabin_subdivision(PolygonMesh& pmesh, int step = 1) {
  **/
 template <class PolygonMesh, class NamedParameters>
 void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   DooSabin_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
   for(unsigned int i = 0; i < step; i++)
     internal::DQQ_1step(pmesh, vpm, mask);
 }
-
+  
+template <class PolygonMesh>
+void DooSabin_subdivision(PolygonMesh& pmesh)
+{
+  DooSabin_subdivision(pmesh, CGAL::parameters::all_default());
+}
 // -----------------------------------------------------------------------------
 
 #ifndef DOXYGEN_RUNNING
 // backward compatibility
+#ifndef CGAL_NO_DEPRECATED_CODE
 template <class PolygonMesh>
-void Sqrt3_subdivision(PolygonMesh& pmesh, int step = 1) {
+CGAL_DEPRECATED_MSG("you are using the deprecated API of Sqrt3_subdivision(), please update your code")
+void Sqrt3_subdivision(PolygonMesh& pmesh, int step) {
   Sqrt3(pmesh, Sqrt3_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)), step);
 }
+#endif
 #endif
 
 /*!
@@ -265,19 +292,24 @@ void Sqrt3_subdivision(PolygonMesh& pmesh, int step = 1) {
  **/
 template <class PolygonMesh, class NamedParameters>
 void Sqrt3_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   Sqrt3_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
   for(unsigned int i = 0; i < step; i++)
     internal::Sqrt3_1step(pmesh, vpm, mask, (i%2==1));
 }
-
+  
+template <class PolygonMesh>
+void Sqrt3_subdivision(PolygonMesh& pmesh)
+{
+  Sqrt3_subdivision(pmesh, CGAL::parameters::all_default());
+}
 /// @}
 
 } // namespace Subdivision_method_3

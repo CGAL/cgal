@@ -40,7 +40,7 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
-/// \ingroup  PkgSurfaceParameterizationMethods
+/// \ingroup  PkgSurfaceMeshParameterizationMethods
 ///
 /// The class `Mean_value_coordinates_parameterizer_3`
 /// implements *Floater Mean Value Coordinates* parameterization.

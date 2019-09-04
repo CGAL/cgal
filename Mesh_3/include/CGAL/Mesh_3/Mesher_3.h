@@ -38,12 +38,13 @@
 
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
-#include<CGAL/Mesh_3/Refine_facets_3.h>
-#include<CGAL/Mesh_3/Refine_facets_manifold_base.h>
-#include<CGAL/Mesh_3/Refine_cells_3.h>
+#include <CGAL/Mesh_3/Refine_facets_3.h>
+#include <CGAL/Mesh_3/Refine_facets_manifold_base.h>
+#include <CGAL/Mesh_3/Refine_cells_3.h>
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>
 #include <CGAL/Mesher_level_visitors.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/point_generators_3.h>
 #include <CGAL/atomic.h>
 
 #ifdef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
@@ -229,7 +230,7 @@ public:
   ~Mesher_3() 
   {
     // The lock data structure is going to be destroyed
-    r_c3t3_.triangulation().set_lock_data_structure(NULL);
+    r_c3t3_.triangulation().set_lock_data_structure(nullptr);
   }
 
   /// Launch mesh refinement
@@ -678,9 +679,17 @@ initialize()
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
+    if (r_c3t3_.number_of_far_points() == 0 &&
+        r_c3t3_.number_of_facets() == 0 &&
+        (r_c3t3_.triangulation().dimension() < 3
 #ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-    if (r_c3t3_.number_of_far_points() == 0 && r_c3t3_.number_of_facets() == 0)
-    {
+         || true // in sequential mode, one wants the far points only
+                 // if the macro
+                 // `CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE`
+                 // is defined, or if the dimension of the
+                 // triangulation is 2.
+#endif
+         )) {
       const Bbox_3 &bbox = r_oracle_.bbox();
 
       // Compute radius for far sphere
@@ -706,7 +715,6 @@ initialize()
       std::cerr << "done." << std::endl;
 # endif
     }
-#endif // CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
 #ifdef CGAL_MESH_3_PROFILING
     double init_time = t.elapsed();

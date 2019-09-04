@@ -335,7 +335,7 @@ void R_s_k_2::draw_relevance(const float line_width, const int nb)
   MultiIndex mindex;
   FT min_value = (std::numeric_limits<FT>::max)();
   FT max_value = -(std::numeric_limits<FT>::max)();
-  unsigned nb_initial = 0;
+  unsigned int nb_initial = 0;
   for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
   {
     Edge edge = *ei;

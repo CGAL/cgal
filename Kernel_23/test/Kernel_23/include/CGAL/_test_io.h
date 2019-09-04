@@ -40,7 +40,7 @@ _test_io_for(const T& t)
     }
 
     std::ifstream iFile(TEST_FILENAME, std::ios::in);
-    T u;
+    T u = t;
     iFile >> u;
     assert(!iFile.fail());
     assert(u == t);

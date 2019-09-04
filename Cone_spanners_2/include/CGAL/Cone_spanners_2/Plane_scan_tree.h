@@ -98,16 +98,16 @@ public:
     /* Explicit Constructor. */
     explicit Plane_scan_tree (const key_compare& comp = key_compare(),
                               const value_compare& vcomp = value_compare())
-        : less (comp), vless (vcomp), root (NULL), m_min (NULL),
-          m_max (NULL), _size (0) {}
+        : less (comp), vless (vcomp), root (nullptr), m_min (nullptr),
+          m_max (nullptr), _size (0) {}
 
     /* Constructor */
     template <typename InputIterator>
     Plane_scan_tree (InputIterator first, InputIterator last,
                      const key_compare& comp = key_compare(),
                      const value_compare& vcomp = value_compare())
-        : less (comp), vless (vcomp), root (NULL), m_min (NULL),
-          m_max (NULL), _size (0)
+        : less (comp), vless (vcomp), root (nullptr), m_min (nullptr),
+          m_max (nullptr), _size (0)
     {
         // buids the tree
         /* Note: a more efficient algorithm building the tree bottom up may be
@@ -121,9 +121,9 @@ public:
      */
     ~Plane_scan_tree () {
         delete root;
-        root = NULL;
-        m_min = NULL;
-        m_max = NULL;
+        root = nullptr;
+        m_min = nullptr;
+        m_max = nullptr;
         _size = 0;;
     }
 
@@ -141,7 +141,7 @@ public:
      * @param v   The value
      */
     void add (const key_type& k, const mapped_type& v) {
-        if (NULL == root) {
+        if (nullptr == root) {
             m_min = new _leaf_type (less, vless, this);
             m_max = m_min;
             root = m_min;
@@ -170,7 +170,7 @@ public:
      * @return  The minimum value whose key is strictly greater than x.
      */
     const mapped_type* minAbove (const key_type& x) const {
-        if (NULL == root) return NULL;
+        if (nullptr == root) return nullptr;
         return root->minAbove(x);
     }
 

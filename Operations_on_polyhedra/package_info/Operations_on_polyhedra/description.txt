@@ -1,3 +1,0 @@
-Package gathering non-documented functionalities used in a polyhedron demo plugin
-and some other packages. At some point, we might decide to document them properly. 
-

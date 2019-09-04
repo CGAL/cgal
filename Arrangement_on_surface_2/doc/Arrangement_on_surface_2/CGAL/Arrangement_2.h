@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgArrangement2
+  \ingroup PkgArrangementOnSurface2Ref
 
   \anchor arr_refarr 
 
@@ -36,7 +36,7 @@ namespace CGAL {
 
   Insertion Functions
 
-  \sa `PkgArrangement2Insert`
+  \sa `PkgArrangementOnSurface2Insert`
   \sa `CGAL::insert_non_intersecting_curve()`
   \sa `CGAL::insert_non_intersecting_curves()`
   \sa `CGAL::insert_point()`
@@ -48,8 +48,8 @@ namespace CGAL {
 
   Input/output functions 
 
-  \sa `PkgArrangement2Read`
-  \sa `PkgArrangement2Write`
+  \sa `PkgArrangementOnSurface2Read`
+  \sa `PkgArrangementOnSurface2Write`
 
 */
 template< typename Traits, typename Dcel >
@@ -91,7 +91,7 @@ public:
   typedef typename Dcel::Size Size; 
 
   /*!
-    \ingroup PkgArrangement2DCEL
+    \ingroup PkgArrangementOnSurface2DCEL
     An object \f$ v\f$ of the class `Vertex` represents an arrangement vertex, 
     that is - a \f$ 0\f$-dimensional cell, associated with a point on the plane. 
   */
@@ -168,7 +168,7 @@ public:
   }; /* end Vertex */
 
   /*!
-    \ingroup PkgArrangement2DCEL
+    \ingroup PkgArrangementOnSurface2DCEL
     An object \f$ e\f$ of the class `Halfedge` represents a halfedge in the 
     arrangement. A halfedge is directed from its <I>source</I> vertex 
     to its <I>target</I> vertex, and has an <I>incident face</I> lying to 
@@ -263,7 +263,7 @@ public:
   }; /* end Halfedge */
 
   /*!
-    \ingroup PkgArrangement2DCEL
+    \ingroup PkgArrangementOnSurface2DCEL
 
     An object of the class `Face` represents an arrangement face, 
     namely, a \f$ 2\f$-dimensional arrangement cell. An arrangement that supports 
@@ -994,7 +994,7 @@ edge, we first need to cast away its "constness".
 namespace CGAL {
 
 /*!
-  \ingroup PkgArrangement2Insert insert
+  \ingroup PkgArrangementOnSurface2Insert insert
   The function `%insert` inserts one or more curves or \f$ x\f$-monotone curves
   into a given arrangement, where no restrictions are imposed on the inserted
   curves. If an inserted curve is not \f$ x\f$-monotone curve, it is subdivided
@@ -1065,7 +1065,7 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 /// @}
 
 /*!
-  \ingroup PkgArrangement2Funcs
+  \ingroup PkgArrangementOnSurface2Funcs
 
   Checks if a given curve or \f$ x\f$-monotone 
   curve intersects an existing arrangement's edges or vertices. 
@@ -1111,7 +1111,7 @@ bool do_intersect (
 
 
 /*!
-  \ingroup PkgArrangement2Funcs
+  \ingroup PkgArrangementOnSurface2Funcs
 
   Inserts a given \f$ x\f$-monotone curve into a given 
   arrangement, where the interior of the given curve is disjoint from all 
@@ -1149,7 +1149,7 @@ insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
 
 
 /*!
-  \ingroup PkgArrangement2Funcs
+  \ingroup PkgArrangementOnSurface2Funcs
 
   Inserts a set of \f$ x\f$-monotone curves in a given 
   range into a given arrangement. The insertion is performed in an aggregated 
@@ -1172,7 +1172,7 @@ void insert_non_intersecting_curves(Arrangement_2<Traits,Dcel>& arr,
 
 
 /*!
-  \ingroup PkgArrangement2Funcs
+  \ingroup PkgArrangementOnSurface2Funcs
 
   Inserts a given point into a given arrangement. 
   It uses a given point-location object to locate the given 
@@ -1210,7 +1210,7 @@ insert_point (Arrangement_2<Traits,Dcel>& arr,
 
 
 /*!
-  \ingroup PkgArrangement2Funcs
+  \ingroup PkgArrangementOnSurface2Funcs
 
   Checks the validity of a given arrangement. 
 
@@ -1234,7 +1234,7 @@ bool is_valid (const Arrangement_2<Traits, Dcel>& arr);
 
 
 /*!
-  \ingroup PkgArrangement2Funcs
+  \ingroup PkgArrangementOnSurface2Funcs
 
   Removes an edge given by one of the twin halfedges 
   that forms it, from a given arrangement. Once the edge is removed, if the 
@@ -1266,7 +1266,7 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
 
 
 /*!
-  \ingroup PkgArrangement2Funcs
+  \ingroup PkgArrangementOnSurface2Funcs
 
   Attempts to removed a given vertex from a given 
   arrangement. The vertex can be removed if it is either an isolated vertex, 
@@ -1291,7 +1291,7 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
                     typename Arrangement_2<Traits,Dcel>::Vertex_handle v);
 
 /*!
-  \ingroup PkgArrangement2Funcs
+  \ingroup PkgArrangementOnSurface2Funcs
 
   Compute the zone of the given \f$ x\f$-monotone 
   curve in the existing arrangement. Meaning, it output the 

@@ -453,14 +453,12 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
 
     virtual  Direction_2
              transform(const Direction_2 & d) const
-             { return transform( Vector_2(d) ).direction(); }
+             { return transform( d.vector() ).direction(); }
 
     virtual  Aff_transformationH2<R>
              inverse() const
              {
-               return Aff_transformationH2<R>(
-                   static_cast< Aff_transformation_rep_baseH2<R>* >
-                   ( const_cast< Reflection_repH2<R>*> (this) )  );
+               return Aff_transformationH2<R>(REFLECTION, l);
              }
 
     virtual  bool
@@ -605,6 +603,21 @@ public:
 
     Aff_transformationH2<R>
     operator*(const Aff_transformationH2<R>& right_argument ) const;
+    
+    
+    bool operator==(const Aff_transformationH2 &t)const
+    {
+      for(int i=0; i<3; ++i)
+        for(int j = 0; j< 3; ++j)
+          if(homogeneous(i,j)!=t.homogeneous(i,j))
+            return false;
+      return true;
+    }
+    
+    bool operator!=(const Aff_transformationH2 &t)const
+    {
+      return !(*this == t);
+    }
 
 };
 

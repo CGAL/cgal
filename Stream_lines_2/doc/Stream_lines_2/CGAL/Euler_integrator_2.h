@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPlacementOfStreamlines2
+\ingroup PkgStreamLines2Ref
 
 This class implements the first order Euler integrator.
 

@@ -115,7 +115,9 @@ template < class A, typename Data, class B >
 std::istream &
 operator>>(std::istream & is, Triangulation_vertex<A, Data, B> & v)
 {
-    is >> v.point();
+    typename Triangulation_vertex<A, Data, B>::Point tmp;
+    is >> tmp;
+    v.set_point(tmp);
     return (is >> v.data());
 }
 

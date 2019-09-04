@@ -1,10 +1,10 @@
-/// \defgroup PkgMeanCurvatureSkeleton3 Triangulated Surface Mesh Skeletonization Reference
-/// \defgroup PkgMeanCurvatureSkeleton3Concepts Concepts
-/// \ingroup PkgMeanCurvatureSkeleton3
+/// \defgroup PkgSurfaceMeshSkeletonizationRef Triangulated Surface Mesh Skeletonization Reference
+/// \defgroup PkgSurfaceMeshSkeletonizationConcepts Concepts
+/// \ingroup PkgSurfaceMeshSkeletonizationRef
 
 /*!
-\addtogroup PkgMeanCurvatureSkeleton3
-\cgalPkgDescriptionBegin{Triangulated Surface Mesh Skeletonization,PkgMeanCurvatureSkeleton3Summary}
+\addtogroup PkgSurfaceMeshSkeletonizationRef
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Skeletonization,PkgSurfaceMeshSkeletonization}
 \cgalPkgPicture{mcfskel-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi}
@@ -14,11 +14,11 @@
         The code is generic and works with any model of the `FaceListGraph`
         concept.
 }
-\cgalPkgManuals{Chapter_3D_Surface_mesh_skeletonization,PkgMeanCurvatureSkeleton3}
+\cgalPkgManuals{Chapter_3D_Surface_mesh_skeletonization,PkgSurfaceMeshSkeletonizationRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{ \ref PkgSolverSummary}
+\cgalPkgDependsOn{ \ref PkgSolverInterface}
 \cgalPkgBib{cgal:glt-tsms}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -28,12 +28,12 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `MeanCurvatureSkeletonizationTraits`
 - `NormalEquationSparseLinearAlgebraTraits_d`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
  - `CGAL::Mean_curvature_flow_skeletonization`
  

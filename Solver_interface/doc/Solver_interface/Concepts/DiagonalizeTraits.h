@@ -1,10 +1,12 @@
 /*!
-\ingroup PkgSolverConcepts
+\ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
 Concept providing functions to extract eigenvectors and eigenvalues
 from covariance matrices represented by an array `a`, using symmetric
-diagonalization. For example, a matrix of dimension 3 is defined as
+diagonalization.
+
+For example, a matrix of dimension 3 is defined as
 follows:
 <center>
 \f$ \begin{bmatrix}
@@ -24,9 +26,9 @@ template <typename FT, unsigned int dim = 3>
 class DiagonalizeTraits
 {
 public:
-  typedef cpp11::array<FT, dim>                 Vector;
-  typedef cpp11::array<FT, dim*dim>             Matrix;
-  typedef cpp11::array<FT, (dim * (dim+1) / 2)> Covariance_matrix;
+  typedef std::array<FT, dim>                 Vector;
+  typedef std::array<FT, dim*dim>             Matrix;
+  typedef std::array<FT, (dim * (dim+1) / 2)> Covariance_matrix;
 
   /// Fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.

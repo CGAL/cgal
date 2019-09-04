@@ -23,6 +23,11 @@ Given a triangulated surface mesh \f$\cal{M}\f$, a set of source points \f$S\f$ 
 
 The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, a fast and practical algorithm for exact computation of geodesic shortest paths. It is an extension of earlier results by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
 
+This package is related to the package \ref PkgHeatMethod. Both deal with geodesic distances.
+The geodesic shortest path package computes the exact shortest path between any two points on the surface.
+The heat method package computes for every vertex of a mesh an approximate distance to one or several source vertices.
+
+
 \section Surface_mesh_shortest_pathHowToUse  User Interface Description
 
 \subsection Surface_mesh_shortest_pathClass Surface Mesh Shortest Path Class

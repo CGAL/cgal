@@ -26,6 +26,5 @@
 #ifndef CGAL_HEADER_ONLY
 
 #include <CGAL/IO/Color.h>
-#include <CGAL/IO/Color_impl.h>
 
 #endif // CGAL_HEADER_ONLY

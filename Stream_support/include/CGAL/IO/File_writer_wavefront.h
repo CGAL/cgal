@@ -47,6 +47,9 @@ public:
     void write_vertex( const double& x, const double& y, const double& z) {
         out() << "v " << x << ' ' << y << ' ' << z << '\n';
     }
+    void write_vertex_normal( const double& x, const double& y, const double& z) {
+        out() << "vn " << x << ' ' << y << ' ' << z << '\n';
+    }
     void write_facet_header() {
         out() << "\n# " << m_facets << " facets\n";
         out() << "# ------------------------------------------\n\n";

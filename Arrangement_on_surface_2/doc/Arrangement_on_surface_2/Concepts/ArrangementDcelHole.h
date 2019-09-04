@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2ConceptsDCEL
+\ingroup PkgArrangementOnSurface2ConceptsDCEL
 \cgalConcept
 
 A hole record in a <span class="textsc">Dcel</span> data structure, which stores the face that contains 

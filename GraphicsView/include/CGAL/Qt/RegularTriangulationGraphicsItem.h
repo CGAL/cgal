@@ -209,8 +209,8 @@ RegularTriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
     }
 
 
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
     for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
         it != t->finite_vertices_end();
         it++){
@@ -228,10 +228,10 @@ RegularTriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& poi
   typename T::Bare_point p = t->geom_traits().construct_point_2_object()(point);
 
   m_painter->setPen(this->verticesPen());
-  QMatrix matrix = m_painter->matrix();
-  m_painter->resetMatrix();
+  QTransform matrix = m_painter->worldTransform();
+  m_painter->resetTransform();
   m_painter->drawPoint(matrix.map(convert(p)));
-  m_painter->setMatrix(matrix);
+  m_painter->setWorldTransform(matrix);
 }
 
 template <typename T>

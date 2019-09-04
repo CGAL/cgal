@@ -24,7 +24,7 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/assertions.h>
@@ -34,6 +34,8 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
 
+#include <cstdlib>
+
 namespace CGAL {
 
 namespace METIS {
@@ -42,7 +44,7 @@ struct Output_vertex_partition_ids
 {
   template<typename TriangleMesh, typename Indices>
   void operator()(const TriangleMesh&, const Indices,
-                  idx_t const * const, boost::param_not_found) { }
+                  idx_t const * const, internal_np::Param_not_found) { }
 
   template<typename TriangleMesh,
            typename Indices,
@@ -62,7 +64,7 @@ struct Output_face_partition_ids
 {
   template<typename TriangleMesh>
   void operator()(const TriangleMesh&,
-                  idx_t const * const, boost::param_not_found) { }
+                  idx_t const * const, internal_np::Param_not_found) { }
 
   template<typename TriangleMesh, typename FacePartitionIDPmap>
   void operator()(const TriangleMesh& tm, idx_t const * const epart,
@@ -76,15 +78,16 @@ struct Output_face_partition_ids
 };
 
 template<typename TriangleMesh, typename METIS_options, typename NamedParameters>
-void partition_graph(const TriangleMesh& tm, int nparts,
+void partition_graph(const TriangleMesh& tm,
+                     int nparts,
                      METIS_options options, // pointer to the options array
                      const NamedParameters& np)
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
   CGAL_precondition_msg(nparts > 1, ("Partitioning requires a number of parts > 1"));
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -92,7 +95,7 @@ void partition_graph(const TriangleMesh& tm, int nparts,
 
   //Vertex index map
   typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<TriangleMesh, NamedParameters>::type Indices;
-  Indices indices = choose_param(get_param(np, internal_np::vertex_index),
+  Indices indices = choose_parameter(get_parameter(np, internal_np::vertex_index),
                                  get_const_property_map(boost::vertex_index, tm));
 
   idx_t nn = static_cast<idx_t>(num_vertices(tm));
@@ -125,12 +128,12 @@ void partition_graph(const TriangleMesh& tm, int nparts,
   idx_t objval;
 
   // partition info for the nodes
-  idx_t* npart = (idx_t*) calloc(nn, sizeof(idx_t));
-  CGAL_assertion(npart != NULL);
+  idx_t* npart = (idx_t*) calloc(num_vertices(tm), sizeof(idx_t));
+  CGAL_assertion(npart != nullptr);
 
   // partition info for the elements
-  idx_t* epart = (idx_t*) calloc(ne, sizeof(idx_t));
-  CGAL_assertion(epart != NULL);
+  idx_t* epart = (idx_t*) calloc(num_faces(tm), sizeof(idx_t));
+  CGAL_assertion(epart != nullptr);
 
   // do not support Fortran-style arrays
   CGAL_assertion((*options)[METIS_OPTION_NUMBERING] == -1 || // default initialization is '-1'
@@ -138,9 +141,9 @@ void partition_graph(const TriangleMesh& tm, int nparts,
 
   CGAL_assertion_code(int ret =)
     METIS_PartMeshNodal(&ne, &nn, eptr, eind,
-                        NULL /* nodes weights */, NULL /* nodes sizes */,
+                        nullptr /* nodes weights */, nullptr /* nodes sizes */,
                         &nparts,
-                        NULL /* partitions weights */,
+                        nullptr /* partitions weights */,
                         *options,
                         &objval, epart, npart);
 
@@ -148,13 +151,19 @@ void partition_graph(const TriangleMesh& tm, int nparts,
 
   Output_vertex_partition_ids vo;
   Output_face_partition_ids fo;
-  vo(tm, indices, npart, get_param(np, internal_np::vertex_partition_id));
-  fo(tm, epart, get_param(np, internal_np::face_partition_id));
+  vo(tm, indices, npart, get_parameter(np, internal_np::vertex_partition_id));
+  fo(tm, epart, get_parameter(np, internal_np::face_partition_id));
+
+  delete[] eptr;
+  delete[] eind;
+
+  std::free(npart);
+  std::free(epart);
 }
 
 template<typename TriangleMesh, typename NamedParameters>
 void partition_graph(const TriangleMesh& tm, int nparts,
-                     const boost::param_not_found, // no METIS options were passed
+                     const internal_np::Param_not_found, // no METIS options were passed
                      const NamedParameters& np)
 {
   idx_t options[METIS_NOPTIONS];
@@ -203,9 +212,9 @@ void partition_graph(const TriangleMesh& tm, int nparts,
 template<typename TriangleMesh, typename NamedParameters>
 void partition_graph(const TriangleMesh& tm, int nparts, const NamedParameters& np)
 {
-  using boost::get_param;
+  using parameters::get_parameter;
 
-  return partition_graph(tm, nparts, get_param(np, internal_np::METIS_options), np);
+  return partition_graph(tm, nparts, get_parameter(np, internal_np::METIS_options), np);
 }
 
 template<typename TriangleMesh>

@@ -112,7 +112,7 @@ In general, the software design of the algorithms and traits for the
 corresponding algorithms and traits for the \f$ L_{2} \f$ Segment
 Delaunay graph. We implement the \f$ L_{\infty} \f$ classes as
 subclasses of corresponding \f$ L_{2} \f$ classes from the
-package \ref PkgSegmentDelaunayGraph2Summary.
+package \ref PkgSegmentDelaunayGraph2.
 The names of the \f$ L_{\infty} \f$ classes contain an additional `_Linf` after
 `graph`, in comparison with the corresponding \f$ L_{2} \f$ classes.
 For more details, see \cgalCite{cdgp-icms-2014}.

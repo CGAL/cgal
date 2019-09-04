@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Fixed_alpha_shape_cell_base_3` is the default model for the concept 
 `FixedAlphaShapeCell_3`. 
@@ -23,8 +23,6 @@ to the `Alpha_shape_3` class.
 template< typename Traits, typename Cb >
 class Fixed_alpha_shape_cell_base_3 : public Cb {
 public:
-
-/// @}
 
 }; /* end Fixed_alpha_shape_cell_base_3 */
 } /* end namespace CGAL */

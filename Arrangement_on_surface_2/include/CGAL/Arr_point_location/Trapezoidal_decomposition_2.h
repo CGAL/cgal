@@ -266,7 +266,7 @@ public:
       m_sep doesn't intersect any existing edges except possibly on common end
       points.
       postconditions:
-      if the rightmost trapezoid was traversed m_cur_item is set to NULL.
+      if the rightmost trapezoid was traversed m_cur_item is set to nullptr.
       remark:
       if the seperator is vertical, using the precondition assumptions it
       follows that there is exactly one trapezoid to travel.
@@ -277,9 +277,9 @@ public:
         return *this;// end reached, do nothing!
 
 #ifndef CGAL_TD_DEBUG
-      CGAL_warning(traits != NULL);
+      CGAL_warning(traits != nullptr);
 #else
-      CGAL_assertion(traits != NULL);
+      CGAL_assertion(traits != nullptr);
       CGAL_assertion(traits->is_active(m_cur_item));
       //m_cur_item should be a trapezoid or an edge
       CGAL_assertion(!traits->is_td_vertex(m_cur_item));
@@ -342,7 +342,7 @@ public:
 
         Td_active_edge e (boost::get<Td_active_edge>(m_cur_item));
         CGAL_assertion_code(Dag_node* tt = e.dag_node();)
-        CGAL_assertion(tt != NULL);
+        CGAL_assertion(tt != nullptr);
         CGAL_assertion(tt->is_inner_node());
 
         //go to next() of the current edge.
@@ -654,12 +654,12 @@ public:
     Dag_node* operator()(Td_nothing& /* t */) const
     {
       CGAL_assertion(false);
-      return NULL;
+      return nullptr;
     }
     Dag_node* operator()(Td_inactive_trapezoid& /* t */) const
     {
       CGAL_assertion(false);
-      return NULL;
+      return nullptr;
     }
 
     template < typename T >
@@ -985,7 +985,7 @@ protected:
                                            const X_monotone_curve_2& cv,
                                            Comparison_result cres) const
   {
-    CGAL_assertion(traits != NULL);
+    CGAL_assertion(traits != nullptr);
     Td_map_item& item = left_cv_end_node.get_data();
     CGAL_precondition(traits->is_td_vertex(item));
     CGAL_precondition (are_equal_end_points(Curve_end(cv,ARR_MIN_END),
@@ -1359,13 +1359,13 @@ public:
   //    const Dag_node* child;
   //    CGAL_assertion(tr_copy);
   //    tr_copy->set_rt(cur->rt() ?
-  //                    htr.find(cur->rt())->second : NULL);
+  //                    htr.find(cur->rt())->second : nullptr);
   //    tr_copy->set_rb(cur->rb() ?
-  //                    htr.find(cur->rb())->second : NULL);
+  //                    htr.find(cur->rb())->second : nullptr);
   //    tr_copy->set_lt(cur->lt() ?
-  //                    htr.find(cur->lt())->second : NULL);
+  //                    htr.find(cur->lt())->second : nullptr);
   //    tr_copy->set_lb(cur->lb() ?
-  //                    htr.find(cur->lb())->second : NULL);
+  //                    htr.find(cur->lb())->second : nullptr);
 
   //    if (cur->dag_node()->is_inner_node())
   //    {
@@ -1391,7 +1391,7 @@ public:
   */
   virtual ~Trapezoidal_decomposition_2()
   {
-    CGAL_warning(m_dag_root != NULL);
+    CGAL_warning(m_dag_root != nullptr);
     if (!m_dag_root) return;
 
     delete m_dag_root;
@@ -1616,7 +1616,7 @@ public:
 
     //the actual locate. curr is the DAG root, the traits,
     //the end point to locate,
-    //and NULL as cv ptr - indicates point location
+    //and nullptr as cv ptr - indicates point location
     lt = search_using_dag (curr, traits, ce, Halfedge_const_handle());
 
 #ifdef CGAL_TD_DEBUG
@@ -1646,7 +1646,7 @@ public:
   //  locate call may change the class
   Td_map_item& locate( Vertex_const_handle v, Locate_type& lt) const
   {
-    CGAL_precondition(traits != NULL);
+    CGAL_precondition(traits != nullptr);
     return locate(traits->vtx_to_ce(v), lt);
   }
 
@@ -1899,7 +1899,7 @@ public:
     return old;
   }
 
-  //This method occasionaly(!) checks the guarantees
+  //This method occasionally(!) checks the guarantees
   // It is currently not in use, since the guarantees are constantly checked in O(1) time
   bool needs_update()
   {

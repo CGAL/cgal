@@ -446,11 +446,12 @@ public:
     };
 
     //! \brief Copy constructor
+#ifdef DOXYGEN_RUNNING 
     Curve_pair_analysis_2(const Self& alg_curve_pair)
         : Base(static_cast<const Base&>(alg_curve_pair)) 
     {
     }
-
+#endif
     // Assignable
     
     /*!
@@ -1434,7 +1435,9 @@ compute_event_x_coordinates_with_event_indices() const {
                 CGAL_ACK_DEBUG_PRINT << " one curve event" << std::endl;
 #endif
 */
-            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
+            // Fix a warning by using `emplace_back()` instead of
+            // copying a non-initialized `optional
+            this->ptr()->event_slices.emplace_back();
             switch(*(one_curve_it++)) {
             case(CGAL::internal::ROOT_OF_FIRST_SET): {
                 event_indices.push_back(Event_indices(-1,f_count,-1));
@@ -1461,8 +1464,7 @@ compute_event_x_coordinates_with_event_indices() const {
             CGAL_ACK_DEBUG_PRINT << " two curve event" << std::endl;
 #endif
 */
-            this->ptr()->
-                event_slices.push_back(Lazy_status_line_CPA_1());
+            this->ptr()->event_slices.emplace_back();
             
             event_indices.push_back
                 (Event_indices(inter_count,-1,-1));
@@ -1476,8 +1478,7 @@ compute_event_x_coordinates_with_event_indices() const {
                                      << std::endl;
 #endif
 */
-            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
-            
+            this->ptr()->event_slices.emplace_back();
             
             switch(*(one_curve_it++)) {
             case(CGAL::internal::ROOT_OF_FIRST_SET): {
@@ -1524,17 +1525,11 @@ compute_intermediate_values_and_slices() const {
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "Prepare intermediate slices.." << std::flush;
 #endif
+    std::size_t size = event_x_coordinates().size()+1;
     this->ptr()->intermediate_values=std::vector<Lazy_bound>();
     this->ptr()->intermediate_slices=std::vector<Lazy_status_line_CPA_1>();
-    
-    for(size_type i=0;
-        i<=static_cast<size_type>(event_x_coordinates().size());
-        i++) {
-        this->ptr()->intermediate_values.get().push_back(Lazy_bound());
-        this->ptr()->intermediate_slices.get().push_back
-            (Lazy_status_line_CPA_1());
-    }
-    
+    this->ptr()->intermediate_values.get().resize(size);
+    this->ptr()->intermediate_slices.get().resize(size);
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
 #endif

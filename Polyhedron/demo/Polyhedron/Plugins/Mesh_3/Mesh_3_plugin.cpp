@@ -3,6 +3,7 @@
 
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include "Messages_interface.h"
 
 #include <QObject>
@@ -18,7 +19,6 @@
 #include <QUrl>
 #include <fstream>
 
-#include "Scene_polyhedron_item.h"
 #include "Scene_polylines_item.h"
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -46,7 +46,7 @@ class Mesh_3_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "mesh_3_plugin.json")
 
 public:
   void init(QMainWindow* mainWindow,
@@ -89,40 +89,27 @@ public:
   bool applicable(QAction* a) const {
     if(a == actionSplitPolylines) {
       return qobject_cast<Scene_polylines_item*>
-        (scene->item(scene->mainSelectionIndex())) != 0;
+        (scene->item(scene->mainSelectionIndex())) != nullptr;
     }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-    if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())) != NULL
-      && a == actionMesh_3)
+    if(qobject_cast<Scene_implicit_function_item*>
+       (scene->item(scene->mainSelectionIndex())) != nullptr) {
       return true;
+    }
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-    Q_FOREACH(int ind, scene->selectionIndices()){
-      if( qobject_cast<Scene_image_item*>(scene->item(ind)))
-        return true;
+    if( qobject_cast<Scene_image_item*>
+        (scene->item(scene->mainSelectionIndex())) != nullptr ) {
+      return true;
     }
-#endif  
-    Q_FOREACH(int ind, scene->selectionIndices()){
-      Scene_polyhedron_item* poly_item
-          = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+#endif
+    for(int ind: scene->selectionIndices()){
       Scene_surface_mesh_item* sm_item
           = qobject_cast<Scene_surface_mesh_item*>(scene->item(ind));
-      if (NULL == poly_item)
-      {
-        if(NULL == sm_item)
-          continue;
-      }
-      if (a == actionMesh_3)
-      {
-        if(poly_item)
-          return poly_item->polyhedron()->is_closed();
-        if(sm_item)
-          return is_closed(*sm_item->polyhedron());
-      }
-      else
-        return true;
+      if(nullptr == sm_item)
+        return false;
     }
-    return false;
+    return true;
   }
 
 public Q_SLOTS:
@@ -145,6 +132,7 @@ private:
   Messages_interface* msg;
   QMessageBox* message_box_;
   Scene_item* source_item_;
+  QString source_item_name_;
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;
   bool as_facegraph;
@@ -189,109 +177,76 @@ void Mesh_3_plugin::mesh_3_volume()
 
 void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 {
-  Scene_polyhedron_item* poly_item = NULL;
-  Scene_polyhedron_item* bounding_poly_item = NULL;
-  Scene_surface_mesh_item* sm_item = NULL;
-  Scene_surface_mesh_item* bounding_sm_item = NULL;
-  Scene_implicit_function_item* function_item = NULL;
-  Scene_image_item* image_item = NULL;
-  Scene_polylines_item* polylines_item = NULL;
+  QList<Scene_surface_mesh_item*> sm_items;
+  Scene_surface_mesh_item* bounding_sm_item = nullptr;
+  Scene_implicit_function_item* function_item = nullptr;
+  Scene_image_item* image_item = nullptr;
+  Scene_polylines_item* polylines_item = nullptr;
 
-  Q_FOREACH(int ind, scene->selectionIndices()) {
-
-    if(poly_item == NULL)
-    {
-      poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
-      if (poly_item != NULL
-          && scene->selectionIndices().size() == 2
-          && bounding_poly_item == NULL)
-      {
-        bounding_poly_item = qobject_cast<Scene_polyhedron_item*>(
-            scene->item(scene->selectionIndices().back()));
-        if (bounding_poly_item != NULL)
-        {
-          //if poly is bounding, and bounding_poly is a non-closed surface
-          if (is_closed(*poly_item->polyhedron())
-            && !is_closed(*bounding_poly_item->polyhedron()))
-          {
-            //todo : check poly_item is inside bounding_poly_item
-            std::swap(poly_item, bounding_poly_item);
-            //now bounding_poly_item is the bounding one
-          }
-        }
-      }
-    }
-    if(sm_item == NULL)
-    {
-      sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(ind));
-      if (sm_item != NULL
-          && scene->selectionIndices().size() == 2
-          && bounding_sm_item == NULL)
-      {
-        bounding_sm_item = qobject_cast<Scene_surface_mesh_item*>(
-            scene->item(scene->selectionIndices().back()));
-        if (bounding_sm_item != NULL)
-        {
-          if (is_closed(*sm_item->polyhedron())
-            && !is_closed(*bounding_sm_item->polyhedron()))
-          {
-            //todo : check sm_item is inside bounding_sm_item
-            std::swap(sm_item, bounding_sm_item);
-            //now bounding_sm_item is the bounding one
-          }
-        }
+  for(int ind: scene->selectionIndices()) {
+    Scene_surface_mesh_item* sm_item =
+      qobject_cast<Scene_surface_mesh_item*>(scene->item(ind));
+    if(sm_item) {
+      sm_items.push_back(sm_item);
+      if(is_closed(*sm_item->polyhedron())) {
+        bounding_sm_item = sm_item;
       }
     }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-    if(function_item == NULL){
-      function_item = qobject_cast<Scene_implicit_function_item*>(scene->item(ind));
-    }
+    else if(function_item == nullptr &&
+            nullptr !=
+            (function_item = qobject_cast<Scene_implicit_function_item*>(scene->item(ind))))
+    {}
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-    if(image_item == NULL){
-      image_item = qobject_cast<Scene_image_item*>(scene->item(ind));
-    }
+    else if(image_item == nullptr &&
+            nullptr != (image_item = qobject_cast<Scene_image_item*>(scene->item(ind))))
+    {}
 #endif
-    if(polylines_item == NULL){
-      polylines_item = qobject_cast<Scene_polylines_item*>(scene->item(ind));
+    else if(polylines_item == nullptr &&
+            nullptr != (polylines_item = qobject_cast<Scene_polylines_item*>(scene->item(ind))))
+    {}
+    else {
+      QMessageBox::warning(mw, tr("Mesh_3 plugin"),
+                           tr("Wrong selection of items"));
+      return;
     }
   }
-  Scene_item* item = NULL;
+  Scene_item* item = nullptr;
+  const bool more_than_one_item = sm_items.size() > 1;
   bool features_protection_available = false;
-  if(NULL != poly_item)
+  if(!sm_items.empty())
   {
-    if (!poly_item->polyhedron()->is_pure_triangle())
-    {
-      QMessageBox::warning(mw, tr(""),
-                           tr("Selected Scene_polyhedron_item is not triangulated."));
-      return;
+    for(auto sm_item : sm_items) {
+      if(nullptr == sm_item->polyhedron()) {
+        QApplication::restoreOverrideCursor();
+        QMessageBox::critical(mw, tr("Mesh_3 plugin"),
+                              tr("ERROR: no data in selected item %1").arg(sm_item->name()));
+        return;
+      }
+      if (!is_triangle_mesh(*sm_item->polyhedron()))
+      {
+        QApplication::restoreOverrideCursor();
+        QMessageBox::warning(mw, tr("Mesh_3 plugin"),
+                             tr("Selected Scene_surface_mesh_item %1 is not triangulated.")
+                             .arg(sm_item->name()));
+        return;
+      }
+      if(sm_item->getNbIsolatedvertices() != 0)
+      {
+        QApplication::restoreOverrideCursor();
+        QMessageBox::critical(mw, tr(""), tr("ERROR: there are isolated vertices in this mesh."));
+        return;
+      }
     }
-    if (NULL != bounding_poly_item
-      && !bounding_poly_item->polyhedron()->is_pure_triangle())
-    {
-      QMessageBox::warning(mw, tr(""),
-        tr("Selected Scene_polyhedron_item is not triangulated."));
-      return;
-    }
-    item = poly_item;
-    features_protection_available = true;
-  }
-  if(NULL != sm_item)
-  {
-    if (!is_triangle_mesh(*sm_item->polyhedron()))
-    {
-      QMessageBox::warning(mw, tr(""),
-                           tr("Selected Scene_surface_mesh__item is not triangulated."));
-      return;
-    }
-    item = sm_item;
+    item = sm_items.front();
     features_protection_available = true;
   }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-  else if (NULL != function_item) { item = function_item; }
+  else if (nullptr != function_item) { item = function_item; }
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-  else if (NULL != image_item)
+  else if (nullptr != image_item)
   {
     item = image_item;
     features_protection_available = true;
@@ -325,7 +280,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   }
 #endif
 
-  if (NULL == item)
+  if (nullptr == item)
   {
     QMessageBox::warning(mw, tr(""),
                          tr("Selected object can't be meshed"));
@@ -386,9 +341,18 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   connect(ui.protect, SIGNAL(toggled(bool)),
           ui.protectEdges, SLOT(setEnabled(bool)));
 
+  QString item_name = more_than_one_item ?
+    QString("%1...").arg(item->name()) :
+    item->name();
+
   // Set default parameters
   CGAL::Three::Scene_interface::Bbox bbox = item->bbox();
-  ui.objectName->setText(item->name());
+  if(more_than_one_item) {
+    for(auto it: sm_items) {
+      bbox = bbox + it->bbox();
+    }
+  }
+  ui.objectName->setText(item_name);
   ui.objectNameSize->setText(tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
                              .arg(bbox.xmax() - bbox.xmin(),0,'g',3)
                              .arg(bbox.ymax() - bbox.ymin(),0,'g',3)
@@ -422,15 +386,13 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   ui.protectEdges->setEnabled(features_protection_available);
 
   ui.facegraphCheckBox->setVisible(surface_only);
-  ui.initializationGroup->setVisible(image_item != NULL && !image_item->isGray());
-  ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
-  if (poly_item != NULL)
-    ui.volumeGroup->setVisible(!surface_only && poly_item->polyhedron()->is_closed());
-  else if (sm_item != NULL)
-      ui.volumeGroup->setVisible(!surface_only && is_closed(*sm_item->polyhedron()));
+  ui.initializationGroup->setVisible(image_item != nullptr && !image_item->isGray());
+  ui.grayImgGroup->setVisible(image_item != nullptr && image_item->isGray());
+  if (!sm_items.empty())
+      ui.volumeGroup->setVisible(!surface_only && nullptr != bounding_sm_item);
   else
     ui.volumeGroup->setVisible(!surface_only);
-  if ((poly_item == NULL && sm_item == NULL)|| polylines_item != NULL) {
+  if ((!sm_items.empty())|| polylines_item != nullptr) {
     ui.sharpEdgesAngleLabel->setVisible(false);
     ui.sharpEdgesAngle->setVisible(false);
 
@@ -446,7 +408,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 
   if (features_protection_available)
   {
-    if (NULL != poly_item || NULL != sm_item)
+    if (!sm_items.empty())
     {
       if (surface_only)
       {
@@ -456,9 +418,9 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
       else
         ui.protectEdges->addItem(QString("Sharp edges"));
     }
-    else if(NULL != image_item)
+    else if(nullptr != image_item)
     {
-      if(polylines_item != NULL)
+      if(polylines_item != nullptr)
         ui.protectEdges->addItem(QString("Input polylines"));
       else
       {
@@ -496,70 +458,26 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   const float inside_is_less =  float(ui.inside_is_less_checkBox->isChecked());
   as_facegraph = surface_only ? ui.facegraphCheckBox->isChecked() : false;
 
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  Meshing_thread* thread = NULL;
-
-  // Polyhedron
-  if ( NULL != poly_item )
+  Meshing_thread* thread = nullptr;
+  if (!sm_items.empty())
   {
-    Polyhedron* pMesh = poly_item->polyhedron();
-    if (NULL == pMesh)
-    {
-      QApplication::restoreOverrideCursor();
-      QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
-      return;
+    QList<const SMesh*> polyhedrons;
+    if(!surface_only) {
+      sm_items.removeAll(bounding_sm_item);
     }
-    if(poly_item->getNbIsolatedvertices() != 0)
-    {
-      QApplication::restoreOverrideCursor();
-      QMessageBox::critical(mw, tr(""), tr("ERROR: there are isolated vertices in this mesh."));
-      return;
-    }
+    std::transform(sm_items.begin(), sm_items.end(),
+                   std::back_inserter(polyhedrons),
+                   [](Scene_surface_mesh_item* item) {
+                     return item->polyhedron();
+                   });
     Scene_polylines_item::Polylines_container plc;
+    SMesh *bounding_polyhedron =
+      (bounding_sm_item == nullptr) ? nullptr : bounding_sm_item->polyhedron();
 
-    thread =    cgal_code_mesh_3(pMesh,
-                                 (polylines_item == NULL)?plc:polylines_item->polylines,
-                                 (bounding_poly_item == NULL)?NULL:bounding_poly_item->polyhedron(),
-                                 item->name(),
-                                 angle,
-                                 facet_sizing,
-                                 approx,
-                                 tet_sizing,
-                                 edge_size,
-                                 radius_edge,
-                                 protect_features,
-                                 protect_borders,//available only for poly_item and sm_item
-                                 sharp_edges_angle,
-                                 manifold,
-                                 surface_only,
-                                 scene);
-  }
-  // Surface_mesh
-  if ( NULL != sm_item )
-  {
-    SMesh* pMesh = sm_item->polyhedron();
-    if (NULL == pMesh)
-    {
-      QApplication::restoreOverrideCursor();
-      QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
-      return;
-    }
-    if(sm_item->getNbIsolatedvertices() != 0)
-    {
-      QApplication::restoreOverrideCursor();
-      QMessageBox::critical(mw, tr(""), tr("ERROR: there are isolated vertices in this mesh."));
-      return;
-    }
-    Scene_polylines_item::Polylines_container plc;
-    SMesh *pBMesh = (bounding_sm_item == NULL) ? NULL
-                    : bounding_sm_item->polyhedron();
-
-    thread =    cgal_code_mesh_3(pMesh,
-                                 (polylines_item == NULL)?plc:polylines_item->polylines,
-                                 pBMesh,
-                                 item->name(),
+    thread =    cgal_code_mesh_3(polyhedrons,
+                                 (polylines_item == nullptr)?plc:polylines_item->polylines,
+                                 bounding_polyhedron,
+                                 item_name,
                                  angle,
                                  facet_sizing,
                                  approx,
@@ -570,15 +488,14 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  protect_borders,
                                  sharp_edges_angle,
                                  manifold,
-                                 surface_only,
-                                 scene);
+                                 surface_only);
   }
   // Image
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-  else if (NULL != function_item)
+  else if (nullptr != function_item)
   {
     const Implicit_function_interface* pFunction = function_item->function();
-    if (NULL == pFunction)
+    if (nullptr == pFunction)
     {
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
@@ -592,14 +509,14 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  edge_size,
                                  radius_edge,
                                  manifold,
-                                 scene);
+                                 surface_only);
   }
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-  else if (NULL != image_item)
+  else if (nullptr != image_item)
   {
     const Image* pImage = image_item->image();
-    if (NULL == pImage)
+    if (nullptr == pImage)
     {
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
@@ -608,7 +525,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
     Scene_polylines_item::Polylines_container plc;
 
     thread =    cgal_code_mesh_3(pImage,
-                                 (polylines_item == NULL)?plc:polylines_item->polylines,
+                                 (polylines_item == nullptr)?plc:polylines_item->polylines,
                                  angle,
                                  facet_sizing,
                                  approx,
@@ -617,7 +534,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  radius_edge,
                                  protect_features,
                                  manifold,
-                                 scene,
+                                 surface_only,
                                  detect_connected_components,
                                  image_item->isGray(),
                                  iso_value,
@@ -626,7 +543,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   }
 #endif
 
-  if ( NULL == thread )
+  if ( nullptr == thread )
   {
     QMessageBox::critical(mw,tr(""),tr("ERROR: no thread created"));
     return;
@@ -634,6 +551,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 
   // Launch thread
   source_item_ = item;
+  source_item_name_ = item_name;
   launch_thread(thread);
 
   QApplication::restoreOverrideCursor();
@@ -656,8 +574,12 @@ launch_thread(Meshing_thread* mesh_thread)
   QAbstractButton* cancelButton = message_box_->button(QMessageBox::Cancel);
   cancelButton->setText(tr("Stop"));
 
-  QObject::connect(cancelButton, SIGNAL(clicked()),
-                   mesh_thread,  SLOT(stop()));
+  QObject::connect(cancelButton, &QAbstractButton::clicked,
+                   this, [mesh_thread](){
+    mesh_thread->stop();
+    mesh_thread->wait();
+    QApplication::restoreOverrideCursor(); // restores cursor set in mesh_thread stop() function
+  });
 
   message_box_->open();
 
@@ -681,7 +603,7 @@ void
 Mesh_3_plugin::
 status_report(QString str)
 {
-  if ( NULL == message_box_ ) { return; }
+  if ( nullptr == message_box_ ) { return; }
 
   message_box_->setInformativeText(str);
 }
@@ -693,7 +615,7 @@ meshing_done(Meshing_thread* thread)
 {
   // Print message in console
   QString str = QString("Meshing of \"%1\" done in %2s<br>")
-    .arg(source_item_->name())
+    .arg(source_item_name_)
     .arg(thread->time());
 
   Q_FOREACH( QString param, thread->parameters_log() )
@@ -711,14 +633,14 @@ meshing_done(Meshing_thread* thread)
     .arg(bbox.zmin())
     .arg(bbox.zmax()));
 
-  msg->information(qPrintable(str));
+  CGAL::Three::Three::information(qPrintable(str));
 
   // Treat new c3t3 item
   treat_result(*source_item_, result_item);
 
   // close message box
   message_box_->done(0);
-  message_box_ = NULL;
+  message_box_ = nullptr;
 
   // free memory
   // TODO: maybe there is another way to do that
@@ -733,7 +655,7 @@ treat_result(Scene_item& source_item,
 {
   if(!as_facegraph)
   {
-    result_item->setName(tr("%1 [3D Mesh]").arg(source_item.name()));
+    result_item->setName(tr("%1 [3D Mesh]").arg(source_item_name_));
 
     result_item->c3t3_changed();
 
@@ -757,38 +679,20 @@ treat_result(Scene_item& source_item,
   }
   else
   {
-    if(mw->property("is_polyhedron_mode").toBool())
-    {
-      Scene_polyhedron_item* new_item = new Scene_polyhedron_item;
-      CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
-      new_item->setName(tr("%1 [Remeshed as Polyhedron_3]").arg(source_item.name()));
-      Q_FOREACH(int ind, scene->selectionIndices()) {
-        scene->item(ind)->setVisible(false);
-      }
-      const Scene_interface::Item_id index = scene->mainSelectionIndex();
-      scene->itemChanged(index);
-      scene->setSelectedItem(-1);
-      Scene_interface::Item_id new_item_id = scene->addItem(new_item);
-      scene->setSelectedItem(new_item_id);
-      delete result_item;
+    Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item;
+    CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
+    new_item->setName(tr("%1 [Remeshed]").arg(source_item_name_));
+    Q_FOREACH(int ind, scene->selectionIndices()) {
+      scene->item(ind)->setVisible(false);
     }
-    else
-    {
-      {
-        Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item;
-        CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
-        new_item->setName(tr("%1 [Remeshed as Surface_mesh]").arg(source_item.name()));
-        Q_FOREACH(int ind, scene->selectionIndices()) {
-          scene->item(ind)->setVisible(false);
-        }
-        const Scene_interface::Item_id index = scene->mainSelectionIndex();
-        scene->itemChanged(index);
-        scene->setSelectedItem(-1);
-        Scene_interface::Item_id new_item_id = scene->addItem(new_item);
-        scene->setSelectedItem(new_item_id);
-        delete result_item;
-      }
-    }
+    const Scene_interface::Item_id index = scene->mainSelectionIndex();
+    scene->itemChanged(index);
+    scene->setSelectedItem(-1);
+    Scene_interface::Item_id new_item_id = scene->addItem(new_item);
+    new_item->invalidateOpenGLBuffers();
+    new_item->redraw();
+    scene->setSelectedItem(new_item_id);
+    delete result_item;
   }
 }
 

@@ -25,7 +25,6 @@
 
 
 #include <CGAL/Three/Scene_item.h>
-#include <QRunnable>
 
 
 #ifdef demo_framework_EXPORTS
@@ -69,7 +68,8 @@ public:
     GEOMETRY = 0x1,                     //!< Invalidates the vertices, edges and faces.
     COLORS   = 0x2,                     //!< Invalidates the color of each vertex
     NORMALS  = 0x4,                     //!< Invalidate the normal of each vertex.
-    ALL      = GEOMETRY|COLORS|NORMALS  //!< Invalidate everything
+    NOT_INSTANCED = 0x8,                //!< Invalidate the centers/radius of each sphere.
+    ALL      = GEOMETRY|COLORS|NORMALS|NOT_INSTANCED  //!< Invalidate everything
   };
 #ifdef DOXYGEN_RUNNING
   //! \brief Flag interface for Scene_item::Gl_data_name.
@@ -78,12 +78,6 @@ public:
 #endif
   Q_DECLARE_FLAGS(Gl_data_names, Gl_data_name)
 
-#ifdef DOXYGEN_RUNNING
-  //! \brief Flag interface for Scene_item::Gl_data_name.
-  //! \todo Review Laurent Rineau:  Should be explained better. Points to `QFlags`...
-  enum Gl_data_names{};
-#endif
-  
   QMenu* contextMenu() Q_DECL_OVERRIDE;
 
   /*!
@@ -190,14 +184,22 @@ public:
   //! @returns the item's bounding box's diagonal length.
   //! @todo must replace the one from Scene_item eventually
   virtual double diagonalBbox() const Q_DECL_OVERRIDE;
+  //!
+  //! \brief newViewer adds Vaos for `viewer`.
+  //! \param viewer the new viewer.
+  //!
+  void newViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE;
+  //! \brief removeViewer removes the Vaos for `viewer`.
+  //! \param viewer the viewer to be removed.
+  void removeViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE;
 protected:
 
 
   //!Returns a pointer to the slider initialized in initGL();
   QSlider* alphaSlider();
 
-  //!Returns`true` if `initGL()` was called.
-  bool isInit()const;
+  //!Returns`true` if `initGL()` was called for `viewer`.
+  bool isInit(CGAL::Three::Viewer_interface* viewer)const;
 
   //!Returns the float alpha value of an item.
   //! This value is between 0.0f and 1.0f.
@@ -207,8 +209,8 @@ protected:
      */
   virtual void initializeBuffers(Viewer_interface*)const{}
 
-  //!Creates the VAOs and VBOs for each existing viewer.
-  virtual void initGL() const;
+  //!Creates the VAOs and VBOs for viewer.
+  virtual void initGL(CGAL::Three::Viewer_interface* viewer) const;
   //!
   //! Computes the items Bbox and stores the result. Must be overridden.
   //!@todo must replace the one from Scene_item eventually.
@@ -217,10 +219,10 @@ protected:
   //! \brief setBbox allows to set the Bbox in compute_bbox();
   //! \param b
   //!
-  void setBbox(Bbox b);
+  void setBbox(Bbox b)const ;
   
   virtual void computeElements()const{}
-private:
+protected:
   friend struct PRIV;
   mutable PRIV* priv;
 };//end Scene_item_rendering_helper

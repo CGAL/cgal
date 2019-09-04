@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgStreamSupportRef
 
 The class `Verbose_ostream` can be used as an output stream. The stream 
 output operator `<<` is defined for any type. The class 
@@ -46,8 +46,9 @@ std::ostream& out = std::cerr);
 /// @{
 
 /*!
-
-*/ 
+creates an output stream with state set to 
+`false` that writes to the stream `std::cerr`. 
+*/
 template < class T > 
 Verbose_ostream& operator<<( const T& t); 
 

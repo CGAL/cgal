@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3SecondaryConcepts
+\ingroup PkgMesh3SecondaryConcepts
 \cgalConcept
 
 The concept `MeshPolyline_3` implements a container of points designed to represent a polyline (i.e.\ a sequence of points). 

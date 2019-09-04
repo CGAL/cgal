@@ -65,7 +65,7 @@ template < class P, class Creator >
 void
 Random_points_in_sphere_3<P,Creator>::
 generate_point() {
-  // A strip between z and z+dz has an area independant of z
+  // A strip between z and z+dz has an area independent of z
     typedef typename Creator::argument_type T;
     double alpha = this->_rnd.get_double() * 2.0 * CGAL_PI;
     double z     = 2 * this->_rnd.get_double() - 1.0;
@@ -104,7 +104,7 @@ template < class P, class Creator >
 void
 Random_points_on_sphere_3<P,Creator>::
 generate_point() {
-  // A strip between z and z+dz has an area independant of z
+  // A strip between z and z+dz has an area independent of z
     typedef typename Creator::argument_type T;
     double alpha = this->_rnd.get_double() * 2.0 * CGAL_PI;
     double z     = 2 * this->_rnd.get_double() - 1.0;

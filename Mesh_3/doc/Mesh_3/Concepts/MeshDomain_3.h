@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3Concepts
+\ingroup PkgMesh3Concepts
 \cgalConcept
 
 The concept `MeshDomain_3` describes the knowledge required on the
@@ -111,7 +111,7 @@ Returns type of `Construct_intersection` queries.
 dimension of the lower dimensional face of the input complex on which the intersection
 point lies and `%Index` is the index of this face.
 */
-typedef CGAL::cpp11::tuple<Point_3, Index, int> Intersection;
+typedef std::tuple<Point_3, Index, int> Intersection;
 
 /*!
 A function object to construct

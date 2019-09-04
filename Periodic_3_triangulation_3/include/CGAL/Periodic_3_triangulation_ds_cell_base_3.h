@@ -56,31 +56,17 @@ public:
   Periodic_3_triangulation_ds_cell_base_3(
       const Vertex_handle& v0, const Vertex_handle& v1,
       const Vertex_handle& v2, const Vertex_handle& v3)
-#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : V{v0, v1, v2, v3},
       _additional_flag(0), off(0) {}
-#else
-    : _additional_flag(0), off(0) {
-      set_vertices(v0, v1, v2, v3);
-      set_neighbors();
-    }
-#endif
 
   Periodic_3_triangulation_ds_cell_base_3(
       const Vertex_handle& v0, const Vertex_handle& v1,
       const Vertex_handle& v2, const Vertex_handle& v3,
       const Cell_handle&   n0, const Cell_handle&   n1,
       const Cell_handle&   n2, const Cell_handle&   n3)
-#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : N{n0, n1, n2, n3},
       V{v0, v1, v2, v3},
       _additional_flag(0), off(0) {}
-#else
-    : _additional_flag(0), off(0) {
-    set_vertices(v0, v1, v2, v3);
-    set_neighbors(n0, n1, n2, n3);
-  }
-#endif
 
   // ACCESS FUNCTIONS
 

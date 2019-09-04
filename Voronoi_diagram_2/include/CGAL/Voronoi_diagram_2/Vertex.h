@@ -66,7 +66,7 @@ class Vertex
 
   // CONSTRUCTORS
   //-------------
-  Vertex(const VDA* vda = NULL) : vda_(vda) {}
+  Vertex(const VDA* vda = nullptr) : vda_(vda) {}
   Vertex(const VDA* vda, Delaunay_face_handle f) : vda_(vda), f_(f) {
     CGAL_precondition( !vda_->dual().is_infinite(f_) );
   }
@@ -183,7 +183,7 @@ class Vertex
   // VALIDITY TESTING
   //-----------------
   bool is_valid() const {
-    if ( vda_ == NULL ) { return true; }
+    if ( vda_ == nullptr ) { return true; }
 
     bool valid = !vda_->dual().is_infinite(f_);
 
@@ -218,8 +218,8 @@ class Vertex
   // COMPARISON OPERATORS
   //---------------------
   bool operator==(const Self& other) const {
-    if ( vda_ == NULL ) { return other.vda_ == NULL; }
-    if ( other.vda_ == NULL ) { return vda_ == NULL; }
+    if ( vda_ == nullptr ) { return other.vda_ == nullptr; }
+    if ( other.vda_ == nullptr ) { return vda_ == nullptr; }
     return ( vda_ == other.vda_ && f_ == other.f_ );
   }
 
@@ -228,8 +228,8 @@ class Vertex
   }
 
   bool operator<(const Self& other) const {
-    if ( vda_ == NULL ) { return other.vda_ != NULL; }
-    if ( other.vda_ == NULL ) { return false; }
+    if ( vda_ == nullptr ) { return other.vda_ != nullptr; }
+    if ( other.vda_ == nullptr ) { return false; }
     if ( vda_ != other.vda_ ) { return vda_ < other.vda_; }
     return f_ < other.f_;
   }

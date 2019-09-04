@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
 The class `Mesh_facet_criteria_3` is a model of `MeshFacetCriteria_3`. 
 It provides a uniform bound for the shape criterion, 

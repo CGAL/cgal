@@ -33,6 +33,6 @@ vertices(const VertexListGraph& g);
   This is the case for implementations only marking vertices deleted in the vertex container.
  */
 template <typename VertexListGraph>
-boost::graph_traits<VertexListGraph>::ver_size_type
+boost::graph_traits<VertexListGraph>::vertices_size_type
 num_vertices(const VertexListGraph& g);
 

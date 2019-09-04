@@ -26,8 +26,6 @@
 #ifndef CGAL_LONG_DOUBLE_H
 #define CGAL_LONG_DOUBLE_H
 
-#include <CGAL/number_type_basic.h>
-
 #include <utility>
 #include <cmath>
 #ifdef CGAL_CFG_IEEE_754_BUG
@@ -36,6 +34,8 @@
 
 // #include <CGAL/FPU.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/assertions.h>
+#include <CGAL/functional.h>
 
 namespace CGAL {
 

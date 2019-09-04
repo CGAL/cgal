@@ -44,7 +44,7 @@
 
 namespace CGAL {
 
-/*! \ingroup PkgConeBasedSpanners
+/*! \ingroup PkgConeSpanners2Ref
  *
  *  \brief The functor for computing the directions of cone boundaries with a given
  *  cone number and a given initial direction.

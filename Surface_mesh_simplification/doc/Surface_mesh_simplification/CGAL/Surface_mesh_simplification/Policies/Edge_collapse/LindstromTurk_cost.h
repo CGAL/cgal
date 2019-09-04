@@ -2,7 +2,7 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 /*!
-\ingroup PkgSurfaceMeshSimplification
+\ingroup PkgSurfaceMeshSimplificationRef
 
 The class `LindstromTurk_cost` provides a model for the `GetCost` concept. 
 It computes the collapse cost following the Lindstrom-Turk strategy 

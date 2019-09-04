@@ -9,7 +9,7 @@
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3  Point_3;
 
-typedef CGAL::cpp11::array<std::size_t,3> Facet;
+typedef std::array<std::size_t,3> Facet;
 
 namespace std {
   std::ostream&

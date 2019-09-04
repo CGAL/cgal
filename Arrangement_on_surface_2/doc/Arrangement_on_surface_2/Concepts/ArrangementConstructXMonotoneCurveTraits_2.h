@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgArrangement2ConceptsTraits
+\ingroup PkgArrangementOnSurface2ConceptsTraits
 \cgalConcept
 
 The concept `ArrangementConstructXMonotoneCurveTraits_2` refines the basic

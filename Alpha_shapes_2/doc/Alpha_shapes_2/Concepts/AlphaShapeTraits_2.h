@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlphaShape2Concepts
+\ingroup PkgAlphaShapes2Concepts
 \cgalConcept
 
 The concept `AlphaShapeTraits_2` describes the requirements for the geometric traits

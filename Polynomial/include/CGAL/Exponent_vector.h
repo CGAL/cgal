@@ -62,7 +62,6 @@ public:
   };
     
   Exponent_vector(const std::vector<int>& v_): v(v_){};
-  Exponent_vector(const Exponent_vector& ev): v(ev.v){};
 
   template <class InputIterator>
   Exponent_vector(InputIterator begin , InputIterator end)
@@ -170,7 +169,10 @@ inline std::ostream& operator << (std::ostream& os, const Exponent_vector& ev) {
 
 namespace std{
 template <> inline 
-void swap(CGAL::Exponent_vector& ev1, CGAL::Exponent_vector& ev2){
+void swap(CGAL::Exponent_vector& ev1, CGAL::Exponent_vector& ev2)
+  CGAL_NOEXCEPT(std::is_nothrow_move_constructible<CGAL::Exponent_vector>::value
+                && std::is_nothrow_move_assignable<CGAL::Exponent_vector>::value)
+{
   ev1.swap(ev2);
 }
 

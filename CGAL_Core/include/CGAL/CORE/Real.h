@@ -46,11 +46,11 @@ typedef RCImpl<RealRep> RCReal;
 class Real : public RCReal {
 public:
   Real(int i=0) : RCReal(new RealLong(i)) {}
-  Real(unsigned int ui) : RCReal(NULL) {
+  Real(unsigned int ui) : RCReal(nullptr) {
     (ui<=INT_MAX) ? (rep=new RealLong(static_cast<int>(ui))) : (rep=new RealBigInt(ui));
   }
   Real(long l) : RCReal(new RealLong(l)) {}
-  Real(unsigned long ul) : RCReal(NULL) {
+  Real(unsigned long ul) : RCReal(nullptr) {
     (ul<=LONG_MAX) ? (rep=new RealLong(static_cast<long>(ul))) : (rep=new RealBigInt(ul));
   }
   Real(float f) : RCReal(new RealDouble(f)) {}
@@ -58,10 +58,10 @@ public:
   Real(const BigInt& I) : RCReal(new RealBigInt(I)) {}
   Real(const BigRat& R) : RCReal(new RealBigRat(R)) {}
   Real(const BigFloat& F) : RCReal(new RealBigFloat(F)) {}
-  Real(const char* s, const extLong& prec=get_static_defInputDigits()) : RCReal(NULL) {
+  Real(const char* s, const extLong& prec=get_static_defInputDigits()) : RCReal(nullptr) {
     constructFromString(s, prec);
   }
-  Real(const std::string& s, const extLong& prec=get_static_defInputDigits()) : RCReal(NULL){
+  Real(const std::string& s, const extLong& prec=get_static_defInputDigits()) : RCReal(nullptr){
     constructFromString(s.c_str(), prec);
   }
 

@@ -1,10 +1,10 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Surface_mesh_simplification_Examples )
 
 
-cmake_minimum_required(VERSION 2.8.11)
 
 
 
@@ -17,10 +17,6 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 
 # Boost and its components
 find_package( Boost )
@@ -45,15 +41,9 @@ endif()
 # include for local directory
 
 # include for local package
-include_directories( BEFORE ../../include )
-
-
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
-
 
 create_single_source_cgal_program( "edge_collapse_constrain_sharp_edges.cpp" )
 create_single_source_cgal_program( "edge_collapse_constrained_border_polyhedron.cpp" )
@@ -64,6 +54,7 @@ create_single_source_cgal_program( "edge_collapse_linear_cell_complex.cpp" )
 create_single_source_cgal_program( "edge_collapse_constrained_border_surface_mesh.cpp" )
 create_single_source_cgal_program( "edge_collapse_all_short_edges.cpp" )
 create_single_source_cgal_program( "edge_collapse_bounded_normal_change.cpp" )
+create_single_source_cgal_program( "edge_collapse_visitor_surface_mesh.cpp" )
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "edge_collapse_OpenMesh.cpp" )

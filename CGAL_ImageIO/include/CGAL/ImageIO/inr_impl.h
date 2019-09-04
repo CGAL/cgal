@@ -164,9 +164,9 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
     
     
     /* write user strings */
-    if ( im->user != NULL ) {
+    if ( im->user != nullptr ) {
       for(i = 0; i < im->nuser; i++) {
-	if ( im->user[i] == NULL ) continue;
+	if ( im->user[i] == nullptr ) continue;
 	pos += strlen(im->user[i]) + 2;
 	if(ImageIO_write(im, "#", 1) == 0) return -1;
 	if(ImageIO_write(im, im->user[i], strlen(im->user[i])) == 0) return -1;
@@ -236,7 +236,7 @@ CGAL_INLINE_FUNCTION
 int readInrimageHeader(const char *,_image *im) {
   char str[257];
   int n, nusr;
-  stringListHead strl = { NULL, NULL };
+  stringListHead strl = { nullptr, nullptr };
   stringListElement *oel, *el;
 
   Set_numeric_locale num_locale("C");
@@ -412,8 +412,8 @@ int readInrimageHeader(const char *,_image *im) {
       if(nusr > 0) {
 	im->nuser = nusr;
 	im->user = (char **) ImageIO_alloc(im->nuser * sizeof(char *));
-	oel = NULL;
-	for(el = strl.begin, n = 0; el != NULL; el = oel, n++) {
+	oel = nullptr;
+	for(el = strl.begin, n = 0; el != nullptr; el = oel, n++) {
 	  im->user[n] = el->string;
 	  oel = el->next;
 	  ImageIO_free(el);
@@ -437,8 +437,8 @@ static void addStringElement(stringListHead *strhead, const char *str) {
   /* was strdup(str); */
   el->string = (char*)ImageIO_alloc( strlen(str)+1);
   memcpy(el->string, str,  strlen(str)+1);
-  el->next = NULL;
-  if(strhead->begin == NULL)
+  el->next = nullptr;
+  if(strhead->begin == nullptr)
     strhead->begin = strhead->end = el;
   else {
     strhead->end->next = el;
@@ -481,7 +481,7 @@ int writeInrimage(char *name,_image *im) {
     fprintf(stderr, "writeInrimage: error: unable to write header of \'%s\'\n",
 	    name);
     ImageIO_close( im );
-    im->fd = NULL;
+    im->fd = nullptr;
     im->openMode = OM_CLOSE;
     return( res );
   }
@@ -490,13 +490,13 @@ int writeInrimage(char *name,_image *im) {
     fprintf(stderr, "writeInrimage: error: unable to write data of \'%s\'\n",
 	    name);
     ImageIO_close( im );
-    im->fd = NULL;
+    im->fd = nullptr;
     im->openMode = OM_CLOSE;
     return -1;
   }
 
   ImageIO_close( im );
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
 
   return ( res );  

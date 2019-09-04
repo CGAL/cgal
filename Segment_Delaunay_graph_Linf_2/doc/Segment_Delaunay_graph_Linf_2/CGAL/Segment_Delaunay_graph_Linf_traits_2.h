@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSDGLinf
+\ingroup PkgSegmentDelaunayGraphLinf2Ref
 
 The class `Segment_Delaunay_graph_Linf_traits_2` provides a model for the
 `SegmentDelaunayGraphLinfTraits_2` concept.
@@ -36,7 +36,7 @@ struct Segment_Delaunay_graph_Linf_traits_2 {
 namespace CGAL {
 
 /*!
-\ingroup PkgSDGLinf
+\ingroup PkgSegmentDelaunayGraphLinf2Ref
 
 The class `Segment_Delaunay_graph_Linf_traits_without_intersections_2`
 provides a model for the

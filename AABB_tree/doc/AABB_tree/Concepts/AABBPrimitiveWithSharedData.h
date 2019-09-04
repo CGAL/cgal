@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgAABB_treeConcepts
+\ingroup PkgAABBTreeConcepts
 \cgalConcept
 
 The concept `AABBPrimitiveWithSharedData` describes the requirements for the primitives

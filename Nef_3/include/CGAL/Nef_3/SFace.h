@@ -125,9 +125,9 @@ class SFace_base {
       verr << "begin CGAL::SNC_items<...>::SFace_base::is_valid( verb=true, "
 	"level = " << level << "):" << std::endl;
 
-      bool valid =(center_vertex_ != Vertex_handle() && center_vertex_ != NULL);
+      bool valid =(center_vertex_ != Vertex_handle() && center_vertex_ != nullptr);
       valid = valid && (volume_ != Volume_handle() &&
-			volume_ != NULL);
+			volume_ != nullptr);
 
       if(boundary_entry_objects_.empty()) {
 	valid = valid && 

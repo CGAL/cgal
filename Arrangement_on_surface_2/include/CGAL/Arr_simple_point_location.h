@@ -96,9 +96,9 @@ protected:
 public:
   /*! Default constructor. */
   Arr_simple_point_location() : 
-    m_arr(NULL),
-    m_geom_traits(NULL),
-    m_topol_traits(NULL)
+    m_arr(nullptr),
+    m_geom_traits(nullptr),
+    m_topol_traits(nullptr)
   {}
         
   /*! Constructor given an arrangement. */
@@ -122,9 +122,9 @@ public:
   /*! Detach from the current arrangement object. */
   void detach()
   {
-    m_arr = NULL;
-    m_geom_traits = NULL;
-    m_topol_traits = NULL;
+    m_arr = nullptr;
+    m_geom_traits = nullptr;
+    m_topol_traits = nullptr;
   }
  
   /*!

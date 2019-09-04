@@ -28,6 +28,8 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/predicates/sign_of_determinant.h>
+
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/Filtered_traits_base_2.h>

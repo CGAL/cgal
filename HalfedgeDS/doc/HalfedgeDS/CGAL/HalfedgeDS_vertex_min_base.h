@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHDS_VHF
+\ingroup PkgHalfedgeDS_VHF
 
 The class `HalfedgeDS_vertex_min_base` is a model of the `HalfedgeDSVertex` 
 concept. `Refs` is an instantiation of a `HalfedgeDS`. It is 

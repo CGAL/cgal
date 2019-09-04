@@ -43,7 +43,7 @@ class LineC2
   typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Line_2               Line_2;
 
-  typedef cpp11::array<FT, 3>               Rep;
+  typedef std::array<FT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

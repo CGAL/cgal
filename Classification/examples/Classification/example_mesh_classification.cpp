@@ -85,7 +85,7 @@ int main (int argc, char** argv)
   std::vector<int> label_indices(mesh.number_of_faces(), -1);
   
   std::cerr << "Using ETHZ Random Forest Classifier" << std::endl;
-  Classification::ETHZ_random_forest_classifier classifier (labels, features);
+  Classification::ETHZ::Random_forest_classifier classifier (labels, features);
 
   std::cerr << "Loading configuration" << std::endl;
   std::ifstream in_config (filename_config, std::ios_base::in | std::ios_base::binary);

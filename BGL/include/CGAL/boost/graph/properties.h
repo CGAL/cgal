@@ -25,7 +25,8 @@
 #include <CGAL/property_map.h>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/foreach.hpp>
+#include <boost/type_traits/is_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include <CGAL/Dynamic_property_map.h>
 
 #include <CGAL/basic.h>
@@ -130,7 +131,7 @@ void init_face_indices(PolygonMesh& pm,
                        Tag)
 {
   typename boost::property_traits<FaceIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
+  for(typename boost::graph_traits<PolygonMesh>::face_descriptor fd :
                 faces(pm))
   {
     put(fid, fd, i);
@@ -144,7 +145,7 @@ void init_vertex_indices(PolygonMesh& pm,
                          Tag)
 {
   typename boost::property_traits<VertexIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
+  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd :
                 vertices(pm))
   {
     put(vid, vd, i);
@@ -158,7 +159,7 @@ void init_halfedge_indices(PolygonMesh& pm,
                            Tag)
 {
   typename boost::property_traits<HalfedgeIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd,
+  for(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd :
                 halfedges(pm))
   {
     put(hid, hd, i);
@@ -267,7 +268,9 @@ struct Edge_index_accessor
   reference operator[](Handle h) const { return h.id(); }
 };
 
-template<typename Handle, typename ValueType, typename Reference>
+template<typename Handle, typename ValueType, typename Reference,
+         bool is_const = boost::is_const<
+                           typename boost::remove_reference<Reference>::type >::value>
 struct Point_accessor
   : boost::put_get_helper< Reference, Point_accessor<Handle, ValueType, Reference> >
 {
@@ -275,6 +278,26 @@ struct Point_accessor
   typedef Reference                      reference;
   typedef ValueType                      value_type;
   typedef Handle                         key_type;
+
+  reference operator[](Handle h) const { return h->point(); }
+};
+
+// partial specialization for const map to make them constructible from non-const map
+template<typename Handle, typename ValueType, typename ConstReference>
+struct Point_accessor<Handle, ValueType, ConstReference, true>
+  : boost::put_get_helper< ConstReference, Point_accessor<Handle, ValueType, ConstReference, true> >
+{
+  typedef boost::lvalue_property_map_tag category;
+  typedef ConstReference                      reference;
+  typedef ValueType                      value_type;
+  typedef Handle                         key_type;
+
+  typedef typename boost::mpl::if_< boost::is_reference<ConstReference>,
+                                    ValueType&,
+                                    ValueType >::type Reference;
+
+  Point_accessor() {}
+  Point_accessor(Point_accessor<Handle, ValueType, Reference, false>) {}
 
   reference operator[](Handle h) const { return h->point(); }
 };

@@ -3,6 +3,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 #include <CGAL/disable_warnings.h>
 
@@ -103,32 +104,25 @@ private:
   }
 };
 
-template <typename T_Geom_traits>
+template <typename GeomTraits>
 class Curve_compare {
 private:
-  typedef T_Geom_traits      Traits;
+  typedef GeomTraits            Geom_traits;
 
-  const Traits& m_traits;
+  const Geom_traits& m_traits;
 
 public:
-  typedef typename Traits::X_monotone_curve_2    X_monotone_curve_2;
-  typedef typename Traits::Point_2               Point_2;
+  typedef typename Geom_traits::X_monotone_curve_2    X_monotone_curve_2;
 
-  Curve_compare(const Traits& traits) : m_traits(traits) {}
+  Curve_compare(const Geom_traits& traits) : m_traits(traits) {}
 
   bool operator()(const X_monotone_curve_2& c1, const X_monotone_curve_2& c2)
   {
-    const Point_2& c1_left = m_traits.construct_min_vertex_2_object()(c1);
-    const Point_2& c2_left = m_traits.construct_min_vertex_2_object()(c2);
-
-    CGAL::Comparison_result res =
-      m_traits.compare_xy_2_object()(c1_left, c2_left);
-
-    if (res == CGAL::SMALLER) return true;
-    if (res == CGAL::LARGER) return false;
-    CGAL_assertion(res == CGAL::EQUAL);
-    res = m_traits.compare_y_at_x_right_2_object()(c1, c2, c1_left);
-    return (res == CGAL::SMALLER) ? true : false;
+    typedef CGAL::Arr_traits_adaptor_2<Geom_traits>     Geom_traits_adaptor;
+    Geom_traits_adaptor geom_traits_adapter(m_traits);
+    typedef typename Geom_traits_adaptor::Compare_xy_2  Compare_xy_2;
+    Compare_xy_2 cmp_xy = geom_traits_adapter.compare_xy_2_object();
+    return (CGAL::SMALLER == cmp_xy(c1, c2));
   }
 };
 

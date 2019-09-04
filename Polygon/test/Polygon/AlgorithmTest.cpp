@@ -1,4 +1,4 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Polygon_2_algorithms.h>
 
@@ -192,7 +192,7 @@ int main()
   cout << "-   testing polygon algorithms with cartesian/double   -" << endl;
   cout << "--------------------------------------------------------" << endl;
   cout << endl;
-  typedef CGAL::Cartesian<double> R1;
+  typedef CGAL::Simple_cartesian<double> R1;
 
   typedef CGAL::Point_2<R1> Point1;
   test_polygon(R1(), Point1(), "data/polygon_cartesian.dat");

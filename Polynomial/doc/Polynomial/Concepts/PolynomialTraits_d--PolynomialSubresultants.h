@@ -3,8 +3,6 @@
 \ingroup PkgPolynomialConcepts
 \cgalConcept
 
-<B>Note:</B> This functor is optional! 
-
 Computes the polynomial subresultant of two polynomials \f$ p\f$ and \f$ q\f$ of 
 type `PolynomialTraits_d::Polynomial_d` with respect to outermost variable. 
 Let 
@@ -22,6 +20,8 @@ In the case that \f$ n=m\f$, \f$ \mathrm{Sres_n}\f$ is set to \f$ q\f$.
 The result is written in an output range, starting with the \f$ 0\f$-th subresultant 
 \f$ \mathrm{Sres}_0(p,q)\f$ 
 (aka as the resultant of \f$ p\f$ and \f$ q\f$). 
+
+\note This functor is optional.
 
 \cgalRefines `AdaptableBinaryFunction` 
 \cgalRefines `CopyConstructible` 

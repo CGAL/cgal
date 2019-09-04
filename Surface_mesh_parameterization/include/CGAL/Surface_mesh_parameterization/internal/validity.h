@@ -34,7 +34,6 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 
 #include <vector>
@@ -73,7 +72,7 @@ bool has_flips(const TriangleMesh& mesh,
   Vector_3 first_triangle_normal(0., 0., 0.);
   bool is_normal_set = false;
 
-  BOOST_FOREACH(face_descriptor fd, faces) {
+  for(face_descriptor fd : faces) {
     // Get 3 vertices of the facet
     halfedge_descriptor hd = halfedge(fd, mesh);
     vertex_descriptor vd0 = target(hd, mesh);
@@ -265,7 +264,7 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   // Create the corresponding vector of bounding boxes
   std::vector<Box> boxes;
 
-  BOOST_FOREACH(face_descriptor fd, faces) {
+  for(face_descriptor fd : faces) {
     halfedge_descriptor hd = halfedge(fd, mesh);
     vertex_descriptor vd0 = target(hd, mesh);
     vertex_descriptor vd1 = target(next(hd, mesh), mesh);
@@ -286,7 +285,7 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   std::vector<const Box*> boxes_ptr;
   boxes_ptr.reserve(boxes.size());
 
-  BOOST_FOREACH(Box& b, boxes)
+  for(Box& b : boxes)
     boxes_ptr.push_back(&b);
 
   // Run the self intersection algorithm with all defaults

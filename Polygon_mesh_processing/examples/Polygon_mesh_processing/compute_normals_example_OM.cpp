@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
@@ -34,10 +33,10 @@ int main(int argc, char* argv[])
   mesh.add_property(vnormals.handle());
 
   Vector v(0, 0, 0);
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+  for(vertex_descriptor vd : vertices(mesh)){
       put(vnormals, vd, v); 
     }
-  BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+  for(face_descriptor fd : faces(mesh)){
       put(fnormals, fd, v); 
     }
   CGAL::Polygon_mesh_processing::compute_normals
@@ -48,11 +47,11 @@ int main(int argc, char* argv[])
      geom_traits(K()));
 
   std::cout << "Face normals :" << std::endl;
-  BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+  for(face_descriptor fd : faces(mesh)){
     std::cout << fnormals[fd] << std::endl;
   }
   std::cout << "Normals at vertices :" << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+  for(vertex_descriptor vd : vertices(mesh)){
     std::cout << vnormals[vd] << std::endl;
   }
   return 0;

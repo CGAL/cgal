@@ -12,7 +12,7 @@
 
 template <typename Iterator> // better be RandomAccessIterator, because
                           // std::distance() is used
-CGAL::cpp11::tuple<
+std::tuple<
   typename std::iterator_traits<Iterator>::value_type,
   typename std::iterator_traits<Iterator>::value_type,
   typename std::iterator_traits<Iterator>::value_type,
@@ -40,7 +40,7 @@ compute_max_min_sum_size(Iterator begin, Iterator end)
 
   const size_type size = std::distance(begin, end);
 
-	return CGAL::cpp11::make_tuple(maximum, minimum,  sum, size);
+	return std::make_tuple(maximum, minimum,  sum, size);
 }
 
 void output_legend(std::ostream* out_stream = &std::cout, std::string prefix = "")

@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3SecondaryConcepts
+\ingroup PkgMesh3SecondaryConcepts
 \cgalConcept
 
 The concept `MeshDomainField_3` describes a scalar field which could be queried 

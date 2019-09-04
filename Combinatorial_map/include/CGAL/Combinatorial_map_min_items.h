@@ -43,7 +43,7 @@ namespace CGAL {
     struct Dart_wrapper
     {
       typedef CGAL::Dart< d, Refs > Dart;
-      typedef CGAL::cpp11::tuple<> Attributes;
+      typedef std::tuple<> Attributes;
     };
   };
 

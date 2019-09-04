@@ -1183,9 +1183,9 @@ std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
         } else {
                 // human-readable format
                 mpfr_exp_t expptr;
-                char *str = mpfr_get_str(NULL, &expptr, 10, 0, a.fr(),
+                char *str = mpfr_get_str(nullptr, &expptr, 10, 0, a.fr(),
                                 mpfr_get_default_rounding_mode());
-                if (str == NULL) return os << "@err@";
+                if (str == nullptr) return os << "@err@";
                 std::string s(str);
                 mpfr_free_str(str);
                 int i = 0;

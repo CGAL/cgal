@@ -1,7 +1,7 @@
 // Test file for the Interval_nt<bool> class.
 // Sylvain Pion, 1997-2005.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/exceptions.h>
 
@@ -211,7 +211,7 @@ bool multiplication_test()
   g = d * e;
   h = d * f;
   i = a * e;
-  j = j;
+  j = (IA_nt&)j;
 
   // When CGAL_IA_DEBUG is defined, it'll test the current rounding mode for
   // these operations.

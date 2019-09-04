@@ -177,7 +177,21 @@ public:
 
   Aff_transformation_3 operator*(const Aff_transformationC3 &t) const
   { return (*this->Ptr()) * (*t.Ptr()); }
-
+  
+  bool operator==(const Aff_transformationC3 &t)const
+  {
+    for(int i=0; i<3; ++i)
+      for(int j = 0; j< 4; ++j)
+        if(cartesian(i,j)!=t.cartesian(i,j))
+          return false;
+    return true;
+  }
+  
+  bool operator!=(const Aff_transformationC3 &t)const
+  {
+    return !(*this == t);
+  }
+  
 protected:
   Aff_transformation_3  transpose() const { return this->Ptr()->transpose(); }
 };

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2
+\ingroup PkgMinkowskiSum2Ref
 
 The `Polygon_triangulation_decomposition_2` class implements a convex
 decomposition of a polygon or a polygon with holes into triangles using

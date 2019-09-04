@@ -157,7 +157,7 @@ private:
   }
 
   void setup_if_intersecting_pointer_with_tag(Tag_false) {
-    Base::insert_point_on_segment_ptr = NULL;
+    Base::insert_point_on_segment_ptr = nullptr;
   }
 
   void setup_if_intersecting_pointer_with_tag(Tag_true) {

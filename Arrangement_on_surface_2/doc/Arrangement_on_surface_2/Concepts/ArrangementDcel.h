@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2ConceptsDCEL
+\ingroup PkgArrangementOnSurface2ConceptsDCEL
 \cgalConcept
 
 A doubly-connected edge-list (<span class="textsc">Dcel</span> for short) data-structure. It consists 

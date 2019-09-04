@@ -49,8 +49,8 @@ namespace CGAL {
 class CGAL_EXPORT Geomview_stream {
 public:
     Geomview_stream(const Bbox_3 &bbox = Bbox_3(0,0,0, 1,1,1),
-		    const char *machine = NULL,
-		    const char *login = NULL);
+		    const char *machine = nullptr,
+		    const char *login = nullptr);
 
     ~Geomview_stream();
 

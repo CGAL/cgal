@@ -70,7 +70,7 @@ struct Trait_for_cmp_tgt_theta_0{
   typename SK::FT 
   unsigned_tkz_coeff_normal( const typename SK::Point_3& C,const typename SK::FT& gamma_k) const
   {
-    return - CGAL_NTS sign(gamma_k)*C.y();
+    return - (int)CGAL_NTS sign(gamma_k)*C.y();
   }
 
   Tk_type

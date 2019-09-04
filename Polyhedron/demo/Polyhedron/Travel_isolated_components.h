@@ -65,13 +65,16 @@ public:
   // to be used in get_minimum_isolated_component function
   struct Minimum_visitor
   {
+    Minimum_visitor()
+      : minimum(-1)
+    {}
     template<class Descriptor>
-    void operator()(const std::vector<Descriptor>& C) {
-      if(!minimum) { minimum = C.size(); }
-      else         { minimum = (std::min)(*minimum, C.size()); }
+    void operator()(const std::vector<Descriptor>& C)
+    {
+      minimum = (std::min)(minimum, C.size());
     }
 
-    boost::optional<std::size_t> minimum;
+    std::size_t minimum;
   };
 
   // to be used in select_isolated_components function

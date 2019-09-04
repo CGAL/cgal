@@ -20,7 +20,6 @@
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <cassert>

@@ -107,7 +107,7 @@ public:
   // it will have been marked as already visited, and bugs appear...
 #ifdef CGAL_PERIODIC_TRIANGULATION_USE_VISITED_VERTEX_BOOLEAN
   // The typedef and the bool are used by Triangulation_data_structure::Vertex_extractor
-  // The names are choosen complicated so that we do not have to document them
+  // The names are chosen complicated so that we do not have to document them
   // (privacy by obfuscation)
   typedef bool Has_visited_for_vertex_extractor;
   bool visited_for_vertex_extractor;

@@ -35,7 +35,7 @@ class Tanglecube_implicit_function :
 {
   Q_OBJECT
   Q_INTERFACES(Implicit_function_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.Mesh3Demo.Implicit_function_interface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.Mesh3Demo.Implicit_function_interface/1.0" FILE "tanglecube_implicit_function.json")
 
 public:
   virtual QString name() const { return "Tanglecube function"; }

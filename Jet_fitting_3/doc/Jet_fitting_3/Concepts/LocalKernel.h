@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgJet_fitting_3Concepts
+\ingroup PkgJetFitting3Concepts
 \cgalConcept
 
 The concept `LocalKernel` describes the set of requirements to be 

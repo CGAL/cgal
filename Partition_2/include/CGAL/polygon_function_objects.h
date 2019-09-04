@@ -47,28 +47,28 @@ template <class Traits>
 class Is_convex_2
 {
   public:
-     Is_convex_2(Traits t): traits(t) {}
+     Is_convex_2(const Traits& t): traits(t) {}
   
      template <class ForwardIterator>
      bool operator()(ForwardIterator first, ForwardIterator last)
      {  return is_convex_2(first, last, traits); }
 
   private:
-     Traits  traits;
+     const Traits& traits;
 };
 
 template <class Traits>
 class Is_y_monotone_2
 {
   public:
-     Is_y_monotone_2(Traits t): traits(t) {}
+     Is_y_monotone_2(const Traits& t): traits(t) {}
   
      template <class ForwardIterator>
      bool operator()(ForwardIterator first, ForwardIterator last)
      {  return is_y_monotone_2(first, last, traits); }
 
   private:
-     Traits  traits;
+     const Traits& traits;
 };
 
 }

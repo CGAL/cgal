@@ -27,7 +27,7 @@ A polygon mesh can have any number of connected components, and also some self-i
 In this package, a polygon mesh is considered to have the topology of a 2-manifold.
 
 \subsection PMPAPI API
-This package follows the BGL API described in \ref PkgBGLSummary.
+This package follows the BGL API described in \ref PkgBGL.
 It can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
 any class model of the concept `FaceGraph`. Each function or class of this package
 details the requirements on the input polygon mesh.
@@ -39,18 +39,19 @@ and provides a list of the parameters that are used in this package.
 \subsection PMPOutline Outline
 The algorithms described in this manual are organized in sections:
 - \ref PMPMeshing : meshing algorithms, including triangulation of non-triangulated
-meshes, refinement, optimization by fairing, and isotropic remeshing of triangulated surface meshes.
+meshes, refinement, optimization by fairing, isotropic remeshing of triangulated surface meshes
+and smoothing algorithms.
 - \ref Coref_section : methods to corefine triangle meshes and to compute
   boolean operations out of corefined closed triangle meshes.
 - \ref PMPHoleFilling : available hole filling algorithms, which can possibly be combined with refinement and fairing.
-- \ref PMPPredicates : predicates that can be evaluated on the processed polygon
+- \ref PMPPredicates : predicates that can be evaluated on the processed polygon.
 mesh, which includes point location and self intersection tests.
-- \ref PMPOrientation : checking or fixing the \ref PMPOrientation of a polygon soup.
-- \ref PMPRepairing :  reparation of polygon meshes and polygon soups.
+- \ref PMPOrientation : checking or fixing the orientation of a polygon soup.
+- \ref PMPRepairing :  repair of polygon meshes and polygon soups.
 - \ref PMPNormalComp : normal computation at vertices and on faces of a polygon mesh.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
-  components of a polygon mesh (extraction, marks, removal, ...)
+  components of a polygon mesh (extraction, marks, removal, ...).
 
 ****************************************
 \section PMPMeshing Meshing
@@ -122,6 +123,59 @@ Isotropic remeshing. (a) Triangulated input surface mesh.
 (d) Surface mesh with the selection uniformly remeshed.
 \cgalFigureEnd
 
+\subsubsection Smoothing
+
+Smoothing of a triangulated mesh region can be achieved with algorithms that aim at either mesh smoothing or shape smoothing.
+While mesh smoothing is achieved by improving the quality of triangles based on criteria such as angle and area,
+shape smoothing is designed to be \e intrinsic, depending as little as possible on the discretization
+and smoothing the shape alone without optimizing the shape of the triangles.
+
+- Mesh smoothing: `CGAL::Polygon_mesh_processing::smooth_mesh()` moves vertices to optimize geometry around each vertex:
+it can try to equalize the angles between incident edges, or (and) move vertices so that areas of adjacent triangles tend to equalize.
+Border vertices are considered constrained and do not move at any step of the procedure. No vertices are inserted at any time.
+Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}.
+Since area smoothing considers only areas as a smoothing criterion, it may result in long and skinny
+triangles. To paliate this phenomenon, area smoothing is followed by an (optional) step of Delaunay-based edge flips.
+In any case, area smoothing is guaranteed to improve the spatial distribution of the vertices
+over the area that is being smoothed. A simple example can be found in \ref Polygon_mesh_processing/mesh_smoothing_example.cpp.
+
+\cgalFigureAnchor{PMPFigMeshSmoothing}
+<center>
+<img src="mesh_smoothing.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{PMPFigMeshSmoothing}
+Mesh smoothing of the closed surface <i>blobby</i>, containing self-intersections (circled in red). For each smoothing combination,
+10 iterations were applied. From left to right:
+(a) Input mesh;
+(b) Smoothing based on areas without using Delaunay flips;
+(c) Smoothing based on areas with Delaunay flips;
+(d) Smoothing based on angles;
+(e) Smoothing based on angles and areas, with Delaunay flips.
+\cgalFigureCaptionEnd
+
+\cgalFigureBegin{Fig_smooth_stats, smooth_statistics.png}
+Statistics for the various combinations of mesh smoothing.
+\cgalFigureEnd
+
+- Shape smoothing: `CGAL::Polygon_mesh_processing::smooth_shape()`
+incrementally moves vertices towards a weighted barycenter of their neighbors along the mean curvature flow.
+The curvature flow algorithm for shape smoothing is based on Desbrun et al. \cgalCite{cgal:dmsb-ifamdcf-99} and on Kazhdan et al. \cgalCite{kazhdan2012can}.
+The algorithm uses the mean curvature flow to calculate the translation of vertices along the surface normal with a speed equal
+to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster.
+If the region around a vertex is flat, this vertex does not move (zero curvature). To avoid the formation
+of undesirable neck pinches (cylindrical surface areas that form singularities) the algorithm slows
+down the evolution in cylindrical regions. The smoothed shape converges to a sphere while staying
+conformally equivalent to its original shape.
+A simple example can be found in \ref Polygon_mesh_processing/shape_smoothing_example.cpp.
+
+\cgalFigureAnchor{PMPFigShapeSmoothing}
+<center>
+<img src="shape_smoothing.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{PMPFigShapeSmoothing}
+Shape smoothing of the devil model, using the mean curvature flow with a time step equal to 0.05 and
+constraining border vertices (located at the neck, where the mesh is open).
+\cgalFigureCaptionEnd
 
 \subsection MeshingExamples Meshing Examples
 
@@ -229,7 +283,7 @@ centered in the output volume is a topological ball. At the surface level this m
 that no non-manifold vertex or edge is allowed in the output. For example, it
 is not possible to compute the union of two cubes that are disjoint but sharing an edge.
 In case you have to deal with such scenarios, you should consider using the
-package \ref PkgNef3Summary.
+package \ref PkgNef3.
 
 It is possible to update the input so that it contains the result (in-place operation).
 In that case the whole mesh will not be copied and only the region around the
@@ -309,7 +363,7 @@ This package provides an algorithm for filling one closed hole that is either in
 or defined by a sequence of points that describe a polyline.
 The main steps of the algorithm are described in \cgalCite{liepa2003filling} and can be summarized as follows.
 
-First, the largest patch triangulating the boundary of the hole is generated without introducing any new vertex. 
+First, the largest patch triangulating the boundary of the hole is generated without introducing any new vertex.
 The patch is selected so as to minimize a quality function evaluated for all possible triangular patches.
 The quality function first minimizes the worst dihedral angle between patch triangles,
 then the total surface area of the patch as a tiebreaker.
@@ -335,10 +389,10 @@ From left to right: (a) the hole,
 \subsection HoleFillingAPI API
 
 This package provides four functions for hole filling:
-	- `triangulate_hole_polyline()` : given a sequence of points defining the hole, triangulates the hole.
-	- `triangulate_hole()` : given a border halfedge on the boundary of the hole on a mesh, triangulates the hole.
-	- `triangulate_and_refine_hole()` : in addition to `triangulate_hole()` the generated patch is refined.
-	- `triangulate_refine_and_fair_hole()` : in addition to `triangulate_and_refine_hole()` the generated patch is also faired.
+  - `triangulate_hole_polyline()` : given a sequence of points defining the hole, triangulates the hole.
+  - `triangulate_hole()` : given a border halfedge on the boundary of the hole on a mesh, triangulates the hole.
+  - `triangulate_and_refine_hole()` : in addition to `triangulate_hole()` the generated patch is refined.
+  - `triangulate_refine_and_fair_hole()` : in addition to `triangulate_and_refine_hole()` the generated patch is also faired.
 
 \subsection HFExamples Examples
 
@@ -372,51 +426,65 @@ iteratively filled, refined and faired to get a faired mesh with no hole.
 The hole filling algorithm has a complexity which depends on the
 number of vertices.  While \cgalCite{liepa2003filling} has a running
 time of \f$ O(n^3)\f$ , \cgalCite{zou2013algorithm} in most cases has
-running time of \f$ O(n \log n)\f$.  We were running
-`triangulate_refine_and_fair_hole()` for the below meshes (and two
-more meshes with smaller holes). The machine used is a PC running
-Windows 10 with an Intel Core i7 CPU clocked at 2.70 GHz. 
-The program has been compiled with Visual C++ 2013 compiler with the O2
-option which maximizes speed.
+running time of \f$ O(n \log n)\f$. We benchmarked the function
+`triangulate_refine_and_fair_hole()` for the two meshes below (as well as two
+more meshes with smaller holes). The machine used was a PC running
+Windows 10 with an Intel Core i7 CPU clocked at 2.70 GHz.
+The program was compiled with the Visual C++ 2013 compiler with the O2
+option, which maximizes speed.
 
 \cgalFigureBegin{Elephants, elephants-with-holes.png}
 The elephant on the left/right has a hole with 963/7657 vertices.
 \cgalFigureEnd
 
-This takes time
+The following running times were observed:
 
+<center>
 |  # vertices | without Delaunay (sec.) | with Delaunay (sec.)|
-| ----:       | ----:                   | ----:               | 
+| ----:       | ----:                   | ----:               |
   565         | 8.5                     | 0.03                |
   774         | 21                      | 0.035               |
   967         | 43                      | 0.06                |
  7657         | na                      | 0.4                 |
-
+</center>
 
 ***************************************
 \section PMPPredicates Predicates
 
 This packages provides several predicates to be evaluated with respect to a triangle mesh.
 
-\subsection PMPSelIntersections Self Intersections
+\subsection PMPDoIntersect Intersections Detection
+Intersection tests between triangle meshes and/or polylines can be done using
+\link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink.
+Additionally, the function `CGAL::Polygon_mesh_processing::intersecting_meshes()`
+records all pairs of intersecting meshes in a range.
 
-Self intersections can be detected from a triangle mesh, by calling the predicate
+\subsubsection PMPSelIntersections Self Intersections
+
+Self intersections within a triangle mesh can be detected by calling the function
 `CGAL::Polygon_mesh_processing::does_self_intersect()`.
 Additionally, the function `CGAL::Polygon_mesh_processing::self_intersections()`
 reports all pairs of intersecting triangles.
 
-\cgalFigureBegin{SelfIntersections, selfintersections.jpg}
-Detecting self-intersections on a triangle mesh.
-The intersecting triangles are displayed in dark grey on the right image.
-\cgalFigureEnd
-
 \subsubsection SIExample Self Intersections Example
+
+The following example illustrates the detection of self intersection in the `pig.off` mesh.
+The detected self-intersection is illustrated on Figure \cgalFigureRef{SelfIntersections}.
+
 \cgalExample{Polygon_mesh_processing/self_intersections_example.cpp}
 
+\cgalFigureAnchor{SelfIntersections}
+<center>
+<img src="selfintersections.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{SelfIntersections}
+Detecting self-intersections on a triangle mesh.
+The intersecting triangles are displayed in dark grey and red on the right image.
+\cgalFigureCaptionEnd
 
 \subsection PMPInsideTest Side of Triangle Mesh
 
-The class `CGAL::Side_of_triangle_mesh` provides a functor that tests whether a query point is 
+The class `CGAL::Side_of_triangle_mesh` provides a functor that tests whether a query point is
 inside, outside, or on the boundary of the domain bounded by a given closed triangle mesh.
 
 A point is said to be on the bounded side of the domain bounded by the input triangle mesh
@@ -435,102 +503,62 @@ input triangle mesh.
 \subsubsection InsideExample Inside Test Example
 \cgalExample{Polygon_mesh_processing/point_inside_example.cpp}
 
-\subsection PMPDoIntersect Intersections Detection
-Intersection tests between triangle meshes and/or polylines can be done using
-\link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink.
-Additionally, the function `CGAL::Polygon_mesh_processing::intersecting_meshes()`
-records all pairs of intersecting meshes in a range.
+\subsection PMPShapePredicates Shape Predicates
+
+Badly shaped or, even worse, completely degenerate elements of a polygon mesh are problematic
+in many algorithms which one might want to use on the mesh.
+This package offers a toolkit of functions to detect such undesirable elements.
+- `CGAL::Polygon_mesh_processing::is_degenerate_edge()`, to detect if an edge is degenerate
+  (that is, if its two vertices share the same geometric location).
+- `CGAL::Polygon_mesh_processing::is_degenerate_triangle_face()`, to detect if a face is
+  degenerate (that is, if its three vertices are collinear).
+- `CGAL::Polygon_mesh_processing::degenerate_edges()`, to collect degenerate edges within a range of edges.
+- `CGAL::Polygon_mesh_processing::degenerate_faces()`, to collect degenerate faces within a range of faces.
+- `CGAL::Polygon_mesh_processing::is_cap_triangle_face()`
+- `CGAL::Polygon_mesh_processing::is_needle_triangle_face()`
+
+\subsection PMPLocationFunctions Surface Location Functions
+
+To ease the manipulation of points on a surface, \cgal offers a multitude of functions based upon
+a different representation of a point on a polygon mesh: the point is represented as a pair of
+a face of the polygon mesh and a triplet of barycentric coordinates. This definition enables
+a robust handling of polylines between points living in the same face: for example, two 3D segments
+created by four points within the same face that should intersect might not actually intersect due to
+inexact computations. However, manipulating these same points through their barycentric coordinates
+can instead be done, and intersections computed in the barycentric space will not suffer
+from the same issues. Furthermore, this definition is only dependent on the intrinsic dimension
+of the surface (i.e. 2) and not on the ambient dimension within which the surface is embedded.
+
+The functions of the group \ref PMP_locate_grp offer the following functionalities:
+location computations (`CGAL::Polygon_mesh_processing::locate()`, and similar) given a point,
+finding the nearest point on a mesh given a point or a ray
+(`CGAL::Polygon_mesh_processing::locate_with_AABB_tree()`, and similar), and location-based predicates
+(for example, `CGAL::Polygon_mesh_processing::is_on_face_border()`).
 
 ****************************************
 \section PMPOrientation Orientation
 
-This package provides functions dealing with the orientation of faces in a closed polygon mesh.
+This package offers multiple functions to compute consistent face orientations for set of faces
+(Section \ref PolygonSoups) and polygon meshes (Section \ref OrientingPolygonMeshes).
+Section \ref PolygonSoupExample offers an example of combination of these functions.
 
-The function `CGAL::Polygon_mesh_processing::is_outward_oriented()` checks whether
-an oriented polygon mesh is oriented such that the normals to all faces are oriented towards the
-outside of the domain bounded by the input polygon mesh.
-
-The function
-`CGAL::Polygon_mesh_processing::reverse_face_orientations()` reverses the orientation
-of halfedges around faces.
-As a consequence, the normal computed for each face (see Section
-\ref PMPNormalComp) is also reversed.
-
-The \ref PolygonSoupExample puts these functions at work on a polygon soup.
-
-The function `CGAL::Polygon_mesh_processing::orient()` makes each connected component
-of a closed polygon mesh outward or inward oriented.
-
-The function `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()` orients
-the connected components of a closed polygon mesh so that it bounds a volume
-(see \ref coref_def_subsec for the precise definition).
-
-
-****************************************
-\section PMPRepairing Combinatorial Repairing 
-*******************
-\subsection Stitching
-
-It happens that a polygon mesh has several edges and vertices that are duplicated.
-For those edges and vertices, the connectivity of the mesh is incomplete, if not considered incorrect.
-
-Stitching the borders of such a polygon mesh consists in two main steps.
-First, border edges that are similar but duplicated are detected and paired.
-Then, they are "stitched" together so that the edges and vertices duplicates are removed
-from the mesh, and each of these remaining edges is incident to exactly two faces.
-
-The function \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
- performs such repairing operation. The input mesh should be manifold.
-Otherwise, stitching is not guaranteed to succeed.
-
-\subsubsection StitchingExample Stitching Example
-
-The following example applies the stitching operation to a simple quad mesh
-with duplicated border edges.
-
-\cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
-
-*******************
-\if READY_TO_PUBLISH
-\subsection DegenerateFaces Removing Degenerate Faces
-
-Some degenerate faces may be part of a given triangle mesh.
-A face is considered \e degenerate if two of its vertices
-share the same location,
-or in general if its three vertices are collinear.
-The function
-`CGAL::Polygon_mesh_processing::remove_degenerate_faces()`
-removes those faces and fixes the connectivity of the newly cleaned up mesh.
-It is also possible to remove isolated vertices from any polygon mesh, using the function
-`CGAL::Polygon_mesh_processing::remove_isolated_vertices()`.
-
-\subsubsection RemoveDegenerateExample Example
-
-In the following example, the degenerate faces of a triangle mesh
-are removed, the connectivity is fixed, and the number of removed faces
-is output.
-
-\cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
-\endif
-*******************
 \subsection PolygonSoups Polygon Soups
 
 When the faces of a polygon mesh are given but the connectivity is unknown,
-we must deal with of a \e polygon \e soup.
+this set of faces is called a \e polygon \e soup.
 
-Before running any of the algorithms on the so-called 
-polygon soup, one should ensure that the polygons are consistently oriented.
+Before running any of the algorithms on a polygon soup,
+one should ensure that the polygons are consistently oriented.
 To do so, this package provides the function
 `CGAL::Polygon_mesh_processing::orient_polygon_soup()`,
 described in \cgalCite{gueziec2001cutting}.
 
 To deal with polygon soups that cannot be converted to a
-combinatorial manifold surface, some points are duplicated.
+combinatorially manifold surface, some points must be duplicated.
 Because a polygon soup does not have any connectivity (each point
 has as many occurrences as the number of polygons it belongs to),
 duplicating one point (or a pair of points)
-amounts to duplicate the polygon to which it belongs.
-
+amounts to duplicating the polygon to which it belongs.
 The duplicated points are either an endpoint of an edge incident to more
 than two polygons, an endpoint of an edge between
 two polygons with incompatible orientations (during the re-orientation process),
@@ -545,8 +573,24 @@ to build a valid polygon mesh.
 The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 performs this mesh construction step.
 
+\subsection OrientingPolygonMeshes Polygon Meshes
 
-\subsubsection PolygonSoupExample Polygon Soup Example
+This package provides functions dealing with the orientation of faces in a closed polygon mesh.
+
+- The function `CGAL::Polygon_mesh_processing::orient()` makes each connected component
+of a closed polygon mesh outward- or inward-oriented.
+- The function `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()` orients
+the connected components of a closed polygon mesh so that it bounds a volume
+(see \ref coref_def_subsec for the precise definition).
+- The function `CGAL::Polygon_mesh_processing::is_outward_oriented()` checks whether
+an oriented polygon mesh is oriented such that the normals to all faces are oriented towards the
+outside of the domain bounded by the input polygon mesh.
+- The function `CGAL::Polygon_mesh_processing::reverse_face_orientations()` reverses the orientation
+of halfedges around faces.
+As a consequence, the normal computed for each face (see Section
+\ref PMPNormalComp) is also reversed.
+
+\subsection PolygonSoupExample Orientation Example
 
 This example shows how to generate a mesh from a polygon soup.
 The first step is to get a soup of consistently oriented faces, before
@@ -555,9 +599,97 @@ In this example, some orientation tests are performed on the output
 polygon mesh to illustrate
 Section \ref PMPOrientation.
 
-\cgalExample{Polygon_mesh_processing/polygon_soup_example.cpp}
+\cgalExample{Polygon_mesh_processing/orient_polygon_soup_example.cpp}
 
+****************************************
+\section PMPRepairing Combinatorial Repairing
 
+*******************
+\subsection PSRepairing Polygon Soup Repairing
+To ensure that a polygon soup can be oriented (see Section \ref PolygonSoups) and transformed
+into a workable polygon mesh, it might be necessary to preprocess the data to remove combinatorial
+and geometrical errors. This package offers the following functions:
+- `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`,
+- `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`,
+- `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`,
+
+as well as the function `CGAL::Polygon_mesh_processing::repair_polygon_soup()`,
+which bundles the previous functions and an additional handful of repairing techniques
+to obtain an as-clean-as-possible polygon soup.
+
+\subsection Stitching
+
+When handling polygon meshes, it might happen that a mesh has several edges and vertices that are duplicated.
+For those edges and vertices, the connectivity of the mesh is incomplete, if not considered incorrect.
+
+Stitching the borders of a polygon mesh can be done to fix some of the duplication.
+It consists in two main steps. First, border edges that are geometrically identical but duplicated
+are detected and paired. Then, they are "stitched" together so that edges and vertices duplicates
+are removed from the mesh, and each of these remaining edges is incident to exactly two faces.
+
+The functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()`, `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`,
+and `CGAL::Polygon_mesh_processing::stitch_borders()` can perform such repairing operations: the first two
+functions can be used to stitch halfedges that are part of the same boundary(ies), whereas the third
+function is more generic and can also stitch halfedges that live on different borders.
+
+The input mesh should be manifold; otherwise, stitching is not guaranteed to succeed.
+
+\subsubsection StitchingExample Stitching Example
+
+The following example applies the stitching operation to a simple quad mesh
+with duplicated border edges.
+
+\cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
+
+\if READY_TO_PUBLISH
+
+\subsection DegenerateFaces Removing Degenerate Faces
+
+Some degenerate faces may be part of a given triangle mesh.
+A face is considered \e degenerate if two of its vertices
+share the same location, or more generally if its three vertices are collinear.
+The function `CGAL::Polygon_mesh_processing::remove_degenerate_faces()`
+removes those faces and fixes the connectivity of the newly cleaned up mesh.
+It is also possible to remove isolated vertices from any polygon mesh, using the function
+`CGAL::Polygon_mesh_processing::remove_isolated_vertices()`.
+
+\subsubsection RemoveDegenerateExample Example
+
+In the following example, the degenerate faces of a triangle mesh
+are removed, the connectivity is fixed, and the number of removed faces
+is output.
+
+\cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
+\endif
+
+\subsection PMPManifoldness Polygon Mesh Manifoldness
+This package offers repairing methods to clean ill-formed polygon soups,
+see Section \ref PMPRepairing.
+
+Non-manifold vertices can be detected using the function `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`.
+The function `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()` can be used
+to attempt to create a combinatorially manifold surface mesh by splitting any non-manifold vertex
+into as many vertices as there are manifold sheets at this geometric position.
+Note however that the mesh will still not be manifold from a geometric
+point of view, as the positions of the new vertices introduced at a non-manifold vertex are identical
+to the input non-manifold vertex.
+
+\subsubsection FixNMVerticeExample Manifoldness Repair Example
+
+In the following example, a non-manifold configuration is artifically created and
+fixed with the help of the functions described above.
+
+\cgalExample{Polygon_mesh_processing/manifoldness_repair_example.cpp}
+
+\subsection PMPDuplicateVertexBoundaryCycle Duplicated Vertices in Boundary Cycles
+
+Similarly to the problematic configuration described in the previous section, another issue that can be present
+in a polygon mesh is the occurrence of a "pinched" hole, that is the configuration where, when
+starting from a border halfedge and walking the halfedges of this border, a geometric position appears
+more than once (although, with different vertices) before reaching the initial border halfedge again. The functions
+`CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()` and
+`CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`, which merge
+vertices at identical positions, can be used to repair this configuration.
 
 ****************************************
 \section PMPNormalComp Computing Normals
@@ -569,7 +701,7 @@ These computations are performed with :
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
 - `CGAL::Polygon_mesh_processing::compute_vertex_normal()`
 
-We further provide functions to compute all the normals to faces,
+Furthermore, we provide functions to compute all the normals to faces,
 or to vertices, or to both :
 - `CGAL::Polygon_mesh_processing::compute_face_normals()`
 - `CGAL::Polygon_mesh_processing::compute_vertex_normals()`
@@ -577,13 +709,11 @@ or to vertices, or to both :
 
 Property maps are used to record the computed normals.
 
-
 \subsection NormalsExample Normals Computation Examples
 
-Property maps are an API introduced in the boost library, that allows to
+Property maps are an API introduced in the boost library that allows to
 associate values to keys. In the following examples we associate
 a normal vector to each vertex and to each face.
-
 
 \subsubsection NormalsExampleSM Normals Computation for a Surface Mesh
 
@@ -651,14 +781,22 @@ enable the user to keep and remove only a selection of connected components,
 provided either as a range of faces that belong to the desired connected components
 or as a range of connected component ids (one or more per connected component).
 
-`CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
-enables the user to keep only the largest connected components. This feature can
-for example be useful for noisy data were small connected components
-should be discarded in favour of major connected components.
-
 When a triangle mesh has no boundary a notion the 3D space is partition is different volumes.
 The function `CGAL::Polygon_mesh_processing::volume_connected_components()` can be used to assign to
 each face an id per volume defined by the surface connected components.
+
+Finally, it can be useful to quickly remove some connected components, for example for noisy data
+where small connected components should be discarded in favor of major connected components.
+The function `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
+enables the user to keep only a given number from the largest connected components. The size
+of a connected component is given by the sum of the sizes of the faces it contains; by default,
+the size of a face is `1` and thus the size of a connected component is equal to the number of faces
+it contains. However, it is also possible to pass a face size map, such that the size of the face
+is its area, for example.
+Similarly to the previous function, the function
+`CGAL::Polygon_mesh_processing::keep_large_connected_components()` can be used to discard all connected
+components whose size is below a user-defined threshold.
+
 
 \subsection CCExample Connected Components Example
 
@@ -712,7 +850,7 @@ In the following example, a mesh is isotropically remeshed and the approximate d
 \subsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
 In \ref Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp,
 a triangulated surface mesh is constructed from a point set using the
-\link PkgPoissonSurfaceReconstructionSummary Poisson reconstruction algorithm \endlink,
+\link PkgPoissonSurfaceReconstruction3 Poisson reconstruction algorithm \endlink,
 and the distance between the point set and the reconstructed surface is computed
 with the following code:
 
@@ -730,7 +868,7 @@ that respectively detect the sharp edges, compute the patch indices, and give ea
 
 \subsection DetectFeaturesExample Feature Detection Example
 In the following example, we count how many edges of `pmesh` are incident to two faces
-which normals form an angle smaller than 90 degrees,
+whose normals form an angle smaller than 90 degrees,
 and the number of surface patches that are separated by these edges.
 
 \cgalExample{Polygon_mesh_processing/detect_features_example.cpp}

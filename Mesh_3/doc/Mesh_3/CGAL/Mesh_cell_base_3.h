@@ -3,7 +3,7 @@ namespace CGAL {
 
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 <!-- Meta-comment: this class cannot be deprecated by
 Compact_mesh_cell_base_3, because the later has a different API.
 -- Laurent Rineau, 2013/10/16
@@ -35,8 +35,6 @@ of the concept `RegularTriangulationCellBaseWithWeightedCircumcenter_3` and defa
 template< typename Gt,  typename MD, typename Cb >
 class Mesh_cell_base_3 : public Cb {
 public:
-
-/// @}
 
 }; /* end Mesh_cell_base_3 */
 } /* end namespace CGAL */

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
 The class `Mesh_criteria_3` is a model of both concepts `MeshCriteria_3` 
 and `MeshCriteriaWithFeatures_3`. 

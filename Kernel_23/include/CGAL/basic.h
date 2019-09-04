@@ -35,9 +35,6 @@
 // This cannot be disabled for now until we have a clear idea which
 // compilers implement N3276.
 
-// #if !defined(CGAL_CFG_NO_CPP0X_DECLTYPE)
-//   #define BOOST_RESULT_OF_USE_DECLTYPE
-// #endif
 #include <CGAL/result_of.h>
 
 #include <CGAL/assertions.h>

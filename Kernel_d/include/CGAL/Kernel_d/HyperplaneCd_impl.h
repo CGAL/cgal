@@ -82,8 +82,8 @@ strong_cmp(const HyperplaneCd<FT,LA>& h1,
   int c1 = CGAL_NTS sign(h1.coefficient(i));
   int c2 = CGAL_NTS sign(h2.coefficient(i));
   if (c1 != c2) return CGAL_NTS compare(c1,c2);
-  FT s1 = (FT)CGAL_NTS sign(h2.coefficient(i)) * h2.coefficient(i); 
-  FT s2 = (FT)CGAL_NTS sign(h1.coefficient(i)) * h1.coefficient(i);
+  FT s1 = (FT)(int)CGAL_NTS sign(h2.coefficient(i)) * h2.coefficient(i);
+  FT s2 = (FT)(int)CGAL_NTS sign(h1.coefficient(i)) * h1.coefficient(i);
 
   Comparison_result c;
   while (++i <= d) { 

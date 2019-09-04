@@ -29,6 +29,7 @@
 #include <QApplication>
 
 #include "Meshing_thread.h"
+#include <CGAL/Three/Three.h>
 
 class Scene_c3t3_item;
 
@@ -62,10 +63,9 @@ run()
 {
   QTime timer;
   timer.start();
-  
+  CGAL::Three::Three::CursorScopeGuard guard(Qt::BusyCursor);
   f_->launch();
   time_ = double(timer.elapsed()) / 1000;
-  
   Q_EMIT done(this);
 }
 
@@ -75,9 +75,7 @@ Meshing_thread::
 stop()
 {
   f_->stop();
-  
-  // Block application until thread is deleted
-  QApplication::setOverrideCursor(Qt::WaitCursor);
+  QApplication::setOverrideCursor(Qt::WaitCursor); //restored in mesh_3_plugin lambda
 }
 
 

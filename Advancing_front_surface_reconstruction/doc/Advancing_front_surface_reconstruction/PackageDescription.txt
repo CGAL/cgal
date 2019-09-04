@@ -1,9 +1,9 @@
-/// \defgroup PkgAdvancingFrontSurfaceReconstruction Advancing Front Surface Reconstruction Reference
+/// \defgroup PkgAdvancingFrontSurfaceReconstructionRef Advancing Front Surface Reconstruction Reference
 
 /*!
-\addtogroup PkgAdvancingFrontSurfaceReconstruction
+\addtogroup PkgAdvancingFrontSurfaceReconstructionRef
 
-\cgalPkgDescriptionBegin{Advancing Front Surface Reconstruction,PkgAdvancingFrontSurfaceReconstructionSummary}
+\cgalPkgDescriptionBegin{Advancing Front Surface Reconstruction,PkgAdvancingFrontSurfaceReconstruction}
 \cgalPkgPicture{afsr-detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Tran Kai Frank Da, David Cohen-Steiner}
@@ -12,11 +12,11 @@ unorganized point set. Starting from a seed facet, a piecewise linear
 surface is grown by adding Delaunay triangles one by one. The most
 plausible triangles are added first, in a way that avoids the appearance
 of topological singularities. }
-\cgalPkgManuals{Chapter_Advancing_Front_Surface_Reconstruction,PkgAdvancingFrontSurfaceReconstruction}
+\cgalPkgManuals{Chapter_Advancing_Front_Surface_Reconstruction,PkgAdvancingFrontSurfaceReconstructionRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{\ref PkgTriangulation3Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation3}
 \cgalPkgBib{cgal:dc-afsr}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgShortInfoEnd
@@ -25,13 +25,13 @@ of topological singularities. }
 
 \cgalClassifedRefPages
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Advancing_front_surface_reconstruction`
 - `CGAL::Advancing_front_surface_reconstruction_vertex_base_3`
 - `CGAL::Advancing_front_surface_reconstruction_cell_base_3`
 
-## Functions ##
+\cgalCRPSection{Functions}
 
 - `CGAL::advancing_front_surface_reconstruction()`
 

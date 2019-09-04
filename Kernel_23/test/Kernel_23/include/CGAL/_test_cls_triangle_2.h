@@ -26,6 +26,7 @@
 
 #include <CGAL/Bbox_2.h>
 #include <cassert>
+#include <CGAL/use.h>
 
 template <class R>
 bool
@@ -35,9 +36,6 @@ _test_cls_triangle_2(const R& )
 
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
-
- typename R::Triangle_2 it;
- CGAL::Triangle_2<R> t0(it);
 
  RT n0 =  0;
  RT n1 =  1;
@@ -61,6 +59,10 @@ _test_cls_triangle_2(const R& )
  CGAL::Point_2<R> p7( n4, n0);        // ( 4, 0)
  CGAL::Point_2<R> p8(-n12,-n8,-n2);   // ( 6, 4)
  CGAL::Point_2<R> p9( n9, n9, n3);    // ( 3, 3)
+
+ typename R::Triangle_2 it0; CGAL_USE(it0); // test default-construction
+ typename R::Triangle_2 it(p1, p2, p3);
+ CGAL::Triangle_2<R> t0(it);
 
  CGAL::Triangle_2<R> t1( p1, p3, p5);
  CGAL::Triangle_2<R> t2( p3, p1, p5);

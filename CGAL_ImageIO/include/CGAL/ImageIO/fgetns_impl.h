@@ -36,7 +36,7 @@ char *fgetns(char *str, int n,  _image *im ) {
   memset( str, 0, n );
   char* ret = ImageIO_gets( im, str, n );
 
-  if(!ret) return NULL;
+  if(!ret) return nullptr;
 
   std::size_t l = strlen(str);
   if(l > 0 && str[l-1] == '\n') str[l-1] = '\0';

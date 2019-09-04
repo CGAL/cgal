@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Point Inside Polyhedron</string>
+   <string>Point Inside Facegraph</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -78,7 +78,7 @@
          <item>
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A selection is possible only if a point set item&lt;br/&gt;and a (closed) polyhedron item are selected&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A selection is possible only if a point set item&lt;br/&gt;and a (closed) surface mesh item are selected&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>

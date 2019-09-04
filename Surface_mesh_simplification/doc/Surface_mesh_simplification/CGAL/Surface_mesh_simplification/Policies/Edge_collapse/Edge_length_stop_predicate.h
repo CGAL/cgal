@@ -3,7 +3,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplification
+\ingroup PkgSurfaceMeshSimplificationRef
 
 The class `Edge_length_stop_predicate` is a model for the `StopPredicate` concept,
 which returns `true` when the top edge in the priority queue is larger than a certain threshold.

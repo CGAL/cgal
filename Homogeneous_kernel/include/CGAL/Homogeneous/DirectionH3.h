@@ -43,7 +43,7 @@ class DirectionH3
    typedef typename R_::Line_3               Line_3;
    typedef typename R_::Ray_3                Ray_3;
 
-    typedef cpp11::array<RT, 4>              Rep;
+    typedef std::array<RT, 4>              Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
  
     Base base;

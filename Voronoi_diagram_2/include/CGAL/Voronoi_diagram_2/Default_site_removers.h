@@ -69,7 +69,7 @@ public:
   typedef typename Site_remover::result_type           result_type;
 
 public:
-  Default_caching_site_remover(const Adaptation_traits* at = NULL) : at_(at) {}
+  Default_caching_site_remover(const Adaptation_traits* at = nullptr) : at_(at) {}
 
   result_type operator()(Delaunay_graph& dg, const Vertex_handle& v) const
   {

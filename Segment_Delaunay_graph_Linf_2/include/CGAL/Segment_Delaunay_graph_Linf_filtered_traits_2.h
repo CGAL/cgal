@@ -221,7 +221,7 @@ template<class CK,
 #ifdef CGAL_USE_GMP
 	 class EK      = Simple_cartesian< Gmpq >,
 #else
-	 class EK      = Simple_cartesian< MP_Float >,
+	 class EK      = Simple_cartesian< CGAL::Quotient<MP_Float> >,
 #endif
 	 class EK_MTag = Integral_domain_without_division_tag,
 	 class FK      = Simple_cartesian< Interval_nt<false> >,

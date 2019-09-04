@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgRangeSegmentTreesDSearchStructure
+\ingroup PkgSearchStructuresSearchStructure
 
 An object of the class `Range_tree_k` is a \f$ k\f$-dimensional range tree 
 that can store k-dimensional keys of type `Key`. 

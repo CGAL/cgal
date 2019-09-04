@@ -145,7 +145,7 @@ template <class T, class = void> struct pool1 {
 template <class T, class D> std::vector<T> pool1<T,D>::data;
 
 // Use an intrusive single-linked list instead (allocate one more limb and use
-// it to store the pointer to next), the difference isn't that noticable (still
+// it to store the pointer to next), the difference isn't that noticeable (still
 // the list wins).  Neither is thread-safe (both can be with threadlocal, and
 // the list can be with an atomic compare-exchange (never tried)).  With gcc,
 // TLS has a large effect on classes with constructor/destructor, but is free
@@ -228,15 +228,7 @@ inline int clz (boost::uint64_t x) {
 // In C++11, std::fill_n returns a pointer to the end, but in C++03,
 // it returns void.
 inline mp_limb_t* fill_n_ptr(mp_limb_t* p, int n, int c) {
-#if CGAL_CXX11
   return std::fill_n (p, n, c);
-#else
-  mp_limb_t* q = p + n;
-  std::fill (p, q, c);
-  //std::fill_n (p, n, c);
-  //memset (p, sizeof(mp_limb_t)*n, c);
-  return q;
-#endif
 }
 } // namespace Mpzf_impl
 
@@ -302,7 +294,13 @@ struct Mpzf {
     data()[-1] = mini;
   }
   void clear(){
-    while(*--data()==0); // in case we skipped final zeroes
+    // while(*--data()==0);
+    // This line gave a misscompilation by Intel Compiler 2019
+    // (19.0.0.117). I replaced it by the following two lines:
+    // -- Laurent Rineau, sept. 2018
+    --data();
+    while(*data()==0) { --data(); } // in case we skipped final zeroes
+
 #ifdef CGAL_MPZF_USE_CACHE
     if (data() == cache) return;
 #endif
@@ -350,8 +348,7 @@ struct Mpzf {
     exp=x.exp;
     if(size!=0) mpn_copyi(data(),x.data(),asize);
   }
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) \
-    && !defined(CGAL_MPZF_USE_CACHE)
+#if !defined(CGAL_MPZF_USE_CACHE)
   Mpzf(Mpzf&& x):data_(x.data()),size(x.size),exp(x.exp){
     x.init(); // yes, that's a shame...
     x.size = 0;
@@ -938,9 +935,7 @@ struct Mpzf {
   }
 
 #ifdef CGAL_USE_GMPXX
-#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
-#endif
   operator mpq_class () const {
     mpq_class q;
     export_to_mpq_t(q.get_mpq_t());
@@ -948,9 +943,7 @@ struct Mpzf {
   }
 #endif
 
-#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
-#endif
   operator Gmpq () const {
     Gmpq q;
     export_to_mpq_t(q.mpq());
@@ -977,9 +970,7 @@ struct Mpzf {
     }
   }
 #if 0
-#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
-#endif
 // This makes Mpzf==int ambiguous
   operator Gmpzf () const {
     mpz_t z;

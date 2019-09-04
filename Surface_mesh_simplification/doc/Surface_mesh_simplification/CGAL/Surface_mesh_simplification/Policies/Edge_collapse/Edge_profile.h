@@ -3,7 +3,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplification
+\ingroup PkgSurfaceMeshSimplificationRef
 
 The class `Edge_profile` provides a model for the `EdgeProfile` concept. 
 
@@ -18,8 +18,6 @@ The class `Edge_profile` provides a model for the `EdgeProfile` concept.
 template< typename TriangleMesh >
 class Edge_profile {
 public:
-
-/// @}
 
 }; /* end Surface_mesh_simplification::Edge_profile */
 } /* namespace Surface_mesh_simplification */

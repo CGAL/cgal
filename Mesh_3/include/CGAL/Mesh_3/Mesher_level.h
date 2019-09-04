@@ -426,7 +426,7 @@ public:
     for (int i = 0 ; i < 4 ; ++i)
       vertices[i] = e->vertex(i);
   }
-  // Among the 4 values, one of them will be Vertex_handle() (~= NULL)
+  // Among the 4 values, one of them will be Vertex_handle() (~= nullptr)
   void get_valid_vertices_of_element(const Facet &e, Vertex_handle vertices[4]) const
   {
     for (int i = 0 ; i < 4 ; ++i)
@@ -859,7 +859,7 @@ public:
   {
 
     CGAL_assertion_msg(triangulation().get_lock_data_structure() == 0,
-      "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be NULL");
+      "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be nullptr");
 
     while(! is_algorithm_done()
       && triangulation().number_of_vertices() < approx_max_num_mesh_vertices)
@@ -1048,6 +1048,11 @@ public:
     {
       // Lock the element area on the grid
       Element element = derivd.extract_element_from_container_value(ce);
+
+      // This is safe to do with the concurrent compact container because even if the element `ce`
+      // gets removed from the TDS at this point, it is not actually deleted in the cells container and
+      // `ce->vertex(0-3)` still points to a vertex of the vertices container whose `.point()`
+      // can be safely accessed (even if that vertex has itself also been removed from the TDS).
       bool locked = derivd.try_lock_element(element, FIRST_GRID_LOCK_RADIUS);
 
       if( locked )

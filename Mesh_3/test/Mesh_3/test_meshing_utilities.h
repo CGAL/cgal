@@ -247,7 +247,7 @@ struct Tester
     std::cout << "\tQuality before optimization: " << original
               << " - Quality after optimization: " << modified << std::endl;
     
-    assert(original <= modified);
+    assert(original <= modified * (1. + 1e-15) /*precision of double*/ );
   }
   
   template<typename C3t3>

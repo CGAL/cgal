@@ -1,6 +1,6 @@
 
 /*!
- * \ingroup PkgMeanCurvatureSkeleton3Concepts
+ * \ingroup PkgSurfaceMeshSkeletonizationConcepts
  * \cgalConcept
  *
  * Traits class concept defining the requirements of the class `CGAL::Mean_curvature_flow_skeletonization`.

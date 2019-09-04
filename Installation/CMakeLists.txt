@@ -4,17 +4,13 @@
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
 if(NOT PROJECT_NAME)
+  cmake_minimum_required(VERSION 3.1...3.15)
   project(CGAL CXX C)
 endif()
 
-# Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1)
-
-# Tested version:
-cmake_policy(VERSION 3.1)
 
 if(POLICY CMP0056)
-  # http://www.cmake.org/cmake/help/v3.2/policy/CMP0056.html
+  # https://cmake.org/cmake/help/v3.2/policy/CMP0056.html
   #
   # Fix a bug: `try_compile` should use `CMAKE_EXE_LINKER_FLAGS`.
   # That variable can contain important flags like
@@ -32,7 +28,7 @@ include(GNUInstallDirs)
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" FALSE)
+option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" TRUE)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -108,10 +104,12 @@ else ( CGAL_BRANCH_BUILD )
 
   # Enable testing with BUILD_TESTING
   option(BUILD_TESTING "Build the testing tree." OFF)
-  include(CTest)
   if(BUILD_TESTING AND NOT POLICY CMP0064)
     message(FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 or later.
 The variable BUILD_TESTING must be set of OFF.")
+  endif()
+  if(BUILD_TESTING)
+    enable_testing()
   endif()
 endif (CGAL_BRANCH_BUILD )
 
@@ -364,10 +362,17 @@ endif()
 #   CGAL-4.10  : 13.0.0 (Change the API/ABI in CGAL_ImageIO.)
 #   CGAL-4.11  : 13.0.1 (Nothing different in CGAL compiled libraries.)
 #   CGAL-4.12  : 13.0.2 (Nothing different in CGAL compiled libraries.)
+#   CGAL-4.14  : 14.0.0 , but only for CGAL_ImageIO (ABI broken in CGAL::Image_3.)
+#                              and for CGAL_Qt5 (ABI broken in DemoMainWindow)
+#   CGAL-4.14  : 13.0.3 , for other libraries
 # ¹) According to http://upstream-tracker.org/versions/cgal.html
 
-set( CGAL_SONAME_VERSION "13" )
-set( CGAL_SOVERSION      "13.0.2" )
+set( CGAL_SONAME_VERSION         "13"     )
+set( CGAL_SOVERSION              "13.0.3" )
+set( CGAL_ImageIO_SONAME_VERSION "14"     )
+set( CGAL_ImageIO_SOVERSION      "14.0.0" )
+set( CGAL_Qt5_SONAME_VERSION     "14"     )
+set( CGAL_Qt5_SOVERSION          "14.0.0" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
@@ -561,8 +566,8 @@ message("== Detect external libraries ==")
 # Remarks: 
 #  External libs configured when Qt5 lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
-#  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 BLAS LAPACK ESBTL Coin3D NTL IPE)
+#  There exists FindIPE, FindMKL, but they are only used to support supporting libs
+list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 ESBTL Coin3D NTL IPE)
 if (NOT WIN32)
   # GMPXX is not supported on WIN32 machines
   list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 1 GMPXX)
@@ -604,6 +609,8 @@ if(CGAL_DISABLE_GMP)
   unset(WITH_CGAL_Core CACHE)
   unset(WITH_GMP)
   unset(WITH_GMP CACHE)
+  unset(CGAL_USE_GMP)
+  unset(CGAL_USE_GMP CACHE)
   unset(WITH_GMPXX)
   unset(WITH_GMPXX CACHE)
   unset(WITH_MPFR)
@@ -901,7 +908,7 @@ install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
-if ( GMP_IN_CGAL_AUXILIARY OR MPFR_IN_CGAL_AUXILIARY )
+if ( IS_DIRECTORY auxiliary/gmp/include AND IS_DIRECTORY auxiliary/gmp/lib )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
   install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
 endif()

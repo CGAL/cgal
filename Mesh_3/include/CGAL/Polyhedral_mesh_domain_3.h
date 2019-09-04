@@ -138,7 +138,7 @@ class Get_face_index_pmap<Polyhedron_type, false> {
 public:
   Get_face_index_pmap(const Polyhedron_type& polyhedron) {
     int id = 0;
-    BOOST_FOREACH(face_descriptor f, faces(polyhedron))
+    for(face_descriptor f : faces(polyhedron))
     {
       face_ids[f] = id++;
     }
@@ -201,7 +201,7 @@ public:
   typedef typename Mesh_3::internal::Index_generator<
     Subdomain_index, Surface_patch_index>::type           Index;
 
-  typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
+  typedef std::tuple<Point_3,Index,int> Intersection;
 
 
   typedef typename IGT::FT         FT;
@@ -212,96 +212,25 @@ public:
   BOOST_MPL_HAS_XXX_TRAIT_DEF(HalfedgeDS)
 
   template <typename P>
-  struct Primitive {
-    typedef typename boost::graph_traits<P>::face_descriptor face_descriptor_t;
-
-    face_descriptor_t face_descriptor;
-    const P* graph;
-
-    typedef Triangle_from_face_descriptor_map<P>   Triangle_pmap;
-    typedef One_point_from_face_descriptor_map<P>  Point_pmap;
-
-    typedef typename Triangle_pmap::value_type              Datum;
-    typedef typename Point_pmap::value_type                 Point;
-    typedef Primitive                                       Id;
-
-    Primitive() : face_descriptor(), graph() {}
-
-    template <typename IndexIterator>
-    Primitive(IndexIterator it, const P& polyhedron)
-      : face_descriptor(*it), graph(&polyhedron)
-    {}
-
-    bool operator==(const Primitive& other) const {
-      return other.face_descriptor == this->face_descriptor
-        && other.graph == this->graph;
-    }
-
-    Datum datum() const {
-      return get(Triangle_pmap(graph), face_descriptor);
-    }
-
-    Point reference_point() const {
-      return get(Point_pmap(graph), face_descriptor);
-    }
-
-    Id id() const {
-      return *this;
-    }
-  }; // Primitive template, for face graphs
-
-  template <typename P, bool is_a_CGAL_Polyhedron_3 = has_HalfedgeDS<P>::value>
   struct Primitive_type {
-    typedef Primitive<P> type;
+      //setting OneFaceGraphPerTree to false transforms the id type into 
+      //std::pair<FD, const FaceGraph*>.
+    typedef AABB_face_graph_triangle_primitive<P, typename boost::property_map<P,vertex_point_t>::type, CGAL::Tag_false> type;
 
     static
     typename IGT_::Triangle_3 datum(const typename type::Id primitive_id) {
-      CGAL::Triangle_from_face_descriptor_map<P> pmap(primitive_id.graph);
-      return get(pmap, primitive_id.face_descriptor);
+      CGAL::Triangle_from_face_descriptor_map<P> pmap(primitive_id.second);
+      return get(pmap, primitive_id.first);
     }
 
     static Surface_patch_index get_index(const typename type::Id primitive_id) {
       return get(get(face_patch_id_t<Patch_id>(),
-                     *primitive_id.graph),
-                 primitive_id.face_descriptor);
+                     *primitive_id.second),
+                 primitive_id.first);
     }
   }; // Primitive_type (for non-Polyhedron_3)
 
-  template <typename P> struct Primitive_type<P, true> {
-    typedef AABB_face_graph_triangle_primitive<P > type;
-
-    static
-    typename IGT_::Triangle_3 datum(const typename type::Id face_handle) {
-      typedef typename IGT_::Point_3 Point;
-      const Point& a = face_handle->halfedge()->vertex()->point();
-      const Point& b = face_handle->halfedge()->next()->vertex()->point();
-      const Point& c = face_handle->halfedge()->next()->next()->vertex()->point();
-      return typename IGT_::Triangle_3(a,b,c);
-    }
-
-    static Surface_patch_index get_index(const typename type::Id face_handle,
-                                         Tag_false)
-    {
-      typename boost::property_map<P, face_patch_id_t<Patch_id> >::type pmap;
-      return get(pmap, face_handle);
-    }
-
-    static Surface_patch_index get_index(const typename type::Id,
-                                         Tag_true)
-    {
-      return Surface_patch_index(0,1);
-    }
-
-    static Surface_patch_index get_index(const typename type::Id face_handle)
-    {
-      namespace m = boost::mpl;
-      return get_index(face_handle,
-                       Boolean_tag<m::or_<boost::is_same<Patch_id, void>,
-                                          boost::is_same<Patch_id, Tag_false>
-                       >::value>());
-    }
-  }; // Primitive_type specialized for CGAL::Polyehdron_3
-
+ 
 public:
   typedef typename Primitive_type<Polyhedron>::type       Ins_fctor_primitive;
   typedef CGAL::AABB_traits<IGT, Ins_fctor_primitive>     Ins_fctor_traits;
@@ -321,7 +250,7 @@ public:
 public:
 
   /// Default constructor
-  Polyhedral_mesh_domain_3(CGAL::Random* p_rng = NULL)
+  Polyhedral_mesh_domain_3(CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(&tree_)
     , p_rng_(p_rng)
@@ -333,7 +262,7 @@ public:
    * @param polyhedron the polyhedron describing the polyhedral surface
    */
   Polyhedral_mesh_domain_3(const Polyhedron& p,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(&tree_) // the bounding tree is tree_
     , p_rng_(p_rng)
@@ -348,7 +277,7 @@ public:
 
   Polyhedral_mesh_domain_3(const Polyhedron& p,
                            const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(new AABB_tree_)
     , p_rng_(p_rng)
@@ -378,7 +307,7 @@ public:
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
                            const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : p_rng_(p_rng)
     , delete_rng_(false)
   {
@@ -409,7 +338,7 @@ public:
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : p_rng_(p_rng)
   {
     if(begin != end) {
@@ -582,26 +511,16 @@ public:
         AABB_primitive_id primitive_id = intersection->second;
 
         // intersection may be either a point or a segment
-#if CGAL_INTERSECTION_VERSION > 1
         if ( const Bare_point* p_intersect_pt =
              boost::get<Bare_point>( &(intersection->first) ) )
-#else
-        if ( const Bare_point* p_intersect_pt =
-             object_cast<Bare_point>( &(intersection->first) ) )
-#endif
         {
           return Intersection(*p_intersect_pt,
                               r_domain_.index_from_surface_patch_index(
                                 r_domain_.make_surface_index(primitive_id)),
                               2);
         }
-#if CGAL_INTERSECTION_VERSION > 1
         else if ( const Segment_3* p_intersect_seg =
                   boost::get<Segment_3>(&(intersection->first)))
-#else
-        else if ( const Segment_3* p_intersect_seg =
-                  object_cast<Segment_3>(&(intersection->first)))
-#endif
         {
           CGAL_MESH_3_PROFILER("Mesh_3 profiler: Intersection is a segment");
 
@@ -845,13 +764,13 @@ Construct_initial_points::operator()(OutputIterator pts,
 
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
     Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
-    if(CGAL::cpp0x::get<2>(intersection) != 0) {
+    if(std::get<2>(intersection) != 0) {
 #else
     if(r_domain_.do_intersect_surface_object()(ray_shot)) {
       Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
 #endif
-      *pts++ = std::make_pair(CGAL::cpp0x::get<0>(intersection),
-                              CGAL::cpp0x::get<1>(intersection));
+      *pts++ = std::make_pair(std::get<0>(intersection),
+                              std::get<1>(intersection));
 
       --i;
 

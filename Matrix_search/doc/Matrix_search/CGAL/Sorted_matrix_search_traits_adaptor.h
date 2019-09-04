@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMatrixSearch
+\ingroup PkgMatrixSearchRef
 
 The class `Sorted_matrix_search_traits_adaptor` can be used
 as an adaptor to create sorted matrix search traits classes for

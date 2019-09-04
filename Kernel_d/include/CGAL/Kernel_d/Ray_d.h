@@ -114,7 +114,6 @@ starting at |s.source()|. \precond $s$ is not trivial. }*/
     "Ray_d::constructor: segment is trivial.");
 }
 
-Ray_d(const Ray_d<R>& r) : Base(r) {}
 
 /*{\Moperations 3 3}*/
 

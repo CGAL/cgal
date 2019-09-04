@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagramAdaptor2Points
+\ingroup PkgVoronoiDiagram2Points
 
 The class `Regular_triangulation_adaptation_traits_2` provides a model for the `AdaptationTraits_2` 
 concept. The template parameter of the `Regular_triangulation_adaptation_traits_2` class must be a 

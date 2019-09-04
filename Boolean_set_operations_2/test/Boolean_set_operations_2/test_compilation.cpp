@@ -18,10 +18,7 @@
 //typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
 typedef int Number_type;
 
-// instead of
-//typedef CGAL::Simple_cartesian<Number_type>            Kernel;
-// workaround for VC++ 
-struct Kernel : public CGAL::Simple_cartesian<Number_type> {};
+typedef CGAL::Simple_cartesian<Number_type>            Kernel;
 
 typedef CGAL::Gps_segment_traits_2<Kernel>            Traits;
 typedef CGAL::Polygon_set_2<Kernel>                   Ps;
