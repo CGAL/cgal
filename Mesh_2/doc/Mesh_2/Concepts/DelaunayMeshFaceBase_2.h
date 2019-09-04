@@ -32,7 +32,7 @@ typedef std::pair<DelaunayMeshFaceBase_2, int> Edge;
 /// @{
 
 /*!
-returns true if this face is in the domain to be refined.
+returns `true` if this face is in the domain to be refined.
 */
 bool is_in_domain() const;
 /*!
@@ -42,7 +42,7 @@ void set_in_domain(const bool b);
 
 
 /*!
-return true if this face has its circumcenter hidden
+returns `true` if this face has its circumcenter hidden
 by a constrained edge. It does not "see" it,
 following the Constrained Delaunay triangulation visibility criterion.
 */
@@ -56,13 +56,13 @@ void set_blind(const bool b);
 If this face is blind, this function returns
 the first constrained edge that prevents it from "seeing"
 its circumcenter.
-\pre is_blind() returns true
+\pre is_blind() returns `true`
 */
 Edge blinding_constraint() const;
 
 /*!
 sets the edge that makes this face blind.
-\pre is_blind() returns true
+\pre is_blind() returns `true`
 \pre e is a constrained edge
 */
 void set_blinding_constraint(const Egde& e);

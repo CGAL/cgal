@@ -154,8 +154,8 @@ PolygonGraphicsItem<P>::paint(QPainter *painter,
     Converter<Traits> convert;
 
     painter->setPen(verticesPen());
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
     for(typename P::Vertex_iterator it = poly->vertices_begin();
         it != poly->vertices_end();
         it++){

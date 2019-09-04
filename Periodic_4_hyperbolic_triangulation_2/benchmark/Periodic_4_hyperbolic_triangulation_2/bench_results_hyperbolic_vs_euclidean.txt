@@ -1,0 +1,23 @@
+---- for best results, make sure that you have compiled me in Release mode ----
+iteration 1: inserting into hyperbolic periodic triangulation...    DONE! (# of vertices = 1000000, time = 50.3773 secs)
+iteration 1: inserting into Euclidean non-periodic triangulation... DONE! (# of vertices = 1000000, time = 20.7566 secs)
+iteration 2: inserting into hyperbolic periodic triangulation...    DONE! (# of vertices = 1000000, time = 58.7336 secs)
+iteration 2: inserting into Euclidean non-periodic triangulation... DONE! (# of vertices = 1000000, time = 24.6808 secs)
+iteration 3: inserting into hyperbolic periodic triangulation...    DONE! (# of vertices = 1000000, time = 57.6734 secs)
+iteration 3: inserting into Euclidean non-periodic triangulation... DONE! (# of vertices = 1000000, time = 23.9461 secs)
+iteration 4: inserting into hyperbolic periodic triangulation...    DONE! (# of vertices = 1000000, time = 54.9728 secs)
+iteration 4: inserting into Euclidean non-periodic triangulation... DONE! (# of vertices = 1000000, time = 21.1166 secs)
+iteration 5: inserting into hyperbolic periodic triangulation...    DONE! (# of vertices = 1000000, time = 51.4028 secs)
+iteration 5: inserting into Euclidean non-periodic triangulation... DONE! (# of vertices = 1000000, time = 21.3222 secs)
+iteration 6: inserting into hyperbolic periodic triangulation...    DONE! (# of vertices = 1000000, time = 50.6842 secs)
+iteration 6: inserting into Euclidean non-periodic triangulation... DONE! (# of vertices = 1000000, time = 21.144 secs)
+iteration 7: inserting into hyperbolic periodic triangulation...    DONE! (# of vertices = 1000000, time = 52.2119 secs)
+iteration 7: inserting into Euclidean non-periodic triangulation... DONE! (# of vertices = 1000000, time = 21.848 secs)
+iteration 8: inserting into hyperbolic periodic triangulation...    DONE! (# of vertices = 1000000, time = 52.7987 secs)
+iteration 8: inserting into Euclidean non-periodic triangulation... DONE! (# of vertices = 1000000, time = 23.4349 secs)
+iteration 9: inserting into hyperbolic periodic triangulation...    DONE! (# of vertices = 1000000, time = 56.7236 secs)
+iteration 9: inserting into Euclidean non-periodic triangulation... DONE! (# of vertices = 1000000, time = 22.5812 secs)
+iteration 10: inserting into hyperbolic periodic triangulation...    DONE! (# of vertices = 1000000, time = 56.6275 secs)
+iteration 10: inserting into Euclidean non-periodic triangulation... DONE! (# of vertices = 1000000, time = 22.441 secs)
+Hyperbolic periodic     triangulation: average time = 54.2206
+Euclidean  non-periodic triangulation: average time = 22.3271

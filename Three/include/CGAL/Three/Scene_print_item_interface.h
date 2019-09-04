@@ -41,18 +41,18 @@ public:
   //! Prints all the vertices ids if their number is not too high. The limit is
   //! editable in the View menu of the application.
   //! \returns `false` if the number of ids is too high to be displayed.
-  virtual bool printVertexIds(CGAL::Three::Viewer_interface*) const= 0;
+  virtual bool printVertexIds() const= 0;
   //! Prints all the edges ids if their number is not too high. The limit is
   //! editable in the View menu of the application.
   //! \returns `false` if the number of ids is too high to be displayed.
-  virtual bool printEdgeIds(CGAL::Three::Viewer_interface*) const= 0;
+  virtual bool printEdgeIds() const= 0;
   //! Prints all the faces ids if their number is not too high. The limit is
   //! editable in the View menu of the application.
   //! \returns `false` if the number of ids is too high to be displayed.
-  virtual bool printFaceIds(CGAL::Three::Viewer_interface*) const= 0;
+  virtual bool printFaceIds() const= 0;
   //! Prints all the primitive ids if their number is not too high. The limit is
   //! editable in the View menu of the application.
-  virtual void printAllIds(CGAL::Three::Viewer_interface*) = 0;
+  virtual void printAllIds() = 0;
   //! \brief Tests if an id should be displayed or not.
   //!
   //! \returns true if the Id should be displayed

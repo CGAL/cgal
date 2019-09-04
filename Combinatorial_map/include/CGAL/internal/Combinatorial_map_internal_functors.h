@@ -84,7 +84,7 @@
  * internal::Reverse_orientation_of_connected_component_functor to reverse
  *   the orientation of a connected component in a cmap
  *
- * internal::Init_attribute_functor to initialize all attributes to NULL.
+ * internal::Init_attribute_functor to initialize all attributes to nullptr.
  *
  * internal::Correct_invalid_attributes_functor to correct the i-attribute
  *   associated with a given i-cell
@@ -114,9 +114,9 @@ struct Swap_attributes_functor
   template<unsigned int i>
   static void run( CMap& cmap1,
                    CMap& cmap2)
-  { CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+  { std::get<CMap::Helper::template Dimension_index<i>::value>
         (cmap1.mattribute_containers).swap(
-          CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+          std::get<CMap::Helper::template Dimension_index<i>::value>
           (cmap2.mattribute_containers));
    }
 };
@@ -159,9 +159,9 @@ struct Call_split_functor
       run(amap.template get_attribute<i>(a1),
           amap.template get_attribute<i>(a2));
     // Dynamic version
-    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+    if ( std::get<CMap::Helper::template Dimension_index<i>::value>
          (amap.m_onsplit_functors) )
-      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+      std::get<CMap::Helper::template Dimension_index<i>::value>
         (amap.m_onsplit_functors) (amap.template get_attribute<i>(a1),
                                     amap.template get_attribute<i>(a2));
   }
@@ -196,9 +196,9 @@ struct Call_merge_functor
       run(amap.template get_attribute<i>(a1),
           amap.template get_attribute<i>(a2));
     // Dynamic version
-    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+    if ( std::get<CMap::Helper::template Dimension_index<i>::value>
          (amap.m_onmerge_functors) )
-      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+      std::get<CMap::Helper::template Dimension_index<i>::value>
         (amap.m_onmerge_functors) (amap.template get_attribute<i>(a1),
                                    amap.template get_attribute<i>(a2));
   }
@@ -283,14 +283,14 @@ struct Test_is_valid_attribute_functor
       if ( !amap.template is_valid_attribute<i>(a) )
       {
         std::cout<<"ERROR: the dart associated with an "<<i
-                <<"-attribute is NULL for dart ";
+                <<"-attribute is nullptr for dart ";
         amap.display_dart(adart); std::cout<<std::endl;
         valid=false;
       }
       if ( amap.template dart_of_attribute<i>(a)!=amap.null_handle &&
            !found_dart )
       {
-        std::cout<<"ERROR: the non NULL dart of an "<<i
+        std::cout<<"ERROR: the non nullptr dart of an "<<i
                 <<"-attribute does not belong to the cell."<<std::endl;
         valid=false;
       }
@@ -499,7 +499,7 @@ struct Restricted_decrease_attribute_functor
         run(amap, adart); }
 };
 // ****************************************************************************
-/// Functor used to initialize all attributes to NULL.
+/// Functor used to initialize all attributes to nullptr.
 template<typename CMap>
 struct Init_attribute_functor
 {
@@ -791,9 +791,9 @@ struct Reverse_orientation_of_map_functor
     CGAL_precondition(amap.is_whole_map_unmarked(mymark));
     CGAL_precondition(amap.is_valid());
 
-    typename CMap::Dart_handle first=NULL, current=NULL, prev=NULL, next=NULL;
+    typename CMap::Dart_handle first=nullptr, current=nullptr, prev=nullptr, next=nullptr;
     typename CMap::Helper::template Attribute_handle<0>::type
-      first_attribute=NULL, next_attribute=NULL;
+      first_attribute=nullptr, next_attribute=nullptr;
 
     for (typename CMap::Dart_range::iterator current_dart=amap.darts().begin(),
            last_dart = amap.darts().end(); current_dart!=last_dart;
@@ -885,9 +885,9 @@ struct Reverse_orientation_of_connected_component_functor
     typename CMap::size_type mymark =
       (amark==CMap::INVALID_MARK?amap.get_new_mark():amark);
 
-    typename CMap::Dart_handle first=NULL, current=NULL, prev=NULL, next=NULL;
+    typename CMap::Dart_handle first=nullptr, current=nullptr, prev=nullptr, next=nullptr;
     typename CMap::Helper::template Attribute_handle<0>::type
-      first_attribute=NULL, next_attribute=NULL;
+      first_attribute=nullptr, next_attribute=nullptr;
 
     for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator
            current_dart=amap.template darts_of_cell<CMap::dimension+1>
@@ -984,7 +984,6 @@ struct Reverse_orientation_of_connected_component_functor<CMap, CGAL::Void>
 };
 // ****************************************************************************
 // Beta functor, used to combine several beta.
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 template<typename CMap, typename Dart_handle, typename ... Betas>
 struct Beta_functor;
 
@@ -1036,7 +1035,6 @@ struct Beta_functor_static<CMap, Dart_handle, B, Betas...>
   { return Beta_functor_static<CMap, Dart_handle, Betas...>::
         run(AMap, AMap.template get_beta<B>(ADart)); }
 };
-#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 // ****************************************************************************
 template<typename Container, class WitdId=
          typename Container::value_type::Has_id>

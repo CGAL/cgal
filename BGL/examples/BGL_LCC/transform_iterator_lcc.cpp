@@ -1,10 +1,10 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <fstream>
-
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+
 #include <algorithm>
+#include <fstream>
 
 typedef CGAL::Simple_cartesian<double>              Kernel;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> LCC_traits;

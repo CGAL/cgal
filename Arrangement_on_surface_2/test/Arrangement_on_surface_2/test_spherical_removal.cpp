@@ -85,7 +85,7 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   std::cout.flush();
   CGAL::insert_non_intersecting_curves(arr, xcurves.begin(), xcurves.end());
   std::cout << "inserted" << std::endl;
-  BOOST_FOREACH(Halfedge_handle hh, arr.halfedge_handles())
+  for(Halfedge_handle hh : arr.halfedge_handles())
       halfedges.push_back(hh);
 #endif
 
@@ -108,7 +108,7 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
 
   {
     std::cout << "Faces:" << std::endl;
-    BOOST_FOREACH(Arrangement_2::Face_handle fh, arr.face_handles())
+    for(Arrangement_2::Face_handle fh : arr.face_handles())
     {
       std::cout << "  Face: "
                 << &(fh)

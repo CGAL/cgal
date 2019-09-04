@@ -69,11 +69,11 @@ indexed  in such a way that the neighbor indexed by \f$ i\f$
 is opposite to the vertex with the same index.
 --->
 
-# Reference Pages Sorted by Type #
+\cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
-## Triangulation Data Structure ##
+\cgalCRPSection{Triangulation Data Structure}
 
 - `TriangulationDataStructure`
 - `TriangulationDataStructure::FullCell`
@@ -83,7 +83,7 @@ is opposite to the vertex with the same index.
 - `TriangulationDSFace`
 - `FullCellData`
 
-## Triangulations ##
+\cgalCRPSection{Triangulations}
 
 - `TriangulationTraits`
 - `DelaunayTriangulationTraits`
@@ -93,16 +93,16 @@ is opposite to the vertex with the same index.
 
 The latter two concepts are also abbreviated respectively as `TrVertex` and `TrFullCell`.
 
-## Classes ##
+\cgalCRPSection{Classes}
 
-## Triangulation Data Structure ##
+\cgalCRPSection{Triangulation Data Structure}
 
 - `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
 - `CGAL::Triangulation_ds_vertex<TriangulationDataStructure_>`
 - `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, TriangulationDSFullCellStoragePolicy>`
 - `CGAL::Triangulation_face<TriangulationDataStructure_>`
 
-## (Geometric) Triangulations ##
+\cgalCRPSection{(Geometric) Triangulations}
 
 - `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>`
 - `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`
@@ -110,11 +110,11 @@ The latter two concepts are also abbreviated respectively as `TrVertex` and `TrF
 - `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`
 - `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
 
-## Traits Classes ##
+\cgalCRPSection{Traits Classes}
 
 -  `CGAL::Regular_triangulation_traits_adapter<K>`
 
-## Enums ##
+\cgalCRPSection{Enums}
 
 - `CGAL::Triangulation::Locate_type`
 */

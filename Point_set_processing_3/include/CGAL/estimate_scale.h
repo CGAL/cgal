@@ -36,7 +36,7 @@
 #include <CGAL/random_simplify_point_set.h>
 #include <CGAL/Point_set_2.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <fstream>
@@ -494,15 +494,17 @@ estimate_local_k_neighbor_scales(
   OutputIterator output,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
   typedef typename Point_set_processing_3::GetQueryPointMap<QueryPointRange, NamedParameters>::const_type QueryPointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
   typedef typename boost::property_traits<PointMap>::value_type Point_d;
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  QueryPointMap query_point_map = choose_param(get_param(np, internal_np::query_point_map), QueryPointMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  QueryPointMap query_point_map = choose_parameter(get_parameter(np, internal_np::query_point_map), QueryPointMap());
 
   // Build multi-scale KD-tree
   internal::Quick_multiscale_approximate_knn_distance<Kernel, Point_d> kdtree (points.begin(),
@@ -570,9 +572,11 @@ estimate_global_k_neighbor_scale(
   const PointRange& points,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
   std::vector<std::size_t> scales;
   estimate_local_k_neighbor_scales (points, points, std::back_inserter (scales), np.query_point_map(point_map));
   std::sort (scales.begin(), scales.end());
@@ -643,15 +647,17 @@ estimate_local_range_scales(
   OutputIterator output,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
   typedef typename Point_set_processing_3::GetQueryPointMap<QueryPointRange, NamedParameters>::const_type QueryPointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
   typedef typename boost::property_traits<PointMap>::value_type Point_d;
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  QueryPointMap query_point_map = choose_param(get_param(np, internal_np::query_point_map), QueryPointMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  QueryPointMap query_point_map = choose_parameter(get_parameter(np, internal_np::query_point_map), QueryPointMap());
 
   // Build multi-scale KD-tree
   internal::Quick_multiscale_approximate_knn_distance<Kernel, Point_d> kdtree (points.begin(),
@@ -726,10 +732,12 @@ estimate_global_range_scale(
   const PointRange& points,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   std::vector<double> scales;
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
   estimate_local_range_scales (points, points, std::back_inserter (scales), np.query_point_map(point_map));
   std::sort (scales.begin(), scales.end());
   return std::sqrt (scales[scales.size() / 2]);
@@ -744,255 +752,6 @@ estimate_global_range_scale(const PointRange& points)
   return estimate_global_range_scale
     (points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API  
-template <typename SamplesInputIterator,
-          typename SamplesPointMap,
-          typename QueriesInputIterator,
-          typename QueriesPointMap,
-          typename OutputIterator,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_local_k_neighbor_scales(), please update your code")
-OutputIterator
-estimate_local_k_neighbor_scales(
-  SamplesInputIterator first, ///< iterator over the first input sample.
-  SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
-  SamplesPointMap samples_map, ///< property map: value_type of InputIterator -> Point_3 or Point_2
-  QueriesInputIterator first_query, ///< iterator over the first point where scale must be estimated
-  QueriesInputIterator beyond_query, ///< past-the-end iterator over the points where scale must be estimated
-  QueriesPointMap queries_map, ///< property map: value_type of InputIterator -> Point_3 or Point_2
-  OutputIterator output, ///< output iterator to store the computed scales
-  const Kernel& /*kernel*/) ///< geometric traits.
-{
-  return estimate_local_k_neighbor_scales
-    (CGAL::make_range (first, beyond),
-     CGAL::make_range (first_query, beyond_query),
-     output,
-     CGAL::parameters::point_map (samples_map).
-     query_point_map (queries_map).
-     geom_traits (Kernel()));
-}
-
-// deprecated API  
-template <typename SamplesInputIterator,
-          typename SamplesPointMap,
-          typename QueriesInputIterator,
-          typename QueriesPointMap,
-          typename OutputIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_local_k_neighbor_scales(), please update your code")
-OutputIterator
-estimate_local_k_neighbor_scales(
-  SamplesInputIterator first, ///< iterator over the first input sample.
-  SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
-  SamplesPointMap samples_map, ///< property map: value_type of InputIterator -> Point_3 or Point_2
-  QueriesInputIterator first_query, ///< iterator over the first point where scale must be estimated
-  QueriesInputIterator beyond_query, ///< past-the-end iterator over the points where scale must be estimated
-  QueriesPointMap queries_map, ///< property map: value_type of InputIterator -> Point_3 or Point_2
-  OutputIterator output) ///< output iterator to store the computed scales
-{
-  return estimate_local_k_neighbor_scales
-    (CGAL::make_range (first, beyond),
-     CGAL::make_range (first_query, beyond_query),
-     output,
-     CGAL::parameters::point_map (samples_map).
-     query_point_map (queries_map));
-}
-
-// deprecated API
-template <typename SamplesInputIterator,
-          typename QueriesInputIterator,
-          typename OutputIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_local_k_neighbor_scales(), please update your code")
-OutputIterator
-estimate_local_k_neighbor_scales(
-  SamplesInputIterator first, ///< iterator over the first input sample.
-  SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
-  QueriesInputIterator first_query, ///< iterator over the first point where scale must be estimated
-  QueriesInputIterator beyond_query, ///< past-the-end iterator over the points where scale must be estimated
-  OutputIterator output) ///< output iterator to store the computed scales
-{
-  return estimate_local_k_neighbor_scales
-    (CGAL::make_range (first, beyond),
-     CGAL::make_range (first_query, beyond_query),
-     output);
-}
-
-// deprecated API
-template <typename InputIterator,
-          typename PointMap,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_global_k_neighbor_scale(), please update your code")
-std::size_t
-estimate_global_k_neighbor_scale(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of InputIterator -> Point_3 or Point_2
-  const Kernel& kernel) ///< geometric traits.
-{
-  return estimate_global_k_neighbor_scale
-    (CGAL::make_range (first, beyond),
-     CGAL::parameters::point_map (point_map).
-     geom_traits (kernel));
-}
-
-// deprecated API
-template <typename InputIterator,
-          typename PointMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_global_k_neighbor_scale(), please update your code")
-std::size_t
-estimate_global_k_neighbor_scale(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map) ///< property map: value_type of InputIterator -> Point_3 or Point_2
-{
-  return estimate_global_k_neighbor_scale
-    (CGAL::make_range (first, beyond),
-     CGAL::parameters::point_map (point_map));
-}
-
-// deprecated API  
-template <typename InputIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_global_k_neighbor_scale(), please update your code")
-std::size_t
-estimate_global_k_neighbor_scale(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond) ///< past-the-end iterator over the input points.
-{
-  return estimate_global_k_neighbor_scale
-    (CGAL::make_range (first, beyond));
-}
-
-// deprecated API
-template <typename SamplesInputIterator,
-          typename SamplesPointMap,
-          typename QueriesInputIterator,
-          typename QueriesPointMap,
-          typename OutputIterator,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_local_range_scales(), please update your code")
-OutputIterator
-estimate_local_range_scales(
-  SamplesInputIterator first, ///< iterator over the first input sample.
-  SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
-  SamplesPointMap samples_map, ///< property map: value_type of InputIterator -> Point_3 or Point_2
-  QueriesInputIterator first_query, ///< iterator over the first point where scale must be estimated
-  QueriesInputIterator beyond_query, ///< past-the-end iterator over the points where scale must be estimated
-  QueriesPointMap queries_map, ///< property map: value_type of InputIterator -> Point_3 or Point_2
-  OutputIterator output, ///< output iterator to store the computed scales
-  const Kernel& /*kernel*/) ///< geometric traits.
-{
-  return estimate_local_range_scales
-    (CGAL::make_range (first, beyond),
-     CGAL::make_range (first_query, beyond_query),
-     output,
-     CGAL::parameters::point_map (samples_map).
-     query_point_map (queries_map).
-     geom_traits (Kernel()));
-}
-
-// deprecated API
-template <typename SamplesInputIterator,
-          typename SamplesPointMap,
-          typename QueriesInputIterator,
-          typename QueriesPointMap,
-          typename OutputIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_local_range_scales(), please update your code")
-OutputIterator
-estimate_local_range_scales(
-  SamplesInputIterator first, ///< iterator over the first input sample.
-  SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
-  SamplesPointMap samples_map, ///< property map: value_type of InputIterator -> Point_3 or Point_2
-  QueriesInputIterator first_query, ///< iterator over the first point where scale must be estimated
-  QueriesInputIterator beyond_query, ///< past-the-end iterator over the points where scale must be estimated
-  QueriesPointMap queries_map, ///< property map: value_type of InputIterator -> Point_3 or Point_2
-  OutputIterator output) ///< output iterator to store the computed scales
-{
-  return estimate_local_range_scales
-    (CGAL::make_range (first, beyond),
-     CGAL::make_range (first_query, beyond_query),
-     output,
-     CGAL::parameters::point_map (samples_map).
-     query_point_map (queries_map));
-}
-
-// deprecated API
-template <typename SamplesInputIterator,
-          typename QueriesInputIterator,
-          typename OutputIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_local_range_scales(), please update your code")
-OutputIterator
-estimate_local_range_scales(
-  SamplesInputIterator first, ///< iterator over the first input sample.
-  SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
-  QueriesInputIterator first_query, ///< iterator over the first point where scale must be estimated
-  QueriesInputIterator beyond_query, ///< past-the-end iterator over the points where scale must be estimated
-  OutputIterator output) ///< output iterator to store the computed scales
-{
-  return estimate_local_range_scales
-    (CGAL::make_range (first, beyond),
-     CGAL::make_range (first_query, beyond_query),
-     output);
-}
-
-
-// deprecated API
-template <typename InputIterator,
-          typename PointMap,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_global_range_scale(), please update your code")
-double
-estimate_global_range_scale(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of InputIterator -> Point_3 or Point_3
-  const Kernel& kernel) ///< geometric traits.
-{
-  return estimate_global_range_scale
-    (CGAL::make_range (first, beyond),
-     CGAL::parameters::point_map (point_map).
-     geom_traits (kernel));
-}
-
-// deprecated API
-template <typename InputIterator,
-          typename PointMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_global_range_scale(), please update your code")
-double
-estimate_global_range_scale(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map) ///< property map: value_type of InputIterator -> Point_3 or Point_3
-{
-  return estimate_global_range_scale
-    (CGAL::make_range (first, beyond),
-     CGAL::parameters::point_map (point_map));
-}
-
-
-// deprecated API
-template <typename InputIterator>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::estimate_global_range_scale(), please update your code")
-double
-estimate_global_range_scale(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond) ///< past-the-end iterator over the input points.
-{
-  return estimate_global_range_scale
-    (CGAL::make_range (first, beyond));
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond  
 
 } //namespace CGAL

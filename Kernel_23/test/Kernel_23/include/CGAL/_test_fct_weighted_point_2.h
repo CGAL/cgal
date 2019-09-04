@@ -31,6 +31,8 @@
 #include <cassert>
 #include <iostream>
 
+#include "_approx_equal.h"
+
 template <class R>
 bool
 _test_fct_weighted_point_2(const R& )
@@ -158,8 +160,9 @@ _test_fct_weighted_point_2(const R& )
 
   std::cout << CGAL::weighted_circumcenter(wp_00, wp_10, wp_01) << std::endl;
 
-  assert( CGAL::squared_radius_smallest_orthogonal_circle(wp1, wp3, wp5)
-            == CGAL::squared_radius(p1, p3, p5));
+  using CGAL::testsuite::approx_equal;
+  assert( approx_equal(CGAL::squared_radius_smallest_orthogonal_circle(wp1, wp3, wp5),
+                       CGAL::squared_radius(p1, p3, p5)) );
   assert( CGAL::squared_radius_smallest_orthogonal_circle(wp_00, wp_10, wp_01) == RT(0));
 
   std::cout << "done" << std::endl;

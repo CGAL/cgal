@@ -97,6 +97,7 @@ public:
   using Base::dimension;
   using Base::geom_traits;
   using Base::infinite_vertex;
+  using Base::finite_vertex;
   using Base::create_face;
   using Base::number_of_faces;
   using Base::all_faces_begin;
@@ -121,12 +122,15 @@ public:
   using Base::is_infinite;
   using Base::degree;
   using Base::delete_vertex;
+  using Base::delete_face;
   using Base::incident_vertices;
   using Base::make_hole;
   using Base::mirror_index;
   using Base::show_vertex;
   using Base::test_dim_down;
   using Base::oriented_side;
+  using Base::compare_x;
+  using Base::compare_y;
 #endif
 
 private:
@@ -171,6 +175,8 @@ public:
     operator Vertex_handle() const { return Base::base(); }
   };
 
+  typedef Iterator_range<Prevent_deref<All_vertices_iterator> > All_vertex_handles;
+  
   class Finite_vertices_iterator :
     public Filter_iterator<Finite_vib, Hidden_tester>
   {
@@ -186,6 +192,8 @@ public:
     operator Vertex_handle() const { return Base::base(); }
  };
 
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  
   class Hidden_vertices_iterator :
     public Filter_iterator<Finite_vib, Unhidden_tester>
   {
@@ -201,6 +209,8 @@ public:
     operator Vertex_handle() const { return Base::base(); }
  };
 
+  typedef Iterator_range<Prevent_deref<Hidden_vertices_iterator> > Hidden_vertex_handles;
+  
  //for backward compatibility
   typedef Finite_faces_iterator                Face_iterator;
   typedef Finite_edges_iterator                Edge_iterator;
@@ -337,14 +347,18 @@ public:
 
   All_vertices_iterator all_vertices_begin() const;
   All_vertices_iterator all_vertices_end() const;
-
+  All_vertex_handles all_vertex_handles() const;
+  
   Finite_vertices_iterator finite_vertices_begin() const;
   Finite_vertices_iterator finite_vertices_end() const;
+  Finite_vertex_handles finite_vertex_handles() const;
+  
   Vertex_handle finite_vertex() const;
 
   Hidden_vertices_iterator hidden_vertices_begin() const;
   Hidden_vertices_iterator hidden_vertices_end() const;
-
+  Hidden_vertex_handles hidden_vertex_handles() const;
+  
 //  Vertex_handle file_input(std::istream& is);
 //  void file_output(std::ostream& os) const;
 
@@ -394,7 +408,7 @@ public:
                   typename std::iterator_traits<InputIterator>::value_type,
                   Weighted_point
               >
-          >::type* = NULL
+          >::type* = nullptr
 )
 #else
   template < class InputIterator >
@@ -515,7 +529,7 @@ public:
                 typename std::iterator_traits<InputIterator>::value_type,
                 std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
               >
-          >::type* = NULL
+          >::type* = nullptr
 )
   {return insert_with_info< std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);}
 
@@ -528,7 +542,7 @@ public:
               typename boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
               typename boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
             >
-          >::type* =NULL
+          >::type* =nullptr
 )
   {return insert_with_info< boost::tuple<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);}
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -986,7 +1000,7 @@ is_valid(bool verbose, int /* level */) const
   // cannot call for is_valid() of Base Triangulation class
   // because 1) number of vertices of base class does not match
   // tds.is_valid calls is_valid for each vertex
-  // and the test is not fullfilled by  hidden vertices ...
+  // and the test is not fulfilled by  hidden vertices ...
   // result = result && Triangulation_2<Gt,Tds>::is_valid(verbose, level);
   bool result = true;
   for(All_faces_iterator fit = all_faces_begin();
@@ -1272,7 +1286,7 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
     {
       CGAL_precondition(dimension() >= 0);
       if(dimension() == 0) {
-        // in this case locate() oddly returns loc = NULL and li = 4,
+        // in this case locate() oddly returns loc = nullptr and li = 4,
         // so we work around it.
         loc = finite_vertex()->face();
         li = 0;
@@ -1699,7 +1713,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
     typename Hole::iterator cut_after(hit);
 
     // if tested vertex is c with respect to the vertex opposite
-    // to NULL neighbor,
+    // to nullptr neighbor,
     // stop at the before last face;
     hdone--;
     while(hit != hdone)
@@ -1840,10 +1854,10 @@ update_hidden_points_2_2(const Face_handle& f1, const Face_handle& f2)
     const Weighted_point& a1 = f1->vertex(f1->index(f2))->point();
     const Weighted_point& a  = f1->vertex(1-f1->index(f2))->point();
     while(! p_list.empty()) {
-      if(this->compare_x(a, p_list.front()->point()) ==
-           this->compare_x(a, a1)  &&
-           this->compare_y(a, p_list.front()->point()) ==
-           this->compare_y(a, a1))
+      if(compare_x(a, p_list.front()->point()) ==
+           compare_x(a, a1)  &&
+           compare_y(a, p_list.front()->point()) ==
+           compare_y(a, a1))
       {
         hide_vertex(f1, p_list.front());
       } else {
@@ -2163,7 +2177,7 @@ stack_flip_dim1(Face_handle f, int i, Faces_around_stack &faces_around)
   n->neighbor(1-in)->set_neighbor(n->neighbor(1-in)->index(n), f);
  (f->vertex_list()).splice(f->vertex_list().begin(),n->vertex_list());
   set_face(f->vertex_list(),f);
-  this->delete_face(n);
+  delete_face(n);
   hide_vertex(f,va);
   faces_around.push_front(f);
   return;
@@ -2187,7 +2201,15 @@ all_vertices_end() const
   return CGAL::filter_iterator(Base::all_vertices_end(),
                                Hidden_tester());
 }
-
+  
+template < class Gt, class Tds >
+typename Regular_triangulation_2<Gt,Tds>::All_vertex_handles
+Regular_triangulation_2<Gt,Tds>::
+all_vertex_handles() const
+{
+  return make_prevent_deref_range(all_vertices_begin(),all_vertices_end());
+}
+  
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Finite_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
@@ -2198,6 +2220,7 @@ finite_vertices_begin() const
                                Base::finite_vertices_begin());
 }
 
+  
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
@@ -2218,6 +2241,14 @@ finite_vertices_end() const
 }
 
 template < class Gt, class Tds >
+typename Regular_triangulation_2<Gt,Tds>::Finite_vertex_handles
+Regular_triangulation_2<Gt,Tds>::
+finite_vertex_handles() const
+{
+  return make_prevent_deref_range(finite_vertices_begin(),finite_vertices_end());
+}
+ 
+template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Hidden_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
 hidden_vertices_begin() const
@@ -2235,7 +2266,15 @@ hidden_vertices_end() const
   return CGAL::filter_iterator(Base::finite_vertices_end(),
                                Unhidden_tester());
 }
-
+  
+template < class Gt, class Tds >
+typename Regular_triangulation_2<Gt,Tds>::Hidden_vertex_handles
+Regular_triangulation_2<Gt,Tds>::
+hidden_vertex_handles() const
+{
+  return make_prevent_deref_range(hidden_vertices_begin(),hidden_vertices_end());
+}
+  
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
@@ -2243,13 +2282,13 @@ nearest_power_vertex(const Bare_point& p) const
 {
   if(dimension() == -1) { return Vertex_handle(); }
 
-  if(dimension() == 0) { return this->finite_vertex(); }
+  if(dimension() == 0) { return finite_vertex(); }
 
   typename Geom_traits::Compare_power_distance_2 cmp_power_distance =
       geom_traits().compare_power_distance_2_object();
 
   Vertex_handle vclosest;
-  Vertex_handle v = this->finite_vertex();
+  Vertex_handle v = finite_vertex();
 
   //  if(dimension() == 1) {
   //  }

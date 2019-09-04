@@ -24,7 +24,6 @@
 
 // within this file FT ^= Fraction_traits<T>
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/to_rational.h>
 #include <CGAL/use.h>

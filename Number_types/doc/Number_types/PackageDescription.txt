@@ -50,7 +50,7 @@
 
 \cgalClassifedRefPages
 
-## Number Type Classes and Concepts ##
+\cgalCRPSection{Number Type Classes and Concepts}
 
 - \link int.h `int` \endlink
 - \link int.h `short int` \endlink
@@ -60,21 +60,21 @@
 - \link double.h `double` \endlink
 - \link long_double.h `long double` \endlink
 
-### %CORE ###
+\cgalCRPSubsection{%CORE}
 
 - `CORE::BigInt`
 - `CORE::BigRat`
 - `CORE::BigFloat`
 - `CORE::Expr`
 
-### LEDA ###
+\cgalCRPSubsection{LEDA}
 
 - `leda_integer`
 - `leda_rational`
 - `leda_bigfloat`
 - `leda_real`
 
-### GMP ###
+\cgalCRPSubsection{GMP}
 
 - `mpz_class`
 - `mpq_class`
@@ -85,7 +85,7 @@
 - `CGAL::Gmpfr`
 - `CGAL::Gmpfi`
 
-### %CGAL ###
+\cgalCRPSubsection{%CGAL}
 
 - `CGAL::MP_Float`
 - `CGAL::Interval_nt<Protected>`
@@ -95,13 +95,13 @@
 - `CGAL::Exact_integer`
 - `CGAL::Exact_rational`
 
-## Relates Rational ##
+\cgalCRPSection{Relates Rational}
 
 - `CGAL::Rational_traits<NT>`
 - `CGAL::simplest_rational_in_interval()`
 - `CGAL::to_rational()`
 
-## Relates Algebraic Extensions ##
+\cgalCRPSection{Relates Algebraic Extensions}
 
 - `RootOf_2`
 - `CGAL::Root_of_traits<RT>`
@@ -110,7 +110,7 @@
 - `CGAL::compute_roots_of_2<RT,OutputIterator>`
 - `CGAL::Sqrt_extension<NT,ROOT>`
 
-## Utilities ##
+\cgalCRPSection{Utilities}
 
 - `CGAL::Min<T,Less>`
 - `CGAL::Max<T,Less>`

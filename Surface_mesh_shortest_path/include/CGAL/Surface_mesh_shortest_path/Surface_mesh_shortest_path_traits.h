@@ -63,7 +63,7 @@ public:
   typedef typename Kernel::FT FT;
 
   /// Barycentric coordinates type
-  typedef typename CGAL::cpp11::array<FT,3> Barycentric_coordinates;
+  typedef typename std::array<FT,3> Barycentric_coordinates;
 
   // Predicates
   typedef typename Surface_mesh_shortest_paths_3::Compare_relative_intersection_along_segment_2<Kernel> Compare_relative_intersection_along_segment_2;

@@ -22,17 +22,17 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `DataKernel`
 - `LocalKernel`
 
 
-## Classes ##
+\cgalCRPSection{Classes}
 - \link CGAL::Monge_via_jet_fitting::Monge_form `CGAL::Monge_via_jet_fitting< DataKernel, LocalKernel, SvdTraits>::Monge_form` \endlink
 - `CGAL::Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`
 
 
-## Global Functions ##
+\cgalCRPSection{Global Functions}
 The insert operator (operator<< ) is overloaded for the class \link CGAL::Monge_via_jet_fitting::Monge_form `Monge_form` \endlink. 
 
 */

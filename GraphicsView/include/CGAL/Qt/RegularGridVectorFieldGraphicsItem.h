@@ -163,8 +163,8 @@ void
     }
   }
   painter->setPen(this->verticesPen());
-  QMatrix matrix = painter->matrix();
-  painter->resetMatrix();
+  QTransform matrix = painter->worldTransform();
+  painter->resetTransform();
   for(int i = 0; i < nw; i++){
     for(int j = 0; j < nh; j++){
       painter->drawPoint(matrix.map(QPointF(i*dw, j*dh)));

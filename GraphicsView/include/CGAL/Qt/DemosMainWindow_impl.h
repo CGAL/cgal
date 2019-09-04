@@ -239,7 +239,7 @@ CGAL_INLINE_FUNCTION
 QMenu* 
 DemosMainWindow::getMenu(QString objectName, QString title)
 {
-  QMenu* menu = NULL;
+  QMenu* menu = nullptr;
 
   QString title2 = title;
   title2.remove('&');
@@ -257,7 +257,7 @@ DemosMainWindow::getMenu(QString objectName, QString title)
       }
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 CGAL_INLINE_FUNCTION
@@ -458,9 +458,14 @@ void DemosMainWindow::readState(QString groupname, Options /*what_to_save*/)
   settings.beginGroup(groupname);
   resize(settings.value("size", this->size()).toSize());
 
-  QDesktopWidget* desktop = qApp->desktop();
   QPoint pos = settings.value("pos", this->pos()).toPoint();
-  if(desktop->availableGeometry(pos).contains(pos)) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+  if(QGuiApplication::screenAt(pos)) {
+#else
+   QDesktopWidget* desktop = qApp->desktop();
+     if(desktop->availableGeometry(pos).contains(pos)) {
+#endif
+
     move(pos);
   }
   QByteArray mainWindowState = settings.value("state").toByteArray();

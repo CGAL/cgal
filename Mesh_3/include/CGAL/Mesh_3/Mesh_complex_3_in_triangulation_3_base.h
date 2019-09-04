@@ -537,9 +537,11 @@ public:
         fit != end; ++fit)
     {
       Facet facet = *fit;
-      Facet mirror = tr_.mirror_facet(facet);
       set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
-      set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
+      if(this->triangulation().dimension() > 2) {
+        Facet mirror = tr_.mirror_facet(facet);
+        set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
+      }
     }
     this->number_of_facets_ = 0;
     clear_manifold_info();

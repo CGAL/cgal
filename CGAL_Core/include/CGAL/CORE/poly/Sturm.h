@@ -944,7 +944,7 @@ std::cout << "In newtonRefine, input J=" << J.first
 	// Newton might bring x very close to one endpoint, but it can be
 	// because the root is near there!  In any case,
 	// by setting x to the center of J, you only gain at most
-	// one bit of accuracy, but you stand to loose an
+  // one bit of accuracy, but you stand to lose an
 	// arbitrary amount of bits of accuracy if you are unlucky!
 	// So I will comment out the next line.  --Chee (Aug 9, 2004).
 	// 

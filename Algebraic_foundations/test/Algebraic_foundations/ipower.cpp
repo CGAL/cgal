@@ -21,7 +21,6 @@
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/ipower.h>
 

@@ -1,13 +1,10 @@
 # This is the CMake script for compiling this folder.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Surface_mesh_parameterization_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
-
-# Include this package's headers first
-include_directories (BEFORE . include)
 
 # Find CGAL
 find_package(CGAL QUIET)

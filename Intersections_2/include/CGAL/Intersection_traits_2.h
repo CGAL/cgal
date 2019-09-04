@@ -28,8 +28,6 @@
 #include <boost/optional.hpp>
 #include <vector>
 
-#if !(CGAL_INTERSECTION_VERSION < 2)
-
 namespace CGAL {
 
 CGAL_INTERSECTION_TRAITS_2(Line_2, Line_2, Point_2, Line_2)
@@ -97,6 +95,11 @@ struct Intersection_traits<K, A, typename K::Point_2> {
   typedef boost::optional<variant_type> result_type;
 };
 
+template<typename K>
+struct Intersection_traits<K, typename K::Point_2, typename K::Point_2> {
+  typedef typename boost::variant<typename K::Point_2> variant_type;
+  typedef boost::optional<variant_type> result_type;
+};
 
 template<typename K>
 struct Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Triangle_2>
@@ -112,8 +115,6 @@ struct Intersection_traits<K, typename K::Triangle_2, typename K::Iso_rectangle_
   : public Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Triangle_2> {};
 
 } // namespace CGAL
-
-#endif
 
 #endif /* CGAL_INTERSECTION_TRAITS_2_H */
 

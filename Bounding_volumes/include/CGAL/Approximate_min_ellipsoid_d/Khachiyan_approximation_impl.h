@@ -183,7 +183,7 @@ namespace CGAL {
     // Since the transformations we apply do not change the solution
     // space of the intermediate systems, we can say: The system t x =
     // e_j has, for any i in {1,...,d}, the same solution space as I x
-    // = n_i (with n_i being the i-th colum of N); it follows that
+    // = n_i (with n_i being the i-th column of N); it follows that
     // x=n_i.
 
     // store the identity matrix in mi:

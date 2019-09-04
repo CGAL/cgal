@@ -150,7 +150,7 @@ public:
   public:
     SFace_cycle_iterator() : Ibase() {}
     SFace_cycle_iterator(const Ibase& b) : Ibase(b) {}
-    SFace_cycle_iterator(const SFace_cycle_iterator& i) : Ibase(i) {}  
+
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
@@ -177,8 +177,7 @@ public:
   public:
     SFace_cycle_const_iterator() : Ibase() {}
     SFace_cycle_const_iterator(const Ibase& b) : Ibase(b) {}
-    SFace_cycle_const_iterator(const SFace_cycle_const_iterator& i) 
-      : Ibase(i) {}  
+
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
@@ -375,57 +374,33 @@ public:
   SVertex_alloc vertex_allocator;
   SVertex* get_vertex_node( const SVertex& ) {
     SVertex* p = vertex_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<SVertex_alloc>::construct(vertex_allocator, p);
-#else
-    vertex_allocator.construct( p, SVertex());
-#endif
     return p;
   }
   void put_vertex_node( SVertex* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<SVertex_alloc>::destroy(vertex_allocator, p);
-#else
-    vertex_allocator.destroy(p);
-#endif
     vertex_allocator.deallocate( p, 1);
   }
 
   SHalfedge_alloc halfedge_allocator;
   SHalfedge* get_halfedge_node( const SHalfedge& ) {
     SHalfedge* p = halfedge_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<SHalfedge_alloc>::construct(halfedge_allocator, p);
-#else
-    halfedge_allocator.construct( p, SHalfedge());
-#endif
     return p;
   }
   void put_halfedge_node( SHalfedge* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<SHalfedge_alloc>::destroy(halfedge_allocator, p);
-#else
-    halfedge_allocator.destroy(p);
-#endif
     halfedge_allocator.deallocate( p, 1);
   }
 
   SFace_alloc face_allocator;
   SFace* get_face_node( const SFace& ) {
     SFace* p = face_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<SFace_alloc>::construct(face_allocator, p);
-#else
-    face_allocator.construct( p, SFace());
-#endif
     return p;
   }
   void put_face_node( SFace* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<SFace_alloc>::destroy(face_allocator, p);
-#else
-    face_allocator.destroy(p);
-#endif
     face_allocator.deallocate( p, 1);
   }
 

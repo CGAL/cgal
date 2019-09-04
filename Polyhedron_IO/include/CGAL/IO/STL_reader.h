@@ -299,7 +299,7 @@ bool read_STL(std::istream& input,
   int pos = 0;
 
   // Ignore all initial whitespace
-  char c;
+  unsigned char c;
 
   while(input.read(reinterpret_cast<char*>(&c), sizeof(c)))
   {

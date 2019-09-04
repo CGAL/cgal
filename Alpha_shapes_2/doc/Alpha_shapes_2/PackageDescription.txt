@@ -68,12 +68,12 @@ finite number of different \f$ \alpha\f$-shapes and corresponding
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `AlphaShapeTraits_2`
 - `AlphaShapeFace_2`
 - `AlphaShapeVertex_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Alpha_shape_2<Dt>`
 - `CGAL::Weighted_alpha_shape_euclidean_traits_2<K>`
 - `CGAL::Alpha_shape_vertex_base_2<AlphaShapeTraits_2>`

@@ -27,7 +27,7 @@
 #ifndef CGAL_INT_H
 #define CGAL_INT_H
 
-#include <CGAL/number_type_basic.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/Modular_traits.h>
 #include <CGAL/Modular_arithmetic/Residue_type.h>
 

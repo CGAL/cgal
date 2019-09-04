@@ -68,7 +68,7 @@ else:
 print_verbose("   index path is {}".format(repo.index_path()))
 print_verbose("Getting commits in current branch", end='')
 print_verbose(" {}".\
-              format(str(repo.refs.read_ref('HEAD'), "ascii")), end='')
+              format(str(repo.refs.read_ref(b'HEAD'), "ascii")), end='')
 sys.stderr.flush()
 walk = repo.get_walker(include=repo.head(),\
                        exclude=[repo.get_refs()[b'refs/remotes/cgal/master']])

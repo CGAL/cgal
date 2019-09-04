@@ -90,7 +90,7 @@ public:
 
     ~FullVector() {
         delete[] coeff_ ;
-        coeff_ = NULL ;
+        coeff_ = nullptr ;
     }
 
     // Return the vector's number of coefficients

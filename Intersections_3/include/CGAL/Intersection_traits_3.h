@@ -25,8 +25,6 @@
 #include <CGAL/Intersection_traits.h>
 #include <vector>
 
-#if !(CGAL_INTERSECTION_VERSION < 2)
-
 namespace CGAL  {
 
 CGAL_INTERSECTION_TRAITS_2(Line_3, Line_3, Point_3, Line_3)
@@ -283,8 +281,6 @@ struct Intersection_traits<K, typename K::Sphere_3, typename K::Point_3>  {
   typedef typename boost::optional< variant_type > result_type;
 };
 } // namespace
-
-#endif // !(CGAL_INTERSECTION_VERSION < 2)
 
 #endif /* CGAL_INTERSECTION_TRAITS_3_H */
 

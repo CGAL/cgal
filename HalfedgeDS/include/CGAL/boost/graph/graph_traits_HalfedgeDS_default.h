@@ -22,6 +22,7 @@
 #define CGAL_GRAPH_TRAITS_HALFEDGEDS_DEFAULT_H
 
 #include <CGAL/boost/graph/graph_traits_HalfedgeDS.h>
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/HalfedgeDS_default.h>
@@ -32,7 +33,7 @@ namespace CGAL {
 template <class Traits_, class HalfedgeDSItems, 
           class Alloc>
 class HalfedgeDS_default;
-}; // namespace CGAL
+} // namespace CGAL
 
 namespace boost {
 
@@ -470,7 +471,16 @@ struct HDS_property_map<vertex_point_t>
       typename T::Point_3, const typename T::Point_3&> const_type;
   };
 };
-  
+
+template<class T, class I, class A>
+void reserve(HalfedgeDS_default<T,I,A>& p,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertices_size_type nv,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::edges_size_type ne,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::faces_size_type nf)
+{
+  p.reserve(nv, 2*ne, nf);
+}
+
 }// namespace CGAL
 namespace boost {
 

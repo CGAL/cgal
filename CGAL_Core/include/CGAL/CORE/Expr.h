@@ -80,7 +80,7 @@ public:
    *  (or, for that matter, as a binary fraction of any finite length). 
    *  The value is the closest double value determined by the compiler.
    */
-  Expr(float f) : RCExpr(NULL) { // check for valid numbers
+  Expr(float f) : RCExpr(nullptr) { // check for valid numbers
     // (i.e., not infinite and not NaN)
     if (! CGAL_CORE_finite(f)) {
       core_error(" ERROR : constructed an invalid float! ", __FILE__, __LINE__, false);
@@ -91,7 +91,7 @@ public:
     rep = new ConstDoubleRep(f);
   }
   /// constructor for <tt>double</tt>
-  Expr(double d) : RCExpr(NULL) { // check for valid numbers
+  Expr(double d) : RCExpr(nullptr) { // check for valid numbers
     // (i.e., not infinite and not NaN)
     if (! CGAL_CORE_finite(d)) {
       core_error(" ERROR : constructed an invalid double! ", __FILE__, __LINE__, false);

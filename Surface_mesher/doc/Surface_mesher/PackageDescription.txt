@@ -78,7 +78,7 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `SurfaceMeshComplex_2InTriangulation_3`
 - `SurfaceMeshTraits_3`
 - `SurfaceMeshFacetsCriteria_3`
@@ -88,7 +88,7 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 - `ImplicitFunction`
 - `ImplicitSurfaceTraits_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr, Edge_info = void>`
 - `CGAL::Surface_mesh_vertex_base_3<Gt,Vb>`
 - `CGAL::Surface_mesh_cell_base_3<Gt,Cb>`
@@ -98,12 +98,12 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 - `CGAL::Implicit_surface_3<Traits, Function>`
 - `CGAL::Gray_level_image_3<FT, Point>`
 
-## Tag Classes ##
+\cgalCRPSection{Tag Classes}
 - `CGAL::Manifold_tag`
 - `CGAL::Manifold_with_boundary_tag`
 - `CGAL::Non_manifold_tag`
 
-## Function Templates ##
+\cgalCRPSection{Function Templates}
 - `CGAL::make_surface_mesh()`
 - `CGAL::output_surface_facets_to_polyhedron()`
 - `CGAL::facets_in_complex_2_to_triangle_mesh()`

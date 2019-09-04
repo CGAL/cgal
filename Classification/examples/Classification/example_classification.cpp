@@ -146,7 +146,7 @@ int main (int argc, char** argv)
 
   ///////////////////////////////////////////////////////////////////
   //! [Classify]
-  std::vector<std::size_t> label_indices;
+  std::vector<int> label_indices (pts.size(), -1);
     
   CGAL::Real_timer t;
   t.start();
@@ -200,7 +200,7 @@ int main (int argc, char** argv)
   {
     f << pts[i] << " ";
       
-    Label_handle label = labels[label_indices[i]];
+    Label_handle label = labels[std::size_t(label_indices[i])];
     if (label == ground)
       f << "245 180 0" << std::endl;
     else if (label == vegetation)

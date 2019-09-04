@@ -314,7 +314,7 @@ public:
 #else
     CGAL_NEF_CLOG(version());
 #endif
-    CGAL_assertion( W != NULL);
+    CGAL_assertion( W != nullptr);
 //    (Base) *this = SNC_decorator(*W);
     this->set_snc(*W);
     Object_list objects;
@@ -1277,7 +1277,7 @@ public:
     CGAL_NEF_TIMER(ct_t.start());
     this->version_ = std::string("Naive Point Locator (tm)");
     CGAL_NEF_CLOG(version());
-    CGAL_assertion( W != NULL);
+    CGAL_assertion( W != nullptr);
     Base::initialize(W); 
     initialized = true;
     CGAL_NEF_TIMER(ct_t.stop());

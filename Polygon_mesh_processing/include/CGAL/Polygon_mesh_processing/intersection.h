@@ -402,8 +402,8 @@ compute_face_face_intersection(const FaceRange& face_range1,
                                const NamedParameters1& np1,
                                const NamedParameters2& np2)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm1));
   CGAL_precondition(CGAL::is_triangle_mesh(tm2));
@@ -433,21 +433,21 @@ compute_face_face_intersection(const FaceRange& face_range1,
   typedef typename GetVertexPointMap<TM, NamedParameters1>::const_type VertexPointMap1;
   typedef typename GetVertexPointMap<TM, NamedParameters2>::const_type VertexPointMap2;
 
-  VertexPointMap1 vpmap1 = choose_param(get_param(np1, internal_np::vertex_point),
+  VertexPointMap1 vpmap1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                         get_const_property_map(boost::vertex_point, tm1));
-  VertexPointMap2 vpmap2 = choose_param(get_param(np2, internal_np::vertex_point),
+  VertexPointMap2 vpmap2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                         get_const_property_map(boost::vertex_point, tm2));
   CGAL_static_assertion(
       (boost::is_same<
        typename boost::property_traits<VertexPointMap1>::value_type,
        typename boost::property_traits<VertexPointMap2>::value_type
        >::value) );
-  BOOST_FOREACH(face_descriptor f, face_range1)
+  for(face_descriptor f : face_range1)
   {
     boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm1), f));
   }
 
-  BOOST_FOREACH(face_descriptor f, face_range2)
+  for(face_descriptor f : face_range2)
   {
     boxes2.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm2), f));
   }
@@ -461,7 +461,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
 
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters1>::type GeomTraits;
-  GeomTraits gt = choose_param(get_param(np1, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter(get_parameter(np1, internal_np::geom_traits), GeomTraits());
 
   internal::Intersect_faces<TM,
                             GeomTraits,
@@ -528,8 +528,8 @@ compute_face_polyline_intersection( const FaceRange& face_range,
                OutputIterator out,
                const NamedParameters& np)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
@@ -542,8 +542,8 @@ compute_face_polyline_intersection( const FaceRange& face_range,
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
 
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                      get_const_property_map(boost::vertex_point, tm));
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                          get_const_property_map(boost::vertex_point, tm));
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
   CGAL_static_assertion(
         (boost::is_same<Point,
@@ -566,7 +566,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
         );
 
 
-  BOOST_FOREACH(face_descriptor f, face_range)
+  for(face_descriptor f : face_range)
   {
     faces.push_back(f);
     boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm), faces.size()-1));
@@ -588,7 +588,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
 
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
-  GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
 
   internal::Intersect_face_polyline<TM,
                                     GeomTraits,
@@ -657,8 +657,8 @@ compute_face_polylines_intersection(const FaceRange& face_range,
                                     OutputIterator out,
                                     const NamedParameters& np)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
   
@@ -677,8 +677,8 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
 
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                      get_const_property_map(boost::vertex_point, tm));
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                          get_const_property_map(boost::vertex_point, tm));
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
   typedef typename boost::range_value<PolylineRange>::type Polyline;
   CGAL_static_assertion(
@@ -698,13 +698,13 @@ compute_face_polylines_intersection(const FaceRange& face_range,
         );
 
   std::size_t polylines_size = 0;
-  BOOST_FOREACH(Polyline poly, polyline_range)
+  for(Polyline poly : polyline_range)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
   }
   boxes2.reserve( polylines_size );
 
-  BOOST_FOREACH(face_descriptor f, face_range)
+  for(face_descriptor f : face_range)
   {
     faces.push_back(f);
     boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm), std::make_pair(0, faces.size()-1)));
@@ -731,7 +731,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
 
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
-  GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
 
   internal::Intersect_face_polylines<TM,
                                      GeomTraits,
@@ -874,14 +874,14 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   std::vector<Box> boxes2;
   std::size_t polylines_size = 0;
   CGAL::Bbox_3 b1, b2;
-  BOOST_FOREACH(Polyline poly, polylines1)
+  for(Polyline poly : polylines1)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
     b1 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes1.reserve( polylines_size );
   polylines_size = 0;
-  BOOST_FOREACH(Polyline poly, polylines2)
+  for(Polyline poly : polylines2)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
     b2 += CGAL::bbox_3(poly.begin(), poly.end());
@@ -1040,7 +1040,7 @@ void get_one_point_per_cc(TriangleMesh& tm,
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   boost::unordered_map<face_descriptor, int> fid_map;
   int id = 0;
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  for(face_descriptor fd : faces(tm))
   {
     fid_map.insert(std::make_pair(fd,id++));
   }
@@ -1054,7 +1054,7 @@ void get_one_point_per_cc(TriangleMesh& tm,
   std::vector<bool> is_cc_treated(nb_cc, false);
   points_of_interest.resize(nb_cc);
   int cc_treated = 0;
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  for(face_descriptor fd : faces(tm))
   {
     int cc=fcc_map[fd];
     if(!is_cc_treated[cc])
@@ -1075,7 +1075,7 @@ bool is_mesh2_in_mesh1_impl(const AABB_tree& tree1,
 {
   //for each CC, take a point on it and test bounded side
   Side_of_triangle_mesh<TriangleMesh, GT, VPM> sotm(tree1, gt);
-  BOOST_FOREACH(const typename GT::Point_3& p, points_of_interest2)
+  for(const typename GT::Point_3& p : points_of_interest2)
   {
     if(sotm(p) == CGAL::ON_BOUNDED_SIDE) // sufficient as we know meshes do not intersect
     {
@@ -1108,8 +1108,8 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any segment of any polyline of `polylines1` intersects
- * any segment of any polyline of `polylines2`, and `false` otherwise.
+ * returns `true` if there exists a segment of a polyline of `polylines1`
+ * and a segment of a polyline of `polylines2` which intersect, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points.
@@ -1151,7 +1151,8 @@ bool do_intersect(const PolylineRange& polylines1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any segment of `polyline1` intersects any segment of `polyline2`, and `false` otherwise.
+ * returns `true` if there exists a segment of `polyline1` and a segment of `polyline2` which intersect,
+ * and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \tparam Polyline a `RandomAccessRange` of points.
@@ -1196,7 +1197,7 @@ bool do_intersect(const Polyline& polyline1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any face of `tm1` intersects any face of `tm2`, and `false` otherwise.
+ * returns `true` if there exists a face of `tm1` and a face of `tm2` which intersect, and `false` otherwise.
  * If `do_overlap_test_of_bounded_sides` is set to `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
@@ -1215,8 +1216,9 @@ bool do_intersect(const Polyline& polyline1,
  * @param np2 optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (tm2`).
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (`tm2`).
  *   \attention The two property maps must have the same `value_type`.
+ *
  *   If this parameter is omitted, an internal property map for
  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
@@ -1234,10 +1236,10 @@ bool do_intersect(const TriangleMesh& tm1,
                   const NamedParameters1& np1,
                   const NamedParameters2& np2)
 {
-  using boost::choose_param;
-  using boost::get_param;
-  bool test_overlap =  choose_param(get_param(np1, internal_np::overlap_test),false) ||
-                       choose_param(get_param(np2, internal_np::overlap_test),false);
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  bool test_overlap =  choose_parameter(get_parameter(np1, internal_np::overlap_test),false) ||
+                       choose_parameter(get_parameter(np2, internal_np::overlap_test),false);
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm1));
   CGAL_precondition(CGAL::is_triangle_mesh(tm2));
@@ -1256,12 +1258,12 @@ bool do_intersect(const TriangleMesh& tm1,
   {
     typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type VertexPointMap1;
     typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type VertexPointMap2;
-    VertexPointMap1 vpm1 = choose_param(get_param(np1, internal_np::vertex_point),
+    VertexPointMap1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                         get_const_property_map(boost::vertex_point, tm1));
-    VertexPointMap2 vpm2 = choose_param(get_param(np2, internal_np::vertex_point),
+    VertexPointMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                         get_const_property_map(boost::vertex_point, tm2));
     typedef typename GetGeomTraits<TriangleMesh, NamedParameters1>::type GeomTraits;
-    GeomTraits gt = choose_param(get_param(np1, internal_np::geom_traits), GeomTraits());
+    GeomTraits gt = choose_parameter(get_parameter(np1, internal_np::geom_traits), GeomTraits());
 
     return internal::is_mesh2_in_mesh1(tm1, tm2, vpm1, vpm2, gt) ||
            internal::is_mesh2_in_mesh1(tm2, tm1, vpm2, vpm1, gt);
@@ -1284,7 +1286,8 @@ bool do_intersect(const TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any face of `tm` and any segment of any polyline of `polylines` intersects, and `false` otherwise.
+ * returns `true` if there exists a face of `tm` and a segment of a polyline of `polylines` which intersect,
+ * and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
  * @pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -1339,7 +1342,7 @@ bool do_intersect(const TriangleMesh& tm,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any face of `tm` and any segment of `polyline` intersects, and `false` otherwise.
+ * returns `true` if there exists a face of `tm` and a segment of `polyline` which intersect, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
  * @pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -1468,13 +1471,13 @@ struct Mesh_callback
       report_overlap(report_overlap), nps(nps), gt(gt)
   {
     std::size_t size = std::distance(meshes.begin(), meshes.end());
-    trees = std::vector<AABBTree*>(size, NULL);
+    trees = std::vector<AABBTree*>(size, nullptr);
     points_of_interest.resize(size);
   }
 
   ~Mesh_callback()
   {
-    BOOST_FOREACH(AABBTree* tree, trees)
+    for(AABBTree* tree : trees)
     {
       delete tree;
     }
@@ -1510,18 +1513,18 @@ struct Mesh_callback
   template<class Mesh_box>
   void operator()(const Mesh_box* b1, const Mesh_box* b2)
   {
-    using boost::choose_param;
-    using boost::get_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
 
     std::size_t mesh_id_1 = std::distance(meshes.begin(), b1->info());
     std::size_t mesh_id_2 = std::distance(meshes.begin(), b2->info());
 
 
-    VPM vpm1 = choose_param(get_param(*(nps.begin() + mesh_id_1), internal_np::vertex_point),
-                            get_const_property_map(CGAL::vertex_point, *b1->info()));
+    VPM vpm1 = choose_parameter(get_parameter(*(nps.begin() + mesh_id_1), internal_np::vertex_point),
+                                get_const_property_map(CGAL::vertex_point, *b1->info()));
 
-    VPM vpm2 = choose_param(get_param(*(nps.begin() + mesh_id_2), internal_np::vertex_point),
-                            get_const_property_map(CGAL::vertex_point, *b2->info()));
+    VPM vpm2 = choose_parameter(get_parameter(*(nps.begin() + mesh_id_2), internal_np::vertex_point),
+                                get_const_property_map(CGAL::vertex_point, *b2->info()));
 
     //surfacic test
     if(Polygon_mesh_processing::do_intersect(*b1->info(),
@@ -1594,12 +1597,12 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          NamedParameters np,
                                          NamedParametersRange nps)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename TriangleMeshRange::const_iterator TriangleMeshIterator;
 
-  bool report_overlap =  choose_param(get_param(np, internal_np::overlap_test),false);
+  bool report_overlap =  choose_parameter(get_parameter(np, internal_np::overlap_test),false);
 
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, TriangleMeshIterator> Mesh_box;
   std::vector<Mesh_box> boxes;
@@ -1617,7 +1620,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
   typedef typename boost::range_value<NamedParametersRange>::type NP_rng;
   typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters, NP_rng>::type GT;
-  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
 
   //get all the pairs of meshes intersecting (no strict inclusion test)
@@ -1633,7 +1636,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out,
                                          NamedParameters np)
 {
-  std::vector<cgal_bgl_named_params<bool, internal_np::all_default_t> >nps(
+  std::vector<Named_function_parameters<bool, internal_np::all_default_t> >nps(
     std::distance(range.begin(), range.end()), parameters::all_default());
   return intersecting_meshes(range, out, np, nps);
 }
@@ -1692,7 +1695,7 @@ surface_intersection(const TriangleMesh& tm1,
                      const NamedParameters2& np2)
 {
   const bool throw_on_self_intersection =
-    boost::choose_param(get_param(np1, internal_np::throw_on_self_intersection), false);
+    parameters::choose_parameter(parameters::get_parameter(np1, internal_np::throw_on_self_intersection), false);
 
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters1>::const_type Vpm;
@@ -1703,12 +1706,10 @@ surface_intersection(const TriangleMesh& tm1,
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
   CGAL_static_assertion(same_vpm);
 
-  Vpm vpm1 = choose_const_pmap(get_param(np1, internal_np::vertex_point),
-                               tm1,
-                               vertex_point);
-  Vpm vpm2 = choose_const_pmap(get_param(np2, internal_np::vertex_point),
-                               tm2,
-                               vertex_point);
+  Vpm vpm1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::vertex_point),
+                                          get_const_property_map(CGAL::vertex_point, tm1));
+  Vpm vpm2 = parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_point),
+                                          get_const_property_map(CGAL::vertex_point, tm2));
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm>
     functor(tm1, tm2, vpm1, vpm2);
@@ -1752,9 +1753,8 @@ surface_self_intersection(const TriangleMesh& tm,
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::const_type Vpm;
 
-  Vpm vpm = choose_const_pmap(get_param(np, internal_np::vertex_point),
-                              tm,
-                              vertex_point);
+  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                          get_const_property_map(CGAL::vertex_point, tm));
 
 // surface intersection algorithm call
   typedef Corefinement::Default_surface_intersection_visitor<TriangleMesh,

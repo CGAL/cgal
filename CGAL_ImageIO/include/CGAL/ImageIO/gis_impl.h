@@ -78,16 +78,16 @@ int writeGis( char *name, _image* im) {
   _openWriteImage(im, outputName);
   if( !im->fd ) {
     fprintf(stderr, "writeGis: error: unable to open file \'%s\'\n", outputName);
-    if ( outputName != NULL ) ImageIO_free( outputName );
+    if ( outputName != nullptr ) ImageIO_free( outputName );
     return ImageIO_OPENING;
   }
 
   if ( !writeGisHeader(im) ) {
     fprintf(stderr, "writeGis: error: unable to write header of \'%s\'\n",
 	    outputName);
-    if ( outputName != NULL ) ImageIO_free( outputName );
+    if ( outputName != nullptr ) ImageIO_free( outputName );
     ImageIO_close( im );
-    im->fd = NULL;
+    im->fd = nullptr;
     im->openMode = OM_CLOSE;
     return -1;
   }
@@ -106,7 +106,7 @@ int writeGis( char *name, _image* im) {
 
   if( !im->fd ) {
     fprintf(stderr, "writeGis: error: unable to open file \'%s\'\n", outputName);
-    if ( outputName != NULL ) ImageIO_free( outputName );
+    if ( outputName != nullptr ) ImageIO_free( outputName );
     return ImageIO_OPENING;
   }
 
@@ -120,19 +120,19 @@ int writeGis( char *name, _image* im) {
     switch( im->wordKind ) {
     default :
       fprintf(stderr, "writeGis: such word kind not handled in ascii mode for file \'%s\'\n", outputName);
-      if ( outputName != NULL ) ImageIO_free( outputName );
+      if ( outputName != nullptr ) ImageIO_free( outputName );
       return( -3 );
     case WK_FIXED :
       switch ( im->wdim ) {
       default :
 	fprintf(stderr, "writeGis: such word dim not handled in ascii mode for file \'%s\'\n", outputName);
-	if ( outputName != NULL ) ImageIO_free( outputName );
+	if ( outputName != nullptr ) ImageIO_free( outputName );
 	return( -3 );
       case 1 :
 	switch ( im->sign ) {
 	default :
 	  fprintf(stderr, "writeGis: such sign not handled in ascii mode for file \'%s\'\n", outputName);
-	  if ( outputName != NULL ) ImageIO_free( outputName );
+	  if ( outputName != nullptr ) ImageIO_free( outputName );
 	  return( -3 );
 	case SGN_UNSIGNED :
 	  {
@@ -148,7 +148,7 @@ int writeGis( char *name, _image* im) {
               res = (done == strlen( str )) ? int(done) : -1;
 	      if ( res  <= 0 ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
-		if ( outputName != NULL ) ImageIO_free( outputName );
+		if ( outputName != nullptr ) ImageIO_free( outputName );
 		return( -3 );
 	      }
 	    } while ( i < size );
@@ -168,7 +168,7 @@ int writeGis( char *name, _image* im) {
               res = (done == strlen( str )) ? int(done) : -1;
 	      if ( res  <= 0 ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
-		if ( outputName != NULL ) ImageIO_free( outputName );
+		if ( outputName != nullptr ) ImageIO_free( outputName );
 		return( -3 );
 	      }
 	    } while ( i < size );
@@ -180,7 +180,7 @@ int writeGis( char *name, _image* im) {
 	switch ( im->sign ) {
 	default :
 	  fprintf(stderr, "writeGis: such sign not handled in ascii mode for file \'%s\'\n", outputName);
-	  if ( outputName != NULL ) ImageIO_free( outputName );
+	  if ( outputName != nullptr ) ImageIO_free( outputName );
 	  return( -3 );
 	case SGN_UNSIGNED :
 	  {
@@ -196,7 +196,7 @@ int writeGis( char *name, _image* im) {
               res = (done == strlen( str )) ? int(done) : -1;
 	      if ( res  <= 0 ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
-		if ( outputName != NULL ) ImageIO_free( outputName );
+		if ( outputName != nullptr ) ImageIO_free( outputName );
 		return( -3 );
 	      }
 	    } while ( i < size );
@@ -216,7 +216,7 @@ int writeGis( char *name, _image* im) {
               res = (done == strlen( str )) ? int(done) : -1;
 	      if ( res  <= 0 ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
-		if ( outputName != NULL ) ImageIO_free( outputName );
+		if ( outputName != nullptr ) ImageIO_free( outputName );
 		return( -3 );
 	      }
 	    } while ( i < size );
@@ -228,12 +228,12 @@ int writeGis( char *name, _image* im) {
     } /* end of switch( im->wordKind ) */
 
     ImageIO_free( str ); 
-    if (outputName != NULL) ImageIO_free(outputName);
+    if (outputName != nullptr) ImageIO_free(outputName);
     return static_cast<int>(res);
   }
   else {
     bool ret = _writeInrimageData(im);
-    if (outputName != NULL) ImageIO_free(outputName);
+    if (outputName != nullptr) ImageIO_free(outputName);
     return (ret ? 1 : -1);
   }
 }
@@ -254,7 +254,7 @@ int testGisHeader(char *,const char *name) {
 CGAL_INLINE_FUNCTION
 int readGisHeader( const char* name,_image* im)
 {
-  char *s, *str = NULL;
+  char *s, *str = nullptr;
   int status;
   int n=0, nusermax = 20;
 
@@ -286,7 +286,7 @@ int readGisHeader( const char* name,_image* im)
 #define ADD_USER_STRING { \
     if ( n == 0 ) { \
       im->user = (char**)ImageIO_alloc( nusermax * sizeof( char*) ); \
-      for ( n=0; n<nusermax; n++ ) im->user[n] = NULL; \
+      for ( n=0; n<nusermax; n++ ) im->user[n] = nullptr; \
       n = 0; \
     } \
     im->user[n] = (char*)ImageIO_alloc( 1+strlen( s ) ); \
@@ -472,7 +472,7 @@ int readGisHeader( const char* name,_image* im)
 
 
   /* header is read. close header file and open data file. */
-  if( name != NULL ) {
+  if( name != nullptr ) {
     
     std::size_t length = strlen(name) ;
     char* data_filename = (char *) ImageIO_alloc(length+4) ;
@@ -554,14 +554,14 @@ int readGisHeader( const char* name,_image* im)
 	    ret = sscanf( tmp, "%d", &iv );
 	  break;
 	  default :
-	    ImageIO_free( im->data ); im->data = NULL;
+	    ImageIO_free( im->data ); im->data = nullptr;
 	    ImageIO_free( str );
 	    return -1;
 	  }
 	  
 	  if ( ret != 1 ) {
 	    fprintf( stderr, "readGisHeader: error in reading ascii data\n" );
-	    ImageIO_free( im->data ); im->data = NULL;
+	    ImageIO_free( im->data ); im->data = nullptr;
 	    ImageIO_free( str );
 	    return -1;	
 	  }
@@ -607,7 +607,7 @@ int readGisHeader( const char* name,_image* im)
 	    n ++;
 	  }
 	  else {
-	    ImageIO_free( im->data ); im->data = NULL;
+	    ImageIO_free( im->data ); im->data = nullptr;
 	    ImageIO_free( str );
 	    return -1;
 	  }

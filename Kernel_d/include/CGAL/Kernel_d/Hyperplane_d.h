@@ -59,7 +59,6 @@ public:
   Hyperplane_d(const Point_d<R>& p, const Direction_d<R>& dir) :
     Base(p,dir) {}
 
-  Hyperplane_d(const Hyperplane_d<R> &h) : Base(h) {}
   Hyperplane_d(const Base& p) : Base(p) {}
 
   template <class InputIterator>

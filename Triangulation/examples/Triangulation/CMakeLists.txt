@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Triangulation_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 if(CMAKE_COMPILER_IS_GNUCCX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.4)
   message(STATUS "NOTICE: this directory requires a version of gcc >= 4.4, and will not be compiled.")

@@ -3,9 +3,9 @@
 #include <CGAL/Eigen_diagonalize_traits.h>
 
 typedef double                                          FT;
-typedef CGAL::cpp11::array<FT, 6>                       Eigen_matrix;
-typedef CGAL::cpp11::array<FT, 3>                       Eigen_vector;
-typedef CGAL::cpp11::array<FT, 9>                       Eigen_three_vectors;
+typedef std::array<FT, 6>                       Eigen_matrix;
+typedef std::array<FT, 3>                       Eigen_vector;
+typedef std::array<FT, 9>                       Eigen_three_vectors;
 
 typedef CGAL::Eigen_diagonalize_traits<FT, 3>           Diagonalize_traits;
 

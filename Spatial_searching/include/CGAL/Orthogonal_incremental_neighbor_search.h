@@ -53,7 +53,7 @@ namespace CGAL {
     typedef typename Tree::Node_const_handle Node_const_handle;
 
     typedef std::pair<Point_d,FT> Point_with_transformed_distance;
-    typedef CGAL::cpp11::tuple<Node_const_handle,FT,std::vector<FT> > Node_with_distance;
+    typedef std::tuple<Node_const_handle,FT,std::vector<FT> > Node_with_distance;
     typedef std::vector<Node_with_distance*> Node_with_distance_vector;
     typedef std::vector<Point_with_transformed_distance*> Point_with_transformed_distance_vector;
 
@@ -107,7 +107,7 @@ namespace CGAL {
         bool 
 	operator() (Node_with_distance* n1, Node_with_distance* n2) const
 	{
-	  return (search_nearest) ? (CGAL::cpp11::get<1>(*n1) > CGAL::cpp11::get<1>(*n2)) : (CGAL::cpp11::get<1>(*n2) > CGAL::cpp11::get<1>(*n1));
+	  return (search_nearest) ? (std::get<1>(*n1) > std::get<1>(*n2)) : (std::get<1>(*n2) > std::get<1>(*n1));
         }
       };
 
@@ -173,7 +173,7 @@ namespace CGAL {
           PriorityQueue.push(The_Root);
 
           // rd is the distance of the top of the priority queue to q
-          rd=CGAL::cpp11::get<1>(*The_Root);
+          rd=std::get<1>(*The_Root);
           Compute_the_next_nearest_neighbour();
         }
          else{
@@ -185,7 +185,7 @@ namespace CGAL {
         PriorityQueue.push(The_Root);
 
         // rd is the distance of the top of the priority queue to q
-        rd=CGAL::cpp11::get<1>(*The_Root);
+        rd=std::get<1>(*The_Root);
         Compute_the_next_furthest_neighbour();
          }
 
@@ -276,8 +276,8 @@ namespace CGAL {
         // otherwise browse the tree further
         while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
 	  Node_with_distance* The_node_top=PriorityQueue.top();
-	  Node_const_handle N= CGAL::cpp11::get<0>(*The_node_top);
-          dists = CGAL::cpp11::get<2>(*The_node_top);
+	  Node_const_handle N= std::get<0>(*The_node_top);
+          dists = std::get<2>(*The_node_top);
 	  PriorityQueue.pop();
 	  delete The_node_top;
 	  FT copy_rd=rd;
@@ -331,7 +331,7 @@ namespace CGAL {
 	    // hence update rd
                 
 	    if (!(PriorityQueue.empty()))  {
-	      rd = CGAL::cpp11::get<1>(*PriorityQueue.top());
+	      rd = std::get<1>(*PriorityQueue.top());
 		next_neighbour_found =
                   (multiplication_factor*rd > 
 		   Item_PriorityQueue.top()->second);
@@ -362,8 +362,8 @@ namespace CGAL {
         // otherwise browse the tree further
         while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
 	  Node_with_distance* The_node_top=PriorityQueue.top();
-	  Node_const_handle N= CGAL::cpp11::get<0>(*The_node_top);
-          dists = CGAL::cpp11::get<2>(*The_node_top);
+	  Node_const_handle N= std::get<0>(*The_node_top);
+          dists = std::get<2>(*The_node_top);
 	  PriorityQueue.pop();
 	  delete The_node_top;
 	  FT copy_rd=rd;
@@ -416,7 +416,7 @@ namespace CGAL {
 	    // hence update rd
                 
 	    if (!(PriorityQueue.empty()))  {
-	      rd = CGAL::cpp11::get<1>(*PriorityQueue.top());
+	      rd = std::get<1>(*PriorityQueue.top());
 		next_neighbour_found =
                   (multiplication_factor*rd < 
 		   Item_PriorityQueue.top()->second);

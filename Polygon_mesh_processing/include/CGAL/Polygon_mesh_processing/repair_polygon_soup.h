@@ -23,12 +23,12 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/unordered.h>
 
 #include <boost/dynamic_bitset.hpp>
 #include <boost/functional/hash.hpp>
@@ -41,6 +41,8 @@
 #include <set>
 #include <vector>
 #include <utility>
+#include <unordered_map>
+#include <unordered_set>
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   #ifndef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
@@ -68,7 +70,7 @@ struct Polygon_types
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
 struct GetPolygonGeomTraits
 {
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
                      internal_np::geom_traits_t,
                      NamedParameters,
                      typename CGAL::Kernel_traits<
@@ -420,24 +422,46 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
   }
 
   // Move all the unused points to the end
-  std::size_t swap_position = ini_points_size - 1;
-  for(std::size_t i=0; i<ini_points_size; ++i)
+  std::size_t first_unused_pos = ini_points_size;
+  for(std::size_t i=0; i<ini_points_size;)
   {
+    if(i >= first_unused_pos)
+      break;
+
     if(!visited[i])
     {
+      std::size_t swap_position = first_unused_pos - 1;
+      CGAL_assertion(swap_position < ini_points_size);
+
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
       std::cout << "points[" << i << "] = " << points[i] << " is isolated" << std::endl;
+      std::cout << "  swapping it to pos: " << swap_position << std::endl;
 #endif
       std::swap(points[swap_position], points[i]);
+
+      // Swap manually because MSVC is unhappy with std::swap(v[i], v[j]) and a vector<bool>,
+      // and Apple Clang is unhappy with v.swap(v[i], v[j])...
+      const bool tmp = visited[swap_position];
+      visited[swap_position] = visited[i];
+      visited[i] = tmp;
+
       id_remapping[swap_position] = i;
-      --swap_position;
+      --first_unused_pos;
+    }
+    else
+    {
+      ++i;
     }
   }
 
   // Actually remove the unused points
-  ++swap_position; // 'swap_position' points at the first element to remove
-  const std::size_t removed_points_n = ini_points_size - swap_position;
-  points.erase(points.begin() + swap_position, points.end());
+  const std::size_t removed_points_n = ini_points_size - first_unused_pos;
+
+  // Pointless to remap everything if nothing has changed, so early exit
+  if(removed_points_n == 0)
+    return removed_points_n;
+
+  points.erase(points.begin() + first_unused_pos, points.end());
 
   // Renumber the polygons
   for(P_ID polygon_index=0, end=polygons.size(); polygon_index!=end; ++polygon_index)
@@ -446,7 +470,7 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
     for(std::size_t i=0, polygon_size = polygon.size(); i<polygon_size; ++i)
     {
       polygon[i] = id_remapping[polygon[i]];
-      CGAL_postcondition(polygon[i] < points.size());
+      CGAL_postcondition(static_cast<std::size_t>(polygon[i]) < points.size());
     }
   }
 
@@ -494,11 +518,11 @@ std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::Point_3     Point_3;
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
   typedef typename Traits::Less_xyz_3                                             Less_xyz_3;
 
@@ -641,7 +665,11 @@ Polygon construct_canonical_polygon(const PointRange& points,
                                     const Traits& traits = Traits())
 {
   if(polygon.size() < 2)
+  {
+    reversed = false;
     return polygon;
+  }
+  
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Input polygon:";
@@ -750,11 +778,11 @@ struct Duplicate_collector
   void dump(OutputIterator out)
   {
     typedef std::pair<const ValueType, std::vector<ValueType> > Pair_type;
-    BOOST_FOREACH(const Pair_type& p, collections)
+    for(const Pair_type& p : collections)
       *out++ = p.second;
   }
 
-  CGAL::cpp11::unordered_map<ValueType, std::vector<ValueType> > collections;
+  std::unordered_map<ValueType, std::vector<ValueType> > collections;
 };
 
 template <typename ValueType>
@@ -796,7 +824,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
   typedef boost::dynamic_bitset<>                                                 Reversed_markers;
   typedef internal::Polygon_equality_tester<PointRange, PolygonRange,
                                             Reversed_markers, Traits>             Equality;
-  typedef CGAL::cpp11::unordered_set<P_ID, Hasher, Equality>                      Unique_polygons;
+  typedef std::unordered_set<P_ID, Hasher, Equality>                      Unique_polygons;
 
   const std::size_t polygons_n = polygons.size();
 
@@ -881,13 +909,13 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
                                                      PolygonRange& polygons,
                                                      const NamedParameters& np)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID                         P_ID;
 
-  const bool erase_all_duplicates = choose_param(get_param(np, internal_np::erase_all_duplicates), false);
-  const bool same_orientation = choose_param(get_param(np, internal_np::require_same_orientation), false);
+  const bool erase_all_duplicates = choose_parameter(get_parameter(np, internal_np::erase_all_duplicates), false);
+  const bool same_orientation = choose_parameter(get_parameter(np, internal_np::require_same_orientation), false);
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Only polygons with the same orientation are duplicates: " << std::boolalpha << same_orientation << std::endl;
@@ -895,7 +923,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 #endif
 
   typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
   std::vector<std::vector<P_ID> > all_duplicate_polygons;
   internal::collect_duplicate_polygons(points, polygons, std::back_inserter(all_duplicate_polygons), traits, same_orientation);
@@ -911,6 +939,18 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
   const std::size_t init_polygons_n = polygons.size();
   std::size_t swap_position = init_polygons_n - 1;
 
+  std::vector<bool> treated(init_polygons_n, false);
+
+  // PID_to_pos is to go from a polygon ID to its position in the polygons vector, and pos_to_PID
+  // is to move the other way
+  std::vector<std::size_t> PID_to_pos(init_polygons_n);
+  std::vector<std::size_t> pos_to_PID(init_polygons_n);
+  for(std::size_t i=0, ps=polygons.size(); i<ps; ++i)
+  {
+    PID_to_pos[i] = i;
+    pos_to_PID[i] = i;
+  }
+
   while(!all_duplicate_polygons.empty())
   {
     const std::vector<P_ID>& duplicate_polygons = all_duplicate_polygons.back();
@@ -919,10 +959,30 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
     std::size_t i = erase_all_duplicates ? 0 : 1;
     for(; i<duplicate_polygons.size(); ++i)
     {
-      const P_ID polygon_to_remove = duplicate_polygons[i];
+      const P_ID polygon_to_remove_id = duplicate_polygons[i];
+      if(treated[polygon_to_remove_id])
+        continue;
+
+      const P_ID polygon_to_remove_pos = PID_to_pos[polygon_to_remove_id];
       CGAL_assertion(swap_position < init_polygons_n);
-      std::swap(polygons[swap_position], polygons[polygon_to_remove]);
+      const P_ID polygon_at_swap_position_id = pos_to_PID[swap_position];
+
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
+      std::cout << "Removing duplicate, PID: " << polygon_to_remove_id << " at position: " << polygon_to_remove_pos << std::endl;
+      std::cout << "  swap position: " << swap_position << ", position of PID: " << polygon_at_swap_position_id << std::endl;
+#endif
+
+      // Need to keep track of who goes where
+      PID_to_pos[polygon_at_swap_position_id] = polygon_to_remove_pos;
+      PID_to_pos[polygon_to_remove_id] = swap_position;
+      pos_to_PID[polygon_to_remove_pos] = polygon_at_swap_position_id;
+      pos_to_PID[swap_position] = polygon_to_remove_id;
+
+      CGAL_assertion(polygon_to_remove_pos <= swap_position);
+      std::swap(polygons[swap_position], polygons[polygon_to_remove_pos]);
       --swap_position;
+
+      treated[polygon_to_remove_id] = true;
     }
 
     all_duplicate_polygons.pop_back();
@@ -930,7 +990,10 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 
   ++swap_position; // so that it points to the first removed polygon
   const std::size_t removed_polygons_n = init_polygons_n - swap_position;
-  polygons.erase(polygons.begin() + swap_position, polygons.end());
+
+  typename PolygonRange::iterator first = polygons.begin();
+  std::advance(first, swap_position);
+  polygons.erase(first, polygons.end());
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
   std::cout << "Removed " << removed_polygons_n << " duplicate polygon(s)" << std::endl;
@@ -1003,11 +1066,11 @@ void repair_polygon_soup(PointRange& points,
                          PolygonRange& polygons,
                          const NamedParameters& np)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
   std::cout << "Repairing soup with " << points.size() << " points and " << polygons.size() << " polygons" << std::endl;

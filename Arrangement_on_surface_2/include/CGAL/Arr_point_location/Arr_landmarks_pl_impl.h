@@ -169,7 +169,7 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
       // We found a vertex closer to p; Continue using this vertex.
       const Vertex_const_handle* p_vh =
         Result().template assign<Vertex_const_handle>(obj);
-      CGAL_assertion(p_vh != NULL);
+      CGAL_assertion(p_vh != nullptr);
       vh = *p_vh;
       continue;
     }
@@ -504,7 +504,7 @@ _walk_from_face(Face_const_handle face,
 
   do {
     // Check whether p lies inside the current face (including its holes):
-    if (p_arr->topology_traits()->is_in_face(&(*face), p, NULL))
+    if (p_arr->topology_traits()->is_in_face(&(*face), p, nullptr))
     {
       // We know that p is located inside the current face, and we check
       // whether it lies inside one of its holes (or on the boundary of

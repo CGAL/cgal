@@ -46,13 +46,12 @@
 #include <CGAL/Boolean_set_operations_2/Ccb_curve_iterator.h>
 #include <CGAL/Union_find.h>
 
-#include <boost/foreach.hpp>
 
 /*!
   \file   Gps_on_surface_base_2.h
   \brief  A class that allows Boolean set operations.
   This class is the base class for General_polygon_set_on_surface_2 and
-  recieves extra template parameter which allows different validation
+  receives extra template parameter which allows different validation
   policies. If you do not want validation then use the default validation
   policy. A different validation policy example can be found in
   General_polygon_set_on_surface_2.
@@ -76,7 +75,7 @@ namespace Boolean_set_operation_2_internal
 
 //! General_polygon_set_on_surface_2
 /*! This class is the base class for General_polygon_set_on_surface_2 and
-    recieves extra template parameter which allows different validation
+    receives extra template parameter which allows different validation
     policies. If you do not want validation then use the default validation
     policy. A different validation policy example can be found in
     General_polygon_set_on_surface_2.
@@ -1093,7 +1092,7 @@ protected:
 
       // update halfedge flag according to the flag of the twin halfedge
       // or if the outer ccb of the cc was set
-      BOOST_FOREACH(Halfedge_handle h, halfedges_that_was_on_an_outer_ccb)
+      for(Halfedge_handle h : halfedges_that_was_on_an_outer_ccb)
       {
         if (h->flag()!=NOT_VISITED) continue;
         std::size_t face_master_id=(*uf_faces.find(face_handles[h->face()->id()]))->id();
@@ -1112,6 +1111,15 @@ protected:
       }
     }
     while(something_was_updated);
+    // last loop, if some tags are not set it means that they are the only ccb
+    // of the face and that they have to be the outer ccb
+    for(Halfedge_handle h : halfedges_that_was_on_an_outer_ccb)
+    {
+      if (h->flag()!=NOT_VISITED) continue;
+      std::size_t face_master_id=(*uf_faces.find(face_handles[h->face()->id()]))->id();
+      set_flag_of_halfedges_of_final_argt(h,ON_OUTER_CCB);
+      face_outer_ccb_set[face_master_id]=true;
+    }
     // at this position there might be some bits in face_outer_ccb_set not set
     // but they are corresponding to the unbounded face
   // End tagging ccbs
@@ -1182,9 +1190,9 @@ protected:
       }
 
       //collect for reuse/removal all inner and outer ccbs
-      BOOST_FOREACH(void* ptr, (*it)->_outer_ccbs())
+      for(void* ptr : (*it)->_outer_ccbs())
         outer_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->outer_ccb() );
-      BOOST_FOREACH(void* ptr, (*it)->_inner_ccbs())
+      for(void* ptr : (*it)->_inner_ccbs())
         inner_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->inner_ccb() );
       (*it)->_outer_ccbs().clear();
       (*it)->_inner_ccbs().clear();
@@ -1203,6 +1211,7 @@ protected:
     for (Halfedge_iterator itr = arr->halfedges_begin(); itr != arr->halfedges_end(); ++itr)
     {
       Halfedge_handle h = itr;
+      CGAL_assertion(h->face() != Face_handle());
       if (h->face()->id_not_set()) continue;
       CGAL_assertion(h->flag()!=NOT_VISITED);
 
@@ -1241,10 +1250,17 @@ protected:
             inner_ccb_and_new_face_pairs.push_back( std::make_pair(inner_ccb, f) );
         }
         else{
-          // we never create more outer ccb than what was available
-          CGAL_assertion(!outer_ccbs_to_remove.empty());
-          typename Aos_2::Dcel::Outer_ccb* outer_ccb = outer_ccbs_to_remove.back();
-          outer_ccbs_to_remove.pop_back();
+          // create a new outer ccb if none is available
+          typename Aos_2::Dcel::Outer_ccb* outer_ccb;
+          if (!outer_ccbs_to_remove.empty())
+          {
+            outer_ccb = outer_ccbs_to_remove.back();
+            outer_ccbs_to_remove.pop_back();
+          }
+          else{
+            outer_ccb = accessor.new_outer_ccb();
+            outer_ccb->set_face(f);
+          }
           Halfedge_handle hstart=h;
           do{
             _halfedge(h)->set_outer_ccb(outer_ccb);
@@ -1259,9 +1275,9 @@ protected:
     }
 
     // now set the new face for all ccbs
-    BOOST_FOREACH(Outer_ccb_and_face& ccb_and_face, outer_ccb_and_new_face_pairs)
+    for(Outer_ccb_and_face& ccb_and_face : outer_ccb_and_new_face_pairs)
       ccb_and_face.first->set_face(ccb_and_face.second);
-    BOOST_FOREACH(Inner_ccb_and_face& ccb_and_face, inner_ccb_and_new_face_pairs)
+    for(Inner_ccb_and_face& ccb_and_face : inner_ccb_and_new_face_pairs)
       ccb_and_face.first->set_face(ccb_and_face.second);
 
     //remove no longer used edges, vertices and faces

@@ -139,7 +139,7 @@ private:
   //! A container of boundary vertices.
   struct Vertex_key_comparer {
     /*! Construct default */
-    Vertex_key_comparer() : m_geom_traits(NULL) {}
+    Vertex_key_comparer() : m_geom_traits(nullptr) {}
 
     /*! Construct */
     Vertex_key_comparer(const Gt_adaptor_2* geom_traits) :
@@ -297,7 +297,7 @@ public:
   Vertex* north_pole() { return m_north_pole; }
 
   /*! Obtain a vertex on the line of discontinuity that corresponds to
-   *  the given curve-end (or return NULL if no such vertex exists).
+   *  the given curve-end (or return nullptr if no such vertex exists).
    */
   Vertex* discontinuity_vertex(const X_monotone_curve_2 xc, Arr_curve_end ind)
   {
@@ -305,7 +305,7 @@ public:
       m_geom_traits->construct_min_vertex_2_object()(xc) :
       m_geom_traits->construct_max_vertex_2_object()(xc);
     typename Vertex_map::iterator it = m_boundary_vertices.find(key);
-    return (it != m_boundary_vertices.end()) ? it->second : NULL;
+    return (it != m_boundary_vertices.end()) ? it->second : nullptr;
   }
   //@}
 
@@ -321,7 +321,6 @@ public:
   // the non-C++11 code requires the (re)definition of all constructors of the
   // derived class. The non-C++11 code follows the commented out C++11 code.
   // When we move to C++11 we can use the more elgant code.
-#if defined(CGAL_CFG_NO_CPP0X_TEMPLATE_ALIASES)
   // Type definition for the construction surface-sweep visitor.
   template <typename Evt, typename Crv>
   struct Construction_helper :
@@ -396,47 +395,6 @@ public:
                                                                 Base;
     Overlay_helper(const ArrA* arr_a, const ArrB* arr_b) : Base(arr_a, arr_b) {}
   };
-#else
-  // Type definition for the construction surface-sweep visitor.
-  template <typename Evt, typename Crv>
-  using Construction_helper =
-    Arr_spherical_construction_helper<Gt2, Arr, Evt, Crv>;
-
-  // Type definition for the no-intersection construction surface-sweep visitor.
-  template <typename Evt, typename Crv>
-  using No_intersection_construction_helper =
-    Arr_spherical_construction_helper<Gt2, Arr, Evt, Crv>;
-
-  // Type definition for the insertion surface-sweep visitor.
-  typedef Arr_insertion_traits_2<Gt2, Arr>                      I_traits;
-  template <typename Evt, typename Crv>
-  using Insertion_helper =
-    Arr_spherical_insertion_helper<I_traits, Arr, Evt, Crv>;
-
-  // Type definition for the no-intersection insertion surface-sweep visitor.
-  typedef Arr_basic_insertion_traits_2<Gt2, Arr>                Nxi_traits;
-  template <typename Evt, typename Crv>
-  using No_intersection_insertion_helper =
-    Arr_spherical_insertion_helper<Nxi_traits, Arr, Evt, Crv>;
-
-  // Type definition for the batched point-location surface-sweep visitor.
-  typedef Arr_batched_point_location_traits_2<Arr>              Bpl_traits;
-  template <typename Evt, typename Crv>
-  using Batched_point_location_helper =
-    Arr_spherical_batched_pl_helper<Bpl_traits, Arr, Evt, Crv>;
-
-  // Type definition for the vertical decomposition surface-sweep visitor.
-  typedef Arr_batched_point_location_traits_2<Arr>              Vd_traits;
-  template <typename Evt, typename Crv>
-  using Vertical_decomposition_helper =
-    Arr_spherical_vert_decomp_helper<Vd_traits, Arr, Evt, Crv>;
-
-  // Type definition for the overlay surface-sweep visitor.
-  template <typename Gt, typename Evt, typename Crv,
-            typename ArrA, typename ArrB>
-  using Overlay_helper =
-    Arr_spherical_overlay_helper<Gt, ArrA, ArrB, Arr, Evt, Crv>;
-#endif
   //@}
 
 public:
@@ -588,7 +546,7 @@ public:
   {
     // There are no fictitious halfedges:
     CGAL_error();
-    return NULL;
+    return nullptr;
   }
 
   /*! Determine whether the given face is unbounded.

@@ -33,7 +33,7 @@ for c in $(git --no-pager log --pretty='%h' --first-parent ${base}..${commit}); 
     git update-ref refs/cgal/git-show-content $c
     git bundle create bundle ${c}^..refs/cgal/git-show-content > /dev/null 2>&1
     gzip -f bundle
-    size=${(l:4:)$(( $(zstat +size bundle.gz) / 1024 ))}
+    size=${(l:6:)$(( $(zstat +size bundle.gz) / 1024 ))}
     git --no-pager show --no-patch --pretty='%C(auto)%h (SIZE: %C(auto)'"${size}kB)"'  %s <%an> %cD' $c
     parents=(${(@)$(git rev-parse $c^@)})
     if ! [ ${#${parents:1}[@]} -eq 0 ]; then

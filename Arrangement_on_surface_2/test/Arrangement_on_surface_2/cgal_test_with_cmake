@@ -1751,7 +1751,7 @@ compile_and_run test_io
 
 compile_and_run test_sgm
 
-# if any error occured then append the full error description file to error file
+# if any error occurred then append the full error description file to error file
 
 if [ -f $FULL_ERROR_DESCRIPTION_FILE ] ; then
     echo "******************** appending all error outputs ********************" >> $ERRORFILE

@@ -262,7 +262,7 @@ public:
     CGAL_assertion(inter_res != boost::none);
     const Exact_kernel::Point_3* pt =
       boost::get<Exact_kernel::Point_3>(&(*inter_res));
-    CGAL_assertion(pt!=NULL);
+    CGAL_assertion(pt!=nullptr);
     add_new_node(*pt);
   }
 
@@ -379,7 +379,7 @@ public:
     CGAL_assertion(inter_res != boost::none);
     const Point_3* pt =
       boost::get<Point_3>(&(*inter_res));
-    CGAL_assertion(pt!=NULL);
+    CGAL_assertion(pt!=nullptr);
     add_new_node(*pt);
   }
 

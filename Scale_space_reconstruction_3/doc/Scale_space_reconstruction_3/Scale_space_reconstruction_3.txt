@@ -52,7 +52,7 @@ The point set at the initial scale is equivalent to the input point set. In theo
 
 - `CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother` (default) uses the <em>density</em>-weighted principal component analysis (PCA) of the local neighborhood. If the point set was sampled from a surface for which any unwanted deformation and sampling noise is smaller than the neighborhood size, the scale is coarse enough for mesh reconstruction after a few iterations of increasing the scale.
 
-- `CGAL::Scale_space_reconstruction_3::Jet_smoother` uses the function `CGAL::jet_smooth_point_set()` that projects the point to a local smooth (jet) surface. This smoothing is less agressive and should be used if the point set is not very noisy and if a higher precision is sough.
+- `CGAL::Scale_space_reconstruction_3::Jet_smoother` uses the function `CGAL::jet_smooth_point_set()` that projects the point to a local smooth (jet) surface. This smoothing is less aggressive and should be used if the point set is not very noisy and if a higher precision is sough.
 
 Users can define their own smoothing operators by following the concept `CGAL::Scale_space_reconstruction_3::Smoother`.
 

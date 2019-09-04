@@ -1,10 +1,3 @@
-#include <CGAL/Object.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Iso_cuboid_3.h>
-#include <CGAL/Ray_3.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Line_3.h>
-#include <CGAL/Plane_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 

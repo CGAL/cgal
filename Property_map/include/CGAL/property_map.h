@@ -342,13 +342,12 @@ struct Nth_of_tuple_property_map
   /// @}
 };
 
-#ifndef CGAL_CFG_NO_CPP0X_TUPLE
 template <int N, typename ... T>
 struct Nth_of_tuple_property_map<N,std::tuple<T...> >
 {
   typedef std::tuple<T...> Tuple;
   typedef Tuple key_type;
-  typedef typename cpp11::tuple_element<N,Tuple>::type value_type;
+  typedef typename std::tuple_element<N,Tuple>::type value_type;
   typedef const value_type& reference;
   typedef boost::lvalue_property_map_tag category;
 
@@ -358,8 +357,6 @@ struct Nth_of_tuple_property_map<N,std::tuple<T...> >
   friend reference get(const Self&,const key_type& k) {return std::get<N>(k);}
   friend void put(const Self&,key_type& k, const value_type& v) {std::get<N>(k)=v;}
 };
-#endif
-
 
 /// Free function to create a Nth_of_tuple_property_map property map.
 ///
@@ -428,7 +425,7 @@ typename Pointer_property_map<T>::type
 make_property_map(std::vector<T>& v)
 {
   if(v.empty()){
-    return make_property_map(static_cast<T*>(NULL));
+    return make_property_map(static_cast<T*>(nullptr));
   }
   return make_property_map(&v[0]);
 }
@@ -501,17 +498,17 @@ struct Boolean_property_map
   /// Constructor taking a copy of the set. Note that `set_` must be valid
   /// while the property map is in use.
   Boolean_property_map(Set& set_) : set_ptr(&set_) {}
-  Boolean_property_map() : set_ptr(NULL) {}
+  Boolean_property_map() : set_ptr(nullptr) {}
 
   friend bool get(const Boolean_property_map<Set>& pm, const key_type& k)
   {
-    CGAL_assertion(pm.set_ptr!=NULL);
+    CGAL_assertion(pm.set_ptr!=nullptr);
     return pm.set_ptr->count(k) != 0;
   }
 
   friend void put(Boolean_property_map<Set>& pm, const key_type& k, bool v)
   {
-    CGAL_assertion(pm.set_ptr!=NULL);
+    CGAL_assertion(pm.set_ptr!=nullptr);
     if (v)
       pm.set_ptr->insert(k);
     else

@@ -21,7 +21,7 @@
 
 \cgalClassifedRefPages
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::minkowski_sum_3()`
 
 */

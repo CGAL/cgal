@@ -17,7 +17,7 @@
 
 \cgalClassifedRefPages
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Ipelet_base<Kernel,int nbf>`
 
 */

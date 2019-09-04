@@ -512,7 +512,7 @@ private:
 
   /*
     Filtering algorithm described in Xin and Wang (2009) "Improving chen and han's algorithm on the discrete geodesic problem."
-    http://doi.acm.org/10.1145/1559755.1559761
+    https://dl.acm.org/citation.cfm?doid=1559755.1559761
   */
   bool window_distance_filter(Cone_tree_node* cone, Segment_2 windowSegment, bool reversed)
   {
@@ -560,9 +560,9 @@ private:
     d2 = v2Distance.second;
     d3 = v3Distance.second;
 
-    bool hasD1 = v1Distance.first != NULL && v1Distance.first != cone->parent();
-    bool hasD2 = v2Distance.first != NULL && v2Distance.first != cone->parent();
-    bool hasD3 = v3Distance.first != NULL && v3Distance.first != cone->parent();
+    bool hasD1 = v1Distance.first != nullptr && v1Distance.first != cone->parent();
+    bool hasD2 = v2Distance.first != nullptr && v2Distance.first != cone->parent();
+    bool hasD3 = v3Distance.first != nullptr && v3Distance.first != cone->parent();
 
     if (hasD1 && (d + CGAL::internal::select_sqrt(csd2(I, B)) > d1 + CGAL::internal::select_sqrt(csd2(v1, B))))
     {
@@ -621,9 +621,9 @@ private:
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     typename Traits::Construct_triangle_3_along_segment_2_flattening ft3as2(m_traits.construct_triangle_3_along_segment_2_flattening_object());
 
-    CGAL_assertion(cone->m_pendingLeftSubtree != NULL);
+    CGAL_assertion(cone->m_pendingLeftSubtree != nullptr);
 
-    cone->m_pendingLeftSubtree = NULL;
+    cone->m_pendingLeftSubtree = nullptr;
 
     if (window_distance_filter(cone, windowSegment, false))
     {
@@ -648,9 +648,9 @@ private:
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     typename Traits::Construct_triangle_3_along_segment_2_flattening ft3as2(m_traits.construct_triangle_3_along_segment_2_flattening_object());
 
-    CGAL_assertion(cone->m_pendingRightSubtree != NULL);
+    CGAL_assertion(cone->m_pendingRightSubtree != nullptr);
 
-    cone->m_pendingRightSubtree = NULL;
+    cone->m_pendingRightSubtree = nullptr;
 
     if (window_distance_filter(cone, windowSegment, true))
     {
@@ -835,7 +835,7 @@ private:
     typename Traits::Construct_triangle_3_to_triangle_2_projection pt3t2(m_traits.construct_triangle_3_to_triangle_2_projection_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
 
-    parent->m_pendingMiddleSubtree = NULL;
+    parent->m_pendingMiddleSubtree = nullptr;
 
     vertex_descriptor expansionVertex = parent->target_vertex();
 
@@ -851,7 +851,7 @@ private:
 
     // A potential optimization could be made by only expanding in the 'necessary' range (i.e. the range outside of geodesic visibility), but the
     // benefits may be small, since the node filter would prevent more than one-level propagation.
-    // It would also be neccessary to distinguish expanding a root vertex node from a pseudo-source node
+    // It would also be necessary to distinguish expanding a root vertex node from a pseudo-source node
 
     do
     {
@@ -1110,7 +1110,7 @@ private:
         std::cout << "\t Target vertex = " << get(m_vertexIndexMap, node->target_vertex()) << std::endl;
       }
 
-      if (currentOccupier.first != NULL)
+      if (currentOccupier.first != nullptr)
       {
         if (node->is_vertex_node())
         {
@@ -1148,7 +1148,7 @@ private:
         std::cout << "\t New Distance = " << currentNodeDistance << std::endl;
       }
 
-      if (currentOccupier.first == NULL || currentOccupier.second > currentNodeDistance)
+      if (currentOccupier.first == nullptr || currentOccupier.second > currentNodeDistance)
       {
         if (m_debugOutput)
         {
@@ -1175,7 +1175,7 @@ private:
           }
         }
 
-        if (currentOccupier.first != NULL)
+        if (currentOccupier.first != nullptr)
         {
           if (isLeftOfCurrent)
           {
@@ -1183,10 +1183,10 @@ private:
             {
               delete_node(currentOccupier.first->remove_left_child());
             }
-            else if (currentOccupier.first->m_pendingLeftSubtree != NULL)
+            else if (currentOccupier.first->m_pendingLeftSubtree != nullptr)
             {
               currentOccupier.first->m_pendingLeftSubtree->m_cancelled = true;
-              currentOccupier.first->m_pendingLeftSubtree = NULL;
+              currentOccupier.first->m_pendingLeftSubtree = nullptr;
             }
           }
           else
@@ -1195,10 +1195,10 @@ private:
             {
               delete_node(currentOccupier.first->remove_right_child());
             }
-            else if (currentOccupier.first->m_pendingRightSubtree != NULL)
+            else if (currentOccupier.first->m_pendingRightSubtree != nullptr)
             {
               currentOccupier.first->m_pendingRightSubtree->m_cancelled = true;
-              currentOccupier.first->m_pendingRightSubtree = NULL;
+              currentOccupier.first->m_pendingRightSubtree = nullptr;
             }
           }
         }
@@ -1208,12 +1208,12 @@ private:
         // Check if this is now the absolute closest node, and replace the current closest as appropriate
         Node_distance_pair currentClosest = m_closestToVertices[targetVertexIndex];
 
-        if (m_debugOutput && currentClosest.first != NULL)
+        if (m_debugOutput && currentClosest.first != nullptr)
         {
           std::cout << "\t Current Closest Distance = " << currentClosest.second << std::endl;
         }
 
-        if (currentClosest.first == NULL || currentClosest.second > currentNodeDistance)
+        if (currentClosest.first == nullptr || currentClosest.second > currentNodeDistance)
         {
           if (m_debugOutput)
           {
@@ -1223,17 +1223,17 @@ private:
           // if this is a saddle vertex, then evict previous closest vertex
           if (m_vertexIsPseudoSource[targetVertexIndex])
           {
-            if (currentClosest.first != NULL)
+            if (currentClosest.first != nullptr)
             {
               if (m_debugOutput)
               {
                 std::cout << "\tEvicting old pseudo-source: " << currentClosest.first << std::endl;
               }
 
-              if (currentClosest.first->m_pendingMiddleSubtree != NULL)
+              if (currentClosest.first->m_pendingMiddleSubtree != nullptr)
               {
                 currentClosest.first->m_pendingMiddleSubtree->m_cancelled = true;
-                currentClosest.first->m_pendingMiddleSubtree = NULL;
+                currentClosest.first->m_pendingMiddleSubtree = nullptr;
               }
 
               while (currentClosest.first->has_middle_children())
@@ -1387,20 +1387,20 @@ private:
 
   void delete_node(Cone_tree_node* node, bool destruction = false)
   {
-    if (node != NULL)
+    if (node != nullptr)
     {
       if (m_debugOutput)
       {
         std::cout << "Deleting node " << node << std::endl;
       }
 
-      if (node->m_pendingLeftSubtree != NULL)
+      if (node->m_pendingLeftSubtree != nullptr)
       {
         node->m_pendingLeftSubtree->m_cancelled = true;
-        node->m_pendingLeftSubtree = NULL;
+        node->m_pendingLeftSubtree = nullptr;
       }
 
-      if (node->get_left_child() != NULL)
+      if (node->get_left_child() != nullptr)
       {
         if (m_debugOutput)
         {
@@ -1410,13 +1410,13 @@ private:
         delete_node(node->remove_left_child(), destruction);
       }
 
-      if (node->m_pendingRightSubtree != NULL)
+      if (node->m_pendingRightSubtree != nullptr)
       {
         node->m_pendingRightSubtree->m_cancelled = true;
-        node->m_pendingRightSubtree = NULL;
+        node->m_pendingRightSubtree = nullptr;
       }
 
-      if (node->get_right_child() != NULL)
+      if (node->get_right_child() != nullptr)
       {
         if (m_debugOutput)
         {
@@ -1426,10 +1426,10 @@ private:
         delete_node(node->remove_right_child(), destruction);
       }
 
-      if (node->m_pendingMiddleSubtree != NULL)
+      if (node->m_pendingMiddleSubtree != nullptr)
       {
         node->m_pendingMiddleSubtree->m_cancelled = true;
-        node->m_pendingMiddleSubtree = NULL;
+        node->m_pendingMiddleSubtree = nullptr;
       }
 
       if (node->has_middle_children() && m_debugOutput)
@@ -1450,13 +1450,13 @@ private:
 
         if (m_vertexOccupiers[entryEdgeIndex].first == node)
         {
-          m_vertexOccupiers[entryEdgeIndex].first = NULL;
+          m_vertexOccupiers[entryEdgeIndex].first = nullptr;
 
           std::size_t targetVertexIndex = get(m_vertexIndexMap, node->target_vertex());
 
           if (m_closestToVertices[targetVertexIndex].first == node)
           {
-            m_closestToVertices[targetVertexIndex].first = NULL;
+            m_closestToVertices[targetVertexIndex].first = nullptr;
           }
         }
       }
@@ -1520,7 +1520,7 @@ private:
 
   void reset_algorithm(bool clearFaceLocations = true)
   {
-    Cone_tree_node* null_value=NULL;
+    Cone_tree_node* null_value=nullptr;
     m_closestToVertices.resize(num_vertices(m_graph));
     std::fill(m_closestToVertices.begin(), m_closestToVertices.end(), Node_distance_pair(null_value, FT(0.0)));
     m_vertexOccupiers.resize(num_halfedges(m_graph));
@@ -1643,12 +1643,12 @@ private:
       m_faceOccupiers[faceIndex].push_back(node);
     }
 
-    if (node->get_left_child() != NULL)
+    if (node->get_left_child() != nullptr)
     {
       add_to_face_list(node->get_left_child());
     }
 
-    if (node->get_right_child() != NULL)
+    if (node->get_right_child() != nullptr)
     {
       add_to_face_list(node->get_right_child());
     }
@@ -1682,7 +1682,7 @@ private:
 
     std::size_t faceIndex = get(m_faceIndexMap, f);
 
-    Cone_tree_node* closest = NULL;
+    Cone_tree_node* closest = nullptr;
     FT closestDistance = 0;
 
     std::vector<Cone_tree_node*>& currentFaceList = m_faceOccupiers[faceIndex];
@@ -1691,7 +1691,7 @@ private:
     {
       Cone_tree_node* current = currentFaceList[i];
 
-      if (closest != NULL && current->distance_from_source_to_root() >= closestDistance)
+      if (closest != nullptr && current->distance_from_source_to_root() >= closestDistance)
       {
         continue;
       }
@@ -1702,7 +1702,7 @@ private:
       {
         FT currentDistance = current->distance_to_root(locationInContext);
 
-        if (closest == NULL || currentDistance < closestDistance)
+        if (closest == nullptr || currentDistance < closestDistance)
         {
           closest = current;
           closestDistance = currentDistance;
@@ -1716,7 +1716,7 @@ private:
     }
     else
     {
-      return std::make_pair(Node_distance_pair((Cone_tree_node*)NULL, FT(0.0)), cbc(FT(0.0), FT(0.0), FT(0.0)));
+      return std::make_pair(Node_distance_pair((Cone_tree_node*)nullptr, FT(0.0)), cbc(FT(0.0), FT(0.0), FT(0.0)));
     }
   }
 
@@ -1755,11 +1755,11 @@ private:
               Barycentric_coordinates oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
               std::pair<Node_distance_pair,Barycentric_coordinates> otherFace = nearest_on_face(face(oppositeHalfedge, m_graph), oppositeLocation);
 
-              if (mainFace.first.first == NULL)
+              if (mainFace.first.first == nullptr)
               {
                 return otherFace;
               }
-              else if (otherFace.first.first == NULL)
+              else if (otherFace.first.first == nullptr)
               {
                 return mainFace;
               }

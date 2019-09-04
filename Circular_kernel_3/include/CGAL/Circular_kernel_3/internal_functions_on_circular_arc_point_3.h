@@ -27,7 +27,7 @@
 #define CGAL_SPHERICAL_KERNEL_PREDICATES_ON_CIRCULAR_ARC_POINT_3_H
 
 #include <CGAL/license/Circular_kernel_3.h>
-
+#include <CGAL/float.h>
 
 namespace CGAL {
   namespace SphericalFunctors {

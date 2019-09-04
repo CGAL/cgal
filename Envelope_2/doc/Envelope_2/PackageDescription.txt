@@ -27,18 +27,18 @@ induce the envelope over each interval is unique.
 
 \cgalClassifedRefPages
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::lower_envelope_2`
 - `CGAL::upper_envelope_2`
 - `CGAL::lower_envelope_x_monotone_2`
 - `CGAL::upper_envelope_x_monotone_2`
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `EnvelopeDiagram_1`
 - `EnvelopeDiagramVertex`
 - `EnvelopeDiagramEdge`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Envelope_diagram_1<Traits> `
 
 */

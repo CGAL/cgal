@@ -1,6 +1,12 @@
 #include <QApplication>
 #include "Scene_facegraph_transform_item.h"
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Three.h>
+#include <CGAL/Three/Edge_container.h>
+
+using namespace CGAL::Three;
+typedef Viewer_interface Vi;
+typedef Edge_container Ec;
 
 struct Scene_facegraph_transform_item_priv
 {
@@ -13,7 +19,7 @@ struct Scene_facegraph_transform_item_priv
       item_name(name)
   {
     item = parent;
-    const CGAL::qglviewer::Vec offset = static_cast<Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     frame->setPosition(pos+offset);
     nb_lines = 0;
   }
@@ -21,16 +27,7 @@ struct Scene_facegraph_transform_item_priv
 {
   delete frame;
 }
-  void initialize_buffers(Viewer_interface *viewer) const;
   void compute_elements() const;
-  enum VAOs {
-      Edges=0,
-      NbOfVaos
-  };
-  enum VBOs {
-      Vertices = 0,
-      NbOfVbos
-  };
 
   bool manipulable;
   CGAL::qglviewer::ManipulatedFrame* frame;
@@ -40,43 +37,16 @@ struct Scene_facegraph_transform_item_priv
   QMatrix4x4 f_matrix;
   const QString item_name;
 
-  mutable QOpenGLShaderProgram *program;
   mutable std::vector<float> positions_lines;
   mutable std::size_t nb_lines;
 };
 
 Scene_facegraph_transform_item::Scene_facegraph_transform_item(const CGAL::qglviewer::Vec& pos, FaceGraph* sm,
-                                                                 const QString name):
-    Scene_item(Scene_facegraph_transform_item_priv::NbOfVbos,Scene_facegraph_transform_item_priv::NbOfVaos)
+                                                                 const QString name)
 {
   d = new Scene_facegraph_transform_item_priv(pos,sm, name, this);
-    invalidateOpenGLBuffers();
-}
-
-
-void Scene_facegraph_transform_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer =0) const
-{
-    //vao for the edges
-    {
-        program = item->getShaderProgram(Scene_facegraph_transform_item::PROGRAM_WITHOUT_LIGHT, viewer);
-        program->bind();
-
-        item->vaos[Edges]->bind();
-        item->buffers[Vertices].bind();
-        item->buffers[Vertices].allocate(positions_lines.data(),
-                            static_cast<int>(positions_lines.size()*sizeof(float)));
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        item->buffers[Vertices].release();
-        item->vaos[Edges]->release();
-
-        program->release();
-    }
-    nb_lines = positions_lines.size();
-    positions_lines.resize(0);
-    std::vector<float>(positions_lines).swap(positions_lines);
-
-    item->are_buffers_filled = true;
+  setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
+  invalidateOpenGLBuffers();
 }
 
 
@@ -109,20 +79,23 @@ void Scene_facegraph_transform_item_priv::compute_elements() const
 
 void Scene_facegraph_transform_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
-    if(!are_buffers_filled)
-        d->initialize_buffers(viewer);
-    vaos[Scene_facegraph_transform_item_priv::Edges]->bind();
-    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
-    d->program->bind();
-    QColor color = this->color();
-    d->program->setAttributeValue("colors",color);
-    d->program->setUniformValue("f_matrix", d->f_matrix);
-    d->program->setUniformValue("is_selected", false);
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/3));
-    vaos[Scene_facegraph_transform_item_priv::Edges]->release();
-    d->program->release();
-
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
+  {
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
+  {
+    computeElements();
+    initializeBuffers(viewer);
+  }
+    Ec* ec = getEdgeContainer(0);
+    ec->setColor(this->color());
+    ec->setFrameMatrix(d->f_matrix);
+    ec->draw(viewer, true);
 }
 
 QString Scene_facegraph_transform_item::toolTip() const {
@@ -152,16 +125,16 @@ Scene_facegraph_transform_item::compute_bbox() const {
     }
     CGAL::qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
     CGAL::qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
-    _bbox = Bbox(min.x,min.y,min.z,
-                 max.x,max.y,max.z);
+    setBbox(Bbox(min.x,min.y,min.z,
+                 max.x,max.y,max.z));
 }
 
 
 void Scene_facegraph_transform_item::invalidateOpenGLBuffers()
 {
-    d->compute_elements();
-    are_buffers_filled = false;
-    compute_bbox();
+  compute_bbox();
+  setBuffersFilled(false);
+  getEdgeContainer(0)->reset_vbos(ALL);
 }
 
 bool Scene_facegraph_transform_item::manipulatable() const { return d->manipulable; }
@@ -178,4 +151,23 @@ void Scene_facegraph_transform_item::setFMatrix(double matrix[16])
 FaceGraph *Scene_facegraph_transform_item::getFaceGraph()
 {
  return d->facegraph;
+}
+
+void Scene_facegraph_transform_item::computeElements() const
+{
+  d->compute_elements();
+  
+  getEdgeContainer(0)->allocate(
+        Ec::Vertices,
+        d->positions_lines.data(),
+        static_cast<int>(d->positions_lines.size()*sizeof(float)));
+  d->nb_lines = d->positions_lines.size();
+  setBuffersFilled(true);
+}
+void Scene_facegraph_transform_item::initializeBuffers(Viewer_interface *v) const
+{
+  getEdgeContainer(0)->initializeBuffers(v);
+  getEdgeContainer(0)->setFlatDataSize(d->nb_lines);
+  d->positions_lines.clear();
+  d->positions_lines.shrink_to_fit();
 }

@@ -36,7 +36,7 @@ namespace CGAL {
       typedef CGAL::Tag_true Darts_with_id;
       typedef CGAL::Cell_attribute_with_point_and_id<LCC> Vertex_attribute;
       typedef CGAL::Cell_attribute_with_id<LCC> Face_attribute;
-      typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
+      typedef std::tuple<Vertex_attribute, void, Face_attribute> Attributes;
     };
   };
   

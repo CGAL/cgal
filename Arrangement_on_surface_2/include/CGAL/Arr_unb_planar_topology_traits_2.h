@@ -226,82 +226,6 @@ public:
   // defining a type that inherits from the template we need to alias.  However,
   // the non-C++11 code requires the (re)definition of all constructors of the
   // derived class.
-#if defined(CGAL_CFG_NO_CPP0X_TEMPLATE_ALIASES)
-  // Type definition for the construction surface-sweep visitor.
-  template <typename Evt, typename Crv>
-  struct Construction_helper :
-    public Arr_unb_planar_construction_helper<Gt2, Arr, Evt, Crv>
-  {
-    typedef Arr_unb_planar_construction_helper<Gt2, Arr, Evt, Crv>
-                                                                Base;
-    Construction_helper(Arr* arr) : Base(arr) {}
-  };
-
-  // Type definition for the no-intersection construction surface-sweep visitor.
-  template <typename Evt, typename Crv>
-  struct No_intersection_construction_helper :
-    public Arr_unb_planar_construction_helper<Gt2, Arr, Evt, Crv>
-  {
-    typedef Arr_unb_planar_construction_helper<Gt2, Arr, Evt, Crv>
-                                                                Base;
-    No_intersection_construction_helper(Arr* arr) : Base(arr) {}
-  };
-
-  // Type definition for the insertion surface-sweep visitor.
-  typedef Arr_insertion_traits_2<Gt2, Arr>                      I_traits;
-  template <typename Evt, typename Crv>
-  struct Insertion_helper :
-    public Arr_unb_planar_insertion_helper<I_traits, Arr, Evt, Crv>
-  {
-    typedef Arr_unb_planar_insertion_helper<I_traits, Arr, Evt, Crv>
-                                                                Base;
-    Insertion_helper(Arr* arr) : Base(arr) {}
-  };
-
-  // Type definition for the no-intersection insertion surface-sweep visitor.
-  typedef Arr_basic_insertion_traits_2<Gt2, Arr>                Nxi_traits;
-  template <typename Evt, typename Crv>
-  struct No_intersection_insertion_helper :
-    public Arr_unb_planar_insertion_helper<Nxi_traits, Arr, Evt, Crv>
-  {
-    typedef Arr_unb_planar_insertion_helper<Nxi_traits, Arr, Evt, Crv>
-                                                                Base;
-    No_intersection_insertion_helper(Arr* arr) : Base(arr) {}
-  };
-
-  // Type definition for the batched point-location surface-sweep visitor.
-  typedef Arr_batched_point_location_traits_2<Arr>              Bpl_traits;
-  template <typename Evt, typename Crv>
-  struct Batched_point_location_helper :
-    public Arr_unb_planar_batched_pl_helper<Bpl_traits, Arr, Evt, Crv>
-  {
-    typedef Arr_unb_planar_batched_pl_helper<Bpl_traits, Arr, Evt, Crv>
-                                                                Base;
-    Batched_point_location_helper(const Arr* arr) : Base(arr) {}
-  };
-
-  // Type definition for the vertical decomposition surface-sweep visitor.
-  typedef Arr_batched_point_location_traits_2<Arr>              Vd_traits;
-  template <typename Evt, typename Crv>
-  struct Vertical_decomposition_helper :
-    public Arr_unb_planar_vert_decomp_helper<Vd_traits, Arr, Evt, Crv>
-  {
-    typedef Arr_unb_planar_vert_decomp_helper<Vd_traits, Arr, Evt, Crv>
-                                                                Base;
-    Vertical_decomposition_helper(const Arr* arr) : Base(arr) {}
-  };
-
-  // Type definition for the overlay surface-sweep visitor.
-  template <typename Gt, typename Evt, typename Crv,
-            typename ArrA, typename ArrB>
-  struct Overlay_helper :
-    public Arr_unb_planar_overlay_helper<Gt, ArrA, ArrB, Arr, Evt, Crv>
-  {
-    typedef Arr_unb_planar_overlay_helper<Gt, ArrA, ArrB, Arr, Evt, Crv>
-                                                                Base;
-    Overlay_helper(const ArrA* arr_a, const ArrB* arr_b) : Base(arr_a, arr_b) {}
-  };
-#else
   // Type definition for the construction surface-sweep visitor.
   template <typename Evt, typename Crv>
   using Construction_helper =
@@ -341,7 +265,6 @@ public:
             typename ArrA, typename ArrB>
   using Overlay_helper =
     Arr_unb_planar_overlay_helper<Gt, ArrA, ArrB, Arr, Evt, Crv>;
-#endif
   //@}
 
 public:
@@ -419,7 +342,7 @@ public:
                                 Arr_parameter_space /* ps_y */) const
   {
     CGAL_error();
-    return (NULL);
+    return (nullptr);
   }
 
   /*! Locate a DCEL feature that contains the given unbounded curve end.
@@ -569,7 +492,7 @@ protected:
    * \param ind Output: ARR_MIN_END if the vertex is induced by the minimal end;
    *                    ARR_MAX_END if it is induced by the curve's maximal end.
    * \pre v is a valid (not fictitious) boundary.
-   * \return The curve that induces v, or NULL if v has no incident curves yet.
+   * \return The curve that induces v, or nullptr if v has no incident curves yet.
    */
   const X_monotone_curve_2* _curve(const Vertex* v, Arr_curve_end& ind) const;
 

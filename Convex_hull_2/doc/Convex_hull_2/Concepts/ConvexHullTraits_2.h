@@ -11,6 +11,7 @@ is specified with each function.
 
 \cgalHasModel `CGAL::Convex_hull_constructive_traits_2<R>`
 \cgalHasModel `CGAL::Convex_hull_traits_2<R>`
+\cgalHasModel `CGAL::Convex_hull_traits_adapter_2<R>`
 \cgalHasModel `CGAL::Projection_traits_xy_3<K>`
 \cgalHasModel `CGAL::Projection_traits_yz_3 <K>`
 \cgalHasModel `CGAL::Projection_traits_xz_3<K>`

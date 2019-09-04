@@ -37,6 +37,7 @@ template < class R > class Aff_transformation_repC2;
 template < class R > class Translation_repC2;
 template < class R > class Rotation_repC2;
 template < class R > class Scaling_repC2;
+template < class R > class Reflection_repC2;
 
 } //namespace CGAL
 
@@ -44,6 +45,7 @@ template < class R > class Scaling_repC2;
 #include <CGAL/Cartesian/Translation_rep_2.h>
 #include <CGAL/Cartesian/Rotation_rep_2.h>
 #include <CGAL/Cartesian/Scaling_rep_2.h>
+#include <CGAL/Cartesian/Reflection_rep_2.h>
 
 namespace CGAL {
 
@@ -107,6 +109,11 @@ public:
     else
       initialize_with(Scaling_repC2<R>(s));
   }
+  
+  Aff_transformationC2(const Reflection, const Line_2& l)
+  {
+      initialize_with(Reflection_repC2<R>(l));
+  }
 
   // The general case:
   // a 3x2 matrix for the operations combining rotation, scaling, translation
@@ -128,6 +135,7 @@ public:
   {
     initialize_with(Aff_transformation_repC2<R>(m11/w, m12/w, m21/w, m22/w));
   }
+  
 
   Point_2
   transform(const Point_2 &p) const 

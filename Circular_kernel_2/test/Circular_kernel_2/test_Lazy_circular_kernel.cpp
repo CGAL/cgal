@@ -26,15 +26,12 @@
 
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
-#include <CGAL/basic.h>
 #include <CGAL/Exact_circular_kernel_2.h>
-#include <CGAL/intersections.h>
 #include <CGAL/Circular_kernel_intersections.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/Circular_kernel_2.h>
 
-#include <iostream>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Linear_k1;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<Linear_k1::FT>          Algebraic_k1;

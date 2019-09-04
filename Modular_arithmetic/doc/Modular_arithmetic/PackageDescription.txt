@@ -19,13 +19,13 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `Modularizable`
 - `ModularTraits`
 - `ModularTraits::ModularImage`
 - `ModularTraits::ModularImageRepresentative`
 
-## Types ##
+\cgalCRPSection{Types}
 - `CGAL::Residue`
 - `CGAL::Modular_traits<T>`
 

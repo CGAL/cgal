@@ -25,7 +25,6 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <boost/foreach.hpp>
 #include "boost/tuple/tuple.hpp"
 #include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -63,17 +62,17 @@ public:
 
   Containers_filler(const TriangleMesh& mesh_,
                     Vertex_set& vertices_)
-    : mesh(mesh_), vertices(vertices_), faces(NULL)
+    : mesh(mesh_), vertices(vertices_), faces(nullptr)
   { }
 
   void operator()(face_descriptor fd)
   {
     halfedge_descriptor hd = halfedge(fd, mesh);
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)) {
+    for(vertex_descriptor vd : vertices_around_face(hd, mesh)) {
       vertices.insert(vd);
     }
 
-    if(faces != NULL)
+    if(faces != nullptr)
       faces->push_back(fd);
   }
 };
@@ -90,7 +89,7 @@ struct Index_map_filler
 
   void operator()(const face_descriptor& fd)
   {
-    BOOST_FOREACH(vertex_descriptor vd,
+    for(vertex_descriptor vd :
                   vertices_around_face(halfedge(fd, mesh), mesh)) {
       typename Map::iterator it;
       bool new_element;

@@ -321,7 +321,7 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
  *   const typename Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
  *                                                   DecompositionStrategy2_,
  *                                                   Container_>::Traits_2>
- * are exchangable except for in one case, where there is an ambiguity.
+ * are exchangeable except for in one case, where there is an ambiguity.
  * Thus, we use the former, even though it is less generic, as change to the
  * traits type in Minkowski_sum_by_decomposition_2 would require a similar
  * change here.

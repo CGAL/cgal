@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 #include <CGAL/is_streamable.h>
 #include <utility> // std::pair

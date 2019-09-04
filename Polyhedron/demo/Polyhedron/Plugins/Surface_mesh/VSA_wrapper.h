@@ -8,7 +8,8 @@
 #include <QColor>
 
 #include "SMesh_type.h"
-#include "Color_cheat_sheet.h"
+//#include "Color_cheat_sheet.h"
+#include "Color_map.h"
 
 #ifdef surface_mesh_approximation_plugin_EXPORTS
 #define VSA_WRAPPER_EXPORT Q_DECL_EXPORT
@@ -65,8 +66,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
       : center_pmap(center_pmap_), area_pmap(area_pmap_) {}
 
     FT compute_error(const face_descriptor f, const SMesh &, const Proxy &px) const {
-      return FT(std::sqrt(CGAL::to_double(
-        CGAL::squared_distance(get(center_pmap, f), px))));
+      return CGAL::sqrt(CGAL::squared_distance(get(center_pmap, f), px));
     }
 
     template <typename FaceRange>
@@ -76,7 +76,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
       // fitting center
       Vector_3 center = CGAL::NULL_VECTOR;
       FT area(0.0);
-      BOOST_FOREACH(const face_descriptor f, faces) {
+      for(const face_descriptor f : faces) {
         center = center + (get(center_pmap, f) - CGAL::ORIGIN) * get(area_pmap, f);
         area += get(area_pmap, f);
       }
@@ -96,21 +96,19 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
   typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
     Compact_metric, EPICK> Compact_approx;
 #endif
-
-  std::size_t rand_0_255() {
-    return static_cast<std::size_t>(std::rand() % 255);
-  }
+  
 
 public:
   enum Metric { L21, L2, Compact };
 
-  typedef CGAL::cpp11::array<std::size_t, 3> Indexed_triangle;
+  typedef std::array<std::size_t, 3> Indexed_triangle;
 
   // visual items
   struct Visual_items {
     Visual_items() :
       group(NULL),
       seeds(NULL),
+      has_meshing_items(false),
       triangles(NULL),
       polygons(NULL),
       anchors(NULL),
@@ -118,6 +116,7 @@ public:
 
     CGAL::Three::Scene_group_item *group;
     Scene_polylines_item *seeds;
+    bool has_meshing_items;
     Scene_polygon_soup_item *triangles;
     Scene_polylines_item *polygons;
     Scene_polylines_item *anchors;
@@ -154,10 +153,10 @@ public:
 
     // generate proxy colors
     m_proxy_colors.clear();
+    m_proxy_colors.reserve(number_of_proxies());
+    
     for (std::size_t i = 0; i < number_of_proxies(); ++i) {
-      const std::size_t c = rand_0_255();
-      m_proxy_colors.push_back(QColor::fromRgb(
-        Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
+      m_proxy_colors.push_back(generate_random_color());
     }
 
     m_initialized = true;
@@ -225,7 +224,7 @@ public:
     typedef typename Approx::Proxy_wrapper Proxy_wrapper;
     std::vector<Proxy_wrapper> pxwrapper;
     approx.wrapped_proxies(std::back_inserter(pxwrapper));
-    BOOST_FOREACH(const Proxy_wrapper &pxw, pxwrapper)
+    for(const Proxy_wrapper& pxw : pxwrapper)
       *out_itr++ = pxw.seed;
   }
 

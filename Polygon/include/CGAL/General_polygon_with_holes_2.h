@@ -26,7 +26,7 @@
 #ifndef CGAL_GENERAL_POLYGON_WITH_HOLES_2_H
 #define CGAL_GENERAL_POLYGON_WITH_HOLES_2_H
 
-#include <list>
+#include <deque>
 #include <iostream>
 #include <CGAL/IO/io.h>
 
@@ -59,7 +59,7 @@ public:
   typedef Polygon_							General_polygon_2;
 /// @}
 
-  typedef std::list<Polygon_>                         Holes_container;
+  typedef std::deque<General_polygon_2>               Holes_container;
 
   typedef typename Holes_container::iterator          Hole_iterator;
   typedef typename Holes_container::const_iterator    Hole_const_iterator;
@@ -81,6 +81,16 @@ public:
                        HolesInputIterator h_end) : m_pgn(pgn_boundary),
                                                    m_holes(h_begin, h_end)
   {}
+
+  Holes_container& holes()
+  {
+    return m_holes;
+  }
+
+  const Holes_container& holes() const
+  {
+    return m_holes;
+  }
 
   Hole_iterator holes_begin()
   {

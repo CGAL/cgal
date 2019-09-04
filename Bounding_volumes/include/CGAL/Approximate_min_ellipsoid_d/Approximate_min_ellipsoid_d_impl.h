@@ -152,11 +152,11 @@ namespace CGAL {
     CGAL_APPEL_ASSERT(d==2);
 
     // write matrix M' as [ a, b; b, c ]:
-    const CGAL::cpp11::array<double, 3> matrix = {{ E->matrix(0, 0),    // a
+    const std::array<double, 3> matrix = {{ E->matrix(0, 0),    // a
 						    E->matrix(0, 1),    // b
 						    E->matrix(1, 1) }}; // c
-    CGAL::cpp11::array<double, 4> eigenvectors; // Note: not neces. normalized.
-    CGAL::cpp11::array<double, 2> eigenvalues;  // Note: sorted ascendent.
+    std::array<double, 4> eigenvectors; // Note: not neces. normalized.
+    std::array<double, 2> eigenvalues;  // Note: sorted ascendent.
 
     CGAL::Default_diagonalize_traits<double, 2>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);
@@ -191,15 +191,15 @@ namespace CGAL {
     //   M' = [ b d e ]
     //        [ c e f ]
     //
-    const CGAL::cpp11::array<double, 6> matrix = {{ E->matrix(0, 0),   // a
+    const std::array<double, 6> matrix = {{ E->matrix(0, 0),   // a
                                                     E->matrix(0, 1),   // b
                                                     E->matrix(0, 2),   // c
                                                     E->matrix(1, 1),   // d
                                                     E->matrix(1, 2),   // e
                                                     E->matrix(2, 2) }}; // f
     
-    CGAL::cpp11::array<double, 9> eigenvectors; // Note: not necessarily normalized.
-    CGAL::cpp11::array<double, 3> eigenvalues;  // Note: sorted ascendent.
+    std::array<double, 9> eigenvectors; // Note: not necessarily normalized.
+    std::array<double, 3> eigenvalues;  // Note: sorted ascendent.
 
     CGAL::Default_diagonalize_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);

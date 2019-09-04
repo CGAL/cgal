@@ -23,11 +23,14 @@ CGAL_add_named_parameter(vertex_point_t, vertex_point, vertex_point_map)
 CGAL_add_named_parameter(halfedge_index_t, halfedge_index, halfedge_index_map)
 CGAL_add_named_parameter(edge_index_t, edge_index, edge_index_map)
 CGAL_add_named_parameter(face_index_t, face_index, face_index_map)
+CGAL_add_named_parameter(vertex_index_t, vertex_index, vertex_index_map)
+CGAL_add_named_parameter(graph_visitor_t, graph_visitor, visitor)
 
 CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
 CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
 CGAL_add_named_parameter(verbosity_level_t, verbosity_level, verbosity_level)
+CGAL_add_named_parameter(use_binary_mode_t, use_binary_mode, use_binary_mode)
 
 CGAL_add_named_parameter(metis_options_t, METIS_options, METIS_options)
 CGAL_add_named_parameter(vertex_partition_id_t, vertex_partition_id, vertex_partition_id_map)
@@ -81,6 +84,13 @@ CGAL_add_named_parameter(use_compact_clipper_t, use_compact_clipper, use_compact
 CGAL_add_named_parameter(output_iterator_t, output_iterator, output_iterator)
 CGAL_add_named_parameter(erase_all_duplicates_t, erase_all_duplicates, erase_all_duplicates)
 CGAL_add_named_parameter(require_same_orientation_t, require_same_orientation, require_same_orientation)
+CGAL_add_named_parameter(face_size_map_t, face_size_map, face_size_map)
+CGAL_add_named_parameter(snapping_tolerance_t, snapping_tolerance, snapping_tolerance)
+CGAL_add_named_parameter(use_safety_constraints_t, use_safety_constraints, use_safety_constraints)
+CGAL_add_named_parameter(use_angle_smoothing_t, use_angle_smoothing, use_angle_smoothing)
+CGAL_add_named_parameter(use_area_smoothing_t, use_area_smoothing, use_area_smoothing)
+CGAL_add_named_parameter(use_Delaunay_flips_t, use_Delaunay_flips, use_Delaunay_flips)
+CGAL_add_named_parameter(do_project_t, do_project, do_project)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -89,7 +99,7 @@ CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_place
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
 CGAL_add_named_parameter(random_seed_t, random_seed, random_seed)
-CGAL_add_named_parameter(do_project_t, do_project, do_project)
+CGAL_add_named_parameter(tolerance_map_t, tolerance_map, tolerance_map)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)

@@ -66,7 +66,7 @@ si_brute_force_II(ForwardIterator first, ForwardIterator last,
   Orientation orientation = traits.orientation_2_object();
 
   for ( ForwardIterator outer = first; outer != last; ++outer)
-    for ( ForwardIterator inner = cpp11::next(outer); inner != last; ++inner)
+    for ( ForwardIterator inner = std::next(outer); inner != last; ++inner)
       {
           Point s1 = (*outer).source();
           Point e1 = (*outer).target();

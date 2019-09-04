@@ -24,25 +24,25 @@ BUILD_SHARED_LIBS:BOOL=ON
 Boost_DEBUG:BOOL=OFF
 
 //Path to a file.
-Boost_INCLUDE_DIR:PATH=/Users/cgaltester/boost-cpp11/boost_1_54_0
+Boost_INCLUDE_DIR:PATH=/Users/cgaltester/boost_1_60_0
 
 //Boost library directory DEBUG
-Boost_LIBRARY_DIR_DEBUG:PATH=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib
+Boost_LIBRARY_DIR_DEBUG:PATH=/Users/cgaltester/boost_1_60_0/stage/lib
 
 //Boost library directory RELEASE
-Boost_LIBRARY_DIR_RELEASE:PATH=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib
+Boost_LIBRARY_DIR_RELEASE:PATH=/Users/cgaltester/boost_1_60_0/stage/lib
 
 //Boost system library (debug)
-Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib
+Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=/Users/cgaltester/boost_1_60_0/stage/lib/libboost_system.dylib
 
 //Boost system library (release)
-Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib
+Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=/Users/cgaltester/boost_1_60_0/stage/lib/libboost_system.dylib
 
 //Boost thread library (debug)
-Boost_THREAD_LIBRARY_DEBUG:FILEPATH=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib
+Boost_THREAD_LIBRARY_DEBUG:FILEPATH=/Users/cgaltester/boost_1_60_0/stage/lib/libboost_thread.dylib
 
 //Boost thread library (release)
-Boost_THREAD_LIBRARY_RELEASE:FILEPATH=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib
+Boost_THREAD_LIBRARY_RELEASE:FILEPATH=/Users/cgaltester/boost_1_60_0/stage/lib/libboost_thread.dylib
 
 //Select to allow to use all preconfigured external libraries
 CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT:BOOL=OFF
@@ -54,7 +54,7 @@ CGAL_BINARY_DIR:STATIC=/Users/cgaltester/cgal_test/reference_platforms/x86-64_Da
 CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF
 
 //Dependencies for the target
-CGAL_Core_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;CGAL;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;
+CGAL_Core_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;CGAL;general;/Users/cgaltester/boost_1_60_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost_1_60_0/stage/lib/libboost_system.dylib;
 
 //Set this to TRUE if you want to define or modify any of CMAKE_*_FLAGS.
 // When this is FALSE, all the CMAKE_*_FLAGS flags are overriden
@@ -91,13 +91,13 @@ CGAL_INSTALL_LIB_DIR:STRING=lib
 CGAL_INSTALL_MAN_DIR:STRING=share/man/man1
 
 //Dependencies for the target
-CGAL_ImageIO_LIB_DEPENDS:STATIC=general;CGAL;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;general;/usr/lib/libz.dylib;
+CGAL_ImageIO_LIB_DEPENDS:STATIC=general;CGAL;general;/Users/cgaltester/boost_1_60_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost_1_60_0/stage/lib/libboost_system.dylib;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;general;/usr/lib/libz.dylib;
 
 //Dependencies for the target
-CGAL_LIB_DEPENDS:STATIC=general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;
+CGAL_LIB_DEPENDS:STATIC=general;/Users/cgaltester/boost_1_60_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost_1_60_0/stage/lib/libboost_system.dylib;
 
 //Dependencies for the target
-CGAL_Qt5_LIB_DEPENDS:STATIC=general;Qt5::OpenGL;general;Qt5::Svg;general;CGAL;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;
+CGAL_Qt5_LIB_DEPENDS:STATIC=general;Qt5::OpenGL;general;Qt5::Svg;general;CGAL;general;/Users/cgaltester/boost_1_60_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost_1_60_0/stage/lib/libboost_system.dylib;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;
 
 //Value Computed by CMake
 CGAL_SOURCE_DIR:STATIC=/Users/cgaltester/cgal_test/CGAL-4.8-I
@@ -115,7 +115,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/clang++
 
 //Flags used by the compiler during all build types.
-CMAKE_CXX_FLAGS:STRING='-Wall -Wextra -isystem /Users/cgaltester/boost-cpp11/boost_1_54_0 '
+CMAKE_CXX_FLAGS:STRING='-Wall -Wextra -isystem /Users/cgaltester/boost_1_60_0 '
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g
@@ -417,9 +417,9 @@ Boost_THREAD_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_THREAD_LIBRARY_RELEASE
 Boost_THREAD_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 CGAL_3RD_PARTY_DEFINITIONS:INTERNAL=
-CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/Users/cgaltester/boost-cpp11/boost_1_54_0
-CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib
-CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib
+CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/Users/cgaltester/boost_1_60_0
+CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/Users/cgaltester/boost_1_60_0/stage/lib/libboost_thread.dylib;/Users/cgaltester/boost_1_60_0/stage/lib/libboost_system.dylib
+CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/Users/cgaltester/boost_1_60_0/stage/lib
 CGAL_3RD_PARTY_PRECONFIGURED:INTERNAL=
 //ADVANCED property for variable: CGAL_Boost_USE_STATIC_LIBS
 CGAL_Boost_USE_STATIC_LIBS-ADVANCED:INTERNAL=1
@@ -728,11 +728,11 @@ _Boost_ADDITIONAL_VERSIONS_LAST:INTERNAL=1.69.1;1.69.0;1.69;1.68.1;1.68.0;1.68;1
 //Components requested for this build tree.
 _Boost_COMPONENTS_SEARCHED:INTERNAL=system;thread
 //Last used Boost_INCLUDE_DIR value.
-_Boost_INCLUDE_DIR_LAST:INTERNAL=/Users/cgaltester/boost-cpp11/boost_1_54_0
+_Boost_INCLUDE_DIR_LAST:INTERNAL=/Users/cgaltester/boost_1_60_0
 //Last used Boost_LIBRARY_DIR_DEBUG value.
-_Boost_LIBRARY_DIR_DEBUG_LAST:INTERNAL=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib
+_Boost_LIBRARY_DIR_DEBUG_LAST:INTERNAL=/Users/cgaltester/boost_1_60_0/stage/lib
 //Last used Boost_LIBRARY_DIR_RELEASE value.
-_Boost_LIBRARY_DIR_RELEASE_LAST:INTERNAL=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib
+_Boost_LIBRARY_DIR_RELEASE_LAST:INTERNAL=/Users/cgaltester/boost_1_60_0/stage/lib
 //Last used Boost_NAMESPACE value.
 _Boost_NAMESPACE_LAST:INTERNAL=boost
 //Last used Boost_USE_MULTITHREADED value.

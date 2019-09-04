@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+set -e
 setopt -o glob
 setopt -o extended_glob
 

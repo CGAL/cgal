@@ -1519,7 +1519,7 @@ public:
       // Check whether we have a single intersection point.
       const Point_2  *ip = object_cast<Point_2> (&obj);
 
-      if (ip != NULL)
+      if (ip != nullptr)
       {
         // Check whether the intersection point ip lies on both segments.
         const bool    ip_on_cv1 = cv1.is_vertical() ? cv1.is_in_y_range(*ip) :

@@ -48,7 +48,7 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
   OutputIterator variant_load(std::istream& is, OutputIterator res)
 {
 
-  typedef cpp11::array<double, 3> Triplet;
+  typedef std::array<double, 3> Triplet;
   typedef typename CK::FT FT;
   typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;    
   typedef typename CK::Root_of_2 Root_of_2;

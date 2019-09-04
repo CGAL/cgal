@@ -29,7 +29,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSolverInterfaceRef
 
-The class `Eigen_sparse_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+The class `Eigen_sparse_matrix` is a wrapper around `Eigen` matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix`</a>
 that represents general matrices, be they symmetric or not.
 
@@ -316,7 +316,7 @@ private:
 /*!
 \ingroup PkgSolverInterfaceRef
 
-The class `Eigen_sparse_symmetric_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+The class `Eigen_sparse_symmetric_matrix` is a wrapper around `Eigen` matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
 
 Since the matrix is symmetric, only the lower triangle part is stored.
@@ -352,7 +352,7 @@ struct Eigen_sparse_symmetric_matrix
 /*!
 \ingroup PkgSolverInterfaceRef
 
-The class `Eigen_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+The class `Eigen_matrix` is a wrapper around `Eigen` matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">`Eigen::Matrix`</a>.
 
 \cgalModels `SvdTraits::Matrix` 

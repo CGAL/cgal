@@ -22,8 +22,6 @@ All its methods are empty.
 template< typename Ss >
 struct Dummy_straight_skeleton_builder_2_visitor {
 
-/// @}
-
 }; /* end Dummy_straight_skeleton_builder_2_visitor */
 
 /*!

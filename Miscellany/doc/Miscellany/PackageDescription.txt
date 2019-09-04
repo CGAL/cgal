@@ -19,10 +19,10 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `UniqueHashFunction`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Timer`
 - `CGAL::Real_timer`
 - `CGAL::Memory_sizer`

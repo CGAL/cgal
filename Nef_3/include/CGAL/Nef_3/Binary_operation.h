@@ -287,7 +287,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
   {
     //    CGAL_NEF_SETDTHREAD(23);
     CGAL_assertion( this->sncp()->is_empty());
-    CGAL_assertion( pl1 != NULL && pl2 != NULL);
+    CGAL_assertion( pl1 != nullptr && pl2 != nullptr);
     //    CGAL_NEF_SETDTHREAD(19*13*43*37);
 
 #ifdef CGAL_NEF3_TIMER_BINARY_OPERATION

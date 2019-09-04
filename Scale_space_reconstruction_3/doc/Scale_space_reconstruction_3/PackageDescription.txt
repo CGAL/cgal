@@ -26,21 +26,21 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `CGAL::Scale_space_reconstruction_3::Smoother`
 - `CGAL::Scale_space_reconstruction_3::Mesher`
 
-## Main Class ##
+\cgalCRPSection{Main Class}
 
 - `CGAL::Scale_space_surface_reconstruction_3<Geom_traits>`
 
-## Smoothers ##
+\cgalCRPSection{Smoothers}
 
 - `CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother<Geom_traits, DiagonalizeTraits, ConcurrencyTag>`
 - `CGAL::Scale_space_reconstruction_3::Jet_smoother<Geom_traits, ConcurrencyTag>`
 
-## Meshers ##
+\cgalCRPSection{Meshers}
 
 - `CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher<Geom_traits, FixedSurface>`
 - `CGAL::Scale_space_reconstruction_3::Advancing_front_mesher<Geom_traits>`

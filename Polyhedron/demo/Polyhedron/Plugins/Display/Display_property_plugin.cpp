@@ -1,4 +1,5 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include <QApplication>
 #include <QObject>
 #include <QAction>
@@ -7,6 +8,7 @@
 #include <QColorDialog>
 #include <QPalette>
 #include <QColor>
+#include <QStyleFactory>
 #include <QMessageBox>
 
 #include <CGAL/boost/graph/helpers.h>
@@ -25,6 +27,7 @@
 #include "triangulate_primitive.h"
 #include <CGAL/Buffer_for_vao.h>
 #include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Dynamic_property_map.h>
 
 #define ARBITRARY_DBL_MIN 1.0E-30
 #define ARBITRARY_DBL_MAX 1.0E+30
@@ -33,6 +36,7 @@
 //Item for heat values
 typedef CGAL::Three::Triangle_container Tri;
 typedef CGAL::Three::Viewer_interface VI;
+
 class Scene_heat_item
     : public CGAL::Three::Scene_item_rendering_helper
 {
@@ -46,22 +50,23 @@ public:
                                                    true));
     setRenderingMode(Gouraud);
   }
-  Scene_item* clone() const{return nullptr;}
-  QString toolTip() const{return QString(); }\
+  Scene_item* clone() const Q_DECL_OVERRIDE {return nullptr;}
+  QString toolTip() const Q_DECL_OVERRIDE{return QString(); }
   void select(double orig_x,
              double orig_y,
              double orig_z,
              double dir_x,
              double dir_y,
-             double dir_z)
+             double dir_z) Q_DECL_OVERRIDE
   {
     parent->select( orig_x, orig_y, orig_z, 
                     dir_x, dir_y, dir_z);
   }
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+  
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
   {
     getTriangleContainer(0)->initializeBuffers(viewer); 
-    getTriangleContainer(0)->setIdxSize(idx.size());
+    getTriangleContainer(0)->setIdxSize(nb_idx);
     verts.resize(0);
     normals .resize(0);
     colors.resize(0);
@@ -70,26 +75,35 @@ public:
     colors.shrink_to_fit();
     verts.shrink_to_fit();
     normals.shrink_to_fit();
-    
-    are_buffers_filled = true;
   }
   
-  void draw(CGAL::Three::Viewer_interface *viewer) const
+  void draw(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
   {
+    if(!visible())
+      return;
+    if(!isInit(viewer))
+      initGL(viewer);
+    if ( getBuffersFilled() &&
+         ! getBuffersInit(viewer))
+    {
+      initializeBuffers(viewer);
+      setBuffersInit(viewer, true);
+    }
+    if(!getBuffersFilled())
+    {
+      computeElements();
+      initializeBuffers(viewer);
+    }
     
-    if(!isInit() && viewer->context()->isValid())
-      initGL();
-    if(!are_buffers_filled)
-      initialize_buffers(viewer);
     getTriangleContainer(0)->setAlpha(1.0f);
-    getTriangleContainer(0)->draw( viewer, false);
+    getTriangleContainer(0)->draw(viewer, false);
   }
-  void compute_bbox() const
+  void compute_bbox() const Q_DECL_OVERRIDE
   {
     SMesh::Property_map<vertex_descriptor, Point_3> pprop = sm->points();
     CGAL::Bbox_3 bbox ;
     
-    BOOST_FOREACH(vertex_descriptor vd,vertices(*sm))
+    for(vertex_descriptor vd :vertices(*sm))
     {
       bbox = bbox + pprop[vd].bbox();
     }
@@ -97,7 +111,7 @@ public:
                  bbox.xmax(),bbox.ymax(),bbox.zmax());
     is_bbox_computed = true;
   }
-  Scene_item::Bbox bbox() const {
+  Scene_item::Bbox bbox() const Q_DECL_OVERRIDE {
     if(!is_bbox_computed)
       compute_bbox();
     is_bbox_computed = true;
@@ -105,12 +119,14 @@ public:
   }
 
   ~Scene_heat_item(){}
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m==Gouraud; }
-  virtual void invalidateOpenGLBuffers()
+  virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE { return m==Gouraud; }
+  virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE
   {
-    computeElements();
+    
+    setBuffersFilled(false);
+    compute_bbox();
+    getTriangleContainer(0)->reset_vbos(NOT_INSTANCED);
     is_bbox_computed = false;
-    are_buffers_filled = false;
   }
   void triangulate_convex_facet(face_descriptor fd,
                                 boost::property_map< SMesh, boost::vertex_index_t >::type *im) const
@@ -171,7 +187,7 @@ public:
     }
   }
   
-  void computeElements() const
+  void computeElements() const Q_DECL_OVERRIDE
   {
     typedef EPICK::Point_3 Point;
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -199,11 +215,11 @@ public:
         im = get(boost::vertex_index, *sm);
     
     idx.reserve(num_faces(*sm) * 3);
-    BOOST_FOREACH(face_descriptor fd, faces(*sm))
+    for(face_descriptor fd : faces(*sm))
     {
       if(is_triangle(halfedge(fd,*sm),*sm))
       {
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *sm),*sm))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, *sm),*sm))
         {
           idx.push_back(source(hd, *sm));
         }
@@ -211,7 +227,7 @@ public:
       else
       {
         std::vector<Point> facet_points;
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *sm),*sm))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, *sm),*sm))
         {
           facet_points.push_back(positions[target(hd, *sm)]);
         }
@@ -240,7 +256,7 @@ public:
         }
       }
     }
-    BOOST_FOREACH(vertex_descriptor vd, vertices(*sm))
+    for(vertex_descriptor vd : vertices(*sm))
     {
       CGAL::Color c = vcolors[vd];
       colors.push_back((float)c.red()/255);
@@ -254,7 +270,7 @@ public:
       CPF::add_normal_in_buffer(n, normals);
       heat_values.push_back(vdist[vd]);
     }
-    
+    nb_idx = idx.size();
     getTriangleContainer(0)->allocate(Tri::Vertex_indices, idx.data(),
                                       static_cast<int>(idx.size()*sizeof(unsigned int)));
     getTriangleContainer(0)->allocate(Tri::Smooth_vertices, verts.data(),
@@ -267,10 +283,11 @@ public:
     getTriangleContainer(0)->allocate(Tri::Distances, heat_values.data(),
                                       static_cast<int>(heat_values.size()*sizeof(float)));
     compute_bbox();
+    setBuffersFilled(true);
      QApplication::restoreOverrideCursor();
   }
   
-  bool isEmpty() const {return false;}
+  bool isEmpty() const Q_DECL_OVERRIDE {return false;}
   SMesh *face_graph() { return sm;}
   Scene_surface_mesh_item* getParent() { return parent; }
 
@@ -282,6 +299,7 @@ private:
   mutable std::vector<float> verts;
   mutable std::vector<float> colors;
   mutable std::vector<float> heat_values;
+  mutable std::size_t nb_idx;
 }; // end class Scene_heat_item
 
 class DockWidget :
@@ -298,7 +316,7 @@ public:
 
 typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-
+CGAL::Three::Viewer_interface* (&getActiveViewer)() = CGAL::Three::Three::activeViewer;
 class DisplayPropertyPlugin :
     public QObject,
     public CGAL::Three::Polyhedron_demo_plugin_helper
@@ -309,6 +327,8 @@ class DisplayPropertyPlugin :
   typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
   typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<SMesh> Heat_method;
   typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<SMesh, CGAL::Heat_method_3::Intrinsic_Delaunay> Heat_method_idt;
+  typedef CGAL::dynamic_vertex_property_t<bool>                        Vertex_source_tag;
+  typedef boost::property_map<SMesh, Vertex_source_tag>::type Vertex_source_map;
   
 public:
 
@@ -338,6 +358,8 @@ public:
     this->current_item = NULL;
 
     QAction *actionDisplayAngles= new QAction(QString("Display Properties"), mw);
+    QAction *actionHeatMethod= new QAction(QString("Heat Method"), mw);
+    actionHeatMethod->setProperty("submenuName", "Color");
 
     rm = 1.0;
     rM = 0.0;
@@ -350,7 +372,16 @@ public:
     if(actionDisplayAngles) {
       connect(actionDisplayAngles, SIGNAL(triggered()),
               this, SLOT(openDialog()));
+      if(actionHeatMethod)
+      {
+        connect(actionHeatMethod, &QAction::triggered,
+                this, [this](){
+          this->dock_widget->propertyBox->setCurrentIndex(2);
+          this->dock_widget->show();
+        });
+      }
       _actions << actionDisplayAngles;
+      _actions << actionHeatMethod;
 
     }
     dock_widget = new DockWidget("Property Displaying", mw);
@@ -358,10 +389,12 @@ public:
     addDockWidget(dock_widget);
     QPalette palette(Qt::red);
     dock_widget->minColorButton->setPalette(palette);
+    dock_widget->minColorButton->setStyle(QStyleFactory::create("Fusion"));
     dock_widget->minColorButton->update();
 
     palette = QPalette(Qt::green);
     dock_widget->maxColorButton->setPalette(palette);
+    dock_widget->maxColorButton->setStyle(QStyleFactory::create("Fusion"));
     dock_widget->maxColorButton->update();
     connect(dock_widget->colorizeButton, SIGNAL(clicked(bool)),
             this, SLOT(colorize()));
@@ -387,6 +420,7 @@ public:
       QPalette palette(minColor);
       dock_widget->minColorButton->setPalette(palette);
       dock_widget->minColorButton->update();
+      replaceRamp();
     });
     connect(dock_widget->maxColorButton, &QPushButton::pressed,
             this, [this]()
@@ -401,10 +435,13 @@ public:
 
       dock_widget->maxColorButton->setPalette(palette);
       dock_widget->maxColorButton->update();
+      replaceRamp();
     });
 
     connect(dock_widget->sourcePointsButton, SIGNAL(toggled(bool)),
             this, SLOT(on_sourcePointsButton_toggled(bool)));
+    connect(dock_widget->deleteButton, &QPushButton::clicked,
+            this, &DisplayPropertyPlugin::delete_group);
 
     connect(dock_widget->resetButton, &QPushButton::pressed,
             this, &DisplayPropertyPlugin::resetRampExtremas);
@@ -467,7 +504,6 @@ private Q_SLOTS:
     replaceRamp();
     item->face_graph()->collect_garbage();
 
-    item->face_graph()->collect_garbage();
     switch(dock_widget->propertyBox->currentIndex()){
     case 0:
       displayAngles(item);
@@ -552,12 +588,6 @@ private Q_SLOTS:
     if(found)
     {
       smesh.remove_property_map(angles);
-    }
-    SMesh::Property_map<vertex_descriptor, bool> is_source;
-    boost::tie(is_source, found) = smesh.property_map<vertex_descriptor,bool>("v:heat_source");
-    if(found)
-    {
-      smesh.remove_property_map(is_source);
     }
   }
 
@@ -692,7 +722,7 @@ private Q_SLOTS:
 
         std::vector<float> local_angles;
         local_angles.reserve(degree(*fit, smesh));
-        BOOST_FOREACH(halfedge_descriptor hd,
+        for(halfedge_descriptor hd :
                       halfedges_around_face(halfedge(*fit, smesh),smesh))
         {
           halfedge_descriptor hdn = next(hd, smesh);
@@ -777,10 +807,7 @@ private Q_SLOTS:
   bool displayHeatIntensity(Scene_surface_mesh_item* item, bool iDT = false)
   {
     SMesh& mesh = *item->face_graph();
-    bool found = false;
-    SMesh::Property_map<vertex_descriptor, bool> is_source ;
-    boost::tie(is_source, found)=
-        mesh.property_map<vertex_descriptor,bool>("v:heat_source");
+    bool found = is_source.find(item) != is_source.end();
     if(!found
        || ! source_points
        || source_points->point_set()->is_empty())
@@ -832,9 +859,8 @@ private Q_SLOTS:
               );
     }
 
-    // AF: So far we only deal with adding sources
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
-      if(is_source[vd]){
+    for(vertex_descriptor vd : vertices(mesh)){
+      if(get(is_source[item], vd)){
         if(iDT){
           hm_idt->add_source(vd);
         } else
@@ -858,7 +884,7 @@ private Q_SLOTS:
     double max = 0;
     double min = (std::numeric_limits<double>::max)();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+    for(vertex_descriptor vd : vertices(mesh)){
       double hi = heat_intensity[vd];
       if(hi < min)
         min = hi;
@@ -896,11 +922,17 @@ private Q_SLOTS:
     else
     {
       group = new Scene_group_item("Heat Visualization");
+      group->setProperty("heat_group", true);
       scene->addItem(group);
       scene->changeGroup(item, group);
       scene->changeGroup(source_points, group);
       group->lockChild(item);
       group->lockChild(source_points);
+      dock_widget->deleteButton->setEnabled(true);
+      connect(group, &Scene_group_item::aboutToBeDestroyed,
+              this, [this](){
+        this->dock_widget->deleteButton->setEnabled(false);
+      });
     }
     mesh_heat_item_map[item] = new Scene_heat_item(item);
     mesh_heat_item_map[item]->setName(tr("%1 heat").arg(item->name()));
@@ -992,19 +1024,19 @@ private Q_SLOTS:
     case 0:
     {
       ::zoomToId(*item->face_graph(),
-                     QString("f%1").arg(angles_min[item].second),
-                     qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
-                     dummy_fd,
-                     dummy_p);
+                 QString("f%1").arg(angles_min[item].second),
+                 getActiveViewer(),
+                 dummy_fd,
+                 dummy_p);
     }
       break;
     case 1:
     {
       ::zoomToId(*item->face_graph(),
-                     QString("f%1").arg(jacobian_min[item].second),
-                     qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
-                     dummy_fd,
-                     dummy_p);
+                 QString("f%1").arg(jacobian_min[item].second),
+                 getActiveViewer(),
+                 dummy_fd,
+                 dummy_p);
     }
       break;
     default:
@@ -1026,7 +1058,7 @@ private Q_SLOTS:
     {
       ::zoomToId(*item->face_graph(),
                  QString("f%1").arg(angles_max[item].second),
-                 qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
+                 getActiveViewer(),
                  dummy_fd,
                  dummy_p);
     }
@@ -1035,7 +1067,7 @@ private Q_SLOTS:
     {
       ::zoomToId(*item->face_graph(),
                  QString("f%1").arg(jacobian_max[item].second),
-                 qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
+                 getActiveViewer(),
                  dummy_fd,
                  dummy_p);
     }
@@ -1043,6 +1075,27 @@ private Q_SLOTS:
     default:
       break;
     }
+  }
+
+  void delete_group()
+  {
+    Scene_item* item = scene->item(scene->selectionIndices().first());
+    Scene_group_item* group = qobject_cast<Scene_group_item*>(item);
+    if(!group || !group->property("heat_group").toBool())
+      return;
+    for(auto child_id : group->getChildren())
+    {
+      if(Scene_surface_mesh_item* child = qobject_cast<Scene_surface_mesh_item*>(scene->item(child_id))){
+        group->unlockChild(child);
+         group->removeChild(child);
+         scene->addChild(child);
+         child->setVisible(true);
+         child->resetColors();
+        break;
+      }
+    }
+    scene->erase(scene->item_id(group));
+
   }
 
   void on_sourcePointsButton_toggled(bool b)
@@ -1098,13 +1151,20 @@ private Q_SLOTS:
         source_points=mesh_sources_map[current_item];
       }
       connect(item, SIGNAL(selected_vertex(void*)), this, SLOT(on_vertex_selected(void*)));
-      bool non_init;
-      SMesh::Property_map<vertex_descriptor, bool> is_source;
-      boost::tie(is_source, non_init) = current_item->face_graph()->add_property_map<vertex_descriptor, bool>("v:heat_source", false);
+      bool non_init = is_source.find(item) == is_source.end();
       if(non_init)
       {
+        Vertex_source_map map = get(Vertex_source_tag(), *item->face_graph());
+        is_source.insert(std::make_pair(item, map));
         connect(item, &Scene_surface_mesh_item::itemChanged,
                 this, &DisplayPropertyPlugin::resetProperty);
+        connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
+                [this, item](){
+          if(is_source.find(item) != is_source.end())
+          {
+            is_source.erase(item);
+          }
+        });
       }
     }
     else
@@ -1121,19 +1181,17 @@ private Q_SLOTS:
     typedef boost::graph_traits<SMesh>::vertices_size_type size_type;
     size_type h = static_cast<size_type>(reinterpret_cast<std::size_t>(void_ptr));
     vertex_descriptor vd = static_cast<vertex_descriptor>(h) ;
-    bool found;
-    SMesh::Property_map<vertex_descriptor, bool> is_source;
-    boost::tie(is_source, found) = current_item->face_graph()->property_map<vertex_descriptor,bool>("v:heat_source");
+    bool found = is_source.find(current_item) != is_source.end();
     if(found)
     {
-      if(!is_source[vd])
+      if(!get(is_source[current_item], vd))
       {
-        is_source[vd]=true;
+        put(is_source[current_item], vd, true);
         source_points->point_set()->insert(current_item->face_graph()->point(vd));
       }
       else
       {
-        is_source[vd]=false;
+        put(is_source[current_item], vd, false);
         Point_set::iterator it;
         for(it = source_points->point_set()->begin(); it != source_points->point_set()->end(); ++it)
           if(source_points->point_set()->point(*it) == current_item->face_graph()->point(vd))
@@ -1224,6 +1282,7 @@ private:
 
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
+  boost::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
 
 
   double minBox;
@@ -1257,7 +1316,7 @@ private:
         pmap = get(boost::vertex_point, mesh);
     std::vector<double> corner_areas(degree(f, mesh));
     std::vector<EPICK::Vector_3> edges;
-    BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
+    for(halfedge_descriptor hd : CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
     {
       edges.push_back(EPICK::Vector_3(get(pmap, source(hd, mesh)), get(pmap, target(hd, mesh))));
     }

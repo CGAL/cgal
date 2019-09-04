@@ -15,6 +15,9 @@ class QMultipleInputDialog
 {
   QDialog* dialog;
   QFormLayout* form;
+  std::map<std::string, QWidget*> map_widgets;
+  
+  
 public:
   QMultipleInputDialog (const char* name, QWidget* parent)
   {
@@ -28,7 +31,7 @@ public:
   }
 
   template <typename QObjectType>
-  QObjectType* add (const char* name)
+  QObjectType* add (const char* name, const char* key = NULL)
   {
     QObjectType* out = NULL;
         
@@ -43,7 +46,22 @@ public:
       form->addRow (QString(name), out);
     }
     
+    if (key != NULL)
+      map_widgets.insert (std::make_pair (key, out));
+
     return out;
+  }
+
+  template <typename QObjectType>
+  const QObjectType* get (const char* key) const
+  {
+    typename std::map<std::string, QWidget*>::const_iterator
+      found = map_widgets.find (key);
+    if (found == map_widgets.end())
+      return NULL;
+    
+    QWidget* widget_out = found->second;
+    return qobject_cast<QObjectType*>(widget_out);
   }
 
   int exec()
@@ -57,6 +75,16 @@ public:
     QObject::connect (oknotok, SIGNAL(rejected()), dialog, SLOT(reject()));
 
     return dialog->exec();
+  }
+  
+  void exec_no_cancel()
+  {
+    QDialogButtonBox* ok = new QDialogButtonBox
+      (QDialogButtonBox::Ok, Qt::Horizontal, dialog);
+      
+    form->addRow (ok);
+    QObject::connect (ok, SIGNAL(accepted()), dialog, SLOT(accept()));
+    dialog->exec();
   }
 };
 

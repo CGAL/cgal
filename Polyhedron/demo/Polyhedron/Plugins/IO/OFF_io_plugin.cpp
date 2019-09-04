@@ -22,7 +22,7 @@ class Polyhedron_demo_off_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "off_io_plugin.json")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "off_io_plugin.json")
 
 public:
   bool isDefaultLoader(const Scene_item *item) const 
@@ -32,24 +32,29 @@ public:
       return true; 
     return false;
   }
+  bool isDefaultLoader(const QString& name) const 
+  { 
+    if(name == QString("off")) 
+      return true; 
+    return false;
+  }
   QString name() const { return "off_plugin"; }
   QString nameFilters() const { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
-  bool canLoad() const;
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
-   CGAL::Three::Scene_item* load_off(QFileInfo fileinfo);
-   CGAL::Three::Scene_item* load_obj(QFileInfo fileinfo);
+  bool canLoad(QFileInfo fileinfo) const;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
+  CGAL::Three::Scene_item* load_off(QFileInfo fileinfo);
+  CGAL::Three::Scene_item* load_obj(QFileInfo fileinfo);
   
   bool canSave(const CGAL::Three::Scene_item*);
-  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& );
 };
 
-bool Polyhedron_demo_off_plugin::canLoad() const {
+bool Polyhedron_demo_off_plugin::canLoad(QFileInfo) const {
   return true;
 }
 
-
-CGAL::Three::Scene_item*
-Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
+QList<Scene_item*> Polyhedron_demo_off_plugin::
+load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
   
   if(fileinfo.size() == 0)
   {
@@ -57,14 +62,41 @@ Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
     Scene_surface_mesh_item* item =
         new Scene_surface_mesh_item(SMesh());
     item->setName(fileinfo.completeBaseName());
-    return item;
+    ok = true;
+    if(add_to_scene)
+      CGAL::Three::Three::scene()->addItem(item);
+    return QList<Scene_item*>()<<item;
   }
   if(fileinfo.suffix().toLower() == "off"){
-    return load_off(fileinfo);
+    Scene_item* item = load_off(fileinfo);
+    if(item){
+      ok = true;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(item);
+      return QList<Scene_item*>()<<item;
+    }
+    else
+    {
+      ok = false;
+      return QList<Scene_item*>();
+    }
   } else if(fileinfo.suffix().toLower() == "obj"){
-    return load_obj(fileinfo);
+
+    Scene_item* item = load_obj(fileinfo);
+    if(item)
+    {
+      ok = true;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(item);
+      return QList<Scene_item*>()<<item;
+    }
+    else
+    {
+      ok = true;
+      return QList<Scene_item*>();
+    }
   }
-  return 0;
+  return QList<Scene_item*>();
 }
 
 
@@ -132,7 +164,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
   item->setName(fileinfo.completeBaseName());
   std::size_t isolated_v = 0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(*surface_mesh))
+  for(vertex_descriptor v : vertices(*surface_mesh))
   {
     if(surface_mesh->is_isolated(v))
     {
@@ -149,6 +181,8 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
                          tr("%1 isolated vertices found")
                          .arg(item->getNbIsolatedvertices()));
   }
+  if(item->isItemMulticolor())
+    item->computeItemColorVectorAutomatically(true);
   return item;
 }
 
@@ -175,8 +209,12 @@ bool Polyhedron_demo_off_plugin::canSave(const CGAL::Three::Scene_item* item)
     qobject_cast<const Scene_points_with_normal_item*>(item);
 }
 
-bool Polyhedron_demo_off_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
+
+bool
+Polyhedron_demo_off_plugin::
+save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 {
+  Scene_item* item = items.front();
   // This plugin supports point sets, surface_meshes and polygon soups
   const Scene_points_with_normal_item* points_item =
     qobject_cast<const Scene_points_with_normal_item*>(item);
@@ -192,12 +230,26 @@ bool Polyhedron_demo_off_plugin::save(const CGAL::Three::Scene_item* item, QFile
   out.precision (std::numeric_limits<double>::digits10 + 2);
 
   if(fileinfo.suffix().toLower() == "off"){
-    return (sm_item && sm_item->save(out)) || 
+    bool res = (sm_item && sm_item->save(out)) ||
       (soup_item && soup_item->save(out)) ||
       (points_item && points_item->write_off_point_set(out));
+    if(res){
+      items.pop_front();
+      return true;
+    }
+    else{
+      return false;
+    }
   }
   if(fileinfo.suffix().toLower() == "obj"){
-    return (sm_item && sm_item->save_obj(out));
+    bool res = (sm_item && sm_item->save_obj(out));
+    if(res)
+    {
+      items.pop_front();
+      return true;
+    }
+    else
+      return false;
   }
   return false;
 }

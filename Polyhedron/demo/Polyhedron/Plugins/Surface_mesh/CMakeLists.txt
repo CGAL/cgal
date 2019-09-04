@@ -30,7 +30,7 @@ target_link_libraries(mesh_simplification_plugin PUBLIC scene_surface_mesh_item 
 
 qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
 polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin ${remeshingUI_FILES})
-target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
+target_link_libraries(offset_meshing_plugin PUBLIC polyhedron_demo scene_surface_mesh_item scene_polygon_soup_item)
 
 if(TBB_FOUND)
   CGAL_target_use_TBB(offset_meshing_plugin)
@@ -44,7 +44,6 @@ qt5_wrap_ui(basicUI_FILES Surface_mesh_approximation_dockwidget.ui)
 polyhedron_demo_plugin(surface_mesh_approximation_plugin
   Surface_mesh_approximation_plugin
   ${basicUI_FILES}
-  Color_cheat_sheet
   VSA_wrapper)
 target_link_libraries(surface_mesh_approximation_plugin
   PUBLIC

@@ -44,13 +44,19 @@ testItem = "./testing/data/sphere.stl";
 main_window.open(testItem, 'stl_plugin');
 scene.erase(0);
 
-testItem = "./testing/data/sphere.vtk";
-main_window.open(testItem, 'vtk_plugin');
-scene.erase(0);
+if (typeof vtk_plugin !== "undefined") {
+  testItem = "./testing/data/sphere.vtk";
+  main_window.open(testItem, 'vtk_plugin');
+  scene.erase(0);
 
-testItem = "./testing/data/sphere.vtp";
-main_window.open(testItem, 'vtk_plugin');
-scene.erase(0);
+  testItem = "./testing/data/sphere.vtp";
+  main_window.open(testItem, 'vtk_plugin');
+  scene.erase(0);
+
+  testItem = "./testing/data/sphere.vtu";
+  main_window.open(testItem, 'vtk_plugin');
+  scene.erase(0);
+}
 
 testItem = "./testing/data/sphere.off";
 main_window.open(testItem, 'off_plugin');
@@ -79,6 +85,3 @@ testItem = "./testing/data/oni.las";
 main_window.open(testItem, 'las_plugin');
 scene.erase(0);
 
-//testItem = "./testing/data/sphere.vtu"; //need #3297
-//main_window.open(testItem, 'vtk_plugin');
-//scene.erase(0);

@@ -51,11 +51,11 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `Kernel`
 
-## %Kernel Classes and Operations ##
+\cgalCRPSection{%Kernel Classes and Operations}
 
 - `CGAL::Cartesian<FieldNumberType>`
 - `CGAL::Cartesian_converter<K1, K2, NTConverter>`
@@ -72,15 +72,15 @@
 - `CGAL::Simple_homogeneous<RingNumberType>`
 - `CGAL::Projection_traits_xy_3<K>`
 
-## Predefined Kernels ##
+\cgalCRPSection{Predefined Kernels}
 
 - `CGAL::Exact_predicates_exact_constructions_kernel`
 - `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt`
 - `CGAL::Exact_predicates_inexact_constructions_kernel`
 
-## %Kernel Objects ##
+\cgalCRPSection{%Kernel Objects}
 
-### Two-dimensional Objects ###
+\cgalCRPSubsection{Two-dimensional Objects}
 
 - `CGAL::Aff_transformation_2<Kernel>`
 - `CGAL::Bbox_2`
@@ -95,7 +95,7 @@
 - `CGAL::Vector_2<Kernel>`
 - `CGAL::Weighted_point_2<Kernel>`
 
-### Three-dimensional Objects ###
+\cgalCRPSubsection{Three-dimensional Objects}
 
 - `CGAL::Bbox_3`
 - `CGAL::Aff_transformation_3<Kernel>`
@@ -114,7 +114,7 @@
 - `CGAL::Weighted_point_3<Kernel>`
 
 
-## Constants and Enumerations ##
+\cgalCRPSection{Constants and Enumerations}
 
 - `CGAL::Angle`
 - `CGAL::Bounded_side`
@@ -139,9 +139,11 @@
 - `CGAL::Scaling`
 - `CGAL::Translation`
 
-## Global Functions ##
+\cgalCRPSection{Global Functions}
 
 - \link angle_grp `CGAL::angle()` \endlink
+- \link angle_grp `CGAL::approximate_angle()` \endlink
+- \link angle_grp `CGAL::approximate_dihedral_angle()` \endlink
 - \link are_ordered_along_line_grp `CGAL::are_ordered_along_line()` \endlink
 - \link are_strictly_ordered_along_line_grp `CGAL::are_strictly_ordered_along_line()` \endlink
 - \link area_grp `CGAL::area()` \endlink
@@ -222,7 +224,7 @@
 - \link y_equal_grp `CGAL::y_equal()` \endlink
 - \link z_equal_grp `CGAL::z_equal()` \endlink
 
-## %Kernel Geometric Object Concepts ##
+\cgalCRPSection{%Kernel Geometric Object Concepts}
 
 - `Kernel::Circle_2`
 - `Kernel::Circle_3`
@@ -250,7 +252,7 @@
 - `Kernel::WeightedPoint_2`
 - `Kernel::WeightedPoint_3`
 
-## %Kernel Function Object Concepts ##
+\cgalCRPSection{%Kernel Function Object Concepts}
 
 - `Kernel::Angle_2`
 - `Kernel::Angle_3`
@@ -298,6 +300,7 @@
 - `Kernel::ComputeB_2`
 - `Kernel::ComputeC_2`
 - `Kernel::ComputeApproximateArea_3`
+- `Kernel::ComputeApproximateAngle_3`
 - `Kernel::ComputeApproximateDihedralAngle_3`
 - `Kernel::ComputeApproximateSquaredLength_3`
 - `Kernel::ComputeArea_2`
@@ -497,7 +500,7 @@
 - `Kernel::SideOfOrientedCircle_2`
 - `Kernel::SideOfOrientedSphere_3`
 
-## Dimension handling tools ##
+\cgalCRPSection{Dimension Handling Tools}
 
 - `CGAL::Ambient_dimension<T, K>`
 - `CGAL::Feature_dimension<T, K>`

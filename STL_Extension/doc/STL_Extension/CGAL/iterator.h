@@ -115,8 +115,8 @@ must be a subset of the parameters of `V`. Should the
 
 \cgalHeading{Parameters}
 
-\tparam V must be a `CGAL::cpp11::tuple<...>` of the types of values to be accepted and dispatched.
-\tparam O must be a `CGAL::cpp11::tuple<...>` of the types of corresponding output iterators.
+\tparam V must be a `std::tuple<...>` of the types of values to be accepted and dispatched.
+\tparam O must be a `std::tuple<...>` of the types of corresponding output iterators.
 
 \cgalModels `OutputIterator`
 
@@ -205,8 +205,8 @@ can be a list of arbitrary types.
 
 \cgalHeading{Parameters}
 
-\tparam V must be a `CGAL::cpp11::tuple<...>` of the types of values to be accepted and dispatched.
-\tparam O must be a `CGAL::cpp11::tuple<...>` of the types of corresponding output iterators.
+\tparam V must be a `std::tuple<...>` of the types of values to be accepted and dispatched.
+\tparam O must be a `std::tuple<...>` of the types of corresponding output iterators.
 
 \cgalModels `OutputIterator`
 

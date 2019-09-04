@@ -187,7 +187,7 @@ before_handle_event(Event* event)
   if (ps_x == ARR_LEFT_BOUNDARY) {
     // The event lies on the left fictitious halfedge.
     this->m_lh = this->m_lh->twin()->next()->twin();
-    this->m_prev_minus_inf_x_event = NULL;
+    this->m_prev_minus_inf_x_event = nullptr;
   }
   else if (ps_x == ARR_RIGHT_BOUNDARY) {
     // The event lies on the right fictitious halfedge.
@@ -204,7 +204,7 @@ before_handle_event(Event* event)
       // The event lies on the top fictitious halfedge.
       CGAL_assertion (ps_y == ARR_TOP_BOUNDARY);
       this->m_th = this->m_th->twin()->next()->twin();
-      this->m_prev_plus_inf_y_event = NULL;
+      this->m_prev_plus_inf_y_event = nullptr;
     }
   }
 }

@@ -33,14 +33,16 @@
 #include <vector>
 #include <set>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Traversal_traits.h>
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Axis_parallel_plane_traits.h>
 
 #include <boost/variant.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
+#include <CGAL/boost/graph/helpers.h>
 
 namespace CGAL {
 
@@ -85,7 +87,13 @@ template<class TriangleMesh,
   class VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
   class AABBTree = AABB_tree<
                        AABB_traits<Traits,
-                         AABB_halfedge_graph_segment_primitive<TriangleMesh> > >,
+                         AABB_halfedge_graph_segment_primitive<TriangleMesh,
+                                                                typename boost::mpl::if_<
+                                                                  typename boost::is_same<
+                                                                    VertexPointMap,
+                                                                    typename boost::property_map< TriangleMesh, vertex_point_t>::type >::type,
+                                                                  Default,
+                                                                  VertexPointMap>::type> > >,
   bool UseParallelPlaneOptimization=true>
 class Polygon_mesh_slicer
 {
@@ -152,6 +160,7 @@ class Polygon_mesh_slicer
     VertexPointMap m_vpmap;
     typename Traits_::Intersect_3 intersect_3;
     OutputIterator out;
+    std::pair<AL_vertex_descriptor, AL_vertex_descriptor> nodes_for_orient;
 
     Polyline_visitor( TriangleMesh& tmesh,
                       AL_graph& al_graph,
@@ -168,12 +177,102 @@ class Polygon_mesh_slicer
     {}
 
     std::vector< Point_3 > current_poly;
+
+    // returns true iff the polyline is not correctly oriented
+    // Using the first edge is oriented such that the normal induced by the face
+    // containing the edge, the oriented edge and the plane orthogonal vector defines
+    // a direct orthogonal basis
+    bool do_reverse_polyline()
+    {
+      if (current_poly.size() < 2)
+        return false;
+
+      AL_vertex_info v1 = al_graph[nodes_for_orient.first];
+      AL_vertex_info v2 = al_graph[nodes_for_orient.second];
+
+      if (const vertex_descriptor* vd1_ptr = boost::get<vertex_descriptor>(&v1) )
+      {
+        if (const vertex_descriptor* vd2_ptr = boost::get<vertex_descriptor>(&v2) )
+        {
+          CGAL_assertion( halfedge(*vd1_ptr, *vd2_ptr, m_tmesh).second );
+          halfedge_descriptor h_opp = halfedge(*vd1_ptr, *vd2_ptr, m_tmesh).first;
+          if ( !is_border(h_opp, m_tmesh) )
+          {
+            CGAL_assertion(source(h_opp, m_tmesh) == *vd1_ptr);
+            CGAL::Oriented_side os = m_plane.oriented_side( get(m_vpmap, target(next(h_opp, m_tmesh), m_tmesh) ) );
+            if (os != CGAL::ON_ORIENTED_BOUNDARY)
+              return m_plane.oriented_side( get(m_vpmap, target(next(h_opp, m_tmesh), m_tmesh)) ) == CGAL::ON_NEGATIVE_SIDE;
+          }
+          h_opp = opposite(h_opp, m_tmesh);
+          if ( !is_border(h_opp, m_tmesh) )
+          {
+            CGAL_assertion(source(h_opp, m_tmesh) == *vd2_ptr);
+            CGAL::Oriented_side os = m_plane.oriented_side( get(m_vpmap, target(next(h_opp, m_tmesh), m_tmesh) ) );
+            if (os != CGAL::ON_ORIENTED_BOUNDARY)
+              return m_plane.oriented_side( get(m_vpmap, target(next(h_opp, m_tmesh), m_tmesh)) ) == CGAL::ON_POSITIVE_SIDE;
+          }
+          return false; // since coplanar edges are filtered out, we should never end up here.
+        }
+        else
+        {
+          // e2 is intersected in its interior
+          edge_descriptor e2 = boost::get<edge_descriptor>(v2);
+          halfedge_descriptor h2 = halfedge(e2, m_tmesh);
+          if ( target(next(h2, m_tmesh), m_tmesh) != *vd1_ptr )
+            h2=opposite(h2, m_tmesh);
+          return m_plane.oriented_side( get(m_vpmap, source(h2, m_tmesh)) ) == CGAL::ON_POSITIVE_SIDE;
+        }
+      }
+      else
+      {
+        edge_descriptor e1 = boost::get<edge_descriptor>(v1);
+        halfedge_descriptor h1 = halfedge(e1, m_tmesh);
+        if (const vertex_descriptor* vd2_ptr = boost::get<vertex_descriptor>(&v2) )
+        {
+          // e1 is intersected in its interior
+          if ( target(next(h1, m_tmesh), m_tmesh) != *vd2_ptr )
+            h1=opposite(h1, m_tmesh);
+          CGAL_assertion( target(next(h1, m_tmesh), m_tmesh) == *vd2_ptr );
+        }
+        else
+        {
+          // intersection in the interior of both edges
+          edge_descriptor e2 = boost::get<edge_descriptor>(v2);
+          halfedge_descriptor h2 = halfedge(e2, m_tmesh);
+          if ( face(h1, m_tmesh) != face(h2,m_tmesh) )
+          {
+            halfedge_descriptor opp_h1 = opposite(h1, m_tmesh),
+                                opp_h2 = opposite(h2, m_tmesh);
+            if ( face(opp_h1, m_tmesh) == face(opp_h2, m_tmesh) )
+            {
+              h1=opp_h1;
+              h2=opp_h2;
+            }
+            else
+              if ( face(opp_h1, m_tmesh)==face(h2,m_tmesh) )
+                h1=opp_h1;
+              else
+                h2=opp_h2;
+          }
+          CGAL_assertion( face(h1, m_tmesh) == face(h2,m_tmesh) );
+        }
+        return m_plane.oriented_side( get(m_vpmap, source(h1, m_tmesh)) ) == CGAL::ON_NEGATIVE_SIDE;
+      }
+    }
+
     void start_new_polyline()
     {
       current_poly.clear();
     }
+
     void add_node(AL_vertex_descriptor node_id)
     {
+      if (current_poly.empty())
+        nodes_for_orient.first=node_id;
+      else
+        if (current_poly.size()==1)
+          nodes_for_orient.second=node_id;
+
       AL_vertex_info v = al_graph[node_id];
       if (const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&v) )
       {
@@ -197,6 +296,8 @@ class Polygon_mesh_slicer
     void end_polyline()
     {
       CGAL_assertion(!current_poly.empty());
+      if(do_reverse_polyline())
+        std::reverse(current_poly.begin(), current_poly.end());
       *out++=current_poly;
     }
   };
@@ -240,7 +341,7 @@ class Polygon_mesh_slicer
 
       if (face(hd, m_tmesh)!=graph_traits::null_face())
       {
-        cpp11::tie(itm, new_insertion) =
+        std::tie(itm, new_insertion) =
           al_edge_map.insert( std::pair< halfedge_descriptor, AL_vertex_pair >
             (hd, AL_vertex_pair(vd, AL_graph::null_vertex())) );
         if (!new_insertion)
@@ -256,7 +357,7 @@ class Polygon_mesh_slicer
       hd=opposite(hd, m_tmesh);
       if (face(hd, m_tmesh)!=graph_traits::null_face())
       {
-        cpp11::tie(itm, new_insertion) =
+        std::tie(itm, new_insertion) =
           al_edge_map.insert( std::pair< halfedge_descriptor, AL_vertex_pair >
             (hd, AL_vertex_pair(vd, AL_graph::null_vertex())) );
         if (!new_insertion)
@@ -298,6 +399,9 @@ class Polygon_mesh_slicer
   }
 
 public:
+
+  /// the AABB-tree type used internally
+  typedef AABBTree AABB_tree;
 
   /**
   * Constructor using `edges(tmesh)` to initialize the
@@ -385,6 +489,18 @@ public:
 
   /**
    * Constructs the intersecting polylines of `plane` with the input triangulated surface mesh.
+   *
+   * If a polyline is closed, the first and last point of that polyline will be identical.
+   *
+   * Each resulting polyline `P` is oriented such that for two consecutive points `p` and `q` in `P`,
+   * the normal vector of the face(s) containing the segment `pq`, the vector `pq`, and the orthogonal vertor of `plane`
+   * is a direct orthogonal basis.
+   * The normal vector of each face is chosen  to point on the side of the face
+   * where its sequence of vertices is seen counterclockwise.
+   *
+   * Note that an edge shared by two faces included in `plane` will not be reported. For example,
+   * if `plane` passes though one face of a cube, only one closed polyline will be reported (the boundary of the face)
+   *
    * @tparam OutputIterator an output iterator accepting polylines.
    *              A polyline is provided as `std::vector<Traits::Point_3>`.
    *              A polyline is closed if its first and last point are identical.
@@ -437,7 +553,7 @@ public:
     AL_graph al_graph;
 
     // add nodes for each vertex in the plane
-    BOOST_FOREACH(Vertex_pair& vdp, vertices)
+    for(Vertex_pair& vdp : vertices)
     {
       vdp.second=add_vertex(al_graph);
       al_graph[vdp.second]=vdp.first;
@@ -449,7 +565,7 @@ public:
     // Filter coplanar edges: we consider only coplanar edges incident to one non-coplanar facet
     //   for each such edge, add the corresponding nodes in the adjacency-list graph as well as
     //   the edge
-    BOOST_FOREACH(const edge_descriptor ed, all_coplanar_edges)
+    for(const edge_descriptor ed : all_coplanar_edges)
     {
       if (  face(halfedge(ed, m_tmesh), m_tmesh)==graph_traits::null_face() ||
             opposite_face(ed)==graph_traits::null_face()  ||
@@ -461,7 +577,7 @@ public:
 
         // Each coplanar edge is connecting two nodes
         //  handle source
-        cpp11::tie(it_insert1, is_new) =
+        std::tie(it_insert1, is_new) =
           vertices.insert(
               Vertex_pair(
                 source(ed,m_tmesh), AL_graph::null_vertex()
@@ -473,7 +589,7 @@ public:
           al_graph[it_insert1->second]=it_insert1->first;
         }
         //  handle target
-        cpp11::tie(it_insert2, is_new) =
+        std::tie(it_insert2, is_new) =
           vertices.insert(
               Vertex_pair(
                 target(ed,m_tmesh), AL_graph::null_vertex()
@@ -494,7 +610,7 @@ public:
     // for each edge intersected in its interior, creates a node in
     // an adjacency-list graph and put an edge between two such nodes
     // when the corresponding edges shares a common face
-    BOOST_FOREACH(edge_descriptor ed, iedges)
+    for(edge_descriptor ed : iedges)
     {
       AL_vertex_descriptor vd=add_vertex(al_graph);
       al_graph[vd]=ed;
@@ -505,7 +621,7 @@ public:
     // then it must be connected to a vertex (including those in the set
     // of coplanar edges)
     typedef std::pair<halfedge_descriptor, AL_vertex_pair> Halfedge_and_vertices;
-    BOOST_FOREACH(Halfedge_and_vertices hnv,al_edge_map)
+    for(Halfedge_and_vertices hnv :al_edge_map)
     {
       if (hnv.second.second==AL_graph::null_vertex())
       {

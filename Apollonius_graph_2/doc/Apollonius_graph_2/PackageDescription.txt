@@ -40,7 +40,7 @@ aforementioned concepts.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `ApolloniusSite_2`
 - `ApolloniusGraphDataStructure_2`
@@ -48,7 +48,7 @@ aforementioned concepts.
 - `ApolloniusGraphTraits_2`
 - `ApolloniusGraphHierarchyVertexBase_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Apollonius_graph_2<Gt,Agds>`
 - `CGAL::Apollonius_site_2<K>`

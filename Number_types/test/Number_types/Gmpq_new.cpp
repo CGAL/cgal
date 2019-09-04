@@ -1,5 +1,5 @@
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifdef CGAL_USE_GMP
 #include <iostream>

@@ -91,7 +91,7 @@ public:
   {
     this->set_name ("elevation");
     if (radius_dtm < 0.)
-      radius_dtm = 100.f * grid.resolution();
+      radius_dtm = 10.f * grid.resolution();
 
     //DEM
     Image_float dem(grid.width(),grid.height());

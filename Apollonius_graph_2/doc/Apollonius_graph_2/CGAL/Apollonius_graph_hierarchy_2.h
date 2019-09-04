@@ -110,7 +110,7 @@ unsigned int insert(Input_iterator first, Input_iterator beyond);
 Inserts the 
 site `s` in the Apollonius graph hierarchy. If `s` 
 is visible then the vertex handle of `s` is returned, otherwise 
-`Vertex_handle(NULL)` is returned. 
+`Vertex_handle(nullptr)` is returned. 
 */ 
 Vertex_handle insert(Site_2 s); 
 
@@ -119,7 +119,7 @@ Inserts `s` in the Apollonius graph hierarchy using the
 site associated with `vnear` as 
 an estimate for the nearest neighbor of the center of `s`. 
 If `s` is visible then the vertex handle of `s` is 
-returned, otherwise `Vertex_handle(NULL)` is returned. 
+returned, otherwise `Vertex_handle(nullptr)` is returned. 
 A call to this method is equivalent to `agh.insert(s);` and it has 
 been added for the sake of conformity with the interface of the 
 `Apollonius_graph_2<Gt,Agds>` class. 
@@ -150,14 +150,14 @@ Finds the nearest neighbor of the point `p`. In other words it
 finds the site whose Apollonius cell contains `p`. Ties are broken 
 arbitrarily and one of the nearest neighbors of `p` is 
 returned. If there are no visible sites in the Apollonius diagram 
-`Vertex_handle(NULL)` is returned. 
+`Vertex_handle(nullptr)` is returned. 
 */ 
 Vertex_handle nearest_neighbor(Point p); 
 
 /*!
 Finds the nearest neighbor of the point 
 `p`. If there are no visible sites in the Apollonius diagram 
-`Vertex_handle(NULL)` is returned. 
+`Vertex_handle(nullptr)` is returned. 
 A call to this method is equivalent to 
 `agh.nearest_neighbor(p);` and it has been added for the sake of 
 conformity with the interface of the 

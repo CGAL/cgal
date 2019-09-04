@@ -90,7 +90,7 @@ int main (int argc, char** argv)
   std::vector<int> label_indices(pts.size(), -1);
   
   std::cerr << "Using OpenCV Random Forest Classifier" << std::endl;
-  Classification::OpenCV_random_forest_classifier classifier (labels, features);
+  Classification::OpenCV::Random_forest_classifier classifier (labels, features);
   
   std::cerr << "Training" << std::endl;
   t.reset();

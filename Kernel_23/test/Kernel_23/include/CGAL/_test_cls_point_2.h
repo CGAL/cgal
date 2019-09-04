@@ -30,6 +30,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Vector_2.h>
 #include <CGAL/Weighted_point_2.h>
+#include <CGAL/use.h>
 
 #include <boost/type_traits/is_convertible.hpp>
 
@@ -49,7 +50,7 @@ _test_cls_point_2(const R& )
  typedef typename R::Point_2::Cartesian_const_iterator CCI;
 
  CGAL::Point_2<R>  p1;
- CGAL::Point_2<R>  p2(ip);
+ CGAL::Point_2<R>  p2(ip); CGAL_USE(p2);
  CGAL::Point_2<R>  p0(CGAL::ORIGIN);
 
  RT  n1(-35 );

@@ -148,7 +148,7 @@ public:
   Arr_trapezoid_ric_point_location (bool with_guarantees = true, 
                            double depth_thrs = CGAL_TD_DEFAULT_DEPTH_THRESHOLD, 
                            double size_thrs = CGAL_TD_DEFAULT_SIZE_THRESHOLD) 
-    : m_traits (NULL), m_with_guarantees(with_guarantees)
+    : m_traits (nullptr), m_with_guarantees(with_guarantees)
   {
     td.set_with_guarantees(with_guarantees);
     td.depth_threshold(depth_thrs);

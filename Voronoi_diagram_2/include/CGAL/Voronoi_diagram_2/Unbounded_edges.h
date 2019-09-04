@@ -46,7 +46,7 @@ class Bounded_edge_tester
   typedef typename VDA::Delaunay_graph::Face_handle   Delaunay_face_handle;
 
  public:
-  Bounded_edge_tester(const VDA* vda = NULL) : vda_(vda) {}
+  Bounded_edge_tester(const VDA* vda = nullptr) : vda_(vda) {}
 
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return false; }
@@ -77,7 +77,7 @@ class Unbounded_edge_tester
   typedef typename VDA::Delaunay_graph::Face_handle   Delaunay_face_handle;
 
  public:
-  Unbounded_edge_tester(const VDA* vda = NULL) : vda_(vda) {}
+  Unbounded_edge_tester(const VDA* vda = nullptr) : vda_(vda) {}
 
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return true; }

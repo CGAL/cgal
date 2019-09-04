@@ -24,6 +24,8 @@
 #ifndef CGAL__TEST_CLS_DIRECTION_3_H
 #define CGAL__TEST_CLS_DIRECTION_3_H
 
+#include <CGAL/use.h>
+
 template <class R>
 bool
 _test_cls_direction_3(const R& )
@@ -35,7 +37,7 @@ _test_cls_direction_3(const R& )
  typename R::Direction_3  id;
 
  CGAL::Direction_3<R> d0;
- CGAL::Direction_3<R> d1(id);
+ CGAL::Direction_3<R> d1(id); CGAL_USE(d1);
 
  std::cout << '.';
  RT   n0 = 10;

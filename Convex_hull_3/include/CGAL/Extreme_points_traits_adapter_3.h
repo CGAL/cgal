@@ -221,16 +221,17 @@ public:
     Orientation_2 orientation_2_object ()const{return Orientation_2(vpm_,static_cast<const Btt*>(this)->orientation_2_object() );}
   };
   
-  typedef Proj_traits_3<typename Base_traits::Traits_xy_3> Traits_xy_3;
-  typedef Proj_traits_3<typename Base_traits::Traits_yz_3> Traits_yz_3;
-  typedef Proj_traits_3<typename Base_traits::Traits_xz_3> Traits_xz_3;
+  typedef internal::Convex_hull_3::Projection_traits<Base_traits> Base_PTraits;
+  typedef Proj_traits_3<typename Base_PTraits::Traits_xy_3> Traits_xy_3;
+  typedef Proj_traits_3<typename Base_PTraits::Traits_yz_3> Traits_yz_3;
+  typedef Proj_traits_3<typename Base_PTraits::Traits_xz_3> Traits_xz_3;
   
   Traits_xy_3 construct_traits_xy_3_object()const
-  {return Traits_xy_3(vpm_, static_cast<const Base_traits*>(this)->construct_traits_xy_3_object());}
+  {return Traits_xy_3(vpm_, Base_PTraits(static_cast<const Base_traits&>(*this)).construct_traits_xy_3_object());}
   Traits_yz_3 construct_traits_yz_3_object()const
-  {return Traits_yz_3(vpm_, static_cast<const Base_traits*>(this)->construct_traits_yz_3_object());}
+  {return Traits_yz_3(vpm_, Base_PTraits(static_cast<const Base_traits&>(*this)).construct_traits_yz_3_object());}
   Traits_xz_3 construct_traits_xz_3_object()const
-  {return Traits_xz_3(vpm_, static_cast<const Base_traits*>(this)->construct_traits_xz_3_object());}
+  {return Traits_xz_3(vpm_, Base_PTraits(static_cast<const Base_traits&>(*this)).construct_traits_xz_3_object());}
 
   typename boost::property_traits<PointPropertyMap>::reference
   get_point(const typename boost::property_traits<PointPropertyMap>::key_type& k) const
