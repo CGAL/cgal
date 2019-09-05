@@ -178,7 +178,6 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
     ++i;
   }
 
-
   face_descriptor f = boost::graph_traits<PolygonMesh>::null_face();
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
   std::vector<face_descriptor> new_faces;
@@ -485,8 +484,10 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
   CGAL::copy_face_graph(ffg, patch_mesh, CP::vertex_point_map(vpmap));
 
   // Constrain sharp and border edges
-  typedef typename boost::property_map<TriangleMesh, CGAL::edge_is_feature_t>::type  EIFMap;
-  EIFMap eif = get(CGAL::edge_is_feature, tmesh);
+  typedef CGAL::dynamic_edge_property_t<bool>                                 Edge_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Edge_property_tag>::type EIFMap;
+  EIFMap eif = get(Edge_property_tag(), tmesh);
+
   constrain_sharp_and_border_edges(face_range, eif, constrain_sharp_edges, tmesh, vpmap, gt);
 
   // @todo choice of number of iterations? Till convergence && max of 100?
@@ -1057,8 +1058,10 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
     std::cout << "  DEBUG: Attempting local hole-filling with constrained sharp edges..." << std::endl;
 
   // If we are treating self intersections locally, first try to constrain sharp edges in the hole
-  typedef typename boost::property_map<TriangleMesh, CGAL::edge_is_feature_t>::type  EIFMap;
-  EIFMap eif = get(CGAL::edge_is_feature, tmesh);
+  typedef CGAL::dynamic_edge_property_t<bool>                                 Edge_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Edge_property_tag>::type EIFMap;
+  EIFMap eif = get(Edge_property_tag(), tmesh);
+
   constrain_sharp_and_border_edges(cc_faces, eif, true /*constrain_sharp_edges*/, tmesh, vpmap, gt);
 
   // Partition the hole using these constrained edges
