@@ -754,7 +754,7 @@ output_to_medit(std::ostream& os,
 
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Tds::Vertex::Point Point;
 
   const Tr& tr = c3t3.triangulation();
 
@@ -783,7 +783,7 @@ output_to_medit(std::ostream& os,
        ++vit)
   {
     V[vit] = inum++;
-    Weighted_point p = tr.point(vit);
+    Point p = tr.point(vit);
     os << CGAL::to_double(p.x()) << ' '
        << CGAL::to_double(p.y()) << ' '
        << CGAL::to_double(p.z()) << ' '
