@@ -29,6 +29,8 @@
 #include <CGAL/Polygon_mesh_processing/remove_degeneracies.h>
 #include <CGAL/Polygon_mesh_processing/remove_self_intersections.h>
 
+#include <CGAL/boost/graph/iterator.h>
+
 #include <vector>
 
 namespace CGAL {
