@@ -64,6 +64,9 @@ public:
     m_map(apath.get_map()),
     m_is_closed(apath.is_closed())
   {
+    // TEMPO POUR DEBUG
+    CGAL_assertion(const_cast<internal::Path_on_surface_with_rle<COST>&>(apath).is_valid(true));
+    // END TEMPO
     for (auto it=apath.m_path.begin(), itend=apath.m_path.end(); it!=itend; ++it)
     {
       push_back(it->begin, false, false);
@@ -72,6 +75,7 @@ public:
       else if (it->length<0)
       { extend_straight_negative(-(it->length), false); }
     }
+    update_is_closed();
     CGAL_assertion(is_valid(true));
   }
 
@@ -237,6 +241,40 @@ public:
   std::size_t back_index() const
   { return get_map().darts().index(back()); }
   
+  /// @return the ith dart of the path taking into account flip.
+  /// return null_handle if flip and there is no beta2
+  Dart_const_handle get_ith_real_dart(std::size_t i) const
+  {
+    CGAL_assertion(i<m_path.size());
+    return (get_ith_flip(i)?get_map().template beta<2>(get_ith_dart(i)):
+                            get_ith_dart(i));
+  }
+
+  /// @return the opposite of the ith dart of the path taking into account flip.
+  /// return null_handle if !flip and there is no beta2
+  Dart_const_handle get_opposite_ith_real_dart(std::size_t i) const
+  {
+    CGAL_assertion(i<m_path.size());
+    return (get_ith_flip(i)?get_ith_dart(i):
+                            get_map().template beta<2>(get_ith_dart(i)));
+  }
+
+  /// @return the first dart of the path, taking into account flip.
+  /// @pre !is_empty()
+  Dart_const_handle real_front() const
+  {
+    CGAL_assertion(!is_empty());
+    return get_ith_real_dart(0);
+  }
+
+  /// @return the last dart of the path, taking into account flip.
+  /// @pre !is_empty()
+  Dart_const_handle real_back() const
+  {
+    CGAL_assertion(!is_empty());
+    return get_ith_real_dart(length()-1);
+  }
+
   /// @return true iff df can be added at the end of the path.
   bool can_be_pushed(Dart_const_handle dh, bool flip=false) const
   {
@@ -1042,11 +1080,11 @@ public:
     CGAL_assertion (is_closed() || i<length()-1);
 
     if (get_ith_flip(i) && get_map().template is_free<2>(get_ith_dart(i)) ||
-       get_next_flip(i) && get_map().template is_free<2>(get_next_dart(i)))
+        get_next_flip(i) && get_map().template is_free<2>(get_next_dart(i)))
     { return std::numeric_limits<std::size_t>::max(); }
     
-    return m_map.positive_turn(get_ith_flip(i)?get_map().template beta<2>(get_ith_dart(i)):get_ith_dart(i),
-                              get_next_flip(i)?get_map().template beta<2>(get_next_dart(i)):get_next_dart(i));
+    return m_map.positive_turn(get_ith_real_dart(i),
+                               get_ith_real_dart(next_index(i)));
   }
 
   /// Same than next_positive_turn but turning in reverse orientation around vertex.
@@ -1057,12 +1095,11 @@ public:
     CGAL_assertion (is_closed() || i<length()-1);
 
     if (!get_ith_flip(i) && get_map().template is_free<2>(get_ith_dart(i)) ||
-       !get_next_flip(i) && get_map().template is_free<2>(get_next_dart(i)))
+        !get_next_flip(i) && get_map().template is_free<2>(get_next_dart(i)))
     { return std::numeric_limits<std::size_t>::max(); }
 
-    return m_map.positive_turn(get_next_flip(i)?get_next_dart(i):get_map().template beta<2>(get_next_dart(i)),
-                                get_ith_flip(i)?get_ith_dart(i):get_map().template beta<2>(get_ith_dart(i)));
-    //I know it seems weird but it works
+    return m_map.positive_turn(get_opposite_ith_real_dart(next_index(i)),
+                               get_opposite_ith_real_dart(i));
   }
 
   std::vector<std::size_t> compute_positive_turns() const

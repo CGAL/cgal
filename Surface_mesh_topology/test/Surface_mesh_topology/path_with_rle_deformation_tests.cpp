@@ -70,15 +70,14 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
   do
   {
 
-    internal::Path_on_surface_with_rle<internal::Light_MQ<LCC_3_cmap> > toto(lmq,prevp);
+    internal::Path_on_surface_with_rle<internal::Light_MQ<LCC_3_cmap> > toto(lmq,prevp,
+                                                                             use_only_positive,
+                                                                             use_only_negative);
     curp=toto;//internal::Path_on_surface_with_rle<internal::Light_MQ<LCC_3_cmap> >(prevp);
 
     Path_on_surface<LCC_3_cmap> toto2(toto);
     assert(toto2==prevp);
 
-
-    curp.set_m_use_only_positive(use_only_positive);
-    curp.set_m_use_only_negative(use_only_negative);
     modified=false;
     /* curp->display_negative_turns();
     std::cout<<"  "; curp->display_positive_turns();

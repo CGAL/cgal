@@ -157,17 +157,63 @@ public:
   /// +2 as turn, and thus these parameters are useless.
   /// However, this case can occured for our unit tests on the cube, this is
   /// the reason of these parameters.
-  Path_on_surface_with_rle(const MQ& aMQ, const Path_on_surface<Map>& p)
+  Path_on_surface_with_rle(const MQ& aMQ, const Path_on_surface<Map>& apath,
+                           bool use_only_positive=false,
+                           bool use_only_negative=false)
   : m_MQ(aMQ),
-    m_is_closed(false),
+    m_is_closed(apath.is_closed()),
     m_length(0),
-    m_use_only_positive(false),
-    m_use_only_negative(false)
+    m_use_only_positive(use_only_positive),
+    m_use_only_negative(use_only_negative)
   {
-    for (std::size_t i=0; i<p.length(); ++i)
+
+    /*TEMPO POUR DEBUG  assert(apath.is_valid(true));
+    std::cout<<"******************************* p [BEGIN]"<<std::endl;
+    apath.display();
+    apath.display_pos_and_neg_turns();
+    std::cout<<"******************************* p [END]"<<std::endl;
+*/
+    if (apath.is_empty()) return;
+
+    std::size_t i=0, starti=0;
+    bool positive_flat=false;
+    bool negative_flat=false;
+
+    if (apath.is_closed())
     {
-      push_back(p.get_ith_flip(i)?get_map().template beta<2>(p[i]):p[i]);
+      if (!use_only_negative && apath.next_positive_turn(i)==2)
+      { positive_flat=true; negative_flat=false; }
+      else if (!use_only_positive && apath.next_negative_turn(i)==2)
+      { positive_flat=false; negative_flat=true; }
+
+      while ((positive_flat && apath.next_positive_turn(i)==2) ||
+             (negative_flat && apath.next_negative_turn(i)==2))
+      {
+        i=apath.next_index(i);
+        if (i==0) // Case of a closed path, made of only one flat part.
+        {
+          m_path.push_back(Flat(apath.real_front(), apath.real_back(),
+                                (positive_flat?(apath.length()-1):
+                                               -(apath.length()-1))));
+          m_length=apath.length();
+          CGAL_assertion(is_valid());
+          return;
+        }
+      }
+      // Here i is the last dart of a flat
+      i=apath.next_index(i); // Now we are sure that i is the beginning of a flat
     }
+
+    starti=i;
+    do
+    {
+      // Here dart i is the beginning of a flat part (maybe of length 0)
+        push_back(apath.get_ith_real_dart(i), false);
+        i=apath.next_index(i);
+    }
+    while(i<apath.length() && i!=starti);
+
+    CGAL_assertion(is_valid(true));
   }
 
   /* Path_on_surface_with_rle(const Path_on_surface<Map>& p)
@@ -225,6 +271,9 @@ public:
     { m_path.push_back(*lit); }
     m_path.push_back(other.m_path.back()); // Last element
     update_is_closed();
+    // TODO: List of flat should be simplify when possible
+    // TODO2: what to do if different values for m_use_only_positive and m_use_only_negative ??
+    //    (probably nothing since these bools are used only for our tests)
     return *this;
   }
 
@@ -247,7 +296,7 @@ public:
     { return true; }
 
     // Note that we need to transform the Path_on_surface_with_rle into
-    // the correspondings Path_on_surface, because a same path can have two
+    // the correspondings Path_on_surface, because a same path can have several
     // different rle representations.
     Path_on_surface<Map> p1(*this);
     Path_on_surface<Map> p2(other);
@@ -434,7 +483,15 @@ public:
     {
       --itlast;
       set_end_of_flat(itlast, dh); // Move the last dart of the last flat
-      set_flat_length(itlast, flat_length(itlast)+(positive_flat?+1:-1)); // Increment the length of the flat
+      if (positive_flat && flat_length(itlast)>=0)
+      {
+        set_flat_length(itlast, flat_length(itlast)+1); // Increment the length of the flat
+      }
+      else
+      {
+        CGAL_assertion(negative_flat && flat_length(itlast)<=0);
+        set_flat_length(itlast, flat_length(itlast)-1); // Increment the length of the flat
+      }
     }
 
     ++m_length;
@@ -535,6 +592,7 @@ public:
   void decrease_flat_length(const List_iterator& it)
   {
     CGAL_assertion(is_valid_iterator(it));
+    CGAL_assertion(flat_length(it)!=0);
     if (flat_length(it)>0) { --(it->length); }
     else                   { ++(it->length); }
   }
@@ -542,8 +600,8 @@ public:
   void increase_flat_length(const List_iterator& it)
   {
     CGAL_assertion(is_valid_iterator(it));
-    if (flat_length(it)>0) { ++(it->length); }
-    else                   { --(it->length); }
+    if (flat_length(it)>=0) { ++(it->length); }
+    else                    { --(it->length); }
   }
 
   void set_begin_of_flat(const List_iterator& it, Dart_const_handle dh)
@@ -760,13 +818,16 @@ public:
     bool positive1=false, negative1=false;
     bool positive3=false, negative3=false;
 
-    if (flat_length(it)>0) positive1=true;
-    else if (flat_length(it)<0) negative1=true;
+    if (flat_length(it)>=0) positive1=true;
+    if (flat_length(it)<=0) negative1=true;
 
-    if (flat_length(it2)>0) positive3=true;
-    else if (flat_length(it2)<0) negative3=true;
+    if (flat_length(it2)>=0) positive3=true;
+    if (flat_length(it2)<=0) negative3=true;
 
-    if (!positive1 && !negative1)
+    return ((positive1 && positive2 && positive3) ||
+            (negative1 && negative2 && negative3));
+
+    /* if (!positive1 && !negative1)
     { // First flat is empty (length 0)
       if (!positive3 && !negative3)
       { // and second flat too
@@ -793,7 +854,7 @@ public:
         { return false; } // the two flats cannot be merged
       }
     }
-    return true;
+    return true; */
   }
 
   /// @return true iff the flat 'it' can be merged with its next flat.
@@ -985,7 +1046,7 @@ public:
       { return; }
     }
     while(it!=itend);
-    it=m_path.end(); // Here there is no spur in the whole path
+    it=m_path.end(); // Here there is no bracket in the whole path
   }
 
   /// Remove the given negative bracket. it1 is the flat beginning
