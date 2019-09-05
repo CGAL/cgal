@@ -498,7 +498,7 @@ void set_f_cc_id(const std::vector<std::size_t>& f_cc,
                  FaceCCIdMap face_cc_map,
                  const TriangleMesh& tm)
 {
-  BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor fd, faces(tm))
+  for(typename boost::graph_traits<TriangleMesh>::face_descriptor fd : faces(tm))
   {
     put(face_cc_map, fd, f_cc[ get(face_index_map, fd) ]);
   }
@@ -766,7 +766,7 @@ volume_connected_components(const TriangleMesh& tm,
 
   std::size_t next_volume_id = 0;
 // Handle open connected components
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(tm))
+  for(halfedge_descriptor h : halfedges(tm))
   {
     if (is_border(h, tm))
     {
