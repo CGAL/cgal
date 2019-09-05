@@ -75,8 +75,7 @@ double compute_hausdorff_distance(const TriangleMesh& old_patch,
   typedef CGAL::Sequential_tag                                      Tag;
 #endif
 
-  // @todo should it be symmetric?
-  const double d = Polygon_mesh_processing::approximate_Hausdorff_distance<Tag>(
+  const double d = Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance<Tag>(
                new_patch, old_patch, parameters::number_of_points_on_edges(10)
                                                 .number_of_points_on_faces(100));
   return d;
@@ -111,11 +110,6 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
 
   CGAL_precondition(pmesh.is_valid()); // @tmp
   CGAL_precondition(is_valid_polygon_mesh(pmesh));
-
-  // extract the old patch from the full mesh to compute the Hausdorff distance
-  const Filtered_graph ffg(pmesh, faces);
-  PolygonMesh pre_mesh;
-  CGAL::copy_face_graph(ffg, pre_mesh, parameters::vertex_point_map(vpm));
 
   // To be used to create new elements
   std::vector<vertex_descriptor> vertex_stack(interior_vertices.begin(), interior_vertices.end());
@@ -184,9 +178,12 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
     ++i;
   }
 
-  face_descriptor f = boost::graph_traits<PolygonMesh>::null_face();
 
+  face_descriptor f = boost::graph_traits<PolygonMesh>::null_face();
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
   std::vector<face_descriptor> new_faces;
+#endif
+
   for(const Vertex_face& vface : patch_with_vertices)
   {
     if(face_stack.empty())
@@ -200,7 +197,6 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
     }
 
     *out++ = f;
-
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
     new_faces.push_back(f);
 #endif
@@ -274,14 +270,6 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
   if(Polygon_mesh_processing::does_self_intersect(new_faces, pmesh))
     std::cout << "!! NEW FACES SELF INTERSECT !!" << std::endl;
 #endif
-
-  const Filtered_graph ffg_post(pmesh, new_faces);
-  PolygonMesh post_mesh;
-  CGAL::copy_face_graph(ffg_post, post_mesh, parameters::vertex_point_map(vpm));
-
-  const double d = compute_hausdorff_distance(pre_mesh, post_mesh);
-
-  std::cout << " ---------------------> distance between old and new patches: " << d << std::endl;
 
   return out;
 }
@@ -422,7 +410,7 @@ void constrain_sharp_and_border_edges(const FaceRange& faces,
   // this is basically the code that is in detect_features (at the very bottom)
   // but we do not want a folding to be marked as a sharp feature so the dihedral angle is also
   // bounded from above
-  const double bound = 45.; // @fixme hardcoded
+  const double bound = 60.; // @fixme hardcoded
   const double cos_angle = std::cos(bound * CGAL_PI / 180.);
 
   for(const auto& ep : is_border_of_selection)
@@ -453,7 +441,7 @@ void constrain_sharp_and_border_edges(const FaceRange& faces,
   out << std::setprecision(17);
   for(edge_descriptor e : edges(tmesh))
     if(get(eif, e))
-       out << "2 " << tmesh.point(source(ep.first, tmesh)) << " " << tmesh.point(target(ep.first, tmesh)) << std::endl;
+       out << "2 " << tmesh.point(source(e, tmesh)) << " " << tmesh.point(target(e, tmesh)) << std::endl;
   out.close();
   // @tmp ------------------------------
 #endif
@@ -547,11 +535,6 @@ bool order_border_halfedge_range(std::vector<typename boost::graph_traits<Triang
         return false;
     }
   }
-
-  for(const auto h : hrange)
-    std::cout << tmesh.point(source(h, tmesh)) << "\n";
-  std::cout << tmesh.point(target(hrange.back(), tmesh)) << "\n";
-  std::cout << std::endl;
 
   CGAL_postcondition(source(hrange.front(), tmesh) == target(hrange.back(), tmesh));
   return true;
@@ -854,14 +837,7 @@ bool construct_tentative_hole_patch(std::vector<typename boost::graph_traits<Tri
       third_points.push_back(get(vpmap, target(next(opposite(h, tmesh), tmesh), tmesh)));
   }
 
-  // @tmp
-  std::cout << cc_border_hedges.size() << " border edges" << std::endl;
-  std::cout << "third points:\n";
-  for(const auto& pt : third_points)
-    std::cout << pt << "\n";
-  std::cout << std::endl;
-
-  CGAL_assertion(hole_points.size() >= 3);
+  CGAL_postcondition(hole_points.size() >= 3);
 
   return construct_tentative_hole_patch(cc_border_vertices, cc_interior_vertices, cc_interior_edges,
                                         point_patch, hole_points, third_points, cc_border_hedges, cc_faces,
