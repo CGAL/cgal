@@ -230,6 +230,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
       PUBLIC demo_framework ${CGAL_LIBRARIES}
       Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
     cgal_add_compilation_test(${item_name})
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${item_name} )
   endmacro(add_item)
 
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
