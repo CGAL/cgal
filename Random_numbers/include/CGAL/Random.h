@@ -95,7 +95,7 @@ public:
                                               static_cast<result_type>(upper-1));
     boost::variate_generator<boost::rand48&, boost::uniform_smallint<result_type> > generator(rng,dist);
     
-    return generator();
+    return static_cast<IntType>(generator());
   }
 
   
