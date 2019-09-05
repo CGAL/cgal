@@ -1734,7 +1734,6 @@ namespace CGAL {
     std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
-      CGAL_assertion((!this->template is_free<2>(d1)));
       /* CGAL_assertion((belong_to_same_cell<0>(this->next(d1), d2))); */
       
       if (d2==opposite2(d1)) { return 0; }
@@ -1743,7 +1742,8 @@ namespace CGAL {
       std::size_t res=1;
       while (next(dd1)!=d2)
       {
-        CGAL_assertion(!this->template is_free<2>(next(dd1)));
+        if (this->template is_free<2>(next(dd1)))
+        { return std::numeric_limits<std::size_t>::max(); }
         
         ++res;
         dd1=opposite2(next(dd1));
@@ -1759,10 +1759,12 @@ namespace CGAL {
     std::size_t negative_turn(Dart_const_handle d1, Dart_const_handle d2) const
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
-      CGAL_assertion((!this->template is_free<2>(d1)));
       /* CGAL_assertion((belong_to_same_cell<0>(this->next(d1), d2))); */
-      
+
       if (d2==opposite2(d1)) { return 0; }
+
+      if (this->template is_free<2>(d1) || this->template is_free<2>(d2))
+      { return std::numeric_limits<std::size_t>::max(); }
 
       d1=opposite2(d1);
       d2=opposite2(d2);
@@ -1770,8 +1772,9 @@ namespace CGAL {
       std::size_t res=1;
       while (previous(dd1)!=d2)
       {
-        CGAL_assertion(!this->template is_free<2>(previous(dd1)));
-        
+        if (this->template is_free<2>(previous(dd1)))
+        { return std::numeric_limits<std::size_t>::max(); }
+
         ++res;
         dd1=opposite2(previous(dd1));
         
