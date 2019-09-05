@@ -94,6 +94,7 @@ if ( CGAL_FOUND )
         add_executable ( mesh_3D_gray_vtk_image mesh_3D_gray_vtk_image.cpp )
         target_link_libraries(  mesh_3D_gray_vtk_image ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${VTK_LIBRARIES})
         cgal_add_test( mesh_3D_gray_vtk_image )
+        add_to_cached_list( CGAL_EXECUTABLE_TARGETS mesh_3D_gray_vtk_image )
       endif()
  
       create_single_source_cgal_program( "mesh_3D_gray_image.cpp" )
