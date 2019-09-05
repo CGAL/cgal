@@ -2,14 +2,16 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
-
+#include <CGAL/Timer.h>
 #include <iostream>
 #include <fstream>
+//#define TEST_ALL_ORIENTATIONS 1
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> SMesh;
+
 
 template<class TriangleMesh, class NamedParameters>
 bool test_orientation(TriangleMesh& tm, bool is_positive, const NamedParameters& np)
@@ -24,7 +26,7 @@ bool test_orientation(TriangleMesh& tm, bool is_positive, const NamedParameters&
 
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
-  
+
   Vpm vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point),
                              CGAL::get_const_property_map(boost::vertex_point, tm));
 
@@ -145,5 +147,67 @@ int main()
     return 1;
   }
 
+#ifdef TEST_ALL_ORIENTATIONS //takes around 2 hours
+  std::cout<<"testing ALL orientations..."<<std::endl;
+  SMesh::Property_map<SMesh::Face_index, std::size_t> fccmap =
+      sm1.add_property_map<SMesh::Face_index, std::size_t>("f:CC").first;
+  std::vector<bool> is_cc_o_or;
+  PMP::orient_to_bound_a_volume(sm1);
+  PMP::does_bound_a_volume(sm1,
+                           CGAL::parameters::is_cc_outward_oriented(std::ref(is_cc_o_or)));
+
+  std::size_t nb_ccs = PMP::connected_components(sm1, fccmap);
+
+  std::vector< std::vector<SMesh::Face_index> > faces_per_cc(nb_ccs);
+  for(SMesh::Face_index fd : faces(sm1))
+  {
+    std::size_t cc_id = get(fccmap, fd);
+      faces_per_cc[cc_id].push_back(fd);
+  }
+  double total_length = 1<<20;
+  CGAL::Timer timer;
+  timer.start();
+  for(std::size_t i=1; i<total_length; ++i)//0 is initial state, already tested
+  {
+    SMesh loop_m = sm1;
+    int i_bis = i;
+    int cc = 0;
+    while(i_bis)
+    {
+      if(i_bis&1)
+      {
+        //reverse_orientation(cc)
+        PMP::reverse_face_orientations(faces_per_cc[cc], loop_m);
+      }
+      //test volume
+      i_bis>>=1;
+      ++cc;
+    }
+    std::vector<bool> is_loop_o_o;
+    PMP::orient_to_bound_a_volume(loop_m);
+
+    if( !PMP::does_bound_a_volume(loop_m,
+                                  CGAL::parameters::is_cc_outward_oriented(std::ref(is_loop_o_o))) )
+    {
+      std::cerr << "ERROR for test7\n";
+      return 1;
+    }
+    if(is_loop_o_o.empty())
+      return 1;
+    if(is_loop_o_o!= is_cc_o_or)
+    {
+      std::cerr << "ERROR for test7\n";
+      return 1;
+    }
+    if(i%1000 == 0){
+      timer.stop();
+      double remaining = ((1<<20) -i)* timer.time()/1000.0 ;
+      std::cout<<remaining/60.0<<"min remaining."<<std::endl;
+      timer.reset();
+      timer.start();
+    }
+  }
+std::cout<<"finished ! "<<std::endl;
+#endif
   return 0;
 }

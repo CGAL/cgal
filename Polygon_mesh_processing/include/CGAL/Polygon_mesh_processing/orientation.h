@@ -1086,7 +1086,11 @@ volume_connected_components(const TriangleMesh& tm,
         }
       }
     }
-    if (used_as_a_predicate) return 1;
+    if (used_as_a_predicate)
+    {
+      internal::copy_orientation_bitset(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
+      return 1;
+    }
 
   // merge nested_cc_per_cc and nested_cc_per_cc_shared
   // (done after the volume creation to assign a CC to a unique volume)
@@ -1157,6 +1161,14 @@ volume_connected_components(const TriangleMesh& tm,
  *   \cgalParamEnd
  *   \cgalParamBegin{face_index_map}
  *     a property map containing the index of each face of `tm`.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{is_cc_outward_oriented}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to an object of type `std::vector<bool>`.
+ *     The size of the vector is exactly the number of connected components.
+ *     For each connected component identified using its id `ccid`, the output of `is_outward_oriented`
+ *     called on the submesh corresponding to this connected component
+ *     is the value at the position `ccid` in the parameter vector.
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
