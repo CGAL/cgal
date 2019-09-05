@@ -30,7 +30,7 @@
 
 namespace CGAL
 {
-namespace Tetrahedral_adaptive_remeshing
+namespace Tetrahedral_remeshing
 {
 namespace internal
 {
@@ -206,5 +206,5 @@ namespace internal
   }
 
 }//end namespace internal
-}//end namespace Tetrahedral_adaptive_remeshing
+}//end namespace Tetrahedral_remeshing
 }//end namespace CGAL

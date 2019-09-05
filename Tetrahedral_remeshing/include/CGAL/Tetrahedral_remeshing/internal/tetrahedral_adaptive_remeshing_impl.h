@@ -56,6 +56,12 @@ namespace internal
     {
       return true;
     }
+
+    typedef typename Tr::Cell::Subdomain_index Subdomain_index;
+    Subdomain_index subdomain_index(const argument_type c) const
+    {
+      return Subdomain_index(1);
+    }
   };
 
   template<typename Primitive>
@@ -120,7 +126,7 @@ namespace internal
       init_c3t3(ecmap);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::debug::dump_without_imaginary(m_c3t3.triangulation(),
+      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(m_c3t3.triangulation(),
         "00-init-no-imaginary.mesh", m_imaginary_index);
 #endif
     }
@@ -141,8 +147,8 @@ namespace internal
       CGAL_assertion(tr().is_valid(true));
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::debug::dump_triangulation_cells(tr(), "0-preprocess.mesh");
-      CGAL::debug::dump_without_imaginary(tr(),
+      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "0-preprocess.mesh");
+      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "0-preprocess-no-imaginary.mesh", m_imaginary_index);
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -160,8 +166,8 @@ namespace internal
 
       CGAL_assertion(tr().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::debug::dump_triangulation_cells(tr(), "1-split.mesh");
-      CGAL::debug::dump_without_imaginary(tr(),
+      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "1-split.mesh");
+      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "1-split-no-imaginary.mesh", m_imaginary_index);
 #endif
     }
@@ -178,8 +184,9 @@ namespace internal
 
       CGAL_assertion(tr().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::debug::dump_triangulation_cells(tr(), "2-collapse.mesh");
-      CGAL::debug::dump_without_imaginary(tr(),
+      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
+        "2-collapse.mesh");
+      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "2-collapse-no-imaginary.mesh", m_imaginary_index);
 #endif
     }
@@ -191,8 +198,9 @@ namespace internal
 
       CGAL_assertion(tr().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::debug::dump_triangulation_cells(tr(), "3-flip.mesh");
-      CGAL::debug::dump_without_imaginary(tr(),
+      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
+        "3-flip.mesh");
+      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "3-flip-no-imaginary.mesh", m_imaginary_index);
 #endif
     }
@@ -204,8 +212,9 @@ namespace internal
 
       CGAL_assertion(tr().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::debug::dump_triangulation_cells(tr(), "4-smooth.mesh");
-      CGAL::debug::dump_without_imaginary(tr(),
+      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
+        "4-smooth.mesh");
+      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "4-smooth-no-imaginary.mesh", m_imaginary_index);
 #endif
     }
@@ -253,8 +262,9 @@ namespace internal
 
       CGAL_assertion(tr().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::debug::dump_triangulation_cells(tr(), "99-postprocess.mesh");
-      CGAL::debug::dump_without_imaginary(tr(),
+      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
+        "99-postprocess.mesh");
+      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "99-postprocess-no-imaginary.mesh", m_imaginary_index);
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -295,7 +305,7 @@ namespace internal
            cit != tr().finite_cells_end();
            ++cit)
       {
-        if (cit->subdomain_index() != Subdomain_index())
+        if (m_cell_selector(cit))//->subdomain_index() != Subdomain_index())
         {
           m_c3t3.add_to_complex(cit, cit->subdomain_index());
           max_si = (std::max)(max_si, cit->subdomain_index());
