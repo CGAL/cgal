@@ -17,6 +17,11 @@ Then it verify that
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
 
+// If you want to use a viewer, you can use qglviewer.
+#ifdef CGAL_USE_BASIC_VIEWER
+#include <CGAL/draw_face_graph_with_paths.h>
+#endif
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point_3;
 typedef CGAL::Surface_mesh<Point_3>                         SM;
@@ -35,8 +40,7 @@ void create_positive_loop_88(Path_on_surface<SM>& p, unsigned int n)
   }
   else
   {
-    p.extend_straight_positive(10*n-1, false);
-    p.update_is_closed();
+    p.extend_straight_positive(10*n-1);
     CGAL_assertion(p.is_closed());
   }
 }
@@ -52,8 +56,7 @@ void create_negative_loop_88(Path_on_surface<SM>& p, unsigned int n)
   }
   else
   {
-    p.extend_straight_positive(10*n-1, false);
-    p.update_is_closed();
+    p.extend_straight_positive(10*n-1);
     CGAL_assertion(p.is_closed());
   }
 }
@@ -69,8 +72,14 @@ void create_positive_loop_24(Path_on_surface<SM>& p, unsigned int n)
   }
   else
   {
-    p.extend_straight_positive(10*n-1, false);
-    p.update_is_closed();
+    p.extend_straight_positive((10*n)-1);
+
+#ifdef CGAL_USE_BASIC_VIEWER
+  /* std::vector<Path_on_surface<SM> > v;
+  v.push_back(p);
+  CGAL::draw(p.get_mesh(), v, "Title"); */
+#endif // CGAL_USE_BASIC_VIEWER
+
     CGAL_assertion(p.is_closed());
   }
 }
@@ -86,8 +95,7 @@ void create_negative_loop_24(Path_on_surface<SM>& p, unsigned int n)
   }
   else
   {
-    p.extend_straight_negative(10*n-1, false);
-    p.update_is_closed();
+    p.extend_straight_negative((10*n)-1);
     CGAL_assertion(p.is_closed());
   }
 }

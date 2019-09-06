@@ -22,6 +22,7 @@ if ( CGAL_FOUND )
   if(CGAL_Qt5_FOUND)
     target_link_libraries(path_with_rle_deformation_tests PUBLIC CGAL::CGAL_Qt5)
     target_link_libraries(test_homotopy PUBLIC CGAL::CGAL_Qt5)
+    target_link_libraries(fundamental_group_of_the_circle PUBLIC CGAL::CGAL_Qt5)
     target_link_libraries(fundamental_group_of_the_torus PUBLIC CGAL::CGAL_Qt5)
   endif()
 

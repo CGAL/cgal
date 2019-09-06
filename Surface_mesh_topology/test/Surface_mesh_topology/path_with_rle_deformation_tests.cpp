@@ -52,8 +52,8 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
                     std::size_t repeat=0) // If 0, repeat as long as there is one modifcation;
                                            // otherwise repeat the given number of times
 {
-  std::vector<Path_on_surface<LCC_3_cmap> > v;
 #ifdef CGAL_USE_BASIC_VIEWER
+  std::vector<Path_on_surface<LCC_3_cmap> > v;
   if (draw)
   {
     v.push_back(path);
@@ -69,14 +69,8 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
   bool modified=false;
   do
   {
-
-    internal::Path_on_surface_with_rle<internal::Light_MQ<LCC_3_cmap> > toto(lmq,prevp,
-                                                                             use_only_positive,
-                                                                             use_only_negative);
-    curp=toto;//internal::Path_on_surface_with_rle<internal::Light_MQ<LCC_3_cmap> >(prevp);
-
-    Path_on_surface<LCC_3_cmap> toto2(toto);
-    assert(toto2==prevp);
+    curp=internal::Path_on_surface_with_rle<internal::Light_MQ<LCC_3_cmap> >
+        (lmq, prevp, use_only_positive, use_only_negative);
 
     modified=false;
     /* curp->display_negative_turns();
@@ -123,6 +117,7 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
 #endif // CGAL_USE_BASIC_VIEWER
 
   path.swap(prevp);
+  CGAL_assertion(path.is_valid(true));
 }
 ///////////////////////////////////////////////////////////////////////////////
 bool unit_test(Path_on_surface<LCC_3_cmap>& path, Transformation t,
@@ -341,25 +336,25 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
   CGAL::Random random(nbtests); // fix seed
   internal::generate_random_positive_bracket(path, 2, 6, 3, random); // Test 17
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^1 1 2^6 1 2^3 ... )",
-                 "2 2 2 2 2 2 1", draw, testtorun, true, false))
+                 "2 2 2 2 1", draw, testtorun, true, false))
   { res=false; }
 
   random=CGAL::Random(nbtests);
   internal::generate_random_positive_bracket(path, 3, 8, 4, random); // Test 18
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^2 1 2^8 1 2^4 ... )",
-                   "2 1 2 2 2 2 2", draw, testtorun, true, false))
+                   "2 1 2 2 2 2 2 2 2", draw, testtorun, true, false))
   { res=false; }
 
   random=CGAL::Random(nbtests);
   internal::generate_random_positive_bracket(path, 5, 12, 8, random); // Test 19
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
-                 "2 1 2", draw, testtorun, true, false))
+                 "1 2 2 2", draw, testtorun, true, false))
   { res=false; }
 
   random=CGAL::Random(nbtests);
   internal::generate_random_positive_bracket(path, 5, 12, 8, random); // Test 20
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
-                   "1 2 2 2", draw, testtorun, true, false))
+                   "2 1", draw, testtorun, true, false))
   { res=false; }
 
   return res;
