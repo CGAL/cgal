@@ -32,7 +32,7 @@ The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew
 \subsection SMTopology_Input Specifying the Input Surface and Curves
 
 The homotopy tests are performed on a input surface represented as a model of `CombinatorialMap` or any model of `FaceGraph`. Note that combinatorial maps are based on darts and FaceGraphs are based on halfedges. To avoid repetitions we use the terms darts and halfedges interchangeably in the sequel.
-The input surface is supposed to be connected, orientable, and closed (without boundary).
+The input surface is supposed to be connected and orientable.
 The main class for this package is `Surface_mesh_topology::Curves_on_surface_topology`. Its constructor takes the input surface. An internal representation of the surface (described below) is computed the first time an homotopy test is called.
 
 Each curve on this surface is contained in an instance of the class `Surface_mesh_topology::Path_on_surface`. An object in this class behaves as a list. This list is initially empty and the halfedges corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides four ways for extending a nonempty path.
