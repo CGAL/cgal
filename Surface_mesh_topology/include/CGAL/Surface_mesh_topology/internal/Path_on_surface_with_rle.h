@@ -166,13 +166,6 @@ public:
     m_use_only_positive(use_only_positive),
     m_use_only_negative(use_only_negative)
   {
-
-    /*TEMPO POUR DEBUG  assert(apath.is_valid(true));
-    std::cout<<"******************************* p [BEGIN]"<<std::endl;
-    apath.display();
-    apath.display_pos_and_neg_turns();
-    std::cout<<"******************************* p [END]"<<std::endl;
-*/
     if (apath.is_empty()) return;
 
     std::size_t i=0, starti=0;
@@ -216,19 +209,6 @@ public:
     CGAL_assertion(is_valid(true));
   }
 
-  /* Path_on_surface_with_rle(const Path_on_surface<Map>& p)
-  : m_MQ(Light_MQ<Map>(p.get_map())),
-    m_is_closed(false),
-    m_length(0),
-    m_use_only_positive(false),
-    m_use_only_negative(false)
-  {
-    for (std::size_t i=0; i<p.length(); ++i)
-    {
-      push_back(p.get_ith_flip(i)?get_map().template beta<2>(p[i]):p[i]);
-    }
-    } */
-
   void swap(Self& p2)
   {
     if (this!=&p2)
@@ -264,8 +244,8 @@ public:
 
   Self& operator+=(Self& other)
   {
-    // Be careful to the special case when *this==other
-    // this is the reason of the iend.
+    // Be careful to the special case when *this==other.
+    // This is the reason of the litend computed with std::prev.
     for (List_iterator lit=other.m_path.begin(),
          litend=std::prev(other.m_path.end()); lit!=litend; ++lit)
     { m_path.push_back(*lit); }
@@ -410,6 +390,13 @@ public:
       {
         std::cout<<"ERROR: The path is not valid: it is empty and closed."
                 <<std::endl;
+        return false;
+      }
+      if (!get_map().template belong_to_same_cell<0>
+          (get_map().template beta<1>(prev), begin_of_flat(m_path.begin())))
+      {
+        std::cerr<<"ERROR: The path is not valid: first flat "
+                 <<" does not follow the last dart for a closed path."<<std::endl;
         return false;
       }
     }
@@ -815,46 +802,13 @@ public:
 
     if (!positive2 && !negative2) { return false; } // the middle turn is not a flat
 
-    bool positive1=false, negative1=false;
-    bool positive3=false, negative3=false;
-
-    if (flat_length(it)>=0) positive1=true;
-    if (flat_length(it)<=0) negative1=true;
-
-    if (flat_length(it2)>=0) positive3=true;
-    if (flat_length(it2)<=0) negative3=true;
+    bool positive1=(flat_length(it)>=0);
+    bool negative1=(flat_length(it)<=0);
+    bool positive3=(flat_length(it2)>=0);
+    bool negative3=(flat_length(it2)<=0);
 
     return ((positive1 && positive2 && positive3) ||
             (negative1 && negative2 && negative3));
-
-    /* if (!positive1 && !negative1)
-    { // First flat is empty (length 0)
-      if (!positive3 && !negative3)
-      { // and second flat too
-        return true;
-      }
-      else
-      { // here second flat is not empty
-        if ((positive3 && !positive2) || (negative3 && !negative2))
-        { return false; } // the two flats cannot be merged
-      }
-    }
-    else
-    { // here first flat is not empty
-      if (!positive3 && !negative3)
-      { // and second flat is empty
-        if ((positive1 && !positive2) || (negative1 && !negative2))
-        { return false; } // the two flats cannot be merged
-      }
-      else
-      {
-        // Second flat is not empty
-        if ((positive1!=positive3) || (negative1!=negative3) ||
-            (positive1 && !positive2) || (negative1 && !negative2))
-        { return false; } // the two flats cannot be merged
-      }
-    }
-    return true; */
   }
 
   /// @return true iff the flat 'it' can be merged with its next flat.
@@ -979,7 +933,7 @@ public:
       }
       else { move_to_next_spur(it); }
     }
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid());
     return res;
   }
 
@@ -1520,7 +1474,7 @@ public:
       }
       else { move_to_next_l_shape(it); }
     }
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid());
     return res;
   }
 

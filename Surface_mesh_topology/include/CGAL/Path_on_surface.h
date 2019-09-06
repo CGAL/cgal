@@ -418,20 +418,23 @@ public:
     if (is_empty() || nb==0)
     { display_failed_extention("extend_straight_positive"); return; }
 
-    Dart_const_handle dh;
+    Dart_const_handle dh=back();
+    if(back_flip())
+    {
+      if (get_map().template is_free<2>(dh))
+      { display_failed_extention("extend_straight_positive"); return; }
+      else
+      { dh=get_map().template beta<2>(dh); }
+    }
+
     for (unsigned int i=0; i<nb; ++i)
     {
-      dh=back();
-      if(!back_flip() && get_map().template is_free<2>(dh))
-      { display_failed_extention("extend_straight_positive"); return; }
-
-      dh=back_flip()?get_map().template beta<2,1>(dh):
-                     get_map().template beta<1>(dh);
+      dh=get_map().template beta<1>(dh);
 
       if (get_map().template is_free<2>(dh))
       { display_failed_extention("extend_straight_positive"); return; }
-
       dh=get_map().template beta<2, 1>(dh);
+      
       push_back(dh, false, false);
     }
 
@@ -443,73 +446,26 @@ public:
     if (is_empty() || nb==0)
     { display_failed_extention("extend_straight_negative"); return; }
 
-    Dart_const_handle dh;
+    Dart_const_handle dh=back();
+    if(!back_flip())
+    {
+      if (get_map().template is_free<2>(dh))
+      { display_failed_extention("extend_straight_positive"); return; }
+      else
+      { dh=get_map().template beta<2>(dh); }
+    }
+
     for (unsigned int i=0; i<nb; ++i)
     {
-      dh=back();
-      if(!back_flip() && get_map().template is_free<2>(dh))
-      { display_failed_extention("extend_straight_negative"); return; }
-    
-      dh=back_flip()?get_map().template beta<0>(dh):
-                     get_map().template beta<2, 0>(dh);
-      if (get_map().template is_free<2>(dh))
-      { display_failed_extention("extend_straight_negative"); return; }
-
-      dh=get_map().template beta<2, 0>(dh);
-      push_back(dh, true, false);
-    }
-    if (update_isclosed) { update_is_closed(); }
-  }
-
-  void extend_straight_positive_until(Dart_const_handle dend,
-                                      bool is_dend_flipped=false,
-                                      bool update_isclosed=true)
-  {
-    if (is_empty() || back()==dend || (is_dend_flipped && get_map().template is_free<2>(dend)))
-    { display_failed_extention("extend_straight_positive_until"); return; }
-
-    Dart_const_handle dh=back();
-    if(back_flip() && get_map().template is_free<2>(dh))
-    { display_failed_extention("extend_straight_positive_until"); return; }
-    dh=back_flip()?get_map().template beta<2, 1>(dh):get_map().template beta<1>(dh);
-    if (get_map().template is_free<2>(dh))
-    { display_failed_extention("extend_straight_positive_until"); return; }
-    dh=get_map().template beta<2, 1>(dh);
-
-    while(dh!=dend)
-    {
-      push_back(dh, false, false);
-      dh=get_map().template beta<1>(dh);
-      if (get_map().template is_free<2>(dh))
-      { display_failed_extention("extend_straight_positive_until"); return; }
-      dh=get_map().template beta<2, 1>(dh);
-    }
-    if (update_isclosed) { update_is_closed(); }
-  }
-
-  void extend_straight_negative_until(Dart_const_handle dend,
-                                      bool is_dend_flipped=false,
-                                      bool update_isclosed=true)
-  {
-    if (is_empty() || back()==dend || (!is_dend_flipped && get_map().template is_free<2>(dend)))
-    { display_failed_extention("extend_straight_negative_until"); return; }
-
-    Dart_const_handle dh=back();//the next 6 lines are the same than in extend_straight_negative
-    if(!back_flip() && get_map().template is_free<2>(dh))
-    { display_failed_extention("extend_straight_negative_until"); return; }    
-    dh=back_flip()?get_map().template beta<0>(dh):get_map().template beta<2, 0>(dh);
-    if (get_map().template is_free<2>(dh))
-    { display_failed_extention("extend_straight_negative_until"); return; }
-    dh=get_map().template beta<2, 0>(dh);
-
-    while(dh!=(is_dend_flipped?dend:get_map().template beta<2>(dend)))
-    {
-      push_back(dh, true, false);
       dh=get_map().template beta<0>(dh);
+      
       if (get_map().template is_free<2>(dh))
-      { return; }
+      { display_failed_extention("extend_straight_negative"); return; }
       dh=get_map().template beta<2, 0>(dh);
+      
+      push_back(dh, true, false);
     }
+    
     if (update_isclosed) { update_is_closed(); }
   }
 
@@ -524,9 +480,14 @@ public:
     }
 
     Dart_const_handle dh=back();
-    if(back_flip() && get_map().template is_free<2>(dh))
-    { display_failed_extention("extend_positive_turn"); return; }
-    dh=back_flip()?get_map().template beta<2, 1>(dh):get_map().template beta<1>(dh);
+    if(back_flip())
+    {
+      if (get_map().template is_free<2>(dh))
+      { display_failed_extention("extend_positive_turn"); return; }
+      else
+      { dh=get_map().template beta<2>(dh); }
+    }
+    dh=get_map().template beta<1>(dh);
     
     for (unsigned int i=1; i<nb; ++i)
     {
@@ -549,9 +510,14 @@ public:
     }
 
     Dart_const_handle dh=back();
-    if(!back_flip() && get_map().template is_free<2>(dh))
-    { display_failed_extention("extend_negative_turn"); return; }
-    dh=back_flip()?get_map().template beta<0>(dh):get_map().template beta<2, 0>(dh);
+    if(!back_flip())
+    {
+      if (get_map().template is_free<2>(dh))
+      { display_failed_extention("extend_negative_turn"); return; }
+      else
+      { dh=get_map().template beta<2>(dh); }
+    }
+    dh=get_map().template beta<0>(dh);
     
     for (unsigned int i=1; i<nb; ++i)
     {
