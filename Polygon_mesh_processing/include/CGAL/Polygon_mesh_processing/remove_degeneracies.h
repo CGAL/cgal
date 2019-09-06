@@ -173,6 +173,20 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       {
         // the following edges are removed by the collapse
         halfedge_descriptor h = halfedge(e, tmesh);
+        CGAL_assertion(!is_border(h, tmesh));
+
+        std::array<halfedge_descriptor,2> nc = internal::is_badly_shaped(face(h, tmesh), tmesh, np);
+        if (nc[0]!=h)
+        {
+#ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
+          std::cerr << "Warning: Needle criteria no longer valid " << tmesh.point(source(e, tmesh)) << " --- "
+                                                                   << tmesh.point(target(e, tmesh)) << std::endl;
+#endif
+          if (nc[0]!=boost::graph_traits<TriangleMesh>::null_halfedge())
+            next_edges_to_collapse.insert(edge(nc[0], tmesh));
+          continue;
+        }
+
         for (int i=0; i<2; ++i)
         {
           if (!is_border(h, tmesh))
@@ -186,7 +200,12 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         }
         edges_to_flip.erase(e);
 
-        /* vertex_descriptor v = */ Euler::collapse_edge(e, tmesh); // @todo move 'v' to the midpoint?
+        // moving to the midpoint is not a good idea. On a circle for example you might endpoint with
+        // a bad geometry because you iteratively move one point
+        // auto mp = midpoint(tmesh.point(source(h, tmesh)), tmesh.point(target(h, tmesh)));
+
+        /* vertex_descriptor v = */ Euler::collapse_edge(e, tmesh);
+        //tmesh.point(v) = mp;
         // @todo the collapsed edge is supposed to be smalled so incident faces are not reevaluated but
         //       maybe we should
         something_was_done = true;
@@ -249,16 +268,16 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         {
           if (!is_border(h, tmesh))
           {
-            std::array<halfedge_descriptor,2> hp = internal::is_badly_shaped(face(h, tmesh), tmesh, np);
-            if (hp[1]!=boost::graph_traits<TriangleMesh>::null_halfedge() &&
-                edge(hp[1], tmesh) != e) // avoid infinite loop
+            std::array<halfedge_descriptor,2> nc = internal::is_badly_shaped(face(h, tmesh), tmesh, np);
+            if (nc[1]!=boost::graph_traits<TriangleMesh>::null_halfedge() &&
+                edge(nc[1], tmesh) != e) // avoid infinite loop
             {
-              next_edges_to_flip.insert( edge(hp[1], tmesh) );
+              next_edges_to_flip.insert( edge(nc[1], tmesh) );
             }
             else
             {
-              if (hp[0]!=boost::graph_traits<TriangleMesh>::null_halfedge() &&
-                  edge(hp[0], tmesh) == e) // only the new edge should be tested
+              if (nc[0]!=boost::graph_traits<TriangleMesh>::null_halfedge() &&
+                  edge(nc[0], tmesh) == e) // only the new edge should be tested
               {
                 next_edges_to_collapse.insert(e);
               }
