@@ -40,6 +40,9 @@
 
 #include <boost/unordered_set.hpp>
 #include <boost/dynamic_bitset.hpp>
+#include <boost/ref.hpp>
+
+#include <functional>
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -468,23 +471,68 @@ enum Volume_error_code { VALID_VOLUME, ///< The set of faces bounds a volume
                          SINGLE_CONNECTED_COMPONENT ///< The set of faces consists of all the faces of the mesh and no further test was done.
                        };
 namespace internal {
-template<class RefToVector>
-void copy_error_codes(std::vector<Volume_error_code>& error_codes_in,
-                      RefToVector ref_wrapper)
+
+template<class T, class RefToContainer>
+void copy_container_content(std::vector<T>& vec, RefToContainer ref_wrapper)
 {
-  error_codes_in.swap(ref_wrapper.get());
+  ref_wrapper.get().reserve(vec.size());
+  for(const T& t : vec)
+  {
+   ref_wrapper.get().push_back(t);
+  }
 }
 
-inline void copy_error_codes(std::vector<Volume_error_code>&,
+template<class T>
+void copy_container_content(std::vector<T>& vec, std::reference_wrapper<std::vector<T> > ref_wrapper)
+{
+  vec.swap(ref_wrapper.get());
+}
+
+template<class T>
+void copy_container_content(std::vector<T>& vec, boost::reference_wrapper<std::vector<T> > ref_wrapper)
+{
+  vec.swap(ref_wrapper.get());
+}
+template<class T>
+inline void copy_container_content(std::vector<T>&,
                              internal_np::Param_not_found)
 {}
 
-template <class RefToVector>
+
+template <class RefToContainer>
 void copy_nested_parents(
   std::vector< std::vector<std::size_t> >& nested_parents,
-  RefToVector ref_to_vector)
+  RefToContainer ref_to_vector)
 {
-  ref_to_vector.get().swap( nested_parents );
+  typedef typename RefToContainer::type Container;
+  typedef typename Container::value_type Container_value;
+
+  ref_to_vector.get().reserve(nested_parents.size());
+  for(const auto& t : nested_parents)
+  {
+    Container_value c;
+    c.reserve(t.size());
+    for(const std::size_t& val : t){
+      c.push_back(val);
+    }
+   ref_to_vector.get().push_back(c);
+  }
+}
+
+template <>
+void copy_nested_parents(
+  std::vector< std::vector<std::size_t> >& nested_parents,
+  std::reference_wrapper<std::vector< std::vector<std::size_t> > > ref_to_vector)
+{
+  nested_parents.swap(ref_to_vector.get());
+}
+
+template <>
+void copy_nested_parents(
+  std::vector< std::vector<std::size_t> >& nested_parents,
+  boost::reference_wrapper<std::vector< std::vector<std::size_t> > > ref_to_vector)
+{
+  nested_parents.swap(ref_to_vector.get());
 }
 
 inline void copy_nested_parents(
@@ -630,9 +678,11 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *   \cgalParamEnd
  *   \cgalParamBegin{volume_inclusions}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object of type `std::vector< std::vector<std::size_t> >`
- *     The size of the vector is exactly the number of surface components of `tm`.
- *     The vector at position `k` contains the ids of all the
+ *     a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+ *     with a value type being a model of `BackInsertionSequence` of `std::size_t`,
+ *     both types having the functions `reserve()` and `push_back()`.
+ *     The size of the container is exactly the number of surface components of `tm`.
+ *     The container at position `k` contains the ids of all the
  *     surface components that are the first intersected by any ray with source on
  *     the surface component `k` and directed outside the volume enclosed by the
  *     surface component `k`. There is only one such id but when some surface components intersect.
@@ -645,9 +695,10 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *   \cgalParamEnd
  *   \cgalParamBegin{error_codes}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object of type `std::vector< Volume_error_code >`.
- *     The size of the vector is exactly the number of volume components.
- *     The vector indicates the status of a volume assigned to a set of faces.
+ *     a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+ *     with a value_type being `Volume_error_code`.
+ *     The size of the container is exactly the number of volume components.
+ *     The container indicates the status of a volume assigned to a set of faces.
  *     The description of the value type is given in the documentation of the enumeration type.
  *   \cgalParamEnd
  *   \cgalParamBegin{do_self_intersection_tests}
@@ -657,22 +708,25 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *   \cgalParamEnd
  *   \cgalParamBegin{connected_component_id_to_volume_id}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object of type `std::vector< std::size_t >`.
- *     The size of the vector is exactly the number of connected components.
+ *     a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+ *     with a value_type being `std::size_t`.
+ *     The size of the container is exactly the number of connected components.
  *     For each connected component identified using its id `ccid`, the id of the volume it contributes
- *     to describe is the value at the position `ccid` in the parameter vector.
+ *     to describe is the value at the position `ccid` in the parameter container.
  *   \cgalParamEnd
  *   \cgalParamBegin{nesting_levels}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object of type `std::vector< std::size_t >`.
- *     The size of the vector is exactly the number of connected components.
+ *     a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+ *     with a value_type being `std::size_t`.
+ *     The size of the container is exactly the number of connected components.
  *     For each connected component identified using its id `ccid`, the vector contains the number of
  *     connected components containing on its bounded side this component.
  *   \cgalParamEnd
  *   \cgalParamBegin{is_cc_outward_oriented}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object of type `std::vector<bool>`.
- *     The size of the vector is exactly the number of connected components.
+ *     a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+ *     with a value_type being `bool`.
+ *     The size of the container is exactly the number of connected components.
  *     For each connected component identified using its id `ccid`, the output of `is_outward_oriented`
  *     called on the submesh corresponding to this connected component
  *     is the value at the position `ccid` in the parameter vector.
@@ -682,6 +736,7 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *     Each pair of connected components intersecting will be reported using their ids.
  *    If `do_self_intersection_tests` named parameter is not set to `true`, nothing will be reported.
  *   \cgalParamEnd
+ *
  * \cgalNamedParamsEnd
  *
  * \return the number of volume components defined by `tm`
@@ -749,16 +804,16 @@ volume_connected_components(const TriangleMesh& tm,
     for(face_descriptor fd : faces(tm))
       put(volume_id_map, fd, 0);
 
-    internal::copy_error_codes(error_codes, parameters::get_parameter(np, internal_np::error_codes));
+    internal::copy_container_content(error_codes, parameters::get_parameter(np, internal_np::error_codes));
     // nested_cc_per_cc is empty and used to clear the vector passed in case it was not empty
     internal::copy_nested_parents(nested_cc_per_cc, parameters::get_parameter(np, internal_np::volume_inclusions));
     if (!ignore_orientation_of_cc &&
         !parameters::is_default_parameter(parameters::get_parameter(np, internal_np::is_cc_outward_oriented)))
     {
       is_cc_outward_oriented.push_back(is_outward_oriented(tm, np));
-      internal::copy_orientation_bitset(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
+      internal::copy_container_content(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
     }
-    internal::copy_cc_to_volume_id(cc_volume_ids, parameters::get_parameter(np, internal_np::connected_component_id_to_volume_id));
+    internal::copy_container_content(cc_volume_ids, parameters::get_parameter(np, internal_np::connected_component_id_to_volume_id));
     return 1;
   }
 
@@ -947,8 +1002,8 @@ volume_connected_components(const TriangleMesh& tm,
     // early return for orient_to_bound_a_volume
     if (parameters::choose_parameter(parameters::get_parameter(np, internal_np::i_used_for_volume_orientation),false))
     {
-      internal::copy_nesting_levels(nesting_levels, parameters::get_parameter(np, internal_np::nesting_levels));
-      internal::copy_orientation_bitset(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
+      internal::copy_container_content(nesting_levels, parameters::get_parameter(np, internal_np::nesting_levels));
+      internal::copy_container_content(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
       return 0;
     }
 
@@ -1088,7 +1143,7 @@ volume_connected_components(const TriangleMesh& tm,
     }
     if (used_as_a_predicate)
     {
-      internal::copy_orientation_bitset(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
+      internal::copy_container_content(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
       return 1;
     }
 
@@ -1130,11 +1185,11 @@ volume_connected_components(const TriangleMesh& tm,
   }
 
   CGAL_assertion(next_volume_id == error_codes.size());
-  internal::copy_error_codes(error_codes, parameters::get_parameter(np, internal_np::error_codes));
+  internal::copy_container_content(error_codes, parameters::get_parameter(np, internal_np::error_codes));
   internal::copy_nested_parents(nesting_parents, parameters::get_parameter(np, internal_np::volume_inclusions));
-  internal::copy_nesting_levels(nesting_levels, parameters::get_parameter(np, internal_np::nesting_levels));
-  internal::copy_cc_to_volume_id(cc_volume_ids, parameters::get_parameter(np, internal_np::connected_component_id_to_volume_id));
-  internal::copy_orientation_bitset(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
+  internal::copy_container_content(nesting_levels, parameters::get_parameter(np, internal_np::nesting_levels));
+  internal::copy_container_content(cc_volume_ids, parameters::get_parameter(np, internal_np::connected_component_id_to_volume_id));
+  internal::copy_container_content(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
   internal::set_cc_intersecting_pairs(self_intersecting_cc, parameters::get_parameter(np, internal_np::intersecting_volume_pairs_output_iterator));
 
   return next_volume_id;

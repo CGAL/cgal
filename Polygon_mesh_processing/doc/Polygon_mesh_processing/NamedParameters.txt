@@ -442,13 +442,14 @@ connected components.
 \cgalNPEnd
 
 \cgalNPBegin{error_codes} \anchor PMP_error_codes
-a reference to a vector holding the classification of a volume connected component identified by its id.
-The size of the vector is exactly the number of volume connected components and the
-object at position `k` in the vector correspond to the classification of the volume connected component
+a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+holding the classification of a volume connected component identified by its id.
+The size of the container is exactly the number of volume connected components and the
+object at position `k` in the container correspond to the classification of the volume connected component
 assigned the id `k`.
 \n
 \b Type: a `reference_wrapper` (either from `boost` or the standard library)
-         over an object of type `std::vector<Volume_error_code>` \n
+         over an object of type `container<Volume_error_code>` \n
 \b Default: None
 \cgalNPEnd
 
@@ -463,51 +464,57 @@ of its surface connected component in the range
 \cgalNPEnd
 
 \cgalNPBegin{volume_inclusions} \anchor PMP_volume_inclusions
-a reference to a vector holding vector of id of surface connected components.
-The size of the vector is exactly the number of surface connected components of the triangle mesh considered
-The vector at position `k` contains the id of each surface connected components
+a reference to a container holding a container of id of surface connected components.
+The container must be a model of the `BackInsertionSequence` Concept,
+with a value type being a model of `BackInsertionSequence` of ids,
+both types having the functions `reserve()` and `push_back()`.
+The size of the container is exactly the number of surface connected components of the triangle mesh considered
+The container at position `k` contains the id of each surface connected components
 that is the first intersected by a ray with source on the surface connected component `k`
 and directed outside the finite volume enclosed by the surface connected component `k`.
 \n
 \b Type: a `reference_wrapper` (either from `boost` or the standard library)
-         over an object of type `std::vector< std::vector<std::size_t> >` \n
+         over an object of type `container< container<std::size_t> >` \n
 \b Default: None
 \cgalNPEnd
 
 \cgalParamBegin{connected_component_id_to_volume_id}
 a `reference_wrapper` (either from `boost` or the standard library) containing
-a reference to an object of type `std::vector< std::size_t >`.
-The size of the vector is exactly the number of connected components.
+a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+with a value_type being `std::size_t`.
+The size of the container is exactly the number of connected components.
 For each connected component identified using its id `ccid`, the id of the volume it contributes
-to describe is the value at the position `ccid` in the parameter vector.
+to describe is the value at the position `ccid` in the parameter container.
 \n
 \b Type: a `reference_wrapper` (either from `boost` or the standard library)
-         over an object of type `std::vector<std::size_t>` \n
+         over an object of type `container<std::size_t>` \n
 \b Default: None
 \cgalParamEnd
 
 \cgalParamBegin{nesting_levels}
 a `reference_wrapper` (either from `boost` or the standard library) containing
-a reference to an object of type `std::vector< std::size_t >`.
-The size of the vector is exactly the number of connected components.
-For each connected component identified using its id `ccid`, the vector contains the number of
+a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+with a value_type being `std::size_t`.
+The size of the container is exactly the number of connected components.
+For each connected component identified using its id `ccid`, the container contains the number of
 connected components containing on its bounded side this component.
 \n
 \b Type: a `reference_wrapper` (either from `boost` or the standard library)
-         over an object of type `std::vector<std::size_t>` \n
+         over an object of type `container<std::size_t>` \n
 \b Default: None
 \cgalParamEnd
 
 \cgalParamBegin{is_cc_outward_oriented}
 a `reference_wrapper` (either from `boost` or the standard library) containing
-a reference to an object of type `std::vector<bool>`.
-The size of the vector is exactly the number of connected components.
+a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+with a value_type being `bool`.
+The size of the container is exactly the number of connected components.
 For each connected component identified using its id `ccid`, the output of `is_outward_oriented`
 called on the submesh corresponding to this connected component
-is the value at the position `ccid` in the parameter vector.
+is the value at the position `ccid` in the parameter container.
 \n
 \b Type: a `reference_wrapper` (either from `boost` or the standard library)
-         over an object of type `std::vector<bool>` \n
+         over an object of type `container<bool>` \n
 \b Default: None
 \cgalParamEnd
 
