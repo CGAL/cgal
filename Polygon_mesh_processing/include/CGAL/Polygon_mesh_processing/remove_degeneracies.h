@@ -57,6 +57,35 @@ bool is_face_incident_to_border(const typename boost::graph_traits<TriangleMesh>
   return false;
 }
 
+template <typename TriangleMesh, typename NamedParameters>
+std::array<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor, 2>
+is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                      TriangleMesh& tmesh,
+                      const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
+  halfedge_descriptor null_halfedge = boost::graph_traits<TriangleMesh>::null_halfedge();
+
+  // @todo parameters
+  const double needle_threshold = 4; // longest edge / shortest edge over this ratio ==> needle
+  const double cap_threshold = std::cos(160. / 180 * CGAL_PI); // angle over 120° ==> cap
+
+  halfedge_descriptor res = CGAL::Polygon_mesh_processing::is_needle_triangle_face(f, tmesh, needle_threshold, np);
+  if(res != boost::graph_traits<TriangleMesh>::null_halfedge())
+  {
+    return make_array(res, null_halfedge);
+  }
+  else // let's not make it possible to have a face be both a cap and a needle (for now)
+  {
+    res = CGAL::Polygon_mesh_processing::is_cap_triangle_face(f, tmesh, cap_threshold, np);
+    if(res != boost::graph_traits<TriangleMesh>::null_halfedge())
+    {
+      return make_array(null_halfedge, res);
+    }
+  }
+  return make_array(null_halfedge, null_halfedge);
+}
+
 template <typename TriangleMesh, typename EdgeContainer, typename NamedParameters>
 void add_if_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                          TriangleMesh& tmesh,
@@ -66,30 +95,23 @@ void add_if_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
 
-  // @todo parameters
-  const double needle_threshold = 4; // longest edge / shortest edge over this ratio ==> needle
-  const double cap_threshold = std::cos(160. / 180 * CGAL_PI); // angle over 120° ==> cap
+  std::array<halfedge_descriptor, 2> res = is_badly_shaped(f, tmesh, np);
 
-  if(is_face_incident_to_border(f, tmesh))
-    return;
-
-  halfedge_descriptor res = CGAL::Polygon_mesh_processing::is_needle_triangle_face(f, tmesh, needle_threshold, np);
-  if(res != boost::graph_traits<TriangleMesh>::null_halfedge())
+  if(res[0] != boost::graph_traits<TriangleMesh>::null_halfedge())
   {
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
     std::cout << "add new needle: " << res << std::endl;
 #endif
-    edges_to_collapse.insert(edge(res, tmesh));
+    edges_to_collapse.insert(edge(res[0], tmesh));
   }
-  else // let's not make it possible to have a face be both a cap and a needle fo(for now)
+  else // let's not make it possible to have a face be both a cap and a needle (for now)
   {
-    res = CGAL::Polygon_mesh_processing::is_cap_triangle_face(f, tmesh, cap_threshold, np);
-    if(res != boost::graph_traits<TriangleMesh>::null_halfedge())
+    if(res[1] != boost::graph_traits<TriangleMesh>::null_halfedge())
     {
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
       std::cout << "add new cap: " << res << std::endl;
 #endif
-      edges_to_flip.insert(edge(res, tmesh));
+      edges_to_flip.insert(edge(res[1], tmesh));
     }
   }
 }
@@ -101,7 +123,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
                                     TriangleMesh& tmesh,
                                     const NamedParameters& np)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
+//  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor           edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor           face_descriptor;
@@ -143,41 +165,24 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #endif
       if(CGAL::Euler::does_satisfy_link_condition(e, tmesh))
       {
-        CGAL_assertion(!is_border(e, tmesh));
-
-        vertex_descriptor v = Euler::collapse_edge(e, tmesh); // @todo move 'v' to the midpoint?
-
+        // the following edges are removed by the collapse
+        halfedge_descriptor h = halfedge(e, tmesh);
+        if (!is_border(h, tmesh))
+        {
+          edge_descriptor pe=edge(prev(h,tmesh), tmesh);
+          edges_to_flip.erase(pe);
+          edges_to_collapse.erase(pe);
+        }
+        h = opposite(h, tmesh);
+        if (!is_border(h, tmesh))
+        {
+          edge_descriptor pe=edge(prev(h,tmesh), tmesh);
+          edges_to_flip.erase(pe);
+          edges_to_collapse.erase(pe);
+        }
         edges_to_flip.erase(e);
 
-        // the following edges are removed by the collapse
-        edge_descriptor pe = edge(prev(halfedge(e, tmesh), tmesh), tmesh);
-        edge_descriptor poe = edge(prev(opposite(halfedge(e, tmesh), tmesh), tmesh), tmesh);
-
-        edges_to_collapse.erase(pe);
-        edges_to_collapse.erase(poe);
-        edges_to_flip.erase(pe);
-        edges_to_flip.erase(poe);
-
-        // The geometry of all the faces incident to 'v' has changed and so we recompute their badness
-        // @fixme nasty complexity, use tags or something...
-        for(halfedge_descriptor inc_h : CGAL::halfedges_around_target(v, tmesh))
-        {
-          if(is_border_edge(inc_h, tmesh))
-            continue;
-
-          // since the 'bad' edge of a face incident to 'v' might not be an incident edge
-          for(halfedge_descriptor other_h : CGAL::halfedges_around_face(inc_h, tmesh))
-          {
-            edge_descriptor other_e = edge(other_h, tmesh);
-
-            if(other_e != e) // erasing the current position while looping is undefined behavior
-              edges_to_collapse.erase(other_e);
-            edges_to_flip.erase(other_e);
-          }
-
-          // adding directly to 'edges_to_flip' because we're treating caps next
-          internal::add_if_badly_shaped(face(inc_h, tmesh), tmesh, next_edges_to_collapse, edges_to_flip, np);
-        }
+        /* vertex_descriptor v = */ Euler::collapse_edge(e, tmesh); // @todo move 'v' to the midpoint?
       }
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
       else
@@ -194,6 +199,20 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
       std::cout << "treat cap: " << e << " (" << tmesh.point(source (e, tmesh)) << " --- " << tmesh.point(target(e, tmesh)) << ")" << std::endl;
 #endif
+
+      // special case on the border
+      if ( is_border(e, tmesh) )
+      {
+        // remove the triangle
+        halfedge_descriptor h = halfedge(e, tmesh);
+        if (is_border(h, tmesh))
+          h = opposite(h, tmesh);
+        edges_to_flip.erase(edge(prev(h, tmesh), tmesh));
+        edges_to_flip.erase(edge(next(h, tmesh), tmesh));
+        Euler::remove_face(h, tmesh);
+        continue;
+      }
+
       halfedge_descriptor h = halfedge(e, tmesh);
 
       // condition for the flip to be valid (the edge to be created does not already exist)
@@ -201,23 +220,36 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
                    target(next(opposite(h, tmesh), tmesh), tmesh), tmesh).second)
       {
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
-        std::cout << "Flippin!" << std::endl;
+        std::cout << "Flipping" << std::endl;
 #endif
         Euler::flip_edge(h, tmesh);
 
-        // commented code below is not needed as long as you can't have both needle & caps but might become relevant later
-//        edges_to_flip.erase(edge(prev(h, tmesh), tmesh));
-//        edges_to_flip.erase(edge(next(h, tmesh), tmesh));
-//        edges_to_flip.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
-//        edges_to_flip.erase(edge(next(opposite(h, tmesh), tmesh), tmesh));
+        // remove edges from the new faces
+        edges_to_flip.erase(edge(prev(h, tmesh), tmesh));
+        edges_to_flip.erase(edge(next(h, tmesh), tmesh));
+        edges_to_flip.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
+        edges_to_flip.erase(edge(next(opposite(h, tmesh), tmesh), tmesh));
 
-        internal::add_if_badly_shaped(face(h, tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
-        internal::add_if_badly_shaped(face(opposite(h, tmesh), tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
-
-//        internal::add_if_badly_shaped(face(opposite(prev(h, tmesh), tmesh), tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
-//        internal::add_if_badly_shaped(face(opposite(next(h, tmesh), tmesh), tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
-//        internal::add_if_badly_shaped(face(opposite(prev(opposite(h, tmesh), tmesh), tmesh), tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
-//        internal::add_if_badly_shaped(face(opposite(next(opposite(h, tmesh), tmesh), tmesh), tmesh), tmesh, next_edges_to_collapse, next_edges_to_flip, np);
+        // make sure we do not enter in an infinite loop
+        if (!is_border(h, tmesh))
+        {
+          std::array<halfedge_descriptor,2> hp = internal::is_badly_shaped(face(h, tmesh), tmesh, np);
+          if (hp[1]!=boost::graph_traits<TriangleMesh>::null_halfedge() &&
+              edge(hp[1], tmesh) != edge(h, tmesh)) // avoid infinite loop
+          {
+            next_edges_to_flip.insert( edge(hp[1], tmesh) );
+          }
+        }
+        h=opposite(h, tmesh);
+        if (!is_border(h, tmesh))
+        {
+          std::array<halfedge_descriptor,2> hp = internal::is_badly_shaped(face(h, tmesh), tmesh, np);
+          if (hp[1]!=boost::graph_traits<TriangleMesh>::null_halfedge() &&
+              edge(hp[1], tmesh) != edge(h, tmesh)) // avoid infinite loop
+          {
+            next_edges_to_flip.insert( edge(hp[1], tmesh) );
+          }
+        }
       }
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
       else

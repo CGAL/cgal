@@ -29,5 +29,8 @@ int main(int argc, char** argv)
 
   PMP::remove_almost_degenerate_faces(mesh);
 
+  std::ofstream out("cleaned_mesh.off");
+  out << std::setprecision(17) << mesh;
+
   return 0;
 }
