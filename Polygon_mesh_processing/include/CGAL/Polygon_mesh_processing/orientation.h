@@ -473,7 +473,7 @@ enum Volume_error_code { VALID_VOLUME, ///< The set of faces bounds a volume
 namespace internal {
 
 template<class T, class RefToContainer>
-void copy_container_content(std::vector<T>& vec, RefToContainer ref_wrapper)
+void copy_container_content(const std::vector<T>& vec, RefToContainer ref_wrapper)
 {
   ref_wrapper.get().reserve(vec.size());
   for(const T& t : vec)
@@ -501,7 +501,7 @@ inline void copy_container_content(std::vector<T>&,
 
 template <class RefToContainer>
 void copy_nested_parents(
-  std::vector< std::vector<std::size_t> >& nested_parents,
+  const std::vector< std::vector<std::size_t> >& nested_parents,
   RefToContainer ref_to_vector)
 {
   typedef typename RefToContainer::type Container;
@@ -678,7 +678,7 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *   \cgalParamEnd
  *   \cgalParamBegin{volume_inclusions}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+ *     a reference to an object that must be a model of the `BackInsertionSequence` concept,
  *     with a value type being a model of `BackInsertionSequence` of `std::size_t`,
  *     both types having the functions `reserve()` and `push_back()`.
  *     The size of the container is exactly the number of surface components of `tm`.
@@ -695,7 +695,7 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *   \cgalParamEnd
  *   \cgalParamBegin{error_codes}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+ *     a reference to an object that must be a model of the `BackInsertionSequence` concept,
  *     with a value_type being `Volume_error_code`.
  *     The size of the container is exactly the number of volume components.
  *     The container indicates the status of a volume assigned to a set of faces.
@@ -708,7 +708,7 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *   \cgalParamEnd
  *   \cgalParamBegin{connected_component_id_to_volume_id}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+ *     a reference to an object that must be a model of the `BackInsertionSequence` concept,
  *     with a value_type being `std::size_t`.
  *     The size of the container is exactly the number of connected components.
  *     For each connected component identified using its id `ccid`, the id of the volume it contributes
@@ -716,7 +716,7 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *   \cgalParamEnd
  *   \cgalParamBegin{nesting_levels}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+ *     a reference to an object that must be a model of the `BackInsertionSequence` concept,
  *     with a value_type being `std::size_t`.
  *     The size of the container is exactly the number of connected components.
  *     For each connected component identified using its id `ccid`, the vector contains the number of
@@ -724,7 +724,7 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  *   \cgalParamEnd
  *   \cgalParamBegin{is_cc_outward_oriented}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+ *     a reference to an object that must be a model of the `BackInsertionSequence` concept,
  *     with a value_type being `bool`.
  *     The size of the container is exactly the number of connected components.
  *     For each connected component identified using its id `ccid`, the output of `is_outward_oriented`

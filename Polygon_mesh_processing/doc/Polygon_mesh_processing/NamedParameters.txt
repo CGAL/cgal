@@ -442,7 +442,7 @@ connected components.
 \cgalNPEnd
 
 \cgalNPBegin{error_codes} \anchor PMP_error_codes
-a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+a reference to an object that must be a model of the `BackInsertionSequence` concept,
 holding the classification of a volume connected component identified by its id.
 The size of the container is exactly the number of volume connected components and the
 object at position `k` in the container correspond to the classification of the volume connected component
@@ -465,7 +465,7 @@ of its surface connected component in the range
 
 \cgalNPBegin{volume_inclusions} \anchor PMP_volume_inclusions
 a reference to a container holding a container of id of surface connected components.
-The container must be a model of the `BackInsertionSequence` Concept,
+The container must be a model of the `BackInsertionSequence` concept,
 with a value type being a model of `BackInsertionSequence` of ids,
 both types having the functions `reserve()` and `push_back()`.
 The size of the container is exactly the number of surface connected components of the triangle mesh considered
@@ -480,7 +480,7 @@ and directed outside the finite volume enclosed by the surface connected compone
 
 \cgalParamBegin{connected_component_id_to_volume_id}
 a `reference_wrapper` (either from `boost` or the standard library) containing
-a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+a reference to an object that must be a model of the `BackInsertionSequence` concept,
 with a value_type being `std::size_t`.
 The size of the container is exactly the number of connected components.
 For each connected component identified using its id `ccid`, the id of the volume it contributes
@@ -493,7 +493,7 @@ to describe is the value at the position `ccid` in the parameter container.
 
 \cgalParamBegin{nesting_levels}
 a `reference_wrapper` (either from `boost` or the standard library) containing
-a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+a reference to an object that must be a model of the `BackInsertionSequence` concept,
 with a value_type being `std::size_t`.
 The size of the container is exactly the number of connected components.
 For each connected component identified using its id `ccid`, the container contains the number of
@@ -506,7 +506,7 @@ connected components containing on its bounded side this component.
 
 \cgalParamBegin{is_cc_outward_oriented}
 a `reference_wrapper` (either from `boost` or the standard library) containing
-a reference to an object that must be a model of the `BackInsertionSequence` Concept,
+a reference to an object that must be a model of the `BackInsertionSequence` concept,
 with a value_type being `bool`.
 The size of the container is exactly the number of connected components.
 For each connected component identified using its id `ccid`, the output of `is_outward_oriented`
