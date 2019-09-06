@@ -248,14 +248,19 @@ public:
     {
       if (!get_map().is_marked(it, marktemp))
       {
-        std::cout<<"Degree="<<CGAL::template degree<Map, 0>(get_map(), it)<<std::endl;
-        std::cout<<"Co-degree="<<CGAL::template codegree<Map, 2>(get_map(), it)<<std::endl;
+        std::cout<<"Degree="<<CGAL::template
+                   degree<CMap_for_minimal_quadrangulation, 0>(get_map(), it)
+            <<std::endl;
+        std::cout<<"Co-degree="<<CGAL::template
+                   codegree<CMap_for_minimal_quadrangulation, 2>(get_map(), it)
+            <<std::endl;
         dh2=it;
         do
         {
           get_map().mark(dh2, marktemp);
           std::cout<<get_map().darts().index(dh2)<<"   "
-                   <<get_map().darts().index(get_map().template beta<0>(dh2))<<std::endl;
+                   <<get_map().darts().index(get_map().template beta<0>(dh2))
+                   <<std::endl;
           dh2=get_map().template beta<0,2>(dh2);
         }
         while(dh2!=it);
@@ -948,7 +953,7 @@ protected:
       if (get_map().is_marked(it->second.first, toremove) || 
           get_map().is_marked(it->second.second, toremove))
       {
-        CGAL_assertion(get_map().is_marked(it->second.first, toremove) && 
+        CGAL_assertion(get_map().is_marked(it->second.first, toremove) &&
                        get_map().is_marked(it->second.second, toremove));
         CGAL_assertion(get_map().template beta<1>(it->second.first)==it->second.second);
         CGAL_assertion(get_map().template beta<2>(it->second.first)==it->second.second);
