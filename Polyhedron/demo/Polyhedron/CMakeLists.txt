@@ -226,6 +226,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     cgal_add_compilation_test(test_items)
     set_property(TEST compilation_of__test_items
       APPEND PROPERTY DEPENDS compilation_of__demo_framework)
+    set_property(TEST compilation_of__test_items
+      APPEND PROPERTY TIMEOUT 1700)
   endif(BUILD_TESTING)
 
   macro(add_item item_name)
