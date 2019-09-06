@@ -231,7 +231,14 @@ bool is_default_parameter(const T&)
 
 } //namespace CGAL
 
-
-
+// code added to avoid silent runtime issues in non-updated code
+namespace boost
+{
+  template <typename T, typename Tag, typename Base, typename Tag2, bool B = false>
+  void get_param(CGAL::Named_function_parameters<T,Tag,Base>, Tag2)
+  {
+    CGAL_static_assertion(B && "You must use CGAL::parameters::get_parameter instead of boost::get_param");
+  }
+}
 
 #endif // CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
