@@ -138,6 +138,8 @@ public Q_SLOTS:
    This slot is for use by scripts.*/
   bool open(QString filename, QString loader_name);
 
+  void write_string_to_file(const QString &str, const QString& filename);
+
   /*! Reloads an item. Expects to be called by a QAction with the
    index of the item to be reloaded as data attached to the action.
    The index must identify a valid `Scene_item`.*/

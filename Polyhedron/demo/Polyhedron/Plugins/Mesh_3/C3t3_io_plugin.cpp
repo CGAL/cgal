@@ -20,7 +20,7 @@ class Polyhedron_demo_c3t3_binary_io_plugin :
 public:
   QString name() const { return "C3t3_io_plugin"; }
   QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
-  QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
+  QString saveNameFilters() const { return "ascii (*.mesh);;binary files (*.cgal);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
   QString loadNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh)"; }
   bool canLoad(QFileInfo) const;
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
