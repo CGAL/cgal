@@ -1,0 +1,68 @@
+/*!
+
+\page IOStreamSupportedFileFormats Supported File Formats
+
+\cgal provides a large number of data structures and algorithms dedicated to
+various applications. This page lists the various supported file formats
+and the data structures offered by \cgal that may be used to read and write files of
+this specific format.
+
+- \ref IOStreamOFF
+- \ref IOStreamPLY
+- \ref IOStreamSTL
+
+\section IOStreamOFF Object File Format (OFF)
+The `OFF` file format can be used to represent collections of planar polygons with possibly shared vertices.
+Although it can be as light as providing points and faces described by IDs, the format also allows
+users to provide more properties such as associating normals or colors to vertices.
+A precise specification of the format is available at <a href="http://www.geomview.org/docs/html/OFF.html">geomview.org</a>.
+
+\subsection IOStreamOFFInput Reading OFF files
+Objects represented in the `.OFF` format can be imported into \cgal's working environment
+using the following data structures and functions.
+
+[Put important remarks such as "we do not support the normal (NOFF) specification".]
+[^ this should not crash if e.g. user is passing a COFF to read_OFF]
+[or "Properties such as the colors or normals are not imported when calling `read_OFF()` and users
+that wish to associate such properties should do blablabla (read_OFF_with_properties)."]
+
+- CGAL::Surface_mesh (read_OFF()), a halfedge data structure allowing to represent polyhedral surfaces
+- CGAL::Polyhedron_3 (read_OFF()), a halfedge data structure, which restricts the class of representable surfaces
+  to orientable 2-manifolds.
+- CGAL::Linear_cell_complex (read_OFF_LCC()), blablabla
+- ...
+
+\subsection IOStreamOFFOutput Writing OFF files
+The following \cgal data structures can be exported into the `OFF` file format:
+
+again, remarks: "Note that we do not support exporting to STOFF."
+
+- CGAL::Surface_mesh (write_OFF)
+- CGAL::Polyhedron_3 (write_OFF)
+- CGAL::Linear_cell_complex (write_OFF_LCC)
+- ...
+
+\section IOStreamPLY Polygon File Format (PLY)
+Conceived to store the data obtained during 3D scans, the `PLY` file format stores objects
+as a simple list of polygons, etc.
+
+- CGAL::Surface_mesh,
+  - Input: read_PLY()
+  - Output: write_PLY()
+- CGAL::Point_set_3, a collection of points with dynamically associated properties
+  - Input:
+  
+
+\section IOStreamSTL blab blabla (STL)
+
+\subsection IOStreamSTLInput Reading STL files
+...
+
+\subsection IOStreamSTLOutput Writing STL files
+
+Note that the STL file format exports triangular faces as geometric triangles and thus
+lose combinatorial information.
+
+\subsection etc etc
+
+*/
