@@ -231,6 +231,7 @@ bool is_default_parameter(const T&)
 
 } //namespace CGAL
 
+#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
 // code added to avoid silent runtime issues in non-updated code
 namespace boost
 {
@@ -240,5 +241,6 @@ namespace boost
     CGAL_static_assertion(B && "You must use CGAL::parameters::get_parameter instead of boost::get_param");
   }
 }
+#endif
 
 #endif // CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
