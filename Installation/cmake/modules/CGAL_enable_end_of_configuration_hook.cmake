@@ -18,10 +18,12 @@ function(CGAL_run_at_the_end_of_configuration variable access value current_list
     return()
   endif()
   if(current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
-      OR NOT stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
-      OR stack MATCHES doc/CMakeLists.txt
-      OR stack MATCHES demo/Polyhedron/)
-    return()
+        AND NOT current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+        OR NOT stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+        AND stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+        OR stack MATCHES doc/CMakeLists.txt
+        OR stack MATCHES demo/Polyhedron/)
+      return()
   endif()
   get_property(_targets DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
   if(CGAL_CHECK_UNREFERENCES_TARGETS)
@@ -47,7 +49,9 @@ function(CGAL_run_at_the_end_of_configuration variable access value current_list
       endif()
     endforeach()
   endif()
-  if(CGAL_CHECK_UNUSED_CPP_FILES)
+  if(CGAL_CHECK_UNUSED_CPP_FILES
+      AND NOT current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+      AND stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
     file(GLOB _cppfiles ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
     if(_targets AND _cppfiles)
       set(_sources)

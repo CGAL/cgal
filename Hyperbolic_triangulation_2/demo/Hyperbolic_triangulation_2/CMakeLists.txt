@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.1...3.15)
 project (Hyperbolic_triangulation_2_Demo)
 
@@ -15,15 +14,10 @@ endif()
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core Qt5)
 find_package(LEDA QUIET)
 
-find_package(Qt5 QUIET COMPONENTS Widgets)
-
-include_directories (BEFORE include)
-
 if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND))
   # ui files, created with Qt Designer
   qt5_wrap_ui( UIS HDT2.ui )
   
-  # qrc files (resources files, that contain icons, at least)
   qt5_add_resources ( RESOURCE_FILES resources/Delaunay_triangulation_2.qrc )
   
   # cpp files
