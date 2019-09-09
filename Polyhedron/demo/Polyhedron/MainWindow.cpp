@@ -42,6 +42,7 @@
 #include <QWidgetAction>
 #include <QJsonArray>
 #include <QSequentialIterable>
+#include <QDir>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -2777,6 +2778,23 @@ void MainWindow::propagate_action()
   }
 }
 
+QString make_fullpath(const QString& filename, bool duplicate = false)
+{
+  QString fullpath = QString("%1/%2").arg(QDir::tempPath()).arg(filename);
+  QString tmp_fullpath = fullpath;
+  if(duplicate)
+  {
+    int i=0;
+    while(QFileInfo(tmp_fullpath).exists())
+    {
+      QString basename = QFileInfo(tmp_fullpath).baseName();
+      QString dir = QFileInfo(tmp_fullpath).dir().path();
+      QString suffix= QFileInfo(fullpath).completeSuffix();
+      tmp_fullpath=QString("%1/%2%3.%4").arg(dir).arg(basename).arg(++i).arg(suffix);
+    }
+  }
+  return tmp_fullpath;
+}
 /*
  The two following functions allow to create files from string and strings from files.
  This is used as a workaround of the absence of stream management in our IO system.
@@ -2808,13 +2826,15 @@ QByteArray file_to_string(const char* filename)
   return ba;
 }
 
-void MainWindow::write_string_to_file(const QString& str, const QString &filename)
+QString MainWindow::write_string_to_file(const QString& str, const QString &filename)
 {
-  std::ofstream f(filename.toStdString().c_str(), std::ofstream::binary);
+  QString fullpath = make_fullpath(filename);
+  std::ofstream f(fullpath.toStdString().c_str(), std::ofstream::binary);
   QByteArray ba(str.toStdString().c_str());
   QByteArray bb = QByteArray::fromBase64(ba);
   f.write(bb.constData(),bb.toStdString().size());
   f.close();
+  return fullpath;
 }
 
 void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
@@ -2854,7 +2874,9 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
         QList<Scene_item*>to_save;
         to_save.append(item);
         QString savename(tr("%1.%2").arg(item->name()).arg(ext));
-        iop->save(QFileInfo(savename), to_save);
+        QString fullpath = make_fullpath(savename, true);
+        savename = QFileInfo(fullpath).fileName();
+        iop->save(QFileInfo(fullpath), to_save);
         names.push_back(std::make_pair(savename, item->name()));
         loader=iop->name();
         break;
@@ -2876,15 +2898,24 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   os << "var items = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
   {
-    QByteArray item = file_to_string(names[i].first.toStdString().c_str());
+    QString fullpath = make_fullpath(names[i].first);
+
+    QByteArray item = file_to_string(fullpath.toStdString().c_str());
     os<<"[\'";
     os<<item.toBase64().toStdString().c_str();
     os << "\', \'"<<names[i].second.toStdString().c_str()<<"\']," ;
+    //delete temp file
+    QFile tmp_file(fullpath);
+    tmp_file.remove();
   }
-  QByteArray item = file_to_string(names.back().first.toStdString().c_str());
+  QString fullpath = make_fullpath(names.back().first);
+  QByteArray item = file_to_string(fullpath.toStdString().c_str());
   os<<"[\'";
   os<<item.toBase64().toStdString().c_str();
   os << "\', \'"<<names.back().second.toStdString().c_str()<<"\']];\n";
+  //delete temp file
+  QFile tmp_file(fullpath);
+  tmp_file.remove();
   //plugin
   os << "var loaders = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
@@ -2913,8 +2944,8 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   os<<"          var path=items[index][1];\n";
   os<<"          path+='.';\n";
   os<<"          path+=loaders[index][1];\n";
-  os<<"          main_window.write_string_to_file(item[0], path);\n";
-  os<<"          main_window.open(path,loaders[index][0]);\n";
+  os<<"          var fullpath = main_window.write_string_to_file(item[0], path);\n";
+  os<<"          main_window.open(fullpath,loaders[index][0]);\n";
   os << "        var it = scene.item(initial_scene_size+index);\n";
   os << "        var r = colors[index][0];\n";
   os << "        var g = colors[index][1];\n";
