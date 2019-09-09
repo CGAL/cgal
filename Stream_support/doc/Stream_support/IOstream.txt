@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_IO_Streams
 \anchor Chapter_operator_for_IO_streams
 \cgalAutoToc
@@ -12,8 +12,8 @@ All classes in the \cgal kernel provide input and output operators for
 IO streams. Classes external to \cgal are also supported, by means of `oformat()` (Section \ref seciofornoncgaltypes "IO for Non CGAL Types").
 The basic task of such an operator is to produce a
 representation of an object that can be written as a sequence of
-characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw ascii, a raw binary and a
-pretty printing format.
+characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw ascii,
+a raw binary, and a pretty printing format.
 
 \code{.cpp}
 enum Mode {ASCII = 0, BINARY, PRETTY};
@@ -43,7 +43,7 @@ IO::Mode set_binary_mode(std::ios& s);
 IO::Mode set_pretty_mode(std::ios& s);
 \endcode
 
-The following functions allow to test whether a stream is in a certain mode.
+The following functions enable testing whether a stream is in a certain mode.
 \code{.cpp}
 IO::Mode get_mode(std::ios& s);
 bool is_ascii(std::ios& s);
@@ -140,7 +140,9 @@ main()
 
 \subsection IOstreamUsingOutputFormatting Using Output Formatting
 
-To ensure that non-\cgal types are formatted correctly (i.e., respecting `IO::Mode`), `oformat()` can be used. For types with a `Output_rep` specialization, the respective output routine of `Output_rep` will be called by `oformat()`. Otherwise, the stream output operator will be called.
+To ensure that non-\cgal types are formatted correctly (i.e., respecting `IO::Mode`), `oformat()` can be used.
+For types with a `Output_rep` specialization, the respective output routine of `Output_rep`
+will be called by `oformat()`. Otherwise, the stream output operator will be called.
 
 Example
 --------------
@@ -149,7 +151,7 @@ Example
 std::cout << CGAL::oformat( myobject );
 \endcode
 
-Optional, you can provide a second template parameter `F` as a formatting tag:
+Optionally, you can provide a second template parameter `F` as a formatting tag:
 
 Example
 --------------
@@ -172,7 +174,7 @@ stream output operator.
 
 Instead of putting `T` directly into an output stream,
 `T` is wrapped into an output representation `Output_rep`. For
-convenience, a function `oformat()` exists which constructs an instance
+convenience, a function `oformat()` exists, which constructs an instance
 of `Output_rep`.
 
 If you do not specialize `Output_rep` for `T`, `T`'s
@@ -234,10 +236,10 @@ and `YELLOW`.
 \section IOstreamStream Stream Support
 
 Three classes are provided by \cgal as adaptors to input and output stream
-iterators. The class `Istream_iterator` is an input iterator adaptor and 
-is particularly useful for classes that are similar but not compatible to 
-`std::istream`. Similarly, the class `Ostream_iterator` is an output 
-iterator adaptor. The class `Verbose_ostream` can be used as an output 
+iterators. The class `Istream_iterator` is an input iterator adaptor and
+is particularly useful for classes that are similar but not compatible to
+`std::istream`. Similarly, the class `Ostream_iterator` is an output
+iterator adaptor. The class `Verbose_ostream` can be used as an output
 stream. The stream
 output operator `<<` is defined for any type. The class
 stores in an internal state a stream and whether the
@@ -251,7 +253,7 @@ the state is inactive, nothing happens.
 WKT stands for <em>Well Known Text</em> and it is a text markup language for representing
 vector geometry objects on a geographical map. See the
 <A HREF="https://en.wikipedia.org/wiki/Well-known_text">wikipedia page</A> for details.
-CGAL supports a subset of WKT types: point, multipoint, linestring, multilinestring, polygon and multipolygon. 
+CGAL supports a subset of WKT types: point, multipoint, linestring, multilinestring, polygon and multipolygon.
 Free functions are provided for reading and writing several \cgal types
 in those WKT types, namely:
 - `CGAL::Point_2`
@@ -268,14 +270,14 @@ looking like this:
 
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <PolySet>
-    	<Polygon>
-		<Point X="-715.8811978465" Y="-2729.9490000000" Z="-534.9000000000"/>
-		<Point X="-718.1905989232" Y="-2729.9490000000" Z="-538.9000000000"/>
-		<Point X="-722.8094010768" Y="-2729.9490000000" Z="-538.9000000000"/>
-        </Polygon>
+      <Polygon>
+        <Point X="-715.8811978465" Y="-2729.9490000000" Z="-534.9000000000"/>
+        <Point X="-718.1905989232" Y="-2729.9490000000" Z="-538.9000000000"/>
+        <Point X="-722.8094010768" Y="-2729.9490000000" Z="-538.9000000000"/>
+      </Polygon>
     </PolySet>
 
 \cgalExample{Stream_support/read_xml.cpp}
-*/ 
+*/
 } /* namespace CGAL */
 
