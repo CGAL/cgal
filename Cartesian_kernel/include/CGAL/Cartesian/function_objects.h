@@ -555,15 +555,7 @@ namespace CartesianKernelFunctors {
 					c.x(), c.y(),
 					d.x(), d.y());
     }
-    /*
-    result_type
-    operator()(const Line_2& l, const Point_2& p, const Point_2& q) const
-    {
-      return has_smaller_signed_dist_to_directionC2(l.a(), l.b(),
-						    p.x(), p.y(),
-						    q.x(), q.y());
-    }
-    */
+ 
   };
 
 
@@ -3927,7 +3919,7 @@ namespace CartesianKernelFunctors {
     }
   };
 
-  // TODO:  Add functor Compare_signed_distance_to_line_2 and use this one in compare_signed_distance_to_line
+
   template <typename K>
   class Less_signed_distance_to_line_2
   {

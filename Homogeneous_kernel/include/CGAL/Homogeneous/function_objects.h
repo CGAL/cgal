@@ -770,7 +770,7 @@ namespace HomogeneousKernelFunctors {
     }
   };
 
-    template <typename K>
+  template <typename K>
   class Compare_signed_distance_to_line_2
   {
     typedef typename K::Point_2   Point_2;
@@ -804,27 +804,6 @@ namespace HomogeneousKernelFunctors {
       return compare(scaled_dist_r_minus_scaled_dist_s, 0);
     }
 
-    result_type
-    operator()(const Line_2& l, const Point_2& p,
-               const Point_2& q) const
-    {
-      typedef typename K::RT RT;
-
-      const RT & la = l.a();
-      const RT & lb = l.b();
-      const RT & phx= p.hx();
-      const RT & phy= p.hy();
-      const RT & phw= p.hw();
-      const RT & qhx= q.hx();
-      const RT & qhy= q.hy();
-      const RT & qhw= q.hw();
-
-      RT scaled_dist_p_minus_scaled_dist_q =
-	la*( phx*qhw - qhx*phw )
-	+ lb*( phy*qhw - qhy*phw );
-
-      return compare(scaled_dist_p_minus_scaled_dist_q, 0);
-    }
   };
 
   
@@ -4176,26 +4155,7 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_2& p, const Point_2& q,
                const Point_2& r, const Point_2& s) const
     {
-      typedef typename K::RT RT;
-
-      const RT & phx= p.hx();
-      const RT & phy= p.hy();
-      const RT & phw= p.hw();
-      const RT & qhx= q.hx();
-      const RT & qhy= q.hy();
-      const RT & qhw= q.hw();
-      const RT & rhx= r.hx();
-      const RT & rhy= r.hy();
-      const RT & rhw= r.hw();
-      const RT & shx= s.hx();
-      const RT & shy= s.hy();
-      const RT & shw= s.hw();
-
-      RT  scaled_dist_r_minus_scaled_dist_s =
-	( rhx*shw - shx*rhw ) * (phy*qhw - qhy*phw)
-	- ( rhy*shw - shy*rhw ) * (phx*qhw - qhx*phw);
-
-      return scaled_dist_r_minus_scaled_dist_s < 0;
+      return Compare_signed_distance_to_line_2<K>::operator(p, q, r, s) == SMALLER;
     }
 
     result_type
