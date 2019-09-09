@@ -52,14 +52,12 @@ private:
   class Node {
   public:
     explicit Node(Vertex_handle vh, bool input = false)
-      : vertex_(vh), point_(vh->point()), id(-1), input(input)
+      : vertex_(vh), id(-1), input(input)
     {}
-    Point& point() { return point_; }
-    const Point& point() const { return point_; }
+    const Point& point() const { return vertex_->point(); }
     Vertex_handle vertex() const { return vertex_; }
   private:
     Vertex_handle vertex_;
-    Point point_;
   public:
     int id;
     bool input;
@@ -74,7 +72,7 @@ public:
     : public boost::iterator_adaptor<
     Point_it
     , typename Vertex_list::all_iterator 
-    , Point
+    , const Point
     >
   {
   public:
@@ -82,7 +80,7 @@ public:
     Point_it(typename Vertex_list::all_iterator it) : Point_it::iterator_adaptor_(it) {}
   private:
     friend class boost::iterator_core_access;
-    Point& dereference() const { return this->base()->point(); }
+    const Point& dereference() const { return this->base()->point(); }
   };
 
   // only nodes with a vertex_handle that is still in the triangulation
