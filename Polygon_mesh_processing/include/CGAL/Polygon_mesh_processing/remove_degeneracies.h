@@ -90,11 +90,11 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
 }
 
 template <typename TriangleMesh, typename EdgeContainer, typename NamedParameters>
-void add_if_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-                         TriangleMesh& tmesh,
-                         EdgeContainer& edges_to_collapse,
-                         EdgeContainer& edges_to_flip,
-                         const NamedParameters& np)
+void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                                    TriangleMesh& tmesh,
+                                    EdgeContainer& edges_to_collapse,
+                                    EdgeContainer& edges_to_flip,
+                                    const NamedParameters& np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
 
@@ -127,7 +127,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
                                     TriangleMesh& tmesh,
                                     const NamedParameters& np)
 {
-//  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor           edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor           face_descriptor;
@@ -138,7 +138,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   // @todo could probably do something a bit better by looping edges, consider the incident faces
   // f1 / f2 and look at f1 if f1<f2, and the edge is smaller than the two other edges...
   for(face_descriptor f : face_range)
-    internal::add_if_badly_shaped(f, tmesh, edges_to_collapse, edges_to_flip, np);
+    internal::collect_badly_shaped_triangles(f, tmesh, edges_to_collapse, edges_to_flip, np);
 
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
   int iter = 0;
@@ -160,6 +160,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
     if(edges_to_collapse.empty() && edges_to_flip.empty())
       return true;
 
+    /// @todo maybe using a priority queue handling the more almost degenerate elements should be used
     std::set<edge_descriptor> next_edges_to_collapse;
     std::set<edge_descriptor> next_edges_to_flip;
 
@@ -174,13 +175,13 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       edges_to_collapse.erase(edges_to_collapse.begin());
 
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
-      std::cout << "treat needle: " << e << " (" << tmesh.point(source (e, tmesh)) << " --- " << tmesh.point(target(e, tmesh)) << ")" << std::endl;
+      std::cout << "  treat needle: " << e << " (" << tmesh.point(source (e, tmesh)) << " --- " << tmesh.point(target(e, tmesh)) << ")" << std::endl;
 #endif
       if(CGAL::Euler::does_satisfy_link_condition(e, tmesh))
       {
         // the following edges are removed by the collapse
         halfedge_descriptor h = halfedge(e, tmesh);
-        CGAL_assertion(!is_border(h, tmesh));
+        CGAL_assertion(!is_border(h, tmesh)); // because extracted from a face
 
         std::array<halfedge_descriptor,2> nc = internal::is_badly_shaped(face(h, tmesh), tmesh, np);
         if (nc[0]!=h)
@@ -190,7 +191,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
                                                                       << tmesh.point(target(e, tmesh)) << std::endl;
 #endif
           if (nc[0]!=boost::graph_traits<TriangleMesh>::null_halfedge())
-            next_edges_to_collapse.insert(edge(nc[0], tmesh));
+            edges_to_collapse.insert(edge(nc[0], tmesh));
           else
             if (nc[1]!=boost::graph_traits<TriangleMesh>::null_halfedge())
               next_edges_to_flip.insert(edge(nc[1], tmesh));
@@ -209,6 +210,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
           h = opposite(h, tmesh);
         }
         edges_to_flip.erase(e);
+        next_edges_to_collapse.erase(e); // for edges added in faces incident to a vertex kept after a collapse
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
         std::cerr << "  " << kk << " -- Collapsing " << tmesh.point(source(h, tmesh)) << "  "
                                      << tmesh.point(target(h, tmesh)) << std::endl;
@@ -216,11 +218,12 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         // moving to the midpoint is not a good idea. On a circle for example you might endpoint with
         // a bad geometry because you iteratively move one point
         // auto mp = midpoint(tmesh.point(source(h, tmesh)), tmesh.point(target(h, tmesh)));
-
-        /* vertex_descriptor v = */ Euler::collapse_edge(e, tmesh);
+        vertex_descriptor v = Euler::collapse_edge(e, tmesh);
         //tmesh.point(v) = mp;
-        // @todo the collapsed edge is supposed to be smalled so incident faces are not reevaluated but
-        //       maybe we should
+        // examine all faces incident to the vertex kept
+        for (halfedge_descriptor hv : halfedges_around_target(v, tmesh))
+          internal::collect_badly_shaped_triangles(face(hv, tmesh), tmesh, edges_to_collapse, edges_to_flip, np);
+
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
         std::string nb = std::to_string(++kk);
         if (kk<10) nb = std::string("0")+nb;
@@ -268,18 +271,18 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
           next_edges_to_collapse.insert(edge(nc[0], tmesh));
         else
           if (nc[1]!=boost::graph_traits<TriangleMesh>::null_halfedge())
-            next_edges_to_flip.insert(edge(nc[1], tmesh));
+            edges_to_flip.insert(edge(nc[1], tmesh));
         continue;
       }
 
       // special case on the border
-      if ( is_border(e, tmesh) )
+      if ( is_border(opposite(h, tmesh), tmesh) )
       {
         // remove the triangle
-        if (is_border(h, tmesh))
-          h = opposite(h, tmesh);
         edges_to_flip.erase(edge(prev(h, tmesh), tmesh));
         edges_to_flip.erase(edge(next(h, tmesh), tmesh));
+        next_edges_to_collapse.erase(edge(prev(h, tmesh), tmesh));
+        next_edges_to_collapse.erase(edge(next(h, tmesh), tmesh));
         Euler::remove_face(h, tmesh);
         something_was_done = true;
         continue;
@@ -335,6 +338,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       {
         std::cerr << "Warning: unflippable edge! " << tmesh.point(source(h, tmesh)) << " --- "
                                                    << tmesh.point(target(h, tmesh)) << std::endl;
+        next_edges_to_flip.insert(e);
       }
 #endif
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
