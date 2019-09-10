@@ -22,6 +22,11 @@ public:
 
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items);
+  bool isDefaultLoader(const Scene_item* item) const{
+    if(qobject_cast<const Scene_nef_polyhedron_item*>(item))
+      return true;
+    return false;
+  }
 };
 
 QString Polyhedron_demo_io_nef_plugin::nameFilters() const {

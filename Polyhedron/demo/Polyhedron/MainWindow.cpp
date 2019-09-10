@@ -2830,8 +2830,9 @@ QString MainWindow::write_string_to_file(const QString& str, const QString &file
 {
   QString fullpath = make_fullpath(filename);
   std::ofstream f(fullpath.toStdString().c_str(), std::ofstream::binary);
-  QByteArray ba(str.toStdString().c_str());
-  QByteArray bb = QByteArray::fromBase64(ba);
+  QByteArray compressed_item(str.toStdString().c_str());
+  QByteArray item = qUncompress(QByteArray::fromBase64(compressed_item));
+  QByteArray bb = item;
   f.write(bb.constData(),bb.toStdString().size());
   f.close();
   return fullpath;
@@ -2862,7 +2863,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     QString ext;
     for(Polyhedron_demo_io_plugin_interface* iop : io_plugins)
     {
-      if(iop->canSave(item))
+      if(iop->isDefaultLoader(item))
       {
         QString sf = iop->saveNameFilters().split(";;").first();
         //OFF Files (*.off)
@@ -2902,7 +2903,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
 
     QByteArray item = file_to_string(fullpath.toStdString().c_str());
     os<<"[\'";
-    os<<item.toBase64().toStdString().c_str();
+    os<<qCompress(item, 9).toBase64().toStdString().c_str();
     os << "\', \'"<<names[i].second.toStdString().c_str()<<"\']," ;
     //delete temp file
     QFile tmp_file(fullpath);
@@ -2911,7 +2912,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   QString fullpath = make_fullpath(names.back().first);
   QByteArray item = file_to_string(fullpath.toStdString().c_str());
   os<<"[\'";
-  os<<item.toBase64().toStdString().c_str();
+  os<<qCompress(item, 9).toBase64().toStdString().c_str();
   os << "\', \'"<<names.back().second.toStdString().c_str()<<"\']];\n";
   //delete temp file
   QFile tmp_file(fullpath);
