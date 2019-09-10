@@ -47,7 +47,7 @@ struct LM3_tester
   };
 
   typedef CGAL::Implicit_to_labeling_function_wrapper<Function, K> Function_wrapper;
-  typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;
+  typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
   static FT shape_function (const Point_3& p)
   {

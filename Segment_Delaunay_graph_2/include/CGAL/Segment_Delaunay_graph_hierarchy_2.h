@@ -199,7 +199,7 @@ public:
     typedef typename Iterator_traits::difference_type Diff_t;
 
     boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-    std::random_shuffle(site_vec.begin(), site_vec.end(),rng);
+    CGAL::cpp98::random_shuffle(site_vec.begin(), site_vec.end(),rng);
     return insert(site_vec.begin(), site_vec.end(), Tag_false());
   }
 

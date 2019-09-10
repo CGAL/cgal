@@ -4,17 +4,17 @@ namespace CGAL {
 /*!
 \ingroup PkgSurfaceMesher3Classes
 
-The class `Surface_mesh_cell_base_3` is a model of the concept 
-`SurfaceMeshCellBase_3`. 
-It is designed to serve as vertex base class 
-in a triangulation class `Tr` 
-plugged in a `Surface_mesh_complex_2_in_triangulation_3<Tr>` 
-class. 
+The class `Surface_mesh_cell_base_3` is a model of the concept
+`SurfaceMeshCellBase_3`.
+It is designed to serve as cell base class
+in a triangulation class `Tr`
+plugged in a `Surface_mesh_complex_2_in_triangulation_3<Tr>`
+class.
 
-\tparam Gt is the geometric traits class. 
+\tparam Gt is the geometric traits class.
 
-\tparam Cb must be a model of the concept `TriangulationCellBase_3` 
-and defaults to `Triangulation_cell_base_3 <GT>`. 
+\tparam Cb must be a model of the concept `DelaunayTriangulationCellBase_3`
+and defaults to `Delaunay_triangulation_cell_base_3<GT>`.
 
 \cgalModels `SurfaceMeshCellBase_3`
 

@@ -208,19 +208,6 @@ public:
   bool is_valid(bool = false, int = 0) const
   { return true; }
 
-  // This is here in the *ds*_cell_base to ease its use as default
-  // template parameter, so that the .dual() functions of Delaunay_3
-  // still work.
-  template < typename Traits >
-  typename Traits::Point_3
-  circumcenter(const Traits& gt) const
-  {
-    return gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
-                                                this->vertex(1)->point(),
-                                                this->vertex(2)->point(),
-                                                this->vertex(3)->point());
-  }
-
   // For use by Compact_container.
   void * for_compact_container() const { return N[0].for_compact_container(); }
   void * & for_compact_container()     { return N[0].for_compact_container(); }

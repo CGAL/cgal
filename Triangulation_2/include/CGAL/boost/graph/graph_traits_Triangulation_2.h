@@ -25,7 +25,7 @@
 
 // include this to avoid a VC15 warning
 #include <CGAL/boost/graph/named_function_params.h>
-
+#include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <boost/config.hpp>
 #include <boost/iterator_adaptors.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -44,114 +44,6 @@
 namespace CGAL {
 
   namespace detail {
-
-template < class T, class EdgeBase >
-class Edge : public EdgeBase {
-
-public:
-  typedef typename T::Face_handle Face_handle ;
-  
-  Edge()
-  {}
-
-  Edge(Face_handle  fh, int i)
-    : EdgeBase(fh,i)
-  {}
-  
-  Edge(const EdgeBase& e)
-    : EdgeBase(e)
-  {}
-
-  Edge(const Edge& e)
-    : EdgeBase(e)
-  {}
-
-  Edge&
-  operator=(const Edge& e)
-  {
-    this->first = e.first;
-    this->second = e.second;
-    return *this;
-  }
-
-  friend std::size_t hash_value(const Edge& e)
-  {
-    if (e.first==Face_handle()) return 0;
-    return hash_value(e.first<e.first->neighbor(e.second)?
-                      e.first:e.first->neighbor(e.second));
-  }
-
-  bool operator==(const Edge& other) const
-  {
-    if((this->first == other.first)&&(this->second == other.second)) return true;
-    Face_handle fh = this->first->neighbor(this->second);
-    if(other.first != fh) return false;
-    int i = fh->index(this->first);
-    return (other.second == i);
-  }
-
-  bool operator!=(Edge& other) const
-  {
-    return ! (*this == other);
-  }
-};
-
-template <class Circ, class E>
-class Out_edge_circulator : public Circ
-{
-private:
-  mutable E e;
-
-public:
-
-  typedef E value_type;
-  typedef E* pointer;
-  typedef E& reference;
-
-  Out_edge_circulator()
-    : Circ()
-  {}
-
-  Out_edge_circulator(Circ c)
-    : Circ(c)
-  {}
-
-  const E& operator*() const
-  {
-    E ed = static_cast<const Circ*>(this)->operator*();
-    e = E(ed.first->neighbor(ed.second), ed.first->neighbor(ed.second)->index(ed.first));
-    return e;
-  }
-};
- 
-template <class Circ, class E>
-class In_edge_circulator : public Circ
-{
-private:
-  mutable E e;
-
-public:
-
-  typedef E value_type;
-  typedef E* pointer;
-  typedef E& reference;
-
-  In_edge_circulator()
-    : Circ()
-  {}
-
-  In_edge_circulator(Circ c)
-    : Circ(c)
-  {}
-
-  const E& operator*() const
-{
-    typename Circ::value_type ed = static_cast<const Circ*>(this)->operator*();
-    e = E(ed);
-    return e;
-  }
-};
-  
 
     template <typename Tr>
     struct T2_halfedge_descriptor
@@ -783,14 +675,6 @@ namespace std {
 #endif
 
 #ifndef CGAL_CFG_NO_STD_HASH
-
-  template < class T, class EdgeBase>
-  struct hash<CGAL::detail::Edge<T,EdgeBase> > {
-    std::size_t operator()(const CGAL::detail::Edge<T,EdgeBase>& e) const
-    {
-      return hash_value(e);
-    }
-  }; 
 
   template < class Tr>
   struct hash<CGAL::detail::T2_halfedge_descriptor<Tr> > {

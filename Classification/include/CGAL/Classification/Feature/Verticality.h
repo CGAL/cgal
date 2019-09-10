@@ -50,7 +50,7 @@ template <typename GeomTraits>
 class Verticality : public Feature_base
 {
   const typename GeomTraits::Vector_3 vertical;
-  std::vector<float> verticality_feature;
+  std::vector<compressed_float> verticality_feature;
   const Local_eigen_analysis* eigen;
   
 public:
@@ -59,33 +59,18 @@ public:
 
     \tparam InputRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
-    \param input point range.
+    \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-#if defined(CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES) || defined(DOXYGEN_RUNNING)
   template <typename InputRange>
   Verticality (const InputRange& input,
                const Local_eigen_analysis& eigen)
-    : vertical (0., 0., 1.), eigen(NULL)
-  {
-    this->set_name ("verticality");
-
-    for (std::size_t i = 0; i < input.size(); i++)
-    {
-      typename GeomTraits::Vector_3 normal = eigen.normal_vector(i);
-      normal = normal / CGAL::sqrt (normal * normal);
-      verticality_feature.push_back (1. - CGAL::abs(normal * vertical));
-    }
-  }
-#else
-  template <typename InputRange>
-  Verticality (const InputRange&,
-               const Local_eigen_analysis& eigen)
     : vertical (0., 0., 1.), eigen (&eigen)
   {
+    CGAL_USE(input);
     this->set_name ("verticality");
   }
-#endif
+
 
   /*!
     \brief Constructs the feature using provided normals of points.
@@ -109,7 +94,7 @@ public:
     {
       typename GeomTraits::Vector_3 normal = get(normal_map, *(input.begin()+i));
       normal = normal / CGAL::sqrt (normal * normal);
-      verticality_feature.push_back (1.f - float(CGAL::abs(normal * vertical)));
+      verticality_feature.push_back (compress_float(1.f - float(CGAL::abs(normal * vertical))));
     }
   }
 
@@ -117,7 +102,6 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t pt_index)
   {
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     if (eigen != NULL)
     {
       typename GeomTraits::Vector_3 normal = eigen->normal_vector<GeomTraits>(pt_index);
@@ -125,8 +109,7 @@ public:
       return (1.f - float(CGAL::abs(normal * vertical)));
     }
     else
-#endif
-      return verticality_feature[pt_index];
+      return decompress_float(verticality_feature[pt_index]);
   }
   /// \endcond
 };

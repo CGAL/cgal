@@ -45,7 +45,7 @@ namespace internal {
 //
 template < class Input_traits, class Kernel_approx, class Kernel_exact,
            class Weighted_tag >
-class Is_traits_point_convertible
+class Is_traits_point_convertible_2
 {
   typedef typename Kernel_traits<typename Input_traits::Point_2>::Kernel   Kernel_input;
 
@@ -60,7 +60,7 @@ public:
 };
 
 template < class Input_traits, class Kernel_approx, class Kernel_exact >
-class Is_traits_point_convertible<Input_traits, Kernel_approx, Kernel_exact,
+class Is_traits_point_convertible_2<Input_traits, Kernel_approx, Kernel_exact,
                                   ::CGAL::Tag_true /* Weighted_tag */>
 {
   typedef typename Kernel_traits<typename Input_traits::Point_2>::Kernel   Kernel_input;
@@ -157,7 +157,7 @@ class Lazy_alpha_nt_2
   Approx_point to_approx(const Input_point& wp) const
   {
     // The traits class' Point_2 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible<
+    CGAL_static_assertion((Is_traits_point_convertible_2<
                             Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
 
     To_approx converter;
@@ -167,7 +167,7 @@ class Lazy_alpha_nt_2
   Exact_point to_exact(const Input_point& wp) const
   {
     // The traits class' Point_2 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible<
+    CGAL_static_assertion((Is_traits_point_convertible_2<
                             Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
 
     To_exact converter;

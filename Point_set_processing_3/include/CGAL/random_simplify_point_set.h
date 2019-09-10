@@ -25,6 +25,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/algorithm.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -64,7 +65,7 @@ random_simplify_point_set(
   CGAL_point_set_processing_precondition(removed_percentage >= 0 && removed_percentage <= 100);
 
   // Random shuffle
-  std::random_shuffle (points.begin(), points.end());
+  CGAL::cpp98::random_shuffle (points.begin(), points.end());
 
   // Computes first iterator to remove
   std::size_t nb_points = std::distance(points.begin(), points.end());

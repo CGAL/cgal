@@ -1,4 +1,4 @@
-#define  CGAL_NO_DEPRECATION_WARNINGS
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <limits>
 

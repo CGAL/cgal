@@ -34,23 +34,6 @@
 
 template <class PeriodicTriangulation>
 void
-_test_periodic_3_triangulation_3_constructors(const PeriodicTriangulation &)
-{
-  std::cout<<"Creation"<<std::endl;
-  PeriodicTriangulation PT_def;
-  assert(PT_def.is_valid());
-
-  PeriodicTriangulation PT_dom(
-        typename PeriodicTriangulation::Iso_cuboid(-1,-2,-3,3,2,1));
-  assert(PT_def.is_valid());
-
-  PeriodicTriangulation PT_cp(PT_dom);
-  assert(PT_dom.is_valid());
-  assert(PT_cp == PT_dom);
-}
-
-template <class PeriodicTriangulation>
-void
 _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
                                      const typename PeriodicTriangulation::Point& pointtt,
                                      const char* covering_test_HOM_filename,
@@ -212,7 +195,10 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
            << ((domain.ymax()-domain.ymin()) == (domain.zmax()-domain.zmin()))
            << std::endl;
 
-  P3T3 PT_constr(domain);
+  std::cout << "Copy Constructor" << std::endl;
+  P3T3 PT_cp(PT3);
+  assert(PT_cp.is_valid());
+  assert(PT_cp == PT3);
 
   std::cout<<"Assignment"<<std::endl;
 
@@ -329,7 +315,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
   std::cout<<"Geometric access functions"<<std::endl;
 
-  Cell_handle ch = PT3.locate(Point(-1,-1,1));
+  Cell_handle ch = PT3.locate(Point(-1,-1,-1));
   assert(PT3.periodic_point(ch->vertex(0)).second != Offset());
   assert(PT3.periodic_point(ch,2).second != Offset());
   PT3.point(PT3.periodic_point(ch,0));
@@ -489,11 +475,10 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(lt == P3T3::VERTEX);
   assert(c->vertex(li)->point() == Point(2,2,2));
 
-  c = P3T3().locate(Point(1,2,3),lt,li,lj);
+  c = P3T3().locate(Point(0,0,0),lt,li,lj);
   assert(c == Cell_handle());
   assert(lt == P3T3::EMPTY);
-  assert(P3T3().side_of_cell(Point(1,2,3),c,lt,li,lj)
-         == CGAL::ON_UNBOUNDED_SIDE);
+  assert(P3T3().side_of_cell(Point(0,0,0),c,lt,li,lj) == CGAL::ON_UNBOUNDED_SIDE);
   assert(lt == P3T3::EMPTY);
 
   std::cout << "Testing Iterators   "<< std::endl;

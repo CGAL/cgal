@@ -26,21 +26,11 @@ Library (MKL)</a>.
 The concept `DiagonalizeTraits<T,dim>` defines an interface for the
 diagonalization and computation of eigenvectors and eigenvalues of a
 symmetric matrix. `T` is the number type and `dim` is the dimension of
-the matrices and vector (set to 3 by default). We provide two models
-for this concept:
-
-- `Eigen_diagonalize_traits<T,dim>` uses the \ref thirdpartyEigen library.
-- `Diagonalize_traits<T,dim>` is an internal implementation that does not
-depend on another library.
-
-Although both models achieve the same computation,
-`Eigen_diagonalize_traits<T,dim>` is faster and should thus be used if the
-\ref thirdpartyEigen library is available. The eigenvalues are stored
-in ascending order and eigenvectors are stored in accordance.
+the matrices and vector (set to 3 by default). We provide the model
+`Eigen_diagonalize_traits<T,dim>` that uses the \ref thirdpartyEigen library.
 
 This is an example of an eigen decomposition of a matrix using this
 class:
-
 
 \cgalExample{Solver_interface/diagonalize_matrix.cpp}
 

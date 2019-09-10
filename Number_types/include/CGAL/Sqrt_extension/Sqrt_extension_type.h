@@ -680,7 +680,7 @@ Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> square (const Sqrt_extension<NT,ROOT,ACD
 //NT_converter specializations
 template <class NT1,class ROOT1,class NT2,class ROOT2,class ACDE_TAG,class FP_TAG>
 struct NT_converter < Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> , Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG> >
-  : public CGAL::unary_function< NT1, NT2 >
+  : public CGAL::cpp98::unary_function< NT1, NT2 >
 {
     Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG>
     operator()(const Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> &a) const
@@ -698,7 +698,7 @@ struct NT_converter < Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> , Sqrt_extension
 
 template <class NT1,class NT2,class ROOT2,class ACDE_TAG,class FP_TAG>
 struct NT_converter < NT1 , Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG> >
-  : public CGAL::unary_function< NT1, NT2 >
+  : public CGAL::cpp98::unary_function< NT1, NT2 >
 {
     Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG>
     operator()(const NT1 &a) const
@@ -710,7 +710,7 @@ struct NT_converter < NT1 , Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG> >
 //needed because it's a better match than the specialization <NT1,NT1>
 template <class NT1,class ROOT1,class ACDE_TAG,class FP_TAG>
 struct NT_converter < Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG>, Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> >
-  : public CGAL::unary_function< NT1, NT1 >
+  : public CGAL::cpp98::unary_function< NT1, NT1 >
 {
     const Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG>&
     operator()(const Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> &a) const

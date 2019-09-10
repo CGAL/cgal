@@ -102,7 +102,7 @@ struct Polyhedral_complex_tester : public Tester<K>
     // Mesh generation
     C3t3 c3t3;
 
-    CGAL::internal::Mesh_3::init_c3t3_with_features(c3t3, domain, criteria,
+    CGAL::Mesh_3::internal::init_c3t3_with_features(c3t3, domain, criteria,
       true /*nonlinear_growth_of_balls*/);
     domain.add_vertices_to_c3t3_on_patch_without_feature_edges(c3t3);
 

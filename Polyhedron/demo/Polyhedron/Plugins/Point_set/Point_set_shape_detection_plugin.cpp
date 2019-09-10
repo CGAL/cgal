@@ -38,8 +38,27 @@
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 
+#include "run_with_qprogressdialog.h"
+
 #include "ui_Point_set_shape_detection_plugin.h"
 
+template <typename Shape_detection>
+struct Detect_shapes_functor
+  : public Functor_with_signal_callback
+{
+  Shape_detection& shape_detection;
+  typename Shape_detection::Parameters& op;
+  
+  Detect_shapes_functor (Shape_detection& shape_detection,
+                         typename Shape_detection::Parameters& op)
+    : shape_detection (shape_detection), op (op)
+  { }
+
+  void operator()()
+  {
+    shape_detection.detect(op, *(this->callback()));
+  }
+};
 
 struct build_from_pair
 {
@@ -54,93 +73,6 @@ struct build_from_pair
 
 
 };
-
-struct Progress_bar_callback
-{
-  mutable int nb;
-  CGAL::Real_timer timer;
-  double t_start;
-  mutable double t_latest;
-  int bar_size;
-  mutable std::size_t string_size;
-  
-  Progress_bar_callback() : nb(0), bar_size (30), string_size(0)
-  {
-    timer.start();
-    t_start = timer.time();
-    t_latest = t_start;
-  }
-  
-  bool operator()(double advancement) const
-  {
-    // Avoid calling time() at every single iteration, which could
-    // impact performances very badly
-    ++ nb;
-    if (advancement != 1 && nb % 1000 != 0)
-      return true;
-
-    // If the limit is reach, interrupt the algorithm
-    double t = timer.time();
-    if (advancement == 1 || (t - t_latest) > 1.)
-    {
-      std::ostringstream oss;
-      oss << "[";
-      int adv = int(advancement * bar_size);
-      for (int i = 0; i < adv; ++ i)
-        oss << "=";
-      if (adv != bar_size)
-        oss << ">";
-      for (int i = adv; i < bar_size; ++ i)
-        oss << " ";
-      
-      oss << "] " << int(advancement * 100) << "% (";
-
-      display_time (oss, t);
-
-      oss << " elapsed, ";
-
-      display_time (oss, estimate_remaining(t, advancement));
-      
-      oss << " remaining)";
-      
-      std::string bar_string = oss.str();
-      std::cerr << "\r" << bar_string;
-      for (std::size_t i = bar_string.size(); i < string_size; ++ i)
-        std::cerr << " ";
-      string_size = (std::max) (string_size, bar_string.size());
-      
-      if (advancement == 1)
-        std::cerr << std::endl;
-      
-      t_latest = t;
-    }
-
-    return true;
-  }
-
-  void display_time (std::ostringstream& oss, double seconds) const
-  {
-    if (seconds > 3600.)
-      {
-	int hours = int(seconds / 3600.);
-	oss << hours << "h";
-	seconds -= hours * 3600.;
-      }
-    if (seconds > 60.)
-      {
-	int minutes = (int)(seconds / 60.);
-	oss << minutes << "min";
-	seconds -= minutes * 60.;
-      }
-    oss << int(seconds) << "sec";
-  }
-
-  double estimate_remaining (double seconds, double advancement) const
-  {
-    return ((1. - advancement) * (seconds - t_start) / advancement);
-  }
-};
-
 
 class Point_set_demo_point_set_shape_detection_dialog : public QDialog, private Ui::PointSetShapeDetectionDialog
 {
@@ -303,7 +235,7 @@ private:
       comments += "shape -1 no assigned shape\n";
     }
     
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::BusyCursor);
 
     Shape_detection shape_detection;
     shape_detection.set_input(*points, points->point_map(), points->normal_map());
@@ -340,8 +272,8 @@ private:
     // The actual shape detection.
     CGAL::Real_timer t;
     t.start();
-    Progress_bar_callback callback;
-    shape_detection.detect(op, callback);
+    Detect_shapes_functor<Shape_detection> functor (shape_detection, op);
+    run_with_qprogressdialog<CGAL::Sequential_tag> (functor, "Detecting shapes...", mw);
     t.stop();
     
     std::cout << shape_detection.shapes().size() << " shapes found in "

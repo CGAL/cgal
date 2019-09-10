@@ -1,6 +1,14 @@
 
 /// \defgroup PkgSurface_mesh Surface Mesh Reference
 
+/*! Draw.
+  \code
+   #include <CGAL/draw_surface_mesh.h>
+  \endcode
+*/
+/// \defgroup PkgDrawSurfaceMesh Draw a Surface Mesh
+/// \ingroup PkgSurface_mesh
+
 /*!
 \addtogroup PkgSurface_mesh
 \cgalPkgDescriptionBegin{Surface Mesh,PkgSurfaceMeshSummary}
@@ -31,5 +39,8 @@ and faces is much simpler and can be used at runtime and not at compile time.}
 
 - `CGAL::Surface_mesh<P>`
                 
+### Draw a Surface Mesh ###
+- `CGAL::draw<SM>`
+
 */
 

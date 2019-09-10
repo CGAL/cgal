@@ -135,7 +135,7 @@ namespace internal {
 *    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
 *    cannot be modified at all during perturbation
 *  \cgalParamEnd
-*  \cgalParamBegin{do_project} a boolean that sets whether vertices should be reprojected
+*  \cgalParamBegin{do_project} a boolean that sets whether vertices are reprojected
 *    on the input surface after their coordinates random perturbation
 *  \cgalParamEnd
 *  \cgalParamBegin{random_seed} a non-negative integer value to seed the random

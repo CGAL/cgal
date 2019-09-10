@@ -57,7 +57,7 @@ namespace Polygon_mesh_processing {
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`
       Instance of a class model of `ReadWritePropertyMap`.
       If this parameter is omitted, an internal property map for
-     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+     `CGAL::vertex_point_t` must be available in `TriangleMesh`
      \cgalParamEnd
     \cgalParamBegin{density_control_factor} factor to control density of the output mesh,
       where larger values lead to denser refinements.

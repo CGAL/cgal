@@ -1,4 +1,4 @@
-#version 430 core
+#version 150
 
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
@@ -8,6 +8,7 @@ in VS_OUT
   vec4 fP;
   vec4 out_color;
   float dist[6];
+  vec4 vertex;
 } gs_in[3];
 
 out GS_OUT
@@ -23,9 +24,8 @@ uniform mat4 mvp_matrix;
 
 void main(void)
 {
-  mat4 inv_mvp = inverse(mvp_matrix);
-  vec4 norm1 = inv_mvp*gl_in[1].gl_Position - inv_mvp*gl_in[0].gl_Position;
-  vec4 norm2 = inv_mvp*gl_in[2].gl_Position - inv_mvp*gl_in[1].gl_Position;
+  vec4 norm1 = gs_in[1].vertex- gs_in[0].vertex;
+  vec4 norm2 = gs_in[2].vertex - gs_in[1].vertex;
 
   gl_Position = gl_in[0].gl_Position;
   gs_out.fP = gs_in[0].fP;

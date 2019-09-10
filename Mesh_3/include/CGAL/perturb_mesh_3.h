@@ -30,14 +30,17 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Mesh_3/global_parameters.h>
+#include <CGAL/boost/parameter.h>
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_3/Sliver_perturber.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h>
 #include <CGAL/internal/Mesh_3/check_weights.h>
-#include <vector>
 #include <CGAL/use.h>
+
+#include <boost/parameter/preprocessor.hpp>
+
+#include <vector>
 
 namespace CGAL {
 
@@ -48,8 +51,8 @@ namespace CGAL {
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),
@@ -116,7 +119,7 @@ perturb_mesh_3_impl(C3T3& c3t3,
                     const PPerturbationVector& perturbation_vector)
 {
   CGAL_precondition(
-    !internal::Mesh_3::has_non_protecting_weights(c3t3.triangulation(), domain));
+    !Mesh_3::internal::has_non_protecting_weights(c3t3.triangulation(), domain));
 
   typedef MeshDomain Md;
   typedef SliverCriterion Sc;

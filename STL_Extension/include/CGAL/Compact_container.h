@@ -252,14 +252,24 @@ public:
 
   typedef T                                         value_type;
   typedef Allocator                                 allocator_type;
-  typedef typename Allocator::reference             reference;
-  typedef typename Allocator::const_reference       const_reference;
+
+  typedef value_type&                               reference;
+  typedef const value_type&                         const_reference;
+
+#ifdef CGAL_CXX11
+  typedef typename std::allocator_traits<Allocator>::pointer               pointer;
+  typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
+  typedef typename std::allocator_traits<Allocator>::size_type             size_type;
+  typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
+#else
   typedef typename Allocator::pointer               pointer;
   typedef typename Allocator::const_pointer         const_pointer;
   typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
-  typedef internal::CC_iterator<Self, false> iterator;
-  typedef internal::CC_iterator<Self, true>  const_iterator;
+#endif
+
+  typedef internal::CC_iterator<Self, false>        iterator;
+  typedef internal::CC_iterator<Self, true>         const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
@@ -568,7 +578,11 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::construct(alloc, ret, t);
+#else
     alloc.construct(ret, t);
+#endif
     CGAL_assertion(type(ret) == USED);
     ++size_;
     time_stamper->set_time_stamp(ret);
@@ -596,7 +610,11 @@ public:
 
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::destroy(alloc, &*x);
+#else
     alloc.destroy(&*x);
+#endif
 /*#ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
 #endif*/
@@ -624,7 +642,11 @@ public:
 
   size_type max_size() const
   {
+#ifdef CGAL_CXX11
+    return std::allocator_traits<allocator_type>::max_size(alloc);
+#else
     return alloc.max_size();
+#endif
   }
 
   size_type capacity() const
@@ -906,7 +928,11 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::clear()
     for (pointer pp = p + 1; pp != p + s - 1; ++pp) {
       if (type(pp) == USED)
       {
+#ifdef CGAL_CXX11
+        std::allocator_traits<allocator_type>::destroy(alloc, pp);
+#else
         alloc.destroy(pp);
+#endif
         set_type(pp, NULL, FREE);
       }
     }
@@ -1288,7 +1314,7 @@ namespace std {
 
   template < class DSC, bool Const >
   struct hash<CGAL::internal::CC_iterator<DSC, Const> >
-    : public CGAL::unary_function<CGAL::internal::CC_iterator<DSC, Const>, std::size_t> {
+    : public CGAL::cpp98::unary_function<CGAL::internal::CC_iterator<DSC, Const>, std::size_t> {
 
     std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i) const
     {

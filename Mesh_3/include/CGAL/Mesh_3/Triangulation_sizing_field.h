@@ -29,11 +29,14 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
-#include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Regular_triangulation_3.h>
+#include <CGAL/Regular_triangulation_cell_base_3.h>
+#include <CGAL/Regular_triangulation_vertex_base_3.h>
+#include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
+
+#include <CGAL/functional.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -41,7 +44,6 @@ namespace CGAL {
 
 namespace Mesh_3
 {
-  
 
 /**
  * @class Triangulation_sizing_field
@@ -50,20 +52,24 @@ template <typename Tr>
 class Triangulation_sizing_field
 {
   // Types
-  typedef typename Tr::Geom_traits    Gt;
-  typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Gt::FT             FT;
-  
-  typedef Triangulation_vertex_base_with_info_3<FT, Gt>   Vb;
-  typedef Triangulation_cell_base_3<Gt>                   Cb;
+  typedef typename Tr::Geom_traits                        Gt;
+  typedef typename Tr::Bare_point                         Bare_point;
+  typedef typename Tr::Weighted_point                     Weighted_point;
+  typedef typename Gt::FT                                 FT;
+
+  typedef Triangulation_vertex_base_with_info_3<FT, Gt>   Vbb;
+  typedef Regular_triangulation_vertex_base_3<Gt, Vb>     Vb;
+  typedef Triangulation_cell_base_3<Gt>                   Cbb;
+  typedef Regular_triangulation_cell_base_3<
+            Gt, Cbb, Discard_hidden_points>               Cb;
   typedef Triangulation_data_structure_3<Vb, Cb>          Tds;
   typedef Regular_triangulation_3<Gt,Tds>                 Compact_triangulation;
   typedef Compact_triangulation                           Ctr;
   
-  typedef typename Tr::Vertex_handle      Vertex_handle;
-  typedef typename Tr::Cell_handle        Cell_handle;
-  typedef typename Ctr::Cell_handle       CCell_handle;
-  typedef typename Ctr::Vertex_handle     CVertex_handle;
+  typedef typename Tr::Vertex_handle                      Vertex_handle;
+  typedef typename Tr::Cell_handle                        Cell_handle;
+  typedef typename Ctr::Cell_handle                       CCell_handle;
+  typedef typename Ctr::Vertex_handle                     CVertex_handle;
   
 public:
   // Vertices of mesh triangulation do not need to be updated 
@@ -107,7 +113,7 @@ private:
                                    const CCell_handle& cell) const;
   
   /**
-   * Returns an hint for \c p location.
+   * Returns a hint for \c p location.
    */
   CCell_handle get_hint(const Weighted_point& p) const
   { return last_cell_; }
@@ -117,7 +123,7 @@ private:
    * Used by boost transform iterator
    */
   struct Extract_point :
-  public CGAL::unary_function<typename Tr::Vertex,Weighted_point>
+    public CGAL::cpp98::unary_function<typename Tr::Vertex, Weighted_point>
   {
     Weighted_point operator()(const typename Tr::Vertex& v) const { return v.point(); }
   };
@@ -153,7 +159,7 @@ fill(const std::map<Weighted_point, FT>& value_map)
         ++ vit )
   {
     typename std::map<Weighted_point, FT>::const_iterator find_result = 
-      value_map.find(vit->point());
+      value_map.find(ctr_.point(vit));
     
     if ( find_result != value_map.end() )
       vit->info() = find_result->second;
@@ -184,20 +190,24 @@ typename Triangulation_sizing_field<Tr>::FT
 Triangulation_sizing_field<Tr>::
 interpolate_on_cell_vertices(const Weighted_point& p, const CCell_handle& cell) const
 {
-  typename Gt::Compute_volume_3 volume =
-    ctr_.geom_traits().compute_volume_3_object();
-  
+  typename Gt::Construct_point_3 cp = ctr_.geom_traits().construct_point_3_object();
+  typename Gt::Compute_volume_3 volume = ctr_.geom_traits().compute_volume_3_object();
+
   // Interpolate value using tet vertices values
   const FT& va = cell->vertex(0)->info();
   const FT& vb = cell->vertex(1)->info();
   const FT& vc = cell->vertex(2)->info();
   const FT& vd = cell->vertex(3)->info();
-  
-  const Weighted_point& a = cell->vertex(0)->point();
-  const Weighted_point& b = cell->vertex(1)->point();
-  const Weighted_point& c = cell->vertex(2)->point();
-  const Weighted_point& d = cell->vertex(3)->point();
-  
+
+  const Weighted_point& wa = ctr_.point(cell, 0);
+  const Weighted_point& wb = ctr_.point(cell, 1);
+  const Weighted_point& wc = ctr_.point(cell, 2);
+  const Weighted_point& wd = ctr_.point(cell, 3);
+  const Bare_point& a = cp(wa);
+  const Bare_point& b = cp(wb);
+  const Bare_point& c = cp(wc);
+  const Bare_point& d = cp(wd);
+
   const FT abcp = CGAL::abs(volume(a,b,c,p));
   const FT abdp = CGAL::abs(volume(a,b,d,p));
   const FT acdp = CGAL::abs(volume(a,c,d,p));
@@ -216,8 +226,8 @@ typename Triangulation_sizing_field<Tr>::FT
 Triangulation_sizing_field<Tr>::
 interpolate_on_facet_vertices(const Weighted_point& p, const CCell_handle& cell) const
 {
-  typename Gt::Compute_area_3 area =
-    ctr_.geom_traits().compute_area_3_object();
+  typename Gt::Construct_point_3 cp = ctr_.geom_traits().construct_point_3_object();
+  typename Gt::Compute_area_3 area = ctr_.geom_traits().compute_area_3_object();
   
   // Find infinite vertex and put it in k0
   int k0 = 0;
@@ -237,10 +247,13 @@ interpolate_on_facet_vertices(const Weighted_point& p, const CCell_handle& cell)
   const FT& vb = cell->vertex(k2)->info();
   const FT& vc = cell->vertex(k3)->info();
   
-  const Weighted_point& a = cell->vertex(k1)->point();
-  const Weighted_point& b = cell->vertex(k2)->point();
-  const Weighted_point& c = cell->vertex(k3)->point();
-  
+  const Weighted_point& wa = ctr_.point(cell, k1);
+  const Weighted_point& wb = ctr_.point(cell, k2);
+  const Weighted_point& wc = ctr_.point(cell, k3);
+  const Bare_point& a = cp(wa);
+  const Bare_point& b = cp(wb);
+  const Bare_point& c = cp(wc);
+
   const FT abp = area(a,b,p);
   const FT acp = area(a,c,p);
   const FT bcp = area(b,c,p);

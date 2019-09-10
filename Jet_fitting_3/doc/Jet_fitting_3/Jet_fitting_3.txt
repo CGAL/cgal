@@ -181,11 +181,11 @@ is performed; and if \f$ N >N_d\f$, approximation is used.
 
 As explained in Section \ref secintro , the output consists of a
 coordinate system, the Monge basis, together with the Monge
-coefficients which are stored in the `Monge_via_jet_fitting::Monge_form` class. In
+coefficients which are stored in the `::CGAL::Monge_via_jet_fitting::Monge_form` class. In
 addition, more information on the computational issues are stored in
 the `Monge_via_jet_fitting` class.
 
-The `Monge_via_jet_fitting::Monge_form` class provides the following information.
+The `::CGAL::Monge_via_jet_fitting::Monge_form` class provides the following information.
 
 <UL>
 <LI>%Origin. This is the point on the fitted polynomial surface
@@ -224,7 +224,7 @@ In addition, the class `Monge_via_jet_fitting` stores
 This concept provides the types for the input sample points, together
 with \f$ 3d\f$ vectors and a number type. It is used as template for the
 class `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`. Typically, one can use
-`Cartesian<double>`.
+`Cartesian< double >`.
 
 \subsubsection Jet_fitting_3TemplateparameterLocalKernel Template parameter LocalKernel
 
@@ -234,11 +234,11 @@ This concept defines the vector and number types used for local
 computations and to store the PCA basis data.
 
 Input points of type
-`DataKernel::Point_3` are converted to
-`LocalKernel::Point_3`. For output of the `Monge_via_jet_fitting::Monge_form` class,
+`DataKernel::%Point_3` are converted to
+`LocalKernel::%Point_3`. For output of the `::CGAL::Monge_via_jet_fitting::Monge_form` class,
 these types are converted back to `DataKernel` ones. Typically,
 one can use
-`Cartesian<double>` which is the default.
+`Cartesian< double >` which is the default.
 
 \subsubsection Jet_fitting_3TemplateparameterSvdTraits Template parameter SvdTraits
 
@@ -253,8 +253,8 @@ To solve the fitting problem, the sample points are first converted
 from the `DataKernel` to the `LocalKernel` (this is done using
 the `Cartesian_converter`). Then change of coordinate
 systems and linear algebra operations are performed with this
-kernel. This implies that the number types `LocalKernel::FT` and
-`SvdTraits::FT` must be identical.
+kernel. This implies that the number types `LocalKernel::%FT` and
+`SvdTraits::%FT` must be identical.
 Second the Monge basis and coefficients, computed with the
 `LocalKernel`, are converted back to the `DataKernel` 
 (this is done using the `Cartesian_converter` and the
@@ -278,7 +278,7 @@ illustrates the computation of local differential quantities for all
 vertices of a given mesh. The neighborhood of a given vertex is
 computed using rings on the triangulation. Results are twofold:
 <UL>
-<LI>a human readable text file featuring the `Monge_via_jet_fitting::Monge_form` and
+<LI>a human readable text file featuring the `::CGAL::Monge_via_jet_fitting::Monge_form` and
 numerical informations on the computation: condition number and the
 PCA basis;
 <LI>another text file that records raw data (better for a vizualization

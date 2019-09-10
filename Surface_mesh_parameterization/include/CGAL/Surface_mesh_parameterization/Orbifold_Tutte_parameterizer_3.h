@@ -110,10 +110,12 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap 
   while(in >> cone_index)
     cones.push_back(cone_index);
 
+#ifdef CGAL_PARAMETERIZATION_ORBIFOLD_CONE_VERBOSE
   std::cout << "Input cones: ";
   for(std::size_t i=0; i<cones.size(); ++i)
     std::cout << cones[i] << " ";
   std::cout << std::endl;
+#endif
 
   if(cones.size() < 3 || cones.size() > 4) {
     std::cerr << "Error: Not enough or too many input cones" << std::endl;
@@ -905,7 +907,7 @@ public:
   ///         `boost::graph_traits<Seam_mesh>::%vertex_descriptor` as key type and
   ///         a unique integer as value type.
   ///
-  /// \param mesh a `Seam_mesh` parameterized by any model of a `FaceGraph`
+  /// \param mesh a `Seam_mesh` parameterized by any model of a `FaceListGraph` and `HalfedgeListGraph`
   /// \param bhd a halfedge on the border of the seam mesh
   /// \param cmap a mapping of the `vertex_descriptor`s of `mesh` that are cones
   ///             to their respective \link PkgSurfaceParameterizationEnums Cone_type \endlink

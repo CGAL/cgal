@@ -5,24 +5,18 @@ set -e
 
 git=git
 
-if ! ${git} diff --exit-code > /dev/null || ! ${git} diff --staged --exit-code  > /dev/null ; then
-    echo 'Your working directory contains local modifications!' >&2
-    exit 1
-fi
-
 base=${1:-HEAD}
-save=$(git rev-parse HEAD)
 
 function reset() {
-    git reset --quiet --hard $save
+    git update-ref -d refs/cgal/git-show-content
     rm -f bundle.gz
 }
 
 trap reset ERR EXIT KILL TERM INT
 
 for c in $(git log --pretty='%h' --first-parent cgal/master..$base); do
-    git reset --quiet --hard $c
-    git bundle create bundle $(git rev-parse ${c}\^)..HEAD > /dev/null 2>&1
+    git update-ref refs/cgal/git-show-content $c
+    git bundle create bundle ${c}^..refs/cgal/git-show-content > /dev/null 2>&1
     gzip -f bundle
     size=${(l:4:)$(( $(zstat +size bundle.gz) / 1024 ))}
     git show --no-patch --pretty='%C(auto)%h (SIZE: %C(auto)'"${size}kB)"'  %s <%an> %cD' $c

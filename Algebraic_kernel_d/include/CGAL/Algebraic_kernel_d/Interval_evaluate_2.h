@@ -40,7 +40,7 @@ namespace CGAL {
 namespace internal {
 
 template<typename Polynomial_2, typename Bound>
-struct Interval_evaluate_2 : public CGAL::binary_function
+struct Interval_evaluate_2 : public CGAL::cpp98::binary_function
 <Polynomial_2,CGAL::cpp11::array<Bound,4>,
       std::pair<typename CGAL::Coercion_traits<typename CGAL::Polynomial_traits_d<Polynomial_2>::Innermost_coefficient_type,Bound>::Type,
                 typename CGAL::Coercion_traits<typename CGAL::Polynomial_traits_d<Polynomial_2>::Innermost_coefficient_type,Bound>::Type> > {

@@ -215,9 +215,10 @@ Considering two triangulated surface meshes, each bounding
 a volume, the functions `CGAL::Polygon_mesh_processing::corefine_and_compute_union()`,
 `CGAL::Polygon_mesh_processing::corefine_and_compute_intersection()` and
 `CGAL::Polygon_mesh_processing::corefine_and_compute_difference()` respectively compute the union,
-the intersection and the difference of the two volumes.
-Note that there is no restriction on the topology of the input volumes.
+the intersection and the difference of the two volumes. If several Boolean operations must be
+computed at the same time, the function `corefine_and_compute_boolean_operations()` should be used.
 
+There is no restriction on the topology of the input volumes.
 However, there are some requirements on the input to guarantee that
 the operation is possible. First, the input meshes must not self-intersect.
 Second, the operation is possible only if the output
@@ -252,6 +253,28 @@ edges will be split at each intersection with a triangle but the
 position of the intersection point might create self-intersections due to
 the limited precision of floating point numbers.
 
+\subsection coref_clip Clipping
+
+As a natural extension, some clipping functionalities with a volume bounded by a closed mesh
+and a halfspace (defined by the negative side of a plane to be consistent with
+the outward normal convention) are offered. The functions `CGAL::Polygon_mesh_processing::clip()`
+have some options to select whether the clipping should be done at the volume or surface
+level, and also if the clipper should be considered as compact or not. This is illustrated on
+\cgalFigureRef{coref_clip_close_open} and \cgalFigureRef{coref_clip_compact}.
+
+\cgalFigureBegin{coref_clip_close_open, clip_open_close.png}
+Clipping a cube with a halfspace. From left to right: (i) initial cube and the plane
+defining the clipping halfspace; (ii) `close_volumes=false`: clipping of the surface mesh (boundary edges
+depicted in red); (iii) `close_volumes=true`: clipping of the volume bounded by the surface mesh.
+\cgalFigureEnd
+
+\cgalFigureBegin{coref_clip_compact, clip_compact.png}
+Clipping a cube with a halfspace: compacity of the clipper (`close_volumes=false` in both cases).
+From left to right: (i) initial cube and the plane defining the clipping halfspace,
+note that a whole face of the cube (2 triangles) is exactly contained in the plane;
+(ii) `use_compact_clipper=true`: clipping of the surface mesh with a compact halfspace: coplanar faces are part of the output;
+(iii) `use_compact_clipper=false`: clipping of the surface mesh with a non-compact halfspace: coplanar faces are not part of the output.
+\cgalFigureEnd
 
 \subsection coref_ex_subsec Examples
 
@@ -468,7 +491,7 @@ with duplicated border edges.
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
 *******************
-<!---
+\if READY_TO_PUBLISH
 \subsection DegenerateFaces Removing Degenerate Faces
 
 Some degenerate faces may be part of a given triangle mesh.
@@ -488,8 +511,7 @@ are removed, the connectivity is fixed, and the number of removed faces
 is output.
 
 \cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
---->
-
+\endif
 *******************
 \subsection PolygonSoups Polygon Soups
 
@@ -505,7 +527,7 @@ described in \cgalCite{gueziec2001cutting}.
 To deal with polygon soups that cannot be converted to a
 combinatorial manifold surface, some points are duplicated.
 Because a polygon soup does not have any connectivity (each point
-has as many occurences as the number of polygons it belongs to),
+has as many occurrences as the number of polygons it belongs to),
 duplicating one point (or a pair of points)
 amounts to duplicate the polygon to which it belongs.
 
@@ -571,11 +593,11 @@ and store them in property maps provided by the class `Surface_mesh`.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example.cpp}
 
-\subsubsection NormalsExampleP Normals Computation for a Poyhedron_3
+\subsubsection NormalsExampleP Normals Computation for a Polyhedron_3
 
 The following example illustrates how to
 compute the normals to faces and vertices
-and store them in ordered or unordered maps as the class `Polyhedron` does
+and store them in ordered or unordered maps as the class `Polyhedron_3` does
 not provide storage for the normals.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example_Polyhedron.cpp}

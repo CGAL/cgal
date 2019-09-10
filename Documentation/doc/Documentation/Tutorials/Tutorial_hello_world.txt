@@ -335,7 +335,7 @@ and its notion of *concepts* and *models*.
 
 Other resources for \cgal are the rest of the \ref tutorials "tutorials" 
  and the user support page at
-http://www.cgal.org/.
+https://www.cgal.org/.
 
 */
 } /* namespace CGAL */

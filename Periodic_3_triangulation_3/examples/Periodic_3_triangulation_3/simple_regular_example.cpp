@@ -22,7 +22,7 @@ typedef P3RT3::Locate_type       Locate_type;
 
 int main(int, char**)
 {
-  Iso_cuboid domain(-1,-1,-1, 2,2,2);  // the cube for the periodic domain
+  Iso_cuboid domain(-1,-1,-1, 2,2,2); // the fundamental domain
 
   // construction from a list of weighted points :
   std::list<Weighted_point> L;

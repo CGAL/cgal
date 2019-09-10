@@ -35,22 +35,21 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/unordered_map.hpp>
-#include <CGAL/triangulation_assertions.h>
-#include <CGAL/use.h>
-
-#include <CGAL/Triangulation_data_structure_3.h>
+#include <CGAL/internal/Periodic_3_triangulation_iterators_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_cell_base_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
+#include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
-
-#include <CGAL/internal/Periodic_3_triangulation_iterators_3.h>
-
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/triangulation_assertions.h>
+#include <CGAL/internal/canonicalize_helper.h>
 
 #include <CGAL/array.h>
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
+#include <CGAL/Unique_hash_map.h>
+#include <CGAL/use.h>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 #include <CGAL/internal/Static_filters/tools.h>
@@ -259,7 +258,6 @@ protected:
   /// conflict region.
   mutable std::vector<Vertex_handle> v_offsets;
 
-public:
   /// Determines if we currently compute in 3-cover or 1-cover.
   Covering_sheets _cover;
 
@@ -269,7 +267,6 @@ public:
                              const Geometric_traits& gt = Geometric_traits())
     : _gt(gt), _tds()
   {
-    set_domain(domain);
     typedef typename internal::Exact_field_selector<FT>::Type EFT;
     typedef NT_converter<FT,EFT> NTC;
     CGAL_USE_TYPE(NTC);
@@ -280,6 +277,8 @@ public:
                                     == ntc(domain.zmax())-ntc(domain.zmin()));
     CGAL_triangulation_precondition(ntc(domain.zmax())-ntc(domain.zmin())
                                     == ntc(domain.xmax())-ntc(domain.xmin()));
+
+    _gt.set_domain(domain);
     _cover = CGAL::make_array(3,3,3);
     init_tds();
   }
@@ -287,17 +286,73 @@ public:
 protected:
   // Copy constructor helpers
   class Finder;
+
 public:
   // Copy constructor duplicates vertices and cells
   Periodic_3_triangulation_3(const Periodic_3_triangulation_3& tr)
     : _gt(tr.geom_traits()),
-      _cover(tr._cover)
-  { }
+      _cover(tr.number_of_sheets())
+  {
+    if(is_1_cover())
+      tds() = tr.tds();
+    else
+      copy_multiple_covering(tr);
+
+    CGAL_triangulation_expensive_postcondition(*this == tr);
+    CGAL_triangulation_expensive_postcondition(is_valid());
+  }
 
   virtual ~Periodic_3_triangulation_3() {}
 
+  void copy_multiple_covering(const Periodic_3_triangulation_3& tr)
+  {
+    // Write the respective offsets in the vertices to make them
+    // automatically copy with the tds.
+    for(Vertex_iterator vit = tr.vertices_begin(); vit != tr.vertices_end(); ++vit)
+      vit->set_offset(tr.get_offset(vit));
+
+    // copy the tds
+    tds() = tr.tds();
+
+    // make a list of all vertices that belong to the original
+    // domain and initialize the basic structure of
+    // virtual_vertices_reverse
+    std::list<Vertex_handle> vlist;
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
+    {
+      if(vit->offset() == Offset())
+      {
+        vlist.push_back(vit);
+        virtual_vertices_reverse.insert(std::make_pair(vit,std::vector<Vertex_handle>(26)));
+        CGAL_triangulation_assertion(virtual_vertices_reverse.find(vit)->second.size() == 26);
+      }
+    }
+
+    // Iterate over all vertices that are not in the original domain
+    // and construct the respective entries to virtual_vertices and
+    // virtual_vertices_reverse
+    for(Vertex_iterator vit2 = vertices_begin(); vit2 != vertices_end(); ++vit2)
+    {
+      if(vit2->offset() != Offset())
+      {
+        typename std::list<Vertex_handle>::iterator vlist_it
+          = std::find_if(vlist.begin(), vlist.end(), Finder(this,vit2->point()));
+        Offset off = vit2->offset();
+        virtual_vertices.insert(std::make_pair(vit2, std::make_pair(*vlist_it,off)));
+        virtual_vertices_reverse.find(*vlist_it)->second[9*off[0]+3*off[1]+off[2]-1] = vit2;
+        CGAL_triangulation_assertion(get_offset(vit2) == off);
+      }
+    }
+
+    // Cleanup vertex offsets
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
+      vit->clear_offset();
+    for(Vertex_iterator vit = tr.vertices_begin(); vit != tr.vertices_end(); ++vit)
+      vit->clear_offset();
+  }
+
   /** @name Assignment */ //@{
-  Periodic_3_triangulation_3& operator=(Periodic_3_triangulation_3& tr)
+  Periodic_3_triangulation_3& operator=(Periodic_3_triangulation_3 tr)
   {
     swap(tr);
     return *this;
@@ -312,17 +367,19 @@ public:
     std::swap(_cover, tr._cover);
   }
 
+  virtual void clear_covering_data() { }
+
   /// Clears the triangulation and initializes it again.
-  virtual void clear_covering_data() {}//= 0;
   void clear()
   {
     _tds.clear();
-    init_tds();
     clear_covering_data();
     virtual_vertices.clear();
     virtual_vertices_reverse.clear();
-    _cover = CGAL::make_array(3,3,3);
     v_offsets.clear();
+
+    _cover = CGAL::make_array(3,3,3);
+    init_tds();
   }
   //@}
 
@@ -339,6 +396,8 @@ public:
   const Geometric_traits& geom_traits() const { return _gt; }
   const TDS& tds() const { return _tds; }
   TDS& tds() { return _tds; }
+
+  bool is_parallel() const { return false; }
 
   virtual void gather_cell_hidden_points(const Cell_handle /*cit*/, std::vector<Point>& /* hidden_points*/) { }
   virtual void reinsert_hidden_points_after_converting_to_1_sheeted(const std::vector<Point>& /* hidden_points*/) { }
@@ -405,7 +464,7 @@ public:
     return _tds.number_of_vertices();
   }
 
-protected:
+public:
   bool is_1_cover() const
   {
     bool flag;
@@ -430,9 +489,9 @@ public:
   // Offset converters
   int off_to_int(const Offset& off) const
   {
-    CGAL_triangulation_assertion( off.x()==0 || off.x() ==1 );
-    CGAL_triangulation_assertion( off.y()==0 || off.y() ==1 );
-    CGAL_triangulation_assertion( off.z()==0 || off.z() ==1 );
+    CGAL_triangulation_assertion( off.x() == 0 || off.x() == 1 );
+    CGAL_triangulation_assertion( off.y() == 0 || off.y() == 1 );
+    CGAL_triangulation_assertion( off.z() == 0 || off.z() == 1 );
     int i = ((off.x()&1)<<2) + ((off.y()&1)<<1) + ((off.z()&1));
     return i;
   }
@@ -613,67 +672,18 @@ public:
     return construct_point(pp.first, pp.second);
   }
 
-  // Given a point `p` in space, compute its offset `o` with respect
-  // to the canonical domain and returns (p, o)
+  Periodic_point_3 construct_periodic_point(const Point_3& p,
+                                            bool& had_to_use_exact) const
+  {
+    // The function is a different file to be able to be used where there is
+    // no triangulation (namely, the domains of Periodic_3_mesh_3).
+    return ::CGAL::P3T3::internal::construct_periodic_point(p, had_to_use_exact, geom_traits());
+  }
+
   Periodic_point_3 construct_periodic_point(const Point_3& p) const
   {
-    // Check if p lies within the domain. If not, translate.
-    const Iso_cuboid& dom = domain();
-    if(!(p.x() < dom.xmin()) && p.x() < dom.xmax() &&
-        !(p.y() < dom.ymin()) && p.y() < dom.ymax() &&
-        !(p.z() < dom.zmin()) && p.z() < dom.zmax())
-      return std::make_pair(p, Offset());
-
-    int ox = -1, oy = -1, oz = -1;
-    if(p.x() < dom.xmin())
-      ox = 1;
-    else if(p.x() < dom.xmax())
-      ox = 0;
-
-    if(p.y() < dom.ymin())
-      oy = 1;
-    else if(p.y() < dom.ymax())
-      oy = 0;
-
-    if(p.z() < dom.zmin())
-      oz = 1;
-    else if(p.z() < dom.zmax())
-      oz = 0;
-
-    Offset transl_offx(0, 0, 0);
-    Offset transl_offy(0, 0, 0);
-    Offset transl_offz(0, 0, 0);
-    Point_3 dp(p);
-
-    // Find the right offset such that the translation will yield a
-    // point inside the original domain.
-    while(dp.x() < dom.xmin() || !(dp.x() < dom.xmax()))
-    {
-      transl_offx.x() += ox;
-      dp = construct_point(std::make_pair(p, transl_offx));
-    }
-    while(dp.y() < dom.ymin() || !(dp.y() < dom.ymax()))
-    {
-      transl_offy.y() += oy;
-      dp = construct_point(std::make_pair(p, transl_offy));
-    }
-    while(dp.z() < dom.zmin() || !(dp.z() < dom.zmax()))
-    {
-      transl_offz.z() += oz;
-      dp = construct_point(std::make_pair(p, transl_offz));
-    }
-
-    Offset transl_off(transl_offx.x(), transl_offy.y(), transl_offz.z());
-    Periodic_point_3 pp(std::make_pair(p, transl_off));
-
-    CGAL_triangulation_assertion_code(
-      Point_3 rp = construct_point(pp.first, pp.second);
-    )
-    CGAL_triangulation_assertion(!(rp.x() < dom.xmin()) && rp.x() < dom.xmax());
-    CGAL_triangulation_assertion(!(rp.y() < dom.ymin()) && rp.y() < dom.ymax());
-    CGAL_triangulation_assertion(!(rp.z() < dom.zmin()) && rp.z() < dom.zmax());
-
-    return pp;
+    bool useless = false;
+    return construct_periodic_point(p, useless);
   }
 
   // ---------------------------------------------------------------------------
@@ -689,10 +699,9 @@ public:
     return cp(pp.first, pp.second);
   }
 
-  // The following functions return the "real" position in space (unrestrained
-  // to the original periodic domain) of the vertices v and c->vertex(idx),
+  // The following functions return the "real" position in space (unconstrained
+  // to the fundamental domain) of the vertices v and c->vertex(idx),
   // respectively
-
   template <class ConstructPoint>
   Point point(Vertex_handle v, ConstructPoint cp) const {
     return point(periodic_point(v), cp);
@@ -702,7 +711,7 @@ public:
   Point point(Cell_handle c, int idx, ConstructPoint cp) const
   {
 //    if(is_1_cover())
-      return point(periodic_point(c, idx), cp);
+    return point(periodic_point(c, idx), cp);
 
     Offset vec_off[4];
     for(int i=0; i<4; i++)
@@ -1397,13 +1406,14 @@ private:
 
   void make_hole(Vertex_handle v, std::map<Vertex_triple,Facet>& outer_map,
                  std::vector<Cell_handle>& hole);
-
-  template < class PointRemover, class CoverManager >
-  void periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_manager);
   //@}
 
 protected:
   /** @name Removal */ //@{
+  template < class PointRemover, class CoverManager >
+  bool periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_manager,
+                       const bool abort_if_cover_change = false);
+
   template < class PointRemover, class CT, class CoverManager >
   void remove(Vertex_handle v, PointRemover& remover, CT& ct, CoverManager& cover_manager);
   //@}
@@ -1615,21 +1625,18 @@ public:
   }
 
   template <class OutputIterator>
-  OutputIterator incident_edges(
-      Vertex_handle v, OutputIterator edges) const {
+  OutputIterator incident_edges(Vertex_handle v, OutputIterator edges) const {
     return _tds.incident_edges(v, edges);
   }
 
   template <class OutputIterator>
-  OutputIterator adjacent_vertices(
-      Vertex_handle v, OutputIterator vertices) const {
+  OutputIterator adjacent_vertices(Vertex_handle v, OutputIterator vertices) const {
     return _tds.adjacent_vertices(v, vertices);
   }
 
   //deprecated, don't use anymore
   template <class OutputIterator>
-  OutputIterator incident_vertices(
-      Vertex_handle v, OutputIterator vertices) const {
+  OutputIterator incident_vertices(Vertex_handle v, OutputIterator vertices) const {
     return _tds.adjacent_vertices(v, vertices);
   }
 
@@ -1732,7 +1739,7 @@ public:
 
   Offset combine_offsets(const Offset& o_c, const Offset& o_t) const
   {
-    Offset o_ct(_cover[0]*o_t.x(),_cover[1]*o_t.y(),_cover[2]*o_t.z());
+    Offset o_ct(_cover[0]*o_t.x(), _cover[1]*o_t.y(), _cover[2]*o_t.z());
     return o_c + o_ct;
   }
 
@@ -1841,7 +1848,8 @@ protected:
     Offset o1 = -p1.second;
     Offset o2 = combine_offsets(-p2.second,-off);
     Offset cumm_off((std::min)(o1.x(),o2.x()),
-                    (std::min)(o1.y(),o2.y()),(std::min)(o1.z(),o2.z()));
+                    (std::min)(o1.y(),o2.y()),
+                    (std::min)(o1.z(),o2.z()));
     const Periodic_point_3 pp1 = std::make_pair(construct_point(p1), o1-cumm_off);
     const Periodic_point_3 pp2 = std::make_pair(construct_point(p2), o2-cumm_off);
     ps = CGAL::make_array(pp1, pp2);
@@ -1867,6 +1875,7 @@ protected:
       *points++ = dual;
       ++ccit;
     } while(ccit != cstart);
+
     return points;
   }
 
@@ -1884,6 +1893,7 @@ protected:
       Point_3 dual = construct_point(std::make_pair(dual_orig, -off));
       *points++ = dual;
     }
+
     return points;
   }
 
@@ -1904,6 +1914,7 @@ protected:
       os << so.target() << '\n';
     }
     CGAL_triangulation_assertion( i == number_of_facets() );
+
     return os;
   }
 
@@ -2260,10 +2271,11 @@ try_next_cell:
              ( o[2] != COPLANAR ) ? 2 : 3;
     break;
   default:
-    // Vertex can not lie on four facets
+    // the point cannot lie on four facets
     CGAL_triangulation_assertion(false);
   }
   lo = off_query;
+
   return c;
 }
 
@@ -2392,19 +2404,12 @@ try_next_cell:
 
 /**
  * returns
- * ON_BOUNDED_SIDE if p inside the cell
- * (for an infinite cell this means that p lies strictly in the half space
- * limited by its finite facet)
- * ON_BOUNDARY if p on the boundary of the cell
- * (for an infinite cell this means that p lies on the *finite* facet)
- * ON_UNBOUNDED_SIDE if p lies outside the cell
- * (for an infinite cell this means that p is not in the preceding
- * two cases)
+ * ON_BOUNDED_SIDE if (q, off) inside the cell
+ * ON_BOUNDARY if (q, off) on the boundary of the cell
+ * ON_UNBOUNDED_SIDE if (q, off) lies outside the cell
  *
  * lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
  */
-// TODO: currently off is not used. It could probably be optimized
-// using off.
 template < class GT, class TDS >
 inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
     const Point& q, const Offset& off, Cell_handle c,
@@ -2548,13 +2553,14 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
 
   tester.set_offset(o);
 
-  // Choose the periodic copy of tester.point() that is inside c.
+  // Choose the periodic copy of tester.point() that is in conflict with c.
   bool found = false;
   Offset current_off = get_location_offset(tester, c, found);
 
   CGAL_triangulation_assertion(side_of_cell(tester.point(),
       combine_offsets(o,current_off),c,lt_assert,i_assert,j_assert)
       != ON_UNBOUNDED_SIDE);
+
   // If the new point is not in conflict with its cell, it is hidden.
   if(!found || !tester.test_initial_cell(c, current_off)) {
     hider.hide_point(c,p);
@@ -2580,7 +2586,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   if(!is_1_cover())
     cover_manager.delete_unsatisfying_elements(cells.begin(), cells.end());
 
-  // Insertion. Attention: facets[0].first MUST be in conflict!
+  // Insertion. Warning: facets[0].first MUST be in conflict!
   // Compute the star and put it into the data structure.
   // Store the new cells from the star in nbs.
   v = _tds._insert_in_hole(cells.begin(), cells.end(), facet.first, facet.second);
@@ -2634,9 +2640,9 @@ template < class GT, class TDS >
 inline typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle
 Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
 {
-  /// Virtual vertices, one per periodic domain
+  /// Virtual vertices, one per periodic instance
   Vertex_handle vir_vertices[3][3][3];
-  /// Virtual cells, 6 per periodic domain
+  /// Virtual cells, 6 per periodic instance
   Cell_handle cells[3][3][3][6];
 
   // Initialise vertices:
@@ -2890,7 +2896,7 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point& p,
     else
       vstart = vvmit->second.first;
     CGAL_triangulation_assertion(virtual_vertices.find(vstart)
-                                 ==virtual_vertices.end());
+                                 == virtual_vertices.end());
     CGAL_triangulation_assertion(virtual_vertices_reverse.find(vstart)
                                  != virtual_vertices_reverse.end());
   }
@@ -3054,21 +3060,24 @@ is_valid_conflict(ConflictTester& tester, bool verbose, int level) const
   for( it = cells_begin(); it != cells_end(); ++it ) {
     is_valid(it, verbose, level);
     for(int i=0; i<4; i++ ) {
-      Offset o_nb = neighbor_offset(it,i,it->neighbor(i));
-      Offset o_vt = get_offset(it->neighbor(i),
-                               it->neighbor(i)->index(it));
+      Offset o_nb = neighbor_offset(it, i, it->neighbor(i));
+      Offset o_vt = get_offset(it->neighbor(i), it->neighbor(i)->index(it));
       if(tester(it,
-                 it->neighbor(i)->vertex(it->neighbor(i)->index(it))->point(),
-                 o_vt-o_nb)) {
+                it->neighbor(i)->vertex(it->neighbor(i)->index(it))->point(),
+                o_vt - o_nb)) {
         if(verbose) {
-          std::cerr << "non-empty sphere: "
-                    << it->vertex(0)->point()<<'\t'
-                    << it->vertex(1)->point()<<'\t'
-                    << it->vertex(2)->point()<<'\t'
-                    << it->vertex(3)->point()<<'\n'
+          std::cerr << "non-empty sphere:\n"
+                    << "Point[0]: " << it->vertex(0)->point()
+                    << " Off: " << int_to_off(it->offset(0)) << "\n"
+                    << "Point[1]: " << it->vertex(1)->point()
+                    << " Off: " << int_to_off(it->offset(1)) << "\n"
+                    << "Point[2]: " << it->vertex(2)->point()
+                    << " Off: " << int_to_off(it->offset(2)) << "\n"
+                    << "Point[3]: " << it->vertex(3)->point()
+                    << " Off: " << int_to_off(it->offset(3)) << "\n"
+                    << "Foreign point: "
                     << it->neighbor(i)->vertex(it->neighbor(i)->index(it))->point()
-                    << '\t'<<o_vt-o_nb
-                    << std::endl;
+                    << "\t Off: " << o_vt - o_nb << std::endl;
         }
         return false;
       }
@@ -3082,8 +3091,6 @@ inline void Periodic_3_triangulation_3<GT,TDS>::make_hole(Vertex_handle v,
                                       std::map<Vertex_triple,Facet>& outer_map,
                                       std::vector<Cell_handle>& hole)
 {
-  //CGAL_triangulation_precondition( all_vertices_begin()++ != all_vertices_end() );
-
   incident_cells(v, std::back_inserter(hole));
 
   for(typename std::vector<Cell_handle>::iterator cit = hole.begin();
@@ -3106,13 +3113,15 @@ inline void Periodic_3_triangulation_3<GT,TDS>::make_hole(Vertex_handle v,
  */
 template < class GT, class TDS >
 template < class PointRemover, class Conflict_tester, class CoverManager>
-inline void Periodic_3_triangulation_3<GT,TDS>::remove(
-    Vertex_handle v, PointRemover& r,
-    Conflict_tester& t, CoverManager& cover_manager)
+inline void
+Periodic_3_triangulation_3<GT,TDS>::
+remove(Vertex_handle v, PointRemover& r, Conflict_tester& t, CoverManager& cover_manager)
 {
   CGAL_expensive_precondition(is_vertex(v));
-  std::vector<Vertex_handle> vhrem;
-  if(!is_1_cover()) {
+
+  if(!is_1_cover())
+  {
+    std::vector<Vertex_handle> vhrem;
     if(number_of_vertices() == 1) {
       clear();
       return;
@@ -3130,10 +3139,12 @@ inline void Periodic_3_triangulation_3<GT,TDS>::remove(
       CGAL_triangulation_expensive_assertion(is_valid());
     }
     periodic_remove(v,r, cover_manager);
-  } else {
-    periodic_remove(v,r, cover_manager);
+  }
+  else
+  {
+    periodic_remove(v, r, cover_manager);
     if(!is_1_cover())
-      remove(v,r, t, cover_manager);
+      remove(v, r, t, cover_manager);
   }
 }
 
@@ -3153,8 +3164,10 @@ inline void Periodic_3_triangulation_3<GT,TDS>::remove(
  */
 template < class GT, class TDS >
 template < class PointRemover, class CoverManager >
-inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(
-    Vertex_handle v, PointRemover& remover, CoverManager& cover_manager)
+inline bool
+Periodic_3_triangulation_3<GT,TDS>::
+periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_manager,
+                const bool abort_if_cover_change)
 {
   // Construct the set of vertex triples on the boundary
   // with the facet just behind
@@ -3201,14 +3214,13 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(
       if((*cit)->vertex(j) != v) {
         tmp_vertices.insert((*cit)->vertex(j));
         vh_off_map[(*cit)->vertex(j)] = int_to_off((*cit)->offset(j))
-            - int_to_off((*cit)->offset((*cit)->index(v)));
+                                        - int_to_off((*cit)->offset((*cit)->index(v)));
       }
     }
   }
 
   // Now output the vertices.
-  std::copy(tmp_vertices.begin(), tmp_vertices.end(),
-      std::back_inserter(vertices));
+  std::copy(tmp_vertices.begin(), tmp_vertices.end(), std::back_inserter(vertices));
 
   // create a Delaunay/regular triangulation of the points on the boundary
   // in Euclidean space and make a map from the vertices in remover.tmp
@@ -3287,8 +3299,12 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(
                         vh_off_map[vmap[i_ch->vertex(3)]]);
 
     // Update the edge length management
-    if(cover_manager.update_cover_data_during_management(new_ch, new_cells))
-        return;
+    if(cover_manager.update_cover_data_during_management(new_ch, new_cells,
+                                                         abort_if_cover_change))
+    {
+      CGAL_triangulation_expensive_postcondition(_tds.is_valid());
+      return false; // removing would cause / has caused a cover change
+    }
 
     // The neighboring relation needs to be stored temporarily in
     // nr_vec. It cannot be applied directly because then we could not
@@ -3337,6 +3353,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(
   _tds.delete_vertex(v);
   _tds.delete_cells(hole.begin(), hole.end());
   CGAL_triangulation_expensive_assertion(is_valid());
+  return true; // sucessfully removed the vertex
 }
 
 // ############################################################################
@@ -3367,8 +3384,8 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering()
 
     bool to_delete, has_simplifiable_offset;
     Virtual_vertex_map_it vvmit;
-    // First iteration over all cells: Mark the cells that are to delete.
-    // Cells are to delete if they cannot be translated anymore in the
+    // First iteration over all cells: Mark the cells that are to be deleted.
+    // Cells will be deleted if they cannot be translated anymore in the
     // direction of one of the axes without yielding negative offsets.
     for( Cell_iterator it = all_cells_begin();
     it != all_cells_end(); ++it ) {
@@ -3387,8 +3404,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering()
             // if it->vertex(i) lies outside the original domain:
           } else {
             // The cell can certainly be deleted if the offset contains a 2
-            to_delete = to_delete
-                || (vvmit->second.second[j] == 2);
+            to_delete = to_delete || (vvmit->second.second[j] == 2);
             // The cell can be moved into one direction only if the offset of
             // all for vertices is >=1 for this direction. Since we already
             // tested for 2 it is sufficient to test here for 1.
@@ -3604,13 +3620,10 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering()
 
   // Create 27 copies of each cell from the respective copies of the
   // vertices and write virtual_cells and virtual_cells_reverse.
-  typedef std::map<Cell_handle, std::pair<Cell_handle, Offset> >
-      Virtual_cell_map;
   typedef std::map<Cell_handle, std::vector<Cell_handle > >
       Virtual_cell_reverse_map;
   typedef typename Virtual_cell_reverse_map::const_iterator VCRMIT;
 
-  Virtual_cell_map virtual_cells;
   Virtual_cell_reverse_map virtual_cells_reverse;
 
   std::list<Cell_handle> original_cells;
@@ -3643,7 +3656,6 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering()
   for(typename std::list<Cell_handle>::iterator cit = original_cells.begin();
       cit != original_cells.end(); ++cit) {
     Cell_handle c_cp;
-    Vertex_handle v0,v1,v2,v3;
     std::vector<Cell_handle> copies;
     Virtual_vertex_reverse_map_it vvrmit[4];
     Offset vvoff[4];
@@ -3880,13 +3892,10 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
 {
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
 
-//  CGAL_triangulation_precondition_code(Locate_type lt; int i; int j;);
-//  CGAL_triangulation_precondition(side_of_cell(q,o,c,lt,i,j)
-//      != ON_UNBOUNDED_SIDE);
-
   int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
   if(cumm_off == 0) {
     // default case:
+    CGAL_triangulation_assertion(tester(c, Offset()));
     return Offset();
   } else {
     // Main idea seems to just test all possibilities.
@@ -3910,14 +3919,10 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
 {
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
 
-//  CGAL_triangulation_precondition_code(Locate_type lt; int i; int j;);
-//  CGAL_triangulation_precondition(side_of_cell(q,o,c,lt,i,j)
-//      != ON_UNBOUNDED_SIDE);
-
   found = false;
 
   int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
-  if(cumm_off == 0) {
+  if(cumm_off == 0 && tester(c, Offset())) {
     // default case:
     found = true;
     return Offset();
@@ -3925,9 +3930,9 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
     // Main idea seems to just test all possibilities.
     for(int i=0; i<8; i++) {
       if(((cumm_off | (~i))&7) == 7) {
-      if(tester(c,int_to_off(i))) {
-        found = true;
-        return int_to_off(i);
+        if(tester(c,int_to_off(i))) {
+          found = true;
+          return int_to_off(i);
         }
       }
     }
@@ -3976,7 +3981,9 @@ inline void Periodic_3_triangulation_3<GT, TDS>::get_vertex(
   off = combine_offsets(Offset(),int_to_off(ch->offset(i)));
   vh = ch->vertex(i);
 
-  if(is_1_cover()) return;
+  if(is_1_cover())
+    return;
+
   Vertex_handle vh_i = vh;
   get_vertex(vh_i, vh, off);
   return;
@@ -3989,7 +3996,7 @@ inline void Periodic_3_triangulation_3<GT, TDS>::get_vertex(
   Virtual_vertex_map_it it = virtual_vertices.find(vh_i);
 
   if(it == virtual_vertices.end()) {
-    // if ch->vertex(i) is not contained in virtual_vertices, then it is in
+    // if 'vh_i' is not contained in virtual_vertices, then it is in
     // the original domain.
     vh = vh_i;
     CGAL_triangulation_assertion(vh != Vertex_handle());
@@ -4087,7 +4094,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS>& tr)
 
   std::vector< Cell_handle > C;
   std::size_t m;
-  tr._tds.read_cells(is, V, m, C);
+  tr.tds().read_cells(is, V, m, C);
 
   // read offsets
   int off[4] = {0,0,0,0};
@@ -4196,7 +4203,9 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
       }
     }
   }
-  CGAL_triangulation_postcondition(i==tr._cover[0]*tr._cover[1]*tr._cover[2]*n);
+  CGAL_triangulation_postcondition(i == tr.number_of_sheets()[0] *
+                                        tr.number_of_sheets()[1] *
+                                        tr.number_of_sheets()[2] * n);
 
   // asks the tds for the combinatorial information
   tr.tds().print_cells(os, V);

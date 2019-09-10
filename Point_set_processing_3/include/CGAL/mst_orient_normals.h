@@ -501,11 +501,12 @@ create_mst_graph(
 /**  
    \ingroup PkgPointSetProcessingAlgorithms
    Orients the normals of the range of `points` using the propagation
-   of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
-
+   of a seed orientation through a minimum spanning tree of the Riemannian graph.
    This method modifies the order of input points so as to pack all sucessfully oriented points first,
    and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
    For this reason it should not be called on sorted containers.
+   It is based on \cgalCite{cgal:hddms-srup-92}.
+
    \warning This function may fail when Boost version 1.54 is used,
    because of the following bug: https://svn.boost.org/trac/boost/ticket/9012
 

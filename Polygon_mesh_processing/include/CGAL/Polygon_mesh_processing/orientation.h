@@ -73,6 +73,8 @@ namespace internal{
     using boost::choose_param;
     using boost::get_param;
 
+    CGAL_assertion(halfedge(v_max, pmesh)!=boost::graph_traits<PolygonMesh>::null_halfedge());
+
     //VertexPointMap
     typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
     VPMap vpmap = choose_param(get_param(np, vertex_point),
@@ -174,7 +176,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
                          const NamedParameters& np)
 {
   CGAL_warning(CGAL::is_closed(pmesh));
-  CGAL_precondition(CGAL::is_valid(pmesh));
+  CGAL_precondition(CGAL::is_valid_polygon_mesh(pmesh));
 
   //check for empty pmesh
   CGAL_warning(faces(pmesh).first != faces(pmesh).second);
@@ -193,13 +195,22 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
 
   //find the vertex with maximal z coordinate
-  typename boost::graph_traits<PolygonMesh>::vertex_iterator vbegin, vend;
-  cpp11::tie(vbegin, vend) = vertices(pmesh);
-
   internal::Compare_vertex_points_z_3<GT, VPMap> less_z(vpmap, gt);
-  typename boost::graph_traits<PolygonMesh>::vertex_iterator v_max_it
-    = std::max_element(vbegin, vend, less_z);
-  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max = *v_max_it;
+  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max = *(vertices(pmesh).first);
+  for (typename boost::graph_traits<PolygonMesh>::vertex_iterator
+          vit=cpp11::next(vertices(pmesh).first), vit_end = vertices(pmesh).second;
+          vit!=vit_end; ++vit)
+  {
+    // skip isolated vertices
+    if (halfedge(*vit, pmesh)==boost::graph_traits<PolygonMesh>::null_halfedge())
+      continue;
+    if( less_z(v_max, *vit) )
+      v_max=*vit;
+  }
+
+  // only isolated vertices
+  if (halfedge(v_max, pmesh)==boost::graph_traits<PolygonMesh>::null_halfedge())
+    return true;
 
   return internal::is_outward_oriented(v_max, pmesh, np);
 }
@@ -445,7 +456,7 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
 *   \cgalParamBegin{vertex_point_map}
 *     the property map with the points associated to the vertices of `tm`.
 *     If this parameter is omitted, an internal property map for
-*     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+*     `CGAL::vertex_point_t` must be available in `TriangleMesh`
 *   \cgalParamEnd
 *   \cgalParamBegin{face_index_map}
 *     a property map containing the index of each face of `tm`.
@@ -469,7 +480,7 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
       NamedParameters>::const_type Fid_map;
 
   CGAL_assertion(is_triangle_mesh(tm));
-  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_valid_polygon_mesh(tm));
   CGAL_assertion(is_closed(tm));
 
   using boost::choose_param;
@@ -550,7 +561,7 @@ void orient(TriangleMesh& tm)
  *   \cgalParamBegin{vertex_point_map}
  *     the property map with the points associated to the vertices of `tm`.
  *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+ *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
  *   \cgalParamEnd
  *   \cgalParamBegin{face_index_map}
  *     a property map containing the index of each face of `tm`.

@@ -134,7 +134,7 @@ void Camera_positions_list::load(QString filename) {
     QString text = input.readLine(1000);
     QString coord = input.readLine(1000);
     if(text.isNull() || coord.isNull()) return;
-    qglviewer::Frame frame;
+    CGAL::qglviewer::Frame frame;
     if(m_viewer->readFrame(coord, frame))
     {
       addItem(text,
@@ -145,15 +145,11 @@ void Camera_positions_list::load(QString filename) {
 
 void Camera_positions_list::on_frontButton_pressed()
 {
-    qglviewer::Vec posFront = qglviewer::Vec(0,0,m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)));
-#if QGLVIEWER_VERSION >= 0x020502
-    qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
+    CGAL::qglviewer::Vec posFront = CGAL::qglviewer::Vec(0,0,m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)));
+    CGAL::qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
     posFront = posFront + trans;
-    qglviewer::Quaternion dirFront;
-    dirFront.setAxisAngle(qglviewer::Vec(0,1,0),0);
+    CGAL::qglviewer::Quaternion dirFront;
+    dirFront.setAxisAngle(CGAL::qglviewer::Vec(0,1,0),0);
     QString frontCoord = QString("%1 %2 %3 %4 %5 %6 %7")
             .arg(posFront[0])
             .arg(posFront[1])
@@ -168,15 +164,11 @@ void Camera_positions_list::on_frontButton_pressed()
 
 void Camera_positions_list::on_backButton_pressed()
 {
-    qglviewer::Vec posBack = qglviewer::Vec(0,0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)));
-#if QGLVIEWER_VERSION >= 0x020502
-    qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
+    CGAL::qglviewer::Vec posBack = CGAL::qglviewer::Vec(0,0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)));
+    CGAL::qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
     posBack+= trans;
-    qglviewer::Quaternion dirBack;
-    dirBack.setAxisAngle(qglviewer::Vec(0,1,0),CGAL_PI);
+    CGAL::qglviewer::Quaternion dirBack;
+    dirBack.setAxisAngle(CGAL::qglviewer::Vec(0,1,0),CGAL_PI);
     QString backCoord = QString("%1 %2 %3 %4 %5 %6 %7")
             .arg(posBack[0])
             .arg(posBack[1])
@@ -190,15 +182,11 @@ void Camera_positions_list::on_backButton_pressed()
 
 void Camera_positions_list::on_topButton_pressed()
 {
-    qglviewer::Vec posTop = qglviewer::Vec(0,m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);
-#if QGLVIEWER_VERSION >= 0x020502
-    qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
+    CGAL::qglviewer::Vec posTop = CGAL::qglviewer::Vec(0,m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);
+    CGAL::qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
     posTop += trans;
-    qglviewer::Quaternion dirTop;
-    dirTop.setAxisAngle(qglviewer::Vec(1,0,0), -CGAL_PI/2);
+    CGAL::qglviewer::Quaternion dirTop;
+    dirTop.setAxisAngle(CGAL::qglviewer::Vec(1,0,0), -CGAL_PI/2);
     QString topCoord = QString("%1 %2 %3 %4 %5 %6 %7")
             .arg(posTop[0])
             .arg(posTop[1])
@@ -212,15 +200,11 @@ void Camera_positions_list::on_topButton_pressed()
 
 void Camera_positions_list::on_botButton_pressed()
 {
-    qglviewer::Vec posBot = qglviewer::Vec(0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);;
-#if QGLVIEWER_VERSION >= 0x020502
-    qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
+    CGAL::qglviewer::Vec posBot = CGAL::qglviewer::Vec(0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);;
+    CGAL::qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
     posBot += trans;
-    qglviewer::Quaternion dirBot;
-    dirBot.setAxisAngle(qglviewer::Vec(1,0,0),CGAL_PI/2);
+    CGAL::qglviewer::Quaternion dirBot;
+    dirBot.setAxisAngle(CGAL::qglviewer::Vec(1,0,0),CGAL_PI/2);
     QString botCoord = QString("%1 %2 %3 %4 %5 %6 %7")
             .arg(posBot[0])
             .arg(posBot[1])
@@ -234,15 +218,11 @@ void Camera_positions_list::on_botButton_pressed()
 
 void Camera_positions_list::on_leftButton_pressed()
 {
-    qglviewer::Vec posLeft = qglviewer::Vec(-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0, 0);;
-#if QGLVIEWER_VERSION >= 0x020502
-    qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
+    CGAL::qglviewer::Vec posLeft = CGAL::qglviewer::Vec(-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0, 0);;
+    CGAL::qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
     posLeft += trans;
-    qglviewer::Quaternion dirLeft;
-    dirLeft.setAxisAngle(qglviewer::Vec(0,1,0),-CGAL_PI/2);
+    CGAL::qglviewer::Quaternion dirLeft;
+    dirLeft.setAxisAngle(CGAL::qglviewer::Vec(0,1,0),-CGAL_PI/2);
     QString leftCoord = QString("%1 %2 %3 %4 %5 %6 %7")
             .arg(posLeft[0])
             .arg(posLeft[1])
@@ -256,15 +236,11 @@ void Camera_positions_list::on_leftButton_pressed()
 
 void Camera_positions_list::on_rightButton_pressed()
 {
-    qglviewer::Vec posRight = qglviewer::Vec(m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0,0);
-#if QGLVIEWER_VERSION >= 0x020502
-    qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
+    CGAL::qglviewer::Vec posRight = CGAL::qglviewer::Vec(m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0,0);
+    CGAL::qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
     posRight += trans;
-    qglviewer::Quaternion dirRight;
-    dirRight.setAxisAngle(qglviewer::Vec(0,1,0),CGAL_PI/2);
+    CGAL::qglviewer::Quaternion dirRight;
+    dirRight.setAxisAngle(CGAL::qglviewer::Vec(0,1,0),CGAL_PI/2);
     QString rightCoord = QString("%1 %2 %3 %4 %5 %6 %7")
             .arg(posRight[0])
             .arg(posRight[1])

@@ -40,8 +40,10 @@ namespace Three {
   class Viewer_interface;
 }
 }
+namespace CGAL{
 namespace qglviewer {
   class ManipulatedFrame;
+}
 }
 
 class QMenu;
@@ -85,10 +87,11 @@ public:
   PROGRAM_SPHERES,             /** Used to render one or several spheres.*/
   PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
   PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
+  PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
   NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
  };
   typedef CGAL::Bbox_3 Bbox;
-  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
   //! \brief The default color of a scene_item.
   //!
   //! This color is the one that will be displayed if none is specified after its creation.
@@ -233,6 +236,15 @@ public:
   //! the Operations menu, actions to save or clone the item if it is supported
   //! and any contextual action for the item.
   virtual QMenu* contextMenu();
+  //!
+  //! \brief setId informs the item of its current index in the scene entries.
+  //!
+  void setId(int id);
+
+  //!
+  //! \brief getId returns the current index of this item in the scene entries.
+  //!
+  int getId()const;
 
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
@@ -352,7 +364,15 @@ public Q_SLOTS:
   //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause a simily
   //!memory leak, for example when multiple items are created at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
-
+  //!Returns the alpha value for the item.
+    //! Must be called within a valid openGl context.
+    virtual float alpha() const;
+  
+    //! Sets the value of the aplha Slider for this item.
+    //!
+    //! Must be overriden;
+    //! \param alpha must be between 0 and 255
+    virtual void setAlpha(int alpha);
   //!Selects a point through raycasting.
   virtual void select(double orig_x,
                       double orig_y,
@@ -430,6 +450,7 @@ protected:
   /*! Contains the VAOs.
    */
   std::vector<QOpenGLVertexArrayObject*> vaos;
+  int cur_id;
   //!Adds a VAO to the Map.
   void addVaos(int i)
   {
@@ -437,15 +458,10 @@ protected:
       vaos[i] = n_vao;
   }
 
-  /*! Fills the VBOs with data. Must be called after each call to #computeElements().
-   * @see compute_elements()
+  /*! Fills the VBOs with data.
    */
   void initializeBuffers(){}
 
-  /*! Collects all the data for the shaders. Must be called in #invalidateOpenGLBuffers().
-   * @see invalidateOpenGLBuffers().
-   */
-  void computeElements(){}
   /*! Passes all the uniform data to the shaders.
    * According to program_name, this data may change.
    */

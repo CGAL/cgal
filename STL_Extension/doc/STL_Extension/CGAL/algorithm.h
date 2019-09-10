@@ -148,7 +148,7 @@ is used.
 
 
 
-\sa <a href="http://www.boost.org/doc/libs/1_46_1/libs/utility/utility.htm#functions_next_prior">boost::next</a>
+\sa <a href="https://www.boost.org/doc/libs/1_46_1/libs/utility/utility.htm#functions_next_prior">boost::next</a>
 \sa `CGAL::cpp11::prev()`
 
 */
@@ -190,5 +190,36 @@ template< class InputIterator, class Size, class OutputIterator>
 OutputIterator copy_n(InputIterator first, Size count, OutputIterator result);
 
 } /* namespace cpp11 */
+
+namespace cpp98 {
+
+/*!
+\ingroup STLAlgos
+
+Replacement for <a href="http://en.cppreference.com/w/cpp/algorithm/random_shuffle">`std::random_shuffle()`</a> 
+which was deprecated in C++14, and removed by C++17.
+In the \stl it was replaced by `std::shuffle()`. 
+
+\note The implementation in \cgal produces the same order on all platforms.
+*/  
+template <class RandomAccessIterator,
+          class RandomGenerator>
+void
+random_shuffle(RandomAccessIterator begin, RandomAccessIterator end,
+               RandomGenerator& random);
+/*!
+\ingroup STLAlgos
+
+Replacement for <a href="http://en.cppreference.com/w/cpp/algorithm/random_shuffle">`std::random_shuffle()`</a>
+which was deprecated in C++14, and removed by C++17.
+In the \stl it was replaced by `std::shuffle()`. 
+
+\note The implementation in \cgal produces the same order on all platforms.
+*/    
+template <class RandomAccessIterator>
+void
+random_shuffle(RandomAccessIterator begin, RandomAccessIterator end);
+} // namespace cpp98
+  
 } /* namespace CGAL */
 

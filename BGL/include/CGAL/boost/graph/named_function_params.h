@@ -88,7 +88,7 @@ enum all_default_t { all_default }; //cannot use macro because it takes no argum
 using boost::vertex_index_t;
 using boost::vertex_index;
 using boost::graph_visitor_t;
-using boost::visitor;
+using boost::graph_visitor;
 
 // define enum types and values for new named parameters
 #define CGAL_add_named_parameter(X, Y, Z)            \

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+[ -n "$CGAL_DEBUG_TRAVIS" ] && set -x
 DONE=0
 while [ $DONE = 0 ]
 do
@@ -21,4 +21,5 @@ libboost-system1.55-dev libboost-program-options1.55-dev libboost-thread1.55-dev
 qt55base qt55script qt55svg qt55tools qt55graphicaleffects libopencv-dev mesa-common-dev libmetis-dev libglu1-mesa-dev \
 || DONE=0 && sudo apt-get update
 done
+exit 0
 

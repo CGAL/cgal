@@ -70,10 +70,13 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 ## Traits Classes ##
 
 - `CGAL::Convex_hull_traits_3<R>`
+- `CGAL::Extreme_points_traits_adapter_3`
 
 ## Convex Hull Functions ##
 
 - `CGAL::convex_hull_3`
+- `CGAL::extreme_points_3`
+- `CGAL::make_extreme_points_traits_adapter`
 
 ## Convexity Checking Function ##
 

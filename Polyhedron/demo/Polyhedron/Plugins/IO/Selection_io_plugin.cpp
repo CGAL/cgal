@@ -1,5 +1,6 @@
 #include "Scene_polyhedron_selection_item.h"
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 using namespace CGAL::Three;
 class Polyhedron_demo_selection_io_plugin :
@@ -19,7 +20,13 @@ public:
 #endif
 
 
-    bool canLoad() const { return true; }
+    bool canLoad() const {
+    Scene_facegraph_item* sel_item = qobject_cast<Scene_facegraph_item*>(CGAL::Three::Three::scene()->item(
+          CGAL::Three::Three::scene()->mainSelectionIndex()));
+    if(sel_item)
+      return true;
+    return false;
+    }
     CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
         if(fileinfo.suffix().toLower() != "txt") return 0;
         // There will be no actual loading at this step.

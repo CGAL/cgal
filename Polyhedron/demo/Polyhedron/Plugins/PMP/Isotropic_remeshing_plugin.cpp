@@ -9,14 +9,10 @@
 
 #ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 #else
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
-#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #endif
-
-#include <CGAL/Mesh_3/properties.h>
 
 #include "Scene_polyhedron_selection_item.h"
 
@@ -404,6 +400,7 @@ public Q_SLOTS:
                  *selection_item->polyhedron(),
                  selection_item->constrained_edges_pmap(),
                  get(CGAL::vertex_point, *selection_item->polyhedron()),
+                 CGAL::Static_property_map<face_descriptor, std::size_t>(1),
                  4. / 3. * target_length))
             {
               QApplication::restoreOverrideCursor();

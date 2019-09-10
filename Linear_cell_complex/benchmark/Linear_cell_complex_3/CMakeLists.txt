@@ -37,11 +37,11 @@ add_definitions(-DINCLUDE_TEMPLATES)
 # Performance_3
 add_executable(performance_3 performance_3.cpp)
 add_dependencies(performance_3 OpenVolumeMesh)
-target_link_libraries(performance_3 OpenVolumeMesh boost_timer boost_system ${CGAL_LIBRARIES}  algo assimp container nl topology utils Zinri z xml2 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${MAP_VIEWER_LIBRARIES})
+target_link_libraries(performance_3 OpenVolumeMesh boost_timer boost_system ${CGAL_LIBRARIES}  algo assimp container nl topology utils Zinri z xml2 ${QT_LIBRARIES} ${MAP_VIEWER_LIBRARIES})
 
 # CGoGN
 add_executable(cgogn_performance_3 performance_3.h cgogn_performance_3.h cgogn_performance_3.cpp)
-target_link_libraries(cgogn_performance_3  algo assimp container nl topology utils Zinri z xml2 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
+target_link_libraries(cgogn_performance_3  algo assimp container nl topology utils Zinri z xml2 ${QT_LIBRARIES} )
 
 # LCC_3
 add_executable(lcc_performance_3 performance_3.h lcc_performance_3.h lcc_performance_3.cpp)

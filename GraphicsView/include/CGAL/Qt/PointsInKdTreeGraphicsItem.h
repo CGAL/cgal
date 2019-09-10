@@ -54,7 +54,8 @@ class PointsInKdTreeGraphicsItem : public GraphicsItem
   // Instead of first collecting points into a container, and then draw them
   // we use an output iterator that draws them on the fly
   template <typename K>
-  class Draw : public CGAL::iterator<std::output_iterator_tag, void, void, void, void> {
+  class Draw
+    : public CGAL::cpp98::iterator<std::output_iterator_tag, void, void, void, void> {
     QPainter* painter;
     QMatrix* matrix;
     Converter<K> convert;

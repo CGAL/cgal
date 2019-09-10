@@ -206,6 +206,14 @@ dl.requires dt a, dl.todo dt a, dl.bug dt a, dl.test dt a
     color: black;
 }
 
+div.toc {
+    width: auto;
+}
+
+.ui-resizable-e {
+    background-repeat: repeat-y;
+}
+
 div.cgal_figure_caption {
 	text-align: center;
 }

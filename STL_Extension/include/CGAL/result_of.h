@@ -27,9 +27,21 @@
 #ifndef CGAL_RESULT_OF_H
 #define CGAL_RESULT_OF_H
 
+#include <CGAL/config.h>
 #include <CGAL/disable_warnings.h>
 
+// Address the warning C4003: not enough actual parameters for macro 'BOOST_PP_SEQ_DETAIL_IS_NOT_EMPTY'
+// result_of.hpp includes files from boost/preprocessor
+// This concerns boost 1_65_1
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable: 4003)
+#endif
 #include <boost/utility/result_of.hpp>
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #include <boost/version.hpp>
 
 namespace CGAL{

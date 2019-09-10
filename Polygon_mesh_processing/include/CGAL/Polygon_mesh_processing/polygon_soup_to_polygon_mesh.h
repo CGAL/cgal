@@ -150,6 +150,9 @@ public:
     typedef typename boost::range_value<
       PolygonRange>::type           Polygon;
 
+    if(boost::begin(polygons) == boost::end(polygons)){
+      return true;
+    }
     //check there is no duplicated ordered edge, and
     //check there is no polygon with twice the same vertex
     std::set< std::pair<V_ID, V_ID> > edge_set;

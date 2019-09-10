@@ -1,4 +1,10 @@
 #!/bin/sh
+
+# Remove test results older than 5 days.
+# The pattern "../test/" after "$CGAL_ROOT" tries to protect against a
+# catastrophic `rm -rf` is "$CGAL_ROOT" happens to be empty.
+find "$CGAL_ROOT/../test" -maxdepth 1 -type d -name 'CGAL*' ! -ctime -5 -exec rm -rf '{}' \;
+
 CGAL_ROOT="/cygdrive/c/cgal/test"
 BUILD_HOSTS="localhost"
 REFERENCE_PLATFORMS_DIR="c:/cgal/reference_platforms"
@@ -22,4 +28,3 @@ PROCESSORS_localhost="7"
 
 UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
 WGET_OPTS="--no-verbose"
-

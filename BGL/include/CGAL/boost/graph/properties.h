@@ -241,6 +241,64 @@ void init_halfedge_indices(PolygonMesh& pm, HalfedgeIndexMap hid)
 
 } //namespace helpers
 
+namespace internal {
+  
+  template<typename Polyhedron, typename Handle>
+struct Index_accessor
+    : boost::put_get_helper< std::size_t&, Index_accessor<Polyhedron,Handle> >
+{
+  typedef boost::lvalue_property_map_tag category;
+  typedef std::size_t&                   reference;
+  typedef std::size_t                    value_type;
+  typedef Handle                         key_type;
+
+  reference operator[](Handle h) const { return h->id(); }
+};
+
+template<typename Handle>
+struct Edge_index_accessor
+  : boost::put_get_helper< std::size_t, Edge_index_accessor<Handle> >
+{
+  typedef boost::readable_property_map_tag category;
+  typedef std::size_t                      reference;
+  typedef std::size_t                      value_type;
+  typedef Handle                           key_type;
+
+  reference operator[](Handle h) const { return h.id(); }
+};
+
+template<typename Handle, typename ValueType, typename Reference>
+struct Point_accessor
+  : boost::put_get_helper< Reference, Point_accessor<Handle, ValueType, Reference> >
+{
+  typedef boost::lvalue_property_map_tag category;
+  typedef Reference                      reference;
+  typedef ValueType                      value_type;
+  typedef Handle                         key_type;
+
+  reference operator[](Handle h) const { return h->point(); }
+};
+
+} // namespace internal
+
+// Needed by PMP::detec_features and Mesh_3
+enum vertex_feature_degree_t    { vertex_feature_degree };
+enum edge_is_feature_t          { edge_is_feature };
+
+enum vertex_time_stamp_t        { vertex_time_stamp};
+enum halfedge_time_stamp_t      { halfedge_time_stamp};
+enum face_time_stamp_t          { face_time_stamp};
+
+template <typename ID>
+struct vertex_incident_patches_t {
+  typedef ID type;
+};
+
+template <typename ID>
+struct face_patch_id_t {
+  typedef ID type;
+};
+
 } // namespace CGAL
 
 

@@ -143,36 +143,13 @@ public:
   void unhide_point_internal(const Point_iterator, typename boost::disable_if_c<Tag::value>::type* = NULL)
   { }
 
-  //note this function is not requested by the RegularTriangulationCellBase_3
-  //it should be replaced everywhere by weighted_circumcenter()
-  // but remains here for backward compatibility
-  template<typename GT_>
-  Point_3 circumcenter(const GT_& gt) const
-  {
-    CGAL_static_assertion((boost::is_same<Point_3,
-      typename GT_::Construct_weighted_circumcenter_3::result_type>::value));
-      return gt.construct_weighted_circumcenter_3_object()
-        (this->vertex(0)->point(),
-         this->vertex(1)->point(),
-         this->vertex(2)->point(),
-         this->vertex(3)->point());
-  }
-
-  Point_3 circumcenter() const
-  {
-    return circumcenter(Geom_traits());
-  }
-
   template<typename GT_>
   Point_3 weighted_circumcenter(const GT_& gt) const
   {
-    CGAL_static_assertion((boost::is_same<Point_3,
-      typename GT_::Construct_weighted_circumcenter_3::result_type>::value));
-      return gt.construct_weighted_circumcenter_3_object()
-        (this->vertex(0)->point(),
-         this->vertex(1)->point(),
-         this->vertex(2)->point(),
-         this->vertex(3)->point());
+    return gt.construct_weighted_circumcenter_3_object()(this->vertex(0)->point(),
+                                                         this->vertex(1)->point(),
+                                                         this->vertex(2)->point(),
+                                                         this->vertex(3)->point());
   }
 
   Point_3 weighted_circumcenter() const

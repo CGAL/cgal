@@ -4,7 +4,6 @@
 #include "properties.h"
 
 #include <CGAL/Surface_mesh/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 

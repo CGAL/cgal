@@ -47,14 +47,9 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
   include( ${CGAL_USE_FILE} )
 
   find_package(Qt5 QUIET COMPONENTS OpenGL Xml Svg)
-  find_package(QGLViewer )
   find_package(OpenGL    )
 
-  if ( QGLVIEWER_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )
-
-
-    include_directories( ${QGLVIEWER_INCLUDE_DIR} )
-    add_definitions(${QGLVIEWER_DEFINITIONS})
+  if (Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )
 
     set( sources Raw_image_dialog.cpp colorlisteditor.cpp values_list.cpp mainwindow.cpp Surface_mesher.cpp viewer.cpp volume.cpp )
 
@@ -117,7 +112,6 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
     target_link_libraries( ${prj} PRIVATE
       CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_ImageIO
       ${OPENGL_LIBRARIES}
-      ${QGLVIEWER_LIBRARIES}
       ${VTK_LIBS} )
 
     include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
@@ -125,10 +119,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
 
     include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
     cgal_add_compilation_test(${prj})
-
-  else( QGLVIEWER_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )
-    message(STATUS "NOTICE: This demo needs libQGLViewer, and will not be compiled.")
-  endif( QGLVIEWER_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )
+  endif( Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )
 else(CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
   if(RUNNING_CGAL_AUTO_TEST)
     # Just to avoid a warning from CMake if that variable is set on the command line...

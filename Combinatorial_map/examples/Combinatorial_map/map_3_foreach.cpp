@@ -8,7 +8,7 @@ typedef CMap_3::Dart_handle        Dart_handle;
 
 // Functor used to display all the vertices of a given volume
 template<class CMap, unsigned int i>
-struct Display_vertices_of_cell : public CGAL::unary_function<CMap, void>
+struct Display_vertices_of_cell : public CGAL::cpp98::unary_function<CMap, void>
 {
   Display_vertices_of_cell(const CMap& acmap) :
     cmap(acmap),
@@ -40,7 +40,7 @@ private:
 
 // Functor used to remove a face
 template<class CMap>
-struct Remove_face : public CGAL::unary_function<CMap, void>
+struct Remove_face : public CGAL::cpp98::unary_function<CMap, void>
 {
   Remove_face(CMap& acmap) : cmap(acmap)
   {}
@@ -60,7 +60,7 @@ private:
 
 // Functor allowing to transform a variable into its address.
 template<typename T>
-struct Take_adress : public CGAL::unary_function<T, T*>
+struct Take_adress : public CGAL::cpp98::unary_function<T, T*>
 {
   T* operator() (T& t) const
   { return &t; }

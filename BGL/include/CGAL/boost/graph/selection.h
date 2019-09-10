@@ -623,8 +623,8 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
 
 //todo: take non-manifold vertices into account.
 template<class PolygonMesh, class FaceRange>
-bool is_selection_a_topologial_disk(const FaceRange& face_selection,
-                       PolygonMesh& pm)
+bool is_selection_a_topological_disk(const FaceRange& face_selection,
+                                           PolygonMesh& pm)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;

@@ -206,24 +206,24 @@ struct Sizing_field_with_aabb_tree
         vs.reserve(32);
         dt.finite_adjacent_vertices(vh, std::back_inserter(vs));
         CGAL_assertion(!vs.empty());
-        nearest = vs[0]->point();
+        nearest = dt.point(vs[0]);
 // 	std::cerr << "sq_dist = " << CGAL::squared_distance(p, nearest)
 // 		  << std::endl;
         typename Kernel_::Compare_distance_3 compare_dist;
         for (typename std::vector<typename Dt::Vertex_handle>::const_iterator
                it = vs.begin(); it != vs.end(); ++it) 
         {
-// 	  std::cerr << "sq_dist = " << CGAL::squared_distance(p, (*it)->point())
+// 	  std::cerr << "sq_dist = " << CGAL::squared_distance(p, dt.point(*it))
 // 		  << std::endl;
-          if(compare_dist(p, (*it)->point(), nearest) == CGAL::SMALLER) {
+          if(compare_dist(p, dt.point(*it), nearest) == CGAL::SMALLER) {
 // 	    std::cerr << "  nearest!\n";
-            nearest =  (*it)->point();
+            nearest = dt.point(*it);
           }
         }
       } else {
 // 	std::cerr << "lt=" << lt << std::endl;
         const typename Dt::Vertex_handle vh = dt.nearest_vertex(p, ch);
-        nearest = vh->point();
+        nearest = dt.point(vh);
       }
       const FT dist = CGAL_NTS sqrt(CGAL::squared_distance( nearest, p));
       // std::cerr << (std::min)(dist / FT(1.5), d_) << "\n";

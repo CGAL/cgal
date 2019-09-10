@@ -17,7 +17,7 @@ INSTALLATION:
 
 1) Install all the following libraries:
 
-CGAL: http://www.cgal.org/
+CGAL: https://www.cgal.org/
 CGoGN: http://cgogn.u-strasbg.fr/
 OpenMesh: http://www.openmesh.org/
 OpenVolumeMesh: http://www.openvolumemesh.org/

@@ -109,6 +109,7 @@ public:
     typedef Polygon_soup::Points Points;
     typedef Polygon_soup::Polygons Polygons;
     typedef Polygon_soup::Edges Edges;
+    typedef Polygon_soup::Edge Edge;
 
     Scene_polygon_soup_item();
     ~Scene_polygon_soup_item();

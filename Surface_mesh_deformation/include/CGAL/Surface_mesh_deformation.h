@@ -216,8 +216,11 @@ public:
   /// @{
   // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
   ///
+  /// Triangle mesh type
   typedef TM Triangle_mesh;
+  /// \cond
   typedef TM Halfedge_graph;
+  /// \endcond
 
 // Index maps
 #ifndef DOXYGEN_RUNNING
@@ -230,9 +233,9 @@ public:
     typename boost::property_map<Triangle_mesh, boost::halfedge_index_t>::type
   >::type Hedge_index_map;
 #else
-  ///
+  /// vertex index map type
   typedef VIM Vertex_index_map;
-  ///
+  /// halfedge index map type
   typedef HIM Hedge_index_map;
 #endif
 
@@ -243,7 +246,7 @@ public:
     typename internal::Types_selectors<TM, TAG>::Weight_calculator
   >::type Weight_calculator;
 #else
-  ///
+  /// weight calculator functor type
   typedef WC Weight_calculator;
 #endif
 
@@ -261,7 +264,7 @@ public:
   #endif
   >::type Sparse_linear_solver;
 #else
-  ///
+  /// sparse linear solver type
   typedef ST Sparse_linear_solver;
 #endif
 
@@ -276,7 +279,7 @@ public:
   #endif
   >::type Closest_rotation_traits;
 #else
-  ///
+  /// closest rotation traits type
   typedef CR Closest_rotation_traits;
 #endif
 
@@ -287,7 +290,7 @@ public:
     typename boost::property_map<Triangle_mesh, CGAL::vertex_point_t>::type
   >::type Vertex_point_map;
 #else
-  ///
+  /// vertex point map type
   typedef VPM Vertex_point_map;
 #endif
 
@@ -955,8 +958,10 @@ public:
   const Triangle_mesh& triangle_mesh() const
   { return m_triangle_mesh; }
 
+  /// \cond
   const Triangle_mesh& halfedge_graph() const
   { return m_triangle_mesh; }
+  /// \endcond
 
   /**
    * Sets the alpha coefficient that determines the weight of the bending term (rotation smoothness) for the SRE-ARAP deformation technique.

@@ -45,7 +45,7 @@ namespace CGAL {
 // Barycentric coordinates namespace.
 namespace Barycentric_coordinates {
 
-// Examples: see the User Manual - http://doc.cgal.org/latest/Manual/index.html.
+// Examples: see the User Manual - https://doc.cgal.org/latest/Manual/index.html.
 
 /*!
  * \ingroup PkgBarycentric_coordinates_2

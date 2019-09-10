@@ -33,7 +33,7 @@ class Bounded_normal_change_placement
 {
 public:
     
-  typedef typename Placement::ECM ECM ;
+  typedef typename Placement::TM TM ;
   
 public:
   

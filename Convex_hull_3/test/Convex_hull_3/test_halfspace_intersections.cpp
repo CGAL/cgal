@@ -5,7 +5,7 @@
 #include <CGAL/point_generators_3.h>
 
 #include <vector>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
 

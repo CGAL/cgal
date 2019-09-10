@@ -40,7 +40,7 @@ int main() {
 
     // Use a random permutation to hide the creation history
     // of the point set.
-    std::random_shuffle( points.begin(), points.end(), get_default_random());
+    CGAL::cpp98::random_shuffle( points.begin(), points.end());
 
     // Check range of values.
     for ( Vector::iterator i = points.begin(); i != points.end(); i++){

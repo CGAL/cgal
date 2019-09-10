@@ -5,6 +5,7 @@
 
 #include <QtOpenGL/qgl.h>
 #include <CGAL/Qt/DemosMainWindow.h>
+#include <CGAL/Three/Three.h>
 
 #include <QScriptEngine>
 #include <QScriptable>
@@ -48,6 +49,7 @@ namespace Ui {
 class MAINWINDOW_EXPORT MainWindow : 
   public CGAL::Qt::DemosMainWindow,
   public Messages_interface,
+  public CGAL::Three::Three,
   protected QScriptable
 {
   Q_OBJECT
@@ -68,7 +70,7 @@ public:
    * Then it creates and initializes the scene and do the
    * connexions with the UI. Finally it loads the plugins.*/
 
-  MainWindow(QWidget* parent = 0);
+  MainWindow(bool verbose = false,QWidget* parent = 0);
   ~MainWindow();
 
   /*! Finds an IO plugin.
@@ -331,6 +333,9 @@ protected Q_SLOTS:
   void on_actionSaveSnapshot_triggered();
   //!Opens a Dialog to choose a color and make it the background color.
   void on_actionSetBackgroundColor_triggered();
+  //!Opens a Dialog to change the lighting settings
+  void on_actionSetLighting_triggered();
+  
   /*! Opens a Dialog to enter coordinates of the new center point and sets it
    * with viewerShow.
    *@see viewerShow(float, float, float, float, float, float)
@@ -410,11 +415,13 @@ private:
   //!Called when "Add new group" in the file menu is triggered.
   QAction* actionAddToGroup;
   QAction* actionResetDefaultLoaders;
+  CGAL::Three::Three* three;
   void print_message(QString message) { messages->information(message); }
   Messages_interface* messages;
 
   QDialog *statistics_dlg;
   Ui::Statistics_on_item_dialog* statistics_ui;
+  bool verbose;
   void insertActionBeforeLoadPlugin(QMenu*, QAction *actionToInsert);
 
 #ifdef QT_SCRIPT_LIB
@@ -430,7 +437,6 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
-
 private Q_SLOTS:
   void set_facegraph_mode_adapter(bool is_polyhedron);
 };

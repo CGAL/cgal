@@ -35,6 +35,10 @@
 #include <iosfwd>
 #include <iostream>
 
+#include <boost/random/random_number_generator.hpp>
+#include <boost/random.hpp>
+#include <boost/random/linear_congruential.hpp>
+
 #ifdef CGAL_CFG_NO_CPP0X_NEXT_PREV
 #  include <boost/next_prior.hpp>
 #endif
@@ -365,6 +369,9 @@ output_range(std::ostream& os,
     return os;
 }
 
+
+namespace cpp98 {
+
 // Reimplementation of std::random_shuffle, for the use of Spatial_sorting.
 // We want an implementation of random_shuffle that produces the same
 // result on all platforms, for a given seeded random generator.
@@ -382,6 +389,20 @@ random_shuffle(RandomAccessIterator begin, RandomAccessIterator end,
     // interval [0, N[
   }
 }
+
+
+template <class RandomAccessIterator>
+void
+random_shuffle(RandomAccessIterator begin, RandomAccessIterator end)
+{
+  typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
+  typedef typename Iterator_traits::difference_type Diff_t;
+  boost::rand48 random;
+  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+  CGAL::cpp98::random_shuffle(begin,end, rng);
+}
+
+} // namespace cpp98
 
 namespace internal {
 namespace algorithm {

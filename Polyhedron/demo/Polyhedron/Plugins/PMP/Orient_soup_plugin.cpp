@@ -56,7 +56,7 @@ private:
   template<class Item>
   void apply_shuffle(Item* item,
                      const CGAL::Three::Scene_interface::Item_id& index);
-  void getNMPoints(std::vector<std::size_t> &vertices_to_duplicate,
+  void getNMPoints(std::set<std::size_t> &vertices_to_duplicate,
       Scene_polygon_soup_item* item);
   
   CGAL::Three::Scene_interface* scene;
@@ -307,7 +307,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
   {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_points_with_normal_item* points = new Scene_points_with_normal_item();
-    std::vector<std::size_t> nm_vertices;
+    std::set<std::size_t> nm_vertices;
     getNMPoints(nm_vertices, item);
     bool items_created = false;
     if(nm_vertices.empty())
@@ -357,7 +357,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
 }
 
 void Polyhedron_demo_orient_soup_plugin::getNMPoints(
-    std::vector<std::size_t > &vertices_to_duplicate,
+    std::set<std::size_t > &vertices_to_duplicate,
     Scene_polygon_soup_item* item)
 {
   typedef std::pair<std::size_t, std::size_t>                              V_ID_pair;
@@ -395,7 +395,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
 
       if (!first_pass)
       {
-        vertices_to_duplicate.push_back(v_id);
+        vertices_to_duplicate.insert(v_id);
       }
 
       
@@ -432,6 +432,13 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
     }
   }
   
+  //remove vertices already in NM edges
+  //check edges of p_id. 
+  BOOST_FOREACH(Scene_polygon_soup_item::Edge edge, item->non_manifold_edges())
+  {
+    vertices_to_duplicate.erase(edge[0]);
+    vertices_to_duplicate.erase(edge[1]);
+  }
 }
 #include "Orient_soup_plugin.moc"
 

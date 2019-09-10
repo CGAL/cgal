@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+[ -n "$CGAL_DEBUG_TRAVIS" ] && set -x
 
 CXX_FLAGS="-DCGAL_NDEBUG"
 
@@ -51,9 +52,13 @@ old_IFS=$IFS
 IFS=$' '
 ROOT="$PWD/.."
 NEED_3D=0
-cd $ROOT
 for ARG in $(echo "$@")
 do
+#skip package maintenance
+  if [ "$ARG" = "Maintenance" ]; then
+    continue
+  fi
+cd $ROOT
 #install openmesh only if necessary
   if [ "$ARG" = "CHECK" ] || [ "$ARG" = BGL ] || [ "$ARG" = Convex_hull_3 ] ||\
      [ "$ARG" = Polygon_mesh_processing ] || [ "$ARG" = Property_map ] ||\
@@ -72,7 +77,8 @@ do
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
     #test dependencies 
     cd $ROOT
-    bash Scripts/developer_scripts/cgal_check_dependencies.sh /usr/bin/doxygen
+    bash Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
+
     cd .travis
   	#parse current matrix and check that no package has been forgotten
 

@@ -14,19 +14,19 @@ Scene_group_item::Scene_group_item(QString name, int nb_vbos, int nb_vaos )
 
 bool Scene_group_item::isFinite() const
 {
-    Q_FOREACH(Scene_item *item, children)
-        if(!item->isFinite()){
-            return false;
-        }
-    return true;
+  Q_FOREACH(Scene_interface::Item_id id, children)
+    if(!getChild(id)->isFinite()){
+      return false;
+    }
+  return true;
 }
 
 bool Scene_group_item::isEmpty() const {
-    Q_FOREACH(Scene_item *item, children)
-        if(!item->isEmpty()){
-            return true;
-        }
-    return true;
+  Q_FOREACH(Scene_interface::Item_id id, children)
+    if(!getChild(id)->isEmpty()){
+      return false;
+    }
+  return true;
 }
 
 Scene_group_item::Bbox Scene_group_item::bbox() const
@@ -37,10 +37,10 @@ Scene_group_item::Bbox Scene_group_item::bbox() const
 
 bool Scene_group_item::supportsRenderingMode(RenderingMode m) const {
 
-    Q_FOREACH(Scene_item* item, children)
-        if(!item->supportsRenderingMode(m))
-            return false;
-    return true;
+  Q_FOREACH(Scene_interface::Item_id id, children)
+    if(!getChild(id)->supportsRenderingMode(m))
+      return false;
+  return true;
 
 }
 
@@ -53,12 +53,21 @@ QString Scene_group_item::toolTip() const {
 
 void Scene_group_item::addChild(Scene_item* new_item)
 {  
-    if(!children.contains(new_item))
+    if(!children.contains(scene->item_id(new_item)))
     {
-        children.append(new_item);
+        children.append(scene->item_id(new_item));
         update_group_number(new_item, has_group+1);
     }
 
+}
+
+void Scene_group_item::addChild(Scene_interface::Item_id new_id)
+{
+  if(!children.contains(new_id))
+  {
+    children.append(new_id);
+    update_group_number(getChild(new_id), has_group+1);
+  }
 }
 
 void Scene_group_item::update_group_number(Scene_item * new_item, int n)
@@ -67,24 +76,27 @@ void Scene_group_item::update_group_number(Scene_item * new_item, int n)
     Scene_group_item* group =
             qobject_cast<Scene_group_item*>(new_item);
     if(group)
-      Q_FOREACH(Scene_item* child, group->getChildren())
-          update_group_number(child,n+1);
+      Q_FOREACH(Scene_interface::Item_id id, group->getChildren()){
+        
+        update_group_number(getChild(id),n+1);
+      }
     new_item->has_group = n;
 }
 void Scene_group_item::setColor(QColor c)
 {
   Scene_item::setColor(c);
-  Q_FOREACH(Scene_item* child, children)
+  Q_FOREACH(Scene_interface::Item_id id, children)
   {
-    child->setColor(c);
+    getChild(id)->setColor(c);
   }
 }
 
 void Scene_group_item::setRenderingMode(RenderingMode m)
 {
   Scene_item::setRenderingMode(m);
-  Q_FOREACH(Scene_item* child, children)
+  Q_FOREACH(Scene_interface::Item_id id, children)
   {
+    Scene_item* child = getChild(id);
     if(child->supportsRenderingMode(m))
       child->setRenderingMode(m);
   }
@@ -93,8 +105,9 @@ void Scene_group_item::setRenderingMode(RenderingMode m)
 void Scene_group_item::setVisible(bool b)
 {
   Scene_item::setVisible(b);
-  Q_FOREACH(Scene_item* child, children)
+  Q_FOREACH(Scene_interface::Item_id id, children)
   {
+    Scene_item* child = getChild(id);
     child->setVisible(b);
     child->itemChanged();
   }
@@ -121,111 +134,115 @@ void Scene_group_item::moveUp(int i)
     children.move(i, i-1);
 }
 
-void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const  {
-  if(viewer->inDrawWithNames() || already_drawn ) return;
-  Q_FOREACH(Scene_item* child, children) {
-    if(!child->visible()) continue;
-    switch(child->renderingMode()) {
-    case Flat:
-    case FlatPlusEdges:
-    case Gouraud:
-      child->draw(viewer); break;
-    default: break;
-    }
-    switch(child->renderingMode()) {
-    case FlatPlusEdges:
-    case Wireframe:
-    case PointsPlusNormals:
-      child->drawEdges(viewer); break;
-    default: break;
-    }
-    switch(child->renderingMode()) {
-    case Points:
-    case ShadedPoints:
-    case PointsPlusNormals:
-      child->drawPoints(viewer); break;
-    default: break;
-    }
-  }
-  already_drawn = true;
+void Scene_group_item::draw(CGAL::Three::Viewer_interface* ) const  {
+  
 }
 
-void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
+void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* ) const
 {
-  if(viewer->inDrawWithNames() || already_drawn ) return;
-  Q_FOREACH(Scene_item* child, children) {
-    if(!child->visible()) continue;
-    switch(child->renderingMode()) {
-    case FlatPlusEdges:
-    case Wireframe:
-    case PointsPlusNormals:
-      child->drawEdges(viewer); break;
-    default: break;
-    }
-    switch(child->renderingMode()) {
-    case Flat:
-    case FlatPlusEdges:
-    case Gouraud:
-      child->draw(viewer); break;
-    default: break;
-    }
-    switch(child->renderingMode()) {
-    case Points:
-    case ShadedPoints:
-    case PointsPlusNormals:
-      child->drawPoints(viewer); break;
-    default: break;
-    }
-  }
-  already_drawn = true;
+  
 }
 
-void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
+void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* ) const
 {
-  if(viewer->inDrawWithNames() || already_drawn ) return;
-  Q_FOREACH(Scene_item* child, children) {
-    if(!child->visible()) continue;
-    switch(child->renderingMode()) {
-    case Points:
-    case ShadedPoints:
-    case PointsPlusNormals:
-      child->drawPoints(viewer); break;
-    default: break;
+  
+}
+
+void Scene_group_item::renderChildren(Viewer_interface *viewer,
+                            QMap<float, int>& picked_item_IDs,
+                            const QPoint& picked_pixel,
+                            bool with_names)
+{
+
+  Q_FOREACH(Scene_interface::Item_id id, children){
+    if(with_names) {
+      viewer->glClearDepthf(1.0f);
+      viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
-    switch(child->renderingMode()) {
-    case Flat:
-    case FlatPlusEdges:
-    case Gouraud:
-      child->draw(viewer); break;
-    default: break;
+    if(id == scene->mainSelectionIndex()|| scene->selectionIndices().contains(id))
+    {
+      getChild(id)->selection_changed(true);
     }
-    switch(child->renderingMode()) {
-    case FlatPlusEdges:
-    case Wireframe:
-    case PointsPlusNormals:
-      child->drawEdges(viewer); break;
-    default: break;
+    else
+    {
+      getChild(id)->selection_changed(false);
+    }
+    if(getChild(id)->visible() &&
+       (getChild(id)->renderingMode() == Flat ||
+        getChild(id)->renderingMode() == FlatPlusEdges ||
+        getChild(id)->renderingMode() == Gouraud))
+    {
+      getChild(id)->draw(viewer);
+    }
+
+    if(getChild(id)->visible() &&
+       (getChild(id)->renderingMode() == FlatPlusEdges
+        || getChild(id)->renderingMode() == Wireframe
+        || getChild(id)->renderingMode() == PointsPlusNormals))
+    {
+      getChild(id)->drawEdges(viewer);
+    }
+
+    if(getChild(id)->visible() &&
+       (getChild(id)->renderingMode() == Points  ||
+       (getChild(id)->renderingMode() == PointsPlusNormals)  ||
+       (getChild(id)->renderingMode() == ShadedPoints)))
+    {
+      getChild(id)->drawPoints(viewer);
+    }
+    if(with_names) {
+      //    read depth buffer at pick location;
+      float depth = 1.0;
+      viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+      if (depth != 1.0)
+      {
+        //add object to list of picked objects;
+        picked_item_IDs[depth] = id;
+      }
     }
   }
-  already_drawn = true;
 }
 
 void Scene_group_item::lockChild(Scene_item *child)
 {
-  if(!children.contains(child))
+  lockChild(scene->item_id(child));
+}
+
+void Scene_group_item::lockChild(Scene_interface::Item_id id)
+{
+  if(!children.contains(id))
     return;
-  child->setProperty("lock", true);
+  getChild(id)->setProperty("lock", true);
+}
+
+void Scene_group_item::unlockChild(Scene_interface::Item_id id)
+{
+  if(!children.contains(id))
+       return;
+  getChild(id)->setProperty("lock", false);
 }
 void Scene_group_item::unlockChild(Scene_item *child)
 {
-  if(!children.contains(child))
-    return;
-  child->setProperty("lock", false);
+  unlockChild(scene->item_id(child));
 }
+bool Scene_group_item::isChildLocked(Scene_interface::Item_id id)
+{
+  if(!children.contains(id)
+     || (!getChild(id)->property("lock").toBool()) )
+     return false;
+   return true;
+ }
 bool Scene_group_item::isChildLocked(Scene_item *child)
 {
-  if(!children.contains(child)
-     || (!child->property("lock").toBool()) )
-    return false;
-  return true;
+  return isChildLocked(scene->item_id(child));
 }
+
+void Scene_group_item::setAlpha(int )
+{
+
+  Q_FOREACH(Scene_interface::Item_id id, children)
+  {
+    scene->item(id)->setAlpha(static_cast<int>(alpha()*255));
+  }
+}
+

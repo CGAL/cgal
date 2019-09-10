@@ -5,7 +5,7 @@
 
 struct Scene_facegraph_transform_item_priv
 {
-  Scene_facegraph_transform_item_priv(const qglviewer::Vec& pos,FaceGraph* sm,
+  Scene_facegraph_transform_item_priv(const CGAL::qglviewer::Vec& pos,FaceGraph* sm,
                                        const QString name, Scene_facegraph_transform_item *parent)
     : manipulable(false),
       frame(new CGAL::Three::Scene_item::ManipulatedFrame()),
@@ -14,7 +14,7 @@ struct Scene_facegraph_transform_item_priv
       item_name(name)
   {
     item = parent;
-    const qglviewer::Vec offset = static_cast<Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     frame->setPosition(pos+offset);
     nb_lines = 0;
   }
@@ -34,9 +34,9 @@ struct Scene_facegraph_transform_item_priv
   };
 
   bool manipulable;
-  qglviewer::ManipulatedFrame* frame;
+  CGAL::qglviewer::ManipulatedFrame* frame;
   FaceGraph* facegraph;
-  qglviewer::Vec center_;
+  CGAL::qglviewer::Vec center_;
   Scene_facegraph_transform_item *item;
   QMatrix4x4 f_matrix;
   const QString item_name;
@@ -46,7 +46,7 @@ struct Scene_facegraph_transform_item_priv
   mutable std::size_t nb_lines;
 };
 
-Scene_facegraph_transform_item::Scene_facegraph_transform_item(const qglviewer::Vec& pos, FaceGraph* sm,
+Scene_facegraph_transform_item::Scene_facegraph_transform_item(const CGAL::qglviewer::Vec& pos, FaceGraph* sm,
                                                                  const QString name):
     Scene_item(Scene_facegraph_transform_item_priv::NbOfVbos,Scene_facegraph_transform_item_priv::NbOfVaos)
 {
@@ -151,8 +151,8 @@ Scene_facegraph_transform_item::compute_bbox() const {
         ++it) {
       bbox = bbox + get(vpmap, *it).bbox();
     }
-    qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
-    qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
+    CGAL::qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
+    CGAL::qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
     _bbox = Bbox(min.x,min.y,min.z,
                  max.x,max.y,max.z);
 }
@@ -168,7 +168,7 @@ void Scene_facegraph_transform_item::invalidateOpenGLBuffers()
 bool Scene_facegraph_transform_item::manipulatable() const { return d->manipulable; }
 CGAL::Three::Scene_item::ManipulatedFrame* Scene_facegraph_transform_item::manipulatedFrame() { return d->frame; }
 void Scene_facegraph_transform_item::setManipulatable(bool b = true) { d->manipulable = b;}
-const qglviewer::Vec& Scene_facegraph_transform_item::center() const { return d->center_; }
+const CGAL::qglviewer::Vec& Scene_facegraph_transform_item::center() const { return d->center_; }
 Scene_facegraph_transform_item::~Scene_facegraph_transform_item() { delete d; Q_EMIT killed(); }
 void Scene_facegraph_transform_item::setFMatrix(double matrix[16])
 {

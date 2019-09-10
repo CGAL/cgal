@@ -244,7 +244,7 @@ sample_triangles(const FaceRange& triangles,
  *    \cgalParamBegin{vertex_point_map} the property map with the points
  *      associated to the vertices of `tm`. If this parameter is omitted,
  *      an internal property map for `CGAL::vertex_point_t`
- *      should be available for `TriangleMesh`.
+ *      must be available for `TriangleMesh`.
  *    \cgalParamEnd
  *    \cgalParamBegin{geom_traits} a model of `PMPDistanceTraits`. \cgalParamEnd
  *    \cgalParamBegin{use_random_uniform_sampling}
@@ -556,8 +556,8 @@ double approximate_Hausdorff_distance(
   typedef AABB_tree< AABB_traits<Kernel, Primitive> > Tree;
 
   Tree tree( faces(tm).first, faces(tm).second, tm);
-  tree.accelerate_distance_queries();
   tree.build();
+  tree.accelerate_distance_queries();
   Point_3 hint = get(vpm, *vertices(tm).first);
 
   return internal::approximate_Hausdorff_distance_impl<Concurrency_tag, Kernel>
@@ -611,8 +611,8 @@ double approximate_Hausdorff_distance(
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm2`
- *      If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh`
- *      and in all places where vertex_point_map is used.
+ *      If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `TriangleMesh`
+ *      and in all places where `vertex_point_map` is used.
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
  * The function `CGAL::parameters::all_default()` can be used to indicate to use the default values for
@@ -671,7 +671,7 @@ double approximate_symmetric_Hausdorff_distance(
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map}
  *    the property map with the points associated to the vertices of `tm`. If this parameter is omitted,
- *    an internal property map for `CGAL::vertex_point_t` should be available for the
+ *    an internal property map for `CGAL::vertex_point_t` must be available for the
       vertices of `tm` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPDistanceTraits`\cgalParamEnd
  * \cgalNamedParamsEnd
@@ -708,7 +708,7 @@ double max_distance_to_triangle_mesh(const PointRange& points,
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map}
  *    the property map with the points associated to the vertices of `tm`. If this parameter is omitted,
- *    an internal property map for `CGAL::vertex_point_t` should be available for the
+ *    an internal property map for `CGAL::vertex_point_t` must be available for the
       vertices of `tm` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPDistanceTraits`. \cgalParamEnd
  * \cgalNamedParamsEnd

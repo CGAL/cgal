@@ -24,9 +24,7 @@
 #include <CGAL/Generalized_map_operations.h>
 #include <CGAL/Random.h>
 
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <iostream>
-#include <fstream>
 
 using namespace std;
 

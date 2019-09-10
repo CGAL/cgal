@@ -17,6 +17,7 @@
 #include <QMenuBar>
 #include <QChar>
 #include <QAction>
+#include <QWidgetAction>
 #include <QShortcut>
 #include <QKeySequence>
 #include <QLibrary>
@@ -36,6 +37,7 @@
 #include <QStandardItem>
 #include <QTreeWidgetItem>
 #include <QTreeWidget>
+#include <QDockWidget>
 #include <stdexcept>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
@@ -44,6 +46,7 @@
 #  endif
 #endif
 
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Scene_item_with_properties.h>
@@ -53,8 +56,8 @@
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
 
-#include <QGLViewer/manipulatedCameraFrame.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
@@ -125,13 +128,15 @@ MainWindow::~MainWindow()
   delete ui;
   delete statistics_ui;
 }
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(bool verbose, QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
+  CGAL::Three::Three::s_mainwindow = this;
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
+  this->verbose = verbose;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoadScript);
@@ -146,6 +151,8 @@ MainWindow::MainWindow(QWidget* parent)
   scene = new Scene(this);
   viewer->textRenderer()->setScene(scene);
   viewer->setScene(scene);
+  CGAL::Three::Three::s_scene = scene;
+  CGAL::Three::Three::s_connectable_scene = scene;
   ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer()->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
@@ -183,6 +190,11 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(scene, SIGNAL(updated()),
           viewer, SLOT(update()));
+  connect(viewer, &Viewer::needNewContext,
+    [this](){create();});
+  
+  connect(ui->actionSet_Transparency_Pass_Number, SIGNAL(triggered()),
+              viewer, SLOT(setTotalPass_clicked()));
 
   connect(scene, SIGNAL(updated()),
           this, SLOT(selectionChanged()));
@@ -304,7 +316,7 @@ MainWindow::MainWindow(QWidget* parent)
     QDockWidget* dock = new QDockWidget(debug_widgets_names[i], this);
     dock->setObjectName(debug_widgets_names[i]);
     dock->setWidget(debugger->widget(debug_widgets[i]));
-    this->addDockWidget(Qt::BottomDockWidgetArea, dock);
+    this->QMainWindow::addDockWidget(Qt::BottomDockWidgetArea, dock);
     dock->hide();
   }
   debugger->setAutoShowStandardWindow(false);
@@ -540,7 +552,8 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
         }
       }
       QDebug qdebug = qDebug();
-      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+      if(verbose)
+        qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
       QPluginLoader loader;
       loader.setFileName(fileinfo.absoluteFilePath());
       QObject *obj = loader.instance();
@@ -560,6 +573,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       else {
         //qdebug << "error: " << qPrintable(loader.errorString());
         pluginsStatus_map[name] = loader.errorString();
+
       }
       PathNames_map[fileinfo.absoluteDir().absolutePath()].push_back(name);
       return true;
@@ -610,9 +624,23 @@ void MainWindow::loadPlugins()
       }
   }
   QString env_path = qgetenv("POLYHEDRON_DEMO_PLUGINS_PATH");
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+  QChar separator = QDir::listSeparator();
+#else
+  #if defined(_WIN32)
+    QChar separator = ';';
+  #else 
+    QChar separator = ':';
+  #endif
+#endif
   if(!env_path.isEmpty()) {
+#if defined(_WIN32)
+    QString path = qgetenv("PATH");
+    QByteArray new_path = path.append(env_path.prepend(separator)).toUtf8();
+    qputenv("PATH", new_path);
+#endif
     Q_FOREACH (QString pluginsDir,
-               env_path.split(":", QString::SkipEmptyParts)) {
+               env_path.split(separator, QString::SkipEmptyParts)) {
       QDir dir(pluginsDir);
       if(dir.isReadable())
         plugins_directories << dir;
@@ -621,8 +649,9 @@ void MainWindow::loadPlugins()
 
   QSet<QString> loaded;
   Q_FOREACH (QDir pluginsDir, plugins_directories) {
-    qDebug("# Looking for plugins in directory \"%s\"...",
-           qPrintable(pluginsDir.absolutePath()));
+    if(verbose)
+      qDebug("# Looking for plugins in directory \"%s\"...",
+             qPrintable(pluginsDir.absolutePath()));
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files))
     {
       QString abs_name = pluginsDir.absoluteFilePath(fileName);
@@ -767,42 +796,34 @@ void MainWindow::viewerShow(float xmin,
                             float ymax,
                             float zmax)
 {
-  qglviewer::Vec
+  CGAL::qglviewer::Vec
     min_(xmin, ymin, zmin),
     max_(xmax, ymax, zmax);
 
   if(min_ == max_) return viewerShow(xmin, ymin, zmin);
 
-#if QGLVIEWER_VERSION >= 0x020502
   viewer->camera()->setPivotPoint((min_+max_)*0.5);
-#else
-  viewer->camera()->setRevolveAroundPoint((min_+max_)*0.5);
-#endif
 
-  qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
+  CGAL::qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
   viewer->camera()->fitBoundingBox(min_, max_);
-  qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
+  CGAL::qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
   *viewer->camera()->frame() = backup_frame;
   viewer->camera()->interpolateTo(new_frame, 1.f);
   viewer->setVisualHintsMask(1);
 }
 
 void MainWindow::viewerShow(float x, float y, float z) {
-  // viewer->camera()->lookAt(qglviewer::Vec(x, y, z));
+  // viewer->camera()->lookAt(CGAL::qglviewer::Vec(x, y, z));
 
-  qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
-  viewer->camera()->fitSphere(qglviewer::Vec(x, y, z),
+  CGAL::qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
+  viewer->camera()->fitSphere(CGAL::qglviewer::Vec(x, y, z),
                               viewer->camera()->sceneRadius()/100);
-  qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
+  CGAL::qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
   *viewer->camera()->frame() = backup_frame;
   viewer->camera()->interpolateTo(new_frame, 1.f);
   viewer->setVisualHintsMask(1);
 
-#if QGLVIEWER_VERSION >= 0x020502
-  viewer->camera()->setPivotPoint(qglviewer::Vec(x, y, z));
-#else
-  viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(x, y, z));
-#endif
+  viewer->camera()->setPivotPoint(CGAL::qglviewer::Vec(x, y, z));
 }
 
 void MainWindow::message(QString message, QString colorName, QString font) {
@@ -836,11 +857,7 @@ void MainWindow::error(QString text) {
 void MainWindow::updateViewerBBox(bool recenter = true)
 {
   const Scene::Bbox bbox = scene->bbox();
-#if QGLVIEWER_VERSION >= 0x020502
-    qglviewer::Vec center = viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec center = viewer->camera()->revolveAroundPoint();
-#endif
+    CGAL::qglviewer::Vec center = viewer->camera()->pivotPoint();
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
   const double zmin = bbox.zmin();
@@ -849,11 +866,11 @@ void MainWindow::updateViewerBBox(bool recenter = true)
   const double zmax = bbox.zmax();
 
 
-  qglviewer::Vec
+  CGAL::qglviewer::Vec
     vec_min(xmin, ymin, zmin),
     vec_max(xmax, ymax, zmax),
     bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
-  qglviewer::Vec offset(0,0,0);
+  CGAL::qglviewer::Vec offset(0,0,0);
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
                       (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
                           (std::abs)(bbox_center.z - viewer->offset().z)));
@@ -882,11 +899,7 @@ void MainWindow::updateViewerBBox(bool recenter = true)
   }
   else
   {
-#if QGLVIEWER_VERSION >= 0x020502
     viewer->camera()->setPivotPoint(center);
-#else
-    viewer->camera()->setRevolveAroundPoint(center);
-#endif
   }
 }
 
@@ -1103,10 +1116,7 @@ CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::P
                                 .arg(fileinfo.absoluteFilePath()).toStdString());
   }
   //test if the file is empty.
-  QFile test(fileinfo.absoluteFilePath());
-
-  test.open( QIODevice::WriteOnly|QIODevice::Append);
-  if (test.pos() == 0) {
+  if(fileinfo.size() == 0) {
     QMessageBox::warning(this, tr("Error"),
                          tr("The file you are trying to load is empty.\n"));
     return 0;
@@ -1299,6 +1309,7 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
 void MainWindow::showSceneContextMenu(const QPoint& p) {
   QWidget* sender = qobject_cast<QWidget*>(this->sender());
   if(!sender) return;
+  if(scene->selectionIndices().isEmpty())return;
   int main_index = scene->selectionIndices().first();
 
   if(sender == sceneView) {
@@ -1325,7 +1336,14 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
         {
           if(action->property("is_groupable").toBool())
+          {
             menu_actions[action->text()] = action;
+            if(action->text() == QString("Alpha value"))
+            {
+              menu_actions["alpha slider"] = action->menu()->actions().last();
+            }
+          }
+          
         }
         Q_FOREACH(Scene::Item_id index, scene->selectionIndices())
         {
@@ -1341,8 +1359,48 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QMenu menu;
         Q_FOREACH(QString name, menu_actions.keys())
         {
-          QAction* action = menu.addAction(name);
-          connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
+          if(name == QString("alpha slider"))
+            continue;
+          if(name == QString("Alpha value"))
+          {
+            QWidgetAction* sliderAction = new QWidgetAction(&menu);
+            QSlider* slider = new QSlider(&menu);
+            slider->setMinimum(0);
+            slider->setMaximum(255);
+            slider->setValue(
+                  qobject_cast<QSlider*>(
+                    qobject_cast<QWidgetAction*>
+                    (menu_actions["alpha slider"])->defaultWidget()
+                  )->value());
+            slider->setOrientation(Qt::Horizontal);
+            sliderAction->setDefaultWidget(slider);
+            
+            connect(slider, &QSlider::valueChanged, [this, slider]()
+            {
+              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              {
+                Scene_item* item = scene->item(id);
+                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                {
+                  if(action->text() == "Alpha value")
+                  {
+                    QWidgetAction* sliderAction = qobject_cast<QWidgetAction*>(action->menu()->actions().last());
+                    QSlider* ac_slider = qobject_cast<QSlider*>(sliderAction->defaultWidget());
+                    ac_slider->setValue(slider->value());
+                    break;
+                  }
+                }
+              }
+            });
+            QMenu* new_menu = new QMenu("Alpha value", &menu);
+              new_menu->addAction(sliderAction);
+              menu.addMenu(new_menu);
+          }
+          else
+          {
+            QAction* action = menu.addAction(name);
+            connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
+          }
         }
         if(has_stats)
         {
@@ -1518,8 +1576,11 @@ void MainWindow::on_actionLoad_triggered()
     Q_FOREACH(const QString& filter, split_filters) {
       FilterPluginMap::iterator it = filterPluginMap.find(filter);
       if(it != filterPluginMap.end()) {
-        qDebug() << "Duplicate Filter: " << it.value()->name();
-        qDebug() << "This filter will not be available.";
+        if(verbose)
+        {
+          qDebug() << "Duplicate Filter: " << it.value()->name();
+          qDebug() << "This filter will not be available.";
+        }
       } else {
         filterPluginMap[filter] = plugin;
       }
@@ -1604,11 +1665,14 @@ void MainWindow::on_actionSaveAs_triggered()
                            .arg(item->name()));
       return;
     }
-    Q_FOREACH(QString s, filters.first().split(";;"))
+    Q_FOREACH(QString string, filters)
     {
-      int pos = extensions.indexIn(s);
-      if( pos >-1)
-        filter_ext.append(extensions.capturedTexts());
+      QStringList sl = string.split(";;");
+      Q_FOREACH(QString s, sl){
+        int pos = extensions.indexIn(s);
+        if( pos >-1)
+          filter_ext.append(extensions.capturedTexts());
+      }
     }
     filters << tr("All files (*)");
     if(canSavePlugins.isEmpty()) {
@@ -1633,28 +1697,30 @@ void MainWindow::on_actionSaveAs_triggered()
     
     last_saved_dir = QFileInfo(dir).absoluteDir().path();
     extensions.indexIn(sf.split(";;").first());
-    ext1 = extensions.cap();
-    //remove `)`
-    ext1.chop(1);
-    //remove `(*`
-    ext1 = ext1.right(ext1.size()-2);
+    ext1 = extensions.cap().split(" ").first();// in case of syntax like (*.a *.b)
+    
+    ext1.remove(")");
+    ext1.remove("(");
+    //remove *
+    ext1=ext1.right(ext1.size()-1);
     if(filename.isEmpty())
       continue;
 
     QStringList filename_split = filename.split(".");
-    int fs_size = filename_split.size();
-    ext2 = filename_split.last();
-    
-    if(fs_size > 2 &&
-       ext2 == filename_split[filename.split(".").size()-2])
-      filename.chop(ext2.size()+1);
+    filename_split.removeFirst();
+    ext2 = filename_split.join(".");
+    ext2.push_front(".");
+   
     QStringList final_extensions;
-    Q_FOREACH(QString s, filter_ext)
+    Q_FOREACH(QString string, filter_ext)
     {
-      //remove `)`
-      s.chop(1);
-      //remove `(*.`
-      final_extensions.append(s.right(s.size()-3));
+      Q_FOREACH(QString s, string.split(" ")){// in case of syntax like (*.a *.b) 
+          s.remove(")");
+          s.remove("(");
+          //remove *
+          s=s.right(s.size()-1);
+          final_extensions.append(s);
+      }
     }
     if(!final_extensions.contains(ext2))
     {
@@ -1688,7 +1754,7 @@ void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
 
 void MainWindow::on_actionSaveSnapshot_triggered()
 {
-  viewer->saveSnapshot(false);
+  viewer->saveSnapshot();
 }
 
 bool MainWindow::on_actionErase_triggered()
@@ -1811,6 +1877,11 @@ void MainWindow::on_actionSetBackgroundColor_triggered()
   }
 }
 
+void MainWindow::on_actionSetLighting_triggered()
+{
+  viewer->setLighting();
+}
+
 void MainWindow::on_actionLookAt_triggered()
 {
   Show_point_dialog dialog(this);
@@ -1819,9 +1890,9 @@ void MainWindow::on_actionLookAt_triggered()
   if( i == QDialog::Accepted &&
       dialog.has_correct_coordinates() )
   {
-    viewerShow((float)dialog.get_x(),
-               (float)dialog.get_y(),
-               (float)dialog.get_z());
+    viewerShow((float)dialog.get_x()+viewer->offset().x,
+               (float)dialog.get_y()+viewer->offset().y,
+               (float)dialog.get_z()+viewer->offset().z);
   }
 }
 
@@ -1834,30 +1905,57 @@ void MainWindow::viewerShowObject()
   }
   if(item) {
     const Scene::Bbox bbox = item->bbox();
-    viewerShow((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z,
-               (float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
+    CGAL::qglviewer::Vec min((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z),
+        max((float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
+    viewer->setSceneBoundingBox(min, max);
+    viewerShow(min.x, min.y, min.z,
+               max.x, max.y, max.z);
   }
 }
 
 QString MainWindow::cameraString() const
 {
-  return viewer->dumpCameraCoordinates();
+  const CGAL::qglviewer::Vec pos = viewer->camera()->position() - viewer->offset();
+  const CGAL::qglviewer::Quaternion q = viewer->camera()->orientation();
+
+  return QString("%1 %2 %3 %4 %5 %6 %7")
+    .arg(pos[0])
+    .arg(pos[1])
+    .arg(pos[2])
+    .arg(q[0])
+    .arg(q[1])
+    .arg(q[2])
+    .arg(q[3]);
 }
 
 void MainWindow::on_actionDumpCamera_triggered()
 {
+  //remove offset
   information(QString("Camera: %1")
               .arg(cameraString()));
 }
 
 void MainWindow::on_actionCopyCamera_triggered()
 {
+  //remove offset
   qApp->clipboard()->setText(this->cameraString());
 }
 
 void MainWindow::on_actionPasteCamera_triggered()
 {
+  //add offset
   QString s = qApp->clipboard()->text();
+  QStringList list = s.split(' ');
+  QString new_s[7];
+  
+  new_s[0] = QString("%1").arg(list.at(0).toFloat() + viewer->offset().x);
+  new_s[1] = QString("%1").arg(list.at(1).toFloat() + viewer->offset().y);
+  new_s[2] = QString("%1").arg(list.at(2).toFloat() + viewer->offset().z);
+  for(int i=3; i<7; ++i)
+    new_s[i] = list.at(i);
+  s = QString();
+  for(int i=0; i<7; ++i)
+    s.append(new_s[i]).append(" ");
   viewer->moveCameraToCoordinates(s, 0.5f);
 }
 
@@ -2108,6 +2206,8 @@ void MainWindow::insertActionBeforeLoadPlugin(QMenu* menu, QAction* actionToInse
 void MainWindow::colorItems()
 {
   std::size_t nb_files = scene->selectionIndices().size();
+  if(nb_files<2)
+    return;
   std::vector<QColor> colors_;
   colors_.reserve(nb_files);
   compute_color_map(scene->item(scene->selectionIndices().last())->color(),

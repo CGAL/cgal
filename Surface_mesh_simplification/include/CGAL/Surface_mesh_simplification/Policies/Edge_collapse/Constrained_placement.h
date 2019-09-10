@@ -49,8 +49,8 @@ public:
   template <typename Profile> 
   optional<typename Profile::Point> operator()( Profile const& aProfile ) const
   {
-    typedef typename Profile::ECM                                ECM;
-    typedef typename CGAL::Halfedge_around_target_iterator<ECM>  in_edge_iterator;
+    typedef typename Profile::TM                                TM;
+    typedef typename CGAL::Halfedge_around_target_iterator<TM>  in_edge_iterator;
 
     in_edge_iterator eb, ee ;
     for ( boost::tie(eb,ee) = halfedges_around_target(aProfile.v0(),aProfile.surface_mesh());

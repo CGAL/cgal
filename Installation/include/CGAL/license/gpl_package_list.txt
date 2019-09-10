@@ -34,6 +34,7 @@ Nef_S2 2D Boolean Operations on Nef Polygons Embedded on the Sphere
 Optimal_transportation_reconstruction_2 Optimal Transportation Curve Reconstruction
 Partition_2 2D Polygon Partitioning
 Periodic_2_triangulation_2 2D Periodic Triangulations
+Periodic_3_mesh_3 3D Periodic Mesh Generation
 Periodic_3_triangulation_3 3D Periodic Triangulations
 Point_set_2 2D Range and Neighbor Search
 Point_set_3 3D Point Set

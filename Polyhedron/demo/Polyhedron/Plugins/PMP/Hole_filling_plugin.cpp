@@ -30,7 +30,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -76,7 +76,7 @@ public:
   struct Polyline_data {
     Scene_polylines_item* polyline;
     fg_halfedge_descriptor halfedge;
-    qglviewer::Vec position;
+    CGAL::qglviewer::Vec position;
   };
   struct Mouse_keyboard_state
   {
@@ -98,7 +98,7 @@ public:
     get_holes();
     active_hole = polyline_data_list.end();
 
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
     mainWindow->installEventFilter(this);
 
@@ -134,8 +134,8 @@ public:
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
-      if(it == active_hole) { viewer->glLineWidth(7.f); }
-      else                  { viewer->glLineWidth(3.f); }
+      if(it == active_hole) { it->polyline->setWidth(7); }
+      else                  { it->polyline->setWidth(3); }
 
       if(selected_holes.find(it) != selected_holes.end())
       { it->polyline->setRbgColor(255, 0, 0); }
@@ -182,7 +182,7 @@ public:
     // activate closest hole
     if(event->type() == QEvent::HoverMove)
     {
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
       const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
       bool need_repaint = activate_closest_hole(p.x(), p.y());
       if(need_repaint) { Q_EMIT itemChanged(); }
@@ -206,7 +206,7 @@ private:
   void get_holes() {
     // save selected hole positions to keep selected holes selected
     // we just use center position of holes for identification which might not work good for advanced cases...
-    std::vector<qglviewer::Vec> selected_hole_positions;
+    std::vector<CGAL::qglviewer::Vec> selected_hole_positions;
     for(Selected_holes_set::const_iterator it = selected_holes.begin(); it != selected_holes.end(); ++it) {
       selected_hole_positions.push_back((*it)->position);
     }
@@ -226,7 +226,7 @@ private:
         polyline_data.polyline->polylines.push_back(Scene_polylines_item::Polyline());
         polyline_data.halfedge = hd;
 
-        qglviewer::Vec center;
+        CGAL::qglviewer::Vec center;
         int counter = 0;
         fg_halfedge_descriptor hf_around_facet;
         BOOST_FOREACH(hf_around_facet, halfedges_around_face(hd,poly)){
@@ -234,7 +234,7 @@ private:
           visited.insert(hf_around_facet);
           const Point_3& p = get(vpm,target(hf_around_facet, poly));
           polyline_data.polyline->polylines.front().push_back(p);
-          center += qglviewer::Vec(p.x(), p.y(), p.z());
+          center += CGAL::qglviewer::Vec(p.x(), p.y(), p.z());
           ++counter;
         }
         hf_around_facet = *halfedges_around_face(hd,poly).first;
@@ -257,8 +257,8 @@ private:
 
     Face_graph& poly = *poly_item->polyhedron();
 
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    qglviewer::Camera* camera = viewer->camera();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+    CGAL::qglviewer::Camera* camera = viewer->camera();
 
     Polyline_data_list::const_iterator min_it;
     double min_dist = (std::numeric_limits<double>::max)();
@@ -267,7 +267,7 @@ private:
     {
 #if 0
       /* use center of polyline to measure distance - performance wise */
-      const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->position);
+      const CGAL::qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->position);
       float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
       if(dist < min_dist) {
         min_dist = dist;
@@ -278,9 +278,9 @@ private:
       /* use polyline points to measure distance - might hurt performance for large holes */
       BOOST_FOREACH(fg_halfedge_descriptor hf_around_facet, halfedges_around_face(it->halfedge,poly)){
         const Point_3& p_1 = get(vpm,target(hf_around_facet,poly));
-        const qglviewer::Vec& pos_it_1 = camera->projectedCoordinatesOf(qglviewer::Vec(p_1.x(), p_1.y(), p_1.z()));
+        const CGAL::qglviewer::Vec& pos_it_1 = camera->projectedCoordinatesOf(CGAL::qglviewer::Vec(p_1.x(), p_1.y(), p_1.z()));
         const Point_3& p_2 = get(vpm,target(opposite(hf_around_facet,poly),poly));
-        const qglviewer::Vec& pos_it_2 = camera->projectedCoordinatesOf(qglviewer::Vec(p_2.x(), p_2.y(), p_2.z()));
+        const CGAL::qglviewer::Vec& pos_it_2 = camera->projectedCoordinatesOf(CGAL::qglviewer::Vec(p_2.x(), p_2.y(), p_2.z()));
         Kernel::Segment_2 s(Kernel::Point_2(pos_it_1.x, pos_it_1.y), Kernel::Point_2(pos_it_2.x, pos_it_2.y));
 
         double dist = CGAL::squared_distance(s, xy);

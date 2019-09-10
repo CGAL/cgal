@@ -32,6 +32,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
 #include <CGAL/HalfedgeDS_items_decorator.h>
+#include <CGAL/N_step_adaptor_derived.h>
 #include <algorithm>
 #include <vector>
 #include <map>
@@ -65,7 +66,12 @@ public:
     typedef typename Vertex_wrapper::Vertex            Vertex;
     typedef typename Halfedge_wrapper::Halfedge        Halfedge;
     typedef typename Face_wrapper::Face                Face;
-
+#ifdef CGAL_CXX11
+    typedef std::allocator_traits<Allocator> Allocator_traits;
+    typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
+    typedef typename Allocator_traits::template rebind_alloc<Halfedge> Halfedge_allocator;
+    typedef typename Allocator_traits::template rebind_alloc<Face> Face_allocator;
+#else // not CGAL_CXX11
     typedef typename Allocator::template rebind< Vertex> Vertex_alloc_rebind;
     typedef typename Vertex_alloc_rebind::other        Vertex_allocator;
     typedef typename Allocator::template rebind< Halfedge>
@@ -73,9 +79,10 @@ public:
     typedef typename Halfedge_alloc_rebind::other      Halfedge_allocator;
     typedef typename Allocator::template rebind< Face> Face_alloc_rebind;
     typedef typename Face_alloc_rebind::other          Face_allocator;
+#endif // not CGAL_CXX11
 
 #ifdef CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR
-    typedef internal::vector<Vertex, Vertex_allocator>    Vertex_vector;
+    typedef internal::vector<Vertex, Vertex_allocator> Vertex_vector;
     typedef typename Vertex_vector::iterator           Vertex_I;
     typedef typename Vertex_vector::const_iterator     Vertex_CI;
     typedef typename Vertex_vector::iterator           Vertex_iterator;
@@ -87,7 +94,12 @@ public:
     typedef typename Halfedge_vector::iterator         Halfedge_iterator;
     typedef typename Halfedge_vector::const_iterator   Halfedge_const_iterator;
 
-    typedef internal::vector<Face, Face_allocator>        Face_vector;
+    typedef N_step_adaptor_derived<Halfedge_iterator, 2>
+                                                       Edge_iterator;
+    typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
+                                                       Edge_const_iterator;
+  
+    typedef internal::vector<Face, Face_allocator>     Face_vector;
     typedef typename Face_vector::iterator             Face_I;
     typedef typename Face_vector::const_iterator       Face_CI;
     typedef typename Face_vector::iterator             Face_iterator;
@@ -522,10 +534,14 @@ public:
             return;
 
         // An array of pointers to update the changed halfedge pointers.
+#ifdef CGAL_CXX11
+        typedef std::allocator_traits<Allocator> Allocator_traits;
+        typedef typename Allocator_traits::template rebind_alloc<Halfedge_I> HI_allocator;
+#else
         typedef typename Allocator::template rebind< Halfedge_I>
                                                       HI_alloc_rebind;
         typedef typename HI_alloc_rebind::other       HI_allocator;
-
+#endif
         typedef std::vector<Halfedge_I, HI_allocator> HVector;
         typedef typename HVector::iterator Hiterator;
         HVector hvector;

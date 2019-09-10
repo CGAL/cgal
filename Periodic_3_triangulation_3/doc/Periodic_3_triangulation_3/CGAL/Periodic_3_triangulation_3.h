@@ -730,6 +730,8 @@ Tetrahedron construct_tetrahedron(const P& p1, const P& p2, const P& p3, const P
 Tests whether `p` is a vertex of `t` by locating `p` in
 the triangulation. If `p` is found, the associated vertex `v`
 is given.
+
+\pre `p` lies in the original domain `domain`.
 */
 bool is_vertex(const Point & p, Vertex_handle & v) const;
 

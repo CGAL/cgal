@@ -27,7 +27,7 @@ namespace RS_AK1{
 
 template <class InputPolynomial_,class OutputPolynomial_>
 struct Polynomial_converter_1:
-public CGAL::unary_function<InputPolynomial_,OutputPolynomial_>{
+public CGAL::cpp98::unary_function<InputPolynomial_,OutputPolynomial_>{
         typedef InputPolynomial_                        InpPolynomial_1;
         typedef OutputPolynomial_                       OutPolynomial_1;
         OutPolynomial_1 operator()(const InpPolynomial_1&)const;

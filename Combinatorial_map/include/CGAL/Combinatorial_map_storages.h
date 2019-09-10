@@ -63,8 +63,13 @@ namespace CGAL {
                                                            Darts_with_id;
     typedef CGAL::Dart<d_, Self, Dart_info, Darts_with_id> Dart;
 #endif
-    typedef typename Alloc_::template rebind<Dart>::other  Dart_allocator;
 
+#ifdef CGAL_CXX11
+    typedef std::allocator_traits<Alloc_> Allocator_traits;
+    typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
+#else // not CGAL_CXX11
+    typedef typename Alloc_::template rebind<Dart>::other  Dart_allocator;
+#endif // not CGAL_CXX11
     typedef Compact_container<Dart, Dart_allocator>        Dart_container;
 
     typedef typename Dart_container::iterator              Dart_handle;
@@ -76,12 +81,17 @@ namespace CGAL {
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
-
+#ifdef CGAL_CXX11
+  template <typename T>
+    struct Container_for_attributes :
+      public Compact_container<T, typename std::allocator_traits<Alloc_>::template rebind_alloc<T> >
+    {};
+#else
     template <typename T>
     struct Container_for_attributes :
         public Compact_container<T, typename Alloc_::template rebind<T>::other>
     {};
-
+#endif
     /// Typedef for attributes
     typedef typename internal::template Get_attributes_tuple<Dart_wrapper>::type
                                    Attributes;

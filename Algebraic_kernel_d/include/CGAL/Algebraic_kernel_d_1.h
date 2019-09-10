@@ -71,12 +71,12 @@ protected:
 
   // Some functors used for STL calls
   template<typename A,typename B>
-    struct Pair_first : public CGAL::unary_function<std::pair<A,B>,A> {
+    struct Pair_first : public CGAL::cpp98::unary_function<std::pair<A,B>,A> {
       A operator() (std::pair<A,B> pair) const { return pair.first; }
   };
 
   template<typename A,typename B>
-    struct Pair_second : public CGAL::unary_function<std::pair<A,B>,B> {
+    struct Pair_second : public CGAL::cpp98::unary_function<std::pair<A,B>,B> {
       B operator() (std::pair<A,B> pair) const { return pair.second; }
   };
   
@@ -86,7 +86,7 @@ public:
     typedef Algebraic_real_1                      Type;
     
     struct Bound_between 
-      : public CGAL::binary_function< Type, Type, Bound > {
+      : public CGAL::cpp98::binary_function< Type, Type, Bound > {
       Bound operator()( const Type& t1, 
           const Type& t2 ) const {
 #if CGAL_AK_DONT_USE_SIMPLE_BOUND_BETWEEN
@@ -99,21 +99,21 @@ public:
     };
                                 
     struct Lower_bound
-      : public CGAL::unary_function< Type, Bound > {
+      : public CGAL::cpp98::unary_function< Type, Bound > {
       Bound operator()( const Type& t ) const {
         return t.low();
       }
     };
                 
     struct Upper_bound
-      : public CGAL::unary_function< Type, Bound > {
+      : public CGAL::cpp98::unary_function< Type, Bound > {
       Bound operator()( const Type& t ) const {
         return t.high();
       }
     };
                 
     struct Refine
-      : public CGAL::unary_function< Type, void > {
+      : public CGAL::cpp98::unary_function< Type, void > {
       void operator()( const Type& t ) const {
         t.refine();
       }
@@ -151,7 +151,7 @@ public:
     };              
     
     struct Approximate_absolute_1:
-      public CGAL::binary_function<Algebraic_real_1,int,std::pair<Bound,Bound> >{
+      public CGAL::cpp98::binary_function<Algebraic_real_1,int,std::pair<Bound,Bound> >{
       std::pair<Bound,Bound> 
       operator()(const Algebraic_real_1& x, int prec) const {
         Lower_bound lower; 
@@ -170,7 +170,7 @@ public:
     }; 
     
     struct Approximate_relative_1:
-      public CGAL::binary_function<Algebraic_real_1,int,std::pair<Bound,Bound> >{
+      public CGAL::cpp98::binary_function<Algebraic_real_1,int,std::pair<Bound,Bound> >{
       std::pair<Bound,Bound> 
       operator()(const Algebraic_real_1& x, int prec) const {
         
@@ -201,7 +201,9 @@ public:
 
 
   }; // class Algebraic_real_traits
-            
+
+  struct Construct_algebraic_real_1;
+  
   // Functors of Algebraic_kernel_d_1
   struct Solve_1 {
   public:
@@ -278,7 +280,7 @@ public:
     /*
     // TODO: Can we avoid to use this?
     struct Greater_compare : 
-      public CGAL::binary_function<Algebraic_real_1,Algebraic_real_1,bool> {
+      public CGAL::cpp98::binary_function<Algebraic_real_1,Algebraic_real_1,bool> {
       
       bool operator() (const Algebraic_real_1& a, const Algebraic_real_1& b)
 	const {
@@ -336,7 +338,7 @@ public:
   };
 
   class Number_of_solutions_1 
-      : public CGAL::unary_function<Polynomial_1,size_type> {
+      : public CGAL::cpp98::unary_function<Polynomial_1,size_type> {
     
     public:
 	
@@ -352,7 +354,7 @@ public:
 
             
   struct Sign_at_1 
-    : public CGAL::binary_function< Polynomial_1, Algebraic_real_1, CGAL::Sign > {
+    : public CGAL::cpp98::binary_function< Polynomial_1, Algebraic_real_1, CGAL::Sign > {
     CGAL::Sign operator()( const Polynomial_1& p, const Algebraic_real_1& ar ) const {
       if(CGAL::is_zero(p)) return ZERO; 
       if(CGAL::degree(p)==0) return p.sign_at(0);
@@ -375,7 +377,7 @@ public:
     }
   };                
   struct Is_zero_at_1 
-    : public CGAL::binary_function< Polynomial_1, Algebraic_real_1, bool > {
+    : public CGAL::cpp98::binary_function< Polynomial_1, Algebraic_real_1, bool > {
     bool operator()( const Polynomial_1& p, const Algebraic_real_1& ar ) const {
       if(CGAL::is_zero(p)) return true; 
       if( ar.low() == ar.high() ) return p.sign_at( ar.low() ) == ZERO;
@@ -385,7 +387,7 @@ public:
   };                
                    
   struct Is_square_free_1 
-    : public CGAL::unary_function< Polynomial_1, bool > {
+    : public CGAL::cpp98::unary_function< Polynomial_1, bool > {
     bool operator()( const Polynomial_1& p ) const {
       typename CGAL::Polynomial_traits_d< Polynomial_1 >::Is_square_free isf;
       return isf(p);
@@ -393,7 +395,7 @@ public:
   };
             
   struct Is_coprime_1
-    : public CGAL::binary_function< Polynomial_1, Polynomial_1, bool > {
+    : public CGAL::cpp98::binary_function< Polynomial_1, Polynomial_1, bool > {
     bool operator()( const Polynomial_1& p1, const Polynomial_1& p2 ) const {
       typename CGAL::Polynomial_traits_d< Polynomial_1 >::Total_degree total_degree;
                         
@@ -403,7 +405,7 @@ public:
   }; 
             
   struct Make_square_free_1
-    : public CGAL::unary_function< Polynomial_1, Polynomial_1 > {
+    : public CGAL::cpp98::unary_function< Polynomial_1, Polynomial_1 > {
     Polynomial_1 operator()( const Polynomial_1& p ) const {
       return typename CGAL::Polynomial_traits_d< Polynomial_1 >::Make_square_free()( p );
     }
@@ -438,7 +440,7 @@ public:
     } 
   };
 
-  struct Compute_polynomial_1 : public CGAL::unary_function<Algebraic_real_1,
+  struct Compute_polynomial_1 : public CGAL::cpp98::unary_function<Algebraic_real_1,
                                                            Polynomial_1> {
     Polynomial_1 operator()(const Algebraic_real_1& x) const {
       return x.polynomial();
@@ -488,7 +490,7 @@ public:
   };
 
   struct Compare_1
-    : public CGAL::binary_function<Algebraic_real_1,
+    : public CGAL::cpp98::binary_function<Algebraic_real_1,
 	                          Algebraic_real_1,
                                   CGAL::Comparison_result>{
     
@@ -533,7 +535,7 @@ public:
 
  public:
 
-  struct Isolate_1 : public CGAL::binary_function
+  struct Isolate_1 : public CGAL::cpp98::binary_function
     < Algebraic_real_1,Polynomial_1,std::pair<Bound,Bound> > {
     
     public:

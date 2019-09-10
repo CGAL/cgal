@@ -96,7 +96,7 @@ void test(const int d, const string & type, const int N)
 
     // Remove all !
     cerr << "\nBefore removal: " << dt.number_of_vertices() << " vertices. After: ";
-    random_shuffle(points.begin(),  points.end());
+    CGAL::cpp98::random_shuffle(points.begin(),  points.end());
     dt.remove(points.begin(),  points.end());
     assert( dt.is_valid() );
     cerr << dt.number_of_vertices() << " vertices.";

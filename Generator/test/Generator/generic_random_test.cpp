@@ -18,7 +18,6 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/point_generators_3.h>
 
@@ -50,11 +49,11 @@ typedef CGAL::Mesh_polyhedron_3<K>::type                          Polyhedron;
 // Domain
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K>           Mesh_domain;
 typedef Mesh_domain::Corner_index                                 Corner_index;
-typedef Mesh_domain::Curve_segment_index                          Curve_segment_index;
+typedef Mesh_domain::Curve_index                                  Curve_index;
 
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type             Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
-          Tr, Corner_index, Curve_segment_index>                  C3t3;
+          Tr, Corner_index, Curve_index>                          C3t3;
 typedef CGAL::Mesh_criteria_3<Tr>                                 Mesh_criteria;
 typedef C3t3::Point                                               Point;
 

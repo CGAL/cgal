@@ -244,6 +244,10 @@ The input selection must be a circle and simple polygons.
 The Minkowski sum of the polygons with the circle is computed and drawn.
 </ul>
 
+\subsection mst_ipelet Minimum Spanning Tree
+The input selection must be a set of points. The Euclidean minimum spanning
+tree of the points is computed and drawn.
+
 \subsection multi_delaunay_ipelet k Order Delaunay
 The input selection must be a set of points.
 The order k Voronoi diagram or its dual the order k Delaunay is drawn.

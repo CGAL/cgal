@@ -378,6 +378,7 @@ set( CGAL_MODULES_REL_DIR cmake/modules )
 set( CGAL_MODULES_DIR     ${CGAL_INSTALLATION_PACKAGE_DIR}/${CGAL_MODULES_REL_DIR} )
 
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 cgal_setup_module_path()
 
 message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
@@ -561,7 +562,7 @@ message("== Detect external libraries ==")
 #  External libs configured when Qt5 lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
 #  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 BLAS LAPACK QGLViewer ESBTL Coin3D NTL IPE)
+list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 BLAS LAPACK ESBTL Coin3D NTL IPE)
 if (NOT WIN32)
   # GMPXX is not supported on WIN32 machines
   list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 1 GMPXX)
@@ -579,7 +580,6 @@ endmacro()
 
 set_special_prefix(Qt5 QT)
 set_special_prefix(Eigen3 EIGEN3)
-set_special_prefix(QGLViewer QGLVIEWER)
 set_special_prefix(Coin3D COIN3D)
 
 # some libraries are essential (stl and Boost.Thread are treated in another way) 
@@ -887,7 +887,9 @@ foreach (dir ${CGAL_CONFIGURED_PACKAGES})
     install(DIRECTORY ${dir}/include/CGAL              DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
   endif()
 endforeach()
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
+if(EXISTS ${CMAKE_BINARY_DIR}/include/CGAL)
+  install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
+endif()
 
 file(GLOB scripts "scripts/*")
 list(SORT scripts)
@@ -899,7 +901,7 @@ install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
-if ( GMP_IN_AUXILIARY )
+if ( GMP_IN_CGAL_AUXILIARY OR MPFR_IN_CGAL_AUXILIARY )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
   install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
 endif()
@@ -917,7 +919,6 @@ if(NOT CGAL_HEADER_ONLY)
     DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 else()
   install(FILES
-    ${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake
     ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig.cmake
     DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 endif()
@@ -1056,8 +1057,7 @@ if ( CGAL_BRANCH_BUILD )
     find_package(GMP REQUIRED)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
-    find_package(Qt5 COMPONENTS Core Widgets Xml OpenGL REQUIRED)
-    find_package(QGLViewer)
+    find_package(Qt5 COMPONENTS Core Widgets Xml OpenGL Gui REQUIRED)
     find_package(VTK COMPONENTS vtkImagingGeneral  vtkIOImage NO_MODULE)
     find_package(IPE)
     find_package(RS3)
@@ -1067,7 +1067,7 @@ if ( CGAL_BRANCH_BUILD )
 
     set(compile_options "\
 ${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED -DCGAL_PROFILE \
-${Qt5Widgets_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} \
+${Qt5Widgets_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Gui_DEFINITIONS} \
 ${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
 ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS} \
 ${Qt5Xml_EXECUTABLE_COMPILE_FLAGS} \
@@ -1120,13 +1120,13 @@ because IPE_FOUND is false.")
     endif()
 
     if(CGAL_ENABLE_CHECK_HEADERS)
-      set(falg "-fsyntax-only")
+      set(flag "-fsyntax-only")
     else()
-      set(falg "-E")
+      set(flag "-E")
     endif()
     if(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
       execute_process(COMMAND 
-        ${CMAKE_CXX_COMPILER} -x c++ ${falg} ${CGAL_MODULES_DIR}/config/support/test_syntaxonly.cpp
+        ${CMAKE_CXX_COMPILER} -x c++ ${flag} ${CGAL_MODULES_DIR}/config/support/test_syntaxonly.cpp
         ERROR_QUIET
         RESULT_VARIABLE ok)
       if(ok EQUAL 0)
@@ -1137,7 +1137,7 @@ because IPE_FOUND is false.")
     endif(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
 
     if(NOT CGAL_CHECK_SYNTAX_ONLY)
-      message(FATAL_ERROR "Your compiler does not seem to support ${falg}.
+      message(FATAL_ERROR "Your compiler does not seem to support ${flag}.
 You must disable CGAL_ENABLE_CHECK_HEADERS.")
     endif()
 
@@ -1154,8 +1154,8 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
         ${RS_INCLUDE_DIR}
         ${EIGEN3_INCLUDE_DIR}
         ${GMP_INCLUDE_DIR}
-        ${QGLVIEWER_INCLUDE_DIR} ${Qt5OpenGL_INCLUDE_DIRS}
-        ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}
+        ${Qt5OpenGL_INCLUDE_DIRS}
+        ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_DEFINITIONS}
         ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS}
     )
       list(APPEND include_options "-I${incdir}")
@@ -1238,14 +1238,6 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
               set(skip_hdr TRUE)
             endif()
           endif()
-          if(NOT QGLVIEWER_FOUND)
-            string(REGEX MATCH "CGAL/Three/.*" is_a_three_header ${header})
-            if(is_a_three_header)
-              message(STATUS "Skip Three header \"${header}\" because \
-QGLVIEWER_FOUND is false.")
-              set(skip_hdr TRUE)
-            endif()
-          endif()
           if(NOT VTK_FOUND)
             string(REGEX MATCH ".*vtk.*" is_a_vtk_header ${header})
             if(is_a_vtk_header)
@@ -1268,6 +1260,7 @@ LEDA_FOUND is false.")
             endif()
           endif()
           if(NOT skip_hdr)
+            LIST( APPEND list_of_headers_to_test ${header})
             string(REPLACE "/" "__" header2 "${header}")
             string(REPLACE "." "_" header2 "${header2}")
             string(REPLACE ";" " " include_options_str "${include_options}")
@@ -1275,7 +1268,16 @@ LEDA_FOUND is false.")
             separate_arguments(CMD
               UNIX_COMMAND
               "${CMAKE_CXX_COMPILER} ${compile_options_str}
-${include_options_str} -x c++ ${falg} -H \
+${include_options_str} -x c++ ${flag} -H \
+${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+              # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
+              # depends on RS.
+              )
+            # CMD2 is CMD without the -H option
+            separate_arguments(CMD2
+              UNIX_COMMAND
+              "${CMAKE_CXX_COMPILER} ${compile_options_str}
+${include_options_str} -x c++ ${flag} \
 ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
               # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
               # depends on RS.
@@ -1286,6 +1288,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
               COMMAND ${CMAKE_COMMAND}
               -DCERR:STRING=${chk_header_name}
               "-DCMD:STRING=${CMD}"
+              "-DCMD2:STRING=${CMD2}"
               -P "${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake"
               DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
               DEPENDS ${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake
@@ -1322,7 +1325,26 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
         list(REMOVE_DUPLICATES packages_deps)
       endif()
     endforeach() # loop on packages
-    add_custom_target(check_headers DEPENDS ${check_pkg_target_list})
+    
+    #Now check that a cpp file including all documented headers compiles
+    file(WRITE ${CGAL_BINARY_DIR}/test_headers.cpp "#define  BOOST_PARAMETER_MAX_ARITY 12 \n")
+    foreach(header ${list_of_headers_to_test})
+      file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "#include <${header}>\n")
+    endforeach() #loop on headers to include in test file
+    file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "int main(){}\n")
+
+    add_custom_target(check_headers 
+                       DEPENDS ${check_pkg_target_list})
+
+    string(REPLACE " " ";" compile_options ${compile_options})
+    string(REPLACE " " ";" include_options ${include_options_str})
+    add_custom_command(TARGET check_headers
+                       POST_BUILD
+                       COMMAND ${CMAKE_CXX_COMPILER}
+                        ${compile_options} ${include_options} 
+                        -x c++ -fsyntax-only ${CGAL_BINARY_DIR}/test_headers.cpp
+                    )
+
     add_custom_target(packages_dependencies DEPENDS ${packages_deps})
     message( "  \n\
   You can now check the headers with the target `check_headers`\n\

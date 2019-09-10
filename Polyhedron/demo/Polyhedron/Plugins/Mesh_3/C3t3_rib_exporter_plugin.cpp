@@ -65,7 +65,7 @@ private:
   typedef Geom_traits::FT                   FT;
   typedef Geom_traits::Aff_transformation_3 Aff_transformation_3;
   
-  typedef qglviewer::Vec qglVec;
+  typedef CGAL::qglviewer::Vec qglVec;
   
   enum Rib_exporter_mode { CUT=0, MESH, TRIANGULATION };
   
@@ -198,7 +198,7 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interfa
   viewer_ = mw->findChild<Viewer_interface*>("viewer");
   if ( NULL == viewer_ )
   {
-    std::cerr << "Can't get QGLViewer" << std::endl;
+    std::cerr << "Can't get CGAL::QGLViewer" << std::endl;
   }
   
   init_parameters();

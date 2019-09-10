@@ -58,7 +58,7 @@ protected:
   }
 
 
-  virtual Badness do_is_bad (const Facet& f) const
+  virtual Badness do_is_bad (const Tr& /*tr*/, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;

@@ -1763,10 +1763,10 @@ namespace CartesianKernelFunctors {
         // to avoid badly defined vectors with coordinates all close
         // to 0 when the plane is almost horizontal, we ignore the
         // smallest coordinate instead of always ignoring Z
-        if (CGAL::possibly(CGAL_AND (a <= b, a <= c)))
+        if (a <= b && a <= c)
           return Vector_3(FT(0), -h.c(), h.b());
 
-        if (CGAL::possibly(CGAL_AND (b <= a, b <= c)))
+        if (b <= a && b <= c)
           return Vector_3(-h.c(), FT(0), h.a());
 
         return Vector_3(-h.b(), h.a(), FT(0));
@@ -3181,6 +3181,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Line_3     Line_3;
     typedef typename K::Triangle_3 Triangle_3;
     typedef typename K::Segment_3  Segment_3;
+    typedef typename K::Ray_3      Ray_3;
     typedef typename K::FT         FT;
   public:
     typedef Point_3                result_type;
@@ -3215,6 +3216,10 @@ namespace CartesianKernelFunctors {
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
     { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
+    
+    Point_3
+    operator()( const Ray_3& r, const Point_3& p ) const
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,r,K()); }
   };
 
   template <class K> 

@@ -44,7 +44,7 @@ set(CGAL_HEADER_ONLY TRUE)
 # the binary directory.
 set(CGAL_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-function(_detect_branch_build VAR_NAME)
+function(cgal_detect_branch_build VAR_NAME)
   if(IS_DIRECTORY ${CGAL_CONFIG_DIR}/../../../../Installation/package_info/Installation/)
     set(${VAR_NAME} TRUE PARENT_SCOPE)
   else()
@@ -52,7 +52,7 @@ function(_detect_branch_build VAR_NAME)
   endif()
 endfunction()
 
-_detect_branch_build(BRANCH_BUILD)
+cgal_detect_branch_build(BRANCH_BUILD)
 if(BRANCH_BUILD)
   set(CGAL_ROOT ${CGAL_CONFIG_DIR}/../../../..)
   set(CGAL_INSTALLATION_PACKAGE_DIR ${CGAL_ROOT}/Installation)
@@ -111,7 +111,7 @@ endforeach()
 include(CGAL_setup_target_dependencies)
 
 #
-# Define the CGAL targets and theirs CGAL:: aliases
+# Define the CGAL targets and their CGAL:: aliases
 #
 foreach(cgal_lib ${CGAL_LIBRARIES})
   set(WITH_${cgal_lib} TRUE)
@@ -139,3 +139,14 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 cgal_setup_module_path()
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
+
+include("${CGAL_MODULES_DIR}/CGAL_parse_version_h.cmake")
+cgal_parse_version_h( "${CGAL_INSTALLATION_PACKAGE_DIR}/include/CGAL/version.h"
+  "CGAL_VERSION_NAME"
+  "CGAL_MAJOR_VERSION"
+  "CGAL_MINOR_VERSION"
+  "CGAL_BUGFIX_VERSION"
+  "CGAL_BUILD_VERSION")
+set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}.${CGAL_BUILD_VERSION}")
+
+include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

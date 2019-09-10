@@ -141,6 +141,34 @@ Color_ramp::build_thermal()
   b_.add(1.0,0.0);
 }
 
+void 
+Color_ramp::build_rainbow()
+{
+  r_.rebuild(1,0.5);
+  g_.rebuild(1,0);
+  b_.rebuild(1,0);
+
+  r_.add(0,0.75);
+  g_.add(0,0.75);
+  b_.add(0,1);
+
+  r_.add(0.2,0);
+  g_.add(0.2,0);
+  b_.add(0.2,1);
+
+  r_.add(0.4,0);
+  g_.add(0.4,1);
+  b_.add(0.4,0);
+
+  r_.add(0.6,1);
+  g_.add(0.6,1);
+  b_.add(0.6,0);
+
+  r_.add(0.8,1);
+  g_.add(0.8,0);
+  b_.add(0.8,0);
+}
+
 void
 Color_ramp::
 print() const

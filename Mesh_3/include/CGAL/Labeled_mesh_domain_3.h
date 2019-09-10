@@ -34,25 +34,218 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Bbox_3.h>
-
 #include <CGAL/point_generators_3.h>
-
-#include <boost/variant.hpp>
-#include <boost/format.hpp>
-#include <boost/optional.hpp>
+#include <CGAL/boost/parameter.h>
+#include <boost/shared_ptr.hpp>
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
 
-#include <CGAL/Default.h>
+#include <CGAL/result_of.h>
+#include <CGAL/function.h>
 
 #include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
+#include <CGAL/internal/Mesh_3/indices_management.h>
+
+// support for `CGAL::Image_3`
+#include <CGAL/Image_3.h>
+#include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
+
+// support for implicit functions
+#include <CGAL/Implicit_to_labeling_function_wrapper.h>
+
+#include <CGAL/boost/parameter.h>
+#include <boost/parameter/preprocessor.hpp>
+#include <boost/parameter/name.hpp>
+#ifdef CGAL_MESH_3_VERBOSE
+#  include <boost/format.hpp>
+#endif
+#include <boost/optional.hpp>
 
 namespace CGAL {
+namespace Mesh_3 {
+namespace internal {
+
+  struct Identity {
+    template <typename T>
+    const T& operator()(const T& x) { return x; }
+  };
+
+  template<typename T>
+  struct Greater_than {
+    typedef T argument_type;
+    typedef bool result_type;
+    Greater_than(const T& second) : second(second) {}
+    bool operator()(const T& first) const {
+      return std::greater<T>()(first, second);
+    }
+    T second;
+  };
+
+  struct Do_not_delete {
+    template <typename T> void operator()(T*) const { }
+  };
+
+  /// Returns a box enclosing image \c im
+  inline Bbox_3 compute_bounding_box(const Image_3& im)
+  {
+    return Bbox_3(-1,-1,-1,
+                  double(im.xdim())*im.vx()+1,
+                  double(im.ydim())*im.vy()+1,
+                  double(im.zdim())*im.vz()+1);
+  }
+
+  template <typename Image_values_to_subdom_indices>
+  struct Create_gray_image_values_to_subdomain_indices {
+    typedef Image_values_to_subdom_indices type;
+    template <typename FT>
+    type operator()(Image_values_to_subdom_indices functor, const FT&) const {
+      return functor;
+    }
+  };
+
+  // specialization for `Null_functor`: create the default functor
+  template <>
+  struct Create_gray_image_values_to_subdomain_indices<Null_functor> {
+    typedef Mesh_3::internal::Greater_than<double> type;
+    template <typename FT>
+    type operator()(Null_functor, const FT& iso_value) const {
+      return type(iso_value);
+    }
+  };
+
+  template <typename Image_values_to_subdom_indices>
+  struct Create_labeled_image_values_to_subdomain_indices {
+    typedef Image_values_to_subdom_indices type;
+    type operator()(Image_values_to_subdom_indices functor) const {
+      return functor;
+    }
+  };
+
+  // specialization for `Null_functor`: create the default functor
+  template <>
+  struct Create_labeled_image_values_to_subdomain_indices<Null_functor> {
+    typedef Identity type;
+    type operator()(Null_functor) const {
+      return type();
+    }
+  };
+
+} // end namespace CGAL::Mesh_3::internal
+} // end namespace CGAL::Mesh_3
 
 struct Null_subdomain_index {
   template <typename T>
   bool operator()(const T& x) const { return 0 == x; }
 };
+
+template <typename Subdomain_index>
+struct Construct_pair_from_subdomain_indices {
+  typedef std::pair<Subdomain_index, Subdomain_index> result_type;
+
+  result_type operator()(Subdomain_index a, Subdomain_index b) const {
+    return result_type(a, b);
+  }
+}; // end class template Construct_pair_from_subdomain_indices
+
+template <typename Geom_traits,
+          typename Subdomain_index,
+          typename Surface_patch_index_>
+class Labeled_mesh_domain_3_impl_details
+{
+protected:
+  typedef Surface_patch_index_ Surface_patch_index;
+  typedef typename Geom_traits::Point_3 Point_3;
+  typedef typename Geom_traits::Sphere_3 Sphere_3;
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Geom_traits::FT FT;
+  typedef boost::shared_ptr<CGAL::Random> CGAL_Random_share_ptr_t;
+  /// Returns squared error bound from \c bbox and \c error
+  FT squared_error_bound(const Iso_cuboid_3& bbox, const FT& error) const
+  {
+    typename Geom_traits::Compute_squared_distance_3 squared_distance =
+                             Geom_traits().compute_squared_distance_3_object();
+    return squared_distance((bbox.min)(), (bbox.max)())*error*error/4;
+  }
+
+  static Iso_cuboid_3 iso_cuboid(const Bbox_3& bbox)
+  {
+    const Point_3 p_min(bbox.xmin(), bbox.ymin(), bbox.zmin());
+    const Point_3 p_max(bbox.xmax(), bbox.ymax(), bbox.zmax());
+
+    return Iso_cuboid_3(p_min,p_max);
+  }
+
+  static Iso_cuboid_3 iso_cuboid(const typename Geom_traits::Sphere_3& sphere)
+  {
+    return iso_cuboid(sphere.bbox());
+  }
+
+  static Iso_cuboid_3 iso_cuboid(const typename Geom_traits::Iso_cuboid_3& c)
+  {
+    return c;
+  }
+
+  static Construct_pair_from_subdomain_indices<Subdomain_index>
+  construct_pair_functor() {
+    return Construct_pair_from_subdomain_indices<Subdomain_index>();
+  }
+
+  template <class ArgumentPack>
+  Labeled_mesh_domain_3_impl_details(ArgumentPack const& args)
+    : function_(args[parameters::function])
+    , bbox_(iso_cuboid(args[parameters::bounding_object]))
+    , cstr_s_p_index(args[parameters::construct_surface_patch_index |
+                          construct_pair_functor()])
+    , null(args[parameters::null_subdomain_index | Null_subdomain_index()])
+    , p_rng_(args[parameters::p_rng|0] == 0 ?
+             CGAL_Random_share_ptr_t(new CGAL::Random(0)) :
+             CGAL_Random_share_ptr_t(args[parameters::p_rng|(CGAL::Random*)(0)],
+                                     Mesh_3::internal::Do_not_delete()))
+    , squared_error_bound_
+      ( squared_error_bound(bbox_,
+                            args[parameters::relative_error_bound|FT(1e-3)]))
+  {
+  }
+
+  template <typename Function,
+            typename Bounding_object,
+            typename Null,
+            typename Construct_surface_patch_index>
+  Labeled_mesh_domain_3_impl_details(const Function& f,
+                                     const Bounding_object& bounding,
+                                     const FT& error_bound,
+                                     Construct_surface_patch_index cstr_s_p_i,
+                                     Null null,
+                                     CGAL::Random* p_rng)
+    : function_(f)
+    , bbox_(iso_cuboid(bounding))
+    , cstr_s_p_index(cstr_s_p_i)
+    , null(null)
+    , p_rng_(p_rng == 0 ?
+             CGAL_Random_share_ptr_t(new CGAL::Random(0)) :
+             CGAL_Random_share_ptr_t(p_rng, Mesh_3::internal::Do_not_delete()))
+    , squared_error_bound_(squared_error_bound(bbox_,error_bound))
+  {}
+
+  /// The function which answers subdomain queries
+  typedef CGAL::cpp11::function<Subdomain_index(const Point_3&)> Function;
+  Function function_;
+  /// The bounding box
+  const Iso_cuboid_3 bbox_;
+
+  typedef CGAL::cpp11::function<
+    Surface_patch_index(Subdomain_index,
+                        Subdomain_index)> Construct_surface_patch_index;
+  Construct_surface_patch_index cstr_s_p_index;
+  /// The functor that decides which sub-domain indices correspond to the
+  /// outside of the domain.
+  typedef CGAL::cpp11::function<bool(Subdomain_index)> Null;
+  Null null;
+  /// The random number generator used by Construct_initial_points
+  CGAL_Random_share_ptr_t p_rng_;
+  /// Error bound relative to sphere radius
+  FT squared_error_bound_;
+}; // Labeled_mesh_domain_3_impl_details
 
 /**
  * \class Labeled_mesh_domain_3
@@ -62,16 +255,46 @@ struct Null_subdomain_index {
  *  - f(p)=0 means that p is outside domain.
  *  - f(p)=a, a!=0 means that p is inside subdomain a.
  *
- *  Any boundary facet is labelled <a,b>, a<b, where a and b are the
+ *  Any boundary facet is labelled <a,b>, with a<b, where a and b are the
  *  tags of it's incident subdomain.
  *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
  */
-template<class Function, class BGT,
-         class Null_subdomain_index = Default >
-class Labeled_mesh_domain_3
+template<class BGT,
+         class Subdomain_index_ = int,
+         class Surface_patch_index_ = std::pair<Subdomain_index_,
+                                                Subdomain_index_> >
+class Labeled_mesh_domain_3 :
+    protected Labeled_mesh_domain_3_impl_details<BGT,
+                                                 Subdomain_index_,
+                                                 Surface_patch_index_>
 {
-  typedef typename Default::Get<Null_subdomain_index,
-                                CGAL::Null_subdomain_index>::type Null;
+public:
+  //-------------------------------------------------------
+  // Index Types
+  //-------------------------------------------------------
+  /// Type of indexes for cells of the input complex
+  typedef Subdomain_index_                  Subdomain_index;
+  typedef boost::optional<Subdomain_index>  Subdomain;
+
+  /// Type of indexes for cells of the input complex
+  typedef Surface_patch_index_                  Surface_patch_index;
+  typedef boost::optional<Surface_patch_index>  Surface_patch;
+
+  /// Type of indexes to characterize the lowest dimensional face of the input
+  /// complex on which a vertex lie
+  typedef typename CGAL::Mesh_3::internal::
+    Index_generator<Subdomain_index, Surface_patch_index>::Index Index;
+
+private:
+  typedef Labeled_mesh_domain_3_impl_details<BGT,
+                                             Subdomain_index,
+                                             Surface_patch_index
+                                             > Impl_details;
+  typedef typename Impl_details::Null     Null;
+  typedef typename Impl_details::Construct_surface_patch_index
+                                          Construct_surface_patch_index;
+  typedef typename Impl_details::Function Function;
+
 public:
   /// Geometric object types
   typedef typename BGT::Point_3    Point_3;
@@ -91,66 +314,179 @@ public:
   // access Function type from inherited class
   typedef Function Fct;
 
-  //-------------------------------------------------------
-  // Index Types
-  //-------------------------------------------------------
-  /// Type of indexes for cells of the input complex
-  typedef typename Function::return_type Subdomain_index;
-  typedef boost::optional<Subdomain_index> Subdomain;
-  /// Type of indexes for surface patch of the input complex
-  typedef std::pair<Subdomain_index, Subdomain_index> Surface_patch_index;
-  typedef boost::optional<Surface_patch_index> Surface_patch;
-  /// Type of indexes to characterize the lowest dimensional face of the input
-  /// complex on which a vertex lie
-  typedef boost::variant<Subdomain_index, Surface_patch_index> Index;
   typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
 
 
   typedef typename BGT::FT FT;
   typedef BGT Geom_traits;
 
+
+  BOOST_PARAMETER_CONSTRUCTOR(Labeled_mesh_domain_3,
+                              (Impl_details),
+                              parameters::tag,
+                              (required
+                               (function_,(Function))
+                               (bounding_object_,*)
+                               )
+                              (optional
+                               (relative_error_bound_, (const FT&))
+                               (p_rng_, (CGAL::Random*))
+                               (null_subdomain_index_,(Null))
+                               (construct_surface_patch_index_,
+                                    (Construct_surface_patch_index))
+                               )
+                              )
+  using Impl_details::construct_pair_functor;
   /**
-   * @brief Constructor
+   * Backward-compatibility constructors, with `null_subdomain_index` as
+   * fourth parameter.
+   * @{
    */
   Labeled_mesh_domain_3(const Function& f,
                         const Sphere_3& bounding_sphere,
                         const FT& error_bound = FT(1e-3),
-                        Null null = Null(),
-                        CGAL::Random* p_rng = NULL);
+                        Null null = Null_subdomain_index(),
+                        CGAL::Random* p_rng = NULL)
+    : Impl_details(f, bounding_sphere,
+                   error_bound,
+                   construct_pair_functor(),
+                   null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Bbox_3& bbox,
                         const FT& error_bound = FT(1e-3),
-                        Null null = Null(),
-                        CGAL::Random* p_rng = NULL);
+                        Null null = Null_subdomain_index(),
+                        CGAL::Random* p_rng = NULL)
+    : Impl_details(f, bbox,
+                   error_bound,
+                   construct_pair_functor(),
+                   null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound = FT(1e-3),
-                        Null null = Null(),
-                        CGAL::Random* p_rng = NULL);
+                        Null null = Null_subdomain_index(),
+                        CGAL::Random* p_rng = NULL)
+    : Impl_details(f, bbox, error_bound,
+                   construct_pair_functor(),
+                   null, p_rng)
+  {}
+  /**
+   * @}
+   */
 
-  Labeled_mesh_domain_3(const Function& f,
-                        const Sphere_3& bounding_sphere,
-                        const FT& error_bound,
-                        CGAL::Random* p_rng);
-
-  Labeled_mesh_domain_3(const Function& f,
-                        const Bbox_3& bbox,
-                        const FT& error_bound,
-                        CGAL::Random* p_rng);
-
-  Labeled_mesh_domain_3(const Function& f,
-                        const Iso_cuboid_3& bbox,
-                        const FT& error_bound,
-                        CGAL::Random* p_rng);
-  /// Destructor
-  virtual ~Labeled_mesh_domain_3()
+  /// Named constructors
+  /// @{
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable: 4003)
+#endif  
+  BOOST_PARAMETER_MEMBER_FUNCTION(
+                                  (Labeled_mesh_domain_3),
+                                  static create_gray_image_mesh_domain,
+                                  parameters::tag,
+                                  (required
+                                   (image_, (const CGAL::Image_3&))
+                                   )
+                                  (optional
+                                   (iso_value_, *, 0)
+                                   (value_outside_, *, 0)
+                                   (relative_error_bound_, (const FT&),
+                                    FT(1e-3))
+                                   (p_rng_, (CGAL::Random*), (CGAL::Random*)(0))
+                                   (image_values_to_subdomain_indices_, *,
+                                    Null_functor())
+                                   (null_subdomain_index_,*,Null_functor())
+                                   (construct_surface_patch_index_, *,
+                                    Null_functor())
+                                   )
+                                  )
   {
-    if(delete_rng_)
-      delete p_rng_;
+    namespace p = CGAL::parameters;
+    return Labeled_mesh_domain_3
+      (create_gray_image_wrapper
+       (image_,
+        iso_value_,
+        image_values_to_subdomain_indices_,
+        value_outside_),
+       Mesh_3::internal::compute_bounding_box(image_),
+       p::relative_error_bound = relative_error_bound_,
+       p::p_rng = p_rng_,
+       p::null_subdomain_index =
+         create_null_subdomain_index(null_subdomain_index_),
+       p::construct_surface_patch_index =
+         create_construct_surface_patch_index(construct_surface_patch_index_));
   }
 
+  BOOST_PARAMETER_MEMBER_FUNCTION(
+                                  (Labeled_mesh_domain_3),
+                                  static create_labeled_image_mesh_domain,
+                                  parameters::tag,
+                                  (required
+                                   (image_, (const CGAL::Image_3&))
+                                   )
+                                  (optional
+                                   (relative_error_bound_, (const FT&),
+                                    FT(1e-3))
+                                   (value_outside_, *, 0)
+                                   (p_rng_, (CGAL::Random*), (CGAL::Random*)(0))
+                                   (image_values_to_subdomain_indices_, *,
+                                    Null_functor())
+                                   (null_subdomain_index_,*,Null_functor())
+                                   (construct_surface_patch_index_, *,
+                                    Null_functor())
+                                   )
+                                  )
+  {
+    namespace p = CGAL::parameters;
+    return Labeled_mesh_domain_3
+      (create_labeled_image_wrapper
+       (image_,
+        image_values_to_subdomain_indices_,
+        value_outside_),
+       Mesh_3::internal::compute_bounding_box(image_),
+       p::relative_error_bound = relative_error_bound_,
+       p::p_rng = p_rng_,
+       p::null_subdomain_index =
+         create_null_subdomain_index(null_subdomain_index_),
+       p::construct_surface_patch_index =
+         create_construct_surface_patch_index(construct_surface_patch_index_));
+  }
+
+  BOOST_PARAMETER_MEMBER_FUNCTION(
+                                  (Labeled_mesh_domain_3),
+                                  static create_implicit_mesh_domain,
+                                  parameters::tag,
+                                  (required
+                                   (function_, *)
+                                   (bounding_object_,*)
+                                   )
+                                  (optional
+                                   (relative_error_bound_, (const FT&),
+                                    FT(1e-3))
+                                   (p_rng_, (CGAL::Random*), (CGAL::Random*)(0))
+                                   (null_subdomain_index_,*,Null_functor())
+                                   (construct_surface_patch_index_, *,
+                                    Null_functor())
+                                   )
+                                  )
+  {
+    namespace p = CGAL::parameters;
+    return Labeled_mesh_domain_3
+      (make_implicit_to_labeling_function_wrapper<BGT>(function_),
+       bounding_object_,
+       p::relative_error_bound = relative_error_bound_,
+       p::p_rng = p_rng_,
+       p::null_subdomain_index =
+         create_null_subdomain_index(null_subdomain_index_),
+       p::construct_surface_patch_index =
+         create_construct_surface_patch_index(construct_surface_patch_index_));
+  }
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+  /// @}
 
   /**
    * Constructs  a set of \ccc{n} points on the surface, and output them to
@@ -179,7 +515,7 @@ public:
    * Returns a bounding box of the domain
    */
   Bbox_3 bbox() const {
-    return bbox_.bbox();
+    return this->bbox_.bbox();
   }
 
   /**
@@ -274,7 +610,7 @@ public:
         if(const Segment_3* s = object_cast<Segment_3>(&clipped))
           return this->operator()(*s);
 #endif
-        
+
       return Surface_patch();
     }
 
@@ -344,7 +680,7 @@ public:
       // Cannot be const: those values are modified below.
       Subdomain_index value_at_p1 = r_domain_.function_(p1);
       Subdomain_index value_at_p2 = r_domain_.function_(p2);
-      Subdomain_index value_at_mid = r_domain_.function_(mid,true);
+      Subdomain_index value_at_mid = r_domain_.function_(mid);
 
       // If both extremities are in the same subdomain,
       // there is no intersection.
@@ -390,7 +726,7 @@ public:
         }
 
         mid = midpoint(p1, p2);
-        value_at_mid = r_domain_.function_(mid,true);
+        value_at_mid = r_domain_.function_(mid);
       }
     }
 
@@ -409,7 +745,7 @@ public:
         if(const Segment_3* s = object_cast<Segment_3>(&clipped))
           return this->operator()(*s);
 #endif
-      
+
       return Intersection();
     }
 
@@ -450,16 +786,16 @@ public:
    */
   Subdomain_index subdomain_index(const Index& index) const
   { return boost::get<Subdomain_index>(index); }
-  
+
   // -----------------------------------
   // Backward Compatibility
   // -----------------------------------
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
   typedef Surface_patch_index   Surface_index;
-  
+
   Index index_from_surface_index(const Surface_index& index) const
   { return index_from_surface_patch_index(index); }
-  
+
   Surface_index surface_index(const Index& index) const
   { return surface_patch_index(index); }
 #endif // CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
@@ -467,30 +803,15 @@ public:
   // End backward Compatibility
   // -----------------------------------
 
-
-private:
+protected:
   /// Returns Surface_patch_index from \c i and \c j
   Surface_patch_index make_surface_index(const Subdomain_index i,
-                                   const Subdomain_index j) const
+                                         const Subdomain_index j) const
   {
-    if ( i < j ) return Surface_patch_index(i,j);
-    else return Surface_patch_index(j,i);
-  }
-
-  /// Returns squared error bound from \c bbox and \c error
-  FT squared_error_bound(const Iso_cuboid_3& bbox, const FT& error) const
-  {
-    typename BGT::Compute_squared_distance_3 squared_distance =
-                                    BGT().compute_squared_distance_3_object();
-    return squared_distance((bbox.min)(), (bbox.max)())*error*error/4;
-  }
-
-  /// Returns squared error bound from \c sphere and \c error
-  FT squared_error_bound(const Sphere_3& sphere, const FT& error) const
-  {
-    typename BGT::Compute_squared_radius_3 squared_radius =
-                                    BGT().compute_squared_radius_3_object();
-    return squared_radius(sphere)*error*error;
+    if(i < j)
+      return this->cstr_s_p_index(i, j);
+    else
+      return this->cstr_s_p_index(j, i);
   }
 
   /// Returns the bounding sphere of an Iso_cuboid_3
@@ -500,156 +821,135 @@ private:
     return sphere((bbox.min)(), (bbox.max)());
   }
 
-  /// Returns and Iso_cuboid_3 from a Bbox_3
-  Iso_cuboid_3 iso_cuboid(const Bbox_3& bbox)
+  template <typename Image_word_type,
+            typename FT, typename FT2, typename Functor>
+  static
+  Function
+  create_gray_image_wrapper_with_known_word_type
+  (const CGAL::Image_3& image,
+   const FT& iso_value,
+   const Functor& image_values_to_subdomain_indices,
+   const FT2& value_outside)
   {
-    const Point_3 p_min(bbox.xmin(), bbox.ymin(), bbox.zmin());
-    const Point_3 p_max(bbox.xmax(), bbox.ymax(), bbox.zmax());
+    using Mesh_3::internal::Create_gray_image_values_to_subdomain_indices;
+    typedef Create_gray_image_values_to_subdomain_indices<Functor> C_i_v_t_s_i;
+    typedef typename C_i_v_t_s_i::type Image_values_to_subdomain_indices;
+    Image_values_to_subdomain_indices transform_fct =
+      C_i_v_t_s_i()(image_values_to_subdomain_indices, iso_value);
 
-    return Iso_cuboid_3(p_min,p_max);
+    typedef Mesh_3::Image_to_labeled_function_wrapper<Image_word_type,
+                                                      double,
+                                                      Subdomain_index,
+                                                      false>           Wrapper;
+    return Wrapper(image,
+                   transform_fct,
+                   transform_fct(value_outside));
   }
 
-protected:
+  template <typename FT, typename FT2, typename Functor>
+  static
+  Function
+  create_gray_image_wrapper(const CGAL::Image_3& image,
+                            const FT& iso_value,
+                            const Functor& image_values_to_subdomain_indices,
+                            const FT2& value_outside)
+  {
+    CGAL_IMAGE_IO_CASE(image.image(),
+       return create_gray_image_wrapper_with_known_word_type<Word>
+                       (image,
+                        iso_value,
+                        image_values_to_subdomain_indices,
+                        value_outside);
+                       );
+    CGAL_error_msg("This place should never be reached, because it would mean "
+                   "the image word type is a type that is not handled by "
+                   "CGAL_ImageIO.");
+    return Function();
+  }
+
+  template <typename Image_word_type,
+            typename FT, typename Functor>
+  static
+  Function
+  create_labeled_image_wrapper_with_known_word_type
+  (const CGAL::Image_3& image,
+   const Functor& image_values_to_subdomain_indices,
+   const FT& value_outside)
+  {
+    using Mesh_3::internal::Create_labeled_image_values_to_subdomain_indices;
+    typedef Create_labeled_image_values_to_subdomain_indices<Functor> C_i_v_t_s_i;
+    typedef typename C_i_v_t_s_i::type Image_values_to_subdomain_indices;
+    Image_values_to_subdomain_indices transform_fct =
+      C_i_v_t_s_i()(image_values_to_subdomain_indices);
+
+    typedef Mesh_3::Image_to_labeled_function_wrapper<Image_word_type,
+                                                      int,
+                                                      Subdomain_index> Wrapper;
+    return Wrapper(image,
+                   transform_fct,
+                   transform_fct(value_outside));
+  }
+
+  template <typename FT, typename Functor>
+  static
+  Function
+  create_labeled_image_wrapper(const CGAL::Image_3& image,
+                               const Functor& image_values_to_subdomain_indices,
+                               const FT& value_outside)
+  {
+    CGAL_IMAGE_IO_CASE(image.image(),
+       return create_labeled_image_wrapper_with_known_word_type<Word>
+                       (image,
+                        image_values_to_subdomain_indices,
+                        value_outside);
+                       );
+    CGAL_error_msg("This place should never be reached, because it would mean "
+                   "the image word type is a type that is not handled by "
+                   "CGAL_ImageIO.");
+    return Function();
+  }
+
+  static
+  Construct_surface_patch_index
+  create_construct_surface_patch_index(const Null_functor&) {
+    return Impl_details::construct_pair_functor();
+  }
+
+  template <typename Functor>
+  static
+  Construct_surface_patch_index
+  create_construct_surface_patch_index(const Functor& functor) {
+    return functor;
+  }
+
+  static Null create_null_subdomain_index(const Null_functor&) {
+    return Null_subdomain_index();
+  }
+
+  template <typename Functor>
+  static Null create_null_subdomain_index(const Functor& functor) {
+    return functor;
+  }
+
+public:
   /// Returns bounding box
-  const Iso_cuboid_3& bounding_box() const { return bbox_; }
-
-private:
-  /// The function which answers subdomain queries
-  const Function function_;
-  /// The bounding box
-  const Iso_cuboid_3 bbox_;
-  /// The functor that decides which sub-domain indices correspond to the
-  /// outside of the domain.
-  Null null;
-  /// The random number generator used by Construct_initial_points
-  CGAL::Random* p_rng_;
-  bool delete_rng_;
-  /// Error bound relative to sphere radius
-  FT squared_error_bound_;
-
-
-private:
-  // Disabled copy constructor & assignment operator
-  typedef Labeled_mesh_domain_3<Function,BGT> Self;
-  Labeled_mesh_domain_3(const Self& src);
-  Self& operator=(const Self& src);
+  const Iso_cuboid_3& bounding_box() const { return this->bbox_; }
 
 };  // end class Labeled_mesh_domain_3
-
-
-
 
 //-------------------------------------------------------
 // Method implementation
 //-------------------------------------------------------
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Sphere_3& bounding_sphere,
-                       const FT& error_bound,
-                       Null null /* = Null() */,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(iso_cuboid(bounding_sphere.bbox()))
-, null(null)
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bounding_sphere,error_bound))
-{
-}
-
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Bbox_3& bbox,
-                       const FT& error_bound,
-                       Null null /* = Null() */,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(iso_cuboid(bbox))
-, null(null)
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bbox_,error_bound))
-{
-}
-
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Iso_cuboid_3& bbox,
-                       const FT& error_bound,
-                       Null null /* = Null() */,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(bbox)
-, null(null)
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bbox_,error_bound))
-{
-}
-
-
-
-
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Sphere_3& bounding_sphere,
-                       const FT& error_bound,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(iso_cuboid(bounding_sphere.bbox()))
-, null(Null())
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bounding_sphere,error_bound))
-{
-}
-
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Bbox_3& bbox,
-                       const FT& error_bound,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(iso_cuboid(bbox))
-, null(Null())
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bbox_,error_bound))
-{
-}
-
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Iso_cuboid_3& bbox,
-                       const FT& error_bound,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(bbox)
-, null(Null())
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bbox_,error_bound))
-{
-}
-
-
-template<class F, class BGT, class Null>
+template<class BGT, class Subdomain_index, class Surface_patch_index>
 template<class OutputIterator>
 OutputIterator
-Labeled_mesh_domain_3<F,BGT,Null>::Construct_initial_points::operator()(
-                                                    OutputIterator pts,
-                                                    const int nb_points) const
+Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::
+Construct_initial_points::operator()(OutputIterator pts,
+                                     const int nb_points) const
 {
   // Create point_iterator on and in bounding_sphere
   typedef Random_points_on_sphere_3<Point_3> Random_points_on_sphere_3;
   typedef Random_points_in_sphere_3<Point_3> Random_points_in_sphere_3;
-
 
   const FT squared_radius = BGT().compute_squared_radius_3_object()(
       r_domain_.bounding_sphere(r_domain_.bbox_));
@@ -676,7 +976,7 @@ Labeled_mesh_domain_3<F,BGT,Null>::Construct_initial_points::operator()(
   // Create nb_point points
   int n = nb_points;
 #ifdef CGAL_MESH_3_VERBOSE
-  std::cerr << "construct initial points:\n";
+  std::cerr << "construct initial points (nb_points: " << nb_points << ")\n";
 #endif
   while ( 0 != n )
   {
@@ -724,4 +1024,4 @@ Labeled_mesh_domain_3<F,BGT,Null>::Construct_initial_points::operator()(
 
 #include <CGAL/enable_warnings.h>
 
-#endif // LABELLED_MESH_TRAITS_3_H_
+#endif // CGAL_LABELED_MESH_DOMAIN_3_H

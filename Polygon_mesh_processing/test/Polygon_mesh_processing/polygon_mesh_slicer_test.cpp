@@ -4,11 +4,8 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #ifdef USE_SURFACE_MESH
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #else
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #endif
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 

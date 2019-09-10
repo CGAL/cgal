@@ -1,11 +1,11 @@
 #include "Viewer.h"
 #include <vector>
 #include <CGAL/bounding_box.h>
-#include <QGLViewer/vec.h>
+#include <CGAL/Qt/vec.h>
 #include "CGAL/Qt/CreateOpenGLContext.h"
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
+  : CGAL::QGLViewer(parent)
 {
   are_buffers_initialized = false;
 }
@@ -109,8 +109,10 @@ const char vertex_source_points[] =
     "attribute highp vec4 vertex;\n"
 
     "uniform highp mat4 mvp_matrix;\n"
+    "uniform highp float point_size;\n"
     "void main(void)\n"
     "{\n"
+    "   gl_PointSize = point_size; \n"
     "   gl_Position = mvp_matrix * vertex;\n"
     "}"
 };
@@ -198,7 +200,7 @@ void Viewer::initialize_buffers()
 }
 
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -261,7 +263,7 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
 
 void Viewer::initializeGL()
 {
-  QGLViewer::initializeGL();
+  CGAL::QGLViewer::initializeGL();
   compile_shaders();
 }
 
@@ -272,8 +274,8 @@ Viewer::sceneChanged()
 
   Iso_cuboid_3 bb = CGAL::bounding_box(scene->points.begin(), scene->points.end());
    
-  this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(), bb.ymin(), bb.zmin()),
-				      qglviewer::Vec(bb.xmax(),
+  this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(), bb.ymin(), bb.zmin()),
+				      CGAL::qglviewer::Vec(bb.xmax(),
 						     bb.ymax(),
 						     bb.zmax()));
 
@@ -334,9 +336,9 @@ Viewer::draw()
     attrib_buffers(this);
     rendering_program_points.bind();
     color.setRgbF(1.0f, 0.0f, 0.0f);
-    glPointSize(5);
     glEnable(GL_POINT_SMOOTH);
     rendering_program_points.setUniformValue(colorLocation_points, color);
+    rendering_program_points.setUniformValue("point_size",5.0f);
     glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
     rendering_program_points.release();
     vao[1].release();

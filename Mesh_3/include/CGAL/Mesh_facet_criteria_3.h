@@ -42,7 +42,7 @@ class Mesh_facet_criteria_3
 public:
   typedef Visitor_ Visitor;
   typedef typename Visitor::Facet_quality Facet_quality;
-  typedef typename Visitor::Facet_badness Facet_badness;
+  typedef typename Visitor::Is_facet_bad  Is_facet_bad;
   
   typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
 private:
@@ -144,13 +144,13 @@ public:
   ~Mesh_facet_criteria_3() { }
 
    /**
-   * @brief returns the badness of facet \c facet
+   * @brief returns whether the facet \c facet is bad or not.
+   * @param tr the triangulation within which \c facet lives
    * @param facet the facet
-   * @return the badness of \c facet
    */
-  Facet_badness operator()(const Facet& facet) const
+  Is_facet_bad operator()(const Tr& tr, const Facet& facet) const
   {
-    return criteria_(facet);
+    return criteria_(tr, facet);
   }
   
   void add(Abstract_criterion* criterion)

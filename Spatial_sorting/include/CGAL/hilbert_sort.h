@@ -51,11 +51,7 @@ namespace internal {
         typedef typename ITraits::difference_type Diff_t;
         boost::rand48 random;
         boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
-        CGAL::random_shuffle(begin,end, rng);
-#else
-        std::random_shuffle(begin,end, rng);
-#endif
+        CGAL::cpp98::random_shuffle(begin,end, rng);
 	(Hilbert_sort_2<Kernel, Policy> (k))(begin, end);
     }
     
@@ -70,11 +66,7 @@ namespace internal {
         typedef typename ITraits::difference_type Diff_t;
         boost::rand48 random;
         boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
-        CGAL::random_shuffle(begin,end, rng);
-#else
-        std::random_shuffle(begin,end, rng);
-#endif
+        CGAL::cpp98::random_shuffle(begin,end, rng);
         (Hilbert_sort_3<Kernel, Policy> (k))(begin, end);
     }
 
@@ -89,11 +81,7 @@ namespace internal {
         typedef typename ITraits::difference_type Diff_t;
         boost::rand48 random;
         boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
-        CGAL::random_shuffle(begin,end, rng);
-#else
-        std::random_shuffle(begin,end, rng);
-#endif
+        CGAL::cpp98::random_shuffle(begin,end, rng);
         (Hilbert_sort_d<Kernel, Policy> (k))(begin, end);
     }
 }

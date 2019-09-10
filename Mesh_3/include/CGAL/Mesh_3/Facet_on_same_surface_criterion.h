@@ -46,7 +46,7 @@ namespace Mesh_3 {
 //  
 //  typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
 //  typedef typename Base::Quality Quality;
-//  typedef typename Base::Badness Badness;
+//  typedef typename Base::Is_bad  Is_bad;
 //  
 //  typedef Facet_on_same_surface_criterion<Tr,Visitor_> Self;
 //  
@@ -68,7 +68,7 @@ namespace Mesh_3 {
 //    return new Self(*this);
 //  }
 //  
-//  virtual Badness do_is_bad (const Facet& f) const
+//  virtual Is_bad do_is_bad (const Tr& tr, Facet& f) const
 //  {
 //    typedef typename Tr::Vertex_handle  Vertex_handle;
 //    typedef typename Tr::Cell_handle    Cell_handle;
@@ -96,7 +96,7 @@ namespace Mesh_3 {
 //      {
 //        if ( !(v2->index() == index) )
 //        {
-//          return Badness(Quality(1));
+//          return Is_bad(Quality(1));
 //        }
 //      }
 //      else
@@ -110,11 +110,11 @@ namespace Mesh_3 {
 //    {
 //      if ( is_index_initialized && !(v3->index() == index) )
 //      {
-//        return Badness(Quality(1));
+//        return Is_bad(Quality(1));
 //      } 
 //    }
 //    
-//    return  Badness();			
+//    return Is_bad();
 //  }
 //  
 //}; // end class Facet_on_same_surface_criterion

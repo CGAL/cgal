@@ -6,10 +6,6 @@
 #include <iostream>
 #include <fstream>
 
-/* If you want to use a viewer, you can use qglviewer. */
-#ifdef CGAL_USE_BASIC_VIEWER
-#include "linear_cell_complex_3_viewer_qt.h"
-#endif
 
 // This example works both with cmap and gmap as combinatorial data structure.
 //typedef CGAL::Linear_cell_complex_for_combinatorial_map<2> LCC_2;
@@ -56,10 +52,6 @@ void display_voronoi(LCC_2& alcc, Dart_handle adart)
   alcc.display_characteristics(std::cout) << ", valid=" 
                                           << alcc.is_valid()
                                           << std::endl;
-  
-#ifdef CGAL_USE_BASIC_VIEWER
-  display_lcc(alcc);
-#endif // CGAL_USE_BASIC_VIEWER
 }
 
 template<typename LCC, typename TR>

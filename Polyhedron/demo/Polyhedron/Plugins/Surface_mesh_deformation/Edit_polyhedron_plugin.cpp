@@ -396,6 +396,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
         Scene_facegraph_item* item = convert_to_plain_facegraph(i, edit_item);
         item->setRenderingMode(last_RM);
         updateSelectionItems(item);
+        item->itemChanged();
       }
     }
   }
@@ -601,7 +602,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
   }
   edit_item->invalidateOpenGLBuffers();
   selection_item->setVisible(false);
-  (*QGLViewer::QGLViewerPool().begin())->update();
+  (*CGAL::QGLViewer::QGLViewerPool().begin())->update();
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_facegraph_item* target)

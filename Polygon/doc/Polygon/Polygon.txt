@@ -8,7 +8,7 @@ namespace CGAL {
 \authors Geert-Jan Giezeman and Wieger Wesselink
 \cgalAutoToc
 
-\section Introduction
+\section secPolygonIntroduction Introduction
 
 A polygon is a closed chain of edges. Several algorithms are available for
 polygons. For some of those algorithms, it is necessary that the polygon is
@@ -32,14 +32,14 @@ Polygons are dynamic. Vertices can be modified, inserted and erased.
 They provide the algorithms described above as member functions.
 Moreover, they provide ways of iterating over the vertices and edges.
 
-Currently, the `Polygon_2` class is a nice wrapper around a container of
+The `Polygon_2` class is a wrapper around a container of
 points, but little more. Especially, computed values are not cached.
 That is, when the `Polygon_2::is_simple()` member function is called
 twice or more, the result is computed each time anew.
 
-\section Examples
+\section secPolygonExamples Examples
 
-\subsection The Polygon Class
+\subsection subsecPolygon The Polygon Class
 
 The following example creates a polygon and illustrates the usage of
 some member functions.
@@ -50,14 +50,14 @@ some member functions.
 A polygon and some points
 \cgalFigureEnd
 
-\subsection Algorithms Operating on Sequences of Points
+\subsection subsecPolygonAlgorithms Algorithms Operating on Sequences of Points
 
 The following example creates a polygon and illustrates the usage of
 some global functions that operate on sequences of points.
 
 \cgalExample{Polygon/polygon_algorithms.cpp}
 
-\subsection Polygons in 3D Space
+\subsection subsecPolygon3D Polygons in 3D Space
 
 Sometimes it is useful to run a 2D algorithm on 3D data.
 Polygons may be contours of a 3D object, where the contours
@@ -71,5 +71,15 @@ and 3D Linear Geometric %Kernel.
 \cgalExample{Polygon/projected_polygon.cpp}
 
 */
+
+\section secPolygonWithHole Polygons with Holes
+
+This package also provides two classes to represent polygons with holes,
+namely `Polygon_with_holes_2` and `General_polygon_with_holes_2`. They
+can store a polygon that represents the outer boundary and a sequence
+of polygons that represent the holes.
+
+These classes do not add any semantic requirements on the simplicity
+or orientation of their boundary polygons.
 
 }

@@ -96,7 +96,7 @@ void test(const int D, const int d, const int N, bool no_transform)
         assert( 2 * dc.number_of_vertices() == dc.number_of_full_cells() + 2 );
     if( dc.current_dimension() > 3 )
     {
-        std::random_shuffle(points.begin(), points.end());
+        CGAL::cpp98::random_shuffle(points.begin(), points.end());
         if (points.size() > 100)
           points.resize(100);
     }

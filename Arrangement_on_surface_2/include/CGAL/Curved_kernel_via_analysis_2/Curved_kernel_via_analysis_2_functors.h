@@ -1432,7 +1432,7 @@ public:
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
     
     //! the result type
-    typedef CGAL::iterator< std::output_iterator_tag, CGAL::Object > 
+    typedef CGAL::cpp98::iterator< std::output_iterator_tag, CGAL::Object >
     result_type;
     
     //! the arity of the functor
@@ -1888,7 +1888,7 @@ public:
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
     
     //! the result type
-    typedef CGAL::iterator< std::output_iterator_tag, CGAL::Object > 
+    typedef CGAL::cpp98::iterator< std::output_iterator_tag, CGAL::Object >
     result_type;
 
     //! the arity of the functor
@@ -2511,7 +2511,7 @@ public:
     typedef typename Curve_analysis_2::Coordinate_2 Coordinate_2;
     
     //! the result type
-    typedef CGAL::iterator< std::output_iterator_tag, Coordinate_2 >
+    typedef CGAL::cpp98::iterator< std::output_iterator_tag, Coordinate_2 >
          result_type;
 
     //! the arity of the functor
@@ -2576,7 +2576,7 @@ public:
     typedef typename Curve_analysis_2::Coordinate_2 Coordinate_2;
     
     //! the result type
-    typedef CGAL::iterator< std::output_iterator_tag, Coordinate_2 >
+    typedef CGAL::cpp98::iterator< std::output_iterator_tag, Coordinate_2 >
              result_type;
 
     //! the arity of the functor

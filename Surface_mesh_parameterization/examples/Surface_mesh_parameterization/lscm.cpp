@@ -37,12 +37,12 @@ typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
 namespace SMP = CGAL::Surface_mesh_parameterization;
 
-int main(int argc, char * argv[])
+int main(int argc, char** argv)
 {
   std::ifstream in_mesh((argc>1) ? argv[1] : "data/lion.off");
   if(!in_mesh){
     std::cerr << "Error: problem loading the input data" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   SurfaceMesh sm;
@@ -97,6 +97,6 @@ int main(int argc, char * argv[])
   std::ofstream out("result.off");
   SMP::IO::output_uvmap_to_off(mesh, bhd, uv_pm, out);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 

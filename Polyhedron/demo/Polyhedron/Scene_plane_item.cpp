@@ -84,7 +84,7 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
     float x = (2*diag)/10.0;
     float y = (2*diag)/10.0;
     {
-        for(int u = 0; u < 11; u++)
+        for(float u = 0; u < 11; u += 1.f)
         {
 
             positions_lines.push_back(-diag + x* u);
@@ -95,7 +95,7 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
             positions_lines.push_back(diag        );
             positions_lines.push_back(0.0         );
         }
-        for(int v=0; v<11; v++)
+        for(float v=0; v<11; v += 1.f)
         {
 
             positions_lines.push_back(-diag        );
@@ -151,12 +151,12 @@ void Scene_plane_item::drawEdges(CGAL::Three::Viewer_interface* viewer)const
 
 void Scene_plane_item::flipPlane()
 {
-  qglviewer::Quaternion q;
-  qglviewer::Vec axis(0,1,0);
+  CGAL::qglviewer::Quaternion q;
+  CGAL::qglviewer::Vec axis(0,1,0);
   if(frame->orientation().axis() == axis)
-    q.setAxisAngle(qglviewer::Vec(1,0,0), M_PI);
+    q.setAxisAngle(CGAL::qglviewer::Vec(1,0,0), CGAL_PI);
   else
-    q.setAxisAngle(axis, M_PI);
+    q.setAxisAngle(axis, CGAL_PI);
   frame->rotate(q.normalized());
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
@@ -186,8 +186,8 @@ Scene_plane_item* Scene_plane_item::clone() const {
 }
 
 QString Scene_plane_item::toolTip() const {
-  const qglviewer::Vec& pos = frame->position();
-  const qglviewer::Vec& n = frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+  const CGAL::qglviewer::Vec& pos = frame->position();
+  const CGAL::qglviewer::Vec& n = frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
   return
     tr("<p><b>%1</b> (mode: %2, color: %3)<br />")
     .arg(this->name())
@@ -209,10 +209,10 @@ QString Scene_plane_item::toolTip() const {
     .arg(manipulable?tr("true"):tr("false"));
 }
 
-Plane_3 Scene_plane_item::plane(qglviewer::Vec offset) const {
-  const qglviewer::Vec& pos = frame->position() - offset;
-  const qglviewer::Vec& n =
-    frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+Plane_3 Scene_plane_item::plane(CGAL::qglviewer::Vec offset) const {
+  const CGAL::qglviewer::Vec& pos = frame->position() - offset;
+  const CGAL::qglviewer::Vec& n =
+    frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
   return Plane_3(n[0], n[1],  n[2], - n * pos);
 }
 
@@ -228,7 +228,7 @@ void Scene_plane_item::setPosition(float x, float y, float z) {
 }
 
 void Scene_plane_item::setPosition(double x, double y, double z) {
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   frame->setPosition((float)x+offset.x, (float)y+offset.y, (float)z+offset.z);
 }
 
@@ -237,21 +237,21 @@ void Scene_plane_item::setNormal(float x, float y, float z) {
   if(normal == QVector3D(0,0,0))
     return;
   QVector3D origin(0,0,1);
-  qglviewer::Quaternion q;
+  CGAL::qglviewer::Quaternion q;
   if(origin == normal)
   {
     return;
   }
    if(origin == -normal)
   {
-    q.setAxisAngle(qglviewer::Vec(0,1,0),M_PI);
+    q.setAxisAngle(CGAL::qglviewer::Vec(0,1,0),CGAL_PI);
     frame->setOrientation(q);
     return;
   }
 
   QVector3D cp = QVector3D::crossProduct(origin, normal);
   cp.normalize();
-  q.setAxisAngle(qglviewer::Vec(cp.x(),cp.y(), cp.z()),acos(QVector3D::dotProduct(origin, normal)/(normal.length()*origin.length())));
+  q.setAxisAngle(CGAL::qglviewer::Vec(cp.x(),cp.y(), cp.z()),acos(QVector3D::dotProduct(origin, normal)/(normal.length()*origin.length())));
 
   frame->setOrientation(q.normalized());
 }

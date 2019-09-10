@@ -66,8 +66,19 @@ int main (int argc, char** argv)
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;
   t.start();
-  Feature_generator generator (features, pts, pts.point_map(),
+  Feature_generator generator (pts, pts.point_map(),
                                5);  // using 5 scales
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  features.begin_parallel_additions();
+#endif
+  
+  generator.generate_point_based_features (features);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  features.end_parallel_additions();
+#endif
+  
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 

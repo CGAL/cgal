@@ -102,11 +102,11 @@ public:
 
       if (bbox.xmax()-bbox.xmin() >= bbox.ymax()-bbox.ymin())
       {
-        std::nth_element(first, middle, beyond, less_x); // sort along x
+        std::nth_element(first, middle, beyond, AABB_traits_2::less_x); // sort along x
       }
       else
       {
-        std::nth_element(first, middle, beyond, less_y); // sort along y
+        std::nth_element(first, middle, beyond, AABB_traits_2::less_y); // sort along y
       }
     }
   };

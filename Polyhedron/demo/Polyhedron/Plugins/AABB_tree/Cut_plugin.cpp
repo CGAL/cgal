@@ -83,11 +83,11 @@ class FillGridSize {
   std::vector<Tree*>&trees;
   std::vector<SM_Tree*>&sm_trees;
   bool is_signed;
-  qglviewer::ManipulatedFrame* frame;
+  CGAL::qglviewer::ManipulatedFrame* frame;
 public:
   FillGridSize(std::size_t grid_size, FT diag, Point_distance (&distance_function)[100][100],
   FT& max_distance_function, std::vector<Tree*>& trees, std::vector<SM_Tree*>& sm_trees,
-  bool is_signed, qglviewer::ManipulatedFrame* frame)
+  bool is_signed, CGAL::qglviewer::ManipulatedFrame* frame)
   : grid_size(grid_size), distance_function (distance_function), diag(diag),
     max_distance_function(max_distance_function),
     trees(trees), sm_trees(sm_trees), is_signed(is_signed), frame(frame)
@@ -112,7 +112,7 @@ public:
       FT x = -diag/fd + FT(i)/FT(grid_size) * dx;
       {
         FT y = -diag/fd + FT(j)/FT(grid_size) * dy;
-        const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+        const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
         Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
         Point query = transfo( Point(x,y,z))-offset;
         FT min = DBL_MAX;
@@ -256,7 +256,7 @@ class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item
 public:
   Scene_aabb_item(const Facet_tree& tree) : CGAL::Three::Scene_item(1,1)
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     positions_lines.clear();
 
     CGAL::AABB_drawing_traits<Facet_primitive, CGAL::AABB_node<Facet_traits> > traits;
@@ -281,7 +281,7 @@ public:
 
   Scene_aabb_item(const Facet_sm_tree& tree) : CGAL::Three::Scene_item(1,1)
   {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       positions_lines.clear();
 
       CGAL::AABB_drawing_traits<Facet_sm_primitive, CGAL::AABB_node<Facet_sm_traits> > traits;
@@ -476,7 +476,7 @@ private:
     }
     void computeElements() const
     {
-       const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+       const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
        Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
        QApplication::setOverrideCursor(Qt::WaitCursor);
        positions_lines.clear();
@@ -562,7 +562,21 @@ public:
     //Vertex source code
     const char tex_vertex_source[] =
     {
-        "#version 120 \n"
+        "#version 150 \n"
+        "in vec4 vertex;\n"
+        "in vec2 tex_coord; \n"
+        "uniform mat4 mvp_matrix;\n"
+        "uniform mat4 f_matrix;\n"
+        "out vec2 texc;\n"
+        "void main(void)\n"
+        "{\n"
+        "   gl_Position = mvp_matrix * f_matrix * vertex;\n"
+        "   texc = tex_coord;\n"
+        "}"
+    };
+    
+    const char tex_vertex_source_comp[] =
+    {
         "attribute highp vec4 vertex;\n"
         "attribute highp vec2 tex_coord; \n"
         "uniform highp mat4 mvp_matrix;\n"
@@ -577,7 +591,17 @@ public:
     //Vertex source code
     const char tex_fragment_source[] =
     {
-        "#version 120 \n"
+        "#version 150 \n"
+        "uniform sampler2D s_texture;\n"
+        "in vec2 texc;\n"
+        "out vec4 out_color; \n"
+        "void main(void) { \n"
+        "out_color = texture(s_texture, texc.st);\n"
+        "} \n"
+        "\n"
+    };
+    const char tex_fragment_source_comp[] =
+    {
         "uniform sampler2D texture;\n"
         "varying highp vec2 texc;\n"
         "void main(void) { \n"
@@ -585,24 +609,38 @@ public:
         "} \n"
         "\n"
     };
-    QOpenGLShader *tex_vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-    if(!tex_vertex_shader->compileSourceCode(tex_vertex_source))
+    QOpenGLShader tex_vertex_shader(QOpenGLShader::Vertex);
+    QOpenGLShader tex_fragment_shader(QOpenGLShader::Fragment);
+    if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
     {
+      if(!tex_vertex_shader.compileSourceCode(tex_vertex_source))
+      {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-    }
-
-    QOpenGLShader *tex_fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!tex_fragment_shader->compileSourceCode(tex_fragment_source))
-    {
+      }
+      
+      if(!tex_fragment_shader.compileSourceCode(tex_fragment_source))
+      {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
     }
-
-    tex_rendering_program = new QOpenGLShaderProgram();
-    if(!tex_rendering_program->addShader(tex_vertex_shader))
+    else
+    {
+      if(!tex_vertex_shader.compileSourceCode(tex_vertex_source_comp))
+      {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+      }
+      
+      if(!tex_fragment_shader.compileSourceCode(tex_fragment_source_comp))
+      {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
+    }
+    tex_rendering_program = new QOpenGLShaderProgram(CGAL::QGLViewer::QGLViewerPool().first());
+    if(!tex_rendering_program->addShader(&tex_vertex_shader))
     {
         std::cerr<<"adding vertex shader FAILED"<<std::endl;
     }
-    if(!tex_rendering_program->addShader(tex_fragment_shader))
+    if(!tex_rendering_program->addShader(&tex_fragment_shader))
     {
         std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
@@ -645,7 +683,7 @@ public:
   {
     this->edge_sm_trees = edge_trees;
   }
-  void draw(CGAL::Three::Viewer_interface* viewer) const
+  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
   {
     if(!are_buffers_filled)
       initializeBuffers(viewer);
@@ -688,7 +726,7 @@ public:
       break;
     }
   }
-  void drawEdges(CGAL::Three::Viewer_interface *viewer) const
+  void drawEdges(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
   {
     if(m_cut_plane != CUT_SEGMENTS)
       return;
@@ -707,7 +745,7 @@ public:
     vaos[Edges]->release();
   }
 
-  void invalidateOpenGLBuffers()
+  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE
   {
     computeElements();
     are_buffers_filled = false;
@@ -1225,7 +1263,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
     connect(real_scene, SIGNAL(newItem(int)),
             this, SLOT(updateTrees(int)));
 
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   viewer->installEventFilter(this);
 
   _actions << actionIntersection
@@ -1443,10 +1481,10 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
     scene->addItem(edges_item);
   }
 
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position() - offset;
-  const qglviewer::Vec& n =
-      plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec& pos = plane_item->manipulatedFrame()->position() - offset;
+  const CGAL::qglviewer::Vec& n =
+      plane_item->manipulatedFrame()->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
   Simple_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
   //std::cerr << plane << std::endl;
   edges_item->edges.clear();

@@ -148,9 +148,9 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
         PMP::surface_intersection(*itemA->polyhedron(),
                                   *itemB->polyhedron(),
                                   std::back_inserter(new_item->polylines),
-                                  true);
+                                  PMP::parameters::throw_on_self_intersection(true));
       }
-      catch(CGAL::Corefinement::Self_intersection_exception)
+      catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
       {
         QMessageBox::warning((QWidget*)NULL,
           tr("Self-intersections Found"),

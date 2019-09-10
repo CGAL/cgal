@@ -162,7 +162,7 @@ Delaunay_triangulation_3 (InputIterator first, InputIterator last,
 /// @{
 
 /*!
-Inserts point `p` in the triangulation and returns the corresponding 
+Inserts the point `p` in the triangulation and returns the corresponding
 vertex. Similar to the insertion in a triangulation, but ensures in 
 addition the empty sphere property of all the created faces. 
 The optional argument `start` is used as a starting place for the search. 
@@ -185,7 +185,7 @@ Vertex_handle insert(const Point & p, Vertex_handle hint,
                      bool *could_lock_zone = NULL); 
 
 /*!
-Inserts point `p` in the triangulation and returns the corresponding 
+Inserts the point `p` in the triangulation and returns the corresponding
 vertex. Similar to the above `insert()` function, but takes as additional 
 parameter the return values of a previous location query. See description of 
 `Triangulation_3::locate()`. 
@@ -234,7 +234,7 @@ insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last);
 /// @{
 
 /*!
-if there is not already another vertex placed on `p`, 
+If there is not already another vertex placed on `p`,
 the triangulation is modified such that the new position of vertex `v` 
 is `p`, and `v` is returned. Otherwise, the triangulation is not 
 modified and the vertex at point `p` is returned. 
@@ -243,8 +243,9 @@ modified and the vertex at point `p` is returned.
 Vertex_handle move_if_no_collision(Vertex_handle v, const Point & p); 
 
 /*!
-same as above if there is no collision. Otherwise, `v` 
-is deleted and the vertex placed on `p` is returned. 
+If there is no collision during the move, this function is the same as
+`move_if_no_collision` . Otherwise, `v` is removed and the vertex at point `p`
+is returned.
 \pre Vertex `v` must be finite. 
 */ 
 Vertex_handle move(Vertex_handle v, const Point & p); 
@@ -397,17 +398,14 @@ specifying where to start the search.
 \pre `c` is a cell of `dt`. 
 
 */ 
-Vertex_handle nearest_vertex(Point p, 
-Cell_handle c = Cell_handle()); 
+Vertex_handle nearest_vertex(const Point& p,
+                             Cell_handle c = Cell_handle());
 
 /*!
-Returns the vertex of the cell `c` that is 
-nearest to \f$ p\f$. 
-
+Returns the vertex of the cell `c` that is nearest to \f$ p\f$.
 */ 
-Vertex_handle nearest_vertex_in_cell(Point p, 
-Cell_handle c); 
-
+Vertex_handle nearest_vertex_in_cell(const Point& p,
+                                     Cell_handle c);
 
 /// @}
 
@@ -447,9 +445,9 @@ Returns the pair composed of the resulting output iterators.
 template <class OutputIteratorBoundaryFacets, 
 class OutputIteratorCells> 
 std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells> 
-find_conflicts(Point p, Cell_handle c, 
-OutputIteratorBoundaryFacets bfit, 
-OutputIteratorCells cit, bool *could_lock_zone = NULL); 
+find_conflicts(const Point& p, Cell_handle c,
+               OutputIteratorBoundaryFacets bfit,
+               OutputIteratorCells cit, bool *could_lock_zone = NULL);
 
 /*!
 Same as the other `find_conflicts()` function, except that it also 
@@ -479,24 +477,23 @@ Returns the `Triple` composed of the resulting output iterators.
 
 */ 
 template <class OutputIteratorBoundaryFacets, 
-class OutputIteratorCells, 
-class OutputIteratorInternalFacets> 
+          class OutputIteratorCells,
+          class OutputIteratorInternalFacets>
 Triple<OutputIteratorBoundaryFacets, 
-OutputIteratorCells, 
-OutputIteratorInternalFacets> 
-find_conflicts(Point p, Cell_handle c, 
-OutputIteratorBoundaryFacets bfit, 
-OutputIteratorCells cit, 
-OutputIteratorInternalFacets ifit,
-bool *could_lock_zone = NULL); 
+       OutputIteratorCells,
+       OutputIteratorInternalFacets>
+find_conflicts(const Point& p, Cell_handle c,
+               OutputIteratorBoundaryFacets bfit,
+               OutputIteratorCells cit,
+               OutputIteratorInternalFacets ifit,
+               bool *could_lock_zone = NULL);
 
 /*!
 \deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
-vertices_in_conflict(Point p, Cell_handle c, 
-OutputIterator res); 
+vertices_in_conflict(const Point& p, Cell_handle c, OutputIterator res);
 
 /*!
 Similar to `find_conflicts()`, but reports the vertices which are on the 
@@ -507,9 +504,7 @@ Returns the resulting output iterator.
 */ 
 template <class OutputIterator> 
 OutputIterator 
-vertices_on_conflict_zone_boundary(Point p, Cell_handle c, 
-OutputIterator res); 
-
+vertices_on_conflict_zone_boundary(const Point& p, Cell_handle c, OutputIterator res);
 
 /// @}
 

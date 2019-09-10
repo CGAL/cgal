@@ -113,6 +113,20 @@ _test_cls_const_triang_plus_2( const TrP & )
   trp.remove_constraint(v2, v3);
   trp.remove_constraint(v3, v1);
 
+  std::cerr << " test the configuration of bug #2999" << std::endl;
+  trp.clear();
+  {
+    Point const p1(942455,   2306674.6);
+    Point const p2(942452.3, 2306671.9);
+    Point const p3(942441.1, 2306667.8);
+    Point const p4(942453.8, 2306673.4);
+    Point const p6(942447.7, 2306686  );
+    trp.insert_constraint(p1,p2);
+    trp.insert_constraint(p3,p4); // that insert an intersection point p5,
+                                  // that should be snapped to p4
+    trp.insert_constraint(p4,p6);
+  }
+
   std::cout << std::endl;
   return;
 }

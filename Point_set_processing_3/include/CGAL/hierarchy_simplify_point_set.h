@@ -39,6 +39,7 @@
 #include <CGAL/PCA_util.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/function.h>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -142,6 +143,13 @@ namespace CGAL {
        if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
        using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation
        `CGAL::Diagonalize_traits` is used.\cgalParamEnd
+       \cgalParamBegin{callback} an instance of
+       `cpp11::function<bool(double)>`. It is called regularly when the
+       algorithm is running: the current advancement (between 0. and
+       1.) is passed as parameter. If it returns `true`, then the
+       algorithm continues its execution normally; if it returns
+       `false`, the algorithm is stopped and simplification stops with
+       no guarantee on the output.\cgalParamEnd
        \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
      \cgalNamedParamsEnd
 
@@ -167,6 +175,8 @@ namespace CGAL {
     PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
     unsigned int size = choose_param(get_param(np, internal_np::size), 10);
     double var_max = choose_param(get_param(np, internal_np::maximum_variation), 1./3.);
+    const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                                 cpp11::function<bool(double)>());
 
     typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Input_type;
 
@@ -191,6 +201,8 @@ namespace CGAL {
 
     std::list<Input_type> points_to_keep;
     std::list<Input_type> points_to_remove;
+
+    std::size_t nb_done = 0;
     
     while (!(clusters_stack.empty ()))
       {
@@ -203,6 +215,7 @@ namespace CGAL {
 	    points_to_keep.splice (points_to_keep.end (), current_cluster->first,
 				   current_cluster->first.begin ());
 	    clusters_stack.pop_front ();
+            ++ nb_done;
 	    continue;
 	  }
 
@@ -268,6 +281,7 @@ namespace CGAL {
 		cluster_iterator nonempty = (current_cluster->first.empty ()
 					     ? negative_side : current_cluster);
 
+                nb_done += nonempty->first.size();
 		// Compute the centroid
 		nonempty->second = internal::hsps_centroid (nonempty->first.begin (),
 							    nonempty->first.end (),
@@ -279,6 +293,7 @@ namespace CGAL {
 						 point_map,
 						 nonempty->second,
 						 Kernel ());
+                
 		clusters_stack.pop_front ();
 		clusters_stack.pop_front ();
 	      }
@@ -311,6 +326,7 @@ namespace CGAL {
 	// and output point
 	else
 	  {
+            nb_done += current_cluster->first.size();
 	    internal::hsc_terminate_cluster (current_cluster->first,
 					     points_to_keep,
 					     points_to_remove,
@@ -319,7 +335,14 @@ namespace CGAL {
 					     Kernel ());
 	    clusters_stack.pop_front ();
 	  }
+
+        if (callback && !callback (nb_done / double (points.size())))
+          break;
       }
+
+    if (callback)
+      callback (1.);
+    
     typename PointRange::iterator first_point_to_remove =
       std::copy (points_to_keep.begin(), points_to_keep.end(), points.begin());
     std::copy (points_to_remove.begin(), points_to_remove.end(), first_point_to_remove);

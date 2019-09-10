@@ -32,6 +32,7 @@
 // provided you give a NT converter from A to B.
 // There's a Homogeneous counterpart.
 
+#include <CGAL/Cartesian_converter_fwd.h>
 #include <CGAL/basic.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Enum_converter.h>
@@ -91,7 +92,7 @@ struct Converting_visitor : boost::static_visitor<> {
 
 template < class K1, class K2,
 //          class Converter = NT_converter<typename K1::FT, typename K2::FT> >
-           class Converter = typename internal::Default_converter<K1, K2>::Type >
+           class Converter>
 class Cartesian_converter : public Enum_converter
 {
     typedef Enum_converter   Base;

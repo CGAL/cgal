@@ -72,12 +72,14 @@ namespace CGAL {
  *  scale. It must be a Boolean_tag type.
  */
 template < class GeomTraits, class FixedSurface >
-class Shape_construction_3 {
+class Shape_construction_3
+{
     typedef Triangulation_vertex_base_with_info_3< unsigned int, GeomTraits >   Vb;
-    typedef Alpha_shape_vertex_base_3< GeomTraits, Vb >                     aVb;
-    typedef Triangulation_cell_base_with_info_3< unsigned int, GeomTraits >     Cb;
-    typedef Alpha_shape_cell_base_3< GeomTraits, Cb >                       aCb;
-    typedef Triangulation_data_structure_3<aVb,aCb>                         Tds;
+    typedef Alpha_shape_vertex_base_3< GeomTraits, Vb >                         aVb;
+    typedef Triangulation_cell_base_with_info_3< unsigned int, GeomTraits >     Cbb;
+    typedef Delaunay_triangulation_cell_base_3< GeomTraits, Cbb >               Cb;
+    typedef Alpha_shape_cell_base_3< GeomTraits, Cb >                           aCb;
+    typedef Triangulation_data_structure_3<aVb,aCb>                             Tds;
 
 public:
 /// \name Types
@@ -157,14 +159,15 @@ public:
 
 // The type for the shape of a set of points with fixed scale.
 template < class GeomTraits >
-class Shape_construction_3 < GeomTraits, Tag_true > {
-    
+class Shape_construction_3 < GeomTraits, Tag_true >
+{
     typedef Triangulation_vertex_base_with_info_3< unsigned int, GeomTraits >   Vb;
-    typedef Fixed_alpha_shape_vertex_base_3< GeomTraits, Vb >               aVb;
-    typedef Triangulation_cell_base_with_info_3< unsigned int, GeomTraits >     Cb;
-    typedef Fixed_alpha_shape_cell_base_3< GeomTraits, Cb >                 aCb;
+    typedef Fixed_alpha_shape_vertex_base_3< GeomTraits, Vb >                   aVb;
+    typedef Triangulation_cell_base_with_info_3< unsigned int, GeomTraits >     Cbb;
+    typedef Delaunay_triangulation_cell_base_3< GeomTraits, Cbb >               Cb;
+    typedef Fixed_alpha_shape_cell_base_3< GeomTraits, Cb >                     aCb;
 
-    typedef Triangulation_data_structure_3<aVb,aCb>                         Tds;
+    typedef Triangulation_data_structure_3<aVb,aCb>                             Tds;
 
 public:
     typedef Tds                                                             Triangulation_data_structure;

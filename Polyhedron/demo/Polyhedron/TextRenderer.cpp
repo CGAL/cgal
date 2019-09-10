@@ -8,7 +8,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
     if (!painter->isActive())
       painter->begin(viewer);
     QRect rect;
-    qglviewer::Camera* camera = viewer->camera();
+    CGAL::qglviewer::Camera* camera = viewer->camera();
     //Display the items textItems
     Q_FOREACH(TextListItem* list, textItems)
     {
@@ -19,19 +19,19 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
          )
         Q_FOREACH(TextItem* item, list->textList())
         {
-          qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
+          CGAL::qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
           if(viewer->testDisplayId(src.x, src.y, src.z))
           {
             if(item->is_3D())
-              rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
-                           camera->projectedCoordinatesOf(src).y-item->height()/2,
-                           item->width(),
-                           item->height());
+              rect = QRect(int(camera->projectedCoordinatesOf(src).x-item->width()/2),
+                           int(camera->projectedCoordinatesOf(src).y-item->height()/2),
+                           int(item->width()),
+                           int(item->height()));
             else
-              rect = QRect(src.x-item->width()/2,
-                           src.y-item->height()/2,
-                           item->width(),
-                           item->height());
+              rect = QRect(int(src.x-item->width()/2),
+                           int(src.y-item->height()/2),
+                           int(item->width()),
+                           int(item->height()));
 
             painter->setFont(item->font());
             painter->setPen(QPen(item->color()));
@@ -43,23 +43,23 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
     //Display the local TextItems
     Q_FOREACH(TextItem* item, local_textItems)
     {
-      qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
+      CGAL::qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
       if(item->is_3D())
       {
         if(item->is_always_visible() || viewer->testDisplayId(src.x, src.y, src.z))
         {
-            rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
-                       camera->projectedCoordinatesOf(src).y-item->height()/2,
-                       item->width(),
-                       item->height());
+            rect = QRect(int(camera->projectedCoordinatesOf(src).x-item->width()/2),
+                         int(camera->projectedCoordinatesOf(src).y-item->height()/2),
+                         int(item->width()),
+                         int(item->height()));
         }
       }
       else
       {
-          rect = QRect(src.x-item->width()/2,
-                     src.y-item->height()/2,
-                     item->width(),
-                     item->height());
+          rect = QRect(int(src.x-item->width()/2),
+                       int(src.y-item->height()/2),
+                       int(item->width()),
+                       int(item->height()));
       }
       painter->setFont(item->font());
       painter->setPen(QPen(item->color()));

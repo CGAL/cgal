@@ -24,8 +24,9 @@
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
+#include <CGAL/Qt/viewer_actions.h>
 
-#include <QGLViewer/vec.h>
+#include <CGAL/Qt/vec.h>
 #include <QDebug>
 
 //Vertex source code
@@ -38,12 +39,14 @@ const char vertex_source[] =
 
     "uniform highp mat4 mvp_matrix;\n"
     "uniform highp mat4 mv_matrix; \n"
+    "uniform highp float point_size; \n"
 
     "varying highp vec4 fP; \n"
     "varying highp vec3 fN; \n"
     "varying highp vec4 fColor; \n"
     "void main(void)\n"
     "{\n"
+    "   gl_PointSize = point_size; \n"
     "   fP = mv_matrix * vertex; \n"
     "   fN = mat3(mv_matrix)* normal; \n"
     "   fColor = vec4(color, 1.0); \n"
@@ -88,8 +91,10 @@ const char vertex_source_p_l[] =
     "#version 120 \n"
     "attribute highp vec4 vertex;\n"
     "uniform highp mat4 mvp_matrix;\n"
+    "uniform highp float point_size; \n"
     "void main(void)\n"
     "{\n"
+    "   gl_PointSize = point_size; \n"
     "   gl_Position = mvp_matrix * vertex;\n"
     "}"
   };
@@ -105,7 +110,7 @@ const char fragment_source_p_l[] =
   };
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent),
+  : CGAL::QGLViewer(parent),
     wireframe(false),
     flatShading(true),
     edges(true),
@@ -595,7 +600,7 @@ void Viewer::compute_elements()
   lcc.free_mark(markface);
 }
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
   QMatrix4x4 mvpMatrix;
   QMatrix4x4 mvMatrix;
@@ -653,10 +658,10 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
 void Viewer::sceneChanged()
 {
   compute_elements();
-  this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
+  this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(),
                                                      bb.ymin(),
                                                      bb.zmin()),
-                                      qglviewer::Vec(bb.xmax(),
+                                      CGAL::qglviewer::Vec(bb.xmax(),
                                                      bb.ymax(),
                                                      bb.zmax()));
   are_buffers_initialized = false;
@@ -664,11 +669,7 @@ void Viewer::sceneChanged()
   if (m_previous_scene_empty)
     this->showEntireScene();
   else
-#if QGLVIEWER_VERSION >= 0x020700
     this->update();
-#else
-    this->updateGL();
-#endif
 
   m_previous_scene_empty = scene->lcc->is_empty(); // for the next call to sceneChanged
 }
@@ -717,12 +718,12 @@ void Viewer::draw()
     }
     if(vertices)
     {
-      glPointSize(size_points);
       vao[3].bind();
       attrib_buffers(this);
       color.setRgbF(.2f,.2f,.6f);
       rendering_program_p_l.bind();
       rendering_program_p_l.setAttributeValue(colorLocation,color);
+      rendering_program_p_l.setUniformValue("point_size", GLfloat(size_points));
       glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
       rendering_program_p_l.release();
       vao[3].release();
@@ -735,7 +736,7 @@ void Viewer::init()
   restoreStateFromFile();
   initializeOpenGLFunctions();
   // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
-  setShortcut(EXIT_VIEWER, Qt::CTRL+Qt::Key_Q);
+  setShortcut(CGAL::qglviewer::EXIT_VIEWER, Qt::CTRL+Qt::Key_Q);
 
   // Add custom key description (see keyPressEvent).
   setKeyDescription(Qt::Key_W, "Toggles wire frame display");
@@ -752,17 +753,10 @@ void Viewer::init()
 
   // Light default parameters
   glLineWidth(size_edges);
-  glPointSize(size_points);
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(1.0f,1.0f);
   glClearColor(1.0f,1.0f,1.0f,0.0f);
-  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
-  glEnable(GL_LIGHTING);
-
-  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-
-  glShadeModel(GL_FLAT);
   glDisable(GL_BLEND);
   glDisable(GL_LINE_SMOOTH);
   glDisable(GL_POLYGON_SMOOTH_HINT);
@@ -780,19 +774,13 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     wireframe = !wireframe;
     if (wireframe)
     {
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       displayMessage("Wireframe.");
     }
     else
     {
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       displayMessage("Filled faces.");
     }
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_F) && (modifiers==Qt::NoButton))
   {
@@ -801,31 +789,22 @@ void Viewer::keyPressEvent(QKeyEvent *e)
       displayMessage("Flat shading.");
     else
       displayMessage("Gouraud shading.");
-#if QGLVIEWER_VERSION >= 0x020700
+
     update();
-#else
-    updateGL();
-#endif
+
   }
   else if ((e->key()==Qt::Key_E) && (modifiers==Qt::NoButton))
   {
     edges = !edges;
     displayMessage(QString("Draw edges=%1.").arg(edges?"true":"false"));
-#if QGLVIEWER_VERSION >= 0x020700
+
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_V) && (modifiers==Qt::NoButton))
   {
     vertices = !vertices;
     displayMessage(QString("Draw vertices=%1.").arg(vertices?"true":"false"));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_N) && (modifiers==Qt::NoButton))
   {
@@ -837,41 +816,25 @@ void Viewer::keyPressEvent(QKeyEvent *e)
   {
     size_edges+=.5;
     displayMessage(QString("Size of edges=%1.").arg(size_edges));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_Minus) && (modifiers==Qt::KeypadModifier))
   {
     if (size_edges>.5) size_edges-=.5;
     displayMessage(QString("Size of edges=%1.").arg(size_edges));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_Plus) && (modifiers==(Qt::ShiftModifier|Qt::KeypadModifier)))
   {
     size_points+=.5;
     displayMessage(QString("Size of points=%1.").arg(size_points));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_Minus) && (modifiers==(Qt::ShiftModifier|Qt::KeypadModifier)))
   {
     if (size_points>.5) size_points-=.5;
     displayMessage(QString("Size of points=%1.").arg(size_points));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton))
   {
@@ -883,11 +846,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.z()>1.) ambient.setZ(1.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::NoButton))
   {
@@ -899,11 +858,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.z()<0.) ambient.setZ(0.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::ShiftModifier))
   {
@@ -911,11 +866,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.x()>1.) ambient.setX(1.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::AltModifier))
   {
@@ -923,11 +874,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.y()>1.) ambient.setY(1.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::ControlModifier))
   {
@@ -935,11 +882,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.z()>1.) ambient.setZ(1.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::ShiftModifier))
   {
@@ -947,11 +890,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.x()<0.) ambient.setX(0.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::AltModifier))
   {
@@ -959,11 +898,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.y()<0.) ambient.setY(0.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::ControlModifier))
   {
@@ -971,14 +906,10 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.z()<0.) ambient.setZ(0.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-#endif
   }
   else
-    QGLViewer::keyPressEvent(e);
+    CGAL::QGLViewer::keyPressEvent(e);
 }
 
 QString Viewer::helpString() const

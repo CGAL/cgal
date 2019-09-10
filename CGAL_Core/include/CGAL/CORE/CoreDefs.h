@@ -41,6 +41,7 @@
 
 #include <CGAL/CORE/extLong.h>
 #include <CGAL/atomic.h>
+#include <CGAL/disable_warnings.h>
 
 #ifdef CGAL_HEADER_ONLY
   
@@ -54,7 +55,7 @@
 #else // CGAL_HEADER_ONLY
 
   #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
-    CGAL_CORE_EXPORT extern TYPE NAME;                   \
+    CGAL_CORE_EXPORT extern TYPE NAME;              \
     inline TYPE& get_static_##NAME()                \
     {                                               \
       return NAME;                                  \
@@ -339,5 +340,9 @@ inline void setPositionalFormat(std::ostream& o = std::cout) {
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/CORE/CoreDefs_impl.h>
 #endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
+
+#undef CGAL_GLOBAL_STATE_VAR
 
 #endif // _CORE_COREDEFS_H_

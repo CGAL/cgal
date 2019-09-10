@@ -1,16 +1,14 @@
 #ifndef SCENE_POLYHEDRON_SELECTION_ITEM_H
 #define SCENE_POLYHEDRON_SELECTION_ITEM_H
-#include "opengl_tools.h"
+
 #include "Scene_polyhedron_selection_item_config.h"
 #include "Plugins/PMP/Scene_facegraph_item_k_ring_selection.h"
 #include "Travel_isolated_components.h"
 
 #ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 #else
 #include "Polyhedron_type.h"
-#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #endif
 #include "Scene_polyhedron_item_decorator.h"
 #include <CGAL/property_map.h>
@@ -35,7 +33,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -435,7 +433,7 @@ public:
     case Active_handle::PATH:
       selected_edges.insert(edges(*polyhedron()).first, edges(*polyhedron()).second);
       invalidateOpenGLBuffers();
-      QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+      CGAL::QGLViewer* v = *CGAL::QGLViewer::QGLViewerPool().begin();
       v->update();
       break;
     }

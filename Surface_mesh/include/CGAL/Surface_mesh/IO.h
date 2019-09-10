@@ -327,45 +327,14 @@ bool read_off(Surface_mesh<K>& mesh, const std::string& filename)
 template <typename K>
 bool write_off(const Surface_mesh<K>& mesh, const std::string& filename)
 {
-    typedef Surface_mesh<K> Mesh;
-    typedef typename Mesh::Point Point_3;
-
-    FILE* out = fopen(filename.c_str(), "w");
-    if (!out)
+    std::ofstream out(filename.c_str());
+    if (out.fail())
         return false;
 
+    out << std::setprecision(17);
+    write_off(out, mesh);
 
-    // header
-    fprintf(out, "OFF\n%d %d 0\n", mesh.num_vertices(), mesh.num_faces());
-
-
-    // vertices
-    typename Mesh::template Property_map<typename Mesh::Vertex_index, Point_3> points
-      = mesh.template property_map<typename Mesh::Vertex_index, Point_3>("v:point").first;
-    for (typename Mesh::Vertex_iterator vit=mesh.vertices_begin(); vit!=mesh.vertices_end(); ++vit)
-    {
-        const Point_3& p = points[*vit];
-        fprintf(out, "%.10f %.10f %.10f\n", p[0], p[1], p[2]);
-    }
-
-
-    // faces
-    for (typename Surface_mesh<K>::Face_iterator fit=mesh.faces_begin(); fit!=mesh.faces_end(); ++fit)
-    {
-        int nV = mesh.degree(*fit);
-        fprintf(out, "%d", nV);
-        typename Surface_mesh<K>::Vertex_around_face_circulator fvit(mesh.halfedge(*fit),mesh), fvend=fvit;
-        do
-        {
-          typename Surface_mesh<K>::size_type idx = *fvit;
-          fprintf(out, " %d", idx);
-        }
-        while (++fvit != fvend);
-        fprintf(out, "\n");
-    }
-
-    fclose(out);
-    return true;
+    return !out.fail();
 }
 
 #if 0

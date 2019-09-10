@@ -40,7 +40,7 @@ namespace CGAL {
 // and Robust 2D Minkowski Sum Using Reduced Convolution", IROS 2011.
 // This implementation is based on Alon Baram's 2013 master's thesis "Polygonal
 // Minkowski Sums via Convolution: Theory and Practice" at Tel-Aviv University.
-template <class Kernel_, class Container_>
+template <typename Kernel_, typename Container_>
 class Minkowski_sum_by_reduced_convolution_2
 {
 private:
@@ -110,7 +110,7 @@ public:
     common_operator(pwh1, pwh2, outer_boundary, holes);
   }
 
-  template <class OutputIterator>
+  template <typename OutputIterator>
   void operator()(const Polygon_with_holes_2& pgn1,
                   const Polygon_with_holes_2& pgn2,
                   Polygon_2& outer_boundary, OutputIterator holes) const
@@ -118,7 +118,7 @@ public:
     common_operator(pgn1, pgn2, outer_boundary, holes);
   }
 
-  template <class OutputIterator>
+  template <typename OutputIterator>
   void operator()(const Polygon_2& pgn1,
                   const Polygon_with_holes_2& pgn2,
                   Polygon_2& outer_boundary, OutputIterator holes) const
@@ -130,11 +130,16 @@ public:
   }
 
 private:
-  template <class OutputIterator>
+  template <typename OutputIterator>
   void common_operator(const Polygon_with_holes_2& pgn1,
                        const Polygon_with_holes_2& pgn2,
                        Polygon_2& outer_boundary, OutputIterator holes) const
   {
+    // If the outer boundaries of both summands are empty the Minkowski sum is
+    // the entire plane.
+    if (pgn1.outer_boundary().is_empty() && pgn2.outer_boundary().is_empty())
+      return;
+
     // Initialize collision detector. It operates on pgn2 and on the inversed
     // pgn1:
     const Polygon_with_holes_2 inversed_pgn1 =
@@ -152,14 +157,32 @@ private:
     insert(arr, reduced_convolution.begin(), reduced_convolution.end());
 
     // Trace the outer loop and put it in 'outer_boundary'
-    get_outer_loop(arr, outer_boundary);
+    // If one of the summand does not have an outer boundary, then the Minkowski
+    // sum does not have an outer boundary either.
+    bool is_outer_boundary_empty = pgn1.outer_boundary().is_empty() ||
+      pgn2.outer_boundary().is_empty();
+
+    if (! is_outer_boundary_empty) get_outer_loop(arr, outer_boundary);
 
     // Check for each face whether it is a hole in the M-sum. If it is, add it
     // to 'holes'. See chapter 3 of of Alon's master's thesis.
-    for (Face_iterator face = arr.faces_begin(); face != arr.faces_end();
-         ++face)
-    {
-      handle_face(arr, face, holes, collision_detector);
+    for (Face_iterator fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
+      // Check whether the face is on the M-sum's border.
+
+      // If the face contains holes, it can't be on the Minkowski sum's border
+      if (0 < fit->number_of_holes()) continue;
+
+      // The face needs to be orientable
+      if (! test_face_orientation(arr, fit)) continue;
+
+      // When the reversed polygon 1, translated by a point inside of this face,
+      // collides with polygon 2, this cannot be a hole
+      if (! is_outer_boundary_empty) {
+        Point_2 inner_point = get_point_in_face(fit);
+        if (collision_detector.check_collision(inner_point)) continue;
+      }
+
+      add_face(fit, holes);
     }
   }
 
@@ -215,6 +238,7 @@ private:
   {
     int n1 = static_cast<int>(pgn1.size());
     int n2 = static_cast<int>(pgn2.size());
+    if ((n1 == 0) || (n2 == 0)) return;
 
     std::vector<Point_2> p1_vertices = vertices_of_polygon(pgn1);
     std::vector<Point_2> p2_vertices = vertices_of_polygon(pgn2);
@@ -375,51 +399,28 @@ private:
     while (--circ != circ_start);
   }
 
-  // Check whether the face is on the M-sum's border. Add it to 'holes' if it is.
-  template <class OutputIterator>
-  void handle_face(const Arrangement_history_2& arr, const Face_handle face,
-                   OutputIterator holes,
-                   AABB_collision_detector_2<Kernel, Container>&
-                   collision_detector) const
+  // Determine whether the face orientation is consistent.
+  bool test_face_orientation(const Arrangement_history_2& arr,
+                             const Face_handle face) const
   {
-
-    // If the face contains holes, it can't be on the Minkowski sum's border
-    if (face->holes_begin() != face->holes_end())
-    {
-      return;
-    }
-
+    // The face needs to be orientable
     Ccb_halfedge_circulator start = face->outer_ccb();
     Ccb_halfedge_circulator circ = start;
-
-    // The face needs to be orientable
-    do
-    {
-      if (!do_original_edges_have_same_direction(arr, circ))
-      {
-        return;
-      }
-    }
+    do if (!do_original_edges_have_same_direction(arr, circ)) return false;
     while (++circ != start);
 
-    // When the reversed polygon 1, translated by a point inside of this face,
-    // collides with polygon 2, this cannot be a hole
-    Point_2 inner_point = get_point_in_face(face);
-    if (collision_detector.check_collision(inner_point))
-    {
-      return;
-    }
+    return true;
+  }
 
-    // At this point, the face is a real hole, add it to 'holes'
+  // Add a face to 'holes'.
+  template <typename OutputIterator>
+  void add_face(const Face_handle face, OutputIterator holes) const
+  {
     Polygon_2 pgn_hole;
-    circ = start;
-
-    do
-    {
-      pgn_hole.push_back(circ->source()->point());
-    }
+    Ccb_halfedge_circulator start = face->outer_ccb();
+    Ccb_halfedge_circulator circ = start;
+    do pgn_hole.push_back(circ->source()->point());
     while (--circ != start);
-
     *holes = pgn_hole;
     ++holes;
   }
@@ -487,24 +488,17 @@ private:
 
     // If there was no vertex inside of the ear, return it's centroid.
     // Otherwise, return a point between v and min_q.
-    if (min_q == 0)
-    {
-      return centroid(ear);
-    }
-    else
-    {
-      return midpoint(v, *min_q);
-    }
+    return (min_q == 0) ? centroid(ear) : midpoint(v, *min_q);
   }
 
-  template <class Transformation>
+  template <typename Transformation>
   Polygon_with_holes_2 transform(const Transformation& t,
                                  const Polygon_with_holes_2& p) const
   {
     Polygon_with_holes_2 result(CGAL::transform(t, p.outer_boundary()));
 
     typename Polygon_with_holes_2::Hole_const_iterator it = p.holes_begin();
-    while(it != p.holes_end())
+    while (it != p.holes_end())
     {
       Polygon_2 p2(it->vertices_begin(), it->vertices_end());
       result.add_hole(CGAL::transform(t, p2));

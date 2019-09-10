@@ -114,8 +114,14 @@ public Q_SLOTS:
       print_message(QString("Triangulated in %1 sec.").arg(timer.time()));
 
       if(patch.empty()) {
-        print_message("Warning: generating patch is not successful, please try it without 'Delaunay Triangulation'!");
-        continue;
+        if(use_DT){
+          print_message("Warning: generating patch is not successful, please try it without 'Delaunay Triangulation'!");
+          continue;
+        }
+        else{
+          print_message("Warning: generating patch is not successful, skipping.");
+          continue;
+        }
       }
 
       if(mw->property("is_polyhedron_mode").toBool()){

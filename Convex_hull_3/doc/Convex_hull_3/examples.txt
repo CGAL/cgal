@@ -5,4 +5,6 @@
 \example Convex_hull_3/quickhull_OM_3.cpp
 \example Convex_hull_3/halfspace_intersection_3.cpp
 \example Convex_hull_3/quickhull_any_dim_3.cpp
+\example Convex_hull_3/extreme_points_3_sm.cpp
+\example Convex_hull_3/extreme_indices_3.cpp
 */

@@ -20,11 +20,7 @@ if(NOT MPFR_LIBRARIES)
 endif()
 
 # Is it already configured?
-if (MPFR_in_cache)
-
-  set(MPFR_FOUND TRUE)
-
-else()
+if (NOT MPFR_in_cache)
 
   find_path(MPFR_INCLUDE_DIR
             NAMES mpfr.h
@@ -34,10 +30,6 @@ else()
             PATH_SUFFIXES include
   	        DOC "The directory containing the MPFR header files"
            )
-
-  if ( MPFR_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include" )
-    cache_set( MPFR_IN_CGAL_AUXILIARY TRUE )
-  endif()
 
   find_library(MPFR_LIBRARIES NAMES mpfr libmpfr-4 libmpfr-1
     HINTS ENV MPFR_LIB_DIR
@@ -56,7 +48,10 @@ else()
     include( MPFRConfig OPTIONAL )
   endif()
 
-  find_package_handle_standard_args(MPFR "DEFAULT_MSG" MPFR_LIBRARIES MPFR_INCLUDE_DIR)
-
 endif()
 
+find_package_handle_standard_args(MPFR "DEFAULT_MSG" MPFR_LIBRARIES MPFR_INCLUDE_DIR)
+
+if ( MPFR_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include" )
+  cache_set( MPFR_IN_CGAL_AUXILIARY TRUE )
+endif()

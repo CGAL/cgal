@@ -2313,7 +2313,7 @@ namespace CGAL {
     }
 
 
-    struct Remove : public CGAL::unary_function<Vertex_handle, bool>
+    struct Remove : public CGAL::cpp98::unary_function<Vertex_handle, bool>
     {
 
       Extract& E;
@@ -2451,7 +2451,7 @@ namespace CGAL {
   namespace AFSR {
 
     template <typename T>
-    struct Auto_count : public CGAL::unary_function<const T&,std::pair<T,std::size_t> >{
+    struct Auto_count : public CGAL::cpp98::unary_function<const T&,std::pair<T,std::size_t> >{
       mutable std::size_t i;
 
       Auto_count()
@@ -2464,7 +2464,7 @@ namespace CGAL {
     };
 
     template <typename T, typename CC>
-    struct Auto_count_cc : public CGAL::unary_function<const T&,std::pair<T,std::size_t> >{
+    struct Auto_count_cc : public CGAL::cpp98::unary_function<const T&,std::pair<T,std::size_t> >{
       mutable std::size_t i;
       CC cc;
 

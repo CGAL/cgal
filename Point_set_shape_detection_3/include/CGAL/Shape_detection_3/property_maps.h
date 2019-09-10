@@ -64,8 +64,8 @@ namespace Shape_detection_3 {
       constant iterator type with value type
       `boost::shared_ptr<CGAL::Shape_detection_3::Shape_base<Traits> >`.
      */
-    template <typename ShapeRange>
-    Point_to_shape_index_map (const typename Traits::Input_range& points,
+    template <typename PointRange, typename ShapeRange>
+    Point_to_shape_index_map (const PointRange& points,
                               const ShapeRange& shapes)
       : m_indices (new std::vector<int>(points.size(), -1))
     {

@@ -97,12 +97,13 @@ class Mesh_sizing_field
                                   typename Tr::Concurrency_tag>
 {
   // Types
-  typedef typename Tr::Geom_traits   Gt;
-  typedef typename Tr::Bare_point Bare_point;
-  typedef typename Gt::FT            FT;
+  typedef typename Tr::Geom_traits              Gt;
+  typedef typename Tr::Bare_point               Bare_point;
+  typedef typename Tr::Weighted_point           Weighted_point;
+  typedef typename Gt::FT                       FT;
 
-  typedef typename Tr::Vertex_handle      Vertex_handle;
-  typedef typename Tr::Cell_handle        Cell_handle;
+  typedef typename Tr::Vertex_handle            Vertex_handle;
+  typedef typename Tr::Cell_handle              Cell_handle;
 
 public:
   // update vertices of mesh triangulation ?
@@ -130,7 +131,7 @@ public:
    * in triangulation
    */
   FT operator()(const Bare_point& p, const Vertex_handle& v) const
-  { return this->operator()(p,v->cell()); }
+  { return this->operator()(p, v->cell()); }
 
   /**
    * Returns size at point \c p.
@@ -140,7 +141,7 @@ public:
   /**
    * Returns size at point \c p. Assumes that p is the centroid of c.
    */
-  FT operator()(const Bare_point& p, const std::pair<Cell_handle,bool>& c) const;
+  FT operator()(const Bare_point& p, const std::pair<Cell_handle, bool>& c) const;
 
 private:
   /**
@@ -162,7 +163,6 @@ private:
 };
 
 
-
 template <typename Tr, bool B>
 Mesh_sizing_field<Tr,B>::
 Mesh_sizing_field(Tr& tr)
@@ -178,12 +178,14 @@ fill(const std::map<Bare_point, FT>& value_map)
 {
   typedef typename Tr::Finite_vertices_iterator  Fvi;
 
-  for ( Fvi vit = tr_.finite_vertices_begin() ;
-        vit != tr_.finite_vertices_end() ;
-        ++ vit )
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+
+  for ( Fvi vit = tr_.finite_vertices_begin(); vit != tr_.finite_vertices_end(); ++ vit )
   {
+    const Weighted_point& position = tr_.point(vit);
+
     typename std::map<Bare_point, FT>::const_iterator find_result =
-      value_map.find(tr_.geom_traits().construct_point_3_object()(vit->point()));
+      value_map.find(cp(position));
 
     if ( find_result != value_map.end() )
     {
@@ -197,29 +199,29 @@ fill(const std::map<Bare_point, FT>& value_map)
   }
 }
 
+
 template <typename Tr, bool B>
 typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
 operator()(const Bare_point& p, const Cell_handle& c) const
 {
-  typename Gt::Construct_weighted_point_3 p2wp =
-      tr_.geom_traits().construct_weighted_point_3_object();
+  typename Gt::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
 
 #ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
   //use the inexact locate (much faster than locate) to get a hint
   //and then use locate to check whether p is really inside hint
   // if not, an exact locate will be performed
-  Cell_handle hint = tr_.inexact_locate(p2wp(p),c);
-  const Cell_handle cell = tr_.locate(p2wp(p), hint);
+  Cell_handle hint = tr_.inexact_locate(cwp(p),c);
+  const Cell_handle cell = tr_.locate(cwp(p), hint);
 #else
-  const Cell_handle cell = tr_.locate(p2wp(p),c);
+  const Cell_handle cell = tr_.locate(cwp(p),c);
 #endif
   this->set_last_cell(cell);
 
   if ( !tr_.is_infinite(cell) )
-    return interpolate_on_cell_vertices(p,cell);
+    return interpolate_on_cell_vertices(p, cell);
   else
-    return interpolate_on_facet_vertices(p,cell);
+    return interpolate_on_facet_vertices(p, cell);
 }
 
 
@@ -246,8 +248,8 @@ typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
 interpolate_on_cell_vertices(const Bare_point& p, const Cell_handle& cell) const
 {
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
   typename Gt::Compute_volume_3 volume = tr_.geom_traits().compute_volume_3_object();
-  typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
 
   // Interpolate value using tet vertices values
   const FT& va = cell->vertex(0)->meshing_info();
@@ -255,10 +257,14 @@ interpolate_on_cell_vertices(const Bare_point& p, const Cell_handle& cell) const
   const FT& vc = cell->vertex(2)->meshing_info();
   const FT& vd = cell->vertex(3)->meshing_info();
 
-  const Bare_point& a = wp2p(cell->vertex(0)->point());
-  const Bare_point& b = wp2p(cell->vertex(1)->point());
-  const Bare_point& c = wp2p(cell->vertex(2)->point());
-  const Bare_point& d = wp2p(cell->vertex(3)->point());
+  const Weighted_point& wa = tr_.point(cell, 0);
+  const Weighted_point& wb = tr_.point(cell, 1);
+  const Weighted_point& wc = tr_.point(cell, 2);
+  const Weighted_point& wd = tr_.point(cell, 3);
+  const Bare_point& a = cp(wa);
+  const Bare_point& b = cp(wb);
+  const Bare_point& c = cp(wc);
+  const Bare_point& d = cp(wd);
 
   const FT abcp = CGAL::abs(volume(a,b,c,p));
   const FT abdp = CGAL::abs(volume(a,d,b,p));
@@ -267,11 +273,10 @@ interpolate_on_cell_vertices(const Bare_point& p, const Cell_handle& cell) const
 
   // If volume is 0, then compute the average value
   if ( is_zero(abcp+abdp+acdp+bcdp) )
-    return (va+vb+vc+vd)/4.;
+    return (va+vb+vc+vd) / 4.;
 
   return ( (abcp*vd + abdp*vc + acdp*vb + bcdp*va) / (abcp+abdp+acdp+bcdp) );
 }
-
 
 
 template <typename Tr, bool B>
@@ -281,7 +286,7 @@ interpolate_on_facet_vertices(const Bare_point& p, const Cell_handle& cell) cons
 {
   typename Gt::Compute_area_3 area =  tr_.geom_traits().compute_area_3_object();
 
-  typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
   // Find infinite vertex and put it in k0
   int k0 = 0;
   int k1 = 1;
@@ -300,13 +305,16 @@ interpolate_on_facet_vertices(const Bare_point& p, const Cell_handle& cell) cons
   const FT& vb = cell->vertex(k2)->meshing_info();
   const FT& vc = cell->vertex(k3)->meshing_info();
 
-  const Bare_point& a = wp2p(cell->vertex(k1)->point());
-  const Bare_point& b = wp2p(cell->vertex(k2)->point());
-  const Bare_point& c = wp2p(cell->vertex(k3)->point());
+  const Weighted_point& wa = tr_.point(cell, k1);
+  const Weighted_point& wb = tr_.point(cell, k2);
+  const Weighted_point& wc = tr_.point(cell, k3);
+  const Bare_point& a = cp(wa);
+  const Bare_point& b = cp(wb);
+  const Bare_point& c = cp(wc);
 
-  const FT abp = area(a,b,p);
-  const FT acp = area(a,c,p);
-  const FT bcp = area(b,c,p);
+  const FT abp = area(a, b, p);
+  const FT acp = area(a, c, p);
+  const FT bcp = area(b, c, p);
 
   CGAL_assertion(abp >= 0);
   CGAL_assertion(acp >= 0);

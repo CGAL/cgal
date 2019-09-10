@@ -24,6 +24,23 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
 
   reset_indices();
 
+  Point_set::Property_map<int> cluster_id;
+  bool cluster_found = false;
+  boost::tie (cluster_id, cluster_found) = m_points->point_set()->property_map<int>("shape");
+  if (cluster_found)
+  {
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->first_selected(); ++ it)
+    {
+      int c = cluster_id[*it];
+      if (c == -1)
+        continue;
+      if (std::size_t(c) >= m_clusters.size())
+        m_clusters.resize (c + 1);
+      m_clusters[c].inliers.push_back (*it);
+    }
+  }
+
   backup_existing_colors_and_add_new();
   bool training_found = false;
   boost::tie (m_training, training_found) = m_points->point_set()->add_property_map<int>("training", -1);
@@ -182,48 +199,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
         new_label = m_labels.add(oss.str().c_str());
       }
 
-      QColor color (64 + rand() % 192,
-                    64 + rand() % 192,
-                    64 + rand() % 192);
-      
-      if (new_label->name() == "ground")
-        color = QColor (186, 189, 182);
-      else if (new_label->name() == "low_veget")
-        color = QColor (78, 154, 6);
-      else if (new_label->name() == "med_veget"
-               || new_label->name() == "vegetation")
-        color = QColor (138, 226, 52);
-      else if (new_label->name() == "high_veget")
-        color = QColor (204, 255, 201);
-      else if (new_label->name() == "building"
-               || new_label->name() == "roof")
-        color = QColor (245, 121, 0);
-      else if (new_label->name() == "noise")
-        color = QColor (0, 0, 0);
-      else if (new_label->name() == "reserved")
-        color = QColor (233, 185, 110);
-      else if (new_label->name() == "water")
-        color = QColor (114, 159, 207);
-      else if (new_label->name() == "rail")
-        color = QColor (136, 46, 25);
-      else if (new_label->name() == "road_surface")
-        color = QColor (56, 56, 56);
-      else if (new_label->name() == "reserved_2")
-        color = QColor (193, 138, 51);
-      else if (new_label->name() == "wire_guard")
-        color = QColor (37, 61, 136);
-      else if (new_label->name() == "wire_conduct")
-        color = QColor (173, 127, 168);
-      else if (new_label->name() == "trans_tower")
-        color = QColor (136, 138, 133);
-      else if (new_label->name() == "wire_connect")
-        color = QColor (145, 64, 236);
-      else if (new_label->name() == "bridge_deck")
-        color = QColor (213, 93, 93);
-      else if (new_label->name() == "high_noise")
-        color = QColor (255, 0, 0);
-      
-      m_label_colors.push_back (color);
+      m_label_colors.push_back (this->get_new_label_color (new_label->name()));
     }
   }
   else
@@ -233,10 +209,8 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
     m_labels.add("roof");
     m_labels.add("facade");
 
-    m_label_colors.push_back (QColor(186, 189, 182));
-    m_label_colors.push_back (QColor(138, 226, 52));
-    m_label_colors.push_back (QColor(245, 121, 0));
-    m_label_colors.push_back (QColor(233, 185, 110));
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      m_label_colors.push_back (this->get_new_label_color (m_labels[i]->name()));
   }
   
   update_comments_of_point_set_item();
@@ -345,7 +319,7 @@ void Point_set_item_classification::change_color (int index)
     
   // Colors
   static Color_ramp ramp;
-  ramp.build_red();
+  ramp.build_rainbow();
   reset_indices();
   if (index_color == -1) // item color
     {
@@ -476,82 +450,99 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   if (!echo)
     boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("number_of_returns");
 
-  add_remaining_point_set_properties_as_features();
+  m_generator = new Generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
 
-  if (!normals && !colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
-  else if (!normals && !colors && echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), CGAL::Default(), echo_map);
-  else if (!normals && colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), m_color);
-  else if (!normals && colors && echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), m_color, echo_map);
-  else if (normals && !colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map());
-  else if (normals && !colors && echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), CGAL::Default(), echo_map);
-  else if (normals && colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), m_color);
-  else
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), m_color, echo_map);
+  CGAL::Real_timer t;
+  t.start();
+    
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.begin_parallel_additions();
+#endif
+
+  m_generator->generate_point_based_features(m_features);
+  if (normals)
+    m_generator->generate_normal_based_features (m_features, m_points->point_set()->normal_map());
+  if (colors)
+    m_generator->generate_color_based_features (m_features, m_color);
+  if (echo)
+    m_generator->generate_echo_based_features (m_features, echo_map);
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.end_parallel_additions();
+#endif
+
+  add_remaining_point_set_properties_as_features();
 
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
   delete m_ethz;
   m_ethz = new ETHZ_random_forest (m_labels, m_features);
+
 #ifdef CGAL_LINKED_WITH_OPENCV
   delete m_random_forest;
   m_random_forest = new Random_forest (m_labels, m_features);
 #endif
-  std::cerr << "Features = " << m_features.size() << std::endl;
+
+  t.stop();
+  std::cerr << m_features.size() << " feature(s) computed in " << t.time() << " second(s)" << std::endl;
 }
 
 void Point_set_item_classification::select_random_region()
 {
   m_points->point_set()->reset_indices();
-  
-  std::size_t scale = (rand() % m_generator->number_of_scales());
-
-  bool use_grid = (rand() % 2);
 
   std::vector<std::size_t> selected;
-  
-  if (use_grid)
+  std::vector<std::size_t> unselected;
+
+  // If no cluster, fallback mode on grid or region selection
+  if (m_clusters.empty())
   {
-    std::size_t x = (rand() % m_generator->grid(scale).width());
-    std::size_t y = (rand() % m_generator->grid(scale).height());
-    std::copy (m_generator->grid(scale).indices_begin(x,y),
-               m_generator->grid(scale).indices_end(x,y),
-               std::back_inserter (selected));
+    std::size_t scale = (rand() % m_generator->number_of_scales());
+
+    bool use_grid = (rand() % 2);
+
+    if (use_grid)
+    {
+      std::size_t x = (rand() % m_generator->grid(scale).width());
+      std::size_t y = (rand() % m_generator->grid(scale).height());
+      std::copy (m_generator->grid(scale).indices_begin(x,y),
+                 m_generator->grid(scale).indices_end(x,y),
+                 std::back_inserter (selected));
+    }
+    else
+    {
+      m_generator->neighborhood(0).sphere_neighbor_query (m_generator->radius_neighbors(scale))
+        (*(m_points->point_set()->points().begin() + (rand() % m_points->point_set()->size())),
+         std::back_inserter (selected));
+    }
+
+    if (selected.empty())
+      return;
+
+    std::sort (selected.begin(), selected.end());
+    std::size_t current_idx = 0;
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->end(); ++ it)
+      if (std::size_t(*it) == selected[current_idx])
+        current_idx ++;
+      else
+        unselected.push_back (*it);
+  
   }
   else
   {
-    m_generator->neighborhood(0).sphere_neighbor_query (m_generator->radius_neighbors(scale))
-      (*(m_points->point_set()->points().begin() + (rand() % m_points->point_set()->size())),
-       std::back_inserter (selected));
+    std::size_t c = rand() % m_clusters.size();
+    std::set<Point_set::Index> in_cluster;
+    for (std::size_t i = 0; i < m_clusters[c].size(); ++ i)
+      in_cluster.insert (m_clusters[c][i]);
+
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->end(); ++ it)
+      if (in_cluster.find (*it) != in_cluster.end())
+        selected.push_back (*it);
+      else
+        unselected.push_back (*it);
   }
-
-  if (selected.empty())
-    return;
-
-  std::sort (selected.begin(), selected.end());
-  std::size_t current_idx = 0;
-
-  std::vector<std::size_t> unselected;
-
-  for (Point_set::const_iterator it = m_points->point_set()->begin();
-       it != m_points->point_set()->end(); ++ it)
-    if (std::size_t(*it) == selected[current_idx])
-      current_idx ++;
-    else
-      unselected.push_back (*it);
   
   for (std::size_t i = 0; i < unselected.size(); ++ i)
     *(m_points->point_set()->begin() + i) = unselected[i];
@@ -578,6 +569,7 @@ void Point_set_item_classification::add_remaining_point_set_properties_as_featur
         prop[i] == "label" ||
         prop[i] == "classification" ||
         prop[i] == "real_color" ||
+        prop[i] == "shape" ||
         prop[i] == "red" || prop[i] == "green" || prop[i] == "blue" ||
         prop[i] == "r" || prop[i] == "g" || prop[i] == "b")
       continue;
@@ -612,11 +604,26 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
   reset_indices();
 
   std::vector<int> training (m_points->point_set()->size(), -1);
-  std::vector<std::size_t> indices (m_points->point_set()->size(), std::size_t(-1));
+  std::vector<int> indices (m_points->point_set()->size(), -1);
 
+  std::vector<std::size_t> nb_label (m_labels.size(), 0);
+  std::size_t nb_total = 0;
+  
   for (Point_set::const_iterator it = m_points->point_set()->begin();
        it != m_points->point_set()->first_selected(); ++ it)
+  {
     training[*it] = m_training[*it];
+    if (training[*it] != -1)
+    {
+      nb_label[std::size_t(training[*it])] ++;
+      ++ nb_total;
+    }
+  }
+
+  std::cerr << nb_total << " point(s) used for training ("
+            << 100. * (nb_total / double(m_points->point_set()->size())) << "% of the total):" << std::endl;
+  for (std::size_t i = 0; i < m_labels.size(); ++ i)
+    std::cerr << " * " << m_labels[i]->name() << ": " << nb_label[i] << " point(s)" << std::endl;
 
   if (classifier == 0)
     {
@@ -648,7 +655,7 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
     }
   for (Point_set::const_iterator it = m_points->point_set()->begin();
        it != m_points->point_set()->first_selected(); ++ it)
-    m_classif[*it] = int(indices[*it]);
+    m_classif[*it] = indices[*it];
   
   if (m_index_color == 1 || m_index_color == 2)
      change_color (m_index_color);

@@ -2857,7 +2857,6 @@ protected:
         // run over all event points within the joint x-range of two arcs
         // looking whether a particular event is made of both curves, i.e.,
         // grabbing all 2-curve events
-        std::pair<int, int> ipair;
         int arcno1, arcno2, mult;
 
         typename CGAL::Polynomial_traits_d<

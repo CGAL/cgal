@@ -14,8 +14,8 @@ must be kept in place, not moved to a new position.
 
 \cgalRefines `CopyConstructible` 
 
-\cgalHasModel `CGAL::Surface_mesh_simplification::Midpoint_placement<ECM>`
-\cgalHasModel `CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Midpoint_placement<TriangleMesh>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
 
 */

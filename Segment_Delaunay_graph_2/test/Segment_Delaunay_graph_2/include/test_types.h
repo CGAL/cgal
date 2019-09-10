@@ -2,6 +2,7 @@
 #define CGAL_SDG_TEST_TYPES_H
 
 #include <CGAL/basic.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/enum.h>
 #include <CGAL/use.h>
 #include <iostream>
@@ -377,7 +378,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 	   vit != sdg.finite_vertices_end(); ++vit) {
 	vec.push_back(vit);
       }
-      std::random_shuffle(vec.begin(), vec.end());
+      CGAL::cpp98::random_shuffle(vec.begin(), vec.end());
 
       typename std::vector<Vertex_handle>::iterator it = vec.begin();
       std::cerr << std::endl;

@@ -203,7 +203,13 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefine_triggered(Sce
     qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
-    CGAL::Polygon_mesh_processing::experimental::autorefine(*poly_item->polyhedron());
+    try{
+      CGAL::Polygon_mesh_processing::experimental::autorefine(*poly_item->polyhedron());
+    }
+    catch(CGAL::Polygon_mesh_processing::Corefinement::Triple_intersection_exception)
+    {
+      messages->warning(tr("The result of the requested operation is not handled (triple intersection)."));
+    }
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }
@@ -225,11 +231,17 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfInter
     qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
-    bool solved =
-      CGAL::Polygon_mesh_processing::experimental::
-        autorefine_and_remove_self_intersections(*poly_item->polyhedron());
-    if (!solved)
-      messages->information(tr("Self-intersection could not be removed due to non-manifold edges in the output"));
+    try{
+      bool solved = 
+        CGAL::Polygon_mesh_processing::experimental::
+          autorefine_and_remove_self_intersections(*poly_item->polyhedron());
+      if (!solved)
+        messages->information(tr("Self-intersection could not be removed due to non-manifold edges in the output"));
+    }
+    catch(CGAL::Polygon_mesh_processing::Corefinement::Triple_intersection_exception)
+    {
+      messages->warning(tr("The result of the requested operation is not handled (triple intersection)."));
+    }
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }

@@ -1,4 +1,4 @@
-#version 430 core
+#version 150
 
 in GS_OUT
 {
@@ -21,12 +21,12 @@ out vec4 out_color;
 void main(void)
 {
   if(is_clipbox_on)
-    if(fs_in.dist[0]>0 ||
-       fs_in.dist[1]>0 ||
-       fs_in.dist[2]>0 ||
-       fs_in.dist[3]>0 ||
-       fs_in.dist[4]>0 ||
-       fs_in.dist[5]>0)
+    if(fs_in.dist[0]>0.0 ||
+       fs_in.dist[1]>0.0 ||
+       fs_in.dist[2]>0.0 ||
+       fs_in.dist[3]>0.0 ||
+       fs_in.dist[4]>0.0 ||
+       fs_in.dist[5]>0.0)
       discard;
   vec3 L = light_pos.xyz - fs_in.fP.xyz;
   vec3 V = -fs_in.fP.xyz;

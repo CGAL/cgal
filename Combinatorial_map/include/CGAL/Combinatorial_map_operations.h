@@ -149,64 +149,57 @@ namespace CGAL
           to_erase.begin();
       for ( ; it!=to_erase.end(); ++it )
       {
-        d1=amap.template beta<iinv>(*it);
-        while ( d1!=amap.null_dart_handle && amap.is_marked(d1, mark) )
+        if (i!=1 || amap.template beta<1>(*it)!=*it) // for 1-removal of a dart loop, nothing to do
         {
-          d1=amap.template beta<i+1, iinv>(d1);
-          if ( d1==amap. template beta<iinv>(*it) ) d1=amap.null_dart_handle;
-        }
+          d1=amap.template beta<iinv>(*it);
+          while (d1!=amap.null_dart_handle && amap.is_marked(d1, mark))
+          {
+            d1=amap.template beta<i+1, iinv>(d1);
+            if (d1==amap. template beta<iinv>(*it))
+            { d1=amap.null_dart_handle; }
+          }
 
-        if ( !amap.is_marked(d1, mark_modified_darts) )
-        {
           d2=amap.template beta<i+1,i>(*it);
           while ( d2!=amap.null_dart_handle && amap.is_marked(d2, mark) )
           {
             d2=amap.template beta<i+1,i>(d2);
             if ( d2==amap.template beta<i+1,i>(*it) )
-              d2=amap.null_dart_handle;
+            { d2=amap.null_dart_handle; }
           }
 
-          if ( !amap.is_marked(d2, mark_modified_darts) )
+          if ( d1!=amap.null_dart_handle )
           {
-            if ( d1!=amap.null_dart_handle )
+            if ( d2!=amap.null_dart_handle && d1!=d2 )
             {
-              if ( d2!=amap.null_dart_handle && d1!=d2 )
+              amap.template basic_link_beta<i>(d1, d2);
+              amap.mark(d1, mark_modified_darts);
+              amap.mark(d2, mark_modified_darts);
+              first_modified_darts.push_back(d1);
+              modified_darts.push_back(d2);
+            }
+            else
+            {
+              if (d1==d2)
               {
-                //d1->basic_link_beta(d2, i);
-                amap.template basic_link_beta<i>(d1, d2);
+                amap.template basic_link_beta<i>(d1, d1);
                 amap.mark(d1, mark_modified_darts);
-                amap.mark(d2, mark_modified_darts);
                 first_modified_darts.push_back(d1);
-                modified_darts.push_back(d2);
-                // TODO push only one out of two dart ?
-
-                /*if ( i==1 )
-                {
-                  d2->basic_link_beta(d1, 0);
-                  modified_darts.push_back(d2);
-                }*/
-                //            modified_darts2.push_back(d1);
               }
-              else
+              else if ( !amap.template is_free<i>(d1) )
               {
-                if ( !amap.template is_free<i>(d1) )
-                {
-                  amap.template unlink_beta<i>(d1);
-                  CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
-                  amap.mark(d1, mark_modified_darts);
-                  first_modified_darts.push_back(d1);
-                }
+                amap.template unlink_beta<i>(d1);
+                amap.mark(d1, mark_modified_darts);
+                first_modified_darts.push_back(d1);
               }
             }
-            else if ( d2!=amap.null_dart_handle )
+          }
+          else if ( d2!=amap.null_dart_handle )
+          {
+            if ( !amap.template is_free<iinv>(d2) )
             {
-              if ( !amap.template is_free<iinv>(d2) )
-              {
-                amap.template unlink_beta<iinv>(d2);
-                CGAL_assertion( !amap.is_marked(d2, mark_modified_darts) );
-                amap.mark(d2, mark_modified_darts);
-                modified_darts.push_back(d2);
-              }
+              amap.template unlink_beta<iinv>(d2);
+              amap.mark(d2, mark_modified_darts);
+              modified_darts.push_back(d2);
             }
           }
         }
@@ -217,7 +210,6 @@ namespace CGAL
           if ( !amap.template is_free<iinv>(d1) )
           {
             amap.template unlink_beta<iinv>(d1);
-            CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
             amap.mark(d1, mark_modified_darts);
             modified_darts.push_back(d1);
           }

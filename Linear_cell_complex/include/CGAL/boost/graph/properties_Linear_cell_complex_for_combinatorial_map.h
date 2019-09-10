@@ -18,13 +18,15 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
+
+
 #ifndef CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_FOR_COMBINATORIAL_MAP_H
 #define CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_FOR_COMBINATORIAL_MAP_H
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+
 
 #define CGAL_LCC_ARGS unsigned int d_, unsigned int ambient_dim,        \
              class Traits_, \

@@ -22,6 +22,7 @@
 #define CGAL_HASH_OPENMESH_H
 
 #include <OpenMesh/Core/Mesh/Handles.hh>
+#include <CGAL/algorithm.h>
 
 namespace CGAL { namespace internal {
 
@@ -97,7 +98,7 @@ namespace std {
 
 template <>
 struct hash<OpenMesh::BaseHandle >
-  : public CGAL::unary_function<OpenMesh::BaseHandle, std::size_t>
+  : public CGAL::cpp98::unary_function<OpenMesh::BaseHandle, std::size_t>
 {
 
   std::size_t operator()(const OpenMesh::BaseHandle& h) const
@@ -108,7 +109,7 @@ struct hash<OpenMesh::BaseHandle >
 
 template <>
 struct hash<OpenMesh::VertexHandle >
-  : public CGAL::unary_function<OpenMesh::VertexHandle, std::size_t>
+  : public CGAL::cpp98::unary_function<OpenMesh::VertexHandle, std::size_t>
 {
 
   std::size_t operator()(const OpenMesh::VertexHandle& h) const
@@ -119,7 +120,7 @@ struct hash<OpenMesh::VertexHandle >
 
 template <>
 struct hash<OpenMesh::HalfedgeHandle >
-  : public CGAL::unary_function<OpenMesh::HalfedgeHandle, std::size_t>
+  : public CGAL::cpp98::unary_function<OpenMesh::HalfedgeHandle, std::size_t>
 {
 
   std::size_t operator()(const OpenMesh::HalfedgeHandle& h) const
@@ -130,7 +131,7 @@ struct hash<OpenMesh::HalfedgeHandle >
 
 template <>
 struct hash<OpenMesh::EdgeHandle >
-  : public CGAL::unary_function<OpenMesh::EdgeHandle, std::size_t>
+  : public CGAL::cpp98::unary_function<OpenMesh::EdgeHandle, std::size_t>
 {
 
   std::size_t operator()(const OpenMesh::EdgeHandle& h) const
@@ -141,7 +142,7 @@ struct hash<OpenMesh::EdgeHandle >
 
 template <>
 struct hash<CGAL::internal::OMesh_edge<OpenMesh::HalfedgeHandle> >
-  : public std::unary_function<OpenMesh::HalfedgeHandle, std::size_t>
+  : public CGAL::cpp98::unary_function<OpenMesh::HalfedgeHandle, std::size_t>
 {
 
   std::size_t operator()(const CGAL::internal::OMesh_edge<OpenMesh::HalfedgeHandle>& h) const
@@ -152,7 +153,7 @@ struct hash<CGAL::internal::OMesh_edge<OpenMesh::HalfedgeHandle> >
 
 template <>
 struct hash<OpenMesh::FaceHandle >
-  : public CGAL::unary_function<OpenMesh::FaceHandle, std::size_t>
+  : public CGAL::cpp98::unary_function<OpenMesh::FaceHandle, std::size_t>
 {
 
   std::size_t operator()(const OpenMesh::FaceHandle& h) const

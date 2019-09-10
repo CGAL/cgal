@@ -8,6 +8,8 @@
 #include <iostream>
 #include <string>
 
+#define CGAL_CLASSIFICATION_VERBOSE
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
 #include <CGAL/Point_set_3.h>
@@ -33,6 +35,7 @@ typedef Classification::Sum_of_weighted_features_classifier                     
 
 typedef Classification::Point_set_feature_generator<Kernel, Point_set, Point_map> Feature_generator;
 
+typedef Point_set::Vector_map Vector_map;
 typedef Point_set::Property_map<std::size_t> Size_t_map;
 typedef Point_set::Property_map<Classification::RGB_Color> Color_map;
 
@@ -41,17 +44,19 @@ typedef Point_set::Property_map<Classification::RGB_Color> Color_map;
 int main (int, char**)
 {
   Point_set pts;
-
-  pts.add_normal_map();
   
   bool map_added = false;
+  Vector_map normal_map;
   Size_t_map echo_map;
   Color_map color_map;
 
+  map_added = pts.add_normal_map();
+  assert (map_added);
+  normal_map = pts.normal_map();
   boost::tie (echo_map, map_added) = pts.add_property_map<std::size_t> ("echo");
-  CGAL_assertion (map_added);
+  assert (map_added);
   boost::tie (color_map, map_added) = pts.add_property_map<Classification::RGB_Color> ("color");
-  CGAL_assertion (map_added);
+  assert (map_added);
 
   for (std::size_t i = 0; i < 1000; ++ i)
   {
@@ -69,13 +74,24 @@ int main (int, char**)
   }
 
   Feature_set features;
-  Feature_generator generator (features, pts, pts.point_map(),
-                               5,  // using 5 scales
-                               pts.normal_map(),
-                               color_map, echo_map);
+  
+  Feature_generator generator (pts, pts.point_map(), 5);  // using 5 scales
 
-  CGAL_assertion (generator.number_of_scales() == 5);
-  CGAL_assertion (features.size() == 80);
+#ifdef CGAL_LINKED_WITH_TBB
+  features.begin_parallel_additions();
+#endif
+
+  generator.generate_point_based_features(features);
+  generator.generate_normal_based_features(features, normal_map);
+  generator.generate_color_based_features(features, color_map);
+  generator.generate_echo_based_features(features, echo_map);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  features.end_parallel_additions();
+#endif
+  
+  assert (generator.number_of_scales() == 5);
+  assert (features.size() == 44);
 
   Label_set labels;
 
@@ -89,7 +105,7 @@ int main (int, char**)
     for (std::size_t j = 0; j < 10; ++ j)
       training_set[std::size_t(CGAL::get_default_random().get_int(0, int(training_set.size())))] = int(i);
   }
-  CGAL_assertion (labels.size() == 20);
+  assert (labels.size() == 20);
   
   Classifier classifier (labels, features);
   

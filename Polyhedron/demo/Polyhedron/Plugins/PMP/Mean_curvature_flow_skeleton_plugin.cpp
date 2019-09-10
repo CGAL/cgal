@@ -2,16 +2,13 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
 #include "ui_Mean_curvature_flow_skeleton_plugin.h"
-#include <CGAL/Mesh_3/properties.h>
 #ifdef USE_SURFACE_MESH
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 #else
 #include "Scene_polyhedron_item.h"
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #endif
 
 #include "Scene_mcf_item.h"
@@ -443,11 +440,17 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   int i=0;
   typedef boost::property_map<Face_graph, CGAL::face_patch_id_t<int> >::type Fpim;
   Fpim fpim = get(CGAL::face_patch_id_t<int>(), *segmented_polyhedron);
+  int nb_segment=0;
   BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*segmented_polyhedron))
   {
-    put(fpim, fd, static_cast<int>(segment_ids[i++] ));
+    int segment = static_cast<int>(segment_ids[i++]);
+    if(segment > nb_segment)
+      nb_segment = segment + 1;
+    put(fpim, fd, segment);
+    
   }
   item_segmentation->setItemIsMulticolor(true);
+  item_segmentation->setProperty("NbPatchIds", nb_segment); //for join_and_split plugin
   item_segmentation->invalidateOpenGLBuffers();
   scene->addItem(item_segmentation);
   item_segmentation->setName(QString("segmentation"));

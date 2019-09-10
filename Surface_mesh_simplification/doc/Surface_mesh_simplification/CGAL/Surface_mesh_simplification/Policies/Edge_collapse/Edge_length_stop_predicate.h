@@ -24,7 +24,7 @@ public:
 /*!
 Initializes the predicate establishing the `threshold` value.
 */
-Edge_length_stop_predicate<ECM>( FT threshold );
+Edge_length_stop_predicate<TriangleMesh>( FT threshold );
 
 /// @}
 

@@ -64,8 +64,13 @@ class chained_map
    std::size_t old_table_size_1;  
 
    std::size_t old_index;
-
+#ifdef CGAL_CXX11
+   typedef std::allocator_traits<Allocator> Allocator_traits;
+   typedef typename Allocator_traits::template rebind_alloc<chained_map_elem<T> > allocator_type;
+#else
    typedef typename Allocator::template rebind<chained_map_elem<T> >::other allocator_type;
+#endif
+
    allocator_type alloc;
 
 public:
@@ -83,6 +88,16 @@ private:
    void del_old_table();
 
    inline void insert(std::size_t x, T y);
+
+   void destroy(chained_map_elem<T>* item)
+   {
+#ifdef CGAL_CXX11
+     typedef std::allocator_traits<allocator_type> Allocator_type_traits;
+     Allocator_type_traits::destroy(alloc,item);
+#else
+     alloc.destroy(item);
+#endif
+   }
 
 public:
    typedef chained_map_elem<T>*  chained_map_item;
@@ -103,11 +118,11 @@ public:
      if (old_table)
      {
        for (chained_map_item item = old_table ; item != old_table_end ; ++item)
-         alloc.destroy(item);
+         destroy(item);
        alloc.deallocate(old_table, old_table_end - old_table);
      }
      for (chained_map_item item = table ; item != table_end ; ++item)
-       alloc.destroy(item);
+       destroy(item);
      alloc.deallocate(table, table_end - table);
    }
 
@@ -145,8 +160,13 @@ void chained_map<T, Allocator>::init_table(std::size_t t)
   table_size = t;
   table_size_1 = t-1;
   table = alloc.allocate(t + t/2);
-  for (std::size_t i = 0 ; i < t + t/2 ; ++i)
+  for (std::size_t i = 0 ; i < t + t/2 ; ++i){
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::construct(alloc,table + i);
+#else
     alloc.construct(table + i, chained_map_elem<T>());
+#endif
+  }
 
   free = table + t;
   table_end = table + t + t/2;      
@@ -226,7 +246,7 @@ void chained_map<T, Allocator>::del_old_table()
   T p = access(old_index);
 
   for (chained_map_item item = table ; item != table_end ; ++item)
-    alloc.destroy(item);
+    destroy(item);
   alloc.deallocate(table, table_end - table);
 
   table = save_table;
@@ -305,7 +325,8 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
   clear_entries();
 
   for (chained_map_item item = table ; item != table_end ; ++item)
-    alloc.destroy(item);
+    destroy(item);
+
   alloc.deallocate(table, table_end - table);
 
   init_table(D.table_size);
@@ -333,7 +354,7 @@ void chained_map<T, Allocator>::clear()
   clear_entries();
 
   for (chained_map_item item = table ; item != table_end ; ++item)
-    alloc.destroy(item);
+    destroy(item);
   alloc.deallocate(table, table_end - table);
 
   init_table(512); 

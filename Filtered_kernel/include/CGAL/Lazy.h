@@ -55,6 +55,12 @@
 
 namespace CGAL {
 
+template <class E,
+          class A,
+          class E2A,
+          class K>
+class Lazy_kernel_base;
+  
 template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
 
 template <typename ET_>
@@ -425,13 +431,19 @@ class Lazy_rep_##n :public Lazy_rep< AT, \
                                      E2A >,                             \
                     private EC                                          \
 {                                                                       \
+  \
+  template <class Ei, \
+            class Ai, \
+            class E2Ai,\
+            class Ki> \
+    friend class Lazy_kernel_base; \
   BOOST_PP_REPEAT(n, CGAL_MLIST, _)                                          \
   const EC& ec() const { return *this; } \
 public: \
   void update_exact() const { \
-    this->et = new ET(ec()( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ) ); \
-    this->at = E2A()(*(this->et));                           \
-    BOOST_PP_REPEAT(n, CGAL_PRUNE_TREE, _) \
+    this->et = new ET(ec()( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ) );   \
+    this->at = E2A()(*(this->et));                                 \
+     BOOST_PP_REPEAT(n, CGAL_PRUNE_TREE, _)                   \
   } \
   Lazy_rep_##n(const AC& ac, const EC&, BOOST_PP_ENUM(n, CGAL_LARGS, _)) \
     : Lazy_rep<AT, ET, E2A>(ac( BOOST_PP_ENUM(n, CGAL_LN, CGAL::approx) )), BOOST_PP_ENUM(n, CGAL_LINIT, _) \
@@ -714,6 +726,17 @@ public:
 template <typename AT_, typename ET_, typename EFT, typename E2A>
 class Lazy : public Handle
 {
+  template <class Exact_kernel_,
+            class Approximate_kernel_,
+            class E2A_>
+  friend struct Lazy_kernel;
+  
+  template <class E_,
+            class A_,
+            class E2A_,
+            class K_>
+  friend class Lazy_kernel_base;
+  
 public :
 
   typedef Lazy<AT_, ET_, EFT, E2A>  Self;
@@ -784,7 +807,7 @@ public :
     ptr()->print_dag(os, level);
   }
 
-private:
+  private:
 
   // We have a static variable for optimizing the default constructor,
   // which is in particular heavily used for pruning DAGs.

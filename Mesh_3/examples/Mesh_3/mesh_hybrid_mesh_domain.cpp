@@ -6,13 +6,11 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Implicit_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
-
-// IO
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 // Ouput
 #include <CGAL/Mesh_3/Dump_c3t3.h>
@@ -22,10 +20,8 @@
 
 // Sphere Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::FT FT;
-typedef K::Point_3 Point;
-typedef FT (Function)(const Point&);
-typedef CGAL::Implicit_mesh_domain_3<Function,K> Implicit_domain;
+
+typedef CGAL::Labeled_mesh_domain_3<K> Implicit_domain;
 
 // Polyhedral Domain
 typedef CGAL::Polyhedron_3<K> Polyhedron;
@@ -182,6 +178,9 @@ typedef Mesh_criteria::Facet_criteria Facet_criteria;
 typedef Mesh_criteria::Cell_criteria  Cell_criteria;
 
 // Function
+typedef K::FT FT;
+typedef K::Point_3 Point;
+
 FT sphere_centered_at_111 (const Point& p)
 {
   const FT dx=p.x()-1;
@@ -214,8 +213,10 @@ int main()
   // - the first argument is the function pointer
   // - the second argument is a bounding sphere of the domain
   // (Warning: Sphere_3 constructor uses square radius !)
-  Implicit_domain sphere_domain(sphere_centered_at_111,
-                                K::Sphere_3(K::Point_3(1, 1, 1), 2.));
+  Implicit_domain sphere_domain =
+    Implicit_domain::create_implicit_mesh_domain(sphere_centered_at_111,
+                                                 K::Sphere_3(K::Point_3(1, 1, 1),
+                                                             2.));
 
   Domain domain(sphere_domain, polyhedron_domain);
 

@@ -41,6 +41,7 @@
 #include <boost/dynamic_bitset.hpp>
 
 namespace CGAL{
+namespace Polygon_mesh_processing {
 namespace Corefinement {
 
 struct Self_intersection_exception{};
@@ -911,6 +912,63 @@ class Intersection_of_triangle_meshes
                             /// so not handling it is a bug
                 }
 
+                // handle cases of segments sharing an endpoint
+                if (ns1[0]==ns2[0] || ns1[0]==ns2[1] ||
+                    ns1[1]==ns2[0] || ns1[1]==ns2[1] )
+                {
+                  Node_id common_nid, nid1, nid2;
+
+                  if (ns1[0]==ns2[0])
+                  {
+                    common_nid=ns1[0];
+                    nid1=ns1[1];
+                    nid2=ns2[1];
+                  }
+                  else
+                  {
+                    if (ns1[0]==ns2[1])
+                    {
+                      common_nid=ns1[0];
+                      nid1=ns1[1];
+                      nid2=ns2[0];
+                    }
+                    else
+                    {
+                      if (ns1[1]==ns2[0])
+                      {
+                        common_nid=ns1[1];
+                        nid1=ns1[0];
+                        nid2=ns2[1];
+                      }
+                      else
+                      {
+                        common_nid=ns1[1];
+                        nid1=ns1[0];
+                        nid2=ns2[0];
+                      }
+                    }
+                  }
+
+                  if (nid1==nid2)
+                  {
+                    // shared intersection edge ( TODO what happen for boundary intersection edges)
+                    throw Triple_intersection_exception();
+                  }
+
+                  typename Node_vector::Exact_kernel::Point_3
+                    common_pt = nodes.exact_node(common_nid),
+                    pt1 = nodes.exact_node(nid1), pt2 = nodes.exact_node(nid2);
+                  if (collinear(common_pt, pt1, pt2))
+                  {
+                    if ( !collinear_are_ordered_along_line(pt1, common_pt, pt2)  )
+                    {
+                      throw Triple_intersection_exception();
+                    }
+                  }
+                  ++it_seg2;
+                  continue;
+                }
+
                 // TODO AUTOREF_TAG there might be a better test rather than relying on constructions
                 typedef typename Node_vector::Exact_kernel::Segment_3 Segment_3;
                 Segment_3 s1(nodes.exact_node(ns1[0]), nodes.exact_node(ns1[1])),
@@ -924,7 +982,8 @@ class Intersection_of_triangle_meshes
                   // with the point found.
                   typename Faces_to_nodes_map::iterator it_seg3 = find_it;
                   // first check if there is only one such edge (no test is needed then)
-                  if (cpp11::next(it_seg3)->first.first == it_seg3->first.first)
+                  if (cpp11::next(it_seg3)!=f_to_node.end() &&
+                      cpp11::next(it_seg3)->first.first == it_seg3->first.first)
                   {
                     while(true)
                     {
@@ -1364,6 +1423,6 @@ public:
 
 };
 
-} } // end of namespace CGAL::Corefinement
+} } } // CGAL::Polygon_mesh_processing::Corefinement
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_INTERNAL_COREFINEMENT_INTERSECTION_IMPL_H

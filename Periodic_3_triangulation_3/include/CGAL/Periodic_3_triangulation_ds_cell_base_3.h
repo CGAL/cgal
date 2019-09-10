@@ -191,7 +191,27 @@ public:
     N[3] = n3;
   }
 
-  void set_offsets(int o0,int o1,int o2,int o3) {
+  void set_offset(const Vertex_handle vh, int o)
+  {
+    CGAL_triangulation_precondition(has_vertex(vh));
+    int vhi = index(vh);
+
+    unsigned int offo[3] = {static_cast<unsigned int>((o&1)),
+                            static_cast<unsigned int>((o>>1)&1),
+                            static_cast<unsigned int>((o>>2)&1)};
+
+    int bit_offset = 3 * vhi;
+
+    // first reset the bit to 0 (AND), then assign the value given in input (OR)
+    off = off & ~(1 <<  bit_offset)      | (offo[0] <<  bit_offset);
+    off = off & ~(1 << (bit_offset + 1)) | (offo[1] << (bit_offset + 1));
+    off = off & ~(1 << (bit_offset + 2)) | (offo[2] << (bit_offset + 2));
+
+    CGAL_postcondition(offset(vhi) == o);
+  }
+
+  void set_offsets(int o0,int o1,int o2,int o3)
+  {
     off = 0;
     // The following explicit cast are needed according to the Intel
     // Compiler version 12.
@@ -257,11 +277,13 @@ private:
   Vertex_handle V[4];
   TDS_data _tds_data;
   unsigned char _additional_flag:2;
-  // 3 respective bits are the offset in x,y and z
-  // right to left: bit[0]-bit[2]: vertex(0),
-  // bit[3]-bit[5]: vertex(1), bit[6]-bit[8]: vertex(2),
-  // and bit[9]-bit[12]: vertex(3)
-  // Thus the underlying data type needs to have at least 12 bit,
+  // 3 consecutive bits give the offset in x, y, and z.
+  // From right to left:
+  // - vertex(0): bit[0]-bit[2],
+  // - vertex(1): bit[3]-bit[5],
+  // - vertex(2): bit[6]-bit[8],
+  // - vertex(3): bit[9]-bit[12].
+  // Thus the underlying data type must have at least 12 bits,
   // which is true for uint.
   unsigned int off;
 };

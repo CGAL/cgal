@@ -11,10 +11,10 @@
 /// [Domain definition]
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
-#include <CGAL/Labeled_image_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Labeled_image_mesh_domain_3<CGAL::Image_3,K> Image_domain;
+typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Image_domain> Mesh_domain;
 /// [Domain definition]
 
@@ -47,7 +47,7 @@ bool add_1D_features(const CGAL::Image_3& image,
                      const char* lines_fname)
 {
   typedef K::Point_3 Point_3;
-  typedef Mesh_domain::Image_word_type Word_type; // that is `unsigned char`
+  typedef unsigned char Word_type;
 
   std::vector<std::vector<Point_3> > features_inside;
   if(!read_polylines(lines_fname, features_inside)) // see file "read_polylines.h"
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
   }
 
   // Domain
-  Mesh_domain domain(image);
+  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
 
   /// Declare 1D-features, see above [Call add_1D_features]
   const char* lines_fname = (argc>2)?argv[2]:"data/420.polylines.txt";

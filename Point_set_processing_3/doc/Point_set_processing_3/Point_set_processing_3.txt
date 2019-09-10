@@ -632,6 +632,26 @@ point set:
 \cgalExample{Point_set_processing_3/structuring_example.cpp}
 
 
+\section Point_set_processing_3Callbacks Callbacks
+
+Several functions of this package provide a callback mechanism that enables the user to track the progress of the algorithms and to interrupt them if needed. A callback, in this package, is an instance of `CGAL::cpp11::function<bool(double)>` that takes the advancement as a parameter (between 0. when the algorithm begins to 1. when the algorithm is completed) and that returns `true` if the algorithm should carry on, `false` otherwise. It is passed as a named parameter with an empty function as default.
+
+Algorithms that support this mechanism are detailed in the [Reference Manual](@ref PkgPointSetProcessing), along with the effect that an early interruption has on the output.
+
+\subsection Point_set_processing_3Example_callbacks Example
+
+The following example defines a callback that displays the name of the current algorithm along with the progress (as a percentage) updated every \f$1/10th\f$ of a second. While the algorithm is running, the console output will typically look like this:
+
+\code{.sh}
+Computing average spacing: 100%
+Grid simplification: 100%
+Jet smoothing: 54%
+\endcode
+
+Thanks to the carriage return character `\r`, the lines are overwritten and the user sees the percentage increasing on each line.
+
+\cgalExample{Point_set_processing_3/callback_example.cpp}
+
 
 \section Point_set_processing_3ImplementationHistory Implementation History
 

@@ -33,6 +33,7 @@
 #include <bitset>
 
 namespace CGAL{
+namespace Polygon_mesh_processing {
 namespace Corefinement{
 
 template <class TriangleMesh, class VertexPointMap>
@@ -80,7 +81,7 @@ struct Intersect_coplanar_faces_3{
   //constructor for intersection of edges. prev and curr are two points on an edge of the first facet (preserving the
   //orientation of the facet). This edge is intersected by h2 from the second facet.
   //
-  //The rational is the following: we first check whether curr and prev are on the same edge. I so we create
+  //The rational is the following: we first check whether curr and prev are on the same edge. If so we create
   //an intersection point between two edges. Otherwise, the point is a vertex of the second facet included into
   //the first facet.
   //
@@ -103,15 +104,47 @@ struct Intersect_coplanar_faces_3{
     res.info_2=h2;
 
     if (ipt_prev.type_1==ON_VERTEX && next(ipt_prev.info_1, tm1) == ipt_curr.info_1){
-      CGAL_assertion(ipt_curr.type_1!=ON_FACE);
-      res.type_1=ON_EDGE;
-      res.info_1=ipt_curr.info_1;
+      if(ipt_curr.type_1!=ON_FACE)
+      {
+        res.type_1=ON_EDGE;
+        res.info_1=ipt_curr.info_1;
+      }
+      else
+      {
+        CGAL_assertion( ipt_curr.type_2==ON_VERTEX);
+        res.type_1=ON_FACE;
+        res.info_1=h1;
+        res.type_2=ON_VERTEX;
+        typename Exact_kernel::Collinear_3 is_collinear = Exact_kernel().collinear_3_object();
+        if ( !is_collinear(ipt_prev.point,ipt_curr.point,to_exact(get(vpm2,target(res.info_2,tm2)) ) ) ){
+          res.info_2=prev(res.info_2,tm2);
+          CGAL_assertion( is_collinear(ipt_prev.point,ipt_curr.point,to_exact(get(vpm2,target(res.info_2,tm2))) ) );
+        }
+        res.point = to_exact( get(vpm2, target(res.info_2,tm2)) );
+        return res;
+      }
     }
     else{
       if(ipt_curr.type_1==ON_VERTEX && ipt_prev.info_1 == ipt_curr.info_1){
-        CGAL_assertion(ipt_prev.type_1!=ON_FACE);
-        res.type_1=ON_EDGE;
-        res.info_1=ipt_curr.info_1;
+        if (ipt_prev.type_1!=ON_FACE)
+        {
+          res.type_1=ON_EDGE;
+          res.info_1=ipt_curr.info_1;
+        }
+        else
+        {
+          CGAL_assertion( ipt_prev.type_2==ON_VERTEX);
+          res.type_1=ON_FACE;
+          res.info_1=h1;
+          res.type_2=ON_VERTEX;
+          typename Exact_kernel::Collinear_3 is_collinear = Exact_kernel().collinear_3_object();
+          if ( !is_collinear(ipt_prev.point,ipt_curr.point,to_exact(get(vpm2,target(res.info_2,tm2)) ) ) ){
+            res.info_2=prev(res.info_2,tm2);
+            CGAL_assertion( is_collinear(ipt_prev.point,ipt_curr.point,to_exact(get(vpm2,target(res.info_2,tm2))) ) );
+          }
+          res.point = to_exact( get(vpm2, target(res.info_2,tm2)) );
+          return res;
+        }
       }
       else{
         if (ipt_curr.type_1==ON_EDGE && ipt_prev.type_1==ON_EDGE &&  ipt_curr.info_1==ipt_prev.info_1){
@@ -288,7 +321,7 @@ void intersection_coplanar_faces(
   intersect_cpln.cutoff_face(next(next(h2,tm2),tm2),inter_pts,h1);
 }
 
-} } //namespace CGAL::Corefinement
+} } } // CGAL::Polygon_mesh_processing::Corefinement
 
 
 #endif //CGAL_PMP_INTERNAL_COREFINEMENT_INTERSECTION_OF_COPLANAR_TRIANGLES_3_H

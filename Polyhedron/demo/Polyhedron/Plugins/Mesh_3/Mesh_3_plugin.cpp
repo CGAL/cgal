@@ -294,7 +294,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   else if (NULL != image_item)
   {
     item = image_item;
-    features_protection_available = (polylines_item != NULL) || !image_item->isGray();
+    features_protection_available = true;
 
     bool fit_wrdtp = true;
     std::size_t img_wdim = image_item->image()->image()->wdim;
@@ -462,7 +462,6 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
         ui.protectEdges->addItem(QString("Input polylines"));
       else
       {
-        CGAL_assertion(!image_item->isGray());
         ui.protectEdges->addItem(QString("Polylines on cube"));
       }
     }
@@ -508,10 +507,16 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
     Polyhedron* pMesh = poly_item->polyhedron();
     if (NULL == pMesh)
     {
+      QApplication::restoreOverrideCursor();
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
     }
-
+    if(poly_item->getNbIsolatedvertices() != 0)
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::critical(mw, tr(""), tr("ERROR: there are isolated vertices in this mesh."));
+      return;
+    }
     Scene_polylines_item::Polylines_container plc;
 
     thread =    cgal_code_mesh_3(pMesh,
@@ -537,7 +542,14 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
     SMesh* pMesh = sm_item->polyhedron();
     if (NULL == pMesh)
     {
+      QApplication::restoreOverrideCursor();
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
+      return;
+    }
+    if(sm_item->getNbIsolatedvertices() != 0)
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::critical(mw, tr(""), tr("ERROR: there are isolated vertices in this mesh."));
       return;
     }
     Scene_polylines_item::Polylines_container plc;

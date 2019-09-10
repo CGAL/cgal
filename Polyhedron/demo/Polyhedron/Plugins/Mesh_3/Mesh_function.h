@@ -138,7 +138,7 @@ private:
   C3t3& c3t3_;
   Domain* domain_;
   Mesh_parameters p_;
-  bool continue_;
+  std::atomic<bool> stop_;
   Mesher* mesher_;
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   mutable typename Mesher::Mesher_status last_report_;
@@ -177,7 +177,7 @@ Mesh_function(C3t3& c3t3, Domain* domain, const Mesh_parameters& p)
 : c3t3_(c3t3)
 , domain_(domain)
 , p_(p)
-, continue_(true)
+, stop_()
 , mesher_(NULL)
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
 , last_report_(0,0,0)
@@ -218,12 +218,14 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag)
 // for a labeled image
 {
   if(p_.detect_connected_components) {
-    initialize_triangulation_from_labeled_image(c3t3_
-                                                , *domain_
-                                                , *p_.image_3_ptr
-                                                , criteria
-                                                , typename D_::Image_word_type()
-                                                , p_.protect_features);
+    CGAL_IMAGE_IO_CASE(p_.image_3_ptr->image(),
+            initialize_triangulation_from_labeled_image(c3t3_
+                                                        , *domain_
+                                                        , *p_.image_3_ptr
+                                                        , criteria
+                                                        , Word()
+                                                        , p_.protect_features);
+                       );
   } else {
     initialize(criteria, Mesh_fnt::Domain_tag());
   }
@@ -239,11 +241,11 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
   // features, or with the initial points (or both).
   // If `detect_connected_components==true`, the initialization is
   // already done.
-  CGAL::internal::Mesh_3::C3t3_initializer<
+  CGAL::Mesh_3::internal::C3t3_initializer<
     C3t3,
     Domain,
     Mesh_criteria,
-    CGAL::internal::Mesh_3::has_Has_features<Domain>::value >()
+    CGAL::Mesh_3::internal::has_Has_features<Domain>::value >()
     (c3t3_,
      *domain_,
      criteria,
@@ -328,7 +330,10 @@ launch()
 
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria,
-                       topology(p_.manifold) & CGAL::MANIFOLD);
+                       topology(p_.manifold) & CGAL::MANIFOLD,
+                       0,
+                       0,
+                       &stop_);
 
 #ifdef CGAL_MESH_3_PROFILING
   CGAL::Real_timer t;
@@ -337,7 +342,7 @@ launch()
 
 #if CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   mesher_->initialize();
-  while ( ! mesher_->is_algorithm_done() && continue_ )
+  while ( ! mesher_->is_algorithm_done() && ! stop_ )
   {
     mesher_->one_step();
   }
@@ -361,7 +366,7 @@ tweak_criteria(Mesh_criteria& c, Mesh_fnt::Polyhedral_domain_tag) {
   typedef CGAL::Mesh_3::Facet_topological_criterion_with_adjacency<Tr,
        Domain, typename Facet_criteria::Visitor> New_topo_adj_crit;
 
-  if((int(c.facet_criteria().topology()) &
+  if((int(c.facet_criteria_object().topology()) &
       CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK) != 0)
   {
     c.add_facet_criterion(new New_topo_adj_crit(this->domain_));
@@ -374,7 +379,7 @@ void
 Mesh_function<D_,Tag>::
 stop()
 {
-  continue_ = false;
+  stop_.store(true, std::memory_order_release);
 }
 
 

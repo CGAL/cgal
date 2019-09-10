@@ -192,9 +192,10 @@ private:
   Compare          comp;
   Constraint_set   constraint_set;
   Sc_to_c_map      sc_to_c_map;
-  std::map<std::pair<Vertex_handle, Vertex_handle>,
-	   Constraint_id,
-	   Pair_compare> constraint_map;
+  typedef std::map<std::pair<Vertex_handle, Vertex_handle>,
+		   Constraint_id,
+		   Pair_compare> Constraint_map;
+  Constraint_map constraint_map;
   
 public:
   Polyline_constraint_hierarchy_2(const Compare& comp)
@@ -867,6 +868,14 @@ typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Vertex_list*
 Polyline_constraint_hierarchy_2<T,Compare,Data>::
 insert_constraint(T va, T vb){
   Edge        he = make_edge(va, vb);
+
+  // First, check if the constraint was already inserted.
+  // If it was not, then the iterator to the lower bound will serve as
+  // the hint of the insertion.
+  typename Constraint_map::iterator c_map_it = constraint_map.lower_bound(he);
+  if(c_map_it != constraint_map.end() && he == c_map_it->first)
+    return 0;
+
   Vertex_list*  children = new Vertex_list; 
   Context_list* fathers;
 
@@ -886,7 +895,8 @@ insert_constraint(T va, T vb){
   ctxt.pos     = children->skip_begin();
   fathers->push_front(ctxt);
 
-  constraint_map[he] = children;
+  constraint_map.insert(c_map_it,
+			typename Constraint_map::value_type(he, children));
   return children;
 }
 

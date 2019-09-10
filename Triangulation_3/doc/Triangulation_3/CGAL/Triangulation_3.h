@@ -867,7 +867,7 @@ void flip_flippable(Cell_handle c, int i);
 /// @{
 
 /*!
-Inserts point `p` in the triangulation and returns the corresponding 
+Inserts the point `p` in the triangulation and returns the corresponding
 vertex. 
 
 If point `p` coincides with an already existing vertex, this 
@@ -901,7 +901,7 @@ Same as above but uses `hint` as the starting place for the search.
 Vertex_handle insert(const Point & p, Vertex_handle hint); 
 
 /*!
-Inserts point `p` in the triangulation and returns the corresponding 
+Inserts the point `p` in the triangulation and returns the corresponding
 vertex. Similar to the above `insert()` function, but takes as additional 
 parameter the return values of a previous location query. See description of 
 <I>locate()</I> above. 
@@ -931,14 +931,14 @@ valid triangulation when they are applied on a valid triangulation.
 
 // @{
 /*!
-Inserts point `p` in cell `c`. Cell `c` is split into 4 
+Inserts the point `p` in the cell `c`. The cell `c` is split into 4
 tetrahedra. 
 \pre `t.dimension() == 3` and `p` lies strictly inside cell `c`. 
 */ 
 Vertex_handle insert_in_cell(const Point & p, Cell_handle c); 
 
 /*!
-Inserts point `p` in facet `f`. In dimension 3, the 2 
+Inserts the point `p` in the facet `f`. In dimension 3, the 2
 neighboring cells are split into 3 tetrahedra; in dimension 2, the facet 
 is split into 3 triangles. 
 \pre `t.dimension()` \f$ \geq2\f$ and `p` lies strictly inside face `f`. 
@@ -946,14 +946,14 @@ is split into 3 triangles.
 Vertex_handle insert_in_facet(const Point & p, const Facet & f); 
 
 /*!
-As above, insertion in facet `(c,i)`. 
+As above, insertion in the facet `(c,i)`.
 \pre As above and \f$ i \in\{0,1,2,3\}\f$ in dimension 3, \f$ i = 3\f$ in dimension 2. 
 */ 
 Vertex_handle insert_in_facet(const Point & p, 
 Cell_handle c, int i); 
 
 /*!
-Inserts `p` in edge `e`. In dimension 3, 
+Inserts `p` in the edge `e`. In dimension 3,
 all the cells having this edge are split into 2 tetrahedra; in 
 dimension 2, the 2 neighboring facets are split into 2 triangles; in 
 dimension 1, the edge is split into 2 edges. 
@@ -962,10 +962,10 @@ dimension 1, the edge is split into 2 edges.
 Vertex_handle insert_in_edge(const Point & p, const Edge & e); 
 
 /*!
-As above, inserts `p` in edge \f$ (i, j)\f$ of `c`. 
+As above, inserts `p` in the edge \f$ (i, j)\f$ of `c`.
 \pre As above and \f$ i\neq j\f$. Moreover \f$ i,j \in\{0,1,2,3\}\f$ in dimension 3, \f$ i,j \in\{0,1,2\}\f$ in dimension 2, \f$ i,j \in\{0,1\}\f$ in dimension 1. 
 */ 
-Vertex_handle insert_in_edge(Point p, Cell_handle c, int i, int j); 
+Vertex_handle insert_in_edge(const Point& p, Cell_handle c, int i, int j);
 
 /*!
 The cell `c` must be an infinite cell containing `p`. 
@@ -1016,16 +1016,16 @@ This operation is equivalent to calling
 \pre `t.dimension()` \f$ \geq2\f$, the set of cells (resp. facets in dimension 2) is connected, its boundary is connected, and `p` lies inside the hole, which is star-shaped wrt `p`. 
 */ 
 template <class CellIt> 
-Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end, 
-Cell_handle begin, int i); 
+Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end,
+                             Cell_handle begin, int i);
 
 /*!
 Same as above, except that `newv` will be used as the new vertex, which 
 must have been allocated previously with e.g.\ `create_vertex`. 
 */ 
 template <class CellIt> 
-Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end, 
-Cell_handle begin, int i, Vertex_handle newv); 
+Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end,
+                             Cell_handle begin, int i, Vertex_handle newv);
 
 /// @} 
 

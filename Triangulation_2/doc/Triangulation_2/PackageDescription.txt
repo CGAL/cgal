@@ -16,6 +16,14 @@
 /// \defgroup PkgTriangulation2Miscellaneous Miscellaneous
 /// \ingroup PkgTriangulation2
 
+/*! Draw.
+  \code
+   #include <CGAL/draw_triangulation_2.h>
+  \endcode
+*/
+/// \defgroup PkgDrawTriangulation2 Draw a Triangulation 2
+/// \ingroup PkgTriangulation2
+
 /*!
 \addtogroup PkgTriangulation2
 \todo check generated documentation
@@ -103,6 +111,9 @@ are described in Chapter \ref PkgTDS2 "2D Triangulation Data Structure".
 
 ## Enum ##
 - \link CGAL::Triangulation_2::Locate_type `CGAL::Triangulation_2<Traits,Tds>::Locate_type` \endlink
+
+### Draw a Triangulation 2 ###
+- `CGAL::draw<T2>`
 
 */
 

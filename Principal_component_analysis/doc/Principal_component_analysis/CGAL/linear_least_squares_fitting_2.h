@@ -13,7 +13,7 @@ The tag `tag` identifies the dimension to be considered from the objects. For po
 
 The class `K` is the kernel in which the value type of the  `InputIterator` is defined. It can be omitted and deduced automatically from the value type. 
 
-The class `DiagonalizeTraits_` is a model of `DiagonalizeTraits`. It can be omitted: if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation `Diagonalize_traits` is used.
+The class `DiagonalizeTraits_` is a model of `DiagonalizeTraits`. It can be omitted if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined: in that case, an overload using `Eigen_diagonalize_traits` is provided.
 
 \cgalHeading{Requirements}
 

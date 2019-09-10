@@ -14,10 +14,10 @@ Functions that perform classification based on a set of labels and a classifier,
 
 Classifiers are functors that, given a label set and an input item, associate this input item with an energy for each label. This energy measures the likelihood of the item to belong to this label.
 
-\defgroup PkgClassificationDataStructures Data Structures
+\defgroup PkgClassificationDataStructures Common Data Structures
 \ingroup PkgClassification
 
-Useful data structures that are used to compute features (computation of eigenvalues, for example) and to regularize classification (neighborhood).
+Useful data structures that are used to compute features (computation of eigenvalues, for example).
 
 \defgroup PkgClassificationLabel Label
 \ingroup PkgClassification
@@ -34,6 +34,21 @@ Features are defined as scalar fields that associates each input item with a spe
 
 \cgal provides some predefined features that are relevant for classification of point sets.
 
+\defgroup PkgClassificationPointSet Point Set Classification
+\ingroup PkgClassification
+
+Data structures specialized to classify point sets.
+
+\defgroup PkgClassificationMesh Mesh Classification
+\ingroup PkgClassification
+
+Data structures specialized to classify surface meshes.
+
+\defgroup PkgClassificationCluster Cluster Classification
+\ingroup PkgClassification
+
+Data structures specialized to classify clusters.
+
 \addtogroup PkgClassification
 
 \cgalPkgDescriptionBegin{Classification, PkgClassificationSummary}
@@ -46,7 +61,7 @@ Features are defined as scalar fields that associates each input item with a spe
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.9}
+\cgalPkgSince{4.12}
 \cgalPkgDependsOn{\ref PkgSolverSummary, \ref PkgSpatialSearchingDSummary, [Boost Serialization](http://www.boost.org/libs/serialization) and
 [Boost IO Streams](http://www.boost.org/libs/iostreams)}
 \cgalPkgBib{cgal:lm-clscm-12}
@@ -75,12 +90,10 @@ Features are defined as scalar fields that associates each input item with a spe
 - `CGAL::Classification::ETHZ_random_forest_classifier`
 - `CGAL::Classification::OpenCV_random_forest_classifier`
 
-## Data Structures ##
+## Common Data Structures ##
 
 - `CGAL::Classification::Local_eigen_analysis`
-- `CGAL::Classification::Planimetric_grid<Geom_traits, PointRange, PointMap>`
-- `CGAL::Classification::Point_set_feature_generator<Geom_traits, PointRange, PointMap, ConcurrencyTag, DiagonalizeTraits>`
-- `CGAL::Classification::Point_set_neighborhood<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Planimetric_grid<GeomTraits, PointRange, PointMap>`
 - `CGAL::Classification::Evaluation`
 
 ## Label ##
@@ -97,21 +110,34 @@ Features are defined as scalar fields that associates each input item with a spe
 
 ## Predefined Features ##
 
-- `CGAL::Classification::Feature::Anisotropy`
+- `CGAL::Classification::Feature::Color_channel<GeomTraits, PointRange, ColorMap>`
 - `CGAL::Classification::Feature::Distance_to_plane<PointRange, PointMap>`
-- `CGAL::Classification::Feature::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap>`
-- `CGAL::Classification::Feature::Eigentropy`
-- `CGAL::Classification::Feature::Elevation<Geom_traits, PointRange, PointMap>`
-- `CGAL::Classification::Feature::Hsv<Geom_traits, PointRange, ColorMap>`
-- `CGAL::Classification::Feature::Linearity`
-- `CGAL::Classification::Feature::Omnivariance`
-- `CGAL::Classification::Feature::Planarity`
+- `CGAL::Classification::Feature::Echo_scatter<GeomTraits, PointRange, PointMap, EchoMap>`
+- `CGAL::Classification::Feature::Eigenvalue`
+- `CGAL::Classification::Feature::Elevation<GeomTraits, PointRange, PointMap>`
 - `CGAL::Classification::Feature::Simple_feature<InputRange, PropertyMap>`
-- `CGAL::Classification::Feature::Sphericity`
-- `CGAL::Classification::Feature::Sum_eigenvalues`
-- `CGAL::Classification::Feature::Surface_variation`
-- `CGAL::Classification::Feature::Vertical_dispersion<Geom_traits, PointRange, PointMap>`
-- `CGAL::Classification::Feature::Verticality<Geom_traits>`
+- `CGAL::Classification::Feature::Vertical_dispersion<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Verticality<GeomTraits>`
 
+## Point Set Classification ##
+
+- `CGAL::Classification::Point_set_feature_generator<GeomTraits, PointRange, PointMap, ConcurrencyTag, DiagonalizeTraits>`
+- `CGAL::Classification::Point_set_neighborhood<GeomTraits, PointRange, PointMap>`
+
+## Mesh Classification ##
+
+- `CGAL::Classification::Mesh_feature_generator<GeomTraits, FaceGraph, PointMap, ConcurrencyTag, DiagonalizeTraits>`
+- `CGAL::Classification::Mesh_neighborhood<FaceListGraph>`
+- `CGAL::Classification::Face_descriptor_to_center_of_mass_map<FaceListGraph, VertexPointMap>`
+- `CGAL::Classification::Face_descriptor_to_face_descriptor_with_bbox_map<FaceListGraph, VertexPointMap>`
+
+## Cluster Classification ##
+
+- `CGAL::Classification::Cluster<ItemRange, ItemMap>`
+- `CGAL::Classification::create_clusters_from_indices()`
+- `CGAL::Classification::Feature::Cluster_mean_of_feature`
+- `CGAL::Classification::Feature::Cluster_variance_of_feature`
+- `CGAL::Classification::Feature::Cluster_size`
+- `CGAL::Classification::Feature::Cluster_vertical_extent`
 
 */

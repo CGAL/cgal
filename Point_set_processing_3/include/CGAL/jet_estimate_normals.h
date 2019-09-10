@@ -32,6 +32,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/function.h>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -40,6 +41,7 @@
 #include <list>
 
 #ifdef CGAL_LINKED_WITH_TBB
+#include <CGAL/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
@@ -125,17 +127,28 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
     const unsigned int degree_fitting;
     const std::vector<Point>& input;
     std::vector<Vector>& output;
+    cpp11::atomic<std::size_t>& advancement;
+    cpp11::atomic<bool>& interrupted;
 
   public:
     Jet_estimate_normals(Tree& tree, unsigned int k, std::vector<Point>& points,
-		     unsigned int degree_fitting, std::vector<Vector>& output)
+                         unsigned int degree_fitting, std::vector<Vector>& output,
+                         cpp11::atomic<std::size_t>& advancement,
+                         cpp11::atomic<bool>& interrupted)
       : tree(tree), k (k), degree_fitting (degree_fitting), input (points), output (output)
+      , advancement (advancement)
+      , interrupted (interrupted)
     { }
     
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for( std::size_t i = r.begin(); i != r.end(); ++i)
+      {
+        if (interrupted)
+          break;
 	output[i] = CGAL::internal::jet_estimate_normal<Kernel,SvdTraits>(input[i], tree, k, degree_fitting);
+        ++ advancement;
+      }
     }
 
   };
@@ -179,6 +192,13 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
      \cgalParamBegin{svd_traits} template parameter for the class `Monge_via_jet_fitting`. If
      \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined,
      then `CGAL::Eigen_svd` is used.\cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `cpp11::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped and the remaining normals are
+      left unchanged.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 */
@@ -212,6 +232,8 @@ jet_estimate_normals(
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
   unsigned int degree_fitting = choose_param(get_param(np, internal_np::degree_fitting), 2);
+  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               cpp11::function<bool(double)>());
 
   typedef typename Kernel::Point_3 Point;
 
@@ -254,28 +276,37 @@ jet_estimate_normals(
 #else
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
-     std::vector<Vector> normals (kd_tree_points.size ());
+     internal::Point_set_processing_3::Parallel_callback
+       parallel_callback (callback, kd_tree_points.size());
+     
+     std::vector<Vector> normals (kd_tree_points.size (),
+                                  CGAL::NULL_VECTOR);
      CGAL::internal::Jet_estimate_normals<Kernel, SvdTraits, Tree>
-       f (tree, k, kd_tree_points, degree_fitting, normals);
+       f (tree, k, kd_tree_points, degree_fitting, normals,
+          parallel_callback.advancement(),
+          parallel_callback.interrupted());
      tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
-     unsigned int i = 0;
+     std::size_t i = 0;
      for(it = points.begin(); it != points.end(); ++ it, ++ i)
-       {
-	 put (normal_map, *it, normals[i]);
-       }
+       if (normals[i] != CGAL::NULL_VECTOR)
+         put (normal_map, *it, normals[i]);
+
+     parallel_callback.join();
    }
    else
 #endif
      {
-       for(it = points.begin(); it != points.end(); it++)
+       std::size_t nb = 0;
+       for(it = points.begin(); it != points.end(); it++, ++ nb)
 	 {
 	   Vector normal = internal::jet_estimate_normal<Kernel,SvdTraits,Tree>(
 										get(point_map,*it), 
 										tree, k, degree_fitting);
 
 	   put(normal_map, *it, normal); // normal_map[it] = normal
-    
-	 }
+           if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
+             break;
+    	 }
      }
 
 

@@ -174,7 +174,7 @@ create_output_file(const char *filename, // Note: "Bernd3" and not
 
 template<typename NT>
 struct tuple_add : 
-  public CGAL::unary_function<const boost::tuple<NT, NT>&, NT>
+  public CGAL::cpp98::unary_function<const boost::tuple<NT, NT>&, NT>
 {
   NT operator()(const boost::tuple<NT, NT>& t) const
   {

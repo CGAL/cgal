@@ -29,13 +29,10 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/disable_warnings.h>
-
+#include <CGAL/assertions.h>
 #include <CGAL/IO/File_medit.h>
 
-#include <CGAL/assertions.h>
-
 #include <boost/array.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/foreach.hpp>
 
@@ -50,7 +47,7 @@ void build_vertices(Tr& tr,
   typedef typename Tr::Vertex_handle            Vertex_handle;
 
   vertex_handle_vector[0] = tr.tds().create_vertex(); // creates the infinite vertex
-  tr.infinite_vertex() = vertex_handle_vector[0];
+  tr.set_infinite_vertex(vertex_handle_vector[0]);
 
   // build vertices
   for(std::size_t i=0; i<points.size(); ++i)
@@ -64,8 +61,7 @@ void build_vertices(Tr& tr,
 template<class Tr>
 void add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
                                      boost::unordered_map<std::set<typename Tr::Vertex_handle>,
-                                     std::vector<std::pair<typename Tr::Cell_handle,
-                                     int> > >& incident_cells_map)
+                                     std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map)
 {
   typedef typename Tr::Vertex_handle                                Vertex_handle;
   typedef typename Tr::Cell_handle                                  Cell_handle;
@@ -98,8 +94,7 @@ void build_finite_cells(Tr& tr,
                         const std::vector<boost::array<int,5> >& finite_cells,
                         const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
                         boost::unordered_map<std::set<typename Tr::Vertex_handle>,
-                        std::vector<std::pair<typename Tr::Cell_handle,
-                        int> > >& incident_cells_map,
+                        std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
                         const std::map<boost::array<int,3>, int>& border_facets)
 {
   typedef boost::array<int, 5>              Tet_with_ref; // 4 ids + 1 reference
@@ -108,7 +103,7 @@ void build_finite_cells(Tr& tr,
   typedef typename Tr::Cell_handle                              Cell_handle;
 
   CGAL_assertion_code(
-    typename Tr::Geom_traits::Construct_point_3 wp2p =
+    typename Tr::Geom_traits::Construct_point_3 cp =
       tr.geom_traits().construct_point_3_object();
   )
 
@@ -120,16 +115,16 @@ void build_finite_cells(Tr& tr,
 
     for(int j=0; j<4; ++j)
     {
-      CGAL_precondition(static_cast<std::size_t>(tet[j]) < tr.number_of_vertices() &&
-                        tet[j] >= 0);
-      vertex_handle_vector[tet[j] + 1]->set_dimension(3);
-      vs[j] = vertex_handle_vector[tet[j] + 1];
+      CGAL_precondition(static_cast<std::size_t>(tet[j]) < tr.number_of_vertices() && tet[j] >= 0);
+      vs[j] = vertex_handle_vector.at(tet[j] + 1);
       CGAL_postcondition(vs[j] != Vertex_handle());
+      CGAL_postcondition(!tr.is_infinite(vs[j]));
+      vs[j]->set_dimension(3);
     }
 
     // this assertion also tests for degeneracy
-    CGAL_assertion(CGAL::orientation(wp2p(vs[0]->point()), wp2p(vs[1]->point()),
-                                     wp2p(vs[2]->point()), wp2p(vs[3]->point()))
+    CGAL_assertion(CGAL::orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
+                                     cp(tr.point(vs[2])), cp(tr.point(vs[3])))
                      == POSITIVE);
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
@@ -147,14 +142,14 @@ void build_finite_cells(Tr& tr,
     for(int j=0; j<4; ++j)
     {
       add_facet_to_incident_cells_map<Tr>(c, j, incident_cells_map);
-      if(border_facets.size() !=0)
+      if(border_facets.size() != 0)
       {
         boost::array<int,3> facet;
-        facet[0]=tet[(j+ 1) % 4];
-        facet[1]=tet[(j+ 2) % 4];
-        facet[2]=tet[(j+ 3) % 4];
+        facet[0]=tet[(j+1) % 4];
+        facet[1]=tet[(j+2) % 4];
+        facet[2]=tet[(j+3) % 4];
         //find the circular permutation that puts the smallest index in the first place.
-        int n0 = (std::min)((std::min)(facet[0],facet[1]), facet[2]);
+        int n0 = (std::min)((std::min)(facet[0], facet[1]), facet[2]);
         int k=0;
         boost::array<int,3> f;
         do
@@ -163,16 +158,22 @@ void build_finite_cells(Tr& tr,
           f[1]=facet[(1+k)%3];
           f[2]=facet[(2+k)%3];
           ++k;
-        }while(f[0] != n0);
-        if(border_facets.find(f) != border_facets.end())
-          c->set_surface_patch_index(j, border_facets.at(f));
+        } while(f[0] != n0);
+
+        typename std::map<boost::array<int,3>, int>::const_iterator it = border_facets.find(f);
+        if(it != border_facets.end())
+        {
+          c->set_surface_patch_index(j, it->second);
+        }
         else
         {
           int temp = f[2];
-          f[2]=f[1];
-          f[1]=temp;
-          if(border_facets.find(f) != border_facets.end())
-            c->set_surface_patch_index(j, border_facets.at(f));
+          f[2] = f[1];
+          f[1] = temp;
+
+          it = border_facets.find(f);
+          if(it != border_facets.end())
+            c->set_surface_patch_index(j, it->second);
           else
             c->set_surface_patch_index(j, 0);
         }
@@ -257,7 +258,7 @@ bool assign_neighbors(Tr& tr,
   typedef typename Tr::Cell_handle                                   Cell_handle;
   typedef std::set<Vertex_handle>                                    Facet;
   typedef std::pair<Cell_handle, int>                                Incident_cell;
-  typedef boost::unordered_map<Facet, std::vector<Incident_cell> >  Incident_cells_map;
+  typedef boost::unordered_map<Facet, std::vector<Incident_cell> >   Incident_cells_map;
 
   typename Incident_cells_map::const_iterator icit = incident_cells_map.begin();
   for(; icit!=incident_cells_map.end(); ++icit)
@@ -318,10 +319,9 @@ bool build_triangulation(Tr& tr,
     std::cout << tr.number_of_cells() << " cells" << std::endl;
   }
   std::cout << tr.number_of_vertices() << " vertices" << std::endl;
+
   if(c3t3_loader_failed)
-  {
     return true;
-  }
   else
     return tr.is_valid(true);
 }
@@ -349,6 +349,7 @@ bool build_triangulation_from_file(std::istream& is,
 
   CGAL_assertion(dim == 3);
 
+  std::cout << "Reading .mesh file..." << std::endl;
   while(is >> word && word != "End")
   {
     if(word == "Vertices")
@@ -357,7 +358,7 @@ bool build_triangulation_from_file(std::istream& is,
       for(int i=0; i<nv; ++i)
       {
         double x,y,z;
-        is >> x >> y >> z>>ref;
+        is >> x >> y >> z >> ref;
         points.push_back(Point_3(x,y,z));
       }
     }
@@ -370,20 +371,20 @@ bool build_triangulation_from_file(std::istream& is,
         int n1, n2, n3, surface_patch_id;
         is >> n1 >> n2 >> n3 >> surface_patch_id;
         Facet facet;
-        facet[0] =n1 -1;
-        facet[1] =n2 -1;
-        facet[2] =n3 -1;
+        facet[0] = n1 - 1;
+        facet[1] = n2 - 1;
+        facet[2] = n3 - 1;
         //find the circular permutation that puts the smallest index in the first place.
         int n0 = (std::min)((std::min)(facet[0],facet[1]), facet[2]);
         int k=0;
         Facet f;
         do
         {
-          f[0]=facet[(0+k)%3];
-          f[1]=facet[(1+k)%3];
-          f[2]=facet[(2+k)%3];
+          f[0] = facet[(0+k)%3];
+          f[1] = facet[(1+k)%3];
+          f[2] = facet[(2+k)%3];
           ++k;
-        }while(f[0] != n0);
+        } while(f[0] != n0);
         border_facets.insert(std::make_pair(f, surface_patch_id));
       }
     }
@@ -405,10 +406,13 @@ bool build_triangulation_from_file(std::istream& is,
       }
     }
   }
+
+  std::cout << points.size() << " points" << std::endl;
+  std::cout << border_facets.size() << " border facets" << std::endl;
+  std::cout << finite_cells.size() << " cells" << std::endl;
+
   if(finite_cells.empty())
-  {
     return false;
-  }
 
   bool is_well_built = build_triangulation<Tr, c3t3_loader_failed>(tr, points, finite_cells, border_facets);
   return is_well_built;

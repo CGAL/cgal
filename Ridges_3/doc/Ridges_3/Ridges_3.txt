@@ -333,7 +333,7 @@ Property maps enables the user
 to store scalars and vectors associated to a vertex either
 <I>internally</I> in extended vertices or <I>externally</I>
 with a `std::map` combined with 
-a <A href="http://www.boost.org/libs/property_map/doc/associative_property_map.html">`boost::associative_property_map`</a>.
+a <A href="https://www.boost.org/libs/property_map/doc/associative_property_map.html">`boost::associative_property_map`</a>.
 
 Output of ridges or umbilics are provided via output iterators.
 

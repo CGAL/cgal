@@ -445,7 +445,7 @@ operator>=(Counted_number<NT> const &n1, Counted_number<NT> const &n2)
 
 template <class NT>
 class Is_valid< Counted_number<NT> >
-  : public CGAL::unary_function< Counted_number<NT>, bool > {
+  : public CGAL::cpp98::unary_function< Counted_number<NT>, bool > {
   public:
     bool operator()( const Counted_number<NT>& x ) {
       return is_valid( x.rep() );
@@ -515,7 +515,7 @@ namespace INTERN_COUNTED_NUMBER{
 
 template< class NT, class Functor >
 struct Simplify_selector {
-  struct Simplify : public CGAL::unary_function<NT&, void> {
+  struct Simplify : public CGAL::cpp98::unary_function<NT&, void> {
     void operator()( NT& x ) const {
       x.simplify();
     }
@@ -529,7 +529,7 @@ struct Simplify_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Unit_part_selector {
-  struct Unit_part : public CGAL::unary_function<NT, NT > {
+  struct Unit_part : public CGAL::cpp98::unary_function<NT, NT > {
     NT operator()( const NT& x ) const {
       return x.unit_part();
     }
@@ -543,7 +543,7 @@ struct Unit_part_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_zero_selector {
-  struct Is_zero : public CGAL::unary_function<NT, bool > {
+  struct Is_zero : public CGAL::cpp98::unary_function<NT, bool > {
     bool operator()( const NT& x ) const {
       return x.is_zero();
     }
@@ -557,7 +557,7 @@ struct Is_zero_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_one_selector {
-  struct Is_one : public CGAL::unary_function<NT, bool > {
+  struct Is_one : public CGAL::cpp98::unary_function<NT, bool > {
     bool operator()( const NT& x ) const {
       return x.is_one();
     }
@@ -571,7 +571,7 @@ struct Is_one_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Square_selector {
-  struct Square : public CGAL::unary_function<NT, NT > {
+  struct Square : public CGAL::cpp98::unary_function<NT, NT > {
     NT operator()( const NT& x ) const {
       return x.square();
     }
@@ -585,7 +585,7 @@ struct Square_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Integral_division_selector {
-  struct Integral_division : public CGAL::binary_function<NT, NT, NT > {
+  struct Integral_division : public CGAL::cpp98::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.integral_division( y );
     }
@@ -599,7 +599,7 @@ struct Integral_division_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_square_selector {
-  struct Is_square : public CGAL::binary_function<NT, NT&, bool > {
+  struct Is_square : public CGAL::cpp98::binary_function<NT, NT&, bool > {
       bool operator()( const NT& x, NT& y ) const {
           return x.is_square( y );
       }
@@ -618,7 +618,7 @@ struct Is_square_selector< NT, Null_functor > {
 
 template <class NT, class AlgebraicStructureTag>
 struct Sqrt_selector{
-    struct Sqrt : public CGAL::unary_function<NT,NT> {
+    struct Sqrt : public CGAL::cpp98::unary_function<NT,NT> {
         NT operator ()(const NT& x) const {
             return x.sqrt();
         }
@@ -631,7 +631,7 @@ struct Sqrt_selector<NT,Null_functor> {
 
 template< class NT, class Functor >
 struct Kth_root_selector {
-  struct Kth_root : public CGAL::binary_function<int, NT, NT > {
+  struct Kth_root : public CGAL::cpp98::binary_function<int, NT, NT > {
     NT operator()( int k, const NT& x ) const {
       return x.kth_root( k );
     }
@@ -687,7 +687,7 @@ struct Root_of_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Gcd_selector {
-  struct Gcd : public CGAL::binary_function<NT, NT, NT > {
+  struct Gcd : public CGAL::cpp98::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.gcd( y );
     }
@@ -701,7 +701,7 @@ struct Gcd_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Div_selector {
-  struct Div : public CGAL::binary_function<NT, NT, NT > {
+  struct Div : public CGAL::cpp98::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.div( y );
     }
@@ -715,7 +715,7 @@ struct Div_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Mod_selector {
-  struct Mod : public CGAL::binary_function<NT, NT, NT > {
+  struct Mod : public CGAL::cpp98::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.mod( y );
     }
@@ -818,20 +818,20 @@ public:
     <Counted_number<NT>, typename RET_NT::Is_zero > ::Is_zero Is_zero;
 
     class Is_finite
-      : public CGAL::unary_function< Counted_number<NT>, bool > {
+      : public CGAL::cpp98::unary_function< Counted_number<NT>, bool > {
       public:
         bool operator()( const Counted_number<NT>& x ) const {
           return CGAL_NTS is_finite( x.rep() );
         }
     };
 
-    struct To_double : public CGAL::unary_function< Counted_number<NT>, double > {
+    struct To_double : public CGAL::cpp98::unary_function< Counted_number<NT>, double > {
         double operator()(const Counted_number<NT>& x) const {
             return x.to_double();
         }
     };
 
-    struct To_interval: public CGAL::unary_function< Counted_number<NT>, std::pair<double,double> > {
+    struct To_interval: public CGAL::cpp98::unary_function< Counted_number<NT>, std::pair<double,double> > {
         std::pair<double,double>
         operator()(const Counted_number<NT>& x) const {
             return x.to_interval();

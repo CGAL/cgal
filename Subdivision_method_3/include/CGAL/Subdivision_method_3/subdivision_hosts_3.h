@@ -31,8 +31,8 @@
 
 #include <CGAL/circulator.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Subdivision_method_3/internal/subdivision_hosts_impl_3.h>
 
@@ -46,7 +46,7 @@ namespace Subdivision_method_3 {
 */
 /// @{
 
-namespace parameters = Polygon_mesh_processing::parameters;
+namespace parameters = CGAL::parameters;
 
 // -----------------------------------------------------------------------------
 

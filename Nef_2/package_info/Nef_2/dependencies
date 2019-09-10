@@ -1,4 +1,5 @@
 Algebraic_foundations
+BGL
 Box_intersection_d
 Cartesian_kernel
 Circulator
@@ -18,6 +19,7 @@ Nef_2
 Number_types
 Polygon
 Profiling_tools
+Property_map
 STL_Extension
 Stream_support
 Union_find

@@ -5,7 +5,7 @@
 
 #include <QColor>
 #include <QString>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
@@ -18,7 +18,7 @@ class Volume_plane_intersection
   typedef std::pair<Volume_plane_interface*, Volume_plane_interface*> Interface_pair;
 Q_OBJECT
 public:
-  Volume_plane_intersection(float x, float y, float z);
+  Volume_plane_intersection(float x, float y, float z, float tx, float ty, float tz);
   ~Volume_plane_intersection();
 
   bool isFinite() const { return true; }

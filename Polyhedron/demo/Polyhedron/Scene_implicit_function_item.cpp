@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <map>
 #include <CGAL/Simple_cartesian.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 
 #include "Color_ramp.h"
 #include <CGAL/Three/Viewer_interface.h>
@@ -39,9 +39,9 @@ struct Scene_implicit_function_item_priv
   {
     delete frame_;
   }
-  typedef qglviewer::Vec                  Point;
+  typedef CGAL::qglviewer::Vec                  Point;
   typedef std::pair <Point,double>        Point_value;
-  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
   void compute_min_max();
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_vertices_and_texmap(void);
@@ -272,7 +272,7 @@ void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
     }
     //the Box
     {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
         positions_cube.push_back(b.xmin()+offset.x);
         positions_cube.push_back(b.ymin()+offset.y);
@@ -439,7 +439,7 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
     double offset_x = (bbox().xmin() + bbox().xmax()) / 2;
     double offset_y = (bbox().ymin() + bbox().ymax()) / 2;
     double offset_z = (bbox().zmin() + bbox().zmax()) / 2;
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     d->frame_->setPosition(offset_x+offset.x, offset_y+offset.y, offset_z+offset.z);
     d->frame_->setOrientation(1., 0, 0, 0);
     d->init = true;
@@ -556,7 +556,7 @@ void
 Scene_implicit_function_item::
 compute_function_grid() const
 {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     typedef CGAL::Simple_cartesian<double>  K;
     typedef K::Aff_transformation_3         Aff_transformation;
     typedef K::Point_3                      Point_3;

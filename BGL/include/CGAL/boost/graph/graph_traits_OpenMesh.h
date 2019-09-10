@@ -34,7 +34,6 @@
 #include <CGAL/assertions.h>
 #include <CGAL/hash_openmesh.h>
 
-
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4267)
@@ -620,12 +619,6 @@ typename boost::graph_traits<OPEN_MESH_CLASS >::face_descriptor
 add_face(OPEN_MESH_CLASS& sm)
 {
   return sm.new_face();
-}
-
-template<typename K>
-bool is_valid(OPEN_MESH_CLASS& sm, bool /* verbose */ = false)
-{
-  return CGAL::is_valid_polygon_mesh(sm);
 }
 
 } // namespace OpenMesh

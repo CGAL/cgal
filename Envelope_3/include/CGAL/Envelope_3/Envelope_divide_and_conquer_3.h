@@ -46,7 +46,7 @@
 
 #ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
 #include <CGAL/Arr_face_index_map.h>
-#include <CGAL/graph_traits_Dual_Arrangement_2.h>
+#include <CGAL/graph_traits_dual_arrangement_on_surface_2.h>
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #endif
 
@@ -92,7 +92,8 @@ namespace CGAL {
 //                              the envelope between 2 surfaces over a feature
 //                              of the arrangement
 // 4. Overlay_2               - overlay of 2 MinimizationDiagram_2
-template <class EnvelopeTraits_3, 
+
+template <class EnvelopeTraits_3,
           class MinimizationDiagram_2,
           class EnvelopeResolver_3 =
             Envelope_element_visitor_3<EnvelopeTraits_3, MinimizationDiagram_2>,
@@ -138,9 +139,9 @@ protected:
     Ccb_halfedge_circulator;
   typedef typename Minimization_diagram_2::Halfedge_around_vertex_circulator
     Halfedge_around_vertex_circulator;
-  typedef typename Minimization_diagram_2::Outer_ccb_iterator 
+  typedef typename Minimization_diagram_2::Outer_ccb_iterator
     Outer_ccb_iterator;
-  typedef typename Minimization_diagram_2::Inner_ccb_iterator 
+  typedef typename Minimization_diagram_2::Inner_ccb_iterator
     Inner_ccb_iterator;
 
   typedef Arr_observer<Minimization_diagram_2>          Md_observer;
@@ -155,7 +156,7 @@ protected:
 public:
   // c'tor
   Envelope_divide_and_conquer_3(Envelope_type type = ENVELOPE_LOWER)
-  {    
+  {
     // Allocate the traits.
     m_geom_traits = new Traits;
     m_own_traits = true;
@@ -178,7 +179,7 @@ public:
 
     m_is_lower = ((type == ENVELOPE_LOWER) ? true : false);
   }
-  
+
   // virtual destructor.
   virtual ~Envelope_divide_and_conquer_3()
   {
@@ -199,11 +200,11 @@ public:
     Envelope_3::Arbitrary_dividor dividor;
     construct_lu_envelope(begin, end, result, dividor);
   }
-    
+
 
   // compute the envelope of surfaces in 3D using the given set dividor
   template <class SurfaceIterator, class SetDividor>
-  void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end, 
+  void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end,
                              Minimization_diagram_2& result,
                              SetDividor& dividor)
   {
@@ -211,7 +212,7 @@ public:
     {
       return; // result is empty
     }
-    
+
     // make the general surfaces xy-monotone
     std::list<Xy_monotone_surface_3> xy_monotones;
     for (; begin != end; ++begin)
@@ -220,10 +221,10 @@ public:
                                     std::back_inserter(xy_monotones));
 
     // recursively construct the envelope of the xy-monotone parts
-    construct_lu_envelope_xy_monotones(xy_monotones.begin(), 
+    construct_lu_envelope_xy_monotones(xy_monotones.begin(),
                                        xy_monotones.end(), result, dividor);
 
-    CGAL_assertion(is_envelope_valid(result));     
+    CGAL_assertion(is_envelope_valid(result));
   }
 
   // compute the envelope of xy-monotone surfaces in 3D,
@@ -266,7 +267,7 @@ public:
 
 protected:
 
-  // compute the envelope of xy-monotone surfaces in 3D 
+  // compute the envelope of xy-monotone surfaces in 3D
   template <class SurfaceIterator, class SetDividor>
   void construct_lu_envelope_xy_monotones(SurfaceIterator begin,
                                           SurfaceIterator end,
@@ -284,25 +285,25 @@ protected:
     {
       // only one surface is in the collection. insert it the result
       Xy_monotone_surface_3& surf = *first;
-      
+
       deal_with_one_surface(surf, result);
-      return;      
+      return;
     }
-   
+
     // divide the surfaces into 2 groups (insert surface to each group
     // alternately)
     // Efi: this copy is redundant. It is sufficient to determine the range
     std::list<Xy_monotone_surface_3> group1, group2;
     dividor(first, end,
             std::back_inserter(group1), std::back_inserter(group2));
-    
+
     // recursively calculate the LU_envelope of the 2 groups
     Minimization_diagram_2 result1(m_geom_traits), result2(m_geom_traits);
     construct_lu_envelope_xy_monotones(group1.begin(), group1.end(),
                                        result1, dividor);
     construct_lu_envelope_xy_monotones(group2.begin(), group2.end(),
                                        result2, dividor);
-        
+
     // merge the results:
     merge_envelopes(result1, result2, result);
 
@@ -323,7 +324,7 @@ protected:
     m_geom_traits->
       construct_projected_boundary_2_object()(surf,
                                               std::back_inserter(boundary));
-    
+
     if (boundary.empty())
     {
       //one infinite surface
@@ -344,13 +345,13 @@ protected:
         Oriented_side side = boundary_cv.second;
         Halfedge_handle he =
           insert_non_intersecting_curve(result, boundary_cv.first);
-        
+
         if (side == ON_ORIENTED_BOUNDARY)
         {
           // vertical xy-surface
           he->face()->set_no_data();
           he->twin()->face()->set_no_data();
-          
+
           continue;
         }
 
@@ -374,41 +375,41 @@ protected:
             he->twin()->face()->set_no_data();
           }
 
-          // init auxiliary data for f and its boundarys. 
+          // init auxiliary data for f and its boundarys.
           for(Outer_ccb_iterator ocit = f->outer_ccbs_begin();
               ocit != f->outer_ccbs_end(); ocit++){
             Ccb_halfedge_circulator face_hec = *ocit;
             Ccb_halfedge_circulator face_hec_begin = face_hec;
-            do 
+            do
               {
                 face_hec->set_is_equal_data_in_face(true);
                 face_hec->set_has_equal_data_in_face(true);
                 face_hec->set_has_equal_data_in_target_and_face(true);
-                
+
                 face_hec->twin()->set_is_equal_data_in_face(false);
                 face_hec->twin()->set_has_equal_data_in_face(false);
                 face_hec->twin()->set_has_equal_data_in_target_and_face(false);
-                
+
                 ++face_hec;
-              } 
+              }
             while(face_hec != face_hec_begin);
           }
           for(Outer_ccb_iterator icit = f->inner_ccbs_begin();
               icit != f->inner_ccbs_end(); icit++){
             Ccb_halfedge_circulator face_hec = *icit;
             Ccb_halfedge_circulator face_hec_begin = face_hec;
-            do 
+            do
               {
                 face_hec->set_is_equal_data_in_face(true);
                 face_hec->set_has_equal_data_in_face(true);
                 face_hec->set_has_equal_data_in_target_and_face(true);
-                
+
                 face_hec->twin()->set_is_equal_data_in_face(false);
                 face_hec->twin()->set_has_equal_data_in_face(false);
                 face_hec->twin()->set_has_equal_data_in_target_and_face(false);
-                
+
                 ++face_hec;
-              } 
+              }
             while(face_hec != face_hec_begin);
           }
         }
@@ -449,7 +450,7 @@ protected:
       }
     }
   }
-  
+
 
 public:
   void merge_envelopes(Minimization_diagram_2& result1,
@@ -457,20 +458,20 @@ public:
                        Minimization_diagram_2& result)
   {
     // overlay the 2 arrangements
-   
+
     Overlay_2 overlay;
     overlay(result1, result2, result);
-  
+
     CGAL_expensive_assertion_msg(is_valid(result),
                                  "after overlay result is not valid");
-       
+
     // make sure the aux flags are correctly set by the overlay
     //CGAL_assertion(verify_aux_flags(result));
 
     // for each face, edge and vertex in the result, should calculate
     // which surfaces are on the envelope
     // a face can be cut, or faces can be merged.
-   
+
     // now the minimization diagram might change - we need to keep data in the
     // edges, when they're split
     Keep_edge_data_observer edge_observer(result, this);
@@ -523,13 +524,13 @@ public:
     for (li = edges_to_resolve.begin(); li != edges_to_resolve.end(); ++li)
     {
       resolver->resolve(*li, result);
-     
+
     }
     edges_to_resolve.clear();
-    
+
     // decompose the result, to have faces without holes
    /* decompose(result);
-    CGAL_expensive_assertion_msg(result.is_valid(), 
+    CGAL_expensive_assertion_msg(result.is_valid(),
                        "after decomposition result is not valid");*/
 
     // compute the surface on the envelope for each face,
@@ -559,7 +560,7 @@ public:
                                 visitor(bfs_visitor));
     index_map.detach();
 #else
-    // traverse the faces in arbitrary order  
+    // traverse the faces in arbitrary order
     Face_iterator fi = result.faces_begin();
     for (; fi != result.faces_end(); ++fi)
     {
@@ -600,7 +601,7 @@ public:
 //          resolver->resolve(hi, result);
 //      }
 //    #endif
-    
+
     // detach the edge_observer from result, since no need for it anymore
     edge_observer.detach();
 
@@ -627,7 +628,7 @@ public:
         continue;
       }
       resolver->resolve(vh);
-     
+
     }
 
     CGAL_expensive_assertion_msg(result.is_valid(),
@@ -636,21 +637,21 @@ public:
     // make sure that aux_source and decision are set at all features
     // after all resolvings
     CGAL_assertion(check_resolve_was_ok(result));
- 
+
     // make sure the aux flags are correctly after all resolvings
     //CGAL_assertion(verify_aux_flags(result));
 
     // finally, remove unneccessary edges, between faces  with the same surface
     // (and which are not degenerate)
-  
+
     remove_unneccessary_edges(result);
-    CGAL_expensive_assertion_msg(result.is_valid(), 
+    CGAL_expensive_assertion_msg(result.is_valid(),
                        "after remove edges result is not valid");
 
     // also remove unneccessary vertices (that were created in the process of
     // vertical decomposition but the vertical edge was removed)
     remove_unneccessary_vertices(result);
-    CGAL_expensive_assertion_msg(result.is_valid(), 
+    CGAL_expensive_assertion_msg(result.is_valid(),
                        "after remove vertices result is not valid");
 
     // update is_equal_data and has_equal_data of halfedge->face and
@@ -661,7 +662,7 @@ public:
     // update the envelope surfaces according to the decision and the aux
     // surfaces in aux source
     update_envelope_surfaces_by_decision(result);
-    
+
     // make sure that all the flags are correctly set on the envelope result
     //CGAL_assertion(verify_flags(result));
     CGAL_expensive_assertion_msg(is_valid(result),
@@ -670,7 +671,7 @@ public:
 
 
 protected:
- 
+
   void deal_with_faces_to_split(std::list<Face_handle>& faces_to_split,
                                 Minimization_diagram_2& result)
   {
@@ -741,7 +742,7 @@ protected:
       if (can_remove_edge(hh))
         edges.push_back(hh);
     }
-    
+
     for (typename std::list<Halfedge_handle>::iterator ci = edges.begin();
          ci != edges.end(); ++ci)
     {
@@ -847,7 +848,7 @@ protected:
       end = v->end_data();
     }
   }
-  
+
   // check if we can remove the edge from the envelope
   // this can be done if the envelope surfaces on the edge are the same as
   // the envelope surfaces on both sides of the edge
@@ -855,7 +856,7 @@ protected:
   bool can_remove_edge(Halfedge_handle hh)
   {
     Face_handle f1 = hh->face(), f2 = hh->twin()->face();
-      
+
     // we check if the decision done on the edge is equal to the decision
     // done on the faces. if not, then the envelope surfaces must differ
     CGAL_assertion(hh->is_decision_set() && f1->is_decision_set() &&
@@ -875,10 +876,10 @@ protected:
 
     if (decision == DAC_DECISION_FIRST)
       return equal_first;
-   
+
     if (decision == DAC_DECISION_SECOND)
       return equal_second;
-    
+
     return (equal_first && equal_second);
   }
 
@@ -895,7 +896,7 @@ protected:
 
        When I tried to use the following code I got a Segmentation Fault when
        trying to compute power diagram:
-       
+
        if ((v->parameter_space_in_x() != ARR_INTERIOR) ||
           (v->parameter_space_in_y() != ARR_INTERIOR))
           return false;
@@ -908,7 +909,7 @@ protected:
 
     /*if (v->get_is_fake() && !v->is_decision_set())
       return true;
-   
+
 
     if (h->get_is_fake() && !h->is_decision_set())
     {
@@ -931,13 +932,13 @@ protected:
 
     if (decision == DAC_DECISION_FIRST)
       return equal_first;
-   
+
     if (decision == DAC_DECISION_SECOND)
       return equal_second;
-    
+
     return (equal_first && equal_second);
   }
-  
+
   // check if we can remove an isolated vertex from the envelope
   // this can be done if the envelope surfaces on the vertex are the same as
   // the envelope surfaces on its incident face
@@ -958,10 +959,10 @@ protected:
 
     if (decision == DAC_DECISION_FIRST)
       return equal_first;
-    
+
     if (decision == DAC_DECISION_SECOND)
       return equal_second;
-    
+
     return (equal_first && equal_second);
   }
 
@@ -977,13 +978,13 @@ protected:
     Halfedge_handle he1 = hec1, he2 = hec2;
     CGAL_assertion(he1 != he2);
     CGAL_assertion(he1->is_decision_set() && he2->is_decision_set());
-    
+
     /* if (vh->get_is_fake()) {
      *   CGAL_assertion(he1->get_decision() == he2->get_decision());
      *   return true;
      * }
      */
-    
+
     CGAL_assertion(vh->is_decision_set());
     // if the decision done on the vertex and its incident halfedges are
     // different, the envelope differs too.
@@ -1001,14 +1002,14 @@ protected:
 
     if (decision == DAC_DECISION_FIRST)
       return equal_first;
-    
+
     if (decision == DAC_DECISION_SECOND)
       return equal_second;
 
     return (equal_first && equal_second);
   }
-  
-  // Remove unneccessary vertices, which have degree 2, and the 2 curves 
+
+  // Remove unneccessary vertices, which have degree 2, and the 2 curves
   // can be merged
   // (and which are not degenerate)
   void remove_unneccessary_vertices(Minimization_diagram_2& result)
@@ -1016,14 +1017,14 @@ protected:
     // we have 2 types of unneccessary vertices: those with degree 2 (that
     // satisfy all the conditions below), and isolated vertices that have the
     // same envelope information as the face they're contained in.
-    
+
     // all the vertices that don't have their data set, are those vertices
     // on vertical edges, created in the decomposition process,
     // and are not neccessary
 
-    // also those vertices with degree 2, that can merge their 2 edges and 
+    // also those vertices with degree 2, that can merge their 2 edges and
     // with same data as both these edges, can be removed
-    
+
     // collect all vertices candidate to remove in this list,
     // and remove the correct ones at the end
     // (thus, not destroying the iterator)
@@ -1041,28 +1042,28 @@ protected:
     }
 
     typename Traits::Merge_2 curves_merge = m_geom_traits->merge_2_object();
-    typename Traits::Are_mergeable_2 curves_can_merge = 
+    typename Traits::Are_mergeable_2 curves_can_merge =
       m_geom_traits->are_mergeable_2_object();
 
     // check the candidates and remove if necessary
     typename std::list<Vertex_handle>::iterator ci;
-    for (ci = candidates_to_remove.begin(); 
+    for (ci = candidates_to_remove.begin();
         ci != candidates_to_remove.end(); ++ci)
     {
       Vertex_handle vh = *ci;
       CGAL_assertion(vh->degree() == 2);
-      
-      // we can remove this vertex only if the data on its halfedges is the 
+
+      // we can remove this vertex only if the data on its halfedges is the
       // same
       if (!combinatorically_can_remove_vertex(vh))
         continue;
-                     
+
       // merge the edges, if geometrically possible (if data on vertex is not
       // set, then it must be geometrically possible)
       Halfedge_around_vertex_circulator hec1 = vh->incident_halfedges();
       Halfedge_around_vertex_circulator hec2 = hec1++;
       Halfedge_handle he1 = hec1, he2 = hec2;
-      
+
 
       const X_monotone_curve_2& a = he1->curve(), b = he2->curve();
       CGAL_assertion(vh->is_decision_set() || curves_can_merge(a,b));
@@ -1072,7 +1073,7 @@ protected:
       X_monotone_curve_2 c;
       curves_merge(a,b,c);
 
-      // the decisions on he1 and he2 were the same, so the decision on 
+      // the decisions on he1 and he2 were the same, so the decision on
       // the edge that will be left after the merge will be ok
       // but we need to take care of the bool flags of the target relation
       // of the edge that will be left
@@ -1115,7 +1116,7 @@ protected:
       result.merge_edge(he1, he2 ,c);
       CGAL_assertion(new_edge->is_decision_set());
 
-      CGAL_expensive_assertion_msg(result.is_valid(), 
+      CGAL_expensive_assertion_msg(result.is_valid(),
                                    "after remove vertex result is not valid");
     }
 
@@ -1157,7 +1158,7 @@ protected:
         fh->set_data(begin, end);
       else
         fh->add_data(begin, end);
-    }    
+    }
   }
 
   // foreach feature of result, update the envelope surfaces, according
@@ -1168,12 +1169,12 @@ protected:
     Vertex_iterator vi = result.vertices_begin();
     for (; vi != result.vertices_end(); ++vi)
       update_envelope_surfaces_by_decision(vi);
-    
+
     // edges
     Halfedge_iterator hi = result.halfedges_begin();
     for (; hi != result.halfedges_end(); ++hi)
       update_envelope_surfaces_by_decision(hi);
-    
+
     // faces
     Face_iterator fi = result.faces_begin();
     for (; fi != result.faces_end(); ++fi)
@@ -1218,7 +1219,7 @@ protected:
       has_equal &= has_equal_first;
       else if (decision == DAC_DECISION_SECOND)
       has_equal &= has_equal_second;
-      else      
+      else
       has_equal &= (has_equal_first & has_equal_second);
     }
 
@@ -1264,7 +1265,7 @@ protected:
       else if (decision == DAC_DECISION_SECOND)
       has_equal &= has_equal_second;
 
-      else      
+      else
       has_equal &= (has_equal_first & has_equal_second);
     }
     h->set_is_equal_data_in_target(is_equal);
@@ -1297,7 +1298,7 @@ protected:
       else if (decision == DAC_DECISION_SECOND)
         has_equal &= has_equal_second;
 
-      else      
+      else
         has_equal &= (has_equal_first & has_equal_second);
     }
     h->set_has_equal_data_in_target_and_face(has_equal);
@@ -1340,7 +1341,7 @@ protected:
       has_equal &= has_equal_first;
       else if (decision == DAC_DECISION_SECOND)
         has_equal &= has_equal_second;
-      else      
+      else
       has_equal &= (has_equal_first & has_equal_second);
     }
     v->set_is_equal_data_in_face(is_equal);
@@ -1348,7 +1349,7 @@ protected:
   }
 
   void update_flags(Minimization_diagram_2& result)
-  {    
+  {
     // edges
     Halfedge_iterator hi = result.halfedges_begin();
     for (; hi != result.halfedges_end(); ++hi)
@@ -1371,7 +1372,7 @@ protected:
   {
     return fh->get_aux_is_set(id);
   }
- 
+
   template <class FeatureHandle>
   bool aux_has_no_data(FeatureHandle fh, unsigned int id)
   {
@@ -1379,7 +1380,7 @@ protected:
     Halfedge_handle h;
     Vertex_handle v;
     Face_handle f;
-   
+
     // aux source of a face must be a face!
     // aux source of a halfedge can be face or halfedge
     // aux source of a vertex can be face, halfedge or vertex
@@ -1497,9 +1498,9 @@ protected:
       }
     }
   }
-   
 
-  // confirm that aux source and decision are set over all minimization 
+
+  // confirm that aux source and decision are set over all minimization
   // diagram features
   bool check_resolve_was_ok(Minimization_diagram_2& result)
   {
@@ -1559,12 +1560,12 @@ protected:
     for (; vi != result.vertices_end(); ++vi)
     {
       Vertex_handle vh = vi;
-      
+
       all_ok &= (vh->get_is_set());
       CGAL_assertion_msg(all_ok, "data not set over vertex");
       all_ok &= (!vh->has_no_data());
 
-      CGAL_assertion_msg(all_ok, "data empty over vertex");      
+      CGAL_assertion_msg(all_ok, "data empty over vertex");
      /* all_ok &= (!vh->get_is_fake());*/
       CGAL_assertion_msg(all_ok, "fake vertex in envelope");
     }
@@ -1572,7 +1573,7 @@ protected:
     for (; hi != result.halfedges_end(); ++hi)
     {
       Halfedge_handle hh = hi;
-      
+
       all_ok &= (hh->get_is_set());
       if (!all_ok)
         std::cerr << "edge: " << hh->curve() << std::endl;
@@ -1594,14 +1595,14 @@ protected:
     }
     return all_ok;
   }
-    
+
   // observer for the minimization diagram
   // keeps the relevant data in the new faces
   class Keep_face_data_observer : public Md_observer
   {
   public:
     typedef typename Minimization_diagram_2::Face_handle Face_handle;
-    
+
     Keep_face_data_observer(Minimization_diagram_2& arr) :
       Md_observer(arr)
     {}
@@ -1619,7 +1620,7 @@ protected:
         new_f->set_decision(org_f->get_decision());
     }
   };
-  
+
 
   // observer for the minimization diagram
   // keeps the relevant data in the new edges & vertices
@@ -1628,12 +1629,12 @@ protected:
   public:
     typedef typename Minimization_diagram_2::Halfedge_handle   Halfedge_handle;
     typedef typename Minimization_diagram_2::Vertex_handle     Vertex_handle;
-    typedef typename Minimization_diagram_2::X_monotone_curve_2 
+    typedef typename Minimization_diagram_2::X_monotone_curve_2
                                                             X_monotone_curve_2;
 
-    typedef typename Envelope_divide_and_conquer_3<Traits, 
+    typedef typename Envelope_divide_and_conquer_3<Traits,
                                                    Minimization_diagram_2,
-                                                   EnvelopeResolver_3, 
+                                                   EnvelopeResolver_3,
                                                    Overlay_2>::Self Self;
     Keep_edge_data_observer(Minimization_diagram_2& arr,
                             Self* b) :
@@ -1651,7 +1652,7 @@ protected:
 
     virtual void after_split_edge(Halfedge_handle he1, Halfedge_handle he2)
     {
-      // update data of the new vertex, which is the common vertex of he1 and 
+      // update data of the new vertex, which is the common vertex of he1 and
       // he2, and of the new edge according to the data in the original edge
       CGAL_assertion(he2->source() == he1->target());
 
@@ -1669,19 +1670,19 @@ protected:
       // find the halfedge with the additional information, to be copied into
       // the second halfedge
       Halfedge_handle org_he = he1, new_he = he2;
-      
+
       if (org_he->is_decision_set())
       {
         new_he->set_decision(org_he->get_decision());
         new_he->twin()->set_decision(org_he->get_decision());
         new_vertex->set_decision(org_he->get_decision());
-      }        
+      }
       if (org_he->get_aux_is_set(0))
       {
         new_vertex->set_aux_source(0, org_he->get_aux_source(0));
         new_he->set_aux_source(0, org_he->get_aux_source(0));
         new_he->twin()->set_aux_source(0, org_he->twin()->get_aux_source(0));
-      }      
+      }
       if (org_he->get_aux_is_set(1))
       {
         new_vertex->set_aux_source(1, org_he->get_aux_source(1));
@@ -1812,11 +1813,11 @@ protected:
     }
   };
 #endif
-  
+
 protected:
   Envelope_resolver* resolver;
   const Traits* m_geom_traits;
-  bool m_own_traits; 
+  bool m_own_traits;
   bool m_is_lower;
 };
 

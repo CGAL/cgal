@@ -311,7 +311,7 @@
          <item>
           <widget class="QLabel" name="facetTopologyLabel">
            <property name="text">
-            <string>The following option enables the &lt;a href=&quot;http://doc.cgal.org/latest/Mesh_3/group__PkgMesh__3Enum.html#gaac682a581ddebf8daff681621911d1f3&quot;&gt; &lt;code&gt;FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK &lt;/code&gt;&lt;/a&gt; facet topology criterion (click on the link to see the manual page).</string>
+            <string>The following option enables the &lt;a href=&quot;https://doc.cgal.org/latest/Mesh_3/group__PkgMesh__3Enum.html#gaac682a581ddebf8daff681621911d1f3&quot;&gt; &lt;code&gt;FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK &lt;/code&gt;&lt;/a&gt; facet topology criterion (click on the link to see the manual page).</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>

@@ -25,11 +25,11 @@
 #include <CGAL/license/Three.h>
 
 #include <QMap>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QWidget>
 #include <QPoint>
-#include <QOpenGLFunctions_2_1>
-#include <QOpenGLFunctions_4_3_Compatibility>
+#include <QOpenGLFunctions>
+#include <QOpenGLFunctions_4_3_Core>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 // forward declarations
 class QWidget;
@@ -37,6 +37,7 @@ class QImage;
 class QMouseEvent;
 class QKeyEvent;
 class QOpenGLShaderProgram;
+class QOpenGLFramebufferObject;
 class TextRenderer;
 class TextListItem;
 
@@ -47,7 +48,7 @@ namespace Three{
 class Scene_draw_interface;
 class Scene_item;
 //! Base class to interact with the viewer from the plugins, the items and the scene.
-class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions_2_1 {
+class VIEWER_EXPORT Viewer_interface : public CGAL::QGLViewer{
 
   Q_OBJECT
 
@@ -75,6 +76,7 @@ public:
    PROGRAM_SPHERES,             //! Used to render one or several spheres.
    PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
    PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
+   PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
 
@@ -102,9 +104,9 @@ public:
   virtual bool hasText() const { return false; }
   //! \brief Constructor
   //!
-  //! Creates a valid context for OpenGL 2.1.
+  //! Creates a valid context for OpenGL ES 2.0.
   //! \param parent the parent widget. It usually is the MainWindow.
-  Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
+  Viewer_interface(QWidget* parent) : CGAL::QGLViewer(parent) {}
   virtual ~Viewer_interface() {}
 
   //! \brief Sets the scene for the viewer.
@@ -123,12 +125,12 @@ public:
   //! \param frame is the frame that will be moved
   //! @returns true if it worked.
   //! @see moveCameraToCoordinates()
-  static bool readFrame(QString s, qglviewer::Frame& frame);
+  static bool readFrame(QString s, CGAL::qglviewer::Frame& frame);
   //! \brief Gives information about a frame.
   //! @see readFrame
   //! @see dumpCameraCoordinates()
   //!@returns a QString containing the position and orientation of a frame.
-  static QString dumpFrame(const qglviewer::Frame&);
+  static QString dumpFrame(const CGAL::qglviewer::Frame&);
   //! \brief The fastDrawing state.
   //!
   //! In fast drawing mode, some items will be simplified while the camera is moving
@@ -173,11 +175,11 @@ public:
   //! The textRenderer uses the painter to display 2D text over the 3D Scene.
   //! \returns the viewer's TextRender
   virtual TextRenderer* textRenderer() = 0;
-  //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
+  //!Allows OpenGL ES 2.0 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  //!Allows OpenGL ES 2.0 context to get access to glVertexAttribDivisor.
   typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  //!Allows OpenGL ES 2.0 context to get access to glVertexAttribDivisor.
   typedef void (APIENTRYP PFNGLFRAMEBUFFERTEXTURE2DEXTPROC) (GLuint target, GLuint attachment, GLuint textarget, GLuint texture, GLint level);
 
   PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
@@ -187,8 +189,6 @@ public:
   //! \brief Used by the items to avoid SEGFAULT.
   //!@returns true if glVertexAttribDivisor, and glDrawArraysInstanced are found.
   virtual bool isExtensionFound() = 0;
-  //!Returns the scene's offset
-  virtual qglviewer::Vec offset()const = 0;
   //!\brief Allows to perform picking from the keyboard and mouse
   //!
   //! Sets the combination SHIFT+LEFT CLICK to perform a selection on the screen.
@@ -215,6 +215,9 @@ public:
   //! Returns the static image to be displayed in 2D selection mode.
   virtual const QImage& staticImage() const = 0;
 
+  //!The number of passes that are performed for the scene transparency.
+  //! Customizable from the MainWindow or the SubViewer menu.
+  virtual float total_pass() = 0;
 Q_SIGNALS:
   //!Emit this to signal that the `id`th item has been picked.
   void selected(int id);
@@ -251,15 +254,23 @@ public Q_SLOTS:
   virtual bool moveCameraToCoordinates(QString target,
                                        float animation_duration = 0.5f) = 0;
 public:
-  //! Is used to know if the openGL context is 4.3 or 2.1.
-  //! @returns `true` if the context is 4.3.
-  //! @returns `false` if the context is 2.1.
-  virtual bool isOpenGL_4_3() const = 0;
+  
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
-  //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isOpenGL_4_3()` is `true`
+  //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Core if `isOpenGL_4_3()` is `true`
   //! @returns NULL if `isOpenGL_4_3()` is `false`
-  virtual QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() = 0;
+  virtual QOpenGLFunctions_4_3_Core* openGL_4_3_functions() = 0;
+  //! getter for point size under old openGL context;
+  virtual const GLfloat& getGlPointSize()const = 0;
+  //! setter for point size under old openGL context;
+  virtual void setGlPointSize(const GLfloat& p) = 0;
+  virtual void setCurrentPass(int pass) = 0;
+  virtual void setDepthWriting(bool writing_depth) = 0;
+  virtual void setDepthPeelingFbo(QOpenGLFramebufferObject* fbo) = 0;
+  
+  virtual int currentPass()const = 0;
+  virtual bool isDepthWriting()const = 0;
+  virtual QOpenGLFramebufferObject* depthPeelingFbo() = 0;
 }; // end class Viewer_interface
 }
 }

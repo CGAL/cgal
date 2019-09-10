@@ -3,13 +3,13 @@
 \cgalConcept
 
 Concept from the Boost Graph Library.
-See http://www.boost.org/libs/graph/doc/VertexListGraph.html.
+See https://www.boost.org/libs/graph/doc/VertexListGraph.html.
 
 The concept `VertexListGraph` refines the concept
- <a href="http://www.boost.org/libs/graph/doc/Graph.html"><code>Graph</code></a>
+ <a href="https://www.boost.org/libs/graph/doc/Graph.html"><code>Graph</code></a>
 and adds the requirement for traversal of all vertices in a graph.
 
-\cgalRefines <a href="http://www.boost.org/libs/graph/doc/Graph.html"><code>Graph</code></a>
+\cgalRefines <a href="https://www.boost.org/libs/graph/doc/Graph.html"><code>Graph</code></a>
 
 \cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
 

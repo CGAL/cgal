@@ -86,7 +86,7 @@ void Edit_box_plugin::bbox()
           this, SLOT(enableAction()));
   item->setName("Edit box");
   item->setRenderingMode(FlatPlusEdges);
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   viewer->installEventFilter(item);
   scene->addItem(item);
   actionBbox->setEnabled(false);
@@ -101,7 +101,7 @@ void Edit_box_plugin::enableAction() {
 void Edit_box_plugin::exportToPoly()
 {
   int id =0;
-  const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   Kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
   Scene_edit_box_item* item = NULL;
   for(int i = 0, end = scene->numberOfEntries();

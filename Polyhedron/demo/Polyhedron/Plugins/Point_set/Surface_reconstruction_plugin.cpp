@@ -22,7 +22,6 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/jet_smooth_point_set.h>
@@ -600,7 +599,7 @@ namespace SurfaceReconstruction
   }
 
   struct Point_set_make_pair_point_index
-    : public CGAL::unary_function<const Point_set::Index&, std::pair<Kernel::Point_3, std::size_t> >
+    : public CGAL::cpp98::unary_function<const Point_set::Index&, std::pair<Kernel::Point_3, std::size_t> >
   {
     const Point_set& point_set;
     Point_set_make_pair_point_index (const Point_set& point_set) : point_set (point_set) { }

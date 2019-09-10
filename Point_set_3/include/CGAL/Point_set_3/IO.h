@@ -402,6 +402,8 @@ read_ply_point_set(
     *comments = reader.comments();
 
   filler.instantiate_properties (reader);
+
+  point_set.reserve (reader.m_nb_points);
   
   std::size_t points_read = 0;
   

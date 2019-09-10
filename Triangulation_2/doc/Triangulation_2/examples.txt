@@ -18,4 +18,5 @@
 \example Triangulation_2/voronoi.cpp
 \example Triangulation_2/copy_triangulation_2.cpp
 \example Triangulation_2/polylines_triangulation.cpp
+\example Triangulation_2/draw_triangulation_2.cpp
 */

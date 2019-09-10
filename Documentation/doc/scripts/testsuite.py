@@ -78,7 +78,8 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </style>
 </head><body>
 <h1 id="maintitle">Doxygen Manual Results</h1>'''
-    page_footer='''<table class="test-results">
+    page_footer='''<table border="1" cellspacing="2" cellpadding="5" class="test-results">
+    <tr><td/><th colspan="3">Doxygen 1.8.4</th><th colspan="3">Doxygen 1.8.13(official)</th><th colspan="3">Doxygen master</th></tr>
 <tr>
 <th>Package Name</th>
 <th>Logs </th>
@@ -101,7 +102,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
       suffix = ''
       if args.doxygen_version2:
         suffix = args.doxygen_version2
-      link2="\n<br><a href=\"output2/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix}</a>\n".format(_suffix=suffix)
+      link2="\n<br><a href=\"output2/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix} (used for the official CGAL documentation)</a>\n".format(_suffix=suffix)
       suffix = ''
       if args.master_describe:
         suffix=args.master_describe
@@ -137,8 +138,8 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         result = [(basename, pretty_name, res)]
         results2.extend(result)
 
-        os.chdir(args.doc_log_dir_master)
-        logs=sorted(glob.glob('./*.log'))
+    os.chdir(args.doc_log_dir_master)
+    logs=sorted(glob.glob('./*.log'))
 
     for log in logs:
         res=count_errors_and_warnings(log)

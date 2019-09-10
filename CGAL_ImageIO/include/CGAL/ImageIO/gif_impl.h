@@ -699,3 +699,5 @@ static int GifError(const char *st) {
   return -1;
 }
 
+#undef CGAL_GLOBAL_STATE_VAR
+

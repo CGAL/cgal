@@ -29,8 +29,8 @@
 
 #include <CGAL/circulator.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Subdivision_method_3/subdivision_hosts_3.h>
 #include <CGAL/Subdivision_method_3/subdivision_masks_3.h>
@@ -89,12 +89,12 @@ Catmull-Clark subdivision.
 */
 /// @{
 
-namespace parameters = Polygon_mesh_processing::parameters;
+namespace parameters = CGAL::parameters;
 
 // -----------------------------------------------------------------------------
 
 #ifndef DOXYGEN_RUNNING
-// backward compatibility
+// Backward compatibility
 template <class PolygonMesh>
 void CatmullClark_subdivision(PolygonMesh& pmesh, int step = 1) {
   PQQ(pmesh, CatmullClark_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)), step);

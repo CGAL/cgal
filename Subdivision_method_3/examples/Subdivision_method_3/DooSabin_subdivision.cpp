@@ -18,7 +18,7 @@ typedef CGAL::Polyhedron_3<Kernel>                PolygonMesh;
 
 using namespace std;
 using namespace CGAL;
-namespace params = CGAL::Polygon_mesh_processing::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char **argv) {
   if (argc > 4) {

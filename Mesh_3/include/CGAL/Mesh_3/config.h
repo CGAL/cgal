@@ -67,22 +67,4 @@
 #  endif
 #endif
 
-#if defined(__clang__) || (BOOST_GCC >= 40600)
-#  define CGAL_MESH_3_IGNORE_UNUSED_VARIABLES \
-    _Pragma("GCC diagnostic ignored \"-Wunused-variable\"") \
-    _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"")
-#else
-#  define CGAL_MESH_3_IGNORE_UNUSED_VARIABLES
-#endif
-#if __has_warning("-Wunneeded-internal-declaration")
-#  define CGAL_MESH_3_IGNORE_UNUSED_INTERNAL_DECLARATION \
-     _Pragma("clang diagnostic ignored \"-Wunneeded-internal-declaration\"")
-#else
-#  define CGAL_MESH_3_IGNORE_UNUSED_INTERNAL_DECLARATION
-#endif
-
-#define CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS \
-  CGAL_MESH_3_IGNORE_UNUSED_VARIABLES                    \
-  CGAL_MESH_3_IGNORE_UNUSED_INTERNAL_DECLARATION
-
 #endif // CGAL_MESH_3_CONFIG_H

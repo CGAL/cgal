@@ -51,8 +51,8 @@ main purpose is to guarantee type safety.
 They are default constructible, which yields an *invalid* element. New
 elements can be added and removed to the `Surface_mesh` through a
 set of low-level functions which do not maintain connectivity. One
-exception is `Surface_mesh::add_face()` which tries to add a new
-face to the mesh (defined by a sequence of vertices), and fails, if the
+exception is `Surface_mesh::add_face()`, which tries to add a new
+face to the mesh (defined by a sequence of vertices), and fails if the
 operation is not topologically valid.
 
 \code
@@ -64,11 +64,14 @@ Mesh::Vertex_index w = m.add_vertex(Point(1,0,0));
 m.add_face(u, v, w);
 \endcode
 
-As `Surface_mesh` is index-based `Vertex_index`, `Face_index`, 
-`Halfedge_index` and `Edge_index`
-don't have member functions to access connectivity or properties.
-The functions of the `Surface_mesh` instance they were
-created from must be used to obtain that information.
+As `Surface_mesh` is index-based
+\link Surface_mesh::Vertex_index Vertex_index\endlink,
+\link Surface_mesh::Halfedge_index Halfedge_index\endlink,
+\link Surface_mesh::Edge_index Edge_index\endlink, and
+\link Surface_mesh::Face_index Face_index\endlink
+do not have member functions to access connectivity or properties.
+The functions of the `Surface_mesh` instance from which
+they were created must be used to obtain this information.
 
 \section sectionSurfaceMeshConnectivity Connectivity 
 
@@ -111,7 +114,7 @@ The connectivity does not allow to represent faces with holes.
 `Surface_mesh` provides iterator ranges to enumerate all vertices,
 halfedges, edges, and faces. It provides member functions
 returning ranges of elements which are compatible with the
-<a href="http://www.boost.org/libs/range/doc/html/index.html">Boost.Range</a>
+<a href="https://www.boost.org/libs/range/doc/html/index.html">Boost.Range</a>
 library. 
 
 \subsection iterators_example Example
@@ -224,8 +227,8 @@ face of `h`, and for all vertices of the surface mesh, respectively.
 The class `Surface_mesh` is a model of the concept `IncidenceGraph`
 defined in the Boost Graph Library.  This enables to apply algorithms such
 as 
-[Dijkstra shortest path](http://www.boost.org/libs/graph/doc/dijkstra_shortest_paths.html), or
-[Kruskal minimum spanning tree](http://www.boost.org/libs/graph/doc/kruskal_min_spanning_tree.html)
+[Dijkstra shortest path](https://www.boost.org/libs/graph/doc/dijkstra_shortest_paths.html), or
+[Kruskal minimum spanning tree](https://www.boost.org/libs/graph/doc/kruskal_min_spanning_tree.html)
 directly on a surface mesh.
 
 The types and free functions of the BGL API have each a similar type or member function,
@@ -326,7 +329,7 @@ to access data in temporary vectors of size `num_vertices()`
 this function must return a number larger than the largest index of 
 the elements.
 
-Iterators like the `Surface_mesh::Vertex_iterator` only enumerate
+Iterators such as `Surface_mesh::Vertex_iterator` only enumerate
 elements that are not marked as deleted. 
 
 
@@ -340,6 +343,20 @@ refering to the right vertices.
 
 \subsection SubsectionSurfaceMeshMemoryManagementExample Example
 \cgalExample{Surface_mesh/sm_memory.cpp}
+
+\section SurfaceMeshDraw Draw a Surface Mesh
+\anchor ssecDrawSurfaceMesh
+
+A surface mesh can be visualized by calling the `CGAL::draw()` function as shown in the following example. This function opens a new window showing the given surface mesh. The function is blocking, that is the program continues as soon as the user closes the window.
+
+\cgalExample{Surface_mesh/draw_surface_mesh.cpp}
+
+This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+
+\cgalFigureBegin{fig_draw_surface_mesh,draw_surface_mesh.png}
+Result of the run of the draw_surface_mesh program. A window shows the surface mesh and allows to navigate through the 3D scene.
+\cgalFigureEnd
+
 
 \section sectionSurfaceMeshImplementation Implementation Details
 

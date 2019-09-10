@@ -48,7 +48,7 @@ template<class NT1,class NT2> struct Algebraic_structure_traits<checked_NT<NT1,N
   typedef typename AST1::Is_numerical_sensitive Is_numerical_sensitive;
   typedef checked_NT<NT1,NT2> Type;
   struct Is_zero
-    : public CGAL::unary_function< Type, bool > {
+    : public CGAL::cpp98::unary_function< Type, bool > {
       bool operator()( const Type& x ) const {
 	bool a=CGAL::is_zero(x.x1);
 	bool b=CGAL::is_zero(x.x2);
@@ -57,7 +57,7 @@ template<class NT1,class NT2> struct Algebraic_structure_traits<checked_NT<NT1,N
       }
     };
   struct Is_one
-    : public CGAL::unary_function< Type, bool > {
+    : public CGAL::cpp98::unary_function< Type, bool > {
       bool operator()( const Type& x ) const {
 	bool a=CGAL::is_one(x.x1);
 	bool b=CGAL::is_one(x.x2);
@@ -66,7 +66,7 @@ template<class NT1,class NT2> struct Algebraic_structure_traits<checked_NT<NT1,N
       }
     };
   struct Is_square
-    : public CGAL::unary_function< Type, bool > {
+    : public CGAL::cpp98::unary_function< Type, bool > {
       bool operator()( const Type& x ) const {
 	bool a=CGAL::is_square(x.x1);
 	bool b=CGAL::is_square(x.x2);
@@ -75,13 +75,13 @@ template<class NT1,class NT2> struct Algebraic_structure_traits<checked_NT<NT1,N
       }
     };
   struct Square
-    : public CGAL::unary_function< Type, Type > {
+    : public CGAL::cpp98::unary_function< Type, Type > {
       Type operator()( const Type& x ) const {
 	return Type(typename Type::pieces(),CGAL::square(x.x1),CGAL::square(x.x2));
       }
     };
   struct Div
-    : public CGAL::binary_function< Type, Type, Type > {
+    : public CGAL::cpp98::binary_function< Type, Type, Type > {
       Type operator()( const Type& x, const Type& y ) const {
 	return Type(typename Type::pieces(),
 	    CGAL::div(x.x1,y.x1),
@@ -89,7 +89,7 @@ template<class NT1,class NT2> struct Algebraic_structure_traits<checked_NT<NT1,N
       }
     };
   struct Mod
-    : public CGAL::binary_function< Type, Type, Type > {
+    : public CGAL::cpp98::binary_function< Type, Type, Type > {
       Type operator()( const Type& x, const Type& y ) const {
 	return Type(typename Type::pieces(),
 	    CGAL::mod(x.x1,y.x1),
@@ -97,7 +97,7 @@ template<class NT1,class NT2> struct Algebraic_structure_traits<checked_NT<NT1,N
       }
     };
   struct Integral_division
-    : public CGAL::binary_function< Type, Type, Type > {
+    : public CGAL::cpp98::binary_function< Type, Type, Type > {
       Type operator()( const Type& x, const Type& y ) const {
 	return Type(typename Type::pieces(),
 	    CGAL::integral_division(x.x1,y.x1),
@@ -110,7 +110,7 @@ template<class NT1,class NT2>struct Real_embeddable_traits<checked_NT<NT1,NT2> >
 : INTERN_RET::Real_embeddable_traits_base<checked_NT<NT1,NT2>, typename Real_embeddable_traits<NT1>::Is_real_embeddable> {
   typedef checked_NT<NT1,NT2> Type;
   struct Sgn
-    : public CGAL::unary_function< Type, ::CGAL::Sign > {
+    : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       ::CGAL::Sign operator()( const Type& x ) const {
 	::CGAL::Sign a=CGAL::sign(x.x1);
 	::CGAL::Sign b=CGAL::sign(x.x2);
@@ -119,19 +119,19 @@ template<class NT1,class NT2>struct Real_embeddable_traits<checked_NT<NT1,NT2> >
       }
     };
   struct To_double
-    : public CGAL::unary_function< Type, double > {
+    : public CGAL::cpp98::unary_function< Type, double > {
       double operator()( const Type& x ) const {
 	return x.to_double();
       }
     };
   struct To_interval
-    : public CGAL::unary_function< Type, std::pair< double, double > > {
+    : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       std::pair<double, double> operator()( const Type& x ) const {
 	return x.to_interval();
       }
     };
   struct Compare
-    : public CGAL::binary_function< Type, Type, Comparison_result > {
+    : public CGAL::cpp98::binary_function< Type, Type, Comparison_result > {
       Comparison_result operator()(
 	  const Type& x,
 	  const Type& y ) const {

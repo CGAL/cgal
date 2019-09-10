@@ -36,8 +36,10 @@
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
+#include <CGAL/atomic.h>
 
-#include <tbb/tbb.h>
+#include <tbb/enumerable_thread_specific.h>
+#include <tbb/queuing_mutex.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -176,12 +178,22 @@ class Concurrent_compact_container
 public:
   typedef T                                         value_type;
   typedef Allocator                                 allocator_type;
-  typedef typename Allocator::reference             reference;
-  typedef typename Allocator::const_reference       const_reference;
+
+  typedef value_type&                               reference;
+  typedef const value_type&                         const_reference;
+
+#ifdef CGAL_CXX11
+  typedef typename std::allocator_traits<Allocator>::pointer               pointer;
+  typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
+  typedef typename std::allocator_traits<Allocator>::size_type             size_type;
+  typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
+#else
   typedef typename Allocator::pointer               pointer;
   typedef typename Allocator::const_pointer         const_pointer;
   typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
+#endif
+
   typedef CCC_internal::CCC_iterator<Self, false>   iterator;
   typedef CCC_internal::CCC_iterator<Self, true>    const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
@@ -245,6 +257,11 @@ public:
   {
     std::swap(m_alloc, c.m_alloc);
     std::swap(m_capacity, c.m_capacity);
+    { // non-atomic swap
+      size_type other_size = c.m_size;
+      c.m_size = size_type(m_size);
+      m_size = other_size;
+    }
     std::swap(m_block_size, c.m_block_size);
     std::swap(m_first_item, c.m_first_item);
     std::swap(m_last_item, c.m_last_item);
@@ -394,7 +411,11 @@ public:
   {
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::construct(m_alloc, ret, t);
+#else
     m_alloc.construct(ret, t);
+#endif
     return finalize_insert(ret, fl);
   }
 
@@ -420,11 +441,18 @@ private:
 
     CGAL_precondition(type(x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
+
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::destroy(m_alloc, &*x);
+#else
     m_alloc.destroy(&*x);
+#endif
+
 /* WE DON'T DO THAT BECAUSE OF THE ERASE COUNTER
 #ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
 #endif*/
+    --m_size;
     put_on_free_list(&*x, fl);
   }
 public:
@@ -445,9 +473,11 @@ public:
   // The complexity is O(size(free list = capacity-size)).
   void merge(Self &d);
 
-  // Do not call this function while others are inserting/erasing elements
+  // If `CGAL_NO_ATOMIC` is defined, do not call this function while others
+  // are inserting/erasing elements
   size_type size() const
   {
+#ifdef CGAL_NO_ATOMIC
     size_type size = m_capacity;
     for( typename Free_lists::iterator it_free_list = m_free_lists.begin() ;
          it_free_list != m_free_lists.end() ;
@@ -456,11 +486,18 @@ public:
       size -= it_free_list->size();
     }
     return size;
+#else // atomic can be used
+    return m_size;
+#endif
   }
 
   size_type max_size() const
   {
+#ifdef CGAL_CXX11
+    return std::allocator_traits<allocator_type>::max_size(m_alloc);
+#else
     return m_alloc.max_size();
+#endif
   }
 
   size_type capacity() const
@@ -563,6 +600,7 @@ private:
   {
     CGAL_assertion(type(ret) == USED);
     fl->dec_size();
+    ++m_size;
     return iterator(ret, 0);
   }
 
@@ -650,6 +688,7 @@ private:
     m_first_item = NULL;
     m_last_item  = NULL;
     m_all_items  = All_items();
+    m_size = 0;
   }
 
   allocator_type    m_alloc;
@@ -660,11 +699,17 @@ private:
   pointer           m_last_item;
   All_items         m_all_items;
   mutable Mutex     m_mutex;
+#ifdef CGAL_NO_ATOMIC
+  size_type         m_size;
+#else
+  CGAL::cpp11::atomic<size_type> m_size;
+#endif
 };
 
 template < class T, class Allocator >
 void Concurrent_compact_container<T, Allocator>::merge(Self &d)
 {
+  m_size += d.m_size;
   CGAL_precondition(&d != this);
 
   // Allocators must be "compatible" :
@@ -1044,7 +1089,7 @@ namespace std {
   
   template < class CCC, bool Const >
   struct hash<CGAL::CCC_internal::CCC_iterator<CCC, Const> >
-    : public CGAL::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
+    : public CGAL::cpp98::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
 
     std::size_t operator()(const CGAL::CCC_internal::CCC_iterator<CCC, Const>& i) const
     {

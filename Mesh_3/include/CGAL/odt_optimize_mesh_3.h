@@ -30,13 +30,15 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Mesh_3/global_parameters.h>
+#include <CGAL/boost/parameter.h>
 #include <CGAL/Mesh_3/Mesh_global_optimizer.h>
 #include <CGAL/Mesh_3/Odt_move.h>
 #include <CGAL/Mesh_3/Mesh_sizing_field.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h>
 #include <CGAL/internal/Mesh_3/check_weights.h>
+
+#include <boost/parameter/preprocessor.hpp>
 
 namespace CGAL {
 
@@ -47,8 +49,8 @@ namespace CGAL {
   
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),
@@ -85,7 +87,7 @@ odt_optimize_mesh_3_impl(C3T3& c3t3,
                          const bool do_freeze )
 {
   CGAL_precondition(
-    !internal::Mesh_3::has_non_protecting_weights(c3t3.triangulation(), domain));
+    !Mesh_3::internal::has_non_protecting_weights(c3t3.triangulation(), domain));
 
   typedef typename C3T3::Triangulation  Tr;
   

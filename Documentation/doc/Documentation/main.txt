@@ -40,10 +40,10 @@ see the \ref licenseIssues "License" page.
 Manuals for the Previous Releases
 =================================
 
-For releases >= 4.2, visit [http://doc.cgal.org/X.Y](http://doc.cgal.org/4.2)
+For releases >= 4.2, visit [https://doc.cgal.org/X.Y](https://doc.cgal.org/4.2)
 
 For releases X.Y, with 3.1 <= X.Y <= 4.1 visit
-[http://doc.cgal.org/Manual/X.Y/doc_html/cgal_manual/packages.html](http://doc.cgal.org/Manual/3.1/doc_html/cgal_manual/packages.html)
+[https://doc.cgal.org/Manual/X.Y/doc_html/cgal_manual/packages.html](https://doc.cgal.org/Manual/3.1/doc_html/cgal_manual/packages.html)
 
 
 

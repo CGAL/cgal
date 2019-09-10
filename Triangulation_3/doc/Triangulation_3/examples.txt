@@ -14,4 +14,5 @@
 \example Triangulation_3/copy_triangulation_3.cpp
 \example Triangulation_3/parallel_insertion_in_delaunay_3.cpp
 \example Triangulation_3/parallel_insertion_and_removal_in_regular_3.cpp
+\example Triangulation_3/draw_triangulation_3.cpp
 */

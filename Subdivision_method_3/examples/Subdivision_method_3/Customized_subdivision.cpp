@@ -16,7 +16,7 @@ typedef CGAL::Simple_cartesian<double>      Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> PolygonMesh;
 using namespace std;
 using namespace CGAL;
-namespace params = CGAL::Polygon_mesh_processing::parameters;
+namespace params = CGAL::parameters;
 
 // ======================================================================
 template <class Poly>

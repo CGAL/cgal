@@ -13,8 +13,8 @@
 #include "Scene_polyhedron_item.h"
 #endif
 
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
 
 #include <QKeyEvent>
 
@@ -33,7 +33,7 @@ class SCENE_FACEGRAPH_TRANSFORM_ITEM_EXPORT Scene_facegraph_transform_item
     Q_OBJECT
     
 public: 
-    Scene_facegraph_transform_item(const qglviewer::Vec& pos, FaceGraph *sm,
+    Scene_facegraph_transform_item(const CGAL::qglviewer::Vec& pos, FaceGraph *sm,
                                     const QString name);
     Scene_item* clone() const{return NULL;}
     QString toolTip() const;
@@ -43,7 +43,7 @@ public:
     bool manipulatable() const;
     ManipulatedFrame* manipulatedFrame();
     void setManipulatable(bool);
-    const qglviewer::Vec& center() const;
+    const CGAL::qglviewer::Vec& center() const;
     virtual bool supportsRenderingMode(RenderingMode m) const { return m==Wireframe ; }
     virtual void invalidateOpenGLBuffers();
     virtual bool keyPressEvent(QKeyEvent*);

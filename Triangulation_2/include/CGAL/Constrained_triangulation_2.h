@@ -28,6 +28,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <set>
+#include <exception>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_2.h> 
@@ -39,6 +40,10 @@
 
 #include <boost/mpl/if.hpp>
 #include <boost/iterator/filter_iterator.hpp>
+
+#include <boost/utility/result_of.hpp>
+#include <boost/type_traits/is_floating_point.hpp>
+
 namespace CGAL {
 
 struct No_intersection_tag{};
@@ -99,6 +104,15 @@ public:
     bool operator()(const E& e) const
     {
       return ct.is_constrained(e);
+    }
+  };
+
+
+  class Intersection_of_constraints_exception : public std::exception
+  {
+    const char* what() const throw ()
+    {
+      return "Intersection of constraints while using No_intersection_tag";
     }
   };
 
@@ -403,7 +417,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   
 
   class Less_edge 
-    :  public CGAL::binary_function<Edge, Edge, bool>
+    :  public CGAL::cpp98::binary_function<Edge, Edge, bool>
   {
   public:
     Less_edge() {}
@@ -853,22 +867,15 @@ intersect(Face_handle f, int i,
 }
 
 template <class Gt, class Tds, class Itag >
-typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
+typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
-intersect(Face_handle , int , 
-	  Vertex_handle ,
-	  Vertex_handle ,
-	  No_intersection_tag)
+intersect(Face_handle , int ,
+          Vertex_handle ,
+          Vertex_handle ,
+          No_intersection_tag)
 {
-  //SL: I added that to be able to throw while we find a better solution
-  #ifdef CGAL_CT2_WANTS_TO_HAVE_EXTRA_ACTION_FOR_INTERSECTING_CONSTRAINTS
-  CGAL_CDT2_EXTRA_ACTION_FOR_INTERSECTING_CONSTRAINTS
-  #endif
-  
-  std::cerr << " sorry, this triangulation does not deal with" 
-	    <<    std::endl
-	    << " intersecting constraints" << std::endl;
-  CGAL_triangulation_assertion(false);
+
+  throw Intersection_of_constraints_exception();
   return Vertex_handle() ;
 }
 
@@ -885,10 +892,15 @@ intersect(Face_handle f, int i,
 // split constraint edge (f,i) 
 // and return the Vertex_handle of the new Vertex
 { 
-  std::cerr << "You are using an exact number types" << std::endl;
-  std::cerr << "using a Constrained_triangulation_plus_2 class" << std::endl;
-  std::cerr << "would avoid cascading intersection computation" << std::endl;
-  std::cerr << " and be much more efficient" << std::endl;
+#ifndef CGAL_NO_CDT_2_WARNING
+  CGAL_warning_msg(false,
+  "You are using an exact number type,\n"
+  "using a Constrained_triangulation_plus_2 class\n"
+  "would avoid cascading intersection computation\n"
+  " and be much more efficient\n"
+  "This message is shown only if CGAL_NO_CDT_2_WARNING"
+  "is not defined.\n");
+#endif
   const Point& pa = vaa->point();
   const Point& pb = vbb->point();
   const Point& pc = f->vertex(cw(i))->point();
@@ -1432,9 +1444,70 @@ intersection(const Gt& gt,
 	     const typename Gt::Point_2& pc, 
 	     const typename Gt::Point_2& pd,
 	     typename Gt::Point_2& pi,
-	     Exact_predicates_tag)
+	     Exact_predicates_tag,
+	     CGAL::Tag_false /* not a FT is not floating-point */)
 {
   return compute_intersection(gt,pa,pb,pc,pd,pi);
+}
+
+template<class Gt>
+inline bool
+intersection(const Gt& gt,
+	     const typename Gt::Point_2& pa,
+	     const typename Gt::Point_2& pb,
+	     const typename Gt::Point_2& pc,
+	     const typename Gt::Point_2& pd,
+	     typename Gt::Point_2& pi,
+	     Exact_predicates_tag,
+	     CGAL::Tag_true /* FT is a floating-point type */)
+{
+  const bool result = compute_intersection(gt,pa,pb,pc,pd,pi);
+  if(!result) return result;
+  if(pi == pa || pi == pb || pi == pc || pi == pd) {
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+    std::cerr << "  CT_2::intersection: intersection is an existing point "
+              << pi << std::endl;
+#endif
+    return result;
+  }
+
+
+#ifdef CGAL_CDT_2_INTERSECTION_SNAPPING_ULP_DISTANCE
+  const int dist = CGAL_CDT_2_INTERSECTION_SNAPPING_ULP_DISTANCE;
+#else
+  const int dist = 4;
+#endif
+  typedef typename Gt::Construct_bbox_2 Construct_bbox_2;
+  Construct_bbox_2 bbox = gt.construct_bbox_2_object();
+  typename boost::result_of<const Construct_bbox_2(const typename Gt::Point_2&)>::type bb(bbox(pi));
+  bb.dilate(dist);
+  if(do_overlap(bb, bbox(pa))) pi = pa;
+  if(do_overlap(bb, bbox(pb))) pi = pb;
+  if(do_overlap(bb, bbox(pc))) pi = pc;
+  if(do_overlap(bb, bbox(pd))) pi = pd;
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  if(pi == pa || pi == pb || pi == pc || pi == pd) {
+    std::cerr << "  CT_2::intersection: intersection SNAPPED to an existing point "
+              << pi << std::endl;
+  }
+#endif
+  return result;
+}
+
+template<class Gt>
+inline bool
+intersection(const Gt& gt,
+	     const typename Gt::Point_2& pa,
+	     const typename Gt::Point_2& pb,
+	     const typename Gt::Point_2& pc,
+	     const typename Gt::Point_2& pd,
+	     typename Gt::Point_2& pi,
+	     Exact_predicates_tag exact_predicates_tag)
+{
+  typedef typename Gt::FT FT;
+  return intersection(gt,pa,pb,pc,pd,pi,
+                      exact_predicates_tag,
+                      Boolean_tag<boost::is_floating_point<FT>::value>());
 }
 
 

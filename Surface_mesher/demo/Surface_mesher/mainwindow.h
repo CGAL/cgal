@@ -8,9 +8,12 @@
 class QDragEnterEvent;
 class QDropEvent;
 class Surface;
-class QGLViewer;
 class QDoubleSpinBox;
 class QCloseEvent;
+
+namespace CGAL{
+class QGLViewer;
+}
 
 class MainWindow : public CGAL::Qt::DemosMainWindow, public Ui::MainWindow
 {

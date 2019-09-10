@@ -1,6 +1,6 @@
 #include <QtCore/qglobal.h>
 #include <QMessageBox>
-#include "opengl_tools.h"
+
 
 #include "Messages_interface.h"
 #ifdef USE_SURFACE_MESH
@@ -635,9 +635,12 @@ public Q_SLOTS:
       const Face_graph& poly = *selection_item->polyhedron();
       BOOST_FOREACH(Scene_polyhedron_selection_item::fg_edge_descriptor ed, selection_item->selected_edges)
       {
-        selection_item->selected_facets.insert(face(halfedge(ed, poly), poly));
-        if(!is_border_edge(halfedge(ed,poly), poly))
+        if(!is_border(halfedge(ed,poly), poly)){
+          selection_item->selected_facets.insert(face(halfedge(ed, poly), poly));
+        }
+        if(!is_border(opposite(halfedge(ed,poly), poly), poly)){
           selection_item->selected_facets.insert(face(opposite(halfedge(ed, poly), poly), poly));
+        }
       }
       selection_item->invalidateOpenGLBuffers();
       selection_item->itemChanged();
@@ -758,6 +761,9 @@ public Q_SLOTS:
                              tr("Degenerated faces have been detected. Problems may occur "
                                 "for operations other tha \"Move point\". "));
       }
+      //remove lasso mode
+      selection_item->set_lasso_mode(false);
+      ui_widget.lassoCheckBox->setChecked(false);
       Q_EMIT save_handleType();
       on_editionBox_changed(ui_widget.editionBox->currentIndex());
       break;

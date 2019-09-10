@@ -33,7 +33,8 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
-#include <CGAL/Mesh_3/global_parameters.h>
+#include <boost/parameter/preprocessor.hpp>
+#include <CGAL/boost/parameter.h>
 #include <CGAL/Mesh_edge_criteria_3.h>
 #include <CGAL/Mesh_facet_criteria_3.h>
 #include <CGAL/Mesh_cell_criteria_3.h>
@@ -45,8 +46,8 @@ namespace parameters {
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
   BOOST_PARAMETER_NAME( (edge_size, tag) edge_size_ )
   BOOST_PARAMETER_NAME( (edge_sizing_field, tag) edge_sizing_field_ )

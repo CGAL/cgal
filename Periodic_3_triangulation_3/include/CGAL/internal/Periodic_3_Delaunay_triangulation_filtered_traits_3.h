@@ -39,29 +39,30 @@
 namespace CGAL {
 
 // The first template item is supposed to be a Filtered_kernel-like kernel.
-template < typename K, typename Off >
+template <typename K_, typename Off_>
 class Periodic_3_Delaunay_triangulation_filtered_traits_base_3
-  : public Periodic_3_Delaunay_triangulation_traits_base_3<K, Off>
+  : public Periodic_3_Delaunay_triangulation_traits_base_3<K_, Off_>
 {
-  typedef Periodic_3_Delaunay_triangulation_traits_base_3<K, Off> Base;
+  typedef Periodic_3_Delaunay_triangulation_traits_base_3<K_, Off_> Base;
+  typedef K_                                                        Kernel;
 
   // Exact traits is based on the exact kernel.
-  typedef Periodic_3_Delaunay_triangulation_traits_3<typename K::Exact_kernel,
-                                                     Off>      Exact_traits;
+  typedef Periodic_3_Delaunay_triangulation_traits_3<typename Kernel::Exact_kernel,
+                                                     Off_>          Exact_traits;
   // Filtering traits is based on the filtering kernel.
-  typedef Periodic_3_Delaunay_triangulation_traits_3<typename K::Approximate_kernel,
-                                                     Off>      Filtering_traits;
+  typedef Periodic_3_Delaunay_triangulation_traits_3<typename Kernel::Approximate_kernel,
+                                                     Off_>          Filtering_traits;
 private:
-  typedef typename K::C2E C2E;
-  typedef typename K::C2F C2F;
+  typedef typename Kernel::C2E C2E;
+  typedef typename Kernel::C2F C2F;
 
-  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
 public:
   virtual ~Periodic_3_Delaunay_triangulation_filtered_traits_base_3() { }
 
   Periodic_3_Delaunay_triangulation_filtered_traits_base_3(const Iso_cuboid_3& domain,
-                                                           const K& k)
+                                                           const Kernel& k)
     :
       Base(domain, k),
       Delaunay_traits_e(C2E()(domain)),
@@ -164,9 +165,9 @@ protected:
   Filtering_traits Delaunay_traits_f;
 };
 
-template < typename K,
-           typename Off = CGAL::Periodic_3_offset_3,
-           bool Has_static_filters = internal::Has_static_filters<K>::value >
+template <class K_,
+          class Off_ = CGAL::Periodic_3_offset_3,
+          bool Has_static_filters_ = internal::Has_static_filters<K_>::value >
 class Periodic_3_Delaunay_triangulation_filtered_traits_3;
 
 } //namespace CGAL
@@ -175,32 +176,34 @@ class Periodic_3_Delaunay_triangulation_filtered_traits_3;
 
 namespace CGAL {
 
-template<class K, class Off>
-class Periodic_3_Delaunay_triangulation_filtered_traits_3<K, Off, false>
-  :  public Periodic_3_Delaunay_triangulation_filtered_traits_base_3<K, Off>
+template<class K_, class Off_>
+class Periodic_3_Delaunay_triangulation_filtered_traits_3<K_, Off_, false>
+  :  public Periodic_3_Delaunay_triangulation_filtered_traits_base_3<K_, Off_>
 {
-  typedef Periodic_3_Delaunay_triangulation_filtered_traits_base_3<K, Off> Base;
+  typedef Periodic_3_Delaunay_triangulation_filtered_traits_base_3<K_, Off_> Base;
 
 public:
-  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+  typedef K_                                                                 Kernel;
+  typedef typename Kernel::Iso_cuboid_3                                      Iso_cuboid_3;
 
   Periodic_3_Delaunay_triangulation_filtered_traits_3(const Iso_cuboid_3& domain,
-                                                      const K& k)
+                                                      const Kernel& k)
     : Base(domain, k)
   { }
 };
 
-template<class K, class Off>
-class Periodic_3_Delaunay_triangulation_filtered_traits_3<K, Off, true>
-    : public Periodic_3_Delaunay_triangulation_statically_filtered_traits_3<K, Off>
+template<class K_, class Off_>
+class Periodic_3_Delaunay_triangulation_filtered_traits_3<K_, Off_, true>
+    : public Periodic_3_Delaunay_triangulation_statically_filtered_traits_3<K_, Off_>
 {
-  typedef Periodic_3_Delaunay_triangulation_statically_filtered_traits_3<K, Off > Base;
+  typedef Periodic_3_Delaunay_triangulation_statically_filtered_traits_3<K_, Off_> Base;
 
 public:
-  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+  typedef K_                                                                       Kernel;
+  typedef typename Kernel::Iso_cuboid_3                                            Iso_cuboid_3;
 
   Periodic_3_Delaunay_triangulation_filtered_traits_3(const Iso_cuboid_3& domain,
-                                                      const K& k)
+                                                      const Kernel& k)
     : Base(domain, k)
   { }
 };

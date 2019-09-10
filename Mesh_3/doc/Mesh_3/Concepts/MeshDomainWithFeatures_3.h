@@ -8,7 +8,7 @@ While the concept
 the domain through different queries, the concept `MeshDomainWithFeatures_3` also exposes 0 and
 1-dimensional features. The exposed features of the domain are respectively called
 subdomains, surface patches, curves
-and corners according to their respective dimensions 3,2,1 and 0.
+and corners according to their respective dimensions 3, 2, 1, and 0.
 
 Each curve is assumed to be bounded, with only one connected component, and
 without auto-intersections. Each curve is also assumed to be

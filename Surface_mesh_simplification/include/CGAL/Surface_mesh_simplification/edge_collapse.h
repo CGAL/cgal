@@ -35,7 +35,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-template<class ECM
+template<class TM
         ,class ShouldStop
         ,class VertexIndexMap
         ,class VertexPointMap
@@ -45,13 +45,13 @@ template<class ECM
         ,class GetPlacement
         ,class Visitor
         >
-int edge_collapse ( ECM&                       aSurface
+int edge_collapse ( TM&                       aSurface
                   , ShouldStop           const& aShould_stop
                   // optional mesh information policies 
                   , VertexIndexMap       const& aVertex_index_map     // defaults to get(vertex_index,aSurface)
                   , VertexPointMap       const& aVertex_point_map     // defaults to get(vertex_point,aSurface)
                   , EdgeIndexMap         const& aEdge_index_map       // defaults to get(edge_index,aSurface)
-                  , EdgeIsConstrainedMap const& aEdge_is_constrained_map   // defaults to No_constrained_edge_map<ECM>()
+                  , EdgeIsConstrainedMap const& aEdge_is_constrained_map   // defaults to No_constrained_edge_map<TM>()
                   
                   // optional strategy policies - defaults to LindstomTurk
                   , GetCost              const& aGet_cost
@@ -60,7 +60,7 @@ int edge_collapse ( ECM&                       aSurface
                   , Visitor                     aVisitor
                   ) 
 {
-  typedef EdgeCollapse< ECM
+  typedef EdgeCollapse< TM
                       , ShouldStop
                       , VertexIndexMap
                       , VertexPointMap
@@ -89,8 +89,8 @@ int edge_collapse ( ECM&                       aSurface
 
 struct Dummy_visitor
 {
-  template<class ECM>                                 void OnStarted( ECM& ) const {} 
-  template<class ECM>                                 void OnFinished ( ECM& ) const {} 
+  template<class TM>                                 void OnStarted( TM& ) const {} 
+  template<class TM>                                 void OnFinished ( TM& ) const {} 
   template<class Profile>                             void OnStopConditionReached( Profile const& ) const {} 
   template<class Profile, class OFT>                  void OnCollected( Profile const&, OFT const& ) const {}                
   template<class Profile, class OFT, class Size_type> void OnSelected( Profile const&, OFT const&, Size_type, Size_type ) const {}                
@@ -99,8 +99,8 @@ struct Dummy_visitor
   template<class Profile>                             void OnNonCollapsable(Profile const& ) const {}                
 } ;
 
-template<class ECM, class ShouldStop, class P, class T, class R>
-int edge_collapse ( ECM& aSurface
+template<class TM, class ShouldStop, class P, class T, class R>
+int edge_collapse ( TM& aSurface
                   , ShouldStop const& aShould_stop
                   , cgal_bgl_named_params<P,T,R> const& aParams 
                   ) 
@@ -118,15 +118,15 @@ int edge_collapse ( ECM& aSurface
                       ,choose_const_pmap(get_param(aParams,internal_np::vertex_index),aSurface,boost::vertex_index)
                       ,choose_pmap(get_param(aParams,internal_np::vertex_point),aSurface,boost::vertex_point)
                       ,choose_const_pmap(get_param(aParams,internal_np::halfedge_index),aSurface,boost::halfedge_index)
-                       ,choose_param     (get_param(aParams,internal_np::edge_is_constrained),No_constrained_edge_map<ECM>())
-                       ,choose_param     (get_param(aParams,internal_np::get_cost_policy), LindstromTurk_cost<ECM>())
-                       ,choose_param     (get_param(aParams,internal_np::get_placement_policy), LindstromTurk_placement<ECM>())
+                       ,choose_param     (get_param(aParams,internal_np::edge_is_constrained),No_constrained_edge_map<TM>())
+                       ,choose_param     (get_param(aParams,internal_np::get_cost_policy), LindstromTurk_cost<TM>())
+                       ,choose_param     (get_param(aParams,internal_np::get_placement_policy), LindstromTurk_placement<TM>())
                       ,choose_param     (get_param(aParams,vis), Dummy_visitor())
                       );
 
 }
-  template<class ECM, class ShouldStop, class GT, class P, class T, class R>
-int edge_collapse ( ECM& aSurface
+  template<class TM, class ShouldStop, class GT, class P, class T, class R>
+int edge_collapse ( TM& aSurface
                   , ShouldStop const& aShould_stop
                   , cgal_bgl_named_params<P,T,R> const& aParams 
                   ) 
@@ -144,22 +144,22 @@ int edge_collapse ( ECM& aSurface
                       ,choose_const_pmap(get_param(aParams,internal_np::vertex_index),aSurface,boost::vertex_index)
                       ,choose_const_pmap(get_param(aParams,internal_np::vertex_point),aSurface,boost::vertex_point)
                       ,choose_const_pmap(get_param(aParams,internal_np::halfedge_index),aSurface,boost::halfedge_index)
-                      ,choose_param     (get_param(aParams,internal_np::edge_is_constrained),No_constrained_edge_map<ECM>())
-                      ,choose_param     (get_param(aParams,internal_np::get_cost_policy), LindstromTurk_cost<ECM>())
-                      ,choose_param     (get_param(aParams,internal_np::get_placement_policy), LindstromTurk_placement<ECM>())
+                      ,choose_param     (get_param(aParams,internal_np::edge_is_constrained),No_constrained_edge_map<TM>())
+                      ,choose_param     (get_param(aParams,internal_np::get_cost_policy), LindstromTurk_cost<TM>())
+                      ,choose_param     (get_param(aParams,internal_np::get_placement_policy), LindstromTurk_placement<TM>())
                       ,choose_param     (get_param(aParams,vis), Dummy_visitor())
                       );
 
 }
 
-template<class ECM, class ShouldStop>
-int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop ) 
+template<class TM, class ShouldStop>
+int edge_collapse ( TM& aSurface, ShouldStop const& aShould_stop ) 
 {
   return edge_collapse(aSurface,aShould_stop, CGAL::parameters::halfedge_index_map(get(boost::halfedge_index,aSurface)));
 }
 
-  template<class ECM, class ShouldStop, class GT>
-  int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop) 
+  template<class TM, class ShouldStop, class GT>
+  int edge_collapse ( TM& aSurface, ShouldStop const& aShould_stop) 
 {
   return edge_collapse(aSurface,aShould_stop, CGAL::parameters::halfedge_index_map(get(boost::halfedge_index,aSurface)));
 }

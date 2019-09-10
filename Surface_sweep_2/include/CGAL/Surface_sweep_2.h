@@ -120,6 +120,7 @@ public:
   typedef std::vector<Object>                           Object_vector;
   typedef random_access_input_iterator<Object_vector>   vector_inserter;
 
+  typedef typename Base::Subcurve_alloc                 Subcurve_alloc;
 protected:
   // Data members:
   Subcurve_container m_overlap_subCurves;

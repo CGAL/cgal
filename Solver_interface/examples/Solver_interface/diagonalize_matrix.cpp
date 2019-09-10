@@ -1,22 +1,13 @@
 #include <iostream>
 
-#ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_diagonalize_traits.h>
-#else
-#include <CGAL/Diagonalize_traits.h>
-#endif
 
 typedef double                                          FT;
 typedef CGAL::cpp11::array<FT, 6>                       Eigen_matrix;
 typedef CGAL::cpp11::array<FT, 3>                       Eigen_vector;
 typedef CGAL::cpp11::array<FT, 9>                       Eigen_three_vectors;
 
-// If Eigen is enabled, use it, otherwise fallback to the internal model
-#ifdef CGAL_EIGEN3_ENABLED
 typedef CGAL::Eigen_diagonalize_traits<FT, 3>           Diagonalize_traits;
-#else
-typedef CGAL::Diagonalize_traits<FT, 3>                 Diagonalize_traits;
-#endif
 
 int main(void)
 {

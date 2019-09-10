@@ -26,7 +26,6 @@ find_package(Qt5 QUIET COMPONENTS OpenGL)
 
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
-  find_package(QGLViewer)
 endif(Qt5_FOUND)
 
 # Activate concurrency ? (turned OFF by default)
@@ -47,9 +46,8 @@ else( CGAL_ACTIVATE_CONCURRENT_TRIANGULATION_3 )
   endif( LINK_WITH_TBB )
 endif()
 
-if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND )
+if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
-  include_directories (${QGLVIEWER_INCLUDE_DIR})
   include_directories (BEFORE ../../include ./ )
 
   # ui files, created with Qt Designer
@@ -68,7 +66,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS T3_demo )
 
   target_link_libraries( T3_demo PRIVATE ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  target_link_libraries( T3_demo PRIVATE Qt5::OpenGL ${QGLVIEWER_LIBRARIES})
+  target_link_libraries( T3_demo PRIVATE Qt5::OpenGL)
   if(TBB_FOUND)
     CGAL_target_use_TBB(T3_demo)
   endif()
@@ -79,7 +77,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND )
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(T3_demo)
 
-else( CGAL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND )
+else( CGAL_FOUND AND Qt5_FOUND)
 
   set(TRIANGULATION_3_MISSING_DEPS "")
 
@@ -91,11 +89,7 @@ else( CGAL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND )
     set(TRIANGULATION_3_MISSING_DEPS "Qt5, ${TRIANGULATION_3_MISSING_DEPS}")
   endif()      	   
 
-  if(NOT QGLVIEWER_FOUND)
-    set(TRIANGULATION_3_MISSING_DEPS "QGLViewer, ${TRIANGULATION_3_MISSING_DEPS}")
-  endif()      	   
-
-
+  
   message(STATUS "NOTICE: This demo requires ${TRIANGULATION_3_MISSING_DEPS}and will not be compiled.")
 
-endif( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND )
+endif( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND  )

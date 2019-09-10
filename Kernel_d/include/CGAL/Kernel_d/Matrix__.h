@@ -165,9 +165,13 @@ vector_pointer* v_; int dm_,dn_;
 
 NT& elem(int i, int j) const { return v_[i]->v_[j]; }
 
+#ifdef CGAL_CXX11
+  typedef typename std::allocator_traits<AL_>:: template rebind_alloc<vector_pointer> allocator_type;
+#else  
 typedef typename AL_::template rebind<vector_pointer>::other 
         allocator_type;
-
+#endif
+  
 allocator_type& allocator()
 {
   CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(allocator_type, MM);

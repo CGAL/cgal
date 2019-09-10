@@ -23,14 +23,9 @@ include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script Help OpenGL Svg)
 
-if(Qt5_FOUND)
-  find_package(QGLViewer)
-endif(Qt5_FOUND)
 
-if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Qt5::qcollectiongenerator )
+if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET Qt5::qcollectiongenerator )
 
-
-  include_directories (${QGLVIEWER_INCLUDE_DIR})
   include_directories (BEFORE ../../include ./ )
 
   # ui file, created wih Qt Designer
@@ -59,12 +54,11 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_Lloyd_3 )
 
   target_link_libraries( Periodic_Lloyd_3 PRIVATE
-    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::OpenGL
-    ${QGLVIEWER_LIBRARIES} )
+    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Periodic_Lloyd_3)
-else( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE )
+else( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE )
 
   set(PERIODIC_LLOYD_MISSING_DEPS "")
 
@@ -74,10 +68,6 @@ else( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCO
 
   if(NOT Qt5_FOUND)
     set(PERIODIC_LLOYD_MISSING_DEPS "Qt5, ${PERIODIC_LLOYD_MISSING_DEPS}")
-  endif()      	   
-
-  if(NOT QGLVIEWER_FOUND)
-    set(PERIODIC_LLOYD_MISSING_DEPS "QGLViewer, ${PERIODIC_LLOYD_MISSING_DEPS}")
   endif()      	   
 
   if(NOT QT_QCOLLECTIONGENERATOR_EXECUTABLE)

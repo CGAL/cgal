@@ -27,7 +27,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/Convex_hull_3/dual/Convex_hull_traits_dual_3.h>
 #include <CGAL/Origin.h>
 #include <CGAL/convex_hull_3.h>
@@ -41,6 +41,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 #include <boost/foreach.hpp>
+#include <deque>
 
 namespace CGAL
 {
@@ -60,13 +61,13 @@ namespace CGAL
               typedef typename Kernel::RT RT;
 
               // Typedefs for dual
-              typedef typename Polyhedron_dual::Facet Facet;
-              typedef typename Polyhedron_dual::Facet_const_handle
+
+              typedef typename boost::graph_traits<Polyhedron_dual>::face_descriptor 
                 Facet_const_handle;
-              typedef typename Polyhedron_dual::Facet_const_iterator
-                Facet_const_iterator;
-              typedef typename Polyhedron_dual::Vertex_const_iterator
-                Vertex_const_iterator;
+              typedef typename boost::graph_traits<Polyhedron_dual>::vertex_descriptor
+                Vertex_const_descriptor;
+              typedef typename boost::graph_traits<Polyhedron_dual>::halfedge_descriptor
+                Halfedge_const_descriptor;
 
               // typedef and type for primal
               typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
@@ -85,9 +86,8 @@ namespace CGAL
               size_t n = 0;
 
               // First, computing the primal vertices
-              for (Facet_const_iterator it = _dual.facets_begin();
-                   it != _dual.facets_end(); ++it, ++n) {
-                typename Facet::Halfedge_const_handle h = it->halfedge();
+              BOOST_FOREACH (Facet_const_handle fd, faces(_dual)){               
+                Halfedge_const_descriptor h = fd->halfedge();
                 // Build the dual plane corresponding to the current facet
                 Plane_3 p1 = h->vertex()->point();
                 Plane_3 p2 = h->next()->vertex()->point();
@@ -119,23 +119,21 @@ namespace CGAL
                             origin.z() + pp->z());
 
                 vertex_descriptor vd = add_vertex(primal);
-                primal_vertices[it] = vd;
+                primal_vertices[fd] = vd;
                 put(vpm, vd, ppp);
+                ++n;
               }
 
               // Then, add facets to the primal polyhedron
               // To do this, for each dual vertex, we circulate around this vertex
               // and we add an edge between each facet we encounter
 
-              for (Vertex_const_iterator it = _dual.vertices_begin();
-                   it != _dual.vertices_end(); ++it) {
-                std::vector<vertex_descriptor> vertices;
-                typename Polyhedron_dual::Halfedge_around_vertex_const_circulator
-                  h0 = it->vertex_begin(), hf = h0;
-                  do {
-                    vertices.push_back(primal_vertices[hf->facet()]);
-                  } while (--hf != h0);
-                  Euler::add_face(vertices,primal);
+              BOOST_FOREACH (Vertex_const_descriptor vd, vertices( _dual)) {
+                std::deque<vertex_descriptor> vertices;
+                BOOST_FOREACH(Halfedge_const_descriptor hd, halfedges_around_target(vd, _dual)){
+                  vertices.push_front(primal_vertices[face(hd, _dual)]);
+                }
+                Euler::add_face(vertices,primal);
               }
             }
 
@@ -249,7 +247,7 @@ namespace CGAL
         // Types
         typedef typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel K;
         typedef Convex_hull_3::Convex_hull_traits_dual_3<K> Hull_traits_dual_3;
-        typedef Polyhedron_3<Hull_traits_dual_3> Polyhedron_dual_3;
+        typedef HalfedgeDS_default<Hull_traits_dual_3, HalfedgeDS_items_3 > Polyhedron_dual_3;
 
         // if a point inside is not provided find one using linear programming
         if (!origin) {

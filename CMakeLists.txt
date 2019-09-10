@@ -3,12 +3,32 @@ message( "== CMake setup ==" )
 project(CGAL CXX C)
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 set( CGAL_BRANCH_BUILD ON CACHE INTERNAL "Create CGAL from a Git branch" FORCE)
 
 include(${CMAKE_SOURCE_DIR}/Installation/cmake/modules/CGAL_SCM.cmake)
 CGAL_detect_git(${CMAKE_SOURCE_DIR})
+
+function(CGAL_error_if_detect_in_source_build)
+  # If in a Git repository, forbid in-source builds
+  get_filename_component(srcdir "${CMAKE_SOURCE_DIR}" REALPATH)
+  get_filename_component(bindir "${CMAKE_BINARY_DIR}" REALPATH)
+  if("${srcdir}" STREQUAL "${bindir}")
+    message(FATAL_ERROR [=[
+############
+Since CGAL-4.12.1, you can no longer configure an in-source build in a Git
+repository. See this StackOverlow question and answers for a way to create
+a separate build directory:
+  https://stackoverflow.com/q/45518317/1728537
+############
+]=])
+  endif()
+endfunction()
+
+if ( "${CGAL_SCM_NAME}" STREQUAL "git" )
+  CGAL_error_if_detect_in_source_build()
+endif()
 
 # add option for duplicate file detection
 option( CGAL_REPORT_DUPLICATE_FILES "Switch on to start (naive) detection of duplicate source- and headerfiles in packages" OFF)

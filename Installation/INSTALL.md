@@ -7,13 +7,13 @@ are for the most common use cases, and cover the command line tools.
 For further information, or in case of problems, please see the
 detailed installation instructions, which can be found in this
 distribution in the file ./doc_html/index.html or on the CGAL website
-http://doc.cgal.org/latest/Manual/installation.html
+https://doc.cgal.org/latest/Manual/installation.html
 
 The documentation of CGAL is available in PDF and HTML formats.
 It is not bundled with the software but can be downloaded separately
-at <http://www.cgal.org/Manual>.
+at <https://www.cgal.org/Manual>.
 
-For more information about CGAL, see the <http://www.cgal.org/>.
+For more information about CGAL, see the <https://www.cgal.org/>.
 
 In the current file, x.y is an implicit replacement for the current version
 of CGAL (3.5.1, 3.6, and so on).
@@ -63,9 +63,6 @@ CGAL packages, some are only needed for demos.
      - Qt5 (>= 5.3)
        http://qt-project.org/
 
-     - libQGLViewer
-       http://www.libqglviewer.com/
-
      - Geomview
        http://www.geomview.org/
        Not supported with Visual C++
@@ -73,47 +70,47 @@ CGAL packages, some are only needed for demos.
    * Numerical Libraries
      - EIGEN (>=3.1)
        Required by the packages:
-       o Estimation of Local Differential Properties of Point-Sampled Surfaces
-       o Approximation of Ridges and Umbilics on Triangulated Surface Meshes
-       o Planar Parameterization of Triangulated Surface Meshes
-       o Surface Reconstruction from Point Sets
+       * Estimation of Local Differential Properties of Point-Sampled Surfaces
+       * Approximation of Ridges and Umbilics on Triangulated Surface Meshes
+       * Planar Parameterization of Triangulated Surface Meshes
+       * Surface Reconstruction from Point Sets
        http://eigen.tuxfamily.org
 
      - BLAS, LAPACK, ATLAS
        Required by the packages (if EIGEN is not available):
-       o Estimation of Local Differential Properties of Point-Sampled Surfaces
-       o Approximation of Ridges and Umbilics on Triangulated Surface Meshes
-       o Planar Parameterization of Triangulated Surface Meshes
+       * Estimation of Local Differential Properties of Point-Sampled Surfaces
+       * Approximation of Ridges and Umbilics on Triangulated Surface Meshes
+       * Planar Parameterization of Triangulated Surface Meshes
        http://www.netlib.org/blas/, http://www.netlib.org/lapack/
        or precompiled version that can be downloaded with CGAL-x.y-Setup.exe
 
      - MPFI
        Required by the package:
-       o Algebraic Kernel
+       * Algebraic Kernel
        https://gforge.inria.fr/projects/mpfi/
        (or shipped with RS http://vegas.loria.fr/rs/)
 
      - RS (root isolation)
        Required by the package:
-       o Algebraic Kernel
+       * Algebraic Kernel
        http://vegas.loria.fr/rs/
 
      - NTL (Number Type Theory)
        Optional for the packages:
-       o Polynomial
-       o Algebraic Kernel
+       * Polynomial
+       * Algebraic Kernel
        http://www.shoup.net/ntl/
 
    * Miscellaneous
 
      - zlib
        Optional for the package:
-       o Surface Mesh Generator can read compressed images directly
+       * Surface Mesh Generator can read compressed images directly
        http://www.zlib.net/
 
      - ESBTL
        Optional to read PDB files:
-       o Import data from a PDB file as CGAL points or weighted points.
+       * Import data from a PDB file as CGAL points or weighted points.
          An example is given in package Skin_surface (see example skin_surface_pdb_reader.cpp)
        http://esbtl.sourceforge.net/
 

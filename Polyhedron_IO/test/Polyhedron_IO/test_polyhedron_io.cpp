@@ -32,7 +32,6 @@
 // disabled compilers.
 #ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
 
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/print_OFF.h>
 #include <CGAL/IO/print_wavefront.h>
 #include <CGAL/IO/print_inventor.h>

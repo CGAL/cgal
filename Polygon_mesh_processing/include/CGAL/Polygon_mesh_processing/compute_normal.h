@@ -109,7 +109,7 @@ void sum_normals(const PM& pmesh,
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
 *   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
 *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
 * \cgalNamedParamsEnd
 *
@@ -168,7 +168,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
 *   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
 *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
 * \cgalNamedParamsEnd
 *
@@ -205,7 +205,7 @@ compute_face_normals(const PolygonMesh& pmesh
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
 *   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
 *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
 * \cgalNamedParamsEnd
 *
@@ -285,7 +285,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
 *   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
 *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
 * \cgalNamedParamsEnd
 *
@@ -331,7 +331,7 @@ compute_vertex_normals(const PolygonMesh& pmesh
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
 *   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
 *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
 * \cgalNamedParamsEnd
 *
