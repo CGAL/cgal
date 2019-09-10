@@ -3,14 +3,19 @@
 
 project (Periodic_Lloyd_3_Demo)
 
+cmake_minimum_required(VERSION 3.1)
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
+endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-cmake_minimum_required(VERSION 2.8.11)
-if(POLICY CMP0043)
-  cmake_policy(SET CMP0043 OLD)
-endif()
 
 find_package(CGAL COMPONENTS Qt5)
 include(${CGAL_USE_FILE})
@@ -18,13 +23,11 @@ include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script Help OpenGL Svg)
 
-find_package(OpenGL)
-
 if(Qt5_FOUND)
   find_package(QGLViewer)
 endif(Qt5_FOUND)
 
-if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND TARGET Qt5::qcollectiongenerator )
+if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Qt5::qcollectiongenerator )
 
 
   include_directories (${QGLVIEWER_INCLUDE_DIR})
@@ -53,14 +56,15 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
 
   add_executable  ( Periodic_Lloyd_3 Periodic_Lloyd_3.qhc Periodic_Lloyd_3.cpp MainWindow.cpp Viewer.cpp ${uis}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-  qt5_use_modules(Periodic_Lloyd_3 Xml Script Help OpenGL Svg)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_Lloyd_3 )
 
-  target_link_libraries( Periodic_Lloyd_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  target_link_libraries( Periodic_Lloyd_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
-  target_link_libraries( Periodic_Lloyd_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  target_link_libraries( Periodic_Lloyd_3 PRIVATE
+    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::OpenGL
+    ${QGLVIEWER_LIBRARIES} )
 
-else( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE )
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Periodic_Lloyd_3)
+else( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE )
 
   set(PERIODIC_LLOYD_MISSING_DEPS "")
 
@@ -70,10 +74,6 @@ else( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER
 
   if(NOT Qt5_FOUND)
     set(PERIODIC_LLOYD_MISSING_DEPS "Qt5, ${PERIODIC_LLOYD_MISSING_DEPS}")
-  endif()      	   
-
-  if(NOT OPENGL_FOUND)
-    set(PERIODIC_LLOYD_MISSING_DEPS "OpenGL, ${PERIODIC_LLOYD_MISSING_DEPS}")
   endif()      	   
 
   if(NOT QGLVIEWER_FOUND)

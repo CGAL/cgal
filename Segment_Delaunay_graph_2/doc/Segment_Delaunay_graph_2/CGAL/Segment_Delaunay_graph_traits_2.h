@@ -36,8 +36,7 @@ part).
 
 */
 template< typename K, typename MTag >
-class Segment_Delaunay_graph_traits_2 {
-public:
+struct Segment_Delaunay_graph_traits_2 {
 
 /// \name Types 
 /// @{
@@ -110,8 +109,7 @@ part).
 
 */
 template< typename K, typename MTag >
-class Segment_Delaunay_graph_traits_without_intersections_2 {
-public:
+struct Segment_Delaunay_graph_traits_without_intersections_2 {
 
 /// \name Types 
 /// @{

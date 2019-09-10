@@ -11,12 +11,16 @@
 
 /*!
 \addtogroup PkgPeriodic3Triangulation3
-\todo check generated documentation
+
 \cgalPkgDescriptionBegin{3D Periodic Triangulations,PkgPeriodic3Triangulation3Summary}
 \cgalPkgPicture{p3Delaunay3_small.jpg}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Manuel Caroli and Monique Teillaud}
-\cgalPkgDesc{This package allows to build and handle triangulations of point sets in the three dimensional flat torus. Triangulations are built incrementally and can be modified by insertion or removal of vertices. They offer point location facilities. The package provides Delaunay triangulations and offers nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
+\cgalPkgAuthors{Manuel Caroli, Aymeric Pellé, Mael Rouxel-Labbé, and Monique Teillaud}
+\cgalPkgDesc{This package allows to build and handle triangulations of point sets
+in the three dimensional flat torus. Triangulations are built incrementally and
+can be modified by insertion or removal of vertices. They offer point location
+facilities. The package provides Delaunay and regular triangulations and offers
+nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
 \cgalPkgManuals{Chapter_3D_Periodic_Triangulations,PkgPeriodic3Triangulation3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -29,23 +33,24 @@
 \cgalPkgDescriptionEnd
 
 The main classes of the 3D Periodic Triangulation package are
-`CGAL::Periodic_3_triangulation_3` and
-`CGAL::Periodic_3_Delaunay_triangulation_3`. They contain functionality
+`CGAL::Periodic_3_triangulation_3`,
+`CGAL::Periodic_3_Delaunay_triangulation_3`,
+and `CGAL::Periodic_3_regular_triangulation_3`.
+ They contain functionality
 to access triangulations and to run queries on
 them. `CGAL::Periodic_3_Delaunay_triangulation_3` can construct and
-modify Delaunay triangulations. It takes the geometric traits as well
+modify Delaunay triangulations, while
+`CGAL::Periodic_3_regular_triangulation_3` can do it for weighted Delaunay
+triangulations. They take the geometric traits as well
 as the triangulation data structure as template parameters.
 
-The geometric traits class must be a model of the concept
-`Periodic_3DelaunayTriangulationTraits_3` for periodic Delaunay triangulations,
-or `Periodic_3TriangulationTraits_3` for periodic triangulations. It must contains all
-predicates and constructions that are needed by the functions in the
-triangulation classes.
+The geometric traits class of each triangulation class must be a model
+of its associated concept, i.e., it must contain all
+predicates and constructions that are needed by the
+triangulation class.
 
 The package uses `CGAL::Triangulation_data_structure_3` to represent the
-triangulation. The cells and vertices need to be models of the
-concepts `Periodic_3TriangulationDSCellBase_3` and
-`Periodic_3TriangulationDSVertexBase_3`, respectively.
+triangulation.
 A triangulation is stored as a collection of vertices and cells that
 are linked together through incidence and adjacency relations. Each
 cell gives access to its four incident vertices and to its four
@@ -70,9 +75,16 @@ of the concept `Periodic_3Offset_3`.
 
 - `Periodic_3TriangulationTraits_3`
 - `Periodic_3DelaunayTriangulationTraits_3`
+
+- `Periodic_3RegularTriangulationTraits_3`
+
 - `TriangulationDataStructure_3`
-- `Periodic_3TriangulationDSCellBase_3`
 - `Periodic_3TriangulationDSVertexBase_3`
+- `Periodic_3TriangulationDSCellBase_3`
+
+- `Periodic_3RegularTriangulationDSCellBase_3`
+- `Periodic_3RegularTriangulationDSVertexBase_3`
+
 - `Periodic_3Offset_3`
 
 ## Classes ##
@@ -81,15 +93,19 @@ of the concept `Periodic_3Offset_3`.
 
 - `CGAL::Periodic_3_triangulation_3<PT,TDS>`
 - `CGAL::Periodic_3_Delaunay_triangulation_3<PT,TDS>`
+
+- `CGAL::Periodic_3_regular_triangulation_3<PT,TDS>`
+
 - `CGAL::Periodic_3_triangulation_hierarchy_3<PTr>`
-- `CGAL::Periodic_3_triangulation_ds_cell_base_3<>`
 - `CGAL::Periodic_3_triangulation_ds_vertex_base_3<>`
+- `CGAL::Periodic_3_triangulation_ds_cell_base_3<>`
 - `CGAL::Periodic_3_offset_3`
 
 ### Traits Classes ###
 
 - `CGAL::Periodic_3_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 - `CGAL::Periodic_3_Delaunay_triangulation_traits_3<Traits,Periodic_3Offset_3>`
+- `CGAL::Periodic_3_regular_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 
 ## Enums ##
 

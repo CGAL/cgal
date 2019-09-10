@@ -1,0 +1,261 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: fig2dev Version 3.2.6 -->
+<!-- CreationDate: Mon Nov 21 08:46:35 2016 -->
+<!-- Magnification: 1.050 -->
+<svg	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	width="6.9in" height="2.5in"
+	viewBox="4865 4117 8285 3058">
+<g style="stroke-width:.025in; fill:none">
+<!-- Line -->
+<polyline points="5201,5012
+5192,5168
+5358,5235
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="5577,6636
+5491,6775
+5374,6780
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="7724,4405
+7628,4427
+7561,4608
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="7579,5946
+7697,5995
+7732,6101
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="5971,6619
+6005,6524
+" style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10121,4995
+10113,5151
+10279,5218
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10498,6619
+10412,6759
+10295,6763
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="12645,4388
+12549,4410
+12481,4592
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="12499,5929
+12618,5979
+12653,6085
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10892,6602
+10925,6508
+" style="stroke:#000000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10311,4773
+10443,4833
+10510,4929
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="12648,4797
+12803,4769
+12854,4639
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="12256,6138
+12319,6221
+12414,6237
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10280,6392
+10101,6475
+10074,6649
+" style="stroke:#ff0000;stroke-width:8;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Text -->
+<text xml:space="preserve" x="5850" y="6792" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">r</text>
+<!-- Text -->
+<text xml:space="preserve" x="10771" y="6775" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">r</text>
+<!-- Circle -->
+<circle cx="5129" cy="4755" r="248"
+ style="stroke:#000000;stroke-width:16;"/>
+<!-- Circle -->
+<circle cx="5146" cy="6911" r="248"
+ style="stroke:#000000;stroke-width:16;"/>
+<!-- Circle -->
+<circle cx="7731" cy="6354" r="248"
+ style="stroke:#000000;stroke-width:16;"/>
+<!-- Circle -->
+<circle cx="7965" cy="4398" r="248"
+ style="stroke:#000000;stroke-width:16;"/>
+<!-- Circle -->
+<circle cx="10050" cy="4739" r="248"
+ style="stroke:#000000;stroke-width:16;"/>
+<!-- Circle -->
+<circle cx="10067" cy="6894" r="248"
+ style="stroke:#000000;stroke-width:16;"/>
+<!-- Circle -->
+<circle cx="12651" cy="6338" r="248"
+ style="stroke:#000000;stroke-width:16;"/>
+<!-- Circle -->
+<circle cx="12886" cy="4382" r="248"
+ style="stroke:#000000;stroke-width:16;"/>
+<!-- Text -->
+<text xml:space="preserve" x="5002" y="4812" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">p3</text>
+<!-- Text -->
+<text xml:space="preserve" x="5015" y="6992" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">p0</text>
+<!-- Text -->
+<text xml:space="preserve" x="7604" y="6411" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">p1</text>
+<!-- Text -->
+<text xml:space="preserve" x="7838" y="4455" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">p2</text>
+<!-- Text -->
+<text xml:space="preserve" x="9923" y="4795" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">p3</text>
+<!-- Text -->
+<text xml:space="preserve" x="9935" y="6975" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">p0</text>
+<!-- Text -->
+<text xml:space="preserve" x="12524" y="6394" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">p1</text>
+<!-- Text -->
+<text xml:space="preserve" x="12759" y="4438" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">p2</text>
+<!-- Line -->
+<polyline points="7546,6101
+5372,6682
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 5372 6682 - 7608 6083-->
+<polyline points="7397 6259
+7590 6089
+7338 6036
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="7728,4618
+7568,6096
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 7568 6096 - 7734 4552-->
+<polyline points="7821 4811
+7732 4571
+7592 4787
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="5405,4979
+7731,4590
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 7731 4590 - 5339 4987-->
+<polyline points="5566 4833
+5358 4984
+5603 5060
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="5371,6649
+5369,4982
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 5369 4982 - 5371 6713-->
+<polyline points="5255 6465
+5371 6695
+5485 6464
+" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
+"/>
+<!-- Line -->
+<polyline points="10291,6666
+10289,4965
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10291,4966
+12651,4573
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="12651,4566
+12489,6079
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="12499,6075
+10292,6665
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="10178,5862
+10380,5818
+" style="stroke:#9f9f9f;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="11540,4658
+11565,4858
+" style="stroke:#9f9f9f;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="12425,5461
+12682,5392
+" style="stroke:#9f9f9f;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="11459,6264
+11446,6521
+" style="stroke:#9f9f9f;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Circle -->
+<circle cx="10304" cy="6621" r="83"
+ style="fill:#535353;stroke:#535353;stroke-width:0;"/>
+<!-- Circle -->
+<circle cx="12437" cy="6044" r="83"
+ style="fill:#535353;stroke:#535353;stroke-width:0;"/>
+<!-- Circle -->
+<circle cx="12644" cy="4626" r="83"
+ style="fill:#535353;stroke:#535353;stroke-width:0;"/>
+<!-- Circle -->
+<circle cx="10310" cy="4978" r="83"
+ style="fill:#535353;stroke:#535353;stroke-width:0;"/>
+</g>
+</svg>

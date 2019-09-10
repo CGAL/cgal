@@ -34,7 +34,7 @@ struct Skip {
 
   bool operator()(const face_descriptor& t) const
   { if(t == fd){
-      std::cerr << "ignore" << t  <<std::endl;
+      std::cerr << "ignore " << t  <<std::endl;
     };
     return(t == fd);
   }
@@ -59,7 +59,8 @@ int main(int argc, char* argv[])
     Vector v = CGAL::Polygon_mesh_processing::compute_face_normal(fd,mesh);	
     
     Ray ray(p,d * v);
-    Ray_intersection intersection = tree.first_intersection(ray);
+    Skip skip(fd);
+    Ray_intersection intersection = tree.first_intersection(ray, skip);
     if(intersection){
       if(boost::get<Point>(&(intersection->first))){
         const Point* p =  boost::get<Point>(&(intersection->first) );

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Sylvain Pion, Andreas Fabri
@@ -28,6 +29,7 @@
 #include <string>
 #include <utility>
 #include <CGAL/basic.h>
+#include <CGAL/tss.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -44,6 +46,10 @@
 #include <boost/random/variate_generator.hpp>
 
 namespace CGAL {
+
+  namespace internal { 
+    struct Random_print_seed{};
+  }
 
 class Random {
 public:
@@ -65,7 +71,8 @@ public:
   };
   // creation
   CGAL_EXPORT Random( );
-  CGAL_EXPORT Random( unsigned int  seed);
+  CGAL_EXPORT Random( internal::Random_print_seed );
+  CGAL_EXPORT Random( unsigned int  seed );
   
   // seed
   CGAL_EXPORT unsigned int get_seed ( ) const;
@@ -77,17 +84,21 @@ public:
   }
 
 
+
   template <typename IntType>
   IntType
   uniform_smallint(IntType lower, IntType upper)
   {
     // uniform_smallint has a closed interval, CGAL a halfopen
-    boost::uniform_smallint<IntType> dist(lower,upper-1);
-    boost::variate_generator<boost::rand48&, boost::uniform_smallint<IntType> > generator(rng,dist);
+    typedef boost::rand48::result_type result_type;
+    boost::uniform_smallint<result_type> dist(static_cast<result_type>(lower),
+                                              static_cast<result_type>(upper-1));
+    boost::variate_generator<boost::rand48&, boost::uniform_smallint<result_type> > generator(rng,dist);
     
     return generator();
   }
 
+  
   template <typename IntType>
   IntType
   uniform_smallint(IntType lower)
@@ -228,11 +239,14 @@ public:
     boost::rand48 rng;
 };
 
-#ifdef CGAL_HEADER_ONLY
-
 inline Random& get_default_random()
 {
-  static Random default_random;
+#if (defined( CGAL_TEST_SUITE ) || defined( CGAL_PRINT_SEED )) && !defined(CGAL_HEADER_ONLY)
+  internal::Random_print_seed rps;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Random, default_random, rps);
+#else
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Random, default_random);
+#endif
   return default_random;
 }
 
@@ -240,16 +254,7 @@ inline Random& get_default_random()
   namespace { CGAL_DEPRECATED_UNUSED CGAL::Random& default_random = get_default_random(); }
 #endif // CGAL_NO_DEPRECATED_CODE
 
-#else // CGAL_HEADER_ONLY
 
-// Global variables
-// ================
-CGAL_EXPORT extern Random default_random;
-
-inline Random& get_default_random()
-{ return default_random; }
-
-#endif // CGAL_HEADER_ONLY
 
 } //namespace CGAL
 

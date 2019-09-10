@@ -57,11 +57,6 @@ Its interior of `bounding_polyhedron` will be meshed.
 template <typename Polyhedron> 
 Polyhedral_mesh_domain_with_features_3(Polyhedron bounding_polyhedron); 
 
-/*!
-Constructs a `Polyhedral_mesh_domain_with_features_3` from an off file. No feature 
-detection is done at this level. 
-*/ 
-Polyhedral_mesh_domain_with_features_3(const std::string& filename); 
 
 /*!
 Constructs a `Polyhedral_mesh_domain_with_features_3` from a polyhedral surface, and a bounding polyhedral surface.
@@ -74,6 +69,13 @@ The inside of `bounding_polyhedron` will be meshed.
 template <typename Polyhedron> 
 Polyhedral_mesh_domain_with_features_3(Polyhedron polyhedron,
 							 Polyhedron bounding_polyhedron);
+
+/*!
+\deprecated Constructs a `Polyhedral_mesh_domain_with_features_3` from an off file. No feature 
+detection is done at this level. Users must read the file into a `Polyhedron_3` and call the
+constructor above.
+*/ 
+Polyhedral_mesh_domain_with_features_3(const std::string& filename); 
 
 /// @} 
 

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
@@ -1010,6 +1011,9 @@ is_valid(bool verbose, int level) const
   bool result(true);
 
 #define DEBUGVALIDHIER true
+
+#include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
+
 //#undef DEBUGVALIDHIER
 
 #ifdef DEBUGVALIDHIER  

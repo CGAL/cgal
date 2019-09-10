@@ -24,8 +24,7 @@ manipulation of algebraic curves.
 
 */
 template< typename Kernel, typename AlgebraicKernelForSpheres >
-class Spherical_kernel_3 : public Kernel {
-public:
+struct Spherical_kernel_3 : public Kernel {
 
 /// \name Types 
 /// The spherical kernel uses basic number types of the algebraic

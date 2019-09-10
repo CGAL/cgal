@@ -10,6 +10,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 /* Auxiliary functions for C++-style input of GMP types. 

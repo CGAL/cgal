@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_ARR_LINEAR_TRAITS_2_H
 #define CGAL_ARR_LINEAR_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The traits-class for handling linear objects (lines, rays and segments)
@@ -2021,5 +2026,7 @@ InputStream& operator>> (InputStream& is, Arr_linear_object_2<Kernel>& lobj)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

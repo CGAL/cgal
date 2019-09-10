@@ -12,13 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
+// $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Laurent Saboret
 
 #ifndef CGAL_TRACE_H
 #define CGAL_TRACE_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <stdio.h>
 #include <stdarg.h>

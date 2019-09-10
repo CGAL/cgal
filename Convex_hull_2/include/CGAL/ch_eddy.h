@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_CH_EDDY_H
 #define CGAL_CH_EDDY_H
+
+#include <CGAL/license/Convex_hull_2.h>
+
 
 #include <CGAL/basic.h>
 #include <iterator>

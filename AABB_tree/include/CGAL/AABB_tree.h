@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
 #ifndef CGAL_AABB_TREE_H
 #define CGAL_AABB_TREE_H
+
+#include <CGAL/license/AABB_tree.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <vector>
 #include <iterator>
@@ -1127,7 +1132,7 @@ public:
 		this->traversal(query, traversal_traits);
 		return traversal_traits.is_intersection_found();
 	}
-
+#ifndef DOXYGEN_RUNNING //To avoid doxygen to consider definition and declaration as 2 different functions (size_type causes problems)
 	template<typename Tr>
 	template<typename Query>
 	typename AABB_tree<Tr>::size_type
@@ -1146,7 +1151,7 @@ public:
 		this->traversal(query, traversal_traits);
 		return counter;
 	}
-
+#endif
 	template<typename Tr>
 	template<typename Query, typename OutputIterator>
 	OutputIterator
@@ -1278,6 +1283,7 @@ public:
 
 #include <CGAL/internal/AABB_tree/AABB_ray_intersection.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_TREE_H
 

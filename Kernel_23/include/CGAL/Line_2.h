@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -260,7 +261,7 @@ template <class R >
 std::istream&
 extract(std::istream& is, Line_2<R>& l)
 {
-    typename R::RT a, b, c;
+  typename R::RT a(0), b(0), c(0);
     switch(get_mode(is)) {
     case IO::ASCII :
         is >> iformat(a) >> iformat(b) >> iformat(c);

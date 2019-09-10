@@ -18,6 +18,10 @@ if `Alpha_shape_vertex_base_2` is intended to be used with an alpha-shape class 
 provided in the documentation of `Alpha_shape_2` for more details. The default value is \link Tag_false `Tag_false`\endlink. 
 
 \cgalModels `AlphaShapeVertex_2`
+
+\sa `Triangulation_vertex_base_2`
+\sa `Regular_triangulation_vertex_base_2`
+\sa `Periodic_2_triangulation_vertex_base_2`
 */
 template< typename Traits, typename Vb, typename ExactAlphaComparisonTag >
 class Alpha_shape_vertex_base_2 : public Vb {

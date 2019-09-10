@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
 
 #ifndef CGAL_ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
 #define CGAL_ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
+
+#include <CGAL/license/Spatial_searching.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <cstring>
 #include <list>
@@ -616,5 +621,7 @@ namespace CGAL {
   }
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH_H

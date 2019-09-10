@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>477</width>
-    <height>602</height>
+    <width>453</width>
+    <height>633</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -277,11 +277,22 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="Create_polyline_items_button">
-           <property name="text">
-            <string>Create Polyline Items for Selected Holes</string>
-           </property>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
+            <widget class="QPushButton" name="Create_polyline_items_button">
+             <property name="text">
+              <string>Create Polyline Items for Selected Holes</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="Fill_from_selection_button">
+             <property name="text">
+              <string>Fill hole from Edge Selection</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>

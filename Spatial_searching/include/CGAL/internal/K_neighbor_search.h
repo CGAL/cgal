@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
 
 #ifndef CGAL_INTERNAL_K_NEIGHBOR_SEARCH_H
 #define CGAL_INTERNAL_K_NEIGHBOR_SEARCH_H
+
+#include <CGAL/license/Spatial_searching.h>
+
 
 #include <cstring>
 #include <set>
@@ -29,7 +33,7 @@
 #include <CGAL/Euclidean_distance.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/internal/bounded_priority_queue.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 namespace internal{

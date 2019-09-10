@@ -129,13 +129,13 @@ configure()
 {
   echo "Configuring... "
   rm -rf CMakeCache.txt CMakeFiles/
-  echo "cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+  echo "cmake --no-warn-unused-cli "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
  -DCGAL_DIR=\"$CGAL_DIR\" \
  -DCGAL_CXX_FLAGS:STRING=\"$TESTSUITE_CXXFLAGS -I../../include\" \
  -DCGAL_EXE_LINKER_FLAGS=\"$TESTSUITE_LDFLAGS\" \
  -DCMAKE_BUILD_TYPE=NOTFOUND \
  ."
-  if eval 'cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+  if eval 'cmake --no-warn-unused-cli "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                     -DCGAL_DIR="$CGAL_DIR" \
                                     -DCGAL_CXX_FLAGS:STRING="$TESTSUITE_CXXFLAGS -I../../include" \
                                     -DCGAL_EXE_LINKER_FLAGS="$TESTSUITE_LDFLAGS" \
@@ -874,6 +874,18 @@ test_construction_spherical_arcs()
 }
 
 #---------------------------------------------------------------------#
+# construction with polylines
+#---------------------------------------------------------------------#
+test_construction_polylines()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$POLYLINE_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_construction polylines "$flags"
+}
+
+#---------------------------------------------------------------------#
 # overlay with segments
 #---------------------------------------------------------------------#
 test_overlay_segments()
@@ -1101,6 +1113,10 @@ test_non_caching_segment_traits()
 #---------------------------------------------------------------------#
 test_polycurve_conic_traits()
 {
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_polycurve_conic_traits not ran"
+    return
+  fi
   echo polycurve test starting
   local nt=$CORE_EXPR_NT;
   local kernel=$CARTESIAN_KERNEL;
@@ -1181,6 +1197,10 @@ test_polycurve_circular_arc_traits()
 #---------------------------------------------------------------------#
 test_polycurve_bezier_traits()
 {
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_polycurve_bezier_traits not ran"
+    return
+  fi
   local nt=$CORE_EXPR_NT;
   local kernel=$CARTESIAN_KERNEL;
   local geom_traits=$POLYCURVE_BEZIER_GEOM_TRAITS;
@@ -1306,6 +1326,10 @@ test_linear_traits()
 #---------------------------------------------------------------------#
 test_conic_traits()
 {
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_conic_traits not ran"
+    return
+  fi
   local nt=$CORE_EXPR_NT;
   local kernel=$CARTESIAN_KERNEL;
   local geom_traits=$CORE_CONIC_GEOM_TRAITS;
@@ -1458,6 +1482,10 @@ test_circle_segments_traits()
 #---------------------------------------------------------------------#
 test_bezier_traits()
 {
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_bezier_traits not ran"
+    return
+  fi
   local nt=$CORE_EXPR_NT;
   local kernel=$CARTESIAN_KERNEL;
   local geom_traits=$BEZIER_GEOM_TRAITS;
@@ -1511,6 +1539,10 @@ test_spherical_arc_traits()
 #---------------------------------------------------------------------#
 test_rational_arc_traits()
 {
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_rational_arc_traits not ran"
+    return
+  fi
   local nt=$CORE_INT_NT;
   local kernel=$UNIVARIATE_ALGEBRAIC_KERNEL;
   local geom_traits=$RATIONAL_ARC_GEOM_TRAITS;
@@ -1586,7 +1618,10 @@ test_algebraic_traits_leda()
 test_algebraic_traits_core()
 {
   #TODO: Adapt
-
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_algebraic_traits_core not ran"
+    return
+  fi
   local nt=$CORE_INT_NT;
   local kernel=$UNIVARIATE_ALGEBRAIC_KERNEL;
   local geom_traits=$ALGEBRAIC_GEOM_TRAITS;
@@ -1663,6 +1698,8 @@ test_algebraic_traits_core
 test_algebraic_traits_gmp
 test_algebraic_traits_leda
 
+compile_and_run test_data_traits
+
 compile_and_run test_insertion
 compile_and_run test_unbounded_rational_insertion
 compile_and_run test_unbounded_rational_direct_insertion
@@ -1672,8 +1709,9 @@ compile_and_run test_iso_verts
 compile_and_run test_vert_ray_shoot_vert_segments
 
 test_construction_segments
-test_construction_linear
+test_construction_linear_curves
 test_construction_spherical_arcs
+test_construction_polylines
 
 test_overlay_segments
 test_overlay_spherical_arcs
@@ -1710,6 +1748,8 @@ compile_and_run test_unbounded_removal
 compile_and_run test_spherical_removal
 
 compile_and_run test_io
+
+compile_and_run test_sgm
 
 # if any error occured then append the full error description file to error file
 

@@ -105,6 +105,28 @@ selection belonging to the pencil defined by the two other circles.
 draws the circle orthogonal to the three selected circles.
 </ul>
 
+\subsection cone_spanners_ipelet Cone spanners
+
+The input selection must be a set of points. The value of k is asked
+in a dialog box.
+
+<ul>
+<li><b>Theta-k-graph:</b>
+Draws a theta-graph with k cones
+<li><b>Yao-k-graph:</b>
+Draws a Yao-graph with k cones
+<li><b>Half-theta-k-graph with even cones:</b>
+Draws an half-theta-graph with the even of k cones.
+<li><b>Half-Yao-k-graph with even cones:</b>
+Draws an half-Yao-graph with the even of k cones.
+<li><b>Half-theta-k-graph with odd cones:</b>
+Draws an half-theta-graph with the odd of k cones.
+<li><b>Half-Yao-k-graph with odd cones:</b>
+Draws an half-Yao-graph with the odd of k cones.
+<li><b>k cones:</b> For earch selected point.
+Draws the k cones around the point.
+</ul>
+
 \subsection diagrams_ipelet Diagrams
 <ul>
 <li><b> Voronoi:</b>

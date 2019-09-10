@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Sylvain Pion
@@ -60,5 +61,7 @@ class Real_embeddable_traits< ::__gmp_expr<T,U> >
     : public Real_embeddable_traits< ::__gmp_expr<T,T> >{};
 
 } //namespace CGAL
+
+#include <CGAL/GMPXX_arithmetic_kernel.h>
 
 #endif // CGAL_GMPXX_H

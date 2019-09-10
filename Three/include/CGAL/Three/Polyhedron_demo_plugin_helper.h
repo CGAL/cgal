@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU
@@ -21,6 +22,9 @@
 //! \file Polyhedron_demo_plugin_helper.h 
 #ifndef POLYHEDRON_DEMO_OPERATION_HELPER_H
 #define POLYHEDRON_DEMO_OPERATION_HELPER_H
+
+#include <CGAL/license/Three.h>
+
 
 #include "Scene_item_config.h" //defines SCENE_ITEM_EXPORT
 
@@ -47,11 +51,9 @@ class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
 public:
 
   /*! \brief Gets an item of the templated type.
-   *
-   * The function first checks if the selected item is of the wanted type. If not, it  will look in the scene entries if there is at least one item of the
-   * right type, make it the selection and return it.
-   * \return the first item found with the templated type
-   * \return NULL if none is found
+   * \returns The currently selected `SceneType` item
+   * \returns the first `SceneType` item found in the scene's list of items if the selected item is not a `SceneType`
+   * \returns NULL if there is no `SceneType` in the list.
    */
   template<class SceneType>
   SceneType* getSelectedItem() const{
@@ -81,7 +83,8 @@ public:
   void addDockWidget(QDockWidget* dock);
   /*! \brief Automatically connects each action of the plugin to the corresponding slot.
    *
-   * All actions in actions() must have their slot name on_ActionsName_triggered().
+   * \attention Each action named `ActionName` in the plugin's `actions()` list must have a corresponding slot named `on_ActionsName_triggered()`
+   * in the plugin.
    */
   void autoConnectActions();
 protected:

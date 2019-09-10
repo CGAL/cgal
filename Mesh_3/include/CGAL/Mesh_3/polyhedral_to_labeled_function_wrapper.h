@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stéphane Tayeb
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_MESH_3_POLYHEDRAL_TO_LABELED_FUNCTION_WRAPPER_H
 #define CGAL_MESH_3_POLYHEDRAL_TO_LABELED_FUNCTION_WRAPPER_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 
 #include <CGAL/AABB_tree.h>

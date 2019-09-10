@@ -96,8 +96,6 @@ const int     TET_SHAPE                = 3;
   // =====================
 
 //# define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
-//# define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-//# define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT // default
 
   // ==========================================================================
   // Profiling
@@ -383,13 +381,9 @@ std::string get_technique()
 #ifdef CGAL_CONCURRENT_MESH_3
 
   tech += "Task-scheduler (auto";
-# if defined(CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET)
-    tech += ", sorted batches with multiset";
-# elif defined(CGAL_MESH_3_LOAD_BASED_WORKSHARING)
+# ifdef CGAL_MESH_3_LOAD_BASED_WORKSHARING
     tech += ", load-based worksharing";
-# else // CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
-    tech += ", sorted batches with std::sort";
-# endif
+#endif
   tech += ")";
 
 #else // !CGAL_CONCURRENT_MESH_3

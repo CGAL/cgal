@@ -1,16 +1,18 @@
+
+#include "test_dependencies.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel            K;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K>              Traits;
-typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, Traits>  Vb;
+typedef K                                                              Traits;
+typedef CGAL::Regular_triangulation_vertex_base_3<Traits>  Vbb;
+typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, Traits,Vbb>  Vb;
 typedef CGAL::Triangulation_data_structure_3<Vb,CGAL::Regular_triangulation_cell_base_3<Traits> > Tds;
 typedef CGAL::Regular_triangulation_3<Traits, Tds>                     Regular;
-typedef Traits::Weighted_point                                         Weighted_point;
-typedef Traits::Bare_point                                             Point;
+typedef K::Weighted_point_3                                            Weighted_point;
+typedef K::Point_3                                                     Point;
 
 #ifdef CGAL_LINKED_WITH_TBB
 typedef CGAL::Spatial_lock_grid_3<CGAL::Tag_priority_blocking>         Lock_ds;
@@ -117,7 +119,7 @@ void test_zip_iterator(){
 #endif
 }
 
-struct Auto_count : public std::unary_function<const Weighted_point&,std::pair<Weighted_point,unsigned> >{
+struct Auto_count : public CGAL::unary_function<const Weighted_point&,std::pair<Weighted_point,unsigned> >{
   mutable unsigned i;
   Auto_count() : i(0){}
   std::pair<Weighted_point,unsigned> operator()(const Weighted_point& p) const {

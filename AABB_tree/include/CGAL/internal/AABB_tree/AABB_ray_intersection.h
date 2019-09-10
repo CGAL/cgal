@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s) : Philipp Moeller
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_AABB_RAY_INTERSECTION_H
 #define CGAL_AABB_RAY_INTERSECTION_H
+
+#include <CGAL/license/AABB_tree.h>
+
 
 #include <functional>
 #include <boost/optional.hpp>
@@ -179,18 +183,25 @@ private:
     as_ray_param_visitor(const Ray* ray) : ray(ray) {}
 
     template<typename T>
-    FT operator()(const T&)
-    { std::cout << "not handled" << std::endl; return FT(); }
+    FT operator()(const T& s)
+    {
+      // intersection is a segment, returns the min relative distance
+      // of its endpoints
+      FT r1 = this->operator()(s[0]);
+      FT r2 = this->operator()(s[1]);
+      return (std::min)(r1,r2);
+    }
 
     FT operator()(const Point& point) {
       typename AABB_traits::Geom_traits::Vector_3 x(ray->source(), point);
       typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
 
       for(int i = 0; i < 3; ++i) {
-        if(v[0] != FT(0.)) {
-          return x[0] / v[0];
+        if(v[i] != FT(0.)) {
+          return x[i] / v[i];
         }
       }
+      CGAL_assertion(false); // should never end-up here
       return FT(0.);
     }
 

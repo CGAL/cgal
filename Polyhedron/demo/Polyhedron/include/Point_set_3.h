@@ -1,4 +1,23 @@
-// Author: Laurent Saboret, Nader Salman, Gael Guennebaud
+// Copyright (c) 2007-2016  INRIA (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+//
+// Author(s)     : Laurent Saboret, Nader Salman, Gael Guennebaud, Simon Giraudot
 
 #ifndef POINT_SET_3_H
 #define POINT_SET_3_H
@@ -7,17 +26,17 @@
 #include <CGAL/Min_sphere_of_spheres_d.h>
 #include <CGAL/Min_sphere_of_points_d_traits_3.h>
 #include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
-#include <UI_point_3.h>
+#include <CGAL/Point_set_3.h>
+#include <CGAL/Iterator_range.h>
+
 #include <algorithm>
 #include <vector>
-# include <CGAL/gl.h>
 
 /// The Point_set_3 class is array of points + normals of type
 /// Point_with_normal_3<Gt> (in fact
 /// UI_point_3 to support a selection flag and an optional radius).
 /// It provides:
 /// - accessors: points and normals iterators, property maps
-/// - OpenGL rendering
 /// - bounding box
 ///
 /// CAUTION:
@@ -31,27 +50,12 @@
 /// @param Gt       Geometric traits class.
 
 template <class Gt>
-class Point_set_3 : public std::vector<UI_point_3<Gt> >
+class Point_set_3 : public CGAL::Point_set_3<typename Gt::Point_3,
+                                             typename Gt::Vector_3>
 {
-// Private types
-private:
-
-  // Base class
-  typedef std::vector<UI_point_3<Gt> > Base;
-
-// Public types
+  
 public:
 
-  // Repeat base class' types
-  /// @cond SKIP_IN_MANUAL
-  typedef typename Base::iterator iterator;
-  typedef typename Base::const_iterator const_iterator;
-
-  using Base::erase;
-
-  /// @endcond
-
-  // Classic CGAL geometric types
   typedef Gt  Geom_traits; ///< Geometric traits class.
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;  ///< typedef to Geom_traits::Point_3
@@ -59,27 +63,41 @@ public:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  /// Type of points in Point_set_3
-  typedef UI_point_3<Gt> UI_point; ///< Position + normal + selection flag
-  // Its superclass:
-  typedef typename UI_point::Point_with_normal Point_with_normal; ///< Position + normal
+  // Base class
+  typedef CGAL::Point_set_3<Point, Vector> Base;
 
-// Data members
+  typedef typename Base::iterator iterator;
+  typedef typename Base::const_iterator const_iterator;
+  typedef typename Base::Index Index;
+  
+  // Classic CGAL geometric types
+
+  typedef typename Base::template Property_map<double> Double_map;
+  typedef typename Base::template Property_map<unsigned char> Byte_map;
+  
 private:
-
+  
   // Indicate if m_barycenter, m_bounding_box, m_bounding_sphere and
   // m_diameter_standard_deviation below are valid.
   mutable bool m_bounding_box_is_valid;
-
   mutable Iso_cuboid m_bounding_box; // point set's bounding box
   mutable Sphere m_bounding_sphere; // point set's bounding sphere
   mutable Point m_barycenter; // point set's barycenter
   mutable FT m_diameter_standard_deviation; // point set's standard deviation
 
-  std::size_t m_nb_selected; // handle selection
-
   bool m_radii_are_uptodate;
 
+  Double_map m_radius;
+  Byte_map m_red;
+  Byte_map m_green;
+  Byte_map m_blue;
+  Double_map m_fred;
+  Double_map m_fgreen;
+  Double_map m_fblue;
+  
+  mutable CGAL::Iterator_range<const_iterator> m_const_range;
+  CGAL::Iterator_range<iterator> m_range;
+  
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
   Point_set_3& operator= (const Point_set_3&)
@@ -88,91 +106,266 @@ private:
   }
 
   
-// Public methods
 public:
-
-  /// Default constructor.
-  Point_set_3()
+  
+  Point_set_3 ()
+    : m_const_range (begin(), end())
+    , m_range (begin(), end())
   {
-    m_nb_selected = 0;
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
   }
 
   // copy constructor 
-  Point_set_3 (const Point_set_3& p) : Base (p)
+  Point_set_3 (const Point_set_3& p)
+    : Base (p)
+    , m_const_range (begin(), end())
+    , m_range (begin(), end())
   {
+    check_colors();
     m_bounding_box_is_valid = p.m_bounding_box_is_valid;
     m_bounding_box = p.m_bounding_box;
     m_barycenter = p.m_barycenter;
     m_diameter_standard_deviation = p.m_diameter_standard_deviation;
-
-    m_nb_selected = p.nb_selected_points ();
-    
     m_radii_are_uptodate = p.m_radii_are_uptodate;
   }
 
-  // Repeat base class' public methods used below
-  /// @cond SKIP_IN_MANUAL
-  using Base::begin;
-  using Base::end;
-  using Base::size;
-  /// @endcond
+  iterator begin() { return this->m_indices.begin(); }
+  iterator end() { return this->m_indices.end(); }
+  const_iterator begin() const { return this->m_indices.begin(); }
+  const_iterator end() const { return this->m_indices.end(); }
+  std::size_t size() const { return this->m_base.size(); }
 
-  iterator first_selected() { return end() - m_nb_selected; }
-  const_iterator first_selected() const { return end () - m_nb_selected; }
+  void reset_indices()
+  {
+    unselect_all();
+    
+    for (std::size_t i = 0; i < this->m_base.size(); ++ i)
+      this->m_indices[i] = i;
+  }
+  
+  bool add_radius()
+  {
+    bool out = false;
+    boost::tie (m_radius, out) = this->template add_property_map<double> ("radius", 0.);
+    return out;
+  }
+  double& radius (const Index& index) { return m_radius[index]; }
+  const double& radius (const Index& index) const { return m_radius[index]; }
+
+  bool check_colors()
+  {
+    bool found = false;
+    
+    boost::tie (m_red, found) = this->template property_map<unsigned char>("red");
+    if (!found)
+      {
+        boost::tie (m_red, found) = this->template property_map<unsigned char>("r");
+        if (!found)
+          return get_float_colors();
+      }
+
+    boost::tie (m_green, found) = this->template property_map<unsigned char>("green");
+    if (!found)
+      {
+        boost::tie (m_green, found) = this->template property_map<unsigned char>("g");
+        if (!found)
+          return false;
+      }
+
+    boost::tie (m_blue, found) = this->template property_map<unsigned char>("blue");
+    if (!found)
+      {
+        boost::tie (m_blue, found) = this->template property_map<unsigned char>("b");
+        if (!found)
+          return false;
+      }
+
+    return true;
+  }
+
+  bool get_float_colors()
+  {
+    bool found = false;
+
+    boost::tie (m_fred, found) = this->template property_map<double>("red");
+    if (!found)
+      {
+        boost::tie (m_fred, found) = this->template property_map<double>("r");
+        if (!found)
+          return get_las_colors();
+      }
+
+    boost::tie (m_fgreen, found) = this->template property_map<double>("green");
+    if (!found)
+      {
+        boost::tie (m_fgreen, found) = this->template property_map<double>("g");
+        if (!found)
+          return false;
+      }
+
+    boost::tie (m_fblue, found) = this->template property_map<double>("blue");
+    if (!found)
+      {
+        boost::tie (m_fblue, found) = this->template property_map<double>("b");
+        if (!found)
+          return false;
+      }
+    return true;
+  }
+
+  bool get_las_colors()
+  {
+    bool found = false;
+    
+    typedef typename Base::template Property_map<unsigned short> Ushort_map;
+    Ushort_map red, green, blue;
+    
+    boost::tie (red, found) = this->template property_map<unsigned short>("R");
+    if (!found)
+      return false;
+
+    boost::tie (green, found) = this->template property_map<unsigned short>("G");
+    if (!found)
+      return false;
+
+    boost::tie (blue, found) = this->template property_map<unsigned short>("B");
+    if (!found)
+      return false;
+
+    unsigned int bit_short_to_char = 0;
+    for (iterator it = begin(); it != end(); ++ it)
+      if (get(red, *it) > 255
+          || get(green, *it) > 255
+          || get(blue, *it) > 255)
+        {
+          bit_short_to_char = 8;
+          break;
+        }
+
+    m_red = this->template add_property_map<unsigned char>("r").first;
+    m_green = this->template add_property_map<unsigned char>("g").first;
+    m_blue = this->template add_property_map<unsigned char>("b").first;
+    for (iterator it = begin(); it != end(); ++ it)
+      {
+        put (m_red, *it, (unsigned char)((get(red, *it) >> bit_short_to_char)));
+        put (m_green, *it, (unsigned char)((get(green, *it) >> bit_short_to_char)));
+        put (m_blue, *it, (unsigned char)((get(blue, *it) >> bit_short_to_char)));
+      }
+    this->remove_property_map(red);
+    this->remove_property_map(green);
+    this->remove_property_map(blue);
+    
+    return true;
+  }
+
+  bool has_colors() const
+  {
+    return (m_blue != Byte_map() || m_fblue != Double_map());
+  }
+
+  bool has_byte_colors() const
+  {
+    return (m_blue != Byte_map());
+  }
+    
+  void remove_colors()
+  {
+    if (m_blue != Byte_map())
+      {
+        this->template remove_property_map<unsigned char>(m_red);
+        this->template remove_property_map<unsigned char>(m_green);
+        this->template remove_property_map<unsigned char>(m_blue);
+      }
+    if (m_fblue != Double_map())
+      {
+        this->template remove_property_map<double>(m_fred);
+        this->template remove_property_map<double>(m_fgreen);
+        this->template remove_property_map<double>(m_fblue);
+      }
+  }
+  
+  double red (const Index& index) const
+  { return (m_red == Byte_map()) ? m_fred[index]  : double(m_red[index]) / 255.; }
+  double green (const Index& index) const
+  { return (m_green == Byte_map()) ? m_fgreen[index]  : double(m_green[index]) / 255.; }
+  double blue (const Index& index) const
+  { return (m_blue == Byte_map()) ? m_fblue[index]  : double(m_blue[index]) / 255.; }
+  void set_color (const Index& index, unsigned char r, unsigned char g, unsigned char b)
+  {
+    m_red[index] = r;
+    m_green[index] = g;
+    m_blue[index] = b;
+  }
+
+    
+  
+  iterator first_selected() { return this->m_indices.end() - this->m_nb_removed; }
+  const_iterator first_selected() const { return this->m_indices.end() - this->m_nb_removed; }
   void set_first_selected(iterator it)
   {
-    m_nb_selected = static_cast<std::size_t>(std::distance (it, end()));
+    this->remove_from (it);
   }
 
   const_iterator begin_or_selection_begin() const
   {
-    return (m_nb_selected == 0 ? begin() : first_selected());
+    return (this->m_nb_removed == 0 ? begin() : first_selected());
   }
   iterator begin_or_selection_begin()
   {
-    return (m_nb_selected == 0 ? begin() : first_selected());
+    return (this->m_nb_removed == 0 ? begin() : first_selected());
   }
+
+  const CGAL::Iterator_range<const_iterator>& all_or_selection_if_not_empty() const
+  {
+    m_const_range = CGAL::make_range (begin_or_selection_begin(), end());
+    return m_const_range;
+  }
+  CGAL::Iterator_range<iterator>& all_or_selection_if_not_empty()
+  {
+    m_range = CGAL::make_range (begin_or_selection_begin(), end());
+    return m_range;
+  }
+
 
   // Test if point is selected
   bool is_selected(const_iterator it) const
   {
-    return static_cast<std::size_t>(std::distance (it, end())) <= m_nb_selected;
+    return this->is_removed (it);
   }
 
   /// Gets the number of selected points.
   std::size_t nb_selected_points() const
   {
-    return m_nb_selected;
+    return this->number_of_removed_points();
   }
 
   /// Mark a point as selected/not selected.
   void select(iterator it, bool selected = true)
   {
     bool currently = is_selected (it);
-    iterator first = first_selected();
+    iterator first = this->first_selected();
+    --first;
     if (currently && !selected)
       {
         std::swap (*it, *first);
-        -- m_nb_selected;
+        -- this->m_nb_removed;
       }
     else if (!currently && selected)
       {
-        std::swap (*it, *(-- first));
-        ++ m_nb_selected;
+        std::swap (*it, *first);
+        ++ this->m_nb_removed;
       }
   }
 
   void select_all()
   {
-    m_nb_selected = size ();
+    this->m_nb_removed = size ();
   }
   void unselect_all()
   {
-    m_nb_selected = 0;
+    this->m_nb_removed = 0;
   }
-
 
   // Invert selection
   void invert_selection()
@@ -180,27 +373,51 @@ public:
     iterator sel = end() - 1;
     iterator unsel = begin();
 
-    iterator first = first_selected();
+    iterator first = this->first_selected();
 
     while (sel != first - 1 && unsel != first)
       std::swap (*(sel --), *(unsel ++));
     
-    m_nb_selected = size() - m_nb_selected;
+    this->m_nb_removed = size() - this->m_nb_removed;
   }
 
   /// Deletes selected points.
   void delete_selection()
   {
-    // Deletes selected points using erase-remove idiom
-    erase (first_selected(), end ());
-
-    // after erase(), use Scott Meyer's "swap trick" to trim excess capacity
-    Point_set_3(*this).swap(*this);
-    m_nb_selected = 0;
+    this->collect_garbage();
     invalidate_bounds();
   }
 
-  /// Gets the bounding box.
+  void merge_with (Point_set_3& other)
+  {
+    if (!(this->has_normal_map()) && other.has_normal_map())
+      this->add_normal_map();
+    if (!(this->has_colors()) && other.has_colors())
+      {
+        if (other.template has_property_map<unsigned char>("red"))
+          {
+            boost::tie (m_red, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("red", 0);
+            boost::tie (m_green, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("green", 0);
+            boost::tie (m_blue, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("blue", 0);
+          }
+        else
+          {
+            boost::tie (m_red, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("r", 0);
+            boost::tie (m_green, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("g", 0);
+            boost::tie (m_blue, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("b", 0);
+          }
+      }
+
+    this->join (other);
+  }
+
+    /// Gets the bounding box.
   Iso_cuboid bounding_box() const
   {
     if (!m_bounding_box_is_valid)
@@ -256,15 +473,26 @@ public:
   {
     m_bounding_box_is_valid = false;
   }
-
-
-
-
   
   bool are_radii_uptodate() const { return m_radii_are_uptodate; }
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
+  
+  CGAL::cgal_bgl_named_params
+  <Kernel,
+   CGAL::internal_np::geom_traits_t,
+   CGAL::cgal_bgl_named_params
+   <typename Base::template Property_map<Vector>,
+    CGAL::internal_np::normal_t,
+    CGAL::cgal_bgl_named_params
+    <typename Base::template Property_map<Point>,
+     CGAL::internal_np::point_t> > >
+  inline parameters() const
+  {
+    return CGAL::parameters::point_map (this->m_points).
+      normal_map (this->m_normals).
+      geom_traits (Kernel());
+  }
 
-// Private methods:
 private:
 
   /// Recompute barycenter, bounding box, bounding sphere and standard deviation.
@@ -282,8 +510,8 @@ private:
     FT norm = 0;
     for (const_iterator it = begin(); it != end(); it++)
     {
-      const Point& p = *it;
-
+      const Point& p = this->point(*it);
+      
       // update bbox
       xmin = (std::min)(p.x(),xmin);
       ymin = (std::min)(p.y(),ymin);
@@ -307,7 +535,7 @@ private:
     typedef CGAL::Min_sphere_of_points_d_traits_3<Gt,FT> Traits;
     typedef CGAL::Min_sphere_of_spheres_d<Traits> Min_sphere;
 
-    Min_sphere ms(begin(),end());
+    Min_sphere ms(this->m_points.begin(), this->m_points.end());
 
     typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
     FT cx = *coord++;
@@ -316,17 +544,47 @@ private:
     m_bounding_sphere = Sphere(Point(cx,cy,cz), ms.radius()*ms.radius());
 
     // Computes standard deviation of the distance to barycenter
-    typename Geom_traits::Compute_squared_distance_3 sqd;
+    typename Gt::Compute_squared_distance_3 sqd;
     FT sq_radius = 0;
     for (const_iterator it = begin(); it != end(); it++)
-        sq_radius += sqd(*it, m_barycenter);
+      sq_radius += sqd(this->point(*it), m_barycenter);
     sq_radius /= FT(size());
     m_diameter_standard_deviation = CGAL::sqrt(sq_radius);
 
     m_bounding_box_is_valid = true;
   }
-
+  
 }; // end of class Point_set_3
 
+namespace CGAL
+{
+namespace Point_set_processing_3
+{
+  template<typename Kernel>
+  class GetFT<::Point_set_3<Kernel> >
+  {
+  public:
+    typedef typename Kernel::FT type;
+  };
+  
+  namespace parameters
+  {
+    template <typename Kernel>
+    cgal_bgl_named_params
+    <Kernel,
+     internal_np::geom_traits_t,
+     cgal_bgl_named_params
+     <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Vector_3>,
+      internal_np::normal_t,
+      cgal_bgl_named_params
+      <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Point_3>,
+       internal_np::point_t> > >
+    inline all_default(const ::Point_set_3<Kernel>& ps)
+    {
+      return ps.parameters();
+    }
+  }
+}
+}
 
 #endif // POINT_SET_3_H

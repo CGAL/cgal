@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
 #define CGAL_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 
 #include <CGAL/Triangulation_cell_base_3.h>

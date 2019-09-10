@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -51,7 +52,7 @@ class Domain_with_polyline_tester
   typedef std::list<Polyline> Polylines;
   
   typedef Mesh_domain::Corner_index         Ci;
-  typedef Mesh_domain::Curve_segment_index  Csi;
+  typedef Mesh_domain::Curve_index          Csi;
   typedef Mesh_domain::Index                Index;
   
   typedef std::vector<std::pair<Ci, Point> >        Corners_vector;
@@ -64,7 +65,7 @@ public:
     : p1_(1,0,0), p2_(1,1,0), p3_(1,2,0.1), p4_(0.9, 0.9, 1)
   { }
   
-  void build_curve_segment()
+  void build_curve()
   {
     Polylines polylines (1);
     Polyline& polyline = polylines.front();
@@ -90,7 +91,7 @@ public:
     domain_.add_features(polylines.begin(),polylines.end());    
   }
   
-  void test_curve_segment_corners() const
+  void test_curve_corners() const
   {
     Corners_vector corners;
     domain_.get_corners(std::back_inserter(corners));
@@ -105,10 +106,10 @@ public:
     Corners_vector corners;
     domain_.get_corners(std::back_inserter(corners));
     
-    assert(corners.empty());
+    assert(corners.size() == 1);
   }
   
-  void test_curve_segments() const
+  void test_curves() const
   {
     std::pair<Point,Point> extremities = get_extremities();
     
@@ -129,27 +130,27 @@ public:
     std::pair<Point,Point> extremities = get_extremities();
     const Point& p = extremities.first;
     const Point& q = extremities.second;
-    const Csi& curve_index = get_curve_segment_index();
+    const Csi& curve_index = get_curve_index();
     
     const FT geod (1.3);
-    Point r = domain_.construct_point_on_curve_segment(p,curve_index,geod);
-    const FT& pq_geo = domain_.geodesic_distance(p,q,curve_index);
+    Point r = domain_.construct_point_on_curve(p,curve_index,geod);
+    const FT& pq_geo = domain_.signed_geodesic_distance(p,q,curve_index);
     
     assert(CGAL::squared_distance(p,r) < CGAL::square(geod));
-    assert(near_equal(domain_.geodesic_distance(p,r,curve_index), geod));
-    assert(near_equal(domain_.geodesic_distance(r,q,curve_index), pq_geo - geod));
-    assert(near_equal(domain_.geodesic_distance(q,r,curve_index), geod - pq_geo));
+    assert(near_equal(domain_.signed_geodesic_distance(p,r,curve_index), geod));
+    assert(near_equal(domain_.signed_geodesic_distance(r,q,curve_index), pq_geo - geod));
+    assert(near_equal(domain_.signed_geodesic_distance(q,r,curve_index), geod - pq_geo));
   }
   
 private:
   std::pair<Point,Point> get_extremities() const
   {
-    Curves_vector curve_segments;
-    domain_.get_curve_segments(std::back_inserter(curve_segments));
-    assert(curve_segments.size() == 1);
+    Curves_vector curves;
+    domain_.get_curves(std::back_inserter(curves));
+    assert(curves.size() == 1);
     
-    const Point& p = get_first_point(curve_segments.front());
-    const Point& q = get_second_point(curve_segments.front());
+    const Point& p = get_first_point(curves.front());
+    const Point& q = get_second_point(curves.front());
     
     return std::make_pair(p,q);
   }
@@ -164,16 +165,16 @@ private:
     return CGAL::cpp11::get<2>(tuple).first;
   }
   
-  Csi get_curve_segment_index() const
+  Csi get_curve_index() const
   {
-    Curves_vector curve_segments;
-    domain_.get_curve_segments(std::back_inserter(curve_segments));
-    assert(curve_segments.size() == 1);
+    Curves_vector curves;
+    domain_.get_curves(std::back_inserter(curves));
+    assert(curves.size() == 1);
     
-    return get_curve_segment_index(curve_segments.front());
+    return get_curve_index(curves.front());
   }
   
-  Csi get_curve_segment_index(const Curve_tuple& tuple) const
+  Csi get_curve_index(const Curve_tuple& tuple) const
   {
     return CGAL::cpp11::get<0>(tuple);
   }
@@ -193,10 +194,10 @@ int main()
 {
   std::cout << "Test curve segments" << std::endl;
   Domain_with_polyline_tester domain_tester;
-  domain_tester.build_curve_segment();
+  domain_tester.build_curve();
   
-  domain_tester.test_curve_segment_corners();
-  domain_tester.test_curve_segments();
+  domain_tester.test_curve_corners();
+  domain_tester.test_curves();
   domain_tester.test_geodesic_distance();
   
   std::cout << "Test cycles" << std::endl;

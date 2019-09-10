@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Michael Hemmer    <hemmer@mpi-inf.mpg.de>
@@ -111,7 +112,7 @@ class Algebraic_structure_traits_base< Type_, Null_tag > {
 
     // does nothing by default
     class Simplify 
-      : public std::unary_function< Type&, void > {
+      : public CGAL::unary_function< Type&, void > {
       public:
         void operator()( Type& ) const {}
     };
@@ -150,7 +151,7 @@ class Algebraic_structure_traits_base< Type_,
 
     // returns Type(1) by default
     class Unit_part 
-      : public std::unary_function< Type, Type > { 
+      : public CGAL::unary_function< Type, Type > { 
       public:
         Type operator()( const Type& x ) const {
           return( x < Type(0)) ? 
@@ -159,7 +160,7 @@ class Algebraic_structure_traits_base< Type_,
     };
     
     class Square 
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:        
         Type operator()( const Type& x ) const {
           return x*x;
@@ -167,7 +168,7 @@ class Algebraic_structure_traits_base< Type_,
     };
     
     class Is_zero 
-      : public std::unary_function< Type, bool > {
+      : public CGAL::unary_function< Type, bool > {
       public:        
         bool operator()( const Type& x ) const {
           return x == Type(0);
@@ -175,7 +176,7 @@ class Algebraic_structure_traits_base< Type_,
     };
 
     class Is_one 
-      : public std::unary_function< Type, bool > {
+      : public CGAL::unary_function< Type, bool > {
       public:        
         bool operator()( const Type& x ) const {
           return x == Type(1);
@@ -220,7 +221,7 @@ class Algebraic_structure_traits_base< Type_,
   // Default implementation of Divides functor for unique factorization domains
   // x divides y if gcd(y,x) equals x up to inverses 
   class Divides 
-    : public std::binary_function<Type,Type,bool>{ 
+    : public CGAL::binary_function<Type,Type,bool>{
   public:
     bool operator()( const Type& x,  const Type& y) const {  
       typedef CGAL::Algebraic_structure_traits<Type> AST;
@@ -256,7 +257,7 @@ class Algebraic_structure_traits_base< Type_,
 
     // maps to \c Div by default.
     class Integral_division 
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Type > { 
       public:
         Type operator()( 
@@ -278,7 +279,7 @@ class Algebraic_structure_traits_base< Type_,
 
     // Algorithm from NiX/euclids_algorithm.h
     class Gcd 
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Type > { 
       public:
         Type operator()( 
@@ -371,7 +372,7 @@ class Algebraic_structure_traits_base< Type_,
     
     // based on \c Div_mod.
     class Div 
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x, 
@@ -389,7 +390,7 @@ class Algebraic_structure_traits_base< Type_,
 
     // based on \c Div_mod.
     class Mod 
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Type > { 
       public:
         Type operator()( const Type& x, 
@@ -407,7 +408,7 @@ class Algebraic_structure_traits_base< Type_,
 
   // Divides for Euclidean Ring 
   class Divides 
-    : public std::binary_function<Type, Type, bool>{
+    : public CGAL::binary_function<Type, Type, bool>{
   public:
     bool operator()( const Type& x, const Type& y) const {
       typedef Algebraic_structure_traits<Type> AST;
@@ -447,7 +448,7 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
 
     // returns the argument \a a by default
     class Unit_part 
-      : public std::unary_function< Type, Type > { 
+      : public CGAL::unary_function< Type, Type > { 
       public:
         Type operator()( const Type& x ) const {
             return( x == Type(0)) ? Type(1) : x;
@@ -455,7 +456,7 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
     };
     // maps to \c operator/ by default.
     class Integral_division 
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Type > { 
       public:
         Type operator()( const Type& x, 
@@ -474,7 +475,7 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
   
   // maps to \c 1/x by default.
   class Inverse 
-    : public std::unary_function< Type, Type > { 
+    : public CGAL::unary_function< Type, Type > { 
   public:
     Type operator()( const Type& x ) const { 
       return Type(1)/x;
@@ -486,7 +487,7 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
   // returns always true
   // \pre: x != 0
   class Divides
-    : public std::binary_function< Type, Type, bool > { 
+    : public CGAL::binary_function< Type, Type, bool > {
   public:
     bool operator()( const Type& CGAL_precondition_code(x), const Type& /* y */) const {
       CGAL_precondition_code( typedef Algebraic_structure_traits<Type> AST);
@@ -522,7 +523,7 @@ class Algebraic_structure_traits_base< Type_,
     typedef Field_with_sqrt_tag   Algebraic_category;
 
     struct Is_square
-        :public std::binary_function<Type,Type&,bool>
+        :public CGAL::binary_function<Type,Type&,bool>
     {
         bool operator()(const Type& ) const {return true;}
         bool operator()(
@@ -579,7 +580,7 @@ class Algebraic_structure_traits_base< Type_,
 namespace INTERN_AST {
   template< class Type >
   class Div_per_operator 
-    : public std::binary_function< Type, Type, 
+    : public CGAL::binary_function< Type, Type,
                               Type > {
     public:      
       Type operator()( const Type& x, 
@@ -592,7 +593,7 @@ namespace INTERN_AST {
   
   template< class Type >
   class Mod_per_operator 
-    : public std::binary_function< Type, Type,
+    : public CGAL::binary_function< Type, Type,
                               Type > {
     public:
       Type operator()( const Type& x, 
@@ -605,7 +606,7 @@ namespace INTERN_AST {
   
   template< class Type >
   class Is_square_per_sqrt
-    : public std::binary_function< Type, Type&,
+    : public CGAL::binary_function< Type, Type&,
                               bool > {
     public:      
       bool operator()( const Type& x, 

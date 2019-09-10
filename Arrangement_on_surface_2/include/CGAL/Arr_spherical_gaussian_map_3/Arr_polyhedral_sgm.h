@@ -12,11 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efif@post.tau.ac.il>
 //            Naama mayer       <naamamay@post.tau.ac.il>
 
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_H
 #define CGAL_ARR_POLYHEDRAL_SGM_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Polyhedral _sgm is a data dtructure that represents a 3D convex polyhedron.
@@ -332,7 +339,6 @@ private:
   virtual void handle_new_edge(typename Base::Halfedge_handle edge)
   {
     typedef typename Base::Face_handle          Arr_face_handle;
-    typedef typename Base::Vertex_handle        Arr_vertex_handle;
 
     Arr_face_handle src_face = edge->twin()->face();
     Arr_face_handle trg_face = edge->face();

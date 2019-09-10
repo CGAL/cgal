@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Jane Tournois
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_H
+
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
@@ -41,22 +46,22 @@ namespace Polygon_mesh_processing {
 * edge flips, tangential relaxation and projection to the initial surface
 * to generate a smooth mesh with a prescribed edge length.
 *
-* @tparam PolygonMesh model of `MutableFaceGraph` that 
-*         has an internal property map for `CGAL::vertex_point_t`.
+* @tparam PolygonMesh model of `MutableFaceGraph`.
 *         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized
+*         as a named parameter, then the internal one must be initialized
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
-* @tparam NamedParameters a sequence of \ref namedparameters
+* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
 * @param faces the range of triangular faces defining one or several surface patches to be remeshed
-* @param target_edge_length the edge length that is targetted in the remeshed patch
-* @param np optional sequence of \ref namedparameters among the ones listed below
+* @param target_edge_length the edge length that is targeted in the remeshed patch.
+*        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
+* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 * @pre if constraints protection is activated, the constrained edges should
 * not be longer than 4/3*`target_edge_length`
@@ -74,7 +79,7 @@ namespace Polygon_mesh_processing {
 *    sequence of atomic operations performed (listed in the above description)
 *  \cgalParamEnd
 *  \cgalParamBegin{edge_is_constrained_map} a property map containing the
-*    constrained-or-not status of each edge of `pmesh`. A constrained edge can be splitted
+*    constrained-or-not status of each edge of `pmesh`. A constrained edge can be split
 *    or collapsed, but not flipped, nor its endpoints moved by smoothing.
 *    Note that patch boundary edges (i.e. incident to only one face in the range)
 *    are always considered as constrained edges.
@@ -85,7 +90,7 @@ namespace Polygon_mesh_processing {
 *  \cgalParamEnd
 *  \cgalParamBegin{protect_constraints} If `true`, the edges set as constrained
 *     in `edge_is_constrained_map` (or by default the boundary edges)
-*     are not splitted nor collapsed during remeshing.
+*     are not split nor collapsed during remeshing.
 *     Note that around constrained edges that have their length higher than
 *     twice `target_edge_length`, remeshing will fail to provide
 *     good quality results. It can even fail to terminate because of cascading vertex
@@ -143,48 +148,47 @@ void isotropic_remeshing(const FaceRange& faces
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_param(get_param(np, vertex_point),
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
 
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
-  FIMap fimap = choose_param(get_param(np, face_index),
+  FIMap fimap = choose_param(get_param(np, internal_np::face_index),
                            get_property_map(face_index, pmesh));
 
   typedef typename boost::lookup_named_param_def <
-      CGAL::edge_is_constrained_t,
+      internal_np::edge_is_constrained_t,
       NamedParameters,
       internal::Border_constraint_pmap<PM, FaceRange, FIMap>//default
     > ::type ECMap;
   ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PM, FaceRange, FIMap> >::value)
      //avoid constructing the Border_constraint_pmap if it's not used
-    ? choose_param(get_param(np, edge_is_constrained)
+    ? choose_param(get_param(np, internal_np::edge_is_constrained)
                  , internal::Border_constraint_pmap<PM, FaceRange, FIMap>(pmesh, faces, fimap))
-    : choose_param(get_param(np, edge_is_constrained)
+    : choose_param(get_param(np, internal_np::edge_is_constrained)
                  , internal::Border_constraint_pmap<PM, FaceRange, FIMap>());
 
   typedef typename boost::lookup_named_param_def <
-      CGAL::vertex_is_constrained_t,
+      internal_np::vertex_is_constrained_t,
       NamedParameters,
       internal::No_constraint_pmap<vertex_descriptor>//default
     > ::type VCMap;
-  VCMap vcmap = choose_param(get_param(np, vertex_is_constrained),
+  VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              internal::No_constraint_pmap<vertex_descriptor>());
 
   typedef typename boost::lookup_named_param_def <
-      CGAL::face_patch_t,
+      internal_np::face_patch_t,
       NamedParameters,
       internal::Connected_components_pmap<PM, ECMap, FIMap>//default
     > ::type FPMap;
-  FPMap fpmap = (boost::is_same<FPMap, internal::Connected_components_pmap<PM, ECMap, FIMap> >::value)
-    ? choose_param(get_param(np, face_patch),
-      internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap))
-    : choose_param(get_param(np, face_patch),
-      internal::Connected_components_pmap<PM, ECMap, FIMap>());//do not compute cc's
+  FPMap fpmap = choose_param(
+    get_param(np, internal_np::face_patch),
+    internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap,
+        boost::is_default_param(get_param(np, internal_np::face_patch))));
 
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
 
-  bool protect = choose_param(get_param(np, protect_constraints), false);
+  bool protect = choose_param(get_param(np, internal_np::protect_constraints), false);
   if(protect)
   {
     std::string msg("Isotropic remeshing : protect_constraints cannot be set to");
@@ -212,9 +216,9 @@ void isotropic_remeshing(const FaceRange& faces
   std::cout << " done ("<< t.time() <<" sec)." << std::endl;
 #endif
 
-  unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
-  bool smoothing_1d = choose_param(get_param(np, relax_constraints), false);
-  unsigned int nb_laplacian = choose_param(get_param(np, number_of_relaxation_steps), 1);
+  unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  bool smoothing_1d = choose_param(get_param(np, internal_np::relax_constraints), false);
+  unsigned int nb_laplacian = choose_param(get_param(np, internal_np::number_of_relaxation_steps), 1);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   std::cout << std::endl;
@@ -228,9 +232,11 @@ void isotropic_remeshing(const FaceRange& faces
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
-
-    remesher.split_long_edges(high);
-    remesher.collapse_short_edges(low, high);
+    if (target_edge_length>0)
+    {
+      remesher.split_long_edges(high);
+      remesher.collapse_short_edges(low, high);
+    }
     remesher.equalize_valences();
     remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
     remesher.project_to_surface();
@@ -278,13 +284,13 @@ void isotropic_remeshing(
 *         has an internal property map for `CGAL::vertex_point_t`.
 * @tparam EdgeRange range of `boost::graph_traits<PolygonMesh>::%edge_descriptor`,
 *   model of `Range`. Its iterator type is `InputIterator`.
-* @tparam NamedParameters a sequence of \ref namedparameters
+* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * @param pmesh a polygon mesh
 * @param edges the range of edges to be split if they are longer than given threshold
 * @param max_length the edge length above which an edge from `edges` is split
 *        into to sub-edges
-* @param np optional \ref namedparameters described below
+* @param np optional \ref pmp_namedparameters "Named Parameters" described below
 
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
@@ -311,19 +317,19 @@ void split_long_edges(const EdgeRange& edges
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_param(get_param(np, vertex_point),
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
 
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
-  FIMap fimap = choose_param(get_param(np, face_index),
+  FIMap fimap = choose_param(get_param(np, internal_np::face_index),
                              get_property_map(face_index, pmesh));
 
   typedef typename boost::lookup_named_param_def <
-        CGAL::edge_is_constrained_t,
+        internal_np::edge_is_constrained_t,
         NamedParameters,
         internal::No_constraint_pmap<edge_descriptor>//default
       > ::type ECMap;
-  ECMap ecmap = choose_param(get_param(np, edge_is_constrained),
+  ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
                              internal::No_constraint_pmap<edge_descriptor>());
   
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap,
@@ -334,7 +340,7 @@ void split_long_edges(const EdgeRange& edges
     remesher(pmesh, vpmap, false/*protect constraints*/
            , ecmap
            , internal::No_constraint_pmap<vertex_descriptor>()
-           , internal::Connected_components_pmap<PM, ECMap, FIMap>()
+           , internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap, false)
            , fimap
            , false/*need aabb_tree*/);
 
@@ -354,5 +360,7 @@ void split_long_edges(const EdgeRange& edges
 
 } //end namespace Polygon_mesh_processing
 } //end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

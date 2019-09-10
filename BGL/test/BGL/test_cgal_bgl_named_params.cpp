@@ -2,8 +2,11 @@
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 
+#include <cstdlib>
+
 template <int i>
-struct A{
+struct A
+{
   A(int v):v(v){}
   int v;
 };
@@ -19,55 +22,178 @@ void check_same_type(T)
 template<class NamedParameters>
 void test(const NamedParameters& np)
 {
-// test values
-  assert(   get_param(np,boost::vertex_index).v == 0 );
-  assert(   get_param(np,boost::halfedge_index).v == 1 );
-  assert(   get_param(np,boost::face_index).v == 2 );
-  assert(   get_param(np,boost::vertex_point).v == 3 );
-  assert(   get_param(np,CGAL::vertex_is_fixed).v == 4 );
-  assert(   get_param(np,boost::edge_index).v == 5 );
-  assert(   get_param(np,boost::graph_visitor).v == 6 );
-  assert(   get_param(np,CGAL::set_cache_policy).v == 7 );
-  assert(   get_param(np,CGAL::get_cost_policy).v == 8 );
-  assert(   get_param(np,CGAL::get_cost_policy_params).v == 9 );
-  assert(   get_param(np,CGAL::get_placement_policy).v == 10 );
-  assert(   get_param(np,CGAL::get_placement_policy_params).v == 11 );
-  assert(   get_param(np,CGAL::edge_is_constrained).v == 12 );
-  assert(   get_param(np,CGAL::edge_is_constrained_params).v == 13 );
+  using boost::get_param;
 
-//test types
-  check_same_type<0>( get_param(np,boost::vertex_index) );
-  check_same_type<1>( get_param(np,boost::halfedge_index) );
-  check_same_type<2>( get_param(np,boost::face_index) );
-  check_same_type<3>( get_param(np,boost::vertex_point) );
-  check_same_type<4>( get_param(np,CGAL::vertex_is_fixed) );
-  check_same_type<5>( get_param(np,boost::edge_index) );
-  check_same_type<6>( get_param(np,boost::graph_visitor) );
-  check_same_type<7>( get_param(np,CGAL::set_cache_policy) );
-  check_same_type<8>( get_param(np,CGAL::get_cost_policy) );
-  check_same_type<9>( get_param(np,CGAL::get_cost_policy_params) );
-  check_same_type<10>( get_param(np,CGAL::get_placement_policy) );
-  check_same_type<11>( get_param(np,CGAL::get_placement_policy_params) );
-  check_same_type<12>( get_param(np,CGAL::edge_is_constrained) );
-  check_same_type<13>( get_param(np,CGAL::edge_is_constrained_params) );
+  // Test values
+
+    // Named parameters from Boost
+  assert(get_param(np, boost::vertex_index).v == 0);
+  assert(get_param(np, boost::graph_visitor).v == 1);
+
+    // Named parameters that we use in CGAL
+  assert(get_param(np, CGAL::internal_np::vertex_point).v == 2);
+  assert(get_param(np, CGAL::internal_np::halfedge_index).v == 3);
+  assert(get_param(np, CGAL::internal_np::edge_index).v == 4);
+  assert(get_param(np, CGAL::internal_np::face_index).v == 5);
+
+  assert(get_param(np, CGAL::internal_np::edge_is_constrained).v == 6);
+  assert(get_param(np, CGAL::internal_np::first_index).v == 7);
+  assert(get_param(np, CGAL::internal_np::number_of_iterations).v == 8);
+
+  assert(get_param(np, CGAL::internal_np::METIS_options).v == 800000001);
+  assert(get_param(np, CGAL::internal_np::vertex_partition_id).v == 800000002);
+  assert(get_param(np, CGAL::internal_np::face_partition_id).v == 800000003);
+
+    // Named parameters that we use in the package 'Mesh_3'
+  assert(get_param(np, CGAL::internal_np::vertex_feature_degree).v == 9);
+
+    // Named parameters used in the package 'Polygon Mesh Processing'
+  assert(get_param(np, CGAL::internal_np::geom_traits).v == 10);
+  assert(get_param(np, CGAL::internal_np::vertex_incident_patches).v == 11);
+  assert(get_param(np, CGAL::internal_np::density_control_factor).v == 12);
+  assert(get_param(np, CGAL::internal_np::use_delaunay_triangulation).v == 13);
+  assert(get_param(np, CGAL::internal_np::fairing_continuity).v == 14);
+  assert(get_param(np, CGAL::internal_np::sparse_linear_solver).v == 15);
+  assert(get_param(np, CGAL::internal_np::number_of_relaxation_steps).v == 16);
+  assert(get_param(np, CGAL::internal_np::protect_constraints).v == 17);
+  assert(get_param(np, CGAL::internal_np::relax_constraints).v == 18);
+  assert(get_param(np, CGAL::internal_np::vertex_is_constrained).v == 19);
+  assert(get_param(np, CGAL::internal_np::face_patch).v == 20);
+  assert(get_param(np, CGAL::internal_np::random_uniform_sampling).v == 21);
+  assert(get_param(np, CGAL::internal_np::grid_sampling).v == 22);
+  assert(get_param(np, CGAL::internal_np::monte_carlo_sampling).v == 23);
+  assert(get_param(np, CGAL::internal_np::do_sample_edges).v == 24);
+  assert(get_param(np, CGAL::internal_np::do_sample_vertices).v == 25);
+  assert(get_param(np, CGAL::internal_np::do_sample_faces).v == 26);
+  assert(get_param(np, CGAL::internal_np::number_of_points_on_faces).v == 27);
+  assert(get_param(np, CGAL::internal_np::number_of_points_per_face).v == 28);
+  assert(get_param(np, CGAL::internal_np::grid_spacing).v == 29);
+  assert(get_param(np, CGAL::internal_np::number_of_points_per_edge).v == 30);
+  assert(get_param(np, CGAL::internal_np::number_of_points_on_edges).v == 31);
+  assert(get_param(np, CGAL::internal_np::nb_points_per_area_unit).v == 32);
+  assert(get_param(np, CGAL::internal_np::nb_points_per_distance_unit).v == 33);
+
+    // Named parameters that we use in the package 'Surface Mesh Simplification'
+  assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
+  assert(get_param(np, CGAL::internal_np::get_placement_policy).v == 35);
+
+    // To-be-documented named parameters
+  assert(get_param(np, CGAL::internal_np::face_normal).v == 36);
+  assert(get_param(np, CGAL::internal_np::random_seed).v == 37);
+  assert(get_param(np, CGAL::internal_np::do_project).v == 38);
+
+    // Internal named parameters
+  assert(get_param(np, CGAL::internal_np::weight_calculator).v == 39);
+
+
+  // Test types
+
+    // Named parameters from Boost
+  check_same_type<0>(get_param(np, boost::vertex_index));
+  check_same_type<1>(get_param(np, boost::graph_visitor));
+
+    // Named parameters that we use in CGAL
+  check_same_type<2>(get_param(np, CGAL::internal_np::vertex_point));
+  check_same_type<3>(get_param(np, CGAL::internal_np::halfedge_index));
+  check_same_type<4>(get_param(np, CGAL::internal_np::edge_index));
+  check_same_type<5>(get_param(np, CGAL::internal_np::face_index));
+
+  check_same_type<6>(get_param(np, CGAL::internal_np::edge_is_constrained));
+  check_same_type<7>(get_param(np, CGAL::internal_np::first_index));
+  check_same_type<8>(get_param(np, CGAL::internal_np::number_of_iterations));
+
+  check_same_type<800000001>(get_param(np, CGAL::internal_np::METIS_options));
+  check_same_type<800000002>(get_param(np, CGAL::internal_np::vertex_partition_id));
+  check_same_type<800000003>(get_param(np, CGAL::internal_np::face_partition_id));
+
+    // Named parameters that we use in the package 'Mesh_3'
+  check_same_type<9>(get_param(np, CGAL::internal_np::vertex_feature_degree));
+
+    // Named parameters used in the package 'Polygon Mesh Processing'
+  check_same_type<10>(get_param(np, CGAL::internal_np::geom_traits));
+  check_same_type<11>(get_param(np, CGAL::internal_np::vertex_incident_patches));
+  check_same_type<12>(get_param(np, CGAL::internal_np::density_control_factor));
+  check_same_type<13>(get_param(np, CGAL::internal_np::use_delaunay_triangulation));
+  check_same_type<14>(get_param(np, CGAL::internal_np::fairing_continuity));
+  check_same_type<15>(get_param(np, CGAL::internal_np::sparse_linear_solver));
+  check_same_type<16>(get_param(np, CGAL::internal_np::number_of_relaxation_steps));
+  check_same_type<17>(get_param(np, CGAL::internal_np::protect_constraints));
+  check_same_type<18>(get_param(np, CGAL::internal_np::relax_constraints));
+  check_same_type<19>(get_param(np, CGAL::internal_np::vertex_is_constrained));
+  check_same_type<20>(get_param(np, CGAL::internal_np::face_patch));
+  check_same_type<21>(get_param(np, CGAL::internal_np::random_uniform_sampling));
+  check_same_type<22>(get_param(np, CGAL::internal_np::grid_sampling));
+  check_same_type<23>(get_param(np, CGAL::internal_np::monte_carlo_sampling));
+  check_same_type<24>(get_param(np, CGAL::internal_np::do_sample_edges));
+  check_same_type<25>(get_param(np, CGAL::internal_np::do_sample_vertices));
+  check_same_type<26>(get_param(np, CGAL::internal_np::do_sample_faces));
+  check_same_type<27>(get_param(np, CGAL::internal_np::number_of_points_on_faces));
+  check_same_type<28>(get_param(np, CGAL::internal_np::number_of_points_per_face));
+  check_same_type<29>(get_param(np, CGAL::internal_np::grid_spacing));
+  check_same_type<30>(get_param(np, CGAL::internal_np::number_of_points_per_edge));
+  check_same_type<31>(get_param(np, CGAL::internal_np::number_of_points_on_edges));
+  check_same_type<32>(get_param(np, CGAL::internal_np::nb_points_per_area_unit));
+  check_same_type<33>(get_param(np, CGAL::internal_np::nb_points_per_distance_unit));
+
+    // Named parameters that we use in the package 'Surface Mesh Simplification'
+  check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
+  check_same_type<35>(get_param(np, CGAL::internal_np::get_placement_policy));
+
+    // To-be-documented named parameters
+  check_same_type<36>(get_param(np, CGAL::internal_np::face_normal));
+  check_same_type<37>(get_param(np, CGAL::internal_np::random_seed));
+  check_same_type<38>(get_param(np, CGAL::internal_np::do_project));
+
+    // Internal named parameters
+  check_same_type<39>(get_param(np, CGAL::internal_np::weight_calculator));
 }
 
 int main()
 {
-  test(
-    CGAL::parameters::vertex_index_map(A<0>(0)).
-                      halfedge_index_map(A<1>(1)).
-                      face_index_map(A<2>(2)).
-                      vertex_point_map(A<3>(3)).
-                      vertex_is_fixed_map(A<4>(4)).
-                      edge_index_map(A<5>(5)).
-                      visitor(A<6>(6)).
-                      set_cache(A<7>(7)).
-                      get_cost(A<8>(8)).
-                      get_cost_params(A<9>(9)).
-                      get_placement(A<10>(10)).
-                      get_placement_params(A<11>(11)).
-                      edge_is_constrained_map(A<12>(12)).
-                      edge_is_constrained_map_params(A<13>(13))
-  );
+  test(CGAL::parameters::vertex_index_map(A<0>(0))
+                         .visitor(A<1>(1))
+                         .vertex_point_map(A<2>(2))
+                         .halfedge_index_map(A<3>(3))
+                         .edge_index_map(A<4>(4))
+                         .face_index_map(A<5>(5))
+                         .edge_is_constrained_map(A<6>(6))
+                         .first_index(A<7>(7))
+                         .number_of_iterations(A<8>(8))
+                         .METIS_options(A<800000001>(800000001))
+                         .vertex_partition_id_map(A<800000002>(800000002))
+                         .face_partition_id_map(A<800000003>(800000003))
+                         .vertex_feature_degree_map(A<9>(9))
+                         .geom_traits(A<10>(10))
+                         .vertex_incident_patches_map(A<11>(11))
+                         .density_control_factor(A<12>(12))
+                         .use_delaunay_triangulation(A<13>(13))
+                         .fairing_continuity(A<14>(14))
+                         .sparse_linear_solver(A<15>(15))
+                         .number_of_relaxation_steps(A<16>(16))
+                         .protect_constraints(A<17>(17))
+                         .relax_constraints(A<18>(18))
+                         .vertex_is_constrained_map(A<19>(19))
+                         .face_patch_map(A<20>(20))
+                         .use_random_uniform_sampling(A<21>(21))
+                         .use_grid_sampling(A<22>(22))
+                         .use_monte_carlo_sampling(A<23>(23))
+                         .do_sample_edges(A<24>(24))
+                         .do_sample_vertices(A<25>(25))
+                         .do_sample_faces(A<26>(26))
+                         .number_of_points_on_faces(A<27>(27))
+                         .number_of_points_per_face(A<28>(28))
+                         .grid_spacing(A<29>(29))
+                         .number_of_points_per_edge(A<30>(30))
+                         .number_of_points_on_edges(A<31>(31))
+                         .number_of_points_per_area_unit(A<32>(32))
+                         .number_of_points_per_distance_unit(A<33>(33))
+                         .get_cost(A<34>(34))
+                         .get_placement(A<35>(35))
+                         .face_normal_map(A<36>(36))
+                         .random_seed(A<37>(37))
+                         .do_project(A<38>(38))
+                         .weight_calculator(A<39>(39))
+       );
+
+  return EXIT_SUCCESS;
 }

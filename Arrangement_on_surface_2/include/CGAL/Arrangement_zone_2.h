@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
@@ -22,6 +23,11 @@
 
 #ifndef CGAL_ARRANGEMENT_ZONE_2_H
 #define CGAL_ARRANGEMENT_ZONE_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
+
 
 /*! \file
  * Defintion of the Arrangement_zone_2 class.
@@ -438,5 +444,7 @@ private:
 
 // The function definitions can be found under:
 #include <CGAL/Arrangement_2/Arrangement_zone_2_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif

@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez, Stephane Tayeb

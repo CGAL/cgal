@@ -21,22 +21,25 @@ BUILD_SHARED_LIBS:BOOL=ON
 Boost_DIR:PATH=Boost_DIR-NOTFOUND
 
 //Path to a file.
-Boost_INCLUDE_DIR:PATH=C:/3rdPartyLibs/boost_1_55_0
+Boost_INCLUDE_DIR:PATH=C:/3rdPartyLibs/boost_1_57_0
 
 //Boost library directory
-Boost_LIBRARY_DIR:PATH=C:/3rdPartyLibs/boost_1_55_0/lib32
+Boost_LIBRARY_DIR:PATH=C:/3rdPartyLibs/boost_1_57_0/lib32
 
 //Boost system library (debug)
-Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/boost_1_55_0/lib32/boost_system-vc120-mt-gd-1_55.lib
+Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/boost_1_57_0/lib32/boost_system-vc120-mt-gd-1_57.lib
 
 //Boost system library (release)
-Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/boost_1_55_0/lib32/boost_system-vc120-mt-1_55.lib
+Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/boost_1_57_0/lib32/boost_system-vc120-mt-1_57.lib
 
 //Boost thread library (debug)
-Boost_THREAD_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/boost_1_55_0/lib32/boost_thread-vc120-mt-gd-1_55.lib
+Boost_THREAD_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/boost_1_57_0/lib32/boost_thread-vc120-mt-gd-1_57.lib
 
 //Boost thread library (release)
-Boost_THREAD_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/boost_1_55_0/lib32/boost_thread-vc120-mt-1_55.lib
+Boost_THREAD_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/1_57_0/lib32/boost_thread-vc120-mt-1_57.lib
+
+//Boost atomic library (debug)
+Boost_ATOMIC_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/boost_1_57_0/lib32/boost_atomic-vc120-mt-gd-1_57.lib
 
 //Select to allow to use all preconfigured external libraries
 CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT:BOOL=OFF
@@ -102,8 +105,7 @@ CGAL_LIB_DEPENDS:STATIC=general;C:/3rdPartyLibs/VC-32/gmp-5.0.1_and_mpfr-3.0.0/l
 //Directory containing the Maintenance package
 CGAL_MAINTENANCE_PACKAGE_DIR:PATH=C:/CGAL/CGAL-I-REF
 
-//Dependencies for the target
-CGAL_Qt4_LIB_DEPENDS:STATIC=general;C:/3rdPartyLibs/VC-32/gmp-5.0.1_and_mpfr-3.0.0/lib/libmpfr-4.lib;general;C:/3rdPartyLibs/VC-32/gmp-5.0.1_and_mpfr-3.0.0/lib/libgmp-10.lib;optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/qtmain.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/qtmaind.lib;optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtOpenGL4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtOpenGLd4.lib;optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtGui4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtGuid4.lib;optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCore4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCored4.lib;general;glu32;general;opengl32;
+
 
 //Value Computed by CMake
 CGAL_SOURCE_DIR:STATIC=C:/CGAL/CGAL-I-REF
@@ -162,19 +164,19 @@ CMAKE_C_FLAGS_RELWITHDEBINFO:STRING=/MD /O2 /Ob1
 CMAKE_C_STANDARD_LIBRARIES:STRING=kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
 
 //Flags used by the linker.
-CMAKE_EXE_LINKER_FLAGS:STRING=' /machine:X86 '
+CMAKE_EXE_LINKER_FLAGS:STRING=' /machine:X86 /INCREMENTAL:NO /DEBUG:NONE'
 
 //Flags used by the linker during debug builds.
-CMAKE_EXE_LINKER_FLAGS_DEBUG:STRING=/debug /INCREMENTAL
+CMAKE_EXE_LINKER_FLAGS_DEBUG:STRING=/DEBUG:NONE /INCREMENTAL:NO
 
 //Flags used by the linker during release minsize builds.
-CMAKE_EXE_LINKER_FLAGS_MINSIZEREL:STRING=/INCREMENTAL:NO
+CMAKE_EXE_LINKER_FLAGS_MINSIZEREL:STRING=/INCREMENTAL:NO /DEBUG:NONE
 
 //Flags used by the linker during release builds.
-CMAKE_EXE_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO
+CMAKE_EXE_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO /DEBUG:NONE
 
 //Flags used by the linker during Release with Debug Info builds.
-CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
+CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/DEBUG:NONE /INCREMENTAL:NO
 
 //Install path prefix, prepended onto install directories.
 CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/CGAL
@@ -186,19 +188,19 @@ CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin
 CMAKE_MAKE_PROGRAM:STRING=nmake
 
 //Flags used by the linker during the creation of modules.
-CMAKE_MODULE_LINKER_FLAGS:STRING=' /machine:X86 '
+CMAKE_MODULE_LINKER_FLAGS:STRING=' /machine:X86 /DEBUG:NONE /INCREMENTAL:NO'
 
 //Flags used by the linker during debug builds.
-CMAKE_MODULE_LINKER_FLAGS_DEBUG:STRING=/debug /INCREMENTAL
+CMAKE_MODULE_LINKER_FLAGS_DEBUG:STRING=/DEBUG:NONE /INCREMENTAL:NO
 
 //Flags used by the linker during release minsize builds.
-CMAKE_MODULE_LINKER_FLAGS_MINSIZEREL:STRING=/INCREMENTAL:NO
+CMAKE_MODULE_LINKER_FLAGS_MINSIZEREL:STRING=
 
 //Flags used by the linker during release builds.
-CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO
+CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=
 
 //Flags used by the linker during Release with Debug Info builds.
-CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
+CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/DEBUG:NONE /INCREMENTAL:NO
 
 //Value Computed by CMake
 CMAKE_PROJECT_NAME:STATIC=CGAL
@@ -210,10 +212,10 @@ CMAKE_RC_COMPILER:FILEPATH=C:/Program Files (x86)/Windows Kits/8.1/bin/x86/rc.ex
 CMAKE_RC_FLAGS:STRING=' '
 
 //Flags used by the linker during the creation of dll's.
-CMAKE_SHARED_LINKER_FLAGS:STRING=' /machine:X86 '
+CMAKE_SHARED_LINKER_FLAGS:STRING=' /machine:X86 /DEBUG:NONE /INCREMENTAL:NO'
 
 //Flags used by the linker during debug builds.
-CMAKE_SHARED_LINKER_FLAGS_DEBUG:STRING=/debug /INCREMENTAL
+CMAKE_SHARED_LINKER_FLAGS_DEBUG:STRING=/DEBUG:NONE /INCREMENTAL:NO
 
 //Flags used by the linker during release minsize builds.
 CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL:STRING=/INCREMENTAL:NO
@@ -222,7 +224,7 @@ CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL:STRING=/INCREMENTAL:NO
 CMAKE_SHARED_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO
 
 //Flags used by the linker during Release with Debug Info builds.
-CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
+CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO:STRING=/DEBUG:NONE /INCREMENTAL:NO
 
 //If set, runtime paths are not added when installing shared libraries,
 // but are added when building.
@@ -262,628 +264,6 @@ OPENGL_gl_LIBRARY:STRING=opengl32
 //GLU library for win32
 OPENGL_glu_LIBRARY:STRING=glu32
 
-//path to Qt3 include directory
-QT3_INCLUDE_DIR:PATH=QT3_INCLUDE_DIR-NOTFOUND
-
-//Path to a program.
-QT3_MOC_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/moc.exe
-
-//Path to a library.
-QT3_QASSISTANTCLIENT_LIBRARY:FILEPATH=QT3_QASSISTANTCLIENT_LIBRARY-NOTFOUND
-
-//This Library is only needed by and included with Qt3 on MSWindows.
-// It should be NOTFOUND, undefined or IGNORE otherwise.
-QT3_QTMAIN_LIBRARY:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/qtmain.lib
-
-//Path to a library.
-QT3_QT_LIBRARY:FILEPATH=QT3_QT_LIBRARY-NOTFOUND
-
-//Path to a program.
-QT3_UIC_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/uic.exe
-
-//Path to a library.
-QT_ARTHURPLUGIN_PLUGIN_DEBUG:FILEPATH=QT_ARTHURPLUGIN_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_ARTHURPLUGIN_PLUGIN_RELEASE:FILEPATH=QT_ARTHURPLUGIN_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_CONTAINEREXTENSION_PLUGIN_DEBUG:FILEPATH=QT_CONTAINEREXTENSION_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_CONTAINEREXTENSION_PLUGIN_RELEASE:FILEPATH=QT_CONTAINEREXTENSION_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_CUSTOMWIDGETPLUGIN_PLUGIN_DEBUG:FILEPATH=QT_CUSTOMWIDGETPLUGIN_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_CUSTOMWIDGETPLUGIN_PLUGIN_RELEASE:FILEPATH=QT_CUSTOMWIDGETPLUGIN_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a program.
-QT_DBUSCPP2XML_EXECUTABLE:FILEPATH=QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND
-
-//Path to a program.
-QT_DBUSXML2CPP_EXECUTABLE:FILEPATH=QT_DBUSXML2CPP_EXECUTABLE-NOTFOUND
-
-//Path to a program.
-QT_DESIGNER_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/designer.exe
-
-//The location of the Qt docs
-QT_DOC_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/doc
-
-//The location of the Qt imports
-QT_IMPORTS_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/imports
-
-//Path to a program.
-QT_LINGUIST_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/linguist.exe
-
-//Path to a program.
-QT_LRELEASE_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/lrelease.exe
-
-//Path to a program.
-QT_LUPDATE_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/lupdate.exe
-
-//The location of the Qt mkspecs containing qconfig.pri
-QT_MKSPECS_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/mkspecs
-
-//Path to a program.
-QT_MOC_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/moc.exe
-
-//Path to a library.
-QT_PHONONWIDGETS_PLUGIN_DEBUG:FILEPATH=QT_PHONONWIDGETS_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_PHONONWIDGETS_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/designer/phononwidgets.dll
-
-//Path to a library.
-QT_PHONON_DS9_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/phonon_backend/phonon_ds9d4.dll
-
-//Path to a library.
-QT_PHONON_DS9_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/phonon_backend/phonon_ds94.dll
-
-//Path to a file.
-QT_PHONON_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/phonon
-
-//The Qt PHONON library
-QT_PHONON_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/phonon4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/phonond4.lib
-
-//Path to a library.
-QT_PHONON_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/phonond4.lib
-
-//Path to a library.
-QT_PHONON_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/phonon4.lib
-
-//The location of the Qt plugins
-QT_PLUGINS_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins
-
-//Path to a library.
-QT_QCNCODECS_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/codecs/qcncodecsd4.dll
-
-//Path to a library.
-QT_QCNCODECS_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/codecs/qcncodecs4.dll
-
-//Path to a program.
-QT_QCOLLECTIONGENERATOR_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/qcollectiongenerator.exe
-
-//Path to a library.
-QT_QCOREWLANBEARER_PLUGIN_DEBUG:FILEPATH=QT_QCOREWLANBEARER_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QCOREWLANBEARER_PLUGIN_RELEASE:FILEPATH=QT_QCOREWLANBEARER_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QDECLARATIVEVIEW_PLUGIN_DEBUG:FILEPATH=QT_QDECLARATIVEVIEW_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QDECLARATIVEVIEW_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/designer/qdeclarativeview.dll
-
-//Path to a library.
-QT_QDECORATIONDEFAULT_PLUGIN_DEBUG:FILEPATH=QT_QDECORATIONDEFAULT_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QDECORATIONDEFAULT_PLUGIN_RELEASE:FILEPATH=QT_QDECORATIONDEFAULT_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QDECORATIONWINDOWS_PLUGIN_DEBUG:FILEPATH=QT_QDECORATIONWINDOWS_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QDECORATIONWINDOWS_PLUGIN_RELEASE:FILEPATH=QT_QDECORATIONWINDOWS_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QGENERICBEARER_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/bearer/qgenericbearerd4.dll
-
-//Path to a library.
-QT_QGENERICBEARER_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/bearer/qgenericbearer4.dll
-
-//Path to a library.
-QT_QGIF_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qgifd4.dll
-
-//Path to a library.
-QT_QGIF_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qgif4.dll
-
-//Path to a library.
-QT_QGLGRAPHICSSYSTEM_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/graphicssystems/qglgraphicssystemd4.dll
-
-//Path to a library.
-QT_QGLGRAPHICSSYSTEM_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/graphicssystems/qglgraphicssystem4.dll
-
-//Path to a library.
-QT_QICO_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qicod4.dll
-
-//Path to a library.
-QT_QICO_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qico4.dll
-
-//Path to a library.
-QT_QIMSW_MULTI_PLUGIN_DEBUG:FILEPATH=QT_QIMSW_MULTI_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QIMSW_MULTI_PLUGIN_RELEASE:FILEPATH=QT_QIMSW_MULTI_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QJPCODECS_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/codecs/qjpcodecsd4.dll
-
-//Path to a library.
-QT_QJPCODECS_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/codecs/qjpcodecs4.dll
-
-//Path to a library.
-QT_QJPEG_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qjpegd4.dll
-
-//Path to a library.
-QT_QJPEG_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qjpeg4.dll
-
-//Path to a library.
-QT_QKRCODECS_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/codecs/qkrcodecsd4.dll
-
-//Path to a library.
-QT_QKRCODECS_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/codecs/qkrcodecs4.dll
-
-//The qmake executable for the Qt installation to use
-QT_QMAKE_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/qmake.exe
-
-//Path to a library.
-QT_QMNG_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qmngd4.dll
-
-//Path to a library.
-QT_QMNG_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qmng4.dll
-
-//Path to a library.
-QT_QSQLDB2_PLUGIN_DEBUG:FILEPATH=QT_QSQLDB2_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QSQLDB2_PLUGIN_RELEASE:FILEPATH=QT_QSQLDB2_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QSQLIBASE_PLUGIN_DEBUG:FILEPATH=QT_QSQLIBASE_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QSQLIBASE_PLUGIN_RELEASE:FILEPATH=QT_QSQLIBASE_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QSQLITE2_PLUGIN_DEBUG:FILEPATH=QT_QSQLITE2_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QSQLITE2_PLUGIN_RELEASE:FILEPATH=QT_QSQLITE2_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QSQLITE_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/sqldrivers/qsqlited4.dll
-
-//Path to a library.
-QT_QSQLITE_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/sqldrivers/qsqlite4.dll
-
-//Path to a library.
-QT_QSQLMYSQL_PLUGIN_DEBUG:FILEPATH=QT_QSQLMYSQL_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QSQLMYSQL_PLUGIN_RELEASE:FILEPATH=QT_QSQLMYSQL_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QSQLOCI_PLUGIN_DEBUG:FILEPATH=QT_QSQLOCI_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QSQLOCI_PLUGIN_RELEASE:FILEPATH=QT_QSQLOCI_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QSQLODBC_PLUGIN_DEBUG:FILEPATH=QT_QSQLODBC_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QSQLODBC_PLUGIN_RELEASE:FILEPATH=QT_QSQLODBC_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QSQLPSQL_PLUGIN_DEBUG:FILEPATH=QT_QSQLPSQL_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QSQLPSQL_PLUGIN_RELEASE:FILEPATH=QT_QSQLPSQL_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QSQLTDS_PLUGIN_DEBUG:FILEPATH=QT_QSQLTDS_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QSQLTDS_PLUGIN_RELEASE:FILEPATH=QT_QSQLTDS_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QSVGICON_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/iconengines/qsvgicond4.dll
-
-//Path to a library.
-QT_QSVGICON_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/iconengines/qsvgicon4.dll
-
-//Path to a library.
-QT_QSVG_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qsvgd4.dll
-
-//Path to a library.
-QT_QSVG_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qsvg4.dll
-
-//Path to a library.
-QT_QT3SUPPORTWIDGETS_PLUGIN_DEBUG:FILEPATH=QT_QT3SUPPORTWIDGETS_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QT3SUPPORTWIDGETS_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/designer/qt3supportwidgets.dll
-
-//Path to a file.
-QT_QT3SUPPORT_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/Qt3Support
-
-//The Qt QT3SUPPORT library
-QT_QT3SUPPORT_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/Qt3Support4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/Qt3Supportd4.lib
-
-//Path to a library.
-QT_QT3SUPPORT_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/Qt3Supportd4.lib
-
-//Path to a library.
-QT_QT3SUPPORT_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/Qt3Support4.lib
-
-//Path to a library.
-QT_QTACCESSIBLECOMPATWIDGETS_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/accessible/qtaccessiblecompatwidgetsd4.dll
-
-//Path to a library.
-QT_QTACCESSIBLECOMPATWIDGETS_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/accessible/qtaccessiblecompatwidgets4.dll
-
-//Path to a library.
-QT_QTACCESSIBLEWIDGETS_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/accessible/qtaccessiblewidgetsd4.dll
-
-//Path to a library.
-QT_QTACCESSIBLEWIDGETS_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/accessible/qtaccessiblewidgets4.dll
-
-//Path to a file.
-QT_QTASSISTANTCLIENT_INCLUDE_DIR:PATH=QT_QTASSISTANTCLIENT_INCLUDE_DIR-NOTFOUND
-
-//The Qt QTASSISTANTCLIENT library
-QT_QTASSISTANTCLIENT_LIBRARY:STRING=
-
-//Path to a library.
-QT_QTASSISTANTCLIENT_LIBRARY_DEBUG:FILEPATH=QT_QTASSISTANTCLIENT_LIBRARY_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QTASSISTANTCLIENT_LIBRARY_RELEASE:FILEPATH=QT_QTASSISTANTCLIENT_LIBRARY_RELEASE-NOTFOUND
-
-//Path to a file.
-QT_QTASSISTANT_INCLUDE_DIR:PATH=QT_QTASSISTANT_INCLUDE_DIR-NOTFOUND
-
-//The Qt QTASSISTANT library
-QT_QTASSISTANT_LIBRARY:STRING=
-
-//Path to a library.
-QT_QTASSISTANT_LIBRARY_DEBUG:FILEPATH=QT_QTASSISTANT_LIBRARY_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QTASSISTANT_LIBRARY_RELEASE:FILEPATH=QT_QTASSISTANT_LIBRARY_RELEASE-NOTFOUND
-
-//The Qt QTCLUCENE library
-QT_QTCLUCENE_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCLucene4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCLucened4.lib
-
-//Path to a library.
-QT_QTCLUCENE_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCLucened4.lib
-
-//Path to a library.
-QT_QTCLUCENE_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCLucene4.lib
-
-//Path to a file.
-QT_QTCORE_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtCore
-
-//The Qt QTCORE library
-QT_QTCORE_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCore4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCored4.lib
-
-//Path to a library.
-QT_QTCORE_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCored4.lib
-
-//Path to a library.
-QT_QTCORE_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCore4.lib
-
-//Path to a file.
-QT_QTDBUS_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtDBus
-
-//The Qt QTDBUS library
-QT_QTDBUS_LIBRARY:STRING=
-
-//Path to a library.
-QT_QTDBUS_LIBRARY_DEBUG:FILEPATH=QT_QTDBUS_LIBRARY_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QTDBUS_LIBRARY_RELEASE:FILEPATH=QT_QTDBUS_LIBRARY_RELEASE-NOTFOUND
-
-//Path to a file.
-QT_QTDECLARATIVE_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtDeclarative
-
-//The Qt QTDECLARATIVE library
-QT_QTDECLARATIVE_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDeclarative4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDeclaratived4.lib
-
-//Path to a library.
-QT_QTDECLARATIVE_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDeclaratived4.lib
-
-//Path to a library.
-QT_QTDECLARATIVE_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDeclarative4.lib
-
-//Path to a file.
-QT_QTDESIGNERCOMPONENTS_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtDesigner
-
-//The Qt QTDESIGNERCOMPONENTS library
-QT_QTDESIGNERCOMPONENTS_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDesignerComponents4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDesignerComponentsd4.lib
-
-//Path to a library.
-QT_QTDESIGNERCOMPONENTS_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDesignerComponentsd4.lib
-
-//Path to a library.
-QT_QTDESIGNERCOMPONENTS_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDesignerComponents4.lib
-
-//Path to a file.
-QT_QTDESIGNER_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtDesigner
-
-//The Qt QTDESIGNER library
-QT_QTDESIGNER_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDesigner4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDesignerd4.lib
-
-//Path to a library.
-QT_QTDESIGNER_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDesignerd4.lib
-
-//Path to a library.
-QT_QTDESIGNER_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtDesigner4.lib
-
-//Path to a file.
-QT_QTGUI_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtGui
-
-//The Qt QTGUI library
-QT_QTGUI_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtGui4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtGuid4.lib
-
-//Path to a library.
-QT_QTGUI_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtGuid4.lib
-
-//Path to a library.
-QT_QTGUI_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtGui4.lib
-
-//Path to a file.
-QT_QTHELP_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtHelp
-
-//The Qt QTHELP library
-QT_QTHELP_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtHelp4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtHelpd4.lib
-
-//Path to a library.
-QT_QTHELP_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtHelpd4.lib
-
-//Path to a library.
-QT_QTHELP_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtHelp4.lib
-
-//Path to a library.
-QT_QTIFF_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qtiffd4.dll
-
-//Path to a library.
-QT_QTIFF_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/imageformats/qtiff4.dll
-
-//The Qt QTMAIN library
-QT_QTMAIN_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/qtmain.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/qtmaind.lib
-
-//Path to a library.
-QT_QTMAIN_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/qtmaind.lib
-
-//Path to a library.
-QT_QTMAIN_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/qtmain.lib
-
-//Path to a file.
-QT_QTMULTIMEDIA_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtMultimedia
-
-//The Qt QTMULTIMEDIA library
-QT_QTMULTIMEDIA_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtMultimedia4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtMultimediad4.lib
-
-//Path to a library.
-QT_QTMULTIMEDIA_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtMultimediad4.lib
-
-//Path to a library.
-QT_QTMULTIMEDIA_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtMultimedia4.lib
-
-//Path to a file.
-QT_QTNETWORK_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtNetwork
-
-//The Qt QTNETWORK library
-QT_QTNETWORK_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtNetwork4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtNetworkd4.lib
-
-//Path to a library.
-QT_QTNETWORK_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtNetworkd4.lib
-
-//Path to a library.
-QT_QTNETWORK_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtNetwork4.lib
-
-//Path to a file.
-QT_QTNSPLUGIN_INCLUDE_DIR:PATH=QT_QTNSPLUGIN_INCLUDE_DIR-NOTFOUND
-
-//The Qt QTNSPLUGIN library
-QT_QTNSPLUGIN_LIBRARY:STRING=
-
-//Path to a library.
-QT_QTNSPLUGIN_LIBRARY_DEBUG:FILEPATH=QT_QTNSPLUGIN_LIBRARY_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QTNSPLUGIN_LIBRARY_RELEASE:FILEPATH=QT_QTNSPLUGIN_LIBRARY_RELEASE-NOTFOUND
-
-//Path to a file.
-QT_QTOPENGL_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtOpenGL
-
-//The Qt QTOPENGL library
-QT_QTOPENGL_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtOpenGL4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtOpenGLd4.lib
-
-//Path to a library.
-QT_QTOPENGL_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtOpenGLd4.lib
-
-//Path to a library.
-QT_QTOPENGL_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtOpenGL4.lib
-
-//Path to a library.
-QT_QTRACEGRAPHICSSYSTEM_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/graphicssystems/qtracegraphicssystemd4.dll
-
-//Path to a library.
-QT_QTRACEGRAPHICSSYSTEM_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/graphicssystems/qtracegraphicssystem4.dll
-
-//Path to a library.
-QT_QTSCRIPTDBUS_PLUGIN_DEBUG:FILEPATH=QT_QTSCRIPTDBUS_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QTSCRIPTDBUS_PLUGIN_RELEASE:FILEPATH=QT_QTSCRIPTDBUS_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a file.
-QT_QTSCRIPTTOOLS_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtScriptTools
-
-//The Qt QTSCRIPTTOOLS library
-QT_QTSCRIPTTOOLS_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtScriptTools4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtScriptToolsd4.lib
-
-//Path to a library.
-QT_QTSCRIPTTOOLS_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtScriptToolsd4.lib
-
-//Path to a library.
-QT_QTSCRIPTTOOLS_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtScriptTools4.lib
-
-//Path to a file.
-QT_QTSCRIPT_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtScript
-
-//The Qt QTSCRIPT library
-QT_QTSCRIPT_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtScript4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtScriptd4.lib
-
-//Path to a library.
-QT_QTSCRIPT_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtScriptd4.lib
-
-//Path to a library.
-QT_QTSCRIPT_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtScript4.lib
-
-//Path to a file.
-QT_QTSQL_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtSql
-
-//The Qt QTSQL library
-QT_QTSQL_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtSql4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtSqld4.lib
-
-//Path to a library.
-QT_QTSQL_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtSqld4.lib
-
-//Path to a library.
-QT_QTSQL_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtSql4.lib
-
-//Path to a file.
-QT_QTSVG_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtSvg
-
-//The Qt QTSVG library
-QT_QTSVG_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtSvg4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtSvgd4.lib
-
-//Path to a library.
-QT_QTSVG_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtSvgd4.lib
-
-//Path to a library.
-QT_QTSVG_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtSvg4.lib
-
-//Path to a file.
-QT_QTTEST_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtTest
-
-//The Qt QTTEST library
-QT_QTTEST_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtTest4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtTestd4.lib
-
-//Path to a library.
-QT_QTTEST_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtTestd4.lib
-
-//Path to a library.
-QT_QTTEST_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtTest4.lib
-
-//Path to a file.
-QT_QTUITOOLS_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtUiTools
-
-//The Qt QTUITOOLS library
-QT_QTUITOOLS_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtUiTools.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtUiToolsd.lib
-
-//Path to a library.
-QT_QTUITOOLS_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtUiToolsd.lib
-
-//Path to a library.
-QT_QTUITOOLS_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtUiTools.lib
-
-//Path to a library.
-QT_QTWCODECS_PLUGIN_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/codecs/qtwcodecsd4.dll
-
-//Path to a library.
-QT_QTWCODECS_PLUGIN_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/plugins/codecs/qtwcodecs4.dll
-
-//Path to a file.
-QT_QTWEBKIT_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtWebKit
-
-//The Qt QTWEBKIT library
-QT_QTWEBKIT_LIBRARY:STRING=
-
-//Path to a library.
-QT_QTWEBKIT_LIBRARY_DEBUG:FILEPATH=QT_QTWEBKIT_LIBRARY_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QTWEBKIT_LIBRARY_RELEASE:FILEPATH=QT_QTWEBKIT_LIBRARY_RELEASE-NOTFOUND
-
-//Path to a file.
-QT_QTXMLPATTERNS_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtXmlPatterns
-
-//The Qt QTXMLPATTERNS library
-QT_QTXMLPATTERNS_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtXmlPatterns4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtXmlPatternsd4.lib
-
-//Path to a library.
-QT_QTXMLPATTERNS_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtXmlPatternsd4.lib
-
-//Path to a library.
-QT_QTXMLPATTERNS_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtXmlPatterns4.lib
-
-//Path to a file.
-QT_QTXML_INCLUDE_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include/QtXml
-
-//The Qt QTXML library
-QT_QTXML_LIBRARY:STRING=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtXml4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtXmld4.lib
-
-//Path to a library.
-QT_QTXML_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtXmld4.lib
-
-//Path to a library.
-QT_QTXML_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtXml4.lib
-
-//Path to a library.
-QT_QWEBVIEW_PLUGIN_DEBUG:FILEPATH=QT_QWEBVIEW_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QWEBVIEW_PLUGIN_RELEASE:FILEPATH=QT_QWEBVIEW_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a library.
-QT_QWSTSLIBMOUSEHANDLER_PLUGIN_DEBUG:FILEPATH=QT_QWSTSLIBMOUSEHANDLER_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_QWSTSLIBMOUSEHANDLER_PLUGIN_RELEASE:FILEPATH=QT_QWSTSLIBMOUSEHANDLER_PLUGIN_RELEASE-NOTFOUND
-
-//Path to a program.
-QT_RCC_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/rcc.exe
-
-//Path to a library.
-QT_TASKMENUEXTENSION_PLUGIN_DEBUG:FILEPATH=QT_TASKMENUEXTENSION_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_TASKMENUEXTENSION_PLUGIN_RELEASE:FILEPATH=QT_TASKMENUEXTENSION_PLUGIN_RELEASE-NOTFOUND
-
-//The location of the Qt translations
-QT_TRANSLATIONS_DIR:PATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/translations
-
-//Path to a program.
-QT_UIC3_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/uic3.exe
-
-//Path to a program.
-QT_UIC_EXECUTABLE:FILEPATH=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin/uic.exe
-
-//Path to a library.
-QT_WORLDTIMECLOCKPLUGIN_PLUGIN_DEBUG:FILEPATH=QT_WORLDTIMECLOCKPLUGIN_PLUGIN_DEBUG-NOTFOUND
-
-//Path to a library.
-QT_WORLDTIMECLOCKPLUGIN_PLUGIN_RELEASE:FILEPATH=QT_WORLDTIMECLOCKPLUGIN_PLUGIN_RELEASE-NOTFOUND
-
 //Select external library BLAS
 WITH_BLAS:BOOL=OFF
 
@@ -896,8 +276,8 @@ WITH_CGAL_ImageIO:BOOL=ON
 //Enable CGAL component CGAL_Qt3
 WITH_CGAL_Qt3:BOOL=OFF
 
-//Enable CGAL component CGAL_Qt4
-WITH_CGAL_Qt4:BOOL=ON
+//Enable CGAL component CGAL_Qt5
+WITH_CGAL_Qt5:BOOL=OFF
 
 //Select external library Coin3D
 WITH_Coin3D:BOOL=OFF
@@ -985,9 +365,9 @@ Boost_THREAD_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_THREAD_LIBRARY_RELEASE
 Boost_THREAD_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 CGAL_3RD_PARTY_DEFINITIONS:INTERNAL=-DBOOST_ALL_DYN_LINK
-CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=C:/3rdPartyLibs/boost_1_55_0
+CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=C:/3rdPartyLibs/boost_1_57_0
 CGAL_3RD_PARTY_LIBRARIES:INTERNAL=
-CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=C:/3rdPartyLibs/boost_1_55_0/lib32
+CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=C:/3rdPartyLibs/boost_1_57_0/lib32
 CGAL_3RD_PARTY_PRECONFIGURED:INTERNAL=
 //ADVANCED property for variable: CGAL_Boost_USE_STATIC_LIBS
 CGAL_Boost_USE_STATIC_LIBS-ADVANCED:INTERNAL=1
@@ -1039,7 +419,7 @@ CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG_COMPILED:INTERNAL=TRUE
 CGAL_CFG_USING_BASE_MEMBER_BUG_2:INTERNAL=0
 //Result of TRY_COMPILE
 CGAL_CFG_USING_BASE_MEMBER_BUG_2_COMPILED:INTERNAL=TRUE
-CGAL_CONFIGURED_LIBRARIES:INTERNAL=CGAL_Core;CGAL_ImageIO;CGAL_Qt3;CGAL_Qt4
+CGAL_CONFIGURED_LIBRARIES:INTERNAL=CGAL_Core;CGAL_ImageIO;
 CGAL_Core_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_Core_3RD_PARTY_INCLUDE_DIRS:INTERNAL=
 CGAL_Core_3RD_PARTY_LIBRARIES:INTERNAL=
@@ -1103,13 +483,7 @@ CGAL_Qt3_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=
 CGAL_Qt3_LIBRARY:INTERNAL=
 //Variable hidden from user
 CGAL_Qt3_LIBRARY_INSTALLED:INTERNAL=
-CGAL_Qt4_3RD_PARTY_DEFINITIONS:INTERNAL=-DQT_DLL
-CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS:INTERNAL=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include
-CGAL_Qt4_3RD_PARTY_LIBRARIES:INTERNAL=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/qtmain.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/qtmaind.lib;optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtOpenGL4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtOpenGLd4.lib;optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtGui4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtGuid4.lib;optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCore4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCored4.lib;glu32;opengl32
-CGAL_Qt4_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=
-CGAL_Qt4_LIBRARY:INTERNAL=
-//Variable hidden from user
-CGAL_Qt4_LIBRARY_INSTALLED:INTERNAL=
+
 //Variable hidden from user
 CGAL_SUPPORTING_3RD_PARTY_LIBRARIES:INTERNAL=GMP;MPFR;ZLIB;OpenGL;LEDA;MPFI;RS;RS3;OpenNL;TAUCS;Eigen3;BLAS;LAPACK;QGLViewer;ESBTL;Coin3D;NTL;IPE
 //This is the cygwin platform.
@@ -1275,7 +649,6 @@ QT4_RUN_RES:INTERNAL=0
 QT_ARTHURPLUGIN_PLUGIN_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: QT_ARTHURPLUGIN_PLUGIN_RELEASE
 QT_ARTHURPLUGIN_PLUGIN_RELEASE-ADVANCED:INTERNAL=1
-QT_BINARY_DIR:INTERNAL=C:/3rdPartyLibs/VC12-32/QT-4.8.4/bin
 //ADVANCED property for variable: QT_CONTAINEREXTENSION_PLUGIN_DEBUG
 QT_CONTAINEREXTENSION_PLUGIN_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: QT_CONTAINEREXTENSION_PLUGIN_RELEASE
@@ -1292,13 +665,10 @@ QT_DBUSXML2CPP_EXECUTABLE-ADVANCED:INTERNAL=1
 QT_DESIGNER_EXECUTABLE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: QT_DOC_DIR
 QT_DOC_DIR-ADVANCED:INTERNAL=1
-QT_HEADERS_DIR:INTERNAL=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include
 //ADVANCED property for variable: QT_IMPORTS_DIR
 QT_IMPORTS_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: QT_LIBRARY_DIR
 QT_LIBRARY_DIR-ADVANCED:INTERNAL=1
-//Qt library dir
-QT_LIBRARY_DIR:INTERNAL=C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib
 //ADVANCED property for variable: QT_LINGUIST_EXECUTABLE
 QT_LINGUIST_EXECUTABLE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: QT_LRELEASE_EXECUTABLE
@@ -1698,11 +1068,12 @@ _Boost_ADDITIONAL_VERSIONS_LAST:INTERNAL=1.56.1;1.56.0;1.56;1.55.1;1.55.0;1.55;1
 //Components requested for this build tree.
 _Boost_COMPONENTS_SEARCHED:INTERNAL=system;thread
 //Last used Boost_INCLUDE_DIR value.
-_Boost_INCLUDE_DIR_LAST:INTERNAL=C:/3rdPartyLibs/boost_1_55_0
+_Boost_INCLUDE_DIR_LAST:INTERNAL=C:/3rdPartyLibs/boost_1_57_0
 //Last used Boost_LIBRARY_DIR value.
-_Boost_LIBRARY_DIR_LAST:INTERNAL=C:/3rdPartyLibs/boost_1_55_0/lib32
+_Boost_LIBRARY_DIR_LAST:INTERNAL=C:/3rdPartyLibs/boost_1_57_0/lib32
 //Last used Boost_USE_MULTITHREADED value.
 _Boost_USE_MULTITHREADED_LAST:INTERNAL=TRUE
 //Last used Boost_USE_STATIC_LIBS value.
 _Boost_USE_STATIC_LIBS_LAST:INTERNAL=OFF
+
 

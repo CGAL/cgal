@@ -37,13 +37,7 @@ struct Custom_point_3{
   }
 };
 
-#include <CGAL/basic.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-// Halfedge adapters for Polyhedron_3
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-
 #include <CGAL/Surface_mesh_deformation.h>
 
 struct Custom_traits{

@@ -12,12 +12,20 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
 //                 Waqar Khan        <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_SEGMENT_TRAITS_2_H
 #define CGAL_ARR_SEGMENT_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The segment traits-class for the arrangement package.
@@ -37,12 +45,12 @@ template <class Kernel_ = Exact_predicates_exact_constructions_kernel>
 class Arr_segment_2;
 
 /*!
- * \class A traits class for maintaining an arrangement of segments, aoviding
+ * \class A traits class for maintaining an arrangement of segments, avoiding
  * cascading of computations as much as possible.
  *
  * The class is derived from the parameterized kernel to extend the traits
  * with all the types and operations supported by the kernel. This makes it
- * possible to use the traits class for data structures that extends the
+ * possible to use the traits class for data structures that extend the
  * Arrangement_2 type and require objects and operations supported by the
  * kernel, but not defined in this derived class.
  */
@@ -71,7 +79,7 @@ public:
   typedef CGAL::Segment_assertions<Arr_segment_traits_2<Kernel> >
                                           Segment_assertions;
 
-  /*! \class Representation of a segement with cached data.
+  /*! \class Representation of a segment with cached data.
    */
   class _Segment_cached_2 {
   public:
@@ -169,7 +177,7 @@ public:
       is_pt_max = (res == SMALLER);
 
       CGAL_precondition_msg(! is_degen,
-                            "Cannot contruct a degenerate segment.");
+                            "Cannot construct a degenerate segment.");
     }
 
     /*!
@@ -192,7 +200,7 @@ public:
       is_pt_max = (res == SMALLER);
 
       CGAL_precondition_msg(! is_degen,
-                            "Cannot contruct a degenerate segment.");
+                            "Cannot construct a degenerate segment.");
 
       l = kernel.construct_line_2_object()(seg);
       is_vert = kernel.is_vertical_2_object()(seg);
@@ -365,7 +373,7 @@ public:
 
   public:
     /*!
-     * Compare two points lexigoraphically: by x, then by y.
+     * Compare two points lexicographically: by x, then by y.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2);
@@ -500,7 +508,7 @@ public:
      * \param p The intersection point.
      * \pre The point p lies on both curves, and both of them must be also be
      *      defined (lexicographically) to its left.
-     * \return The relative position of cv1 with respect to cv2 immdiately to
+     * \return The relative position of cv1 with respect to cv2 immediately to
      *         the left of p: SMALLER, LARGER or EQUAL.
      */
     Comparison_result operator()(const X_monotone_curve_2& cv1,
@@ -523,7 +531,7 @@ public:
       CGAL_precondition(compare_xy(cv1.left(), p) == SMALLER &&
                         compare_xy(cv2.left(), p) == SMALLER);
 
-      // Compare the slopes of the two segments to determine thir relative
+      // Compare the slopes of the two segments to determine their relative
       // position immediately to the left of q.
       // Notice we use the supporting lines in order to compare the slopes,
       // and that we swap the order of the curves in order to obtain the
@@ -559,7 +567,7 @@ public:
      * \param p The intersection point.
      * \pre The point p lies on both curves, and both of them must be also be
      *      defined (lexicographically) to its right.
-     * \return The relative position of cv1 with respect to cv2 immdiately to
+     * \return The relative position of cv1 with respect to cv2 immediately to
      *         the right of p: SMALLER, LARGER or EQUAL.
      */
     Comparison_result operator()(const X_monotone_curve_2& cv1,
@@ -582,7 +590,7 @@ public:
       CGAL_precondition(compare_xy(cv1.right(), p) == LARGER &&
                         compare_xy(cv2.right(), p) == LARGER);
 
-      // Compare the slopes of the two segments to determine thir relative
+      // Compare the slopes of the two segments to determine their relative
       // position immediately to the left of q.
       // Notice we use the supporting lines in order to compare the slopes.
       return (kernel.compare_slope_2_object()(cv1.line(), cv2.line()));
@@ -624,7 +632,7 @@ public:
               equal(cv1.right(), cv2.right()));
     }
 
-    /*! Detemine whether the two points are the same.
+    /*! Determine whether the two points are the same.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return (true) if the two point are the same; (false) otherwise.
@@ -734,7 +742,7 @@ public:
   public:
     /*!
      * Find the intersections of the two given curves and insert them into the
-     * given output iterator. As two segments may itersect only once, only a
+     * given output iterator. As two segments may intersect only once, only a
      * single intersection will be contained in the iterator.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
@@ -986,7 +994,7 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
 
     /*! Obtain a trimmed version of a line.
-     * \param xseg The x-mnotone segmet.
+     * \param xseg The x-monotone segment.
      * \param src the new start endpoint.
      * \param tgt the new end endpoint.
      * \return The trimmed x-monotone segment.
@@ -1168,5 +1176,6 @@ InputStream& operator>>(InputStream& is, Arr_segment_2<Kernel>& seg)
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif

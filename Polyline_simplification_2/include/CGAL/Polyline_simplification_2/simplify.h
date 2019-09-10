@@ -14,11 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Andreas Fabri
 //
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_2_SIMPLIFY_H
 #define CGAL_POLYLINE_SIMPLIFICATION_2_SIMPLIFY_H
+
+#include <CGAL/license/Polyline_simplification_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <list>
 
@@ -481,4 +486,7 @@ simplify(CGAL::Constrained_triangulation_plus_2<CDT>& ct,
 
 } // namespace polyline_simplification_2
 } // namespace CGAL 
+
+#include <CGAL/enable_warnings.h>
+
 #endif

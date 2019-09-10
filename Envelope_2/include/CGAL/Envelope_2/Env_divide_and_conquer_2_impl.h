@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 
 #ifndef CGAL_ENVELOPE_DIVIDE_AND_CONQUER_2_IMPL_H
 #define CGAL_ENVELOPE_DIVIDE_AND_CONQUER_2_IMPL_H
+
+#include <CGAL/license/Envelope_2.h>
+
 
 /*! \file
  * Definitions of the functions of the Envelope_divide_and_conquer_2 class.

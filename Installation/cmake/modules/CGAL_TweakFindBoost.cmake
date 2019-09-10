@@ -52,10 +52,9 @@ if( NOT CGAL_TweakFindBoost )
       # One must add -DBOOST_ALL_DYN_LINK to DEFINITIONS to use Boost
       # auto-link with shared libraries.
 
-      # First, add the variable to cache, if it was loaded from CGALConfig.cmake
-      cache_set(CGAL_3RD_PARTY_DEFINITIONS "${CGAL_3RD_PARTY_DEFINITIONS}")
-      # Then amend it
-      add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS -DBOOST_ALL_DYN_LINK)
+      list(APPEND CGAL_3RD_PARTY_DEFINITIONS -DBOOST_ALL_DYN_LINK)
+      set(CGAL_3RD_PARTY_DEFINITIONS "${CGAL_3RD_PARTY_DEFINITIONS}"
+	CACHE INTERNAL "3rd party definitions for CGAL")
     endif()
   endif()
 

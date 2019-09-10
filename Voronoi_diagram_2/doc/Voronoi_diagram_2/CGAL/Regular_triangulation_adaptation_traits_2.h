@@ -18,8 +18,7 @@ the semantics of a 2D regular triangulation.
 
 */
 template< typename RT2 >
-class Regular_triangulation_adaptation_traits_2 {
-public:
+struct Regular_triangulation_adaptation_traits_2 {
 
 /// \name Types 
 /// @{

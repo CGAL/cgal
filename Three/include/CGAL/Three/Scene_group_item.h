@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Maxime Gimeno
@@ -21,6 +22,9 @@
 
 #ifndef SCENE_GROUP_ITEM_H
 #define SCENE_GROUP_ITEM_H
+
+#include <CGAL/license/Three.h>
+
 
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
@@ -34,9 +38,11 @@ using namespace CGAL::Three;
 #endif
 namespace CGAL {
 namespace Three {
-//!A Scene_group_item is a virtual Scene_item that does not draw anything,
+//!A Scene_group_item is a special Scene_item that does not draw anything,
 //! but regroups other items as its children. It allows the
 //! user to apply several actions to multiple items at the same time.
+//! A custom Scene_item can derive from it to have children. They appear
+//! hierarchically in the Geometric Objects list.
 class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
 {
     Q_OBJECT
@@ -51,11 +57,14 @@ public :
     bool isEmpty() const ;
     /*!
      * \brief Locks a child
+     *
      * A locked child cannot be moved out of the group nor can it be deleted.
+     * Use it to prevent a child to be destroyed without its parent.
      */
     void lockChild(CGAL::Three::Scene_item*);
     /*!
      * \brief Unlocks a child
+     *
      * @see lockChild()
      */
     void unlockChild(CGAL::Three::Scene_item*);
@@ -65,33 +74,53 @@ public :
      * @see lockChild()
      */
     bool isChildLocked(CGAL::Three::Scene_item*);
-    //!Returns if the group_item is currently expanded or collapsed in the view.
+    //!Returns if the group_item is currently expanded or collapsed in the Geometric Objects list.
     //! True means expanded, false means collapsed.
-    //! @see setExpanded.
+    //! @see isExpanded().
     bool isExpanded() const;
     //!Makes the group_item expanded or collapsed in the view.
     //! True means expanded, false means collapsed.
+    //! @see isExpanded().
     void setExpanded(bool);
-    //! @see isExpanded.
-    //!Returns an empty BBox to avoid disturbing the BBox of the scene.
+    //!Returns an empty Bbox to avoid disturbing the Bbox of the scene.
     Bbox bbox() const;
     //!Not supported.
     Scene_item* clone() const {return 0;}
     //! Indicates if the rendering mode is supported.
+    //! \returns true for all rendering modes that are shared by
+    //! all of the children.
     bool supportsRenderingMode(RenderingMode m) const;
-    //!Prints the number of children.
+    //!\returns a string containing the number of children.
     QString toolTip() const;
 
     /// Draw functions
+    /// Scene_group_item's children are not drawn by the scene, they are drawn by the group.
     ///@{
+    //!\brief draws all the children
+    //!
+    //! Calls `Scene_item::draw()`, then calls `Scene_item::drawEdges()`
+    //! and `Scene_item::drawPoints` for each child if its current
+    //! rendering mode is adequat.
+    //! @see #RenderingMode
     virtual void draw(CGAL::Three::Viewer_interface*) const;
+    //!\brief draws all the children
+    //!
+    //! Calls `Scene_item::drawEdges()`, then calls `Scene_item::draw()`
+    //! and `Scene_item::drawPoints` for each child if its current
+    //! rendering mode is adequat.
+    //! @see #RenderingMode
     virtual void drawEdges(CGAL::Three::Viewer_interface*) const;
+    //!\brief draws all the children
+    //!
+    //! Calls `Scene_item::drawPoints()`, then calls `Scene_item::draw()`
+    //! and `Scene_item::drawEdges()` for each child if its current
+    //! rendering mode is adequat.
+    //! @see #RenderingMode
     virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
-    virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
     ///@}
 
-    //!Adds a Scene_item* to the list of children.
-    //!@see getChildren. @see removeChild.
+    //!Adds a CGAL::Three::Scene_item* to the list of children.
+    //!@see getChildren() @see removeChild()
     void addChild(Scene_item* new_item);
     //!Sets all the children to the specified color.
     void setColor(QColor c);
@@ -131,19 +160,28 @@ public :
     void setPointsPlusNormalsMode(){
       setRenderingMode(PointsPlusNormals);
     }
-    //!Sets all the children in splat rendering.
-    void setSplattingMode(){
-      setRenderingMode(Splatting);
-    }
-    //!Returns a list of all the direct children.
+    //! \brief Returns a list of all the direct children.
+    //!
+    //! Only returns children that have this item as a parent.
+    //! Children of these children are not returned.
     QList<Scene_item*> getChildren() const {return children;}
+
+    //! \brief getChildrenForSelection returns the list of
+    //! children to select along with the group.
+    //!
+    //! When a `Scene_group_item` is added to the selection of the scene,
+    //! this function defines which of its children will be added too.
+    //! Typically overriden to allow applying an operation from the
+    //! Operation menu only to the parent item and not to its children.
+    virtual QList<Scene_item*> getChildrenForSelection() const {return children;}
     //!Removes a Scene_item from the list of children.
-    //!@see getChildren @see addChild
+    //!@see getChildren() @see addChild()
     void removeChild( Scene_item* item)
     {
      if(isChildLocked(item))
       return;
      update_group_number(item,0);
+     item->moveToGroup(0);
      children.removeOne(item);
     }
     //!Moves a child up in the list.
@@ -152,11 +190,16 @@ public :
     void moveDown(int);
 
 public Q_SLOTS:
+    //!\brief Redraws children.
+    //!
+    //! As each drawing function of a group draws all parts of its children,
+    //! once any of these functions is called, we skip all drawing calls
+    //! until `resetDraw()` is called. This keeps children from being
+    //! drawn several times. It is automatically called at the end of the scene's
+    //! `draw()` function.
     void resetDraw() { already_drawn = false;}
 private:
-    //!Updates the property has_group for each group and sub-groups containing new_item.
     void update_group_number(Scene_item*new_item, int n);
-
     bool expanded;
     mutable bool already_drawn;
 protected:

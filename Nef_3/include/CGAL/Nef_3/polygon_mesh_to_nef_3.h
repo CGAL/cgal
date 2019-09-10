@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_POLYGON_MESH_TO_NEF_3_H
 #define CGAL_POLYGON_MESH_TO_NEF_3_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/normal_vector_newell_3.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
@@ -254,11 +258,11 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       if(is_border(pe_prev,P))
 	with_border = true;
       else {
-	Plane ss_plane( CGAL::ORIGIN, normals[get(fimap,face(pe_prev,P))] );
+  Plane ss_plane( CGAL::ORIGIN, normals[get(fimap,face(pe_prev,P))] );
 	Sphere_circle ss_circle(ss_plane);
 	
-	CGAL_assertion(ss_circle.has_on(sp));
-	CGAL_assertion(ss_circle.has_on(sv_prev->point()));
+  CGAL_assertion(ss_circle.has_on(sp));
+  CGAL_assertion(ss_circle.has_on(sv_prev->point()));
 	
 	SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
 	e->circle() = ss_circle;

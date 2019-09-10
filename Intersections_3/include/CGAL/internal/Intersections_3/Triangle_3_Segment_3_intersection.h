@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     :  Laurent Rineau, Stephane Tayeb
@@ -256,13 +257,12 @@ intersection_coplanar(const typename K::Triangle_3 &t,
             case NEGATIVE:
               // c is isolated on the negative side
               return t3s3_intersection_coplanar_aux(a,b,c,p,q,true,k);
-            case COLLINEAR:
+            default: // COLLINEAR
               if ( collinear_ordered(p,c,q) ) // c is inside [p,q]
                 return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(c);
               else
                 return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
           }
-
         case NEGATIVE:
           if ( POSITIVE == pqc )
             // b is isolated on the negative side
@@ -270,7 +270,6 @@ intersection_coplanar(const typename K::Triangle_3 &t,
           else
             // a is isolated on the positive side
             return t3s3_intersection_coplanar_aux(b,c,a,q,p,false,k);
-
         case COLLINEAR:
           switch ( pqc ) {
             case POSITIVE:
@@ -281,11 +280,10 @@ intersection_coplanar(const typename K::Triangle_3 &t,
             case NEGATIVE:
               // a is isolated on the positive side
               return t3s3_intersection_coplanar_aux(b,c,a,q,p,false,k);
-            case COLLINEAR:
+            default: // COLLINEAR
               // b,c,p,q are aligned, [p,q]&[b,c] have the same direction
               return t3s3_intersection_collinear_aux(b,c,p,q,k);
           }
-
         default: // should not happen.
           CGAL_error();
           return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
@@ -313,7 +311,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               // the triangle lies in the negative halfspace
               // defined by the segment's supporting line.
               return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
-            case COLLINEAR:
+            default: // COLLINEAR
               if ( collinear_ordered(p,c,q) ) // c is inside [p,q]
                 return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(c);
               else
@@ -330,7 +328,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
                 return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(b);
               else
                 return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
-            case COLLINEAR:
+            default: // COLLINEAR
               // b,c,p,q are aligned, [p,q]&[c,b] have the same direction
               return t3s3_intersection_collinear_aux(c,b,p,q,k);
           }
@@ -355,7 +353,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
             case NEGATIVE:
               // b is isolated on the positive side
               return t3s3_intersection_coplanar_aux(c,a,b,q,p,false,k);
-            case COLLINEAR:
+            default: // COLLINEAR
               // a,c,p,q are aligned, [p,q]&[c,a] have the same direction
               return t3s3_intersection_collinear_aux(c,a,p,q,k);
           }
@@ -370,7 +368,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
                 return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(a);
               else
                 return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
-            case COLLINEAR:
+            default: // COLLINEAR
               // a,c,p,q are aligned, [p,q]&[a,c] have the same direction
               return t3s3_intersection_collinear_aux(a,c,p,q,k);
           }
@@ -383,7 +381,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
             case NEGATIVE:
               // a,b,p,q are aligned, [p,q]&[b,a] have the same direction
               return t3s3_intersection_collinear_aux(b,a,p,q,k);
-            case COLLINEAR:
+            default:  // COLLINEAR
               // case pqc == COLLINEAR is impossible since the triangle is
               // assumed to be non flat
               CGAL_error();

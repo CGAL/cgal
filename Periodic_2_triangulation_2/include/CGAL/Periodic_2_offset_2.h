@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
 #ifndef CGAL_PERIODIC_2_OFFSET_H
 #define CGAL_PERIODIC_2_OFFSET_H
+
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Clement Jamin
@@ -33,11 +34,10 @@ _test_cls_parallel_triangulation_3(const Parallel_triangulation &)
   const int NUM_INSERTED_POINTS = 5000;
 
   typedef Parallel_triangulation                                Cls;
+
   typedef typename Cls::Vertex_handle                           Vertex_handle;
-  typedef typename boost::mpl::if_<typename Cls::Weighted_tag,
-                                   typename Cls::Point, Cls>::type::Point 
-                                                                Point;
-  
+  typedef typename Cls::Point                                   Point;
+
   CGAL::Random_points_in_cube_3<Point> rnd(1.);
 
   // Construction from a vector of points

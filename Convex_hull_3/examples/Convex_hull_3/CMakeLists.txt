@@ -1,30 +1,74 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
-
+# Created by the script cgal_create_CMakeLists
+# This is the CMake script for compiling a set of CGAL applications.
 
 project( Convex_hull_3_Examples )
 
-cmake_minimum_required(VERSION 2.8.10)
 
-find_package(CGAL QUIET)
+cmake_minimum_required(VERSION 2.8.11)
 
-if ( CGAL_FOUND )
+# CGAL and its components
+find_package( CGAL QUIET COMPONENTS  )
 
-  include( ${CGAL_USE_FILE} )
+if ( NOT CGAL_FOUND )
 
-  include( CGAL_CreateSingleSourceCGALProgram )
+  message(STATUS "This project requires the CGAL library, and will not be compiled.")
+  return()  
 
-  include_directories (BEFORE "../../include")
-
-  # create a target per cppfile
-  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-  foreach(cppfile ${cppfiles})
-    create_single_source_cgal_program( "${cppfile}" )
-  endforeach()
-
-else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
 endif()
 
+# include helper file
+include( ${CGAL_USE_FILE} )
+
+
+# Boost and its components
+find_package( Boost REQUIRED )
+
+if ( NOT Boost_FOUND )
+
+  message(STATUS "This project requires the Boost library, and will not be compiled.")
+
+  return()  
+
+endif()
+
+find_package( OpenMesh QUIET )
+
+if ( OpenMesh_FOUND )
+  include( UseOpenMesh )
+else()
+  message(STATUS "Examples that use OpenMesh will not be compiled.")
+endif()
+
+# include for local directory
+
+# include for local package
+include_directories( BEFORE ../../include )
+
+
+# Creating entries for all C++ files with "main" routine
+# ##########################################################
+
+include( CGAL_CreateSingleSourceCGALProgram )
+
+create_single_source_cgal_program( "dynamic_hull_3.cpp" )
+
+create_single_source_cgal_program( "dynamic_hull_LCC_3.cpp" )
+
+create_single_source_cgal_program( "dynamic_hull_SM_3.cpp" )
+
+create_single_source_cgal_program( "halfspace_intersection_3.cpp" )
+
+create_single_source_cgal_program( "lloyd_algorithm.cpp" )
+
+create_single_source_cgal_program( "quickhull_3.cpp" )
+
+create_single_source_cgal_program( "quickhull_any_dim_3.cpp" )
+
+
+if(OpenMesh_FOUND)
+  create_single_source_cgal_program( "quickhull_OM_3.cpp" )
+  create_single_source_cgal_program( "dynamic_hull_OM_3.cpp" )
+
+  target_link_libraries( quickhull_OM_3 PRIVATE ${OPENMESH_LIBRARIES} )
+  target_link_libraries( dynamic_hull_OM_3 PRIVATE ${OPENMESH_LIBRARIES} )
+endif()

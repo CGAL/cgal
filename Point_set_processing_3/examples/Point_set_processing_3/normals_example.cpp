@@ -32,29 +32,28 @@ int main(int argc, char*argv[])
     if (!stream ||
         !CGAL::read_xyz_points(stream,
                                std::back_inserter(points),
-                               CGAL::First_of_pair_property_map<PointVectorPair>()))
+                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {
       std::cerr << "Error: cannot read file " << fname<< std::endl;
         return EXIT_FAILURE;
     }
 
     // Estimates normals direction.
-    // Note: pca_estimate_normals() requires an iterator over points
+    // Note: pca_estimate_normals() requiresa range of points
     // as well as property maps to access each point's position and normal.
     const int nb_neighbors = 18; // K-nearest neighbors = 3 rings
-    CGAL::pca_estimate_normals<Concurrency_tag>(points.begin(), points.end(),
-                               CGAL::First_of_pair_property_map<PointVectorPair>(),
-                               CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                               nb_neighbors);
+    CGAL::pca_estimate_normals<Concurrency_tag>
+      (points, nb_neighbors,
+       CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+       normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 
     // Orients normals.
-    // Note: mst_orient_normals() requires an iterator over points
+    // Note: mst_orient_normals() requires a range of points
     // as well as property maps to access each point's position and normal.
     std::list<PointVectorPair>::iterator unoriented_points_begin =
-      CGAL::mst_orient_normals(points.begin(), points.end(),
-                                 CGAL::First_of_pair_property_map<PointVectorPair>(),
-                                 CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                                 nb_neighbors);
+      CGAL::mst_orient_normals(points, nb_neighbors,
+                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+                               normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 
     // Optional: delete points with an unoriented normal
     // if you plan to call a reconstruction algorithm that expects oriented normals.

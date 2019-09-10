@@ -5,8 +5,8 @@
 #if (!CGAL_USE_CORE) && (!CGAL_USE_LEDA) && (!(CGAL_USE_GMP && CGAL_USE_MPFI))
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE, LEDA, or GMP+MPFI ..." 
-	    << std::endl; 
+  std::cout << "Sorry, this example needs CORE, LEDA, or GMP+MPFI ..."
+	    << std::endl;
   return 0;
 }
 #else
@@ -32,7 +32,7 @@ typedef Arr_traits_2::Polynomial_2 Polynomial_2;
 typedef Arr_traits_2::Algebraic_real_1 Algebraic_real_1;
 typedef Arr_traits_2::X_monotone_curve_2 X_monotone_curve_2;
 typedef Arr_traits_2::Point_2 Point_2;
-    
+
 
 int main() {
 
@@ -46,7 +46,7 @@ int main() {
         = arr_traits.construct_point_2_object();
     Arr_traits_2::Make_x_monotone_2 make_x_monotone
         = arr_traits.make_x_monotone_2_object();
-  
+
     Arrangement_2 arr(&arr_traits);
 
     std::vector<X_monotone_curve_2> segs;
@@ -80,7 +80,7 @@ int main() {
     // Construct a vertical cusp x^2-y^3=0
     Curve_2 cv2 = construct_curve(CGAL::ipower(x,2)-CGAL::ipower(y,3));
 
-    // Construct a segment containing the cusp point. 
+    // Construct a segment containing the cusp point.
     // This adds to X_monotone_curve_2 objects to the vector,
     // because the cusp is a critical point
     Point_2 p21 = construct_point(Algebraic_real_1(-2),cv2,0);
@@ -121,9 +121,9 @@ int main() {
     // Print the arrangement size.
     std::cout << "The arrangement size:" << std::endl
               << "   V = " << arr.number_of_vertices()
-              << ",  E = " << arr.number_of_edges() 
+              << ",  E = " << arr.number_of_edges()
               << ",  F = " << arr.number_of_faces() << std::endl;
-    
+
     return 0;
 }
 

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_SPLITTERS_H
 #define CGAL_SPLITTERS_H
+
+#include <CGAL/license/Spatial_searching.h>
+
 #include <CGAL/Point_container.h>
 #include <CGAL/Plane_separator.h>
 

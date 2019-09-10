@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Marc Glisse
 
@@ -33,6 +34,7 @@
 #include <CGAL/NewKernel_d/Wrapper/Segment_d.h>
 #include <CGAL/NewKernel_d/Wrapper/Sphere_d.h>
 #include <CGAL/NewKernel_d/Wrapper/Hyperplane_d.h>
+#include <CGAL/NewKernel_d/Wrapper/Weighted_point_d.h>
 
 #include <CGAL/NewKernel_d/Wrapper/Ref_count_obj.h>
 
@@ -111,6 +113,7 @@ CGAL_REGISTER_OBJECT_WRAPPER(Vector);
 CGAL_REGISTER_OBJECT_WRAPPER(Segment);
 CGAL_REGISTER_OBJECT_WRAPPER(Sphere);
 CGAL_REGISTER_OBJECT_WRAPPER(Hyperplane);
+CGAL_REGISTER_OBJECT_WRAPPER(Weighted_point);
 #undef CGAL_REGISTER_OBJECT_WRAPPER
 
 // Note: this tends to be an all or nothing thing currently, wrapping

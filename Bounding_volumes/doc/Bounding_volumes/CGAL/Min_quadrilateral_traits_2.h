@@ -18,8 +18,7 @@ functions `min_rectangle_2`, `min_parallelogram_2` and
 
 */
 template< typename K >
-class Min_quadrilateral_default_traits_2 {
-public:
+struct Min_quadrilateral_default_traits_2 {
 
 /// \name Types 
 /// @{

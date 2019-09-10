@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU, Clement JAMIN
 
 #ifndef CGAL_MESH_3_MESHER_LEVEL_H
 #define CGAL_MESH_3_MESHER_LEVEL_H
+
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <string>
 
@@ -145,6 +150,8 @@ public:
   typedef Tr Triangulation;
   /** Type of point that are inserted into the triangulation. */
   typedef typename Triangulation::Point Point;
+  /** Type of point with no weight */
+  typedef typename Triangulation::Bare_point Bare_point;
   /** Type of vertex handles that are returns by insertions into the
       triangulation. */
   typedef typename Triangulation::Vertex_handle Vertex_handle;
@@ -285,7 +292,7 @@ public:
     derived().pop_next_element_impl();
   }
 
-  Point circumcenter_of_element(const Element& e)
+  Bare_point circumcenter_of_element(const Element& e)
   {
     return derived().circumcenter_impl(e);
   }
@@ -305,7 +312,7 @@ public:
   }
 
   /** Gives the point that should be inserted to refine the element \c e */
-  Point refinement_point(const Element& e)
+  Bare_point refinement_point(const Element& e)
   {
     return derived().refinement_point_impl(e);
   }
@@ -559,7 +566,9 @@ public:
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
-    const Point& p = this->refinement_point(e);
+    const Tr& tr = derived().triangulation_ref_impl();
+    const Point& p = tr.geom_traits().construct_weighted_point_3_object()(
+                       this->refinement_point(e));
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<
@@ -828,7 +837,7 @@ public:
       previous_level.refine(visitor.previous_level());
       if(! no_longer_element_to_refine() )
       {
-        process_a_batch_of_elements(visitor);
+        refine_mesh_in_parallel(visitor);
       }
     }
   }
@@ -888,7 +897,7 @@ public:
     * it in parallel.
     */
   template <class Mesh_visitor>
-  void process_a_batch_of_elements(Mesh_visitor visitor)
+  void refine_mesh_in_parallel(Mesh_visitor visitor)
   {
     typedef typename Derived::Container::value_type Container_quality_and_element;
 
@@ -943,7 +952,9 @@ public:
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
-    const Point& p = this->refinement_point(e);
+    const Tr& tr = derived().triangulation_ref_impl();
+    const Point& p = tr.geom_traits().construct_weighted_point_3_object()(
+      this->refinement_point(e));
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<
@@ -1110,6 +1121,8 @@ public:
    * Applies one step of the algorithm: tries to refine one element of
    * previous level or one element of this level. Return \c false iff
    * <tt> is_algorithm_done()==true </tt>.
+   * Note that when parallelism is activated, this is not "one step"
+   * but the full refinement.
    */
   template <class Mesh_visitor>
   bool one_step(Mesh_visitor visitor)
@@ -1118,7 +1131,7 @@ public:
       previous_level.one_step(visitor.previous_level());
     else if( ! no_longer_element_to_refine() )
     {
-      process_a_batch_of_elements(visitor);
+      refine_mesh_in_parallel(visitor);
     }
     return ! is_algorithm_done();
   }
@@ -1210,5 +1223,7 @@ private:
 
 #include <CGAL/Mesher_level_visitors.h>
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_MESHER_LEVEL_H

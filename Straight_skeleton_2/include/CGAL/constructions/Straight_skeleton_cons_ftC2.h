@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_CONS_FTC2_H
 #define CGAL_STRAIGHT_SKELETON_CONS_FTC2_H 1
+
+#include <CGAL/license/Straight_skeleton_2.h>
+
 
 #include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
 
@@ -51,7 +55,7 @@ inline CORE::BigFloat to_BigFloat<MP_Float>( MP_Float const& b )
   const MP_Float::V::size_type limbs_per_double = 2 + 53/log_limb;
     
   exponent_type exp = b.max_exp();
-  int steps = (std::min)(limbs_per_double, b.v.size());
+  int steps = static_cast<int>((std::min)(limbs_per_double, b.v.size()));
   
   CORE::BigFloat d_exp_1 = CORE::BigFloat::exp2(-log_limb);
   

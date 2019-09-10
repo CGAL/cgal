@@ -1,10 +1,10 @@
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <iostream>
 #include <fstream>
 #include <cstring>
 
-typedef CGAL::Linear_cell_complex<2,2> LCC_2;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,2> LCC_2;
 typedef LCC_2::Dart_handle             Dart_handle;
 typedef LCC_2::Point                   Point;
 

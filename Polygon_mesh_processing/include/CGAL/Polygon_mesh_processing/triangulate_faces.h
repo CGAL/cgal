@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
 #define CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
+
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -103,13 +108,13 @@ public:
     {
       halfedge_descriptor v0, v1, v2, v3;
       v0 = halfedge(f, pmesh);
-      Point_ref p0 = _vpmap[target(v0, pmesh)];
+      Point_ref p0 = get(_vpmap, target(v0, pmesh));
       v1 = next(v0, pmesh);
-      Point_ref p1 = _vpmap[target(v1, pmesh)];
+      Point_ref p1 = get(_vpmap, target(v1, pmesh));
       v2 = next(v1, pmesh);
-      Point_ref p2 = _vpmap[target(v2, pmesh)];
+      Point_ref p2 = get(_vpmap, target(v2, pmesh));
       v3 = next(v2, pmesh);
-      Point_ref p3 = _vpmap[target(v3, pmesh)];
+      Point_ref p3 = get(_vpmap, target(v3, pmesh));
 
       /* Chooses the diagonal that will split the quad in two triangles that maximize
        * the scalar product of of the un-normalized normals of the two triangles.
@@ -143,7 +148,7 @@ public:
       Tr_Vertex_handle previous, first;
       do
       {
-        Tr_Vertex_handle vh = cdt.insert(_vpmap[target(h, pmesh)]);
+        Tr_Vertex_handle vh = cdt.insert(get(_vpmap, target(h, pmesh)));
         if (first == Tr_Vertex_handle()) {
           first = vh;
         }
@@ -303,11 +308,11 @@ public:
 * \ingroup PMP_meshing_grp
 * triangulates a single face of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* @tparam NamedParameters a sequence of \ref namedparameters
+* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * @param f face to be triangulated
 * @param pmesh the polygon mesh to which the face to be triangulated belongs
-* @param np optional sequence of \ref namedparameters among the ones listed below
+* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 *
 * \cgalNamedParamsBegin
@@ -329,7 +334,7 @@ bool  triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descripto
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_param(get_param(np, vertex_point),
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
@@ -353,11 +358,11 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
           model of `Range`.
           Its iterator type is `InputIterator`.
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* @tparam NamedParameters a sequence of \ref namedparameters
+* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * @param face_range the range of faces to be triangulated
 * @param pmesh the polygon mesh to be triangulated
-* @param np optional sequence of \ref namedparameters among the ones listed below
+* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -379,7 +384,7 @@ bool triangulate_faces(FaceRange face_range,
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_param(get_param(np, vertex_point),
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
@@ -398,10 +403,10 @@ bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 * \ingroup PMP_meshing_grp
 * triangulates all faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* @tparam NamedParameters a sequence of \ref namedparameters
+* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * @param pmesh the polygon mesh to be triangulated
-* @param np optional sequence of \ref namedparameters among the ones listed below
+* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -429,5 +434,7 @@ bool triangulate_faces(PolygonMesh& pmesh)
 } // end namespace Polygon_mesh_processing
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H

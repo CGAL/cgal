@@ -229,6 +229,8 @@ There are a 11 predefined `Color` constants available:
 `DEEPBLUE`, `BLUE`, `PURPLE`, `VIOLET`, `ORANGE`,
 and `YELLOW`.
 
+
+
 \section IOstreamStream Stream Support
 
 Three classes are provided by \cgal as adaptors to input and output stream

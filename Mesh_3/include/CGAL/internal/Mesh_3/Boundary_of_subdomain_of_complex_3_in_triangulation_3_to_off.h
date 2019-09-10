@@ -12,14 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://sloriot@scm.gforge.inria.fr/svn/cgal/branches/next/Mesh_3/include/CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h $
-// $Id: Complex_3_in_triangulation_3_to_vtk.h 67117 2012-01-13 18:14:48Z lrineau $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent Rineau and Sebastien Loriot
 
 #ifndef CGAL_INTERNAL_MESH_3_BOUNDARY_OF_SUDDOMAIN_OF_COMPLEX_3_IN_TRIANGULATION_3_TO_OFF_H
 #define CGAL_INTERNAL_MESH_3_BOUNDARY_OF_SUDDOMAIN_OF_COMPLEX_3_IN_TRIANGULATION_3_TO_OFF_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <map>
 #include <sstream>

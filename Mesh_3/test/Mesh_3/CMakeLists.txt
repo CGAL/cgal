@@ -14,11 +14,6 @@ if ( CGAL_FOUND )
 
   find_package( TBB QUIET )
 
-  if( TBB_FOUND )
-    include(${TBB_USE_FILE})
-    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
-  endif()
-
   include( CGAL_CreateSingleSourceCGALProgram )
 
   include_directories (BEFORE ../../include)
@@ -38,6 +33,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_mesh_implicit_domains.cpp" "implicit_functions.cpp" )
   create_single_source_cgal_program( "test_labeled_mesh_domain_3.cpp" )
   create_single_source_cgal_program( "test_mesh_criteria_creation.cpp" )
+  create_single_source_cgal_program( "test_c3t3_into_facegraph.cpp" )
   if(CGAL_ImageIO_USE_ZLIB)
     create_single_source_cgal_program( "test_meshing_3D_image.cpp" )
     create_single_source_cgal_program( "test_meshing_3D_gray_image.cpp" )
@@ -45,15 +41,33 @@ if ( CGAL_FOUND )
     message(STATUS "test_meshing_3D_image requires the ZLIB library, and will not be compiled.")
   endif()
   create_single_source_cgal_program( "test_meshing_implicit_function.cpp" )
+  create_single_source_cgal_program( "test_meshing_polyhedral_complex.cpp" )
   create_single_source_cgal_program( "test_meshing_polyhedron.cpp" )
   create_single_source_cgal_program( "test_meshing_polylines_only.cpp" )
   create_single_source_cgal_program( "test_meshing_polyhedron_with_features.cpp" )
   create_single_source_cgal_program( "test_meshing_unit_tetrahedron.cpp" )
   create_single_source_cgal_program( "test_meshing_with_default_edge_size.cpp" )
-  create_single_source_cgal_program( "test_robust_weighted_circumcenter.cpp" )
   create_single_source_cgal_program( "test_meshing_determinism.cpp" )
   create_single_source_cgal_program( "test_c3t3_extract_subdomains_boundaries.cpp" )
   create_single_source_cgal_program( "test_mesh_3_issue_1554.cpp" )
+  create_single_source_cgal_program( "test_mesh_polyhedral_domain_with_features_deprecated.cpp" )
+
+  foreach(target
+      test_meshing_polyhedron_with_features
+      test_meshing_utilities.h
+      test_mesh_implicit_domains
+      test_meshing_implicit_function
+      test_meshing_3D_image
+      test_meshing_3D_gray_image
+      test_meshing_unit_tetrahedron
+      test_backward_compatibility
+      test_meshing_polyhedron
+      test_meshing_polyhedral_complex
+      )
+    if(TBB_FOUND AND TARGET ${target})
+      CGAL_target_use_TBB(${target})
+    endif()
+  endforeach()
 
 else()
   

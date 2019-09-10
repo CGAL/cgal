@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
 
 #ifndef CGAL_MIN_ANNULUS_D_H
 #define CGAL_MIN_ANNULUS_D_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 #ifdef _MSC_VER
 # pragma warning(push)
@@ -36,7 +40,7 @@
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/functional.hpp>
 
 // here is how it works. We have d+2 variables: 
@@ -91,7 +95,7 @@ namespace MA_detail {
 
   // functor for a fixed column of A
   template <class NT, class Iterator>
-  class A_column : public std::unary_function <int, NT>
+  class A_column : public CGAL::unary_function <int, NT>
   {
   public:
     typedef NT result_type;
@@ -129,7 +133,7 @@ namespace MA_detail {
   // functor for matrix A
   template <class NT, class Access_coordinate_begin_d,
 	    class Point_iterator >
-  class A_matrix : public std::unary_function
+  class A_matrix : public CGAL::unary_function
   <int, boost::transform_iterator <A_column
     <NT, typename Access_coordinate_begin_d::Coordinate_iterator>, 
 				   boost::counting_iterator<int> > >
@@ -163,7 +167,7 @@ namespace MA_detail {
 
   // The functor necessary to realize access to b
   template <class NT>
-  class B_vector : public std::unary_function<int, NT>
+  class B_vector : public CGAL::unary_function<int, NT>
   {
   public:
     typedef NT result_type;

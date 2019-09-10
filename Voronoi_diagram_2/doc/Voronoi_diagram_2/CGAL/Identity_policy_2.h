@@ -26,8 +26,7 @@ uses the aforementioned `insert` method.
 
 */
 template< typename DG, typename AT >
-class Identity_policy_2 {
-public:
+struct Identity_policy_2 {
 
 /// \name Types 
 /// @{

@@ -14,11 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Yin Xu, Andreas Fabri and Ilker O. Yaz
 
 #ifndef CGAL_SURFACE_MESH_DEFORMATION_H
 #define CGAL_SURFACE_MESH_DEFORMATION_H
+
+#include <CGAL/license/Surface_mesh_deformation.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
@@ -820,8 +825,6 @@ public:
    */
   void reset()
   {
-    if(roi.empty()) { return; } // no ROI to reset
-
     region_of_solution(); // since we are using original vector
 
     //restore the current positions to be the original positions
@@ -1504,7 +1507,6 @@ private:
     else
     {
       return energy_arap();
-      return 0;
     }
   }
   double energy_arap() const
@@ -1611,4 +1613,7 @@ private:
   }
 };
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif  // CGAL_SURFACE_MESH_DEFORMATION_H

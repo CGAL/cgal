@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ilker O. Yaz
@@ -21,11 +22,13 @@
 #ifndef CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 #define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
+
 #include <CGAL/value_type_traits.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/iterator.h>
-#include <CGAL/trace.h>
 #include <CGAL/use.h>
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/squared_distance_3.h>
@@ -34,7 +37,7 @@
 #include <stack>
 #include <map>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/unordered_set.hpp>
 
 namespace CGAL {
@@ -1226,7 +1229,9 @@ triangulate_hole_polyline(const PointRange1& points,
   typename WeightCalculator::Weight w = use_delaunay_triangulation ?
     Fill_DT().operator()(P,Q,tracer,WC) :
     Fill().operator()(P,Q,tracer,WC);
-  CGAL_TRACE_STREAM << w << std::endl;
+  #ifdef CGAL_PMP_HOLE_FILLING_DEBUG
+  std::cerr << w << std::endl;
+  #endif
   return w;
 }
 

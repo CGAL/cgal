@@ -12,6 +12,7 @@ Scene_plane_item::Scene_plane_item(const CGAL::Three::Scene_interface* scene_int
       frame(new ManipulatedFrame())
   {
     setNormal(0., 0., 1.);
+
     //Generates an integer which will be used as ID for each buffer
     invalidateOpenGLBuffers();
   }
@@ -60,23 +61,23 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
 
     positions_quad.push_back(-diag);
     positions_quad.push_back(-diag);
-    positions_quad.push_back(0.0);
+    positions_quad.push_back(0.0  );
     positions_quad.push_back(-diag);
-    positions_quad.push_back(diag);
-    positions_quad.push_back(0.0);
-    positions_quad.push_back(diag);
+    positions_quad.push_back(diag );
+    positions_quad.push_back(0.0  );
+    positions_quad.push_back(diag );
     positions_quad.push_back(-diag);
-    positions_quad.push_back(0.0);
+    positions_quad.push_back(0.0  );
 
-    positions_quad.push_back(diag);
+    positions_quad.push_back(diag );
     positions_quad.push_back(-diag);
-    positions_quad.push_back(0.0);
+    positions_quad.push_back(0.0  );
     positions_quad.push_back(-diag);
-    positions_quad.push_back(diag);
-    positions_quad.push_back(0.0);
-    positions_quad.push_back(diag);
-    positions_quad.push_back(diag);
-    positions_quad.push_back(0.0);
+    positions_quad.push_back(diag );
+    positions_quad.push_back(0.0  );
+    positions_quad.push_back(diag );
+    positions_quad.push_back(diag );
+    positions_quad.push_back(0.0  );
 
 }
     //The grid
@@ -87,23 +88,23 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
         {
 
             positions_lines.push_back(-diag + x* u);
-            positions_lines.push_back(-diag);
-            positions_lines.push_back(0.0);
+            positions_lines.push_back(-diag       );
+            positions_lines.push_back(0.0         );
 
             positions_lines.push_back(-diag + x* u);
-            positions_lines.push_back(diag);
-            positions_lines.push_back(0.0);
+            positions_lines.push_back(diag        );
+            positions_lines.push_back(0.0         );
         }
         for(int v=0; v<11; v++)
         {
 
-            positions_lines.push_back(-diag);
+            positions_lines.push_back(-diag        );
             positions_lines.push_back(-diag + v * y);
-            positions_lines.push_back(0.0);
+            positions_lines.push_back(0.0          );
 
-            positions_lines.push_back(diag);
+            positions_lines.push_back(diag         );
             positions_lines.push_back(-diag + v * y);
-            positions_lines.push_back(0.0);
+            positions_lines.push_back(0.0          );
         }
 
     }
@@ -208,8 +209,8 @@ QString Scene_plane_item::toolTip() const {
     .arg(manipulable?tr("true"):tr("false"));
 }
 
-Plane_3 Scene_plane_item::plane() const {
-  const qglviewer::Vec& pos = frame->position();
+Plane_3 Scene_plane_item::plane(qglviewer::Vec offset) const {
+  const qglviewer::Vec& pos = frame->position() - offset;
   const qglviewer::Vec& n =
     frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
   return Plane_3(n[0], n[1],  n[2], - n * pos);
@@ -227,7 +228,8 @@ void Scene_plane_item::setPosition(float x, float y, float z) {
 }
 
 void Scene_plane_item::setPosition(double x, double y, double z) {
-  frame->setPosition((float)x, (float)y, (float)z);
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  frame->setPosition((float)x+offset.x, (float)y+offset.y, (float)z+offset.z);
 }
 
 void Scene_plane_item::setNormal(float x, float y, float z) {

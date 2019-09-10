@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_POLYGON_SET_2_H
 #define CGAL_POLYGON_SET_2_H
+
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/General_polygon_set_2.h>
@@ -51,12 +56,12 @@ public:
   typedef  typename Base::Arrangement_2                   Arrangement_2;
   typedef  typename Base::Size                            Size;
 
-  /*! Default consturctor. */
+  /*! Default constructor. */
   Polygon_set_2 () :
     Base()
   {}
 
-  /*! Consturctor from the base class. */
+  /*! Constructor from the base class. */
   Polygon_set_2 (const Base& base) :
     Base (base)
   {}
@@ -247,5 +252,7 @@ private:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

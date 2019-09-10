@@ -6,7 +6,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/random.hpp>
 
 

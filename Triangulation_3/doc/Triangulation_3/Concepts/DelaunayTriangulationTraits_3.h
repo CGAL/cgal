@@ -83,6 +83,29 @@ typedef unspecified_type Compare_distance_3;
 
 /// @}
 
+/// \name
+/// When `is_Gabriel` functions are used, the traits class must
+/// in addition provide the following predicate object:
+/// @{
+
+/*!
+A predicate object that must provide the function operators
+
+`Bounded_side operator()(Point_3 p, Point_3 q, Point_3 t)`,
+
+which returns the position of the point `t` relative to the sphere
+that has `pq` as its diameter,
+
+`Bounded_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 t)`,
+
+which returns the position of the point `t` relative to the sphere
+passing through `p, q`, and `r` and whose center is in the
+plane defined by these three points.
+*/
+typedef unspecified_type Side_of_bounded_sphere_3;
+
+/// @}
+
 /*! \name
  In addition, only when the dual operations are used, the traits class must provide the following constructor objects:
 */
@@ -165,8 +188,6 @@ When using the `Fast_location` policy or the `CGAL::Delaunay_triangulation_3::ne
 
 */ 
 Compare_distance_3 compare_distance_3_object(); 
-
-
 
 /// @}
 

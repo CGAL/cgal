@@ -13,6 +13,7 @@ use Archive::Tar::File;
 use File::Copy;
 use File::Copy::Recursive qw(dircopy);
 use File::Path qw(mkpath);
+use POSIX qw(strftime);
 
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
 
@@ -259,6 +260,7 @@ sub create_version_file()
     chdir "$RELEASEDIR/$VERSION/include/CGAL" or die;
     open(TEMPFILE, ">tempfile") or die;
 
+    my $RELEASE_DATE = strftime "%Y%m%d", localtime;
 # TODO : add `svnversion` Revision.
 
     print TEMPFILE << 'EOF';
@@ -279,6 +281,8 @@ sub create_version_file()
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: LGPL-3.0+
+//
 // Author(s)     : -
 
 // This file is automatically created by create_internal_release.
@@ -295,6 +299,7 @@ EOF
     print TEMPFILE "#define CGAL_VERSION_NR $VERSION_NR\n";
     print TEMPFILE "#define CGAL_SVN_REVISION 0\n";
     print TEMPFILE "#define CGAL_GIT_HASH 0\n";
+    print TEMPFILE "#define CGAL_RELEASE_DATE $RELEASE_DATE\n";
 
 print TEMPFILE << 'EOF';
 #define CGAL_VERSION_STR CGAL_str(CGAL_VERSION)

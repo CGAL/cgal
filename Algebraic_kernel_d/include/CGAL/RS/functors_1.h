@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
@@ -60,7 +61,7 @@ struct Construct_algebraic_real_1{
 
 template <class Polynomial_,class Algebraic_>
 struct Compute_polynomial_1:
-public std::unary_function<Algebraic_,Polynomial_>{
+public CGAL::unary_function<Algebraic_,Polynomial_>{
         typedef Polynomial_                                     Polynomial;
         typedef Algebraic_                                      Algebraic;
         Polynomial operator()(const Algebraic &x)const{
@@ -70,7 +71,7 @@ public std::unary_function<Algebraic_,Polynomial_>{
 
 template <class Polynomial_,class Ptraits_>
 struct Is_coprime_1:
-public std::binary_function<Polynomial_,Polynomial_,bool>{
+public CGAL::binary_function<Polynomial_,Polynomial_,bool>{
         typedef Polynomial_                                     Polynomial;
         typedef Ptraits_                                        Ptraits;
         typedef typename Ptraits::Gcd_up_to_constant_factor     Gcd;
@@ -256,7 +257,7 @@ template <class Polynomial_,
           class Signat_,
           class Ptraits_>
 class Sign_at_1:
-public std::binary_function<Polynomial_,Algebraic_,CGAL::Sign>{
+public CGAL::binary_function<Polynomial_,Algebraic_,CGAL::Sign>{
         // This implementation will work with any polynomial type whose
         // coefficient type is explicit interoperable with Gmpfi.
         // TODO: Make this function generic.
@@ -362,7 +363,7 @@ template <class Polynomial_,
           class Signat_,
           class Ptraits_>
 class Is_zero_at_1:
-public std::binary_function<Polynomial_,Algebraic_,bool>{
+public CGAL::binary_function<Polynomial_,Algebraic_,bool>{
         // This implementation will work with any polynomial type whose
         // coefficient type is explicit interoperable with Gmpfi.
         // TODO: Make this function generic.
@@ -442,7 +443,7 @@ public std::binary_function<Polynomial_,Algebraic_,bool>{
 // programs assume that this is equal to int
 template <class Polynomial_,class Isolator_>
 struct Number_of_solutions_1:
-public std::unary_function<Polynomial_,int>{
+public CGAL::unary_function<Polynomial_,int>{
         typedef Polynomial_                                     Polynomial_1;
         typedef Isolator_                                       Isolator;
         size_t operator()(const Polynomial_1 &p)const{
@@ -458,7 +459,7 @@ template <class Algebraic_,
           class Bound_,
           class Comparator_>
 struct Compare_1:
-public std::binary_function<Algebraic_,Algebraic_,CGAL::Comparison_result>{
+public CGAL::binary_function<Algebraic_,Algebraic_,CGAL::Comparison_result>{
         typedef Algebraic_                                      Algebraic;
         typedef Bound_                                          Bound;
         typedef Comparator_                                     Comparator;
@@ -510,7 +511,7 @@ template <class Algebraic_,
           class Bound_,
           class Comparator_>
 struct Bound_between_1:
-public std::binary_function<Algebraic_,Algebraic_,Bound_>{
+public CGAL::binary_function<Algebraic_,Algebraic_,Bound_>{
         typedef Algebraic_                                      Algebraic;
         typedef Bound_                                          Bound;
         typedef Comparator_                                     Comparator;
@@ -550,7 +551,7 @@ template <class Polynomial_,
           class Signat_,
           class Ptraits_>
 struct Isolate_1:
-public std::binary_function<Algebraic_,Polynomial_,std::pair<Bound_,Bound_> >{
+public CGAL::binary_function<Algebraic_,Polynomial_,std::pair<Bound_,Bound_> >{
         typedef Polynomial_                                     Polynomial_1;
         typedef Bound_                                          Bound;
         typedef Algebraic_                                      Algebraic;
@@ -588,7 +589,7 @@ template <class Polynomial_,
           class Algebraic_,
           class Refiner_>
 struct Approximate_absolute_1:
-public std::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
+public CGAL::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
         typedef Polynomial_                                     Polynomial_1;
         typedef Bound_                                          Bound;
         typedef Algebraic_                                      Algebraic;
@@ -620,7 +621,7 @@ template <class Polynomial_,
           class Algebraic_,
           class Refiner_>
 struct Approximate_relative_1:
-public std::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
+public CGAL::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
         typedef Polynomial_                                     Polynomial_1;
         typedef Bound_                                          Bound;
         typedef Algebraic_                                      Algebraic;

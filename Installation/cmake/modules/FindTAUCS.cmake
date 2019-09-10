@@ -11,7 +11,7 @@
 #  TAUCS_USE_FILE - The name of the cmake module to include to compile
 #     applications or libraries using TAUCS.
 
-include(CGAL_GeneratorSpecificSettings)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_GeneratorSpecificSettings.cmake)
 
 # TAUCS requires LAPACK
 if(TAUCS_FIND_QUIETLY OR NOT TAUCS_FIND_REQUIRED)
@@ -43,7 +43,7 @@ else()
 
   # Look first for the TAUCS library distributed with CGAL in auxiliary/taucs.
   # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
-  include(CGAL_Locate_CGAL_TAUCS)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Locate_CGAL_TAUCS.cmake)
 
   # Search for TAUCS headers in ${CGAL_TAUCS_INCLUDE_DIR} (TAUCS shipped with CGAL),
   # else in $TAUCS_INC_DIR environment variable.

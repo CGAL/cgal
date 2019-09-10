@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Mariette Yvinec
 
 #ifndef CGAL_TRIANGULATION_FACE_BASE_2_H
 #define CGAL_TRIANGULATION_FACE_BASE_2_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 #include <CGAL/config.h>
 #include <CGAL/triangulation_assertions.h>

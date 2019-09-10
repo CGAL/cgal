@@ -860,10 +860,10 @@ void Viewer::init()
     compile_shaders();
     compute_elements();
     initialize_buffers();
-    ::glEnable(GL_BLEND);
+    glEnable(GL_BLEND);
 
-    ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
 

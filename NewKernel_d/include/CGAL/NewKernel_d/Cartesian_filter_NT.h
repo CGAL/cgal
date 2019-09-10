@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Marc Glisse
 
@@ -55,7 +56,7 @@ struct Cartesian_filter_NT : public Base_
 				  try {
 					  typename P1::result_type res=p1(u...); // don't forward as u may be reused
 					  if(is_certain(res)) return get_certain(res);
-				  } catch (Uncertain_conversion_exception) {}
+				  } catch (Uncertain_conversion_exception&) {}
 			    }
 			    return p2(std::forward<U>(u)...);
 		    }
@@ -66,7 +67,7 @@ struct Cartesian_filter_NT : public Base_
 				  try {
 					  typename P1::result_type res=p1();
 					  if(is_certain(res)) return get_certain(res);
-				  } catch (Uncertain_conversion_exception) {}
+				  } catch (Uncertain_conversion_exception&) {}
 			    }
 			    return p2();
 		    }
@@ -76,7 +77,7 @@ struct Cartesian_filter_NT : public Base_
 				  try { \
 					  typename P1::result_type res=p1(BOOST_PP_ENUM_PARAMS(N,t)); \
 					  if(is_certain(res)) return get_certain(res); \
-				  } catch (Uncertain_conversion_exception) {} \
+				  } catch (Uncertain_conversion_exception&) {} \
 			    } \
 			    return p2(BOOST_PP_ENUM_PARAMS(N,t)); \
 		    }

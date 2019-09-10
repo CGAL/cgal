@@ -57,7 +57,7 @@
   VIProductVersion "4.8.0.0"
   VIAddVersionKey "ProductName"     "CGAL Windows Installer"
   VIAddVersionKey "CompanyName"     "The CGAL Project and GeometryFactory"
-  VIAddVersionKey "LegalCopyright"  "© The CGAL Project and GeometryFactory"
+  VIAddVersionKey "LegalCopyright"  "Â© The CGAL Project and GeometryFactory"
   VIAddVersionKey "FileDescription" "Windows Installer for CGAL"
   VIAddVersionKey "FileVersion"     "4.8"
   
@@ -149,8 +149,6 @@ Section "!Main CGAL" MAIN_Idx
   File /nonfatal /r "${CGAL_SRC}\auxiliary\*.*"
   SetOutPath "$INSTDIR\cmake"
   File /r "${CGAL_SRC}\cmake\*.*"
-  SetOutPath "$INSTDIR\config"
-  File /r "${CGAL_SRC}\config\*.*"
   SetOutPath "$INSTDIR\doc_html"
   File /r "${CGAL_SRC}\doc_html\*.*"
   SetOutPath "$INSTDIR\include"
@@ -166,7 +164,7 @@ Section "!Main CGAL" MAIN_Idx
 
   SetOutPath "$INSTDIR"
   File "${CGAL_SRC}\AUTHORS"
-  File "${CGAL_SRC}\CHANGES"
+  File "${CGAL_SRC}\CHANGES.md"
   File "${CGAL_SRC}\CMakeLists.txt"
   File "${CGAL_SRC}\INSTALL.md"
   File "${CGAL_SRC}\LICENSE"

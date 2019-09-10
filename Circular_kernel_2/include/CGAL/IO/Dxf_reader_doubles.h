@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Andreas Fabri
 
@@ -29,6 +30,9 @@
 
 #ifndef CGAL_IO_DXF_READER_DOUBLES_H
 #define CGAL_IO_DXF_READER_DOUBLES_H
+
+#include <CGAL/license/Circular_kernel_2.h>
+
 
 #include <CGAL/basic.h>
 #include <iostream>
@@ -136,9 +140,8 @@ private:
   is >> n;
   CGAL_assertion(n == 40);
   is >> iformat(r);
-  FT rft(r);
-
-  circ = CGAL::make_array(cx,cy,rft);
+  FT sqr_ft(r*r);
+  circ = CGAL::make_array(cx,cy,sqr_ft);
 }
 
 

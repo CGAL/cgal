@@ -8,7 +8,7 @@
 # TODO: support MacOSX
 
 include(FindPackageHandleStandardArgs)
-include(CGAL_GeneratorSpecificSettings)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_GeneratorSpecificSettings.cmake)
 
 if(MPFR_INCLUDE_DIR)
   set(MPFR_in_cache TRUE)

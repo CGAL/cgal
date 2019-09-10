@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Hemmer
@@ -175,7 +176,7 @@ public:
     typedef Tag_true            Is_numerical_sensitive;
 
     class Sqrt
-        : public std::unary_function< Type, Type > {
+        : public CGAL::unary_function< Type, Type > {
     public:
         Type operator()( const Type& x ) const {
             return ::boost::numeric::sqrt(x);
@@ -188,7 +189,7 @@ template <> class Real_embeddable_traits< leda_bigfloat_interval >
 public:
   
     class Abs
-        : public std::unary_function< Type, Type > {
+        : public CGAL::unary_function< Type, Type > {
     public:
         Type operator()( const Type& x ) const {
             return ::boost::numeric::abs(x);
@@ -196,7 +197,7 @@ public:
     };
 
     class To_double
-        : public std::unary_function< Type, double > {
+        : public CGAL::unary_function< Type, double > {
     public:
         double operator()( const Type& x ) const {
             return CGAL::to_double(::boost::numeric::median(x));
@@ -204,7 +205,7 @@ public:
     };
 
     class To_interval
-        : public std::unary_function< Type, std::pair< double, double > > {
+        : public CGAL::unary_function< Type, std::pair< double, double > > {
     public:
         std::pair<double, double> operator()( const Type& x ) const {            
             std::pair<double, double> lower_I(CGAL::to_interval(x.lower()));
@@ -313,98 +314,98 @@ public:
     typedef CGAL::Tag_true Is_interval; 
     typedef CGAL::Tag_true With_empty_interval; 
 
-    struct Construct :public std::binary_function<Bound,Bound,Interval>{
+    struct Construct :public CGAL::binary_function<Bound,Bound,Interval>{
         Interval operator()( const Bound& l,const Bound& r) const {
             CGAL_precondition( l < r ); 
             return Interval(l,r);
         }
     };
 
-    struct Lower :public std::unary_function<Interval,Bound>{
+    struct Lower :public CGAL::unary_function<Interval,Bound>{
         Bound operator()( const Interval& a ) const {
             return a.lower();
         }
     };
 
-    struct Upper :public std::unary_function<Interval,Bound>{
+    struct Upper :public CGAL::unary_function<Interval,Bound>{
         Bound operator()( const Interval& a ) const {
             return a.upper();
         }
     };
 
-    struct Width :public std::unary_function<Interval,Bound>{
+    struct Width :public CGAL::unary_function<Interval,Bound>{
         Bound operator()( const Interval& a ) const {
             return ::boost::numeric::width(a);
         }
     };
 
-    struct Median :public std::unary_function<Interval,Bound>{
+    struct Median :public CGAL::unary_function<Interval,Bound>{
         Bound operator()( const Interval& a ) const {
             return ::boost::numeric::median(a);
         }
     };
     
-    struct Norm :public std::unary_function<Interval,Bound>{
+    struct Norm :public CGAL::unary_function<Interval,Bound>{
         Bound operator()( const Interval& a ) const {
             return ::boost::numeric::norm(a);
         }
     };
 
-    struct Empty :public std::unary_function<Interval,bool>{
+    struct Empty :public CGAL::unary_function<Interval,bool>{
         bool operator()( const Interval& a ) const {
             return ::boost::numeric::empty(a);
         }
     };
 
-    struct Singleton :public std::unary_function<Interval,bool>{
+    struct Singleton :public CGAL::unary_function<Interval,bool>{
         bool operator()( const Interval& a ) const {
             return ::boost::numeric::singleton(a);
         }
     };
 
-    struct Zero_in :public std::unary_function<Interval,bool>{
+    struct Zero_in :public CGAL::unary_function<Interval,bool>{
         bool operator()( const Interval& a ) const {
             return ::boost::numeric::in_zero(a);
         }
     };
 
-    struct In :public std::binary_function<Bound,Interval,bool>{
+    struct In :public CGAL::binary_function<Bound,Interval,bool>{
         bool operator()( Bound x, const Interval& a ) const {
             return ::boost::numeric::in(x,a);
         }
     };
 
-    struct Equal :public std::binary_function<Interval,Interval,bool>{
+    struct Equal :public CGAL::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::equal(a,b);
         }
     };
     
-    struct Overlap :public std::binary_function<Interval,Interval,bool>{
+    struct Overlap :public CGAL::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::overlap(a,b);
         }
     };
     
-    struct Subset :public std::binary_function<Interval,Interval,bool>{
+    struct Subset :public CGAL::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::subset(a,b);
         }
     };
     
-    struct Proper_subset :public std::binary_function<Interval,Interval,bool>{
+    struct Proper_subset :public CGAL::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::proper_subset(a,b);
         }
     };
     
-    struct Hull :public std::binary_function<Interval,Interval,Interval>{
+    struct Hull :public CGAL::binary_function<Interval,Interval,Interval>{
         Interval operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::hull(a,b);
         }
     };
     
-    struct Intersection :public std::binary_function<Interval,Interval,Interval>{
+    struct Intersection :public CGAL::binary_function<Interval,Interval,Interval>{
         Interval operator()( const Interval& a, const Interval& b ) const {
             Interval r = ::boost::numeric::intersect(a,b);      
             return r;
@@ -423,7 +424,7 @@ public:
   typedef CGAL::Tag_true Is_bigfloat_interval; 
   
 
-//   struct Get_significant_bits : public std::unary_function<NT,long>{
+//   struct Get_significant_bits : public CGAL::unary_function<NT,long>{
 //         long operator()( NT x) const {
 //             CGAL_precondition(!Singleton()(x));
 //             leda::bigfloat lower = x.lower();
@@ -443,7 +444,7 @@ public:
 //     };
 
     
-  struct Relative_precision: public std::unary_function<NT,long>{
+  struct Relative_precision: public CGAL::unary_function<NT,long>{
     long operator()(const NT& x) const {
       CGAL_precondition(!Singleton()(x));
       CGAL_precondition(!CGAL::zero_in(x));
@@ -454,7 +455,7 @@ public:
     }
   };
   
-  struct Set_precision : public std::unary_function<long,long> {
+  struct Set_precision : public CGAL::unary_function<long,long> {
     long operator()( long prec ) const {
       return BF::set_precision(prec); 
     }

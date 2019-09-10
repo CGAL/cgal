@@ -27,6 +27,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifndef _COREIO_IMPL_H_
@@ -101,15 +102,15 @@ void append_char (char * &s, int & sz, int pos, char c) {
 // skip blanks, tabs, line breaks and comment lines
 CGAL_INLINE_FUNCTION
 int skip_comment_line (std::istream & in) {
-  int c;
+  char c;
 
   do {
-    c = in.get();
+    in.get(c);
     while ( c == '#' ) {
       do {
-        c = in.get();
+        in.get(c);
       } while ( c != '\n' );
-      c = in.get();
+     in.get(c);
     }
   } while (c == ' ' || c == '\t' || c == '\n');
 
@@ -122,14 +123,15 @@ int skip_comment_line (std::istream & in) {
 
 // skips '\\' followed by '\n'
 CGAL_INLINE_FUNCTION
-int skip_backslash_new_line (std::istream & in) {
-  int c = in.get();
+char skip_backslash_new_line (std::istream & in) {
+  char c;
+  in.get(c);
 
   while (c == '\\') {
-    c = in.get();
+    in.get(c);
 
     if (c == '\n')
-      c = in.get();
+      in.get(c);
     else
       core_io_error_handler("CoreIO::operator>>", "\\ must be immediately followed by new line.");
   }
@@ -139,10 +141,11 @@ int skip_backslash_new_line (std::istream & in) {
 
 CGAL_INLINE_FUNCTION
 void read_string(std::istream& in, char* &buffer, int sz) {
-  int c, pos=0;
+  char c;
+  int pos=0;
   skip_comment_line(in);
 
-  while ( (c = in.get()) != EOF ) {
+  while ( in.get(c) ) {
     if ( c == ' ' || c == '\t' || c == '\n' || c == '#')
       break;
     else
@@ -158,20 +161,21 @@ void read_base_number(std::istream& in, BigInt& m, long length, long maxBits) {
   int base;
   bool is_negate;
 
-  int c, pos = 0;
+  char c;
+  int pos = 0;
   skip_comment_line(in);
 
   // read sign
-  c = in.get();
+  in.get(c);
   if (c == '-') {
     is_negate = true;
-    c = in.get();
+    in.get(c);
   } else
     is_negate = false;
 
   // read base and compute digits
   if (c == '0') {
-    c = in.get();
+    in.get(c);
     if (c == 'b') {
       base = 2;
       size = (maxBits == 0 || maxBits > length) ? length : maxBits;
@@ -224,7 +228,7 @@ void read_base_number(std::istream& in, BigInt& m, long length, long maxBits) {
 
 
 CGAL_INLINE_FUNCTION
-void write_base_number(std::ostream& out, char* buffer, int length, int base, int charsPerLine) {
+void write_base_number(std::ostream& out, char* buffer, std::size_t length, int base, int charsPerLine) {
   // write big number in a format that gmp's mpz_set_str() can
   // automatically recognize with argument base = 0.
   if (base == 2)
@@ -236,7 +240,7 @@ void write_base_number(std::ostream& out, char* buffer, int length, int base, in
 
   // write big number in charsPerLine.
   char* start, *end, c;
-  for (int i=0; i<length; i += charsPerLine) {
+  for (std::size_t i=0; i<length; i += charsPerLine) {
     start = buffer + i;
     if (i + charsPerLine >= length)
       out << start;
@@ -280,7 +284,7 @@ void writeToFile(const BigInt& z, std::ostream& out, int base, int charsPerLine)
   // get the absoulte value string
   char* buffer = new char[mpz_sizeinbase(c.get_mp(), base) + 2];
   mpz_get_str(buffer, base, c.get_mp());
-  int length = std::strlen(buffer);
+  std::size_t length = std::strlen(buffer);
 
   // write type name of big number and length
   //out << "# This is an experimental big number format.\n";
@@ -342,7 +346,7 @@ void writeToFile(const BigFloat& bf, std::ostream& out, int base, int charsPerLi
   // get the absoulte value string
   char* buffer = new char[mpz_sizeinbase(c.get_mp(), base) + 2];
   mpz_get_str(buffer, base, c.get_mp());
-  int length = std::strlen(buffer);
+  std::size_t length = std::strlen(buffer);
 
 
   // write type name, base, length

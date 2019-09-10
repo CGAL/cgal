@@ -20,13 +20,13 @@
 All classes in the \cgal kernel provide input and output operators for
 IO streams.
 \cgal provides three different printing mode, defined in the enum
-`Mode`, as well as different functions to set and get
+`IO::Mode`, as well as different functions to set and get
 the printing mode.
 
 \cgalClassifedRefPages
 
 ## Enum ##
-- `CGAL::Mode`
+- `CGAL::IO::Mode`
 
 ## Functions ##
 - `CGAL::get_mode()`

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
@@ -257,7 +258,7 @@ public:
      *  line component of the curve at the given x-coordinate.
      */
     size_type number_of_events() const {
-        return this->ptr()->_m_arcs.size();
+        return static_cast<size_type>(this->ptr()->_m_arcs.size());
     }
 
 

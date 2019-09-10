@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stéphane Tayeb
@@ -24,6 +25,10 @@
 
 #ifndef CGAL_MAKE_MESH_3_H
 #define CGAL_MAKE_MESH_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/global_parameters.h>
@@ -124,6 +129,7 @@ CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
   BOOST_PARAMETER_NAME( features_param )
 
 CGAL_PRAGMA_DIAG_POP
+
   
 } // end namespace parameters::internal
 
@@ -153,12 +159,15 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
   else //use default number of points
     domain.construct_initial_points_object()(std::back_inserter(initial_points));
 
+  typename C3T3::Triangulation::Geom_traits::Construct_weighted_point_3 p2wp =
+      c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
+
   // Insert points and set their index and dimension
   for ( Ipv_iterator it = initial_points.begin() ;
        it != initial_points.end() ;
        ++it )
   {
-    Vertex_handle v = c3t3.triangulation().insert(it->first);
+    Vertex_handle v = c3t3.triangulation().insert(p2wp(it->first));
     
     // v could be null if point is hidden
     if ( v != Vertex_handle() )
@@ -189,13 +198,15 @@ template < typename C3T3, typename MeshDomain, typename MeshCriteria >
 void
 init_c3t3_with_features(C3T3& c3t3,
                         const MeshDomain& domain,
-                        const MeshCriteria& criteria)
+                        const MeshCriteria& criteria,
+                        bool nonlinear = false)
 {
   typedef typename MeshCriteria::Edge_criteria Edge_criteria;
   typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
 
   CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field>     
     protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()));
+  protect_edges.set_nonlinear_growth_of_balls(nonlinear);
   
   protect_edges(true);
 }
@@ -218,6 +229,7 @@ struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
+                  bool /* nonlinear */= false,
                   const int nb_initial_points = -1)
   {
     if ( with_features )
@@ -239,10 +251,11 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
+                  bool nonlinear = false,
                   const int nb_initial_points = -1)
   {
     C3t3_initializer < C3T3, MD, MC, true, typename MD::Has_features >()
-      (c3t3,domain,criteria,with_features,nb_initial_points);
+      (c3t3,domain,criteria,with_features,nonlinear,nb_initial_points);
   }  
 };
 
@@ -256,10 +269,11 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
+                  bool nonlinear = false,
                   const int nb_initial_points = -1)
   {
     if ( with_features ) {
-      init_c3t3_with_features(c3t3,domain,criteria);
+      init_c3t3_with_features(c3t3,domain,criteria,nonlinear);
 
       // If c3t3 initialization is not sufficient (may happen if there is only
       // a planar curve as feature for example), add some surface points
@@ -291,6 +305,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
+                  bool /* nonlinear */ = false,
                   const int nb_initial_points = -1)
   {
     if ( with_features )
@@ -381,6 +396,11 @@ C3T3 make_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
 }
 
 #endif  
+ 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
   
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
@@ -401,15 +421,23 @@ BOOST_PARAMETER_FUNCTION(
       (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
       (mesh_options_param, (parameters::internal::Mesh_3_options), 
                            parameters::internal::Mesh_3_options())
+      (manifold_options_param, (parameters::internal::Manifold_options),
+                               parameters::internal::Manifold_options())
     )
   )
 )
 {
   make_mesh_3_impl(c3t3, domain, criteria,
                    exude_param, perturb_param, odt_param, lloyd_param,
-                   features_param.features(), mesh_options_param);
+                   features_param.features(), mesh_options_param,
+                   manifold_options_param);
 }
 CGAL_PRAGMA_DIAG_POP
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 
 /**
  * @brief This function meshes the domain defined by mesh_traits
@@ -432,7 +460,9 @@ void make_mesh_3_impl(C3T3& c3t3,
                       const parameters::internal::Lloyd_options& lloyd,
                       const bool with_features,
                       const parameters::internal::Mesh_3_options& 
-                        mesh_options = parameters::internal::Mesh_3_options())
+                        mesh_options = parameters::internal::Mesh_3_options(),
+                      const parameters::internal::Manifold_options&
+                        manifold_options = parameters::internal::Manifold_options())
 {
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   CGAL::get_default_random() = CGAL::Random(0);
@@ -447,6 +477,7 @@ void make_mesh_3_impl(C3T3& c3t3,
             domain,
             criteria,
             with_features,
+            mesh_options.nonlinear_growth_of_balls,
             mesh_options.number_of_initial_points);
 
   CGAL_assertion( c3t3.triangulation().dimension() == 3 );
@@ -454,11 +485,13 @@ void make_mesh_3_impl(C3T3& c3t3,
   // Build mesher and launch refinement process
   // Don't reset c3t3 as we just created it
   refine_mesh_3(c3t3, domain, criteria,
-                exude, perturb, odt, lloyd, parameters::no_reset_c3t3(), mesh_options);
+                exude, perturb, odt, lloyd, parameters::no_reset_c3t3(), mesh_options,
+                manifold_options);
 }
 
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MAKE_MESH_3_H

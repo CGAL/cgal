@@ -1,5 +1,4 @@
 #include <CGAL/Combinatorial_map.h>
-#include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Cell_attribute.h>
 #include <iostream>
 #include <algorithm>
@@ -26,7 +25,6 @@ struct Myitem
   template<class CMap>
   struct Dart_wrapper
   {
-    typedef CGAL::Dart<3, CMap> Dart;
     typedef CGAL::Cell_attribute<CMap, int, CGAL::Tag_true,
      Sum_functor, Divide_by_two_functor> Facet_attribute;
     typedef CGAL::cpp11::tuple<void,void,Facet_attribute> Attributes;

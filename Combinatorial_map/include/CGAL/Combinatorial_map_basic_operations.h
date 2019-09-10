@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -21,8 +22,9 @@
 #define CGAL_COMBINATORIAL_MAP_BASIC_OPERATIONS_H 1
 
 #include <CGAL/Combinatorial_map_iterators_base.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/tags.h>
+
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL
 {

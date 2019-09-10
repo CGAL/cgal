@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stéphane Tayeb, Pierre Alliez
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
 #define CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
+
+#include <CGAL/license/AABB_tree.h>
+
+#include <CGAL/disable_warnings.h>
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/AABB_polyhedron_triangle_primitive.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_face_graph_triangle_primitive.h>"
@@ -154,5 +159,6 @@ namespace CGAL {
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-inf.mpg.de>
@@ -42,8 +43,11 @@
 
 #include <CGAL/Testsuite/use.h>
 
+
 #ifndef CGAL_TEST_ALGEBRAIC_STRUCTURE_H
 #define CGAL_TEST_ALGEBRAIC_STRUCTURE_H
+
+#include <CGAL/disable_warnings.h>
 
 // checks the result type of a functor 
 template <typename AdaptableFunctor, typename ResultType>
@@ -648,6 +652,7 @@ template<class  AS , class Sqrt>
 class Test_sqrt {
 public:
     void operator() (const Sqrt& sqrt) {
+        CGAL_USE(sqrt);
         typedef typename Sqrt::argument_type Argument_type;
         typedef typename Sqrt::result_type   Result_type;
         CGAL_USE_TYPE(Argument_type);
@@ -950,5 +955,7 @@ void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {
 }
   
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TEST_ALGEBRAIC_STRUCTURE_H

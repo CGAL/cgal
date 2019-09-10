@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H 
 #define CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H 1
+
+#include <CGAL/license/Straight_skeleton_2.h>
+
 
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 #include <CGAL/Uncertain.h>

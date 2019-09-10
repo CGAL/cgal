@@ -18,12 +18,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion
  
 #ifndef CGAL_HANDLE_FOR_H
 #define CGAL_HANDLE_FOR_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/config.h>
 #include <CGAL/assertions.h> // for CGAL_assume
@@ -311,5 +314,7 @@ get_pointee_or_identity(const T &t)
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_HANDLE_FOR_H

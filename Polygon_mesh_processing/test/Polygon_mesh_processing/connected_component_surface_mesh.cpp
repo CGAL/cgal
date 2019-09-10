@@ -4,6 +4,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -63,19 +64,20 @@ int main(int argc, char* argv[])
 
   std::cerr << "connected components without edge constraints" << std::endl;
   std::cerr << cc.size() << " faces in the CC of " << fd << std::endl;
-
+  if (strcmp(filename, "data/blobby_3cc.off") == 0)
+    assert(cc.size() == 1452);
 
   std::cerr << "\nconnected components with edge constraints (dihedral angle < 3/4 pi)" << std::endl;
   Mesh::Property_map<face_descriptor,std::size_t> fccmap;
   fccmap = sm.add_property_map<face_descriptor,std::size_t>("f:CC").first;
   std::size_t num =
     PMP::connected_components(sm,
-      fccmap,
-      CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
-        Constraint<Mesh>(sm,bound))
+      fccmap
     );
 
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
+ if (strcmp(filename, "data/blobby_3cc.off") == 0)
+   assert(num == 3);
 
  std::vector<face_descriptor> one_face_per_cc(num);
  std::vector<std::size_t> cc_size(num,0);

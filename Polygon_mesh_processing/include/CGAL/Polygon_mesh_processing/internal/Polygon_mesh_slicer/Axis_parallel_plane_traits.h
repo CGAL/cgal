@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     :  Sebastien Loriot
@@ -28,6 +29,9 @@
 
 #ifndef CGAL_INTERNAL_POLYGON_MESH_SLICER_AXIS_PARALLEL_PLANE_TRAITS_H
 #define CGAL_INTERNAL_POLYGON_MESH_SLICER_AXIS_PARALLEL_PLANE_TRAITS_H
+
+#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
+
 
 namespace CGAL{
 namespace Polygon_mesh_slicer_{

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_TRIVIAL_ITERATOR_H
 #define CGAL_TRIVIAL_ITERATOR_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 #include <iterator>
 #include <CGAL/iterator.h>

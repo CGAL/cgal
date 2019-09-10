@@ -47,7 +47,7 @@ struct TestMeshProgramInstance
   //typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef typename Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef typename Traits::FT FT;
   typedef typename Traits::Point_3 Point_3;
   typedef typename Traits::Point_2 Point_2;
@@ -86,11 +86,11 @@ struct TestMeshProgramInstance
 
   Face_location next_location(Surface_mesh_shortest_path& shortestPath, Polyhedron_3& polyhedron, const std::vector<vertex_descriptor>& vertices)
   {
-    typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
+    typename Traits::Construct_barycentric_coordinates construct_barycentric_coordinates;
 
     if (randomizer)
     {
-      return shortestPath.face_location(vertices[randomizer->get_int(0, vertices.size())]);
+      return shortestPath.face_location(vertices[randomizer->get_int(0, static_cast<int>(vertices.size()))]);
     }
     else
     {
@@ -122,10 +122,10 @@ struct TestMeshProgramInstance
         double alpha0, alpha1, alpha2;
         std::cin >> x >> y >> alpha0 >> alpha1 >> alpha2;
         std::pair<halfedge_descriptor, bool> he = halfedge(vertices[x], vertices[y], polyhedron);
-        return Face_location(face(he.first, polyhedron), construct_barycentric_coordinate(FT(alpha0), FT(alpha1), FT(alpha2)));
+        return Face_location(face(he.first, polyhedron), construct_barycentric_coordinates(FT(alpha0), FT(alpha1), FT(alpha2)));
       }
 
-      return Face_location(Graph_traits::null_face(), construct_barycentric_coordinate(FT(0.0), FT(0.0), FT(0.0)));
+      return Face_location(Graph_traits::null_face(), construct_barycentric_coordinates(FT(0.0), FT(0.0), FT(0.0)));
     }
   }
 
@@ -269,7 +269,7 @@ void run_program_instance(po::variables_map& vm)
 
   if (vm.count("randomseed"))
   {
-    programInstance.randomizer = new CGAL::Random(vm["randomSeed"].as<size_t>());
+    programInstance.randomizer = new CGAL::Random(vm["randomSeed"].as<unsigned int>());
   }
 
   programInstance.debugMode = vm["debugmode"].as<bool>();
@@ -315,7 +315,7 @@ int main(int argc, char** argv)
     ("help,h", "Display help message")
     ("polyhedron,p", po::value<std::string>(), "Polyhedron input file")
     ("debugmode,d", po::value<bool>()->default_value(false), "Enable debug output")
-    ("randomseed,r", po::value<size_t>(), "Randomization seed value")
+    ("randomseed,r", po::value<unsigned int>(), "Randomization seed value")
     ("trials,t", po::value<size_t>()->default_value(1), "Number of trials to run")
     ("kernel,k", po::value<std::string>()->default_value("epick"), "Kernel to use.  One of \'ipick\', \'epick\', \'epeck\'")
     ;

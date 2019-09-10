@@ -14,11 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Stephen Kiazyk
 
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_BARYCENTRIC_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_BARYCENTRIC_H
+
+#include <CGAL/license/Surface_mesh_shortest_path.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/number_utils.h>
 
@@ -29,8 +34,8 @@ namespace CGAL {
 
 namespace Surface_mesh_shortest_paths_3 {
 
-template <class K, class B, class Construct_barycentric_coordinate>
-class Construct_barycentric_coordinate_in_triangle_2
+template <class K, class B, class Construct_barycentric_coordinates>
+class Construct_barycentric_coordinates_in_triangle_2
 {
 public:
   typedef typename K::FT FT;
@@ -44,17 +49,17 @@ public:
   typedef B result_type;
 
 private:
-  Construct_barycentric_coordinate m_construct_barycentric_coordinate;
+  Construct_barycentric_coordinates m_construct_barycentric_coordinates;
   Construct_vector_2 m_construct_vector_2;
   Compute_scalar_product_2 m_compute_scalar_product_2;
 
 public:
-  Construct_barycentric_coordinate_in_triangle_2()
+  Construct_barycentric_coordinates_in_triangle_2()
   {
   }
 
-  Construct_barycentric_coordinate_in_triangle_2(const Construct_barycentric_coordinate& cbc, const Construct_vector_2& cv2, const Compute_scalar_product_2& csp2)
-    : m_construct_barycentric_coordinate(cbc)
+  Construct_barycentric_coordinates_in_triangle_2(const Construct_barycentric_coordinates& cbc, const Construct_vector_2& cv2, const Compute_scalar_product_2& csp2)
+    : m_construct_barycentric_coordinates(cbc)
     , m_construct_vector_2(cv2)
     , m_compute_scalar_product_2(csp2)
   {
@@ -76,12 +81,12 @@ public:
 
     FT v = (d11 * d20 - d01 * d21) / denom;
     FT w = (d00 * d21 - d01 * d20) / denom;
-    return m_construct_barycentric_coordinate(FT(1.0) - v - w, v, w);
+    return m_construct_barycentric_coordinates(FT(1.0) - v - w, v, w);
   }
 };
 
-template <class K, class B, class Construct_barycentric_coordinate>
-class Construct_barycentric_coordinate_in_triangle_3
+template <class K, class B, class Construct_barycentric_coordinates>
+class Construct_barycentric_coordinates_in_triangle_3
 {
 public:
   typedef typename K::FT FT;
@@ -95,17 +100,17 @@ public:
   typedef B result_type;
 
 private:
-  Construct_barycentric_coordinate m_construct_barycentric_coordinate;
+  Construct_barycentric_coordinates m_construct_barycentric_coordinates;
   Construct_vector_3 m_construct_vector_3;
   Compute_scalar_product_3 m_compute_scalar_product_3;
 
 public:
-  Construct_barycentric_coordinate_in_triangle_3()
+  Construct_barycentric_coordinates_in_triangle_3()
   {
   }
 
-  Construct_barycentric_coordinate_in_triangle_3(const Construct_barycentric_coordinate& cbc, const Construct_vector_3& cv3, const Compute_scalar_product_3& csp3)
-    : m_construct_barycentric_coordinate(cbc)
+  Construct_barycentric_coordinates_in_triangle_3(const Construct_barycentric_coordinates& cbc, const Construct_vector_3& cv3, const Compute_scalar_product_3& csp3)
+    : m_construct_barycentric_coordinates(cbc)
     , m_construct_vector_3(cv3)
     , m_compute_scalar_product_3(csp3)
   {
@@ -127,58 +132,71 @@ public:
 
     FT v = (d11 * d20 - d01 * d21) / denom;
     FT w = (d00 * d21 - d01 * d20) / denom;
-    return m_construct_barycentric_coordinate(FT(1.0) - v - w, v, w);
+    return m_construct_barycentric_coordinates(FT(1.0) - v - w, v, w);
   }
 };
 
 /*!
-  \brief Classification of the location of a 3-tuple barycentric coordinate in a triangle
+  \brief Classification of the location of a 3-tuple barycentric coordinates in a triangle
 */
-enum Barycentric_coordinate_type
+enum Barycentric_coordinates_type
 {
-  /// If the coordinate is invalid
-  BARYCENTRIC_COORDINATE_INVALID = 0,
-  /// if the coordinate has exactly one non-zero weight equal to 1, and the rest are zero
-  BARYCENTRIC_COORDINATE_ON_VERTEX,
-  ///if the coordinate has exactly one zero weight, and the rest sum to 1
-  BARYCENTRIC_COORDINATE_ON_BOUNDARY,
-  /// if the coordinate has no non-zero weight, and they all sum to 1
-  BARYCENTRIC_COORDINATE_ON_BOUNDED_SIDE,
-  /// if the weights of the coordinate do not sum to 1
-  BARYCENTRIC_COORDINATE_ON_UNBOUNDED_SIDE
+  /// If the coordinates is invalid
+  BARYCENTRIC_COORDINATES_INVALID = 0,
+  /// if the coordinates has exactly one non-zero weight equal to 1, and the rest are zero
+  BARYCENTRIC_COORDINATES_ON_VERTEX,
+  ///if the coordinates has exactly one zero weight, and the rest sum to 1
+  BARYCENTRIC_COORDINATES_ON_BOUNDARY,
+  /// if the coordinates has no non-zero weight, and they all sum to 1
+  BARYCENTRIC_COORDINATES_ON_BOUNDED_SIDE,
+  /// if the weights of the coordinates do not sum to 1
+  BARYCENTRIC_COORDINATES_ON_UNBOUNDED_SIDE
+  #ifndef CGAL_NO_DEPRECATED_CODE
+  // deprecated in CGAL 4.10
+  , BARYCENTRIC_COORDINATE_INVALID = 0
+  , BARYCENTRIC_COORDINATE_ON_VERTEX
+  , BARYCENTRIC_COORDINATE_ON_BOUNDARY
+  , BARYCENTRIC_COORDINATE_ON_BOUNDED_SIDE
+  , BARYCENTRIC_COORDINATE_ON_UNBOUNDED_SIDE
+  #endif
 };
 
-template <class B, class Construct_barycentric_coordinate_weight>
-class Classify_barycentric_coordinate
+#ifndef CGAL_NO_DEPRECATED_CODE
+// deprecated in CGAL 4.10
+typedef Barycentric_coordinates_type Barycentric_coordinate_type;
+#endif
+
+template <class B, class Construct_barycentric_coordinates_weight>
+class Classify_barycentric_coordinates
 {
 public:
-  typedef B Barycentric_coordinate;
-  typedef std::pair<Barycentric_coordinate_type, std::size_t> result_type;
+  typedef B Barycentric_coordinates;
+  typedef std::pair<Barycentric_coordinates_type, std::size_t> result_type;
 
 private:
-  Construct_barycentric_coordinate_weight m_construct_barycentric_coordinate_weight;
+  Construct_barycentric_coordinates_weight m_construct_barycentric_coordinates_weight;
 
 public:
 
-  Classify_barycentric_coordinate()
+  Classify_barycentric_coordinates()
   {
   }
 
-  Classify_barycentric_coordinate(const Construct_barycentric_coordinate_weight& construct_barycentric_coordinate_weight)
-    : m_construct_barycentric_coordinate_weight(construct_barycentric_coordinate_weight)
+  Classify_barycentric_coordinates(const Construct_barycentric_coordinates_weight& construct_barycentric_coordinates_weight)
+    : m_construct_barycentric_coordinates_weight(construct_barycentric_coordinates_weight)
   {
   }
 
-  result_type operator()(const Barycentric_coordinate& baryCoords)
+  result_type operator()(const Barycentric_coordinates& baryCoords)
   {
-    Construct_barycentric_coordinate_weight cbcw;
+    Construct_barycentric_coordinates_weight cbcw;
 
     bool nonZero[3];
     std::size_t numNonZero = 0;
 
     if (cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) > 1.00001 || cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) < 0.99999)
     {
-      return std::make_pair(BARYCENTRIC_COORDINATE_ON_UNBOUNDED_SIDE, 0);
+      return std::make_pair(BARYCENTRIC_COORDINATES_ON_UNBOUNDED_SIDE, 0);
     }
 
     for (std::size_t i = 0; i < 3; ++i)
@@ -193,7 +211,7 @@ public:
 
     if (numNonZero == 3)
     {
-      return std::make_pair(BARYCENTRIC_COORDINATE_ON_BOUNDED_SIDE, 0);
+      return std::make_pair(BARYCENTRIC_COORDINATES_ON_BOUNDED_SIDE, 0);
     }
     else if (numNonZero == 2)
     {
@@ -212,7 +230,7 @@ public:
         associatedEdge = 0;
       }
 
-      return std::make_pair(BARYCENTRIC_COORDINATE_ON_BOUNDARY, associatedEdge);
+      return std::make_pair(BARYCENTRIC_COORDINATES_ON_BOUNDARY, associatedEdge);
     }
     else if (numNonZero == 1)
     {
@@ -231,11 +249,11 @@ public:
         associatedEdge = 2;
       }
 
-      return std::make_pair(BARYCENTRIC_COORDINATE_ON_VERTEX, associatedEdge);
+      return std::make_pair(BARYCENTRIC_COORDINATES_ON_VERTEX, associatedEdge);
     }
     else
     {
-      return std::make_pair(BARYCENTRIC_COORDINATE_INVALID, 0);
+      return std::make_pair(BARYCENTRIC_COORDINATES_INVALID, 0);
     }
   }
 
@@ -244,5 +262,7 @@ public:
 } // namespace Surface_mesh_shortest_paths_3
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_SHORTEST_PATHS_3_BARYCENTRIC_H

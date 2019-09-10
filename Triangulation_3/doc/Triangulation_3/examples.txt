@@ -10,6 +10,7 @@
 \example Triangulation_3/segment_traverser_3.cpp
 \example Triangulation_3/find_conflicts_3.cpp
 \example Triangulation_3/regular_3.cpp
+\example Triangulation_3/regular_with_info_3.cpp
 \example Triangulation_3/copy_triangulation_3.cpp
 \example Triangulation_3/parallel_insertion_in_delaunay_3.cpp
 \example Triangulation_3/parallel_insertion_and_removal_in_regular_3.cpp

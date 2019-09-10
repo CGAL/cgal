@@ -199,6 +199,18 @@ a polyhedron type with a facet type storing an extra ID field, together with a v
 The main advantage is to decrease from log to constant the complexity for accessing the data associated to facets.
 
 \cgalExample{Surface_mesh_segmentation/segmentation_with_facet_ids_example.cpp}
+
+
+\subsection Surface_mesh_segmentationUsingSM Using a Surface_mesh
+When using a `Surface_mesh`, you can use the built-in property mechanism. 
+
+\cgalExample{Surface_mesh_segmentation/segmentation_from_sdf_values_SM_example.cpp}
+
+\subsection Surface_mesh_segmentationIndependantmeshpersegment Independant TriangleMesh per Segment
+ It is possible to consider each segment as an independant triangle mesh, like in the following example, where the area of each segment is computed.
+
+\cgalExample{Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp}
+
 <BR>
 \section Performances Performances
 <!-- \subsection SMSRuntime Runtime of the functions sdf_values() and segmentation_from_sdf_values() -->

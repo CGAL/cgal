@@ -1,6 +1,7 @@
 #ifndef CGAL_BOX_INTERSECTION_D_UTIL_H
 #define CGAL_BOX_INTERSECTION_D_UTIL_H
 
+
 #include <vector>
 #include <algorithm> // for pair
 #include <cmath>
@@ -8,6 +9,8 @@
 #include <cstdlib>
 
 #include <CGAL/Random.h>
+
+#include <CGAL/disable_warnings.h>
 
 template< class NT, int DIM, bool CLOSED = true >
 struct Util {
@@ -128,5 +131,6 @@ struct Util {
 
 };
 
+#include <CGAL/enable_warnings.h>
 
 #endif

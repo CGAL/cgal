@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert
 
 #ifndef CGAL_CONVEX_HULL_PROJECTIVE_XZ_TRAITS_2_H
 #define CGAL_CONVEX_HULL_PROJECTIVE_XZ_TRAITS_2_H
+
+#include <CGAL/license/Convex_hull_2.h>
+
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_projective_xz_traits_2.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Projection_traits_xz_3.h>"

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_ARR_DCEL_BASE_H
 #define CGAL_ARR_DCEL_BASE_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The definition of the base DCEL class for planar arrangements and its
@@ -1008,24 +1013,64 @@ public:
   //@{
   Vertex_iterator   vertices_begin()  { return vertices.begin(); }
   Vertex_iterator   vertices_end()    { return vertices.end(); }
+  Iterator_range<Prevent_deref<Vertex_iterator> >
+  vertex_handles()
+  {
+    return make_prevent_deref_range(vertices_begin(), vertices_end());
+  }
   Halfedge_iterator halfedges_begin() { return halfedges.begin();}
   Halfedge_iterator halfedges_end()   { return halfedges.end(); }
+  Iterator_range<Prevent_deref<Halfedge_iterator> >
+  halfedge_handles()
+  {
+    return make_prevent_deref_range(halfedges_begin(), halfedges_end());
+  }
   Face_iterator     faces_begin()     { return faces.begin(); }
   Face_iterator     faces_end()       { return faces.end(); }
+  Iterator_range<Prevent_deref<Face_iterator> >
+  face_handles()
+  {
+    return make_prevent_deref_range(faces_begin(), faces_end());
+  }
   Edge_iterator     edges_begin()     { return halfedges.begin(); }
   Edge_iterator     edges_end()       { return halfedges.end(); }
+  Iterator_range<Prevent_deref<Edge_iterator> >
+  edge_handles()
+  {
+    return make_prevent_deref_range(edges_begin(), edges_end());
+  }
   //@}
 
   /// \name Obtaining constant iterators.
   //@{
   Vertex_const_iterator   vertices_begin() const { return vertices.begin(); }
   Vertex_const_iterator   vertices_end() const { return vertices.end(); }
+  Iterator_range<Prevent_deref<Vertex_const_iterator> >
+  vertex_handles() const
+  {
+    return make_prevent_deref_range(vertices_begin(), vertices_end());
+  }
   Halfedge_const_iterator halfedges_begin() const { return halfedges.begin(); }
   Halfedge_const_iterator halfedges_end() const { return halfedges.end(); }
+  Iterator_range<Prevent_deref<Halfedge_const_iterator> >
+  halfedge_handles() const
+  {
+    return make_prevent_deref_range(halfedges_begin(), halfedges_end());
+  }
   Face_const_iterator     faces_begin() const { return faces.begin(); }
   Face_const_iterator     faces_end() const { return faces.end(); }
+  Iterator_range<Prevent_deref<Face_const_iterator> >
+  face_handles() const
+  {
+    return make_prevent_deref_range(faces_begin(), faces_end());
+  }
   Edge_const_iterator     edges_begin() const { return halfedges.begin(); }
   Edge_const_iterator     edges_end() const { return halfedges.end(); }
+  Iterator_range<Prevent_deref<Edge_const_iterator> >
+  edge_handles() const
+  {
+    return make_prevent_deref_range(edges_begin(), edges_end());
+  }
   //@}
 
   // \name Creation of new DCEL features.
@@ -1414,5 +1459,7 @@ protected:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

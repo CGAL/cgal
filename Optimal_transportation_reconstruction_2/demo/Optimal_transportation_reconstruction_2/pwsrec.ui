@@ -42,7 +42,7 @@
      <x>0</x>
      <y>0</y>
      <width>680</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -97,6 +97,7 @@
     <addaction name="actionReconstruction_100_steps"/>
     <addaction name="actionReconstruction_1000_steps"/>
     <addaction name="actionReconstruction_until"/>
+    <addaction name="actionReconstruction_Wasserstein_tolerance"/>
     <addaction name="separator"/>
     <addaction name="actionRelocate_vertices"/>
     <addaction name="actionReconstruction_reinit"/>
@@ -111,6 +112,7 @@
      <string>View</string>
     </property>
     <addaction name="actionView_points"/>
+    <addaction name="actionView_tolerance"/>
     <addaction name="separator"/>
     <addaction name="actionView_vertices"/>
     <addaction name="actionView_edges"/>
@@ -525,17 +527,6 @@
     <string>Shift+R</string>
    </property>
   </action>
-  <action name="actionView_tolerance">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Tolerance</string>
-   </property>
-   <property name="shortcut">
-    <string>Shift+T</string>
-   </property>
-  </action>
   <action name="actionClamp_mass">
    <property name="text">
     <string>Clamp mass</string>
@@ -594,6 +585,25 @@
   <action name="actionOutput_console">
    <property name="text">
     <string>Output to console</string>
+   </property>
+  </action>
+  <action name="actionReconstruction_Wasserstein_tolerance">
+   <property name="text">
+    <string>Run under Wasserstein tolerance...</string>
+   </property>
+   <property name="shortcut">
+    <string>W</string>
+   </property>
+  </action>
+  <action name="actionView_tolerance">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Tolerance</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>

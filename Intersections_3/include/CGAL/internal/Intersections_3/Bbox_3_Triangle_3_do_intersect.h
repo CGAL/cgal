@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez
@@ -24,6 +25,8 @@
 
 #include <CGAL/Triangle_3.h>
 #include <CGAL/Bbox_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 // Fast Triangle-Cuboid intersection test, following Tomas Akenine-Moeller description.
 // The code looks slightly different from his code because we avoid the translation at
@@ -95,6 +98,9 @@ namespace internal {
     typename K::Point_3& p_min,
     typename K::Point_3& p_max)
   {
+    CGAL_USE(px);
+    CGAL_USE(py);
+    CGAL_USE(pz);
     if(AXE == 0 || px > 0) {
       if(AXE == 1 || py > 0) {
         if(AXE == 2 || pz > 0) {
@@ -397,5 +403,7 @@ bool do_intersect(const Triangle_3<K>& a,
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_TRIANGLE_3_DO_INTERSECT_H

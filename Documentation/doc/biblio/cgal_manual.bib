@@ -21,6 +21,8 @@
 % ----------------------------------------------------------------------------
 
 
+
+
 @article{ cgal:afh-pdecm-02,
     author =  "P. K. Agarwal and E. Flato and D. Halperin",
     title =   "Polygon Decomposition for Efficient Construction of {Minkowski} Sums",
@@ -266,6 +268,15 @@ Boissonnat}
 , pages =   "405--451"
 }
 
+@misc{ cgal:b-ply-11
+  ,key          = {PLY}
+  ,title        = "{PLY} - Polygon File Format"
+  ,howpublished = {Paul Bourke}
+  ,year         = 2011
+  ,url          = "http://paulbourke.net/dataformats/ply/"
+}
+
+
 @misc{ cgal:bpp-vrml-95
   ,author       = {Gavin Bell and Anthony Parisi and Mark Pesce}
   ,title        = {VRML The Virtual Reality Modeling Language:
@@ -360,7 +371,7 @@ Boissonnat}
 
 @article{ cgal:cht-oacov-90
   ,author       = {M. Chang and N. Huang and C. Tang}
-  ,title        = {An optimal algorithm for constructing oriented Voronoi diagrams 
+  ,title        = {An optimal algorithm for constructing oriented Voronoi diagrams
                    and geographic neighborhood graphs}
   ,journal      = "Information Processing Letters"
   ,volume       = 35
@@ -450,6 +461,14 @@ note="Conference version: Symp. on Geometry Processing 2003"
        year = {2010},
        school = {Universit\'e Lyon 1},
        type = {Habilitation \`a Diriger des Recherches}
+}
+
+@Book{cgal:dl-cmeds-14,
+       author = {Damiand, G and Lienhardt, P.},
+       title = {Combinatorial Maps: Efficient Data Structures for Computer Graphics and Image Processing},
+       month = {September},
+       year = {2014},
+       publisher = {A K Peters/CRC Press}
 }
 
 @article{cgal:d-dh-02
@@ -586,18 +605,20 @@ Teillaud"
   , author =      "Olivier Devillers and Monique Teillaud"
   , title =  "Perturbations and Vertex Removal in a {3D Delaunay} Triangulation"
   , booktitle =   "Proc. 14th ACM-SIAM Sympos. Discrete Algorithms (SODA)"
+  , url         = "http://hal.inria.fr/inria-00166710/"
   , year =    2003
   , pages = "313-319"
 }
 
-@TechReport{ cgal:dt-pvrdr-06,
-author      = {Devillers, Olivier  and  Teillaud, Monique},
-title       = {Perturbations and Vertex Removal in {Delaunay} and Regular {3D} Triangulations},
-year        =  {2006},
-institution = {INRIA},
-number      = {5968},
-type        = {Research Report},
-note         = {\url{ttp://hal.inria.fr/inria-00090522}}
+@article{cgal:dt-pvrdr-06
+, author      = "Olivier Devillers and Monique Teillaud"
+, title       = "Perturbations for {Delaunay} and weighted {Delaunay} {3D} Triangulations"
+, journal     = "Computational Geometry: Theory and Applications"
+, volume      = 44
+, year        = 2011
+, pages       = "160--168"
+, url         = "http://hal.archives-ouvertes.fr/inria-00560388/"
+, doi         = "10.1016/j.comgeo.2010.09.010"
 }
 
 @article{cgal:dw-tmgob-02,
@@ -626,7 +647,7 @@ note         = {\url{ttp://hal.inria.fr/inria-00090522}}
   ,year         = 1995
   ,pages        = {173--182}
   ,note         = {Examples in
-                   \url{tp://ftp.cs.washington.edu/pub/graphics}}
+                   \url{ftp://ftp.cs.washington.edu/pub/graphics}}
   ,update       = "97.08 kettner"
 }
 
@@ -657,7 +678,7 @@ note         = {\url{ttp://hal.inria.fr/inria-00090522}}
   ,school       = "Universit\'e de {Nice-Sophia Antipolis}"
   ,address      = "France"
   ,year         = 2003
-  ,url          = "http://www-sop.inria.fr/prisme/personnel/flototto/"
+  ,url          = "https://tel.archives-ouvertes.fr/tel-00832487/"
 }
 
 
@@ -713,6 +734,17 @@ note         = {\url{ttp://hal.inria.fr/inria-00090522}}
   ,volume       = "1643"
   ,publisher    = "Springer-Verlag"
   ,pages        = "325--338"
+}
+
+@article{cgal:gcsa-nasr-13,
+   journal = {Computer Graphics Forum},
+   title = {{Noise-Adaptive Shape Reconstruction from Raw Point Sets}},
+   author = {Simon Giraudot and David Cohen-Steiner and Pierre Alliez },
+   pages = {229-238},
+   volume= {32},
+   number= {5},
+   year = {2013},
+   DOI = {10.1111/cgf.12189},
 }
 
 @manual{ cgal:g-gmpal-96
@@ -977,6 +1009,15 @@ note         = {\url{ttp://hal.inria.fr/inria-00090522}}
   , pages       = "209--225"
 }
 
+@article{cgal:hws-fsso3-16,
+  title={Fast semantic segmentation of 3D point clouds with strongly varying density},
+  author={Hackel, Timo and Wegner, Jan D and Schindler, Konrad},
+  journal={ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences, Prague, Czech Republic},
+  volume={3},
+  pages={177--184},
+  year={2016}
+}
+
 @book{ cgal:hw-vrml2h-96
   ,author       = {Jed Hartman and Josie Wernecke}
   ,title        = {The {VRML} 2.0 Handbook: Building Moving Worlds on the
@@ -1038,6 +1079,15 @@ note         = {\url{ttp://hal.inria.fr/inria-00090522}}
    ,pages        = "307--320"
 }
 
+@book{ cgal:l-mrfmi-09,
+ author = {Li, Stan Z.},
+ title = {Markov Random %Field Modeling in Image Analysis},
+ year = {2009},
+ isbn = {9781848002784},
+ edition = {3rd},
+ publisher = {Springer Publishing Company, Incorporated}
+} 
+
 @inproceedings { cgal:l-nmdgp-05,
   AUTHOR = {Bruno Levy},
   TITLE  = {Numerical Methods for Digital Geometry Processing},
@@ -1060,13 +1110,30 @@ note         = {\url{ttp://hal.inria.fr/inria-00090522}}
   annote =   {map,generalized map},
 }
 
+@INPROCEEDINGS{cgal:la-srpss-13,
+    author = {Lafarge, Florent and Alliez, Pierre},
+    title = {Surface reconstruction through point set structuring},
+    booktitle = {Proc. of Eurographics},
+    year = {2013},
+    address = {Girona, Spain}
+}
+
+@article{cgal:lm-clscm-12,
+    author = {Lafarge, Florent and Mallet, Clement},
+    title = {{Creating large-scale city models from 3D-point clouds: a robust approach with hybrid representation}},
+    journal = {International Journal of Computer Vision},
+    volume = {99},
+    number = {1},
+    pages = {69-85},
+    year = {2012},
+}
+
 @inproceedings{ cgal:lt-fmeps-98,
     author = "Peter Lindstrom and Greg Turk",
     title = "Fast and memory efficient polygonal simplification",
     booktitle = "{IEEE} Visualization",
     pages = "279-286",
-    year = "1998",
-    url = "citeseer.ist.psu.edu/lindstrom98fast.html"
+    year = "1998"
 }
 
 @article{ cgal:lt-ems-99,
@@ -1077,8 +1144,7 @@ note         = {\url{ttp://hal.inria.fr/inria-00090522}}
     number = "2",
     month = "\slash",
     pages = "98--115",
-    year = "1999",
-    url = "citeseer.ist.psu.edu/lindstrom99evaluation.html"
+    year = "1999"
 }
 
 @article{ cgal:k-lp-84
@@ -1295,6 +1361,20 @@ ABSTRACT = {We present the first complete, exact and efficient C++ implementatio
   update        = "09.11 penarand"
 }
 
+@article{cgal:mbrsh-raofw-11,
+    title = "Relevance assessment of full-waveform lidar data for urban area classification ",
+    journal = "\{ISPRS\} Journal of Photogrammetry and Remote Sensing ",
+    volume = "66",
+    number = "6, Supplement",
+    pages = "S71 - S84",
+    year = "2011",
+    note = "Advances in \{LIDAR\} Data Processing and Applications ",
+    issn = "0924-2716",
+    doi = "http://dx.doi.org/10.1016/j.isprsjprs.2011.09.008",
+    url = "http://www.sciencedirect.com/science/article/pii/S0924271611001055",
+    author = "Clément Mallet and Frédéric Bretar and Michel Roux and Uwe Soergel and Christian Heipke"
+}
+
 @article{cgal:ml-cfsg-00
 , author =	"G. Medioni and M. Lee and C. Tang"
 , title =	"A Computational Framework for Segmentation and Grouping"
@@ -1408,6 +1488,14 @@ ABSTRACT = {We present the first complete, exact and efficient C++ implementatio
   ,update       = "99.05 schirra, 00.09 hert"
 }
 
+@manual{ cgal:as-lum
+  ,author       = {Algorithmic Solutions}
+  ,title        = {The {LEDA} {U}ser {M}anual}
+  ,organization = {Algorithmic Solutions}
+  ,address      = {66123 Saarbr\"ucken, Germany}
+  ,url         =  {http://www.algorithmic-solutions.info/leda_manual/manual.html}
+}
+
 @article{ cgal:mog-vbcfe-11
   ,author    = {Merigot, Quentin and Ovsjanikov, Maks and Guibas, Leonidas}
   ,title     = {Voronoi-based curvature and feature estimation from point clouds}
@@ -1518,7 +1606,7 @@ ABSTRACT = {We present the first complete, exact and efficient C++ implementatio
   ,organization = {The Geometry Center}
   ,address      = {University of Minnesota}
   ,year         = 1996
-  ,url         =  {http://www.geom.umn.edu/software/download/geomview.html}
+  ,url         =  {http://www.geomview.org/docs/}
   ,annote       = {Reference for object file format (OFF).}
   ,update       = "03.04 kettner"
 }
@@ -1785,6 +1873,15 @@ ABSTRACT = {We present the first complete, exact and efficient C++ implementatio
   ,update       = "97.12 kettner"
 }
 
+@inproceedings{ cgal:ss-spfis-16
+  ,author       = {Shahar Shamai and Dan Halperin}
+  ,title        = {On the Separation of a Polyhedron from Its Single-Part Mold}
+  ,booktitle    = {Abstracts 32nd European Workshop Comput. Geom.}
+  ,year         = {2016}
+  ,pages        = {99--102}
+  ,site         = {Lugano}
+}
+
 @misc{ cgal:sl-stl-95
   ,author       = {Alexander Stepanov and Meng Lee}
   ,title        = {The Standard Template Library}
@@ -2028,6 +2125,16 @@ location    = {Salt Lake City, Utah, USA}
   ,update       = "97.04 kettner"
 }
 
+@Misc{ cgal:w-erftl-14,
+  key           = {ETHZRandomForest},
+  title         = {{ETH Zurich Random Forest Template Library}},
+  howpublished  = {Stefan Walk (ETH Zurich, Department of Civil,
+                  Environmental and Geomatic Engineering, Institute of
+                  Geodesy and Photogrammetry)},
+  url           = {http://www.prs.igp.ethz.ch/research/Source_code_and_datasets.html},
+  year          = 2014
+}
+
 @book{cgal:ww-smgd-02
    ,author = "Joe Warren and Henrik Weimer"
    ,title = "Subdivision Methods for Geometric Design"
@@ -2155,6 +2262,14 @@ ee        = {http://link.springer.de/link/service/series/0558/bibs/1766/17660069
 crossref  = {cgal:jlm-isgp-98},
 bibsource = {DBLP, http://dblp.uni-trier.de},
 url = "http://www.boost.org/community/exception_safety.html"
+}
+
+@misc{ cgal:asprs-lasf-13
+  ,key          = {ASPRS}
+  ,title        = "LASer ({LAS}) File Format Exchange Activities"
+  ,howpublished = {American Society for Photogrammetry \& Remote Sensing}
+  ,year         = 2013
+  ,url          = "https://www.asprs.org/committee-general/laser-las-file-format-exchange-activities.html"
 }
 
 @article{cgal:as-solri-92
@@ -2684,6 +2799,66 @@ pages = "207--221"
     number = {5 },
     year = {2011},
 }
+
+@mastersthesis{cloop:mthesis,
+  author       = {Charles Loop},
+  title        = {Smooth Subdivision Surfaces Based on Triangles},
+  school       = {University of Utah},
+  year         = 1987,
+}
+
+@article{doo1978behaviour,
+  title={Behaviour of recursive division surfaces near extraordinary points},
+  author={Doo, Daniel and Sabin, Malcolm},
+  journal={Computer-Aided Design},
+  volume={10},
+  number={6},
+  pages={356--360},
+  year={1978},
+  publisher={Elsevier}
+}
+
+@inproceedings{liu2008local,
+  title={A local/global approach to mesh parameterization},
+  author={Liu, Ligang and Zhang, Lei and Xu, Yin and Gotsman, Craig and Gortler, Steven J},
+  booktitle={Computer Graphics Forum},
+  volume={27},
+  number={5},
+  pages={1495--1504},
+  year={2008},
+  organization={Wiley Online Library}
+}
+
+@inproceedings{kami2005free,
+  title={Free-boundary linear parameterization of 3D meshes in the presence of constraints},
+  author={Kami, Z and Gotsman, Craig and Gortler, Steven J},
+  booktitle={International Conference on Shape Modeling and Applications 2005 (SMI'05)},
+  pages={266--275},
+  year={2005},
+  organization={IEEE}
+}
+
+@article{aigerman2015orbifold,
+  title={Orbifold Tutte embeddings},
+  author={Aigerman, Noam and Lipman, Yaron},
+  journal={ACM Transactions on Graphics},
+  volume={34},
+  number={6},
+  pages={190},
+  year={2015}
+}
+
+@article{karypis1998fast,
+  title={A fast and high quality multilevel scheme for partitioning irregular graphs},
+  author={Karypis, George and Kumar, Vipin},
+  journal={SIAM Journal on scientific Computing},
+  volume={20},
+  number={1},
+  pages={359--392},
+  year={1998},
+  publisher={SIAM}
+}
+
 % ----------------------------------------------------------------------------
 % END OF BIBFILE
 % ----------------------------------------------------------------------------

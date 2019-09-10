@@ -32,6 +32,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifdef CGAL_HEADER_ONLY
@@ -40,8 +41,11 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/CORE/Expr.h>
 #include <cmath>
+#include <sstream> 
 
 namespace CORE { 
 
@@ -68,12 +72,12 @@ const char* Sub::name = "-";
  ********************************************************/
 CGAL_INLINE_FUNCTION
 const Expr& Expr::getZero() {
-  static Expr Zero(0);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Expr, Zero,0);
   return Zero;
 }
 CGAL_INLINE_FUNCTION
 const Expr& Expr::getOne() {
-  static Expr One(1);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Expr, One,1);
   return One;
 }
 
@@ -1024,45 +1028,55 @@ void SqrtRep::computeApproxValue(const extLong& relPrec,
 CGAL_INLINE_FUNCTION
 void MultRep::computeApproxValue(const extLong& relPrec,
                                  const extLong& absPrec) {
-  if (lMSB() < EXTLONG_BIG && lMSB() > EXTLONG_SMALL) {
-    extLong r   = relPrec + EXTLONG_FOUR;
-    extLong  afr = - first->lMSB() + EXTLONG_ONE;
-    extLong  afa = second->uMSB() + absPrec + EXTLONG_FIVE;
-    extLong  af  = afr > afa ? afr : afa;
-    extLong  asr = - second->lMSB() + EXTLONG_ONE;
-    extLong  asa = first->uMSB() + absPrec + EXTLONG_FIVE;
-    extLong  as  = asr > asa ? asr : asa;
-    appValue() = first->getAppValue(r, af)*second->getAppValue(r, as);
-  } else {
-    std::cerr << "lMSB = " << lMSB() << std::endl;
-    core_error("a huge lMSB in MulRep", __FILE__, __LINE__, false);
+  // warn about large MSB bound but do the computation as extLong is
+  // handling overflow and underflow
+  if (lMSB() >= EXTLONG_BIG || lMSB() <= EXTLONG_SMALL)
+  {
+    std::ostringstream oss;
+    oss << "CORE WARNING: a huge lMSB in AddSubRep " <<  lMSB();
+    core_error(oss.str(),
+	 	__FILE__, __LINE__, false);
   }
+
+  extLong r   = relPrec + EXTLONG_FOUR;
+  extLong  afr = - first->lMSB() + EXTLONG_ONE;
+  extLong  afa = second->uMSB() + absPrec + EXTLONG_FIVE;
+  extLong  af  = afr > afa ? afr : afa;
+  extLong  asr = - second->lMSB() + EXTLONG_ONE;
+  extLong  asa = first->uMSB() + absPrec + EXTLONG_FIVE;
+  extLong  as  = asr > asa ? asr : asa;
+  appValue() = first->getAppValue(r, af)*second->getAppValue(r, as);
 }
 
 CGAL_INLINE_FUNCTION
 void DivRep::computeApproxValue(const extLong& relPrec,
                                 const extLong& absPrec) {
-  if (lMSB() < EXTLONG_BIG && lMSB() > EXTLONG_SMALL) {
-    extLong rr  = relPrec + EXTLONG_SEVEN;		// These rules come from
-    extLong ra  = uMSB() + absPrec + EXTLONG_EIGHT;	// Koji's Master Thesis, page 65
-    extLong ra2 = core_max(ra, EXTLONG_TWO);
-    extLong r   = core_min(rr, ra2);
-    extLong  af  = - first->lMSB() + r;
-    extLong  as  = - second->lMSB() + r;
-
-    extLong pr = relPrec + EXTLONG_SIX;
-    extLong pa = uMSB() + absPrec + EXTLONG_SEVEN;
-    extLong p  = core_min(pr, pa);	// Seems to be an error:
-    // p can be negative here!
-    // Also, this does not conform to
-    // Koji's thesis which has a default
-    // relative precision (p.65).
-
-    appValue() = first->getAppValue(r, af).div(second->getAppValue(r, as), p);
-  } else {
-    std::cerr << "lMSB = " << lMSB() << std::endl;
-    core_error("a huge lMSB in DivRep", __FILE__, __LINE__, false);
+  // warn about large MSB bound but do the computation as extLong is
+  // handling overflow and underflow
+  if (lMSB() >= EXTLONG_BIG || lMSB() <= EXTLONG_SMALL)
+  {
+    std::ostringstream oss;
+    oss << "CORE WARNING: a huge lMSB in AddSubRep " << lMSB();
+    core_error(oss.str(),
+	 	__FILE__, __LINE__, false);
   }
+
+  extLong rr  = relPrec + EXTLONG_SEVEN;		// These rules come from
+  extLong ra  = uMSB() + absPrec + EXTLONG_EIGHT;	// Koji's Master Thesis, page 65
+  extLong ra2 = core_max(ra, EXTLONG_TWO);
+  extLong r   = core_min(rr, ra2);
+  extLong  af  = - first->lMSB() + r;
+  extLong  as  = - second->lMSB() + r;
+
+  extLong pr = relPrec + EXTLONG_SIX;
+  extLong pa = uMSB() + absPrec + EXTLONG_SEVEN;
+  extLong p  = core_min(pr, pa);	// Seems to be an error:
+  // p can be negative here!
+  // Also, this does not conform to
+  // Koji's thesis which has a default
+  // relative precision (p.65).
+
+  appValue() = first->getAppValue(r, af).div(second->getAppValue(r, as), p);
 }
 
 //
@@ -1221,23 +1235,6 @@ CORE_MEMORY_IMPL(SqrtRep)
 CORE_MEMORY_IMPL(MultRep)
 CORE_MEMORY_IMPL(DivRep)
 
-template <typename O>
-void * AddSubRep<O>::operator new( size_t size)
-{ return MemoryPool<AddSubRep<O> >::global_allocator().allocate(size); }
-
-template <typename O>
-void AddSubRep<O>::operator delete( void *p, size_t )
-{ MemoryPool<AddSubRep<O> >::global_allocator().free(p); }
-
-
-
-template <class T>
-void * Realbase_for<T>::operator new( size_t size)
-{ return MemoryPool<Realbase_for<T> >::global_allocator().allocate(size); }
-
-template <class T>
-void Realbase_for<T>::operator delete( void *p, size_t )
-{ MemoryPool<Realbase_for<T> >::global_allocator().free(p); }
 
  template class AddSubRep<Add>;
  template class AddSubRep<Sub>;
@@ -1253,3 +1250,5 @@ template class Realbase_for<BigFloat>;
  template class ConstPolyRep<BigInt>;
  template class ConstPolyRep<BigRat>;
 } //namespace CORE
+
+#include <CGAL/enable_warnings.h>

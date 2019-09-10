@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -23,6 +24,11 @@
 
 #ifndef CGAL_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_DELAUNAY_TRIANGULATION_3_H
+
+#include <CGAL/license/Triangulation_3.h>
+
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 
@@ -87,9 +93,8 @@ class Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_>
 {
   typedef Delaunay_triangulation_3<Gt, Tds_, Default,
                                    Lock_data_structure_> Self;
-  typedef Triangulation_3<Gt,Tds_,Lock_data_structure_>  Tr_Base;
-
 public:
+  typedef Triangulation_3<Gt,Tds_,Lock_data_structure_>  Tr_Base;
 
   typedef typename Tr_Base::Triangulation_data_structure
                                      Triangulation_data_structure;
@@ -134,6 +139,11 @@ public:
   typedef typename Tr_Base::size_type size_type;
   typedef typename Tr_Base::Locate_type Locate_type;
 
+  //Tag to distinguish Delaunay from regular triangulations
+  typedef Tag_false                          Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                          Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::cw;
@@ -903,18 +913,6 @@ protected:
     void hide_point(Cell_handle, const Point &) {}
   };
 
-  class Perturbation_order {
-      const Self *t;
-
-  public:
-      Perturbation_order(const Self *tr)
-          : t(tr) {}
-
-      bool operator()(const Point *p, const Point *q) const {
-          return t->compare_xyz(*p, *q) == SMALLER;
-      }
-  };
-
 #ifdef CGAL_LINKED_WITH_TBB
   // Functor for parallel insert(begin, end) function
   template <typename DT>
@@ -1130,7 +1128,6 @@ protected:
   template < class DelaunayTriangulation_3 >
   class Vertex_inserter;
 
-  friend class Perturbation_order;
   friend class Conflict_tester_3;
   friend class Conflict_tester_2;
 
@@ -1456,7 +1453,7 @@ side_of_oriented_sphere(const Point &p0, const Point &p1, const Point &p2,
 
     // We sort the points lexicographically.
     const Point * points[5] = {&p0, &p1, &p2, &p3, &p};
-    std::sort(points, points+5, Perturbation_order(this) );
+    std::sort(points, points + 5, typename Tr_Base::Perturbation_order(this));
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
@@ -1500,7 +1497,7 @@ coplanar_side_of_bounded_circle(const Point &p0, const Point &p1,
 
     // We sort the points lexicographically.
     const Point * points[4] = {&p0, &p1, &p2, &p};
-    std::sort(points, points+4, Perturbation_order(this) );
+    std::sort(points, points + 4, typename Tr_Base::Perturbation_order(this));
 
     Orientation local = coplanar_orientation(p0, p1, p2);
 
@@ -2080,5 +2077,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
 } //namespace CGAL
 
 #include <CGAL/internal/Delaunay_triangulation_hierarchy_3.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_3_H

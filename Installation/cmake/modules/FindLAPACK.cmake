@@ -31,8 +31,8 @@
 
 include(CheckFunctionExists)
 
-include(CGAL_GeneratorSpecificSettings)
-include(CGAL_Macros)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_GeneratorSpecificSettings.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Macros.cmake)
 
 
 # This macro checks for the existence of the combination of fortran libraries
@@ -172,7 +172,7 @@ else()
 
   # Look first for the TAUCS library distributed with CGAL in auxiliary/taucs.
   # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
-  include(CGAL_Locate_CGAL_TAUCS)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Locate_CGAL_TAUCS.cmake)
 
   # Search for LAPACK in CGAL_TAUCS_INCLUDE_DIR/CGAL_TAUCS_LIBRARIES_DIR (TAUCS shipped with CGAL)...
   if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)

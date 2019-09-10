@@ -59,7 +59,8 @@ _test_cls_regular_hierarchy_2( const Rh & )
 //rh.is_valid(true);
 
   std::cout << "  location" << std::endl;
-  rh.locate(Bare_point(0.,0.));
+  rh.locate(Weighted_point(0.,0.));
+
   std::cout <<  "  removal of all points" << std::endl;
   while( rh.number_of_vertices() > 0) {
     rh.remove(rh.finite_vertices_begin());

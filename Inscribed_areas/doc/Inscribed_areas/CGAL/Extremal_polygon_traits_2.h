@@ -23,8 +23,7 @@ be inscribed into a given convex polygon \f$ P\f$ using the function
 
 */
 template< typename K >
-class Extremal_polygon_area_traits_2 {
-public:
+struct Extremal_polygon_area_traits_2 {
 
 /// \name Types 
 /// @{
@@ -128,8 +127,7 @@ k\f$-gon \f$ P_k\f$ that can be inscribed into a given convex polygon
 
 */
 template< typename K >
-class Extremal_polygon_perimeter_traits_2 {
-public:
+struct Extremal_polygon_perimeter_traits_2 {
 
 /// \name Types 
 /// @{

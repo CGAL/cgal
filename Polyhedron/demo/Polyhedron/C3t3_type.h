@@ -4,8 +4,10 @@
 // include this to get #define BOOST_PARAMETER_MAX_ARITY 12
 // as otherwise it gets set via inclusion of Polyhedron_3.h
 #include <CGAL/Mesh_3/global_parameters.h>
+#include <CGAL/Default.h>
 
 #include "Polyhedron_type.h"
+#include "SMesh_type.h"
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Image_type.h"
 #include <CGAL/Labeled_image_mesh_domain_3.h>
@@ -18,6 +20,7 @@
 #endif
 
 #include <CGAL/Mesh_triangulation_3.h>
+#include "Scene_surface_mesh_item.h"
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
@@ -45,10 +48,10 @@ private:
 };
 #endif
 
-typedef CGAL::Triangle_accessor_3<Polyhedron, Kernel> T_accessor;
-
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<
-          Kernel, Polyhedron, T_accessor, CGAL::Tag_true> Polyhedral_mesh_domain;
+          Kernel, Polyhedron, CGAL::Default, CGAL::Tag_true> Polyhedral_mesh_domain;
+typedef CGAL::Polyhedral_mesh_domain_with_features_3<
+          Kernel, SMesh, CGAL::Default, int> Polyhedral_mesh_domain_sm;
 // The last `Tag_true` says the Patch_id type will be int, and not pair<int, int>
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
@@ -62,14 +65,30 @@ typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, Kernel>        Function_do
 typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Function_domain> Function_mesh_domain;
 #endif
 
+//Robust_cc_geom_traits
+typedef CGAL::Kernel_traits<Polyhedral_mesh_domain>::Kernel
+    Robust_intersections_traits;
+typedef CGAL::details::Mesh_geom_traits_generator<Robust_intersections_traits>::type
+    Robust_K;
+
 // Triangulation
+typedef CGAL::Compact_mesh_cell_base_3<Robust_K, Polyhedral_mesh_domain>    Cell_base;
+typedef CGAL::Triangulation_cell_base_with_info_3<int, Robust_K, Cell_base> Cell_base_with_info;
+
 #ifdef CGAL_CONCURRENT_MESH_3
   typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain, 
-                                     CGAL::Kernel_traits<Polyhedral_mesh_domain>::Kernel,
-                                     CGAL::Parallel_tag>::type Tr;
+                                     Robust_intersections_traits,
+                                     CGAL::Parallel_tag,
+                                     CGAL::Default,
+                                     Cell_base_with_info>::type Tr;
 #else
-  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
+  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain,
+                                     Robust_intersections_traits,
+                                     CGAL::Sequential_tag,
+                                     CGAL::Default,
+                                     Cell_base_with_info>::type Tr;
 #endif
+
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 typedef Tr::Geom_traits Geom_traits;

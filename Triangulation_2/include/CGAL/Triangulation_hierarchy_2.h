@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Olivier Devillers <Olivivier.Devillers@sophia.inria.fr>
@@ -22,16 +23,29 @@
 #ifndef CGAL_TRIANGULATION_HIERARCHY_2_H
 #define CGAL_TRIANGULATION_HIERARCHY_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/spatial_sort.h>
+#include <CGAL/Spatial_sort_traits_adapter_2.h>
 
-#include <map>
+#include <CGAL/internal/boost/function_property_map.hpp>
 
+#include <boost/mpl/identity.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <boost/utility/result_of.hpp>
+
+#include <iostream>
+#include <map>
+#include <vector>
 
 namespace CGAL {
 
@@ -42,23 +56,33 @@ const int   Triangulation_hierarchy_2__minsize  = 20;
 const int   Triangulation_hierarchy_2__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
 
-template < class Tr>
+template < class Tr_>
 class Triangulation_hierarchy_2
-  : public Tr
+  : public Tr_
 {
  public:
-  typedef Tr                                   Tr_Base;
+  typedef Tr_                                  Tr_Base;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
-  typedef typename Tr_Base::Point              Point;
   typedef typename Tr_Base::size_type          size_type;
   typedef typename Tr_Base::Vertex_handle      Vertex_handle;
   typedef typename Tr_Base::Face_handle        Face_handle;
   typedef typename Tr_Base::Vertex             Vertex;
   typedef typename Tr_Base::Locate_type        Locate_type;
   typedef typename Tr_Base::Finite_vertices_iterator  Finite_vertices_iterator;
-  //typedef typename Tr_Base::Finite_faces_iterator     Finite_faces_iterator;
 
-  typedef typename Tr_Base::Weighted_tag       Weighted_tag;
+  // this one may be weighted or not
+  typedef typename Tr_Base::Point                  Point;
+
+  // If the triangulation has defined the `Bare_point` typename, use it.
+  typedef typename boost::mpl::eval_if_c<
+    internal::Has_nested_type_Bare_point<Tr_Base>::value,
+    typename internal::Bare_point_type<Tr_Base>,
+    boost::mpl::identity<typename Tr_Base::Point>
+  >::type                                          Bare_point;
+  typedef typename Geom_traits::Weighted_point_2   Weighted_point;
+
+  typedef typename Tr_Base::Weighted_tag           Weighted_tag;
+  typedef typename Tr_Base::Periodic_tag           Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::geom_traits;
@@ -109,7 +133,17 @@ public:
     std::ptrdiff_t n = this->number_of_vertices();
 
       std::vector<Point> points (first, last);
-      CGAL::spatial_sort (points.begin(), points.end(), geom_traits());
+
+      // Spatial sort can only be used with Gt::Point_2: we need an adapter
+      typedef typename Geom_traits::Construct_point_2 Construct_point_2;
+      typedef typename boost::result_of<const Construct_point_2(const Point&)>::type Ret;
+      typedef CGAL::internal::boost_::function_property_map<Construct_point_2, Point, Ret> fpmap;
+      typedef CGAL::Spatial_sort_traits_adapter_2<Geom_traits, fpmap> Search_traits_2;
+
+      spatial_sort(points.begin(), points.end(),
+                   Search_traits_2(
+                     CGAL::internal::boost_::make_function_property_map<Point, Ret, Construct_point_2>(
+                       geom_traits().construct_point_2_object()), geom_traits()));
 
       // hints[i] is the face of the previously inserted point in level i.
       // Thanks to spatial sort, they are better hints than what the hierarchy
@@ -175,18 +209,17 @@ public:
   //LOCATE
   Face_handle
   locate(const Point& p,
-	 Locate_type& lt,
-	 int& li,
-	 Face_handle start = Face_handle()) const;
+         Locate_type& lt,
+         int& li,
+         Face_handle start = Face_handle()) const;
 
   Face_handle
-  locate(const Point &p,
-	 Face_handle start = Face_handle()) const;
+  locate(const Point&p, Face_handle start = Face_handle()) const;
 
   Vertex_handle
   nearest_vertex(const Point& p, Face_handle start = Face_handle()) const
   {
-    return nearest_vertex_dispatch<Tr>(p, start, Weighted_tag());
+    return nearest_vertex_dispatch<Tr_Base>(p, start, Weighted_tag());
   }
 
 private:
@@ -208,11 +241,12 @@ private:
   }
 
   void  locate_in_all(const Point& p,
-		      Locate_type& lt,
-		      int& li,
-		      Face_handle loc,
-		      Face_handle
-		      pos[Triangulation_hierarchy_2__maxlevel]) const;
+                      Locate_type& lt,
+                      int& li,
+                      Face_handle loc,
+                      Face_handle
+                      pos[Triangulation_hierarchy_2__maxlevel]) const;
+
   int random_level();
 
   // helping function to copy_triangulation
@@ -673,17 +707,20 @@ template <class Tr>
 void
 Triangulation_hierarchy_2<Tr>::
 locate_in_all(const Point& p,
-    Locate_type& lt,
-    int& li,
-    Face_handle loc,
-    Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const
+              Locate_type& lt,
+              int& li,
+              Face_handle loc,
+              Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const
 {
   Face_handle position;
   Vertex_handle nearest;
   int level  = Triangulation_hierarchy_2__maxlevel;
-  typename Geom_traits::Compare_distance_2 
+  typename Geom_traits::Compare_distance_2
     closer = this->geom_traits().compare_distance_2_object();
 
+  typename Geom_traits::Construct_point_2
+    construct_point = this->geom_traits().construct_point_2_object();
+  
   // find the highest level with enough vertices that is at the same time 2D
   while ( (hierarchy[--level]->number_of_vertices() 
 	   < static_cast<size_type> (Triangulation_hierarchy_2__minsize ))
@@ -696,7 +733,7 @@ locate_in_all(const Point& p,
 
   for (int i=level+1; i<Triangulation_hierarchy_2__maxlevel;++i) pos[i]=0;
   while(level > 0) {
-    pos[level]=position=hierarchy[level]->locate(p,position);  
+    pos[level]=position=hierarchy[level]->locate(p, position);
     // locate at that level from "position"
     // result is stored in "position" for the next level
     // find the nearest between vertices 0 and 1
@@ -706,9 +743,9 @@ locate_in_all(const Point& p,
     }
     else if (hierarchy[level]->is_infinite(position->vertex(1))){
       nearest = position->vertex(0);
-}     else if ( closer(p,
-		      position->vertex(0)->point(),
-		       position->vertex(1)->point()) == SMALLER){
+    }     else if ( closer(construct_point(p),
+                           construct_point(position->vertex(0)->point()),
+                           construct_point(position->vertex(1)->point())) == SMALLER){
       nearest = position->vertex(0);
 }
     else{
@@ -716,9 +753,9 @@ locate_in_all(const Point& p,
 }
     // compare to vertex 2, but only if the triangulation is 2D, because otherwise vertex(2) is  NULL
     if ( (hierarchy[level]->dimension()==2) && (!  hierarchy[level]->is_infinite(position->vertex(2)))){
-      if ( closer( p, 
-		   position->vertex(2)->point(),
-		   nearest->point()) == SMALLER ){
+      if ( closer( construct_point(p), 
+		   construct_point(position->vertex(2)->point()),
+		   construct_point(nearest->point())) == SMALLER ){
 	nearest = position->vertex(2);
       }
     }
@@ -743,5 +780,7 @@ random_level()
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_HIERARCHY_2_H

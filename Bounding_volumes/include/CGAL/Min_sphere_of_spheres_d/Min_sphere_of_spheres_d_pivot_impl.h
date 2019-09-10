@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Kaspar Fischer
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_MINIBALL_PIVOT_C
 #define CGAL_MINIBALL_PIVOT_C
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 #include <CGAL/Min_sphere_of_spheres_d.h>
 

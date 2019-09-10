@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
  
 #ifndef CGAL_CH_MELKMAN_IMPL_H
 #define CGAL_CH_MELKMAN_IMPL_H
+
+#include <CGAL/license/Convex_hull_2.h>
+
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_2.h>

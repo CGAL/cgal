@@ -96,7 +96,7 @@ void shuffle_off(const char* fname_in, const char* fname_out)
 }
 
 template <typename K>
-int test_orient() {
+int test_orient(const bool save_oriented) {
   typedef typename K::Point_3 Point_3;
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
@@ -114,6 +114,7 @@ int test_orient() {
   bool oriented
     = CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons);
   std::cerr << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
+  assert(oriented);
 
   if(oriented) {
     Surface_mesh mesh;
@@ -124,16 +125,19 @@ int test_orient() {
     CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
       points, polygons, poly);
 
-    std::ofstream out("elephant-oriented.off");
-    out << poly;
-    out.close();
+    if (save_oriented)
+    {
+      std::ofstream out("elephant-oriented.off");
+      out << poly;
+      out.close();
+    }
   }
   return 0;
 }
 
 int main()
 {
-  assert(test_orient<Epic>() == 0);
-  assert(test_orient<Epec>() == 0);
+  assert(test_orient<Epic>(false) == 0);
+  assert(test_orient<Epec>(false) == 0);
   return 0;
 }

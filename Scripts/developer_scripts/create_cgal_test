@@ -82,6 +82,7 @@ configure()
 
   if eval 'cmake "\$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \\
                                      -DCGAL_DIR="\$CGAL_DIR" \\
+                                     --no-warn-unused-cli \\
                                      .' ; then
 
     echo "   successful configuration" >> \$ERRORFILE

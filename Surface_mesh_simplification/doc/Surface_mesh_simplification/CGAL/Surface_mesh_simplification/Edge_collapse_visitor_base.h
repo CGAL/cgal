@@ -19,8 +19,7 @@ and hide a non-virtual method in the context of the static polymorphism used in 
 
 */
 template< typename ECM >
-class Edge_collapse_visitor_base {
-public:
+struct Edge_collapse_visitor_base {
 
 /// @}
 

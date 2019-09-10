@@ -19,8 +19,6 @@ if ( CGAL_FOUND )
 
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
-    # Use /FR to turn on IntelliSense
-    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
 
     # Allow Windows applications to use up to 3GB of RAM
     SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
@@ -38,16 +36,12 @@ if ( CGAL_FOUND )
 
   #find Eigen 
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  if (EIGEN3_FOUND)
+  if(EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
-  endif()
-
-  if(NOT EIGEN3_FOUND)
-    message(STATUS "NOTICE: This directory requires Eigen 3.1 (or greater), and some features will not be available.")
-  endif()
-
-  # Executable that can use EIGEN or not, depending on the macro CGAL_EIGEN3_ENABLED
-  create_single_source_cgal_program( "extensive_parameterization_test.cpp" )
+    create_single_source_cgal_program( "extensive_parameterization_test.cpp" )
+  else(EIGEN3_FOUND)
+    message(STATUS "NOTICE: The tests require Eigen 3.1 (or greater) and will not be compiled.")
+  endif(EIGEN3_FOUND)
 
 else()
 

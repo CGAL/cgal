@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
 #ifndef CGAL_RECONSTRUCTION_TRIANGULATION_2_H
 #define CGAL_RECONSTRUCTION_TRIANGULATION_2_H
+
+#include <CGAL/license/Optimal_transportation_reconstruction_2.h>
+
 
 // local
 #include <CGAL/OTR_2/Sample.h>
@@ -141,7 +145,7 @@ public:
   > MultiIndex;
 
   FT m_factor; // ghost vs solid
-
+  mutable Random rng;
 
 public:
   Reconstruction_triangulation_2(Traits_ traits = Traits_())
@@ -161,7 +165,6 @@ public:
   }
 
   Edge random_finite_edge() const {
-    static CGAL::Random rng;
     std::size_t nbf = Base::number_of_faces();
     int offset = rng.get_int(0, static_cast<int>(nbf - 1));
     Finite_faces_iterator fi = Base::finite_faces_begin();

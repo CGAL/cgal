@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
 #ifndef CGAL_SM_LIST_H
 #define CGAL_SM_LIST_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_S2/SM_items.h>

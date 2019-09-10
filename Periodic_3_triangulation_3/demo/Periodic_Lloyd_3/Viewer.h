@@ -2,6 +2,7 @@
 #define VIEWER_H
 
 #include "Scene.h"
+#include <QMap>
 #include <QGLViewer/qglviewer.h>
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>

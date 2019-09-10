@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_APOLLONIUS_GRAPH_VERTEX_BASE_2_H
 #define CGAL_APOLLONIUS_GRAPH_VERTEX_BASE_2_H
+
+#include <CGAL/license/Apollonius_graph_2.h>
+
 
 #include <list>
 
@@ -62,6 +66,7 @@ public:
   //------
   typedef Gt                             Geom_traits;
   typedef Vb                             Base;
+  typedef typename Gt::Point_2           Point;
   typedef typename Gt::Site_2            Site_2;
   typedef AGDS	                         Apollonius_graph_data_structure_2;
   typedef typename AGDS::Face_handle     Face_handle;

@@ -32,6 +32,10 @@
  *      - Added OpenNL namespace
  *  Andreas Meyer 2007 changes for CGAL:
  *      - replaced assert with CGAL_assertion/CGAL_error etc.
+ *
+ * $URL$
+ * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
 */
 
 #ifndef __OPENNL_BLAS__

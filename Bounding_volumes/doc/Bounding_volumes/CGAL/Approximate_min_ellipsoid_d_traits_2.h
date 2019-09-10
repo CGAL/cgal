@@ -26,8 +26,7 @@ number-type are `MP_Float`, `CORE::Expr`, and `Gmpq`.)
 
 */
 template< typename K, typename ET >
-class Approximate_min_ellipsoid_d_traits_2 {
-public:
+struct Approximate_min_ellipsoid_d_traits_2 {
 
 /// \name Types 
 /// @{

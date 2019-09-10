@@ -36,10 +36,11 @@ Scene_group_item::Bbox Scene_group_item::bbox() const
 
 
 bool Scene_group_item::supportsRenderingMode(RenderingMode m) const {
+
     Q_FOREACH(Scene_item* item, children)
         if(!item->supportsRenderingMode(m))
             return false;
-    return !children.isEmpty();
+    return true;
 
 }
 
@@ -120,7 +121,7 @@ void Scene_group_item::moveUp(int i)
     children.move(i, i-1);
 }
 
-void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const {
+void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const  {
   if(viewer->inDrawWithNames() || already_drawn ) return;
   Q_FOREACH(Scene_item* child, children) {
     if(!child->visible()) continue;
@@ -140,6 +141,7 @@ void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     }
     switch(child->renderingMode()) {
     case Points:
+    case ShadedPoints:
     case PointsPlusNormals:
       child->drawPoints(viewer); break;
     default: break;
@@ -169,6 +171,7 @@ void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
     }
     switch(child->renderingMode()) {
     case Points:
+    case ShadedPoints:
     case PointsPlusNormals:
       child->drawPoints(viewer); break;
     default: break;
@@ -184,6 +187,7 @@ void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
     if(!child->visible()) continue;
     switch(child->renderingMode()) {
     case Points:
+    case ShadedPoints:
     case PointsPlusNormals:
       child->drawPoints(viewer); break;
     default: break;
@@ -204,15 +208,6 @@ void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
     }
   }
   already_drawn = true;
-}
-
-void Scene_group_item::drawSplats(CGAL::Three::Viewer_interface* viewer) const
-{
-  if(viewer->inDrawWithNames()) return;
-  Q_FOREACH(Scene_item* child, children) {
-    if(child->visible() && child->renderingMode() == Splatting)
-      child->drawSplats(viewer);
-  }
 }
 
 void Scene_group_item::lockChild(Scene_item *child)

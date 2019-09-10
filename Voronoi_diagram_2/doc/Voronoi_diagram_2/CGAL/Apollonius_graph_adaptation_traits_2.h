@@ -19,8 +19,7 @@ the semantics of a (triangulated) 2D Apollonius graph.
 
 */
 template< typename AG2 >
-class Apollonius_graph_adaptation_traits_2 {
-public:
+struct Apollonius_graph_adaptation_traits_2 {
 
 /// \name Types 
 /// @{

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 #ifndef CGAL_SEGMENT_LESS_YX_2_H
 #define CGAL_SEGMENT_LESS_YX_2_H
+
+#include <CGAL/license/Partition_2.h>
+
 
 #include <utility>
 #include <CGAL/Partition_2/Turn_reverser.h>

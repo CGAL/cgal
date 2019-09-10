@@ -22,6 +22,7 @@ if ( CGAL_FOUND )
   include_directories (BEFORE "include")
 
   create_single_source_cgal_program( "otr2_simplest_example.cpp" )
+  create_single_source_cgal_program( "otr2_simplest_example_with_tolerance.cpp" )
   create_single_source_cgal_program( "otr2_list_output_example.cpp" )
   create_single_source_cgal_program( "otr2_indexed_output_example.cpp" )
   create_single_source_cgal_program( "otr2_mass_example.cpp" )

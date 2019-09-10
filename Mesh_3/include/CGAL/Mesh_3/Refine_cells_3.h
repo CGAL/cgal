@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent Rineau, Stéphane Tayeb
 
 #ifndef CGAL_MESH_3_REFINE_CELLS_3_H
 #define CGAL_MESH_3_REFINE_CELLS_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -331,7 +335,8 @@ public:
 
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
-  typedef typename Tr::Point Point;
+  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Cell Cell;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -339,14 +344,15 @@ public:
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
   typedef Complex3InTriangulation3 C3T3;
 
-
+public:
   // Constructor
   // For sequential
   Refine_cells_3(Tr& triangulation,
                  const Criteria& criteria,
                  const MeshDomain& oracle,
                  Previous_& previous,
-                 C3T3& c3t3);
+                 C3T3& c3t3,
+                 std::size_t maximal_number_of_vertices);
   // For parallel
   Refine_cells_3(Tr& triangulation,
                  const Criteria& criteria,
@@ -354,7 +360,8 @@ public:
                  Previous_& previous,
                  C3T3& c3t3,
                  Lock_data_structure *lock_ds,
-                 WorksharingDataStructureType *worksharing_ds);
+                 WorksharingDataStructureType *worksharing_ds,
+                 std::size_t maximal_number_of_vertices);
 
   // Destructor
   virtual ~Refine_cells_3() { }
@@ -368,7 +375,7 @@ public:
 
   int number_of_bad_elements_impl();
 
-  Point circumcenter_impl(const Cell_handle& cell) const
+  Bare_point circumcenter_impl(const Cell_handle& cell) const
   {
     return r_tr_.dual(cell);
   }
@@ -387,8 +394,20 @@ public:
     return this->extract_element_from_container_value(Container_::get_next_element_impl());
   }
 
+  // Tells if the refinement process of cells is currently finished
+  bool no_longer_element_to_refine_impl()
+  {
+    if(m_maximal_number_of_vertices_ !=0 &&
+       triangulation_ref_impl().number_of_vertices() >=
+       m_maximal_number_of_vertices_)
+    {
+      return true;
+    }
+    return Container_::no_longer_element_to_refine_impl();
+  }
+
   // Gets the point to insert from the element to refine
-  Point refinement_point_impl(const Cell_handle& cell) const
+  Bare_point refinement_point_impl(const Cell_handle& cell) const
   {
     this->set_last_vertex_index(
       r_oracle_.index_from_subdomain_index(cell->subdomain_index()) );
@@ -399,16 +418,16 @@ public:
   }
 
   // Returns the conflicts zone
-  Zone conflicts_zone_impl(const Point& point
+  Zone conflicts_zone_impl(const Weighted_point& point
                            , const Cell_handle& cell
                            , bool &facet_is_in_its_cz) const;
-  Zone conflicts_zone_impl(const Point& point
+  Zone conflicts_zone_impl(const Weighted_point& point
                            , const Cell_handle& cell
                            , bool &facet_is_in_its_cz
                            , bool &could_lock_zone) const;
 
   // Job to do before insertion
-  void before_insertion_impl(const Cell_handle&, const Point&, Zone& zone)
+  void before_insertion_impl(const Cell_handle&, const Weighted_point&, Zone& zone)
   {
     before_insertion_handle_cells_in_conflict_zone(zone);
   }
@@ -422,7 +441,7 @@ public:
 #endif
 
   // Insertion implementation ; returns the inserted vertex
-  Vertex_handle insert_impl(const Point& p, const Zone& zone);
+  Vertex_handle insert_impl(const Weighted_point& p, const Zone& zone);
 
   // Updates cells incident to vertex, and add them to queue if needed
   void update_star(const Vertex_handle& vertex);
@@ -568,6 +587,9 @@ private:
   /// The mesh result
   C3T3& r_c3t3_;
 
+  /// Maximal allowed number of vertices
+  std::size_t m_maximal_number_of_vertices_;
+
 private:
   // Disabled copy constructor
   Refine_cells_3(const Self& src);
@@ -585,7 +607,8 @@ Refine_cells_3(Tr& triangulation,
                const Cr& criteria,
                const MD& oracle,
                P_& previous,
-               C3T3& c3t3)
+               C3T3& c3t3,
+               std::size_t maximal_number_of_vertices)
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct >(previous)
   , C_()
@@ -596,6 +619,7 @@ Refine_cells_3(Tr& triangulation,
   , r_criteria_(criteria)
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
+  , m_maximal_number_of_vertices_(maximal_number_of_vertices)
 {
 }
 
@@ -609,7 +633,8 @@ Refine_cells_3(Tr& triangulation,
                P_& previous,
                C3T3& c3t3,
                Lock_data_structure *lock_ds,
-               WorksharingDataStructureType *worksharing_ds)
+               WorksharingDataStructureType *worksharing_ds,
+               std::size_t maximal_number_of_vertices)
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct >(previous, lock_ds, worksharing_ds)
   , C_()
@@ -620,6 +645,7 @@ Refine_cells_3(Tr& triangulation,
   , r_criteria_(criteria)
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
+  , m_maximal_number_of_vertices_(maximal_number_of_vertices)
 {
 }
 
@@ -754,7 +780,7 @@ number_of_bad_elements_impl()
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-conflicts_zone_impl(const Point& point
+conflicts_zone_impl(const Weighted_point& point
                     , const Cell_handle& cell
                     , bool &facet_is_in_its_cz) const
 {
@@ -778,7 +804,7 @@ conflicts_zone_impl(const Point& point
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-conflicts_zone_impl(const Point& point
+conflicts_zone_impl(const Weighted_point& point
                     , const Cell_handle& cell
                     , bool &facet_is_in_its_cz
                     , bool &could_lock_zone
@@ -931,7 +957,7 @@ compute_badness(const Cell_handle& cell)
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Vertex_handle
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-insert_impl(const Point& point,
+insert_impl(const Weighted_point& point,
             const Zone& zone)
 {
   // TODO: look at this

@@ -3,9 +3,10 @@
 
 project (Polyline_simplification_2_Demo)
 
-cmake_minimum_required(VERSION 2.8.11)
-if(POLICY CMP0043)
-  cmake_policy(SET CMP0043 OLD)
+cmake_minimum_required(VERSION 3.1)
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
 endif()
 
 find_package(CGAL COMPONENTS Qt5)
@@ -35,14 +36,13 @@ qt5_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/Polyline_simplification_2.cpp Poly
 # The executable itself.
 add_executable  ( Polyline_simplification_2 ${CMAKE_CURRENT_SOURCE_DIR}/Polyline_simplification_2.cpp Polyline_simplification_2.moc ${CDT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-qt5_use_modules(Polyline_simplification_2 Xml Script OpenGL Widgets Svg)
-# Link with Qt libraries
-target_link_libraries( Polyline_simplification_2 ${QT_LIBRARIES} )
-
-# Link with CGAL
-target_link_libraries( Polyline_simplification_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries( Polyline_simplification_2 PRIVATE
+  CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui )
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyline_simplification_2 )
+
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(Polyline_simplification_2)
 
 else()
 

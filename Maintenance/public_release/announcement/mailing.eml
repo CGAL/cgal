@@ -1,29 +1,102 @@
-Subject: CGAL 4.9 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.11 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.9
+The CGAL Open Source Project is pleased to announce the release 4.11
 of CGAL, the Computational Geometry Algorithms Library.
 
+This release is pretty special by its number of breaking changes in the
+API. In order to have a better feature set, or a better API, several
+packages have been reworked in a way that breaks the back-compatibility
+with the previous versions of the API.
+
 Besides fixes and general enhancement to existing packages, the following
-has changed since CGAL 4.8:
-
-  o General
-
-    - CGAL can now be used in headers only mode, i.e. without compiling the
-      CGAL libraries and linking with these libraries when compiling
-      examples, tests and demos. Note that running CMake on CGAL is still
-      required in order to generate some configuration files.
+has changed since CGAL 4.10:
 
 
-  o Cone Based Spanners (new package)
+* 3D Periodic Regular Triangulations (new feature)
 
-    - This package provides algorithms for constructing two kinds of
-      cone-based spanners: Yao graph and Theta graph, given a set of
-      vertices on the plane and the directions of cone boundaries.
+  - Added the class Periodic_3_regular_triangulation_3, which provides
+    functionality for 3D periodic weighted Delaunay triangulations. The
+    construction is fully dynamic: it provides both point insertion and
+    vertex removal.
 
 
-See http://www.cgal.org/releases.html for a complete list of changes.
+* dD Regular Triangulations (new feature)
+
+  - Added the class Regular_triangulation, which provides functionality for
+    dD weighted Delaunay triangulations. Note that the removal of points is
+    not yet supported.
+
+
+* 2D and 3D Linear Geometry Kernel (breaking change)
+
+  - Breaking change: The dangerous implicit conversions between weighted
+    points and points in the concept Kernel have been
+    disabled. Constructors offering to build a weighted point from a point
+    (and reversely) are still requested by the concept Kernel but must now
+    be marked with the explicit specifier.
+
+  - Breaking change: The removal of implicit conversions between points and
+    weighted points in the concept Kernel has incidentally created various
+    minor breaking changes in the following packages: 2D Alpha Shapes, 2D
+    and 3D Triangulations, and 3D Mesh Generation. See the full changelog
+    for details.
+
+
+* Triangulated Surface Mesh Parameterization (breaking change)
+
+  - Breaking change: The package has been rewritten and can operate on any
+    model of the MutableFaceGraph concept. All previous parameterization
+    methods are still offered, although with a different, simpler API. The
+    documentation has been updated and offers a gentle introduction to the
+    new API. Users who wish to use the former API must use a version prior
+    to 4.11.
+
+  - Breaking change: The adapter to add virtual seams is now the class
+    CGAL::Seam_mesh in the package CGAL and the BGL.
+
+  - Breaking change: The package has been restructured and most headers
+    have been moved. In a general manner, users should replace <CGAL/XXX.h>
+    with <CGAL/Surface_mesh_parameterization/XXX.h>
+
+  - Add the As Rigid As Possible Parameterization method. This
+    parameterization allows the user to prioritize angle preservation,
+    shape preservation, or a balance of both.
+
+  - Add the Orbifold Tutte Embedding method. This parameterization method
+    allows to parameterize meshes that are topological spheres.
+
+
+* 3D Surface Subdivision Methods (breaking changes)
+
+  - The subdivision algorithms now work on any model of a
+    MutableFaceGraph. A new API to the subdivision methods is offered,
+    which uses optional named parameters to pass the number of iterations
+    and a vertex property map.
+
+  - Breaking change: Removed the headers <CGAL/Subdivision_method_3.h> and
+    <CGAL/Subdivision_mask_3.h>. The headers <CGAL/Subdivision_method_3/
+    subdivision_methods_3.h> and <CGAL/Subdivision_method_3/
+    subdivision_masks_3.h> should respectively be used instead.
+
+  - Sqrt3 subdivision can now handle input surfaces with a border.
+
+
+* Scale-Space Surface Reconstruction (breaking change)
+
+  - Breaking change: the API was rewritten to separate the smoothing and
+    meshing algorithm and making it possible for the user to use different
+    ones. The default algorithms used are the same as before this API
+    change, but methods are moved to the classes Weighted_PCA_smoother and
+    Alpha_shape_mesher.
+
+  - Alternative smoothing and meshing methods are provided: Jet_smoother
+    and Advancing_front_mesher.
+
+
+See http://www.cgal.org/2017/09/21/cgal411/ for a complete list of
+changes.
 
 
 The CGAL project is a collaborative effort to develop a robust,

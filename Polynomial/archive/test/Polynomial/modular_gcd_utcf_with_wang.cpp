@@ -21,6 +21,7 @@
 // CGAL_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Dominik Hülse <dominik.huelse@gmx.de>
 //                 Michael Hemmer <hemmer@mpi-inf.mpg.de>

@@ -84,6 +84,12 @@ functions for each optimization parameter
 to generate appropriate value of this parameter. 
 
 \cgalHeading{Named Parameters}
+- <b>`manifold`</b> allows the user to drive the meshing algorithm,
+and ensure that the output mesh surface follows the given manifold criterion.
+It can be activated with `parameters::manifold()`, `parameters::manifold_with_boundary()`
+and `parameters::non_manifold()`. Note that the meshing algorithm cannot generate a manifold
+surface if the input surface is not manifold.
+
 - <b>`lloyd`</b>  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
 trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the 
 parameters of this optimizer. If one parameter is not set, the default value of 
@@ -126,6 +132,9 @@ some optimization processes. Also beware that the default behavior does involve 
 optimization processes. 
 
 \sa `CGAL::make_mesh_3()` 
+\sa `CGAL::parameters::manifold`
+\sa `CGAL::parameters::manifold_with_boundary`
+\sa `CGAL::parameters::non_manifold`
 \sa `CGAL::exude_mesh_3()` 
 \sa `CGAL::perturb_mesh_3()` 
 \sa `CGAL::lloyd_optimize_mesh_3()` 
@@ -137,7 +146,7 @@ optimization processes.
 \sa `CGAL::parameters::lloyd` 
 \sa `CGAL::parameters::no_lloyd` 
 \sa `CGAL::parameters::odt` 
-\sa `CGAL::parameters::no_odt` 
+\sa `CGAL::parameters::no_odt`
 
 */
 
@@ -150,9 +159,66 @@ MeshCriteria mesh_criteria,
 parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
 parameters::internal::Odt_options odt = parameters::no_odt(),
 parameters::internal::Perturb_options perturb = parameters::perturb(),
-parameters::internal::Exude_options exude = parameters::exude()); 
+parameters::internal::Exude_options exude = parameters::exude(),
+parameters::internal::Manifold_options manifold = parameters::non_manifold()
+); 
 
 namespace parameters {
+
+  /*!
+  \ingroup PkgMesh_3Parameters
+
+  The function `parameters::manifold()` is used to drive the
+  meshing algorithm for surfaces.
+  It ensures that the surface of the output mesh is a manifold surface
+    without boundaries.
+  The manifold property of the output mesh can be achieved only if the input surface
+  is a manifold.
+  Note that the meshing algorithm provably terminates only if the input
+  sharp edges have been protected, using the
+  feature protection (see \ref Mesh_3Protectionof0and1dimensionalExposed).
+
+  \sa `CGAL::make_mesh_3()`
+  \sa `CGAL::refine_mesh_3()`
+  \sa `CGAL::parameters::manifold_with_boundary()`
+  \sa `CGAL::parameters::non_manifold()`
+  */
+  parameters::internal::Manifold_options manifold();
+
+  /*!
+  \ingroup PkgMesh_3Parameters
+
+  The function `parameters::non_manifold()` is used to drive the
+  meshing algorithm for surfaces.
+  It does not ensure that the surface of the output mesh is a manifold surface.
+  The manifold property of the output mesh might nevertheless result from an appropriate
+  choice of meshing criteria.
+  \sa `CGAL::make_mesh_3()`
+  \sa `CGAL::refine_mesh_3()`
+  \sa `CGAL::parameters::manifold_with_boundary()`
+  \sa `CGAL::parameters::manifold()`
+  */
+  parameters::internal::Manifold_options non_manifold();
+
+  /*!
+  \ingroup PkgMesh_3Parameters
+
+  The function `parameters::manifold_with_boundary()` is used to drive the
+  meshing algorithm for surfaces.
+  It ensures that the surface of the output mesh is a manifold surface which
+  may have boundaries.
+  The manifold property of the output mesh can be achieved only if the input surface
+  is a manifold.
+  Note that the meshing algorithm provably terminates only if the input
+  sharp edges have been protected, using the
+  feature protection (see \ref Mesh_3Protectionof0and1dimensionalExposed).
+
+  \sa `CGAL::make_mesh_3()`
+  \sa `CGAL::refine_mesh_3()`
+  \sa `CGAL::parameters::non_manifold()`
+  \sa `CGAL::parameters::manifold()`
+  */
+  parameters::internal::Manifold_options manifold_with_boundary();
 
 /*!
 \ingroup PkgMesh_3Parameters
@@ -198,7 +264,7 @@ parameters::internal::Exude_options exude(
 The function `parameters::features()` provides a value of internal type `Features` 
 to specify if 0 and 1-dimensional features have to be taken into account. 
 The provided value is a default value that triggers the representation 
-of corners and curve segments in the mesh when the domain is a model 
+of corners and curves in the mesh when the domain is a model 
 of `MeshDomainWithFeatures_3`. 
 
 Provides a `Features_options` value such that 
@@ -284,7 +350,7 @@ parameters::internal::Exude_options no_exude();
 The function `parameters::no_features()` allows the user to prevent the handling 
 of 0 and 1-dimensional features. This is useful when the 
 domain is a model of `MeshDomainWithFeatures_3` 
-and the user does not want corners and curve segments 
+and the user does not want corners and curves 
 to be accurately represented 
 in the mesh. 
 

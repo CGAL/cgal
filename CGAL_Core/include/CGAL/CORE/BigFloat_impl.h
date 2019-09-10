@@ -39,6 +39,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifdef CGAL_HEADER_ONLY
@@ -47,9 +48,13 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
+#include <CGAL/disable_warnings.h>
+
 #include <ctype.h>
 #include <CGAL/CORE/BigFloat.h>
 #include <CGAL/CORE/Expr.h>
+#include <CGAL/tss.h>
+#include <sstream> 
 
 namespace CORE { 
 
@@ -84,13 +89,13 @@ BigInt FiveTo(unsigned long exp) {
 // ZERO
 CGAL_INLINE_FUNCTION
 const BigFloat& BigFloat::getZero() {
-  static BigFloat Zero(0);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(BigFloat, Zero,0);
   return Zero;
 }
 // ONE
 CGAL_INLINE_FUNCTION
 const BigFloat& BigFloat::getOne() {
-  static BigFloat One(1);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(BigFloat, One,1);
   return One;
 }
 
@@ -136,7 +141,7 @@ BigFloatRep::BigFloatRep(double d) : m(0), err(0), exp(0) {
       exp--;
       stop++;
     }
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     CGAL_assertion (s >= 0);
 #endif
 
@@ -276,7 +281,7 @@ void BigFloatRep::normal() {
 	                     // bits of error
     long f = chunkFloor(--le); // f is roughly equal to floor(le/CHUNK_BIT)
     long bits_f = bits(f);   // f chunks will have bits_f many bits
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     CGAL_assertion (bits_f >= 0);
 #endif
 
@@ -304,7 +309,7 @@ void BigFloatRep::bigNormal(BigInt& bigErr) {
   } else {
     long f = chunkFloor(--le);
     long bits_f = bits(f);
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     CGAL_assertion(bits_f >= 0);
 #endif
 
@@ -683,7 +688,7 @@ void BigFloatRep::sqrt(const BigFloatRep& x, const extLong& a, const BigFloat& A
         } else {                  //  p > 0
           m = chunkShift(z.m, chunkCeil(p));
           long r = CHUNK_BIT - 1 - (p + CHUNK_BIT - 1) % CHUNK_BIT;
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
           CGAL_assertion(r >= 0);
 #endif
 
@@ -726,7 +731,7 @@ void BigFloatRep::sqrt(const BigFloatRep& x, const extLong& a, const BigFloat& A
         } else {         //  q > 0
           m = chunkShift(z.m, chunkCeil(q));
           long r = CHUNK_BIT - 1 - (q + CHUNK_BIT - 1) % CHUNK_BIT;
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
           CGAL_assertion(r >= 0);
 #endif
 
@@ -917,16 +922,9 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
       } else { // L10 < 0
         decRep += '-';
       }
-      char eBuf[48]; // enought to hold long number L10
-      int ne = 0;
-      if ((ne = sprintf(eBuf, "%ld", labs(L10))) >= 0) {
-        eBuf[ne] = '\0';
-      } else {
-        //perror("BigFloat.cpp: Problem in outputing the exponent!");
-        core_error("BigFloat error: Problem in outputing the exponent",
-			__FILE__, __LINE__, true);
-      }
-      decRep += eBuf;
+      std::ostringstream oss;
+      oss << labs(L10);
+      decRep += oss.str();
       decOut.isScientific = true;
     }
   } else {
@@ -940,7 +938,7 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
           return toDecimal(width, true);
         }
       }
-      decOut.noSignificant = decRep.length();
+      decOut.noSignificant = static_cast<int>(decRep.length());
       if (L10 + 1 < (long)width ) {
         decRep.insert(L10 + 1, ".");
       } else { // L10 + 1 == width
@@ -955,12 +953,12 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
         decRep = round(decRep, L10, width );
         // cannot overflow since there are L10 leading zeroes.
       }
-      decOut.noSignificant = decRep.length() - (-L10);
+      decOut.noSignificant = static_cast<int>(decRep.length() - (-L10));
       decRep.insert(1, ".");
     }
     decOut.isScientific = false;
   }
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   CGAL_assertion(decOut.noSignificant >= 0);
 #endif
 
@@ -1009,7 +1007,7 @@ std::string BigFloatRep::round(std::string inRep, long& L10, unsigned int width)
 // See the file Real.cc for the differences
 
 CGAL_INLINE_FUNCTION
-void BigFloatRep :: fromString(const char *str, const extLong & prec ) {
+void BigFloatRep :: fromString(const char *str, extLong prec ) {
   // NOTE: prec defaults to get_static_defBigFloatInputDigits() (see BigFloat.h)
   // check that prec is not INFTY
   if (prec.isInfty())
@@ -1024,7 +1022,7 @@ void BigFloatRep :: fromString(const char *str, const extLong & prec ) {
   // i.e., input is A/10^{e10}.
   else {
     e = str + strlen(str);
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     CGAL_assertion(*e == '\0');
 #endif
 
@@ -1083,7 +1081,7 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
   // Change to:
   //  int status;
   do {
-    c = i.get();
+    i.get(c);
   } while (isspace(c)); /* loop if met end-of-file, or
                                char read in is white-space. */
   // Chen Li, "if (c == EOF)" is unsafe since c is of char type and
@@ -1115,7 +1113,7 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
       p = str + size;
       size *= 2;
     }
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     CGAL_assertion((p-str) < size);
 #endif
 
@@ -1133,7 +1131,7 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
 
   // chenli: make sure that the p is still in the range
   if (p - str >= size) {
-    int len = p - str;
+    std::size_t len = p - str;
     char *t = str;
     str = new char[len + 1];
     memcpy(str, t, len);
@@ -1141,7 +1139,7 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
     p = str + len;
   }
 
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   CGAL_assertion(p - str < size);
 #endif
 
@@ -1228,7 +1226,7 @@ BigInt BigFloatRep::toBigInt() const {
   long le = clLg(err);
   if (le == -1)
     le = 0;
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   CGAL_assertion (le >= 0);
 #endif
 
@@ -1248,7 +1246,7 @@ long BigFloatRep :: toLong() const {
   // convert a BigFloat to a long integer, rounded toward -\infty.
   long e2 = bits(exp);
   long le = clLg(err);
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   CGAL_assertion (le >= 0);
 #endif
 
@@ -1325,3 +1323,5 @@ BigFloat root(const BigFloat& x, unsigned long k,
   CORE_MEMORY_IMPL(BigFloatRep)
 
 } //namespace CORE
+
+#include <CGAL/enable_warnings.h>

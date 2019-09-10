@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_3_H
 #define CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_3_H
+
+#include <CGAL/license/Triangulation_3.h>
+
 
 namespace CGAL { namespace internal {
 

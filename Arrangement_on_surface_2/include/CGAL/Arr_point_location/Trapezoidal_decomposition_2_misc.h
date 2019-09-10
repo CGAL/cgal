@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>
 //                 Iddo Hanniel <hanniel@math.tau.ac.il>
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_MISC_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_2_MISC_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/Handle.h>
 

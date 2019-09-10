@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_SURFACE_MESH_VERTEX_BASE_3_H
 #define CGAL_SURFACE_MESH_VERTEX_BASE_3_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Complex_2_in_triangulation_vertex_base_3.h>

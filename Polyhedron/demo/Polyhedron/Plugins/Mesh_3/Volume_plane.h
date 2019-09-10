@@ -10,9 +10,11 @@
 #include <QGLViewer/qglviewer.h>
 
 #include "Volume_plane_interface.h"
+#include "create_sphere.h"
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
+#include <QMouseEvent>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Qt/debug.h>
 
@@ -20,12 +22,12 @@ using namespace CGAL::Three;
 
 #if !defined(NDEBUG)
 inline
-void printGlError(unsigned int line) {
- CGAL::Qt::opengl_check_errors(line);
+void printGlError(CGAL::Three::Viewer_interface* viewer, unsigned int line) {
+  CGAL::Qt::opengl_check_errors(viewer, line);
 }
 #else
 inline
-void printGlError(unsigned int) {
+void printGlError(CGAL::Three::Viewer_interface*, unsigned int) {
 }
 #endif
 
@@ -37,10 +39,10 @@ public:
   void constrainTranslation(qglviewer::Vec& t, qglviewer::Frame* const frame) {
     WorldConstraint::constrainTranslation(t, frame);
     qglviewer::Vec pos = frame->position();
-    double start = pos[Dim];
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    double start = pos[Dim] - offset[Dim];
     double end = t[Dim];
     start += end;
-
     if(start > max_ || (start < 0)) {
       t[Dim] = 0.0;
     }
@@ -59,6 +61,12 @@ class Volume_plane : public Volume_plane_interface, public Tag {
 public:
  Volume_plane();
 
+ void invalidateOpenGLBuffers()
+ {
+     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+     mFrame_->setPosition(offset.x, offset.y, offset.z);
+ }
+ bool eventFilter(QObject *, QEvent *);
  void compute_bbox()const
  {
    compute_bbox(*this);
@@ -111,11 +119,15 @@ public:
 
   unsigned int getCurrentCube() const { return currentCube; }
 
-  // uses a public init function to make enable construction in
+  // uses a public init function to enable construction in
   // threads without gl-context
-  void init();
+  void init(Viewer_interface* viewer);
 
 private:
+  bool is_grabbing;
+
+
+
   static const char* vertexShader_source;
 
   static const char* fragmentShader_source;
@@ -162,20 +174,36 @@ private:
   unsigned int adim_, bdim_, cdim_;
   double xscale_, yscale_, zscale_;
   mutable int currentCube;
-
   mutable QOpenGLBuffer vVBO;
   mutable QOpenGLBuffer cbuffer;
   mutable QOpenGLBuffer rectBuffer;
   mutable std::vector<float> v_rec;
+  mutable std::vector<float> v_spheres;
+  mutable std::vector<float> n_spheres;
+  mutable std::vector<float> c_spheres;
   mutable QOpenGLShaderProgram program_bordures;
   mutable QOpenGLShaderProgram program;
+  mutable QOpenGLShaderProgram* spheres_program;
   mutable std::vector< std::pair<QOpenGLBuffer, unsigned int> > ebos;
+  mutable double sphere_radius;
   std::vector< float > colors_;
 
   QString name(x_tag) const { return tr("X Slice for %1").arg(name_); }
   QString name(y_tag) const { return tr("Y Slice for %2").arg(name_); }
   QString name(z_tag) const { return tr("Z Slice for %2").arg(name_); }
 
+  double compute_maxDim() const
+  {
+    double ax((adim_ - 1) * xscale_), ay((adim_ - 1) * yscale_), az((adim_ - 1) * zscale_),
+           bx((bdim_ - 1) * xscale_), by((bdim_ - 1) * yscale_), bz((bdim_ - 1) * zscale_),
+           cx((cdim_ - 1) * xscale_), cy((cdim_ - 1) * yscale_), cz((cdim_ - 1) * zscale_);
+
+    double max_a = (std::max)((std::max)(ax, ay), az);
+    double max_b = (std::max)((std::max)(bx, by), bz);
+    double max_c = (std::max)((std::max)(cx, cy), cz);
+    return (std::max)((std::max)(max_a, max_b), max_c);
+
+  }
   void drawRectangle(x_tag) const {
 
 
@@ -183,6 +211,7 @@ private:
       v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back(0.0f);
       v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back((bdim_ - 1) * zscale_);
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
+
 
   }
 
@@ -198,6 +227,43 @@ private:
       v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
       v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
       v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
+  }
+
+  void drawSpheres(x_tag) const
+  {
+      double max_dim = compute_maxDim();
+      sphere_radius = max_dim / 40.0f;
+      create_flat_sphere(1.0f, v_spheres, n_spheres, 18);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + max_dim/15.0f); c_spheres.push_back(0.0f);
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_ ); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + max_dim/15.0f);
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + max_dim/15.0f); c_spheres.push_back((bdim_ - 1 ) * zscale_);
+      c_spheres.push_back(0.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + max_dim/15.0f);
+
+  }
+
+  void drawSpheres(y_tag) const
+  {
+      double max_dim = compute_maxDim();
+      sphere_radius = max_dim / 40.0f;
+      create_flat_sphere(1.0f, v_spheres, n_spheres,18);
+
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_);
+      c_spheres.push_back(0.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f);
+  }
+
+  void drawSpheres(z_tag) const
+  {
+      double max_dim = compute_maxDim();
+      sphere_radius = max_dim / 40.0f;
+      create_flat_sphere(1.0f, v_spheres, n_spheres,18);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f - max_dim/15.0f); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back((bdim_ - 1) * yscale_); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
   }
 
   qglviewer::Constraint* setConstraint(x_tag) {
@@ -221,13 +287,57 @@ private:
     return c;
   }
 
-  void updateCurrentCube() const { currentCube = getTranslation(); }
+  void updateCurrentCube() const {
+      currentCube = getTranslation();
+
+  }
 
   GLdouble getTranslation() const { return getTranslation(*this); }
-  GLdouble getTranslation(x_tag) const { return mFrame_->matrix()[12] / xscale_; }
-  GLdouble getTranslation(y_tag) const { return mFrame_->matrix()[13] / yscale_; }
-  GLdouble getTranslation(z_tag) const { return mFrame_->matrix()[14] / zscale_; }
+  GLdouble getTranslation(x_tag) const {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      return mFrame_->matrix()[12] / xscale_ - offset.x;
+  }
+  GLdouble getTranslation(y_tag) const {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      return mFrame_->matrix()[13] / yscale_ - offset.y;
+  }
+  GLdouble getTranslation(z_tag) const {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      return mFrame_->matrix()[14] / zscale_ - offset.z;
+  }
 
+  void initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
+  {
+      spheres_program = getShaderProgram(PROGRAM_SPHERES, viewer);
+
+      spheres_program->bind();
+      vaos[0]->bind();
+      buffers[0].bind();
+      buffers[0].allocate(v_spheres.data(),
+                                 static_cast<int>(v_spheres.size()*sizeof(float)));
+      spheres_program->enableAttributeArray("vertex");
+      spheres_program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+      buffers[0].release();
+
+      buffers[1].bind();
+      buffers[1].allocate(n_spheres.data(),
+                                static_cast<int>(n_spheres.size()*sizeof(float)));
+      spheres_program->enableAttributeArray("normals");
+      spheres_program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
+      buffers[1].release();
+
+      buffers[2].bind();
+      buffers[2].allocate(c_spheres.data(),
+                               static_cast<int>(c_spheres.size()*sizeof(float)));
+      spheres_program->enableAttributeArray("center");
+      spheres_program->setAttributeBuffer("center", GL_FLOAT, 0, 3);
+      buffers[2].release();
+
+      viewer->glVertexAttribDivisor(spheres_program->attributeLocation("center"), 1);
+      vaos[0]->release();
+      spheres_program->release();
+      are_buffers_filled = true;
+  }
 };
 
 template<typename T>
@@ -272,6 +382,12 @@ template<typename T>
 Volume_plane<T>::Volume_plane()
   : Volume_plane_interface(new qglviewer::ManipulatedFrame)
  {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    mFrame_->setPosition(offset.x, offset.y, offset.z);
+    sphere_Slider = new QSlider(Qt::Horizontal);
+    sphere_Slider->setValue(40);
+    sphere_Slider->setMinimum(1);
+    sphere_Slider->setMaximum(100);
  }
 template<typename T>
 void Volume_plane<T>::setData(unsigned int adim, unsigned int bdim, unsigned int cdim, float xscale, float yscale, float zscale, std::vector<float> &colors)
@@ -285,6 +401,10 @@ void Volume_plane<T>::setData(unsigned int adim, unsigned int bdim, unsigned int
  currentCube = 0;
  colors_.swap(colors);
  mFrame_->setConstraint(setConstraint(*this));
+ v_spheres.resize(0);
+ n_spheres.resize(0);
+ c_spheres.resize(0);
+ drawSpheres(*this);
 }
 template<typename T>
 Volume_plane<T>::~Volume_plane() {
@@ -293,6 +413,7 @@ Volume_plane<T>::~Volume_plane() {
       it->first.destroy();
   }
   program.release();
+  delete sphere_Slider;
 }
 
 template<typename T>
@@ -317,11 +438,11 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   program_bordures.setUniformValue("f_matrix", f);
   program_bordures.release();
   GLint renderMode;
-  glGetIntegerv(GL_RENDER_MODE, &renderMode);
-  printGlError(__LINE__);
+  viewer->glGetIntegerv(GL_RENDER_MODE, &renderMode);
+  printGlError(viewer, __LINE__);
 
 
-  glLineWidth(4.0f);
+  viewer->glLineWidth(4.0f);
   v_rec.resize(0);
   drawRectangle(*this);
 
@@ -332,10 +453,10 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   program_bordures.setAttributeBuffer("vertex",GL_FLOAT,0,3);
   program_bordures.enableAttributeArray("vertex");
   program_bordures.setUniformValue("color",this->color());
-  glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
+  viewer->glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
   rectBuffer.release();
   program_bordures.release();
-  glLineWidth(1.0f);
+  viewer->glLineWidth(1.0f);
 
   program.bind();
   int mvpLoc = program.uniformLocation("mvp_matrix");
@@ -355,25 +476,49 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   cbuffer.release();
 
 
-  printGlError(__LINE__);
+
+  printGlError(viewer, __LINE__);
 
  for(unsigned int i = 0; i < ebos.size(); ++i)
   {
       ebos[i].first.bind();
-      glDrawElements(GL_TRIANGLES, ebos[i].second, GL_UNSIGNED_INT, 0);
+      viewer->glDrawElements(GL_TRIANGLES, ebos[i].second, GL_UNSIGNED_INT, 0);
       ebos[i].first.release();
   }
 
   cbuffer.release();
-  printGlError(__LINE__);
+  printGlError(viewer, __LINE__);
   program.release();
 
-  printGlError(__LINE__);
+  printGlError(viewer, __LINE__);
+
+  if(!are_buffers_filled)
+      initializeBuffers(viewer);
+  mvp = mvp*f;
+  //hide spheres if only 1 plane.
+  if(aDim() <= 1 ||
+     bDim() <= 1 ||
+     cDim() <=1)
+    return;
+  vaos[0]->bind();
+  spheres_program = getShaderProgram(PROGRAM_SPHERES, viewer);
+  attribBuffers(viewer, PROGRAM_SPHERES);
+  spheres_program->bind();
+  double max_dim = compute_maxDim();
+  sphere_radius = max_dim/20.0f * sphere_Slider->value()/100.0f;
+  spheres_program->setAttributeValue("radius", sphere_radius);
+  spheres_program->setAttributeValue("colors", this->color());
+  spheres_program->setUniformValue("mvp_matrix", mvp);
+  viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
+                                static_cast<GLsizei>(v_spheres.size()/3),
+                                static_cast<GLsizei>(4));
+  spheres_program->release();
+  vaos[0]->release();
 }
 
 template<typename T>
-void Volume_plane<T>::init() {
-  
+void Volume_plane<T>::init(Viewer_interface* viewer) {
+  is_grabbing = false;
   initShaders();
 
   // for each vertex
@@ -389,15 +534,11 @@ void Volume_plane<T>::init() {
     
   assert(vertices.size() == (3 * adim_ * bdim_));
 
-  int maxi, maxv;
-  glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &maxi);
-  glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &maxv);
-  assert((vertices.size( ) / 3) < (unsigned int)maxi);
   vVBO.create();
   vVBO.bind();
   vVBO.allocate(vertices.data(),static_cast<int>(sizeof(float) * vertices.size()));
   vVBO.release();
-  printGlError(__LINE__);
+  printGlError(viewer, __LINE__);
 
   // for each patch
   std::vector<unsigned int> indices;
@@ -449,7 +590,7 @@ void Volume_plane<T>::init() {
   cbuffer.allocate(colors_.data(),static_cast<int>(colors_.size()*sizeof(float)));
   cbuffer.release();
 
-  printGlError(__LINE__);
+  printGlError(viewer, __LINE__);
 }
 
 template<typename T>
@@ -474,5 +615,64 @@ void Volume_plane<T>::initShaders() {
   program_bordures.link();
 }
 
+
+//intercept events for picking
+template<typename T>
+bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
+{
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    if(event->type() == QEvent::MouseButtonPress)
+    {
+        QMouseEvent* e = static_cast<QMouseEvent*>(event);
+        if(e->modifiers() == Qt::NoModifier)
+        {
+            //pick
+            bool found = false;
+            viewer->makeCurrent();
+            qglviewer::Vec pos = viewer->camera()->pointUnderPixel(e->pos(), found);
+            if(!found)
+                return false;
+            found = false;
+            //check the found point is on a sphere
+            pos = manipulatedFrame()->inverse().inverseCoordinatesOf(pos);
+            float sq_radius = sphere_radius * sphere_radius;
+            qglviewer::Vec center;
+            //is the picked point on the sphere ?
+            for (int i=0; i<4; ++i)
+            {
+                center = qglviewer::Vec(c_spheres[i*3], c_spheres[i*3+1], c_spheres[i*3+2]);
+                if(
+                        (center.x - pos.x) * (center.x - pos.x) +
+                        (center.y - pos.y) * (center.y - pos.y) +
+                        (center.z - pos.z) * (center.z - pos.z)
+                        <= sq_radius)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+                return false;
+            is_grabbing = true;
+            emitSelection();
+            viewer->setManipulatedFrame(manipulatedFrame());
+            viewer->setMouseBinding(
+                        Qt::NoModifier,
+                        Qt::LeftButton,
+                        QGLViewer::FRAME,
+                        QGLViewer::TRANSLATE);
+        }
+    }
+    else if(event->type() == QEvent::MouseButtonRelease && is_grabbing)
+    {
+        is_grabbing = false;
+        viewer->setMouseBinding(
+                    Qt::NoModifier,
+                    Qt::LeftButton,
+                    QGLViewer::CAMERA,
+                    QGLViewer::ROTATE);
+    }
+    return false;
+}
 
 #endif /* CGAL_VOLUME_PLANE_H */

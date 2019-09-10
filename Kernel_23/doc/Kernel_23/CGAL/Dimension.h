@@ -29,8 +29,7 @@ assert(dimension == 2);
 
 */
 template< typename T, typename K = typename Kernel_traits<T>::Kernel >
-class Ambient_dimension {
-public:
+struct Ambient_dimension {
 
 /// \name Constants 
 /// @{
@@ -84,8 +83,7 @@ std::cout << get_origin(Dimension_tag<2>())) << std::endl;
 
 */
 template< typename int dim >
-class Dimension_tag {
-public:
+struct Dimension_tag {
 
 /// \name Constants 
 /// @{
@@ -126,8 +124,7 @@ std::cout << get_origin(Dynamic_dimension_tag())) << std::endl;
 
 */
 
-class Dynamic_dimension_tag {
-public:
+struct Dynamic_dimension_tag {
 
 /// @}
 
@@ -158,8 +155,7 @@ assert(dimension == 0);
 
 */
 template< typename T, typename K = typename Kernel_traits<T>::Kernel >
-class Feature_dimension {
-public:
+struct Feature_dimension {
 
 /// \name Constants 
 /// @{

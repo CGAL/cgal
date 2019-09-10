@@ -40,7 +40,11 @@ if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/libQGLViewer-2.6.2 ]; t
    export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.6.2"
 fi
 
-export PATH="`cygpath $CGAL_DIR`/bin:`cygpath $GMP_LIB_DIR`:`cygpath $QTDIR`/bin:`cygpath $BOOST_LIBRARYDIR`:`cygpath $QGLVIEWERROOT`/QGLViewer/debug:`cygpath $QGLVIEWERROOT`/QGLViewer/release:/cygdrive/c/3rdPartyLibs/VC-${ARCH}/zlib":$PATH
+export PATH=`cygpath $GMP_LIB_DIR`:$PATH
+export PATH=`cygpath $BOOST_LIBRARYDIR`:$PATH
+export PATH=/cygdrive/c/3rdPartyLibs/VC-${ARCH}/zlib:$PATH
+
+#export QT_QPA_PLATFORM_PLUGIN_PATH=$Qt5_DIR/../../../plugins
 
 #TBB # only when TBB_ARCH_PLATFORM is already defined in platform-specific setup
 if [ -n "${TBB_ARCH}" ]; then
@@ -49,4 +53,5 @@ if [ -n "${TBB_ARCH}" ]; then
   export TBB_ARCH_PLATFORM="${TBB_ARCH}/vc${VC_VERSION}"
   export PATH=$PATH:"${TBBROOT}\bin\\${TBB_ARCH}\vc${VC_VERSION}"
 fi
+
 

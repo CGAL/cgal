@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -22,72 +23,82 @@
 #ifndef CGAL_CONVEXITY_CHECK_3_H
 #define CGAL_CONVEXITY_CHECK_3_H
 
+#include <CGAL/license/Convex_hull_3.h>
+
+
 #include <CGAL/intersections.h>
+#include <CGAL/boost/graph/iterator.h>
+#include <boost/foreach.hpp>
+#include <CGAL/boost/graph/property_maps.h>
 
 namespace CGAL {
 
 
-template <class Plane, class Facet_handle>
-void get_plane2(Plane& plane, Facet_handle f) 
+  template <class Polyhedron, class Vpmap, class Plane, class Facet_handle>
+  void get_plane2(const Polyhedron& P, Vpmap vpmap, Plane& plane, Facet_handle f) 
 {
-   typedef typename Facet_handle::value_type         Facet;
-   typedef typename Facet::Halfedge_handle           Halfedge_handle;
-
-   Halfedge_handle h = (*f).halfedge();
-   plane = Plane(h->opposite()->vertex()->point(),
-		   h->vertex()->point(),
-		   h->next()->vertex()->point());
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  halfedge_descriptor h = halfedge(f,P);
+  plane = Plane(get(vpmap, target(opposite(h,P),P)),
+                get(vpmap, target(h,P)),
+                get(vpmap, target(next(h,P),P)));
 }
 
 
-template <class Facet_handle, class Traits>
-bool is_locally_convex(Facet_handle f_hdl, const Traits& traits)
+  template <class Polyhedron, class Vpmap, class Facet_handle, class Traits>
+bool is_locally_convex(Polyhedron P, Vpmap vpmap, Facet_handle f_hdl, const Traits& traits)
 {
   // This function checks if all the faces around facet *f_hdl form part of 
   // the convex hull
 
-  typedef typename Facet_handle::value_type                Facet;
-  typedef typename Facet::Halfedge_around_facet_circulator Halfedge_circ;
+  typedef Halfedge_around_face_circulator<Polyhedron>      Halfedge_circ;
   typedef typename Traits::Point_3			   Point_3; 
   typedef typename Traits::Plane_3			   Plane_3; 
 
   typename Traits::Has_on_positive_side_3 has_on_positive_side = 
             traits.has_on_positive_side_3_object();
   
-  Halfedge_circ h_circ = (*f_hdl).facet_begin();
+  Halfedge_circ h_circ( halfedge(f_hdl,P),P), done(h_circ);
  
   do 
   {
      // Take the point on the other facet not shared by this facet
-     Point_3 point= h_circ->opposite()->next()->vertex()->point();
+    Point_3 point = get(vpmap, target(next(opposite(*h_circ,P),P),P));
      Plane_3 plane;
-     get_plane2(plane, f_hdl);
+     get_plane2(P, vpmap, plane, f_hdl);
      // Point must be on the plane or on the negative side 
      if (has_on_positive_side(plane, point)) {
        return false;
      }
      h_circ++;
   }
-  while ( h_circ != (*f_hdl).facet_begin());
+  while ( h_circ != done);
   return true;
 }
 
 
 // Pre: equations of facet planes have been computed
 template<class Polyhedron, class Traits>
-bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
+bool is_strongly_convex_3(const Polyhedron& P, const Traits& traits)
 { 
-  typedef typename Polyhedron::Facet_iterator  Facet_iterator;
-  typedef typename Polyhedron::Vertex_iterator Vertex_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator vertex_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
+
   typedef typename Traits::Point_3             Point_3; 
   typedef typename Traits::Ray_3               Ray_3; 
   typedef typename Traits::Triangle_3          Triangle_3; 
-  typedef typename Traits::Plane_3             Plane_3; 
-  if (P.vertices_begin() == P.vertices_end()) return false;
+  typedef typename Traits::Plane_3             Plane_3;
+ 
+  typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpmap  = get(CGAL::vertex_point, P);
+
+  vertex_iterator v_it, v_it_e;
+  boost::tie(v_it, v_it_e) = vertices(P);
+
+  if (v_it == v_it_e) return false;
   
-  Facet_iterator f_it;
-  for ( f_it = P.facets_begin(); f_it != P.facets_end(); ++f_it)
-     if (!is_locally_convex(f_it, traits)) 
+  BOOST_FOREACH(face_descriptor fd , faces(P))
+    if (!is_locally_convex(P, vpmap, fd, traits)) 
 	return false;
 
   // Check 2: see if a point interior to the hull is actually on the same
@@ -95,30 +106,33 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
  
   typename Traits::Coplanar_3 coplanar = traits.coplanar_3_object();
 
-  Vertex_iterator v_it = P.vertices_begin();
+  face_iterator f_it, f_it_e;
+  boost::tie(f_it, f_it_e) = faces(P);
   Point_3 p;
   Point_3 q;
   Point_3 r;
   Point_3 s;
 
   // First take 3 arbitrary points
-  p = v_it->point();  v_it++;
-  q = v_it->point();  v_it++;
-  r = v_it->point();  v_it++;
+  p = get(vpmap, *v_it);  v_it++;
+  q = get(vpmap,*v_it);  v_it++;
+  r = get(vpmap,*v_it);  v_it++;
 
   // three vertices that form a single (triangular) facet
-  if (v_it == P.vertices_end()) return P.facets_begin() != P.facets_end(); 
+  if (v_it == v_it_e){
+    return f_it != f_it_e;
+  }
   
   // Now take 4th point s.t. it's not coplaner with them
-  while (v_it != P.vertices_end() && coplanar(p, q, r, (*v_it).point()))
+  while (v_it != v_it_e && coplanar(p, q, r, get(vpmap,*v_it)))
     v_it++;
 
   // if no such point, all are coplanar so it is not strongly convex
-  if( v_it == P.vertices_end() ){
+  if( v_it == v_it_e ){
     return false;
   }
 
-  s = (*v_it).point();
+  s = get(vpmap,*v_it);
 
   // else construct a point inside the polyhedron
   typename Traits::Construct_centroid_3 construct_centroid =
@@ -128,9 +142,9 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
   typename Traits::Oriented_side_3 oriented_side = 
             traits.oriented_side_3_object();
 
-  f_it = P.facets_begin();
+
   Plane_3 plane;
-  get_plane2(plane, f_it);
+  get_plane2(P, vpmap, plane, *f_it);
   Oriented_side side = oriented_side(plane, inside_pt);
 
   // the point inside should not be on the facet plane
@@ -140,10 +154,10 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
 
   // now make sure this point that is inside the polyhedron is on the same
   // side of each facet
-  for (f_it++; f_it != P.facets_end(); f_it++)
+  for (f_it++; f_it != f_it_e; f_it++)
   {
     Plane_3 plane;
-    get_plane2(plane, f_it);
+    get_plane2(P, vpmap, plane, *f_it);
     if ( oriented_side(plane, inside_pt) != side ){
       return false;
     }
@@ -159,19 +173,20 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
   typename Traits::Do_intersect_3 do_intersect =
             traits.do_intersect_3_object();
 
-  f_it = P.facets_begin();
+  f_it = faces(P).first;
+
   Point_3 facet_pt = 
-     construct_centroid(f_it->halfedge()->opposite()->vertex()->point(),
-                        f_it->halfedge()->vertex()->point(),
-                        f_it->halfedge()->next()->vertex()->point());
+    construct_centroid(get(vpmap,target(opposite(halfedge(*f_it,P),P),P)),
+                       get(vpmap,target(halfedge(*f_it,P),P)),
+                       get(vpmap,target(next(halfedge(*f_it,P),P),P)));
   Ray_3  ray = construct_ray(inside_pt, facet_pt);
 
-  for ( ++f_it ; f_it != P.facets_end(); f_it++)
+  for ( ++f_it ; f_it != f_it_e; f_it++)
   {
     Triangle_3 facet_tri = 
-      construct_triangle(f_it->halfedge()->opposite()->vertex()->point(),
-			 f_it->halfedge()->vertex()->point(),
-			 f_it->halfedge()->next()->vertex()->point());
+      construct_triangle(get(vpmap,target(opposite(halfedge(*f_it,P),P),P)),
+                         get(vpmap,target(halfedge(*f_it,P),P)),
+                         get(vpmap,target(next(halfedge(*f_it,P),P),P)));
      
     if (do_intersect(facet_tri, ray)){
       return false;
@@ -190,7 +205,8 @@ bool CGAL_is_strongly_convex_3(Polyhedron& P, Point_3<R>*)
 template<class Polyhedron>
 bool is_strongly_convex_3(Polyhedron& P)
 { 
-  typedef typename Polyhedron::Point_3 Point_3;
+  typedef typename boost::property_map<Polyhedron, vertex_point_t>::type Ppmap;
+  typedef typename boost::property_traits<Ppmap>::value_type Point_3;
 
   return CGAL_is_strongly_convex_3(P, reinterpret_cast<Point_3*>(0));
 }
@@ -202,17 +218,16 @@ bool all_points_inside( ForwardIterator first,
 			const Traits&  traits)
 {  
   typedef typename Traits::Plane_3			   Plane_3; 
-   typedef typename Polyhedron::Facet_iterator Facet_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
    typename Traits::Has_on_positive_side_3   has_on_positive_side = 
              traits.has_on_positive_side_3_object();
 
    for (ForwardIterator p_it = first; p_it != last; p_it++)
    {
-      Facet_iterator f_it;
-      for (f_it = P.facets_begin(); f_it != P.facets_end(); f_it++)
+      BOOST_FOREACH(face_descriptor fd, faces(P))
       {
 	Plane_3 plane;
-	get_plane2(plane, f_it);
+	get_plane2(P,plane, fd);
 	if (has_on_positive_side(plane,*p_it)){
              return false;
 	}

@@ -25,7 +25,7 @@ int main()
   CGAL_static_assertion( (boost::is_same<SCD,Default_traits_for_Chull_3<SCD::Point_3>::type>::value) );
   CGAL_static_assertion( (boost::is_same<SCR,Default_traits_for_Chull_3<SCR::Point_3>::type>::value) );
   CGAL_static_assertion( (boost::is_same<EPEC,Default_traits_for_Chull_3<EPEC::Point_3>::type>::value) );
-  CGAL_static_assertion( (boost::is_same<CGAL::Convex_hull_traits_3<EPIC, CGAL::Tag_true>,Default_traits_for_Chull_3<EPIC::Point_3>::type>::value) );
-  CGAL_static_assertion( (boost::is_same<Is_on_positive_side_of_plane_3<CGAL::Convex_hull_traits_3<EPIC, CGAL::Tag_true> >::Protector,CGAL::Protect_FPU_rounding<true> >::value) );
+  CGAL_static_assertion( (boost::is_same<CGAL::Convex_hull_traits_3<EPIC, CGAL::Default, CGAL::Tag_true>,Default_traits_for_Chull_3<EPIC::Point_3>::type>::value) );
+  CGAL_static_assertion( (boost::is_same<Is_on_positive_side_of_plane_3<CGAL::Convex_hull_traits_3<EPIC, CGAL::Default, CGAL::Tag_true> >::Protector,CGAL::Protect_FPU_rounding<true> >::value) );
   return 0;
 }

@@ -33,10 +33,10 @@ int main(int argc, char* argv[])
   std::ifstream stream(input_filename);
 
   if (!stream ||
-      !CGAL::read_xyz_points_and_normals(stream,
+      !CGAL::read_xyz_points(stream,
                         std::back_inserter(points),
-                        CGAL::First_of_pair_property_map<PointVectorPair>(),
-                        CGAL::Second_of_pair_property_map<PointVectorPair>()))
+                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+                        normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
   {
     std::cerr << "Error: cannot read file " << input_filename << std::endl;
     return EXIT_FAILURE;
@@ -50,24 +50,23 @@ int main(int argc, char* argv[])
 
    //Run algorithm 
   CGAL::edge_aware_upsample_point_set<Concurrency_tag>(
-            points.begin(), 
-            points.end(), 
-            std::back_inserter(points),
-            CGAL::First_of_pair_property_map<PointVectorPair>(),
-            CGAL::Second_of_pair_property_map<PointVectorPair>(),
-            sharpness_angle, 
-            edge_sensitivity,
-            neighbor_radius,
-            number_of_output_points);
+    points,
+    std::back_inserter(points),
+    CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+    normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()).
+    sharpness_angle(sharpness_angle).
+    edge_sensitivity(edge_sensitivity).
+    neighbor_radius(neighbor_radius).
+    number_of_output_points(number_of_output_points));
 
   // Saves point set.
   std::ofstream out(output_filename);  
 
   if (!out ||
-     !CGAL::write_xyz_points_and_normals(
-      out, points.begin(), points.end(), 
-      CGAL::First_of_pair_property_map<PointVectorPair>(),
-      CGAL::Second_of_pair_property_map<PointVectorPair>()))
+     !CGAL::write_xyz_points(
+      out, points,
+      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+      normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
   {
     return EXIT_FAILURE;
   }

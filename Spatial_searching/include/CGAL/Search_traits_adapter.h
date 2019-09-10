@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sebastien Loriot
 
 #ifndef CGAL_SEARCH_TRAITS_WITH_INFO
 #define CGAL_SEARCH_TRAITS_WITH_INFO
+
+#include <CGAL/license/Spatial_searching.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Euclidean_distance.h> //for default distance specialization
@@ -91,7 +96,6 @@ public:
 
   struct Construct_cartesian_const_iterator_d: public Base_traits::Construct_cartesian_const_iterator_d{
     PointPropertyMap ppmap;
-    using Base_traits::Construct_cartesian_const_iterator_d::operator();
     typedef typename Base_traits::Construct_cartesian_const_iterator_d Base;
     
     Construct_cartesian_const_iterator_d(const typename Base_traits::Construct_cartesian_const_iterator_d& base, const PointPropertyMap& ppmap_)
@@ -102,6 +106,17 @@ public:
 
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p, int)  const
     { return Base::operator() (get(ppmap,p),0); }
+
+    // These 2 additional operators forward the call to Base_traits.
+    // This is needed because of an undocumented requirement of 
+    // Orthogonal_k_neighbor_search and Orthogonal_incremental_neighbor_search: 
+    // Traits::Construct_cartesian_const_iterator should be callable 
+    // on the query point type
+    typename Base_traits::Cartesian_const_iterator_d operator()(const typename Base_traits::Point_d& p) const
+    { return Base::operator() (p); }
+
+    typename Base_traits::Cartesian_const_iterator_d operator()(const typename Base_traits::Point_d& p, int)  const
+    { return Base::operator() (p,0); }
   };
   
   struct Construct_iso_box_d: public Base::Construct_iso_box_d{
@@ -178,5 +193,7 @@ public:
 };
 
 }//namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_SEARCH_TRAITS_WITH_INFO

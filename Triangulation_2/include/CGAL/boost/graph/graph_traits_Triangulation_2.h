@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
@@ -33,6 +34,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/iterator.h>
 
 // The functions and classes in this file allows the user to
 // treat a CGAL Triangulation_2 object as a boost graph "as is". No
@@ -151,116 +153,6 @@ public:
 };
   
 
-  //  The vertex iterator of the bgl must evaluate to a vertex handle, not to a vertex
-template < class T>
-class boost_all_vertices_iterator {
-protected:
- typename T::All_vertices_iterator nt;
-public:
-  typedef typename T::All_vertices_iterator  Iterator;
-  typedef boost_all_vertices_iterator<T> Self;
-
-  typedef typename std::iterator_traits<Iterator>::iterator_category iterator_category;
-  typedef typename T::Vertex_handle  value_type;
-  typedef typename std::iterator_traits<Iterator>::difference_type           difference_type;
-  typedef value_type      reference;
-  typedef value_type      pointer;
-
-  // CREATION
-  // --------
-
-  boost_all_vertices_iterator()
-  {}
-
-  boost_all_vertices_iterator( Iterator j) : nt(j) {}
-
-  // OPERATIONS Forward Category
-  // ---------------------------
-
-
-  bool operator==( const Self& i) const { return ( nt == i.nt); }
-  bool operator!=( const Self& i) const { return !(nt == i.nt );   }
-  value_type  operator*() const  { return nt; }
-  value_type    operator->()  { return nt; }
-
-  Self& operator++() {
-    ++nt;
-    return *this;
-  }
-
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
-  }
-
-  Self& operator--() {
-    --nt;
-    return *this;
-  }
-
-  Self  operator--(int) {
-    Self tmp = *this;
-    --*this;
-    return tmp;
-  }
-};
-
-template < class T>
-class boost_all_faces_iterator {
-protected:
- typename T::All_faces_iterator nt;
-public:
-  typedef typename T::All_faces_iterator  Iterator;
-  typedef boost_all_faces_iterator<T> Self;
-
-  typedef typename std::iterator_traits<Iterator>::iterator_category iterator_category;
-  typedef typename T::Face_handle  value_type;
-  typedef typename std::iterator_traits<Iterator>::difference_type           difference_type;
-  typedef value_type      reference;
-  typedef value_type      pointer;
-
-  // CREATION
-  // --------
-
-  boost_all_faces_iterator()
-  {}
-
-  boost_all_faces_iterator( Iterator j) : nt(j) {}
-
-  // OPERATIONS Forward Category
-  // ---------------------------
-
-
-  bool operator==( const Self& i) const { return ( nt == i.nt); }
-  bool operator!=( const Self& i) const { return !(nt == i.nt );   }
-  value_type  operator*() const  { return nt; }
-  value_type    operator->()  { return nt; }
-
-  Self& operator++() {
-    ++nt;
-    return *this;
-  }
-
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
-  }
-
-  Self& operator--() {
-    --nt;
-    return *this;
-  }
-
-  Self  operator--(int) {
-    Self tmp = *this;
-    --*this;
-    return tmp;
-  }
-};
-
-    
     template <typename Tr>
     struct T2_halfedge_descriptor
     {
@@ -329,10 +221,10 @@ namespace boost {
 
     typedef CGAL::detail::T2_halfedge_descriptor<Triangulation> halfedge_descriptor;
 
-    typedef typename CGAL::Triangulation_2<GT,TDS>::All_halfedges_iterator  halfedge_iterator;
+    typedef typename Triangulation::All_halfedges_iterator  halfedge_iterator;
 
-    typedef CGAL::detail::boost_all_vertices_iterator<Triangulation> vertex_iterator;
-    typedef CGAL::detail::boost_all_faces_iterator<Triangulation> face_iterator;
+    typedef CGAL::Prevent_deref<typename Triangulation::All_vertices_iterator> vertex_iterator;
+    typedef CGAL::Prevent_deref<typename Triangulation::All_faces_iterator> face_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::Out_edge_circulator<typename Triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > out_edge_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::In_edge_circulator<typename Triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > in_edge_iterator;
     typedef CGAL::Counting_iterator<typename Triangulation::Vertex_circulator> Incident_vertices_iterator;
@@ -348,10 +240,10 @@ namespace boost {
     typedef size_type faces_size_type;
     typedef size_type degree_size_type;
 
-  // nulls
-  static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
-  static face_descriptor     null_face()   { return face_descriptor(); }
-  static halfedge_descriptor     null_halfedge()   { return halfedge_descriptor(); }
+    // nulls
+    static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
+    static face_descriptor     null_face()   { return face_descriptor(); }
+    static halfedge_descriptor     null_halfedge()   { return halfedge_descriptor(); }
   };
 
 
@@ -469,6 +361,57 @@ namespace CGAL {
     return edge_descriptor(e.first,e.second);
   }
 
+  template <class Gt, class Tds>
+  std::pair<typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor,
+            bool>
+  edge(typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_descriptor u,
+       typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_descriptor v,
+       const Triangulation_2<Gt,Tds>& g)
+  {
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor edge_descriptor;
+
+    typename Triangulation_2<Gt,Tds>::Edge_circulator c = g.incident_edges(u), done(c);
+    if (c != 0) {
+      do {
+        // find the index of the other vertex of *c
+        int indv = 3 - c->first->index(u) - c->second;
+        if(c->first->vertex(indv) == v)
+          return std::make_pair(edge_descriptor(c->first, c->second), true);
+      } while (++c != done);
+    }
+
+    return std::make_pair(edge_descriptor(), false);
+  }
+
+  template <class Gt, class Tds>
+  std::pair<typename boost::graph_traits<Triangulation_2<Gt,Tds> >::halfedge_descriptor,
+            bool>
+  halfedge(typename boost::graph_traits<Triangulation_2<Gt,Tds> >::vertex_descriptor u,
+           typename boost::graph_traits<Triangulation_2<Gt,Tds> >::vertex_descriptor v,
+           const Triangulation_2<Gt,Tds>& g)
+  {
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor edge_descriptor;
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::face_descriptor face_descriptor;
+
+    std::pair<edge_descriptor, bool> eb = edge(u, v, g);
+
+    if(!eb.second)
+      return std::make_pair(halfedge_descriptor(), false);
+
+    const edge_descriptor& e = eb.first;
+
+    if(e.first->vertex(g.ccw(e.first->index(u))) == v)
+    {
+      return std::make_pair(halfedge_descriptor(e.first, e.second), true);
+    }
+    else
+    {
+      face_descriptor nf = e.first->neighbor(e.second);
+      int idx = nf->index(e.first);
+      return std::make_pair(halfedge_descriptor(nf, idx), true);
+    }
+  }
 
   template <class Gt, class Tds>
   inline Iterator_range<typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_iterator>  
@@ -636,7 +579,7 @@ namespace CGAL {
     {}
     
     long operator[](key_type vh) const {
-      return vh->id(); 
+      return vh->id();
     }
   };
 
@@ -651,11 +594,11 @@ namespace CGAL {
 
     friend reference get(T2_vertex_point_map<Gt,Tds>, key_type vh)
     { 
-      return vh->point(); 
+      return vh->point();
     }
     friend void put(T2_vertex_point_map<Gt,Tds>, key_type vh, reference v)
     {
-      vh->point()=v; 
+      vh->point() = v;
     }
     reference operator[](key_type vh) const {
       return vh->point();
@@ -743,8 +686,6 @@ namespace CGAL {
     };
   };
 
-
-
   template <>
   struct T2_property_map<boost::vertex_point_t> {
     template <class Gt, class Tds>
@@ -754,7 +695,6 @@ namespace CGAL {
     };
   };
 
-
   template <>
   struct T2_property_map<boost::edge_index_t> {
     template <class Gt, class Tds>
@@ -763,7 +703,6 @@ namespace CGAL {
       typedef T2_edge_id_map<Gt,Tds> const_type;
     };
   };
-
 
   template <>
   struct T2_property_map<boost::edge_weight_t> {

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
@@ -31,9 +32,9 @@
 #include <CGAL/Polygon_2/polygon_assertions.h>
 
 namespace CGAL {
-
+#ifndef DOXYGEN_RUNNING //to avoid conflicts
 template <class _Traits, class _Container> class Polygon_2;
-
+#endif
 template <class _Traits, class _Container>
 class Polygon_2_const_edge_circulator {
   public:

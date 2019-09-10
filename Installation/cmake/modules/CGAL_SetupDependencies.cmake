@@ -1,4 +1,4 @@
-include(CGAL_Macros)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Macros.cmake)
 
 message ( STATUS "External libraries supported: ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES}")
 
@@ -82,4 +82,4 @@ if( NOT GMP_FOUND )
 endif( NOT GMP_FOUND )
 
 # finally setup Boost
-include(CGAL_SetupBoost)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupBoost.cmake)

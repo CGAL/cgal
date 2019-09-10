@@ -46,7 +46,7 @@ or with respect to some user customized quality criteria.
 The meshing engine used in this mesh generator
 is based on Delaunay refinement \cgalCite{c-gqmgc-93}, \cgalCite{r-draq2d-95}, \cgalCite{s-tmgdr-98}.
 It uses the notion of restricted Delaunay triangulation
-to approximate 1-dimensional curve segments and surface patches \cgalCite{cgal:bo-pgsms-05}.
+to approximate 1-dimensional curves and surface patches \cgalCite{cgal:bo-pgsms-05}.
 Before the refinement, a mechanism of protecting balls is set up on 1-dimensional features, if any,
 to ensure a fair representation
 of those features in the mesh, and also to guarantee the termination of the refinement process,
@@ -77,14 +77,14 @@ some 3D faces may have dangling 2D or 1D faces in their boundary faces.
 In the rest of the documentation, we will refer to the
 input 3D complex as the input domain. The faces of the input domain 
 with dimension 0, 1, 2 and 3 are called respectively
-<I>corners</I>, <I>curve segments</I>, <I>surface patches</I> and <I>subdomains</I>
+<I>corners</I>, <I>curves</I>, <I>surface patches</I> and <I>subdomains</I>
 to clearly distinguish them from the faces of the mesh
 that are called vertices, edges, facets and cells.
 
 Note that the input complex faces are not required to be linear nor smooth.
 Surface patches, for instance, may be smooth surface patches, 
 or portions of surface meshes with boundaries.
-Curve segments may be for instance straight segments, curved segments
+Curves may be for instance straight segments, parameterized curves
 or polylines. Each of those features will be accurately represented in the final mesh.
 
 The 0 and 1-dimensional features of the input domain are usually singular points
@@ -102,7 +102,7 @@ in the final mesh.
 Note also that input complex faces are not required to be connected.
 Faces of the input domain are identified by indexes.
 If a subdomain is not connected, its different components receive the same index.
-Likewise different surface patches, segment curves or corners may share the same index.
+Likewise different surface patches, curves or corners may share the same index.
 Each connected component of a feature will be accurately represented
 in the final mesh.
 Note however that the occurrence of multiply connected faces in the
@@ -136,8 +136,14 @@ The resulting mesh is output as a subcomplex of a 3D Delaunay triangulation,
 in a class providing various iterators
 on mesh elements.
 
+\subsection Mesh_3OutputFaceGraph Output FaceGraph
+
+This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`:
+
+- `facets_in_complex_3_to_triangle_mesh()`
+
 The 3D triangulation provides approximations of the
-subdomains, surface patches and curve segments
+subdomains, surface patches and curves
 and corners, according to the restricted
 Delaunay triangulation paradigm. This means that each subdomain
 is approximated by the union of the tetrahedral cells
@@ -370,11 +376,11 @@ the concept `MeshDomainWithFeatures_3` provides
 the incidence
 graph of 0, 1 and 2-dimensional features,
 and a member function to construct
-sample points on curve segments.
+sample points on curves.
 
 Using the parameter of type `Features`, the user
 whose domain is a model of `MeshDomainWithFeatures_3` 
-can choose to have the corners and curve segments of the domain
+can choose to have the corners and curves of the domain
 represented in the mesh or not.
 The type `Features` of this parameter is an internal undescribed type.
 The library provides functions to construct appropriate values of that type.
@@ -422,7 +428,7 @@ provides an upper bound for the distance between the circumcenter
 of a surface facet and the center of a surface Delaunay ball of this facet.
 <LI><I>`facet_topology`.</I> This parameters controls the set of topological constraints
 which have to be verified by each surface facet. By default, each vertex of a surface
-facet has to be located on a surface patch, on a curve segment, or on a corner. It can
+facet has to be located on a surface patch, on a curve, or on a corner. It can
 also be set to check whether the three vertices of a surface facet belongs to the same
 surface patch. This has to be done cautiously, as such a criteria needs that each surface
 patches intersection is an input 1-dimensional feature.
@@ -584,7 +590,7 @@ Cut view of a 3D mesh produced from an implicit domain
 
 The following example produces a 3D mesh for a domain whose boundary surface
 is the isosurface associated to an isovalue inside the input gray-level
-3D image.
+3D image. In the distribution you can also find the example \ref Mesh_3/mesh_3D_gray_vtk_image.cpp which can deal with DICOM files as input.
 
 \cgalExample{Mesh_3/mesh_3D_gray_image.cpp}
 
@@ -619,6 +625,33 @@ resulting mesh.
 View of a 3D mesh of the relative complement of a torus in a sphere.
 \cgalFigureEnd
 
+\subsubsection Mesh_3MeshingMultipleDomains_3 Construction of an Hybrid domain : from an Implicit and a Polyhedral domain
+
+The example code of \ref Mesh_3/mesh_hybrid_mesh_domain.cpp produces a 3D mesh for a domain consisting of several subdomains too.
+Here, the set of subdomains is given by two subdomains of different types : a domain defined by an implicit sphere,
+and a domain defined by the triangulated surface of a cube.
+
+\cgalFigureRef{mesh3HybridDomainExample} shows the results with or without the
+protection of the 1D-features.
+
+\cgalFigureAnchor{mesh3HybridDomainExample}
+<center>
+<table border=0>
+<tr>
+  <td><img border="0" src="./hybrid_domain.jpg"></td>
+  <td><img border="0" src="./hybrid_domain_mesh_no_protection.jpg"></td>
+  <td><img border="0" src="./hybrid_domain_mesh_protection.jpg"></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{mesh3HybridDomainExample}
+Left: the input hybrid domain.
+
+Middle : the output mesh without any call to `%add_features()`.
+
+Right : the output mesh with added 1D-features at the intersection of subdomains.
+\cgalFigureCaptionEnd
+
 
 \subsection Mesh_3PolyhedralDomains Polyhedral Domains
 
@@ -627,13 +660,27 @@ View of a 3D mesh of the relative complement of a torus in a sphere.
 \subsubsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
 
 The following code produces a 3D mesh for a domain
-defined by polyhedral surfaces. \cgalFigureRef{figurepolyhedral_domain} 
+defined by a polyhedral surface. \cgalFigureRef{figurepolyhedral_domain} 
 shows the resulting mesh.
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain.cpp}
 
 \cgalFigureBegin{figurepolyhedral_domain,polyhedral_domain.jpg,polyhedral_domain_2.jpg}
-View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files."
+View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files.
+\cgalFigureEnd
+
+\subsubsection Mesh_33DSurfaceInsidePolyhedralDomain Remeshing a Polyhedral Domain with Surfaces
+
+In the following example we have a "bounding polyhedron" which defines the meshing domain and two surfaces inside this domain. 
+The surfaces inside the domain may be closed surfaces as well as surfaces with boundaries. In the case of a closed surface
+the volume delimited by this surface is also considered as inside the domain. 
+previous subsection.
+
+ 
+\cgalExample{Mesh_3/mesh_polyhedral_domain_with_surface_inside.cpp}
+
+\cgalFigureBegin{figurepolyhedral_domain_with_surface,polyhedral_domain_with_surface.jpg}
+View of 3D meshes produced from a polyhedral domain with a nested surface.
 \cgalFigureEnd
 
 \subsubsection Mesh_3RemeshingPolyhedralSurface Remeshing a Polyhedral Surface
@@ -782,6 +829,21 @@ a 3D medical image.
 View of a 3D mesh produced from a 3D image with different size for different organs. Code from subsection \ref Mesh_3_subsubsection_examples_3d_image_variable generates this file.
 \cgalFigureEnd
 
+\subsubsection Mesh_3LipschitzSizingField Lipschitz Sizing Field
+
+\anchor Mesh_3_subsubsection_examples_3d_image_lip_sizing
+
+The following example shows how to use another custom sizing function, that is
+`k`-Lipschitz. For each subdomain, the user provides the parameter `k`,
+a minimal size and maximal size for cells.
+
+\cgalExample{Mesh_3/mesh_polyhedral_domain_with_lipschitz_sizing.cpp}
+
+\cgalFigureBegin{figurefandisk_lip_sizing,fandisk_lip.jpg}
+View of a 3D mesh produced with a Lipschitz sizing field,
+for a single subdomain. Code from subsection \ref Mesh_3_subsubsection_examples_3d_image_lip_sizing generates this mesh.
+\cgalFigureEnd
+
 \subsection Mesh_3MeshingDomainswithSharpFeatures Meshing Domains with Sharp Features
 
 \anchor Mesh_3_subsection_example_polyhedral_with_edges
@@ -852,16 +914,16 @@ the edges of the 1D-mesh corresponding to the 1D-features.
 
 The rest of the example is similar to \ref Mesh_3/mesh_3D_image.cpp.
 
-\cgalFigureRef{mesh3protectionimage3D} shows the results with or with the
+\cgalFigureRef{mesh3protectionimage3D} shows the results without or with the
 protection of the 1D-features.
 
 \cgalFigureAnchor{mesh3protectionimage3D}
 <center>
 <table border=0>
 <tr>
-  <td><img border="0" src="./no-protection.png"></td>
-  <td><img border="0" src="./protection-box.png"></td>
-  <td><img border="0" src="./protection-all.png"></td>
+<td><img border="0" src="./no-protection.png"></td>
+<td><img border="0" src="./protection-box.png"></td>
+<td><img border="0" src="./protection-all.png"></td>
 </tr>
 </table>
 </center>
@@ -874,6 +936,42 @@ Middle: the mesh with only the 1D-features computed by
 Right: the mesh with added 1D-features in the interior of the bounding box
 of the image.
 \cgalFigureCaptionEnd
+
+\subsubsection Mesh_3PolyhedralComplex Polyhedral complex
+
+The following example shows how to generate a mesh from a polyhedral complex
+that forms a bounded domain.
+The domain is defined by a group of polyhedral surfaces that are conformal.
+For each facet of the input polyhedral surfaces,
+the ids of incident subdomains are known.
+The input surfaces intersect along polylines that are considered as sharp features,
+and protected as for all domain types in this Section. 
+
+\cgalExample{Mesh_3/mesh_polyhedral_complex.cpp}
+
+\cgalFigureRef{mesh3protectionComplex} shows the results without or with the
+protection of the 1D-features.
+
+\cgalFigureAnchor{mesh3protectionComplex}
+<center>
+<table border=0>
+<tr>
+  <td><img border="0" src="./no-protection-complex.png"></td>
+  <td><img border="0" src="./protection-complex.png"></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{mesh3protectionComplex}
+Left: the mesh without any call to `%detect_features()`.
+The mesh is overrefined next to sharp features, because the mesher tries to
+reach the target `facet_distance`, by inserting centers of surface Delaunay
+balls, that are not likely to be on sharp edges.
+
+Right: the mesh with added 1D-features along sharp edges and edges shared
+by at least two of the input polyhedral surfaces forming the complex.
+\cgalFigureCaptionEnd
+
+
 
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 

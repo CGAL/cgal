@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -21,11 +22,29 @@
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_REMOVE_TRAITS_3_H
 #define CGAL_PERIODIC_3_TRIANGULATION_REMOVE_TRAITS_3_H
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
 namespace CGAL { 
+
+// Triangulation_3 has calls to Construct_point_3 to handle weighted and bare points.
+// The default inherited Construct_point_3 inherited by Periodic_3_triangulation_remove_traits_3
+// must be overwritten by a construction Construct_point_3 that offers:
+// - pair<K::Point_3, offset> --> pair<K::Point_3, offset> (identity)
+// - pair<K::Weighted_point_3, offset> --> pair<K::Point_3, offset> (will be added when needed)
+template < class Traits_ >
+class Construct_point_3_remove_traits
+{
+  typedef Traits_                        Traits;
+  typedef typename Traits::Point_3       Point_3; // actually a pair <K::Point_3, offset>
+
+public:
+  const Point_3& operator()(const Point_3& p) { return p; }
+};
 
 template < class Traits_, class Functor_ >
 class Point_offset_adaptor {
@@ -83,6 +102,9 @@ public:
     _pt.set_domain(domain);
   }
 
+  // Construct point
+  typedef Construct_point_3_remove_traits<Self> Construct_point_3;
+
   // Triangulation traits
   typedef Point_offset_adaptor<Self, typename PT::Compare_xyz_3>
       Compare_xyz_3;
@@ -101,6 +123,11 @@ public:
       Compare_distance_3;
 
   // Operations
+  Construct_point_3
+  construct_point_3_object() const {
+    return Construct_point_3();
+  }
+
   Compare_xyz_3
   compare_xyz_3_object() const {
     return Compare_xyz_3(_pt.compare_xyz_3_object());

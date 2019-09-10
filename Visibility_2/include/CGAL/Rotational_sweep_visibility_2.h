@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s):  Kan Huang <huangkandiy@gmail.com>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 #define CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
+
+#include <CGAL/license/Visibility_2.h>
+
 
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Arrangement_2.h>
@@ -69,7 +73,7 @@ private:
   typedef Halfedge_const_handle                         EH;
   typedef std::vector<EH>                               EHs;
 
-  class Less_edge: public std::binary_function<EH, EH, bool> {
+  class Less_edge: public CGAL::binary_function<EH, EH, bool> {
     const Geometry_traits_2* geom_traits;
   public:
     Less_edge() {}
@@ -90,7 +94,7 @@ private:
     }
   };
 
-  class Less_vertex: public std::binary_function<VH, VH, bool> {
+  class Less_vertex: public CGAL::binary_function<VH, VH, bool> {
     const Geometry_traits_2* geom_traits;
   public:
     Less_vertex() {}
@@ -106,7 +110,7 @@ private:
     }
   };
 
-  class Closer_edge: public std::binary_function<EH, EH, bool> {
+  class Closer_edge: public CGAL::binary_function<EH, EH, bool> {
     const Geometry_traits_2* geom_traits;
     Point_2 q;
   public:
@@ -720,7 +724,7 @@ private:
 
   //functor to decide which vertex is swept earlier by the rotational sweeping
   //ray
-  class Is_swept_earlier:public std::binary_function<VH, VH, bool> {
+  class Is_swept_earlier:public CGAL::binary_function<VH, VH, bool> {
     const Point_2& q;
     const Geometry_traits_2* geom_traits;
   public:

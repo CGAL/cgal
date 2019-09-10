@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Kaspar Fischer
@@ -23,6 +24,10 @@
 
 #ifndef CGAL_QP_SOLVER_H
 #define CGAL_QP_SOLVER_H
+
+#include <CGAL/license/QP_solver.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/iterator.h>
 #include <CGAL/QP_solver/basic.h>
@@ -44,7 +49,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <vector>
 #include <numeric>
@@ -1993,6 +1998,8 @@ compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
 #include <CGAL/QP_solver/QP_solver_nonstandardform_impl.h>
 #include <CGAL/QP_solver/QP_solver_bounds_impl.h>
 #include <CGAL/QP_solver/QP_solver_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_QP_SOLVER_H
 

@@ -71,13 +71,13 @@ int main ()
   // Insert a full unit circle that is centered at (0, 4).
   Rat_circle_2  circ5 (Rat_point_2(0,4), 1);
   Conic_arc_2   c5 (circ5);
-  
+
   insert (arr, c5);
 
   // Insert a parabolic arc that is supported by a parabola y = -x^2
   // (or: x^2 + y = 0) and whose endpoints are (-sqrt(3), -3) ~ (-1.73, -3)
-  // and (sqrt(2), -2) ~ (1.41, -2). Notice that since the x-coordinates 
-  // of the endpoints cannot be acccurately represented, we specify them
+  // and (sqrt(2), -2) ~ (1.41, -2). Notice that since the x-coordinates
+  // of the endpoints cannot be accurately represented, we specify them
   // as the intersections of the parabola with the lines y = -3 and y = -2.
   // Note that the arc is clockwise oriented.
   Conic_arc_2   c6 =

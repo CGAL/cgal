@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Frank Da, David Cohen-Steiner, Andreas Fabri
 
 #ifndef CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_VERTEX_BASE_WITH_ID_3_H
 #define CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_VERTEX_BASE_WITH_ID_3_H
+
+#include <CGAL/license/Advancing_front_surface_reconstruction.h>
+
 
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/utility.h>

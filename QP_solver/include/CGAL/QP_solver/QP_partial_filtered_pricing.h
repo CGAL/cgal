@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_QP_PARTIAL_FILTERED_PRICING_H
 #define CGAL_QP_PARTIAL_FILTERED_PRICING_H
+
+#include <CGAL/license/QP_solver.h>
+
 
 // MSVC detection
 #include <boost/config.hpp>

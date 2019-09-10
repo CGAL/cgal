@@ -12,8 +12,12 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : Sebastien Loriot
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
+// Author(s)     : Sebastien Loriot
+
 
 #ifndef CGAL_BOOST_GRAPH_PROPERTY_MAPS_H
 #define CGAL_BOOST_GRAPH_PROPERTY_MAPS_H
@@ -63,7 +67,6 @@ struct Triangle_from_face_descriptor_map{
       key_type f)
   {
     typename boost::remove_const<TriangleMesh>::type & tm = *(pmap.m_tm);
-
     CGAL_precondition(halfedge(f,tm) == next(next(next(halfedge(f,tm),tm),tm),tm));
 
     return value_type( get(pmap.m_vpm, target(halfedge(f,tm),tm)),

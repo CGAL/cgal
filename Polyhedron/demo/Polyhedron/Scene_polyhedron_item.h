@@ -2,8 +2,9 @@
 #define SCENE_POLYHEDRON_ITEM_H
 
 #include "Scene_polyhedron_item_config.h"
-#include  <CGAL/Three/Scene_item.h>
-#include  <CGAL/Three/TextRenderer.h>
+#include <CGAL/Three/Scene_print_item_interface.h>
+#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/TextRenderer.h>
 #include "Polyhedron_type_fwd.h"
 #include "Polyhedron_type.h"
 #include <iostream>
@@ -15,25 +16,46 @@
 #include <vector>
 
 #include <QColor>
+#include <CGAL/Three/Scene_zoomable_item_interface.h>
 
 class QMenu;
 struct Scene_polyhedron_item_priv;
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
-        : public CGAL::Three::Scene_item{
+        : public CGAL::Three::Scene_item,
+          public CGAL::Three::Scene_zoomable_item_interface,
+          public CGAL::Three::Scene_print_item_interface{
+    Q_INTERFACES(CGAL::Three::Scene_print_item_interface)
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PrintInterface/1.0")
     Q_OBJECT
+    Q_INTERFACES(CGAL::Three::Scene_zoomable_item_interface)
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
 public:
+    typedef Polyhedron Face_graph;
+    typedef boost::property_map<Face_graph, boost::vertex_index_t>::type Vertex_selection_map;
+    typedef boost::property_map<Face_graph, boost::face_index_t>::type Face_selection_map;
+
     enum STATS {
       NB_VERTICES = 0,
-      NB_FACETS,
       NB_CONNECTED_COMPOS,
       NB_BORDER_EDGES,
+      IS_PURE_TRIANGLE,
       NB_DEGENERATED_FACES,
       HOLES,
       AREA,
       VOLUME,
       SELFINTER,
+      NB_FACETS,
+      MIN_AREA,
+      MAX_AREA,
+      MED_AREA,
+      MEAN_AREA,
+      MIN_ALTITUDE,
+      MIN_ASPECT_RATIO,
+      MAX_ASPECT_RATIO,
+      MEAN_ASPECT_RATIO,
+      GENUS,
       NB_EDGES,
       MIN_LENGTH,
       MAX_LENGTH,
@@ -45,17 +67,16 @@ public:
       MEAN_ANGLE
     };
 
-    bool has_stats()const {return true;}
-    QString computeStats(int type);
-    CGAL::Three::Scene_item::Header_data header() const;
-    TextListItem* textItems;
+    bool has_stats()const Q_DECL_OVERRIDE{return true;}
+    QString computeStats(int type)Q_DECL_OVERRIDE;
+    CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
     Scene_polyhedron_item(const Polyhedron& p);
     Scene_polyhedron_item(Polyhedron* const p);
     ~Scene_polyhedron_item();
 
-    Scene_polyhedron_item* clone() const;
+    Scene_polyhedron_item* clone() const Q_DECL_OVERRIDE;
 
     // IO
     bool load(std::istream& in);
@@ -64,31 +85,39 @@ public:
     bool save_obj(std::ostream& out) const;
 
     // Function for displaying meta-data of the item
-    virtual QString toolTip() const;
+    virtual QString toolTip() const Q_DECL_OVERRIDE;
 
     // Function to override the context menu
-    QMenu* contextMenu();
+    QMenu* contextMenu() Q_DECL_OVERRIDE;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); }
+    virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
     // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-    void draw() const {}
-    virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void drawEdges() const {}
-    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
-    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
+    void draw() const Q_DECL_OVERRIDE{}
+    virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void drawEdges() const Q_DECL_OVERRIDE{}
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
 
     // Get wrapped polyhedron
     Polyhedron*       polyhedron();
     const Polyhedron* polyhedron() const;
 
+    Face_graph*       face_graph() { return polyhedron(); }
+    const Face_graph* face_graph() const { return polyhedron(); }
+
     // Get dimensions
-    bool isFinite() const { return true; }
-    bool isEmpty() const;
-    void compute_bbox() const;
+    bool isFinite() const Q_DECL_OVERRIDE { return true; }
+    bool isEmpty() const Q_DECL_OVERRIDE;
+    void compute_bbox() const Q_DECL_OVERRIDE;
+    
+    Vertex_selection_map vertex_selection_map();
+    Face_selection_map face_selection_map();
+ 
     std::vector<QColor>& color_vector();
     void set_color_vector_read_only(bool on_off);
     bool is_color_vector_read_only();
+
     int getNumberOfNullLengthEdges();
     int getNumberOfDegeneratedFaces();
     bool triangulated();
@@ -100,29 +129,51 @@ public:
     //! @returns `true` if the item has multiple colors at the same time.
     bool isItemMulticolor();
 
-    void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer);
-    void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const;
-    bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*);
+    void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer)Q_DECL_OVERRIDE;
+    bool printVertexIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+    bool printEdgeIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+    bool printFaceIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+    void printAllIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+    bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const Q_DECL_OVERRIDE;
+    bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+
+
+    //! @returns `true` if `f` is the first facet intersected by a raytracing
+    bool intersect_face(double orig_x,
+                        double orig_y,
+                        double orig_z,
+                        double dir_x,
+                        double dir_y,
+                        double dir_z,
+                        Polyhedron::Facet_handle f);
 
 public Q_SLOTS:
-    virtual void invalidateOpenGLBuffers();
-    virtual void selection_changed(bool);
-    virtual void setColor(QColor c);
+    virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+    virtual void selection_changed(bool) Q_DECL_OVERRIDE;
+    virtual void setColor(QColor c) Q_DECL_OVERRIDE;
     virtual void show_feature_edges(bool);
     void show_only_feature_edges(bool);
     void enable_facets_picking(bool);
     void set_erase_next_picked_facet(bool);
+    void set_flat_disabled(bool b);
 
     void select(double orig_x,
                 double orig_y,
                 double orig_z,
                 double dir_x,
                 double dir_y,
-                double dir_z);
+                double dir_z) Q_DECL_OVERRIDE;
     void update_vertex_indices();
     void update_facet_indices();
     void update_halfedge_indices();
     void invalidate_aabb_tree();
+    void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
+    void resetColors();
+    void showVertices(bool);
+    void showEdges(bool);
+    void showFaces(bool);
+    void showPrimitives(bool);
+    void zoomToId();
 
 Q_SIGNALS:
     void selection_done();
@@ -137,6 +188,9 @@ public:
 protected:
     friend struct Scene_polyhedron_item_priv;
     Scene_polyhedron_item_priv* d;
+
+   public:
+    void zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *)const Q_DECL_OVERRIDE;
 
 }; // end class Scene_polyhedron_item
 

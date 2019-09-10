@@ -20,7 +20,7 @@ The class
 
 */
 template< typename Map >
-struct Data_access : public std::unary_function< typename Map::key_type,
+struct Data_access : public CGAL::unary_function< typename Map::key_type,
 		     std::pair< typename Map::mapped_type, bool> > {
 public:
 

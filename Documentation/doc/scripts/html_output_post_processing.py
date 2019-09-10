@@ -74,7 +74,7 @@ def package_glob(target):
 
 # remove duplicate files
 def clean_doc():
-    duplicate_files=package_glob('./*/jquery.js')
+    duplicate_files=list(package_glob('./*/jquery.js'))
     duplicate_files.extend(package_glob('./*/dynsections.js'))
     duplicate_files.extend(package_glob('./*/resize.js'))
     duplicate_files.extend(package_glob('./*/stylesheet.css'))
@@ -88,7 +88,7 @@ def clean_doc():
     duplicate_files.extend(package_glob('./*/geom.bib'))
     duplicate_files.extend(package_glob('./*/ftv2cl.png'))
     duplicate_files.extend(package_glob('./*/ftv2ns.png'))
-    
+
     for fn in duplicate_files:
         os.remove(fn)
 
@@ -135,7 +135,7 @@ def re_replace_first_in_file(pat, s_after, fname):
 def is_concept_file(filename):
   if not path.exists(filename):
     return False;
-  d = pq(filename=filename, parser='html')
+  d = pq(filename=filename, parser='html', encoding='utf-8')
   ident = d('#CGALConcept')
   return ident.size() == 1
 
@@ -149,6 +149,15 @@ def rearrange_img(i, dir_name):
                 img.attr("src","ftv2cpt.png")
     srcpath=img.attr("src")
     img.attr("src", "../Manual/" + srcpath.split('/')[-1])
+
+def rearrange_icon(i, dir_name):
+    icon = pq(this)
+    if icon.attr("class") == "icon-class":
+        parser=pq(this).parent().parent()
+        for link_class in ['a.el', 'a.elRef']:
+            links=parser(link_class)
+            if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
+                icon.attr("class","icon-concept")
 
 ###############################################################################
 ############################## Figure Numbering ###############################
@@ -174,7 +183,7 @@ def update_figure_ref(i,global_anchor_map):
   link_name=link.text()
   if re.match("fig__.+",link_name) != None:
     #replace the link only if it was collected
-    if global_anchor_map.has_key(link_name):
+    if link_name in global_anchor_map:
       link.text( "Figure "+str(global_anchor_map[link_name]) )
     else:
       stderr.write("Error: Figure numbering; "+link_name+" has not been collected\n")
@@ -184,7 +193,7 @@ def automagically_number_figures():
   #collect the list of packages in the package overview page,
   #respecting the order of that page
   all_packages=[]
-  d = pq(filename="./Manual/packages.html", parser='html')
+  d = pq(filename="./Manual/packages.html", parser='html', encoding='utf-8')
   for el in d('a.elRef'):
     text = pq(el).attr('href')
     if text.find("index.html")!=-1:
@@ -204,14 +213,14 @@ def automagically_number_figures():
     all_pkg_files.remove(userman)
     for fname in [userman]+all_pkg_files:
       infos=figure_anchor_info(pkg_id, global_anchor_map)
-      d = pq(filename=fname, parser='html')
+      d = pq(filename=fname, parser='html', encoding='utf-8')
       d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
     pkg_id+=1
 
   #Figure link dev Manual
   for fname in glob.glob("Manual/*.html"):
     infos=figure_anchor_info(0, global_anchor_map)
-    d = pq(filename=fname, parser='html')
+    d = pq(filename=fname, parser='html', encoding='utf-8')
     d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
 
   #replace each link to a figure by its unique id
@@ -221,7 +230,7 @@ def automagically_number_figures():
     with codecs.open(fname, encoding='utf-8') as f:
         if not any(re.search("fig__", line) for line in f):
             continue # pattern does not occur in file so we are done.
-    d = pq(filename=fname, parser='html')
+    d = pq(filename=fname, parser='html', encoding='utf-8')
     d('a.el').each( lambda i: update_figure_ref(i,global_anchor_map) )
     d('a.elRef').each( lambda i: update_figure_ref(i,global_anchor_map) )
     write_out_html(d, fname)
@@ -232,12 +241,12 @@ def automagically_number_figures():
 
 def main():
     parser = argparse.ArgumentParser(
-        description='''This script makes adjustments to the doxygen output. 
-It replaces some text in specifically marked classes with the appropriate text for a concept, 
+        description='''This script makes adjustments to the doxygen output.
+It replaces some text in specifically marked classes with the appropriate text for a concept,
 removes some unneeded files, and performs minor repair on some glitches.''')
     parser.add_argument('--output', metavar='/path/to/doxygen/output', default="output")
     parser.add_argument('--resources', metavar='/path/to/cgal/Documentation/resources')
-    
+
     args = parser.parse_args()
     resources_absdir=args.resources
     os.chdir(args.output)
@@ -252,16 +261,19 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
     annotated_files=package_glob('./*/annotated.html')
     for fn in annotated_files:
+      re_replace_in_file("<span class=\"icon\">N</span>", "<span class=\"icon-namespace\">N</span>", fn)
+      re_replace_in_file("<span class=\"icon\">C</span>", "<span class=\"icon-class\">C</span>", fn)
       dir_name=path.dirname(fn)
-      d = pq(filename=fn, parser='html')
+      d = pq(filename=fn, parser='html', encoding='utf-8')
       tr_tags = d('table.directory tr img')
       tr_tags.each(lambda i: rearrange_img(i, dir_name))
+      span_tags = d('table.directory tr span')
+      span_tags.each(lambda i: rearrange_icon(i, dir_name))
       write_out_html(d,fn)
-    
-    class_files=package_glob('./*/class*.html')
+    class_files=list(package_glob('./*/class*.html'))
     class_files.extend(package_glob('./*/struct*.html'))
     for fn in class_files:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html', encoding='utf-8')
         ident = d('#CGALConcept')
         if ident.size() == 1:
             conceptify(d);
@@ -275,7 +287,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
     namespace_files=package_glob('./*/namespace*.html')
     for fn in namespace_files:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html', encoding='utf-8')
         ident = d('#CGALConceptNS')
         if ident.size() == 1:
             conceptify_ns(d);
@@ -285,14 +297,14 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # in a group we only need to change the nested-classes
     group_files=package_glob('./*/group*Concepts*.html')
     for fn in group_files:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html',encoding='utf-8')
         conceptify_nested_classes(d)
         write_out_html(d, fn)
 
     # fix up Files
     files_files=package_glob('./*/files.html')
     for fn in files_files:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html',encoding='utf-8')
         table = d("table.directory")
         row_id=table("td.entry").filter(lambda i: pq(this).text() == 'Concepts').parent().attr('id')
         if row_id != None:
@@ -300,9 +312,11 @@ removes some unneeded files, and performs minor repair on some glitches.''')
             table("tr").filter(lambda i: re.match(row_id + '*', pq(this).attr('id'))).remove()
             write_out_html(d, fn)
 
+    #Rewrite the code for index trees images
+
     filesjs_files=package_glob('./*/files.js')
     for fn in filesjs_files:
-        re_replace_in_file('^.*\[ "Concepts",.*$', '', fn)
+      re_replace_in_file('^.*\[ "Concepts",.*$', '', fn)
 
     #Rewrite the path of some images
     re_replace_in_file("'src','ftv2",
@@ -315,11 +329,11 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     re_replace_in_file('\[external\]', '', os.path.join('Manual','annotated.html'))
 
     # fix class/concept mismatch in generated pages
-    relationship_pages=package_glob('./*/hasModels.html')
+    relationship_pages=list(package_glob('./*/hasModels.html'))
     relationship_pages.extend(package_glob('./*/generalizes.html'))
     relationship_pages.extend(package_glob('./*/refines.html'))
     for fn in relationship_pages:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html',encoding='utf-8')
         dts=d(".textblock .reflist dt")
         # no contents() on pyquery, do it the hard way
         # Note that in the following regular expression, the Struct did not appear in doxygen version 1.8.3
@@ -331,7 +345,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # throw out nav-sync
     all_pages=glob.glob('./*/*.html')
     for fn in all_pages:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html',encoding='utf-8')
         d('#nav-sync').hide()
         # TODO count figures
         write_out_html(d, fn)
@@ -339,21 +353,22 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # remove %CGAL in navtree: this should be a fix in doxygen but for now it does not worth it
     re_replace_first_in_file('%CGAL','CGAL',glob.glob('./Manual/navtree.js')[0])
     clean_doc()
-    
+
     #remove links to CGAL in the bibliography
     citelist_files=package_glob('./*/citelist.html')
     for fn in citelist_files:
         re_replace_in_file('<a class=\"el\" href=\"namespaceCGAL.html\">CGAL</a>', 'CGAL', fn)
-    
+
     #add a section for Inherits from
-    class_and_struct_files=package_glob('./*/class*.html')+package_glob('./*/struct*.html')
+    class_and_struct_files=list(package_glob('./*/class*.html'))
+    class_and_struct_files.extend(package_glob('./*/struct*.html'))
     for fn in class_and_struct_files:
         re_replace_first_in_file(r'<p>Inherits\s*(.*)</p>', r'<a name="details" id="details"></a><h2 class="groupheader">Inherits from</h2><p>\1</p>', fn)
 
     # remove class name in Definition section if there is no default template
     # parameter documented
     for fn in class_and_struct_files:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html',encoding='utf-8')
         for el in d('h3'):
           text = pq(el).text()
           if text[0:9]=="template<" and text.find('=')==-1:
@@ -365,10 +380,10 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     for f in all_pages:
       url_f=os.path.split(f)
       url_f=url_f[0]+"/"+url_f[1]
-      canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/"+url_f+"\"/>\n"
+      canonical_link="<link rel=\"canonical\" href=\"https://doc.cgal.org/latest/"+url_f+"\"/>\n"
       re_replace_first_in_file(r'<head>', r'<head>\n'+canonical_link, f)
     ## special case for how_to_cite.html
-    canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/Manual/how_to_cite.html\"/>\n"
+    canonical_link="<link rel=\"canonical\" href=\"https://doc.cgal.org/latest/Manual/how_to_cite.html\"/>\n"
     re_replace_first_in_file(r'<body>', r'<head>\n'+canonical_link+"</head>\n<body>", os.path.join("Manual","how_to_cite.html"))
 
     #copy deprecated.html

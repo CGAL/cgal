@@ -14,15 +14,18 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
 #ifndef CGAL_TRIANGULATION_UTILS_3_H
 #define CGAL_TRIANGULATION_UTILS_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_utils_2.h>
 
 namespace CGAL {
 
@@ -37,6 +40,10 @@ struct Triangulation_utils_base_3
   static const int index_increment_map[4];
   static const int index_jump_map[4];
   static const int index_decrement_map[4];
+  
+  // copied from Triangulation_utils_2.h to avoid package dependency
+  static const int ccw_map[3];
+  static const int cw_map[3];
 };
 
 template < class T >
@@ -63,14 +70,31 @@ const int Triangulation_utils_base_3<T>::index_jump_map[4] = { 2, 3, 0, 1 };
 template < class T >
 const int Triangulation_utils_base_3<T>::index_decrement_map[4] = { 3, 0, 1, 2 };
 
+template < class T >
+const int Triangulation_utils_base_3<T>::ccw_map[3] = {1, 2, 0};
+
+template < class T >
+const int Triangulation_utils_base_3<T>::cw_map[3] = {2, 0, 1};
+
 // We derive from Triangulation_cw_ccw_2 because we still use cw() and ccw()
 // in the 2D part of the code.  Ideally, this should go away when we re-use
 // T2D entirely.
 
 struct Triangulation_utils_3
-  : public Triangulation_cw_ccw_2,
-    public Triangulation_utils_base_3<>
+  : public Triangulation_utils_base_3<>
 {
+  static int ccw(const int i) 
+    {
+      CGAL_triangulation_precondition( i >= 0 && i < 3);
+      return ccw_map[i];
+    }
+
+  static int cw(const int i)
+    {
+      CGAL_triangulation_precondition( i >= 0 && i < 3);
+      return cw_map[i];
+    }
+
   static int next_around_edge(const int i, const int j)
   {
     // index of the next cell when turning around the

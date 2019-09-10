@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez
@@ -22,6 +23,10 @@
 #ifndef CGAL_IMPLICIT_FCT_DELAUNAY_TRIANGULATION_H
 #define CGAL_IMPLICIT_FCT_DELAUNAY_TRIANGULATION_H
 
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Lightweight_vector_3.h>
 #include <CGAL/property_map.h>
@@ -29,10 +34,8 @@
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
-#include <CGAL/Min_sphere_of_spheres_d.h>
-#include <CGAL/Min_sphere_of_points_d_traits_3.h>
-#include <CGAL/centroid.h>
 
+#include <CGAL/bounding_box.h>
 #include <boost/random/random_number_generator.hpp>
 #include <boost/random/linear_congruential.hpp>
 
@@ -233,6 +236,7 @@ public:
   typedef typename Geom_traits::Point_3 Point;  ///< typedef to Point_with_normal_3<BaseGt>
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Point_with_normal_3<BaseGt>
   typedef typename Geom_traits::Sphere_3 Sphere;
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
 
   /// Point type
   enum Point_type {
@@ -312,18 +316,9 @@ public:
 
   void initialize_bounding_sphere() const
   {
-    typedef Min_sphere_of_points_d_traits_3<Gt,FT> Traits;
-    typedef Min_sphere_of_spheres_d<Traits> Min_sphere;
-   
-    // Computes min sphere
-    Min_sphere ms(points.begin(),points.end());
-
-    typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
-    FT cx = *coord++;
-    FT cy = *coord++;
-    FT cz = *coord;
-
-    sphere = Sphere(Point(cx,cy,cz), ms.radius()*ms.radius());
+    Iso_cuboid ic = bounding_box(points.begin(), points.end());
+    Point center = midpoint((ic.min)(), (ic.max)());
+    sphere = Sphere(center, squared_distance(center, (ic.max)()));
   }
 
   /// Insert point in the triangulation.
@@ -340,7 +335,7 @@ public:
     }
     if(this->dimension() < 3){
       Vertex_handle v = Base::insert(p, start);
-      v->type() = type;
+      v->type() = static_cast<unsigned char>(type);
       return v;
     }
     typename Base::Locate_type lt;
@@ -348,7 +343,7 @@ public:
     Cell_handle ch = Base::locate(p, lt, li, lj, start);
 
     Vertex_handle v = Base::insert(p, lt, ch, li, lj);
-    v->type() = type;
+    v->type() = static_cast<unsigned char>(type);
     return v;
     
   }
@@ -391,8 +386,10 @@ public:
 
     initialize_bounding_sphere();
 
+    typedef std::iterator_traits<InputIterator> Iterator_traits;
+    typedef typename Iterator_traits::difference_type Diff_t;
     boost::rand48 random;
-    boost::random_number_generator<boost::rand48> rng(random);
+    boost::random_number_generator<boost::rand48, Diff_t> rng(random);
     std::random_shuffle (points.begin(), points.end(), rng);
     fraction = 0;
 
@@ -465,7 +462,7 @@ public:
                  Point_type type = STEINER)
   {
       Vertex_handle v = Base::insert_in_hole(p, cell_begin, cell_end, begin, i);
-      v->type() = type;
+      v->type() = static_cast<unsigned char>(type);
       return v;
   }
 
@@ -502,5 +499,7 @@ public:
 }; // end of Reconstruction_triangulation_3
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IMPLICIT_FCT_DELAUNAY_TRIANGULATION_H

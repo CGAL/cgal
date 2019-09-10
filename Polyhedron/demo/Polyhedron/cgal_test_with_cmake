@@ -26,7 +26,7 @@ configure()
 {
   echo "Configuring... "
   
-  if eval 'cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+  if eval 'cmake --no-warn-unused-cli "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                      -DCGAL_DIR="$CGAL_DIR" \
                                      .' ; then
                                      
@@ -116,29 +116,39 @@ scene_points_with_normal_item \
 scene_polygon_soup_item \
 scene_polyhedron_item \
 scene_polyhedron_item_decorator \
-scene_polyhedron_item_k_ring_selection \
+scene_polyhedron_and_sm_item_k_ring_selection \
+scene_poly_item_k_ring_selection \
+scene_sm_item_k_ring_selection \
 scene_polyhedron_selection_item \
 scene_polyhedron_shortest_path_item \
 scene_polyhedron_transform_item \
 scene_polylines_item \
 scene_surface_mesh_item \
 scene_textured_polyhedron_item \
+basic_generator_plugin \
 c3t3_io_plugin \
 camera_positions_plugin \
+classification_plugin \
 clip_polyhedron_plugin \
 convex_hull_plugin \
 corefinement_plugin \
 create_bbox_mesh_plugin \
 cut_plugin \
 detect_sharp_edges_plugin \
+detect_sharp_edges_sm_plugin \
+distance_plugin \
+distance_sm_plugin \
 edit_polyhedron_plugin \
+edit_sm_plugin \
 fairing_plugin \
 features_detection_plugin \
 gocad_plugin \
 hole_filling_plugin \
+hole_filling_sm_plugin \
 hole_filling_polyline_plugin \
 inside_out_plugin \
-intersection_plugin \
+surface_intersection_plugin \
+surface_intersection_sm_plugin \
 io_image_plugin \
 io_implicit_function_plugin \
 isotropic_remeshing_plugin \
@@ -146,17 +156,20 @@ jet_fitting_plugin \
 join_and_split_polyhedra_plugin \
 kernel_plugin \
 mean_curvature_flow_skeleton_plugin \
+mean_curvature_flow_skeleton_sm_plugin \
 merge_point_sets_plugin \
 mesh_2_plugin \
 mesh_2_plugin \
 mesh_3_optimization_plugin \
 mesh_3_plugin \
 mesh_segmentation_plugin \
+mesh_segmentation_sm_plugin \
 mesh_simplification_plugin \
 nef_io_plugin \
 nef_plugin \
 off_plugin \
 off_to_nef_plugin \
+offset_meshing_plugin \
 orient_soup_plugin \
 parameterization_plugin \
 pca_plugin \
@@ -180,16 +193,19 @@ polyhedron_stitching_plugin \
 polylines_io_plugin \
 p_sphere_function_plugin \
 p_tanglecube_function_plugin \
-remeshing_plugin \
+random_perturbation_plugin \
 repair_polyhedron_plugin \
 selection_io_plugin \
+selection_sm_io_plugin \
 selection_plugin \
+selection_sm_plugin \
 self_intersection_plugin \
 shortest_path_plugin \
 stl_plugin \
 subdivision_methods_plugin \
 surface_mesh_io_plugin \
 surface_reconstruction_plugin \
+surf_to_sm_io_plugin \
 transform_polyhedron_plugin \
 triangulate_facets_plugin \
 trivial_plugin \

@@ -21,7 +21,7 @@ of the concept `TriangulationVertexBase_3` and defaults to
 
 \cgalModels `MeshVertexBase_3` 
 
-\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
+\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>` 
 
 */
 template< typename Gt, typename MD, typename Vb >

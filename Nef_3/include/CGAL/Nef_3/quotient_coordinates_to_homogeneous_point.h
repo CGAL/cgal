@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
 #ifndef CGAL_NEF_QUOTIENT_COORDINATES_TO_HOMOGENEOUS_POINT_H
 #define CGAL_NEF_QUOTIENT_COORDINATES_TO_HOMOGENEOUS_POINT_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 namespace CGAL {
 

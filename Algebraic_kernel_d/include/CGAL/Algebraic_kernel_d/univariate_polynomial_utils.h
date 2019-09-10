@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de>
@@ -68,7 +69,7 @@ namespace internal {
         int variations = 0;
         int old_sign = CGAL::sign(P[n]); // never zero unless P is zero
         for (int i = n-1; i >= 0; i--) {
-            int s = sign(P[i]);
+            int s = CGAL::sign(P[i]);
             if (s == 0) continue;
             if (old_sign != s) {
                 old_sign = s;

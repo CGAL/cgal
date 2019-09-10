@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Mariette Yvinec,Sylvain Pion
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_TRIANGULATION_FACE_BASE_WITH_INFO_2_H
 #define CGAL_TRIANGULATION_FACE_BASE_WITH_INFO_2_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 #include <CGAL/Triangulation_face_base_2.h>
 

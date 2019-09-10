@@ -106,7 +106,7 @@ Section \ref secsurface and the reference page
 
 \subsection InterpolationImplementation Implementation
 
-Given a Delaunay triangulation or a Regular triangulation, the
+Given a Delaunay triangulation or a regular triangulation, the
 vertices in conflict with the query point are determined. The areas
 \f$ \pi_i(\mathbf{x})\f$ are computed by triangulating the Voronoi
 sub-cells. The normalization factor \f$ \pi(\mathbf{x})\f$ is also

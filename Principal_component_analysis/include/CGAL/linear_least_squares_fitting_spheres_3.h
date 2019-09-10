@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez and Sylvain Pion and Ankit Gupta
 
 #ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_SPHERES_3_H
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_SPHERES_3_H
+
+#include <CGAL/license/Principal_component_analysis.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>

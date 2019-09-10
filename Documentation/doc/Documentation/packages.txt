@@ -48,6 +48,7 @@ h1 {
 \package_listing{Minkowski_sum_2}
 \package_listing{Polyline_simplification_2}
 \package_listing{Visibility_2}
+\package_listing{Set_movable_separability_2}
 
 
 \section PartPolyhedra Cell Complexes and Polyhedra
@@ -56,6 +57,7 @@ h1 {
 \package_listing{HalfedgeDS}
 \package_listing{Surface_mesh}
 \package_listing{Combinatorial_map}
+\package_listing{Generalized_map}
 \package_listing{Linear_cell_complex}
 \package_listing{Nef_3}
 \package_listing{Convex_decomposition_3}
@@ -65,7 +67,7 @@ h1 {
 \section PartArrangements Arrangements
 
 \package_listing{Arrangement_on_surface_2}
-\package_listing{Sweep_line_2}
+\package_listing{Surface_sweep_2}
 \package_listing{Snap_rounding_2}
 \package_listing{Envelope_2}
 \package_listing{Envelope_3}
@@ -115,9 +117,11 @@ h1 {
 \package_listing{Surface_mesh_skeletonization}
 \package_listing{Ridges_3}
 \package_listing{Jet_fitting_3}
+\package_listing{Point_set_3}
 \package_listing{Point_set_processing_3}
 \package_listing{Point_set_shape_detection_3}
 \package_listing{Stream_lines_2}
+\package_listing{Classification}
 
 
 \section PartSearchStructures Spatial Searching and Sorting
@@ -141,11 +145,6 @@ h1 {
 
 \package_listing{Interpolation}
 \package_listing{Barycentric_coordinates_2}
-
-\section PartKineticDataStructures Kinetic Data Structures
-
-\package_listing{Kinetic_data_structures}
-\package_listing{Kinetic_framework}
 
 \section PartSupportLibrary Support Library
 

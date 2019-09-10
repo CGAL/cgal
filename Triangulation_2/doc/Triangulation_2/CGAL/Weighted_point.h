@@ -4,10 +4,13 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation2Miscellaneous
 
+\deprecated This class is deprecated, as 2D and 3D weighted point classes are now part of the concept `Kernel`.
+
+
 The class `Weighted_point` provides a type associating 
 a point type `Pt` with a weight type `Wt`. 
-It is used in the traits classes `Regular_triangulation_euclidean_traits_2` 
-and `Regular_triangulation_euclidean_traits_3`. 
+It was used in the traits classes `Regular_triangulation_euclidean_traits_2`
+and `Regular_triangulation_euclidean_traits_3`, which are now also deprecated.
 
 \sa `CGAL::Regular_triangulation_euclidean_traits_2<Rep,Weight>` 
 \sa `CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>`

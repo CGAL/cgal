@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
@@ -29,12 +30,17 @@
 #ifndef CGAL_SHAPE_DETECTION_3_H
 #define CGAL_SHAPE_DETECTION_3_H
 
+#include <CGAL/license/Point_set_shape_detection_3.h>
+
+
 #include <CGAL/Shape_detection_3/Efficient_RANSAC.h>
-#include <CGAL/Shape_detection_3/Efficient_RANSAC_traits.h>
+#include <CGAL/Shape_detection_3/Region_growing.h>
+#include <CGAL/Shape_detection_3/Shape_detection_traits.h>
 #include <CGAL/Shape_detection_3/Plane.h>
 #include <CGAL/Shape_detection_3/Cylinder.h>
 #include <CGAL/Shape_detection_3/Cone.h>
 #include <CGAL/Shape_detection_3/Torus.h>
 #include <CGAL/Shape_detection_3/Sphere.h>
+#include <CGAL/Shape_detection_3/property_maps.h>
 
 #endif //CGAL_SHAPE_DETECTION_3_H

@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)    : Samuel Hornus (Well... `copy, paste and hack' of Monique Teillaud's work)
 
 #ifndef CGAL_INTERNAL_TRIANGULATION_TRIANGULATION_DS_ITERATORS_H
 #define CGAL_INTERNAL_TRIANGULATION_TRIANGULATION_DS_ITERATORS_H
+
+#include <CGAL/license/Triangulation.h>
+
 
 namespace CGAL {
 

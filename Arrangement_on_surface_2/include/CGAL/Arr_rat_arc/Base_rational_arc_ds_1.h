@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
 #ifndef CGAL_BASE_RATIONAL_ARC_DS_D_1_H
 #define CGAL_BASE_RATIONAL_ARC_DS_D_1_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <vector>
 #include <ostream>

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau, Stephane Tayeb, Clement Jamin
@@ -27,7 +28,13 @@
 #ifndef CGAL_MESH_3_MESHER_3_H
 #define CGAL_MESH_3_MESHER_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Mesh_3/config.h>
+
+#include <CGAL/Mesh_error_code.h>
 
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
@@ -144,6 +151,7 @@ public:
 #endif
   typedef typename C3T3::Triangulation              Triangulation;
   typedef typename Triangulation::Point             Point;
+  typedef typename Triangulation::Bare_point        Bare_point;
   typedef typename Kernel_traits<Point>::Kernel     Kernel;
   typedef typename Kernel::Vector_3                 Vector;
   typedef typename MeshDomain::Index                Index;
@@ -207,7 +215,10 @@ public:
   /// Constructor
   Mesher_3(C3T3&               c3t3,
            const MeshDomain&   domain,
-           const MeshCriteria& criteria);
+           const MeshCriteria& criteria,
+           int mesh_topology = 0,
+           std::size_t maximal_number_of_vertices = 0,
+           Mesh_error_code* error_code = 0);
 
   /// Destructor
   ~Mesher_3() 
@@ -259,6 +270,22 @@ private:
   /// The container of the resulting mesh
   C3T3& r_c3t3_;
 
+  enum Refinement_stage {
+    NOT_INITIALIZED,
+    REFINE_FACETS,
+    REFINE_FACETS_AND_EDGES,
+    REFINE_FACETS_AND_EDGES_AND_VERTICES,
+    REFINE_ALL
+  };
+
+  Refinement_stage refinement_stage;
+
+  /// Maximal number of vertices
+  std::size_t maximal_number_of_vertices_;
+
+  /// Pointer to the error code
+  Mesh_error_code* error_code_;
+
 private:
   // Disabled copy constructor
   Mesher_3(const Self& src);
@@ -272,7 +299,10 @@ private:
 template<class C3T3, class MC, class MD>
 Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                                const MD& domain,
-                               const MC& criteria)
+                               const MC& criteria,
+                               int mesh_topology,
+                               std::size_t maximal_number_of_vertices,
+                               Mesh_error_code* error_code)
 : Base(c3t3.bbox(),
        Concurrent_mesher_config::get().locking_grid_num_cells_per_axis)
 , r_oracle_(domain)
@@ -281,12 +311,15 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                  criteria.facet_criteria_object(),
                  domain,
                  null_mesher_,
-                 c3t3)
+                 c3t3,
+                 mesh_topology,
+                 maximal_number_of_vertices)
 , cells_mesher_(c3t3.triangulation(),
                 criteria.cell_criteria_object(),
                 domain,
                 facets_mesher_,
-                c3t3)
+                c3t3,
+                maximal_number_of_vertices)
 , null_visitor_()
 , facets_visitor_(&cells_mesher_, &null_visitor_)
 #ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
@@ -295,6 +328,8 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
 , cells_visitor_(&facets_mesher_, &facets_visitor_)
 #endif
 , r_c3t3_(c3t3)
+, maximal_number_of_vertices_(maximal_number_of_vertices)
+, error_code_(error_code)
 {
   facets_mesher_.set_lock_ds(this->get_lock_data_structure());
   facets_mesher_.set_worksharing_ds(this->get_worksharing_data_structure());
@@ -306,7 +341,8 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
 
 template<class C3T3, class MC, class MD>
 double
-Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
+Mesher_3<C3T3,MC,MD>::
+refine_mesh(std::string dump_after_refine_surface_prefix)
 {
   CGAL::Real_timer timer;
   timer.start();
@@ -319,6 +355,8 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   // triangulation.
   r_c3t3_.clear_cells_and_facets_from_c3t3();
 
+  const Triangulation& r_tr = r_c3t3_.triangulation();
+
 #ifndef CGAL_MESH_3_VERBOSE
   // Scan surface and refine it
   initialize();
@@ -327,6 +365,12 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "Refining facets..." << std::endl;
   WallClockTimer t;
 #endif
+  facets_mesher_.refine(facets_visitor_);
+  facets_mesher_.scan_edges();
+  refinement_stage = REFINE_FACETS_AND_EDGES;
+  facets_mesher_.refine(facets_visitor_);
+  facets_mesher_.scan_vertices();
+  refinement_stage = REFINE_FACETS_AND_EDGES_AND_VERTICES;
   facets_mesher_.refine(facets_visitor_);
 #ifdef CGAL_MESH_3_PROFILING
   double facet_ref_time = t.elapsed();
@@ -357,17 +401,21 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 
   dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
 
-  // Then scan volume and refine it
-  cells_mesher_.scan_triangulation();
+  if(maximal_number_of_vertices_ == 0 ||
+     r_tr.number_of_vertices() < maximal_number_of_vertices_)
+  {
+    // Then scan volume and refine it
+    cells_mesher_.scan_triangulation();
+    refinement_stage = REFINE_ALL;
 #ifdef CGAL_MESH_3_PROFILING
-  std::cerr << "Refining cells..." << std::endl;
-  t.reset();
+    std::cerr << "Refining cells..." << std::endl;
+    t.reset();
 #endif
-  cells_mesher_.refine(cells_visitor_);
+    cells_mesher_.refine(cells_visitor_);
 #ifdef CGAL_MESH_3_PROFILING
-  double cell_ref_time = t.elapsed();
-  std::cerr << "==== Cell refinement: " << cell_ref_time << " seconds ===="
-            << std::endl << std::endl;
+    double cell_ref_time = t.elapsed();
+    std::cerr << "==== Cell refinement: " << cell_ref_time << " seconds ===="
+              << std::endl << std::endl;
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
     // If it's parallel but the refinement is forced to sequential, we don't
     // output the value
@@ -378,12 +426,12 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 #endif
 
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
-  std::cerr
-    << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
-    << "Facets  : " << r_c3t3_.number_of_facets_in_complex() << std::endl
-    << "Tets    : " << r_c3t3_.number_of_cells_in_complex() << std::endl;
+    std::cerr
+      << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
+      << "Facets  : " << r_c3t3_.number_of_facets_in_complex() << std::endl
+      << "Tets    : " << r_c3t3_.number_of_cells_in_complex() << std::endl;
 #endif
-
+  } // end test of `maximal_number_of_vertices`
 #else // ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Start surface scan...";
   initialize();
@@ -392,7 +440,6 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   elapsed_time += timer.time();
   timer.stop(); timer.reset(); timer.start();
 
-  const Triangulation& r_tr = r_c3t3_.triangulation();
   int nbsteps = 0;
 
   std::cerr << "Refining Surface...\n";
@@ -403,7 +450,9 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "(" << r_tr.number_of_vertices() << ","
             << nbsteps << "," << cells_mesher_.debug_info() << ")";
 
-  while ( ! facets_mesher_.is_algorithm_done() )
+  while ( ! facets_mesher_.is_algorithm_done() &&
+          ( maximal_number_of_vertices_ == 0 ||
+            maximal_number_of_vertices_ >= r_tr.number_of_vertices()) )
   {
     facets_mesher_.one_step(facets_visitor_);
     std::cerr
@@ -426,6 +475,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
   std::cerr << "Start volume scan...";
   cells_mesher_.scan_triangulation();
+  refinement_stage = REFINE_ALL;
   std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
   std::cerr << std::endl << std::endl;
   elapsed_time += timer.time();
@@ -438,7 +488,9 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "(" << r_tr.number_of_vertices() << ","
             << nbsteps << "," << cells_mesher_.debug_info() << ")";
 
-  while ( ! cells_mesher_.is_algorithm_done() )
+  while ( ! cells_mesher_.is_algorithm_done()  &&
+          ( maximal_number_of_vertices_ == 0 ||
+            maximal_number_of_vertices_ >= r_tr.number_of_vertices()) )
   {
     cells_mesher_.one_step(cells_visitor_);
     std::cerr
@@ -455,6 +507,13 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "Total refining time: " << timer.time()+elapsed_time << "s" << std::endl;
   std::cerr << std::endl;
 #endif
+
+  if(maximal_number_of_vertices_ != 0 &&
+     r_tr.number_of_vertices() >= maximal_number_of_vertices_ &&
+     error_code_ != 0)
+  {
+    *error_code_ = CGAL_MESH_3_MAXIMAL_NUMBER_OF_VERTICES_REACHED;
+  }
 
   timer.stop();
   elapsed_time += timer.time();
@@ -528,12 +587,13 @@ initialize()
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "Adding points on a far sphere (radius = " << radius <<")...";
 #  endif
-      Random_points_on_sphere_3<Point> random_point(radius);
+      Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
         float(tbb::task_scheduler_init::default_num_threads())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-        r_c3t3_.add_far_point(*random_point + center);
+        r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
+                              (r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
     
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "done." << std::endl;
@@ -548,6 +608,7 @@ initialize()
 
     // Scan triangulation
     facets_mesher_.scan_triangulation();
+    refinement_stage = REFINE_FACETS;
 
     // From now on, we're multi-thread
     r_c3t3_.triangulation().set_lock_data_structure(get_lock_data_structure());
@@ -559,24 +620,9 @@ initialize()
 #ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
     if (r_c3t3_.number_of_far_points() == 0 && r_c3t3_.number_of_facets() == 0)
     {
-      /*std::cerr << "A little bit of refinement... ";
-
-      // Start by a little bit of refinement to get a coarse mesh
-      // => Good approx of bounding box
-      const int NUM_VERTICES_OF_COARSE_MESH = 40;
-      facets_mesher_.refine_sequentially_up_to_N_vertices(
-        facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
-
-      std::cerr << "done." << std::endl;
-      std::cerr
-        << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
-        << "Facets  : " << r_c3t3_.number_of_facets_in_complex() << std::endl
-        << "Tets    : " << r_c3t3_.number_of_cells_in_complex() << std::endl;*/
+      const Bbox_3 &bbox = r_oracle_.bbox();
 
       // Compute radius for far sphere
-      //const Bbox_3 &bbox = r_c3t3_.bbox();
-      CGAL_assertion(is_estimated_bbox_initialized);
-      const Bbox_3 &bbox = estimated_bbox;
       const double xdelta = bbox.xmax()-bbox.xmin();
       const double ydelta = bbox.ymax()-bbox.ymin();
       const double zdelta = bbox.zmax()-bbox.zmin();
@@ -590,10 +636,11 @@ initialize()
 # ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
 # endif
-      Random_points_on_sphere_3<Point> random_point(radius);
+      Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = 12*2;
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-        r_c3t3_.add_far_point(*random_point + center);
+        r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
+                              (r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
 # ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "done." << std::endl;
 # endif
@@ -607,7 +654,7 @@ initialize()
 
     // Scan triangulation
     facets_mesher_.scan_triangulation();
-
+    refinement_stage = REFINE_FACETS;
   }
 }
 
@@ -645,12 +692,27 @@ one_step()
 
     if ( facets_mesher_.is_algorithm_done() )
     {
-      facets_visitor_.activate();
-      cells_mesher_.scan_triangulation();
+      switch(refinement_stage) {
+      case REFINE_FACETS:
+        facets_mesher_.scan_edges();
+        refinement_stage = REFINE_FACETS_AND_EDGES;
+        if (!facets_mesher_.is_algorithm_done()) break;
+        CGAL_FALLTHROUGH;
+      case REFINE_FACETS_AND_EDGES:
+        facets_mesher_.scan_vertices();
+        refinement_stage = REFINE_FACETS_AND_EDGES_AND_VERTICES;
+        if (!facets_mesher_.is_algorithm_done()) break;
+        CGAL_FALLTHROUGH;
+      default:
+        facets_visitor_.activate();
+        cells_mesher_.scan_triangulation();
+        refinement_stage = REFINE_ALL;
+      }
     }
   }
   else
   {
+    CGAL_assertion(refinement_stage == REFINE_ALL);
     cells_mesher_.one_step(cells_visitor_);
   }
 }
@@ -696,5 +758,6 @@ Mesher_3<C3T3,MC,MD>::debug_info_header() const
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_MESHER_3_H

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_CURVE_DATA_AUX_H
 #define CGAL_CURVE_DATA_AUX_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Definition of auxiliary classes for the Arr_curve_data_traits_2<> template.

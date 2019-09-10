@@ -12,10 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_MINKOWSKI_SUM_DECOMP_2_H
 #define CGAL_MINKOWSKI_SUM_DECOMP_2_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Polygon_with_holes_2.h>

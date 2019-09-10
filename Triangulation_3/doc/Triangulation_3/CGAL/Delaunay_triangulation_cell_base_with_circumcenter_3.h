@@ -13,12 +13,12 @@ Note that input/output operators discard this additional information.
 All functions modifying the vertices of the cell invalidate the cached 
 circumcenter. 
 
-\tparam DelaunayTriangulationTraits_3 is the geometric traits class.
+\tparam Traits is the geometric traits class and must be a model of `DelaunayTriangulationTraits_3`.
 
 \tparam Cb is a cell base class from which 
 `Delaunay_triangulation_cell_base_with_circumcenter_3` derives. Cb should
 be a model of `DelaunayTriangulationCellBase_3`. 
-It has the default value `Triangulation_cell_base_3<DelaunayTriangulationTraits_3>`. 
+It has the default value `Triangulation_cell_base_3<Traits>`.
 
 \cgalModels `DelaunayTriangulationCellBase_3`
 
@@ -27,13 +27,13 @@ It has the default value `Triangulation_cell_base_3<DelaunayTriangulationTraits_
 \sa `CGAL::Delaunay_triangulation_cell_base_3`
 
 */
-template< typename DelaunayTriangulationTraits_3, typename Cb >
+template< typename Traits, typename Cb >
 class Delaunay_triangulation_cell_base_with_circumcenter_3 : public Cb {
 public:
 	
 /// \name Types 
 /// @{
-typedef DelaunayTriangulationTraits_3::Point_3 Point_3;
+typedef Traits::Point_3 Point;
 /// @}
 
 /*! \name Access function 
@@ -51,8 +51,7 @@ If it has already been computed in the past, the cached value is returned.
 Computes the circumcenter of the tetrahedron, or retrieves it if already 
 computed
 */ 
-const Point_3& circumcenter( 
-const DelaunayTriangulationTraits_3&gt = DelaunayTriangulationTraits_3()) const; 
+const Point& circumcenter(Traits&gt = Traits()) const;
 
 /// @}
 

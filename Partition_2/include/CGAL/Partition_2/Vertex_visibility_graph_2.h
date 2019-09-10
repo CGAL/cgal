@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -57,6 +58,9 @@
 
 #ifndef  CGAL_VERTEX_VISIBILITY_GRAPH_2_H
 #define  CGAL_VERTEX_VISIBILITY_GRAPH_2_H
+
+#include <CGAL/license/Partition_2.h>
+
 
 #include <CGAL/Segment_2.h>
 #include <CGAL/Partition_2/Rotation_tree_2.h>

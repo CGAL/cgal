@@ -46,7 +46,7 @@ void test_routine() {
     
     rr(p,std::back_inserter(v1),true);
     
-    int n = std::distance(v1.begin(),v1.end());
+    std::ptrdiff_t n = std::distance(v1.begin(),v1.end());
 
     assert(n==3);
     
@@ -70,7 +70,7 @@ void test_routine() {
     
     rr2(p,std::back_inserter(v2),false);
     
-    int n = std::distance(v2.begin(), v2.end());
+    std::ptrdiff_t n = std::distance(v2.begin(), v2.end());
 
     assert(n==4);
     
@@ -94,7 +94,7 @@ void test_routine() {
     
     rr1(p,std::back_inserter(v1),false);
     
-    int n = std::distance(v1.begin(), v1.end());
+    std::ptrdiff_t n = std::distance(v1.begin(), v1.end());
 
     assert(n==0);
     
@@ -118,7 +118,7 @@ void test_routine() {
     
     rr2(p,std::back_inserter(v2),false);
     
-    int n = std::distance(v2.begin(), v2.end());
+    std::ptrdiff_t n = std::distance(v2.begin(), v2.end());
 
     assert(n==1);
     

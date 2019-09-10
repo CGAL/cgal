@@ -12,15 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://balasmic@scm.gforge.inria.fr/svn/cgal/trunk/Arrangement_on_surface_2/include/CGAL/Arr_point_location/Trapezoidal_decomposition_2_impl.h $
-// $Id: Arr_trapezoid_ric_pl_impl.h 56667 2010-06-09 07:37:13Z sloriot $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Michal Balas   <balasmic@post.tau.ac.il>
 //                based on the methods implemented in Trapezoidal_decomposition.h by Oren Nechushtan
 
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_FUNCTIONS_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_FUNCTIONS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
 * Member-function definitions for the Trapezoidal_decomposition_2<Traits>
@@ -1527,7 +1530,7 @@ Trapezoidal_decomposition_2<Td_traits>
 
 template <class Td_traits>
 bool Trapezoidal_decomposition_2<Td_traits>
-::is_last_edge(Halfedge_const_handle he , Td_map_item& vtx_item)
+::is_last_edge(Halfedge_const_handle /* he */ , Td_map_item& vtx_item)
 {
   CGAL_precondition(traits->is_td_vertex(vtx_item));
   CGAL_precondition(traits->is_active(vtx_item));
@@ -1537,9 +1540,7 @@ bool Trapezoidal_decomposition_2<Td_traits>
   typename Arrangement_on_surface_2::Halfedge_around_vertex_const_circulator first, second;
   first = second = v->incident_halfedges();
   ++second;
-  if (he->source() == v)
-    he = he->twin();
-  CGAL_assertion(he == first);
+
   if (second == first) //if he is the only halfedge around v -> return true
     return true;
   return false;

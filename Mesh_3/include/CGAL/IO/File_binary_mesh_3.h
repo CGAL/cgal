@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_IO_FILE_BINARY_MESH_3_H
 #define CGAL_IO_FILE_BINARY_MESH_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <iostream>
 #include <string>
@@ -53,10 +57,12 @@ template <class C3T3>
 bool load_binary_file(std::istream& is, C3T3& c3t3)
 {
   std::string s;
-  is >> s;
-  if (s != "binary" ||
-      !(is >> s) ||
-      s != "CGAL" ||
+  if(!(is >> s)) return false;
+  bool binary = (s == "binary");
+  if(binary) {
+    if(!(is >> s)) return false;
+  }
+  if (s != "CGAL" ||
       !(is >> s) ||
       s != "c3t3") 
   {
@@ -71,7 +77,7 @@ bool load_binary_file(std::istream& is, C3T3& c3t3)
       return false;
     }
   }
-  CGAL::set_binary_mode(is);
+  if(binary) CGAL::set_binary_mode(is);
   is >> c3t3;
   return !!is;
   // call operator!() twice, because operator bool() is C++11

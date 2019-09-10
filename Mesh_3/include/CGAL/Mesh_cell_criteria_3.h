@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU, Stephane Tayeb
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_MESH_CELL_CRITERIA_3_H
 #define CGAL_MESH_CELL_CRITERIA_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
 
@@ -35,9 +39,9 @@ public:
   typedef typename Visitor::Cell_quality Cell_quality;
   typedef typename Visitor::Cell_badness Cell_badness;
 
+  typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
 private:
   typedef Mesh_3::Criteria<Tr,Visitor> Criteria;
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
   
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Geom_traits::FT FT;

@@ -19,7 +19,7 @@
 \cgalPkgDependsOn{\ref PkgHDSSummary}
 \cgalPkgBib{cgal:k-ps}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -60,6 +60,7 @@ surface can be used without knowing the halfedge data structure.
 ## Functions ##
 - \link PkgPolyhedronIOFunc `CGAL::operator<<()` \endlink
 - \link PkgPolyhedronIOFunc `CGAL::operator>>()` \endlink
-                
+- \link PkgPolyhedronIOFunc `write_off()` \endlink   
+- \link PkgPolyhedronIOFunc `read_off()` \endlink
 */
 

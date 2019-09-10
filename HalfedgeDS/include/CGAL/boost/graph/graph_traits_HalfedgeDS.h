@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
@@ -27,7 +28,7 @@
 
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/type_traits/remove_const.hpp>
 
 #include <boost/graph/graph_traits.hpp>

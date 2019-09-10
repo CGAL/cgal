@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_SINGLETON_H_
 #define SINGLETON_H_
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/assertions.h>
 

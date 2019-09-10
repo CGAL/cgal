@@ -7,11 +7,6 @@ project( BGL_Tests )
 cmake_minimum_required(VERSION 2.8.11)
 
 
-if ( COMMAND cmake_policy )
-
-  cmake_policy( SET CMP0003 NEW )  
-
-endif()
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -56,12 +51,16 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "graph_concept_OpenMesh.cpp" )
-  target_link_libraries( graph_concept_OpenMesh ${OPENMESH_LIBRARIES} )
+  target_link_libraries( graph_concept_OpenMesh PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 
 create_single_source_cgal_program( "next.cpp" )
 
 create_single_source_cgal_program( "test_circulator.cpp" )
+
+create_single_source_cgal_program( "test_Gwdwg.cpp" )
+
+create_single_source_cgal_program( "test_bgl_dual.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Polyhedron_3.cpp" )
 
@@ -71,9 +70,15 @@ create_single_source_cgal_program( "graph_concept_Triangulation_2.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Surface_mesh.cpp" )
 
-create_single_source_cgal_program( "test_clear.cpp" )
+create_single_source_cgal_program( "graph_concept_Seam_mesh_Surface_mesh.cpp" )
 
-create_single_source_cgal_program( "test_graph_geometry.cpp" )
+create_single_source_cgal_program( "graph_concept_Gwdwg_Surface_mesh.cpp" )
+
+create_single_source_cgal_program( "graph_concept_Linear_cell_complex.cpp" )
+
+create_single_source_cgal_program( "graph_concept_Arrangement_2.cpp" )
+
+create_single_source_cgal_program( "test_clear.cpp" )
 
 create_single_source_cgal_program( "test_helpers.cpp" )
 
@@ -83,28 +88,25 @@ create_single_source_cgal_program( "test_Has_member_id.cpp" )
 
 create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
-if(OpenMesh_FOUND)
-  target_link_libraries( test_graph_geometry ${OPENMESH_LIBRARIES})
-endif()
+create_single_source_cgal_program( "test_bgl_read_write.cpp" )
 
-if(OpenMesh_FOUND)
-  target_link_libraries( test_clear ${OPENMESH_LIBRARIES})
-endif()
+create_single_source_cgal_program( "graph_concept_Face_filtered_graph.cpp" )
+
+create_single_source_cgal_program( "test_Manifold_face_removal.cpp")
+
+create_single_source_cgal_program( "test_Face_filtered_graph.cpp" )
 
 create_single_source_cgal_program( "test_Euler_operations.cpp" )
-if(OpenMesh_FOUND)
-  target_link_libraries( test_Euler_operations ${OPENMESH_LIBRARIES})
-endif()
 
 create_single_source_cgal_program( "test_graph_traits.cpp" )
 
-if(OpenMesh_FOUND)
-  target_link_libraries( test_graph_traits ${OPENMESH_LIBRARIES} )
-endif()
-
-
 create_single_source_cgal_program( "test_Properties.cpp" )
-if(OpenMesh_FOUND)
-  target_link_libraries( test_Properties ${OPENMESH_LIBRARIES})
-endif()
 
+if(OpenMesh_FOUND)
+  target_link_libraries( test_clear PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_Euler_operations PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_Face_filtered_graph PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_graph_traits PRIVATE ${OPENMESH_LIBRARIES} )
+  target_link_libraries( test_Properties PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_bgl_read_write PRIVATE ${OPENMESH_LIBRARIES})
+endif()

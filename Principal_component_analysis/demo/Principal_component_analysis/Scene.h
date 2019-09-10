@@ -1,11 +1,12 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <QtOpenGL/qgl.h>
+
 #include <iostream>
 #include <cmath>
 
 #include "types.h"
+class Viewer;
 
 class Scene
 {
@@ -47,11 +48,11 @@ public:
     void fit_triangles();
 
     // rendering
-    void draw(); 
-    void render_line();
-    void render_plane();
-    void render_centroid();
-    void render_polyhedron();
+    void draw(Viewer *viewer);
+    void render_line(Viewer *viewer);
+    void render_plane(Viewer* viewer);
+    void render_centroid(Viewer* viewer);
+    void render_polyhedron(Viewer* viewer);
 
 private:
 

@@ -15,6 +15,12 @@ set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
 # CGAL_DIR is the directory where this CGALConfig.cmake is installed
 string(REPLACE "@CGAL_INSTALL_CMAKE_DIR@" "" CGAL_INSTALL_PREFIX "${CGAL_CONFIG_DIR}")
 
+ if(NOT EXISTS "${CGAL_INSTALL_PREFIX}/@CGAL_INSTALL_CMAKE_DIR@/CGALConfig.cmake")
+    # Cannot compute CGAL_INSTALL_PREFIX!
+    # Use the CMake prefix chosen at compile time.
+    set(CGAL_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@")
+ endif()
+
 set(CGAL_MAJOR_VERSION    "@CGAL_MAJOR_VERSION@" )
 set(CGAL_MINOR_VERSION    "@CGAL_MINOR_VERSION@" )
 set(CGAL_BUGFIX_VERSION   "@CGAL_BUGFIX_VERSION@" )
@@ -62,7 +68,7 @@ else()
   endif()
 endif()
 
-set(CGAL_CONFIGURED_LIBRARIES "@CGAL_CONFIGURED_LIBRARIES@")
+set(CGAL_CONFIGURED_LIBRARIES "@CGAL_ACTUAL_CONFIGURED_LIBRARIES@")
 
 macro(check_cgal_component COMPONENT)
 
@@ -76,6 +82,15 @@ macro(check_cgal_component COMPONENT)
     # include config file
     include(${CGAL_CONFIG_DIR}/CGALLibConfig.cmake)
     set( CHECK_CGAL_ERROR_TAIL "" )
+    get_property(CGAL_CGAL_is_imported TARGET CGAL::CGAL PROPERTY IMPORTED)
+    if(CGAL_CGAL_is_imported)
+      include("${CGAL_MODULES_DIR}/CGAL_SetupBoost.cmake")
+      get_property(CGAL_requires_Boost_libs
+        GLOBAL PROPERTY CGAL_requires_Boost_Thread)
+      if(CGAL_requires_Boost_libs AND TARGET Boost::thread)
+        set_property(TARGET CGAL::CGAL APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::thread)
+      endif()
+    endif()
   else()
     if (EXISTS ${CGAL_CONFIG_DIR}/${CGAL_LIB}Exports.cmake)
       # include export files for requested component
@@ -85,42 +100,25 @@ macro(check_cgal_component COMPONENT)
     endif()
 
     if ( WITH_${CGAL_LIB} )
-      if(CGAL_HEADER_ONLY OR TARGET CGAL::${CGAL_LIB})
+      if(TARGET CGAL::${CGAL_LIB})
         if ("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
-          find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
-          find_package(OpenGL QUIET)
-
-          set(CGAL_Qt5_MISSING_DEPS "")
-          if(NOT Qt5OpenGL_FOUND)
-            set(CGAL_Qt5_MISSING_DEPS "Qt5OpenGL")
-          endif()
-          if(NOT Qt5Svg_FOUND)
-            set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5Svg")
-          endif()
-          if(NOT Qt5_FOUND)
-            set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5")
-          endif()
-          if(NOT OPENGL_FOUND)
-            set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} OpenGL")
-          endif()
+          
+          include("${CGAL_MODULES_DIR}/CGAL_SetupCGAL_Qt5Dependencies.cmake")
 
           if(CGAL_Qt5_MISSING_DEPS)
-            set( ${CGAL_LIB}_FOUND FALSE )
+            set( CGAL_Qt5_FOUND FALSE )
             message(STATUS "libCGAL_Qt5 is missing the dependencies: ${CGAL_Qt5_MISSING_DEPS} cannot be configured.")
           else()
-            set( ${CGAL_LIB}_FOUND TRUE )
-            if (CGAL_HEADER_ONLY)
-              include("${CGAL_MODULES_DIR}/Use_CGAL_Qt5_headers.cmake")
-            endif()
+            set( CGAL_Qt5_FOUND TRUE )
           endif()
         else("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
           # Librairies that have no dependencies
           set( ${CGAL_LIB}_FOUND TRUE )
         endif("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
-      else(CGAL_HEADER_ONLY OR TARGET CGAL::${CGAL_LIB})
+      else(TARGET CGAL::${CGAL_LIB})
         set( ${CGAL_LIB}_FOUND FALSE )
         set( CHECK_${CGAL_LIB}_ERROR_TAIL " CGAL was configured with WITH_${CGAL_LIB}=ON, but one of the dependencies of ${CGAL_LIB} was not configured properly." )
-      endif(CGAL_HEADER_ONLY OR TARGET CGAL::${CGAL_LIB})
+      endif(TARGET CGAL::${CGAL_LIB})
     else( WITH_${CGAL_LIB} )
       set( ${CGAL_LIB}_FOUND FALSE )
       set( CHECK_${CGAL_LIB}_ERROR_TAIL " Please configure CGAL using WITH_${CGAL_LIB}=ON." )
@@ -153,3 +151,17 @@ set(CGAL_SUPPORTING_3RD_PARTY_LIBRARIES "@CGAL_SUPPORTING_3RD_PARTY_LIBRARIES@")
 set(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "@CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES@")
 
 set(CGAL_DISABLE_GMP "@CGAL_DISABLE_GMP@")
+
+include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+
+# Temporary? Change the CMAKE module path
+cgal_setup_module_path()
+
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
+  # Do not use -isystem for CGAL include paths
+  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
+  # Ugly hack to be compatible with current CGAL testsuite process (as of
+  # Nov. 2017). -- Laurent Rineau
+  include(CGAL_SetupFlags)
+endif()

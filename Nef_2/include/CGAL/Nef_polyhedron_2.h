@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -21,11 +22,9 @@
 #ifndef CGAL_NEF_POLYHEDRON_2_H
 #define CGAL_NEF_POLYHEDRON_2_H
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4800) // complaint about performance in std::map where we can't do anything
-#endif                          
+#include <CGAL/license/Nef_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
@@ -1129,8 +1128,6 @@ std::istream& operator>>
 
 } //namespace CGAL
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_NEF_POLYHEDRON_2_H

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_SHAPE_DETECTION_3_CYLINDER_H
 #define CGAL_SHAPE_DETECTION_3_CYLINDER_H
+
+#include <CGAL/license/Point_set_shape_detection_3.h>
+
 
 #include <CGAL/Shape_detection_3/Shape_base.h>
 #include <CGAL/number_utils.h>

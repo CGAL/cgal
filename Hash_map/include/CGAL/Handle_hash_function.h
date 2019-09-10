@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -30,6 +31,7 @@
 #include <cstddef>
 
 namespace CGAL {
+
 
 //mechanism to abuse Handle_hash_function which is the default
 //template parameter of Unique_hash_map

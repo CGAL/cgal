@@ -13,12 +13,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
 
 #ifndef CGAL_MEAN_CURVATURE_FLOW_SKELETONIZATION_H
 #define CGAL_MEAN_CURVATURE_FLOW_SKELETONIZATION_H
+
+#include <CGAL/license/Surface_mesh_skeletonization.h>
+
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
@@ -35,7 +39,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/property_map/property_map.hpp>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/foreach.hpp>
 
 #include <CGAL/boost/graph/iterator.h>
@@ -832,12 +836,13 @@ private:
   /// Initialize some global data structures such as vertex id.
   void init(const TriangleMesh& tmesh)
   {
-    copy_face_graph(tmesh, m_tmesh);
+    typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
+    std::vector<Vertex_pair> v2v;
+    copy_face_graph(tmesh, m_tmesh, std::back_inserter(v2v));
 
     // copy input vertices to keep correspondence
-    typename boost::graph_traits<mTriangleMesh>::vertex_iterator vit=vertices(m_tmesh).first;
-    BOOST_FOREACH(Input_vertex_descriptor vd, vertices(tmesh) )
-      (*vit++)->vertices.push_back(vd);
+    BOOST_FOREACH(const Vertex_pair& vp, v2v)
+      vp.second->vertices.push_back(vp.first);
 
     //init indices
     typedef typename boost::graph_traits<mTriangleMesh>::vertex_descriptor vertex_descriptor;

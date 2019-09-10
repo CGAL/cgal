@@ -27,8 +27,7 @@ construct_segment(Point p, Point q)
 
 */
 template< typename T >
-class Kernel_traits {
-public:
+struct Kernel_traits {
 
 /// \name Types 
 /// @{

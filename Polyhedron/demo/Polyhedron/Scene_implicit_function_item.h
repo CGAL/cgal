@@ -31,9 +31,9 @@ public:
     int getHeight() const {return Height;}
     int getSize() const {return size;}
     void setData(int i, int j, int r, int g, int b){
-        data[j*Width*3 +i*3] = r;
-        data[j*Width*3 +i*3+1] = g;
-        data[j*Width*3 +i*3+2] = b;}
+      data[j*Width*3 +i*3] = GLubyte(r);
+      data[j*Width*3 +i*3+1] = GLubyte(g);
+      data[j*Width*3 +i*3+2] = GLubyte(b);}
     GLubyte* getData(){return data; }
 
 };

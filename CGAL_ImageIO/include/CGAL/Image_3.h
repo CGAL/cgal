@@ -15,12 +15,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau, Pierre Alliez
 
 #ifndef CGAL_IMAGE_3_H
 #define CGAL_IMAGE_3_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/array.h>
@@ -49,7 +52,7 @@ namespace ImageIO {
 template <typename T>
 struct Indicator_factory
 {
-  class Indicator : public std::unary_function<T, double>
+  class Indicator : public CGAL::unary_function<T, double>
   {
     const T label;
   public:
@@ -530,5 +533,7 @@ Image_3::labellized_trilinear_interpolation
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
- 
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_IMAGE_3_H

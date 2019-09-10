@@ -75,8 +75,8 @@ of the concept `Periodic_2Offset_2`.
 
 ## Concepts ##
 
+- `Periodic_2TriangulationTraits_2`
 - `Periodic_2DelaunayTriangulationTraits_2`
-- `TriangulationDataStructure_2`
 - `Periodic_2TriangulationFaceBase_2`
 - `Periodic_2TriangulationVertexBase_2`
 - `Periodic_2Offset_2`
@@ -95,6 +95,7 @@ of the concept `Periodic_2Offset_2`.
 ### Traits Classes ###
 
 - `CGAL::Periodic_2_triangulation_traits_2<Traits,Periodic_2Offset_2>`
+- `CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits,Periodic_2Offset_2>`
 
 ## Enums ##
 

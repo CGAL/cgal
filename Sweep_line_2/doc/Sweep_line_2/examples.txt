@@ -1,3 +1,0 @@
-/*!
-\example Sweep_line_2/sweep_line.cpp
-*/

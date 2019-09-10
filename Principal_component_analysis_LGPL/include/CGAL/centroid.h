@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -405,7 +406,7 @@ template < typename InputIterator,
 typename K::Point_3
 centroid(InputIterator begin, 
          InputIterator end, 
-         const K&,
+         const K& k,
          const typename K::Point_3*,
          CGAL::Dimension_tag<0>)
 {
@@ -418,7 +419,7 @@ centroid(InputIterator begin,
   unsigned int nb_pts = 0;
   while (begin != end) 
   {
-    v = v + (*begin++ - ORIGIN);
+    v = v + k.construct_vector_3_object()(ORIGIN, *begin++);
     nb_pts++;
   }
   return ORIGIN + v / (FT)nb_pts;

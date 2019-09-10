@@ -42,7 +42,7 @@ void project_triangle3D_to_triangle2D()
 
 }
 
-void test_simple_2D_barycentric_coordinates()
+void test_simple_2D_barycentric_coordinatess()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
@@ -50,9 +50,9 @@ void test_simple_2D_barycentric_coordinates()
 
   Traits traits;
 
-  Traits::Construct_barycentric_coordinate_in_triangle_2 construct_barycentric_coordinate_in_triangle_2(traits.construct_barycentric_coordinate_in_triangle_2_object());
+  Traits::Construct_barycentric_coordinates_in_triangle_2 construct_barycentric_coordinates_in_triangle_2(traits.construct_barycentric_coordinates_in_triangle_2_object());
   Traits::Construct_barycenter_2 construct_barycenter_2(traits.construct_barycenter_2_object());
-  Traits::Classify_barycentric_coordinate classify_barycentric_coordinate(traits.classify_barycentric_coordinate_object());
+  Traits::Classify_barycentric_coordinates classify_barycentric_coordinates(traits.classify_barycentric_coordinates_object());
 
   // effectively a 1-1 mapping triangle for barycentric coords
   Traits::Triangle_2 simpleTriangle(
@@ -60,53 +60,53 @@ void test_simple_2D_barycentric_coordinates()
     Traits::Point_2(Kernel::FT(1), Kernel::FT(0)),
     Traits::Point_2(Kernel::FT(0), Kernel::FT(1)));
 
-  Traits::Barycentric_coordinate b0 = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, simpleTriangle[0]);
+  Traits::Barycentric_coordinates b0 = construct_barycentric_coordinates_in_triangle_2(simpleTriangle, simpleTriangle[0]);
 
   CHECK_CLOSE(Kernel::FT(1.0), b0[0], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(0.0), b0[1], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(0.0), b0[2], Kernel::FT(0.000001));
 
   size_t outVertex0;
-  CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type b0Type;
-  boost::tie(b0Type, outVertex0) = classify_barycentric_coordinate(b0);
+  CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type b0Type;
+  boost::tie(b0Type, outVertex0) = classify_barycentric_coordinates(b0);
 
-  CHECK_EQUAL(b0Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX);
+  CHECK_EQUAL(b0Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX);
   CHECK_EQUAL(outVertex0, 0u);
 
-  Traits::Barycentric_coordinate b1 = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, simpleTriangle[1]);
+  Traits::Barycentric_coordinates b1 = construct_barycentric_coordinates_in_triangle_2(simpleTriangle, simpleTriangle[1]);
 
   CHECK_CLOSE(Kernel::FT(0.0), b1[0], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(1.0), b1[1], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(0.0), b1[2], Kernel::FT(0.000001));
 
   size_t outVertex1;
-  CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type b1Type;
-  boost::tie(b1Type, outVertex1) = classify_barycentric_coordinate(b1);
+  CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type b1Type;
+  boost::tie(b1Type, outVertex1) = classify_barycentric_coordinates(b1);
 
-  CHECK_EQUAL(b1Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX);
+  CHECK_EQUAL(b1Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX);
   CHECK_EQUAL(outVertex1, 1u);
 
-  Traits::Barycentric_coordinate b2 = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, simpleTriangle[2]);
+  Traits::Barycentric_coordinates b2 = construct_barycentric_coordinates_in_triangle_2(simpleTriangle, simpleTriangle[2]);
 
   CHECK_CLOSE(Kernel::FT(0.0), b2[0], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(0.0), b2[1], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(1.0), b2[2], Kernel::FT(0.000001));
 
   size_t outVertex2;
-  CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type b2Type;
-  boost::tie(b2Type, outVertex2) = classify_barycentric_coordinate(b2);
+  CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type b2Type;
+  boost::tie(b2Type, outVertex2) = classify_barycentric_coordinates(b2);
 
-  CHECK_EQUAL(b2Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX);
+  CHECK_EQUAL(b2Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX);
   CHECK_EQUAL(outVertex2, 2u);
 
   Traits::Point_2 location(Kernel::FT(0.3), Kernel::FT(0.2));
-  Traits::Barycentric_coordinate bLocation = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, location);
+  Traits::Barycentric_coordinates bLocation = construct_barycentric_coordinates_in_triangle_2(simpleTriangle, location);
 
   size_t dummyOut;
-  CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type bLocationType;
-  boost::tie(bLocationType, dummyOut) = classify_barycentric_coordinate(bLocation);
+  CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type bLocationType;
+  boost::tie(bLocationType, dummyOut) = classify_barycentric_coordinates(bLocation);
 
-  CHECK_EQUAL(bLocationType, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDED_SIDE);
+  CHECK_EQUAL(bLocationType, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_BOUNDED_SIDE);
 
   CHECK_CLOSE(Kernel::FT(1.0) - location[0] - location[1], bLocation[0], Kernel::FT(0.000001));
   CHECK_CLOSE(location[0], bLocation[1], Kernel::FT(0.000001));
@@ -125,7 +125,7 @@ void barycentric_coords_3D()
 
   Traits traits;
 
-  Traits::Construct_barycentric_coordinate_in_triangle_3 construct_barycentric_coordinate_in_triangle_3(traits.construct_barycentric_coordinate_in_triangle_3_object());
+  Traits::Construct_barycentric_coordinates_in_triangle_3 construct_barycentric_coordinates_in_triangle_3(traits.construct_barycentric_coordinates_in_triangle_3_object());
   Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
 
   Traits::Triangle_3 quadrantTriangle(
@@ -133,25 +133,25 @@ void barycentric_coords_3D()
     Traits::Point_3(Kernel::FT(-1.0), Kernel::FT(-1.0), Kernel::FT(-1.0)),
     Traits::Point_3(Kernel::FT(-1.0), Kernel::FT(1.0), Kernel::FT(-1.0)));
 
-  Traits::Barycentric_coordinate b0 = construct_barycentric_coordinate_in_triangle_3(quadrantTriangle, quadrantTriangle[0]);
+  Traits::Barycentric_coordinates b0 = construct_barycentric_coordinates_in_triangle_3(quadrantTriangle, quadrantTriangle[0]);
 
   CHECK_CLOSE(Kernel::FT(1.0), b0[0], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(0.0), b0[1], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(0.0), b0[2], Kernel::FT(0.000001));
 
-  Traits::Barycentric_coordinate b1 = construct_barycentric_coordinate_in_triangle_3(quadrantTriangle, quadrantTriangle[1]);
+  Traits::Barycentric_coordinates b1 = construct_barycentric_coordinates_in_triangle_3(quadrantTriangle, quadrantTriangle[1]);
 
   CHECK_CLOSE(Kernel::FT(0.0), b1[0], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(1.0), b1[1], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(0.0), b1[2], Kernel::FT(0.000001));
 
-  Traits::Barycentric_coordinate b2 = construct_barycentric_coordinate_in_triangle_3(quadrantTriangle, quadrantTriangle[2]);
+  Traits::Barycentric_coordinates b2 = construct_barycentric_coordinates_in_triangle_3(quadrantTriangle, quadrantTriangle[2]);
 
   CHECK_CLOSE(Kernel::FT(0.0), b2[0], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(0.0), b2[1], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(1.0), b2[2], Kernel::FT(0.000001));
 
-  Traits::Barycentric_coordinate bOrigin = construct_barycentric_coordinate_in_triangle_3(quadrantTriangle, Traits::Point_3(CGAL::ORIGIN));
+  Traits::Barycentric_coordinates bOrigin = construct_barycentric_coordinates_in_triangle_3(quadrantTriangle, Traits::Point_3(CGAL::ORIGIN));
 
   CHECK_CLOSE(Kernel::FT(0.5), bOrigin[0], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(0.25), bOrigin[1], Kernel::FT(0.000001));
@@ -164,7 +164,7 @@ void barycentric_coords_3D()
   CHECK_CLOSE(Kernel::FT(0.0), originOutAgain[2], Kernel::FT(0.000001));
 
   Traits::Point_3 pNegative(Kernel::FT(-0.5), Kernel::FT(-0.5), Kernel::FT(-0.5));
-  Traits::Barycentric_coordinate bNegative = construct_barycentric_coordinate_in_triangle_3(quadrantTriangle, pNegative);
+  Traits::Barycentric_coordinates bNegative = construct_barycentric_coordinates_in_triangle_3(quadrantTriangle, pNegative);
 
   CHECK_CLOSE(Kernel::FT(0.25), bNegative[0], Kernel::FT(0.000001));
   CHECK_CLOSE(Kernel::FT(0.625), bNegative[1], Kernel::FT(0.000001));
@@ -237,7 +237,7 @@ void nonsimple_flattening_triangle_along_edge()
     Traits::Point_3(Kernel::FT(5), Kernel::FT(-9), Kernel::FT(7)),
     Traits::Point_3(Kernel::FT(0), Kernel::FT(4), Kernel::FT(5)));
 
-  for (size_t edgeIndex = 0; edgeIndex < 3; ++edgeIndex)
+  for (int edgeIndex = 0; edgeIndex < 3; ++edgeIndex)
   {
     const Kernel::FT baseDistance = CGAL::sqrt(compute_squared_distance_3(sourceTriangle.vertex(edgeIndex), sourceTriangle.vertex(edgeIndex + 1)));
     const Traits::Vector_2 direction(Kernel::FT(3.0) / Kernel::FT(5.0), Kernel::FT(4.0) / Kernel::FT(5.0));
@@ -303,7 +303,7 @@ void detect_is_saddle_vertex()
 int main()
 {
   project_triangle3D_to_triangle2D();
-  test_simple_2D_barycentric_coordinates();
+  test_simple_2D_barycentric_coordinatess();
   barycentric_coords_3D();
   simple_flattening_triangle_along_edge();
   nonsimple_flattening_triangle_along_edge();

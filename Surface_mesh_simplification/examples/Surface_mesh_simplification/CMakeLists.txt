@@ -7,11 +7,6 @@ project( Surface_mesh_simplification_Examples )
 cmake_minimum_required(VERSION 2.8.11)
 
 
-if ( COMMAND cmake_policy )
-
-  cmake_policy( SET CMP0003 NEW )  
-
-endif()
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -61,18 +56,17 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 
 create_single_source_cgal_program( "edge_collapse_constrain_sharp_edges.cpp" )
-
 create_single_source_cgal_program( "edge_collapse_constrained_border_polyhedron.cpp" )
-
 create_single_source_cgal_program( "edge_collapse_enriched_polyhedron.cpp" )
-
 create_single_source_cgal_program( "edge_collapse_polyhedron.cpp" )
-
 create_single_source_cgal_program( "edge_collapse_surface_mesh.cpp" )
+create_single_source_cgal_program( "edge_collapse_linear_cell_complex.cpp" )
 create_single_source_cgal_program( "edge_collapse_constrained_border_surface_mesh.cpp" )
+create_single_source_cgal_program( "edge_collapse_all_short_edges.cpp" )
+create_single_source_cgal_program( "edge_collapse_bounded_normal_change.cpp" )
 
 if(OpenMesh_FOUND)
-create_single_source_cgal_program( "edge_collapse_OpenMesh.cpp" )
+  create_single_source_cgal_program( "edge_collapse_OpenMesh.cpp" )
 
-target_link_libraries( edge_collapse_OpenMesh ${OPENMESH_LIBRARIES} )
+  target_link_libraries( edge_collapse_OpenMesh PRIVATE ${OPENMESH_LIBRARIES} )
 endif()

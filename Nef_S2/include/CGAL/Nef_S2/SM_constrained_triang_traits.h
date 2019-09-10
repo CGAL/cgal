@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_SM_CONSTRAINED_TRIANG_TRAITS_H
 #define CGAL_SM_CONSTRAINED_TRIANG_TRAITS_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>

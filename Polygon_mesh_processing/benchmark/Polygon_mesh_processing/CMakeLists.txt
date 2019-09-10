@@ -13,11 +13,6 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-if ( COMMAND cmake_policy )
-
-  cmake_policy( SET CMP0003 NEW )  
-
-endif()
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -50,11 +45,20 @@ endif()
 include_directories( BEFORE ../../include )
 
 
+find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+if (EIGEN3_FOUND)
+  # Executables that require Eigen 3.2
+  include( ${EIGEN3_USE_FILE} )
+endif(EIGEN3_FOUND)
+
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "polygon_mesh_slicer.cpp" )
+
+
+create_single_source_cgal_program( "hole_filling.cpp" )
 
 

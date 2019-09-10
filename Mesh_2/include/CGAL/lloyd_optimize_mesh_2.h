@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 // Author(s) : Jane Tournois
 //
@@ -21,7 +22,9 @@
 #ifndef CGAL_LLOYD_OPTIMIZE_MESH_2_H
 #define CGAL_LLOYD_OPTIMIZE_MESH_2_H
 
+#include <CGAL/license/Mesh_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_2/Mesh_global_optimizer_2.h>
 #include <CGAL/Mesh_2/Lloyd_move_2.h>
@@ -44,7 +47,6 @@
 #else
 #  define  BOOST_PARAMETER_MAX_ARITY 8
 #endif
-
 #include <boost/parameter.hpp>
 #include <boost/parameter/name.hpp>
 
@@ -71,6 +73,11 @@ namespace CGAL
 {
   using namespace parameters;
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
+
   BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),
   lloyd_optimize_mesh_2,
@@ -96,6 +103,10 @@ namespace CGAL
                                       seeds_end_,
                                       mark_);
   }
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
   /**
   * this partial specialization is a workaround
@@ -174,5 +185,6 @@ namespace CGAL
 #endif
 
 
+#include <CGAL/enable_warnings.h>
 
 #endif

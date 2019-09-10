@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Quincy Tse, Weisheng Si
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_CONE_SPANNER_PLANE_SCAN_TREE_IMPL_H
 #define CGAL_CONE_SPANNER_PLANE_SCAN_TREE_IMPL_H
+
+#include <CGAL/license/Cone_spanners_2.h>
+
 
 #include <stdexcept>
 

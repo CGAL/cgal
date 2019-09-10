@@ -9,13 +9,17 @@
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
 //
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Ilker O. Yaz
 
 #ifndef CGAL_SURFACE_MODELING_SPOKES_AND_RIMS_ITERATOR_H
 #define CGAL_SURFACE_MODELING_SPOKES_AND_RIMS_ITERATOR_H
+
+#include <CGAL/license/Surface_mesh_deformation.h>
+
 /// @cond CGAL_DOCUMENT_INTERNAL
 
 namespace CGAL {

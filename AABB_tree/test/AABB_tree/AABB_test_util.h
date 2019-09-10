@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Pierre Alliez, Stephane Tayeb, Camille Wormser
 //
@@ -30,6 +30,9 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
 #include <CGAL/use.h>
 
@@ -870,3 +873,5 @@ private:
   mutable double m_naive_time;
   mutable double m_tree_time;
 };
+
+#include <CGAL/enable_warnings.h>

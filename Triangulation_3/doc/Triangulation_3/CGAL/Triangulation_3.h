@@ -7,34 +7,36 @@ namespace CGAL {
 The class `Triangulation_3` represents a 3-dimensional tetrahedralization 
 of points. 
 
-\tparam TriangulationTraits_3 is the geometric traits class.
+\tparam Traits is the geometric traits class and must be a model of `TriangulationTraits_3`.
 
-\tparam TriangulationDataStructure_3 is the triangulation data structure.
-It has the default value `Triangulation_data_structure_3< Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> >`. 
-`Default` may be used.
+\tparam TDS is the triangulation data structure and must be a model of `TriangulationDataStructure_3`.
+`Default` may be used, with default type `Triangulation_data_structure_3<Triangulation_vertex_base_3<Traits>,
+                                                                         Triangulation_cell_base_3<Traits> >`.
+Any custom type can be used instead of `Triangulation_vertex_base_3`
+and `Triangulation_cell_base_3`, provided that they are models of the
+concepts `TriangulationVertexBase_3` and `TriangulationCellBase_3`,
+respectively.
 
-\tparam SurjectiveLockDataStructure is an optional parameter to specify the type of the spatial lock data structure.
+\tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
+        It must be a model of the `SurjectiveLockDataStructure` concept,
+        with `Object` being a `Point` (as defined below).
         It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
         `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
-        It must be a model of the `SurjectiveLockDataStructure` concept,
-        with `Object` being a `Point`.
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
         the triangulation data structure is concurrency-safe, and `void` otherwise.
         In order to use concurrent operations, the user must provide a
-        reference to a `SurjectiveLockDataStructure`
-        instance via the constructor or `Triangulation_3::set_lock_data_structure`.
+        reference to a SLDS instance via the constructor or `Triangulation_3::set_lock_data_structure`.
 
 \cgalHeading{Traversal of the Triangulation}
 
 The triangulation class provides several iterators and circulators 
 that allow one to traverse it (completely or partially). 
 
-\sa `TriangulationDataStructure_3::Vertex` 
-\sa `TriangulationDataStructure_3::Cell` 
+\sa `CGAL::Delaunay_triangulation_3`
+\sa `CGAL::Regular_triangulation_3`
 
 */
-template< typename TriangulationTraits_3, typename TriangulationDataStructure_3,
-          typename SurjectiveLockDataStructure >
+template< typename Traits, typename TDS, typename SLDS >
 class Triangulation_3 : public Triangulation_utils_3 {
 public:
 
@@ -52,38 +54,38 @@ public:
 
 /*!
 
-*/ 
-typedef TriangulationDataStructure_3 Triangulation_data_structure; 
+*/
+typedef Traits Geom_traits;
 
 /*!
 
 */ 
-typedef SurjectiveLockDataStructure Lock_data_structure; 
+typedef TDS Triangulation_data_structure;
 
 /*!
 
 */ 
-typedef TriangulationTraits_3 Geom_traits; 
+typedef SLDS Lock_data_structure;
 
 /*!
 
 */ 
-typedef TriangulationTraits_3::Point_3 Point; 
+typedef Triangulation_data_structure::Vertex::Point Point;
 
 /*!
 
 */ 
-typedef TriangulationTraits_3::Segment_3 Segment; 
+typedef Geom_traits::Segment_3 Segment;
 
 /*!
 
 */ 
-typedef TriangulationTraits_3::Triangle_3 Triangle; 
+typedef Geom_traits::Triangle_3 Triangle;
 
 /*!
 
 */ 
-typedef TriangulationTraits_3::Tetrahedron_3 Tetrahedron; 
+typedef Geom_traits::Tetrahedron_3 Tetrahedron;
 
 /// @}
 
@@ -96,22 +98,22 @@ Only vertices (0-faces) and cells (3-faces) are stored. Edges (1-faces) and face
 /*!
 
 */ 
-typedef TriangulationDataStructure_3::Vertex Vertex; 
+typedef Triangulation_data_structure::Vertex Vertex;
 
 /*!
 
 */ 
-typedef TriangulationDataStructure_3::Cell Cell; 
+typedef Triangulation_data_structure::Cell Cell;
 
 /*!
 
 */ 
-typedef TriangulationDataStructure_3::Facet Facet; 
+typedef Triangulation_data_structure::Facet Facet;
 
 /*!
 
 */ 
-typedef TriangulationDataStructure_3::Edge Edge; 
+typedef Triangulation_data_structure::Edge Edge;
 
 
 /// @}
@@ -136,12 +138,12 @@ in containers such as `std::map` and `boost::unordered_map`.
 /*!
 handle to a vertex 
 */ 
-typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle; 
+typedef Triangulation_data_structure::Vertex_handle Vertex_handle;
 
 /*!
 handle to a cell 
 */ 
-typedef TriangulationDataStructure_3::Cell_handle Cell_handle; 
+typedef Triangulation_data_structure::Cell_handle Cell_handle;
 
 /*!
 Reference to a simplex (vertex, edge, facet or cell) of the triangulation 
@@ -151,32 +153,32 @@ typedef Triangulation_simplex_3<Self> Simplex;
 /*!
 Size type (an unsigned integral type) 
 */ 
-typedef TriangulationDataStructure_3::size_type size_type; 
+typedef Triangulation_data_structure::size_type size_type;
 
 /*!
 Difference type (a signed integral type) 
 */ 
-typedef TriangulationDataStructure_3::difference_type difference_type; 
+typedef Triangulation_data_structure::difference_type difference_type;
 
 /*!
 iterator over cells 
 */ 
-typedef TriangulationDataStructure_3::Cell_iterator All_cells_iterator; 
+typedef Triangulation_data_structure::Cell_iterator All_cells_iterator;
 
 /*!
 iterator over facets 
 */ 
-typedef TriangulationDataStructure_3::Facet_iterator All_facets_iterator; 
+typedef Triangulation_data_structure::Facet_iterator All_facets_iterator;
 
 /*!
 iterator over edges 
 */ 
-typedef TriangulationDataStructure_3::Edge_iterator All_edges_iterator; 
+typedef Triangulation_data_structure::Edge_iterator All_edges_iterator;
 
 /*!
 iterator over vertices 
 */ 
-typedef TriangulationDataStructure_3::Vertex_iterator All_vertices_iterator; 
+typedef Triangulation_data_structure::Vertex_iterator All_vertices_iterator;
 
 /*!
 iterator over finite cells 
@@ -207,17 +209,17 @@ typedef unspecified_type Point_iterator;
 /*!
 circulator over all cells incident to a given edge 
 */ 
-typedef TriangulationDataStructure_3::Cell_circulator Cell_circulator; 
+typedef Triangulation_data_structure::Cell_circulator Cell_circulator;
 
 /*!
 circulator over all facets incident to a given edge 
 */ 
-typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator; 
+typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
 /*! 
 Concurrency tag (from the TDS).
 */ 
-typedef TriangulationDataStructure_3::Concurrency_tag Concurrency_tag;
+typedef Triangulation_data_structure::Concurrency_tag Concurrency_tag;
 
 /*!
 iterator over the cells intersected by a line segment.
@@ -235,16 +237,14 @@ infinite vertex.
 `lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
 */ 
-Triangulation_3 
-(const TriangulationTraits_3 & traits = TriangulationTraits_3(), 
- Lock_data_structure *lock_ds = NULL);
+Triangulation_3(const Geom_traits & traits = Geom_traits(),
+                Lock_data_structure *lock_ds = NULL);
 
 /*! 
 Same as the previous one, but with parameters in reverse order.
 */ 
-Triangulation_3 
-(Lock_data_structure *lock_ds = NULL,
- const TriangulationTraits_3 & traits = TriangulationTraits_3());
+Triangulation_3(Lock_data_structure *lock_ds = NULL,
+                const Geom_traits & traits = Geom_traits());
 
 /*!
 Copy constructor. All vertices and faces are duplicated. 
@@ -259,8 +259,8 @@ traits class argument and calling `insert(first,last)`.
 */ 
 template < class InputIterator> 
 Triangulation_3 (InputIterator first, InputIterator last, 
-const TriangulationTraits_3 & traits = TriangulationTraits_3(),
-Lock_data_structure *lock_ds = NULL); 
+                 const Geom_traits & traits = Geom_traits(),
+                 Lock_data_structure *lock_ds = NULL);
 
 /// @} 
 
@@ -312,12 +312,12 @@ bool operator!=(const Triangulation_3<GT, Tds1> & t1, const Triangulation_3<GT, 
 /*!
 Returns a const reference to the geometric traits object. 
 */ 
-const TriangulationTraits_3 & geom_traits() const; 
+const Geom_traits & geom_traits() const;
 
 /*!
 Returns a const reference to the triangulation data structure. 
 */ 
-const TriangulationDataStructure_3 & tds() const; 
+const Triangulation_data_structure & tds() const;
 
 
 /*!
@@ -327,7 +327,7 @@ This method is mainly a help for users implementing their own triangulation algo
 The responsibility of keeping a valid triangulation belongs to the user when using advanced operations allowing a direct manipulation of the `tds`.
 \cgalAdvancedEnd
 */
-TriangulationDataStructure_3 & tds(); 
+Triangulation_data_structure & tds();
 
 /*!
 Returns the dimension of the affine hull. 
@@ -1439,7 +1439,7 @@ is_valid(bool verbose = false) const;
 \cgalDebugFunction
 \cgalDebugBegin
 Checks the combinatorial validity of the cell by calling the 
-`is_valid` method of the `TriangulationDataStructure_3` cell class. Also checks the 
+`is_valid` method of the cell class. Also checks the
 geometric validity of `c`, if `c` is finite. (See 
 Section \ref Triangulation3secintro.) 
 

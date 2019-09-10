@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_DELAUNAY_TRIANGULATION_CELL_BASE_WITH_CIRCUMCENTER_3_H
 #define CGAL_DELAUNAY_TRIANGULATION_CELL_BASE_WITH_CIRCUMCENTER_3_H
+
+#include <CGAL/license/Triangulation_3.h>
+
 
 
 #include <CGAL/basic.h>
@@ -35,9 +39,9 @@ template < typename GT, typename Cb = Triangulation_cell_base_3<GT> >
 class Delaunay_triangulation_cell_base_with_circumcenter_3
   : public Cb
 {
-  typedef typename GT::Point_3                         Point_3;
+  typedef typename GT::Point_3                         Point;
 
-  mutable Point_3 * circumcenter_;
+  mutable Point * circumcenter_;
 
 public:
   void invalidate_circumcenter()
@@ -65,7 +69,7 @@ public:
 
   Delaunay_triangulation_cell_base_with_circumcenter_3
         (const Delaunay_triangulation_cell_base_with_circumcenter_3 &c)
-    : Cb(c), circumcenter_(c.circumcenter_ != NULL ? new Point_3(*(c.circumcenter_)) : NULL)
+    : Cb(c), circumcenter_(c.circumcenter_ != NULL ? new Point(*(c.circumcenter_)) : NULL)
   {}
 
   Delaunay_triangulation_cell_base_with_circumcenter_3&
@@ -115,11 +119,10 @@ public:
       Cb::set_vertices(v0, v1, v2, v3);
   }
 
-  const Point_3 &
-  circumcenter(const Geom_traits& gt = Geom_traits()) const
+  const Point& circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       if (circumcenter_ == NULL) {
-    	  circumcenter_ = new Point_3(this->Cb::circumcenter(gt));
+        circumcenter_ = new Point(this->Cb::circumcenter(gt));
       } else {
         CGAL_expensive_assertion(
           this->Cb::circumcenter(gt) == *circumcenter);

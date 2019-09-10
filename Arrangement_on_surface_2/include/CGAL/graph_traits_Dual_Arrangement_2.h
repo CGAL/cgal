@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
 #define CGAL_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * Definition of the specialized Dual<Arrangement_2> class,
@@ -422,7 +427,7 @@ public:
 } //namespace CGAL
 
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 
 namespace boost {
 
@@ -744,5 +749,7 @@ edges (const CGAL::Dual<CGAL::
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Wieger Wesselink, Geert-Jan Giezeman <geert@cs.uu.nl>
@@ -29,9 +30,9 @@
 #include <CGAL/circulator.h>
 
 namespace CGAL {
-
+#ifndef DOXYGEN_RUNNING //to avoid conflicts
 template <class Traits_, class Container_> class Polygon_2;
-
+#endif
 template <class Segment_>
 class Polygon_2__Segment_ptr
 {

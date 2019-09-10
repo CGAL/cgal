@@ -546,6 +546,10 @@ returning constant iterators instead of mutable ones.
   Vertex_iterator vertices_end(); 
 
   /*!
+  returns a range over handles of the arrangement vertices .
+  */
+  unspecified_type vertex_handles();
+  /*!
     returns the number of arrangement vertices that lie at infinity and 
     are not associated with valid points. Such vertices are not considered 
     to be regular arrangement vertices and `arr.number_of_vertices()`
@@ -579,6 +583,11 @@ returning constant iterators instead of mutable ones.
   Halfedge_iterator halfedges_end(); 
 
   /*!
+  returns a range over handles of the arrangement halfedges .
+  */
+  unspecified_type halfedge_handles();
+
+  /*!
     returns the number of edges in the arrangement (equivalent to 
     `arr.number_of_halfedges() / 2`). 
   */ 
@@ -594,6 +603,10 @@ returning constant iterators instead of mutable ones.
   */ 
   Edge_iterator edges_end(); 
 
+  /*!
+  returns a range over handles of the arrangement edges .
+  */
+  unspecified_type edge_handles();
 
 /// @}
 
@@ -626,6 +639,11 @@ returning constant iterators instead of mutable ones.
     returns the past-the-end iterator of the faces in the arrangement. 
   */ 
   Face_iterator faces_end(); 
+
+  /*!
+  returns a range over handles of the arrangement faces .
+  */
+  unspecified_type face_handles();
 
   /*!
     returns the number of unbounded faces in the arrangement. 

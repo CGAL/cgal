@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Jane Tournois
@@ -21,14 +22,18 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REFINE_POLYHEDRON_3_H
 #define CGAL_POLYGON_MESH_PROCESSING_REFINE_POLYHEDRON_3_H
 
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
+
 #include <cmath>
 #include <map>
 #include <set>
 #include <list>
 
 #include <CGAL/assertions.h>
-#include <CGAL/trace.h>
+#ifdef CGAL_PMP_FAIR_DEBUG
 #include <CGAL/Timer.h>
+#endif
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -68,8 +73,8 @@ private:
     } while(++v_cir != v_end);
     
     // also eliminate collinear triangle generation
-    if( CGAL::collinear(vpmap[v_tip_0], vpmap[v_tip_1], vpmap[target(h, pmesh)]) ||
-        CGAL::collinear(vpmap[v_tip_0], vpmap[v_tip_1], vpmap[target(opposite(h, pmesh),pmesh)]) ) {
+    if( CGAL::collinear(get(vpmap, v_tip_0), get(vpmap, v_tip_1), get(vpmap, target(h, pmesh))) ||
+        CGAL::collinear(get(vpmap, v_tip_0), get(vpmap, v_tip_1), get(vpmap, target(opposite(h, pmesh),pmesh))) ) {
       return false;
     }
 
@@ -78,10 +83,11 @@ private:
 
   bool relax(halfedge_descriptor h)
   {
-    const Point_3& p = vpmap[target(h,pmesh)];
-    const Point_3& q = vpmap[target(opposite(h,pmesh),pmesh)];
-    const Point_3& r = vpmap[target(next(h,pmesh),pmesh)];
-    const Point_3& s = vpmap[target(next(opposite(h,pmesh),pmesh),pmesh)];
+    typedef typename boost::property_traits<VertexPointMap>::reference Point_3_ref;
+    Point_3_ref p = get(vpmap, target(h,pmesh));
+    Point_3_ref q = get(vpmap, target(opposite(h,pmesh),pmesh));
+    Point_3_ref r = get(vpmap, target(next(h,pmesh),pmesh));
+    Point_3_ref s = get(vpmap, target(next(opposite(h,pmesh),pmesh),pmesh));
     if( (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,r,s)) ||
         (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,s,r)) )
     {
@@ -111,11 +117,11 @@ private:
       vertex_descriptor vi = target(halfedge(fd,pmesh),pmesh);
       vertex_descriptor vj = target(next(halfedge(fd,pmesh),pmesh),pmesh);
       vertex_descriptor vk = target(prev(halfedge(fd,pmesh),pmesh),pmesh);
-      Point_3 c = CGAL::centroid(vpmap[vi], vpmap[vj], vpmap[vk]);
+      Point_3 c = CGAL::centroid(get(vpmap,vi), get(vpmap,vj), get(vpmap,vk));
       double sac  = (scale_attribute[vi] + scale_attribute[vj] + scale_attribute[vk])/3.0;
-      double dist_c_vi = to_double(CGAL::approximate_sqrt(CGAL::squared_distance(c,vpmap[vi])));
-      double dist_c_vj = to_double(CGAL::approximate_sqrt(CGAL::squared_distance(c, vpmap[vj])));
-      double dist_c_vk = to_double(CGAL::approximate_sqrt(CGAL::squared_distance(c, vpmap[vk])));
+      double dist_c_vi = to_double(CGAL::approximate_sqrt(CGAL::squared_distance(c, get(vpmap, vi))));
+      double dist_c_vj = to_double(CGAL::approximate_sqrt(CGAL::squared_distance(c, get(vpmap, vj))));
+      double dist_c_vk = to_double(CGAL::approximate_sqrt(CGAL::squared_distance(c, get(vpmap, vk))));
       if((alpha * dist_c_vi > sac) &&
          (alpha * dist_c_vj > sac) &&
          (alpha * dist_c_vk > sac) &&
@@ -164,7 +170,9 @@ private:
     collect_interior_edges(faces, border_edges, interior_edges, included_map);
     collect_interior_edges(new_faces, border_edges, interior_edges, included_map);
 
-    CGAL_TRACE_STREAM << "Test " << interior_edges.size() << " edges " << std::endl;
+    #ifdef CGAL_PMP_REFINE_DEBUG
+    std::cerr << "Test " << interior_edges.size() << " edges " << std::endl;
+    #endif
     //do not just use std::set (included_map) for iteration, the order effects the output (we like to make it deterministic)
     BOOST_FOREACH(halfedge_descriptor h, interior_edges)
     {
@@ -173,7 +181,9 @@ private:
       }
     }
 
-    CGAL_TRACE_STREAM << "|flips| = " << flips << std::endl;
+    #ifdef CGAL_PMP_REFINE_DEBUG
+    std::cerr  << "|flips| = " << flips << std::endl;
+    #endif
     return flips > 0;
   }
 
@@ -205,7 +215,7 @@ private:
                         const std::set<face_descriptor>& interior_map, 
                         bool accept_internal_facets)
   {
-    const Point_3& vp = vpmap[vh]; 
+    const Point_3& vp = get(vpmap, vh);
     Halfedge_around_target_circulator<PolygonMesh> circ(halfedge(vh,pmesh),pmesh), done(circ);
     int deg = 0;
     double sum = 0;
@@ -217,7 +227,7 @@ private:
         { continue; } // which means current edge is an interior edge and should not be included in scale attribute calculation
       }
 
-      const Point_3& vq = vpmap[target(opposite(*circ,pmesh),pmesh)];
+      const Point_3& vq = get(vpmap, target(opposite(*circ,pmesh),pmesh));
       sum += to_double(CGAL::approximate_sqrt(CGAL::squared_distance(vp, vq)));
       ++deg;
     } while(++circ != done);
@@ -304,24 +314,34 @@ public:
     calculate_scale_attribute(faces, interior_map, scale_attribute, accept_internal_facets);
 
     std::vector<face_descriptor> all_faces(boost::begin(faces), boost::end(faces));
+    #ifdef CGAL_PMP_REFINE_DEBUG
     CGAL::Timer total_timer; total_timer.start();
+    #endif
     for(int i = 0; i < 10; ++i)
     {
       std::vector<face_descriptor> new_faces;
+      #ifdef CGAL_PMP_REFINE_DEBUG
       CGAL::Timer timer; timer.start();
+      #endif
       bool is_subdivided = subdivide(all_faces, border_edges, scale_attribute, vertex_out, facet_out, new_faces, alpha);
-      CGAL_TRACE_STREAM << "**Timer** subdivide() :" << timer.time() << std::endl; timer.reset();
+      #ifdef CGAL_PMP_REFINE_DEBUG
+      std::cerr  << "**Timer** subdivide() :" << timer.time() << std::endl; timer.reset();
+      #endif
       if(!is_subdivided)
         break;
 
       bool is_relaxed = relax(faces, new_faces, border_edges);
-      CGAL_TRACE_STREAM << "**Timer** relax() :" << timer.time() << std::endl;
+      #ifdef CGAL_PMP_REFINE_DEBUG
+      std::cerr << "**Timer** relax() :" << timer.time() << std::endl;
+      #endif
       if(!is_relaxed)
         break;
       all_faces.insert(all_faces.end(), new_faces.begin(), new_faces.end());
     }
 
-    CGAL_TRACE_STREAM << "**Timer** TOTAL: " << total_timer.time() << std::endl;
+    #ifdef CGAL_PMP_REFINE_DEBUG
+    std::cerr << "**Timer** TOTAL: " << total_timer.time() << std::endl;
+    #endif
   }
 
 }; //end class Refine_Polyhedron_3

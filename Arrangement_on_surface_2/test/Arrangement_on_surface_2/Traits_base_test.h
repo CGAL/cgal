@@ -52,6 +52,7 @@
 
 template <typename Geom_traits_T>
 class Traits_base_test : public IO_test<Geom_traits_T> {
+  Traits_base_test<Geom_traits_T>&  operator=(const Traits_base_test<Geom_traits_T>&);
 protected:
   typedef Geom_traits_T                                 Traits;
   typedef IO_test<Traits>                               Base;
@@ -317,7 +318,7 @@ bool Traits_base_test<Geom_traits_T>::perform()
       test_result &= result;
     }
 
-    catch (CGAL::Precondition_exception /* e */)
+    catch (CGAL::Precondition_exception& /* e */)
     {
       if (m_violation_tested != PRECONDITION)
       {
@@ -326,7 +327,7 @@ bool Traits_base_test<Geom_traits_T>::perform()
       }
     }
 
-    catch (CGAL::Postcondition_exception /* e */)
+    catch (CGAL::Postcondition_exception& /* e */)
     {
       if (m_violation_tested != POSTCONDITION)
       {
@@ -335,7 +336,7 @@ bool Traits_base_test<Geom_traits_T>::perform()
       }
     }
 
-    catch (CGAL::Warning_exception /* e */)
+    catch (CGAL::Warning_exception& /* e */)
     {
       if (m_violation_tested != WARNING)
       {
@@ -344,7 +345,7 @@ bool Traits_base_test<Geom_traits_T>::perform()
       }
     }
 
-    catch (CGAL::Assertion_exception /* e */)
+    catch (CGAL::Assertion_exception& /* e */)
     {
       if (m_violation_tested != ASSERTION)
       {

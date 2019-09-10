@@ -36,7 +36,10 @@ find_package( OpenMesh QUIET )
 if ( OpenMesh_FOUND )
 include( UseOpenMesh )
 else()
-  message(STATUS "Examples that use OpenMesh will not be compiled.")
+
+  message(STATUS "NOTICE: These examples require OpenMesh and will not be compiled.")
+  return()
+
 endif()
 
 # include for local directory
@@ -51,7 +54,7 @@ include_directories( BEFORE ../../include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 if(OpenMesh_FOUND)
-create_single_source_cgal_program( "TriMesh.cpp" )
-  target_link_libraries( TriMesh ${OPENMESH_LIBRARIES} )
+  create_single_source_cgal_program( "TriMesh.cpp" )
+  target_link_libraries( TriMesh PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 

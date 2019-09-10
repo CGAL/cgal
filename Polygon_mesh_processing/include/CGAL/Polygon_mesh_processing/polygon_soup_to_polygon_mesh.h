@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau and Ilker O. Yaz
@@ -21,11 +22,16 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH
 #define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH
 
+#include <CGAL/license/Polygon_mesh_processing/repair.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/algorithm.h>
 #include <set>
+#include <boost/dynamic_bitset.hpp>
 
 #include <boost/range/size.hpp>
 #include <boost/range/value_type.hpp>
@@ -64,13 +70,29 @@ public:
       _polygons(polygons)
   { }
 
-  void operator()(PM& pmesh)
+  void operator()(PM& pmesh, const bool insert_isolated_vertices = true)
   {
     Vpmap vpmap = get(CGAL::vertex_point, pmesh);
+
+    boost::dynamic_bitset<> not_isolated;
+    if (!insert_isolated_vertices)
+    {
+      not_isolated.resize(_points.size());
+      for (std::size_t i = 0, end = _polygons.size(); i < end; ++i)
+      {
+        const Polygon& polygon = _polygons[i];
+        const std::size_t size = polygon.size();
+        for (std::size_t j = 0; j < size; ++j)
+          not_isolated.set(polygon[j], true);
+      }
+    }
 
     std::vector<vertex_descriptor> vertices(_points.size());
     for (std::size_t i = 0, end = _points.size(); i < end; ++i)
     {
+      if (!insert_isolated_vertices && !not_isolated.test(i))
+        continue;
+
       Point_3 pi(_points[i][0], _points[i][1], _points[i][2]);
       vertices[i] = add_vertex(pmesh);
       put(vpmap, vertices[i], pi);
@@ -159,6 +181,8 @@ public:
     typename Orienter::Marked_edges marked_edges;
     Orienter::fill_edge_map(edges, marked_edges, polygons);
     //returns false if duplication is necessary
+    if (!marked_edges.empty())
+      return false;
     return Orienter::has_singular_vertices(static_cast<std::size_t>(max_id+1),polygons,edges,marked_edges);
   }
 
@@ -200,5 +224,7 @@ public:
 }//end namespace Polygon_mesh_processing
 
 }// end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH

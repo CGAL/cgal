@@ -23,7 +23,7 @@ two.
 
 */
 
-class Handle_hash_function {
+struct Handle_hash_function {
 public:
 
 /// \name Creation 

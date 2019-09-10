@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Thomas Herrmann
 
 #ifndef CGAL_WIDTH_ASSERTIONS_H
 #define CGAL_WIDTH_ASSERTIONS_H 1
+
+#include <CGAL/license/Polytope_distance_d.h>
+
 
 #ifdef SIMPLIFY
 #define GCD_COMPUTATION 1

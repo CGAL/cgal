@@ -335,7 +335,7 @@ Viewer::draw()
     rendering_program_points.bind();
     color.setRgbF(1.0f, 0.0f, 0.0f);
     glPointSize(5);
-    ::glEnable(GL_POINT_SMOOTH);
+    glEnable(GL_POINT_SMOOTH);
     rendering_program_points.setUniformValue(colorLocation_points, color);
     glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
     rendering_program_points.release();

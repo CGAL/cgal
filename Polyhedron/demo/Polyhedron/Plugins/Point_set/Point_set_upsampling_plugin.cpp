@@ -113,29 +113,23 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
       CGAL::Timer task_timer; task_timer.start();
 
       // Computes average spacing
-      double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
-                                      points->begin(), points->end(),
-                                      6 /* knn = 1 ring */);
+      double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(*points, 6);
       
       std::size_t nb_selected = points->nb_selected_points();
       
       std::vector<std::pair<Point_set::Point, Point_set::Vector> > new_points;
-      CGAL::edge_aware_upsample_point_set<Concurrency_tag>(points->begin_or_selection_begin(),
-					  points->end(), 
+      CGAL::edge_aware_upsample_point_set<Concurrency_tag>(points->all_or_selection_if_not_empty(),
 					  std::back_inserter(new_points),
-					  CGAL::make_identity_property_map(Point_set::value_type()),
-					  CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
-					  dialog.sharpness_angle(), 
-					  dialog.edge_sensitivity(),
-					  dialog.neighborhood_radius() * average_spacing,
-					  output_size);
+                                          points->parameters().
+                                          sharpness_angle (dialog.sharpness_angle()).
+                                          edge_sensitivity (dialog.edge_sensitivity()).
+                                          neighbor_radius (dialog.neighborhood_radius() * average_spacing).
+                                          number_of_output_points (output_size));
       nb_selected += new_points.size();
       
       for (unsigned int i = 0; i < new_points.size (); ++ i)
-        {
-          points->push_back (Point_set::Point_with_normal (new_points[i].first,
-                                                           new_points[i].second));
-        }
+	points->insert (new_points[i].first, new_points[i].second);
+
       if (nb_selected != new_points.size())
         points->set_first_selected (points->end() - nb_selected);
       

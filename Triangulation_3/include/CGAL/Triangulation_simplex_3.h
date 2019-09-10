@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_TRIANGULATION_SIMPLEX_3_H
 #define CGAL_TRIANGULATION_SIMPLEX_3_H
+
+#include <CGAL/license/Triangulation_3.h>
+
 
 #include <CGAL/assertions.h>
 #include <algorithm>

@@ -4,7 +4,6 @@
 #include <CGAL/Three/Scene_item.h>
 #include "Image_type_fwd.h"
 #include "Scene_image_item_config.h"
-#include <CGAL/gl.h>
 
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
@@ -45,6 +44,7 @@ public:
   const Image* image() const { return m_image; }
   bool isGray();
   Image* m_image;
+  void invalidateOpenGLBuffers();
 protected :
   friend struct Scene_image_item_priv;
   Scene_image_item_priv* d;

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_FILTERED_TRAITS_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_FILTERED_TRAITS_2_H
+
+#include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 
@@ -241,5 +246,7 @@ struct Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2
 #undef SDG2_INS
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_FILTERED_TRAITS_2_H

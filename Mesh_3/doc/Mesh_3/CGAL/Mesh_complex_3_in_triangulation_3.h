@@ -19,8 +19,8 @@ vertex and cell base class are models of the concepts
 \tparam  CornerIndex is the type of the indices for corners. It must match the `Corner_index` of the model 
 of the `MeshDomainWithFeatures_3` concept used for mesh generation. 
 
-\tparam CurveSegmentIndex is the type of the indices for curves segments. 
-It must match the `Curve_segment_index` types of the model 
+\tparam CurveIndex is the type of the indices for curves. 
+It must match the `Curve_index` types of the model 
 of the `MeshDomainWithFeatures_3` concept used for mesh generation. 
 
 Those two last template parameters defaults to `int`, so that they can be ignored 
@@ -37,7 +37,7 @@ is a model of the concept `MeshDomain_3`).
 \sa `MeshVertexBase_3` 
 
 */
-template< typename Tr, typename CornerIndex, typename CurveSegmentIndex >
+template< typename Tr, typename CornerIndex, typename CurveIndex >
 class Mesh_complex_3_in_triangulation_3 {
 public:
 
@@ -65,9 +65,9 @@ typedef Tr::Cell::Subdomain_index Subdomain_index;
 typedef CornerIndex Corner_index; 
 
 /*!
-Curve segment index type. 
+Curve index type. 
 */ 
-typedef CurveSegmentIndex Curve_segment_index; 
+typedef CurveIndex Curve_index; 
 
 /// @} 
 

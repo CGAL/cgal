@@ -24,8 +24,7 @@ For example, passing `Location_policy<Compact>` as parameter to
 
 */
 
-class Compact {
-public:
+struct Compact {
 
 
 }; /* end Compact */
@@ -57,8 +56,7 @@ more memory usage.
 
 */
 
-class Fast {
-public:
+struct Fast {
 
 
 }; /* end Fast */

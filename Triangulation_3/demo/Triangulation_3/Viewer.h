@@ -2,6 +2,7 @@
 #define VIEWER_H
 
 #include "Scene.h"
+#include <QMap>
 #include <QGLViewer/qglviewer.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -99,7 +100,13 @@ public:
     m_isMoving = false;
     m_hasEmptyS = false;
     m_nearestNb = NULL;
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+
+#endif
+
   }
 
   // set selectBuffer size (if necessary)
@@ -193,12 +200,55 @@ public Q_SLOTS:
   void incremental_insert();
 
   // show options
-  inline void toggleShowAxis(bool flag)  { m_showAxis = flag; updateGL(); }
-  inline void toggleShowVertex(bool flag)  { m_showVertex = flag; updateGL(); }
-  inline void toggleShowDEdge(bool flag)  { m_showDEdge = flag; updateGL(); }
-  inline void toggleShowVEdge(bool flag)  { m_showVEdge = flag; updateGL(); }
-  inline void toggleShowFacet(bool flag)  { m_showFacet = flag; updateGL(); }
-  inline void toggleFlat(bool flag)  { m_isFlat = flag; updateGL(); }
+  inline void toggleShowAxis(bool flag)  {
+    m_showAxis = flag;
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
+    updateGL();
+
+#endif
+  }
+  inline void toggleShowVertex(bool flag)  { m_showVertex = flag;
+                                         #if QGLVIEWER_VERSION >= 0x020700
+                                             update();
+                                         #else
+                                             updateGL();
+
+                                         #endif
+                                           }
+  inline void toggleShowDEdge(bool flag)  { m_showDEdge = flag;
+                                        #if QGLVIEWER_VERSION >= 0x020700
+                                            update();
+                                        #else
+                                            updateGL();
+
+                                        #endif
+                                          }
+  inline void toggleShowVEdge(bool flag)  { m_showVEdge = flag;
+                                        #if QGLVIEWER_VERSION >= 0x020700
+                                            update();
+                                        #else
+                                            updateGL();
+
+                                        #endif
+                                          }
+  inline void toggleShowFacet(bool flag)  { m_showFacet = flag;
+                                        #if QGLVIEWER_VERSION >= 0x020700
+                                            update();
+                                        #else
+                                            updateGL();
+
+                                        #endif
+                                          }
+  inline void toggleFlat(bool flag)  { m_isFlat = flag;
+                                   #if QGLVIEWER_VERSION >= 0x020700
+                                       update();
+                                   #else
+                                       updateGL();
+
+                                   #endif
+                                     }
 
   // set preferences
   void setPreferences() {
@@ -225,7 +275,12 @@ public Q_SLOTS:
     m_iStep = m_pDlgPrefer->m_iStep*40;
     m_colorEmptySphere = m_pDlgPrefer->m_colorEmptySphere;
     // redraw
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+
+#endif
   }
 
   Q_SIGNALS:

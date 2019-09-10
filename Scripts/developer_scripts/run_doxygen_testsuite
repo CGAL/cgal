@@ -62,25 +62,11 @@ PYTHONPATH=/home/cgal-testsuite/.local/lib/python2.6/site-packages
 export PYTHONPATH
 PATH=/home/cgal-testsuite/local/bin:$PATH
 export PATH
-
-cmake \
-    -DBUILD_DOC:BOOL=ON \
-    -DCGAL_DOC_CREATE_LOGS:bool=ON \
-    -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax \
-    -DCGAL_DOC_RELEASE:BOOL=TRUE \
-    -DCGAL_DOC_PUBLISH_DIR=/srv/CGAL/www/Members/Manual_doxygen_test \
-    -DDOXYGEN_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/doxygen \
-    -DPYTHON_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/python2 \
-    . 2>&1 || error "exit code $? returned by CMake"
-# Note that -DCGAL_DOC_RELEASE:BOOL=TRUE should be only for master-only
-# internal releases, and not for integration releases.
-
-make doc 2>&1 || error "exit code $? returned by the command 'make doc'"
-make doc_and_publish_testsuite 2>&1 || error "exit code $? returned by the command 'make doc_and_publish_testsuite'"
-case "$CGAL_RELEASE_ID" in
-    *-I-*) ln -snf "../Manual_doxygen_test/$CGAL_RELEASE_ID/output" /srv/CGAL/www/doc/master
-           ;;
-esac
+cd "$PWD/doc/scripts"
+bash -$- ./process_doc.sh /home/cgal-testsuite/local/bin/doxygen /home/mgimeno/bin/doxygen /srv/CGAL/www/Members/Manual_doxygen_test
+if head -2 ../../.scm-branch | grep -q cgal/master; then
+    rsync -a --delete "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}/output2/" /srv/CGAL/www/doc/master/
+fi
 rm -rf "${CGAL_DOC_BUILD}"
 # Then gzip the log file, to save space
 exec

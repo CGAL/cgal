@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
@@ -24,10 +25,14 @@
 #ifndef CGAL_TD_DAG_H
 #define CGAL_TD_DAG_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/Handle.h>
+#include <CGAL/tss.h>
 
 #include <cstdlib>
 #include <iostream>
@@ -383,7 +388,7 @@ std::ostream& write(std::ostream&  out,
                     const Td_dag<T>& t,
                     const Traits& traits)
 {
-  static int depth;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, depth,0);
   int i;
   if (!!t) {
     out << "\n";
@@ -413,7 +418,7 @@ std::ostream& write(std::ostream&  out,
 template<class T> std::ostream& operator<<(std::ostream&  out, 
                                            const Td_dag<T>& t)
 {
-  static int depth;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, depth,0);
   int i;
   if (!!t) {
     out << "\n";

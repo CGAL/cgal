@@ -3,9 +3,10 @@
 
 project (Bounding_volumes_Demo)
 
-cmake_minimum_required(VERSION 2.8.11)
-if(POLICY CMP0043)
-  cmake_policy(SET CMP0043 OLD)
+cmake_minimum_required(VERSION 3.1)
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
 endif()
 
 find_package(CGAL COMPONENTS Qt5)
@@ -37,14 +38,16 @@ qt5_generate_moc( "Bounding_volumes.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Bounding_v
 # The executable itself.
 add_executable  ( Bounding_volumes Bounding_volumes.cpp Bounding_volumes.moc ${DT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-qt5_use_modules(Bounding_volumes Xml Script OpenGL Svg)
-
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Bounding_volumes )
 
-# Link with Qt libraries
-target_link_libraries( Bounding_volumes ${QT_LIBRARIES} )
-# Link with CGAL
-target_link_libraries( Bounding_volumes ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries( Bounding_volumes PRIVATE
+  CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui)
+
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(Bounding_volumes)
+
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(Bounding_volumes)
 
 else()
 

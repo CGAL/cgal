@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Geert-Jan Giezeman, Michael Hemmer
@@ -62,7 +63,7 @@ is_nan_by_mask_float(unsigned int u)
 
 template<>
 class Is_valid< float >
-  : public std::unary_function< float, bool > {
+  : public CGAL::unary_function< float, bool > {
   public :
     bool operator()( const float& x ) const {
       float f = x;
@@ -75,7 +76,7 @@ class Is_valid< float >
 
 template<>
 class Is_valid< float >
-  : public std::unary_function< float, bool > {
+  : public CGAL::unary_function< float, bool > {
   public :
     bool operator()( const float& x ) const {
       return (x == x);
@@ -92,7 +93,7 @@ template <> class Algebraic_structure_traits< float >
     typedef Tag_true             Is_numerical_sensitive;
 
     class Sqrt
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return std::sqrt( x );
@@ -100,7 +101,7 @@ template <> class Algebraic_structure_traits< float >
     };
 
     class Kth_root
-      : public std::binary_function<int, Type, Type> {
+      : public CGAL::binary_function<int, Type, Type> {
       public:
         Type operator()( int k, const Type& x) const {
           CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
@@ -115,13 +116,16 @@ template <> class Real_embeddable_traits< float >
 public:
 // Is_finite depends on platform
     class Is_finite
-      : public std::unary_function< Type, bool > {
+      : public CGAL::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
-#ifdef CGAL_CFG_IEEE_754_BUG
+
+#if defined CGAL_CFG_IEEE_754_BUG
           Type f = x;
           IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
           return is_finite_by_mask_float( p->c );
+#elif !defined CGAL_CFG_NO_CPP0X_ISFINITE
+          return std::isfinite(x);
 #else
           return (x == x) && (is_valid(x-x));
 #endif

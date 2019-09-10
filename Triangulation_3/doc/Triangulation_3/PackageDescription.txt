@@ -19,7 +19,7 @@
 \cgalPkgPicture{twotets.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Clément Jamin, Sylvain Pion and Monique Teillaud}
-\cgalPkgDesc{This package allows to build and handle triangulations for point sets in three dimensions. Any \cgal triangulation covers the convex hull of its vertices. Triangulations are build incrementally  and can be modified by insertion, displacements or removal of vertices.  They offer point location facilities.  The package provides plain triangulation (whose faces depends on the  insertion order of the vertices) and Delaunay triangulations.  Regular triangulations are also provided for sets of weighted points. Delaunay and regular triangulations offer nearest neighbor queries and primitives to build the dual Voronoi and power diagrams. Optionally, the main Delaunay and regular triangulation algorithms (insert, remove) support multi-core shared-memory architectures to take advantage of available parallelism.}
+\cgalPkgDesc{This package allows to build and handle triangulations for point sets in three dimensions. Any \cgal triangulation covers the convex hull of its vertices. Triangulations are build incrementally  and can be modified by insertion, displacements or removal of vertices.  They offer point location facilities.  The package provides plain triangulation (whose faces depends on the  insertion order of the vertices) and Delaunay triangulations. Regular triangulations are also provided for sets of weighted points. Delaunay and regular triangulations offer nearest neighbor queries and primitives to build the dual Voronoi and power diagrams. Optionally, the main Delaunay and regular triangulation algorithms (insert, remove) support multi-core shared-memory architectures to take advantage of available parallelism.}
 \cgalPkgManuals{Chapter_3D_Triangulations,PkgTriangulation3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -76,7 +76,9 @@ is opposite to the vertex with the same index. See
 - `TriangulationCellBase_3`
 - `TriangulationCellBaseWithInfo_3`
 - `DelaunayTriangulationCellBase_3`
+- `RegularTriangulationVertexBase_3`
 - `RegularTriangulationCellBase_3`
+- `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 - `TriangulationDataStructure_3`
 - `WeightedPoint`
 
@@ -94,6 +96,7 @@ is opposite to the vertex with the same index. See
 - `CGAL::Triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3, TriangulationCellBase_3>` (deprecated)
 - `CGAL::Delaunay_triangulation_cell_base_3<DelaunayTriangulationTraits_3,Cb>`
 - `CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3,Cb>`
+- `CGAL::Regular_triangulation_vertex_base_3<RegularTriangulationTraits_3,Vb>`
 - `CGAL::Regular_triangulation_cell_base_3<RegularTriangulationTraits_3,Cb>`
 - `CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<RegularTriangulationTraits_3,Cb>`
 - `CGAL::Triangulation_simplex_3<Triangulation_3>`
@@ -101,6 +104,7 @@ is opposite to the vertex with the same index. See
 ### Traits Classes ###
 
 - `CGAL::Regular_triangulation_euclidean_traits_3<K,Weight>`
+- `CGAL::Robust_weighted_circumcenter_filtered_traits_3<K>`
 
 ## Enums ##
 

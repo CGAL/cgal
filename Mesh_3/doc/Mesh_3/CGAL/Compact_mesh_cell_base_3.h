@@ -22,7 +22,7 @@ default parameter value `void`.
 
 \cgalModels `MeshCellBase_3`
 
-\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
+\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>` 
 \sa `CGAL::Mesh_cell_base_3<Gt, MD, Cb>`
 
 */

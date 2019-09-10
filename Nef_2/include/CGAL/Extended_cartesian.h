@@ -14,11 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_EXTENDED_CARTESIAN_H
 #define CGAL_EXTENDED_CARTESIAN_H
+
+#include <CGAL/license/Nef_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_2.h> 
@@ -440,4 +445,7 @@ const char* output_identifier() const { return "Extended_cartesian"; }
 
 #undef Polynomial
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_EXTENDED_CARTESIAN_H

@@ -4,6 +4,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
+#include <CGAL/Alpha_shape_vertex_base_2.h>
 
 #include <CGAL/point_generators_2.h>
 

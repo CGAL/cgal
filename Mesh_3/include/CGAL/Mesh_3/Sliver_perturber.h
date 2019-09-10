@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -24,6 +25,10 @@
 
 #ifndef CGAL_MESH_3_SLIVER_PERTURBER_H
 #define CGAL_MESH_3_SLIVER_PERTURBER_H
+
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -62,6 +67,9 @@
 
 #include <boost/format.hpp>
 #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
+#  error This option CGAL_MESH_3_USE_RELAXED_HEAP is no longer supported
+// The reason is that the Boost relaxed heap does not ensure a strict order
+// of the priority queue.
 #include <boost/pending/relaxed_heap.hpp>
 #else
 #include <CGAL/Modifiable_priority_queue.h>
@@ -1292,6 +1300,8 @@ perturb_vertex( PVertex pv
               , bool *could_lock_zone
               ) const
 {
+  typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
+
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
   static Profile_branch_counter_3 bcounter(
     "early withdrawals / late withdrawals / successes [Perturber]");
@@ -1305,8 +1315,9 @@ perturb_vertex( PVertex pv
     return;
   }
 
-  Point_3 p = pv.vertex()->point();
-  if (!helper_.try_lock_point_no_spin(p) || p != pv.vertex()->point())
+  Point_3 p = wp2p(pv.vertex()->point());
+  if (!helper_.try_lock_point_no_spin(pv.vertex()->point()) ||
+      ! tr_.geom_traits().equal_3_object()(p, wp2p(pv.vertex()->point())))
   {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
     bcounter.increment_branch_2(); // THIS is an early withdrawal!
@@ -1657,5 +1668,7 @@ enqueue_task(const PVertex &pv,
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_SLIVERS_PERTURBER_H

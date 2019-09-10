@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Michal Balas <balasmic@post.tau.ac.il>
 //                 (based on old version by Iddo Hanniel & Oren Nechushtan)
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_TD_DAG_NODE_H
 #define CGAL_TD_DAG_NODE_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/number_utils.h>

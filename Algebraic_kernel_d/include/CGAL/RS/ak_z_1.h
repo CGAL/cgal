@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 

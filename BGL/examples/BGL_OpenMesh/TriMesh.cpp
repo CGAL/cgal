@@ -31,18 +31,13 @@ int main(int argc, char** argv )
   Mesh mesh;
 
   std::vector<vertex_descriptor> V;
-  V.push_back(add_vertex(mesh));
-  V.push_back(add_vertex(mesh));
-  V.push_back(add_vertex(mesh));
-  add_face(V.begin(), V.end(), mesh);
-
-  //  OpenMesh::IO::read_mesh(mesh, (argc>1)?argv[1]:"in.off");
-  
+  std::ifstream in((argc>1)?argv[1]:"in.off");
+  CGAL::read_off(in, mesh);
   BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
     BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_target(vd,mesh)){
       if(! CGAL::is_border(edge(hd,mesh),mesh)){
         CGAL::Euler::flip_edge(hd,mesh);
-        OpenMesh::IO::write_mesh(mesh, (argc>2)?argv[2]:"out.off");
+        CGAL::write_off((argc>2)?argv[2]:"out.off", mesh);
         return 0;
       }
     }

@@ -1,5 +1,5 @@
 #include <CGAL/Triangulation_data_structure.h>
-#include <CGAL/internal/Combination_enumerator.h>
+#include <CGAL/Combination_enumerator.h>
 #include <CGAL/assertions.h>
 
 #include <iostream>
@@ -34,8 +34,8 @@ void barycentric_subdivide(TDS & tds, typename TDS::Full_cell_handle fc)
         face_vertices.resize(d+1);
         // The following class
         // enumerates all (d+1)-tuple of the set {0, 1, ..., dim}
-        CGAL::internal::Combination_enumerator combi(d+1, 0, dim);
-        while( ! combi.end() )
+        CGAL::Combination_enumerator<unsigned int> combi(d+1, 0, dim);
+        while ( !combi.finished() )
         {
             for( int i = 0; i <= d; ++i )
                 face_vertices[i] = vertices[combi[i]];

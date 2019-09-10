@@ -90,7 +90,7 @@ public:
   bool applicable(QAction* a) const {
     Scene_c3t3_item* item
       = qobject_cast<Scene_c3t3_item*>(scene->item(scene->mainSelectionIndex()));
-    if (NULL == item)
+    if (NULL == item || !item->is_valid())
       return false;
 
     if (a == actionOdt || a == actionLloyd)

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -40,6 +41,8 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <limits>
 #include <vector>
 #include <boost/optional/optional_io.hpp>
@@ -54,6 +57,34 @@
 struct Bissection_tag {};
 struct Polyhedral_tag {};
 
+// Verify that the time stamps of vertices and cells are strictly
+// increasing
+template <typename C3t3>
+void verify_time_stamps(const C3t3& c3t3, CGAL::Sequential_tag) {
+  typedef typename C3t3::Triangulation::Triangulation_data_structure TDS;
+  const TDS& tds = c3t3.triangulation().tds();
+  {
+    typename TDS::Vertex_iterator prev = tds.vertices_begin();
+    assert(0 == prev->time_stamp());
+    typename TDS::Vertex_iterator vit = prev;
+    ++vit;
+    for(; vit != tds.vertices_end(); ++vit, ++prev) {
+      assert(prev->time_stamp() < vit->time_stamp());
+    }
+  }
+  {
+    typename TDS::Cell_iterator prev = tds.cells_begin();
+    typename TDS::Cell_iterator cit = prev;
+    ++cit;
+    for(; cit != tds.cells_end(); ++cit, ++prev) {
+      assert(prev->time_stamp() < cit->time_stamp());
+    }
+  }
+}
+
+// Do not verify time stamps in parallel mode
+template <typename C3t3>
+void verify_time_stamps(const C3t3&, CGAL::Parallel_tag) {}
 
 template <typename K>
 struct Tester
@@ -180,6 +211,7 @@ struct Tester
                    const std::size_t min_cells_expected = 0,
                    const std::size_t max_cells_expected = STD_SIZE_T_MAX ) const
   {
+    verify_time_stamps(c3t3, typename C3t3::Concurrency_tag());
     //-------------------------------------------------------
     // Verifications
     //-------------------------------------------------------
@@ -391,5 +423,7 @@ struct Tester
   { //nothing to do
   }
 };
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_TEST_TEST_MESHING_UTILITIES

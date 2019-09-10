@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -22,6 +23,10 @@
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_HIERARCHY_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_HIERARCHY_2_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <map>
 
@@ -190,7 +195,10 @@ public:
       site_vec.push_back(Site_2(*it));
     }
 
-    boost::random_number_generator<boost::rand48> rng(random);
+    typedef std::iterator_traits<Input_iterator> Iterator_traits;
+    typedef typename Iterator_traits::difference_type Diff_t;
+
+    boost::random_number_generator<boost::rand48, Diff_t> rng(random);
     std::random_shuffle(site_vec.begin(), site_vec.end(),rng);
     return insert(site_vec.begin(), site_vec.end(), Tag_false());
   }
@@ -490,5 +498,6 @@ std::ostream& operator<<(std::ostream& os,
 
 #include <CGAL/Segment_Delaunay_graph_2/Segment_Delaunay_graph_hierarchy_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_HIERARCHY_2_H

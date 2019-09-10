@@ -50,9 +50,9 @@ the computation of the underlying triangulation.  The corresponding
 \f$ \alpha\f$-shape is defined as the underlying interior space of the
 \f$ \alpha\f$-complex.
 
-In general, an \f$ \alpha\f$-complex is a non-connected and non-pure polytope, it
-means, that one \f$ k\f$-simplex, \f$ 0 \leq k \leq d-1\f$ is not necessary adjacent to
-a \f$ (k+1)\f$-simplex.
+In general, an \f$ \alpha\f$-complex is a non-connected and non-pure polytope,
+meaning that a \f$ k\f$-simplex, with \f$ 0 \leq k \leq d-1\f$, is not necessarily
+adjacent to a \f$ (k+1)\f$-simplex.
 
 The \f$ \alpha\f$-shapes of \f$ S\f$ form a discrete family, even though they
 are defined for all real numbers \f$ \alpha\f$ with \f$ 0 \leq \alpha

@@ -12,14 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
-// $Id$ 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     :     Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
 #ifndef CGAL_NEF_3_ID_SUPPORT_HANDLER
 #define CGAL_NEF_3_ID_SUPPORT_HANDLER
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/Nef_S2/ID_support_handler.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>

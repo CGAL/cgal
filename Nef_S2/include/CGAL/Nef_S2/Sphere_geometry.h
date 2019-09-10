@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel       <seel@mpi-inf.mpg.de>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_SPHERE_GEOMETRY_H
 #define CGAL_SPHERE_GEOMETRY_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/intersection_3.h>

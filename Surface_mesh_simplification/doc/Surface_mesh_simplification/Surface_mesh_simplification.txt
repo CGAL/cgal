@@ -301,12 +301,32 @@ What is particular in this example is the property map that allows to associate
 
 \subsection Surface_mesh_simplificationExamplewithedges Example with Edges Marked as Non-Removable
 
-The following examples show how to use the optional named parameter `edge_is_constrained_map` to prevent
+The following example shows how to use the optional named parameter `edge_is_constrained_map` to prevent
 edges from being removed. Edges marked as contrained are guaranteed to be in the final surface mesh. However,
 the vertices of the constrained edges may change and the placement may change the points.
-The wrapper `CGAL::Constrained_placement` guarantees that these points are not changed.
+The wrapper `CGAL::Surface_mesh_simplification::Constrained_placement` guarantees that these points are not changed.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_constrained_border_polyhedron.cpp}
+
+
+\subsection Surface_mesh_simplificationExamplewithBoundedNormal Example with Bounded Changement of Face Normals
+
+The surface mesh simplification does not guarantee that the resulting surface
+has no self intersections. Even the rather trivial mesh shown in \cgalFigureRef{SMS-selfintersection}
+results in a self intersection when one edge is collapsed using the Lindstrom-Turk method.
+
+
+\cgalFigureBegin{SMS-selfintersection, SMS-selfintersection.png}
+Simple mesh before and after the collapse of edge `v-w` into vertex `w`. While the normals of `f1` and `f2` are almost equal, they are opposed after the edge collapse.
+\cgalFigureEnd
+
+The class `Surface_mesh_simplification::Bounded_normal_change_placement` is a placement that checks if
+another placement would invert the normal of a face around the stars of the
+two vertices of an edge that is candidate for an edge collapse.  It then
+rejects this placement by returning `boost::none`.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp}
+
 
 */ 
 } /* namespace CGAL */

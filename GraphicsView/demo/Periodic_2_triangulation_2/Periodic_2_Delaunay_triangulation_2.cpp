@@ -4,7 +4,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Periodic_2_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
-#include <CGAL/Periodic_2_triangulation_traits_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 #include <CGAL/point_generators_2.h>
 
 // Qt headers
@@ -32,11 +32,11 @@
 
 //typedef CGAL::Exact_predicates_inexact_constructions_kernel     EPIC;
 struct EPIC : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-typedef CGAL::Periodic_2_triangulation_traits_2<EPIC>           K;
-typedef K::Point_2                                              Point_2;
-typedef K::Iso_rectangle_2                                      Iso_rectangle_2;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<EPIC>  Gt;
+typedef Gt::Point_2                                             Point_2;
+typedef Gt::Iso_rectangle_2                                     Iso_rectangle_2;
 
-typedef CGAL::Periodic_2_Delaunay_triangulation_2<K>            Periodic_DT;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<Gt>           Periodic_DT;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -362,8 +362,8 @@ MainWindow::open(QString fileName)
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::ifstream ifs(qPrintable(fileName));
   
-  K::Point_2 p;
-  std::vector<K::Point_2> points;
+  Point_2 p;
+  std::vector<Point_2> points;
   while(ifs >> p) {
     points.push_back(p);
   }

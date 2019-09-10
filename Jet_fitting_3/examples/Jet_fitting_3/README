@@ -8,7 +8,7 @@ it outputs results in the <output.txt> file and on the standard std::cout
 
 Usage is : Single_estimation <inputPoints.txt> <d_fitting>, <d_monge>" 
 
-in_points are sampled on 0.1(x²+2y²)
+in_points are sampled on 0.1(xÂ²+2yÂ²)
 
 ./Single_estimation data/in_points_file.txt  2 2
 ./Single_estimation data/in_points_d4.txt  4 4

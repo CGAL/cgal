@@ -27,7 +27,7 @@ int main (int , char**) {
     if (!stream ||
         !CGAL::read_off_points(stream,
                                std::back_inserter(points),
-                               CGAL::First_of_pair_property_map<PointVectorPair>()))
+                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {
         std::cerr << "Error: cannot read file data/fandisk.off" << std::endl;
         return EXIT_FAILURE;
@@ -37,9 +37,10 @@ int main (int , char**) {
     double R = 0.2,
            r = 0.1;
     std::vector<Covariance> cov;
-    CGAL::First_of_pair_property_map<PointVectorPair> point_pmap;
+    CGAL::First_of_pair_property_map<PointVectorPair> point_map;
 
-    CGAL::compute_vcm(points.begin(), points.end(), point_pmap, cov, R, r, Kernel());
+    CGAL::compute_vcm(points, cov, R, r,
+                      CGAL::parameters::point_map (point_map).geom_traits (Kernel()));
 
     // Find the points on the edges.
     // Note that this step is not expensive and can be done several time to get better results

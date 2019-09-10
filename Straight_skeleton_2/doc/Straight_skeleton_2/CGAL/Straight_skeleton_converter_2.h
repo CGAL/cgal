@@ -47,8 +47,7 @@ skeleton itself.
 
 */
 template< typename SrcSs, typename TgtSs, typename ItemsCvt >
-class Straight_skeleton_converter_2 {
-public:
+struct Straight_skeleton_converter_2 {
 
 /// \name Types 
 /// @{
@@ -115,8 +114,7 @@ provide `TgtSs:Traits::FT operator()(SrcSs::Traits::FT n)` that converts `n` to 
 
 */
 template< typename SrcSs, typename TgtSs, typename NTConverter >
-class Straight_skeleton_items_converter_2 {
-public:
+struct Straight_skeleton_items_converter_2 {
 
 /// \name Creation 
 /// @{

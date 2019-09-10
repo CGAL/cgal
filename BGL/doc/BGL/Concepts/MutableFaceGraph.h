@@ -7,26 +7,44 @@ the requirement for operations to add faces and to modify face-halfedge relation
 
 \cgalRefines `FaceGraph`
 \cgalRefines `MutableHalfedgeGraph`
-\cgalHasModel `CGAL::Polyhedron_3`
-\cgalHasModel `CGAL::Surface_mesh`
 
-\cgalHeading{Notations}
+\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
 
-<dl>
-<dt>`G`</dt> 	<dd>A type that is a model of `MutableFaceGraph`.</dd>
-<dt>`g`</dt> 	<dd>An object of type `G`.</dd>
-<dt>`h`</dt> 	<dd>A halfedge descriptor.</dd>
-<dt>`f`</dt> 	<dd>A face descriptor.</dd>
-</dl>
-
-\cgalHeading{Valid Expressions}
-
-Expression              | returns           | Description                           
------------------------ | ------------      | -----------
-`add_face(g)`           | `face_descriptor` | Adds a new face to the graph without initializing the connectivity.
-`remove_face(f, g)`     | `void`            | Removes `f` from the graph.
-`set_face(h, f, g)`     | `void`            | Sets the corresponding face of `h` to `f`.
-`set_halfedge(f, h, g)` | `void`            | Sets the corresponding halfedge of `f` to `h`.
-
+\sa \link PkgBGLConcepts Graph Concepts \endlink
 */
 class MutableFaceGraph{};
+
+/*! \relates MutableFaceGraph
+Adds a new face to the graph without initializing the connectivity.
+ */
+template <typename MutableFaceGraph>
+boost::graph_traits<MutableFaceGraph>::face_descriptor
+add_face(MutableFaceGraph& g);
+
+/*! \relates MutableFaceGraph
+Removes `f` from the graph.
+ */
+template <typename MutableFaceGraph>
+boost::graph_traits<MutableFaceGraph>::face_descriptor
+remove_face(boost::graph_traits<MutableFaceGraph>::face_descriptor f, MutableFaceGraph& g);
+
+/*! \relates MutableFaceGraph
+Sets the corresponding face of `h` to `f`.
+ */
+template <typename MutableFaceGraph>
+void
+set_face(boost::graph_traits<MutableFaceGraph>::halfedge_descriptor h, boost::graph_traits<MutableFaceGraph>::face_descriptor f, MutableFaceGraph& g);
+
+/*! \relates MutableFaceGraph
+Sets the corresponding halfedge of `f` to `h`.
+ */
+template <typename MutableFaceGraph>
+void
+set_halfedge(boost::graph_traits<MutableFaceGraph>::face_descriptor f, boost::graph_traits<MutableFaceGraph>::halfedge_descriptor h, MutableFaceGraph& g);
+
+/*! \relates MutableFaceGraph
+Indicates the expected size of vertices (`nv`), edges (`ed`) and faces (`nf`).
+ */
+template <typename MutableFaceGraph>
+void
+reserve(MutableFaceGraph& g, boost::graph_traits<MutableFaceGraph>::vertices_size_type nv, boost::graph_traits<MutableFaceGraph>::vertices_size_type ne, boost::graph_traits<MutableFaceGraph>::vertices_size_type nf);

@@ -27,6 +27,8 @@ int main()
 # include <tbb/parallel_for.h>
 # include <tbb/atomic.h>
 
+#include <CGAL/disable_warnings.h>
+
 struct Node_1
 : public CGAL::Compact_container_base
 {

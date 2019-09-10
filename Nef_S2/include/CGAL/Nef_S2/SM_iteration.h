@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_SM_ITERATION_H
 #define CGAL_SM_ITERATION_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #undef CGAL_forall_iterators
 #define CGAL_forall_iterators(x,S)\

@@ -76,7 +76,7 @@ void build_segments(std::vector< Segment_2 >& all_segments)
 
     for( int i = 0; i < numArrays; ++i )
     {
-        double angle = M_PI * (double)rand() / RAND_MAX;
+        double angle = CGAL_PI * (double)rand() / RAND_MAX;
         double scale = 1 + (double)rand() / RAND_MAX;
 
         get_rotated_line_array( x0, y0, angle, scale, all_segments );

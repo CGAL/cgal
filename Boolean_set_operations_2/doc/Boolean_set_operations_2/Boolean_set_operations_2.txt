@@ -508,9 +508,9 @@ The package provides the overloaded free function
 range defined by the two input iterators `[begin, end)` intersect.
 
 The class `General_polygon_set_2` also provides equivalent member
-functions that aggragately operate on a range of input polygons or
-polygons with holes. When such a member function is called, the general 
-polygons represented by the current object are considered operands as 
+functions that aggregately operate on a range of input polygons or
+polygons with holes. When such a member function is called, the general
+polygons represented by the current object are considered operands as
 well. Thus, you can easily compute the union of our polygon range as
 follows:
 \code{.cpp}
@@ -626,8 +626,8 @@ swap its source and target points).
 </UL>
 
 The traits classes `Arr_segment_traits_2`, 
-`Arr_non_caching_segment_traits`, `Arr_circle_segment_traits_2`,
-`Arr_conic_traits_2` and `Arr_rational_arc_traits_2`, which are 
+`Arr_non_caching_segment_traits_2`, `Arr_circle_segment_traits_2`,
+`Arr_conic_traits_2` and `Arr_rational_function_traits_2`, which are 
 bundled in the `Arrangement_2` package and distributed with \cgal,
 are all models of the refined concept 
 `ArrangementDirectionalXMonotoneTraits_2`.\cgalFootnote{The `Arr_polyline_traits_2` class is <I>not</I> a model of the, `ArrangementDirectionalXMonotoneTraits_2` concept, as the \f$ x\f$-monotone curve it defines is always directed from left to right. Thus, an opposite curve cannot be constructed. However, it is not very useful to construct a polygon whose edges are polylines, as an ordinary polygon with linear edges can represent the same entity.}

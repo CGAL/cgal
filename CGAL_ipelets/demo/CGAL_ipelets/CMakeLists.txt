@@ -1,8 +1,9 @@
 project(CGAL_ipelets_Demo)
 
-cmake_minimum_required(VERSION 2.8.11)
-if(POLICY CMP0043)
-  cmake_policy(SET CMP0043 OLD)
+cmake_minimum_required(VERSION 3.1)
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
 endif()
 
 macro( remove_leading_zero var )
@@ -42,14 +43,17 @@ if ( CGAL_FOUND )
         ${IPE_MINOR_VERSION_1} GREATER "1" AND
         ${IPE_MINOR_VERSION_2} GREATER "0")
       message(STATUS "Starting from Ipe 7.2.1 a compiler with c++11 support must be used")
-      include(CheckCXXCompilerFlag)
-      CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-      CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-      if(COMPILER_SUPPORTS_CXX11)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-      elseif(COMPILER_SUPPORTS_CXX0X)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+
+      list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
+      if(has_cpp11 LESS 0)
+        message(STATUS "NOTICE: This demo requires a C++11 compiler and will not be compiled.")
+        return()
       endif()
+
+      # Use C++11 for this directory and its sub-directories.
+      set(CMAKE_CXX_STANDARD 11)
+      set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
     endif()
   endif()
 
@@ -114,27 +118,34 @@ if ( CGAL_FOUND )
     set(CGAL_IPELETS ${CGAL_IPELETS} circle_pencils)
     set(CGAL_IPELETS ${CGAL_IPELETS} hyperbolic)
     set(CGAL_IPELETS ${CGAL_IPELETS} distance)
+    set(CGAL_IPELETS ${CGAL_IPELETS} cone_spanners)
 
 
     if ( IPELET_INSTALL_DIR )
       message(STATUS "Set Ipelets install dir: ${IPELET_INSTALL_DIR}")
     endif()
 
+    include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+
     foreach(IPELET ${CGAL_IPELETS})
       add_library(CGAL_${IPELET} MODULE ${IPELET}.cpp)
       add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_${IPELET})
-      target_link_libraries(CGAL_${IPELET} ${IPE_LIBRARIES})
+      target_link_libraries(CGAL_${IPELET} PRIVATE CGAL::CGAL ${IPE_LIBRARIES})
       if ( IPELET_INSTALL_DIR )
         install(TARGETS CGAL_${IPELET} DESTINATION ${IPELET_INSTALL_DIR})
         if (WITH_IPE_7)
           install(FILES ./lua/libCGAL_${IPELET}.lua DESTINATION ${IPELET_INSTALL_DIR}) #only for ipe 7
         endif()
       endif ()
+      cgal_add_compilation_test(CGAL_${IPELET})
     endforeach(IPELET)
+    target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL_Core)
     #example in doc not installed
     add_library(simple_triangulation MODULE simple_triangulation.cpp)
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)
     target_link_libraries(simple_triangulation ${IPE_LIBRARIES})
+
+    cgal_add_compilation_test(simple_triangulation)
 
   else()
     message(STATUS "NOTICE: This program requires the Ipe include files and library, and will not be compiled.")

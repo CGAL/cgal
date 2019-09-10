@@ -19,7 +19,7 @@
 
 #include <functional>
 #include <boost/foreach.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <fstream>
 
@@ -44,7 +44,7 @@ typedef CGAL::Timer Timer;
 
 template <typename PolygonMesh>
  class Point_projector
-  : public std::unary_function<typename boost::graph_traits<PolygonMesh>::vertex_descriptor,
+  : public CGAL::unary_function<typename boost::graph_traits<PolygonMesh>::vertex_descriptor,
                                typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>::value_type> {
   typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type Ppmap;
 public:

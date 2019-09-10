@@ -47,7 +47,7 @@ The alpha shapes of a  set of points
 \f$ S\f$ form a discrete family, even though they
 are defined for all real numbers \f$ \alpha\f$.
 The entire family of alpha shapes can be represented 
-through  the underlying triangulation of \f$ S\f$. In this representation
+through  the underlying triangulation of \f$ S\f$. In this representation,
 each \f$ k\f$-simplex of the underlying triangulation is associated with an
 interval that specifies for which values of \f$ \alpha\f$ the \f$ k\f$-simplex
 belongs to the alpha complex. Relying on this fact, the family of
@@ -60,7 +60,7 @@ The definition is analog in the case of weighted alpha shapes.
 The input set is now a set of weighted points (which can be regarded
 as spheres) and the underlying triangulation 
 is the regular triangulation of this set.
-Two spheres, or two weighted points , with centers \f$ C_1, C_2\f$
+Two spheres, or two weighted points, with centers \f$ C_1, C_2\f$
 and  radii \f$ r_1, r_2 \f$ are said to be orthogonal iff 
 \f$  C_1C_2 ^2 = r_1^2 + r_2^2\f$ and suborthogonal
 iff  \f$  C_1C_2 ^2 < r_1^2 + r_2^2\f$.

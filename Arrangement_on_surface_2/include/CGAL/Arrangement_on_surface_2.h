@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
@@ -27,6 +28,10 @@
 //                                      and Eugene Lipovetsky)
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The header file for the Arrangement_on_surface_2<Traits,Dcel> class.
@@ -54,9 +59,9 @@ namespace CGAL {
 
 /*! \class Arrangement_on_surface_2
  * The arrangement class, representing 2-dimensional subdivisions induced on
- * an arbitrary surface by a set of arbitrary planar.
+ * an arbitrary surface by a set of arbitrary planar curves.
  * The GeomTraits parameter corresponds to a geometry-traits class that
- * is defines the Point_2 and X_monotone_curve_2 types and implements the
+ * defines the Point_2 and X_monotone_curve_2 types and implements the
  * geometric predicates and constructions for the family of curves it defines.
  * The TopTraits parameter corresponds to a topology-traits class that defines
  * the topological structure of the surface. Note that the geometry traits
@@ -68,6 +73,7 @@ class Arrangement_on_surface_2 {
 public:
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef TopTraits_                                      Topology_traits;
+  typedef CGAL_ALLOCATOR(int)                             Allocator;
 
   // first define adaptor ...
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
@@ -1021,6 +1027,15 @@ public:
                             _Is_concrete_vertex(&m_topol_traits)));
   }
 
+  /*!
+  returns a range over handles of the arrangement vertices .
+  */
+  Iterator_range<Prevent_deref<Vertex_iterator> >
+  vertex_handles()
+  {
+    return make_prevent_deref_range(vertices_begin(), vertices_end());
+  }
+
   /*! Get a const iterator for the first vertex in the arrangement. */
   Vertex_const_iterator vertices_begin() const
   {
@@ -1036,6 +1051,16 @@ public:
                                   _dcel().vertices_end(),
                                   _Is_concrete_vertex(&m_topol_traits)));
   }
+
+  /*!
+  returns a const range (model of `ConstRange`) over handles of the arrangement vertices .
+  */
+  Iterator_range<Prevent_deref<Vertex_iterator> >
+  vertex_handles() const
+  {
+    return make_prevent_deref_range(vertices_begin(), vertices_end());
+  }
+
   //@}
 
   /// \name Traversal functions for the arrangement halfedges.
@@ -1057,6 +1082,15 @@ public:
                               _Is_valid_halfedge(&m_topol_traits)));
   }
 
+  /*!
+  returns a range over handles of the arrangement halfedges .
+  */
+  Iterator_range<Prevent_deref<Halfedge_iterator> >
+  halfedge_handles()
+  {
+    return make_prevent_deref_range(halfedges_begin(), halfedges_end());
+  }
+
   /*! Get a const iterator for the first halfedge in the arrangement. */
   Halfedge_const_iterator halfedges_begin() const
   {
@@ -1071,6 +1105,14 @@ public:
     return (Halfedge_const_iterator(_dcel().halfedges_end(),
                                     _dcel().halfedges_end(),
                                     _Is_valid_halfedge(&m_topol_traits)));
+  }
+  /*!
+  returns a const range (model of `ConstRange`) over handles of the arrangement halfedges .
+  */
+  Iterator_range<Prevent_deref<Halfedge_iterator> >
+  halfedge_handles() const
+  {
+    return make_prevent_deref_range(halfedges_begin(), halfedges_end());
   }
   //@}
 
@@ -1091,6 +1133,15 @@ public:
                           _Is_valid_halfedge(&m_topol_traits)));
   }
 
+  /*!
+  returns a range over handles of the arrangement edges .
+  */
+  Iterator_range<Prevent_deref<Edge_iterator> >
+  edge_handles()
+  {
+    return make_prevent_deref_range(edges_begin(), edges_end());
+  }
+
   /*! Get a const iterator for the first edge in the arrangement. */
   Edge_const_iterator edges_begin() const
   {
@@ -1103,6 +1154,15 @@ public:
   {
     return (Edge_const_iterator(_dcel().edges_end(), _dcel().edges_end(),
                                 _Is_valid_halfedge(&m_topol_traits)));
+  }
+
+  /*!
+  returns a const range (model of `ConstRange`) over handles of the arrangement edges .
+  */
+  Iterator_range<Prevent_deref<Edge_iterator> >
+  edge_handles() const
+  {
+    return make_prevent_deref_range(edges_begin(), edges_end());
   }
   //@}
 
@@ -1123,6 +1183,14 @@ public:
                           _Is_valid_face(&m_topol_traits)));
   }
 
+  /*!
+  returns a range over handles of the arrangement faces .
+  */
+  Iterator_range<Prevent_deref<Face_iterator> >
+  face_handles()
+  {
+    return make_prevent_deref_range(faces_begin(), faces_end());
+  }
   /*! Get a const iterator for the first face in the arrangement. */
   Face_const_iterator faces_begin() const
   {
@@ -1137,6 +1205,14 @@ public:
                                 _Is_valid_face(&m_topol_traits)));
   }
 
+  /*!
+  returns a const range (model of `ConstRange`) over handles of the arrangement faces .
+  */
+  Iterator_range<Prevent_deref<Face_iterator> >
+  face_handles() const
+  {
+    return make_prevent_deref_range(faces_begin(), faces_end());
+  }
   //! reference_face (const version).
   /*! The function returns a reference face of the arrangement.
    * All reference faces of arrangements of the same type have a common
@@ -1713,23 +1789,23 @@ protected:
   Comparison_result _compare_induced_path_length(const DHalfedge* e1,
                                                  const DHalfedge* e2) const;
 
-  /*
-   * Updates the indices according to boundary locations
+  /*!
+   * Update the indices according to boundary locations
    */
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
                    int& x_index, int& y_index,  boost::mpl::bool_<true>) const;
 
-  /*
-   * Updates the indices according to boundary locations (i.e. does nothing)
+  /*!
+   * Update the indices according to boundary locations (i.e. does nothing)
    */
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
                    int& x_index, int& y_index,  boost::mpl::bool_<false>) const;
 
-  /*
+  /*!
    * Is the first given x-monotone curve above the second given?
    * \param xcv1 the first given curve
    * \param ps_y1 the parameter space in y of xcv1
@@ -1744,7 +1820,7 @@ protected:
                  Arr_parameter_space ps_y1,
                  Arr_has_identified_side_tag) const;
 
-  /*
+  /*!
    * Is the first given x-monotone curve above the second given?
    * \param xcv1 the first given curve
    * \param ps_y1 the parameter space in y of xcv1
@@ -1759,7 +1835,7 @@ protected:
                  Arr_parameter_space ps_y1,
                  Arr_has_contracted_side_tag) const;
 
-  /*
+  /*!
    * Is the first given x-monotone curve above the second given?
    * \param xcv1 the first given curve
    * \param ps_y1 the parameter space in y of xcv1
@@ -1775,7 +1851,7 @@ protected:
                  Arr_boundary_cond_tag) const;
 
   /*!
-   * Computes the signs (in left/right and bottom/top) of a path
+   * Compute the signs (in left/right and bottom/top) of a path
    * induced by the sequence he_to=>cv,cv_dir=>he_away, and reports
    * as side-effect the halfedges pointing to local minima copied
    * to an outputiterator.
@@ -2035,7 +2111,7 @@ protected:
   void _relocate_inner_ccbs_in_new_face(DHalfedge* new_he);
 
   /*!
-   * Relocate all  vertices to their proper position,
+   * Relocate all vertices to their proper position,
    * immediately after a face has split due to the insertion of a new halfedge.
    * \param new_he The new halfedge that caused the split, such that the new
    *               face lies to its left and the old face to its right.
@@ -2113,7 +2189,7 @@ protected:
   DFace* _remove_edge(DHalfedge* e, bool remove_source, bool remove_target);
 
   /*!
-   * Decides whether a hole is created when an edge is removed.
+   * Decide whether a hole is created when an edge is removed.
    *
    * \param signs1 signs of future ccb1
    * \param signs2 signs of future ccb2
@@ -2935,4 +3011,5 @@ bool do_intersect(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 #include <CGAL/Arrangement_2/Arrangement_on_surface_2_impl.h>
 #include <CGAL/Arrangement_2/Arrangement_on_surface_2_global.h>
 
+#include <CGAL/enable_warnings.h>
 #endif

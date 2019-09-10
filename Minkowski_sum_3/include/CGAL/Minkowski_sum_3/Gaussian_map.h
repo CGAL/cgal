@@ -13,12 +13,16 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_MS3_GAUSSIAN_MAP
 #define CGAL_MS3_GAUSSIAN_MAP
+
+#include <CGAL/license/Minkowski_sum_3.h>
+
 
 #include <CGAL/Nef_S2/SM_items.h>
 #include <CGAL/Nef_S2/Sphere_map.h>

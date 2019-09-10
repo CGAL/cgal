@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_TRIANGULATION_CELL_BASE_3_H
 #define CGAL_TRIANGULATION_CELL_BASE_3_H
+
+#include <CGAL/license/Triangulation_3.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
@@ -62,10 +66,6 @@ public:
                             Cell_handle   n0, Cell_handle   n1,
                             Cell_handle   n2, Cell_handle   n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
-
-  Point_iterator hidden_points_begin() const { return hidden_points_end(); }
-  Point_iterator hidden_points_end() const { return NULL; }
-  void hide_point (const Point &) const { }
 
   // note the circumcenter() function is not part of the concept TriangulationCellBase_3
   // it is requested only by DelaunayTriangulartionCellBase_3

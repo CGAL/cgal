@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     :  Sebastien Loriot
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_INTERNAL_POLYGON_MESH_SLICER_TRAVERSAL_TRAITS_H
 #define CGAL_INTERNAL_POLYGON_MESH_SLICER_TRAVERSAL_TRAITS_H
+
+#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
+
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Triangle_3_Ray_3_do_intersect.h>

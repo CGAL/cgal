@@ -13,11 +13,6 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-if ( COMMAND cmake_policy )
-
-  cmake_policy( SET CMP0003 NEW )  
-
-endif()
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )

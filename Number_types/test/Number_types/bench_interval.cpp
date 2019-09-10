@@ -6,6 +6,8 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <cassert>
 
 #ifndef LOOPS

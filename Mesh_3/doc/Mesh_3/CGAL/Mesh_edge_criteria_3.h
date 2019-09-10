@@ -33,7 +33,7 @@ typedef Tr::Geom_traits::FT FT;
 /*!
 Returns an object to serve as criteria for edges. 
 The argument `length_bound` is an upper bound 
-for the length of the edges which are used to discretize the curve segments. 
+for the length of the edges which are used to discretize the curves. 
 Note that if one parameter is set to 0, then its corresponding criteria is ignored. 
 */ 
 Mesh_edge_criteria_3( 

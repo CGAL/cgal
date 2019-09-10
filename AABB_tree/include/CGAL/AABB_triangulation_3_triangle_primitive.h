@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stéphane Tayeb, Pierre Alliez
@@ -21,6 +22,10 @@
 
 #ifndef AABB_TRIANGULATION_3_TRIANGLE_PRIMITIVE_H_
 #define AABB_TRIANGULATION_3_TRIANGLE_PRIMITIVE_H_
+
+#include <CGAL/license/AABB_tree.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -67,9 +72,9 @@ namespace CGAL {
             m_facet = primitive.id();
         }
         AABB_triangulation_3_triangle_primitive(const Id& handle)
-            : m_facet(handle)  { };
+            : m_facet(handle)  { }
         AABB_triangulation_3_triangle_primitive(const Id* ptr)
-            : m_facet(*ptr)  { };
+            : m_facet(*ptr)  { }
         template <class Iterator>
         AABB_triangulation_3_triangle_primitive( Iterator it,
                                             typename boost::enable_if<
@@ -83,18 +88,23 @@ namespace CGAL {
         // Returns by constructing on the fly the geometric datum wrapped by the primitive
         Datum datum() const
         {
+          typename GeomTraits::Construct_point_3 cp =
+              GeomTraits().construct_point_3_object();
+
           int i = m_facet.second;
-          const Point& a = m_facet.first->vertex((i+1) &3)->point();
-          const Point& b = m_facet.first->vertex((i+2) &3)->point();
-          const Point& c = m_facet.first->vertex((i+3) &3)->point();
-          
+          const Point& a = cp(m_facet.first->vertex((i+1) &3)->point());
+          const Point& b = cp(m_facet.first->vertex((i+2) &3)->point());
+          const Point& c = cp(m_facet.first->vertex((i+3) &3)->point());
+
           return Datum(a,b,c);
         }
 
         // Returns a point on the primitive
         Point reference_point() const
         {
-          return  m_facet.first->vertex((m_facet.second +1) &3)->point();
+          typename GeomTraits::Construct_point_3 cp =
+              GeomTraits().construct_point_3_object();
+          return cp(m_facet.first->vertex((m_facet.second +1) &3)->point());
         }
 
         // Returns the identifier
@@ -110,5 +120,6 @@ namespace CGAL {
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // AABB_TRIANGULATION_3_TRIANGLE_PRIMITIVE_H_

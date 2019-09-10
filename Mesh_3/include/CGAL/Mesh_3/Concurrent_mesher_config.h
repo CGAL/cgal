@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Clement Jamin
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_MESH_3_CONCURRENT_MESHER_CONFIG_H
 #define CGAL_MESH_3_CONCURRENT_MESHER_CONFIG_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 # include <boost/program_options.hpp>

@@ -43,7 +43,7 @@ its options in Section \ref seccreate_cgal_CMakeLists for various details).
 
 Note that, until CGAL 4.6, \ref seccreate_cgal_CMakeLists only recognized
 source files ending in `.cpp` or `.C`; if the above fails on the `cmake` command
-or produces an empty Makefile, check whether your source files go by such a name.
+or produces an empty `Makefile`, check whether your source files go by such a name.
 Recent versions find all source files ending in
 `.cc`, `.cp`, `.cxx`, `.cpp`, `.CPP`, `.c++`, or `.C`.
 
@@ -175,7 +175,7 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 In order to configure, build, and install the \cgal libraries, examples and
 demos, you need CMake, a cross-platform "makefile generator".
 If CMake is not installed already you can obtain it from <A HREF="http://www.cmake.org/">`http://www.cmake.org/`</A>.
-CMake version 2.8.11 or higher is required.
+CMake version 3.1 or higher is required.
 This manual explains only those features of
 CMake which are needed in order to build \cgal. Please refer to the 
 CMake documentation at <A HREF="http://www.cmake.org/">`http://www.cmake.org/`</A> for further details.
@@ -299,7 +299,7 @@ We next list the libraries and essential 3rd party software
 
 | Library   | CMake Variable | Functionality | Dependencies |
 | :-------- | :------------- | :------------ | :----------- |
-| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers), Boost.Thread and Boost.System (library) for compilers not supporting the keywords `threadlocal` and the class `mutex` |
+| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers), Boost.Thread and Boost.System (library) for compilers not supporting the keywords `thread_local` and the class `std::mutex` |
 | `CGAL_Core` | `WITH_CGAL_Core`  | The CORE library for algebraic numbers.\cgalFootnote{CGAL_Core is not part of \cgal, but a custom version of the \sc{Core} library distributed by \cgal for the user convenience and it has it's own license.}  | \sc{Gmp} and \sc{Mpfr} |
 | `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \sc{OpenGL}, \sc{zlib}, \sc{Vtk}(optional) |
 | `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \sc{Qt}5-based demos | \sc{Qt}5 and \sc{OpenGL} |
@@ -321,21 +321,18 @@ can choose to produce static libraries instead by setting the CMake
 variable `BUILD_SHARED_LIBS` to `FALSE`. If you use
 `cmake-gui`, a tick box for that variable is available to set it.
 
-These setting affect the variants of third-party libraries (see next
-section) selected whenever the choice is available.
-
 \subsection subsection_headeronly Header-only option
 
 Since \cgal 4.9, \cgal can be used in headers only mode, i.e. without compiling the \cgal libraries and linking with these libraries when compiling examples, tests and demos. This possibility can be enabled by setting the value of the CMake variable `CGAL_HEADER_ONLY` to `ON`. CMake version 3.0.0 or higher is required to use this option.
 
-One advantage of using \cgal in header-only mode is that you do not need to compile and install \cgal libraries before compiling a given example or demo. Note that even in header-only mode we still need to run cmake on \cgal in order to generate different configuration files. So, setting up \cgal becomes now:
+One advantage of using \cgal in header-only mode is that you do not need to compile and install \cgal libraries before compiling a given example or demo. Note that even in header-only mode we still need to run CMake on \cgal in order to generate different configuration files. So, setting up \cgal becomes now:
 
 <PRE>
 cd CGAL-\cgalReleaseNumber # go to \cgal directory
-cmake . # configure \cgal
+cmake -DCGAL_HEADER_ONLY=ON . # configure \cgal
 </PRE>
 
-and we do not need to run make anymore.
+and we do not need to run `make` anymore.
 
 There is one possible problem when using \cgal in header-only mode on a Windows operating system when compiling a program using several modules (executable programs or dynamic-link libraries DLL). If two different modules use the same static variable, this variable is defined independently in each of these modules. If one module modifies the value of this variable, it will not be modified in the other module, which could induce an unexpected behavior. In \cgal, this concerns only a few specific variables: the <A HREF="http://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>, the <A HREF="http://doc.cgal.org/latest/STL_Extension/group__PkgStlExtensionAssertions.html">failure behavior</A>, <A HREF="http://doc.cgal.org/latest/Stream_support/group__PkgIOstreams.html">IO mode</A>. One example is the following: if you change the default random in one DLL, then if you use the default random in another DLL, you will not obtain the modified default random but the original one.
 
@@ -372,7 +369,11 @@ installed as binaries.
 \cgal requires the \sc{Boost} libraries. In particular the header files
 and the threading library (`Boost.Thread` and
 `Boost.System` binaries). Version 1.48 (or higher) are needed
-for compilers not supporting the keywords `threadlocal` and the class `mutex` (This is supported for \gcc 4.8 and later when using the \cpp 11 standard, and for Visual C++ starting with 2015, that is VC14).
+for compilers not supporting the keyword `thread_local` and the class `std::mutex` (This is supported for \gcc 4.8 and later when using the \cpp 11 standard, and for Visual C++ starting with 2015, that is VC14).
+
+As an exception, because of a bug in the \gcc compiler about the \cpp 11
+keyword `thread_local`, the `CGAL_Core` library always requires
+`Boost.Thread` if the \gcc compiler is used.
 
 On Windows, as auto-linking is used, you also need the binaries of
 `Boost.Serialization` and `Boost.DateTime`, but the
@@ -554,6 +555,30 @@ programs that take advantage of multi-core processors.
 In \cgal, \sc{Tbb} is used by the packages that offer parallel code.
 
 The \sc{Tbb} web site is <A HREF="http://www.threadingbuildingblocks.org">`http://www.threadingbuildingblocks.org`</A>.
+
+\subsection thirdpartyLASlib LASlib
+
+\sc{LASlib} is a `C++` library for handling LIDAR data sets stored in
+the LAS format (or the compressed LAZ format).
+
+In \cgal, \sc{LASlib} is used to provide input and output functions in
+the \ref PkgPointSetProcessing package.
+
+The \sc{LASlib} web site is <a
+href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \sc{LASlib}
+is usually distributed along with LAStools: for simplicity, \cgal
+provides <a href="https://github.com/CGAL/LAStools">a fork with a
+CMake based install procedure</a>.
+
+\subsection thirdpartyOpenCV OpenCV
+
+\sc{OpenCV} (Open Computer Vision) is a library designed for computer
+vision, computer graphics and machine learning.
+
+In \cgal, \sc{OpenCV} is used by the \ref PkgClassification package.
+
+The \sc{OpenCV} web site is <A HREF="http://opencv.org/">`http://opencv.org/`</A>.
+
 
 \section secbuilding Building CGAL 
 
@@ -1162,9 +1187,9 @@ environment variable. The environment variable `TBB_ARCH_PLATFORM=<arch>/<compil
 `<arch>` is `ia32` or `intel64`. `<compiler>` describes the Linux kernel, gcc version or Visual Studio version
 used. It should be set to what is used in `$TBBROOT/lib/<arch>`.
 
-The folder `TBBROOT/bin/<arch>/<compiler>` should be added to the `PATH` variable.
+For windows users, the folder `TBBROOT/bin/<arch>/<compiler>` should be added to the `PATH` variable.
 
-Note that the variables in the table below are begin used.
+Note that the variables in the table below are being used.
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |

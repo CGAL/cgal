@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
 #define CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
+
+#include <CGAL/license/AABB_tree.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/boost/graph/property_maps.h>
@@ -44,6 +49,7 @@ namespace CGAL {
  * while the AABB tree holding the primitive is in use.
  * The type of the 3D segment is taken from the kernel of the point type which is the value type
  * of `VertexPointPMap` (using the `Kernel_traits` mechanism).
+ * The segment type of the primitive (`Datum`) is `CGAL::Kernel_traits< boost::property_traits< VertexPointPMap >::%value_type >::%Kernel::Segment_3`.
  *
  * \cgalModels `AABBPrimitive` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_false`,
  *    and `AABBPrimitiveWithSharedData` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_true`.
@@ -185,6 +191,7 @@ public:
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
 

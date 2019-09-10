@@ -15,11 +15,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_COMPACT_CONTAINER_H
 #define CGAL_COMPACT_CONTAINER_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
@@ -235,9 +238,9 @@ class Compact_container
   typedef Allocator_                                Al;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
   typedef Increment_policy_                         Ip;
-  typedef typename Default::Get< Ip, 
+  typedef typename Default::Get< Ip,
             Addition_size_policy<CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE,
-                             CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE> 
+                             CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE>
           >::type                                   Increment_policy;
   typedef TimeStamper_                              Ts;
   typedef Compact_container <T, Al, Ip, Ts>         Self;
@@ -815,6 +818,12 @@ private:
     Traits::pointer(*ptr) = (void *) ((clean_pointer((char *) p)) + (int) t);
   }
 
+public:
+  // @return true iff pts is on the beginning or on the end of its block.
+  static bool is_begin_or_end(const_pointer ptr)
+  { return type(ptr)==START_END; }
+
+
   // We store a vector of pointers to all allocated blocks and their sizes.
   // Knowing all pointers, we don't have to walk to the end of a block to reach
   // the pointer to the next block.
@@ -921,6 +930,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_ne
   for (size_type i = block_size; i >= 1; --i)
   {
     EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
+    time_stamper->initialize_time_stamp(new_block + i);
     put_on_free_list(new_block + i);
   }
   // We insert this new block at the end.
@@ -999,6 +1009,7 @@ namespace internal {
     typedef typename DSC::iterator                    iterator;
     typedef CC_iterator<DSC, Const>                   Self;
   public:
+    typedef DSC                                       CC;
     typedef typename DSC::value_type                  value_type;
     typedef typename DSC::size_type                   size_type;
     typedef typename DSC::difference_type             difference_type;
@@ -1010,6 +1021,9 @@ namespace internal {
 
     // the initialization with NULL is required by our Handle concept.
     CC_iterator()
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      : ts(0)
+#endif
     {
       m_ptr.p = NULL;
     }
@@ -1017,19 +1031,28 @@ namespace internal {
     // Either a harmless copy-ctor,
     // or a conversion from iterator to const_iterator.
     CC_iterator (const iterator &it)
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      : ts(Time_stamper_impl::time_stamp(it.operator->()))
+#endif
     {
-      m_ptr.p = &(*it);
+      m_ptr.p = it.operator->();
     }
 
     // Same for assignment operator (otherwise MipsPro warns)
     CC_iterator & operator= (const iterator &it)
     {
-      m_ptr.p = &(*it);
+      m_ptr.p = it.operator->();
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      ts = Time_stamper_impl::time_stamp(it.operator->());
+#endif
       return *this;
     }
 
     // Construction from NULL
     CC_iterator (Nullptr_t CGAL_assertion_code(n))
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      : ts(0)
+#endif
     {
       CGAL_assertion (n == NULL);
       m_ptr.p = NULL;
@@ -1038,7 +1061,9 @@ namespace internal {
   private:
 
     typedef typename DSC::Time_stamper_impl           Time_stamper_impl;
-
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+    std::size_t ts;
+#endif
     union {
       pointer      p;
       void        *vp;
@@ -1053,6 +1078,9 @@ namespace internal {
 
     // For begin()
     CC_iterator(pointer ptr, int, int)
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      : ts(0)
+#endif
     {
       m_ptr.p = ptr;
       if (m_ptr.p == NULL) // empty container.
@@ -1061,12 +1089,24 @@ namespace internal {
       ++(m_ptr.p); // if not empty, p = start
       if (DSC::type(m_ptr.p) == DSC::FREE)
         increment();
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      else
+        ts = Time_stamper_impl::time_stamp(m_ptr.p);
+#endif // CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
     }
 
     // Construction from raw pointer and for end().
     CC_iterator(pointer ptr, int)
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      : ts(0)
+#endif
     {
       m_ptr.p = ptr;
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      if(ptr != NULL){
+        ts = Time_stamper_impl::time_stamp(m_ptr.p);
+      }
+#endif // end CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
     }
 
     // NB : in case empty container, begin == end == NULL.
@@ -1083,8 +1123,12 @@ namespace internal {
         ++(m_ptr.p);
         if (DSC::type(m_ptr.p) == DSC::USED ||
             DSC::type(m_ptr.p) == DSC::START_END)
+        {
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+          ts = Time_stamper_impl::time_stamp(m_ptr.p);
+#endif
           return;
-
+        }
         if (DSC::type(m_ptr.p) == DSC::BLOCK_BOUNDARY)
           m_ptr.p = DSC::clean_pointee(m_ptr.p);
       } while (true);
@@ -1103,7 +1147,12 @@ namespace internal {
         --m_ptr.p;
         if (DSC::type(m_ptr.p) == DSC::USED ||
             DSC::type(m_ptr.p) == DSC::START_END)
+        {
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+          ts = Time_stamper_impl::time_stamp(m_ptr.p);
+#endif
           return;
+        }
 
         if (DSC::type(m_ptr.p) == DSC::BLOCK_BOUNDARY)
           m_ptr.p = DSC::clean_pointee(m_ptr.p);
@@ -1136,6 +1185,13 @@ namespace internal {
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+    bool is_time_stamp_valid() const
+    {
+      return (ts == 0) || (ts == Time_stamper_impl::time_stamp(m_ptr.p));
+    }
+#endif // CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+
     reference operator*() const { return *(m_ptr.p); }
 
     pointer   operator->() const { return (m_ptr.p); }
@@ -1143,22 +1199,34 @@ namespace internal {
     // For std::less...
     bool operator<(const CC_iterator& other) const
     {
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      assert( is_time_stamp_valid() );
+#endif
       return Time_stamper_impl::less(m_ptr.p, other.m_ptr.p);
     }
 
     bool operator>(const CC_iterator& other) const
     {
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      assert( is_time_stamp_valid() );
+#endif
       return Time_stamper_impl::less(other.m_ptr.p, m_ptr.p);
     }
 
     bool operator<=(const CC_iterator& other) const
     {
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      assert( is_time_stamp_valid() );
+#endif
       return Time_stamper_impl::less(m_ptr.p, other.m_ptr.p)
           || (*this == other);
     }
 
     bool operator>=(const CC_iterator& other) const
     {
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      assert( is_time_stamp_valid() );
+#endif
       return Time_stamper_impl::less(other.m_ptr.p, m_ptr.p)
           || (*this == other);
     }
@@ -1216,16 +1284,11 @@ namespace internal {
 
 namespace std {
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4099) // For VC10 it is class hash 
-#endif
-
 #ifndef CGAL_CFG_NO_STD_HASH
-  
+
   template < class DSC, bool Const >
   struct hash<CGAL::internal::CC_iterator<DSC, Const> >
-    : public std::unary_function<CGAL::internal::CC_iterator<DSC, Const>, std::size_t> {
+    : public CGAL::unary_function<CGAL::internal::CC_iterator<DSC, Const>, std::size_t> {
 
     std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i) const
     {
@@ -1234,10 +1297,9 @@ namespace std {
   };
 #endif // CGAL_CFG_NO_STD_HASH
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
 
 } // namespace std
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_COMPACT_CONTAINER_H

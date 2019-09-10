@@ -32,10 +32,10 @@ degenerate hull may also be possible.
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.1}
-\cgalPkgDependsOn{All algorithms produce as output a \ref PkgPolyhedronSummary "Polyhedron". The dynamic algorithms depend on \ref PkgTriangulation3Summary "3D Triangulations".} 
+\cgalPkgDependsOn{The dynamic algorithms depend on \ref PkgTriangulation3Summary "3D Triangulations".}
 \cgalPkgBib{cgal:hs-ch3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{See Polyhedral Surface,polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -64,10 +64,6 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 
 ## Concepts ##
 
-- `ConvexHullPolyhedron_3`
-- `ConvexHullPolyhedronFacet_3`
-- `ConvexHullPolyhedronHalfedge_3`
-- `ConvexHullPolyhedronVertex_3`
 - `ConvexHullTraits_3`
 - `IsStronglyConvexTraits_3`
 
@@ -78,7 +74,6 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 ## Convex Hull Functions ##
 
 - `CGAL::convex_hull_3`
-- `CGAL::convex_hull_3_to_polyhedron_3`
 
 ## Convexity Checking Function ##
 

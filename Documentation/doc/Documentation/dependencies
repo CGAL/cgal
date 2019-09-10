@@ -25,6 +25,7 @@ GraphicsView
 HalfedgeDS
 BGL
 Combinatorial_map
+Generalized_map
 Linear_cell_complex
 Interval_skip_list
 Nef_2
@@ -56,7 +57,7 @@ Principal_component_analysis
 STL_Extension
 Skin_surface_3
 Snap_rounding_2
-Sweep_line_2
+Surface_sweep_2
 Arrangement_on_surface_2
 Boolean_set_operations_2
 TDS_2
@@ -66,12 +67,11 @@ Three
 Triangulation_3
 Triangulation
 Ridges_3
+Point_set_3
 Point_set_processing_3
 Point_set_shape_detection_3
 Polyline_simplification_2
 Property_map
-Kinetic_framework
-Kinetic_data_structures
 Periodic_2_triangulation_2
 Periodic_3_triangulation_3
 Scale_space_reconstruction_3
@@ -95,6 +95,5 @@ Barycentric_coordinates_2
 Surface_mesh
 Surface_mesh_shortest_path
 Polygon_mesh_processing
-
-
-
+Set_movable_separability_2
+Classification

@@ -22,11 +22,6 @@ typedef K::Vector_3 Vector_3;
 // Point with normal vector stored in a std::pair.
 typedef std::pair<Point_3, Vector_3> PointVectorPair; 
 
-// Data type = index, followed by the point, followed by a boolean
-// that tells us whether the normal is oriented or not, followed by the normal vector.
-typedef boost::tuple<int, Point_3, bool, Vector_3> IndexedPointWithOrientableNormalTuple;
-
-
 
 // This is an implementation detail of the process_point_set function.
 // We need this function because in process_point_set() we use std::sort.
@@ -128,6 +123,9 @@ int main()
   // As the point is the second element of the tuple (that is with index 1)
   // we use a property map that accesses the 1st element of the tuple.
   {
+    // Data type = index, followed by the point, followed by a boolean
+    // that tells us whether the normal is oriented or not, followed by the normal vector.
+    typedef boost::tuple<int, Point_3, bool, Vector_3> IndexedPointWithOrientableNormalTuple;
     std::vector<IndexedPointWithOrientableNormalTuple> points;
 
     for(int i = 0; i < 10; i++){
@@ -156,5 +154,27 @@ int main()
       std::cout << points[i]  << std::endl;
     }     
   }
+
+  #ifndef CGAL_CFG_NO_CPP0X_TUPLE
+  // same test with std::tuple
+  {
+    typedef std::tuple<int, Point_3, bool, Vector_3> IndexedPointWithOrientableNormalTuple;
+    std::vector<IndexedPointWithOrientableNormalTuple> points;
+
+    for(int i = 0; i < 10; i++){
+      double x = (i%2)?i:-i;
+      points.push_back(std::make_tuple(i,Point_3(9-i,0,0), false, Vector_3(x,0,0)));
+    }
+
+    process_point_set(points.begin(),
+                      points.end(),
+                      CGAL::Nth_of_tuple_property_map<1,IndexedPointWithOrientableNormalTuple>());
+
+    orient_normals(points.begin(),
+                   points.end(),
+                   CGAL::make_nth_of_tuple_property_map<2>(IndexedPointWithOrientableNormalTuple()),
+                   CGAL::make_nth_of_tuple_property_map<3>(IndexedPointWithOrientableNormalTuple()));
+  }
+  #endif
   return 0;
 }

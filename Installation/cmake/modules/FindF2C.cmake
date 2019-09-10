@@ -15,7 +15,7 @@ else(F2C_LIBRARIES)
 
   # F2C shipped with CGAL (as part of TAUCS)?
   # If found, we will search for f2c library in ${CGAL_TAUCS_LIBRARIES_DIR}.
-  include(CGAL_Locate_CGAL_TAUCS)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Locate_CGAL_TAUCS.cmake)
 
   find_library(F2C_LIBRARIES NAMES f2c g2c vcf2c
                PATHS ${CGAL_TAUCS_LIBRARIES_DIR}

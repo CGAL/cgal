@@ -1,481 +1,485 @@
-// extensive_parameterization_test.cpp
+#define CGAL_CHECK_EXPENSIVE
 
+#include <CGAL/Simple_cartesian.h>
 
-// ----------------------------------------------------------------------------
-// USAGE EXAMPLES
-// ----------------------------------------------------------------------------
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/Seam_mesh.h>
 
-//----------------------------------------------------------
-// Test all parameterization methods and all solvers
-// No output
-// Input files are .off
-//----------------------------------------------------------
-// extensive_parameterization_test mesh1.off mesh2.off...
+#include <CGAL/Surface_mesh_parameterization/Error_code.h>
+#include <CGAL/surface_mesh_parameterization.h>
 
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
-// CGAL
-#include <CGAL/basic.h> // include basic.h before testing #defines
-#include <CGAL/Cartesian.h>
-#include <CGAL/Timer.h>
+#include <boost/foreach.hpp>
+#include <boost/functional/hash.hpp>
 
-// This package
-#include <CGAL/parameterize.h>
-#include <CGAL/Parameterization_mesh_patch_3.h>
-#include <CGAL/Circular_border_parameterizer_3.h>
-#include <CGAL/Square_border_parameterizer_3.h>
-#include <CGAL/Two_vertices_parameterizer_3.h>
-#include <CGAL/Barycentric_mapping_parameterizer_3.h>
-#include <CGAL/Discrete_conformal_map_parameterizer_3.h>
-#include <CGAL/Discrete_authalic_parameterizer_3.h>
-#include <CGAL/Mean_value_coordinates_parameterizer_3.h>
-#include <CGAL/LSCM_parameterizer_3.h>
-#include <CGAL/Parameterization_mesh_feature_extractor.h>
-#include <CGAL/OpenNL/linear_solver.h>
-#ifdef CGAL_EIGEN3_ENABLED
-    #include <CGAL/Eigen_solver_traits.h>
+#include <iostream>
+#include <fstream>
+
+namespace SMP = CGAL::Surface_mesh_parameterization;
+
+typedef CGAL::Simple_cartesian<double>            Kernel;
+typedef Kernel::Point_2                           Point_2;
+typedef Kernel::Point_3                           Point_3;
+
+#define MVC_POLYHEDRON_MESH
+#define ARAP_POLYHEDRON_MESH
+#define BARY_SURF_MESH
+#define ARAP_SURF_MESH
+#define DCM_PM_SEAM_MESH
+#define DAC_SM_SEAM_MESH
+#define ORBIFOLD_SM_MESH
+
+// POLYHEDRON_MESH
+typedef CGAL::Polyhedron_3<Kernel>                                PMesh;
+
+typedef boost::graph_traits<PMesh>::vertex_descriptor             PM_vertex_descriptor;
+typedef boost::graph_traits<PMesh>::halfedge_descriptor           PM_halfedge_descriptor;
+
+typedef CGAL::Unique_hash_map<PM_halfedge_descriptor, Point_2>    PM_UV_hmap;
+typedef boost::associative_property_map<PM_UV_hmap>               PM_UV_pmap;
+
+// SURF_MESH
+typedef CGAL::Surface_mesh<Point_3>                               SMesh;
+
+typedef boost::graph_traits<SMesh>::vertex_descriptor             SM_vertex_descriptor;
+typedef boost::graph_traits<SMesh>::halfedge_descriptor           SM_halfedge_descriptor;
+
+typedef SMesh::Property_map<SM_halfedge_descriptor, Point_2>      SM_UV_pmap;
+
+// PM_SEAM_MESH
+typedef boost::graph_traits<PMesh>::edge_descriptor               PM_edge_descriptor;
+
+typedef CGAL::Unique_hash_map<PM_edge_descriptor, bool>           PM_seam_edge_hmap;
+typedef boost::associative_property_map<PM_seam_edge_hmap>        PM_seam_edge_pmap;
+typedef CGAL::Unique_hash_map<PM_vertex_descriptor, bool>         PM_seam_vertex_hmap;
+typedef boost::associative_property_map<PM_seam_vertex_hmap>      PM_seam_vertex_pmap;
+
+typedef CGAL::Seam_mesh<PMesh, PM_seam_edge_pmap, PM_seam_vertex_pmap>
+                                                                  PM_Seam_mesh;
+
+typedef boost::graph_traits<PM_Seam_mesh>::vertex_descriptor      PM_SE_vertex_descriptor;
+typedef boost::graph_traits<PM_Seam_mesh>::halfedge_descriptor    PM_SE_halfedge_descriptor;
+
+// SM_SEAM_MESH
+typedef boost::graph_traits<SMesh>::edge_descriptor               SM_edge_descriptor;
+
+typedef SMesh::Property_map<SM_edge_descriptor, bool>             SM_seam_edge_pmap;
+typedef SMesh::Property_map<SM_vertex_descriptor, bool>           SM_seam_vertex_pmap;
+
+typedef CGAL::Seam_mesh<SMesh, SM_seam_edge_pmap, SM_seam_vertex_pmap>
+                                                                  SM_Seam_mesh;
+
+typedef boost::graph_traits<SM_Seam_mesh>::vertex_descriptor      SM_SE_vertex_descriptor;
+typedef boost::graph_traits<SM_Seam_mesh>::halfedge_descriptor    SM_SE_halfedge_descriptor;
+
+int main(int, char**)
+{
+  std::cout.precision(17);
+  CGAL::set_pretty_mode(std::cout);
+
+  // ***************************************************************************
+  // Default case
+  // ***************************************************************************
+
+#ifdef MVC_POLYHEDRON_MESH
+  {
+    std::cout << " ----------- MVC POLYHEDRON -----------" << std::endl;
+
+    std::ifstream in("data/mushroom.off");
+    PMesh pm;
+    in >> pm;
+    if(!in || num_vertices(pm) == 0) {
+      std::cerr << "Problem loading the input data" << std::endl;
+      return 1;
+    }
+
+    PM_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(pm).first;
+
+    CGAL::Unique_hash_map<PM_vertex_descriptor, Point_2,
+                          boost::hash<PM_vertex_descriptor> > uvhm;
+    boost::associative_property_map<
+      CGAL::Unique_hash_map<PM_vertex_descriptor, Point_2,
+                            boost::hash<PM_vertex_descriptor> > > uvpm(uvhm);
+
+    // Go to default (MVC)
+    SMP::Error_code status = SMP::parameterize(pm, hd, uvpm);
+
+    if(status != SMP::OK) {
+      std::cout << "Encountered a problem: " << status << std::endl;
+      return 1;
+    }
+    else {
+      std::cout << "Parameterized with MVC (POLY)!" << std::endl;
+    }
+  }
 #endif
 
-// This test
-#include "Polyhedron_ex.h"
-#include "Mesh_cutter.h"
-#include "Parameterization_polyhedron_adaptor_ex.h"
+  // ***************************************************************************
+  // ARAP WITH POLYHEDRON_MESH
+  // ***************************************************************************
 
-// STL stuff
-#include <iostream>
-#include <cstdlib>
-#include <fstream>
-#include <cassert>
+#ifdef ARAP_POLYHEDRON_MESH
+  {
+    std::cout << " ----------- ARAP POLYHEDRON -----------" << std::endl;
 
-
-// ----------------------------------------------------------------------------
-// Private types
-// ----------------------------------------------------------------------------
-
-// Mesh true type and Surface_mesh_parameterization adaptors
-typedef Polyhedron_ex                                       Polyhedron;
-typedef Parameterization_polyhedron_adaptor_ex              Parameterization_polyhedron_adaptor;
-typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor>
-                                                            Mesh_patch_polyhedron;
-
-// Parameterizer for this kind of mesh
-typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron> Parameterizer;
-
-// Type describing a border or seam as a vertex list
-typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
-                                                            Seam;
-
-
-// ----------------------------------------------------------------------------
-// Private functions
-// ----------------------------------------------------------------------------
-
-// Cut the mesh to make it homeomorphic to a disk
-// or extract a region homeomorphic to a disc.
-// Return the border of this region (empty on error)
-//
-// CAUTION:
-// This method is provided "as is". It is very buggy and simply part of this example.
-// Developers using this package should implement a more robust cut algorithm!
-static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
-{
-    // Helper class to compute genus or extract borders
-    typedef CGAL::Parameterization_mesh_feature_extractor<Parameterization_polyhedron_adaptor_ex>
-                                            Mesh_feature_extractor;
-    typedef Mesh_cutter::Backbone           Backbone;
-
-    Seam seam;              // returned list
-
-    // Get refererence to Polyhedron_3 mesh
-    Polyhedron& mesh = mesh_adaptor.get_adapted_mesh();
-
-    // Extract mesh borders and compute genus
-    Mesh_feature_extractor feature_extractor(mesh_adaptor);
-    int nb_borders = feature_extractor.get_nb_borders();
-    int genus = feature_extractor.get_genus();
-
-    // If mesh is a topological disk
-    if (genus == 0 && nb_borders > 0)
-    {
-        // Pick the longest border
-        seam = feature_extractor.get_longest_border();
-    }
-    else // if mesh is *not* a topological disk, create a virtual cut
-    {
-        Backbone seamingBackbone;           // result of cutting
-        Backbone::iterator he;
-
-        // Compute a cutting path that makes the mesh a "virtual" topological disk
-        mesh.compute_facet_centers();
-        Mesh_cutter cutter(mesh);
-        if (genus == 0)
-        {
-            // no border, we need to cut the mesh
-            assert(nb_borders == 0);
-            cutter.cut(seamingBackbone);   // simple cut
-        }
-        else // genus > 0 -> cut the mesh
-        {
-            cutter.cut_genus(seamingBackbone);
-        }
-
-        // The Mesh_cutter class is quite buggy
-        // => we check that seamingBackbone is valid
-        //
-        // 1) Check that seamingBackbone is not empty
-        if (seamingBackbone.begin() == seamingBackbone.end())
-            return seam;                    // return empty list
-        //
-        // 2) Check that seamingBackbone is a loop and
-        //    count occurences of seam halfedges
-        mesh.tag_halfedges(0);              // Reset counters
-        for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
-        {
-            // Get next halfedge iterator (looping)
-            Backbone::iterator next_he = he;
-            next_he++;
-            if (next_he == seamingBackbone.end())
-                next_he = seamingBackbone.begin();
-
-            // Check that seamingBackbone is a loop: check that
-            // end of current HE == start of next one
-            if ((*he)->vertex() != (*next_he)->opposite()->vertex())
-                return seam;                // return empty list
-
-            // Increment counter (in "tag" field) of seam halfedges
-            (*he)->tag( (*he)->tag()+1 );
-        }
-        //
-        // 3) check that the seamingBackbone is a 2-way list
-        for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
-        {
-            // Counter of halfedge and opposite halfedge must be 1
-            if ((*he)->tag() != 1 || (*he)->opposite()->tag() != 1)
-                return seam;                // return empty list
-        }
-
-        // Convert list of halfedges to a list of vertices
-        for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
-            seam.push_back((*he)->vertex());
+    std::ifstream in("data/three_peaks.off");
+    PMesh pm;
+    in >> pm;
+    if(!in || num_vertices(pm) == 0) {
+      std::cerr << "Problem loading the input data" << std::endl;
+      return 1;
     }
 
-    return seam;
+    PM_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(pm).first;
+
+    // UV map
+    CGAL::Unique_hash_map<PM_vertex_descriptor, Point_2,
+                          boost::hash<PM_vertex_descriptor> > uvhm;
+    boost::associative_property_map<
+      CGAL::Unique_hash_map<PM_vertex_descriptor, Point_2,
+                            boost::hash<PM_vertex_descriptor> > > uvpm(uvhm);
+
+    // Indices map
+    typedef boost::unordered_map<PM_vertex_descriptor, int> Indices;
+    Indices indices;
+    CGAL::Polygon_mesh_processing::connected_component(
+      face(opposite(hd, pm), pm),
+      pm,
+      boost::make_function_output_iterator(
+                 SMP::internal::Index_map_filler<PMesh, Indices>(pm, indices)));
+
+    boost::associative_property_map<Indices> vipm(indices);
+
+    // Vertex parameterized map
+    boost::unordered_set<PM_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map<boost::unordered_set<PM_vertex_descriptor> > vpm(vs);
+
+    // Parameterizer
+    SMP::ARAP_parameterizer_3<PMesh> parameterizer;
+    SMP::Error_code status = parameterizer.parameterize(pm, hd, uvpm, vipm, vpm);
+
+    if(status != SMP::OK) {
+      std::cout << "Encountered a problem: " << status << std::endl;
+      return 1;
+    }
+    else {
+      std::cout << "Parameterized with ARAP (POLY)!" << std::endl;
+    }
+  }
+#endif
+
+  // ***************************************************************************
+  // Barycentric mapping
+  // ***************************************************************************
+
+#ifdef BARY_SURF_MESH
+  {
+    std::cout << " ----------- BARY SURFACE MESH ----------- " << std::endl;
+
+    std::ifstream in("data/oni.off");
+    SMesh sm;
+    in >> sm;
+    if(!in || num_vertices(sm) == 0) {
+      std::cerr << "Problem loading the input data" << std::endl;
+      return 1;
+    }
+
+    SM_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(sm).first;
+    assert(hd != SM_halfedge_descriptor());
+
+    // UV map
+    typedef SMesh::Property_map<SM_vertex_descriptor, Point_2>  UV_pmap;
+    UV_pmap uvpm = sm.add_property_map<SM_vertex_descriptor, Point_2>("h:uv").first;
+
+    // Indices map
+    typedef boost::unordered_map<SM_vertex_descriptor, int> Indices;
+    Indices indices;
+    CGAL::Polygon_mesh_processing::connected_component(
+      face(opposite(hd, sm), sm),
+      sm,
+      boost::make_function_output_iterator(
+                SMP::internal::Index_map_filler<SMesh, Indices>(sm, indices)));
+    boost::associative_property_map<Indices> vipm(indices);
+
+    // Vertex parameterized map
+    boost::unordered_set<SM_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map<boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
+
+    // Parameterizer
+    SMP::Barycentric_mapping_parameterizer_3<SMesh> parameterizer;
+
+    SMP::Error_code status = parameterizer.parameterize(sm, hd, uvpm, vipm, vpm);
+
+    if(status != SMP::OK) {
+      std::cout << "Encountered a problem: " << status << std::endl;
+      return 1;
+    }
+    else {
+      std::cout << "Parameterized with Barycentric (SM)!" << std::endl;
+    }
+  }
+#endif
+
+  // ***************************************************************************
+  // ARAP WITH SURF_MESH
+  // ***************************************************************************
+
+#ifdef ARAP_SURF_MESH
+  {
+    std::cout << " ----------- ARAP SURFACE MESH -----------" << std::endl;
+
+    std::ifstream in("data/nefertiti.off");
+    SMesh sm;
+    in >> sm;
+    if(!in || num_vertices(sm) == 0) {
+      std::cerr << "Problem loading the input data" << std::endl;
+      return 1;
+    }
+
+    // halfedge on the longest border
+    SM_halfedge_descriptor hd =
+                        CGAL::Polygon_mesh_processing::longest_border(sm).first;
+
+    CGAL::Unique_hash_map<SM_vertex_descriptor, Point_2,
+                          boost::hash<SM_vertex_descriptor> > uvhm;
+    boost::associative_property_map<
+      CGAL::Unique_hash_map<SM_vertex_descriptor,
+                            Point_2,
+                            boost::hash<SM_vertex_descriptor> > > uv_pm(uvhm);
+
+    // Indices map
+    typedef boost::unordered_map<SM_vertex_descriptor, int> Indices;
+    Indices indices;
+    CGAL::Polygon_mesh_processing::connected_component(
+      face(opposite(hd, sm), sm),
+      sm,
+      boost::make_function_output_iterator(
+                SMP::internal::Index_map_filler<SMesh, Indices>(sm, indices)));
+    boost::associative_property_map<Indices> vipm(indices);
+
+    // Parameterized bool pmap
+    boost::unordered_set<SM_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map< boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
+
+    // Parameterizer
+    SMP::ARAP_parameterizer_3<SMesh> parameterizer;
+
+    SMP::Error_code status = parameterizer.parameterize(sm, hd, uv_pm, vipm, vpm);
+    if(status != SMP::OK) {
+      std::cout << "Encountered a problem: " << status << std::endl;
+      return 1;
+    }
+    else {
+      std::cout << "Parameterized with ARAP (SM)!" << std::endl;
+    }
+  }
+#endif
+
+#ifdef DCM_PM_SEAM_MESH
+  {
+    std::cout << " ----------- DCM POLYHEDRON SEAM MESH -----------" << std::endl;
+
+    std::ifstream in("data/fandisk.off");
+    PMesh pm;
+    in >> pm;
+    if(!in || num_vertices(pm) == 0) {
+      std::cerr << "Problem loading the input data" << std::endl;
+      return 1;
+    }
+    const char* selection = "data/fandisk.dcm.selection.txt";
+
+    PM_seam_edge_hmap seam_edge_hm(false);
+    PM_seam_edge_pmap seam_edge_pm(seam_edge_hm);
+    PM_seam_vertex_hmap seam_vertex_hm(false);
+    PM_seam_vertex_pmap seam_vertex_pm(seam_vertex_hm);
+
+    PM_Seam_mesh mesh(pm, seam_edge_pm, seam_vertex_pm);
+    PM_halfedge_descriptor pmhd = mesh.add_seams(selection);
+    if(pmhd == PM_halfedge_descriptor() ) {
+      std::cerr << "Warning: No seams in input" << std::endl;
+    }
+
+    // The 2D points of the uv parametrisation will be written into this map
+    // Note that this is a halfedge property map, and that the uv
+    // is only stored for the canonical halfedges representing a vertex
+    PM_UV_hmap uv_hm;
+    PM_UV_pmap uv_pm(uv_hm);
+
+    // a halfedge on the (possibly virtual) border
+    PM_SE_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(mesh).first;
+
+    // Indices
+    typedef boost::unordered_map<PM_SE_vertex_descriptor, int> Indices;
+    Indices indices;
+    CGAL::Polygon_mesh_processing::connected_component(
+      face(opposite(hd, mesh), mesh),
+      mesh,
+      boost::make_function_output_iterator(
+        SMP::internal::Index_map_filler<PM_Seam_mesh, Indices>(mesh, indices)));
+    boost::associative_property_map<Indices> vipm(indices);
+
+    // Parameterized
+    boost::unordered_set<PM_SE_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map<boost::unordered_set<PM_SE_vertex_descriptor> > vpm(vs);
+
+    SMP::Discrete_conformal_map_parameterizer_3<PM_Seam_mesh> parameterizer;
+
+    SMP::Error_code status = parameterizer.parameterize(mesh, hd, uv_pm, vipm, vpm);
+
+    if(status != SMP::OK) {
+      std::cout << "Encountered a problem: " << status << std::endl;
+      return 1;
+    }
+    else {
+      std::cout << "Parameterized with DCM (SEAM POLY)!" << std::endl;
+    }
+  }
+#endif
+
+  // ***************************************************************************
+  // DAC WITH SEAM_MESH (SM)
+  // ***************************************************************************
+
+#ifdef DAC_SM_SEAM_MESH
+  {
+    std::cout << " ----------- DAC SURFACE MESH SEAM MESH -----------" << std::endl;
+
+    std::ifstream in("data/bear.off");
+    SMesh sm;
+    in >> sm;
+    if(!in || num_vertices(sm) == 0) {
+      std::cerr << "Problem loading the input data" << std::endl;
+      return 1;
+    }
+
+    const char* selection = "data/bear.dac.selection.txt";
+
+    SM_seam_edge_pmap seam_edge_pm =
+        sm.add_property_map<SM_edge_descriptor,bool>("e:on_seam", false).first;
+    SM_seam_vertex_pmap seam_vertex_pm =
+        sm.add_property_map<SM_vertex_descriptor,bool>("v:on_seam", false).first;
+
+    SM_Seam_mesh mesh(sm, seam_edge_pm, seam_vertex_pm);
+    SM_halfedge_descriptor smhd = mesh.add_seams(selection);
+    if(smhd == SM_halfedge_descriptor() ) {
+      std::cerr << "Warning: No seams in input" << std::endl;
+    }
+
+    // The 2D points of the uv parametrisation will be written into this map
+    // Note that this is a halfedge property map, and that the uv
+    // is only stored for the canonical halfedges representing a vertex
+    SM_UV_pmap uv_pm = sm.add_property_map<SM_halfedge_descriptor,
+                                           Point_2>("h:uv").first;
+
+    // a halfedge on the (possibly virtual) border
+    SM_SE_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(mesh).first;
+
+    // Indices
+    typedef boost::unordered_map<SM_SE_vertex_descriptor, int> Indices;
+    Indices indices;
+    CGAL::Polygon_mesh_processing::connected_component(
+        face(opposite(hd, mesh), mesh),
+        mesh,
+        boost::make_function_output_iterator(
+        SMP::internal::Index_map_filler<SM_Seam_mesh, Indices>(mesh, indices)));
+    boost::associative_property_map<Indices> vipm(indices);
+
+    // Parameterized
+    boost::unordered_set<SM_SE_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map<boost::unordered_set<SM_SE_vertex_descriptor> > vpm(vs);
+
+    SMP::Discrete_authalic_parameterizer_3<SM_Seam_mesh> parameterizer;
+
+    SMP::Error_code status = parameterizer.parameterize(mesh, hd, uv_pm, vipm, vpm);
+    if(status != SMP::OK) {
+      std::cout << "Encountered a problem: " << status << std::endl;
+      return 1;
+    }
+    else {
+      std::cout << "Parameterized with DAC (SEAM SM)!" << std::endl;
+    }
+  }
+#endif
+
+#ifdef ORBIFOLD_SM_MESH
+  {
+    std::cout << " ----------- ORBIFOLD SURFACE MESH -----------" << std::endl;
+
+    SMesh sm; // underlying mesh of the seam mesh
+
+    std::ifstream in("data/fandisk.off");
+    in >> sm;
+    if(!in || num_vertices(sm) == 0) {
+      std::cerr << "Problem loading the input data" << std::endl;
+      return 1;
+    }
+
+    const char* cone_filename = "data/fandisk.orbifold.selection.txt";
+
+    // Read the cones and find the corresponding vertex_descriptor in the underlying mesh 'sm'
+    std::vector<SM_vertex_descriptor> cone_sm_vds;
+    SMP::read_cones<SMesh>(sm, cone_filename, std::back_inserter(cone_sm_vds));
+
+    // Two property maps to store the seam edges and vertices
+    SM_seam_edge_pmap seam_edge_pm = sm.add_property_map<SM_edge_descriptor, bool>("e:on_seam", false).first;
+    SM_seam_vertex_pmap seam_vertex_pm = sm.add_property_map<SM_vertex_descriptor, bool>("v:on_seam",false).first;
+
+    // The seam mesh
+    SM_Seam_mesh mesh(sm, seam_edge_pm, seam_vertex_pm);
+
+    // Use the path provided between cones to create a seam mesh
+    SM_halfedge_descriptor smhd = mesh.add_seams(cone_filename);
+    if(smhd == SM_halfedge_descriptor() ) {
+      std::list<SM_edge_descriptor> seam_edges;
+      SMP::compute_shortest_paths_between_cones(sm, cone_sm_vds.begin(), cone_sm_vds.end(), seam_edges);
+
+      // Add the seams to the seam mesh
+      BOOST_FOREACH(SM_edge_descriptor e, seam_edges) {
+        mesh.add_seam(source(e, sm), target(e, sm));
+      }
+    }
+
+    // Index map of the seam mesh (assuming a single connected component so far)
+    typedef boost::unordered_map<SM_SE_vertex_descriptor, int> Indices;
+    Indices indices;
+    boost::associative_property_map<Indices> vimap(indices);
+    int counter = 0;
+    BOOST_FOREACH(SM_SE_vertex_descriptor vd, vertices(mesh)) {
+      put(vimap, vd, counter++);
+    }
+
+    // Mark the cones in the seam mesh
+    boost::unordered_map<SM_SE_vertex_descriptor, SMP::Cone_type> cmap;
+    SMP::locate_cones(mesh, cone_sm_vds.begin(), cone_sm_vds.end(), cmap);
+
+    // The 2D points of the uv parametrisation will be written into this map
+    // Note that this is a halfedge property map, and that uv values
+    // are only stored for the canonical halfedges representing a vertex
+    SM_UV_pmap uvmap = sm.add_property_map<SM_halfedge_descriptor, Point_2>("h:uv").first;
+
+    // Parameterizer
+    typedef SMP::Orbifold_Tutte_parameterizer_3<SM_Seam_mesh>         Parameterizer;
+    Parameterizer parameterizer(SMP::Parallelogram, SMP::Cotangent);
+
+    // a halfedge on the (possibly virtual) border
+    // only used in output (will also be used to handle multiple connected components in the future)
+    SM_SE_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(mesh,
+                  CGAL::Polygon_mesh_processing::parameters::all_default()).first;
+
+    SMP::Error_code status = parameterizer.parameterize(mesh, hd, cmap, uvmap, vimap);
+    if(status != SMP::OK) {
+      std::cout << "Encountered a problem: " << status << std::endl;
+      return 1;
+    }
+    else {
+      std::cout << "Parameterized with Orbifold (SEAM SM)!" << std::endl;
+    }
+  }
+#endif
+
+  std::cout << "Done!" << std::endl;
+
+  return 0;
 }
-
-
-// ----------------------------------------------------------------------------
-// main()
-// ----------------------------------------------------------------------------
-
-int main(int argc, char * argv[])
-{
-    std::cerr << "PARAMETERIZATION" << std::endl;
-    std::cerr << "Test all parameterization methods and all solvers" << std::endl;
-    std::cerr << "No output" << std::endl;
-
-    //***************************************
-    // decode parameters
-    //***************************************
-
-    if (argc-1 == 0)
-    {
-        std::cerr << "Usage: " << argv[0] << " input_file1.off input_file2.obj ..." << std::endl;
-        return(EXIT_FAILURE);
-    }
-
-    // Accumulated errors
-    int accumulated_fatal_err = EXIT_SUCCESS;
-
-    // Parameterize each input file and accumulate errors
-    for (int arg_index = 1; arg_index <= argc-1; arg_index++)
-    {
-        std::cerr << std::endl << std::endl;
-
-        // File name is:
-        const char* input_filename  = argv[arg_index];
-
-        //***************************************
-        // Read the mesh
-        //***************************************
-
-        CGAL::Timer task_timer;
-        task_timer.start();
-
-        // Read the mesh
-        std::ifstream stream(input_filename);
-        Polyhedron mesh;
-        stream >> mesh;
-        if(!stream || !mesh.is_valid() || mesh.empty())
-        {
-            std::cerr << "Error: cannot read OFF file " << input_filename << std::endl;
-            accumulated_fatal_err = EXIT_FAILURE;
-            continue;
-        }
-        std::cerr << "Read file " << input_filename << ": "
-                  << task_timer.time() << " seconds "
-                  << "(" << mesh.size_of_facets() << " facets, "
-                  << mesh.size_of_vertices() << " vertices)" << std::endl;
-        task_timer.reset();
-
-        //***************************************
-        // Create mesh adaptor
-        //***************************************
-
-        // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_ex meshes
-        Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
-
-        // The parameterization methods support only meshes that
-        // are topological disks => we need to compute a cutting path
-        // that makes the mesh a "virtual" topological disk
-        //
-        // 1) Cut the mesh
-        Seam seam = cut_mesh(mesh_adaptor);
-        if (seam.empty())
-        {
-            std::cerr << "Input mesh not supported: the example cutting algorithm is too simple to cut this shape" << std::endl;
-            // this is not a bug => do not set accumulated_fatal_err
-            continue;
-        }
-        //
-        // 2) Create adaptor that virtually "cuts" a patch in a Polyhedron_ex mesh
-        Mesh_patch_polyhedron   mesh_patch(mesh_adaptor, seam.begin(), seam.end());
-        if (!mesh_patch.is_valid())
-        {
-            std::cerr << "Input mesh not supported: non manifold shape or invalid cutting" << std::endl;
-            // this is not a bug => do not set accumulated_fatal_err
-            continue;
-        }
-
-        std::cerr << "Mesh cutting: " << task_timer.time() << " seconds." << std::endl << std::endl;
-        task_timer.reset();
-
-        //***************************************
-        // Tutte Barycentric Mapping parameterization
-        // with square uniform border parameterization
-        // OpenNL solver
-        //***************************************
-
-        Parameterizer::Error_code err;
-
-        std::cerr << "Tutte Barycentric Mapping parameterization" << std::endl;
-        std::cerr << "with square uniform border parameterization" << std::endl;
-        std::cerr << "OpenNL solver" << std::endl;
-
-        err = CGAL::parameterize(
-            mesh_patch,
-            CGAL::Barycentric_mapping_parameterizer_3<
-                Mesh_patch_polyhedron,
-                CGAL::Square_border_uniform_parameterizer_3<Mesh_patch_polyhedron>,
-                OpenNL::DefaultLinearSolverTraits<double>
-            >());
-        switch(err) {
-        case Parameterizer::OK: // Success
-            break;
-        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:
-            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
-            // this is not a bug => do not set accumulated_fatal_err
-            break;
-        default: // Error
-            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
-            accumulated_fatal_err = EXIT_FAILURE;
-            break;
-        };
-
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
-        task_timer.reset();
-
-        //***************************************
-        // Floater Mean Value Coordinates parameterization
-        // with circular arc length border parameterization
-        // OpenNL solver
-        //***************************************
-
-        std::cerr << "Floater Mean Value Coordinates parameterization" << std::endl;
-        std::cerr << "with circular arc length border parameterization" << std::endl;
-        std::cerr << "OpenNL solver" << std::endl;
-
-        err = CGAL::parameterize(
-            mesh_patch,
-            CGAL::Mean_value_coordinates_parameterizer_3<
-                Mesh_patch_polyhedron,
-                CGAL::Circular_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
-                OpenNL::DefaultLinearSolverTraits<double>
-            >());
-        switch(err) {
-        case Parameterizer::OK: // Success
-            break;
-        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:
-            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
-            // this is not a bug => do not set accumulated_fatal_err
-            break;
-        default: // Error
-            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
-            accumulated_fatal_err = EXIT_FAILURE;
-            break;
-        };
-
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
-        task_timer.reset();
-
-        //***************************************
-        // Least Squares Conformal Maps parameterization
-        // OpenNL solver
-        //***************************************
-
-        std::cerr << "Least Squares Conformal Maps parameterization" << std::endl;
-        std::cerr << "OpenNL solver" << std::endl;
-
-        err = CGAL::parameterize(
-            mesh_patch,
-            CGAL::LSCM_parameterizer_3<
-                Mesh_patch_polyhedron,
-                CGAL::Two_vertices_parameterizer_3<Mesh_patch_polyhedron>,
-                OpenNL::SymmetricLinearSolverTraits<double>
-            >());
-        switch(err) {
-        case Parameterizer::OK: // Success
-            break;
-        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:
-            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
-            // this is not a bug => do not set accumulated_fatal_err
-            break;
-        default: // Error
-            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
-            accumulated_fatal_err = EXIT_FAILURE;
-            break;
-        };
-
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
-        task_timer.reset();
-
-#ifdef CGAL_EIGEN3_ENABLED
-
-        //***************************************
-        // Discrete Conformal Map parameterization
-        // with circular arc length border parameterization
-        // Eigen solver (if installed)
-        //***************************************
-
-        std::cerr << "Discrete Conformal Map parameterization" << std::endl;
-        std::cerr << "with circular arc length border parameterization" << std::endl;
-        std::cerr << "Eigen solver" << std::endl;
-
-        err = CGAL::parameterize(
-            mesh_patch,
-            CGAL::Discrete_conformal_map_parameterizer_3<
-                Mesh_patch_polyhedron,
-                CGAL::Circular_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
-                CGAL::Eigen_solver_traits<>
-            >());
-        switch(err) {
-        case Parameterizer::OK: // Success
-            break;
-        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:
-            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
-            // this is not a bug => do not set accumulated_fatal_err
-            break;
-        default: // Error
-            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
-            accumulated_fatal_err = EXIT_FAILURE;
-            break;
-        };
-
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
-        task_timer.reset();
-
-        //***************************************
-        // Discrete Authalic Parameterization
-        // with square arc length border parameterization
-        // Eigen solver (if installed)
-        //***************************************
-
-        std::cerr << "Discrete Authalic Parameterization" << std::endl;
-        std::cerr << "with square arc length border parameterization" << std::endl;
-        std::cerr << "Eigen solver" << std::endl;
-
-        err = CGAL::parameterize(
-            mesh_patch,
-            CGAL::Discrete_authalic_parameterizer_3<
-	    Mesh_patch_polyhedron,
-	    CGAL::Square_border_arc_length_parameterizer_3<Mesh_patch_polyhedron> >()
-				 );
-        switch(err) {
-        case Parameterizer::OK: // Success
-            break;
-        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:
-            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
-            // this is not a bug => do not set accumulated_fatal_err
-            break;
-        default: // Error
-            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
-            accumulated_fatal_err = EXIT_FAILURE;
-            break;
-        };
-
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
-        task_timer.reset();
-
-        //***************************************
-        // Least Squares Conformal Maps parameterization
-        // Eigen solver (if installed)
-        //***************************************
-
-        std::cerr << "Least Squares Conformal Maps parameterization" << std::endl;
-        std::cerr << "Eigen solver" << std::endl;
-        
-        typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix;
-        err = CGAL::parameterize(
-            mesh_patch,
-            CGAL::LSCM_parameterizer_3<
-                Mesh_patch_polyhedron,
-                CGAL::Two_vertices_parameterizer_3<Mesh_patch_polyhedron>,
-                CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> >
-            >());
-        switch(err) {
-        case Parameterizer::OK: // Success
-            break;
-        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:
-            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
-            // this is not a bug => do not set accumulated_fatal_err
-            break;
-        default: // Error
-            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
-            accumulated_fatal_err = EXIT_FAILURE;
-            break;
-        };
-
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
-        task_timer.reset();
-
-#else
-
-        std::cerr << "Skip EIGEN tests as EIGEN is not installed" << std::endl << std::endl;
-        // this is not a bug => do not set accumulated_fatal_err
-
-#endif // CGAL_USE_EIGEN
-
-    } // for each input file
-
-    // Return accumulated fatal error
-    std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
-    return accumulated_fatal_err;
-}
-
-

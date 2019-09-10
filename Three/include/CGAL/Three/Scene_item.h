@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU, Maxime Gimeno
 
 #ifndef SCENE_ITEM_H
 #define SCENE_ITEM_H
+
+#include <CGAL/license/Three.h>
+
 #include <CGAL/Three/Scene_item_config.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <QString>
@@ -30,7 +34,6 @@
 #include <QOpenGLVertexArrayObject>
 #include <vector>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Three/Scene_print_interface_item.h>
 
 namespace CGAL {
 namespace Three {
@@ -48,8 +51,10 @@ namespace Three {
 
 class Scene_group_item;
 class Viewer_interface;
-//! This class represents an object in the OpenGL scene
-class SCENE_ITEM_EXPORT Scene_item : public QObject, public CGAL::Three::Scene_print_interface_item {
+//! This class represents an object in the OpenGL scene.
+//! It contains all the functions called by the Scene. It
+//! acts like a mix between an interface and a helper.
+class SCENE_ITEM_EXPORT Scene_item : public QObject{
   Q_OBJECT
   Q_PROPERTY(QColor color READ color WRITE setColor)
   Q_PROPERTY(QString name READ name WRITE setName)
@@ -59,8 +64,9 @@ class SCENE_ITEM_EXPORT Scene_item : public QObject, public CGAL::Three::Scene_p
 public:
  /*!
    * \brief The OpenGL_program_IDs enum
+   *
    * This enum holds the OpenGL programs IDs that are given to getShaderProgram() and attribBuffers().
-   *@see getShaderProgram
+   * @see getShaderProgram
    * @see attribBuffers
    */
  enum OpenGL_program_IDs
@@ -77,34 +83,45 @@ public:
   PROGRAM_C3T3_EDGES,          /** Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.*/
   PROGRAM_CUTPLANE_SPHERES,    /** Used to render the spheres of an item with a cut plane.*/
   PROGRAM_SPHERES,             /** Used to render one or several spheres.*/
+  PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
+  PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
   NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
  };
   typedef CGAL::Bbox_3 Bbox;
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
-  //! The default color of a scene_item.
+  //! \brief The default color of a scene_item.
+  //!
+  //! This color is the one that will be displayed if none is specified after its creation.
   static const QColor defaultColor; // defined in Scene_item.cpp
 
-  //!The Constructor.
-  /*!
-   * Initializes the number of VBOs and VAOs and creates them.
-   */
+  //!\brief The Constructor.
+  //!
+  //! This is where the vectors of VBOs and VAOs are initialized.
   Scene_item(int buffers_size = 20, int vaos_size = 10);
 
-  //! Sets the number of isolated vertices.
+  //! \brief Sets the number of isolated vertices.
+  //!
+  //! This number will be displayed in a warning box at loading.
+  //! @see getNbIsolatedvertices
   void setNbIsolatedvertices(std::size_t nb) { nb_isolated_vertices = nb;}
   //! Getter for the number of isolated vertices.
+  //! @see setNbIsolatedvertices
   std::size_t getNbIsolatedvertices() const {return nb_isolated_vertices;}
-  //!The destructor. It is virtual as the item is virtual.
   virtual ~Scene_item();
-  //! Creates a new item as a copy of the sender.
+  //! \brief Duplicates the item.
+  //!
+  //! Creates a new item as a copy of this one.
   virtual Scene_item* clone() const = 0;
 
-  //! Indicates if rendering mode is supported
+  //! \brief Indicates if `m` is supported
+  //!
+  //! If it is, it will be displayed in the context menu of the item.
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
   //! Deprecated. Does nothing.
   virtual void draw() const {}
-  /*! \brief The drawing function.
-   * Draws the facets of the item in the viewer using OpenGL functions. The data
+  /*! \brief The drawing function for faces.
+   *
+   * Draws the faces of the item in the viewer. The data
    * for the drawing is gathered in computeElements(), and is sent
    * to buffers in initializeBuffers().
    * @see computeElements()
@@ -113,8 +130,9 @@ public:
   virtual void draw(CGAL::Three::Viewer_interface*) const  { draw(); }
   //! Deprecated. Does nothing.
   virtual void drawEdges() const { draw(); }
-  /*! \brief The drawing function.
-   * Draws the edges and lines of the item in the viewer using OpenGL functions. The data
+  /*! \brief The drawing function for the edges.
+   *
+   * Draws the edges and lines of the item in the viewer. The data
    * for the drawing is gathered in computeElements(), and is sent
    * to buffers in initializeBuffers().
    * @see computeElements()
@@ -123,8 +141,9 @@ public:
   virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const { draw(viewer); }
   //! Deprecated. Does nothing.
   virtual void drawPoints() const { draw(); }
-  /*! \brief The drawing function.
-   * Draws the points of the item in the viewer using OpenGL functions. The data
+  /*! \brief The drawing function for the points.
+   *
+   * Draws the points of the item in the viewer. The data
    * for the drawing is gathered in computeElements(), and is sent
    * to buffers in initializeBuffers().
    * @see computeElements()
@@ -132,40 +151,45 @@ public:
    */
   virtual void drawPoints(CGAL::Three::Viewer_interface*) const { drawPoints(); }
 
-  //! Draws the splats of the item in the viewer using GLSplat functions.
-  virtual void drawSplats() const {}
-  //! Draws the splats of the item in the viewer using GLSplat functions.
-  virtual void drawSplats(CGAL::Three::Viewer_interface*) const {drawSplats();}
-
   //! Called by the scene. If b is true, then this item is currently selected.
   virtual void selection_changed(bool b);
 
   // Functions for displaying meta-data of the item
   //!\brief Contains meta-data about the item.
-  //! Data is :Number of vertices, Number of edges, Number of facets,
-  //! Volume, Area, Bounding box limits and Number of isolated points.
   //! @returns a QString containing meta-data about the item.
   virtual QString toolTip() const = 0;
-  //! \brief contains graphical meta-data about the item.
+  //! \brief Contains graphical meta-data about the item.
   //! @returns a QPixmap containing graphical meta-data about the item.
   virtual QPixmap graphicalToolTip() const { return QPixmap(); }
-  //! \brief contains the font used for the data of the item.
+  //! \brief Contains the font used for the data of the item.
   //! @returns a QFont containing the font used for the data of the item.
   virtual QFont font() const { return QFont(); }
 
   // Functions that help the Scene to compute its bbox
-  //! If isFinite() returns false, the BBox is not computed.
+  //! \brief Determines if the item is finite or not.
+  //!
+  //! For example, a plane is not finite.
+  //! If false, the BBox is not computed.
   virtual bool isFinite() const { return true; }
   //! Specifies if the item is empty or null.
+  //! If true, the BBox is not computed.
   virtual bool isEmpty() const { return true; }
-  //! \brief the item's bounding box.
-  //!@returns the item's bounding box.
+  //! \brief The item's bounding box.
+  //!
+  //! If the Bbox has never been computed, computes it and
+  //! saves the result for further calls.
+  //! @returns the item's bounding box.
   virtual Bbox bbox() const {
       if(!is_bbox_computed)
           compute_bbox();
       is_bbox_computed = true;
       return _bbox;
   }
+  //! \brief the item's bounding box's diagonal length.
+  //!
+  //! If the diagonal's length has never been computed, computes it and
+  //! saves the result for further calls.
+  //! @returns the item's bounding box's diagonal length.
   virtual double diagonalBbox() const {
    if(!is_diag_bbox_computed)
        compute_diag_bbox();
@@ -173,37 +197,49 @@ public:
    return _diag_bbox;
   }
 
-  //!Finds the spot the closest to point and prints the id of the corresponding Primitive (vertex, edg or Facet).
-  virtual void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*);
-  virtual void printPrimitiveIds(CGAL::Three::Viewer_interface*)const;
-
-  virtual bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*);
   // Function about manipulation
-  //! returns true  if the item can have a ManipulatedFrame.
+  //! Returns true if the item has a ManipulatedFrame.
+  //! @see manipulatedFrame()
   virtual bool manipulatable() const { return false; }
+  //!\brief The manipulatedFrame of the item.
+  //!
+  //! A manipulated frame is an independant system that can be
+  //! translated or rotated using the Ctrl key and the mouse.
   //!@returns the manipulatedFrame of the item.
   virtual ManipulatedFrame* manipulatedFrame() { return 0; }
 
   // Getters for the four basic properties
+  //!Getter for the item's color.
   //! @returns the current color of the item.
   virtual QColor color() const { return color_; }
+  //!Getter for the item's name.
   //! @returns the current name of the item.
   virtual QString name() const { return name_; }
+  //! If the item is not visible, it is not drawn and its Bbox
+  //! is ignored in the computation of the scene's.
   //! @returns the current visibility of the item.
   virtual bool visible() const { return visible_; }
+  //!Getter for the item's rendering mode.
   //! @returns the current rendering mode of the item.
   //!@see RenderingMode
   virtual RenderingMode renderingMode() const { return rendering_mode; }
+  //!The renderingMode's name.
   //! @returns the current rendering mode of the item as a human readable string.
   virtual QString renderingModeName() const;
 
-  //! Context menu
+  //! \brief Context menu
+  //!
+  //! Contains the list of the supported rendering modes,
+  //! the Operations menu, actions to save or clone the item if it is supported
+  //! and any contextual action for the item.
   virtual QMenu* contextMenu();
 
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
 
-  //!The parent group, or 0 if the item is not in a group.
+  //!The group containing the item.
+  //! \returns the parent group if the item is in a group
+  //! \returns 0 if the item is not in a group.
   Scene_group_item* parentGroup() const;
 
   //!Contains the header for the table in the statistics dialog
@@ -310,12 +346,11 @@ public Q_SLOTS:
   void setPointsPlusNormalsMode(){
     setRenderingMode(PointsPlusNormals);
   }
-  //!Sets the RenderingMode to Splatting.
-  void setSplattingMode(){
-    setRenderingMode(Splatting);
-  }
   
   //!Emits an aboutToBeDestroyed() signal.
+  //!Override this function to delete what needs to be deleted on destruction.
+  //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause a simily
+  //!memory leak, for example when multiple items are created at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
   //!Selects a point through raycasting.
@@ -326,9 +361,14 @@ public Q_SLOTS:
                       double dir_y,
                       double dir_z);
 
+
+
 Q_SIGNALS:
   //! Is emitted to notify a change in the item's data.
   void itemChanged();
+  //! Is emitted when the item is shown to notify a change in the item's visibility.
+  //! Typically used to update the scene's bbox;
+  void itemVisibilityChanged();
   //! Is emitted to notify that the item is about to be deleted.
   void aboutToBeDestroyed();
   //! Is emitted to require a new display.
@@ -375,8 +415,8 @@ protected:
    * @see invalidateOpenGLBuffers()*/
   RenderingMode prev_shading;
   /*! \todo replace it by RenderingMode().
-   * \brief
-   *  Contains the current RenderingMode.
+   * \brief Contains the current RenderingMode.
+   *
    * This is used to determine if invalidateOpenGLBuffers should be called or not
    * in certain cases.
    * @see invalidateOpenGLBuffers()*/
@@ -397,7 +437,7 @@ protected:
       vaos[i] = n_vao;
   }
 
-  /*! Fills the VBOs with data. Must be called after each call to #compute_elements().
+  /*! Fills the VBOs with data. Must be called after each call to #computeElements().
    * @see compute_elements()
    */
   void initializeBuffers(){}

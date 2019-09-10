@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -78,8 +79,10 @@ bool test2D()
     map.make_edge();
 
     dh = map.make_combinatorial_tetrahedron();
-    cout << "Nombre de brins : " << map.number_of_darts() << endl;
+    cout << "Nb of darts: " << map.number_of_darts() << endl;
     map.display_darts(std::cout, true);
+    std::cout<<"Faces:"<<std::endl;
+    map.template display_cells<2>(std::cout);
     
     cout << "Parcours de CC : ";
     for ( typename Map::template Dart_of_orbit_range<1,2>::iterator it ( map, dh );

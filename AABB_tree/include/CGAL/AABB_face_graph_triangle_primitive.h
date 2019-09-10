@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_AABB_FACE_GRAPH_TRIANGLE_PRIMITIVE_H
 #define CGAL_AABB_FACE_GRAPH_TRIANGLE_PRIMITIVE_H
+
+#include <CGAL/license/AABB_tree.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/boost/graph/property_maps.h>
@@ -34,6 +39,7 @@ namespace CGAL {
  * It wraps a handle to a facet of a polyhedron to a 3D triangle.
  * The polyhedron from which the primitive is built should not be deleted
  * while the AABB tree holding the primitive is in use.
+ * The triangle type of the primitive (`Datum`) is `CGAL::Kernel_traits< boost::property_traits< VertexPointPMap >::%value_type >::%Kernel::Triangle_3`.
  *
  * \cgalModels `AABBPrimitiveWithSharedData`
  *
@@ -43,10 +49,9 @@ namespace CGAL {
  *                         The default is `typename boost::property_map< FaceGraph,vertex_point_t>::%type`.
  *\tparam OneFaceGraphPerTree is either `CGAL::Tag_true` or `CGAL::Tag_false`.
  * In the former case, we guarantee that all the primitives will be from a
- * common polyhedron and some data will be factorized so that the size of
+ * common `FaceGraph` and some data will be factorized so that the size of
  * the primitive is reduced. In the latter case, the primitives can be from
- * different polyhedra and extra storage is required in the primitives. The default is `CGAL::Tag_true`.
- *        This parameter is useless for the moment and will be useful in an upcoming release of \cgal.
+ * different graphs and extra storage is required in the primitives. The default is `CGAL::Tag_true`.
  *\tparam CacheDatum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case, the datum is stored
  *        in the primitive, while in the latter it is constructed on the fly to reduce the memory footprint.
  *        The default is `CGAL::Tag_false` (datum is not stored).
@@ -173,6 +178,8 @@ public:
 };
 
 }  // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_FACE_GRAPH_TRIANGLE_PRIMITIVE_H
 

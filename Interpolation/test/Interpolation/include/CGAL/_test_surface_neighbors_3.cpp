@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Julia Floetotto
@@ -106,10 +107,10 @@ bool compare_neighbors(ForwardIteratorCoord first_coord,
 template < class Triangul, class OutputIterator>
 OutputIterator
 test_neighbors(const Triangul& T, const  typename
-	       Triangul::Geom_traits::Point_3& p,
-	       const typename Triangul::Geom_traits::Vector_3& n,
-	       const int& version,
-	       OutputIterator out)
+               Triangul::Geom_traits::Point_3& p,
+               const typename Triangul::Geom_traits::Vector_3& n,
+               const int& version,
+               OutputIterator out)
 {
   typedef CGAL::Voronoi_intersection_2_traits_3<typename
     Triangul::Geom_traits>                I_traits;

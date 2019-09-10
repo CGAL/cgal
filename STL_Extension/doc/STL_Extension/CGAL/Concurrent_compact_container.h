@@ -25,8 +25,7 @@ types `T` to make them usable with the default `Concurrent_compact_container`.
 `void *& t.for_compact_container();`.
 */
 template< typename T >
-class Concurrent_compact_container_traits {
-public:
+struct Concurrent_compact_container_traits {
 
 /// \name Operations 
 /// @{ 

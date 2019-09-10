@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
 #ifndef CGAL_MARCHING_TETRAHEDRA_H
 #define CGAL_MARCHING_TETRAHEDRA_H
+
+#include <CGAL/license/Skin_surface_3.h>
+
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Modifier_base.h>

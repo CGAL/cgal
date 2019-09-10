@@ -45,7 +45,7 @@
 \cgalPkgDependsOn{\ref PkgTriangulation3Summary}
 \cgalPkgBib{cgal:rty-m3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -79,7 +79,7 @@ related to the template parameters of some models of the main concepts:
 
 ## Classes ##
 
-- `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>`
+- `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 - `CGAL::Mesh_triangulation_3<MD,Gt,Concurrency_tag,Vertex_base,Cell_base>`
 - `CGAL::Mesh_vertex_base_3<Gt,MD,Vb>`
 - `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
@@ -97,6 +97,7 @@ and their associated classes:
 - `CGAL::Labeled_mesh_domain_3<LabelingFunction,BGT>`
 - `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
 - `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
+- `CGAL::Polyhedral_complex_mesh_domain_3<IGT>`
 - `CGAL::Labeled_image_mesh_domain_3<Image,BGT>`
 - `CGAL::Gray_image_mesh_domain_3<Image,BGT,Image_word_type>`
 - `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>`
@@ -112,6 +113,7 @@ and their associated classes:
 - `CGAL::perturb_mesh_3`
 - `CGAL::lloyd_optimize_mesh_3`
 - `CGAL::odt_optimize_mesh_3`
+- `CGAL::facets_in_complex_3_to_triangle_mesh()`
 
 ## CGAL::parameters Functions ##
 
@@ -125,6 +127,9 @@ and their associated classes:
 - `CGAL::parameters::no_lloyd`
 - `CGAL::parameters::odt`
 - `CGAL::parameters::no_odt`
+- `CGAL::parameters::manifold`
+- `CGAL::parameters::manifold_with_boundary`
+- `CGAL::parameters::non_manifold`
 
 ## Enumerations ##
 

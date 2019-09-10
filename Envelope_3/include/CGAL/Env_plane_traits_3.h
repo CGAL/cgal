@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Baruch Zukerman     <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_ENV_PLANE_TRAITS_3_H
 #define CGAL_ENV_PLANE_TRAITS_3_H
+
+#include <CGAL/license/Envelope_3.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>

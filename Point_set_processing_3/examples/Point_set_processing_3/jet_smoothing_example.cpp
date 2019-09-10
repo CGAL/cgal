@@ -31,7 +31,7 @@ int main(void)
 
   // Smoothing.
   const unsigned int nb_neighbors = 8; // default is 24 for real-life point sets
-  CGAL::jet_smooth_point_set<Concurrency_tag>(points.begin(), points.end(), nb_neighbors);
+  CGAL::jet_smooth_point_set<Concurrency_tag>(points, nb_neighbors);
 
   return EXIT_SUCCESS;
 }

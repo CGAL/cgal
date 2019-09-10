@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -24,9 +25,18 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_3_H
 #define CGAL_REGULAR_TRIANGULATION_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 
 #include <set>
+
+#include <boost/bind.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/utility/result_of.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
@@ -36,8 +46,14 @@
 #endif
 
 #include <CGAL/Triangulation_3.h>
+#include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <boost/bind.hpp>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/internal/boost/function_property_map.hpp>
+
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/result_of.h>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -54,11 +70,6 @@
 #include <CGAL/point_generators_3.h>
 #endif
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4355) // complaint about using 'this' to
-#endif                          // initialize a member
-
 namespace CGAL {
 
   /************************************************
@@ -72,23 +83,24 @@ namespace CGAL {
   : public Triangulation_3<
       Gt,
       typename Default::Get<Tds_, Triangulation_data_structure_3 <
-        Triangulation_vertex_base_3<Gt>,
-        Regular_triangulation_cell_base_3<Gt> > >::type,
+                                    Regular_triangulation_vertex_base_3<Gt>,
+                                    Regular_triangulation_cell_base_3<Gt> > >::type,
       Lock_data_structure_>
   {
+  private:
+    typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
+      Regular_triangulation_vertex_base_3<Gt>,
+      Regular_triangulation_cell_base_3<Gt> > >::type               Tds;
+
     typedef Regular_triangulation_3<Gt, Tds_, Lock_data_structure_> Self;
 
-    typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
-      Triangulation_vertex_base_3<Gt>,
-      Regular_triangulation_cell_base_3<Gt> > >::type Tds;
-
-    typedef Triangulation_3<Gt,Tds,Lock_data_structure_> Tr_Base;
-
   public:
+    typedef Triangulation_3<Gt, Tds, Lock_data_structure_>          Tr_Base;
 
-    typedef Tds                                   Triangulation_data_structure;
     typedef Gt                                    Geom_traits;
+    typedef Tds                                   Triangulation_data_structure;
 
+    typedef Geom_traits                           Traits;
     typedef typename Tr_Base::Concurrency_tag     Concurrency_tag;
     typedef typename Tr_Base::Lock_data_structure Lock_data_structure;
 
@@ -112,8 +124,15 @@ namespace CGAL {
     typedef typename Tr_Base::Finite_edges_iterator    Finite_edges_iterator;
     typedef typename Tr_Base::All_cells_iterator       All_cells_iterator;
 
+    // Traits are not supposed to define Bare_point, but leaving below
+    // for backward compatibility
+    typedef typename boost::mpl::eval_if_c<
+      internal::Has_nested_type_Bare_point<Gt>::value,
+      typename internal::Bare_point_type<Gt>,
+      boost::mpl::identity<typename Gt::Point_3>
+    >::type                                          Bare_point;
     typedef typename Gt::Weighted_point_3            Weighted_point;
-    typedef typename Gt::Bare_point                  Bare_point;
+
     typedef typename Gt::Segment_3                   Segment;
     typedef typename Gt::Triangle_3                  Triangle;
     typedef typename Gt::Tetrahedron_3               Tetrahedron;
@@ -124,16 +143,22 @@ namespace CGAL {
     typedef typename Gt::Plane_3       Plane;
     typedef typename Gt::Object_3      Object;
 
-    //Tag to distinguish Delaunay from Regular triangulations
-    typedef Tag_true   Weighted_tag;
+    //Tag to distinguish Delaunay from regular triangulations
+    typedef Tag_true                   Weighted_tag;
 
-    using Tr_Base::cw;
-    using Tr_Base::ccw;
+    // Tag to distinguish periodic triangulations from others
+    typedef Tag_false                  Periodic_tag;
+
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
     using Tr_Base::geom_traits;
 #endif
-    using Tr_Base::number_of_vertices;
+    using Tr_Base::adjacent_vertices;
+    using Tr_Base::cw;
+    using Tr_Base::ccw;
+    using Tr_Base::construct_point;
+    using Tr_Base::coplanar_orientation;
     using Tr_Base::dimension;
+    using Tr_Base::find_conflicts;
     using Tr_Base::finite_facets_begin;
     using Tr_Base::finite_facets_end;
     using Tr_Base::finite_vertices_begin;
@@ -142,33 +167,31 @@ namespace CGAL {
     using Tr_Base::finite_cells_end;
     using Tr_Base::finite_edges_begin;
     using Tr_Base::finite_edges_end;
-    using Tr_Base::tds;
-    using Tr_Base::infinite_vertex;
-    using Tr_Base::next_around_edge;
-    using Tr_Base::vertex_triple_index;
-    using Tr_Base::mirror_vertex;
-    using Tr_Base::mirror_index;
-    using Tr_Base::orientation;
-    using Tr_Base::coplanar_orientation;
-    using Tr_Base::adjacent_vertices;
-    using Tr_Base::construct_segment;
     using Tr_Base::incident_facets;
     using Tr_Base::insert_in_conflict;
+    using Tr_Base::infinite_vertex;
     using Tr_Base::is_infinite;
+    using Tr_Base::is_valid;
     using Tr_Base::is_valid_finite;
     using Tr_Base::locate;
+    using Tr_Base::mirror_vertex;
+    using Tr_Base::mirror_index;
+    using Tr_Base::next_around_edge;
+    using Tr_Base::number_of_vertices;
+    using Tr_Base::orientation;
+    using Tr_Base::point;
     using Tr_Base::side_of_segment;
     using Tr_Base::side_of_edge;
-    using Tr_Base::find_conflicts;
-    using Tr_Base::is_valid;
+    using Tr_Base::tds;
+    using Tr_Base::vertex_triple_index;
 
     Regular_triangulation_3(const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
       : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
-    {}
+    { }
 
     Regular_triangulation_3(Lock_data_structure *lock_ds, const Gt & gt = Gt())
       : Tr_Base(lock_ds, gt), hidden_point_visitor(this)
-    {}
+    { }
 
     Regular_triangulation_3(const Regular_triangulation_3 & rt)
       : Tr_Base(rt), hidden_point_visitor(this)
@@ -223,23 +246,36 @@ namespace CGAL {
           bbox.xmin() + 0.5*xdelta,
           bbox.ymin() + 0.5*ydelta,
           bbox.zmin() + 0.5*zdelta);
-        Random_points_on_sphere_3<Point> random_point(radius);
+        Random_points_on_sphere_3<Bare_point> random_point(radius);
         const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
           tbb::task_scheduler_init::default_num_threads() * 3.5);
-        std::vector<Point> points_on_far_sphere;
+        typename Gt::Construct_weighted_point_3 cwp =
+          geom_traits().construct_weighted_point_3_object();
+
+        std::vector<Weighted_point> points_on_far_sphere;
         for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-          points_on_far_sphere.push_back(*random_point + center);
+          points_on_far_sphere.push_back(cwp(*random_point + center));
 
-        spatial_sort(points_on_far_sphere.begin(),
-          points_on_far_sphere.end(),
-          geom_traits());
+        // Spatial sorting can only be applied to bare points, so we need an adaptor
+        typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+        typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
+        typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+        typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
-        std::vector<Point>::const_iterator it_p = points_on_far_sphere.begin();
-        std::vector<Point>::const_iterator it_p_end = points_on_far_sphere.end();
+        spatial_sort(points_on_far_sphere.begin(), points_on_far_sphere.end(),
+                     Search_traits_3(
+                       CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                           geom_traits().construct_point_3_object()), geom_traits()));
+
+        typename std::vector<Weighted_point>::const_iterator it_p =
+          points_on_far_sphere.begin();
+        typename std::vector<Weighted_point>::const_iterator it_p_end =
+          points_on_far_sphere.end();
+
         for (; it_p != it_p_end ; ++it_p)
         {
           Locate_type lt;
-          Cell_handle c;
+          Cell_handle c, hint;
           int li, lj;
 
           c = locate(*it_p, lt, li, lj, hint);
@@ -294,7 +330,20 @@ namespace CGAL {
 
       size_type n = number_of_vertices();
       std::vector<Weighted_point> points(first, last);
-      spatial_sort (points.begin(), points.end(), geom_traits());
+
+      // Spatial sorting can only be applied to bare points, so we need an adaptor
+      // @todo Unary_function_to_property_map makes a copy (get() returns a value_type) but
+      // we could hope to get a const & to the bare point. Unfortunately, the lazy
+      // kernel creates temporaries and prevent it.
+      typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+      typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
+      typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+      typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
+
+      spatial_sort(points.begin(), points.end(),
+                   Search_traits_3(
+                     CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                         geom_traits().construct_point_3_object()), geom_traits()));
 
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
@@ -372,6 +421,23 @@ namespace CGAL {
     template <class Info>
     const Info& top_get_second(const boost::tuple<Weighted_point,Info>& tuple) const { return boost::get<1>(tuple); }
 
+    // Functor to go from an index of a container of Weighted_point to
+    // the corresponding Bare_point
+    template<class Construct_bare_point, class Container>
+    struct Index_to_Bare_point
+    {
+      const Bare_point& operator()(const std::size_t& i) const
+      {
+        return cp(c[i]);
+      }
+
+      Index_to_Bare_point(const Container& c, const Construct_bare_point& cp)
+        : c(c), cp(cp) { }
+
+      const Container& c;
+      const Construct_bare_point cp;
+    };
+
     template <class Tuple_or_pair,class InputIterator>
     std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
     {
@@ -387,12 +453,22 @@ namespace CGAL {
         indices.push_back(index++);
       }
 
-      typedef typename Pointer_property_map<Weighted_point>::type Pmap;
-      typedef Spatial_sort_traits_adapter_3<Geom_traits,Pmap> Search_traits;
+      // We need to sort the points and their info at the same time through
+      // the `indices` vector AND spatial sort can only handle Gt::Point_3.
+      typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+      typedef Index_to_Bare_point<Construct_point_3,
+                                  std::vector<Weighted_point> > Access_bare_point;
+      typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
+      typedef CGAL::internal::boost_::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
+      typedef CGAL::Spatial_sort_traits_adapter_3<Gt, fpmap> Search_traits_3;
 
-      spatial_sort( indices.begin(),
-                    indices.end(),
-                    Search_traits(make_property_map(points),geom_traits()) );
+      Access_bare_point accessor(points, geom_traits().construct_point_3_object());
+      spatial_sort(indices.begin(), indices.end(),
+                   Search_traits_3(
+                     CGAL::internal::boost_::make_function_property_map<
+                       std::size_t, Ret, Access_bare_point>(accessor),
+                     geom_traits()));
+
 #ifdef CGAL_LINKED_WITH_TBB
       if (this->is_parallel())
       {
@@ -755,7 +831,7 @@ namespace CGAL {
     // DISPLACEMENT
     Vertex_handle move_point(Vertex_handle v, const Weighted_point & p);
 
-    // Displacement works only for Regular triangulation
+    // Displacement works only for regular triangulation
     // without hidden points at any time
     Vertex_handle move_if_no_collision(Vertex_handle v, const Weighted_point & p);
     Vertex_handle move(Vertex_handle v, const Weighted_point & p);
@@ -840,25 +916,18 @@ namespace CGAL {
 
     // Dual functions
     Bare_point dual(Cell_handle c) const;
-
-    Object dual(const Facet & f) const
-    { return dual( f.first, f.second ); }
-
     Object dual(Cell_handle c, int i) const;
+    Object dual(const Facet& facet) const;
+
+    void dual_segment(Cell_handle c, int i, Bare_point& p, Bare_point&q) const;
+    void dual_segment(const Facet& facet, Bare_point& p, Bare_point&q) const;
+    void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const;
+    void dual_ray(Cell_handle c, int i, Ray& ray) const;
+    void dual_ray(const Facet& facet, Ray& ray) const;
+    void dual_ray_exact(const Facet& facet, Ray& ray) const;
 
     template < class Stream>
-    Stream& draw_dual(Stream & os)
-    {
-      for (Finite_facets_iterator fit = finite_facets_begin(),
-        end = finite_facets_end();
-        fit != end; ++fit) {
-          Object o = dual(*fit);
-          if      (const Segment    *s = object_cast<Segment>(&o))    os << *s;
-          else if (const Ray        *r = object_cast<Ray>(&o))        os << *r;
-          else if (const Bare_point *p = object_cast<Bare_point>(&o)) os << *p;
-      }
-      return os;
-    }
+    Stream& draw_dual(Stream & os) const;
 
     bool is_valid(bool verbose = false, int level = 0) const;
 
@@ -887,6 +956,12 @@ namespace CGAL {
       const Weighted_point &r) const
     {
       return geom_traits().construct_weighted_circumcenter_3_object()(p,q,r);
+    }
+
+    Segment
+    construct_segment(const Bare_point &p, const Bare_point &q) const
+    {
+      return geom_traits().construct_segment_3_object()(p, q);
     }
 
     Line
@@ -941,7 +1016,7 @@ namespace CGAL {
       power_test(const Weighted_point &p, const Weighted_point &q) const
     {
       CGAL_triangulation_precondition(this->equal(p, q));
-      return geom_traits().power_test_3_object()(p, q);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q);
     }
 
     Oriented_side
@@ -949,7 +1024,7 @@ namespace CGAL {
       const Weighted_point &r) const
     {
       CGAL_triangulation_precondition(this->collinear(p, q, r));
-      return geom_traits().power_test_3_object()(p, q, r);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r);
     }
 
     Oriented_side
@@ -957,7 +1032,7 @@ namespace CGAL {
       const Weighted_point &r, const Weighted_point &s) const
     {
       CGAL_triangulation_precondition(this->coplanar(p, q, r, s));
-      return geom_traits().power_test_3_object()(p, q, r, s);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r, s);
     }
 
     Oriented_side
@@ -965,7 +1040,7 @@ namespace CGAL {
       const Weighted_point &r, const Weighted_point &s,
       const Weighted_point &t) const
     {
-      return geom_traits().power_test_3_object()(p, q, r, s, t);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r, s, t);
     }
 
     bool in_conflict_3(const Weighted_point &p, const Cell_handle c) const
@@ -1500,9 +1575,10 @@ namespace CGAL {
 
     Locate_type lt;
     int li, lj;
-    // I put the cast here temporarily
-    // until we solve the traits class pb of regular triangulation
-    Cell_handle c = locate(static_cast<Weighted_point>(p), lt, li, lj, start);
+
+    typename Gt::Construct_weighted_point_3 p2wp =
+      geom_traits().construct_weighted_point_3_object();
+    Cell_handle c = locate(p2wp(p), lt, li, lj, start);
 
     // - start with the closest vertex from the located cell.
     // - repeatedly take the nearest of its incident vertices if any
@@ -1524,38 +1600,44 @@ namespace CGAL {
     return nearest;
   }
 
-template < class Gt, class Tds, class Lds >
-typename Regular_triangulation_3<Gt,Tds,Lds>::Bare_point
-Regular_triangulation_3<Gt,Tds,Lds>::
-dual(Cell_handle c) const
-{
-  CGAL_triangulation_precondition(dimension()==3);
-  CGAL_triangulation_precondition( ! is_infinite(c) );
+  template < class Gt, class Tds, class Lds >
+  typename Regular_triangulation_3<Gt,Tds,Lds>::Bare_point
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual(Cell_handle c) const
+  {
+    CGAL_triangulation_precondition(dimension()==3);
+    CGAL_triangulation_precondition( ! is_infinite(c) );
 
-  return c->weighted_circumcenter(geom_traits());
-}
+    return c->weighted_circumcenter(geom_traits());
+  }
 
   template < class Gt, class Tds, class Lds >
-  typename Regular_triangulation_3<Gt,Tds,Lds>::Object
-    Regular_triangulation_3<Gt,Tds,Lds>::
-    dual(Cell_handle c, int i) const
+  void
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual_segment(Cell_handle c, int i, Bare_point& p, Bare_point&q) const
   {
-    CGAL_triangulation_precondition(dimension()>=2);
-    CGAL_triangulation_precondition( ! is_infinite(c,i) );
-
-    if ( dimension() == 2 ) {
-      CGAL_triangulation_precondition( i == 3 );
-      return construct_object(
-        construct_weighted_circumcenter(c->vertex(0)->point(),
-        c->vertex(1)->point(),
-        c->vertex(2)->point()) );
-    }
-
-    // dimension() == 3
     Cell_handle n = c->neighbor(i);
-    if ( ! is_infinite(c) && ! is_infinite(n) )
-      return construct_object(construct_segment( dual(c), dual(n) ));
+    CGAL_assertion( ! is_infinite(c) && ! is_infinite(n) );
 
+    p = dual(c);
+    q = dual(n);
+  }
+
+  template < class Gt, class Tds, class Lds >
+  void
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual_segment(const Facet& facet, Bare_point& p, Bare_point&q) const
+  {
+    return dual_segment(facet.first, facet.second, p, q);
+  }
+
+  template < class Gt, class Tds, class Lds >
+  void
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual_ray(Cell_handle c, int i, Ray& ray) const
+  {
+    Cell_handle n = c->neighbor(i);
+    CGAL_triangulation_precondition( (!is_infinite(c) != !is_infinite(n)) ); // xor
     // either n or c is infinite
     int in;
     if ( is_infinite(c) )
@@ -1568,16 +1650,181 @@ dual(Cell_handle c) const
     int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
     if ( (in&1) == 1 )
       std::swap(ind[0], ind[1]);
+
     const Weighted_point& p = n->vertex(ind[0])->point();
     const Weighted_point& q = n->vertex(ind[1])->point();
     const Weighted_point& r = n->vertex(ind[2])->point();
+    const Bare_point& bp = construct_point(p);
+    const Bare_point& bq = construct_point(q);
+    const Bare_point& br = construct_point(r);
 
-    Line l =
-      construct_perpendicular_line( construct_plane(p,q,r),
-      construct_weighted_circumcenter(p,q,r) );
-    return construct_object(construct_ray( dual(n), l));
+    Line l = construct_perpendicular_line(construct_plane(bp, bq, br),
+                                          construct_weighted_circumcenter(p,q,r));
+
+    ray = construct_ray(dual(n), l);
   }
 
+  template < class Gt, class Tds, class Lds >
+  void
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual_ray(const Facet& facet, Ray& ray) const
+  {
+    return dual_ray(facet.first, facet.second, ray);
+  }
+
+  // Exact versions of dual_segment() and dual_ray() for Mesh_3.
+  // These functions are really dirty: they assume that the point type is nice enough
+  // such that EPECK can manipulate it (e.g. convert it to EPECK::Point_3) AND
+  // that the result of these manipulations will make sense.
+  template < class Gt, class Tds, class Lds >
+  void
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const
+  {
+    typedef typename Gt::Kernel                                  K;
+    typedef Exact_predicates_exact_constructions_kernel          EK;
+    typedef Cartesian_converter<K, EK>                           To_exact;
+    typedef Cartesian_converter<EK,K>                            Back_from_exact;
+
+    typedef EK                                                   Exact_Rt;
+
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+      Exact_Rt().construct_weighted_circumcenter_3_object();
+
+    Cell_handle c = facet.first;
+    int i = facet.second;
+    Cell_handle n = c->neighbor(i);
+
+    const typename Exact_Rt::Weighted_point_3& cp = to_exact(c->vertex(0)->point());
+    const typename Exact_Rt::Weighted_point_3& cq = to_exact(c->vertex(1)->point());
+    const typename Exact_Rt::Weighted_point_3& cr = to_exact(c->vertex(2)->point());
+    const typename Exact_Rt::Weighted_point_3& cs = to_exact(c->vertex(3)->point());
+
+    const typename Exact_Rt::Weighted_point_3& np = to_exact(n->vertex(0)->point());
+    const typename Exact_Rt::Weighted_point_3& nq = to_exact(n->vertex(1)->point());
+    const typename Exact_Rt::Weighted_point_3& nr = to_exact(n->vertex(2)->point());
+    const typename Exact_Rt::Weighted_point_3& ns = to_exact(n->vertex(3)->point());
+
+    p = back_from_exact(exact_weighted_circumcenter(cp, cq, cr, cs));
+    q = back_from_exact(exact_weighted_circumcenter(np, nq, nr, ns));
+  }
+
+  template < class Gt, class Tds, class Lds >
+  void
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual_ray_exact(const Facet& facet, Ray& ray) const
+  {
+    Cell_handle c = facet.first;
+    int i = facet.second;
+    Cell_handle n = c->neighbor(i);
+    CGAL_triangulation_precondition( !is_infinite(c) != !is_infinite(n) ); // xor
+    // either n or c is infinite
+    int in;
+    if ( is_infinite(c) )
+      in = n->index(c);
+    else {
+      n = c;
+      in = i;
+    }
+    // n now denotes a finite cell, either c or c->neighbor(i)
+    int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
+    if ( (in&1) == 1 )
+      std::swap(ind[0], ind[1]);
+
+    // exact part
+    typedef typename Gt::Kernel                                  K;
+    typedef Exact_predicates_exact_constructions_kernel          EK;
+    typedef Cartesian_converter<K, EK>                           To_exact;
+    typedef Cartesian_converter<EK,K>                            Back_from_exact;
+
+    typedef EK                                                   Exact_Rt;
+
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+
+    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+      Exact_Rt().construct_weighted_circumcenter_3_object();
+    Exact_Rt::Construct_perpendicular_line_3 exact_perpendicular_line =
+      Exact_Rt().construct_perpendicular_line_3_object();
+    Exact_Rt::Construct_plane_3 exact_plane_3 = Exact_Rt().construct_plane_3_object();
+    Exact_Rt::Construct_ray_3 exact_ray_3 = Exact_Rt().construct_ray_3_object();
+    Exact_Rt::Construct_point_3 exact_point_3 = Exact_Rt().construct_point_3_object();
+
+    const typename Exact_Rt::Weighted_point_3& p = to_exact(n->vertex(ind[0])->point());
+    const typename Exact_Rt::Weighted_point_3& q = to_exact(n->vertex(ind[1])->point());
+    const typename Exact_Rt::Weighted_point_3& r = to_exact(n->vertex(ind[2])->point());
+    const typename Exact_Rt::Weighted_point_3& s = to_exact(n->vertex(in)->point());
+
+    const typename Exact_Rt::Point_3& bp = exact_point_3(p);
+    const typename Exact_Rt::Point_3& bq = exact_point_3(q);
+    const typename Exact_Rt::Point_3& br = exact_point_3(r);
+
+    typename Exact_Rt::Line_3 l = exact_perpendicular_line(
+                                    exact_plane_3(bp, bq, br),
+                                    exact_weighted_circumcenter(p, q, r));
+
+   ray = back_from_exact(
+           exact_ray_3(
+             exact_weighted_circumcenter(p, q, r, s), l));
+  }
+
+  template < class Gt, class Tds, class Lds >
+  typename Regular_triangulation_3<Gt,Tds,Lds>::Object
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual(Cell_handle c, int i) const
+  {
+    CGAL_triangulation_precondition(dimension()>=2);
+    CGAL_triangulation_precondition( ! is_infinite(c,i) );
+
+    if ( dimension() == 2 ) {
+      CGAL_triangulation_precondition( i == 3 );
+      return construct_object(
+        construct_weighted_circumcenter(c->vertex(0)->point(),
+                                        c->vertex(1)->point(),
+                                        c->vertex(2)->point()) );
+    }
+
+    // dimension() == 3
+    Cell_handle n = c->neighbor(i);
+    if ( ! is_infinite(c) && ! is_infinite(n) ){
+      // dual is a segment
+      Bare_point bp = dual(c);
+      Bare_point np = dual(n);
+      return construct_object(construct_segment(bp, np));
+    }
+
+    // either n or c is infinite, dual is a ray
+    Ray r;
+    dual_ray(c, i, r);
+    return construct_object(r);
+  }
+
+  template < class Gt, class Tds, class Lds >
+  typename Regular_triangulation_3<Gt,Tds,Lds>::Object
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual(const Facet& facet) const
+  {
+    return dual(facet.first, facet.second);
+  }
+
+  template < class Gt, class Tds, class Lds >
+  template < class Stream>
+  Stream&
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  draw_dual(Stream & os) const
+  {
+    for (Finite_facets_iterator fit = finite_facets_begin(),
+      end = finite_facets_end();
+      fit != end; ++fit) {
+        Object o = dual(*fit);
+        if      (const Segment    *s = object_cast<Segment>(&o))    os << *s;
+        else if (const Ray        *r = object_cast<Ray>(&o))        os << *r;
+        else if (const Bare_point *p = object_cast<Bare_point>(&o)) os << *p;
+    }
+    return os;
+  }
 
   template < class Gt, class Tds, class Lds >
   Oriented_side
@@ -1601,10 +1848,8 @@ dual(Cell_handle c) const
 
     // We sort the points lexicographically.
     const Weighted_point * points[5] = {&p0, &p1, &p2, &p3, &p};
-    std::sort(points, points + 5,
-      boost::bind(geom_traits().compare_xyz_3_object(),
-      boost::bind(Dereference<Weighted_point>(), _1),
-      boost::bind(Dereference<Weighted_point>(), _2)) == SMALLER);
+
+    std::sort(points, points + 5, typename Tr_Base::Perturbation_order(this));
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
@@ -1711,10 +1956,8 @@ dual(Cell_handle c) const
 
     // We sort the points lexicographically.
     const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
-    std::sort(points, points + 4,
-      boost::bind(geom_traits().compare_xyz_3_object(),
-      boost::bind(Dereference<Weighted_point>(), _1),
-      boost::bind(Dereference<Weighted_point>(), _2)) == SMALLER);
+
+    std::sort(points, points + 4, typename Tr_Base::Perturbation_order(this));
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
@@ -1822,7 +2065,8 @@ dual(Cell_handle c) const
     // We are now in a degenerate case => we do a symbolic perturbation.
 
     switch (this->collinear_position(p0, p, p1)) {
-    case Tr_Base::BEFORE: case Tr_Base::AFTER:
+    case Tr_Base::BEFORE:
+    case Tr_Base::AFTER:
       return ON_UNBOUNDED_SIDE;
     case Tr_Base::MIDDLE:
       return ON_BOUNDED_SIDE;
@@ -1871,9 +2115,9 @@ dual(Cell_handle c) const
     is_Gabriel(Cell_handle c, int i) const
   {
     CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i));
-    typename Geom_traits::Side_of_bounded_orthogonal_sphere_3
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
       side_of_bounded_orthogonal_sphere =
-      geom_traits().side_of_bounded_orthogonal_sphere_3_object();
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
 
     if ((!is_infinite(c->vertex(i))) &&
       side_of_bounded_orthogonal_sphere(
@@ -1910,9 +2154,9 @@ dual(Cell_handle c) const
     is_Gabriel(Cell_handle c, int i, int j) const
   {
     CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i,j));
-    typename Geom_traits::Side_of_bounded_orthogonal_sphere_3
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
       side_of_bounded_orthogonal_sphere =
-      geom_traits().side_of_bounded_orthogonal_sphere_3_object();
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
 
     Facet_circulator fcirc = incident_facets(c,i,j),
       fdone(fcirc);
@@ -1937,7 +2181,16 @@ dual(Cell_handle c) const
     Regular_triangulation_3<Gt,Tds,Lds>::
     is_Gabriel(Vertex_handle v) const
   {
-    return nearest_power_vertex( v->point().point(), v->cell()) == v;
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
+      side_of_bounded_orthogonal_sphere =
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
+
+    Vertex_handle nearest_v =
+      nearest_power_vertex(geom_traits().construct_point_3_object()(v->point()),
+                           v->cell());
+
+    return (side_of_bounded_orthogonal_sphere(v->point(), nearest_v->point())
+              != CGAL::ON_BOUNDED_SIDE);
   }
 
   // Returns
@@ -2048,9 +2301,9 @@ dual(Cell_handle c) const
   template <class RegularTriangulation_3>
   class Regular_triangulation_3<Gt, Tds, Lds>::Vertex_remover {
     typedef RegularTriangulation_3 Regular;
-    typedef typename Gt::Point_3 Point;
+    typedef typename Gt::Weighted_point_3 Weighted_point;
   public:
-    typedef typename std::vector<Point>::iterator
+    typedef typename std::vector<Weighted_point>::iterator
       Hidden_points_iterator;
 
     Vertex_remover(Regular &tmp_) : tmp(tmp_) {}
@@ -2069,15 +2322,15 @@ dual(Cell_handle c) const
       return hidden.end();
     }
 
-    Bounded_side side_of_bounded_circle(const Point &p, const Point &q,
-      const Point &r, const Point &s, bool perturb = false) const {
+    Bounded_side side_of_bounded_circle(const Weighted_point &p, const Weighted_point &q,
+      const Weighted_point &r, const Weighted_point &s, bool perturb = false) const {
         return tmp.side_of_bounded_power_circle(p,q,r,s,perturb);
     }
 
   private:
     // The removal of v may un-hide some points,
     // Space functions output them.
-    std::vector<Point> hidden;
+    std::vector<Weighted_point> hidden;
   };
 
   // The displacement method works only
@@ -2204,7 +2457,7 @@ dual(Cell_handle c) const
     return insert(p, old_neighbor->cell());
   }
 
-  // Displacement works only for Regular triangulation
+  // Displacement works only for regular triangulation
   // without hidden points at any time
   template < class Gt, class Tds, class Lds >
   typename Regular_triangulation_3<Gt,Tds,Lds>::Vertex_handle
@@ -2316,14 +2569,12 @@ dual(Cell_handle c) const
       }
     }
     if (verbose)
-      std::cerr << "valid Regular triangulation" << std::endl;
+      std::cerr << "valid regular triangulation" << std::endl;
     return true;
   }
 
 } //namespace CGAL
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_REGULAR_TRIANGULATION_3_H

@@ -5,15 +5,15 @@ suitable domain to the surface. In this package, we focus on triangulated
 surfaces that are homeomorphic to a disk and on piecewise linear mappings
 into a planar domain.
 
-This CGAL package implements some of the state-of-the-art surface mesh parameterization
-methods, such as Least Squares Conformal Maps, Discrete Conformal Map,
-Discrete Authalic Parameterization, Floater Mean Value Coordinates or
-Tutte Barycentric Mapping.
+This CGAL package implements several surface mesh parameterization methods, such as
+As Rigid As Possible Parameterization, Discrete Authalic Parameterization,
+Discrete Conformal Map, Floater Mean Value Coordinates, Least Squares Conformal Maps,
+Orbifold Tutte Embedding, or Tutte Barycentric Mapping.
 
-The package proposes currently an interface with CGAL Polyhedron_3 data structure.
+The package proposes an interface with the Boost Graph Library API data structure.
+It can thus be used either with Polyhedron_3, Surface_mesh, or any class model of the concept `FaceGraph`.
 
-Since parameterizing meshes require efficient representation of sparse matrices
-and efficient iterative or direct linear solvers, we provide links to standard
-libraries (Eigen3) and propose a separate package devoted to OpenNL
-sparse linear solver (Levy).
+Since parameterizing meshes requires an efficient representation of sparse matrices
+and efficient iterative or direct linear solvers, we provide links to the standard
+library Eigen3.
 

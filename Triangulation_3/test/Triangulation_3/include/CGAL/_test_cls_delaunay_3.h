@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Francois Rebufat, Monique Teillaud, Sylvain Pion
@@ -28,12 +29,16 @@
 #include <list>
 #include <vector>
 
+#include <boost/mpl/identity.hpp>
+#include <boost/mpl/if.hpp>
+
 #include "_test_cls_iterator.h"
 #include "_test_cls_circulator.h"
 #include "_test_remove_cluster.h"
 
 #include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 
 // Accessory set of functions to differentiate between
 // Delaunay::nearest_vertex[_in_cell] and
@@ -53,7 +58,9 @@ template < typename T, typename P >
 typename T::Vertex_handle
 nearest_vertex(const T&t, const P&p, CGAL::Tag_true)
 {
-  return t.nearest_power_vertex(p);
+  typename T::Geom_traits::Construct_point_3 cp
+    = t.geom_traits().construct_point_3_object();
+  return t.nearest_power_vertex(cp(p));
 }
 
 template < typename T, typename P >
@@ -74,7 +81,9 @@ template < typename T, typename P >
 typename T::Vertex_handle
 nearest_vertex_in_cell(const T&t, const P&p, const typename T::Cell_handle c, CGAL::Tag_true)
 {
-  return t.nearest_power_vertex_in_cell(p, c);
+  typename T::Geom_traits::Construct_point_3 cp
+    = t.geom_traits().construct_point_3_object();
+  return t.nearest_power_vertex_in_cell(cp(p), c);
 }
 
 template < typename T, typename P >
@@ -175,10 +184,15 @@ _test_cls_delaunay_3(const Triangulation &)
   // We assume the traits class has been tested already
   // actually, any traits is good if it has been tested
 
-  // typedef typename Cls::Point          Point; // Delaunay
-  // typedef typename Cls::Point::Point   Point; // Regular
-  typedef typename If<typename Cls::Weighted_tag,
-                      typename Cls::Point, Cls>::type::Point   Point; 
+  // this one may be weighted or not
+  typedef typename Cls::Point                Point;
+
+  // If the triangulation has defined the `Bare_point` typename, use it.
+  typedef typename boost::mpl::eval_if_c<
+    CGAL::internal::Has_nested_type_Bare_point<Cls>::value,
+    typename CGAL::internal::Bare_point_type<Cls>,
+    boost::mpl::identity<typename Cls::Point>
+  >::type                                    Bare_point;
 
   typedef typename Cls::Segment              Segment;
   typedef typename Cls::Triangle             Triangle;
@@ -671,22 +685,26 @@ _test_cls_delaunay_3(const Triangulation &)
 	  Vertex_handle v = nearest_vertex(T3_13, p);
 	  for (typename Cls::Finite_vertices_iterator
 	         fvit = T3_13.finite_vertices_begin();
-	       fvit != T3_13.finite_vertices_end(); ++fvit)
-	    assert(CGAL::squared_distance(p, v->point()) <=
-		   CGAL::squared_distance(p, fvit->point()));
-	  Vertex_handle v1 = nearest_vertex_in_cell(T3_13, p, c1);
+	       fvit != T3_13.finite_vertices_end(); ++fvit){
+            
+	    assert(CGAL::squared_distance(p, 
+                                          v->point()) <=
+                   CGAL::squared_distance(p, fvit->point()));
+          }
+                   Vertex_handle v1 = nearest_vertex_in_cell(T3_13, p, c1)
+;
 	  int i1 = c1->index(v1);
  	  for(int i=0; i<4; ++i) {
 	    if (i != i1) 
 	      assert(CGAL::squared_distance(p, v1->point()) <=
-		     CGAL::squared_distance(p, c1->vertex(i)->point()));
+              CGAL::squared_distance(p, c1->vertex(i)->point()));
 	  }
 	  Vertex_handle v2 = nearest_vertex_in_cell(T3_13, p, c2);
 	  int i2 = c2->index(v2);
 	  for(int i=0; i<4; ++i) { 
 	    if (i != i2 && c2->vertex(i) != T3_13.infinite_vertex())
 	      assert(CGAL::squared_distance(p, v2->point()) <=
-		     CGAL::squared_distance(p, c2->vertex(i)->point()));
+              CGAL::squared_distance(p, c2->vertex(i)->point()));
 	  }
 	}
   }
@@ -904,7 +922,7 @@ _test_cls_delaunay_3(const Triangulation &)
   // We only test return types and instantiation, basically.
   {
     Cell_handle c = T4.finite_cells_begin();
-    Point p = T4.dual(c);
+    Bare_point p = T4.dual(c);
     (void)p;
     Facet f = Facet(c, 2);
     CGAL::Object o = T4.dual(f);
@@ -1019,22 +1037,26 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(TM_0.is_valid());
   assert(TM_0.dimension() == 1);
 
-  TM_0.move_if_no_collision(tmv2, Point(0, -1, 0, 2));
+  Bare_point bp(0, -1, 0, 2);
+  TM_0.move_if_no_collision(tmv2, Point(bp));
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
   assert(TM_0.dimension() == 1);
 
-  TM_0.move_if_no_collision(tmv2, Point(0, -1, 0, 4));
+  bp = Bare_point(0, -1, 0, 4);
+  TM_0.move_if_no_collision(tmv2, Point(bp));
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
   assert(TM_0.dimension() == 1);
 
-  TM_0.move_if_no_collision(tmv2, Point(0, -1, 0, 2));
+  bp = Bare_point(0, -1, 0, 2);
+  TM_0.move_if_no_collision(tmv2, Point(bp));
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
   assert(TM_0.dimension() == 1);
 
-  TM_0.move_if_no_collision(tmv2, Point(0, -1, 1, 2));
+  bp = Bare_point(0, -1, 1, 2);
+  TM_0.move_if_no_collision(tmv2, Point(bp));
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
   assert(TM_0.dimension() == 2);

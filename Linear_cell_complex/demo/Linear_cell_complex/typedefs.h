@@ -14,23 +14,25 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
-#include <CGAL/Linear_cell_complex.h>
-#include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Combinatorial_map_save_load.h>
 
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
+
+#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_constructors.h>
+#include <CGAL/Linear_cell_complex_operations.h>
+#include <CGAL/Combinatorial_map_save_load.h>
 
 #include <CGAL/IO/Color.h>
 #include <CGAL/Timer.h>
@@ -153,8 +155,6 @@ public:
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart<3, Refs > Dart;
-
     typedef CGAL::Cell_attribute_with_point< Refs > Vertex_attrib;
     typedef CGAL::Cell_attribute< Refs, Volume_info> Volume_attrib;
 
@@ -166,7 +166,7 @@ public:
 typedef CGAL::Linear_cell_complex_traits
 <3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
 
-typedef CGAL::Linear_cell_complex<3,3,Mytraits,Myitems> LCC;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,Mytraits,Myitems> LCC;
 typedef LCC::Dart_handle      Dart_handle;
 typedef LCC::Vertex_attribute Vertex;
 
@@ -187,14 +187,15 @@ struct Face_info {
   bool is_process;
 };
 
-typedef CGAL::Triangulation_2_projection_traits_3<Mytraits> P_traits;
+typedef CGAL::Triangulation_2_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
 typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
 
 typedef CGAL::Triangulation_face_base_with_info_2<Face_info,P_traits> Fb1;
 
 typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>    Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                   TDS;
-typedef CGAL::No_intersection_tag                                     Itag;
+// typedef CGAL::No_intersection_tag                                     Itag;
+ typedef CGAL::Exact_predicates_tag Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS,
                                                    Itag>              CDT;
 

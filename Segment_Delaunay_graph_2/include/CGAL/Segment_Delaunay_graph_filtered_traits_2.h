@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -22,6 +23,10 @@
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_FILTERED_TRAITS_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_FILTERED_TRAITS_2_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
@@ -242,5 +247,7 @@ struct Segment_Delaunay_graph_filtered_traits_without_intersections_2
 #undef SDG2_INS
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_FILTERED_TRAITS_2_H

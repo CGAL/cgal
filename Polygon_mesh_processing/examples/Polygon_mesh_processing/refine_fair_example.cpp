@@ -1,8 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
@@ -48,8 +46,9 @@ int main(int argc, char* argv[])
   std::ifstream input(filename);
 
   Polyhedron poly;
-  if ( !input || !(input >> poly) || poly.empty() ) {
-    std::cerr << "Not a valid off file." << std::endl;
+  if ( !input || !(input >> poly) || poly.empty()
+              || !CGAL::is_triangle_mesh(poly)) {
+    std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
 

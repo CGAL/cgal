@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Maxime Gimeno
@@ -21,12 +22,15 @@
 #ifndef CGAL_INTERNAL_GENERIC_RANDOM_POINT_GENERATOR_H
 #define CGAL_INTERNAL_GENERIC_RANDOM_POINT_GENERATOR_H
 
+#include <CGAL/assertions.h>
+#include <CGAL/Iterator_range.h>
 #include <CGAL/generators.h>
 #include <CGAL/Random.h>
 #include <CGAL/property_map.h>
-#include <vector>
+
 #include <boost/foreach.hpp>
-#include <CGAL/Iterator_range.h>
+
+#include <vector>
 
 namespace CGAL {
 
@@ -56,6 +60,8 @@ public:
     , random(rnd)
   {
     std::size_t input_size = input.size();
+    CGAL_precondition(input_size > 0);
+
     ids.reserve(input_size);
     weights.reserve(input_size);
 
@@ -70,9 +76,11 @@ public:
       total_weight += to_double( compute_weight(object) );
       weights.push_back(total_weight);
     }
+
     //generate the first point
     generate_point();
   }
+
   This& operator++()
   {
     generate_point();
@@ -84,6 +92,7 @@ public:
     ++(*this);
     return tmp;
   }
+
   double sum_of_weights() const
   {
     if (weights.empty())
@@ -112,10 +121,16 @@ void Generic_random_point_generator<Id, ObjectFromIdMap,  GeneratorOnObject, P>:
 
 namespace internal{
 template< class Functor >
-struct Apply_approx_sqrt: public Functor
+struct Apply_approx_sqrt
+  : public Functor
 {
+  Apply_approx_sqrt() : Functor() { }
+  Apply_approx_sqrt(const Functor& f) : Functor(f) { }
+
   template <class T>
-  double operator()(const T& t) const
+  typename boost::remove_reference<
+             typename cpp11::result_of<Functor(const T&)>::type>::type
+  operator()(const T& t) const
   {
     return approximate_sqrt( static_cast<const Functor&>(*this)(t) );
   }

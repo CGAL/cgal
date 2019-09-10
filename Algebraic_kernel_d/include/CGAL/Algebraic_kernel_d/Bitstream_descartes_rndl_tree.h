@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
@@ -30,6 +31,8 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_BITSTREAM_DESCARTES_RNDL_TREE_H
 #define CGAL_ALGEBRAIC_KERNEL_D_BITSTREAM_DESCARTES_RNDL_TREE_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <vector>
 #include <list>
 #include <utility>
@@ -38,6 +41,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Random.h>
+#include <CGAL/tss.h>
 
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 /*#include <CGAL/Handle.h>
@@ -175,7 +179,7 @@ Integer caching_factorial(int n) {
     CGAL_precondition(n >= 0);
 
     // table of factorials; augment if necessary
-    static std::vector< Integer > factorial;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(std::vector< Integer >, factorial);
     factorial.reserve(n+1);
     if (factorial.empty()) {
         factorial.push_back(Integer(1)); // 0! = 1
@@ -1505,7 +1509,7 @@ long Fujiwara_root_bound_log(
     RandomAccessIterator first, RandomAccessIterator beyond,
     LowerBoundLog2Abs lblog2, UpperBoundLog2AbsApproximator ublog2apx
 ) {
-    int n = beyond - first - 1; // degree
+    std::ptrdiff_t n = beyond - first - 1; // degree
     if (n < 1) return 0;
     long lblog2_lcoeff = lblog2(*(beyond - 1));
 
@@ -1515,7 +1519,7 @@ long Fujiwara_root_bound_log(
     std::vector<QE*> heap(n);    // heap is built from pointers to them
     for (int i = 0; i < n; ++i) {
         QE& entry = entries[i];
-        entry.n_minus_i = n - i;
+        entry.n_minus_i = static_cast<int>(n - i);
         entry.is_tight = ublog2apx.initial_upper_bound(
                 *(first + i), entry.ub_log2_qi, entry.is_certainly_zero
         );
@@ -1529,7 +1533,7 @@ long Fujiwara_root_bound_log(
     while (!heap[0]->is_tight) {
         std::pop_heap(heap.begin(), heap.end(), less);
         QE& popped = **(heap.end() - 1);
-        int i = n - popped.n_minus_i;
+        std::ptrdiff_t i = n - popped.n_minus_i;
         CGAL_assertion(i >= 0 && i < n);
         CGAL_assertion(&popped == &(entries[i]));
         popped.is_tight = ublog2apx.improve_upper_bound(
@@ -1566,6 +1570,8 @@ long Fujiwara_root_bound_log(
 } // namespace internal
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ALGEBRAIC_KERNEL_D_BITSTREAM_DESCARTES_RNDL_TREE_H
 

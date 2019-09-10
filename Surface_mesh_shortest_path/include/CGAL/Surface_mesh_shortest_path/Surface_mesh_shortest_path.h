@@ -14,11 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Stephen Kiazyk
 
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_SURFACE_MESH_SHORTEST_PATH_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_SURFACE_MESH_SHORTEST_PATH_H
+
+#include <CGAL/license/Surface_mesh_shortest_path.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <iterator>
 #include <vector>
@@ -42,6 +47,7 @@
 #include <CGAL/Surface_mesh_shortest_path/internal/Cone_tree.h>
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/variant/get.hpp>
 
@@ -136,7 +142,12 @@ public:
 
   /// An ordered triple which specifies a location inside a triangle as
   /// a convex combination of its three vertices.
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef typename Traits::Barycentric_coordinates Barycentric_coordinates;
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  // deprecated in CGAL 4.10
+  typedef Barycentric_coordinates Barycentric_coordinate;
+#endif
 
   /// \brief An ordered pair specifying a location on the surface of the `Triangle_mesh`.
   /// \details If `tm` is the input graph and given the pair (`f`, `bc`) such that `bc` is `(w0, w1, w2)`,
@@ -144,7 +155,7 @@ public:
   /// - `w0 = source(halfedge(f,tm),tm)`
   /// - `w1 = target(halfedge(f,tm),tm)`
   /// - `w2 = target(next(halfedge(f,tm),tm),tm)`
-  typedef std::pair<face_descriptor, Barycentric_coordinate> Face_location;
+  typedef std::pair<face_descriptor, Barycentric_coordinates> Face_location;
 
 private:
 
@@ -281,7 +292,7 @@ private:
   typedef internal::Cone_tree_node<Traits> Cone_tree_node;
   typedef internal::Cone_expansion_event<Traits> Cone_expansion_event;
 
-  typedef std::priority_queue<Cone_expansion_event, std::vector<Cone_expansion_event*>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
+  typedef std::priority_queue<Cone_expansion_event*, std::vector<Cone_expansion_event*>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
   typedef std::pair<Cone_tree_node*, FT> Node_distance_pair;
 
 private:
@@ -310,7 +321,7 @@ private:
       ++m_output;
     }
 
-    void operator()(face_descriptor f, Barycentric_coordinate location)
+    void operator()(face_descriptor f, Barycentric_coordinates location)
     {
       *m_output = m_owner.point(f, location);
       ++m_output;
@@ -440,29 +451,29 @@ private:
 #endif
   }
 
-  Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t, const Barycentric_coordinate& b) const
+  Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t, const Barycentric_coordinates& b) const
   {
     return construct_barycenter_in_triangle_2(t, b, m_traits);
   }
 
-  static Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t, const Barycentric_coordinate& b, const Traits& traits)
+  static Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t, const Barycentric_coordinates& b, const Traits& traits)
   {
     typename Traits::Construct_vertex_2 cv2(traits.construct_vertex_2_object());
-    typename Traits::Construct_barycentric_coordinate_weight cbcw(traits.construct_barycentric_coordinate_weight_object());
+    typename Traits::Construct_barycentric_coordinates_weight cbcw(traits.construct_barycentric_coordinates_weight_object());
     typename Traits::Construct_barycenter_2 cb2(traits.construct_barycenter_2_object());
 
     return cb2(cv2(t, 0), cbcw(b, 0), cv2(t, 1), cbcw(b, 1), cv2(t, 2), cbcw(b, 2));
   }
 
-  Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t, const Barycentric_coordinate& b) const
+  Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t, const Barycentric_coordinates& b) const
   {
     return construct_barycenter_in_triangle_3(t, b, m_traits);
   }
 
-  static Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t, const Barycentric_coordinate& b, const Traits& traits)
+  static Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t, const Barycentric_coordinates& b, const Traits& traits)
   {
     typename Traits::Construct_vertex_3 cv3(traits.construct_vertex_3_object());
-    typename Traits::Construct_barycentric_coordinate_weight cbcw(traits.construct_barycentric_coordinate_weight_object());
+    typename Traits::Construct_barycentric_coordinates_weight cbcw(traits.construct_barycentric_coordinates_weight_object());
     typename Traits::Construct_barycenter_3 cb3(traits.construct_barycenter_3_object());
 
     return cb3(cv3(t, 0), cbcw(b, 0), cv3(t, 1), cbcw(b, 1), cv3(t, 2), cbcw(b, 2));
@@ -659,21 +670,21 @@ private:
     Determines whether to expand `location` as a face, edge, or vertex root, depending on
     whether it is near to a given edge or vertex, or is an internal face location
   */
-  void expand_root(face_descriptor f, Barycentric_coordinate location, Source_point_iterator sourcePointIt)
+  void expand_root(face_descriptor f, Barycentric_coordinates location, Source_point_iterator sourcePointIt)
   {
-    typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
-    typename Traits::Classify_barycentric_coordinate classify_barycentric_coordinate(m_traits.classify_barycentric_coordinate_object());
+    typename Traits::Construct_barycentric_coordinates_weight cbcw(m_traits.construct_barycentric_coordinates_weight_object());
+    typename Traits::Classify_barycentric_coordinates classify_barycentric_coordinates(m_traits.classify_barycentric_coordinates_object());
 
     std::size_t associatedEdge;
-    CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type type;
-    boost::tie(type, associatedEdge) = classify_barycentric_coordinate(location);
+    CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type type;
+    boost::tie(type, associatedEdge) = classify_barycentric_coordinates(location);
 
     switch (type)
     {
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDED_SIDE:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_BOUNDED_SIDE:
         expand_face_root(f, location, sourcePointIt);
         break;
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDARY:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_BOUNDARY:
         {
           halfedge_descriptor he = halfedge(f, m_graph);
           for (std::size_t i = 0; i < associatedEdge; ++i)
@@ -683,7 +694,7 @@ private:
           expand_edge_root(he, cbcw(location, associatedEdge), cbcw(location, (associatedEdge + 1) % 3), sourcePointIt);
         }
         break;
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX:
         {
           halfedge_descriptor he = halfedge(f, m_graph);
           for (std::size_t i = 0; i < associatedEdge; ++i)
@@ -702,7 +713,7 @@ private:
   /*
     Create source nodes facing each edge of `f`, rooted at the given `faceLocation`
   */
-  void expand_face_root(face_descriptor f, Barycentric_coordinate faceLocation, Source_point_iterator sourcePointIt)
+  void expand_face_root(face_descriptor f, Barycentric_coordinates faceLocation, Source_point_iterator sourcePointIt)
   {
     typename Traits::Construct_triangle_3_to_triangle_2_projection pt3t2(m_traits.construct_triangle_3_to_triangle_2_projection_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
@@ -716,7 +727,7 @@ private:
 
     if (m_debugOutput)
     {
-      typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
+      typename Traits::Construct_barycentric_coordinates_weight cbcw(m_traits.construct_barycentric_coordinates_weight_object());
       std::cout << "\tFace Root Expansion: id = " << get(m_faceIndexMap, f) << " , Location = " << cbcw(faceLocation, 0) << " " << cbcw(faceLocation, 1) << " " << cbcw(faceLocation, 2) << " " << std::endl;
     }
 
@@ -724,7 +735,7 @@ private:
     {
       Triangle_3 face3d(triangle_from_halfedge(current));
       Triangle_2 layoutFace(pt3t2(face3d));
-      Barycentric_coordinate rotatedFaceLocation(shifted_coordiate(faceLocation, currentVertex));
+      Barycentric_coordinates rotatedFaceLocation(shifted_coordinates(faceLocation, currentVertex));
       Point_2 sourcePoint(construct_barycenter_in_triangle_2(layoutFace, rotatedFaceLocation));
 
       Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, current, layoutFace, sourcePoint, FT(0.0), cv2(layoutFace, 0), cv2(layoutFace, 2), Cone_tree_node::FACE_SOURCE);
@@ -1259,7 +1270,7 @@ private:
       propagateRight = rightSide;
     }
 
-    if (node->level() <= num_faces(m_graph))
+    if (node->level() <= static_cast<std::size_t>(num_faces(m_graph)))
     {
       if (propagateLeft)
       {
@@ -1647,26 +1658,26 @@ private:
     }
   }
 
-  Point_2 face_location_with_normalized_coordinate(Cone_tree_node* node, Barycentric_coordinate location)
+  Point_2 face_location_with_normalized_coordinates(Cone_tree_node* node, Barycentric_coordinates location)
   {
     return construct_barycenter_in_triangle_2(node->layout_face(), localized_coordiate(node, location));
   }
 
-  Barycentric_coordinate localized_coordiate(Cone_tree_node* node, Barycentric_coordinate location)
+  Barycentric_coordinates localized_coordiate(Cone_tree_node* node, Barycentric_coordinates location)
   {
-    return shifted_coordiate(location, node->edge_face_index());
+    return shifted_coordinates(location, node->edge_face_index());
   }
 
-  Barycentric_coordinate shifted_coordiate(Barycentric_coordinate location, std::size_t shift)
+  Barycentric_coordinates shifted_coordinates(Barycentric_coordinates location, std::size_t shift)
   {
-    typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
-    typename Traits::Construct_barycentric_coordinate cbc(m_traits.construct_barycentric_coordinate_object());
+    typename Traits::Construct_barycentric_coordinates_weight cbcw(m_traits.construct_barycentric_coordinates_weight_object());
+    typename Traits::Construct_barycentric_coordinates cbc(m_traits.construct_barycentric_coordinates_object());
     return cbc(cbcw(location, shift), cbcw(location, (shift + 1) % 3), cbcw(location, (shift + 2) % 3));
   }
 
-  std::pair<Node_distance_pair, Barycentric_coordinate> nearest_on_face(face_descriptor f, Barycentric_coordinate location)
+  std::pair<Node_distance_pair, Barycentric_coordinates> nearest_on_face(face_descriptor f, Barycentric_coordinates location)
   {
-    typename Traits::Construct_barycentric_coordinate cbc(m_traits.construct_barycentric_coordinate_object());
+    typename Traits::Construct_barycentric_coordinates cbc(m_traits.construct_barycentric_coordinates_object());
 
     std::size_t faceIndex = get(m_faceIndexMap, f);
 
@@ -1684,7 +1695,7 @@ private:
         continue;
       }
 
-      Point_2 locationInContext = face_location_with_normalized_coordinate(current, location);
+      Point_2 locationInContext = face_location_with_normalized_coordinates(current, location);
 
       if (current->inside_window(locationInContext))
       {
@@ -1708,21 +1719,21 @@ private:
     }
   }
 
-  std::pair<Node_distance_pair, Barycentric_coordinate> nearest_to_location(face_descriptor f, Barycentric_coordinate location)
+  std::pair<Node_distance_pair, Barycentric_coordinates> nearest_to_location(face_descriptor f, Barycentric_coordinates location)
   {
-    typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
-    typename Traits::Construct_barycentric_coordinate cbc(m_traits.construct_barycentric_coordinate_object());
-    typename Traits::Classify_barycentric_coordinate classify_barycentric_coordinate(m_traits.classify_barycentric_coordinate_object());
+    typename Traits::Construct_barycentric_coordinates_weight cbcw(m_traits.construct_barycentric_coordinates_weight_object());
+    typename Traits::Construct_barycentric_coordinates cbc(m_traits.construct_barycentric_coordinates_object());
+    typename Traits::Classify_barycentric_coordinates classify_barycentric_coordinates(m_traits.classify_barycentric_coordinates_object());
 
     std::size_t associatedEdge;
-    CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type type;
-    boost::tie(type, associatedEdge) = classify_barycentric_coordinate(location);
+    CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type type;
+    boost::tie(type, associatedEdge) = classify_barycentric_coordinates(location);
 
     switch (type)
     {
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDED_SIDE:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_BOUNDED_SIDE:
         return nearest_on_face(f, location);
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDARY:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_BOUNDARY:
         {
           halfedge_descriptor he = halfedge(f, m_graph);
           for (std::size_t i = 0; i < associatedEdge; ++i)
@@ -1730,32 +1741,37 @@ private:
             he = next(he, m_graph);
           }
 
+          std::pair<Node_distance_pair,Barycentric_coordinates> mainFace = nearest_on_face(f, location);
+
           halfedge_descriptor oppositeHalfedge = opposite(he, m_graph);
-
-          std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
-
-          FT oppositeLocationCoords[3] = { FT(0.0), FT(0.0), FT(0.0) };
-          oppositeLocationCoords[oppositeIndex] = cbcw(location, (associatedEdge + 1) % 3);
-          oppositeLocationCoords[(oppositeIndex + 1) % 3] = cbcw(location, associatedEdge);
-          std::pair<Node_distance_pair,Barycentric_coordinate> mainFace = nearest_on_face(f, location);
-          Barycentric_coordinate oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
-          std::pair<Node_distance_pair,Barycentric_coordinate> otherFace = nearest_on_face(face(oppositeHalfedge, m_graph), oppositeLocation);
-
-          if (mainFace.first.first == NULL)
+          if(!CGAL::is_border(oppositeHalfedge, m_graph))
           {
-            return otherFace;
+              std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
+
+              FT oppositeLocationCoords[3] = { FT(0.0), FT(0.0), FT(0.0) };
+              oppositeLocationCoords[oppositeIndex] = cbcw(location, (associatedEdge + 1) % 3);
+              oppositeLocationCoords[(oppositeIndex + 1) % 3] = cbcw(location, associatedEdge);
+              Barycentric_coordinates oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
+              std::pair<Node_distance_pair,Barycentric_coordinates> otherFace = nearest_on_face(face(oppositeHalfedge, m_graph), oppositeLocation);
+
+              if (mainFace.first.first == NULL)
+              {
+                return otherFace;
+              }
+              else if (otherFace.first.first == NULL)
+              {
+                return mainFace;
+              }
+              else
+              {
+                return mainFace.first.second < otherFace.first.second ? mainFace : otherFace;
+              }
           }
-          else if (otherFace.first.first == NULL)
-          {
-            return mainFace;
-          }
-          else
-          {
-            return mainFace.first.second < otherFace.first.second ? mainFace : otherFace;
-          }
+
+          return mainFace;
         }
         break;
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX:
         {
           halfedge_descriptor he = halfedge(f, m_graph);
 
@@ -1772,7 +1788,7 @@ private:
 
       default:
         CGAL_assertion(false && "Invalid face location");
-        return std::pair<Node_distance_pair, Barycentric_coordinate>();
+        return std::pair<Node_distance_pair, Barycentric_coordinates>();
     }
   }
 
@@ -1989,13 +2005,13 @@ public:
 
   Equivalent to `Surface_mesh_shortest_path(tm, get(boost::vertex_index, tm), get(boost::halfedge_index, tm), get(boost::face_index, tm), get(CGAL::vertex_point, tm), traits)`.
   */
-  Surface_mesh_shortest_path(Triangle_mesh& tm, const Traits& traits = Traits())
+  Surface_mesh_shortest_path(const Triangle_mesh& tm, const Traits& traits = Traits())
     : m_traits(traits)
-    , m_graph(tm)
+    , m_graph(const_cast<Triangle_mesh&>(tm))
     , m_vertexIndexMap(get(boost::vertex_index, tm))
     , m_halfedgeIndexMap(get(boost::halfedge_index, tm))
     , m_faceIndexMap(get(boost::face_index, tm))
-    , m_vertexPointMap(get(CGAL::vertex_point, tm))
+    , m_vertexPointMap(get(CGAL::vertex_point, m_graph))
     , m_debugOutput(false)
   {
     reset_algorithm();
@@ -2018,9 +2034,9 @@ public:
 
   \param traits Optional instance of the traits class to use.
   */
-  Surface_mesh_shortest_path(Triangle_mesh& tm, Vertex_index_map vertexIndexMap, Halfedge_index_map halfedgeIndexMap, Face_index_map faceIndexMap, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  Surface_mesh_shortest_path(const Triangle_mesh& tm, Vertex_index_map vertexIndexMap, Halfedge_index_map halfedgeIndexMap, Face_index_map faceIndexMap, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
     : m_traits(traits)
-    , m_graph(tm)
+    , m_graph(const_cast<Triangle_mesh&>(tm))
     , m_vertexIndexMap(vertexIndexMap)
     , m_halfedgeIndexMap(halfedgeIndexMap)
     , m_faceIndexMap(faceIndexMap)
@@ -2044,7 +2060,6 @@ public:
       std::cout << "Final node count: " << m_currentNodeCount << std::endl;
     }
     return;
-    CGAL_assertion(m_currentNodeCount == 0);
 #endif
   }
 
@@ -2076,10 +2091,10 @@ public:
   the first shortest path query is done.
 
   \param f A face of the input face graph
-  \param location Barycentric coordinate in face `f` specifying the source point.
+  \param location Barycentric coordinates in face `f` specifying the source point.
   \return An iterator to the source point added
   */
-  Source_point_iterator add_source_point(face_descriptor f, Barycentric_coordinate location)
+  Source_point_iterator add_source_point(face_descriptor f, Barycentric_coordinates location)
   {
     return add_source_point(std::make_pair(f, location));
   }
@@ -2271,17 +2286,17 @@ public:
   \brief Computes the shortest surface distance from any surface location to any source point
 
   \param f A face of the input face graph
-  \param location Barycentric coordinate of the query point on face `f`
+  \param location Barycentric coordinates of the query point on face `f`
   \return A pair, containing the distance to the source point, and an
     iterator to the source point.  If no source point was reachable (can
     occur when the graph is disconnected), the distance will be a negative
     value and the source point iterator will be equal to `source_points_end()`.
   */
-  Shortest_path_result shortest_distance_to_source_points(face_descriptor f, Barycentric_coordinate location)
+  Shortest_path_result shortest_distance_to_source_points(face_descriptor f, Barycentric_coordinates location)
   {
     build_sequence_tree();
 
-    std::pair<Node_distance_pair, Barycentric_coordinate> result = nearest_to_location(f, location);
+    std::pair<Node_distance_pair, Barycentric_coordinates> result = nearest_to_location(f, location);
 
     Cone_tree_node* current = result.first.first;
 
@@ -2347,7 +2362,7 @@ public:
   (not even for the query point).
 
   \param f A face of the input face graph
-  \param location Barycentric coordinate of the query point on face `f`
+  \param location Barycentric coordinates of the query point on face `f`
   \param visitor A model of `SurfaceMeshShortestPathVisitor` to receive the shortest path
   \return A pair, containing the distance to the source point, and an
     iterator to the source point.  If no source point was reachable (can
@@ -2356,11 +2371,11 @@ public:
   */
   template <class Visitor>
   Shortest_path_result
-  shortest_path_sequence_to_source_points(face_descriptor f, Barycentric_coordinate location, Visitor& visitor)
+  shortest_path_sequence_to_source_points(face_descriptor f, Barycentric_coordinates location, Visitor& visitor)
   {
     build_sequence_tree();
 
-    std::pair<Node_distance_pair, Barycentric_coordinate> result = nearest_to_location(f, location);
+    std::pair<Node_distance_pair, Barycentric_coordinates> result = nearest_to_location(f, location);
     Cone_tree_node* current = result.first.first;
 
     if (current)
@@ -2409,7 +2424,7 @@ public:
     source point.
 
   \param f A face of on the input face graph
-  \param location The barycentric coordinate of the query point on face `f`
+  \param location The barycentric coordinates of the query point on face `f`
   \param output An OutputIterator to receive the shortest path points as `Point_3` objects
   \return A pair, containing the distance to the source point, and an
     iterator to the source point.  If no source point was reachable (can
@@ -2418,7 +2433,7 @@ public:
   */
   template <class OutputIterator>
   Shortest_path_result
-  shortest_path_points_to_source_points(face_descriptor f, Barycentric_coordinate location, OutputIterator output)
+  shortest_path_points_to_source_points(face_descriptor f, Barycentric_coordinates location, OutputIterator output)
   {
     build_sequence_tree();
 
@@ -2432,30 +2447,30 @@ public:
   /// @{
 
   /*!
-  \brief Returns the 3-dimensional coordinate at the barycentric coordinate
+  \brief Returns the 3-dimensional coordinates at the barycentric coordinates
     of the given face.
 
   \details The following static overloads are also available:
-    - `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& tm, const Traits& traits = Traits())`
-    - `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Point_3 point(face_descriptor f, Barycentric_coordinates location, const Triangle_mesh& tm, const Traits& traits = Traits())`
+    - `static Point_3 point(face_descriptor f, Barycentric_coordinates location, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
 
   \param f A face of on the input face graph
-  \param location The barycentric coordinate of the query point on face `f`
+  \param location The barycentric coordinates of the query point on face `f`
   */
-  Point_3 point(face_descriptor f, Barycentric_coordinate location) const
+  Point_3 point(face_descriptor f, Barycentric_coordinates location) const
   {
     return point(f, location, m_graph, m_vertexPointMap, m_traits);
   }
 
   /// \cond
 
-  static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& tm, const Traits& traits = Traits())
+  static Point_3 point(face_descriptor f, Barycentric_coordinates location, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
     using boost::get;
     return point(f, location, tm, get(CGAL::vertex_point, tm), traits);
   }
 
-  static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Point_3 point(face_descriptor f, Barycentric_coordinates location, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
     return construct_barycenter_in_triangle_3(triangle_from_face(f, tm, vertexPointMap), location, traits);
   }
@@ -2463,7 +2478,7 @@ public:
   /// \endcond
 
   /*!
-  \brief Returns the 3-dimensional coordinate at the parametric location
+  \brief Returns the 3-dimensional coordinates at the parametric location
     along the given edge.
 
   \details The following static overloads are also available:
@@ -2490,14 +2505,14 @@ public:
   {
     typename Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
 
-    // Note: the parameter t is meant to be the weighted coordinate on the _endpoint_ (i.e. target) of the segment
+    // Note: the parameter t is meant to be the weighted coordinates on the _endpoint_ (i.e. target) of the segment
     return construct_barycenter_3(get(vertexPointMap, target(edge, tm)), t, get(vertexPointMap, source(edge, tm)));
   }
 
   /// \endcond
 
   /*!
-  \brief Returns the 3-dimensional coordinate of the given vertex.
+  \brief Returns the 3-dimensional coordinates of the given vertex.
 
   \param vertex A vertex of the input face graph
   */
@@ -2528,7 +2543,7 @@ public:
 
   static Face_location face_location(vertex_descriptor vertex, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
-    typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
+    typename Traits::Construct_barycentric_coordinates construct_barycentric_coordinates(traits.construct_barycentric_coordinates_object());
     halfedge_descriptor he = next(halfedge(vertex, tm), tm);
     face_descriptor locationFace = face(he, tm);
     std::size_t edgeIndex = CGAL::internal::edge_index(he, tm);
@@ -2537,7 +2552,7 @@ public:
 
     coords[edgeIndex] = FT(1.0);
 
-    return Face_location(locationFace, construct_barycentric_coordinate(coords[0], coords[1], coords[2]));
+    return Face_location(locationFace, construct_barycentric_coordinates(coords[0], coords[1], coords[2]));
   }
 
   /// \endcond
@@ -2560,7 +2575,7 @@ public:
 
   static Face_location face_location(halfedge_descriptor he, FT t, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
-    typename Traits::Construct_barycentric_coordinate cbc(traits.construct_barycentric_coordinate_object());
+    typename Traits::Construct_barycentric_coordinates cbc(traits.construct_barycentric_coordinates_object());
     face_descriptor locationFace = face(he, tm);
     std::size_t edgeIndex = CGAL::internal::edge_index(he, tm);
 
@@ -2604,10 +2619,11 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static Face_location locate(const Point_3& location, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Point_3& location, const Triangle_mesh& tm,
+                              Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
-    build_aabb_tree(tm, tree);
+    build_aabb_tree(tm, tree, vertexPointMap);
     return locate(location, tree, tm, vertexPointMap, traits);
   }
 
@@ -2635,11 +2651,11 @@ public:
   template <class AABBTraits>
   static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
-    typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(traits.construct_barycentric_coordinate_in_triangle_3_object());
+    typename Traits::Construct_barycentric_coordinates_in_triangle_3 cbcit3(traits.construct_barycentric_coordinates_in_triangle_3_object());
     typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(location);
 
     face_descriptor f = result.second;
-    Barycentric_coordinate b = cbcit3(triangle_from_face(f, tm, vertexPointMap), result.first);
+    Barycentric_coordinates b = cbcit3(triangle_from_face(f, tm, vertexPointMap), result.first);
     return Face_location(f, b);
   }
 
@@ -2668,10 +2684,11 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static Face_location locate(const Ray_3& ray, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Ray_3& ray, const Triangle_mesh& tm,
+                              Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
-    build_aabb_tree(tm, tree);
+    build_aabb_tree(tm, tree, vertexPointMap);
     return locate(ray, tree, tm, vertexPointMap, traits);
   }
 
@@ -2701,8 +2718,8 @@ public:
   static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
     typedef AABB_tree<AABBTraits> AABB_face_graph_tree;
-    typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(traits.construct_barycentric_coordinate_in_triangle_3_object());
-    typename Traits::Construct_barycentric_coordinate cbc(traits.construct_barycentric_coordinate_object());
+    typename Traits::Construct_barycentric_coordinates_in_triangle_3 cbcit3(traits.construct_barycentric_coordinates_in_triangle_3_object());
+    typename Traits::Construct_barycentric_coordinates cbc(traits.construct_barycentric_coordinates_object());
     typename Traits::Compute_squared_distance_3 csd3(traits.compute_squared_distance_3_object());
     typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
     typedef boost::optional<Intersection_type> Ray_intersection;
@@ -2739,7 +2756,7 @@ public:
 
     if (foundOne)
     {
-      Barycentric_coordinate b = cbcit3(triangle_from_face(nearestFace, tm, vertexPointMap), nearestPoint);
+      Barycentric_coordinates b = cbcit3(triangle_from_face(nearestFace, tm, vertexPointMap), nearestPoint);
       return Face_location(nearestFace, b);
     }
     else
@@ -2765,17 +2782,24 @@ public:
   template <class AABBTraits>
   void build_aabb_tree(AABB_tree<AABBTraits>& outTree) const
   {
-    build_aabb_tree(m_graph, outTree);
+    build_aabb_tree(m_graph, outTree, m_vertexPointMap);
+  }
+
+  template <class AABBTraits>
+  void build_aabb_tree(AABB_tree<AABBTraits>& outTree, Vertex_point_map vertexPointMap) const
+  {
+    build_aabb_tree(m_graph, outTree, vertexPointMap);
   }
 
   /// \cond
 
   template <class AABBTraits>
-  static void build_aabb_tree(const Triangle_mesh& tm, AABB_tree<AABBTraits>& outTree)
+  static void build_aabb_tree(const Triangle_mesh& tm, AABB_tree<AABBTraits>& outTree,
+                              Vertex_point_map vertexPointMap)
   {
     face_iterator facesStart, facesEnd;
     boost::tie(facesStart, facesEnd) = faces(tm);
-    outTree.rebuild(facesStart, facesEnd, tm);
+    outTree.rebuild(facesStart, facesEnd, tm, vertexPointMap);
     outTree.build();
   }
   /// \endcond
@@ -2783,5 +2807,7 @@ public:
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_SHORTEST_PATH_SURFACE_MESH_SHORTEST_PATH_H

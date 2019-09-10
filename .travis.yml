@@ -1,42 +1,120 @@
-language: cpp
-dist: trusty
-install:
-before_script:
-  - mkdir build
-  - cd build
-  - cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON ..
-script:
-  - make
-  - make -k examples
-#  - make -k tests
-#  - make -k demos
-compiler:
-  - clang
-  - gcc
-addons:
-  apt:
-    packages:
-      - cmake
-      - libboost1.55-dev
-      - libboost-system1.55-dev
-      - libboost-program-options1.55-dev
-      - libboost-thread1.55-dev
-      - libgmp-dev
-      - libmpfr-dev
-      - zlib1g-dev
-      - libeigen3-dev # too old
-      # Not allowed (yet)
-      # - geomview
-      # - libglew1.5-dev
-      # - libipe-dev
-      # - libmpfi-dev
-      # Not found
-      # - libqglviewer-dev
-      # - qtbase5-dev
-      # - qtscript5-dev
-      # - libqt5svg5-dev
-      # - qttools5-dev
-      # - qttools5-dev-tools
-    sources:
-      - kalakris-cmake
-      - boost-latest
+language: cpp 
+dist: trusty 
+sudo: required 
+git: 
+ depth: 3
+matrix:
+ include: 
+  - compiler: gcc 
+    env: PACKAGE='CHECK' 
+  - compiler: clang-3.6
+    env: PACKAGE='CHECK' 
+  - compiler: clang-3.6
+    env: PACKAGE='AABB_tree Advancing_front_surface_reconstruction Algebraic_foundations ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Algebraic_kernel_d Algebraic_kernel_for_circles Algebraic_kernel_for_spheres ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Alpha_shapes_2 Alpha_shapes_3 Apollonius_graph_2 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Arithmetic_kernel Arrangement_on_surface_2 Barycentric_coordinates_2 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='BGL Boolean_set_operations_2 Bounding_volumes ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Box_intersection_d Cartesian_kernel CGAL_Core ' 
+  - compiler: clang-3.6
+    env: PACKAGE='CGAL_ImageIO CGAL_ipelets Circular_kernel_2 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Circular_kernel_3 Circulator Classification ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Combinatorial_map Cone_spanners_2 Convex_decomposition_3 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Convex_hull_2 Convex_hull_3 Convex_hull_d ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Distance_2 Distance_3 Envelope_2 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Envelope_3 Filtered_kernel Generalized_map ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Generator Geomview GraphicsView ' 
+  - compiler: clang-3.6
+    env: PACKAGE='HalfedgeDS Hash_map Homogeneous_kernel ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Inscribed_areas Installation Interpolation ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Intersections_2 Intersections_3 Interval_skip_list ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Interval_support Inventor Jet_fitting_3 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Kernel_23 Kernel_d LEDA ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Linear_cell_complex MacOSX Maintenance ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Matrix_search Mesh_2 Mesh_3 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Mesher_level Minkowski_sum_2 Minkowski_sum_3 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Modifier Modular_arithmetic Nef_2 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Nef_3 Nef_S2 NewKernel_d ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Number_types OpenNL Operations_on_polyhedra ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Optimal_transportation_reconstruction_2 Optimisation_basic Partition_2 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Periodic_2_triangulation_2 Periodic_3_triangulation_3 Point_set_2 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Point_set_3 Point_set_processing_3 Point_set_shape_detection_3 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Poisson_surface_reconstruction_3 Polygon Polygon_mesh_processing ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Polyhedron Polyhedron_IO Polyline_simplification_2 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Polynomial Polytope_distance_d Principal_component_analysis ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Principal_component_analysis_LGPL Profiling_tools Property_map ' 
+  - compiler: clang-3.6
+    env: PACKAGE='QP_solver Random_numbers Ridges_3 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Scale_space_reconstruction_3 Scripts SearchStructures ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Segment_Delaunay_graph_2 Segment_Delaunay_graph_Linf_2 Set_movable_separability_2 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Skin_surface_3 Snap_rounding_2 Solver_interface ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Spatial_searching Spatial_sorting STL_Extension ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Straight_skeleton_2 Stream_lines_2 Stream_support ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Subdivision_method_3 Surface_mesh Surface_mesh_deformation ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Surface_mesher Surface_mesh_parameterization Surface_mesh_segmentation ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Surface_mesh_shortest_path Surface_mesh_simplification Surface_mesh_skeletonization ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Surface_sweep_2 TDS_2 TDS_3 ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Testsuite Three Triangulation ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Triangulation_2 Triangulation_3 Union_find ' 
+  - compiler: clang-3.6
+    env: PACKAGE='Visibility_2 Voronoi_diagram_2 wininst ' 
+install: 
+  - bash .travis/install.sh 
+  - if [[ "$CXX" = "clang++" ]]; then export CXX=clang++-3.6 CC=clang-3.6; fi
+before_script: 
+- wget -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen_exe
+- sudo mv doxygen_exe /usr/bin/doxygen
+- sudo chmod +x /usr/bin/doxygen
+- mkdir -p build 
+- cd build 
+- cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCGAL_HEADER_ONLY=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
+- make 
+- sudo make install &>/dev/null
+- cd ..
+script: 
+- cd ./.travis
+- bash -x -e ./build_package.sh $PACKAGE
+notifications:
+  email:
+    on_success: change # default: always
+    on_failure: always # default: always
+

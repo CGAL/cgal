@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Geert-Jan Giezeman, Michael Hemmer
@@ -72,7 +73,7 @@ is_nan_by_mask_double(unsigned int h, unsigned int l)
 
 template<>
 class Is_valid< double >
-  : public std::unary_function< double, bool > {
+  : public CGAL::unary_function< double, bool > {
   public :
     bool operator()( const double& x ) const{
       double d = x;
@@ -85,7 +86,7 @@ class Is_valid< double >
 
 template<>
 class Is_valid< double >
-  : public std::unary_function< double, bool > {
+  : public CGAL::unary_function< double, bool > {
   public :
     bool operator()( const double& x ) const {
 #ifdef _MSC_VER
@@ -106,7 +107,7 @@ template <> class Algebraic_structure_traits< double >
     typedef Tag_true             Is_numerical_sensitive;
 
     class Sqrt
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return std::sqrt( x );
@@ -114,7 +115,7 @@ template <> class Algebraic_structure_traits< double >
     };
 
     class Kth_root
-      : public std::binary_function<int, Type, Type> {
+      : public CGAL::binary_function<int, Type, Type> {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -138,8 +139,7 @@ inline double sse2fabs(double a)
   __m128d temp = _mm_set1_pd(a);
   
   temp = _mm_and_pd(temp, absMask.m);
-  _mm_store_sd(&a, temp);
-  return a;
+  return _mm_cvtsd_f64 (temp);
 }
 
 #endif
@@ -152,7 +152,7 @@ template <> class Real_embeddable_traits< double >
 // GCC is faster with std::fabs().
 #if defined(__GNUG__) || defined(CGAL_MSVC_USE_STD_FABS) || defined(CGAL_USE_SSE2_FABS)
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
 #ifdef CGAL_USE_SSE2_FABS
@@ -166,13 +166,16 @@ template <> class Real_embeddable_traits< double >
 
 // Is_finite depends on platform
     class Is_finite
-      : public std::unary_function< Type, bool > {
+      : public CGAL::unary_function< Type, bool > {
       public :
         bool operator()( const Type& x ) const {
-#ifdef CGAL_CFG_IEEE_754_BUG
+
+#if defined CGAL_CFG_IEEE_754_BUG
           Type d = x;
           IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
           return is_finite_by_mask_double( p->c.H );
+#elif !defined CGAL_CFG_NO_CPP0X_ISFINITE
+          return std::isfinite(x);
 #elif defined CGAL_CFG_NUMERIC_LIMITS_BUG
           return (x == x) && (is_valid(x-x));
 #else

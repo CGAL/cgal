@@ -10,6 +10,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: BSL-1.0
 //
 // NOTE: this file have been taken from boost 1.46.1 for using
 //       with Modificable_priority_queue (to enhance the 
@@ -22,6 +23,7 @@
 #include <iterator>
 #include <functional>
 #include <boost/config.hpp>
+#include <boost/iterator.hpp>
 
 namespace CGAL { namespace internal {
 namespace boost_ {

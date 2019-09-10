@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -25,6 +26,9 @@
 #ifndef CGAL_PERTURB_MESH_3_H
 #define CGAL_PERTURB_MESH_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/sliver_criteria.h>
@@ -36,6 +40,11 @@
 #include <CGAL/use.h>
 
 namespace CGAL {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
@@ -63,6 +72,9 @@ BOOST_PARAMETER_FUNCTION(
 }
 CGAL_PRAGMA_DIAG_POP
 
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 template <typename C3T3, 
           typename MeshDomain, 
@@ -129,5 +141,7 @@ perturb_mesh_3_impl(C3T3& c3t3,
   
 } //namespace CGAL
 
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_PERTURB_MESH_3_H

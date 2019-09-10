@@ -23,12 +23,12 @@ the faces of the input complex. It has to be a model
 of the concept `MeshDomain_3`. 
 
 \tparam Cb is the cell base class. It has to be a model 
-of the concept `RegularTriangulationCellBase_3` and defaults to 
-`Regular_triangulation_cell_base_3<Gt>`. 
+of the concept `RegularTriangulationCellBaseWithWeightedCircumcenter_3` and defaults to
+`Regular_triangulation_cell_base_with_weighted_circumcenter_3<Gt>`.
 
 \cgalModels `MeshCellBase_3`
 
-\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
+\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>` 
 \sa `CGAL::Compact_mesh_cell_base_3<Gt, MD, Tds>`
 
 */

@@ -16,8 +16,7 @@ arrangement.
 
 */
 
-class Arr_oblivious_side_tag {
-public:
+struct Arr_oblivious_side_tag {
 
 /// @}
 
@@ -44,8 +43,7 @@ functions based on type of curves that induce the arrangement.
 
 */
 
-class Arr_open_side_tag {
-public:
+struct Arr_open_side_tag {
 
 /// @}
 

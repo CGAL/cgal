@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
@@ -65,7 +66,7 @@ public:
 
     // Allows construction of const_iterator from iterator
     template < class A, class B, class C>
-    vector_iterator( const vector_iterator<A,B,C>& i) : ptr( &*i) {}
+    vector_iterator( const vector_iterator<A,B,C>& i) : ptr(i.operator->()) {}
 
     // OPERATIONS Forward Category
     // ---------------------------
@@ -174,11 +175,7 @@ public:
     typedef std::reverse_iterator<const_iterator>    const_reverse_iterator;
 
 protected:
-#ifndef _MSC_VER
-    // Somehow the static initialization does not work correctly for MSVC
-    // ---> strange linker errors
-    static
-#endif // _MSC_VER
+
     Allocator alloc;
 
     iterator start_;
@@ -520,11 +517,6 @@ protected:
     }
 }; // class vector
 
-#ifndef _MSC_VER
-// init static member allocator object
-template <class T, class Alloc>
-Alloc vector< T, Alloc>::alloc = Alloc();
-#endif // _MSC_VER
 
 
 template <class T, class Alloc>

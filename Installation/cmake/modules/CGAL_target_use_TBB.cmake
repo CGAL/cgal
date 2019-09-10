@@ -1,0 +1,10 @@
+if (CGAL_target_use_TBB_included)
+  return()
+endif()
+set(CGAL_target_use_TBB_included TRUE)
+
+function(CGAL_target_use_TBB target)
+  target_include_directories ( ${target} SYSTEM PUBLIC ${TBB_INCLUDE_DIRS} )
+  target_link_libraries( ${target} PUBLIC ${TBB_LIBRARIES} )
+  target_compile_options( ${target} PUBLIC -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
+endfunction()

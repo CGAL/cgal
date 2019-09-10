@@ -14,19 +14,19 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_COMBINATORIAL_MAP_OPERATIONS_H
 #define CGAL_COMBINATORIAL_MAP_OPERATIONS_H 1
 
-#include <CGAL/Combinatorial_map_basic_operations.h>
-#include <CGAL/Combinatorial_map_insertions.h>
-#include <CGAL/internal/Combinatorial_map_sewable.h>
+#include <CGAL/Dart_const_iterators.h>
 #include <CGAL/internal/Combinatorial_map_group_functors.h>
 
 #include <deque>
-#include <stack>
+
+#define CGAL_BETAINV(i) (i>1?i:(i==1?0:1))
 
 namespace CGAL
 {
@@ -129,7 +129,7 @@ namespace CGAL
         // We group the two (i+1)-cells incident if they exist.
         if ( dg1!=amap.null_handle )
           CGAL::internal::Group_attribute_functor_run<CMap, i+1>::
-              run(&amap, dg1, dg2);
+              run(amap, dg1, dg2);
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -231,12 +231,12 @@ namespace CGAL
         if ( i==1 )
           CMap::Helper::template Foreach_enabled_attributes_except
               <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
-              run(&amap, modified_darts, modified_darts2,
+              run(amap, modified_darts, modified_darts2,
                   mark_modified_darts);
         else
           CMap::Helper::template Foreach_enabled_attributes_except
               <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
-              run(&amap, modified_darts, mark_modified_darts);
+              run(amap, modified_darts, mark_modified_darts);
       }
 
       // We remove all the darts of the i-cell.
@@ -277,7 +277,7 @@ namespace CGAL
 
   /** Remove a d-cell, in a d-map (special case).
    *  @param amap the used combinatorial map.
-   *  @param adart a dart of the volume to remove.
+   *  @param adart a dart of the d-cell to remove.
    *  @param update_attributes a boolean to update the enabled attributes
    *         (deprecated, now we use are_attributes_automatically_managed())
    *  @return the number of deleted darts.
@@ -303,7 +303,7 @@ namespace CGAL
         ++res;
       }
 
-      // We unlink all the darts of the volume for beta-d.
+      // We unlink all the darts of the d-cell for beta-d.
       typename std::deque<typename CMap::Dart_handle>::iterator
         it = to_erase.begin();
       for ( it = to_erase.begin(); it != to_erase.end(); ++it )
@@ -325,7 +325,7 @@ namespace CGAL
         // void attributes.
         CMap::Helper::template Foreach_enabled_attributes_except
           <CGAL::internal::Test_split_attribute_functor<CMap,i>,
-           CMap::dimension>::run(&amap, modified_darts);
+           CMap::dimension>::run(amap, modified_darts);
       }
 
       // We remove all the darts of the d-cell.
@@ -382,7 +382,7 @@ namespace CGAL
         // We group the two edges incident if they exist.
         if ( dg1!=amap.null_handle )
           CGAL::internal::Group_attribute_functor_run<CMap, 1>::
-              run(&amap, dg1, dg2);
+              run(amap, dg1, dg2);
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -454,7 +454,7 @@ namespace CGAL
         // void attributes.
         CMap::Helper::template Foreach_enabled_attributes_except
             <CGAL::internal::Test_split_attribute_functor<CMap,0>, 1>::
-            run(&amap,modified_darts, modified_darts2);
+            run(amap, modified_darts, modified_darts2);
       }
 
       // We remove all the darts of the 0-cell.
@@ -576,10 +576,10 @@ namespace CGAL
 
       if ( amap.are_attributes_automatically_managed() && update_attributes )
       {
-        // We group the two (i+1)-cells incident if they exist.
+        // We group the two (i-1)-cells incident if they exist.
         if ( dg1!=amap.null_handle )
           CGAL::internal::Group_attribute_functor_run<CMap,i-1>::
-            run(&amap, dg1, dg2);
+            run(amap, dg1, dg2);
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -663,7 +663,7 @@ namespace CGAL
         // void attributes.
         CMap::Helper::template Foreach_enabled_attributes_except
           <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
-          run(&amap, modified_darts, mark_modified_darts);
+          run(amap, modified_darts, mark_modified_darts);
       }
 
       // We remove all the darts of the i-cell.
@@ -713,18 +713,18 @@ namespace CGAL
       typename CMap::Dart_handle d1, d2;
       typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
-      typename CMap::size_type mark = amap.get_new_mark();
+      typename CMap::size_type amark = amap.get_new_mark();
 
       // First we store and mark all the darts of the 1-cell to contract.
       std::deque<typename CMap::Dart_handle> to_erase;
-      for ( CGAL::CMap_dart_iterator_basic_of_cell<CMap,1> it(amap,adart,mark);
+      for ( CGAL::CMap_dart_iterator_basic_of_cell<CMap,1> it(amap,adart,amark);
             it.cont(); ++it )
       {
         to_erase.push_back(it);
         if ( dg1==amap.null_handle && !amap.template is_free<0>(it) &&
              !amap.template is_free<1>(it) )
         { dg1=amap.template beta<0>(it); dg2=amap.template beta<1>(it); }
-        amap.mark(it, mark);
+        amap.mark(it, amark);
         ++res;
       }
 
@@ -733,7 +733,7 @@ namespace CGAL
         // We group the two vertices incident if they exist.
         if ( dg1!=amap.null_handle )
           CGAL::internal::Group_attribute_functor_run<CMap, 0, 1>::
-            run(&amap, dg1, dg2);
+            run(amap, dg1, dg2);
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -757,7 +757,8 @@ namespace CGAL
               if ( (*it)->beta(0)!=(*it)->beta(1) )*/
               if ( amap.are_attributes_automatically_managed() && update_attributes )
               {
-                modified_darts.push_back(amap.template beta<1>(*it));
+                if (!amap.is_marked(amap.template beta<1>(*it), amark))
+                { modified_darts.push_back(amap.template beta<1>(*it)); }
               }
               amap.basic_link_beta_1(amap.template beta<0>(*it),
                                      amap.template beta<1>(*it));
@@ -767,7 +768,8 @@ namespace CGAL
           {
             if ( amap.are_attributes_automatically_managed() && update_attributes )
             {
-              modified_darts2.push_back(amap.template beta<0>(*it));
+              if (!amap.is_marked(amap.template beta<0>(*it), amark))
+              { modified_darts2.push_back(amap.template beta<0>(*it)); }
             }
             amap.template dart_unlink_beta<1>(amap.template beta<0>(*it));
           }
@@ -778,7 +780,8 @@ namespace CGAL
           {
             if ( amap.are_attributes_automatically_managed() && update_attributes )
             {
-              modified_darts.push_back(amap.template beta<1>(*it));
+              if (!amap.is_marked(amap.template beta<1>(*it), amark))
+              { modified_darts.push_back(amap.template beta<1>(*it)); }
             }
             amap.template dart_unlink_beta<0>(amap.template beta<1>(*it));
           }
@@ -789,8 +792,8 @@ namespace CGAL
       for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
       { amap.erase_dart(*it); }
 
-      CGAL_assertion( amap.is_whole_map_unmarked(mark) );
-      amap.free_mark(mark);
+      CGAL_assertion( amap.is_whole_map_unmarked(amark) );
+      amap.free_mark(amark);
 
       if ( amap.are_attributes_automatically_managed() && update_attributes )
       {
@@ -798,7 +801,7 @@ namespace CGAL
         // void attributes.
         CMap::Helper::template Foreach_enabled_attributes_except
           <CGAL::internal::Test_split_attribute_functor<CMap,1>, 1>::
-          run(&amap, modified_darts, modified_darts2);
+          run(amap, modified_darts, modified_darts2);
       }
 
 #ifdef CGAL_CMAP_TEST_VALID_CONTRACTIONS

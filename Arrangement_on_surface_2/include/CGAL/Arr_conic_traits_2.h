@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_ARR_CONIC_TRAITS_2_H
 #define CGAL_ARR_CONIC_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The conic traits-class for the arrangement package.
@@ -870,6 +875,8 @@ public:
   Trim_2 trim_2_object() const { return Trim_2(*this); }
   //@}
 };
+
+#include <CGAL/enable_warnings.h>
 
 } //namespace CGAL
 #endif

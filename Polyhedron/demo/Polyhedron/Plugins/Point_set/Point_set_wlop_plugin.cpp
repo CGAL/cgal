@@ -98,25 +98,23 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
 	      << dialog.neighborhoodRadius() <<" * average spacing)...\n";
 
     // Computes average spacing
-    double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points->begin_or_selection_begin(),
-                                                           points->end(),
-							   6 /* knn = 1 ring */);
+    double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points->all_or_selection_if_not_empty(),
+                                                                            6 /* knn = 1 ring */,
+                                                                            points->parameters());
 
     Scene_points_with_normal_item* new_item
       = new Scene_points_with_normal_item();
     new_item->setName (tr("%1 (WLOP processed)").arg(item->name()));
-    new_item->set_has_normals(false);
     new_item->setVisible(true);
     item->setVisible(false);
     scene->addItem(new_item);
     
     CGAL::wlop_simplify_and_regularize_point_set<Concurrency_tag>
-      (points->begin_or_selection_begin(),
-       points->end(),
-       std::back_inserter(*(new_item->point_set ())),
-       dialog.retainedPercentage (),
-       dialog.neighborhoodRadius()*average_spacing
-       );
+      (points->all_or_selection_if_not_empty(),
+       new_item->point_set()->point_back_inserter(),
+       points->parameters().
+       select_percentage (dialog.retainedPercentage()).
+       neighbor_radius (dialog.neighborhoodRadius()*average_spacing));
 
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Simplification and regularization: "

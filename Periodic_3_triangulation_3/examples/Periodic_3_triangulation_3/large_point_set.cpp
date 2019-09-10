@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 
@@ -9,14 +10,13 @@
 #include <iostream>
 #include <vector>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K> GT;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K>   Gt;
+typedef CGAL::Periodic_3_Delaunay_triangulation_3<Gt>         P3DT3;
 
-typedef CGAL::Periodic_3_Delaunay_triangulation_3<GT> PDT;
+typedef P3DT3::Point          Point;
 
-typedef PDT::Point          Point;
-
-int main()
+int main(int, char**)
 {
   CGAL::Timer t;
   typedef CGAL::Creator_uniform_3<double, Point> Creator;
@@ -26,7 +26,7 @@ int main()
   int n = 10000;
   std::vector<Point> pts;
 
-  PDT PT1, PT2, PT3;
+  P3DT3 PT1, PT2, PT3;
 
   // Generating n random points
   for (int i=0 ; i < n ; i++) {

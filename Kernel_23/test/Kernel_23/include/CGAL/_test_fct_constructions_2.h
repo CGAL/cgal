@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -27,10 +28,11 @@ template <class R>
 bool
 _test_fct_constructions_2(const R&)
 {
-  typedef typename R::RT     RT;
-  typedef CGAL::Point_2<R>    Point;
-  typedef CGAL::Triangle_2<R> Triangle;
-  typedef CGAL::Vector_2<R>   Vector;
+  typedef typename R::RT              RT;
+  typedef CGAL::Point_2<R>            Point;
+  typedef CGAL::Weighted_point_2<R>   Weighted_Point;
+  typedef CGAL::Triangle_2<R>         Triangle;
+  typedef CGAL::Vector_2<R>           Vector;
 
   RT RT0(0);
   RT RT1(1);
@@ -43,6 +45,15 @@ _test_fct_constructions_2(const R&)
   Point pnw = p + Vector(-RT1, RT1 );
   Point pse = p + Vector( RT1,-RT1 );
   Point psw = p + Vector(-RT1,-RT1 );
+
+  Weighted_Point wpne(pne);
+  Weighted_Point wpnw(pnw);
+  Weighted_Point wpse(pse);
+  Weighted_Point wpsw(psw);
+
+  Weighted_Point wpnw_b(pnw, 4);
+  Weighted_Point wpse_b(pse, 4);
+  Weighted_Point wpsw_b(psw, 0);
 
   // midpoint
   assert( CGAL::midpoint( pne, psw) == p);
@@ -76,7 +87,11 @@ _test_fct_constructions_2(const R&)
   assert( CGAL::barycenter( pne, 0, psw, 0, pse, 0, pnw) == pnw);
   assert( CGAL::barycenter( pne, 1, psw, 1, pse, 1, pnw, 1) == p);
 
-  // general position intersection point
+  // weighted circumcenter
+  assert( CGAL::weighted_circumcenter( wpne, wpse, wpnw ) == p);
+  assert( CGAL::weighted_circumcenter( wpsw, wpse, wpnw ) == p);
+
+  assert( CGAL::weighted_circumcenter( wpnw_b, wpse_b, wpsw_b ) == psw);
 
   return true;
 }

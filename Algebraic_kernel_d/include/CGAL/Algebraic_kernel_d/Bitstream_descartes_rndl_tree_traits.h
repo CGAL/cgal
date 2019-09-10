@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -22,6 +23,8 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_BITSTREAM_DESCARTES_RNDL_TREE_TRAITS_H
 #define CGAL_ALGEBRAIC_KERNEL_D_BITSTREAM_DESCARTES_RNDL_TREE_TRAITS_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
@@ -29,6 +32,7 @@
 #include <CGAL/Algebraic_kernel_d/Float_traits.h>
 #include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/convert_to_bfi.h>
+#include <CGAL/tss.h>
 
 #include <vector>
 
@@ -134,7 +138,7 @@ public:
 private:
     static const Self& get_default_instance(){
       Bitstream_coefficient_kernel kernel;
-      static Self x = Self(kernel);
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE(Self, x,kernel);
       return x;
     }
 
@@ -438,5 +442,7 @@ public:
 } // namespace internal
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ALGEBRAIC_KERNEL_D_BITSTREAM_DESCARTES_RNDL_TREE_TRAITS_H

@@ -295,8 +295,7 @@ think of it as being connected to <TT>/dev/null</TT>.
 
 */
 
-class Emptyset_iterator {
-public:
+struct Emptyset_iterator {
 
 /// \name Creation
 /// @{
@@ -348,8 +347,7 @@ argument, and not the iterator itself.
 
 */
 template< typename Iterator, typename Predicate >
-class Filter_iterator {
-public:
+struct Filter_iterator {
 
 /// \name Creation
 /// @{

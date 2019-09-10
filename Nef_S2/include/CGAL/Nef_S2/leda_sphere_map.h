@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_LEDA_SPHERE_MAP_H
 #define CGAL_LEDA_SPHERE_MAP_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/generic_sweep.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>

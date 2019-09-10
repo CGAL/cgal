@@ -35,7 +35,7 @@ std::cout << "=== test_fandisk ===\n";
   if (!stream ||
       !CGAL::read_off_points(stream,
                              std::back_inserter(points),
-                             pmap))
+                             CGAL::parameters::point_map(pmap)))
   {
     std::cerr << "Error: cannot read file data/fandisk.off" << std::endl;
     return false;
@@ -44,7 +44,8 @@ std::cout << "=== test_fandisk ===\n";
 // test vcm without convolution
   std::cout << " Test compute vcm without convolution\n";
   cov.clear();
-  CGAL::compute_vcm(points.begin(), points.end(), pmap, cov, 0.2, 0, Kernel());
+  CGAL::compute_vcm(points, cov, 0.2, 0,
+                    CGAL::parameters::point_map(pmap));
 
 //    check the cov matrices
   std::ifstream cov_stream("vcm_all_test-covmat_no_cov.txt");
@@ -66,7 +67,7 @@ std::cout << "=== test_fandisk ===\n";
 // test vcm with convolution
   std::cout << " Test compute vcm with convolution\n";
   cov.clear();
-  CGAL::compute_vcm(points.begin(), points.end(), pmap, cov, 0.2, 0.1, Kernel());
+  CGAL::compute_vcm(points, cov, 0.2, 0.1, CGAL::parameters::point_map (pmap));
 //    check the cov matrices
   cov_stream.open("vcm_all_test-covmat_with_cov.txt");
   while( cov_stream >> index >> expected[0] >> expected[1] >> expected[2] >> expected[3] >> expected[4] >> expected[5] )

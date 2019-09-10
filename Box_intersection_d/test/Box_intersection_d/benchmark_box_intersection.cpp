@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
@@ -28,6 +29,8 @@
 #include <iterator>
 #include <fstream>
 #include <cstdlib>
+
+#include <CGAL/disable_warnings.h>
 
 #include "util.h"
 

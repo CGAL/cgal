@@ -41,13 +41,16 @@ _test_regular_duality( const Del &T );
 template < class Triangulation, class Point, class Face_handle >
 bool
 _test_is_to_the_left( const Triangulation &T,
-		      const Point &p,
-		      const Face_handle &f,
-		      const int li)
+                      const Point &p,
+                      const Face_handle &f,
+                      const int li)
 {
+  typename Triangulation::Geom_traits::Construct_weighted_point_2 p2wp =
+      T.geom_traits().construct_weighted_point_2_object();
+
   return( T.orientation(f->vertex(f->ccw(li))->point(),
-			f->vertex(f->cw(li))->point(),
-			p)  == CGAL::LEFT_TURN );
+                        f->vertex(f->cw(li))->point(),
+                        p2wp(p)) == CGAL::LEFT_TURN );
 }
 
 template <class Triangulation>
@@ -140,11 +143,11 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   Weighted_point wp8(p8,20);
   Weighted_point wp9(p9,1); // intersection of p2,p8 and p6,p7
   Weighted_point wp10(p10,2);
-  //Weighted_point wp11(p11,2); // midpoint p1,p0
+  Weighted_point wp11(p11,2); // midpoint p1,p0
   Weighted_point wp12(p12,2); // slightly above, in face
-  //Weighted_point wp13(p13,1);
-  //Weighted_point wp14(p14,1);
-  //Weighted_point wp15(p15,1);
+  Weighted_point wp13(p13,1);
+  Weighted_point wp14(p14,1);
+  Weighted_point wp15(p15,1);
   Weighted_point wp16(p2,1);
   Weighted_point wp17(p3,20);
   Weighted_point wp19(p9,0.5);
@@ -154,10 +157,13 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   {
     Weighted_point p15_bis(p15.x(), p15.y());
     assert(p15_bis == p15);
-    CGAL::Weighted_point<CGAL::Simple_cartesian<double>::Point_3, double> w3(0, 0, 0);
   }
 
   Cls T;
+  
+  std::cerr << wp1 << " " << wp1.x()  << std::endl;
+  std::cerr << wp2 << std::endl;
+  std::cerr << wp3 << std::endl;
   assert(T.power_test(wp1,wp2,wp3) == CGAL::ON_NEGATIVE_SIDE);
   assert(T.power_test(wp1,wp8,wp2) == CGAL::ON_POSITIVE_SIDE);
   assert(T.power_test(wp2,wp8,wp9) == CGAL::ON_NEGATIVE_SIDE);
@@ -368,62 +374,62 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   T1_3_2.insert(wp2);
   T1_3_2.insert(wp9); 
   T1_3_2.is_valid(verbose);
-  loc = T1_3_2.locate(p1,lt,li); assert( lt == Cls::VERTEX );
-  assert( T1_3_2.xy_equal(loc->vertex(li)->point(), p1) );
-  loc = T1_3_2.locate(p2,lt,li); assert( lt == Cls::VERTEX );
-  assert( T1_3_2.xy_equal(loc->vertex(li)->point(), p2) );
-  loc = T1_3_2.locate(p9,lt,li); assert( lt == Cls::VERTEX );
-  assert( T1_3_2.xy_equal(loc->vertex(li)->point(), p9) );
-  loc = T1_3_2.locate(p3,lt,li); assert( lt == Cls::EDGE );
-  assert( (T1_3_2.xy_equal(loc->vertex(loc->ccw(li))->point().point(), p1)
-        && T1_3_2.xy_equal(loc->vertex(loc->cw(li))->point().point(), p2))
-       || (T1_3_2.xy_equal(loc->vertex(loc->ccw(li))->point().point(), p2)
-        && T1_3_2.xy_equal(loc->vertex(loc->cw(li))->point().point(), p1)));
-  loc = T1_3_2.locate(p8,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
-  loc = T1_3_2.locate(p7,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  loc = T1_3_2.locate(p5,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  loc = T1_3_2.locate(p4,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
-  loc = T1_3_2.locate(p6,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL);
+  loc = T1_3_2.locate(wp1,lt,li); assert( lt == Cls::VERTEX );
+  assert( T1_3_2.xy_equal(loc->vertex(li)->point(), wp1) );
+  loc = T1_3_2.locate(wp2,lt,li); assert( lt == Cls::VERTEX );
+  assert( T1_3_2.xy_equal(loc->vertex(li)->point(), wp2) );
+  loc = T1_3_2.locate(wp9,lt,li); assert( lt == Cls::VERTEX );
+  assert( T1_3_2.xy_equal(loc->vertex(li)->point(), wp9) );
+  loc = T1_3_2.locate(wp3,lt,li); assert( lt == Cls::EDGE );
+  assert( (T1_3_2.xy_equal(loc->vertex(loc->ccw(li))->point(), wp1)
+        && T1_3_2.xy_equal(loc->vertex(loc->cw(li))->point(), wp2))
+       || (T1_3_2.xy_equal(loc->vertex(loc->ccw(li))->point(), wp2)
+        && T1_3_2.xy_equal(loc->vertex(loc->cw(li))->point(), wp1)));
+  loc = T1_3_2.locate(wp8,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  loc = T1_3_2.locate(wp7,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
+  loc = T1_3_2.locate(wp5,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
+  loc = T1_3_2.locate(wp4,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
+  loc = T1_3_2.locate(wp6,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL);
  
 
   // Check point location in 2-dimensional triangulations
   std::cout << "    point locations 2-dim" << std::endl;
-  loc = T2_3.locate(p0,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p0) );
-  loc = T2_3.locate(p1,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p1) );
-  loc = T2_3.locate(p2,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p2) );
-  loc = T2_3.locate(p4,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p4) );
-  loc = T2_3.locate(p5,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p5) );
-  loc = T2_3.locate(p6,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p6) );
-  loc = T2_3.locate(p7,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p7) );
-  loc = T2_3.locate(p8,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p8) );
-  loc = T2_3.locate(p10,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p10) );
+  loc = T2_3.locate(wp0,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), wp0) );
+  loc = T2_3.locate(wp1,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), wp1) );
+  loc = T2_3.locate(wp2,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), wp2) );
+  loc = T2_3.locate(wp4,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), wp4) );
+  loc = T2_3.locate(wp5,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), wp5) );
+  loc = T2_3.locate(wp6,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), wp6) );
+  loc = T2_3.locate(wp7,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), wp7) );
+  loc = T2_3.locate(wp8,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), wp8) );
+  loc = T2_3.locate(wp10,lt,li); assert( lt == Cls::VERTEX );
+  assert( T2_3.xy_equal(loc->vertex(li)->point(), wp10) );
 
   
-  loc = T2_3.locate(p3,lt,li); assert( lt == Cls::EDGE );
-  loc = T2_3.locate(p9,lt,li); assert( lt == Cls::EDGE );
-  loc = T2_3.locate(p11,lt,li); assert( lt == Cls::EDGE);
-  assert( (T2_3.xy_equal(loc->vertex(loc->ccw(li))->point().point(), p1)
-        && T2_3.xy_equal(loc->vertex(loc->cw(li))->point().point(), p0))
-       || (T2_3.xy_equal(loc->vertex(loc->ccw(li))->point().point(), p0)
-        && T2_3.xy_equal(loc->vertex(loc->cw(li))->point().point(), p1)));
-  loc = T2_3.locate(p12,lt,li); assert( lt == Cls::FACE );
-  assert( T2_3.oriented_side(loc,p12) == CGAL::ON_POSITIVE_SIDE );
-  loc = T2_3.locate(p13,lt,li,loc); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  loc = T2_3.locate(wp3,lt,li); assert( lt == Cls::EDGE );
+  loc = T2_3.locate(wp9,lt,li); assert( lt == Cls::EDGE );
+  loc = T2_3.locate(wp11,lt,li); assert( lt == Cls::EDGE);
+  assert( (T2_3.xy_equal(loc->vertex(loc->ccw(li))->point(), wp1)
+        && T2_3.xy_equal(loc->vertex(loc->cw(li))->point(), wp0))
+       || (T2_3.xy_equal(loc->vertex(loc->ccw(li))->point(), wp0)
+        && T2_3.xy_equal(loc->vertex(loc->cw(li))->point(), wp1)));
+  loc = T2_3.locate(wp12,lt,li); assert( lt == Cls::FACE );
+  assert( T2_3.oriented_side(loc,wp12) == CGAL::ON_POSITIVE_SIDE );
+  loc = T2_3.locate(wp13,lt,li,loc); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   li = loc->index(T2_3.infinite_vertex());
   assert( _test_is_to_the_left(T2_3,p13,loc,li) );
-  loc = T2_3.locate(p14,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  loc = T2_3.locate(wp14,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   li = loc->index(T2_3.infinite_vertex());
   assert( _test_is_to_the_left(T2_3,p14,loc,li) );
-  loc = T2_3.locate(p15,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  loc = T2_3.locate(wp15,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   li = loc->index(T2_3.infinite_vertex());
   assert( _test_is_to_the_left(T2_3,p15,loc,li) );
 
@@ -438,9 +444,9 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   T2_3_1.insert(wp19);    // hidden on edge
   T2_3_1.is_valid(verbose);
 
-  loc = T2_3_1.locate(p12,lt,li); assert( lt == Cls::FACE );
-  assert( T2_3_1.oriented_side(loc,p12) == CGAL::ON_POSITIVE_SIDE );
-  assert( T2_3_1.power_test(loc,p12) == CGAL::ON_NEGATIVE_SIDE);
+  loc = T2_3_1.locate(wp12,lt,li); assert( lt == Cls::FACE );
+  assert( T2_3_1.oriented_side(loc,wp12) == CGAL::ON_POSITIVE_SIDE );
+  assert( T2_3_1.power_test(loc,wp12) == CGAL::ON_NEGATIVE_SIDE);
   T2_3_1.insert(wp12); //hidden in face
   T2_3_1.is_valid(verbose);
 
@@ -514,7 +520,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   typedef typename Cls::Line_face_circulator LFC;
   // here == operator needed for Point!
   // testing with the grid triangulation
-  LFC fc= T2_3.line_walk(p1,p10);
+  LFC fc= T2_3.line_walk(wp1,wp10);
   assert(fc != NULL);
   assert(!fc.is_empty());
   LFC fc2=fc;
@@ -524,8 +530,9 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   ++fc;
   --fc;
   Bare_point pp(0,1,2);
-  loc = T2_3.locate(pp,lt,li);
-  fc= T2_3.line_walk(pp,p10,loc);
+  Weighted_point wpp(pp);
+  loc = T2_3.locate(wpp,lt,li);
+  fc= T2_3.line_walk(wpp,wp10,loc);
   fc2=fc;
   assert(fc==fc2);
   fc++;
@@ -534,15 +541,15 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   --fc;
   // testing with dummy triangulations
   Cls T2_8;
-     T2_8.insert(Bare_point(0,0,1));
-     T2_8.insert(Bare_point(1,0,1));
-     T2_8.insert(Bare_point(0,1,1));
-     T2_8.insert(Bare_point(1,1,1));
+  T2_8.insert(Weighted_point(Bare_point(0,0,1)));
+  T2_8.insert(Weighted_point(Bare_point(1,0,1)));
+  T2_8.insert(Weighted_point(Bare_point(0,1,1)));
+  T2_8.insert(Weighted_point(Bare_point(1,1,1)));
   int n=0;
   do {fc2++ ; n = n+1;} while (fc2 != fc);
   assert(T2_8.number_of_vertices()>=2);
   assert(T2_8.is_valid(verbose));
-  fc= T2_8.line_walk(Bare_point(5,4,10),Bare_point(5,5));
+  fc= T2_8.line_walk(Weighted_point(Bare_point(5,4,10)),Weighted_point(5,5));
   fc2=fc;
   n=0;
   assert(fc==fc2);
@@ -550,16 +557,16 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   assert(n==4);
   // the two point are vertices of the triangulation.
   Cls TT;
-  TT.insert(Bare_point(0,0)); 
-  TT.insert(Bare_point(1,0));
-  TT.insert(Bare_point(1,1));
-  TT.insert(Bare_point(0,1));
+  TT.insert(Weighted_point(Bare_point(0,0))); 
+  TT.insert(Weighted_point(Bare_point(1,0)));
+  TT.insert(Weighted_point(Bare_point(1,1)));
+  TT.insert(Weighted_point(Bare_point(0,1)));
   assert(TT.dimension()==2);
   assert(TT.is_valid(verbose));
   assert(TT.number_of_vertices()==4);
-  loc = TT.locate(Bare_point(0,0));
-  fc = TT.line_walk(Bare_point(0,0),Bare_point(1,1));
-  fc2 = TT.line_walk(Bare_point(0,0),Bare_point(1,1),loc);
+  loc = TT.locate(Weighted_point(0,0));
+  fc = TT.line_walk(Weighted_point(0,0),Weighted_point(1,1));
+  fc2 = TT.line_walk(Weighted_point(0,0),Weighted_point(1,1),loc);
   if (fc != fc2) 
     {
       TT.show_all();
@@ -583,7 +590,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   assert( T0_0.cw(2) == 1 );
 
   // the assert() are to avoid compiler warnings about unused variables
-  loc = T2_3.locate(p12,lt,li); // from section locate above
+  loc = T2_3.locate(wp12,lt,li); // from section locate above
   Triangle t = T2_3.triangle(loc); assert( &t == &t );
   Segment  s = T2_3.segment(loc,0); assert( &s == &s );
   s = T2_3.segment(Edge(loc,1)); assert( &s == &s );
@@ -684,7 +691,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
      std::back_inserter(conflicts),
      std::back_inserter(hole_bd),
      std::back_inserter(hidden_vertices));
-  loc = T2_3.locate(p12,lt,li); assert( lt == Cls::FACE );
+  loc = T2_3.locate(wp12,lt,li); assert( lt == Cls::FACE );
   tit = T2_3.get_conflicts_and_boundary_and_hidden_vertices
     (wp12, 
      std::back_inserter(conflicts),

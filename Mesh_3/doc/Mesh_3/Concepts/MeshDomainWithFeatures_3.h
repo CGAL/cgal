@@ -7,8 +7,13 @@ While the concept
 `MeshDomain_3` only exposes the 2-dimensional and 3-dimensional features of
 the domain through different queries, the concept `MeshDomainWithFeatures_3` also exposes 0 and
 1-dimensional features. The exposed features of the domain are respectively called
-subdomains, surface patches, curve segments
+subdomains, surface patches, curves
 and corners according to their respective dimensions 3,2,1 and 0.
+
+Each curve is assumed to be bounded, with only one connected component, and
+without auto-intersections. Each curve is also assumed to be
+oriented. Therefore it is possible to define the signed geodesic distance
+between two ordered points on the same curve.
 
 \cgalRefines `MeshDomain_3`
 
@@ -37,16 +42,21 @@ Numerical type.
 typedef unspecified_type FT;
 
 /*!
-Type of indices for curve segments (\f$ 1\f$-dimensional features)
+Point type.
+*/
+typedef unspecified_type Point_3;
+
+/*!
+Type of indices for curves (i.e. \f$ 1\f$-dimensional features)
 of the input domain.
 Must be a model of CopyConstructible, Assignable, DefaultConstructible and
 LessThanComparable. The default constructed value must be the value of an edge which
 does not approximate a 1-dimensional feature of the input domain.
 */
-typedef unspecified_type Curve_segment_index;
+typedef unspecified_type Curve_index;
 
 /*!
-Type of indices for corners (i.e.\ 0-dimensional features)
+Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
 of the input domain.
 Must be a model of CopyConstructible, Assignable, DefaultConstructible and
 LessThanComparable.
@@ -56,30 +66,22 @@ typedef unspecified_type Corner_index;
 /// @}
 
 /*! \name Operations
-Each connected component of a curve segment is assumed
-to be oriented. The orientation is defined by the ordering
-of the two incident corners at the origin and endpoint.
-Therefore it is possible
-to defined the signed geodesic distance between two ordered
-points on the same connected component of a curve segment.
-A cycle is a connected component of a curve segment incident to
-0 or 1 corner.
 
-\note `construct_point_on_curve segment` is assumed to return
-a uniquely defined point. Therefore it is not possible to handle as a single
-curve segment, a singular curve with several branches incident
-to the same point.
 */
 /// @{
 
 /*!
 
-Returns a point on the curve segment with index `ci`
+Returns a point on the curve with index `ci`
 at signed geodesic distance `d` from point `p`.
-\pre Point `p` is supposed to be on curve segment `ci`. If ` d > 0`, the signed geodesic distance from `p` to the endpoint of the connected component of `ci` including \f$ p\f$, should be greater than \f$ d\f$. If ` d < 0`, the signed geodesic distance from `p` to the origin of the connected component should be less than \f$ d\f$ from the origin of the connected component.
+\pre Point `p` is supposed to be on curve `ci`. If `d > 0`, the signed
+geodesic distance from `p` to the endpoint of `ci` should be greater than
+`d`. If ` d < 0`, the signed geodesic distance from `p` to the origin
+of the curve should be less than `d`.
+
 */
-Point_3 construct_point_on_curve_segment(
-const Point_3& p, const Curve_segment_index& ci, FT d) const;
+Point_3 construct_point_on_curve(
+const Point_3& p, const Curve_index& ci, FT d) const;
 
 /// @}
 
@@ -87,36 +89,61 @@ const Point_3& p, const Curve_segment_index& ci, FT d) const;
 /// @{
 
 /*!
-Returns the signed geodesic distance
-between points `p` and `q` along the input curve segment
-with index `ci`.
-\pre Points `p` and `q` belong to the same connected component of the curve segment with index `ci`.
-*/
-FT geodesic_distance(const Point_3& p,
-const Point_3& q, const Curve_segment_index& ci) const;
+Returns the length of the curve segment from \c p to \c q, on the curve
+with index \c curve_index.
 
+If the curve with index \c curve_index is a loop, the
+orientation identifies which portion of the loop corresponds to the curve
+segment, otherwise \c orientation must be compatible with the orientation
+of \c p and \c q on the curve.
+*/
+FT curve_segment_length(const Point_3& p, const Point_3& q,
+                        const Curve_index& curve_index,
+                        CGAL::Orientation orientation) const;
 /*!
 
 Returns `CGAL::POSITIVE` if the signed geodesic distance from
-`p`
-to `q` on the way through \f$ r\f$
-along cycle with index `ci`
-is positive, `CGAL::NEGATIVE` if the distance is negative, and `CGAL::ZERO` if `(p = q = r)`.
-\pre Points `p`, `q` and `r` belongs to the same connected component of curve segment `ci` and this component is a cycle.
+`p` to `q` on the way through `r` along loop with index `ci`
+is positive, `CGAL::NEGATIVE` if the distance is negative.
+\pre `p != q && p != r && r != q`
 */
-CGAL::Sign distance_sign_along_cycle(const Point_3& p, const Point_3& q,
-const Point_3& r, const Curve_segment_index& ci) const;
+CGAL::Sign distance_sign_along_loop(const Point_3& p, const Point_3& q,
+const Point_3& r, const Curve_index& ci) const;
 
 /*!
-
-Returns `true` if the connected component of curve segment
-`ci` including point `p` is a cycle.
+Returns the sign of the geodesic distance from `p` to `q`, on the curve
+with index `ci`.
+If the curve with index `ci` is a loop, the function `distance_sign_along_loop()`
+must be used instead.
 */
-bool is_cycle(const Point_3& p, const Curve_segment_index& ci) const;
+CGAL::Sign distance_sign(const Point_3& p, const Point_3& q,
+                         const Curve_index& ci) const;
+
+/*!
+Returns the length of curve with index
+\c curve_index
+*/
+FT curve_length(const Curve_index& curve_index) const;
+/*!
+Returns `true` if the portion of the curve of index \c index,
+between the points \c c1 and \c c2, is covered by the spheres of
+centers \c c1 and \c c2 and squared radii \c sq_r1 and \c sq_r2
+respectively. The points \c c1 and \c c2 are assumed to lie on the curve.
+*/
+bool is_curve_segment_covered(const Curve_index& index,
+                              CGAL::Orientation orientation,
+                              const Point_3& c1, const Point_3& c2,
+                              const FT sq_r1, const FT sq_r2) const;
+/*!
+
+Returns `true` if the curve
+`ci` is a loop.
+*/
+bool is_loop(const Curve_index& ci) const;
 
 /// @}
 
-/// \name Retrieval of the input features and their incidences
+/// \name Retrieval of the input features
 /// @{
 
 /*!
@@ -129,31 +156,21 @@ get_corners(OutputIterator corners) const;
 
 /*!
 
-Fills `curves` with the curve segments
+Fills `curves` with the curves
 of the input domain.
 `curves` value type must be
-`CGAL::cpp11::tuple<Curve_segment_index,std::pair<Point_3,%Index>,std::pair<Point_3,%Index> >`.
-If the curve segment corresponding to an entry
-in curves is not a cycle, the pair of associated points should
+`CGAL::cpp11::tuple<Curve_index,std::pair<Point_3,%Index>,std::pair<Point_3,%Index> >`.
+If the curve corresponding to an entry
+in `curves` is not a loop, the pair of associated points should
 belong to
-two corners incident on the curve segment.
-If it is a cycle, then the same `Point_3` should be given twice and must be any
-point on the cycle.
+two corners incident to the curve.
+If it is a loop, then the same `Point_3` should be given twice and must be any
+point on the loop.
 The `%Index` values associated to the points are their indices w.r.t.\ their dimension.
 */
 template <typename OutputIterator>
 OutputIterator
-get_curve_segments(OutputIterator curves) const;
-
-/*!
-Returns `true` if the curve segment with index `csi` is incident to the surface patch with index `spi`.
-*/
-bool are_incident_surface_patch_curve_segment(Surface_patch_index spi, Curve_segment_index csi);
-
-/*!
-Returns `true` if the corner with index `ci` is incident to the surface patch with index `spi`.
-*/
-bool are_incident_surface_patch_corner(Surface_patch_index spi, Corner_index ci);
+get_curves(OutputIterator curves) const;
 
 /// @}
 
@@ -162,17 +179,17 @@ bool are_incident_surface_patch_corner(Surface_patch_index spi, Corner_index ci)
 
 /*!
 
-Returns the index to be stored at a vertex lying on the curve segment identified
-by `curve_segment_index`.
+Returns the index to be stored at a vertex lying on the curve identified
+by `curve_index`.
 */
-Index index_from_curve_segment_index(const Curve_segment_index& curve_segment_index) const;
+Index index_from_curve_index(const Curve_index& curve_index) const;
 
 /*!
 
-Returns the `Curve_segment_index` of the curve segment where lies a vertex with
+Returns the `Curve_index` of the curve where lies a vertex with
 dimension 1 and index `index`.
 */
-Curve_segment_index curve_segment_index(const Index& index) const;
+Curve_index curve_index(const Index& index) const;
 
 /*!
 

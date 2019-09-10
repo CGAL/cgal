@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -22,6 +23,10 @@
 
 #ifndef CGAL_AABB_SEGMENT_PRIMITIVE_H_
 #define CGAL_AABB_SEGMENT_PRIMITIVE_H_
+
+#include <CGAL/license/AABB_tree.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/result_of.h>
@@ -98,6 +103,7 @@ public:
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_SEGMENT_PRIMITIVE_H_
 

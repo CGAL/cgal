@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 #ifndef CGAL_PARTITION_2_IS_VALID_TRAITS_H
 #define CGAL_PARTITION_2_IS_VALID_TRAITS_H
+
+#include <CGAL/license/Partition_2.h>
+
 
 namespace CGAL {
 

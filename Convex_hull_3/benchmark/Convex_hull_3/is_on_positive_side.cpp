@@ -121,7 +121,7 @@ struct Is_on_positive_side_of_plane_3<Kernel,2>{
     try{
       return ck_plane.has_on_positive_side(to_CK(s));
     }
-    catch (Uncertain_conversion_exception){
+    catch (Uncertain_conversion_exception&){
       std::cerr << "ERROR Interval filtering failure\n";
       exit(EXIT_FAILURE);
     }

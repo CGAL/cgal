@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_NEF_2_GEN_POINT_LOCATION_H
 #define CGAL_NEF_2_GEN_POINT_LOCATION_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <CGAL/LEDA_basic.h>
 #include <LEDA/core/pp_dictionary.h>

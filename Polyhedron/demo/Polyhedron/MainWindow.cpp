@@ -1,8 +1,11 @@
+#include <cmath>
+
 #include "config.h"
 #include "MainWindow.h"
 #include "Scene.h"
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/TextRenderer.h>
+#include <CGAL/Three/exceptions.h>
 #include <CGAL/Qt/debug.h>
 
 #include <QtDebug>
@@ -28,8 +31,11 @@
 #include <QTreeView>
 #include <QSortFilterProxyModel>
 #include <QMap>
+#include <QSet>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QTreeWidgetItem>
+#include <QTreeWidget>
 #include <stdexcept>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
@@ -53,15 +59,16 @@
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
 #  include <QScriptValue>
+#include "Color_map.h"
 using namespace CGAL::Three;
-QScriptValue 
-myScene_itemToScriptValue(QScriptEngine *engine, 
+QScriptValue
+myScene_itemToScriptValue(QScriptEngine *engine,
                           CGAL::Three::Scene_item* const &in)
-{ 
-  return engine->newQObject(in); 
+{
+  return engine->newQObject(in);
 }
 
-void myScene_itemFromScriptValue(const QScriptValue &object, 
+void myScene_itemFromScriptValue(const QScriptValue &object,
                                  CGAL::Three::Scene_item* &out)
 {
   out = qobject_cast<CGAL::Three::Scene_item*>(object.toQObject());
@@ -108,6 +115,7 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
   }
 
   if(mw) mw->message(QString("QtScript: ") + result, "");
+  QTextStream (stdout) << (QString("QtScript: ") + result) << "\n";
 
   return engine->undefinedValue();
 }
@@ -122,6 +130,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
+  menuBar()->setNativeMenuBar(false);
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
@@ -135,13 +144,16 @@ MainWindow::MainWindow(QWidget* parent)
 
   // setup scene
   scene = new Scene(this);
-  viewer->textRenderer->setScene(scene);
+  viewer->textRenderer()->setScene(scene);
   viewer->setScene(scene);
-  ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer->getMax_textItems()));
+  ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer()->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(setFocusToQuickSearch()));
+    shortcut = new QShortcut(QKeySequence(Qt::Key_F5), this);
+    connect(shortcut, SIGNAL(activated()),
+            this, SLOT(reloadItem()));
   }
 
   proxyModel = new QSortFilterProxyModel(this);
@@ -157,23 +169,12 @@ MainWindow::MainWindow(QWidget* parent)
 
   // setup the sceneview: delegation and columns sizing...
   sceneView->setItemDelegate(delegate);
+  resetHeader();
 
- //sceneView->header()->setStretchLastSection(false);
-  /* sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
-  sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
-  sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
-  sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
-  sceneView->resizeColumnToContents(Scene::ColorColumn);
-  sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
-  sceneView->resizeColumnToContents(Scene::ABColumn);
-  sceneView->resizeColumnToContents(Scene::VisibleColumn);
-*/
   // setup connections
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateInfo()));
-  
+
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateDisplayInfo()));
 
@@ -189,8 +190,8 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
           this, SLOT(removeManipulatedFrame(CGAL::Three::Scene_item*)));
 
-  connect(scene, SIGNAL(updated_bbox()),
-          this, SLOT(updateViewerBBox()));
+  connect(scene, SIGNAL(updated_bbox(bool)),
+          this, SLOT(updateViewerBBox(bool)));
 
   connect(scene, SIGNAL(selectionChanged(int)),
           this, SLOT(selectSceneItem(int)));
@@ -198,15 +199,15 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(itemPicked(const QModelIndex &)),
           this, SLOT(recenterSceneView(const QModelIndex &)));
 
-  connect(sceneView->selectionModel(), 
+  connect(sceneView->selectionModel(),
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateInfo()));
 
-  connect(sceneView->selectionModel(), 
+  connect(sceneView->selectionModel(),
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateDisplayInfo()));
 
-  connect(sceneView->selectionModel(), 
+  connect(sceneView->selectionModel(),
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
 
@@ -232,7 +233,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(viewer, SIGNAL(selectedPoint(double, double, double)),
           this, SLOT(showSelectedPoint(double, double, double)));
 
-  connect(viewer, SIGNAL(selectionRay(double, double, double, 
+  connect(viewer, SIGNAL(selectionRay(double, double, double,
                                       double, double, double)),
           scene, SIGNAL(selectionRay(double, double, double,
                                      double, double, double)));
@@ -246,10 +247,8 @@ MainWindow::MainWindow(QWidget* parent)
   // can easily copy-paste its text.
   // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
   //         this, SLOT(showSceneContextMenu(const QPoint &)));
-
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer, SLOT(update()));
-
   connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
 
@@ -257,6 +256,8 @@ MainWindow::MainWindow(QWidget* parent)
           viewer, SLOT(setTwoSides(bool)));
   connect(ui->actionQuickCameraMode, SIGNAL(toggled(bool)),
           viewer, SLOT(setFastDrawing(bool)));
+  connect(ui->actionSwitchProjection, SIGNAL(toggled(bool)),
+          viewer, SLOT(SetOrthoProjection(bool)));
 
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
@@ -275,10 +276,13 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionSelectAllItems, SIGNAL(triggered()),
           this, SLOT(selectAll()));
 
+  connect(ui->actionColorItems, SIGNAL(triggered()),
+          this, SLOT(colorItems()));
+
   // Recent files menu
   this->addRecentFiles(ui->menuFile, ui->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 
   // Reset the "Operation menu"
   clearMenu(ui->menuOperations);
@@ -292,7 +296,7 @@ MainWindow::MainWindow(QWidget* parent)
 #  ifdef QT_SCRIPTTOOLS_LIB
   QScriptEngineDebugger* debugger = new QScriptEngineDebugger(this);
   debugger->setObjectName("qt script debugger");
-  QAction* debuggerMenuAction = 
+  QAction* debuggerMenuAction =
     menuBar()->addMenu(debugger->createStandardMenu());
   debuggerMenuAction->setText(tr("Qt Script &Debug"));
   for(unsigned int i = 0; i < 9; ++i)
@@ -308,7 +312,7 @@ MainWindow::MainWindow(QWidget* parent)
 #  endif // QT_SCRIPTTOOLS_LIB
   QScriptValue fun = script_engine->newFunction(myPrintFunction);
   script_engine->globalObject().setProperty("print", fun);
-  
+
   //  evaluate_script("print('hello', 'world', 'from QtScript!')");
   QScriptValue mainWindowObjectValue = script_engine->newQObject(this);
   script_engine->globalObject().setProperty("main_window", mainWindowObjectValue);
@@ -355,34 +359,11 @@ MainWindow::MainWindow(QWidget* parent)
   }
 
   QMenu* menuFile = findChild<QMenu*>("menuFile");
-  if ( NULL != menuFile )
-  {
-    QList<QAction*> menuFileActions = menuFile->actions();
-
-    // Look for action just after "Load..." action
-    QAction* actionAfterLoad = NULL;
-    for ( QList<QAction*>::iterator it_action = menuFileActions.begin(),
-         end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
-    {
-      if ( NULL != *it_action && (*it_action)->text().contains("Load") )
-      {
-        ++it_action;
-        if ( it_action != end && NULL != *it_action )
-        {
-          actionAfterLoad = *it_action;
-        }
-      }
-    }
-
-    // Insert "Load implicit function" action
-    if ( NULL != actionAfterLoad )
-    {
-      menuFile->insertAction(actionAfterLoad,actionAddToGroup);
-    }
-  }
-
+  insertActionBeforeLoadPlugin(menuFile, actionAddToGroup);
   statistics_dlg = NULL;
   statistics_ui = new Ui::Statistics_on_item_dialog();
+
+  actionResetDefaultLoaders = new QAction("Reset Default Loaders",this);
 
 #ifdef QT_SCRIPT_LIB
   // evaluate_script("print(plugins);");
@@ -423,24 +404,45 @@ void MainWindow::filterOperations()
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   filterMenuOperations(ui->menuOperations);
 }
-#ifdef QT_SCRIPT_LIB
+
+#include <CGAL/Three/exceptions.h>
+
 void MainWindow::evaluate_script(QString script,
                                  const QString& filename,
                                  const bool quiet) {
+  QScriptContext* context = script_engine->currentContext();
+  QScriptValue object = context->activationObject();
+  QScriptValue former_current_filename = object.property("current_filename");;
+  object.setProperty("current_filename", filename);
+
   QScriptValue value = script_engine->evaluate(script, filename);
   if(script_engine->hasUncaughtException()) {
-    QTextStream err(stderr);
-    err << "Qt Script exception:\n"
-        << script_engine->uncaughtException().toString()
-        << "\nBacktrace:\n";
-    Q_FOREACH(QString line, script_engine->uncaughtExceptionBacktrace()) {
-      err << "  " << line << "\n";
+    QScriptValue js_exception = script_engine->uncaughtException();
+    QScriptValue js_bt =js_exception.property("backtrace");
+    QStringList bt = script_engine->uncaughtExceptionBacktrace();
+    if(js_bt.isValid()) {
+      QStringList other_bt;
+      qScriptValueToSequence(js_bt, other_bt);
+      if(!other_bt.isEmpty()) bt = other_bt;
     }
+    if(!quiet) {
+      QTextStream err(stderr);
+      err << "Qt Script exception:\n"
+          << js_exception.toString()
+          << "\nBacktrace:\n";
+      Q_FOREACH(QString line, bt) {
+        err << "  " << line << "\n";
+      }
+    }
+    throw CGAL::Three::Script_exception
+       (script_engine->uncaughtException().toString(), bt);
   }
   else if(!quiet && !value.isNull() && !value.isUndefined()) {
     QTextStream(stderr) << "Qt Script evaluated to \""
                         << value.toString() << "\"\n";
   }
+
+  object.setProperty("current_filename", former_current_filename);
 }
 
 void MainWindow::evaluate_script_quiet(QString script,
@@ -448,7 +450,6 @@ void MainWindow::evaluate_script_quiet(QString script,
 {
   evaluate_script(script, filename, true);
 }
-#endif
 
 void MainWindow::enableScriptDebugger(bool b /* = true */)
 {
@@ -460,6 +461,10 @@ void MainWindow::enableScriptDebugger(bool b /* = true */)
   if(debugger) {
     if(b) {
       debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
+    }
+    else {
+      std::cerr << "Detach the script debugger\n";
+      debugger->detach();
     }
   }
   return;
@@ -477,75 +482,45 @@ bool actionsByName(QAction* x, QAction* y) {
 }
 
 //Recursively creates all subMenus containing an action.
+// In the current implementation, there is a bug if a menu
+// and a submenu have the same name (cf map menu_map).
 void MainWindow::setMenus(QString name, QString parentName, QAction* a )
 {
-  bool hasSub = false;
   QString menuName, subMenuName;
   if (name.isNull())
     return;
-  //Get the menu and submenu names
-  for(int i=0; i<name.size(); i++)
-  {
-    if(name.at(i)=='/')
-    {
-      hasSub = true;
-      break;
-    }
-  }
+  int slash_index = name.indexOf('/');
 
-  if(!hasSub)
-    menuName= name;
+  if(slash_index==-1)
+    menuName= name; // no extra sub-menu
   else
   {
-    int i;
-    for(i = 0; name.at(i)!='/'; i++)
-      menuName.append(name.at(i));
-    i++;
-    for(int j = i; j<name.size(); j++)
-      subMenuName.append(name.at(j));
-    setMenus(subMenuName, name, a);
+    int l = name.length();
+    menuName=name.mid(0,slash_index);
+    subMenuName=name.mid(slash_index+1,l-slash_index-1);
+    // recursively create sub-menus
+    setMenus(subMenuName, menuName, a);
   }
 
-  //Create the menu and sub menu
-  QMenu* menu = 0;
-  QMenu* parentMenu = 0;
-  //If the menu already exists, don't create a new one.
-  if(menu_map.contains(name))
-  {
-    menu = menu_map[name];
-  }
+  //Create the menu if it does not already exist
+  if(!menu_map.contains(menuName))
+    menu_map[menuName] = new QMenu(menuName, this);
 
-  bool hasAction = false;
-  if(menu == 0){
-    menu = new QMenu(menuName, this);
-    menu_map[name] = menu;
-  }
-  else //checks the action is not already in the menu
-    if(a->property("added").toBool())
-      hasAction = true;
-  if(!hasAction)
+  //Create the parent menu if it does not already exist
+  if(!menu_map.contains(parentName))
+    menu_map[parentName] = new QMenu(parentName, this);
+  // add the submenu in the menu
+  menu_map[parentName]->addMenu(menu_map[menuName]);
+
+  // only add the action in the last submenu
+  if(slash_index==-1)
   {
     ui->menuOperations->removeAction(a);
-    menu->addAction(a);
+    menu_map[menuName]->addAction(a);
   }
-  a->setProperty("added", true);
-  //If the parent menu already exists, don't create a new one.
-  if(menu_map.contains(parentName))
-  {
-    parentMenu = menu_map[parentName];
-  }
-  if(parentMenu == 0)
-  {//get the parentMenu title :
-    QString parentTitle;
-    for(int i=0; parentName.at(i)!='/'; i++)
-      parentTitle.append(parentName.at(i));
-    parentMenu = new QMenu(parentTitle, this);
-    menu_map[parentName] = parentMenu;
-  }
-  parentMenu->addMenu(menu);
 }
 
-void MainWindow::load_plugin(QString fileName, bool blacklisted)
+bool MainWindow::load_plugin(QString fileName, bool blacklisted)
 {
     if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
       //set plugin name
@@ -558,8 +533,10 @@ void MainWindow::load_plugin(QString fileName, bool blacklisted)
       if(blacklisted)
       {
         if ( plugin_blacklist.contains(name) ){
-          qDebug("### Ignoring plugin \"%s\".", qPrintable(fileName));
-          return;
+          pluginsStatus_map[name] = QString("ignored");
+          //qDebug("### Ignoring plugin \"%s\".", qPrintable(fileName));
+          PathNames_map[fileinfo.absoluteDir().absolutePath()].push_back(name);
+          return true;
         }
       }
       QDebug qdebug = qDebug();
@@ -572,14 +549,22 @@ void MainWindow::load_plugin(QString fileName, bool blacklisted)
         bool init1 = initPlugin(obj);
         bool init2 = initIOPlugin(obj);
         if (!init1 && !init2)
-          qdebug << "not for this program";
+        {
+          //qdebug << "not for this program";
+          pluginsStatus_map[name] = QString("Not for this program.");
+        }
         else
-          qdebug << "success";
+          //qdebug << "success";
+          pluginsStatus_map[name] = QString("success");
       }
       else {
-        qdebug << "error: " << qPrintable(loader.errorString());
+        //qdebug << "error: " << qPrintable(loader.errorString());
+        pluginsStatus_map[name] = loader.errorString();
       }
+      PathNames_map[fileinfo.absoluteDir().absolutePath()].push_back(name);
+      return true;
     }
+    return false;
 }
 
 void MainWindow::loadPlugins()
@@ -589,10 +574,10 @@ void MainWindow::loadPlugins()
     initPlugin(obj);
     initIOPlugin(obj);
   }
+
   QList<QDir> plugins_directories;
   QString dirPath = qApp->applicationDirPath();
   plugins_directories<<dirPath;
-
   QDir msvc_dir(dirPath);
   QString build_dir_name = msvc_dir.dirName();//Debug or Release for msvc
   msvc_dir.cdUp();
@@ -626,18 +611,29 @@ void MainWindow::loadPlugins()
   }
   QString env_path = qgetenv("POLYHEDRON_DEMO_PLUGINS_PATH");
   if(!env_path.isEmpty()) {
-    Q_FOREACH (QString pluginsDir, 
+    Q_FOREACH (QString pluginsDir,
                env_path.split(":", QString::SkipEmptyParts)) {
       QDir dir(pluginsDir);
       if(dir.isReadable())
         plugins_directories << dir;
     }
   }
+
+  QSet<QString> loaded;
   Q_FOREACH (QDir pluginsDir, plugins_directories) {
     qDebug("# Looking for plugins in directory \"%s\"...",
            qPrintable(pluginsDir.absolutePath()));
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files))
-      load_plugin(pluginsDir.absoluteFilePath(fileName), true);
+    {
+      QString abs_name = pluginsDir.absoluteFilePath(fileName);
+      if(loaded.find(abs_name) == loaded.end())
+      {
+        if(load_plugin(abs_name, true))
+        {
+          loaded.insert(abs_name);
+        }
+      }
+    }
   }
   updateMenus();
 }
@@ -656,6 +652,7 @@ void MainWindow::updateMenus()
   ui->menuOperations->clear();
   ui->menuOperations->addActions(as);
 }
+
 bool MainWindow::hasPlugin(const QString& pluginName) const
 {
   Q_FOREACH(const PluginNamePair& p, plugins) {
@@ -691,7 +688,7 @@ bool MainWindow::initPlugin(QObject* obj)
     }
     return true;
   }
-  else 
+  else
     return false;
 }
 
@@ -703,7 +700,7 @@ bool MainWindow::initIOPlugin(QObject* obj)
     io_plugins << plugin;
     return true;
   }
-  else 
+  else
     return false;
 }
 
@@ -773,6 +770,9 @@ void MainWindow::viewerShow(float xmin,
   qglviewer::Vec
     min_(xmin, ymin, zmin),
     max_(xmax, ymax, zmax);
+
+  if(min_ == max_) return viewerShow(xmin, ymin, zmin);
+
 #if QGLVIEWER_VERSION >= 0x020502
   viewer->camera()->setPivotPoint((min_+max_)*0.5);
 #else
@@ -810,86 +810,117 @@ void MainWindow::message(QString message, QString colorName, QString font) {
     message.remove(message.length()-1, 1);
   }
   statusBar()->showMessage(message, 5000);
+  QTimer::singleShot(5000, [this]{this->statusBar()->setStyleSheet("");});
   message = "<font color=\"" + colorName + "\" style=\"font-style: " + font + ";\" >" +
-    message + "</font><br>";
+      message + "</font><br>";
   message = "[" + QTime::currentTime().toString() + "] " + message;
-  ui->consoleTextEdit->insertHtml(message);
+  ui->consoleTextEdit->append(message);
   ui->consoleTextEdit->verticalScrollBar()->setValue(ui->consoleTextEdit->verticalScrollBar()->maximum());
 }
 
 void MainWindow::information(QString text) {
-  this->message("INFO: " + text, "");
+  statusBar()->setStyleSheet("color: blue");
+  this->message("INFO: " + text, "blue");
 }
 
 void MainWindow::warning(QString text) {
-  this->message("WARNING: " + text, "blue");
+  statusBar()->setStyleSheet("color: orange");
+  this->message("WARNING: " + text, "orange");
 }
 
 void MainWindow::error(QString text) {
+  statusBar()->setStyleSheet("color: red");
   this->message("ERROR: " + text, "red");
 }
 
-void MainWindow::updateViewerBBox()
+void MainWindow::updateViewerBBox(bool recenter = true)
 {
   const Scene::Bbox bbox = scene->bbox();
+#if QGLVIEWER_VERSION >= 0x020502
+    qglviewer::Vec center = viewer->camera()->pivotPoint();
+#else
+    qglviewer::Vec center = viewer->camera()->revolveAroundPoint();
+#endif
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
   const double zmin = bbox.zmin();
   const double xmax = bbox.xmax();
   const double ymax = bbox.ymax();
   const double zmax = bbox.zmax();
-   //qDebug() << QString("Bounding box: (%1, %2, %3) - (%4, %5, %6)\n")
-   //.arg(xmin).arg(ymin).arg(zmin).arg(xmax).arg(ymax).arg(zmax);
-  qglviewer::Vec 
+
+
+  qglviewer::Vec
     vec_min(xmin, ymin, zmin),
-    vec_max(xmax, ymax, zmax);
+    vec_max(xmax, ymax, zmax),
+    bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
+  qglviewer::Vec offset(0,0,0);
+  double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
+                      (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
+                          (std::abs)(bbox_center.z - viewer->offset().z)));
+  if((std::log2)(l_dist) > 13.0 )
+    for(int i=0; i<3; ++i)
+    {
+      offset[i] = -bbox_center[i];
+
+    }
+  if(offset != viewer->offset())
+  {
+    viewer->setOffset(offset);
+    for(int i=0; i<scene->numberOfEntries(); ++i)
+    {
+      scene->item(i)->invalidateOpenGLBuffers();
+      scene->item(i)->itemChanged();
+    }
+  }
+
+
   viewer->setSceneBoundingBox(vec_min,
                               vec_max);
-  viewer->camera()->showEntireScene();
+  if(recenter)
+  {
+    viewer->camera()->showEntireScene();
+  }
+  else
+  {
+#if QGLVIEWER_VERSION >= 0x020502
+    viewer->camera()->setPivotPoint(center);
+#else
+    viewer->camera()->setRevolveAroundPoint(center);
+#endif
+  }
 }
 
 void MainWindow::reloadItem() {
-  QAction* sender_action = qobject_cast<QAction*>(sender());
-  if(!sender_action) return;
-  
-  bool ok;
-  int item_index = sender_action->data().toInt(&ok);
-  QObject* item_object = scene->item(item_index);
-  if(!ok || !item_object || sender_action->data().type() != QVariant::Int) {
-    std::cerr << "Cannot reload item: "
-              << "the reload action has not item attached\n";
-    return;
-  }
-  CGAL::Three::Scene_item* item = qobject_cast<CGAL::Three::Scene_item*>(item_object);
-  if(!item) {
-    std::cerr << "Cannot reload item: "
-              << "the reload action has a QObject* pointer attached\n"
-              << "that is not a Scene_item*\n";
-    return;
-  }
-  QString filename = item->property("source filename").toString();
-  QString loader_name = item->property("loader_name").toString();
-  if(filename.isEmpty() || loader_name.isEmpty()) {
-    std::cerr << "Cannot reload item: "
-              << "the item has no \"source filename\" or no \"loader_name\" attached\n";
-    return;
-  }
 
-  CGAL::Three::Polyhedron_demo_io_plugin_interface* fileloader = findLoader(loader_name);
-  QFileInfo fileinfo(filename);
+  Scene_item* item = NULL;
 
-  CGAL::Three::Scene_item* new_item = loadItem(fileinfo, fileloader);
+  Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+  {
+    item = scene->item(id);
+    QString filename = item->property("source filename").toString();
+    QString loader_name = item->property("loader_name").toString();
+    if(filename.isEmpty() || loader_name.isEmpty()) {
+       this->warning(QString("Cannot reload item %1: "
+                "the item has no \"source filename\" or no \"loader_name\" attached\n").arg(item->name()));
+      continue;
+    }
 
-  new_item->setName(item->name());
-  new_item->setColor(item->color());
-  new_item->setRenderingMode(item->renderingMode());
-  new_item->setVisible(item->visible());
-  Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
-  if(property_item)
-    property_item->copyProperties(item);
-  new_item->invalidateOpenGLBuffers();
-  scene->replaceItem(item_index, new_item, true);
-  item->deleteLater();
+    CGAL::Three::Polyhedron_demo_io_plugin_interface* fileloader = findLoader(loader_name);
+    QFileInfo fileinfo(filename);
+
+    CGAL::Three::Scene_item* new_item = loadItem(fileinfo, fileloader);
+
+    new_item->setName(item->name());
+    new_item->setColor(item->color());
+    new_item->setRenderingMode(item->renderingMode());
+    new_item->setVisible(item->visible());
+    Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
+    if(property_item)
+      property_item->copyProperties(item);
+    scene->replaceItem(scene->item_id(item), new_item, true);
+    new_item->invalidateOpenGLBuffers();
+    item->deleteLater();
+  }
 }
 
 CGAL::Three::Polyhedron_demo_io_plugin_interface* MainWindow::findLoader(const QString& loader_name) const {
@@ -950,7 +981,7 @@ void MainWindow::open(QString filename)
   if(!program.isEmpty())
   {
     {
-      QTextStream(stderr) << "Execution of script \"" 
+      QTextStream(stderr) << "Execution of script \""
                           << filename << "\"\n";
                           // << filename << "\", with following content:\n"
                           // << program;
@@ -974,9 +1005,9 @@ void MainWindow::open(QString filename)
   QStringList selected_items;
   QStringList all_items;
 
-  QMap<QString,QString>::iterator dfs_it = 
+  QMap<QString,QString>::iterator dfs_it =
     default_plugin_selection.find( fileinfo.completeSuffix() );
-  
+
   if ( dfs_it==default_plugin_selection.end() )
   {
     // collect all io_plugins and offer them to load if the file extension match one name filter
@@ -984,16 +1015,16 @@ void MainWindow::open(QString filename)
     Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
       if ( !io_plugin->canLoad() ) continue;
       all_items << io_plugin->name();
-      if ( file_matches_filter(io_plugin->loadNameFilters(), filename) )
+      if ( file_matches_filter(io_plugin->loadNameFilters(), filename.toLower()) )
         selected_items << io_plugin->name();
     }
   }
   else
     selected_items << *dfs_it;
-  
+
   bool ok;
   std::pair<QString, bool> load_pair;
-  
+
   switch( selected_items.size() )
   {
     case 1:
@@ -1006,34 +1037,61 @@ void MainWindow::open(QString filename)
     default:
       load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
   }
-  viewer->context()->makeCurrent();
+
+  viewer->makeCurrent();
   if(!ok || load_pair.first.isEmpty()) { return; }
-  
+
   if (load_pair.second)
-     default_plugin_selection[fileinfo.completeSuffix()]=load_pair.first;
-  
-  
+  {
+    connect(actionResetDefaultLoaders, SIGNAL(triggered()),
+            this, SLOT(reset_default_loaders()));
+    default_plugin_selection[fileinfo.completeSuffix()]=load_pair.first;
+    insertActionBeforeLoadPlugin(ui->menuFile, actionResetDefaultLoaders);
+  }
+
+
   QSettings settings;
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
   CGAL::Three::Scene_item* scene_item = loadItem(fileinfo, findLoader(load_pair.first));
-  if(scene_item != 0) {
-    this->addToRecentFiles(fileinfo.absoluteFilePath());
-  }
+  if(!scene_item)
+    return;
+  this->addToRecentFiles(fileinfo.absoluteFilePath());
+
   selectSceneItem(scene->addItem(scene_item));
+
+  CGAL::Three::Scene_group_item* group =
+          qobject_cast<CGAL::Three::Scene_group_item*>(scene_item);
+  if(group)
+    scene->redraw_model();
 }
 
 bool MainWindow::open(QString filename, QString loader_name) {
-  QFileInfo fileinfo(filename); 
-  CGAL::Three::Scene_item* item;
+  QFileInfo fileinfo(filename);
+  boost::optional<CGAL::Three::Scene_item*> item_opt;
+  CGAL::Three::Scene_item* item = 0;
   try {
-    item = loadItem(fileinfo, findLoader(loader_name));
+    item_opt = wrap_a_call_to_cpp
+      ([this, fileinfo, loader_name]()
+       {
+         return loadItem(fileinfo, findLoader(loader_name));
+       },
+       this, __FILE__, __LINE__
+       );
+    if(!item_opt) return false;
+    else item = *item_opt;
   }
-  catch(std::logic_error e) {
+  catch(std::logic_error& e) {
     std::cerr << e.what() << std::endl;
     return false;
   }
   selectSceneItem(scene->addItem(item));
+
+  CGAL::Three::Scene_group_item* group =
+          qobject_cast<CGAL::Three::Scene_group_item*>(item);
+  if(group)
+    scene->redraw_model();
+
   return true;
 }
 
@@ -1044,8 +1102,17 @@ CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::P
     throw std::invalid_argument(QString("File %1 is not a readable file.")
                                 .arg(fileinfo.absoluteFilePath()).toStdString());
   }
+  //test if the file is empty.
+  QFile test(fileinfo.absoluteFilePath());
 
+  test.open( QIODevice::WriteOnly|QIODevice::Append);
+  if (test.pos() == 0) {
+    QMessageBox::warning(this, tr("Error"),
+                         tr("The file you are trying to load is empty.\n"));
+    return 0;
+  }
   QApplication::setOverrideCursor(Qt::WaitCursor);
+
   item = loader->load(fileinfo);
   QApplication::restoreOverrideCursor();
   if(!item) {
@@ -1086,7 +1153,7 @@ void MainWindow::showSelectedPoint(double x, double y, double z)
   static double x_prev = 0;
   static double y_prev = 0;
   static double z_prev = 0;
-  double dist = std::sqrt((x-x_prev)*(x-x_prev) + (y-y_prev)*(y-y_prev) + (z-z_prev)*(z-z_prev)); 
+  double dist = std::sqrt((x-x_prev)*(x-x_prev) + (y-y_prev)*(y-y_prev) + (z-z_prev)*(z-z_prev));
   information(QString("Selected point: (%1, %2, %3) distance to previous: %4").
               arg(x, 0, 'g', 10).
               arg(y, 0, 'g', 10).
@@ -1123,7 +1190,7 @@ void MainWindow::selectAll()
 {
   QItemSelection s =
     proxyModel->mapSelectionFromSource(scene->createSelectionAll());
-  sceneView->selectionModel()->select(s, 
+  sceneView->selectionModel()->select(s,
                                       QItemSelectionModel::ClearAndSelect);
 }
 
@@ -1208,16 +1275,16 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
         QAction* reload = menu->addAction(tr("&Reload Item from File"));
-        reload->setData(qVariantFromValue(selectedItemIndex));
+        reload->setProperty("is_groupable", true);
         connect(reload, SIGNAL(triggered()),
                 this, SLOT(reloadItem()));
       }
       QAction* saveas = menu->addAction(tr("&Save as..."));
-      saveas->setData(qVariantFromValue(selectedItemIndex));
+      saveas->setData(qVariantFromValue((void*)item));
       connect(saveas,  SIGNAL(triggered()),
               this, SLOT(on_actionSaveAs_triggered()));
       QAction* showobject = menu->addAction(tr("&Zoom to this Object"));
-      showobject->setData(qVariantFromValue(selectedItemIndex));
+      showobject->setData(qVariantFromValue((void*)item));
       connect(showobject, SIGNAL(triggered()),
               this, SLOT(viewerShowObject()));
 
@@ -1232,8 +1299,8 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
 void MainWindow::showSceneContextMenu(const QPoint& p) {
   QWidget* sender = qobject_cast<QWidget*>(this->sender());
   if(!sender) return;
+  int main_index = scene->selectionIndices().first();
 
-  int index = -1;
   if(sender == sceneView) {
       QModelIndex modelIndex = sceneView->indexAt(p);
       if(!modelIndex.isValid())
@@ -1251,17 +1318,53 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
               menu->exec(sender->mapToGlobal(p));
           return;
       }
-      else
+      else if(scene->selectionIndices().size() > 1 )
       {
-          index = scene->getIdFromModelIndex(proxyModel->mapToSource(modelIndex));
-          scene->setSelectedItemIndex(index);
+        QMap<QString, QAction*> menu_actions;
+        bool has_stats = false;
+        Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
+        {
+          if(action->property("is_groupable").toBool())
+            menu_actions[action->text()] = action;
+        }
+        Q_FOREACH(Scene::Item_id index, scene->selectionIndices())
+        {
+          if(index == main_index)
+            continue;
+
+          CGAL::Three::Scene_item* item = scene->item(index);
+          if(!item)
+            continue;
+          if(item->has_stats())
+            has_stats = true;
+        }
+        QMenu menu;
+        Q_FOREACH(QString name, menu_actions.keys())
+        {
+          QAction* action = menu.addAction(name);
+          connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
+        }
+        if(has_stats)
+        {
+          QAction* actionStatistics =
+              menu.addAction(tr("Statistics..."));
+          actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
+          connect(actionStatistics, SIGNAL(triggered()),
+                  this, SLOT(statisticsOnItem()));
+        }
+          QAction* reload = menu.addAction(tr("&Reload Item from File"));
+          reload->setProperty("is_groupable", true);
+          connect(reload, SIGNAL(triggered()),
+                  this, SLOT(reloadItem()));
+        QAction* saveas = menu.addAction(tr("&Save as..."));
+        connect(saveas,  SIGNAL(triggered()),
+                this, SLOT(on_actionSaveAs_triggered()));
+        menu.exec(sender->mapToGlobal(p));
+        return;
       }
   }
-  else {
-    index = scene->mainSelectionIndex();
-  }
-
-  showSceneContextMenu(index, sender->mapToGlobal(p));
+  showSceneContextMenu(main_index, sender->mapToGlobal(p));
+  return;
 }
 
 void MainWindow::removeManipulatedFrame(CGAL::Three::Scene_item* item)
@@ -1297,18 +1400,20 @@ void MainWindow::updateDisplayInfo() {
   CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item)
     ui->displayLabel->setPixmap(item->graphicalToolTip());
-  else 
+  else
     ui->displayLabel->clear();
+
 }
 
 void MainWindow::readSettings()
 {
     QSettings settings;
-    // enable anti-aliasing 
+    // enable anti-aliasing
     ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
+    set_facegraph_mode_adapter(settings.value("polyhedron_mode", true).toBool());
 }
 
 void MainWindow::writeSettings()
@@ -1316,13 +1421,15 @@ void MainWindow::writeSettings()
   this->writeState("MainWindow");
   {
     QSettings settings;
-    settings.setValue("antialiasing", 
+    settings.setValue("antialiasing",
                       ui->actionAntiAliasing->isChecked());
     //setting plugin blacklist
     QStringList blacklist;
     Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
     if ( !blacklist.isEmpty() ) settings.setValue("plugin_blacklist",blacklist);
     else settings.remove("plugin_blacklist");
+    //setting polyhedron mode
+    settings.setValue("polyhedron_mode", this->property("is_polyhedron_mode").toBool());
   }
   std::cerr << "Write setting... done.\n";
 }
@@ -1345,7 +1452,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 bool MainWindow::loadScript(QString filename)
 {
   QFileInfo fileinfo(filename);
-  return loadScript(fileinfo);
+  boost::optional<bool> opt = wrap_a_call_to_cpp
+    ([this, fileinfo] {
+      return loadScript(fileinfo);
+    }, this, __FILE__, __LINE__, CGAL::Three::PARENT_CONTEXT);
+  if(!opt) return false;
+  else return *opt;
 }
 
 bool MainWindow::loadScript(QFileInfo info)
@@ -1355,11 +1467,14 @@ bool MainWindow::loadScript(QFileInfo info)
   QString filename = info.absoluteFilePath();
   QFile script_file(filename);
   script_file.open(QIODevice::ReadOnly);
+  if(!script_file.isReadable()) {
+    throw std::ios_base::failure(script_file.errorString().toStdString());
+  }
   program = script_file.readAll();
   if(!program.isEmpty())
   {
-    QTextStream(stderr) 
-      << "Execution of script \"" 
+    QTextStream(stderr)
+      << "Execution of script \""
       << filename << "\"\n";
     evaluate_script(program, filename);
     return true;
@@ -1368,7 +1483,14 @@ bool MainWindow::loadScript(QFileInfo info)
   return false;
 }
 
-void MainWindow::on_actionLoadScript_triggered() 
+void MainWindow::throw_exception() {
+  wrap_a_call_to_cpp([]() {
+      throw std::runtime_error("Exception thrown in "
+                               "MainWindow::throw_exception()");
+    }, this, __FILE__, __LINE__);
+}
+
+void MainWindow::on_actionLoadScript_triggered()
 {
 #if defined(QT_SCRIPT_LIB)
   QString filename = QFileDialog::getOpenFileName(
@@ -1387,17 +1509,16 @@ void MainWindow::on_actionLoad_triggered()
   // we need to special case our way out of this
   filters << "All Files (*)";
 
-  QStringList extensions;
 
   typedef QMap<QString, CGAL::Three::Polyhedron_demo_io_plugin_interface*> FilterPluginMap;
   FilterPluginMap filterPluginMap;
-  
+
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     QStringList split_filters = plugin->loadNameFilters().split(";;");
     Q_FOREACH(const QString& filter, split_filters) {
       FilterPluginMap::iterator it = filterPluginMap.find(filter);
       if(it != filterPluginMap.end()) {
-        qDebug() << "Duplicate Filter: " << it.value();
+        qDebug() << "Duplicate Filter: " << it.value()->name();
         qDebug() << "This filter will not be available.";
       } else {
         filterPluginMap[filter] = plugin;
@@ -1405,7 +1526,6 @@ void MainWindow::on_actionLoad_triggered()
       filters << filter;
     }
   }
-
   QSettings settings;
   QString directory = settings.value("OFF open directory",
                                      QDir::current().dirName()).toString();
@@ -1416,75 +1536,133 @@ void MainWindow::on_actionLoad_triggered()
   dialog.setFileMode(QFileDialog::ExistingFiles);
 
   if(dialog.exec() != QDialog::Accepted) { return; }
-  FilterPluginMap::iterator it = 
+  viewer->update();
+  FilterPluginMap::iterator it =
     filterPluginMap.find(dialog.selectedNameFilter());
-  
+
   CGAL::Three::Polyhedron_demo_io_plugin_interface* selectedPlugin = NULL;
 
   if(it != filterPluginMap.end()) {
     selectedPlugin = it.value();
   }
 
+  std::size_t nb_files = dialog.selectedFiles().size();
+  std::vector<QColor> colors_;
+  colors_.reserve(nb_files);
+  compute_color_map(QColor(100, 100, 255),//Scene_item's default color
+                    static_cast<unsigned>(nb_files),
+                    std::back_inserter(colors_));
+  std::size_t nb_item = -1;
   Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
     CGAL::Three::Scene_item* item = NULL;
     if(selectedPlugin) {
       QFileInfo info(filename);
       item = loadItem(info, selectedPlugin);
+      item->setColor(colors_[++nb_item]);
       Scene::Item_id index = scene->addItem(item);
       selectSceneItem(index);
+      CGAL::Three::Scene_group_item* group =
+              qobject_cast<CGAL::Three::Scene_group_item*>(item);
+      if(group)
+        scene->redraw_model();
       this->addToRecentFiles(filename);
     } else {
+      int scene_size = scene->numberOfEntries();
       open(filename);
+      if(scene->numberOfEntries() != scene_size)
+        scene->item(scene->numberOfEntries()-1)->setColor(colors_[++nb_item]);
     }
   }
 }
 
 void MainWindow::on_actionSaveAs_triggered()
 {
-  int index = -1;
-  QAction* sender_action = qobject_cast<QAction*>(sender());
-  if(sender_action && !sender_action->data().isNull()) {
-    index = sender_action->data().toInt();
-  }
+  Scene_item* item = NULL;
 
-  if(index < 0) {
-    QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
-    if(selectedRows.size() != 1)
-      return;
-    index = getSelectedSceneItemIndex();
-  }
-  CGAL::Three::Scene_item* item = scene->item(index);
-
-  if(!item)
-    return;
-
-  QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> canSavePlugins;
-  QStringList filters;
-  Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
-    if(plugin->canSave(item)) {
-      canSavePlugins << plugin;
-      filters += plugin->saveNameFilters();
+  Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+  {
+    item = scene->item(id);
+    QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> canSavePlugins;
+    QStringList filters;
+      QString sf;
+    Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
+      if(plugin->canSave(item)) {
+        canSavePlugins << plugin;
+        filters += plugin->saveNameFilters();
+        if(plugin->isDefaultLoader(item))
+          sf = plugin->saveNameFilters().split(";;").first();
+      }
     }
-  }
-  filters << tr("All files (*)");
+    QString ext1, ext2;
+    QRegExp extensions("\\(\\*\\..+\\)");
+    QStringList filter_ext;
+    if(filters.empty())
+    {
+      QMessageBox::warning(this,
+                           tr("Cannot save"),
+                           tr("The selected object %1 cannot be saved.")
+                           .arg(item->name()));
+      return;
+    }
+    Q_FOREACH(QString s, filters.first().split(";;"))
+    {
+      int pos = extensions.indexIn(s);
+      if( pos >-1)
+        filter_ext.append(extensions.capturedTexts());
+    }
+    filters << tr("All files (*)");
+    if(canSavePlugins.isEmpty()) {
+      QMessageBox::warning(this,
+                           tr("Cannot save"),
+                           tr("The selected object %1 cannot be saved.")
+                           .arg(item->name()));
+      continue;
+    }
+    QString caption = tr("Save %1 to File...").arg(item->name());
+    QString dir = item->property("source filename").toString();
+    if(dir.isEmpty())
+      dir = QString("%1/%2").arg(last_saved_dir).arg(item->name());
+    if(dir.isEmpty())
+      dir = item->name();
+    QString filename =
+        QFileDialog::getSaveFileName(this,
+                                     caption,
+                                     dir,
+                                     filters.join(";;"),
+                                     &sf);
+    
+    last_saved_dir = QFileInfo(dir).absoluteDir().path();
+    extensions.indexIn(sf.split(";;").first());
+    ext1 = extensions.cap();
+    //remove `)`
+    ext1.chop(1);
+    //remove `(*`
+    ext1 = ext1.right(ext1.size()-2);
+    if(filename.isEmpty())
+      continue;
 
-  if(canSavePlugins.isEmpty()) {
-    QMessageBox::warning(this,
-                         tr("Cannot save"),
-                         tr("The selected object %1 cannot be saved.")
-                         .arg(item->name()));
-    return;
+    QStringList filename_split = filename.split(".");
+    int fs_size = filename_split.size();
+    ext2 = filename_split.last();
+    
+    if(fs_size > 2 &&
+       ext2 == filename_split[filename.split(".").size()-2])
+      filename.chop(ext2.size()+1);
+    QStringList final_extensions;
+    Q_FOREACH(QString s, filter_ext)
+    {
+      //remove `)`
+      s.chop(1);
+      //remove `(*.`
+      final_extensions.append(s.right(s.size()-3));
+    }
+    if(!final_extensions.contains(ext2))
+    {
+      filename = filename.append(ext1);
+    }
+    viewer->update();
+    save(filename, item);
   }
-
-  QString caption = tr("Save %1 to File...").arg(item->name());
-  QString filename = 
-    QFileDialog::getSaveFileName(this,
-                                 caption,
-                                 QString(),
-                                 filters.join(";;"));
-  if(filename.isEmpty())
-    return;
-  save(filename, item);
 }
 
 void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
@@ -1492,7 +1670,7 @@ void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
   bool saved = false;
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(  plugin->canSave(item) &&
-        file_matches_filter(plugin->saveNameFilters(),filename) )
+        file_matches_filter(plugin->saveNameFilters(),filename.toLower()) )
     {
       if(plugin->save(item, fileinfo))
       {
@@ -1563,52 +1741,65 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
-  
-  
-  QStandardItemModel* iStandardModel = new QStandardItemModel(this);
+  if(this->property("is_polyhedron_mode").toBool())
+    prefdiag.polyRadioButton->setChecked(true);
+  else
+    prefdiag.smRadioButton->setChecked(true);
+  connect(prefdiag.polyRadioButton, &QRadioButton::toggled,
+          this, &MainWindow::set_facegraph_mode_adapter);
+
+  //QStandardItemModel* iStandardModel = new QStandardItemModel(this);
+
+  std::vector<QTreeWidgetItem*> items;
+  QBrush successBrush(Qt::green),
+      errorBrush(Qt::red),
+      ignoredBrush(Qt::lightGray);
+
   //add blacklisted plugins
-  Q_FOREACH(QString name, plugin_blacklist)
+  Q_FOREACH (QString path, PathNames_map.keys())
   {
-    QStandardItem* item =  new QStandardItem(name);
-    item->setCheckable(true);
-    item->setCheckState(Qt::Checked);
-    iStandardModel->appendRow(item);
+    QTreeWidgetItem* pluginItem = new QTreeWidgetItem(prefdiag.treeWidget);
+    pluginItem->setText(1, path);
+    prefdiag.treeWidget->setItemExpanded(pluginItem, true);
+    QFont boldFont = pluginItem->font(1);
+    boldFont.setBold(true);
+    pluginItem->setFont(1, boldFont);
+    Q_FOREACH(QString name, PathNames_map[path])
+    {
+      QTreeWidgetItem *item = new QTreeWidgetItem(pluginItem);
+      item->setText(1, name);
+      if(plugin_blacklist.contains(name)){
+        item->setCheckState(0, Qt::Checked);
+      }
+      else{
+        item->setCheckState(0, Qt::Unchecked);
+      }
+      if(pluginsStatus_map[name] == QString("success"))
+        item->setBackground(1, successBrush);
+      else if(pluginsStatus_map[name] == QString("ignored")){
+        item->setBackground(1, ignoredBrush);
+        item->setToolTip(1, QString("This plugin is currently blacklisted, so it has been ignored."));
+      }
+      else{
+        item->setBackground(1, errorBrush);
+        item->setToolTip(1, pluginsStatus_map[name]);
+      }
+      items.push_back(item);
+    }
   }
+  dialog.exec();
 
-  //add operations plugins
-  Q_FOREACH(PluginNamePair pair,plugins){
-    QStandardItem* item =  new QStandardItem(pair.second);
-    item->setCheckable(true);
-    iStandardModel->appendRow(item);
-  }
-  
-  //add io-plugins
-  Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins)
-  {
-    QStandardItem* item =  new QStandardItem(plugin->name());
-    item->setCheckable(true);
-    if ( plugin_blacklist.contains(plugin->name()) ) item->setCheckState(Qt::Checked);
-    iStandardModel->appendRow(item);
-  }
-
-  //Setting the model
-  prefdiag.listView->setModel(iStandardModel);
-  
-  dialog.exec();  
-  
   if ( dialog.result() )
   {
     plugin_blacklist.clear();
-    for (int k=0,k_end=iStandardModel->rowCount();k<k_end;++k)
+
+    for (std::size_t k=0; k<items.size(); ++k)
     {
-      QStandardItem* item=iStandardModel->item(k);
-      if (item->checkState()==Qt::Checked)
-        plugin_blacklist.insert(item->text());
+     QTreeWidgetItem* item=items[k];
+      if (item->checkState(0)==Qt::Checked)
+        plugin_blacklist.insert(item->text(1));
     }
   }
-  
-  for (int k=0,k_end=iStandardModel->rowCount();k<k_end;++k) delete iStandardModel->item(k);
-  delete iStandardModel;
 }
 
 void MainWindow::on_actionSetBackgroundColor_triggered()
@@ -1616,6 +1807,7 @@ void MainWindow::on_actionSetBackgroundColor_triggered()
   QColor c =  QColorDialog::getColor();
   if(c.isValid()) {
     viewer->setBackgroundColor(c);
+    viewer->update();
   }
 }
 
@@ -1635,15 +1827,15 @@ void MainWindow::on_actionLookAt_triggered()
 
 void MainWindow::viewerShowObject()
 {
-  int index = -1;
+  Scene_item* item = NULL;
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(sender_action && !sender_action->data().isNull()) {
-    index = sender_action->data().toInt();
+    item = (Scene_item*)sender_action->data().value<void*>();
   }
-  if(index >= 0) {
-    const Scene::Bbox bbox = scene->item(index)->bbox();
-    viewerShow((float)bbox.xmin(), (float)bbox.ymin(), (float)bbox.zmin(),
-               (float)bbox.xmax(), (float)bbox.ymax(), (float)bbox.zmax());
+  if(item) {
+    const Scene::Bbox bbox = item->bbox();
+    viewerShow((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z,
+               (float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
   }
 }
 
@@ -1704,8 +1896,6 @@ void MainWindow::recurseExpand(QModelIndex index)
     {
         recurseExpand(index.child(0,0));
     }
-
-    QString name = scene->item(scene->getIdFromModelIndex(index))->name();
         CGAL::Three::Scene_group_item* group =
                 qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
         if(group && group->isExpanded())
@@ -1724,10 +1914,11 @@ void MainWindow::restoreCollapseState()
     QModelIndex modelIndex = scene->index(0,0,scene->invisibleRootItem()->index());
     if(modelIndex.isValid())
         recurseExpand(modelIndex);
+    resetHeader();
 }
 void MainWindow::makeNewGroup()
 {
-    Scene_group_item * group = new Scene_group_item("New group");
+    Scene_group_item * group = new Scene_group_item();
     scene->addItem(group);
 }
 
@@ -1764,6 +1955,8 @@ void MainWindow::statisticsOnItem()
             statistics_dlg, SLOT(accept()));
     connect(statistics_ui->updateButton, SIGNAL(clicked()),
             this, SLOT(statisticsOnItem()));
+    connect(statistics_ui->exportButton, &QPushButton::clicked,
+            this, &MainWindow::exportStatistics);
   }
   statistics_ui->label_htmltab->setText(get_item_stats());
 
@@ -1863,10 +2056,150 @@ void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
   bool valid;
   QString text = QInputDialog::getText(this, tr("Maximum Number of Text Items"),
                                        tr("Maximum Text Items Diplayed:"), QLineEdit::Normal,
-                                       QString("%1").arg(viewer->textRenderer->getMax_textItems()), &ok);
+                                       QString("%1").arg(viewer->textRenderer()->getMax_textItems()), &ok);
   text.toInt(&valid);
   if (ok && valid){
-    viewer->textRenderer->setMax(text.toInt());
+    viewer->textRenderer()->setMax(text.toInt());
     ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(text.toInt()));
+  }
+}
+
+void MainWindow::resetHeader()
+{
+  sceneView->header()->setStretchLastSection(false);
+  scene->invisibleRootItem()->setColumnCount(5);
+  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+  sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::Fixed);
+  sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
+  sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
+  sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
+  sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
+  sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
+  sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
+  sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
+}
+
+void MainWindow::reset_default_loaders()
+{
+  default_plugin_selection.clear();
+
+  const char* prop_name = "Menu modified by MainWindow.";
+  QMenu* menu = ui->menuFile;
+  if(!menu)
+    return;
+  bool menuChanged = menu->property(prop_name).toBool();
+  if(!menuChanged) {
+    menu->setProperty(prop_name, true);
+  }
+  QList<QAction*> menuActions = menu->actions();
+  menu->removeAction(actionResetDefaultLoaders);
+}
+
+void MainWindow::insertActionBeforeLoadPlugin(QMenu* menu, QAction* actionToInsert)
+{
+  if(menu)
+  {
+    QList<QAction*> menuActions = menu->actions();
+    if(!menuActions.contains(actionToInsert))
+      menu->insertAction(ui->actionLoadPlugin, actionToInsert);
+  }
+}
+
+void MainWindow::colorItems()
+{
+  std::size_t nb_files = scene->selectionIndices().size();
+  std::vector<QColor> colors_;
+  colors_.reserve(nb_files);
+  compute_color_map(scene->item(scene->selectionIndices().last())->color(),
+                    static_cast<unsigned>(nb_files),
+                    std::back_inserter(colors_));
+  std::size_t nb_item = -1;
+  Q_FOREACH(int id, scene->selectionIndices())
+  {
+    scene->item(id)->setColor(colors_[++nb_item]);
+  }
+  viewer->update();
+}
+// Only used to make the doc clearer. Only the adapter is actueally used in the code,
+// for signal/slots reasons.
+void MainWindow::set_face_graph_default_type(Face_graph_mode m)
+{
+  this->setProperty("is_polyhedron_mode", m);
+}
+
+void MainWindow::set_facegraph_mode_adapter(bool is_polyhedron)
+{
+  if(is_polyhedron)
+   set_face_graph_default_type(POLYHEDRON);
+  else
+    set_face_graph_default_type(SURFACE_MESH);
+}
+
+void MainWindow::exportStatistics()
+{
+  std::vector<Scene_item*> items;
+  Q_FOREACH(int id, getSelectedSceneItemIndices())
+  {
+    Scene_item* s_item = scene->item(id);
+    items.push_back(s_item);
+  }
+
+  QString str;
+  Q_FOREACH(Scene_item* sit, items)
+  {
+    CGAL::Three::Scene_item::Header_data data = sit->header();
+    if(data.titles.size()>0)
+    {
+      int titles_limit =0;
+      int title = 0;
+      str.append(QString("%1: \n").arg(sit->name()));
+      for(int j=0; j<data.categories.size(); j++)
+      {
+        str.append(QString("  %1: \n")
+                   .arg(data.categories[j].first));
+        titles_limit+=data.categories[j].second;
+        for(;title<titles_limit; ++title)
+        {
+          str.append(QString("    %1: ").arg(data.titles.at(title)));
+          str.append(QString("%1\n").arg(sit->computeStats(title)));
+        }
+      }
+    }
+  }
+
+  QString filename =
+      QFileDialog::getSaveFileName((QWidget*)sender(),
+                                   "",
+                                   QString("Statistics.txt"),
+                                   "Text Files (*.txt)");
+  if(filename.isEmpty())
+    return;
+  QFile output(filename);
+  output.open(QIODevice::WriteOnly | QIODevice::Text);
+
+  if(!output.isOpen()){
+    qDebug() << "- Error, unable to open" << "outputFilename" << "for output";
+  }
+  QTextStream outStream(&output);
+  outStream << str;
+  output.close();
+}
+
+void MainWindow::propagate_action()
+{
+  QAction* sender = qobject_cast<QAction*>(this->sender());
+  if(!sender) return;
+  QString name = sender->text();
+  Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+  {
+    Scene_item* item = scene->item(id);
+    Q_FOREACH(QAction* action, item->contextMenu()->actions())
+    {
+      if(action->text() == name)
+      {
+        action->trigger();
+        break;
+      }
+    }
   }
 }

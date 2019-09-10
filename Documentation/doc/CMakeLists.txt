@@ -32,6 +32,11 @@ if(NOT DOXYGEN_FOUND)
   return()
 endif()
 
+#starting from cmake 3.9 the usage of DOXYGEN_EXECUTABLE is deprecated
+if(TARGET Doxygen::doxygen)
+  get_property(DOXYGEN_EXECUTABLE TARGET Doxygen::doxygen PROPERTY IMPORTED_LOCATION)
+endif()
+
 # Visual Studio users might appreciate this
 # set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -78,6 +83,10 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
   if(EXISTS "${CGAL_PACKAGE_DIR}/examples")
     file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/examples\n")
   endif()
+  if(CGAL_GENERATE_XML)
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_XML = YES\n")
+  endif()
+
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_TAGFILE = ${CGAL_DOC_TAG_GEN_DIR}/${CGAL_PACKAGE_NAME}.tag\n")
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH = ${CGAL_PACKAGE_DOC_DIR}/\n")
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
@@ -176,8 +185,11 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
 endfunction()
 
 # set up the directories and variables
-set(CGAL_DOC_MATHJAX_LOCATION "https://cdn.mathjax.org/mathjax/latest"
-    CACHE STRING "The location of MathJax to be used for the documentation.")
+if (CGAL_DOC_MATHJAX_LOCATION)
+  set(CGAL_DOC_MATHJAX_LOCATION_FULL_OPTION_LINE "MATHJAX_RELPATH = ${CGAL_DOC_MATHJAX_LOCATION}")
+else()
+  set(CGAL_DOC_MATHJAX_LOCATION "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2")
+endif()
 
 set(CGAL_DOC_OUTPUT_DIR "${CMAKE_BINARY_DIR}/doc_output")
 file(MAKE_DIRECTORY "${CGAL_DOC_OUTPUT_DIR}")
@@ -198,7 +210,17 @@ file(MAKE_DIRECTORY "${CGAL_DOC_TAG_DIR}")
 set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
 file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
-set(CGAL_DOC_RESOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/resources")
+#Setting the resource directory depending on the version of doxygen
+set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.8.14")
+
+#  first look if resources for the specific doxygen version is available, fallback
+#  on the default otherwise
+if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/resources/${DOXYGEN_VERSION}")
+  set(CGAL_DOC_RESOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/resources/${DOXYGEN_VERSION}")
+else()
+  set(CGAL_DOC_RESOURCE_DIR "${CGAL_DOC_RESOURCE_DIR_DEFAULT}")
+endif()
+
 set(CGAL_DOC_BIBLIO_DIR "${CMAKE_CURRENT_LIST_DIR}/biblio")
 set(CGAL_DOC_SCRIPT_DIR "${CMAKE_CURRENT_LIST_DIR}/scripts")
 
@@ -217,6 +239,25 @@ if(${CGAL_BUILD_MONTH} GREATER 6)
   set(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}b")
 else()
   set(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}a")
+endif()
+
+if (NOT CGAL_CREATED_VERSION_NUM)
+  if (CGAL_BRANCH_BUILD)
+    file(STRINGS "${CGAL_ROOT}/Maintenance/release_building/MAJOR_NUMBER" CGAL_MAJOR_VERSION REGEX "[0-9]*")
+    file(STRINGS "${CGAL_ROOT}/Maintenance/release_building/MINOR_NUMBER" CGAL_MINOR_VERSION REGEX "[0-9]*")
+    file(STRINGS "${CGAL_ROOT}/Maintenance/release_building/BUGFIX_NUMBER" CGAL_BUGFIX_VERSION REGEX "[0-9]*")
+
+    if (CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
+      set(CGAL_CREATED_VERSION_NUM "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}")
+    else()
+      set(CGAL_CREATED_VERSION_NUM "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
+    endif()
+  else()
+    #read version.h and get the line with CGAL_VERSION
+    file(STRINGS "${CGAL_ROOT}/include/CGAL/version.h" CGAL_VERSION_LINE REGEX "CGAL_VERSION ")
+    #extract release id
+    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.?[0-9]*(-Ic-)?[0-9]*" CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_LINE}")
+  endif()
 endif()
 
 # Introduce our own version variable. This way we avoid tying this too

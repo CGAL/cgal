@@ -115,7 +115,7 @@ The description of each parameter is as follows:
 
 - `edge_size`: a scalar field (resp. a constant) providing a space varying 
 (resp. a uniform) 
-upper bound for the lengths of curve segment edges. This parameter has to be set to a positive 
+upper bound for the lengths of curve edges. This parameter has to be set to a positive 
 value when 1-dimensional features protection is used.
 
 - `facet_angle`: a lower bound for the angles (in degrees) of the 

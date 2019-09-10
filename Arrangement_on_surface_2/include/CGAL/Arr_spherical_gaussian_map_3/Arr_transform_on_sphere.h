@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 // Author(s)     : Naama mayer         <naamamay@post.tau.ac.il>
 
@@ -22,6 +23,13 @@
 // geodesic arcs.
 // It should be templated with a transformation (affine transformations) and a
 // transformation traits, defines the way the faces should be rotated.
+
+
+#ifndef CGAL_ARR_SGM_3_ATOS_H
+#define CGAL_ARR_SGM_3_ATOS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm.h>
@@ -225,3 +233,5 @@ void Arr_transform_on_sphere(Arrangement & arr,
 }
 
 } //namespace CGAL
+
+#endif // CGAL_ARR_SGM_3_ATOS_H

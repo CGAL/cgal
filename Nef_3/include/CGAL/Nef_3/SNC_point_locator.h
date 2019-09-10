@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
@@ -21,13 +22,16 @@
 #ifndef CGAL_NEF_SNC_POINT_LOCATOR_H
 #define CGAL_NEF_SNC_POINT_LOCATOR_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_3/SNC_k3_tree_traits.h>
 #include <CGAL/Nef_3/K3_tree.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Timer.h>
-#include <cstring> // for std::strcpy
+#include <string>
 
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
 #include <CGAL/Constrained_triangulation_2.h>
@@ -66,7 +70,7 @@ class SNC_point_locator
   typedef typename SNC_decorator::Decorator_traits Decorator_traits;
   typedef typename SNC_decorator::SNC_structure SNC_structure;
 protected:
-  char version_[64];
+  std::string version_;
   // time for construction, point location, ray shooting and intersection test
   mutable Timer ct_t, pl_t, rs_t, it_t; 
 
@@ -89,7 +93,7 @@ public:
   typedef typename Decorator_traits::Halffacet_iterator Halffacet_iterator;
 
 
-  const char* version() { return version_; }
+  const std::string& version() const { return version_; }
 
   virtual Object_handle locate(const Point_3& p) const = 0;
 
@@ -304,7 +308,7 @@ public:
     candidate_provider = new SNC_candidate_provider(W);
 #else // CGAL_NEF_LIST_OF_TRIANGLES
     CGAL_NEF_TIMER(ct_t.start());
-    std::strcpy( this->version_, "Point Locator by Spatial Subdivision (tm)");
+    this->version_ = std::string("Point Locator by Spatial Subdivision (tm)");
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
     CGAL_NEF_CLOG(version()<<" (with triangulated facets)");
 #else
@@ -1271,7 +1275,7 @@ public:
   SNC_point_locator_naive() : initialized(false) {}
   virtual void initialize(SNC_structure* W) { 
     CGAL_NEF_TIMER(ct_t.start());
-    std::strcpy(this->version_, "Naive Point Locator (tm)");
+    this->version_ = std::string("Naive Point Locator (tm)");
     CGAL_NEF_CLOG(version());
     CGAL_assertion( W != NULL);
     Base::initialize(W); 

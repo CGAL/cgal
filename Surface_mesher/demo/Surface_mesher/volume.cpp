@@ -36,7 +36,7 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Qt/debug.h>
 
-struct Threshold : public std::unary_function<FT, unsigned char> {
+struct Threshold : public CGAL::unary_function<FT, unsigned char> {
   double isovalue;
   bool is_identity;
 
@@ -54,14 +54,14 @@ struct Threshold : public std::unary_function<FT, unsigned char> {
 };
 
 class Classify_from_isovalue_list :
-  public std::unary_function<FT, unsigned char> 
+  public CGAL::unary_function<FT, unsigned char> 
 {
   typedef std::pair<FT, result_type> Isovalue;
   typedef std::vector<Isovalue> Isovalues;
   boost::shared_ptr<Isovalues> isovalues;
   bool is_identity;
 
-  struct Sort_isovalues : std::binary_function<Isovalue, Isovalue, bool> 
+  struct Sort_isovalues : CGAL::binary_function<Isovalue, Isovalue, bool>
   {
     bool operator()(const Isovalue& isoval1, const Isovalue& isoval2)
     {
@@ -110,7 +110,7 @@ public:
 };
 
 class Generate_surface_identifiers :
-  public std::binary_function<Classify_from_isovalue_list::result_type,
+  public CGAL::binary_function<Classify_from_isovalue_list::result_type,
                               Classify_from_isovalue_list::result_type,
                               const QTreeWidgetItem*>
 {
@@ -137,13 +137,13 @@ public:
 };
 
 // class Classify_from_isovalue_list :
-//   public std::unary_function<FT, const QTreeWidgetItem*> 
+//   public CGAL::unary_function<FT, const QTreeWidgetItem*> 
 // {
 //   typedef std::pair<FT, result_type> Isovalue;
 //   typedef std::vector<Isovalue> Isovalues;
 //   boost::shared_ptr<Isovalues> isovalues;
 
-//   struct Sort_isovalues : std::binary_function<Isovalue, Isovalue, bool> 
+//   struct Sort_isovalues : CGAL::binary_function<Isovalue, Isovalue, bool>
 //   {
 //     bool operator()(const Isovalue& isoval1, const Isovalue& isoval2)
 //     {
@@ -1243,7 +1243,9 @@ void Volume::draw()
   if(!m_view_mc && m_draw_triangulation)
   {
     // draw the triangualtion
-    mw->viewer->qglColor(m_triangulation_color);
+    ::glColor3d(m_triangulation_color.redF(),
+                m_triangulation_color.greenF(),
+                m_triangulation_color.blueF());
     ::glLineWidth(1.0);
     ::glBegin(GL_LINES);
     for(Tr::Finite_edges_iterator 
@@ -1362,7 +1364,9 @@ void Volume::gl_draw_surface()
 	} else {
 	  ::glNormal3d(n.x(),n.y(),n.z());
 	}
-	mw->viewer->qglColor(values_list->color(values_list->search(facet_cell->info())));
+        ::glColor3d(values_list->color(values_list->search(facet_cell->info())).redF(),
+                    values_list->color(values_list->search(facet_cell->info())).greenF(),
+                    values_list->color(values_list->search(facet_cell->info())).blueF());
 	::glVertex3d(a.x(),a.y(),a.z());
 	::glVertex3d(b.x(),b.y(),b.z());
 	::glVertex3d(c.x(),c.y(),c.z());
@@ -1378,7 +1382,9 @@ void Volume::gl_draw_surface()
     {
       if(values_list->enabled(i))
       {
-        mw->viewer->qglColor(values_list->color(i));
+        ::glColor3d(values_list->color(i).redF(),
+                  values_list->color(i).greenF(),
+                  values_list->color(i).blueF());
         ::glCallList(lists_draw_surface[i]);
       }
     }
@@ -1398,7 +1404,9 @@ void Volume::gl_draw_surface()
         % lists_draw_surface[i]
         % i;
         
-      mw->viewer->qglColor(values_list->color(i));
+      ::glColor3d(values_list->color(i).redF(),
+                values_list->color(i).greenF(),
+                values_list->color(i).blueF());
 
       if(!direct_draw && lists_draw_surface[i]) // If
         ::glNewList(lists_draw_surface[i],      // lists_draw_surface[i]==0

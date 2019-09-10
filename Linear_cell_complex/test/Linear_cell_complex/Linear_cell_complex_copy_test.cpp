@@ -1,7 +1,8 @@
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Cell_attribute_with_point.h>
-#include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Random.h>
 
 #include <iostream>
 #include <fstream>
@@ -14,8 +15,6 @@ struct Map_2_dart_items
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 2, Refs > Dart;
-
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
@@ -30,7 +29,7 @@ struct Map_2_dart_max_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 2, Refs > Dart;
+    typedef double Dart_info;
 
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
@@ -47,7 +46,7 @@ struct Map_3_dart_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 3, Refs > Dart;
+    typedef char Dart_info;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
@@ -64,7 +63,7 @@ struct Map_3_dart_max_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 3, Refs > Dart;
+    typedef char* Dart_info;
 
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
@@ -82,7 +81,7 @@ public:
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 3, Refs > Dart;
+    typedef int* Dart_info;
 
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
@@ -91,12 +90,25 @@ public:
   };
 };
 
+struct MonInfo
+{
+  MonInfo(long long int i=0) : mnb(i==0?rand():i),
+                               ptr(reinterpret_cast<char*>(this))
+  {}
+  long long int mnb;
+  std::string s;
+  char *ptr;
+
+  bool operator==(const MonInfo& info) const
+  { return mnb==info.mnb && s==info.s && ptr==info.ptr; }
+};
+
 struct Map_dart_items_4
 {
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 4, Refs > Dart;
+    typedef MonInfo Dart_info;
 
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
@@ -113,7 +125,7 @@ struct Map_dart_max_items_4
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 4, Refs > Dart;
+    typedef double Dart_info;
 
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
@@ -133,53 +145,119 @@ typedef CGAL::Linear_cell_complex_traits
 
 typedef CGAL::Linear_cell_complex_traits<4> Traits4_a;
 
+// ======================= LCC based on combinatorial maps
 // Point_3, void, void
-typedef CGAL::Linear_cell_complex<2,3, Traits3_a, CGAL::Linear_cell_complex_min_items<2> > Map1;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_a,
+               CGAL::Linear_cell_complex_min_items > CMap1;
 
 // Point_3+double, void, double
-typedef CGAL::Linear_cell_complex<2,3, Traits3_a, Map_2_dart_items > Map2;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3,
+               Traits3_a, Map_2_dart_items > CMap2;
 
 // Point_3+int, int, double
-typedef CGAL::Linear_cell_complex<2,3, Traits3_b, Map_2_dart_max_items_3> Map3;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_b,
+               Map_2_dart_max_items_3> CMap3;
 
 // Point_3, void, void, void
-typedef CGAL::Linear_cell_complex<3,3, Traits3_a, CGAL::Linear_cell_complex_min_items<3> > Map4;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3, Traits3_a,
+               CGAL::Linear_cell_complex_min_items > CMap4;
 
 // Point_3+double, void, int, double
-typedef CGAL::Linear_cell_complex<3,3, Traits3_a, Map_3_dart_items_3> Map5;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,
+               Traits3_a, Map_3_dart_items_3> CMap5;
 
 // Point_3+int, int, int, double
-typedef CGAL::Linear_cell_complex<3,3, Traits3_b, Map_3_dart_max_items_3> Map6;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,
+               Traits3_b, Map_3_dart_max_items_3> CMap6;
 
 // Point_3+int, void, int, void
-typedef CGAL::Linear_cell_complex<3,3, Traits3_b, Another_map_3_dart_items_3> Map7;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,
+               Traits3_b, Another_map_3_dart_items_3> CMap7;
 
 // Point_4+int, void, int, void, int
-typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_items_4> Map8;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<4,4,
+               Traits4_a, Map_dart_items_4> CMap8;
 
 // Point_4+int, int, int, int, double
-typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_max_items_4> Map9;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<4,4,
+               Traits4_a, Map_dart_max_items_4> CMap9;
 
 struct Converter_map9_points_into_map5_points
 {
-  Map5::Attribute_handle<0>::type operator()
-  (const Map9& map1, Map5& map2, Map9::Dart_const_handle dh1,
-   Map5::Dart_handle dh2) const
+  CMap5::Attribute_handle<0>::type operator()
+  (const CMap9& map1, CMap5& map2, CMap9::Dart_const_handle dh1,
+   CMap5::Dart_handle dh2) const
   {
     CGAL_assertion( map1.attribute<0>(dh1)!=map1.null_handle );
 
-    Map5::Attribute_handle<0>::type res = map2.attribute<0>(dh2);
+    CMap5::Attribute_handle<0>::type res = map2.attribute<0>(dh2);
     if ( res==map2.null_handle )
     {
       res = map2.create_attribute<0>();
     }
 
-    const Map9::Point & p = map1.point(dh1);
-    map2.point_of_vertex_attribute(res) = Map5::Point(p[0],p[1],p[2]);
+    const CMap9::Point & p = map1.point(dh1);
+    map2.point_of_vertex_attribute(res) = CMap5::Point(p[0],p[1],p[2]);
     return res;
   }
 };
 
+// ======================= LCC based on generalized maps
+// Point_3, void, void
+typedef CGAL::Linear_cell_complex_for_generalized_map<2,3, Traits3_a,
+               CGAL::Linear_cell_complex_min_items > GMap1;
+
+// Point_3+double, void, double
+typedef CGAL::Linear_cell_complex_for_generalized_map<2,3,
+               Traits3_a, Map_2_dart_items > GMap2;
+
+// Point_3+int, int, double
+typedef CGAL::Linear_cell_complex_for_generalized_map<2,3, Traits3_b,
+               Map_2_dart_max_items_3> GMap3;
+
+// Point_3, void, void, void
+typedef CGAL::Linear_cell_complex_for_generalized_map<3,3, Traits3_a,
+               CGAL::Linear_cell_complex_min_items > GMap4;
+
+// Point_3+double, void, int, double
+typedef CGAL::Linear_cell_complex_for_generalized_map<3,3,
+               Traits3_a, Map_3_dart_items_3> GMap5;
+
+// Point_3+int, int, int, double
+typedef CGAL::Linear_cell_complex_for_generalized_map<3,3,
+               Traits3_b, Map_3_dart_max_items_3> GMap6;
+
+// Point_3+int, void, int, void
+typedef CGAL::Linear_cell_complex_for_generalized_map<3,3,
+               Traits3_b, Another_map_3_dart_items_3> GMap7;
+
+// Point_4+int, void, int, void, int
+typedef CGAL::Linear_cell_complex_for_generalized_map<4,4,
+               Traits4_a, Map_dart_items_4> GMap8;
+
+// Point_4+int, int, int, int, double
+typedef CGAL::Linear_cell_complex_for_generalized_map<4,4,
+               Traits4_a, Map_dart_max_items_4> GMap9;
+
+struct Converter_gmap9_points_into_gmap5_points
+{
+  GMap5::Attribute_handle<0>::type operator()
+  (const GMap9& map1, GMap5& map2, GMap9::Dart_const_handle dh1,
+   GMap5::Dart_handle dh2) const
+  {
+    CGAL_assertion( map1.attribute<0>(dh1)!=map1.null_handle );
+
+    GMap5::Attribute_handle<0>::type res = map2.attribute<0>(dh2);
+    if ( res==map2.null_handle )
+    {
+      res = map2.create_attribute<0>();
+    }
+
+    const GMap9::Point & p = map1.point(dh1);
+    map2.point_of_vertex_attribute(res) = GMap5::Point(p[0],p[1],p[2]);
+    return res;
+  }
+};
 
 /*
 template<typename Map>
@@ -197,17 +275,19 @@ template<typename Map, int i, typename Info=
          typename Map::template Attribute_type<i>::type::Info>
 struct SetInfoIfNonVoid
 {
-  static void run(Map& map, typename Map::template Attribute_handle<i>::type attr,
-                  int nb)
+  static void run(Map& map,
+                  typename Map::template Attribute_handle<i>::type attr,
+                  long long int nb)
   {
-    map.template info_of_attribute<i>(attr)=nb;
+    map.template info_of_attribute<i>(attr)=
+      typename Map::template Attribute_type<i>::type::Info(nb);
   }
 };
 template<typename Map, int i>
 struct SetInfoIfNonVoid<Map, i, void>
 {
   static void run(Map&, typename Map::template Attribute_handle<i>::type,
-                  int)
+                  long long int)
   {}
 };
 
@@ -217,7 +297,7 @@ struct CreateAttributes
 {
   static void run(Map& map)
   {
-    int nb=0;
+    long long int nb=0;
     for(typename Map::Dart_range::iterator it=map.darts().begin(),
         itend=map.darts().end(); it!=itend; ++it)
     {
@@ -235,7 +315,7 @@ struct CreateAttributes<Map, 0, Attr>
 {
   static void run(Map& amap)
   {
-    int nb=0;
+    long long int nb=0;
     for ( typename Map::template Attribute_range<0>::type::iterator
           it=amap.template attributes<0>().begin(),
           itend=amap.template attributes<0>().end(); it!=itend; ++it )
@@ -252,6 +332,28 @@ struct CreateAttributes<Map, i, CGAL::Void>
 
 template<typename Map>
 struct CreateAttributes<Map, 0, CGAL::Void>
+{
+  static void run(Map&)
+  {}
+};
+
+template<typename Map, typename Info=typename Map::Dart_info>
+struct InitDartInfo
+{
+  static void run(Map& map)
+  {
+    long long int nb=0;
+    for(typename Map::Dart_range::iterator it=map.darts().begin(),
+        itend=map.darts().end(); it!=itend; ++it)
+    {
+      nb=CGAL::get_default_random().get_int(0,20000);
+      map.info(it)=Info(nb);
+    }
+  }
+};
+
+template<typename Map>
+struct InitDartInfo<Map, CGAL::Void>
 {
   static void run(Map&)
   {}
@@ -285,7 +387,7 @@ struct DisplayAttribs
           itend=amap.template attributes<i>().end();
           it!=itend; ++it )
     {
-      std::cout<<it->info()<<"; ";
+      std::cout<<amap.template info<i>(it)<<"; ";
     }
     std::cout<<std::endl;
   }
@@ -308,7 +410,7 @@ struct DisplayVertexAttrib
           itend=amap.template attributes<0>().end();
           it!=itend; ++it )
     {
-      std::cout<<it->info()<<"; ";
+      std::cout<<amap.template info<0>()<<"; ";
     }
     std::cout<<std::endl;
   }
@@ -341,7 +443,7 @@ void displayAllAttribs2D(Map& amap, const char* c)
         itend=amap.template attributes<0>().end();
         it!=itend; ++it )
   {
-    std::cout<<it->point()<<"; ";
+    std::cout<<amap.point(it)<<"; ";
   }
   std::cout<<std::endl;
 }
@@ -361,7 +463,7 @@ void displayAllAttribs3D(Map& amap, const char* c)
         itend=amap.template attributes<0>().end();
         it!=itend; ++it )
   {
-    std::cout<<it->point()<<"; ";
+    std::cout<<amap.point(it)<<"; ";
   }
   std::cout<<std::endl;
 }
@@ -382,7 +484,7 @@ void displayAllAttribs4D(Map& amap, const char* c)
         itend=amap.template attributes<0>().end();
         it!=itend; ++it )
   {
-    std::cout<<it->point()<<"; ";
+    std::cout<<amap.point(it)<<"; ";
   }
   std::cout<<std::endl;
 
@@ -392,8 +494,11 @@ template<typename Map>
 void create2Dmap(Map& map)
 {
   for ( int i=0; i<15; ++i )
-    map.make_tetrahedron(typename Map::Point(i, 0, 0),typename Map::Point(i, 2, 0),
-                         typename Map::Point(i+1, 0, 0),typename Map::Point(i+1, 1, 2));
+    map.make_tetrahedron(typename Map::Point(i, 0, 0),
+                         typename Map::Point(i, 2, 0),
+                         typename Map::Point(i+1, 0, 0),
+                         typename Map::Point(i+1, 1, 2));
+  InitDartInfo<Map>::run(map);
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
@@ -403,8 +508,10 @@ template<typename Map>
 void create3Dmap(Map& map)
 {
   for ( int i=0; i<15; ++i )
-    map.make_tetrahedron(typename Map::Point(i, 0, 0),typename Map::Point(i, 2, 0),
-                         typename Map::Point(i+1, 0, 0),typename Map::Point(i+1, 1, 2));
+    map.make_tetrahedron(typename Map::Point(i, 0, 0),
+                         typename Map::Point(i, 2, 0),
+                         typename Map::Point(i+1, 0, 0),
+                         typename Map::Point(i+1, 1, 2));
 
   for ( int i=0; i<20; ++i )
   {
@@ -414,6 +521,7 @@ void create3Dmap(Map& map)
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
   }
+  InitDartInfo<Map>::run(map);
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
@@ -436,8 +544,10 @@ template<typename Map>
 void create4Dmap(Map& map)
 {
   for ( int i=0; i<45; ++i )
-    map.make_tetrahedron(apoint<Map>(i, 0, 0, 0),apoint<Map>(i, 2, 0, 0),
-                         apoint<Map>(i+1, 0, 0, 0),apoint<Map>(i+1, 1, 2, 0));
+    map.make_tetrahedron(apoint<Map>(i, 0, 0, 0),
+                         apoint<Map>(i, 2, 0, 0),
+                         apoint<Map>(i+1, 0, 0, 0),
+                         apoint<Map>(i+1, 1, 2, 0));
 
   for ( int i=0; i<40; ++i )
   {
@@ -456,6 +566,7 @@ void create4Dmap(Map& map)
     while ( !map.template is_sewable<4>(d1, d2) ) ++d2;
     map.template sew<4>(d1,d2);
   }
+  InitDartInfo<Map>::run(map);
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
@@ -464,6 +575,16 @@ void create4Dmap(Map& map)
   CGAL_assertion ( map.is_valid() );
 }
 
+template<typename Map1,
+         typename Map2,
+         typename Map3,
+         typename Map4,
+         typename Map5,
+         typename Map6,
+         typename Map7,
+         typename Map8,
+         typename Map9,
+         typename Converter>
 bool testCopy()
 {
   Map1 map1; create2Dmap(map1);
@@ -515,36 +636,45 @@ bool testCopy()
     // 2D
     Map2 map1p(map1); assert(map1p.is_valid());
     if ( map1.is_isomorphic_to(map1p) ) { assert(false); return false; }
-    if ( !map1.is_isomorphic_to(map1p, false) ) { assert(false); return false; }
+    if ( !map1.is_isomorphic_to(map1p, false, false, true) )
+    { assert(false); return false; }
 
     Map3 map1t(map1); assert(map1t.is_valid());
     if ( map1.is_isomorphic_to(map1t) ) { assert(false); return false; }
-    if ( !map1.is_isomorphic_to(map1t, false) ) { assert(false); return false; }
+    if ( !map1.is_isomorphic_to(map1t, false, false, false) )
+    { assert(false); return false; }
 
     if ( map1p.is_isomorphic_to(map1t) ) { assert(false); return false; }
-    if ( !map1p.is_isomorphic_to(map1t, false) ) { assert(false); return false; }
+    if ( !map1p.is_isomorphic_to(map1t, false, false, false) )
+    { assert(false); return false; }
 
     Map1 map2p(map2); assert(map2p.is_valid());
     if ( map2.is_isomorphic_to(map2p) ) { assert(false); return false; }
-    if ( !map2.is_isomorphic_to(map2p, false) ) { assert(false); return false; }
+    if ( !map2.is_isomorphic_to(map2p, false, false, true) )
+    { assert(false); return false; }
 
     Map3 map2t(map2); assert(map2t.is_valid());
     if ( map2.is_isomorphic_to(map2t) ) { assert(false); return false; }
-    if ( !map2.is_isomorphic_to(map2t, false) ) { assert(false); return false; }
+    if ( !map2.is_isomorphic_to(map2t, false, false, false) )
+    { assert(false); return false; }
 
     if ( map2p.is_isomorphic_to(map2t) ) { assert(false); return false; }
-    if ( !map2p.is_isomorphic_to(map2t, false) ) { assert(false); return false; }
+    if ( !map2p.is_isomorphic_to(map2t, false, false, false) )
+    { assert(false); return false; }
 
     Map1 map3p(map3); assert(map3p.is_valid());
     if ( map3.is_isomorphic_to(map3p) ) { assert(false); return false; }
-    if ( !map3.is_isomorphic_to(map3p, false) ) { assert(false); return false; }
+    if ( !map3.is_isomorphic_to(map3p, false, false, false) )
+    { assert(false); return false; }
 
     Map2 map3t(map3); assert(map3t.is_valid());
     if ( map3.is_isomorphic_to(map3t) ) { assert(false); return false; }
-    if ( !map3.is_isomorphic_to(map3t, false) ) { assert(false); return false; }
+    if ( !map3.is_isomorphic_to(map3t, false, false, false) )
+    { assert(false); return false; }
 
     if ( map3p.is_isomorphic_to(map3t) ) { assert(false); return false; }
-    if ( !map3p.is_isomorphic_to(map3t, false) ) { assert(false); return false; }
+    if ( !map3p.is_isomorphic_to(map3t, false, false, false) )
+    { assert(false); return false; }
 
     assert( map1.is_isomorphic_to(map1p)==map1p.is_isomorphic_to(map1) );
     assert( map1.is_isomorphic_to(map1t)==map1t.is_isomorphic_to(map1) );
@@ -556,21 +686,31 @@ bool testCopy()
     // 3D
     Map4 map5a(map5); assert(map5a.is_valid());
     if ( map5.is_isomorphic_to(map5a) ) { assert(false); return false; }
-    if ( !map5.is_isomorphic_to(map5a, false) ) { assert(false); return false; }
+    if ( !map5.is_isomorphic_to(map5a, false, false, true) )
+    { assert(false); return false; }
 
     Map6 map5b(map5); assert(map5b.is_valid());
     if ( map5.is_isomorphic_to(map5b) ) { assert(false); return false; }
-    if ( !map5.is_isomorphic_to(map5b, false) ) { assert(false); return false; }
-    assert( map5b.number_of_attributes<0>()==map5.number_of_attributes<0>() &&
-            map5b.number_of_attributes<1>()==0 &&
-            map5b.number_of_attributes<2>()==map5.number_of_attributes<2>() &&
-            map5b.number_of_attributes<3>()==map5.number_of_attributes<3>() );
+    if ( !map5.is_isomorphic_to(map5b, false, false, false) )
+    { assert(false); return false; }
+    assert( map5b.template number_of_attributes<0>()==
+            map5.template number_of_attributes<0>() &&
+            map5b.template number_of_attributes<1>()==0 &&
+            map5b.template number_of_attributes<2>()==
+            map5.template number_of_attributes<2>() &&
+            map5b.template number_of_attributes<3>()==
+            map5.template number_of_attributes<3>() );
 
     Map7 map5c(map5); assert(map5c.is_valid());
     if ( map5.is_isomorphic_to(map5c) ) { assert(false); return false; }
-    if ( !map5.is_isomorphic_to(map5c, false) ) { assert(false); return false; }
-    assert( map5c.number_of_attributes<0>()==map5.number_of_attributes<0>() &&
-            map5c.number_of_attributes<2>()==map5.number_of_attributes<2>() );
+    if ( !map5.is_isomorphic_to(map5c, false, false, false) )
+    { assert(false); return false; }
+    if ( !map5b.is_isomorphic_to(map5c, false, false, true) )
+    { assert(false); return false; }
+    assert( map5c.template number_of_attributes<0>()==
+            map5.template number_of_attributes<0>() &&
+            map5c.template number_of_attributes<2>()==
+            map5.template number_of_attributes<2>() );
 
     assert( map5.is_isomorphic_to(map5a)==map5a.is_isomorphic_to(map5) );
     assert( map5.is_isomorphic_to(map5b)==map5b.is_isomorphic_to(map5) );
@@ -579,20 +719,26 @@ bool testCopy()
     // 4D
     Map8 map9a(map9); assert(map9a.is_valid());
     if ( map9.is_isomorphic_to(map9a) ) { assert(false); return false; }
-    if ( !map9.is_isomorphic_to(map9a, false) ) { assert(false); return false; }
-    assert( map9a.number_of_attributes<0>()==map9.number_of_attributes<0>() &&
-            map9a.number_of_attributes<2>()==map9.number_of_attributes<2>() &&
-            map9a.number_of_attributes<4>()==0 );
+    if ( !map9.is_isomorphic_to(map9a, false, false, true) )
+    { assert(false); return false; }
+    assert( map9a.template number_of_attributes<0>()==
+            map9.template number_of_attributes<0>() &&
+            map9a.template number_of_attributes<2>()==
+            map9.template number_of_attributes<2>() &&
+            map9a.template number_of_attributes<4>()==0 );
     assert( map9a.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9a) );
 
     Map9 map8a(map8); assert(map8a.is_valid());
     if ( map8.is_isomorphic_to(map8a) ) { assert(false); return false; }
-    if ( !map8.is_isomorphic_to(map8a, false) ) { assert(false); return false; }
-    assert( map8a.number_of_attributes<0>()==map8.number_of_attributes<0>() &&
-            map8a.number_of_attributes<1>()==0 &&
-            map8a.number_of_attributes<2>()==map8.number_of_attributes<2>() &&
-            map8a.number_of_attributes<3>()==0 &&
-            map8a.number_of_attributes<4>()==0 );
+    if ( !map8.is_isomorphic_to(map8a, false, false, true) )
+    { assert(false); return false; }
+    assert( map8a.template number_of_attributes<0>()==
+            map8.template number_of_attributes<0>() &&
+            map8a.template number_of_attributes<1>()==0 &&
+            map8a.template number_of_attributes<2>()==
+            map8.template number_of_attributes<2>() &&
+            map8a.template number_of_attributes<3>()==0 &&
+            map8a.template number_of_attributes<4>()==0 );
     assert( map8a.is_isomorphic_to(map8)==map8.is_isomorphic_to(map8a) );
 
   }
@@ -601,22 +747,27 @@ bool testCopy()
   {
     Map5 map2a(map2); assert(map2a.is_valid());
     if ( map2a.is_isomorphic_to(map2) ) { assert(false); return false; }
-    if ( !map2a.is_isomorphic_to(map2, false) ) { assert(false); return false; }
-    assert( map2a.number_of_attributes<0>()==map2.number_of_attributes<0>() &&
-            map2a.number_of_attributes<2>()==0 &&
-            map2a.number_of_attributes<3>()==0 );
+    if ( !map2a.is_isomorphic_to(map2, false, false, true) )
+    { assert(false); return false; }
+    assert( map2a.template number_of_attributes<0>()==
+            map2.template number_of_attributes<0>() &&
+            map2a.template number_of_attributes<2>()==0 &&
+            map2a.template number_of_attributes<3>()==0 );
     assert( map2a.is_isomorphic_to(map2)==map2.is_isomorphic_to(map2a) );
 
     Map2 map5a(map5); assert(map5a.is_valid());
     if ( map5a.is_isomorphic_to(map5) ) { assert(false); return false; }
-    assert( map5a.number_of_attributes<0>()==map2.number_of_attributes<0>() &&
-            map5a.number_of_attributes<2>()==0 );
+    assert( map5a.template number_of_attributes<0>()==
+            map2.template number_of_attributes<0>() &&
+            map5a.template number_of_attributes<2>()==0 );
 
     Map5 map9a(map9); assert(map9a.is_valid());
     if ( map9a.is_isomorphic_to(map9) ) { assert(false); return false; }
-    assert( map9a.number_of_attributes<0>()>=map9.number_of_attributes<0>() &&
-            map9a.number_of_attributes<2>()>=map9.number_of_attributes<2>() &&
-            map9a.number_of_attributes<3>()==0 );
+    assert( map9a.template number_of_attributes<0>()>=
+            map9.template number_of_attributes<0>() &&
+            map9a.template number_of_attributes<2>()>=
+            map9.template number_of_attributes<2>() &&
+            map9a.template number_of_attributes<3>()==0 );
     assert( map9a.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9a) );
 
     CGAL::Cast_converter_cmap_attributes<Map9,Map5,0> c0;
@@ -632,18 +783,24 @@ bool testCopy()
 
     Map5 map9b(map9, myconverters); assert(map9a.is_valid());
     if ( map9b.is_isomorphic_to(map9) ) { assert(false); return false; }
-    assert( map9b.number_of_attributes<0>()>=map9.number_of_attributes<0>() &&
-            map9b.number_of_attributes<2>()>=map9.number_of_attributes<2>() &&
-            map9b.number_of_attributes<3>()>=map9.number_of_attributes<3>() );
+    assert( map9b.template number_of_attributes<0>()>=
+            map9.template number_of_attributes<0>() &&
+            map9b.template number_of_attributes<2>()>=
+            map9.template number_of_attributes<2>() &&
+            map9b.template number_of_attributes<3>()>=
+            map9.template number_of_attributes<3>() );
     assert( map9b.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9b) );
 
-    Converter_map9_points_into_map5_points mypointconverter;
+    Converter mypointconverter;
 
     Map5 map9c(map9, myconverters, mypointconverter); assert(map9a.is_valid());
     if ( map9c.is_isomorphic_to(map9) ) { assert(false); return false; }
-    assert( map9c.number_of_attributes<0>()>=map9.number_of_attributes<0>() &&
-            map9c.number_of_attributes<2>()>=map9.number_of_attributes<2>() &&
-            map9c.number_of_attributes<3>()>=map9.number_of_attributes<3>() );
+    assert( map9c.template number_of_attributes<0>()>=
+            map9.template number_of_attributes<0>() &&
+            map9c.template number_of_attributes<2>()>=
+            map9.template number_of_attributes<2>() &&
+            map9c.template number_of_attributes<3>()>=
+            map9.template number_of_attributes<3>() );
     assert( map9c.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9c) );
 
     CGAL::Cast_converter_cmap_attributes<Map5,Map9,0> cb0;
@@ -659,10 +816,14 @@ bool testCopy()
 
     Map9 map5b(map5, myconverters2); assert(map5b.is_valid());
     if ( map5b.is_isomorphic_to(map5) ) { assert(false); return false; }
-    if ( !map5b.is_isomorphic_to(map5, false) ) { assert(false); return false; }
-    assert( map5b.number_of_attributes<0>()==map5.number_of_attributes<0>() &&
-            map5b.number_of_attributes<2>()==map5.number_of_attributes<2>() &&
-            map5b.number_of_attributes<3>()==map5.number_of_attributes<3>() );
+    if ( !map5b.is_isomorphic_to(map5, false, false, false) )
+    { assert(false); return false; }
+    assert( map5b.template number_of_attributes<0>()==
+            map5.template number_of_attributes<0>() &&
+            map5b.template number_of_attributes<2>()==
+            map5.template number_of_attributes<2>() &&
+            map5b.template number_of_attributes<3>()==
+            map5.template number_of_attributes<3>() );
     assert( map5b.is_isomorphic_to(map5)==map5.is_isomorphic_to(map5b) );
 
     Map9 map5c;
@@ -686,7 +847,15 @@ int main()
 {
   std::cout<<"Linear cell complex copy test (v1)."<<std::flush;
 
-  if ( !testCopy() )
+  if ( !testCopy<CMap1, CMap2, CMap3, CMap4, CMap5, CMap6, CMap7, CMap8,
+       CMap9, Converter_map9_points_into_map5_points>() )
+  {
+    std::cout<<" Failed."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  if ( !testCopy<GMap1, GMap2, GMap3, GMap4, GMap5, GMap6, GMap7, GMap8,
+       GMap9, Converter_gmap9_points_into_gmap5_points>() )
   {
     std::cout<<" Failed."<<std::endl;
     return EXIT_FAILURE;

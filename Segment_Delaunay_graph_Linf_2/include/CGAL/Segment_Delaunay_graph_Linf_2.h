@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_H
+
+#include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <iostream>
 #include <vector>
@@ -38,9 +43,9 @@
 #include <CGAL/Segment_Delaunay_graph_vertex_base_2.h>
 #include <CGAL/Segment_Delaunay_graph_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
+#include <CGAL/internal/TDS_2/edge_list.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/in_place_edge_list.h>
-#include <CGAL/Segment_Delaunay_graph_2/edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/Traits_wrapper_2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Constructions_C2.h>
@@ -51,7 +56,7 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 
 /*
   Conventions:
@@ -90,6 +95,7 @@ public:
   typedef typename Base::Point_2                 Point_2;
 
   typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Base::Finite_edges_iterator     Finite_edges_iterator;
 
   typedef typename Base::All_faces_iterator All_faces_iterator;
   typedef typename Base::All_vertices_iterator All_vertices_iterator;
@@ -101,6 +107,7 @@ public:
   typedef typename Base::Face           Face;
 
   typedef typename Base::Vertex_circulator     Vertex_circulator;
+  typedef typename Base::Edge_circulator       Edge_circulator;
   typedef typename Base::Face_circulator       Face_circulator;
 
 protected:
@@ -130,12 +137,16 @@ public:
   using Base::all_edges_end;
   using Base::all_faces_begin;
   using Base::all_faces_end;
+  using Base::finite_edges_begin;
+  using Base::finite_edges_end;
   using Base::tds;
   using Base::incident_vertices;
   using Base::incident_faces;
   using Base::infinite_vertex;
   using Base::is_infinite;
   using Base::storage_traits;
+  using Base::primal;
+  using Base::is_endpoint_of_segment;
 
 private:
   // CREATION helper
@@ -403,6 +414,69 @@ public:
 
   }
 
+  template< class Stream >
+  Stream& draw_dual(Stream& str) const
+  {
+    Finite_edges_iterator eit = finite_edges_begin();
+    for (; eit != finite_edges_end(); ++eit) {
+      draw_dual_edge(*eit, str);
+    }
+    return str;
+  }
+
+  template < class Stream >
+  Stream& draw_skeleton(Stream& str) const
+  {
+    Finite_edges_iterator eit = finite_edges_begin();
+    for (; eit != finite_edges_end(); ++eit) {
+      Site_2 p = eit->first->vertex(  cw(eit->second) )->site();
+      Site_2 q = eit->first->vertex( ccw(eit->second) )->site();
+
+      bool is_endpoint_of_seg =
+	( p.is_segment() && q.is_point() &&
+	  is_endpoint_of_segment(q, p) ) ||
+	( p.is_point() && q.is_segment() &&
+	  is_endpoint_of_segment(p, q) );
+
+      if ( !is_endpoint_of_seg ) {
+	draw_dual_edge(*eit, str);
+      }
+    }
+    return str;
+  }
+
+  // MK: this has to be rewritten. all the checking must be done in
+  // the geometric traits class.
+  template< class Stream >
+  Stream& draw_dual_edge(Edge e, Stream& str) const
+  {
+    CGAL_precondition( !is_infinite(e) );
+
+    CGAL::Polychainline_2<Geom_traits>      pcl;
+    CGAL::Polychainray_2<Geom_traits>       pcr;
+    CGAL::Polychainsegment_2<Geom_traits>   pcs;
+
+    Object o = primal(e);
+
+    if (CGAL::assign(pcl, o))   pcl.draw(str);
+    if (CGAL::assign(pcr, o))   pcr.draw(str);
+    if (CGAL::assign(pcs, o))   pcs.draw(str);
+
+    return str;
+  }
+
+  template< class Stream >
+  inline
+  Stream& draw_dual_edge(Edge_circulator ec, Stream& str) const {
+    return draw_dual_edge(*ec, str);
+  }
+
+  template< class Stream >
+  inline
+  Stream& draw_dual_edge(Finite_edges_iterator eit, Stream& str) const {
+    return draw_dual_edge(*eit, str);
+  }
+
 };
 
 } //namespace CGAL
@@ -410,5 +484,6 @@ public:
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Segment_Delaunay_graph_Linf_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_H

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
@@ -22,8 +23,12 @@
 #ifndef CGAL_INTERNAL_TRIANGULATION_2_PROJECTION_TRAITS_BASE_3_H
 #define CGAL_INTERNAL_TRIANGULATION_2_PROJECTION_TRAITS_BASE_3_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Profile_timer.h>
 #include <CGAL/intersections.h>
+#include <CGAL/predicates/sign_of_determinant.h>
 
 namespace CGAL {
 
@@ -33,7 +38,7 @@ template <class Traits>
 class Projected_orientation_with_normal_3
 {
   // private members
-  const typename Traits::Vector_3 normal;
+  typename Traits::Vector_3 normal;
 
   // private type aliases
   typedef typename Traits::K K;
@@ -64,7 +69,7 @@ template <class Traits>
 class Projected_side_of_oriented_circle_with_normal_3
 {
   // private members
-  const typename Traits::Vector_3 normal;
+  typename Traits::Vector_3 normal;
 
   // private types aliases
   typedef typename Traits::K K;
@@ -121,7 +126,7 @@ template <class Traits>
 class Projected_squared_distance_with_normal_3
 {
   // private members
-  const typename Traits::Vector_3 normal;
+  typename Traits::Vector_3 normal;
 
   // private types aliases
   typedef typename Traits::K K;
@@ -171,7 +176,7 @@ template <class Traits>
 class Projected_intersect_3
 {
   // private members
-  const typename Traits::Vector_3 normal;
+  typename Traits::Vector_3 normal;
 
   // private types aliases
   typedef typename Traits::K K;
@@ -249,7 +254,7 @@ class Less_along_axis
   // private members
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
-  const Vector_3 base;
+  Vector_3 base;
 public:
   Less_along_axis(const Vector_3& base) : base(base)
   {
@@ -270,7 +275,7 @@ class Compare_along_axis
   // private members
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
-  const Vector_3 base;
+  Vector_3 base;
 public:
   Compare_along_axis(const Vector_3& base) : base(base)
   {
@@ -362,6 +367,8 @@ public:
   typedef TriangulationProjectionTraitsCartesianFunctors::
   Projected_intersect_3<Self>                                Intersect_2;
 
+  typedef typename K::Construct_point_3   Construct_point_2;
+  typedef typename K::Construct_weighted_point_3  Construct_weighted_point_2;
   typedef typename K::Construct_segment_3  Construct_segment_2;
   typedef typename K::Construct_vector_3   Construct_vector_2;
   typedef typename K::Construct_line_3     Construct_line_2;
@@ -424,6 +431,12 @@ public:
 
   Angle_2  angle_2_object() const
     {return Angle_2();}
+
+  Construct_point_2  construct_point_2_object() const
+    {return Construct_point_2();}
+
+  Construct_weighted_point_2  construct_weighted_point_2_object() const
+    {return Construct_weighted_point_2();}
 
   Construct_segment_2  construct_segment_2_object() const
     {return Construct_segment_2();}

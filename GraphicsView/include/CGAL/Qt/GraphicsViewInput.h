@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_QT_GRAPHICS_VIEW_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_INPUT_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/export/Qt.h>
 #include <CGAL/auto_link/Qt.h>

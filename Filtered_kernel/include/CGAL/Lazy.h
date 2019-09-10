@@ -14,12 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
 
 #ifndef CGAL_LAZY_H
 #define CGAL_LAZY_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle.h>
@@ -817,7 +820,7 @@ struct Lazy_construction_bbox
     Protect_FPU_rounding<Protection> P;
     try {
       return ac(CGAL::approx(l1));
-    } catch (Uncertain_conversion_exception) {
+    } catch (Uncertain_conversion_exception&) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return ec(CGAL::exact(l1));
@@ -866,7 +869,7 @@ struct Lazy_construction_nt {
     Protect_FPU_rounding<Protection> P;                                 \
     try {                                                               \
       return new Lazy_rep_##n<AT, ET, AC, EC, To_interval<ET>, BOOST_PP_ENUM_PARAMS(n, L) >(ac, ec, BOOST_PP_ENUM_PARAMS(n, l)); \
-    } catch (Uncertain_conversion_exception) {                          \
+    } catch (Uncertain_conversion_exception&) {                          \
       CGAL_BRANCH_PROFILER_BRANCH(tmp);                                 \
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);          \
       return new Lazy_rep_0<AT,ET,To_interval<ET> >(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) )); \
@@ -1092,7 +1095,7 @@ public:
     try {
       // we suppose that R1 is a Lazy<Something>
       r1 = R1(new Lazy_rep_2_1<AC, EC, E2A, L1, L2, R1>(ac, ec, l1, l2));
-    } catch (Uncertain_conversion_exception) {
+    } catch (Uncertain_conversion_exception&) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       typename R1::ET et;
@@ -1162,7 +1165,7 @@ public:
       // lv->approx() is a std::pair<R1::AT, R2::AT>;
       r1 = R1(Handle_1(new Lazy_rep_1<void, void, First<std::pair<typename R1::AT, typename R2::AT> >, First<std::pair<typename R1::ET, typename R2::ET> >, E2A, Lazy_pair>(First<std::pair<typename R1::AT, typename R2::AT> >(), First<std::pair<typename R1::ET, typename R2::ET> >(), lv)));
       r2 = R2(Handle_2(new Lazy_rep_1<void, void, Second<std::pair<typename R1::AT, typename R2::AT> >, Second<std::pair<typename R1::ET, typename R2::ET> >, E2A, Lazy_pair>(Second<std::pair<typename R1::AT, typename R2::AT> >(), Second<std::pair<typename R1::ET, typename R2::ET> >(), lv)));
-    } catch (Uncertain_conversion_exception) {
+    } catch (Uncertain_conversion_exception&) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       typename R1::ET et1, et2;
@@ -1219,7 +1222,7 @@ public:
         std::cerr << "we need  more casts" << std::endl;
       }
 
-    } catch (Uncertain_conversion_exception) {
+    } catch (Uncertain_conversion_exception&) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       // TODO: Instead of using a vector, write an iterator adapter
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
@@ -1298,7 +1301,7 @@ public:
       std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's (#1)" << std::endl;
       std::cerr << "dynamic type of the Object : " << lo.approx().type().name() << std::endl;
 
-    } catch (Uncertain_conversion_exception) {
+    } catch (Uncertain_conversion_exception&) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1));
@@ -1352,7 +1355,7 @@ CGAL_Kernel_obj(Point_3)
       std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's (#1)" << std::endl;
       std::cerr << "dynamic type of the Object : " << lo.approx().type().name() << std::endl;
 
-    } catch (Uncertain_conversion_exception) {
+    } catch (Uncertain_conversion_exception&) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1), CGAL::exact(l2));
@@ -1385,7 +1388,7 @@ CGAL_Kernel_obj(Point_3)
       std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's (#1)" << std::endl;
       std::cerr << "dynamic type of the Object : " << lo.approx().type().name() << std::endl;
 
-    } catch (Uncertain_conversion_exception) {
+    } catch (Uncertain_conversion_exception&) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
@@ -1560,7 +1563,7 @@ struct Lazy_construction_variant {
       boost::apply_visitor(visitor, *approx_v);
       
       return res;
-    } catch (Uncertain_conversion_exception) {
+    } catch (Uncertain_conversion_exception&) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
 
@@ -1609,7 +1612,7 @@ struct Lazy_construction_variant {
       boost::apply_visitor(visitor, *approx_v);
       
       return res;
-    } catch (Uncertain_conversion_exception) {
+    } catch (Uncertain_conversion_exception&) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
 
@@ -1661,7 +1664,7 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
     Protect_FPU_rounding<Protection> P;                                 \
     try {                                                               \
       return result_type( Handle(new Lazy_rep_##n<AT, ET, AC, EC, E2A, BOOST_PP_ENUM_PARAMS(n, L)>(ac, ec, BOOST_PP_ENUM_PARAMS(n, l)))); \
-    } catch (Uncertain_conversion_exception) {                          \
+    } catch (Uncertain_conversion_exception&) {                          \
       CGAL_BRANCH_PROFILER_BRANCH(tmp);                                 \
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);          \
       return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ))) ); \
@@ -1716,7 +1719,7 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
 #define CGAL_CONSTRUCTION_OPERATOR(z, n, d)                                      \
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
   typename cpp11::result_of<Lazy_construction(BOOST_PP_ENUM_PARAMS(n, L))>::type \
-  operator()( BOOST_PP_ENUM(n, CGAL_LARGS, _) ) {                            \
+  operator()( BOOST_PP_ENUM(n, CGAL_LARGS, _) ) const {                            \
     BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, L)                                     \
     BOOST_PP_REPEAT(n, CGAL_TYPEMAP_AC, L)                                     \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
@@ -1729,7 +1732,7 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
     Protect_FPU_rounding<Protection> P;                                   \
     try {                                                                 \
       return result_type( Handle(new Lazy_rep_##n<AT, ET, AC, EC, E2A, BOOST_PP_ENUM_PARAMS(n, L)>(ac, ec, BOOST_PP_ENUM_PARAMS(n, l)))); \
-    } catch (Uncertain_conversion_exception) {                          \
+    } catch (Uncertain_conversion_exception&) {                          \
       CGAL_BRANCH_PROFILER_BRANCH(tmp);                                 \
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);          \
       return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ))) ); \
@@ -1759,5 +1762,6 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
 #undef CGAL_LEXACT
 #undef CGAL_LARGS
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_LAZY_H

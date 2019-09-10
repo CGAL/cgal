@@ -1,13 +1,15 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Surface_mesh.h>
 
 #include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef K::Plane_3                                            Plane;
 typedef K::Point_3                                            Point;
-typedef CGAL::Polyhedron_3<K>                                 Polyhedron_3;
+typedef CGAL::Surface_mesh<Point>                             Surface_mesh;
+
 
 // compute the tangent plane of a point
 template <typename K>
@@ -31,15 +33,16 @@ int main (void) {
     }
 
     // define polyhedron to hold the intersection
-    Polyhedron_3 P;
+    Surface_mesh chull;
 
     // compute the intersection
     // if no point inside the intersection is provided, one
     // will be automatically found using linear programming
     CGAL::halfspace_intersection_3(planes.begin(),
                                    planes.end(),
-                                   P,
-                                   boost::make_optional(Point(0, 0, 0)) );
+                                   chull );
+
+    std::cout << "The convex hull contains " << num_vertices(chull) << " vertices" << std::endl;
 
     return 0;
 }

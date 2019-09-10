@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -173,7 +174,7 @@ bool import_from_moka(LCC& lcc, const char* filename)
         }
       }
 
-      if ( gdarts[i].dh->attribute<3>() == NULL )
+      if ( lcc.template attribute<3>(gdarts[i].dh) == NULL )
       {
         lcc.template set_attribute<3>(gdarts[i].dh, lcc.template create_attribute<3>());
       }

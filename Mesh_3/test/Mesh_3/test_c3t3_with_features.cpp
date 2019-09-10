@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -25,7 +26,6 @@
 #include <CGAL/Bbox_3.h>
 
 #include "test_utilities.h"
-#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 
 #include <CGAL/Implicit_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
@@ -46,12 +46,13 @@ struct Tester
   typedef CGAL::Mesh_domain_with_polyline_features_3<Base_domain>     Md;
   typedef typename CGAL::Mesh_triangulation_3<Md>::type               Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<
-    Tr, typename Md::Corner_index, typename Md::Curve_segment_index>  C3t3;
+    Tr, typename Md::Corner_index, typename Md::Curve_index>          C3t3;
 
-  typedef typename Tr::Geom_traits  Gt;
-  typedef typename Gt::FT           FT;
-  typedef typename Gt::Point_3      Point;
-  typedef CGAL::Mesh_3::Creator_weighted_point_3<FT, Point> Point_creator;
+  typedef typename Tr::Bare_point       Bare_point;
+  typedef typename Tr::Weighted_point   Weighted_point;
+
+  typedef typename Tr::Geom_traits      Gt;
+  typedef typename Gt::FT               FT;
 
   typedef typename C3t3::Cell_handle    Cell_handle;
   typedef typename C3t3::Facet          Facet;
@@ -61,7 +62,7 @@ struct Tester
   typedef typename C3t3::Edges_in_complex_iterator      Edge_iterator;
   typedef typename C3t3::Vertices_in_complex_iterator   Vertices_iterator;
   
-  typedef typename C3t3::Curve_segment_index  Curve_segment_index;
+  typedef typename C3t3::Curve_index          Curve_index;
   typedef typename C3t3::Corner_index         Corner_index;
   typedef typename C3t3::Index                Index;
 
@@ -83,15 +84,14 @@ struct Tester
     assert(c3t3.number_of_facets_in_complex() == 0);
     assert(c3t3.number_of_edges_in_complex() == 0);
     assert(c3t3.number_of_vertices_in_complex() == 0);
-    
+
     //-------------------------------------------------------
     // Data generation : fill a triangulation with 4 vertices
     //-------------------------------------------------------
-    Point_creator creator;
-    Point p1 = creator(0,0,0);
-    Point p2 = creator(1,0,0);
-    Point p3 = creator(0,1,0);
-    Point p4 = creator(0,0,1);
+    Weighted_point p1(0,0,0);
+    Weighted_point p2(1,0,0);
+    Weighted_point p3(0,1,0);
+    Weighted_point p4(0,0,1);
 
     Vertex_handle vp1 = tr.insert(p1);
     Vertex_handle vp2 = tr.insert(p2);
@@ -100,9 +100,9 @@ struct Tester
 
     Corner_index corner_index (1);
     Corner_index corner_index_bis (2);
-    Curve_segment_index curve_segment_index (1);
-    Curve_segment_index curve_segment_index_bis (2);
-    Index vertex_index (curve_segment_index);
+    Curve_index curve_index (1);
+    Curve_index curve_index_bis (2);
+    Index vertex_index (curve_index);
 
     //-------------------------------------------------------
     // Add edge to c3t3 and verify
@@ -117,7 +117,7 @@ struct Tester
     const Vertex_handle& ev1 = e.first->vertex(e.second);
     const Vertex_handle& ev2 = e.first->vertex(e.third);
     
-    c3t3.add_to_complex(e,curve_segment_index);
+    c3t3.add_to_complex(e,curve_index);
 
     std::cerr << "\tNumber of edges in c3t3: "
               << c3t3.number_of_edges_in_complex() << std::endl;
@@ -130,7 +130,7 @@ struct Tester
                                                                         c3t3.edges_in_complex_end())));
     assert(c3t3.is_in_complex(e));
     assert(c3t3.is_in_complex(ev1, ev2));
-    assert(c3t3.curve_segment_index(e) == curve_segment_index);
+    assert(c3t3.curve_index(e) == curve_index);
 
     //-------------------------------------------------------
     // Remove cell from c3t3 and verify
@@ -147,8 +147,8 @@ struct Tester
     assert(c3t3.number_of_edges_in_complex() == 0);
     assert(! c3t3.is_in_complex(e));
     assert(! c3t3.is_in_complex(ev1, ev2));
-    assert(c3t3.curve_segment_index(e) == Curve_segment_index());
-    assert(c3t3.curve_segment_index(ev1, ev2) == Curve_segment_index());
+    assert(c3t3.curve_index(e) == Curve_index());
+    assert(c3t3.curve_index(ev1, ev2) == Curve_index());
     
     //-------------------------------------------------------
     // Add corner to c3t3 and verify
@@ -192,9 +192,9 @@ struct Tester
     //-------------------------------------------------------
     std::cerr << "Insert 1 curve segment (3 edges + 2 corners) in c3t3" << std::endl;
 
-    c3t3.add_to_complex(vp1,vp2,curve_segment_index);
-    c3t3.add_to_complex(vp2,vp3,curve_segment_index);
-    c3t3.add_to_complex(vp3,vp4,curve_segment_index);
+    c3t3.add_to_complex(vp1,vp2,curve_index);
+    c3t3.add_to_complex(vp2,vp3,curve_index);
+    c3t3.add_to_complex(vp3,vp4,curve_index);
     c3t3.add_to_complex(vp1,corner_index);
     c3t3.add_to_complex(vp4,corner_index);
     c3t3.set_dimension(vp1,0);
@@ -230,7 +230,7 @@ struct Tester
     //-------------------------------------------------------
     // Check adjacencies
     //-------------------------------------------------------
-    std::vector<std::pair<Vertex_handle,Curve_segment_index> > incident_vertices;
+    std::vector<std::pair<Vertex_handle,Curve_index> > incident_vertices;
     c3t3.adjacent_vertices_in_complex(vp1,std::back_inserter(incident_vertices));
     
     assert(incident_vertices.size() == 1);
@@ -248,19 +248,19 @@ struct Tester
     //-------------------------------------------------------
     std::cout << "Insert 6 points in c3t3_bis, add 1 corner and 1 edge to c3t3_bis\n";
 
-    std::vector<Point> points;
-    points.push_back(creator(10,11,12));
-    points.push_back(creator(11,13,10));
-    points.push_back(creator(7,4,6));
-    points.push_back(creator(5,2,14));
-    points.push_back(creator(1,2,3));
-    points.push_back(creator(3,9,13));
-    
+    std::vector<Weighted_point> points;
+    points.push_back(Weighted_point(10,11,12));
+    points.push_back(Weighted_point(11,13,10));
+    points.push_back(Weighted_point(7,4,6));
+    points.push_back(Weighted_point(5,2,14));
+    points.push_back(Weighted_point(1,2,3));
+    points.push_back(Weighted_point(3,9,13));
+
     C3t3 c3t3_bis;
     c3t3_bis.triangulation().insert(points.begin(),points.end());
     
     Edge e_bis = *(c3t3_bis.triangulation().finite_edges_begin());
-    c3t3_bis.add_to_complex(e_bis,curve_segment_index_bis);
+    c3t3_bis.add_to_complex(e_bis,curve_index_bis);
     Vertex_handle v_bis = ++c3t3_bis.triangulation().finite_vertices_begin();
     c3t3_bis.add_to_complex(v_bis,corner_index_bis);
     
@@ -318,24 +318,24 @@ struct Tester
     std::cout << "Test edge iterators\n";
     const Edge& edge_to_modify = *(c3t3.edges_in_complex_begin());
     c3t3.remove_from_complex(edge_to_modify);
-    c3t3.add_to_complex(edge_to_modify,curve_segment_index_bis);
+    c3t3.add_to_complex(edge_to_modify,curve_index_bis);
     
     typename C3t3::Edges_in_complex_iterator curve_eit =
-      c3t3.edges_in_complex_begin(curve_segment_index);
+      c3t3.edges_in_complex_begin(curve_index);
     typename C3t3::Edges_in_complex_iterator curve_eit_bis =
-      c3t3.edges_in_complex_begin(curve_segment_index_bis);
+      c3t3.edges_in_complex_begin(curve_index_bis);
     typename C3t3::Edges_in_complex_iterator eend =
       c3t3.edges_in_complex_end();
     
-    std::cout << "\tNumber of edges of index '" << curve_segment_index << "': "
+    std::cout << "\tNumber of edges of index '" << curve_index << "': "
               << std::distance(curve_eit,eend) << std::endl;
-    std::cout << "\tNumber of edges of index '" << curve_segment_index_bis << "': "
+    std::cout << "\tNumber of edges of index '" << curve_index_bis << "': "
               << std::distance(curve_eit_bis,eend) << std::endl;
     
     assert ( std::distance(curve_eit,eend) == 2 );
     assert ( std::distance(curve_eit_bis,eend) == 1 );
-    assert ( c3t3.curve_segment_index(*curve_eit) == curve_segment_index );
-    assert ( c3t3.curve_segment_index(*curve_eit_bis) == curve_segment_index_bis );
+    assert ( c3t3.curve_index(*curve_eit) == curve_index );
+    assert ( c3t3.curve_index(*curve_eit_bis) == curve_index_bis );
     
     //-------------------------------------------------------
     // Test vertex iterators

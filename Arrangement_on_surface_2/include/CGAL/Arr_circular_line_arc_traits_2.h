@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Julien Hazebrouck
 
@@ -25,6 +26,11 @@
 
 #ifndef CGAL_CIRCULAR_KERNEL_VARIANT_TRAITS_2_H
 #define CGAL_CIRCULAR_KERNEL_VARIANT_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
+
 
 /*! \file
  * This file was developed at Inria, France, and copied over to the
@@ -615,5 +621,7 @@ namespace CGAL {
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CIRCULAR_KERNEL_VARIANT_TRAITS_H

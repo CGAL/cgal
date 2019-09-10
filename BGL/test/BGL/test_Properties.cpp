@@ -43,6 +43,16 @@ void index_uniqueness_poly(const Polyhedron& g)
   index_uniqueness(g, faces(g),     get(boost::face_external_index, g));
   index_uniqueness(g, halfedges(g), get(boost::halfedge_external_index, g));
 }
+
+void index_uniqueness_lcc(const LCC& g)
+{
+  std::cerr << "testing Linear_cell_complex\n";
+  index_uniqueness(g, edges(g) ,    get(boost::edge_index, g));
+  index_uniqueness(g, vertices(g),  get(boost::vertex_index, g));
+  index_uniqueness(g, faces(g),     get(boost::face_index, g));
+  index_uniqueness(g, halfedges(g), get(boost::halfedge_index, g));
+}
+
 #if defined(CGAL_USE_SURFACE_MESH)
 void index_uniqueness_sm(const SM& g)
 {
@@ -65,7 +75,6 @@ void index_uniqueness_omesh(const OMesh& g)
 }
 #endif
 
-
 int
 main()
 {
@@ -75,7 +84,10 @@ main()
     index_uniqueness_poly(p);
   }
 
-
+  std::vector<LCC> lccs = lcc_data();
+  BOOST_FOREACH(LCC p, lccs){
+    index_uniqueness_lcc(p);
+  }
 
 #if defined(CGAL_USE_SURFACE_MESH)
   std::vector<SM> sms = sm_data();

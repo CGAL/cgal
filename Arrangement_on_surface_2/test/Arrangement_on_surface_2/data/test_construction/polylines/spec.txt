@@ -1,0 +1,1 @@
+test06 covers the case "Overlap with common ancestors"

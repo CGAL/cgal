@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel
@@ -25,6 +26,7 @@
 #define CGAL__TEST_NEW_2_H
 
 #include <CGAL/squared_distance_2.h>
+#include <CGAL/use.h>
 
 #include "_test_cls_line_new_2.h"
 #include "_test_cls_segment_new_2.h"
@@ -67,6 +69,7 @@ test_new_2(const R& rep)
   typedef typename R::FT                          FT;
 
   typedef typename R::Point_2                     Point_2;
+  typedef typename R::Weighted_point_2            Weighted_point_2;
   typedef typename R::Vector_2                    Vector_2;
   typedef typename R::Direction_2                 Direction_2;
   typedef typename R::Segment_2                   Segment_2;
@@ -90,6 +93,20 @@ test_new_2(const R& rep)
   Point_2 p4 = construct_point(1,2,2);
   Point_2 p5 = construct_point(3,4,5);
   Point_2 p6 = construct_point(3,4,6);
+
+  typename R::Construct_weighted_point_2 construct_weighted_point =
+        rep.construct_weighted_point_2_object();
+  Weighted_point_2 wp1;
+  Weighted_point_2 wp2 = construct_weighted_point(ORIGIN);
+  Weighted_point_2 wp3 = construct_weighted_point(1,1);
+  Weighted_point_2 wp3bis = construct_weighted_point(RT(1),RT(1));
+  Weighted_point_2 wp3ter = construct_weighted_point(FT(1),FT(1));
+  Weighted_point_2 wp4 = construct_weighted_point(p2);
+  Weighted_point_2 wp5 = construct_weighted_point(p3,2);
+  Weighted_point_2 wp6 = construct_weighted_point(p4,RT(2));
+  Weighted_point_2 wp7 = construct_weighted_point(p5,FT(2));
+  Weighted_point_2 wp8 = construct_weighted_point(wp7);
+  use(wp1); use(wp3bis); use(wp3ter);
 
   typename R::Construct_vector_2 construct_vector =
         rep.construct_vector_2_object();
@@ -261,6 +278,10 @@ test_new_2(const R& rep)
           tmp13 = construct_circumcenter(p2,p3);
           tmp13 = construct_circumcenter(t2);
 
+  typename R::Construct_weighted_circumcenter_2 construct_weighted_circumcenter
+        = rep.construct_weighted_circumcenter_2_object();
+          tmp13 = construct_weighted_circumcenter(wp4,wp5,wp6);
+
   typename R::Construct_centroid_2 construct_centroid
         = rep.construct_centroid_2_object();
           tmp13 = construct_centroid(p2,p3,p4);
@@ -301,6 +322,9 @@ test_new_2(const R& rep)
         = rep.construct_opposite_line_2_object();
   Line_2 tmp17 = construct_opposite_line(l2);
 
+  typename R::Construct_radical_axis_2 construct_radical_axis
+        = rep.construct_radical_axis_2_object();
+         tmp17 = construct_radical_axis(wp6, wp8);
 
   typename R::Construct_opposite_triangle_2 construct_opposite_triangle
         = rep.construct_opposite_triangle_2_object();
@@ -352,6 +376,10 @@ test_new_2(const R& rep)
      tmp22d = Compute_squared_distance(p1, r2);
      tmp22d = Compute_squared_distance(p1, t2);
 
+  typename R::Compute_power_product_2 compute_power_product
+        = rep.compute_power_product_2_object();
+     tmp22d = compute_power_product(wp6, wp7);
+
   typename R::Compute_squared_length_2 Compute_squared_length
         = rep.compute_squared_length_2_object();
   FT tmp23 = Compute_squared_length(v2);
@@ -363,6 +391,14 @@ test_new_2(const R& rep)
      tmp23b = Compute_squared_radius(p3);
      tmp23b = Compute_squared_radius(p3, p4);
      tmp23b = Compute_squared_radius(p3, p4, p5);
+
+  typename R::Compute_squared_radius_smallest_orthogonal_circle_2
+         compute_squared_radius_smallest_orthogonal_circle
+      = rep.compute_squared_radius_smallest_orthogonal_circle_2_object();
+    tmp23b = compute_squared_radius_smallest_orthogonal_circle(wp4);
+    tmp23b = compute_squared_radius_smallest_orthogonal_circle(wp4, wp5);
+    tmp23b = compute_squared_radius_smallest_orthogonal_circle(wp4, wp5, wp6);
+  (void) tmp23b;
 
   typename R::Equal_2 equal
         = rep.equal_2_object();
@@ -471,6 +507,10 @@ test_new_2(const R& rep)
   tmp34ab = CGAL::compare_distance(t2, l1, s1, p1);
   tmp34ab = CGAL::compare_distance(t2, l1, s1);
 
+  typename R::Compare_power_distance_2 compare_power_dist
+        = rep.compare_power_distance_2_object();
+  tmp34ab = compare_power_dist(p1, wp2, wp3);
+
   typename R::Compare_angle_with_x_axis_2 compare_angle
         = rep.compare_angle_with_x_axis_2_object();
   Comparison_result tmp34ac = compare_angle(d3,d2);
@@ -508,12 +548,22 @@ test_new_2(const R& rep)
         = rep.side_of_oriented_circle_2_object();
   Oriented_side tmp41 = side_of_oriented_circle(p2,p3,p4,p5);
 
+  typename R::Power_side_of_oriented_power_circle_2 power_side_of_oriented_power_circle
+        = rep.power_side_of_oriented_power_circle_2_object();
+                tmp41 = power_side_of_oriented_power_circle(wp4,wp5);
+                tmp41 = power_side_of_oriented_power_circle(wp4,wp5,wp6);
+                tmp41 = power_side_of_oriented_power_circle(wp4,wp5,wp6,wp7);
 
   typename R::Side_of_bounded_circle_2 side_of_bounded_circle
         = rep.side_of_bounded_circle_2_object();
   Bounded_side tmp42 = side_of_bounded_circle(p2,p3,p4,p5);
                tmp42 = side_of_bounded_circle(p2,p3,p5);
 
+  typename R::Power_side_of_bounded_power_circle_2 power_side_of_bounded_power_circle
+        = rep.power_side_of_bounded_power_circle_2_object();
+               tmp42 = power_side_of_bounded_power_circle(wp4,wp5);
+               tmp42 = power_side_of_bounded_power_circle(wp4,wp5,wp6);
+               tmp42 = power_side_of_bounded_power_circle(wp4,wp5,wp6,wp7);
 
   typename R::Is_horizontal_2 is_horizontal
         = rep.is_horizontal_2_object();

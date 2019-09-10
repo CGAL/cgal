@@ -15,7 +15,7 @@
 \cgalPkgSince{3.3}
 \cgalPkgBib{cgal:c-tsms-12}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -38,11 +38,12 @@
 - `CGAL::Surface_mesh_simplification::Edge_profile<ECM>`
 - `CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>`
 - `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>`
+- `CGAL::Surface_mesh_simplification::Edge_length_stop_predicate<ECM>`
 - `CGAL::Surface_mesh_simplification::Edge_length_cost<ECM>`
 - `CGAL::Surface_mesh_simplification::Midpoint_placement<ECM>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>`
 - `CGAL::Surface_mesh_simplification::Constrained_placement<Placement,ECM>`
-
+- `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
 */
 

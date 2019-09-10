@@ -25,8 +25,9 @@
 - `CGAL::Three::Polyhedron_demo_io_plugin_interface`
 
 ## Classes ##
--  `MainWindow`
+-  `TextRenderer`
+-  `TextItem`
+-  `TextListItem`
 -  `CGAL::Three::Scene_item`
 -  `CGAL::Three::Scene_group_item`
-
 */

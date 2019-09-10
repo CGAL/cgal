@@ -12,9 +12,17 @@
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Ilker O. Yaz
 
 #define CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
+
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
@@ -288,7 +296,7 @@ public:
         cut_time += timer.time();
         #endif
 
-        if(min_cut - flow < flow * tolerance) {
+        if(min_cut - flow <= flow * tolerance) {
           continue;
         }
         min_cut = flow;
@@ -526,7 +534,7 @@ public:
         cut_time += timer.time();
         #endif
 
-        if(min_cut - flow < flow * tolerance) {
+        if(min_cut - flow <= flow * tolerance) {
           continue;
         }
         min_cut = flow;
@@ -656,7 +664,7 @@ public:
         cut_time += timer.time();
         #endif
 
-        if(min_cut - flow < flow * tolerance) {
+        if(min_cut - flow <= flow * tolerance) {
           continue;
         }
 

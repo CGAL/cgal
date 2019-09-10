@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_DELAUNAY_MESH_CRITERIA_2_H
 #define CGAL_DELAUNAY_MESH_CRITERIA_2_H
+
+#include <CGAL/license/Mesh_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_2/Face_badness.h>
 #include <CGAL/number_utils.h>
@@ -115,5 +120,7 @@ public:
 };
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -33,6 +34,7 @@ _test_angle(const R&)
   typedef CGAL::Point_3<R>  Point_3;
 
   typedef CGAL::Vector_2<R> Vector_2;
+  typedef CGAL::Vector_3<R> Vector_3;
 
   Point_2 p(RT(2),RT(1));
   Point_2 q(RT(5),RT(4));
@@ -67,6 +69,12 @@ _test_angle(const R&)
   assert( CGAL::angle( org3 - sz, sz - sy) == CGAL::OBTUSE );
   assert( CGAL::angle( org3 - sx, sy - sx) == CGAL::ACUTE );
 
+  Vector_3 vz(RT0, RT0, RT1);
+  Vector_3 vcoplanar(RT1, RT1, RT0);
+  Vector_3 vmz(RT0, RT0, -RT1);
+  assert( CGAL::angle( org3, sx, sy, vz) ==  CGAL::ACUTE );
+  assert( CGAL::angle( org3, sx, sy, vcoplanar) ==  CGAL::RIGHT );
+  assert( CGAL::angle( org3, sx, sy, vmz) ==  CGAL::OBTUSE );
   return true;
 }
 

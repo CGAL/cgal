@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
 #ifndef CGAL_PIERCE_RECTANGLES_2_H
 #define CGAL_PIERCE_RECTANGLES_2_H 1
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/circulator.h>

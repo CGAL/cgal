@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -65,10 +66,10 @@ namespace CGAL {
   }
 
   /// returns `std::distance(begin(), end())`
-  typename std::iterator_traits<I>::difference_type
+  std::size_t
   size() const
   {
-    return std::distance(begin(), end());
+    return static_cast<std::size_t>(std::distance(begin(), end()));
   }
 
   /// returns `std::distance(begin(), end())==0`

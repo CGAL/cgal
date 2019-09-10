@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_OBSERVER_H
 #define CGAL_ARR_OBSERVER_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Arr_enums.h>
 
@@ -673,5 +678,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

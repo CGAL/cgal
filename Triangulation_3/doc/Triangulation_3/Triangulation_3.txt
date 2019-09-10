@@ -143,8 +143,7 @@ and displacements of points.
 The class `Regular_triangulation_3` implements incremental regular
 triangulations, also known as weighted Delaunay triangulations.
 
-Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^3\f$. Let
-\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^3, w_p\in\mathbb{R}\f$ and 
+Let\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^3, w_p\in\mathbb{R}\f$ and 
 \f$ {z}^{(w)}=(z,w_z), z\in\mathbb{R}^3, w_z\in\mathbb{R}\f$ be two weighted points. 
 A weighted point
 \f$ {p}^{(w)}=(p,w_p)\f$ can also be seen as a sphere of center \f$ p\f$ and
@@ -152,12 +151,13 @@ radius \f$ \sqrt{w_p}\f$.
 The <I>power product</I> between \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$ is
 defined as 
 \f[ \Pi({p}^{(w)},{z}^{(w)}) = {\|{p-z}\|^2-w_p-w_z} \f]
-where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$. 
-\f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$
+where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$.
+
+The weighted points \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$
 are said to be <I>orthogonal</I> iff \f$ \Pi{({p}^{(w)},{z}^{(w)})}
 = 0\f$ (see \cgalFigureRef{Triangulation3figortho)}.
 
-\cgalFigureBegin{Triangulation3figortho,ortho.png}
+\cgalFigureBegin{Triangulation3figortho,ortho.svg}
 Orthogonal weighted points (picture in 2D).
 \cgalFigureEnd
 
@@ -168,6 +168,8 @@ called the <I>power circle</I>. The
 <I>power segment</I> will denote the weighted point orthogonal to
 two weighted points on the line defined by these two points.
 
+
+Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^3\f$. 
 A sphere \f$ {z}^{(w)}\f$ is said to be
 <I>regular</I> if \f$ \forall {p}^{(w)}\in{S}^{(w)},
 \Pi{({p}^{(w)},{z}^{(w)})}\geq 0\f$.
@@ -248,38 +250,17 @@ class of `Delaunay_triangulation_3` must define predicates to test for the
 <I>empty sphere property</I>. It is described by the concept
 `DelaunayTriangulationTraits_3`, which refines `TriangulationTraits_3`.
 
-The kernels provided by \cgal: `Cartesian`, `Homogeneous`,
-`Simple_cartesian`, `Simple_homogeneous` and
-`Filtered_kernel` can all be used as models for the geometric traits
+In addition to the requirements described before, the geometric traits
+class of `Regular_triangulation_3` must define predicates to test for the
+<I>power distances</I> and orientation tests for <I>power spheres</I>. 
+It is described by the concept
+`RegularTriangulationTraits_3`, which refines `TriangulationTraits_3`.
+
+
+
+All kernels provided by \cgal can all be used as models for the geometric traits
 parameter.
-They supply the user with all the functionalities described for the concepts
-`TriangulationTraits_3` and
-`DelaunayTriangulationTraits_3`.
-In addition, the predefined kernels
-`Exact_predicates_inexact_constructions_kernel` and
-`Exact_predicates_exact_constructions_kernel`
-can also be used, the latter being recommended when the dual construction is
-used.
 
-In order to be used as the traits class for `Regular_triangulation_3`,
-a class must provide functions to compute the <I>power tests</I>
-(see Section \ref Triangulation3secclassRegulartriangulation).
-`Regular_triangulation_euclidean_traits_3<K,Weight>` is a traits class 
-designed to be used by the class
-`Regular_triangulation_3<RegularTriangulationTraits_3, TriangulationDataStructure_3>`. It provides
-`Weighted_point`, a class for weighted points
-needed by the regular triangulation, which derives from the three dimensional
-point class `K::Point_3`.
-It supplies the user with all the functionalities 
-described for the concept `RegularTriangulationTraits_3`. 
-It can be used as a traits class for
-`Regular_triangulation_3<RegularTriangulationTraits_3, TriangulationDataStructure_3>`.
-
-Note that for regular triangulations, plugging a filtered kernel such
-as `Exact_predicates_inexact_constructions_kernel` or
-`Exact_predicates_exact_constructions_kernel` in
-`Regular_triangulation_euclidean_traits_3<K,Weight>` will 
-provide exact and efficient filtered predicates.
 
 \subsection Triangulation3sectds The Triangulation Data Structure Parameter 
 
@@ -450,7 +431,7 @@ cell. It uses the default parameter of the `Triangulation_3` class.
 The following two examples show how the user can plug his own vertex base in a
 triangulation. Changing the cell base is similar.
 
-\subsection Triangulation3secexamplescolor Adding a Color 
+\subsubsection Triangulation3secexamplescolor Adding a Color 
 
 When the user doesn't need to add a type in a vertex which depends on the
 `TriangulationDataStructure_3` (e.g. a `Vertex_handle` or
@@ -461,7 +442,7 @@ this way.
 
 \cgalExample{Triangulation_3/color.cpp}
 
-\subsection Triangulation_3AddingHandles Adding Handles
+\subsubsection Triangulation_3AddingHandles Adding Handles
 
 When the user needs to add a type in a vertex which depends on the
 `TriangulationDataStructure_3` (e.g. a `Vertex_handle` or
@@ -531,23 +512,33 @@ The package provides a utility class that can be used to traverse the triangulat
 
 \subsection Triangulation_3RegularTriangulation Regular Triangulation
 
+\subsubsection Triangulation_3RegularTriangulationDefaults Regular Triangulation with Defaults
+
 This example shows the building of a regular triangulation. In this
 triangulation, points have an associated weight, and some points can
 be hidden and do not result in vertices in the triangulation.
-Another difference is that a specific traits class has to be used
-(at least at the moment).
 
 \cgalExample{Triangulation_3/regular_3.cpp}
 
-\subsection Triangulation_3ParallelDelaunay Parallel insertion in Delaunay triangulation
+
+\subsubsection Triangulation_3RegularTriangulationInfo Regular Triangulation with Custom Vertex
+
+This example shows that one must use the class `Regular_triangulation_vertex_base_3` as vertex base class,
+if one has to specifiy the template parameter. 
+
+\cgalExample{Triangulation_3/regular_with_info_3.cpp}
+
+
+
+\subsection Triangulation_3ParallelDelaunay Parallel Insertion in Delaunay Triangulation
 
 This example shows the parallel building of a Delaunay triangulation.
 
 \cgalExample{Triangulation_3/parallel_insertion_in_delaunay_3.cpp}
 
-\subsection Triangulation_3ParallelRegular Parallel insertion and removal in Regular triangulation
+\subsection Triangulation_3ParallelRegular Parallel Insertion and Removal in Regular Triangulation
 
-This example shows the parallel building of a Regular triangulation, followed by the parallel 
+This example shows the parallel building of a regular triangulation, followed by the parallel
 removal of the first 100,000 vertices.
 
 \cgalExample{Triangulation_3/parallel_insertion_and_removal_in_regular_3.cpp}
@@ -574,9 +565,7 @@ the following ones and give practical numbers on their efficiency :
 </UL>
 
 We will use the following types of triangulations, using
-`Exact_predicates_inexact_constructions_kernel` as geometric traits
-(combined with `Regular_triangulation_euclidean_traits_3` in the weighted
-case) :
+`Exact_predicates_inexact_constructions_kernel` as geometric traits:
 <UL>
 <LI><B>Delaunay</B> : `Delaunay_triangulation_3`
 <LI><B>Delaunay - %Fast location</B> : `Delaunay_triangulation_3` with `Fast_location`

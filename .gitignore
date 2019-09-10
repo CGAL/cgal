@@ -95,7 +95,6 @@ Arrangement_on_surface_2/examples/Arrangement_on_surface_2/rational_functions
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/rational_functions_rational_coefficients
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/special_edge_insertion
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/spherical_insert
-Arrangement_on_surface_2/examples/Arrangement_on_surface_2/sweep_line
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/tracing_counting
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/unb_planar_vertical_decomposition
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/unbounded_non_intersecting
@@ -1095,6 +1094,9 @@ cgal_test_with_cmake.log
 
 # File created by the Semantic Bovinator (an Emacs package)
 semantic.cache
+
+# Python cache files
+*.pyc
 
 # Files produced by a Qt compilation/execution
 .qglviewer.xml

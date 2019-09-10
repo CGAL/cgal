@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
 #ifndef CGAL_AABB_TREE_WITH_JOIN_H
 #define CGAL_AABB_TREE_WITH_JOIN_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <vector>
 #include <iterator>
