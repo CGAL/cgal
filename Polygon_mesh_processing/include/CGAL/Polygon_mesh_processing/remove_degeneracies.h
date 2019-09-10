@@ -103,7 +103,7 @@ void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleM
   if(res[0] != boost::graph_traits<TriangleMesh>::null_halfedge())
   {
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
-    std::cout << "add new needle: " << res[0] << std::endl;
+    std::cout << "add new needle: " << edge(res[0], tmesh) << std::endl;
 #endif
     edges_to_collapse.insert(edge(res[0], tmesh));
   }
@@ -112,7 +112,7 @@ void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleM
     if(res[1] != boost::graph_traits<TriangleMesh>::null_halfedge())
     {
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
-      std::cout << "add new cap: " << res[1] << std::endl;
+      std::cout << "add new cap: " << edge(res[1],tmesh) << std::endl;
 #endif
       edges_to_flip.insert(edge(res[1], tmesh));
     }
@@ -143,6 +143,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
   int iter = 0;
 #endif
+
   for(;;)
   {
     bool something_was_done = false;
@@ -190,12 +191,12 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
           std::cerr << "Warning: Needle criteria no longer verified " << tmesh.point(source(e, tmesh)) << " "
                                                                       << tmesh.point(target(e, tmesh)) << std::endl;
 #endif
-          if (nc[0]!=boost::graph_traits<TriangleMesh>::null_halfedge())
-            edges_to_collapse.insert(edge(nc[0], tmesh));
-          else
-            if (nc[1]!=boost::graph_traits<TriangleMesh>::null_halfedge())
-              next_edges_to_flip.insert(edge(nc[1], tmesh));
-          continue;
+          // the opposite edge might also have been inserted in the set and might still be a needle
+          h = opposite(h, tmesh);
+          if (is_border(h, tmesh) ) continue;
+          nc = internal::is_badly_shaped(face(h, tmesh), tmesh, np);
+          if (nc[0] != h)
+            continue;
         }
 
         for (int i=0; i<2; ++i)
@@ -222,7 +223,8 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         //tmesh.point(v) = mp;
         // examine all faces incident to the vertex kept
         for (halfedge_descriptor hv : halfedges_around_target(v, tmesh))
-          internal::collect_badly_shaped_triangles(face(hv, tmesh), tmesh, edges_to_collapse, edges_to_flip, np);
+          if (!is_border(hv, tmesh))
+            internal::collect_badly_shaped_triangles(face(hv, tmesh), tmesh, edges_to_collapse, edges_to_flip, np);
 
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
         std::string nb = std::to_string(++kk);
@@ -267,12 +269,12 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         std::cerr << "Warning: Cap criteria no longer verified " << tmesh.point(source(e, tmesh)) << " --- "
                                                                   << tmesh.point(target(e, tmesh)) << std::endl;
 #endif
-        if (nc[0]!=boost::graph_traits<TriangleMesh>::null_halfedge())
-          next_edges_to_collapse.insert(edge(nc[0], tmesh));
-        else
-          if (nc[1]!=boost::graph_traits<TriangleMesh>::null_halfedge())
-            edges_to_flip.insert(edge(nc[1], tmesh));
-        continue;
+        // the opposite edge might also have been inserted in the set and might still be a cap
+        h = opposite(h, tmesh);
+        if (is_border(h, tmesh) ) continue;
+        nc = internal::is_badly_shaped(face(h, tmesh), tmesh, np);
+        if (nc[1] != h)
+          continue;
       }
 
       // special case on the border
