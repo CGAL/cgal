@@ -631,10 +631,6 @@ public:
         CGAL_assertion(i>=0 && 
                        i < static_cast<size_type>
                            (event_indices().size()));
-
-        for(int j = 0; j < event_indices().size(); j++){
-          std::cout << "event_indices["<< j << "] = " << event_indices()[j].fg << " " << event_indices()[j].ffy << " "<< event_indices()[j].ggy << std::endl;
-        }
         return event_indices()[i];
     } 
 
@@ -1426,19 +1422,18 @@ compute_event_x_coordinates_with_event_indices() const {
     std::vector<Event_indices>& event_indices
         = this->ptr()->event_indices.get();
     for(size_type i=0;i<static_cast<size_type>(events.size());i++) {
-
+/*
         #if CGAL_ACK_DEBUG_FLAG
-      std::cout << " events["<< i << "] = ";
         CGAL_ACK_DEBUG_PRINT << CGAL::to_double(events[i]) << std::flush;
         #endif
-
+*/
         switch(events_type[i]) {
         case(CGAL::internal::ROOT_OF_FIRST_SET): {
-
+/*
 #if CGAL_ACK_DEBUG_FLAG
                 CGAL_ACK_DEBUG_PRINT << " one curve event" << std::endl;
 #endif
-
+*/
             this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
             switch(*(one_curve_it++)) {
             case(CGAL::internal::ROOT_OF_FIRST_SET): {
@@ -1461,11 +1456,11 @@ compute_event_x_coordinates_with_event_indices() const {
             break;
         }
         case(CGAL::internal::ROOT_OF_SECOND_SET): {
-
+/*
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << " two curve event" << std::endl;
 #endif
-
+*/
             this->ptr()->
                 event_slices.push_back(Lazy_status_line_CPA_1());
             
@@ -1475,12 +1470,12 @@ compute_event_x_coordinates_with_event_indices() const {
             break;
         }
         case(CGAL::internal::ROOT_OF_BOTH_SETS): {
-
+/*
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << " one and two curve event" 
                                      << std::endl;
 #endif
-
+*/
             this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
             
             
