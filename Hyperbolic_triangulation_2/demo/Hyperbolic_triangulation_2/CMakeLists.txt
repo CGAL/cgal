@@ -15,6 +15,7 @@ find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core Qt5)
 find_package(LEDA QUIET)
 
 if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND))
+  include_directories( BEFORE ./ ./include )
   # ui files, created with Qt Designer
   qt5_wrap_ui( UIS HDT2.ui )
   
