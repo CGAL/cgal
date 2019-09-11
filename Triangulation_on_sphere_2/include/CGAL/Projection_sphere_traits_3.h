@@ -29,187 +29,149 @@
 
 namespace CGAL {
 
-template<typename K>
-class Projection_sphere_traits_3;
-
 template < typename K>
-class Projected_point
+class Point_with_scale
   : public K::Point_3
 {
 public:
+  typedef typename K::FT                              FT;
   typedef typename K::Point_3                         Base_point;
 
-  Projected_point() : Base_point() { }
-  Projected_point(const Base_point& p,
-                  const typename K::Point_3& sphere_center)
+  Point_with_scale() : Base_point() { }
+  Point_with_scale(const Base_point& p,
+                   const typename K::Point_3& sphere_center)
     : Base_point(p)
   {
     compute_scale(p-(sphere_center-ORIGIN));
   }
 
-public:
-  double _scale;
-
-  void scale() { return _scale; }
+  FT scale() const { return _scale; }
 
 private:
-  void compute_scale(double x, double y, double z)
+  void compute_scale(const FT x, const FT y, const FT z)
   {
-    double tmp = x*x+y*y+z*z;
+    const FT tmp = x*x + y*y + z*z;
     if(tmp == 0)
       _scale = 0;
     else
-      _scale = 1 / sqrt(tmp);
+      _scale = 1 / CGAL::sqrt(tmp);
   }
 
   void compute_scale(const Base_point& p)
   {
     return compute_scale(p.x(), p.y(), p.z());
   }
+
+  FT _scale;
 };
 
-// the following two different adaptors are necessary because the Predicates don not need _sphere
-// compared to Predicates from Delaunay_sphere_traits
-
-// adaptor for calling the Predicate_ with the points projected on the sphere
-template < class K, class P, class Predicate_ >
-class Traits_with_projection_adaptor
+//adaptor for calling the Predicate_ with the points projected on the sphere
+template <typename Traits, typename Predicate_>
+class Functor_projection_adaptor
+  : public Predicate_
 {
-public:
-  typedef Predicate_                        Predicate;
-
-  typedef typename P::Point_2               Point;
-  typedef typename K::Point_2               Base_point;
-
-  Traits_with_projection_adaptor(Base_point sphere, double radius) : _radius(radius), _sphere(sphere) { }
-
-  double _radius;
-  Base_point _sphere ;
-
-  typedef typename Predicate::result_type result_type;
-
-  result_type operator()(const Point& p0, const Point& p1)
-  { return Predicate(_sphere)(project(p0), project(p1)); }
-
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2)
-  { return Predicate(_sphere)(project(p0), project(p1), project(p2)); }
-
-  result_type operator ()(const Point& p0, const Point& p1, const Point& p2, const Point& p3)
-  { return Predicate(_sphere)(project(p0), project(p1), project(p2), project(p3)); }
-
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2, const Point& p3, const Point& p4)
-  { return Predicate(_sphere)(project(p0), project(p1), project(p2), project(p3), project(p4)); }
-
-private:
-  Base_point project (const Point& p)
-  {
-    double scale = _radius * p._scale;
-    return Base_point(scale*p.x(), scale*p.y(), scale*p.z());
-  }
-};
-
-//adaptor for calling the Predicate_ with the points projected on the sphere for predicates from the Kernel
-template < class K, class P, class Predicate_ >
-class Traits_with_projection_adaptorKernel
-{
-public:
   typedef Predicate_                                 Predicate;
+  typedef Predicate_                                 Base;
 
-  typedef typename P::Point_2                        Point;
-  typedef typename K::Point_3                        Base_point;
+  typedef typename Traits::FT                        FT;
+  typedef typename Traits::Point_2                   Point; // that's Projected_point<>
+  typedef typename Traits::Base_point                Base_point;
 
-  Traits_with_projection_adaptorKernel(double radius) : _radius(radius) { }
+public:
+  typedef typename Predicate::result_type            result_type;
 
-  double _radius;
-  Base_point _sphere;
-
-  typedef typename Predicate::result_type result_type;
+  Functor_projection_adaptor(const Predicate& p, const FT r) : Base(p), _radius(r) { }
 
   result_type operator()(const Point& p0, const Point& p1)
-  { return Predicate()(project(p0), project(p1)); }
+  { return Base::operator()(project(p0), project(p1)); }
 
   result_type operator()(const Point& p0, const Point& p1, const Point& p2)
-  { return Predicate()(project(p0), project(p1), project(p2)); }
+  { return Base::operator()(project(p0), project(p1), project(p2)); }
 
   result_type operator ()(const Point& p0, const Point& p1, const Point& p2, const Point& p3)
-  { return Predicate()(project(p0), project(p1), project(p2), project(p3)); }
+  { return Base::operator()(project(p0), project(p1), project(p2), project(p3)); }
 
   result_type operator()(const Point& p0, const Point& p1, const Point& p2, const Point& p3, const Point& p4)
-  { return Predicate()(project(p0), project(p1), project(p2), project(p3), project(p4)); }
+  { return Base::operator()(project(p0), project(p1), project(p2), project(p3), project(p4)); }
 
 private:
-  Base_point project (const Point& p)
+  Base_point project(const Point& p)
   {
-    double scale = _radius * p._scale;
+    const FT scale = _radius * p.scale();
     return Base_point(scale*p.x(), scale*p.y(), scale*p.z());
   }
+
+  const FT _radius;
 };
 
-template < class R >
+template <typename K>
 class Projection_sphere_traits_3
-  : public R
+  : public Delaunay_triangulation_sphere_traits_2<K>
 {
 protected:
+  typedef Delaunay_triangulation_sphere_traits_2<K>                          Base;
+  typedef Projection_sphere_traits_3<K>                                      Self;
 
 public:
-  double _radius;
-  typedef Projection_sphere_traits_3<R>                   Self;
-  typedef Delaunay_triangulation_sphere_traits_2<R>       Base;
-  typedef Projected_point<R>                              Point_2;
-  typedef typename R::Point_3                             Base_point;
+  typedef typename K::FT                                                     FT;
+  typedef Point_with_scale<K>                                                Point_2;
+  typedef typename K::Point_3                                                Base_point;
 
-  typedef Point_2                                         result_type;
+  typedef Functor_projection_adaptor<Self, typename Base::Power_test_2>      Power_test_2;
+  typedef Functor_projection_adaptor<Self, typename Base::Orientation_2>     Orientation_2;
+  typedef Functor_projection_adaptor<Self, typename Base::Coradial_sphere_2> Coradial_sphere_2;
+  typedef Functor_projection_adaptor<Self, typename Base::Inside_cone_2>     Inside_cone_2;
 
-  typedef Traits_with_projection_adaptor<Base, Self, typename Base::Power_test_2>          Power_test_2;
-  typedef Traits_with_projection_adaptor<Base, Self, typename Base::Orientation_2>         Orientation_2;
-  typedef Traits_with_projection_adaptor<Base, Self, typename Base::Coradial_sphere_2 >    Coradial_sphere_2;
-  typedef Traits_with_projection_adaptor<Base, Self, typename Base::Inside_cone_2 >        Inside_cone_2;
-  typedef Traits_with_projection_adaptorKernel<R, Self, typename Base::Orientation_1 >     Orientation_1;
-  typedef Traits_with_projection_adaptorKernel<R, Self, typename Base ::Compute_squared_distance_2> Compute_squared_distance_2;
-  typedef Traits_with_projection_adaptorKernel<R, Self, typename Base::Compare_xyz_3>    Compare_xyz_3;
+  typedef Functor_projection_adaptor<Self, typename Base::Orientation_1>     Orientation_1;
+  typedef Functor_projection_adaptor<Self, typename Base::Compute_squared_distance_2> Compute_squared_distance_2;
+  typedef Functor_projection_adaptor<Self, typename Base::Compare_xyz_3>     Compare_xyz_3;
 
-  typedef boost::false_type                               requires_test;
+  Projection_sphere_traits_3(const Base_point& sphere = CGAL::ORIGIN,
+                             const FT radius = 1,
+                             const K& k = K())
+    : Base(sphere, radius, k)
+  { }
 
   void set_radius(double radius) { _radius = radius; }
 
-  Projection_sphere_traits_3(const Base_point& sphere=Base_point(0,0,0), double radius = 1);
-
   Orientation_2
   orientation_2_object() const
-  { return Orientation_2(_sphere, _radius); }
+  { return Orientation_2(Base::orientation_2_object(), _radius); }
 
   Orientation_1
   orientation_1_object() const
-  { return Orientation_1(_radius); }
+  { return Orientation_1(Base::orientation_1_object(), _radius); }
 
   Power_test_2
   power_test_2_object() const
-  { return Power_test_2(_sphere, _radius); }
+  { return Power_test_2(Base::power_test_2_object(), _radius); }
 
   Coradial_sphere_2
   coradial_sphere_2_object() const
-  { return Coradial_sphere_2(_sphere, _radius); }
+  { return Coradial_sphere_2(Base::coradial_sphere_2_object(), _radius); }
 
   Inside_cone_2
   inside_cone_2_object() const
-  { return Inside_cone_2(_sphere, _radius); }
+  { return Inside_cone_2(Base::inside_cone_2_object(), _radius); }
 
   Compute_squared_distance_2
   compute_squared_distance_3_object() const
-  { return Compute_squared_distance_2(_radius); }
+  { return Compute_squared_distance_2(Base::compute_squared_distance_2_object(), _radius); }
 
   Compare_xyz_3
   compare_xyz_3_object() const
-  { return Compare_xyz_3(_radius); }
+  { return Compare_xyz_3(Base::compare_xyz_3_object(), _radius); }
 
+  // @fixme rename that?
   struct Construct_projected_point_3
-    : public std::unary_function<Base_point,Point_2>
+    : public std::unary_function<Base_point, Point_2>
   {
-    const Base_point& sphere_center;
+    Construct_projected_point_3(const Base_point& sc) : sphere_center(sc) { }
 
     Point_2 operator()(const Base_point& pt) const { return Point_2(pt, sphere_center); }
 
-    Construct_projected_point_3(const Base_point& sc) : sphere_center(sc) { }
+  private:
+    const Base_point& sphere_center;
   };
 
   Construct_projected_point_3
@@ -217,14 +179,9 @@ public:
   { return Construct_projected_point_3(_sphere); }
 
 protected :
+  FT _radius;
   Base_point _sphere;
 };
-
-template < class R >
-Projection_sphere_traits_3<R> ::
-Projection_sphere_traits_3(const Base_point& sphere, double radius)
-  :  _radius(radius), _sphere(sphere)
-{ }
 
 } // namespace CGAL
 

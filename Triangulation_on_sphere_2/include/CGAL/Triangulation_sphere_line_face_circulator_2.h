@@ -20,29 +20,31 @@
 
 #ifndef CGAL_TRIANGULATION_SPHERE_LINE_FACE_CIRCULATOR_2_H
 #define CGAL_TRIANGULATION_SPHERE_LINE_FACE_CIRCULATOR_2_H
-namespace CGAL{
+
+namespace CGAL {
+
 template <class Triangulation_>
 class Triangulation_sphere_line_face_circulator_2
-  : public Bidirectional_circulator_base<
-             typename Triangulation_::Triangulation_data_structure::Face,
-              std::size_t>,
+  : public Bidirectional_circulator_base<typename Triangulation_::Triangulation_data_structure::Face,
+                                         std::size_t>,
     public Triangulation_cw_ccw_2
 {
 public:
   typedef Triangulation_sphere_line_face_circulator_2<Triangulation_> Line_face_circulator;
-  typedef Triangulation_                                        Triangulation;
-  typedef typename Triangulation::Geom_traits                   Gt;
-  typedef typename Triangulation_::Triangulation_data_structure Tds;
+  typedef Triangulation_                                              Triangulation;
 
-  typedef typename Tds::Vertex                 Vertex;
-  typedef typename Tds::Face                   Face;
-  typedef typename Tds::Edge                   Edge;
-  typedef typename Tds::Vertex_handle          Vertex_handle;
-  typedef typename Tds::Face_handle            Face_handle;
-  typedef typename Tds::Face_circulator        Face_circulator;
+  typedef typename Triangulation::Geom_traits                         Gt;
+  typedef typename Triangulation_::Triangulation_data_structure       Tds;
 
-  typedef typename Gt::Point_2 Point;
-  typedef typename Triangulation::Locate_type Locate_type;
+  typedef typename Tds::Vertex                                        Vertex;
+  typedef typename Tds::Edge                                          Edge;
+  typedef typename Tds::Face                                          Face;
+  typedef typename Tds::Vertex_handle                                 Vertex_handle;
+  typedef typename Tds::Face_handle                                   Face_handle;
+  typedef typename Tds::Face_circulator                               Face_circulator;
+
+  typedef typename Gt::Point_2                                        Point;
+  typedef typename Triangulation::Locate_type                         Locate_type;
 
   enum State {undefined = -1,
               vertex_vertex,
@@ -66,8 +68,8 @@ public:
                                               const Triangulation* tr,
                                               const Point& dir);
 
-  Line_face_circulator& operator++() ;
-  Line_face_circulator& operator--() ;
+  Line_face_circulator& operator++();
+  Line_face_circulator& operator--();
   Line_face_circulator operator++(int);
   Line_face_circulator operator--(int);
   Face* operator->() { return &*pos; }
@@ -98,7 +100,7 @@ private:
   void decrement();
 };
 
-template < class Triangulation >
+template <typename Triangulation>
 inline
 bool
 operator==(typename Triangulation::Triangulation_data_structure::Face_handle fh,
@@ -107,7 +109,7 @@ operator==(typename Triangulation::Triangulation_data_structure::Face_handle fh,
   return (fc == fh);
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 inline
 bool
 operator!=(typename Triangulation::Triangulation_data_structure::Face_handle fh,
@@ -116,12 +118,12 @@ operator!=(typename Triangulation::Triangulation_data_structure::Face_handle fh,
   return (fc != fh);
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 Triangulation_sphere_line_face_circulator_2(Vertex_handle v,
                                             const Triangulation* tr,
                                             const Point& dir)
-  :pos(), _tr(tr), s(undefined)
+  : pos(), _tr(tr), s(undefined)
   // begin at the face incident to v, traversed by the ray from v to  dir
   // or null iterator
 {
@@ -179,7 +181,7 @@ Triangulation_sphere_line_face_circulator_2(Vertex_handle v,
   }
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 inline
 void
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
@@ -233,7 +235,7 @@ increment()
   }
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 void
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 decrement()
@@ -275,7 +277,7 @@ decrement()
   }
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 inline
 Triangulation_sphere_line_face_circulator_2<Triangulation>&
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
@@ -286,7 +288,7 @@ operator++()
   return *this;
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 inline
 Triangulation_sphere_line_face_circulator_2<Triangulation>&
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
@@ -297,7 +299,7 @@ operator--()
   return *this;
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 inline
 Triangulation_sphere_line_face_circulator_2<Triangulation>
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
@@ -308,7 +310,7 @@ operator++(int)
   return tmp;
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 inline
 Triangulation_sphere_line_face_circulator_2<Triangulation>
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
@@ -319,7 +321,7 @@ operator--(int)
   return tmp;
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 inline bool
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 operator==(const Line_face_circulator& lfc) const
@@ -329,7 +331,7 @@ operator==(const Line_face_circulator& lfc) const
           s == lfc.s && p==lfc.p && q==lfc.q);
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 inline bool
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 operator!=(const Line_face_circulator& lfc) const
@@ -337,7 +339,7 @@ operator!=(const Line_face_circulator& lfc) const
   return !(*this == lfc);
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 inline bool
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 is_empty() const
@@ -345,7 +347,7 @@ is_empty() const
   return pos == Face_handle();
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 inline bool
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const
@@ -354,7 +356,7 @@ operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const
   return pos == Face_handle();
 }
 
-template < class Triangulation >
+template <typename Triangulation>
 inline bool
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 operator!=(Nullptr_t n) const
@@ -365,4 +367,4 @@ operator!=(Nullptr_t n) const
 
 } // end namespace CGAL
 
-#endif
+#endif // CGAL_TRIANGULATION_SPHERE_LINE_FACE_CIRCULATOR_2_H

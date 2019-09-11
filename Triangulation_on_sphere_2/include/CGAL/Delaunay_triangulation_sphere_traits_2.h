@@ -25,15 +25,16 @@
 
 namespace CGAL {
 
-template < typename K >
+template <typename TTraits>
 class Power_test_2
 {
 public:
-  typedef typename K::Point_2               Point_2;
-  typedef typename K::Oriented_side         Oriented_side;
-  typedef typename K::Comparison_result     Comparison_result;
+  typedef typename TTraits::Point_2               Point_2;
+  typedef typename TTraits::Oriented_side         Oriented_side;
+  typedef typename TTraits::Comparison_result     Comparison_result;
+  typedef Oriented_side                           result_type;
 
-  Power_test_2(const Point_2& sphere);
+  Power_test_2(const Point_2& sphere) : _sphere(sphere) { }
 
   Oriented_side operator()(const Point_2& p,
                            const Point_2& q,
@@ -65,64 +66,19 @@ public:
     return ON_NEGATIVE_SIDE;
   }
 
-public:
-  typedef Oriented_side result_type;
-
 protected:
-  Point_2 _sphere;
+  const Point_2& _sphere;
 };
 
-template < typename K >
-Power_test_2<K>::
-Power_test_2(const Point_2& sphere)
-  : _sphere(sphere)
-{ }
-
-template < typename K >
-class Orientation_sphere_1
-{
-public:
-  typedef typename K::Point_2                  Point_2;
-  typedef typename K::Comparison_result        Comparison_result;
-  typedef Comparison_result                    result_type;
-
-  Orientation_sphere_1(const Point_2& sphere);
-
-  Comparison_result operator()(const Point_2& p, const Point_2& q) const
-  {
-    return coplanar_orientation(_sphere, p, q);
-  }
-
-  Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
-  {
-    return coplanar_orientation(p, q, r, _sphere);
-  }
-
-  Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r, const Point_2& s) const
-  {
-    return coplanar_orientation(p, q, r, s);
-  }
-
-protected :
-  Point_2 _sphere;
-};
-
-template < typename K >
-Orientation_sphere_1<K>::
-Orientation_sphere_1(const Point_2& sphere)
-  : _sphere(sphere)
-{ }
-
-template < typename K >
+template <typename TTraits>
 class Orientation_sphere_2
 {
 public:
-  typedef typename K::Point_2                  Point_2;
-  typedef typename K::Comparison_result        Comparison_result;
+  typedef typename TTraits::Point_2                  Point_2;
+  typedef typename TTraits::Comparison_result        Comparison_result;
+  typedef Comparison_result                          result_type;
 
-  typedef Comparison_result                    result_type;
-
-  Orientation_sphere_2(const Point_2& sphere);
+  Orientation_sphere_2(const Point_2& sphere) : _sphere(sphere) { }
 
   Comparison_result operator()(const Point_2& p, const Point_2& q,
                                const Point_2& r) const
@@ -132,24 +88,18 @@ public:
                                const Point_2& r, const Point_2& s) const
   { return orientation(p, q, r, s); }
 
-protected :
-  Point_2 _sphere;
+protected:
+  const Point_2& _sphere;
 };
 
-template < typename K >
-Orientation_sphere_2<K>::
-Orientation_sphere_2(const Point_2& sphere)
-  : _sphere(sphere)
-{ }
-
-template < typename K >
+template <typename TTraits>
 class Coradial_sphere_2
 {
 public:
-  typedef typename K::Point_2                  Point_2;
-  typedef bool                                 result_type;
+  typedef typename TTraits::Point_2                  Point_2;
+  typedef bool                                       result_type;
 
-  Coradial_sphere_2(const Point_2& sphere);
+  Coradial_sphere_2(const Point_2& sphere) : _sphere(sphere) { }
 
   bool operator()(const Point_2& p, const Point_2 q) const
   {
@@ -158,24 +108,18 @@ public:
             are_ordered_along_line(_sphere, q, p));
   }
 
-protected :
-  Point_2 _sphere;
+protected:
+  const Point_2& _sphere;
 };
 
-template < typename K >
-Coradial_sphere_2<K>::
-Coradial_sphere_2(const Point_2& sphere)
-  : _sphere(sphere)
-{ }
-
-template < typename K >
+template <typename TTraits>
 class Inside_cone_2
 {
 public:
-  typedef typename K::Point_2                  Point_2;
-  typedef bool                                 result_type;
+  typedef typename TTraits::Point_2                  Point_2;
+  typedef bool                                       result_type;
 
-  Inside_cone_2(const Point_2& sphere);
+  Inside_cone_2(const Point_2& sphere) : _sphere(sphere) { }
 
   bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
   {
@@ -191,54 +135,90 @@ public:
              (POSITIVE == coplanar_orientation(_sphere, q, p, r));
   }
 
-protected :
-  Point_2 _sphere;
+protected:
+  const Point_2& _sphere;
 };
 
-template < typename K >
-Inside_cone_2<K>::
-Inside_cone_2(const Point_2& sphere)
-  : _sphere(sphere)
-{ }
-
-template < class R >
+template <typename K>
 class Delaunay_triangulation_sphere_traits_2
-  : public R
+  : public K
 {
-public:
-  typedef typename R::Point_3                       Point_2;
-  typedef typename R::Point_3                       Weighted_point_2;
-  typedef typename R::Ray_3                         Ray_2;
-  typedef typename R::Line_3                        Line_2;
-  typedef typename R::Construct_ray_3               Construct_ray_3;
-  typedef typename R::Construct_circumcenter_3      Construct_circumcenter_3;
-  typedef typename R::Construct_bisector_3          Construct_bisector_3;
-  typedef typename R::Construct_segment_3           Construct_segment_3;
+  typedef K                                         Base;
+  typedef Delaunay_triangulation_sphere_traits_2<K> Self;
 
-  typedef Delaunay_triangulation_sphere_traits_2<R> Self;
-  typedef CGAL::Power_test_2<Self>                  Power_test_2;
-  typedef CGAL::Orientation_sphere_2<Self>          Orientation_2;
+public:
+  typedef typename K::FT                            FT;
+  typedef typename K::Point_3                       Point_2;
+  typedef typename K::Point_3                       Point;
+  typedef typename K::Point_3                       Weighted_point_2; // @fixme
+  typedef typename K::Ray_3                         Ray_2;
+  typedef typename K::Line_3                        Line_2;
+
+  typedef typename K::Compare_xyz_3                 Compare_xyz_3;
+  typedef typename K::Construct_bisector_3          Construct_bisector_3;
+  typedef typename K::Construct_circumcenter_3      Construct_circumcenter_3;
+  typedef typename K::Construct_ray_3               Construct_ray_3;
+  typedef typename K::Construct_segment_3           Construct_segment_3;
+
+  typedef typename K::Compute_squared_distance_3    Compute_squared_distance_2;
+
   typedef CGAL::Coradial_sphere_2<Self>             Coradial_sphere_2;
   typedef CGAL::Inside_cone_2<Self>                 Inside_cone_2;
-  //typedef CGAL::Orientation_sphere_1<Self>          Orientation_1;
-  typedef typename R::Coplanar_orientation_3        Orientation_1;
-  typedef typename R::Compute_squared_distance_3    Compute_squared_distance_2;
-  typedef typename R::Compare_xyz_3                 Compare_xyz_3;
+  typedef CGAL::Orientation_sphere_2<Self>          Orientation_2;
+  typedef CGAL::Power_test_2<Self>                  Power_test_2;
 
-  typedef boost::true_type                          requires_test;
+  typedef typename K::Coplanar_orientation_3        Orientation_1;
 
-  double _radius;
+  Delaunay_triangulation_sphere_traits_2(const Point_2& sphere = CGAL::ORIGIN,
+                                         const FT radius = 1,
+                                         const K& k = K())
+    : Base(k), _sphere(sphere), _radius(radius)
+  {
+    initialize_bounds();
+  }
 
-  void set_radius(double a) { _radius = a; }
+private:
+  void initialize_bounds()
+  {
+    const FT minDist = _radius * std::pow(2, -23); // @fixme
+    const FT minRadius = _radius * (1 - std::pow(2, -50));
+    const FT maxRadius = _radius * (1 + std::pow(2, -50));
+    _minDistSquared = CGAL::square(minDist);
+    _minRadiusSquared = CGAL::square(minRadius);
+    _maxRadiusSquared = CGAL::square(maxRadius);
+  }
 
-  Delaunay_triangulation_sphere_traits_2(const Point_2& sphere = Point_2(0,0,0));
-  Compare_xyz_3
-  compare_xyz_3_object() const
-  { return Compare_xyz_3(); }
+public:
+  Point_2 center() const { return _sphere; }
+  void set_center(const Point_2& sphere) { _sphere = sphere; }
+  void set_radius(const FT radius) { _radius = radius; initialize_bounds(); }
+
+  bool is_on_sphere(const Point_2& p) const
+  {
+    const FT sq_dist = Base::compute_squared_distance_3_object()(p, _sphere);
+    return (_minRadiusSquared < sq_dist && sq_dist < _maxRadiusSquared);
+  }
+
+  bool are_points_too_close(const Point_2& p, const Point_2& q) const
+  {
+    return (Base::compute_squared_distance_3_object()(p, q) <= _minDistSquared);
+  }
 
   Compute_squared_distance_2
-  compute_squared_distance_2_object() const
-  { return Compute_squared_distance_2(); }
+  compute_squared_distance_3_object() const
+  { return Base::compute_squared_distance_3_object(); }
+
+  Construct_ray_3
+  construct_ray_2_object() const
+  { return Base::construct_ray_3_object(); }
+
+  Construct_circumcenter_3
+  construct_circumcenter_2_object() const
+  { return Base::construct_circumcenter_3_object(); }
+
+  Construct_segment_3
+  construct_segment_2_object() const
+  { return Base::construct_segment_3_object(); }
 
   Orientation_2
   orientation_2_object() const
@@ -260,32 +240,15 @@ public:
   inside_cone_2_object() const
   { return Inside_cone_2(_sphere); }
 
-  Construct_ray_3
-  construct_ray_2_object() const
-  { return Construct_ray_3(); }
-
-  Construct_circumcenter_3
-  construct_circumcenter_2_object() const
-  { return Construct_circumcenter_3(); }
-
-  Construct_segment_3
-  construct_segment_2_object() const
-  { return Construct_segment_3(); }
-
-  Compute_squared_distance_2
-  compute_squared_distance_3_object() const
-  { return Compute_squared_distance_2(); }
-
-protected :
+protected:
   Point_2 _sphere;
-};
+  FT _radius;
 
-template < class R >
-Delaunay_triangulation_sphere_traits_2<R> ::
-Delaunay_triangulation_sphere_traits_2(const Point_2& sphere)
-  : _sphere(sphere)
-{ }
+  FT _minDistSquared; // minimal distance of two points to each other
+  FT _minRadiusSquared; // minimal distance of a point from center of the sphere
+  FT _maxRadiusSquared; // maximal distance of a point from center of the sphere
+};
 
 } // namespace CGAL
 
-#endif // CGAL_Reg_TRIANGULATION_SPHERE_TRAITS_2_H
+#endif // CGAL_DELAUNAY_TRIANGULATION_SPHERE_TRAITS_2_H

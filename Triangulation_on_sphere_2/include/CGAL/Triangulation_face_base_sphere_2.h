@@ -40,8 +40,6 @@ public:
     typedef Triangulation_face_base_sphere_2<Gt, Fb2>      Other;
   };
 
-  unsigned char _in_conflict_flag;
-
 public:
   void set_in_conflict_flag(unsigned char f) { _in_conflict_flag = f; }
   unsigned char get_in_conflict_flag() const { return _in_conflict_flag; }
@@ -72,11 +70,12 @@ public:
     set_in_conflict_flag(0);
   }
 
-  const bool& is_ghost() const { return _ghost; }
+  bool is_ghost() const { return _ghost; }
   bool& ghost() { return _ghost; }
 
 protected:
   bool _ghost;
+  unsigned char _in_conflict_flag;
 };
 
 } // namespace CGAL
