@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 Depending on `bool value` the class `Boolean_tag` indicates that 
 something is `true` or `false` respectively. 
@@ -29,7 +29,7 @@ static const bool value;
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 The typedef `Tag_false` is `Boolean_tag<false>`. 
 It is used to indicate, for example, 
@@ -42,7 +42,7 @@ typedef CGAL::Boolean_tag<false> Tag_false;
 
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 The typedef `Tag_true` is `Boolean_tag<true>`. 
 It is used to indicate, for example, 
@@ -55,7 +55,7 @@ typedef CGAL::Boolean_tag<true> Tag_true;
 
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 Class indicating the absence of a functor.
 \cgalModels `DefaultConstructible`
@@ -68,21 +68,21 @@ struct Null_functor {
 };
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 Tag used to enable/disable concurrency.
 For example, it may be used by a user to request the sequential version of an algorithm.
 */
 struct Sequential_tag {};
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 Tag used to enable/disable concurrency.
 For example, it may be used by a user to request the parallel version of an algorithm.
 */
 struct Parallel_tag {};
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 General tag indicating that non of any other possible tags is valid. 
 

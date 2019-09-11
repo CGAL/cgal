@@ -146,9 +146,11 @@ public:
     /*!\brief
      * copy constructor
      */
+#ifdef DOXYGEN_RUNNING
     Non_x_monotone_arc_2(const Self& a) :
         Base(static_cast<const Base&>(a)) {  
     }
+#endif
 
     /*! \brief
      * constructs an arc from one x-monotone piece

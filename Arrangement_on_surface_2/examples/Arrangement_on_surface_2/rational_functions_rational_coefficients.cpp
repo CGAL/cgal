@@ -1,7 +1,7 @@
-//! \file examples/Arrangement_2/ex_rational_functions.cpp
+//! \file examples/Arrangement_2/rational_functions_rational_coefficients.cpp
 // Constructing an arrangement of arcs of rational functions.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>

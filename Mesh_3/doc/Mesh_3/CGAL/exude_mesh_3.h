@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Functions
+\ingroup PkgMesh3Functions
 
 The function `exude_mesh_3()` performs a sliver exudation process on a Delaunay mesh.
 

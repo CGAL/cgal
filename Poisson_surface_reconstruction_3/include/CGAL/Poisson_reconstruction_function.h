@@ -37,7 +37,7 @@
 #include <cmath>
 #include <iterator>
 
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/Reconstruction_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
 #ifdef CGAL_EIGEN3_ENABLED
@@ -149,7 +149,7 @@ struct Special_wrapper_of_two_functions_keep_pointers {
 
 
 /*!
-\ingroup PkgPoissonSurfaceReconstruction
+\ingroup PkgPoissonSurfaceReconstruction3Ref
 
 \brief Implementation of the Poisson Surface Reconstruction method.
   

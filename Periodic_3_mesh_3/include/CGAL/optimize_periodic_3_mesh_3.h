@@ -33,6 +33,11 @@
 
 namespace CGAL {
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
+  
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
 // see <CGAL/boost/parameter.h>
@@ -119,6 +124,10 @@ BOOST_PARAMETER_FUNCTION(
 }
 
 CGAL_PRAGMA_DIAG_POP
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 } // namespace CGAL
 

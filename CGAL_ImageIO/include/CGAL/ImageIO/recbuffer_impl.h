@@ -99,8 +99,8 @@ int GradientModulus( void *bufferIn,
 		     recursiveFilterType filterType )
 {
   const char *proc = "GradientModulus";
-  float *auxBuf = NULL;
-  float *tmpBuf = NULL, *grdBuf = NULL;
+  float *auxBuf = nullptr;
+  float *tmpBuf = nullptr, *grdBuf = nullptr;
   int sizeAuxBuf = 0;
   derivativeOrder derivatives[3];
   int i;
@@ -114,7 +114,7 @@ int GradientModulus( void *bufferIn,
   /* allocation des buffers de calcul
    */
   auxBuf = (float*)malloc( sizeAuxBuf * sizeof(float) );
-  if ( auxBuf == NULL ) {
+  if ( auxBuf == nullptr ) {
     if ( _VERBOSE_ > 0 )
       fprintf( stderr, "%s: unable to allocate auxiliary buffer\n", proc );
     return( EXIT_ON_FAILURE );
@@ -265,15 +265,15 @@ int Laplacian_2D ( void *bufferIn,
 		   recursiveFilterType filterType )
 {
   const char *proc = "Laplacian_2D";
-  float *theXX = NULL;
-  float *theYY = NULL;
+  float *theXX = nullptr;
+  float *theYY = nullptr;
 
   derivativeOrder XXderiv[3] = { DERIVATIVE_2, SMOOTHING, NODERIVATIVE };
   derivativeOrder YYderiv[3] = { SMOOTHING, DERIVATIVE_2, NODERIVATIVE };
   int sliceDims[3];
   int z, i, dimxXdimy;
 
-  void *sliceOut = NULL;
+  void *sliceOut = nullptr;
 
 
 
@@ -312,7 +312,7 @@ int Laplacian_2D ( void *bufferIn,
     theXX = (float*)malloc( 2 * dimxXdimy * sizeof( float ) );
   }
   
-  if ( theXX == NULL ) {
+  if ( theXX == nullptr ) {
     if ( _VERBOSE_ > 0 ) {
       fprintf( stderr, " Fatal error in %s:", proc );
       fprintf( stderr, " unable to allocate auxiliary buffer.\n" );
@@ -407,9 +407,9 @@ int Laplacian ( void *bufferIn,
 		   recursiveFilterType filterType )
 {
   const char *proc = "Laplacian";
-  float *theSL = NULL;
-  float *theZZ = NULL;
-  float *theZ0 = NULL;
+  float *theSL = nullptr;
+  float *theZZ = nullptr;
+  float *theZ0 = nullptr;
 
 
   derivativeOrder XXderiv[3] = { DERIVATIVE_2, SMOOTHING, NODERIVATIVE };
@@ -466,7 +466,7 @@ int Laplacian ( void *bufferIn,
 
 
   
-  if ( theSL == NULL ) {
+  if ( theSL == nullptr ) {
     if ( _VERBOSE_ > 0 ) {
       fprintf( stderr, " Fatal error in %s:", proc );
       fprintf( stderr, " unable to allocate auxiliary buffer.\n" );
@@ -610,11 +610,11 @@ int GradientHessianGradient_2D ( void *bufferIn,
 		   recursiveFilterType filterType )
 {
   const char *proc = "GradientHessianGradient_2D";
-  float *theXX = NULL;
-  float *theYY = NULL;
-  float *theXY = NULL;
-  float *theX  = NULL;
-  float *theY  = NULL;
+  float *theXX = nullptr;
+  float *theYY = nullptr;
+  float *theXY = nullptr;
+  float *theX  = nullptr;
+  float *theY  = nullptr;
 
   derivativeOrder Xsmooth[3] = { SMOOTHING,          NODERIVATIVE,       NODERIVATIVE };
   derivativeOrder Yderiv[3]  = { NODERIVATIVE,       DERIVATIVE_1_EDGES, NODERIVATIVE };
@@ -629,8 +629,8 @@ int GradientHessianGradient_2D ( void *bufferIn,
   int sliceDims[3];
   int z, i, dimxXdimy;
 
-  void *sliceIn = NULL;
-  void *sliceOut = NULL;
+  void *sliceIn = nullptr;
+  void *sliceOut = nullptr;
 
   double gx, gy, g;
 
@@ -669,7 +669,7 @@ int GradientHessianGradient_2D ( void *bufferIn,
     theXX = (float*)malloc( 5 * dimxXdimy * sizeof( float ) );
   }
   
-  if ( theXX == NULL ) {
+  if ( theXX == nullptr ) {
     if ( _VERBOSE_ > 0 ) {
       fprintf( stderr, " Fatal error in %s:", proc );
       fprintf( stderr, " unable to allocate auxiliary buffer.\n" );
@@ -872,20 +872,20 @@ int GradientHessianGradient ( void *bufferIn,
 
 
 
-  float *theZZ = NULL;
-  float *theZ  = NULL;
-  float *theZ1 = NULL;
-  float *theZ0 = NULL;
+  float *theZZ = nullptr;
+  float *theZ  = nullptr;
+  float *theZ1 = nullptr;
+  float *theZ0 = nullptr;
 
-  float *theXZ = NULL;
-  float *theYZ = NULL;
+  float *theXZ = nullptr;
+  float *theYZ = nullptr;
 
-  float *theXX = NULL;
-  float *theYY = NULL;
-  float *theXY = NULL;
+  float *theXX = nullptr;
+  float *theYY = nullptr;
+  float *theXY = nullptr;
 
-  float *theX  = NULL;
-  float *theY  = NULL;
+  float *theX  = nullptr;
+  float *theY  = nullptr;
 
 
   derivativeOrder ZZderiv[3] = { SMOOTHING,    SMOOTHING,    DERIVATIVE_2 };
@@ -949,7 +949,7 @@ int GradientHessianGradient ( void *bufferIn,
   }
 
   
-  if ( theX == NULL ) {
+  if ( theX == nullptr ) {
     if ( _VERBOSE_ > 0 ) {
       fprintf( stderr, " Fatal error in %s:", proc );
       fprintf( stderr, " unable to allocate auxiliary buffer.\n" );
@@ -1228,9 +1228,9 @@ int RecursiveFilterOnBuffer( void *bufferIn,
    * we allocate an auxiliary buffer if the output buffer
    * is not of type float or double.
    */
-  void *bufferToBeProcessed = (void*)NULL;
+  void *bufferToBeProcessed = (void*)nullptr;
   bufferType typeToBeProcessed = TYPE_UNKNOWN;
-  void *bufferResult = (void*)NULL;
+  void *bufferResult = (void*)nullptr;
   bufferType typeResult = TYPE_UNKNOWN;
   /*
    * lines' lengths
@@ -1245,28 +1245,28 @@ int RecursiveFilterOnBuffer( void *bufferIn,
   /*
    * 1D arrays for computations.
    */
-  double *theLine = (double*)NULL;
-  double *resLine = (double*)NULL;
-  double *tmpLine = (double*)NULL;
+  double *theLine = (double*)nullptr;
+  double *resLine = (double*)nullptr;
+  double *tmpLine = (double*)nullptr;
   /*
    * pointers for computations;
    */
-  r32 *r32firstPoint = (r32*)NULL;
-  r64 *r64firstPoint = (r64*)NULL;
-  r32 *r32_pt = (r32*)NULL;
-  r64 *r64_pt = (r64*)NULL;
-  double *dbl_pt1 = (double*)NULL;
-  double *dbl_pt2 = (double*)NULL;
+  r32 *r32firstPoint = (r32*)nullptr;
+  r64 *r64firstPoint = (r64*)nullptr;
+  r32 *r32_pt = (r32*)nullptr;
+  r64 *r64_pt = (r64*)nullptr;
+  double *dbl_pt1 = (double*)nullptr;
+  double *dbl_pt2 = (double*)nullptr;
   double dbl_first = 0.0;
   double dbl_last = 0.0;
   int offsetLastPoint = 0;
   int offsetNextFirstPoint = 0;
-  r32 *r32firstPointResult = (r32*)NULL;
-  r64 *r64firstPointResult = (r64*)NULL;
-  double *theLinePlusBorder = (double*)NULL;
-  double *resLinePlusBorder = (double*)NULL;
+  r32 *r32firstPointResult = (r32*)nullptr;
+  r64 *r64firstPointResult = (r64*)nullptr;
+  double *theLinePlusBorder = (double*)nullptr;
+  double *resLinePlusBorder = (double*)nullptr;
 
-  RFcoefficientType *RFC = NULL;
+  RFcoefficientType *RFC = nullptr;
 
   /* 
    * We check the buffers' dimensions.
@@ -1281,9 +1281,9 @@ int RecursiveFilterOnBuffer( void *bufferIn,
   /*
    * We check the pointers.
    */
-  if ( (bufferIn == (void*)NULL) || (bufferOut == (void*)NULL) ) {
+  if ( (bufferIn == (void*)nullptr) || (bufferOut == (void*)nullptr) ) {
     if ( _VERBOSE_ > 0 )
-      fprintf( stderr, " Fatal error in %s: NULL pointer on buffer.\n", proc );
+      fprintf( stderr, " Fatal error in %s: nullptr pointer on buffer.\n", proc );
     return( EXIT_ON_FAILURE );
   }
 
@@ -1297,7 +1297,7 @@ int RecursiveFilterOnBuffer( void *bufferIn,
     typeResult = typeOut;
   } else {
     bufferResult = (void*)malloc( (dimx*dimy*dimz) * sizeof(r32) );
-    if ( bufferResult == (void*)NULL ) {
+    if ( bufferResult == (void*)nullptr ) {
       if ( _VERBOSE_ > 0 )
 	fprintf( stderr, " Fatal error in %s: unable to allocate auxiliary buffer.\n", proc );
       return( EXIT_ON_FAILURE );
@@ -1323,7 +1323,7 @@ int RecursiveFilterOnBuffer( void *bufferIn,
   /*
    * Estimation of the lines' length along each direction.
    */
-  if ( borderLengths != NULL ) {
+  if ( borderLengths != nullptr ) {
     borderXlength = borderLengths[0];
     borderYlength = borderLengths[1];
     borderZlength = borderLengths[2];
@@ -1354,7 +1354,7 @@ int RecursiveFilterOnBuffer( void *bufferIn,
    * We will use them to process each line.
    */
   theLine = (double*)malloc( 3 * maxLengthline * sizeof(double) );
-  if ( theLine == (double*)NULL ) {
+  if ( theLine == (double*)nullptr ) {
     if ( _VERBOSE_ > 0 )
       fprintf( stderr, " Fatal error in %s: unable to allocate auxiliary work arrays.\n", proc );
     if ( (typeOut != CGAL_FLOAT) && (typeOut != CGAL_DOUBLE) )
@@ -1383,7 +1383,7 @@ int RecursiveFilterOnBuffer( void *bufferIn,
 
     RFC = InitRecursiveCoefficients( (double)filterCoefs[0], filterType, derivatives[0] );
 
-    if ( RFC == NULL ) {
+    if ( RFC == nullptr ) {
       if ( _VERBOSE_ != 0 )
 	fprintf( stderr, " %s: unable to allocate coefficients\n", proc );
       if ( (typeOut != CGAL_FLOAT) && (typeOut != CGAL_DOUBLE) )
@@ -1466,7 +1466,7 @@ int RecursiveFilterOnBuffer( void *bufferIn,
     typeToBeProcessed = typeResult;
     
     free( RFC );
-    RFC = NULL;
+    RFC = nullptr;
 
   } /* end of Processing along X. */
   
@@ -1482,7 +1482,7 @@ int RecursiveFilterOnBuffer( void *bufferIn,
 
     RFC = InitRecursiveCoefficients( (double)filterCoefs[1], filterType, derivatives[1] );
 
-    if ( RFC == NULL ) {
+    if ( RFC == nullptr ) {
       if ( _VERBOSE_ != 0 )
 	fprintf( stderr, " %s: unable to allocate coefficients\n", proc );
       if ( (typeOut != CGAL_FLOAT) && (typeOut != CGAL_DOUBLE) )
@@ -1601,7 +1601,7 @@ int RecursiveFilterOnBuffer( void *bufferIn,
     typeToBeProcessed = typeResult;
   
     free( RFC );
-    RFC = NULL;
+    RFC = nullptr;
 
   } /* end of Processing along Y. */
   
@@ -1618,7 +1618,7 @@ int RecursiveFilterOnBuffer( void *bufferIn,
     
     RFC = InitRecursiveCoefficients( (double)filterCoefs[2], filterType, derivatives[2] );
     
-    if ( RFC == NULL ) {
+    if ( RFC == nullptr ) {
       if ( _VERBOSE_ != 0 )
 	fprintf( stderr, " %s: unable to allocate coefficients\n", proc );
       if ( (typeOut != CGAL_FLOAT) && (typeOut != CGAL_DOUBLE) )
@@ -1707,7 +1707,7 @@ int RecursiveFilterOnBuffer( void *bufferIn,
     }
 
     free( RFC );
-    RFC = NULL;
+    RFC = nullptr;
 
   } /* end of Processing along Z. */
   

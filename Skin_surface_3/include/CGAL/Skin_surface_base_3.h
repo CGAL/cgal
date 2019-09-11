@@ -782,7 +782,7 @@ get_weighted_circumcenter(const Simplex &s, Gt2 &traits)
     }
     case 2:
     {
-      f = s;
+      f = Facet(s);
       result = traits.construct_weighted_circumcenter_3_object()
                (converter(f.first->vertex((f.second+1)&3)->point()),
                 converter(f.first->vertex((f.second+2)&3)->point()),

@@ -5,7 +5,6 @@
 # Radu Ursu, Sylvain Pion, 2004-2006.
 
 # TODO :
-# - Use svn revision instead of separate internal release number ?
 # - Cleanup the public/internal separation:
 #   - have CGAL_VERSION_NR be not affected by the internal version
 #   - have CGAL_REVISION be the revision (replacing the internal number)
@@ -13,45 +12,44 @@
 #   [new] : create_internal_release should not know about internal/public mode.
 # - Merge [some parts] into ./create_internal_release ?
 
-DO_RPM=""                # Also build RPMs (no RPMs by default)
 DO_PUBLIC=""             # Also build the public versions
-DO_IT=""                 # Real mode (svn tag, copy to HTTP server), versus local testing
-DO_NOT_TAG=""            # If set, do not call svn tag
-DO_TAG=""                # If set, svn tag is called anyway
+DO_IT=""                 # Real mode (copy to HTTP server), versus local testing
+DO_NOT_TAG=""            # If set, do not call tag
+DO_TAG=""                # If set, tag is called anyway
 NO_TESTUITE=""           # If set, the LATEST file is not updated
 NO_SCM=""                # If set, git pull is not called.
-SOURCES_DIR="$PWD/trunk" # SVN working copy directory, default is "$PWD/trunk"
+SOURCES_DIR="$PWD"       # Directory containing the sources, default is "$PWD"
 VERBOSE=""               # Verbose mode (displays log to standard err)
 BETA=""                  #If set, will change the release number and version number accordingly.
-SCM=svn
+DESTINATION="/tmp"
+IS_MASTER="y"
 
 SOURCES_DIR_HAS_BEEN_SET=
-CANDIDATES_DIR_HAS_BEEN_SET=
 
 printerr() {
     echo "$@" >&2;
 }
 
 usage() {
-    printerr "Usage : $0 [--help] [--rpm] [--public] [--do-it] [--beta <n>] <packages dir> [<candidates dir>]"
+    printerr "Usage : $0 [--help] [--public] [--do-it] [--beta <n>] <packages dir>"
     printerr
     printerr '  --help           : prints this usage help'
-    printerr '  --rpm            : also build the corresponding SRPMs'
     printerr '  --public         : also build the corresponding public versions'
     printerr '  --do-it          : the real thing (NOT for local tests!  Only for the release'
     printerr '                     master! Does write operations (updating the version_number,'
-    printerr '                     svn tag, copying on the web server...)'
+    printerr '                     tag, copying on the web server...)'
     printerr '  --do-not-tag     : when used with --do-it, the tag is not created.'
     printerr '  --tag            : when used without --do-it, the tag is created, but files'
     printerr '                     are not published'
-    printerr '  --no-scm-update  : do not "svn update" or "git pull"'
+    printerr '  --no-scm-update  : do not "git pull"'
     printerr '  --no-testsuite   : when used with --do-it, the tag is made, files are published,'
     printerr '                     but the LATEST file is not updated.'
     printerr '  --verbose        : print log to standard output, instead of the log file'
     printerr '  --beta <n>       : followed by a number. When used with --public, will modify 
     the release number and the release version name to include beta<n>'
+    printerr '  --dest           : followed by the path to where the release should be created. Default is /tmp.'
+    printerr '  --is_master      : replace the Ic in the name by I.'
     printerr '  <packages dir>   : the directory containing the packages [default is trunk]'
-    printerr '  <candidates dir> : the directory containing the candidate packages [no default]'
 }
 
 
@@ -62,12 +60,8 @@ while [ $1 ]; do
             usage;
             exit;
         ;;
-        --rpm)
-            DO_RPM="y"
-            shift; continue
-        ;;
         --public)
-            DO_PUBLIC="y"
+            DO_PUBLIC="ON"
             shift; continue
         ;;
         --do-it)
@@ -91,7 +85,7 @@ while [ $1 ]; do
             shift; continue
         ;;
         --verbose)
-            VERBOSE="y"
+            VERBOSE="ON"
             shift; continue
         ;;
         --beta)
@@ -104,6 +98,15 @@ while [ $1 ]; do
             shift;
             continue
         ;;
+        --dest)
+            shift 
+            DESTINATION=$1
+            shift;continue
+        ;;
+        --is_master)
+            IS_MASTER="y"
+            shift;continue
+        ;;
         -*)
             printerr "Unrecognized option : $1"
             exit
@@ -113,9 +116,9 @@ while [ $1 ]; do
                 SOURCES_DIR="$1"
                 SOURCES_DIR_HAS_BEEN_SET=y
                 shift; continue
-            elif [ -z "$CANDIDATES_DIR_HAS_BEEN_SET" ]; then
-                CANDIDATES_DIR="$1"
-                CANDIDATES_DIR_HAS_BEEN_SET=y
+            elif [ -n "$IS_MASTER" ]; then
+                # Compatibility with the old syntax with candidates
+                IS_MASTER=""
                 shift; continue
             else
                 printerr "Unrecognized option : $1"
@@ -132,8 +135,6 @@ VERSION_FILE="version_number"
 HTML_DIR="/u/agrion/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
 
-# SVN repository
-SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
 
 PATH=$PATH:/usr/local/bin:/usr/bin/gnu
 
@@ -168,22 +169,15 @@ set -e
 cd ${TMPDIR} || return
 
 # Update the working copy
-if [ -d "${SOURCES_DIR}/.git" ]; then
+if [ -e "${SOURCES_DIR}/.git" ]; then
     pushd "${SOURCES_DIR}"
     [ -z "$NO_SCM" ] && git pull
     CGAL_GIT_HASH=`git rev-parse HEAD`
-    CGAL_SVN_REVISION=99999
     popd
-    SCM=git
 else
-    [ -z "$NO_SCM" ] && svn update ${SOURCES_DIR}
-    CGAL_SVN_REVISION=`svn info ${SOURCES_DIR} | grep Revision | cut -d' ' -f2`
-    CGAL_GIT_HASH=n/a
+    echo "Not a git repository"
+    exit 1
 fi
-if [ "$SCM" = "svn" -a -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then  
-    [ -z "$NO_SCM" ] && svn update ${CANDIDATES_DIR}
-fi
-
 # Set the major/minor/bugfix release numbers
 NUMBERS_DIR=${SOURCES_DIR}/Maintenance/release_building
 MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
@@ -202,13 +196,13 @@ if [ -r $VERSION_FILE ]; then
   INTERNAL_NUMBER=$(( `cat $VERSION_FILE` + 1 ))
   [ -n "$DO_TAG" ] && printf "%d\n" "${INTERNAL_NUMBER}" > $VERSION_FILE
 else
-  INTERNAL_NUMBER=$((`svn ls $SVNCGAL/tags/internal-releases | awk "/${MAJOR_NUMBER}\\.${MINOR_NUMBER}${BUGFIX_STRING}/ "'{FS="-|/"; print $4}' | sort -n | tail -1` + 1 ))
+  echo "Need a \"version_number\" file."
 fi
 if [ -z "$INTERNAL_NUMBER" ]; then
   INTERNAL_NUMBER=1
 fi
 
-if [ -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then
+if [ -z "${IS_MASTER}" ]; then
     INTERNAL_STRING="-Ic-${INTERNAL_NUMBER}"
 else
     INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
@@ -217,10 +211,11 @@ fi
 internal_nr=`printf "%4s" "${INTERNAL_NUMBER}" | sed "y/ /0/"`
 
 if [ -r "${NUMBERS_DIR}/release_name" ]; then
-    release_name=`cat "${NUMBERS_DIR}/release_name"`${INTERNAL_STRING}
+    release_version=`cat "${NUMBERS_DIR}/release_name"`${INTERNAL_STRING}
 else
-    release_name="CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}${INTERNAL_STRING}"
+    release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}${INTERNAL_STRING}"
 fi
+release_name="CGAL-${release_version}"
 echo "${release_name}"
 major_nr=`printf "%2s" "${MAJOR_NUMBER}" | sed "y/ /0/"`
 minor_nr=`printf "%2s" "${MINOR_NUMBER}" | sed "y/ /0/"`
@@ -235,8 +230,15 @@ fi
 
 function cleanup() {
     # Remove local directory and tarball
-    rm -rf ./"${release_name}"
-    rm ${release_name}.tar.gz
+    if [ -d ${release_name} ]; then
+      rm -rf ./"${release_name}"
+    fi
+    if [ -d "${DESTINATION}/${release_name}" ]; then
+        rm -rf "${DESTINATION}/${release_name}"
+    fi
+    if [ -f ${release_name}.tar.gz ]; then
+      rm ${release_name}.tar.gz
+    fi
     if [ -n "$DO_PUBLIC" ]; then
         [ -d "${public_release_name}" ] && rm -rf  ./"${public_release_name}"
         rm -rf doc
@@ -249,14 +251,8 @@ function cleanup() {
 trap cleanup EXIT
 
 # Create the release
-if [ -n "$CANDIDATES_DIR_HAS_BEEN_SET" ]; then
-    ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${SOURCES_DIR} -c ${CANDIDATES_DIR} -r ${release_name} -n ${release_number}
-else
-    ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${SOURCES_DIR} -r ${release_name} -n ${release_number}
-fi
-# Add the SVN revision to version.h
-cd "${release_name}"
-sed -i -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVISION/" include/CGAL/version.h
+cmake -DGIT_REPO=${SOURCES_DIR} -DPUBLIC=NO -DTESTSUITE=ON -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
+pushd "${DESTINATION}/${release_name}"
 sed -i -e "s/define CGAL_GIT_HASH .*/define CGAL_GIT_HASH $CGAL_GIT_HASH/" include/CGAL/version.h
 cd ..
 # Make the release tarball
@@ -269,6 +265,7 @@ ln -s "${release_name}.tar.gz" "$HTML_DIR/CGAL-last.tar.gz"
 if [ -z "${NO_TESTSUITE}" ]; then
   echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
 fi
+popd
 
 # Tag
 if [ -n "$DO_TAG" ]; then
@@ -284,20 +281,8 @@ if [ -n "$DO_TAG" ]; then
     if [ -n "$NO_TESTSUITE" ]; then
         TAG_MSG_EXTRA=" (no testsuite)"
     fi
-    [ "$SCM" = "svn" ] && svn cp -m "Internal release tag for $release_name$TAG_MSG_EXTRA (automated commit)" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name
 fi
 
-# Build the SRPM
-if [ "$DO_RPM" ]; then
-    echo "Making the SRPM file"
-    rm -rf rpm
-    cp -r ${SOURCES_DIR}/Maintenance/rpm .
-    cp ${release_name}.tar.gz rpm/SOURCES/
-    make -C rpm CGAL.src CGAL_INTERNAL_RELEASE=${INTERNAL_NUMBER}
-    echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM"
-    mv rpm/SRPMS/*.src.rpm "${HTML_DIR}"
-    rm -rf rpm
-fi
 
 # Build public release version
 if [ -n "$DO_PUBLIC" ]; then
@@ -309,19 +294,17 @@ if [ -n "$DO_PUBLIC" ]; then
     fi
     public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
     if [ -n "$BETA" ]; then
-	public_release_name="CGAL-${public_release_version}-beta${BETA}"
-    elif [ -r "${NUMBERS_DIR}/public_release_name" ]; then
+        public_release_version="${public_release_version}-beta${BETA}"
+    fi
+    if [ -r "${NUMBERS_DIR}/public_release_name" ]; then
 	public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
+        public_release_version=${public_release_name#CGAL-}
     else
 	public_release_name="CGAL-${public_release_version}"
     fi
-    mv -T ${release_name} $public_release_name
 
-    cd ${public_release_name}
-    rm -rf bench* Bench* test package_info developer_scripts doc winutils include/CGAL/Test include/CGAL/Testsuite/
-    rm -f examples/*/cgal_test* demo/*/cgal_test*
-    find . -name .scm-urls -exec rm '{}' '+'
-    rm -f .scm-branch
+    cmake -DGIT_REPO=${SOURCES_DIR} -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
+    pushd "${DESTINATION}/${public_release_name}"
 
     # Modify the version numbers in <CGAL/version.h>
     sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
@@ -343,28 +326,21 @@ if [ -n "$DO_PUBLIC" ]; then
     cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/"
     rm -f "$HTML_DIR/CGAL-last-public"
     ln -s "${release_name}-public" "$HTML_DIR/CGAL-last-public"
-fi
-
-# Build the SRPM of the public version
-if [ -n "$DO_RPM" -a -n "$DO_PUBLIC" ]; then
-    echo "Making the SRPM public file"
-    rm -rf rpm
-    cp -r ${SOURCES_DIR}/Maintenance/rpm .
-    cp ${public_release_name}.tar.gz rpm/SOURCES/
-    make -C rpm CGAL.src
-    # echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM"
-    mv rpm/SRPMS/*.src.rpm "${HTML_DIR}/${release_name}-public/"
-    rm -rf rpm
+    popd
 fi
 
 if [ -n "$DO_PUBLIC" ]; then
-  # Build the Windows installer
-  docker pull cgal/cgal-nsis-dockerfile
-  docker create -v `realpath ${public_release_name}`:/mnt/cgal_release:ro,z \
-                -v ${SOURCES_DIR}:/mnt/cgal_sources:ro,z                    \
-                cgal/cgal-nsis-dockerfile
-  container_id=`docker ps -q -l`
-  docker start -a ${container_id}
-  docker cp ${container_id}:/nsis_release/${public_release_name}-Setup.exe "${HTML_DIR}/${release_name}-public/"
-  docker rm ${container_id}
+  if docker version > /dev/null; then
+    # Build the Windows installer
+    docker pull cgal/cgal-nsis-dockerfile
+    docker create -v `realpath ${DESTINATION}/${public_release_name}`:/mnt/cgal_release:ro,z \
+                  -v ${SOURCES_DIR}:/mnt/cgal_sources:ro,z                    \
+                  cgal/cgal-nsis-dockerfile
+    container_id=`docker ps -q -l`
+    docker start -a ${container_id}
+    docker cp ${container_id}:/nsis_release/${public_release_name}-Setup.exe "${HTML_DIR}/${release_name}-public/"
+    docker rm ${container_id}
+  else
+    echo "Cannot use Docker, the Windows installer will not be created" >&2
+  fi
 fi

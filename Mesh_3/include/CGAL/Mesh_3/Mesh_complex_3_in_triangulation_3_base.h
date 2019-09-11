@@ -61,12 +61,6 @@ namespace CGAL {
   }
 
 
-  template < class DSC, bool Const >
-  std::size_t tbb_hasher(const CGAL::CCC_internal::CCC_iterator<DSC, Const>& it)
-  {
-    return CGAL::CCC_internal::hash_value(it);
-  }
-
   // As Marc Glisse pointed out the TBB hash of a std::pair is
   // simplistic and leads to the
   // TBB Warning: Performance is not optimal because the hash function
@@ -80,14 +74,6 @@ namespace CGAL {
                                  CGAL::internal::CC_iterator<DSC, Const> > >()(p);
   }
 
-
-  template < class DSC, bool Const >
-  std::size_t tbb_hasher(const std::pair<CGAL::CCC_internal::CCC_iterator<DSC, Const>,
-                                         CGAL::CCC_internal::CCC_iterator<DSC, Const> >& p)
-  {
-    return boost::hash<std::pair<CGAL::CCC_internal::CCC_iterator<DSC, Const>,
-                                 CGAL::CCC_internal::CCC_iterator<DSC, Const> > >()(p);
-  }
 
 }
 #endif
@@ -551,9 +537,11 @@ public:
         fit != end; ++fit)
     {
       Facet facet = *fit;
-      Facet mirror = tr_.mirror_facet(facet);
       set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
-      set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
+      if(this->triangulation().dimension() > 2) {
+        Facet mirror = tr_.mirror_facet(facet);
+        set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
+      }
     }
     this->number_of_facets_ = 0;
     clear_manifold_info();

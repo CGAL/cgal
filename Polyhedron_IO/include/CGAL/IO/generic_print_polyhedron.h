@@ -24,7 +24,7 @@
 
 #include <CGAL/license/Polyhedron.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <boost/graph/graph_traits.hpp>
@@ -50,7 +50,7 @@ generic_print_polyhedron( std::ostream&     out,
                          P.size_of_vertices(),
                          P.size_of_halfedges(),
                          P.size_of_facets());
-    BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::vertex_descriptor vi, vertices(P)) {
+    for(typename boost::graph_traits<Polyhedron>::vertex_descriptor vi : vertices(P)) {
         writer.write_vertex( ::CGAL::to_double( get(vpm, vi).x()),
                              ::CGAL::to_double( get(vpm, vi).y()),
                              ::CGAL::to_double( get(vpm, vi).z()));

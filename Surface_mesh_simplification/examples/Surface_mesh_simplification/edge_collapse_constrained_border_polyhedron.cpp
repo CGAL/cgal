@@ -107,7 +107,9 @@ int main( int argc, char** argv )
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n" ;
 
-  std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
+  std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ;
+  os.precision(17) ;
+  os << surface_mesh ;
 
   // now check!
   for (Surface_mesh::Halfedge_iterator hit=surface_mesh.halfedges_begin(),

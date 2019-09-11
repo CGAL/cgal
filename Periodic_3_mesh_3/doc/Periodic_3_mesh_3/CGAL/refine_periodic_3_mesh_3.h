@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic_3_mesh_3Functions
+\ingroup PkgPeriodic3Mesh3Functions
 
 The function `refine_periodic_3_mesh_3()` is a 3D periodic
 mesh generator. It produces periodic simplicial meshes which discretize

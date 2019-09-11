@@ -5,8 +5,7 @@ corresponding to the weighted Alpha Shape.
 
 ************************************************************************/
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Alpha_shape_2.h>
 #include <CGAL/Alpha_shape_face_base_2.h>
@@ -22,8 +21,7 @@ corresponding to the weighted Alpha Shape.
 
 typedef double                                          coord_type;
 
-typedef CGAL::Simple_cartesian<coord_type>              SC;
-typedef CGAL::Filtered_kernel<SC>                       K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                      Point;
 typedef K::Weighted_point_2                             Weighted_point;
 typedef K::Segment_2                                    Segment;

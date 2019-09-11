@@ -81,7 +81,6 @@ DirectionCd(const FT& x, const FT& y, const FT& z) :
   Base( Tuple(x,y,z) ) {}
 DirectionCd(int a, int b, int c) : Base( Tuple(FT(a),FT(b),FT(c), MatchHelper()) ) {}
 
-DirectionCd(const DirectionCd<FT,LA>& p) : Base(p)  {}
 ~DirectionCd() {}     
 
 int dimension() const { return ptr()->size(); }

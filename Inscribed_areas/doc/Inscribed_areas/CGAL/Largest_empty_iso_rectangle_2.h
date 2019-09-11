@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgInscribedAreas
+\ingroup PkgInscribedAreasRef
 
 Given a set of points in the plane, the class `Largest_empty_iso_rectangle_2` is a data 
 structure that maintains an iso-rectangle with the largest area among 

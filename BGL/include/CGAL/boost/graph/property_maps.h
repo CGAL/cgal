@@ -38,7 +38,7 @@ struct Triangle_from_face_descriptor_map{
   VertexPointMap m_vpm;
 
   Triangle_from_face_descriptor_map()
-    : m_tm(NULL)
+    : m_tm(nullptr)
   {}
 
   Triangle_from_face_descriptor_map(TriangleMesh const* tm)
@@ -73,6 +73,19 @@ struct Triangle_from_face_descriptor_map{
                        get(pmap.m_vpm, target(next(halfedge(f,tm),tm),tm)),
                        get(pmap.m_vpm, source(halfedge(f,tm),tm)) );
   }
+
+  inline friend
+  reference
+  get(const Triangle_from_face_descriptor_map<TriangleMesh,VertexPointMap>& pmap,
+      const std::pair<key_type, const TriangleMesh*>& f)
+  {
+    typename boost::remove_const<TriangleMesh>::type & tm = *(pmap.m_tm);
+    CGAL_precondition(halfedge(f.first,tm) == next(next(next(halfedge(f.first,tm),tm),tm),tm));
+
+    return value_type( get(pmap.m_vpm, target(halfedge(f.first,tm),tm)),
+                       get(pmap.m_vpm, target(next(halfedge(f.first,tm),tm),tm)),
+                       get(pmap.m_vpm, source(halfedge(f.first,tm),tm)) );
+  }
 };
 
 template < class PolygonMesh,
@@ -80,7 +93,7 @@ template < class PolygonMesh,
 struct Segment_from_edge_descriptor_map{
 
   Segment_from_edge_descriptor_map()
-    : m_pm(NULL)
+    : m_pm(nullptr)
   {}
 
   Segment_from_edge_descriptor_map(PolygonMesh const * pm)
@@ -114,6 +127,15 @@ struct Segment_from_edge_descriptor_map{
     return value_type(get(pmap.m_vpm, source(h, *pmap.m_pm) ),
                       get(pmap.m_vpm, target(h, *pmap.m_pm) ) );
   }
+
+  inline friend
+  reference
+  get(const Segment_from_edge_descriptor_map<PolygonMesh,VertexPointMap>& pmap,
+      const std::pair<key_type, const PolygonMesh*>& h)
+  {
+    return value_type(get(pmap.m_vpm, source(h.first, *pmap.m_pm) ),
+                      get(pmap.m_vpm, target(h.first, *pmap.m_pm) ) );
+  }
 };
 
 //property map to access a point from a face_descriptor
@@ -121,7 +143,7 @@ template <class PolygonMesh,
           class VertexPointMap = typename boost::property_map<PolygonMesh,vertex_point_t>::type >
 struct One_point_from_face_descriptor_map{
   One_point_from_face_descriptor_map()
-    : m_pm(NULL)
+    : m_pm(nullptr)
   {}
 
   One_point_from_face_descriptor_map(PolygonMesh const * g)
@@ -151,13 +173,21 @@ struct One_point_from_face_descriptor_map{
   {
     return get(m.m_vpm, target(halfedge(f, *m.m_pm), *m.m_pm));
   }
+
+  inline friend
+  reference
+  get(const One_point_from_face_descriptor_map<PolygonMesh,VertexPointMap>& m,
+      const std::pair<key_type, const PolygonMesh*>& f)
+  {
+    return get(m.m_vpm, target(halfedge(f.first, *m.m_pm), *m.m_pm));
+  }
 };
 
 //property map to access a point from an edge
 template < class PolygonMesh,
            class VertexPointMap = typename boost::property_map<PolygonMesh,vertex_point_t>::type >
 struct Source_point_from_edge_descriptor_map{
-  Source_point_from_edge_descriptor_map()  : m_pm(NULL)
+  Source_point_from_edge_descriptor_map()  : m_pm(nullptr)
   {}
 
   Source_point_from_edge_descriptor_map(PolygonMesh const * g)
@@ -186,6 +216,14 @@ struct Source_point_from_edge_descriptor_map{
       key_type h)
   {
     return get(pmap.m_vpm,  source(h, *pmap.m_pm) );
+  }
+
+  inline friend
+  reference
+  get(const Source_point_from_edge_descriptor_map<PolygonMesh,VertexPointMap>& pmap,
+      const std::pair<key_type, const PolygonMesh*>& h)
+  {
+    return get(pmap.m_vpm,  source(h.first, *pmap.m_pm) );
   }
 };
 

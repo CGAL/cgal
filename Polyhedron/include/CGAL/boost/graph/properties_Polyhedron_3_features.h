@@ -227,7 +227,7 @@ void put(Polyhedron_incident_patches_pmap<Patch_id>,
          Handle_type h, const std::set<Patch_id>& v)
 {
   h->clear_incident_patches();
-  BOOST_FOREACH(Patch_id n, v)
+  for(Patch_id n : v)
     h->add_incident_patch(n);
 }
 

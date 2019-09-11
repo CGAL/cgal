@@ -90,6 +90,7 @@ int main ()
      case BLUE  : std::cout << "BLUE."  << std::endl; break;
      case RED   : std::cout << "RED."   << std::endl; break;
      case WHITE : std::cout << "WHITE." << std::endl; break;
+     default: break;
     }
   }
 

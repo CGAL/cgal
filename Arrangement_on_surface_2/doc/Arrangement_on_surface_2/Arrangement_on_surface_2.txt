@@ -79,7 +79,7 @@ for an illustration of the various \sc{Dcel} features. For more details
 on the \sc{Dcel} data structure see \cgalCite{bkos-cgaa-00} Chapter 2.
 
 \cgalFigureBegin{arr_figseg_dcel,arr_segs.png}
-An arrangement of interior-disjoint line segments with some of the \sc{Dcel} records that represent it. The unbounded face \f$ f_0\f$ has a single connected component that forms a hole inside it, and this hole is comprised if several faces. The half-edge \f$ e\f$ is directed from its source vertex \f$ v_1\f$ to its target vertex \f$ v_2\f$. This edge, together with its twin \f$ e'\f$, correspond to a line segment that connects the points associated with \f$ v_1\f$ and \f$ v_2\f$ and separates the face \f$ f_1\f$ from \f$ f_2\f$. The predecessor \f$ e_{\rm prev}\f$ and successor \f$ e_{\rm next}\f$ of \f$ e\f$ are part of the chain that form the outer boundary of the face \f$ f_2\f$. The face \f$ f_1\f$ has a more complicated structure as it contains two holes in its interior: One hole consists of two adjacent faces \f$ f_3\f$ and \f$ f_4\f$, while the other hole is comprised of two edges. \f$ f_1\f$ also contains two isolated vertices \f$ u_1\f$ and \f$ u_2\f$ in its interior.
+An arrangement of interior-disjoint line segments with some of the \sc{Dcel} records that represent it. The unbounded face \f$ f_0\f$ has a single connected component that forms a hole inside it, and this hole is comprised of several faces. The half-edge \f$ e\f$ is directed from its source vertex \f$ v_1\f$ to its target vertex \f$ v_2\f$. This edge, together with its twin \f$ e'\f$, correspond to a line segment that connects the points associated with \f$ v_1\f$ and \f$ v_2\f$ and separates the face \f$ f_1\f$ from \f$ f_2\f$. The predecessor \f$ e_{\rm prev}\f$ and successor \f$ e_{\rm next}\f$ of \f$ e\f$ are part of the chain that form the outer boundary of the face \f$ f_2\f$. The face \f$ f_1\f$ has a more complicated structure as it contains two holes in its interior: One hole consists of two adjacent faces \f$ f_3\f$ and \f$ f_4\f$, while the other hole is comprised of two edges. \f$ f_1\f$ also contains two isolated vertices \f$ u_1\f$ and \f$ u_2\f$ in its interior.
 \cgalFigureEnd
 
 The \f$ x\f$-monotone curves of an arrangement are embedded in an
@@ -559,8 +559,8 @@ The arrangement of the line segments \f$ s_1, \ldots, s_5\f$ constructed in `edg
 
 The following program demonstrates the usage of the four insertion
 functions. It creates an arrangement of five line segments, as
-depicted in \cgalFigureRef{arr_figex_1}.\cgalFootnote{Notice that in all figures in the rest of this chapter the coordinate axes are drawn only for illustrative purposes and are <I>not</I> part of the arrangement.} As the arrangement is very
-simple, we use the simple Cartesian kernel of \cgal with integer
+depicted in \cgalFigureRef{arr_figex_2} \cgalFootnote{Notice that in all figures in the rest of this chapter the coordinate axes are drawn only for illustrative purposes and are <I>not</I> part of the arrangement.}. As the arrangement is very
+simple, we use the simple %Cartesian kernel of \cgal with integer
 coordinates for the segment endpoints. We also use the
 `Arr_segment_traits_2` class that enables the efficient
 maintenance of arrangements of line segments; see more details on
@@ -668,7 +668,7 @@ In case the <span class="textsc">Gmp</span> library is not installed (as indicat
 the `CGAL_USE_GMP` flag defined in `CGAL/basic.h`), we
 use `MP_Float`, a number-type included in \cgal's support
 library that is capable of storing floating-point numbers with
-unbounded mantissa. We also use the standard Cartesian
+unbounded mantissa. We also use the standard %Cartesian
 kernel of \cgal as our kernel. This is recommended when the
 kernel is instantiated with a more complex number type, as we
 demonstrate in other examples in this chapter.
@@ -782,7 +782,7 @@ ability to answer such queries effectively.
 The `Arrangement_2` class template does not support point-location
 queries directly, as the arrangement representation is decoupled from
 the geometric algorithms that operate on it. The <I>2D Arrangements</I>
-package includes a set of classe templates that are capable of
+package includes a set of class templates that are capable of
 answering such queries; all are models of the concept
 `ArrangementPointLocation_2`. Each model employs a different
 algorithm or <I>strategy</I> for answering queries. A model of this
@@ -1439,7 +1439,7 @@ of the edge, it is removed as well.
 \image latex h_shape.png
 
 The following example demonstrates the usage of the free removal
-functions. In creates an arrangement of four line segment forming
+functions. It creates an arrangement of four line segment forming
 an H-shape with a double horizontal line. Then it removes the two
 horizontal edges and clears all redundant vertices, such that the
 final arrangement consists of just two edges associated with the
@@ -2209,10 +2209,10 @@ representing line segments.
 
 A polyline can be constructed given one of the following inputs:
 
-- <b>A range of \a points</b>, where two succeeding points in the
+- <b>A range of <em>points</em></b>, where two succeeding points in the
   range represent the endpoints of a segment of the polyline.
 
-- <b>A range of \a segments</b>. Note that , if the types
+- <b>A range of <em>segments</em></b>. Note that , if the types
 `SubcurveTraits_2::Curve_2` and `SubcurveTraits_2::X_monotone_curve_2` are
 not the same, then when `Make_x_monotone_2` is invoked the segments
 that compose the polyline will be broken into \f$x\f$-monotone
@@ -2668,7 +2668,7 @@ of arbitrary degree (in general, a sequence of \f$ n+1\f$ control points define 
 B&eacute;zier curve of degree \f$ n\f$). The template parameters are the same ones
 used by the `Arr_conic_traits_2` class template, and here it is also
 recommended to use the `CORE_algebraic_number_traits` class, with
-Cartesian kernels instantiated with the `Rational` and `Algebraic`
+%Cartesian kernels instantiated with the `Rational` and `Algebraic`
 number-types defined by this class.
 
 As mentioned above, we assume that the coordinates of all control
@@ -2681,7 +2681,7 @@ manner whenever possible. Thus, it resorts to exact computations only when
 the approximate computation fails to produce an unambiguous result.
 Note that most arrangement vertices are therefore associated with approximated
 points. You cannot access the coordinates of such points and obtain them as
-algebraic numbers, and only access to the approximate coordinates in possible.
+algebraic numbers, and only access to the approximate coordinates is possible.
 See the Reference Manual for the exact interface of the `Point_2`,
 `Curve_2` and `X_monotone_curve_2` defined by the traits class.
 

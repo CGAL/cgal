@@ -39,6 +39,9 @@ public:
   Object_handle() : Base() {}
   Object_handle(const CGAL::Object& o) : Base(o) {}
   Object_handle(const Object_handle& h) : Base(h) {}
+  
+  Object_handle&
+  operator=(const Object_handle& v)=default;
 };
  
 Object_handle return_obj()

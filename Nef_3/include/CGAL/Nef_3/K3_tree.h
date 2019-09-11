@@ -589,7 +589,7 @@ else {
       
 inline 
 const Node* get_child_by_side( const Node* node, Oriented_side side) {
-  CGAL_assertion( node != NULL);
+  CGAL_assertion( node != nullptr);
   CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
   if( side == ON_NEGATIVE_SIDE) {
     return node->left();
@@ -756,7 +756,7 @@ class Objects_around_box {
       
     inline 
     const Node* get_child_by_side( const Node* node, Oriented_side side) {
-      CGAL_assertion( node != NULL);
+      CGAL_assertion( node != nullptr);
       CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
       if( side == ON_NEGATIVE_SIDE) {
 	return node->left();
@@ -787,7 +787,7 @@ public:
     typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator;
     typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator;
 
-    CGAL_assertion( W != NULL);
+    CGAL_assertion( W != nullptr);
     Object_list objects;
     Vertex_iterator v;
     Halfedge_iterator e;

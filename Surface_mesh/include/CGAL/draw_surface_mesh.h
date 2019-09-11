@@ -41,6 +41,7 @@ void draw(const SM& asm);
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -71,7 +72,7 @@ class SimpleSurfaceMeshViewerQt : public Basic_viewer_qt
   typedef typename SM::Face_index face_descriptor;
   typedef typename SM::Edge_index edge_descriptor;
   typedef typename SM::Halfedge_index halfedge_descriptor;
-  
+
 public:
   /// Construct the viewer.
   /// @param amesh the surface mesh to view
@@ -156,40 +157,41 @@ protected:
   }
 
 protected:
-  typename Kernel::Vector_3 get_face_normal(halfedge_descriptor he)
+  Local_vector get_face_normal(halfedge_descriptor he)
   {
-    typename Kernel::Vector_3 normal=CGAL::NULL_VECTOR;
+    Local_vector normal=CGAL::NULL_VECTOR;
     halfedge_descriptor end=he;
     unsigned int nb=0;
     do
     {
-      internal::newell_single_step_3(sm.point(sm.source(he)),
-                                     sm.point(sm.target(he)), normal);
+      internal::newell_single_step_3
+        (internal::Geom_utils<Kernel>::get_local_point(sm.point(sm.source(he))),
+         internal::Geom_utils<Kernel>::get_local_point(sm.point(sm.target(he))), normal);
       ++nb;
       he=sm.next(he);
     }
     while (he!=end);
     assert(nb>0);
-    return (typename Kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
+    return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
   
-  typename Kernel::Vector_3 get_vertex_normal(halfedge_descriptor he)
+  Local_vector get_vertex_normal(halfedge_descriptor he)
   {
-    typename Kernel::Vector_3 normal=CGAL::NULL_VECTOR;
+    Local_vector normal=CGAL::NULL_VECTOR;
     halfedge_descriptor end=he;
     do
     {
       if (!sm.is_border(he))
       {
-        typename Kernel::Vector_3 n=get_face_normal(he);
-        normal=typename Kernel::Construct_sum_of_vectors_3()(normal, n);
+        Local_vector n=get_face_normal(he);
+        normal=typename Local_kernel::Construct_sum_of_vectors_3()(normal, n);
       }
       he=sm.next(sm.opposite(he));
     }
     while (he!=end);
     
-    if (!typename Kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
-    { normal=(typename Kernel::Construct_scaled_vector_3()
+    if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
+    { normal=(typename Local_kernel::Construct_scaled_vector_3()
               (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
     
     return normal;
@@ -201,16 +203,16 @@ protected:
   const ColorFunctor& m_fcolor;
 };
 
-template<class SM, class ColorFunctor>
-void draw(const SM& amesh,
-          const char* title,
-          bool nofill,
-          const ColorFunctor& fcolor)
+// Specialization of draw function.
+template<class K>
+void draw(const Surface_mesh<K>& amesh,
+          const char* title="Surface_mesh Basic Viewer",
+          bool nofill=false)
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
   if (!cgal_test_suite)
@@ -218,30 +220,13 @@ void draw(const SM& amesh,
     int argc=1;
     const char* argv[2]={"surface_mesh_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(app.activeWindow(),
-                                                           amesh,
-                                                           title,
-                                                           nofill,
-                                                           fcolor);
+    DefaultColorFunctorSM fcolor;
+    SimpleSurfaceMeshViewerQt<Surface_mesh<K>, DefaultColorFunctorSM>
+      mainwindow(app.activeWindow(), amesh, title, nofill, fcolor);
     mainwindow.show();
     app.exec();
   }
 }
-
-template<class SM>
-void draw(const SM& amesh, const char* title, bool nofill)
-{
-  DefaultColorFunctorSM c;
-  draw(amesh, title, nofill, c);
-}
-
-template<class SM>
-void draw(const SM& amesh, const char* title)
-{ draw(amesh, title, false); }
-
-template<class SM>
-void draw(const SM& amesh)
-{ draw(amesh, "Basic Surface_mesh Viewer"); }
 
 } // End namespace CGAL
 

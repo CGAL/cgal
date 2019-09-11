@@ -30,23 +30,6 @@
 
 namespace CGAL {
 
-namespace cpp11 {
-
-#ifndef CGAL_CFG_NO_CPP0X_ARRAY
-using std::array;
-#else
-using boost::array;
-#endif
-
-} // cpp11
-
-namespace cpp0x = cpp11;
-
-// This using is just for short-term backward-compat, people should take the
-// habit to use CGAL::cpp11::array.
-using cpp11::array;
-
-
 // The make_array() function simply constructs an std::array.
 // It is needed for cases where a std::array is used as a class data
 // member and you want to initialize it in the member initializers list.
@@ -56,7 +39,7 @@ using cpp11::array;
 
 // I proposed it for Boost.Array, but it has not been integrated so far.
 // See the thread starting at
-// http://lists.boost.org/Archives/boost/2006/08/109003.php
+// https://lists.boost.org/Archives/boost/2006/08/109003.php
 //
 // C++0x has it under discussion here :
 // http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-active.html#851
@@ -74,14 +57,12 @@ using cpp11::array;
 
 // It's also untrue that this is not documented...  It is !
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-
 template< typename T, typename... Args >
 inline
-cpp11::array< T, 1 + sizeof...(Args) >
+std::array< T, 1 + sizeof...(Args) >
 make_array(const T & t, const Args & ... args)
 {
-  cpp11::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
+  std::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
   return a;
 }
 
@@ -90,112 +71,11 @@ make_array(const T & t, const Args & ... args)
 struct Construct_array
 {
   template <typename T, typename... Args>
-  cpp11::array<T, 1 + sizeof...(Args)> operator()(const T& t, const Args& ... args)
+  std::array<T, 1 + sizeof...(Args)> operator()(const T& t, const Args& ... args)
   {
     return make_array (t, args...);
   }
 };
-
-#else // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-
-template < typename T > inline
-cpp11::array<T, 1>
-make_array(const T& b1)
-{
-  cpp11::array<T, 1> a = { { b1 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 2>
-make_array(const T& b1, const T& b2)
-{
-  cpp11::array<T, 2> a = { { b1, b2 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 3>
-make_array(const T& b1, const T& b2, const T& b3)
-{
-  cpp11::array<T, 3> a = { { b1, b2, b3 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 4>
-make_array(const T& b1, const T& b2, const T& b3, const T& b4)
-{
-  cpp11::array<T, 4> a = { { b1, b2, b3, b4 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 5>
-make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5)
-{
-  cpp11::array<T, 5> a = { { b1, b2, b3, b4, b5 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 6>
-make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
-           const T& b6)
-{
-  cpp11::array<T, 6> a = { { b1, b2, b3, b4, b5, b6 } };
-  return a;
-}
-
-// Functor version
-struct Construct_array
-{
-  template < typename T >
-  cpp11::array<T, 1>
-  operator()(const T& b1)
-  {
-    return make_array (b1);
-  }
-
-  template < typename T >
-  cpp11::array<T, 2>
-  operator()(const T& b1, const T& b2)
-  {
-    return make_array (b1, b2);
-  }
-
-  template < typename T >
-  cpp11::array<T, 3>
-  operator()(const T& b1, const T& b2, const T& b3)
-  {
-    return make_array (b1, b2, b3);
-  }
-
-  template < typename T >
-  cpp11::array<T, 4>
-  operator()(const T& b1, const T& b2, const T& b3, const T& b4)
-  {
-    return make_array (b1, b2, b3, b4);
-  }
-
-  template < typename T >
-  cpp11::array<T, 5>
-  operator()(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5)
-  {
-    return make_array (b1, b2, b3, b4, b5);
-  }
-
-  template < typename T >
-  cpp11::array<T, 6>
-  operator()(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
-             const T& b6)
-  {
-    return make_array (b1, b2, b3, b4, b5, b6);
-  }
-};
-
-  
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 } //namespace CGAL
 

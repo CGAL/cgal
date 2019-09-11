@@ -2,9 +2,8 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
-#include <CGAL/internal/corefinement/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
-#include <boost/foreach.hpp>
 
 #include <fstream>
 #include <set>
@@ -35,13 +34,15 @@ bool is_mesh_valid(Polyhedron& pMesh)
     std::cerr << "The mesh is not a pure triangle mesh.";
     return false;
   }
+  std::size_t i=0;
+  for(Polyhedron::Face_handle fh : faces(pMesh))
+    fh->id()=i++;
 
   // the algorithm is only applicable on a mesh
   // that has only one connected component
-  std::size_t num_component;
-  CGAL::Counting_output_iterator output_it(&num_component);
-  CGAL::internal::corefinement::extract_connected_components(pMesh, output_it);
-  ++output_it;
+  std::size_t num_component =
+  CGAL::Polygon_mesh_processing::connected_components(
+    pMesh, get(CGAL::dynamic_face_property_t<std::size_t>(), pMesh));
   if (num_component != 1)
   {
     std::cerr << "The mesh is not a single closed mesh. It has "
@@ -77,9 +78,9 @@ int main()
 // check all vertices are seen exactly once
 {
   std::set<vertex_descriptor> visited;
-  BOOST_FOREACH(vertex_desc v, vertices(skeleton))
+  for(vertex_desc v : CGAL::make_range(vertices(skeleton)))
   {
-    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
+    for(vertex_descriptor vd : skeleton[v].vertices)
       if (!visited.insert(vd).second)
       {
         std::cerr << "A vertex was seen twice!\n";
@@ -87,7 +88,7 @@ int main()
       }
   }
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
+  for(vertex_descriptor vd : vertices(mesh))
   {
     if (!visited.count(vd))
     {
@@ -110,7 +111,7 @@ int main()
     vertex_desc cur = qu.front();
     qu.pop();
 
-    BOOST_FOREACH(edge_desc ed, in_edges(cur, skeleton))
+    for(edge_desc ed : CGAL::make_range(in_edges(cur, skeleton)))
     {
       vertex_desc next = source(ed, skeleton);
       if (visited.insert(next).second)
@@ -118,7 +119,7 @@ int main()
     }
   }
 
-  BOOST_FOREACH(vertex_desc vd, vertices(skeleton))
+  for(vertex_desc vd : CGAL::make_range(vertices(skeleton)))
   {
     if (!visited.count(vd))
     {

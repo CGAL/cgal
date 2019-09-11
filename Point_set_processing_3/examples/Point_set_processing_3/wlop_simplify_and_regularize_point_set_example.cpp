@@ -46,6 +46,7 @@ int main(int argc, char** argv)
      neighbor_radius (neighbor_radius));
   
   std::ofstream out(output_filename);
+  out.precision(17);
   if (!out || !CGAL::write_xyz_points(
         out, output))
   {

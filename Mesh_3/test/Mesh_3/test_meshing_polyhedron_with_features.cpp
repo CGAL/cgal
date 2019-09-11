@@ -39,8 +39,11 @@ struct Polyhedron_with_features_tester : public Tester<K>
   void operator()() const
   {
     typedef CGAL::Mesh_3::Robust_intersection_traits_3<K> Gt;
-    typedef typename CGAL::Mesh_polyhedron_3<Gt>::type Polyhedron;
-    typedef CGAL::Polyhedral_mesh_domain_with_features_3<Gt> Mesh_domain;
+    typedef typename CGAL::Mesh_polyhedron_3<Gt, short>::type Polyhedron;
+    typedef CGAL::Polyhedral_mesh_domain_with_features_3<Gt,
+                                                         Polyhedron,
+                                                         CGAL::Default,
+                                                         short> Mesh_domain;
     
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,

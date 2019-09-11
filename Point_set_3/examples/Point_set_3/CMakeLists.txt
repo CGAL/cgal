@@ -1,13 +1,13 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Point_set_3_Examples )
 
 
-cmake_minimum_required(VERSION 2.8.11)
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
+find_package( CGAL QUIET COMPONENTS Qt5 )
 
 if ( NOT CGAL_FOUND )
 
@@ -16,9 +16,9 @@ if ( NOT CGAL_FOUND )
 
 endif()
 
-# include helper file
-include( ${CGAL_USE_FILE} )
-
+if(CGAL_Qt5_FOUND)
+    add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+endif()
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -31,17 +31,9 @@ if ( NOT Boost_FOUND )
 
 endif()
 
-# include for local directory
-include_directories( BEFORE include )
-
-# include for local package
-include_directories( BEFORE ../../include )
-
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "point_set.cpp" )
 create_single_source_cgal_program( "point_set_property.cpp" )
@@ -62,5 +54,7 @@ else()
   create_single_source_cgal_program( "point_set_algo.cpp" )
 endif()
 
-
-
+create_single_source_cgal_program("draw_point_set_3.cpp" )
+if(CGAL_Qt5_FOUND)
+  target_link_libraries(draw_point_set_3 PUBLIC CGAL::CGAL_Qt5)
+endif()

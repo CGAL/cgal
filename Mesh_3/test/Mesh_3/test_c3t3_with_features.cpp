@@ -314,7 +314,9 @@ struct Tester
     // Test edge iterators
     //-------------------------------------------------------
     std::cout << "Test edge iterators\n";
-    const Edge& edge_to_modify = *(c3t3.edges_in_complex_begin());
+    typename C3t3::Edges_in_complex_iterator eit = c3t3.edges_in_complex_begin();
+    assert(eit != c3t3.edges_in_complex_end());
+    const Edge& edge_to_modify = *eit;
     c3t3.remove_from_complex(edge_to_modify);
     c3t3.add_to_complex(edge_to_modify,curve_index_bis);
     

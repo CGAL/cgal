@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangementOnSurface2Ref
 
 `Arr_vertex_index_map` maintains a mapping of vertex handles of an
 attached arrangement object to indices (of type `unsigned int`).

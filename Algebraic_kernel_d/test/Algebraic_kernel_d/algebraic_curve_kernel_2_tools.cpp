@@ -13,8 +13,6 @@
 
 #include <CGAL/Algebraic_kernel_d/flags.h>
 
-#include <CGAL/basic.h>
-
 #include <vector>
 
 #include <CGAL/Arithmetic_kernel.h>

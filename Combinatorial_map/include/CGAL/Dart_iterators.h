@@ -45,97 +45,8 @@ namespace CGAL {
   /* Class CMap_dart_iterator_basic_of_orbit<Map, Beta...>: to iterate
    * on the darts of the orbit <Beta...>
    */
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template<typename Map,bool Const,int... Beta>
   class CMap_dart_iterator_basic_of_orbit_generic;
-#else
-  template <typename Map,bool Const,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-            int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
-  class CMap_dart_iterator_basic_of_orbit_generic;
-
-  template <typename Map,bool Const,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-            int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
-  struct Get_CMap_dart_iterator_basic_of_orbit;
-
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6,
-           int B7,int B8,int B9>
-  struct Get_CMap_dart_iterator_basic_of_orbit
-  {
-    typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,B4,
-                                                      B5,B6,B7,B8,B9> type;
-  };
-
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6,
-           int B7,int B8>
-  struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,B4,B5,B6,B7,B8,-1>
-  {
-    typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,B4,B5,
-                                                      B6,B7,B8> type;
-  };
-
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6,
-           int B7>
-  struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,B4,B5,B6,B7,-1,-1>
-  {
-    typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,
-                                                      B1,B2,B3,B4,B5,
-                                                      B6,B7> type;
-  };
-
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6>
-  struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,B4,B5,B6,-1,-1,-1>
-  {
-    typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,B4,
-                                                      B5,B6> type;
-  };
-
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5>
-  struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,B4,B5,-1,-1,-1,-1>
-  {
-    typedef CMap_dart_iterator_basic_of_orbit_generic<Map,B1,B2,B3,B4,
-                                                      B5,Const> type;
-  };
-
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4>
-  struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,B4,-1,-1,-1,-1,-1>
-  {
-    typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,
-                                                      B4> type;
-  };
-
-  template<typename Map, int B1,int B2,int B3,bool Const>
-  struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,-1,-1,-1,-1,-1,-1>
-  {
-    typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3> type;
-  };
-
-  template<typename Map, int B1,int B2,bool Const>
-  struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,-1,-1,-1,-1,-1,-1,-1>
-  {
-    typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2> type;
-  };
-
-  template<typename Map, int B1,bool Const>
-  struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,-1,-1,-1,-1,-1,-1,-1,-1>
-  {
-    typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1> type;
-  };
-
-  template<typename Map,bool Const>
-  struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               -1,-1,-1,-1,-1,-1,-1,-1,-1>
-  {
-    typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const> type;
-  };
-#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   //****************************************************************************
   // Case when Beta... is empty: iterator of self
   template <typename Map_,bool Const>
@@ -994,7 +905,6 @@ namespace CGAL {
   //****************************************************************************
   /* Generic nD version. 
    */
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template <typename Map_,bool Const,int Bi,int Bj, int Bk, int... Beta>
   class CMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Bi,Bj,Bk,Beta...>: 
     public CMap_extend_iterator<Map_,
@@ -1024,42 +934,10 @@ namespace CGAL {
       Base(amap, adart, amark)
     {}
   };
-#else //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-  template <typename Map_,bool Const,int B1,int B2,int B3,int B4,int B5,int B6,
-            int B7,int B8,int B9>
-  class CMap_dart_iterator_basic_of_orbit_generic: 
-    public CMap_extend_iterator
-  <Map_,typename Get_CMap_dart_iterator_basic_of_orbit
-   <Map_,Const,B1,B2,B4,B5,B6,B7,B8,B9>::type, B3>
-  {
-  public:
-    typedef typename Get_CMap_dart_iterator_basic_of_orbit
-    <Map_,Const,B1,B2,B3,B4,B5,B6,B7,B8,B9>::type Self;
-
-    typedef CMap_extend_iterator
-    <Map_,typename Get_CMap_dart_iterator_basic_of_orbit
-     <Map_,Const,B1,B2,B4,B5,B6,B7,B8,B9>::type, B3> Base;
-
-    typedef typename Base::Dart_handle Dart_handle;
-    typedef typename Base::Map Map;
-    typedef typename Map::size_type size_type;
-
-    /// True iff this iterator is basic
-    typedef Tag_true Basic_iterator;
-
-  public:
-    /// Main constructor.
-    CMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart, 
-                                              size_type amark):
-      Base(amap, adart, amark)
-    {}
-  };
-#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   //****************************************************************************
   // TODO? we can optimize the iterators<Bi,Bj,Bk> when
   // 1<Bi and Bi+2<=Bj and Bj+2<=Bk but there is no real interest...
   //****************************************************************************
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template<typename Map,int...Beta>
   class CMap_dart_iterator_basic_of_orbit: 
     public CMap_dart_iterator_basic_of_orbit_generic<Map,false,Beta...>
@@ -1080,33 +958,6 @@ namespace CGAL {
       Base(amap,adart,amark)
     {}
   };
-#else
-  //****************************************************************************
-  template<typename Map,int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1, 
-           int B6=-1,int B7=-1,int B8=-1,int B9=-1>
-  class CMap_dart_iterator_basic_of_orbit: 
-    public Get_CMap_dart_iterator_basic_of_orbit<Map,false,B1,B2,B3,B4,
-                                                 B5,B6,B7,B8,B9>::type
-  {
-  public:
-    typedef CMap_dart_iterator_basic_of_orbit<Map,B1,B2,B3,B4,B5,B6,B7,B8,B9> 
-    Self;
-    typedef typename Get_CMap_dart_iterator_basic_of_orbit
-    <Map,false,B1,B2,B3,B4,B5,B6,B7,B8,B9>::type Base;
-
-    typedef typename Map::Dart_handle Dart_handle;
-    typedef typename Map::size_type size_type;
-
-    /// Main constructor.
-    CMap_dart_iterator_basic_of_orbit(Map& amap,Dart_handle adart):
-      Base(amap,adart)
-    {}
-    /// Main constructor.
-    CMap_dart_iterator_basic_of_orbit(Map& amap,Dart_handle adart,size_type amark):
-      Base(amap,adart,amark)
-    {}
-  };
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   //****************************************************************************
   /* Class CMap_dart_iterator_basic_of_all: to iterate onto all the
    * darts of the map.
@@ -1789,7 +1640,6 @@ namespace CGAL {
   //*************************ITERATORS*NON*BASIC********************************
   //****************************************************************************
   //****************************************************************************
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template<typename Map_,bool Const,int...Beta>
   class CMap_dart_iterator_of_orbit_generic: 
     public  CMap_non_basic_iterator<Map_, 
@@ -1826,54 +1676,6 @@ namespace CGAL {
       Base(amap, adart)
     {}
   };
-#else
-  //****************************************************************************
-  template<typename Map_,bool Const,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-           int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
-  class CMap_dart_iterator_of_orbit_generic:
-    public CMap_non_basic_iterator<Map_,
-                                   typename 
-                                   Get_CMap_dart_iterator_basic_of_orbit
-                                   <Map_,Const,B1,B2,B3,B4,B5,
-                                    B6,B7,B8,B9>::type>
-  {
-  public:
-    typedef CMap_dart_iterator_of_orbit_generic<Map_,Const,B1,B2,B3,B4,B5,
-                                                B6,B7,B8,B9> Self;
-    typedef CMap_non_basic_iterator<Map_,
-                                    typename 
-                                    Get_CMap_dart_iterator_basic_of_orbit
-                                    <Map_,Const,B1,B2,B3,B4,B5,
-                                     B6,B7,B8,B9>::type> Base;
-
-    typedef typename Base::Map Map;
-    typedef typename Base::Dart_handle Dart_handle;
-
-    /// Main constructor.
-    CMap_dart_iterator_of_orbit_generic(Map& amap, Dart_handle adart1):
-      Base(amap, adart1)
-    {}
-  };
-  //****************************************************************************
-  template<typename Map,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-           int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
-  class CMap_dart_iterator_of_orbit: 
-    public CMap_dart_iterator_of_orbit_generic<Map,false,
-                                               B1,B2,B3,B4,B5,B6,B7,B8,B9>
-  {
-  public:
-    typedef CMap_dart_iterator_of_orbit<Map,B1,B2,B3,B4,B5,B6,B7,B8,B9> Self;
-    typedef CMap_dart_iterator_of_orbit_generic<Map,false,
-                                                B1,B2,B3,B4,B5,B6,B7,B8,B9> Base;
-
-    typedef typename Base::Dart_handle Dart_handle;
-    
-    /// Main constructor.
-    CMap_dart_iterator_of_orbit(Map& amap, Dart_handle adart):
-      Base(amap, adart)
-    {}
-  };
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   //****************************************************************************
   template<typename Map_,int i,int d=Map_::dimension,bool Const=false>
   class CMap_dart_iterator_of_cell: 

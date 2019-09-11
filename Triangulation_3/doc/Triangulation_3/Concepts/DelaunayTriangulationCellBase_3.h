@@ -11,8 +11,8 @@ in the cell an operator that computes its circumcenter.
 
 \cgalRefines `TriangulationCellBase_3`
 
-\cgalHasModel CGAL::Delaunay_triangulation_cell_base_3 
-\cgalHasModel CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3
+\cgalHasModel `CGAL::Delaunay_triangulation_cell_base_3` 
+\cgalHasModel `CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3`
 
 \sa `DelaunayTriangulationTraits_3`
 
@@ -26,7 +26,7 @@ public:
 typedef DelaunayTriangulationTraits_3::Point_3 Point;
 /// @}
 
-/// \name Access functions
+/// \name Access Functions
 /// @{
 /*!
 Returns the circumcenter of the cell. 

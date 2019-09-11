@@ -7,15 +7,17 @@
 #include <QtDebug>
 
 #include "Scene_polygon_soup_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+
 #include <CGAL/array.h>
+#include <CGAL/Three/Three.h>
 #include "Messages_interface.h"
+#include "ui_Repair_soup.h"
 using namespace CGAL::Three;
 class Polyhedron_demo_orient_soup_plugin : 
   public QObject,
@@ -23,7 +25,7 @@ class Polyhedron_demo_orient_soup_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "orient_soup_plugin.json")
 
 public:
   void init(QMainWindow* mainWindow,
@@ -34,9 +36,8 @@ public:
       if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
         return true;
       else
-        if (action==actionShuffle &&
-            (qobject_cast<Scene_polyhedron_item*>(scene->item(index))
-            ||qobject_cast<Scene_surface_mesh_item*>(scene->item(index)))
+        if (action==actionShuffle && 
+            qobject_cast<Scene_surface_mesh_item*>(scene->item(index))
             )
           return true;
     }
@@ -46,11 +47,11 @@ public:
   QList<QAction*> actions() const;
 
 public Q_SLOTS:
-  void orientPoly();
   void orientSM();
   void shuffle();
   void displayNonManifoldEdges();
   void createPointsAndPolyline();
+  void cleanSoup();
 
 private:
   template<class Item>
@@ -62,11 +63,11 @@ private:
   CGAL::Three::Scene_interface* scene;
   Messages_interface* messages;
   QMainWindow* mw;
-  QAction* actionOrientPoly;
   QAction* actionOrientSM;
   QAction* actionShuffle;
   QAction* actionNMToPolyline;
   QAction* actionDisplayNonManifoldEdges;
+  QAction* actionClean;
 
 }; // end Polyhedron_demo_orient_soup_plugin
 
@@ -77,12 +78,7 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   scene = scene_interface;
   mw = mainWindow;
   messages = m;
-  actionOrientPoly = new QAction(tr("&Orient Polygon Soup (as a polyhedron)"), mainWindow);
-  actionOrientPoly->setObjectName("actionOrientPoly");
-  actionOrientPoly->setProperty("subMenuName", "Polygon Mesh Processing");
-  connect(actionOrientPoly, SIGNAL(triggered()),
-          this, SLOT(orientPoly()));
-  actionOrientSM = new QAction(tr("&Orient Polygon Soup (as a surface_mesh)"), mainWindow);
+  actionOrientSM = new QAction(tr("&Orient Polygon Soup"), mainWindow);
   actionOrientSM->setObjectName("actionOrientSM");
   actionOrientSM->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionOrientSM, SIGNAL(triggered()),
@@ -102,15 +98,19 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   actionNMToPolyline->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionNMToPolyline, &QAction::triggered,
           this, &Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline);
+  actionClean = new QAction(tr("Clean Polygon Soup"), mainWindow);
+  actionClean->setProperty("subMenuName", "Polygon Mesh Processing");
+  connect(actionClean, &QAction::triggered,
+          this, &Polyhedron_demo_orient_soup_plugin::cleanSoup);
 }
 
 QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
   return QList<QAction*>()
-      << actionOrientPoly
       << actionOrientSM
       << actionShuffle
       << actionNMToPolyline
-      << actionDisplayNonManifoldEdges;
+      << actionDisplayNonManifoldEdges
+      << actionClean;
 }
 
 void set_vcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
@@ -123,7 +123,7 @@ void set_vcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
   boost::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
   assert(colors.size()==smesh->number_of_vertices());
   int color_id = 0;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh))
+  for(vertex_descriptor vd : vertices(*smesh))
       vcolors[vd] = colors[color_id++];
 }
 
@@ -137,53 +137,8 @@ void set_fcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
    boost::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
   assert(colors.size()==smesh->number_of_faces());
   int color_id = 0;
-  BOOST_FOREACH(face_descriptor fd, faces(*smesh))
+  for(face_descriptor fd : faces(*smesh))
       fcolors[fd] = colors[color_id++];
-}
-
-void Polyhedron_demo_orient_soup_plugin::orientPoly()
-{
-  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
-  {
-    Scene_polygon_soup_item* item =
-      qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
-
-    if(item)
-    {
-      int create_items = QMessageBox::question(mw, "Orient Mesh", "Do you wish to extract the eventual non manifold simplicies ?");
-      if(create_items == QMessageBox::Yes)
-      {
-        createPointsAndPolyline();
-      }
-      if(!item->orient()) {
-         QMessageBox::information(mw, tr("Not orientable without self-intersections"),
-                                      tr("The polygon soup \"%1\" is not directly orientable."
-                                         " Some vertices have been duplicated and some self-intersections"
-                                         " have been created.")
-                                      .arg(item->name()));
-      }
-
-
-        Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
-        if(item->exportAsPolyhedron(poly_item->polyhedron())) {
-          poly_item->setName(item->name());
-          poly_item->setColor(item->color());
-          poly_item->setRenderingMode(item->renderingMode());
-          poly_item->setVisible(item->visible());
-          poly_item->invalidateOpenGLBuffers();
-          poly_item->setProperty("source filename", item->property("source filename"));
-          poly_item->setProperty("loader_name", item->property("loader_name"));
-          scene->replaceItem(index, poly_item);
-          item->deleteLater();
-        } else {
-          item->invalidateOpenGLBuffers();
-          scene->itemChanged(item);
-        }
-    }
-    else{
-      messages->warning(tr("This function is only applicable on polygon soups."));
-    }
-  }
 }
 
 void Polyhedron_demo_orient_soup_plugin::orientSM()
@@ -229,14 +184,14 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
       QApplication::restoreOverrideCursor();
     }
     else{
-      messages->warning(tr("This function is only applicable on polygon soups."));
+      CGAL::Three::Three::warning(tr("This function is only applicable on polygon soups."));
     }
   }
 }
 
 void Polyhedron_demo_orient_soup_plugin::shuffle()
 {
-  BOOST_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
   {
     Scene_polygon_soup_item* soup_item =
         qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
@@ -245,13 +200,6 @@ void Polyhedron_demo_orient_soup_plugin::shuffle()
       QApplication::setOverrideCursor(Qt::WaitCursor);
       soup_item->shuffle_orientations();
       QApplication::restoreOverrideCursor();
-      continue;
-    }
-
-    Scene_polyhedron_item* poly_item =
-        qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-    if(poly_item) {
-      apply_shuffle(poly_item, index);
       continue;
     }
     Scene_surface_mesh_item* sm_item =
@@ -313,12 +261,12 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
     if(nm_vertices.empty())
     {
       delete points;
-      messages->information(tr("There is no non-manifold vertex in this soup."));
+      CGAL::Three::Three::information(tr("There is no non-manifold vertex in this soup."));
     }
     else
     {
         items_created = true;
-      BOOST_FOREACH(std::size_t id, nm_vertices)
+      for(std::size_t id : nm_vertices)
       {
         points->point_set()->insert(item->points()[id]);
       }
@@ -332,7 +280,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
     {
       Scene_polylines_item* poly = 
           new Scene_polylines_item();
-      BOOST_FOREACH(Polygon_soup::Edge edge, nm_edges)
+      for(Polygon_soup::Edge edge : nm_edges)
       {
         Point_3 a(item->points()[edge[0]]), b(item->points()[edge[1]]);
         Scene_polylines_item::Polyline new_edge;
@@ -348,7 +296,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
     }
     else
     {
-      messages->information(tr("There is no non-manifold edge in this soup."));
+      CGAL::Three::Three::information(tr("There is no non-manifold edge in this soup."));
     }
     QApplication::restoreOverrideCursor();
     if(!items_created)
@@ -361,12 +309,13 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
     Scene_polygon_soup_item* item)
 {
   typedef std::pair<std::size_t, std::size_t>                              V_ID_pair;
-  typedef std::map<V_ID_pair, boost::container::flat_set<std::size_t> >    Edge_map;
-  typedef std::set<V_ID_pair>                                              Marked_edges;
   typedef CGAL::Polygon_mesh_processing::internal::Polygon_soup_orienter<Polygon_soup::Points, 
       Polygon_soup::Polygons> PSO;
+  typedef PSO::Edge_map Edge_map;
+  typedef std::set<V_ID_pair>                                              Marked_edges;
       
   Edge_map edges;
+  edges.resize(item->points().size());
   Marked_edges m_edges;
   PSO::fill_edge_map(edges, m_edges, item->polygons());
   
@@ -375,7 +324,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
   std::size_t nb_polygons=item->polygons().size();
   for(std::size_t ip=0; ip<nb_polygons; ++ip)
   {
-    BOOST_FOREACH(std::size_t iv, item->polygons()[ip])
+    for(std::size_t iv : item->polygons()[ip])
       incident_polygons_per_vertex[iv].push_back(ip);
   }
 
@@ -389,7 +338,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
     std::set<std::size_t> visited_polygons;
 
     bool first_pass = true;
-    BOOST_FOREACH(std::size_t p_id, incident_polygons)
+    for(std::size_t p_id : incident_polygons)
     {
       if ( !visited_polygons.insert(p_id).second ) continue; // already visited
 
@@ -405,13 +354,13 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
       CGAL_assertion( pvid!=nbv );
       std::size_t p = item->polygons()[p_id][ (pvid+nbv-1)%nbv ];
       std::size_t n = item->polygons()[p_id][ (pvid+1)%nbv ];
-      const CGAL::cpp11::array<std::size_t,3>& neighbors = CGAL::make_array(p,v_id,n);
+      const std::array<std::size_t,3>& neighbors = CGAL::make_array(p,v_id,n);
 
       std::size_t next = neighbors[2];
 
       do{
         std::size_t other_p_id;
-        CGAL::cpp11::tie(next, other_p_id) = PSO::next_cw_vertex_around_source(v_id, next, item->polygons(), edges, m_edges);
+        std::tie(next, other_p_id) = PSO::next_cw_vertex_around_source(v_id, next, item->polygons(), edges, m_edges);
         if (next==v_id) break;
         visited_polygons.insert(other_p_id);
       }
@@ -422,7 +371,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
         next = neighbors[0];
         do{
           std::size_t other_p_id;
-          CGAL::cpp11::tie(next, other_p_id) = PSO::next_ccw_vertex_around_target(next, v_id, item->polygons(), edges, m_edges);
+          std::tie(next, other_p_id) = PSO::next_ccw_vertex_around_target(next, v_id, item->polygons(), edges, m_edges);
           if (next==v_id) break;
           visited_polygons.insert(other_p_id);
         }
@@ -434,11 +383,43 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
   
   //remove vertices already in NM edges
   //check edges of p_id. 
-  BOOST_FOREACH(Scene_polygon_soup_item::Edge edge, item->non_manifold_edges())
+  for(Scene_polygon_soup_item::Edge edge : item->non_manifold_edges())
   {
     vertices_to_duplicate.erase(edge[0]);
     vertices_to_duplicate.erase(edge[1]);
   }
+}
+
+
+class RepairDialog :
+    public QDialog,
+    public Ui::Dialog
+{
+  Q_OBJECT
+public:
+  RepairDialog(QWidget* =0)
+  {
+    setupUi(this);
+  }
+};
+
+void Polyhedron_demo_orient_soup_plugin::cleanSoup()
+{
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+  
+  Scene_polygon_soup_item* item =
+      qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+  
+  if(!item)
+    return;
+  RepairDialog dlg;
+  if(!dlg.exec())
+    return;
+  bool b1 = dlg.eadCheckbox->isChecked(), b2 = dlg.rsoCheckBox->isChecked();
+  item->repair(b1, b2);
+  
+  item->invalidateOpenGLBuffers();
+  item->itemChanged();
 }
 #include "Orient_soup_plugin.moc"
 

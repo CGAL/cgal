@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKerneldConceptsUni
+\ingroup PkgAlgebraicKernelDConceptsUni
 \cgalConcept
 
 Computes for a given pair of univariate polynomials \f$ p_1\f$, \f$ p_2\f$ their 

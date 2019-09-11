@@ -3,12 +3,12 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/algorithm.h>
-#ifdef CGAL_USE_SURFACE_MESH
+#include <CGAL/Three/Scene_item_rendering_helper.h>
+#include <CGAL/Three/Three.h>
+#include <CGAL/Three/Point_container.h>
+
+#include <CGAL/Polygon_mesh_processing/transform.h>
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Polyhedron_type.h"
-#include "Scene_polyhedron_item.h"
-#endif
 
 #include "Scene_facegraph_transform_item.h"
 #include "Scene_points_with_normal_item.h"
@@ -19,36 +19,37 @@
 #include <QMenu>
 #include <QMainWindow>
 #include <QDockWidget>
+#include <QDialog>
 #include <QApplication>
 #include <QTime>
 #include <QMessageBox>
 
 #include "ui_Transformation_widget.h"
-#ifdef CGAL_USE_SURFACE_MESH
+
+using namespace CGAL::Three;
+typedef Viewer_interface Vi;
+typedef Point_container Pc;
+
+#include "ui_MeshOnGrid_dialog.h"
 typedef Scene_surface_mesh_item Facegraph_item;
-#else
-typedef Scene_polyhedron_item Facegraph_item;
-#endif
 
 
-class Scene_transform_point_set_item : public Scene_item
+class Scene_transform_point_set_item : public Scene_item_rendering_helper
 {
   Q_OBJECT
   typedef Point_set_3<Kernel> Point_set;
 public:
   Scene_transform_point_set_item(Scene_points_with_normal_item *item, const CGAL::qglviewer::Vec& pos)
-    :Scene_item(1,1),
-      base(item),
+    : base(item),
       center_(pos),
       frame(new CGAL::Three::Scene_item::ManipulatedFrame())
   {
-    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     frame->setPosition(pos+offset);
     Point_set ps= *item->point_set();
     const Kernel::Point_3& p = ps.point(*(ps.begin()));
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
     CGAL::cpp98::random_shuffle (ps.begin(), ps.end());
-    std::vector<float> points;
     points.reserve(3*ps.size());
     for (Point_set::const_iterator it = ps.begin(); it != ps.first_selected(); it++)
     {
@@ -58,25 +59,32 @@ public:
       points.push_back(p.y()-center_.y);
       points.push_back(p.z()-center_.z);
     }
-    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-                 bbox.xmax(),bbox.ymax(),bbox.zmax());
+    setPointContainer(0, new Pc(Vi::PROGRAM_NO_SELECTION, false));
+    setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+                 bbox.xmax(),bbox.ymax(),bbox.zmax()));
+    
     nb_points = points.size();
-    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
-    program = getShaderProgram(Scene_facegraph_transform_item::PROGRAM_WITHOUT_LIGHT, viewer);
-    program->bind();
-
-    vaos[0]->bind();
-    buffers[0].bind();
-    buffers[0].allocate(points.data(),
-                        static_cast<int>(points.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[0].release();
-    vaos[0]->release();
-
-    program->release();
+    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+      initGL(viewer);
+    }
+    Pc* pc = getPointContainer(0);
+    pc->allocate(Pc::Vertices,
+                 points.data(),
+                 static_cast<int>(points.size()*sizeof(float)));
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      initializeBuffers(qobject_cast<Vi*>(v));
   }
-
+  
+  void initializeBuffers(Viewer_interface *v) const
+  {
+    Pc* pc = getPointContainer(0);
+    pc->initializeBuffers(v);
+    pc->setFlatDataSize(nb_points);
+    points.clear();
+    points.shrink_to_fit();
+  }
   bool manipulatable() const { return true; }
 
   Scene_item* clone()const{ return NULL; }
@@ -107,17 +115,13 @@ public:
         (nb_points /3 > 300000)) // arbitrary large value
       ratio_displayed = 3 * 300000. / (double)nb_points;
 
-    vaos[0]->bind();
-    program=getShaderProgram(PROGRAM_NO_SELECTION);
-    attribBuffers(viewer,PROGRAM_NO_SELECTION);
-    program->bind();
-    program->setAttributeValue("colors", QColor(Qt::green));
-    program->setUniformValue("f_matrix", f_matrix);
-    program->setUniformValue("is_selected", false);
-    viewer->glDrawArrays(GL_POINTS, 0,
-                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * nb_points)/3)));
-    vaos[0]->release();
-    program->release();
+    Pc* pc = getPointContainer(0);
+    std::size_t real_size = pc->getFlatDataSize();
+    pc->setFlatDataSize(ratio_displayed * real_size);
+    pc->setColor(QColor(Qt::green));
+    pc->setFrameMatrix(f_matrix);
+    pc->draw(viewer, true);
+    pc->setFlatDataSize(real_size);
   }
   bool keyPressEvent(QKeyEvent* e){
     if (e->key()==Qt::Key_S){
@@ -142,8 +146,8 @@ public:
     CGAL::qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
     CGAL::qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
 
-    _bbox = Bbox(min.x,min.y,min.z,
-                 max.x,max.y,max.z);
+    setBbox(Bbox(min.x,min.y,min.z,
+                 max.x,max.y,max.z));
   }
   bool isEmpty() const{return false;}
 Q_SIGNALS:
@@ -153,7 +157,7 @@ private:
   const Scene_points_with_normal_item* base;
   CGAL::qglviewer::Vec center_;
   CGAL::Three::Scene_item::ManipulatedFrame* frame;
-  mutable QOpenGLShaderProgram *program;
+  mutable std::vector<float> points;
   std::size_t nb_points;
   QMatrix4x4 f_matrix;
 
@@ -173,17 +177,20 @@ public:
   Polyhedron_demo_affine_transform_plugin():started(false){}
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionTransformPolyhedron;
+    return QList<QAction*>() << actionTransformPolyhedron
+                             << actionMeshOnGrid;
   }
 
-  bool applicable(QAction*) const {
-    return qobject_cast<Facegraph_item*>(scene->item(scene->mainSelectionIndex()))
-        || qobject_cast<Scene_facegraph_transform_item*>(scene->item(scene->mainSelectionIndex()))
-    #ifdef CGAL_USE_SURFACE_MESH
-        || qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()))
-        || qobject_cast<Scene_transform_point_set_item*>(scene->item(scene->mainSelectionIndex()))
-    #endif
-           ;
+  bool applicable(QAction* a) const {
+    if(a == actionMeshOnGrid)
+    {
+      return qobject_cast<Facegraph_item*>(scene->item(scene->mainSelectionIndex()));
+    }
+    else
+      return qobject_cast<Facegraph_item*>(scene->item(scene->mainSelectionIndex()))
+          || qobject_cast<Scene_facegraph_transform_item*>(scene->item(scene->mainSelectionIndex()))
+          || qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()))
+          || qobject_cast<Scene_transform_point_set_item*>(scene->item(scene->mainSelectionIndex()));
   }
   
   void init(QMainWindow* _mw, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
@@ -196,13 +203,15 @@ public:
     mw = _mw;
     this->scene = scene_interface;
 
+    actionMeshOnGrid = new QAction(
+                tr("Create a Grid of Surface Meshes")
+          , mw);
+    if(actionMeshOnGrid) {
+      connect(actionMeshOnGrid, SIGNAL(triggered()),this, SLOT(grid()));
+    }
 
     actionTransformPolyhedron = new QAction(
-      #ifdef CGAL_USE_SURFACE_MESH
-                tr("Affine Transformation for Surface Mesh")
-      #else
-                tr("Affine Transformation for Polyhedron")
-      #endif
+                tr("Affine Transformation")
           , mw);
     if(actionTransformPolyhedron) {
       connect(actionTransformPolyhedron, SIGNAL(triggered()),this, SLOT(go()));
@@ -211,19 +220,11 @@ public:
     transform_points_item = NULL;
 
     dock_widget = new QDockWidget(
-      #ifdef CGAL_USE_SURFACE_MESH
-          tr("Affine Transformation for Surface Mesh")
-      #else
-          tr("Affine Transformation for Polyhedron")
-      #endif
+          tr("Affine Transformation")
           , mw);
     ui.setupUi(dock_widget);
     dock_widget->setWindowTitle(tr(
-                              #ifdef CGAL_USE_SURFACE_MESH
-                                  "Affine Transformation for Surface Mesh"
-                              #else
-                                  "Affine Transformation for Polyhedron"
-                              #endif
+                                  "Affine Transformation"
                                   ));
     addDockWidget(dock_widget);
     dock_widget->hide();
@@ -246,12 +247,14 @@ public:
             this, &Polyhedron_demo_affine_transform_plugin::clear);
     connect(ui.undoButton, &QPushButton::clicked,
             this, &Polyhedron_demo_affine_transform_plugin::undo);
+    connect(ui.validatePushButton, &QPushButton::clicked, 
+            this, &Polyhedron_demo_affine_transform_plugin::end);
+    //initial state is Translation: no need for this one
+    ui.lineEditA->hide();
   }
 
   void start(FaceGraph *facegraph, const QString name, const Scene_item::Bbox&);
-#ifdef CGAL_USE_SURFACE_MESH
   void start(Scene_points_with_normal_item*);
-#endif
   void end();
   void closure()
   {
@@ -259,10 +262,10 @@ public:
   }
   
 private:
-
   QDockWidget* dock_widget;
   Ui::TransformationWidget ui;
   QAction*  actionTransformPolyhedron;
+  QAction* actionMeshOnGrid;
   Scene_facegraph_transform_item* transform_item;
   Scene_transform_point_set_item* transform_points_item;
   CGAL::Three::Scene_interface::Item_id tr_item_index;
@@ -306,6 +309,7 @@ private:
   template<class Item>
   void normalize(Item*);
 public Q_SLOTS:
+  void grid();
   void go();
   void transformed_killed();
 
@@ -336,14 +340,14 @@ public Q_SLOTS:
 
     if(!is_point_set)
     {
-      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
       transform_item->manipulatedFrame()->setFromMatrix(matrix);
       transform_item->manipulatedFrame()->translate(offset);
       transform_item->itemChanged();
     }
     else
     {
-      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
       transform_points_item->manipulatedFrame()->setFromMatrix(matrix);
       transform_points_item->manipulatedFrame()->translate(offset);
       transform_points_item->itemChanged();
@@ -388,32 +392,97 @@ public Q_SLOTS:
 
 }; // end class Polyhedron_demo_affine_transform_plugin
 
+class GridDialog :
+    public QDialog,
+    public Ui::GridDialog
+{
+  Q_OBJECT
+public:
+  GridDialog(QWidget* =0)
+  {
+    setupUi(this);
+  }
+};
+
+void Polyhedron_demo_affine_transform_plugin::grid()
+{
+      Facegraph_item* item = 
+          qobject_cast<Facegraph_item*>(scene->item(scene->mainSelectionIndex()));
+      if(!item)
+        return;
+      
+      
+      FaceGraph m = *item->face_graph();
+      
+      Scene_item::Bbox b = item->bbox();
+      
+      
+      double x_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)), 
+                                                   Kernel::Point_3(b.max(0), b.min(1), b.min(2))))),
+          y_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)), 
+                                                Kernel::Point_3(b.min(0), b.max(1), b.min(2))))),
+          z_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)), 
+                                                Kernel::Point_3(b.min(0), b.min(1), b.max(2)))));
+      
+      GridDialog dialog(mw);
+      dialog.x_space_doubleSpinBox->setValue(x_t);
+      dialog.y_space_doubleSpinBox->setValue(y_t);
+      dialog.z_space_doubleSpinBox->setValue(z_t);
+      if(!dialog.exec())
+        return;
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      int i_max=dialog.x_spinBox->value(),
+          j_max=dialog.y_spinBox->value(),
+          k_max=dialog.z_spinBox->value();
+      x_t = dialog.x_space_doubleSpinBox->value();
+      y_t = dialog.y_space_doubleSpinBox->value();
+      z_t = dialog.z_space_doubleSpinBox->value();
+      
+      for(int i = 0; i < i_max; ++i)
+      {
+        for(int j = 0; j< j_max; ++j)
+        {
+          for(int k = 0; k< k_max; ++k)
+          {
+            FaceGraph e;
+            CGAL::copy_face_graph(m,e);
+            
+            Kernel::Aff_transformation_3 trans(CGAL::TRANSLATION, Kernel::Vector_3(i*x_t,j*y_t,k*z_t));
+            CGAL::Polygon_mesh_processing::transform(trans, e);
+            Facegraph_item* t_item = new Facegraph_item(e);
+            t_item->setName(tr("%1 %2%3%4")
+                            .arg(item->name())
+                            .arg(i)
+                            .arg(j)
+                            .arg(k));
+            scene->addItem(t_item);
+          }
+        }
+      }
+      QApplication::restoreOverrideCursor();
+}
 void Polyhedron_demo_affine_transform_plugin::go(){
   if (!started){
     Scene_item* item = scene->item(scene->mainSelectionIndex());
-#ifdef CGAL_USE_SURFACE_MESH
     Scene_points_with_normal_item* points_item = NULL;
-#endif
     Facegraph_item* poly_item = qobject_cast<Facegraph_item*>(item);
     if(!poly_item)
     {
-#ifdef CGAL_USE_SURFACE_MESH
       points_item = qobject_cast<Scene_points_with_normal_item*>(item);
       if(!points_item)
-#endif
         return;
     }
     dock_widget->show();
+    dock_widget->raise();
     started=true;
     actionTransformPolyhedron->setText("Apply affine transformation");
     if(poly_item)
     {
       start(poly_item->polyhedron(), poly_item->name(), poly_item->bbox());
     }
-#ifdef CGAL_USE_SURFACE_MESH
     else if(points_item)
       start(points_item);
-#endif
+    ui.validatePushButton->setEnabled(true);
   }
   else
     end();
@@ -454,7 +523,7 @@ void Polyhedron_demo_affine_transform_plugin::start(FaceGraph *facegraph, const 
   scene->setSelectedItem(tr_item_index);
   resetTransformMatrix();
 }
-#ifdef CGAL_USE_SURFACE_MESH
+
 void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_item* points_item){
   QApplication::setOverrideCursor(Qt::PointingHandCursor);
 
@@ -482,13 +551,14 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
   scene->setSelectedItem(tr_item_index);
   resetTransformMatrix();
 }
-#endif
+
 
 void Polyhedron_demo_affine_transform_plugin::end(){
+  ui.validatePushButton->setEnabled(false);
   QApplication::restoreOverrideCursor();
   double matrix[16];
   transformMatrix(&matrix[0]);
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
   matrix[12]-=offset.x;
   matrix[13]-=offset.y;
   matrix[14]-=offset.z;
@@ -519,33 +589,28 @@ void Polyhedron_demo_affine_transform_plugin::end(){
     delete transform_item;
     transform_item = NULL;
   }
-#ifdef CGAL_USE_SURFACE_MESH
   else if(transform_points_item)
   {
-    const Point_set *base_ps = transform_points_item->getBase()->point_set();
-    Point_set* new_ps = new Point_set();
-    new_ps->reserve(base_ps->size());
+    Scene_points_with_normal_item* new_item
+      = new Scene_points_with_normal_item (*(transform_points_item->getBase()));
+    Point_set* new_ps = new_item->point_set();
     CGAL::qglviewer::Vec c = transform_points_item->center();
-    for(Point_set::const_iterator it = base_ps->begin(); it != base_ps->end(); ++ it)
+
+    for(Point_set::Index idx : *new_ps)
     {
-      QVector3D vec = transform_matrix * QVector3D(base_ps->point(*it).x() - c.x,
-                                                   base_ps->point(*it).y() - c.y,
-                                                   base_ps->point(*it).z() - c.z);
-      new_ps->insert(Kernel::Point_3 (vec.x(), vec.y(), vec.z()));
+      QVector3D vec = transform_matrix * QVector3D(new_ps->point(idx).x() - c.x,
+                                                   new_ps->point(idx).y() - c.y,
+                                                   new_ps->point(idx).z() - c.z);
+      new_ps->point(idx) = Kernel::Point_3 (vec.x(), vec.y(), vec.z());
     }
-
-
-    Scene_points_with_normal_item* new_item=new Scene_points_with_normal_item();
-    for(Point_set::const_iterator it = new_ps->begin(); it != new_ps->end(); ++ it)
-      new_item->point_set()->insert(new_ps->point(*it));
+    
     new_item->setName(tr("%1_transformed").arg(transform_points_item->getBase()->name()));
-
     scene->replaceItem(tr_item_index,new_item);
     delete transform_points_item;
     transform_points_item = NULL;
   }
-#endif
   dock_widget->hide();
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
@@ -580,7 +645,7 @@ void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
     matrix(1,3) -= transform_points_item->center().y;
     matrix(2,3) -= transform_points_item->center().z;
   }
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
   matrix.data()[12]-=offset.x;
   matrix.data()[13]-=offset.y;
   matrix.data()[14]-=offset.z;

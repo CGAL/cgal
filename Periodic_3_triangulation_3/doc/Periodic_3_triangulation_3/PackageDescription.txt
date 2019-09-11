@@ -1,18 +1,18 @@
-/// \defgroup PkgPeriodic3Triangulation3 3D Periodic Triangulations Reference
+/// \defgroup PkgPeriodic3Triangulation3Ref 3D Periodic Triangulations Reference
 
 /// \defgroup PkgPeriodic3Triangulation3Concepts Concepts
-/// \ingroup PkgPeriodic3Triangulation3
+/// \ingroup PkgPeriodic3Triangulation3Ref
 
 /// \defgroup PkgPeriodic3Triangulation3MainClasses Main Classes
-/// \ingroup PkgPeriodic3Triangulation3
+/// \ingroup PkgPeriodic3Triangulation3Ref
 
 /// \defgroup PkgPeriodic3Triangulation3TraitsClasses Traits Classes
-/// \ingroup PkgPeriodic3Triangulation3
+/// \ingroup PkgPeriodic3Triangulation3Ref
 
 /*!
-\addtogroup PkgPeriodic3Triangulation3
+\addtogroup PkgPeriodic3Triangulation3Ref
 
-\cgalPkgDescriptionBegin{3D Periodic Triangulations,PkgPeriodic3Triangulation3Summary}
+\cgalPkgDescriptionBegin{3D Periodic Triangulations,PkgPeriodic3Triangulation3}
 \cgalPkgPicture{p3Delaunay3_small.jpg}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Manuel Caroli, Aymeric Pellé, Mael Rouxel-Labbé, and Monique Teillaud}
@@ -21,11 +21,11 @@ in the three dimensional flat torus. Triangulations are built incrementally and
 can be modified by insertion or removal of vertices. They offer point location
 facilities. The package provides Delaunay and regular triangulations and offers
 nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
-\cgalPkgManuals{Chapter_3D_Periodic_Triangulations,PkgPeriodic3Triangulation3}
+\cgalPkgManuals{Chapter_3D_Periodic_Triangulations,PkgPeriodic3Triangulation3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgTDS3Summary}
+\cgalPkgDependsOn{\ref PkgTDS3}
 \cgalPkgBib{cgal:ct-pt3}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{3D Periodic Delaunay Triangulation,periodic_3_triangulation_3.zip,3D Periodic Lloyd,periodic_3_lloyd.zip}
@@ -71,7 +71,7 @@ of the concept `Periodic_3Offset_3`.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `Periodic_3TriangulationTraits_3`
 - `Periodic_3DelaunayTriangulationTraits_3`
@@ -87,9 +87,9 @@ of the concept `Periodic_3Offset_3`.
 
 - `Periodic_3Offset_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
-### Main Classes ###
+\cgalCRPSubsection{Main Classes}
 
 - `CGAL::Periodic_3_triangulation_3<PT,TDS>`
 - `CGAL::Periodic_3_Delaunay_triangulation_3<PT,TDS>`
@@ -101,13 +101,13 @@ of the concept `Periodic_3Offset_3`.
 - `CGAL::Periodic_3_triangulation_ds_cell_base_3<>`
 - `CGAL::Periodic_3_offset_3`
 
-### Traits Classes ###
+\cgalCRPSubsection{Traits Classes}
 
 - `CGAL::Periodic_3_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 - `CGAL::Periodic_3_Delaunay_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 - `CGAL::Periodic_3_regular_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 
-## Enums ##
+\cgalCRPSection{Enums}
 
 - `CGAL::Periodic_3_triangulation_3::Iterator_type`
 - `CGAL::Periodic_3_triangulation_3::Locate_type`

@@ -1,18 +1,8 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Polygon_mesh_processing_Examples )
-
-
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
-
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -23,10 +13,6 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -51,23 +37,13 @@ endif()
 # include for local directory
 
 # include for local package
-include_directories( BEFORE ../../include )
-
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
 
-include( CGAL_CreateSingleSourceCGALProgram )
-
-find_package( TBB )
 create_single_source_cgal_program( "hausdorff_distance_remeshing_example.cpp")
-if( TBB_FOUND )
-  CGAL_target_use_TBB(hausdorff_distance_remeshing_example)
-else()
-  message( STATUS "NOTICE: Intel TBB was not found. hausdorff_distance_example will use sequential code." )
-endif()
 
 if (EIGEN3_FOUND)
   # Executables that require Eigen 3.2
@@ -76,6 +52,8 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program( "hole_filling_example.cpp" )
   create_single_source_cgal_program( "hole_filling_example_SM.cpp" )
   create_single_source_cgal_program( "refine_fair_example.cpp")
+  create_single_source_cgal_program( "shape_smoothing_example.cpp")
+
 endif(EIGEN3_FOUND)
 
 create_single_source_cgal_program( "self_intersections_example.cpp" )
@@ -86,7 +64,7 @@ create_single_source_cgal_program( "point_inside_example.cpp")
 create_single_source_cgal_program( "triangulate_faces_example.cpp")
 create_single_source_cgal_program( "connected_components_example.cpp")
 create_single_source_cgal_program( "face_filtered_graph_example.cpp")
-create_single_source_cgal_program( "polygon_soup_example.cpp")
+create_single_source_cgal_program( "orient_polygon_soup_example.cpp")
 create_single_source_cgal_program( "triangulate_polyline_example.cpp")
 create_single_source_cgal_program( "mesh_slicer_example.cpp")
 #create_single_source_cgal_program( "remove_degeneracies_example.cpp")
@@ -104,6 +82,9 @@ create_single_source_cgal_program( "random_perturbation_SM_example.cpp" )
 create_single_source_cgal_program( "corefinement_LCC.cpp")
 create_single_source_cgal_program( "hole_filling_example_LCC.cpp" )
 create_single_source_cgal_program( "detect_features_example.cpp" )
+create_single_source_cgal_program( "manifoldness_repair_example.cpp" )
+create_single_source_cgal_program( "repair_polygon_soup_example.cpp" )
+create_single_source_cgal_program( "mesh_smoothing_example.cpp")
 
 if(OpenMesh_FOUND)
 create_single_source_cgal_program( "compute_normals_example_OM.cpp" )
@@ -125,5 +106,16 @@ create_single_source_cgal_program( "triangulate_faces_example_OM.cpp")
 target_link_libraries( triangulate_faces_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif(OpenMesh_FOUND)
 
+find_package( TBB )
+if( TBB_FOUND )
+  CGAL_target_use_TBB(hausdorff_distance_remeshing_example)
+else()
+  message( STATUS "NOTICE: Intel TBB was not found. Sequential code will be used." )
+endif()
 
+find_package(Ceres QUIET)
+if(TARGET ceres)
+  target_compile_definitions( mesh_smoothing_example PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+  target_link_libraries( mesh_smoothing_example PRIVATE ceres )
+endif(TARGET ceres)
 

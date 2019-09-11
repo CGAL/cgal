@@ -28,7 +28,6 @@
 #include <CGAL/use.h>
 
 #include <boost/utility/result_of.hpp>
-
 #include <iterator>
 #include <utility>
 #include <vector>
@@ -59,7 +58,7 @@ struct Data_access
 };
 
 //the interpolation functions:
-template < class ForwardIterator, class ValueFunctor >
+  template < class ForwardIterator, class ValueFunctor>
 typename boost::result_of<
            ValueFunctor(typename std::iterator_traits<ForwardIterator>::value_type::first_type)>
              ::type::first_type
@@ -67,19 +66,21 @@ linear_interpolation(ForwardIterator first, ForwardIterator beyond,
                      const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                      ValueFunctor value_function)
 {
+  CGAL_precondition(first != beyond);
   CGAL_precondition(norm > 0);
 
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
   typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 result_type;
   typedef typename result_type::first_type                                        Value_type;
 
-  Value_type result(0);
-  result_type val;
+  result_type val = value_function(first->first);
+  CGAL_assertion(val.second);
+  Value_type result = (first->second / norm) * val.first;
+  ++first;
   for(; first!=beyond; ++first)
   {
     val = value_function(first->first);
-    CGAL_assertion(val.second);
-    result += (first->second / norm) * val.first;
+    result = result + (first->second / norm) * val.first;
   }
   return result;
 }
@@ -97,6 +98,7 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
                         GradFunctor gradient_function,
                         const Traits& traits)
 {
+  CGAL_precondition(first != beyond);
   CGAL_precondition(norm > 0);
 
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
@@ -145,6 +147,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
                         GradFunctor gradient_function,
                         const Traits& traits)
 {
+  CGAL_precondition(first != beyond);
   CGAL_precondition(norm >0);
 
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
@@ -227,6 +230,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
                                GradFunctor gradient_function,
                                const Traits& traits)
 {
+  CGAL_precondition(first != beyond);
   CGAL_precondition(norm > 0);
 
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
@@ -300,6 +304,7 @@ farin_c1_interpolation(RandomAccessIterator first,
                        GradFunctor gradient_function,
                        const Traits& traits)
 {
+  CGAL_precondition(first != beyond);
   CGAL_precondition(norm >0);
 
   typedef typename std::iterator_traits<RandomAccessIterator>::value_type::first_type  arg_type;

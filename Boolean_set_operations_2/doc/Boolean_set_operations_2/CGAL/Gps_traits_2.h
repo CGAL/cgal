@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBooleanSetOperations2
+\ingroup PkgBooleanSetOperations2Ref
 
 The traits class `Gps_traits_2` models the concept 
 `GeneralPolygonSetTraits_2`. It inherits from the instantiated 
@@ -19,8 +19,6 @@ of `GpsTraitsGeneralPolygon_2`. By default, the latter is instantiated by
 template< typename ArrTraits, typename GeneralPolygon_t >
 class Gps_traits_2 {
 public:
-
-/// @}
 
 }; /* end Gps_traits_2 */
 } /* end namespace CGAL */

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3
+\ingroup PkgTriangulation3Ref
 
 fills the face graph `tm` with the <A HREF="https://en.wikipedia.org/wiki/Simplicial_complex#Closure.2C_star.2C_and_link">link</a> of triangulation vertex `vh`.  
 

@@ -72,13 +72,13 @@ namespace Qt {
   GraphicsViewNavigation::eventFilter(QObject *obj, QEvent *event)
   {
     QGraphicsView* v = qobject_cast<QGraphicsView*>(obj);
-    if(v == NULL) {
+    if(v == nullptr) {
       QWidget* viewport = qobject_cast<QWidget*>(obj);
-      if(viewport == NULL) {
+      if(viewport == nullptr) {
         return false;
       }
       v = qobject_cast<QGraphicsView*>(viewport->parent());
-      if(v == NULL) {
+      if(v == nullptr) {
         return false;
       }
     }
@@ -302,7 +302,7 @@ namespace Qt {
       v->centerOn(new_center);
 
       // QGraphicsView::centerOn makes rounding errors.
-      // The following two "if" make them unnoticable when dx==0 or dy==0.
+      // The following two "if" make them unnoticeable when dx==0 or dy==0.
       if(dx == 0) {
         v->horizontalScrollBar()->setValue(horizontalScrollBarValue);
       }

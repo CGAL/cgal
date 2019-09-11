@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3GeometricConcepts
+\ingroup PkgCircularKernel3GeometricConcepts
 \cgalConcept
 
 Concept for line segments supported by a line that is a model of 
@@ -17,8 +17,6 @@ Concept for line segments supported by a line that is a model of
 
 class SphericalKernel::LineArc_3 {
 public:
-
-/// @}
 
 }; /* end SphericalKernel::LineArc_3 */
 

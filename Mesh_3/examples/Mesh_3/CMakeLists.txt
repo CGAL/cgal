@@ -2,12 +2,11 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Mesh_3_Examples )
 
-cmake_minimum_required(VERSION 2.8.11)
 
 
-include_directories(../../include)
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
                 -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
 
@@ -15,10 +14,15 @@ if ( MESH_3_VERBOSE )
   add_definitions(-DCGAL_MESH_3_VERBOSE)
 endif()
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
 find_package(CGAL COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
+
   find_package(Boost)
 
   # Activate concurrency ? (turned OFF by default)
@@ -48,23 +52,23 @@ if ( CGAL_FOUND )
     include( ${EIGEN3_USE_FILE} )
   endif()
   
- set(VTK_LIBS "")
-      find_package(VTK QUIET COMPONENTS vtkImagingGeneral  vtkIOImage NO_MODULE)
-      if(VTK_FOUND)
-          include(${VTK_USE_FILE})
-          if ("${VTK_VERSION_MAJOR}" GREATER "5")
-            message(STATUS "VTK found")
-            set( VTK_LIBS vtkImagingGeneral vtkIOImage )
-          else()
-            message(STATUS "VTK version 6.0 or greater is required")
-          endif()
-      else()
-        message(STATUS "VTK was not found")
+  find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
+  if(VTK_FOUND)
+    if(VTK_USE_FILE)
+      include(${VTK_USE_FILE})
+    endif()
+    if ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
+      message(STATUS "VTK found")
+      if(TARGET VTK::IOImage)
+        set(VTK_LIBRARIES VTK::ImagingGeneral VTK::IOImage)
       endif()
+    else()
+      message(STATUS "VTK version 6.0 or greater is required")
+      endif()
+    else()
+      message(STATUS "VTK was not found")
+    endif()
 
-
-  if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
-    include( CGAL_CreateSingleSourceCGALProgram )
 
     # Compilable examples
     create_single_source_cgal_program( "mesh_hybrid_mesh_domain.cpp" )
@@ -79,14 +83,18 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "mesh_polyhedral_domain_sm.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_surface_inside.cpp" )
     create_single_source_cgal_program( "remesh_polyhedral_surface.cpp" )
+    create_single_source_cgal_program( "remesh_polyhedral_surface_sm.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
+    create_single_source_cgal_program( "mesh_polyhedral_domain_with_features_sm.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_lipschitz_sizing.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_complex.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_complex_sm.cpp" )
     if( WITH_CGAL_ImageIO )
-      if( VTK_FOUND AND "${VTK_VERSION_MAJOR}" GREATER "5" )
+      if( VTK_FOUND AND ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5) )
         add_executable ( mesh_3D_gray_vtk_image mesh_3D_gray_vtk_image.cpp )
-        target_link_libraries(  mesh_3D_gray_vtk_image ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${VTK_LIBS}) 
+        target_link_libraries(  mesh_3D_gray_vtk_image ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${VTK_LIBRARIES})
+        cgal_add_test( mesh_3D_gray_vtk_image )
+        add_to_cached_list( CGAL_EXECUTABLE_TARGETS mesh_3D_gray_vtk_image )
       endif()
  
       create_single_source_cgal_program( "mesh_3D_gray_image.cpp" )
@@ -111,7 +119,8 @@ if ( CGAL_FOUND )
 #    create_single_source_cgal_program( "mesh_polyhedral_surface_tolerance_region.cpp" )
 #    create_single_source_cgal_program( "mesh_polyhedral_edge_tolerance_region.cpp" )
 
-    foreach(target
+    if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TBB_FOUND AND TARGET ${target})
+      foreach(target
         mesh_3D_image_with_features
         mesh_3D_image
         mesh_polyhedral_domain
@@ -127,14 +136,9 @@ if ( CGAL_FOUND )
         mesh_polyhedral_complex
         mesh_polyhedral_domain_with_features
         mesh_3D_image_variable_size)
-      if(TBB_FOUND AND TARGET ${target})
         CGAL_target_use_TBB(${target})
-      endif()
-    endforeach()
-
-  else()
-    message(STATUS "NOTICE: This program requires Boost >= 1.34.1, and will not be compiled.")
-  endif()
+      endforeach()
+    endif()
 
 else()
   message(STATUS "This program requires the CGAL library, and will not be compiled.")

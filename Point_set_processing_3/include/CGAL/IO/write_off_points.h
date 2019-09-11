@@ -36,10 +36,13 @@ namespace CGAL {
 
 
 /**
-   \ingroup PkgPointSetProcessingIO
+   \ingroup PkgPointSetProcessing3IO
    Saves the range of `points` (positions + normals, if available) to a .off ASCII stream.
    The function writes for each point a line with the x y z position
    followed by the nx ny nz normal (if available).
+
+   \note The <A HREF="https://en.cppreference.com/w/cpp/io/ios_base/precision">`precision()`</A> 
+         of the output stream might not be sufficient depending on the data to be written.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -57,7 +60,7 @@ namespace CGAL {
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
-   \return true on success.
+   \return `true` on success.
 */
 template <typename PointRange,
           typename NamedParameters
@@ -68,7 +71,8 @@ write_off_points(
   const PointRange& points,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
@@ -77,8 +81,8 @@ write_off_points(
   bool has_normals = !(boost::is_same<NormalMap,
                        typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value);
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
   
   CGAL_point_set_processing_precondition(points.begin() != points.end());
 

@@ -20,15 +20,11 @@
 //
 // Warning: this file is generated, see include/CGAL/licence/README.md
 
-
 #ifndef CGAL_LICENSE_SEARCHSTRUCTURES_H
 #define CGAL_LICENSE_SEARCHSTRUCTURES_H
 
 #include <CGAL/config.h>
 #include <CGAL/license.h>
-
-
-
 
 #ifdef CGAL_SEARCHSTRUCTURES_COMMERCIAL_LICENSE
 
@@ -42,8 +38,8 @@
 
 #    ifdef CGAL_LICENSE_ERROR
 #      error "Your commercial license for CGAL does not cover this release \
-of the dD Range and Segment Trees package. \
-You get this error, as you defined CGAL_LICENSE_ERROR."
+              of the dD Range and Segment Trees package. \
+              You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
 #  endif // CGAL_SEARCHSTRUCTURES_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
@@ -58,10 +54,10 @@ You get this error, as you defined CGAL_LICENSE_ERROR."
 
 #  ifdef CGAL_LICENSE_ERROR
 #    error "The macro CGAL_SEARCHSTRUCTURES_COMMERCIAL_LICENSE is not defined.\
- You use the CGAL dD Range and Segment Trees package under the terms of \
-the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
+            You use the CGAL dD Range and Segment Trees package under the terms of \
+            the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
 #endif // no CGAL_SEARCHSTRUCTURES_COMMERCIAL_LICENSE
 
-#endif // CGAL_LICENSE_CHECK_SEARCHSTRUCTURES_H
+#endif // CGAL_LICENSE_SEARCHSTRUCTURES_H

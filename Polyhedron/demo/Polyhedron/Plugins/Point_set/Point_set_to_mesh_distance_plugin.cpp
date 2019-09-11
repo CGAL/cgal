@@ -1,11 +1,11 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include <QApplication>
 #include <QDockWidget>
 #include <QObject>
 #include <QAction>
 #include <QMainWindow>
-#include <Scene_polyhedron_item.h>
 #include <Scene_surface_mesh_item.h>
 #include <Scene_points_with_normal_item.h>
 #include "Messages_interface.h"
@@ -132,19 +132,16 @@ public:
   {
     if(scene->selectionIndices().size() != 2)
       return false;
-    Scene_polyhedron_item* poly = NULL;
     Scene_surface_mesh_item* sm = NULL;
     Scene_points_with_normal_item* pn = NULL;
     Q_FOREACH(Scene_interface::Item_id i,scene->selectionIndices())
     {
-      if(!poly)
-        poly = qobject_cast<Scene_polyhedron_item*>(scene->item(i));
       if(!sm)
         sm = qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
       if(!pn)
         pn = qobject_cast<Scene_points_with_normal_item*>(scene->item(i));
     }
-    if((!poly && ! sm)|| !pn)
+    if(! sm|| !pn)
       return false;
     else
       return true;
@@ -188,7 +185,7 @@ private Q_SLOTS:
     if(!item ||
        !item->point_set()->has_property_map<double>("distance"))
     {
-      messageInterface->warning("You must select the resulting point set.");
+      CGAL::Three::Three::warning("You must select the resulting point set.");
       return;
     }
     PMap distance_map;
@@ -198,26 +195,23 @@ private Q_SLOTS:
         it != item->point_set()->end(); ++ it)
    {
      if(distance <= distance_map[*it])
-       item->point_set()->select(it);
+       item->point_set()->select(*it);
    }
    item->invalidateOpenGLBuffers();
    item->itemChanged();
   }
   void perform()
   {
-    Scene_polyhedron_item* poly = NULL;
     Scene_surface_mesh_item* sm = NULL;
     Scene_points_with_normal_item* pn = NULL;
     Q_FOREACH(Scene_interface::Item_id i,scene->selectionIndices())
     {
-      if(!poly)
-        poly = qobject_cast<Scene_polyhedron_item*>(scene->item(i));
       if(!sm)
         sm = qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
       if(!pn)
         pn = qobject_cast<Scene_points_with_normal_item*>(scene->item(i));
     }
-    if((!poly && ! sm)|| !pn)
+    if(! sm|| !pn)
       return ;
     QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item(*pn);
@@ -241,10 +235,7 @@ private Q_SLOTS:
     points->collect_garbage();
     std::vector<double> distances(points->size());
     double hdist;
-    if(poly)
-      hdist = compute_distances(*poly->face_graph(), *points, distances);
-    else
-      hdist = compute_distances(*sm->face_graph(), *points, distances);
+    hdist = compute_distances(*sm->face_graph(), *points, distances);
     if(hdist == 0)
       hdist++;
     int id = 0;
@@ -279,6 +270,7 @@ private Q_SLOTS:
     if(!dock_widget->isVisible())
     {
       dock_widget->show();
+      dock_widget->raise();
     }
     perform();
   }

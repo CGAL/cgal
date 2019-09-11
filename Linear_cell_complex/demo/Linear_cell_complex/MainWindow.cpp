@@ -39,7 +39,7 @@ void subdivide_lcc_pqq (LCC & m);
 
 #define DELAY_STATUSMSG 1500
 
-MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
+MainWindow::MainWindow (QWidget * parent) : CGAL::Qt::DemosMainWindow (parent),
   nbcube      (0),
   dialogmesh  (this),
   dialogmenger(this),
@@ -78,7 +78,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 
   QObject::connect(&dialogmesh, SIGNAL(accepted()),
                    this, SLOT(onCreateMeshOk()));
-  this->viewer->setScene(&scene);
+  this->viewer->setScene(&scene, false);
 
   connect_actions ();
   this->addAboutDemo (":/cgal/help/about_Linear_cell_complex_3.html");

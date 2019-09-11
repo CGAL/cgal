@@ -19,7 +19,7 @@ circumcenter by calling `invalidate_weighted_circumcenter_cache()`.
 
 \cgalRefines `RegularTriangulationCellBase_3`
 
-\cgalHasModel CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3
+\cgalHasModel `CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3`
 
 \sa `RegularTriangulationTraits_3`
 

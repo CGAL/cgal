@@ -193,7 +193,7 @@ _get_unbounded_face(const Td_map_item& item,const Point_2& p,
     Td_map_item& left_v_item = td.locate(tr.left(),td_lt);
     CGAL_assertion(td_lt == TD::POINT);
     Halfedge_const_handle he;
-    if (boost::get<Td_active_vertex>(&left_v_item) != NULL) {
+    if (boost::get<Td_active_vertex>(&left_v_item) != nullptr) {
       Td_active_vertex v(boost::get<Td_active_vertex>(left_v_item));
       he = v.cw_he();
     }
@@ -225,7 +225,7 @@ _get_unbounded_face(const Td_map_item& item,const Point_2& p,
     Td_map_item& right_v_item = td.locate(tr.right(),td_lt);
     CGAL_assertion(td_lt == TD::POINT);
     Halfedge_const_handle he;
-    if (boost::get<Td_active_vertex>(&right_v_item)!= NULL) {
+    if (boost::get<Td_active_vertex>(&right_v_item)!= nullptr) {
       Td_active_vertex v(boost::get<Td_active_vertex>(right_v_item));
       he = v.cw_he();
     }

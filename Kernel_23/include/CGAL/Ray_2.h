@@ -102,23 +102,20 @@ public:
     return R().construct_second_point_2_object()(*this);
   }
 
-
-  Point_2
-  point(int i) const
+  Point_2 point(const FT i) const
   {
-    CGAL_kernel_precondition( i >= 0 );
-    
+    CGAL_kernel_precondition(i >= FT(0));
+
     typename R::Construct_vector_2 construct_vector;
     typename R::Construct_scaled_vector_2 construct_scaled_vector;
     typename R::Construct_translated_point_2 construct_translated_point;
-    if (i == 0) return source();
-    if (i == 1) return second_point();
-    return construct_translated_point(source(),
-				      construct_scaled_vector(construct_vector(source(), 
-									       second_point()),
-							      FT(i)));
-  }
 
+    if (i == FT(0)) return source();
+    if (i == FT(1)) return second_point();
+
+    return construct_translated_point(source(),
+             construct_scaled_vector(construct_vector(source(), second_point()), i));
+  }
 
   typename cpp11::result_of<typename R_::Construct_source_2( Ray_2 )>::type
   start() const

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
 The function object class `Mesh_edge_criteria_3` is a model of `MeshEdgeCriteria_3`. It 
 provides a bound for the size criterion. 

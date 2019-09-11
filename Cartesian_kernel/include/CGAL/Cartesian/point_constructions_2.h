@@ -34,7 +34,7 @@ namespace CGAL {
 template < class K >
 inline
 typename K::Point_2
-line_get_point(const LineC2<K> &l, int i)
+line_get_point(const LineC2<K> &l, const typename K::FT &i)
 {
   typename K::FT x, y;
   line_get_pointC2(l.a(), l.b(), l.c(), i, x, y);

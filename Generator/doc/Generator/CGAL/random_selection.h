@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
+\ingroup PkgGeneratorsRef
 \brief chooses `n` items at random from a random 
 access iterator range which is useful to produce degenerate input data 
 sets with multiple entries of identical items. 

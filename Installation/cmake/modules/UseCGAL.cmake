@@ -9,11 +9,6 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 
 cgal_setup_module_path()
 
-# Save the current source directory. That variable can be changed by
-# a `CMakeLists.txt`, for `CMakeLists.txt` files that are created in
-# the binary directory.
-set(CGAL_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
 if(NOT USE_CGAL_FILE_INCLUDED)
   set(USE_CGAL_FILE_INCLUDED 1)
 

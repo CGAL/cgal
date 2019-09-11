@@ -26,6 +26,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Triangulation_2.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -47,11 +48,11 @@ struct DefaultColorFunctorT2
 template<class T2, class ColorFunctor>
 class SimpleTriangulation2ViewerQt : public Basic_viewer_qt
 {
-  typedef Basic_viewer_qt                     Base;
-  typedef typename T2::Vertex_handle          Vertex_const_handle;
+  typedef Basic_viewer_qt                    Base;
+  typedef typename T2::Vertex_handle         Vertex_const_handle;
   typedef typename T2::Finite_edges_iterator Edge_const_handle;
   typedef typename T2::Finite_faces_iterator Facet_const_handle;
-  typedef typename T2::Point                  Point;
+  typedef typename T2::Point                 Point;
  
 public:
   /// Construct the viewer.
@@ -135,48 +136,35 @@ protected:
   bool m_nofaces;
   const ColorFunctor& m_fcolor;
 };
+
+// Specialization of draw function.
+#define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
   
-template<class T2, class ColorFunctor>
-void draw(const T2& at2,
-          const char* title,
-          bool nofill,
-          const ColorFunctor& fcolor)
+template<class Gt, class Tds>
+void draw(const CGAL_T2_TYPE& at2,
+          const char* title="Triangulation_2 Basic Viewer",
+          bool nofill=false)
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
-
+  
   if (!cgal_test_suite)
   {
     int argc=1;
     const char* argv[2]={"t2_viewer","\0"};
-    QApplication app(argc,const_cast<char**>(argv)); 
-    SimpleTriangulation2ViewerQt<T2, ColorFunctor> mainwindow(app.activeWindow(),
-                                                              at2,
-                                                              title,
-                                                              nofill,
-                                                              fcolor);
+    QApplication app(argc,const_cast<char**>(argv));
+    DefaultColorFunctorT2 fcolor;
+    SimpleTriangulation2ViewerQt<CGAL_T2_TYPE, DefaultColorFunctorT2>
+      mainwindow(app.activeWindow(), at2, title, nofill, fcolor);
     mainwindow.show();
     app.exec();
   }
 }
 
-template<class T2>
-void draw(const T2& at2, const char* title, bool nofill)
-{
-  DefaultColorFunctorT2 c;
-  draw(at2, title, nofill, c);
-}
-
-template<class T2>
-void draw(const T2& at2, const char* title)
-{ draw(at2, title, false); }
-
-template<class T2>
-void draw(const T2& at2)
-{ draw(at2, "Basic T2 Viewer"); }
+#undef CGAL_T2_TYPE
 
 } // End namespace CGAL
 

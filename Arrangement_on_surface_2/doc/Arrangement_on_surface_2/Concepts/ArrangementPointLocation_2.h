@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2Concepts
+\ingroup PkgArrangementOnSurface2Concepts
 \cgalConcept
 
 A model of the `ArrangementPointLocation_2` concept can answer point-location queries on

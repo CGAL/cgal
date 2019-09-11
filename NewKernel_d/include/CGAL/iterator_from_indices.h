@@ -33,11 +33,7 @@ struct Default_coordinate_access {
 
 //TODO: default type for Value_: typename same_cv<Container_,typename remove_cv<Container_>::type::value_type>::type
 template <class Container_, class Value_, class Ref_=
-#ifdef CGAL_CXX11
 	decltype(std::declval<Container_>()[0])
-#else
-	Value_&
-#endif
 	, class Coord_access = Default_coordinate_access<Ref_>
 	>
 class Iterator_from_indices
@@ -50,7 +46,7 @@ class Iterator_from_indices
 	typedef std::ptrdiff_t index_t;
 	Container_* cont;
 	index_t index;
-	Coord_access ca;
+	CGAL_NO_UNIQUE_ADDRESS Coord_access ca;
 	void increment(){ ++index; }
 	void decrement(){ --index; }
 	void advance(std::ptrdiff_t n){ index+=n; }
@@ -66,6 +62,7 @@ class Iterator_from_indices
 		return ca(*cont,index);
 	}
 	public:
+	Iterator_from_indices(){}
 	Iterator_from_indices(Container_& cont_,std::size_t n)
 		: cont(&cont_), index(n) {}
 	template<class T>

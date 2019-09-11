@@ -60,7 +60,7 @@ public:
   //!\brief print theTextItems.
   virtual void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*) = 0;
   //!\brief update theTextItems.
-  virtual void updatePrimitiveIds(CGAL::Three::Viewer_interface* , CGAL::Three::Scene_item*) = 0;
+  virtual void updatePrimitiveIds(CGAL::Three::Scene_item*) = 0;
 
   /*!
    * \brief checks if the text at position (x,y,z) is visible or not.
@@ -72,13 +72,13 @@ public:
   virtual bool  testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) = 0;
 
   ///\brief displays all the vertices ids if there are less than max_textItems.
-  virtual void printVertexIds(CGAL::Three::Viewer_interface*) = 0;
+  virtual void printVertexIds() = 0;
   ///\brief displays all the edges ids if there are less than max_textItems.
-  virtual void printEdgeIds(CGAL::Three::Viewer_interface*) = 0;
+  virtual void printEdgeIds() = 0;
   ///\brief displays all the faces ids if there are less than max_textItems.
-  virtual void printFaceIds(CGAL::Three::Viewer_interface*) = 0;
+  virtual void printFaceIds() = 0;
   ///\brief displays all the primitive ids if there are less than max_textItems.
-  virtual void printAllIds(CGAL::Three::Viewer_interface*) = 0;
+  virtual void printAllIds() = 0;
 
   //!\brief moves the camera orthogonally to the picked sface.
   //!

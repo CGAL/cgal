@@ -2,7 +2,7 @@
 #define SCENE_POLYHEDRON_ITEM_DECORATOR_CONFIG_H
 
 
-#if defined(scene_polyhedron_item_decorator_EXPORTS) || defined(scene_surface_mesh_item_decorator_EXPORTS)
+#if defined(scene_item_decorator_EXPORTS)
 #  define SCENE_POLYHEDRON_ITEM_DECORATOR_EXPORT Q_DECL_EXPORT
 #else
 #  define SCENE_POLYHEDRON_ITEM_DECORATOR_EXPORT Q_DECL_IMPORT

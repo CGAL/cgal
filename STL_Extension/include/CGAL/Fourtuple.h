@@ -29,7 +29,7 @@
 #include <CGAL/config.h>
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Fourtuple.h>"
-#define CGAL_DEPRECATED_MESSAGE_DETAILS "Please use `CGAL::cpp11::array` instead."
+#define CGAL_DEPRECATED_MESSAGE_DETAILS "Please use `std::array` instead."
 #include <CGAL/internal/deprecation_warning.h>
 
 #ifndef CGAL_NO_DEPRECATED_CODE

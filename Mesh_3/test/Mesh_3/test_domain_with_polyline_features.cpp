@@ -38,6 +38,7 @@ struct Dummy_domain
   typedef typename K::FT FT;
   typedef int Index;
   typedef int Surface_patch_index;
+  typedef unsigned short Subdomain_index;
 };
 
 typedef Dummy_domain<K_e_i> Smooth_domain;
@@ -58,7 +59,7 @@ class Domain_with_polyline_tester
   
   typedef std::vector<std::pair<Ci, Point> >        Corners_vector;
   typedef std::pair<Point, Index>                   P_and_i;
-  typedef CGAL::cpp11::tuple<Csi,P_and_i,P_and_i>   Curve_tuple;
+  typedef std::tuple<Csi,P_and_i,P_and_i>   Curve_tuple;
   typedef std::vector<Curve_tuple>                  Curves_vector;
   
 public:
@@ -201,12 +202,12 @@ private:
   
   Point get_first_point(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp11::get<1>(tuple).first;
+    return std::get<1>(tuple).first;
   }
   
   Point get_second_point(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp11::get<2>(tuple).first;
+    return std::get<2>(tuple).first;
   }
   
   Csi get_curve_index() const
@@ -220,7 +221,7 @@ private:
   
   Csi get_curve_index(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp11::get<0>(tuple);
+    return std::get<0>(tuple);
   }
   
   bool near_equal(const double d1, const double d2) const

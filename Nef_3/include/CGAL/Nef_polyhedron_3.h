@@ -637,7 +637,7 @@ protected:
                            const FaceIndexMap& fim,
                            typename boost::disable_if <
                               boost::is_same<FaceIndexMap, bool>
-                           >::type* = NULL // disambiguate with another constructor
+                           >::type* = nullptr // disambiguate with another constructor
   )
   {
     CGAL_NEF_TRACEN("construction from PolygonMesh");
@@ -1952,7 +1952,7 @@ protected:
   interior. The point |p| is contained in the set represented by |\Mvar| if 
   |\Mvar.contains(h)| is true.}*/ {
     CGAL_NEF_TRACEN( "locating point...");
-    CGAL_assertion( pl() != NULL);
+    CGAL_assertion( pl() != nullptr);
 
     Object_handle o = pl()->locate(p);
     

@@ -1,9 +1,9 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgConvexHullD
+\ingroup PkgConvexHullDRef
 
-\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulationsSummary should be used instead.
+\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulations should be used instead.
 
 An instance `DT` of type `Delaunay_d< R, Lifted_R >` is the
 nearest and furthest site Delaunay triangulation of a set `S` of

@@ -67,7 +67,7 @@ public:
   typedef typename T::Iterator_type                       Iterator_type;
 
   Periodic_2_triangulation_triangle_iterator_2(Iterator_type it = T::STORED)
-    : _t(NULL), _it(it), _off(0) {}
+    : _t(nullptr), _it(it), _off(0) {}
 
   Periodic_2_triangulation_triangle_iterator_2(const T * t,
       Iterator_type it = T::STORED)
@@ -386,7 +386,7 @@ public:
   typedef typename T::Iterator_type                       Iterator_type;
 
   Periodic_2_triangulation_segment_iterator_2(Iterator_type it = T::STORED)
-    : _t(NULL), _it(it), _off(0) {}
+    : _t(nullptr), _it(it), _off(0) {}
 
   Periodic_2_triangulation_segment_iterator_2(const T * t,
       Iterator_type it = T::STORED)
@@ -682,7 +682,7 @@ public:
   typedef typename T::Iterator_type                       Iterator_type;
 
   Periodic_2_triangulation_point_iterator_2(Iterator_type it = T::STORED)
-    : _t(NULL), _it(it) {}
+    : _t(nullptr), _it(it) {}
 
   Periodic_2_triangulation_point_iterator_2(const T * t,
       Iterator_type it = T::STORED)

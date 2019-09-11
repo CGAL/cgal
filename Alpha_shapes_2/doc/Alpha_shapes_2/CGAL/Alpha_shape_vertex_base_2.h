@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShape2
+\ingroup PkgAlphaShapes2Ref
 
 The class `Alpha_shape_vertex_base_2` is the default model for the concept 
 `AlphaShapeVertex_2`. 
@@ -26,8 +26,6 @@ provided in the documentation of `Alpha_shape_2` for more details. The default v
 template< typename Traits, typename Vb, typename ExactAlphaComparisonTag >
 class Alpha_shape_vertex_base_2 : public Vb {
 public:
-
-/// @}
 
 }; /* end Alpha_shape_vertex_base_2 */
 } /* end namespace CGAL */

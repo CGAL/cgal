@@ -250,9 +250,9 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalFigureBegin{8}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n \image latex \2 \"\" width=2.1cm \n </TD> <TD> \image html \3 \n \image latex \3 \"\" width=2.1cm \n </TD> <TD> \image html \4 \n \image latex \4 \"\" width=2.1cm \n </TD> <TD> \image html \5 \n \image latex \5 \"\" width=2.1cm \n </TD> <TD> \image html \6 \n \image latex \6 \"\" width=2.1cm \n </TD> <TD> \image html \7 \n \image latex \7 \"\" width=2.1cm \n </TD> <TD> \image html \8 \n \image latex \8 \"\" width=2.1cm \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \n \latexonly \n \endlatexonly \ref fig__\1" \
                          "cgalFigureBegin{9}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n \image latex \2 \"\" width=1.9cm \n </TD> <TD> \image html \3 \n \image latex \3 \"\" width=1.9cm \n </TD> <TD> \image html \4 \n \image latex \4 \"\" width=1.9cm \n </TD> <TD> \image html \5 \n \image latex \5 \"\" width=1.9cm \n </TD> <TD> \image html \6 \n \image latex \6 \"\" width=1.9cm \n </TD> <TD> \image html \7 \n \image latex \7 \"\" width=1.9cm \n </TD> <TD> \image html \8 \n \image latex \8 \"\" width=1.9cm \n </TD> <TD> \image html \9 \n \image latex \9 \"\" width=1.9cm \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \n \latexonly \n \endlatexonly \ref fig__\1" \
                          "cgalFigureBegin{10}=\anchor fig__\1 \n <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n \image latex \2 \"\" width=1.6cm \n </TD> <TD> \image html \3 \n \image latex \3 \"\" width=1.6cm \n </TD> <TD> \image html \4 \n \image latex \4 \"\" width=1.6cm \n </TD> <TD> \image html \5 \n \image latex \5 \"\" width=1.6cm \n </TD> <TD> \image html \6 \n \image latex \6 \"\" width=1.6cm \n </TD> <TD> \image html \7 \n \image latex \7 \"\" width=1.6cm \n </TD> <TD> \image html \8 \n \image latex \8 \"\" width=1.6cm \n </TD> <TD> \image html \9 \n \image latex \9 \"\" width=1.6cm \n </TD> <TD> \image html \10 \n \image latex \10 \"\" width=1.6cm \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \n \latexonly \n \endlatexonly \ref fig__\1" \
-                         "cgalFigureEnd=\htmlonly </div> \endhtmlonly <br>" \
+                         "cgalFigureEnd=\htmlonly </div> <br> \endhtmlonly" \
                          "cgalFigureCaptionBegin{1}=\htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                         "cgalFigureCaptionEnd=\htmlonly </div> \endhtmlonly <br>" \
+                         "cgalFigureCaptionEnd=\htmlonly </div> <br> \endhtmlonly" \
                          "cgalConcept=\details <div id=\"CGALConcept\"></div>\n \brief" \
                          "cgalConceptNamespace=\details <div id=\"CGALConceptNS\"></div>\n \brief" \
                          "cgalRefines=\xrefitem refines \"Refines\" \"Refinement Relationships\"" \
@@ -266,6 +266,8 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalAdvancedEnd=\htmlonly </div> \endhtmlonly" \
                          "cgalAdvancedFunction=This is an advanced function." \
                          "cgalAdvancedClass=This is an advanced class." \
+                         "cgalAdvancedType=This is an advanced type." \
+                         "cgalAdvancedConcept=This is an advanced concept." \
                          "cgalRequiresCPP11=\warning This function requires a C++11 compiler." \
                          "cgalPkgPicture{1}=<div class=\"PkgImage\"> \n \image html \1 \n</div>" \
                          "cgalPkgSummaryBegin=<div class=\"PkgSummary\">" \
@@ -291,7 +293,10 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalTagFalse=\link CGAL::Tag_false `CGAL::Tag_false`\endlink" \
                          "cgalHeading{1}= <B>\1</B><BR>" \
                          "cgalClassifedRefPages=\htmlonly  <h2 class=\"groupheader\">Classified Reference Pages</h2> \endhtmlonly" \
-                         "cgalCite{1}=<!-- -->\cite \1"
+                         "cgalCRPSection{1}=<h2>\1</h2>" \
+                         "cgalCRPSubsection{1}=<h3>\1</h3>" \
+                         "cgalCite{1}=<!-- -->\cite \1" \
+                         "cgalPackageSection{2}=\htmlonly[block] <div style=\"background-color: #EEEDF2;\">\endhtmlonly \section \1 \2 \n \htmlonly[block] </div>\endhtmlonly"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"

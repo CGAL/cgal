@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Fixed_alpha_shape_vertex_base_3` is the default model for the concept 
 `FixedAlphaShapeVertex_3`. 
@@ -23,8 +23,6 @@ to the `Alpha_shape_3` class.
 template< typename Traits, typename Vb >
 class Fixed_alpha_shape_vertex_base_3 : public Vb {
 public:
-
-/// @}
 
 }; /* end Fixed_alpha_shape_vertex_base_3 */
 } /* end namespace CGAL */

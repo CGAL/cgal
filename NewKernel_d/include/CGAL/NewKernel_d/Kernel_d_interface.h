@@ -29,8 +29,8 @@
 
 namespace CGAL {
 template <class Base_> struct Kernel_d_interface : public Base_ {
-  CGAL_CONSTEXPR Kernel_d_interface(){}
-  CGAL_CONSTEXPR Kernel_d_interface(int d):Base_(d){}
+  constexpr Kernel_d_interface(){}
+  constexpr Kernel_d_interface(int d):Base_(d){}
 
 	typedef Base_ Base;
 	typedef Kernel_d_interface<Base> Kernel;
@@ -89,7 +89,6 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	  Point_d operator()(Weighted_point_d const&wp)const{
 	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(wp);
 	  }
-#ifdef CGAL_CXX11
 	  Point_d operator()(Weighted_point_d &wp)const{
 	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(wp);
 	  }
@@ -100,26 +99,10 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(std::move(wp));
 	  }
 	  template<class...T>
-# if CGAL_CXX14
 	  decltype(auto)
-# else
-	  Point_d
-# endif
 	  operator()(T&&...t)const{
 	    return CP(this->kernel())(std::forward<T>(t)...);
-	    //return CP(this->kernel())(t...);
 	  }
-#else // not CGAL_CXX11
-# define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-	    Point_d operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t))const{ \
-	      return CP(this->kernel())(BOOST_PP_ENUM_PARAMS(N,t)); \
-	    }
-	  BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-# undef CGAL_CODE
-	  Point_d operator()()const{ \
-	    return CP(this->kernel())(); \
-	  }
-#endif // not CGAL_CXX11
 	};
 	typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type Construct_vector_d;
 	typedef typename Get_functor<Base, Construct_ttag<Segment_tag> >::type Construct_segment_d;
@@ -151,30 +134,33 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	  CGAL_FUNCTOR_INIT_STORE(Construct_cartesian_const_iterator_d)
 	  typedef typename Get_functor<Base, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CPI;
 	  typedef typename Get_functor<Base, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
-	  // FIXME: The following sometimes breaks compilation. The typedef below forces instantiation of this, which forces Point_d, which itself (in the wrapper) needs the derived kernel to tell it what the base kernel is, and that's a cycle. The exact circumstances are not clear, g++ and clang++ are ok in both C++03 and C++11, it is only clang in C++11 without CGAL_CXX11 that breaks. For now, rely on result_type.
+	  // FIXME: The following sometimes breaks compilation. The typedef below forces instantiation of this, which forces Point_d, which itself (in the wrapper) needs the derived kernel to tell it what the base kernel is, and that's a cycle. The exact circumstances are not clear, g++ and clang++ are ok in both C++03 and C++11, it is only clang in C++11 without CGAL_CXX11 that breaks. Relying on CPI::result_type is great for Epick_d but not Epeck_d.
 	  //typedef typename CGAL::decay<typename boost::result_of<CPI(Point_d,CGAL::Begin_tag)>::type>::type result_type;
-	  typedef typename CGAL::decay<typename CPI::result_type>::type result_type;
+	  //typedef typename CGAL::decay<typename CPI::result_type>::type result_type;
+	  //typedef decltype(std::declval<CPI>()(std::declval<Point_d>(),Begin_tag{})) result_type;
+	  // HACK
+	  typedef typename Base::Point_cartesian_const_iterator result_type;
 	  // Kernel_d requires a common iterator type for points and vectors
 	  // TODO: provide this mixed functor in preKernel?
 	  //CGAL_static_assertion((boost::is_same<typename CGAL::decay<typename boost::result_of<CVI(Vector_d,CGAL::Begin_tag)>::type>::type, result_type>::value));
-	  CGAL_static_assertion((boost::is_same<typename CGAL::decay<typename CVI::result_type>::type, result_type>::value));
+	  //CGAL_static_assertion((boost::is_same<typename CGAL::decay<typename CVI::result_type>::type, result_type>::value));
 	  template <class Tag_>
-	  result_type operator()(Point_d const&p, Tag_ t)const{
+	  auto operator()(Point_d const&p, Tag_ t)const{
 	    return CPI(this->kernel())(p,t);
 	  }
 	  template <class Tag_>
-	  result_type operator()(typename First_if_different<Vector_d,Point_d>::Type const&v, Tag_ t)const{
+	  auto operator()(typename First_if_different<Vector_d,Point_d>::Type const&v, Tag_ t)const{
 	    return CVI(this->kernel())(v,t);
 	  }
 
 	  template <class Obj>
-	  result_type operator()(Obj const&o)const{
+	  auto operator()(Obj const&o)const{
 	    return operator()(o, Begin_tag());
 	  }
-	  result_type operator()(Point_d const&p, int)const{
+	  auto operator()(Point_d const&p, int)const{
 	    return operator()(p, End_tag());
 	  }
-	  result_type operator()(typename First_if_different<Vector_d,Point_d>::Type const&v, int)const{
+	  auto operator()(typename First_if_different<Vector_d,Point_d>::Type const&v, int)const{
 	    return operator()(v, End_tag());
 	  }
 	};
@@ -182,8 +168,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	  typedef Kernel R_; // for the macro
 	  CGAL_FUNCTOR_INIT_STORE(Compute_squared_radius_d)
 	  typedef FT result_type;
-	  template<class S> FT operator()(CGAL_FORWARDABLE(S) s)const{
-	    return typename Get_functor<Base, Squared_radius_tag>::type(this->kernel())(CGAL_FORWARD(S,s));
+	  template<class S> FT operator()(S&& s)const{
+	    return typename Get_functor<Base, Squared_radius_tag>::type(this->kernel())(std::forward<S>(s));
 	  }
 	  template<class I> FT operator()(I b, I e)const{
 	    return typename Get_functor<Base, Squared_circumradius_tag>::type(this->kernel())(b,e);

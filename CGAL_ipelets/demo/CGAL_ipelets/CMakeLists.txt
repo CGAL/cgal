@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project(CGAL_ipelets_Demo)
 
-cmake_minimum_required(VERSION 3.1)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
   cmake_policy(SET CMP0053 OLD)
@@ -23,7 +23,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )
-  include( ${CGAL_USE_FILE} )
+
+  include(${CGAL_USE_FILE})
 
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (EIGEN3_FOUND)
@@ -127,7 +128,9 @@ if ( CGAL_FOUND )
     set(CGAL_IPELETS ${CGAL_IPELETS} circle_pencils)
     set(CGAL_IPELETS ${CGAL_IPELETS} hyperbolic)
     set(CGAL_IPELETS ${CGAL_IPELETS} distance)
-    set(CGAL_IPELETS ${CGAL_IPELETS} cone_spanners)
+    if(CGAL_Core_FOUND)
+      set(CGAL_IPELETS ${CGAL_IPELETS} cone_spanners)
+    endif()
 
 
     if ( IPELET_INSTALL_DIR )
@@ -148,7 +151,9 @@ if ( CGAL_FOUND )
       endif ()
       cgal_add_compilation_test(CGAL_${IPELET})
     endforeach(IPELET)
-    target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL_Core)
+    if(CGAL_Core_FOUND)
+      target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL_Core)
+    endif()
     #example in doc not installed
     add_library(simple_triangulation MODULE simple_triangulation.cpp)
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)

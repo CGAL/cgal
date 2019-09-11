@@ -66,7 +66,7 @@ public:
     //! standard constructor
     Compare_xy_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
@@ -170,7 +170,7 @@ public:
     //! standard constructor
     Less_xy_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -196,7 +196,7 @@ public:
     //! standard constructor
     Compare_y_at_x_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     result_type operator()(const Arc_2& cv, const Point_2& p) const {
@@ -322,7 +322,7 @@ public:
     //! standard constructor
     Equal_y_at_x_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -425,7 +425,7 @@ public:
     //! standard constructor
     Source_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -452,7 +452,7 @@ public:
     //! standard constructor
     Target_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -548,7 +548,7 @@ public:
     //! standard constructor
     New_endpoints_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!\brief
@@ -646,7 +646,7 @@ public:
     //! standard constructor
     Intersect_right_of_point_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!\brief
@@ -699,7 +699,7 @@ public:
     //! standard constructor
     Make_x_monotone_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!

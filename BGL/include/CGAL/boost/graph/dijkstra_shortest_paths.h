@@ -23,7 +23,7 @@
 #define CGAL_BOOST_GRAPH_DIJKSTRA_SHORTEST_PATHS_H
 
 // This will push/pop a VC15 warning
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 #include <boost/version.hpp>
 #include <climits>

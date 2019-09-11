@@ -33,7 +33,7 @@ namespace CGAL {
 //  The iterator identity adaptor will be used for the HDS implementations
 //  that are based on STL (or other) container classes which do not
 //  guarantee that the default construction of its iterator gives always
-//  the same singular value (i.e. something like NULL). This adaptor
+//  the same singular value (i.e. something like nullptr). This adaptor
 //  assumes that iterator traits are fully supported. It works for all
 //  kinds of iterators, from input iterators to random access iterators.
 //  It does no longer require that these iterators have a constructor

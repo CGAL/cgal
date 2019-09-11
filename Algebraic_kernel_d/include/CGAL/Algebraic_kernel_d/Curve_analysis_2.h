@@ -505,11 +505,12 @@ public:
     }
 
     //! \brief Copy constructor
+#ifdef DOXYGEN_RUNNING
     Curve_analysis_2(const Self& alg_curve)
         : Base(static_cast<const Base&>(alg_curve)) 
     {
     }
-
+#endif
 
     //!@}
 

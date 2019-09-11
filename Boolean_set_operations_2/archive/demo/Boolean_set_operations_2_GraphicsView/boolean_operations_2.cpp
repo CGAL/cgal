@@ -946,7 +946,7 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet, Bezier_region_so
           
           if ( bezier_polygons.size() > 1 )
           {
-            for ( Bezier_polygon_vector::const_iterator it = CGAL::cpp11::next(bezier_polygons.begin())
+            for ( Bezier_polygon_vector::const_iterator it = std::next(bezier_polygons.begin())
                 ; it != bezier_polygons.end()
                 ; ++ it 
                 )

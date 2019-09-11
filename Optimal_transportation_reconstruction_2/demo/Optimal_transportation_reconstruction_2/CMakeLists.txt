@@ -1,24 +1,28 @@
 # This is the CMake script for compiling the Optimal_transportation_reconstruction_2 demo.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project(Optimal_transportation_reconstruction_2_Demo)
 
-cmake_minimum_required(VERSION 3.1)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
   cmake_policy(SET CMP0053 OLD)
 endif()
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../include )
+include_directories( BEFORE ./ ./include )
 
 # Find CGAL and CGAL Qt5
 find_package(CGAL COMPONENTS Qt5)
-include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
 find_package(Qt5 5.4 QUIET COMPONENTS OpenGL)
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif(Qt5_FOUND)
 
 # Find CImg

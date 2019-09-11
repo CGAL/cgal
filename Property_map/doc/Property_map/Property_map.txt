@@ -19,7 +19,7 @@ The data themselves may be stored in the element, or they may
 be stored in an external data structure, or they may be computed on
 the fly. This is an "implementation detail" of the particular property map.<BR>
 
-Property maps in the Boost manuals: <A HREF="http://www.boost.org/libs/property_map/doc/property_map.html"><TT>http://www.boost.org/libs/property_map/doc/property_map.html</TT></A>
+Property maps in the Boost manuals: <A HREF="https://www.boost.org/libs/property_map/doc/property_map.html"><TT>https://www.boost.org/libs/property_map/doc/property_map.html</TT></A>
 
 \section Property_mapCGAL CGAL and Boost Property Maps
 

@@ -1,17 +1,17 @@
-/// \defgroup PkgNefS2 2D Boolean Operations on Nef Polygons Embedded on the Sphere Reference
+/// \defgroup PkgNefS2Ref 2D Boolean Operations on Nef Polygons Embedded on the Sphere Reference
 /*!
-\addtogroup PkgNefS2
+\addtogroup PkgNefS2Ref
 
-\cgalPkgDescriptionBegin{2D Boolean Operations on Nef Polygons Embedded on the Sphere,PkgNefS2Summary}
+\cgalPkgDescriptionBegin{2D Boolean Operations on Nef Polygons Embedded on the Sphere,PkgNefS2}
 \cgalPkgPicture{Nef_S2-teaser-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Peter Hachenberger and Lutz Kettner}
 \cgalPkgDesc{This package offers the equivalent to 2D Nef Polygons in the plane. Here halfplanes correspond to half spheres delimited by great circles.}
-\cgalPkgManuals{Chapter_2D_Boolean_Operations_on_Nef_Polygons_Embedded_on_the_Sphere,PkgNefS2}
+\cgalPkgManuals{Chapter_2D_Boolean_Operations_on_Nef_Polygons_Embedded_on_the_Sphere,PkgNefS2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
-\cgalPkgDependsOn{\ref PkgNef2Summary}
+\cgalPkgDependsOn{\ref PkgNef2}
 \cgalPkgBib{cgal:hk-bonpes2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgShortInfoEnd

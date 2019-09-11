@@ -1,5 +1,6 @@
 /*!
 \example Triangulation_3/simple_triangulation_3.cpp
+\example Triangulation_3/for_loop.cpp
 \example Triangulation_3/color.cpp
 \example Triangulation_3/adding_handles_3.cpp
 \example Triangulation_3/info_insert_with_pair_iterator.cpp

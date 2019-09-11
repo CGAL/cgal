@@ -289,7 +289,7 @@ private:
                                           //visibility_cone is greater than pi.
 
 public:
-  Rotational_sweep_visibility_2(): p_arr(NULL), geom_traits(NULL) {}
+  Rotational_sweep_visibility_2(): p_arr(nullptr), geom_traits(nullptr) {}
   Rotational_sweep_visibility_2(const Arrangement_2& arr): p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
   }
@@ -429,7 +429,7 @@ public:
   }
 
 bool is_attached() const {
-  return (p_arr != NULL);
+  return (p_arr != nullptr);
 }
 
 void attach(const Arrangement_2& arr) {
@@ -438,8 +438,8 @@ void attach(const Arrangement_2& arr) {
 }
 
 void detach() {
-  p_arr = NULL;
-  geom_traits = NULL;
+  p_arr = nullptr;
+  geom_traits = nullptr;
 }
 
 const Arrangement_2& arrangement_2() const {

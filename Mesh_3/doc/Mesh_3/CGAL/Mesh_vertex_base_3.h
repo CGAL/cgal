@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
 The class `Mesh_vertex_base_3` is a model of the concept `MeshVertexBase_3`.
 It is designed to serve as vertex base class for the 3D triangulation
@@ -27,8 +27,6 @@ of the concept `RegularTriangulationVertexBase_3` and defaults to
 template< typename Gt, typename MD, typename Vb >
 class Mesh_vertex_base_3 : public Vb {
 public:
-
-/// @}
 
 }; /* end Mesh_vertex_base_3 */
 } /* end namespace CGAL */

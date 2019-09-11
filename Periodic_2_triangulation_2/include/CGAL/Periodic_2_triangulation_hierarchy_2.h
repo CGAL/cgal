@@ -299,7 +299,7 @@ clear()
 {
   for(int i = 0; i < m_maxlevel; ++i) 
   {
-      CGAL_assertion(hierarchy[i] != NULL);
+      CGAL_assertion(hierarchy[i] != nullptr);
       hierarchy[i]->clear();
   }
 }
@@ -604,7 +604,7 @@ locate_in_all(const Point& p,
         {
           nearest = position->vertex(1);
         }
-      // compare to vertex 2, but only if the triangulation is 2D, because otherwise vertex(2) is  NULL
+      // compare to vertex 2, but only if the triangulation is 2D, because otherwise vertex(2) is  nullptr
       if ( (hierarchy[level]->dimension() == 2) && (!  hierarchy[level]->is_infinite(position->vertex(2))))
         {
           if ( closer( p,

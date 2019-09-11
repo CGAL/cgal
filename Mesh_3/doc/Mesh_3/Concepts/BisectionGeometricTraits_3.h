@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3SecondaryConcepts
+\ingroup PkgMesh3SecondaryConcepts
 \cgalConcept
 
 The concept `BisectionGeometricTraits_3` describes a geometric traits class 

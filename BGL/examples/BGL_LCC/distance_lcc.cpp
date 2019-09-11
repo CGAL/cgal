@@ -15,11 +15,11 @@ typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
 typedef boost::graph_traits<LCC>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<LCC>::vertex_iterator   vertex_iterator;
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
   LCC lcc;
-  CGAL::read_off(argv[1], lcc);
-  
+  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
+
   // This is the vector where the distance gets written to
   std::vector<int> distance(lcc.vertex_attributes().size());  
 

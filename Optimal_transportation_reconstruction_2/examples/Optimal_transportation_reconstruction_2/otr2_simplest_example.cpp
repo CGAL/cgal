@@ -19,7 +19,7 @@ int main ()
   // Generate a set of random points on the boundary of a square.
   std::vector<Point> points;
   CGAL::Random_points_on_square_2<Point> point_generator(1.);
-  CGAL::cpp11::copy_n(point_generator, 100, std::back_inserter(points));
+  std::copy_n(point_generator, 100, std::back_inserter(points));
 
   Otr otr(points);
 

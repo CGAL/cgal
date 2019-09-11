@@ -142,9 +142,9 @@ public:
   ~Minkowski_sum_by_convolution_2()
   {
     if (m_own_kernel) {
-      if (m_kernel != NULL) {
+      if (m_kernel != nullptr) {
         delete m_kernel;
-        m_kernel = NULL;
+        m_kernel = nullptr;
       }
       m_own_kernel = false;
     }

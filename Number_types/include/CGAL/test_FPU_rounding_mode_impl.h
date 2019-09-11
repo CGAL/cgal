@@ -27,7 +27,6 @@
 
 #ifndef CGAL_NDEBUG
 
-#include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 
 namespace CGAL {

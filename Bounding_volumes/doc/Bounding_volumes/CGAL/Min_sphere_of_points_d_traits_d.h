@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumes
+\ingroup PkgBoundingVolumesRef
 
 The class 
 `Min_sphere_of_points_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>` is 

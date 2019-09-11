@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgBarycentric_coordinates_2Concepts
+\ingroup PkgBarycentricCoordinates2Concepts
 \cgalConcept
 
 Requirements of the template parameter `Coordinate_2` for the class `CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2`.

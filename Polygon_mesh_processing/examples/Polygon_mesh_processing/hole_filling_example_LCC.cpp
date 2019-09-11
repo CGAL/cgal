@@ -7,7 +7,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
@@ -36,7 +35,7 @@ int main(int argc, char* argv[])
     {
       std::vector<face_descriptor>  patch_facets;
       std::vector<vertex_descriptor> patch_vertices;
-      bool success = CGAL::cpp11::get<0>(
+      bool success = std::get<0>(
         CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
                   mesh,
                   h,

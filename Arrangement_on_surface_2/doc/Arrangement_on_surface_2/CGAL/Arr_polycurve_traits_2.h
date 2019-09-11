@@ -1,14 +1,5 @@
-/// \ingroup PkgArrangement2Macros
-/// @{
-/*!
- * If the macro is set to one, then \f$x\f$-monotone curves are always
- * directed from left-to-right.
- */
-#define CGAL_ALWAYS_LEFT_TO_RIGHT
-/// @}
-
 namespace CGAL {
-  /*! \ingroup PkgArrangement2TraitsClasses
+  /*! \ingroup PkgArrangementOnSurface2TraitsClasses
    *
    * Note: The `SubcurveTraits_2` can comprise of Line_segments, Conic_arcs,
    *       Circular_arc, Bezier_curves, or Linear_curves. A portion or a part
@@ -280,9 +271,9 @@ namespace CGAL {
      *
      * The copy and default constructor as well as the assignment operator are
      * provided for polycurve subcurves. In addition, an \link
-     * PkgArrangement2op_left_shift `operator<<` \endlink for the subcurves is
+     * PkgArrangementOnSurface2op_left_shift `operator<<` \endlink for the subcurves is
      * defined for standard output streams, and an \link
-     * PkgArrangement2op_right_shift `operator>>` \endlink for the subcurves is
+     * PkgArrangementOnSurface2op_right_shift `operator>>` \endlink for the subcurves is
      * defined for standard input streams.
      */
     template <typename SubcurveType_2, typename PointType_2>

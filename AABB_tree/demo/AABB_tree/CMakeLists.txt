@@ -1,12 +1,12 @@
 # This is the CMake script for compiling the AABB tree demo.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( AABB_tree_Demo )
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-cmake_minimum_required(VERSION 3.1)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
   cmake_policy(SET CMP0053 OLD)
@@ -17,16 +17,13 @@ if(POLICY CMP0071)
 endif()
 
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../include )
+include_directories( BEFORE ./ ./include )
 
 # Find CGAL and CGAL Qt5
 find_package(CGAL COMPONENTS Qt5)
 
 # Find Qt5 itself
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Gui Svg)
-
-include( ${CGAL_USE_FILE} )
-
 
 if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
 

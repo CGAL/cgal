@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Functions
+\ingroup PkgMesh3Functions
 
 The function `odt_optimize_mesh_3()` is a mesh optimization process
 based on the minimization of a global energy function.

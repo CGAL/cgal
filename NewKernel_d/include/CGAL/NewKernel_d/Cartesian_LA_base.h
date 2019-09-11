@@ -20,7 +20,6 @@
 
 #ifndef CGAL_KERNEL_D_CARTESIAN_LA_BASE_H
 #define CGAL_KERNEL_D_CARTESIAN_LA_BASE_H
-
 #include <CGAL/basic.h>
 #include <CGAL/Origin.h>
 #include <boost/type_traits/integral_constant.hpp>
@@ -28,8 +27,10 @@
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/typeset.h>
+
 #include <CGAL/NewKernel_d/Dimension_base.h>
 #include <CGAL/NewKernel_d/Cartesian_LA_functors.h>
+
 #include <CGAL/NewKernel_d/Vector/array.h>
 #include <CGAL/NewKernel_d/Vector/vector.h>
 #include <CGAL/NewKernel_d/Vector/mix.h>
@@ -88,6 +89,7 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
       ::add<Hyperplane_tag>::type
       ::add<Sphere_tag>::type
       ::add<Weighted_point_tag>::type
+      ::add<Iso_box_tag>::type
       Object_list;
 
     typedef typeset< Point_cartesian_const_iterator_tag>::type
@@ -169,8 +171,8 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 	    typedef CartesianDVectorBase::Identity_functor<Self> type;
     };
 
-    CGAL_CONSTEXPR Cartesian_LA_base_d(){}
-    CGAL_CONSTEXPR Cartesian_LA_base_d(int d):Dimension_base<Dim_>(d){}
+    constexpr Cartesian_LA_base_d(){}
+    constexpr Cartesian_LA_base_d(int d):Dimension_base<Dim_>(d){}
 };
 
 } //namespace CGAL

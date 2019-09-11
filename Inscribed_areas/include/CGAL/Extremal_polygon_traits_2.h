@@ -167,7 +167,19 @@ struct Extremal_polygon_perimeter_traits_2 {
     typedef FT              result_type;
   
     Kgon_triangle_perimeter(const K& k_): k(k_) {}
-  
+
+    // Added as workaround for VC2017 with /arch:AVX to fix
+    // https://cgal.geometryfactory.com/CGAL/testsuite/CGAL-4.14-I-95/Inscribed_areas_Examples/TestReport_afabri_x64_Cygwin-Windows10_MSVC2017-Release-64bits.gz
+    Kgon_triangle_perimeter(const Kgon_triangle_perimeter& other)
+      : k(other.k)
+    {}
+
+    Kgon_triangle_perimeter& operator=(const Kgon_triangle_perimeter& other)
+    {
+      k = other.k;
+      return *this;
+    }
+    
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     { return dist(p, r) + dist(p, q) - dist(q, r); }

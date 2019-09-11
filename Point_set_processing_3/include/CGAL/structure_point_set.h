@@ -42,7 +42,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/iterator/counting_iterator.hpp>
@@ -54,7 +54,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPointSetProcessingAlgorithms
+\ingroup PkgPointSetProcessing3Algorithms
 
 \brief A 3D point set with structure information based on a set of
 detected planes.
@@ -62,10 +62,10 @@ detected planes.
 Given a point set in 3D space along with a set of fitted planes, this
 class stores a simplified and structured version of the point
 set. Each output point is assigned to one, two or more primitives
-(depending wether it belongs to a planar section, an edge or a if it
+(depending whether it belongs to a planar section, an edge or a if it
 is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 
-\tparam Kernel a model of `ShapeDetectionTraits` that must provide in
+\tparam Kernel a model of `EfficientRANSACTraits` that must provide in
 addition a function `Intersect_3 intersection_3_object() const` and a
 functor `Intersect_3` with:
 - `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
@@ -119,7 +119,7 @@ private:
 
   struct Edge
   {
-    CGAL::cpp11::array<std::size_t, 2> planes;
+    std::array<std::size_t, 2> planes;
     std::vector<std::size_t> indices; // Points belonging to intersection
     Line support;
     bool active;
@@ -202,30 +202,6 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  // deprecated
-  template <typename PointRange,
-            typename PointMap,
-            typename NormalMap,
-            typename PlaneRange,
-            typename PlaneMap,
-            typename IndexMap>
-  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::Point_set_with_structure(), please update your code")
-  Point_set_with_structure (const PointRange& points,
-                            PointMap point_map,
-                            NormalMap normal_map,
-                            const PlaneRange& planes,
-                            PlaneMap plane_map,
-                            IndexMap index_map,
-                            double epsilon,
-                            double attraction_factor = 3.)
-  {
-    init (points, planes, epsilon,
-          CGAL::parameters::point_map (point_map).
-          normal_map (normal_map).
-          plane_map (plane_map).
-          plane_index_map (index_map).
-          attraction_factor (attraction_factor));
-  }
 
   template <typename PointRange,
             typename PlaneRange,
@@ -235,7 +211,8 @@ public:
              double epsilon,
              const NamedParameters& np)
   {
-    using boost::choose_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
 
     // basic geometric types
     typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
@@ -250,11 +227,11 @@ public:
                                 typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
                               "Error: no plane index map");
 
-    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-    NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-    PlaneMap plane_map = choose_param(get_param(np, internal_np::plane_map), PlaneMap());
-    PlaneIndexMap index_map = choose_param(get_param(np, internal_np::plane_index_map), PlaneIndexMap());
-    double attraction_factor = choose_param(get_param(np, internal_np::attraction_factor), 3.);
+    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+    PlaneMap plane_map = choose_parameter(get_parameter(np, internal_np::plane_map), PlaneMap());
+    PlaneIndexMap index_map = choose_parameter(get_parameter(np, internal_np::plane_index_map), PlaneIndexMap());
+    double attraction_factor = choose_parameter(get_parameter(np, internal_np::attraction_factor), 3.);
     
     m_points.reserve(points.size());
     m_normals.reserve(points.size());
@@ -330,7 +307,7 @@ public:
     `f` with respect to the underlying structure.
 
    */
-  Coherence_type facet_coherence (const CGAL::cpp11::array<std::size_t, 3>& f) const
+  Coherence_type facet_coherence (const std::array<std::size_t, 3>& f) const
   {
     // O- FREEFORM CASE
     if (m_status[f[0]] == POINT &&
@@ -1497,7 +1474,7 @@ private:
 // ----------------------------------------------------------------------------
 
 /** 
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
 
    This is an implementation of the Point Set Structuring algorithm. This
    algorithm takes advantage of a set of detected planes: it detects adjacency
@@ -1516,7 +1493,7 @@ private:
    \tparam OutputIterator Type of the output iterator. The type of the
    objects put in it is `std::pair<Kernel::Point_3, Kernel::Vector_3>`.
    Note that the user may use a
-   <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
+   <A HREF="https://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
    to match specific needs.
 
    \param points input point range.
@@ -1553,7 +1530,8 @@ structure_point_set (const PointRange& points,
                      double epsilon,
                      const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
@@ -1581,72 +1559,6 @@ structure_point_set (const PointRange& points, ///< range of points.
      CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 /// \endcond
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-/// \cond SKIP_IN_MANUAL
-
-namespace Shape_detection_3{
-//Forward declarations
-template <class Traits>
-class Efficient_RANSAC;
-template <typename Traits>
-class Plane_map;
-template <typename Traits>
-class Point_to_shape_index_map;
-} // end of namespace Shape_detection_3
-
-// deprecated API
-template <typename Traits,
-          typename OutputIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::structure_point_set(), please update your code")
-OutputIterator
-structure_point_set (typename Traits::Input_range::iterator first,  ///< iterator over the first input point.
-                     typename Traits::Input_range::iterator beyond, ///< past-the-end iterator over the input points.
-                     typename Traits::Point_map point_map, ///< property map: value_type of InputIterator -> Point_3.
-                     typename Traits::Normal_map normal_map, ///< property map: value_type of InputIterator -> Vector_3.
-                     OutputIterator output, ///< output iterator where output points are written
-                     Shape_detection_3::Efficient_RANSAC<Traits>&
-                     shape_detection, ///< shape detection object
-                     double epsilon, ///< size parameter
-                     double attraction_factor = 3.) ///< attraction factor
-{
-  typename Shape_detection_3::Efficient_RANSAC<Traits>::Plane_range planes = shape_detection.planes();
-  return structure_point_set (CGAL::make_range(first, beyond),
-                              planes,
-                              output,
-                              epsilon, // epsilon for structuring points
-                              CGAL::parameters::point_map (point_map).
-                              normal_map (normal_map).
-                              plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
-                              plane_index_map (Shape_detection_3::Point_to_shape_index_map<Traits>(CGAL::make_range(first, beyond), planes)).
-                              attraction_factor(attraction_factor));
-}
-
-// deprecated API
-template <typename Traits,
-          typename OutputIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::structure_point_set(), please update your code")
-OutputIterator
-structure_point_set (typename Traits::Input_range::iterator first,  ///< iterator over the first input point.
-                     typename Traits::Input_range::iterator beyond, ///< past-the-end iterator over the input points.
-                     OutputIterator output, ///< output iterator where output points are written
-                     Shape_detection_3::Efficient_RANSAC<Traits>&
-                     shape_detection, ///< shape detection object
-                     double epsilon, ///< size parameter
-                     double attraction_factor = 3.) ///< attraction factor
-{
-  return structure_point_set (first, beyond,
-                              typename Traits::Point_map(),
-                              typename Traits::Normal_map(),
-                              output,
-                              shape_detection,
-                              epsilon,
-                              attraction_factor);
-}
-/// \endcond
-#endif // CGAL_NO_DEPRECATED_CODE
 
 
 } //namespace CGAL
