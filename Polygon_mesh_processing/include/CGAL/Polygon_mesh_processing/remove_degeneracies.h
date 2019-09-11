@@ -148,8 +148,8 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   {
     bool something_was_done = false;
 
-    std::cout << edges_to_collapse.size() << " needles and " << edges_to_flip.size() << " caps" << std::endl;
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
+    std::cout << edges_to_collapse.size() << " needles and " << edges_to_flip.size() << " caps" << std::endl;
     std::ostringstream oss;
     oss << "degen_cleaning_iter_" << iter++ << ".off";
     std::ofstream out(oss.str().c_str());
@@ -170,6 +170,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
     int kk=0;
     std::ofstream(std::string("tmp/n-00000.off")) << tmesh;
 #endif
+
     while (!edges_to_collapse.empty())
     {
       edge_descriptor e = *edges_to_collapse.begin();
@@ -220,6 +221,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         // a bad geometry because you iteratively move one point
         // auto mp = midpoint(tmesh.point(source(h, tmesh)), tmesh.point(target(h, tmesh)));
         vertex_descriptor v = Euler::collapse_edge(e, tmesh);
+
         //tmesh.point(v) = mp;
         // examine all faces incident to the vertex kept
         for (halfedge_descriptor hv : halfedges_around_target(v, tmesh))
@@ -304,36 +306,39 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #endif
         Euler::flip_edge(h, tmesh);
         CGAL_assertion( edge(h, tmesh) == e );
-        something_was_done = true;
-
-        // remove edges from the new faces
-        edges_to_flip.erase(edge(prev(h, tmesh), tmesh));
-        edges_to_flip.erase(edge(next(h, tmesh), tmesh));
-        edges_to_flip.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
-        edges_to_flip.erase(edge(next(opposite(h, tmesh), tmesh), tmesh));
 
         // handle face updates
+        bool undo = false;
         for (int i=0; i<2; ++i)
         {
-          if (!is_border(h, tmesh))
+          CGAL_assertion(!is_border(h, tmesh));
+          std::array<halfedge_descriptor,2> nc = internal::is_badly_shaped(face(h, tmesh), tmesh, np);
+          if (nc[1]!=boost::graph_traits<TriangleMesh>::null_halfedge())
           {
-            std::array<halfedge_descriptor,2> nc = internal::is_badly_shaped(face(h, tmesh), tmesh, np);
-            if (nc[1]!=boost::graph_traits<TriangleMesh>::null_halfedge() &&
-                edge(nc[1], tmesh) != e) // avoid infinite loop
-            {
+            if (edge(nc[1], tmesh) != e)
               next_edges_to_flip.insert( edge(nc[1], tmesh) );
-            }
             else
+              undo = true;
+          }
+          else
+          {
+            if (nc[0]!=boost::graph_traits<TriangleMesh>::null_halfedge())
             {
-              if (nc[0]!=boost::graph_traits<TriangleMesh>::null_halfedge() &&
-                  edge(nc[0], tmesh) == e) // only the new edge should be tested
-              {
-                next_edges_to_collapse.insert(e);
-              }
+              next_edges_to_collapse.insert(edge(nc[0], tmesh));
             }
           }
           h=opposite(h, tmesh);
         }
+
+        if (undo)
+        {
+          Euler::flip_edge(h, tmesh); // avoid infinite loop: flip only if a cap is removed
+          // even if we inserted some edges above these will be tested before flipping (not optimal but it does not harm)
+          next_edges_to_flip.insert(e); // we add it for the next round in case some other flip  fix the loop
+          continue;
+        }
+
+        something_was_done = true;
       }
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
       else
