@@ -558,7 +558,6 @@ public:
     return geom_traits().construct_point_3_object()(p);
   }
 
-public:
   template<typename P> // Point or Point_3
   Comparison_result compare_xyz(const P& p, const P& q) const
   {

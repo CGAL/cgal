@@ -418,7 +418,7 @@ walk_to_next_3()
     // For the remembering stochastic walk, we start trying with a random facet.
     int li = 0;
     CGAL_triangulation_assertion_code( bool incell = true; )
-    for( int k = 0; k < 4; ++k, li = _tr.increment_index(li) )
+    for( int k = 0; k < 4; ++k, ++li )
     {
         // Skip the previous cell.
         Cell_handle next = get<0>(_cur)->neighbor(li);
@@ -445,7 +445,7 @@ walk_to_next_3()
         // the source as apex and the facet as an intersection.
           int lj = 0;
         int Or = 0;
-        for( int l = 0; l < 4; ++l, lj = _tr.increment_index(lj) ) {
+        for( int l = 0; l < 4; ++l, ++lj ) {
             if( li == lj )
                 continue;
 
@@ -610,7 +610,7 @@ walk_to_next_3_inf( int inf ) {
     // Check if the line enters an adjacent infinite cell.
     // This occurs if the target lies on the other side of
     // a plane through one of the finite edges and the source point.
-    for( int j = 0; j != 4; ++j, li = _tr.increment_index(li) ) {
+    for( int j = 0; j != 4; ++j, ++li ) {
         if( li == inf ) {
             o[li] = COPLANAR;
             continue;

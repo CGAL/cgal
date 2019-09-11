@@ -36,10 +36,6 @@ struct Triangulation_utils_base_3
 {
   static const char tab_next_around_edge[4][4];
   static const int tab_vertex_triple_index[4][3];
-
-  static const int index_increment_map[4];
-  static const int index_jump_map[4];
-  static const int index_decrement_map[4];
   
   // copied from Triangulation_utils_2.h to avoid package dependency
   static const int ccw_map[3];
@@ -60,15 +56,6 @@ const int Triangulation_utils_base_3<T>::tab_vertex_triple_index[4][3] = {
  {0, 3, 1},
  {0, 1, 2}
 };
-
-template < class T >
-const int Triangulation_utils_base_3<T>::index_increment_map[4] = { 1, 2, 3, 0 };
-
-template < class T >
-const int Triangulation_utils_base_3<T>::index_jump_map[4] = { 2, 3, 0, 1 };
-
-template < class T >
-const int Triangulation_utils_base_3<T>::index_decrement_map[4] = { 3, 0, 1, 2 };
 
 template < class T >
 const int Triangulation_utils_base_3<T>::ccw_map[3] = {1, 2, 0};
@@ -115,23 +102,6 @@ struct Triangulation_utils_3
     return tab_vertex_triple_index[i][j];
   }
 
-  // Get the index of the next vertex or facet.
-  static int increment_index( int li ) {
-      CGAL_triangulation_precondition( li >= 0 && li < 4 );
-      return index_increment_map[ li ];
-  }
-
-  // Get the index of the vertex or facet two places further.
-  static int jump_index( int li ) {
-      CGAL_triangulation_precondition( li >= 0 && li < 4 );
-      return index_jump_map[ li ];
-  }
-
-  // Get the index of the previous vertex or facet.
-  static int decrement_index( int li ) {
-      CGAL_triangulation_precondition( li >= 0 && li < 4 );
-      return index_decrement_map[ li ];
-  }
 };
 
 } //namespace CGAL
