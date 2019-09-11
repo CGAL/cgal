@@ -119,6 +119,56 @@ void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleM
   }
 }
 
+// Following Ronfard et al. 96 we look at variation of the normal after the collapse
+// the collapse must be topologically valid
+template <class TriangleMesh, class NamedParameters>
+bool is_collapse_geometrically_valid(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h,
+                                     const TriangleMesh& tmesh,
+                                     const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
+  typedef typename boost::property_traits<VPM>::reference Point_ref;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
+
+  VPM vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(vertex_point, tmesh));
+
+
+/// @todo handle boundary edges
+
+  h = opposite(h, tmesh); // Euler::collapse edge keeps the target and removes the source
+
+  // source is kept, target is removed
+  CGAL_assertion( target(h, tmesh)==vertex_removed );
+  Point_ref kept = get(vpm, source(h, tmesh));
+  Point_ref removed= get(vpm, target(h, tmesh));
+
+  // consider triangles incident to the vertex removed
+  halfedge_descriptor stop = prev(opposite(h, tmesh), tmesh);
+  halfedge_descriptor hi = opposite(next(h, tmesh), tmesh);
+
+  std::vector<halfedge_descriptor> triangles;
+  while (hi!=stop)
+  {
+    if (!is_border(hi, tmesh))
+    {
+      Point_ref a = get(vpm, target(next(hi, tmesh), tmesh));
+      Point_ref b = get(vpm, source(hi, tmesh));
+
+      //ack a-b-point_remove and a-b-point_kept has a compatible orientation
+      /// @todo use a predicate
+      typename Traits::Vector_3 n1 = CGAL::cross_product(removed-a, b-a);
+      typename Traits::Vector_3 n2 = CGAL::cross_product(kept-a, b-a);
+      if ( n1*n2 <=0 )
+        return false;
+    }
+    hi = opposite(next(hi, tmesh), tmesh);
+  }
+
+  return true;
+}
+
 } // namespace internal
 
 // @todo check what to use as priority queue with removable elements, set might not be optimal
@@ -170,7 +220,6 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
     int kk=0;
     std::ofstream(std::string("tmp/n-00000.off")) << tmesh;
 #endif
-
     while (!edges_to_collapse.empty())
     {
       edge_descriptor e = *edges_to_collapse.begin();
@@ -211,6 +260,23 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
           }
           h = opposite(h, tmesh);
         }
+
+        if ( !internal::is_collapse_geometrically_valid(h, tmesh, np) )
+        {
+          h = opposite(h, tmesh);
+          if ( !internal::is_collapse_geometrically_valid(h, tmesh, np) )
+          {
+#ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
+            std::cerr << "Warning: geometrically invalid edge collapse! "
+                      << tmesh.point(source(e, tmesh)) << " "
+                      << tmesh.point(target(e, tmesh)) << std::endl;
+#endif
+            next_edges_to_collapse.insert(e);
+            continue;
+          }
+          e = edge(h, tmesh); // update the edge
+        }
+
         edges_to_flip.erase(e);
         next_edges_to_collapse.erase(e); // for edges added in faces incident to a vertex kept after a collapse
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
@@ -332,6 +398,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 
         if (undo)
         {
+          /// @todo we could decide on a metric and allow the filp only if it is improving the mesh
           Euler::flip_edge(h, tmesh); // avoid infinite loop: flip only if a cap is removed
           // even if we inserted some edges above these will be tested before flipping (not optimal but it does not harm)
           next_edges_to_flip.insert(e); // we add it for the next round in case some other flip  fix the loop
