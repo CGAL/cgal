@@ -46,11 +46,52 @@
 
 namespace CGAL {
     
+/*
+add the following to Triangulation_segment_traverser_3.h to get a superclass of the Incrementer visitor.
+
+
+
+
+
+template < class Tr, class Inc >
+class Test_super_SCI;
+
+namespace internal {
+
+template < class Tr >
+struct Test_incrementer: public Incrementer<Tr> {
+    typedef Incrementer<Tr>             Base;
+    typedef Test_incrementer<Tr>        Self;
+    typedef Test_super_SCI<Tr,Self>     SCI;
+    Test_incrementer() {}
+    void increment( SCI& sci ) {
+        ++sci._superclass;
+        sci.increment();
+    }
+}; // struct Test_incrementer
+
+} // namespace internal
+
+template < class Tr_, class Inc = internal::Test_incrementer<Tr_> >
+class Test_super_SCI: public Triangulation_segment_cell_iterator_3<Tr_,Inc> {
+    typedef Tr_                                             Tr;
+    typedef Triangulation_segment_cell_iterator_3<Tr,Inc>   SCI;
+
+    int _superclass;
+
+    friend internal::Test_incrementer<Tr>;
+
+public:
+    Test_super_SCI( const Tr& tr, const Point& s, const Point& t, Cell_handle hint = Cell_handle() )
+        : SCI(tr,s,t,hint), _superclass(0) {}
+
+};
+*/
+
 template < class Tr, class Inc >
 class Triangulation_segment_cell_iterator_3;
 
 namespace internal {
-
 template < class Tr >
 struct Incrementer {
     typedef Incrementer<Tr>                                 Self;
