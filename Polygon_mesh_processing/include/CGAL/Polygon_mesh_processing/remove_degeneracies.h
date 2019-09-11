@@ -71,6 +71,7 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
   const double needle_threshold = 4; // longest edge / shortest edge over this ratio ==> needle
   const double cap_threshold = std::cos(160. / 180 * CGAL_PI); // angle over 160° ==> cap
   const double collapse_threshold = 0.2; // max length of edges allowed to be collapsed
+  /// @todo add is_constrained edge map
 
   halfedge_descriptor res = CGAL::Polygon_mesh_processing::is_needle_triangle_face(f, tmesh, needle_threshold, np);
   if(res != boost::graph_traits<TriangleMesh>::null_halfedge())
@@ -119,6 +120,7 @@ void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleM
   }
 }
 
+/*
 // Following Ronfard et al. 96 we look at variation of the normal after the collapse
 // the collapse must be topologically valid
 template <class TriangleMesh, class NamedParameters>
@@ -167,6 +169,91 @@ bool is_collapse_geometrically_valid(typename boost::graph_traits<TriangleMesh>:
   }
 
   return true;
+}
+*/
+
+template <class TriangleMesh, class NamedParameters>
+boost::optional<double> get_collapse_volume(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h,
+                                            const TriangleMesh& tmesh,
+                                            const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
+  typedef typename boost::property_traits<VPM>::reference Point_ref;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
+
+  const typename Traits::Point_3 origin(ORIGIN);
+
+  VPM vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(vertex_point, tmesh));
+
+
+/// @todo handle boundary edges
+
+  h = opposite(h, tmesh); // Euler::collapse edge keeps the target and removes the source
+
+  // source is kept, target is removed
+  CGAL_assertion( target(h, tmesh)==vertex_removed );
+  Point_ref kept = get(vpm, source(h, tmesh));
+  Point_ref removed= get(vpm, target(h, tmesh));
+
+  // init volume with incident triangles (reversed orientation
+  double delta_vol = volume(removed, kept, get(vpm,target(next(h, tmesh), tmesh)), origin) +
+                     volume(kept, removed, get(vpm,target(next(opposite(h, tmesh), tmesh), tmesh)), origin);
+
+  // consider triangles incident to the vertex removed
+  halfedge_descriptor stop = prev(opposite(h, tmesh), tmesh);
+  halfedge_descriptor hi = opposite(next(h, tmesh), tmesh);
+
+  std::vector<halfedge_descriptor> triangles;
+  while (hi!=stop)
+  {
+    if (!is_border(hi, tmesh))
+    {
+      Point_ref a = get(vpm, target(next(hi, tmesh), tmesh));
+      Point_ref b = get(vpm, source(hi, tmesh));
+
+      //ack a-b-point_remove and a-b-point_kept has a compatible orientation
+      /// @todo use a predicate
+      typename Traits::Vector_3 n1 = CGAL::cross_product(removed-a, b-a);
+      typename Traits::Vector_3 n2 = CGAL::cross_product(kept-a, b-a);
+      if ( n1*n2 <=0 )
+        return boost::none;
+      delta_vol += volume(b, a, removed, origin) + volume(a, b, kept, origin); // opposite orientation
+    }
+    hi = opposite(next(hi, tmesh), tmesh);
+  }
+
+  return CGAL::abs(delta_vol);
+}
+
+template <class TriangleMesh, class NamedParameters>
+typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
+get_best_edge_orientation(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
+                          const TriangleMesh& tmesh,
+                          const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
+  halfedge_descriptor h = halfedge(e, tmesh), ho=opposite(h, tmesh);
+
+  boost::optional<double> dv1 = get_collapse_volume(h, tmesh, np);
+  boost::optional<double> dv2 = get_collapse_volume(ho, tmesh, np);
+
+  if (dv1 != boost::none)
+  {
+    if (dv2 != boost::none)
+    {
+      return *dv1 < *dv2 ? h : ho;
+    }
+    return h;
+  }
+
+  if (dv2 != boost::none)
+  {
+    return ho;
+  }
+  return boost::graph_traits<TriangleMesh>::null_halfedge();
 }
 
 } // namespace internal
@@ -261,20 +348,18 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
           h = opposite(h, tmesh);
         }
 
-        if ( !internal::is_collapse_geometrically_valid(h, tmesh, np) )
+        // pick the orientation of edge to keep the vertex minimizing the volume variation
+        h = internal::get_best_edge_orientation(e, tmesh, np);
+
+        if ( h == boost::graph_traits<TriangleMesh>::null_halfedge() )
         {
-          h = opposite(h, tmesh);
-          if ( !internal::is_collapse_geometrically_valid(h, tmesh, np) )
-          {
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
             std::cerr << "Warning: geometrically invalid edge collapse! "
                       << tmesh.point(source(e, tmesh)) << " "
                       << tmesh.point(target(e, tmesh)) << std::endl;
 #endif
-            next_edges_to_collapse.insert(e);
-            continue;
-          }
-          e = edge(h, tmesh); // update the edge
+          next_edges_to_collapse.insert(e);
+          continue;
         }
 
         edges_to_flip.erase(e);
@@ -286,7 +371,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         // moving to the midpoint is not a good idea. On a circle for example you might endpoint with
         // a bad geometry because you iteratively move one point
         // auto mp = midpoint(tmesh.point(source(h, tmesh)), tmesh.point(target(h, tmesh)));
-        vertex_descriptor v = Euler::collapse_edge(e, tmesh);
+        vertex_descriptor v = Euler::collapse_edge(edge(h, tmesh), tmesh);
 
         //tmesh.point(v) = mp;
         // examine all faces incident to the vertex kept
