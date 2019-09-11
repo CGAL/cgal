@@ -95,6 +95,11 @@ if( POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY )
   endif()
 endif()
 
+#find libssh for scene sharing
+find_package(LibSSH)
+if( NOT LIBSSH_FOUND )
+  message("NOTICE : The SSH features will be disabled.")
+endif()
 
 # Activate concurrency ? (turned OFF by default)
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3
@@ -131,7 +136,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   qt5_wrap_ui( statisticsUI_FILES Statistics_on_item_dialog.ui)
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
-  qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui Details.ui)
+  qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui Details.ui SSH_dialog.ui)
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt5_wrap_ui( ViewerUI_FILES  LightingDialog.ui)
   qt5_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
@@ -322,11 +327,16 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     MainWindow.cpp
     Polyhedron_demo.cpp
     File_loader_dialog_moc.cpp
+    Use_ssh.cpp
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
     ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} 
     ${statisticsUI_FILES} ${SubViewerUI_files})
   target_link_libraries(polyhedron_demo PUBLIC
     demo_framework point_dialog Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Script)
+  if(LIBSSH_FOUND)
+    add_definitions(-DCGAL_USE_SSH)
+    target_link_libraries(polyhedron_demo PUBLIC ${LIBSSH_LIBRARIES})
+  endif() #libssh
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
   target_link_libraries( Polyhedron_3 PRIVATE polyhedron_demo )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )

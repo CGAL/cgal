@@ -59,6 +59,7 @@
 #include "ui_Preferences.h"
 #include "ui_Details.h"
 #include "ui_Statistics_on_item_dialog.h"
+#include "ui_SSH_dialog.h"
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
 #include "Viewer.h"
@@ -70,6 +71,11 @@
 #  include <QScriptEngine>
 #  include <QScriptValue>
 #include "Color_map.h"
+
+#ifdef CGAL_USE_SSH
+#  include "CGAL/Use_ssh.h"
+#endif
+
 using namespace CGAL::Three;
 QScriptValue
 myScene_itemToScriptValue(QScriptEngine *engine,
@@ -151,6 +157,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoadScript);
+  ui->menuBar->removeAction(ui->on_actionLoad_a_Scene_from_a_Script_File);
 #endif
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
@@ -1891,14 +1898,7 @@ void MainWindow::throw_exception() {
 void MainWindow::on_actionLoadScript_triggered()
 {
 #if defined(QT_SCRIPT_LIB)
-  QString filename = QFileDialog::getOpenFileName(
-        this,
-        tr("Select a script to run..."),
-        ".",
-        "QTScripts (*.js);;All Files (*)");
-  if(filename.isEmpty())
-    return;
-  loadScript(QFileInfo(filename));
+
 #endif
 }
 
@@ -2198,7 +2198,10 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
+#ifdef CGAL_USE_SSH
 
+  prefdiag.sshButton->setEnabled(true);
+#endif
   float lineWidth[2];
   if(!viewer->isOpenGL_4_3())
     viewer->glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
@@ -2336,6 +2339,52 @@ void MainWindow::on_actionPreferences_triggered()
       }
     });
     dialog.exec();
+  });
+  connect(prefdiag.sshButton, &QPushButton::clicked,
+          this, [this, prefdiag](){
+    QDialog dialog(this);
+    Ui::SSHDialog sshdiag;
+    sshdiag.setupUi(&dialog);
+    sshdiag.userEdit->setText(settings.value("ssh_user", QString()).toString());
+    sshdiag.serverEdit->setText(settings.value("ssh_server", QString()).toString());
+    sshdiag.publicEdit->setText(settings.value("ssh_public_key", QString()).toString());
+    sshdiag.privkEdit->setText(settings.value("ssh_priv_key", QString()).toString());
+    connect(sshdiag.pubButton, &QPushButton::clicked,
+            this, [this, sshdiag](){
+      QFileDialog diag(this,
+                       "Public Key",
+                       "",
+                       "All Files (*)");
+      diag.setFilter(QDir::Hidden|QDir::Files|QDir::Dirs|QDir::NoDotAndDotDot);
+      if(!diag.exec())
+        return;
+      sshdiag.publicEdit->setText(diag.selectedFiles().front());
+    });
+    connect(sshdiag.privButton, &QPushButton::clicked,
+            this, [this, sshdiag](){
+      QFileDialog diag(this,
+                       "Private Key",
+                       "",
+                       "All Files (*)");
+      diag.setFilter(QDir::Hidden|QDir::Files|QDir::Dirs|QDir::NoDotAndDotDot);
+      if(!diag.exec())
+        return;
+      sshdiag.privkEdit->setText(diag.selectedFiles().front());
+    });
+    connect(prefdiag.sshButton, &QPushButton::clicked,
+            this, [this, prefdiag](){});
+    dialog.exec();
+    if ( dialog.result() )
+    {
+      settings.setValue("ssh_user",
+                        sshdiag.userEdit->text());
+      settings.setValue("ssh_server",
+                        sshdiag.serverEdit->text());
+      settings.setValue("ssh_public_key",
+                        sshdiag.publicEdit->text());
+      settings.setValue("ssh_priv_key",
+                        sshdiag.privkEdit->text());
+    }
   });
   dialog.exec();
 
@@ -2842,11 +2891,41 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
 {
   if(scene->numberOfEntries() == 0)
     return;
-  QString filename =
-      QFileDialog::getSaveFileName(this,
-                                   "Save the Scene as a Script File",
-                                   last_saved_dir,
-                                   "Qt Script files (*.js)");
+  bool do_upload = false;
+#ifdef CGAL_USE_SSH
+  QString user = settings.value("ssh_user", QString()).toString();
+  QString pass;
+  if(!user.isEmpty())
+  {
+    QMessageBox::StandardButton doyou =
+        QMessageBox::question(this, tr("Upload ?"), tr("Do you wish to upload the scene"
+                                                       " using the SSH preferences ?"));
+    bool ok;
+    do_upload = (doyou == QMessageBox::Yes);
+    if(do_upload)
+    {
+      pass = QInputDialog::getText(this, "SSH Password",
+                                   "Enter ssh key password:",
+                                   QLineEdit::Password,
+                                   tr(""),
+                                   &ok);
+      if(!ok)
+        return;
+      pass = pass.trimmed();
+    }
+  }
+#endif
+
+  QString filename;
+
+  if(do_upload){
+    filename = QString("%1/save_scene.js").arg(QDir::tempPath());
+  }else{
+    filename = QFileDialog::getSaveFileName(this,
+                                            "Save the Scene as a Script File",
+                                            last_saved_dir,
+                                            "Qt Script files (*.js)");
+  }
   CGAL::Three::Three::CursorScopeGuard cs(Qt::WaitCursor);
   std::ofstream os(filename.toUtf8(), std::ofstream::binary);
   if(!os)
@@ -2961,6 +3040,58 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                          "Items Not  Saved",
                          QString("The following items could not be saved: %1").arg(
                            not_saved.join(", ")));
+#ifdef CGAL_USE_SSH
+  using namespace CGAL::ssh_internal;
+  if(do_upload)
+  {
+    QString server = settings.value("ssh_server", QString()).toString();
+    QString pk = settings.value("ssh_public_key", QString()).toString();
+    QString privK = settings.value("ssh_priv_key", QString()).toString();
+    user = user.trimmed();
+    server = server.trimmed();
+    pk = pk.trimmed();
+    privK=privK.trimmed();
+    if(user.isEmpty()){
+      return;
+    }
+    QString path;
+    path = QInputDialog::getText(this,
+                                 "",
+                                 tr("Enter the destination path for your file."));
+    if(path.isEmpty())
+      return;
+    try{
+      ssh_session session;
+      bool res = establish_ssh_session(session,
+                            user.toStdString().c_str(),
+                            server.toStdString().c_str(),
+                            pk.toStdString().c_str(),
+                            privK.toStdString().c_str(),
+                            pass.toStdString().c_str());
+      if(!res)
+      {
+        QMessageBox::warning(this,
+                             "Error",
+                             "The SSH session could not be started.");
+        return;
+      }
+      res = push_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
+      if(!res)
+      {
+        QMessageBox::warning(this,
+                             "Error",
+                             "The file could not be uploaded. Check your console for more information.");
+        close_connection(session);
+        return;
+      }
+      close_connection(session);
+    } catch( ssh::SshException e )
+    {
+      std::cout << "Error during connection : ";
+      std::cout << e.getError() << std::endl;
+    }
+  }
+#endif
 }
 void MainWindow::setTransparencyPasses(int val)
 {
@@ -3357,4 +3488,101 @@ void MainWindow::on_action_Save_triggered()
       save(filename, to_save);
     }
   }
+}
+
+void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
+{
+  bool do_download = false;
+  QString filename;
+
+#ifdef CGAL_USE_SSH
+  QString user = settings.value("ssh_user", QString()).toString();
+  QString pass;
+  if(!user.isEmpty())
+  {
+    QMessageBox::StandardButton doyou =
+        QMessageBox::question(this, tr("Download ?"), tr("Do you wish to download the scene"
+                                                         " using the SSH preferences ?"));
+    bool ok;
+    do_download= (doyou == QMessageBox::Yes);
+    if(do_download)
+    {
+      pass = QInputDialog::getText(this, "SSH Password",
+                                   "Enter ssh key password:",
+                                   QLineEdit::Password,
+                                   tr(""),
+                                   &ok);
+      if(!ok)
+        return;
+      pass = pass.trimmed();
+    }
+  }
+#endif
+
+  if(do_download)
+  {
+    using namespace CGAL::ssh_internal;
+    QString server = settings.value("ssh_server", QString()).toString();
+    QString pk = settings.value("ssh_public_key", QString()).toString();
+    QString privK = settings.value("ssh_priv_key", QString()).toString();
+    user = user.trimmed();
+    server = server.trimmed();
+    pk = pk.trimmed();
+    privK=privK.trimmed();
+    QString path;
+    path = QInputDialog::getText(this,
+                                 "",
+                                 tr("Enter the remote path for your file."));
+    if(path.isEmpty())
+      return;
+    try{
+      ssh_session session;
+      bool res = establish_ssh_session(session,
+                            user.toStdString().c_str(),
+                            server.toStdString().c_str(),
+                            pk.toStdString().c_str(),
+                            privK.toStdString().c_str(),
+                            pass.toStdString().c_str());
+      if(!res)
+      {
+        QMessageBox::warning(this,
+                             "Error",
+                             "The SSH session could not be started.");
+        return;
+      }
+      filename = QString("%1/load_scene.js").arg(QDir::tempPath());
+      path = tr("%1/%2").arg(QDir::tempPath()).arg(path);
+      res = pull_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
+      if(!res)
+      {
+        QMessageBox::warning(this,
+                             "Error",
+                             "The file could not be fetched. Check your console for more info.");
+        close_connection(session);
+        return;
+      }
+      close_connection(session);
+    } catch( ssh::SshException e )
+    {
+      std::cout << "Error during connection : ";
+      std::cout << e.getError() << std::endl;
+    }
+  }
+  else
+  {
+    filename =  QFileDialog::getOpenFileName(
+          this,
+          tr("Select a Whole Scene file..."),
+          ".",
+          "Whole Scene files (*.js)");
+    if(filename.isEmpty())
+      return;
+  }
+
+
+
+
+  loadScript(QFileInfo(filename));
+
+
 }

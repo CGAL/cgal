@@ -449,6 +449,7 @@ public:
 #endif
 public Q_SLOTS:
   void on_actionSa_ve_Scene_as_Script_triggered();
+  void on_actionLoad_a_Scene_from_a_Script_File_triggered();
   void toggleFullScreen();
   void setDefaultSaveDir();
   void invalidate_bbox(bool do_recenter);
