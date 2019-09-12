@@ -205,7 +205,7 @@ public:
   }
 
   Compute_squared_distance_2
-  compute_squared_distance_3_object() const
+  compute_squared_distance_2_object() const
   { return Base::compute_squared_distance_3_object(); }
 
   Construct_ray_3

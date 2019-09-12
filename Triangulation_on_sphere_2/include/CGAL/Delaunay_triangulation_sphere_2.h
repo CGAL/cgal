@@ -388,6 +388,7 @@ power_test(const Point& p0, const Point& p1, const Point& p2, const Point& p, bo
   const Point* points[4] = { &p0, &p1, &p2, &p };
   std::sort(points, points + 4, Perturbation_order(this));
 
+  // @fixme revert to former?
   for(int i=3; i>0; --i)
   {
     if(points[i] == &p)
@@ -578,8 +579,6 @@ insert(const Point& p, Face_handle start)
   Locate_type lt;
   int li;
   Face_handle loc = Base::locate(p, lt, li, start);
-
-  std::cout << "Locate: " << lt << " " << li << std::endl;
 
   switch(lt)
   {

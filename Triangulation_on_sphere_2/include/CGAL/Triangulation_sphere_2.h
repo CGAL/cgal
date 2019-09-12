@@ -1341,7 +1341,7 @@ typename Triangulation_sphere_2<Gt, Tds>::FT
 Triangulation_sphere_2<Gt, Tds>::
 squared_distance(const Point& p, const Point& q) const
 {
-  return geom_traits().compute_squared_distance_3_object()(p, q);
+  return geom_traits().compute_squared_distance_2_object()(p, q);
 }
 
 // ---------------------------------I/O--------------------------- //

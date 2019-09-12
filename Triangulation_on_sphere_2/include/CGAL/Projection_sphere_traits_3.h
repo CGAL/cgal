@@ -155,7 +155,7 @@ public:
   { return Inside_cone_2(Base::inside_cone_2_object(), _radius); }
 
   Compute_squared_distance_2
-  compute_squared_distance_3_object() const
+  compute_squared_distance_2_object() const
   { return Compute_squared_distance_2(Base::compute_squared_distance_2_object(), _radius); }
 
   Compare_xyz_3
