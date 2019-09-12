@@ -256,6 +256,44 @@ get_best_edge_orientation(typename boost::graph_traits<TriangleMesh>::edge_descr
   return boost::graph_traits<TriangleMesh>::null_halfedge();
 }
 
+// adapted from triangulate_faces
+template <class TriangleMesh, class NamedParameters>
+bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
+                 const TriangleMesh& tmesh,
+                 const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
+  typedef typename boost::property_traits<VPM>::reference Point_ref;
+
+  VPM vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(vertex_point, tmesh));
+
+  CGAL_assertion( !is_border(e, tmesh) );
+
+  halfedge_descriptor h = halfedge(e, tmesh);
+
+  Point_ref p0 = get(vpm, target(h, tmesh));
+  Point_ref p1 = get(vpm, target(next(h, tmesh), tmesh));
+  Point_ref p2 = get(vpm, source(h, tmesh));
+  Point_ref p3 = get(vpm, target(next(opposite(h, tmesh), tmesh), tmesh));
+
+  /* Chooses the diagonal that will split the quad in two triangles that maximize
+   * the scalar product of of the un-normalized normals of the two triangles.
+   * The lengths of the un-normalized normals (computed using cross-products of two vectors)
+   *  are proportional to the area of the triangles.
+   * Maximize the scalar product of the two normals will avoid skinny triangles,
+   * and will also taken into account the cosine of the angle between the two normals.
+   * In particular, if the two triangles are oriented in different directions,
+   * the scalar product will be negative.
+   */
+
+  double p1p3 = CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
+  double p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
+
+  return p0p2<=p1p3;
+}
+
 } // namespace internal
 
 // @todo check what to use as priority queue with removable elements, set might not be optimal
@@ -447,6 +485,15 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       if(!halfedge(target(next(h, tmesh), tmesh),
                    target(next(opposite(h, tmesh), tmesh), tmesh), tmesh).second)
       {
+
+        if (!internal::should_flip(e, tmesh, np))
+        {
+#ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
+          std::cout << "Flipping prevented: not the best diagonal" << std::endl;
+#endif
+          next_edges_to_flip.insert(e);
+          continue;
+        }
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
         std::cout << "Flipping" << std::endl;
 #endif
@@ -459,7 +506,6 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         CGAL_assertion( edge(h, tmesh) == e );
 
         // handle face updates
-        bool undo = false;
         for (int i=0; i<2; ++i)
         {
           CGAL_assertion(!is_border(h, tmesh));
@@ -468,8 +514,6 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
           {
             if (edge(nc[1], tmesh) != e)
               next_edges_to_flip.insert( edge(nc[1], tmesh) );
-            else
-              undo = true;
           }
           else
           {
@@ -480,16 +524,6 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
           }
           h=opposite(h, tmesh);
         }
-
-        if (undo)
-        {
-          /// @todo we could decide on a metric and allow the filp only if it is improving the mesh
-          Euler::flip_edge(h, tmesh); // avoid infinite loop: flip only if a cap is removed
-          // even if we inserted some edges above these will be tested before flipping (not optimal but it does not harm)
-          next_edges_to_flip.insert(e); // we add it for the next round in case some other flip  fix the loop
-          continue;
-        }
-
         something_was_done = true;
       }
 #ifdef  CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
