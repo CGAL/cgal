@@ -256,9 +256,12 @@ public:
     Triangulation_segment_cell_iterator_3( const Tr& tr, const Segment& S, Cell_handle hint = Cell_handle() );
 // \}
 
+#ifndef CGAL_TST_ASSUME_CORRECT_TYPES
     // The virtual destructor is mainly defined to indicate to the casting
     // operators that this is a dynamic type.
-    virtual ~Triangulation_segment_cell_iterator_3() {}
+    virtual
+#endif
+    ~Triangulation_segment_cell_iterator_3() {}
     
 private:
     //  private constructor that does not initialize the source and target.
