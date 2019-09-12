@@ -16,6 +16,7 @@
 #include <QApplication>
 #include <QOpenGLDebugLogger>
 #include <QStyleFactory>
+#include <QtWebSockets/QWebSocket>
 
 #include <CGAL/Three/Three.h>
 
@@ -40,6 +41,7 @@ public:
   bool inDrawWithNames;
   bool clipping;
   bool projection_is_ortho;
+  bool cam_sharing;
   GLfloat gl_point_size;
   QVector4D clipbox[6];
   QPainter *painter;
@@ -107,6 +109,9 @@ public:
   {
     return shader_programs;
   }
+
+  QWebSocket m_webSocket;
+  QUrl m_url;
 };
 
 class LightingDialog :
@@ -254,6 +259,7 @@ void Viewer::doBindings()
   d->spec_power = viewer_settings.value("spec_power", 51.8).toFloat();
   d->scene = 0;
   d->projection_is_ortho = false;
+  d->cam_sharing = false;
   d->twosides = false;
   this->setProperty("draw_two_sides", false);
   d->macro_mode = false;
@@ -589,7 +595,7 @@ void Viewer::mousePressEvent(QMouseEvent* event)
       d->showDistance(event->pos());
       event->accept();
   }
-  else {
+  else{
     makeCurrent();
     CGAL::QGLViewer::mousePressEvent(event);
   }
@@ -1836,5 +1842,51 @@ bool Viewer::isClipping() const
   return d->clipping;
 }
 
-#include "Viewer.moc"
+void Viewer::setShareCam(bool b)
+{
+  static bool init = false;
+  if(b)
+  {
+    d->cam_sharing = b;
+    QString ws_url
+        = CGAL::Three::Three::mainWindow()->property("ws_url").toString();
+    if(ws_url.isEmpty())
+    {
+      QMessageBox::warning(this, "Error", "No Server configured. Please go to Edit->Preferences->Network Settings and fill the \"Camera Synchronization Server\" Field.");
+    }
+    else{
+      if(!init)
+      {
+        connect(&d->m_webSocket, &QWebSocket::connected, this, &Viewer::onSocketConnected);
+        connect(&d->m_webSocket, &QWebSocket::disconnected, this, &Viewer::socketClosed);
+        init = true;
+      }
+      d->m_webSocket.open(QUrl(ws_url));
+    }
+  }
+  else
+  {
+    d->m_webSocket.close();
+  }
+}
 
+void Viewer::onSocketConnected()
+{
+  connect(&d->m_webSocket, &QWebSocket::textMessageReceived,
+          this, &Viewer::onTextMessageSocketReceived);
+  connect(camera()->frame(), &CGAL::qglviewer::ManipulatedCameraFrame::manipulated,
+          this, [this](){
+    if(d->cam_sharing){
+      QString cam_state = dumpCameraCoordinates();
+      //send to server
+      d->m_webSocket.sendTextMessage(cam_state);
+    }
+  });
+}
+
+void Viewer::onTextMessageSocketReceived(QString message)
+{
+  moveCameraToCoordinates(message, 0.05f);
+}
+
+#include "Viewer.moc"

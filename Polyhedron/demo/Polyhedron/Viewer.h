@@ -95,6 +95,7 @@ public:
 Q_SIGNALS:
   void sendMessage(QString);
   void doneInitGL(CGAL::Three::Viewer_interface*);
+  void socketClosed();
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
   void setAntiAliasing(bool b) Q_DECL_OVERRIDE;
@@ -129,6 +130,10 @@ public Q_SLOTS:
   void setLighting();
 
   void messageLogged(QOpenGLDebugMessage);
+
+  void setShareCam(bool);
+  void onSocketConnected();
+  void onTextMessageSocketReceived(QString message);
 
 protected:
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;

@@ -288,10 +288,10 @@
             <item>
              <widget class="QPushButton" name="sshButton">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="text">
-               <string>SSH Settings</string>
+               <string>Network Settings</string>
               </property>
              </widget>
             </item>

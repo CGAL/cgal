@@ -64,7 +64,7 @@ include(${CGAL_USE_FILE})
 find_package(Qt5
              QUIET
              COMPONENTS            OpenGL Script
-             OPTIONAL_COMPONENTS   ScriptTools)
+             OPTIONAL_COMPONENTS   ScriptTools WebSockets)
 
 if(Qt5_FOUND)
 
@@ -199,6 +199,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     )
+  if(TARGET Qt5::WebSockets)
+    target_link_libraries(demo_framework PUBLIC Qt5::WebSockets)
+    message(STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
+  endif()
+
   cgal_add_compilation_test(demo_framework)
   # Let's define `three_EXPORT` during the compilation of `demo_framework`,
   # in addition of `demo_framework_EXPORT` (defined automatically by
@@ -337,6 +342,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     add_definitions(-DCGAL_USE_SSH)
     target_link_libraries(polyhedron_demo PUBLIC ${LIBSSH_LIBRARIES})
   endif() #libssh
+  if(TARGET Qt5::WebSockets)
+    target_link_libraries(polyhedron_demo PUBLIC Qt5::WebSockets)
+  endif()
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
   target_link_libraries( Polyhedron_3 PRIVATE polyhedron_demo )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )

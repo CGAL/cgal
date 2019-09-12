@@ -2198,10 +2198,6 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
-#ifdef CGAL_USE_SSH
-
-  prefdiag.sshButton->setEnabled(true);
-#endif
   float lineWidth[2];
   if(!viewer->isOpenGL_4_3())
     viewer->glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
@@ -2345,6 +2341,12 @@ void MainWindow::on_actionPreferences_triggered()
     QDialog dialog(this);
     Ui::SSHDialog sshdiag;
     sshdiag.setupUi(&dialog);
+
+#ifdef CGAL_USE_SSH
+    sshdiag.userBox->setEnabled(true);
+    sshdiag.serverBox->setEnabled(true);
+    sshdiag.pkBox->setEnabled(true);
+    sshdiag.privkBox->setEnabled(true);
     sshdiag.userEdit->setText(settings.value("ssh_user", QString()).toString());
     sshdiag.serverEdit->setText(settings.value("ssh_server", QString()).toString());
     sshdiag.publicEdit->setText(settings.value("ssh_public_key", QString()).toString());
@@ -2371,11 +2373,18 @@ void MainWindow::on_actionPreferences_triggered()
         return;
       sshdiag.privkEdit->setText(diag.selectedFiles().front());
     });
-    connect(prefdiag.sshButton, &QPushButton::clicked,
-            this, [this, prefdiag](){});
+#else
+    sshdiag.userBox->setEnabled(false);
+    sshdiag.serverBox->setEnabled(false);
+    sshdiag.pkBox->setEnabled(false);
+    sshdiag.privkBox->setEnabled(false);
+#endif
+    sshdiag.wsEdit->setText(settings.value("ws_server_url", QString()).toString());
+
     dialog.exec();
     if ( dialog.result() )
     {
+#ifdef CGAL_USE_SSH
       settings.setValue("ssh_user",
                         sshdiag.userEdit->text());
       settings.setValue("ssh_server",
@@ -2384,8 +2393,13 @@ void MainWindow::on_actionPreferences_triggered()
                         sshdiag.publicEdit->text());
       settings.setValue("ssh_priv_key",
                         sshdiag.privkEdit->text());
+#endif
+      settings.setValue("ws_server_url",
+                        sshdiag.wsEdit->text());
+      setProperty("ws_url", sshdiag.wsEdit->text());
     }
   });
+
   dialog.exec();
 
   if ( dialog.result() )
@@ -2871,7 +2885,7 @@ QByteArray file_to_string(const char* filename)
   //ss.write( << f.rdbuf(); // reading data
   f.close();
   std::string st = ss.str();
-  QByteArray ba(st.c_str(), st.size());
+  QByteArray ba(st.c_str(), static_cast<int>(st.size()));
   return ba;
 }
 
@@ -3212,6 +3226,11 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
     information(s);
   });
 
+
+  action= subviewer->findChild<QAction*>("actionShareCamera");
+  connect(action, SIGNAL(toggled(bool)),
+          viewer, SLOT(setShareCam(bool)));
+  
 }
 
 void MainWindow::on_actionAdd_Viewer_triggered()
@@ -3363,6 +3382,11 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);
+  QAction* actionShareCamera= new QAction("Join WS Server",this);
+  actionShareCamera->setObjectName("actionShareCamera");
+  actionShareCamera->setCheckable(true);
+  actionShareCamera->setChecked(false);
+  viewMenu->addAction(actionShareCamera);
   if(mainviewer)
     setAttribute(Qt::WA_DeleteOnClose);
   setWindowIcon(QIcon(":/cgal/icons/resources/menu.png"));
@@ -3521,6 +3545,7 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
 
   if(do_download)
   {
+    #ifdef CGAL_USE_SSH
     using namespace CGAL::ssh_internal;
     QString server = settings.value("ssh_server", QString()).toString();
     QString pk = settings.value("ssh_public_key", QString()).toString();
@@ -3567,6 +3592,7 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
       std::cout << "Error during connection : ";
       std::cout << e.getError() << std::endl;
     }
+    #endif
   }
   else
   {
