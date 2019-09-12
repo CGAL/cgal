@@ -1,10 +1,11 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <fstream>
 #include <CGAL/Polygon_mesh_processing/remove_degeneracies.h>
 
 #include <iostream>
-#include <fstream>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -27,10 +28,18 @@ int main(int argc, char** argv)
     return 1;
   }
 
+  std::cout << "Input mesh has " << edges(mesh).size() << " edges\n";
+  if (PMP::does_self_intersect(mesh))
+    std::cout << "Input mesh has self-intersections\n";
+
   PMP::remove_almost_degenerate_faces(mesh);
 
   std::ofstream out("cleaned_mesh.off");
   out << std::setprecision(17) << mesh;
+
+  std::cout << "Output mesh has " << edges(mesh).size() << " edges\n";
+  if (PMP::does_self_intersect(mesh))
+    std::cout << "Output mesh has self-intersections\n";
 
   return 0;
 }
