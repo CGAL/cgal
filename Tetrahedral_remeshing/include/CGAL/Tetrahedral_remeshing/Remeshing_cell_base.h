@@ -44,8 +44,8 @@ namespace Tetrahedral_remeshing
     typedef typename Base::Cell_handle   Cell_handle;
 
   public:
-    typedef int                                         Subdomain_index;
-    typedef std::pair<Subdomain_index, Subdomain_index> Surface_patch_index;
+    typedef int Subdomain_index;
+    typedef int Surface_patch_index;
 
   private:
     Subdomain_index subdomain_index_;
@@ -105,10 +105,11 @@ namespace Tetrahedral_remeshing
 
     const Surface_patch_index surface_patch_index(const int& i)
     {
-      const Subdomain_index& i1 = subdomain_index_;
-      const Subdomain_index& i2 = this->neighbor(i)->subdomain_index();
-      if (i1 < i2) return std::make_pair(i1, i2);
-      else         return std::make_pair(i2, i1);
+      CGAL_precondition(i >= 0 && i < 4);
+      if(is_facet_on_surface(i))
+        return 1;
+      else
+        return 0;
     }
 
     /// Returns true if facet lies on a surface patch

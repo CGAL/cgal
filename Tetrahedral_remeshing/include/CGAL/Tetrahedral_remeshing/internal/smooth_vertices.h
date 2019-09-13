@@ -149,19 +149,26 @@ namespace internal
     return true;
   }
 
-  template<typename VertexHandle, typename K, typename CellHandle>
-  bool check_inversion_and_move(const VertexHandle v,
+  template<typename Tr, typename K>
+  bool check_inversion_and_move(const typename Tr::Vertex_handle v,
                                 const CGAL::Vector_3<K>& move,
-                                const std::vector<CellHandle>& cells)
+                                const std::vector<typename Tr::Cell_handle>& cells)
   {
-    const CGAL::Point_3<K> backup = v->point(); //backup v's position
-    v->set_point(backup + move);
+    typedef typename Tr::Cell_handle Cell_handle;
 
-    for (std::size_t i = 0; i < cells.size(); ++i)
+    const typename Tr::Point backup = v->point(); //backup v's position
+    typename Tr::Point new_pos(v->point().x() + move.x(),
+                               v->point().y() + move.y(),
+                               v->point().z() + move.z());
+                               //note that weight is lost in case of Regular_triangulation
+    v->set_point(new_pos);
+
+    for (Cell_handle ci : cells)
     {
-      CellHandle ci = cells[i];
-      if (CGAL::POSITIVE != CGAL::orientation(ci->vertex(0)->point(),
-          ci->vertex(1)->point(), ci->vertex(2)->point(), ci->vertex(3)->point()))
+      if (CGAL::POSITIVE != CGAL::orientation(point(ci->vertex(0)->point()),
+                                              point(ci->vertex(1)->point()),
+                                              point(ci->vertex(2)->point()),
+                                              point(ci->vertex(3)->point())))
       {
         v->set_point(backup);
         return false;
@@ -191,7 +198,7 @@ namespace internal
       Vertex_handle ve = (e.first->vertex(e.second) != v)
                         ? e.first->vertex(e.second)
                         : e.first->vertex(e.third);
-      move = move + Vector_3(CGAL::ORIGIN,  ve->point());
+      move = move + Vector_3(CGAL::ORIGIN,  point(ve->point()));
     }
 
     return 1. / edges.size() * move;
@@ -223,7 +230,7 @@ namespace internal
         Vertex_handle ve = (e.first->vertex(e.second) != v)
                           ? e.first->vertex(e.second)
                           : e.first->vertex(e.third);
-        move = move + Vector_3(CGAL::ORIGIN, ve->point());
+        move = move + Vector_3(CGAL::ORIGIN, point(ve->point()));
         ++nbe;
       }
     }
@@ -262,7 +269,7 @@ namespace internal
                       ? e.first->vertex(e.second)
                       : e.first->vertex(e.third);
 
-      move = move + Vector_3(CGAL::ORIGIN, ve->point());
+      move = move + Vector_3(CGAL::ORIGIN, point(ve->point()));
       ++nbe;
     }
 
@@ -361,15 +368,15 @@ namespace internal
          vit != tr.finite_vertices_end(); ++vit)
     {
       const std::size_t& vid = vertex_id.at(vit);
-      Point_3 new_pos = CGAL::ORIGIN + smoothing_vecs[vid];
-      const Vector_3 move(vit->point(), new_pos);
+      const Point_3 new_pos = CGAL::ORIGIN + smoothing_vecs[vid];
+      const Vector_3 move(point(vit->point()), new_pos);
 
       std::vector<Cell_handle> cells;
       tr.finite_incident_cells(vit, std::back_inserter(cells));
 
       double frac = 1.;
       while (frac > 0.05   /// 1/16 = 0.0625
-          && !check_inversion_and_move(vit, frac * move, cells))
+          && !check_inversion_and_move<Tr>(vit, frac * move, cells))
       {
         frac = 0.5 * frac;
       }

@@ -166,10 +166,10 @@ namespace internal
         Vector_3 v0_new_pos = vec(vh0->point());
 
         if (collapse_type == TO_MIDPOINT){
-          v0_new_pos = v0_new_pos + 0.5 * Vector_3(vh0->point(), vh1->point());
+          v0_new_pos = v0_new_pos + 0.5 * Vector_3(point(vh0->point()), point(vh1->point()));
         }
         else if (collapse_type == TO_V1){
-          v0_new_pos = vec(vh1->point());
+          v0_new_pos = vec(point(vh1->point()));
         }
 
         boost::unordered_set<Cell_handle> invalid_cells;
@@ -317,12 +317,6 @@ namespace internal
     }
 
   protected:
-
-    Vector_3 vec(const Point_3& p)
-    {
-      return Vector_3(p.x(), p.y(), p.z());
-    }
-
     Tr triangulation;
     boost::bimap<Vertex_handle, Vertex_handle> v2v;/*vertex of main tr - vertex of collapse tr*/
     boost::bimap<Cell_handle, Cell_handle>     c2c;/*cell of main tr - cell of collapse tr*/
@@ -491,7 +485,7 @@ namespace internal
   {
     typedef typename C3t3::Vertex_handle Vertex_handle;
     typedef typename C3t3::Cell_handle   Cell_handle;
-    typedef typename C3t3::Triangulation::Point Point;
+    typedef typename C3t3::Triangulation::Geom_traits::Point_3 Point;
 
     Vertex_handle v0 = edge.first->vertex(edge.second);
     Vertex_handle v1 = edge.first->vertex(edge.third);
@@ -525,11 +519,11 @@ namespace internal
         if (!ch->has_vertex(v1))
         {
           //check orientation
-          boost::array<Point, 4> pts = { ch->vertex(0)->point(),
-                                         ch->vertex(1)->point(),
-                                         ch->vertex(2)->point(),
-                                         ch->vertex(3)->point()};
-          pts[ch->index(v0)] = new_pos;
+          boost::array<Point, 4> pts = { point(ch->vertex(0)->point()),
+                                         point(ch->vertex(1)->point()),
+                                         point(ch->vertex(2)->point()),
+                                         point(ch->vertex(3)->point())};
+          pts[ch->index(v0)] = point(new_pos);
           if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
             return false;
         }
@@ -547,11 +541,11 @@ namespace internal
         if (!ch->has_vertex(v0))
         {
           //check orientation
-          boost::array<Point, 4> pts = { ch->vertex(0)->point(),
-                                         ch->vertex(1)->point(),
-                                         ch->vertex(2)->point(),
-                                         ch->vertex(3)->point() };
-          pts[ch->index(v1)] = new_pos;
+          boost::array<Point, 4> pts = { point(ch->vertex(0)->point()),
+                                         point(ch->vertex(1)->point()),
+                                         point(ch->vertex(2)->point()),
+                                         point(ch->vertex(3)->point()) };
+          pts[ch->index(v1)] = point(new_pos);
           if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
             return false;
         }
@@ -808,7 +802,7 @@ namespace internal
     //Collapse at mid point
     if (collapse_type == TO_MIDPOINT)
     {
-      Point_3 new_position = CGAL::midpoint(vh0->point(), vh1->point());
+      Point_3 new_position(CGAL::midpoint(point(vh0->point()), point(vh1->point())));
       vh0->set_point(new_position);
       vh1->set_point(new_position);
 
@@ -867,7 +861,7 @@ namespace internal
         new_pos = v1->point(); break;
       default:
         CGAL_assertion(collapse_type == TO_MIDPOINT);
-        new_pos = CGAL::midpoint(v0->point(), v1->point());
+        new_pos = Point(CGAL::midpoint(point(v0->point()), point(v1->point())));
       }
 
       boost::unordered_map<Vertex_handle, double> edges_sqlength_after_collapse;

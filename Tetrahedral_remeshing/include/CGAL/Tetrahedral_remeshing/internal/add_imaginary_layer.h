@@ -69,11 +69,13 @@ namespace internal
                                Tr& tr,
                                OutputIterator oit)
   {
+    typedef typename Tr::Point Point;
+
     CGAL_assertion(tr.is_valid());
     int i = 1;
     for (PointIterator pit = begin; pit != end; ++pit, ++i)
     {
-      *oit++ = tr.insert(*pit);
+      *oit++ = tr.insert(Point(*pit));
     }
     CGAL_assertion(tr.is_valid());
 
@@ -98,7 +100,7 @@ namespace internal
     for (typename VertexNormalsMap::const_iterator nit = normals.begin();
          nit != normals.end(); ++nit)
     {
-      *oit++ = (*nit).first->point() + offset * (*nit).second;
+      *oit++ = point((*nit).first->point()) + offset * (*nit).second;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       ofs << ((*nit).first->point() + offset * (*nit).second) << std::endl;

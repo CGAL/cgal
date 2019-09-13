@@ -95,7 +95,7 @@ namespace internal
 
     typedef typename C3t3::Cell_handle         Cell_handle;
     typedef typename C3t3::Vertex_handle       Vertex_handle;
-    typedef typename C3t3::Surface_patch_index Surface_patch_index;
+    typedef typename int                       Surface_patch_index; //only needed for is_in_complex()
     typedef typename C3t3::Subdomain_index     Subdomain_index;
 
   private:
@@ -336,9 +336,9 @@ namespace internal
         if (s1 != s2)
         {
           if(s1 < s2)
-            m_c3t3.add_to_complex(f, helpers::make_surface_patch_index(s1, s2));
+            m_c3t3.add_to_complex(f, 1);
           else
-            m_c3t3.add_to_complex(f, helpers::make_surface_patch_index(s2, s1));
+            m_c3t3.add_to_complex(f, 1);
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           ++nbf;
 #endif

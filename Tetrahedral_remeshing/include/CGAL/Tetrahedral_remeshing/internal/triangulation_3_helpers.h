@@ -27,8 +27,13 @@
 
 #include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/Point_3.h>
+#include <CGAL/Weighted_point_3.h>
+#include <CGAL/Vector_3.h>
 #include <CGAL/utility.h>
+#include <CGAL/Origin.h>
+
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+
 #include <boost/bimap.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -80,6 +85,31 @@ namespace CGAL
     }
 
   } // end namespace debug (in ::CGAL)
+
+  template<typename K>
+  CGAL::Point_3<K> point(const CGAL::Point_3<K>& p)
+  {
+    return p;
+  }
+  template<typename K>
+  CGAL::Point_3<K> point(const CGAL::Weighted_point_3<K>& wp)
+  {
+    typename K::Construct_point_3 pt = K().construct_point_3_object();
+    return pt(wp);
+  }
+
+  template <typename K>
+  CGAL::Vector_3<K> vec(const CGAL::Point_3<K>& p)
+  {
+    typename K::Construct_vector_3 v = K().construct_vector_3_object();
+    return v(CGAL::ORIGIN, p);
+  }
+  template <typename K>
+  CGAL::Vector_3<K> vec(const CGAL::Weighted_point_3<K>& wp)
+  {
+    return vec(point(wp));
+  }
+
 
   const int indices_table[4][3] = { { 3, 1, 2 },
                                     { 3, 2, 0 },
@@ -136,19 +166,19 @@ namespace CGAL
                                      VertexHandle v2,
                                      VertexHandle v3)
   {
-    return min_dihedral_angle(v0->point(),
-                              v1->point(),
-                              v2->point(),
-                              v3->point());
+    return min_dihedral_angle(point(v0->point()),
+                              point(v1->point()),
+                              point(v2->point()),
+                              point(v3->point()));
   }
 
   template<typename Gt, typename CellHandle>
   typename Gt::FT min_dihedral_angle(CellHandle c)
   {
-    return min_dihedral_angle(c->vertex(0)->point(),
-                              c->vertex(1)->point(),
-                              c->vertex(2)->point(),
-                              c->vertex(3)->point());
+    return min_dihedral_angle(point(c->vertex(0)->point()),
+                              point(c->vertex(1)->point()),
+                              point(c->vertex(2)->point()),
+                              point(c->vertex(3)->point()));
   }
 
   template<typename Tr>
@@ -189,8 +219,10 @@ namespace CGAL
   template<typename CellHandle>
   CGAL::Orientation orientation(const CellHandle ch)
   {
-    return CGAL::orientation(ch->vertex(0)->point(), ch->vertex(1)->point(),
-                             ch->vertex(2)->point(), ch->vertex(3)->point());
+    return CGAL::orientation(point(ch->vertex(0)->point()),
+                             point(ch->vertex(1)->point()),
+                             point(ch->vertex(2)->point()),
+                             point(ch->vertex(3)->point()));
   }
 
   template<typename CellHandle>
@@ -203,8 +235,8 @@ namespace CGAL
   bool is_well_oriented(const VertexHandle v0, const VertexHandle v1,
                         const VertexHandle v2, const VertexHandle v3)
   {
-    return CGAL::POSITIVE == CGAL::orientation(v0->point(), v1->point(),
-                                               v2->point(), v3->point());
+    return CGAL::POSITIVE == CGAL::orientation(point(v0->point()), point(v1->point()),
+                                               point(v2->point()), point(v3->point()));
   }
 
   template<typename C3t3, typename OutputIterator>
@@ -663,9 +695,9 @@ namespace CGAL
     typedef typename Gt::Vector_3 Vector;
     typedef typename Gt::Point_3  Point;
 
-    Point p0 = f.first->vertex((f.second + 1) % 4)->point();
-    Point p1 = f.first->vertex((f.second + 2) % 4)->point();
-    const Point& p2 = f.first->vertex((f.second + 3) % 4)->point();
+    Point p0 = point(f.first->vertex((f.second + 1) % 4)->point());
+    Point p1 = point(f.first->vertex((f.second + 2) % 4)->point());
+    const Point& p2 = point(f.first->vertex((f.second + 3) % 4)->point());
 
     //if (CGAL::POSITIVE != CGAL::orientation(p0, p1, p2, p3))
     if (f.second % 2 == 0)//equivalent to the commented orientation test

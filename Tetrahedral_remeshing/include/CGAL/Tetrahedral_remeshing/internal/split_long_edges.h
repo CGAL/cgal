@@ -85,7 +85,7 @@ namespace internal
 
     // insert midpoint
     Vertex_handle new_v = tr.tds().insert_in_edge(e);
-    const Point m = CGAL::midpoint(v1->point(), v2->point());
+    const Point m(CGAL::midpoint(point(v1->point()), point(v2->point())));
     new_v->set_point(m);
 
     // update dimension
