@@ -256,7 +256,7 @@ public:
     for (unsigned int i=0; i<NB_VBO_BUFFERS; ++i)
       buffers[i].destroy();
 
-    for (int i=0; i<NB_VAO_BUFFERS; ++i)
+    for (unsigned int i=0; i<NB_VAO_BUFFERS; ++i)
       vao[i].destroy();
   }
 
@@ -373,21 +373,21 @@ public:
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v)
   {
-    float bigNumber = 1e30;
+    double bigNumber = 1e30;
     m_buffer_for_mono_rays.add_ray_segment(p, (p + (bigNumber)*v));
   }
 
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v, const CGAL::Color &acolor)
   {
-    float bigNumber = 1e30;
+    double bigNumber = 1e30;
     m_buffer_for_colored_rays.add_ray_segment(p, (p + (bigNumber)*v), acolor);
   }
 
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v)
   {
-    float bigNumber = 1e30;
+    double bigNumber = 1e30;
     m_buffer_for_mono_lines.add_line_segment((p - (bigNumber)*v),
                                              (p + (bigNumber)*v));
   }
@@ -395,7 +395,7 @@ public:
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v, const CGAL::Color &acolor)
   {
-    float bigNumber = 1e30;
+    double bigNumber = 1e30;
     m_buffer_for_colored_lines.add_line_segment((p - (bigNumber)*v),
                                                 (p + (bigNumber)*v), acolor);
   }
@@ -467,7 +467,7 @@ protected:
       { std::cerr<<"VBO Creation number "<<i<<" FAILED"<<std::endl; }
     }
 
-    for (int i=0; i<NB_VAO_BUFFERS; ++i)
+    for (unsigned int i=0; i<NB_VAO_BUFFERS; ++i)
     {
       if(!vao[i].isCreated() && !vao[i].create())
       { std::cerr<<"VAO Creation number "<<i<<" FAILED"<<std::endl; }
@@ -789,12 +789,12 @@ protected:
     QMatrix4x4 mvMatrix;
     double mat[16];
     viewer->camera()->getModelViewProjectionMatrix(mat);
-    for(int i=0; i < 16; i++)
+    for(unsigned int i=0; i < 16; i++)
     {
       mvpMatrix.data()[i] = (float)mat[i];
     }
     viewer->camera()->getModelViewMatrix(mat);
-    for(int i=0; i < 16; i++)
+    for(unsigned int i=0; i < 16; i++)
     {
       mvMatrix.data()[i] = (float)mat[i];
     }

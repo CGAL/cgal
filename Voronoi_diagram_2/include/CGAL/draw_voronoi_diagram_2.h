@@ -40,7 +40,7 @@ namespace CGAL {
 struct DefaultColorFunctorV2
 {
   template <typename V2>
-  static CGAL::Color run(const V2 &, const typename V2::Face_iterator fh) {
+  static CGAL::Color run(const V2 &, const typename V2::Face_iterator /*fh*/) {
     //CGAL::Random random((unsigned int)(std::size_t)(&*fh));
     //return get_random_color(random);
     return CGAL::Color(73, 250, 117);
