@@ -319,8 +319,8 @@ CGAL_IMAGEIO_EXPORT void _freeImage(_image *im);
     @param w image word size in bytes
     @param wk image word kind
     @param sgn image word sign */
-CGAL_IMAGEIO_EXPORT _image *_createImage(int x, int y, int z, int v,
-                                         float vx, float vy, float vz, int w,
+CGAL_IMAGEIO_EXPORT _image *_createImage(std::size_t x, std::size_t y, std::size_t z, std::size_t v,
+                                         double vx, double vy, double vz, std::size_t w,
                                          WORD_KIND wk, SIGN sgn);
 
 

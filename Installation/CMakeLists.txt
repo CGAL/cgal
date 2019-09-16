@@ -957,12 +957,17 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
+if(NOT TARGET ALL_CGAL_TARGETS)
+  add_custom_target( ALL_CGAL_TARGETS )
+endif()
+
 macro( add_programs subdir target ON_OFF )
 
   cache_set( CGAL_EXECUTABLE_TARGETS "" )
   
   add_custom_target( ${target} )
-  
+  add_dependencies( ALL_CGAL_TARGETS ${target} )
+
   option( WITH_${target} "Select ${target}" ${ON_OFF} )
   if ( WITH_${target} )
     add_subdirectory( ${subdir} EXCLUDE_FROM_ALL )

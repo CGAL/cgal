@@ -138,7 +138,7 @@ protected:
     , m_lock_ds(bbox, num_grid_cells_per_axis)
   {
     big_moves_current_size_ = 0;
-    big_moves_smallest_ = std::numeric_limits<FT>::max();
+    big_moves_smallest_ = (std::numeric_limits<FT>::max)();
   }
 
   void update_big_moves(const FT& new_sq_move)
@@ -177,7 +177,7 @@ protected:
   void clear_big_moves()
   {
     big_moves_current_size_ = 0;
-    big_moves_smallest_ = std::numeric_limits<FT>::max();
+    big_moves_smallest_ = (std::numeric_limits<FT>::max)();
     big_moves_.clear();
   }
 

@@ -24,7 +24,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/assertions.h>
@@ -146,9 +146,9 @@ struct Face_filtered_graph
                            #endif
                              )
     : _graph(const_cast<Graph&>(graph))
-    , fimap(boost::choose_param(get_param(np, internal_np::face_index), get_const_property_map(face_index, graph)))
-    , vimap(boost::choose_param(get_param(np, boost::vertex_index), get_const_property_map(boost::vertex_index, graph)))
-    , himap(boost::choose_param(get_param(np, internal_np::halfedge_index), get_const_property_map(halfedge_index, graph)))
+    , fimap(parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index), get_const_property_map(face_index, graph)))
+    , vimap(parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_index), get_const_property_map(boost::vertex_index, graph)))
+    , himap(parameters::choose_parameter(parameters::get_parameter(np, internal_np::halfedge_index), get_const_property_map(halfedge_index, graph)))
   {
     set_selected_faces(selected_face_patch_indices, face_patch_index_map);
   }
@@ -201,9 +201,9 @@ struct Face_filtered_graph
                             const CGAL_BGL_NP_CLASS& np
                              )
     : _graph(const_cast<Graph&>(graph))
-    , fimap(boost::choose_param(get_param(np, internal_np::face_index), get_const_property_map(face_index, graph)))
-    , vimap(boost::choose_param(get_param(np, boost::vertex_index), get_const_property_map(boost::vertex_index, graph)))
-    , himap(boost::choose_param(get_param(np, internal_np::halfedge_index), get_const_property_map(halfedge_index, graph)))
+    , fimap(parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index), get_const_property_map(face_index, graph)))
+    , vimap(parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_index), get_const_property_map(boost::vertex_index, graph)))
+    , himap(parameters::choose_parameter(parameters::get_parameter(np, internal_np::halfedge_index), get_const_property_map(halfedge_index, graph)))
   {
     set_selected_faces(selected_face_patch_index, face_patch_index_map);
   }
@@ -246,9 +246,9 @@ struct Face_filtered_graph
                       const FaceRange& selected_faces,
                       const CGAL_BGL_NP_CLASS& np)
     : _graph(const_cast<Graph&>(graph))
-    , fimap(boost::choose_param(get_param(np, internal_np::face_index), get_const_property_map(face_index, graph)))
-    , vimap(boost::choose_param(get_param(np, boost::vertex_index), get_const_property_map(boost::vertex_index, graph)))
-    , himap(boost::choose_param(get_param(np, internal_np::halfedge_index), get_const_property_map(halfedge_index, graph)))
+    , fimap(parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index), get_const_property_map(face_index, graph)))
+    , vimap(parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_index), get_const_property_map(boost::vertex_index, graph)))
+    , himap(parameters::choose_parameter(parameters::get_parameter(np, internal_np::halfedge_index), get_const_property_map(halfedge_index, graph)))
   {
     set_selected_faces(selected_faces);
   }

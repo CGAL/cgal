@@ -2935,6 +2935,7 @@ namespace CartesianKernelFunctors {
   class Construct_point_2
   {
     typedef typename K::RT         RT;
+    typedef typename K::FT         FT;
     typedef typename K::Point_2    Point_2;
     typedef typename K::Weighted_point_2 Weighted_point_2;
     typedef typename K::Line_2     Line_2;
@@ -2973,12 +2974,12 @@ namespace CartesianKernelFunctors {
     {
       typename K::Construct_point_2 construct_point_2;
       typename K::FT x, y;
-      line_get_pointC2(l.a(), l.b(), l.c(), 0, x, y);
+      line_get_pointC2(l.a(), l.b(), l.c(), FT(0), x, y);
       return construct_point_2(x,y);
     }
 
     Point_2
-    operator()(const Line_2& l, int i) const
+    operator()(const Line_2& l, const FT i) const
     {
       typename K::Construct_point_2 construct_point_2;
       typename K::FT x, y;

@@ -31,6 +31,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/IO/io.h>
+#include <CGAL/Kernel/mpl.h>
 
 namespace CGAL {
 
@@ -211,7 +212,20 @@ public:
   }
 
   Point_2
-  point(int i) const
+  point(const int i) const
+  {
+    return R().construct_point_2_object()(*this, RT(i));
+  }
+
+  Point_2
+  point(const typename First_if_different<RT, int, 1>::Type& i) const
+  {
+    return R().construct_point_2_object()(*this,i);
+  }
+
+  Point_2
+  point(const typename First_if_different<
+                const typename First_if_different<FT, RT, 2>::Type, int>::Type& i) const
   {
     return R().construct_point_2_object()(*this,i);
   }

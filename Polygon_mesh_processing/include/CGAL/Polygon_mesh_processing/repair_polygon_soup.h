@@ -23,7 +23,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
@@ -70,7 +70,7 @@ struct Polygon_types
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
 struct GetPolygonGeomTraits
 {
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
                      internal_np::geom_traits_t,
                      NamedParameters,
                      typename CGAL::Kernel_traits<
@@ -470,7 +470,7 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
     for(std::size_t i=0, polygon_size = polygon.size(); i<polygon_size; ++i)
     {
       polygon[i] = id_remapping[polygon[i]];
-      CGAL_postcondition(polygon[i] < points.size());
+      CGAL_postcondition(static_cast<std::size_t>(polygon[i]) < points.size());
     }
   }
 
@@ -518,11 +518,11 @@ std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::Point_3     Point_3;
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
   typedef typename Traits::Less_xyz_3                                             Less_xyz_3;
 
@@ -909,13 +909,13 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
                                                      PolygonRange& polygons,
                                                      const NamedParameters& np)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID                         P_ID;
 
-  const bool erase_all_duplicates = choose_param(get_param(np, internal_np::erase_all_duplicates), false);
-  const bool same_orientation = choose_param(get_param(np, internal_np::require_same_orientation), false);
+  const bool erase_all_duplicates = choose_parameter(get_parameter(np, internal_np::erase_all_duplicates), false);
+  const bool same_orientation = choose_parameter(get_parameter(np, internal_np::require_same_orientation), false);
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Only polygons with the same orientation are duplicates: " << std::boolalpha << same_orientation << std::endl;
@@ -923,7 +923,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 #endif
 
   typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
   std::vector<std::vector<P_ID> > all_duplicate_polygons;
   internal::collect_duplicate_polygons(points, polygons, std::back_inserter(all_duplicate_polygons), traits, same_orientation);
@@ -1066,11 +1066,11 @@ void repair_polygon_soup(PointRange& points,
                          PolygonRange& polygons,
                          const NamedParameters& np)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
   std::cout << "Repairing soup with " << points.size() << " points and " << polygons.size() << " polygons" << std::endl;

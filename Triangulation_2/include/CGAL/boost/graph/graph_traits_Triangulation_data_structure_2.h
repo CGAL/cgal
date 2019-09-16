@@ -24,7 +24,7 @@
 #include <functional>
 
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/internal/graph_traits_2D_triangulation_helper.h>
 #include <CGAL/boost/graph/properties_Triangulation_data_structure_2.h>
 

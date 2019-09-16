@@ -1,4 +1,4 @@
-// Copyright (c) 2018 GeometryFactory (France).
+// Copyright (c) 2018, 2019 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -28,8 +28,6 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -47,6 +45,11 @@
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/member.hpp>
+
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/concurrent_vector.h>
+# include <tbb/parallel_for.h>
+#endif
 
 #include <functional>
 #include <iostream>
@@ -73,8 +76,8 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& hrange,
                                                    PolygonMesh& mesh,
                                                    const SourceNamedParameters& snp)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor              halfedge_descriptor;
@@ -83,9 +86,9 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& hrange,
   typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
   typedef typename GT::FT                                                             FT;
 
-  GT gt = choose_param(get_param(snp, internal_np::geom_traits), GT());
-  SVPM svpm = choose_param(get_param(snp, internal_np::vertex_point),
-                           get_property_map(vertex_point, mesh));
+  GT gt = choose_parameter(get_parameter(snp, internal_np::geom_traits), GT());
+  SVPM svpm = choose_parameter(get_parameter(snp, internal_np::vertex_point),
+                               get_property_map(vertex_point, mesh));
 
   for(halfedge_descriptor hd : hrange)
   {
@@ -121,7 +124,7 @@ template <typename HalfedgeRange,
           typename PolygonMesh>
 void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& hrange,
                                                    ToleranceMap& tol_pmap,
-                                                   const typename GetGeomTraits<PolygonMesh, internal_np::all_default_t>::type::FT tolerance,
+                                                   const typename GetGeomTraits<PolygonMesh>::type::FT tolerance,
                                                    PolygonMesh& mesh)
 {
   return assign_tolerance_with_local_edge_length_bound(hrange, tol_pmap, tolerance, mesh, CGAL::parameters::all_default());
@@ -291,8 +294,8 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
                                                 const SourceNamedParameters& snp,
                                                 const TargetNamedParameters& tnp)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
@@ -312,12 +315,12 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
 
   CGAL_static_assertion((std::is_same<Point, typename GT::Point_3>::value));
 
-  GT gt = choose_param(get_param(snp, internal_np::geom_traits), GT());
+  GT gt = choose_parameter(get_parameter(snp, internal_np::geom_traits), GT());
 
-  SVPM svpm = choose_param(get_param(snp, internal_np::vertex_point),
-                           get_property_map(vertex_point, smesh));
-  TVPM tvpm = choose_param(get_param(tnp, internal_np::vertex_point),
-                           get_const_property_map(vertex_point, tmesh));
+  SVPM svpm = choose_parameter(get_parameter(snp, internal_np::vertex_point),
+                               get_property_map(vertex_point, smesh));
+  TVPM tvpm = choose_parameter(get_parameter(tnp, internal_np::vertex_point),
+                               get_const_property_map(vertex_point, tmesh));
 
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "Snapping vertices to vertices. Range sizes: "
@@ -410,7 +413,7 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
     CGAL_assertion(sp.sq_dist >= prev);
     CGAL_assertion_code(prev = sp.sq_dist;)
 
-#ifdef CGAL_PMP_SNAP_DEBUG
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "Snapping " /*<< vs*/ << " (" << get(svpm, vs) << ") "
               << " to " /*<< vt*/ << " (" << get(tvpm, vt) << ") at dist: " << sp.sq_dist << std::endl;
 #endif
@@ -585,9 +588,11 @@ class Projection_traits
   typedef CGAL::AABB_node<AABBTraits>                           Node;
 
 public:
-  explicit Projection_traits(const AABBTraits& traits)
+  explicit Projection_traits(const AABBTraits& traits,
+                             const FT sq_tolerance)
     : m_traits(traits),
-      m_closest_point_initialized(false)
+      m_closest_point_initialized(false),
+      m_sq_dist(sq_tolerance)
   {}
 
   bool go_further() const { return true; }
@@ -595,8 +600,8 @@ public:
   void intersection(const Point& query, const Primitive& primitive)
   {
     // skip the primitive if one of its endpoints is the query
-    typename Primitive::Datum s = primitive.datum(m_traits.shared_data());
-    if(s[0] == query || s[1] == query)
+    const typename Primitive::Datum& s = primitive.datum(m_traits.shared_data());
+    if(m_traits.equal_3_object()(s[0], query) || m_traits.equal_3_object()(s[1], query))
       return;
 
     if(!m_closest_point_initialized)
@@ -604,31 +609,34 @@ public:
       m_closest_point_initialized = true;
       m_closest_primitive = primitive.id();
       m_closest_point = primitive.reference_point(m_traits.shared_data());
+      m_sq_dist = m_traits.squared_distance_object()(query, m_closest_point);
     }
 
     Point new_closest_point = m_traits.closest_point_object()(query, primitive, m_closest_point);
-    if(new_closest_point != m_closest_point)
+    if(!m_traits.equal_3_object()(new_closest_point, m_closest_point))
     {
       m_closest_primitive = primitive.id();
-      m_closest_point = new_closest_point; // this effectively shrinks the sphere
+      m_closest_point = new_closest_point;
+      m_sq_dist = m_traits.squared_distance_object()(query, m_closest_point);
     }
   }
 
   bool do_intersect(const Point& query, const Node& node) const
   {
-    return !m_closest_point_initialized ||
-           m_traits.compare_distance_object()(query, node.bbox(), m_closest_point) == CGAL::SMALLER;
+    return m_traits.compare_distance_object()(query, node.bbox(), m_sq_dist) == CGAL::SMALLER;
   }
 
-  Point closest_point() const { return m_closest_point; }
+  const Point& closest_point() const { return m_closest_point; }
   typename Primitive::Id closest_primitive_id() const { return m_closest_primitive; }
   bool closest_point_initialized() const { return m_closest_point_initialized; }
 
 private:
-  Point m_closest_point;
-  typename Primitive::Id m_closest_primitive;
   const AABBTraits& m_traits;
   bool m_closest_point_initialized;
+  Point m_closest_point;
+  FT m_sq_dist;
+
+  typename Primitive::Id m_closest_primitive;
 };
 
 template <typename PolygonMesh, typename GeomTraits, typename VPM>
@@ -650,6 +658,117 @@ struct Compare_points_along_edge
   Point m_src;
 };
 
+template <typename TriangleMesh, typename EdgeToSplitContainer, typename AABBTree, typename VPM, typename GT>
+void find_splittable_edge(const std::pair<typename boost::property_traits<VPM>::value_type,
+                                          typename GT::FT>& point_with_tolerance,
+                          EdgeToSplitContainer& edges_to_split,
+                          const AABBTree* aabb_tree_ptr,
+                          const TriangleMesh& /* pms */,
+                          const VPM& /* vpms */,
+                          const TriangleMesh& pmt,
+                          const VPM& vpmt,
+                          const GT& gt)
+{
+  CGAL_USE(vpmt);
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor       edge_descriptor;
+
+  typedef typename GT::FT                                                   FT;
+  typedef typename boost::property_traits<VPM>::value_type                  Point;
+
+  typedef typename AABBTree::AABB_traits                                    AABB_traits;
+
+  const Point& query = point_with_tolerance.first;
+  const FT sq_tolerance = CGAL::square(point_with_tolerance.second);
+
+  // use the current halfedge as hint
+  internal::Projection_traits<AABB_traits> traversal_traits(aabb_tree_ptr->traits(), sq_tolerance);
+  aabb_tree_ptr->traversal(query, traversal_traits);
+
+  if(!traversal_traits.closest_point_initialized())
+    return;
+
+  const Point& closest_p = traversal_traits.closest_point();
+
+  // The filtering in the AABB tree checks the dist query <-> node bbox, which might be smaller than
+  // the actual distance between the query <-> closest point
+  const FT sq_dist_to_closest = gt.compute_squared_distance_3_object()(query, closest_p);
+  bool is_close_enough = (sq_dist_to_closest <= sq_tolerance);
+
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+  std::cout << "  Closest point: (" << closest_p << ")" << std::endl
+            << "  at distance " << gt.compute_squared_distance_3_object()(query, closest_p)
+            << " with a tolerance of " << point_with_tolerance.second << " at vertex (squared tol: " << sq_tolerance
+            << " && close enough? " << is_close_enough << ")" << std::endl;
+#endif
+
+  if(!is_close_enough)
+    return;
+
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+  std::cout << "\t and is thus beneath tolerance" << std::endl;
+#endif
+
+  edge_descriptor closest = traversal_traits.closest_primitive_id();
+  CGAL_assertion(get(vpmt, source(closest, pmt)) != query &&
+                                                    get(vpmt, target(closest, pmt)) != query);
+
+  halfedge_descriptor clos_hd = halfedge(closest, pmt);
+  CGAL_assertion(is_border(edge(clos_hd, pmt), pmt));
+
+  if(!is_border(clos_hd, pmt))
+    clos_hd = opposite(clos_hd, pmt);
+
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+  std::cout << "splitting position: " << query << std::endl;
+#endif
+
+  edges_to_split.push_back(std::make_pair(query, clos_hd));
+}
+
+#ifdef CGAL_LINKED_WITH_TBB
+template <typename PointWithToleranceContainer,
+          typename TriangleMesh, typename EdgeToSplitContainer,
+          typename AABBTree, typename VPM, typename GT>
+struct Find_splittable_edge_for_parallel_for
+{
+  Find_splittable_edge_for_parallel_for(const PointWithToleranceContainer& points_with_tolerance,
+                                        EdgeToSplitContainer& edges_to_split,
+                                        const AABBTree* aabb_tree_ptr,
+                                        const TriangleMesh& pms,
+                                        const VPM& vpms,
+                                        const TriangleMesh& pmt,
+                                        const VPM& vpmt,
+                                        const GT& gt)
+    :
+      m_points_with_tolerance(points_with_tolerance),
+      m_edges_to_split(edges_to_split), m_aabb_tree_ptr(aabb_tree_ptr),
+      m_pms(pms), m_vpms(vpms), m_pmt(pmt), m_vpmt(vpmt), m_gt(gt)
+  { }
+
+  void operator()(const tbb::blocked_range<size_t>& r) const
+  {
+    for(std::size_t i=r.begin(); i!=r.end(); ++i)
+    {
+      find_splittable_edge(m_points_with_tolerance[i], m_edges_to_split,
+                           m_aabb_tree_ptr,
+                           m_pms, m_vpms, m_pmt, m_vpmt,
+                           m_gt);
+    }
+  }
+
+private:
+  const PointWithToleranceContainer& m_points_with_tolerance;
+  EdgeToSplitContainer& m_edges_to_split;
+  const AABBTree* m_aabb_tree_ptr;
+  const TriangleMesh& m_pms;
+  const VPM m_vpms;
+  const TriangleMesh& m_pmt;
+  const VPM m_vpmt;
+  const GT& m_gt;
+};
+#endif
+
 } // namespace internal
 
 namespace experimental {
@@ -668,13 +787,13 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor       edge_descriptor;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type   VPM;
+  typedef typename boost::property_traits<VPM>::value_type                  Point;
+  typedef typename boost::property_traits<VPM>::reference                   Point_ref;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       GT;
   typedef typename GT::FT                                                   FT;
-  typedef typename GT::Point_3                                              Point;
   typedef typename GT::Vector_3                                             Vector;
 
   typedef internal::Compare_points_along_edge<TriangleMesh, GT, VPM>        Point_along_edge_comparer;
@@ -683,8 +802,8 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
   typedef CGAL::AABB_traits<GT, Primitive>                                  AABB_Traits;
   typedef CGAL::AABB_tree<AABB_Traits>                                      AABB_tree;
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   // Need to have a triangle mesh to ensure that the refinement point of a border edge 'e' has visibility
   // of the third p oint of the face 'f' incident to 'e'
@@ -692,12 +811,10 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 
   std::size_t snapped_n = 0;
 
-  VPM vpms = choose_param(get_param(nps, internal_np::vertex_point), get_property_map(vertex_point, pms));
-  VPM vpmt = choose_param(get_param(npt, internal_np::vertex_point), get_property_map(vertex_point, pmt));
+  VPM vpms = choose_parameter(get_parameter(nps, internal_np::vertex_point), get_property_map(vertex_point, pms));
+  VPM vpmt = choose_parameter(get_parameter(npt, internal_np::vertex_point), get_property_map(vertex_point, pmt));
 
-  const GT gt = choose_param(get_param(nps, internal_np::geom_traits), GT());
-
-  const bool is_same_mesh = (&pms == &pmt); // @todo probably not optimal
+  const GT gt = choose_parameter(get_parameter(nps, internal_np::geom_traits), GT());
 
   // start by snapping vertices together to simplify things
   snapped_n = snap_vertex_range_onto_vertex_range(source_hrange, pms, target_hrange, pmt, tol_pmap, nps, npt);
@@ -708,120 +825,99 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
             << std::distance(target_hrange.begin(), target_hrange.end()) << std::endl;
 #endif
 
-  typedef std::map<Point, std::set<vertex_descriptor /*target vd*/> >     Occurrence_map;
-  Occurrence_map occurrences_as_target;
-  for(halfedge_descriptor hd : target_hrange)
-  {
-    vertex_descriptor vd = target(hd, pmt);
-
-    std::set<vertex_descriptor> corresponding_vd;
-    corresponding_vd.insert(vd);
-
-    std::pair<typename Occurrence_map::iterator, bool> is_insert_successful =
-      occurrences_as_target.insert(std::make_pair(get(vpmt, vd), corresponding_vd));
-    if(!is_insert_successful.second) // point already existed in the map
-      is_insert_successful.first->second.insert(vd);
-  }
-
-  // Since we're inserting primitives one by one, we can't pass this shared data in the constructor of the tree
-  AABB_Traits aabb_traits;
-  aabb_traits.set_shared_data(pmt, vpmt);
-
-  // Fill the AABB-tree
-  AABB_tree aabb_tree(aabb_traits);
-  for(halfedge_descriptor hd : target_hrange)
-  {
-    CGAL_precondition(is_border(edge(hd, pmt), pmt));
-    aabb_tree.insert(Primitive(edge(hd, pmt), pmt, vpmt));
-  }
-
   // Collect border points that can be projected onto a border edge
-  std::vector<std::pair<Point, halfedge_descriptor> > edges_to_split;
-  std::unordered_set<vertex_descriptor> unique_vertices;
+  typedef std::map<Point, FT>                       Unique_vertices_with_tolerance;  // unordered map is empirically slower
+
+  // If the point appears multiple times on the source border, use it only once to snap target edges
+  // use the smallest tolerance from all source vertices
+
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout << "gather unique points in source range" << std::endl;
+#endif
+
+  Unique_vertices_with_tolerance unique_source_vertices;
   for(halfedge_descriptor hd : source_hrange)
   {
-    const vertex_descriptor vd = target(hd, pms);
-    if(!unique_vertices.insert(vd).second)
-    {
-      // if 'vd' appears multiple times on the source border, use it only once to snap target edges
-      continue;
-    }
-
-    const Point& query = get(vpms, vd);
-    const std::set<vertex_descriptor>& occurrences = occurrences_as_target[query];
-
-    // Skip points that are already attached to another border. Keeping it in two 'continue' for clarity.
-
-    // If we are working with a single mesh, the vertex is only blocked if another vertex has the same
-    // position (that is, if occurrences.size() > 1)
-    if(is_same_mesh && occurrences.size() > 1)
-      continue;
-
-    // If it's not the same mesh, then block as soon as a vertex in the target range has already that position
-    if(!is_same_mesh && !occurrences.empty())
-      continue;
-
     // Skip the source vertex if its two incident halfedges are geometrically identical (it means that
     // the two halfedges are already stitchable and we don't want this common vertex to be used
     // to split a halfedge somewhere else)
     if(get(vpms, source(hd, pms)) == get(vpms, target(next(hd, pms), pms)))
       continue;
 
-#ifdef CGAL_PMP_SNAP_DEBUG
-    std::cout << "Query: " << vd << " (" << query << ")" << std::endl;
+    const vertex_descriptor vd = target(hd, pms);
+    const Point_ref query = get(vpms, vd);
+    const FT tolerance = get(tol_pmap, vd);
+
+    std::pair<typename Unique_vertices_with_tolerance::iterator, bool> is_insert_successful =
+      unique_source_vertices.insert(std::make_pair(query, tolerance));
+
+    // Keep the lowest tolerance out of all the source vertices with the same position
+    is_insert_successful.first->second = (std::min)(is_insert_successful.first->second, tolerance);
+
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    if(is_insert_successful.second)
+      std::cout << "Query: " << vd << " (" << query << ")" << std::endl;
 #endif
-
-    // use the current halfedge as hint
-    internal::Projection_traits<AABB_Traits> traversal_traits(aabb_tree.traits());
-    aabb_tree.traversal(query, traversal_traits);
-
-    if(!traversal_traits.closest_point_initialized())
-      continue;
-
-    const FT sq_tolerance = CGAL::square(get(tol_pmap, vd));
-    const Point& closest_p = traversal_traits.closest_point();
-    const FT sq_dist_to_closest = gt.compute_squared_distance_3_object()(query, closest_p);
-    bool is_close_enough = (sq_dist_to_closest <= sq_tolerance);
-
-#ifdef CGAL_PMP_SNAP_DEBUG
-    std::cout << "  Closest point: (" << closest_p << ")" << std::endl
-              << "  at distance " << gt.compute_squared_distance_3_object()(query, closest_p)
-              << " with a tolerance of " << get(tol_pmap, vd) << " at vertex (squared: " << sq_tolerance
-              << " && close enough? " << is_close_enough << ")" << std::endl;;
-#endif
-
-    if(is_close_enough)
-    {
-#ifdef CGAL_PMP_SNAP_DEBUG
-      std::cout << "\t and is thus beneath tolerance" << std::endl;
-#endif
-
-      edge_descriptor closest = traversal_traits.closest_primitive_id();
-      CGAL_assertion(get(vpmt, source(closest, pmt)) != query &&
-                     get(vpmt, target(closest, pmt)) != query);
-
-      halfedge_descriptor clos_hd = halfedge(closest, pmt);
-      CGAL_assertion(is_border(edge(clos_hd, pmt), pmt));
-
-      if(!is_border(clos_hd, pmt))
-        clos_hd = opposite(clos_hd, pmt);
-
-      Point new_pos = query;
-      put(vpms, vd, new_pos);
-
-#ifdef CGAL_PMP_SNAP_DEBUG
-      std::cout << "splitting position: " << new_pos << std::endl;
-#endif
-
-      edges_to_split.push_back(std::make_pair(new_pos, clos_hd));
-    }
   }
+
+  // Since we're inserting primitives one by one, we can't pass this shared data in the constructor of the tree
+  AABB_Traits aabb_traits;
+  aabb_traits.set_shared_data(pmt, vpmt);
+  AABB_tree aabb_tree(aabb_traits);
+
+  for(halfedge_descriptor hd : target_hrange)
+  {
+    CGAL_precondition(is_border(edge(hd, pmt), pmt));
+    aabb_tree.insert(Primitive(edge(hd, pmt), pmt, vpmt));
+  }
+
+  // Now, check which edges of the target range ought to be split by source vertices
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+  std::cout << "Collect edges to split w/ " << unique_source_vertices.size() << " unique vertices" << std::endl;
+#endif
+
+#ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout << "Parallel find splittable edges!" << std::endl;
+#endif
+
+  typedef tbb::concurrent_vector<std::pair<Point, halfedge_descriptor> >        Concurrent_edge_to_split_container;
+
+  // Can't parallel for a map...
+  std::vector<std::pair<Point, FT> > unique_vertices_with_tolerance_vector(unique_source_vertices.begin(),
+                                                                           unique_source_vertices.end());
+
+  typedef internal::Find_splittable_edge_for_parallel_for<std::vector<std::pair<Point, FT> >,
+                                                          TriangleMesh,
+                                                          Concurrent_edge_to_split_container,
+                                                          AABB_tree, VPM, GT>    Functor;
+
+  Concurrent_edge_to_split_container edges_to_split;
+  Functor f(unique_vertices_with_tolerance_vector, edges_to_split, &aabb_tree, pms, vpms, pmt, vpmt, gt);
+  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, unique_vertices_with_tolerance_vector.size()), f);
+#else // CGAL_LINKED_WITH_TBB
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout << "Sequential find splittable edges!" << std::endl;
+#endif
+  typedef std::pair<Point, FT>                      Point_with_tolerance;
+
+  std::vector<std::pair<Point, halfedge_descriptor> > edges_to_split;
+  for(const Point_with_tolerance& point_with_tolerance : unique_source_vertices)
+  {
+    internal::find_splittable_edge(point_with_tolerance, edges_to_split, &aabb_tree,
+                                   pms, vpms, pmt, vpmt, gt);
+  }
+#endif
 
   // Sort points falling on the same edge and split the edge
   std::map<halfedge_descriptor, std::vector<Point> > points_per_edge;
   typedef std::pair<Point, halfedge_descriptor> Pair_type;
   for(const Pair_type& p : edges_to_split)
     points_per_edge[p.second].push_back(p.first);
+
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout << "split " << points_per_edge.size() << " edges" << std::endl;
+#endif
 
   typedef std::pair<const halfedge_descriptor, std::vector<Point> > Map_type;
   for(Map_type& mt : points_per_edge)
@@ -832,7 +928,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 
     if(mt.second.size() > 1)
     {
-#ifdef CGAL_PMP_SNAP_DEBUG
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
       std::cout << " MUST SORT ON BORDER!" << std::endl;
 #endif
       /// \todo Sorting the projected positions is too simple (for example, this doesn't work
@@ -847,7 +943,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
     halfedge_descriptor hd_to_split = mt_hd;
     for(const Point& p : mt.second)
     {
-#ifdef CGAL_PMP_SNAP_DEBUG
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
       std::cout << "SPLIT " << edge(hd_to_split, pmt) << " |||| "
                 << " vs " << source(hd_to_split, pmt) << " (" << pmt.point(source(hd_to_split, pmt)) << ")"
                 << " --- vt " << target(hd_to_split, pmt) << " (" << pmt.point(target(hd_to_split, pmt)) << ")" << std::endl;
@@ -878,9 +974,9 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
        *       opp
        */
 
-      const Point left_pt = get(vpmt, source(res, pmt));
-      const Point right_pt = get(vpmt, target(hd_to_split, pmt));
-      const Point opp = get(vpmt, target(next(opposite(res, pmt), pmt), pmt));
+      const Point_ref left_pt = get(vpmt, source(res, pmt));
+      const Point_ref right_pt = get(vpmt, target(hd_to_split, pmt));
+      const Point_ref opp = get(vpmt, target(next(opposite(res, pmt), pmt), pmt));
 
       // Check if 'p' is "visible" from 'opp' (i.e. its projection on the plane 'Pl(left, opp, right)'
       // falls in the cone with apex 'opp' and sides given by 'left' and 'right')
@@ -894,7 +990,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 
       const bool is_visible = (!left_of_left && !right_of_right);
 
-#ifdef CGAL_PMP_SNAP_DEBUG
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
       std::cout << "Left/Right: " << left_of_left << " " << right_of_right << std::endl;
       std::cout << "visible from " << opp << " ? " << is_visible << std::endl;
 #endif
