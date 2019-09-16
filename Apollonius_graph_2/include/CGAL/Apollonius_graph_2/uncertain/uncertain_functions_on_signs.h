@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_UNCERTAIN_FUNCTIONS_ON_SIGNS_H
 #define CGAL_UNCERTAIN_FUNCTIONS_ON_SIGNS_H
+
+#include <CGAL/license/Apollonius_graph_2.h>
+
 
 #include <CGAL/enum.h>
 #include <CGAL/Uncertain.h>

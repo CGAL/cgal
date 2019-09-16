@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
@@ -32,7 +33,7 @@
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
-
+#include <CGAL/iterator.h>
 #include <CGAL/Handle_with_policy.h>
 
 #include <CGAL/Arr_enums.h>
@@ -65,7 +66,7 @@ public:
     //! standard constructor
     Compare_xy_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
@@ -169,7 +170,7 @@ public:
     //! standard constructor
     Less_xy_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -195,7 +196,7 @@ public:
     //! standard constructor
     Compare_y_at_x_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     result_type operator()(const Arc_2& cv, const Point_2& p) const {
@@ -321,7 +322,7 @@ public:
     //! standard constructor
     Equal_y_at_x_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -424,7 +425,7 @@ public:
     //! standard constructor
     Source_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -451,7 +452,7 @@ public:
     //! standard constructor
     Target_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -547,7 +548,7 @@ public:
     //! standard constructor
     New_endpoints_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!\brief
@@ -645,7 +646,7 @@ public:
     //! standard constructor
     Intersect_right_of_point_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!\brief
@@ -692,13 +693,13 @@ class Make_x_monotone_2
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Generic_arc_2;
    
 public:
-    typedef std::iterator<std::output_iterator_tag, Generic_arc_2> 
+    typedef CGAL::cpp98::iterator<std::output_iterator_tag, Generic_arc_2>
       result_type;
     
     //! standard constructor
     Make_x_monotone_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!

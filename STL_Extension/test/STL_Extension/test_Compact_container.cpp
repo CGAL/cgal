@@ -1,13 +1,11 @@
 // test program for Compact_container.
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <cstddef>
 #include <list>
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Random.h>
-#include <CGAL/Testsuite/use.h>
 
 #include <CGAL/tags.h>
 #include <CGAL/use.h>
@@ -15,10 +13,13 @@
 
 #include <boost/type_traits/is_base_of.hpp>
 
+#include <CGAL/disable_warnings.h>
+
 template <typename Has_timestamp_ = CGAL::Tag_true>
 struct Node_1
 : public CGAL::Compact_container_base
 {
+  Node_1() {} // // it is important `time_stamp_` is not initialized
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
@@ -273,6 +274,22 @@ void test_index(const Cont &C)
   }
 }
 
+template < class Cont >
+void test_time_stamps() {
+  Cont c1;
+  for (std::size_t i = 0 ; i < 10 ; ++i)
+    c1.emplace();
+  typename Cont::iterator it = c1.begin();
+  for (std::size_t i = 0 ; i < 10 ; ++i) {
+    assert(i == it++->time_stamp());
+  }
+  Cont c2(c1);
+  it = c2.begin();
+  for (std::size_t i = 0 ; i < 10 ; ++i) {
+    assert(i == it++->time_stamp());
+  }
+}
+
 struct Incomplete_struct;
 
 int main()
@@ -297,6 +314,8 @@ int main()
   C2 c2;  test(c2);
   C3 c3;  test(c3);
   C4 c4;  test(c4);
+
+  test_time_stamps<C4>();
 
   // Check the time stamper policies
   if(! boost::is_base_of<CGAL::Time_stamper<T1>,

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef SCENE_ITEM_CONFIG_H
 #define SCENE_ITEM_CONFIG_H
+
+#include <CGAL/license/Three.h>
+
 
 #include <QtCore/qglobal.h>
 

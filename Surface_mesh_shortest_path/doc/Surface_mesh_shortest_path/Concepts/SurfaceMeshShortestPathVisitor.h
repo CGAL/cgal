@@ -45,7 +45,9 @@ public:
   sequence, and only if the target/source point is an internal face location
   (i.e. not on an edge or at a vertex).
   \param face a face of the surface mesh encountered at the start or the end of the shortest path.
-  \param location the barycentric coordinate inside `face` of this point on the path.
+  \param location the barycentric coordinates inside `face` of this point on the path.
   */
-  void operator()(face_descriptor face, Barycentric_coordinate location);
+  void operator()(face_descriptor face, Barycentric_coordinates location);
+
+///@}
 };

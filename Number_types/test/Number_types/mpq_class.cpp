@@ -1,9 +1,10 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifdef CGAL_USE_GMPXX
 
 #include <iostream>
 #include <CGAL/mpq_class.h>
+#include <CGAL/Lazy_exact_nt.h>
 
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
@@ -33,6 +34,16 @@ int main() {
       mpq_class q;
       std::istringstream in("12.34");
       in >> CGAL::iformat(q);
+      assert(in);
+      assert(q.get_num() == 617);
+      assert(q.get_den() == 50);
+    }
+    {
+      CGAL::Lazy_exact_nt<mpq_class> x;
+      std::istringstream in("12.34");
+      in >> x;
+      mpq_class q = x.exact();
+      assert(in);
       assert(q.get_num() == 617);
       assert(q.get_den() == 50);
     }

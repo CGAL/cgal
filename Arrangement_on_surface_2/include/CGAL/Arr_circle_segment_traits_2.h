@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
 //                 Waqar Khan <wkhan@mpi-inf.mpg.de>
@@ -19,10 +23,15 @@
 #ifndef CGAL_ARR_CIRCLE_SEGMENT_TRAITS_2_H
 #define CGAL_ARR_CIRCLE_SEGMENT_TRAITS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
+
 /*! \file
  * The header file for the Arr_circle_segment_traits_2<Kenrel> class.
  */
 
+#include <CGAL/atomic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Circle_segment_2.h>
@@ -76,7 +85,11 @@ public:
   /*! Get the next curve index. */
   static unsigned int get_index ()
   {
-    static unsigned int index = 0;
+#ifdef CGAL_NO_ATOMIC
+    static unsigned int index;
+#else
+    static CGAL::cpp11::atomic<unsigned int> index;
+#endif
     return (++index);
   }
 
@@ -738,8 +751,13 @@ public:
 
   /*! Obtain a Trim_2 functor object. */
   Trim_2 trim_2_object() const { return Trim_2(*this); }
+
+  // @}
+
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

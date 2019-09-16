@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_STOP_PREDICATE_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_STOP_PREDICATE_H 1
+
+#include <CGAL/license/Surface_mesh_simplification.h>
+
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
@@ -38,16 +42,16 @@ namespace Surface_mesh_simplification
 // 
 // Stops when the number of edges left falls below a given number.
 //
-template<class ECM_>    
+template<class TM_>    
 class Count_stop_predicate
 {
 public:
 
-  typedef ECM_ ECM ;
+  typedef TM_ TM ;
 
-  //  typedef Edge_profile<ECM> Profile ;
+  //  typedef Edge_profile<TM> Profile ;
   
-  typedef typename boost::graph_traits<ECM>::edges_size_type size_type ;
+  typedef typename boost::graph_traits<TM>::edges_size_type size_type ;
   
   // typedef typename Kernel::FT FT ;
 

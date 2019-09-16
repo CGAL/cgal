@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -21,6 +22,10 @@
 
 #ifndef CGAL_ARR_DCEL_BASE_H
 #define CGAL_ARR_DCEL_BASE_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The definition of the base DCEL class for planar arrangements and its
@@ -87,31 +92,31 @@ protected:
 public:
   /*! Default constructor. */
   Arr_vertex_base() :
-    p_inc(NULL),
-    p_pt(NULL)
+    p_inc(nullptr),
+    p_pt(nullptr)
   { pss[0] = pss[1] = static_cast<char>(CGAL::ARR_INTERIOR); }
 
   /*! Destructor. */
   virtual ~Arr_vertex_base() {}
 
-  /*! Check if the point pointer is NULL. */
-  bool has_null_point() const { return (p_pt == NULL); }
+  /*! Check if the point pointer is nullptr. */
+  bool has_null_point() const { return (p_pt == nullptr); }
 
   /*! Get the point (const version). */
   const Point& point() const
   {
-    CGAL_assertion(p_pt != NULL);
+    CGAL_assertion(p_pt != nullptr);
     return (*p_pt);
   }
 
   /*! Get the point (non-const version). */
   Point& point()
   {
-    CGAL_assertion(p_pt != NULL);
+    CGAL_assertion(p_pt != nullptr);
     return (*p_pt);
   }
 
-  /*! Set the point (may be a NULL point). */
+  /*! Set the point (may be a nullptr point). */
   void set_point(Point* p) { p_pt = p; }
 
   /*! Get the boundary type in x. */
@@ -170,31 +175,31 @@ protected:
 public:
   /*! Default constructor */
   Arr_halfedge_base() :
-    p_opp(NULL),
-    p_prev(NULL),
-    p_next(NULL),
-    p_v(NULL),
-    p_comp(NULL),
-    p_cv(NULL)
+    p_opp(nullptr),
+    p_prev(nullptr),
+    p_next(nullptr),
+    p_v(nullptr),
+    p_comp(nullptr),
+    p_cv(nullptr)
   {}
 
   /*! Destructor. */
   virtual ~Arr_halfedge_base() {}
 
-  /*! Check if the curve pointer is NULL. */
-  bool has_null_curve() const { return (p_cv == NULL); }
+  /*! Check if the curve pointer is nullptr. */
+  bool has_null_curve() const { return (p_cv == nullptr); }
 
   /*! Get the x-monotone curve (const version). */
   const X_monotone_curve& curve() const
   {
-    CGAL_precondition(p_cv != NULL);
+    CGAL_precondition(p_cv != nullptr);
     return (*p_cv);
   }
 
   /*! Get the x-monotone curve (non-const version). */
   X_monotone_curve& curve()
   {
-    CGAL_precondition(p_cv != NULL);
+    CGAL_precondition(p_cv != nullptr);
     return (*p_cv);
   }
 
@@ -707,7 +712,7 @@ private:
 
 public:
   /*! Default constructor. */
-  Arr_outer_ccb() : p_f(NULL), iter_is_not_singular(false) {}
+  Arr_outer_ccb() : p_f(nullptr), iter_is_not_singular(false) {}
 
   /*! Copy constructor. */
   Arr_outer_ccb(const Arr_outer_ccb& other) :
@@ -773,7 +778,7 @@ private:
 
 public:
   /*! Default constructor. */
-  Arr_inner_ccb() : p_f(NULL), iter_is_not_singular(false) {}
+  Arr_inner_ccb() : p_f(nullptr), iter_is_not_singular(false) {}
 
   /*! Copy constructor. */
   Arr_inner_ccb(const Arr_inner_ccb& other) :
@@ -838,7 +843,7 @@ private:
 
 public:
   /*! Default constructor. */
-  Arr_isolated_vertex() : p_f(NULL), iter_is_not_singular(false) {}
+  Arr_isolated_vertex() : p_f(nullptr), iter_is_not_singular(false) {}
 
   /*! Copy constructor. */
   Arr_isolated_vertex(const Arr_isolated_vertex& other) :
@@ -903,30 +908,13 @@ protected:
   typedef In_place_list<Inner_ccb, false>        Inner_ccb_list;
   typedef In_place_list<Isolated_vertex, false>  Iso_vert_list;
 
-  // Vertex allocator.
-  typedef typename Allocator::template rebind<Vertex>    Vertex_alloc_rebind;
-  typedef typename Vertex_alloc_rebind::other            Vertex_allocator;
-
-  // Halfedge allocator.
-  typedef typename Allocator::template rebind<Halfedge>  Halfedge_alloc_rebind;
-  typedef typename Halfedge_alloc_rebind::other          Halfedge_allocator;
-
-  // Face allocator.
-  typedef typename Allocator::template rebind<Face>      Face_alloc_rebind;
-  typedef typename Face_alloc_rebind::other              Face_allocator;
-
-  // Outer CCB allocator.
-  typedef typename Allocator::template rebind<Outer_ccb> Out_ccb_alloc_rebind;
-  typedef typename Out_ccb_alloc_rebind::other           Outer_ccb_allocator;
-
-  // Inner CCB allocator.
-  typedef typename Allocator::template rebind<Inner_ccb> In_ccb_alloc_rebind;
-  typedef typename In_ccb_alloc_rebind::other            Inner_ccb_allocator;
-
-  // Isolated vertex allocator.
-  typedef typename Allocator::template rebind<Isolated_vertex>
-                                                         Iso_vert_alloc_rebind;
-  typedef typename Iso_vert_alloc_rebind::other          Iso_vert_allocator;
+    typedef std::allocator_traits<Allocator> Allocator_traits;
+    typedef typename Allocator_traits::template rebind_alloc<Vertex>          Vertex_allocator;
+    typedef typename Allocator_traits::template rebind_alloc<Halfedge>        Halfedge_allocator;
+    typedef typename Allocator_traits::template rebind_alloc<Face>            Face_allocator;
+    typedef typename Allocator_traits::template rebind_alloc<Outer_ccb>       Outer_ccb_allocator;
+    typedef typename Allocator_traits::template rebind_alloc<Inner_ccb>       Inner_ccb_allocator;
+    typedef typename Allocator_traits::template rebind_alloc<Isolated_vertex> Iso_vert_allocator;
 
 public:
   typedef typename Halfedge_list::size_type              Size;
@@ -1008,24 +996,64 @@ public:
   //@{
   Vertex_iterator   vertices_begin()  { return vertices.begin(); }
   Vertex_iterator   vertices_end()    { return vertices.end(); }
+  Iterator_range<Prevent_deref<Vertex_iterator> >
+  vertex_handles()
+  {
+    return make_prevent_deref_range(vertices_begin(), vertices_end());
+  }
   Halfedge_iterator halfedges_begin() { return halfedges.begin();}
   Halfedge_iterator halfedges_end()   { return halfedges.end(); }
+  Iterator_range<Prevent_deref<Halfedge_iterator> >
+  halfedge_handles()
+  {
+    return make_prevent_deref_range(halfedges_begin(), halfedges_end());
+  }
   Face_iterator     faces_begin()     { return faces.begin(); }
   Face_iterator     faces_end()       { return faces.end(); }
+  Iterator_range<Prevent_deref<Face_iterator> >
+  face_handles()
+  {
+    return make_prevent_deref_range(faces_begin(), faces_end());
+  }
   Edge_iterator     edges_begin()     { return halfedges.begin(); }
   Edge_iterator     edges_end()       { return halfedges.end(); }
+  Iterator_range<Prevent_deref<Edge_iterator> >
+  edge_handles()
+  {
+    return make_prevent_deref_range(edges_begin(), edges_end());
+  }
   //@}
 
   /// \name Obtaining constant iterators.
   //@{
   Vertex_const_iterator   vertices_begin() const { return vertices.begin(); }
   Vertex_const_iterator   vertices_end() const { return vertices.end(); }
+  Iterator_range<Prevent_deref<Vertex_const_iterator> >
+  vertex_handles() const
+  {
+    return make_prevent_deref_range(vertices_begin(), vertices_end());
+  }
   Halfedge_const_iterator halfedges_begin() const { return halfedges.begin(); }
   Halfedge_const_iterator halfedges_end() const { return halfedges.end(); }
+  Iterator_range<Prevent_deref<Halfedge_const_iterator> >
+  halfedge_handles() const
+  {
+    return make_prevent_deref_range(halfedges_begin(), halfedges_end());
+  }
   Face_const_iterator     faces_begin() const { return faces.begin(); }
   Face_const_iterator     faces_end() const { return faces.end(); }
+  Iterator_range<Prevent_deref<Face_const_iterator> >
+  face_handles() const
+  {
+    return make_prevent_deref_range(faces_begin(), faces_end());
+  }
   Edge_const_iterator     edges_begin() const { return halfedges.begin(); }
   Edge_const_iterator     edges_end() const { return halfedges.end(); }
+  Iterator_range<Prevent_deref<Edge_const_iterator> >
+  edge_handles() const
+  {
+    return make_prevent_deref_range(edges_begin(), edges_end());
+  }
   //@}
 
   // \name Creation of new DCEL features.
@@ -1034,8 +1062,7 @@ public:
   Vertex* new_vertex()
   {
     Vertex* v = vertex_alloc.allocate(1);
-
-    vertex_alloc.construct(v, Vertex());
+    std::allocator_traits<Vertex_allocator>::construct(vertex_alloc,v);
     vertices.push_back(*v);
     return v;
   }
@@ -1058,8 +1085,7 @@ public:
   Face* new_face()
   {
     Face* f = face_alloc.allocate(1);
-
-    face_alloc.construct(f, Face());
+    std::allocator_traits<Face_allocator>::construct(face_alloc, f);
     faces.push_back (*f);
     return(f);
   }
@@ -1068,7 +1094,7 @@ public:
   Outer_ccb* new_outer_ccb()
   {
     Outer_ccb* oc = out_ccb_alloc.allocate(1);
-    out_ccb_alloc.construct(oc, Outer_ccb());
+    std::allocator_traits<Outer_ccb_allocator>::construct(out_ccb_alloc, oc);
     out_ccbs.push_back(*oc);
     return (oc);
   }
@@ -1077,7 +1103,7 @@ public:
   Inner_ccb* new_inner_ccb()
   {
     Inner_ccb* ic = in_ccb_alloc.allocate(1);
-    in_ccb_alloc.construct(ic, Inner_ccb());
+    std::allocator_traits<Inner_ccb_allocator>::construct(in_ccb_alloc, ic);
     in_ccbs.push_back(*ic);
     return (ic);
   }
@@ -1086,7 +1112,7 @@ public:
   Isolated_vertex* new_isolated_vertex()
   {
     Isolated_vertex* iv = iso_vert_alloc.allocate(1);
-    iso_vert_alloc.construct(iv, Isolated_vertex());
+    std::allocator_traits<Iso_vert_allocator>::construct(iso_vert_alloc, iv);
     iso_verts.push_back(*iv);
     return (iv);
   }
@@ -1098,7 +1124,7 @@ public:
   void delete_vertex(Vertex* v)
   {
     vertices.erase(v);
-    vertex_alloc.destroy(v);
+    std::allocator_traits<Vertex_allocator>::destroy(vertex_alloc, v);
     vertex_alloc.deallocate(v,1);
   }
 
@@ -1114,7 +1140,7 @@ public:
   void delete_face(Face* f)
   {
     faces.erase(f);
-    face_alloc.destroy(f);
+    std::allocator_traits<Face_allocator>::destroy(face_alloc, f);
     face_alloc.deallocate(f, 1);
   }
 
@@ -1122,7 +1148,7 @@ public:
   void delete_outer_ccb(Outer_ccb* oc)
   {
     out_ccbs.erase(oc);
-    out_ccb_alloc.destroy(oc);
+    std::allocator_traits<Outer_ccb_allocator>::destroy(out_ccb_alloc, oc);
     out_ccb_alloc.deallocate(oc, 1);
   }
 
@@ -1130,7 +1156,7 @@ public:
   void delete_inner_ccb(Inner_ccb* ic)
   {
     in_ccbs.erase(ic);
-    in_ccb_alloc.destroy(ic);
+    std::allocator_traits<Inner_ccb_allocator>::destroy(in_ccb_alloc, ic);
     in_ccb_alloc.deallocate(ic, 1);
   }
 
@@ -1138,7 +1164,7 @@ public:
   void delete_isolated_vertex(Isolated_vertex* iv)
   {
     iso_verts.erase(iv);
-    iso_vert_alloc.destroy(iv);
+    std::allocator_traits<Iso_vert_allocator>::destroy(iso_vert_alloc, iv);
     iso_vert_alloc.deallocate(iv, 1);
   }
 
@@ -1399,7 +1425,7 @@ protected:
   Halfedge* _new_halfedge()
   {
     Halfedge* h = halfedge_alloc.allocate(1);
-    halfedge_alloc.construct(h, Halfedge());
+    std::allocator_traits<Halfedge_allocator>::construct(halfedge_alloc, h);
     halfedges.push_back(*h);
     return (h);
   }
@@ -1408,11 +1434,13 @@ protected:
   void _delete_halfedge(Halfedge* h)
   {
     halfedges.erase(h);
-    halfedge_alloc.destroy(h);
+    std::allocator_traits<Halfedge_allocator>::destroy(halfedge_alloc,h);
     halfedge_alloc.deallocate(h, 1);
   }
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

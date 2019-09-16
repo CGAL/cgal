@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_CIRCULAR_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
 #define CGAL_CIRCULAR_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
+
+#include <CGAL/license/Circular_kernel_2.h>
+
 
 #include <CGAL/Circular_kernel_2/Intersection_traits.h>
 #include <vector>
@@ -50,7 +54,7 @@ circle_intersect( const typename CK::Circle_2 & c1,
   // the circles intersect
   
   const std::pair<typename CK::Circular_arc_point_2, unsigned>*
-    result = internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (*it);
+    result = Intersections::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (*it);
   
   if ( result->second == 2 ) // double solution
     return result->first;
@@ -59,7 +63,7 @@ circle_intersect( const typename CK::Circle_2 & c1,
     return result->first;
   
   ++it;
-  result = internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (*it);
+  result = Intersections::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (*it);
   
   return result->first;
 }

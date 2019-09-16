@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_PARABOLA_2_H
 #define CGAL_PARABOLA_2_H
+
+#include <CGAL/license/Apollonius_graph_2.h>
+
 
 #include <vector>
 #include <CGAL/determinant.h>
@@ -48,21 +52,6 @@ public:
 private:
     typedef Algebraic_structure_traits<FT> AST;
 protected:
-  // static stuff
-#if defined(__POWERPC__) && \
-  defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 4)
-  // hack to avoid nasty warning for G++ 3.4 on Darwin
-  static FT STEP()
-  {
-    return FT(2);
-  }
-#else
-  static const FT& STEP()
-  {
-    static FT step_(2);
-    return step_;
-  }
-#endif
 
   //  inline static
   //  FT square(const FT &x)
@@ -71,9 +60,20 @@ protected:
   //  }
 
   inline static
-  FT divide(const FT& x, const FT& y) {
-      return CGAL::integral_division(x,y);
+  FT divide(const FT& x, const FT& y, Integral_domain_without_division_tag) {
+    return FT(CGAL::to_double(x) / CGAL::to_double(y));
   }
+  
+  inline static
+  FT divide(const FT& x, const FT& y, Field_tag) {
+    return x / y;
+  }
+  
+  inline static
+  FT divide(const FT& x, const FT& y) {
+    return divide(x,y, typename AST::Algebraic_category());
+  }
+  
   inline static
   FT sqrt(const FT& x, Integral_domain_without_division_tag) {
     return CGAL::sqrt(CGAL::to_double(x));
@@ -108,7 +108,8 @@ protected:
   {
     return sqrt( distance2(p1, p2) );
   }
-
+  
+ 
   inline static
   FT distance(const Point_2& p, const Line_2& l)
   {
@@ -116,6 +117,8 @@ protected:
 		   sqrt( CGAL::square(l.a()) + CGAL::square(l.b()) ) );
   }
 
+  
+  
   // instance stuff
   Point_2 c;
   Line_2 l;
@@ -147,8 +150,8 @@ protected:
 
     std::vector< Point_2 > p;
 
-    if ( l.a() == ZERO ) {
-      FT y = d2 * CGAL::sign(l.b()) - divide(l.c(), l.b());
+    if ( l.a() == FT(0) ) {
+      FT y = d2 * int(CGAL::sign(l.b())) - divide(l.c(), l.b());
 
       FT C = CGAL::square(y) - FT(2) * c.y() * y + 
 	CGAL::square(c.x()) + CGAL::square(c.y()) - d1;
@@ -291,9 +294,9 @@ public:
 
     pleft.push_back(o);
     pright.push_back(o);
-
+    const FT STEP(2);
     for (int i = 1; i <= 100; i++) {
-      p = compute_points(i * i * STEP());
+      p = compute_points(i * i * STEP);
 
       W << p[0];
       W << p[1];

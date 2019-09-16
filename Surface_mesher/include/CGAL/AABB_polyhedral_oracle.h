@@ -15,12 +15,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s) : Pierre Alliez, Laurent Rineau, Stephane Tayeb
 
 #ifndef CGAL_AABB_POLYHEDRAL_ORACLE_H
 #define CGAL_AABB_POLYHEDRAL_ORACLE_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <utility>
 #include <CGAL/iterator.h>
@@ -79,10 +83,6 @@ namespace CGAL {
     friend class Intersect_3;
 
     class Intersect_3 {
-      #if CGAL_INTERSECTION_VERSION < 2
-      typedef boost::optional<typename Tree::Object_and_primitive_id> 
-        AABB_intersection;
-      #endif
       
       const Self& self;
 
@@ -93,11 +93,7 @@ namespace CGAL {
 
       Object operator()(const Surface_3& surface, const Segment_3& segment) const
       {
-        #if CGAL_INTERSECTION_VERSION < 2
-        AABB_intersection
-        #else
         boost::optional< typename AABB_traits::template Intersection_and_primitive_id<Segment_3>::Type >
-        #endif
           intersection = surface.tree()->any_intersection(segment);
         
         if ( intersection )
@@ -108,11 +104,7 @@ namespace CGAL {
       
       Object operator()(const Surface_3& surface, const Line_3& line) const
       {
-        #if CGAL_INTERSECTION_VERSION < 2
-        AABB_intersection
-        #else
         boost::optional< typename AABB_traits::template Intersection_and_primitive_id<Line_3>::Type >
-        #endif
           intersection = surface.tree()->any_intersection(line);
         
         if ( intersection )
@@ -122,11 +114,7 @@ namespace CGAL {
       }
       Object operator()(const Surface_3& surface, const Ray_3& ray) const
       {
-        #if CGAL_INTERSECTION_VERSION < 2
-        AABB_intersection
-        #else
         boost::optional< typename AABB_traits::template Intersection_and_primitive_id<Ray_3>::Type >
-        #endif
           intersection = surface.tree()->any_intersection(ray);
         
         if ( intersection )

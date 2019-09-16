@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_SPHERE_CIRCLE_H
 #define CGAL_SPHERE_CIRCLE_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/basic.h>
 
@@ -68,7 +72,8 @@ between $p$ and $q$. If $p$ and $q$ are antipodal of each other then we
 create any great circle that contains $p$ and $q$.}*/ 
 { Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + ((Base*) this)->orthogonal_vector();
   if ( p != q.antipode() ) {
-    if (R_().orientation_3_object()(p1,p,q,p4) != CGAL::POSITIVE )
+    if (R_().orientation_3_object()(p1,Point_3(p),
+                                    Point_3(q), p4) != CGAL::POSITIVE )
       *this = Self(opposite());
   } else {
     /* previous method was: *this = Self(Plane_3(p1,q-p)); 
@@ -154,9 +159,9 @@ bool equal_not_opposite(const CGAL::Sphere_circle<R>& c1,
 			const CGAL::Sphere_circle<R>& c2) {
   // function should be called to decide whether two circles
   // are equal or opposites. returns true iff |c1| and |c2| are equal
-  if(c1.a() != 0) return sign(c1.a()) == sign(c2.a());
-  if(c1.b() != 0) return sign(c1.b()) == sign(c2.b());
-  return sign(c1.c()) == sign(c2.c());
+  if(c1.a() != 0) return CGAL::sign(c1.a()) == CGAL::sign(c2.a());
+  if(c1.b() != 0) return CGAL::sign(c1.b()) == CGAL::sign(c2.b());
+  return CGAL::sign(c1.c()) == CGAL::sign(c2.c());
 }
 
 template <typename R>

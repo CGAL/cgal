@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations_2.cpp $
-// $Id: boolean_operations_2.cpp 45454 2008-09-09 21:42:42Z lrineau $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 
@@ -946,7 +946,7 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet, Bezier_region_so
           
           if ( bezier_polygons.size() > 1 )
           {
-            for ( Bezier_polygon_vector::const_iterator it = CGAL::cpp11::next(bezier_polygons.begin())
+            for ( Bezier_polygon_vector::const_iterator it = std::next(bezier_polygons.begin())
                 ; it != bezier_polygons.end()
                 ; ++ it 
                 )

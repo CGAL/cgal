@@ -12,14 +12,12 @@ Note that input/output operators discard this additional information.
 \tparam Info is the information the user would like to add 
 to a vertex. It has to be `DefaultConstructible` and `Assignable`. 
 
-\tparam TriangulationTraits_3  is the geometric traits class 
- which provides the `Point_3`. 
+\tparam Traits is the geometric traits class and must be a model of `TriangulationTraits_3`.
 
-\tparam TriangulationVertexBase_3_ is a vertex base class from which 
+\tparam Vb is a vertex base class from which
 `Triangulation_vertex_base_with_info_3` derives.
 It must be a model of the `TriangulationVertexBase_3` concept.
-It has the default 
-value `Triangulation_vertex_base_3<TriangulationTraits_3>`. 
+It has the default value `Triangulation_vertex_base_3<Traits>`.
 
 \cgalModels `TriangulationVertexBase_3`
 \cgalModels `TriangulationVertexBaseWithInfo_3`
@@ -28,8 +26,8 @@ value `Triangulation_vertex_base_3<TriangulationTraits_3>`.
 \sa `CGAL::Triangulation_vertex_base_3` 
 
 */
-template< typename Info, typename TriangulationTraits_3, typename TriangulationVertexBase_3_ >
-class Triangulation_vertex_base_with_info_3 : public TriangulationVertexBase_3_ {
+template< typename Info, typename Traits, typename Vb >
+class Triangulation_vertex_base_with_info_3 : public Vb {
 public:
 
 /// \name Types 

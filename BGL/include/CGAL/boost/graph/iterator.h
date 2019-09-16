@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -41,7 +42,7 @@ struct Edge {
   const G* g; 
 
   Edge()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Edge(const G& g)
@@ -62,7 +63,7 @@ struct Opposite_edge {
   const G* g; 
 
   Opposite_edge()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Opposite_edge(const G& g)
@@ -83,7 +84,7 @@ struct Opposite_halfedge {
   const G* g; 
 
   Opposite_halfedge()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Opposite_halfedge(const G& g)
@@ -104,7 +105,7 @@ struct Target {
   const G* g; 
 
   Target()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Target(const G& g)
@@ -125,7 +126,7 @@ struct Source {
   const G* g; 
 
   Source()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Source(const G& g)
@@ -146,7 +147,7 @@ struct Face {
   const G* g; 
 
   Face()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Face(const G& g)
@@ -166,7 +167,7 @@ struct Opposite_face {
   const G* g; 
 
   Opposite_face()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Opposite_face(const G& g)
@@ -229,7 +230,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base() == nullptr)) ?
       &Halfedge_around_source_iterator::this_type_does_not_support_comparisons : 0;
   }
 
@@ -244,7 +245,7 @@ public:
 
   bool operator== (void* ) const
   {
-    return g == NULL;
+    return g == nullptr;
   }
 
   reference operator*() const
@@ -329,7 +330,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base() == nullptr)) ?
       &Halfedge_around_target_iterator::this_type_does_not_support_comparisons : 0;
   }
 
@@ -344,7 +345,7 @@ public:
 
   bool operator== (void* ) const
   {
-    return g == NULL;
+    return g == nullptr;
   }
 
   reference operator*() const
@@ -428,7 +429,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base() == nullptr)) ?
       &Halfedge_around_face_iterator::this_type_does_not_support_comparisons : 0;
   }
 
@@ -443,8 +444,8 @@ public:
 
   Self& operator++() 
   {
-    CGAL_assertion(g != NULL);
-    pos = next(pos,*g); 
+    CGAL_assertion(g != nullptr);
+    pos = next(pos,*g);
     if ( pos == anchor)
       ++winding;
     return *this;
@@ -452,7 +453,7 @@ public:
 
   Self operator++(int) 
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     ++*this;
     return tmp;
@@ -460,7 +461,7 @@ public:
 
   Self& operator--() 
   {
-    CGAL_assertion(g != NULL); 
+    CGAL_assertion(g != nullptr); 
     if ( pos == anchor)
       --winding;
   
@@ -470,7 +471,7 @@ public:
 
   Self operator--(int) 
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     --*this;
     return tmp;
@@ -538,13 +539,13 @@ public:
   
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Halfedge_around_source_circulator::this_type_does_not_support_comparisons : 0;
   }
   
   bool operator== (void*) const
   {
-    return this->base_reference() == NULL;
+    return this->base_reference() == nullptr;
   }
   
 private:
@@ -596,13 +597,13 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Face_around_target_circulator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base_reference() == NULL;
+    return this->base_reference() == nullptr;
   }
 
 
@@ -671,27 +672,27 @@ public:
 
   operator bool_type() const
   {
-    return (! (g == NULL)) ?
+    return (! (g == nullptr)) ?
       &Halfedge_around_target_circulator::this_type_does_not_support_comparisons : 0;
   }
 
 
   bool operator== (void* ) const
   {
-    return g == NULL;
+    return g == nullptr;
   }
 
  
   Self& operator++() 
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     pos = opposite(next(pos,*g),*g);
     return *this;
   }
 
   Self operator++(int) 
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     ++*this;
     return tmp;
@@ -699,14 +700,14 @@ public:
 
   Self& operator--() 
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     pos = prev(opposite(pos,*g),*g);
     return *this;
   }
 
   Self operator--(int) 
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     --*this;
     return tmp;
@@ -768,25 +769,25 @@ public:
 
   operator bool_type() const
   {
-    return (! (g == NULL)) ?
+    return (! (g == nullptr)) ?
       &Halfedge_around_face_circulator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void* ) const
   {
-    return g == NULL;
+    return g == nullptr;
   }
 
   Self& operator++() 
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     pos = next(pos,*g);
     return *this;
   }
 
   Self operator++(int) 
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     ++*this;
     return tmp;
@@ -794,14 +795,14 @@ public:
 
   Self& operator--() 
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     pos = prev(pos,*g);
     return *this;
   }
 
   Self operator--(int) 
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     --*this;
     return tmp;
@@ -820,7 +821,7 @@ private:
  */
 template<typename Graph>
 Iterator_range<Halfedge_around_source_iterator<Graph> >
-halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor h, Graph& g)
+halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Halfedge_around_source_iterator<Graph> I;
   return make_range(I(h,g), I(h,g,1));
@@ -832,7 +833,7 @@ halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor
  */
 template<typename Graph>
 Iterator_range<Halfedge_around_source_iterator<Graph> >
-halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v, Graph& g)
+halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
   return halfedges_around_source(opposite(halfedge(v,g),g),g);
 }
@@ -1024,13 +1025,13 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Vertex_around_face_circulator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base_reference()== NULL;
+    return this->base_reference()== nullptr;
   }
 private:
   friend class boost::iterator_core_access;
@@ -1078,13 +1079,13 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Vertex_around_face_iterator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base_reference()== NULL;
+    return this->base_reference()== nullptr;
   }
 private:
   friend class boost::iterator_core_access;
@@ -1128,6 +1129,40 @@ opposite_edges_around_face(typename boost::graph_traits<Graph>::halfedge_descrip
   return make_range(I(h,g), I(h,g,1));
 }
 
+template <typename Graph>
+class Edge_around_face_iterator
+#ifndef DOXYGEN_RUNNING
+  : public boost::iterator_adaptor<
+            Edge_around_face_iterator<Graph>                       // Derived
+             , Halfedge_around_face_iterator<Graph>                // Base
+             , typename boost::graph_traits<Graph>::edge_descriptor  // Value
+             , std::bidirectional_iterator_tag                       // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::edge_descriptor  // Reference
+             >
+#endif
+{
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  internal::Edge<Graph> fct;
+public:
+
+  Edge_around_face_iterator()
+  {}
+
+  Edge_around_face_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
+    : Edge_around_face_iterator::iterator_adaptor_(Halfedge_around_face_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
+  {}
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::edge_descriptor dereference() const { return fct(*this->base_reference()); }
+}; 
+
+template<typename Graph>
+Iterator_range<Edge_around_face_iterator<Graph> >
+edges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
+{
+  typedef Edge_around_face_iterator<Graph> I;
+  return make_range(I(h,g), I(h,g,1));
+}
 
 
 
@@ -1174,13 +1209,13 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Vertex_around_target_circulator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base_reference()== NULL;
+    return this->base_reference()== nullptr;
   }
 
 private:
@@ -1232,7 +1267,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Vertex_around_target_iterator::this_type_does_not_support_comparisons : 0;
   }
 private:
@@ -1246,7 +1281,7 @@ template <typename Graph>
 Iterator_range<Vertex_around_target_iterator<Graph> >
 adjacent_vertices(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
-  typedef Vertex_around_face_iterator<Graph> I;
+  typedef Vertex_around_target_iterator<Graph> I;
   return make_range(I(h,g), I(h,g,1));
 }
 
@@ -1255,7 +1290,7 @@ template <typename Graph>
 Iterator_range<Vertex_around_target_iterator<Graph> >
 adjacent_vertices(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
-  typedef Vertex_around_face_iterator<Graph> I;
+  typedef Vertex_around_target_iterator<Graph> I;
   return make_range(I(halfedge(v,g),g), I(halfedge(v,g),g,1));
 }
 
@@ -1319,7 +1354,7 @@ public:
   
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Out_edge_iterator::this_type_does_not_support_comparisons : 0;
   }
   
@@ -1361,7 +1396,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &In_edge_iterator::this_type_does_not_support_comparisons : 0;
   }
 

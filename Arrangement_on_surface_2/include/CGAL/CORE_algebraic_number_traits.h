@@ -14,12 +14,18 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 
 #ifndef CGAL_CORE_ALGEBRAIC_NUMBER_TRAITS_2_H
 #define CGAL_CORE_ALGEBRAIC_NUMBER_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
+
 
 /*! \file
  * The number-type traits for CORE algebraic numbers.
@@ -584,7 +590,7 @@ public:
                                   poly.getCoeff(1),
                                   poly.getCoeff(0),
                                   buffer);
-      unsigned int  num_of_roots = std::distance(&buffer[0], end_buffer);
+      unsigned int num_of_roots = static_cast<unsigned int>(std::distance(&buffer[0], end_buffer));
 
       for (i = 0; i < num_of_roots; ++i)
       {
@@ -616,5 +622,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

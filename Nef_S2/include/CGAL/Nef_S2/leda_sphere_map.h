@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_LEDA_SPHERE_MAP_H
 #define CGAL_LEDA_SPHERE_MAP_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/generic_sweep.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
@@ -243,7 +247,7 @@ void compute_faces()
 }
 
 void dump(std::ostream& os, leda_node v, bool nl=true) const
-{  os << " ["<<::index(v)<<"] "<<G[v]; 
+{  os << " ["<< ::index(v)<<"] "<<G[v]; 
    if (nl) os << std::endl; }
 
 void dump(std::ostream& os) const

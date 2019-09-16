@@ -12,13 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: https://scm.gforge.inria.fr/svn/cgal/branches/features/Mesh_3-experimental-GF/Mesh_3/include/CGAL/Mesh_3/config.h $
-// $Id: config.h 70893 2012-07-31 10:43:20Z jtournoi $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_MESH_3_CONFIG_H
 #define CGAL_MESH_3_CONFIG_H 1
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/config.h>
 
@@ -62,23 +66,5 @@
 #    define CGAL_MESH_3_OPTIMIZER_VERBOSE 1
 #  endif
 #endif
-
-#if defined(__clang__) || (BOOST_GCC >= 40600)
-#  define CGAL_MESH_3_IGNORE_UNUSED_VARIABLES \
-    _Pragma("GCC diagnostic ignored \"-Wunused-variable\"") \
-    _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"")
-#else
-#  define CGAL_MESH_3_IGNORE_UNUSED_VARIABLES
-#endif
-#if __has_warning("-Wunneeded-internal-declaration")
-#  define CGAL_MESH_3_IGNORE_UNUSED_INTERNAL_DECLARATION \
-     _Pragma("clang diagnostic ignored \"-Wunneeded-internal-declaration\"")
-#else
-#  define CGAL_MESH_3_IGNORE_UNUSED_INTERNAL_DECLARATION
-#endif
-
-#define CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS \
-  CGAL_MESH_3_IGNORE_UNUSED_VARIABLES                    \
-  CGAL_MESH_3_IGNORE_UNUSED_INTERNAL_DECLARATION
 
 #endif // CGAL_MESH_3_CONFIG_H

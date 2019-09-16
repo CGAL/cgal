@@ -1,3 +1,4 @@
+#include <QAction>
 #include <QApplication>
 #include <QMessageBox>
 #include <QMainWindow>
@@ -18,7 +19,7 @@ class Polyhedron_demo_features_detection_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   QAction* actionDetectFeatures;
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionDetectFeatures; }
@@ -75,17 +76,15 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
       return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    typedef CGAL::cpp11::array<double,6> Covariance;
+    typedef std::array<double,6> Covariance;
     std::vector<Covariance> cov;
 
     std::cerr << "Compute VCM (offset_radius="
         << dialog.offsetRadius() << " and convolution radius=" << dialog.convolveRadius() << ")...\n";
 
     CGAL::Timer task_timer; task_timer.start();
-    CGAL::compute_vcm(points->begin(), points->end(),
-                      points->point_map(),
-                      cov, dialog.offsetRadius(), dialog.convolveRadius(),
-                      Kernel());
+    CGAL::compute_vcm(*points, cov, dialog.offsetRadius(), dialog.convolveRadius(),
+                      points->parameters());
     task_timer.stop();
     std::cerr << "done: " << task_timer.time() << " seconds\n";
 

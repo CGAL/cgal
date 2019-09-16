@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 The class `Polyhedral_mesh_domain_with_features_3` implements a domain whose 
 boundary is a simplicial polyhedral surface. 
@@ -22,7 +22,7 @@ instantiated with a model of the concept `IntersectionGeometricTraits_3`.
 
 \cgalModels `MeshDomainWithFeatures_3` 
 
-\sa `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain>` 
+\sa `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>` 
 \sa `CGAL::Mesh_polyhedron_3<IGT>` 
 */
@@ -55,13 +55,8 @@ The polyhedron `bounding_polyhedron` has to be closed and free of intersections.
 Its interior of `bounding_polyhedron` will be meshed.
 */ 
 template <typename Polyhedron> 
-Polyhedral_mesh_domain_with_features_3(Polyhedron bounding_polyhedron); 
+Polyhedral_mesh_domain_with_features_3(const Polyhedron& bounding_polyhedron);
 
-/*!
-Constructs a `Polyhedral_mesh_domain_with_features_3` from an off file. No feature 
-detection is done at this level. 
-*/ 
-Polyhedral_mesh_domain_with_features_3(const std::string& filename); 
 
 /*!
 Constructs a `Polyhedral_mesh_domain_with_features_3` from a polyhedral surface, and a bounding polyhedral surface.
@@ -72,8 +67,15 @@ Using this constructor allows to mesh a polyhedral surface which is not closed, 
 The inside of `bounding_polyhedron` will be meshed.
 */
 template <typename Polyhedron> 
-Polyhedral_mesh_domain_with_features_3(Polyhedron polyhedron,
-							 Polyhedron bounding_polyhedron);
+Polyhedral_mesh_domain_with_features_3(const Polyhedron& polyhedron,
+                                       const Polyhedron& bounding_polyhedron);
+
+/*!
+\deprecated Constructs a `Polyhedral_mesh_domain_with_features_3` from an off file. No feature 
+detection is done at this level. Users must read the file into a `Polyhedron_3` and call the
+constructor above.
+*/ 
+Polyhedral_mesh_domain_with_features_3(const std::string& filename); 
 
 /// @} 
 
@@ -88,7 +90,7 @@ For an edge of the polyhedron, if the angle between the two normal vectors of it
 incident facets is bigger than the given bound, then the edge is considered as
 a feature edge.
 */ 
-void detect_features(FT angle_bound=120); 
+void detect_features(FT angle_bound=60);
 
 
 /*!

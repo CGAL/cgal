@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_NEF_POLYHEDRON_2_PS_STREAM_H
 #define CGAL_NEF_POLYHEDRON_2_PS_STREAM_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <CGAL/Nef_polyhedron_2.h>
 #include <LEDA/geo/gen_polygon.h>

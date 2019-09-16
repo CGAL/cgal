@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
@@ -52,6 +53,7 @@ public:
   typedef Dimension_tag<2>  Ambient_dimension;
   typedef Dimension_tag<0>  Feature_dimension;
 
+  typedef typename R_::Weighted_point_2 Weighted_point_2;
   typedef RPoint_2 Rep;
   typedef typename R_::Cartesian_const_iterator_2 Cartesian_const_iterator;
 
@@ -75,6 +77,11 @@ public:
 
   Point_2(const RPoint_2& p)
     : RPoint_2(p)
+  {}
+
+  explicit
+  Point_2(const Weighted_point_2& wp)
+    : Rep(wp.point())
   {}
 
   template < typename T1, typename T2 >
@@ -120,7 +127,6 @@ public:
   {
     return typename R::Construct_cartesian_const_iterator_2()(*this,2);
   }
-
 
 
   typename cpp11::result_of<typename R::Compute_hx_2(Point_2)>::type
@@ -245,7 +251,7 @@ extract(std::istream& is, Point_2<R>& p, const Cartesian_tag&)
         break;
     }
     if (is)
-	p = Point_2<R>(x, y);
+      p = Point_2<R>(x, y);
     return is;
 }
 

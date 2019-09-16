@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <cassert>
 
 #include <CGAL/hilbert_sort.h>
@@ -48,8 +47,9 @@ int main ()
 
         CGAL::Random_points_in_square_2<Point_2> gen (1.0, random);
 
-        for (int i = 0; i < nb_points_2; ++i)
+        for (int i = 0; i < nb_points_2 - 1; ++i)
             v.push_back (*gen++);
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -107,8 +107,9 @@ int main ()
 
         CGAL::Random_points_in_square_2<Point_2> gen (1.0, random);
 
-        for (int i = 0; i < nb_points_2; ++i)
+        for (int i = 0; i < nb_points_2 - 1; ++i)
             v.push_back (*gen++);
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -167,8 +168,9 @@ int main ()
 
         CGAL::Random_points_in_cube_3<Point_3> gen (1.0, random);
 
-        for (int i = 0; i < nb_points_3; ++i)
+        for (int i = 0; i < nb_points_3 - 1; ++i)
             v.push_back (*gen++);
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -228,8 +230,9 @@ int main ()
 
         CGAL::Random_points_in_cube_3<Point_3> gen (1.0, random);
 
-        for (int i = 0; i < nb_points_3; ++i)
+        for (int i = 0; i < nb_points_3 - 1; ++i)
             v.push_back (*gen++);
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -288,8 +291,9 @@ int main ()
 
         CGAL::Random_points_on_sphere_3<Point_3> gen (1.0, random);
 
-        for (int i = 0; i < nb_points_3; ++i)
+        for (int i = 0; i < nb_points_3 - 1; ++i)
             v.push_back (*gen++);
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -319,8 +323,9 @@ int main ()
 
         CGAL::Random_points_on_sphere_3<Point_3> gen (2.0, random);
 
-        for (int i = 0; i < nb_points_3; ++i)
+        for (int i = 0; i < nb_points_3 - 1; ++i)
             v.push_back (*gen++ + Vector_3(3,5,5));
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -350,8 +355,9 @@ int main ()
 
         CGAL::Random_points_on_sphere_3<Point_3> gen (1.0, random);
 
-        for (int i = 0; i < nb_points_3; ++i)
+        for (int i = 0; i < nb_points_3 - 1; ++i)
             v.push_back (*gen++);
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -381,8 +387,9 @@ int main ()
 
         CGAL::Random_points_on_sphere_3<Point_3> gen (2.0, random);
 
-        for (int i = 0; i < nb_points_3; ++i)
+        for (int i = 0; i < nb_points_3 - 1; ++i)
             v.push_back (*gen++ + Vector_3(3,5,5));
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -413,8 +420,9 @@ int main ()
 
         CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
 
-        for (int i = 0; i < nb_points_d; ++i)
+        for (int i = 0; i < nb_points_d - 1; ++i)
             v.push_back (*gen++);
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -445,8 +453,9 @@ int main ()
 
         CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
 
-        for (int i = 0; i < nb_points_d; ++i)
+        for (int i = 0; i < nb_points_d - 1; ++i)
             v.push_back (*gen++);
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -477,8 +486,9 @@ int main ()
 
         CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
 
-        for (int i = 0; i < nb_points_d; ++i)
+        for (int i = 0; i < nb_points_d - 1; ++i)
             v.push_back (*gen++);
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -510,8 +520,9 @@ int main ()
 
         CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
 
-        for (int i = 0; i < nb_points_d; ++i)
+        for (int i = 0; i < nb_points_d - 1; ++i)
             v.push_back (*gen++);
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 
@@ -633,8 +644,9 @@ int main ()
 
         CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
 
-        for (int i = 0; i < nb_points_d; ++i)
+        for (int i = 0; i < nb_points_d - 1; ++i)
             v.push_back (*gen++);
+        v.push_back(v[0]); //insert twice the same point
 
         std::cout << "done." << std::endl;
 

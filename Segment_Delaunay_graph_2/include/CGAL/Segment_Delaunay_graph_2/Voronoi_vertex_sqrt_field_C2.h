@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_VORONOI_VERTEX_SQRT_FIELD_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_VORONOI_VERTEX_SQRT_FIELD_C2_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
 
 
 
@@ -872,7 +876,7 @@ private:
 #ifndef CGAL_DISABLE_AM_CODE
     // code added by Andreas + Monique -- start
     if(v_type == PPP){
-      Site_2 const *p1 = NULL;
+      Site_2 const *p1 = nullptr;
       if(is_endpoint_of(p_, t)){
 	p1 = &p_;
       } else if(is_endpoint_of(q_, t)){
@@ -880,7 +884,7 @@ private:
       } else if(is_endpoint_of(r_, t)){
 	p1 = &r_;
       }
-      if(p1 != NULL){
+      if(p1 != nullptr){
         // As the Voronoi circle and the segment t touch in p1,
         // it is enough to check that the center and the non-touching point of the segment
         // are not in the same halfspace defined by the tangent line through p1

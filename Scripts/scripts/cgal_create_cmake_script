@@ -18,8 +18,9 @@
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Scripts/scripts/cgal_create_makefile $
-# $Id: cgal_create_makefile 36976 2007-03-09 22:53:24Z reichel $
+# $URL$
+# $Id$
+# SPDX-License-Identifier: LGPL-3.0+
 #
 # Author(s)     : various
 
@@ -39,33 +40,14 @@ create_cmake_script()
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
+cmake_minimum_required(VERSION 3.1...3.14)
+project( ${PROJECT}${TYPE} )
 
-project( ${PROJECT}_${TYPE} )
-EOF
-  cat <<'EOF'
-
-cmake_minimum_required(VERSION 2.8.10)
-
-set(CMAKE_CXX_STANDARD 14)
-
-EOF
-  
-    cat <<'EOF'
-find_package(CGAL QUIET COMPONENTS Core )
-
-if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
+find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
 
 EOF
     if [ -d "${SOURCE_DIR}" ] ; then
       echo "  set(CGAL_CURRENT_SOURCE_DIR \"${SOURCE_DIR}\")"
-      echo
-    fi
-    if [ -d "${SOURCE_DIR}../../include" ] ; then
-      echo "  include_directories (BEFORE \"${SOURCE_DIR}../../include\")"
       echo
     fi
     if [ -d "${SOURCE_DIR}../include" ] ; then
@@ -88,20 +70,10 @@ EOF
       BASE=`basename $BASE .C`
       egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
-        echo "  create_single_source_cgal_program( \"$file\" )"
+        echo "create_single_source_cgal_program( \"$file\" )"
         echo "Adding a target ${BASE}..." >&3
       fi
     done
-    
-    cat <<'EOF'
-
-else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
-endif()
-EOF
-  
   echo
 
 }
@@ -128,13 +100,13 @@ while [ $1 ]; do
             usage; exit
         ;;
         example) 
-            if [ -z "$TYPE" ]; then TYPE=$1; shift; else usage; exit 1; fi
+            if [ -z "$TYPE" ]; then TYPE=_Examples; shift; else usage; exit 1; fi
         ;;
         demo) 
-            if [ -z "$TYPE" ]; then TYPE=$1; shift; else usage; exit 1; fi
+            if [ -z "$TYPE" ]; then TYPE=_Demo; shift; else usage; exit 1; fi
         ;;
         test) 
-            if [ -z "$TYPE" ]; then TYPE=$1; shift; else usage; exit 1; fi
+            if [ -z "$TYPE" ]; then TYPE=; shift; else usage; exit 1; fi
         ;;
         --source_dir)
             if [ -d "$2" ]; then 

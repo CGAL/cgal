@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
@@ -23,10 +24,37 @@
 
 #include <CGAL/property_map.h>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/type_traits/is_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+#include <CGAL/Dynamic_property_map.h>
 
 #include <CGAL/basic.h>
 #include <string>
 
+namespace CGAL{
+/// \ingroup PkgBGLProperties
+/// \brief graph_has_property is used to indicate if
+/// a model of `HalfedgeGraph` or `FaceGraph`
+/// has an internal property associated with the
+/// given `PropertyTag`.
+///
+/// It inherits from `CGAL::Tag_true` if there is a
+/// default internal property map for the
+/// corresponding property tag and from
+/// `CGAL::Tag_false` otherwise.
+///
+/// \tparam Graph a model of `HalfedgeGraph` or `FaceGraph`
+/// \tparam PropertyTag the type of a property tag
+/// referring to the property of interest.
+///
+template<typename Graph, typename PropertyTag>
+struct graph_has_property
+#ifndef DOXYGEN_RUNNING
+    : CGAL::Tag_false
+#endif
+{};
+}
 /// Boost Namespace
 namespace boost {
 
@@ -52,18 +80,6 @@ enum halfedge_external_index_t   { halfedge_external_index   } ;
 enum face_index_t            { face_index            };
 enum face_external_index_t   { face_external_index   } ;
 
-  template <typename T>
-  struct vertex_property_t
-  {
-    vertex_property_t(const std::string s, const T& t = T())
-      : s(s), t(t)
-    {}
-    std::string s;
-    T t;
-  };
-
-template<typename Graph, typename PropertyTag>
-struct graph_has_property : CGAL::Tag_false {};
   
 struct cgal_no_property
 {
@@ -102,7 +118,211 @@ using boost::face_index_t;
 using boost::face_index;
 using boost::face_external_index_t;
 using boost::face_external_index;
-using boost::vertex_property_t;
 } // CGAL
+
+namespace CGAL{
+namespace helpers {
+
+// matches read-write property maps
+template <class PolygonMesh, class FaceIndexMap, class Tag>
+void init_face_indices(PolygonMesh& pm,
+                       FaceIndexMap& fid,
+                       boost::read_write_property_map_tag,
+                       Tag)
+{
+  typename boost::property_traits<FaceIndexMap>::value_type i = 0;
+  for(typename boost::graph_traits<PolygonMesh>::face_descriptor fd :
+                faces(pm))
+  {
+    put(fid, fd, i);
+    ++i;
+  }
+}
+template <class PolygonMesh, class VertexIndexMap, class Tag>
+void init_vertex_indices(PolygonMesh& pm,
+                         VertexIndexMap& vid,
+                         boost::read_write_property_map_tag,
+                         Tag)
+{
+  typename boost::property_traits<VertexIndexMap>::value_type i = 0;
+  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd :
+                vertices(pm))
+  {
+    put(vid, vd, i);
+    ++i;
+  }
+}
+template <class PolygonMesh, class HalfedgeIndexMap, class Tag>
+void init_halfedge_indices(PolygonMesh& pm,
+                           HalfedgeIndexMap& hid,
+                           boost::read_write_property_map_tag,
+                           Tag)
+{
+  typename boost::property_traits<HalfedgeIndexMap>::value_type i = 0;
+  for(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd :
+                halfedges(pm))
+  {
+    put(hid, hd, i);
+    ++i;
+  }
+}
+
+// matches mutable Lvalue property maps
+template <class PolygonMesh, class FaceIndexMap>
+void init_face_indices(PolygonMesh& pm,
+                       FaceIndexMap& fid,
+                       boost::lvalue_property_map_tag,
+                       boost::false_type)
+{
+  init_face_indices(pm, fid,
+    boost::read_write_property_map_tag(), boost::false_type());
+}
+template <class PolygonMesh, class VertexIndexMap>
+void init_vertex_indices(PolygonMesh& pm,
+                         VertexIndexMap& vid,
+                         boost::lvalue_property_map_tag,
+                         boost::false_type)
+{
+  init_vertex_indices(pm, vid,
+    boost::read_write_property_map_tag(), boost::false_type());
+}
+template <class PolygonMesh, class HalfedgeIndexMap>
+void init_halfedge_indices(PolygonMesh& pm,
+                         HalfedgeIndexMap& hid,
+                         boost::lvalue_property_map_tag,
+                         boost::false_type)
+{
+  init_halfedge_indices(pm, hid,
+    boost::read_write_property_map_tag(), boost::false_type());
+}
+
+// matches all other types of property map
+template <class PolygonMesh, class FaceIndexMap, class MapTag, class Tag>
+void init_face_indices(PolygonMesh&, FaceIndexMap, MapTag, Tag)
+{}
+template <class PolygonMesh, class VertexIndexMap, class MapTag, class Tag>
+void init_vertex_indices(PolygonMesh&, VertexIndexMap, MapTag, Tag)
+{}
+template <class PolygonMesh, class HalfedgeIndexMap, class MapTag, class Tag>
+void init_halfedge_indices(PolygonMesh&, HalfedgeIndexMap, MapTag, Tag)
+{}
+
+template <class PolygonMesh, class FaceIndexMap>
+void init_face_indices(PolygonMesh& pm, FaceIndexMap fid)
+{
+  init_face_indices(pm, fid,
+                    typename boost::property_traits<FaceIndexMap>::category(),
+                    typename boost::is_const<
+                      typename boost::remove_reference<
+                        typename boost::property_traits<FaceIndexMap>::reference
+                            >::type >::type() );
+}
+
+template <class PolygonMesh, class VertexIndexMap>
+void init_vertex_indices(PolygonMesh& pm, VertexIndexMap vid)
+{
+  init_vertex_indices(pm, vid,
+                      typename boost::property_traits<VertexIndexMap>::category(),
+                      typename boost::is_const<
+                        typename boost::remove_reference<
+                          typename boost::property_traits<VertexIndexMap>::reference
+                            >::type >::type() );
+}
+
+template <class PolygonMesh, class HalfedgeIndexMap>
+void init_halfedge_indices(PolygonMesh& pm, HalfedgeIndexMap hid)
+{
+  init_halfedge_indices(pm, hid,
+                        typename boost::property_traits<HalfedgeIndexMap>::category(),
+                        typename boost::is_const<
+                          typename boost::remove_reference<
+                            typename boost::property_traits<HalfedgeIndexMap>::reference
+                              >::type >::type() );
+}
+
+} //namespace helpers
+
+namespace internal {
+  
+  template<typename Polyhedron, typename Handle>
+struct Index_accessor
+    : boost::put_get_helper< std::size_t&, Index_accessor<Polyhedron,Handle> >
+{
+  typedef boost::lvalue_property_map_tag category;
+  typedef std::size_t&                   reference;
+  typedef std::size_t                    value_type;
+  typedef Handle                         key_type;
+
+  reference operator[](Handle h) const { return h->id(); }
+};
+
+template<typename Handle>
+struct Edge_index_accessor
+  : boost::put_get_helper< std::size_t, Edge_index_accessor<Handle> >
+{
+  typedef boost::readable_property_map_tag category;
+  typedef std::size_t                      reference;
+  typedef std::size_t                      value_type;
+  typedef Handle                           key_type;
+
+  reference operator[](Handle h) const { return h.id(); }
+};
+
+template<typename Handle, typename ValueType, typename Reference,
+         bool is_const = boost::is_const<
+                           typename boost::remove_reference<Reference>::type >::value>
+struct Point_accessor
+  : boost::put_get_helper< Reference, Point_accessor<Handle, ValueType, Reference> >
+{
+  typedef boost::lvalue_property_map_tag category;
+  typedef Reference                      reference;
+  typedef ValueType                      value_type;
+  typedef Handle                         key_type;
+
+  reference operator[](Handle h) const { return h->point(); }
+};
+
+// partial specialization for const map to make them constructible from non-const map
+template<typename Handle, typename ValueType, typename ConstReference>
+struct Point_accessor<Handle, ValueType, ConstReference, true>
+  : boost::put_get_helper< ConstReference, Point_accessor<Handle, ValueType, ConstReference, true> >
+{
+  typedef boost::lvalue_property_map_tag category;
+  typedef ConstReference                      reference;
+  typedef ValueType                      value_type;
+  typedef Handle                         key_type;
+
+  typedef typename boost::mpl::if_< boost::is_reference<ConstReference>,
+                                    ValueType&,
+                                    ValueType >::type Reference;
+
+  Point_accessor() {}
+  Point_accessor(Point_accessor<Handle, ValueType, Reference, false>) {}
+
+  reference operator[](Handle h) const { return h->point(); }
+};
+
+} // namespace internal
+
+// Needed by PMP::detec_features and Mesh_3
+enum vertex_feature_degree_t    { vertex_feature_degree };
+enum edge_is_feature_t          { edge_is_feature };
+
+enum vertex_time_stamp_t        { vertex_time_stamp};
+enum halfedge_time_stamp_t      { halfedge_time_stamp};
+enum face_time_stamp_t          { face_time_stamp};
+
+template <typename ID>
+struct vertex_incident_patches_t {
+  typedef ID type;
+};
+
+template <typename ID>
+struct face_patch_id_t {
+  typedef ID type;
+};
+
+} // namespace CGAL
+
 
 #endif // CGAL_BOOST_GRAPH_BGL_PROPERTIES_H

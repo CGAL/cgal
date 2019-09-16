@@ -23,7 +23,7 @@ public:
 
     process = new QProcess(this);
 
-    // QGLViewer drawing signals
+    // CGAL::QGLViewer drawing signals
     connect(ui->viewer, SIGNAL(viewerInitialized()), s, SLOT(init()));
     connect(ui->viewer, SIGNAL(drawNeeded()), s, SLOT(draw()));
 
@@ -59,8 +59,8 @@ public:
 	    s, SLOT(insert_random()));
 
     connect(ui->actionGrab_image, SIGNAL(triggered()),
-	    s, SLOT(grab_image()));
-
+            s, SLOT(grab_image()));
+    
     // Features menu:
     connect(ui->actionPoint_location, SIGNAL(toggled(bool)),
 	    s, SLOT(toggle_dlocate(bool)));

@@ -4,16 +4,19 @@
 #include <CGAL/mesh_skin_surface_3.h>
 #include <list>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Skin_surface_traits_3<K> Traits;
-typedef CGAL::Skin_surface_3<Traits> Skin_surface_3;
-typedef Skin_surface_3::FT FT;
-typedef Skin_surface_3::Weighted_point Weighted_point;
-typedef Weighted_point::Point Bare_point;
-typedef CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> Polyhedral_items;
-typedef CGAL::Polyhedron_3<K, Polyhedral_items> Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
+typedef CGAL::Skin_surface_traits_3<K>                        Traits;
+typedef CGAL::Skin_surface_3<Traits>                          Skin_surface_3;
+typedef Skin_surface_3::FT                                    FT;
 
-int main() {
+typedef Skin_surface_3::Bare_point                            Bare_point;
+typedef Skin_surface_3::Weighted_point                        Weighted_point;
+
+typedef CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> Polyhedral_items;
+typedef CGAL::Polyhedron_3<K, Polyhedral_items>               Polyhedron;
+
+int main()
+{
   std::list<Weighted_point> l;
   FT shrinkfactor = 0.5;
 

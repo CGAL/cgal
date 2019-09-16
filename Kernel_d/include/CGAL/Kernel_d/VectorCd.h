@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 // Author(s)     : Michael Seel
 
@@ -112,7 +113,6 @@ VectorCd(int x, int y, int z, int w) :
 { CGAL_assertion_msg((w!=0), "VectorCd::construction: w == 0.");
   vector_rep()/=w; }
 
-VectorCd(const VectorCd<FT,LA>& p) : Base(p)  {}
 ~VectorCd() {}     
 
 int dimension() const { return ptr()->size(); } 

@@ -26,8 +26,8 @@ which is also the unique vertex and the unique full cell in the
 `TriangulationDataStructure`.
 In a
 geometric realization of the `TriangulationDataStructure` (<I>e.g.</I>, in a
-`Triangulation<TriangulationTraits, TriangulationDataStructure>` or a
-`Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`), this vertex
+`Triangulation<TriangulationTraits_, TriangulationDataStructure_>` or a
+`Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`), this vertex
 corresponds to <I>the vertex at infinity</I>.
 
 <DT><B>0</B><DD> This corresponds to two vertices, each incident to one \f$ 0\f$-face;
@@ -47,8 +47,7 @@ We call a \f$ 0\f$-simplex a <I>vertex</I>, a \f$ (d-1)\f$-simplex a <I>facet</I
 Two full cells are <I>neighbors</I> if they share a facet. Two faces are
 <I>incident</I> if one is included in the other.
 
-Input/Output
---------------
+\cgalHeading{Input/Output}
 
 The information stored in the `iostream` is:
 
@@ -70,7 +69,7 @@ The classes `Vertex` and
 `Full_cell` have to provide the relevant I/O operators
 (possibly empty).
 
-\cgalHasModel `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
+\cgalHasModel `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
 
 \sa `TriangulationDataStructure::Vertex`
 \sa `TriangulationDataStructure::FullCell`
@@ -84,7 +83,7 @@ class TriangulationDataStructure {
 public:
 
 /// \name Types
-// @{
+/// @{
 
 /*!
 The vertex type, requirements for this type are described 
@@ -123,6 +122,7 @@ typedef unspecified_type Face;
 /// Vertices and full cells are manipulated via
 /// <I>handles</I>. Handles support the usual two dereference
 /// operators and `operator->`. 
+/// @{
 
 /*!
 Handle to a `Vertex`.
@@ -257,11 +257,13 @@ The predicate must return `true`
 if the traversal of that `Facet` leads to a good full cell.
 
 All the good full cells are output into the last argument `out`.
-\pre `start != Full_cell_handle()` and `start` is a good cell.
 
+Returns a facet on the boundary of the set of cells.
+
+\pre `start != Full_cell_handle()` and `start` is a good cell.
 */
 template< typename TraversalPredicate, typename OutputIterator >
-void gather_full_cells(Full_cell_handle start, TraversalPredicate & tp,
+Facet gather_full_cells(Full_cell_handle start, TraversalPredicate & tp,
 OutputIterator & out) const;
 
 /*!
@@ -430,6 +432,7 @@ Inserts a vertex in the triangulation data structure by subdividing the
 Vertex_handle insert_in_facet(const Facet & ft);
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex 
 at position `p` and fills the hole by connecting
@@ -448,6 +451,7 @@ All vertices of cells of \f$ C\f$ are on \f$ \partial H\f$.
 \cgalFigureBegin{triangulationfiginserthole,insert-in-hole.png}
 Insertion in a hole, \f$ d=2\f$
 \cgalFigureEnd
+\cgalAdvancedEnd
 */
 template< class ForwardIterator > Vertex_handle
 insert_in_hole(ForwardIterator start, ForwardIterator end, Facet f);
@@ -553,8 +557,8 @@ This method does exactly the opposite of
 `insert_increase_dimension()`:
 `v` is removed,
 full cells not containing `star` are removed,
-full cells containing `star` but not `v` loose vertex `star`,
-full cells containing `star` and `v` loose vertex `v`
+full cells containing `star` but not `v` lose vertex `star`,
+full cells containing `star` and `v` lose vertex `v`
 (see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
 \pre All cells contain either `star` or `v`.
 Edge `star-v` exists in the triangulation
@@ -656,8 +660,8 @@ It sets requirements of combinatorial nature
 only, as geometry is not concerned here. In particular, we only require that
 the vertex holds a handle to a full cell incident to it in the triangulation.
 
-\cgalHasModel `CGAL::Triangulation_ds_vertex<TriangulationDataStructure>`
-\cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>`
+\cgalHasModel `CGAL::Triangulation_ds_vertex<TriangulationDataStructure_>`
+\cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`
 
 \sa `TriangulationDataStructure::FullCell`
 \sa `TriangulationDataStructure::Face`
@@ -763,8 +767,8 @@ full cell as well as handles to the adjacent full cells. Two full cells
 are said to be adjacent when they share a facet. Adjacent full cells are
 called hereafter neighbors.
 
-\cgalHasModel `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure,DSFullCellStoragePolicy>`
-\cgalHasModel `CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`
+\cgalHasModel `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, DSFullCellStoragePolicy>`
+\cgalHasModel `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
 
 \sa `TriangulationDataStructure::FullCell`
 \sa `TriangulationDataStructure::Face`

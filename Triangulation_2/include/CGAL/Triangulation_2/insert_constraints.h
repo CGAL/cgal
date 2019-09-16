@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Mariette Yvinec
@@ -21,9 +22,12 @@
 #ifndef CGAL_INTERNAL_TRIANGULATION_2_IMSERT_CONSTRAINTS_H
 #define CGAL_INTERNAL_TRIANGULATION_2_IMSERT_CONSTRAINTS_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/property_map.h>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <vector>
 #include <iterator>
 
@@ -48,12 +52,8 @@ namespace CGAL {
     typedef std::vector<std::size_t> Vertex_indices;
     typedef std::vector<Vertex_handle> Vertices;
 
-    Vertex_indices vertex_indices;
-    vertex_indices.resize(points.size());
-
-    std::copy(boost::counting_iterator<std::ptrdiff_t>(0),
-              boost::counting_iterator<std::ptrdiff_t>(points.size()),
-              std::back_inserter(vertex_indices));
+    Vertex_indices vertex_indices(boost::counting_iterator<std::ptrdiff_t>(0),
+                                  boost::counting_iterator<std::ptrdiff_t>(points.size()));
 
     typename T::size_type n = t.number_of_vertices();
     CGAL::Spatial_sort_traits_adapter_2<

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Authors: Weisheng Si, Quincy Tse
@@ -26,6 +27,9 @@
 
 #ifndef CGAL_COMPUTE_CONE_BOUNDARIES_2_H
 #define CGAL_COMPUTE_CONE_BOUNDARIES_2_H
+
+#include <CGAL/license/Cone_spanners_2.h>
+
 
 #include <iostream>
 #include <cstdlib>
@@ -40,7 +44,7 @@
 
 namespace CGAL {
 
-/*! \ingroup PkgConeBasedSpanners
+/*! \ingroup PkgConeSpanners2Ref
  *
  *  \brief The functor for computing the directions of cone boundaries with a given
  *  cone number and a given initial direction.

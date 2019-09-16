@@ -92,8 +92,6 @@
   // =====================
       
 //# define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
-//# define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-//# define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT // default
 
   // ==========================================================================
   // Profiling

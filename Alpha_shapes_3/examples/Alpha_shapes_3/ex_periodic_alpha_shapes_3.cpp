@@ -1,7 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/Alpha_shape_3.h>
+#include <CGAL/Alpha_shape_cell_base_3.h>
+#include <CGAL/Alpha_shape_vertex_base_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
-#include <CGAL/Alpha_shape_3.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
@@ -48,16 +51,13 @@ int main()
 
   // compute alpha shape
   Alpha_shape_3 as(pdt);
-  std::cout << "Alpha shape computed in REGULARIZED mode by default."
-	    << std::endl;
+  std::cout << "Alpha shape computed in REGULARIZED mode by default." << std::endl;
 
    // find optimal alpha values
   Alpha_shape_3::NT alpha_solid = as.find_alpha_solid();
   Alpha_shape_3::Alpha_iterator opt = as.find_optimal_alpha(1);
-  std::cout << "Smallest alpha value to get a solid through data points is "
-	    << alpha_solid << std::endl;
-  std::cout << "Optimal alpha value to get one connected component is "
-	    <<  *opt    << std::endl;
+  std::cout << "Smallest alpha value to get a solid through data points is " << alpha_solid << std::endl;
+  std::cout << "Optimal alpha value to get one connected component is " << *opt << std::endl;
   as.set_alpha(*opt);
   assert(as.number_of_solid_components() == 1);
   return 0;

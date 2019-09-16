@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
@@ -22,6 +23,10 @@
 
 #ifndef CGAL_POLYHEDRON_CUT_PLANE_3_H
 #define CGAL_POLYHEDRON_CUT_PLANE_3_H 1
+
+#include <CGAL/license/Polyhedron.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Kernel_traits.h>
@@ -149,5 +154,8 @@ polyhedron_cut_plane_3( Poly& poly,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_POLYHEDRON_CUT_PLANE_3_H //
 // EOF //

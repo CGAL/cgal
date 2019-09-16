@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Kernel_traits` provides access to the kernel model to 
 which the argument type `T` belongs. (Provided `T` belongs to 
 some kernel model.) The default implementation assumes there is a 
-local type `T::Kernel` referring to the kernel model of `T`. 
+local type `T::R` referring to the kernel model of `T`. 
 If this type does not exist, a specialization of `Kernel_traits` can be 
 used to provide the desired information. 
 
@@ -27,8 +27,7 @@ construct_segment(Point p, Point q)
 
 */
 template< typename T >
-class Kernel_traits {
-public:
+struct Kernel_traits {
 
 /// \name Types 
 /// @{

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -42,10 +43,24 @@
 #include <CGAL/make_mesh_3.h> // for C3t3_initializer
 #include <CGAL/use.h>
 
+#include <boost/any.hpp>
+#include <CGAL/Mesh_3/experimental/Get_facet_patch_id.h>
+
 namespace CGAL {
   class Image_3;
 }
-
+namespace internal{
+//general case for polyhedron
+template<class Domain>
+struct Get_facet_patch_id_selector {
+  typedef CGAL::Default type;
+};
+//specialization for surface_mesh
+template<>
+struct Get_facet_patch_id_selector<Polyhedral_mesh_domain> {
+  typedef CGAL::Mesh_3::Get_facet_patch_id_sm<Polyhedral_mesh_domain> type;
+};
+}//end internal
 struct Mesh_parameters
 {
   double facet_angle;
@@ -59,12 +74,22 @@ struct Mesh_parameters
   bool detect_connected_components;
   int manifold;
   const CGAL::Image_3* image_3_ptr;
+  bool use_sizing_field_with_aabb_tree;
   
   inline QStringList log() const;
 };
 
+namespace Mesh_fnt {
+  struct Domain_tag {};
+  struct Polyhedral_domain_tag : public Domain_tag {};
+  struct Labeled_domain_tag : public Domain_tag {};
+  struct Image_domain_tag : Labeled_domain_tag {};
+  struct Implicit_domain_tag : Labeled_domain_tag {};
+  struct Labeled_image_domain_tag : Image_domain_tag {};
+  struct Gray_image_domain_tag : Image_domain_tag {};
+} // end Mesh_fnt
 
-template < typename Domain_, typename Image_tag >
+template < typename Domain_, typename Domain_tag >
 class Mesh_function
   : public Mesh_function_interface
 {
@@ -99,15 +124,21 @@ private:
   typedef Mesh_criteria::Cell_criteria              Cell_criteria;
   
   typedef CGAL::Mesh_3::Mesher_3<C3t3, Mesh_criteria, Domain>   Mesher;
-  
-  void initialize(const Mesh_criteria& criteria, CGAL::Tag_true);
-  void initialize(const Mesh_criteria& criteria, CGAL::Tag_false);
 
+  void initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag);
+  void initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag);
+
+  Edge_criteria edge_criteria(double b, Mesh_fnt::Domain_tag);
+  Edge_criteria edge_criteria(double b, Mesh_fnt::Polyhedral_domain_tag);
+
+  void tweak_criteria(Mesh_criteria&, Mesh_fnt::Domain_tag) {}
+  void tweak_criteria(Mesh_criteria&, Mesh_fnt::Polyhedral_domain_tag);
 private:
+  boost::any object_to_destroy;
   C3t3& c3t3_;
-  Domain* domain_;
-  Mesh_parameters p_;
-  bool continue_;
+  Domain* const domain_;
+  Mesh_parameters const p_;
+  std::atomic<bool> stop_;
   Mesher* mesher_;
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   mutable typename Mesher::Mesher_status last_report_;
@@ -146,7 +177,7 @@ Mesh_function(C3t3& c3t3, Domain* domain, const Mesh_parameters& p)
 : c3t3_(c3t3)
 , domain_(domain)
 , p_(p)
-, continue_(true)
+, stop_()
 , mesher_(NULL)
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
 , last_report_(0,0,0)
@@ -168,49 +199,117 @@ Mesh_function<D_,Tag>::
 
 
 CGAL::Mesh_facet_topology topology(int manifold) {
-  return manifold == 0 ? CGAL::FACET_VERTICES_ON_SURFACE :
-    static_cast<CGAL::Mesh_facet_topology>
-    (CGAL::MANIFOLD |
-     CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
-}
-
-template < typename D_, typename Tag >
-void
-Mesh_function<D_,Tag>::
-initialize(const Mesh_criteria& criteria, CGAL::Tag_true) // for an image
-{
-  if(p_.detect_connected_components) {
-    initialize_triangulation_from_labeled_image(c3t3_
-                                                , *domain_
-                                                , *p_.image_3_ptr
-                                                , criteria
-                                                , typename D_::Image_word_type()
-                                                , p_.protect_features);
-  } else {
-    initialize(criteria, CGAL::Tag_false());
+  switch(manifold) {
+  case 1: return static_cast<CGAL::Mesh_facet_topology>
+      (CGAL::MANIFOLD |
+       CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
+  case 2: return CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK;
+  case 3: return static_cast<CGAL::Mesh_facet_topology>
+      (CGAL::MANIFOLD |
+       CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK);
+  default: return CGAL::FACET_VERTICES_ON_SURFACE;
   }
 }
 
 template < typename D_, typename Tag >
 void
 Mesh_function<D_,Tag>::
-initialize(const Mesh_criteria& criteria, CGAL::Tag_false) // for the other domain types
+initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag)
+// for a labeled image
 {
+  if(p_.detect_connected_components) {
+    CGAL_IMAGE_IO_CASE(p_.image_3_ptr->image(),
+            initialize_triangulation_from_labeled_image(c3t3_
+                                                        , *domain_
+                                                        , *p_.image_3_ptr
+                                                        , criteria
+                                                        , Word()
+                                                        , p_.protect_features);
+                       );
+  } else {
+    initialize(criteria, Mesh_fnt::Domain_tag());
+  }
+}
+
+template < typename D_, typename Tag >
+void
+Mesh_function<D_,Tag>::
+initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
+// for the other domain types
+{
+  namespace p = CGAL::parameters;
   // Initialization of the mesh, either with the protection of sharp
   // features, or with the initial points (or both).
   // If `detect_connected_components==true`, the initialization is
   // already done.
-  CGAL::internal::Mesh_3::C3t3_initializer<
+  CGAL::Mesh_3::internal::C3t3_initializer<
     C3t3,
     Domain,
     Mesh_criteria,
-    CGAL::internal::Mesh_3::has_Has_features<Domain>::value >()
+    CGAL::Mesh_3::internal::has_Has_features<Domain>::value >()
     (c3t3_,
      *domain_,
      criteria,
-     p_.protect_features);
+     p_.protect_features,
+     p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
+                       p::nonlinear_growth_of_balls =
+                       p_.use_sizing_field_with_aabb_tree));
 }
 
+template < typename D_, typename Tag >
+typename Mesh_function<D_,Tag>::Edge_criteria
+Mesh_function<D_,Tag>::
+edge_criteria(double b, Mesh_fnt::Domain_tag)
+{
+  return Edge_criteria(b);
+}
+
+#include <CGAL/Mesh_3/experimental/Sizing_field_with_aabb_tree.h>
+#include <CGAL/Mesh_3/experimental/Facet_topological_criterion_with_adjacency.h>
+
+template < typename D_, typename Tag >
+typename Mesh_function<D_,Tag>::Edge_criteria
+Mesh_function<D_,Tag>::
+edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
+{
+  if(p_.use_sizing_field_with_aabb_tree) {
+    typedef typename Domain::Surface_patch_index_set Set_of_patch_ids;
+    typedef Sizing_field_with_aabb_tree
+      <
+      Kernel
+      , Domain
+      , typename Domain::AABB_tree
+      , CGAL::Default
+      , typename internal::Get_facet_patch_id_selector<Domain>::type
+      > Mesh_sizing_field; // type of sizing field for 0D and 1D features
+    typedef std::vector<Set_of_patch_ids> Patches_ids_vector;
+    typedef typename Domain::Curve_index Curve_index;
+    const Curve_index max_index = domain_->maximal_curve_index();
+    Patches_ids_vector* patches_ids_vector_p =
+      new Patches_ids_vector(max_index+1);
+    for(Curve_index curve_id = 1; curve_id <= max_index; ++curve_id)
+    {
+      (*patches_ids_vector_p)[curve_id] = domain_->get_incidences(curve_id);
+    }
+    Mesh_sizing_field* sizing_field_ptr =
+      new Mesh_sizing_field(edge_size,
+                            domain_->aabb_tree(),
+                            *domain_);
+    // The sizing field object, as well as the `patch_ids_vector` are
+    // allocated on the heap, and the following `boost::any` object,
+    // containing two shared pointers, is used to make the allocated
+    // objects be destroyed at the destruction of the thread object, using
+    // type erasure (`boost::any`).
+    object_to_destroy =
+      std::make_pair(QSharedPointer<Mesh_sizing_field>(sizing_field_ptr),
+                     QSharedPointer<Patches_ids_vector>(patches_ids_vector_p));
+
+    std::cerr << "USE SIZING FIELD!\n";
+    return Edge_criteria(*sizing_field_ptr);
+  } else {
+    return Edge_criteria(edge_size);
+  }
+}
 
 template < typename D_, typename Tag >
 void
@@ -222,18 +321,22 @@ launch()
 #endif
 
   // Create mesh criteria
-  Mesh_criteria criteria(Edge_criteria(p_.edge_sizing),
+  Mesh_criteria criteria(edge_criteria(p_.edge_sizing, Tag()),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
-                                        p_.facet_approx,
-                                        topology(p_.manifold)),
+                                        p_.facet_approx),
                          Cell_criteria(p_.tet_shape,
                                        p_.tet_sizing));
 
-  initialize(criteria, CGAL::Boolean_tag<Tag::value>());
+  tweak_criteria(criteria, Tag());
+  initialize(criteria, Tag());
 
   // Build mesher and launch refinement process
-  mesher_ = new Mesher(c3t3_, *domain_, criteria);
+  mesher_ = new Mesher(c3t3_, *domain_, criteria,
+                       topology(p_.manifold) & CGAL::MANIFOLD,
+                       0,
+                       0,
+                       &stop_);
 
 #ifdef CGAL_MESH_3_PROFILING
   CGAL::Real_timer t;
@@ -242,7 +345,7 @@ launch()
 
 #if CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   mesher_->initialize();
-  while ( ! mesher_->is_algorithm_done() && continue_ )
+  while ( ! mesher_->is_algorithm_done() && ! stop_ )
   {
     mesher_->one_step();
   }
@@ -262,9 +365,24 @@ launch()
 template < typename D_, typename Tag >
 void
 Mesh_function<D_,Tag>::
+tweak_criteria(Mesh_criteria& c, Mesh_fnt::Polyhedral_domain_tag) {
+  typedef CGAL::Mesh_3::Facet_topological_criterion_with_adjacency<Tr,
+       Domain, typename Facet_criteria::Visitor> New_topo_adj_crit;
+
+  if((int(c.facet_criteria_object().topology()) &
+      CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK) != 0)
+  {
+    c.add_facet_criterion(new New_topo_adj_crit(this->domain_));
+  }
+}
+
+
+template < typename D_, typename Tag >
+void
+Mesh_function<D_,Tag>::
 stop()
 {
-  continue_ = false;
+  stop_.store(true, std::memory_order_release);
 }
 
 
@@ -290,25 +408,34 @@ status(double time_period) const
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   // If mesher_ is not yet created, it means that either launch() has not
   // been called or that initial points have not been founded
-  if ( NULL == mesher_ )
+  if ( NULL == mesher_ ) /// @TODO: there is a race-condition, here.
   {
-    return QString("Initialization in progress...");
+    typename Mesher::Mesher_status s(c3t3_.triangulation().number_of_vertices(),
+                                     0,
+                                     0);
+    result = QString("Initialization in progress...\n\n"
+                     "Vertices: %1 \n"
+                     "Vertices inserted last %2s: %3 \n")
+      .arg(s.vertices)
+      .arg(time_period)
+      .arg(s.vertices - last_report_.vertices);
+    last_report_ = s;
+  } else {
+    // Get status and return a string corresponding to it
+    typename Mesher::Mesher_status s = mesher_->status();
+  
+    result = QString("Vertices: %1 \n"
+                     "Vertices inserted last %2s: %3 \n\n"
+                     "Bad facets: %4 \n"
+                     "Bad cells: %5")
+      .arg(s.vertices)
+      .arg(time_period)
+      .arg(s.vertices - last_report_.vertices)
+      .arg(s.facet_queue)
+      .arg(s.cells_queue);
+    last_report_ = s;
   }
   
-  // Get status and return a string corresponding to it
-  typename Mesher::Mesher_status s = mesher_->status();
-  
-  result = QString("Vertices: %1 \n"
-                           "Vertices inserted last %2s: %3 \n\n"
-                           "Bad facets: %4 \n"
-                           "Bad cells: %5")
-    .arg(s.vertices)
-    .arg(time_period)
-    .arg(s.vertices - last_report_.vertices)
-    .arg(s.facet_queue)
-    .arg(s.cells_queue);
-  
-  last_report_ = s;
 #endif
   return result;
 }

@@ -1,0 +1,93 @@
+#import Visual specific variables
+
+source "${PLATFORM_REFERENCE}/setup_VC${VC_VERSION}-${ARCH}"
+export PATH="C:/cygwin/bin":"/usr/bin":$PATH #broken by the above setup (why?)
+
+if [ -z "${BOOST_VERSION}" ]; then
+  export BOOST_VERSION="1_63_0"
+fi
+
+export CMAKE_GENERATOR='-GNMake Makefiles'
+
+#export JOM="jom.exe"
+export MAKE_CMD='nmake'
+
+export PATH=$PATH:'/cygdrive/c/CGAL/CGAL-4.9/scripts'
+export PATH=$PATH:'/cygdrive/c/CGAL'
+export PATH="/cygdrive/c/dev/CMake/bin":$PATH
+
+#Header only
+export BOOST_INCLUDEDIR="C:/3rdPartyLibs/boost/boost_${BOOST_VERSION}"
+
+#paths depending on the architecture
+export BOOST_LIBRARYDIR="C:/3rdPartyLibs/boost/boost_${BOOST_VERSION}/lib${ARCH}_msvc${VC_VERSION}"
+export PATH="`cygpath $BOOST_LIBRARYDIR`":$PATH
+
+export GMP_INC_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\include"
+export GMP_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
+export MPFR_INC_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\include"
+export MPFR_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
+export PATH="`cygpath $GMP_LIB_DIR`":$PATH
+
+#paths depending on the compiler and the architecture
+if [ -d /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}_${ARCH} ]; then
+   export QTDIR="C:/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}_${ARCH}"
+   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}_${ARCH}/lib/cmake/Qt5`
+elif [ -d /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR} ]; then
+   export QTDIR="C:\3rdPartyLibs\Qt\${QT_VERSION}\msvc${VC_VERSION_YEAR}"
+   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}/lib/cmake/Qt5`
+#else
+#  export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/VC${VC_VERSION_YEAR}-${ARCH}/QT-5*/*/msvc*/lib/cmake/Qt5`
+fi
+export PATH=`cygpath ${QTDIR}/bin`:$PATH
+
+if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/libQGLViewer-2.6.2 ]; then
+   export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.6.2"
+elif [ -d /cygdrive/c/3rdPartyLibs/VC-${ARCH}/libQGLViewer-2.6.2  ]; then
+   export QGLVIEWERROOT="C:\3rdPartyLibs/VC-${ARCH}/libQGLViewer-2.6.2"
+fi
+
+if [ -z "$OPENMESH_DIR" ]; then
+  export OPENMESH_DIR="C:\3rdPartyLibs\OpenMesh-6.3"
+fi
+export OPENMESH_INC_DIR="${OPENMESH_DIR}\src"
+export OPENMESH_LIB_DIR="${OPENMESH_DIR}\build_vs${VC_VERSION_YEAR}-${ARCH}\Build\lib"
+
+export PATH=${OPENMESH_LIB_DIR}:$PATH
+
+#Zlib build_msvc2013 is sufficient for all versions
+export ZLIB_ROOT="C:/3rdPartyLibs/zlib-1.2.11/build_msvc2013"
+export PATH="`cygpath ${ZLIB_ROOT}/Release`":$PATH
+export PATH="`cygpath ${ZLIB_ROOT}/Debug`":$PATH
+
+export CMAKE_PREFIX_PATH="$ZLIB_ROOT;$CMAKE_PREFIX_PATH"
+
+
+#TBB
+if [ "${VC_VERSION}" != "14.1" ]; then
+  export TBB_ARCH_PLATFORM="${TBB_ARCH}/vc${VC_VERSION}"
+  #else it is defined in the platform setup
+fi
+export TBBROOT="C:/3rdPartyLibs/tbb2018_20170919oss"
+export PATH="`cygpath ${TBBROOT}/bin/${TBB_ARCH_PLATFORM}`":$PATH
+
+#Vtk
+export VTK_DIR="C:/3rdPartyLibs/VTK-8.0.1/build_vs${VC_VERSION_YEAR}-${ARCH}"
+export PATH="`cygpath ${VTK_DIR}/bin/Debug`":$PATH
+export PATH="`cygpath ${VTK_DIR}/bin/Release`":$PATH
+
+#LAS
+if [ -d /cygdrive/c/3rdPartyLibs/LAStools-master/build_vs${VC_VERSION_YEAR}-${ARCH} ]; then
+  export LASLIB_INC_DIR="C:/3rdPartyLibs/LAStools-master/LASlib/inc"
+  export LASLIB_LIB_DIR="C:/3rdPartyLibs/LAStools-master/build_vs${VC_VERSION_YEAR}-${ARCH}/Release"
+  export PATH="`cygpath ${LASLIB_LIB_DIR}`":$PATH
+fi
+
+#OpenCV
+if [ -d/cygdrive/c/3rdPartyLibs/opencv/build_vs${VC_VERSION_YEAR}-${ARCH} ]; then
+  export PATH="/cygdrive/c/dev/Python":$PATH
+  export OpenCV_DIR="C:/3rdPartyLibs/opencv/build_vs${VC_VERSION_YEAR}-${ARCH}"
+  export PATH="`cygpath ${OpenCV_DIR}/bin/Release`":$PATH
+  export PATH="`cygpath ${OpenCV_DIR}/bin/Debug`":$PATH
+  export PATH="`cygpath ${OpenCV_DIR}/3rdparty/ffmpeg/`":$PATH
+fi

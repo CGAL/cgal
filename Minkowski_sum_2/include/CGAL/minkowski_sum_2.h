@@ -12,11 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s) : Ron Wein   <wein_r@yahoo.com>
 //             Efi Fogel  <efifogel@gmail.com>
 
 #ifndef CGAL_MINKOWSKI_SUM_2_H
 #define CGAL_MINKOWSKI_SUM_2_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -314,7 +321,7 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
  *   const typename Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
  *                                                   DecompositionStrategy2_,
  *                                                   Container_>::Traits_2>
- * are exchangable except for in one case, where there is an ambiguity.
+ * are exchangeable except for in one case, where there is an ambiguity.
  * Thus, we use the former, even though it is less generic, as change to the
  * traits type in Minkowski_sum_by_decomposition_2 would require a similar
  * change here.

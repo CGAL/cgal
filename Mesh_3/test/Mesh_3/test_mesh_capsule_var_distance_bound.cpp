@@ -4,15 +4,17 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Implicit_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
+
+#include <boost/version.hpp>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef FT (Function)(const Point&);
-typedef CGAL::Implicit_mesh_domain_3<Function,K> Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
 #ifdef CGAL_CONCURRENT_MESH_3
 typedef CGAL::Parallel_tag Concurrency_tag;
@@ -42,7 +44,14 @@ FT capsule_function(const Point& p)
   else if(z < FT(-5)) return base+CGAL::square(z+5);
   else return base;
 }
-
+#if BOOST_VERSION >= 106600
+auto field = [](const Point& p, const int, const Mesh_domain::Index)
+             {
+               if(p.z() > 2) return 0.025;
+               if(p.z() < -3) return 0.01;
+               else return 1.;
+             };
+#else
 struct Field {
   typedef ::FT FT;
   
@@ -52,11 +61,13 @@ struct Field {
     else return 1;
   }
 } field;
+#endif
 
 int main()
 {
-  Mesh_domain domain(capsule_function,
-                     K::Sphere_3(CGAL::ORIGIN, 49.));
+  Mesh_domain domain =
+    Mesh_domain::create_implicit_mesh_domain(capsule_function,
+                                             K::Sphere_3(CGAL::ORIGIN, 49.));
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=0.5,

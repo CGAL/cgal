@@ -12,14 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Jane Tournois
 
-#include <CGAL/Has_timestamp.h>
-
 #ifndef CGAL_TIME_STAMPER_H
 #define CGAL_TIME_STAMPER_H
+
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/atomic.h>
 
 namespace CGAL {
 
@@ -27,34 +30,83 @@ template <typename T>
 struct Time_stamper
 {
   Time_stamper()
-   : time_stamp_(0) {}
+   : time_stamp_() {}
 
   Time_stamper(const Time_stamper& ts)
-   : time_stamp_(ts.time_stamp_) {}
-
-  void set_time_stamp(T* pt) {
-    pt->set_time_stamp(time_stamp_++);
+    : time_stamp_()
+  {
+    time_stamp_ = std::size_t(ts.time_stamp_);
   }
 
+  Time_stamper& operator=(const Time_stamper& ts)
+  {
+    time_stamp_ = std::size_t(ts.time_stamp_);
+    return *this;
+  }
+
+  static void initialize_time_stamp(T* pt) {
+    pt->set_time_stamp(std::size_t(-1));
+  }
+
+  void set_time_stamp(T* pt) {
+    if(pt->time_stamp() == std::size_t(-1)) {
+      const std::size_t new_ts = time_stamp_++;
+      pt->set_time_stamp(new_ts);
+    }
+    else {
+      // else: the time stamp is re-used
+
+      // Enforces that the time stamp is greater than the current value.
+      // That is used when a TDS_3 is copied: in that case, the
+      // time stamps are copied from the old element to the new one,
+      // but the time stamper does not know.
+#ifdef CGAL_NO_ATOMIC
+      time_stamp_ = (std::max)(time_stamp_, pt->time_stamp() + 1);
+#else
+      // How to atomically update a maximum value?
+      //   https://stackoverflow.com/a/16190791/1728537
+      const std::size_t new_value = pt->time_stamp() + 1;
+      std::size_t prev_value = time_stamp_;
+      while(prev_value < new_value &&
+            !time_stamp_.compare_exchange_weak(prev_value, new_value))
+        ;
+#endif // atomic
+    }
+  }
+
+  static std::size_t time_stamp(const T* pt)
+  {
+    if(pt == nullptr){
+      return std::size_t(-1);
+    }
+    return pt->time_stamp();
+  }
 
   static std::size_t hash_value(const T* p) {
-    if(NULL == p)
+    if(nullptr == p)
       return std::size_t(-1);
     else
       return p->time_stamp();
   }
 
   static bool less(const T* p_t1, const T* p_t2) {
-    if(p_t1 == NULL)      return (p_t2 != NULL);
-    else if(p_t2 == NULL) return false;
-    else                  return p_t1->time_stamp() < p_t2->time_stamp();
+    if(p_t1 == nullptr)      return (p_t2 != nullptr);
+    else if(p_t2 == nullptr) return false;
+    else {
+      CGAL_assertion((p_t1 == p_t2) == (time_stamp(p_t1) == time_stamp(p_t2)));
+      return time_stamp(p_t1) < time_stamp(p_t2);
+    }
   }
 
   void reset() {
     time_stamp_ = 0;
   }
 private:
+#ifdef CGAL_NO_ATOMIC
   std::size_t time_stamp_;
+#else
+  CGAL::cpp11::atomic<std::size_t> time_stamp_;
+#endif
 }; // end class template Time_stamper<T>
 
 template <typename T>
@@ -64,6 +116,14 @@ public:
   void set_time_stamp(T*)  {}
   static bool less(const T* p_t1,const T* p_t2) {
     return p_t1 < p_t2;
+  }
+
+  static void initialize_time_stamp(T*) {
+  }
+
+  static std::size_t time_stamp(const T*)
+  {
+    return 0;
   }
 
   static std::size_t hash_value(const T* p) {

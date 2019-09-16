@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@gmail.com>
@@ -122,31 +123,31 @@ public:
 // Constructs a flat polyhedron containing just the link of a vertex
 class Vertex_link_builder : public Link_builder
 {
-  Surface*      mECM ;
+  Surface*      m_tm ;
   Vertex_handle mV ;
   
-  Surface& ecm() { return *mECM ; }
+  Surface& tm() { return *m_tm ; }
   
 public:
 
-  Vertex_link_builder( Surface& aECM, Vertex_handle aV) : mECM(&aECM), mV(aV) {}
+  Vertex_link_builder( Surface& aTM, Vertex_handle aV) : m_tm(&aTM), mV(aV) {}
   
   void operator()( Surface::HalfedgeDS& hds ) 
   {
     Builder B( hds, true);
     
-    B.begin_surface( 1 + out_degree(mV,ecm()), out_degree(mV,ecm()) );
+    B.begin_surface( 1 + out_degree(mV,tm()), out_degree(mV,tm()) );
     
     this->add_vertex(B,mV);
     Profile::Triangle_vector triangles ;
     
     out_edge_iterator eb, ee ; 
-    for ( boost::tie(eb,ee) = halfedges_around_source(opposite(halfedge(mV,ecm()),ecm()),ecm()) ; eb != ee ; ++ eb )
+    for ( boost::tie(eb,ee) = halfedges_around_source(opposite(halfedge(mV,tm()),tm()),tm()) ; eb != ee ; ++ eb )
     {
       halfedge_descriptor out_edge1 = *eb ;
       halfedge_descriptor out_edge2 = out_edge1->opposite()->next(); 
-      vertex_descriptor v1 = target(out_edge1,ecm());
-      vertex_descriptor v2 = target(out_edge2,ecm());
+      vertex_descriptor v1 = target(out_edge1,tm());
+      vertex_descriptor v2 = target(out_edge2,tm());
        
       this->add_vertex(B,v1);
       
@@ -288,8 +289,8 @@ public :
 
   Visitor( string aTestCase ) : mTestCase(aTestCase) 
   {
-#ifdef CGAL_ECMS_TRACE_IMPL  
-    ::internal::cgal_enable_ecms_trace = true ;
+#ifdef CGAL_SMS_TRACE_IMPL  
+    ::internal::cgal_enable_sms_trace = true ;
 #endif    
     mStep = 0 ; 
   }

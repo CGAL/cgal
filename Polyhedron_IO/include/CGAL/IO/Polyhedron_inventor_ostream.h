@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #ifndef CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H
 #define CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H 1
+
+#include <CGAL/license/Polyhedron.h>
+
 
 #include <CGAL/IO/Inventor_ostream.h>
 #include <CGAL/IO/File_writer_inventor.h>

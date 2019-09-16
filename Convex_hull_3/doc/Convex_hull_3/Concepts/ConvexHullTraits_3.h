@@ -87,11 +87,9 @@ typedef unspecified_type Has_on_positive_side_3;
 
 /*!
 Predicate object type that provides 
-a constructor taking a single `Point_3` object and 
-`bool operator()(Point_3 q, Point_3 r)`, which returns true iff the 
+`bool operator()(Point_3 p, Point_3 q, Point_3 r)`, which returns true iff the 
 distance from `q` to `p` is smaller than the distance from 
-`r` to `p`, where `p` is the point passed to the object 
-at construction. 
+`r` to `p`. 
 */ 
 typedef unspecified_type Less_distance_to_point_3; 
 
@@ -105,11 +103,13 @@ typedef unspecified_type Less_signed_distance_to_plane_3;
 
 /*!
 A traits class providing the requirements of the template parameter `Traits` of
-the 2D convex hull function `CGAL::ch_bykat()` such that `Traits::Point_2`
+the 2D convex hull function `CGAL::ch_akl_toussaint()` such that `Traits::Point_2`
 is `Point_3`, and the 2D points considered in the algorithm are the projections
 of the 3D points in the `xy`-plane.
 If this type is not available, the function `CGAL::convex_hull_3()` will
 automatically use `CGAL::Projection_traits_xy< CGAL::Kernel_traits<Point_3>::%Kernel >.`
+Otherwise, a function must exist with the name `construct_traits_xy_3_object()` that creates an 
+instance of `Traits_xy_3`.
 */
 typedef unspecified_type Traits_xy_3;
 

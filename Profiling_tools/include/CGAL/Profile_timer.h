@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sylvain Pion
 
@@ -39,6 +40,8 @@
 #include <iomanip>
 #include <string>
 #include <CGAL/Timer.h>
+
+#include <CGAL/disable_warnings.h>
 
 namespace CGAL {
 
@@ -76,5 +79,7 @@ private:
 #endif
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_PROFILE_TIMER_H

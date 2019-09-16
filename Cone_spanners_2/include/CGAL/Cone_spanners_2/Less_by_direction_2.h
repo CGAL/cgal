@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Authors: Weisheng Si, Quincy Tse
 
 #ifndef CGAL_LESS_BY_DIRECTION_2_H
 #define CGAL_LESS_BY_DIRECTION_2_H
+
+#include <CGAL/license/Cone_spanners_2.h>
+
 
 #include <iostream>
 #include <cstdlib>
@@ -35,25 +39,29 @@
 
 namespace CGAL {
 
-/*  Function object that orders 2D graph vertex_descriptors based on the order
+/*  Function object that orders the vertex_descriptors in a 2D graph based on the order
  *  induced by the direction D described in the book:
  *
  *  Giri Narasimhan and Michiel Smid, Chapter 4: Spanners based on the Theta graph, Geometric Spanner Networks,
  *  Cambridge University Press, 2007.
  *
- *  The ties are broken according to the direction of ccw90(D).
- *  The way of breaking ties in this functor is intended to prevent the overlapping of cone boundaries.
- *  As a result, a vertex on the cw boundary will be considered to be inside this cone,
- *  while a vertex on the ccw boundary will not.
+ *  In this implementation, the ties are broken according to the direction of cw90(D).
+ *  This way of breaking ties will prevent the overlapping of cone boundaries when this functor
+ *  is used to construct Theta and Yao graphs in `CGAL::Construct_theta_graph_2` and 
+ *  `CGAL::Construct_yao_graph_2`. Resultantly, the cw boundary of a cone will be considered inside this cone,
+ *  while the ccw boundary not. On the other hand, if your application requires that 
+ *  the ccw boundary of a cone belongs to this cone while the cw boundary not, 
+ *  you can modify the code below to use the direction of ccw90(D) to break the ties. 
  *
- *  This function object is implemented using the function `CGAL::compare_signed_distance_to_line_2()`,
+ *  This function object utilizes the existing function `CGAL::compare_signed_distance_to_line_2()`,
  *  which orders two points according to their signed distance to a base line.
  *
  */
 template <typename Kernel_, typename Graph_>
-class  Less_by_direction_2 : public std::binary_function <typename Graph_::vertex_descriptor,
-        typename Graph_::vertex_descriptor, bool> {
-
+class Less_by_direction_2
+  : public CGAL::cpp98::binary_function <typename Graph_::vertex_descriptor,
+                                         typename Graph_::vertex_descriptor, bool>
+{
 public:
     // typedef for C++11 - doesn't hurt to also have for C++98
     typedef typename Graph_::vertex_descriptor first_argument_type;
@@ -82,13 +90,13 @@ public:
         }
 
         /* otherwise, outcome == CGAL::EQUAL, ties will be broken by a second order
-         * according to the ccw90(base_line) direction.
+         * according to the cw90(base_line) direction. 
          */
-        // define a rotation of counter clockwise 90
-        Transformation ccw90(0, -1, 1,  0);
+        // define a rotation of clockwise 90
+        Transformation cw90(0, 1, -1,  0);
         // rotate
-        Line_2 ccw90_line = ccw90(base_line);
-        outcome = compare_signed_distance_to_line(ccw90_line, graph[p], graph[q]);
+        Line_2 cw90_line = cw90(base_line);
+        outcome = compare_signed_distance_to_line(cw90_line, graph[p], graph[q]);
         if (outcome == SMALLER)
             return true;
         else

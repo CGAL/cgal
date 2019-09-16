@@ -36,6 +36,12 @@ public:
     return MyPointC2(x, y, 0);
   }
 
+  const Point_2&
+  operator()(const Point_2 & p) const
+  {
+    return p;
+  }
+
   Point_2
   operator()(const Line_2& l) const
   {

@@ -21,6 +21,7 @@
 // SoX_release   : $Name:  $
 // Revision      : $Revision: 1.12 $
 // Revision_date : $Date: 2009-06-30 13:14:58 $
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-inf.mpg.de>
 //                 
@@ -478,7 +479,7 @@ void xAlci_main_window::setup(int w, int h)
     tab_widget->addTab(cad_tab,"cad");
     tab_widget->addTab(arr_tab,"arrangement");
 
-    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor(CGAL::WHITE);
+    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor(CGAL::white());
     resize(w,h);
     double ratio = 1.0;//(double)h/w;
     widget->set_window(-1, 1, -ratio, ratio, true);

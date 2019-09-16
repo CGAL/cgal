@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
@@ -23,6 +24,9 @@
 //                 Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_NEF_HALFFACET_H
 #define CGAL_NEF_HALFFACET_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <string>
 #include <sstream>
@@ -119,8 +123,8 @@ class Halffacet_base  {
 	verr << "begin CGAL::SNC_items<...>::Halffacet_base::is_valid( verb=true, "
 	  "level = " << level << "):" << std::endl;
 
-	bool valid = (twin_ != NULL && twin_ != Halffacet_handle());
-	valid = valid && (volume_ != NULL && volume_ != Volume_handle());
+	bool valid = (twin_ != nullptr && twin_ != Halffacet_handle());
+	valid = valid && (volume_ != nullptr && volume_ != Volume_handle());
       
 	valid = valid && (supporting_plane_.a() != 0 || 
 			  supporting_plane_.b() != 0 ||

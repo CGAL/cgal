@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -218,9 +219,11 @@ public:
     /*!\brief
      * copy constructor
      */
+#ifdef DOXYGEN_RUNNING  
     Xy_coordinate_2(const Self& p) : 
         Base(static_cast<const Base&>(p)) {  
     }
+#endif  
 
     /*!\brief
      * Point at \c x, on \c curve with \c arcno. Finite points on vertical arcs
@@ -674,8 +677,6 @@ public:
     friend std::size_t hash_value(const Self& x) {
         return static_cast<std::size_t>(x.id());
     }
-
-    //!@}
 
 }; // class Xy_coordinate_2
 

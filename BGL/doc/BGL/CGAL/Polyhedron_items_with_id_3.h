@@ -65,14 +65,14 @@ public:
 /*!
 \ingroup PkgBGLHelper
 
-Given a `CGAL::Polyhedron_3` or more generally a model of `HalfedgeDS`,
+Given a `CGAL::Polyhedron_3`,
 for each simplex type (vertex, halfedge, facet) associates an index from
 0 to the number of simplices minus 1 to each simplex of `hds`.
 All simplex types must provide an `id()` method return a reference to a variable
-that can be assigned a `std::size_t`. For the `Polyhedron_3` type, an item class
+that can be assigned a `std::size_t`. An item class
 suited for this use is `CGAL::Polyhedron_items_with_id_3`.
 */
 template<class HalfedgeDS_with_id>
-void set_halfedgeds_items_id ( HalfedgeDS_with_id& hds );
+void set_halfedgeds_items_id ( Polyhedron_with_id& P );
 
 } /* end namespace CGAL */

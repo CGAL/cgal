@@ -34,6 +34,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 // We need to include BigFloat.h here because there is a circular dependency
@@ -79,10 +80,10 @@ public:
    *  (or, for that matter, as a binary fraction of any finite length). 
    *  The value is the closest double value determined by the compiler.
    */
-  Expr(float f) : RCExpr(NULL) { // check for valid numbers
+  Expr(float f) : RCExpr(nullptr) { // check for valid numbers
     // (i.e., not infinite and not NaN)
     if (! CGAL_CORE_finite(f)) {
-      std::cerr << " ERROR : constructed an invalid float! " << std::endl;
+      core_error(" ERROR : constructed an invalid float! ", __FILE__, __LINE__, false);
       if (get_static_AbortFlag())
         abort();
       get_static_InvalidFlag() = -1;
@@ -90,10 +91,10 @@ public:
     rep = new ConstDoubleRep(f);
   }
   /// constructor for <tt>double</tt>
-  Expr(double d) : RCExpr(NULL) { // check for valid numbers
+  Expr(double d) : RCExpr(nullptr) { // check for valid numbers
     // (i.e., not infinite and not NaN)
     if (! CGAL_CORE_finite(d)) {
-      std::cerr << " ERROR : constructed an invalid double! " << std::endl;
+      core_error(" ERROR : constructed an invalid double! ", __FILE__, __LINE__, false);
       if (get_static_AbortFlag())
         abort();
       get_static_InvalidFlag() = -2;
@@ -183,7 +184,7 @@ public:
   /// /= operator
   Expr& operator/=(const Expr& e) {
     if ((e.rep)->getSign() == 0) {
-      std::cerr << " ERROR : division by zero ! " << std::endl;
+      core_error(" ERROR : division by zero ! ",__FILE__, __LINE__, false);
       if (get_static_AbortFlag())
         abort();
       get_static_InvalidFlag() = -3;
@@ -386,7 +387,7 @@ inline Expr operator*(const Expr& e1, const Expr& e2) {
 /// division
 inline Expr operator/(const Expr& e1, const Expr& e2) {
   if (e2.sign() == 0) {
-    std::cerr << " ERROR : division by zero ! " << std::endl;
+    core_error(" ERROR : division by zero ! ", __FILE__, __LINE__, false);
     if (get_static_AbortFlag())
       abort();
     get_static_InvalidFlag() = -4;
@@ -489,7 +490,7 @@ inline bool isDivisible(const Expr& e1, const Expr& e2) {
 /// square root
 inline Expr sqrt(const Expr& e) {
   if (e.sign() < 0) {
-    std::cerr << " ERROR : sqrt of negative value ! " << std::endl;
+    core_error(" ERROR : sqrt of negative value ! ", __FILE__, __LINE__, false);
     if (get_static_AbortFlag())
       abort();
     get_static_InvalidFlag() = -5;

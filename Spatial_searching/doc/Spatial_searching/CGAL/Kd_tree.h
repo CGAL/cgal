@@ -96,12 +96,20 @@ template <class InputIterator> Kd_tree(InputIterator first, InputIterator beyond
 The constructor does not build the internal data structure, and it
 is also not updated after calls to `insert()`.  
 The method `build()` is called implicitly
-at the first call to a query member function. You can call
+at the first call to a query or removal member function. You can call
 `build()` explicitly to ensure that the next call to
 query functions will not trigger the reconstruction of the
 data structure.
 */
 void build();
+
+/*!
+This clears the internal data structure, which then gets rebuilt either by an
+explicit call to `build()` or implicitly by the next query or removal. The only
+reason to call this function explicitly is to rebalance the tree after some
+number of removals.
+*/
+void invalidate_build();
 /// @}
 
 /// \name Operations
@@ -109,6 +117,9 @@ void build();
 
 /*!
 Inserts the point `p` in the `k-d` tree.
+\note Insertions do not dynamically update the internal data structure. The
+next query, or a call to `build()`, automatically triggers a rebuild of the
+whole structure.
 */
 void insert(Point_d p);
 
@@ -118,6 +129,23 @@ The value type of the `InputIterator` must be `Point_d`.
 */
 template <class InputIterator> void insert(InputIterator first, InputIterator beyond);
 
+/*!
+Removes the point `p` from the `k-d` tree. It uses `equal_to_p` to identify
+the point after locating it, which can matter in particular when 2 points are
+in the same place. `Identify_point` is a unary functor that takes a `Point_d`
+and returns a `bool`.  This is a limited and naive implementation that does not
+rebalance the tree. On the other hand, the tree remains valid and ready for
+queries. If the internal data structure is not already built, for instance
+because the last operation was an insertion, it first calls `build()`.
+*/
+template<class Identify_point>
+void remove(Point_d p, Identify_point equal_to_p);
+
+/*!
+Removes point `p`, calling the 2-argument function `remove()` with a functor
+that simply compares coordinates.
+*/
+void remove(Point_d p);
 
 /*
 Pre-allocates memory in order to store at least 'size' points.

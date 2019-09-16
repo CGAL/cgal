@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Hervé Brönnimann
@@ -25,6 +26,5 @@
 #ifndef CGAL_HEADER_ONLY
 
 #include <CGAL/IO/Color.h>
-#include <CGAL/IO/Color_impl.h>
 
 #endif // CGAL_HEADER_ONLY

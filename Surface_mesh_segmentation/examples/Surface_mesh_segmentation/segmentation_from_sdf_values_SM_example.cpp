@@ -1,10 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <CGAL/Surface_mesh.h>
-
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/mesh_segmentation.h>
-
 #include <CGAL/property_map.h>
 
 #include <iostream>
@@ -17,7 +13,6 @@ typedef CGAL::Surface_mesh<Point_3> Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-typedef boost::graph_traits<Mesh>::face_iterator face_iterator;
 
 int main(int argc, char** argv )
 {
@@ -28,6 +23,10 @@ int main(int argc, char** argv )
   } else {
     std::ifstream cactus("data/cactus.off");
     cactus >> mesh;
+  }
+  if (!CGAL::is_triangle_mesh(mesh)){
+    std::cerr << "Input is not a triangle mesh" << std::endl;
+    return EXIT_FAILURE;
   }
   typedef Mesh::Property_map<face_descriptor,double> Facet_double_map;
   Facet_double_map sdf_property_map;
@@ -49,8 +48,8 @@ int main(int argc, char** argv )
 
   std::cout << "Number of segments: " << number_of_segments << std::endl;
   // print segment-ids
-  face_iterator facet_it, fend;
-  BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+
+  for(face_descriptor fd : faces(mesh)){
       // ids are between [0, number_of_segments -1]
       std::cout << segment_property_map[fd] << " ";
   }
@@ -62,4 +61,5 @@ int main(int argc, char** argv )
   // Note that we can use the same SDF values (sdf_property_map) over and over again for segmentation.
   // This feature is relevant for segmenting the mesh several times with different parameters.
   CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map, number_of_clusters, smoothing_lambda);
+  return EXIT_SUCCESS;
 }

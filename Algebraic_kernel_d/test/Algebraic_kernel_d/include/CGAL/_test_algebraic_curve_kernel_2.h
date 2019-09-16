@@ -12,19 +12,21 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://hemmer@scm.gforge.inria.fr/svn/cgal/trunk/Polynomial/include/CGAL/Polynomial.h $
-// $Id: Polynomial.h 47254 2008-12-06 21:18:27Z afabri $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     :   Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //                   Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
-#include <cassert>
+#include <CGAL/use.h>
+#include <CGAL/IO/io.h>
 
-//#include <CGAL/_test_basic.h>
+#include <cassert>
+#include <vector>
+
 
 #ifndef CGAL_TEST_ALGEBRAIC_CURVE_KERNEL_2_H
 #define CGAL_TEST_ALGEBRAIC_CURVE_KERNEL_2_H

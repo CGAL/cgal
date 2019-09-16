@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_QT_SEGMENT_DELAUNAY_GRAPH_LINF_GRAPHICS_ITEM_H
 #define CGAL_QT_SEGMENT_DELAUNAY_GRAPH_LINF_GRAPHICS_ITEM_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Qt/PainterOstream.h>
@@ -196,17 +200,17 @@ SegmentDelaunayGraphLinfGraphicsItem<T>::drawAll(QPainter *painter, const QStyle
     }
     {
     m_painter->setPen(this->verticesPen());
-    QMatrix matrix = m_painter->matrix();
-    m_painter->resetMatrix();
+    QTransform matrix = m_painter->worldTransform();
+    m_painter->resetTransform();
     Converter<Kern> convert;
       typename T::Finite_vertices_iterator vit;
       for (vit = t->finite_vertices_begin();
 	   vit != t->finite_vertices_end(); ++vit) {
 	typename T::Site_2 s = vit->site();
 	if ( s.is_input() ) {
-	  //*widget << CGAL::RED;
+	  //*widget << CGAL::red();
 	} else {
-	  //*widget << CGAL::YELLOW;
+	  //*widget << CGAL::yellow();
 	}
 	if ( s.is_point() ) {
           QPointF point = matrix.map(convert(s.point()));

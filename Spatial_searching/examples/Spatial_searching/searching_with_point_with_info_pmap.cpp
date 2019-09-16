@@ -3,7 +3,7 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <utility>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;

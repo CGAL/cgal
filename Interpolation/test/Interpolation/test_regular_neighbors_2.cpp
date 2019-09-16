@@ -12,33 +12,27 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Julia Floetotto
 
-#include <CGAL/basic.h>
-#include <CGAL/double.h>
-
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
-#include <CGAL/Regular_triangulation_2.h>
-
 #include <CGAL/_test_regular_neighbors_2.cpp>
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-struct K : CGAL::Exact_predicates_exact_constructions_kernel {};
-typedef double W;
+#include <CGAL/double.h>
+#include <CGAL/Regular_triangulation_2.h>
 
-typedef CGAL::Regular_triangulation_euclidean_traits_2<K,W>  Gt1;
-typedef CGAL::Regular_triangulation_2<Gt1>                   Rt1;
+#include <iostream>
+
+typedef CGAL::Exact_predicates_exact_constructions_kernel K;
+typedef CGAL::Regular_triangulation_2<K>                  Rt1;
 
 int main()
 {
   std::cout << "Testing NN_neighbors_2 " << std::endl;
-  std::cout << " with Exact_predicates_exact_constructions_kernel: " << std::endl ;
+  std::cout << " using Exact_predicates_exact_constructions_kernel: " << std::endl;
   _test_regular_neighbors_2( Rt1() );
 
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -15,6 +15,8 @@
 typedef unsigned char Word;
 
 int main() {
+  CGAL::Set_ieee_double_precision pfr;
+
   CGAL::Image_3 image(_createImage(2, 2, 2, 1,
 				   1., 1., 1.,
 				   1, WK_FIXED, SGN_UNSIGNED));
@@ -39,9 +41,9 @@ int main() {
 		  << "[" << y << "]"
 		  << "[" << z << "]"
 		  << " = " << c_value << "\n";
-	for(double d_x = 0.; d_x <= 1.; d_x += 0.499999)
-	  for(double d_y = 0.; d_y <= 1.; d_y += 0.499999)
-	    for(double d_z = 0.; d_z <= 1.; d_z += 0.499999)
+	for(float d_x = 0.f; d_x <= 1.f; d_x += 0.499999f)
+	  for(float d_y = 0.f; d_y <= 1.f; d_y += 0.499999f)
+	    for(float d_z = 0.f; d_z <= 1.f; d_z += 0.499999f)
 	    {
 	      assert((int)d_x == 0);
 	      assert((int)d_y == 0);
@@ -54,7 +56,7 @@ int main() {
 
 	      const Word label = 
 		image.labellized_trilinear_interpolation<Word,
-	          double>(d_x, d_y, d_z, 255);
+	          double>(d_x, d_y, d_z, '\xFF');
 
 	      std::cerr << "val(" << d_x << ", " << d_y << " , " << d_z << ") = "
 			<< value << "   -- " 
@@ -124,13 +126,13 @@ int main() {
   {
     // fill the 2x2x2 image
     for(int i = 0; i < 8; ++i) {
-      data[i] = CGAL::get_default_random().get_int(0,255);
+      data[i] = CGAL::get_default_random().uniform_smallint('\x00','\xFF');
     }
 
     // test the difference between the two implementations
-    for(double d_x = 0.; d_x < 0.9; d_x += 0.1)
-      for(double d_y = 0.; d_y < 0.9; d_y += 0.1)
-	for(double d_z = 0.; d_z < 0.9; d_z += 0.1)
+    for(float d_x = 0.f; d_x < 0.9f; d_x += 0.1f)
+      for(float d_y = 0.f; d_y < 0.9f; d_y += 0.1f)
+	for(float d_z = 0.f; d_z < 0.9f; d_z += 0.1f)
 	{
 
 	  const float value1 = 
@@ -154,9 +156,9 @@ int main() {
     // bench new implementation
     float sum = 0.f;
     timer_new_implementation.start();
-    for(double d_x = 0.; d_x < 0.9; d_x += 0.05)
-      for(double d_y = 0.; d_y < 0.9; d_y += 0.05)
-	for(double d_z = 0.; d_z < 0.9; d_z += 0.05)
+    for(float d_x = 0.f; d_x < 0.9f; d_x += 0.05f)
+      for(float d_y = 0.f; d_y < 0.9f; d_y += 0.05f)
+	for(float d_z = 0.f; d_z < 0.9f; d_z += 0.05f)
 	{
 
 	  sum += 
@@ -170,9 +172,9 @@ int main() {
     sum = 0.f;
     timer_old_implementation.start();
     // bench old implementation    
-    for(double d_x = 0.; d_x < 0.9; d_x += 0.05)
-      for(double d_y = 0.; d_y < 0.9; d_y += 0.05)
-	for(double d_z = 0.; d_z < 0.9; d_z += 0.05)
+    for(float d_x = 0.f; d_x < 0.9f; d_x += 0.05f)
+      for(float d_y = 0.f; d_y < 0.9f; d_y += 0.05f)
+	for(float d_z = 0.f; d_z < 0.9f; d_z += 0.05f)
 	{
 	  sum += triLinInterp(image.image(),
 			      d_x, 
@@ -190,6 +192,7 @@ int main() {
 
 
   const char* filenames[] = {
+    "data/skull_2.9.inr",
     "../../examples/Surface_mesher/data/skull_2.9.inr",
     "../../../Surface_mesher/examples/Surface_mesher/data/skull_2.9.inr",
     "../Surface_mesher_Examples/data/skull_2.9.inr" 

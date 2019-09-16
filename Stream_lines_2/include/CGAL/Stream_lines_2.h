@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
 
 #ifndef CGAL_STREAM_LINES_2_H_ 
 #define CGAL_STREAM_LINES_2_H_
+
+#include <CGAL/license/Stream_lines_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -643,7 +647,7 @@ insert_streamline(const Vector_field_2 & vector_field_2,
       stl_vertices)
 {
   stl_container.push_back(stl);
-  Vertex_handle m_Vertex_handle = NULL;
+  Vertex_handle m_Vertex_handle = nullptr;
   int i = 1;
   unsigned int size_ = (int) (stl_vertices.size());
   ir = il = 0;

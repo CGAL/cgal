@@ -2,21 +2,17 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Arrangement_on_surface_2_Tests )
 
 enable_testing()
 
-cmake_minimum_required(VERSION 2.8.10)
 
 find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
+  include(${CGAL_USE_FILE})
 
   if(COMMAND target_compile_options)
     # Since CMake-2.8.12: New CMake script, that defines the targets and
@@ -33,8 +29,7 @@ if ( CGAL_FOUND )
   endif()
 
 else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
-endif()
 
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+
+endif()

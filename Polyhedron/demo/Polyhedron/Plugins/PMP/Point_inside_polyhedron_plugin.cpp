@@ -1,13 +1,12 @@
 #include <QtCore/qglobal.h>
-#include "opengl_tools.h"
+
 
 #include "Messages_interface.h"
-#include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 #include <CGAL/Three/Scene_interface.h>
-
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
-#include "Polyhedron_type.h"
 
 #include <CGAL/Timer.h>
 #include <CGAL/Random.h>
@@ -23,10 +22,14 @@
 #include <vector>
 #include <algorithm>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/optional/optional.hpp>
+
 using namespace CGAL::Three;
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
+
+
 
 class Polyhedron_demo_point_inside_polyhedron_plugin :
   public QObject,
@@ -39,20 +42,17 @@ class Polyhedron_demo_point_inside_polyhedron_plugin :
 public:
   bool applicable(QAction*) const 
   {
-    bool poly_item_exists = false;
-    bool point_item_exists = false;
-
     for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
-      i < end && (!poly_item_exists || !point_item_exists); ++i)
+        i < end; ++i)
     {
-      poly_item_exists |= qobject_cast<Scene_polyhedron_item*>(scene->item(i)) != NULL;
-      point_item_exists |= qobject_cast<Scene_points_with_normal_item*>(scene->item(i)) != NULL;
+      if( qobject_cast<Scene_surface_mesh_item*>(scene->item(i)) != NULL)
+        return true;
     }
 
-    //return poly_item_exists && point_item_exists;
-    return poly_item_exists || point_item_exists;
+    //if the loop ends without returning true, return false
+    return false;
   }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointInsidePolyhedron; }
 
 
@@ -81,13 +81,6 @@ public:
   {
     dock_widget->hide();
   }
-private:
-  // for transform iterator
-  struct Get_ref {
-    typedef const Polyhedron& result_type;
-    result_type operator()(const Polyhedron* poly_ptr) const
-    { return *poly_ptr; }
-  };
 
 
 public Q_SLOTS:
@@ -108,16 +101,19 @@ public Q_SLOTS:
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
     // place all selected polyhedron and point items to vectors below
-    std::vector<const Polyhedron*> polys;
-    typedef CGAL::Side_of_triangle_mesh<Polyhedron, Kernel> Point_inside;
-    std::vector<Point_inside*> inside_testers;// to put all polyhedra to query object
+    std::vector<const SMesh*> smeshs;
+
+    typedef CGAL::Side_of_triangle_mesh<SMesh, Kernel> Point_inside_smesh;
         // it does not support copy-construction so let's use pointers
+    std::vector<Point_inside_smesh*>inside_smesh_testers;
+
     std::vector<Point_set*> point_sets;
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
-      Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
-      if (poly_item)
-        inside_testers.push_back(new Point_inside(*(poly_item->polyhedron())));
-      if(poly_item) { polys.push_back(poly_item->polyhedron()); }
+      Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(id));
+      if (sm_item){
+        inside_smesh_testers.push_back(new Point_inside_smesh(*(sm_item->polyhedron())));
+         smeshs.push_back(sm_item->polyhedron());
+      }
 
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) { point_sets.push_back(point_item->point_set()); }
@@ -125,14 +121,14 @@ public Q_SLOTS:
 
 
     // there should be at least one selected polyhedron and point item
-    if(inside_testers.empty()) { print_message("Error: there is no selected polyhedron item(s)."); }
+    if(inside_smesh_testers.empty()) { print_message("Error: there is no selected polyhedron item(s)."); }
     if(point_sets.empty()) {
     if(!generated_points.empty())
       point_sets.push_back(generated_points.last()->point_set());
     else
       print_message("Error: there is no selected point set item(s).");
     }
-    if(inside_testers.empty() || point_sets.empty()) { QApplication::restoreOverrideCursor(); return; }
+    if((inside_smesh_testers.empty()) || point_sets.empty()) { QApplication::restoreOverrideCursor(); return; }
 
     // deselect all points
     for(std::vector<Point_set*>::iterator point_set_it = point_sets.begin(); 
@@ -143,7 +139,7 @@ public Q_SLOTS:
     CGAL::Timer timer; timer.start();
 
     print_message(
-      QString("Constructing with %1 items is done in %2 sec.").arg(inside_testers.size()).arg(timer.time()));
+      QString("Constructing with %1 items is done in %2 sec.").arg(inside_smesh_testers.size()).arg(timer.time()));
     timer.reset();
 
     std::size_t nb_query = 0, nb_selected = 0;// for print message
@@ -155,19 +151,25 @@ public Q_SLOTS:
            pt < point_set->size() - point_set->nb_selected_points();
            ++ pt, ++ nb_query)
       {
+        bool selected = false;
         Point_set::iterator point_it = point_set->begin() + pt;
-        for (std::size_t i = 0; i < inside_testers.size(); ++i)
-        {
-        CGAL::Bounded_side res = (*inside_testers[i])(point_set->point(*point_it));
-
-        if( (inside      && res == CGAL::ON_BOUNDED_SIDE) ||
-            (on_boundary && res == CGAL::ON_BOUNDARY)     ||
-            (outside     && res == CGAL::ON_UNBOUNDED_SIDE) )
-        {
-          point_set->select(point_it); ++nb_selected;
-          -- pt; // Selection replaces current point with unselected one
-          break;//loop on i
-        }
+        if(! selected){
+          // now the same for the smeshs
+          point_it = point_set->begin() + pt;
+          for (std::size_t i = 0; i < inside_smesh_testers.size(); ++i)
+            {
+              CGAL::Bounded_side res = (*inside_smesh_testers[i])(point_set->point(*point_it));
+              
+              if( (inside      && res == CGAL::ON_BOUNDED_SIDE) ||
+                  (on_boundary && res == CGAL::ON_BOUNDARY)     ||
+                  (outside     && res == CGAL::ON_UNBOUNDED_SIDE) )
+                {
+                  point_set->select(*point_it); ++nb_selected;
+                  -- pt; // Selection replaces current point with unselected one
+                  selected = true;
+                  break;//loop on i
+                }
+            }
         }
       } // loop on points in point_set
     }// loop on selected point sets
@@ -176,8 +178,8 @@ public Q_SLOTS:
     print_message(QString("%1 points are selected. All Done!").arg(nb_selected));
 
     // delete testers
-    for (std::size_t i = 0; i < inside_testers.size(); ++i)
-      delete inside_testers[i];
+  for (std::size_t i = 0; i < inside_smesh_testers.size(); ++i)
+      delete inside_smesh_testers[i];
 
     bool found = false;
     // for repaint
@@ -208,13 +210,13 @@ public Q_SLOTS:
     // -- Laurent Rineau, 2014/10/30
 
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
-      Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
-      if(poly_item) {
+      Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(id));
+      if(sm_item) {
         if(!bbox) {
-          bbox = poly_item->bbox();
+          bbox = sm_item->bbox();
         }
         else {
-          *bbox = *bbox + poly_item->bbox();
+          *bbox = *bbox + sm_item->bbox();
         }
       }
     }
@@ -237,6 +239,7 @@ public Q_SLOTS:
 
     if(!ok) { return; }
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
     // sample random points and constuct item
     Scene_points_with_normal_item* point_item = new Scene_points_with_normal_item();
     point_item->setName(QString("sample-%1").arg(nb_points));

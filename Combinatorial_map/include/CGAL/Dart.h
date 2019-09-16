@@ -14,82 +14,89 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_DART_H
 #define CGAL_DART_H 1
 
-#include <CGAL/Compact_container.h>
 #include <CGAL/assertions.h>
+#include <CGAL/tags.h>
+#include <CGAL/tuple.h>
 #include <bitset>
-#include <CGAL/internal/Combinatorial_map_internal_functors.h>
+#include <CGAL/Cell_attribute.h>
 
 namespace CGAL {
+
+  template <class, class, class, class>
+  class Compact_container;
+
+  template <class, class>
+  class Concurrent_compact_container;
+
+  template<unsigned int, class, class>
+  class Combinatorial_map_storage_1;
+
+  template<unsigned int, class, class>
+  class Generalized_map_storage_1;
+
+  template<unsigned int, unsigned int, class, class, class>
+  class CMap_linear_cell_complex_storage_1;
+
+  template<unsigned int, unsigned int, class, class, class>
+  class GMap_linear_cell_complex_storage_1;
+
+  namespace internal {
+
+  template<class, class>
+  struct Init_id;
+
+  } // end namespace internal
 
   /** @file Dart.h
    * Definition of nD dart.
    */
 
-  namespace internal {
-    template <typename Map,unsigned int i>
-    struct basic_link_beta_functor;
-
-    template <typename CMap,unsigned int i>
-    struct link_beta_functor;
-  }
-
-#define CGAL_BETAINV(i) (i>1?i:(i==1?0:1))
-
-  /** Definition of nD dart.
-   * The Dart class describes an nD dart (basic element of a
-   * combinatorial map). A dart is composed with handle towards its neighbors,
+  /** Definition of nD dart without information.
+   * The_dart class describes an nD dart (basic element of a combinatorial or generalized map).
+   * A dart is composed with handle towards its neighbors,
    * a bitset containing Boolean marks, and handle towards enabled attributes.
    * n is the dimension of the space (2 for 2D, 3 for 3D...)
    * Refs the ref class
    */
-  template <unsigned int d, typename Refs>
-  struct Dart
+  template <unsigned int d, typename Refs, class WithId>
+  struct Dart_without_info: public Add_id<WithId>
   {
-    template < unsigned int, class, class, class, class >
-    friend class Combinatorial_map_base;
-
+  public:
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Combinatorial_map_storage_2;
+    friend class Generalized_map_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class Linear_cell_complex_storage_1;
+    friend class CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class Linear_cell_complex_storage_2;
+    friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
     friend class Compact_container;
 
-    template<class, unsigned int, unsigned int>
-    friend struct Remove_cell_functor;
+    template <class, class>
+    friend class Concurrent_compact_container;
 
-    template<class, unsigned int>
-    friend struct Contract_cell_functor;
+    template<class, class>
+    friend struct internal::Init_id;
 
-    template <typename,unsigned int>
-    friend struct internal::link_beta_functor;
+    typedef Dart_without_info<d,Refs, WithId> Self;
+    typedef typename Refs::Dart_handle        Dart_handle;
+    typedef typename Refs::size_type          size_type;
+    typedef typename Refs::Dart_const_handle  Dart_const_handle;
+    typedef typename Refs::Helper             Helper;
+    typedef WithId                            Has_id;
 
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_map_functor;
-
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_connected_component_functor;
-
-  public:
-    typedef Dart<d,Refs>                     Self;
-    typedef typename Refs::Dart_handle       Dart_handle;
-    typedef typename Refs::size_type         size_type;
-    typedef typename Refs::Dart_const_handle Dart_const_handle;
-    typedef typename Refs::Helper            Helper;
     /// Typedef for attributes
     template<int i>
     struct Attribute_handle: public Refs::template Attribute_handle<i>
@@ -105,64 +112,32 @@ namespace CGAL {
     /// The dimension of the combinatorial map.
     static const unsigned int dimension = d;
 
-    /** Return the beta of this dart for a given dimension.
-     * @param i the dimension.
-     * @return beta(\em i).
-     */
-    template<unsigned int i>
-    Dart_handle beta()
-    {
-      CGAL_assertion(i <= dimension);
-      return mbeta[i];
-    }
-    Dart_handle beta(unsigned int i)
-    {
-      CGAL_assertion(i <= dimension);
-      return mbeta[i];
-    }
-    template<unsigned int i>
-    Dart_const_handle beta() const
-    {
-      CGAL_assertion(i <= dimension);
-      return mbeta[i];
-    }
-    Dart_const_handle beta(unsigned int i) const
-    {
-      CGAL_assertion(i <= dimension);
-      return mbeta[i];
-    }
+    void * for_compact_container() const
+    { return mf[0].for_compact_container(); }
+    void * & for_compact_container()
+    { return mf[0].for_compact_container(); }
 
-    /** Return the beta inverse of this dart for a given dimension.
-     * @param i the dimension.
-     * @return beta^{-1}(\em i).
-     */
-    template<unsigned int i>
-    Dart_handle beta_inv()
-    { return beta<CGAL_BETAINV(i)>(); }
-    Dart_handle beta_inv(unsigned int i)
-    { return beta(CGAL_BETAINV(i)); }
-    template<unsigned int i>
-    Dart_const_handle beta_inv() const
-    { return beta<CGAL_BETAINV(i)>(); }
-    Dart_const_handle beta_inv(unsigned int i) const
-    { return beta(CGAL_BETAINV(i)); }
-
-    /// @return a handle on the i-attribute
-    template<int i>
-    typename Attribute_handle<i>::type attribute()
+    Dart_handle get_f(unsigned int i) const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                     "attribute<i> called but i-attributes are disabled.");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_handles);
+      assert(i<=dimension);
+      return mf[i];
     }
-    template<int i>
-    typename Attribute_const_handle<i>::type attribute() const
+    
+  protected:
+    /** Default constructor: no real initialisation,
+     *  because this is done in the combinatorial map class.
+     */
+    Dart_without_info()
+    {}
+
+    /** Copy constructor:
+     * @param adart a dart.
+     */
+    Dart_without_info(const Dart_without_info& adart) : mmarks(adart.mmarks),
+    mattribute_handles(adart.mattribute_handles)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                     "attribute<i> called but i-attributes are disabled.");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_handles);
+      for (unsigned int i = 0; i <= dimension; ++i)
+        mf[i] = adart.mf[i];
     }
 
     /** Return the mark value of a given mark number.
@@ -205,32 +180,27 @@ namespace CGAL {
      void set_marks(const std::bitset<NB_MARKS>& amarks) const
     { mmarks = amarks; }
 
-  protected:
-    /** Default constructor: no real initialisation,
-     *  because this is done in the combinatorial map class.
-     */
-    Dart()
-    {}
-
-    /** Copy constructor:
-     * @param adart a dart.
-     */
-    Dart(const Dart& adart) : mmarks(adart.mmarks),
-    mattribute_handles(adart.mattribute_handles)
+    /// @return a handle on the i-attribute
+    template<int i>
+    typename Attribute_handle<i>::type attribute()
     {
-      for (unsigned int i = 0; i <= dimension; ++i)
-        mbeta[i] = adart.mbeta[i];
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                     "attribute<i> called but i-attributes are disabled.");
+      return std::get<Helper::template Dimension_index<i>::value>
+        (mattribute_handles);
+    }
+    template<int i>
+    typename Attribute_const_handle<i>::type attribute() const
+    {
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                     "attribute<i> called but i-attributes are disabled.");
+      return std::get<Helper::template Dimension_index<i>::value>
+        (mattribute_handles);
     }
 
-   public:
-    void * for_compact_container() const
-    { return mbeta[0].for_compact_container(); }
-    void * & for_compact_container()
-    { return mbeta[0].for_compact_container(); }
-
   protected:
-    /// Beta for each dimension +1 (from 0 to dimension).
-    Dart_handle mbeta[dimension+1];
+    /// Neighboors for each dimension +1 (from 0 to dimension).
+    Dart_handle mf[dimension+1];
 
     /// Values of Boolean marks.
     mutable std::bitset<NB_MARKS> mmarks;
@@ -238,6 +208,166 @@ namespace CGAL {
     /// Attributes enabled
     typename Helper::Attribute_handles mattribute_handles;
   };
+
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
+
+#define CGAL_BETAINV(i) (i>1?i:(i==1?0:1))
+
+  /** Definition of nD dart for combinatorial map. Add functions beta and attributes which
+   * are now deprecated.
+   */
+  template <unsigned int d, typename Refs, class WithID=Tag_false>
+  struct CGAL_DEPRECATED Dart : public Dart_without_info<d, Refs, WithID>
+  {
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template <class, class, class, class>
+    friend class Compact_container;
+
+    template <class, class>
+    friend class Concurrent_compact_container;
+
+    typedef Dart_without_info<d, Refs, WithID> Base;
+
+    using Base::dimension;
+    using Base::mf;
+    using Base::mattribute_handles;
+
+    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_const_handle Dart_const_handle;
+    typedef typename Base::Helper Helper;
+
+    /// Typedef for attributes
+    template<int i>
+    struct Attribute_handle: public Refs::template Attribute_handle<i>
+    {};
+    template<int i>
+    struct Attribute_const_handle:
+      public Refs::template Attribute_const_handle<i>
+    {};
+
+  public:
+    /** Return the beta of this dart for a given dimension.
+     * @param i the dimension.
+     * @return beta(\em i).
+     */
+    template<unsigned int i>
+    Dart_handle beta()
+    {
+      CGAL_assertion(i <= dimension);
+      return mf[i];
+    }
+    Dart_handle beta(unsigned int i)
+    {
+      CGAL_assertion(i <= dimension);
+      return mf[i];
+    }
+    template<unsigned int i>
+    Dart_const_handle beta() const
+    {
+      CGAL_assertion(i <= dimension);
+      return mf[i];
+    }
+    Dart_const_handle beta(unsigned int i) const
+    {
+      CGAL_assertion(i <= dimension);
+      return mf[i];
+    }
+
+    /** Return the beta inverse of this dart for a given dimension.
+     * @param i the dimension.
+     * @return beta^{-1}(\em i).
+     */
+    template<unsigned int i>
+    Dart_handle beta_inv()
+    { return beta<CGAL_BETAINV(i)>(); }
+    Dart_handle beta_inv(unsigned int i)
+    { return beta(CGAL_BETAINV(i)); }
+    template<unsigned int i>
+    Dart_const_handle beta_inv() const
+    { return beta<CGAL_BETAINV(i)>(); }
+    Dart_const_handle beta_inv(unsigned int i) const
+    { return beta(CGAL_BETAINV(i)); }
+
+    /// @return a handle on the i-attribute
+    template<int i>
+    typename Attribute_handle<i>::type attribute()
+    {
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                     "attribute<i> called but i-attributes are disabled.");
+      return std::get<Helper::template Dimension_index<i>::value>
+        (mattribute_handles);
+    }
+    template<int i>
+    typename Attribute_const_handle<i>::type attribute() const
+    {
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                     "attribute<i> called but i-attributes are disabled.");
+      return std::get<Helper::template Dimension_index<i>::value>
+        (mattribute_handles);
+    }
+  };
+#else // CGAL_CMAP_DART_DEPRECATED
+  // Dart definition with an info;
+  //  (there is a specialization below when Info_==void)
+  template <unsigned int d, typename Refs, typename Info_=void,
+            class WithID=Tag_false>
+  struct Dart : public Dart_without_info<d, Refs, WithID>
+  {
+  public:
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
+
+    template <class, class, class, class>
+    friend class Compact_container;
+
+    template <class, class>
+    friend class Concurrent_compact_container;
+
+    typedef Dart<d, Refs, Info_, WithID> Self;
+    typedef Info_                        Info;
+
+  protected:
+    /** Default constructor: no real initialisation,
+     *  because this is done in the combinatorial or generalized map class.
+     */
+    Dart()
+    {}
+
+    Dart(const Info_& info) : minfo(info)
+    {}
+
+    Info_& info()
+    { return minfo; }
+    const Info_& info() const
+    { return minfo; }
+
+  protected:
+    Info minfo;
+  };
+
+  // Specialization of Dart class when info==void
+  template <unsigned int d, typename Refs, class WithID>
+  struct Dart<d, Refs, void, WithID> : public Dart_without_info<d, Refs, WithID>
+  {
+  public:
+    typedef CGAL::Void Info;
+  };
+
+#endif // CGAL_CMAP_DART_DEPRECATED
 
 } // namespace CGAL
 

@@ -7,4 +7,7 @@ Stream_support
 BGL
 AABB_tree
 Polyhedron
+Surface_mesh
 Number_types
+Heat_method_3
+

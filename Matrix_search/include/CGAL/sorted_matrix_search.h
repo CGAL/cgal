@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
 #ifndef CGAL_SORTED_MATRIX_SEARCH_H
 #define CGAL_SORTED_MATRIX_SEARCH_H 1
+
+#include <CGAL/license/Matrix_search.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
@@ -121,7 +125,7 @@ private:
 };
 template < class Cell >
 struct Cell_min
-: public std::unary_function< Cell, typename Cell::Value >
+: public CGAL::cpp98::unary_function< Cell, typename Cell::Value >
 {
   typename Cell::Value
   operator()( const Cell& c) const
@@ -130,7 +134,7 @@ struct Cell_min
 
 template < class Cell >
 struct Cell_max
-: public std::unary_function< Cell, typename Cell::Value > {
+: public CGAL::cpp98::unary_function< Cell, typename Cell::Value > {
 
   Cell_max( int offset) : ofs( offset) {}
 

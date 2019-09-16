@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_CCB_CURVE_ITERATOR_H
 #define CGAL_CCB_CURVE_ITERATOR_H
+
+#include <CGAL/license/Boolean_set_operations_2.h>
+
 
 namespace CGAL {
 

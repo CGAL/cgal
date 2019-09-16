@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 
 The Quadruple class is an extension of
@@ -14,7 +14,7 @@ model of container, though, because it does not support the standard
 methods (such as iterators) for accessing the elements of a
 container.
 
-`CGAL::cpp11::tuple` or `CGAL::cpp11::array` instead for new uses.
+`std::tuple` or `std::array` instead for new uses.
 
 
 
@@ -225,7 +225,7 @@ y);
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 
 
@@ -237,7 +237,7 @@ elements. It is not actually a model of container, though, because
 it does not support the standard methods (such as iterators) for
 accessing the elements of a container.
 
-`CGAL::cpp11::tuple` or `CGAL::cpp11::array` instead for new uses.
+`std::tuple` or `std::array` instead for new uses.
 
 
 
@@ -428,7 +428,7 @@ Quadruple<T1, T2, T3, T4> make_tuple(T1 x, T2 y, T3 z, T4 w);
 
 #ifndef DOXYGEN_RUNNING
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 Creates a pair `(t1,t2)` if `comp(t1,t2)==true` and `(t2,t1)` otherwise.
 `comp` is a binary function taking two elements of type T that returns
 a value convertible to `bool`.

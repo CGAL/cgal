@@ -2,7 +2,8 @@
 #define VIEWER_H
 
 #include "Scene.h"
-#include <QGLViewer/qglviewer.h>
+#include <QMap>
+#include <CGAL/Qt/qglviewer.h>
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
@@ -10,9 +11,9 @@
 #include <CGAL/Qt/CreateOpenGLContext.h>
 
 
-class Viewer : public QGLViewer, QOpenGLFunctions_2_1 {
+class Viewer : public CGAL::QGLViewer{
 
-  typedef qglviewer::Vec Vec;
+  typedef CGAL::qglviewer::Vec Vec;
 
   Q_OBJECT
 
@@ -22,7 +23,7 @@ class Viewer : public QGLViewer, QOpenGLFunctions_2_1 {
   int nr_of_facets;
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(CGAL::Qt::createOpenGLContext(), parent)
+    : CGAL::QGLViewer(parent)
   {}
   ~Viewer()
   {
@@ -48,7 +49,6 @@ public:
 public slots :
   void changed();
   void sceneChanged();
-  void render_video();
   
 signals:
   void valueChanged(int i);
@@ -72,7 +72,7 @@ private:
       QOpenGLShaderProgram rendering_program;
       void initialize_buffers();
       void compute_elements();
-      void attrib_buffers(QGLViewer*);
+      void attrib_buffers(CGAL::QGLViewer*);
       void compile_shaders();
 };
 

@@ -1,11 +1,10 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/iterator.h>
-#include <fstream>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+
+#include <fstream>
 #include <algorithm>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -38,9 +37,9 @@ struct Source {
   }
 };
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 { 
-  std::ifstream in(argv[1]);
+  std::ifstream in((argc>1)?argv[1]:"cube.off");
   Polyhedron P;
   in >> P;
   GraphTraits::vertex_descriptor vd = *(vertices(P).first);

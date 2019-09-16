@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -25,13 +26,15 @@
 #ifndef CGAL_ACK_CURVE_PAIR_ANALYSIS_H
 #define CGAL_ACK_CURVE_PAIR_ANALYSIS_H 1
 
+#include <CGAL/disable_warnings.h>
+
 #include <vector>
 #include <algorithm>
 
 #include <boost/optional.hpp>
 
 #include <CGAL/Handle_with_policy.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
@@ -42,10 +45,7 @@
 #include <CGAL/Algebraic_kernel_d/exceptions.h>
 #include <CGAL/Algebraic_kernel_d/Status_line_CPA_1.h>
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4290)
-#endif
+
 
 namespace CGAL {
 
@@ -446,11 +446,12 @@ public:
     };
 
     //! \brief Copy constructor
+#ifdef DOXYGEN_RUNNING 
     Curve_pair_analysis_2(const Self& alg_curve_pair)
         : Base(static_cast<const Base&>(alg_curve_pair)) 
     {
     }
-
+#endif
     // Assignable
     
     /*!
@@ -480,8 +481,6 @@ public:
                           Curve_analysis_2 c2,
                           CGAL::Degeneracy_strategy strategy
                               = CGAL_ACK_DEFAULT_DEGENERACY_STRATEGY) 
-        throw(CGAL::internal::Zero_resultant_exception<Polynomial_2>,
-              CGAL::internal::Non_generic_position_exception)
         : Base(Rep(kernel,c1, c2, strategy)) 
     {
         
@@ -804,7 +803,7 @@ private:
 	  (typename Polynomial_traits_2::Swap() (sres,0,1),r);
         std::vector<Algebraic_real_1> gcd_roots;
         kernel()->solve_1_object()(gcd,std::back_inserter(gcd_roots),false);
-        int m = gcd_roots.size();
+        size_type m = static_cast<size_type>(gcd_roots.size());
 
         Slice_info slice_info = construct_slice_info(x);
         reduce_number_of_candidates_and_intersections_to
@@ -847,13 +846,11 @@ private:
 private:
 
     // Computes a slice_info object at Algebraic_real_1 \c alpha
-    Slice_info construct_slice_info(Algebraic_real_1 alpha) const
-        throw(CGAL::internal::Non_generic_position_exception);
+    Slice_info construct_slice_info(Algebraic_real_1 alpha) const;
       
 private:
       
-    Status_line_CPA_1 construct_generic_case(size_type i) const 
-        throw(CGAL::internal::Non_generic_position_exception);        
+    Status_line_CPA_1 construct_generic_case(size_type i) const;        
 
 private:
       
@@ -1002,9 +999,9 @@ public:
     void x_to_index(Algebraic_real_1 x, 
                     size_type& idx, bool& event) const {
         const std::vector<Algebraic_real_1>& sl = event_x_coordinates();
-        idx = std::lower_bound(sl.begin(),
-                               sl.end(),
-                               x) - sl.begin();
+        idx = static_cast<size_type>(std::lower_bound(sl.begin(),
+                                                      sl.end(),
+                                                      x) - sl.begin());
         event = (idx < static_cast<size_type>(sl.size()) && (sl[idx] == x));
 
     }
@@ -1126,16 +1123,14 @@ private:
         }
         Intersection_info_container& old_info_container
             = *(this->ptr()->intersection_info_container);
-        size_type n = old_info_container.size();
-        CGAL_assertion(n == static_cast<size_type>
-                              ( new_info_container.size()));
+        std::size_t n = old_info_container.size();
+        CGAL_assertion(n == new_info_container.size());
         //iterate through the vector and update 
         // (-1 stands for "multiplicity unknown")
-        for(size_type i=0;i<n;i++) {
-            size_type m = old_info_container[i].size();
-            CGAL_assertion(m == static_cast<size_type>\
-                                  (new_info_container[i].size()));
-            for(size_type j=0;j<m;j++) {
+        for(std::size_t i=0;i<n;i++) {
+          std::size_t m = old_info_container[i].size();
+            CGAL_assertion(m == new_info_container[i].size());
+            for(std::size_t j=0;j<m;j++) {
                 old_info_container[i][j].mult
                   = (std::max)(new_info_container[i][j].mult,
                                old_info_container[i][j].mult);
@@ -1170,8 +1165,7 @@ private:
 
       
     Status_line_CPA_1 
-        create_event_slice_from_current_intersection_info (size_type i) 
-        const throw(CGAL::internal::Non_generic_position_exception);
+        create_event_slice_from_current_intersection_info (size_type i) const;
 
     Bound x_sheared(Bound x, Bound y,Integer sh) const {
         return x-sh*y;
@@ -1441,7 +1435,9 @@ compute_event_x_coordinates_with_event_indices() const {
                 CGAL_ACK_DEBUG_PRINT << " one curve event" << std::endl;
 #endif
 */
-            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
+            // Fix a warning by using `emplace_back()` instead of
+            // copying a non-initialized `optional
+            this->ptr()->event_slices.emplace_back();
             switch(*(one_curve_it++)) {
             case(CGAL::internal::ROOT_OF_FIRST_SET): {
                 event_indices.push_back(Event_indices(-1,f_count,-1));
@@ -1468,8 +1464,7 @@ compute_event_x_coordinates_with_event_indices() const {
             CGAL_ACK_DEBUG_PRINT << " two curve event" << std::endl;
 #endif
 */
-            this->ptr()->
-                event_slices.push_back(Lazy_status_line_CPA_1());
+            this->ptr()->event_slices.emplace_back();
             
             event_indices.push_back
                 (Event_indices(inter_count,-1,-1));
@@ -1483,8 +1478,7 @@ compute_event_x_coordinates_with_event_indices() const {
                                      << std::endl;
 #endif
 */
-            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
-            
+            this->ptr()->event_slices.emplace_back();
             
             switch(*(one_curve_it++)) {
             case(CGAL::internal::ROOT_OF_FIRST_SET): {
@@ -1531,17 +1525,11 @@ compute_intermediate_values_and_slices() const {
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "Prepare intermediate slices.." << std::flush;
 #endif
+    std::size_t size = event_x_coordinates().size()+1;
     this->ptr()->intermediate_values=std::vector<Lazy_bound>();
     this->ptr()->intermediate_slices=std::vector<Lazy_status_line_CPA_1>();
-    
-    for(size_type i=0;
-        i<=static_cast<size_type>(event_x_coordinates().size());
-        i++) {
-        this->ptr()->intermediate_values.get().push_back(Lazy_bound());
-        this->ptr()->intermediate_slices.get().push_back
-            (Lazy_status_line_CPA_1());
-    }
-    
+    this->ptr()->intermediate_values.get().resize(size);
+    this->ptr()->intermediate_slices.get().resize(size);
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
 #endif
@@ -1992,8 +1980,7 @@ create_slice_from_slice_info(size_type id,
 template<typename AlgebraicKernelWithAnalysis_2>
 typename Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>::Slice_info 
 Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>::
-construct_slice_info(Algebraic_real_1 alpha) const
-    throw(CGAL::internal::Non_generic_position_exception) {
+construct_slice_info(Algebraic_real_1 alpha) const {
     
 /*
   #if CGAL_ACK_DEBUG_FLAG
@@ -2074,8 +2061,7 @@ template<typename AlgebraicKernelWithAnalysis_2>
 typename Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>
     ::Status_line_CPA_1 
 Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>::
-construct_generic_case(size_type i) const 
-    throw(CGAL::internal::Non_generic_position_exception) {
+construct_generic_case(size_type i) const {
     
     Algebraic_real_1 alpha = event_x(i);
     
@@ -2414,8 +2400,7 @@ template<typename AlgebraicKernelWithAnalysis_2>
 typename Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>
     ::Status_line_CPA_1 
 Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>::
-create_event_slice_from_current_intersection_info (size_type i) 
-    const throw(CGAL::internal::Non_generic_position_exception){
+create_event_slice_from_current_intersection_info (size_type i) const{
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "Reduce the candidates.." << std::flush;
 #endif
@@ -2651,10 +2636,6 @@ reduce_number_of_candidates_and_intersections_to(size_type n,
 
 } //namespace CGAL
 
-
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
-
+#include <CGAL/enable_warnings.h>
 
 #endif

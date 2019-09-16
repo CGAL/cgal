@@ -14,7 +14,7 @@
    <string>Surface Mesh Deformation</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,1">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">

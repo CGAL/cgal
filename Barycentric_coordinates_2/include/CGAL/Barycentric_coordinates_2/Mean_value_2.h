@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
@@ -23,6 +24,10 @@
 
 #ifndef CGAL_MEAN_VALUE_2_H
 #define CGAL_MEAN_VALUE_2_H
+
+#include <CGAL/license/Barycentric_coordinates_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 // STL headers. 
 #include <vector>
@@ -91,12 +96,12 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Examples: see the User Manual here - http://doc.cgal.org/latest/Manual/index.html.
+// Examples: see the User Manual here - https://doc.cgal.org/latest/Manual/index.html.
 // [1] Reference: "K. Hormann and M. Floater. Mean value coordinates for arbitrary planar polygons. ACM Transactions on Graphics, 25(4):1424-1441, 2006.".
 // [2] Reference: "M. S. Floater, Wachspress and mean value coordinates, to appear in the Proceedings of the 14th International Conference on Approximation Theory, G. Fasshauer and L. L. Schumaker (eds.)."
 
 /*!
- * \ingroup PkgBarycentric_coordinates_2
+ * \ingroup PkgBarycentricCoordinates2Ref
  * The class `Mean_value_2` implements 2D mean value coordinates ( \cite cgal:bc:hf-mvcapp-06, \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ).
  * This class is parameterized by a traits class `Traits`, and it is used as a coordinate class to complete the class `Generalized_barycentric_coordinates_2`.
  * For a polygon with three vertices (triangle) it is better to use the class `Triangle_coordinates_2`.
@@ -331,8 +336,8 @@ private:
         // Following section 4.2 from [2] we denote P_j = r_j*r_{j+1} + dot_product(d_j, d_{j+1}).
         // Vector s_i from [1] corresponds to that one with the name d_i in [2].
         for(int j = 0; j < n-1; ++j)
-            P[j] = (CGAL::max)(r[j]*r[j+1] + scalar_product_2(s[j], s[j+1]), FT(0));
-        P[n-1] = (CGAL::max)(r[n-1]*r[0] + scalar_product_2(s[n-1], s[0]), FT(0));
+            P[j] = CGAL::max<FT>(r[j]*r[j+1] + scalar_product_2(s[j], s[j+1]), 0);
+        P[n-1] = CGAL::max<FT>(r[n-1]*r[0] + scalar_product_2(s[n-1], s[0]), 0);
 
         // Compute mean value weights using the formula (16) from [2].
         // Since the formula (16) always gives positive values, we have to add a proper sign to all the weight functions.
@@ -504,5 +509,7 @@ private:
 } // namespace Barycentric_coordinates
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MEAN_VALUE_2_H

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_NEF_POLYNOMIAL_H
 #define CGAL_NEF_POLYNOMIAL_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <CGAL/Nef_2/Polynomial.h>
 #include <cstddef>
@@ -142,7 +146,7 @@ public:
     typedef typename AST_NT::Is_exact            Is_exact;
     typedef Tag_false                            Is_numerical_sensitive;                                                           
     class Integral_division
-        : public std::binary_function< Type, Type,
+        : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
     public:
         Type operator()( const Type& x,
@@ -154,7 +158,7 @@ public:
     };
 
     class Gcd 
-      : public std::binary_function< Type, Type, Type > {
+      : public CGAL::cpp98::binary_function< Type, Type, Type > {
     public:
         Type operator()( const Type& x, const Type& y ) const {
             // By definition gcd(0,0) == 0
@@ -172,7 +176,7 @@ template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> >
   public:
     typedef Nef_polynomial<NT> Type;
     class Abs 
-        : public std::unary_function< Type, Type> {
+        : public CGAL::cpp98::unary_function< Type, Type> {
     public:
         Type inline operator()( const Type& x ) const {
             return (CGAL::Nef::sign( x ) == CGAL::NEGATIVE)? -x : x;
@@ -180,7 +184,7 @@ template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> >
     };
 
     class Sgn 
-      : public std::unary_function< Type, CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, CGAL::Sign > {
       public:
         CGAL::Sign inline operator()( const Type& x ) const {
             return CGAL::Nef::sign( x );
@@ -188,7 +192,7 @@ template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> >
     };
     
     class Compare 
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 CGAL::Comparison_result > {
       public:
         CGAL::Comparison_result inline operator()( 
@@ -199,7 +203,7 @@ template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> >
     };
     
     class To_double 
-      : public std::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double inline operator()( const Type& p ) const {
             return CGAL::to_double(
@@ -208,7 +212,7 @@ template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> >
     };
     
     class To_interval 
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& p ) const {
             return CGAL::to_interval(p.eval_at(Nef_polynomial<NT>::infi_maximal_value()));

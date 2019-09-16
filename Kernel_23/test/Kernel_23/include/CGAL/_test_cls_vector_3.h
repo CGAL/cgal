@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -22,6 +23,8 @@
 
 #ifndef CGAL__TEST_CLS_VECTOR_3_H
 #define CGAL__TEST_CLS_VECTOR_3_H
+
+#include <CGAL/use.h>
 
 template <class R>
 bool
@@ -36,7 +39,7 @@ _test_cls_vector_3(const R& )
  typedef typename R::Vector_3::Cartesian_const_iterator CCI;
 
  CGAL::Vector_3<R>  v1;
- CGAL::Vector_3<R>  v2(iv);
+ CGAL::Vector_3<R>  v2(iv); CGAL_USE(v2);
  CGAL::Vector_3<R>  v0(CGAL::NULL_VECTOR);
 
  RT  n1( 12 );

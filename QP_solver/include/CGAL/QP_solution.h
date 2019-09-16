@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Kaspar Fischer
@@ -23,6 +24,10 @@
 
 #ifndef CGAL_QP_SOLUTION_H
 #define CGAL_QP_SOLUTION_H
+
+#include <CGAL/license/QP_solver.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <iostream>
 #include <vector>
@@ -35,7 +40,7 @@
 #include <boost/function.hpp>
 
 #include <CGAL/boost/iterator/counting_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -309,6 +314,12 @@ public:
     : Handle_for<const QP_solver_base<ET>*>(s), et0(0)
   {}
 
+  Quadratic_program_solution(const Quadratic_program_solution& rhs)
+    : Handle_for<const QP_solver_base<ET>*>(), et0(0)
+  {
+    *this = rhs;
+  }
+ 
   Quadratic_program_solution& 
   operator= (const Quadratic_program_solution& sol)
   {
@@ -770,7 +781,7 @@ namespace QP_solution_detail {
   // Value_by_index
   // --------------
   template < typename ET>
-  class Value_by_index : public std::unary_function< std::size_t, ET>
+  class Value_by_index : public CGAL::cpp98::unary_function< std::size_t, ET>
   {
   public:
     typedef QP_solver_base<ET> QP;
@@ -792,7 +803,7 @@ namespace QP_solution_detail {
   // Unbounded_direction_by_index
   // ----------------------------
   template < typename ET>
-  class Unbounded_direction_by_index : public std::unary_function< std::size_t, ET>
+  class Unbounded_direction_by_index : public CGAL::cpp98::unary_function< std::size_t, ET>
   {
   public:
     typedef QP_solver_base<ET> QP;
@@ -813,7 +824,7 @@ namespace QP_solution_detail {
   // Lambda_by_index
   // ---------------
   template < typename ET>
-  class Lambda_by_index : public std::unary_function< std::size_t, ET>
+  class Lambda_by_index : public CGAL::cpp98::unary_function< std::size_t, ET>
   {
   public:
     typedef QP_solver_base<ET> QP;
@@ -834,5 +845,7 @@ namespace QP_solution_detail {
 } //namespace CGAL
 
 #include <CGAL/QP_solver/QP_solution_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif// CGAL_QP_SOLUTION_H

@@ -2,30 +2,32 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Alpha_shape_cell_base_3` is the default model for the concept 
 `AlphaShapeCell_3`. 
 
 \tparam Traits is the geometric traits class that is provided 
 to the `Alpha_shape_3` class. 
-\tparam Cb must be a cell base class instantiated by default 
-with `Triangulation_cell_base_3<Traits>`. 
+\tparam Cb must be a cell base class adapted to the type of triangulation that is being used.
+        By default, it is instantiated with `Delaunay_triangulation_cell_base_3<Traits>`,
+        which is appropriate for basic alpha shapes.
 \tparam ExactAlphaComparisonTag is a tag that, when set to 
-`Tag_true`, triggers exact comparisons between alpha values. See the description 
-provided in the documentation of `Alpha_shape_3` for more details. The default value is `Tag_false`. 
-\tparam WeightedTag is used only if `ExactAlphaComparisonTag` is `Tag_true`. It 
-must be `Tag_true` if the underlying triangulation of the alpha shape to be used is a Regular triangulation 
-and `Tag_false` otherwise. The default is `Tag_false`. 
+\link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. See the description
+provided in the documentation of `Alpha_shape_3` for more details. The default value is \link Tag_false `Tag_false`\endlink.
+\tparam WeightedTag is used only if `ExactAlphaComparisonTag` is \link Tag_true `Tag_true`\endlink. It
+must be \link Tag_true `Tag_true`\endlink if the underlying triangulation of the alpha shape to be used is a regular triangulation
+and \link Tag_false `Tag_false`\endlink otherwise. The default is \link Tag_false `Tag_false`\endlink.
 
 \cgalModels `AlphaShapeCell_3`
 
+\sa `Delaunay_triangulation_cell_base_3`
+\sa `Regular_triangulation_cell_base_3`
+\sa `Periodic_3_triangulation_ds_cell_base_3`
 */
 template< typename Traits, typename Cb, typename ExactAlphaComparisonTag, typename WeightedTag >
-class Alpha_shape_cell_base_3 : public Fb {
+class Alpha_shape_cell_base_3 : public Cb {
 public:
-
-/// @}
 
 }; /* end Alpha_shape_cell_base_3 */
 } /* end namespace CGAL */
@@ -33,7 +35,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Alpha_status` is a small data structure to store 
 the critical alpha values of faces of an alpha shape. 
@@ -105,28 +107,28 @@ void set_alpha_max(NT alpha);
 /// @{
 
 /*!
-Returns true for Gabriel faces. 
+returns `true`  for Gabriel faces. 
 */ 
 bool is_Gabriel() const ; 
 
 /*!
-Returns true for convex hull faces. 
+returns `true` for convex hull faces. 
 */ 
 bool is_on_chull() const; 
 
 /*!
-Returns the `alpha_min`. 
-\pre `is_Gabriel()` returns false; 
+returns the `alpha_min`. 
+\pre `is_Gabriel()` returns `false`. 
 */ 
 NT alpha_min() const; 
 
 /*!
-Returns the `alpha_mid`.
+returns `alpha_mid`.
 */ 
 NT alpha_mid() const; 
 
 /*!
-Returns `alpha_max`. 
+returns `alpha_max`. 
 \pre `is_on_chull()` returns `false`. 
 */ 
 NT alpha_max() const; 

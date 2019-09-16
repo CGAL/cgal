@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
 #define CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
+
+#include <CGAL/license/Circular_kernel_2.h>
+
 
 #include <CGAL/Circular_kernel_intersections.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
@@ -504,7 +508,7 @@ namespace CircularFunctors {
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
-    { return internal::do_intersect(t1, t2, CK()); }
+    { return Intersections::internal::do_intersect(t1, t2, CK()); }
   };
   
   template < class CK >
@@ -631,6 +635,15 @@ namespace CircularFunctors {
     operator()(const Line_arc & la, const Line & l,
 	       OutputIterator res) const
     { return CircularFunctors::intersect_2<CK> (l,la,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line & l1, const Line & l2,
+	       OutputIterator res) const
+    {
+      *res++=typename CK::Linear_kernel::Intersect_2()(l1, l2);
+      return res;
+    }
 
   };
 

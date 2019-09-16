@@ -15,11 +15,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_POISSON_IMPLICIT_SURFACE_3_H
 #define CGAL_POISSON_IMPLICIT_SURFACE_3_H
+
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
 
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Surface_mesher/Poisson_implicit_surface_oracle_3.h>
@@ -125,7 +129,7 @@ namespace CGAL {
 
   // non documented class
   template <typename FT, typename Point>
-  class Poisson_implicit_function_wrapper : public std::unary_function<Point, FT> 
+  class Poisson_implicit_function_wrapper : public CGAL::cpp98::unary_function<Point, FT> 
   {
     typedef FT (*Poisson_implicit_function)(FT, FT, FT);
 

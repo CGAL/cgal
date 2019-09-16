@@ -1,0 +1,62 @@
+/// \defgroup PkgSetMovableSeparability2Ref 2D Movable Separability of Sets Reference
+
+/// \defgroup top_edges_grp Top Edges
+/// These function determine whether a cavity (of a mold in the plane)
+/// that has the shape of a given polygon could be casted in the mold
+/// and then pulled out of the mold without colliding into the mold (but
+/// possibly sliding along the mold boundary).
+/// \ingroup PkgSetMovableSeparability2Ref
+
+/// \defgroup is_pullout_direction_grp Is Pullout Direction
+/// These functions determine whether a cavity (of a mold in the plane)
+/// that has the shape of a given polygon could be casted in the mold
+/// and then pulled out of the mold in a given direction without colliding
+/// into the mold (but possibly sliding along the mold boundary).
+/// \ingroup PkgSetMovableSeparability2Ref
+
+/// \defgroup pullout_directions_grp Pullout Directions
+/// These functions determine whether a cavity (of a mold in the plane)
+/// that has the shape of a given polygon could be casted in the mold
+/// using a given edge as the top edge and then pulled out of the mold
+/// without colliding into the mold (but possibly sliding along the mold
+/// boundary). If the polygon is <em>castable</em> this way, the function
+/// computes the closed range of pullout directions.
+/// \ingroup PkgSetMovableSeparability2Ref
+
+/// \defgroup PkgSetMovableSeparability2Concepts Concepts
+/// \ingroup PkgSetMovableSeparability2Ref
+
+/*!
+\addtogroup PkgSetMovableSeparability2Ref
+\cgalPkgDescriptionBegin{2D Movable Separability of Sets,PkgSetMovableSeparability2}
+\cgalPkgPicture{Casting_2.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Shahar Shamai, Efi Fogel}
+\cgalPkgDesc{<em>Movable Separability of Sets</em> \cgalCite{t-mss-85} is a
+class of problems that deal with moving sets of objects, such as polygons in
+the plane; the challenge is to avoid collisions between the objects
+while considering different kinds of motions and various definitions
+of separation.}
+\cgalPkgManuals{Chapter_SetMovableSeparability2,PkgSetMovableSeparability2Ref}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.12}
+\cgalPkgDependsOn{\ref PkgPolygon2}
+\cgalPkgBib{cgal:sf-sms2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+At this point this package consists of the implementations of various predicates and constructions related to castings of polygonal objects. In particular, it can be used to determine whether a feasible mold for a polygonal object does exist. If a mold exists, the package can also be used to compute all possible orientations of the feasible molds and the corresponding motions needed to remove the casted object from the mold.
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Casting Functions}
+- `CGAL::Set_movable_separability_2::Single_mold_translational_casting::top_edges()`
+- `CGAL::Set_movable_separability_2::Single_mold_translational_casting::pullout_directions()`
+- `CGAL::Set_movable_separability_2::Single_mold_translational_casting::is_pullout_direction()`
+
+\cgalCRPSection{Casting Concepts}
+- `CastingTraits_2`
+
+*/

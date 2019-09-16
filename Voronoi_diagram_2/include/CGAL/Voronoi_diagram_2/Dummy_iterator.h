@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_VORONOI_DIAGRAM_2_DUMMY_ITERATOR_H
 #define CGAL_VORONOI_DIAGRAM_2_DUMMY_ITERATOR_H 1
+
+#include <CGAL/license/Voronoi_diagram_2.h>
+
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/iterator.h>
@@ -43,9 +47,6 @@ class Dummy_iterator : public Emptyset_iterator
   typedef std::size_t                     size_type;
   typedef std::ptrdiff_t                  difference_type;
   typedef std::bidirectional_iterator_tag iterator_category;
-
-  Dummy_iterator() {}
-  Dummy_iterator(const Dummy_iterator&) {}
 
   template< class T >
   Self& operator=(const T&) { return *this; }

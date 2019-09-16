@@ -21,6 +21,7 @@
 // CGAL_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Dominik Huelse <dominik.huelse@gmx.de>
 //
@@ -31,7 +32,7 @@
   test for the function euclidean_division_obstinate
 */
 
-#include <CGAL/basic.h>
+
 #include <CGAL/gen_polynomials.h>
 #include <CGAL/Polynomial/modular_gcd_utils.h>
 #include <CGAL/Random.h>

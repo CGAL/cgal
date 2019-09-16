@@ -1,7 +1,7 @@
 #include "Viewer.h"
 #include <vector>
 #include <CGAL/bounding_box.h>
-#include <QGLViewer/vec.h>
+#include <CGAL/Qt/vec.h>
 
 
 void
@@ -10,8 +10,8 @@ Viewer::init()
   initializeOpenGLFunctions();
   setBackgroundColor(::Qt::white);
   this->camera()->setSceneBoundingBox(
-      qglviewer::Vec(-1.,-1.,-1.),
-      qglviewer::Vec( 1., 1., 1.));
+      CGAL::qglviewer::Vec(-1.,-1.,-1.),
+      CGAL::qglviewer::Vec( 1., 1., 1.));
   glEnable(GL_LINE_SMOOTH);
   compile_shaders();
   are_buffers_initialized = false;
@@ -32,18 +32,14 @@ Viewer::draw()
       initialize_buffers();
   QColor color;
  //the points
-  ::glEnable(GL_BLEND);
-  ::glEnable(GL_POINT_SMOOTH);
-  ::glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-  ::glEnable(GL_LINE_SMOOTH);
-  ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-  ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  ::glPointSize(5);
-
-  ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-  ::glColor3f(0.2f, 0.2f, 1.f);
-  ::glEnable(GL_POLYGON_OFFSET_FILL);
-  ::glPolygonOffset(3.0f,-3.0f);
+  glEnable(GL_BLEND);
+  glEnable(GL_POINT_SMOOTH);
+  glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+  glEnable(GL_LINE_SMOOTH);
+  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(3.0f,-3.0f);
 
 
   attrib_buffers(this);
@@ -56,10 +52,7 @@ Viewer::draw()
   vao[0].release();
 
   //The Lines
-  ::glLineWidth(1.);
-  ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-  ::glColor3ub(0,0,0);
-  ::glDisable(GL_POLYGON_OFFSET_FILL);
+  glDisable(GL_POLYGON_OFFSET_FILL);
 
   vao[1].bind();
   color.setRgbF(0.27f, 0.51f, 0.7f);
@@ -102,29 +95,6 @@ Viewer::next_around_circle(const float& phi, const Vec& pos, const Vec& ori) {
   
   Vec new_cam = ori + (cam_norm*cos(phi) + y_norm*sin(phi)) * cam.norm();
   return new_cam;  
-}
-
-void
-Viewer::render_video()
-{
-  setSnapshotFormat("PNG");
-  for (int alpha=0 ; alpha <= 100 ; alpha++ ) {
-    emit (valueChanged(alpha));
-    std::cout<<alpha<<std::endl;
-    QString alpha_str;
-    alpha_str.setNum(alpha);
-    displayMessage(QString("alpha: ") + alpha_str + QString("%"),10000);
-    
-    for (int fr=0 ; fr < 50 ; fr++) {
-      Vec cam = camera()->position();
-      Vec ori = sceneCenter();
-      Vec new_cam = next_around_circle(0.01f,cam,ori);
-      camera()->setPosition(new_cam);
-      camera()->lookAt(ori);
-      this->showEntireScene();
-      saveSnapshot(true);
-    }
-  }
 }
 
 void Viewer::initialize_buffers()
@@ -173,7 +143,7 @@ void Viewer::initialize_buffers()
 
 void Viewer::compute_elements()
 {
-    //::glColor3f(1.0f, 0.72f, 0.06f);
+    //glColor3f(1.0f, 0.72f, 0.06f);
     pos_points.resize(0);
     pos_lines.resize(0);
     pos_8lines.resize(0);
@@ -188,7 +158,7 @@ void Viewer::compute_elements()
       pos_points.push_back(p.x()); pos_points.push_back(p.y()); pos_points.push_back(p.z());
     }
 
-    //::glColor3f(0.27f, 0.51f, 0.7f);
+    //glColor3f(0.27f, 0.51f, 0.7f);
     for (Periodic_triangle_iterator ptit
        = scene->periodic_triangulation.periodic_triangles_begin(
            P3DT3::UNIQUE);
@@ -196,7 +166,7 @@ void Viewer::compute_elements()
          P3DT3::UNIQUE);
         ++ptit) {
       for (int i=0 ; i<4 ; i++) {
-        Segment_3 dual = scene->periodic_triangulation.segment(
+        Segment_3 dual = scene->periodic_triangulation.construct_segment(
         scene->periodic_triangulation.dual(*(ptit.get_facet())));
 
         FT sz = dual.source().z();
@@ -233,7 +203,7 @@ void Viewer::compute_elements()
     }
 }
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     double mat[16];
@@ -271,6 +241,7 @@ void Viewer::compile_shaders()
         "uniform highp mat4 mvp_matrix;\n"
         "void main(void)\n"
         "{\n"
+        "   gl_PointSize = 5.0; \n"
         "   gl_Position = mvp_matrix * vertex; \n"
         "}"
     };

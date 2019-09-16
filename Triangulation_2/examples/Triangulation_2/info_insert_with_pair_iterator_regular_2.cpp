@@ -1,21 +1,19 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <cassert>
 #include <vector>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel                     K;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<K>                       Traits;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel            K;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel                     K;
-typedef CGAL::Regular_triangulation_vertex_base_2<Traits>                       Vbase;
-typedef CGAL::Triangulation_vertex_base_with_info_2<unsigned, Traits,Vbase>     Vb;
-typedef CGAL::Regular_triangulation_face_base_2<Traits>                         Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                             Tds;
-typedef CGAL::Regular_triangulation_2<Traits, Tds>                              Regular;
-typedef K::Point_2                                                              Point;
-typedef Traits::Weighted_point_2                                                Wpoint;
+typedef CGAL::Regular_triangulation_vertex_base_2<K>                   Vbase;
+typedef CGAL::Triangulation_vertex_base_with_info_2<unsigned, K,Vbase> Vb;
+typedef CGAL::Regular_triangulation_face_base_2<K>                     Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                    Tds;
+typedef CGAL::Regular_triangulation_2<K, Tds>                          Regular;
+typedef K::Point_2                                                     Point;
+typedef K::Weighted_point_2                                            Wpoint;
+typedef Regular::Vertex_handle                                         Vertex_handle;
 
 int main()
 {
@@ -33,9 +31,8 @@ int main()
   CGAL_assertion( rt.number_of_vertices() == 6 );
 
   // check that the info was correctly set.
-  Regular::Finite_vertices_iterator vit;
-  for (vit = rt.finite_vertices_begin(); vit != rt.finite_vertices_end(); ++vit)
-    if( points[ vit->info() ].first != vit->point() ){
+  for (Vertex_handle v : rt.finite_vertex_handles())
+    if( points[ v->info() ].first != v->point() ){
       std::cerr << "Error different info" << std::endl;
       exit(EXIT_FAILURE);
     }

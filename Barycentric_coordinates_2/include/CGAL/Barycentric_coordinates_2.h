@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_BARYCENTRIC_COORDINATES_2_H
 #define CGAL_BARYCENTRIC_COORDINATES_2_H
+
+#include <CGAL/license/Barycentric_coordinates_2.h>
+
 
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
 #include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h> 

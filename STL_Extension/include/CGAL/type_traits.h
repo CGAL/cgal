@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Andreas Meyer
 
@@ -36,4 +37,4 @@ struct is_same_or_derived :
 
 }
 
-#endif
+#endif // CGAL_TYPE_TRAITS_H

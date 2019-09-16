@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Envelope_3/include/CGAL/Env_plane_traits_3.h $
-// $Id: Env_plane_traits_3.h 51989 2009-09-21 10:55:53Z efif $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Ophir Setter
 
@@ -84,8 +85,8 @@ public:
     FT delta_x = pp2->x() - pp1->x();
     FT delta_y = pp2->y() - pp1->y();
     
-    FT sign_x = CGAL::sign(delta_x);
-    FT sign_y = CGAL::sign(delta_y);
+    FT sign_x = (int)CGAL::sign(delta_x);
+    FT sign_y = (int)CGAL::sign(delta_y);
 
     FT abs_x = CGAL::abs(delta_x);
     FT abs_y = CGAL::abs(delta_y);

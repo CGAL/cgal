@@ -16,7 +16,7 @@ class Scene : public QObject, QOpenGLFunctions_2_1
   Q_OBJECT
 
 private:
-  typedef qglviewer::Vec Vec;
+  typedef CGAL::qglviewer::Vec Vec;
   typedef std::set<Segment, Compare_segment<Segment> > Segment_set;
 
   enum Init {EMPTY, GRID, SINGLE, PLANE, RANDOM};
@@ -130,10 +130,11 @@ public Q_SLOTS:
     dconflict = temp_flags[1];
     changed();
   }
+
   void grab_image() {
-    ui->viewer->openSnapshotFormatDialog();
-    ui->viewer->saveSnapshot(false);
+    ui->viewer->saveSnapshot();
   }
+  
   void toggle_dlocate(bool on) {
     dlocate = on;
     changed();
@@ -304,7 +305,7 @@ private:
       PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
       void initialize_buffers();
       void compute_elements();
-      void attrib_buffers(QGLViewer*);
+      void attrib_buffers(CGAL::QGLViewer*);
       void compile_shaders();
       void draw_sphere(float R, int prec);
       void draw_cylinder(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals);

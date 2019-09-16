@@ -1,33 +1,33 @@
-/// \defgroup PkgHandlesAndCirculators Handles and Circulators Reference
+/// \defgroup PkgHandlesAndCirculatorsRef Handles and Circulators Reference
 /// \defgroup PkgHandlesAndCirculatorsConcepts Concepts
-/// \ingroup PkgHandlesAndCirculators
+/// \ingroup PkgHandlesAndCirculatorsRef
 
 
 /// \defgroup PkgHandlesAndCirculatorsAdapter Adapters for Iterators and Containers
-/// \ingroup PkgHandlesAndCirculators
+/// \ingroup PkgHandlesAndCirculatorsRef
 
 
 /// \defgroup PkgHandlesAndCirculatorsFunctions Functions
-/// \ingroup PkgHandlesAndCirculators
+/// \ingroup PkgHandlesAndCirculatorsRef
 
 /// \defgroup PkgHandlesAndCirculatorsTags Compile Time Tags
-/// \ingroup PkgHandlesAndCirculators
+/// \ingroup PkgHandlesAndCirculatorsRef
 
 /// \defgroup PkgHandlesAndCirculatorsAssert Assertions
-/// \ingroup PkgHandlesAndCirculators
+/// \ingroup PkgHandlesAndCirculatorsRef
 
 /// \defgroup PkgHandlesAndCirculatorsBaseClasses Base Classes
-/// \ingroup PkgHandlesAndCirculators
+/// \ingroup PkgHandlesAndCirculatorsRef
 
 
 /*!
-\addtogroup PkgHandlesAndCirculators
-\cgalPkgDescriptionBegin{Handles and Circulators,PkgHandlesAndCirculatorsSummary}
+\addtogroup PkgHandlesAndCirculatorsRef
+\cgalPkgDescriptionBegin{Handles and Circulators,PkgHandlesAndCirculators}
 \cgalPkgPicture{circulator.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Olivier Devillers, Lutz Kettner, Sylvain Pion, Michael Seel, and Mariette Yvinec}
 \cgalPkgDesc{This package descibes handles and circulators. They are related to iterators. Handles allow to dereference but neither to increment nor to decrement. Circulators have no notion of past-the-end, and they are used in \cgal whenever we have cyclic stuctures. }
-\cgalPkgManuals{Chapter_Handles_Ranges_and_Circulators,PkgHandlesAndCirculators}
+\cgalPkgManuals{Chapter_Handles_Ranges_and_Circulators,PkgHandlesAndCirculatorsRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.0}
@@ -58,7 +58,7 @@ circulators as well as with iterators.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `Handle`
 - `Range`
 - `ConstRange`
@@ -67,7 +67,7 @@ circulators as well as with iterators.
 - `BidirectionalCirculator`
 - `RandomAccessCirculator`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Container_from_circulator<C>`
 - `CGAL::Circulator_from_iterator<I>`
 - `CGAL::Circulator_from_container<C>`

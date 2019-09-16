@@ -13,12 +13,16 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_MINKOWSKI_SUM_3_H
 #define CGAL_MINKOWSKI_SUM_3_H
+
+#include <CGAL/license/Minkowski_sum_3.h>
+
 
 #include <CGAL/convex_decomposition_3.h>
 #include <CGAL/Minkowski_sum_3/bipartite_nary_union_sorted_combined.h> 
@@ -29,7 +33,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum3
+\ingroup PkgMinkowskiSum3Ref
 
 The function `minkowski_sum_3()` computes the Minkowski sum of two 
 given 3D Nef polyhedra \f$ N0\f$ and \f$ N1\f$. Note that the function runs in 

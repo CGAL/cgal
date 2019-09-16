@@ -85,9 +85,8 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   std::cout.flush();
   CGAL::insert_non_intersecting_curves(arr, xcurves.begin(), xcurves.end());
   std::cout << "inserted" << std::endl;
-  for (Halfedge_iterator hit = arr.halfedges_begin(); hit != arr.halfedges_end(); hit++) {
-    halfedges.push_back(hit);
-  }
+  for(Halfedge_handle hh : arr.halfedge_handles())
+      halfedges.push_back(hh);
 #endif
 
   curves.clear();
@@ -102,7 +101,6 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   }
   isolated_points.clear();
   points.clear();
-
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges()
@@ -110,16 +108,16 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
 
   {
     std::cout << "Faces:" << std::endl;
-    Arrangement_2::Face_const_iterator fit;
-    for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
+    for(Arrangement_2::Face_handle fh : arr.face_handles())
+    {
       std::cout << "  Face: "
-                << &(*fit)
+                << &(fh)
                 << std::endl;
       std::cout << "  Outer CCBs: "
-                << std::distance(fit->outer_ccbs_begin(), fit->outer_ccbs_end())
+                << std::distance(fh->outer_ccbs_begin(), fh->outer_ccbs_end())
                 << std::endl;
       std::cout << "  Inner CCBs: "
-                << std::distance(fit->inner_ccbs_begin(), fit->inner_ccbs_end())
+                << std::distance(fh->inner_ccbs_begin(), fh->inner_ccbs_end())
                 << std::endl;
       std::cout << std::endl;
     }

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -21,6 +22,9 @@
    
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
+
+#include <CGAL/license/GraphicsView.h>
+
 #else
 #define CGAL_INLINE_FUNCTION
 #endif
@@ -235,7 +239,7 @@ CGAL_INLINE_FUNCTION
 QMenu* 
 DemosMainWindow::getMenu(QString objectName, QString title)
 {
-  QMenu* menu = NULL;
+  QMenu* menu = nullptr;
 
   QString title2 = title;
   title2.remove('&');
@@ -253,7 +257,7 @@ DemosMainWindow::getMenu(QString objectName, QString title)
       }
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 CGAL_INLINE_FUNCTION
@@ -375,13 +379,11 @@ CGAL_INLINE_FUNCTION
 void 
 DemosMainWindow::addToRecentFiles(QString fileName)
 {
-  QSettings settings;
   QStringList files = settings.value("recentFileList").toStringList();
   files.removeAll(fileName);
   files.prepend(fileName);
   while (files.size() > (int)maxNumberOfRecentFiles())
     files.removeLast();
-
   settings.setValue("recentFileList", files);
 
   updateRecentFileActions();
@@ -419,7 +421,6 @@ CGAL_INLINE_FUNCTION
 void 
 DemosMainWindow::updateRecentFileActions()
 {
-  QSettings settings;
   QStringList files = settings.value("recentFileList").toStringList();
 
   int numRecentFiles = qMin(files.size(), (int)this->maxNumberOfRecentFiles());
@@ -440,7 +441,7 @@ DemosMainWindow::updateRecentFileActions()
 CGAL_INLINE_FUNCTION
 void DemosMainWindow::writeState(QString groupname)
 {
-  QSettings settings;
+  
 
   settings.beginGroup(groupname);
   settings.setValue("size", size());
@@ -452,14 +453,19 @@ void DemosMainWindow::writeState(QString groupname)
 CGAL_INLINE_FUNCTION
 void DemosMainWindow::readState(QString groupname, Options /*what_to_save*/)
 {
-  QSettings settings;
+  
   
   settings.beginGroup(groupname);
   resize(settings.value("size", this->size()).toSize());
 
-  QDesktopWidget* desktop = qApp->desktop();
   QPoint pos = settings.value("pos", this->pos()).toPoint();
-  if(desktop->availableGeometry(pos).contains(pos)) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+  if(QGuiApplication::screenAt(pos)) {
+#else
+   QDesktopWidget* desktop = qApp->desktop();
+     if(desktop->availableGeometry(pos).contains(pos)) {
+#endif
+
     move(pos);
   }
   QByteArray mainWindowState = settings.value("state").toByteArray();

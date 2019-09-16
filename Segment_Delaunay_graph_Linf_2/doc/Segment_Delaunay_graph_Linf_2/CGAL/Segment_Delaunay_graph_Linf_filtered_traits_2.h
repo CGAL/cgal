@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSDGLinf
+\ingroup PkgSegmentDelaunayGraphLinf2Ref
 
 The class `Segment_Delaunay_graph_Linf_filtered_traits_2` provides a model for the
 `SegmentDelaunayGraphLinfTraits_2` concept.
@@ -27,14 +27,14 @@ in the user manual).
 
 */
 template< typename CK, typename CM, typename EK, typename EM, typename FK, typename FM >
-class Segment_Delaunay_graph_Linf_filtered_traits_2 {
+struct Segment_Delaunay_graph_Linf_filtered_traits_2 {
 }; /* end Segment_Delaunay_graph_Linf_filtered_traits_2 */
 } /* end namespace CGAL */
 
 namespace CGAL {
 
 /*!
-\ingroup PkgSDGLinf
+\ingroup PkgSegmentDelaunayGraphLinf2Ref
 
 The class `Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2`
 provides a model for the
@@ -60,6 +60,6 @@ in the user manual).
 
 */
 template< typename CK, typename CM, typename EK, typename EM, typename FK, typename FM >
-class Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2 {
+struct Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2 {
 }; /* end Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2 */
 } /* end namespace CGAL */

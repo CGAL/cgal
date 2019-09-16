@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
 #ifndef CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H
 #define CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H 1
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Iso_rectangle_2.h>
@@ -30,7 +34,7 @@
 namespace CGAL {
 
 template < class A, class S >
-struct Select : public std::binary_function< A, A, A > {
+struct Select : public CGAL::cpp98::binary_function< A, A, A > {
   Select() {}
   Select(const S& s) : s_(s) {}
   A operator()(const A& a, const A& b) const
@@ -43,7 +47,7 @@ protected:
 
 template < class R >
 struct I_Signed_x_distance_2
-: public std::binary_function<
+: public CGAL::cpp98::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
   typename R::FT
@@ -52,7 +56,7 @@ struct I_Signed_x_distance_2
 };
 template < class R >
 struct I_Signed_y_distance_2
-: public std::binary_function<
+: public CGAL::cpp98::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
   typename R::FT
@@ -61,9 +65,22 @@ struct I_Signed_y_distance_2
 };
 template < class R >
 struct I_Infinity_distance_2
-: public std::binary_function<
+: public CGAL::cpp98::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
+  // Added as workaround for VC2017 with /arch:AVX to fix
+  // https://cgal.geometryfactory.com/CGAL/testsuite/CGAL-4.14-I-95/Rectangular_p_center_2_Examples/TestReport_afabri_x64_Cygwin-Windows10_MSVC2017-Release-64bits.gz
+  I_Infinity_distance_2()
+  {}
+  
+  I_Infinity_distance_2(const I_Infinity_distance_2&)
+  {}
+
+  I_Infinity_distance_2& operator=(const I_Infinity_distance_2&)
+  {
+    return *this;
+  }
+  
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const {
     return (std::max)(CGAL_NTS abs(q1.x() - q2.x()),
@@ -73,7 +90,7 @@ struct I_Infinity_distance_2
 
 template < class R >
 struct I_Signed_infinity_distance_2
-: public std::binary_function<
+: public CGAL::cpp98::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
   typename R::FT

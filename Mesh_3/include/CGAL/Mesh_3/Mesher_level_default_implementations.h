@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU, Clement JAMIN
 
 #ifndef CGAL_MESH_3_MESHER_LEVEL_DEFAULT_IMPLEMENTATIONS_H
 #define CGAL_MESH_3_MESHER_LEVEL_DEFAULT_IMPLEMENTATIONS_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Mesh_3/Mesher_level.h>
 

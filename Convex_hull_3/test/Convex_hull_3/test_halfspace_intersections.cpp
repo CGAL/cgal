@@ -5,15 +5,16 @@
 #include <CGAL/point_generators_3.h>
 
 #include <vector>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
 
-template <class K>
+
+template <class K, class Polyhedron_3>
 void test()
 {
   typedef typename K::Plane_3                                            Plane;
   typedef typename K::Point_3                                            Point;
-  typedef CGAL::Polyhedron_3<K>                                 Polyhedron_3;
-
+ 
   // generates supporting planes of the facets of a cube
   std::vector<Plane> planes;
 
@@ -56,11 +57,11 @@ void test()
                                                      boost::optional<Point>(),
                                                      K());
 
-  assert(P1.size_of_vertices()==8 && P1.size_of_facets()==6);
-  assert(P2.size_of_vertices()==8 && P2.size_of_facets()==6);
-  assert(P3.size_of_vertices()==8 && P3.size_of_facets()==6);
-  assert(P4.size_of_vertices()==8 && P4.size_of_facets()==6);
-  assert(P5.size_of_vertices()==8 && P5.size_of_facets()==6);
+  assert(num_vertices(P1)==8 && num_faces(P1)==6);
+  assert(num_vertices(P2)==8 && num_faces(P2)==6);
+  assert(num_vertices(P3)==8 && num_faces(P3)==6);
+  assert(num_vertices(P4)==8 && num_faces(P4)==6);
+  assert(num_vertices(P5)==8 && num_faces(P5)==6);
 
   using CGAL::Convex_hull_3::internal::point_inside_convex_polyhedron;
   assert(point_inside_convex_polyhedron(P1, Point(0,0,0)));
@@ -72,7 +73,12 @@ void test()
 
 
 int main()
-{
-  test<CGAL::Exact_predicates_inexact_constructions_kernel>();
-  test<CGAL::Exact_predicates_exact_constructions_kernel>();
+{ 
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
+  typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
+
+  test<Epic,CGAL::Polyhedron_3<Epic> >();
+  test<Epec,CGAL::Polyhedron_3<Epec> >();
+  test<Epic,CGAL::Surface_mesh<Epic::Point_3> >();
+  test<Epec,CGAL::Surface_mesh<Epec::Point_3> >();
 }

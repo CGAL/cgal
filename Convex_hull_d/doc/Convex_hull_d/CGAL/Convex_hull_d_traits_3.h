@@ -1,9 +1,9 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgConvexHullD
+\ingroup PkgConvexHullDRef
 
-\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulationsSummary should be used instead.
+\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulations should be used instead.
 
 <A NAME="Index_anchor_0"></A> 
 
@@ -17,8 +17,7 @@ low-dimensional standard kernel model, e.g. `Homogeneous<RT>` or
 
 */
 template< typename R >
-class Convex_hull_d_traits_3 {
-public:
+struct Convex_hull_d_traits_3 {
 
 /// \name Creation 
 /// @{

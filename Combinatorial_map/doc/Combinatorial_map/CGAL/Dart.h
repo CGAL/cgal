@@ -4,31 +4,13 @@ namespace CGAL {
 /*!
 \ingroup PkgCombinatorialMapsClasses
 
-The class `Dart` represents a <I>d</I>D dart.
+The class `Dart` represents a <I>d</I>D dart in a combinatorial map.
 
-\f$ \beta_i\f$ pointers are coded in a array of <I>d+1</I> \ref Dart::Dart_handle "Dart_handle"
-(because we describe also the \f$ \beta_0\f$ link). Attributes are
-associated to each dart by \ref Attribute_handle "Attribute_handle<i>", one for each
-non void <I>i</I>-attribute.
-
-\cgalModels `::Dart`
-
-\tparam d an integer for the dimension of the dart.
-
-\tparam CMap must be a model of the `CombinatorialMap` concept.
-
-\cgalHeading{Complexity}
-
-\sa `CombinatorialMap`
-
-*/
+\deprecated This class is deprecated since CGAL 4.9. Dart is now a type defined internally; users can now only define the information associated with darts. All functions defined in this class are now defined as methods of a combinatorial map taking a `Dart_handle` as first parameter. `CGAL_CMAP_DART_DEPRECATED` can be defined to keep the old behavior.
+  
+*/  
 template< typename d, typename CMap >
-class Dart {
-public:
-
-/// \name Types
-/// @{
-
+struct Dart {
 /*!
 
 */
@@ -51,7 +33,29 @@ using Attribute_handle = CMap::Attribute_handle<i>;
 template <unsigned int i>
 using Attribute_const_handle = CMap::Attribute_const_handle<i>;
 
-/// @}
+/*!
+Returns \f$ \beta_i\f$(`*this`).
+\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dimension</I>.
+*/
+Dart_handle beta(unsigned int i);
+
+/*!
+Returns \f$ \beta_i\f$(`*this`) when the dart is const.
+\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dimension</I>.
+*/
+Dart_const_handle beta(unsigned int i) const;
+
+/*!
+Returns \f$ \beta_i^{-1}\f$(`*this`).
+\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dimension</I>.
+*/
+Dart_handle beta_inv(unsigned int i);
+
+/*!
+Returns \f$ \beta_i^{-1}\f$(`*this`) when the dart is const.
+\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dimension</I>.
+*/
+Dart_const_handle beta_inv(unsigned int i) const;
 
 }; /* end Dart */
 } /* end namespace CGAL */

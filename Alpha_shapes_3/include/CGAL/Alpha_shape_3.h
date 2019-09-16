@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 //                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -23,27 +23,30 @@
 #ifndef CGAL_ALPHA_SHAPE_3_H
 #define CGAL_ALPHA_SHAPE_3_H
 
+#include <CGAL/license/Alpha_shapes_3.h>
+
+#include <CGAL/internal/Lazy_alpha_nt_3.h>
+#include <CGAL/Alpha_shape_cell_base_3.h> // for Alpha_status
+
 #include <CGAL/basic.h>
-
-#include <set>
-#include <map>
-#include <list>
-#include <vector>
-#include <algorithm>
-#include <utility>
-#include <iostream>
-
-#include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/Compact_container.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Object.h>
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Compact_container.h>
-#include <CGAL/Alpha_shape_vertex_base_3.h>
-#include <CGAL/Alpha_shape_cell_base_3.h>
-#include <CGAL/internal/Lazy_alpha_nt_3.h>
-#include <CGAL/iterator.h>
 #ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 #endif
+#include <CGAL/Triangulation_utils_3.h>
+
+#include <boost/type_traits/is_same.hpp>
+
+#include <algorithm>
+#include <iostream>
+#include <map>
+#include <list>
+#include <set>
+#include <utility>
+#include <vector>
 
 //-------------------------------------------------------------------
 namespace CGAL {
@@ -103,16 +106,25 @@ public:
   typedef typename Dt::Geom_traits                  Gt;
   typedef typename Dt::Triangulation_data_structure Tds;
 
+  // The Exact Comparison Tag cannot be used in conjonction with periodic triangulations
+  // because the periodic triangulations' point() function returns a temporary
+  // value while the lazy predicate evaluations that are used when the Exact tag
+  // is set to true rely on a permanent and safe access to the points.
+  CGAL_static_assertion(
+   (boost::is_same<ExactAlphaComparisonTag, Tag_false>::value) ||
+   (boost::is_same<typename Dt::Periodic_tag, Tag_false>::value));
+
   //extra the type used for representing alpha according to ExactAlphaComparisonTag
   typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Type_of_alpha  NT;
   typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Compute_squared_radius_3 Compute_squared_radius_3;
   typedef NT      FT;
   typedef typename Gt::FT Coord_type;
+
   //checks whether tags are correctly set in Vertex and Cell classes
   CGAL_static_assertion( (boost::is_same<NT,typename Dt::Cell::NT>::value) );
   CGAL_static_assertion( (boost::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value) );
 
-  typedef typename Gt::Point_3 Point;
+  typedef typename Dt::Point Point;
   
   typedef typename Dt::Cell_handle Cell_handle;
   typedef typename Dt::Vertex_handle Vertex_handle;
@@ -145,12 +157,6 @@ public:
   using Dt::finite_vertices_end;
   using Dt::finite_cells_begin;
   using Dt::finite_cells_end;
-  using Dt::VERTEX;
-  using Dt::EDGE;
-  using Dt::FACET;
-  using Dt::CELL;
-  using Dt::OUTSIDE_CONVEX_HULL;
-  using Dt::OUTSIDE_AFFINE_HULL;
   using Dt::vertex_triple_index;
   using Dt::is_infinite;
   using Dt::is_Gabriel;
@@ -158,14 +164,21 @@ public:
   using Dt::incident_vertices;
   using Dt::incident_facets;
   using Dt::locate;
+  using Dt::point;
 
-  enum Classification_type {EXTERIOR, 
-			    SINGULAR, 
-			    REGULAR,
-			    INTERIOR};
- 
+  using Dt::VERTEX;
+  using Dt::EDGE;
+  using Dt::FACET;
+  using Dt::CELL;
+  using Dt::OUTSIDE_CONVEX_HULL;
+  using Dt::OUTSIDE_AFFINE_HULL;
+
+  enum Classification_type {EXTERIOR,
+                            SINGULAR,
+                            REGULAR,
+                            INTERIOR};
+
   enum Mode {GENERAL, REGULARIZED};
-
 
   typedef CGAL::Alpha_status< NT >          Alpha_status;
   typedef Compact_container<Alpha_status>   Alpha_status_container;
@@ -741,43 +754,37 @@ public:
   // starting point for searching 
   // takes O(#alpha_shape) time
 
-
   //------------------- GEOMETRIC PRIMITIVES ----------------------------
 private:
   NT squared_radius(const Cell_handle& s) const
-    {
-      return Compute_squared_radius_3()(*this)(
-	  this->point(s,0), this->point(s,1),
-	  this->point(s,2), this->point(s,3));
-    }
+  {
+    return Compute_squared_radius_3()(*this)(point(s,0), point(s,1),
+                                             point(s,2), point(s,3));
+  }
 
   NT squared_radius(const Cell_handle& s, const int& i) const
-    {
-      return Compute_squared_radius_3()(*this) (
-	  this->point(s,vertex_triple_index(i,0)),
-	  this->point(s,vertex_triple_index(i,1)),
-	  this->point(s,vertex_triple_index(i,2)) );
-    }
+  {
+    return Compute_squared_radius_3()(*this)(point(s,vertex_triple_index(i,0)),
+                                             point(s,vertex_triple_index(i,1)),
+                                             point(s,vertex_triple_index(i,2)));
+  }
 
   NT squared_radius(const Facet& f) const {
     return squared_radius(f.first, f.second);
   }
 
-  NT squared_radius(const Cell_handle& s, 
-			    const int& i, const int& j) const
-    {
-      return Compute_squared_radius_3()(*this)(
-	  this->point(s,i), this->point(s,j));
-    }
+  NT squared_radius(const Cell_handle& s, const int& i, const int& j) const
+  {
+    return Compute_squared_radius_3()(*this)(point(s,i), point(s,j));
+  }
 
   NT squared_radius(const Edge& e) const {
-   return  squared_radius(e.first,e.second,e.third);
+   return squared_radius(e.first,e.second,e.third);
   }
 
   NT squared_radius(const Vertex_handle& v) const {
     return  Compute_squared_radius_3()(*this)(v->point()); 
   }
-
 
   //---------------------------------------------------------------------
 
@@ -789,6 +796,7 @@ private:
   //---------------------------------------------------------------------
 public:  
 #ifdef CGAL_USE_GEOMVIEW
+  void show_triangulation_edges(Geomview_stream &gv) const;
   void show_alpha_shape_faces(Geomview_stream &gv) const;
 #endif
 
@@ -971,8 +979,8 @@ public:
    template<class OutputIterator> 
    OutputIterator filtration(OutputIterator it)  const
    {
-      Dispatch_or_drop_output_iterator<cpp11::tuple<CGAL::Object>, cpp11::tuple<OutputIterator> > out(it);
-      return cpp11::template get<0>( filtration_with_alpha_values(out) );
+      Dispatch_or_drop_output_iterator<std::tuple<CGAL::Object>, std::tuple<OutputIterator> > out(it);
+      return std::template get<0>( filtration_with_alpha_values(out) );
    }
 
   private: 
@@ -1723,7 +1731,7 @@ Alpha_shape_3<Dt,EACT>::number_of_solid_components(const NT& alpha) const
   for( cell_it = finite_cells_begin(); cell_it != done; ++cell_it)
     {
       Cell_handle pCell = cell_it;
-      CGAL_triangulation_assertion(pCell != NULL);
+      CGAL_triangulation_assertion(pCell != nullptr);
       
       if (classify(pCell, alpha) == INTERIOR){
 	Data& data = marked_cell_set[pCell];
@@ -1755,7 +1763,7 @@ void Alpha_shape_3<Dt,EACT>::traverse(Cell_handle pCell,
     for (int i=0; i<=3; i++)
       {
 	pNeighbor = pCell->neighbor(i);
-	CGAL_triangulation_assertion(pNeighbor != NULL);
+	CGAL_triangulation_assertion(pNeighbor != nullptr);
 	if (classify(pNeighbor, alpha) == INTERIOR){
 	  Data& data = marked_cell_set[pNeighbor];
 	  if(data == false){
@@ -1799,43 +1807,46 @@ Alpha_shape_3<Dt,EACT>::find_optimal_alpha(size_type nb_components) const
   std::ptrdiff_t half;
 
   while (len > 0)
+  {
+    half = len / 2;
+    middle = first + half;
+
+#ifdef CGAL_DEBUG_ALPHA_SHAPE_3
+    std::cerr << "first : " << *first
+              << " last : "
+              << ((first+len != last) ? *(first+len) : *(last-1))
+              << " mid : " << *middle
+              << " nb comps : " << number_of_solid_components(*middle)
+              << std::endl;
+#endif
+    if (number_of_solid_components(*middle) > nb_components)
     {
-      half = len / 2;
-      middle = first + half;
-
- /*      //#ifdef DEBUG */
-/*       std::cerr << "first : " << *first  */
-/* 		<< " last : "  */
-/* 		<< ((first+len != last) ? *(first+len) : *(last-1)) */
-/* 		<< " mid : " << *middle  */
-/* 		<< " nb comps : " << number_of_solid_components(*middle)  */
-/* 		<< std::endl; */
-/*       //#endif // DEBUG */
-
-      if (number_of_solid_components(*middle) > nb_components)
-	{
-	  first = middle + 1;
-	  len = len - half -1; 
-	} 
-      else // number_of_solid_components(*middle) <= nb_components
-	{
-	  len = half;
-	}
+      first = middle + 1;
+      len = len - half -1;
     }
+    else // number_of_solid_components(*middle) <= nb_components
+    {
+      len = half;
+    }
+  }
 
- /*  std::cerr << "a la fin " << std::endl */
-/* 	    << "first : " << *first  */
-/* 	    << " nb comps : " << number_of_solid_components(*first) */
-/* 	    << std::endl; */
-/*   if ((first+1) < alpha_end())  */
-/*     std::cerr << "first+1 " << *(first+1)  */
-/* 	      << " nb comps : " << number_of_solid_components(*(first+1)) */
-/* 	      << std::endl; */
-/*   std::cerr << std::endl; */
+#ifdef CGAL_DEBUG_ALPHA_SHAPE_3
+  std::cerr << "In the end: " << std::endl
+            << "first : " << *first
+            << " nb comps : " << number_of_solid_components(*first)
+            << std::endl;
+  if ((first+1) < alpha_end())
+    std::cerr << "first+1 " << *(first+1)
+              << " nb comps : " << number_of_solid_components(*(first+1))
+              << std::endl;
+  std::cerr << std::endl;
+#endif
 
-  if (number_of_solid_components(*first) <= nb_components ) return first;
-  else return first+1;
-}  	
+  if (number_of_solid_components(*first) <= nb_components )
+    return first;
+  else
+    return first+1;
+}
 
 //----------------------------------------------------------------------
 

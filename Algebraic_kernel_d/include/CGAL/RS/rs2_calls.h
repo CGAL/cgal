@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
@@ -25,6 +26,8 @@
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Gmpfi.h>
 #include <CGAL/Polynomial.h>
+#include <CGAL/tss.h>
+
 #include <rs_exports.h>
 
 #ifdef CGAL_RS_OLD_INCLUDES
@@ -33,7 +36,7 @@
 #define CGALRS_PTR(a)   void *a
 #endif
 
-// RS3 does not work with MPFR 3.1.3 to 3.1.5. In case RS3 is enabled and
+// RS3 does not work with MPFR 3.1.3 to 3.1.6. In case RS3 is enabled and
 // the version of MPFR is one of those buggy versions, abort the compilation
 // and instruct the user to update MPFR or don't use RS3.
 #ifdef CGAL_USE_RS3
@@ -41,8 +44,8 @@
 BOOST_STATIC_ASSERT_MSG(
         MPFR_VERSION_MAJOR!=3 ||
         MPFR_VERSION_MINOR!=1 ||
-        MPFR_VERSION_PATCHLEVEL<3 || MPFR_VERSION_PATCHLEVEL>5,
-        "RS3 does not work with MPFR versions 3.1.3 to 3.1.5. "#
+        MPFR_VERSION_PATCHLEVEL<3 || MPFR_VERSION_PATCHLEVEL>6,
+        "RS3 does not work with MPFR versions 3.1.3 to 3.1.6. "
         "Please update MPFR or disable RS3.");
 #endif // CGAL_USE_RS3
 
@@ -52,7 +55,7 @@ namespace RS2{
 struct RS2_calls{
 
         static void init_solver(){
-                static bool first=true;
+                CGAL_STATIC_THREAD_LOCAL_VARIABLE(bool, first,true);
                 if(first){
                         first=false;
                         rs_init_rs();

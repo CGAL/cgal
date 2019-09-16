@@ -12,12 +12,20 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Efi Fogel    <efif@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
 //                 (base on old version by: Iddo Hanniel)
 
 #ifndef CGAL_ARR_NON_CACHING_SEGMENT_TRAITS_H
 #define CGAL_ARR_NON_CACHING_SEGMENT_TRAITS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file The non-caching segment traits-class for the arrangement package.
  * This traits class handles general segments. It is a model of the
@@ -233,7 +241,7 @@ public:
       // Chack if the intersection is a point:
       const Point_2             *ip;
 
-      if ((ip = object_cast<Point_2> (&res)) != NULL)
+      if ((ip = object_cast<Point_2> (&res)) != nullptr)
       {
         // Create a pair representing the point with its multiplicity,
         // which is always 1 for line segments for all practical purposes.
@@ -249,7 +257,7 @@ public:
         // The intersection is a segment.
 
         const X_monotone_curve_2 *ov = object_cast<X_monotone_curve_2>(&res);
-        CGAL_assertion (ov != NULL);
+        CGAL_assertion (ov != nullptr);
 
         Self self;
         Comparison_result cmp1 = self.compare_endpoints_xy_2_object()(cv1);
@@ -425,5 +433,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

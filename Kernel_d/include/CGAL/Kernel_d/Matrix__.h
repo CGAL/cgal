@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -164,9 +165,8 @@ vector_pointer* v_; int dm_,dn_;
 
 NT& elem(int i, int j) const { return v_[i]->v_[j]; }
 
-typedef typename AL_::template rebind<vector_pointer>::other 
-        allocator_type;
-
+  typedef typename std::allocator_traits<AL_>:: template rebind_alloc<vector_pointer> allocator_type;
+  
 allocator_type& allocator()
 {
   CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(allocator_type, MM);

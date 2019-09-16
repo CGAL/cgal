@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Kumar Snehasish <kumar.snehasish@gmail.com>
@@ -21,9 +22,10 @@
 //
 #include "MainWindow.h"
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/import_from_polyhedron_3.h>
-#include <CGAL/import_from_triangulation_3.h>
+#include <CGAL/Polyhedron_3_to_lcc.h>
+#include <CGAL/Triangulation_3_to_lcc.h>
 #include <QSettings>
+#include <QHeaderView>
 #include <CGAL/Timer.h>
 #include <CGAL/ipower.h>
 #include "import_moka.h"
@@ -37,7 +39,7 @@ void subdivide_lcc_pqq (LCC & m);
 
 #define DELAY_STATUSMSG 1500
 
-MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
+MainWindow::MainWindow (QWidget * parent) : CGAL::Qt::DemosMainWindow (parent),
   nbcube      (0),
   dialogmesh  (this),
   dialogmenger(this),
@@ -46,7 +48,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 {
   setupUi (this);
   scene.lcc = new LCC;
-  
+
   volumeListDock = new QDockWidget(QString(tr("Volume List")),this);
   volumeListDock->setAllowedAreas(Qt::RightDockWidgetArea |
                                   Qt::LeftDockWidgetArea);
@@ -67,7 +69,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   volumeList->setColumnWidth(2,35);*/
 
   volumeList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
- 
+
   volumeList->setSelectionMode(QAbstractItemView::NoSelection);
   //volumeList->setSelectionBehavior(QAbstractItemView::SelectRows);
   volumeListDock->setWidget(volumeList);
@@ -76,7 +78,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 
   QObject::connect(&dialogmesh, SIGNAL(accepted()),
                    this, SLOT(onCreateMeshOk()));
-  this->viewer->setScene(&scene);
+  this->viewer->setScene(&scene, false);
 
   connect_actions ();
   this->addAboutDemo (":/cgal/help/about_Linear_cell_complex_3.html");
@@ -153,7 +155,6 @@ void MainWindow::connectVolumeListHandlers()
 void MainWindow::update_operations_entries(bool show)
 {
   actionImportOFF->setEnabled(show);
-  actionAddOFF->setEnabled(show);
   actionImport3DTDS->setEnabled(show);
   actionCompute_Voronoi_3D->setEnabled(show);
   actionClear->setEnabled(show);
@@ -211,8 +212,7 @@ void MainWindow::clear_all()
 void MainWindow::on_new_volume(Dart_handle adart)
 {
   CGAL_assertion( scene.lcc->attribute<3>(adart)==LCC::null_handle);
-  CGAL::Set_i_attribute_functor<LCC, 3>::
-      run(scene.lcc, adart, scene.lcc->create_attribute<3>());
+  scene.lcc->set_attribute<3>(adart, scene.lcc->create_attribute<3>());
   update_volume_list_add(scene.lcc->attribute<3>(adart));
 }
 
@@ -247,7 +247,7 @@ void MainWindow::on_actionLoad_triggered ()
 
   if (!fileName.isEmpty ())
   {
-    load(fileName, true);
+    load(fileName, false);
   }
 }
 
@@ -260,7 +260,7 @@ void MainWindow::on_actionImportOFF_triggered ()
 
   if (!fileName.isEmpty ())
   {
-    load_off (fileName, true);
+    load_off (fileName, false);
   }
 }
 
@@ -273,7 +273,7 @@ void MainWindow::on_actionImportMoka_triggered()
 
   if (!fileName.isEmpty ())
   {
-    load_moka(fileName, true);
+    load_moka(fileName, false);
   }
 }
 
@@ -286,22 +286,9 @@ void MainWindow::on_actionImport3DTDS_triggered ()
 
   if (!fileName.isEmpty ())
   {
-    load_3DTDS (fileName, true);
+    load_3DTDS (fileName, false);
     statusBar ()->showMessage (QString ("Import 3DTDS file") + fileName,
                                DELAY_STATUSMSG);
-  }
-}
-
-void MainWindow::on_actionAddOFF_triggered()
-{
-  QString fileName = QFileDialog::getOpenFileName (this,
-                                                   tr ("Add OFF"),
-                                                   "./off",
-                                                   tr ("off files (*.off)"));
-
-  if (!fileName.isEmpty ())
-  {
-    load_off (fileName, false);
   }
 }
 
@@ -345,6 +332,7 @@ void MainWindow::load(const QString & fileName, bool clear)
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 
+  init_all_new_volumes();
   recreate_whole_volume_list();
 
   this->addToRecentFiles(fileName);
@@ -467,7 +455,7 @@ void MainWindow::load_moka(const QString & fileName, bool clear)
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
-  std::cout<<"Time to load off "<<qPrintable(fileName)<<": "
+  std::cout<<"Time to load moka "<<qPrintable(fileName)<<": "
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 
@@ -478,10 +466,10 @@ void MainWindow::load_moka(const QString & fileName, bool clear)
   QApplication::restoreOverrideCursor ();
 
   if (clear)
-    statusBar ()->showMessage (QString ("Load off file") + fileName,
+    statusBar ()->showMessage (QString ("Load moka file") + fileName,
                                DELAY_STATUSMSG);
   else
-    statusBar ()->showMessage (QString ("Add off file") + fileName,
+    statusBar ()->showMessage (QString ("Add moka file") + fileName,
                                DELAY_STATUSMSG);
   Q_EMIT (sceneChanged ());
 }
@@ -902,6 +890,48 @@ void MainWindow::on_actionUnsew3_all_triggered()
     statusBar()->showMessage (QString ("No dart 3-unsewn"), DELAY_STATUSMSG);
 }
 
+void MainWindow::on_actionInsideOut_triggered()
+{
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
+  LCC::size_type mymark=scene.lcc->get_new_mark();
+
+  for (LCC::Attribute_range<3>::type::iterator
+         it=scene.lcc->attributes<3>().begin(),
+         itend=scene.lcc->attributes<3>().end(); it!=itend; )
+  {
+    LCC::Attribute_handle<3>::type cur = it++;
+    if( !scene.lcc->is_marked(scene.lcc->get_attribute<3>(cur).dart(), mymark) &&
+        scene.lcc->get_attribute<3>(cur).info().is_filled_and_visible() )
+    {
+      scene.lcc->reverse_orientation_connected_component
+        (scene.lcc->get_attribute<3>(cur).dart(), mymark);
+    }
+  }
+
+  // unmark all the darts by iterating on all the darts
+  // but we cannot do really better
+  scene.lcc->free_mark(mymark);
+
+  QApplication::restoreOverrideCursor ();
+  Q_EMIT( sceneChanged());
+
+  statusBar()->showMessage
+      (QString("Orientation of visible and filled volume(s) reversed"),
+       DELAY_STATUSMSG);
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to reverse the orientation of all filled volumes: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+}
+
 void MainWindow::on_actionRemove_filled_volumes_triggered()
 {
   QApplication::setOverrideCursor (Qt::WaitCursor);
@@ -977,9 +1007,9 @@ double compute_angle3d(const Vector_3& v1, const Vector_3& v2)
   double a = CGAL::to_double( (v1*v2) /
                               ( sqrt(v1.squared_length()) * sqrt(v2.squared_length()) ) ) ;
 
-  if (a < -1.0) return acos(-1.0)/M_PI*180.0;
-  else if (a > 1.0) return acos(1.0)/M_PI*180.0;
-  else return acos(a)/M_PI*180.0;
+  if (a < -1.0) return acos(-1.0)/CGAL_PI*180.0;
+  else if (a > 1.0) return acos(1.0)/CGAL_PI*180.0;
+  else return acos(a)/CGAL_PI*180.0;
 }
 
 void MainWindow::on_actionMerge_coplanar_faces_triggered()
@@ -1206,7 +1236,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
    }
    if ( face_internal!=NULL )
      face_queue.push(face_internal);
-   
+
    while(! face_queue.empty() )
    {
      CDT::Face_handle fh = face_queue.front();
@@ -1224,7 +1254,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
        }
      }
    }
-   
+
    for( CDT::Finite_edges_iterator eit = cdt.finite_edges_begin(),
           eitend = cdt.finite_edges_end(); eit != eitend; ++eit)
    {
@@ -1263,7 +1293,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
        const CDT::Vertex_handle va = fh->vertex(cdt. cw(index));
        const CDT::Vertex_handle vb = fh->vertex(cdt.ccw(index));
        const CDT::Vertex_handle vc = fh->vertex(index);
-       
+
        Dart_handle dd1 = NULL;
        for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(va->info().dh).begin());
             dd1==NULL && it.cont(); ++it)
@@ -1271,7 +1301,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
          if (lcc.point(lcc.beta<1>(it))==vc->point())
            dd1=it;
        }
-       
+
        Dart_handle dd2 = NULL;
        for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(vb->info().dh).begin());
             dd2==NULL && it.cont(); ++it)
@@ -1279,9 +1309,9 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
          if (lcc.point(lcc.beta<0>(it))==vc->point())
            dd2=it;
        }
-       
+
        //       assert(((lcc.beta<0,0>(dd1)==dd2) || lcc.beta<1,1>(dd1)==dd2));
-       
+
        Dart_handle ndart=lcc.insert_cell_1_in_cell_2(dd1, dd2);
        va->info().dh=lcc.beta<2>(ndart);
 
@@ -2750,10 +2780,9 @@ void MainWindow::sierpinski_carpet_copy_attributes_and_embed_vertex
     // We copy all the attributes except for dim=0
     LCC::Helper::Foreach_enabled_attributes_except
       <CGAL::internal::Group_attribute_functor_of_dart<LCC>, 0>::
-      run(scene.lcc,sierpinskiCarpetSurfaces[0],it);
+      run(*(scene.lcc),sierpinskiCarpetSurfaces[0],it);
     // We initialise the 0-atttrib to ah
-    CGAL::internal::Set_i_attribute_of_dart_functor<LCC, 0>::
-        run(scene.lcc, it, ah);
+    scene.lcc->set_dart_attribute<0>(it, ah);
   }
 }
 
@@ -3155,14 +3184,13 @@ void MainWindow::onSierpinskiTriangleInc()
     for(std::size_t i = nbfacesinit; i < sierpinskiTriangleSurfaces.size(); i++)
     {
       LCC::Attribute_handle<3>::type ah = (scene.lcc)->create_attribute<3>();
-        CGAL::Set_i_attribute_functor<LCC, 3>::
-            run(scene.lcc, sierpinskiTriangleSurfaces[i], ah);
-        scene.lcc->info<3>(sierpinskiTriangleSurfaces[i]).color()=
-          (CGAL::Color(myrandom.get_int(0,256),
-                       myrandom.get_int(0,256),
-                       myrandom.get_int(0,256)));
+      scene.lcc->set_attribute<3>(sierpinskiTriangleSurfaces[i], ah);
+      scene.lcc->info<3>(sierpinskiTriangleSurfaces[i]).color()=
+        (CGAL::Color(myrandom.get_int(0,256),
+                     myrandom.get_int(0,256),
+                     myrandom.get_int(0,256)));
 
-        update_volume_list_add(scene.lcc->attribute<3>(sierpinskiTriangleSurfaces[i]));
+      update_volume_list_add(scene.lcc->attribute<3>(sierpinskiTriangleSurfaces[i]));
     }
 
     scene.lcc->correct_invalid_attributes();

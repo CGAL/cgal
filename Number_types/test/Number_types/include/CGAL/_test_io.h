@@ -13,13 +13,14 @@
 // 
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_TEST_IO_H
 #define CGAL_TEST_IO_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #ifdef NDEBUG
 #  undef NDEBUG
 #  include <cassert>

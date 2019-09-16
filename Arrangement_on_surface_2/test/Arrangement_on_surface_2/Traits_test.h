@@ -1,7 +1,6 @@
 #ifndef CGAL_TRAITS_TEST_H
 #define CGAL_TRAITS_TEST_H
 
-#include <CGAL/basic.h>
 
 #include <iostream>
 #include <fstream>
@@ -24,6 +23,7 @@
 template <typename Geom_traits_T>
 class Traits_test : public Traits_base_test<Geom_traits_T> {
 private:
+  Traits_test<Geom_traits_T>&  operator=(const Traits_test<Geom_traits_T>&);
   typedef Geom_traits_T                                 Traits;
   typedef Traits_base_test<Traits>                      Base;
   typedef typename Base::Enum_type                      Enum_type;
@@ -1456,7 +1456,7 @@ compare_x_at_limit_wrapper_imp(std::istringstream& str_stream,
   std::cout << "Test: compare_x_at_limit( ";
 
   CGAL::Comparison_result real_answer;
-  unsigned int id1, id2;
+  unsigned int id1 = 0, id2 = 0 ;
   // first argument must be a number (either a point or a xcurve)
   str_stream >> id1;
   std::pair<Enum_type, unsigned int> next_input =

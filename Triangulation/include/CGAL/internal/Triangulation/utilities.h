@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)    : Samuel Hornus
 
 #ifndef CGAL_INTERNAL_TRIANGULATION_UTILITIES_H
 #define CGAL_INTERNAL_TRIANGULATION_UTILITIES_H
+
+#include <CGAL/license/Triangulation.h>
+
 
 #include <CGAL/basic.h>
 
@@ -98,7 +102,7 @@ public:
 template< class T >
 struct Compare_points_for_perturbation
 {
-    typedef typename T::Point_d Point;
+    typedef typename T::Geom_traits::Point_d Point;
 
     const T & t_;
 
@@ -119,8 +123,8 @@ public:
 template< class T >
 struct Point_from_pointer
 {
-    typedef const typename T::Point_d *   argument_type;
-    typedef const typename T::Point_d     result_type;
+    typedef const typename T::Geom_traits::Point_d *   argument_type;
+    typedef const typename T::Geom_traits::Point_d     result_type;
     result_type & operator()(argument_type & x) const 
     {
         return (*x);

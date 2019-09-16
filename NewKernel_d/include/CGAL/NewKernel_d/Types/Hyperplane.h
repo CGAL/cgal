@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Marc Glisse
 
@@ -22,8 +23,8 @@
 #include <CGAL/enum.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/NewKernel_d/store_kernel.h>
-#include <boost/iterator/transform_iterator.hpp>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 namespace CGAL {
 template <class R_> class Hyperplane {
 	typedef typename Get_type<R_, FT_tag>::type FT_;
@@ -32,6 +33,7 @@ template <class R_> class Hyperplane {
 	FT_ s_;
 
 	public:
+	Hyperplane(){}
 	Hyperplane(Vector_ const&v, FT_ const&s): v_(v), s_(s) {}
 	// TODO: Add a piecewise constructor?
 
@@ -61,7 +63,15 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
   // Not really needed
   result_type operator()()const{
     typename Get_functor<R_, Construct_ttag<Vector_tag> >::type cv(this->kernel());
+
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(push)
+#  pragma warning(disable: 4309)
+#endif    
     return result_type(cv(),0);
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(pop)
+#endif
   }
 
   template <class Iter>

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Mariette Yvinec
@@ -21,9 +22,14 @@
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+#include <CGAL/disable_warnings.h>
+
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Polyline_constraint_hierarchy_2.h>
+#include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <boost/tuple/tuple.hpp>
 
 #include <CGAL/Default.h>
@@ -37,11 +43,6 @@
 #include <boost/container/flat_set.hpp>
 #endif
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4355)
-//warning C4355: 'this' : used in base member initializer list
-#endif
 
 namespace CGAL {
 
@@ -133,6 +134,14 @@ public:
   typedef Constrained_triangulation_plus_2<Tr_> Self;
   typedef Tr                                   Base;
 
+  
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Triangulation::vertices_begin;
+  using Triangulation::vertices_end;
+  using Triangulation::is_infinite;
+  using Triangulation::number_of_vertices;
+#endif
+
   typedef typename Triangulation::Edge             Edge;
   typedef typename Triangulation::Vertex           Vertex;
   typedef typename Triangulation::Vertex_handle    Vertex_handle;
@@ -152,32 +161,45 @@ public:
   typedef typename Triangulation::List_faces       List_faces;
   typedef typename Triangulation::List_vertices    List_vertices;
   typedef typename Triangulation::List_constraints List_constraints;
+  typedef typename Triangulation::Constrained_edges_iterator Constrained_edges_iterator;
 
   typedef Pct2_vertex_handle_less_xy<Self>         Vh_less_xy;
   typedef Polyline_constraint_hierarchy_2<Vertex_handle, Vh_less_xy, Point>
                                                    Constraint_hierarchy;
 public:
-  typedef Tag_true                                Constraint_hierarchy_tag;
+  // Tag to mark the presence of a hierarchy of constraints
+  typedef Tag_true                                 Constraint_hierarchy_tag;
+
+  //Tag to distinguish Delaunay from regular triangulations
+  typedef Tag_false                                Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                                Periodic_tag;
 
   // for user interface with the constraint hierarchy
-
   typedef typename Constraint_hierarchy::Vertex_it 
                                             Vertices_in_constraint_iterator;
+
+  typedef Iterator_range<Vertices_in_constraint_iterator> Vertices_in_constraint;
   
   typedef typename Constraint_hierarchy::Point_it
                                             Points_in_constraint_iterator;
-
-  typedef typename Constraint_hierarchy::Context      Context;
-  typedef typename Constraint_hierarchy::Context_iterator  Context_iterator;
+  typedef Iterator_range<Points_in_constraint_iterator> Points_in_constraint;
+  
+  typedef typename Constraint_hierarchy::Context          Context;
+  typedef typename Constraint_hierarchy::Context_iterator Context_iterator;
+  typedef Iterator_range<Context_iterator>                Contexts;
+  
   typedef typename Constraint_hierarchy::C_iterator   Constraint_iterator;
+  typedef Iterator_range<Constraint_iterator> Constraints;
+  
   typedef typename Constraint_hierarchy::Subconstraint_iterator  Subconstraint_iterator;
+  typedef Iterator_range<Subconstraint_iterator> Subconstraints;
+  
   typedef typename Constraint_hierarchy::Constraint_id Constraint_id;   
                                             
   typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
   
-  //for backward compatibility
-  typedef Vertices_in_constraint_iterator     Vertices_in_constraint;
-
   using Triangulation::geom_traits;
   using Triangulation::cw;
   using Triangulation::ccw;
@@ -261,11 +283,11 @@ public:
   {
     // protects against inserting a zero length constraint
     if(va == vb){
-    return Constraint_id(NULL);
+      return Constraint_id(nullptr);
     }
     // protects against inserting twice the same constraint
-    Constraint_id cid = hierarchy.insert_constraint(va, vb);
-    if (va != vb && (cid != Constraint_id(NULL)) )  insert_subconstraint(va,vb); 
+    Constraint_id cid = hierarchy.insert_constraint_old_API(va, vb);
+    if (va != vb && (cid != Constraint_id(nullptr)) )  insert_subconstraint(va,vb); 
 
     return cid;
   }
@@ -525,7 +547,7 @@ public:
     }
     int n = vertices.size();
     if(n == 1){
-      return NULL;
+      return nullptr;
     }
     Constraint_id ca = hierarchy.insert_constraint(vertices[0],vertices[1]);
     insert_subconstraint(vertices[0],vertices[1], std::back_inserter(fc)); 
@@ -570,7 +592,7 @@ private:
 
     std::size_t n = vertices.size();
     if(n == 1){
-      return NULL;
+      return nullptr;
     }
     CGAL_assertion(n >= 2);
     
@@ -590,18 +612,70 @@ private:
 
     return ca;
   }
+  
 public:
+  
+  void
+  file_output(std::ostream& os) const
+  {
+    os << static_cast<const Tr&>(*this);
+    Unique_hash_map<Vertex_handle,int> V;
+    int inum = 0;
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end() ; ++vit){
+      if(! is_infinite(vit)){
+        V[vit] = inum++;
+      }
+    }
+
+    for(Constraint_iterator cit = constraints_begin(); cit != constraints_end(); ++cit){
+      os << (*cit).second->all_size();
+      for(Vertex_handle vh : vertices_in_constraint(*cit)){
+         os << " " << V[vh];
+       }
+       os << std::endl;
+    }
+  }
+
+
+  void file_input(std::istream& is)
+  {
+    
+    is >> static_cast<Tr&>(*this);
+    
+    std::vector<Vertex_handle> V;
+    V.reserve(number_of_vertices());
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end() ; ++vit){
+      if(! is_infinite(vit)){
+        V.push_back(vit);
+      }
+    }
+    Constraint_id cid;
+    int n, i0, i1;
+    while(is >> n){
+      is >> i0 >> i1;
+      cid = insert_constraint(V[i0],V[i1]);
+    
+      for(int i = 2; i < n; i++){
+        i0 = i1;
+        is >> i1;
+        Constraint_id cid2 = insert_constraint(V[i0],V[i1]);
+        cid = concatenate(cid, cid2);
+      }
+    }
+  }
+
+  
   template <class OutputIterator>
   typename Constrained_triangulation_plus_2<Tr>::Constraint_id
   insert_constraint(Vertex_handle va, Vertex_handle vb, OutputIterator out)
   {
     // protects against inserting a zero length constraint
     if(va == vb){
-    return Constraint_id(NULL);
+    return Constraint_id(nullptr);
     }
     // protects against inserting twice the same constraint
     Constraint_id cid = hierarchy.insert_constraint(va, vb);
-    if (va != vb && (cid != NULL) )  insert_subconstraint(va,vb,out); 
+    if (va != vb && (cid != nullptr) )  insert_subconstraint(va,vb,out); 
   
     for(Vertices_in_constraint_iterator vcit = vertices_in_constraint_begin(cid);
 	vcit != vertices_in_constraint_end(cid);
@@ -643,9 +717,8 @@ public:
       if(! is_subconstraint(*it, *succ)){ // this checks whether other constraints pass
 	Face_handle fh;
 	int i;
-        CGAL_triangulation_assertion_code(bool b =)
-          Triangulation::is_edge(*it, *succ, fh, i);
-	CGAL_triangulation_assertion(b);
+	bool b = Triangulation::is_edge(*it, *succ, fh, i);
+	CGAL_assume(b);
 	Triangulation::remove_constrained_edge(fh,i, out); // this does also flipping if necessary.
       }
     }
@@ -655,11 +728,7 @@ public:
     remove_constraint(cid, Emptyset_iterator());
   }
 
-  void remove_constraint(Vertex_handle va, Vertex_handle vb)
-  {
-    hierarchy.remove_constraint(va,vb);
-  }
-
+ 
   void simplify(Vertices_in_constraint_iterator v)
   {
     Vertices_in_constraint_iterator u = boost::prior(v);
@@ -701,8 +770,19 @@ public:
   // Query of the constraint hierarchy
   Constraint_iterator constraints_begin() const;
   Constraint_iterator constraints_end()   const;
+  Constraints constraints() const
+  {
+    return Constraints(constraints_begin(),constraints_end());
+  }
+  
   Subconstraint_iterator subconstraints_begin() const;
   Subconstraint_iterator subconstraints_end() const;
+
+  Subconstraints subconstraints() const
+  {
+    return Subconstraints(subconstraints_begin(),subconstraints_end());
+  }
+  
   Context   context(Vertex_handle va, Vertex_handle vb); //AF: const; 
 
   bool is_subconstraint(Vertex_handle va, 
@@ -714,13 +794,26 @@ public:
   Context_iterator   contexts_end(Vertex_handle va, 
 				  Vertex_handle vb) const;
 
+  Contexts contexts(Vertex_handle va, Vertex_handle vb) const
+  {
+    return Contexts(contexts_begin(va,vb),contexts_end(va,vb));
+  }
+  
   Vertices_in_constraint_iterator vertices_in_constraint_begin(Constraint_id cid) const;
-  Vertices_in_constraint_iterator vertices_in_constraint_end(Constraint_id cid) const ;  
-  Vertices_in_constraint_iterator vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb) const;
-  Vertices_in_constraint_iterator vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const ;
+  Vertices_in_constraint_iterator vertices_in_constraint_end(Constraint_id cid) const;
+  
+  Vertices_in_constraint vertices_in_constraint(Constraint_id cid) const
+  {
+    return Vertices_in_constraint(vertices_in_constraint_begin(cid), vertices_in_constraint_end(cid));
+  }
+  
   Points_in_constraint_iterator points_in_constraint_begin(Constraint_id cid) const;
   Points_in_constraint_iterator points_in_constraint_end(Constraint_id cid) const ;
 
+  Points_in_constraint points_in_constraint(Constraint_id cid) const
+  {
+    return Points_in_constraint(points_in_constraint_begin(cid), points_in_constraint_end(cid));
+  }
 
   size_type number_of_constraints() {
     return static_cast<size_type> (hierarchy.number_of_constraints());}
@@ -770,82 +863,87 @@ insert_subconstraint(Vertex_handle vaa,
   // insert the subconstraint [vaa vbb] 
   // it will eventually be splitted into several subconstraints
 {
-  CGAL_triangulation_precondition( vaa != vbb);
-  Vertex_handle vi;
+  std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
+  stack.push(std::make_pair(vaa,vbb));
 
-  Face_handle fr;
-  int i;
-  if(this->includes_edge(vaa,vbb,vi,fr,i)) {
-    this->mark_constraint(fr,i);
-    if (vi != vbb)  {
-      hierarchy.split_constraint(vaa,vbb,vi);
-      insert_subconstraint(vi,vbb, out);
+  while(! stack.empty()){
+    boost::tie(vaa,vbb) = stack.top();
+    stack.pop();
+    CGAL_triangulation_precondition( vaa != vbb);
+  
+    Vertex_handle vi;
+
+    Face_handle fr;
+    int i;
+    if(this->includes_edge(vaa,vbb,vi,fr,i)) {
+      this->mark_constraint(fr,i);
+      if (vi != vbb)  {
+        hierarchy.split_constraint(vaa,vbb,vi);
+        stack.push(std::make_pair(vi,vbb));
+      }
+      continue;
     }
-    return;
-  }
       
-  List_faces intersected_faces;
-  List_edges conflict_boundary_ab, conflict_boundary_ba;
+    List_faces intersected_faces;
+    List_edges conflict_boundary_ab, conflict_boundary_ba;
      
-  bool intersection  = this->find_intersected_faces( 
-    vaa, vbb,
-    intersected_faces,
-    conflict_boundary_ab,
-    conflict_boundary_ba,
-    vi);
+    bool intersection  = this->find_intersected_faces( 
+                                                      vaa, vbb,
+                                                      intersected_faces,
+                                                      conflict_boundary_ab,
+                                                      conflict_boundary_ba,
+                                                      vi);
 
-  if ( intersection) {
-    if (vi != vaa && vi != vbb) {
-      hierarchy.split_constraint(vaa,vbb,vi);
-      insert_subconstraint(vaa,vi, out); 
-      insert_subconstraint(vi,vbb, out); 
-     }
-    else insert_subconstraint(vaa,vbb,out);  
+    if ( intersection) {
+      if (vi != vaa && vi != vbb) {
+        hierarchy.split_constraint(vaa,vbb,vi);
+        stack.push(std::make_pair(vaa,vi)); 
+        stack.push(std::make_pair(vi,vbb)); 
+      }
+      else stack.push(std::make_pair(vaa,vbb));  
 
-    
-    return;
-  }
+      continue;
+    }
 
 
-  //no intersection
+    //no intersection
 
-  List_edges edges(conflict_boundary_ab);
-  std::copy(conflict_boundary_ba.begin(), conflict_boundary_ba.end(), std::back_inserter(edges));
+    List_edges edges(conflict_boundary_ab);
+    std::copy(conflict_boundary_ba.begin(), conflict_boundary_ba.end(), std::back_inserter(edges));
 
-  // edges may contain mirror edges. They no longer exist after triangulate_hole
-  // so we have to remove them before calling get_bounded_faces
-  if(! edges.empty()){
+    // edges may contain mirror edges. They no longer exist after triangulate_hole
+    // so we have to remove them before calling get_bounded_faces
+    if(! edges.empty()){
 
 #if defined(BOOST_MSVC) && (BOOST_VERSION == 105500)
-    std::set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
+      std::set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
 #else
-    boost::container::flat_set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
+      boost::container::flat_set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
 #endif
-    typename List_edges::iterator it2;
-    for(typename List_edges::iterator it = edges.begin(); it!= edges.end();){
-      if(faces.find(it->first) != faces.end()){
-        typename List_edges::iterator it2 = it;
-        ++it;
-        edges.erase(it2);
-      }else {
-        ++it;
+      for(typename List_edges::iterator it = edges.begin(); it!= edges.end();){
+        if(faces.find(it->first) != faces.end()){
+          typename List_edges::iterator it2 = it;
+          ++it;
+          edges.erase(it2);
+        }else {
+          ++it;
+        }
       }
     }
+
+    this->triangulate_hole(intersected_faces,
+                           conflict_boundary_ab,
+                           conflict_boundary_ba);
+
+    this->get_bounded_faces(edges.begin(),
+                            edges.end(),
+                            out);
+
+    if (vi != vbb) {
+      hierarchy.split_constraint(vaa,vbb,vi);
+      stack.push(std::make_pair(vi,vbb)); 
+    }
   }
-
-  this->triangulate_hole(intersected_faces,
-                         conflict_boundary_ab,
-                         conflict_boundary_ba);
-
-  this->get_bounded_faces(edges.begin(),
-                          edges.end(),
-                          out);
-
-  if (vi != vbb) {
-    hierarchy.split_constraint(vaa,vbb,vi);
-    insert_subconstraint(vi,vbb, out); 
-  }
-  return;
 }
 
 
@@ -863,6 +961,9 @@ public:
     std::ptrdiff_t insert(InputIterator first, InputIterator last) 
 #endif
   {
+#if defined(_MSC_VER)
+    CGAL_USE(i);
+#endif
     size_type n = this->number_of_vertices();
 
     std::vector<Point> points (first, last);
@@ -1085,6 +1186,15 @@ operator<<(std::ostream& os,
   return os ;
 }
 
+template <class Tr>
+std::istream &
+operator>>(std::istream& is, 
+	   Constrained_triangulation_plus_2<Tr> &ct)
+{
+  ct.file_input(is);
+  return is ;
+}
+
 // Constraint Hierarchy Queries
 
 template <class Tr>
@@ -1192,23 +1302,6 @@ vertices_in_constraint_end(Constraint_id cid) const
 {
   return  hierarchy.vertices_in_constraint_end(cid);
 }
-template <class Tr>
-inline
-typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator
-Constrained_triangulation_plus_2<Tr>::
-vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb) const
-{
-  return  hierarchy.vertices_in_constraint_begin(va,vb);
-}
-
-template <class Tr>
-inline
-typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator
-Constrained_triangulation_plus_2<Tr>::
-vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const
-{
-  return  hierarchy.vertices_in_constraint_end(va,vb);
-}
 
 template <class Tr>
 inline
@@ -1230,7 +1323,6 @@ points_in_constraint_end(Constraint_id cid) const
 
 } //namespace CGAL
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
+
 #endif //CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H

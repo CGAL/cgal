@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 // Author(s)     : Michael Seel
 
@@ -163,7 +164,6 @@ $3$-dimensional space.}*/
   if (w < 0) invert_rep();
 }
 
-PointHd(const PointHd<RT,LA>& p) : Base(p) {}
 ~PointHd() {}     
 
 /*{\Moperations 4 3}*/

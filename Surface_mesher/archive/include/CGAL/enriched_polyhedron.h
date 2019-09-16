@@ -16,6 +16,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Pierre Alliez
 
@@ -33,8 +34,6 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/HalfedgeDS_default.h>
 #include <list>
-
-#include <CGAL/gl.h>
 
 // a refined facet with a normal and a tag
 template <class Refs, class T, class P, class Norm>
@@ -68,7 +67,7 @@ public:
 };
 
 // a refined halfedge with a general tag and 
-// a binary tag to indicate wether it belongs 
+// a binary tag to indicate whether it belongs 
 // to the control mesh or not
 template <class Refs, class Tprev, class Tvertex, class Tface, class Norm>
 class Enriched_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
@@ -381,7 +380,7 @@ public :
     return CGAL::circulator_size(pVertex->vertex_begin());
   }
 
-  // check wether a vertex is on a boundary or not
+  // check whether a vertex is on a boundary or not
   static bool is_border(Vertex_handle pVertex)
   {
     Halfedge_around_vertex_circulator pHalfEdge = pVertex->vertex_begin();
@@ -489,99 +488,6 @@ public :
       degree++;
     }
     center = CGAL::ORIGIN + (vec/FT(degree));
-  }
-
-
-  void gl_draw_direct_triangles(bool smooth_shading,
-                                bool use_normals,
-                                bool inverse_normals = false)
-  {
-    // draw triangles
-    ::glBegin(GL_TRIANGLES);
-    Facet_iterator pFacet = facets_begin();
-    for(;pFacet != facets_end();pFacet++)
-      gl_draw_facet(pFacet,smooth_shading,use_normals,inverse_normals);
-    ::glEnd(); // end polygon assembly
-  }
-
-
-  void gl_draw_direct(bool smooth_shading,
-                      bool use_normals,
-                      bool inverse_normals = false)
-  {
-    // draw polygons
-    Facet_iterator pFacet = facets_begin();
-    for(;pFacet != facets_end();pFacet++)
-    {
-      // begin polygon assembly
-      ::glBegin(GL_POLYGON);
-        gl_draw_facet(pFacet,smooth_shading,use_normals,inverse_normals);
-      ::glEnd(); // end polygon assembly
-    }
-  }
-
-  void gl_draw_facet(Facet_handle pFacet,
-                      bool smooth_shading,
-                      bool use_normals,
-                      bool inverse_normals = false)
-  {
-    // one normal per face
-    if(use_normals && !smooth_shading)
-    {
-      const typename Facet::Normal_3& normal = pFacet->normal();
-      if(inverse_normals)
-        ::glNormal3f(-normal[0],-normal[1],-normal[2]);
-      else
-        ::glNormal3f(normal[0],normal[1],normal[2]);
-    }
-
-    // revolve around current face to get vertices
-    Halfedge_around_facet_circulator pHalfedge = pFacet->facet_begin();
-    do
-    {
-      // one normal per vertex
-      if(use_normals && smooth_shading)
-      {
-        const typename Facet::Normal_3& normal = pHalfedge->vertex()->normal();
-        if(inverse_normals)
-          ::glNormal3f(-normal[0],-normal[1],-normal[2]);
-        else      
-          ::glNormal3f(normal[0],normal[1],normal[2]);      }
-
-      // polygon assembly is performed per vertex
-      const Point& point  = pHalfedge->vertex()->point();
-      ::glVertex3d(point[0],point[1],point[2]);
-    }
-    while(++pHalfedge != pFacet->facet_begin());
-  }
-
-  // superimpose edges
-  void superimpose_edges(bool skip_ordinary_edges = true,
-                         bool skip_control_edges = false)
-  {
-    ::glBegin(GL_LINES);
-    for(Edge_iterator h = edges_begin();
-        h != edges_end();
-        h++)
-    {
-      if(h->sharp())
-        continue;
-
-      // ignore this edges
-      if(skip_ordinary_edges && !h->control_edge())
-        continue;
-
-      // ignore control edges
-      if(skip_control_edges && h->control_edge())
-        continue;
-
-        // assembly and draw line segment
-        const Point& p1 = h->prev()->vertex()->point();
-        const Point& p2 = h->vertex()->point();
-        ::glVertex3f(p1[0],p1[1],p1[2]);
-        ::glVertex3f(p2[0],p2[1],p2[2]);
-    }
-    ::glEnd();
   }
 
   bool is_sharp(Halfedge_handle he,
@@ -760,87 +666,6 @@ public :
     return nb;
   }
 
-  // draw edges
-  void gl_draw_sharp_edges(const float line_width,
-                           unsigned char r,
-                           unsigned char g,
-                           unsigned char b)
-  {
-    ::glLineWidth(line_width);
-    ::glColor3ub(r,g,b);
-
-    ::glBegin(GL_LINES);
-    for(Halfedge_iterator he = edges_begin();
-        he != edges_end();
-        he++)
-    {
-      if(he->sharp())
-      {
-        const Point& a =  he->opposite()->vertex()->point();
-        const Point& b =  he->vertex()->point();
-        ::glVertex3d(a[0],a[1],a[2]);
-        ::glVertex3d(b[0],b[1],b[2]);
-      }
-    }
-    ::glEnd();
-  }
-
-
-  void gl_draw_boundaries()
-  {
-    ::glBegin(GL_LINES);
-    for(Halfedge_iterator he = halfedges_begin();
-        he != halfedges_end();
-        he++)
-    {
-      if(he->is_border())
-      {
-        const Point& a = he->vertex()->point();
-        const Point& b = he->opposite()->vertex()->point();
-        ::glVertex3d(a.x(),a.y(),a.z());
-        ::glVertex3d(b.x(),b.y(),b.z());
-      }
-    }
-    ::glEnd();
-  }
-
-  // draw bounding box
-  void gl_draw_bounding_box()
-  {
-    ::glBegin(GL_LINES);
-
-      // along x axis
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
-
-      // along y axis
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
-
-      // along z axis
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
-      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
-
-    ::glEnd();
-  }
 
   // count #boundaries
   unsigned int nb_boundaries()

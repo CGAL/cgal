@@ -1,19 +1,19 @@
 #include <QTime>
 #include <QApplication>
 #include <QAction>
+#include <QMainWindow>
 #include <QStringList>
-
-#include "opengl_tools.h"
-#include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_polyhedron_selection_item.h"
-#include "Polyhedron_type.h"
+#include "SMesh_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/convex_hull_3.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 using namespace CGAL::Three;
 class Polyhedron_demo_convex_hull_plugin : 
   public QObject,
@@ -28,6 +28,7 @@ public:
               Messages_interface*)
     {
         scene = scene_interface;
+        this->mw = mw;
         QAction *actionConvexHull = new QAction("Convex Hull", mw);
         actionConvexHull->setProperty("subMenuName","3D Convex Hulls");
         connect(actionConvexHull, SIGNAL(triggered()), this, SLOT(on_actionConvexHull_triggered()));
@@ -38,7 +39,7 @@ public:
 
   bool applicable(QAction*) const {
     return 
-      qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
+      qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
@@ -49,23 +50,14 @@ public Q_SLOTS:
 private:
   QList<QAction*> _actions;
   Scene_interface* scene;
+  QMainWindow* mw;
 }; // end Polyhedron_demo_convex_hull_plugin
 
-// for transform iterator
-struct Get_point {
-  typedef const Polyhedron::Point_3& result_type;
-  result_type operator()(const Polyhedron::Vertex_handle v) const
-  { return v->point(); }
-};
 
 void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* poly_item = 
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-
-  Scene_points_with_normal_item* pts_item =
+    Scene_points_with_normal_item* pts_item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
   
   Scene_polylines_item* lines_item = 
@@ -74,7 +66,10 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
   Scene_polyhedron_selection_item* selection_item = 
     qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
 
-  if(poly_item || pts_item || lines_item || selection_item)
+  Scene_surface_mesh_item* sm_item = 
+    qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+
+  if( pts_item || lines_item || selection_item || sm_item)
   {
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -84,16 +79,31 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
     std::cout << "Convex hull...";
 
     // add convex hull as new polyhedron
-    Polyhedron *pConvex_hull = new Polyhedron;
+    SMesh *pConvex_hull  = new SMesh;
+    typedef boost::property_map<SMesh,CGAL::vertex_point_t>::type Vpmap;
+    typedef CGAL::Property_map_to_unary_function<Vpmap> Vpmap_fct;
     if(selection_item) {
+      SMesh* pMesh = selection_item->polyhedron();
+      Vpmap vpm = get(CGAL::vertex_point,*pMesh);
+      
+      Vpmap_fct v2p(vpm);
       CGAL::convex_hull_3(
-        boost::make_transform_iterator(selection_item->selected_vertices.begin(), Get_point()),
-        boost::make_transform_iterator(selection_item->selected_vertices.end(), Get_point()),
+        boost::make_transform_iterator(selection_item->selected_vertices.begin(), v2p),
+        boost::make_transform_iterator(selection_item->selected_vertices.end(), v2p),
         *pConvex_hull);
     }
-    else if ( poly_item ){
-      Polyhedron* pMesh = poly_item->polyhedron();  
-      CGAL::convex_hull_3(pMesh->points_begin(),pMesh->points_end(),*pConvex_hull);
+    else if ( sm_item ){
+      SMesh* pMesh = sm_item->polyhedron();
+      Vpmap vpm = get(CGAL::vertex_point,*pMesh);
+      
+      Vpmap_fct v2p(vpm);
+      boost::graph_traits<SMesh>::vertex_iterator b,e;
+      boost::tie(b,e) = vertices(*pMesh);
+      
+      CGAL::convex_hull_3(boost::make_transform_iterator(b,v2p),
+                          boost::make_transform_iterator(e,v2p),
+                          *pConvex_hull);
+                          
     }
     else{
       if (pts_item)
@@ -118,7 +128,7 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
     }
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
-    Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pConvex_hull);
+    Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(pConvex_hull);
     new_item->setName(tr("%1 (convex hull)").arg(scene->item(index)->name()));
     new_item->setColor(Qt::magenta);
     new_item->setRenderingMode(FlatPlusEdges);

@@ -1,22 +1,19 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <iostream>
 #include <fstream>
-
+#include <cstring>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
-typedef CGAL::Polyhedron_3<Kernel> Mesh;
+typedef CGAL::Polyhedron_3<Kernel>                           Mesh;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Mesh_with_id;
 
-void mesh_with_id(const char* argv1)
+void mesh_with_id(const char* argv1, const bool save_output)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
@@ -26,19 +23,16 @@ void mesh_with_id(const char* argv1)
   in >> sm;
 
   int i=0;
-  BOOST_FOREACH(face_descriptor f, faces(sm)){
+  for(face_descriptor f : faces(sm))
     f->id() = i++;
-  } 
+
   i=0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(sm)){
+  for(vertex_descriptor v : vertices(sm))
     v->id() = i++;
-  }
 
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(sm).first;
-  PMP::connected_component(fd,
-                           sm,
-                           std::back_inserter(cc));
+  PMP::connected_component(fd, sm, std::back_inserter(cc));
 
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
 
@@ -46,19 +40,25 @@ void mesh_with_id(const char* argv1)
     boost::property_map<Mesh_with_id, boost::face_index_t>::type>
       fccmap(get(boost::face_index,sm));
 
-  std::size_t num = PMP::connected_components(sm,
-                                              fccmap);
-  
+  std::size_t num = PMP::connected_components(sm, fccmap);
+  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+    assert(num == 3);
+
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
 
-  PMP::keep_largest_connected_components(sm,2);
+  PMP::keep_largest_connected_components(sm, 2,
+                                         CGAL::parameters::face_size_map(
+                                           CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
+
+  if (!save_output)
+    return;
 
   std::ofstream ofile("blobby_2cc_id.off");
   ofile << sm << std::endl;
   ofile.close();
 }
 
-void mesh_no_id(const char* argv1)
+void mesh_no_id(const char* argv1, const bool save_output)
 {
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
@@ -66,13 +66,9 @@ void mesh_no_id(const char* argv1)
   std::ifstream in(argv1);
   in >> sm;
 
-  
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(sm).first;
-  PMP::connected_component(fd,
-                           sm,
-                           std::back_inserter(cc));
-
+  PMP::connected_component(fd, sm, std::back_inserter(cc));
 
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
   boost::property_map<Mesh,boost::vertex_external_index_t>::type vim 
@@ -85,19 +81,20 @@ void mesh_no_id(const char* argv1)
     boost::property_map<Mesh, boost::face_external_index_t>::type>
       fccmap(fim);
 
-  std::size_t num = PMP::connected_components(sm,
-    fccmap,
-    PMP::parameters::face_index_map(fim));
-  
+  std::size_t num = PMP::connected_components(sm, fccmap, PMP::parameters::face_index_map(fim));
+
+  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+    assert(num == 3);
+
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
-  //BOOST_FOREACH(face_descriptor f , faces(sm)){
+  //for(face_descriptor f : faces(sm)){
   //  std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
   //}
 
-  PMP::keep_largest_connected_components(sm
-    , 2
-    , PMP::parameters::vertex_index_map(vim).
-      face_index_map(fim));
+  PMP::keep_largest_connected_components(sm, 2, PMP::parameters::vertex_index_map(vim)
+                                                                .face_index_map(fim));
+  if (save_output)
+    return;
 
   std::ofstream ofile("blobby_2cc_no_id.off");
   ofile << sm << std::endl;
@@ -115,10 +112,11 @@ void test_border_cases()
   input >> sm;
 
   std::size_t i=0;
-  BOOST_FOREACH(face_descriptor f, faces(sm))
+  for(face_descriptor f : faces(sm))
     f->id() = i++;
+
   i=0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(sm))
+  for(vertex_descriptor v : vertices(sm))
     v->id() = i++;
 
   boost::vector_property_map<int,
@@ -162,13 +160,12 @@ void keep_nothing(const char* argv1)
     return;
   }
   int i=0;
-  BOOST_FOREACH(face_descriptor f, faces(sm)){
+  for(face_descriptor f : faces(sm))
     f->id() = i++;
-  }
+
   i=0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(sm)){
+  for(vertex_descriptor v : vertices(sm))
     v->id() = i++;
-  }
 
   PMP::keep_largest_connected_components(sm, 0);
   assert(num_vertices(sm) == 0);
@@ -179,9 +176,12 @@ void keep_nothing(const char* argv1)
 int main(int argc, char* argv[]) 
 {
   const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
-  mesh_with_id(filename);
-  mesh_no_id(filename);
+  const bool save_output = (argc > 2) ? true : false;
+
+  mesh_with_id(filename, save_output);
+  mesh_no_id(filename, save_output);
   test_border_cases();
   keep_nothing(filename);
-  return 0;
+
+  return EXIT_SUCCESS;
 }

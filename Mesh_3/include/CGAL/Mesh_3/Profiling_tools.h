@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Clement Jamin
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_MESH_3_PROFILING_TOOLS_H
 #define CGAL_MESH_3_PROFILING_TOOLS_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 // TBB timers
 #ifdef CGAL_LINKED_WITH_TBB

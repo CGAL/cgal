@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU Library General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+// SPDX-License-Identifier: LGPL-2.0
+//
 //=============================================================================
 
 
@@ -30,9 +33,13 @@
 
 
 bool read_mesh(Surface_mesh& mesh, const std::string& filename);
+template<typename NamedParameters>
+bool read_off(Surface_mesh& mesh, const std::string& filename, NamedParameters& np);
 bool read_off(Surface_mesh& mesh, const std::string& filename);
 
 bool write_mesh(const Surface_mesh& mesh, const std::string& filename);
+template<typename NamedParameters>
+bool write_off(const Surface_mesh& mesh, const std::string& filename, const NamedParameters& np);
 bool write_off(const Surface_mesh& mesh, const std::string& filename);
 
 

@@ -1,12 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
 
 #include <fstream>
 
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                        Kernel;
 typedef Kernel::Point_3                                       Point;
@@ -27,6 +24,11 @@ int main(int argc, char* argv[])
   std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
   Triangle_mesh tmesh;
   input >> tmesh;
+  if (!CGAL::is_triangle_mesh(tmesh))
+  {
+    std::cout << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   Skeleton skeleton;
 
@@ -36,8 +38,8 @@ int main(int argc, char* argv[])
   std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
   // Output all the edges of the skeleton.
-  std::ofstream output("skel.cgal");
-  BOOST_FOREACH(Skeleton_edge e, edges(skeleton))
+  std::ofstream output("skel-sm.cgal");
+  for(Skeleton_edge e : CGAL::make_range(edges(skeleton)))
   {
     const Point& s = skeleton[source(e, skeleton)].point;
     const Point& t = skeleton[target(e, skeleton)].point;
@@ -46,12 +48,12 @@ int main(int argc, char* argv[])
   output.close();
 
   // Output skeleton points and the corresponding surface points
-  output.open("correspondance.cgal");
-  BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
-    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
+  output.open("correspondance-sm.cgal");
+  for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)))
+    for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";
 
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 

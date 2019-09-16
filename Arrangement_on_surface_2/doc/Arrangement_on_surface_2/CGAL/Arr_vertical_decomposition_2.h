@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2Funcs
+\ingroup PkgArrangementOnSurface2Funcs
 
 Produces the symbolic vertical decomposition of a 
 given arrangement, performing a batched vertical ray-shooting query from 

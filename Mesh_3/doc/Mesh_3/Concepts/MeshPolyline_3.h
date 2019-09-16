@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3SecondaryConcepts
+\ingroup PkgMesh3SecondaryConcepts
 \cgalConcept
 
 The concept `MeshPolyline_3` implements a container of points designed to represent a polyline (i.e.\ a sequence of points). 
@@ -8,7 +8,7 @@ are natural models of this concept.
 
 \cgalHasModel `std::vector<Kernel::Point_3>` for any Kernel of \cgal is a natural model of this concept.
 
-\sa `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain>` 
+\sa `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 
 */
 class MeshPolyline_3 {

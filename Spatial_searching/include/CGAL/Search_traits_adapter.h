@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sebastien Loriot
 
 #ifndef CGAL_SEARCH_TRAITS_WITH_INFO
 #define CGAL_SEARCH_TRAITS_WITH_INFO
+
+#include <CGAL/license/Spatial_searching.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Euclidean_distance.h> //for default distance specialization
@@ -28,6 +33,8 @@
 
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/iterator/iterator_facade.hpp>
 
 namespace CGAL{
 
@@ -72,9 +79,6 @@ template <class Point_with_info,class PointPropertyMap,class Base_traits>
 class Search_traits_adapter : public Base_traits{
   PointPropertyMap ppmap;
 
-  CGAL_static_assertion( ( boost::is_same< boost::lvalue_property_map_tag,
-                           typename boost::property_traits<PointPropertyMap>::category
-                         >::value ) );
 public:
   typedef Base_traits Base;
   typedef typename internal::Get_iso_box_d<Base>::type Iso_box_d;
@@ -83,18 +87,19 @@ public:
                           const Base_traits& base=Base_traits()
   ):Base_traits(base),ppmap(ppmap_){}
 
-  typedef typename Base_traits::Cartesian_const_iterator_d      Cartesian_const_iterator_d;
+  
   typedef Point_with_info                                       Point_d;
   typedef typename Base_traits::FT                              FT;
   typedef typename Base_traits::Dimension                       Dimension;
   
 
-  struct Construct_cartesian_const_iterator_d: public Base_traits::Construct_cartesian_const_iterator_d{
+  // Default if point map is lvalue: use Construct_cartesian_const_iterator_d
+  struct Construct_cartesian_const_iterator_d_lvalue: public Base_traits::Construct_cartesian_const_iterator_d{
     PointPropertyMap ppmap;
-    using Base_traits::Construct_cartesian_const_iterator_d::operator();
     typedef typename Base_traits::Construct_cartesian_const_iterator_d Base;
     
-    Construct_cartesian_const_iterator_d(const typename Base_traits::Construct_cartesian_const_iterator_d& base, const PointPropertyMap& ppmap_)
+    Construct_cartesian_const_iterator_d_lvalue
+    (const typename Base_traits::Construct_cartesian_const_iterator_d& base, const PointPropertyMap& ppmap_)
       :Base_traits::Construct_cartesian_const_iterator_d(base), ppmap(ppmap_){}
     
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p) const
@@ -102,7 +107,149 @@ public:
 
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p, int)  const
     { return Base::operator() (get(ppmap,p),0); }
+
+    // These 2 additional operators forward the call to Base_traits.
+    // This is needed because of an undocumented requirement of 
+    // Orthogonal_k_neighbor_search and Orthogonal_incremental_neighbor_search: 
+    // Traits::Construct_cartesian_const_iterator should be callable 
+    // on the query point type. If the query point type is the same as
+    // Point_with_info, we disable it.
+
+    template <typename Point> // boost::disable_if requires a template argument to work
+    typename Base_traits::Cartesian_const_iterator_d operator()(const Point& p,
+                                                                typename boost::disable_if<
+                                                                boost::is_same<Point_with_info,
+                                                                Point> >::type* = 0
+      ) const
+    { return Base::operator() (p); }
+
+    template <typename Point> // boost::disable_if requires a template argument to work
+    typename Base_traits::Cartesian_const_iterator_d operator()(const Point& p, int,
+                                                                typename boost::disable_if<
+                                                                boost::is_same<Point_with_info,
+                                                                Point> >::type* = 0
+      ) const
+    { return Base::operator() (p,0); }
   };
+  
+  // If point map is not lvalue, use this work-around that stores a
+  // Point object in a shared pointer to avoid iterating on a temp
+  // object
+  class No_lvalue_iterator
+    : public boost::iterator_facade<No_lvalue_iterator,
+                                    typename std::iterator_traits<typename Base::Cartesian_const_iterator_d>::value_type,
+                                    std::random_access_iterator_tag
+                                     >
+  {
+    typedef boost::iterator_facade<No_lvalue_iterator,
+                                   typename std::iterator_traits<typename Base::Cartesian_const_iterator_d>::value_type,
+                                   std::random_access_iterator_tag
+                                   > Facade;
+    
+    typedef typename std::iterator_traits<typename Base::Cartesian_const_iterator_d>::value_type
+    Dereference_type;
+    typedef typename boost::property_traits<PointPropertyMap>::value_type
+    Point;
+
+    boost::shared_ptr<Point> point;
+    std::size_t idx;
+
+  public:
+    
+    No_lvalue_iterator() : point(NULL), idx(0) { }
+    No_lvalue_iterator(const Point& point, std::size_t idx = 0) : point(new Point(point)), idx(idx) { }
+    
+  private:
+    
+    friend class boost::iterator_core_access;
+    void increment()
+    {
+      ++idx;
+      CGAL_assertion(point != boost::shared_ptr<Point>());
+    }
+    void decrement()
+    {
+      --idx;
+      CGAL_assertion(point != boost::shared_ptr<Point>());
+    }
+  
+    void advance(std::ptrdiff_t n)
+    {
+      idx += n;
+      CGAL_assertion(point != boost::shared_ptr<Point>());
+    }
+
+    std::ptrdiff_t distance_to(const No_lvalue_iterator& other) const
+    {
+      return other.idx - this->idx;
+      
+    }
+    bool equal(const No_lvalue_iterator& other) const
+    {
+      return this->idx == other.idx;
+    }
+
+    Dereference_type&
+    dereference() const { return const_cast<Dereference_type&>((*point)[idx]); }
+
+  };
+
+  // Alternative Construct_cartesian_const_iterator_d if the point map
+  // is not lvalue (generates No_lvalue_iterator objects)
+  struct Construct_cartesian_const_iterator_d_no_lvalue {
+    typedef No_lvalue_iterator result_type;
+    PointPropertyMap ppmap;
+    
+    Construct_cartesian_const_iterator_d_no_lvalue
+    (const typename Base_traits::Construct_cartesian_const_iterator_d&, const PointPropertyMap& ppmap_)
+      : ppmap(ppmap_) { }
+    
+    No_lvalue_iterator operator()(const Point_with_info& p) const
+    { return No_lvalue_iterator(get(ppmap, p)); }
+
+    No_lvalue_iterator operator()(const Point_with_info& p, int)  const
+    { return No_lvalue_iterator(get(ppmap, p),0); }
+
+    // These 2 additional operators forward the call to Base_traits.
+    // This is needed because of an undocumented requirement of 
+    // Orthogonal_k_neighbor_search and Orthogonal_incremental_neighbor_search: 
+    // Traits::Construct_cartesian_const_iterator should be callable 
+    // on the query point type. If the query point type is the same as
+    // Point_with_info, we disable it.
+
+    template <typename Point> // boost::disable_if requires a template argument to work
+    No_lvalue_iterator operator()(const Point& p,
+                                  typename boost::disable_if<
+                                  boost::is_same<Point_with_info,
+                                  Point> >::type* = 0
+      ) const
+    { return No_lvalue_iterator(p); }
+
+    template <typename Point> // boost::disable_if requires a template argument to work
+    No_lvalue_iterator operator()(const Point& p, int,
+                                  typename boost::disable_if<
+                                  boost::is_same<Point_with_info,
+                                  Point> >::type* = 0
+      ) const
+    { return No_lvalue_iterator(p,0); }
+  };
+
+  // Select type of iterator + construct class depending on whether
+  // point map is lvalue or not
+  typedef typename boost::mpl::if_
+            <boost::is_same
+              <boost::lvalue_property_map_tag,
+               typename boost::property_traits<PointPropertyMap>::category >,
+               typename Base::Cartesian_const_iterator_d,
+               No_lvalue_iterator>::type
+    Cartesian_const_iterator_d;
+  typedef typename boost::mpl::if_
+            <boost::is_same
+              <boost::lvalue_property_map_tag,
+               typename boost::property_traits<PointPropertyMap>::category >,
+             Construct_cartesian_const_iterator_d_lvalue,
+             Construct_cartesian_const_iterator_d_no_lvalue>::type
+    Construct_cartesian_const_iterator_d;
   
   struct Construct_iso_box_d: public Base::Construct_iso_box_d{
     PointPropertyMap ppmap;
@@ -178,5 +325,7 @@ public:
 };
 
 }//namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_SEARCH_TRAITS_WITH_INFO

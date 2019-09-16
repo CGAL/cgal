@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Philipp Moeller
@@ -20,13 +21,17 @@
 #ifndef CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H
 #define CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H
 
+#ifndef DOXYGEN_RUNNING
+
+#include <CGAL/license/Surface_mesh.h>
+
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -122,6 +127,15 @@ degree(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v
        const CGAL::Surface_mesh<P>& sm)
 {
   return sm.degree(v);
+}
+
+
+template <typename P>
+typename boost::graph_traits<CGAL::Surface_mesh<P> >::degree_size_type
+degree(typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor f,
+       const CGAL::Surface_mesh<P>& sm)
+{
+  return sm.degree(f);
 }
 
          
@@ -414,7 +428,7 @@ num_faces(const CGAL::Surface_mesh<P>& sm)
 {
   return sm.num_faces();
 }
-  
+
 template <typename P>
 Iterator_range<typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_iterator>
 faces(const CGAL::Surface_mesh<P>& sm)
@@ -435,23 +449,17 @@ add_vertex(const typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_pr
   return sm.add_vertex(p);
 }
 
-/*
 // MutableGraph
-// add a vertex with a default constructed property
-template <typename P>
-typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor
-add_vertex(CGAL::Surface_mesh<P>& sm) {
-  return sm.add_vertex(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_property_type());
-}
-
-template <typename P>
+template<typename P>
 void
-clear_vertex(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor, 
-             CGAL::Surface_mesh<P>&) {
-  CGAL_assertion(false);
+reserve(CGAL::Surface_mesh<P>& sm,
+        typename boost::graph_traits< CGAL::Surface_mesh<P> >::vertices_size_type nv,
+        typename boost::graph_traits< CGAL::Surface_mesh<P> >::edges_size_type ne,
+        typename boost::graph_traits< CGAL::Surface_mesh<P> >::faces_size_type nf)
+{
+  sm.reserve(nv, ne, nf);
 }
 
-  */
 
 template <typename P>
 void
@@ -515,15 +523,11 @@ add_face(InputIterator begin, InputIterator end, CGAL::Surface_mesh<P>& sm)
 }
 
 template<typename P>
-bool is_valid(const CGAL::Surface_mesh<P>& sm, bool verbose = false)
-{
-  return sm.is_valid(verbose);
-}
+void normalize_border(const CGAL::Surface_mesh<P>&)
+{}
 
 } // namespace CGAL
 
-
-
-
+#endif // DOXYGEN_RUNNING
 
 #endif // CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H

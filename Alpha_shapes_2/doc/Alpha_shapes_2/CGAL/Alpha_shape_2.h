@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShape2
+\ingroup PkgAlphaShapes2Ref
 
 The class `Alpha_shape_2` represents the family of 
 \f$ \alpha\f$-shapes of points in a plane for <I>all</I> positive 
@@ -16,20 +16,48 @@ and the \f$ k\f$-dimensional faces of the triangulation.
 Note that this class is at the same time used for <I>basic</I> and 
 for <I>weighted</I> Alpha Shapes. 
 
+The modifying functions `Alpha_shape_2::insert()` and `Alpha_shape_2::remove()` will overwrite
+the one inherited from the underlying triangulation class `Dt`.
+At the moment, only the static version is implemented.
+
 \tparam Dt must be either `Delaunay_triangulation_2` or `Regular_triangulation_2`. 
-Note that `Dt::Geom_traits`, `Dt::Vertex` and `Dt::Face` must be model the concepts `AlphaShapeTraits_2`, 
+Note that `Dt::Geom_traits`, `Dt::Vertex`, and `Dt::Face` must be model the concepts `AlphaShapeTraits_2`,
 `AlphaShapeVertex_2` and `AlphaShapeFace_2`, respectively. 
 
 \tparam ExactAlphaComparisonTag is a tag that, when set to 
 \link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. This is useful 
 when the underlying triangulation is instantiated with an exact predicates inexact constructions 
 kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_false`\endlink as it induces a small 
-overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
-the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
+overhead. Note that the tag `ExactAlphaComparisonTag` is currently ignored (meaning that the code will
+ behave as if `ExactAlphaComparisonTag` were set to \link Tag_false `Tag_false`\endlink)
+if `Dt::Geom_traits::FT` is not a floating point number type as this strategy
+does not make sense if the traits class already provides exact constructions.
 
-The modifying functions `Alpha_shape_2::insert()` and `Alpha_shape_2::remove()` will overwrite
-the one inherited from the underlying triangulation class `Dt`.
-At the moment, only the static version is implemented.
+\warning
+<ul>
+<li>When the tag `ExactAlphaComparisonTag` is set to \link Tag_true `Tag_true`\endlink,
+the class `Cartesian_converter` is used internally to switch between the traits class
+and the %CGAL kernel `CGAL::Simple_cartesian<NT>`, where `NT` can be either `CGAL::Interval_nt` or
+`CGAL::Exact_rational`. `Cartesian_converter` must thus offer the necessary functors
+to convert a two-dimensional point of the traits class to a two-dimensional point
+of `CGAL::Simple_cartesian<NT>`. However, these functors are not necessarily provided by
+the basic `Cartesian_converter`. For example when using the traits class `CGAL::Projection_traits_xy_3`,
+a `CGAL::Point_3` is camouflaged as a `%Point_2` and the basic `Cartesian_converter` does not know
+how to convert from the camouflaged `CGAL::Point_3` to the two-dimensional point
+of `CGAL::Simple_cartesian<NT>`. In this case, a partial specialization of `Cartesian_converter`
+must be provided by the user. An example of such specialization is given in the example
+\ref Alpha_shapes_2/ex_alpha_projection_traits.cpp "ex_alpha_projection_traits.cpp".
+<li>The tag `ExactAlphaComparisonTag` cannot be used in conjonction with periodic triangulations.
+When the tag `ExactAlphaComparisonTag` is set to \link Tag_true `Tag_true`\endlink,
+the evaluations of predicates such as `Side_of_oriented_circle_2` are done lazily.
+Consequently, the predicates store pointers to the geometrical positions of the
+points passed as arguments of the predicates. It is thus important that
+these points are not temporary objects. Points of the triangulation are accessed
+using the function `point(Face_handle, int)` of the underlying triangulation.
+In the case of periodic triangulations, the `point(Face_handle, int)` function
+is actually a construction that returns a temporary, which thus cannot be used
+along with a lazy predicate evaluation.
+</ul>
 
 \cgalHeading{I/O}
 
@@ -80,12 +108,24 @@ resorting to exact arithmetic). Access to the interval containing the exact valu
 with `Protected=true`. Access to the exact value is provided through the function
 `FT::Exact_nt exact() const` where `FT::Exact_nt` depends on the configuration of %CGAL
 (it is `Gmpq` if `gmp` is available and `Quotient<CGAL::MP_Float>` otherwise).
+An overload for the function `double to_double(FT)` is also available. Its
+precision is controlled through `FT::set_relative_precision_of_to_double()` in
+exactly the same way as with `Lazy_exact_nt<NT>`, so a call to `to_double` may
+trigger an exact evaluation.
 It must be noted that an object of type `FT` is valid as long as the alpha shapes class that creates
 it is valid and has not been modified.
 For convenience, classical comparison operators are provided for the type `FT`.
 
 */ 
 typedef Gt::FT FT; 
+
+/*!
+The point type.
+
+For basic alpha shapes, `Point` will be equal to `Gt::Point_2`. For weighted alpha
+shapes, `Point` will be equal to `Gt::Weighted_point_2`.
+*/
+typedef Dt::Point Point;
 
 /*!
 The size type. 
@@ -348,8 +388,11 @@ size_type number_of_solid_components(const FT& alpha = get_alpha()) const;
 Returns an iterator pointing to the first element with \f$ \alpha\f$-value 
 such that the alpha shape satisfies the following two properties: 
 
-- `nb_components` equals the number of solid components and 
-- all data points are either on the boundary or in the interior of the regularized version of the alpha shape. 
+- All data points are either on the boundary or in the interior
+of the regularized version of the alpha shape.
+
+- The number of solid component of the alpha shape is equal to or
+smaller than `nb_components`.
 
 If no such value is found, the iterator points to the first element with 
 \f$ \alpha\f$-value such that the alpha shape satisfies the second property. 

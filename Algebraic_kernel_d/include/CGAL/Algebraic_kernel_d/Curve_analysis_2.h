@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -22,6 +23,8 @@
 
 #ifndef CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <vector>
 #include <set>
@@ -60,12 +63,6 @@
 
 #if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
 // put includes here
-#endif
-
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4290)
 #endif
 
 
@@ -111,7 +108,7 @@ template<typename Comparable>
 };
 
 template<typename Comparable> struct Compare_for_vert_line_map
-  : public std::binary_function<Comparable,Comparable,bool> {
+  : public CGAL::cpp98::binary_function<Comparable,Comparable,bool> {
     
   BOOST_MPL_HAS_XXX_TRAIT_DEF(T)
   BOOST_MPL_HAS_XXX_TRAIT_DEF(Handle_policy)
@@ -502,18 +499,18 @@ public:
                               const Polynomial_2& f,
                               CGAL::Degeneracy_strategy strategy
                                   = CGAL_ACK_DEFAULT_DEGENERACY_STRATEGY) 
-        throw(internal::Zero_resultant_exception<Polynomial_2>)
         : Base(Rep(kernel,f,strategy))
     {
 
     }
 
     //! \brief Copy constructor
+#ifdef DOXYGEN_RUNNING
     Curve_analysis_2(const Self& alg_curve)
         : Base(static_cast<const Base&>(alg_curve)) 
     {
     }
-
+#endif
 
     //!@}
 
@@ -693,14 +690,14 @@ public:
 #endif
         CGAL_precondition(has_defining_polynomial());
         typename Rep::Val_functor xval;
-        i = std::lower_bound(
+        i = static_cast<size_type>(std::lower_bound(
                 ::boost::make_transform_iterator(event_coordinates().begin(), 
                                                  xval),
                 ::boost::make_transform_iterator(event_coordinates().end(),
                                                  xval),
                 x
         ) - ::boost::make_transform_iterator(event_coordinates().begin(), 
-                                             xval);
+                                             xval));
         is_event = (i < static_cast<size_type>(event_coordinates().size()) && 
                     (event_coordinates()[i].val == x) );
     }
@@ -812,7 +809,7 @@ private:
     
     // Creates a status line for the curve's <tt>index</tt>th critical point
     Status_line_1 create_status_line_at_event(size_type index) const 
-        throw(CGAL::internal::Non_generic_position_exception) {
+      {
 
         Event_coordinate_1& event = event_coordinates()[index];
         
@@ -1446,7 +1443,7 @@ private:
 
     //! Returns the Sturm-Habicht sequence of the primitive part of f
     std::vector<Polynomial_2>& sturm_habicht_of_primitive() const 
-    throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         if(! this->ptr()->sturm_habicht_of_primitive) {
             compute_sturm_habicht_of_primitive();
         }  
@@ -1460,7 +1457,7 @@ public:
      * of the primitive part of the defining polynomial
      */
     Polynomial_2 sturm_habicht_of_primitive(size_type i) const 
-      throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         CGAL_assertion(i>=0 && 
                     i < static_cast<size_type>
                        (sturm_habicht_of_primitive().size()));
@@ -1474,7 +1471,7 @@ public:
      * of the primitive part of the defining polynomial
      */
     Polynomial_1 principal_sturm_habicht_of_primitive(size_type i) const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         CGAL_assertion(i>=0 && 
                     i < static_cast<size_type>
                        (sturm_habicht_of_primitive().size()));
@@ -1496,7 +1493,7 @@ public:
      * of <tt>y^{i-1}</tt> of the <tt>i</tt>th Sturm-Habicht polynomial
      */
     Polynomial_1 coprincipal_sturm_habicht_of_primitive(size_type i) const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         CGAL_assertion(i>=1 && 
                     i < static_cast<size_type>
                        (sturm_habicht_of_primitive().size()));
@@ -1523,7 +1520,7 @@ public:
     Principal_sturm_habicht_iterator principal_sturm_habicht_end() const {
         return boost::make_transform_iterator
             (boost::counting_iterator<size_type>
-                 (sturm_habicht_of_primitive().size()),
+             (static_cast<int>(sturm_habicht_of_primitive().size())),
              Stha_functor(this));
     }
 
@@ -1531,7 +1528,7 @@ private:
 
     // Internal method to compute the Sturm-Habicht sequence
     void compute_sturm_habicht_of_primitive() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "Compute Sturm-Habicht.." << std::flush;
@@ -1591,7 +1588,7 @@ private:
 
     //! Returns the resultant of the primitive part of f and its y-derivative
     Polynomial_1 resultant_of_primitive_and_derivative_y() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         if(! this->ptr()->resultant_of_primitive_and_derivative_y) {
             compute_resultant_of_primitive_and_derivative_y();
         }
@@ -1602,7 +1599,7 @@ private:
 
     //! Returns the resultant of the primitive part of f with its x-derivative
     Polynomial_1 resultant_of_primitive_and_derivative_x() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         if(! this->ptr()->resultant_of_primitive_and_derivative_x) {
             compute_resultant_of_primitive_and_derivative_x();
         }
@@ -1612,8 +1609,8 @@ private:
 private:
     // Computes <tt>res_y(f,f_y)</tt>, where \c f is the defining polynomial
     void compute_resultant_of_primitive_and_derivative_y() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
-        
+      {
+  
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "Compute resultant.." << std::flush;
 #endif
@@ -1664,7 +1661,7 @@ private:
     
     // Computes <tt>res_y(f,f_x)</tt>, where \c f is the defining polynomial
     void compute_resultant_of_primitive_and_derivative_x() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "Compute x-resultant.." << std::flush;
@@ -1723,7 +1720,7 @@ private:
 
     // Returns the critical event coordinates
     std::vector<Event_coordinate_1>& event_coordinates() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
         if(! this->ptr()->event_coordinates) {
             compute_event_coordinates();
         }
@@ -1734,8 +1731,7 @@ private:
 
     // Returns the intermediate values for intervals between events
     std::vector<boost::optional<Bound> >& intermediate_values() const 
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
-        
+      {
         if(! this->ptr()->intermediate_values) {
             // This is created during event_coordiantes()
             event_coordinates();
@@ -1755,7 +1751,7 @@ private:
      * x-coordinates of the curve.
      */
     void compute_event_coordinates() const
-        throw(internal::Zero_resultant_exception<Polynomial_2>) {
+      {
          
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "compute events..." << std::flush;
@@ -1953,7 +1949,6 @@ public:
      * of the Algebraic_curve_kernel_2 yet.
      */
     Self& shear_primitive_part(Integer s) const
-        throw(CGAL::internal::Non_generic_position_exception)
     {
         CGAL_assertion(s!=0);
 #if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
@@ -2550,9 +2545,6 @@ std::istream& operator>> (
 } //namespace CGAL
 
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
-
+#include <CGAL/enable_warnings.h>
 
 #endif // ALGEBRAIC_CURVE_2_H

@@ -24,7 +24,7 @@ int main(int argc, char*argv[])
 
   // simplification by clustering using erase-remove idiom
   double cell_size = 0.001;
-  points.erase(CGAL::grid_simplify_point_set(points.begin(), points.end(), cell_size),
+  points.erase(CGAL::grid_simplify_point_set(points, cell_size),
                points.end());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity

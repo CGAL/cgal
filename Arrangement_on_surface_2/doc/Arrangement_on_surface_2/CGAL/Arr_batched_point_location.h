@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2PointLocation
+\ingroup PkgArrangementOnSurface2PointLocation
 
 Performs a batched point-location operation on a 
 given arrangement. It accepts a range of query points, and locates each 

@@ -17,10 +17,11 @@
 // ----------------------------------------------------------------------------
 //
 // Library       : CGAL 
-// File          : test/Chinese_remaminder_test.C
+// File          : test/Chinese_remaminder_traits.cpp
 // CGAL_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Dominik H�lse <dominik.huelse@gmx.de>
 //                 Michael Hemmer <hemmer@mpi-inf.mpg.de>
@@ -28,7 +29,6 @@
 // ============================================================================
 
 #undef NDEBUG
-#include <CGAL/basic.h>
 #include <CGAL/Chinese_remainder_traits.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
@@ -170,7 +170,7 @@ int main(){
 
 #ifdef CGAL_USE_CORE  
     test_CR<CGAL::CORE_arithmetic_kernel>();
-#endif // Lis_HAVE_CORE
+#endif // CGAL_USE_CORE
      
     return 0;
 }

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_CIRCULAR_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 #define CGAL_CIRCULAR_KERNEL_PREDICATES_ON_LINE_ARC_2_H
+
+#include <CGAL/license/Circular_kernel_2.h>
+
 
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
@@ -484,11 +488,11 @@ namespace CircularFunctors {
     }
 
     typename Intersection_traits<CK, typename CK::Line_2, typename CK::Line_2>::result_type
-      v = CGAL::internal::intersection(a1.supporting_line(), a2.supporting_line(), CK());
+      v = CGAL::Intersections::internal::intersection(a1.supporting_line(), a2.supporting_line(), CK());
     if(!v) return res;
 
-    const Point_2 *pt = CGAL::internal::intersect_get<Point_2>(v);
-    if(pt == NULL) return res;
+    const Point_2 *pt = CGAL::Intersections::internal::intersect_get<Point_2>(v);
+    if(pt == nullptr) return res;
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
     //      (Root_for_circles_2_2(Root_of_2(pt->x()),Root_of_2(pt->y())));
 
@@ -532,18 +536,8 @@ namespace CircularFunctors {
 
     for (typename solutions_container::iterator it = solutions.begin();
 	 it != solutions.end(); ++it) {
-      #if CGAL_INTERSECTION_VERSION  < 2
-      if(const std::pair<typename CK::Circular_arc_point_2, unsigned>* p =
-         object_cast< std::pair< typename CK::Circular_arc_point_2, unsigned> >(& (*it))) {
-        Has_on_visitor<CK, typename CK::Line_arc_2> vis(&l);
-        if(vis(*p)) {
-	*res++ = *it;
-    }
-  }
-      #else
       if(boost::apply_visitor(Has_on_visitor<CK, typename CK::Line_arc_2>(&l), *it))
 	*res++ = *it;
-      #endif
     }
 
     return res;
@@ -564,9 +558,6 @@ namespace CircularFunctors {
 	       const typename CK::Circular_arc_2 &c,
 	       OutputIterator res )
   {
-    typedef std::vector<CGAL::Object > solutions_container;
-    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-
 #if defined(CGAL_CK_EXPLOIT_IDENTITY) || \
   defined(CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES)
     typedef typename CK::Line_arc_2 Line_arc_2;
@@ -674,7 +665,8 @@ namespace CircularFunctors {
     }
 #endif // CGAL_CK_EXPLOIT_IDENTITY
 
-    typedef std::vector<CGAL::Object > solutions_container;
+    typedef std::vector<typename CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circle_2>::type>
+      solutions_container;
     solutions_container solutions;
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
@@ -694,25 +686,15 @@ namespace CircularFunctors {
       }
 #endif
 
+
     for (typename solutions_container::iterator it = solutions.begin();
-	 it != solutions.end(); ++it) {
-      const std::pair<Circular_arc_point_2, unsigned>
-        *result = CGAL::object_cast
-	  <std::pair<Circular_arc_point_2, unsigned> > (&(*it));
-#ifdef CGAL_CK_TEST_BBOX_BEFORE_HAS_ON
-	  Bbox_2 rb = result->first.bbox();
-	  if(do_overlap(l.bbox(), rb) && do_overlap(c.bbox(),rb)){
-	    if (has_on<CK>(l,result->first,true) &&
-		has_on<CK>(c,result->first,true)) {
-	      *res++ = *it;
-	    }
-	  }
-#else
-      if (has_on<CK>(l,result->first,true) &&
-          has_on<CK>(c,result->first,true)) {
+	 it != solutions.end(); ++it)
+    {
+      if(boost::apply_visitor(Has_on_visitor<CK, typename CK::Line_arc_2>(&l), *it) &&
+         boost::apply_visitor(Has_on_visitor<CK, typename CK::Circular_arc_2>(&c), *it) )
+      {
 	*res++ = *it;
       }
-#endif
     }
     return res;
   }
@@ -785,7 +767,7 @@ namespace CircularFunctors {
 
     if(!v) return res;
     const Point_2 *pt = boost::get<Point_2>(&*v);
-    if(pt == NULL) return res;
+    if(pt == nullptr) return res;
 
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
 
@@ -817,16 +799,8 @@ namespace CircularFunctors {
 
     for (typename solutions_container::const_iterator it = solutions.begin();
 	 it != solutions.end(); ++it) {
-#if CGAL_INTERSECTION_VERSION < 2
-      typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-      const std::pair<Circular_arc_point_2, unsigned>* p =
-        object_cast<std::pair<Circular_arc_point_2, unsigned> >(& (*it));
-      Has_on_visitor<CK, Circular_arc_2> vis(&c);
-      if(vis(*p)) *res++ = *it;
-#else
       if(boost::apply_visitor(Has_on_visitor<CK, Circular_arc_2>(&c), *it))
         *res++ = *it;
-#endif
     }
     return res;
   }

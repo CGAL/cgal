@@ -12,15 +12,15 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://mkerber@scm.gforge.inria.fr/svn/cgal/trunk/Algebraic_kernel_d/test/Algebraic_kernel_d/include/CGAL/_test_algebraic_kernel_1.h $
-// $Id: _test_algebraic_kernel_1.h 55082 2010-03-31 12:52:26Z penarand $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sebastian Limbach <slimbach@mpi-inf.mpg.de>
 //                 Michael Hemmer <hemmer@mpi-inf.mpg.de>    
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/use.h>
 #include <CGAL/Test/_test_real_embeddable.h>
@@ -338,7 +338,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
        c0i != coeffs.end(); c0i++) {
     for (typename std::vector< int >::const_iterator c2i = coeffs.begin(); 
          c2i != coeffs.end(); c2i++) {
-      // we basically test a quadratic polynomial (with choosen small and large 
+      // we basically test a quadratic polynomial (with chosen small and large
       // quadratic and constant coefficient, which is disturbed by a root close to zero).
       //Polynomial_1 poly((*c2i*x*x - *c0i) * (c*x-1));
       Polynomial_1 poly((*c2i*x*x - *c0i) * (c*x-1));

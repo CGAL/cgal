@@ -7,7 +7,7 @@
 
 \cgalAutoToc
 
-\authors Pierre Alliez, Clément Jamin, Quentin Mérigot, Jocelyn Meyron, Laurent Saboret, Nader Salman, Shihao Wu
+\authors Pierre Alliez, Simon Giraudot, Clément Jamin, Florent Lafarge, Quentin Mérigot, Jocelyn Meyron, Laurent Saboret, Nader Salman, Shihao Wu
 
 \section Point_set_processing_3Introduction Introduction
 
@@ -38,19 +38,49 @@ Point set processing pipeline for surface reconstruction. The algorithms listed 
 \cgalFigureEnd
 
 
+\section Point_set_processing_3API API
 
-\section Point_set_processing_3PropertyMaps Property Maps
+The algorithms of this component take as input parameters ranges of 3D
+points, or of 3D points with normals. They can be
+adapted to the user's data structures and make extensive use of
+\ref Point_set_processing_3NamedParameters "named parameters" and of
+\ref Point_set_processing_3PropertyMaps "property maps":
 
-The algorithms of this component take as input parameters iterator
-ranges of 3D points, or of 3D points with normals. The property maps
-are used to access the point or normal information from the input
-data, so as to let the user decide upon the implementation of a point
-with normal. The latter can be represented as, e.g., a class derived
-from the \cgal 3D point, or as a `std::pair<Point_3<K>, Vector_3<K>>`, 
-or as a `boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
+\code
+std::vector<PointVectorPair> points;
+typedef CGAL::First_of_pair_property_map<PointVectorPair> Point_map;
+typedef CGAL::Second_of_pair_property_map<PointVectorPair> Vector_map;
 
-The following classes described in Chapter \ref chapterProperty_map
-"CGAL and Boost Property Maps"
+CGAL::jet_estimate_normals
+<CGAL::Parallel_tag>           // concurrency tag
+  (points,                     // input range of points
+   12,                         // parameter: number of neighbors
+   CGAL::parameters::          // named parameters:
+   point_map (Point_map()).    //  * point map
+   normal_map (Vector_map())); //  * normal map
+\endcode
+
+This API was introduced in \cgal 4.12. Please refer to the
+\ref Point_set_processing_3Outdated "dedicated section"
+on how to upgrade from the outdated API.
+
+\subsection Point_set_processing_3NamedParameters Named Parameters
+
+Named parameters are used to deal with optional parameters. The page
+\ref BGLNamedParameters explains the rationale and API in general.
+The page \ref psp_namedparameters describes their usage
+and provides a list of the parameters that are used in this package.
+
+\subsection Point_set_processing_3PropertyMaps Property Maps
+
+The property maps are used to access the point or normal information
+from the input data, so as to let the user decide upon the
+implementation of a point with normal. The latter can be represented
+as, e.g., a class derived from the \cgal 3D point, or as a
+`std::pair<Point_3<K>, Vector_3<K>>`, or as a
+`boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
+
+The following classes described in Chapter \ref PkgPropertyMap
 provide property maps for the implementations of points with normals
 listed above:
 
@@ -72,59 +102,145 @@ a property map.
 
 \cgalExample{Point_set_processing_3/grid_simplify_indices.cpp}
 
+\subsection Point_set_processing_3Outdated Upgrading from pre-CGAL 4.12 API
+
+The current API based on ranges and named parameters was introduced in
+\cgal 4.12. The old API that used pairs of iterators along with usual
+\cpp parameters (with some default values and overloads to handle
+optional parameters) has been removed in \cgal 5.0.
+
+Translating your pre-\cgal 4.12 code using Point Set Processing to the
+current API is easy. For example, consider this code using the old API:
+
+\code
+std::vector<PointVectorPair> points;
+
+// Old pre-CGAL 4.12 API
+CGAL::jet_estimate_normals<Concurrency_tag>
+  (points.begin(), points.end(),
+   CGAL::First_of_pair_property_map<PointVectorPair>(),
+   CGAL::Second_of_pair_property_map<PointVectorPair>(),
+   12); // Number of neighbors
+\endcode
+
+The pair of iterators is replaced by a range and the optional
+parameters (than can be deduced automatically in simple cases) are
+moved to the end of the function in a single named parameter object
+(see \ref BGLNamedParameters). The code translated to the current API
+becomes:
+   
+\code
+std::vector<PointVectorPair> points;
+
+// New API
+CGAL::jet_estimate_normals<Concurrency_tag>
+  (points,
+   12, // Number of neighbors
+   CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
+   normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
+\endcode
+
+Please refer to the [Reference Manual](@ref PkgPointSetProcessing3Ref) for
+the detailed API of the Point Set Processing functions.
+
 
 \section Point_set_processing_3InputOutput Input/Output
 
-\subsection Point_set_processing_3Streams Streams
+\subsection Point_set_processing_3Points_io Points And Normals
 
-We provide functions to read and write sets of points or sets of
-points with normals from the following ASCII file formats: XYZ (three
-point coordinates `x y z` per line or three point coordinates and
-three normal vector coordinates `x y z nx ny nz` per line), OFF
-(%Object File Format) \cgalCite{cgal:p-gmgv16-96} and PLY (Polygon
-File Format).
+\cgal provides functions to read and write sets of points or sets of
+points with normals from the following file formats:
 
-- `read_xyz_points()` and `read_xyz_points_and_normals()` 
-- `read_off_points()` and `read_off_points_and_normals()` 
-- `read_ply_points()`, `read_ply_points_and_normals()` and `read_ply_custom_points()`
-- `write_xyz_points()` and `write_xyz_points_and_normals()`
-- `write_off_points()` and `write_off_points_and_normals()`
-- `write_ply_points()` and `write_ply_points_and_normals()` 
+- XYZ (ASCII file three point coordinates `x y z` per line or three
+point coordinates and three normal vector coordinates `x y z nx ny nz`
+per line)
+- OFF (%Object File Format) \cgalCite{cgal:p-gmgv16-96}
+- %PLY (Polygon File Format) \cgalCite{cgal:b-ply-11}
+- %LAS (Lidar Format). \cgalCite{cgal:asprs-lasf-13} This format does
+not handle normals and requires the \ref thirdpartyLASlib library.
 
-Note that PLY reading functions accepts binary PLY format in addition
-of ASCII. `read_ply_custom_points()` provides the user with a means to
-read any point property from a PLY file (for example, colors), see
-\ref Point_set_processing_3Example_ply.
+The following functions are available:
 
-\subsection Point_set_processing_3Example_io Example
+- `read_xyz_points()`
+- `read_off_points()`
+- `read_ply_points()`
+- `read_las_points()`
+- `write_xyz_points()`
+- `write_off_points()`
+- `write_ply_points()`
+- `write_las_points()`
+
+All of these functions (with the exception of the LAS format) can read
+and write either points alone or points with normals (depending on
+whether the [normal_map](@ref PSP_normal_map) is provided by the user
+or not).
+
+Note that the %PLY format handles both ASCII and binary formats. In
+addition, %PLY and %LAS are extensible formats that can embed additional
+properties. These can also be read by \cgal (see Section \ref
+Point_set_processing_3Properties_io).
+
+\subsubsection Point_set_processing_3Example_io Example
 
 The following example reads a point set from an input file and writes
 it to a file, both in the XYZ format. Positions and normals are stored
 in pairs and accessed through property maps.
 \cgalExample{Point_set_processing_3/read_write_xyz_point_set_example.cpp}
 
-\subsection Point_set_processing_3Example_ply Example of custom PLY reader
+\subsection Point_set_processing_3Properties_io Points With Properties
 
-PLY files are designed to embed an arbitrary number of additional
-attributes. More specifically, point sets may contain normal vectors,
-visibility vectors, RGB colors, intensity, etc. As it is not possible
-to provide dedicated functions to every possible combination of PLY
-properties, \cgal provides a simple way to write custom PLY readers so
-that the user can adapt its programs to its PLY input.
+%PLY files are designed to embed an arbitrary number of additional
+attributes. More specifically, point sets may contain visibility
+vectors, RGB colors, intensity, etc. As it is not possible to provide
+dedicated functions to every possible combination of %PLY properties,
+\cgal provides a simple way to read %PLY properties and store them in
+any structure the user needs. Handling of %LAS files works similarly
+with the difference that the property names and types are fixed and
+defined by the %LAS standard.
 
-The function `read_ply_custom_points()` uses the concept `PlyInterpreter`
-to read specific properties defined by the user. \cgal provides, for this
-concept, the model `CGAL::Ply_interpreter_points_and_normals_3`: it is
-the standard interpreter that is used internally by `read_ply_points()`
-and `read_ply_points_and_normals()`.
+Functions `read_ply_points_with_properties()` and
+`read_las_points_with_properties()` allow the user to read any
+property needed. The user must provide a set of property handlers that
+are used to instantiate number types and complex objects from %PLY/%LAS
+properties. This handlers are either:
 
-The following example shows how to define a custom interpreter that
-reads a point set with points, normals and RGB colors, and stores
-these attributes in user-defined containers.
+- a pair consisting of a property map and of a single %PLY/%LAS property
+descriptor
+
+- a tuple consisting of a property map, a functor to construct the
+objects wanted and multiple %PLY/%LAS property descriptors
+
+Output functions `write_ply_points_with_properties()` and
+`write_las_points_with_properties()` work similarly.
+
+\subsubsection Point_set_processing_3Example_ply_write PLY Writing Example
+
+The following example shows how to call
+`write_ply_points_with_properties()` to write a point set with points,
+RGB colors and intensity. Notice that in order to write a complex
+object, users need to provide an overload of `CGAL::Output_rep`.
+
+\cgalExample{Point_set_processing_3/write_ply_points_example.cpp}
+
+\subsubsection Point_set_processing_3Example_ply_read PLY Reading Example
+
+The following example shows how to call
+`read_ply_points_with_properties()` to read a point set with points,
+normals, RGB colors and intensity and stores these attributes in a
+user-defined container.
 
 \cgalExample{Point_set_processing_3/read_ply_points_with_colors_example.cpp}
 
-\section Point_set_processing_3Analysis Analysis
+\subsubsection Point_set_processing_3Example_las_read LAS Reading Example
+
+The following example shows how to call
+`read_las_points_with_properties()` to read a point set with points
+and RGBI colors and stores these attributes in a user-defined
+container.
+
+\cgalExample{Point_set_processing_3/read_las_example.cpp}
+
+\section Point_set_processing_3Spacing Average Spacing
 
 Function `compute_average_spacing()` computes the average
 spacing of all input points to their `k` nearest neighbor points,
@@ -147,6 +263,57 @@ found in other \cgal components:
 - `bounding_box()`
 - `Min_sphere_of_spheres_d<Traits>`
 
+\section Point_set_processing_3Scale Automatic Scale Estimation
+
+Point sets are often used to sample objects with a higher dimension,
+typically a curve in 2D or a surface in 3D. In such cases, finding the
+scale of the objet is crucial, that is to say finding the minimal
+number of points (or the minimal local range) such that the subset of
+points has the appearance of a curve in 2D or a surface in 3D
+\cgalCite{cgal:gcsa-nasr-13}.
+
+\cgal provides 2 functions that automatically estimate the scale of a
+2D point set sampling a curve or a 3D point set sampling a surface:
+
+- `estimate_global_k_neighbor_scale()`
+- `estimate_global_range_scale()`
+
+Functions such as `grid_simplify_point_set()` require a range scale
+while `jet_estimate_normals()`, `remove_outliers()` or
+`vcm_estimate_normals()` are examples of functions that accepts both a
+K neighbor scale or a range scale.
+
+In some specific cases, the scale of a point set might not be
+homogeneous (for example if the point set contains variable
+noise). \cgal also provides 2 functions that automatically estimate
+the scales of a point set at a set of user-defined query points:
+
+- `estimate_local_k_neighbor_scales()`
+- `estimate_local_range_scales()`
+
+The 4 functions presented here work both with 2D points and 3D points
+and they shouldn't be used if the point sets do not sample a curve in
+2D or a surface in 3D.
+
+\subsection Point_set_processing_3Example_scale_estimation_global Global Scale Example 
+
+The following example reads a 3D point set in the `xyz` format and:
+
+- Estimates the K neighbor global scale
+- Uses it to smooth the point set
+- Estimates the range global scale
+- Uses it to simplify the point set
+
+\cgalExample{Point_set_processing_3/scale_estimation_example.cpp}
+
+\subsection Point_set_processing_3Example_scale_estimation_local Local Scales Example
+
+This second example generates a 2D point set sampling a circle with
+variable noise. It then estimates the scale at 3 different query
+points in the domain.
+
+\cgalExample{Point_set_processing_3/scale_estimation_2d_example.cpp}
+
 
 
 \section Point_set_processing_3OutlierRemoval Outlier Removal
@@ -154,7 +321,9 @@ found in other \cgal components:
 Function `remove_outliers()` deletes a user-specified fraction
 of outliers from an input point set. More specifically, it sorts the
 input points in increasing order of average squared distances to their
-`k` nearest neighbors and deletes the points with largest value.
+nearest neighbors and deletes the points with largest value. The user
+can either specify a fixed number of nearest neighbors or a fixed
+spherical neighborhood radius.
 
 \subsection Point_set_processing_3Example_outlier_removal Example
 
@@ -216,7 +385,7 @@ parameter: \f$10\f$, \f$100\f$ and \f$1000\f$. In the 3 cases,
 
 \subsubsection Point_set_processing_3Hierarchy_simplification_parameter_var_max Parameter: var_max
 In addition to the size parameter, a variation parameter allows to
-increase simplification in monotoneous regions. For each cluster, a
+increase simplification in monotonous regions. For each cluster, a
 surface variation measure is computed using the sorted eigenvalues of
 the covariance matrix: \f[ \sigma(p) = \frac{\lambda_0}{\lambda_0 +
     \lambda_1 + \lambda_2}. \f]
@@ -259,9 +428,9 @@ Comparison between different sizes of neighbor radius.
 
 \subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance
 A parallel version of WLOP is provided and requires the executable to be linked against the 
-<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
 for more details. We provide below a speed-up chart generated using the parallel version of the WLOP algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parallel_performance, parallel_WLOP_performance.jpg}
@@ -275,12 +444,15 @@ Two smoothing functions are devised to smooth an input point set.
 
 Function `jet_smooth_point_set()` smooths the input point set by
 projecting each point onto a smooth parametric surface patch
-(so-called jet surface) fitted over its `k` nearest neighbors.
+(so-called jet surface) fitted over its nearest neighbors. 
 
 Function `bilateral_smooth_point_set()` smooths the input point set by
-iteratively projecting each point onto the implicit surface patch fitted over its `k` nearest neighbors.
+iteratively projecting each point onto the implicit surface patch fitted over its nearest neighbors.
 Bilateral projection preserves sharp features according to the normal (gradient) information. 
 Normals are thus required as input. For more details, see section 4 of \cgalCite{ear-2013}.
+
+For both functions, the user can either specify a fixed number of
+nearest neighbors or a fixed spherical neighborhood radius.
 
 \subsection Point_set_processing_3Example_jet_smoothing Jet Smoothing Example
 
@@ -301,9 +473,9 @@ Comparison for two smoothing methods: Left: Input, 250K points, normal-color map
 
 Performance: 
 A parallel version of bilateral smoothing is provided and requires the executable to be linked against the 
-<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 The number of threads used is controlled through the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3Bilateral_smoothing_parallel_performance, parallel_bilateral_smooth_point_set_performance.jpg}
 Parallel bilateral smoothing speed-up, compared to the sequential version of the algorithm. 
@@ -316,13 +488,13 @@ functions provide an estimate of the normal to \b S at each
 point. The result is an unoriented normal vector for each input point.
 
 Function `jet_estimate_normals()` estimates the normal direction
-at each point from the input set by fitting a jet surface over its `k`
+at each point from the input set by fitting a jet surface over its
 nearest neighbors. The default jet is a quadric surface. This
 algorithm is well suited to point sets scattered over curved surfaces.
 
 Function `pca_estimate_normals()` estimates the normal direction
 at each point from the set by linear least squares fitting of a plane
-over its `k` nearest neighbors. This algorithm is simpler and
+over its nearest neighbors. This algorithm is simpler and
 faster than `jet_estimate_normals()`.
 
 Function `vcm_estimate_normals()` estimates the normal direction
@@ -331,13 +503,16 @@ of the point set. This algorithm is more complex and slower than
 the previous algorithms. It is based on the
 article \cgalCite{cgal:mog-vbcfe-11}.
 
+For these three functions, the user can either specify a fixed number
+of nearest neighbors or a fixed spherical neighborhood radius.
+
 \section Point_set_processing_3NormalOrientation Normal Orientation
 
 Function `mst_orient_normals()` orients the normals of a set of
 points with unoriented normals using the method described by Hoppe et
 al. in <I>Surface reconstruction from unorganized points</I> \cgalCite{cgal:hddms-srup-92}. 
 More specifically, this method constructs a
-Riemannian graph over the input points (the graph of the `k`
+Riemannian graph over the input points (the graph of the 
 nearest neighbor points) and propagates a seed normal orientation
 within a minimum spanning tree computed over this graph. The result is
 an oriented normal vector for each input unoriented normal, except for
@@ -350,8 +525,9 @@ Normal orientation of a sampled cube surface. Left: unoriented normals. Right: o
 \subsection Point_set_processing_3Example_normals Example
 
 The following example reads a point set from a file, estimates the
-normals through PCA over the 6 nearest neighbors and orients the
-normals:
+normals through PCA (either over the 18 nearest neighbors or using a
+spherical neighborhood radius of twice the average spacing) and
+orients the normals:
 \cgalExample{Point_set_processing_3/normals_example.cpp}
 
 
@@ -385,7 +561,7 @@ Upsampling for different sharpness_angle parameter values. The input containing 
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3upsample_neighborhood_size Parameter: neighbor_radius
-Usually, the neighborhood of sample points should include at least one ring of neighboring sample points. Using small neighborhood size may not be able to insert new points. Using big neighborhood size can fill small holes, but points inserted on the edges could be irregular. The function will use a neigbhorhood size estimation if this parameter value is set to default or smaller than zero.
+Usually, the neighborhood of sample points should include at least one ring of neighboring sample points. Using small neighborhood size may not be able to insert new points. Using big neighborhood size can fill small holes, but points inserted on the edges could be irregular. The function will use a neighborhood size estimation if this parameter value is set to default or smaller than zero.
 
 \cgalFigureBegin{Point_set_processing_3figupsample_neighborhood_size, upsample_neighborhood_size.jpg}
 Comparison between different sizes of neighbor radius. 
@@ -408,12 +584,86 @@ points that are on sharp edges:
 \cgalExample{Point_set_processing_3/edges_example.cpp}
 
 
+\section Point_set_processing_3Structuring Structuring
+
+The function `structure_point_set()` generates a structured version of
+the input point set assigned to a set of planes. Such an input can be
+produced by a shape detection algorithm (see \ref PkgShapeDetectionRef). 
+Point set structuring is based on the article \cgalCite{cgal:la-srpss-13}.
+
+- __Planes__: inliers of each detected plane are replaced by sets of
+noise-free points sampled at the vertices of a regular grid: this is
+achieved by filling an occupancy grid aligned on the principal
+components of the inlier sets with a spacing lower than \f$\sqrt{2}\f$
+times the user-defined tolerance.
+
+- __Creases__: adjacencies between 2 planes are detected and regularly
+resampled on an occupancy array along the edge with a spacing equal to
+twice the user-defined tolerance.
+
+- __Corners__: 3-cycles are detected from the primitive adjacency
+graph and sampled using the exact intersection point of the 3 planes
+(provided it exists and remains in the given tolerance). These corners
+are also locally clustered to former corners of degree higher than 3.
+
+This algorithm is well suited to point sets sampled on surfaces with
+planar sections and sharp edges.
+
+\cgalFigureBegin{Point_set_processing_3figstructuring,structuring.png}
+Point set structuring. Left: input raw point set. Right: structured point set.
+\cgalFigureEnd
+
+Structure information of points can be used to perform feature
+preserving reconstruction (see
+\ref AFSR_Example_sharp_features "Advancing Front Surface Reconstruction"
+for example). More specifically, the class storing a point set with
+structure provides the user with a method
+`Point_set_with_structure::facet_coherence()` that estimates if a
+triplet of points form a coherent facet.
+
+\cgalFigureBegin{Point_set_processing_3figstructuring_coherence, structuring_coherence.png}
+(a) Input point set (and structured output); (b) output with many
+incoherent facets; (c) output with all facets coherent. i, j and k
+each corresponds to a primitive index.
+\cgalFigureEnd
+
+
+
+\subsection Point_set_processing_3Example_9 Example
+
+The following example applies shape detection followed by structuring to a
+point set:
+\cgalExample{Point_set_processing_3/structuring_example.cpp}
+
+
+\section Point_set_processing_3Callbacks Callbacks
+
+Several functions of this package provide a callback mechanism that enables the user to track the progress of the algorithms and to interrupt them if needed. A callback, in this package, is an instance of `std::function<bool(double)>` that takes the advancement as a parameter (between 0. when the algorithm begins to 1. when the algorithm is completed) and that returns `true` if the algorithm should carry on, `false` otherwise. It is passed as a named parameter with an empty function as default.
+
+Algorithms that support this mechanism are detailed in the [Reference Manual](@ref PkgPointSetProcessing3Ref), along with the effect that an early interruption has on the output.
+
+\subsection Point_set_processing_3Example_callbacks Example
+
+The following example defines a callback that displays the name of the current algorithm along with the progress (as a percentage) updated every \f$1/10th\f$ of a second. While the algorithm is running, the console output will typically look like this:
+
+\code{.sh}
+Computing average spacing: 100%
+Grid simplification: 100%
+Jet smoothing: 54%
+\endcode
+
+Thanks to the carriage return character `\r`, the lines are overwritten and the user sees the percentage increasing on each line.
+
+\cgalExample{Point_set_processing_3/callback_example.cpp}
+
+
 \section Point_set_processing_3ImplementationHistory Implementation History
 
 Pierre Alliez and Laurent Saboret contributed the initial component. Nader Salman contributed the grid simplification.
 Started from GSoC'2013, three new algorithms were implemented by Shihao Wu and Clément Jamin: WLOP, bilateral smoothing and upsampling.
-Started from GSoC'2014, Jocelyn Meyron with the help of Quentin Mérigot introduced the computation of the Voronoi covarience measure of a point set,
+Started from GSoC'2014, Jocelyn Meyron with the help of Quentin Mérigot introduced the computation of the Voronoi covariance measure of a point set,
 as well as the normal and feature edge estimation functions based on it.
+Florent Lafarge with the help of Simon Giraudot contributed the point set structuring algorithm.
 
 */ 
 } /* namespace CGAL */

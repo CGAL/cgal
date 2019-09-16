@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Andreas Fabri
 //                 Lutz Kettner <kettner@inf.ethz.ch>
@@ -49,21 +50,11 @@ public:
             os() << std::endl;
         m_os = 0;
     }
-    #if defined BOOST_NO_EXPLICIT_CONVERSION_OPERATORS \
-        || defined BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
-    typedef const void* Const_void_ptr;
-    operator Const_void_ptr () const {
-      if ( m_os->fail() )
-        return 0;
-      else
-        return static_cast<Const_void_ptr>(m_os);
-    }
-    #else
     explicit operator bool ()
     {
       return m_os && !m_os->fail();
     }
-    #endif
+
     std::ostream& os() {
         // The behaviour if m_os == 0 could be changed to return
         // cerr or a file handle to /dev/null. The latter one would

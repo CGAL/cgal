@@ -15,11 +15,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)    : Samuel Hornus
 
 #ifndef CGAL_COMBINATION_ENUMERATOR_H
 #define CGAL_COMBINATION_ENUMERATOR_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <vector>
@@ -57,7 +60,7 @@ public:
     Combination_enumerator(const int k, const T & first, const T & beyond)
     : combi_(k), k_(k), first_(first), beyond_(beyond), max_at_pos_0_(beyond - k)
     {
-        CGAL_assertion_msg( (1 <= k) && (k <= beyond - first), "wrong value of k");
+        CGAL_assertion_msg( (1 <= k) && (k <= static_cast<int>(beyond - first)), "wrong value of k");
         reset();
     }
 
@@ -134,5 +137,7 @@ public:
 };
 
 } // end of namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_COMBINATION_ENUMERATOR_H

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_VORONOI_DIAGRAM_2_FACE_H
 #define CGAL_VORONOI_DIAGRAM_2_FACE_H 1
+
+#include <CGAL/license/Voronoi_diagram_2.h>
+
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
@@ -58,7 +62,7 @@ class Face
 
   // CONSTRUCTORS
   //-------------
-  Face(const VDA* vda = NULL) : vda_(vda) {}
+  Face(const VDA* vda = nullptr) : vda_(vda) {}
   Face(const VDA* vda, Delaunay_vertex_handle v) : vda_(vda), v_(v)
   {
     //    CGAL_precondition( !vda_->face_rejector()(v_) );
@@ -148,7 +152,7 @@ class Face
   // VALIDITY TESTING
   //-----------------
   bool is_valid() const {
-    if ( vda_ == NULL ) { return true; }
+    if ( vda_ == nullptr ) { return true; }
 
     if ( vda_->dual().dimension() < 1 ) { return true; }
 
@@ -171,8 +175,8 @@ class Face
   // COMPARISON OPERATORS
   //---------------------
   bool operator==(const Self& other) const {
-    if ( vda_ == NULL ) { return other.vda_ == NULL; }
-    if ( other.vda_ == NULL ) { return vda_ == NULL; }
+    if ( vda_ == nullptr ) { return other.vda_ == nullptr; }
+    if ( other.vda_ == nullptr ) { return vda_ == nullptr; }
     return ( vda_ == other.vda_ && v_ == other.v_ );
   }
 
@@ -181,8 +185,8 @@ class Face
   }
 
   bool operator<(const Self& other) const {
-    if ( vda_ == NULL ) { return other.vda_ != NULL; }
-    if ( other.vda_ == NULL ) { return false; }
+    if ( vda_ == nullptr ) { return other.vda_ != nullptr; }
+    if ( other.vda_ == nullptr ) { return false; }
     if ( vda_ != other.vda_ ) { return vda_ < other.vda_; }
     return v_ < other.v_;
   }

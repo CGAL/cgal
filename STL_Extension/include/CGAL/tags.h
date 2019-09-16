@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -34,7 +35,7 @@ namespace CGAL {
 struct Void {};
 
 // Boolean_tag<bool> is a model of the Boost Integral Constant concept.
-//   http://www.boost.org/libs/mpl/doc/refmanual/integral-constant.html
+//   https://www.boost.org/libs/mpl/doc/refmanual/integral-constant.html
 template <bool b>
 struct Boolean_tag {
   typedef boost::mpl::integral_c_tag tag;

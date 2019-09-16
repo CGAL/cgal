@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_CARTESIAN_MATRIXC33_H
 #define CGAL_CARTESIAN_MATRIXC33_H
+
+#include <CGAL/license/Surface_mesh_simplification.h>
+
 
 #include <CGAL/Vector_3.h>
 #include <CGAL/determinant.h>

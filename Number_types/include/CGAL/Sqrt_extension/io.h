@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -47,15 +48,15 @@ input_ascii(std::istream& is , Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& result){
     swallow(is, 'T');
     swallow(is, '[');
     is >> iformat(a0);
-    do c = is.get(); while (isspace(c));
+    do is.get(c); while (isspace(c));
     if (c != ',') CGAL_error_msg( "input error: , expected" );
 
     is >> iformat(a1);
-    do c = is.get(); while (isspace(c));
+    do is.get(c); while (isspace(c));
     if (c != ',') CGAL_error_msg( "input error: , expected" );
 
     is >> iformat(root);
-    do c = is.get(); while (isspace(c));
+    do is.get(c); while (isspace(c));
     if (c != ']') CGAL_error_msg( "input error: ] expected" );
 
     if ( root  < ROOT(0)) CGAL_error_msg("input error: non-negative root expected");

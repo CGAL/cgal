@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -23,6 +24,9 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_SIMPLE_SITE_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_SIMPLE_SITE_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 #include <iostream>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
@@ -30,6 +34,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -137,11 +142,13 @@ public:
   }
 
   const Point_2& source_of_crossing_site(unsigned int i) const {
+    CGAL_USE(i);
     CGAL_precondition( is_segment() && !is_input(i) );
     return p_[0];
   }
 
   const Point_2& target_of_crossing_site(unsigned int i) const {
+    CGAL_USE(i);
     CGAL_precondition( is_segment() && !is_input(i) );
     return p_[0];
   }

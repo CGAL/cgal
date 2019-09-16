@@ -1,8 +1,13 @@
 /*!
 \example Periodic_3_triangulation_3/simple_example.cpp
+\example Periodic_3_triangulation_3/simple_regular_example.cpp
 \example Periodic_3_triangulation_3/colored_vertices.cpp
 \example Periodic_3_triangulation_3/periodic_adding_handles.cpp
 \example Periodic_3_triangulation_3/covering.cpp
 \example Periodic_3_triangulation_3/large_point_set.cpp
 \example Periodic_3_triangulation_3/geometric_access.cpp
+\example Periodic_3_triangulation_3/p3rt3_insert_remove.cpp
+\example Periodic_3_triangulation_3/p3rt3_insert_only.cpp
+\example Periodic_3_triangulation_3/p3rt3_hidden_points.cpp
+\example Periodic_3_triangulation_3/p3rt3_insert_point_with_bad_weight.cpp
 /h*/

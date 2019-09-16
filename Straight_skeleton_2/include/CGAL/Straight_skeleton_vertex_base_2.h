@@ -13,16 +13,21 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H
 #define CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Origin.h>
+#include <CGAL/use.h>
 
 #include <boost/iterator/iterator_facade.hpp>
 
@@ -79,14 +84,15 @@ protected :
         ( Halfedge_circulator_base<OtherHalfedgeHandle,OtherAccessPolicy> const& aOther )
         : mHandle(aOther.mHandle) {}
 
-      bool operator==( Nullptr_t p ) const 
+      bool operator==( std::nullptr_t p ) const 
       {
-        CGAL_assertion( p == NULL ); 
+        CGAL_USE(p);
+        CGAL_assertion( p == nullptr ); 
         HalfedgeHandle null ;
         return mHandle == null ;
       }
       
-      bool operator!=( Nullptr_t p ) const { return !(*this == p); }
+      bool operator!=( std::nullptr_t p ) const { return !(*this == p); }
       
     private :
 

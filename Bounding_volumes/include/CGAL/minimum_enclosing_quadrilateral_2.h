@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
@@ -22,9 +23,13 @@
 #ifndef CGAL_MINIMUM_ENCLOSING_QUADRILATERAL_2_H
 #define CGAL_MINIMUM_ENCLOSING_QUADRILATERAL_2_H 1
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+#include <CGAL/license/Bounding_volumes.h>
+
+#define CGAL_DEPRECATED_HEADER "<CGAL/minimum_enclosing_quadrilateral_2.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/min_quadrilateral_2.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
 #include <CGAL/min_quadrilateral_2.h>
-#endif // CGAL_NO_DEPRECATED_CODE
 
 #endif // ! (CGAL_MINIMUM_ENCLOSING_QUADRILATERAL_2_H)
 

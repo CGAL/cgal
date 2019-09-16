@@ -13,6 +13,7 @@ will explicitly state where you can pass this constant as an argument
 instead of a vector initialized with zeros. 
 
 \cgalModels `Kernel::Vector_2`
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
 */
 template< typename Kernel >
@@ -85,7 +86,7 @@ Vector_2(const Kernel::FT &x, const Kernel::FT &y);
 /// There are two sets of coordinate access functions, namely to the
 /// homogeneous and to the %Cartesian coordinates. They can be used
 /// independently from the chosen kernel model. Note that you do not
-/// loose information with the homogeneous representation, because the
+/// lose information with the homogeneous representation, because the
 /// `FieldNumberType` is a quotient.
 /// @{
 
@@ -124,13 +125,13 @@ Kernel::FT y() const;
 
 
 /*!
-returns the i'th homogeneous coordinate of `v`, starting with 0. 
+returns the i'th homogeneous coordinate of `v`.
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 Kernel::RT homogeneous(int i) const; 
 
 /*!
-returns the i'th Cartesian coordinate of `v`, starting at 0. 
+returns the i'th Cartesian coordinate of `v`.
 \pre \f$ 0\leq i \leq1\f$. 
 */ 
 Kernel::FT cartesian(int i) const; 

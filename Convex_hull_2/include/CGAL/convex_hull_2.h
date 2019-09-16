@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
 
 #ifndef CGAL_CONVEX_HULL_2_H
 #define CGAL_CONVEX_HULL_2_H
+
+#include <CGAL/license/Convex_hull_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/convex_hull_traits_2.h>

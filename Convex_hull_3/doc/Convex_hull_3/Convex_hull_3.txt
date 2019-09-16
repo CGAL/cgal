@@ -34,8 +34,8 @@ triangulation to get a fully dynamic computation.
 
 The function 
 `convex_hull_3()` provides an 
-implementation of the quickhull algorithm \cgalCite{bdh-qach-96} for three 
-dimensionsquickhull, 3D. There are two versions of this
+implementation of the quickhull algorithm \cgalCite{bdh-qach-96}.
+There are two versions of this
 function available, one that can be used when it is known that the output
 will be a polyhedron (<I>i.e.</I>, there are more than three points and
 they are not all collinear) and one that handles all degenerate cases
@@ -49,11 +49,76 @@ computing the hull.
 
 The function `convex_hull_3()` is parameterized by a traits class,
 which specifies the types and geometric primitives to be used in the
-computation. If input points from a kernel with exact predicates 
+computation.   As the function constructs 3D planes from three input
+points, we cannot simply pass a kernel with inexact constructions as
+optional argument for the traits class.
+
+If input points from a kernel with exact predicates 
 and non-exact constructions are used, and a certified result is expected,
-the traits `Convex_hull_traits_3<R>` should be used 
-(`R` being the input kernel). Note that the default traits class takes this into
-account.
+the class `Convex_hull_traits_3<R>` should be used 
+(`R` being the input kernel).
+If the constructions from a kernel are exact this kernel can be used
+directly as a traits class.
+
+Note that the default traits class takes this into account, that is the
+above considerations are only important for custom traits classes.
+
+\subsubsection Convex_hull_3Example Example
+
+The following program reads points from an input file and computes
+their convex hull.  We assume that the points are
+not all identical and not all collinear, thus we directly use a polyhedron
+as output. In the example you see that the convex hull function can
+write in any model of the concept `MutableFaceGraph`.
+
+
+\cgalExample{Convex_hull_3/quickhull_3.cpp}
+
+
+\subsubsection Convex_hull_3ExampleLower Example for Lower Dimensional Results
+
+The following program reads points from an input file and computes
+their convex hull. Depending on the dimension of the result, we will
+get a point, a segment, a triangle, or a polyhedral surface.
+Note that the latter may also be planar polygon with a border.
+
+\cgalExample{Convex_hull_3/quickhull_any_dim_3.cpp}
+
+\subsection Convex_hull_3ExtremePoints Extreme points
+In addition to the `convex_hull_3()` function, the function `extreme_points_3()` is also
+provided in case only the points on the convex hull are required (without the connectivity
+information). In addition the traits class adapter `CGAL::Extreme_points_traits_adapter_3`
+is also provided in order to get the indices or more generally any given entity that
+is associated a 3D point that is on the convex hull.
+
+The following program reads a set of points from an OFF file and outputs the indices
+of the points that are on the convex hull.
+\cgalExample{Convex_hull_3/extreme_indices_3.cpp}
+
+The following program reads and builds a mesh from an OFF file, and then collects the vertices
+that are on the convex hull of the mesh.
+\cgalExample{Convex_hull_3/extreme_points_3_sm.cpp}
+
+\subsection Convex_hull_3HalfspaceIntersection Halfspace Intersection
+
+The functions `halfspace_intersection_3()` and
+`halfspace_intersection_with_constructions_3()`
+uses the convex hull algorithm and the duality to compute the intersection
+of a list of halfspaces. The first version does not explicitly compute
+the dual points: the traits class handles this issue. The second one constructs
+these points and hence is less robust but the computation is faster.
+
+In order to compute the intersection an interior point is needed. It can be
+either given by the user or computed using linear programming. Notice that the
+second approach is slower due to the resolution of a linear program.
+
+\subsubsection Convex_hull_3HalfspaceInntersectionExample Example
+
+The following example computes the intersection of halfspaces defined by
+tangent planes to a sphere. 
+
+\cgalExample{Convex_hull_3/halfspace_intersection_3.cpp}
+
 
 \subsection Convex_hull_3ConvexityChecking Convexity Checking
 
@@ -63,33 +128,6 @@ to determine if the vertices of a given polytope constitute a strongly convex
 point set or not. This function is used in postcondition testing for
 `convex_hull_3()`.
 
-\subsection Convex_hull_3HalfspaceIntersection Halfspace Intersection
-The functions `halfspace_intersection_3()` and
-`halfspace_intersection_with_constructions_3()`
-uses the convex hull algorithm and the duality to compute the intersection
-of a list of halfspaces. The first version does not explicitly computes
-the dual points: the traits class handles this issue. The second one constructs
-these points and hence is less robust but the computation is faster.
-
-In order to compute, the intersection an interior point is needed. It could be
-either given by the user or computed using linear programming. Notice that the
-second approach is slower due to the resolution of a linear program.
-
-The following program computes the intersection of halfspaces defined by
-tangent planes to a sphere:
-
-\cgalExample{Convex_hull_3/halfspace_intersection_3.cpp}
-
-\subsection Convex_hull_3Example Example
-
-The following program computes the convex hull of a set of 250 random
-points chosen from a sphere of radius 100. We assume that the points are
-not all identical and not all collinear, thus we directly use a polyhedron
-as output. Note the usage of the functor `Plane_from_facet` together with
-`std::transform()` to compute the equations of the plane of each facet
-of the convex hull.
-
-\cgalExample{Convex_hull_3/quickhull_3.cpp}
 
 \section Convex_hull_3Dynamic Dynamic Convex Hull Construction
 
@@ -108,13 +146,19 @@ not all of them are vertices of the hull.
 
 \subsection Convex_hull_3Example_2 Example
 
+The following example shows how to compute a convex hull with a triangulation.
+The vertices incident to the infinite vertex are on the convex hull.
+
+The function `convex_hull_3_to_face_graph()` can be used to obtain a polyhedral surface 
+that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surface_mesh`.
+
 \cgalExample{Convex_hull_3/dynamic_hull_3.cpp}
 
 \section Convex_hull_3Performance Performance
 
-In the following, we compare the running times of the three approaches to compute 3D convex hulls.
+In the following, we compare the running times of the two approaches to compute 3D convex hulls.
 For the static version (using `convex_hull_3()`) and the dynamic version
-(using `Delaunay_triangulation_3` and `convex_hull_3_to_polyhedron_3()`), the kernel
+(using `Delaunay_triangulation_3` and `convex_hull_3_to_face_graph()`), the kernel
 used was `Exact_predicates_inexact_constructions_kernel`.
 
 To compute the convex hull of a million of random points in a unit ball the static approach needed 1.63s, while 

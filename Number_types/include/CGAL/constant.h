@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Sylvain Pion
@@ -22,6 +23,7 @@
 #define CGAL_CONSTANT_H
 
 #include <CGAL/config.h>
+#include <CGAL/tss.h>
 
 namespace CGAL {
 
@@ -33,7 +35,7 @@ inline
 const T&
 constant()
 {
-  static const T t(i);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(T, t,i);
   return t;
 }
 

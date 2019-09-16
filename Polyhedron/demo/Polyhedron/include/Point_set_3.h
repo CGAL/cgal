@@ -14,9 +14,10 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s)     : Laurent Saboret, Nader Salman, Gael Guennebaud
+// Author(s)     : Laurent Saboret, Nader Salman, Gael Guennebaud, Simon Giraudot
 
 #ifndef POINT_SET_3_H
 #define POINT_SET_3_H
@@ -26,17 +27,16 @@
 #include <CGAL/Min_sphere_of_points_d_traits_3.h>
 #include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
 #include <CGAL/Point_set_3.h>
+#include <CGAL/Iterator_range.h>
 
 #include <algorithm>
 #include <vector>
-# include <CGAL/gl.h>
 
 /// The Point_set_3 class is array of points + normals of type
 /// Point_with_normal_3<Gt> (in fact
 /// UI_point_3 to support a selection flag and an optional radius).
 /// It provides:
 /// - accessors: points and normals iterators, property maps
-/// - OpenGL rendering
 /// - bounding box
 ///
 /// CAUTION:
@@ -91,7 +91,13 @@ private:
   Byte_map m_red;
   Byte_map m_green;
   Byte_map m_blue;
-
+  Double_map m_fred;
+  Double_map m_fgreen;
+  Double_map m_fblue;
+  
+  mutable CGAL::Iterator_range<const_iterator> m_const_range;
+  CGAL::Iterator_range<iterator> m_range;
+  
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
   Point_set_3& operator= (const Point_set_3&)
@@ -101,15 +107,22 @@ private:
 
   
 public:
+  
   Point_set_3 ()
+    : m_const_range (begin(), end())
+    , m_range (begin(), end())
   {
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
   }
 
   // copy constructor 
-  Point_set_3 (const Point_set_3& p) : Base ()
+  Point_set_3 (const Point_set_3& p)
+    : Base (p)
+    , m_const_range (begin(), end())
+    , m_range (begin(), end())
   {
+    check_colors();
     m_bounding_box_is_valid = p.m_bounding_box_is_valid;
     m_bounding_box = p.m_bounding_box;
     m_barycenter = p.m_barycenter;
@@ -123,6 +136,11 @@ public:
   const_iterator end() const { return this->m_indices.end(); }
   std::size_t size() const { return this->m_base.size(); }
 
+  void reset_indices()
+  {
+    this->cancel_removals();
+  }
+  
   bool add_radius()
   {
     bool out = false;
@@ -132,8 +150,6 @@ public:
   double& radius (const Index& index) { return m_radius[index]; }
   const double& radius (const Index& index) const { return m_radius[index]; }
 
-  void test () { }
-  
   bool check_colors()
   {
     bool found = false;
@@ -143,7 +159,7 @@ public:
       {
         boost::tie (m_red, found) = this->template property_map<unsigned char>("r");
         if (!found)
-          return false;
+          return get_float_colors();
       }
 
     boost::tie (m_green, found) = this->template property_map<unsigned char>("green");
@@ -165,17 +181,148 @@ public:
     return true;
   }
 
+  bool get_float_colors()
+  {
+    bool found = false;
+
+    boost::tie (m_fred, found) = this->template property_map<double>("red");
+    if (!found)
+      {
+        boost::tie (m_fred, found) = this->template property_map<double>("r");
+        if (!found)
+          return get_las_colors();
+      }
+
+    boost::tie (m_fgreen, found) = this->template property_map<double>("green");
+    if (!found)
+      {
+        boost::tie (m_fgreen, found) = this->template property_map<double>("g");
+        if (!found)
+          return false;
+      }
+
+    boost::tie (m_fblue, found) = this->template property_map<double>("blue");
+    if (!found)
+      {
+        boost::tie (m_fblue, found) = this->template property_map<double>("b");
+        if (!found)
+          return false;
+      }
+    return true;
+  }
+
+  bool get_las_colors()
+  {
+    bool found = false;
+    
+    typedef typename Base::template Property_map<unsigned short> Ushort_map;
+    Ushort_map red, green, blue;
+    
+    boost::tie (red, found) = this->template property_map<unsigned short>("R");
+    if (!found)
+      return false;
+
+    boost::tie (green, found) = this->template property_map<unsigned short>("G");
+    if (!found)
+      return false;
+
+    boost::tie (blue, found) = this->template property_map<unsigned short>("B");
+    if (!found)
+      return false;
+
+    unsigned int bit_short_to_char = 0;
+    for (iterator it = begin(); it != end(); ++ it)
+      if (get(red, *it) > 255
+          || get(green, *it) > 255
+          || get(blue, *it) > 255)
+        {
+          bit_short_to_char = 8;
+          break;
+        }
+
+    m_red = this->template add_property_map<unsigned char>("r").first;
+    m_green = this->template add_property_map<unsigned char>("g").first;
+    m_blue = this->template add_property_map<unsigned char>("b").first;
+    for (iterator it = begin(); it != end(); ++ it)
+      {
+        put (m_red, *it, (unsigned char)((get(red, *it) >> bit_short_to_char)));
+        put (m_green, *it, (unsigned char)((get(green, *it) >> bit_short_to_char)));
+        put (m_blue, *it, (unsigned char)((get(blue, *it) >> bit_short_to_char)));
+      }
+    this->remove_property_map(red);
+    this->remove_property_map(green);
+    this->remove_property_map(blue);
+    
+    return true;
+  }
+
   bool has_colors() const
   {
-    return m_blue != Byte_map();
+    return (m_blue != Byte_map() || m_fblue != Double_map());
+  }
+
+  bool has_byte_colors() const
+  {
+    return (m_blue != Byte_map());
+  }
+
+  bool add_colors ()
+  {
+    if (has_colors())
+      return false;
+    
+    m_red = this->template add_property_map<unsigned char>("red", 0).first;
+    m_green = this->template add_property_map<unsigned char>("green", 0).first;
+    m_blue = this->template add_property_map<unsigned char>("blue", 0).first;
+
+    return true;
+  }
+  
+  void remove_colors()
+  {
+    if (m_blue != Byte_map())
+      {
+        this->template remove_property_map<unsigned char>(m_red);
+        this->template remove_property_map<unsigned char>(m_green);
+        this->template remove_property_map<unsigned char>(m_blue);
+      }
+    if (m_fblue != Double_map())
+      {
+        this->template remove_property_map<double>(m_fred);
+        this->template remove_property_map<double>(m_fgreen);
+        this->template remove_property_map<double>(m_fblue);
+      }
+  }
+
+  double red (const Index& index) const
+  { return (m_red == Byte_map()) ? m_fred[index]  : double(m_red[index]) / 255.; }
+  double green (const Index& index) const
+  { return (m_green == Byte_map()) ? m_fgreen[index]  : double(m_green[index]) / 255.; }
+  double blue (const Index& index) const
+  { return (m_blue == Byte_map()) ? m_fblue[index]  : double(m_blue[index]) / 255.; }
+  
+  void set_color (const Index& index, unsigned char r = 0, unsigned char g = 0, unsigned char b = 0)
+  {
+    m_red[index] = r;
+    m_green[index] = g;
+    m_blue[index] = b;
+  }
+
+  void set_color (const Index& index, const QColor& color)
+  {
+    m_red[index] = color.red();
+    m_green[index] = color.green();
+    m_blue[index] = color.blue();
+  }
+
+  template <typename ColorRange>
+  void set_color (const Index& index, const ColorRange& color)
+  {
+    m_red[index] = color[0];
+    m_green[index] = color[1];
+    m_blue[index] = color[2];
   }
     
-  unsigned char& red (const Index& index) { return m_red[index]; }
-  unsigned char& green (const Index& index) { return m_green[index]; }
-  unsigned char& blue (const Index& index) { return m_blue[index]; }
-  const unsigned char& red (const Index& index) const { return m_red[index]; }
-  const unsigned char& green (const Index& index) const { return m_green[index]; }
-  const unsigned char& blue (const Index& index) const { return m_blue[index]; }
   
   iterator first_selected() { return this->m_indices.end() - this->m_nb_removed; }
   const_iterator first_selected() const { return this->m_indices.end() - this->m_nb_removed; }
@@ -193,11 +340,28 @@ public:
     return (this->m_nb_removed == 0 ? begin() : first_selected());
   }
 
+  const CGAL::Iterator_range<const_iterator>& all_or_selection_if_not_empty() const
+  {
+    m_const_range = CGAL::make_range (begin_or_selection_begin(), end());
+    return m_const_range;
+  }
+  CGAL::Iterator_range<iterator>& all_or_selection_if_not_empty()
+  {
+    m_range = CGAL::make_range (begin_or_selection_begin(), end());
+    return m_range;
+  }
+
 
   // Test if point is selected
   bool is_selected(const_iterator it) const
   {
     return this->is_removed (it);
+  }
+  
+  // Test if point is selected
+  bool is_selected(const Index& idx) const
+  {
+    return this->is_removed (idx);
   }
 
   /// Gets the number of selected points.
@@ -207,20 +371,19 @@ public:
   }
 
   /// Mark a point as selected/not selected.
-  void select(iterator it, bool selected = true)
+  void select(const Index& index)
   {
-    bool currently = is_selected (it);
-    iterator first = this->first_selected();
-    if (currently && !selected)
-      {
-        std::swap (*it, *first);
-        -- this->m_nb_removed;
-      }
-    else if (!currently && selected)
-      {
-        std::swap (*it, *first);
-        ++ this->m_nb_removed;
-      }
+    this->remove(index);
+  }
+
+  /// Mark a point as selected/not selected.
+  void unselect(const Index& index)
+  {
+    iterator it = this->m_indices.begin() + index;
+    while (*it != index)
+      it = this->m_indices.begin() + *it;
+    std::iter_swap (it, first_selected());
+    this->m_nb_removed --;
   }
 
   void select_all()
@@ -342,6 +505,21 @@ public:
   bool are_radii_uptodate() const { return m_radii_are_uptodate; }
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
   
+  CGAL::Named_function_parameters
+  <Kernel,
+   CGAL::internal_np::geom_traits_t,
+   CGAL::Named_function_parameters
+   <typename Base::template Property_map<Vector>,
+    CGAL::internal_np::normal_t,
+    CGAL::Named_function_parameters
+    <typename Base::template Property_map<Point>,
+     CGAL::internal_np::point_t> > >
+  inline parameters() const
+  {
+    return CGAL::parameters::point_map (this->m_points).
+      normal_map (this->m_normals).
+      geom_traits (Kernel());
+  }
 
 private:
 
@@ -406,5 +584,35 @@ private:
   
 }; // end of class Point_set_3
 
+namespace CGAL
+{
+namespace Point_set_processing_3
+{
+  template<typename Kernel>
+  class GetFT< ::Point_set_3<Kernel> >
+  {
+  public:
+    typedef typename Kernel::FT type;
+  };
+  
+  namespace parameters
+  {
+    template <typename Kernel>
+    Named_function_parameters
+    <Kernel,
+     internal_np::geom_traits_t,
+     Named_function_parameters
+     <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Vector_3>,
+      internal_np::normal_t,
+      Named_function_parameters
+      <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Point_3>,
+       internal_np::point_t> > >
+    inline all_default(const ::Point_set_3<Kernel>& ps)
+    {
+      return ps.parameters();
+    }
+  }
+}
+}
 
 #endif // POINT_SET_3_H

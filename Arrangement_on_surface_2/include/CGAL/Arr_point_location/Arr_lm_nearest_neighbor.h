@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_ARR_LANDMARKS_NEAREST_NEIGHBOR_H
 #define CGAL_ARR_LANDMARKS_NEAREST_NEIGHBOR_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Definition of the Arr_landmarks_nearest_neighbor<Arrangement> template.
@@ -38,7 +42,7 @@ namespace CGAL {
 
 /*! \class
  * A class that answers nearest neighbor queries.
- * It recieves a set of points, and builds a kd-tree for them.
+ * It receives a set of points, and builds a kd-tree for them.
  * Given a query point, it finds the closest point to the query.
  */
 template <typename Arrangement_>
@@ -157,7 +161,7 @@ private:
 public:
   /*! Default constructor. */
   Arr_landmarks_nearest_neighbor () :
-    m_tree(NULL),
+    m_tree(nullptr),
     m_is_empty(true)
   {}
 
@@ -173,7 +177,7 @@ public:
   template <class InputIterator>
   void init(InputIterator begin, InputIterator end)
   {
-    CGAL_precondition_msg(m_tree == NULL,
+    CGAL_precondition_msg(m_tree == nullptr,
                           "The search tree is already initialized.");
 
     if (begin != end) {
@@ -189,9 +193,9 @@ public:
   /*! Clear the search tree. */
   void clear() 
   {
-    if (m_tree != NULL)
+    if (m_tree != nullptr)
       delete m_tree;
-    m_tree = NULL;
+    m_tree = nullptr;
     m_is_empty = true;
   }
 
@@ -205,7 +209,7 @@ public:
    */
   Point_2 find_nearest_neighbor(const Point_2& q, PL_result_type &obj) const
   {
-    CGAL_precondition_msg(m_tree != NULL && ! m_is_empty,
+    CGAL_precondition_msg(m_tree != nullptr && ! m_is_empty,
                           "The search tree is not initialized.");
 
     // Create an NN_Point_2 object from the query point and use it to

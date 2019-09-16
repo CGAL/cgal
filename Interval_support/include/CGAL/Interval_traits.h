@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Hemmer <hemmer@mpi-inf.mpg.de>
@@ -202,7 +203,7 @@ template<typename Interval> inline
 typename Interval_traits<Interval>::Intersection::result_type
 intersection(Interval interval1, Interval interval2, typename boost::enable_if<
              typename Interval_traits<Interval>::Is_interval
-             >::type* = NULL
+             >::type* = nullptr
 ) {
     typename Interval_traits<Interval>::Intersection intersection;
     return intersection(interval1, interval2);
@@ -213,7 +214,7 @@ typename Interval_traits<Interval>::Hull::result_type
 hull(Interval interval1, Interval interval2, typename boost::enable_if<
                                                        boost::is_same<
                                                           typename Interval_traits<Interval>::Is_interval,
-                                                          Tag_true > >::type* = NULL) 
+                                                          Tag_true > >::type* = nullptr) 
 {
     typename Interval_traits<Interval>::Hull hull;
     return hull(interval1, interval2);

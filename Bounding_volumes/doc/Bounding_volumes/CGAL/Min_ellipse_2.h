@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumes
+\ingroup PkgBoundingVolumesRef
 
 An object of the class `Min_ellipse_2` is the unique ellipse of smallest area 
 enclosing a finite (multi)set of points in two-dimensional euclidean 

@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez and Sylvain Pion and Ankit Gupta
 
 #ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_UTIL_H
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_UTIL_H
+
+#include <CGAL/license/Principal_component_analysis.h>
+
 
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/Dimension.h>
@@ -28,13 +32,13 @@ namespace CGAL {
 namespace internal {
 
 // Initialize a matrix in n dimension by an array or numbers
-template <typename K>
-typename CGAL::Linear_algebraCd<typename K::FT>::Matrix
+template <typename FT>
+typename CGAL::Linear_algebraCd<FT>::Matrix
 init_matrix(const int n,
-            typename K::FT entries[])
+            FT entries[])
 {
   CGAL_assertion(n > 1); // dimension > 1
-  typedef typename CGAL::Linear_algebraCd<typename K::FT>::Matrix Matrix;
+  typedef typename CGAL::Linear_algebraCd<FT>::Matrix Matrix;
 
   Matrix m(n);
   int i,j;
@@ -54,7 +58,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
                              typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
-                             const K& ,                    // kernel
+                             const K& k,                    // kernel
                              const typename K::Point_3*,   // used for indirection
                              const CGAL::Dimension_tag<0>&,
 			     const DiagonalizeTraits&)
@@ -74,7 +78,7 @@ assemble_covariance_matrix_3(InputIterator first,
       it++)
   {
     const Point& p = *it;
-    Vector d = p - c;
+    Vector d = k.construct_vector_3_object()(c,p);
     covariance[0] += d.x() * d.x();
     covariance[1] += d.x() * d.y();
     covariance[2] += d.x() * d.z();
@@ -98,10 +102,14 @@ assemble_covariance_matrix_3(InputIterator first,
                              const CGAL::Dimension_tag<2>&,
 			     const DiagonalizeTraits&)
 {
-  typedef typename K::FT          FT;
+  // Use FT from the DiagonalizeTraits to avoid warnings if the Kernel
+  // uses double but the user wants to compute diagonalization using floats
+  typedef typename DiagonalizeTraits::Vector::value_type FT;
+  
   typedef typename K::Triangle_3  Triangle;
   typedef typename CGAL::Linear_algebraCd<FT> LA;
   typedef typename LA::Matrix Matrix;
+  
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
@@ -109,13 +117,13 @@ assemble_covariance_matrix_3(InputIterator first,
   //   3 4
   //     5          
   //Final combined covariance matrix for all triangles and their combined mass
-  FT mass = 0.0;
+  FT mass = FT(0.0);
 
   // assemble 2nd order moment about the origin.  
-  FT temp[9] = {1.0/12.0, 1.0/24.0, 1.0/24.0,
-                1.0/24.0, 1.0/12.0, 1.0/24.0,
-                1.0/24.0, 1.0/24.0, 1.0/12.0};
-  Matrix moment = init_matrix<K>(3,temp);
+  FT temp[9] = {FT(1.0/12.0), FT(1.0/24.0), FT(1.0/24.0),
+                FT(1.0/24.0), FT(1.0/12.0), FT(1.0/24.0),
+                FT(1.0/24.0), FT(1.0/24.0), FT(1.0/12.0)};
+  Matrix moment = init_matrix<FT>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -126,11 +134,11 @@ assemble_covariance_matrix_3(InputIterator first,
     const Triangle& t = *it;
 
     // defined for convenience.
-    FT delta[9] = {t[0].x(), t[1].x(), t[2].x(), 
-                   t[0].y(), t[1].y(), t[2].y(),
-                   t[0].z(), t[1].z(), t[2].z()};
-    Matrix transformation = init_matrix<K>(3,delta);
-    FT area = std::sqrt(t.squared_area());
+    FT delta[9] = {FT(t[0].x()), FT(t[1].x()), FT(t[2].x()), 
+                   FT(t[0].y()), FT(t[1].y()), FT(t[2].y()),
+                   FT(t[0].z()), FT(t[1].z()), FT(t[2].z())};
+    Matrix transformation = init_matrix<FT>(3,delta);
+    FT area = FT(std::sqrt(t.squared_area()));
 
 		// skip zero measure primitives
     if(area == (FT)0.0)
@@ -154,12 +162,12 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.z() * c.x());
-  covariance[3] += mass * (-1.0 * c.y() * c.y());
-  covariance[4] += mass * (-1.0 * c.z() * c.y());
-  covariance[5] += mass * (-1.0 * c.z() * c.z());
+  covariance[0] += mass * FT(-1.0 * c.x() * c.x());
+  covariance[1] += mass * FT(-1.0 * c.x() * c.y());
+  covariance[2] += mass * FT(-1.0 * c.z() * c.x());
+  covariance[3] += mass * FT(-1.0 * c.y() * c.y());
+  covariance[4] += mass * FT(-1.0 * c.z() * c.y());
+  covariance[5] += mass * FT(-1.0 * c.z() * c.z());
 
 }
 
@@ -194,7 +202,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {(FT)(1.0/3.0), (FT)(1.0/4.0), (FT)(1.0/4.0),
 								(FT)(1.0/4.0), (FT)(1.0/3.0), (FT)(1.0/4.0),
                 (FT)(1.0/4.0), (FT)(1.0/4.0), (FT)(1.0/3.0)};
-  Matrix moment = init_matrix<K>(3,temp);
+  Matrix moment = init_matrix<FT>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -212,7 +220,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {t[1].x()-x0, t[3].x()-x0, t[5].x()-x0, 
                    t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
                    t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
-    Matrix transformation = init_matrix<K>(3,delta);
+    Matrix transformation = init_matrix<FT>(3,delta);
     FT volume = t.volume();
 
 		// skip zero measure primitives
@@ -281,7 +289,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {(FT)(7.0/3.0), (FT)1.5,       (FT)1.5,
                 (FT)1.5,       (FT)(7.0/3.0), (FT)1.5,
                 (FT)1.5,       (FT)1.5,       (FT)(7.0/3.0)};
-  Matrix moment = init_matrix<K>(3,temp);
+  Matrix moment = init_matrix<FT>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -298,7 +306,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {t[1].x()-x0, t[3].x()-x0, t[5].x()-x0, 
                    t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
                    t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
-    Matrix transformation = init_matrix<K>(3,delta);
+    Matrix transformation = init_matrix<FT>(3,delta);
     FT area = std::pow(delta[0]*delta[0] + delta[3]*delta[3] +
                   delta[6]*delta[6],1/3.0)*std::pow(delta[1]*delta[1] +
                   delta[4]*delta[4] + delta[7]*delta[7],1/3.0)*2 +
@@ -376,7 +384,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {4.0/15.0, 0.0,      0.0,
                 0.0,      4.0/15.0, 0.0,
                 0.0,      0.0,      4.0/15.0};
-  Matrix moment = init_matrix<K>(3,temp);
+  Matrix moment = init_matrix<FT>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -391,7 +399,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {radius, 0.0, 0.0, 
                    0.0, radius, 0.0,
                    0.0, 0.0, radius};
-    Matrix transformation = init_matrix<K>(3,delta);
+    Matrix transformation = init_matrix<FT>(3,delta);
     FT volume = (FT)(4.0/3.0) * radius * t.squared_radius();
 
 		// skip zero measure primitives
@@ -460,7 +468,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {4.0/3.0, 0.0,     0.0,
                 0.0,     4.0/3.0, 0.0,
                 0.0,     0.0,     4.0/3.0};
-  Matrix moment = init_matrix<K>(3,temp);
+  Matrix moment = init_matrix<FT>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -476,7 +484,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {radius, 0.0,    0.0, 
                    0.0,    radius, 0.0,
                    0.0,    0.0,    radius};
-    Matrix transformation = init_matrix<K>(3,delta);
+    Matrix transformation = init_matrix<FT>(3,delta);
     FT area = (FT)4.0 * t.squared_radius();
 
 		// skip zero measure primitives
@@ -546,7 +554,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {1.0/60.0,  1.0/120.0, 1.0/120.0,
                 1.0/120.0, 1.0/60.0,  1.0/120.0,
                 1.0/120.0, 1.0/120.0, 1.0/60.0};
-  Matrix moment = init_matrix<K>(3,temp);
+  Matrix moment = init_matrix<FT>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -564,7 +572,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {t[1].x()-x0, t[2].x()-x0, t[3].x()-x0, 
                    t[1].y()-y0, t[2].y()-y0, t[3].y()-y0,
                    t[1].z()-z0, t[2].z()-z0, t[3].z()-z0};
-    Matrix transformation = init_matrix<K>(3,delta);
+    Matrix transformation = init_matrix<FT>(3,delta);
     FT volume = t.volume();
 
 		// skip zero measure primitives
@@ -633,7 +641,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {1.0, 0.5, 0.0,
                 0.5, 1.0, 0.0,
                 0.0, 0.0, 0.0};
-  Matrix moment = (FT)(1.0/3.0) * init_matrix<K>(3,temp);
+  Matrix moment = (FT)(1.0/3.0) * init_matrix<FT>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -648,7 +656,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {t[0].x(), t[1].x(), 0.0, 
        t[0].y(), t[1].y(), 0.0,
                    t[0].z(), t[1].z(), 1.0};
-    Matrix transformation = init_matrix<K>(3,delta);
+    Matrix transformation = init_matrix<FT>(3,delta);
     FT length = std::sqrt(t.squared_length());
 
 		// skip zero measure primitives
@@ -774,5 +782,10 @@ fitting_line_3(typename DiagonalizeTraits::Covariance_matrix& covariance, // cov
 } // end namespace internal
 
 } //namespace CGAL
+
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/PCA_util_Eigen.h>
+#endif
+
 
 #endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_UTIL_H

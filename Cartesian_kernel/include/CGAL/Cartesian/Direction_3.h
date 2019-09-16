@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -41,7 +42,7 @@ class DirectionC3
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef cpp11::array<FT, 3>               Rep;
+  typedef std::array<FT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

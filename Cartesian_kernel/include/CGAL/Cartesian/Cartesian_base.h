@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -30,6 +31,7 @@
 #include <CGAL/Kernel/global_functions.h>
 
 #include <CGAL/Cartesian/Point_2.h>
+#include <CGAL/Cartesian/Weighted_point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>
 #include <CGAL/Cartesian/Direction_2.h>
 #include <CGAL/Cartesian/Line_2.h>
@@ -47,6 +49,7 @@
 #include <CGAL/Cartesian/basic_constructions_2.h>
 
 #include <CGAL/Cartesian/Point_3.h>
+#include <CGAL/Cartesian/Weighted_point_3.h>
 #include <CGAL/Cartesian/Vector_3.h>
 #include <CGAL/Cartesian/Direction_3.h>
 #include <CGAL/Cartesian/Line_3.h>
@@ -123,6 +126,7 @@ struct Cartesian_base
     typedef CircleC2<Kernel>                            Circle_2;
     typedef Iso_rectangleC2<Kernel>                     Iso_rectangle_2;
     typedef Aff_transformationC2<Kernel>                Aff_transformation_2;
+    typedef Weighted_pointC2<Kernel>                    Weighted_point_2;
 
     typedef PointC3<Kernel>                             Point_3;
     typedef VectorC3<Kernel>                            Vector_3;
@@ -137,9 +141,10 @@ struct Cartesian_base
     typedef SphereC3<Kernel>                            Sphere_3;
     typedef CircleC3<Kernel>                            Circle_3;
     typedef Aff_transformationC3<Kernel>                Aff_transformation_3;
+    typedef Weighted_pointC3<Kernel>                    Weighted_point_3;
 
-    typedef typename cpp11::array<FT_, 2>::const_iterator Cartesian_const_iterator_2;
-    typedef typename cpp11::array<FT_, 3>::const_iterator Cartesian_const_iterator_3;
+    typedef typename std::array<FT_, 2>::const_iterator Cartesian_const_iterator_2;
+    typedef typename std::array<FT_, 3>::const_iterator Cartesian_const_iterator_3;
 
     // Undocumented stuff.
     typedef Data_accessorC2<Kernel>                     Data_accessor_2;

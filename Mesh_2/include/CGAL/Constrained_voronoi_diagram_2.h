@@ -15,12 +15,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 // Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez
 //
 
 #ifndef CGAL_CONSTRAINED_VORONOI_DIAGRAM_2_H
 #define CGAL_CONSTRAINED_VORONOI_DIAGRAM_2_H
+
+#include <CGAL/license/Mesh_2.h>
+
 
 #include <utility>
 #include <stack>
@@ -40,8 +44,8 @@ public:
   typedef typename Cdt::Geom_traits::Ray_2        Ray;
   typedef typename Cdt::Geom_traits::Point_2      Point;
   typedef CGAL::Dispatch_output_iterator<
-    CGAL::cpp11::tuple<Segment, Ray>,
-    CGAL::cpp11::tuple<std::back_insert_iterator<std::vector<Segment> >,
+    std::tuple<Segment, Ray>,
+    std::tuple<std::back_insert_iterator<std::vector<Segment> >,
                        std::back_insert_iterator<std::vector<Ray> > >
     > Construction_dispatcher;
 

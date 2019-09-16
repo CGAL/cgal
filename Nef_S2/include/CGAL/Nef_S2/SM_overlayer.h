@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_SM_OVERLAYER_H
 #define CGAL_SM_OVERLAYER_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Union_find.h>
@@ -867,16 +871,17 @@ create_from_segments(Forward_iterator start, Forward_iterator end)
   SM_output O(*this,From_input); 
 
   typedef typename PHS_traits::INPUT Input_range;
+  PH_geometry ph_g;
   Positive_halfsphere_sweep SP(
     Input_range(L_pos.begin(),L_pos.end()),O,
-    PH_geometry());
+    ph_g);
   SP.sweep();
   //CGAL_NEF_TRACEN("POS SWEEP\n"<<(dump(std::cerr),""));
   v=--this->svertices_end(); e=--this->shalfedges_end();
-
+  NH_geometry nh_g;
   Negative_halfsphere_sweep SM(
     Input_range(L_neg.begin(),L_neg.end()),O,
-    NH_geometry());
+    nh_g);
   SM.sweep();
   //CGAL_NEF_TRACEN("NEG SWEEP\n"<<(dump(std::cerr),""));
   ++v; ++e;
@@ -939,16 +944,17 @@ create_from_circles(Forward_iterator start, Forward_iterator end)
   SM_output O(*this,From_input); 
 
   typedef typename PHS_traits::INPUT Input_range;
+  PH_geometry ph_g;
   Positive_halfsphere_sweep SP(
     Input_range(L_pos.begin(),L_pos.end()),O,
-    PH_geometry());
+    ph_g);
   SP.sweep();
   //CGAL_NEF_TRACEN("POS SWEEP\n"<<(dump(std::cerr),""));
   v=--this->svertices_end(); e=--this->shalfedges_end();
-
+  NH_geometry nh_geom;
   Negative_halfsphere_sweep SM(
     Input_range(L_neg.begin(),L_neg.end()), O,
-    NH_geometry());
+    nh_geom);
   SM.sweep();
   //CGAL_NEF_TRACEN("NEG SWEEP\n"<<(dump(std::cerr),""));
   ++v; ++e;
@@ -2309,8 +2315,8 @@ void SM_overlayer<Map>::simplify()
   CGAL_NEF_TRACEN("simplifying"); 
 
   typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(NULL);
-  CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(NULL);
+  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
+  CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
   CGAL::Union_find< SFace_handle> UF;
   
   SFace_iterator f;
@@ -2372,7 +2378,7 @@ void SM_overlayer<Map>::simplify()
     vn=v; ++vn;
     if ( is_isolated(v) ) {
     
-      if(Vitem[v] != NULL) {
+      if(Vitem[v] != nullptr) {
 	set_face(v,*(UF.find(Vitem[v])));
 	CGAL_NEF_TRACEN("incident face of " << PH(v) << " set to " << &*(v->incident_sface()));
       }

@@ -33,6 +33,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifdef CGAL_HEADER_ONLY
@@ -41,9 +42,11 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
+#include <CGAL/disable_warnings.h>
+
 #include <ctype.h>
 #include <CGAL/CORE/Real.h>
-
+#include <CGAL/tss.h>
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/CORE/BigFloat.h> // for FiveTo
 #endif
@@ -52,7 +55,7 @@ namespace CORE {
 
 CGAL_INLINE_FUNCTION
 const Real& Real::getZero() {
-  static Real Zero(0);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Real, Zero, 0);
   return Zero;
 }
 
@@ -131,7 +134,7 @@ void Real::constructFromString(const char *str, const extLong& prec )
   //		Moreover, the value of prec is ignored (basically
   //		assumed to be infinity).
 
-  if (std::strchr(str, '/') != NULL) {	// this is a rational number
+  if (std::strchr(str, '/') != nullptr) {	// this is a rational number
     rep = new RealBigRat(BigRat(str));
     return;
   }
@@ -139,7 +142,7 @@ void Real::constructFromString(const char *str, const extLong& prec )
   const char *e = std::strchr(str, 'e');
   int dot = 0;
   long e10 = 0;
-  if (e != NULL)
+  if (e != nullptr)
     e10 = std::atol(e+1);	// e10 is decimal precision of the input string
   // i.e., input is A/10^{e10}.
   else {
@@ -267,7 +270,7 @@ std::istream& operator >>(std::istream& i, Real& x) {
   }
   // chenli: make sure that the p is still in the range
   if (p - str >= size) {
-    int len = p - str;
+    std::ptrdiff_t len = p - str;
     char *t = str;
     str = new char[len + 1];
     std::memcpy(str, t, len);
@@ -290,3 +293,5 @@ std::istream& operator >>(std::istream& i, Real& x) {
 
 
 } //namespace CORE
+
+#include <CGAL/enable_warnings.h>

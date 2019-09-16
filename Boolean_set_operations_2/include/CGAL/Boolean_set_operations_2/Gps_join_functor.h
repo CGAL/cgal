@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_GPS_JOIN_FUNCTOR_H
 #define CGAL_GPS_JOIN_FUNCTOR_H
+
+#include <CGAL/license/Boolean_set_operations_2.h>
+
 
 #include <CGAL/Boolean_set_operations_2/Gps_base_functor.h>
 

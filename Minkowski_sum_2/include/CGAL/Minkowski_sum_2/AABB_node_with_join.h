@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
 #ifndef CGAL_AABB_NODE_WITH_JOIN_H
 #define CGAL_AABB_NODE_WITH_JOIN_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Cartesian_converter.h>
@@ -43,8 +47,8 @@ public:
   /// Constructor
   AABB_node_with_join()
     : m_bbox()
-    , m_p_left_child(NULL)
-    , m_p_right_child(NULL)      { };
+    , m_p_left_child(nullptr)
+    , m_p_right_child(nullptr)      { };
 
   /// Non virtual Destructor
   /// Do not delete children because the tree hosts and delete them
@@ -147,7 +151,7 @@ AABB_node_with_join<Tr>::expand(ConstPrimitiveIterator first,
   m_bbox = traits.compute_bbox_object()(first, beyond);
 
   // sort primitives along longest axis aabb
-  traits.sort_primitives_object()(first, beyond, m_bbox);
+  traits.split_primitives_object()(first, beyond, m_bbox);
 
   switch(range)
   {

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -197,7 +198,7 @@ main(int argc, char* argv[])
 
       // generate a random cluster of size number_of_points:
       PCont input_points;
-      CGAL::cpp11::copy_n(ptgen,
+      std::copy_n(ptgen,
                    number_of_points,
                    back_inserter(input_points));
 

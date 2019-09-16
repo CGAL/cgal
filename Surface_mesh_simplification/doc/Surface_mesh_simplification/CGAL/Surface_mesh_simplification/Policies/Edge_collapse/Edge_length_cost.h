@@ -3,18 +3,18 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplification
+\ingroup PkgSurfaceMeshSimplificationRef
 
 The class `Edge_length_cost` is a model for the `GetCost` concept,
 which computes the collapse cost as the squared length of the edge. 
 
-\tparam ECM is the type of surface mesh being simplified, and must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
+\tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 
 \cgalModels `GetCost`
 
 */
-template< typename ECM >
+template< typename TriangleMesh >
 class Edge_length_cost {
 public:
 
@@ -24,7 +24,7 @@ public:
 /*!
 Default constructor 
 */ 
-Edge_length_cost<ECM>(); 
+Edge_length_cost<TriangleMesh>(); 
 
 /// @} 
 

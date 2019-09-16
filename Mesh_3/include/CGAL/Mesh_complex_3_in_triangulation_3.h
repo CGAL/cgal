@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb, Clement Jamin
@@ -26,49 +27,58 @@
 #ifndef CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 #define CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 
+#include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 #include <CGAL/iterator.h>
-
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/Mesh_3/utilities.h>
 #include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_base.h>
+#include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
 
-#include <map>
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/mpl/if.hpp>
-#include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
+#include <boost/unordered_map.hpp>
 
 namespace CGAL {
 
 
 template <typename Tr,
           typename CornerIndex = int,
-          typename CurveSegmentIndex = int>
+          typename CurveIndex = int>
 class Mesh_complex_3_in_triangulation_3 :
   public Mesh_3::Mesh_complex_3_in_triangulation_3_base<
     Tr, typename Tr::Concurrency_tag>
+  , public CGAL::Mesh_3::internal::Debug_messages_tools
 {
 public:
   typedef typename Tr::Concurrency_tag                   Concurrency_tag;
 
 private:
   typedef Mesh_complex_3_in_triangulation_3<
-    Tr,CornerIndex,CurveSegmentIndex>                             Self;
+    Tr,CornerIndex,CurveIndex>                                    Self;
   typedef Mesh_3::Mesh_complex_3_in_triangulation_3_base<
                                           Tr,Concurrency_tag>     Base;
 
 public:
   typedef typename Base::size_type                        size_type;
-  
+
   typedef typename Tr::Point                              Point;
   typedef typename Base::Edge                             Edge;
   typedef typename Base::Facet                            Facet;
   typedef typename Base::Vertex_handle                    Vertex_handle;
   typedef typename Base::Cell_handle                      Cell_handle;
   typedef CornerIndex                                     Corner_index;
-  typedef CurveSegmentIndex                               Curve_segment_index;
+  typedef CurveIndex                                      Curve_index;
+
+  typedef CGAL::Hash_handles_with_or_without_timestamps   Hash_fct;
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  typedef CurveIndex Curve_segment_index;
+#endif
 
   typedef typename Base::Triangulation                    Triangulation;
   typedef typename Base::Subdomain_index                  Subdomain_index;
@@ -79,17 +89,20 @@ private:
   // Type to store the edges:
   //  - a set of std::pair<Vertex_handle,Vertex_handle> (ordered at insertion)
   //  - which allows fast lookup from one Vertex_handle
-  //  - each element of the set has an associated info (Curve_segment_index) value
+  //  - each element of the set has an associated info (Curve_index) value
   typedef boost::bimaps::bimap<
     boost::bimaps::multiset_of<Vertex_handle>,
     boost::bimaps::multiset_of<Vertex_handle>,
     boost::bimaps::set_of_relation<>,
-    boost::bimaps::with_info<Curve_segment_index> >   Edge_map;
+    boost::bimaps::with_info<Curve_index> >           Edge_map;
 
   typedef typename Edge_map::value_type               Internal_edge;
 
   // Type to store the corners
-  typedef std::map<Vertex_handle,Corner_index>        Corner_map;
+  typedef boost::unordered_map<Vertex_handle,
+                               Corner_index,
+                               Hash_fct>              Corner_map;
+
   // Type to store far vertices
   typedef std::vector<Vertex_handle>                  Far_vertices_vec;
 
@@ -148,14 +161,14 @@ public:
   using Base::remove_from_complex;
   using Base::triangulation;
   using Base::set_surface_patch_index;
-    
+
 
 
   /**
-   * Add edge e to complex, with Curve_segment_index index
+   * Add edge e to complex, with Curve_index index
    */
   void add_to_complex(const Edge& e,
-                      const Curve_segment_index& index)
+                      const Curve_index& index)
   {
     add_to_complex(e.first->vertex(e.second),
                    e.first->vertex(e.third),
@@ -163,11 +176,11 @@ public:
   }
 
   /**
-   * Add edge (v1,v2) to complex, with Curve_segment_index index
+   * Add edge (v1,v2) to complex, with Curve_index index
    */
   void add_to_complex(const Vertex_handle& v1,
                       const Vertex_handle& v2,
-                      const Curve_segment_index& index)
+                      const Curve_index& index)
   {
     add_to_complex(make_internal_edge(v1,v2), index);
   }
@@ -215,7 +228,7 @@ public:
   {
     far_vertices_.push_back(triangulation().insert(p));
   }
-  
+
   void add_far_point(Vertex_handle vh)
   {
     far_vertices_.push_back(vh);
@@ -243,7 +256,7 @@ public:
           Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i));
           if (is_in_complex(mirror_facet))
           {
-            set_surface_patch_index(c, i, 
+            set_surface_patch_index(c, i,
                                     surface_patch_index(mirror_facet));
             c->set_facet_surface_center(i,
               mirror_facet.first->get_facet_surface_center(mirror_facet.second));
@@ -255,7 +268,7 @@ public:
           Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i_inf));
           if (is_in_complex(mirror_facet))
           {
-            set_surface_patch_index(c, i_inf, 
+            set_surface_patch_index(c, i_inf,
                                     surface_patch_index(mirror_facet));
           }
         }*/
@@ -280,6 +293,10 @@ public:
    * Returns the number of corners of c3t3
    */
   size_type number_of_vertices_in_complex() const
+  {
+    return corners_.size();
+  }
+  size_type number_of_corners() const
   {
     return corners_.size();
   }
@@ -311,22 +328,34 @@ public:
   }
 
   /**
-   * Returns Curve_segment_index of edge \c e
+   * Returns Curve_index of edge \c e
    */
-  Curve_segment_index curve_segment_index(const Edge& e) const
+  Curve_index curve_index(const Edge& e) const
   {
-    return curve_segment_index(e.first->vertex(e.second),
-                               e.first->vertex(e.third));
+    return curve_index(e.first->vertex(e.second),
+                       e.first->vertex(e.third));
   }
 
-  /**
-   * Returns Curve_segment_index of edge \c (v1,v2)
-   */
-  Curve_segment_index curve_segment_index(const Vertex_handle& v1,
-                                          const Vertex_handle& v2) const
+  Curve_index curve_index(const Vertex_handle& v1,
+                          const Vertex_handle& v2) const
   {
     return curve_index(make_internal_edge(v1,v2));
   }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  CGAL_DEPRECATED
+  Curve_index curve_segment_index(const Edge& e) const
+  {
+    return curve_index(e);
+  }
+
+  CGAL_DEPRECATED
+  Curve_index curve_segment_index(const Vertex_handle& v1,
+                                  const Vertex_handle& v2) const
+  {
+    return curve_index(v1, v2);
+  }
+#endif // CGAL_NO_DEPRECATED_CODE
 
   /**
    * Returns Corner_index of vertex \c v
@@ -367,7 +396,7 @@ public:
 
   /**
    * Fills \c out with incident edges (1-dimensional features of \c v.
-   * OutputIterator value type is std::pair<Vertex_handle,Curve_segment_index>
+   * OutputIterator value type is std::pair<Vertex_handle,Curve_index>
    * \pre v->in_dimension() < 2
    */
   template <typename OutputIterator>
@@ -390,18 +419,18 @@ private:
   class Edge_iterator_not_in_complex
   {
     const Self& c3t3_;
-    const Curve_segment_index index_;
+    const Curve_index index_;
   public:
     Edge_iterator_not_in_complex(const Self& c3t3,
-                                 const Curve_segment_index& index = Curve_segment_index())
+                                 const Curve_index& index = Curve_index())
     : c3t3_(c3t3)
     , index_(index) { }
 
     template <typename Iterator>
     bool operator()(Iterator it) const
     {
-      if ( index_ == Curve_segment_index() ) { return ! c3t3_.is_in_complex(*it); }
-      else { return c3t3_.curve_segment_index(*it) != index_;  }
+      if ( index_ == Curve_index() ) { return ! c3t3_.is_in_complex(*it); }
+      else { return c3t3_.curve_index(*it) != index_;  }
     }
   };
 
@@ -482,7 +511,7 @@ public:
 
   /// Returns a Facets_in_complex_iterator to the first facet of the 1D complex
   Edges_in_complex_iterator
-  edges_in_complex_begin(const Curve_segment_index& index) const
+  edges_in_complex_begin(const Curve_index& index) const
   {
     return CGAL::filter_iterator(this->triangulation().finite_edges_end(),
                                  Edge_iterator_not_in_complex(*this,index),
@@ -490,7 +519,7 @@ public:
   }
 
   /// Returns past-the-end iterator on facet of the 1D complex
-  Edges_in_complex_iterator edges_in_complex_end(const Curve_segment_index& = Curve_segment_index()) const
+  Edges_in_complex_iterator edges_in_complex_end(const Curve_index& = Curve_index()) const
   {
     return CGAL::filter_iterator(this->triangulation().finite_edges_end(),
                                  Edge_iterator_not_in_complex(*this));
@@ -540,18 +569,18 @@ private:
    */
   bool is_in_complex(const Internal_edge& edge) const
   {
-    return (curve_index(edge) != Curve_segment_index() );
+    return (curve_index(edge) != Curve_index() );
   }
 
   /**
-   * Add edge \c edge to complex, with Curve_segment_index index
+   * Add edge \c edge to complex, with Curve_index index
    */
-  void add_to_complex(const Internal_edge& edge, const Curve_segment_index& index)
+  void add_to_complex(const Internal_edge& edge, const Curve_index& index)
   {
     CGAL_precondition(!is_in_complex(edge));
-#ifdef CGAL_MESH_3_PROTECTION_DEBUG
-    std::cerr << "Add edge ( " << edge.left->point()
-              << " , " << edge.right->point() << " ), curve_index=" << index
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
+    std::cerr << "Add edge ( " << disp_vert(edge.left)
+              << " , " << disp_vert(edge.right) << " ), curve_index=" << index
               << " to c3t3.\n";
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
     std::pair<typename Edge_map::iterator, bool> it = edges_.insert(edge);
@@ -567,13 +596,13 @@ private:
   }
 
   /**
-   * Returns Curve_segment_index of edge \c edge
+   * Returns Curve_index of edge \c edge
    */
-  Curve_segment_index curve_index(const Internal_edge& edge) const
+  Curve_index curve_index(const Internal_edge& edge) const
   {
     typename Edge_map::const_iterator it = edges_.find(edge);
     if ( edges_.end() != it ) { return it->info; }
-    return Curve_segment_index();
+    return Curve_index();
   }
 
 private:
@@ -598,10 +627,10 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
     const Vertex_handle& vb = it->left;
 
     Vertex_handle new_va;
-    this->triangulation().is_vertex(va->point(), new_va);
+    this->triangulation().is_vertex(rhs.triangulation().point(va), new_va);
 
     Vertex_handle new_vb;
-    this->triangulation().is_vertex(vb->point(), new_vb);
+    this->triangulation().is_vertex(rhs.triangulation().point(vb), new_vb);
 
     this->add_to_complex(make_internal_edge(new_va,new_vb), it->info);
   }
@@ -611,7 +640,7 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
        end = rhs.corners_.end() ; it != end ; ++it )
   {
     Vertex_handle new_v;
-    this->triangulation().is_vertex(it->first->point(), new_v);
+    this->triangulation().is_vertex(rhs.triangulation().point(it->first), new_v);
     this->add_to_complex(new_v, it->second);
   }
 
@@ -665,11 +694,10 @@ bool
 Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::
 is_valid(bool verbose) const
 {
-  typedef typename Tr::Point::Point    Bare_point;
-  typedef typename Tr::Point::Weight   Weight;
-  typedef Weight FT;
+  typedef typename Tr::Weighted_point                         Weighted_point;
+  typedef boost::unordered_map<Vertex_handle, int, Hash_fct>  Vertex_map;
 
-  std::map<Vertex_handle, int> vertex_map;
+  Vertex_map vertex_map;
 
   // Fill map counting neighbor number for each vertex of an edge
   for ( typename Edge_map::const_iterator it = edges_.begin(),
@@ -685,14 +713,14 @@ is_valid(bool verbose) const
   }
 
   // Verify that each vertex has 2 neighbors if it's not a corner
-  for ( typename std::map<Vertex_handle, int>::iterator vit = vertex_map.begin(),
+  for ( typename Vertex_map::iterator vit = vertex_map.begin(),
        vend = vertex_map.end() ; vit != vend ; ++vit )
   {
     if ( vit->first->in_dimension() != 0 && vit->second != 2 )
     {
       if(verbose)
         std::cerr << "Validity error: vertex " << (void*)(&*vit->first)
-                  << " (" << vit->first->point() << ") "
+                  << " (" << this->triangulation().point(vit->first) << ") "
                   << "is not a corner (dimension " << vit->first->in_dimension()
                   << ") but has " << vit->second << " neighbor(s)!\n";
       return false;
@@ -703,22 +731,22 @@ is_valid(bool verbose) const
   for ( typename Edge_map::const_iterator it = edges_.begin(),
        end = edges_.end() ; it != end ; ++it )
   {
-    const Bare_point& p = it->right->point().point();
-    const Bare_point& q = it->left->point().point();
-
+    typename Tr::Geom_traits::Compute_weight_3 cw =
+      this->triangulation().geom_traits().compute_weight_3_object();
+    typename Tr::Geom_traits::Construct_point_3 cp =
+      this->triangulation().geom_traits().construct_point_3_object();
     typename Tr::Geom_traits::Construct_sphere_3 sphere =
       this->triangulation().geom_traits().construct_sphere_3_object();
-
     typename Tr::Geom_traits::Do_intersect_3 do_intersect =
       this->triangulation().geom_traits().do_intersect_3_object();
 
-    const FT& sq_rp = it->right->point().weight();
-    const FT& sq_rq = it->left->point().weight();
+    const Weighted_point& itrwp = this->triangulation().point(it->right);
+    const Weighted_point& itlwp = this->triangulation().point(it->left);
 
-    if ( ! do_intersect(sphere(p, sq_rp), sphere(q, sq_rq)) )
+    if ( ! do_intersect(sphere(cp(itrwp), cw(itrwp)), sphere(cp(itlwp), cw(itlwp))) )
     {
-      std::cerr << "Point p[" << p << "], dim=" << it->right->in_dimension()
-                << " and q[" << q << "], dim=" << it->left->in_dimension()
+      std::cerr << "Points p[" << disp_vert(it->right) << "], dim=" << it->right->in_dimension()
+                << " and q[" << disp_vert(it->left) << "], dim=" << it->left->in_dimension()
                 << " form an edge but do not intersect !\n";
       return false;
     }
@@ -770,5 +798,7 @@ operator>> (std::istream& is,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H

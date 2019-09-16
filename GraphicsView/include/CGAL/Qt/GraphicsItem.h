@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_QT_GRAPHICS_ITEM_H
 #define CGAL_QT_GRAPHICS_ITEM_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/export/Qt.h>
 #include <CGAL/auto_link/Qt.h>
@@ -39,6 +43,9 @@ namespace Qt {
 class CGAL_QT_EXPORT GraphicsItem : public QObject, public QGraphicsItem {
 
   Q_OBJECT
+#ifdef CGAL_HEADER_ONLY
+  Q_INTERFACES(QGraphicsItem)
+#endif
 
 public Q_SLOTS:
 

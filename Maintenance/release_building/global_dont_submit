@@ -16,3 +16,7 @@ benchmark
 Benchmark
 fig_src
 archive
+license/generate_files.cmake
+license/README.md
+license/gpl.h.in
+license/package_list.txt

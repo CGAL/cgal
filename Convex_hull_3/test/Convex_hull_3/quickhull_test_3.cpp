@@ -1,5 +1,6 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/convex_hull_3.h>
@@ -11,7 +12,7 @@
 typedef CGAL::Exact_rational                          NT;
 typedef CGAL::Cartesian<NT>                           K;
 typedef CGAL::Convex_hull_traits_3<K>                 Traits;
-typedef Traits::Polyhedron_3                          Polyhedron_3;
+typedef Traits::Polygon_mesh                          Polyhedron_3;
 
 typedef K::Point_3                                        Point_3;
 typedef K::Segment_3                                      Segment_3;
@@ -106,6 +107,22 @@ void test_small_hull()
           polyhedron2.size_of_facets() == 6 );
 }
 
+void test_coplanar_hull()
+{
+  std::vector<Point_3> points;
+  points.push_back(Point_3(0,0,0));
+  points.push_back(Point_3(1,0,0));
+  points.push_back(Point_3(0,1,0));
+  points.push_back(Point_3(1,1,0));
+  points.push_back(Point_3(1.5,0.5,0));
+  points.push_back(Point_3(0.5,1.1,0));
+  Polyhedron_3 polyhedron;
+  CGAL::convex_hull_3(points.begin(), points.end(), polyhedron, Traits());
+  assert( polyhedron.is_valid() );
+  assert( polyhedron.size_of_facets() == 4 );
+  assert( polyhedron.is_pure_triangle() );
+}
+
 
 int main()
 {
@@ -115,11 +132,13 @@ int main()
   test_tetrahedron_convexity();
   std::cerr << "Testing small hull" << std::endl;
   test_small_hull();
+  std::cerr << "Testing coplanar hull" << std::endl;
+  test_coplanar_hull();
 
   std::cerr << "Testing 500 random points" << std::endl;
   std::vector<Point_3> points;
   Generator g(500);
-  CGAL::cpp11::copy_n( g, num, std::back_inserter(points));
+  std::copy_n( g, num, std::back_inserter(points));
 
   assert(points.size() == num);
 

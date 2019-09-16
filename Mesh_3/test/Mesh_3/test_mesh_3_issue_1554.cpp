@@ -1,3 +1,7 @@
+// Mesh_3 bug: The surface of c3t3 has holes
+//
+//   https://github.com/CGAL/cgal/issues/1554
+//
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -7,8 +11,11 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
+#include <fstream>
+
 // Domain 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
 #ifdef CGAL_CONCURRENT_MESH_3
@@ -18,32 +25,39 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type Tr;
+typedef CGAL::Mesh_triangulation_3<Mesh_domain,
+                                   CGAL::Default,
+                                   Concurrency_tag>::type  Tr;
+typedef Tr::Geom_traits                                    Gt;
 
-typedef CGAL::Mesh_complex_3_in_triangulation_3<
-  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
-typedef Tr::Geom_traits Gt;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr,
+                                                Mesh_domain::Corner_index,
+                                                Mesh_domain::Curve_index> C3t3;
+
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-Gt::Construct_weighted_circumcenter_3 w_circumcenter = Gt().construct_weighted_circumcenter_3_object();
-
-K::Point_3 wc_circumcenter(Tr::Cell_handle ch, bool force_exact = false) {
-  return w_circumcenter(ch->vertex(0)->point(),
-                        ch->vertex(1)->point(),
-                        ch->vertex(2)->point(),
-                        ch->vertex(3)->point(), force_exact
-                        );
+template < class ConstructWCircumcenter >
+Tr::Bare_point wc_circumcenter(const Tr& tr,
+                               Tr::Cell_handle ch,
+                               ConstructWCircumcenter construct_w_circumcenter,
+                               bool force_exact = false)
+{
+  return construct_w_circumcenter(tr.point(ch, 0), tr.point(ch, 1),
+                                  tr.point(ch, 2), tr.point(ch, 3), force_exact);
 }
 
 int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
   // Create domain
-  Mesh_domain domain(fname);
+  std::ifstream in(fname);
+  Polyhedron poly;
+  in >> poly;
+  Mesh_domain domain(poly);
   
   // Get sharp features
   domain.detect_features();
@@ -57,6 +71,9 @@ int main(int argc, char*argv[])
   
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+
+  Gt::Construct_weighted_circumcenter_3 w_circumcenter =
+      c3t3.triangulation().geom_traits().construct_weighted_circumcenter_3_object();
 
   int return_code = 0;
   for(C3t3::Cells_in_complex_iterator cit = c3t3.cells_in_complex_begin();
@@ -72,18 +89,18 @@ int main(int argc, char*argv[])
       if(!c3t3.is_in_complex(Facet(ch, i))) {
         return_code = 1;
         std::cout << "ERROR with facet: 3 \n";
-        K::Point_3 p[3];
+        K::Weighted_point_3 p[3];
         for(int j = 0; j < 3; ++j) {
-          p[j] = ch->vertex(c3t3.triangulation().vertex_triple_index(i, j))->point().point();
+          p[j] = c3t3.triangulation().point(ch, c3t3.triangulation().vertex_triple_index(i, j));
           std::cout << "  " << p[j] << "\n";
         }
         int n_i = nch->index(ch);
-        K::Point_3 a = ch->vertex(i)->point().point();
-        K::Point_3 b = nch->vertex(n_i)->point().point();
+        K::Weighted_point_3 a = c3t3.triangulation().point(ch, i);
+        K::Weighted_point_3 b = c3t3.triangulation().point(nch, n_i);
         std::cout << a << "\n";
         std::cout << b << "\n";
-        std::cout << "    " << wc_circumcenter(ch, true) << std::endl;
-        std::cout << "    " << wc_circumcenter(nch, true) << std::endl;
+        std::cout << "    " << wc_circumcenter(c3t3.triangulation(), ch, w_circumcenter, true) << std::endl;
+        std::cout << "    " << wc_circumcenter(c3t3.triangulation(), nch, w_circumcenter, true) << std::endl;
       }
     }
   }

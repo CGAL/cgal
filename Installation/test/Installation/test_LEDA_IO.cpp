@@ -9,6 +9,10 @@ const char* tests[] = { "0\n",  "1/2\n",  "3 4",  "0",  "1/2",
 
 int main()
 {
+#if __LEDA__ < 640
+  std::cerr << "This version of LEDA has I/O bugs.\n";
+  return 0;
+#endif
   int result = EXIT_SUCCESS;
   for(int i = 0, end = sizeof(tests)/sizeof(char*);
       i < end; ++i)

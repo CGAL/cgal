@@ -50,7 +50,11 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
       ${rc_file}
       ${ADDITIONAL_FILES})
     #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${rc_file} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
-    if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
+    if(${LIBRARY_NAME}_SOVERSION AND ${LIBRARY_NAME}_SONAME_VERSION)
+      set_target_properties(${LIBRARY_NAME} PROPERTIES
+        VERSION "${${LIBRARY_NAME}_SOVERSION}"
+        SOVERSION "${${LIBRARY_NAME}_SONAME_VERSION}")
+    elseif(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
       set_target_properties(${LIBRARY_NAME} PROPERTIES
         VERSION "${CGAL_SOVERSION}"
         SOVERSION "${CGAL_SONAME_VERSION}")
@@ -64,6 +68,14 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     add_library(${LIBRARY_NAME} INTERFACE)
   endif()
 
+  # Add an alias with the prefix `CGAL::`, so that consumer
+  # CMakeLists.txt can be the target like if it was an imported
+  # target.
+  add_library(CGAL::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+  if(NOT TARGET ALL_CGAL_TARGETS)
+    add_custom_target( ALL_CGAL_TARGETS )
+  endif()
+  add_dependencies( ALL_CGAL_TARGETS ${LIBRARY_NAME} )
   if(CGAL_AUTO_LINK_ENABLED)
     if (NOT CGAL_HEADER_ONLY)
       set_target_properties( ${LIBRARY_NAME} PROPERTIES
@@ -81,7 +93,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     endif()
   endif()
 
-  # if (NOT CGAL_HEADER_ONLY)
+  if (NOT CGAL_HEADER_ONLY)
     install(TARGETS ${LIBRARY_NAME} EXPORT ${LIBRARY_NAME}Exports
       RUNTIME DESTINATION "${CGAL_INSTALL_BIN_DIR}"
       LIBRARY DESTINATION "${CGAL_INSTALL_LIB_DIR}"
@@ -89,15 +101,14 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     install(EXPORT ${LIBRARY_NAME}Exports
       DESTINATION "${CGAL_INSTALL_CMAKE_DIR}"
       NAMESPACE CGAL::)
-  # endif()
 
-  # We have to call configure_file twice to force double expansion of variables.
-  configure_file("${CGAL_MODULES_DIR}/CGALLibConfig.cmake.in"
-    "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
-  configure_file("${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake"
-    "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
-  install(FILES "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
-
+    # We have to call configure_file twice to force double expansion of variables.
+    configure_file("${CGAL_MODULES_DIR}/CGALLibConfig.cmake.in"
+      "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
+    configure_file("${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake"
+      "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
+    install(FILES "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
+  endif()
 endfunction()
 
 function( configure_component DIR COMPONENT )
@@ -131,7 +142,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CGAL_RUNTIME_DIR})
 
 # TODO: Seems useless, because it is called again in ../CMakeLists.txt
 #       Should probably be removed. -- Laurent Rineau, 2014/07/22
-create_CGALconfig_files()
+if(NOT CGAL_HEADER_ONLY)
+  create_CGALconfig_files()
+endif()
 
 set(CGAL_DIR ${CMAKE_BINARY_DIR})
 
@@ -209,9 +222,11 @@ CGAL_add_if_target(CGAL_Core)
 CGAL_add_if_target(CGAL_ImageIO)
 CGAL_add_if_target(CGAL_Qt5)
 
-# if (NOT CGAL_HEADER_ONLY)
+cache_set(CGAL_ACTUAL_CONFIGURED_LIBRARIES "${CGAL_ACTUAL_CONFIGURED_LIBRARIES}")
+
+if (NOT CGAL_HEADER_ONLY)
   export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")
-# endif()
+endif()
 
 message(STATUS "Sources for CGAL component libraries '${CGAL_CONFIGURED_LIBRARIES}' detected")
 

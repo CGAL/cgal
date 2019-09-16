@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -272,7 +273,7 @@ extract(std::istream& is, Circle_2<R>& c)
 {
     typename R::Point_2 center;
     typename R::FT squared_radius(0);
-    int o;
+    int o=0;
     switch(get_mode(is)) {
     case IO::ASCII :
         is >> center >> iformat(squared_radius) >> o;

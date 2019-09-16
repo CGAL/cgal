@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel
@@ -135,8 +136,6 @@ initialized to the sphere through the points in |A = set [first,last)|.
 \precond $A$ consists of $d+1$ $d$-dimensional points.}*/
   Base( Rep(d,first,last) ) {}
 
-Sphere_d(const Self& c) : Base(c) {}
-~Sphere_d() {}
 
 /*{\Moperations 4 3}*/
 

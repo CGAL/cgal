@@ -1,167 +1,143 @@
-/// \defgroup PkgSurfaceParameterization Triangulated Surface Mesh Parameterization Reference
+/// \defgroup PkgSurfaceMeshParameterizationRef Triangulated Surface Mesh Parameterization Reference
 
 
 /*!
-\addtogroup PkgSurfaceParameterization
-\cgalPkgDescriptionBegin{Triangulated Surface Mesh Parameterization,PkgSurfaceParameterizationSummary}
+\addtogroup PkgSurfaceMeshParameterizationRef
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Parameterization,PkgSurfaceMeshParameterization}
 \cgalPkgPicture{bimbaDetail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Laurent Saboret, Pierre Alliez and Bruno Lévy}
-\cgalPkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from a suitable domain to the surface. In this package, we focus on triangulated surfaces that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.  This package implements several surface mesh parameterization methods, such as least squares conformal maps, discrete conformal map, discrete authalic parameterization, Floater mean value coordinates or Tutte barycentric mapping.}
-\cgalPkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes,PkgSurfaceParameterization}
+\cgalPkgAuthors{Laurent Saboret, Pierre Alliez, Bruno Lévy, Mael Rouxel-Labbé, and Andreas Fabri}
+\cgalPkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from
+a suitable domain to the surface. In this package, we focus on triangulated surfaces
+that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.
+This package implements several surface mesh parameterization methods, such as
+As Rigid As Possible Parameterization, Discrete Authalic Parameterization,
+Discrete Conformal Map, Floater Mean Value Coordinates, Least Squares Conformal Maps,
+Orbifold Tutte Embedding, or Tutte Barycentric Mapping.
+The code is generic and works with any model of the `FaceGraph` concept.}
+\cgalPkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes, PkgSurfaceMeshParameterizationRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgSolverSummary} 
-\cgalPkgBib{cgal:sal-pptsm2}
+\cgalPkgDependsOn{\ref PkgSolverInterface}
+\cgalPkgBib{cgal:salf-pptsm2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
 
-## Main Function ##
+\cgalCRPSection{Main Function}
 
-- `CGAL::parameterize()`
+- `CGAL::Surface_mesh_parameterization::parameterize()`
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
-- `ParameterizerTraits_3`
-- `BorderParameterizer_3`
-- `ParameterizationMesh_3`
-- `ParameterizationPatchableMesh_3`
-- `PolyhedronTraitsWithKernel_3`
+- `Parameterizer_3`
 
-## Surface Parameterization Methods ##
+\cgalCRPSection{Surface Parameterization Methods}
 
 This \cgal package implements several parameterization methods:
 
 - Fixed border:
-  - Tutte Barycentric Mapping \cgalCite{t-hdg-63}.
+  - Tutte Barycentric Mapping \cgalCite{t-hdg-63} :
      One-to-one mapping is guaranteed for convex border.
-  - Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03}.
+  - Discrete Authalic Parameterization \cgalCite{cgal:dma-ipsm-02} :
+     Conditionally guaranteed if all weights are positive and border is convex.
+  - Discrete Conformal Map \cgalCite{cgal:eddhls-maam-95} :
+     Conditionally guaranteed if all weights are positive and border is convex.
+  - Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03} :
      One-to-one mapping is guaranteed for convex border.
-  - Discrete Conformal Map \cgalCite{cgal:eddhls-maam-95}.
-    Conditionally guaranteed if all weights are positive and border is convex.
-  - Discrete Authalic parameterization \cgalCite{cgal:dma-ipsm-02}.
-    Conditionally guaranteed if all weights are positive and border is convex.
 - Free border:
+  - As Rigid As Possible Parameterization \cgalCite{liu2008local}
   - Least Squares Conformal Maps \cgalCite{cgal:lprm-lscm-02}.
+- Borderless:
+  - Orbifold Tutte Embeddings \cgalCite{aigerman2015orbifold}.
 
-- `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
-- `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3>`
-- `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+The following classes implement the methods listed above:
+- `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+- `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+- `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+- `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+- `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer>`
+- `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+- `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<TriangleMesh, SolverTraits>`
 
-## Border Parameterization Methods ##
+\cgalCRPSection{Border Parameterization Methods}
 
 Border parameterization methods define a
 set of constraints (a constraint specifies two (u,v) coordinates for
 each instance of a vertex along the border).
 
-This package implements all common border parameterization methods:
+This package implements common border parameterization methods:
 - For fixed border methods:
-   - the user can select a border
-      parameterization among two common methods: uniform or
-      arc-length parameterizations.
-   - one convex shape specified by:
-    - one shape among a set of standard ones (circle, square).
-- For free border methods: at least two constraints (the pinned
-vertices).
+   - the user can select a border parameterization among two common methods:
+     uniform or arc-length parameterizations.
+   - the user can select a convex shape among a set of standard ones (circle, square).
+- For free border methods: at least two constraints (the pinned vertices).
 
-- `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
-- `CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>`
-- `CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
-- `CGAL::Square_border_uniform_parameterizer_3<ParameterizationMesh_3>`
-- `CGAL::Two_vertices_parameterizer_3<ParameterizationMesh_3>`
+The following classes implement the methods listed above:
+- `CGAL::Surface_mesh_parameterization::Circular_border_uniform_parameterizer_3<TriangleMesh>`
+- `CGAL::Surface_mesh_parameterization::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
+- `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+- `CGAL::Surface_mesh_parameterization::Square_border_uniform_parameterizer_3<TriangleMesh>`
+- `CGAL::Surface_mesh_parameterization::Square_border_arc_length_parameterizer_3<TriangleMesh>`
+- `CGAL::Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh>`
 
-## Mesh ##
+\cgalCRPSection{Mesh}
 
-The general definition of input meshes handled directly by `CGAL::parameterize()` is:
+The general definition of input meshes handled directly by
+`CGAL::Surface_mesh_parameterization::parameterize()` is a triangulated surface
+mesh model of `FaceGraph` that is homeomorphic to a disc (may have holes). In
+particular, it means that it must be 2-manifold and oriented.
 
- - Model of `ParameterizationMesh_3`.
- - Triangulated.
- - 2-manifold.
- - Oriented.
- - Homeomorphic to a disc (may have holes).
-
-This package provides a model of the `ParameterizationMesh_3` concept
-to access `CGAL::Polyhedron_3<Traits>`: 
-
-- `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
-
-The meshes supported <I>indirectly</I> by the package can be of any genus and
-have any number of connected components. If it is not a topological
-disc, the input mesh has to come with a description of a cutting path (an oriented list of
-vertices) which is the border of a topological disc.  If no cutting path is
-given as input, we assume that the surface border is the longest border already
-in the input mesh (the other borders will be considered as holes).
-
-The `CGAL::Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>`
-class is responsible for <I>virtually</I> cutting
-a patch in a `ParameterizationPatchableMesh_3` mesh.
-The resulting patch is a topological
-disk (if the input cutting path is correct)
-and provides a `ParameterizationMesh_3` interface. It can be used as
-parameter of `CGAL::parameterize()`.
-
-Note that this way the user is responsible for cutting a closed mesh of
-arbitrary genus (even a topological disc with an intricate seam
-cut), as long as this condition is fulfilled.
-
-The package provides an interface with `CGAL::Polyhedron_3<Traits>`: 
-
-- `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
-
-## Output ##
-
-A `(u,v)` pair is computed for each inner vertex (i.e.\ its halfedges share the same `(u,v)` pair), while a `(u,v)` pair is computed for each border halfedge. The user must iterate over the mesh halfedges to get the result. 
-
-
-## Helper Classes ##
-
-- `CGAL::Parameterization_mesh_feature_extractor<ParameterizationMesh_3>`
-
-## Checks and Assertions ##
+\cgalCRPSection{Checks and Assertions}
 
 The package performs the next checks:
 
-For <i>fixed</i> border parameterizations:
+- For <i>fixed</i> border parameterizations:
  - Preconditions:
-    - check that the border is mapped onto a convex polygon.
-    - check that the input mesh is triangular.
-    - check that the input mesh is a surface with one connected component.
- - Postconditions:
-    - check one-to-one mapping.
+    - the border is mapped onto a convex polygon.
+    - the input mesh is triangular.
+    - the input mesh is a surface with one connected component.
 
-For <i>free</i> border parameterizations:
-
+- For <i>free</i> border parameterizations:
  - Preconditions:
-    - check that the input mesh is triangular.
-    - check that the input mesh is a surface with one connected component.
- -Postconditions:
-    - check one-to-one mapping.
-
-Assertions are optional checks. The assertion flags for the package
-use `SURFACE_MESH_PARAMETERIZATION` in their names (e.g. `CGAL_SURFACE_MESH_PARAMETERIZATION_NO_ASSERTIONS`).
-
+    - the input mesh is triangular.
+    - the input mesh is a surface with one connected component.
+- For <i>borderless</i> parameterizations:
+ - Preconditions:
+    - the input mesh is triangular.
+    - the input mesh is a surface with one connected component.
 */
 
-/// \defgroup PkgSurfaceParameterizationMainFunction Main Function
-/// \ingroup PkgSurfaceParameterization
+/*!
+ \defgroup PkgSurfaceMeshParameterizationMainFunction Main Functions
+ \ingroup PkgSurfaceMeshParameterizationRef
 
-/// \defgroup PkgSurfaceParameterizationConcepts Concepts
-/// \ingroup PkgSurfaceParameterization
+ The central functions, main entry point of the package.
+*/
 
 /*!
- \defgroup PkgSurfaceParameterizationMethods Surface Parameterization Methods
- \ingroup PkgSurfaceParameterization
+ \defgroup PkgSurfaceMeshParameterizationEnums Enums
+ \ingroup PkgSurfaceMeshParameterizationRef
 
-This \cgal package implements several parameterization methods:
+ The enum classes defined and used in this package.
+*/
+
+/*!
+ \defgroup PkgSurfaceMeshParameterizationConcepts Concepts
+ \ingroup PkgSurfaceMeshParameterizationRef
+
+ The concepts of this package.
+*/
+
+/*!
+ \defgroup PkgSurfaceMeshParameterizationMethods Surface Parameterization Methods
+ \ingroup PkgSurfaceMeshParameterizationRef
+
+ This \cgal package implements several parameterization methods:
 
  - Fixed border:
   - Tutte Barycentric Mapping \cgalCite{t-hdg-63}.
@@ -173,18 +149,21 @@ This \cgal package implements several parameterization methods:
   - Discrete Authalic parameterization \cgalCite{cgal:dma-ipsm-02}.
     Conditionally guaranteed if all weights are positive and border is convex.
  - Free border:
+  - As Rigid As Possible Maps \cgalCite{liu2008local}
   - Least Squares Conformal Maps \cgalCite{cgal:lprm-lscm-02}.
+ - Borderless:
+  - Orbifold Tutte Embeddings \cgalCite{aigerman2015orbifold}
 */
 
 /*!
- \defgroup PkgSurfaceParameterizationBorderParameterizationMethods Border Parameterization Methods
- \ingroup PkgSurfaceParameterization
+ \defgroup PkgSurfaceMeshParameterizationBorderParameterizationMethods Border Parameterization Methods
+ \ingroup PkgSurfaceMeshParameterizationRef
 
 Border parameterization methods define a
 set of constraints (a constraint specifies two (u,v) coordinates for
 each instance of a vertex along the border).
 
-This package implements all common border parameterization methods:
+This package implements common border parameterization methods:
  - For fixed border methods:
    - the user can select a border
       parameterization among two common methods: uniform or
@@ -195,54 +174,10 @@ This package implements all common border parameterization methods:
 vertices).
 */
 
-
-
-/*! \defgroup PkgSurfaceParameterizationMesh Mesh
-    \ingroup PkgSurfaceParameterization
-
-The general definition of input meshes handled directly by `CGAL::parameterize()` is:
-
- - Model of `ParameterizationMesh_3`.
- - Triangulated.
- - 2-manifold.
- - Oriented.
- - Homeomorphic to a disc (may have holes).
-
-This package provides a model of the `ParameterizationMesh_3` concept
-to access `CGAL::Polyhedron_3<Traits>`: 
-
-`CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
-
-The meshes supported <I>indirectly</I> by the package can be of any genus and
-have any number of connected components. If it is not a topological
-disc, the input mesh has to come with a description of a cutting path (an oriented list of
-vertices) which is the border of a topological disc.  If no cutting path is
-given as input, we assume that the surface border is the longest border already
-in the input mesh (the other borders will be considered as holes).
-
-The `CGAL::Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>`
-class is responsible for <I>virtually</I> cutting
-a patch in a `ParameterizationPatchableMesh_3` mesh.
-The resulting patch is a topological
-disk (if the input cutting path is correct)
-and provides a `ParameterizationMesh_3` interface. It can be used as
-parameter of `CGAL::parameterize()`.
-
-Note that this way the user is responsible for cutting a closed mesh of
-arbitrary genus (even a topological disc with an intricate seam
-cut), as long as this condition is fulfilled.
-
-The package provides an interface with `CGAL::Polyhedron_3<Traits>`: 
-
-`CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
-*/
-
-
-
-
 /*!
-\defgroup PkgSurfaceParameterizationHelper Helper Class
-\ingroup PkgSurfaceParameterization
-*/
+ \defgroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions Orbifold Helper Functions
+ \ingroup PkgSurfaceMeshParameterizationMethods
 
+
+*/
 

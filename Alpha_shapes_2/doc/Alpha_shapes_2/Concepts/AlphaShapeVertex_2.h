@@ -1,11 +1,15 @@
 
 /*!
-\ingroup PkgAlphaShape2Concepts
+\ingroup PkgAlphaShapes2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationVertexBase_2` 
+The concept `AlphaShapeVertex_2` describes the requirements for the base vertex of an alpha shape.
 
-\cgalHasModel `CGAL::Alpha_shape_vertex_base_2`
+\cgalRefines `TriangulationVertexBase_2`, if the underlying triangulation of the alpha shape is a Delaunay triangulation.
+\cgalRefines `RegularTriangulationVertexBase_2`, if the underlying triangulation of the alpha shape is a regular triangulation.
+\cgalRefines `Periodic_2TriangulationVertexBase_2`, if the underlying triangulation of the alpha shape is a periodic triangulation.
+
+\cgalHasModel `CGAL::Alpha_shape_vertex_base_2` (templated with the appropriate triangulation vertex base class).
 */
 class AlphaShapeVertex_2 {
 public:

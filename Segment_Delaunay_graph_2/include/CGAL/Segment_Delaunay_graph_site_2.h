@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_SITE_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_SITE_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
 
 #include <iostream>
 #include <CGAL/assertions.h>
@@ -285,8 +289,8 @@ protected:
     RT x3 = p3.x(), y3 = p3.y();
     RT x4 = p4.x(), y4 = p4.y();
 
-    RT D = determinant(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
-    RT Dt = determinant(x3 - x1, x4 - x3, y3 - y1, y4 - y3);
+    RT D = determinant<RT>(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
+    RT Dt = determinant<RT>(x3 - x1, x4 - x3, y3 - y1, y4 - y3);
 
     RT t = Dt / D;
 

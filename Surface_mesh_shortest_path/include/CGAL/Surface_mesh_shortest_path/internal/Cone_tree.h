@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Stephen Kiazyk
 
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_CONE_TREE_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_CONE_TREE_H
+
+#include <CGAL/license/Surface_mesh_shortest_path.h>
+
 
 #include <vector>
 
@@ -103,11 +107,11 @@ public:
     , m_level(0)
     , m_treeId(treeId)
     , m_nodeType(ROOT)
-    , m_leftChild(NULL)
-    , m_rightChild(NULL)
-    , m_pendingLeftSubtree(NULL)
-    , m_pendingRightSubtree(NULL)
-    , m_pendingMiddleSubtree(NULL)
+    , m_leftChild(nullptr)
+    , m_rightChild(nullptr)
+    , m_pendingLeftSubtree(nullptr)
+    , m_pendingRightSubtree(nullptr)
+    , m_pendingMiddleSubtree(nullptr)
   {
   }
 
@@ -121,11 +125,11 @@ public:
     , m_level(0)
     , m_treeId(treeId)
     , m_nodeType(ROOT)
-    , m_leftChild(NULL)
-    , m_rightChild(NULL)
-    , m_pendingLeftSubtree(NULL)
-    , m_pendingRightSubtree(NULL)
-    , m_pendingMiddleSubtree(NULL)
+    , m_leftChild(nullptr)
+    , m_rightChild(nullptr)
+    , m_pendingLeftSubtree(nullptr)
+    , m_pendingRightSubtree(nullptr)
+    , m_pendingMiddleSubtree(nullptr)
   {
   }
 
@@ -139,11 +143,11 @@ public:
     , m_windowLeft(windowLeft)
     , m_windowRight(windowRight)
     , m_nodeType(nodeType)
-    , m_leftChild(NULL)
-    , m_rightChild(NULL)
-    , m_pendingLeftSubtree(NULL)
-    , m_pendingRightSubtree(NULL)
-    , m_pendingMiddleSubtree(NULL)
+    , m_leftChild(nullptr)
+    , m_rightChild(nullptr)
+    , m_pendingLeftSubtree(nullptr)
+    , m_pendingRightSubtree(nullptr)
+    , m_pendingMiddleSubtree(nullptr)
   {
   }
 
@@ -343,10 +347,10 @@ public:
 
   void push_middle_child(Cone_tree_node* child)
   {
-    if (m_pendingMiddleSubtree != NULL)
+    if (m_pendingMiddleSubtree != nullptr)
     {
       m_pendingMiddleSubtree->m_cancelled = true;
-      m_pendingMiddleSubtree = NULL;
+      m_pendingMiddleSubtree = nullptr;
     }
 
     m_middleChildren.push_back(child);
@@ -362,10 +366,10 @@ public:
 
   void set_left_child(Cone_tree_node* child)
   {
-    if (m_pendingLeftSubtree != NULL)
+    if (m_pendingLeftSubtree != nullptr)
     {
       m_pendingLeftSubtree->m_cancelled = true;
-      m_pendingLeftSubtree = NULL;
+      m_pendingLeftSubtree = nullptr;
     }
 
     m_leftChild = child;
@@ -380,16 +384,16 @@ public:
   Cone_tree_node* remove_left_child()
   {
     Cone_tree_node* temp = m_leftChild;
-    m_leftChild = NULL;
+    m_leftChild = nullptr;
     return temp;
   }
 
   void set_right_child(Cone_tree_node* child)
   {
-    if (m_pendingRightSubtree != NULL)
+    if (m_pendingRightSubtree != nullptr)
     {
       m_pendingRightSubtree->m_cancelled = true;
-      m_pendingRightSubtree = NULL;
+      m_pendingRightSubtree = nullptr;
     }
 
     m_rightChild = child;
@@ -404,7 +408,7 @@ public:
   Cone_tree_node* remove_right_child()
   {
     Cone_tree_node* temp = m_rightChild;
-    m_rightChild = NULL;
+    m_rightChild = nullptr;
     return temp;
   }
 
@@ -415,12 +419,12 @@ public:
 
   bool is_left_child() const
   {
-    return m_parent != NULL && m_parent->m_leftChild == this;
+    return m_parent != nullptr && m_parent->m_leftChild == this;
   }
 
   bool is_right_child() const
   {
-    return m_parent != NULL && m_parent->m_rightChild == this;
+    return m_parent != nullptr && m_parent->m_rightChild == this;
   }
 
 public:

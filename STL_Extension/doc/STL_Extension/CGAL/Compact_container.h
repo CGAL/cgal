@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /// \defgroup CompactContainer Compact Container
-/// \ingroup PkgStlExtension
+/// \ingroup PkgSTLExtensionRef
 
 /*!
 \ingroup CompactContainer
@@ -92,7 +92,7 @@ The iterators themselves can be used as `T`, they provide the necessary
 functions to be used by `Compact_container_traits<T>`. Moreover, they 
 also provide a default constructor value which is not singular: it is 
 copyable, comparable, and guaranteed to be unique under comparison 
-(like `NULL` for pointers). This makes them suitable for use in 
+(like `nullptr` for pointers). This makes them suitable for use in 
 geometric graphs like handles to vertices in triangulations. 
 
 In addition, in a way inspired from the Boost.Intrusive containers, it is 
@@ -507,7 +507,7 @@ returns the total number of elements that `cc` can hold without requiring
 reallocation. 
 */ 
 size_type capacity() const; 
-
+/// @}
 
 /// \name Access Member Functions 
 /// @{ 
@@ -801,8 +801,7 @@ types `T` to make them usable with the default `Compact_container_traits`.
 
 */
 template< typename T >
-class Compact_container_traits {
-public:
+struct Compact_container_traits {
 
 /// \name Operations 
 /// @{ 

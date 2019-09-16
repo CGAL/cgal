@@ -6,14 +6,13 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3  Point_3;
 
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 
-typedef CGAL::cpp11::array<std::size_t,3> Facet;
+typedef std::array<std::size_t,3> Facet;
 
 namespace std {
 std::ostream&

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
@@ -26,7 +27,6 @@
 
 #ifndef CGAL_NDEBUG
 
-#include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 
 namespace CGAL {

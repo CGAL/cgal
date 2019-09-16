@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s): Efi Fogel         <efif@post.tau.ac.il>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_ARR_DCEL_H
 #define CGAL_ARR_POLYHEDRAL_SGM_ARR_DCEL_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/basic.h>
 

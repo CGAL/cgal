@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s): Quincy Tse, Weisheng Si
@@ -27,6 +28,9 @@
 
 #ifndef GNUPLOT_OUTPUT_2_H
 #define GNUPLOT_OUTPUT_2_H
+
+#include <CGAL/license/Cone_spanners_2.h>
+
 
 #include <iostream>
 #include <sstream>
@@ -42,7 +46,7 @@ namespace CGAL {
 /*  ------ Declarations go first, then implementations follow.   ------ */
 
 /*!
-*  \ingroup PkgConeBasedSpanners
+*  \ingroup PkgConeSpanners2Ref
 *  \brief Output a set of files used by Gnuplot to plot `g`.
 *
 *  The files that are generated for Gnuplot are:

@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
 #ifndef CGAL_RECONSTRUCTION_VERTEX_BASE_2_H_
 #define CGAL_RECONSTRUCTION_VERTEX_BASE_2_H_
+
+#include <CGAL/license/Optimal_transportation_reconstruction_2.h>
+
 
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/OTR_2/Sample.h>
@@ -65,7 +69,7 @@ public:
   : Base(),
     m_id(-1),
     m_pinned(false),
-    m_sample(NULL),
+    m_sample(nullptr),
     m_relevance(0)
 {
 }
@@ -74,7 +78,7 @@ public:
   : Base(p),
     m_id(-1),
     m_pinned(false),
-    m_sample(NULL),
+    m_sample(nullptr),
     m_relevance(0)
   {
   }
@@ -83,7 +87,7 @@ public:
   : Base(f),
     m_id(-1),
     m_pinned(false),
-    m_sample(NULL),
+    m_sample(nullptr),
     m_relevance(0)
   {
   }
@@ -92,7 +96,7 @@ public:
   : Base(p, f),
     m_id(-1),
     m_pinned(false),
-    m_sample(NULL),
+    m_sample(nullptr),
     m_relevance(0)
   {
   }
@@ -114,7 +118,7 @@ public:
   const Point& relocated() const { return m_relocated; }
   Point& relocated() { return m_relocated; }
 
-  bool  has_sample_assigned() const { return sample() != NULL; }
+  bool  has_sample_assigned() const { return sample() != nullptr; }
 };
 //---------------STRUCT LESS VERTEX_HANDLE---------------------
 template <class T>

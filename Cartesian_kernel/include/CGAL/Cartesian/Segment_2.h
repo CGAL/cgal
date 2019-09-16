@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
@@ -35,7 +36,7 @@ class SegmentC2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Segment_2            Segment_2;
 
-  typedef cpp11::array<Point_2, 2>          Rep;
+  typedef std::array<Point_2, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

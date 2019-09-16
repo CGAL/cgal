@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Herve Bronnimann
@@ -36,7 +37,7 @@ template <class R_>
 class SphereC3
 {
   typedef typename R_::FT                   FT;
-// http://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
+// https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
   typedef typename R_::Point_3              Point_3_;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Sphere_3             Sphere_3;

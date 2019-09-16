@@ -11,11 +11,8 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h>
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h>
@@ -32,7 +29,7 @@ int main(int argc, char* argv[])
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
 
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
-  typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef Traits::FT FT;
   typedef boost::graph_traits<Polyhedron_3> Graph_traits;
   typedef Graph_traits::vertex_descriptor vertex_descriptor;
@@ -106,8 +103,8 @@ int main(int argc, char* argv[])
 
   for (size_t i = 0; i < numTests; ++i)
   {
-    size_t startVertexIndex = rand.get_int(0, vertices.size());
-    size_t endVertexIndex = rand.get_int(0, vertices.size());
+    size_t startVertexIndex = rand.get_int(0, static_cast<int>(vertices.size()));
+    size_t endVertexIndex = rand.get_int(0, static_cast<int>(vertices.size()));
 
     vertex_descriptor startVertex = vertices[startVertexIndex];
     vertex_descriptor endVertex = vertices[endVertexIndex];
@@ -192,14 +189,14 @@ int main(int argc, char* argv[])
 
   for (size_t i = 0; i < numTests; ++i)
   {
-    size_t startFaceIndex = rand.get_int(0, faces.size());
-    size_t endFaceIndex = rand.get_int(0, faces.size());
+    size_t startFaceIndex = rand.get_int(0, static_cast<int>(faces.size()));
+    size_t endFaceIndex = rand.get_int(0, static_cast<int>(faces.size()));
 
     face_descriptor startFace = faces[startFaceIndex];
     face_descriptor endFace = faces[endFaceIndex];
 
-    Barycentric_coordinate startLocation = CGAL::test::random_coordinate<Traits>(rand);
-    Barycentric_coordinate endLocation = CGAL::test::random_coordinate<Traits>(rand);
+    Barycentric_coordinates startLocation = CGAL::test::random_coordinates<Traits>(rand);
+    Barycentric_coordinates endLocation = CGAL::test::random_coordinates<Traits>(rand);
 
     //shortestPaths.m_debugOutput = true;
 

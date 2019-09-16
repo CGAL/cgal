@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>
 //                 Iddo Hanniel <hanniel@math.tau.ac.il>
 #ifndef CGAL_TD_NINETUPLE_H
 #define CGAL_TD_NINETUPLE_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 namespace CGAL {
 

@@ -1,5 +1,6 @@
 #include <CGAL/Interval_skip_list.h>
 #include <CGAL/Interval_skip_list_interval.h>
+#include <CGAL/algorithm.h>
 #include <vector>
 #include <list>
 #include <iostream>
@@ -19,7 +20,7 @@ int main()
   for(i = 0; i < n; i++) {
     intervals[i] = Interval(i, i+d);
   }
-  std::random_shuffle(intervals.begin(), intervals.end());
+  CGAL::cpp98::random_shuffle(intervals.begin(), intervals.end());
 
   isl.insert(intervals.begin(), intervals.end());
 

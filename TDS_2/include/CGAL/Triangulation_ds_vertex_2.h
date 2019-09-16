@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Mariette Yvinec
 
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_2_H
 #define CGAL_TRIANGULATION_DS_VERTEX_2_H
+
+#include <CGAL/license/TDS_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
@@ -111,7 +115,7 @@ is_valid(bool verbose, int level)
 {
   bool result = Vb::is_valid(verbose, level);
   CGAL_triangulation_assertion(result);
-  if (this->face() != Face_handle()) { // face==NULL if dim <0
+  if (this->face() != Face_handle()) { // face==nullptr if dim <0
     result = result && ( &*this->face()->vertex(0) == this ||
 			 &*this->face()->vertex(1) == this ||
 			 &*this->face()->vertex(2) == this );

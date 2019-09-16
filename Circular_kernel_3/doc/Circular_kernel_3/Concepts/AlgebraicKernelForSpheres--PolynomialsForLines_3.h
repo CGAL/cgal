@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3AlgebraicConcepts
+\ingroup PkgCircularKernel3AlgebraicConcepts
 \cgalConcept
 
 Concept to represent a system of polynomials on `FieldNumberType` 
@@ -18,8 +18,6 @@ capable of storing equations of lines.
 
 class AlgebraicKernelForSpheres::PolynomialsForLines_3 {
 public:
-
-/// @}
 
 }; /* end AlgebraicKernelForSpheres::PolynomialsForLines_3 */
 

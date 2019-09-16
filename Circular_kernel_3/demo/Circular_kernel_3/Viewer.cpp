@@ -7,7 +7,7 @@
 
 
 Viewer::Viewer(QWidget* parent )
-  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
+  : CGAL::QGLViewer(parent)
 {
     extension_is_found = false;
 }
@@ -56,24 +56,24 @@ void Viewer::compile_shaders()
         "varying highp vec4 fP; \n"
         "varying highp vec3 fN; \n"
         "uniform highp vec4 color; \n"
-        "uniform vec4 light_pos;  \n"
-        "uniform vec4 light_diff; \n"
-        "uniform vec4 light_spec; \n"
-        "uniform vec4 light_amb;  \n"
+        "uniform highp vec4 light_pos;  \n"
+        "uniform highp vec4 light_diff; \n"
+        "uniform highp vec4 light_spec; \n"
+        "uniform highp vec4 light_amb;  \n"
         "uniform float spec_power ; \n"
 
         "void main(void) { \n"
 
-        "   vec3 L = light_pos.xyz - fP.xyz; \n"
-        "   vec3 V = -fP.xyz; \n"
+        "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
+        "   highp vec3 V = -fP.xyz; \n"
 
-        "   vec3 N = normalize(fN); \n"
+        "   highp vec3 N = normalize(fN); \n"
         "   L = normalize(L); \n"
         "   V = normalize(V); \n"
 
-        "   vec3 R = reflect(-L, N); \n"
-        "   vec4 diffuse = max(dot(N,L), 0.0) * light_diff * color; \n"
-        "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+        "   highp vec3 R = reflect(-L, N); \n"
+        "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * color; \n"
+        "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
         "gl_FragColor = light_amb*color + diffuse  ; \n"
         "} \n"
@@ -116,6 +116,7 @@ void Viewer::compile_shaders()
                  "uniform highp mat4 mvp_matrix;\n"
                  "void main(void)\n"
                  "{\n"
+                 "   gl_PointSize = 4.0;\n"
                  "   gl_Position = mvp_matrix * vertex;\n"
                  "}"
              };
@@ -316,8 +317,8 @@ void Viewer::compute_elements()
 
 
 
-            P = rings*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = rings*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             y[1] = sin(P) * sin(T) ;
             z[1] = cos(P);
@@ -331,8 +332,8 @@ void Viewer::compute_elements()
             normals.push_back(z[1]);
 
             //
-            P = rings*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = rings*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             y[2] = sin(P) * sin(T) ;
             z[2] = cos(P);
@@ -351,8 +352,8 @@ void Viewer::compute_elements()
             for(int t=0; t<360; t+=sectors)
             {
                 //A
-                P = p*M_PI/180.0;
-                T = t*M_PI/180.0;
+                P = p*CGAL_PI/180.0;
+                T = t*CGAL_PI/180.0;
                 x[0] = sin(P) * cos(T) ;
                 y[0] = sin(P) * sin(T) ;
                 z[0] = cos(P);
@@ -367,8 +368,8 @@ void Viewer::compute_elements()
                 normals.push_back(z[0]);
 
                 //B
-                P = (p+rings)*M_PI/180.0;
-                T = t*M_PI/180.0;
+                P = (p+rings)*CGAL_PI/180.0;
+                T = t*CGAL_PI/180.0;
                 x[1] = sin(P) * cos(T) ;
                 y[1] = sin(P) * sin(T) ;
                 z[1] = cos(P);
@@ -382,8 +383,8 @@ void Viewer::compute_elements()
                 normals.push_back(z[1]);
 
                 //C
-                P = p*M_PI/180.0;
-                T = (t+sectors)*M_PI/180.0;
+                P = p*CGAL_PI/180.0;
+                T = (t+sectors)*CGAL_PI/180.0;
                 x[2] = sin(P) * cos(T) ;
                 y[2] = sin(P) * sin(T) ;
                 z[2] = cos(P);
@@ -396,8 +397,8 @@ void Viewer::compute_elements()
                 normals.push_back(y[2]);
                 normals.push_back(z[2]);
                 //D
-                P = (p+rings)*M_PI/180.0;
-                T = (t+sectors)*M_PI/180.0;
+                P = (p+rings)*CGAL_PI/180.0;
+                T = (t+sectors)*CGAL_PI/180.0;
                 x[3] = sin(P) * cos(T) ;
                 y[3] = sin(P) * sin(T) ;
                 z[3] = cos(P);
@@ -446,8 +447,8 @@ void Viewer::compute_elements()
             normals.push_back(-1);
 
 
-            P = (180-rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = (180-rings)*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             y[1] = sin(P) * sin(T) ;
             z[1] = cos(P);
@@ -461,8 +462,8 @@ void Viewer::compute_elements()
             normals.push_back(z[1]);
 
 
-            P = (180-rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = (180-rings)*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             y[2] = sin(P) * sin(T) ;
             z[2] = cos(P);
@@ -501,8 +502,8 @@ void Viewer::compute_elements()
 
 
 
-            P = rings*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = rings*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             y[1] = sin(P) * sin(T) ;
             z[1] = cos(P);
@@ -516,8 +517,8 @@ void Viewer::compute_elements()
             normals_inter.push_back(z[1]);
 
             //
-            P = rings*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = rings*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             y[2] = sin(P) * sin(T) ;
             z[2] = cos(P);
@@ -536,8 +537,8 @@ void Viewer::compute_elements()
             for(int t=0; t<360; t+=sectors)
             {
                 //A
-                P = p*M_PI/180.0;
-                T = t*M_PI/180.0;
+                P = p*CGAL_PI/180.0;
+                T = t*CGAL_PI/180.0;
                 x[0] = sin(P) * cos(T) ;
                 y[0] = sin(P) * sin(T) ;
                 z[0] = cos(P);
@@ -552,8 +553,8 @@ void Viewer::compute_elements()
                 normals_inter.push_back(z[0]);
 
                 //B
-                P = (p+rings)*M_PI/180.0;
-                T = t*M_PI/180.0;
+                P = (p+rings)*CGAL_PI/180.0;
+                T = t*CGAL_PI/180.0;
                 x[1] = sin(P) * cos(T) ;
                 y[1] = sin(P) * sin(T) ;
                 z[1] = cos(P);
@@ -567,8 +568,8 @@ void Viewer::compute_elements()
                 normals_inter.push_back(z[1]);
 
                 //C
-                P = p*M_PI/180.0;
-                T = (t+sectors)*M_PI/180.0;
+                P = p*CGAL_PI/180.0;
+                T = (t+sectors)*CGAL_PI/180.0;
                 x[2] = sin(P) * cos(T) ;
                 y[2] = sin(P) * sin(T) ;
                 z[2] = cos(P);
@@ -581,8 +582,8 @@ void Viewer::compute_elements()
                 normals_inter.push_back(y[2]);
                 normals_inter.push_back(z[2]);
                 //D
-                P = (p+rings)*M_PI/180.0;
-                T = (t+sectors)*M_PI/180.0;
+                P = (p+rings)*CGAL_PI/180.0;
+                T = (t+sectors)*CGAL_PI/180.0;
                 x[3] = sin(P) * cos(T) ;
                 y[3] = sin(P) * sin(T) ;
                 z[3] = cos(P);
@@ -631,8 +632,8 @@ void Viewer::compute_elements()
             normals_inter.push_back(-1);
 
 
-            P = (180-rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = (180-rings)*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             y[1] = sin(P) * sin(T) ;
             z[1] = cos(P);
@@ -646,8 +647,8 @@ void Viewer::compute_elements()
             normals_inter.push_back(z[1]);
 
 
-            P = (180-rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = (180-rings)*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             y[2] = sin(P) * sin(T) ;
             z[2] = cos(P);
@@ -722,7 +723,7 @@ void Viewer::compute_elements()
     }
 }
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -813,12 +814,10 @@ void Viewer::draw()
     }
     else
     {
-        glPointSize(4.0f);
         rendering_program_no_ext.bind();
         rendering_program_no_ext.setUniformValue(colorLocation, color);
         glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
         rendering_program_no_ext.release();
-        glPointSize(1.0f);
     }
 
     vao[2].release();
@@ -860,10 +859,10 @@ void Viewer::init()
     compile_shaders();
     compute_elements();
     initialize_buffers();
-    ::glEnable(GL_BLEND);
+    glEnable(GL_BLEND);
 
-    ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
 

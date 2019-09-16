@@ -9,9 +9,7 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h>
@@ -30,7 +28,7 @@ void shortest_path_regular_tetrahedron()
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
-  typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef Traits::FT FT;
   typedef boost::graph_traits<Polyhedron_3> Graph_traits;
   typedef Graph_traits::vertex_iterator vertex_iterator;
@@ -40,7 +38,7 @@ void shortest_path_regular_tetrahedron()
 
   Traits traits;
 
-  Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
+  Traits::Construct_barycentric_coordinates construct_barycentric_coordinates(traits.construct_barycentric_coordinates_object());
 
   Polyhedron_3 P;
 
@@ -48,7 +46,7 @@ void shortest_path_regular_tetrahedron()
 
   CGAL::set_halfedgeds_items_id(P);
 
-  Barycentric_coordinate b = construct_barycentric_coordinate(FT(1.0) / FT(3.0), FT(1.0) / FT(3.0), FT(1.0) / FT(3.0));
+  Barycentric_coordinates b = construct_barycentric_coordinates(FT(1.0) / FT(3.0), FT(1.0) / FT(3.0), FT(1.0) / FT(3.0));
 
   face_iterator startFace;
   face_iterator endFace;
@@ -87,7 +85,7 @@ void test_simple_saddle_vertex_mesh()
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
-  typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef Traits::FT FT;
   typedef Traits::Point_3 Point_3;
   typedef Traits::Point_2 Point_2;
@@ -107,7 +105,7 @@ void test_simple_saddle_vertex_mesh()
   Traits::Compute_squared_distance_3 compute_squared_distance_3(traits.compute_squared_distance_3_object());
   Traits::Compute_squared_distance_2 compute_squared_distance_2(traits.compute_squared_distance_2_object());
   Traits::Construct_triangle_3_along_segment_2_flattening flatten_triangle_3_along_segment_2(traits.construct_triangle_3_along_segment_2_flattening_object());
-  Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
+  Traits::Construct_barycentric_coordinates construct_barycentric_coordinates(traits.construct_barycentric_coordinates_object());
 
   std::ifstream inFile("data/saddle_vertex_mesh.off");
 
@@ -130,7 +128,7 @@ void test_simple_saddle_vertex_mesh()
 
   face_descriptor currentFace = CGAL::face(CGAL::halfedge(rootSearchVertex, P), P);
   size_t vertexIndex = CGAL::test::face_vertex_index(currentFace, rootSearchVertex, P);
-  Barycentric_coordinate baryCoord = construct_barycentric_coordinate(vertexIndex == 0 ? FT(1.0) : FT(0.0), vertexIndex == 1 ? FT(1.0) : FT(0.0), vertexIndex == 2 ? FT(1.0) : FT(0.0));
+  Barycentric_coordinates baryCoord = construct_barycentric_coordinates(vertexIndex == 0 ? FT(1.0) : FT(0.0), vertexIndex == 1 ? FT(1.0) : FT(0.0), vertexIndex == 2 ? FT(1.0) : FT(0.0));
 
   Surface_mesh_shortest_path shortestPaths(P, traits);
   //shortestPaths.m_debugOutput = true;
@@ -217,10 +215,10 @@ void test_simple_saddle_vertex_mesh()
 
   size_t edgeIndex = CGAL::internal::edge_index(firstCrossing, P);
 
-  Barycentric_coordinate location = construct_barycentric_coordinate(0.25, 0.5, 0.25);
+  Barycentric_coordinates location = construct_barycentric_coordinates(0.25, 0.5, 0.25);
 
   collector.m_sequence.clear();
-  shortestPaths.shortest_path_sequence_to_source_points(CGAL::face(firstCrossing, P), construct_barycentric_coordinate(location[edgeIndex], location[(edgeIndex + 1) % 3], location[(edgeIndex + 2) % 3]), collector);
+  shortestPaths.shortest_path_sequence_to_source_points(CGAL::face(firstCrossing, P), construct_barycentric_coordinates(location[edgeIndex], location[(edgeIndex + 1) % 3], location[(edgeIndex + 2) % 3]), collector);
 
   CHECK_EQUAL(collector.m_sequence.size(), 4u);
   CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_EDGE);
@@ -242,7 +240,7 @@ void test_simple_saddle_vertex_mesh()
 
   face_descriptor currentFace2 = CGAL::face(CGAL::halfedge(rootSearchVertex2, P), P);
   size_t vertexIndex2 = CGAL::test::face_vertex_index(currentFace2, rootSearchVertex2, P);
-  Barycentric_coordinate baryCoord2 = construct_barycentric_coordinate(vertexIndex2 == 0 ? FT(1.0) : FT(0.0), vertexIndex2 == 1 ? FT(1.0) : FT(0.0), vertexIndex2 == 2 ? FT(1.0) : FT(0.0));
+  Barycentric_coordinates baryCoord2 = construct_barycentric_coordinates(vertexIndex2 == 0 ? FT(1.0) : FT(0.0), vertexIndex2 == 1 ? FT(1.0) : FT(0.0), vertexIndex2 == 2 ? FT(1.0) : FT(0.0));
 
   Surface_mesh_shortest_path::Source_point_iterator secondSourcePoint = shortestPaths.add_source_point(currentFace2, baryCoord2);
   shortestPaths.build_sequence_tree();
@@ -320,7 +318,7 @@ void test_boundary_mesh()
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
-  typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef Traits::FT FT;
   typedef Traits::Point_3 Point_3;
   typedef Traits::Triangle_3 Triangle_3;
@@ -340,7 +338,7 @@ void test_boundary_mesh()
   Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
   Traits::Construct_triangle_3_along_segment_2_flattening flatten_triangle_3_along_segment_2(traits.construct_triangle_3_along_segment_2_flattening_object());
   CGAL_USE(flatten_triangle_3_along_segment_2);
-  Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
+  Traits::Construct_barycentric_coordinates construct_barycentric_coordinates(traits.construct_barycentric_coordinates_object());
 
   struct Construct_barycenter_in_triangle_3
   {
@@ -351,7 +349,7 @@ void test_boundary_mesh()
     {
     }
 
-    Point_3 operator() (const Triangle_3& t, const Barycentric_coordinate& b)
+    Point_3 operator() (const Triangle_3& t, const Barycentric_coordinates& b)
     {
       return m_cb3(t[0], b[0], t[1], b[1], t[2], b[2]);
     }
@@ -397,7 +395,7 @@ void test_boundary_mesh()
     ++currentFaceIndex;
   }
 
-  Barycentric_coordinate startLocation = construct_barycentric_coordinate(FT(0.1), FT(0.8), FT(0.1));
+  Barycentric_coordinates startLocation = construct_barycentric_coordinates(FT(0.1), FT(0.8), FT(0.1));
 
   typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FaceIndexMap;
 
@@ -430,13 +428,13 @@ void test_boundary_mesh()
   FT dist5 = shortestPaths.shortest_distance_to_source_points(vertexHandles[5]).first;
   CHECK_CLOSE(dist5, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[3])) + CGAL::sqrt(compute_squared_distance_3(vertexLocations[3], vertexLocations[5])), FT(0.000001));
 
-  Barycentric_coordinate somewhereElseInFirstTriangle = construct_barycentric_coordinate(0.8, 0.05, 0.15);
+  Barycentric_coordinates somewhereElseInFirstTriangle = construct_barycentric_coordinates(0.8, 0.05, 0.15);
 
   FT distT0 = shortestPaths.shortest_distance_to_source_points(faceHandles[0], somewhereElseInFirstTriangle).first;
   CHECK_CLOSE(distT0, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, construct_barycenter_in_triangle_3(firstTriangle, somewhereElseInFirstTriangle))), FT(0.000001));
 
   Triangle_3 oneStepTriangle(vertexLocations[4], vertexLocations[1], vertexLocations[3]);
-  Barycentric_coordinate locationInOneStepTriangle = construct_barycentric_coordinate(0.1, 0.8, 0.1);
+  Barycentric_coordinates locationInOneStepTriangle = construct_barycentric_coordinates(0.1, 0.8, 0.1);
 
   CGAL::test::Edge_sequence_collector<Traits> collector(P);
   shortestPaths.shortest_path_sequence_to_source_points(faceHandles[2], locationInOneStepTriangle, collector);
@@ -445,13 +443,13 @@ void test_boundary_mesh()
   CHECK_CLOSE(distT2, dist1 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[1], construct_barycenter_in_triangle_3(oneStepTriangle, locationInOneStepTriangle))), FT(0.00001));
 
   Triangle_3 twoStepTriangle(vertexLocations[6], vertexLocations[5], vertexLocations[7]);
-  Barycentric_coordinate locationInTwoStepTriangle = construct_barycentric_coordinate(0.8, 0.1, 0.1);
+  Barycentric_coordinates locationInTwoStepTriangle = construct_barycentric_coordinates(0.8, 0.1, 0.1);
 
   FT distT5 = shortestPaths.shortest_distance_to_source_points(faceHandles[5], locationInTwoStepTriangle).first;
   CHECK_CLOSE(distT5, dist3 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[3], construct_barycenter_in_triangle_3(twoStepTriangle, locationInTwoStepTriangle))), FT(0.00001));
 
   Triangle_3 threeStepTriangle(vertexLocations[7], vertexLocations[5], vertexLocations[8]);
-  Barycentric_coordinate locationInThreeStepTriangle = construct_barycentric_coordinate(0.2, 0.6, 0.2);
+  Barycentric_coordinates locationInThreeStepTriangle = construct_barycentric_coordinates(0.2, 0.6, 0.2);
 
   FT distT6 = shortestPaths.shortest_distance_to_source_points(faceHandles[6], locationInThreeStepTriangle).first;
   CHECK_CLOSE(distT6, dist5 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[5], construct_barycenter_in_triangle_3(threeStepTriangle, locationInThreeStepTriangle))), FT(0.00001));

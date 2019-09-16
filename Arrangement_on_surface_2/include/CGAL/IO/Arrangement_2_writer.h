@@ -12,11 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 //                 (based on old version by Michal Meyerovitch and Ester Ezra)
 //
 #ifndef CGAL_IO_ARRANGEMENT_2_WRITER_H
 #define CGAL_IO_ARRANGEMENT_2_WRITER_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * The header file for the Arrangement_2_writer<Arrangement> class.
@@ -84,7 +91,7 @@ namespace CGAL {
     /*! Constructor. */
     Arrangement_2_writer(const Arrangement_2& arr) :
       m_arr(arr),
-      m_dcel(NULL),
+      m_dcel(nullptr),
       m_curr_v(0),
       m_curr_he(0)
     {
@@ -321,7 +328,7 @@ namespace CGAL {
     /*! Get the number of edges along a given CCB. */
     std::size_t _circulator_size(const DHalfedge* ccb) const
     {
-      CGAL_assertion(ccb != NULL);
+      CGAL_assertion(ccb != nullptr);
 
       std::size_t       n = 0;
       const DHalfedge*  curr = ccb;

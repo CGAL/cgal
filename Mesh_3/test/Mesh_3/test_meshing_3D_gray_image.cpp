@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau, Jane Tournois
@@ -24,7 +25,7 @@
 
 #include "test_meshing_utilities.h"
 #include <CGAL/Image_3.h>
-#include <CGAL/Gray_image_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/use.h>
 
 #include <functional>
@@ -48,13 +49,8 @@ struct Image_tester : public Tester<K_e_i>
 public:
   void image() const
   {
-    typedef float                                       Image_word_type;
     typedef CGAL::Image_3                               Image;
-    typedef CGAL::Gray_image_mesh_domain_3<
-      Image,
-      K_e_i,
-      Image_word_type,
-      Greater_than<double> >                            Mesh_domain;
+    typedef CGAL::Labeled_mesh_domain_3<K_e_i>          Mesh_domain;
 
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
@@ -77,24 +73,20 @@ public:
 
     std::cout << "\tSeed is\t"
               << CGAL::get_default_random().get_seed() << std::endl;
-
+    namespace p = CGAL::parameters;
     // Domain
-    Mesh_domain domain(image,
-      2.9f, //isovalue
-      0.f,  //value_outside
-      1e-3, //error_bound
-      &CGAL::get_default_random());//random generator for determinism
-
-    const CGAL::Mesh_facet_topology topology =
-      boost::is_same<Concurrency_tag, CGAL::Sequential_tag>::value ?
-      CGAL::MANIFOLD :
-      CGAL::FACET_VERTICES_ON_SURFACE;
+    Mesh_domain domain =
+      Mesh_domain::create_gray_image_mesh_domain(image,
+                                                 p::iso_value = 2.9f,
+                                                 p::value_outside = 0.f,
+                                                 p::relative_error_bound = 1e-3,
+                                                 p::p_rng =
+                                                 &CGAL::get_default_random());
 
     // Mesh criteria
     Mesh_criteria criteria(facet_angle = 30,
                            facet_size = 6,
                            facet_distance = 2,
-                           facet_topology = topology,
                            cell_radius_edge_ratio = 3,
                            cell_size = 8);
 
@@ -102,7 +94,9 @@ public:
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                         no_perturb(),
                                         no_exude(),
-      mesh_3_options(number_of_initial_points = 30));
+      mesh_3_options(number_of_initial_points = 30),
+      non_manifold()
+      );
 
     // Verify
     this->verify_c3t3_volume(c3t3, 1236086 * 0.95, 1236086 * 1.05);

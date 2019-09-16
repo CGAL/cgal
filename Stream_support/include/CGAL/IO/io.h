@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -26,6 +27,7 @@
 #ifndef CGAL_IO_H
 #define CGAL_IO_H
 
+#include <CGAL/disable_warnings.h>
 
 #include <cstdio>
 #include <cctype>
@@ -41,21 +43,26 @@
 
 namespace CGAL {
 
-class IO {
+
+
+namespace IO {
+
+class Static {
 public:
-#ifndef CGAL_HEADER_ONLY
-  CGAL_EXPORT static int mode;
-  static int& get_static_mode()
-  { return IO::mode; }
-#else // CGAL_HEADER_ONLY
-  static int& get_static_mode()
+
+  static int get_mode()
   {
-    static int mode = std::ios::xalloc();
+    static const int mode = std::ios::xalloc();
     return mode;
   }
-#endif // CGAL_HEADER_ONLY
-    enum Mode {ASCII = 0, PRETTY, BINARY};
+
 };
+
+  enum Mode {ASCII = 0, PRETTY, BINARY};
+
+}
+
+
 
 template <typename Dummy>
 struct IO_rep_is_specialized_aux
@@ -125,7 +132,7 @@ public:
 };
 
 #if CGAL_FORCE_IFORMAT_DOUBLE || \
-  ( ( _MSC_VER > 1600 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
+  ( ( _MSC_VER > 1600 ) && ( _MSC_VER < 1910 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
 template <>
 class Input_rep<double> : public IO_rep_is_specialized {
     double& t;
@@ -170,8 +177,59 @@ public:
 	break;
       }
     }while(true);
+    if(sscanf_s(buffer.c_str(), "%lf", &t) != 1) {
+      // if a 'buffer' does not contain a double, set the fail bit.
+      is.setstate(std::ios_base::failbit);
+    }
+    return is; 
+  }
+};
 
-    if(sscanf(buffer.c_str(), "%lf", &t) != 1) {
+template <>
+class Input_rep<float> {
+    float& t;
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( float& tt) : t(tt) {}
+
+  std::istream& operator()( std::istream& is) const 
+  {
+    typedef std::istream istream;
+    typedef istream::char_type char_type;
+    typedef istream::int_type int_type;
+    typedef istream::traits_type traits_type;
+
+    std::string buffer;
+    buffer.reserve(32);
+
+    char_type c;
+    do {
+      const int_type i = is.get();
+      if(i == traits_type::eof()) {
+	return is;
+      }
+      c = static_cast<char_type>(i);
+    }while (std::isspace(c));
+    if(c == '-'){
+      buffer += '-';
+    } else if(c != '+'){
+      is.unget();
+    }
+    do {
+      const int_type i = is.get();
+      if(i == traits_type::eof()) {
+	is.clear(is.rdstate() & ~std::ios_base::failbit);
+	break;
+      }
+      c = static_cast<char_type>(i);
+      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-')){
+        buffer += c;
+      }else{
+	is.unget();
+	break;
+      }
+    }while(true);
+    if(sscanf_s(buffer.c_str(), "%f", &t) != 1) {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
@@ -335,39 +393,45 @@ std::ostream& operator<<( std::ostream& out, const Color& col)
     switch(get_mode(out)) {
     case IO::ASCII :
         return out << static_cast<int>(col.red())   << ' '
-		   << static_cast<int>(col.green()) << ' '
-		   << static_cast<int>(col.blue());
+                  << static_cast<int>(col.green()) << ' '
+                  << static_cast<int>(col.blue()) << ' '
+                  << static_cast<int>(col.alpha());
     case IO::BINARY :
-        write(out, static_cast<int>(col.red()));
-        write(out, static_cast<int>(col.green()));
-        write(out, static_cast<int>(col.blue()));
+        out.write(reinterpret_cast<const char*>(col.to_rgba().data()), 4);
         return out;
     default:
         return out << "Color(" << static_cast<int>(col.red()) << ", "
-		   << static_cast<int>(col.green()) << ", "
-                   << static_cast<int>(col.blue()) << ')';
+                  << static_cast<int>(col.green()) << ", "
+                  << static_cast<int>(col.blue()) << ", "
+                  << static_cast<int>(col.alpha()) << ")";
     }
 }
 
 inline
 std::istream &operator>>(std::istream &is, Color& col)
 {
-    int r = 0, g = 0, b = 0;
+    unsigned char r = 0, g = 0, b = 0, a = 0;
+    int ir = 0, ig = 0, ib = 0, ia = 0;
     switch(get_mode(is)) {
     case IO::ASCII :
-        is >> r >> g >> b;
+        is >> ir >> ig >> ib >> ia;
+        r = (unsigned char)ir;
+        g = (unsigned char)ig;
+        b = (unsigned char)ib;
+        a = (unsigned char)ia;
         break;
     case IO::BINARY :
         read(is, r);
         read(is, g);
         read(is, b);
+        read(is, a);
         break;
     default:
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
-    col = Color((unsigned char)r,(unsigned char)g,(unsigned char)b);
+    col = Color(r,g,b,a);
     return is;
 }
 
@@ -556,5 +620,7 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/IO/io_impl.h>
 #endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IO_H

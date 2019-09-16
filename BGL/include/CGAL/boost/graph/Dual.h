@@ -13,12 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_BGL_DUAL_H
 #define CGAL_BGL_DUAL_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/properties.h>
 #include <boost/range/distance.hpp>
@@ -27,7 +30,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBGLHelper
+\ingroup PkgBGLAdaptors
 
 The class template `Dual` is an adaptor that creates the dual view of
 a `FaceGraph`. Faces of the original graph correspond to vertices in
@@ -40,14 +43,18 @@ vertices as a source and target. It is possible to filter border edges
 using `boost::filtered_graph` as shown in example
 \ref BGL_surface_mesh/surface_mesh_dual.cpp
 
-Property forwarding
--------------------
+\cgalHeading{Property Forwarding}
 \cgalAdvancedBegin
 Edge properties of the underlying graph are forwarded directly. For
 faces and vertices only the `face_index` and `vertex_index` properties
 are forwarded. Accessing other properties will lead to a compilation
 error.
 \cgalAdvancedEnd
+
+\tparam Primal_ must be a model of `FaceGraph`
+
+\cgalModels `FaceGraph`
+
 */
 template <typename Primal_>
 class Dual
@@ -79,12 +86,15 @@ Dual<Primal> dual(const Primal& primal)
 } // namespace CGAL
 
 namespace boost {
-  
+  /*!
+\ingroup PkgBGLTraits
+
+  */
 template <typename Primal>
 class graph_traits<CGAL::Dual<Primal> >
 {
-  typedef boost::graph_traits<Primal> GTP;
 public:
+  typedef boost::graph_traits<Primal> GTP;
   typedef typename GTP::face_descriptor     vertex_descriptor;
   typedef typename GTP::vertex_descriptor   face_descriptor;
   typedef typename GTP::halfedge_descriptor halfedge_descriptor;
@@ -104,8 +114,8 @@ public:
   typedef typename GTP::halfedge_iterator halfedge_iterator;
   typedef typename GTP::edge_iterator     edge_iterator;
 
-  typedef CGAL::Halfedge_around_face_iterator<Primal>      in_edge_iterator;
-  typedef CGAL::Opposite_edge_around_face_iterator<Primal> out_edge_iterator;
+  typedef CGAL::Edge_around_face_iterator<Primal>      out_edge_iterator;
+  typedef CGAL::Opposite_edge_around_face_iterator<Primal> in_edge_iterator;
 
   static vertex_descriptor   null_vertex()   { return vertex_descriptor(); }
   static face_descriptor     null_face()     { return face_descriptor(); }
@@ -335,7 +345,7 @@ source(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
        const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return face(opposite(h,primal),primal);
+  return face(h,primal);
 }
  
 template <typename P>
@@ -344,7 +354,7 @@ target(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
        const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return face(h,primal);
+  return face(opposite(h,primal),primal);
 }
  
 
@@ -354,7 +364,7 @@ source(typename boost::graph_traits<Dual<P> >::edge_descriptor h,
        const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return face(opposite(halfedge(h,primal),primal),primal);
+  return face(halfedge(h,primal),primal);
 }
  
 template <typename P>
@@ -363,7 +373,7 @@ target(typename boost::graph_traits<Dual<P> >::edge_descriptor h,
        const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return face(halfedge(h,primal),primal);
+  return face(opposite(halfedge(h,primal),primal),primal);
 }
 
 template <typename P>
@@ -371,7 +381,8 @@ typename boost::graph_traits<Dual<P> >::halfedge_descriptor
 halfedge(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
          const Dual<P>& dual)
 {
-  return halfedge(v, dual.primal());
+  const typename Dual<P>::Primal& primal = dual.primal();
+  return opposite(halfedge(v, primal),primal);
 }
 
 template <typename P>
@@ -428,7 +439,7 @@ next(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
          const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return opposite(prev(h,primal),primal);
+  return prev(opposite(h,primal),primal);
 }  
 
 template <typename P>
@@ -437,7 +448,7 @@ prev(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
          const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return next(opposite(h,primal),primal);
+  return opposite(next(h,primal),primal);
 }  
 
 template <typename P>
@@ -446,16 +457,16 @@ out_edges(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
           const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return opposite_edges_around_face(halfedge(v,primal),primal);
+  return edges_around_face(halfedge(v,primal),primal);
 }
 
 template <typename P>
-Iterator_range<typename boost::graph_traits<Dual<P> >::out_edge_iterator>
+Iterator_range<typename boost::graph_traits<Dual<P> >::in_edge_iterator>
 in_edges(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
          const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return halfedges_around_face(halfedge(v,primal),primal);
+  return opposite_edges_around_face(halfedge(v,primal),primal);
 }
        
 template <typename P>
@@ -477,5 +488,7 @@ in_degree(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
          
         
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

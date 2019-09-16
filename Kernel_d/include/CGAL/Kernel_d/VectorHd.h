@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel
@@ -176,7 +177,6 @@ VectorHd(int a, int b, int c, int d) :
   if (d < 0) invert_rep();
 }
 
-VectorHd(const VectorHd<RT,LA>& p) : Base(p)  {}
 ~VectorHd() {}     
 
 /*{\Moperations 5 3 }*/

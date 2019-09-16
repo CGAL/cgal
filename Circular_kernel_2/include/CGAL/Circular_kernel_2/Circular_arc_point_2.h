@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_POINT_2_H
 #define CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_POINT_2_H
+
+#include <CGAL/license/Circular_kernel_2.h>
+
 
 #include <iostream>
 #include <CGAL/Handle.h>
@@ -101,23 +105,23 @@ public:
 
   ////Construction/////
   Filtered_bbox_circular_arc_point_2_base()
-    : P_point(), bb(NULL)
+    : P_point(), bb(nullptr)
   {}
 
   Filtered_bbox_circular_arc_point_2_base(const P_point& pt)
-    : P_point(pt), bb(NULL)
+    : P_point(pt), bb(nullptr)
   {}
 
   explicit Filtered_bbox_circular_arc_point_2_base(const Root_for_circles_2_2 & np)
-    : P_point(np), bb(NULL)
+    : P_point(np), bb(nullptr)
   {}
 
   explicit Filtered_bbox_circular_arc_point_2_base(const Point_2 & p)
-    : P_point(p), bb(NULL)
+    : P_point(p), bb(nullptr)
   {}
 
   Filtered_bbox_circular_arc_point_2_base(const Self &c) 
-    : P_point(c), bb(c.bb ? new Bbox_2(*(c.bb)) : NULL)
+    : P_point(c), bb(c.bb ? new Bbox_2(*(c.bb)) : nullptr)
   {}
 
   Filtered_bbox_circular_arc_point_2_base&
@@ -126,10 +130,10 @@ public:
     {
       this->P_point::operator=(c);
 
-      if (bb != NULL){ 
+      if (bb != nullptr){ 
         delete bb;
       }
-      bb = c.bb ? new Bbox_2(*(c.bb)) : NULL;
+      bb = c.bb ? new Bbox_2(*(c.bb)) : nullptr;
     }
     return *this;
   }
@@ -144,7 +148,7 @@ public:
   ////Bbox related accessors////
   
   bool has_no_bbox() const
-  { return (bb==NULL);}
+  { return (bb==nullptr);}
 
   Bbox_2  bbox() const
   { 

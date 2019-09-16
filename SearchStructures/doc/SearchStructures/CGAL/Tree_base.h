@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgRangeSegmentTreesD
+\ingroup PkgSearchStructuresRef
 
 `Tree_anchor` is also derived from `Tree_base`. Therefore, it provides
 the same methods as `Range_tree_d` and `Segment_tree_d`, but does

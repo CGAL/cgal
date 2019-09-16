@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://odevil@scm.gforge.inria.fr/svn/cgal/trunk/Spatial_sorting/include/CGAL/Hilbert_sort_3.h $
-// $Id: Hilbert_sort_3.h 51456 2009-08-24 17:10:04Z spion $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Christophe Delage
 
@@ -32,8 +33,8 @@ namespace internal {
 
     template <class K, int x>
     struct Hilbert_cmp_3<K,x,true>
-        : public std::binary_function<typename K::Point_3,
-                                      typename K::Point_3, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_3,
+                                              typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;
         K k;
@@ -46,8 +47,8 @@ namespace internal {
 
     template <class K>
     struct Hilbert_cmp_3<K,0,false>
-        : public std::binary_function<typename K::Point_3,
-                                      typename K::Point_3, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_3,
+                                              typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;
         K k;
@@ -60,8 +61,8 @@ namespace internal {
 
     template <class K>
     struct Hilbert_cmp_3<K,1,false>
-        : public std::binary_function<typename K::Point_3,
-                                      typename K::Point_3, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_3,
+                                              typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;
         K k;
@@ -74,8 +75,8 @@ namespace internal {
 
     template <class K>
     struct Hilbert_cmp_3<K,2,false>
-        : public std::binary_function<typename K::Point_3,
-                                      typename K::Point_3, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_3,
+                                              typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;
         K k;

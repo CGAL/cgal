@@ -14,12 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_OBSERVER_H
 #define CGAL_ARR_OBSERVER_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Arr_enums.h>
 
@@ -67,7 +72,7 @@ public:
 
   /*! Default constructor. */
   Arr_observer () :
-    p_arr (NULL)
+    p_arr (nullptr)
   {}
 
   /*! Constructor with an associated arrangement. */
@@ -82,7 +87,7 @@ public:
   virtual ~Arr_observer ()
   {
     // Unregister the observer object from the arrangement.
-    if (p_arr != NULL)
+    if (p_arr != nullptr)
       p_arr->_unregister_observer (this);
   }
   //@}
@@ -113,9 +118,9 @@ public:
       return;
 
     // The observer is not already attached to an arrangement.
-    CGAL_precondition (p_arr == NULL);
+    CGAL_precondition (p_arr == nullptr);
 
-    if (p_arr != NULL)
+    if (p_arr != nullptr)
       return;
 
     // Notify the concrete oberver (the sub-class) about the attachment.
@@ -134,7 +139,7 @@ public:
   /*! Detach the observer from the arrangement. */
   void detach ()
   {
-    if (p_arr == NULL)
+    if (p_arr == nullptr)
       return;
 
     // Notify the concrete oberver (the sub-class) about the detachment.
@@ -143,7 +148,7 @@ public:
     // Unregister the observer object from the current arrangement, and mark
     // that the oberver is not attached to an arrangement.
     p_arr->_unregister_observer (this);
-    p_arr = NULL;
+    p_arr = nullptr;
    
     // Notify the concrete oberver that the detachment took place.
     after_detach();
@@ -673,5 +678,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

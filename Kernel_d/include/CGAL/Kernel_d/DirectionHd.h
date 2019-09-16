@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel
@@ -133,7 +134,6 @@ $3$-dimensional space. }*/
 DirectionHd(int a, int b, int c) : 
   Base( Tuple(RT(a),RT(b),RT(c),RT(1)) ) {}
 
-DirectionHd(const DirectionHd<RT,LA>& p) : Base(p)  {}
 ~DirectionHd() {}     
 
 /*{\Moperations 5 3}*/

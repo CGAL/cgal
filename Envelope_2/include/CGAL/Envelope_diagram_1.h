@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 
 #ifndef CGAL_ENVELOPE_DIAGRAM_1_H
 #define CGAL_ENVELOPE_DIAGRAM_1_H
+
+#include <CGAL/license/Envelope_2.h>
+
 
 #include <list>
 
@@ -58,15 +62,15 @@ public:
   public:
     /*! Constructor. */
     Vertex () :
-      _leftP(NULL),
-      _rightP(NULL)
+      _leftP(nullptr),
+      _rightP(nullptr)
     {}
 
     /*! Constructor with a point. */
     Vertex (const Point_2& p) :
       _p(p),
-      _leftP(NULL),
-      _rightP(NULL)
+      _leftP(nullptr),
+      _rightP(nullptr)
     {}
 
     /*! Get the point. */
@@ -171,8 +175,8 @@ public:
   public:
     /*! Constructor. */
     Edge () :
-      _leftP(NULL),
-      _rightP(NULL)
+      _leftP(nullptr),
+      _rightP(nullptr)
     {}
 
     /*! Check if the edge represents an empty interval. */
@@ -274,13 +278,11 @@ public:
 private:
 
   // Vertex allocator.
-  typedef typename Allocator::template rebind<Vertex>    Vertex_alloc_rebind;
-  typedef typename Vertex_alloc_rebind::other            Vertex_allocator;
+  typedef std::allocator_traits<Allocator> Allocator_traits;
+  typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
 
   // Halfedge allocator.
-  typedef typename Allocator::template rebind<Edge>      Edge_alloc_rebind;
-  typedef typename Edge_alloc_rebind::other              Edge_allocator;
-
+  typedef typename Allocator_traits::template rebind_alloc<Edge> Edge_allocator;
 
   Edge* _leftmostP;                   // The leftmost edge of the diagram
                                       // (representing the range from -oo).
@@ -372,8 +374,7 @@ public:
   Vertex_handle new_vertex (const Point_2& p)
   {
     Vertex* v = vertex_alloc.allocate (1);
-
-    vertex_alloc.construct (v, Vertex(p));
+    std::allocator_traits<Vertex_allocator>::construct(vertex_alloc, v, p);
     return (v);
   }
 
@@ -381,22 +382,21 @@ public:
   Edge_handle new_edge ()
   {
     Edge* e = edge_alloc.allocate (1);
-
-    edge_alloc.construct (e, Edge());
+    std::allocator_traits<Edge_allocator>::construct(edge_alloc, e);
     return (e);
   }
    
   /*! Delete an existing vertex. */
   void delete_vertex (Vertex_handle v)
   {
-    vertex_alloc.destroy (v);
+    std::allocator_traits<Vertex_allocator>::destroy(vertex_alloc, v);
     vertex_alloc.deallocate (v, 1);
   }
   
   /*! Delete an existing edge. */
   void delete_edge (Edge_handle e)
   {
-    edge_alloc.destroy (e);
+    std::allocator_traits<Edge_allocator>::destroy(edge_alloc, e);
     edge_alloc.deallocate (e, 1);
   }
   
@@ -409,14 +409,14 @@ private:
     Vertex* v;
     Edge* e = _leftmostP;
 
-    while (e != NULL) {
+    while (e != nullptr) {
       // Get a pointer to the next vertex.
       v = e->right();
 
       // Free the edge and update it to be the next one after v.
       delete_edge (e);
 
-      if (v != NULL) {
+      if (v != nullptr) {
         e = v->right();
 
         // Free the current vertex.
@@ -424,12 +424,12 @@ private:
       }
       else
       {
-        e = NULL;
+        e = nullptr;
       }
     }
      
-    _leftmostP = NULL;
-    _rightmostP = NULL;
+    _leftmostP = nullptr;
+    _rightmostP = nullptr;
   }
 };
 

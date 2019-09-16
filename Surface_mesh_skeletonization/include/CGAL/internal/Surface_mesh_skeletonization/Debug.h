@@ -13,12 +13,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
 
 #ifndef CGAL_MCFSKEL_DEBUG_H
 #define CGAL_MCFSKEL_DEBUG_H
+
+#include <CGAL/license/Surface_mesh_skeletonization.h>
+
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 

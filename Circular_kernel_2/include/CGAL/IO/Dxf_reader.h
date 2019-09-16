@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Andreas Fabri
 
@@ -23,12 +24,14 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-// Descriptions of the file format can be found at
+// Description of the file format can be found at the following address:
 // http://www.autodesk.com/techpubs/autocad/acad2000/dxf/
-// http://www.tnt.uni-hannover.de/soft/compgraph/fileformats/docs/DXF.ascii
 
 #ifndef CGAL_IO_DXF_READER_H
 #define CGAL_IO_DXF_READER_H
+
+#include <CGAL/license/Circular_kernel_2.h>
+
 
 #include <CGAL/basic.h>
 #include <iostream>
@@ -133,8 +136,8 @@ private:
   is >> n;
   CGAL_assertion(n == 40);
   is >> iformat(r);
-  FT rft(r);
-  circ = typename K::Construct_circle_2()(Point_2(cx,cy), rft);
+  FT sqr_ft(r*r);
+  circ = typename K::Construct_circle_2()(Point_2(cx,cy), sqr_ft);
 }
 
   void
@@ -159,7 +162,7 @@ private:
   is >> iformat(r);
 
   center = typename K::Construct_point_2()(cx,cy);
-  rft = FT(r);
+  rft = FT(r); // intentionally not squared
 }
 
 

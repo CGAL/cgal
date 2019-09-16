@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Michael Hemmer    <hemmer@mpi-inf.mpg.de>
@@ -23,7 +24,6 @@
 
 // within this file FT ^= Fraction_traits<T>
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/to_rational.h>
 #include <CGAL/use.h>

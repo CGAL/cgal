@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H 1
+
+#include <CGAL/license/Surface_mesh_simplification.h>
+
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core.h>
@@ -27,15 +31,15 @@ namespace CGAL {
 namespace Surface_mesh_simplification  
 {
 
-  template<class ECM_>
+  template<class TM_>
 class LindstromTurk_cost
 {
 public:
     
-  typedef ECM_ ECM ;
+  typedef TM_ TM ;
   /*
 
-  typedef Edge_profile<ECM> Profile ;
+  typedef Edge_profile<TM> Profile ;
   typedef typename Traits::Point_3 Point;
   typedef typename Traits::FT FT ;
   
@@ -49,7 +53,7 @@ public:
   optional<typename Profile::FT>
   operator()( Profile const& aProfile, optional<typename Profile::Point> const& aPlacement ) const
   {
-    return LindstromTurkCore<ECM,Profile>(mParams,aProfile).compute_cost(aPlacement) ;
+    return LindstromTurkCore<TM,Profile>(mParams,aProfile).compute_cost(aPlacement) ;
   }
 
 private:

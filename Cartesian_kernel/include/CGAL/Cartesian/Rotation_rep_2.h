@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
@@ -35,6 +36,7 @@ class Rotation_repC2: public Aff_transformation_rep_baseC2<R>
 friend class Aff_transformation_repC2<R>;
 friend class Translation_repC2<R>;
 friend class Scaling_repC2<R>;
+friend class Reflection_repC2<R>;
 
 public:
   typedef Aff_transformation_rep_baseC2<R> Aff_t_base;
@@ -47,6 +49,7 @@ public:
   typedef Translation_repC2<R>             Translation;
   typedef Rotation_repC2<R>                Rotation;
   typedef Scaling_repC2<R>                 Scaling;
+  typedef Reflection_repC2<R>              Reflection;
 
   Rotation_repC2() {}
 
@@ -125,6 +128,17 @@ public:
                                 t.scalefactor_*cosinus_);
   }
 
+  Aff_transformation_2 compose(const Reflection &r) const
+  {
+    return Aff_transformation_2(
+          r.cosinus_*cosinus_+r.sinus_*sinus_, 
+          -r.cosinus_*sinus_+r.sinus_*cosinus_, 
+          r.t13(),
+          r.sinus_*cosinus_-r.cosinus_*sinus_, 
+          -r.sinus_*sinus_-r.cosinus_*cosinus_
+          , r.t23());
+  }
+
   Aff_transformation_2 compose(const Transformation &t) const
   {
     return Aff_transformation_2(cosinus_*t.t11 + sinus_*t.t12,
@@ -134,7 +148,6 @@ public:
                                 -sinus_*t.t21 + cosinus_*t.t22,
                                 t.t23);
   }
-
   bool is_even() const
   {
     return true;
@@ -148,19 +161,19 @@ public:
             {
               case 0: return cosinus_;
               case 1: return -sinus_;
-              case 2: return FT(0);
+              default: return FT(0);
             }
     case 1: switch (j)
             {
               case 0: return sinus_;
               case 1: return cosinus_;
-              case 2: return FT(0);
+              default: return FT(0);
             }
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
-              case 2: return FT(1);
+              default: return FT(1);
             }
     }
     return FT(0);

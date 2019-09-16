@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_VORONOI_DIAGRAM_2_UNBOUNDED_FACES_H
 #define CGAL_VORONOI_DIAGRAM_2_UNBOUNDED_FACES_H 1
+
+#include <CGAL/license/Voronoi_diagram_2.h>
+
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 
@@ -43,7 +47,7 @@ class Bounded_face_tester
   Delaunay_vertex_circulator;
 
  public:
-  Bounded_face_tester(const VDA* vda = NULL) : vda_(vda) {}
+  Bounded_face_tester(const VDA* vda = nullptr) : vda_(vda) {}
 
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return false; }
@@ -79,7 +83,7 @@ class Unbounded_face_tester
   Delaunay_vertex_circulator;
 
  public:
-  Unbounded_face_tester(const VDA* vda = NULL) : vda_(vda) {}
+  Unbounded_face_tester(const VDA* vda = nullptr) : vda_(vda) {}
 
   bool operator()(const Base_iterator& it) const {
     if ( vda_->dual().dimension() < 2 ) { return true; }

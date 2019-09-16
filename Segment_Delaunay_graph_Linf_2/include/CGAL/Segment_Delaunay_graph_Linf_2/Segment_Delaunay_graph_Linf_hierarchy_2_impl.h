@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
@@ -182,7 +183,7 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 
   CGAL_assertion( vertex != Vertex_handle() );
 
-  if ( vertices != NULL ) { vertices[0] = vertex; }
+  if ( vertices != nullptr ) { vertices[0] = vertex; }
 
   // insert at other levels
   Vertex_handle previous = vertex;
@@ -239,7 +240,7 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 
     CGAL_assertion( vertex != Vertex_handle() );
 
-    if ( vertices != NULL ) { vertices[k] = vertex; }
+    if ( vertices != nullptr ) { vertices[k] = vertex; }
 
     vertex->set_down(previous); // link with other levels
     previous->set_up(vertex);
@@ -300,7 +301,7 @@ insert_point(const Site_2& t, const Storage_site_2& ss,
 
     CGAL_assertion( vertex != Vertex_handle() );
 
-    if ( vertices != NULL ) { vertices[k] = vertex; }
+    if ( vertices != nullptr ) { vertices[k] = vertex; }
 
     vertex->set_down(previous); // link with other levels
     previous->set_up(vertex);
@@ -519,8 +520,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
     vcross(false, Vertex_handle(), AT2::DISJOINT);
 
   hierarchy[0]->initialize_conflict_region(start_f, l);
-  hierarchy[0]->expand_conflict_region(start_f, t, ss, l, fm,
-				       sign_map, vcross);
+  hierarchy[0]->expand_conflict_region(start_f, t, l, fm, sign_map, vcross);
 
   CGAL_assertion( vcross.third == AT2::DISJOINT ||
 		  vcross.third == AT2::CROSSING ||
@@ -564,7 +564,7 @@ insert_segment_in_upper_levels(const Site_2& t, const Storage_site_2& ss,
 			       const Vertex_handle* vertices,
 			       int level, Tag_true /* stag */)
 {
-  CGAL_precondition( vertices != NULL );
+  CGAL_precondition( vertices != nullptr );
   CGAL_precondition( vbelow != Vertex_handle() );
 
   // insert at all upper levels
@@ -1010,6 +1010,9 @@ is_valid(bool verbose, int level) const
   bool result(true);
 
 #define DEBUGVALIDHIER true
+
+#include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
+
 //#undef DEBUGVALIDHIER
 
 #ifdef DEBUGVALIDHIER  

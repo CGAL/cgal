@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
@@ -21,9 +22,12 @@
 #ifndef CGAL_MESH_2_REFINE_FACES_H
 #define CGAL_MESH_2_REFINE_FACES_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <CGAL/Mesh_2/Face_badness.h>
 #include <CGAL/Double_map.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <string>
 #include <sstream>
@@ -381,8 +385,8 @@ class Refine_faces :
   typedef typename Tr::Geom_traits Geom_traits;
 
   template <class Pair>
-  struct Pair_get_first: public std::unary_function<Pair,
-                                                    typename Pair::first_type>
+  struct Pair_get_first
+    : public CGAL::cpp98::unary_function<Pair, typename Pair::first_type>
   {
     typedef typename Pair::first_type result;
     const result& operator()(const Pair& p) const

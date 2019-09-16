@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -22,6 +23,6 @@
 #ifndef CGAL_BOOST_GRAPH_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
 #define CGAL_BOOST_GRAPH_GRAPH_TRAITS_ARRANGEMENT_2_H
 
-#include <CGAL/graph_traits_Dual_Arrangement_2.h>
+#include <CGAL/graph_traits_dual_arrangement_2.h>
 
 #endif //CGAL_BOOST_GRAPH_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H

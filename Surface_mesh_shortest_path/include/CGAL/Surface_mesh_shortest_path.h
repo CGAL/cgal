@@ -14,14 +14,18 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Stephen Kiazyk
 
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_H
 
+#include <CGAL/license/Surface_mesh_shortest_path.h>
+
+
 /**
- * \ingroup PkgSurfaceMeshShortestPath
+ * \ingroup PkgSurfaceMeshShortestPathRef
  * \file CGAL/Surface_mesh_shortest_path.h
  * Convenience header file only including `CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h`
  * and `CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h`.

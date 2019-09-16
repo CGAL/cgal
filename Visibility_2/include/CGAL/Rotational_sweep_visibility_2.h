@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s):  Kan Huang <huangkandiy@gmail.com>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 #define CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
+
+#include <CGAL/license/Visibility_2.h>
+
 
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Arrangement_2.h>
@@ -69,7 +73,7 @@ private:
   typedef Halfedge_const_handle                         EH;
   typedef std::vector<EH>                               EHs;
 
-  class Less_edge: public std::binary_function<EH, EH, bool> {
+  class Less_edge: public CGAL::cpp98::binary_function<EH, EH, bool> {
     const Geometry_traits_2* geom_traits;
   public:
     Less_edge() {}
@@ -90,7 +94,7 @@ private:
     }
   };
 
-  class Less_vertex: public std::binary_function<VH, VH, bool> {
+  class Less_vertex: public CGAL::cpp98::binary_function<VH, VH, bool> {
     const Geometry_traits_2* geom_traits;
   public:
     Less_vertex() {}
@@ -106,7 +110,7 @@ private:
     }
   };
 
-  class Closer_edge: public std::binary_function<EH, EH, bool> {
+  class Closer_edge: public CGAL::cpp98::binary_function<EH, EH, bool> {
     const Geometry_traits_2* geom_traits;
     Point_2 q;
   public:
@@ -125,8 +129,8 @@ private:
         return 1;
       case LEFT_TURN:
         return 2;
+      default: CGAL_assume(false);
       }
-
       return -1;
     }
 
@@ -203,6 +207,7 @@ private:
             return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
                     == Visibility_2::orientation_2(geom_traits, s2, t2, s1));
         }
+        break;
       case RIGHT_TURN:
         switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
         case COLLINEAR:
@@ -219,7 +224,9 @@ private:
                 == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
           else
             return true;
+        default: CGAL_assume(false);
         }
+        break;
       case LEFT_TURN:
         switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
         case COLLINEAR:
@@ -236,9 +243,11 @@ private:
                 == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
           else
             return true;
+        default: CGAL_assume(false);
         }
       }
 
+      CGAL_assume(false);
       return false;
     }
 
@@ -280,7 +289,7 @@ private:
                                           //visibility_cone is greater than pi.
 
 public:
-  Rotational_sweep_visibility_2(): p_arr(NULL), geom_traits(NULL) {}
+  Rotational_sweep_visibility_2(): p_arr(nullptr), geom_traits(nullptr) {}
   Rotational_sweep_visibility_2(const Arrangement_2& arr): p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
   }
@@ -420,7 +429,7 @@ public:
   }
 
 bool is_attached() const {
-  return (p_arr != NULL);
+  return (p_arr != nullptr);
 }
 
 void attach(const Arrangement_2& arr) {
@@ -429,8 +438,8 @@ void attach(const Arrangement_2& arr) {
 }
 
 void detach() {
-  p_arr = NULL;
-  geom_traits = NULL;
+  p_arr = nullptr;
+  geom_traits = nullptr;
 }
 
 const Arrangement_2& arrangement_2() const {
@@ -720,7 +729,7 @@ private:
 
   //functor to decide which vertex is swept earlier by the rotational sweeping
   //ray
-  class Is_swept_earlier:public std::binary_function<VH, VH, bool> {
+  class Is_swept_earlier:public CGAL::cpp98::binary_function<VH, VH, bool> {
     const Point_2& q;
     const Geometry_traits_2* geom_traits;
   public:

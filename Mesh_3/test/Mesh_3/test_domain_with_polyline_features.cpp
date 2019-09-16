@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -37,6 +38,7 @@ struct Dummy_domain
   typedef typename K::FT FT;
   typedef int Index;
   typedef int Surface_patch_index;
+  typedef unsigned short Subdomain_index;
 };
 
 typedef Dummy_domain<K_e_i> Smooth_domain;
@@ -51,20 +53,36 @@ class Domain_with_polyline_tester
   typedef std::list<Polyline> Polylines;
   
   typedef Mesh_domain::Corner_index         Ci;
-  typedef Mesh_domain::Curve_segment_index  Csi;
+  typedef Mesh_domain::Curve_index          Csi;
+  typedef Mesh_domain::Surface_patch_index  Spi;
   typedef Mesh_domain::Index                Index;
   
   typedef std::vector<std::pair<Ci, Point> >        Corners_vector;
   typedef std::pair<Point, Index>                   P_and_i;
-  typedef CGAL::cpp11::tuple<Csi,P_and_i,P_and_i>   Curve_tuple;
-  typedef std::vector<Curve_tuple>                 Curves_vector;
+  typedef std::tuple<Csi,P_and_i,P_and_i>   Curve_tuple;
+  typedef std::vector<Curve_tuple>                  Curves_vector;
   
 public:
   Domain_with_polyline_tester()
     : p1_(1,0,0), p2_(1,1,0), p3_(1,2,0.1), p4_(0.9, 0.9, 1)
   { }
-  
-  void build_curve_segment()
+
+  void build_corners()
+  {
+    domain_.add_corner(p1_);
+
+    std::vector<Point> corners;
+    corners.push_back(p2_);
+    domain_.add_corners(corners.begin(), corners.end());
+
+    Csi dummy_curve_index = 12;
+    domain_.register_corner(p3_, dummy_curve_index);
+
+    Spi dummy_surface_patch_index = 21;
+    domain_.add_corner_with_context(p4_, dummy_surface_patch_index);
+  }
+
+  void build_curve()
   {
     Polylines polylines (1);
     Polyline& polyline = polylines.front();
@@ -89,8 +107,36 @@ public:
     
     domain_.add_features(polylines.begin(),polylines.end());    
   }
-  
-  void test_curve_segment_corners() const
+
+  void test_corners() const
+  {
+    Corners_vector corners;
+    domain_.get_corners(std::back_inserter(corners));
+    assert(corners.size() == 4);
+
+    Corners_vector::const_iterator cit = corners.begin(), end = corners.end();
+    for(; cit!=end; ++cit)
+    {
+      if(cit->second == p3_)
+      {
+        std::vector<Csi> incident_curves;
+        domain_.get_corner_incident_curves(cit->first, std::back_inserter(incident_curves));
+        assert(incident_curves.size() == 1 && incident_curves.front() == 12);
+      }
+      else if(cit->second == p4_)
+      {
+        std::vector<Spi> incident_surface_patchs;
+        domain_.get_corner_incidences(cit->first, std::back_inserter(incident_surface_patchs));
+        assert(incident_surface_patchs.size() == 1 && incident_surface_patchs.front() == 21);
+      }
+      else
+      {
+        assert(cit->second == p1_ || cit->second == p2_);
+      }
+    }
+  }
+
+  void test_curve_corners() const
   {
     Corners_vector corners;
     domain_.get_corners(std::back_inserter(corners));
@@ -105,10 +151,10 @@ public:
     Corners_vector corners;
     domain_.get_corners(std::back_inserter(corners));
     
-    assert(corners.empty());
+    assert(corners.size() == 1);
   }
   
-  void test_curve_segments() const
+  void test_curves() const
   {
     std::pair<Point,Point> extremities = get_extremities();
     
@@ -129,53 +175,53 @@ public:
     std::pair<Point,Point> extremities = get_extremities();
     const Point& p = extremities.first;
     const Point& q = extremities.second;
-    const Csi& curve_index = get_curve_segment_index();
+    const Csi& curve_index = get_curve_index();
     
     const FT geod (1.3);
-    Point r = domain_.construct_point_on_curve_segment(p,curve_index,geod);
-    const FT& pq_geo = domain_.geodesic_distance(p,q,curve_index);
+    Point r = domain_.construct_point_on_curve(p,curve_index,geod);
+    const FT& pq_geo = domain_.signed_geodesic_distance(p,q,curve_index);
     
     assert(CGAL::squared_distance(p,r) < CGAL::square(geod));
-    assert(near_equal(domain_.geodesic_distance(p,r,curve_index), geod));
-    assert(near_equal(domain_.geodesic_distance(r,q,curve_index), pq_geo - geod));
-    assert(near_equal(domain_.geodesic_distance(q,r,curve_index), geod - pq_geo));
+    assert(near_equal(domain_.signed_geodesic_distance(p,r,curve_index), geod));
+    assert(near_equal(domain_.signed_geodesic_distance(r,q,curve_index), pq_geo - geod));
+    assert(near_equal(domain_.signed_geodesic_distance(q,r,curve_index), geod - pq_geo));
   }
   
 private:
   std::pair<Point,Point> get_extremities() const
   {
-    Curves_vector curve_segments;
-    domain_.get_curve_segments(std::back_inserter(curve_segments));
-    assert(curve_segments.size() == 1);
+    Curves_vector curves;
+    domain_.get_curves(std::back_inserter(curves));
+    assert(curves.size() == 1);
     
-    const Point& p = get_first_point(curve_segments.front());
-    const Point& q = get_second_point(curve_segments.front());
+    const Point& p = get_first_point(curves.front());
+    const Point& q = get_second_point(curves.front());
     
     return std::make_pair(p,q);
   }
   
   Point get_first_point(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp11::get<1>(tuple).first;
+    return std::get<1>(tuple).first;
   }
   
   Point get_second_point(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp11::get<2>(tuple).first;
+    return std::get<2>(tuple).first;
   }
   
-  Csi get_curve_segment_index() const
+  Csi get_curve_index() const
   {
-    Curves_vector curve_segments;
-    domain_.get_curve_segments(std::back_inserter(curve_segments));
-    assert(curve_segments.size() == 1);
+    Curves_vector curves;
+    domain_.get_curves(std::back_inserter(curves));
+    assert(curves.size() == 1);
     
-    return get_curve_segment_index(curve_segments.front());
+    return get_curve_index(curves.front());
   }
   
-  Csi get_curve_segment_index(const Curve_tuple& tuple) const
+  Csi get_curve_index(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp11::get<0>(tuple);
+    return std::get<0>(tuple);
   }
   
   bool near_equal(const double d1, const double d2) const
@@ -191,12 +237,17 @@ private:
 
 int main()
 {
+  std::cout << "Test corners" << std::endl;
+  Domain_with_polyline_tester domain_corner_tester;
+  domain_corner_tester.build_corners();
+  domain_corner_tester.test_corners();
+
   std::cout << "Test curve segments" << std::endl;
   Domain_with_polyline_tester domain_tester;
-  domain_tester.build_curve_segment();
+  domain_tester.build_curve();
   
-  domain_tester.test_curve_segment_corners();
-  domain_tester.test_curve_segments();
+  domain_tester.test_curve_corners();
+  domain_tester.test_curves();
   domain_tester.test_geodesic_distance();
   
   std::cout << "Test cycles" << std::endl;

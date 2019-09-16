@@ -14,11 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH
 #define CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH 1
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Compact_container.h>
 #include <queue>
@@ -596,6 +599,9 @@ namespace CGAL {
   };
   //****************************************************************************
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 //******************************************************************************
 #endif // CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH
 //******************************************************************************

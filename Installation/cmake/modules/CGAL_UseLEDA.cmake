@@ -21,9 +21,6 @@ if ( LEDA_FOUND AND NOT LEDA_SETUP )
     link_libraries( ${LEDA_LIBRARIES} )
   endif()
 
-  if (LEDA_CGAL_FRIEND_INJECTION)
-    message( STATUS "${LEDA_CGAL_FRIEND_INJECTION}" )
-  endif()
   if (LEDA_CGAL_NO_STRICT_ALIASING)
     message( STATUS "${LEDA_CGAL_NO_STRICT_ALIASING}" )
   endif()
@@ -32,6 +29,7 @@ if ( LEDA_FOUND AND NOT LEDA_SETUP )
   endif()
 
   uniquely_add_flags( CMAKE_CXX_FLAGS ${LEDA_CXX_FLAGS} )
+  uniquely_add_flags( CMAKE_EXE_LINKER_FLAGS ${LEDA_LINKER_FLAGS} )
   uniquely_add_flags( CMAKE_SHARED_LINKER_FLAGS ${LEDA_LINKER_FLAGS} )
   uniquely_add_flags( CMAKE_MODULE_LINKER_FLAGS ${LEDA_LINKER_FLAGS} )
 

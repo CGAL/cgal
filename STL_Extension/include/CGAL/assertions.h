@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Geert-Jan Giezeman and Sven Schoenherr
@@ -62,9 +63,9 @@ namespace CGAL {
 // =====================
 // failure functions
 // -----------------
-CGAL_EXPORT void assertion_fail      ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
-CGAL_EXPORT void precondition_fail   ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
-CGAL_EXPORT void postcondition_fail  ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
+CGAL_EXPORT CGAL_NORETURN void assertion_fail      ( const char*, const char*, int, const char* = "") ;
+CGAL_EXPORT CGAL_NORETURN void precondition_fail   ( const char*, const char*, int, const char* = "") ;
+CGAL_EXPORT CGAL_NORETURN void postcondition_fail  ( const char*, const char*, int, const char* = "") ;
 
 // warning function
 // ----------------
@@ -99,9 +100,14 @@ inline bool possibly(Uncertain<bool> c);
 #else // no CGAL_NO_ASSERTIONS
 #  define CGAL_assertion(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
-#  define CGAL_destructor_assertion(EX) \
-   (CGAL::possibly(EX)||std::uncaught_exception()?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
-#  define CGAL_assertion_msg(EX,MSG) \
+#  if __cpp_lib_uncaught_exceptions || ( _MSVC_LANG >= 201703L )  // C++17
+#    define CGAL_destructor_assertion(EX) \
+     (CGAL::possibly(EX)||(std::uncaught_exceptions() > 0)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+#  else // use C++03 `std::uncaught_exception()`
+#    define CGAL_destructor_assertion(EX) \
+     (CGAL::possibly(EX)||std::uncaught_exception()?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+#  endif // use C++03 `std::uncaught_exception()`
+#  define CGAL_assertion_msg(EX,MSG)                                    \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_assertion_code(CODE) CODE
 #  define CGAL_assume(EX) CGAL_assertion(EX)

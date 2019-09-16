@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -129,7 +130,7 @@ int main()
 
   std::cout <<"          Removing vertices in random order" << std::endl;
 
-  std::random_shuffle(V.begin(), V.end());
+  CGAL::cpp98::random_shuffle(V.begin(), V.end());
 
   for (i=0; i<125; ++i) {
     T.remove(V[i]);

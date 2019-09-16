@@ -21,6 +21,7 @@
 // CGAL_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Dominik Huelse <dominik.huelse@gmx.de>
 //                 Tobias Reithmann <treith@mpi-inf.mpg.de>
@@ -31,7 +32,7 @@
   test for computing the gcd for polynomials
 */
 
-#include <CGAL/basic.h>
+
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
 #include <CGAL/LEDA_arithmetic_kernel.h>

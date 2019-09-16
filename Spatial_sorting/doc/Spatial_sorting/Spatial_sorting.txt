@@ -64,7 +64,7 @@ Hilbert mapping
 
 Now given a set of 2D points, they can be sorted in the order they have on such
 a space filling curve. Note that at each step, we split a square exactly at its center; we call this 
-subdivision policy: \f$middle\f$ policy (see \cgalFigureRef{Spatial_sorting_fig_Hilbert_median}).
+subdivision policy: <i>middle</i> policy (see \cgalFigureRef{Spatial_sorting_fig_Hilbert_middle}).
 
 \cgalFigureBegin{Spatial_sorting_fig_Hilbert_middle,Hilbert-middle.png}
 Hilbert sort with middle policy
@@ -75,7 +75,7 @@ as above, we subdivide it
 by splitting at the median point (in \f$ x\f$ or \f$ y\f$ directions alternating),
 we construct a 2-d tree adapted to the point set. This tree can be visited in a
 similar manner and we get also a suitable ordering of the points; we call this 
-subdivision policy: \f$median\f$ policy (see \cgalFigureRef{Spatial_sorting_fig_Hilbert_median}).
+subdivision policy: <i>median</i> policy (see \cgalFigureRef{Spatial_sorting_fig_Hilbert_median}).
 
 \cgalFigureBegin{Spatial_sorting_fig_Hilbert_median,Hilbert-median.png}
 Hilbert sort with median policy
@@ -184,7 +184,7 @@ a sequence of tuples containing a point, or a sequence of indices
 in a vector of points, you need another level of indirection.
 We provide the spatial sorting traits class adapters which are templated by
 another spatial sorting traits class, and a 
-<A HREF="http://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
+<A HREF="https://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
 which allows to obtain a point from whatever you want to sort.
 
 The following examples illustrate the usage of these traits class adapters.

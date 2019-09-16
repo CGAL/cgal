@@ -1,0 +1,9 @@
+/*!
+\example Generalized_map/gmap_2_moebius.cpp
+\example Generalized_map/gmap_3_marks.cpp
+\example Generalized_map/gmap_3_simple_example.cpp
+\example Generalized_map/gmap_3_operations.cpp
+\example Generalized_map/gmap_4_simple_example.cpp
+\example Generalized_map/gmap_3_with_colored_facets.cpp
+\example Generalized_map/gmap_3_dynamic_onmerge.cpp
+*/

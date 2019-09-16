@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stéphane Tayeb, Aymeric PELLE
@@ -30,6 +31,9 @@
 #ifndef CGAL_IMPLICIT_TO_LABELING_FUNCTION_WRAPPER_H
 #define CGAL_IMPLICIT_TO_LABELING_FUNCTION_WRAPPER_H
 
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -39,6 +43,8 @@
 #include <boost/dynamic_bitset.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/remove_cv.hpp>
+#include <boost/type_traits/is_function.hpp>
+#include <boost/mpl/if.hpp>
 
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>
@@ -61,27 +67,31 @@ public:
   typedef typename BGT::Point_3   Point_3;
 
   /// Constructor
-  Implicit_to_labeling_function_wrapper(const Function_& f)
-    : r_f_(f) {}
+  Implicit_to_labeling_function_wrapper(Function_ f) : f_(f) {}
 
-  // Default copy constructor and assignment operator are ok
-
-  /// Destructor
-  ~Implicit_to_labeling_function_wrapper() {}
+  // Default copy constructor, assignment operator, and destructor are ok
 
   /// Operator ()
-  return_type operator()(const Point_3& p, const bool = true) const
+  return_type operator()(const Point_3& p) const
   {
-    return ( (r_f_(p)<0) ? 1 : 0 );
+    return ( (f_(p)<0) ? 1 : 0 );
   }
 
 private:
+  typedef typename boost::mpl::if_<boost::is_function<Function_>,
+                                   Function_*,
+                                   Function_>::type Stored_function;
   /// Function to wrap
-  const Function_& r_f_;
+  Stored_function f_;
 
 };  // end class Implicit_to_labeling_function_wrapper
 
-
+template <typename BGT, typename Function>
+Implicit_to_labeling_function_wrapper<Function, BGT>
+make_implicit_to_labeling_function_wrapper(Function f)
+{
+  return Implicit_to_labeling_function_wrapper<Function, BGT>(f);
+}
 
 /**
  * \deprecated
@@ -107,7 +117,13 @@ public:
 
   /// Constructor
   Implicit_vector_to_labeling_function_wrapper(const std::vector<Function_*>& v)
-    : function_vector_(v) {}
+    : function_vector_(v)
+  {
+    if ( v.size() > 8 )
+    {
+      CGAL_error_msg("We support at most 8 functions !");
+    }
+  }
 
   // Default copy constructor and assignment operator are ok
 
@@ -115,20 +131,15 @@ public:
   ~Implicit_vector_to_labeling_function_wrapper() {}
 
   /// Operator ()
-  return_type operator()(const Point_3& p, const bool = true) const
+  return_type operator()(const Point_3& p) const
   {
-    int nb_func = function_vector_.size();
-    if ( nb_func > 8 )
-    {
-      CGAL_error_msg("We support at most 8 functions !");
-    }
-
+    const int nb_func = static_cast<int>(function_vector_.size());
     char bits = 0;
     for ( int i = 0 ; i < nb_func ; ++i )
     {
       // Insert value into bits : we compute fi(p) and insert result at
       // bit i of bits
-      bits |= ( ((*function_vector_[i])(p) < 0) << i );
+      bits = char(bits | ( ((*function_vector_[i])(p) < 0) << i ));
     }
 
     return ( static_cast<return_type>(bits) );
@@ -187,7 +198,7 @@ public:
       typename Bmask::size_type bit_index = 0;
       for (std::vector<Sign>::const_iterator iter = mask.begin(), endIter = mask.end(); iter != endIter; ++iter)
       {
-        std::string::value_type character = *iter;
+        Sign character = *iter;
         CGAL_assertion(character == POSITIVE || character == NEGATIVE);
 
         bmask[bit_index] = (character == POSITIVE);
@@ -254,7 +265,7 @@ public:
     std::sort(bmasks.begin(), bmasks.end());
   }
 
-  return_type operator() (const Point_3& p, const bool = true) const
+  return_type operator() (const Point_3& p) const
   {
     Bmask bmask(funcs.size() * 2, false);
 
@@ -272,7 +283,7 @@ public:
       ++i;
     }
 
-    std::vector<Bmask>::const_iterator iter = std::lower_bound(bmasks.begin(), bmasks.end(), bmask);
+    typename std::vector<Bmask>::const_iterator iter = std::lower_bound(bmasks.begin(), bmasks.end(), bmask);
     if (iter != bmasks.end() && *iter == bmask)
       return static_cast<return_type>(1 + (iter - bmasks.begin()));
     return 0;
@@ -286,5 +297,7 @@ public:
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IMPLICIT_TO_LABELING_FUNCTION_WRAPPER_H

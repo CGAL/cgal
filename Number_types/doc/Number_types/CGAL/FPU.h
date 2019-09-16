@@ -63,8 +63,7 @@ What follows describes the behavior when the parameter has its default value,
 
 */
 template< typename Protected >
-class Protect_FPU_rounding {
-public:
+struct Protect_FPU_rounding {
 
 /// \name Creation 
 /// @{
@@ -170,6 +169,8 @@ constructor was called.
 */ 
 ~Set_ieee_double_precision(); 
 
+/// @}
+
 }; /* end Set_ieee_double_precision */
 
 
@@ -184,8 +185,6 @@ except that it does not perform the save and restore of the previous state.
 \relates Set_ieee_double_precision 
 */ 
 void force_ieee_double_precision(); 
-
-/// @}
 
 
 } /* end namespace CGAL */

@@ -7,11 +7,14 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Skin_surface_traits_3<K>                      Traits;
 typedef CGAL::Union_of_balls_3<Traits>                      Union_of_balls_3;
+
+typedef Union_of_balls_3::Bare_point                        Bare_point;
 typedef Union_of_balls_3::Weighted_point                    Weighted_point;
-typedef Weighted_point::Point                               Bare_point;
+
 typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
-int main() {
+int main()
+{
   std::list<Weighted_point> l;
 
   l.push_front(Weighted_point(Bare_point(0,0,0), 1));

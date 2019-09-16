@@ -32,6 +32,10 @@
  *      - Added OpenNL namespace
  *      - FullVector is now a model of the SparseLinearAlgebraTraits_d::Vector concept
  *      - Coefficients are initialized with zeros
+ *
+ * $URL$
+ * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  */
 
 
@@ -86,7 +90,7 @@ public:
 
     ~FullVector() {
         delete[] coeff_ ;
-        coeff_ = NULL ;
+        coeff_ = nullptr ;
     }
 
     // Return the vector's number of coefficients

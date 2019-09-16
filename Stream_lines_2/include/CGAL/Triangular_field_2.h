@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
 
 #ifndef CGAL_TRIANGULAR_FIELD_2_H_ 
 #define CGAL_TRIANGULAR_FIELD_2_H_
+
+#include <CGAL/license/Stream_lines_2.h>
+
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2_algorithms.h>

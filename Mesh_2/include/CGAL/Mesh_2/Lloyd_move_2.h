@@ -15,12 +15,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 // Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez
 //
 
 #ifndef CGAL_LLOYD_MOVE_2_H
 #define CGAL_LLOYD_MOVE_2_H
+
+#include <CGAL/license/Mesh_2.h>
+
 
 #include <CGAL/Mesh_2/Uniform_sizing_field_2.h>
 #include <CGAL/Constrained_voronoi_diagram_2.h>

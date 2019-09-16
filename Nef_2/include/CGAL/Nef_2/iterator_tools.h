@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_ITERATORTOOLS_H
 #define CGAL_ITERATORTOOLS_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/circulator.h>
@@ -40,11 +44,11 @@ public:
 // OPERATIONS Forward Category
 // ---------------------------
 
-    bool operator==( Nullptr_t CGAL_assertion_code(p) ) const {
-      CGAL_assertion( p == NULL );
-      return Iter::operator==( Iter(NULL) );
+    bool operator==( std::nullptr_t CGAL_assertion_code(p) ) const {
+      CGAL_assertion( p == nullptr );
+      return Iter::operator==( Iter(nullptr) );
     }
-    bool operator!=( Nullptr_t p ) const {
+    bool operator!=( std::nullptr_t p ) const {
       return !(*this == p);
     }
     bool operator==( const Self& i ) const {

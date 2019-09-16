@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author     : Laurent Rineau
@@ -30,6 +31,11 @@
 #ifndef CGAL_STR
 #define CGAL_STR(X) CGAL_STR_STR(X)
 #define CGAL_STR_STR(X) #X
+#endif
+
+#ifndef CGAL_str
+#define CGAL_xstr(s) #s
+#define CGAL_str(s) CGAL_xstr(s)
 #endif
 
 #define CGAL_VERSION_STR CGAL_STR(CGAL_VERSION)

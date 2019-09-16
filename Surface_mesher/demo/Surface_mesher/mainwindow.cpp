@@ -16,7 +16,7 @@
 #include <QSettings>
 #include <QMimeData>
 
-#include <QGLViewer/vec.h>
+#include <CGAL/Qt/vec.h>
 
 #include <algorithm> // std::max
 #include <cmath> // std::sqrt

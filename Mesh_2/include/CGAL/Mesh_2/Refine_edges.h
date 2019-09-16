@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_MESH_2_REFINE_EDGES_H
 #define CGAL_MESH_2_REFINE_EDGES_H
+
+#include <CGAL/license/Mesh_2.h>
+
 
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
@@ -30,7 +34,7 @@
 #include <utility>
 #include <iterator>
 #include <boost/iterator/filter_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -66,7 +70,7 @@ namespace Mesh_2 {
         typedef typename Tr::Edge Result_type;
 
         /** \param tr_ points to the triangulation. */
-        explicit Is_a_constrained_edge(const Tr& tr_) : tr(tr_) {}
+        explicit Is_a_constrained_edge(const Tr& tr_) : tr(tr_), i(-1) {}
 
         bool operator()(const Constrained_edge& ce)
         {
@@ -581,7 +585,9 @@ public:
     } while( fc != fcbegin );
 
     Face_handle fh;
-    int index;
+    int index = 0; // Avoids a warning. 
+                   // We know that is_edge must return true, and is_edge will assign something to index
+                   // but the compiler does not so it will issue a maybe uninitialized warning
 
     CGAL_assume_code(bool is_edge = )
     tr.is_edge(va, v, fh, index);
@@ -629,7 +635,7 @@ protected:
 
 private: /** \name DEBUGGING TYPES AND DATAS */
   class From_pair_of_vertex_to_edge 
-    : public std::unary_function<Constrained_edge, Edge>
+    : public CGAL::cpp98::unary_function<Constrained_edge, Edge>
   {
     Tr& tr;
   public:

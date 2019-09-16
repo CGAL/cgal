@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Manuel Caroli
@@ -87,7 +88,6 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   typedef CGAL::Creator_uniform_3<double,Point>  Creator;
   CGAL::Random rnd(7);
   CGAL::Random_points_in_cube_3<Point, Creator> in_cube(1, rnd);
-  CGAL::Random_points_in_cube_3<Point, Creator> in_cube_tmp(0.5, rnd);
 
   std::vector<Point> pts_rnd1000;
   for (int i=0 ; i<1000 ; i++)
@@ -106,7 +106,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   pts_rnd10.push_back(Point(-0.255508,  0.816668,   0.823991 ));
 
   // Create a triangulation for testing
-  P3T3 PT(pts_rnd10.begin(), pts_rnd10.end(), Iso_cuboid(-1,-1,-1,1,1,1));
+  P3T3 PT(pts_rnd10.begin(), pts_rnd10.end(), Iso_cuboid(-1,-1,-1, 1,1,1));
   assert(PT.number_of_vertices() == 10);
   assert(PT.is_valid());
 
@@ -118,11 +118,11 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   assert(PT_def.number_of_vertices() == 0);
   assert(PT_def.is_valid());
   
-  P3T3 PT_dom(Iso_cuboid(-1,-2,0,3,2,4));
+  P3T3 PT_dom(Iso_cuboid(-1,-2,0, 3,2,4));
   assert(PT_dom.number_of_vertices() == 0);
   assert(PT_dom.is_valid());
   
-  P3T3 PT_gt(Iso_cuboid(0,0,0,1,1,1),GT());
+  P3T3 PT_gt(Iso_cuboid(0,0,0, 1,1,1), GT());
   assert(PT_gt.number_of_vertices() == 0);
   assert(PT_gt.is_valid());
     
@@ -134,8 +134,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
 
   std::cout << "  Special constructor" << std::endl;
 
-  P3T3 PT_range(pts_rnd10.begin(), pts_rnd10.end(),
-      Iso_cuboid(-1,-1,-1,1,1,1));
+  P3T3 PT_range(pts_rnd10.begin(), pts_rnd10.end(), Iso_cuboid(-1,-1,-1, 1,1,1));
   assert(PT_range.number_of_vertices() == 10);
   assert(PT_range.is_valid());
   
@@ -215,7 +214,8 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
 
   std::cout << "  Iterator range insertion" << std::endl;
   
-  P3T3 PT_range_ins(Iso_cuboid(-1,-1,-1,1,1,1));
+  // "1.1" because random points are in the cube (-1,-1,-1, 1,1,1)
+  P3T3 PT_range_ins(Iso_cuboid(-1,-1,-1, 1.1,1.1,1.1));
   pts_rnd1000.push_back(Point(-1,-1,-1));
   assert(PT_range_ins.insert(pts_rnd1000.begin(), pts_rnd1000.end(), true)
       == 1001);
@@ -306,20 +306,19 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   std::cout << "Queries" << std::endl;
   std::cout << "Side of sphere" << std::endl;
 
-  ch = PT.locate(Point(-1,-1,1));
-  assert(PT.side_of_sphere(ch,Point(-1,-1,1)) == CGAL::ON_BOUNDED_SIDE);
-  assert(PT.side_of_sphere(ch,Point(-1,-1,1),Offset(3,3,0))
-	  == CGAL::ON_BOUNDED_SIDE);
-  assert(PT.side_of_sphere(ch,Point(-1,-1,1),Offset(0,0,2))
-	  == CGAL::ON_UNBOUNDED_SIDE);
+  ch = PT.locate(Point(-1,-1,-1));
+  assert(PT.side_of_sphere(ch,Point(-1,-1,-1)) == CGAL::ON_BOUNDED_SIDE);
+  assert(PT.side_of_sphere(ch,Point(-1,-1,-1),Offset(3,3,3)) == CGAL::ON_BOUNDED_SIDE);
+  assert(PT.side_of_sphere(ch,Point(-1,-1,1),Offset(0,0,5)) == CGAL::ON_UNBOUNDED_SIDE);
   Periodic_point pp = PT.periodic_point(ch,0);
   assert(PT.side_of_sphere(ch,pp.first,pp.second) == CGAL::ON_BOUNDARY);
 
   std::cout << "  Nearest vertex"<< std::endl;
   vh = PT.nearest_vertex(Point(0,0,0));
   assert(Segment(vh->point(),Point(0,0,0)).squared_length() < FT(0.25));
-  assert(PT.nearest_vertex(Point( 1, 1, 1))
-      == PT.nearest_vertex(Point( 1,-1,-1)));
+  FT eps = 1e-10;
+  assert(PT.nearest_vertex(Point( 1 - eps, 1 - eps, 1 - eps))
+         == PT.nearest_vertex(Point( -1,-1,-1)));
   vh = PT.nearest_vertex_in_cell(vh->cell(),Point(0,0,0),
       PT.get_offset(vh->cell(),vh->cell()->index(vh)));
   assert(PT.construct_segment(vh->point(),Point(0,0,0),
@@ -332,24 +331,24 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   std::vector<Facet> bd_facets;
   std::vector<Cell_handle> conflict_cells;
   std::vector<Facet> int_facets;
-  PT.find_conflicts(Point(-1,-1,1),ch,std::back_inserter(bd_facets),
+  PT.find_conflicts(Point(-1,-1,-1),ch,std::back_inserter(bd_facets),
       std::back_inserter(conflict_cells),std::back_inserter(int_facets));
   for (unsigned int i=0 ; i<bd_facets.size() ; i++) {
-    assert( (PT.side_of_sphere(bd_facets[i].first,Point(-1,-1,1))
-	    == CGAL::ON_BOUNDED_SIDE)
-	^ (PT.side_of_sphere(bd_facets[i].first->neighbor(bd_facets[i].second),
-		Point(-1,-1,1)) == CGAL::ON_BOUNDED_SIDE) );
+    assert((PT.side_of_sphere(bd_facets[i].first, Point(-1,-1,-1))
+             == CGAL::ON_BOUNDED_SIDE)
+            ^ (PT.side_of_sphere(bd_facets[i].first->neighbor(bd_facets[i].second),
+                                 Point(-1,-1,-1)) == CGAL::ON_BOUNDED_SIDE));
   }
   for (unsigned int i=0 ; i<conflict_cells.size() ; i++) {
-    assert( PT.side_of_sphere(conflict_cells[i],Point(-1,-1,1))
-	== CGAL::ON_BOUNDED_SIDE);
+    assert( PT.side_of_sphere(conflict_cells[i], Point(-1,-1,-1))
+            == CGAL::ON_BOUNDED_SIDE);
   }
   for (unsigned int i=0 ; i<int_facets.size() ; i++) {
-    assert((PT.side_of_sphere(int_facets[i].first,Point(-1,-1,1))
-	    == CGAL::ON_BOUNDED_SIDE) );
+    assert((PT.side_of_sphere(int_facets[i].first, Point(-1,-1,-1))
+            == CGAL::ON_BOUNDED_SIDE));
     assert((PT.side_of_sphere(int_facets[i].first->neighbor(
-		    int_facets[i].second),Point(-1,-1,1))
-	    == CGAL::ON_BOUNDED_SIDE) );
+                                int_facets[i].second), Point(-1,-1,-1))
+            == CGAL::ON_BOUNDED_SIDE));
   }
 
   std::cout << "  Gabriel"<< std::endl;

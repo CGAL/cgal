@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
@@ -22,6 +23,9 @@
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
 #ifndef CGAL_NORMAL_VECTOR_NEWELL_3_H
 #define CGAL_NORMAL_VECTOR_NEWELL_3_H 1
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/iterator.h>
 

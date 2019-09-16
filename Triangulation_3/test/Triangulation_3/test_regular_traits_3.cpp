@@ -13,11 +13,14 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // $Date$
 // 
 //
 // Author(s)     : Mariette Yvinec
+
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <cassert>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
@@ -30,10 +33,13 @@
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
 // Explicit instantiation of the whole class :
-template class CGAL::Regular_triangulation_euclidean_traits_3<K>;
+template class CGAL::Regular_triangulation_euclidean_traits_3<K, K::FT>;
 
 int main()
 {
   typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Traits;
   _test_cls_regular_euclidean_traits_3(Traits() );
+  std::cerr << "done"<< std::endl;
+
+  return 0;
 }

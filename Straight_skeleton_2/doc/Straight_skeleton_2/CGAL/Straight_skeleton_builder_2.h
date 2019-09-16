@@ -20,10 +20,7 @@ All its methods are empty.
 
 */
 template< typename Ss >
-class Dummy_straight_skeleton_builder_2_visitor {
-public:
-
-/// @}
+struct Dummy_straight_skeleton_builder_2_visitor {
 
 }; /* end Dummy_straight_skeleton_builder_2_visitor */
 

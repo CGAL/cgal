@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHDS_HDS
+\ingroup PkgHalfedgeDS_HDS
 
 The class `HalfedgeDS_list` is a model for the `HalfedgeDS` concept. 
 `HalfedgeDS_list` is a list-based representation with bidirectional 

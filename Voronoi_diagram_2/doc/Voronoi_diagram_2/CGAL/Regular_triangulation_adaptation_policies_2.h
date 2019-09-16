@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagramAdaptor2Points
+\ingroup PkgVoronoiDiagram2Points
 
 The class `Regular_triangulation_caching_degeneracy_removal_policy_2` provides a model for the `AdaptationPolicy_2` 
 concept. The template parameter of the `Regular_triangulation_caching_degeneracy_removal_policy_2` class must be a 
@@ -22,8 +22,7 @@ edges of zero length.
 
 */
 template< typename RT2 >
-class Regular_triangulation_caching_degeneracy_removal_policy_2 {
-public:
+struct Regular_triangulation_caching_degeneracy_removal_policy_2 {
 
 /// \name Types 
 /// @{
@@ -41,7 +40,7 @@ typedef CGAL::Tag_true Has_inserter;
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagramAdaptor2Points
+\ingroup PkgVoronoiDiagram2Points
 
 The class `Regular_triangulation_degeneracy_removal_policy_2` provides a model for the `AdaptationPolicy_2` 
 concept. The template parameter of the `Regular_triangulation_degeneracy_removal_policy_2` class must be a 
@@ -60,8 +59,7 @@ i.e., it has no Voronoi edges of zero length.
 
 */
 template< typename RT2 >
-class Regular_triangulation_degeneracy_removal_policy_2 {
-public:
+struct Regular_triangulation_degeneracy_removal_policy_2 {
 
 /// \name Types 
 /// @{

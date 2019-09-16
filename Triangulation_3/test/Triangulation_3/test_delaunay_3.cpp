@@ -14,17 +14,20 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Francois Rebufat
 
-#define CGAL_NO_DEPRECATION_WARNINGS
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+
+#include "test_dependencies.h"
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_with_circumcenter_3.h>
 
 bool del=true;
 
@@ -54,9 +57,9 @@ int main()
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Spatial_lock_grid_3<
     CGAL::Tag_priority_blocking>                      Lock_ds;
-  typedef CGAL::Triangulation_data_structure_3< 
-    CGAL::Triangulation_vertex_base_3<EPIC>, 
-    CGAL::Triangulation_cell_base_3<EPIC>, 
+  typedef CGAL::Triangulation_data_structure_3<
+    CGAL::Triangulation_vertex_base_3<EPIC>,
+    CGAL::Delaunay_triangulation_cell_base_3<EPIC>,
     CGAL::Parallel_tag >	                            Tds_parallel;
   typedef CGAL::Delaunay_triangulation_3<
     EPIC, Tds_parallel, CGAL::Default, Lock_ds>       Cls_parallel;
@@ -68,10 +71,10 @@ int main()
 #endif
 
   // Second version for the circumcenter storing cell base class.
-  typedef CGAL::Triangulation_vertex_base_3<K>                 Vb;
-  typedef CGAL::Triangulation_cell_base_with_circumcenter_3<K> Cb;
-  typedef CGAL::Triangulation_data_structure_3<Vb, Cb>         TDS;
-  typedef CGAL::Delaunay_triangulation_3<K, TDS>               Cls_circumcenter;
+  typedef CGAL::Triangulation_vertex_base_3<K>                          Vb;
+  typedef CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<K> Cb;
+  typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                  TDS;
+  typedef CGAL::Delaunay_triangulation_3<K, TDS>                        Cls_circumcenter;
 
   _test_cls_delaunay_3( Cls_circumcenter() );
 

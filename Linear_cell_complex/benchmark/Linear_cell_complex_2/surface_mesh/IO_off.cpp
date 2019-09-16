@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU Library General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+// SPDX-License-Identifier: LGPL-2.0
+//
 //=============================================================================
 
 
@@ -21,7 +24,8 @@
 
 #include "IO.h"
 #include <stdio.h>
-
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 //== IMPLEMENTATION ===========================================================
 
@@ -36,12 +40,13 @@ template <typename T> void read(FILE* in, T& t)
 
 //-----------------------------------------------------------------------------
 
-
+template <typename NamedParameters>
 bool read_off_ascii(Surface_mesh& mesh,
                     FILE* in,
                     const bool has_normals,
                     const bool has_texcoords,
-                    const bool has_colors)
+                    const bool has_colors,
+                    NamedParameters& np)
 {
     char                 line[100], *lp;
     unsigned int         i, j, items, idx, nc;
@@ -49,6 +54,9 @@ bool read_off_ascii(Surface_mesh& mesh,
     Vec3f                p, n, c;
     Vec2f                t;
     Surface_mesh::Vertex v;
+    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Surface_mesh, NamedParameters>::const_type
+        vpm = choose_parameter(get_parameter(np, CGAL::boost::internal_np::vertex_point),
+                           get_const_property_map(CGAL::vertex_point, mesh));
 
 
     // properties
@@ -75,7 +83,8 @@ bool read_off_ascii(Surface_mesh& mesh,
         // position
         items = sscanf(lp, "%f %f %f%n", &p[0], &p[1], &p[2], &nc);
         assert(items==3);
-        v = mesh.add_vertex((Point)p);
+        Surface_mesh::Vertex v = mesh.add_vertex();
+        put(vpm, v, (Point)p);
         lp += nc;
 
         // normal
@@ -143,12 +152,13 @@ bool read_off_ascii(Surface_mesh& mesh,
 
 //-----------------------------------------------------------------------------
 
-
+template<typename NamedParameters>
 bool read_off_binary(Surface_mesh& mesh,
                      FILE* in,
                      const bool has_normals,
                      const bool has_texcoords,
-                     const bool has_colors)
+                     const bool has_colors,
+                     NamedParameters& np)
 {
     unsigned int       i, j, idx;
     unsigned int       nV, nF, nE;
@@ -166,6 +176,9 @@ bool read_off_binary(Surface_mesh& mesh,
     Surface_mesh::Vertex_property<Texture_coordinate>  texcoords;
     if (has_normals)   normals   = mesh.vertex_property<Normal>("v:normal");
     if (has_texcoords) texcoords = mesh.vertex_property<Texture_coordinate>("v:texcoord");
+    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Surface_mesh, NamedParameters>::const_type
+        vpm = choose_parameter(get_parameter(np, CGAL::boost::internal_np::vertex_point),
+                           get_const_property_map(CGAL::vertex_point, mesh));
 
 
     // #Vertice, #Faces, #Edges
@@ -181,7 +194,8 @@ bool read_off_binary(Surface_mesh& mesh,
     {
         // position
         read(in, p);
-        v = mesh.add_vertex((Point)p);
+        Surface_mesh::Vertex v = mesh.add_vertex();
+        put(vpm, v, (Point)p);
 
         // normal
         if (has_normals)
@@ -221,8 +235,8 @@ bool read_off_binary(Surface_mesh& mesh,
 
 //-----------------------------------------------------------------------------
 
-
-bool read_off(Surface_mesh& mesh, const std::string& filename)
+template<typename NamedParameters>
+bool read_off(Surface_mesh& mesh, const std::string& filename, NamedParameters& np)
 {
     char  line[100];
     bool  has_texcoords = false;
@@ -271,8 +285,8 @@ bool read_off(Surface_mesh& mesh, const std::string& filename)
 
     // read as ASCII or binary
     bool ok = (is_binary ?
-               read_off_binary(mesh, in, has_normals, has_texcoords, has_colors) :
-               read_off_ascii(mesh, in, has_normals, has_texcoords, has_colors));
+               read_off_binary(mesh, in, has_normals, has_texcoords, has_colors, np) :
+               read_off_ascii(mesh, in, has_normals, has_texcoords, has_colors, np));
 
 
     fclose(in);

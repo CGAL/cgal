@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Eli Packer (algorithm), Andreas Fabri (cgal conformance)
 
 #ifndef CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
 #define CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
+
+#include <CGAL/license/Inscribed_areas.h>
+
 
 /*! \file
  * The implementation of the Largest_empty_iso_rectangle_2<Traits> class.
@@ -250,16 +254,6 @@ public:
     Point_2 y_part;// the y coordinate of the point
     Point_2 original;
 
-    Internal_point &
-     operator=(const Internal_point &other)
-    {
-      x_part = other.x_part;
-      y_part = other.y_part;
-      original = other.original;
-
-      return(*this);
-    }
-
     Internal_point() // no real value - just to allow construction of LER
       : x_part(Point_2(0,0)), y_part(Point_2(0,0)), original(Point_2(0,0)) {}
 
@@ -313,10 +307,10 @@ public:
     {}
 
     ~Point_data() {
-      if(right_tent != NULL){
+      if(right_tent != nullptr){
         delete right_tent;
       }
-      if (left_tent != NULL){
+      if (left_tent != nullptr){
         delete left_tent;
       }
     }

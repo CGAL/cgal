@@ -1,8 +1,12 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/long_double.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/Interval_nt.h>
 
+#include <CGAL/disable_warnings.h>
+
 #if defined(BOOST_MSVC)
-#  pragma warning(disable:4723)
+#  pragma warning(disable:4723) // potential divide by 0
 #endif
 
 int main()

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein         <wein@post.tau.ac.il>
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_ARR_ON_SURFACE_WITH_HISTORY_2_FUNCTIONS_H
 #define CGAL_ARR_ON_SURFACE_WITH_HISTORY_2_FUNCTIONS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Member-function definitions for the Arrangement_on_surface_with_history_2
@@ -109,7 +113,7 @@ assign(const Self& arr)
     dup_c = m_curves_alloc.allocate (1);
     
     p_cv = &(*ocit);
-    m_curves_alloc.construct (dup_c, *p_cv);
+    std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, dup_c, *p_cv);
     m_curves.push_back (*dup_c);
     
     // Assign a map entry.
@@ -177,7 +181,7 @@ void Arrangement_on_surface_with_history_2<GeomTr,TopTr>::clear ()
     ++cit;
     
     m_curves.erase (p_cv);
-    m_curves_alloc.destroy (p_cv);
+    std::allocator_traits<Curves_alloc>::destroy(m_curves_alloc,p_cv);
     m_curves_alloc.deallocate (p_cv, 1);
   }
   m_curves.destroy();

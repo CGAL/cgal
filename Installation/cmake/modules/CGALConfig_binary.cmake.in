@@ -12,33 +12,15 @@ get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
 
+include(CMakeFindDependencyMacro)
+find_dependency(Boost REQUIRED)
+
 # The code for including exported targets is different from
 # CGAL_Config_install.cmake. We do not have separate export files in
 # an installed version and we need to make sure that we are not
-# currently building CGAL. Note that for CMake<=2.8.11 (detected by
-# the absence of CMP0024), the else() condition is never used.
-if(NOT POLICY CMP0024 OR NOT CGAL_BUILDING_LIBS)
+# currently building CGAL.
+if(NOT CGAL_BUILDING_LIBS)
   include("${CGAL_CONFIG_DIR}/CGALExports.cmake")
-
-  macro(CGAL_get_property_optional VAR TARGET PROPERTY)
-    if(TARGET ${TARGET})
-      get_property(${VAR} TARGET ${TARGET} PROPERTY ${PROPERTY})
-    else()
-      set(${VAR} "")
-    endif()
-  endmacro()
-
-  if(NOT MSVC AND NOT CGAL_HEADER_ONLY)
-    CGAL_get_property_optional(CGAL_LIBRARY CGAL::CGAL LOCATION)
-    CGAL_get_property_optional(CGAL_Core_LIBRARY CGAL::CGAL_Core LOCATION)
-    CGAL_get_property_optional(CGAL_ImageIO_LIBRARY CGAL::CGAL_ImageIO LOCATION)
-    CGAL_get_property_optional(CGAL_Qt5_LIBRARY CGAL::CGAL_Qt5 LOCATION)
-  else()
-    set(CGAL_LIBRARY         "")
-    set(CGAL_Core_LIBRARY    "")
-    set(CGAL_ImageIO_LIBRARY "")
-    set(CGAL_Qt5_LIBRARY     "")
-  endif()
 else()
   # We are currently in a CGAL Build and CGALExports.cmake has not
   # necessarily been created yet. Just alias the targets. Also don't
@@ -48,9 +30,6 @@ else()
   macro(CGAL_alias_library lib)
     if(TARGET ${lib} AND NOT TARGET CGAL::${lib})
       add_library(CGAL::${lib} ALIAS ${lib})
-      set(${lib}_LIBRARY CGAL::${lib})
-    else()
-      set(${lib}_LIBRARY "")
     endif()
   endmacro()
 
@@ -60,12 +39,24 @@ else()
   CGAL_alias_library(CGAL_Qt5)
 endif()
 
+macro(CGAL_set_LIB_LIBRARY_var lib)
+  if(TARGET CGAL::${lib})
+    set(${lib}_LIBRARY CGAL::${lib})
+  else()
+    set(${lib}_LIBRARY "")
+  endif()
+endmacro()
+
+CGAL_set_LIB_LIBRARY_var(CGAL)
+CGAL_set_LIB_LIBRARY_var(CGAL_Core)
+CGAL_set_LIB_LIBRARY_var(CGAL_ImageIO)
+CGAL_set_LIB_LIBRARY_var(CGAL_Qt5)
+
+set(CGAL_CONFIGURED_LIBRARIES "@CGAL_ACTUAL_CONFIGURED_LIBRARIES@")
+
 # Check for possible config files of our libraries and include them.
-file(GLOB CGAL_CONFIG_FILES LIST_DIRECTORIES false
-  RELATIVE "${CGAL_CONFIG_DIR}" "${CGAL_CONFIG_DIR}/*LibConfig.cmake")
-list(SORT CGAL_CONFIG_FILES)
-foreach(configfile ${CGAL_CONFIG_FILES})
-  include("${CGAL_CONFIG_DIR}/${configfile}")
+foreach(lib ${CGAL_CONFIGURED_LIBRARIES})
+  include("${CGAL_CONFIG_DIR}/${lib}LibConfig.cmake" OPTIONAL)
 endforeach()
 
 set(CGAL_INSTALLATION_PACKAGE_DIR "@CGAL_INSTALLATION_PACKAGE_DIR@")
@@ -118,8 +109,6 @@ else()
   endif()
 endif()
 
-set(CGAL_CONFIGURED_LIBRARIES "@CGAL_CONFIGURED_LIBRARIES@")
-
 macro(check_cgal_component COMPONENT)
 
   set( CGAL_LIB ${COMPONENT} )
@@ -130,47 +119,38 @@ macro(check_cgal_component COMPONENT)
     set( CHECK_CGAL_ERROR_TAIL "" )
   else( "${CGAL_LIB}" STREQUAL "CGAL" )
     if ( WITH_${CGAL_LIB} )
-      if(CGAL_HEADER_ONLY OR TARGET CGAL::${CGAL_LIB})
+      if(TARGET CGAL::${CGAL_LIB})
         if ("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
-          find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
-          find_package(OpenGL QUIET)
-
-          set(CGAL_Qt5_MISSING_DEPS "")
-          if(NOT Qt5OpenGL_FOUND)
-            set(CGAL_Qt5_MISSING_DEPS "Qt5OpenGL")
-          endif()
-          if(NOT Qt5Svg_FOUND)
-            set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5Svg")
-          endif()
-          if(NOT Qt5_FOUND)
-            set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5")
-          endif()
-          if(NOT OPENGL_FOUND)
-            set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} OpenGL")
-          endif()
+          
+          include("${CGAL_MODULES_DIR}/CGAL_SetupCGAL_Qt5Dependencies.cmake")
 
           if(CGAL_Qt5_MISSING_DEPS)
-            set( ${CGAL_LIB}_FOUND FALSE )
+            set( CGAL_Qt5_FOUND FALSE )
             message(STATUS "libCGAL_Qt5 is missing the dependencies: ${CGAL_Qt5_MISSING_DEPS} cannot be configured.")
           else()
-            set( ${CGAL_LIB}_FOUND TRUE )
-            if (CGAL_HEADER_ONLY)
-              include("${CGAL_MODULES_DIR}/Use_CGAL_Qt5_headers.cmake")
-            endif()
+            set( CGAL_Qt5_FOUND TRUE )
+          endif()
+        elseif("${CGAL_LIB}" STREQUAL "CGAL_Core")
+          include("${CGAL_MODULES_DIR}/CGAL_SetupCGAL_CoreDependencies.cmake")
+          if(CGAL_Core_MISSING_DEPS)
+            set( CGAL_Core_FOUND FALSE )
+            message(STATUS "libCGAL_Core is missing the dependencies: ${CGAL_Core_MISSING_DEPS} cannot be configured.")
+          else()
+            set( CGAL_Core_FOUND TRUE )
           endif()
         else("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
           # Librairies that have no dependencies
           set( ${CGAL_LIB}_FOUND TRUE )
         endif("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
-      else(CGAL_HEADER_ONLY OR TARGET CGAL::${CGAL_LIB})
+      else(TARGET CGAL::${CGAL_LIB})
         set( ${CGAL_LIB}_FOUND FALSE )
         set( CHECK_${CGAL_LIB}_ERROR_TAIL " CGAL was configured with WITH_${CGAL_LIB}=ON, but one of the dependencies of ${CGAL_LIB} was not configured properly." )
-      endif(CGAL_HEADER_ONLY OR TARGET CGAL::${CGAL_LIB})
+      endif(TARGET CGAL::${CGAL_LIB})
     else( WITH_${CGAL_LIB} )
       set( ${CGAL_LIB}_FOUND FALSE )
       set( CHECK_${CGAL_LIB}_ERROR_TAIL " Please configure CGAL using WITH_${CGAL_LIB}=ON." )
     endif( WITH_${CGAL_LIB} )
-  endif( "${CGAL_LIB}" STREQUAL "CGAL" )
+  endif()
 
   if ( NOT ${CGAL_LIB}_FOUND AND CHECK_CGAL_COMPONENT_MSG_ON_ERROR )
     message( ${CHECK_CGAL_COMPONENT_ERROR_TYPE} "${CHECK_CGAL_COMPONENT_ERROR_TITLE} The ${CGAL_LIB} library was not configured.${CHECK_${CGAL_LIB}_ERROR_TAIL}" )
@@ -198,3 +178,22 @@ set(CGAL_SUPPORTING_3RD_PARTY_LIBRARIES "@CGAL_SUPPORTING_3RD_PARTY_LIBRARIES@")
 set(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "@CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES@")
 
 set(CGAL_DISABLE_GMP "@CGAL_DISABLE_GMP@")
+
+include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
+
+# Temporary? Change the CMAKE module path
+cgal_setup_module_path()
+
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
+  # Do not use -isystem for CGAL include paths
+  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
+  # Ugly hack to be compatible with current CGAL testsuite process (as of
+  # Nov. 2017). -- Laurent Rineau
+  include(CGAL_SetupFlags)
+endif()
+
+include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

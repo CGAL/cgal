@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
@@ -36,8 +35,8 @@ int main(int argc, char* argv[])
   std::ifstream input(filename);
 
   Mesh mesh;
-  if (!input || !(input >> mesh)) {
-    std::cerr << "Not a valid off file." << std::endl;
+  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+    std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
 

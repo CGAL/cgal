@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Matthias Baesken
 
 #ifndef CGAL_RANGE_SEARCH_DELAUNAY_2_H
 #define CGAL_RANGE_SEARCH_DELAUNAY_2_H
+
+#include <CGAL/license/Point_set_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
@@ -182,7 +186,7 @@ OutputIterator range_search(Dt& delau,
    bool new_v = false;     
 
    // we have to insert the center ...
-   if ( v == NULL )
+   if ( v == nullptr )
    { 
        new_v = true;
        v = delau.insert(p); 
@@ -333,7 +337,7 @@ OutputIterator range_search(Dt& delau,
    bool new_v = false;     
 
    // we have to insert the center ...
-   if ( v == NULL )
+   if ( v == nullptr )
    { 
        new_v = true;
        v = delau.insert(p); 

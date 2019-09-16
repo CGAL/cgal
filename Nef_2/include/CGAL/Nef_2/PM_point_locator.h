@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_PM_POINT_LOCATOR_H
 #define CGAL_PM_POINT_LOCATOR_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
@@ -298,7 +302,7 @@ public:
   |bool operator() (const Vertex_/Halfedge_/Face_const_handle&)|.\\
   The object returned is intersected by the segment |s| and has
   minimal distance to |s.source()| and |M(h)| holds on the converted
-  object. The operation returns the null handle |NULL| if the ray shoot
+  object. The operation returns the null handle |nullptr| if the ray shoot
   along |s| does not hit any object |h| of |P| with |M(h)|.}*/
   { CGAL_NEF_TRACEN("naive ray_shoot "<<s);
     CGAL_assertion( !K.is_degenerate(s) );
@@ -780,7 +784,7 @@ public:
   |bool operator() (const Vertex_/ Halfedge_/Face_const_handle&) const|.\\
   The object returned is intersected by the segment |s| and has minimal
   distance to |s.source()| and |M(h)| holds on the converted object. The
-  operation returns the null handle |NULL| if the ray shoot along |s|
+  operation returns the null handle |nullptr| if the ray shoot along |s|
   does not hit any object |h| of |P| with |M(h)|.}*/
   { Segment s(ss);
     CGAL_NEF_TRACEN("ray_shoot "<<s);

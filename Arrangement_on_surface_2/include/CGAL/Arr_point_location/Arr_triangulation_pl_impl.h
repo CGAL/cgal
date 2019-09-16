@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 #ifndef CGAL_ARR_TRIANGULATION_POINT_LOCATION_FUNCTIONS_H
 #define CGAL_ARR_TRIANGULATION_POINT_LOCATION_FUNCTIONS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
 * Member-function definitions for the Arr_triangulation_point_location<Arrangement>

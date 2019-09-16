@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -118,8 +119,11 @@ protected:
      manager. */
 
     NT* p = vi + di - 1;
-    while (p >= vi)  { allocator().destroy(p); p--; }  //af:  as proposed by sylvain
-allocator().deallocate(vi, di);
+    while (p >= vi)  {
+      std::allocator_traits<allocator_type>::destroy(allocator(),p);
+      p--;
+    }  //af:  as proposed by sylvain
+    allocator().deallocate(vi, di);
     vi = (NT*)0;
   }
 

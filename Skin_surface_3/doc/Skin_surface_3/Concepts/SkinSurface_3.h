@@ -27,16 +27,14 @@ construction of the regular triangulation.
 typedef unspecified_type Geometric_traits; 
 
 /*!
-The `Weighted_point` type defined 
-by the `Geometric_traits`. 
+The `Weighted_point` type.
 */ 
-typedef unspecified_type Weighted_point; 
+typedef Geometric_traits::Weighted_point_3 Weighted_point;
 
 /*!
-The `Bare_point` type defined by the 
-`Geometric_traits`. 
-*/ 
-typedef unspecified_type Bare_point; 
+The `Bare_point` type.
+*/
+typedef Geometric_traits::Point_3 Bare_point;
 
 /*!
 The `FT` type defined by the 

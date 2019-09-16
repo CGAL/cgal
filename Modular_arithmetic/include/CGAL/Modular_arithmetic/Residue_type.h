@@ -15,16 +15,21 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer, Alexander Kobel
 
 #ifndef CGAL_RESIDUE_TYPE_H
 #define CGAL_RESIDUE_TYPE_H
 
-#include <CGAL/basic.h>
 #include <CGAL/tss.h>
+#include <CGAL/FPU.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/double.h>
+#include <iostream>
 
 #include <cfloat>
+#include <cmath>
 
 #include <boost/operators.hpp>
 
@@ -59,17 +64,13 @@ public:
   typedef Residue NT;
   
 private:
-#ifdef CGAL_HEADER_ONLY
+
   static const double& get_static_CST_CUT()
   {
     static const double CST_CUT = std::ldexp( 3., 51 );
     return CST_CUT;
   }
-#else // CGAL_HEADER_ONLY
-  CGAL_EXPORT static const double  CST_CUT; 
-  static const double& get_static_CST_CUT()
-  { return Residue::CST_CUT; }
-#endif // CGAL_HEADER_ONLY
+
 
   static int& prime_int_internal()
   {

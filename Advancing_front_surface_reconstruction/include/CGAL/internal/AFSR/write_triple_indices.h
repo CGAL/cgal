@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Frank Da, David Cohen-Steiner, Andreas Fabri
 
 #ifndef CGAL_AFSR_WRITE_TRIPLE_INDICES_H
 #define CGAL_AFSR_WRITE_TRIPLE_INDICES_H
+
+#include <CGAL/license/Advancing_front_surface_reconstruction.h>
+
 
 #include <CGAL/array.h>
 

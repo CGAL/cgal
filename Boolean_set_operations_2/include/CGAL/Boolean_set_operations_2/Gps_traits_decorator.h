@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_GPS_TRAITS_DECORATOR_H
 #define CGAL_GPS_TRAITS_DECORATOR_H
+
+#include <CGAL/license/Boolean_set_operations_2.h>
+
 
 #include <boost/mpl/assert.hpp>
 
@@ -479,7 +483,7 @@ public:
       {
         base_pt = object_cast<std::pair<Base_Point_2, Multiplicity> >(&(*oi));
 
-        if (base_pt != NULL)
+        if (base_pt != nullptr)
         {
           Point_2 point_plus (base_pt->first); // the extended point
           *oi = CGAL::make_object(std::make_pair(point_plus, 
@@ -488,7 +492,7 @@ public:
         else
         {
           overlap_cv = object_cast<Base_X_monotone_curve_2> (&(*oi));
-          CGAL_assertion(overlap_cv != NULL);
+          CGAL_assertion(overlap_cv != nullptr);
           *oi = CGAL::make_object (X_monotone_curve_2 (*overlap_cv));
         }
       }

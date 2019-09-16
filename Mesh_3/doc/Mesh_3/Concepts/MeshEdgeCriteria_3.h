@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3Concepts
+\ingroup PkgMesh3Concepts
 \cgalConcept
 
 The function object concept `MeshEdgeCriteria_3` is designed to drive the process which samples 
@@ -43,12 +43,6 @@ typedef unspecified_type FT;
 
 /// \name Operations 
 /// @{
-
-/*!
-
-Returns `true` if edge `e` does not fulfill the criteria. 
-*/ 
-bool operator()(const Edge& e); 
 
 /*!
 

@@ -5,6 +5,8 @@
 #include <fstream>
 #include <vector>
 #include <list>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -22,6 +24,10 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
+#include <CGAL/IO/write_vtu.h>
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/WKT.h>
+#endif
 
 // Qt headers
 #include <QtGui>
@@ -39,7 +45,6 @@
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/DelaunayMeshTriangulationGraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
-
 // the two base classes
 #include "ui_Constrained_Delaunay_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -84,12 +89,12 @@ discoverInfiniteComponent(const CDT & ct)
     Face_handle fh = queue.front();
     queue.pop_front();
     fh->set_in_domain(false);
-	
+    
     for(int i = 0; i < 3; i++)
     {
       Face_handle fi = fh->neighbor(i);
       if(fi->is_in_domain()
-        && !ct.is_constrained(CDT::Edge(fh,i)))
+         && !ct.is_constrained(CDT::Edge(fh,i)))
         queue.push_back(fi);
     }
   }
@@ -224,6 +229,8 @@ public Q_SLOTS:
 
   void on_actionLoadConstraints_triggered();
 
+  void loadWKT(QString);
+  
   void loadFile(QString);
 
   void loadPolyConstraints(QString);
@@ -269,7 +276,7 @@ MainWindow::MainWindow()
   dgi->setFacesInDomainBrush(facesColor);
     
   QObject::connect(this, SIGNAL(changed()),
-		   dgi, SLOT(modelChanged()));
+                   dgi, SLOT(modelChanged()));
   dgi->setVerticesPen(
     QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   dgi->setVoronoiPen(
@@ -285,8 +292,8 @@ MainWindow::MainWindow()
   // the signal/slot mechanism    
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are not closed
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
-    
+                   this, SLOT(processInput(CGAL::Object)));
+  
   tcc = new CGAL::Qt::TriangulationCircumcircle<CDT>(&scene, &cdt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   
@@ -298,8 +305,8 @@ MainWindow::MainWindow()
   // Manual handling of actions
   //
   QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
-
+                   this, SLOT(close()));
+  
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPolyline);
@@ -338,7 +345,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
@@ -373,7 +380,7 @@ MainWindow::processInput(CGAL::Object o)
 
 /* 
  *  Qt Automatic Connections
- *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
  * 
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
@@ -512,19 +519,20 @@ MainWindow::open(QString fileName)
       else
         return;
     }
-    if(fileName.endsWith(".cgal")){
-      loadFile(fileName);
-      this->addToRecentFiles(fileName);
-    } else if(fileName.endsWith(".plg")){
+    if(fileName.endsWith(".polygons.cgal")){
       loadPolygonConstraints(fileName);
-      this->addToRecentFiles(fileName);
+    } else if(fileName.endsWith(".cpts.cgal")){
+      loadFile(fileName);
     } else if(fileName.endsWith(".edg")){
       loadEdgConstraints(fileName);
-      this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".poly")){
       loadPolyConstraints(fileName);
-      this->addToRecentFiles(fileName);
+    } else if(fileName.endsWith(".wkt")){
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+      loadWKT(fileName);
+#endif
     }
+    this->addToRecentFiles(fileName);
   }
   Q_EMIT(changed());
   actionRecenter->trigger();
@@ -537,9 +545,113 @@ MainWindow::on_actionLoadConstraints_triggered()
 						  tr("Open Constraint File"),
 						  ".",
 						  tr("Edge files (*.edg);;"
+                                                     "Polyline files (*.polygons.cgal);;"
+                                                     "Poly files (*.poly);;"
                                                      "Plg files (*.plg);;"
-						     "Poly files (*.poly)"));
+                                                     "CGAL files (*.cpts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.WKT *.wkt);;"
+                                                   #endif
+                                                     "All (*)"));
   open(fileName);
+}
+
+void 
+MainWindow::loadWKT(QString
+                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                    filename
+                    #endif
+                    )
+{
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+  //Polygons todo : make it multipolygons
+  std::ifstream ifs(qPrintable(filename));
+  do
+  {
+    typedef CGAL::Polygon_with_holes_2<K> Polygon;
+    typedef CGAL::Point_2<K> Point;
+    std::vector<Polygon> mps;
+    CGAL::read_multi_polygon_WKT(ifs, mps);
+    BOOST_FOREACH(const Polygon& p, mps)
+    {
+      if(p.outer_boundary().is_empty())
+        continue;
+      
+      BOOST_FOREACH(Point point, p.outer_boundary().container())
+          cdt.insert(point);
+      for(Polygon::General_polygon_2::Edge_const_iterator 
+          e_it=p.outer_boundary().edges_begin(); e_it != p.outer_boundary().edges_end(); ++e_it)
+        cdt.insert_constraint(e_it->source(), e_it->target());
+      
+      for(Polygon::Hole_const_iterator h_it = 
+          p.holes_begin(); h_it != p.holes_end(); ++h_it)
+      {                  
+        BOOST_FOREACH(Point point, h_it->container())
+            cdt.insert(point);
+        for(Polygon::General_polygon_2::Edge_const_iterator 
+            e_it=h_it->edges_begin(); e_it != h_it->edges_end(); ++e_it)
+        {
+          cdt.insert_constraint(e_it->source(), e_it->target());
+        }
+      }
+    }
+  }while(ifs.good() && !ifs.eof());
+  //Edges
+  ifs.clear();
+  ifs.seekg(0, ifs.beg);
+  do
+  {
+    typedef std::vector<K::Point_2> LineString;
+    std::vector<LineString> mls;
+    CGAL::read_multi_linestring_WKT(ifs, mls);
+    BOOST_FOREACH(const LineString& ls, mls)
+    {
+      if(ls.empty())
+        continue;
+      K::Point_2 p,q, qold(0,0); // initialize to avoid maybe-uninitialized warning from GCC6
+      bool first = true;
+      CDT::Vertex_handle vp, vq, vqold;
+      LineString::const_iterator it = 
+          ls.begin();
+      for(; it != ls.end(); ++it) {
+        p = *it++;
+        q = *it;
+        if(p == q){
+          continue;
+        }
+        if((!first) && (p == qold)){
+          vp = vqold;
+        } else {
+          vp = cdt.insert(p);
+        }
+        vq = cdt.insert(q, vp->face());
+        if(vp != vq) {
+          cdt.insert_constraint(vp,vq);
+        }
+        qold = q;
+        vqold = vq;
+        first = false;
+      }
+    }
+  }while(ifs.good() && !ifs.eof());
+  
+  //Points
+  ifs.clear();
+  ifs.seekg(0, ifs.beg);
+  do
+  {
+    std::vector<K::Point_2> mpts;
+    CGAL::read_multi_point_WKT(ifs, mpts);
+    BOOST_FOREACH(const K::Point_2& p, mpts)
+    {
+      cdt.insert(p);
+    }
+  }while(ifs.good() && !ifs.eof());
+  
+  discoverComponents(cdt, m_seeds);
+  Q_EMIT( changed());
+  actionRecenter->trigger();
+#endif
 }
 
 void
@@ -655,12 +767,14 @@ void
 MainWindow::on_actionSaveConstraints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
+
 						  tr("Save Constraints"),
 						  ".",
-						  tr("Poly files (*.poly)\n"
-						     "Edge files (*.edg)"));
+                                                  tr("CGAL files (*.cpts.cgal);;"
+                                                     "VTU files (*.vtu);;"
+                                                     "All (*)"));
   if(! fileName.isEmpty()){
-    saveConstraints(fileName);
+      saveConstraints(fileName);
   }
 }
 
@@ -669,7 +783,13 @@ void
 MainWindow::saveConstraints(QString fileName)
 {
   std::ofstream output(qPrintable(fileName));
-  if (output) output << cdt;
+  
+  if(!fileName.endsWith("vtu") && output)
+    output << cdt;
+  else if (output)
+  {
+    CGAL::write_vtu(output, cdt);
+  }
 }
 
 
@@ -796,15 +916,15 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   bool ok = false;
 
   const int number_of_points = 
-    QInputDialog::getInt(this, 
-                             tr("Number of random points"),
-                             tr("Enter number of random points"),
-			     100,
-			     0,
-			     (std::numeric_limits<int>::max)(),
-			     1,
-			     &ok);
-
+      QInputDialog::getInt(this, 
+                           tr("Number of random points"),
+                           tr("Enter number of random points"),
+                           100,
+                           0,
+                           (std::numeric_limits<int>::max)(),
+                           1,
+                           &ok);
+  
   if(!ok) {
     return;
   }

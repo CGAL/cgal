@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
@@ -24,11 +25,14 @@
 #ifndef CGAL_BARYCENTRIC_ENUM_2_H
 #define CGAL_BARYCENTRIC_ENUM_2_H
 
+#include <CGAL/license/Barycentric_coordinates_2.h>
+
+
 // CGAL namespace.
 namespace CGAL {
 
 /*!
- * \ingroup PkgBarycentric_coordinates_2
+ * \ingroup PkgBarycentricCoordinates2Ref
  * The namespace Barycentric_coordinates contains implementations of all generalized barycentric coordinates: 2D, 3D, related enumerations, and so on.
  */
 

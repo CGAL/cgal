@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -27,7 +28,6 @@
 #ifndef CGAL_GMPXX_COERCION_TRAITS_H
 #define CGAL_GMPXX_COERCION_TRAITS_H 1
 
-#include <CGAL/number_type_basic.h>
 #include <CGAL/Coercion_traits.h>
 
 #include <cstring> // needed by GMP 4.1.4 since <gmpxx.h> misses it.

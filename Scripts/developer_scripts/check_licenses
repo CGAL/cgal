@@ -20,6 +20,7 @@
 #
 # $URL$
 # $Id$
+# SPDX-License-Identifier: LGPL-3.0+
 #
 # Author(s)     : Joachim Reichel <joachim.reichel@gmx.de>
 #                 Laurent Rineau
@@ -58,7 +59,7 @@ fi
 mkdir $DIR
 rm -f $PREFIX1* $PREFIX2*
 
-if [ ! -f INSTALL ]; then
+if [ ! -f INSTALL.md ]; then
 	echo This script should be run from the top-level directory of an internal or external release.
 	exit 1
 fi

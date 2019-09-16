@@ -1,0 +1,529 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Generalized_Maps
+\anchor ChapterGeneralizedMap
+
+\author Guillaume Damiand
+\cgalAutoToc
+
+\section Generalized_mapIntroduction Introduction
+
+A <I>d</I>-dimensional generalized map is a data structure representing an orientable or non-orientable subdivided <I>d</I>-dimensional object obtained by taking <I>d</I>D cells, and allowing to glue <I>d</I>D cells along <I>(d-1)</I>D cells. It provides a description of all the cells of the subdivision (for example vertices and edges), together with incidence and adjacency relationships.
+
+This package is a generalization of the \ref ChapterCombinatorialMap "combinatorial maps" data structure (which allows to describe only orientable objects) in order to be able to describe also non-orientable objects such as a Möbius strip (\cgalFigureRef{fig_gmap_non_orientable_objects} Left) or a Klein bottle (\cgalFigureRef{fig_gmap_non_orientable_objects} Right).
+
+\cgalFigureBegin{fig_gmap_non_orientable_objects,gmap_non_orientable_objects.png}
+Example of two non-orientable objects. Left: A Möbius strip. Right: A Klein bottle.
+\cgalFigureEnd
+
+We denote <I>i</I>-cell for an <I>i</I>-dimensional cell (for example in 3D, 0-cells are <I>vertices</I>, 1-cells are <I>edges</I>, 2-cells are <I>facets</I>, and 3-cells are <I>volumes</I>). A <I>boundary relation</I> is defined on these cells, giving for each <I>i</I>-cell <I>c</I> the set of <I>(i-1)</I>-cells contained in the boundary of <I>c</I>. Two cells <I>c1</I> and <I>c2</I> are <I>incident</I> if there is a path of cells, starting from the cell of highest dimension to the other cell, such that each cell of the path (except the first one) belongs to the boundary of the previous cell in the path. Two <I>i</I>-cells <I>c3</I> and <I>c4</I> are <I>adjacent</I> if there is an <I>(i-1)</I>-cell incident to both <I>c3</I> and <I>c4</I>. You can see an example of a 2D object and a 3D object in \cgalFigureRef{fig_gmap_example_subdivisions} showing some cells of the subdivision and some adjacency and incidence relations.
+
+\cgalFigureBegin{fig_gmap_example_subdivisions,gmap_example_subdivisions.svg}
+Example of subdivided objects that can be described by generalized maps. Left: A 2D object composed of three facets (2-cells), named <I>f1</I>, <I>f2</I> and <I>f3</I>, nine edges (1-cells) and seven vertices (0-cells). <I>f1</I> and <I>f2</I> are adjacent along edge <I>e1</I>, thus <I>e1</I> is incident both to <I>f1</I> and <I>f2</I>. Vertex <I>v1</I> is incident to edge <I>e1</I>, thus <I>v1</I> is incident to <I>f1</I> and <I>f2</I> by transitivity. Right: A 3D object (only partially represented for vertices and edges) composed of three volumes (3-cells), named <I>vol1</I>, <I>vol2</I> and <I>vol3</I>, twelve facets (2-cells) (there is one facet <I>f4</I> between <I>vol1</I> and <I>vol2</I>, and similarly between <I>vol1</I> and <I>vol3</I> and <I>vol2</I> and <I>vol3</I>), sixteen edges (1-cells), and eight vertices (0-cells). <I>vol1</I> and <I>vol2</I> are adjacent along facet <I>f4</I>, thus <I>f4</I> is incident both to <I>vol1</I> and <I>vol2</I>. Edge <I>e4</I> is incident to the three facets between <I>vol1</I> and <I>vol2</I>, <I>vol1</I> and <I>vol3</I>, and <I>vol2</I> and <I>vol3</I>. <I>e4</I> is also incident to the three volumes by transitivity.
+\cgalFigureEnd
+
+A generalized map is an edge-centered data structure, describing the cells and the incidence and adjacency relations. It uses only one basic element called <I>dart</I>, and a set of <I>pointers</I> between these darts. A dart can be thought as a part of an edge (1-cell), together with a part of incident cells of dimensions 0, 2, 3, ..., <I>d</I>. When a dart <I>d0</I> describes a part of an <I>i</I>-cell <I>c</I>, we say that <I>d0</I> <I>belongs</I> to <I>c</I>, and that <I>c</I> <I>contains</I> <I>d0</I>. Let us look at the example in \cgalFigureRef{fig_gmap_examples} showing the 2D and 3D generalized maps describing the two objects of \cgalFigureRef{fig_gmap_example_subdivisions}.
+
+\cgalFigureBegin{fig_gmap_examples,gmap_examples.svg}
+Generalized maps representing the objects given in \cgalFigureRef{fig_gmap_example_subdivisions}. Left: The 2D generalized map which contains 24 darts. Right: The 3D generalized map which contains 108 darts (36 for each volume).
+\cgalFigureEnd
+
+First let us start in 2D (\cgalFigureRef{fig_gmap_examples} (Left)). Edge <I>e1</I> contains four darts. These darts are linked together with pointers called \f$ \alpha_0\f$ and \f$ \alpha_2\f$. Starting from a dart and following an \f$ \alpha_0\f$ pointer, we get to a dart which belongs to the same edge, to the same facet but to the other vertex (0-cell, which explains the index 0 of \f$ \alpha_0\f$). Starting from a dart and following an \f$ \alpha_2\f$ pointer, we get to a dart which belongs to the same vertex, to the same edge but to the other facet (2-cell, which explains the index 2).
+
+Facet <I>f1</I> is represented by four edges, and thus contains eight darts. The edges are linked together with pointers called \f$ \alpha_0\f$ and \f$ \alpha_1\f$. Starting from a dart and following an \f$ \alpha_1\f$ pointer, we get to a dart which belongs to the same vertex, the same facet but to the other edge (1-cell, which explains the index 1 of \f$ \alpha_1\f$).
+
+Similarly, vertex <I>v1</I> contains six darts, linked together with pointers \f$ \alpha_1\f$ and \f$ \alpha_2\f$.
+
+The main interest of generalized map definition based on darts and \f$ \alpha_i\f$ pointers is to be able to increase the dimension <em>only</em> by adding new pointers. This is illustrated thanks to the 3D example given in  \cgalFigureRef{fig_gmap_examples} (Right). In addition to \f$ \alpha_0\f$, \f$ \alpha_1\f$ and \f$ \alpha_2\f$ of the 2D case, there is a new pointer \f$ \alpha_3\f$.
+
+If we take a closer look at the central edge <I>e4</I> shown in \cgalFigureRef{fig_gmap_examples_zoom} (Left), we can see that it contains twelve darts linked together. Starting from a dart and following an \f$ \alpha_3\f$ pointer, we get to a dart which belongs to the same vertex, to the same edge, to the same facet, but to the neighboring volume (a 3-cell, which explains the index 3 in \f$ \alpha_3\f$). Similarly, starting from a dart and following an \f$ \alpha_2\f$ pointer, we get to a dart which belongs to the same vertex, to the same edge, to the same volume, but to the neighboring facet (2-cell). And starting from a dart and following an \f$ \alpha_0\f$ pointer, we get to a dart which belongs to the same edge, to the same facet, to the same volume, but to the neighboring vertex (0-cell). Starting from any of these twelve darts and following \f$ \alpha_0\f$, \f$ \alpha_2\f$ and \f$ \alpha_3\f$ pointers, we can reach exactly the twelve darts that belong to edge <I>e4</I>.
+
+\cgalFigureBegin{fig_gmap_examples_zoom,gmap_examples_zoom.svg}
+Two zooms on the 3D generalized map given in \cgalFigureRef{fig_gmap_examples} (Right). Left: Zoom around the central edge <I>e4</I> which details the twelve darts belonging to the edge. Right: Zoom around the facet between volumes <I>vol2</I> and <I>vol3</I> which details the sixteen darts belonging to the facet.
+\cgalFigureEnd
+
+For facets, by following an \f$ \alpha_1\f$ pointer, we get to a dart which belongs to the same vertex, to the same facet, to the same volume, but to the next edge (1-cell, which explains the index 1 of \f$ \alpha_1\f$). Starting from any dart and following \f$ \alpha_0\f$, \f$ \alpha_1\f$ and \f$ \alpha_3\f$ pointers, we can reach exactly all the darts belonging to the facet (see \cgalFigureRef{fig_gmap_examples_zoom} (Right)). For volumes, starting from any dart and following \f$ \alpha_0\f$, \f$ \alpha_1\f$ and \f$ \alpha_2\f$ pointers, we can reach exactly all the darts belonging to the volume. For vertices, we have to follow \f$ \alpha_1\f$, \f$ \alpha_2\f$ and \f$ \alpha_3\f$ pointers to reach exactly the darts belonging to the vertex <I>v</I>.
+
+In some cases, the general rule that by following an \f$ \alpha_i\f$ we get a dart which belongs to the neighboring <I>i</I>-cell is not true, as for example for darts belonging to the boundary of the represented object. For example, in \cgalFigureRef{fig_gmap_example_subdivisions} (Left), any dart <I>d0</I> that does not belong to edge <I>e1</I>, <I>e2</I> and <I>e3</I> belongs to a 2-cell, and there is no neighboring facet along the edge containing <I>d0</I>. Another example is in \cgalFigureRef{fig_gmap_example_subdivisions} (Right), for any dart <I>d0</I> that belongs to facet <I>f5</I>. <I>d0</I> belongs to volume <I>vol2</I>, but there is no neighboring volume along this facet. The general rule is also not true for unbounded cells. For example if we remove a dart in \cgalFigureRef{fig_gmap_examples} (Left), we obtain an unbounded facet having one dart without next dart for \f$ \alpha_0\f$, and one dart without next dart for \f$ \alpha_1\f$, and if we remove a facet in \cgalFigureRef{fig_gmap_examples} (Right), we obtain an unbounded volume having some darts without neighboring facet for \f$ \alpha_2\f$. In such a case, the darts are linked with themselves for \f$ \alpha_i\f$ to describe that a dart <I>d0</I> is not linked to another dart in dimension <I>i</I>.
+
+Generalized maps are defined in any dimension. A -1D generalized map is a set of isolated darts describing isolated vertices. A 0D generalized map is a set of darts paired by \f$ \alpha_0\f$ describing isolated edges. A 1D generalized map describes paths or cycles of darts corresponding to paths or cycles of edges. The most useful cases are 2D and 3D generalized maps. In 2D, a generalized map is a set of surfaces (orientable or not), and in 3D a generalized map is a set of connected volumes. In the following, notions are mainly illustrated in 3D. But it is important to keep in mind that one main interest of generalized maps is their generic definition in any dimension, and that everything presented in this manual is valid in any dimension.
+
+A <I>d</I>D generalized map is useful when you want to describe <I>d</I>D objects and the adjacency relations between these objects, and you want to be able to efficiency traverse these objects by using the different relations. For example, we can use a 3D generalized map to describe a 3D segmented image: each 3-cell corresponds to a region in the image and each 2-cell corresponds to a contact area between two regions.
+
+A generalized map does not contain any geometric information. However, this package allows to associate any information to the cells of the generalized map. A specific information, which is often used in practice, consists in adding linear geometry to a generalized map by associating a point to each vertex of the map: this is the object of the \ref ChapterLinearCellComplex "Linear cell complex" package (when an object has a point associated to each vertex, each edge is thus a straight line segment, which explains the name <em>linear geometry</em>). The \ref ChapterLinearCellComplex "Linear cell complex" package  can for example be useful to describe 3D buildings as set of walls, rooms, doors and windows (both combinatorial and geometric descriptions) and all the adjacency relations between these elements allowing for example to move a camera in a given building from rooms to rooms by traversing doors.
+
+\section sec_presentation_gmap Data Structure Presentation
+
+In this section, we describe <I>d</I>D generalized maps in terms of data structure and operations. Mathematical definitions are provided in Section \ref sec_definition_gmap "Mathematical Definitions", and a package description is given in Section \ref secsoftwaredesign_gmap "Software Design".
+
+\subsection ssecgenmapanddarts Generalized Map and Darts
+
+A <I>d</I>D generalized map is a set of darts <I>D</I>. A dart <I>d0</I> is an element that can be <I>linked</I> with <I>d</I>+1 darts by pointers called \f$ \alpha_i\f$, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>. %Dart <I>d0</I> is said <I>i-free</I> when \f$ \alpha_i\f$(<I>d0</I>)=<I>d0</I>. Each \f$ \alpha_i\f$ is its own inverse, i.e. \f$ \alpha_i\f$(\f$
+\alpha_i\f$(<I>d0</I>))=<I>d0</I>.
+
+A generalized map is <I>without i-boundary</I> if there is no <I>i</I>-free dart, and it is <I>without boundary</I> if it is without <I>i</I>-boundary for all dimensions 1 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>.
+
+We show in \cgalFigureRef{fig_gmap_detailed_example} a 3D object and the corresponding 3D generalized map. This map has 80 darts, some darts being numbered. In this generalized map, we have for example \f$ \alpha_0\f$(1)=2, \f$ \alpha_1\f$(1)=8, \f$ \alpha_2\f$(1)=24, and \f$ \alpha_3\f$(1)=9. This generalized map is without 0-boundary, without 1-boundary and 2-boundary, but has some 3-boundary, because some darts are 3-free, for example \f$ \alpha_3\f$(17)=17.
+
+\cgalFigureBegin{fig_gmap_detailed_example,gmap_detailed_example.svg}
+Example of a 3D generalized map. Left: A 3D object made of two volumes adjacent along facet <I>f2</I>. Right: The corresponding 3D generalized map. Darts are drawn with dark grey and black segments, black darts being numbered. Two darts linked by \f$ \alpha_0\f$ are drawn aligned and separated by a small gray orthogonal segment (for example \f$ \alpha_0\f$(1)=2), two darts linked by \f$ \alpha_1\f$ are drawn consecutively and separated by a small gray disk (for example \f$ \alpha_1\f$(1)=8), and two darts linked by \f$ \alpha_2\f$ are drawn parallel, in reverse orientations, with the little gray segment joining them (for example \f$ \alpha_2\f$(1)=24). \f$ \alpha_3\f$ pointers are represented by blue segments in this figure (for example \f$ \alpha_3\f$(1)=9).
+\cgalFigureEnd
+
+\subsection sseccellsingmap Cells as Sets of Darts
+
+A cell in a <I>d</I>D generalized map is implicitly represented by a subset of darts.  In this section, we will see how to retrieve all cells containing a given dart, how to retrieve all darts belonging to a cell containing a given dart, and how incidence and adjacency relations are defined in terms of darts.
+
+The first important property of a generalized map is that each dart belongs to an <I>i</I>-cell, \f$ \forall \f$ <I>i</I>, 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>.  For example in 3D, a dart belongs to a vertex, an edge, a facet, and a volume. This means that a 3D generalized map containing an isolated dart contains exactly one vertex, one edge, one facet and one volume.
+
+The second important property is that cells of a generalized map correspond to specific <I>orbits</I>. Given a set  <I>S</I>\f$ \subseteq\f${\f$ \alpha_1\f$,...,\f$ \alpha_d\f$} and a dart <I>d0</I>, the <I>orbit</I> \f$ \langle{}\f$ <I>S</I>\f$ \rangle{}\f$(<I>d0</I>) is the set of darts that can be reached from <I>d0</I> by following any combination of any \f$ \alpha_i\f$'s in <I>S</I> (to simplify notations, we can use for example \f$ \langle{}\f$\f$ \alpha_1\f$,\f$ \alpha_4\f$\f$\rangle{}\f$(<I>d0</I>) to denote \f$ \langle{}\f$ <I>S</I>\f$ \rangle{}\f$(<I>d0</I>) with <I>S</I>={\f$ \alpha_1\f$,\f$ \alpha_4\f$}).
+
+Given a dart <I>d0</I>, in general, \f$ \alpha_i\f$(<I>d0</I>) (with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>) belongs to the same cells as <I>d0</I>, only the <I>i</I>-cell is different. There are two exceptions:
+<ol type="1">
+<li>if <I>d0</I> is <I>i</I>-free, then \f$ \alpha_i\f$(<I>d0</I>)=<I>d0</I>, the <I>i</I>-cell is not different;</li>
+<li>if \f$ \alpha_i\f$(<I>d0</I>) belongs to the same <I>i</I>-cell as <I>d0</I> (case of multi-incidence). For example if an edge is an isolated loop, it is incident twice to the same vertex, then given a dart <I>d0</I> belonging to this edge, \f$ \alpha_1\f$(<I>d0</I>) goes to the next edge, which is in fact the same edge.</li>
+</ol>
+
+Since \f$ \alpha_i\f$(<I>d0</I>) (with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>) allows to change the current <I>i</I>-cell, all the darts that can be reached from <I>d0</I> by using any combination of \f$ \alpha_j\f$'s, \f$ \forall \f$ <I>j</I>, 0 \f$ \leq \f$ <I>j</I> \f$ \leq \f$ <I>d</I> and <I>j</I> \f$ \neq \f$ <I>i</I> are contained in the same <I>i</I>-cell as <I>d0</I>. The <I>i</I>-cell containing <I>d0</I> is defined in terms of orbit by \f$ \langle{}\f$\f$ \alpha_0\f$,...,\f$ \alpha_{i-1}\f$,\f$ \alpha_{i+1}\f$,...,\f$ \alpha_d\f$\f$ \rangle{}\f$(<I>d0</I>).
+
+Orbit \f$ \langle{}\f$\f$ \alpha_0\f$,...,\f$ \alpha_d\f$\f$ \rangle{}\f$(<I>d0</I>) is the <I>connected component</I> containing dart <I>d0</I>. A generalized map is <I>connected</I> if this set is equal to the set of all the darts of the generalized map.
+
+A last important property of cells is that for all dimensions <I>i</I> the set of <I>i</I>-cells forms a partition of the set of darts <I>D</I>, i.e.\ for any <I>i</I>, the union of the sets of darts of all the <I>i</I>-cells is equal to <I>D</I>, and the sets of darts of two different <I>i</I>-cells are disjoint.
+
+Let us give some examples of cells in 3D, for the 3D generalized map of \cgalFigureRef{fig_gmap_detailed_example} :
+<UL>
+<LI>All the darts belonging to the same vertex can be obtained by any combination of \f$ \alpha_1\f$, \f$ \alpha_2\f$ and \f$ \alpha_3\f$: for example vertex <I>v</I> of the object corresponds in the generalized map to the set of darts {1,8,9,16,17,24,25,27,28,29,30,31}. Given any dart belonging to this vertex, we retrieve all the other darts by, for example, a breadth-first traversal. In terms of orbits, this 0-cell corresponds to \f$ \langle{}\f$\f$ \alpha_1\f$,\f$ \alpha_2\f$,\f$ \alpha_3\f$\f$ \rangle{}\f$(1).
+<LI>All the darts belonging to the same edge can be obtained by any combination of \f$ \alpha_0\f$, \f$ \alpha_2\f$ and \f$ \alpha_3\f$: for example edge <I>e</I> of the object corresponds in the generalized map to the set of darts {1,2,9,10,23,24,25,26}. In terms of orbits, this 1-cell corresponds to \f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \alpha_2\f$,\f$ \alpha_3\f$\f$ \rangle{}\f$(1).
+<LI>All the darts belonging to the same facet can be obtained by any combination of \f$ \alpha_0\f$, \f$ \alpha_1\f$ and \f$ \alpha_3\f$: for example facet <I>f2</I> corresponds in the generalized map to the set of darts {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}. Facet <I>f1</I> corresponds to the set of darts {17,18,19,20,21,22,23,24}. Note that these last darts are 3-free since there is no other volume sharing this facet. In terms of orbits, <I>f2</I> corresponds to \f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \alpha_1\f$,\f$ \alpha_3\f$\f$ \rangle{}\f$(1) and <I>f1</I> corresponds to \f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \alpha_1\f$,\f$ \alpha_3\f$\f$ \rangle{}\f$(17).
+<LI>All the darts belonging to the same volume can be obtained by any combination of \f$ \alpha_0\f$, \f$ \alpha_1\f$ and \f$ \alpha_2\f$: for example volume <I>vol1</I> corresponds in the generalized map to the set of the 48 darts belonging to the cube. In terms of orbits, <I>vol1</I> corresponds to \f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \alpha_1\f$,\f$ \alpha_2\f$\f$ \rangle{}\f$(1).
+</UL>
+
+Using this definition of cells as sets of darts, we can retrieve all the incidence and adjacency relations between the cells of the subdivision in a generalized map. Two cells are <I>incident</I> if the intersection of their two sets of darts is non empty (whatever the dimension of the two cells). Two <I>i</I>-cells <I>c1</I> and <I>c2</I>, 1 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>, are <I>adjacent</I> if there is  <I>d1</I> \f$ \in \f$ <I>c1</I> and <I>d2</I> \f$ \in \f$ <I>c2</I> such that <I>d1</I> and <I>d2</I> belong to the same <I>(i-1)</I>-cell.
+
+In the example of \cgalFigureRef{fig_gmap_detailed_example}, vertex <I>v</I> and edge <I>e</I> are incident since the intersection of the two corresponding sets of darts is {1,9,24,25} \f$ \neq \f$ \f$ \emptyset\f$. Vertex <I>v</I> is incident to facet <I>f2</I> since the intersection of the two corresponding sets of darts is {1,8,9,16} \f$ \neq \f$ \f$ \emptyset\f$. Edge <I>e</I> and facet <I>f1</I> are incident since the intersection of the two corresponding sets of darts is {23,24} \f$ \neq \f$ \f$ \emptyset\f$. Finally, facets <I>f1</I> and <I>f2</I> are adjacent because 1 \f$ \in \f$ <I>f1</I>, 24 \f$ \in \f$ <I>f2</I> and 1 and 24 belong to the same edge.
+
+We can consider <I>i</I>-cells in a dimension <I>d'</I> with <I>i</I> \f$ \leq \f$ <I>d'</I> \f$ \leq \f$ <I>d</I>. The idea is to consider the <I>i</I>-cells as if the generalized map was in <I>d'</I> dimension. For that, we only take into account the \f$ \alpha_j \f$s for <I>j</I> \f$ \leq \f$ <I>d'</I>. The <I>i</I>-cell containing <I>d0</I> in dimension <I>d'</I> is the orbit \f$ \langle{}\f$\f$ \alpha_0\f$,...,\f$ \alpha_{i-1}\f$,\f$ \alpha_{i+1}\f$,...,\f$ \alpha_{d'}\f$\f$ \rangle{}\f$(<I>d0</I>). By default, <I>i</I>-cells are considered in dimension <I>d</I>, the dimension of the generalized map.
+
+In the example of \cgalFigureRef{fig_gmap_detailed_example}, the 2-cell containing dart 1 is facet <I>f2</I> which is the set of darts {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}. If we consider the same 2-cell in dimension 2, we obtain the set of darts {1,2,3,4,5,6,7,8}. Intuitively we <em>forget</em> \f$ \alpha_3\f$ and we obtain the set of darts of the facet containing dart 1 restricted to the volume containing this dart.
+
+\subsection ssecassociateattributesgmap How to Associate Information to Cells
+
+Generalized maps only describe the cells of the subdvision, and all the incidence and adjacency relations between these cells. This is not enough for many applications which need to associate <I>information</I> to cells. This can be geometric or non-geometric information, such as 3D points associated to vertices, the edge length associated to edges, or a color or normal to a facet.
+
+To answer this need, a generalized map allows to create <I>attributes</I> which are able to store any information, and to associate attributes to cells of the generalized map. We denote <I>i</I>-attributes for the attributes associated with <I>i</I>-cells. Attributes may exist for only some of the dimensions, and if they exist for dimension <I>i</I>, they do not necessarily exist for each of the <I>i</I>-cells. More precisely, <I>i</I>-attributes are associated to <I>i</I>-cells by an injection:
+<UL>
+<LI>two different <I>i</I>-cells are associated to two different <I>i</I>-attributes;
+<LI>an <I>i</I>-cell may have no associated <I>i</I>-attribute.
+</UL>
+
+Since <I>i</I>-cells are not explicitely represented in generalized maps, the association between <I>i</I>-cells and <I>i</I>-attributes is transferred to darts: if attribute <I>a</I> is associated to <I>i</I>-cell <I>c</I>, all the darts belonging to <I>c</I> are associated to <I>a</I>.
+
+We can see two examples of generalized maps having some attributes in \cgalFigureRef{fig_gmap_with_attribs}. In the first example (Left), a 2D generalized map has 1-attributes containing a float, for example corresponding to the length of the associated 1-cell, and 2-attributes containing a color in RGB format. In the second example (Right), a 3D generalized map has 2-attributes containing a color in RGB format.
+
+\cgalFigureBegin{fig_gmap_with_attribs,gmap_with_attribs.svg}
+Example of generalized maps with attributes. Attributes are represented by black rectangles containing an information, and association between darts and attributes are represented by small red lines. Left: A 2D generalized map with 1-attributes containing a double, for example corresponding to the length of the 1-cell, and 2-attributes containing a color in RGB format. Only three edges of the generalized map, among the nine, are associated to a 1-attribute. All the 2-cells are associated to a 2-attribute. Right: A 3D generalized map with 2-attributes containing a color in RGB format. Only three 2-cells of the generalized map, among the ten, are associated to a 2-attribute.
+\cgalFigureEnd
+
+\subsection ssecgenmapvalidity Generalized Map Properties
+
+There are some conditions that a generalized map must satisfy to be valid. Some of them have already been given about the \f$ \alpha\f$ pointers (see Section \ref ssecgenmapanddarts "Generalized Map and Darts") and about the association between darts and attributes (see Section \ref ssecassociateattributesgmap "How to Associate Information to Cells").
+
+There is an additional condition related to the type of represented objects, which are <I>quasi-manifold</I> <I>d</I>D objects. A <I>d</I>D quasi-manifold is an object obtained by taking some isolated <I>d</I>-cells, and allowing to glue <I>d</I>-cells along <I>(d-1)</I>-cells. In 2D, quasi-manifolds are manifolds, but this is no longer true in higher dimension as we can see in the example presented in \cgalFigureRef{fig_gmap_quasi_manifold}. In this example, the object to the right is not a manifold since the neighborhood of the point <I>p</I> in the object is not homeomorphic to a 3D ball (intuitively, two objects are homeomorphic if each object can be continuously deformed into the second one; in such a case, the two objects have exactly the same topological properties).
+
+\cgalFigureBegin{fig_gmap_quasi_manifold,gmap_quasi_manifold.svg}
+Example of a 3D quasi-manifold which is not a manifold. The object to the right is made of the four pyramids (shown to the left) glued together along facets, thus it is a quasi-manifold.
+\cgalFigureEnd
+
+Generalized maps can only represent quasi-manifolds due to the definition of \f$ \alpha\f$ pointers. As we have seen in Section \ref sseccellsingmap "Cells as Sets of Darts", \f$ \alpha_i\f$(<I>d0</I>) (with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>) belongs to the same cells as <I>d0</I>, only the <I>i</I>-cell is different. In other words, \f$ \alpha_i\f$ links two <I>i</I>-cells that share a common <I>(i-1)</I>-cell: it is not possible to link more than two <I>i</I>-cells along a same <I>(i-1)</I>-cell.  For this reason, it is not possible to describe non quasi-manifold objects as those shown in \cgalFigureRef{fig_gmap_non_manifolds} by generalized maps.
+
+\cgalFigureBegin{fig_gmap_non_manifolds,gmap_non_manifolds.svg}
+Three examples of non quasi-manifold objects. Left: A 2D object which is not a quasi-manifold since the two 2-cells share a common vertex but no common 1-cell. Middle: A 3D object which is not a quasi-manifold since is it not only composed by 3D cells glued together (there is an isolated 2-cell in dark gray). Right: A 3D object which is not a quasi-manifold since the two 3-cells share a common edge but no common 2-cell.
+\cgalFigureEnd
+
+Due to this additional condition, any objects can not be represented by a generalized map but only quasi-manifolds. We need to study now the inverse relation. Does any set of darts linked together by \f$ \alpha_i\f$'s, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I> correspond to a quasi-manifold? As we can see in \cgalFigureRef{fig_gmap_non_valid}, the answer is no.
+
+\cgalFigureBegin{fig_gmap_non_valid,gmap_non_valid.svg}
+Two examples of darts linked together by some \f$ \alpha_0\f$, \f$ \alpha_1\f$, \f$ \alpha_2\f$ and \f$ \alpha_3\f$ which does not represent a 3D quasi-manifold, and thus which are not 3D generalized map. Left: In this example, all the darts are 3-free except \f$ \alpha_3\f$(1)=a, \f$ \alpha_3\f$(2)=b, \f$ \alpha_3\f$(7)=g and \f$ \alpha_3\f$(8)=h (and vice-versa). Right: In this example, darts 1 to 8 and a to h linked by \f$ \alpha_3\f$ are not in the same order in both 3-cells.
+\cgalFigureEnd
+
+In the first example (Left), there are two 3-cells (one to the left for the cube, a second to the right for the pyramid) which are <em>partially adjacent</em> along one 2-cell. Indeed, only four darts of the 2-cell are linked by \f$ \alpha_3\f$. We have \f$ \alpha_3\f$(1)=a, \f$ \alpha_3\f$(2)=b, \f$ \alpha_3\f$(7)=g and \f$ \alpha_3\f$(8)=h (and vice-versa). This configuration is not possible in a quasi-manifold: two <I>d</I>-cells are always glue along an <em>entire</em> <I>(d-1)</I>-cells.
+
+But as we can see in the second example (Right), the condition that all the darts of the cell are linked in not sufficient. Indeed, in this example, all the darts of the 2-cell between the cube and the pyramid are linked together by \f$ \alpha_3\f$. However, this configuration does not correspond to a 3D quasi-manifold. Indeed, the operation of gluing two <I>d</I>-cells along one <I>(d-1)</I>-cell must preserve the structure of the initial <I>(d-1)</I>-cell.
+
+To avoid these two kinds of configurations, conditions are added on \f$ \alpha\f$ pointers compositions (see Section \ref sec_definition_gmap "Mathematical Definitions", condition (3) of the definition of generalized maps). Intuitively these conditions say that if two darts are linked by \f$ \alpha_i\f$, then all the required darts are linked by \f$ \alpha_i\f$ two by two in such a way that neighborhood relations are preserved.
+
+We say that a generalized map is <I>valid</I> if it satisfies all the conditions on \f$ \alpha\f$ pointers and on association between darts and attributes. High level operations provided on generalized maps ensure that these conditions are always satisfied. Sometimes, it can be useful to use low level operations in a specific algorithm, for example to modify locally a generalized map in a really fast way. In such a case, additional operations may be needed to restore these validity conditions.
+
+\subsection ssec-comparison-gmaps-with-cmaps Comparison with Combinatorial Maps
+
+Generalized maps and \ref ChapterCombinatorialMap "combinatorial maps" are very similar: they are both based on darts and functions, and they both allow to represent quasi-manifold <I>n</I>D objects. This explains that they share their main concepts.
+
+However, they have three main differences. Firstly, generalized maps allow to represent orientable and non-orientable objects while combinatorial maps allow only to represent orientable objects. Secondly, generalized maps are homogeneous in each dimension since all functions are involutions, while combinatorial maps are not homogeneous since one function is a permutation while other ones are involutions. This homogeneity simplifies algorithms for generalized maps since it allows to avoid a specific case for the first dimension. Thirdly, a generalized map requires twice the number of darts of a combinatorial map in order to represent an orientable object.
+
+Considering these different advantages and drawbacks, you can choose to use generalized maps or combinatorial maps depending on the needs of your application.
+
+\section secsoftwaredesign_gmap Software Design
+
+The diagram in \cgalFigureRef{fig_gmap_diagramme_class} shows the different classes of the package. `Generalized_map` is the main class (see Section \ref ssecgeneralizedmap "Generalized Maps"). It allows to manage darts and attributes (see Section \ref ssecattributesgmap "Cell Attributes"). Users can customize a generalized map thanks to an items class (see Section \ref ssecitemgmap "Generalized Map Items"), which defines the information associated with darts and the attribute types. These types may be different for different dimensions, and they may also be void (note that the main concepts of `GenericMap`, `GenericMapItems` and `CellAttribute` are shared between combinatorial maps and generalized maps).
+
+The darts and attributes are accessed through <I>handles</I>. A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `boost::unordered_map`.
+
+\cgalFigureBegin{fig_gmap_diagramme_class,gmap_diagramme_class.svg}
+UML diagram of the main classes of the package. k is the number of non void attributes.
+\cgalFigureEnd
+
+\subsection ssecgeneralizedmap Generalized Maps
+
+The class `Generalized_map<d,Items,Alloc>` is a model of the `GeneralizedMap` concept which refines the generic concept of `GenericMap`. It has three template parameters standing for the dimension of the generalized map (an  `unsigned int`), an items class (a model of the  `GenericMapItems` concept), and an allocator which must be a model of the allocator concept of the \stl. %Default classes are provided for the items and the allocator classes.
+
+The main role of the class `Generalized_map` is the storage and the management of darts. It allows to create or remove an isolated dart from the generalized map. The \link GenericMap::Dart_handle `Dart_handle`\endlink type defines a handle to the type of used darts (given in the items class). `Generalized_map` provides several <I>ranges</I> which allow to iterate over specific subsets of darts of the generalized map (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). It also defines several methods to link and to unlink darts by \f$ \alpha_i\f$s (see Section \ref sseclinkdarts_gmap "Sewing Orbits and Linking Darts"). We said that a dart <I>d0</I> is <I>i</I>-free  if \f$ \alpha_i\f$(<I>d0</I>)=<I>d0</I>.  Finally, some high level operations are defined to update the generalized map (see Section \ref ssecoperationsgmap "Removal and Insertion Operations")
+
+The second role of the class `Generalized_map` is the storage and the management of attributes. It allows to create or remove an attribute, and provides methods to associate attributes and cells.  A range is defined for each <I>i</I>-attribute allowing to iterate over all the <I>i</I>-attributes of the generalized map. Finally, `Generalized_map` defines several types allowing to manage the attributes. We can use \link GenericMap::Attribute_handle `Generalized_map::Attribute_handle<i>::type`\endlink for a handle to the <I>i</I>-attributes (and the const version \link GenericMap::Attribute_const_handle `Generalized_map::Attribute_const_handle<i>::type`\endlink) and \link GenericMap::Attribute_type `Generalized_map::Attribute_type<i>::type`\endlink for the type of the <I>i</I>-attributes.
+
+All information associated to darts (\f$ \alpha\f$ links and attributes) are accessed through member functions in `GeneralizedMap`.
+
+\subsection ssecitemgmap Generalized Map Items
+
+The `GenericMapItems` concept defines information associated with darts and attribute types of a generalized map. It contains one inner class named \link GenericMapItems::Dart_wrapper `Dart_wrapper`\endlink, having one template parameter, `Map`, a model of `GenericMap` concept. The \link GenericMapItems::Dart_wrapper `Dart_wrapper<Map>`\endlink class can provide two local types: `%Dart_info` for the information associated with darts, and `%Attributes` which defines the attributes and their types.
+
+If `%Dart_info` is not defined or if it is equal to `void`, no information is associated with darts.
+
+The `%Attributes` tuple must contain at most <I>d</I>+1 types (one for each possible cell dimension of the generalized map). Each type of the tuple must be either a model of the `CellAttribute` concept or `void`. The first type corresponds to 0-attributes, the second to 1-attributes and so on. If the <i>i <sup>th</sup></i> type in the tuple is  `void`, <I>(i-1)</I>-attributes are disabled: we say that <I>(i-1)</I>-attributes are <I>void</I>. Otherwise, <I>(i-1)</I>-attributes are enabled and have the given type: we say <I>(i-1)</I>-attributes are <I>non void</I>. If the size of the tuple is <I>k</I>, with <I>k</I> \f$ < \f$ \link GenericMap::dimension `dimension`\endlink +1, \f$ \forall \f$ <I>i</I>: <I>k</I> \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, <I>i</I>-attributes are void. If this type is not defined, all attributes are disabled.
+
+The class `Generic_map_min_items` is a model of the `GenericMapItems` concept which can be used for default behaviors. It defines `void` as type of information associated with darts, and `Attributes` as empty tuple.
+
+\subsection ssecattributesgmap Cell Attributes
+
+The class `Cell_attribute<Map,Info_,Tag,OnMerge,OnSplit>`, a model of the `CellAttribute` concept, represents an attribute associated with a cell of a generalized map. The  template parameter `Map` must be a model of the `GenericMap` concept. The attribute stores a handle to one dart of its associated cell when the template parameter `Tag` is \link CGAL::Tag_true `Tag_true`\endlink. `Info_` is the type of information stored in the attribute. It may be `void`. `OnMerge` and `OnSplit` must be either `Null_functor`, or models of the `Binary Function` concept having two references to a model of `CellAttribute` as type of both parameters and `void` as return type. There are two default parameters for `OnMerge` and `OnSplit`, which are `Null_functor`, a default parameter for `Tag` which is `Tag_true`, and a default parameter for `Info_` which is `void`.
+
+If `Info_` is different from `void`, the class `Cell_attribute` contains two methods `info()` returning the information contained in the attribute (const and non const version).  The information is returned by reference, thus the non const version allows the modification of the information.
+
+Two attributes are merged when their corresponding cells are merged into one cell during some operation. In this case, the functor `OnMerge` is called, unless it is equal to `Null_functor`.  This functor allows the user to define its own custom behavior when two attributes are merged (for example if the information is a color, we can compute the average color of the two initial attributes, and affect this value to the first attribute, see example in Section \ref ssecgenmapwithcolor "Generalized Map With Attributes"). Similarly, the functor `OnSplit` is called when one attribute is split in two, because its corresponding cell is split in two during some operation, unless it is equal to `Null_functor`. In any high level operation, `OnMerge` is called before to start the operation (i.e.\ before modifying the generalized map), and `OnSplit` is called when the operation is finished (i.e.\ after all the modifications were made).
+
+In addition, there are dynamic onmerge and onsplit functions that can be associated to i-attributes, and modified, thanks to the \link GenericMap::onmerge_function() `onmerge_function()`\endlink and \link GenericMap::onsplit_function() `onsplit_function()`\endlink. When these functions are set, they are also called in addition to the previous mechanism when two attributes are merged or one attribute is split into two (see example in Section \ref ssecgenmapdynamicattibute "Use of Dynamic Onmerge and Onsplit Functors").
+
+What we said for the dart also holds for the cell attribute. The generalized map can be used with any user defined model of the `CellAttribute` concept.
+
+\subsection ssecexampledefgmap Example of Generalized Map Definition
+
+Here comes an example of two generalized map definitions. The first case `Example_gmap4` defines a 4D generalized map which uses all the default values (`Generic_map_min_items`). The second example `Example_custom_gmap3` uses its own model of the `GenericMapItems` concept. In this model, a `double` is associated as information on darts, and an attribute containing an integer is associated to edges.
+
+\code{.cpp}
+
+typedef CGAL::Generalized_map<4> Example_gmap4;
+
+struct Example_items_3
+{
+  template <class GMap>
+  struct Dart_wrapper
+  {
+    typedef double Dart_info;
+    typedef CGAL::Cell_attribute<GMap, int> Edge_attrib;
+    typedef std::tuple<void,Edge_attrib> Attributes;
+  };
+};
+typedef CGAL::Generalized_map<3, Example_items_3> Example_custom_gmap3;
+
+\endcode
+
+\section Generalized_mapIteration Iteration and Creation Operations
+
+An important operation in generalized maps consists in iterating over specific subsets of darts or over attributes. For that, several <I>ranges</I> are offered (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). A range is a model of the `Range` concept, thus supporting the two methods `begin()` and `end()` allowing to iterate over all the elements in the range. Several functions allow to create specific configurations of darts into a generalized map (see Section \ref ssecconstructiongmap "Construction Operations"). Darts can be marked during operations, for example when performing a breadth-first search traversal, thanks to Boolean marks (see Sections \ref ssecadvmarksgmap "Boolean Marks"). In the following, we denote by `dh0`, `dh1`, `dh2` the dart handles for the darts `d0`, `d1`, `d2`, respectively. That is `d0 == *dh0`.
+
+\subsection ssecrangegmap Iterating over Orbits, Cells, and Attributes
+
+The generalized map offers iterators to traverse the darts of a specific orbit, to traverse all darts of one cell, or one dart per cell, and to traverse all <I>i</I>-attributes.
+
+Instead of the `begin()/end()` member function pair as we know it from \stl containers, and from most \cgal data structures, the generalized map defines range classes which are all models of the `Range` concept.
+
+There are three different categories of dart range classes:
+<UL>
+
+<LI>\link GenericMap::Dart_range `Dart_range`\endlink: range of all the darts of a generalized map;
+
+<LI>\link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range<Alpha...>`\endlink: range of all the darts of the orbit \f$ \langle{}\f$`Alpha...`\f$ \rangle{}\f$(<I>d0</I>) for a given <I>d0</I>. `Alpha...` is a sequence of integers  \f$ i_1\f$,..., \f$ i_k\f$,  each \f$ i_j\f$ \f$ \in \f$ {0, ..., <I>d</I>}.  These integers must satisfy: \f$ i_1\f$ \f$ < \f$\f$ i_2\f$\f$ < \f$...\f$ < \f$\f$ i_k\f$ (for example \link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range<1,2>`\endlink for the orbit \f$ \langle{}\f$\f$ \alpha_1\f$,\f$ \alpha_2\f$\f$ \rangle{}\f$(<I>d0</I>));
+
+<LI>\link GenericMap::Dart_of_cell_range `Dart_of_cell_range<i,dim>`\endlink: range of all the darts of the <I>i</I>-cell containing a given dart. The <I>i</I>-cell is considered in dimension `dim` (with 0 \f$ \leq \f$ <I>dim</I> \f$ \leq \f$ <I>d</I>, <I>dim</I>=<I>d</I> by default), with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dim+1</I>. If <I>i</I>=<I>dim+1</I>, \link GenericMap::Dart_of_cell_range `Dart_of_cell_range<i,dim>`\endlink is the range of all the darts of the connected component containing a given dart.
+</UL>
+
+There are also two different classes of ranges containing one dart per <I>i</I>-cell. Note that in these classes, the dart of each <I>i</I>-cell can be any dart of the cell. Moreover, each <I>i</I>-cell (and <I>j</I>-cell in the second case) is considered in dimension `dim` (with  0 \f$ \leq \f$ <I>dim</I> \f$ \leq \f$ <I>d</I>, <I>dim=d</I> by default).
+<UL>
+<LI>\link GenericMap::One_dart_per_cell_range `One_dart_per_cell_range<i,dim>`\endlink: range containing one dart of each <I>i</I>-cell of the generalized map, 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dim+1</I> (for example \link GenericMap::One_dart_per_cell_range `One_dart_per_cell_range<2>`\endlink for the range of one dart per 2-cell of the generalized map);
+
+<LI>\link GenericMap::One_dart_per_incident_cell_range `One_dart_per_incident_cell_range<i,j,dim>`\endlink: range containing one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing a given dart, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dim+1</I> and  0 \f$ \leq \f$ <I>j</I> \f$ \leq \f$ <I>dim+1</I> (for example \link GenericMap::One_dart_per_incident_cell_range `One_dart_per_incident_cell_range<0,3>`\endlink for the range of one dart per vertex of the volume incident to the starting dart).  If <I>i</I>=<I>j</I>, the range contains only the given dart.
+</UL>
+
+The iterators of the \link GenericMap::Dart_range `Dart_range`\endlink are bidirectional iterators,  while the iterators of the other four ranges are forward iterators.  The value type of all these iterators is `Dart` thus all these iterators can be directly used as \link GenericMap::Dart_handle `Dart_handle`\endlink.
+
+Additionally, there is a range over non void <I>i</I>-attributes: \link GenericMap::Attribute_range `Attribute_range<i>::type`\endlink, having a bidirectional iterator with value type \link GenericMap::Attribute_type Attribute_type<i>::type`\endlink.
+
+For each range, there is an associated const range, a model of the `ConstRange` concept. You can find some examples of ranges in Section \ref ssecexample3DGM "A 3D Generalized Map".
+
+\subsection ssecconstructiongmap Construction Operations
+
+Several functions allow to create specific configurations of darts into a generalized map. Existing darts in the generalized map are not modified. Note that the dimension of the generalized map must be large enough: darts must contain all the \f$ \alpha\f$ pointers used by the operation. All these functions return a \link GenericMap::Dart_handle `Dart_handle`\endlink to a new dart created during the operation.
+
+<UL>
+<LI>`gm.`\link GenericMap::make_edge `make_edge()`\endlink: creates an isolated edge (two darts linked by \f$ \alpha_0\f$); dimension must be greater or equal than zero;
+<LI>`gm.`\link GenericMap::make_combinatorial_polygon `make_combinatorial_polygon(lg)`\endlink: creates an isolated combinatorial polygon of length `lg` (`lg` edges linked by \f$ \alpha_1\f$), for `lg>0`; dimension must be greater or equal than one;
+<LI>`gm.`\link GenericMap::make_combinatorial_tetrahedron `make_combinatorial_tetrahedron()`\endlink: creates an isolated combinatorial tetrahedron (four combinatorial triangles linked together by \f$ \alpha_2\f$); dimension must be greater or equal than two;
+<LI>`gm.`\link GenericMap::make_combinatorial_hexahedron `make_combinatorial_hexahedron()`\endlink: creates an isolated combinatorial hexahedron (six combinatorial quadrangles linked together by \f$ \alpha_2\f$); dimension must be greater or equal than two.
+</UL>
+
+\subsection ssecadvmarksgmap Boolean Marks
+
+It is often necessary to mark darts, for example to retrieve in <I>O(1)</I> if a given dart was already processed during a specific algorithm, for example,  iteration over a given range. Users can also mark specific parts of a generalized map (for example mark all the darts belonging to objects having specific semantics). To answer these needs, a `GeneralizedMap` has a certain number of Boolean marks (fixed by the constant \link GenericMap::NB_MARKS `NB_MARKS`\endlink). When one wants to use a Boolean mark, the following methods are available (with `gm` an instance of a generalized map):
+<ul>
+<li> get a new free mark: `size_type m = gm.`\link GenericMap::get_new_mark `get_new_mark()`\endlink (throws the exception Exception_no_more_available_mark if no mark is available);
+<li> set mark `m` for a given dart `d0`: `gm.`\link GenericMap::mark `mark(dh0,m)`\endlink;
+<li> unset mark `m` for a given dart `d0`: `gm.`\link GenericMap::unmark `unmark(dh0,m)`\endlink;
+<li> test if a given dart `d0` is marked for `m`: `gm.`\link GenericMap::is_marked `is_marked(dh0,m)`\endlink;
+<li> unmark all the darts of `gm` for `m`: `gm.`\link GenericMap::unmark_all `unmark_all(m)`\endlink;
+<li> negate mark `m` of all the darts of `gm`: `gm.`\link GenericMap::negate_mark `negate_mark(m)`\endlink. All the marked darts become unmarked and all the unmarked darts become marked;
+<li> free mark `m`: `gm.`\link GenericMap::free_mark `free_mark(m)`\endlink. This method unmarks all the darts of `gm` for `m` before freeing it.
+</ul>
+
+It is important to free a mark when it is no longer needed, otherwise you may at some point run out of marks.
+
+The following example illustrates how to use marks. Two combinatorial tetrahedra are created and 3-sewn (see Section \ref sseclinkdarts_gmap "Sewing Orbits and Linking Darts" for a detailed description of the sew operation). Then a mark is reserved and used to mark all the darts belonging to the first combinatorial tetrahedron. Finally, these tetrahedron are merged. The marks allow us to know which darts come from the first and second tetrahedron.
+
+\cgalExample{Generalized_map/gmap_3_marks.cpp}
+
+\section ssecmodoperations_gmap Modification Operations
+
+Several operations allow to modify a given generalized map. There are two main categories of modification operations:
+<UL>
+<LI>\ref GeneralizedMap::sew "Sew", \ref GeneralizedMap::link_alpha "link_alpha", \ref GeneralizedMap::unsew "unsew" and \ref GeneralizedMap::unlink_alpha "unlink_alpha" which modify some existing \f$ \alpha\f$ pointers, without creating or removing darts (see Section \ref sseclinkdarts_gmap "Sewing Orbits and Linking Darts");
+<LI>Removal and insertion of cells which modify both darts and \f$ \alpha\f$ pointers (see Section \ref ssecoperationsgmap "Removal and Insertion Operations").
+</UL>
+
+\subsection sseclinkdarts_gmap Sewing Orbits and Linking Darts
+
+The `GeneralizedMap` defines two groups of methods to modify the \f$ \alpha\f$ pointers of existing darts.
+
+The sew and unsew methods iterate over two orbits in order to link or unlink specific darts two by two. Intuitively, a \link GeneralizedMap::sew `sew<i>`\endlink operation glues two <I>i</I>-cells by identifying two of their <I>(i-1)</I>-cells (see example in \cgalFigureRef{fig_gmap_example_3d_sew} where \link GeneralizedMap::sew `sew<3>`\endlink is used to glue two 3-cells along one 2-cell). Reciprocally, a \link GeneralizedMap::unsew `unsew<i>`\endlink operation un-glues two <I>i</I>-cells which were glued along one of their <I>(i-1)</I>-cells. These methods guarantee that given a valid generalized map and a possible operation we obtain a valid generalized map as result of the operation.
+
+\cgalAdvancedBegin
+The \link GeneralizedMap::link_alpha `link_alpha`\endlink and \link GeneralizedMap::unlink_alpha `unlink_alpha`\endlink methods only modify the pointer of two darts: the obtained generalized maps may be not valid. These operations can be useful to use low level operations in a specific algorithm, for example to modify locally a generalized map in a really fast way. In such a case, additional operations may be needed to restore the validity conditions.
+\cgalAdvancedEnd
+
+
+Linking two darts <I>d1</I> and <I>d2</I> by \f$ \alpha_i\f$, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I> and <I>d1</I> \f$ \neq \f$ <I>d2</I>, consists in modifying two \f$ \alpha_i\f$ pointers such that \f$ \alpha_i\f$(<I>d1</I>)=<I>d2</I> and \f$ \alpha_i\f$(<I>d2</I>)=<I>d1</I>.
+
+Reciprocally, unlinking a given dart <I>d0</I> by \f$ \alpha_i\f$, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>, consists in modifying two \f$ \alpha_i\f$ pointers such that \f$ \alpha_i\f$(\f$ \alpha_i\f$(<I>d0</I>))=\f$ \alpha_i\f$(<I>d0</I>) and \f$ \alpha_i\f$(<I>d0</I>)=<I>d0</I>. Note that is it possible to unlink a given dart for \f$ \alpha_i\f$ only if it is not <I>i</I>-free.
+
+\cgalFigureBegin{fig_gmap_example_3d_sew,gmap_example_3d_sew.svg}
+Example of 3-sew operation. Left: A 3D generalized map containing two volumes that are not connected, with 2-attributes. Each attribute contains a color in RGB format, and there are four 2-cells associated with attributes. Associations between darts and attributes are drawn with red segments. Right: The 3D generalized map obtained as result of \link GeneralizedMap::sew `sew<3>(1,a)`\endlink (or \link GeneralizedMap::sew `sew<3>(2,b)`\endlink ...  or \link GeneralizedMap::sew `sew<3>(8,h)`\endlink). Darts (1,a), ..., (8,h) are linked together by \f$ \alpha_3\f$. The two 2-cells <I>c1</I>={1,...,8} and <I>c2</I>={a,...,h} are merged after the sew into the 2-cell {1,...,8,a,...,h}. We are in the case where the two attributes are non `nullptr`, thus the first one is kept, and all the darts of <I>c2</I> are associated with the first attribute.
+\cgalFigureEnd
+
+The \link GeneralizedMap::sew `sew<i>(dh1,dh2)`\endlink method consists mainly to link two by two several darts by \f$ \alpha_i\f$. This operation is possible only if there is a bijection <I>f</I> between all the darts of the orbit <I>D1</I>=\f$ \langle{}\f$\f$ \alpha_1\f$,...,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,...,\f$ \alpha_d\f$\f$ \rangle{}\f$(<I>d1</I>) and <I>D2</I>=\f$ \langle{}\f$\f$ \alpha_1\f$,...,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,..., \f$ \alpha_d\f$\f$ \rangle{}\f$(<I>d2</I>) satisfying: <I>f</I>(<I>d1</I>)=<I>d2</I>, and for all <I>e</I> \f$ \in \f$ <I>D1</I>,  for all <I>j</I> \f$ \in \f$ {1,..., i-2,i+2,...,<I>d</I>}, <I>f</I>(\f$ \alpha_j\f$(<I>e</I>))=\f$ \alpha_j^{-1}\f$(<I>f</I>(<I>e</I>)). Intuitively, this condition ensures the validity of the generalized map by verifying that condition discussed in Section \ref ssecgenmapvalidity "Generalized Map Properties" will be satisfied after the operation. This condition can be tested by using the method \link GeneralizedMap::is_sewable `is_sewable<i>(dh1,dh2)`\endlink. For example, the function \link GeneralizedMap::is_sewable `is_sewable<3>`\endlink would return `false` if we tried to 3-sew a triangular facet with a quad facet. Note that given two darts <I>d1</I> and <I>d2</I>, if there is such a bijection, it is uniquely defined. So giving the two darts as arguments of the \link GeneralizedMap::sew `sew<i>`\endlink is enough to retrieve all the pairs of darts to link.  If such a bijection exists, the \link GeneralizedMap::sew `sew<i>(dh1,dh2)`\endlink operation consists only in linking by \f$ \alpha_i\f$ each couple of darts <I>d3</I> and <I>d4</I> such that <I>d3</I>=<I>f</I>(<I>d4</I>).
+
+In addition, the sew operation updates the associations between darts and non void attributes in order to guarantee that all the darts belonging to a given cell are associated with the same attribute (which is a condition of generalized map validity). For each couple of <I>j</I>-cells <I>c1</I> and <I>c2</I> that are merged into one <I>j</I>-cell during the sew, we have to update the two associated attributes <I>attr1</I> and <I>attr2</I>. If both are `nullptr`, there is nothing to do. If one is `nullptr` and the other not, we only associate the non `nullptr` attribute to all the darts of the resulting cell. When the two attributes are non `nullptr`, we first apply functor \link CellAttribute::On_merge `On_merge`\endlink on the two attributes <I>attr1</I> and <I>attr2</I> (see Section \ref ssecattributesgmap "Cell Attributes"). Then, we associate the attribute <I>attr1</I> to all darts of the resulting <I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from the generalized map.
+
+Note that when the two attributes are non `nullptr`, the first one is kept. But user can customize this behavior in order to update the information contained in the attributes according to its needs. For that, we can define a specific functor, and use it as template argument for \link CellAttribute::On_merge `On_merge`\endlink parameter of the `Cell_attribute` definition. This functor can for example copy the information of the second attribute in the information of the first one to make as if the second attribute is kept.
+
+For example, in \cgalFigureRef{fig_gmap_example_3d_sew}, we want to 3-sew the two initial volumes. \link GeneralizedMap::sew `sew<3>(1,a)`\endlink links by \f$ \alpha_3\f$ the pairs of darts (1,a), ..., (8,g), thus the generalized map obtained is valid. 2-attributes are updated so that all the darts belonging to the 2-cell containing dart 1 become associated to the same 2-attribute after the operation.
+
+Similarly, \link GeneralizedMap::unsew `unsew<i>(dh0)`\endlink operation unlinks \f$ \alpha_i\f$ for all the darts in the orbit  \f$ \langle{}\f$\f$ \alpha_1\f$,..., \f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,...,\f$ \alpha_d\f$\f$ \rangle{}\f$(<I>d0</I>),  and thus guarantees to obtain a valid generalized map. This operation is possible for any non <I>i</I>-free dart.
+
+As for the sew operations, attributes are updated to guarantee that two darts belonging to two different <I>j</I>-cells are associated to two different <I>j</I>-attributes. If the unsew operation splits a <I>j</I>-cell <I>c</I> in two <I>j</I>-cells <I>c1</I> and <I>c2</I>, and if <I>c</I> is associated to a <I>j</I>-attribute <I>attr1</I>, then this attribute is duplicated into <I>attr2</I>, and all the darts belonging to <I>c2</I> are associated with this new attribute. Finally, we call the functor \link CellAttribute::On_split `On_split`\endlink on the two attributes <I>attr1</I> and <I>attr2</I> (see Section \ref ssecattributesgmap "Cell Attributes").
+
+Let us consider the generalized map given in \cgalFigureRef{fig_gmap_example_3d_sew} (Right). If we call \link GeneralizedMap::unsew `unsew<3>(1)`\endlink, we obtain the generalized map in \cgalFigureRef{fig_gmap_example_3d_sew} (Left) (except for the color of the attribute associated to the 2-cell {a,...,g} which would be <TT>#00ff00</TT>). The \link GeneralizedMap::unsew `unsew<3>`\endlink operation has duplicated the 2-attribute associated to the initial 2-cell {1,...,8,a,...,g} since this 2-cell is split in two after the unsew operation.
+
+\cgalAdvancedBegin
+If one wants to modify a generalized map <I>manually</I>, it is  possible to switch off the updating between darts and attributes by calling \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to call \link GeneralizedMap::sew `sew<i>(dh1,dh2)`\endlink and \link GeneralizedMap::unsew `unsew<i>(dh0)`\endlink. In these cases, the generalized map obtained may be no longer valid due to incorrect associations between darts and attributes. A call later to \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink will correct the invalid non void attributes.
+
+In \cgalFigureRef{fig_gmap_example_3d_sew} (Left), if we call \link GeneralizedMap::sew `sew<3>(1,5)`\endlink, the resulting generalized map is similar to the generalized map of \cgalFigureRef{fig_gmap_example_3d_sew} (Right) (we have linked by \f$ \alpha_3\f$ the pairs of darts (1,a), ..., (8,g), but associations between darts and attributes are not valid. Indeed, we have kept the four initial attributes and all the associations between darts and attributes, thus two darts belonging to the same 2-cell (for example darts 1 and a) are associated with two different attributes.
+
+We can also use the \link GeneralizedMap::link_alpha `link_alpha<i>(dh1,dh2)`\endlink which links `d1` and `d2` by \f$ \alpha_i\f$ without modifying the other links.  Association between darts and attributes are only modified for darts `d1` and `d2`, and similarly as for \link GeneralizedMap::sew `sew<i>`\endlink, this updating can be avoided by calling \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to call \link GeneralizedMap::link_alpha `link_alpha<i>(dh1,dh2)`\endlink. Lastly, we can use \link GeneralizedMap::unlink_alpha `unlink_alpha<i>(dh0)`\endlink to unlink `d0` for \f$ \alpha_i\f$. In this last case, there is no modification of association between darts and attributes.
+
+In \cgalFigureRef{fig_gmap_example_3d_sew} (Left), if we call \link GeneralizedMap::link_alpha `link_alpha<3>(1,a)`\endlink, in the resulting generalized map we have now \f$ \alpha_3\f$(1)=a and \f$ \alpha_3\f$(a)=1. This generalized map is no longer valid (for example dart 2 is 3-free and we should have \f$ \alpha_3\f$(2)=b).
+\cgalAdvancedEnd
+
+Sewing operations can be used in order to build a non-orientable generalized map. Let us consider the 2D generalized map representing a square given in \cgalFigureRef{fig_gmap_sew_non_orientable} (Left). Two opposite edges of the square can be identified by using the \link GeneralizedMap::sew `sew<2>`\endlink operation. But there are two possibilities to make this identification. The first one, shown in \cgalFigureRef{fig_gmap_sew_non_orientable} (Middle), creates an annulus which is thus orientable. The second one, shown in \cgalFigureRef{fig_gmap_sew_non_orientable} (Right), creates a Möbius strip which is thus non-orientable. The choice of the two darts for the sew operation is thus crucial. See the example \ref  ssecexample2DGMNO "A non orientable 2D Generalized Map".
+
+\cgalFigureBegin{fig_gmap_sew_non_orientable,gmap_sew_non_orientable.svg}
+Illustration of the use of the 2-sew operation to construct a non-orientable generalized map. Left: A 2D generalized map <I>M</I> representing a square (one side colored in orange, the other side in green). Middle: the generalized map obtained from <I>M</I> after \link GeneralizedMap::sew `sew<2>(1,3)`\endlink. This map is orientable and corresponds to an annulus. Right: the generalized map obtained from <I>M</I> after \link GeneralizedMap::sew `sew<2>(1,4)`\endlink. This map is non-orientable and corresponds to a Möbius strip.
+\cgalFigureEnd
+
+\subsection ssecoperationsgmap Removal and Insertion Operations
+
+The following high level operations are defined. All these methods ensure that given a valid generalized map and a possible operation, the modified generalized map is also valid.
+
+The first one is `gm`.\link GenericMap::remove_cell `remove_cell<i>(dh0)`\endlink which modifies the generalized map to remove the <I>i</I>-cell containing dart `d0`, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>. This operation is possible  if <I>i</I>=<I>d</I> or if the given <I>i</I>-cell is incident to at most two <I>(i+1)</I>-cells which can be tested thanks to `gm.`\link GenericMap::is_removable `is_removable<i>(dh0)`\endlink. If the removed <I>i</I>-cell was incident to two different <I>(i+1)</I>-cells, these two cells are merged into one <I>(i+1)</I>-cell. In this case, the \link CellAttribute::On_merge `On_merge`\endlink functor is called if two <I>(i+1)</I>-attributes are associated to the two <I>(i+1)</I>-cells. If the <I>i</I>-cell is associated with a non void attribute, it is removed from the generalized map (see three examples on \cgalFigureRef{fig_gmap_insert_vertex}, \cgalFigureRef{fig_gmap_insert_edge} and \cgalFigureRef{fig_gmap_insert_facet}).
+
+
+\cgalFigureBegin{fig_gmap_insert_vertex,gmap_insert_vertex.svg}
+Example of \link GenericMap::insert_cell_0_in_cell_1 `insert_cell_0_in_cell_1`\endlink and \link GenericMap::remove_cell `remove_cell<0>`\endlink operations. Left: Initial generalized map. Right: After the insertion of a 0-cell in the 1-cell containing dart `d1`. Now if we remove the 0-cell containing dart `d2`, we obtain the initial generalized map.
+\cgalFigureEnd
+
+The inverse operation of the removal is the insertion operation. Several versions exist, sharing a common principle. They consist in adding a new <I>i</I>-cell <em>inside</em> an existing <I>j</I>-cell, <I>i</I> \f$ < \f$<I>j</I>, by splitting the <I>j</I>-cell into several <I>j</I>-cells. Contrary to `remove_cell<i>`, is it not possible to define a unique `insert_cell_i_in_cell_j<i,j>` function because parameters are different depending on `i` and `j`.
+
+`gm.`\link GenericMap::insert_cell_0_in_cell_1 `insert_cell_0_in_cell_1(dh0)`\endlink adds a 0-cell in the 1-cell containing dart `d0`. The 1-cell is split in two. This operation is possible if `d0` \f$ \in \f$ \link GenericMap::darts `gm.darts()`\endlink (see example on \cgalFigureRef{fig_gmap_insert_vertex}).
+
+`gm.`\link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2(dh0)`\endlink adds a 0-cell in the 2-cell containing dart `d0`. The 2-cell is split in triangles, one for each initial edge of the facet. This operation is possible if `d0` \f$ \in \f$ \link GenericMap::darts `gm.darts()`\endlink (see example on \cgalFigureRef{fig_gmap_triangulation}).
+
+\cgalFigureBegin{fig_gmap_triangulation,gmap_triangulation.svg}
+Example of \link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink operation.
+\cgalFigureEnd
+
+`gm.`\link GenericMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2(dh1,dh2)`\endlink adds a 1-cell in the 2-cell containing darts `d1` and `d2`, between the two 0-cells containing darts `d1` and `d2`. The 2-cell is split in two. This operation is possible if <I>d1</I> \f$ \in \f$ \f$ \langle{}\f$\f$ \alpha_0, \alpha_1\f$\f$ \rangle{}\f$(<I>d2</I>) which can be tested thanks to `gm.`\link GenericMap::is_insertable_cell_1_in_cell_2 `is_insertable_cell_1_in_cell_2(dh1,dh2)`\endlink. In the example on \cgalFigureRef{fig_gmap_insert_edge}, it is possible to insert an edge between darts <I>d2</I> and <I>d3</I>, but it is not possible to insert an edge between <I>d1</I> and <I>d3</I>.
+
+\cgalFigureBegin{fig_gmap_insert_edge,gmap_insert_edge.svg}
+Example of \link GenericMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2`\endlink and \link GenericMap::remove_cell `remove_cell<1>`\endlink operations. Left: Initial generalized map. Right: After the insertion of two 1-cells: a first one between the two 0-cells containing darts `d2` and `d3`, and a second one incident to the 0-cell containing dart `d1`. Now if we remove the two 1-cells containing darts `d4` and `d5`, we obtain the initial generalized map.
+\cgalFigureEnd
+
+`gm.`\link GenericMap::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2(dh0)`\endlink adds a 1-cell in the 2-cell containing dart `d0`, the 1-cell being attached by only one of its vertex to the 0-cell containing dart `d0`.  This operation is possible if `d0` \f$ \in \f$ \link GenericMap::darts `gm.darts()`\endlink.
+
+`gm.`\link GenericMap::insert_cell_2_in_cell_3 `insert_cell_2_in_cell_3(itbegin,itend)`\endlink adds a 2-cell in the 3-cell containing all the darts between `itbegin` and `itend`, along the path of 1-cells containing darts in [`itbegin`,`itend`). The 3-cell is split in two. This operation is possible if all the  darts in [`itbegin`,`itend`) form a closed path inside a same 3-cell  which can be tested thanks to `gm.`\link GenericMap::is_insertable_cell_2_in_cell_3 `is_insertable_cell_2_in_cell_3(itbegin,itend)`\endlink (see example on \cgalFigureRef{fig_gmap_insert_facet}).
+
+\cgalFigureBegin{fig_gmap_insert_facet,gmap_insert_facet.svg}
+Example of \link GenericMap::insert_cell_2_in_cell_3 `insert_cell_2_in_cell_3`\endlink and \link GenericMap::remove_cell `remove_cell<2>`\endlink operations.  Left: Initial generalized map. Right: After the insertion of a 2-cell along the path of 1-cells containing respectively `d1,d2,d3,d4`. Now if we remove the 2-cell containing dart `d5`, we obtain the initial generalized map.
+\cgalFigureEnd
+
+As the sew operation, insertion operations could create non-orientable generalized map. This is for example the case if we start from the 3D generalized map given in \cgalFigureRef{fig_gmap_insert_edge} (Left) and insert an edge not between darts `d2` and `d3` but between darts `d2` and \f$ \alpha_1\f$(`d3`).
+
+Some examples of use of these operations are given in Section \ref ssecexempleoperationsgmap "High Level Operations".
+
+\cgalAdvancedBegin
+If \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future insertion or removal operations will not update non void attributes. These attributes will be updated later by the call to \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink. This can be useful to speed up an algorithm which uses several successive insertion and removal operations. See example \ref ssecAttributesManagement "Automatic attributes management".
+\cgalAdvancedEnd
+
+\section Generalized_mapExamples Examples
+
+\subsection ssecexample3DGM A 3D Generalized Map
+
+In this example, a 3-dimensional generalized map is constructed. Two combinatorial tetrahedra are created, then the numbers of cells of the generalized map are displayed, and the validity of the generalized map is checked. Then, we illustrate the use of ranges to iterate over specific darts. The first loop enumerates all the darts of the first tetrahedron by using the range \link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range<0,1,2>`\endlink, and the second loop enumerates all the darts of the facet containing dart `dh2` by using the range \link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range<0,1>`\endlink.
+
+\cgalExample{Generalized_map/gmap_3_simple_example.cpp}
+
+The output is:
+\verbatim
+#Darts=48, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #ccs=2, orientable=true, valid=1
+Number of darts of the first tetrahedron: 24
+Number of darts of the face incident to d1: 6
+\endverbatim
+
+which gives the number of darts of the generalized map, the numbers of different cells, the number of connected components, a Boolean showing if the generalized map is orientable or not and finally a Boolean showing the validity of the generalized map (a tetrahedron is made up of 48 darts because there are 12 darts per facet and there are 4 facets).
+
+Note the creation in the for loops of the two instances of \link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range`\endlink::`const_iterator`: `it` is the current iterator, and `itend` an iterator to the end of the range. Having `itend` avoids calling \link GenericMap::darts_of_orbit `gm.darts_of_orbit<0,1,2>(dh1)`\endlink`.end()` again and again as in the following example (which is a bad solution):
+
+\code{.cpp}
+
+for (GMap_3::Dart_of_orbit_range<0,1,2>::const_iterator
+     it(gm.darts_of_orbit<0,1,2>(dh1).begin());
+     it!=gm.darts_of_orbit<0,1,2>(dh1).end()); ++it)
+{...}
+
+\endcode
+
+\subsection ssecexample2DGMNO A non orientable 2D Generalized Map
+
+In this example, a square is constructed in a 2-dimensional generalized map. Then two darts belonging to two opposite edges of the square are 2-sewn. Since they darts do not belong to the same orientation of the initial square, this creates a torsion and thus leads to a non orientable generalized map which represents a Möbius strip (cf. \cgalFigureRef{fig_gmap_sew_non_orientable} (Right)).
+
+The output is:
+\verbatim
+#Darts=8, #0-cells=2, #1-cells=3, #2-cells=1, #ccs=1, orientable=false, valid=1
+\endverbatim
+
+showing that the generalized map is non orientable.
+
+\cgalExample{Generalized_map/gmap_2_moebius.cpp}
+
+\subsection Generalized_mapHighLevelOperations High Level Operations
+
+\anchor ssecexempleoperationsgmap
+
+This example shows some uses of high level operations. First we create a combinatorial hexahedron, the generalized map obtained is shown in \cgalFigureRef{fig_gmap_example_insertions} (Left). Then we insert two 1-cells along two opposite 2-cells of the hexahedron. The generalized map obtained is shown in \cgalFigureRef{fig_gmap_example_insertions} (Middle). Finally, we insert a 2-cell in the diagonal of the hexahedron in order to split it into two parts. We obtain the generalized map shown in \cgalFigureRef{fig_gmap_example_insertions} (Right). We display the characteristics of the generalized map and check its validity.
+
+The second part of this example removes the inserted elements. First we remove the inserted 2-cell, then the two inserted 1-cells. We get back the initial combinatorial hexahedron, which is verified by displaying once again the characteristics of the generalized map.
+
+\cgalExample{Generalized_map/gmap_3_operations.cpp}
+
+The output is:
+\verbatim
+#Darts=72, #0-cells=8, #1-cells=14, #2-cells=9, #3-cells=2, #ccs=1, orientable=true, valid=1
+#Darts=48, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, orientable=true, valid=1
+\endverbatim
+
+The first line gives the characteristics of the generalized map after all the insertions (the generalized map drawn in \cgalFigureRef{fig_gmap_example_insertions} (Right)). There are two 3-cells (since the combinatorial hexahedron was split in two by the 2-cell insertion), nine 2-cells (since two 2-cells of the original hexahedron were split in two by the two 1-cell insertions, and a new 2-cell was created during the 2-cell insertion), fourteen 1-cells (since there are two new 1-cells created by the 1-cell insertion) while the number of 0-cells remains unchanged.
+
+The second line is the result after the removal operations. We retrieve the original combinatorial hexahedron since we have removed all the inserted elements.
+
+\cgalFigureBegin{fig_gmap_example_insertions,gmap_example_insertions.svg}
+Example of high level operations. Left: Initial 3D generalized map after the creation of the generalized hexahedron. Middle: Generalized map obtained after the two 1-cell insertions. The two 2-cells were split in two. Right: Generalized map obtained after the 2-cell insertion. The 3-cell was split in two.
+\cgalFigureEnd
+
+\subsection Generalized_mapA4DGeneralizedMap A 4D Generalized Map
+
+In this example, a 4-dimensional generalized map is used. Two tetrahedral cells are created and sewn by \f$ \alpha_4\f$. Then the numbers of cells of the generalized map are displayed, and its validity is checked.
+
+By looking at these numbers of cells, we can see that the 4D generalized map contains only one 3-cell. Indeed, the \link GeneralizedMap::sew `sew<4>`\endlink operation has identified by pairs all the darts of the two 3-cells by definition of the sew operation (see Section \ref sseclinkdarts_gmap "Sewing Orbits and Linking Darts") which, in 4D, links by \f$ \alpha_3\f$ all the darts in \f$ \langle{}\f$\f$ \alpha_1\f$,\f$ \alpha_2\f$\f$ \rangle{}\f$(<I>d1</I>) and in  \f$ \langle{}\f$\f$ \alpha_1\f$,\f$ \alpha_2\f$\f$ \rangle{}\f$(<I>d2</I>). The situation is similar (but in higher dimension) to the configuration where we have two triangles in a 3D generalized map, and you use  \link GeneralizedMap::sew `sew<3>`\endlink between these two triangles. The two triangles are identified since all their darts are linked by \f$ \alpha_3\f$, thus we obtain a 3D generalized map containing only one 3-cell. Note that this 3-cell is unbounded since the darts of the two triangles are all 2-free. In the 4D case, the 4-cell is unbounded since all its darts are 3-free.
+
+In this example, we also illustrate how to use the basic methods to build <em>by hand</em> some specific configuration in a generalized map. In fact, these functions are already present in the package: function `make_triangle(gm)` is equivalent to \link GenericMap::make_combinatorial_polygon() `gm.make_combinatorial_polygon(3)`\endlink and `make_tetrahedron(gm)` is equivalent to \link GenericMap::make_combinatorial_tetrahedron `gm.make_combinatorial_tetrahedron()`\endlink. If we want to create a 4D simplex, we must create five 3D simplexes, and sew them correctly two by two by \f$ \alpha_3\f$ (and so on if you want to create higher dimensional generalized map).
+
+\cgalExample{Generalized_map/gmap_4_simple_example.cpp}
+
+The output is:
+\verbatim
+#Darts=48, #0-cells=4, #1-cells=6, #2-cells=4, #3-cells=1, #4-cells=2, #ccs=1, orientable=true, valid=1
+\endverbatim
+
+\subsection ssecgenmapwithcolor Generalized Map With Attributes
+
+In the following example, we illustrate how to specify the 2-attributes in a 3D generalized map. For that, we define our own item class using \link Cell_attribute `Cell_attribute<GMap,int,Tag_true,Sum_functor,Divide_by_two_functor>`\endlink as attributes which contain an `int` and which are associated to 2-cells of the generalized map.
+
+Functors `Sum_functor` and `Divide_by_two_functor` define a custom behavior: when two attributes `ca1` and `ca2` are merged into `ca1`, the value of `ca1` is the sum of the two initial values. When an attribute `ca1` is split in the two attributes `ca1` and `ca2`, the value of each attribute is half of the first value.
+
+\cgalExample{Generalized_map/gmap_3_with_colored_facets.cpp}
+
+The output is:
+\verbatim
+20; 7; 7; 7; 7; 7; 13; 13; 13; 13; 13;
+2; 7; 7; 7; 7; 7; 10; 13; 13; 13; 13; 13; 5; 2;
+#Darts=128, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, orientable=true, valid=1
+\endverbatim
+
+Before the `gm.`\link GeneralizedMap::sew `sew<3>`\endlink, each 2-cell of the first cube is associated with an attribute having 7 as value, and each 2-cell of the second cube with an attribute having 13 as value. During the `gm.`\link GeneralizedMap::sew `sew<3>`\endlink, two 2-cells are merged, thus the functor `Sum_functor` is called on the two associated 2-attributes, and the value of the new 2-cell is the sum of the two previous one: 20.
+
+Then we call \link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink on a dart which belong to this 2-cell. This method splits the existing 2-cell in <I>k</I> 2-cells, <I>k</I> being the number of 1-cells of the initial 2-cell (4 in this example). These splits are made consecutively, thus for the first split, we create a new attribute as copy of the initial one and call functor `Divide_by_two_functor` on these two attributes: the value of each attribute is thus 20/2=10. For the second split, the value of each attribute is thus 10/2=5, and for the last split the value of each attribute is thus 5/2=2 (remember that information contained in 2-attributes in an `int`). At the end, we obtain five 2-attributes with 7 as value, five 2-attributes with 13 as value, and four 2-attributes having respectively 2, 2, 5 and 10 as values.
+
+\subsection ssecgenmapdynamicattibute Use of Dynamic Onmerge and Onsplit Functors
+
+In the following example, we show an example of use of dynamic onmerge and onsplit functor. We define our 3D generalized map with 2-attributes. Then we create two hexahedra and create all the 2-attributes, having their info initialized to 1.
+
+Step 2 defines the onsplit and onmerge dynamic functors. We can see here that with this mechanism, functors can store data member. This is the case in the example for `Split_functor` which stores a reference to the generalized map.
+
+The next operations will call these functors when 2-cells are split or merged. The \link GeneralizedMap::sew `sew<3>`\endlink operation calls 1 onmerge as two faces are identified; the \link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink operation calls 3 onsplit as one face is split in 4.
+
+Lastly we remove the dynamic onmerge functor (step 7). This is done by initializing the fonctor to a default boost::function. After this initialization, no dynamic merge functor is called when two faces are merged.
+
+\cgalExample{Generalized_map/gmap_3_dynamic_onmerge.cpp}
+
+
+\section sec_definition_gmap Mathematical Definitions
+
+The definition of generalized map in any dimension is given in \cgalCite{cgal:l-tmbrc-91}, \cgalCite{l-ndgcm-94}. See also the book \cgalCite{cgal:dl-cmeds-14} which regroups many definitions, operations and algorithms about combinatorial and generalized maps.
+
+An <I>involution</I> on a finite set <I>E</I> is a mapping <I>f</I> from <I>E</I> to <I>E</I> which is bijective and equal to its inverse. Thus \f$ \forall \f$ <I>e</I> \f$ \in \f$ <I>E</I>, we have <I>f</I>(<I>e</I>) = \f$ f^{-1}\f$(<I>e</I>) and <I>f</I>(<I>f</I>(<I>e</I>))=<I>e</I>.
+
+Let <I>d</I>\f$ \geq\f$ 0. A <I>d</I>-dimensional generalized map (or <I>d</I>-Gmap) is a (d+1)-tuple <I>G</I>=(<I>D</I>,\f$ \alpha_0\f$,...,\f$ \alpha_d\f$) where:
+<OL>
+<LI><I>D</I> is a finite set of darts;
+<LI>\f$ \forall \f$ <I>i</I>, 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>, \f$ \alpha_i \f$ is an involution on <I>D</I>;
+<LI>\anchor gmapcondcomposition \f$ \forall \f$ <I>i</I>: 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>-2, \f$ \forall \f$ <I>j</I>: 2 \f$ \leq \f$ <I>j</I> \f$ \leq \f$ <I>d</I>, <I>i</I>+2 \f$ \leq \f$ <I>j</I>, \f$ \alpha_i \f$ \f$ \circ \f$ \f$ \alpha_j\f$ is an involution.
+</OL>
+
+A <I>d</I>-dimensional generalized map represents a subdivision of an orientable or non-orientable <I>d</I>-dimensional quasi-manifold. A dart is an abstract element which is only required to define involutions. The last line of the definition fixes constraints which guarantee the topological validity of the represented object, i.e., the fact that it is a quasi-manifold. This definition allows us to verify the validity of a given generalized map by checking if each item of the definition is satisfied.
+
+Given a set of involutions <I>S</I>=\f$\{f_1\f$,..., \f$ f_k\}\f$, we denote by \f$ \langle{}\f$ <I>S</I> \f$ \rangle{}\f$ the <I>permutation group</I> generated by \f$\{f_1\f$,..., \f$ f_k\}\f$ and whose group operation is the composition of involutions. The orbit \f$ \langle{}\f$\f$ f_1\f$,..., \f$ f_k\f$\f$ \rangle{}\f$(<I>a</I>)  is the set of darts which can be obtained from <I>a</I> by elements of \f$ \langle{}\f$ <I>S</I> \f$ \rangle{}\f$: \f$ \langle{}\f$\f$ f_1\f$,..., \f$ f_k\f$\f$ \rangle{}\f$(<I>a</I>)=\f$\{ \phi\f$(<I>a</I>)\f$ |\f$\f$ \phi\f$\f$ \in \f$ \f$ \langle{}\f$<I>S</I>\f$ \rangle{}\}\f$.
+
+Let <I>d0</I> \f$ \in \f$ <I>D</I> be a dart. Given <I>i</I>, 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>, the <I>i</I>-cell containing <I>d0</I> is \f$ \langle{}\f$\f$ \alpha_0\f$,...,\f$ \alpha_{i-1}\f$,\f$ \alpha_{i+1}\f$,...,\f$ \alpha_d\f$\f$ \rangle{}\f$(<I>d0</I>).
+
+\section Generalized_mapDesign Design and Implementation History
+
+The code of this package followed the code of Combinatorial maps and was inspired by Moka, a 3D topological modeler that uses 3D generalized maps (<A HREF="http://moka-modeller.sourceforge.net/">http://moka-modeller.sourceforge.net/</A>).
+
+*/
+} /* namespace CGAL */

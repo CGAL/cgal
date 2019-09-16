@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_SURFACE_MESHER_TYPES_GENERATORS_H
 #define CGAL_SURFACE_MESHER_TYPES_GENERATORS_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 

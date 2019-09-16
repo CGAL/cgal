@@ -148,13 +148,13 @@ void print_results(std::ostream& stream, const std::string& filename, const Benc
 }
 
 template <class Traits>
-typename Traits::Barycentric_coordinate random_coordinate(CGAL::Random& rand)
+typename Traits::Barycentric_coordinates random_coordinates(CGAL::Random& rand)
 {
   typedef typename Traits::FT FT;
-  typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
+  typename Traits::Construct_barycentric_coordinates construct_barycentric_coordinates;
   FT u = rand.uniform_real(FT(0.0), FT(1.0));
   FT v = rand.uniform_real(FT(0.0), FT(1.0) - u);
-  return construct_barycentric_coordinate(u, v, FT(1.0) - u - v);
+  return construct_barycentric_coordinates(u, v, FT(1.0) - u - v);
 }
 
 template <class Kernel>
@@ -162,7 +162,7 @@ void run_benchmarks(CGAL::Random& rand, size_t numTrials, size_t numSources, siz
 {
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef typename Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef typename Surface_mesh_shortest_path::Face_location Face_location;
   typedef typename Surface_mesh_shortest_path::FT FT;
@@ -211,7 +211,7 @@ void run_benchmarks(CGAL::Random& rand, size_t numTrials, size_t numSources, siz
     while (sourcePoints.size() < numSources)
     {
       face_descriptor sourceFace = allFaces[rand.get_int(0, allFaces.size())];
-      Barycentric_coordinate sourceLocation = random_coordinate<Traits>(rand);
+      Barycentric_coordinates sourceLocation = random_coordinate<Traits>(rand);
       sourcePoints.push_back(Face_location(sourceFace, sourceLocation));
     }
 
@@ -233,7 +233,7 @@ void run_benchmarks(CGAL::Random& rand, size_t numTrials, size_t numSources, siz
     for (size_t j = 0; j < numQueries; ++j)
     {
       face_descriptor sourceFace = allFaces[rand.get_int(0, allFaces.size())];
-      Barycentric_coordinate sourceLocation = random_coordinate<Traits>(rand);
+      Barycentric_coordinates sourceLocation = random_coordinate<Traits>(rand);
       
       timer.start();
       FT distance = shortestPaths.shortest_distance_to_source_points(sourceFace, sourceLocation).first;

@@ -10,4 +10,6 @@ Bounding_volumes
 Principal_component_analysis
 Jet_fitting_3
 Solver_interface
-
+Shape_detection
+Advancing_front_surface_reconstruction
+BGL

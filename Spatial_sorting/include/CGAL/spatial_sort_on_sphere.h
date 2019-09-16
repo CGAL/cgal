@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Olivier Devillers
 //               : Pedro Machado Manhaes de Castro
@@ -42,9 +43,12 @@ void spatial_sort_on_sphere (
                    double ratio)
 {
   typedef Hilbert_sort_on_sphere_3<Kernel, Policy> Sort;
+    typedef std::iterator_traits<RandomAccessIterator> ITraits;
+    typedef typename ITraits::difference_type Diff_t;
+
     boost::rand48 random;
-    boost::random_number_generator<boost::rand48> rng(random);
-    std::random_shuffle(begin,end, rng);
+    boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+    CGAL::cpp98::random_shuffle(begin,end, rng);
 
             if (threshold_hilbert==0) threshold_hilbert=4;
             if (threshold_multiscale==0) threshold_multiscale=16;

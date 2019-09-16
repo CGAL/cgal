@@ -13,13 +13,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_TEST_SLS_TRAITS_TYPES_H
 #define CGAL_TEST_SLS_TRAITS_TYPES_H
 
-#include <CGAL/basic.h>
+
 #include <iostream>
 #include <cassert>
 

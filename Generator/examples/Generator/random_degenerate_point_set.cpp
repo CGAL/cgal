@@ -20,7 +20,7 @@ int main() {
 
     // Create 600 points within a disc of radius 150.
     Random_points_in_disc_2<Point,Creator> g( 150.0);
-    CGAL::cpp11::copy_n( g, 600, std::back_inserter(points));
+    std::copy_n( g, 600, std::back_inserter(points));
 
     // Create 200 points from a 15 x 15 grid.
     points_on_square_grid_2( 250.0, 200, std::back_inserter(points),Creator());
@@ -40,7 +40,7 @@ int main() {
 
     // Use a random permutation to hide the creation history
     // of the point set.
-    std::random_shuffle( points.begin(), points.end(), get_default_random());
+    CGAL::cpp98::random_shuffle( points.begin(), points.end());
 
     // Check range of values.
     for ( Vector::iterator i = points.begin(); i != points.end(); i++){

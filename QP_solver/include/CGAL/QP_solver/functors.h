@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr 
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_QP_SOLVER_FUNCTORS_H
 #define CGAL_QP_SOLVER_FUNCTORS_H
+
+#include <CGAL/license/QP_solver.h>
+
 
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/function_objects.h>
@@ -61,12 +65,12 @@ class Map_with_default;
 // QP_vector_accessor
 // -------------------
 template < class VectorIt, bool check_lower, bool check_upper >
-class QP_vector_accessor : public std::unary_function<
+class QP_vector_accessor : public CGAL::cpp98::unary_function<
     int, typename std::iterator_traits<VectorIt>::value_type > {
 
   public:
     typedef typename 
-        std::unary_function<
+        CGAL::cpp98::unary_function<
            int, 
            typename std::iterator_traits<VectorIt>::value_type >::result_type
     result_type;
@@ -175,12 +179,12 @@ private:
 // Value_by_basic_index
 // --------------------
 template < class RndAccIt >
-class Value_by_basic_index : public std::unary_function<
+class Value_by_basic_index : public CGAL::cpp98::unary_function<
     int, typename std::iterator_traits<RndAccIt>::value_type > {
 
   public:
     typedef typename
-    std::unary_function<
+    CGAL::cpp98::unary_function<
       int, typename std::iterator_traits
          <RndAccIt>::value_type >::result_type
     result_type;
@@ -258,6 +262,15 @@ public:
   Map_with_default (const Map* m, const mapped_type& v = mapped_type())
     : map(m), d(v)
   {}
+
+  // Added as workaround for VC2017 with /arch:AVX to fix
+  // https://cgal.geometryfactory.com/CGAL/testsuite/CGAL-4.14-I-95/QP_solver/TestReport_afabri_x64_Cygwin-Windows10_MSVC2017-Release-64bits.gz
+  Map_with_default& operator=(const Map_with_default& other)
+  {
+    map = other.map;
+    d = other.d;
+    return *this;
+  }
   
   // operator()
   const mapped_type& operator() (key_type n) const {

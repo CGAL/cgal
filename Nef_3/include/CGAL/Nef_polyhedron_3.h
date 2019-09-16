@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
@@ -24,6 +25,10 @@
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_NEF_POLYHEDRON_3_H
 #define CGAL_NEF_POLYHEDRON_3_H
+
+#include <CGAL/license/Nef_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
@@ -53,6 +58,8 @@
 #include <CGAL/Nef_3/shell_to_nef_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/assertions.h>
 
@@ -157,8 +164,8 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
   typedef typename Kernel::Segment_3                  Segment_3;
   typedef typename Kernel::Aff_transformation_3       Aff_transformation_3;
 
-#ifndef _MSC_VER
-  // VC++ has a problem to digest the following typedef,
+#if (! defined _MSC_VER) || (_MSC_VER >= 1900)
+  // VC++ < 2017 has a problem to digest the following typedef,
   // and does not need the using statements -- AF
   // The left and right part of these typedefs have the same name. It is
   // very important to qualify the left part with the CGAL:: namespace, no
@@ -630,7 +637,7 @@ protected:
                            const FaceIndexMap& fim,
                            typename boost::disable_if <
                               boost::is_same<FaceIndexMap, bool>
-                           >::type* = NULL // disambiguate with another constructor
+                           >::type* = nullptr // disambiguate with another constructor
   )
   {
     CGAL_NEF_TRACEN("construction from PolygonMesh");
@@ -1411,6 +1418,10 @@ protected:
   intersection(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
     /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/ {
     CGAL_NEF_TRACEN(" intersection between nef3 "<<&*this<<" and "<<&N1);
+    if (is_empty()) return *this;
+    if (N1.is_empty()) return N1;
+    if (is_space()) return N1;
+    if (N1.is_space()) return *this;
     AND _and;
     SNC_structure rsnc;
     Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
@@ -1435,6 +1446,10 @@ protected:
   join(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
   /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/ { 
     CGAL_NEF_TRACEN(" join between nef3 "<<&*this<<" and "<<&N1);
+    if (is_empty()) return N1;
+    if (N1.is_empty()) return *this;
+    if (is_space()) return *this;
+    if (N1.is_space()) return N1;
     OR _or;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, OR> tests_impl;
     SNC_structure rsnc;
@@ -1448,6 +1463,10 @@ protected:
   difference(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
   /*{\Mop returns |\Mvar| $-$ |N1|. }*/ { 
     CGAL_NEF_TRACEN(" difference between nef3 "<<&*this<<" and "<<&N1);
+    if (is_empty()) return *this;
+    if (N1.is_empty()) return *this;
+    if (is_space()) return N1.complement();
+    if (N1.is_space()) return Nef_polyhedron_3(EMPTY);
     DIFF _diff;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, DIFF> tests_impl;
     SNC_structure rsnc;
@@ -1462,6 +1481,10 @@ protected:
   /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$ 
           |T - \Mvar|. }*/ {
     CGAL_NEF_TRACEN(" symmetic difference between nef3 "<<&*this<<" and "<<&N1);
+    if (is_empty()) return N1;
+    if (N1.is_empty()) return *this;
+    if (is_space()) return Nef_polyhedron_3(EMPTY);
+    if (N1.is_space()) return Nef_polyhedron_3(EMPTY);
     XOR _xor;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, XOR> tests_impl;
     SNC_structure rsnc;
@@ -1929,7 +1952,7 @@ protected:
   interior. The point |p| is contained in the set represented by |\Mvar| if 
   |\Mvar.contains(h)| is true.}*/ {
     CGAL_NEF_TRACEN( "locating point...");
-    CGAL_assertion( pl() != NULL);
+    CGAL_assertion( pl() != nullptr);
 
     Object_handle o = pl()->locate(p);
     
@@ -2139,5 +2162,7 @@ extract_boundary() {
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_NEF_POLYHEDRON_3_H

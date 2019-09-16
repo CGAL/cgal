@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>GeometryFactory</author>
+ <class>Delaunay_triangulation_2</class>
+ <widget class="QMainWindow" name="Hyperbolic_Delaunay_triangulation_2">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CGAL Hyperbolic Delaunay Triangulation</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../../GraphicsView/demo/resources/CGAL.qrc">
+    <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout">
+    <item row="0" column="0">
+     <widget class="QGraphicsView" name="graphicsView">
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="transformationAnchor">
+       <enum>QGraphicsView::NoAnchor</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="fileToolBar">
+   <property name="windowTitle">
+    <string>File Tools</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionClear"/>
+   <addaction name="actionLoadPoints"/>
+   <addaction name="actionSavePoints"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>Visualization Tools</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionInsertPoint"/>
+   <addaction name="actionMovingPoint"/>
+   <addaction name="actionCircumcenter"/>
+   <addaction name="actionShowConflictZone"/>
+   <addaction name="separator"/>
+   <addaction name="actionShowDelaunay"/>
+   <addaction name="actionShowVoronoi"/>
+   <addaction name="separator"/>
+   <addaction name="actionRecenter"/>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionClear"/>
+    <addaction name="actionLoadPoints"/>
+    <addaction name="actionSavePoints"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionInsertRandomPoints"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionInsertPoint"/>
+    <addaction name="actionG"/>
+    <addaction name="actionG2"/>
+    <addaction name="actionG4"/>
+    <addaction name="actionG8"/>
+    <addaction name="actionG16"/>
+    <addaction name="actionMovingPoint"/>
+    <addaction name="actionCircumcenter"/>
+    <addaction name="actionShowConflictZone"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowDelaunay"/>
+    <addaction name="actionShowVoronoi"/>
+    <addaction name="separator"/>
+    <addaction name="actionRecenter"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuTools"/>
+  </widget>
+  <action name="actionAbout">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionAboutCGAL">
+   <property name="text">
+    <string>About &amp;CGAL</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionInsertRandomPoints">
+   <property name="text">
+    <string>&amp;Insert random points</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionMovingPoint">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/icons/moving_point.png</normaloff>:/cgal/Actions/icons/moving_point.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Simulate insertion</string>
+   </property>
+   <property name="toolTip">
+    <string comment="The comment">Simulate Insertion</string>
+   </property>
+   <property name="statusTip">
+    <string comment="and its comment">Move mouse with left button pressed to see where point would be inserted</string>
+   </property>
+   <property name="whatsThis">
+    <string comment="what">whats this</string>
+   </property>
+  </action>
+  <action name="actionInsertPoint">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../GraphicsView/demo/icons/Input.qrc">
+     <normaloff>:/cgal/Input/inputPoint.png</normaloff>:/cgal/Input/inputPoint.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Insert Point</string>
+   </property>
+   <property name="toolTip">
+    <string>Insert Point</string>
+   </property>
+   <property name="statusTip">
+    <string>Left: Insert vtx</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="icon">
+    <iconset resource="../../../GraphicsView/demo/icons/File.qrc">
+     <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Clear</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionShowVoronoi">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../GraphicsView/demo/icons/Triangulation_2.qrc">
+     <normaloff>:/cgal/Triangulation_2/Voronoi_diagram_2.png</normaloff>:/cgal/Triangulation_2/Voronoi_diagram_2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Voronoi Diagram</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionShowDelaunay">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/icons/triangulation.png</normaloff>:/cgal/Actions/icons/triangulation.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Hyperbolic &amp;Delaunay Triangulation</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionLoadPoints">
+   <property name="icon">
+    <iconset resource="../../../GraphicsView/demo/icons/File.qrc">
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Load Points...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionSavePoints">
+   <property name="icon">
+    <iconset resource="../../../GraphicsView/demo/icons/File.qrc">
+     <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save Points...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionCircumcenter">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/icons/circumcenter.png</normaloff>:/cgal/Actions/icons/circumcenter.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Circumcenter</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw circumcenter</string>
+   </property>
+  </action>
+  <action name="actionRecenter">
+   <property name="icon">
+    <iconset resource="../../../GraphicsView/demo/icons/Input.qrc">
+     <normaloff>:/cgal/Input/zoom-best-fit</normaloff>:/cgal/Input/zoom-best-fit</iconset>
+   </property>
+   <property name="text">
+    <string>Re&amp;center the viewport</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionShowConflictZone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/icons/conflict_zone.png</normaloff>:/cgal/Actions/icons/conflict_zone.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Conflict Zone</string>
+   </property>
+  </action>
+  <action name="actionG">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Hyperbolic_translations_2.qrc">
+     <normaloff>:/cgal/Actions/icons/G.png</normaloff>:/cgal/Actions/icons/G.png</iconset>
+   </property>
+   <property name="text">
+    <string>G</string>
+   </property>
+  </action>
+  <action name="actionG2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Hyperbolic_translations_2.qrc">
+     <normaloff>:/cgal/Actions/icons/G2.png</normaloff>:/cgal/Actions/icons/G2.png</iconset>
+   </property>
+   <property name="text">
+    <string>G2</string>
+   </property>
+  </action>
+  <action name="actionG4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Hyperbolic_translations_2.qrc">
+     <normaloff>:/cgal/Actions/icons/G4.png</normaloff>:/cgal/Actions/icons/G4.png</iconset>
+   </property>
+   <property name="text">
+    <string>G4</string>
+   </property>
+  </action>
+  <action name="actionG8">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Hyperbolic_translations_2.qrc">
+     <normaloff>:/cgal/Actions/icons/G8.png</normaloff>:/cgal/Actions/icons/G8.png</iconset>
+   </property>
+   <property name="text">
+    <string>G8</string>
+   </property>
+  </action>
+  <action name="actionG16">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Hyperbolic_translations_2.qrc">
+     <normaloff>:/cgal/Actions/icons/G16.png</normaloff>:/cgal/Actions/icons/G16.png</iconset>
+   </property>
+   <property name="text">
+    <string>G16</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../../GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.qrc"/>
+  <include location="../../../GraphicsView/demo/icons/File.qrc"/>
+  <include location="Hyperbolic_translations_2.qrc"/>
+  <include location="../../../GraphicsView/demo/resources/CGAL.qrc"/>
+  <include location="../../../GraphicsView/demo/icons/Triangulation_2.qrc"/>
+  <include location="../../../GraphicsView/demo/icons/Input.qrc"/>
+ </resources>
+ <connections/>
+</ui>

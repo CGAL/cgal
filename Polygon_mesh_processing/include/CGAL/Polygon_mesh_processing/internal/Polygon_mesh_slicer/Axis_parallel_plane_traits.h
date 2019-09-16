@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     :  Sebastien Loriot
@@ -28,6 +29,9 @@
 
 #ifndef CGAL_INTERNAL_POLYGON_MESH_SLICER_AXIS_PARALLEL_PLANE_TRAITS_H
 #define CGAL_INTERNAL_POLYGON_MESH_SLICER_AXIS_PARALLEL_PLANE_TRAITS_H
+
+#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
+
 
 namespace CGAL{
 namespace Polygon_mesh_slicer_{
@@ -119,10 +123,10 @@ public:
       const typename Traits::Point_3& src = m_source_3(s);
       const typename Traits::Point_3& tgt = m_target_3(s);
 
-      cpp11::array<FT,3> src_coords = {{ *m_coord_iterator(src),
+      std::array<FT,3> src_coords = {{ *m_coord_iterator(src),
                                          *(m_coord_iterator(src)+1),
                                          *(m_coord_iterator(src)+2) }};
-      cpp11::array<FT,3> tgt_coords = {{ *m_coord_iterator(tgt),
+      std::array<FT,3> tgt_coords = {{ *m_coord_iterator(tgt),
                                          *(m_coord_iterator(tgt)+1),
                                          *(m_coord_iterator(tgt)+2) }};
 

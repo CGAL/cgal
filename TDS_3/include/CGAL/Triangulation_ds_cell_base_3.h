@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_TRIANGULATION_DS_CELL_BASE_3_H
 #define CGAL_TRIANGULATION_DS_CELL_BASE_3_H
+
+#include <CGAL/license/TDS_3.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
@@ -53,7 +57,6 @@ public:
 
   Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                                Vertex_handle v2, Vertex_handle v3)
-#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : V{v0, v1, v2, v3}
   {
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
@@ -61,32 +64,12 @@ public:
     mark2 = -1;
 #endif
   }
-#else
-  {
-    set_vertices(v0, v1, v2, v3);
-#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
-    mark = -1;
-    mark2 = -1;
-#endif
-  }
-#endif
 
   Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                                Vertex_handle v2, Vertex_handle v3,
                                Cell_handle   n0, Cell_handle   n1,
                                Cell_handle   n2, Cell_handle   n3)
-#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : N{n0, n1, n2, n3}, V{v0, v1, v2, v3} {}
-#else
-  {
-    set_neighbors(n0, n1, n2, n3);
-    set_vertices(v0, v1, v2, v3);
-#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
-    mark = -1;
-    mark2 = -1;
-#endif
-  }
-#endif
 
   // ACCESS FUNCTIONS
 
@@ -160,7 +143,7 @@ public:
   void set_neighbor(int i, Cell_handle n)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3);
-    CGAL_triangulation_precondition( this != &*n );
+    CGAL_triangulation_precondition( this != n.operator->() );
     N[i] = n;
   }
 
@@ -203,19 +186,6 @@ public:
   // to add their own purpose checking
   bool is_valid(bool = false, int = 0) const
   { return true; }
-
-  // This is here in the *ds*_cell_base to ease its use as default
-  // template parameter, so that the .dual() functions of Delaunay_3
-  // still work.
-  template < typename Traits >
-  typename Traits::Point_3
-  circumcenter(const Traits& gt) const
-  {
-    return gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
-                                                this->vertex(1)->point(),
-                                                this->vertex(2)->point(),
-                                                this->vertex(3)->point());
-  }
 
   // For use by Compact_container.
   void * for_compact_container() const { return N[0].for_compact_container(); }

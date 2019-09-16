@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -26,6 +27,7 @@
 
 #ifndef CGAL_CKVA_SUBDIVISION_2_H
 #define CGAL_CKVA_SUBDIVISION_2_H 1
+
 #warning this file is considered obsolete
 
 #include <vector>
@@ -241,7 +243,7 @@ private:
 template <class NT, class Algebraic_curve_2_>
 void Subdivision_2<NT, Algebraic_curve_2_>::draw(QPainter *painter_)
 {
-	if(!initialized||!polynomial_set||painter_==NULL)
+	if(!initialized||!polynomial_set||painter_==nullptr)
 		return;
 	painter = painter_;
 	//std::cout << " P(x(y)): " << coeffs_x << std::endl; 

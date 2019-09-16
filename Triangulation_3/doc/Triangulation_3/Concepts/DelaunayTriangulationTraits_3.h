@@ -12,11 +12,11 @@ predicates and constructions on these objects.
 
 \cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended) 
 \cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel` (recommended for Voronoi) 
-\cgalHasModel CGAL::Filtered_kernel 
-\cgalHasModel CGAL::Cartesian 
-\cgalHasModel CGAL::Simple_cartesian 
-\cgalHasModel CGAL::Homogeneous 
-\cgalHasModel CGAL::Simple_homogeneous 
+\cgalHasModel `CGAL::Filtered_kernel` 
+\cgalHasModel `CGAL::Cartesian` 
+\cgalHasModel `CGAL::Simple_cartesian` 
+\cgalHasModel `CGAL::Homogeneous` 
+\cgalHasModel `CGAL::Simple_homogeneous` 
 
 In addition to the requirements described for the traits class of 
 `CGAL::Triangulation_3`, the geometric traits class of a 
@@ -80,6 +80,29 @@ It is only needed when using the `Fast_location` policy or the
 */ 
 typedef unspecified_type Compare_distance_3; 
 
+
+/// @}
+
+/// \name
+/// When `is_Gabriel` functions are used, the traits class must
+/// in addition provide the following predicate object:
+/// @{
+
+/*!
+A predicate object that must provide the function operators
+
+`Bounded_side operator()(Point_3 p, Point_3 q, Point_3 t)`,
+
+which returns the position of the point `t` relative to the sphere
+that has `pq` as its diameter,
+
+`Bounded_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 t)`,
+
+which returns the position of the point `t` relative to the sphere
+passing through `p, q`, and `r` and whose center is in the
+plane defined by these three points.
+*/
+typedef unspecified_type Side_of_bounded_sphere_3;
 
 /// @}
 
@@ -165,8 +188,6 @@ When using the `Fast_location` policy or the `CGAL::Delaunay_triangulation_3::ne
 
 */ 
 Compare_distance_3 compare_distance_3_object(); 
-
-
 
 /// @}
 

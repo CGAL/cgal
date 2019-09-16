@@ -14,7 +14,7 @@
 
 #include <CGAL/Timer.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Subdivision_method_3.h>
+#include <CGAL/subdivision_method_3.h>
 
 #include <QOpenGLShader>
 #include <QDebug>
@@ -490,7 +490,7 @@ void Scene::compute_texture(int i, int j,Color_ramp pos_ramp ,Color_ramp neg_ram
 
 }
 
-void Scene::attrib_buffers(QGLViewer* viewer)
+void Scene::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     double mat[16];
@@ -589,12 +589,13 @@ void Scene::update_bbox()
               << " facets)" << std::endl;
 }
 
-void Scene::draw(QGLViewer* viewer)
+void Scene::draw(CGAL::QGLViewer* viewer)
 {       
     if(!gl_init)
         initGL();
     if(!are_buffers_initialized)
         initialize_buffers();
+    gl->glEnable(GL_DEPTH_TEST);
     QColor color;
     QMatrix4x4 fMatrix;
     fMatrix.setToIdentity();
@@ -612,7 +613,6 @@ void Scene::draw(QGLViewer* viewer)
     }
     if(m_view_points && pos_points.size()>0)
     {
-        gl->glPointSize(2.0f);
         vao[0].bind();
         attrib_buffers(viewer);
         rendering_program.bind();
@@ -663,7 +663,7 @@ void Scene::draw(QGLViewer* viewer)
 
             //cutting_segments
             fMatrix.setToIdentity();
-            ::glLineWidth(2.0f);
+            gl->glLineWidth(2.0f);
             vao[3].bind();
             attrib_buffers(viewer);
             rendering_program.bind();
@@ -671,7 +671,7 @@ void Scene::draw(QGLViewer* viewer)
             rendering_program.setUniformValue(colorLocation, color);
             rendering_program.setUniformValue(fLocation, fMatrix);
             gl->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_cut_segments.size()/3));
-            ::glLineWidth(1.0f);
+            gl->glLineWidth(1.0f);
             rendering_program.release();
             vao[3].release();
             //grid
@@ -690,8 +690,8 @@ void Scene::draw(QGLViewer* viewer)
             //cutting_plane
             // for(int i=0; i< 16 ; i++)
             //     fMatrix.data()[i] =  m_frame->matrix()[i];
-            ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-            ::glEnable(GL_BLEND);
+            gl->glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+            gl->glEnable(GL_BLEND);
             vao[4].bind();
             attrib_buffers(viewer);
             rendering_program.bind();
@@ -699,7 +699,7 @@ void Scene::draw(QGLViewer* viewer)
             rendering_program.setUniformValue(colorLocation, color);
             rendering_program.setUniformValue(fLocation, fMatrix);
             gl->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_plane.size()/3));
-            ::glDisable(GL_BLEND);
+            gl->glDisable(GL_BLEND);
             rendering_program.release();
             vao[4].release();
 
@@ -765,8 +765,8 @@ Plane Scene::random_plane(const CGAL::Bbox_3& bbox)
 
 Plane Scene::frame_plane() const
 {
-    const qglviewer::Vec& pos = m_frame->position();
-    const qglviewer::Vec& n = m_frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+    const CGAL::qglviewer::Vec& pos = m_frame->position();
+    const CGAL::qglviewer::Vec& n = m_frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
 
     return Plane(n[0], n[1],  n[2], - n * pos);
 }
@@ -1297,7 +1297,7 @@ void Scene::refine_loop()
         return;
     }
     std::cout << "Loop subdivision...";
-    CGAL::Subdivision_method_3::Loop_subdivision(*m_pPolyhedron, 1);
+    CGAL::Subdivision_method_3::Loop_subdivision(*m_pPolyhedron);
     std::cout << "done (" << m_pPolyhedron->size_of_facets() << " facets)" << std::endl;
 
     clear_internal_data();

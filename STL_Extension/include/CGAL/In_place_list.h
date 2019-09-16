@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -26,6 +27,8 @@
 
 #ifndef CGAL_IN_PLACE_LIST_H
 #define CGAL_IN_PLACE_LIST_H 1
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <cstddef>
@@ -55,6 +58,10 @@ public:
 template < class T >
 class In_place_list_base {
 public:
+  In_place_list_base()
+    : next_link(nullptr), prev_link(nullptr)
+  {}
+
   T* next_link;        // forward pointer
   T* prev_link;        // backwards pointer
   //friend  class internal::In_place_list_iterator<T, Alloc>;
@@ -235,13 +242,15 @@ public:
   // Note: the standard requires the following types to be equivalent
   // to T, T*, const T*, T&, const T&, size_t, and ptrdiff_t, respectively.
   // So we don't pass these types to the iterators explicitly.
-  typedef typename Allocator::value_type          value_type;
-  typedef typename Allocator::pointer             pointer;
-  typedef typename Allocator::const_pointer       const_pointer;
-  typedef typename Allocator::reference           reference;
-  typedef typename Allocator::const_reference     const_reference;
-  typedef typename Allocator::size_type           size_type;
-  typedef typename Allocator::difference_type     difference_type;
+
+  typedef typename std::allocator_traits<Allocator>::value_type            value_type;
+  typedef typename std::allocator_traits<Allocator>::pointer               pointer;
+  typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
+  typedef typename std::allocator_traits<Allocator>::size_type             size_type;
+  typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
+
+  typedef value_type&       reference;
+  typedef const value_type& const_reference;
 
   typedef internal::In_place_list_iterator<T, Alloc> iterator;
   typedef internal::In_place_list_const_iterator<T, Alloc> const_iterator;
@@ -270,7 +279,7 @@ protected:
   pointer get_node( const T& t) {
     pointer p = allocator.allocate(1);
 #ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
-    allocator.construct(p, t);
+    std::allocator_traits<Allocator>::construct(allocator, p, t);
 #else
     new (p) value_type(t);
 #endif
@@ -278,8 +287,8 @@ protected:
   }
   void put_node( pointer p) {
 #ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY  
-    allocator.destroy( p);
-#else 
+    std::allocator_traits<Allocator>::destroy(allocator, p);
+#else // not CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
    p->~value_type();
 #endif
     allocator.deallocate( p, 1);
@@ -782,7 +791,7 @@ namespace std {
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> >
-    : public std::unary_function<CGAL::internal::In_place_list_iterator<T, Alloc>, std::size_t>  {
+    : public CGAL::cpp98::unary_function<CGAL::internal::In_place_list_iterator<T, Alloc>, std::size_t>  {
 
     std::size_t operator()(const CGAL::internal::In_place_list_iterator<T, Alloc>& i) const
     {
@@ -793,7 +802,7 @@ namespace std {
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_const_iterator<T, Alloc> >
-    : public std::unary_function<CGAL::internal::In_place_list_const_iterator<T, Alloc>, std::size_t> {
+    : public CGAL::cpp98::unary_function<CGAL::internal::In_place_list_const_iterator<T, Alloc>, std::size_t> {
 
     std::size_t operator()(const CGAL::internal::In_place_list_const_iterator<T, Alloc>& i) const
     {
@@ -808,5 +817,7 @@ namespace std {
 #endif
 
 } // namespace std
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IN_PLACE_LIST_H

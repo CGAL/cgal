@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_ConeBasedSpanners
 
 \cgalAutoToc
-\author Weisheng Si and Quincy Tse
+\author Weisheng Si, Quincy Tse and Frédérik Paradis
 
 \section sec_CBS_Introduction Introduction
 
@@ -57,6 +57,11 @@ in \cgalFigureRef{f-theta}, vertex \f$u\f$'s <i>closest</i> vertex will be verte
 \cgalFigureBegin{f-theta, BisectorInThetaGraph.jpg}
 The bisector in a cone of a Theta Graph.
 \cgalFigureEnd
+
+Variants of Yao graph and Theta graph are Half Yao graph and Half Theta graph. The difference
+is that only the edges in the even or odd cones are drawn. For instance, in the even case of
+the Theta graph with \f$k=6\f$, only the edges in the cones \f$c(u, 0)\f$, \f$c(u, 2)\f$, and
+\f$c(u, 4)\f$ are drawn.
 
 \section sec_CBS_design Software Design
 This package provides the following template functors:
@@ -131,7 +136,7 @@ Similar to the functor `Compute_cone_boundaries_2`, the template parameter `Trai
 determines whether the Theta graph will constructed exactly or inexactly.
 The template parameter `Graph` specifies the graph type used to store the constructed graph.
 Our package requires it to be
-<a href="http://www.boost.org/libs/graph/doc/adjacency_list.html">boost::adjacency_list</a>
+<a href="https://www.boost.org/libs/graph/doc/adjacency_list.html">boost::adjacency_list</a>
 from the Boost Graph Library (BGL).
 The advantage of using `boost::adjacency_list` is that it provides convenience
 to the further processing of the constructed graphs, since BGL includes most common graph algorithms.
@@ -146,7 +151,7 @@ Note that there are seven template parameters for `boost::adjacency_list` in BGL
 of which we require `VertexProperties` to be `Traits::Point_2`,
 and other parameters can be chosen freely.
 Also note that, here we pass `Point_2` directly as
-<a href="http://www.boost.org/doc/libs/release/libs/graph/doc/bundles.html"><i>bundled properties</i></a>
+<a href="https://www.boost.org/doc/libs/release/libs/graph/doc/bundles.html"><i>bundled properties</i></a>
 to `boost::adjacency_list`, because this makes our implementation more straightforward than using a property map.
 If you want more properties other than `Point_2` for vertices, you can still
 construct external properties by using property maps.
@@ -270,7 +275,7 @@ does not need `CGAL::sqrt()`.
 
 Also note that when using g++ or clang++ compilers with the c++11 standard,
 using a directed graph will cause a compilation error due to a
-<a href="http://lists.boost.org/Archives/boost/2016/05/229458.php">bug</a> in the boost library.
+<a href="https://lists.boost.org/Archives/boost/2016/05/229458.php">bug</a> in the boost library.
 As a workaround you can use a undirected graph instead.
 
 After compiling `theta_io.cpp`, execute the executable `theta_io` to construct a Theta graph with 4 cones
@@ -291,6 +296,33 @@ The following two files will be generated for \gnuplot:
 \cgalFigureBegin{f-t4, t4n20.jpg}
 A directed Theta graph of 20 vertices with \f$k=4\f$.
 \cgalFigureEnd
+
+\subsection CBS_half Constructing Half Theta or Yao Graphs
+
+By default, the functors `Construct_theta_graph_2`
+and `Construct_yao_graph_2` construct full Theta and Yao graphs. They also provide a way
+to compute Half Theta and Yao graphs. As mentioned in Section \ref sec_CBS_mydefinitions,
+only the edges for the odd or even cones are added to the graph in an Half Theta and Yao
+graph. To do so, the constructor of the functors provides a parameter of type
+`Cones_selected` which is a enumeration that contains the following possible values:
+`ALL_CONES`, `EVEN_CONES` and `ODD_CONES`. Users should include the
+`CGAL/Cone_spanners_enum_2.h` header file to use these enum values. The following are the
+examples on the functor constructions for Half Theta and Yao Graphs.
+
+
+\code{.cpp}
+// Construct an Half Theta graph with the edges only in the even cones.
+CGAL::Construct_theta_graph_2<Kernel, Graph> theta(k, Direction_2(1,0), CGAL::EVEN_CONES);
+
+// Construct an Half Theta graph with the edges only in the odd cones.
+CGAL::Construct_theta_graph_2<Kernel, Graph> theta(k, Direction_2(1,0), CGAL::ODD_CONES);
+
+// Construct an Half Yao graph with the edges only in the even cones.
+CGAL::Construct_yao_graph_2<Kernel, Graph> yao(k, Direction_2(1,0), CGAL::EVEN_CONES);
+
+// Construct an Half Yao graph with the edges only in the odd cones.
+CGAL::Construct_yao_graph_2<Kernel, Graph> yao(k, Direction_2(1,0), CGAL::ODD_CONES);
+\endcode
 
 \subsection CBS_diff_exact Exact Construction Can Make a Difference
 

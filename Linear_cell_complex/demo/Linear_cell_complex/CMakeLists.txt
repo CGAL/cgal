@@ -2,17 +2,21 @@
 # This is the CMake script for compiling a CGAL application.
 # cmake ../ -DCMAKE_BUILD_TYPE=Debug
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project (Linear_cell_complex_Demo)
+
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
+endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-
-cmake_minimum_required(VERSION 2.8.11)
-if(POLICY CMP0043)
-  cmake_policy(SET CMP0043 OLD)
-endif()
 
 ## To add expensive tests
 # add_definitions("-DCGAL_CHECK_EXPENSIVE")
@@ -32,25 +36,17 @@ add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 
 ##################
 find_package(CGAL COMPONENTS Qt5)
-include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
-find_package(OpenGL)
-find_package(QGLViewer)
+if ( NOT (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND ) )
 
-if ( NOT (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND
-      OPENGL_FOUND AND QGLVIEWER_FOUND) )
-
-  MESSAGE(STATUS "NOTICE: This demo requires CGAL, QGLViewer, OpenGL "
+  MESSAGE(STATUS "NOTICE: This demo requires CGAL, "
     "and Qt5, and will not be compiled.")
 
 else()
 
-add_definitions(-DQT_NO_KEYWORDS)
-
-include_directories(${QGLVIEWER_INCLUDE_DIR})
-include_directories(BEFORE . ../../include/)
+add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 
 # ui file, created wih Qt Designer
 qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
@@ -59,21 +55,18 @@ qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
 # qrc files (resources files, that contain icons, at least)
 qt5_add_resources (CGAL_Qt5_RESOURCE_FILES ./Linear_cell_complex_3.qrc)
 
-
 add_executable(Linear_cell_complex_3_demo
   Linear_cell_complex_3_demo.cpp MainWindow.cpp
   Viewer.cpp Linear_cell_complex_3_subdivision.cpp
   Linear_cell_complex_pqq_subdivision.cpp
+  typedefs.h import_moka.h
   ${uis} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-qt5_use_modules(Linear_cell_complex_3_demo Xml Script OpenGL Svg)
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
-target_link_libraries(Linear_cell_complex_3_demo ${CGAL_LIBRARIES}
-                                                 ${CGAL_3RD_PARTY_LIBRARIES})
-target_link_libraries(Linear_cell_complex_3_demo ${QT_LIBRARIES}
-                                                 ${QGLVIEWER_LIBRARIES} )
-target_link_libraries(Linear_cell_complex_3_demo ${OPENGL_gl_LIBRARY}
-                                                 ${OPENGL_glu_LIBRARY} )
+target_link_libraries(Linear_cell_complex_3_demo PUBLIC
+  CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL)
 
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(Linear_cell_complex_3_demo)
 endif()

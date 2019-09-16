@@ -2,26 +2,28 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Triangulation_Examples )
 
-cmake_minimum_required(VERSION 2.8.11)
+
+if(CMAKE_COMPILER_IS_GNUCCX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.4)
+  message(STATUS "NOTICE: this directory requires a version of gcc >= 4.4, and will not be compiled.")
+  return()
+endif()
 
 
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
   
   find_package(Eigen3 3.1.0) 
   if (EIGEN3_FOUND) 
     include( ${EIGEN3_USE_FILE} ) 
-    include_directories (BEFORE "../../include")
 
     create_single_source_cgal_program( "barycentric_subdivision.cpp" )
     create_single_source_cgal_program( "delaunay_triangulation.cpp" )
+    create_single_source_cgal_program( "convex_hull.cpp" )
+    create_single_source_cgal_program( "regular_triangulation.cpp" )
     create_single_source_cgal_program( "triangulation.cpp" )
     create_single_source_cgal_program( "triangulation_data_structure_dynamic.cpp" )
     create_single_source_cgal_program( "triangulation_data_structure_static.cpp" )

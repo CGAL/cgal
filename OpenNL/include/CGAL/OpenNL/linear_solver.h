@@ -33,6 +33,10 @@
  *      - DefaultLinearSolverTraits is now a model of the SparseLinearAlgebraTraits_d concept
  *      - Added SymmetricLinearSolverTraits
  *      - copied Jacobi preconditioner from Graphite 1.9 code
+ *
+ * $URL$
+ * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  */
 
 
@@ -224,9 +228,9 @@ public:
         least_squares_ = false ;
         nb_variables_ = nb_variables ;
         variable_ = new Variable[nb_variables] ;
-        A_ = NULL ;
-        x_ = NULL ;
-        b_ = NULL ;
+        A_ = nullptr ;
+        x_ = nullptr ;
+        b_ = nullptr ;
     }
 
     ~LinearSolver() {
@@ -388,9 +392,9 @@ public:
 
         transition(CONSTRUCTED, SOLVED) ;
 
-        delete A_ ; A_ = NULL ;
-        delete b_ ; b_ = NULL ;
-        delete x_ ; x_ = NULL ;
+        delete A_ ; A_ = nullptr ;
+        delete b_ ; b_ = nullptr ;
+        delete x_ ; x_ = nullptr ;
 
         return success;
     }

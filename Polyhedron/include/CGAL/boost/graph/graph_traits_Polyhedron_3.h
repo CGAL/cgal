@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
@@ -95,6 +96,14 @@ in_degree(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::v
           , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
 {
   return v->vertex_degree();
+}
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::degree_size_type
+degree(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::face_descriptor f
+       , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
+{
+  return f->facet_degree();
 }
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
@@ -444,13 +453,22 @@ num_faces(const CGAL::Polyhedron_3<Gt,I,HDS,A>& p)
   return p.size_of_facets();
 }
 
-
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+void
+reserve(CGAL::Polyhedron_3<Gt,I,HDS,A>& p,
+        typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertices_size_type nv,
+        typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edges_size_type ne,
+        typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::faces_size_type nf)
+{
+  p.reserve(nv, 2*ne, nf);
+}
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-bool is_valid(const CGAL::Polyhedron_3<Gt,I,HDS,A>& p, bool verbose = false)
+void normalize_border(CGAL::Polyhedron_3<Gt,I,HDS,A>& p)
 {
-  return p.is_valid(verbose);
+  p.normalize_border();
 }
+  
 } // namespace CGAL
 
 

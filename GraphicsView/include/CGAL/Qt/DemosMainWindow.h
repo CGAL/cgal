@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_QT_DEMOS_MAIN_WINDOW_H
 #define CGAL_QT_DEMOS_MAIN_WINDOW_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <iostream>
 #include <QVector>
@@ -31,6 +35,7 @@
 #include <CGAL/auto_link/Qt.h>
 #include <CGAL/export/Qt.h>
 #include <CGAL/Qt/resources.h>
+#include <QSettings>
 
 // forward declaration
 class QLabel;
@@ -121,6 +126,7 @@ protected:
   QAction* recentFilesSeparator;
   unsigned int maxNumRecentFiles;
   QVector<QAction*> recentFileActs;
+  QSettings settings;
 }; // end class DemosMainWindow
 
 } // namespace Qt
@@ -133,3 +139,4 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(CGAL::Qt::DemosMainWindow::Options)
 #endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_QT_DEMOS_MAIN_WINDOW_H
+

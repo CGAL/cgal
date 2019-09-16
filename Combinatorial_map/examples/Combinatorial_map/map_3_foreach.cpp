@@ -8,7 +8,7 @@ typedef CMap_3::Dart_handle        Dart_handle;
 
 // Functor used to display all the vertices of a given volume
 template<class CMap, unsigned int i>
-struct Display_vertices_of_cell : public std::unary_function<CMap, void>
+struct Display_vertices_of_cell : public CGAL::cpp98::unary_function<CMap, void>
 {
   Display_vertices_of_cell(const CMap& acmap) :
     cmap(acmap),
@@ -25,7 +25,7 @@ struct Display_vertices_of_cell : public std::unary_function<CMap, void>
            (cmap.dart_handle(d)).end();
          it!=itend; ++it)
     {
-      std::cout << &*it << "; ";
+      std::cout << cmap.darts().index(it) << "; ";
     }
     std::cout<<std::endl;
   }
@@ -40,7 +40,7 @@ private:
 
 // Functor used to remove a face
 template<class CMap>
-struct Remove_face : public std::unary_function<CMap, void>
+struct Remove_face : public CGAL::cpp98::unary_function<CMap, void>
 {
   Remove_face(CMap& acmap) : cmap(acmap)
   {}
@@ -60,7 +60,7 @@ private:
 
 // Functor allowing to transform a variable into its address.
 template<typename T>
-struct Take_adress : public std::unary_function<T, T*>
+struct Take_address : public CGAL::cpp98::unary_function<T, T*>
 {
   T* operator() (T& t) const
   { return &t; }
@@ -97,14 +97,14 @@ int main()
   std::vector<CMap_3::Dart*> toremove;
 
   // Copy in vector toremove one dart per face
-  std::copy(boost::transform_iterator<Take_adress<CMap_3::Dart>,
+  std::copy(boost::transform_iterator<Take_address<CMap_3::Dart>,
                                       CMap_3::One_dart_per_cell_range<2>::iterator>
             (cmap.one_dart_per_cell<2>().begin(),
-             Take_adress<CMap_3::Dart>()),
-            boost::transform_iterator<Take_adress<CMap_3::Dart>,
+             Take_address<CMap_3::Dart>()),
+            boost::transform_iterator<Take_address<CMap_3::Dart>,
                                       CMap_3::One_dart_per_cell_range<2>::iterator>
             (cmap.one_dart_per_cell<2>().end(),
-             Take_adress<CMap_3::Dart>()),
+             Take_address<CMap_3::Dart>()),
             back_inserter(toremove));
 
   // Remove each face sequentially.

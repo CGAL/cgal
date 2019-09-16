@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgProfilingTools
+\ingroup MiscellanyRef
 
 The class `Profile_counter` provides a way to count the number of times a given 
 line of code is executed during the execution of a program, and print this 
@@ -34,8 +34,7 @@ will print at exit:
 
 */
 
-class Profile_counter {
-public:
+struct Profile_counter {
 
 /// \name Creation 
 /// @{

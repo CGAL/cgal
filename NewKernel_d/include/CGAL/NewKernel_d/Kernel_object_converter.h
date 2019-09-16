@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Marc Glisse
 
@@ -41,25 +42,24 @@ struct Point_converter_help {
 		return cp(conv(i(p,Begin_tag())),conv(i(p,End_tag())));
 	}
 };
-#ifdef CGAL_CXX11
+
 // This doesn't seem so useful, the compiler should be able to handle
 // the iterators just as efficiently.
 template <int d, class K1, class K2>
 struct Point_converter_help<Dimension_tag<d>,K1,K2> {
 	typedef typename Get_type<K1, Point_tag>::type	argument_type;
 	typedef typename Get_type<K2, Point_tag>::type	result_type;
-	template <class C,int...I>
-	result_type help(Indices<I...>, K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
+	template <class C,std::size_t...I>
+	result_type help(std::index_sequence<I...>, K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
 		typename Get_functor<K1, Compute_point_cartesian_coordinate_tag>::type cc(k1);
 		typename Get_functor<K2, Construct_ttag<Point_tag> >::type cp(k2);
 		return cp(conv(cc(p,I))...);
 	}
 	template <class C>
 	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
-		return help(typename N_increasing_indices<d>::type(),k1,k2,conv,p);
+		return help(std::make_index_sequence<d>(),k1,k2,conv,p);
 	}
 };
-#endif
 }
 template <class K1, class K2> struct KO_converter<Point_tag,K1,K2>
 : internal::Point_converter_help<typename K1::Default_ambient_dimension,K1,K2>
@@ -94,6 +94,18 @@ template <class K1, class K2> struct KO_converter<Segment_tag,K1,K2>{
 	}
 };
 
+template <class K1, class K2> struct KO_converter<Iso_box_tag,K1,K2>{
+	typedef typename Get_type<K1, Iso_box_tag>::type	argument_type;
+	typedef typename Get_type<K2, Iso_box_tag>::type	result_type;
+	template <class C>
+	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& s) const {
+		typename Get_functor<K1, Construct_min_vertex_tag>::type f(k1);
+		typename Get_functor<K1, Construct_max_vertex_tag>::type g(k1);
+		typename Get_functor<K2, Construct_ttag<Iso_box_tag> >::type cib(k2);
+		return cib(conv(f(s)),conv(g(s)));
+	}
+};
+
 template <class K1, class K2> struct KO_converter<Hyperplane_tag,K1,K2>{
   typedef typename Get_type<K1, Hyperplane_tag>::type	argument_type;
   typedef typename Get_type<K2, Hyperplane_tag>::type	result_type;
@@ -115,6 +127,18 @@ template <class K1, class K2> struct KO_converter<Sphere_tag,K1,K2>{
       typename Get_functor<K1, Squared_radius_tag>::type sr(k1);
       typename Get_functor<K2, Construct_ttag<Sphere_tag> >::type cs(k2);
       return cs(conv(cos(s)),conv(sr(s)));
+    }
+};
+
+template <class K1, class K2> struct KO_converter<Weighted_point_tag,K1,K2>{
+  typedef typename Get_type<K1, Weighted_point_tag>::type	argument_type;
+  typedef typename Get_type<K2, Weighted_point_tag>::type	result_type;
+  template <class C>
+    result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& s) const {
+      typename Get_functor<K1, Point_drop_weight_tag>::type pdw(k1);
+      typename Get_functor<K1, Point_weight_tag>::type pw(k1);
+      typename Get_functor<K2, Construct_ttag<Weighted_point_tag> >::type cwp(k2);
+      return cwp(conv(pdw(s)),conv(pw(s)));
     }
 };
 

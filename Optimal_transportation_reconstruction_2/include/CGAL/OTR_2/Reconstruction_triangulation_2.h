@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
 #ifndef CGAL_RECONSTRUCTION_TRIANGULATION_2_H
 #define CGAL_RECONSTRUCTION_TRIANGULATION_2_H
+
+#include <CGAL/license/Optimal_transportation_reconstruction_2.h>
+
 
 // local
 #include <CGAL/OTR_2/Sample.h>
@@ -141,7 +145,7 @@ public:
   > MultiIndex;
 
   FT m_factor; // ghost vs solid
-
+  mutable Random rng;
 
 public:
   Reconstruction_triangulation_2(Traits_ traits = Traits_())
@@ -161,7 +165,6 @@ public:
   }
 
   Edge random_finite_edge() const {
-    static CGAL::Random rng;
     std::size_t nbf = Base::number_of_faces();
     int offset = rng.get_int(0, static_cast<int>(nbf - 1));
     Finite_faces_iterator fi = Base::finite_faces_begin();
@@ -370,7 +373,7 @@ public:
     if (sample)
       samples.push_back(sample);
     if (cleanup)
-      vertex->set_sample(NULL);
+      vertex->set_sample(nullptr);
   }
 
   void collect_all_samples(Sample_vector& samples) const {
@@ -397,7 +400,7 @@ public:
     }
     for (Finite_vertices_iterator vi = Base::finite_vertices_begin();
         vi != Base::finite_vertices_end(); ++vi) {
-      vi->set_sample(NULL);
+      vi->set_sample(nullptr);
     }
   }
 
@@ -918,6 +921,22 @@ public:
     return true;
   }
 
+  bool check_validity_test () const
+  {
+    for(Finite_faces_iterator it = Base::finite_faces_begin();
+        it != Base::finite_faces_end(); it++)
+    {
+      typename Traits_::Orientation s
+        = orientation(it->vertex(0)->point(),
+                      it->vertex(1)->point(),
+                      it->vertex(2)->point());
+      if (s != LEFT_TURN)
+        return false;
+    }
+
+    return true;  
+  }
+
   // COLLAPSE //
 
   // (s,a,b) + (s,b,c) -> (s,a,c) + (a,b,c)
@@ -1056,7 +1075,7 @@ public:
         return false;
       }
 
-      FT value = Dbc <= 0 ? 1 : 2*Dbc; // value used if Dbd or Dac are +infinity
+      FT value = Dbc <= 0 ? FT(1) : 2*Dbc; // value used if Dbd or Dac are +infinity
       if ( !is_infinity(Dac) )
       {
         if ( !is_infinity(Dbd))

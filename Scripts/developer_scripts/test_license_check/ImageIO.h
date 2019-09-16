@@ -16,6 +16,8 @@
 // $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/releases/CGAL-4.1-branch/CGALimageIO/include/CGAL/ImageIO.h $
 // $Id: ImageIO.h 67097 2012-01-13 13:36:56Z lrineau $
 //
+// SPDX-License-Identifier: LGPL-3.0+
+//
 
 #ifndef IMAGEIO_H
 #define IMAGEIO_H

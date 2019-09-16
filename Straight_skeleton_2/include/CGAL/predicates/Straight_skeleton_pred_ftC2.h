@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H 
 #define CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H 1
+
+#include <CGAL/license/Straight_skeleton_2.h>
+
 
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 #include <CGAL/Uncertain.h>
@@ -208,11 +212,11 @@ Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > cons
         }
       }
       else{
-        CGAL_STSKEL_TRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existance is indeterminate." ) ;
+        CGAL_STSKEL_TRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existence is indeterminate." ) ;
       }
     }
     else{
-      CGAL_STSKEL_TRAITS_TRACE("\nEvent time overflowed, event existance is indeterminate." ) ;
+      CGAL_STSKEL_TRAITS_TRACE("\nEvent time overflowed, event existence is indeterminate." ) ;
     }
   }
   else

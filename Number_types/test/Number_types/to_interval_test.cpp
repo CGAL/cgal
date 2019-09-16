@@ -1,5 +1,5 @@
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <iostream>
 
 // That one should not be needed in the long term:

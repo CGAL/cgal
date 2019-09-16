@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent Rineau <Laurent.Rineau@geometryfactory.com>
    
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
+
+#include <CGAL/license/GraphicsView.h>
+
 #else
 #define CGAL_INLINE_FUNCTION
 #endif

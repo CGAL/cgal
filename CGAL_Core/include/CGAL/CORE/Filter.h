@@ -33,6 +33,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifndef _CORE_FILTER_H_
@@ -42,15 +43,10 @@
 #include <CGAL/assertions.h>
 #include <CGAL/CORE/Real.h>
 #include <cmath>
+#include <limits>
 
-#if !defined CGAL_CFG_NO_CPP0X_ISFINITE
-  #define CGAL_CORE_finite(x)	std::isfinite(x)
-#elif defined (_MSC_VER) || defined (__MINGW32__) // add support for MinGW
-  #define CGAL_CORE_finite(x)	_finite(x)
-  #define ilogb(x)	(int)_logb(x)
-#else
-  #define CGAL_CORE_finite(x)	finite(x)
-#endif
+#define CGAL_CORE_finite(x)	std::isfinite(x)
+#define CGAL_CORE_ilogb(x)	ilogb(x)
 
 #if defined(sun) || defined(__sun)
   #include <ieeefp.h>
@@ -124,11 +120,11 @@ public:
       ilogb(x) is floor(log_2(|x|)). 
       Also, ilogb(0) = -INT_MAX.  ilogb(NaN) = ilogb(+/-Inf) = INT_MAX */
   extLong lMSB() const {
-    return extLong(ilogb(core_abs(fpVal)-maxAbs*ind*CORE_EPS));
+    return extLong(CGAL_CORE_ilogb(core_abs(fpVal)-maxAbs*ind*CORE_EPS));
   }
   /// upper bound on MSB
   extLong uMSB() const {
-    return extLong(ilogb(core_abs(fpVal)+maxAbs*ind*CORE_EPS));
+    return extLong(CGAL_CORE_ilogb(core_abs(fpVal)+maxAbs*ind*CORE_EPS));
   }
   //@}
 
@@ -180,8 +176,7 @@ public:
 
   /// helper function (to avoid warning under some compilers)
   static double getDoubleInfty() {
-    static double d = DBL_MAX;
-    return 2*d;
+    return std::numeric_limits<double>::infinity();
   }
   //@}
 }; //filteredFp class

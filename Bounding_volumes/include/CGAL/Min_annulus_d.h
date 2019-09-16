@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
 
 #ifndef CGAL_MIN_ANNULUS_D_H
 #define CGAL_MIN_ANNULUS_D_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 #ifdef _MSC_VER
 # pragma warning(push)
@@ -36,8 +40,9 @@
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/functional.hpp>
+#include <CGAL/NT_converter.h>
 
 // here is how it works. We have d+2 variables: 
 // R (big radius), r (small radius), c (center). The problem is
@@ -91,7 +96,7 @@ namespace MA_detail {
 
   // functor for a fixed column of A
   template <class NT, class Iterator>
-  class A_column : public std::unary_function <int, NT>
+  class A_column : public CGAL::cpp98::unary_function <int, NT>
   {
   public:
     typedef NT result_type;
@@ -129,7 +134,7 @@ namespace MA_detail {
   // functor for matrix A
   template <class NT, class Access_coordinate_begin_d,
 	    class Point_iterator >
-  class A_matrix : public std::unary_function
+  class A_matrix : public CGAL::cpp98::unary_function
   <int, boost::transform_iterator <A_column
     <NT, typename Access_coordinate_begin_d::Coordinate_iterator>, 
 				   boost::counting_iterator<int> > >
@@ -163,7 +168,7 @@ namespace MA_detail {
 
   // The functor necessary to realize access to b
   template <class NT>
-  class B_vector : public std::unary_function<int, NT>
+  class B_vector : public CGAL::cpp98::unary_function<int, NT>
   {
   public:
     typedef NT result_type;
@@ -462,7 +467,8 @@ public:
   { CGAL_optimisation_precondition(
 				   is_empty() || tco.access_dimension_d_object()( p) == d);
   ET sqr_d = sqr_dist( p);
-  ET h_p_sqr = da_coord(p)[d] * da_coord(p)[d];
+  ET h_p_sqr(da_coord(p)[d]);
+  h_p_sqr *= h_p_sqr;
   return ( ( sqr_d < h_p_sqr * sqr_i_rad_numer) || 
 	   ( h_p_sqr * sqr_o_rad_numer < sqr_d)); }
     
@@ -619,9 +625,10 @@ private:
       inner_indices.push_back( 0);
       outer_indices.push_back( 0);
       center_coords.resize( d+1);
-      std::copy( da_coord( points[ 0]),
-		 da_coord( points[ 0])+d+1,
-		 center_coords.begin());
+      std::transform( da_coord( points[ 0]),
+		      da_coord( points[ 0])+d+1,
+		      center_coords.begin(),
+		      NT_converter<RT,ET>());
       sqr_i_rad_numer = ET( 0);
       sqr_o_rad_numer = ET( 0);
       sqr_rad_denom   = ET( 1);
@@ -744,7 +751,8 @@ is_valid( bool verbose, int level) const
   // all inner support points on inner boundary?
   Inner_support_point_iterator  i_pt_it = inner_support_points_begin();
   for ( ; i_pt_it != inner_support_points_end(); ++i_pt_it) {
-    ET h_p_sqr = da_coord (*i_pt_it)[d] * da_coord (*i_pt_it)[d];
+    ET h_p_sqr(da_coord (*i_pt_it)[d]);
+    h_p_sqr *= h_p_sqr;
     if ( sqr_dist( *i_pt_it) != h_p_sqr * sqr_i_rad_numer)
       return CGAL::_optimisation_is_valid_fail( verr,
 						"annulus does not have all inner support points on its inner boundary");
@@ -753,7 +761,8 @@ is_valid( bool verbose, int level) const
   // all outer support points on outer boundary?
   Outer_support_point_iterator  o_pt_it = outer_support_points_begin();
   for ( ; o_pt_it != outer_support_points_end(); ++o_pt_it) {
-    ET h_p_sqr = da_coord (*o_pt_it)[d] * da_coord (*o_pt_it)[d];
+    ET h_p_sqr(da_coord (*o_pt_it)[d]);
+    h_p_sqr *= h_p_sqr;
     if ( sqr_dist( *o_pt_it) != h_p_sqr * sqr_o_rad_numer)
       return CGAL::_optimisation_is_valid_fail( verr,
 						"annulus does not have all outer support points on its outer boundary");

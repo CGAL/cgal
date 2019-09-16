@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -21,7 +22,6 @@
 #ifndef CGAL_DELAUNAY_GRAPH_CONCEPT_H
 #define CGAL_DELAUNAY_GRAPH_CONCEPT_H 1
 
-#include <CGAL/basic.h>
 #include <CGAL/iterator.h>
 #include <iostream>
 #include <fstream>

@@ -12,14 +12,16 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "NewTabDialog.h"
 #include "ArrangementDemoWindow.h"
 #include "ui_NewTabDialog.h"
+#include <QButtonGroup>
 
 NewTabDialog::NewTabDialog( QWidget* parent, Qt::WindowFlags f ) :
   QDialog( parent, f ),

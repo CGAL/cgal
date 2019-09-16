@@ -12,12 +12,19 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s) : Ron Wein   <wein_r@yahoo.com>
 //             (based on an old version by Eyal Flato)
 //             Efi Fogel  <efifogel@gmail.com>
 
 #ifndef CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
 #define CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/number_utils.h>
@@ -124,9 +131,9 @@ public:
   ~Small_side_angle_bisector_decomposition_2()
   {
     if (m_own_kernel) {
-      if (m_kernel != NULL) {
+      if (m_kernel != nullptr) {
         delete m_kernel;
-        m_kernel = NULL;
+        m_kernel = nullptr;
       }
       m_own_kernel = false;
     }

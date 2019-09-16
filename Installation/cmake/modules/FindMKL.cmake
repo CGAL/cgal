@@ -15,8 +15,8 @@
 
 include(CheckFunctionExists)
 
-include(CGAL_GeneratorSpecificSettings)
-include(CGAL_Macros)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_GeneratorSpecificSettings.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Macros.cmake)
 
 
 # This macro checks for the existence of the combination of fortran libraries

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -40,7 +41,8 @@ int main()
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Triangulation_vertex_base_with_info_3<CGAL::Color, K>  Vb;
-typedef CGAL::Triangulation_data_structure_3<Vb>                     Tds;
+typedef CGAL::Delaunay_triangulation_cell_base_3<K>                  Cb;
+typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                 Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds>                       Delaunay;
 
 typedef Delaunay::Point Point;
@@ -64,7 +66,7 @@ int main()
   Delaunay::Finite_vertices_iterator vit;
   for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)
     if (T.degree(vit) == 6)
-      vit->info() = CGAL::RED;
+      vit->info() = CGAL::red();
 
   std::cout << "           Visualization of T" << std::endl;
   gv.set_wired(true);

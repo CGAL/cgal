@@ -6,10 +6,10 @@
 #include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
-typedef CGAL::Delaunay_triangulation_3<K> DT;
-typedef K::Point_3 Point_3;
-typedef CGAL::Timer Timer;
-typedef CGAL::Creator_uniform_3<double,Point_3>  Creator;
+typedef CGAL::Delaunay_triangulation_3<K>                    DT;
+typedef DT::Point                                            Point_3;
+typedef CGAL::Timer                                          Timer;
+typedef CGAL::Creator_uniform_3<double,Point_3>              Creator;
 
 int main(int,char** argv)
 {
@@ -19,7 +19,7 @@ int main(int,char** argv)
 
   CGAL::Random rng(0);
   CGAL::Random_points_in_sphere_3<Point_3,Creator> g( 1,rng);
-  CGAL::cpp11::copy_n( g, n, std::back_inserter(points));
+  std::copy_n( g, n, std::back_inserter(points));
 
   Timer timer;
   timer.start();

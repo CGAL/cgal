@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Andreas Fabri
 
@@ -30,8 +31,8 @@ namespace CGAL{
 template <class HDS>
 class Polyhedron_builder_from_STL : public CGAL::Modifier_base<HDS> {
   typedef typename HDS::Vertex::Point Point_3;
-  typedef std::vector<cpp11::array<double, 3> > Points_3;
-  typedef cpp11::array<int,3> Facet;
+  typedef std::vector<std::array<double, 3> > Points_3;
+  typedef std::array<int,3> Facet;
   typedef std::vector<Facet> Surface;
 
   std::istream& is;
@@ -66,7 +67,7 @@ public:
     }
     if(B.error())
       {
-        std::cerr << "An error occured while creating a Polyhedron" << std::endl;
+        std::cerr << "An error occurred while creating a Polyhedron" << std::endl;
         B.rollback();
       }
 

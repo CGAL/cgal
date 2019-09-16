@@ -98,11 +98,7 @@ printed.
 See \cgalFigureRef{Conformexampleconform}
 
 \cgalFigureBegin{Conformexampleconform,example-conform-Delaunay-Gabriel.png}
-Initial triangulation and the corresponding Delaunay and Gabriel triangulation.
-\cgalFigureEnd
-
-\cgalFigureBegin{ConformexampleconformDelaunay,example-conform-Delaunay.png}
-The corresponding conforming Delaunay triangulation.
+From left to right: Initial Delaunay triangulation, the corresponding conforming Delaunay, and the corresponding Gabriel triangulation.
 \cgalFigureEnd
 
 \section secMesh_2_meshes Meshes 

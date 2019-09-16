@@ -8,6 +8,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 
 #include "Scene_c3t3_item.h"
 
@@ -36,7 +37,7 @@ class C3t3_rib_exporter_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "c3t3_rib_exporter_plugin.json")
 
 public:
   C3t3_rib_exporter_plugin();
@@ -47,7 +48,9 @@ public:
   {
     return QList<QAction*>() << actionCreateRib;
   }
-  bool applicable(QAction*)const{return qobject_cast<Scene_c3t3_item*>(scene->item(scene->mainSelectionIndex()));}
+  bool applicable(QAction*)const{
+    Scene_c3t3_item* item = qobject_cast<Scene_c3t3_item*>(scene->item(scene->mainSelectionIndex()));
+    return item && item->is_valid();}
   
 public Q_SLOTS:
   void create_rib();
@@ -55,13 +58,15 @@ public Q_SLOTS:
   void width_changed(int i);
   
 private:
-  typedef Kernel::Point_3   Point_3;
-  typedef Kernel::Vector_3  Vector_3;
-  typedef Kernel::Plane_3   Plane;
-  typedef Kernel::FT        FT;
-  typedef Kernel::Aff_transformation_3 Aff_transformation_3;
+  typedef Tr::Bare_point                    Bare_point;
+  typedef Tr::Weighted_point                Weighted_point;
+
+  typedef Geom_traits::Vector_3             Vector_3;
+  typedef Geom_traits::Plane_3              Plane;
+  typedef Geom_traits::FT                   FT;
+  typedef Geom_traits::Aff_transformation_3 Aff_transformation_3;
   
-  typedef qglviewer::Vec qglVec;
+  typedef CGAL::qglviewer::Vec qglVec;
   
   enum Rib_exporter_mode { CUT=0, MESH, TRIANGULATION };
   
@@ -95,11 +100,11 @@ private:
   void init_point_radius(const C3t3& c3t3);
   void init_parameters();
   
-  Point_3 camera_coordinates(const Point_3& p);
+  Bare_point camera_coordinates(const Bare_point& p);
   void fill_points_and_edges_map(const C3t3& c3t3);
   
-  void add_edge(const Point_3& p, const Point_3& q, const QColor& color);
-  void add_vertex(const Point_3& p, const QColor& color);
+  void add_edge(const Bare_point& p, const Bare_point& q, const QColor& color);
+  void add_vertex(const Bare_point& p, const QColor& color);
   
   void write_header(const std::string& filename, std::ofstream& out);
   
@@ -112,15 +117,15 @@ private:
   void write_cells_intersecting_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
   void write_cells_on_the_positive_side_of_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
   
-  void write_triangle(const Point_3& p, const Point_3& q, const Point_3& r, 
+  void write_triangle(const Bare_point& p, const Bare_point& q, const Bare_point& r,
                       const QColor& color, const QColor& edge_color, std::ofstream& out);
-  void write_tetrahedron (const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s,
+  void write_tetrahedron (const Bare_point& p, const Bare_point& q, const Bare_point& r, const Bare_point& s,
                           const QColor& color, const QColor& edge_color, std::ofstream& out);
   
-  void write_point(const Point_3& p, std::ofstream& out);
-  void write_point_sphere(const Point_3& p, std::ofstream& out);
+  void write_point(const Bare_point& p, std::ofstream& out);
+  void write_point_sphere(const Bare_point& p, std::ofstream& out);
   
-  void write_edge_cylinder(const Point_3& p, const Point_3& q, std::ofstream& out);
+  void write_edge_cylinder(const Bare_point& p, const Bare_point& q, std::ofstream& out);
   
   // Writes data which has been stored during triangle drawing
   void write_edges_flat(std::ofstream& out);
@@ -137,7 +142,6 @@ private:
   QAction* actionCreateRib;
   
   // Viewer
-  Viewer_interface* viewer_;
   
   typedef std::map<C3t3::Surface_patch_index, QColor> Surface_map;
   typedef std::map<C3t3::Subdomain_index, QColor> Subdomain_map;
@@ -145,8 +149,8 @@ private:
   Surface_map surface_map_;
   Subdomain_map subdomain_map_;
   
-  typedef std::map<std::pair<Point_3,Point_3>,QColor> Edge_map;
-  typedef std::map<Point_3,QColor> Vertex_map;
+  typedef std::map<std::pair<Bare_point, Bare_point>,QColor> Edge_map;
+  typedef std::map<Bare_point, QColor> Vertex_map;
   
   Edge_map edges_;
   Vertex_map vertices_;
@@ -166,7 +170,6 @@ private:
 C3t3_rib_exporter_plugin::
 C3t3_rib_exporter_plugin()
   : actionCreateRib(NULL)
-  , viewer_(NULL)
   , zmax_(0)
   , diag_(0)
   , prev_color_(0,0,0)
@@ -190,13 +193,6 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interfa
     actionCreateRib->setProperty("subMenuName", "Tetrahedral Mesh Generation");
     connect(actionCreateRib, SIGNAL(triggered()), this, SLOT(create_rib()));
   }
-  
-  viewer_ = mw->findChild<Viewer_interface*>("viewer");
-  if ( NULL == viewer_ )
-  {
-    std::cerr << "Can't get QGLViewer" << std::endl;
-  }
-  
   init_parameters();
 }
 
@@ -204,7 +200,7 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interfa
 void
 C3t3_rib_exporter_plugin::create_rib()
 {
-  if ( NULL == viewer_ )
+  if ( NULL == Three::activeViewer() )
   {
     std::cerr << "Can't find viewer" << std::endl;
     return;
@@ -238,14 +234,14 @@ C3t3_rib_exporter_plugin::create_rib()
 
     QBitmap bitmap;
     bitmap.clear();
-    viewer_->setMask(bitmap);
+    Three::activeViewer()->setMask(bitmap);
     return;
   }
   
   // Disable Mask
   QBitmap bitmap;
   bitmap.clear();
-  viewer_->setMask(bitmap);
+  Three::activeViewer()->setMask(bitmap);
   
   // Save dialog
   QStringList filters;
@@ -289,7 +285,7 @@ update_mask()
 {
   double ratio = double(parameters_.width) / double(parameters_.height);
   
-  if ( NULL == viewer_ )
+  if ( NULL == Three::activeViewer() )
   {
     std::cerr << "Can't find viewer..." << std::endl;
     return;
@@ -297,7 +293,7 @@ update_mask()
   QBitmap bitmap;
   bitmap.setDevicePixelRatio(ratio);
   bitmap.fill();
-  viewer_->setMask(bitmap);
+  Three::activeViewer()->setMask(bitmap);
 }
 
 
@@ -508,17 +504,17 @@ init_parameters()
 }
 
 
-C3t3_rib_exporter_plugin::Point_3 
+C3t3_rib_exporter_plugin::Bare_point
 C3t3_rib_exporter_plugin::
-camera_coordinates(const Point_3& p)
+camera_coordinates(const Bare_point& p)
 {
   qglVec p_vec ( p.x(), p.y(), p.z() );
-  qglVec p_cam = viewer_->camera()->cameraCoordinatesOf(p_vec);
+  qglVec p_cam = Three::activeViewer()->camera()->cameraCoordinatesOf(p_vec);
   
   // Store maximal depth
   zmax_ = (std::max)(zmax_, double(-p_cam[2]));
   
-  return Point_3(p_cam[0],p_cam[1],p_cam[2]);
+  return Bare_point(p_cam[0],p_cam[1],p_cam[2]);
 }
 
 
@@ -526,13 +522,16 @@ void
 C3t3_rib_exporter_plugin::
 fill_points_and_edges_map(const C3t3& c3t3)
 {
+  Geom_traits::Construct_point_3 wp2p
+    = c3t3.triangulation().geom_traits().construct_point_3_object();
+
   for ( C3t3::Cells_in_complex_iterator it = c3t3.cells_in_complex_begin(),
        end = c3t3.cells_in_complex_end() ; it != end ; ++it )
   {
-    const Point_3& p1 = it->vertex(0)->point();
-    const Point_3& p2 = it->vertex(1)->point();
-    const Point_3& p3 = it->vertex(2)->point();
-    const Point_3& p4 = it->vertex(3)->point();
+    const Bare_point& p1 = wp2p(it->vertex(0)->point());
+    const Bare_point& p2 = wp2p(it->vertex(1)->point());
+    const Bare_point& p3 = wp2p(it->vertex(2)->point());
+    const Bare_point& p4 = wp2p(it->vertex(3)->point());
     
     const QColor& edge_color = subdomain_map_[c3t3.subdomain_index(it)];
     
@@ -553,7 +552,7 @@ fill_points_and_edges_map(const C3t3& c3t3)
 
 void
 C3t3_rib_exporter_plugin::
-add_edge(const Point_3& p, const Point_3& q, const QColor& color)
+add_edge(const Bare_point& p, const Bare_point& q, const QColor& color)
 {
   if ( p < q )
   {
@@ -568,7 +567,7 @@ add_edge(const Point_3& p, const Point_3& q, const QColor& color)
 
 void
 C3t3_rib_exporter_plugin::
-add_vertex(const Point_3& p, const QColor& color)
+add_vertex(const Bare_point& p, const QColor& color)
 {
   vertices_.insert(std::make_pair(p,color));    
 }
@@ -672,15 +671,18 @@ void
 C3t3_rib_exporter_plugin::
 write_facets(const C3t3& c3t3, std::ofstream& out)
 {
+  Geom_traits::Construct_point_3 wp2p
+    = c3t3.triangulation().geom_traits().construct_point_3_object();
+
   for ( C3t3::Facets_in_complex_iterator it = c3t3.facets_in_complex_begin(),
        end = c3t3.facets_in_complex_end() ; it != end ; ++it )
   {
     const C3t3::Cell_handle& c = it->first;
     const int& k = it->second;
     
-    const Point_3& p1 = c->vertex((k+1)&3)->point();
-    const Point_3& p2 = c->vertex((k+2)&3)->point();
-    const Point_3& p3 = c->vertex((k+3)&3)->point();
+    const Bare_point& p1 = wp2p(c->vertex((k+1)&3)->point());
+    const Bare_point& p2 = wp2p(c->vertex((k+2)&3)->point());
+    const Bare_point& p3 = wp2p(c->vertex((k+3)&3)->point());
     
     QColor color = c3t3.is_in_complex(c) ? subdomain_map_[c3t3.subdomain_index(c)]
     : subdomain_map_[c3t3.subdomain_index(c->neighbor(k))];
@@ -694,17 +696,20 @@ void
 C3t3_rib_exporter_plugin::
 write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
-  typedef Kernel::Oriented_side Side;
-  
+  typedef EPICK::Oriented_side Side;
+
+  Geom_traits::Construct_point_3 wp2p
+    = c3t3.triangulation().geom_traits().construct_point_3_object();
+
   for ( C3t3::Facets_in_complex_iterator it = c3t3.facets_in_complex_begin(),
        end = c3t3.facets_in_complex_end() ; it != end ; ++it )
   {
     const C3t3::Cell_handle& c = it->first;
     const int& k = it->second;
    
-    const Point_3& p1 = c->vertex((k+1)&3)->point();
-    const Point_3& p2 = c->vertex((k+2)&3)->point();
-    const Point_3& p3 = c->vertex((k+3)&3)->point();
+    const Bare_point& p1 = wp2p(c->vertex((k+1)&3)->point());
+    const Bare_point& p2 = wp2p(c->vertex((k+2)&3)->point());
+    const Bare_point& p3 = wp2p(c->vertex((k+3)&3)->point());
 
     const Side s1 = plane.oriented_side(p1);
     const Side s2 = plane.oriented_side(p2);
@@ -725,6 +730,9 @@ void
 C3t3_rib_exporter_plugin::
 write_surface_cells(const C3t3& c3t3, const Plane& /* plane */, std::ofstream& out)
 {
+  Geom_traits::Construct_point_3 wp2p
+    = c3t3.triangulation().geom_traits().construct_point_3_object();
+
   for ( C3t3::Cells_in_complex_iterator it_cell = c3t3.cells_in_complex_begin(),
        end = c3t3.cells_in_complex_end() ; it_cell != end ; ++it_cell )
   {
@@ -779,9 +787,9 @@ write_surface_cells(const C3t3& c3t3, const Plane& /* plane */, std::ofstream& o
           edgecolor.setAlpha(255);
         }
 
-        write_triangle(c->vertex((i+1)%4)->point(), 
-                       c->vertex((i+2)%4)->point(), 
-                       c->vertex((i+3)%4)->point(), 
+        write_triangle(wp2p(c->vertex((i+1)%4)->point()),
+                       wp2p(c->vertex((i+2)%4)->point()),
+                       wp2p(c->vertex((i+3)%4)->point()),
                        facecolor, edgecolor, out );
       }
     }*/
@@ -798,10 +806,10 @@ write_surface_cells(const C3t3& c3t3, const Plane& /* plane */, std::ofstream& o
       typedef Kernel::Oriented_side Side;
 
       // Transparency on the negative side of the plane
-      const Side s0 = plane.oriented_side(c->vertex(0)->point());
-      const Side s1 = plane.oriented_side(c->vertex(1)->point());
-      const Side s2 = plane.oriented_side(c->vertex(2)->point());
-      const Side s3 = plane.oriented_side(c->vertex(3)->point());
+      const Side s0 = plane.oriented_side(wp2p(c->vertex(0)->point()));
+      const Side s1 = plane.oriented_side(wp2p(c->vertex(1)->point()));
+      const Side s2 = plane.oriented_side(wp2p(c->vertex(2)->point()));
+      const Side s3 = plane.oriented_side(wp2p(c->vertex(3)->point()));
       if(   s0 == CGAL::ON_NEGATIVE_SIDE && s1 == CGAL::ON_NEGATIVE_SIDE 
          && s2 == CGAL::ON_NEGATIVE_SIDE && s3 == CGAL::ON_NEGATIVE_SIDE )
       {
@@ -816,9 +824,9 @@ write_surface_cells(const C3t3& c3t3, const Plane& /* plane */, std::ofstream& o
          
       for (int i = 0 ; i < 4 ; ++i)
       {
-        write_triangle(c->vertex((i+1)%4)->point(), 
-                       c->vertex((i+2)%4)->point(), 
-                       c->vertex((i+3)%4)->point(), 
+        write_triangle(wp2p(c->vertex((i+1)%4)->point()),
+                       wp2p(c->vertex((i+2)%4)->point()),
+                       wp2p(c->vertex((i+3)%4)->point()),
                        facecolor, edgecolor, out );
       }
     }
@@ -839,9 +847,9 @@ write_surface_cells(const C3t3& c3t3, const Plane& /* plane */, std::ofstream& o
           edgecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE);
         }
 
-        write_triangle(c->vertex((i+1)%4)->point(), 
-                       c->vertex((i+2)%4)->point(), 
-                       c->vertex((i+3)%4)->point(), 
+        write_triangle(wp2p(c->vertex((i+1)%4)->point()),
+                       wp2p(c->vertex((i+2)%4)->point()),
+                       wp2p(c->vertex((i+3)%4)->point()),
                        facecolor, edgecolor, out );
       }
     }
@@ -853,15 +861,18 @@ void
 C3t3_rib_exporter_plugin::
 write_cells_intersecting_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
-  typedef Kernel::Oriented_side Side;
-  
+  typedef EPICK::Oriented_side Side;
+
+  Geom_traits::Construct_point_3 wp2p
+    = c3t3.triangulation().geom_traits().construct_point_3_object();
+
   for ( C3t3::Cells_in_complex_iterator it = c3t3.cells_in_complex_begin(),
        end = c3t3.cells_in_complex_end() ; it != end ; ++it )
   {
-    const Point_3& p1 = it->vertex(0)->point();
-    const Point_3& p2 = it->vertex(1)->point();
-    const Point_3& p3 = it->vertex(2)->point();
-    const Point_3& p4 = it->vertex(3)->point();
+    const Bare_point& p1 = wp2p(it->vertex(0)->point());
+    const Bare_point& p2 = wp2p(it->vertex(1)->point());
+    const Bare_point& p3 = wp2p(it->vertex(2)->point());
+    const Bare_point& p4 = wp2p(it->vertex(3)->point());
     
     const Side s1 = plane.oriented_side(p1);
     const Side s2 = plane.oriented_side(p2);
@@ -898,15 +909,18 @@ void
 C3t3_rib_exporter_plugin::
 write_cells_on_the_positive_side_of_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
-  typedef Kernel::Oriented_side Side;
-  
+  typedef EPICK::Oriented_side Side;
+
+  Geom_traits::Construct_point_3 wp2p
+    = c3t3.triangulation().geom_traits().construct_point_3_object();
+
   for ( C3t3::Cells_in_complex_iterator it = c3t3.cells_in_complex_begin(),
        end = c3t3.cells_in_complex_end() ; it != end ; ++it )
   {
-    const Point_3& p1 = it->vertex(0)->point();
-    const Point_3& p2 = it->vertex(1)->point();
-    const Point_3& p3 = it->vertex(2)->point();
-    const Point_3& p4 = it->vertex(3)->point();
+    const Bare_point& p1 = wp2p(it->vertex(0)->point());
+    const Bare_point& p2 = wp2p(it->vertex(1)->point());
+    const Bare_point& p3 = wp2p(it->vertex(2)->point());
+    const Bare_point& p4 = wp2p(it->vertex(3)->point());
     
     const Side s1 = plane.oriented_side(p1);
     const Side s2 = plane.oriented_side(p2);
@@ -947,7 +961,7 @@ write_cells_on_the_positive_side_of_a_plane(const C3t3& c3t3, const Plane& plane
 
 void
 C3t3_rib_exporter_plugin::
-write_triangle (const Point_3& p, const Point_3& q, const Point_3& r,
+write_triangle (const Bare_point& p, const Bare_point& q, const Bare_point& r,
                 const QColor& color, const QColor& edge_color, std::ofstream& out)
 {
   // Color
@@ -973,7 +987,7 @@ write_triangle (const Point_3& p, const Point_3& q, const Point_3& r,
 
 void
 C3t3_rib_exporter_plugin::
-write_tetrahedron (const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s,
+write_tetrahedron (const Bare_point& p, const Bare_point& q, const Bare_point& r, const Bare_point& s,
                    const QColor& color, const QColor& edge_color, std::ofstream& out)
 {
   // Color
@@ -1004,10 +1018,10 @@ write_tetrahedron (const Point_3& p, const Point_3& q, const Point_3& r, const P
 
 void
 C3t3_rib_exporter_plugin::
-write_point (const Point_3& p, std::ofstream& out)
+write_point (const Bare_point& p, std::ofstream& out)
 {
   // Transform point in camera coordinates
-  Point_3 p_cam = camera_coordinates(p);
+  const Bare_point& p_cam = camera_coordinates(p);
   
   // Write it
   out << " " << -p_cam.x() << " " << -p_cam.y() << " " << -p_cam.z() << " ";
@@ -1016,10 +1030,10 @@ write_point (const Point_3& p, std::ofstream& out)
 
 void
 C3t3_rib_exporter_plugin::
-write_point_sphere(const Point_3& p, std::ofstream& out)
+write_point_sphere(const Bare_point& p, std::ofstream& out)
 {
   // Transform point in camera coordinates
-  Point_3 p_cam = camera_coordinates(p);
+  const Bare_point& p_cam = camera_coordinates(p);
   
   // radius
   const double& r = parameters_.sphere_radius;
@@ -1034,16 +1048,16 @@ write_point_sphere(const Point_3& p, std::ofstream& out)
 
 void
 C3t3_rib_exporter_plugin::
-write_edge_cylinder(const Point_3& p, const Point_3& q, std::ofstream& out)
+write_edge_cylinder(const Bare_point& p, const Bare_point& q, std::ofstream& out)
 {
   // Transform point in camera coordinates
-  Point_3 p_cam = camera_coordinates(p);
-  Point_3 q_cam = camera_coordinates(q);
+  const Bare_point& p_cam = camera_coordinates(p);
+  const Bare_point& q_cam = camera_coordinates(q);
   
   double pq = CGAL::to_double(CGAL::sqrt(CGAL::squared_distance(p_cam,q_cam)));
   
   Aff_transformation_3 t (CGAL::Translation(), Vector_3(p_cam,CGAL::ORIGIN));
-  Point_3 q_cam_t = q_cam.transform(t);
+  const Bare_point& q_cam_t = q_cam.transform(t);
   
   Vector_3 Oq (CGAL::ORIGIN,q_cam_t);
   Vector_3 Oz (FT(0),FT(0),FT(1));

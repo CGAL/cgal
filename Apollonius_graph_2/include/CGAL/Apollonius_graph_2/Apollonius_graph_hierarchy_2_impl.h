@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_APOLLONIUS_GRAPH_HIERARCHY_2_IMPL_H
 #define CGAL_APOLLONIUS_GRAPH_HIERARCHY_2_IMPL_H
+
+#include <CGAL/license/Apollonius_graph_2.h>
+
 
 
 // class implementation
@@ -265,7 +269,7 @@ insert(const Site_2 &p)
   }
 
   initialize_conflict_region(start_f, l);
-  expand_conflict_region(start_f, p, l, fm, v_hidden, NULL);
+  expand_conflict_region(start_f, p, l, fm, v_hidden, nullptr);
   n_hidden = v_hidden.size();
 
   if ( n_hidden != 0 ) {

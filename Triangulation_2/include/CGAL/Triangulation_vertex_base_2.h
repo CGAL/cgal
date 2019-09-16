@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Mariette Yvinec
 
 #ifndef CGAL_TRIANGULATION_VERTEX_BASE_2_H
 #define CGAL_TRIANGULATION_VERTEX_BASE_2_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 #include <CGAL/config.h>
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
@@ -55,7 +59,7 @@ private:
   Point _p;
 
 public:
-  Triangulation_vertex_base_2 () : Vb() {}
+  Triangulation_vertex_base_2 () : Vb(), _p() {}
   Triangulation_vertex_base_2(const Point & p) : Vb(), _p(p) {}
   Triangulation_vertex_base_2(const Point & p, Face_handle f)
     : Vb(f), _p(p) {}

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
 
 #ifndef CGAL_CONVEXITY_CHECK_2_C
 #define CGAL_CONVEXITY_CHECK_2_C
+
+#include <CGAL/license/Convex_hull_2.h>
+
 
 #include <CGAL/algorithm.h>
 #include <algorithm>
@@ -155,7 +159,7 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
 
   if ( first2 == last2) return false;
 
-  if ( cpp11::next(first2) == last2 )
+  if ( std::next(first2) == last2 )
   {
       while (first1 != last1)
       {
@@ -200,7 +204,7 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
 
   if ( first2 == last2) return false;
 
-  if ( cpp11::next(first2) == last2 ) return true;
+  if ( std::next(first2) == last2 ) return true;
 
   Left_turn_2  left_turn = ch_traits.left_turn_2_object();
   iter22 = first2;

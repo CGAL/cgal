@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_NEF_2_GEN_POINT_LOCATION_H
 #define CGAL_NEF_2_GEN_POINT_LOCATION_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <CGAL/LEDA_basic.h>
 #include <LEDA/core/pp_dictionary.h>
@@ -328,7 +332,7 @@ class PointLocator {
    |PLocTraits| which widely controls its behaviour.
    The traits may even change the return type of a query and its semantics.
    There are predined traits classes for the LEDA graph types, which are
-   described below in a seperate section.
+   described below in a separate section.
 }*/
 public:
   // copied types from PLocTraits

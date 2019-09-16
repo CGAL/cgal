@@ -2,6 +2,7 @@
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/point_generators_3.h>
 
@@ -14,7 +15,7 @@ typedef K::Plane_3 Plane;
 typedef K::Vector_3 Vector;
 
 typedef CGAL::Convex_hull_traits_3<K> Traits;
-typedef Traits::Polyhedron_3 Polyhedron;
+typedef Traits::Polygon_mesh Polyhedron;
 
 typedef CGAL::Delaunay_triangulation_3<K> DT;
 typedef DT::Vertex_handle Vertex_handle;

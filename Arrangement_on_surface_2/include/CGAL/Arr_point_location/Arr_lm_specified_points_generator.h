@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Shlomo Golubev   <golubevs@post.tau.ac.il>
 
 #ifndef CGAL_ARR_LANDMARKS_SPECIFIED_POINTS_GENERATOR_H
 #define CGAL_ARR_LANDMARKS_SPECIFIED_POINTS_GENERATOR_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Definition of the Arr_lm_specified_points_generator<Arrangement> template.

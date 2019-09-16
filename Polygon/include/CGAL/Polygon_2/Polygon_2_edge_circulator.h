@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
@@ -31,9 +32,9 @@
 #include <CGAL/Polygon_2/polygon_assertions.h>
 
 namespace CGAL {
-
+#ifndef DOXYGEN_RUNNING //to avoid conflicts
 template <class _Traits, class _Container> class Polygon_2;
-
+#endif
 template <class _Traits, class _Container>
 class Polygon_2_const_edge_circulator {
   public:
@@ -64,12 +65,12 @@ class Polygon_2_const_edge_circulator {
     Polygon_2_const_edge_circulator(Vertex_const_circulator f)
       : first_vertex(f) {}
 
-  bool operator==( Nullptr_t CGAL_assertion_code(p) ) const {
+  bool operator==( std::nullptr_t CGAL_assertion_code(p) ) const {
       CGAL_polygon_assertion( p == 0);
       return (first_vertex == 0);
     }
 
-    bool operator!=( Nullptr_t p ) const
+    bool operator!=( std::nullptr_t p ) const
     {
       return !(*this == p);
     }

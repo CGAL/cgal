@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_VORONOI_DIAGRAM_2_SITE_REMOVERS_H
 #define CGAL_VORONOI_DIAGRAM_2_SITE_REMOVERS_H 1
+
+#include <CGAL/license/Voronoi_diagram_2.h>
+
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
@@ -65,7 +69,7 @@ public:
   typedef typename Site_remover::result_type           result_type;
 
 public:
-  Default_caching_site_remover(const Adaptation_traits* at = NULL) : at_(at) {}
+  Default_caching_site_remover(const Adaptation_traits* at = nullptr) : at_(at) {}
 
   result_type operator()(Delaunay_graph& dg, const Vertex_handle& v) const
   {

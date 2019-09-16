@@ -2,7 +2,7 @@
 // Needed for lloyd_optimize_mesh_2 which does it too late
 // (and we don't want to spend the time on finding out who
 // includes the header file that sets it too a value too low
-#define  BOOST_PARAMETER_MAX_ARITY 8
+#define  BOOST_PARAMETER_MAX_ARITY 12
 
 #include <stdexcept>
 
@@ -15,10 +15,10 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
-#include "Scene_polyhedron_item.h"
+
+#include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_type.h"
 
 #include <CGAL/iterator.h>
 
@@ -111,7 +111,7 @@ mark_nested_domains(CDT& cdt)
 template <class CDT, class TriangleMesh>
 void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm, int constant_coordinate_index, double constant_coordinate)
 {
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
   typedef std::map<typename CDT::Vertex_handle, vertex_descriptor> Map;
   Map descriptors;
@@ -120,7 +120,7 @@ void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm, int constant_coordinat
                                            fit!=fit_end; ++fit)
   {
     if (!fit->is_in_domain()) continue;
-    CGAL::cpp11::array<vertex_descriptor,3> vds;
+    std::array<vertex_descriptor,3> vds;
     for(int i=0; i<3; ++i)
     {
       typename Map::iterator it;
@@ -283,7 +283,7 @@ private:
         Q_FOREACH(const std::vector<Kernel::Point_3>& points,
                     polylines_item->polylines)
           cdt.insert_constraint(points.begin(),points.end());
-    }catch(std::runtime_error)
+    }catch(std::runtime_error&)
     {
       QApplication::restoreOverrideCursor();
       throw;
@@ -333,14 +333,14 @@ private:
       std::cout << " done (" << ltime.elapsed() << " ms)" << std::endl;
     }
 
-    // export result as a polyhedron item
+    // export result as a surface_mesh item
     QString iname =
       polylines_items.size()==1?
       polylines_items.front()->name()+QString("_meshed_"):
       QString("2dmesh_");
     iname+=QString::number(target_length);
     if (runLloyd) iname+=QString("_Lloyd_")+QString::number(nb_iter);
-    Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
+    Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();
     poly_item->setName(iname);
     cdt2_to_face_graph(cdt,
                        *poly_item->polyhedron(),
@@ -348,7 +348,7 @@ private:
                        constant_coordinate);
     scene->addItem(poly_item);
     poly_item->invalidateOpenGLBuffers();
-
+    
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
     // default cursor
     QApplication::restoreOverrideCursor();

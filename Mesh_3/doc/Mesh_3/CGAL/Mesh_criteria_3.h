@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
 The class `Mesh_criteria_3` is a model of both concepts `MeshCriteria_3` 
 and `MeshCriteriaWithFeatures_3`. 
@@ -52,7 +52,8 @@ Mesh_criteria_3<Tr> criteria (parameters::cell_radius_edge_ratio=2,
 
 */
 template< typename Tr >
-class Mesh_criteria_3 {
+class Mesh_criteria_3
+{
 public:
 
 /// \name Types 
@@ -61,14 +62,12 @@ public:
 /*!
 The criteria for edges. 
 */ 
-typedef Mesh_edge_criteria_3<Tr> 
-Edge_criteria; 
+typedef Mesh_edge_criteria_3<Tr> Edge_criteria;
 
 /*!
 The criteria for facets. 
 */ 
-typedef Mesh_facet_criteria_3<Tr> 
-Facet_criteria; 
+typedef Mesh_facet_criteria_3<Tr> Facet_criteria;
 
 /*!
 The 
@@ -85,17 +84,15 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
 Construction from facet and cell criteria. The edge criteria are ignored 
 in this case. 
 */ 
-Mesh_criteria_3( 
-Facet_criteria facet_criteria, 
-Cell_criteria cell_criteria); 
+Mesh_criteria_3(const Facet_criteria& facet_criteria,
+                const Cell_criteria& cell_criteria);
 
 /*!
 Construction from edge, facet and cell criteria. 
 */ 
-Mesh_criteria_3( 
-Edge_criteria edge_criteria, 
-Facet_criteria facet_criteria, 
-Cell_criteria cell_criteria); 
+Mesh_criteria_3(const Edge_criteria& edge_criteria,
+                const Facet_criteria& facet_criteria,
+                const Cell_criteria& cell_criteria);
 
 /*!
 \brief Construction from criteria parameters. This constructor uses named 
@@ -115,7 +112,7 @@ The description of each parameter is as follows:
 
 - `edge_size`: a scalar field (resp. a constant) providing a space varying 
 (resp. a uniform) 
-upper bound for the lengths of curve segment edges. This parameter has to be set to a positive 
+upper bound for the lengths of curve edges. This parameter has to be set to a positive 
 value when 1-dimensional features protection is used.
 
 - `facet_angle`: a lower bound for the angles (in degrees) of the 
@@ -150,14 +147,13 @@ of the mesh generation process.
 */ 
 template<typename FT, 
 typename ...Fieldi> 
-Mesh_criteria_3( 
-Field1 parameters::edge_size = ignored, 
-FT parameters::facet_angle = ignored, 
-Field2 parameters::facet_size = ignored, 
-Field3 parameters::facet_distance = ignored, 
-Mesh_facet_topology parameters::facet_topology = CGAL::FACET_VERTICES_ON_SURFACE, 
-FT parameters::cell_radius_edge_ratio = ignored, 
-Field4 parameters::cell_size = ignored); 
+Mesh_criteria_3(Field1 parameters::edge_size = ignored,
+                FT parameters::facet_angle = ignored,
+                Field2 parameters::facet_size = ignored,
+                Field3 parameters::facet_distance = ignored,
+                Mesh_facet_topology parameters::facet_topology = CGAL::FACET_VERTICES_ON_SURFACE,
+                FT parameters::cell_radius_edge_ratio = ignored,
+                Field4 parameters::cell_size = ignored);
 
 /// @}
 

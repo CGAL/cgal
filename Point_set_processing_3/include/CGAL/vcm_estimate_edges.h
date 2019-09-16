@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Jocelyn Meyron and Quentin Mérigot
 //
@@ -21,11 +22,15 @@
 #ifndef CGAL_VCM_ESTIMATE_EDGES_H
 #define CGAL_VCM_ESTIMATE_EDGES_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/vcm_estimate_normals.h>
 
 namespace CGAL {
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessing3Algorithms
 /// determines if a point is on a sharp feature edge from a point set
 /// for which the Voronoi covariance Measures have been computed.
 ///
@@ -48,11 +53,11 @@ namespace CGAL {
 ///
 template <class FT, class VCMTraits>
 bool
-vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
+vcm_is_on_feature_edge (std::array<FT,6> &cov,
                         double threshold,
                         VCMTraits)
 {
-    cpp11::array<double,3> eigenvalues;
+    std::array<double,3> eigenvalues;
     if (!VCMTraits::
           diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues) )
     {
@@ -71,7 +76,7 @@ vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
 
 template <class FT>
 bool
-vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
+vcm_is_on_feature_edge (std::array<FT,6> &cov,
                         double threshold)
 {
   return vcm_is_on_feature_edge(cov, threshold,
@@ -80,5 +85,7 @@ vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
 }
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_VCM_ESTIMATE_EDGES_H

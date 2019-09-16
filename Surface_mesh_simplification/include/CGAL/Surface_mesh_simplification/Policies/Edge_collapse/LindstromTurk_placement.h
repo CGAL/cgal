@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H 1
+
+#include <CGAL/license/Surface_mesh_simplification.h>
+
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core.h>
@@ -27,12 +31,12 @@ namespace CGAL {
 namespace Surface_mesh_simplification  
 {
 
-  template<class ECM_>
+  template<class TM_>
 class LindstromTurk_placement
 {
 public:
     
-  typedef ECM_ ECM ;
+  typedef TM_ TM ;
   
 public:
 
@@ -42,7 +46,7 @@ public:
   optional<typename Profile::Point>
   operator()( Profile const& aProfile) const
   {
-    return LindstromTurkCore<ECM,Profile>(mParams,aProfile).compute_placement() ;
+    return LindstromTurkCore<TM,Profile>(mParams,aProfile).compute_placement() ;
   }
   
 private:

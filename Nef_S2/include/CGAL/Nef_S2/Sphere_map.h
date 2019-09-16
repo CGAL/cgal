@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_SPHERE_MAP_H
 #define CGAL_SPHERE_MAP_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
@@ -146,7 +150,7 @@ public:
   public:
     SFace_cycle_iterator() : Ibase() {}
     SFace_cycle_iterator(const Ibase& b) : Ibase(b) {}
-    SFace_cycle_iterator(const SFace_cycle_iterator& i) : Ibase(i) {}  
+
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
@@ -173,8 +177,7 @@ public:
   public:
     SFace_cycle_const_iterator() : Ibase() {}
     SFace_cycle_const_iterator(const Ibase& b) : Ibase(b) {}
-    SFace_cycle_const_iterator(const SFace_cycle_const_iterator& i) 
-      : Ibase(i) {}  
+
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
@@ -371,33 +374,33 @@ public:
   SVertex_alloc vertex_allocator;
   SVertex* get_vertex_node( const SVertex& ) {
     SVertex* p = vertex_allocator.allocate(1);
-    vertex_allocator.construct( p, SVertex());
+    std::allocator_traits<SVertex_alloc>::construct(vertex_allocator, p);
     return p;
   }
   void put_vertex_node( SVertex* p) {
-    vertex_allocator.destroy(p);
+    std::allocator_traits<SVertex_alloc>::destroy(vertex_allocator, p);
     vertex_allocator.deallocate( p, 1);
   }
 
   SHalfedge_alloc halfedge_allocator;
   SHalfedge* get_halfedge_node( const SHalfedge& ) {
     SHalfedge* p = halfedge_allocator.allocate(1);
-    halfedge_allocator.construct( p, SHalfedge());
+    std::allocator_traits<SHalfedge_alloc>::construct(halfedge_allocator, p);
     return p;
   }
   void put_halfedge_node( SHalfedge* p) {
-    halfedge_allocator.destroy(p);
+    std::allocator_traits<SHalfedge_alloc>::destroy(halfedge_allocator, p);
     halfedge_allocator.deallocate( p, 1);
   }
 
   SFace_alloc face_allocator;
   SFace* get_face_node( const SFace& ) {
     SFace* p = face_allocator.allocate(1);
-    face_allocator.construct( p, SFace());
+    std::allocator_traits<SFace_alloc>::construct(face_allocator, p);
     return p;
   }
   void put_face_node( SFace* p) {
-    face_allocator.destroy(p);
+    std::allocator_traits<SFace_alloc>::destroy(face_allocator, p);
     face_allocator.deallocate( p, 1);
   }
 

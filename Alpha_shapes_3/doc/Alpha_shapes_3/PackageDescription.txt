@@ -1,18 +1,18 @@
-/// \defgroup PkgAlphaShapes3 3D Alpha Shapes Reference
+/// \defgroup PkgAlphaShapes3Ref 3D Alpha Shapes Reference
 /// \defgroup PkgAlphaShapes3Concepts Concepts
-/// \ingroup PkgAlphaShapes3
+/// \ingroup PkgAlphaShapes3Ref
 /*!
-\addtogroup PkgAlphaShapes3
-\cgalPkgDescriptionBegin{3D Alpha Shapes,PkgAlphaShapes3Summary}
+\addtogroup PkgAlphaShapes3Ref
+\cgalPkgDescriptionBegin{3D Alpha Shapes,PkgAlphaShapes3}
 \cgalPkgPicture{alpha_shapes_3_small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Tran Kai Frank Da, Sébastien Loriot, and Mariette Yvinec}
 \cgalPkgDesc{This package offers a data structure encoding either one alpha-complex or the whole family of alpha-complexes related to a given 3D Delaunay or regular triangulation. In the latter case, the data structure allows to retrieve   the alpha-complex for any alpha value, the whole spectrum of critical alpha values and a filtration on the triangulation faces (this filtration is based on the first  alpha value for which each face is included on the alpha-complex). }
-\cgalPkgManuals{Chapter_3D_Alpha_Shapes,PkgAlphaShapes3}
+\cgalPkgManuals{Chapter_3D_Alpha_Shapes,PkgAlphaShapes3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.3}
-\cgalPkgDependsOn{\ref PkgTriangulation3Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation3}
 \cgalPkgBib{cgal:dy-as3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{3D Alpha Shapes,alpha_shape_3.zip}
@@ -47,7 +47,7 @@ The alpha shapes of a  set of points
 \f$ S\f$ form a discrete family, even though they
 are defined for all real numbers \f$ \alpha\f$.
 The entire family of alpha shapes can be represented 
-through  the underlying triangulation of \f$ S\f$. In this representation
+through  the underlying triangulation of \f$ S\f$. In this representation,
 each \f$ k\f$-simplex of the underlying triangulation is associated with an
 interval that specifies for which values of \f$ \alpha\f$ the \f$ k\f$-simplex
 belongs to the alpha complex. Relying on this fact, the family of
@@ -60,7 +60,7 @@ The definition is analog in the case of weighted alpha shapes.
 The input set is now a set of weighted points (which can be regarded
 as spheres) and the underlying triangulation 
 is the regular triangulation of this set.
-Two spheres, or two weighted points , with centers \f$ C_1, C_2\f$
+Two spheres, or two weighted points, with centers \f$ C_1, C_2\f$
 and  radii \f$ r_1, r_2 \f$ are said to be orthogonal iff 
 \f$  C_1C_2 ^2 = r_1^2 + r_2^2\f$ and suborthogonal
 iff  \f$  C_1C_2 ^2 < r_1^2 + r_2^2\f$.
@@ -83,7 +83,7 @@ of the alpha complex where singular faces are removed.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `AlphaShapeTraits_3`
 - `WeightedAlphaShapeTraits_3`
 - `AlphaShapeCell_3`
@@ -93,7 +93,7 @@ of the alpha complex where singular faces are removed.
 - `FixedAlphaShapeCell_3`
 - `FixedAlphaShapeVertex_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Alpha_status<NT>`
 - `CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>`
 - `CGAL::Alpha_shape_vertex_base_3<Traits,Vb>`

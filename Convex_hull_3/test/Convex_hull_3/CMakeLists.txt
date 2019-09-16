@@ -2,21 +2,23 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Convex_hull_3_Tests )
 
-cmake_minimum_required(VERSION 2.8.10)
 
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
+  find_package( OpenMesh QUIET )
 
-  include( CGAL_CreateSingleSourceCGALProgram )
+  if ( OpenMesh_FOUND )
+    include( UseOpenMesh )
+  else()
+    message(STATUS "Examples that use OpenMesh will not be compiled.")
+  endif()
 
-  include_directories (BEFORE "../../include")
-
-    include_directories (BEFORE "include")
+  include_directories (BEFORE "include")
 
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)

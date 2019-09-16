@@ -1,0 +1,31 @@
+#!/bin/sh
+
+CGAL_ROOT="/cygdrive/c/cgal/test"
+
+# Remove test results older than 5 days.
+# The pattern "../test/" after "$CGAL_ROOT" tries to protect against a
+# catastrophic `rm -rf` is "$CGAL_ROOT" happens to be empty.
+find "$CGAL_ROOT/../test" -maxdepth 1 -name 'CGAL*' ! -ctime -5 -exec rm -rf '{}' \;
+
+BUILD_HOSTS="localhost"
+REFERENCE_PLATFORMS_DIR="c:/cgal/reference_platforms"
+CGAL_TESTER="afabri"
+CGAL_TESTER_NAME="gauguin (GF)"
+CGAL_TESTER_ADDRESS="andreas.fabri@geometryfactory.com"
+
+COMPILERS_localhost=""
+#COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2013-Release-64bits"
+[ $(date +%a) = Sat ] && COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2013-Debug-64bits"
+COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2017-Release-64bits"
+#COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2017-Release-64bits-extra_flags"
+COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2017-Debug-64bits"
+COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2015-Debug-64bits"
+#COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2015-Release-64bits"
+
+
+MYSHELL="bash --login"
+FTP_OPTS="-v -n"
+PROCESSORS_localhost="7"
+
+UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
+WGET_OPTS="--no-verbose"

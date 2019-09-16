@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 
 #ifndef CGAL_STRAIGHT_SKELETON_DEBUG_H
 #define CGAL_STRAIGHT_SKELETON_DEBUG_H 1
+
+#include <CGAL/license/Straight_skeleton_2.h>
+
 
 #include <CGAL/config.h>
 
@@ -64,7 +68,7 @@ inline std::string ptr2str( boost::intrusive_ptr<T> const& ptr )
   std::ostringstream ss ; ss << std::setprecision(19)  ;
   if ( ptr )
        ss << *ptr ;
-  else ss << "·NULL·" ;
+  else ss << "·nullptr·" ;
   return ss.str();
 }
 

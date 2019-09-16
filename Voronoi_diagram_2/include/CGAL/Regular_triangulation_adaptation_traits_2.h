@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_REGULAR_TRIANGULATION_ADAPTATION_TRAITS_2_H
 #define CGAL_REGULAR_TRIANGULATION_ADAPTATION_TRAITS_2_H 1
+
+#include <CGAL/license/Voronoi_diagram_2.h>
+
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Regular_triangulation_nearest_site_2.h>
@@ -35,7 +39,7 @@ struct Regular_triangulation_adaptation_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_INS::Adaptation_traits_base_2
   <RT2,
    CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor
-   <typename RT2::Geom_traits::Point_2,RT2,Tag_true>,
+   <typename RT2::Geom_traits::Weighted_point_2,RT2,Tag_false>,
    CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_Voronoi_point_2<RT2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Regular_triangulation_nearest_site_2<RT2> >
 {

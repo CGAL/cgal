@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumes
+\ingroup PkgBoundingVolumesRef
 
 The class 
 `Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>` is a 
@@ -42,7 +42,7 @@ public:
 /*!
 is the constant 2, i.e.\ the dimension of \f$ \mathbb{R}^2\f$. 
 */ 
-typedef unspecified_type D; 
+static const int D;
 
 /// @} 
 

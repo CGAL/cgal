@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_CIRCLE_SEGMENT_2_H
 #define CGAL_CIRCLE_SEGMENT_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Header file for the _Circle_segment_2<Kernel, Filter> class.
@@ -105,6 +109,8 @@ public:
     Point_handle (p)
   {}
 
+  _One_root_point_2& operator=(const _One_root_point_2&)=default;
+  
   /*! Constructor of a point with one-root coefficients.
      This constructor of a point can also be used with rational coefficients
      thanks to convertor of CoordNT. */
@@ -139,7 +145,7 @@ public:
     return !equals(p);
   }
 
-  bool operator == (const Self& p)
+  bool operator == (const Self& p) const
   {
     return equals(p);
   }
@@ -398,7 +404,7 @@ public:
     NT          y3 = p3.y();
 
 
-    // Make sure that the source and the taget are not the same.
+    // Make sure that the source and the target are not the same.
     CGAL_precondition (Kernel().compare_xy_2_object() (p1, p3) != EQUAL);
 
     // Compute the lines: A1*x + B1*y + C1 = 0,
@@ -529,7 +535,7 @@ public:
 
   /*!
    * Get the vertical tangency points the arc contains.
-   * \param vpts Output: The vertical tagnecy points.
+   * \param vpts Output: The vertical tangency points.
    * \pre The curve is circular.
    * \return The number of points (0, 1, or 2).
    */
@@ -590,8 +596,8 @@ private:
 
   /*!
    * Get the vertical tangency points the arc contains, assuming it is
-   * counterclockwise oreinted.
-   * \param vpts Output: The vertical tagnecy points.
+   * counterclockwise oriented.
+   * \param vpts Output: The vertical tangency points.
    * \return The number of points (0, 1, or 2).
    */
   unsigned int _ccw_vertical_tangency_points (const Point_2& src,
@@ -1181,7 +1187,7 @@ public:
    */
   template <class OutputIterator>
   OutputIterator intersect (const Self& cv, OutputIterator oi,
-                            Intersection_map *inter_map = NULL) const
+                            Intersection_map *inter_map = nullptr) const
   {
     // First check whether the two arcs have the same supporting curve.
     if (has_same_supporting_curve (cv))
@@ -1226,7 +1232,7 @@ public:
     Intersection_list            inter_list;
     bool                         invalid_ids = false;
 
-    if (inter_map != NULL && _index() != 0 && cv._index() != 0)
+    if (inter_map != nullptr && _index() != 0 && cv._index() != 0)
     {
       if (_index() < cv._index())
         id_pair = Curve_id_pair (_index(), cv._index());
@@ -1239,12 +1245,12 @@ public:
     {
       // In case one of the IDs is invalid, we do not look in the map neither
       // we cache the results.
-      if (inter_map != NULL)
+      if (inter_map != nullptr)
         map_iter = inter_map->end();
       invalid_ids = true;
     }
 
-    if (inter_map == NULL || map_iter == inter_map->end())
+    if (inter_map == nullptr || map_iter == inter_map->end())
     {
       // Compute the intersections points between the two supporting curves.
       if (is_linear())
@@ -2437,7 +2443,7 @@ protected:
     {
       x = x_left + x_jump*i;
       disc = app_sqr_rad - CGAL::square(x - app_xcenter);
-      CGAL_precondition(disc >= 0);
+      if (disc < 0) disc = 0;
       if(is_up)
         y = app_ycenter + std::sqrt(disc);
       else

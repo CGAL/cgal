@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_MESH_3_POISSON_REFINE_CELLS_3_H
 #define CGAL_MESH_3_POISSON_REFINE_CELLS_3_H
+
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
 
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
@@ -277,7 +281,7 @@ template <typename Tr,
  >
 class Poisson_refine_tets : 
   public BaseP, 
-  public Mesher_level <
+  public CGAL::Mesher_level <   // qualified with CGAL:: as CGAL::Mesh_3::Mesher_level also exists
     Tr,
     Poisson_refine_tets<Tr, Criteria, Surface, Oracle, BaseP, Facets_level>,
     typename Tr::Cell_handle,
@@ -290,7 +294,7 @@ class Poisson_refine_tets :
   Facets_level& facets_level;
 public:
   typedef Poisson_refine_tets<Tr, Criteria, Surface, Oracle, Base, Facets_level> Self;
-  typedef Mesher_level <
+  typedef CGAL::Mesher_level <
     Tr,
     Poisson_refine_tets<Tr, Criteria, Surface, Oracle, Base, Facets_level>,
     typename Tr::Cell_handle,

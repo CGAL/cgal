@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de> 
@@ -23,6 +24,9 @@
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_SNC_EXTERNAL_STRUCTURE_H
 #define CGAL_SNC_EXTERNAL_STRUCTURE_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Nef_3/Pluecker_line_3.h>
@@ -315,7 +319,7 @@ public:
     }
   };
 
-  SNC_external_structure_base( SNC_structure& W, SNC_point_locator* spl = NULL) 
+  SNC_external_structure_base( SNC_structure& W, SNC_point_locator* spl = nullptr) 
     : SNC_decorator(W), pl(spl) {}
   /*{\Mcreate makes |\Mvar| a decorator of |W|.}*/
 
@@ -839,7 +843,7 @@ public:
 	Closed[ShellF[hf->twin()]] = true;
       }
     
-    CGAL_assertion( pl != NULL);
+    CGAL_assertion( pl != nullptr);
 
 #ifdef CGAL_NEF3_TIMER_INITIALIZE_KDTREE
     CGAL::Timer timer_initialize_kdtree;
@@ -1076,7 +1080,7 @@ class SNC_external_structure : public SNC_external_structure_base<Items_, SNC_st
   typedef CGAL::SNC_point_locator<SNC_decorator>             SNC_point_locator;
 public:
 
-  SNC_external_structure( SNC_structure_& W, SNC_point_locator* spl = NULL) 
+  SNC_external_structure( SNC_structure_& W, SNC_point_locator* spl = nullptr) 
     : SNC_external_structure_base<Items_, SNC_structure_>(W, spl) 
   {}
 };
@@ -1120,7 +1124,7 @@ public:
   using Base::link_as_inner_shell;
 
 
-  SNC_external_structure( SNC_structure& W, SNC_point_locator* spl = NULL) 
+  SNC_external_structure( SNC_structure& W, SNC_point_locator* spl = nullptr) 
     : Base(W, spl) {}
   /*{\Mcreate makes |\Mvar| a decorator of |W|.}*/
 

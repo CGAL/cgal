@@ -14,13 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s):  Kan Huang <huangkandiy@gmail.com>
 //             Francisc Bungiu <fbungiu@gmail.com>
 //             Michael Hemmer <michael.hemmer@cgal.org>
 
-#include <CGAL/basic.h>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

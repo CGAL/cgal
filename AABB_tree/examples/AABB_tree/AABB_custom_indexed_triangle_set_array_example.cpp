@@ -1,5 +1,5 @@
 #include <iostream>
-#include <boost/iterator.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>

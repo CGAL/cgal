@@ -1,0 +1,11 @@
+export CGAL_DIR='/cygdrive/c/CGAL/CGAL-4.9/build_vs2017'
+export VC_VERSION="14.1"
+export VC_VERSION_YEAR="2017"
+export ARCH="64"
+export QT_VERSION="5.9.1"
+export PLATFORM_REFERENCE="/cygdrive/c/CGAL/reference_platforms"
+export BOOST_VERSION="1_65_1"
+export TBB_ARCH_PLATFORM="intel64/vc14"
+export EIGEN3_DIR="C:/3rdPartyLibs/eigen-master" 
+export INIT_FILE="C:\\CGAL\\reference_platforms\\x64_Cygwin-Windows10_MSVC2017-Release-64bits-extra_flags\\init.cmake"
+source "${PLATFORM_REFERENCE}/setup_common"

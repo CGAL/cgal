@@ -19,5 +19,6 @@
 - \subpage devman_testing
 - \subpage devman_submission
 - \subpage devman_info
+- \subpage deprecated
 
 */

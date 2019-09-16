@@ -1,7 +1,7 @@
-/// \defgroup PkgKernel23 2D and 3D Linear Geometry Kernel Reference
+/// \defgroup PkgKernel23Ref 2D and 3D Linear Geometry Kernel Reference
 
 /// \defgroup PkgKernel23Concepts Concepts
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup PkgKernel23ConceptsGeomObject Kernel Geometric Object Concepts
 /// \ingroup PkgKernel23Concepts
@@ -10,37 +10,37 @@
 /// \ingroup PkgKernel23Concepts
 
 /// \defgroup kernel_predef Predefined Kernels
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_classes2 2D Kernel Objects
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_classes3 3D Kernel Objects
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_classes Kernel Classes
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_global_function Global Kernel Functions
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_enums Enumerations and Related Functions
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_conversion Cartesian/Homogenous Conversion
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_dimension Dimension Handling Tools
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /*!
-\addtogroup PkgKernel23
-\cgalPkgDescriptionBegin{2D and 3D Linear Geometry Kernel,PkgKernel23Summary}
+\addtogroup PkgKernel23Ref
+\cgalPkgDescriptionBegin{2D and 3D Linear Geometry Kernel,PkgKernel23}
 \cgalPkgPicture{pointSegmentTriangle.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Hervé Brönnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra}
 \cgalPkgDesc{This package contains kernels each containing objects of  constant size, such as point, vector, direction, line, ray, segment, circle as well as predicates and constructions for these objects. The kernels mainly differ in the way they handle robustness issues.}
-\cgalPkgManuals{Chapter_2D_and_3D_Geometry_Kernel,PkgKernel23}
+\cgalPkgManuals{Chapter_2D_and_3D_Geometry_Kernel,PkgKernel23Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{0.9}
@@ -51,11 +51,11 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `Kernel`
 
-## %Kernel Classes and Operations ##
+\cgalCRPSection{%Kernel Classes and Operations}
 
 - `CGAL::Cartesian<FieldNumberType>`
 - `CGAL::Cartesian_converter<K1, K2, NTConverter>`
@@ -72,15 +72,15 @@
 - `CGAL::Simple_homogeneous<RingNumberType>`
 - `CGAL::Projection_traits_xy_3<K>`
 
-## Predefined Kernels ##
+\cgalCRPSection{Predefined Kernels}
 
 - `CGAL::Exact_predicates_exact_constructions_kernel`
 - `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt`
 - `CGAL::Exact_predicates_inexact_constructions_kernel`
 
-## %Kernel Objects ##
+\cgalCRPSection{%Kernel Objects}
 
-### Two-dimensional Objects ###
+\cgalCRPSubsection{Two-dimensional Objects}
 
 - `CGAL::Aff_transformation_2<Kernel>`
 - `CGAL::Bbox_2`
@@ -93,8 +93,9 @@
 - `CGAL::Segment_2<Kernel>`
 - `CGAL::Triangle_2<Kernel>`
 - `CGAL::Vector_2<Kernel>`
+- `CGAL::Weighted_point_2<Kernel>`
 
-### Three-dimensional Objects ###
+\cgalCRPSubsection{Three-dimensional Objects}
 
 - `CGAL::Bbox_3`
 - `CGAL::Aff_transformation_3<Kernel>`
@@ -110,8 +111,10 @@
 - `CGAL::Tetrahedron_3<Kernel>`
 - `CGAL::Triangle_3<Kernel>`
 - `CGAL::Vector_3<Kernel>`
+- `CGAL::Weighted_point_3<Kernel>`
 
-## Constants and Enumerations ##
+
+\cgalCRPSection{Constants and Enumerations}
 
 - `CGAL::Angle`
 - `CGAL::Bounded_side`
@@ -136,9 +139,11 @@
 - `CGAL::Scaling`
 - `CGAL::Translation`
 
-## Global Functions ##
+\cgalCRPSection{Global Functions}
 
 - \link angle_grp `CGAL::angle()` \endlink
+- \link angle_grp `CGAL::approximate_angle()` \endlink
+- \link angle_grp `CGAL::approximate_dihedral_angle()` \endlink
 - \link are_ordered_along_line_grp `CGAL::are_ordered_along_line()` \endlink
 - \link are_strictly_ordered_along_line_grp `CGAL::are_strictly_ordered_along_line()` \endlink
 - \link area_grp `CGAL::area()` \endlink
@@ -181,6 +186,7 @@
 - \link has_smaller_signed_distance_to_line_grp `CGAL::has_smaller_signed_distance_to_line()` \endlink
 - \link has_smaller_signed_distance_to_plane_grp `CGAL::has_smaller_signed_distance_to_plane()` \endlink
 - \link intersection_grp `CGAL::intersection()` \endlink
+- \link l_infinity_distance_grp `CGAL::l_infinity_distance()` \endlink
 - \link left_turn_grp `CGAL::left_turn()` \endlink
 - \link lexicographically_xyz_smaller_grp `CGAL::lexicographically_xyz_smaller()` \endlink
 - \link lexicographically_xyz_smaller_or_equal_grp `CGAL::lexicographically_xyz_smaller_or_equal()` \endlink
@@ -218,7 +224,7 @@
 - \link y_equal_grp `CGAL::y_equal()` \endlink
 - \link z_equal_grp `CGAL::z_equal()` \endlink
 
-## %Kernel Geometric Object Concepts ##
+\cgalCRPSection{%Kernel Geometric Object Concepts}
 
 - `Kernel::Circle_2`
 - `Kernel::Circle_3`
@@ -243,8 +249,10 @@
 - `Kernel::Triangle_3`
 - `Kernel::Vector_2`
 - `Kernel::Vector_3`
+- `Kernel::WeightedPoint_2`
+- `Kernel::WeightedPoint_3`
 
-## %Kernel Function Object Concepts ##
+\cgalCRPSection{%Kernel Function Object Concepts}
 
 - `Kernel::Angle_2`
 - `Kernel::Angle_3`
@@ -270,9 +278,13 @@
 - `Kernel::CompareDistance_2`
 - `Kernel::CompareDistance_3`
 - `Kernel::CompareSlope_2`
+- `Kernel::CompareSlope_3`
+- `Kernel::ComparePowerDistance_2`
+- `Kernel::ComparePowerDistance_3`
 - `Kernel::CompareSquaredDistance_2`
 - `Kernel::CompareSquaredDistance_3`
 - `Kernel::CompareSquaredRadius_3`
+- `Kernel::CompareWeightedSquaredRadius_3`
 - `Kernel::CompareXAtY_2`
 - `Kernel::CompareXYZ_3`
 - `Kernel::CompareXY_2`
@@ -288,6 +300,7 @@
 - `Kernel::ComputeB_2`
 - `Kernel::ComputeC_2`
 - `Kernel::ComputeApproximateArea_3`
+- `Kernel::ComputeApproximateAngle_3`
 - `Kernel::ComputeApproximateDihedralAngle_3`
 - `Kernel::ComputeApproximateSquaredLength_3`
 - `Kernel::ComputeArea_2`
@@ -299,6 +312,11 @@
 - `Kernel::ComputeDy_2`
 - `Kernel::ComputeHx_2`
 - `Kernel::ComputeHy_2`
+- `Kernel::ComputeLInfinityDistance_2`
+- `Kernel::ComputeLInfinityDistance_3`
+- `Kernel::ComputePowerDistanceToPowerSphere_3`
+- `Kernel::ComputePowerProduct_2`
+- `Kernel::ComputePowerProduct_3`
 - `Kernel::ComputeScalarProduct_2`
 - `Kernel::ComputeScalarProduct_3`
 - `Kernel::ComputeSquaredArea_3`
@@ -309,7 +327,11 @@
 - `Kernel::ComputeSquaredLengthDividedByPiSquare_3`
 - `Kernel::ComputeSquaredRadius_2`
 - `Kernel::ComputeSquaredRadius_3`
+- `Kernel::ComputeSquaredRadiusSmallestOrthogonalCircle_2`
+- `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3`
 - `Kernel::ComputeVolume_3`
+- `Kernel::ComputeWeight_2`
+- `Kernel::ComputeWeight_3`
 - `Kernel::ComputeX_2`
 - `Kernel::ComputeX_3`
 - `Kernel::ComputeY_2`
@@ -387,6 +409,7 @@
 - `Kernel::ConstructProjectedPoint_2`
 - `Kernel::ConstructProjectedPoint_3`
 - `Kernel::ConstructProjectedXYPoint_2`
+- `Kernel::ConstructRadicalAxis_2`
 - `Kernel::ConstructRadicalLine_2`
 - `Kernel::ConstructRadicalPlane_3`
 - `Kernel::ConstructRay_2`
@@ -412,6 +435,9 @@
 - `Kernel::ConstructVector_3`
 - `Kernel::ConstructVertex_2`
 - `Kernel::ConstructVertex_3`
+- `Kernel::ConstructWeightedCircumcenter_3`
+- `Kernel::ConstructWeightedPoint_2`
+- `Kernel::ConstructWeightedPoint_3`
 - `Kernel::CartesianConstIterator_2`
 - `Kernel::CartesianConstIterator_3`
 - `Kernel::CoplanarOrientation_3`
@@ -465,12 +491,16 @@
 - `Kernel::Orientation_3`
 - `Kernel::OrientedSide_2`
 - `Kernel::OrientedSide_3`
+- `Kernel::PowerSideOfBoundedPowerCircle_2`
+- `Kernel::PowerSideOfBoundedPowerSphere_3`
+- `Kernel::PowerSideOfOrientedPowerCircle_2`
+- `Kernel::PowerSideOfOrientedPowerSphere_3`
 - `Kernel::SideOfBoundedCircle_2`
 - `Kernel::SideOfBoundedSphere_3`
 - `Kernel::SideOfOrientedCircle_2`
 - `Kernel::SideOfOrientedSphere_3`
 
-## Dimension handling tools ##
+\cgalCRPSection{Dimension Handling Tools}
 
 - `CGAL::Ambient_dimension<T, K>`
 - `CGAL::Feature_dimension<T, K>`

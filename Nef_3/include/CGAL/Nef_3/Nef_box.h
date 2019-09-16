@@ -13,11 +13,15 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 // Author(s)     : Peter Hachenberger    <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_NEF_BOX_H
 #define CGAL_NEF_BOX_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Box_intersection_d/box_limits.h>

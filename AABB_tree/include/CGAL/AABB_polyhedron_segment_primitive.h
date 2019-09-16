@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Pierre Alliez, Stephane Tayeb
@@ -26,6 +27,10 @@
 #ifndef CGAL_AABB_POLYHEDRON_SEGMENT_PRIMITIVE_H_
 #define CGAL_AABB_POLYHEDRON_SEGMENT_PRIMITIVE_H_
 
+#include <CGAL/license/AABB_tree.h>
+
+#include <CGAL/disable_warnings.h>
+
 #define CGAL_DEPRECATED_HEADER "<CGAL/AABB_polyhedron_segment_primitive.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_halfedge_graph_segment_primitive.h>"
 #include <CGAL/internal/deprecation_warning.h>
@@ -35,7 +40,7 @@
 
 namespace CGAL {
 
-/// \addtogroup PkgAABB_tree
+/// \addtogroup PkgAABBTreeRef
 /// @{
     /// \deprecated This class is deprecated since \cgal 4.3, the class
     /// `AABB_halfedge_graph_segment_primitive` should be used instead.
@@ -158,5 +163,6 @@ namespace CGAL {
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_POLYHEDRON_SEGMENT_PRIMITIVE_H_

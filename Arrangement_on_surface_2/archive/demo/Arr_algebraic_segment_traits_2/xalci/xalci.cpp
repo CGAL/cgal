@@ -21,6 +21,7 @@
 // SoX_release   : $Name:  $
 // Revision      : $Revision: 1.43 $
 // Revision_date : $Date: 2009-06-30 13:14:58 $
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-inf.mpg.de>
 //                 Michael Kerber <mkerber@mpi-inf.mpg.de>

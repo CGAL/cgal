@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSkinSurface3
+\ingroup PkgSkinSurface3Ref
 
 The `Union_of_balls_3` is used to represent a skin surface with shrink 
 factor equal to one, which is the boundary of the union of the input 
@@ -20,8 +20,6 @@ points.
 template< typename SkinSurfaceTraits_3 >
 class Union_of_balls_3 {
 public:
-
-/// @}
 
 }; /* end Union_of_balls_3 */
 } /* end namespace CGAL */

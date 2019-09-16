@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -30,6 +31,7 @@
 
 #include <CGAL/Kernel/global_functions_2.h>
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Kernel/hash_functions.h>
 
 namespace CGAL {
 

@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGHT_COST_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGHT_COST_H
+
+#include <CGAL/license/Surface_mesh_simplification.h>
+
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
@@ -30,14 +34,14 @@ namespace Surface_mesh_simplification
 //
 // Edge-length cost: the squared length of the collapsing edge
 //
-  template<class ECM>
+  template<class TM>
 class Edge_length_cost
 {
 public:
   /*  
-  typedef ECM_ ECM ;
+  typedef TM_ TM ;
   
-  typedef Edge_profile<ECM> Profile ;
+  typedef Edge_profile<TM> Profile ;
   typedef typename Profile::Point Point;  
   typedef typename Kernel_traits<Point>::Kernel Kernel ;
   typedef typename Kernel::FT FT ;

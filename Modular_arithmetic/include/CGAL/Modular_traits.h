@@ -14,17 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Michael Hemmer
 
 #ifndef CGAL_MODULAR_TRAITS_H
 #define CGAL_MODULAR_TRAITS_H 1
 
-#include <CGAL/basic.h>
-#include <CGAL/Residue.h>
-#include <CGAL/Modular_arithmetic/Residue_type.h>
-#include <vector>
-
+#include <CGAL/tags.h>
 
 namespace CGAL { 
 

@@ -7,60 +7,61 @@ namespace CGAL {
 The class `Delaunay_triangulation_3` represents a three-dimensional 
 Delaunay triangulation. 
 
-\tparam DelaunayTriangulationTraits_3 is the geometric traits class. 
+\tparam Traits is the geometric traits class and must be a model of `DelaunayTriangulationTraits_3`.
 
-\tparam TriangulationDataStructure_3 is the triangulation data structure. 
-It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<DelaunayTriangulationTraits_3>, 
-								  Delaunay_triangulation_cell_base_3<DelaunayTriangulationTraits_3> >`.
-`Default` may be used.
+\tparam TDS is the triangulation data structure and must be a model of `TriangulationDataStructure_3`.
+`Default` may be used, with default type `Triangulation_data_structure_3<Triangulation_vertex_base_3<Traits>,
+                                                                         Delaunay_triangulation_cell_base_3<Traits> >`.
+Any custom type can be used instead of `Triangulation_vertex_base_3`
+and `Delaunay_triangulation_cell_base_3`, provided that they are models of the
+concepts `TriangulationVertexBase_3` and `DelaunayTriangulationCellBase_3`,
+respectively.
 
-\tparam LocationPolicy is a tag which must be a `Location_policy<Tag>`: 
-either `Fast_location` or `Compact_location`. 
-`Fast_location` offers faster (\f$ O(\log n)\f$ time) point 
+\tparam LP is a tag which must be a `Location_policy<Tag>`:
+either `CGAL::Fast_location` or `CGAL::Compact_location`.
+`CGAL::Fast_location` offers faster (\f$ O(\log n)\f$ time) point
 location, which can be beneficial when performing point locations or random 
 point insertions (with no good location hint) in large data sets. 
 It is currently implemented using an additional triangulation 
 hierarchy data structure \cgalCite{cgal:d-dh-02}. 
-The default is `Compact_location`, which saves memory (3-5%) by avoiding the need for this 
+The default is `CGAL::Compact_location`, which saves memory (3-5%) by avoiding the need for this
 separate data structure, and point location is then performed roughly in 
 \f$ O(n^{1/3})\f$ time. 
 If the triangulation is parallel (see user manual), the default compact 
 location policy must be used.
 Note that this argument can also come in second position, which can be useful when 
-the default value for the `TriangulationDataStructure_3` parameter is 
-satisfactory (this is using so-called deduced parameters). 
+the default value for the `TDS` parameter is
+satisfactory (this is achieved using so-called deduced parameters).
 Note that this argument replaces the functionality 
 provided before \cgal 3.6 by `Triangulation_hierarchy_3`. 
 An example of use can be found in the user 
 manual \ref Triangulation3exfastlocation. 
 
-\tparam SurjectiveLockDataStructure is an optional parameter to specify the type of the spatial lock data structure.
-        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
-        `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
+\tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
         It must be a model of the `SurjectiveLockDataStructure` concept,
-        with `Object` being a `Point`.
+        with `Object` being a `Point` (as defined below).
+        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
+        `TDS::Concurrency_tag` is `CGAL::Parallel_tag`).
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
         the triangulation data structure is concurrency-safe, and `void` otherwise.
         In order to use concurrent operations, the user must provide a 
         reference to a `SurjectiveLockDataStructure`
         instance via the constructor or `Triangulation_3::set_lock_data_structure()`.
 
-If `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`, some operations, 
+If `TDS::Concurrency_tag` is `CGAL::Parallel_tag`, some operations,
 such as insertion/removal of a range of points, are performed in parallel. See 
 the documentation of the operations for more details.
 
+\sa `CGAL::Triangulation_3`
 \sa `CGAL::Regular_triangulation_3` 
 
 */
-template< typename DelaunayTriangulationTraits_3, typename TriangulationDataStructure_3, typename LocationPolicy, typename SurjectiveLockDataStructure >
+template< typename Traits, typename TDS, typename LP, typename SLDS >
 class Delaunay_triangulation_3 : 
-    public Triangulation_3<DelaunayTriangulationTraits_3,
-                           Delaunay_triangulation_3<DelaunayTriangulationTraits_3,
-                                                    TriangulationDataStructure_3,
-                                                    LocationPolicy>::Triangulation_data_structure,
-                           SurjectiveLockDataStructure
-                           >
-                           
+    public Triangulation_3<Traits,
+                           Delaunay_triangulation_3<
+                             Traits, TDS, LP>::Triangulation_data_structure,
+                           SLDS>
 {
 public:
 
@@ -70,13 +71,23 @@ public:
 
 /*!
 
-*/ 
-typedef LocationPolicy Location_policy; 
+*/
+typedef Traits Geom_traits;
+
+/*!
+
+*/
+typedef TDS Triangulation_data_structure;
 
 /*!
 
 */ 
-typedef SurjectiveLockDataStructure Lock_data_structure; 
+typedef LP Location_policy;
+
+/*!
+
+*/ 
+typedef SLDS Lock_data_structure;
 
 /// @}
 
@@ -88,22 +99,22 @@ In addition to those inherited, the following types are defined, for use by the 
 /*!
 
 */ 
-typedef DelaunayTriangulationTraits_3::Line_3 Line; 
+typedef Geom_traits::Line_3 Line;
 
 /*!
 
 */ 
-typedef DelaunayTriangulationTraits_3::Ray_3 Ray; 
+typedef Geom_traits::Ray_3 Ray;
 
 /*!
 
 */ 
-typedef DelaunayTriangulationTraits_3::Plane_3 Plane; 
+typedef Geom_traits::Plane_3 Plane;
 
 /*!
 
 */ 
-typedef DelaunayTriangulationTraits_3::Object_3 Object; 
+typedef Geom_traits::Object_3 Object;
 
 /// @} 
 
@@ -116,9 +127,8 @@ Creates an empty Delaunay triangulation, possibly specifying a traits class
 `lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
 */ 
-Delaunay_triangulation_3 
-(const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 
-Lock_data_structure *lock_ds = NULL);
+Delaunay_triangulation_3(const Geom_traits& traits = Geom_traits(),
+                         Lock_data_structure *lock_ds = nullptr);
 
 /*!
 Copy constructor. 
@@ -134,16 +144,16 @@ If parallelism is enabled, the points will be inserted in parallel.
 */ 
 template < class InputIterator > 
 Delaunay_triangulation_3 (InputIterator first, InputIterator last, 
-const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 
-Lock_data_structure *lock_ds = NULL); 
+                          const Geom_traits& traits = Geom_traits(),
+                          Lock_data_structure *lock_ds = nullptr);
 
 /*! 
 Same as before, with last two parameters in reverse order.
 */ 
 template < class InputIterator > 
 Delaunay_triangulation_3 (InputIterator first, InputIterator last, 
-Lock_data_structure *lock_ds, 
-const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3()); 
+                          Lock_data_structure *lock_ds,
+                          const Geom_traits& traits = Geom_traits());
 
 /// @} 
 
@@ -152,7 +162,7 @@ const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3());
 /// @{
 
 /*!
-Inserts point `p` in the triangulation and returns the corresponding 
+Inserts the point `p` in the triangulation and returns the corresponding
 vertex. Similar to the insertion in a triangulation, but ensures in 
 addition the empty sphere property of all the created faces. 
 The optional argument `start` is used as a starting place for the search. 
@@ -166,23 +176,23 @@ is true, otherwise it is false and the return value is Vertex_handle()
 function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Point & p, 
-Cell_handle start = Cell_handle(), bool *could_lock_zone = NULL); 
+Cell_handle start = Cell_handle(), bool *could_lock_zone = nullptr); 
 
 /*!
 Same as above but uses `hint` as a starting place for the search. 
 */ 
 Vertex_handle insert(const Point & p, Vertex_handle hint,
-                     bool *could_lock_zone = NULL); 
+                     bool *could_lock_zone = nullptr); 
 
 /*!
-Inserts point `p` in the triangulation and returns the corresponding 
+Inserts the point `p` in the triangulation and returns the corresponding
 vertex. Similar to the above `insert()` function, but takes as additional 
 parameter the return values of a previous location query. See description of 
 `Triangulation_3::locate()`. 
 */ 
 Vertex_handle insert(const Point & p, Locate_type lt, 
 Cell_handle loc, int li, int lj,
-bool *could_lock_zone = NULL); 
+bool *could_lock_zone = nullptr); 
 
 /*!
 Inserts the points in the iterator range `[first,last)`. Returns the number of inserted points. 
@@ -199,7 +209,6 @@ std::ptrdiff_t
 insert(PointInputIterator first, PointInputIterator last); 
 
 /*!
-
 Inserts the points in the iterator range  `[first,last)`. 
 Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
@@ -224,7 +233,7 @@ insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last);
 /// @{
 
 /*!
-if there is not already another vertex placed on `p`, 
+If there is not already another vertex placed on `p`,
 the triangulation is modified such that the new position of vertex `v` 
 is `p`, and `v` is returned. Otherwise, the triangulation is not 
 modified and the vertex at point `p` is returned. 
@@ -233,8 +242,9 @@ modified and the vertex at point `p` is returned.
 Vertex_handle move_if_no_collision(Vertex_handle v, const Point & p); 
 
 /*!
-same as above if there is no collision. Otherwise, `v` 
-is deleted and the vertex placed on `p` is returned. 
+If there is no collision during the move, this function is the same as
+`move_if_no_collision` . Otherwise, `v` is removed and the vertex at point `p`
+is returned.
 \pre Vertex `v` must be finite. 
 */ 
 Vertex_handle move(Vertex_handle v, const Point & p); 
@@ -387,17 +397,14 @@ specifying where to start the search.
 \pre `c` is a cell of `dt`. 
 
 */ 
-Vertex_handle nearest_vertex(Point p, 
-Cell_handle c = Cell_handle()); 
+Vertex_handle nearest_vertex(const Point& p,
+                             Cell_handle c = Cell_handle());
 
 /*!
-Returns the vertex of the cell `c` that is 
-nearest to \f$ p\f$. 
-
+Returns the vertex of the cell `c` that is nearest to \f$ p\f$.
 */ 
-Vertex_handle nearest_vertex_in_cell(Point p, 
-Cell_handle c); 
-
+Vertex_handle nearest_vertex_in_cell(const Point& p,
+                                     Cell_handle c);
 
 /// @}
 
@@ -437,9 +444,9 @@ Returns the pair composed of the resulting output iterators.
 template <class OutputIteratorBoundaryFacets, 
 class OutputIteratorCells> 
 std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells> 
-find_conflicts(Point p, Cell_handle c, 
-OutputIteratorBoundaryFacets bfit, 
-OutputIteratorCells cit, bool *could_lock_zone = NULL); 
+find_conflicts(const Point& p, Cell_handle c,
+               OutputIteratorBoundaryFacets bfit,
+               OutputIteratorCells cit, bool *could_lock_zone = nullptr);
 
 /*!
 Same as the other `find_conflicts()` function, except that it also 
@@ -469,24 +476,23 @@ Returns the `Triple` composed of the resulting output iterators.
 
 */ 
 template <class OutputIteratorBoundaryFacets, 
-class OutputIteratorCells, 
-class OutputIteratorInternalFacets> 
+          class OutputIteratorCells,
+          class OutputIteratorInternalFacets>
 Triple<OutputIteratorBoundaryFacets, 
-OutputIteratorCells, 
-OutputIteratorInternalFacets> 
-find_conflicts(Point p, Cell_handle c, 
-OutputIteratorBoundaryFacets bfit, 
-OutputIteratorCells cit, 
-OutputIteratorInternalFacets ifit,
-bool *could_lock_zone = NULL); 
+       OutputIteratorCells,
+       OutputIteratorInternalFacets>
+find_conflicts(const Point& p, Cell_handle c,
+               OutputIteratorBoundaryFacets bfit,
+               OutputIteratorCells cit,
+               OutputIteratorInternalFacets ifit,
+               bool *could_lock_zone = nullptr);
 
 /*!
 \deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
-vertices_in_conflict(Point p, Cell_handle c, 
-OutputIterator res); 
+vertices_in_conflict(const Point& p, Cell_handle c, OutputIterator res);
 
 /*!
 Similar to `find_conflicts()`, but reports the vertices which are on the 
@@ -497,9 +503,7 @@ Returns the resulting output iterator.
 */ 
 template <class OutputIterator> 
 OutputIterator 
-vertices_on_conflict_zone_boundary(Point p, Cell_handle c, 
-OutputIterator res); 
-
+vertices_on_conflict_zone_boundary(const Point& p, Cell_handle c, OutputIterator res);
 
 /// @}
 

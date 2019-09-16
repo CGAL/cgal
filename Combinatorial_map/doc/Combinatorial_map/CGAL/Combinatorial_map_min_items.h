@@ -4,18 +4,15 @@ namespace CGAL {
 /*!
 \ingroup PkgCombinatorialMapsClasses
 
-The class `Combinatorial_map_min_items` is a model of the `CombinatorialMapItems`
-concept. It defines the type of darts which is a
-`Dart<d,CMap>`. The `Combinatorial_map_min_items` has a
-template argument for the dimension of the combinatorial map.
-In this class, no attribute is enabled.
+The class `Combinatorial_map_min_items` defines the type of darts which is a `Dart<d,CMap>`. The `Combinatorial_map_min_items` has a template argument for the dimension of the combinatorial map. In this class, no attribute is enabled.
 
-\cgalModels `CombinatorialMapItems`
+\tparam d the dimension of the combinatorial map.
+
+\deprecated This class is deprecated since CGAL 4.9. Users are required to use class `Generic_map_min_items` instead, where the `Dart` type is no more defined, but replaced by the `Dart_info` type. `CGAL_CMAP_DART_DEPRECATED` can be defined to keep the old behavior.
 
 \cgalHeading{Example}
 
-The following example shows the implementation of the
-`Combinatorial_map_min_items` class.
+The following example shows the implementation of the `Combinatorial_map_min_items` class.
 
 \code{.cpp}
 template <unsigned int d>
@@ -25,20 +22,16 @@ struct Combinatorial_map_min_items
   struct Dart_wrapper
   {
     typedef CGAL::Dart<d, CMap> Dart;
-    typedef CGAL::cpp11::tuple<> Attributes;
+    typedef std::tuple<> Attributes;
   };
 };
 \endcode
 
-\sa `Combinatorial_map<d,Items,Alloc>`
-\sa `Dart<d,CMap>`
+\sa `Generic_map_items`
 
 */
-template< typename d >
-class Combinatorial_map_min_items {
-public:
-
-/// @}
+template< unsigned int d >
+struct Combinatorial_map_min_items {
 
 }; /* end Combinatorial_map_min_items */
 } /* end namespace CGAL */

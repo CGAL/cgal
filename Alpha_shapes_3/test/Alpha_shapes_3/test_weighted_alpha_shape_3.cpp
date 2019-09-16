@@ -12,40 +12,38 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
-// $Id$ 
-// $Date$
-// 
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Triangulation_data_structure_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
+#include <CGAL/Alpha_shape_cell_base_3.h>
+#include <CGAL/Alpha_shape_vertex_base_3.h>
+#include <CGAL/Regular_triangulation_3.h>
+#include <CGAL/Triangulation_data_structure_3.h>
 
 #include <CGAL/_test_weighted_alpha_shape_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Gt;
-typedef Gt::Weighted_point   Weighted_point;
+typedef CGAL::Regular_triangulation_vertex_base_3<K>        Rvb;
+typedef CGAL::Alpha_shape_vertex_base_3<K,Rvb>              Vb;
 
-typedef CGAL::Alpha_shape_vertex_base_3<Gt>                 Vb;
-typedef CGAL::Alpha_shape_cell_base_3<Gt>                   Fb;
-typedef CGAL::Triangulation_data_structure_3<Vb,Fb>         Tds;
+typedef CGAL::Regular_triangulation_cell_base_3<K>          Rcb;
+typedef CGAL::Alpha_shape_cell_base_3<K,Rcb>                Cb;
+typedef CGAL::Triangulation_data_structure_3<Vb,Cb>         Tds;
 
-typedef CGAL::Regular_triangulation_3<Gt,Tds>               Triangulation_3;
+typedef CGAL::Regular_triangulation_3<K,Tds>                Triangulation_3;
 typedef CGAL::Alpha_shape_3<Triangulation_3>                Alpha_shape_3;
 
 //using exact filtered traits
-typedef CGAL::Alpha_shape_vertex_base_3<Gt,CGAL::Default,CGAL::Tag_true,CGAL::Tag_true>   EF_Vb;
-typedef CGAL::Alpha_shape_cell_base_3<Gt,CGAL::Default,CGAL::Tag_true,CGAL::Tag_true>       EF_Fb;
-typedef CGAL::Triangulation_data_structure_3<EF_Vb,EF_Fb>   EF_Tds;
+typedef CGAL::Alpha_shape_vertex_base_3<K,Rvb,CGAL::Tag_true,CGAL::Tag_true>   EF_Vb;
+typedef CGAL::Alpha_shape_cell_base_3<K,Rcb,CGAL::Tag_true,CGAL::Tag_true>     EF_Cb;
+typedef CGAL::Triangulation_data_structure_3<EF_Vb,EF_Cb>   EF_Tds;
 
-typedef CGAL::Regular_triangulation_3<Gt,EF_Tds>        EF_Triangulation_3;
+typedef CGAL::Regular_triangulation_3<K,EF_Tds>        EF_Triangulation_3;
 typedef CGAL::Alpha_shape_3<EF_Triangulation_3,CGAL::Tag_true>            EF_Alpha_shape_3;
 
 int main()

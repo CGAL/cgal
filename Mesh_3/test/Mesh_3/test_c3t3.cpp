@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -25,14 +26,13 @@
 #include <CGAL/Bbox_3.h>
 
 #include "test_utilities.h"
-#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 
 // IO
 #include <fstream>
 #include <iostream>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/File_tetgen.h>
 
@@ -47,10 +47,11 @@ struct Tester
   typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
+  typedef typename Tr::Bare_point Bare_point;
+  typedef typename Tr::Weighted_point Weighted_point;
+
   typedef typename Tr::Geom_traits Gt;
   typedef typename Gt::FT FT;
-  typedef typename Gt::Point_3 Point;
-  typedef CGAL::Mesh_3::Creator_weighted_point_3<FT, Point> Point_creator;
 
   typedef typename C3t3::Cell_handle Cell_handle;
   typedef typename C3t3::Facet Facet;
@@ -79,11 +80,10 @@ struct Tester
     //-------------------------------------------------------
     // Data generation : fill a triangulation with 4 vertices
     //-------------------------------------------------------
-    Point_creator creator;
-    Point p1 = creator(0,0,0);
-    Point p2 = creator(1,0,0);
-    Point p3 = creator(0,1,0);
-    Point p4 = creator(0,0,1);
+    Weighted_point p1(0,0,0);
+    Weighted_point p2(1,0,0);
+    Weighted_point p3(0,1,0);
+    Weighted_point p4(0,0,1);
 
     tr.insert(p1);
     tr.insert(p2);
@@ -234,8 +234,8 @@ struct Tester
     input >> polyhedron;
     input.close();
     Mesh_domain domain(polyhedron);
-        
-    typedef std::vector<std::pair<Point, Index> > Initial_points_vector;
+
+    typedef std::vector<std::pair<Bare_point, Index> > Initial_points_vector;
     Initial_points_vector initial_points;
     domain.construct_initial_points_object()(std::back_inserter(initial_points), 6);
     

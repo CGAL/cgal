@@ -79,7 +79,7 @@ void test()
         // -- Laurent Rineau, 2013/03/26
 	CGAL_assertion_code( ok = false );
 	try { CGAL::get_certain(u); }
-	catch (CGAL::Assertion_exception) { ok = true; }
+  catch (CGAL::Assertion_exception&) { ok = true; }
 	bool_assert(ok);
 
 	ok = false;
@@ -90,7 +90,7 @@ void test()
 	  CGAL_USE(t);
 #endif
 	}
-	catch (CGAL::Uncertain_conversion_exception) { ok = true; }
+	catch (CGAL::Uncertain_conversion_exception&) { ok = true; }
 	bool_assert(ok);
 
 	U u2 = CGAL::make_uncertain(u);
@@ -293,7 +293,7 @@ void test_bool()
           bool_assert(indet.is_same(CGAL_OR(ufalse, indet)));
           bool_assert(indet.is_same(CGAL_OR(indet, ufalse)));
 
-        } catch (CGAL::Uncertain_conversion_exception) {
+        } catch (CGAL::Uncertain_conversion_exception&) {
 #ifndef CGAL_CFG_NO_STATEMENT_EXPRESSIONS
          std::abort();
 #endif
@@ -302,16 +302,16 @@ void test_bool()
 	// Test exceptions
 	bool ok = false;
 	try { bool b = indet; CGAL_USE(b); }
-	catch (CGAL::Uncertain_conversion_exception) { ok = true; }
+	catch (CGAL::Uncertain_conversion_exception&) { ok = true; }
 	bool_assert(ok);
 	// The following must throw.
 	ok = false;
 	try { U u = indet && utrue; u = indet || ufalse; }
-	catch (CGAL::Uncertain_conversion_exception) { ok = true; }
+	catch (CGAL::Uncertain_conversion_exception&) { ok = true; }
 	bool_assert(ok);
 	// The following must not throw.
 	try { bool b = utrue; b = ufalse; CGAL_USE(b); }
-	catch (CGAL::Uncertain_conversion_exception) { bool_assert(false); }
+	catch (CGAL::Uncertain_conversion_exception&) { bool_assert(false); }
 
 	// certainly, possibly
 	bool_assert(CGAL::certainly(true));

@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Frank Da, David Cohen-Steiner, Andreas Fabri
 
 #ifndef CGAL_AFSR_CONSTRUCT_POLYHEDRON_2
 #define CGAL_AFSR_CONSTRUCT_POLYHEDRON_2
+
+#include <CGAL/license/Advancing_front_surface_reconstruction.h>
+
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>

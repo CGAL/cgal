@@ -1,5 +1,23 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
+# macros to be used inside the code
+ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><dd> <table class=\"params\">"
+ALIASES += "cgalNamedParamsEnd=</table> </dd> </dl>"
+ALIASES += "cgalParamBegin{1}=<tr><td class=\"paramname\">\ref PMP_\1 \"\1\"</td><td>"
+ALIASES += "cgalParamEnd=</td></tr>"
+ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of points, each pair of contiguous points defines a segment of the polyline. If the first and last points of the polyline are identical, the polyline is closed."
+
+#macros for NamedParameters.txt
+ALIASES += "cgalNPTableBegin=<dl class=\"params\"><dt></dt><dd> <table class=\"params\">"
+ALIASES += "cgalNPTableEnd=</table> </dd> </dl>"
+ALIASES += "cgalNPBegin{1}=<tr><td class=\"paramname\">\1 </td><td>"
+ALIASES += "cgalNPEnd=</td></tr>"
+
+
+INPUT += \
+      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polyhedral_complex_mesh_domain_3.h \
+      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_domain_with_polyline_features_3.h
+
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Mesh Generation"
 HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_3.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_4.jpg \
@@ -8,6 +26,11 @@ HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_3.jpg 
                               ${CGAL_PACKAGE_DOC_DIR}/fig/protection-box.png \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/protection-all.png \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/no-custom-init.png \
-                              ${CGAL_PACKAGE_DOC_DIR}/fig/with-custom-init.png
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/with-custom-init.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/hybrid_domain.jpg \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/hybrid_domain_mesh_no_protection.jpg \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/hybrid_domain_mesh_protection.jpg \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/protection-complex.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/no-protection-complex.png
 
 EXAMPLE_PATH += ${CGAL_PACKAGE_INCLUDE_DIR}

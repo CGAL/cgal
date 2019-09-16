@@ -1,27 +1,27 @@
-/// \defgroup PkgInterpolation2 2D and Surface Function Interpolation Reference
+/// \defgroup PkgInterpolation2Ref 2D and Surface Function Interpolation Reference
 
 /// \defgroup PkgInterpolation2Concepts Concepts
-/// \ingroup PkgInterpolation2
-
+/// \ingroup PkgInterpolation2Ref
 
 /// \defgroup PkgInterpolation2Interpolation Interpolation Functions
-/// \ingroup PkgInterpolation2
+/// \ingroup PkgInterpolation2Ref
 
 /// \defgroup PkgInterpolation2NatNeighbor Natural Neighbor Coordinate Computation
-/// \ingroup PkgInterpolation2
+/// \ingroup PkgInterpolation2Ref
 
 /// \defgroup PkgInterpolation2SurfaceNeighbor Surface Neighbor and Surface Neighbor Coordinate Computation
-/// \ingroup PkgInterpolation2
-
+/// \ingroup PkgInterpolation2Ref
 
 /*!
-\addtogroup PkgInterpolation2
-\cgalPkgDescriptionBegin{2D and Surface Function Interpolation,PkgInterpolation2Summary}
+\addtogroup PkgInterpolation2Ref
+\cgalPkgDescriptionBegin{2D and Surface Function Interpolation,PkgInterpolation2}
 \cgalPkgPicture{interpolation.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Julia Flötotto}
-\cgalPkgDesc{This package implements different methods for scattered data interpolation: Given measures of a function on a set of discrete data points, the task is to interpolate this function on an arbitrary query point. The package further offers functions for natural neighbor interpolation.}
-\cgalPkgManuals{Chapter_2D_and_Surface_Function_Interpolation,PkgInterpolation2}
+\cgalPkgDesc{This package implements different methods for scattered data interpolation:
+Given measures of a function on a set of discrete data points, the task is to interpolate
+this function on an arbitrary query point. The package further offers functions for natural neighbor interpolation.}
+\cgalPkgManuals{Chapter_2D_and_Surface_Function_Interpolation,PkgInterpolation2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
@@ -41,62 +41,61 @@ function gradients are known, we can exactly interpolate quadratic
 functions given barycentric coordinates. Any further properties of
 these interpolation functions depend on the properties of the
 barycentric coordinates. They are provided in this package under the
-name `linear_interpolation()` and
-`quadratic_interpolation()`.
+names `linear_interpolation()` and `quadratic_interpolation()`.
 
-## Natural Neighbor Interpolation ##
+\cgalCRPSection{Natural Neighbor Interpolation}
 
 Natural neighbor coordinates are defined by Sibson in 1980 and are based on the Voronoi
 diagram of the data points. Interpolation methods based on natural
 neighbor coordinates are particularly interesting because they adapt
-easily to non-uniform and highly anisotropic data.  This package
-contains Sibson's \f$ C^1\f$ continuous interpolation method which
-interpolates exactly spherical quadrics (of the form 
-\f$ \Phi(\mathbf{x})=a + \mathbf{b}^t \mathbf{x} +\gamma\ \mathbf{x}^t\mathbf{x}\f$) 
+easily to non-uniform and highly anisotropic data.
+This package contains Sibson's \f$ C^1\f$ continuous interpolation method which
+interpolates exactly spherical quadrics (of the form
+\f$ \Phi(\mathbf{x})= a + \mathbf{b}^t \mathbf{x} +\gamma\ \mathbf{x}^t\mathbf{x}\f$)
 and Farin's \f$ C^1\f$ continuous interpolation method based on
 Bernstein-B&eacute;zier techniques and interpolating exactly quadratic
-functions - assuming that the function gradient is known. In
-addition, Sibson defines a method to approximate the function
+functions - assuming that the function gradient is known.
+In addition, Sibson defines a method to approximate the function
 gradients for data points that are in the interior of the convex hull.
 This method is exact for spherical quadrics.
 
-This \cgal package implements Sibson's and Farin's interpolation
-functions as well as Sibson's function gradient fitting method.
-Furthermore, it provides functions to compute the natural neighbor
-coordinates with respect to a two-dimensional Voronoi diagram (i. e., 
+This \cgal package provides functions to compute the natural neighbor
+coordinates with respect to a two-dimensional Voronoi diagram (i. e.,
 from the Delaunay triangulation of the data points) and to a
 two-dimensional power diagram for weighted points (i. e., from their
-regular triangulation).  Natural neighbor coordinates on closed and
+regular triangulation). Natural neighbor coordinates on closed and
 well-sampled surfaces can also be computed if the normal to the
 surface at the query point is known. The latter coordinates are only
 approximately barycentric, see \cgalCite{bf-lcss-02}.
-
-For a more thorough introduction see the user manual.
+Furthermore, it implements Sibson's and Farin's interpolation
+functions as well as Sibson's function gradient fitting method.
+For a more thorough introduction, see the \link Chapter_2D_and_Surface_Function_Interpolation
+User Manual \endlink.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `InterpolationTraits`
 - `GradientFittingTraits`
 
-## Interpolation Functions ##
-- `CGAL::linear_interpolation`
-- `CGAL::sibson_c1_interpolation`
-- `CGAL::farin_c1_interpolation`
-- `CGAL::quadratic_interpolation`
-- `CGAL::sibson_gradient_fitting`
+\cgalCRPSection{Interpolation Functions}
+- `CGAL::linear_interpolation()`
+- `CGAL::sibson_c1_interpolation()`
+- `CGAL::farin_c1_interpolation()`
+- `CGAL::quadratic_interpolation()`
+- `CGAL::sibson_gradient_fitting()`
 
 - `CGAL::Interpolation_traits_2<K>`
 - `CGAL::Interpolation_gradient_fitting_traits_2<K>`
 
-## Natural neighbor coordinate computation ##
-- `CGAL::natural_neighbor_coordinates_2`
-- `CGAL::regular_neighbor_coordinates_2`
+\cgalCRPSection{Natural Neighbor Coordinate Computation}
+- `CGAL::natural_neighbor_coordinates_2()`
+- `CGAL::regular_neighbor_coordinates_2()`
 
-## Surface neighbor and surface neighbor coordinate computation ##
+\cgalCRPSection{Surface Neighbor and Surface Neighbor Coordinate Computation}
 - `CGAL::Voronoi_intersection_2_traits_3<K>`
-- `CGAL::surface_neighbor_coordinates_3`
-- `CGAL::surface_neighbors_3`
+- `CGAL::surface_neighbor_coordinates_3()`
+- `CGAL::surface_neighbors_3()`
 
 */
 

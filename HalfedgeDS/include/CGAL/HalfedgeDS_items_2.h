@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
@@ -46,7 +47,24 @@ public:
         typedef HalfedgeDS_face_base< Refs>                    Face;
     };
 };
+  
+class HalfedgeDS_items_3 {
+public:
+    template < class Refs, class Traits>
+    struct Vertex_wrapper {
+        typedef typename Traits::Point_3 Point;
+        typedef HalfedgeDS_vertex_base< Refs, Tag_true, Point> Vertex;
+    };
+    template < class Refs, class Traits>
+    struct Halfedge_wrapper {
+        typedef HalfedgeDS_halfedge_base< Refs>                Halfedge;
+    };
+    template < class Refs, class Traits>
+    struct Face_wrapper {
+        typedef HalfedgeDS_face_base< Refs>                    Face;
 
+    };
+};
 } //namespace CGAL
 #endif // CGAL_HALFEDGEDS_ITEMS_2_H //
 // EOF //

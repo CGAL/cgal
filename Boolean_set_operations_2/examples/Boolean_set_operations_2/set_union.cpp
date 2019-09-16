@@ -69,7 +69,7 @@ int main (int argc, char* argv[])
     circles.push_back (construct_polygon (circle));
   }
 
-  // Compute the union aggragately.
+  // Compute the union aggregately.
   std::list<Polygon_with_holes_2> res;
   CGAL::join (circles.begin(), circles.end(), std::back_inserter (res));
 

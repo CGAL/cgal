@@ -1,19 +1,22 @@
 
 /*!
-\ingroup PkgAlphaShape2Concepts
+\ingroup PkgAlphaShapes2Concepts
 \cgalConcept
 
-A model of the concept `AlphaShapeTraits_2` must provide the following predicate and 
-operations in addition to the requirements for the underlying triangulation 
-traits class. 
-It means, the metric has to be Euclidean for Delaunay triangulation or the power 
-metric for regular triangulation. 
+The concept `AlphaShapeTraits_2` describes the requirements for the geometric traits
+class of the underlying Delaunay triangulation of a basic alpha shape.
 
-\cgalRefines `TriangulationTraits_2` 
+\cgalRefines `DelaunayTriangulationTraits_2`
 
-\cgalHasModel Kernel
-\cgalHasModel `CGAL::Projection_traits_xy_3<K>` 
+In addition to the requirements described in the concept
+::DelaunayTriangulationTraits_2, the geometric traits class of a
+Delaunay triangulation plugged in a basic alpha shapes provides the
+following.
 
+\cgalHasModel All models of `Kernel`.
+\cgalHasModel Projection traits such as `CGAL::Projection_traits_xy_3<K>`.
+
+\sa `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended kernel)
 */
 
 class AlphaShapeTraits_2 {

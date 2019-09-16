@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 //                 Ron Wein  <wein@post.tau.ac.il>
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
@@ -19,6 +23,10 @@
 
 #ifndef CGAL_ARR_POLYCURVE_TRAITS_2_H
 #define CGAL_ARR_POLYCURVE_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The traits-class for the general piece-wise (polycurve) type of curves of the
@@ -89,6 +97,7 @@ public:
   typedef typename Base::Parameter_space_in_y_2       Parameter_space_in_y_2;
   typedef typename Base::Compare_x_on_boundary_2      Compare_x_on_boundary_2;
   typedef typename Base::Compare_x_at_limit_2         Compare_x_at_limit_2;
+  typedef typename Base::Compare_x_near_boundary_2    Compare_x_near_boundary_2;
   typedef typename Base::Compare_x_near_limit_2       Compare_x_near_limit_2;
   typedef typename Base::Compare_y_on_boundary_2      Compare_y_on_boundary_2;
   typedef typename Base::Compare_y_near_boundary_2    Compare_y_near_boundary_2;
@@ -155,6 +164,9 @@ public:
   /// \name Construction functors(based on the subcurve traits).
   //@{
 
+#ifndef DOXYGEN_RUNNING
+  class Push_back_2;
+#endif
   /*! \class
    * A functor that divides an arc into x-monotone arcs. That are, arcs that
    * do not cross the identification arc.
@@ -837,7 +849,7 @@ public:
           for (size_t i = 0; i < int_seg.size(); ++i) {
             const X_monotone_subcurve_2* x_seg =
               CGAL::object_cast<X_monotone_subcurve_2> (&(int_seg[i]));
-            if (x_seg != NULL) {
+            if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
 
               // If for some reason the subcurve intersection
@@ -849,7 +861,7 @@ public:
 
             const Point_2_pair* p_ptr =
               CGAL::object_cast<Point_2_pair>(&(int_seg[i]));
-            if (p_ptr != NULL) {
+            if (p_ptr != nullptr) {
               // Any point that is not equal to the max_vertex of the
               // subcurve should be inserted into oi.
               // The max_vertex of the current subcurve (if intersecting)
@@ -866,7 +878,7 @@ public:
           // The left point of the current subcurve of one polycurve
           // coincides with the current subcurve of the other polycurve.
           if (left_overlap) {
-            // An overlap occured at the previous iteration:
+            // An overlap occurred at the previous iteration:
             // Output the overlapping polycurve.
             CGAL_assertion(ocv.number_of_subcurves() > 0);
             *oi++ = make_object(ocv);
@@ -875,7 +887,7 @@ public:
           else {
             // The left point of the current subcurve of one
             // polycurve coincides with the current subcurve of the
-            // other polycurve, and no overlap occured at the
+            // other polycurve, and no overlap occurred at the
             // previous iteration: Output the intersection
             // point. The derivative of at least one of the
             // polycurves is not defined at this point, so we give
@@ -1180,5 +1192,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

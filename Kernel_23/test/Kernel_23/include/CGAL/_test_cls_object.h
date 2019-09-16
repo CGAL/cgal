@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -38,6 +39,9 @@ public:
   Object_handle() : Base() {}
   Object_handle(const CGAL::Object& o) : Base(o) {}
   Object_handle(const Object_handle& h) : Base(h) {}
+  
+  Object_handle&
+  operator=(const Object_handle& v)=default;
 };
  
 Object_handle return_obj()
@@ -128,7 +132,7 @@ _test_cls_object(const R&)
     use(k);
     assert(false);
   }
-  catch (CGAL::Bad_object_cast) {}
+  catch (CGAL::Bad_object_cast&) {}
 
 
   std::cout << "done" << std::endl;

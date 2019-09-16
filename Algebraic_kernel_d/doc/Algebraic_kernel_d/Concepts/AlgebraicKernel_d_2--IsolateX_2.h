@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKerneldConceptsBi
+\ingroup PkgAlgebraicKernelDConceptsBi
 \cgalConcept
 
 Computes an isolating interval for the first coordinate of an `AlgebraicKernel_d_2::Algebraic_real_2` 

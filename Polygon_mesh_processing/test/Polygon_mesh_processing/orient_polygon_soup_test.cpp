@@ -2,13 +2,12 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
 
 #include <fstream>
@@ -86,7 +85,7 @@ void shuffle_off(const char* fname_in, const char* fname_out)
     for (int k=0;k<n;++k)
       input >> indices[k];
 
-    std::random_shuffle(indices.begin(), indices.end());
+    CGAL::cpp98::random_shuffle(indices.begin(), indices.end());
 
     output << n;
     for (int k=0;k<n;++k)
@@ -96,7 +95,7 @@ void shuffle_off(const char* fname_in, const char* fname_out)
 }
 
 template <typename K>
-int test_orient() {
+int test_orient(const bool save_oriented) {
   typedef typename K::Point_3 Point_3;
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
@@ -114,6 +113,7 @@ int test_orient() {
   bool oriented
     = CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons);
   std::cerr << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
+  assert(oriented);
 
   if(oriented) {
     Surface_mesh mesh;
@@ -124,16 +124,19 @@ int test_orient() {
     CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
       points, polygons, poly);
 
-    std::ofstream out("elephant-oriented.off");
-    out << poly;
-    out.close();
+    if (save_oriented)
+    {
+      std::ofstream out("elephant-oriented.off");
+      out << poly;
+      out.close();
+    }
   }
   return 0;
 }
 
 int main()
 {
-  assert(test_orient<Epic>() == 0);
-  assert(test_orient<Epec>() == 0);
+  assert(test_orient<Epic>(false) == 0);
+  assert(test_orient<Epec>(false) == 0);
   return 0;
 }

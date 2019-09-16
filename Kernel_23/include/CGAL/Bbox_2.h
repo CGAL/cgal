@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Andreas Fabri
 
@@ -29,6 +30,7 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/array.h>
+#include <boost/math/special_functions/next.hpp>
 
 namespace CGAL {
 
@@ -37,7 +39,7 @@ struct Simple_cartesian;
 
 class Bbox_2
 {
-  typedef cpp11::array<double, 4>            BBox_rep_2;
+  typedef std::array<double, 4>            BBox_rep_2;
 
   BBox_rep_2 rep;
 
@@ -75,6 +77,7 @@ public:
   inline Bbox_2     operator+(const Bbox_2 &b) const;
   inline Bbox_2&     operator+=(const Bbox_2 &b);
 
+  inline void dilate(int dist);
 };
 
 inline
@@ -155,7 +158,17 @@ Bbox_2::operator+=(const Bbox_2& b)
   rep[3] = (std::max)(ymax(), b.ymax());
   return *this;
 }
-
+inline
+void
+Bbox_2::dilate(int dist)
+{
+  using boost::math::float_advance;
+  rep[0] = float_advance(rep[0],-dist);
+  rep[1] = float_advance(rep[1],-dist);
+  rep[2] = float_advance(rep[2],dist);
+  rep[3] = float_advance(rep[3],dist);
+}
+  
 inline
 bool
 do_overlap(const Bbox_2 &bb1, const Bbox_2 &bb2)

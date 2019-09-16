@@ -30,10 +30,13 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifndef _CORE_BIGFLOAT_H_
 #define _CORE_BIGFLOAT_H_
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/CORE/BigFloatRep.h>
 #include <CGAL/assertions.h>
@@ -58,6 +61,8 @@ public:
   BigFloat(float i) : RCBigFloat(new BigFloatRep(i)) {}
   /// constructor for <tt>int</tt>
   BigFloat(int i) : RCBigFloat(new BigFloatRep(i)) {}
+  /// constructor for <tt>unsigned int</tt>
+  BigFloat(unsigned int i) : RCBigFloat(new BigFloatRep(i)) {}
   /// constructor for <tt>long</tt>
   BigFloat(long l) : RCBigFloat(new BigFloatRep(l)) {}
   /// constructor for <tt>double</tt>
@@ -183,7 +188,7 @@ public:
   /// \name String Conversion Functions
   //@{
   /// set value from <tt>const char*</tt> (base = 10)
-  void fromString(const char* s, const extLong& p=get_static_defBigFloatInputDigits()) {
+  void fromString(const char* s, extLong p = getBigFloatInputDigits()) {
     rep->fromString(s, p);
   }
   /// convert to <tt>std::string</tt> (base = 10)
@@ -631,5 +636,7 @@ inline BigRat::BigRat(const BigFloat& f) : RCBigRat(new BigRatRep()){
 #include <CGAL/CORE/BigFloat_impl.h>
 #include <CGAL/CORE/CoreIO_impl.h>
 #endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
 
 #endif // _CORE_BIGFLOAT_H_

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_QT_POLYGON_WITH_HOLES_GRAPHICS_ITEM_H
 #define CGAL_QT_POLYGON_WITH_HOLES_GRAPHICS_ITEM_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -177,8 +181,8 @@ PolygonWithHolesGraphicsItem<P>::paint(QPainter *painter,
   if(drawVertices()) {
 
     painter->setPen(verticesPen());
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
     for(typename P::General_polygon_2::Vertex_iterator it = poly->outer_boundary().vertices_begin();
         it != poly->outer_boundary().vertices_end();
         it++){

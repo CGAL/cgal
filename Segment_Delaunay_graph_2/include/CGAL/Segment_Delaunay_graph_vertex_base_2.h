@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -23,6 +24,10 @@
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_VERTEX_BASE_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_VERTEX_BASE_2_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
@@ -47,6 +52,7 @@ public:
   //------
   typedef STraits                                  Storage_traits;
   typedef typename Storage_traits::Geom_traits     Geom_traits;
+  typedef typename Geom_traits::Point_2            Point;
   typedef typename Geom_traits::Site_2             Site_2;
   typedef typename Storage_traits::Storage_site_2  Storage_site_2;
   typedef D_S                                       Data_structure;
@@ -94,5 +100,7 @@ private:
 
 
 } //namespace CGAL 
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_VERTEX_BASE_2_H
