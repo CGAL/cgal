@@ -61,7 +61,10 @@ class Handle
     Handle(const Handle& x)
     {
       CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
+#ifndef CGAL_HANDLE_FOR_USE_ATOMIC
+      // using CGAL_assume when `count` is atomic is costly
       CGAL_assume (x.PTR->count > 0);
+#endif
       PTR = x.PTR;
 #if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
       PTR->count.fetch_add(1, CGAL::cpp11::memory_order_relaxed);
@@ -73,7 +76,9 @@ class Handle
     ~Handle()
     {
       if ( PTR ) {
+#ifndef CGAL_HANDLE_FOR_USE_ATOMIC
         CGAL_assume (PTR->count > 0);
+#endif
 #if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
         if (PTR->count.fetch_sub(1, CGAL::cpp11::memory_order_release) == 1) {
           CGAL::cpp11::atomic_thread_fence(CGAL::cpp11::memory_order_acquire);
@@ -91,14 +96,18 @@ class Handle
     operator=(const Handle& x)
     {
       CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
+#ifndef CGAL_HANDLE_FOR_USE_ATOMIC
       CGAL_assume (x.PTR->count > 0);
+#endif
 #if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
       x.PTR->count.fetch_add(1, CGAL::cpp11::memory_order_relaxed);
 #else // not CGAL::cpp11::atomic
       ++(x.PTR->count);
 #endif // not CGAL::cpp11::atomic
       if ( PTR ) {
+#ifndef CGAL_HANDLE_FOR_USE_ATOMIC
         CGAL_assume (PTR->count > 0);
+#endif
 #if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
         if (PTR->count.fetch_sub(1, CGAL::cpp11::memory_order_release) == 1) {
           CGAL::cpp11::atomic_thread_fence(CGAL::cpp11::memory_order_acquire);
