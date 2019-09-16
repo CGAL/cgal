@@ -16,6 +16,7 @@
 #include <QApplication>
 #include <QOpenGLDebugLogger>
 #include <QStyleFactory>
+#include <QAction>
 #include <QtWebSockets/QWebSocket>
 
 #include <CGAL/Three/Three.h>
@@ -111,6 +112,8 @@ public:
   }
 
   QWebSocket m_webSocket;
+  bool is_connected;
+  QString session;
   QUrl m_url;
 };
 
@@ -269,6 +272,7 @@ void Viewer::doBindings()
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
+  d->is_connected = false;
   
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
@@ -1842,12 +1846,13 @@ bool Viewer::isClipping() const
   return d->clipping;
 }
 
-void Viewer::setShareCam(bool b)
+void Viewer::setShareCam(bool b, QString session)
 {
   static bool init = false;
   if(b)
   {
     d->cam_sharing = b;
+    d->session = session;
     QString ws_url
         = CGAL::Three::Three::mainWindow()->property("ws_url").toString();
     if(ws_url.isEmpty())
@@ -1858,14 +1863,30 @@ void Viewer::setShareCam(bool b)
       if(!init)
       {
         connect(&d->m_webSocket, &QWebSocket::connected, this, &Viewer::onSocketConnected);
-        connect(&d->m_webSocket, &QWebSocket::disconnected, this, &Viewer::socketClosed);
+        connect(&d->m_webSocket, &QWebSocket::disconnected, this,[this]()
+        {
+          d->is_connected = false;
+          Viewer::socketClosed();
+        });
         init = true;
       }
       d->m_webSocket.open(QUrl(ws_url));
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      QTimer::singleShot(1000, this, [this](){
+        QApplication::restoreOverrideCursor();
+        if(!d->is_connected){
+          QMessageBox::warning(CGAL::Three::Three::mainWindow(),
+                               "Connection failure",
+                               "The requested server was not found.");
+          setShareCam(false, "");
+        }
+      });
     }
   }
   else
   {
+    QAction* action = findChild<QAction*>("actionShareCamera");
+    action->setChecked(false);
     d->m_webSocket.close();
   }
 }
@@ -1877,16 +1898,26 @@ void Viewer::onSocketConnected()
   connect(camera()->frame(), &CGAL::qglviewer::ManipulatedCameraFrame::manipulated,
           this, [this](){
     if(d->cam_sharing){
-      QString cam_state = dumpCameraCoordinates();
+      QString cam_state = QString("[%1] %2").arg(d->session).arg(dumpCameraCoordinates());
       //send to server
       d->m_webSocket.sendTextMessage(cam_state);
     }
   });
+  d->is_connected = true;
 }
 
 void Viewer::onTextMessageSocketReceived(QString message)
 {
-  moveCameraToCoordinates(message, 0.05f);
+  QString session;
+  QString position;
+  QRegularExpression re("\\[(.*)\\] (.*)");
+  QRegularExpressionMatch match = re.match(message);
+  session = match.captured(1);
+  position = match.captured(2);
+  if(session != d->session){
+    return;
+  }
+  moveCameraToCoordinates(position, 0.05f);
 }
 
 #include "Viewer.moc"

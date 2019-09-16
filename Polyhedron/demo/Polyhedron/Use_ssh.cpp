@@ -4,8 +4,8 @@
 #include <fstream>
 #include <cstring>
 #include <vector>
-
-#include <sys/stat.h>
+#include <chrono>
+#include <thread>
 
 bool test_result(int res)
 {
@@ -112,7 +112,7 @@ bool push_file(ssh_session &session,
   {
     std::cerr<<"Error allocating scp session: %s\n"
             << ssh_get_error(session)<<std::endl;
-    return SSH_ERROR;
+    return false;
   }
   int res = ssh_scp_init(scp);
   if(res != SSH_OK)
@@ -143,7 +143,7 @@ bool push_file(ssh_session &session,
     return false;
   }
   //push a file to /tmp
-  res = ssh_scp_push_directory(scp, ".", S_IRWXU|S_IRWXO);
+  res = ssh_scp_push_directory(scp, ".", 0707);
   if (res != SSH_OK)
   {
     std::cerr<<"Can't create remote directory: %s\n"
@@ -152,7 +152,7 @@ bool push_file(ssh_session &session,
     return false;
   }
   res = ssh_scp_push_file
-      (scp, dest_path, size, S_IRWXU|S_IRWXO);
+      (scp, dest_path, size, 0707);
   if (res != SSH_OK)
   {
     std::cerr<< "Can't open remote file: %s\n"
@@ -161,6 +161,10 @@ bool push_file(ssh_session &session,
     return false;
   }
   res = ssh_scp_write(scp, buffer.data(), size);
+  //some versions of libssh don't copy everything without this.
+  //This is the case for the official version on Ubuntu 18.04
+  std::chrono::duration<int, std::micro> timespan(size);
+  std::this_thread::sleep_for(timespan);
   if (res != SSH_OK)
   {
     std::cerr<< "Can't write to remote file: %s\n"
@@ -176,8 +180,8 @@ bool pull_file(ssh_session &session,
                const char* to_path)
 {
   int rc;
-  long unsigned int size;
-  long unsigned int processed = 0;
+  std::size_t size;
+  std::size_t processed = 0;
   std::vector<char> buffer;
 
   ssh_scp scp = ssh_scp_new(
@@ -186,7 +190,7 @@ bool pull_file(ssh_session &session,
   {
     std::cerr<<"Error allocating scp session: %s\n"
             << ssh_get_error(session)<<std::endl;
-    return SSH_ERROR;
+    return false;
   }
   int res = ssh_scp_init(scp);
   if(res != SSH_OK)
@@ -235,7 +239,6 @@ bool pull_file(ssh_session &session,
     std::cerr<<"Error while writing file."<<std::endl;
   }
   file.close();
-  //free(buffer);
   ssh_scp_free(scp);
   return true;
 }

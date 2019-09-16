@@ -131,7 +131,7 @@ public Q_SLOTS:
 
   void messageLogged(QOpenGLDebugMessage);
 
-  void setShareCam(bool);
+  void setShareCam(bool, QString);
   void onSocketConnected();
   void onTextMessageSocketReceived(QString message);
 

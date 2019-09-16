@@ -1,3 +1,6 @@
+#ifdef CGAL_USE_SSH
+#  include "CGAL/Use_ssh.h"
+#endif
 #include <cmath>
 
 #include "config.h"
@@ -72,9 +75,11 @@
 #  include <QScriptValue>
 #include "Color_map.h"
 
-#ifdef CGAL_USE_SSH
-#  include "CGAL/Use_ssh.h"
-#endif
+
+#include <QWebSocketServer>
+#include <QWebSocket>
+#include <QRandomGenerator>
+#include <QNetworkInterface>
 
 using namespace CGAL::Three;
 QScriptValue
@@ -1824,6 +1829,7 @@ void MainWindow::readSettings()
     this->default_point_size = settings.value("points_size").toInt();
     this->default_normal_length = settings.value("normals_length").toInt();
     this->default_lines_width = settings.value("lines_width").toInt();
+    setProperty("ws_url", settings.value("ws_server_url").toString());
 }
 
 void MainWindow::writeSettings()
@@ -2940,10 +2946,10 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                                             last_saved_dir,
                                             "Qt Script files (*.js)");
   }
-  CGAL::Three::Three::CursorScopeGuard cs(Qt::WaitCursor);
   std::ofstream os(filename.toUtf8(), std::ofstream::binary);
   if(!os)
     return;
+  CGAL::Three::Three::CursorScopeGuard cs(Qt::WaitCursor);
   std::vector<std::pair<QString, QString> > names;
   std::vector<std::pair<QString, QString> > loaders;
   std::vector<QColor> colors;
@@ -3033,14 +3039,13 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     os << rendering_modes[i] << ", ";
   }
   os << rendering_modes.back()<<"];\n";
-  os <<"var initial_scene_size = scene.numberOfEntries;\n";
   os << "items.forEach(function(item, index, array){\n";
   os<<"          var path=items[index][1];\n";
   os<<"          path+='.';\n";
   os<<"          path+=loaders[index][1];\n";
   os<<"          var fullpath = main_window.write_string_to_file(item[0], path);\n";
   os<<"          main_window.open(fullpath,loaders[index][0]);\n";
-  os << "        var it = scene.item(initial_scene_size+index);\n";
+  os << "        var it = scene.item(scene.numberOfEntries-1);\n";
   os << "        var r = colors[index][0];\n";
   os << "        var g = colors[index][1];\n";
   os << "        var b = colors[index][2];\n";
@@ -3099,6 +3104,8 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
         return;
       }
       close_connection(session);
+      QFile tmp_file(filename);
+      tmp_file.remove();
     } catch( ssh::SshException e )
     {
       std::cout << "Error during connection : ";
@@ -3227,9 +3234,30 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
   });
 
 
-  action= subviewer->findChild<QAction*>("actionShareCamera");
-  connect(action, SIGNAL(toggled(bool)),
-          viewer, SLOT(setShareCam(bool)));
+  action= subviewer->viewer->findChild<QAction*>("actionShareCamera");
+  connect(action, &QAction::toggled,
+          this, [this, viewer](bool b)
+  {
+    if(!viewer){
+      return;
+    }
+    QString session;
+    if(b){
+      bool ok;
+      session = QInputDialog::getText(
+            this,"Session",
+            "Please enter the session name.\n"
+            "Only the machines that enter the same session name will be connected.\n"
+            "Several sessions can run simultaneously on a same server. ",
+            QLineEdit::Normal, QString(), &ok);
+      if(session.isEmpty() || !ok)
+      {
+        viewer->setShareCam(false, session);
+        return;
+      }
+    }
+    viewer->setShareCam(b, session);
+  });
   
 }
 
@@ -3382,7 +3410,7 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);
-  QAction* actionShareCamera= new QAction("Join WS Server",this);
+  QAction* actionShareCamera= new QAction("Join &WS Server",viewer);
   actionShareCamera->setObjectName("actionShareCamera");
   actionShareCamera->setCheckable(true);
   actionShareCamera->setChecked(false);
@@ -3576,7 +3604,7 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
         return;
       }
       filename = QString("%1/load_scene.js").arg(QDir::tempPath());
-      path = tr("%1/%2").arg(QDir::tempPath()).arg(path);
+      path = tr("/tmp/%2").arg(path);
       res = pull_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
       if(!res)
       {
@@ -3604,11 +3632,95 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
     if(filename.isEmpty())
       return;
   }
-
-
-
-
   loadScript(QFileInfo(filename));
+  if(do_download){
+    QFile tmp_file(filename);
+    tmp_file.remove();
+  }
+}
+
+void MainWindow::on_action_Start_a_Session_triggered()
+{
+  QAction * action= findChild<QAction*>("action_Start_a_Session");
+  static EchoServer *server =nullptr;
+  if(action->isChecked()){
+     server = new EchoServer(1234);
+    QObject::connect(server, &EchoServer::closed, server,&EchoServer::deleteLater);
+  }
+  else
+  {
+    server->deleteLater();
+  }
+}
 
 
+EchoServer::EchoServer(quint16 port) :
+    QObject(CGAL::Three::Three::mainWindow()),
+    m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Echo Server"),
+                                            QWebSocketServer::NonSecureMode, this))
+{
+    if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
+        connect(m_pWebSocketServer, &QWebSocketServer::newConnection,
+                this, &EchoServer::onNewConnection);
+        connect(m_pWebSocketServer, &QWebSocketServer::closed, this, &EchoServer::closed);
+    }
+    QHostAddress local_host("0.0.0.0");
+
+    //to avoid printing 127.0.0.1. Not realy sure it won't ever print the external ipv4 though.
+    const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
+    for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
+      if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
+      {
+        local_host= address;
+        break;
+      }
+    }
+    QMessageBox mb(QMessageBox::NoIcon, "WS Server",
+                   tr("WebSockets Server started.\nEnter the following address in\nyour Network Preferences to be able to join it :\n"
+                      "ws://%1:%2").arg(local_host.toString()).arg(port), QMessageBox::Ok, CGAL::Three::Three::mainWindow());
+    mb.setTextInteractionFlags(Qt::TextSelectableByMouse);
+    mb.exec();
+}
+
+EchoServer::~EchoServer()
+{
+    m_pWebSocketServer->close();
+    qDeleteAll(m_clients.begin(), m_clients.end());
+}
+
+void EchoServer::onNewConnection()
+{
+    QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
+
+    connect(pSocket, &QWebSocket::textMessageReceived, this, &EchoServer::processTextMessage);
+    connect(pSocket, &QWebSocket::binaryMessageReceived, this, &EchoServer::processBinaryMessage);
+    connect(pSocket, &QWebSocket::disconnected, this, &EchoServer::socketDisconnected);
+
+    m_clients << pSocket;
+}
+
+void EchoServer::processTextMessage(QString message)
+{
+    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+    for(auto *client : m_clients) {
+      if(client != pClient)
+        client->sendTextMessage(message);
+    }
+}
+
+void EchoServer::processBinaryMessage(QByteArray message)
+{
+    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+    if (pClient) {
+        pClient->sendBinaryMessage(message);
+    }
+}
+
+void EchoServer::socketDisconnected()
+{
+    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+    if (pClient) {
+        m_clients.removeAll(pClient);
+        pClient->deleteLater();
+    }
 }
