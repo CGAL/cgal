@@ -1157,7 +1157,6 @@ Note that the variables in the table below are being used.
 | :-                   | :-                    | :-             |
 | `TBB_ROOT` | Directory of \sc{Tbb} default installation | Environment |
 | `TBB_INCLUDE_DIRS` | Directory containing the `tbb/tbb.h` file | CMake |
-| `TBB_LIBRARY_DIRS` | Directory(ies) containing the compiled TBB libraries | CMake |
 | `TBB_LIBRARIES` | Full pathnames of the compiled TBB libraries (both release and debug versions, using "optimized" and "debug" CMake keywords). Note that if the debug versions are not found, the release versions will be used instead for the debug mode. | CMake |
 | `TBB_RELEASE_LIBRARY` | Full pathname of the compiled TBB release library | CMake |
 | `TBB_MALLOC_RELEASE_LIBRARY` | Full pathname of the compiled TBB release malloc library | CMake |
