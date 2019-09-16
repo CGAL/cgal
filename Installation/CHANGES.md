@@ -6,6 +6,8 @@ Release 5.0
 
 Release date: September 2019
 
+### Installation
+-   The FindTBB.cmake file has been updated to work with later versions of TBB. The TBBROOT variable now becomes TBB_ROOT.
 ### Polygonal Surface Reconstruction (new package)
 
 -   This package provides a method for piecewise planar object reconstruction from point clouds. 

@@ -5,7 +5,7 @@
 
 \section installation_introduction Introduction
 
-Since \cgal version 5.0, \cgal is header-only be default, which means
+Since \cgal version 5.0, \cgal is header-only be default, which means
 that there is no need to compile and install anything before it can be
 used. The dependencies of \cgal still have to be installed.
 
@@ -1144,18 +1144,18 @@ environment variable is sufficient.
 
 \subsection installation_tbb TBB Library
 
-If \sc{Tbb} is not automatically found, the user must set the `TBBROOT`
+If \sc{Tbb} is not automatically found, the user must set the `TBB_ROOT`
 environment variable. The environment variable `TBB_ARCH_PLATFORM=<arch>/<compiler>` must be set. 
 `<arch>` is `ia32` or `intel64`. `<compiler>` describes the Linux kernel, gcc version or Visual Studio version
-used. It should be set to what is used in `$TBBROOT/lib/<arch>`.
+used. It should be set to what is used in `$TBB_ROOT/lib/<arch>`.
 
-For windows users, the folder `TBBROOT/bin/<arch>/<compiler>` should be added to the `PATH` variable.
+For windows users, the folder `TBB_ROOT/bin/<arch>/<compiler>` should be added to the `PATH` variable.
 
 Note that the variables in the table below are being used.
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
-| `TBBROOT` | Directory of \sc{Tbb} default installation | Environment |
+| `TBB_ROOT` | Directory of \sc{Tbb} default installation | Environment |
 | `TBB_INCLUDE_DIRS` | Directory containing the `tbb/tbb.h` file | CMake |
 | `TBB_LIBRARY_DIRS` | Directory(ies) containing the compiled TBB libraries | CMake |
 | `TBB_LIBRARIES` | Full pathnames of the compiled TBB libraries (both release and debug versions, using "optimized" and "debug" CMake keywords). Note that if the debug versions are not found, the release versions will be used instead for the debug mode. | CMake |
