@@ -2805,9 +2805,7 @@ public:
 
   /// \endcond
 
-  /// @}
-
-  /*
+  /*!
   \brief Creates an `AABB_tree` suitable for use with `locate`.
 
   \details The following static overload is also available:
@@ -2823,14 +2821,14 @@ public:
     build_aabb_tree(m_graph, outTree, m_vertexPointMap);
   }
 
+  /// \cond
+
   template <class AABBTraits>
   void build_aabb_tree(AABB_tree<AABBTraits>& outTree,
                        Vertex_point_map vertexPointMap) const
   {
     build_aabb_tree(m_graph, outTree, vertexPointMap);
   }
-
-  /// \cond
 
   template <class AABBTraits>
   static void build_aabb_tree(const Triangle_mesh& tm, AABB_tree<AABBTraits>& outTree,
@@ -2843,6 +2841,7 @@ public:
   }
   /// \endcond
 
+  /// @}
 };
 
 } // namespace CGAL
