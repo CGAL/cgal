@@ -94,7 +94,7 @@ protected:
   class Nef_Visitor {
   public:
     Nef_Visitor(SimpleNefPolyhedronViewerQt &v)
-        : viewer(v), facets_done(), n_faces(0), n_edges(0) {}
+      : n_faces(0), n_edges(0), viewer(v) {}
 
     void visit(Vertex_const_handle vh) {
       viewer.add_point(vh->point());
@@ -169,7 +169,6 @@ protected:
     Nef_Visitor V(*this);
     CGAL_forall_volumes(c, nef)
     {
-      int is = 0;
       Shell_entry_const_iterator it;
       CGAL_forall_shells_of(it, c)
       {
