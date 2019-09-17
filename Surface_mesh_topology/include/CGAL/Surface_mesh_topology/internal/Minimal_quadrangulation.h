@@ -23,19 +23,18 @@
 
 // Should be defined before to include Path_on_surface_with_rle.h
 // If nothing is defined, use V1
-#define CGAL_PWRLE_TURN_V1  // Compute turns by turning (method of CMap)
+// #define CGAL_PWRLE_TURN_V1  // Compute turns by turning (method of CMap)
 // #define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash-table (built and given by Curves_on_surface_topology)
-// #define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Curves_on_surface_topology)
+#define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Curves_on_surface_topology)
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
-#include <CGAL/Union_find.h>
-#include <CGAL/Random.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h>
 #include <CGAL/Surface_mesh_topology/internal/Path_generators.h>
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Cell_attribute.h>
+#include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 #include <boost/unordered_map.hpp>
 #include <queue>
@@ -71,13 +70,7 @@ public:
   Dart_handle;
   typedef typename CMap_for_minimal_quadrangulation::Dart_const_handle
   Dart_const_handle;
-  typedef CGAL::Union_find<Dart_handle> UFTree;
-  typedef typename UFTree::handle UFTree_handle;
-
   typedef typename Get_map<Mesh, Mesh>::type Map;
-
-  typedef CGAL::Union_find<typename Map::Dart_const_handle> UFTree2;
-  typedef typename UFTree2::handle UFTree_handle2;
 
   // Associate each dart of the original map, not removed, a pair of darts in the
   // reduced map.
@@ -91,17 +84,10 @@ public:
   Minimal_quadrangulation(const Mesh& amap, bool display_time=false) :
     m_original_map(amap)
   {
-    if (!get_map().is_without_boundary(1))
+    if (!m_original_map.is_without_boundary(1))
     {
       std::cerr<<"ERROR: the given amap has 1-boundaries; "
                <<"such a surface is not possible to process here."
-               <<std::endl;
-      return;
-    }
-    if (!get_map().is_without_boundary(2))
-    {
-      std::cerr<<"ERROR: the given amap has 2-boundaries; "
-               <<"which are not yet considered (but this will be done later)."
                <<std::endl;
       return;
     }
