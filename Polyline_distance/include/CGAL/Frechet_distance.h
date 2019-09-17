@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : André Nusser <anusser@mpi-inf.mpg.de>
-//                 Marvin Kuennemann<marvin@mpi-inf.mpg.de>
+//                 Marvin Künnemann <marvin@mpi-inf.mpg.de>
 //
 // =============================================================================
 
@@ -47,7 +47,6 @@ Frechet_distance(const PointRange& curve1,
 {
   typedef Traits::Point_2 Point_2;
   typedef Traits::FT FT;
-
 
 
   return 0;

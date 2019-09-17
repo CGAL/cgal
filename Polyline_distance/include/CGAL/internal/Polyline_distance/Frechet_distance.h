@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : André Nusser <anusser@mpi-inf.mpg.de>
-//                 Marvin Kuennemann<marvin@mpi-inf.mpg.de>
+//                 Marvin Künnemann <marvin@mpi-inf.mpg.de>
 //
 // =============================================================================
 
