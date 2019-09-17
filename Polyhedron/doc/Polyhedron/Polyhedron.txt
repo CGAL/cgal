@@ -363,6 +363,9 @@ restrictions on these formats. They must represent a permissible
 polyhedral surface, e.g., a 2-manifold and no isolated vertices, see 
 Section \ref sectionPolyIntro.
 
+For more information, you can see the \ref IOstreamPolygonMeshIO
+section.
+
 Some example programs around the different file formats are provided
 in the distribution under <TT>examples/Polyhedron_IO/</TT> and
 <TT>demo/Polyhedron_IO/</TT>. We show an example converting OFF input

@@ -55,6 +55,7 @@ as a simple list of polygons, etc.
 
 \section IOStreamSTL blab blabla (STL)
 
+
 \subsection IOStreamSTLInput Reading STL files
 ...
 
@@ -65,4 +66,6 @@ lose combinatorial information.
 
 \subsection etc etc
 
+\section IOStreamVTK VTK Formats (VTK VTU VTP)
+blah blah
 */

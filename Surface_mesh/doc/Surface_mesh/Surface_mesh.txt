@@ -302,6 +302,9 @@ this boils down to an identity function as vertices \em are indices.
 
 \cgalExample{Surface_mesh/sm_bgl.cpp}
 
+\section sectionSurfaceMesh_IO Surface Mesh IO
+
+See the \ref IOstreamPolygonMeshIO section for more info.
 
 \section sectionSurfaceMesh_memory Memory Management
 
