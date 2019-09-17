@@ -1,3 +1,23 @@
+// Copyright (c) 2019  GeometryFactory (France). All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Baskin Burak Senbaslar
+//
+
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_INTERNAL_GARLAND_HECKBERT_CORE_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_INTERNAL_GARLAND_HECKBERT_CORE_H
 
@@ -13,6 +33,7 @@
 #include <Eigen/Dense>
 #include <limits>
 #include <vector>
+
 namespace CGAL {
 namespace Surface_mesh_simplification {
 namespace internal {
@@ -36,23 +57,23 @@ struct GarlandHeckbertCore
   typedef typename Kernel::RT                                                   RT;
   typedef typename Kernel::Vector_3                                             Vector_3;
 
-  typedef typename Eigen::Matrix<FT, 4, 4> Matrix4x4;
-  typedef typename Eigen::Matrix<FT, 1, 4> Row4;
-  typedef typename Eigen::Matrix<FT, 4, 1> Col4;
+  typedef typename Eigen::Matrix<FT, 4, 4>                                      Matrix4x4;
+  typedef typename Eigen::Matrix<FT, 1, 4>                                      Row4;
+  typedef typename Eigen::Matrix<FT, 4, 1>                                      Col4;
 
+  typedef std::unordered_map<vertex_descriptor, Matrix4x4>                      garland_heckbert_state_type;
 
-  typedef std::unordered_map<vertex_descriptor, Matrix4x4> garland_heckbert_state_type;
-
-
-  static Col4 point_to_homogenous_column(const Point& pt) {
-    return Col4(pt.x(), pt.y(), pt.z(), 1);
+  static Col4 point_to_homogenous_column(const Point& pt)
+  {
+    return Col4(pt.x(), pt.y(), pt.z(), FT(1));
   }
 
   /**
   * Combines two Q matrices.
   * It is simply the addition of two matrices
   */
-  inline static Matrix4x4 combine_matrices(const Matrix4x4& aFirst, const Matrix4x4& aSecond) {
+  inline static Matrix4x4 combine_matrices(const Matrix4x4& aFirst, const Matrix4x4& aSecond)
+  {
     return aFirst + aSecond;
   }
 
@@ -68,14 +89,18 @@ struct GarlandHeckbertCore
     return false;
   }*/
 
-  static bool is_discontinuity_edge(const halfedge_descriptor& aHD, const TM& aTM) {
+  static bool is_discontinuity_edge(const halfedge_descriptor& aHD, const TM& aTM)
+  {
     return is_border_edge(aHD, aTM);
   }
 
   /*
   * fundamental error quadric for the target vertex of aHD in aTM
   */
-  static Matrix4x4 fundamental_error_quadric(const halfedge_descriptor& aHD, const TM& aTM, FT aDiscontinuityMultiplier = 1.0) {
+  static Matrix4x4 fundamental_error_quadric(const halfedge_descriptor& aHD,
+                                             const TM& aTM,
+                                             const FT aDiscontinuityMultiplier = FT(1))
+  {
     Matrix4x4 quadric;
     quadric.setZero();
 
@@ -85,71 +110,101 @@ struct GarlandHeckbertCore
                                         target_vertex_point.y(),
                                         target_vertex_point.z());
 
-  //std::cout << "point: " << target_vertex_point.x() << " "
-  //            << target_vertex_point.y() << " "
-  //            << target_vertex_point.z() << std::endl;
+    //std::cout << "point: " << target_vertex_point.x() << " "
+    //            << target_vertex_point.y() << " "
+    //            << target_vertex_point.z() << std::endl;
 
     //bool discontinuity_vertex = is_discontinuity_vertex(aHD, aTM);
 
     int i = 0;
-    for(const halfedge_descriptor hd: halfedges_around_target(target_vd, aTM)) {
-      face_descriptor fd = face(hd, aTM);
-      if(fd != GraphTraits::null_face()) {
-        //std::cout << "face" << std::endl;
-        std::vector<vertex_descriptor> vds;
-        for(vertex_descriptor vd: vertices_around_face(hd, aTM)) {
-          vds.push_back(vd);
-        }
-        Plane_3 plane(get(boost::vertex_point, aTM, vds[0]),
-                      get(boost::vertex_point, aTM, vds[1]),
-                      get(boost::vertex_point, aTM, vds[2]));
+    for(const halfedge_descriptor hd: halfedges_around_target(target_vd, aTM))
+    {
+      const face_descriptor fd = face(hd, aTM);
+      if(fd == GraphTraits::null_face())
+        continue;
+
+      //std::cout << "face" << std::endl;
+      std::vector<vertex_descriptor> vds;
+      for(vertex_descriptor vd : vertices_around_face(hd, aTM))
+        vds.push_back(vd);
+
+      Plane_3 plane(get(boost::vertex_point, aTM, vds[0]),
+                    get(boost::vertex_point, aTM, vds[1]),
+                    get(boost::vertex_point, aTM, vds[2]));
+
+      Row4 plane_mtr;
+      const FT norm = sqrt(CGAL::square(plane.a()) + CGAL::square(plane.b()) + CGAL::square(plane.c()));
+      const FT den = FT(1) / norm;
+
+      plane_mtr << den * plane.a(),
+                   den * plane.b(),
+                   den * plane.c(),
+                   den * plane.d();
+      quadric += plane_mtr.transpose() * plane_mtr;
+      //std::cout << plane_mtr << std::endl;
+
+      if(is_discontinuity_edge(hd, aTM))
+      {
+        const vertex_descriptor source_vd = source(hd, aTM);
+        const Vector_3 p1p2(target_vertex_point, get(boost::vertex_point, aTM, source_vd));
+        const Vector_3 normal = cross_product(p1p2, plane.orthogonal_vector());
+
+        const FT d = - normal * target_vertex_vector;
+        const FT norm = sqrt(CGAL::square(normal.x()) +
+                             CGAL::square(normal.y()) +
+                             CGAL::square(normal.z()));
+        const FT den = FT(1) / norm;
+
+        plane_mtr << den * normal.x(),
+                     den * normal.y(),
+                     den * normal.z(),
+                     den * d;
+        quadric += plane_mtr.transpose() * plane_mtr * aDiscontinuityMultiplier;
+      }
+
+      halfedge_descriptor shd = next(hd, aTM);
+      if(is_discontinuity_edge(shd, aTM))
+      {
+        const vertex_descriptor target_vd = target(shd, aTM);
+        const Vector_3 p1p2(target_vertex_point, get(boost::vertex_point, aTM, target_vd));
+        const Vector_3 normal = cross_product(p1p2, plane.orthogonal_vector());
+
+        const FT d = - normal * target_vertex_vector;
+        const FT norm = sqrt(CGAL::square(normal.x()) +
+                             CGAL::square(normal.y()) +
+                             CGAL::square(normal.z()));
+        const FT den = FT(1) / den;
+
+        plane_mtr << den * normal.x(),
+                     den * normal.y(),
+                     den * normal.z(),
+                     den * d;
+        quadric += plane_mtr.transpose() * plane_mtr * aDiscontinuityMultiplier;
+      }
+
+      /*if(discontinuity_vertex)
+      {
+        const vertex_descriptor source_vd = source(hd, aTM);
+        const Line_3 edge_line = Line_3(get(boost::vertex_point, aTM, source_vd),
+                                        target_vertex_point);
+
+        Plane_3 plane = edge_line.perpendicular_plane(target_vertex_point);
+
+        const FT norm = sqrt(CGAL::square(plane.a()) +
+                             CGAL::square(plane.b()) +
+                             CGAL::square(plane.c()));
+        const FT den = FT(1) / norm;
 
         Row4 plane_mtr;
-        FT norm = sqrt(plane.a() * plane.a() + plane.b() * plane.b() + plane.c() * plane.c());
-        plane_mtr << plane.a() / norm, plane.b() / norm, plane.c() / norm, plane.d() / norm;
+        plane_mtr << den * plane.a(),
+                     den * plane.b(),
+                     den * plane.c(),
+                     den * plane.d();
+        std::cout << plane_mtr << std::endl;
         quadric += plane_mtr.transpose() * plane_mtr;
-        //std::cout << plane_mtr << std::endl;
-
-        if(is_discontinuity_edge(hd, aTM)) {
-          const vertex_descriptor source_vd = source(hd, aTM);
-          const Vector_3 p1p2(target_vertex_point, get(boost::vertex_point, aTM, source_vd));
-          const Vector_3 normal = cross_product(p1p2, plane.orthogonal_vector());
-          FT d = - normal * target_vertex_vector;
-          FT norm = sqrt(normal.x() * normal.x() + normal.y() * normal.y() + normal.z() * normal.z());
-          plane_mtr << normal.x() / norm, normal.y() / norm, normal.z() / norm, d / norm;
-          quadric += plane_mtr.transpose() * plane_mtr * aDiscontinuityMultiplier;
-        }
-
-        halfedge_descriptor shd = next(hd, aTM);
-        if(is_discontinuity_edge(shd, aTM)) {
-          const vertex_descriptor target_vd = target(shd, aTM);
-          const Vector_3 p1p2(target_vertex_point, get(boost::vertex_point, aTM, target_vd));
-          const Vector_3 normal = cross_product(p1p2, plane.orthogonal_vector());
-          FT d = - normal * target_vertex_vector;
-          FT norm = sqrt(normal.x() * normal.x() + normal.y() * normal.y() + normal.z() * normal.z());
-          plane_mtr << normal.x() / norm, normal.y() / norm, normal.z() / norm, d / norm;
-          quadric += plane_mtr.transpose() * plane_mtr * aDiscontinuityMultiplier;
-        }
-
-        /*if(discontinuity_vertex) {
-          const vertex_descriptor source_vd = source(hd, aTM);
-          const Line_3 edge_line = Line_3(get(boost::vertex_point, aTM, source_vd),
-                                          target_vertex_point);
-
-          Plane_3 plane = edge_line.perpendicular_plane(target_vertex_point);
-
-          Row4 plane_mtr;
-          FT norm = sqrt(plane.a() * plane.a() + plane.b() * plane.b() + plane.c() * plane.c());
-          plane_mtr << plane.a() / norm, plane.b() / norm, plane.c() / norm, plane.d() / norm;
-          std::cout << plane_mtr << std::endl;
-          quadric += plane_mtr.transpose() * plane_mtr;
-        }*/
-      } else {
-        //std::cout << "null face." << std::endl;
-      }
+      }*/
     }
 
-    //std::cout << std::endl;
     return quadric;
   }
 
@@ -160,54 +215,58 @@ struct GarlandHeckbertCore
   * aQuadric is the matrix that is the combination of matrices
   * of aP0 and aP1.
   */
-  static Col4 optimal_point(const Matrix4x4& aQuadric, const Col4& aP0, const Col4& aP1) {
+  static Col4 optimal_point(const Matrix4x4& aQuadric,
+                            const Col4& aP0,
+                            const Col4& aP1)
+  {
     Matrix4x4 X;
     X << aQuadric.block(0, 0, 3, 4), 0, 0, 0, 1;
 
     Col4 opt_pt;
 
-    if(X.determinant() == 0) {
+    if(X.determinant() == 0)
+    {
       // not invertible
       Col4 p1mp0 = std::move(aP1 - aP0);
-      FT a = (p1mp0.transpose() * aQuadric * p1mp0)(0,0);
-      FT b = 2 * (aP0.transpose() * aQuadric * p1mp0)(0,0);
+      const FT a = (p1mp0.transpose() * aQuadric * p1mp0)(0, 0);
+      const FT b = 2 * (aP0.transpose() * aQuadric * p1mp0)(0, 0);
 
-      if(a == 0) {
-        if(b < 0) {
+      if(a == 0)
+      {
+        if(b < 0)
           opt_pt = aP1;
-        } else if (b == 0) {
-          opt_pt = (aP0 + aP1) / 2;
-        } else {
+        else if(b == 0)
+          opt_pt = 0.5 * (aP0 + aP1);
+        else
           opt_pt = aP0;
-        }
-      } else {
+      }
+      else
+      {
         FT ext_t = -b/(2*a);
-        if(ext_t < 0 || ext_t > 1 || a > 0) {
+        if(ext_t < 0 || ext_t > 1 || a > 0)
+        {
           // one of endpoints
-          FT aP0_cost = (aP0.transpose() * aQuadric * aP0)(0,0);
-          FT aP1_cost = (aP1.transpose() * aQuadric * aP1)(0,0);
-          if(aP0_cost > aP1_cost) {
+          FT aP0_cost = (aP0.transpose() * aQuadric * aP0)(0, 0);
+          FT aP1_cost = (aP1.transpose() * aQuadric * aP1)(0, 0);
+          if(aP0_cost > aP1_cost)
             opt_pt = aP1;
-          } else {
+          else
             opt_pt = aP0;
-          }
-        } else {
+        }
+        else
+        {
           // extremum of the parabola
-          opt_pt = aP0 + (aP1 - aP0) * ext_t;
+          opt_pt = aP0 + ext_t * (aP1 - aP0);
         }
       }
-    } else {
-      // invertible
-      //Col4 rhs;
-      //rhs << 0, 0, 0, 1;
-      //opt_pt = X.inverse() * rhs;
-      opt_pt = X.inverse().col(3);
+    }
+    else // invertible
+    {
+      opt_pt = X.inverse().col(3); // == X.inverse() * (0 0 0 1)
     }
     return opt_pt;
   }
-
 };
-
 
 } // namespace internal
 } // namespace Surface_mesh_simplification

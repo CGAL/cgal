@@ -104,7 +104,7 @@ int main(int argc, char** argv)
 
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
-  const double stop_ratio = (argc > 2) ? std::stod(argv[2]) : 0.1;
+  const double stop_threshold = (argc > 2) ? std::stod(argv[2]) : 0.1;
 
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
@@ -114,7 +114,8 @@ int main(int argc, char** argv)
   SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>::garland_heckbert_state_type state;
 
   // stop
-  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(stop_ratio);
+  // SMS::Count_ratio_stop_predicate<Surface_mesh> stop(stop_threshold);
+  SMS::GarlandHeckbert_cost_stop_predicate<double> stop(stop_threshold);
 
   // cost
   SMS::GarlandHeckbert_cost<Surface_mesh> cost(state);

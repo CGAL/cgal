@@ -17,8 +17,8 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_cost_stop_predicate.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Surface_mesh;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
+typedef CGAL::Polyhedron_3<Kernel>                              Surface_mesh;
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 
@@ -31,17 +31,20 @@ int main(int argc, char** argv)
   }
 
   Surface_mesh surface_mesh;
-
   std::ifstream is(argv[1]);
-  assert(is);
+  if(is >> surface_mesh)
+  {
+    std::cerr << "Error: could not read input file" << std::endl;
+    return EXIT_FAILURE;
+  }
 
-  is >> surface_mesh;
-  double threshold = atof(argv[2]);
+  const double threshold = atof(argv[2]);
 
   std::cout << num_vertices(surface_mesh) << " vertices and " << num_edges(surface_mesh) << " edges (input)" << std::endl;
 
-  if(!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cerr << "Input geometry is not triangulated." << std::endl;
+  if(!CGAL::is_triangle_mesh(surface_mesh))
+  {
+    std::cerr << "Error: Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -50,7 +53,7 @@ int main(int argc, char** argv)
   int r = SMS::edge_collapse(surface_mesh,
                              CGAL::Surface_mesh_simplification::GarlandHeckbert_cost_stop_predicate<double>(threshold),
                              CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
-                                              .halfedge_index_map(get(CGAL::halfedge_external_index  ,surface_mesh))
+                                              .halfedge_index_map(get(CGAL::halfedge_external_index, surface_mesh))
                                               .get_cost(SMS::GarlandHeckbert_cost <Surface_mesh>(state))
                                               .get_placement(SMS::GarlandHeckbert_placement<Surface_mesh>(state))
                                               .visitor(SMS::GarlandHeckbert_edge_collapse_visitor_base<Surface_mesh>(state)));
