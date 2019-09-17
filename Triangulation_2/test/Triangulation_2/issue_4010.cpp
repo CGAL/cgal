@@ -27,7 +27,7 @@ int main()
   
   cdtp.remove_constraint(handle1,handle3);
   
-  auto lastConstraintId = cdtp.insert_constraint(handle1,handle3);
+  Constraint_id lastConstraintId = cdtp.insert_constraint(handle1,handle3);
   
   if (lastConstraintId == Constraint_id()){
     std::cout << "problem" << std::endl;
