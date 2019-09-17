@@ -152,11 +152,11 @@ namespace internal
       curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle<Gt>(cell_to_remove));
 
       //Result worst dihedral angle
-      if (curr_min_dh > min_dihedral_angle<Gt>(vh2,
+      if (curr_min_dh > min_dihedral_angle<Gt, Vertex_handle>(vh2,
                                                ch0->vertex(indices(vh0_id, 0)),
                                                ch0->vertex(indices(vh0_id, 1)),
                                                ch0->vertex(indices(vh0_id, 2)))
-       || curr_min_dh > min_dihedral_angle<Gt>(vh3,
+       || curr_min_dh > min_dihedral_angle<Gt, Vertex_handle>(vh3,
                                                ch1->vertex(indices(vh1_id, 0)),
                                                ch1->vertex(indices(vh1_id, 1)),
                                                ch1->vertex(indices(vh1_id, 2))))
@@ -172,10 +172,10 @@ namespace internal
       average_min_dh /= 3.;
 
       FT new_average_min_dh = 0.5 *
-        (min_dihedral_angle<Gt>(vh2, ch0->vertex(indices(vh0_id, 0)),
+        (min_dihedral_angle<Gt, Vertex_handle>(vh2, ch0->vertex(indices(vh0_id, 0)),
                                      ch0->vertex(indices(vh0_id, 1)),
                                      ch0->vertex(indices(vh0_id, 2)))
-         + min_dihedral_angle<Gt>(vh3, ch1->vertex(indices(vh1_id, 0)),
+         + min_dihedral_angle<Gt, Vertex_handle>(vh3, ch1->vertex(indices(vh1_id, 0)),
                                        ch1->vertex(indices(vh1_id, 1)),
                                        ch1->vertex(indices(vh1_id, 2))));
       //Result worst dihedral angle
@@ -432,7 +432,7 @@ namespace internal
                                    fi.first->vertex(indices(fi.second, 2))))
           {
             min_flip_dihedral_angle = (std::min)(min_flip_dihedral_angle,
-              min_dihedral_angle<Gt>(vh, fi.first->vertex(indices(fi.second, 0)),
+              min_dihedral_angle<Gt, Vertex_handle>(vh, fi.first->vertex(indices(fi.second, 0)),
                                          fi.first->vertex(indices(fi.second, 1)),
                                          fi.first->vertex(indices(fi.second, 2))));
           }
@@ -571,7 +571,7 @@ namespace internal
                                    fi.first->vertex(indices(fi.second, 2))))
           {
             min_flip_dihedral_angle = (std::min)(min_flip_dihedral_angle,
-              min_dihedral_angle<Gt>(vh, fi.first->vertex(indices(fi.second, 0)),
+              min_dihedral_angle<Gt, Vertex_handle>(vh, fi.first->vertex(indices(fi.second, 0)),
                                          fi.first->vertex(indices(fi.second, 1)),
                                          fi.first->vertex(indices(fi.second, 2))));
           }

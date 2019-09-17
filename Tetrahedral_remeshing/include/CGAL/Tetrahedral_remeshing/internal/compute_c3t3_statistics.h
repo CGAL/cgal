@@ -28,6 +28,8 @@
 
 #include <boost/unordered_set.hpp>
 
+#include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
+
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
@@ -44,7 +46,7 @@ namespace internal
     typedef typename Tr::Geom_traits Gt;
     typedef typename Tr::Cell_handle   Cell_handle;
     typedef typename Tr::Vertex_handle Vertex_handle;
-    typedef typename Tr::Point       Point;
+    typedef typename Gt::Point_3       Point;
     typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
     typedef typename Tr::Finite_cells_iterator  Finite_cells_iterator;
     typedef typename Tr::Cell::Subdomain_index  Subdomain_index;
@@ -71,9 +73,9 @@ namespace internal
       if (!cell_selector(cell) || !cell_selector(cell->neighbor(index)))
         continue;
 
-      const Point& pa = (cell->vertex((index + 1) & 3)->point());
-      const Point& pb = (cell->vertex((index + 2) & 3)->point());
-      const Point& pc = (cell->vertex((index + 3) & 3)->point());
+      const Point& pa = point(cell->vertex((index + 1) & 3)->point());
+      const Point& pb = point(cell->vertex((index + 2) & 3)->point());
+      const Point& pc = point(cell->vertex((index + 3) & 3)->point());
 
       double edges[3];
       edges[0] = (CGAL::sqrt(CGAL::squared_distance(pa, pb)));
@@ -110,11 +112,11 @@ namespace internal
       for (int i = 0; i < 4; ++i)
         selected_vertices.insert(cit->vertex(i));
 
-      const Point& p0 = (cit->vertex(0)->point());
-      const Point& p1 = (cit->vertex(1)->point());
-      const Point& p2 = (cit->vertex(2)->point());
-      const Point& p3 = (cit->vertex(3)->point());
-      double v = CGAL::abs(CGAL::volume(p0, p1, p2, p3));
+      const Point& p0 = point(cit->vertex(0)->point());
+      const Point& p1 = point(cit->vertex(1)->point());
+      const Point& p2 = point(cit->vertex(2)->point());
+      const Point& p3 = point(cit->vertex(3)->point());
+      double v = CGAL::abs(tr.tetrahedron(cit).volume());
       double circumradius = CGAL::sqrt(CGAL::squared_radius(p0, p1, p2, p3));
 
       //find shortest edge
