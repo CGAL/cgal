@@ -20,6 +20,8 @@ int main()
   ps.add_edges_to_facet("-e");
   ps.end_facet();
 
+  ps.perforate_facet("f");
+  
   std::cout<<"Number of cells of the combinatorial maps: ";
   ps.display_characteristics(std::cout)<<std::endl;
   

@@ -152,12 +152,15 @@ public:
   
   template<unsigned int i>
   bool is_free(Dart_const_handle dh) const
-  { return Is_free<HEG, i>::value(m_fg, dh); }
+  { return false; } // Not possible to have a free dart with an HEG.
+ //return Is_free<HEG, i>::value(m_fg, dh); }
   bool is_free(Dart_const_handle dh, unsigned int i) const
   {
-    if (i==2) { return Is_free<HEG, 2>::value(m_fg, dh); }
-    return false; // Not possible to have 0 or 1 free dart with an HEG.
+    // if (i==2) { return Is_free<HEG, 2>::value(m_fg, dh); }
+    return false; // Not possible to have a free dart with an HEG.
   }
+  bool is_perforated(Dart_const_handle dh) const
+  { return is_border(dh, m_fg); }
 
   Dart_const_handle get_beta(Dart_const_handle ADart, int B1) const
   {
@@ -180,7 +183,7 @@ public:
       { return true; ?? } */
   
   int highest_nonfree_dimension(Dart_const_handle dh) const
-  { return (Is_free<HEG, 2>(m_fg, dh)?1:2); }
+  { return 2; } //(Is_free<HEG, 2>(m_fg, dh)?1:2); }
 
   Dart_const_handle previous(Dart_const_handle ADart) const
   { return get_beta<0>(ADart); }  
@@ -205,7 +208,7 @@ public:
   { return true; }
   template<unsigned int dim>
   bool is_opposite_exist(Dart_const_handle ADart) const
-  { return !this->template is_free<dim>(ADart); }
+  { return true; } // !this->template is_free<dim>(ADart); }
 
   template<typename ...Betas>
   Dart_handle beta(Dart_handle ADart, Betas... betas)
@@ -407,7 +410,7 @@ public:
     
     for ( typename Dart_range::const_iterator it(darts().begin()),
             itend(darts().end()); it!=itend; ++it)
-    { if (is_free<2>(it)) return false; }
+    { if (is_perforated(it)) return false; }
     return true;
   }
   

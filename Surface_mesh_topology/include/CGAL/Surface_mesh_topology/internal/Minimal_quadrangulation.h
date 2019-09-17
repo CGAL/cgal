@@ -697,24 +697,30 @@ protected:
     {
       if (!m_original_map.is_marked(it, m_mark_T))
       {
-	if (m_original_map.template is_free<2>(it))
-	{// case of a boundary
+        if (m_original_map.template is_free<2>(it))
+        {// case of a boundary
           d1=get_map().create_dart();
           d2=get_map().create_dart();
           get_map().template basic_link_beta_for_involution<2>(d1, d2);
           origin_to_copy[it]=d1;
           copy_to_origin[d1]=it;
           get_map().mark(d2, m_mark_hole);
-	}
+        }
         else if (typename Map::Dart_const_handle(it)<m_original_map.template beta<2>(it))
-	{
+        {
           d1=get_map().create_dart();
           d2=get_map().create_dart();
           get_map().template basic_link_beta_for_involution<2>(d1, d2);
+
           origin_to_copy[it]=d1;
           origin_to_copy[m_original_map.template beta<2>(it)]=d2;
           copy_to_origin[d1]=it;
           copy_to_origin[d2]=m_original_map.template beta<2>(it);
+
+          if (m_original_map.is_perforated(it))
+          { get_map().mark(d1, m_mark_hole); }
+          if (m_original_map.is_perforated(m_original_map.template beta<2>(it)))
+          { get_map().mark(d2, m_mark_hole); }
         }
       }
     }
@@ -731,13 +737,14 @@ protected:
         while(m_original_map.is_marked(dd1, m_mark_T))
         { dd1=m_original_map.template beta<1>(dd1); }
         get_map().basic_link_beta_1(origin_to_copy[it], origin_to_copy[dd1]); // let's link both
-	if (m_original_map.template is_free<2>(it))
-	{
-	  dd1=prev_in_boundary(it);
+        if (m_original_map.template is_free<2>(it))
+        {
+          dd1=prev_in_boundary(it);
           while(m_original_map.is_marked(dd1, m_mark_T))
           { dd1=prev_in_boundary(dd1); }
-          get_map().basic_link_beta_1(get_map().template beta<2>(origin_to_copy[it]), get_map().template beta<2>(origin_to_copy[dd1]));
-	}
+          get_map().basic_link_beta_1(get_map().template beta<2>(origin_to_copy[it]),
+                                      get_map().template beta<2>(origin_to_copy[dd1]));
+        }
       }
     }
   }
@@ -759,7 +766,7 @@ protected:
       if (!m_original_map.is_marked(it, m_mark_T))
       {
         if (m_original_map.template is_free<2>(it) ||
-	    typename Map::Dart_const_handle(it)<m_original_map.template beta<2>(it))
+            typename Map::Dart_const_handle(it)<m_original_map.template beta<2>(it))
         {
           m_paths[it]=std::make_pair
               (origin_to_copy.at(it),
@@ -783,8 +790,8 @@ protected:
 
   /// Marks all darts belonging to L using a BFS
   void compute_L(typename CMap_for_minimal_quadrangulation::size_type toremove,
-		 boost::unordered_map<Dart_handle, typename Map::Dart_const_handle>&
-		 copy_to_origin)
+                 boost::unordered_map<Dart_handle, typename Map::Dart_const_handle>&
+                 copy_to_origin)
   {
     Dart_handle dh;
     Dart_handle ddh;
@@ -879,7 +886,7 @@ protected:
          ++it)
     {
       if (get_map().is_marked(it, oldedges) && !get_map().is_marked(it, m_mark_hole) && 
-	  !get_map().is_marked(it, treated))
+          !get_map().is_marked(it, treated))
       {
         get_map().template mark_cell<2>(it, treated);
         get_map().insert_cell_0_in_cell_2(it);
@@ -908,10 +915,11 @@ protected:
     {
       if (get_map().is_dart_used(it) && get_map().is_marked(it, oldedges))
       {
-        if (get_map().is_marked(get_map().template beta<2>(it), m_mark_hole))
-	{
+        if (get_map().is_marked(get_map().template beta<2>(it), m_mark_hole) &&
+            !get_map().is_marked(it, m_mark_hole))
+        {
           get_map().template mark_cell<2>(it, m_mark_hole);
-	}
+        }
         get_map().template remove_cell<1>(it);
       }
     }

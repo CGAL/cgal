@@ -36,21 +36,21 @@
 namespace CGAL 
 {
 /// Is_free
-template<typename HEG, unsigned int i>
-struct Is_free
-{
-  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
+//template<typename HEG, unsigned int i>
+//struct Is_free
+//{
+//  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
 
-  static bool value(const HEG& /*heg*/, Dart_const_handle /*dh*/) 
-  { CGAL_static_assertion(i==0 || i==1); return false; }
-};
-template<typename HEG>
-struct Is_free<HEG, 2>
-{
-  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
-  static bool value(const HEG& heg, Dart_const_handle dh) 
-  { return is_border(opposite(dh, heg), heg); }
-};
+//  static bool value(const HEG& /*heg*/, Dart_const_handle /*dh*/)
+//  { CGAL_static_assertion(i==0 || i==1); return false; }
+//};
+//template<typename HEG>
+//struct Is_free<HEG, 2>
+//{
+//  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
+//  static bool value(const HEG& heg, Dart_const_handle dh)
+//  { return is_border(opposite(dh, heg), heg); }
+//};
 ////////////////////////////////////////////////////////////////////////////////
 /// Get_beta
 template<typename HEG, unsigned int i>
@@ -85,7 +85,7 @@ struct Get_beta<HEG, 2>
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
   static Dart_const_handle value(const HEG& heg, Dart_const_handle dh) 
   {
-    if (Is_free<HEG, 2>::value(heg, dh)) return Dart_const_handle();
+    //if (Is_free<HEG, 2>::value(heg, dh)) return Dart_const_handle();
     return opposite(dh, heg);
   }
 };

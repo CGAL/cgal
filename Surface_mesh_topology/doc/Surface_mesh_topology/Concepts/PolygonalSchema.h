@@ -45,4 +45,24 @@ public:
 
   /// returns dart with label `s`, NULL if this label is not used.
   Dart_handle get_dart_labeled(const std::string & s) const;
+
+  /// returns true iff the face containing `dh` is perforated.
+  bool is_perforated(Dart_const_handle dh) const
+    
+  /// Shortcut for is_perforated(get_dart_labeled(s)).
+  bool is_perforated(const std::string & s) const
+
+  /// perforate the face containing `dh`. Returns the number of darts of the face; 0 if the face was already perforated.
+  size_type perforate_facet(Dart_handle dh);
+
+  /// Shortcut for perforate_facet(get_dart_labeled(s)).
+  size_type perforate_facet(const std::string & s);
+
+  /// fills the face containing `dh`. Returns the number of darts of the face; 0 if the face was already filled.
+  size_type fill_facet(Dart_handle dh);
+    
+  /// Shortcut for fill_facet(get_dart_labeled(s)).
+  size_type fill_facet(const std::string & s);
+
+  
 };

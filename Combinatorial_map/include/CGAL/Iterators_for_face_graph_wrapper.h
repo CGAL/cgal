@@ -48,9 +48,9 @@ namespace CGAL
       mmap(amap),
       m_it(halfedges(amap.get_fg()).begin())
     {
-      if (m_it!=halfedges(amap.get_fg()).end() &&
+      /*if (m_it!=halfedges(amap.get_fg()).end() &&
           is_border(*m_it, amap.get_fg()))
-      { operator++(0); }
+      { operator++(0); } */
     }
 
     /// Constructor with a dart in parameter (for end iterator).
@@ -78,12 +78,12 @@ namespace CGAL
     {
       CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).end());
 
-      do
+      //do
       {
         ++m_it;
       }
-      while(m_it!=halfedges(this->mmap.get_fg()).end() &&
-            is_border(*m_it, this->mmap.get_fg()));
+      /*while(m_it!=halfedges(this->mmap.get_fg()).end() &&
+            is_border(*m_it, this->mmap.get_fg())); */
       
       return *this;
     }
