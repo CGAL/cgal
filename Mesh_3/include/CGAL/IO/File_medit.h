@@ -754,7 +754,7 @@ output_to_medit(std::ostream& os,
 
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Tds::Vertex::Point Point;
+  typedef typename Tr::Point Point; //can be weighted or not
 
   const Tr& tr = c3t3.triangulation();
 
