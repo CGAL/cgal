@@ -36,7 +36,7 @@ public:
     this->scene = scene_interface;
     this->mw = mainWindow;
 
-    actionTetrahedralRemeshing_ = new QAction("Tetrehedral Remeshing", mw);
+    actionTetrahedralRemeshing_ = new QAction("Tetrahedral Remeshing", mw);
     if (actionTetrahedralRemeshing_) {
       connect(actionTetrahedralRemeshing_, SIGNAL(triggered()),
         this, SLOT(tetrahedral_remeshing()));
@@ -104,11 +104,7 @@ public Q_SLOTS:
       QTime time;
       time.start();
 
-
-      Tr& tr = c3t3_item->c3t3().triangulation();
-
-
-      CGAL::tetrahedral_adaptive_remeshing(tr, target_edge_length);
+      CGAL::tetrahedral_adaptive_remeshing(c3t3_item->c3t3().triangulation(), target_edge_length);
 
       std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
