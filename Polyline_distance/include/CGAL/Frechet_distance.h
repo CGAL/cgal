@@ -26,6 +26,10 @@
 
 #include <CGAL/internal/Polyline_distance/Frechet_distance.h>
 
+#include <CGAL/basic.h>
+
+#include <iterator>
+
 namespace CGAL{
 
 /**
@@ -38,16 +42,15 @@ namespace CGAL{
  */
 template <class PointRange,
           class Traits = typename CGAL::Kernel_traits<
-                           typename std::iterator_trait<
+                           typename std::iterator_traits<
                              typename PointRange::iterator>::value_type
                            >::Kernel >
 typename Traits::FT
 Frechet_distance(const PointRange& curve1,
                  const PointRange& curve2)
 {
-  typedef Traits::Point_2 Point_2;
-  typedef Traits::FT FT;
-
+  using Point_2 = typename Traits::Point_2;
+  using FT = typename Traits::FT;
 
   return 0;
 }
