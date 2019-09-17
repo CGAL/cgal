@@ -1,0 +1,29 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_dD_Polyline_distance
+
+\cgalAutoToc
+\author Marvin Kuennemann and André Nusser
+
+This chapter describes the ...
+
+\section secmydefinitions Definitions
+
+Section on definitions here ...
+
+\section secmyexamples Examples
+
+\subsection myFirstExample First Example
+
+The following example shows ...
+
+\cgalExample{Polyline_distance/dummy_example.cpp}
+
+\cgalFigureBegin{figRefId,pkg-small.png}
+Here you can put the caption
+\cgalFigureEnd
+
+*/
+} /* namespace CGAL */
