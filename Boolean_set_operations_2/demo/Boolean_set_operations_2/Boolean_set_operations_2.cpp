@@ -8112,82 +8112,11 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
 		  {
 		  	if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p5, p6);
 		  }
-
-		  
-
-		  
-	  	  //CGAL_assertion(mink_sum_res.number_of_holes() == 0);
+      
+	  	//CGAL_assertion(mink_sum_res.number_of_holes() == 0);
 		  if (!mink_sum_res.is_unbounded()) 
       {
         get_MinkowskiSum_result(mink_sum_res);
-        boost::optional<QRectF> lTotalRect;
-
-  for (auto si = m_curve_sets.begin(); si != m_curve_sets.end(); ++ si) 
-  {
-    if (!si->is_empty()) 
-    {
-      QRectF lRect = si->bounding_rect();
-      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-      else lTotalRect = lRect;
-    }
-  }
-
-  if (pathItem0_exists) 
-  {
-      QRectF lRect = pathItem0->boundingRect();
-      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-      else lTotalRect = lRect;
-  }
-
-  if (pathItem1_exists) 
-  {
-      QRectF lRect = pathItem1->boundingRect();
-      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-      else lTotalRect = lRect;
-  }
-
-  if (pathItem2_exists) 
-  {
-      QRectF lRect = pathItem2->boundingRect();
-      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-      else lTotalRect = lRect;
-  }
-
-  if (pathItem3_exists) 
-  {
-      QRectF lRect = pathItem3->boundingRect();
-      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-      else lTotalRect = lRect;
-  }
-
-  if (pathItem4_exists) 
-  {
-      QRectF lRect = pathItem4->boundingRect();
-      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-      else lTotalRect = lRect;
-  }
-
-  if (pathItem5_exists) 
-  {
-      QRectF lRect = pathItem5->boundingRect();
-      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-      else lTotalRect = lRect;
-  }
-
-  if (pathItem6_exists) 
-  {
-      QRectF lRect = pathItem6->boundingRect();
-      if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-      else lTotalRect = lRect;
-  }
-
-
-        
-  if (lTotalRect) 
-  {
-    if(ask_user_yesno("Recenter Needed","Output polygon caused some polygons to go out of view\n Would you like to recenter the view"))
-      zoomToFit();
-  }
       }
 		  else ask_user_ok("Minkowski Sum Operation Error", "resultant polygon is unbounded\n");
 	      lDone = true;
