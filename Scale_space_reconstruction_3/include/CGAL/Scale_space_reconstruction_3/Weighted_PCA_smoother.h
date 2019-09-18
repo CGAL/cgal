@@ -61,11 +61,10 @@ namespace Scale_space_reconstruction_3
 
  *  \tparam DiagonalizeTraits model of `DiagonalizeTraits` that
  *  determines how to diagonalize a weighted covariance matrix to
- *  approximate a weighted point set. It can be omitted: if Eigen 3
- *  (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
- *  then an overload using `Eigen_diagonalize_traits` is
- *  provided. Otherwise, the internal implementation
- *  `Diagonalize_traits` is used.
+ *  approximate a weighted point set. It can be omitted if Eigen 3 (or
+ *  greater) is available and `CGAL_EIGEN3_ENABLED` is defined: in
+ *  that case, an overload using `Eigen_diagonalize_traits` is
+ *  provided.
  *  \tparam ConcurrencyTag indicates whether to use concurrent
  *  processing. It can be omitted: if TBB (or greater) is available
  *  and `CGAL_LINKED_WITH_TBB` is defined then `Parallel_tag` is
@@ -317,7 +316,7 @@ private:
         barycenter = barycenter + ((1.0 / _nn[boost::get<1>(nit->first)]) / weight_sum) * v;
       }
 	
-      CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
+      std::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
       column = 0;
       // Compute covariance matrix of Weighted PCA
       for( typename Static_search::iterator nit = search.begin();
@@ -336,10 +335,10 @@ private:
       }
 
       // Compute the weighted least-squares planar approximation of the point set.
-      CGAL::cpp11::array<FT, 9> eigenvectors = {{ 0., 0., 0.,
+      std::array<FT, 9> eigenvectors = {{ 0., 0., 0.,
                                                   0., 0., 0.,
                                                   0., 0., 0. }};
-      CGAL::cpp11::array<FT, 3> eigenvalues = {{ 0., 0., 0. }};
+      std::array<FT, 3> eigenvalues = {{ 0., 0., 0. }};
       DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
         (covariance, eigenvalues, eigenvectors);
 

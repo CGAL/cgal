@@ -57,10 +57,6 @@ if ( NOT CMAKE_BUILD_TYPE )
   endif()
 endif()
 
-if( RUNNING_CGAL_AUTO_TEST )
-  add_definitions(-DCGAL_TEST_SUITE)
-endif()
-
 if ( NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug"
      AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo" AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel" )
   message( FATAL_ERROR "${CMAKE_BUILD_TYPE} is not a valid build type: only Release, Debug, RelWithDebInfo or MinSizeRel is allowed" )

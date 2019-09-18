@@ -287,26 +287,12 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${component}_3RD_PARTY_DEFINITIONS}    )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${component}_3RD_PARTY_LIBRARIES_DIRS} )
 
-      if (NOT MSVC AND "${component}" STREQUAL "Core")
-        # See the release notes of CGAL-4.10: CGAL_Core now requires
-        # Boost.Thread, with all compilers but MSVC.
-        find_package( Boost 1.48 REQUIRED thread system )
-        add_to_list( CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES} )
-      endif()
-
-      if (${component} STREQUAL "ImageIO")
-        find_package( ZLIB QUIET )
-
-        if(ZLIB_FOUND)
-          cache_set(CGAL_ImageIO_USE_ZLIB "ON")
-          add_definitions("-DCGAL_USE_ZLIB")
-          include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
-        endif(ZLIB_FOUND)
-
-      endif()
-
-      if (${component} STREQUAL "Qt5")
-        find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
+      # To deal with imported targets of Qt5 and Boost, when CGAL
+      # targets are themselves imported by another project.
+      if(NOT CGAL_BUILDING_LIBS)
+        if (${component} STREQUAL "Qt5")
+          find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
+        endif()
       endif()
 
     else(WITH_CGAL_${component})
@@ -328,22 +314,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
         else()
 
-          ####message( STATUS "External library ${component} has not been preconfigured")
-          if (${component} STREQUAL "ImageIO")
-            find_package( ZLIB QUIET )
-
-            if(ZLIB_FOUND)
-              cache_set(CGAL_ImageIO_USE_ZLIB "ON")
-              add_definitions("-DCGAL_USE_ZLIB")
-              include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
-            endif(ZLIB_FOUND)
-
-          endif()
-
-          if (${component} STREQUAL "Qt5")
-            set(CGAL_${component}_FOUND TRUE)
-            find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
-          endif()
           ####message( STATUS "External library ${vlib} after find")
           if (${vlib}_FOUND)
             ####message( STATUS "External library ${vlib} about to be used")

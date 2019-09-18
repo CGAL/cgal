@@ -13,15 +13,18 @@ void create_flat_sphere(FLOAT R,
 {
   //The more small they are, the more precise the Sphere will be.
   // Must be divisors of 180 and 360.
-  const int rings=prec/2;
-  const int sectors=prec;
+  const float rings=float(prec)/2;
+  const float sectors=float(prec);
   const float to_rad = static_cast<float>(CGAL_PI / 180.0);
 
   float T, P;
   float x[4],y[4],z[4];
 
+  using std::cos;
+  using std::sin;
+
   //Top of the sphere
-  for(int t=0; t<360; t+=sectors)
+  for(float t=0; t<360.f; t+=sectors)
   {
 
     positions_spheres.push_back(0);
@@ -61,8 +64,8 @@ void create_flat_sphere(FLOAT R,
   }
 
   //Body of the sphere
-  for (int p=rings; p<180-rings; p+=rings)
-    for(int t=0; t<360; t+=sectors)
+  for (float p=rings; p<180.f-rings; p+=rings)
+    for(float t=0; t<360.f; t+=sectors)
     {
       //A
       P = p*to_rad;
@@ -140,7 +143,7 @@ void create_flat_sphere(FLOAT R,
 
     }
   //Bottom of the sphere
-  for(int t=0; t<360; t+=sectors)
+  for(float t=0; t<360.f; t+=sectors)
   {
     positions_spheres.push_back(0);
     positions_spheres.push_back(0);
@@ -190,8 +193,8 @@ void create_flat_and_wire_sphere(FLOAT R,
 {
   //The smaller they are, the more precise the Sphere will be.
   // Must be a divisor of 360 and 180.
-  const int rings=prec/2;
-  const int sectors=prec;
+  const float rings=float(prec)/2;
+  const float sectors=float(prec);
   const float to_rad = static_cast<float>(CGAL_PI / 180.0);
 
   create_flat_sphere(R, positions_spheres, normals_spheres);
@@ -199,8 +202,11 @@ void create_flat_and_wire_sphere(FLOAT R,
   float T, P;
   float x[4],y[4],z[4];
 
+  using std::cos;
+  using std::sin;
+
   //Top of the sphere
-  for(int t=0; t<360; t+=sectors)
+  for(float t=0; t<360; t+=sectors)
   {
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(0);
@@ -240,8 +246,8 @@ void create_flat_and_wire_sphere(FLOAT R,
   }
 
   //Body of the sphere
-  for (int p=rings; p<180-rings; p+=rings)
-    for(int t=0; t<360; t+=sectors)
+  for (float p=rings; p<180.f-rings; p+=rings)
+    for(float t=0; t<360.f; t+=sectors)
     {
       //A
       P = p*to_rad;
@@ -315,7 +321,7 @@ void create_flat_and_wire_sphere(FLOAT R,
 
     }
   //Bottom of the sphere
-  for(int t=0; t<360; t+=sectors)
+  for(float t=0; t<360.f; t+=sectors)
   {
     P = (180-rings)*to_rad;
     T = t*to_rad;

@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget* parent)
  : CGAL::Qt::DemosMainWindow(parent)
 {
   //  Qt Automatic Connections
-  //   http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+  //   https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
   //  setupUi(this) automatically generates connections to the slots named
   //   "on_<action_name>_<signal_name>"
   setupUi(this);
@@ -81,7 +81,7 @@ void MainWindow::connectActions()
 
   // Viewer signals
   QObject::connect(this, SIGNAL(sceneChanged()),
-	   this->viewer, SLOT(updateGL()));
+	   this->viewer, SLOT(update()));
 }
 
 void MainWindow::closeEvent(QCloseEvent * /*event*/)

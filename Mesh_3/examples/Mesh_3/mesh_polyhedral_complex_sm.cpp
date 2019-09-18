@@ -5,7 +5,6 @@
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 
 #include <CGAL/Polyhedral_complex_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
@@ -28,7 +27,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 typedef CGAL::Mesh_triangulation_3<Mesh_domain,K,Concurrency_tag>::type Tr;
 
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
-  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
+  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index>                C3t3;
 
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;

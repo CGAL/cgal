@@ -24,6 +24,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 /*! \file
  * Definition of the Arr_curve_data_traits_2<> class template.
  */
@@ -135,13 +137,13 @@ public:
              base_objects.begin(); it != base_objects.end(); ++it)
       {
         base_x_curve = object_cast<Base_x_monotone_curve_2>(&(*it));
-        if (base_x_curve != NULL) {
+        if (base_x_curve != nullptr) {
           // Current object is an x-monotone curve: Attach data to it.
           *oi++ = make_object(X_monotone_curve_2(*base_x_curve, xdata));
         }
         else {
           // Current object is an isolated point: Leave it as is.
-          CGAL_assertion(object_cast<Point_2>(&(*it)) != NULL);
+          CGAL_assertion(object_cast<Point_2>(&(*it)) != nullptr);
           *oi++ = *it;
         }
       }
@@ -217,7 +219,7 @@ public:
       for (typename std::list<CGAL::Object>::const_iterator it =
              base_objects.begin(); it != base_objects.end(); ++it)
       {
-        if ((base_cv = object_cast<Base_x_monotone_curve_2>(&(*it))) != NULL) {
+        if ((base_cv = object_cast<Base_x_monotone_curve_2>(&(*it))) != nullptr) {
           // The current intersection object is an overlapping x-monotone
           // curve: Merge the data fields of both intersecting curves and
           // associate the result with the overlapping curve.
@@ -415,7 +417,7 @@ public:
     template <typename GeomeTraits_2>
     typename boost::enable_if_c<!has_construct_opposite_2<GeomeTraits_2>::value,
                                 X_monotone_curve_2>::type
-    construct_opposite(const X_monotone_curve_2& cv) const
+    construct_opposite(const X_monotone_curve_2&) const
     {
       CGAL_error_msg("Construct opposite curve is not supported!");
       return X_monotone_curve_2();
@@ -440,5 +442,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

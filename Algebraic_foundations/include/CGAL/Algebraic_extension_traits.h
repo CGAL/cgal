@@ -47,7 +47,7 @@ public:
     //! computes the factor which normalizes a number to be integral after 
     //  multiplication
     class Normalization_factor 
-        : public CGAL::unary_function<Type,Type> {
+        : public CGAL::cpp98::unary_function<Type,Type> {
     private:
         static Type 
         normalization_factor(const Type&,Integral_domain_without_division_tag){
@@ -68,7 +68,7 @@ public:
     };
     
     class Denominator_for_algebraic_integers 
-        : public CGAL::unary_function<Type,Type> {
+        : public CGAL::cpp98::unary_function<Type,Type> {
     public: 
         //! determine normalization factor
         Type operator () (const Type&) {

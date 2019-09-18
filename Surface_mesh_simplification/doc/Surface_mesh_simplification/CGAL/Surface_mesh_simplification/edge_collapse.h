@@ -2,12 +2,12 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplification
+\ingroup PkgSurfaceMeshSimplificationRef
 
 Simplifies `surface_mesh` in-place by collapsing edges, and returns
 the number of edges effectively removed.
 
-@tparam TriangleMesh a model of `EdgeCollapsableSurfaceMesh`
+@tparam TriangleMesh a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 @tparam StopPolicy a model of `StopPredicate`
 @tparam NamedParameters a sequence of \ref sms_namedparameters "Named Parameters"
 
@@ -35,8 +35,6 @@ the number of edges effectively removed.
 
   \cgalParamBegin{edge_is_constrained_map}
     The property map containing the constrained-or-not status of each edge of `pmesh`
-   \attention If this parameter is provided, `surface_mesh` must be a model of the
-   `EdgeCollapsableSurfaceMeshWithConstraints` concept.
   \cgalParamEnd
 
   \cgalParamBegin{visitor}

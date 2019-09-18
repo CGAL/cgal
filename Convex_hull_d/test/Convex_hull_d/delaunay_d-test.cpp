@@ -1,6 +1,5 @@
-#define CGAL_NO_DEPRECATION_WARNINGS
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
-#include <CGAL/basic.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Delaunay_d.h>

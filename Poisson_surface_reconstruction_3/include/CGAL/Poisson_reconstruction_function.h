@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #ifndef CGAL_DIV_NORMALIZED
 #  ifndef CGAL_DIV_NON_NORMALIZED
@@ -36,7 +37,7 @@
 #include <cmath>
 #include <iterator>
 
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/Reconstruction_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
 #ifdef CGAL_EIGEN3_ENABLED
@@ -148,7 +149,7 @@ struct Special_wrapper_of_two_functions_keep_pointers {
 
 
 /*!
-\ingroup PkgPoissonSurfaceReconstruction
+\ingroup PkgPoissonSurfaceReconstruction3Ref
 
 \brief Implementation of the Poisson Surface Reconstruction method.
   
@@ -1221,5 +1222,7 @@ private:
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POISSON_RECONSTRUCTION_FUNCTION_H

@@ -23,13 +23,15 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
+#include <CGAL/algorithm.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Iterator_range.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -40,7 +42,7 @@
 namespace CGAL {
 
 /**
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
    Randomly deletes a user-specified fraction of the input points.
 
    This method modifies the order of input points so as to pack all remaining points first,
@@ -63,7 +65,7 @@ random_simplify_point_set(
   CGAL_point_set_processing_precondition(removed_percentage >= 0 && removed_percentage <= 100);
 
   // Random shuffle
-  std::random_shuffle (points.begin(), points.end());
+  CGAL::cpp98::random_shuffle (points.begin(), points.end());
 
   // Computes first iterator to remove
   std::size_t nb_points = std::distance(points.begin(), points.end());
@@ -74,60 +76,8 @@ random_simplify_point_set(
   return first_point_to_remove;
 }
 
-/// \cond SKIP_IN_MANUAL
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template <typename ForwardIterator,
-          typename PointMap,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::random_simplify_point_set(), please update your code")
-ForwardIterator
-random_simplify_point_set(
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap /*point_map*/, ///< property map: value_type of ForwardIterator -> Point_3
-  double removed_percentage, ///< percentage of points to remove.
-  const Kernel& /*kernel*/) ///< geometric traits.
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return random_simplify_point_set (points, removed_percentage);
-}
-
-  
-// deprecated API
-template <typename ForwardIterator,
-          typename PointMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::random_simplify_point_set(), please update your code")
-ForwardIterator
-random_simplify_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
-  PointMap, ///< property map: value_type of ForwardIterator -> Point_3
-  double removed_percentage) ///< percentage of points to remove
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return random_simplify_point_set (points, removed_percentage);
-}
-
-// deprecated API
-template <typename ForwardIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::random_simplify_point_set(), please update your code")
-ForwardIterator
-random_simplify_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
-  double removed_percentage) ///< percentage of points to remove
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return random_simplify_point_set (points, removed_percentage);
-}
-#endif // CGAL_NO_DEPRECATED_CODE
-/// \endcond
-
-
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_RANDOM_SIMPLIFY_POINT_SET_H

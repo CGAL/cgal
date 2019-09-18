@@ -120,6 +120,7 @@ public:
   typedef std::vector<Object>                           Object_vector;
   typedef random_access_input_iterator<Object_vector>   vector_inserter;
 
+  typedef typename Base::Subcurve_alloc                 Subcurve_alloc;
 protected:
   // Data members:
   Subcurve_container m_overlap_subCurves;
@@ -207,7 +208,7 @@ protected:
    * \param curve1 The first curve.
    * \param curve2 The second curve.
    */
-  void _intersect(Subcurve* c1, Subcurve* c2, Event* event_for_overlap = NULL);
+  void _intersect(Subcurve* c1, Subcurve* c2, Event* event_for_overlap = nullptr);
 
   /*! When a curve is removed from the status line for good, its top and
    * bottom neighbors become neighbors. This method finds these cases and

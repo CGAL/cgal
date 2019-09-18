@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/internal/validity.h>
@@ -38,7 +40,6 @@
 #endif
 #include <CGAL/OpenNL/linear_solver.h>
 
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -54,7 +55,7 @@ namespace Surface_mesh_parameterization {
 // Declaration
 // ------------------------------------------------------------------------------------
 
-/// \ingroup  PkgSurfaceParameterizationMethods
+/// \ingroup  PkgSurfaceMeshParameterizationMethods
 ///
 /// The class `LSCM_parameterizer_3` implements the
 /// *Least Squares Conformal Maps (LSCM)* parameterization \cgalCite{cgal:lprm-lscm-02}.
@@ -91,12 +92,6 @@ namespace Surface_mesh_parameterization {
 /// \endcode
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SolverTraits>`
 ///
 template < class TriangleMesh_,
            class BorderParameterizer_ = Default,
@@ -246,7 +241,7 @@ public:
     // Fill the matrix for the other vertices
     solver.begin_system();
 
-    BOOST_FOREACH(face_descriptor fd, ccfaces) {
+    for(face_descriptor fd : ccfaces) {
       // Create two lines in the linear system per triangle (one for u, one for v)
       status = setup_triangle_relations(solver, mesh, fd, vimap);
       if (status != OK)
@@ -265,7 +260,7 @@ public:
     // Copy X coordinates into the (u,v) pair of each vertex
     //set_mesh_uv_from_system(mesh, solver, uvmap);
 
-    BOOST_FOREACH(vertex_descriptor vd, ccvertices) {
+    for(vertex_descriptor vd : ccvertices) {
       int index = get(vimap,vd);
       NT u = solver.variable(2 * index).value();
       NT v = solver.variable(2 * index + 1).value();
@@ -289,7 +284,7 @@ private:
                                           VertexIndexMap vimap,
                                           VertexParameterizedMap vpmap) const
   {
-    BOOST_FOREACH(vertex_descriptor v, ccvertices) {
+    for(vertex_descriptor v : ccvertices) {
       // Get vertex index in sparse linear system
       int index = get(vimap, v);
 
@@ -450,5 +445,7 @@ private:
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_LSCM_PARAMETERIZER_3_H

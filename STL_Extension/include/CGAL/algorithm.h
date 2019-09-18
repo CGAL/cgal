@@ -35,77 +35,11 @@
 #include <iosfwd>
 #include <iostream>
 
-#ifdef CGAL_CFG_NO_CPP0X_NEXT_PREV
-#  include <boost/next_prior.hpp>
-#endif
+#include <boost/random/random_number_generator.hpp>
+#include <boost/random.hpp>
+#include <boost/random/linear_congruential.hpp>
 
 namespace CGAL {
-
-namespace cpp11 {
-#ifndef CGAL_CFG_NO_CPP0X_NEXT_PREV
-  using std::next;
-  using std::prev;
-#else
-  using boost::next;
-
-  // boost provides prior, we go with the standard declaration as
-  // described in $24.4.4 and forward it to boost prior
-  template<typename BidirectionalIterator>
-  BidirectionalIterator prev( BidirectionalIterator x, 
-			      typename std::iterator_traits<BidirectionalIterator>::difference_type n = 1)
-  {
-    return boost::prior(x, n);
-  }
-#endif
-} // namespace cpp11
-
-namespace cpp0x = cpp11;
-
-// copy_n is usually in the STL as well, but not in the official
-// standard. We provide our own copy_n.  It is planned for C++0x. 
-// Our own version is declared deprecated, if std::copy_n is
-// available.
-
-#ifndef CGAL_CFG_NO_CPP0X_COPY_N
-#ifndef CGAL_NO_DEPRECATED_CODE
-template <class InputIterator, class Size, class OutputIterator>
-CGAL_DEPRECATED OutputIterator copy_n( InputIterator first, Size n, OutputIterator result )
-{
-  // copies the first `n' items from `first' to `result'. Returns
-  // the value of `result' after inserting the `n' items.
-  while( n--) {
-    *result = *first;
-    first++;
-    result++;
-  }
-  return result;
-}
-#endif // no CGAL_NO_DEPRECATED_CODE
-#else // CGAL_CFG_NO_CPP0X_COPY_N
-template <class InputIterator, class Size, class OutputIterator>
-OutputIterator copy_n( InputIterator first, Size n, OutputIterator result )
-{
-  // copies the first `n' items from `first' to `result'. Returns
-  // the value of `result' after inserting the `n' items.
-  while( n--) {
-    *result = *first;
-    first++;
-    result++;
-  }
-  return result;
-}
-#endif // CGAL_CFG_NO_CPP0X_COPY_N
-
-namespace cpp11 {
-#ifndef CGAL_CFG_NO_CPP0X_COPY_N
-  using std::copy_n;
-#else
-  using CGAL::copy_n;
-#endif
-} // cpp11
-
-namespace cpp0x = cpp11;
-
 
 // Not documented
 template <class T> inline
@@ -365,6 +299,9 @@ output_range(std::ostream& os,
     return os;
 }
 
+
+namespace cpp98 {
+
 // Reimplementation of std::random_shuffle, for the use of Spatial_sorting.
 // We want an implementation of random_shuffle that produces the same
 // result on all platforms, for a given seeded random generator.
@@ -383,11 +320,25 @@ random_shuffle(RandomAccessIterator begin, RandomAccessIterator end,
   }
 }
 
+
+template <class RandomAccessIterator>
+void
+random_shuffle(RandomAccessIterator begin, RandomAccessIterator end)
+{
+  typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
+  typedef typename Iterator_traits::difference_type Diff_t;
+  boost::rand48 random;
+  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+  CGAL::cpp98::random_shuffle(begin,end, rng);
+}
+
+} // namespace cpp98
+
 namespace internal {
 namespace algorithm {
 
 // Implementation of the algorithm described here:
-//   http://en.wikipedia.org/w/index.php?title=Selection_algorithm&oldid=480099620#Partition-based_general_selection_algorithm
+//   https://en.wikipedia.org/w/index.php?title=Selection_algorithm&oldid=480099620#Partition-based_general_selection_algorithm
 template <class RandomAccessIterator, class Compare>
 RandomAccessIterator
 partition(RandomAccessIterator left,
@@ -434,6 +385,19 @@ void nth_element(RandomAccessIterator left,
   } // end while(true)
 }
 
+// Not a standard function, but close enough
+template <class InputIterator, class Size, class OutputIterator, class UnaryFun>
+OutputIterator transform_n( InputIterator first, Size n, OutputIterator result, UnaryFun fun)
+{
+  // copies the first `n' transformed items from `first' to `result'.
+  // Returns the value of `result' after inserting the `n' items.
+  while( n--) {
+    *result = fun(*first);
+    first++;
+    result++;
+  }
+  return result;
+}
 } //namespace CGAL
 
 #endif // CGAL_ALGORITHM_H

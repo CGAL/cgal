@@ -26,7 +26,6 @@
 
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/gl.h>
 #include <vector>
 
 namespace CGAL {

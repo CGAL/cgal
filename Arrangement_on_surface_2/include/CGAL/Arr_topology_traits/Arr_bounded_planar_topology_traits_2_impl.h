@@ -71,7 +71,7 @@ void Arr_bounded_planar_topology_traits_2<GeometryTraits_2, Dcel_>::
 dcel_updated()
 {
   // Go over the DCEL faces and locate the unbounded face.
-  unb_face = NULL;
+  unb_face = nullptr;
   typename Dcel::Face_iterator fit = this->m_dcel.faces_begin();
   for (; fit != this->m_dcel.faces_end(); ++fit) {
     if (fit->is_unbounded()) {
@@ -79,7 +79,7 @@ dcel_updated()
       break;
     }
   }
-  CGAL_assertion(unb_face != NULL);
+  CGAL_assertion(unb_face != nullptr);
 }
 
 } // namespace CGAL

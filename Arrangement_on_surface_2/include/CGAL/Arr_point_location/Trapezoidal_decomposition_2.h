@@ -16,8 +16,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>
-//                 Iddo Hanniel <hanniel@math.tau.ac.il>
+// Author(s): Oren Nechushtan <theoren@math.tau.ac.il>
+//            Iddo Hanniel <hanniel@math.tau.ac.il>
+//            Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
@@ -29,6 +30,7 @@
 
 #include <CGAL/Arr_tags.h>
 #include <CGAL/basic.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Arr_point_location/Td_predicates.h>
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2_misc.h>
 
@@ -264,7 +266,7 @@ public:
       m_sep doesn't intersect any existing edges except possibly on common end
       points.
       postconditions:
-      if the rightmost trapezoid was traversed m_cur_item is set to NULL.
+      if the rightmost trapezoid was traversed m_cur_item is set to nullptr.
       remark:
       if the seperator is vertical, using the precondition assumptions it
       follows that there is exactly one trapezoid to travel.
@@ -275,9 +277,9 @@ public:
         return *this;// end reached, do nothing!
 
 #ifndef CGAL_TD_DEBUG
-      CGAL_warning(traits != NULL);
+      CGAL_warning(traits != nullptr);
 #else
-      CGAL_assertion(traits != NULL);
+      CGAL_assertion(traits != nullptr);
       CGAL_assertion(traits->is_active(m_cur_item));
       //m_cur_item should be a trapezoid or an edge
       CGAL_assertion(!traits->is_td_vertex(m_cur_item));
@@ -340,7 +342,7 @@ public:
 
         Td_active_edge e (boost::get<Td_active_edge>(m_cur_item));
         CGAL_assertion_code(Dag_node* tt = e.dag_node();)
-        CGAL_assertion(tt != NULL);
+        CGAL_assertion(tt != nullptr);
         CGAL_assertion(tt->is_inner_node());
 
         //go to next() of the current edge.
@@ -616,27 +618,34 @@ public:
     }
   };
 
-  class set_cw_he_visitor : public boost::static_visitor<void>
-  {
+  /*! A visitor to set the cw halfedge of a vertex node.
+   */
+  class set_cw_he_visitor : public boost::static_visitor<void> {
   public:
-    set_cw_he_visitor (Halfedge_const_handle he) : m_cw_he(he) {}
+    set_cw_he_visitor(Halfedge_const_handle he) : m_cw_he(he) {}
 
-    void operator()(Td_active_vertex& t) const
-    {
-      t.set_cw_he(m_cw_he);
-    }
+    void operator()(Td_active_vertex& t) const { t.set_cw_he(m_cw_he); }
+
     void operator()(Td_active_fictitious_vertex& t) const
-    {
-      t.set_cw_he(m_cw_he);
-    }
+    { t.set_cw_he(m_cw_he); }
 
-    template < typename T >
-    void operator()(T& /*t*/) const
-    {
-      CGAL_assertion(false);
-    }
+    template <typename T>
+    void operator()(T& /*t*/) const { CGAL_assertion(false); }
+
   private:
     Halfedge_const_handle m_cw_he;
+  };
+
+  /*! A visitor to reset the cw halfedge of a vertex node.
+   */
+  class reset_cw_he_visitor : public boost::static_visitor<void> {
+  public:
+    void operator()(Td_active_vertex& t) const { t.reset_cw_he(); }
+
+    void operator()(Td_active_fictitious_vertex& t) const { t.reset_cw_he(); }
+
+    template <typename T>
+    void operator()(T& /*t*/) const { CGAL_assertion(false); }
   };
 
   class dag_node_visitor : public boost::static_visitor<Dag_node*>
@@ -645,12 +654,12 @@ public:
     Dag_node* operator()(Td_nothing& /* t */) const
     {
       CGAL_assertion(false);
-      return NULL;
+      return nullptr;
     }
     Dag_node* operator()(Td_inactive_trapezoid& /* t */) const
     {
       CGAL_assertion(false);
-      return NULL;
+      return nullptr;
     }
 
     template < typename T >
@@ -976,7 +985,7 @@ protected:
                                            const X_monotone_curve_2& cv,
                                            Comparison_result cres) const
   {
-    CGAL_assertion(traits != NULL);
+    CGAL_assertion(traits != nullptr);
     Td_map_item& item = left_cv_end_node.get_data();
     CGAL_precondition(traits->is_td_vertex(item));
     CGAL_precondition (are_equal_end_points(Curve_end(cv,ARR_MIN_END),
@@ -1149,6 +1158,11 @@ protected:
   void update_vtx_cw_he_after_merge(const X_monotone_curve_2& old_cv,
                                     Halfedge_const_handle new_he,
                                     Td_map_item& vtx_item);
+
+  /*! Update the cw halfedge of an active vertex after a halfedge is removed.
+   */
+  void update_vtx_cw_he_after_remove(Halfedge_const_handle old_he,
+                                     Td_map_item& vtx_item);
 
   ////MICHAL: currently not in use since split is implemented as: remove and insert two
   //void set_trp_params_after_split_halfedge_update(Halfedge_const_handle new_he,
@@ -1345,13 +1359,13 @@ public:
   //    const Dag_node* child;
   //    CGAL_assertion(tr_copy);
   //    tr_copy->set_rt(cur->rt() ?
-  //                    htr.find(cur->rt())->second : NULL);
+  //                    htr.find(cur->rt())->second : nullptr);
   //    tr_copy->set_rb(cur->rb() ?
-  //                    htr.find(cur->rb())->second : NULL);
+  //                    htr.find(cur->rb())->second : nullptr);
   //    tr_copy->set_lt(cur->lt() ?
-  //                    htr.find(cur->lt())->second : NULL);
+  //                    htr.find(cur->lt())->second : nullptr);
   //    tr_copy->set_lb(cur->lb() ?
-  //                    htr.find(cur->lb())->second : NULL);
+  //                    htr.find(cur->lb())->second : nullptr);
 
   //    if (cur->dag_node()->is_inner_node())
   //    {
@@ -1377,7 +1391,7 @@ public:
   */
   virtual ~Trapezoidal_decomposition_2()
   {
-    CGAL_warning(m_dag_root != NULL);
+    CGAL_warning(m_dag_root != nullptr);
     if (!m_dag_root) return;
 
     delete m_dag_root;
@@ -1425,7 +1439,7 @@ public:
       start_over = false;
 
       //random_shuffle the range
-      std::random_shuffle(begin,end);
+      CGAL::cpp98::random_shuffle(begin,end);
 
       Halfedge_const_handle he_cst;
       Halfedge_iterator it = begin;
@@ -1475,7 +1489,7 @@ public:
   //  if(begin == end)
   //    return;
   //
-  //  std::random_shuffle(begin,end);
+  //  CGAL::cpp98::random_shuffle(begin,end);
   //
   //  curve_iterator it=begin,next=it;
   //  while(it!=end)
@@ -1602,7 +1616,7 @@ public:
 
     //the actual locate. curr is the DAG root, the traits,
     //the end point to locate,
-    //and NULL as cv ptr - indicates point location
+    //and nullptr as cv ptr - indicates point location
     lt = search_using_dag (curr, traits, ce, Halfedge_const_handle());
 
 #ifdef CGAL_TD_DEBUG
@@ -1632,7 +1646,7 @@ public:
   //  locate call may change the class
   Td_map_item& locate( Vertex_const_handle v, Locate_type& lt) const
   {
-    CGAL_precondition(traits != NULL);
+    CGAL_precondition(traits != nullptr);
     return locate(traits->vtx_to_ce(v), lt);
   }
 
@@ -1757,22 +1771,20 @@ public:
 #endif
 
     Halfedge_container container;
-
 #ifdef CGAL_TD_DEBUG
     unsigned long rep = Halfedge_filter(container, &dag_root());
+#else
+    Halfedge_filter(container, &dag_root());
 #endif
-
     clear();
 
     //// initialize container to point to curves in Td_map_item Tree
-    //if (rep>0)
-    //{
+    //if (rep>0) {
     //  bool o = set_with_guarantees(false);
     //  typename std::vector<Halfedge_const_handle>::iterator
     //    it = container.begin(),
     //    it_end = container.end();
-    //  while(it!=it_end)
-    //  {
+    //  while (it != it_end) {
     //    insert(*it);
     //    ++it;
     //  }
@@ -1786,8 +1798,7 @@ public:
 #ifdef CGAL_TD_DEBUG
     CGAL_assertion(is_valid());
     unsigned long sz = number_of_curves();
-    if (sz != rep)
-    {
+    if (sz != rep) {
       std::cerr << "\nnumber_of_curves()=" << sz;
       std::cerr << "\nrepresentatives.size()=" << rep;
       CGAL_assertion(number_of_curves() == rep);
@@ -1831,47 +1842,38 @@ public:
   //  return container.size();
   //}
 
+  /* Return a container for all active curves.
+   */
   template <typename Halfedge_container>
   unsigned long Halfedge_filter(Halfedge_container& container,
                                 const Dag_node* ds) const
-  /* Return a container for all active curves */
   {
     unsigned long sz = number_of_curves();
     std::list<Td_map_item> representatives;
-    //X_trapezoid_list representatives;
     ds->filter(representatives, Td_active_edge_item(*traits));
 
 #ifndef CGAL_TD_DEBUG
-
-    CGAL_warning(sz==representatives.size());
-
+    CGAL_warning(sz == representatives.size());
 #else
 
-    unsigned long rep=representatives.size();
-    if (sz != rep)
-    {
+    unsigned long rep = representatives.size();
+    if (sz != rep) {
       std::cerr << "\nnumber_of_curves()=" << sz;
       std::cerr << "\nrepresentatives.size()=" << rep;
       CGAL_assertion(number_of_curves()==representatives.size());
     }
-
 #endif
 
-    if (sz > 0)
-    {
-      typename std::list<Td_map_item>::iterator it = representatives.begin(),
-        it_end = representatives.end();
-      //typename X_trapezoid_list::iterator it = representatives.begin(),
-      //  it_end = representatives.end();
-      while(!(it==it_end))
+    if (sz > 0) {
+      for (typename std::list<Td_map_item>::iterator it =
+             representatives.begin(); it != representatives.end(); ++it)
       {
-        Td_active_edge e (boost::get<Td_active_edge>(*it));
+        Td_active_edge e(boost::get<Td_active_edge>(*it));
         container.push_back(e.halfedge()); //it represents an active trapezoid
-        ++it;
       }
     }
-    if(! container.empty()) {
-      std::random_shuffle(container.begin(),container.end());
+    if (! container.empty()) {
+      CGAL::cpp98::random_shuffle(container.begin(),container.end());
     }
     return sz;
   }
@@ -1897,7 +1899,7 @@ public:
     return old;
   }
 
-  //This method occasionaly(!) checks the guarantees
+  //This method occasionally(!) checks the guarantees
   // It is currently not in use, since the guarantees are constantly checked in O(1) time
   bool needs_update()
   {
@@ -2008,7 +2010,6 @@ public:
     return longest_query_path_length_rec(true, *m_dag_root,
                                          true, *m_dag_root, *m_dag_root);
   }
-
 
 protected:
 
@@ -2137,7 +2138,6 @@ private:
 
 #endif
 
-
   void print_cv_data(const X_monotone_curve_2& cv,
                      std::ostream& out = std::cout) const
   {
@@ -2204,7 +2204,6 @@ private:
 
     }
   }
-
 
   void print_dag_addresses(const Dag_node& curr) const
   {

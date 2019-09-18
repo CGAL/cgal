@@ -24,7 +24,7 @@ set(CGAL_SetupCGAL_Qt5Dependencies_included TRUE)
 # Used Modules
 # ^^^^^^^^^^^^
 #   - :module:`Qt5Config`
-find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS OpenGL Svg Xml)
 
 set(CGAL_Qt5_MISSING_DEPS "")
 if(NOT Qt5OpenGL_FOUND)
@@ -48,15 +48,32 @@ endif()
 #
 if(NOT CGAL_Qt5_MISSING_DEPS)
   set(CGAL_Qt5_FOUND TRUE)
+  set_property(GLOBAL PROPERTY CGAL_Qt5_FOUND TRUE)
 
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Qt5_moc_and_resource_files.cmake)
 
-  if(NOT TARGET CGAL_Qt5_moc_and_resources)
-    add_library(CGAL_Qt5_moc_and_resources STATIC ${_CGAL_Qt5_MOC_FILES_private} ${_CGAL_Qt5_RESOURCE_FILES_private})
+  if(CGAL_HEADER_ONLY AND (WITH_demos OR WITH_examples OR WITH_tests OR NOT CGAL_BUILDING_LIBS) AND NOT TARGET CGAL_Qt5_moc_and_resources)
+    add_library(CGAL_Qt5_moc_and_resources STATIC 
+      ${_CGAL_Qt5_MOC_FILES_private} 
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/GraphicsViewNavigation.h
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/DemosMainWindow.h
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/GraphicsItem.h
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/GraphicsViewInput.h
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/camera.h
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/frame.h
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/keyFrameInterpolator.h
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/manipulatedCameraFrame.h
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/manipulatedFrame.h
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/qglviewer.h
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/image_interface.h
+        ${_CGAL_Qt5_UI_FILES}
+      ${_CGAL_Qt5_RESOURCE_FILES_private})
+    target_include_directories( CGAL_Qt5_moc_and_resources PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
     set_target_properties(CGAL_Qt5_moc_and_resources PROPERTIES
       POSITION_INDEPENDENT_CODE TRUE
-      EXCLUDE_FROM_ALL TRUE)
-    target_link_libraries(CGAL_Qt5_moc_and_resources CGAL::CGAL Qt5::Widgets Qt5::OpenGL Qt5::Svg)
+      EXCLUDE_FROM_ALL TRUE
+      AUTOMOC TRUE)
+    target_link_libraries(CGAL_Qt5_moc_and_resources CGAL::CGAL Qt5::Widgets Qt5::OpenGL Qt5::Svg Qt5::Xml)
 
     add_library(CGAL::CGAL_Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
     add_library(CGAL::Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
@@ -100,6 +117,14 @@ function(CGAL_setup_CGAL_Qt5_dependencies target)
   if(CGAL_HEADER_ONLY)
     target_link_libraries( ${target} ${keyword} CGAL::Qt5_moc_and_resources)
   endif()
-  target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg)
+  target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg Qt5::Xml)
+
+  # Remove -Wdeprecated-copy, for g++ >= 9.0, because Qt5, as of
+  # version 5.12, has a lot of [-Wdeprecated-copy] warnings.
+  if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
+      AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9" )
+    target_compile_options( ${target} ${keyword} "-Wno-deprecated-copy" "-Wno-cast-function-type" )
+  endif()
+
 endfunction()
 

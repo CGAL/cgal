@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -31,9 +32,9 @@
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/compute_average_spacing.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-
+#include <CGAL/algorithm.h>
 #include <iterator>
 #include <set>
 #include <algorithm>
@@ -41,8 +42,10 @@
 #include <ctime>
 
 #ifdef CGAL_LINKED_WITH_TBB
+#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>  
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <CGAL/Simple_cartesian.h>
@@ -75,9 +78,7 @@ public:
   Kd_tree_element(const Base& p, unsigned int id=0)
     : Base(p), index(id)
   {}
-  Kd_tree_element(const Kd_tree_element& other)
-    : Base(other), index(other.index)
-  {}
+
 };
 
 // Helper class for the Kd-tree
@@ -353,6 +354,8 @@ class Sample_point_updater
   const typename Kernel::FT radius;  
   const std::vector<typename Kernel::FT> &original_densities;
   const std::vector<typename Kernel::FT> &sample_densities; 
+  cpp11::atomic<std::size_t>& advancement;
+  cpp11::atomic<bool>& interrupted;
 
 public:
   Sample_point_updater(
@@ -362,20 +365,25 @@ public:
     const Tree &_sample_kd_tree,              
     const typename Kernel::FT _radius,
     const std::vector<typename Kernel::FT> &_original_densities,
-    const std::vector<typename Kernel::FT> &_sample_densities): 
+    const std::vector<typename Kernel::FT> &_sample_densities,
+    cpp11::atomic<std::size_t>& advancement,
+    cpp11::atomic<bool>& interrupted):
   update_sample_points(out), 
     sample_points(in),
     original_kd_tree(_original_kd_tree),
     sample_kd_tree(_sample_kd_tree),
     radius(_radius),
     original_densities(_original_densities),
-    sample_densities(_sample_densities){} 
-
+    sample_densities(_sample_densities),
+    advancement (advancement),
+    interrupted (interrupted) {} 
 
   void operator() ( const tbb::blocked_range<size_t>& r ) const 
   { 
     for (size_t i = r.begin(); i != r.end(); ++i) 
     {
+      if (interrupted)
+        break;
       update_sample_points[i] = simplify_and_regularize_internal::
         compute_update_sample_point<Kernel, Tree, RandomAccessIterator>(
         sample_points[i], 
@@ -384,6 +392,7 @@ public:
         radius, 
         original_densities,
         sample_densities);
+      ++ advancement;
     }
   }
 };
@@ -396,7 +405,7 @@ public:
 // ----------------------------------------------------------------------------
 
 /**
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
    This is an implementation of the Weighted Locally Optimal Projection (WLOP) simplification algorithm.
    The WLOP simplification algorithm can produce a set of 
    denoised, outlier-free and evenly distributed particles over the original 
@@ -406,9 +415,9 @@ public:
    For more details, please refer to \cgalCite{wlop-2009}.
 
    A parallel version of WLOP is provided and requires the executable to be 
-   linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
    for more details.
 
    \tparam ConcurrencyTag enables sequential versus parallel algorithm.
@@ -433,12 +442,19 @@ public:
      \cgalParamBegin{neighbor_radius} spherical neighborhood radius. This is a key parameter that needs to be
      finely tuned. The result will be irregular if too small, but a larger value will impact the runtime. In 
      practice, choosing a radius such that the neighborhood of each sample point includes at least two rings 
-     of neighboring sample points gives satisfactory result. The default value is set to 8 times the average 
-     spacing of the point set.\cgalParamEnd
+     of neighboring sample points gives satisfactory result. If this parameter is not provided, it is
+     automatically set to 8 times the average spacing of the point set.\cgalParamEnd
      \cgalParamBegin{number_of_iterations} number of iterations to solve the optimsation problem. The default
      value is 35. More iterations give a more regular result but increase the runtime.\cgalParamEnd
      \cgalParamBegin{require_uniform_sampling} an optional preprocessing, which will give better result if the
      distribution of the input points is highly non-uniform. The default value is `false`. \cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `std::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped, no output points are
+      generated.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
@@ -454,17 +470,20 @@ wlop_simplify_and_regularize_point_set(
   const NamedParameters& np
 )
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  double select_percentage = choose_param(get_param(np, internal_np::select_percentage), 5.);
-  double radius = choose_param(get_param(np, internal_np::neighbor_radius), -1);
-  unsigned int iter_number = choose_param(get_param(np, internal_np::number_of_iterations), 35);
-  bool require_uniform_sampling = choose_param(get_param(np, internal_np::require_uniform_sampling), false);
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  double select_percentage = choose_parameter(get_parameter(np, internal_np::select_percentage), 5.);
+  double radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), -1);
+  unsigned int iter_number = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 35);
+  bool require_uniform_sampling = choose_parameter(get_parameter(np, internal_np::require_uniform_sampling), false);
+  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
+                                                                 std::function<bool(double)>());
 
   typedef typename Kernel::Point_3   Point;
   typedef typename Kernel::FT        FT;
@@ -483,7 +502,7 @@ wlop_simplify_and_regularize_point_set(
                                          && select_percentage <= 100);
 
   // Random shuffle
-  std::random_shuffle (points.begin(), points.end());
+  CGAL::cpp98::random_shuffle (points.begin(), points.end());
 
   // Computes original(input) and sample points size 
   std::size_t number_of_original = std::distance(points.begin(), points.end());
@@ -588,6 +607,9 @@ wlop_simplify_and_regularize_point_set(
     //parallel
     if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
     {
+      Point_set_processing_3::internal::Parallel_callback
+        parallel_callback (callback, iter_number * number_of_sample, iter_n * number_of_sample);
+     
       tbb::blocked_range<size_t> block(0, number_of_sample);
       Sample_point_updater<Kernel, Kd_Tree, typename PointRange::iterator> sample_updater(
                            update_sample_points,
@@ -596,15 +618,28 @@ wlop_simplify_and_regularize_point_set(
                            sample_kd_tree,
                            radius2,
                            original_density_weights,
-                           sample_density_weights);
+                           sample_density_weights,
+                           parallel_callback.advancement(),
+                           parallel_callback.interrupted());
 
        tbb::parallel_for(block, sample_updater);
+
+       bool interrupted = parallel_callback.interrupted();
+  
+       // We interrupt by hand as counter only goes halfway and won't terminate by itself
+       parallel_callback.interrupted() = true;
+       parallel_callback.join();       
+
+       // If interrupted during this step, nothing is computed, we return NaN
+       if (interrupted)
+         return output;
     }else
 #endif
     {
       //sequential
+      std::size_t nb = iter_n * number_of_sample;
       for (sample_iter = sample_points.begin();
-        sample_iter != sample_points.end(); ++sample_iter, ++update_iter)
+           sample_iter != sample_points.end(); ++sample_iter, ++update_iter, ++ nb)
       {
         *update_iter = simplify_and_regularize_internal::
           compute_update_sample_point<Kernel,
@@ -616,6 +651,8 @@ wlop_simplify_and_regularize_point_set(
                                        radius2,
                                        original_density_weights,
                                        sample_density_weights);
+        if (callback && !callback ((nb+1) / double(iter_number * number_of_sample)))
+          return output;
       }
     }
     
@@ -652,108 +689,10 @@ wlop_simplify_and_regularize_point_set(
   return wlop_simplify_and_regularize_point_set<ConcurrencyTag>
     (points, output, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template <typename ConcurrencyTag,
-          typename OutputIterator,
-          typename RandomAccessIterator,
-          typename PointMap,
-          typename Kernel>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::wlop_simplify_and_regularize_point_set(), please update your code")
-OutputIterator
-wlop_simplify_and_regularize_point_set(
-  RandomAccessIterator first,  ///< random-access iterator to the first input point.
-  RandomAccessIterator beyond, ///< past-the-end iterator.
-  OutputIterator output,       ///< output iterator where output points are put.
-  PointMap point_map,        ///< point property map.
-  double select_percentage,    ///< percentage of points to retain. 
-                               ///< The default value is set to 5 (\%).
-  double radius,               ///< spherical neighborhood radius.
-                               ///< This is a key parameter that needs to be finely tuned.  
-                               ///< The result will be irregular if too small, but a larger
-                               ///< value will impact the runtime.
-                               ///< In practice, choosing a radius such that the neighborhood of each sample point
-                               ///< includes at least two rings of neighboring sample points
-                               ///< gives satisfactory result.
-                               ///< The default value is set to 8 times the average spacing of the point set.
-  unsigned int iter_number,    ///< number of iterations to solve the optimsation problem. The default value is 35.
-                               ///< More iterations give a more regular result but increase the runtime.
-  bool require_uniform_sampling,///< an optional preprocessing, which will give better result
-                               ///< if the distribution of the input points is highly non-uniform. 
-                               ///< The default value is `false`. 
-  const Kernel&                ///< geometric traits.
-)
-{
-  CGAL::Iterator_range<RandomAccessIterator> points (first, beyond);
-  return wlop_simplify_and_regularize_point_set<ConcurrencyTag>
-    (points, output,
-     CGAL::parameters::point_map (point_map).
-     select_percentage (select_percentage).
-     neighbor_radius (radius).
-     number_of_iterations(iter_number).
-     require_uniform_sampling (require_uniform_sampling).
-     geom_traits (Kernel()));
-}
-  
-
-// deprecated API
-template <typename ConcurrencyTag,
-          typename OutputIterator,     
-          typename RandomAccessIterator, 
-          typename PointMap>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::wlop_simplify_and_regularize_point_set(), please update your code")
-OutputIterator 
-wlop_simplify_and_regularize_point_set(
-  RandomAccessIterator  first,  ///< iterator over the first input point
-  RandomAccessIterator  beyond, ///< past-the-end iterator
-  OutputIterator output,        ///< add back-inserter
-  PointMap point_map, ///< property map RandomAccessIterator  -> Point_3
-  const double select_percentage,     ///< percentage of points to retain
-  double neighbor_radius,       ///< size of neighbors.
-  const unsigned int max_iter_number, ///< number of iterations.
-  const bool require_uniform_sampling     ///< if needed to compute density 
-                                      ///  to generate more rugularized result.                                 
-) 
-{
-  CGAL::Iterator_range<RandomAccessIterator> points (first, beyond);
-  return wlop_simplify_and_regularize_point_set<ConcurrencyTag>
-    (points, output,
-     CGAL::parameters::point_map (point_map).
-     select_percentage (select_percentage).
-     neighbor_radius (neighbor_radius).
-     number_of_iterations(max_iter_number).
-     require_uniform_sampling (require_uniform_sampling));
-}
-
-// deprecated API
-template <typename ConcurrencyTag, 
-          typename OutputIterator,     
-          typename RandomAccessIterator >
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::wlop_simplify_and_regularize_point_set(), please update your code")
-OutputIterator
-wlop_simplify_and_regularize_point_set(
-  RandomAccessIterator  first,  ///< iterator to the first input point.
-  RandomAccessIterator  beyond, ///< past-the-end iterator.
-  OutputIterator output,        ///< add back-inserter.
-  const double select_percentage = 5, ///< percentage of points to retain
-  double neighbor_radius = -1,  ///< size of neighbors.
-  const unsigned int max_iter_number = 35, ///< number of iterations.
-  const bool require_uniform_sampling = false ///< if needed to compute density   
-                                           ///to generate a more uniform result. 
-)
-{
-  CGAL::Iterator_range<RandomAccessIterator> points (first, beyond);
-  return wlop_simplify_and_regularize_point_set<ConcurrencyTag>
-    (points, output,
-     CGAL::parameters::select_percentage (select_percentage).
-     neighbor_radius (neighbor_radius).
-     number_of_iterations(max_iter_number).
-     require_uniform_sampling (require_uniform_sampling));
-}
-#endif // CGAL_NO_DEPRECATED_CODE
-/// @endcond
+/// \endcond
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_wlop_simplify_and_regularize_point_set_H

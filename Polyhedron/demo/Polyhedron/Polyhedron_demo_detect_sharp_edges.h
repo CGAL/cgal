@@ -3,7 +3,6 @@
 #define POLYHEDRON_DEMO_DETECT_SHARP_EDGES_H
 
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
-#include <CGAL/Mesh_3/properties.h>
 
 namespace CGAL
 {
@@ -12,7 +11,7 @@ namespace CGAL
   {
     typename boost::property_map<Polyhedron,edge_is_feature_t>::type if_pm =
         get(CGAL::edge_is_feature, *pMesh);
-    BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::edge_descriptor ed, edges(*pMesh))
+    for(typename boost::graph_traits<Polyhedron>::edge_descriptor ed : edges(*pMesh))
     {
       put(if_pm,ed,false);
     }

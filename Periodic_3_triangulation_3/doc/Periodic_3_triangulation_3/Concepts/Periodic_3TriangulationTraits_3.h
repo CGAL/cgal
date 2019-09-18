@@ -12,15 +12,15 @@ work with point-offset pairs. In most cases the offsets will be
 can be used directly. For efficiency reasons we maintain for each
 functor the version without offsets.
 
-\cgalRefines TriangulationTraits_3
+\cgalRefines `TriangulationTraits_3`
 
-\cgalHasModel CGAL::Periodic_3_triangulation_traits_3
+\cgalHasModel `CGAL::Periodic_3_triangulation_traits_3`
 
-\sa Periodic_3DelaunayTriangulationTraits_3
-\sa Periodic_3RegularTriangulationTraits_3
+\sa `Periodic_3DelaunayTriangulationTraits_3`
+\sa `Periodic_3RegularTriangulationTraits_3`
 
 In addition to the requirements described for the traits class
-TriangulationTraits_3, the geometric traits class of a
+`TriangulationTraits_3`, the geometric traits class of a
 Periodic triangulation must fulfill the following
 requirements.
 */
@@ -80,11 +80,7 @@ of `Kernel::Tetrahedron_3`.
 typedef unspecified_type Tetrahedron_3;
 
 /*!
-A predicate object that must provide the function operators
-
-`Comparison_result operator()(Point_3 p, Point_3 q)`,
-
-which returns `EQUAL` if the two points are equal and
+A predicate object that must provide the function operator
 
 `Comparison_result operator()(Point_3 p, Point_3 q, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q)`,
 
@@ -96,14 +92,7 @@ in a same line.
 typedef unspecified_type Compare_xyz_3;
 
 /*!
-A predicate object that must provide the function operators
-
-`Orientation operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`,
-
-which returns `POSITIVE`, if `s` lies on the positive side of
-the oriented plane `h` defined by `p`, `q`, and `r`,
-returns `NEGATIVE` if `s` lies on the negative side of
-`h`, and returns `COPLANAR` if `s` lies on `h` and
+A predicate object that must provide the function operator
 
 `Orientation operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s)`,
 
@@ -134,11 +123,7 @@ which constructs a point from a point-offset pair.
 typedef unspecified_type Construct_point_3;
 
 /*!
-A constructor object that must provide the function operators
-
-`Segment_3 operator()(Point_3 p, Point_3 q)`,
-
-which constructs a segment from two points and
+A constructor object that must provide the function operator
 
 `Segment_3 operator()(Point_3 p, Point_3 q, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q)`,
 
@@ -148,11 +133,7 @@ which constructs a segment from two point-offset pairs.
 typedef unspecified_type Construct_segment_3;
 
 /*!
-A constructor object that must provide the function operators
-
-`Triangle_3 operator()(Point_3 p, Point_3 q, Point_3 r )`,
-
-which constructs a triangle from three points and
+A constructor object that must provide the function operator
 
 `Triangle_3 operator()(Point_3 p, Point_3 q, Point_3 r, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r)`,
 
@@ -162,11 +143,7 @@ which constructs a triangle from three point-offset pairs.
 typedef unspecified_type Construct_triangle_3;
 
 /*!
-A constructor object that must provide the function operators
-
-`Tetrahedron_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`,
-
-which constructs a tetrahedron from four points and
+A constructor object that must provide the function operator
 
 `Tetrahedron_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s)`,
 

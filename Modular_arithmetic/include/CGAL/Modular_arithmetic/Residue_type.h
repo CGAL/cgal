@@ -22,10 +22,14 @@
 #ifndef CGAL_RESIDUE_TYPE_H
 #define CGAL_RESIDUE_TYPE_H
 
-#include <CGAL/basic.h>
 #include <CGAL/tss.h>
+#include <CGAL/FPU.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/double.h>
+#include <iostream>
 
 #include <cfloat>
+#include <cmath>
 
 #include <boost/operators.hpp>
 

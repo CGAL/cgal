@@ -24,12 +24,9 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#define CGAL_NO_DEPRECATION_WARNINGS
-#include <CGAL/basic.h>
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+
 #include <CGAL/Exact_circular_kernel_2.h>
-#include <CGAL/intersections.h>
-#include <CGAL/Circular_kernel_intersections.h>
-#include <iostream>
 
 typedef CGAL::Exact_circular_kernel_2 CK;
 

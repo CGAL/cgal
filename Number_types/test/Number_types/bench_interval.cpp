@@ -1,10 +1,11 @@
 // Generic bench file for the IA package.
 // Sylvain Pion, 1997-2005.
 
-#include <CGAL/basic.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/predicates/kernel_ftC2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <cassert>
 

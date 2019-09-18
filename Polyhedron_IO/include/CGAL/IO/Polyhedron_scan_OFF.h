@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polyhedron.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/IO/File_header_OFF.h>
@@ -151,5 +152,8 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_IO_POLYHEDRON_SCAN_OFF_H //
 // EOF //

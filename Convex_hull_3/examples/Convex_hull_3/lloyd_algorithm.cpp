@@ -2,6 +2,7 @@
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/point_generators_3.h>
 

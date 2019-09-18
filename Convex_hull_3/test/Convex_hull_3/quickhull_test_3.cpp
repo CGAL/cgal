@@ -1,5 +1,6 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/convex_hull_3.h>
@@ -137,7 +138,7 @@ int main()
   std::cerr << "Testing 500 random points" << std::endl;
   std::vector<Point_3> points;
   Generator g(500);
-  CGAL::cpp11::copy_n( g, num, std::back_inserter(points));
+  std::copy_n( g, num, std::back_inserter(points));
 
   assert(points.size() == num);
 

@@ -167,7 +167,7 @@ public:
 
     DHalfedge* he = p_arr->_locate_around_vertex(p_arr->_vertex (vh), cv, ind);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for (he));
   }
 
@@ -198,7 +198,7 @@ public:
     DHalfedge* he = p_arr->topology_traits()->
       locate_around_boundary_vertex(p_arr->_vertex (vh), cv, ind, ps_x, ps_y);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for (he));
   }
 
@@ -219,10 +219,10 @@ public:
     
     if (he1 == he2) return (0);
 
-    const DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : NULL;
-    const DOuter_ccb* oc1 = (ic1 == NULL) ? he1->outer_ccb() : NULL;
-    const DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : NULL;
-    const DOuter_ccb* oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
+    const DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : nullptr;
+    const DOuter_ccb* oc1 = (ic1 == nullptr) ? he1->outer_ccb() : nullptr;
+    const DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : nullptr;
+    const DOuter_ccb* oc2 = (ic2 == nullptr) ? he2->outer_ccb() : nullptr;
 
     if ((oc1 != oc2) || (ic1 != ic2)) return (-1);
 
@@ -305,7 +305,7 @@ public:
   Vertex_handle create_vertex(const Point_2& p)
   {
     DVertex* v = p_arr->_create_vertex (p);
-    CGAL_assertion(v != NULL);
+    CGAL_assertion(v != nullptr);
     return (p_arr->_handle_for (v));
   }
   
@@ -328,7 +328,7 @@ public:
   {
     DVertex* v = p_arr->_create_boundary_vertex (cv, ind, ps_x, ps_y);
 
-    CGAL_assertion(v != NULL);
+    CGAL_assertion(v != nullptr);
 
     // Notify the topology traits on the creation of the boundary vertex.
     if (notify)
@@ -359,7 +359,7 @@ public:
     DVertex* v = p_arr->_place_and_set_curve_end(p_arr->_face (f), cv, ind,
                                                  ps_x, ps_y, &pred);
 
-    if (pred == NULL)
+    if (pred == nullptr)
       // No predecessor halfedge, return just the vertex:
       return (std::make_pair(p_arr->_handle_for(v), Halfedge_handle()));
 
@@ -401,7 +401,7 @@ public:
                                                new_face, swapped_predecessors,
                                                allow_swap_of_predecessors);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for(he));
   }
 
@@ -438,7 +438,7 @@ public:
     DHalfedge* he =
       p_arr->_insert_from_vertex(p_arr->_halfedge(he_to), cv, cv_dir, p_v);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for (he));
   }
 
@@ -485,7 +485,7 @@ public:
     DHalfedge* he = p_arr->_insert_in_face_interior(p_arr->_face (f),
                                                     cv, cv_dir, p_v1, p_v2);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for (he));
   
   }
@@ -613,7 +613,7 @@ public:
   {
     DHalfedge* he = p_arr->_split_edge (p_arr->_halfedge(e), p, cv1, cv2);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for(he));
   }
 
@@ -636,7 +636,7 @@ public:
     DHalfedge* he = p_arr->_split_edge(p_arr->_halfedge(e), p_arr->_vertex(v),
                                        cv1, cv2);
 
-    CGAL_assertion (he != NULL);
+    CGAL_assertion (he != nullptr);
     return (p_arr->_handle_for(he));
   }
 
@@ -673,7 +673,7 @@ public:
   {
     DFace* f =
       p_arr->_remove_edge(p_arr->_halfedge (e), remove_source, remove_target);
-    CGAL_assertion(f != NULL);
+    CGAL_assertion(f != nullptr);
     return (p_arr->_handle_for(f));
   }
 
@@ -687,9 +687,9 @@ public:
   {
      DHalfedge* he1 = p_arr->_halfedge(e1);
      DHalfedge* he2 = p_arr->_halfedge(e2);
-    const DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : NULL;
-    if (ic1 == NULL) return (false);
-    const DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : NULL;
+    const DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : nullptr;
+    if (ic1 == nullptr) return (false);
+    const DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : nullptr;
     return (ic1 == ic2);
   }
 
@@ -703,9 +703,9 @@ public:
   {
      DHalfedge* he1 = p_arr->_halfedge(e1);
      DHalfedge* he2 = p_arr->_halfedge(e2);
-    const DOuter_ccb* oc1 = (he1->is_on_outer_ccb()) ? he1->outer_ccb() : NULL;
-    if (oc1 == NULL) return (false);
-    const DOuter_ccb* oc2 = (he2->is_on_outer_ccb()) ? he2->outer_ccb() : NULL;
+    const DOuter_ccb* oc1 = (he1->is_on_outer_ccb()) ? he1->outer_ccb() : nullptr;
+    if (oc1 == nullptr) return (false);
+    const DOuter_ccb* oc2 = (he2->is_on_outer_ccb()) ? he2->outer_ccb() : nullptr;
     return (oc1 == oc2);
   }
   //@}
@@ -797,7 +797,7 @@ public:
 
   /*!
    * Create a new vertex.
-   * \param p A pointer to the point (may be NULL in case of a vertex at
+   * \param p A pointer to the point (may be nullptr in case of a vertex at
    *          infinity).
    * \param ps_x The boundary condition at x.
    * \param ps_y The boundary condition at y.
@@ -807,14 +807,14 @@ public:
                           Arr_parameter_space ps_x, Arr_parameter_space ps_y)
   {
     Dcel_vertex* new_v = p_arr->_dcel().new_vertex();
-    if (p != NULL) {
+    if (p != nullptr) {
       typename Dcel::Vertex::Point* p_pt = p_arr->_new_point(*p);
       new_v->set_point(p_pt);
     }
     else
     {
       CGAL_precondition (p_arr->is_open(ps_x, ps_y));
-      new_v->set_point (NULL);
+      new_v->set_point (nullptr);
     }
 
     new_v->set_boundary (ps_x, ps_y);
@@ -823,7 +823,7 @@ public:
 
   /*!
    * Create a new edge (halfedge pair), associated with the given curve.
-   * \param cv A pointer to the x-monotone curve (may be NULL in case of
+   * \param cv A pointer to the x-monotone curve (may be nullptr in case of
    *           a fictitious edge).
    * \return A pointer to one of the created DCEL halfedge.
    */
@@ -831,11 +831,11 @@ public:
   {
     Dcel_halfedge* new_he = p_arr->_dcel().new_edge();
 
-    if (cv != NULL) {
+    if (cv != nullptr) {
       typename Dcel::Halfedge::X_monotone_curve* p_cv = p_arr->_new_curve(*cv);
       new_he->set_curve(p_cv);
     }
-    else new_he->set_curve(NULL);
+    else new_he->set_curve(nullptr);
     return new_he;
   }
 

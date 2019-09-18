@@ -830,6 +830,55 @@ namespace CommonKernelFunctors {
   };
 
  template <typename K>
+ class Compute_approximate_angle_3
+ {
+   typedef typename K::Point_3 Point_3;
+   typedef typename K::Vector_3 Vector_3;
+   
+ public:
+   typedef typename K::FT       result_type;
+
+    result_type
+    operator()(const Vector_3& u, const Vector_3& v) const
+   {
+     K k;
+     typename K::Compute_scalar_product_3 scalar_product =
+       k.compute_scalar_product_3_object();
+
+     double product = CGAL::sqrt(to_double(scalar_product(u,u)) * to_double(scalar_product(v,v)));
+     
+     if(product == 0)
+       return 0;
+     
+     // cosine
+     double dot = to_double(scalar_product(u,v));
+     double cosine = dot / product;
+
+     if(cosine > 1.){
+       cosine = 1.;
+     }
+     if(cosine < -1.){
+       cosine = -1.;
+     }
+
+     return std::acos(cosine) * 180./CGAL_PI;
+   }
+
+   
+   result_type
+   operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+   {
+     K k;
+     typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+     
+     Vector_3 u = vector(q,p);
+     Vector_3 v = vector(q,r);
+
+     return this->operator()(u,v); 
+   }
+ };
+  
+ template <typename K>
  class Compute_approximate_dihedral_angle_3
  {
     typedef typename K::Point_3 Point_3;  
@@ -1646,7 +1695,7 @@ namespace CommonKernelFunctors {
         res = typename K::Intersect_3()(l1,l2);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
-      CGAL_assertion(e_pt!=NULL);
+      CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
   };
@@ -2046,7 +2095,21 @@ namespace CommonKernelFunctors {
         res = typename K::Intersect_3()(plane,line);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
-      CGAL_assertion(e_pt!=NULL);
+      CGAL_assertion(e_pt!=nullptr);
+      return *e_pt;
+    }
+
+    Point
+    operator()(const Plane& plane,
+               const Point& l1, const Point& l2) const
+    {
+      Line line = construct_line( l1, l2 );
+
+      typename cpp11::result_of<typename K::Intersect_3(Plane,Line)>::type
+        res = typename K::Intersect_3()(plane,line);
+      CGAL_assertion(res!=boost::none);
+      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
   };
@@ -2054,6 +2117,7 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Construct_point_on_2
   {
+    typedef typename K::FT         FT;
     typedef typename K::Point_2    Point_2;
     typedef typename K::Segment_2  Segment_2;
     typedef typename K::Line_2     Line_2;
@@ -2062,7 +2126,7 @@ namespace CommonKernelFunctors {
     typedef Point_2          result_type;
 
     Point_2
-    operator()( const Line_2& l, int i) const
+    operator()( const Line_2& l, const FT i) const
     { return l.point(i); }
 
     Point_2
@@ -2070,13 +2134,14 @@ namespace CommonKernelFunctors {
     { return s.point(i); }
 
     Point_2
-    operator()( const Ray_2& r, int i) const
+    operator()( const Ray_2& r, const FT i) const
     { return r.point(i); }
   };
 
   template <typename K>
   class Construct_point_on_3
   {
+    typedef typename K::FT         FT;
     typedef typename K::Point_3    Point_3;
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Line_3     Line_3;
@@ -2086,7 +2151,7 @@ namespace CommonKernelFunctors {
     typedef Point_3          result_type;
 
     Point_3
-    operator()( const Line_3& l, int i) const
+    operator()( const Line_3& l, const FT i) const
     { return l.rep().point(i); }
 
     Point_3
@@ -2094,7 +2159,7 @@ namespace CommonKernelFunctors {
     { return s.point(i); }
 
     Point_3
-    operator()( const Ray_3& r, int i) const
+    operator()( const Ray_3& r, const FT i) const
     { return r.rep().point(i); }
 
     Point_3
@@ -2855,10 +2920,7 @@ namespace CommonKernelFunctors {
                const typename K::Segment_3& segment,
                const K& k)
     {
-      typedef typename K::Point_3 Point_3;
 
-      typename K::Construct_projected_point_3 projection =
-          k.construct_projected_point_3_object();
       typename K::Is_degenerate_3 is_degenerate =
           k.is_degenerate_3_object();
       typename K::Construct_vertex_3 vertex =
@@ -2867,20 +2929,27 @@ namespace CommonKernelFunctors {
       if(is_degenerate(segment))
         return vertex(segment, 0);
 
-      // Project query on segment supporting line
-      const Point_3 proj = projection(segment.supporting_line(), query);
-
-      Point_3 closest_point_on_segment;
-      bool inside = is_inside_segment_3(proj,segment,closest_point_on_segment,k);
-
+      if(segment.to_vector() * (query-segment.source()) <= 0)
+        return segment.source();
+      if(segment.to_vector() * (query-segment.target()) >= 0)
+        return segment.target();
       // If proj is inside segment, returns it
-      if ( inside )
-        return proj;
-
-      // Else returns the constructed point
-      return closest_point_on_segment;
+      return k.construct_projected_point_3_object()(segment.supporting_line(), query);
     }
 
+    typename K::Point_3
+    operator()(const typename K::Point_3& query,
+               const typename K::Ray_3& ray,
+               const K& k)
+    {
+      if ( ray.to_vector() * (query-ray.source()) <= 0)
+        return ray.source();
+      else
+      {
+        return k.construct_projected_point_3_object()(ray.supporting_line(), query);
+      }
+    }
+    
     // code for operator for plane and point is defined in
     // CGAL/Cartesian/function_objects.h and CGAL/Homogeneous/function_objects.h
   };
@@ -2933,7 +3002,7 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
-    { return internal::do_intersect(t1, t2, K()); }
+    { return Intersections::internal::do_intersect(t1, t2, K()); }
   };
 
   template <typename K>
@@ -2946,11 +3015,11 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
-    { return internal::do_intersect(t1, t2, K()); }
+    { return Intersections::internal::do_intersect(t1, t2, K()); }
 
     result_type
     operator()(const typename K::Plane_3& pl1, const typename K::Plane_3& pl2, const typename K::Plane_3& pl3) const
-    { return internal::do_intersect(pl1, pl2, pl3, K() ); }
+    { return Intersections::internal::do_intersect(pl1, pl2, pl3, K() ); }
 
   };
 
@@ -3469,16 +3538,11 @@ namespace CommonKernelFunctors {
       typedef typename Intersection_traits<K, A, B>::result_type type;
     };
 
-    // Solely to make the lazy kernel work
-    #if CGAL_INTERSECTION_VERSION < 2
-    typedef CGAL::Object result_type;
-    #endif
-
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
     typename Intersection_traits<K, T1, T2>::result_type
     operator()(const T1& t1, const T2& t2) const
-    { return internal::intersection(t1, t2, K()); }
+    { return Intersections::internal::intersection(t1, t2, K()); }
   };
 
   template <typename K>
@@ -3502,24 +3566,15 @@ namespace CommonKernelFunctors {
                         typename K::Plane_3 > > type;
     };
 
-    // Solely to make the lazy kernel work
-    #if CGAL_INTERSECTION_VERSION < 2
-    typedef CGAL::Object result_type;
-    #endif
-
     // n possibilities, so I keep the template.
     template <class T1, class T2>
     typename cpp11::result_of< Intersect_3(T1, T2) >::type
     operator()(const T1& t1, const T2& t2) const
-    { return internal::intersection(t1, t2, K() ); }
+    { return Intersections::internal::intersection(t1, t2, K() ); }
 
-    #if CGAL_INTERSECTION_VERSION < 2
-    CGAL::Object
-    #else
     typename boost::optional< boost::variant< typename K::Point_3, typename K::Line_3, typename K::Plane_3 > >
-    #endif
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
-    { return internal::intersection(pl1, pl2, pl3, K() ); }
+    { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };
 
   template <typename K>

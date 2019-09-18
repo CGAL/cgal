@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
+#include <CGAL/disable_warnings.h>
 
 /**
  * @file mesh_segmentation.h
@@ -68,7 +69,7 @@ sdf_values( const TriangleMesh& triangle_mesh,
 /// @endcond
 
 /*!
- * \ingroup PkgSurfaceSegmentation
+ * \ingroup PkgSurfaceMeshSegmentationRef
  * @brief Function computing the Shape Diameter Function over a surface mesh.
  *
  * This function implements the Shape Diameter Function (SDF) as described in \cgalCite{shapira2008consistent}.
@@ -116,7 +117,7 @@ sdf_values( const TriangleMesh& triangle_mesh,
 
 
 /*!
- * \ingroup PkgSurfaceSegmentation
+ * \ingroup PkgSurfaceMeshSegmentationRef
  * @brief Function post-processing raw SDF values computed per facet.
  *
  * Post-processing steps applied :
@@ -151,7 +152,7 @@ sdf_values_postprocessing(const TriangleMesh& triangle_mesh,
 
 
 /*!
- * \ingroup PkgSurfaceSegmentation
+ * \ingroup PkgSurfaceMeshSegmentationRef
  * @brief Function computing the segmentation of a surface mesh given an SDF value per facet.
  *
  * This function fills a property map which associates a segment-id (in [0, number of segments -1])
@@ -251,7 +252,7 @@ segmentation_via_sdf_values(const TriangleMesh& triangle_mesh,
 
 
 /*!
- * \ingroup PkgSurfaceSegmentation
+ * \ingroup PkgSurfaceMeshSegmentationRef
  * @brief Function computing the segmentation of a surface mesh.
  *
  * This function is equivalent to calling the functions `CGAL::sdf_values()` and
@@ -498,5 +499,7 @@ segmentation_via_sdf_values(const TriangleMesh& triangle_mesh,
 
 
 }//namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H //

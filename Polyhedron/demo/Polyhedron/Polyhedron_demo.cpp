@@ -6,6 +6,10 @@
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <QSurfaceFormat>
+#include <QOpenGLContext>
+#include <clocale>
+
 
 struct Polyhedron_demo_impl {
   bool catch_exceptions;
@@ -14,10 +18,34 @@ struct Polyhedron_demo_impl {
   Polyhedron_demo_impl() : catch_exceptions(true) {}
 }; // end struct Polyhedron_demo_impl
 
+int& code_to_call_before_creation_of_QCoreApplication(int& i) {
+  QSurfaceFormat fmt;
+
+  fmt.setVersion(4, 3);
+  fmt.setRenderableType(QSurfaceFormat::OpenGL);
+  fmt.setProfile(QSurfaceFormat::CoreProfile);
+  fmt.setOption(QSurfaceFormat::DebugContext);
+  QSurfaceFormat::setDefaultFormat(fmt);
+
+  //for windows
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
+  QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+#endif
+
+  //We set the locale to avoid any trouble with VTK
+  std::setlocale(LC_ALL, "C");
+  return i;
+}
+
 Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
                                  QString application_name,
-                                 QString main_window_title)
-  : QApplication(argc, argv)
+                                 QString main_window_title,
+                                 QStringList input_keywords)
+  : QApplication(code_to_call_before_creation_of_QCoreApplication(argc),
+                 // This trick in the previous line ensure that code
+                 // is called before the creation of the QApplication
+                 // object.
+                 argv)
   , d_ptr_is_initialized(false)
   , d_ptr(new Polyhedron_demo_impl)
 {
@@ -25,11 +53,6 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   std::cerr.precision(17);
   std::cout.precision(17);
   std::clog.precision(17);
-
-  //for windows
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-  this->setAttribute(Qt::AA_UseDesktopOpenGL);
-#endif
 
   // Import resources from libCGAL (Qt5).
   CGAL_QT_INIT_RESOURCES;
@@ -40,6 +63,11 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
 
   QCommandLineParser parser;
   parser.addHelpOption();
+  
+  QCommandLineOption use_keyword("keyword",
+                              tr("Only loads the plugins associated with the following keyword. Can be called multiple times."),
+                                 "keyword");
+  parser.addOption(use_keyword);
 
   QCommandLineOption use_meta("use-meta",
                               tr("Use the [Meta] key to move frames, instead of [Tab]."));
@@ -56,12 +84,20 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   QCommandLineOption no_autostart("no-autostart",
                                   tr("Ignore the autostart.js file, if any."));
   parser.addOption(no_autostart);
+  QCommandLineOption verbose("verbose",
+                                   tr("Print the paths explored byt the application searching for plugins."));
+  parser.addOption(verbose);
+  QCommandLineOption old("old",
+    tr("Force OpenGL 2.1 context."));
+  parser.addOption(old);
   parser.addPositionalArgument("files", tr("Files to open"), "[files...]");
   parser.process(*this);
-
-  d_ptr->mainWindow.reset(new MainWindow);
+  QStringList keywords = input_keywords;
+  QStringList parser_keywords = parser.values(use_keyword);
+  keywords.append(parser_keywords);
+  d_ptr->mainWindow.reset(new MainWindow(keywords, parser.isSet(verbose)));
   MainWindow& mainWindow = *d_ptr->mainWindow;
-
+  
   mainWindow.setWindowTitle(main_window_title);
   mainWindow.show();
 

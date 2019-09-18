@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2PointLocation
+\ingroup PkgArrangementOnSurface2PointLocation
 
 \anchor arr_refwalk_pl 
 
@@ -35,8 +35,6 @@ of issued queries is not large.
 template< typename Arrangement >
 class Arr_walk_along_line_point_location {
 public:
-
-/// @}
 
 }; /* end Arr_walk_along_line_point_location */
 } /* end namespace CGAL */

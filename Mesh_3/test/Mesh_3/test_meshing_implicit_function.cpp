@@ -1,30 +1,8 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0+
-//
-//
-// Author(s)     : Stephane Tayeb
-//
-//******************************************************************************
-// File Description : 
-//******************************************************************************
-
 #include "test_meshing_utilities.h"
-#include <CGAL/Implicit_mesh_domain_3.h>
+
+#include <CGAL/Labeled_mesh_domain_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Implicit_tester : public Tester<K>
@@ -40,9 +18,7 @@ struct Implicit_tester : public Tester<K>
   void implicit() const
   {
     
-    typedef FT (Function)(const Point&);
-    
-    typedef CGAL::Implicit_mesh_domain_3<Function, K> Mesh_domain;
+    typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
     
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
@@ -63,10 +39,14 @@ struct Implicit_tester : public Tester<K>
     //-------------------------------------------------------
     std::cout << "\tSeed is\t" 
       << CGAL::get_default_random().get_seed() << std::endl;
-    Mesh_domain domain(Implicit_tester<K>::sphere_function,
-                       Sphere_3(CGAL::ORIGIN,2.),
-                       1e-3,
-                       &CGAL::get_default_random());
+
+    namespace p = CGAL::parameters;
+    Mesh_domain domain =
+      Mesh_domain::create_implicit_mesh_domain
+      (p::function = Implicit_tester<K>::sphere_function,
+       p::bounding_object = Sphere_3(CGAL::ORIGIN,2.),
+       p::p_rng = &CGAL::get_default_random(),
+       p::relative_error_bound = 1e-3);
     
     // Set mesh criteria
     Facet_criteria facet_criteria(0, 0, 0.3);

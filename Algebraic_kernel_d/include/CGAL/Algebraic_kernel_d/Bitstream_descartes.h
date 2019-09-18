@@ -24,6 +24,7 @@
 #ifndef CGAL_GENERIC_DESCARTES
 #define CGAL_GENERIC_DESCARTES 1
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
@@ -1453,5 +1454,7 @@ public:
 } // namespace internal
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

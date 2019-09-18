@@ -22,9 +22,13 @@
 
 #ifndef CGAL_POINT_GENERATORS_D_H
 #define CGAL_POINT_GENERATORS_D_H 1
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/generators.h>
 #include <CGAL/number_type_basic.h>
 #include <cmath>
+#include <vector>
 
 namespace CGAL {
 
@@ -148,6 +152,7 @@ void
 Random_points_in_cube_d<P>::
 generate_point() {
     typedef typename Kernel_traits<P>::Kernel::RT RT;
+    CGAL_assume(dimension>0);
     std::vector<RT> coord(dimension);
     for(int i=0; i<dimension; ++i)
       coord[i]=RT(this->d_range * ( 2 * this->_rnd.get_double() - 1.0));
@@ -207,6 +212,8 @@ points_on_cube_grid_d( int dimension, double a,
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POINT_GENERATORS_D_H //
 // EOF //

@@ -174,10 +174,12 @@ public:
     /*!\brief
      * copy constructor
      */
+#ifdef DOXYGEN_RUNNING
     Status_line_CPA_1(const Self& p) : 
             Base(static_cast<const Base&>(p)) {  
     }
-
+#endif
+  
     /*!\brief
      * constructs undefined status line
      */
@@ -258,7 +260,7 @@ public:
      *  line component of the curve at the given x-coordinate.
      */
     size_type number_of_events() const {
-        return this->ptr()->_m_arcs.size();
+        return static_cast<size_type>(this->ptr()->_m_arcs.size());
     }
 
 

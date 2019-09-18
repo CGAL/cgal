@@ -48,10 +48,13 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
+#include <CGAL/disable_warnings.h>
+
 #include <ctype.h>
 #include <CGAL/CORE/BigFloat.h>
 #include <CGAL/CORE/Expr.h>
 #include <CGAL/tss.h>
+#include <sstream> 
 
 namespace CORE { 
 
@@ -919,16 +922,9 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
       } else { // L10 < 0
         decRep += '-';
       }
-      char eBuf[48]; // enought to hold long number L10
-      int ne = 0;
-      if ((ne = sprintf(eBuf, "%ld", labs(L10))) >= 0) {
-        eBuf[ne] = '\0';
-      } else {
-        //perror("BigFloat.cpp: Problem in outputing the exponent!");
-        core_error("BigFloat error: Problem in outputing the exponent",
-			__FILE__, __LINE__, true);
-      }
-      decRep += eBuf;
+      std::ostringstream oss;
+      oss << labs(L10);
+      decRep += oss.str();
       decOut.isScientific = true;
     }
   } else {
@@ -942,7 +938,7 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
           return toDecimal(width, true);
         }
       }
-      decOut.noSignificant = decRep.length();
+      decOut.noSignificant = static_cast<int>(decRep.length());
       if (L10 + 1 < (long)width ) {
         decRep.insert(L10 + 1, ".");
       } else { // L10 + 1 == width
@@ -957,7 +953,7 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
         decRep = round(decRep, L10, width );
         // cannot overflow since there are L10 leading zeroes.
       }
-      decOut.noSignificant = decRep.length() - (-L10);
+      decOut.noSignificant = static_cast<int>(decRep.length() - (-L10));
       decRep.insert(1, ".");
     }
     decOut.isScientific = false;
@@ -1021,7 +1017,7 @@ void BigFloatRep :: fromString(const char *str, extLong prec ) {
   const char *e = strchr(str, 'e');
   int dot = 0;
   long e10 = 0;
-  if (e != NULL)
+  if (e != nullptr)
     e10 = atol(e+1);    // e10 is decimal precision of the input string
   // i.e., input is A/10^{e10}.
   else {
@@ -1085,7 +1081,7 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
   // Change to:
   //  int status;
   do {
-    c = i.get();
+    i.get(c);
   } while (isspace(c)); /* loop if met end-of-file, or
                                char read in is white-space. */
   // Chen Li, "if (c == EOF)" is unsafe since c is of char type and
@@ -1135,7 +1131,7 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
 
   // chenli: make sure that the p is still in the range
   if (p - str >= size) {
-    int len = p - str;
+    std::size_t len = p - str;
     char *t = str;
     str = new char[len + 1];
     memcpy(str, t, len);
@@ -1327,3 +1323,5 @@ BigFloat root(const BigFloat& x, unsigned long k,
   CORE_MEMORY_IMPL(BigFloatRep)
 
 } //namespace CORE
+
+#include <CGAL/enable_warnings.h>

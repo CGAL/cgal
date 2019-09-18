@@ -24,12 +24,7 @@
 
 #include <CGAL/license/Nef_2.h>
 
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4800) // complaint about performance in std::map where we can't do anything
-#endif                          
-
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
@@ -43,6 +38,7 @@
 #include <CGAL/Nef_2/PM_overlayer.h>
 #include <CGAL/Nef_2/PM_point_locator.h>
 #include <CGAL/Nef_2/Bounding_box_2.h>
+#include <CGAL/use.h>
 #include <vector>
 #include <list>
 
@@ -459,6 +455,7 @@ public:
 		   Polygons, Operation op = JOIN) : Base(Nef_rep()) { 
 
     CGAL_assertion(op==JOIN);
+    CGAL_USE(op);
 
     typedef typename std::iterator_traits<Forward_iterator>::value_type
       iterator_pair;
@@ -951,7 +948,7 @@ public:
   converted to a |Vertex_/Halfedge_/Face_const_handle| as described
   above. The object returned is intersected by the ray starting in |p|
   with direction |d| and has minimal distance to |p|.  The operation
-  returns the null handle |NULL| if the ray shoot along |d| does not hit
+  returns the null handle |nullptr| if the ray shoot along |d| does not hit
   any object |h| of |\Mvar| with |\Mvar.contains(h)|. The location mode
   flag |m| allows one to choose between different point location
   strategies.}*/
@@ -991,7 +988,7 @@ public:
   |Vertex_/Halfedge_const_handle| as described above. The object
   returned is part of the $1$-skeleton of |\Mvar|, intersected by the
   ray starting in |p| with direction |d| and has minimal distance to
-  |p|.  The operation returns the null handle |NULL| if the ray shoot
+  |p|.  The operation returns the null handle |nullptr| if the ray shoot
   along |d| does not hit any $1$-skeleton object |h| of |\Mvar|. The
   location mode flag |m| allows one to choose between different point
   location strategies.}*/
@@ -1133,8 +1130,6 @@ std::istream& operator>>
 
 } //namespace CGAL
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_NEF_POLYHEDRON_2_H

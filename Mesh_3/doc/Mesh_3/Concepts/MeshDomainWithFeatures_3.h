@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3Concepts
+\ingroup PkgMesh3Concepts
 \cgalConcept
 
 The concept `MeshDomainWithFeatures_3` refines the concept `MeshDomain_3`.
@@ -8,7 +8,7 @@ While the concept
 the domain through different queries, the concept `MeshDomainWithFeatures_3` also exposes 0 and
 1-dimensional features. The exposed features of the domain are respectively called
 subdomains, surface patches, curves
-and corners according to their respective dimensions 3,2,1 and 0.
+and corners according to their respective dimensions 3, 2, 1, and 0.
 
 Each curve is assumed to be bounded, with only one connected component, and
 without auto-intersections. Each curve is also assumed to be
@@ -159,7 +159,7 @@ get_corners(OutputIterator corners) const;
 Fills `curves` with the curves
 of the input domain.
 `curves` value type must be
-`CGAL::cpp11::tuple<Curve_index,std::pair<Point_3,%Index>,std::pair<Point_3,%Index> >`.
+`std::tuple<Curve_index,std::pair<Point_3,%Index>,std::pair<Point_3,%Index> >`.
 If the curve corresponding to an entry
 in `curves` is not a loop, the pair of associated points should
 belong to

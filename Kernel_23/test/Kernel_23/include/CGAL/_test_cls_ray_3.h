@@ -31,6 +31,7 @@ _test_cls_ray_3(const R& )
  std::cout << "Testing class Ray_3" ;
 
  typedef typename  R::RT    RT;
+ typedef typename  R::FT    FT;
 
  typename R::Ray_3 ir;
  CGAL::Ray_3<R>  r1(ir);
@@ -93,7 +94,7 @@ _test_cls_ray_3(const R& )
  assert( r5.source() == p3 );
  assert( r2.source() != r3.source() );
  assert( r7.direction() == dir );
- assert( r2.direction() == CGAL::Direction_3<R>(r2.point(2) - r2.point(1) ));
+ assert( r2.direction() == CGAL::Direction_3<R>(r2.point(FT(1)/FT(2)) - r2.point(0) ));
  assert( r2.direction() == r3.opposite().direction() );
  assert( r2.to_vector().direction() == r3.opposite().to_vector().direction() );
  assert( r1.supporting_line() == r2.supporting_line() );

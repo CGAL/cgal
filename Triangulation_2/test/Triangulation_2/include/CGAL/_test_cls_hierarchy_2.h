@@ -1,4 +1,4 @@
-#include <CGAL/Constraint_hierarchy_2.h>
+#include <CGAL/Triangulation_2/internal/Constraint_hierarchy_2.h>
 
 struct Less
 {

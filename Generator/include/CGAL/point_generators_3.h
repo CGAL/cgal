@@ -28,6 +28,9 @@
 
 #ifndef CGAL_POINT_GENERATORS_3_H
 #define CGAL_POINT_GENERATORS_3_H 1
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/generators.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/number_type_basic.h>
@@ -62,7 +65,7 @@ template < class P, class Creator >
 void
 Random_points_in_sphere_3<P,Creator>::
 generate_point() {
-  // A strip between z and z+dz has an area independant of z
+  // A strip between z and z+dz has an area independent of z
     typedef typename Creator::argument_type T;
     double alpha = this->_rnd.get_double() * 2.0 * CGAL_PI;
     double z     = 2 * this->_rnd.get_double() - 1.0;
@@ -101,7 +104,7 @@ template < class P, class Creator >
 void
 Random_points_on_sphere_3<P,Creator>::
 generate_point() {
-  // A strip between z and z+dz has an area independant of z
+  // A strip between z and z+dz has an area independent of z
     typedef typename Creator::argument_type T;
     double alpha = this->_rnd.get_double() * 2.0 * CGAL_PI;
     double z     = 2 * this->_rnd.get_double() - 1.0;
@@ -696,6 +699,7 @@ struct Random_points_in_triangles_3
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POINT_GENERATORS_3_H //
 // EOF //

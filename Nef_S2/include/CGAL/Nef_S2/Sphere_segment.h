@@ -141,7 +141,7 @@ Sphere_segment(const Sphere_circle<R>& c1,
 that is part of the halfsphere left of the oriented circle |c2|.
 \precond |c1 != c2| as unoriented circles.}*/
 
-Sphere_segment(const Self& s) : Base(s) {}
+// Sphere_segment(const Self& s) : Base(s) {}
 
 /*{\Moperations 4 2}*/
 

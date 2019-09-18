@@ -29,6 +29,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 
 /*! \file
  * This file was developed at Inria, France, and copied over to the
@@ -40,6 +42,8 @@
 #include <CGAL/basic.h>
 #include <boost/variant.hpp>
 #include <CGAL/Arr_tags.h>
+
+#include <vector>
 
 namespace CGAL {
   namespace VariantFunctors{
@@ -619,5 +623,7 @@ namespace CGAL {
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CIRCULAR_KERNEL_VARIANT_TRAITS_H

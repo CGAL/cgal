@@ -28,6 +28,12 @@
 #ifndef CGAL_ASSERTIONS_BEHAVIOUR_H
 #define CGAL_ASSERTIONS_BEHAVIOUR_H
 
+// workaround against the definition of EXIT in <opencv2/core/internal.hpp>
+#ifdef EXIT
+#  undef EXIT
+#endif
+
+
 namespace CGAL {
 
 enum Failure_behaviour { ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE,

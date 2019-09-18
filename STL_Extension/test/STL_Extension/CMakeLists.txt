@@ -2,22 +2,16 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( STL_Extension_Tests )
 
-cmake_minimum_required(VERSION 2.8.11)
 
 
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
   find_package( TBB QUIET )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
 
   create_single_source_cgal_program( "test_Boolean_tag.cpp" )
   create_single_source_cgal_program( "test_Cache.cpp" )
@@ -47,7 +41,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_type_traits.cpp" )
   create_single_source_cgal_program( "test_Uncertain.cpp" )
   create_single_source_cgal_program( "test_vector.cpp" )
-
+  create_single_source_cgal_program( "test_join_iterators.cpp" )
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

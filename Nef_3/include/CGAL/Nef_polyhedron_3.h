@@ -28,6 +28,7 @@
 
 #include <CGAL/license/Nef_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
@@ -163,8 +164,8 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
   typedef typename Kernel::Segment_3                  Segment_3;
   typedef typename Kernel::Aff_transformation_3       Aff_transformation_3;
 
-#ifndef _MSC_VER
-  // VC++ has a problem to digest the following typedef,
+#if (! defined _MSC_VER) || (_MSC_VER >= 1900)
+  // VC++ < 2017 has a problem to digest the following typedef,
   // and does not need the using statements -- AF
   // The left and right part of these typedefs have the same name. It is
   // very important to qualify the left part with the CGAL:: namespace, no
@@ -636,7 +637,7 @@ protected:
                            const FaceIndexMap& fim,
                            typename boost::disable_if <
                               boost::is_same<FaceIndexMap, bool>
-                           >::type* = NULL // disambiguate with another constructor
+                           >::type* = nullptr // disambiguate with another constructor
   )
   {
     CGAL_NEF_TRACEN("construction from PolygonMesh");
@@ -1951,7 +1952,7 @@ protected:
   interior. The point |p| is contained in the set represented by |\Mvar| if 
   |\Mvar.contains(h)| is true.}*/ {
     CGAL_NEF_TRACEN( "locating point...");
-    CGAL_assertion( pl() != NULL);
+    CGAL_assertion( pl() != nullptr);
 
     Object_handle o = pl()->locate(p);
     
@@ -2161,5 +2162,7 @@ extract_boundary() {
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_NEF_POLYHEDRON_3_H

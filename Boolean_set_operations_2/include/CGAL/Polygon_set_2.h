@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/General_polygon_set_2.h>
@@ -251,5 +252,7 @@ private:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

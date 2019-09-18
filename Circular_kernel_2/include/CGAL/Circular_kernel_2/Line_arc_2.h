@@ -92,13 +92,13 @@ public:
     // the circles intersect
       
     const std::pair<typename CK::Circular_arc_point_2, unsigned>* 
-      result = CGAL::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
+      result = CGAL::Intersections::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
     // get must have succeeded
     if ( result->second == 2 ) // double solution
       return result->first;
     if (b) return result->first;
     ++it;
-    result = CGAL::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
+    result = CGAL::Intersections::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
     return result->first;
   }
 
@@ -136,15 +136,15 @@ public:
     CGAL_kernel_precondition(do_intersect(support, l2));
     //typedef typename Root_of_2::RT RT_2;
     typename Intersection_traits<CK, Line_2, Line_2>::result_type 
-      v = CGAL::internal::intersection(support, l1, CK());
+      v = CGAL::Intersections::internal::intersection(support, l1, CK());
     CGAL_assertion(bool(v));
 
-    const Point_2 *pt = CGAL::internal::intersect_get<Point_2>(v);
-    CGAL_assertion(pt != NULL);
+    const Point_2 *pt = CGAL::Intersections::internal::intersect_get<Point_2>(v);
+    CGAL_assertion(pt != nullptr);
     _begin = Circular_arc_point_2(*pt);
-    v = CGAL::internal::intersection(support, l2, CK());
-    const Point_2 *pt2 = CGAL::internal::intersect_get<Point_2>(v);
-    CGAL_assertion(pt2 != NULL);
+    v = CGAL::Intersections::internal::intersection(support, l2, CK());
+    const Point_2 *pt2 = CGAL::Intersections::internal::intersect_get<Point_2>(v);
+    CGAL_assertion(pt2 != nullptr);
     _end = Circular_arc_point_2(*pt2);
     reset_flags();
   }
@@ -289,43 +289,43 @@ public:
   typedef typename CB::Circle_2 Circle_2;
   typedef typename CB::Circular_arc_point_2 Circular_arc_point_2;
 
-  Filtered_bbox_line_arc_2_base() : P_arc(), bb(NULL) {}
+  Filtered_bbox_line_arc_2_base() : P_arc(), bb(nullptr) {}
   
-  Filtered_bbox_line_arc_2_base(const P_arc& arc) : P_arc(arc), bb(NULL) {}
+  Filtered_bbox_line_arc_2_base(const P_arc& arc) : P_arc(arc), bb(nullptr) {}
 
   Filtered_bbox_line_arc_2_base(const Line_2 &support, 
                                 const Circle_2 &l1, const bool b_l1,
                                 const Circle_2 &l2, const bool b_l2)
-    : P_arc(support,l1,b_l1,l2,b_l2), bb(NULL)
+    : P_arc(support,l1,b_l1,l2,b_l2), bb(nullptr)
   {}
 
     
   Filtered_bbox_line_arc_2_base(const Line_2 &support, 
                                 const Line_2 &l1,
                                 const Line_2 &l2)
-    : P_arc(support,l1,l2), bb(NULL)
+    : P_arc(support,l1,l2), bb(nullptr)
   {}
 
   Filtered_bbox_line_arc_2_base(const Line_2 &support,
                                 const Circular_arc_point_2 &begin,
                                 const Circular_arc_point_2 &end)
-    : P_arc(support, begin, end) , bb(NULL)
+    : P_arc(support, begin, end) , bb(nullptr)
   {}
 
 
   Filtered_bbox_line_arc_2_base(const Segment_2 &s)
-    : P_arc(s) , bb(NULL)
+    : P_arc(s) , bb(nullptr)
   {}
 
     
   Filtered_bbox_line_arc_2_base(const Point_2 &p1,
                                 const Point_2 &p2)
-    : P_arc(p1,p2) , bb(NULL)
+    : P_arc(p1,p2) , bb(nullptr)
   {}
 
   
   Filtered_bbox_line_arc_2_base(const Filtered_bbox_line_arc_2_base &c) 
-    : P_arc(c), bb(c.bb ? new Bbox_2(*(c.bb)) : NULL)
+    : P_arc(c), bb(c.bb ? new Bbox_2(*(c.bb)) : nullptr)
   {}
 
   Filtered_bbox_line_arc_2_base& operator=(const Self& c)
@@ -334,10 +334,10 @@ public:
     {
       this->P_arc::operator=(c);
 
-      if (bb != NULL){ 
+      if (bb != nullptr){ 
         delete bb;
       }
-      bb = c.bb ? new Bbox_2(*(c.bb)) : NULL;
+      bb = c.bb ? new Bbox_2(*(c.bb)) : nullptr;
     }
     return *this;
   }
@@ -346,13 +346,13 @@ public:
 
   Bbox_2 bbox() const
   {
-    if(bb==NULL)
+    if(bb==nullptr)
       bb=new Bbox_2(P_arc::bbox());
     return *bb;
   }
 
   bool has_no_bbox() const
-  { return (bb==NULL);}
+  { return (bb==nullptr);}
 
 private:
 

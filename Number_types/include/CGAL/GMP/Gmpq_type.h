@@ -27,6 +27,8 @@
 #ifndef CGAL_GMPQ_TYPE_H
 #define CGAL_GMPQ_TYPE_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/IO/io.h>
 
@@ -512,5 +514,7 @@ inline Gmpq max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpq& x,const Gmpq& y){
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_GMPQ_TYPE_H

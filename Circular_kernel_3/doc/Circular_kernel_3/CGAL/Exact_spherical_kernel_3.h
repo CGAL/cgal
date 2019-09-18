@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSphericalKernel3GeometricClasses
+\ingroup PkgCircularKernel3GeometricClasses
 
 A typedef to a spherical kernel that provides 
 both exact geometric predicates and exact geometric constructions.
@@ -15,8 +15,6 @@ It defines the same types as `CGAL::Spherical_kernel_3`.
 
 class Exact_spherical_kernel_3 {
 public:
-
-/// @}
 
 }; /* end Exact_spherical_kernel_3 */
 } /* end namespace CGAL */

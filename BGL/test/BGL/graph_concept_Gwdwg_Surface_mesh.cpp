@@ -1,5 +1,4 @@
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
 
@@ -45,6 +44,7 @@ void concept_check_surface_mesh()
 
   // null
   boost::graph_traits<Surface_mesh>::null_vertex();
+  boost::graph_traits<Surface_mesh>::null_halfedge();
   boost::graph_traits<Surface_mesh>::null_face();
 }
 

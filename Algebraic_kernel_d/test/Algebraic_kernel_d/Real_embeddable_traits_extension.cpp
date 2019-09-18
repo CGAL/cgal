@@ -24,13 +24,13 @@
 
 
 
-#include <CGAL/basic.h> 
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
+#include <CGAL/Get_arithmetic_kernel.h>
 
 #include <CGAL/GMP_arithmetic_kernel.h>
 #include <CGAL/LEDA_arithmetic_kernel.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
-
+#include <CGAL/use.h>
 //#include <CGAL/Sqrt_extension.h> // used in this file
 
 
@@ -54,6 +54,8 @@ void test_real_embeddable_extension(const NT_&){
     const Floor floor = Floor();
     typedef typename Floor::argument_type Argument_type;
     typedef typename Floor::result_type   Result_type;
+    CGAL_USE_TYPE(Argument_type);
+    CGAL_USE_TYPE(Result_type);
     CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
     CGAL_static_assertion(( ::boost::is_same<Integer, Result_type>::value));
     assert(Integer(42) == floor(NT(42)));
@@ -64,6 +66,8 @@ void test_real_embeddable_extension(const NT_&){
     const Floor_log2_abs floor_log2_abs = Floor_log2_abs();
     typedef typename Floor_log2_abs::argument_type Argument_type;
     typedef typename Floor_log2_abs::result_type   Result_type;
+    CGAL_USE_TYPE(Argument_type);
+    CGAL_USE_TYPE(Result_type);
     CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
     CGAL_static_assertion(( ::boost::is_same<long, Result_type>::value));
     
@@ -89,6 +93,8 @@ void test_real_embeddable_extension(const NT_&){
     const Ceil ceil = Ceil();
     typedef typename Ceil::argument_type Argument_type;
     typedef typename Ceil::result_type   Result_type;
+    CGAL_USE_TYPE(Argument_type);
+    CGAL_USE_TYPE(Result_type);
     CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
     CGAL_static_assertion(( ::boost::is_same<Integer, Result_type>::value));
     assert(Integer(42) == ceil(NT(42)));
@@ -99,6 +105,8 @@ void test_real_embeddable_extension(const NT_&){
     const Ceil_log2_abs ceil_log2_abs = Ceil_log2_abs();
     typedef typename Ceil_log2_abs::argument_type Argument_type;
     typedef typename Ceil_log2_abs::result_type   Result_type;
+    CGAL_USE_TYPE(Argument_type);
+    CGAL_USE_TYPE(Result_type);
     CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
     CGAL_static_assertion(( ::boost::is_same<long, Result_type>::value));
     

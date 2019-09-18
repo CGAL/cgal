@@ -697,8 +697,8 @@ static const int O[216][4] = {
         vertices[9*i+3*j+k] = _tds.create_vertex();
         Point p(k*(1.0/3.0) + i*(1.0/6.0),
                 j*(1.0/3.0) + i*(1.0/6.0), i*(1.0/4.0) );
-        p = Point((p.x() > FT(0.9375) ? (std::max)( p.x()-1, FT(0) ) : p.x()),
-                  (p.y() > FT(0.9375) ? (std::max)( p.y()-1, FT(0) ) : p.y()), p.z());
+        p = Point((p.x() > FT(0.9375) ? CGAL::max<FT>( p.x()-1, 0 ) : p.x()),
+                  (p.y() > FT(0.9375) ? CGAL::max<FT>( p.y()-1, 0 ) : p.y()), p.z());
         p = Point((domain().xmax()-domain().xmin())*p.x(),
                   (domain().xmax()-domain().xmin())*p.y(),
                   (domain().xmax()-domain().xmin())*p.z());

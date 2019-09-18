@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Surface_mesh_parameterization/internal/angles.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
@@ -41,7 +43,7 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
-/// \ingroup  PkgSurfaceParameterizationMethods
+/// \ingroup  PkgSurfaceMeshParameterizationMethods
 ///
 /// The class `Discrete_conformal_map_parameterizer_3`
 /// implements the <i>Discrete Conformal Map (DCM)</i> parameterization.
@@ -82,12 +84,6 @@ namespace Surface_mesh_parameterization {
 /// \endcode
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer>`
-/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SolverTraits>`
 ///
 template < typename TriangleMesh_,
            typename BorderParameterizer_ = Default,
@@ -207,5 +203,7 @@ protected:
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_DISCRETE_CONFORMAL_MAP_PARAMETERIZER_3_H

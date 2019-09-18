@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <cassert>
 
 #include <CGAL/hilbert_sort.h>

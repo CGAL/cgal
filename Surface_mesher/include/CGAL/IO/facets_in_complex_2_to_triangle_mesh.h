@@ -24,8 +24,12 @@
 #define CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
 
 #include <CGAL/license/Surface_mesher.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <map>
+#include <stack>
 
 namespace CGAL{
 /*!
@@ -170,4 +174,7 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
 }
 
 }// end CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H

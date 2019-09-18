@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The partition traits class for geodesic arcs on the sphere enables 
@@ -615,5 +616,7 @@ public:
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_ARR_GEODESIC_ARC_ON_SPHERE_PARTITION_TRAITS_2_H

@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Compact_container_benchmark )
 
-cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET)
 

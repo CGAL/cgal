@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTDS2
+\ingroup PkgTDS2Ref
 
 The class `Triangulation_ds_face_base_2` is a model for the concept 
 `TriangulationDSFaceBase_2` to be used by 
@@ -17,8 +17,6 @@ The class `Triangulation_ds_face_base_2` is a model for the concept
 template< typename Tds >
 class Triangulation_ds_face_base_2 {
 public:
-
-/// @}
 
 }; /* end Triangulation_ds_face_base_2 */
 } /* end namespace CGAL */

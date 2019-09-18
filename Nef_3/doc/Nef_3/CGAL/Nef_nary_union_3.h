@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgNef3
+\ingroup PkgNef3Ref
 
 This class helps to perform the union of a set of 3D Nef polyhedra 
 efficiently. It succesively applies the binary union operation of 

@@ -26,11 +26,6 @@
 #ifndef CGAL_MPZ_CLASS_H
 #define CGAL_MPZ_CLASS_H
 
-#include <CGAL/number_type_basic.h>
-#include <CGAL/gmpxx_coercion_traits.h>
-#include <CGAL/Modular_traits.h>
-
-
 // This file gathers the necessary adaptors so that the following
 // C++ number types that come with GMP can be used by CGAL :
 // - mpz_class
@@ -40,6 +35,15 @@
 // Reading gmpxx.h shows that ::__gmp_expr<T, T> is the mp[zqf]_class proper,
 // while ::__gmp_expr<T, U> is the others "expressions".
 
+#include <CGAL/number_type_config.h>
+#include <CGAL/functional.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/double.h>
+#include <boost/type_traits/is_same.hpp>
+#include <mpfr.h>
+#include <gmpxx.h>
 
 #define CGAL_CHECK_GMP_EXPR                                             \
     CGAL_static_assertion(                                                \
@@ -52,13 +56,14 @@ namespace CGAL {
 template<>
 class Algebraic_structure_traits< mpz_class >
   :public Algebraic_structure_traits_base<  mpz_class , Euclidean_ring_tag > {
+
 public:
     typedef mpz_class           Type;
     typedef Euclidean_ring_tag  Algebraic_category;
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
 
-    struct Is_zero: public CGAL::unary_function< mpz_class , bool > {
+    struct Is_zero: public CGAL::cpp98::unary_function< mpz_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
@@ -66,7 +71,7 @@ public:
         }
     };
 
-    struct Is_one: public CGAL::unary_function< mpz_class , bool > {
+    struct Is_one: public CGAL::cpp98::unary_function< mpz_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
@@ -74,20 +79,20 @@ public:
         }
     };
 
-    struct Simplify: public CGAL::unary_function< mpz_class , void > {
+    struct Simplify: public CGAL::cpp98::unary_function< mpz_class , void > {
         template <class T, class U>
         void operator()( const ::__gmp_expr< T ,U >&) const {
             CGAL_CHECK_GMP_EXPR;
         }
     };
 
-    struct Square: public CGAL::unary_function< mpz_class , mpz_class > {
+    struct Square: public CGAL::cpp98::unary_function< mpz_class , mpz_class > {
         mpz_class operator()( const mpz_class& x) const {
             return x*x;
         }
     };
 
-    struct Unit_part: public CGAL::unary_function< mpz_class , mpz_class > {
+    struct Unit_part: public CGAL::cpp98::unary_function< mpz_class , mpz_class > {
         mpz_class operator()( const mpz_class& x) const {
             return (x < 0) ? -1 : 1;
         }
@@ -96,7 +101,7 @@ public:
 
 
     struct Integral_division:
-        public CGAL::binary_function< mpz_class , mpz_class, mpz_class > {
+        public CGAL::cpp98::binary_function< mpz_class , mpz_class, mpz_class > {
         template <typename T,  typename U1, typename U2>
         mpz_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
@@ -111,7 +116,7 @@ public:
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 
-    struct Gcd : public CGAL::binary_function< mpz_class, mpz_class, mpz_class > {
+    struct Gcd : public CGAL::cpp98::binary_function< mpz_class, mpz_class, mpz_class > {
         mpz_class operator()(
                 const mpz_class& x,
                 const mpz_class& y) const {
@@ -122,7 +127,7 @@ public:
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 
-    struct Div : public CGAL::binary_function< mpz_class, mpz_class, mpz_class > {
+    struct Div : public CGAL::cpp98::binary_function< mpz_class, mpz_class, mpz_class > {
         template <typename T,  typename U1, typename U2>
         mpz_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
@@ -133,7 +138,7 @@ public:
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 
-    struct Mod : public CGAL::binary_function< mpz_class, mpz_class, mpz_class > {
+    struct Mod : public CGAL::cpp98::binary_function< mpz_class, mpz_class, mpz_class > {
         template <typename T,  typename U1, typename U2>
         mpz_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
@@ -166,7 +171,7 @@ public:
     };
 
 
-    struct Sqrt: public CGAL::unary_function< mpz_class , mpz_class > {
+    struct Sqrt: public CGAL::cpp98::unary_function< mpz_class , mpz_class > {
         template <typename T, typename U>
         mpz_class operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
@@ -175,7 +180,7 @@ public:
     };
 
 
-    /*struct Is_square: public CGAL::binary_function< mpz_class , mpz_class& , bool > {
+    /*struct Is_square: public CGAL::cpp98::binary_function< mpz_class , mpz_class& , bool > {
         template <typename T, typename U>
         bool operator()(
                 const ::__gmp_expr< T , U >& x,
@@ -191,20 +196,26 @@ public:
         };*/
 };
 
+} //namespace CGAL
+
+#include <CGAL/int.h> // for `sign( ::cmp(x, y) )`, below
+
+namespace CGAL {
+
 // RET for mpz_class
 template<>
 class Real_embeddable_traits< mpz_class  >
     : public INTERN_RET::Real_embeddable_traits_base< mpz_class , CGAL::Tag_true > {
 public:
 
-    struct Is_zero: public CGAL::unary_function< mpz_class , bool > {
+    struct Is_zero: public CGAL::cpp98::unary_function< mpz_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
             return ::sgn(x) == 0;
         }
     };
-    struct Is_finite: public CGAL::unary_function<mpz_class,bool> {
+    struct Is_finite: public CGAL::cpp98::unary_function<mpz_class,bool> {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& ) const {
             CGAL_CHECK_GMP_EXPR;
@@ -212,7 +223,7 @@ public:
         }
     };
 
-    struct Is_positive: public CGAL::unary_function< mpz_class , bool > {
+    struct Is_positive: public CGAL::cpp98::unary_function< mpz_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
@@ -220,7 +231,7 @@ public:
         }
     };
 
-    struct Is_negative: public CGAL::unary_function< mpz_class , bool > {
+    struct Is_negative: public CGAL::cpp98::unary_function< mpz_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
@@ -228,7 +239,7 @@ public:
         }
     };
 
-    struct Abs: public CGAL::unary_function< mpz_class , mpz_class > {
+    struct Abs: public CGAL::cpp98::unary_function< mpz_class , mpz_class > {
         template <typename T, typename U>
         mpz_class operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
@@ -237,7 +248,7 @@ public:
     };
 
     struct Sgn
-        : public CGAL::unary_function< mpz_class, ::CGAL::Sign > {
+        : public CGAL::cpp98::unary_function< mpz_class, ::CGAL::Sign > {
     public:
         template <typename T, typename U>
         ::CGAL::Sign operator()( const ::__gmp_expr< T , U >& x ) const {
@@ -247,7 +258,7 @@ public:
     };
 
     struct Compare
-        : public CGAL::binary_function< mpz_class, mpz_class, Comparison_result > {
+        : public CGAL::cpp98::binary_function< mpz_class, mpz_class, Comparison_result > {
         template <typename T,  typename U1, typename U2>
         Comparison_result operator()(
                 const ::__gmp_expr< T , U1 >& x,
@@ -261,7 +272,7 @@ public:
     };
 
     struct To_double
-        : public CGAL::unary_function< mpz_class, double > {
+        : public CGAL::cpp98::unary_function< mpz_class, double > {
         double operator()( const mpz_class& x ) const {
             return x.get_d();
         }
@@ -269,7 +280,7 @@ public:
 
     struct To_interval
 
-        : public CGAL::unary_function< mpz_class, std::pair< double, double > > {
+        : public CGAL::cpp98::unary_function< mpz_class, std::pair< double, double > > {
         std::pair<double, double>
         operator()( const mpz_class& x ) const {
 #if MPFR_VERSION_MAJOR >= 3
@@ -300,10 +311,20 @@ public:
     };
 };
 
+} //namespace CGAL
+
+#include <CGAL/gmpxx.h>
+#include <CGAL/gmpxx_coercion_traits.h>
+#include <CGAL/Residue.h>
+#include <CGAL/Modular_traits.h>
+
+namespace CGAL {
+
 /*! \ingroup NiX_Modular_traits_spec
  *  \brief a model of concept ModularTraits, 
  *  specialization of NiX::Modular_traits. 
  */
+ 
 template<>
 class Modular_traits< mpz_class > {
 public:
@@ -323,8 +344,11 @@ public:
     }
   };    
 };
+} //namespace CGAL
 
+#include <CGAL/Quotient.h>
 
+namespace CGAL {
 template <>
 struct Split_double<mpz_class>
 {

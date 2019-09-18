@@ -29,7 +29,7 @@
 #include <boost/iterator/iterator_categories.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/iterator_traits.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/always.hpp>
 #include <boost/mpl/and.hpp>
@@ -172,7 +172,6 @@
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/function_objects.h>
-#include <CGAL/gl.h>
 #include <CGAL/Hilbert_policy_tags.h>
 #include <CGAL/hilbert_sort.h>
 #include <CGAL/Hilbert_sort_2.h>
@@ -259,7 +258,6 @@
 //#include <CGAL/Triangulation_3.h>
 //#include <CGAL/triangulation_assertions.h>
 //#include <CGAL/Triangulation_cell_base_3.h>
-//#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
 //#include <CGAL/Triangulation_data_structure_3.h>
 //#include <CGAL/Triangulation_ds_cell_base_3.h>
 //#include <CGAL/Triangulation_ds_vertex_base_3.h>

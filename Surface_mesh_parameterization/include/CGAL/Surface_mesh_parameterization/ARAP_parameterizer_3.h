@@ -21,6 +21,8 @@
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/Bool_property_map.h>
@@ -85,7 +87,6 @@
 #include <CGAL/Kernel/Conic_misc.h> // used to solve conic equations
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_set.hpp>
@@ -113,7 +114,7 @@ namespace Surface_mesh_parameterization {
 // Declaration
 // ------------------------------------------------------------------------------------
 
-/// \ingroup PkgSurfaceParameterizationMethods
+/// \ingroup PkgSurfaceMeshParameterizationMethods
 ///
 /// The class `ARAP_parameterizer_3` implements the
 /// *Local/Global Approach to Mesh Parameterization* \cgalCite{liu2008local}.
@@ -159,12 +160,6 @@ namespace Surface_mesh_parameterization {
 /// \endcode
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer>`
-/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SolverTraits>`
 ///
 template < class TriangleMesh_,
            class BorderParameterizer_ = Default,
@@ -306,7 +301,7 @@ private:
                        VertexUVMap uvmap,
                        const VertexIndexMap vimap)
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       int index = get(vimap, vd);
       NT u = Xu(index);
       NT v = Xv(index);
@@ -432,7 +427,7 @@ private:
                                       const Faces_vector& faces,
                                       Cot_map ctmap) const
   {
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       halfedge_descriptor hd = halfedge(fd, mesh), hdb = hd;
 
       vertex_descriptor vi = target(hd, mesh);
@@ -535,7 +530,7 @@ private:
 
     // compute A
     unsigned int count = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the line i of the matrix A
         status = fill_linear_system_matrix(A, mesh, vd, ctmap, vimap);
@@ -744,7 +739,7 @@ private:
   {
     Error_code status = OK;
 
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       // Compute the coefficients C1, C2, C3
       NT C1 = 0., C2 = 0., C3 = 0.;
 
@@ -893,7 +888,7 @@ private:
   {
     int global_index = 0;
 
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       halfedge_descriptor hd = halfedge(fd, mesh), hdb = hd;
 
       vertex_descriptor vi = target(hd, mesh); // hd is k -- > i
@@ -1054,7 +1049,7 @@ private:
     Error_code status = OK;
 
     unsigned int count = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the lines i of the vectors Bu and Bv
         status = fill_linear_system_rhs(mesh, vd, ctmap, lp, lpmap,
@@ -1117,7 +1112,7 @@ private:
     CGAL_postcondition_code
     (
       // make sure that the constrained vertices have not been moved
-      BOOST_FOREACH(vertex_descriptor vd, vertices) {
+      for(vertex_descriptor vd : vertices) {
         if(get(vpmap, vd)) {
           int index = get(vimap, vd);
           CGAL_postcondition(std::abs(Xu[index] - Bu[index] ) < 1e-10);
@@ -1203,7 +1198,7 @@ private:
   {
     NT E = 0.;
 
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap,
                                           ltmap, uvmap);
       E += Ef;
@@ -1232,7 +1227,9 @@ private:
     if(status != OK)
       return status;
 
+#ifdef CGAL_SMP_ARAP_DEBUG
     output_uvmap("ARAP_final_post_processing.off", mesh, vertices, faces, uvmap, vimap);
+#endif
 
     return OK;
   }
@@ -1297,7 +1294,11 @@ public:
 
     // Compute the initial parameterization of the mesh
     status = compute_initial_uv_map(mesh, bhd, uvmap, vimap);
+
+#ifdef CGAL_SMP_ARAP_DEBUG
     output_uvmap("ARAP_initial_param.off", mesh, vertices, faces, uvmap, vimap);
+#endif
+
     if(status != OK)
       return status;
 
@@ -1331,8 +1332,11 @@ public:
     NT energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
                                             ltmap, uvmap);
     NT energy_last;
+
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
     std::cout << "Initial energy: " << energy_this << std::endl;
     std::cout << m_iterations << " max iterations" << std::endl;
+#endif
 
     // main loop
     for(unsigned int ite=1; ite<=m_iterations; ++ite)
@@ -1342,11 +1346,15 @@ public:
                                                uvmap, vimap, vpmap, A);
 
       // Output the current situation
-//      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap, vimap);
+#ifdef CGAL_SMP_ARAP_DEBUG
+      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap vimap);
+#endif
       energy_last = energy_this;
       energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
                                                         ltmap, uvmap);
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
       std::cout << "Energy at iteration " << ite << " : " << energy_this << std::endl;
+#endif
       CGAL_warning(energy_this >= 0);
 
       if(status != OK)
@@ -1357,15 +1365,19 @@ public:
       {  // also no need compute energy if this iteration is the last iteration
         double energy_diff = std::abs((energy_last - energy_this) / energy_this);
         if(energy_diff < m_tolerance) {
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
           std::cout << "Minimization process ended after: "
                     << ite + 1 << " iterations. "
                     << "Energy diff: " << energy_diff << std::endl;
+#endif
           break;
         }
       }
     }
 
+#ifdef CGAL_SMP_ARAP_DEBUG
     output_uvmap("ARAP_final_pre_processing.off", mesh, vertices, faces, uvmap, vimap);
+#endif
 
     if(!is_one_to_one_mapping(mesh, faces, uvmap)) {
      // Use post processing to handle flipped elements
@@ -1417,5 +1429,7 @@ public:
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H

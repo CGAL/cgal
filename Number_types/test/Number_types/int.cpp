@@ -1,5 +1,8 @@
 #include <iostream>
 #include <CGAL/int.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
 

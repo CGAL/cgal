@@ -24,6 +24,8 @@
 #ifndef CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <vector>
 #include <set>
 #include <map>
@@ -61,12 +63,6 @@
 
 #if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
 // put includes here
-#endif
-
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4290)
 #endif
 
 
@@ -112,7 +108,7 @@ template<typename Comparable>
 };
 
 template<typename Comparable> struct Compare_for_vert_line_map
-  : public CGAL::binary_function<Comparable,Comparable,bool> {
+  : public CGAL::cpp98::binary_function<Comparable,Comparable,bool> {
     
   BOOST_MPL_HAS_XXX_TRAIT_DEF(T)
   BOOST_MPL_HAS_XXX_TRAIT_DEF(Handle_policy)
@@ -509,11 +505,12 @@ public:
     }
 
     //! \brief Copy constructor
+#ifdef DOXYGEN_RUNNING
     Curve_analysis_2(const Self& alg_curve)
         : Base(static_cast<const Base&>(alg_curve)) 
     {
     }
-
+#endif
 
     //!@}
 
@@ -693,14 +690,14 @@ public:
 #endif
         CGAL_precondition(has_defining_polynomial());
         typename Rep::Val_functor xval;
-        i = std::lower_bound(
+        i = static_cast<size_type>(std::lower_bound(
                 ::boost::make_transform_iterator(event_coordinates().begin(), 
                                                  xval),
                 ::boost::make_transform_iterator(event_coordinates().end(),
                                                  xval),
                 x
         ) - ::boost::make_transform_iterator(event_coordinates().begin(), 
-                                             xval);
+                                             xval));
         is_event = (i < static_cast<size_type>(event_coordinates().size()) && 
                     (event_coordinates()[i].val == x) );
     }
@@ -1523,7 +1520,7 @@ public:
     Principal_sturm_habicht_iterator principal_sturm_habicht_end() const {
         return boost::make_transform_iterator
             (boost::counting_iterator<size_type>
-                 (sturm_habicht_of_primitive().size()),
+             (static_cast<int>(sturm_habicht_of_primitive().size())),
              Stha_functor(this));
     }
 
@@ -2548,9 +2545,6 @@ std::istream& operator>> (
 } //namespace CGAL
 
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
-
+#include <CGAL/enable_warnings.h>
 
 #endif // ALGEBRAIC_CURVE_2_H

@@ -1,5 +1,4 @@
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 
@@ -23,7 +22,7 @@ typedef Traits::halfedge_descriptor halfedge_descriptor;
 typedef Traits::vertex_descriptor vertex_descriptor;
 typedef Traits::face_descriptor face_descriptor;
 
-void concept_check_surface_mesh()
+void concept_check_seam_surface_mesh()
 {
   boost::function_requires< boost::GraphConcept<Seam_mesh> >();
   boost::function_requires< boost::VertexListGraphConcept<Seam_mesh> >();
@@ -31,19 +30,20 @@ void concept_check_surface_mesh()
   boost::function_requires< boost::IncidenceGraphConcept<Seam_mesh> >();
   boost::function_requires< boost::AdjacencyMatrixConcept<Seam_mesh> >();
   boost::function_requires< boost::BidirectionalGraphConcept<Seam_mesh> >();
+
   boost::function_requires< CGAL::HalfedgeGraphConcept<Seam_mesh> >();
   boost::function_requires< CGAL::HalfedgeListGraphConcept<Seam_mesh> >();
   boost::function_requires< CGAL::FaceGraphConcept<Seam_mesh> >();
   boost::function_requires< CGAL::FaceListGraphConcept<Seam_mesh> >();
 
-
   // null
   boost::graph_traits<Seam_mesh>::null_vertex();
+  boost::graph_traits<Seam_mesh>::null_halfedge();
   boost::graph_traits<Seam_mesh>::null_face();
 }
 
 int main()
 {
-  concept_check_surface_mesh();
+  concept_check_seam_surface_mesh();
   return 0;
 }

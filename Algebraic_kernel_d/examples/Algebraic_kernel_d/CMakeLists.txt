@@ -1,19 +1,18 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Algebraic_kernel_d_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )
-  include( ${CGAL_USE_FILE} )
   find_package(MPFI QUIET)
 endif()
 
 if( CGAL_FOUND AND MPFI_FOUND)
 
+  include( ${CGAL_USE_FILE} )
   include( ${MPFI_USE_FILE} )
-  include( CGAL_CreateSingleSourceCGALProgram )
   include( CGAL_VersionUtils )
 
   create_single_source_cgal_program( "Compare_1.cpp" )

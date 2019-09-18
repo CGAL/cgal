@@ -35,7 +35,7 @@
 namespace CGAL {
 
   template <class Construct_cartesian_const_iterator_d, class P, class T>
-  struct set_bounds_from_pointer : public CGAL::unary_function<P, void> {
+  struct set_bounds_from_pointer : public CGAL::cpp98::unary_function<P, void> {
     int dim;
     T *lower;
     T *upper;
@@ -68,8 +68,8 @@ namespace CGAL {
   private:
     
     //int dim;
-    CGAL::cpp11::array<T,D::value> lower_;
-    CGAL::cpp11::array<T,D::value> upper_;
+    std::array<T,D::value> lower_;
+    std::array<T,D::value> upper_;
     int max_span_coord_;
     
   public:
@@ -166,6 +166,7 @@ namespace CGAL {
     inline FT 
     min_coord(int i) const 
     {
+      CGAL_assume(i<D::value);
       CGAL_assertion(lower_.size() != 0);
       return lower_[i];
     }
@@ -173,6 +174,7 @@ namespace CGAL {
     inline FT 
     max_coord(int i) const 
     {
+      CGAL_assume(i<D::value);
       return upper_[i];
     }
     
@@ -350,7 +352,7 @@ namespace CGAL {
     inline FT 
     min_coord(int i) const 
     {
-      CGAL_assertion(coords_ != NULL);
+      CGAL_assertion(coords_ != nullptr);
       return lower()[i];
     }
     

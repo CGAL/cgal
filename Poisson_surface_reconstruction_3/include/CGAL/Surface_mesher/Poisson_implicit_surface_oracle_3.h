@@ -29,6 +29,7 @@
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Surface_mesher/Sphere_oracle_3.h>
+#include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 #include <CGAL/Real_embeddable_traits.h>
 #include <CGAL/squared_distance_3.h>
 
@@ -51,12 +52,6 @@
 // NB: this oracle requires that the user provide a function that can
 // compute the value of the potential in any point of space
 namespace CGAL {
-
-#ifdef  BOOST_MPL_CFG_NO_HAS_XXX
-#  error "BOOST_MPL_HAS_XXX_TRAIT_DEF is needed!"
-#else
-   BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_set_on_surface, Set_on_surface_tag, true)
-#endif
 
   namespace Surface_mesher {
 
@@ -100,19 +95,7 @@ namespace CGAL {
 )
     */
 
-  namespace {
-    
-  template <typename T>
-  struct Return_min : CGAL::binary_function<T, T, T>
-  {
-    T operator()(const T& a, const T& b) const
-    {
-      return (std::min)(a, b);
-    }
-  };
-
-  } // end anonymous namespace
-
+ 
   template <
     class GT,
     class Surface,

@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 
@@ -36,7 +35,7 @@ int main(int argc, char* argv[])
       = PMP::sharp_edges_segmentation(mesh, 90, eif, pid);
 
     std::size_t nb_sharp_edges = 0;
-    BOOST_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
+    for(boost::graph_traits<Mesh>::edge_descriptor e : edges(mesh))
     {
       if(get(eif, e))
         ++nb_sharp_edges;
@@ -50,6 +49,7 @@ int main(int argc, char* argv[])
       = PMP::sharp_edges_segmentation(mesh, 90, eif, pid,
                                       PMP::parameters::first_index(1)
                                      .vertex_incident_patches_map(vip));
+   
     CGAL_assertion(number_of_patches == 6);
 
     PMP::detect_sharp_edges(mesh, 90, eif);
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     PMP::detect_vertex_incident_patches(mesh, pid, vip, eif);
 
     nb_sharp_edges = 0;
-    BOOST_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
+    for(boost::graph_traits<Mesh>::edge_descriptor e : edges(mesh))
     {
       if(get(eif, e))
         ++nb_sharp_edges;
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
     PMP::detect_vertex_incident_patches(mesh, patch_id_map, vertex_incident_patch_map, eif);
 
     nb_sharp_edges =0;
-    BOOST_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
+    for(boost::graph_traits<Mesh>::edge_descriptor e : edges(mesh))
     {
       if(get(eif, e))
         ++nb_sharp_edges;
@@ -89,4 +89,5 @@ int main(int argc, char* argv[])
 
     return 0;
 }
+
 

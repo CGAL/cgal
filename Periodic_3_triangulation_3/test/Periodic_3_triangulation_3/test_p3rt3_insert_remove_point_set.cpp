@@ -7,6 +7,7 @@
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Timer.h>
 
 #include <algorithm>
 #include <cassert>
@@ -44,22 +45,13 @@ public:
   typedef typename Traits::Point_3                              Point_3;
   typedef typename Traits::Iso_cuboid_3                         Iso_cuboid;
 
-  static void test_insert_rnd_then_remove_all (unsigned pt_count,
-                                               unsigned seed,
-                                               const std::string& path)
+  static void test_insert_rnd_then_remove_all (unsigned pt_count)
   {
-    std::cout << "--- test_insert_rnd (" << pt_count << ", " << seed << ')' << std::endl;
-
-    CGAL::Random random(seed);
-//    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
-//    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
+    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
+    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5);
 
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
     P3RT3 p3rt3(iso_cuboid);
-
-    std::ofstream stream("p3rt3_ir_point_set");
-    assert(stream);
-    std::ifstream input_stream(path.c_str());
 
     std::vector<Weighted_point_3> insert_set;
     insert_set.reserve(pt_count);
@@ -69,22 +61,17 @@ public:
     std::cout << "-- insert" << std::endl;
     for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
     {
-//      Weighted_point_3 p(*in_cube++, random.get_double(0., 0.015625));
-//      std::cout << cnt << " : " << p << std::endl;
-      Weighted_point_3 p;
-      input_stream >> p;
-      assert(p.weight() < 0.015625);
-      stream << p << std::endl;
+      Weighted_point_3 p(*in_cube++, CGAL::get_default_random().get_double(0., 0.015625));
 
       std::size_t hidden_point_count = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
-        hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+        hidden_point_count += iter->hidden_points().size();
 
       Vertex_handle vh = p3rt3.insert(p);
 
       std::size_t hidden_point_count_2 = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
-        hidden_point_count_2 += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+        hidden_point_count_2 += iter->hidden_points().size();
       assert(hidden_point_count <= hidden_point_count_2);
       assert(hidden_point_count_2 + p3rt3.number_of_vertices() == cnt);
 #ifdef REALLY_VERBOSE
@@ -99,8 +86,6 @@ public:
         insert_set.push_back(p);
     }
 
-    stream.close();
-
     assert(p3rt3.is_valid());
 
     std::cout << "-- remove" << std::endl;
@@ -108,7 +93,7 @@ public:
     for (; p3rt3.number_of_vertices() != 0; ++cnt)
     {
       Vertex_iterator iter = p3rt3.vertices_begin();
-      for (int j = random.get_int(0, static_cast<int>(p3rt3.number_of_vertices())); j; --j)
+      for (int j = CGAL::get_default_random().get_int(0, static_cast<int>(p3rt3.number_of_vertices())); j; --j)
         ++iter;
 #ifdef REALLY_VERBOSE
       std::cout << cnt << " : " << iter->point() << std::endl;
@@ -120,7 +105,7 @@ public:
 #endif
       std::size_t hidden_point_count = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
-        hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+        hidden_point_count += iter->hidden_points().size();
 
       assert(hidden_point_count + cnt + p3rt3.number_of_vertices() == insert_set.size());
     }
@@ -135,14 +120,14 @@ public:
 
   static void test ()
   {
-    //////    Iso_cuboid unitaire ->  0 <= weight < 0.015625
-    test_insert_rnd_then_remove_all(800, 7, "data/p3rt3_point_set__s7_n800");
-    test_insert_rnd_then_remove_all(800, 12, "data/p3rt3_point_set__s12_n800");
+    test_insert_rnd_then_remove_all(800);
   }
 };
 
 int main (int, char**)
 {
+  CGAL::Timer t;
+  t.start();
   std::cout << "TESTING ..." << std::endl;
 
   CGAL::Set_ieee_double_precision pfr;
@@ -152,6 +137,7 @@ int main (int, char**)
   std::cout << "Epick ..." << std::endl;
   Tests<CGAL::Epick>::test();
 
+  std::cout << t.time() << " sec." << std::endl;
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

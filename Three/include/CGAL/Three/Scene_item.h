@@ -40,8 +40,10 @@ namespace Three {
   class Viewer_interface;
 }
 }
+namespace CGAL{
 namespace qglviewer {
   class ManipulatedFrame;
+}
 }
 
 class QMenu;
@@ -69,26 +71,30 @@ public:
    * @see getShaderProgram
    * @see attribBuffers
    */
- enum OpenGL_program_IDs
- {
-  PROGRAM_WITH_LIGHT = 0,      /** Used to render a surface or edge affected by the light. It uses a per fragment lighting model, and renders brighter the selected item.*/
-  PROGRAM_WITHOUT_LIGHT,       /** Used to render a polygon edge or points. It renders in a uniform color and is not affected by light. It renders the selected item in black.*/
-  PROGRAM_NO_SELECTION,        /** Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.*/
-  PROGRAM_WITH_TEXTURE,        /** Used to render a textured polyhedron. Affected by light.*/
-  PROGRAM_PLANE_TWO_FACES,     /** Used to render a two-faced plane. The two faces have a different color. Not affected by light.*/
-  PROGRAM_WITH_TEXTURED_EDGES, /** Used to render the edges of a textured polyhedorn. Not affected by light.*/
-  PROGRAM_INSTANCED,           /** Used to display instanced rendered spheres.Affected by light.*/
-  PROGRAM_INSTANCED_WIRE,      /** Used to display instanced rendered wired spheres. Not affected by light.*/
-  PROGRAM_C3T3,                /** Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.*/
-  PROGRAM_C3T3_EDGES,          /** Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.*/
-  PROGRAM_CUTPLANE_SPHERES,    /** Used to render the spheres of an item with a cut plane.*/
-  PROGRAM_SPHERES,             /** Used to render one or several spheres.*/
-  PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
-  PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
-  NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
- };
+  enum OpenGL_program_IDs
+  {
+    ROGRAM_WITH_LIGHT = 0,      //! Used to render a surface or an edge affected by the light. It uses a per fragment lighting model, and renders the selected item brighter.
+    PROGRAM_WITHOUT_LIGHT,       //! Used to render a polyhedron edge or points. It renders in a uniform color and is not affected by light. \attention It renders the selected item in black.
+    PROGRAM_NO_SELECTION,        //! Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.
+    PROGRAM_WITH_TEXTURE,        //! Used to render a textured polyhedron. Affected by light.
+    PROGRAM_PLANE_TWO_FACES,     //! Used to render a two-faced plane. The two faces have a different color. Not affected by light.
+    PROGRAM_WITH_TEXTURED_EDGES, //! Used to render the edges of a textured polyhedron. Not affected by light.
+    PROGRAM_INSTANCED,           //! Used to display instanced rendered spheres.Affected by light.
+    PROGRAM_INSTANCED_WIRE,      //! Used to display instanced rendered wired spheres. Not affected by light.
+    PROGRAM_C3T3,                //! Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.
+    PROGRAM_C3T3_EDGES,          //! Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.
+    PROGRAM_CUTPLANE_SPHERES,    //! Used to render the spheres of an item with a cut plane.
+    PROGRAM_SPHERES,             //! Used to render one or several spheres.
+    PROGRAM_DARK_SPHERES,        //! Used to render one or several spheres without light (for picking for example).
+    PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
+    PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
+    PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
+    PROGRAM_NO_INTERPOLATION,   //! Used to render faces without interpolating their color.
+    PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Display_property_plugin
+    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
+  };
   typedef CGAL::Bbox_3 Bbox;
-  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
   //! \brief The default color of a scene_item.
   //!
   //! This color is the one that will be displayed if none is specified after its creation.
@@ -151,11 +157,6 @@ public:
    */
   virtual void drawPoints(CGAL::Three::Viewer_interface*) const { drawPoints(); }
 
-  //! Draws the splats of the item in the viewer using GLSplat functions.
-  virtual void drawSplats() const {}
-  //! Draws the splats of the item in the viewer using the GLSplat library.
-  virtual void drawSplats(CGAL::Three::Viewer_interface*) const {drawSplats();}
-
   //! Called by the scene. If b is true, then this item is currently selected.
   virtual void selection_changed(bool b);
 
@@ -208,7 +209,7 @@ public:
   virtual bool manipulatable() const { return false; }
   //!\brief The manipulatedFrame of the item.
   //!
-  //! A manipulated frame is an independant system that can be
+  //! A manipulated frame is an independent system that can be
   //! translated or rotated using the Ctrl key and the mouse.
   //!@returns the manipulatedFrame of the item.
   virtual ManipulatedFrame* manipulatedFrame() { return 0; }
@@ -238,7 +239,19 @@ public:
   //! the Operations menu, actions to save or clone the item if it is supported
   //! and any contextual action for the item.
   virtual QMenu* contextMenu();
+  //!
+  //! \brief setId informs the item of its current index in the scene entries.
+  //!
+  void setId(int id);
 
+  //!
+  //! \brief getId returns the current index of this item in the scene entries.
+  //!
+  int getId()const;
+
+  //! invalidates the context menu. Call it when supportsRenderingMode() changes, 
+  //! for example.
+  void resetMenu();
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
 
@@ -285,7 +298,7 @@ public:
    * |             |_______|_____|
    * |General Info | #Edges|12   |
    * |_____________|_______|_____|
-   * compute stats(0) should return "Cube" and computeStats(1) should return QString::number(12);
+   * ComputeStats(0) should return "Cube" and computeStats(1) should return QString::number(12);
    * The numbers must be coherent with the order of declaration of the titles in the header.
    * \endverbatim
    *
@@ -294,6 +307,18 @@ public:
 
   //!Contains the number of group and subgroups containing this item.
   int has_group;
+  //!
+  //! \brief newViewer adds Vaos for `viewer`.
+  //!
+  //! Must be overriden;
+  //!
+  virtual void newViewer(CGAL::Three::Viewer_interface* viewer) = 0;
+  //!
+  //! \brief removeViewer removes the Vaos fo `viewer`.
+  //!
+  //! Must be overriden;
+  //!
+  virtual void removeViewer(CGAL::Three::Viewer_interface* viewer) = 0;
 
 public Q_SLOTS:
 
@@ -306,7 +331,7 @@ public Q_SLOTS:
   virtual void setColor(QColor c) { color_ = c;}
   //!Setter for the RGB color of the item. Calls setColor(QColor).
   //!@see setColor(QColor c)
-  void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
+  void setRgbColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
   //!Sets the name of the item.
   virtual void setName(QString n) { name_ = n; }
     //!Sets the visibility of the item.
@@ -315,6 +340,7 @@ public Q_SLOTS:
   //!This function is called by `Scene::changeGroup` and should not be
   //!called manually.
   virtual void moveToGroup(Scene_group_item* group);
+  void setRenderingMode(int m) { setRenderingMode((RenderingMode)m);}
   //!Sets the rendering mode of the item.
   //!@see RenderingMode
   virtual void setRenderingMode(RenderingMode m) { 
@@ -351,9 +377,9 @@ public Q_SLOTS:
   void setPointsPlusNormalsMode(){
     setRenderingMode(PointsPlusNormals);
   }
-  //!Sets the RenderingMode to Splatting.
-  void setSplattingMode(){
-    setRenderingMode(Splatting);
+  //!Sets the RenderingMode to GouraudPlusEdges.
+  void setGouraudPlusEdgesMode(){
+    setRenderingMode(GouraudPlusEdges);
   }
   
   //!Emits an aboutToBeDestroyed() signal.
@@ -361,7 +387,15 @@ public Q_SLOTS:
   //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause a simily
   //!memory leak, for example when multiple items are created at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
-
+  //!Returns the alpha value for the item.
+    //! Must be called within a valid openGl context.
+    virtual float alpha() const;
+  
+    //! Sets the value of the aplha Slider for this item.
+    //!
+    //! Must be overriden;
+    //! \param alpha must be between 0 and 255
+    virtual void setAlpha(int alpha);
   //!Selects a point through raycasting.
   virtual void select(double orig_x,
                       double orig_y,
@@ -439,6 +473,7 @@ protected:
   /*! Contains the VAOs.
    */
   std::vector<QOpenGLVertexArrayObject*> vaos;
+  int cur_id;
   //!Adds a VAO to the Map.
   void addVaos(int i)
   {
@@ -446,15 +481,10 @@ protected:
       vaos[i] = n_vao;
   }
 
-  /*! Fills the VBOs with data. Must be called after each call to #computeElements().
-   * @see compute_elements()
+  /*! Fills the VBOs with data.
    */
   void initializeBuffers(){}
 
-  /*! Collects all the data for the shaders. Must be called in #invalidateOpenGLBuffers().
-   * @see invalidateOpenGLBuffers().
-   */
-  void computeElements(){}
   /*! Passes all the uniform data to the shaders.
    * According to program_name, this data may change.
    */
@@ -462,6 +492,13 @@ protected:
 
   /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
   virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
+public:
+  //! \brief defaultSaveName returns the name to be used as default
+  //! when saving this item.
+  //! 
+  //! Default is `name()`.
+  //! \return A new name for the default value in the "save as" dialog.
+  virtual QString defaultSaveName() const { return name(); }
 }; // end class Scene_item
 }
 }

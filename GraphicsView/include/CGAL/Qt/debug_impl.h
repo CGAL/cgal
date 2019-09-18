@@ -32,7 +32,7 @@
 #include <CGAL/Qt/debug.h>
 #include <QDir>
 #include <iostream>
-#include <CGAL/gl.h>
+#include <QtOpenGL/qgl.h>
 #include <qopenglfunctions.h>
 namespace CGAL {
 namespace Qt {

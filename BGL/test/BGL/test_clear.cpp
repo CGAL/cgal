@@ -10,13 +10,13 @@ void test() {
     std::cout << "Error reading file: " << fname << std::endl;
   }
 
-  assert(CGAL::is_valid(m));
+  assert(CGAL::is_valid_polygon_mesh(m));
 
   CGAL::clear(m);
   assert(num_vertices(m) == 0);
   assert(num_faces(m) == 0);
   assert(num_edges(m) == 0);
-  assert(CGAL::is_valid(m));
+  assert(CGAL::is_valid_polygon_mesh(m));
 }
 
 int main()

@@ -24,6 +24,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 
+#include <CGAL/algorithm.h>
 #include <algorithm>
 #include <utility>
 #include <deque>
@@ -291,7 +292,7 @@ namespace Meshes {
     // Random shuffle
     void random_shuffle ()
     {
-      std::random_shuffle(container.begin(), container.end());
+      CGAL::cpp98::random_shuffle(container.begin(), container.end());
     }
 
     size_type size() const

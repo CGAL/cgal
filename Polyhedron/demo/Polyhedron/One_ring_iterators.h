@@ -1,6 +1,6 @@
 #ifndef ONE_RING_ITERATORS_H
 #define ONE_RING_ITERATORS_H
-#include "Polyhedron_type.h"
+
 /***************************************************************/
 /* For iterating on one ring neighbor, sample usage:
    Halfedge_handle h; //or Vertex_handle or Facet_handle

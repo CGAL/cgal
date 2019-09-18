@@ -34,7 +34,7 @@ namespace CGAL {
 
 template < class NT1, class NT2 >
 struct NT_converter
-  : public CGAL::unary_function< NT1, NT2 >
+  : public CGAL::cpp98::unary_function< NT1, NT2 >
 {
     NT2
     operator()(const NT1 &a) const
@@ -50,7 +50,7 @@ struct NT_converter
 
 template < class NT1 >
 struct NT_converter < NT1, NT1 >
-  : public CGAL::unary_function< NT1, NT1 >
+  : public CGAL::cpp98::unary_function< NT1, NT1 >
 {
     const NT1 &
     operator()(const NT1 &a) const
@@ -61,7 +61,7 @@ struct NT_converter < NT1, NT1 >
 
 template < class NT1 >
 struct NT_converter < NT1, double >
-  : public CGAL::unary_function< NT1, double >
+  : public CGAL::cpp98::unary_function< NT1, double >
 {
     double
     operator()(const NT1 &a) const
@@ -72,7 +72,7 @@ struct NT_converter < NT1, double >
 
 template <>
 struct NT_converter < double, double >
-  : public CGAL::unary_function< double, double >
+  : public CGAL::cpp98::unary_function< double, double >
 {
     const double &
     operator()(const double &a) const
@@ -83,7 +83,7 @@ struct NT_converter < double, double >
 
 template < class NT1, bool b >
 struct NT_converter < NT1, Interval_nt<b> >
-  : public CGAL::unary_function< NT1, Interval_nt<b> >
+  : public CGAL::cpp98::unary_function< NT1, Interval_nt<b> >
 {
     Interval_nt<b>
     operator()(const NT1 &a) const
@@ -94,7 +94,7 @@ struct NT_converter < NT1, Interval_nt<b> >
 
 template < bool b >
 struct NT_converter < Interval_nt<b>, Interval_nt<b> >
-  : public CGAL::unary_function< Interval_nt<b>, Interval_nt<b> >
+  : public CGAL::cpp98::unary_function< Interval_nt<b>, Interval_nt<b> >
 {
     const Interval_nt<b> &
     operator()(const Interval_nt<b> &a) const

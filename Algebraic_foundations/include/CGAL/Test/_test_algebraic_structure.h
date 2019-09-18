@@ -28,10 +28,10 @@
 
 // within this file AS ^= Type
 
-#include <CGAL/basic.h>
 #include <CGAL/Algebraic_structure_traits.h>
 //#include <CGAL/Real_embeddable_traits.h>
 
+#include <CGAL/number_utils.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 #include <boost/type_traits.hpp>
@@ -43,8 +43,11 @@
 
 #include <CGAL/Testsuite/use.h>
 
+
 #ifndef CGAL_TEST_ALGEBRAIC_STRUCTURE_H
 #define CGAL_TEST_ALGEBRAIC_STRUCTURE_H
+
+#include <CGAL/disable_warnings.h>
 
 // checks the result type of a functor 
 template <typename AdaptableFunctor, typename ResultType>
@@ -414,7 +417,7 @@ void test_algebraic_structure_intern(
     assert( a !=  AS (0));
     assert( b !=  AS (0));
     assert( c !=  AS (0));
-    //  AS (0) == NULL of IntegralDomain
+    //  AS (0) == nullptr of IntegralDomain
     assert(a* AS (0)== AS (0));
     assert(a+ AS (0)==a);
     assert(b* AS (0)== AS (0));
@@ -649,6 +652,7 @@ template<class  AS , class Sqrt>
 class Test_sqrt {
 public:
     void operator() (const Sqrt& sqrt) {
+        CGAL_USE(sqrt);
         typedef typename Sqrt::argument_type Argument_type;
         typedef typename Sqrt::result_type   Result_type;
         CGAL_USE_TYPE(Argument_type);
@@ -918,18 +922,20 @@ void test_algebraic_structure(){
         w[0]= AS (10);
         w[1]= AS (-8);
         w[2]= AS (-2);
-        std::pair<int,int> equal_pair(0,0);
-        // functor
-        // find_only_equal_pair is not yet implemented
-//        equal_pair = find_only_equal_pair(v.begin(),v.end(),
+
+//      functor
+//      find_only_equal_pair is not yet implemented
+//      std::pair<int,int> equal_pair(0,0);
+//
+//      equal_pair = find_only_equal_pair(v.begin(),v.end(),
 //                                          w.begin(),w.end());
-//        assert(1 == equal_pair.first);
-//        assert(2 == equal_pair.second);
+//      assert(1 == equal_pair.first);
+//      assert(2 == equal_pair.second);
         //function
-//        equal_pair = NiX::find_only_equal_pair(v.begin(),v.end(),
+//      equal_pair = NiX::find_only_equal_pair(v.begin(),v.end(),
 //                                               w.begin(),w.end());
-//        assert(1 == equal_pair.first);
-//        assert(2 == equal_pair.second);
+//      assert(1 == equal_pair.first);
+//      assert(2 == equal_pair.second);
         
     } 
 }
@@ -951,5 +957,7 @@ void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {
 }
   
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TEST_ALGEBRAIC_STRUCTURE_H

@@ -31,8 +31,8 @@ namespace CGAL {
 template < typename FT_, typename Dim_, typename Derived_=Default>
 struct Cartesian_base_d : public CGAL_BASE
 {
-    CGAL_CONSTEXPR Cartesian_base_d(){}
-    CGAL_CONSTEXPR Cartesian_base_d(int d):CGAL_BASE(d){}
+    constexpr Cartesian_base_d(){}
+    constexpr Cartesian_base_d(int d):CGAL_BASE(d){}
 };
 #undef CGAL_BASE
 

@@ -107,7 +107,7 @@ public:
   typedef typename Dt::Triangulation_data_structure Tds;
 
   // The Exact Comparison Tag cannot be used in conjonction with periodic triangulations
-  // because the periodic triangulations' point() function return a temporary
+  // because the periodic triangulations' point() function returns a temporary
   // value while the lazy predicate evaluations that are used when the Exact tag
   // is set to true rely on a permanent and safe access to the points.
   CGAL_static_assertion(
@@ -979,8 +979,8 @@ public:
    template<class OutputIterator> 
    OutputIterator filtration(OutputIterator it)  const
    {
-      Dispatch_or_drop_output_iterator<cpp11::tuple<CGAL::Object>, cpp11::tuple<OutputIterator> > out(it);
-      return cpp11::template get<0>( filtration_with_alpha_values(out) );
+      Dispatch_or_drop_output_iterator<std::tuple<CGAL::Object>, std::tuple<OutputIterator> > out(it);
+      return std::template get<0>( filtration_with_alpha_values(out) );
    }
 
   private: 
@@ -1731,7 +1731,7 @@ Alpha_shape_3<Dt,EACT>::number_of_solid_components(const NT& alpha) const
   for( cell_it = finite_cells_begin(); cell_it != done; ++cell_it)
     {
       Cell_handle pCell = cell_it;
-      CGAL_triangulation_assertion(pCell != NULL);
+      CGAL_triangulation_assertion(pCell != nullptr);
       
       if (classify(pCell, alpha) == INTERIOR){
 	Data& data = marked_cell_set[pCell];
@@ -1763,7 +1763,7 @@ void Alpha_shape_3<Dt,EACT>::traverse(Cell_handle pCell,
     for (int i=0; i<=3; i++)
       {
 	pNeighbor = pCell->neighbor(i);
-	CGAL_triangulation_assertion(pNeighbor != NULL);
+	CGAL_triangulation_assertion(pNeighbor != nullptr);
 	if (classify(pNeighbor, alpha) == INTERIOR){
 	  Data& data = marked_cell_set[pNeighbor];
 	  if(data == false){

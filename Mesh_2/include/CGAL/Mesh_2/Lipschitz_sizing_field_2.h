@@ -26,6 +26,7 @@
 
 #include <CGAL/license/Mesh_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <list>
 
@@ -208,7 +209,7 @@ protected:
 	Face_circulator c = fc;
 	std::list<Point> vv;
 			    
-	if (fc != NULL)
+	if (fc != nullptr)
 	  {
 	    do
 	      {
@@ -291,5 +292,7 @@ protected:
 };
 
 }//namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_LIPSCHITZ_SIZING_FIELD_2_H

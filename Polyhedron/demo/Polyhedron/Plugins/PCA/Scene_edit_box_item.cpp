@@ -1,13 +1,22 @@
 #include "Scene_edit_box_item.h"
 #include <QApplication>
 #include <CGAL/Three/Viewer_interface.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Three/Edge_container.h>
+#include <CGAL/Three/Three.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/constraint.h>
 #include <QMouseEvent>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLShaderProgram>
 #include <QCursor>
 
 using namespace CGAL::Three;
+typedef Viewer_interface Vi;
+typedef Triangle_container Tc;
+typedef Edge_container Ec;
+typedef Scene_edit_box_item_priv Priv;
+
 struct Scene_edit_box_item::vertex{
   int id;
   double *x;
@@ -43,32 +52,23 @@ struct Scene_edit_box_item::face{
 
 struct Scene_edit_box_item_priv{
   typedef CGAL::Simple_cartesian<double>  Kernel;
-  enum VAOs{
-    Edges = 0,
-    Spheres,
-    Faces,
-    S_Edges,
-    S_Spheres,
+  enum Face_containers{
+    Faces = 0,
     S_Faces,
-    P_Edges,
+    Spheres,
+    S_Spheres,
     P_Spheres,
     P_Faces,
-    NumberOfVaos
+    Nbf
   };
-  enum VBOs{
-    VertexEdges = 0,
-    ColorsEdges,
-    VertexSpheres,
-    NormalSpheres,
-    CenterSpheres,
-    ColorsSpheres,
-    VertexFaces,
-    NormalFaces,
-    ColorsFaces,
-    S_Vertex,
-    S_Normal,
-    NumberOfVbos
+  
+  enum Line_containers{
+    Edges = 0,
+    S_Edges,
+    P_Edges,
+    Nbe
   };
+
   enum HL_Primitive{
     VERTEX=0,
     EDGE,
@@ -78,7 +78,7 @@ struct Scene_edit_box_item_priv{
 
   Scene_edit_box_item_priv(const Scene_interface *scene_interface, Scene_edit_box_item* ebi)
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     ready_to_hl = true;
     scene = scene_interface;
     item = ebi;
@@ -87,16 +87,16 @@ struct Scene_edit_box_item_priv{
     double x=(bb.xmin()+bb.xmax())/2;
     double y=(bb.ymin()+bb.ymax())/2;
     double z=(bb.zmin()+bb.zmax())/2;
-    center_ = qglviewer::Vec(x,y,z);
-    relative_center_ = qglviewer::Vec(0,0,0);
+    center_ = CGAL::qglviewer::Vec(x,y,z);
+    relative_center_ = CGAL::qglviewer::Vec(0,0,0);
     remodel_frame = new Scene_item::ManipulatedFrame();
     remodel_frame->setTranslationSensitivity(1.0);
     frame = new Scene_item::ManipulatedFrame();
     frame->setPosition(center_+offset);
     frame->setSpinningSensitivity(100.0); //forbid spinning
-    constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::AXIS);
-    constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
-    constraint.setRotationConstraintDirection(qglviewer::Vec(.0,.0,.1));
+    constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
+    constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
+    constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(.0,.0,.1));
     frame->setConstraint(&constraint);
     //create the sphere model
     pool[0] = bb.xmin(); pool[3] = bb.xmax();
@@ -199,77 +199,6 @@ struct Scene_edit_box_item_priv{
     for(int i=0; i<8; ++i)
       for(int j=0; j<3; ++j)
         last_pool[i][j] = vertices[i][j];
-
-    pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_spheres.v");
-    pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.f");
-    pick_sphere_program.bindAttributeLocation("colors", 1);
-    pick_sphere_program.link();
-
-
-    //Vertex source code
-    const char vertex_source[] =
-    {
-      "#version 120 \n                         "
-      "attribute highp vec4 vertex;            "
-      "attribute highp vec3 normals;           "
-      "attribute highp vec4 colors;            "
-      "uniform highp mat4 mvp_matrix;          "
-      "uniform highp mat4 mv_matrix;           "
-      "varying highp vec4 fP;                  "
-      "varying highp vec3 fN;                  "
-      "varying highp vec4 color;               "
-      "void main(void)                         "
-      "{                                       "
-      "   color = colors;                       "
-      "   fP = mv_matrix * vertex;             "
-      "   fN = mat3(mv_matrix)* normals;       "
-      "   gl_Position = mvp_matrix * vertex;   "
-      "}\n                                     "
-      "\n                                      "
-    };
-
-    //Fragment source code
-    const char fragment_source[] =
-    {
-      "#version 120 \n"
-      "varying highp vec4 color;"
-      "varying highp vec4 fP; "
-      "varying highp vec3 fN; "
-      "uniform highp vec4 light_pos;  "
-      "uniform highp vec4 light_diff; "
-      "uniform highp vec4 light_spec; "
-      "uniform highp vec4 light_amb;  "
-      "uniform highp float spec_power ; "
-      "uniform int is_two_side; "
-      "uniform bool is_selected;"
-      "void main(void) {"
-      "highp vec3 L = light_pos.xyz - fP.xyz;"
-      "highp vec3 V = -fP.xyz;"
-      "highp vec3 N;"
-      "if(fN == highp vec3(0.0,0.0,0.0)) "
-      "N = highp vec3(0.0,0.0,0.0);"
-      "else "
-      "N = normalize(fN);"
-      "L = normalize(L);"
-      "V = normalize(V);"
-      "highp vec3 R = reflect(-L, N);"
-      "vec4 diffuse;"
-      "if(is_two_side == 1) "
-      "diffuse = abs(dot(N,L)) * light_diff * color;"
-      "else "
-      "diffuse = max(dot(N,L), 0.0) * light_diff * color;"
-      "highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec;"
-      "vec4 ret_color = vec4((color*light_amb).xyz + diffuse.xyz + specular.xyz,1);"
-      "if(is_selected) "
-      "gl_FragColor = vec4(ret_color.r+70.0/255.0, ret_color.g+70.0/255.0, ret_color.b+70.0/255.0, color.a);"
-      "else "
-      "gl_FragColor = vec4(ret_color.rgb, color.a); }\n"
-      "\n"
-    };
-    transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source);
-    transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_source);
-    transparent_face_program.bindAttributeLocation("colors", 1);
-    transparent_face_program.link();
     reset_selection();
     last_picked_id = -1;
     last_picked_type = -1;
@@ -298,15 +227,13 @@ struct Scene_edit_box_item_priv{
   bool ready_to_hl;
 
 
-  qglviewer::ManipulatedFrame* frame;
-  qglviewer::ManipulatedFrame* remodel_frame;
-  qglviewer::Vec rf_last_pos;
-  qglviewer::LocalConstraint constraint;
-  qglviewer::Vec center_;
-  qglviewer::Vec relative_center_;
+  CGAL::qglviewer::ManipulatedFrame* frame;
+  CGAL::qglviewer::ManipulatedFrame* remodel_frame;
+  CGAL::qglviewer::Vec rf_last_pos;
+  CGAL::qglviewer::LocalConstraint constraint;
+  CGAL::qglviewer::Vec center_;
+  CGAL::qglviewer::Vec relative_center_;
 
-  mutable QOpenGLShaderProgram pick_sphere_program;
-  mutable QOpenGLShaderProgram transparent_face_program;
   mutable Scene_edit_box_item::vertex vertices[8];
   mutable Scene_edit_box_item::edge edges[12];
   mutable Scene_edit_box_item::face faces[6];
@@ -316,7 +243,6 @@ struct Scene_edit_box_item_priv{
   bool selection_on;
   void picking(int& type, int& id, Viewer_interface *viewer);
 
-  mutable QOpenGLShaderProgram* program;
   void initializeBuffers(Viewer_interface *viewer)const;
 
   void computeElements() const;
@@ -340,14 +266,34 @@ Scene_edit_box_item::Scene_edit_box_item()
   d = NULL;
 }
 Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
-  :  Scene_item(Scene_edit_box_item_priv::NumberOfVbos,Scene_edit_box_item_priv::NumberOfVaos)
-
 {
   d = new Scene_edit_box_item_priv(scene_interface, this);
 
   are_buffers_filled = false;
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-  viewer->setMouseTracking(true);
+  
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    v->setMouseTracking(true);
+  }
+  connect(Three::mainWindow(), SIGNAL(newViewerCreated(QObject*)),
+          this, SLOT(connectNewViewer(QObject*)));
+  
+  setTriangleContainer(Priv::P_Faces  , new Tc(Vi::PROGRAM_NO_SELECTION, false));
+  setTriangleContainer(Priv::Faces , new Tc(Vi::PROGRAM_WITH_LIGHT, false));
+  setTriangleContainer(Priv::S_Faces , new Tc(Vi::PROGRAM_WITH_LIGHT, false));
+  setTriangleContainer(Priv::Spheres  , new Tc(Vi::PROGRAM_SPHERES, false));
+  setTriangleContainer(Priv::S_Spheres, new Tc(Vi::PROGRAM_SPHERES, false));
+  setTriangleContainer(Priv::P_Spheres, new Tc(Vi::PROGRAM_DARK_SPHERES, false));
+  
+  
+  for(int i=Priv::Nbe-1; i>=0; --i)
+  {
+    setEdgeContainer(i, 
+                     new Ec(Three::mainViewer()->isOpenGL_4_3()
+                            ? Vi::PROGRAM_SOLID_WIREFRAME
+                            : Vi::PROGRAM_NO_SELECTION,
+                            false));
+  }
 }
 QString Scene_edit_box_item::toolTip() const {
 
@@ -356,47 +302,42 @@ QString Scene_edit_box_item::toolTip() const {
 
 void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4 f_matrix ) const
 {
-  vaos[Scene_edit_box_item_priv::Spheres]->bind();
   GLdouble d_mat[16];
-  QMatrix4x4 mvp_mat;
-  viewer->camera()->getModelViewProjectionMatrix(d_mat);
-  for (int i=0; i<16; ++i)
-    mvp_mat.data()[i] = GLfloat(d_mat[i]);
-  mvp_mat = mvp_mat*f_matrix;
   QMatrix4x4 mv_mat;
   viewer->camera()->getModelViewMatrix(d_mat);
   for (int i=0; i<16; ++i)
     mv_mat.data()[i] = GLfloat(d_mat[i]);
   mv_mat = mv_mat*f_matrix;
-  QVector4D light_pos(0.0f,0.0f,1.0f, 1.0f );
-  light_pos = light_pos*f_matrix;
   double radius =std::sqrt(
       (point(6,0) - point(0,0)) * (point(6,0) - point(0,0)) +
       (point(6,1) - point(0,1)) * (point(6,1) - point(0,1)) +
       (point(6,2) - point(0,2)) * (point(6,2) - point(0,2))) *0.02 ;
 
-  attribBuffers(viewer, PROGRAM_SPHERES);
-  d->program = getShaderProgram(PROGRAM_SPHERES, viewer);
-  d->program->bind();
-  d->program->setUniformValue("mvp_matrix", mvp_mat);
-  d->program->setUniformValue("mv_matrix", mv_mat);
-  d->program->setUniformValue("light_pos", light_pos);
-  d->program->setUniformValue("is_clipbox_on", false);
-  d->program->setAttributeValue("radius",radius);
-  d->program->setAttributeValue("colors", QColor(Qt::red));
-  viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                static_cast<GLsizei>(d->vertex_spheres.size()/3),
-                                static_cast<GLsizei>(8));
-  d->program->release();
-  vaos[Scene_edit_box_item_priv::Spheres]->release();
+  Tc* tc = getTriangleContainer(Priv::Spheres);
+  tc->setFrameMatrix(f_matrix);
+  tc->setMvMatrix(mv_mat);
+  tc->setClipping(false);
+  tc->getVao(viewer)->bind();
+  tc->getVao(viewer)->program->setAttributeValue("radius",radius);
+  tc->getVao(viewer)->release();
+  tc->setColor(QColor(Qt::red));
+  tc->draw(viewer, true);
 }
 
 void Scene_edit_box_item::draw(Viewer_interface *viewer) const
 {
-  if (!are_buffers_filled)
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
   {
-    d->computeElements();
-    d->initializeBuffers(viewer);
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
+  {
+    computeElements();
+    initializeBuffers(viewer);
   }
   QMatrix4x4 f_matrix;
   for (int i=0; i<16; ++i){
@@ -404,41 +345,51 @@ void Scene_edit_box_item::draw(Viewer_interface *viewer) const
   }
 
   drawSpheres(viewer, f_matrix);
+  
 }
 
 void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
 {
-  if(!are_buffers_filled)
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
   {
-    d->computeElements();
-    d->initializeBuffers(viewer);
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
+  {
+    computeElements();
+    initializeBuffers(viewer);
   }
   QMatrix4x4 f_matrix;
   for (int i=0; i<16; ++i){
     f_matrix.data()[i] = (float)d->frame->matrix()[i];
   }
-  vaos[Scene_edit_box_item_priv::Edges]->bind();
-  viewer->glLineWidth(6.0f);
-  d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-  attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-  d->program->bind();
-  d->program->setUniformValue("f_matrix", f_matrix);
-  d->program->setUniformValue("is_clipbox_on", false);
-  d->program->setAttributeValue("colors", QColor(Qt::black));
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->vertex_edges.size()/3));
-  viewer->glLineWidth(1.0f);
-  vaos[Scene_edit_box_item_priv::Edges]->release();
-  d->program->release();
+  Ec* ec = getEdgeContainer(Priv::Edges);
+  if(viewer->isOpenGL_4_3())
+  {
+    QVector2D vp(viewer->width(), viewer->height());
+    ec->setViewport(vp);
+    ec->setWidth(6.0f);
+  }
+  ec->setClipping(false);
+  ec->setFrameMatrix(f_matrix);
+  ec->setColor(QColor(Qt::black));
+  ec->draw(viewer, true);
+  
   if(renderingMode() == Wireframe)
   {
     drawSpheres(viewer, f_matrix);
   }
   drawHl(viewer);
+  drawTransparent(viewer);
 }
 
 void Scene_edit_box_item::compute_bbox() const
 {
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
 
   QVector3D min(d->pool[0], d->pool[1], d->pool[2]);
@@ -450,162 +401,15 @@ void Scene_edit_box_item::compute_bbox() const
     max[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
   }
 
-  _bbox = Scene_item::Bbox(min.x(),min.y(),min.z(),max.x(),max.y(),max.z());
+  setBbox(Scene_item::Bbox(min.x(),min.y(),min.z(),max.x(),max.y(),max.z()));
 }
 
 
-void
-Scene_edit_box_item_priv::initializeBuffers(Viewer_interface *viewer)const
-{
 
-  //vao containing the data for the lines
-  {
-    program = item->getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
-    program->bind();
-
-    item->vaos[Edges]->bind();
-    item->buffers[VertexEdges].bind();
-    item->buffers[VertexEdges].allocate(vertex_edges.data(),
-                                        static_cast<GLsizei>(vertex_edges.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    item->buffers[VertexEdges].release();
-    item->vaos[Edges]->release();
-
-    item->vaos[P_Edges]->bind();
-    item->buffers[VertexEdges].bind();
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    item->buffers[VertexEdges].release();
-    item->buffers[ColorsEdges].bind();
-    item->buffers[ColorsEdges].allocate(color_edges.data(),
-                                        static_cast<GLsizei>(color_edges.size()*sizeof(float)));
-    program->enableAttributeArray("colors");
-    program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-    item->buffers[ColorsEdges].release();
-    item->vaos[P_Edges]->release();
-    program->release();
-
-  }
-
-  //vao containing the data for the spheres
-  {
-    program = item->getShaderProgram(Scene_edit_box_item::PROGRAM_SPHERES, viewer);
-    item->attribBuffers(viewer, Scene_edit_box_item::PROGRAM_SPHERES);
-
-    program->bind();
-    item->vaos[Spheres]->bind();
-    item->buffers[VertexSpheres].bind();
-    item->buffers[VertexSpheres].allocate(vertex_spheres.data(),
-                                          static_cast<int>(vertex_spheres.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-    item->buffers[VertexSpheres].release();
-
-    item->buffers[NormalSpheres].bind();
-    item->buffers[NormalSpheres].allocate(normal_spheres.data(),
-                                          static_cast<int>(normal_spheres.size()*sizeof(float)));
-    program->enableAttributeArray("normals");
-    program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-    item->buffers[NormalSpheres].release();
-
-    item->buffers[CenterSpheres].bind();
-    item->buffers[CenterSpheres].allocate(center_spheres.data(),
-                                          static_cast<int>(center_spheres.size()*sizeof(float)));
-    program->enableAttributeArray("center");
-    program->setAttributeBuffer("center", GL_FLOAT, 0, 3);
-    item->buffers[CenterSpheres].release();
-    program->disableAttributeArray("radius");
-    program->disableAttributeArray("colors");
-
-    viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-    viewer->glVertexAttribDivisor(program->attributeLocation("radius"), 1);
-    item->vaos[Spheres]->release();
-    program->release();
-
-    pick_sphere_program.bind();
-    pick_sphere_program.bind();
-    item->vaos[P_Spheres]->bind();
-    item->buffers[VertexSpheres].bind();
-    pick_sphere_program.enableAttributeArray("vertex");
-    pick_sphere_program.setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-    item->buffers[VertexSpheres].release();
-
-    item->buffers[NormalSpheres].bind();
-    pick_sphere_program.disableAttributeArray("normals");
-    pick_sphere_program.setAttributeValue("normals",QVector3D(0,0,0));
-    item->buffers[NormalSpheres].release();
-
-    item->buffers[CenterSpheres].bind();
-    pick_sphere_program.enableAttributeArray("center");
-    pick_sphere_program.setAttributeBuffer("center", GL_FLOAT, 0, 3);
-    item->buffers[CenterSpheres].release();
-
-    pick_sphere_program.disableAttributeArray("radius");
-    viewer->glVertexAttribDivisor(program->attributeLocation("radius"), 1);
-
-    item->buffers[ColorsSpheres].bind();
-    item->buffers[ColorsSpheres].allocate(color_spheres.data(),
-                                          static_cast<int>(color_spheres.size()*sizeof(float)));
-    pick_sphere_program.enableAttributeArray("colors");
-    pick_sphere_program.setAttributeBuffer("colors", GL_FLOAT, 0, 3);
-    item->buffers[ColorsSpheres].release();
-
-    viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-    viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
-    item->vaos[P_Spheres]->release();
-    pick_sphere_program.release();
-  }
-
-  //vao containing the data for the faces
-  {
-    program = item->getShaderProgram(Scene_edit_box_item::PROGRAM_WITH_LIGHT, viewer);
-    item->attribBuffers(viewer, Scene_edit_box_item::PROGRAM_WITH_LIGHT);
-
-    program->bind();
-    item->vaos[Faces]->bind();
-    item->buffers[VertexFaces].bind();
-    item->buffers[VertexFaces].allocate(vertex_faces.data(),
-                                        static_cast<int>(vertex_faces.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-    item->buffers[VertexFaces].release();
-
-    item->buffers[NormalFaces].bind();
-    item->buffers[NormalFaces].allocate(normal_faces.data(),
-                                        static_cast<int>(normal_faces.size()*sizeof(float)));
-    program->enableAttributeArray("normals");
-    program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-    item->buffers[NormalFaces].release();
-    item->vaos[Faces]->release();
-    program->release();
-
-
-    program = item->getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
-    item->attribBuffers(viewer, Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT);
-    program->bind();
-    item->vaos[P_Faces]->bind();
-    item->buffers[VertexFaces].bind();
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-    item->buffers[VertexFaces].release();
-
-    item->buffers[ColorsFaces].bind();
-    item->buffers[ColorsFaces].allocate(color_faces.data(),
-                                        static_cast<int>(color_faces.size()*sizeof(float)));
-    program->enableAttributeArray("colors");
-    program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
-    item->buffers[ColorsFaces].release();
-
-    item->vaos[P_Faces]->release();
-    program->release();
-  }
-  item->are_buffers_filled = true;
-}
 
 void push_xyz(std::vector<float> &v,
               const Scene_edit_box_item::Kernel::Point_3& p,
-              qglviewer::Vec center_ = qglviewer::Vec(0,0,0))
+              CGAL::qglviewer::Vec center_ = CGAL::qglviewer::Vec(0,0,0))
 {
   v.push_back(p.x()-center_.x);
   v.push_back(p.y()-center_.y);
@@ -744,7 +548,7 @@ void Scene_edit_box_item_priv::computeElements() const
 
 Scene_edit_box_item::~Scene_edit_box_item()
 {
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   viewer->setMouseTracking(false);
 
   delete d;
@@ -763,16 +567,16 @@ Scene_edit_box_item::manipulatedFrame()
 
 double Scene_edit_box_item::point(short i, short j) const
 {
-  qglviewer::Vec pos(d->vertices[i].position().x()-d->center_.x,
+  CGAL::qglviewer::Vec pos(d->vertices[i].position().x()-d->center_.x,
                      d->vertices[i].position().y()-d->center_.y,
                      d->vertices[i].position().z()-d->center_.z);
   return (d->frame->inverseCoordinatesOf(pos))[j];
 }
 
-void Scene_edit_box_item::highlight()
+void Scene_edit_box_item::highlight(Viewer_interface *viewer)
 {
   d->ready_to_hl = true;
-  Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+  viewer->makeCurrent();
   int type = -1, id = -1;
   //pick
   if(!d->selection_on)
@@ -795,37 +599,33 @@ void Scene_edit_box_item::highlight()
       d->hl_vertex.push_back(d->vertices[d->last_picked_id].position().y()-d->center_.y);
       d->hl_vertex.push_back(d->vertices[d->last_picked_id].position().z()-d->center_.z);
       //fill buffers
-      d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_SPHERES, viewer);
-      d->program->bind();
-
-      vaos[Scene_edit_box_item_priv::S_Spheres]->bind();
-      buffers[Scene_edit_box_item_priv::VertexSpheres].bind();
-      buffers[Scene_edit_box_item_priv::VertexSpheres].allocate(d->vertex_spheres.data(),
-                                      static_cast<int>(d->vertex_spheres.size()*sizeof(float)));
-      d->program->enableAttributeArray("vertex");
-      d->program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-      buffers[Scene_edit_box_item_priv::VertexSpheres].release();
-
-      buffers[Scene_edit_box_item_priv::NormalSpheres].bind();
-      buffers[Scene_edit_box_item_priv::NormalSpheres].allocate(d->normal_spheres.data(),
-                                      static_cast<int>(d->normal_spheres.size()*sizeof(float)));
-      d->program->enableAttributeArray("normals");
-      d->program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-      buffers[Scene_edit_box_item_priv::NormalSpheres].release();
-
-      buffers[Scene_edit_box_item_priv::S_Vertex].bind();
-      buffers[Scene_edit_box_item_priv::S_Vertex].allocate(d->hl_vertex.data(),
-                                 static_cast<int>(d->hl_vertex.size()*sizeof(float)));
-      d->program->enableAttributeArray("center");
-      d->program->setAttributeBuffer("center", GL_FLOAT, 0, 3);
-      buffers[Scene_edit_box_item_priv::S_Vertex].release();
-      d->program->disableAttributeArray("colors");
-
-      viewer->glVertexAttribDivisor(d->program->attributeLocation("center"), 1);
-      d->program->release();
-      vaos[Scene_edit_box_item_priv::S_Spheres]->release();
+      Tc* tc = getTriangleContainer(Priv::S_Spheres);
+      tc->reset_vbos(ALL);
+      tc->allocate(
+            Tc::Flat_vertices,
+            d->vertex_spheres.data(),
+            static_cast<int>(d->vertex_spheres.size()*sizeof(float)));
+      
+      tc->allocate(
+            Tc::Flat_normals,
+            d->normal_spheres.data(),
+            static_cast<int>(d->normal_spheres.size()*sizeof(float)));
+      
+      tc->allocate(
+            Tc::Facet_centers,
+            d->hl_vertex.data(),
+            static_cast<int>(d->hl_vertex.size()*sizeof(float)));
+      
+      tc->setFlatDataSize(d->vertex_spheres.size());
+      tc->setCenterSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::VERTEX;
+      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      {
+        CGAL::Three::Viewer_interface* viewer = 
+            static_cast<CGAL::Three::Viewer_interface*>(v);
+        tc->initializeBuffers(viewer);
+      }
       break;
     }
     case 1:
@@ -840,20 +640,21 @@ void Scene_edit_box_item::highlight()
       d->hl_vertex.push_back(d->edges[d->last_picked_id].target->position().z()-d->center_.z);
 
       //fill buffers
-      d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
-      d->program->bind();
-
-      vaos[Scene_edit_box_item_priv::S_Edges]->bind();
-      buffers[Scene_edit_box_item_priv::S_Vertex].bind();
-      buffers[Scene_edit_box_item_priv::S_Vertex].allocate(d->hl_vertex.data(),
-                                 static_cast<GLsizei>(d->hl_vertex.size()*sizeof(float)));
-      d->program->enableAttributeArray("vertex");
-      d->program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-      buffers[Scene_edit_box_item_priv::S_Vertex].release();
-      vaos[Scene_edit_box_item_priv::S_Edges]->release();
-      d->program->release();
+      Ec* ec = getEdgeContainer(Priv::S_Edges);
+      ec->reset_vbos(ALL);
+      ec->allocate(
+            Ec::Vertices,
+            d->hl_vertex.data(),
+            static_cast<GLsizei>(d->hl_vertex.size()*sizeof(float)));
+      ec->setFlatDataSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::EDGE;
+      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      {
+        CGAL::Three::Viewer_interface* viewer = 
+            static_cast<CGAL::Three::Viewer_interface*>(v);
+        ec->initializeBuffers(viewer);
+      }
       break;
     }
     case 2:
@@ -872,29 +673,26 @@ void Scene_edit_box_item::highlight()
         push_normal(d->hl_normal, d->last_picked_id);
       }
       //fill buffers
-      d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_WITH_LIGHT, viewer);
-      attribBuffers(viewer, Scene_edit_box_item::PROGRAM_WITH_LIGHT);
-
-      d->program->bind();
-      vaos[Scene_edit_box_item_priv::S_Faces]->bind();
-      buffers[Scene_edit_box_item_priv::S_Vertex].bind();
-      buffers[Scene_edit_box_item_priv::S_Vertex].allocate(d->hl_vertex.data(),
-                                 static_cast<int>(d->hl_vertex.size()*sizeof(float)));
-      d->program->enableAttributeArray("vertex");
-      d->program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-      buffers[Scene_edit_box_item_priv::S_Normal].release();
-
-      buffers[Scene_edit_box_item_priv::S_Normal].bind();
-      buffers[Scene_edit_box_item_priv::S_Normal].allocate(d->hl_normal.data(),
-                                 static_cast<int>(d->hl_normal.size()*sizeof(float)));
-      d->program->enableAttributeArray("normals");
-      d->program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-      buffers[Scene_edit_box_item_priv::S_Normal].release();
-      vaos[Scene_edit_box_item_priv::S_Faces]->release();
-      d->program->release();
-
+      Tc* tc = getTriangleContainer(Priv::S_Faces);
+      tc->reset_vbos(ALL);
+      tc->allocate(
+            Tc::Flat_vertices,
+            d->hl_vertex.data(),
+            static_cast<int>(d->hl_vertex.size()*sizeof(float)));
+      
+      tc->allocate(
+            Tc::Flat_normals,
+            d->hl_normal.data(),
+            static_cast<int>(d->hl_normal.size()*sizeof(float)));
+      tc->setFlatDataSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::FACE;
+      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      {
+        CGAL::Three::Viewer_interface* viewer = 
+            static_cast<CGAL::Three::Viewer_interface*>(v);
+        tc->initializeBuffers(viewer);
+      }
       break;
     }
     default:
@@ -902,81 +700,46 @@ void Scene_edit_box_item::highlight()
       break;
     }
   }
-  itemChanged();
+  else
+    clearHL();
+  redraw();
 
   d->ready_to_hl = false;
 }
 
 void Scene_edit_box_item::clearHL()
 {
-  Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+  Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
+  viewer->makeCurrent();
   d->hl_normal.clear();
   d->hl_vertex.clear();
 
-  d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_SPHERES, viewer);
-  d->program->bind();
-
-  vaos[Scene_edit_box_item_priv::S_Spheres]->bind();
-  buffers[Scene_edit_box_item_priv::VertexSpheres].bind();
-  buffers[Scene_edit_box_item_priv::VertexSpheres].allocate(d->vertex_spheres.data(),
-                                                            static_cast<int>(d->vertex_spheres.size()*sizeof(float)));
-  d->program->enableAttributeArray("vertex");
-  d->program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-  buffers[Scene_edit_box_item_priv::VertexSpheres].release();
-
-  buffers[Scene_edit_box_item_priv::NormalSpheres].bind();
-  buffers[Scene_edit_box_item_priv::NormalSpheres].allocate(d->normal_spheres.data(),
-                                                            static_cast<int>(d->normal_spheres.size()*sizeof(float)));
-  d->program->enableAttributeArray("normals");
-  d->program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-  buffers[Scene_edit_box_item_priv::NormalSpheres].release();
-
-  buffers[Scene_edit_box_item_priv::S_Vertex].bind();
-  buffers[Scene_edit_box_item_priv::S_Vertex].allocate(d->hl_vertex.data(),
-                                                       static_cast<int>(d->hl_vertex.size()*sizeof(float)));
-  d->program->enableAttributeArray("center");
-  d->program->setAttributeBuffer("center", GL_FLOAT, 0, 3);
-  buffers[Scene_edit_box_item_priv::S_Vertex].release();
-  d->program->disableAttributeArray("colors");
-
-  viewer->glVertexAttribDivisor(d->program->attributeLocation("center"), 1);
-  d->program->release();
-  vaos[Scene_edit_box_item_priv::S_Spheres]->release();
+  Tc* tc = getTriangleContainer(Priv::S_Spheres);
+  tc->reset_vbos(ALL);
+  tc->allocate(Tc::Flat_vertices, d->vertex_spheres.data(), 
+               static_cast<int>(d->vertex_spheres.size()*sizeof(float)));
+  tc->allocate(Tc::Flat_normals, 
+               d->normal_spheres.data(),
+               static_cast<int>(d->normal_spheres.size()*sizeof(float)));
+  
+  tc->allocate(Tc::Facet_centers, nullptr, 0);
+  
+  tc->initializeBuffers(viewer);
+  tc->setFlatDataSize(0);
+  tc->setCenterSize(0);
   //draw
-  d->hl_type = Scene_edit_box_item_priv::VERTEX;
-  d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
-  d->program->bind();
-
-  vaos[Scene_edit_box_item_priv::S_Edges]->bind();
-  buffers[Scene_edit_box_item_priv::S_Vertex].bind();
-  buffers[Scene_edit_box_item_priv::S_Vertex].allocate(d->hl_vertex.data(),
-                                                       static_cast<GLsizei>(d->hl_vertex.size()*sizeof(float)));
-  d->program->enableAttributeArray("vertex");
-  d->program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  buffers[Scene_edit_box_item_priv::S_Vertex].release();
-  vaos[Scene_edit_box_item_priv::S_Edges]->release();
-  d->program->release();
-
-  d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_WITH_LIGHT, viewer);
-  attribBuffers(viewer, Scene_edit_box_item::PROGRAM_WITH_LIGHT);
-
-  d->program->bind();
-  vaos[Scene_edit_box_item_priv::S_Faces]->bind();
-  buffers[Scene_edit_box_item_priv::S_Vertex].bind();
-  buffers[Scene_edit_box_item_priv::S_Vertex].allocate(d->hl_vertex.data(),
-                                                       static_cast<int>(d->hl_vertex.size()*sizeof(float)));
-  d->program->enableAttributeArray("vertex");
-  d->program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-  buffers[Scene_edit_box_item_priv::S_Normal].release();
-
-  buffers[Scene_edit_box_item_priv::S_Normal].bind();
-  buffers[Scene_edit_box_item_priv::S_Normal].allocate(d->hl_normal.data(),
-                                                       static_cast<int>(d->hl_normal.size()*sizeof(float)));
-  d->program->enableAttributeArray("normals");
-  d->program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-  buffers[Scene_edit_box_item_priv::S_Normal].release();
-  vaos[Scene_edit_box_item_priv::S_Faces]->release();
-  d->program->release();
+  Ec* ec = getEdgeContainer(Priv::S_Edges);
+  ec->reset_vbos(ALL);
+  ec->allocate(Ec::Vertices, nullptr, 0);
+  ec->initializeBuffers(viewer);
+  ec->setFlatDataSize(0);
+  
+  tc = getTriangleContainer(Priv::S_Faces);
+  tc->reset_vbos(ALL);
+  tc->allocate(Tc::Flat_vertices, nullptr, 0);
+  tc->allocate(Tc::Flat_normals, nullptr, 0);
+  tc->initializeBuffers(viewer);
+  tc->setFlatDataSize(0);
   d->hl_type = Scene_edit_box_item_priv::NO_TYPE;
 
   itemChanged();
@@ -985,17 +748,19 @@ void Scene_edit_box_item::clearHL()
 void Scene_edit_box_item_priv::reset_selection()
 {
   selection_on = false;
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   viewer->setManipulatedFrame(frame);
-  viewer->setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, QGLViewer::SELECT);
-  constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+  viewer->setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, CGAL::qglviewer::SELECT);
+  constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
   selected_vertices.clear();
 }
 
 //intercept events for picking
 bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
 {
-  QGLViewer* viewer = qobject_cast<QGLViewer*>(obj);
+  if(!visible())
+    return false;
+  Viewer_interface* viewer = qobject_cast<Vi*>(obj);
   if(!viewer)
     return false;
   if(event->type() == QEvent::MouseButtonPress)
@@ -1003,16 +768,15 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
     QMouseEvent* e = static_cast<QMouseEvent*>(event);
     if(e->modifiers() == Qt::NoModifier)
     {
-      Viewer_interface* v_i = dynamic_cast<Viewer_interface*>(viewer);
       //pick
       int type, picked;
       d->picked_pixel = e->pos();
-      d->picking(type, picked, v_i);
+      d->picking(type, picked, viewer);
       if(type !=-1)
       {
         bool found = false;
         QApplication::setOverrideCursor(Qt::DragMoveCursor);
-        qglviewer::Vec pos = viewer->camera()->pointUnderPixel(d->picked_pixel, found);
+        CGAL::qglviewer::Vec pos = viewer->camera()->pointUnderPixel(d->picked_pixel, found);
         if(found)
         {
           d->rf_last_pos = pos;
@@ -1025,7 +789,7 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
         if(type == 0)
         {
           d->selected_vertices.push_back(&d->vertices[picked]);
-          d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+          d->constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
           d->remodel_frame->setConstraint(&d->constraint);
         }
         else if(type == 1)
@@ -1034,8 +798,8 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
           d->selected_vertices.push_back(d->edges[picked].target);
           Kernel::Point_3 s(d->edges[picked].source->position()), t(d->edges[picked].target->position());
 
-          qglviewer::Vec normal(t.x()-s.x(), t.y()-s.y(), t.z()-s.z());
-          d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::PLANE);
+          CGAL::qglviewer::Vec normal(t.x()-s.x(), t.y()-s.y(), t.z()-s.z());
+          d->constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::PLANE);
           d->constraint.setTranslationConstraintDirection(normal);
           d->remodel_frame->setConstraint(&d->constraint);
         }
@@ -1049,16 +813,16 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
           QVector3D n = QVector3D::crossProduct(a,b);
 
           d->remodel_frame->setConstraint(&d->constraint);
-          d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::AXIS);
-          d->constraint.setTranslationConstraintDirection(qglviewer::Vec(n.x(), n.y(), n.z()));
+          d->constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
+          d->constraint.setTranslationConstraintDirection(CGAL::qglviewer::Vec(n.x(), n.y(), n.z()));
         }
 
         viewer->setManipulatedFrame(d->remodel_frame);
         viewer->setMouseBinding(
                     Qt::NoModifier,
                     Qt::LeftButton,
-                    QGLViewer::FRAME,
-                    QGLViewer::TRANSLATE);
+                    CGAL::qglviewer::FRAME,
+                    CGAL::qglviewer::TRANSLATE);
       }
       else
       {
@@ -1075,13 +839,17 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
       if(d->selection_on)
       {
         d->remodel_frame->setOrientation(d->frame->orientation());
-        qglviewer::Vec td(d->remodel_frame->transformOf(d->remodel_frame->position() - d->rf_last_pos));
+        CGAL::qglviewer::Vec td(d->remodel_frame->transformOf(d->remodel_frame->position()
+                                                              - d->rf_last_pos));
         QVector3D dir(td.x, td.y, td.z);
         d->remodel_box(dir);
       }
       d->ready_to_hl= true;
       d->picked_pixel = e->pos();
-      QTimer::singleShot(0, this, SLOT(highlight()));
+      QTimer::singleShot(0, this,
+                         [this, viewer](){
+        highlight(viewer);
+      });
     }
     else if(e->modifiers() == Qt::ControlModifier &&
             e->buttons() == Qt::LeftButton)
@@ -1102,8 +870,8 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
     viewer->setMouseBinding(
                 Qt::NoModifier,
                 Qt::LeftButton,
-                QGLViewer::CAMERA,
-                QGLViewer::ROTATE);
+                CGAL::qglviewer::CAMERA,
+                CGAL::qglviewer::ROTATE);
   }
   else if(event->type() == QEvent::KeyRelease)
   {
@@ -1124,58 +892,49 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
     f_matrix.data()[i] = (float)frame->matrix()[i];
   }
   GLdouble d_mat[16];
-  QMatrix4x4 mvp_mat;
-  viewer->camera()->getModelViewProjectionMatrix(d_mat);
-  for (int i=0; i<16; ++i)
-    mvp_mat.data()[i] = GLfloat(d_mat[i]);
-  mvp_mat = mvp_mat*f_matrix;
   QMatrix4x4 mv_mat;
   viewer->camera()->getModelViewMatrix(d_mat);
   for (int i=0; i<16; ++i)
     mv_mat.data()[i] = GLfloat(d_mat[i]);
   mv_mat = mv_mat*f_matrix;
-  QVector4D light_pos(0.0f,0.0f,1.0f, 1.0f );
-  light_pos = light_pos*f_matrix;
+  
 
   if(item->renderingMode() == FlatPlusEdges)
   {
-    item->vaos[P_Faces]->bind();
-    program = item->getShaderProgram(Scene_item::PROGRAM_WITHOUT_LIGHT, viewer);
-    item->attribBuffers(viewer, Scene_item::PROGRAM_WITHOUT_LIGHT);
-    program->bind();
-    program->setUniformValue("mvp_matrix", mvp_mat);
-    program->setUniformValue("is_clipbox_on", false);
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertex_faces.size()/3));
-    item->vaos[P_Faces]->release();
-    program->release();
+    Tc* tc = item->getTriangleContainer(P_Faces);
+    tc->setFrameMatrix(f_matrix);
+    tc->setClipping(false);
+    tc->draw(viewer, false);
   }
-  item->vaos[P_Spheres]->bind();
-  pick_sphere_program.bind();
-  pick_sphere_program.setUniformValue("mvp_matrix", mvp_mat);
-  program->setUniformValue("is_clipbox_on", false);
-  viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                static_cast<GLsizei>(vertex_spheres.size()/3),
-                                static_cast<GLsizei>(8));
-  pick_sphere_program.release();
-  item->vaos[P_Spheres]->release();
+  double radius =std::sqrt(
+      (item->point(6,0) - item->point(0,0)) * (item->point(6,0) - item->point(0,0)) +
+      (item->point(6,1) - item->point(0,1)) * (item->point(6,1) - item->point(0,1)) +
+      (item->point(6,2) - item->point(0,2)) * (item->point(6,2) - item->point(0,2))) *0.02 ;
+  Tc* tc = item->getTriangleContainer(P_Spheres);
+  tc->setFrameMatrix(f_matrix);
+  tc->setClipping(false);
+  tc->getVao(viewer)->bind();
+  tc->getVao(viewer)->program->setAttributeValue("radius", (float)radius);
+  tc->getVao(viewer)->release();
+  tc->draw(viewer, false);
 
-  item->vaos[P_Edges]->bind();
-  viewer->glLineWidth(6.0f);
-  program = item->getShaderProgram(Scene_item::PROGRAM_WITHOUT_LIGHT);
-  item->attribBuffers(viewer, Scene_item::PROGRAM_WITHOUT_LIGHT);
-  program->bind();
-  program->setUniformValue("f_matrix", f_matrix);
-  program->setUniformValue("is_clipbox_on", false);
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertex_edges.size()/3));
-  viewer->glLineWidth(1.0f);
-  item->vaos[P_Edges]->release();
-  program->release();
+  Ec* ec = item->getEdgeContainer(P_Edges);
+  if(viewer->isOpenGL_4_3())
+  {
+   
+    QVector2D vp(viewer->width(), viewer->height());
+    ec->setViewport(vp);
+    ec->setWidth(6.0f);
+  }
+  ec->setFrameMatrix(f_matrix);
+  ec->setClipping(false);
+  ec->draw(viewer, false);
 }
 
 void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
 {
-  qglviewer::AxisPlaneConstraint::Type prev_cons = constraint.translationConstraintType();
-  constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+  CGAL::qglviewer::AxisPlaneConstraint::Type prev_cons = constraint.translationConstraintType();
+  constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
   Q_FOREACH(Scene_edit_box_item::vertex*  selected_vertex, selected_vertices )
   {
     int id = selected_vertex->id;
@@ -1273,6 +1032,7 @@ double Scene_edit_box_item_priv::applyZ(int id, double z, double dirz)
 //type : 0 = vertex, 1 = edge, 2 = face
 void Scene_edit_box_item_priv::picking(int& type, int& id, Viewer_interface *viewer)
 {
+  viewer->makeCurrent();
   type = -1;
   id = -1;
   int deviceWidth = viewer->camera()->screenWidth();
@@ -1332,61 +1092,44 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     f_matrix.data()[i] = (float)d->frame->matrix()[i];
   }
   GLdouble d_mat[16];
-  QMatrix4x4 mvp_mat;
-  viewer->camera()->getModelViewProjectionMatrix(d_mat);
-  for (int i=0; i<16; ++i)
-    mvp_mat.data()[i] = GLfloat(d_mat[i]);
-  mvp_mat = mvp_mat*f_matrix;
   QMatrix4x4 mv_mat;
   viewer->camera()->getModelViewMatrix(d_mat);
   for (int i=0; i<16; ++i)
     mv_mat.data()[i] = GLfloat(d_mat[i]);
   mv_mat = mv_mat*f_matrix;
-  QVector4D light_pos(0.0f,0.0f,1.0f, 1.0f );
-  light_pos = light_pos*f_matrix;
-  QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
-  // Diffuse
-  QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
-  // Specular
-  QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
 
   if(d->hl_type == Scene_edit_box_item_priv::VERTEX)
   {
-    vaos[Scene_edit_box_item_priv::S_Spheres]->bind();
-    attribBuffers(viewer, PROGRAM_SPHERES);
-    d->program = getShaderProgram(PROGRAM_SPHERES, viewer);
-    d->program->bind();
-    d->program->setUniformValue("mvp_matrix", mvp_mat);
-    d->program->setUniformValue("mv_matrix", mv_mat);
-    d->program->setUniformValue("light_pos", light_pos);
-    d->program->setAttributeValue("colors", QColor(Qt::yellow));
+    Tc* tc = getTriangleContainer(Priv::S_Spheres);
+    
+    tc->setFrameMatrix(f_matrix);
+    tc->setMvMatrix(mv_mat);
+    tc->setColor(QColor(Qt::yellow));
+    
     double radius =std::sqrt(
         (point(6,0) - point(0,0)) * (point(6,0) - point(0,0)) +
         (point(6,1) - point(0,1)) * (point(6,1) - point(0,1)) +
         (point(6,2) - point(0,2)) * (point(6,2) - point(0,2))) *0.02 ;
-    d->program->setAttributeValue("radius", radius);
-    d->program->setUniformValue("is_clipbox_on", false);
-    viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                  static_cast<GLsizei>(d->vertex_spheres.size()/3),
-                                  static_cast<GLsizei>(d->hl_vertex.size()/3));
-
-    d->program->release();
-    vaos[Scene_edit_box_item_priv::S_Spheres]->release();
+    tc->setClipping(false);
+    tc->getVao(viewer)->bind();
+    tc->getVao(viewer)->program->setUniformValue("radius", (float)radius);
+    tc->getVao(viewer)->release();
+    tc->draw(viewer, true);
   }
   else if(d->hl_type == Scene_edit_box_item_priv::EDGE)
   {
-    vaos[Scene_edit_box_item_priv::S_Edges]->bind();
-    viewer->glLineWidth(6.0f);
-    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    d->program->bind();
-    d->program->setUniformValue("f_matrix", f_matrix);
-    d->program->setAttributeValue("colors", QColor(Qt::yellow));
-    d->program->setUniformValue("is_clipbox_on", false);
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->hl_vertex.size()/3));
-    viewer->glLineWidth(1.0f);
-    vaos[Scene_edit_box_item_priv::S_Edges]->release();
-    d->program->release();
+    Ec* ec = getEdgeContainer(Priv::S_Edges);
+    if(viewer->isOpenGL_4_3())
+    {
+      QVector2D vp(viewer->width(), viewer->height());
+      ec->setViewport(vp);
+      ec->setWidth(6.0f);
+    }
+    ec->setClipping(false);
+    ec->setFrameMatrix(f_matrix);
+    ec->setColor(QColor(Qt::yellow));
+    ec->draw(viewer, true);
+    
   }
   else if(d->hl_type == Scene_edit_box_item_priv::FACE)
   {
@@ -1394,32 +1137,34 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
     viewer->glEnable(GL_BLEND);
     viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    vaos[Scene_edit_box_item_priv::S_Faces]->bind();
-    d->program = &d->transparent_face_program;
-    d->program->bind();
-    d->program->setUniformValue("mvp_matrix", mvp_mat);
-    d->program->setUniformValue("mv_matrix", mv_mat);
-    d->program->setUniformValue("light_pos", light_pos);
-    d->program->setUniformValue("light_diff",diffuse);
-    d->program->setUniformValue("light_spec", specular);
-    d->program->setUniformValue("light_amb", ambient);
-    d->program->setUniformValue("spec_power", 51.8f);
-    d->program->setUniformValue("is_clipbox_on", false);
-    d->program->setAttributeValue("colors", QColor(128,128,0,128));
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->hl_vertex.size()/3));
-    vaos[Scene_edit_box_item_priv::S_Faces]->release();
-    d->program->release();
+    Tc* tc = getTriangleContainer(Priv::S_Faces);
+    tc->setMvMatrix(mv_mat);
+    tc->setFrameMatrix(f_matrix);
+    tc->setClipping(false);
+    
+    tc->setColor(QColor(Qt::yellow));
+    tc->setAlpha(0.5);
+    tc->draw(viewer, true);
     viewer->glPolygonOffset(offset_factor, offset_units);
     viewer->glDisable(GL_BLEND);
-
   }
 }
 void Scene_edit_box_item::drawTransparent(CGAL::Three::Viewer_interface*viewer)const
 {
-  if (!are_buffers_filled)
+  if(renderingMode() != FlatPlusEdges)
+    return;
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
   {
-    d->computeElements();
-    d->initializeBuffers(viewer);
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
+  {
+    computeElements();
+    initializeBuffers(viewer);
   }
   QMatrix4x4 f_matrix;
   for (int i=0; i<16; ++i){
@@ -1427,40 +1172,139 @@ void Scene_edit_box_item::drawTransparent(CGAL::Three::Viewer_interface*viewer)c
   }
 
   GLdouble d_mat[16];
-  QMatrix4x4 mvp_mat;
-  viewer->camera()->getModelViewProjectionMatrix(d_mat);
-  for (int i=0; i<16; ++i)
-    mvp_mat.data()[i] = GLfloat(d_mat[i]);
-  mvp_mat = mvp_mat*f_matrix;
   QMatrix4x4 mv_mat;
   viewer->camera()->getModelViewMatrix(d_mat);
   for (int i=0; i<16; ++i)
     mv_mat.data()[i] = GLfloat(d_mat[i]);
   mv_mat = mv_mat*f_matrix;
-  QVector4D light_pos(0.0f,0.0f,1.0f, 1.0f );
-  light_pos = light_pos*f_matrix;
-  QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
-  // Diffuse
-  QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
-  // Specular
-  QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
-
+  
   viewer->glEnable(GL_BLEND);
   viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  vaos[Scene_edit_box_item_priv::Faces]->bind();
-  d->program = &d->transparent_face_program;
-  d->program->bind();
-  d->program->setUniformValue("mvp_matrix", mvp_mat);
-  d->program->setUniformValue("mv_matrix", mv_mat);
-  d->program->setUniformValue("light_pos", light_pos);
-  d->program->setUniformValue("light_diff",diffuse);
-  d->program->setUniformValue("light_spec", specular);
-  d->program->setUniformValue("light_amb", ambient);
-  d->program->setUniformValue("spec_power", 51.8f);
-  d->program->setUniformValue("is_clipbox_on", false);
-  d->program->setAttributeValue("colors", QColor(128,128,128,128));
-  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->vertex_faces.size()/3));
-  vaos[Scene_edit_box_item_priv::Faces]->release();
-  d->program->release();
+  Tc* tc = getTriangleContainer(Priv::Faces);
+  tc->setMvMatrix(mv_mat);
+  tc->setFrameMatrix(f_matrix);
+  tc->setClipping(false);
+  tc->setColor(QColor(128,128,128,128));
+  tc->setAlpha(0.5);
+  tc->draw(viewer, true);
   viewer->glDisable(GL_BLEND);
+}
+
+void Scene_edit_box_item::invalidateOpenGLBuffers()
+{
+  compute_bbox();
+  setBuffersFilled(false);
+  getTriangleContainer(Priv::Faces)->reset_vbos(ALL);
+  getTriangleContainer(Priv::P_Faces)->reset_vbos(ALL);
+  getTriangleContainer(Priv::Spheres)->reset_vbos(ALL);
+  getTriangleContainer(Priv::P_Spheres)->reset_vbos(ALL);
+  getEdgeContainer(Priv::Edges)->reset_vbos(ALL);
+  getEdgeContainer(Priv::P_Edges)->reset_vbos(ALL);
+}
+
+void Scene_edit_box_item::computeElements() const
+{
+  d->computeElements();
+  getEdgeContainer(Priv::Edges)->allocate(
+        Ec::Vertices,
+        d->vertex_edges.data(),
+        static_cast<GLsizei>(d->vertex_edges.size()*sizeof(float)));
+  Ec* ec = getEdgeContainer(Priv::P_Edges);
+  ec->allocate(
+        Ec::Vertices,
+        d->vertex_edges.data(),
+        static_cast<GLsizei>(d->vertex_edges.size()*sizeof(float)));
+  
+  ec->allocate(
+        Ec::Colors,
+        d->color_edges.data(),
+        static_cast<GLsizei>(d->color_edges.size()*sizeof(float)));
+  
+  
+  Tc* tc = getTriangleContainer(Priv::Spheres);
+  tc->allocate(
+        Tc::Flat_vertices,
+        d->vertex_spheres.data(),
+        static_cast<int>(d->vertex_spheres.size()*sizeof(float)));
+  
+  tc->allocate(
+        Tc::Flat_normals, 
+        d->normal_spheres.data(),
+        static_cast<int>(d->normal_spheres.size()*sizeof(float)));
+  tc->allocate(
+        Tc::Facet_centers,
+        d->center_spheres.data(),
+        static_cast<int>(d->center_spheres.size()*sizeof(float)));
+  
+  tc = getTriangleContainer(Priv::P_Spheres);
+  tc->allocate(
+        Tc::Flat_vertices,
+        d->vertex_spheres.data(),
+        static_cast<int>(d->vertex_spheres.size()*sizeof(float)));
+
+  tc->allocate(
+        Tc::Facet_centers,
+        d->center_spheres.data(),
+        static_cast<int>(d->center_spheres.size()*sizeof(float)));
+  
+  tc->allocate(
+        Tc::FColors,
+        d->color_spheres.data(),
+        static_cast<int>(d->color_spheres.size()*sizeof(float)));
+  
+  tc = getTriangleContainer(Priv::Faces);
+  tc->allocate(
+        Tc::Flat_vertices,
+        d->vertex_faces.data(),
+        static_cast<int>(d->vertex_faces.size()*sizeof(float)));
+  
+  tc->allocate(
+        Tc::Flat_normals,
+        d->normal_faces.data(),
+        static_cast<int>(d->normal_faces.size()*sizeof(float)));
+  tc = getTriangleContainer(Priv::P_Faces);
+  tc->allocate(
+        Tc::Flat_vertices,
+        d->vertex_faces.data(),
+        static_cast<int>(d->vertex_faces.size()*sizeof(float)));
+  tc->allocate(
+        Tc::FColors,
+        d->color_faces.data(),
+        static_cast<int>(d->color_faces.size()*sizeof(float)));
+  setBuffersFilled(true);
+}
+
+void Scene_edit_box_item::initializeBuffers(Viewer_interface *v) const
+{
+  
+  getTriangleContainer(Priv::Faces)->initializeBuffers(v);
+  getTriangleContainer(Priv::P_Faces)->initializeBuffers(v);
+  
+  getTriangleContainer(Priv::Spheres)->initializeBuffers(v);
+  getTriangleContainer(Priv::Spheres)->initializeBuffers(v);
+  getTriangleContainer(Priv::P_Spheres)->initializeBuffers(v);
+  getTriangleContainer(Priv::P_Spheres)->initializeBuffers(v);
+  
+  getEdgeContainer(Priv::Edges)->initializeBuffers(v);
+  getEdgeContainer(Priv::P_Edges)->initializeBuffers(v);
+
+  
+  getTriangleContainer(Priv::Faces)->setFlatDataSize(d->vertex_faces.size());
+  getTriangleContainer(Priv::P_Faces)->setFlatDataSize(d->vertex_faces.size());
+  
+  getTriangleContainer(Priv::Spheres)->setFlatDataSize(d->vertex_spheres.size());
+  getTriangleContainer(Priv::Spheres)->setCenterSize(d->center_spheres.size());
+  getTriangleContainer(Priv::P_Spheres)->setFlatDataSize(d->vertex_spheres.size());
+  getTriangleContainer(Priv::P_Spheres)->setCenterSize(d->center_spheres.size());
+  
+  getEdgeContainer(Priv::Edges)->setFlatDataSize(d->vertex_edges.size());
+  getEdgeContainer(Priv::P_Edges)->setFlatDataSize(d->vertex_edges.size());
+}
+
+void Scene_edit_box_item::connectNewViewer(QObject *o)
+{
+  Vi* viewer = qobject_cast<Vi*>(o);
+  if(!viewer)
+    return;
+  viewer->setMouseTracking(true);
 }

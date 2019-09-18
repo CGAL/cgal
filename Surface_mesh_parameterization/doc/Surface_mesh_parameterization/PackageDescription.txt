@@ -1,9 +1,9 @@
-/// \defgroup PkgSurfaceParameterization Triangulated Surface Mesh Parameterization Reference
+/// \defgroup PkgSurfaceMeshParameterizationRef Triangulated Surface Mesh Parameterization Reference
 
 
 /*!
-\addtogroup PkgSurfaceParameterization
-\cgalPkgDescriptionBegin{Triangulated Surface Mesh Parameterization,PkgSurfaceParameterizationSummary}
+\addtogroup PkgSurfaceMeshParameterizationRef
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Parameterization,PkgSurfaceMeshParameterization}
 \cgalPkgPicture{bimbaDetail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Saboret, Pierre Alliez, Bruno Lévy, Mael Rouxel-Labbé, and Andreas Fabri}
@@ -14,12 +14,12 @@ This package implements several surface mesh parameterization methods, such as
 As Rigid As Possible Parameterization, Discrete Authalic Parameterization,
 Discrete Conformal Map, Floater Mean Value Coordinates, Least Squares Conformal Maps,
 Orbifold Tutte Embedding, or Tutte Barycentric Mapping.
-The code is generic and works with any model of the `FaceListGraph` concept.}
-\cgalPkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes, PkgSurfaceParameterization}
+The code is generic and works with any model of the `FaceGraph` concept.}
+\cgalPkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes, PkgSurfaceMeshParameterizationRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgSolverSummary}
+\cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:salf-pptsm2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -28,15 +28,15 @@ The code is generic and works with any model of the `FaceListGraph` concept.}
 
 \cgalClassifedRefPages
 
-## Main Function ##
+\cgalCRPSection{Main Function}
 
 - `CGAL::Surface_mesh_parameterization::parameterize()`
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `Parameterizer_3`
 
-## Surface Parameterization Methods ##
+\cgalCRPSection{Surface Parameterization Methods}
 
 This \cgal package implements several parameterization methods:
 
@@ -64,7 +64,7 @@ The following classes implement the methods listed above:
 - `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 - `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<TriangleMesh, SolverTraits>`
 
-## Border Parameterization Methods ##
+\cgalCRPSection{Border Parameterization Methods}
 
 Border parameterization methods define a
 set of constraints (a constraint specifies two (u,v) coordinates for
@@ -85,14 +85,14 @@ The following classes implement the methods listed above:
 - `CGAL::Surface_mesh_parameterization::Square_border_arc_length_parameterizer_3<TriangleMesh>`
 - `CGAL::Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh>`
 
-## Mesh ##
+\cgalCRPSection{Mesh}
 
 The general definition of input meshes handled directly by
 `CGAL::Surface_mesh_parameterization::parameterize()` is a triangulated surface
 mesh model of `FaceGraph` that is homeomorphic to a disc (may have holes). In
 particular, it means that it must be 2-manifold and oriented.
 
-## Checks and Assertions ##
+\cgalCRPSection{Checks and Assertions}
 
 The package performs the next checks:
 
@@ -112,20 +112,32 @@ The package performs the next checks:
     - the input mesh is a surface with one connected component.
 */
 
-/// \defgroup PkgSurfaceParameterizationMainFunction Main Function
-/// \ingroup PkgSurfaceParameterization
+/*!
+ \defgroup PkgSurfaceMeshParameterizationMainFunction Main Functions
+ \ingroup PkgSurfaceMeshParameterizationRef
 
-/// \defgroup PkgSurfaceParameterizationEnums Enums
-/// \ingroup PkgSurfaceParameterization
-
-/// \defgroup PkgSurfaceParameterizationConcepts Concepts
-/// \ingroup PkgSurfaceParameterization
+ The central functions, main entry point of the package.
+*/
 
 /*!
- \defgroup PkgSurfaceParameterizationMethods Surface Parameterization Methods
- \ingroup PkgSurfaceParameterization
+ \defgroup PkgSurfaceMeshParameterizationEnums Enums
+ \ingroup PkgSurfaceMeshParameterizationRef
 
-This \cgal package implements several parameterization methods:
+ The enum classes defined and used in this package.
+*/
+
+/*!
+ \defgroup PkgSurfaceMeshParameterizationConcepts Concepts
+ \ingroup PkgSurfaceMeshParameterizationRef
+
+ The concepts of this package.
+*/
+
+/*!
+ \defgroup PkgSurfaceMeshParameterizationMethods Surface Parameterization Methods
+ \ingroup PkgSurfaceMeshParameterizationRef
+
+ This \cgal package implements several parameterization methods:
 
  - Fixed border:
   - Tutte Barycentric Mapping \cgalCite{t-hdg-63}.
@@ -144,8 +156,8 @@ This \cgal package implements several parameterization methods:
 */
 
 /*!
- \defgroup PkgSurfaceParameterizationBorderParameterizationMethods Border Parameterization Methods
- \ingroup PkgSurfaceParameterization
+ \defgroup PkgSurfaceMeshParameterizationBorderParameterizationMethods Border Parameterization Methods
+ \ingroup PkgSurfaceMeshParameterizationRef
 
 Border parameterization methods define a
 set of constraints (a constraint specifies two (u,v) coordinates for
@@ -161,6 +173,11 @@ This package implements common border parameterization methods:
  - For free border methods: at least two constraints (the pinned
 vertices).
 */
+
+/*!
+ \defgroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions Orbifold Helper Functions
+ \ingroup PkgSurfaceMeshParameterizationMethods
+
 
 */
 

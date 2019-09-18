@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <iostream>
 #include <vector>
@@ -156,7 +157,7 @@ private:
   }
 
   void setup_if_intersecting_pointer_with_tag(Tag_false) {
-    Base::insert_point_on_segment_ptr = NULL;
+    Base::insert_point_on_segment_ptr = nullptr;
   }
 
   void setup_if_intersecting_pointer_with_tag(Tag_true) {
@@ -483,5 +484,6 @@ public:
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Segment_Delaunay_graph_Linf_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_H

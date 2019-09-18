@@ -27,7 +27,7 @@
 
 #include "test_utilities.h"
 
-#include <CGAL/Implicit_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
 // IO
@@ -40,9 +40,7 @@
 template <typename K>
 struct Tester
 {
-  typedef typename K::FT (Function)(const typename K::Point_3&);
-  
-  typedef CGAL::Implicit_mesh_domain_3<Function, K>                   Base_domain;
+  typedef CGAL::Labeled_mesh_domain_3<K>                              Base_domain;
   typedef CGAL::Mesh_domain_with_polyline_features_3<Base_domain>     Md;
   typedef typename CGAL::Mesh_triangulation_3<Md>::type               Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<
@@ -223,8 +221,8 @@ struct Tester
     typename C3t3::Triangulation::Vertex& tv1 = *v;
     typename C3t3::Triangulation::Vertex& tv2 = *vit;
     
-    assert(   ( v == vp1 && vit->point() == p1 )
-           || ( v == vp4 && vit->point() == p4 ) );
+    assert(   ( v == vp1 && tr.point(vit) == p1 )
+           || ( v == vp4 && tr.point(vit) == p4 ) );
     
     assert ( tv1.in_dimension() == tv2.in_dimension() );
     //-------------------------------------------------------
@@ -316,7 +314,9 @@ struct Tester
     // Test edge iterators
     //-------------------------------------------------------
     std::cout << "Test edge iterators\n";
-    const Edge& edge_to_modify = *(c3t3.edges_in_complex_begin());
+    typename C3t3::Edges_in_complex_iterator eit = c3t3.edges_in_complex_begin();
+    assert(eit != c3t3.edges_in_complex_end());
+    const Edge& edge_to_modify = *eit;
     c3t3.remove_from_complex(edge_to_modify);
     c3t3.add_to_complex(edge_to_modify,curve_index_bis);
     

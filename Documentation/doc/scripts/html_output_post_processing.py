@@ -62,7 +62,7 @@ def conceptify_ns(d):
 def write_out_html(d, fn):
     f = codecs.open(fn, 'w', encoding='utf-8')
     # this is the normal doxygen doctype, which is thrown away by pyquery
-    f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
+    f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
     f.write('<html xmlns=\"http://www.w3.org/1999/xhtml\">')
     f.write(d.html())
     f.write('\n')
@@ -88,7 +88,7 @@ def clean_doc():
     duplicate_files.extend(package_glob('./*/geom.bib'))
     duplicate_files.extend(package_glob('./*/ftv2cl.png'))
     duplicate_files.extend(package_glob('./*/ftv2ns.png'))
-    
+
     for fn in duplicate_files:
         os.remove(fn)
 
@@ -149,6 +149,15 @@ def rearrange_img(i, dir_name):
                 img.attr("src","ftv2cpt.png")
     srcpath=img.attr("src")
     img.attr("src", "../Manual/" + srcpath.split('/')[-1])
+
+def rearrange_icon(i, dir_name):
+    icon = pq(this)
+    if icon.attr("class") == "icon-class":
+        parser=pq(this).parent().parent()
+        for link_class in ['a.el', 'a.elRef']:
+            links=parser(link_class)
+            if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
+                icon.attr("class","icon-concept")
 
 ###############################################################################
 ############################## Figure Numbering ###############################
@@ -232,12 +241,12 @@ def automagically_number_figures():
 
 def main():
     parser = argparse.ArgumentParser(
-        description='''This script makes adjustments to the doxygen output. 
-It replaces some text in specifically marked classes with the appropriate text for a concept, 
+        description='''This script makes adjustments to the doxygen output.
+It replaces some text in specifically marked classes with the appropriate text for a concept,
 removes some unneeded files, and performs minor repair on some glitches.''')
     parser.add_argument('--output', metavar='/path/to/doxygen/output', default="output")
     parser.add_argument('--resources', metavar='/path/to/cgal/Documentation/resources')
-    
+
     args = parser.parse_args()
     resources_absdir=args.resources
     os.chdir(args.output)
@@ -252,12 +261,15 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
     annotated_files=package_glob('./*/annotated.html')
     for fn in annotated_files:
+      re_replace_in_file("<span class=\"icon\">N</span>", "<span class=\"icon-namespace\">N</span>", fn)
+      re_replace_in_file("<span class=\"icon\">C</span>", "<span class=\"icon-class\">C</span>", fn)
       dir_name=path.dirname(fn)
       d = pq(filename=fn, parser='html', encoding='utf-8')
       tr_tags = d('table.directory tr img')
       tr_tags.each(lambda i: rearrange_img(i, dir_name))
+      span_tags = d('table.directory tr span')
+      span_tags.each(lambda i: rearrange_icon(i, dir_name))
       write_out_html(d,fn)
-    
     class_files=list(package_glob('./*/class*.html'))
     class_files.extend(package_glob('./*/struct*.html'))
     for fn in class_files:
@@ -300,9 +312,11 @@ removes some unneeded files, and performs minor repair on some glitches.''')
             table("tr").filter(lambda i: re.match(row_id + '*', pq(this).attr('id'))).remove()
             write_out_html(d, fn)
 
+    #Rewrite the code for index trees images
+
     filesjs_files=package_glob('./*/files.js')
     for fn in filesjs_files:
-        re_replace_in_file('^.*\[ "Concepts",.*$', '', fn)
+      re_replace_in_file('^.*\[ "Concepts",.*$', '', fn)
 
     #Rewrite the path of some images
     re_replace_in_file("'src','ftv2",
@@ -339,12 +353,12 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # remove %CGAL in navtree: this should be a fix in doxygen but for now it does not worth it
     re_replace_first_in_file('%CGAL','CGAL',glob.glob('./Manual/navtree.js')[0])
     clean_doc()
-    
+
     #remove links to CGAL in the bibliography
     citelist_files=package_glob('./*/citelist.html')
     for fn in citelist_files:
         re_replace_in_file('<a class=\"el\" href=\"namespaceCGAL.html\">CGAL</a>', 'CGAL', fn)
-    
+
     #add a section for Inherits from
     class_and_struct_files=list(package_glob('./*/class*.html'))
     class_and_struct_files.extend(package_glob('./*/struct*.html'))
@@ -371,9 +385,6 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     ## special case for how_to_cite.html
     canonical_link="<link rel=\"canonical\" href=\"https://doc.cgal.org/latest/Manual/how_to_cite.html\"/>\n"
     re_replace_first_in_file(r'<body>', r'<head>\n'+canonical_link+"</head>\n<body>", os.path.join("Manual","how_to_cite.html"))
-
-    #copy deprecated.html
-    shutil.copy(path.join(resources_absdir,"deprecated.html"),path.join("Manual/", "deprecated.html"))
 
 if __name__ == "__main__":
     main()

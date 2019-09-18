@@ -26,12 +26,12 @@
 #include <CGAL/license/Surface_mesh.h>
 
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -520,12 +520,6 @@ add_face(InputIterator begin, InputIterator end, CGAL::Surface_mesh<P>& sm)
   std::vector<typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor> 
     v(begin, end);
   return sm.add_face(v);
-}
-
-template<typename P>
-bool is_valid(const CGAL::Surface_mesh<P>& sm, bool verbose = false)
-{
-  return sm.is_valid(verbose);
 }
 
 template<typename P>

@@ -22,6 +22,8 @@
 #ifndef CGAL_DOUBLE_MAP_H
 #define CGAL_DOUBLE_MAP_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <map>
 #include <utility>
 #include <algorithm>
@@ -38,8 +40,15 @@
 #endif
 
 #ifdef CGAL_USE_BOOST_BIMAP
-#include <boost/bimap.hpp>
+#  if defined(BOOST_MSVC)
+#    pragma warning(push)
+#    pragma warning(disable: 4996)
+#  endif
+#include <CGAL/boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
+#  if defined(BOOST_MSVC)
+#    pragma warning(pop)
+#  endif
 #endif
 
 namespace CGAL {
@@ -316,5 +325,7 @@ erase(const Key& k)
 }
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_DOUBLE_MAP_H

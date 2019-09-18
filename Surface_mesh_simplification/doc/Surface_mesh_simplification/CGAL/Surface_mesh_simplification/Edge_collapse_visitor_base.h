@@ -2,7 +2,7 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 /*!
-\ingroup PkgSurfaceMeshSimplification
+\ingroup PkgSurfaceMeshSimplificationRef
 
 The class `Surface_mesh_simplification::Edge_collapse_visitor_base` provides a base class for models of the `EdgeCollapseSimplificationVisitor` concept. 
 
@@ -13,15 +13,13 @@ and the derived visitor will never be used polymorphically at runtime (is perfec
 and hide a non-virtual method in the context of the static polymorphism used in the simplification algorithm). 
 
 
-\tparam ECM is the type of surface mesh being simplified, and must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
+\tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 \cgalModels `EdgeCollapseSimplificationVisitor`
 
 */
-template< typename ECM >
+template< typename TriangleMesh >
 struct Edge_collapse_visitor_base {
-
-/// @}
 
 }; /* end Surface_mesh_simplification::Edge_collapse_visitor_base */
 

@@ -12,6 +12,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>

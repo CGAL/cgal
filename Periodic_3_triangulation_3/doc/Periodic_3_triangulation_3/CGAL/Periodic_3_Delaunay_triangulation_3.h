@@ -74,7 +74,7 @@ and `Cell_handle`s.
 Inserts point `p` in the triangulation and returns the corresponding
 vertex. The optional argument `start` is used as a starting place
 for the point location.
-\pre `p` lies in the original domain `domain`.
+\pre `p` lies in the original domain.
 */
 Vertex_handle insert(const Point & p,
 Cell_handle start = Cell_handle() );
@@ -84,7 +84,7 @@ Inserts point `p` in the triangulation and returns the corresponding
 vertex. Similar to the above `insert()` function, but takes as additional
 parameter the return values of a previous location query. See description of
 `Periodic_3_triangulation_3::locate()`.
-\pre `p` lies in the original domain `domain`.
+\pre `p` lies in the original domain.
 */
 Vertex_handle insert(const Point & p, Locate_type lt,
 Cell_handle loc, int li, int lj);
@@ -105,7 +105,7 @@ and therefore is not guaranteed to insert the points following the
 order of `InputIterator`. If the third argument
 `is_large_point_set` is set to `true` a heuristic for
 optimizing the insertion of large point sets is applied.
-\pre The `value_type` of `first` and `last` are `Point`s lying inside `domain`.
+\pre The `value_type` of `first` and `last` are points lying inside the original domain.
 */
 template < class InputIterator >
 std::ptrdiff_t
@@ -122,7 +122,7 @@ Moves the point stored in `v` to `p`, while preserving the Delaunay
 property. This performs an action semantically equivalent to `remove(v)`
 followed by `insert(p)`, but is supposedly faster when the point has
 not moved much. Returns the handle to the new vertex.
-\pre `p` lies in the original domain `domain`.
+\pre `p` lies in the original domain.
 */
 Vertex_handle move_point(Vertex_handle v, const Point & p);
 
@@ -174,13 +174,13 @@ Returns a value indicating on which side of the circumscribed sphere
 of `c` the point-offset pair (`p`,`off`) lies. More
 precisely, it returns:
 
-- `ON_BOUNDED_SIDE` if (`p`,`off`) is inside the sphere.
+- `ON_BOUNDED_SIDE` if (`p`,`off`) lies inside the sphere.
 
-- `ON_BOUNDARY` if (`p`,`off`) on the boundary of the sphere.
+- `ON_BOUNDARY` if (`p`,`off`) lies on the boundary of the sphere.
 
 - `ON_UNBOUNDED_SIDE` if (`p`,`off`) lies outside the
 sphere.
-\pre `p` lies in the original domain `domain`.
+\pre `p` lies in the original domain.
 */
 Bounded_side
 side_of_sphere(Cell_handle c, const Point & p,
@@ -190,9 +190,9 @@ const Offset & off = Offset(0,0,0)) const;
 Returns any nearest vertex to the point `p`, or the default constructed
 handle if the triangulation is empty. The optional argument `c` is a hint
 specifying where to start the search. It always returns a vertex
-corresponding to a point inside `domain` even if computing in a
+corresponding to a point inside the original domain, even if computing in a
 multiply sheeted covering space.
-\pre `c` is a cell of `dt` and `p` lies in the original domain `domain`.
+\pre `c` is a cell of `dt` and `p` lies in the original domain.
 
 */
 Vertex_handle nearest_vertex(Point p,
@@ -201,7 +201,7 @@ Cell_handle c = Cell_handle());
 /*!
 Returns the vertex of the cell `c` that is nearest to the
 point-offset pair (`p`,`off`).
-\pre `p` lies in the original domain `domain`.
+\pre `p` lies in the original domain.
 */
 Vertex_handle nearest_vertex_in_cell(Cell_handle c,
 Point p, Offset off = Offset(0,0,0)) const;
@@ -231,7 +231,7 @@ conflict, but `t->neighbor(i)` is not.
 cells in conflict.
 
 Returns the pair composed of the resulting output iterators.
-\pre `c` is in conflict with `p` and `p` lies in the original domain `domain`.
+\pre `c` is in conflict with `p` and `p` lies in the original domain.
 */
 template <class OutputIteratorBoundaryFacets,
 class OutputIteratorCells,
@@ -248,7 +248,7 @@ OutputIteratorInternalFacets ifit);
 Similar to `find_conflicts()`, but reports the vertices which are on the
 boundary of the conflict hole of `p`, in the output iterator `res`.
 Returns the resulting output iterator.
-\pre `c` is in conflict with `p` and `p` lies in the original domain `domain`.
+\pre `c` is in conflict with `p` and `p` lies in the original domain.
 */
 template <class OutputIterator>
 OutputIterator
@@ -302,17 +302,22 @@ bool is_Gabriel(const Edge& e);
 
 /*!
 Returns the representative of the circumcenter of the four vertices
-of c that lies in the original domain `domain`.
+of c that lies in the original domain.
+*/
+Point canonical_dual(Cell_handle c) const;
+
+/*!
+Returns the circumcenter of the four vertices of c.
 */
 Point dual(Cell_handle c) const;
 
 /*!
-Returns the dual of facet `f`, which is a periodic segment.
+Returns the dual of the facet `f`, which is a periodic segment.
 */
 Periodic_segment dual(Facet f) const;
 
 /*!
-same as the previous method for facet `(c,i)`.
+same as the previous method for the facet `(c,i)`.
 \pre \f$ i\in\{0,1,2,3\}\f$
 */
 Periodic_segment dual(Cell_handle c, int i) const;
@@ -329,7 +334,7 @@ OutputIterator
 dual(Edge e, OutputIterator pts) const;
 
 /*!
-same as the previous method for edge `(c,i,j)`.
+same as the previous method for the edge `(c,i,j)`.
 \pre \f$ i,j\in\{0,1,2,3\}, i\neq j\f$
 */
 template <class OutputIterator>
@@ -337,7 +342,7 @@ OutputIterator
 dual(Cell_handle c, int i, int j, OutputIterator pts) const;
 
 /*!
-Returns in the output iterator the points of the dual polyhedron of
+Returns in the output iterator the points of the dual polyhedron of the
 vertex `v` in no particular order. The points form the dual
 polyhedron in \f$ \mathbb R^3\f$, so they do not necessarily lie all
 inside the original domain.
@@ -374,7 +379,7 @@ Section \ref P3Triangulation3secintro). Also checks that all the
 circumscribing spheres of cells are empty.
 
 When `verbose` is set to true, messages describing the first
-invalidity encountered are printed.
+invalidity encountered (if any) are printed.
 */
 bool
 is_valid(bool verbose = false) const;
@@ -385,7 +390,7 @@ Section \ref P3Triangulation3secintro). Also checks that the
 circumscribing sphere of cells is empty.
 
 When `verbose` is set to true, messages are printed to give
-a precise indication of the kind of invalidity encountered.
+a precise indication of the kind of invalidity encountered (if any).
 */
 bool
 is_valid(Cell_handle c, bool verbose = false) const;

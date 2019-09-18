@@ -13,10 +13,10 @@ work with point-offset pairs. In most cases the offsets will be
 can be used directly. For efficiency reasons we maintain for each
 functor the version without offsets.
 
-\cgalRefines Periodic_3TriangulationTraits_3
-\cgalRefines RegularTriangulationTraits_3
+\cgalRefines `Periodic_3TriangulationTraits_3`
+\cgalRefines `RegularTriangulationTraits_3`
 
-\cgalHasModel CGAL::Periodic_3_regular_triangulation_traits_3
+\cgalHasModel `CGAL::Periodic_3_regular_triangulation_traits_3`
 
 In addition to the requirements described for the traits class
 RegularTriangulationTraits_3, the geometric traits class of a
@@ -34,57 +34,40 @@ public:
 /// @{
 
 /*!
-A predicate object that must provide the function operators:
-
-`Oriented_side operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s, Weighted_point_3 t)`,
-
-which determines the position of `t` with respect to the power sphere of `p, q, r, s`.
+A predicate object that must provide the function operators
 
 `Oriented_side operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s, Weighted_point_3 t,
 Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s, Periodic_3_offset_3 o_t)`,
 
-which is the same for the point-offset pair `(t,o_t)` with respect to the power sphere of the point-offset pairs
-`(p,o_p), (q,o_q), (r,o_r), (s,o_s)`.
+which determines the position of the point-offset pair `(t,o_t)` with respect
+to the power sphere of the point-offset pairs `(p,o_p), (q,o_q), (r,o_r), (s,o_s)`.
 \pre `p`, `q`, `r`, `s`, `t` lie inside the domain and `p, q, r, s` are not coplanar.
 
 <HR WIDTH=50%>
 
-When vertex removal is used, the predicate must in addition provide the following function operators:
+When vertex removal is used, the predicate must in addition provide the function operators
 
-`Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 t)`,
+`Oriented_side operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 t,
+                          Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_t)`,
 
 which has a definition similar to the previous method, for coplanar points,
 with the power circle of `p,q,r`.
+\pre `p`, `q`, `r`, `t` lie inside the domain, `p, q, r` are not collinear,
+and `(p,o_p), (q,o_q), (r,o_r), (t,o_t)` are coplanar.
 
-`Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 t,
-Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_t)`,
+`Oriented_side operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 t,
+                          Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_t)`,
 
-which is the same for point-offset pairs.
+which is the same for collinear points, and the power segment of `(p,o_p)` and `(q,o_q)`,
 
-\pre `p`, `q`, `r`, `t` lie inside the domain, `p, q, r` are not collinear, and `p, q, r, t` are coplanar.
+\pre `p`, `q`, `t` lie inside the domain, `p` and `q` have different Bare_points, and
+`(p,o_p), (q,o_q), (t,o_t)` are collinear.
 
+`Oriented_side operator()(Weighted_point_3 p, Weighted_point_3 q,
+                          Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q)`,
 
-`Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 t)`,
-
-which is the same for collinear points, and the power segment of `p` and `q`,
-
-`Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 t,
-Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_t)`,
-
-which is the same for point-offset pairs.
-
-\pre `p`, `q`, `t` lie inside the domain, `p` and `q` have different Bare_points, and `p, q, t` are collinear.
-
-
-`Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q)`,
-
-which is the same for equal points, that is when `p` and `q`
+which is the same for equal points, that is when `(p,o_p)` and `(q,o_q)`
 have equal coordinates, then it returns the comparison of the weights.
-
-`Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q,
-Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q)`,
-
-which is the same for point-offset pairs.
 
 \pre `p` and `q` lie inside the domain and have equal Bare_points.
 
@@ -118,15 +101,11 @@ typedef unspecified_type Compare_weighted_squared_radius_3;
 A predicate object, model of `ComparePowerDistance_3`, that must provide
 the function operator
 
-`Comparison_result operator()(Point_3 p, Weighted_point_3 q, Weighted_point_3 r)`,
-
-which compares the power distance between `p` and `q` to the power distance
-between `p` and `r` and
-
 `Comparison_result operator()(Point_3 p, Weighted_point_3 q, Weighted_point_3 r,
-Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r)`,
+                              Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r)`,
 
-which is the same for point-offset pairs.
+which compares the power distance between `(p,o_p)` and `(q,o_q)` to the power distance
+between `(p,o_p)` and `(r,o_r)`.
 
 \note This predicate is required if a call to `nearest_power_vertex()` or
 `nearest_power_vertex_in_cell()` is issued.*/
@@ -158,22 +137,50 @@ typedef unspecified_type Coplanar_orientation_3;
 /// @}
 
 /// \name
+/// When `is_Gabriel` functions are used, the traits class must
+/// in addition provide the following predicate object:
+/// @{
+
+/*!
+A predicate object that must provide the function operator
+
+`Bounded_side operator()(Weighted_point_3 p, Weighted_point_3 t,
+                         Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_t)`,
+
+which returns the sign of the power test of `(t,o_t)` with respect to the smallest
+sphere orthogonal to `(p,o_p)` (which is the sphere with center `(p,o_p)` and squared
+radius `-w_p` with `w_p` the weight of `p`),
+
+`Bounded_side operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 t,
+                         Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_t)`,
+
+which returns the sign of the power test of `(t,o_t)` with respect to the smallest
+sphere orthogonal to `(p,o_p)` and `(q,o_q)`,
+
+`Bounded_side operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 t,
+                         Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_q)`,
+
+which returns the sign of the power test of `(t,o_t)` with respect to the smallest
+sphere orthogonal to `(p,o_p)`, `(q,o_q)`, and `(r,o_r)`.
+*/
+typedef unspecified_type Power_side_of_bounded_power_sphere_3;
+
+/// @}
+
+/// \name
 /// When the dual operations are used, the traits
 /// class must in addition provide the following constructor object:
 /// @{
 
 /*!
-A constructor object that must provide the function operators:
-
-`Weighted_point_3 operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s)`,
-
-which constructs the weighted circumcenter of four points and
+A constructor object that must provide the function operator
 
 `Weighted_point_3 operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s,
 Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s)`,
 
 which constructs the weighted circumcenter of four point-offset pairs.
-\pre `p`, `q`, `r` and `s` as well as `(p,o_p)`, `(q,o_q)`, `(r,o_r)` and `(s,o_s)` must be non coplanar. `p`, `q`, `r`, `s` lie inside the domain.
+\pre `p`, `q`, `r`, `s` lie inside the domain.  `p`, `q`, `r` and `s`,
+as well as `(p,o_p)`, `(q,o_q)`, `(r,o_r)` and `(s,o_s)` must be non coplanar.
 */
 typedef unspecified_type Construct_weighted_circumcenter_3;
 

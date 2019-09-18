@@ -48,6 +48,7 @@ endif(ZLIB_FOUND)
 set( CGAL_ImageIO_BASENAME CGAL_ImageIO)
 
 set(CGAL_ImageIO_FOUND TRUE)
+set_property(GLOBAL PROPERTY CGAL_ImageIO_FOUND TRUE)
 
 function(CGAL_setup_CGAL_ImageIO_dependencies target)
   if(ARGV1 STREQUAL INTERFACE)

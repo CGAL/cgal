@@ -2,6 +2,7 @@ Algebraic_foundations
 Advancing_front_surface_reconstruction
 AABB_tree
 Polygon
+Polygonal_surface_reconstruction
 Number_types
 Alpha_shapes_2
 Alpha_shapes_3
@@ -23,6 +24,7 @@ Generator
 Geomview
 GraphicsView
 HalfedgeDS
+Heat_method_3
 BGL
 Combinatorial_map
 Generalized_map
@@ -72,8 +74,6 @@ Point_set_processing_3
 Point_set_shape_detection_3
 Polyline_simplification_2
 Property_map
-Kinetic_framework
-Kinetic_data_structures
 Periodic_2_triangulation_2
 Periodic_3_triangulation_3
 Scale_space_reconstruction_3
@@ -99,3 +99,6 @@ Surface_mesh_shortest_path
 Polygon_mesh_processing
 Set_movable_separability_2
 Classification
+Hyperbolic_triangulation_2
+Periodic_4_hyperbolic_triangulation_2
+Surface_mesh_approximation

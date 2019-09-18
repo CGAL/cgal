@@ -1,5 +1,5 @@
-#if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
-
+#include <CGAL/config.h>
+#if defined(BOOST_GCC) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
 #include <iostream>
 int main()
 {
@@ -28,7 +28,7 @@ int main()
     // - - - - - - - - - - - - - - - - - - - - - - - - STEP 1
     CGAL::Random_points_in_cube_d<Triangulation::Point> rand_it(D, 1.0);
     std::vector<Triangulation::Point> points;
-    CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
+    std::copy_n(rand_it, N, std::back_inserter(points));
 
     Triangulation t(D);                      // create triangulation
     CGAL_assertion(t.empty());

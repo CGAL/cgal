@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+set -e
 setopt -o glob
 setopt -o extended_glob
 
@@ -35,7 +36,7 @@ printf "Copy documentation to doc_html/ and doc_html_online/...\n"
 [ -d "/srv/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual" ] || mkdir -p "/srv/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual"
 
 cp "$PUBLIC_RELEASE_DIR"/*(.) "${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
-rsync -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output/* "$DEST_DIR/doc_html/"
+rsync -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output2/* "$DEST_DIR/doc_html/"
 pushd "$DEST_DIR/doc_html/Manual/search"
   for i in g n c s i; do sed -i "s/..\/BGL$i/..\/BGL\/$i/g" *; done
 popd
@@ -43,7 +44,7 @@ rsync -a "$DEST_DIR/doc_html/" "$DEST_DIR/doc_html_online/"
 
 printf "Modify \"../../MathJax\" to MathJax CDN in doc_html...\n"
 pushd "$DEST_DIR/doc_html"
-find -name '*.html' -exec sed -i -e 's|../../MathJax|http://cdn.mathjax.org/mathjax/latest|g' {} +
+find -name '*.html' -exec sed -i -e 's|../../MathJax|https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2|g' {} +
 popd
 
 printf "Create doc_html tarball...\n"

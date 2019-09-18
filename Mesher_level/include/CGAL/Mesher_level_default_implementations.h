@@ -22,6 +22,8 @@
 #ifndef CGAL_MESHER_LEVEL_DEFAULT_IMPLEMENTATIONS_H
 #define CGAL_MESHER_LEVEL_DEFAULT_IMPLEMENTATIONS_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Mesher_level.h>
 
 namespace CGAL {
@@ -135,5 +137,7 @@ struct No_before_conflicts {
 };
 
 }  // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESHER_LEVEL_DEFAULT_IMPLEMENTATIONS_H

@@ -114,7 +114,7 @@ public:
   Arr_spherical_construction_helper(Arrangement_2* arr) :
     m_top_traits(arr->topology_traits()),
     m_arr_access(*arr),
-    m_he_ind_map_p(NULL)
+    m_he_ind_map_p(nullptr)
   {}
 
   /*! Destructor. */
@@ -172,7 +172,7 @@ public:
    */
   void splice_indices_list(Halfedge_handle he)
   {
-    CGAL_assertion(m_he_ind_map_p != NULL);
+    CGAL_assertion(m_he_ind_map_p != nullptr);
     Indices_list& list_ref = (*m_he_ind_map_p)[he];
     list_ref.splice(list_ref.end(), m_subcurves_at_nf);
   }

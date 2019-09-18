@@ -26,6 +26,7 @@
 
 #include <CGAL/license/AABB_tree.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/result_of.h>
@@ -55,7 +56,7 @@ namespace internal {
 
 
 /*!
- * \ingroup PkgAABB_tree
+ * \ingroup PkgAABBTreeRef
  * Primitive type that uses as identifier an iterator with a 3D triangle as `value_type`.
  * The iterator from which the primitive is built should not be invalided
  * while the AABB tree holding the primitive is in use.
@@ -102,6 +103,7 @@ public:
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_TRIANGLE_PRIMITIVE_H_
 

@@ -35,7 +35,7 @@ namespace CGAL {
 template < class R_ >
 class VectorC3
 {
-// http://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
+// https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
   typedef typename R_::FT                   FT_;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
@@ -44,7 +44,7 @@ class VectorC3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef cpp11::array<FT_, 3>               Rep;
+  typedef std::array<FT_, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

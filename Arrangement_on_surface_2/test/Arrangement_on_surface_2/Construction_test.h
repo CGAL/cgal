@@ -6,13 +6,15 @@
 #include <string>
 #include <algorithm>
 
-#include <CGAL/basic.h>
+
 #include <CGAL/Timer.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 
 #include "utils.h"
 #include "IO_base_test.h"
+
+#include <CGAL/disable_warnings.h>
 
 /*! Construction test */
 template <typename T_Geom_traits, typename T_Topol_traits>
@@ -268,10 +270,9 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
   typename Xcurve_container::iterator xcit = curves_res.begin();
 
   Edge_const_iterator eit;
-  for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) {
-    if (is_interior(eit->source()) && is_interior(eit->target()))
-      *xcit++ = eit->curve();
-  }
+  for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit)
+    *xcit++ = eit->curve();
+
   Curve_compare<Geom_traits> curve_compare(m_geom_traits);
   std::sort(curves_res.begin(), xcit, curve_compare);
 
@@ -674,5 +675,7 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::perform()
   if (! test9()) return false;
   return true;
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif

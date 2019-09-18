@@ -84,17 +84,21 @@ public:
   }
 
 
+
   template <typename IntType>
   IntType
   uniform_smallint(IntType lower, IntType upper)
   {
     // uniform_smallint has a closed interval, CGAL a halfopen
-    boost::uniform_smallint<IntType> dist(lower,upper-1);
-    boost::variate_generator<boost::rand48&, boost::uniform_smallint<IntType> > generator(rng,dist);
+    typedef boost::rand48::result_type result_type;
+    boost::uniform_smallint<result_type> dist(static_cast<result_type>(lower),
+                                              static_cast<result_type>(upper-1));
+    boost::variate_generator<boost::rand48&, boost::uniform_smallint<result_type> > generator(rng,dist);
     
-    return generator();
+    return static_cast<IntType>(generator());
   }
 
+  
   template <typename IntType>
   IntType
   uniform_smallint(IntType lower)

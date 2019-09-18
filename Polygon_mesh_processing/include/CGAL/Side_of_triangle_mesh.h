@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -36,7 +37,7 @@
 namespace CGAL {
 
 /** 
- * \ingroup PkgPolygonMeshProcessing
+ * \ingroup PkgPolygonMeshProcessingRef
  * This class provides an efficient point location functionality with respect to a domain bounded
  * by one or several disjoint closed triangle meshes.
  *
@@ -54,7 +55,7 @@ namespace CGAL {
  * will return in turns `CGAL::ON_BOUNDED_SIDE` and `CGAL::ON_UNBOUNDED_SIDE`,
  * following the aforementioned parity criterion.
  *
- * This class depends on the package \ref PkgAABB_treeSummary.
+ * This class depends on the package \ref PkgAABBTree.
  *
  * @tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph`
  * @tparam GeomTraits a geometric traits class, model of `Kernel`
@@ -201,5 +202,7 @@ public:
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_SIDE_OF_TRIANGLE_MESH_H

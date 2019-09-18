@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <utility>
 #include <CGAL/Mesh_3/io_signature.h>
@@ -39,13 +40,6 @@ struct Get_io_signature<std::pair<int, int> > {
     return std::string("std::pair<i,i>");
   }
 }; // end Get_io_signature<std::pair<int, int> >
-
-inline std::ostream& operator<<(std::ostream& out, const std::pair<int, int>& id) {
-  return out << id.first << " " << id.second;
-}
-inline std::istream& operator>>(std::istream& in, std::pair<int, int>& id) {
-  return in >> id.first >> id.second;
-}
 
 template <>
 class Output_rep<std::pair<int, int> > : public IO_rep_is_specialized {
@@ -104,5 +98,7 @@ public:
   }
 };
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_INTERNAL_MESH_3_INTERNAL_HANDLE_IO_FOR_PAIR_OF_INT_H

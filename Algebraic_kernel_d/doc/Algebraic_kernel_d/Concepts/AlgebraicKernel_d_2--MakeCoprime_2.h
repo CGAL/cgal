@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKerneldConceptsBi
+\ingroup PkgAlgebraicKernelDConceptsBi
 \cgalConcept
 
 Computes for a given pair of bivariate polynomials \f$ p_1\f$, \f$ p_2\f$ their 

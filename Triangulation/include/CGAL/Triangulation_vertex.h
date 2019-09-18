@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Triangulation.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Triangulation_ds_vertex.h>
 #include <CGAL/Default.h>
@@ -114,7 +115,9 @@ template < class A, typename Data, class B >
 std::istream &
 operator>>(std::istream & is, Triangulation_vertex<A, Data, B> & v)
 {
-    is >> v.point();
+    typename Triangulation_vertex<A, Data, B>::Point tmp;
+    is >> tmp;
+    v.set_point(tmp);
     return (is >> v.data());
 }
 
@@ -128,5 +131,7 @@ operator<<(std::ostream & os, const Triangulation_vertex<A, Data, B> & v)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_VERTEX_H

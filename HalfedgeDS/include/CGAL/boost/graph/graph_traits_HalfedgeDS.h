@@ -24,11 +24,11 @@
 #include <functional>
 
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/type_traits/remove_const.hpp>
 
 #include <boost/graph/graph_traits.hpp>
@@ -177,7 +177,6 @@ public:
   typedef CGAL::Prevent_deref<typename HDS::Face_iterator>       face_iterator;
   typedef CGAL::Prevent_deref<typename HDS::Edge_iterator>       edge_iterator_i;
   typedef CGAL::Prevent_deref<typename HDS::Halfedge_iterator>   halfedge_iterator;
-
 
 
   typedef boost::transform_iterator<

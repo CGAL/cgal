@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Triangulation.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/internal/Triangulation/utilities.h>
 #include <CGAL/Triangulation_data_structure.h>
@@ -36,7 +37,7 @@
 #include <CGAL/Random.h>
 
 #include <boost/iterator/filter_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -120,7 +121,7 @@ protected:
     {
       if (current_dimension() == preset_flat_orientation_.first)
       {
-        CGAL_assertion(preset_flat_orientation_.second != NULL);
+        CGAL_assertion(preset_flat_orientation_.second != nullptr);
         flat_orientation_ = *preset_flat_orientation_.second;
       }
       else
@@ -243,26 +244,26 @@ public:
     // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
     // the two "covertices" around the sub-simplex. Useful for traversing the
     // boundary of a hole. NOT DOCUMENTED
-    typedef cpp11::tuple<Full_cell_handle, int, int>    Rotor;
+    typedef std::tuple<Full_cell_handle, int, int>    Rotor;
 
     // Commented out because it was causing "internal compiler error" in MSVC
     /*Full_cell_handle full_cell(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<0>(r);
+        return std::get<0>(r);
     }
     int index_of_covertex(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<1>(r);
+        return std::get<1>(r);
     }
     int index_of_second_covertex(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<2>(r);
+        return std::get<2>(r);
     }*/
     Rotor rotate_rotor(Rotor & r) // NOT DOCUMENTED...
     {
-        int opposite = cpp11::get<0>(r)->mirror_index(cpp11::get<1>(r));
-        Full_cell_handle s = cpp11::get<0>(r)->neighbor(cpp11::get<1>(r));
-        int new_second = s->index(cpp11::get<0>(r)->vertex(cpp11::get<2>(r)));
+        int opposite = std::get<0>(r)->mirror_index(std::get<1>(r));
+        Full_cell_handle s = std::get<0>(r)->neighbor(std::get<1>(r));
+        int new_second = s->index(std::get<0>(r)->vertex(std::get<2>(r)));
         return Rotor(s, new_second, opposite);
     }
     
@@ -273,7 +274,7 @@ public:
         , kernel_(k)
         , infinity_()
         , preset_flat_orientation_((std::numeric_limits<int>::max)(),
-                                   (Flat_orientation_d*) NULL)
+                                   (Flat_orientation_d*) nullptr)
         , rng_((long)0)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
@@ -308,14 +309,14 @@ public:
         , kernel_(t2.kernel_)
         , infinity_()
         , preset_flat_orientation_((std::numeric_limits<int>::max)(), 
-                                   (Flat_orientation_d*) NULL)
+                                   (Flat_orientation_d*) nullptr)
         , rng_(t2.rng_)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(t2.walk_size_)
 #endif
     {
         // We find the vertex at infinity by scanning the vertices of both
-        // triangulations. This works because Compact_container garantees that
+        // triangulations. This works because Compact_container guarantees that
         // the vertices in the copy (*this) are stored in the same order as in
         // the original triangulation (t2)
         infinity_ = vertices_begin();
@@ -459,9 +460,9 @@ public:
 
     Facet_iterator facets_begin() { return tds().facets_begin(); }
     Facet_iterator facets_end() { return tds().facets_end(); }
-    Facet_iterator finite_facets_begin()
+    Finite_facet_iterator finite_facets_begin()
     { return Finite_facet_iterator(Finiteness_predicate(*this), facets_begin(), facets_end()); }
-    Facet_iterator finite_facets_end()
+    Finite_facet_iterator finite_facets_end()
     { return Finite_facet_iterator(Finiteness_predicate(*this), facets_end(), facets_end()); }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - SOME PREDICATE FUNCTORS
@@ -1351,7 +1352,7 @@ operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
     else
     {
         read(is, cd);
-        read(is, n, io_Read_write());
+        read(is, n);
     }
 
     CGAL_assertion_msg( cd <= tr.maximal_dimension(), "input Triangulation has too high dimension");
@@ -1403,32 +1404,41 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
     else
     {
         write(os, tr.current_dimension());
-        write(os, n, io_Read_write());
+        write(os, n);
     }
 
     if( n == 0 )
         return os;
 
-    size_t i(0);
+    int i = 0;
     // write the vertices
     std::map<Vertex_handle, int> index_of_vertex;
 
     // infinite vertex has index 0 (among all the vertices)
     index_of_vertex[tr.infinite_vertex()] = i++;
-    os << *tr.infinite_vertex();
+    if(is_ascii(os))
+      os << *tr.infinite_vertex() <<"\n";
+    else
+      write(os, *tr.infinite_vertex());
+       
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it )
     {
         if( tr.is_infinite(it) )
             continue;
-        os << *it; // write the vertex
+        if(is_ascii(os))
+          os << *it <<"\n"; // write the vertex
+        else
+          write(os, *it);
         index_of_vertex[it] = i++;
     }
-    CGAL_assertion( i == n+1 );
+    CGAL_assertion( size_t(i) == n+1 );
 
     // output the combinatorial information
     return tr.tds().write_full_cells(os, index_of_vertex);
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_H

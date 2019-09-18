@@ -79,7 +79,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // assemble 2nd order moment about the origin.  
   FT temp[4] = {0.25, 0.0,
 		0.0, 0.25};
-  Matrix moment = init_matrix<K>(2,temp);
+  Matrix moment = init_matrix<FT>(2,temp);
   //  Matrix moment = Matrix(2,true,PI);
 
   for(InputIterator it = first;
@@ -95,7 +95,7 @@ linear_least_squares_fitting_2(InputIterator first,
     FT radius = std::sqrt(t.squared_radius());
     FT delta[4] = {radius, 0.0, 
 		   0.0, radius};
-    Matrix transformation = init_matrix<K>(2,delta);
+    Matrix transformation = init_matrix<FT>(2,delta);
     FT area = t.squared_radius();
     CGAL_assertion(area != 0.0);
 
@@ -184,7 +184,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // assemble 2nd order moment about the origin.  
   FT temp[4] = {1.0, 0.0,
 		0.0, 1.0};
-  Matrix moment = init_matrix<K>(2,temp);
+  Matrix moment = init_matrix<FT>(2,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -199,7 +199,7 @@ linear_least_squares_fitting_2(InputIterator first,
     FT radius = std::sqrt(t.squared_radius());
     FT delta[4] = {radius, 0.0, 
 		   0.0, radius};
-    Matrix transformation = init_matrix<K>(2,delta);
+    Matrix transformation = init_matrix<FT>(2,delta);
     FT length = 2 * radius;
     CGAL_assertion(length != 0.0);
 

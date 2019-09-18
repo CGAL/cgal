@@ -29,17 +29,11 @@ and the coordinates of the replacing vertex are determined by another user-suppl
 is met, such as reaching the desired number of edges.
 
 The algorithm implemented here is generic in the sense that it does not require the surface mesh 
-to be of a particular type. Instead, it defines the concept of a `EdgeCollapsableSurfaceMesh`,
-which presents the surface mesh as being a halfedge data structure, and any surface mesh that 
-is a model of that concept can be simplified. The concept is defined not in terms of a monolithic class, but in terms of a set 
-of functions and traits, making it easy to adapt any concrete surface mesh type, 
-even if it is not a halfedge data structure at all.
-In particular, the concept definition follows the design of the 
-<A HREF="http://www.boost.org/libs/graph/doc/index.html"> Boost Graph Library (Bgl)</A>
-\cgalCite{cgal:sll-bgl-02}.
+to be of a particular type but to be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
+We give examples for `Surface_mesh`, `Polyhedron_3`, and OpenMesh.
 
-The design is <A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
-(<A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><TT>http://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
+The design is <A HREF="https://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
+(<A HREF="https://en.wikipedia.org/wiki/Policy-based_design"><TT>https://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
 meaning that you can customize some aspects of the process by passing a set of
 <I>policy objects</I>. Each policy object specifies a particular aspect of the algorithm,
 such as how edges are selected and where the replacement vertex is placed. All policies have 
@@ -59,7 +53,7 @@ There are two slightly different "edge" collapse operations. One is known as
 <I>edge-collapse</I> while the other is known as <I>halfedge-collapse</I>.
 Given an edge `e` joining vertices `w` and `v`, the edge-collapse operation replaces
 `e`,`w` and `v` for a new vertex `r`, while the halfedge-collapse operation
-pulls `v` into `w`, dissapearing `e` and leaving `w` in place.
+pulls `v` into `w`, eliminating `e` and leaving `w` in place.
 In both cases the operation removes the edge `e` along with the 2 triangles 
 adjacent to it.
 
@@ -180,7 +174,7 @@ simplifying a surface mesh of 1 million edges (a normal size) requires 1 million
 of additional storage. Thus, to minimize the amount of additional memory required to
 simplify a surface mesh only the cost is attached to each edge and nothing else.
 
-But this is a tradeoff: the cost of a collapse is a function of the placement
+But this is a trade-off: the cost of a collapse is a function of the placement
 (the new position chosen for the remaining vertex) so before `GetCost`
 is called for each and every edge, `GetPlacement` must also be called to obtain
 the placement parameter to the cost function.
@@ -213,17 +207,7 @@ The simplification algorithm is implemented as the free template function
 
 There are two main parameters to the algorithm: the surface mesh to be simplified (in-place) and the stop predicate.
 
-The surface mesh to simplify must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
-Many concrete surface mesh types, such as `Polyhedron_3` with only triangular faces,
-become models of that concept via a technique known as 
-<I>external adaptation</I>, which is described in \cgalCite{cgal:sll-bgl-02}
-and this <span class="textsc">Bgl</span> web page: <A HREF="http://www.boost.org/libs/graph/doc/leda_conversion.html"><TT>http://www.boost.org/libs/graph/doc/leda_conversion.html</TT></A>
-
-External adaptation is a way to add an interface to an 
-object without coercing the type of the object (which happens when you adapt it by means 
-of a wrapper). That is, the formal parameter to the `edge_collapse` function that 
-implements the simplification is the concrete surface mesh object itself, not an adaptor 
-which delegates the functionality to the concrete type.
+The surface mesh to simplify must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 The stop predicate is called after each edge is selected for processing, <I>before</I> 
 it is classified as collapsible or not (thus before it is collapsed). If the stop predicate 
@@ -231,7 +215,7 @@ returns `true` the algorithm terminates.
 
 \subsection Surface_mesh_simplificationOptionalNamed Optional Named Parameters
 
-The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="http://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>http://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
+The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="https://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>https://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 
 Say there is a function `f()` that takes 3 parameters called `name`, `age` and `gender`, and you have variables `n,a and g` to pass as parameters to that function. Without named parameters, you would call it like this: `f(n,a,g)`, but with named parameters, you call it like this: `f(name(n).age(a).gender(g))`.
 
@@ -247,14 +231,14 @@ When you use named parameters, the ordering is irrelevant, so this: `f(name(n).a
 \code{.cpp}
 
 /*
-surface_mesh             : the surface_mesh to simplify
-stop_predicate           : policy indicating when the simplification must finish 
-vertex_index_map(vimap)  : property-map giving each vertex a unique integer index 
-edge_index_map(eimap)    : property-map giving each edge a unique integer index 
-edge_is_border_map(ebmap): property-map specifying whether an edge is a border edge or not 
-get_cost(cf)             : function object computing the cost of a collapse 
-get_placement(pf)        : function object computing the placement for the remaining vertex 
-visitor(vis)             : function object tracking the simplification process 
+surface_mesh                  : the surface_mesh to simplify
+stop_predicate                : policy indicating when the simplification must finish 
+vertex_index_map(vimap)       : property-map giving each vertex a unique integer index 
+edge_index_map(eimap)         : property-map giving each edge a unique integer index 
+edge_is_constrained_map(ebmap): property-map specifying whether an edge is a constrained edge or not 
+get_cost(cf)                  : function object computing the cost of a collapse 
+get_placement(pf)             : function object computing the placement for the remaining vertex 
+visitor(vis)                  : function object tracking the simplification process 
 */
 
 int r = edge_collapse(surface_mesh
@@ -269,22 +253,29 @@ int r = edge_collapse(surface_mesh
 
 \endcode
 
-\subsection Surface_mesh_simplificationExamples Examples
+\section Surface_mesh_simplificationExamples Examples
+
+\subsection Surface_mesh_simplificationExampleUsingSurfaceMesh Example Using a Surface_mesh
+
+The following example illustrates the simplification of a `Surface_mesh`.
+The unspecified cost strategy defaults to Lindstrom-Turk.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_surface_mesh.cpp}
+
 
 \subsection Surface_mesh_simplificationExampleUsinga Example Using a Default Polyhedron
 
-The following example illustrates the simplest of the cases. It uses
-an ordinary polyhedron and only one of the optional parameters.
+The following example illustrates the simplification of a `Polyhedron_3` with default
+vertices, halfedges, and faces. 
 The unspecified cost strategy defaults to Lindstrom-Turk.
+
 \cgalExample{Surface_mesh_simplification/edge_collapse_polyhedron.cpp}
 
 \subsection Surface_mesh_simplificationExampleUsingan Example Using an Enriched Polyhedron
 
 The following example is equivalent to the previous example but using an
 enriched polyhedron whose halfedges support an `id` field to
-store the edge index needed by the algorithm. It also shows how to
-explicitly specify a cost strategy (other than the default)
-and how to use a visitor object to track the simplification process.
+store the edge index needed by the algorithm.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
 
@@ -302,14 +293,14 @@ What is particular in this example is the property map that allows to associate
 \subsection Surface_mesh_simplificationExamplewithedges Example with Edges Marked as Non-Removable
 
 The following example shows how to use the optional named parameter `edge_is_constrained_map` to prevent
-edges from being removed. Edges marked as contrained are guaranteed to be in the final surface mesh. However,
+edges from being removed. Edges marked as constrained are guaranteed to be in the final surface mesh. However,
 the vertices of the constrained edges may change and the placement may change the points.
 The wrapper `CGAL::Surface_mesh_simplification::Constrained_placement` guarantees that these points are not changed.
 
-\cgalExample{Surface_mesh_simplification/edge_collapse_constrained_border_polyhedron.cpp}
+\cgalExample{Surface_mesh_simplification/edge_collapse_constrained_border_surface_mesh.cpp}
 
 
-\subsection Surface_mesh_simplificationExamplewithBoundedNormal Example with Bounded Changement of Face Normals
+\subsection Surface_mesh_simplificationExamplewithBoundedNormal Example with Bounded Change of Face Normals
 
 The surface mesh simplification does not guarantee that the resulting surface
 has no self intersections. Even the rather trivial mesh shown in \cgalFigureRef{SMS-selfintersection}
@@ -327,6 +318,12 @@ rejects this placement by returning `boost::none`.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp}
 
+\subsection Surface_mesh_simplificationExamplewithVisitor Example with Visitor
+
+The last example shows how to use a visitor with callbacks that are called at the different
+steps of the simplification algorithm.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_visitor_surface_mesh.cpp}
 
 */ 
 } /* namespace CGAL */

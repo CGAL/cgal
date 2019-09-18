@@ -2,13 +2,18 @@
 \ingroup PkgBGLConcepts
 \cgalConcept
 
-The concept `EdgeListGraph` refines the concept `Graph` and adds
-the requirement for traversal of all edges in a graph.
+Concept from the Boost Graph Library.
+See https://www.boost.org/libs/graph/doc/EdgeListGraph.html.
 
-\cgalRefines `Graph`
-\cgalHasModel `CGAL::Polyhedron_3`
-\cgalHasModel `CGAL::Surface_mesh`
+The concept `EdgeListGraph` refines the concept
+<a href="https://www.boost.org/libs/graph/doc/Graph.html"><code>Graph</code></a>
+and adds the requirement for traversal of all edges in a graph.
 
+\cgalRefines <a href="https://www.boost.org/libs/graph/doc/Graph.html"><code>Graph</code></a>
+
+\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+
+\sa \link PkgBGLConcepts Graph Concepts \endlink
 */
 class EdgeListGraph{};
 
@@ -28,21 +33,21 @@ edges(const EdgeListGraph& g);
   This is the case for implementations only marking edges deleted in the edge container.
  */
 template <typename EdgeListGraph>
-boost::graph_traits<EdgeListGraph>::ver_size_type
+boost::graph_traits<EdgeListGraph>::edges_size_type
 num_edges(const EdgeListGraph& g);
 
 
 /*! \relates EdgeListGraph
-returns the source vertex of `h`.
+returns the source vertex of `e`.
  */
 template <typename EdgeListGraph>
 boost::graph_traits<EdgeListGraph>::vertex_descriptor
-source(boost::graph_traits<EdgeListGraph>::halfedge_descriptor h, const EdgeListGraph& g);
+source(boost::graph_traits<EdgeListGraph>::edge_descriptor e, const EdgeListGraph& g);
 
 
 /*! \relates EdgeListGraph
-returns the target vertex of `h`.
+returns the target vertex of `e`.
  */
 template <typename EdgeListGraph>
 boost::graph_traits<EdgeListGraph>::vertex_descriptor
-target(boost::graph_traits<EdgeListGraph>::halfedge_descriptor h, const EdgeListGraph& g);
+target(boost::graph_traits<EdgeListGraph>::edge_descriptor e, const EdgeListGraph& g);

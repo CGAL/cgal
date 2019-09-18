@@ -101,7 +101,7 @@
 
   !define MUI_FINISHPAGE_LINK "Installation instructions"
   
-  !define MUI_FINISHPAGE_LINK_LOCATION "http://www.cgal.org/download/windows.html"
+  !define MUI_FINISHPAGE_LINK_LOCATION "https://www.cgal.org/download/windows.html"
   
 ;--------------------------------
 ; Pages
@@ -149,12 +149,12 @@ Section "!Main CGAL" MAIN_Idx
   File /nonfatal /r "${CGAL_SRC}\auxiliary\*.*"
   SetOutPath "$INSTDIR\cmake"
   File /r "${CGAL_SRC}\cmake\*.*"
-  SetOutPath "$INSTDIR\config"
-  File /r "${CGAL_SRC}\config\*.*"
   SetOutPath "$INSTDIR\doc_html"
   File /r "${CGAL_SRC}\doc_html\*.*"
   SetOutPath "$INSTDIR\include"
   File /r "${CGAL_SRC}\include\*.*"
+  SetOutPath "$INSTDIR\lib"
+  File /r "${CGAL_SRC}\lib\*.*"
   SetOutPath "$INSTDIR\scripts"
   File /r "${CGAL_SRC}\scripts\*.*"
   SetOutPath "$INSTDIR\src"
@@ -166,7 +166,8 @@ Section "!Main CGAL" MAIN_Idx
 
   SetOutPath "$INSTDIR"
   File "${CGAL_SRC}\AUTHORS"
-  File "${CGAL_SRC}\CHANGES"
+  File "${CGAL_SRC}\CGALConfig.cmake"
+  File "${CGAL_SRC}\CHANGES.md"
   File "${CGAL_SRC}\CMakeLists.txt"
   File "${CGAL_SRC}\INSTALL.md"
   File "${CGAL_SRC}\LICENSE"
@@ -197,7 +198,7 @@ Section "!Main CGAL" MAIN_Idx
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
                    "Publisher" "The CGAL Project and GeometryFactory"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
-                   "URLInfoAbout" "http://www.cgal.org/"
+                   "URLInfoAbout" "https://www.cgal.org/"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
                    "DisplayedVersion" "4.8.0"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \

@@ -33,7 +33,7 @@
 #include <CGAL/Euclidean_distance.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/internal/bounded_priority_queue.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 namespace internal{
@@ -90,7 +90,7 @@ protected:
     typedef Point_with_transformed_distance result_type;
     
     result_type operator()(const Point_ptr_with_transformed_distance& pair) const {
-      CGAL_precondition(pair.first!=NULL);
+      CGAL_precondition(pair.first!=nullptr);
       return std::make_pair(*(pair.first),pair.second);
     }
   };

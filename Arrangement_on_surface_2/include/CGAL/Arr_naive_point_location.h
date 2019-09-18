@@ -26,6 +26,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
@@ -77,9 +78,9 @@ protected:
 public:
   /*! Default constructor. */
   Arr_naive_point_location() : 
-    p_arr(NULL),
-    geom_traits(NULL),
-    top_traits(NULL)
+    p_arr(nullptr),
+    geom_traits(nullptr),
+    top_traits(nullptr)
   {}
         
   /*! Constructor given an arrangement. */
@@ -100,9 +101,9 @@ public:
   /*! Detach from the current arrangement object. */
   void detach()
   {
-    p_arr = NULL;
-    geom_traits = NULL;
-    top_traits = NULL;
+    p_arr = nullptr;
+    geom_traits = nullptr;
+    top_traits = nullptr;
   }
  
   /*!
@@ -119,5 +120,7 @@ public:
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_naive_point_location_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif

@@ -29,11 +29,15 @@
 
 #ifndef CGAL_POINT_GENERATORS_2_H
 #define CGAL_POINT_GENERATORS_2_H 1
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/generators.h>
-#include <iterator>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/internal/Generic_random_point_generator.h>
 #include <CGAL/iterator.h>
+
+#include <iterator>
 
 namespace CGAL {
 
@@ -190,6 +194,8 @@ generate_point() {
     case 3:
         this->d_item = creator( T( this->d_range),        T(d));
         break;
+    default:
+        CGAL_assume(false);
     }
 }
 
@@ -548,6 +554,7 @@ void Random_points_in_triangle_2<P, Creator>::generate_point() {
 }
 
 namespace internal {
+
 //Functor returning Triangle_2 from Triangulation_2 Faces
 template <class T>
 class Triangle_from_face_2
@@ -557,38 +564,75 @@ public:
   typedef Triangle result_type;
   Triangle_from_face_2() {}
 
-  Triangle operator()(typename T::Face_handle face)const {
+  Triangle operator()(typename T::Finite_faces_iterator face) const {
     return Triangle(face->vertex(0)->point(), face->vertex(1)->point(), face->vertex(2)->point());
   }
 };
+
+struct Is_not_in_domain
+{
+  typedef bool                                   result_type;
+
+  template <class FH>
+  result_type operator()(const FH fh) const {
+    return (!fh->is_in_domain());
+  }
+};
+
+template <class T>
+class In_domain_finite_faces_iterator
+  : public Filter_iterator<typename T::Finite_faces_iterator, Is_not_in_domain>
+{
+  typedef CGAL::Filter_iterator<typename T::Finite_faces_iterator, Is_not_in_domain>     Base;
+  typedef In_domain_finite_faces_iterator<T>                                             Self;
+
+  typedef typename T::Face_handle                                                        Face_handle;
+  typedef typename T::Finite_faces_iterator                                              Finite_faces_iterator;
+
+public:
+  In_domain_finite_faces_iterator() : Base() {}
+  In_domain_finite_faces_iterator(const Base &b) : Base(b) {}
+  Self & operator++() { Base::operator++(); return *this; }
+  Self & operator--() { Base::operator--(); return *this; }
+  Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+  Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+  operator Finite_faces_iterator() const { return Base::base(); }
+  operator Face_handle() const { return Face_handle(Base::base()); }
+};
+
 }//end namespace internal
+
 template <class P,
           class T,
-          class Creator =
-            Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P>
->
-class Random_points_in_triangle_mesh_2 : public Generic_random_point_generator<
-  typename T::Face_handle ,
-  internal::Triangle_from_face_2<T>,
-    Random_points_in_triangle_2<P> , P> {
+          class Creator = Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT, P> >
+class Random_points_in_triangle_mesh_2
+  : public Generic_random_point_generator<internal::In_domain_finite_faces_iterator<T>,
+                                          internal::Triangle_from_face_2<T>,
+                                          Random_points_in_triangle_2<P, Creator>,
+                                          P>
+{
 public:
-  typedef Generic_random_point_generator<typename T::Face_handle,
+  typedef Generic_random_point_generator<internal::In_domain_finite_faces_iterator<T>,
                                          internal::Triangle_from_face_2<T>,
                                          Random_points_in_triangle_2<P, Creator>,
                                          P>                           Base;
   typedef typename T::Face_handle                                     Id;
-  typedef P result_type;
+  typedef P                                                           result_type;
   typedef Random_points_in_triangle_mesh_2<P, T, Creator>             This;
 
-
-  Random_points_in_triangle_mesh_2( const T& triangulation, Random& rnd = get_default_random())
-    : Base( CGAL::make_prevent_deref_range(triangulation.finite_faces_begin(),
-                                           triangulation.finite_faces_end()),
-            internal::Triangle_from_face_2<T>(),
-            typename Kernel_traits<P>::Kernel::Compute_area_2(),
-            rnd )
+  Random_points_in_triangle_mesh_2(const T& triangulation, Random& rnd = get_default_random())
+    : Base(CGAL::make_prevent_deref_range(
+             CGAL::filter_iterator(triangulation.finite_faces_end(),
+                                   internal::Is_not_in_domain(),
+                                   triangulation.finite_faces_begin()),
+             CGAL::filter_iterator(triangulation.finite_faces_end(),
+                                   internal::Is_not_in_domain())),
+           internal::Triangle_from_face_2<T>(),
+           typename Kernel_traits<P>::Kernel::Compute_area_2(),
+           rnd)
   {
   }
+
   This& operator++() {
     Base::generate_point();
     return *this;
@@ -664,5 +708,7 @@ struct Random_points_in_triangles_2
 };
 
 } //namespace CGAL
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_POINT_GENERATORS_2_H //
 // EOF //

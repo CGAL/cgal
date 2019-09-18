@@ -19,16 +19,15 @@ Iterators are widely used in \cgal too.
 \cgal extends the idea of the iterator, which works for linear data
 structures, to circular data structures by defining the concept of
 a circulator.
-\ref PkgHandlesAndCirculatorsSummary "Circulators" are quite similar to iterators, with the
+\ref PkgHandlesAndCirculators "Circulators" are quite similar to iterators, with the
 major difference being the absence of a past-the-end position in a sequence.
 Note that circulators are NOT part of the \stl, but of \cgal.
 
-In \cgal, we also define the concept of \ref PkgHandlesAndCirculatorsSummary "handle",
-
+In \cgal, we also define the concept of \ref PkgHandlesAndCirculators "handle",
 which behaves roughly
 like a pointer to an object without an increment or decrement operation.
 More details about handles and their requirements can be found in 
-the \ref PkgHandlesAndCirculatorsSummary "chapter Circulators and Handles"
+the \ref PkgHandlesAndCirculators "chapter Circulators and Handles"
 of the Support Library part of \cgal manual. 
 Section  \ref sechandle_vs_it_vs_circ  below discusses when handles
 should be used in your code.
@@ -36,7 +35,7 @@ should be used in your code.
 The concepts of iterators is relatively well described in textbooks such as 
 Stroustrup's book (<I>The C++ Programming Language</I> \cgalCite{cgal:s-cpl-97})
 and Austern's book (<I>Generic Programming and the \stl</I> \cgalCite{cgal:a-gps-98})
-and in chapter \ref PkgHandlesAndCirculatorsSummary "Handles and Circulators"
+and in chapter \ref PkgHandlesAndCirculators "Handles and Circulators"
 of the <I>Support Library</I> part of the \cgal manual.
 which also presents the concepts of handles and circulators.
 Thus we will not give a full description of these concept here
@@ -128,7 +127,6 @@ might not be valid.
 <B>Stream iterators</B>
 
 \stl  provides a special type of input iterator called `istream_iterator`,
-
 which is designed to be bound to an object of the class `istream` and 
 provides a way to read a sequence of values from the input stream to which 
 it is bound.  For example, the following code reads numbers of type 
@@ -146,7 +144,6 @@ cout << sum << endl;
 \endcode
 
 In a similar fashion, \stl provides the type `ostream_iterator`, 
-
 which is designed to be bound to an object of the class `ostream`  
 and used to output values to the output stream to which it is bound.
 
@@ -211,9 +208,7 @@ member function and a provided location of the insertion.
 For convenience, \stl  provides the templated
 functions (or adaptors) 
 `front_inserter`, 
-
 `back_inserter`
-
 and `inserter` to get insert iterators, also called inserters,
  from containers.
 
@@ -327,12 +322,10 @@ if ( ! CGAL::is_empty_range( i, j) )
 
 The following two macros are also defined as a generic means for iterating
 over either a linear or circular sequence:
+- `CGAL_For_all( ic1, ic2)`
+- `CGAL_For_all_backwards( ic1, ic2)`.
 
-`CGAL_For_all( ic1, ic2)`
-
-`CGAL_For_all_backwards( ic1, ic2)`
-
-See the chapter \ref PkgHandlesAndCirculatorsSummary "Handles and Circulators"
+See the chapter \ref PkgHandlesAndCirculators "Handles and Circulators"
  in the <I>Support Library</I> part of \cgal manual 
 for more information and examples.
 
@@ -345,7 +338,6 @@ in \cgalCite{cgal:a-gps-98}.  For the purposes of this discussion, the relevant
 types are:
 
 <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-
 `iterator` 
         <TD ALIGN=LEFT VALIGN=TOP NOWRAP>
  type of iterator 
@@ -353,7 +345,6 @@ types are:
 `const_iterator` 
         <TD ALIGN=LEFT VALIGN=TOP NOWRAP>
  iterator type for container with constant elements
-
 </TABLE>
 
 and the relevant functions are:
@@ -378,7 +369,6 @@ elements in addition to (or, where appropriate, instead of) the iterators.
 This means that the following types should be defined:
 
 <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-
 `circulator` 
         <TD ALIGN=LEFT VALIGN=TOP NOWRAP>
  type of circulator 
@@ -386,7 +376,6 @@ This means that the following types should be defined:
 `const_circulator` 
         <TD ALIGN=LEFT VALIGN=TOP NOWRAP>
  circulator type for container with constant elements
-
 </TABLE>
 
 as well as two access functions, one for each of the two types, with names

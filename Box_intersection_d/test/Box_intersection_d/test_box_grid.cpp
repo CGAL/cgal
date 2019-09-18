@@ -116,7 +116,7 @@ void test_box_intersection() {
                               std::ptrdiff_t(1), 
                               CGAL::Box_intersection_d::HALF_OPEN,
                               CGAL::Box_intersection_d::COMPLETE);
-    check_result( "Box self inters. 3x3+2, half-open", result, check5, 2);
+    check_result( "Box inters. 3x3+2, half-open", result, check5, 2);
     
     // compare this with the bipartite case
     // self intersect 3x3+2 query boxes, half-open boxes

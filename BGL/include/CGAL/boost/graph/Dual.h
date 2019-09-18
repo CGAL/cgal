@@ -21,6 +21,8 @@
 #ifndef CGAL_BGL_DUAL_H
 #define CGAL_BGL_DUAL_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/boost/graph/properties.h>
 #include <boost/range/distance.hpp>
 #include <CGAL/boost/graph/iterator.h>
@@ -41,8 +43,7 @@ vertices as a source and target. It is possible to filter border edges
 using `boost::filtered_graph` as shown in example
 \ref BGL_surface_mesh/surface_mesh_dual.cpp
 
-Property forwarding
--------------------
+\cgalHeading{Property Forwarding}
 \cgalAdvancedBegin
 Edge properties of the underlying graph are forwarded directly. For
 faces and vertices only the `face_index` and `vertex_index` properties
@@ -487,5 +488,7 @@ in_degree(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
          
         
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

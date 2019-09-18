@@ -1,12 +1,20 @@
 
 /*!
-\ingroup PkgRangeSegmentTreesDConcepts
+\ingroup PkgSearchStructuresConcepts
 \cgalConcept
 
 A tree traits class gives the range tree and segment tree class the necessary 
 type information of the keys and intervals. Further more, they define function objects that allow to access 
 the keys and intervals, and provide comparison functions that 
 are needed for window queries. 
+
+
+\cgalHasModel `CGAL::Range_segment_tree_set_traits_2`
+\cgalHasModel `CGAL::Range_segment_tree_set_traits_3`
+\cgalHasModel `CGAL::Range_tree_map_traits_2`
+\cgalHasModel `CGAL::Range_tree_map_traits_3`
+\cgalHasModel `CGAL::Segment_tree_map_traits_2`
+\cgalHasModel `CGAL::Segment_tree_map_traits_3`
 
 \cgalHeading{Example}
 
@@ -122,7 +130,7 @@ typedef unspecified_type high_i;
 /*!
 function object providing an 
 `operator()` that takes two arguments argument \f$ a\f$, \f$ b\f$ of type `Key_i` and returns 
-true if \f$ a<b\f$, false otherwise. 
+`true` if \f$ a<b\f$, `false` otherwise. 
 */ 
 typedef unspecified_type compare_i; 
 

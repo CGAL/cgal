@@ -40,7 +40,6 @@ namespace internal
 {
 // ****************************************************************************
 // Alpha functor, used to combine several alpha.
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 template<typename GMap, typename Dart_handle, typename ... Alphas>
 struct Alpha_functor;
 
@@ -92,7 +91,6 @@ struct Alpha_functor_static<GMap, Dart_handle, B, Alphas...>
   { return Alpha_functor_static<GMap, Dart_handle, Alphas...>::
         run(AMap, AMap.template get_alpha<B>(ADart)); }
 };
-#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 // ****************************************************************************
 } // namespace internal
 } // namespace CGAL

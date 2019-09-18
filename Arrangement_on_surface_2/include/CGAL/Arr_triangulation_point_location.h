@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 
 /*! \file
  * Definition of the Arr_triangulation_point_location<Arrangement> template.
@@ -127,7 +129,7 @@ protected:
 public:
   /*! Default constructor. */
   Arr_triangulation_point_location() :
-    m_traits(NULL),
+    m_traits(nullptr),
     m_ignore_notifications(false),
     m_ignore_remove_edge(false)
   {}
@@ -370,6 +372,8 @@ public:
     }
   }
 
+  // @}
+
 protected:
   /*! Locate the arrangement feature containing the given point in the
    * unbounded face(s).
@@ -389,5 +393,7 @@ protected:
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_triangulation_pl_functions.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif

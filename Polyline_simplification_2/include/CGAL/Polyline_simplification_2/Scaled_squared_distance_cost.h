@@ -86,7 +86,7 @@ public:
       d1 = (std::max)(d1, compute_squared_distance( lP_R, *pp ) ) ;
 
     
-    FT d2;
+    FT d2=0;
     bool d2_uninitialized = true;
 
     Vertex_circulator vc = pct.incident_vertices(*vicq), done(vc);

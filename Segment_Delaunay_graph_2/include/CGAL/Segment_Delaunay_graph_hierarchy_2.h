@@ -26,6 +26,7 @@
 
 #include <CGAL/license/Segment_Delaunay_graph_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <map>
 
@@ -198,7 +199,7 @@ public:
     typedef typename Iterator_traits::difference_type Diff_t;
 
     boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-    std::random_shuffle(site_vec.begin(), site_vec.end(),rng);
+    CGAL::cpp98::random_shuffle(site_vec.begin(), site_vec.end(),rng);
     return insert(site_vec.begin(), site_vec.end(), Tag_false());
   }
 
@@ -497,5 +498,6 @@ std::ostream& operator<<(std::ostream& os,
 
 #include <CGAL/Segment_Delaunay_graph_2/Segment_Delaunay_graph_hierarchy_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_HIERARCHY_2_H

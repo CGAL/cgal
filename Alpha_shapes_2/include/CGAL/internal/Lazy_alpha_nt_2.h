@@ -45,7 +45,7 @@ namespace internal {
 //
 template < class Input_traits, class Kernel_approx, class Kernel_exact,
            class Weighted_tag >
-class Is_traits_point_convertible
+class Is_traits_point_convertible_2
 {
   typedef typename Kernel_traits<typename Input_traits::Point_2>::Kernel   Kernel_input;
 
@@ -60,7 +60,7 @@ public:
 };
 
 template < class Input_traits, class Kernel_approx, class Kernel_exact >
-class Is_traits_point_convertible<Input_traits, Kernel_approx, Kernel_exact,
+class Is_traits_point_convertible_2<Input_traits, Kernel_approx, Kernel_exact,
                                   ::CGAL::Tag_true /* Weighted_tag */>
 {
   typedef typename Kernel_traits<typename Input_traits::Point_2>::Kernel   Kernel_input;
@@ -157,7 +157,7 @@ class Lazy_alpha_nt_2
   Approx_point to_approx(const Input_point& wp) const
   {
     // The traits class' Point_2 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible<
+    CGAL_static_assertion((Is_traits_point_convertible_2<
                             Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
 
     To_approx converter;
@@ -167,7 +167,7 @@ class Lazy_alpha_nt_2
   Exact_point to_exact(const Input_point& wp) const
   {
     // The traits class' Point_2 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible<
+    CGAL_static_assertion((Is_traits_point_convertible_2<
                             Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
 
     To_exact converter;
@@ -186,7 +186,25 @@ class Lazy_alpha_nt_2
   const Data_vector& data() const{ return input_points;}
   Data_vector& data(){ return input_points;}
 
+  static double & relative_precision_of_to_double_internal()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(double, relative_precision_of_to_double, 0.00001);
+      return relative_precision_of_to_double;
+  }
+
 public:
+
+  static const double & get_relative_precision_of_to_double()
+  {
+    return relative_precision_of_to_double_internal();
+  }
+
+  static void set_relative_precision_of_to_double(double d)
+  {
+      CGAL_assertion((0 < d) & (d < 1));
+      relative_precision_of_to_double_internal() = d;
+  }
+
   typedef NT_exact               Exact_nt;
   typedef NT_approx              Approximate_nt;
 
@@ -242,26 +260,26 @@ public:
     : exact_(Exact_nt(0)), approx_(0)
   {
     data().nbpts=0;
-    data().p0=NULL;
-    data().p1=NULL;
-    data().p2=NULL;
+    data().p0=nullptr;
+    data().p1=nullptr;
+    data().p2=nullptr;
   }
 
   Lazy_alpha_nt_2(double d)
    : exact_(Exact_nt(d)), approx_(d)
   {
     data().nbpts=0;
-    data().p0=NULL;
-    data().p1=NULL;
-    data().p2=NULL;
+    data().p0=nullptr;
+    data().p1=nullptr;
+    data().p2=nullptr;
   }
 
   Lazy_alpha_nt_2(const Input_point& wp0)
   {
     data().nbpts=1;
     data().p0=&wp0;
-    data().p1=NULL;
-    data().p2=NULL;
+    data().p1=nullptr;
+    data().p2=nullptr;
     set_approx();
   }
 
@@ -271,7 +289,7 @@ public:
     data().nbpts=2;
     data().p0=&wp0;
     data().p1=&wp1;
-    data().p2=NULL;
+    data().p2=nullptr;
     set_approx();
   }
 
@@ -449,7 +467,17 @@ struct Alpha_nt_selector_2
 template<class Input_traits, bool mode, class Weighted_tag>
 double to_double(const internal::Lazy_alpha_nt_2<Input_traits, mode, Weighted_tag>& a)
 {
-  return to_double(a.approx());
+  double r;
+  if (fit_in_double(a.approx(), r))
+    return r;
+
+  // If it isn't precise enough,
+  // we trigger the exact computation first,
+  // which will refine the approximation.
+  if (!has_smaller_relative_precision(a.approx(), a.get_relative_precision_of_to_double()))
+    a.exact();
+
+  return CGAL_NTS to_double(a.approx());
 }
 
 } // namespace CGAL

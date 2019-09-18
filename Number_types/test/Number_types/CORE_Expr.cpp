@@ -1,5 +1,5 @@
 #include <iostream>
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #ifdef CGAL_USE_CORE
 #include <sstream>
 #include <list>
@@ -139,8 +139,6 @@ int main() {
 }
 
 #if 0
-
-#include <CGAL/basic.h>
 
 #include <cstdlib>
 #include <sstream>

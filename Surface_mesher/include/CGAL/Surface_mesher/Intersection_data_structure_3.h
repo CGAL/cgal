@@ -31,7 +31,7 @@
 #include <boost/format.hpp>
 #include <boost/bind.hpp>
 #include <boost/ref.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/intersections.h>
 

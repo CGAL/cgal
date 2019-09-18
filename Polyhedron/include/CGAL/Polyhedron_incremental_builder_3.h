@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polyhedron.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Random_access_adaptor.h>
@@ -361,7 +362,7 @@ protected:
     }
 
     size_type find_vertex( Vertex_handle v) {
-        // Returns 0 if v == NULL.
+        // Returns 0 if v == nullptr.
         if ( v == Vertex_handle() )
             return 0;
         size_type n = 0;
@@ -376,7 +377,7 @@ protected:
     }
 
     size_type find_facet( Face_handle f) {
-        // Returns 0 if f == NULL.
+        // Returns 0 if f == nullptr.
         if ( f == Face_handle())
             return 0;
         size_type n = 0;
@@ -914,6 +915,8 @@ remove_unconnected_vertices( Tag_true) {
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYHEDRON_INCREMENTAL_BUILDER_3_H //
 // EOF //

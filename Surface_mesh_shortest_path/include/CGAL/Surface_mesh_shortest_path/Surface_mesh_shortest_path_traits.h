@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Surface_mesh_shortest_path.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesh_shortest_path/barycentric.h>
 #include <CGAL/Surface_mesh_shortest_path/function_objects.h>
@@ -62,7 +63,7 @@ public:
   typedef typename Kernel::FT FT;
 
   /// Barycentric coordinates type
-  typedef typename CGAL::cpp11::array<FT,3> Barycentric_coordinates;
+  typedef typename std::array<FT,3> Barycentric_coordinates;
 
   // Predicates
   typedef typename Surface_mesh_shortest_paths_3::Compare_relative_intersection_along_segment_2<Kernel> Compare_relative_intersection_along_segment_2;
@@ -225,5 +226,6 @@ public:
 
 } // namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_SHORTEST_PATH_TRAITS_H

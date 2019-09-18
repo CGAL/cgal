@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgSurfaceSubdivisionMethods3Concepts
+\ingroup PkgSurfaceSubdivisionMethod3Concepts
 \cgalConcept
 
 Required member functions for the `PTQMask_3` concept. This

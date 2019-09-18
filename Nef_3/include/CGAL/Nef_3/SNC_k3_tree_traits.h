@@ -417,7 +417,6 @@ Side_of_plane<SNC_decorator>::operator()
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   }
 #endif
-  CGAL_error_msg( "should not be reached");
 }
 
 /* 

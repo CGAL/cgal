@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3Concepts
+\ingroup PkgMesh3Concepts
 \cgalConcept
 
 The concept `MeshComplexWithFeatures_3InTriangulation_3` describes a data structure 
@@ -145,21 +145,9 @@ size_type number_of_edges() const;
 
 /*!
 
-Returns the number of edges which belong to curve with index `index`.
-*/ 
-size_type number_of_edges(Curve_index index) const;
-
-/*!
-
 Returns the number of vertices which are corners of the complex. 
 */ 
 size_type number_of_corners() const; 
-
-/*!
-
-Returns the number of vertices which are corners of the complex with index `index`. 
-*/ 
-size_type number_of_corners(Corner_index index) const; 
 
 /*!
 Returns `true` 
@@ -215,7 +203,7 @@ Edges_in_complex_iterator edges_in_complex_begin() const;
 
 Returns the past-the-end iterator for the above iterator. 
 */ 
-Edge_in_complex_iterator edges_in_complex_end() const; 
+Edges_in_complex_iterator edges_in_complex_end() const; 
 
 /*!
 
@@ -228,7 +216,7 @@ Edges_in_complex_iterator edges_in_complex_begin(Curve_index index) const;
 
 Returns the past-the-end iterator for the above iterator. 
 */ 
-Edge_in_complex_iterator edges_in_complex_end(Curve_index index) const;
+Edges_in_complex_iterator edges_in_complex_end(Curve_index index) const;
 
 /*!
 

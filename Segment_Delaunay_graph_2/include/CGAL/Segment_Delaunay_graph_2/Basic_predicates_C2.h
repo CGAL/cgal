@@ -110,9 +110,6 @@ public:
     Homogeneous_point_2(const Point_2& p)
       : hx_(p.x()), hy_(p.y()), hw_(1) {}
 
-    Homogeneous_point_2(const Homogeneous_point_2& other)
-      : hx_(other.hx_), hy_(other.hy_), hw_(other.hw_) {}
-
     RT hx() const { return hx_; }
     RT hy() const { return hy_; }
     RT hw() const { return hw_; }
@@ -146,8 +143,11 @@ public:
   static
   FT to_ft(const Sqrt_3& x)
   {
-    FT sqrt_e = compute_sqrt( to_ft(x.e()), FT_Has_sqrt() );
-    FT sqrt_f = compute_sqrt( to_ft(x.f()), FT_Has_sqrt() );
+    // If the number type does not offer a square root, x.e() and x.f() (which are of type sqrt_1)
+    // might be negative after (approximately) evaluating them. Taking the max sanitize these values
+    // to ensure that we do not take the square root of a negative number.
+    FT sqrt_e = compute_sqrt( (std::max)(FT(0), to_ft(x.e())), FT_Has_sqrt() );
+    FT sqrt_f = compute_sqrt( (std::max)(FT(0), to_ft(x.f())), FT_Has_sqrt() );
     FT sqrt_ef = sqrt_e * sqrt_f;
     return to_ft(x.a()) + to_ft(x.b()) * sqrt_e
       + to_ft(x.c()) * sqrt_f + to_ft(x.d()) * sqrt_ef;

@@ -18,7 +18,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 int main()
 {
   {
-    typedef CGAL::Surface_mesh<typename Epic::Point_3> SM;
+    typedef CGAL::Surface_mesh<Epic::Point_3> SM;
     SM sm;
 
     std::ifstream in("data/elephant.off");

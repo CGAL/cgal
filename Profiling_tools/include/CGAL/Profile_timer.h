@@ -41,6 +41,8 @@
 #include <string>
 #include <CGAL/Timer.h>
 
+#include <CGAL/disable_warnings.h>
+
 namespace CGAL {
 
 struct Profile_timer
@@ -77,5 +79,7 @@ private:
 #endif
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_PROFILE_TIMER_H

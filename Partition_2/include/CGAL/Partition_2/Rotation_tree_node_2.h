@@ -45,8 +45,9 @@ namespace CGAL {
 template <class Traits> class Rotation_tree_2;
 
 template <class Traits>
-class Rotation_tree_node_2 : public Traits::Point_2
+class Rotation_tree_node_2
 {
+  typename Traits::Point_2 point;
 public:
 
    typedef typename Traits::Point_2          Base_point;
@@ -56,7 +57,7 @@ public:
    typedef std::pair<Tree_iterator, bool>    Node_ref;
 
 
-   Rotation_tree_node_2(Base_point p) : Base_point(p)
+   Rotation_tree_node_2(Base_point p) : point(p)
    { 
       _parent.second = false;
       _left_sibling.second = false;
@@ -64,6 +65,9 @@ public:
       _rightmost_child.second = false;
    }
 
+   operator Base_point() const
+   { return point;}
+  
    bool has_left_sibling() const
    {  return _left_sibling.second; }
 

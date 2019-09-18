@@ -43,6 +43,9 @@ namespace Qt {
 class CGAL_QT_EXPORT GraphicsItem : public QObject, public QGraphicsItem {
 
   Q_OBJECT
+#ifdef CGAL_HEADER_ONLY
+  Q_INTERFACES(QGraphicsItem)
+#endif
 
 public Q_SLOTS:
 

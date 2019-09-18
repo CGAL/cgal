@@ -26,6 +26,8 @@
 #ifndef CGAL_HANDLE_FOR_H
 #define CGAL_HANDLE_FOR_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/config.h>
 #include <CGAL/assertions.h> // for CGAL_assume
 
@@ -49,8 +51,11 @@ class Handle_for
         unsigned int count;
     };
 
-    typedef typename Alloc::template rebind<RefCounted>::other  Allocator;
-    typedef typename Allocator::pointer                         pointer;
+
+    typedef std::allocator_traits<Alloc> Alloc_traits;
+    typedef typename Alloc_traits::template rebind_alloc<RefCounted>           Allocator;
+    typedef std::allocator_traits<Allocator> Allocator_traits;
+    typedef typename Alloc_traits::template rebind_traits<RefCounted>::pointer pointer;
 
     static Allocator   allocator;
     pointer            ptr_;
@@ -77,7 +82,6 @@ public:
         ptr_ = p;
     }
 
-#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     Handle_for(element_type && t)
     {
         pointer p = allocator.allocate(1);
@@ -85,7 +89,6 @@ public:
         p->count = 1;
         ptr_ = p;
     }
-#endif
 
 /* I comment this one for now, since it's preventing the automatic conversions
    to take place.  We'll see if it's a problem later.
@@ -99,7 +102,6 @@ public:
     }
 */
 
-#if !defined CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES && !defined CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     template < typename T1, typename T2, typename... Args >
     Handle_for(T1 && t1, T2 && t2, Args && ... args)
     {
@@ -108,34 +110,6 @@ public:
         p->count = 1;
         ptr_ = p;
     }
-#else
-    template < typename T1, typename T2 >
-    Handle_for(const T1& t1, const T2& t2)
-    {
-        pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(t1, t2);
-        p->count = 1;
-        ptr_ = p;
-    }
-
-    template < typename T1, typename T2, typename T3 >
-    Handle_for(const T1& t1, const T2& t2, const T3& t3)
-    {
-        pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(t1, t2, t3);
-        p->count = 1;
-        ptr_ = p;
-    }
-
-    template < typename T1, typename T2, typename T3, typename T4 >
-    Handle_for(const T1& t1, const T2& t2, const T3& t3, const T4& t4)
-    {
-        pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(t1, t2, t3, t4);
-        p->count = 1;
-        ptr_ = p;
-    }
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
     Handle_for(const Handle_for& h)
       : ptr_(h.ptr_)
@@ -163,9 +137,8 @@ public:
         return *this;
     }
 
-#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     // Note : I don't see a way to make a useful move constructor, apart
-    //        from e.g. using NULL as a ptr value, but this is drastic.
+    //        from e.g. using nullptr as a ptr value, but this is drastic.
 
     Handle_for&
     operator=(Handle_for && h)
@@ -184,13 +157,12 @@ public:
 
         return *this;
     }
-#endif
 
     ~Handle_for()
     {
       if (--(ptr_->count) == 0) {
-          allocator.destroy( ptr_);
-          allocator.deallocate( ptr_, 1);
+        Allocator_traits::destroy(allocator, ptr_);
+        allocator.deallocate( ptr_, 1);
       }
     }
 
@@ -312,5 +284,7 @@ get_pointee_or_identity(const T &t)
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_HANDLE_FOR_H

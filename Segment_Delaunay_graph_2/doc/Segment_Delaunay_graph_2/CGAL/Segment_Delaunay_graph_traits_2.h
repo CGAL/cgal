@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSegmentDelaunayGraph2
+\ingroup PkgSegmentDelaunayGraph2Ref
 
 The class `Segment_Delaunay_graph_traits_2` provides a model for the 
 `SegmentDelaunayGraphTraits_2` concept. 
@@ -74,7 +74,7 @@ typedef MTag Method_tag;
 namespace CGAL {
 
 /*!
-\ingroup PkgSegmentDelaunayGraph2
+\ingroup PkgSegmentDelaunayGraph2Ref
 
 The class `Segment_Delaunay_graph_traits_without_intersections_2` provides a model for the 
 `SegmentDelaunayGraphTraits_2` concept. 
@@ -119,6 +119,8 @@ struct Segment_Delaunay_graph_traits_without_intersections_2 {
 */ 
 typedef CGAL::Tag_false Intersections_tag; 
 
+/// @}
+  
 /// \name Additional Types
 /// The `Segment_Delaunay_graph_traits_without_intersections_2` class
 /// introduces a few additional types with respect to the

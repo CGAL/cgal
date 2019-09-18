@@ -633,6 +633,8 @@ A translation in accordance with `offset` is applied on the point-offet pairs.
 */
 Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c, Offset offset) const;
 
+/// @}
+
 /// \name
 /// \warning The following functions were renamed with %CGAL 4.11 to clarify
 /// that they return geometric objects with inner type `Point_3`.
@@ -730,6 +732,8 @@ Tetrahedron construct_tetrahedron(const P& p1, const P& p2, const P& p3, const P
 Tests whether `p` is a vertex of `t` by locating `p` in
 the triangulation. If `p` is found, the associated vertex `v`
 is given.
+
+\pre `p` lies in the original domain `domain`.
 */
 bool is_vertex(const Point & p, Vertex_handle & v) const;
 

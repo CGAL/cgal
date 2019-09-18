@@ -18,12 +18,10 @@ circumcenter.
 \tparam Cb is a cell base class from which 
 `Delaunay_triangulation_cell_base_with_circumcenter_3` derives. Cb should
 be a model of `DelaunayTriangulationCellBase_3`. 
-It has the default value `Triangulation_cell_base_3<Traits>`.
+It has the default value `Delaunay_triangulation_cell_base_3<Traits>`.
 
 \cgalModels `DelaunayTriangulationCellBase_3`
 
-\sa `CGAL::Triangulation_cell_base_3` 
-\sa `CGAL::Triangulation_cell_base_with_info_3` 
 \sa `CGAL::Delaunay_triangulation_cell_base_3`
 
 */

@@ -120,7 +120,7 @@ class Interval_for_container : public Interval_
       void * p;
     public:
       Interval_for_container(const Interval_& i)
-	: Interval_(i), p(NULL)
+	: Interval_(i), p(nullptr)
       {}
       
       void *   for_compact_container() const { return p; }
@@ -358,7 +358,8 @@ class Interval_for_container : public Interval_
 #ifdef CGAL_ISL_USE_CCC
     static Compact_container<IntervalListElt<Interval> > compact_container;
 #endif
-    std::allocator<IntervalListElt<Interval> > alloc;
+    typedef std::allocator<IntervalListElt<Interval> > Alloc;
+    Alloc alloc;
 
   public:
 
@@ -383,7 +384,7 @@ class Interval_for_container : public Interval_
       return it;
 #else
       IntervalListElt<Interval> *elt_ptr = alloc.allocate(1);
-      alloc.construct(elt_ptr, I);
+      std::allocator_traits<Alloc>::construct(alloc,elt_ptr, I);
       return elt_ptr;
       //return new IntervalListElt<Interval>(I);
 #endif
@@ -394,7 +395,8 @@ class Interval_for_container : public Interval_
 #ifdef CGAL_ISL_USE_CCC
       compact_container.erase(I);
 #else
-      alloc.destroy(I);
+
+      std::allocator_traits<Alloc>::destroy(alloc,I);
       alloc.deallocate(I,1);
       //delete I;
 #endif
@@ -412,7 +414,7 @@ class Interval_for_container : public Interval_
     copy(OutputIterator out) const
     {
       ILE_handle e = header;
-      while(e!= NULL) { 
+      while(e!= nullptr) { 
 	out = *(e->I);
 	++out;
 	e = e->next;
@@ -617,7 +619,7 @@ template <class Interval>
   void IntervalList<Interval>::copy(IntervalList* from)
   {
     ILE_handle e = from->header;
-    while(e!=NULL) { 
+    while(e!=nullptr) { 
       insert(e->I);
       e = e->next;
     }
@@ -629,7 +631,7 @@ template <class Interval>
   {
     ILE_handle x = header;
     ILE_handle y; 
-    while(x!= NULL) { // was 0
+    while(x!= nullptr) { // was 0
       y = x;
       x = x->next;
       erase_list_element(y);
@@ -707,7 +709,7 @@ template <class Interval>
 
     for(i=0; (i<= x->level() - 2) && x->forward[i+1]!=0; i++) {
       IntervalList<Interval>* markList = update[i]->markers[i];
-      for(m = markList->get_first(); m != NULL ; m = markList->get_next(m)) {
+      for(m = markList->get_first(); m != nullptr ; m = markList->get_next(m)) {
 	if(m->getInterval()->contains_interval(x->key,x->forward[i+1]->key)) { 
 	  // promote m
 	  
@@ -725,7 +727,7 @@ template <class Interval>
 	}
       }
       
-      for(m = promoted.get_first(); m != NULL; m = promoted.get_next(m)) {
+      for(m = promoted.get_first(); m != nullptr; m = promoted.get_next(m)) {
 	if(!m->getInterval()->contains_interval(x->key, x->forward[i+1]->key)){
 	  // Then m does not need to be promoted higher.
 	  // Place m on the level i edge out of x and remove m from promoted.
@@ -755,7 +757,7 @@ template <class Interval>
     
     x->markers[i]->copy(&promoted);
     x->markers[i]->copy(update[i]->markers[i]);
-    for(m=promoted.get_first(); m!=NULL; m=promoted.get_next(m))
+    for(m=promoted.get_first(); m!=nullptr; m=promoted.get_next(m))
       if(m->getInterval()->contains(x->forward[i]->key))
         x->forward[i]->eqMarkers->insert(m->getInterval());
     
@@ -769,7 +771,7 @@ template <class Interval>
     for (i=0; (i <= x->level() - 2) && !update[i+1]->isHeader(); i++) {
       tempMarkList.copy(update[i]->markers[i]);
       for(m = tempMarkList.get_first(); 
-	  m != NULL; 
+	  m != nullptr; 
 	  m = tempMarkList.get_next(m)){
 	if(m->getInterval()->contains_interval(update[i+1]->key,x->key)) {
 	  // m needs to be promoted
@@ -784,7 +786,7 @@ template <class Interval>
       }
       tempMarkList.clear();  // reclaim storage
       
-      for(m = promoted.get_first(); m != NULL; m = promoted.get_next(m)) {
+      for(m = promoted.get_first(); m != nullptr; m = promoted.get_next(m)) {
 	if (!update[i]->isHeader() && 
 	    m->getInterval()->contains_interval(update[i]->key,x->key) &&
 	    !update[i+1]->isHeader() &&
@@ -827,12 +829,12 @@ template <class Interval>
        will be placed on the edge.  */
 
     update[i]->markers[i]->copy(&promoted);
-    for(m=promoted.get_first(); m!=NULL; m=promoted.get_next(m))
+    for(m=promoted.get_first(); m!=nullptr; m=promoted.get_next(m))
       if(m->getInterval()->contains(update[i]->key))
 	update[i]->eqMarkers->insert(m->getInterval());
 
     // Place markers on x for all intervals the cross x.
-    // (Since x is a new node, every marker comming into x must also leave x).
+    // (Since x is a new node, every marker coming into x must also leave x).
     for(i=0; i<x->level(); i++)
       x->eqMarkers->copy(x->markers[i]);
     
@@ -859,7 +861,7 @@ template <class Interval>
 
     for(i=x->level()-1; i>=0; i--){
       // find marks on edge into x at level i to be demoted
-      for(m=update[i]->markers[i]->get_first(); m!=NULL; 
+      for(m=update[i]->markers[i]->get_first(); m!=nullptr; 
 	  m=update[i]->markers[i]->get_next(m)){
 	if(x->forward[i]==0 ||
 	   ! m->getInterval()->contains_interval(update[i]->key,
@@ -873,7 +875,7 @@ template <class Interval>
       // there before demotion must be there afterwards.
 
       // Place previously demoted marks on this level as needed.
-      for(m=demoted.get_first(); m!=NULL; m=demoted.get_next(m)){
+      for(m=demoted.get_first(); m!=nullptr; m=demoted.get_next(m)){
 	// Place mark on level i from update[i+1] to update[i], not including 
 	// update[i+1] itself, since it already has a mark if it needs one.
 	for(y=update[i+1]; y!=0 && y!=update[i]; y=y->forward[i]) {
@@ -907,7 +909,7 @@ template <class Interval>
     // newDemoted is already empty
 
     for(i=x->level()-1; i>=0; i--){
-      for(m=x->markers[i]->get_first(); m!=NULL ; m=x->markers[i]->get_next(m)){
+      for(m=x->markers[i]->get_first(); m!=nullptr ; m=x->markers[i]->get_next(m)){
 	if(x->forward[i]!=0 && 
 	   (update[i]->isHeader() ||
 	    !m->getInterval()->contains_interval(update[i]->key,
@@ -917,7 +919,7 @@ template <class Interval>
 	  }
       }
 
-      for(m=demoted.get_first(); m!= NULL; m=demoted.get_next(m)){
+      for(m=demoted.get_first(); m!= nullptr; m=demoted.get_next(m)){
 	// Place mark on level i from x->forward[i] to x->forward[i+1].
 	// Don't place a mark directly on x->forward[i+1] since it is already
 	// marked.
@@ -1008,10 +1010,10 @@ template <class Interval>
       }
     }
     x = x->forward[0];
-    if(x != NULL && (x->key == searchKey))
+    if(x != nullptr && (x->key == searchKey))
       return(x);
     else
-      return(NULL);
+      return(nullptr);
   }
 
   template <class Interval>
@@ -1227,10 +1229,10 @@ template <class Interval>
     for(i=0; i<=topLevel; i++)
       {
 	os << "forward[" << i << "] = ";
-	if(forward[i] != NULL) {
+	if(forward[i] != nullptr) {
 	  os << forward[i]->getValue();
 	} else {
-	  os << "NULL";
+	  os << "nullptr";
 	}
 	os << std::endl;
       }
@@ -1238,10 +1240,10 @@ template <class Interval>
     for(i=0; i<=topLevel; i++)
       {
 	os << "markers[" << i << "] = ";
-	if(markers[i] != NULL) {
+	if(markers[i] != nullptr) {
 	  markers[i]->print(os);
 	} else {
-	  os << "NULL";
+	  os << "nullptr";
 	}
 	os << "\n";
       }
@@ -1266,14 +1268,14 @@ template <class Interval>
   IntervalList<Interval>::remove(const Interval& I, Interval_handle& res)
   {
     ILE_handle x, last;
-    x = header; last = NULL;
-    while(x != NULL && *(x->getInterval()) != I) {
+    x = header; last = nullptr;
+    while(x != nullptr && *(x->getInterval()) != I) {
       last = x;
       x = x->next;
     } 
-    if(x==NULL) {
+    if(x==nullptr) {
       return false;
-    } else if (last==NULL) {
+    } else if (last==nullptr) {
       header = x->next;
       res = x->getInterval();
       erase_list_element(x);
@@ -1291,14 +1293,14 @@ template <class Interval>
   IntervalList<Interval>::remove(const Interval& I)
   {
     ILE_handle x, last;
-    x = header; last = NULL;
-    while(x != NULL && *(x->getInterval()) != I) {
+    x = header; last = nullptr;
+    while(x != nullptr && *(x->getInterval()) != I) {
       last = x;
       x = x->next;
     }
-    if(x==NULL) {
+    if(x==nullptr) {
       return ;
-    } else if (last==NULL) {
+    } else if (last==nullptr) {
       header = x->next;
       erase_list_element(x);
     } else {
@@ -1311,7 +1313,7 @@ template <class Interval>
   void IntervalList<Interval>::removeAll(IntervalList<Interval> *l)
   {
     ILE_handle x;
-    for(x=l->get_first(); x!=NULL; x=l->get_next(x))
+    for(x=l->get_first(); x!=nullptr; x=l->get_next(x))
       this->remove(*(x->getInterval()));
   }
 
@@ -1319,14 +1321,14 @@ template <class Interval>
   template <class Interval>
   inline 
   IntervalListElt<Interval>::IntervalListElt()
-    : next(NULL)
+    : next(nullptr)
   {}
 
 
   template <class Interval>
   inline 
   IntervalListElt<Interval>::IntervalListElt(const Interval_handle& anInterval)
-    : I(anInterval), next(NULL)
+    : I(anInterval), next(nullptr)
   {}
 
   template <class Interval>
@@ -1356,7 +1358,7 @@ template <class Interval>
   void IntervalList<Interval>::print(std::ostream& os) const
   {
     ILE_handle e = header;
-    while(e != NULL) {
+    while(e != nullptr) {
       e->print(os);
       e = e->get_next();
     }
@@ -1367,7 +1369,7 @@ template <class Interval>
   {
     /*
     if(I == 0) {
-      os << "NULL";
+      os << "nullptr";
     } else {
       os << *I;
     }
@@ -1381,7 +1383,7 @@ template <class Interval>
     ILE_handle x = header;
     while(x!=0 && I != x->I)
       x = x->next;
-    if (x==NULL)
+    if (x==nullptr)
       return false;
     else
       return true;
@@ -1391,7 +1393,7 @@ template <class Interval>
 
   template <class Interval>
   inline IntervalList<Interval>::IntervalList()
-    :  header(NULL)
+    :  header(nullptr)
   {}
 
 

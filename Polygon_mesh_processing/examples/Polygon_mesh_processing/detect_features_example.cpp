@@ -1,8 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 
 #include <fstream>
 
@@ -37,7 +35,7 @@ int main(int argc, char* argv[])
                                     PMP::parameters::vertex_incident_patches_map(vip));
 
   std::size_t nb_sharp_edges = 0;
-  BOOST_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
+  for(boost::graph_traits<Mesh>::edge_descriptor e : edges(mesh))
   {
     if(get(eif, e))
       ++nb_sharp_edges;

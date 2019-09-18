@@ -203,9 +203,9 @@ public:
       }
 
       // Create the subcurve object.
-      this->m_subCurveAlloc.construct(this->m_subCurves + index,
+      typedef decltype(this->m_subCurveAlloc) Subcurve_alloc;
+      std::allocator_traits<Subcurve_alloc>::construct(this->m_subCurveAlloc, this->m_subCurves + index,
                                       this->m_masterSubcurve);
-
       (this->m_subCurves + index)->init(*iter);
       (this->m_subCurves + index)->set_left_event(e_left);
       (this->m_subCurves + index)->set_right_event(e_right);

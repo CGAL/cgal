@@ -29,7 +29,7 @@
 
 #include <CGAL/config.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Make_x_monotone_2.h>
-
+#include <CGAL/iterator.h>
 namespace CGAL {
 
 namespace internal {
@@ -93,7 +93,7 @@ public:
     Curved_kernel_via_analysis_2_functor_base(
             Curved_kernel_via_analysis_2 *kernel) :
         _m_curved_kernel(kernel) {
-        CGAL_precondition(kernel != NULL);
+        CGAL_precondition(kernel != nullptr);
     }
 
     //!@}
@@ -458,6 +458,8 @@ public:
         Arc_2 arc(x, c);
         return arc;
     }
+
+    //!@}
 };
 
 /*!\brief
@@ -1432,7 +1434,7 @@ public:
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
     
     //! the result type
-    typedef std::iterator< std::output_iterator_tag, CGAL::Object > 
+    typedef CGAL::cpp98::iterator< std::output_iterator_tag, CGAL::Object >
     result_type;
     
     //! the arity of the functor
@@ -1888,7 +1890,7 @@ public:
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
     
     //! the result type
-    typedef std::iterator< std::output_iterator_tag, CGAL::Object > 
+    typedef CGAL::cpp98::iterator< std::output_iterator_tag, CGAL::Object >
     result_type;
 
     //! the arity of the functor
@@ -2511,7 +2513,7 @@ public:
     typedef typename Curve_analysis_2::Coordinate_2 Coordinate_2;
     
     //! the result type
-    typedef std::iterator< std::output_iterator_tag, Coordinate_2 >
+    typedef CGAL::cpp98::iterator< std::output_iterator_tag, Coordinate_2 >
          result_type;
 
     //! the arity of the functor
@@ -2576,7 +2578,7 @@ public:
     typedef typename Curve_analysis_2::Coordinate_2 Coordinate_2;
     
     //! the result type
-    typedef std::iterator< std::output_iterator_tag, Coordinate_2 >
+    typedef CGAL::cpp98::iterator< std::output_iterator_tag, Coordinate_2 >
              result_type;
 
     //! the arity of the functor
@@ -2668,7 +2670,7 @@ public:
     
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-
+    //!@}
 //     typedef Curved_kernel_via_analysis_2_functors<
 //         CurvedKernelViaAnalysis_2 > Functor_base;
    

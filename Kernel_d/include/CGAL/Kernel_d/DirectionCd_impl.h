@@ -52,8 +52,8 @@ cmp(const DirectionCd<FT,LA>& h1,
   int c2 = CGAL_NTS sign(h2.delta(i));
   if (c1 != c2) return CGAL_NTS compare(c1,c2);
  
-  FT s1 = (FT) CGAL_NTS sign(h2.delta(i)) * h2.delta(i); 
-  FT s2 = (FT) CGAL_NTS sign(h1.delta(i)) * h1.delta(i); 
+  FT s1 = (FT) (int) CGAL_NTS sign(h2.delta(i)) * h2.delta(i);
+  FT s2 = (FT) (int) CGAL_NTS sign(h1.delta(i)) * h1.delta(i);
 
   i++;
   Comparison_result c; 

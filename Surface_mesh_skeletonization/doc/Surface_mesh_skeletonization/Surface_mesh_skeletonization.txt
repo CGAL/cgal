@@ -31,7 +31,7 @@ The input is a triangulated surface mesh, model of the `FaceListGraph`
 concept (`CGAL::Surface_mesh`, `CGAL::Polyhedron_3`, ...)
 that has no boundary and that has only one connected component.
 The skeleton is provided as a graph of type
-<a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><code>boost::adjacency_list</code></a>.
+<a href="https://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><code>boost::adjacency_list</code></a>.
 Each vertex of the skeleton is associated to a 3D location point and to the
 set of input vertices that contracted to that skeleton vertex.
 Note that due to the construction process of the skeleton, a
@@ -97,7 +97,7 @@ In this example, we show how to use the API of the class
 As a proof of concept, we show how to use the skeleton and the
 association of input vertices to skeleton to compute a segmentation
 of the input triangulated surface mesh using the package
-\ref PkgSurfaceSegmentationSummary.
+\ref PkgSurfaceMeshSegmentation.
 The segmentation algorithm consists in computing a <i>shape diameter function</i>
 for each face of the input mesh, followed by solving a graph cut problem.
 Here we use the skeleton to define a new shape diameter function.

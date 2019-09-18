@@ -250,8 +250,8 @@ struct Reference_counted_hierarchy_base {};
 template <class Allocator_  = CGAL_ALLOCATOR(char)>
 class Reference_counted_hierarchy : public Reference_counted_hierarchy_base {
     // make sure it's always a char allocator
-    typedef typename Allocator_::template rebind< char> Char_alloc_rebind;
-    typedef typename Char_alloc_rebind::other   Char_allocator;
+    typedef std::allocator_traits<Allocator_> Allocator_traits;
+    typedef typename Allocator_traits::template rebind_alloc<char> Char_allocator;
 
     static Char_allocator alloc;
 
@@ -535,7 +535,7 @@ public:
             while ( new_rep->next != 0)
                 new_rep = static_cast<Rep*>(new_rep->next);
             // path compression: assign new rep to all reps seen on the path
-            // update reference count properly: all reps on the path loose
+            // update reference count properly: all reps on the path lose
             // one reference, and the new_rep gains all of them unless
             // the rep on the path get actually deleted.
             Rep* rep = h.ptr_;
@@ -750,8 +750,8 @@ public:
 
     typedef typename Rep::Rep_pointer  Rep_pointer;
 
-    typedef typename Allocator_::template rebind<Rep>::other  Rep_allocator;
-
+    typedef std::allocator_traits<Allocator_> Allocator_traits;
+    typedef typename Allocator_traits::template rebind_alloc<Rep> Rep_allocator;
 
     //! integer type for identifying a representation.
     typedef std::ptrdiff_t              Id_type;
@@ -772,11 +772,11 @@ private:
         CGAL_static_assertion( !(
            ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value ));
         Rep* p = allocator.allocate(1);
-        allocator.construct(p, rep);
+        std::allocator_traits<Rep_allocator>::construct(allocator, p, rep);
         return p;
     }
     static void delete_rep( Rep* p, ::CGAL::Tag_false ) {
-        allocator.destroy( p);
+      std::allocator_traits<Rep_allocator>::destroy(allocator, p);
         allocator.deallocate( p, 1);
     }
     static void delete_rep( Rep* p, ::CGAL::Tag_true ) {

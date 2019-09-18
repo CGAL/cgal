@@ -20,6 +20,9 @@
 
 #ifndef CGAL_EPICK_D_H
 #define CGAL_EPICK_D_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/NewKernel_d/Cartesian_base.h>
 #include <CGAL/NewKernel_d/Cartesian_static_filters.h>
 #include <CGAL/NewKernel_d/Cartesian_filter_K.h>
@@ -41,8 +44,8 @@ template<class Dim>
 struct Epick_d_help1
 : CGAL_BASE
 {
-  CGAL_CONSTEXPR Epick_d_help1(){}
-  CGAL_CONSTEXPR Epick_d_help1(int d):CGAL_BASE(d){}
+  constexpr Epick_d_help1(){}
+  constexpr Epick_d_help1(int d):CGAL_BASE(d){}
 };
 #undef CGAL_BASE
 #define CGAL_BASE \
@@ -51,8 +54,8 @@ template<class Dim>
 struct Epick_d_help2
 : CGAL_BASE
 {
-  CGAL_CONSTEXPR Epick_d_help2(){}
-  CGAL_CONSTEXPR Epick_d_help2(int d):CGAL_BASE(d){}
+  constexpr Epick_d_help2(){}
+  constexpr Epick_d_help2(int d):CGAL_BASE(d){}
 };
 #undef CGAL_BASE
 #define CGAL_BASE \
@@ -64,9 +67,12 @@ template<class Dim>
 struct Epick_d
 : CGAL_BASE
 {
-  CGAL_CONSTEXPR Epick_d(){}
-  CGAL_CONSTEXPR Epick_d(int d):CGAL_BASE(d){}
+  constexpr Epick_d(){}
+  constexpr Epick_d(int d):CGAL_BASE(d){}
 };
 #undef CGAL_BASE
 }
+
+#include <CGAL/enable_warnings.h>
+
 #endif

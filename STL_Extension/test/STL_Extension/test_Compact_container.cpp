@@ -1,19 +1,19 @@
 // test program for Compact_container.
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <cstddef>
 #include <list>
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Random.h>
-#include <CGAL/Testsuite/use.h>
 
 #include <CGAL/tags.h>
 #include <CGAL/use.h>
 #include <CGAL/assertions.h>
 
 #include <boost/type_traits/is_base_of.hpp>
+
+#include <CGAL/disable_warnings.h>
 
 template <typename Has_timestamp_ = CGAL::Tag_true>
 struct Node_1

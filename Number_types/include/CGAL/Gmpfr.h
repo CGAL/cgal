@@ -35,28 +35,28 @@ public:
         typedef bool            Boolean;
 
         struct Is_zero:
-        public CGAL::unary_function<Type,Boolean>{
+        public CGAL::cpp98::unary_function<Type,Boolean>{
                 Boolean operator()(const Type &x)const{
                         return x.is_zero();
                 }
         };
 
         struct Is_one:
-        public CGAL::unary_function<Type,Boolean>{
+        public CGAL::cpp98::unary_function<Type,Boolean>{
                 Boolean operator()(const Type &x)const{
                         return x.is_one();
                 }
         };
 
         struct Square:
-        public CGAL::unary_function<Type,Type>{
+        public CGAL::cpp98::unary_function<Type,Type>{
                 Type operator()(const Type &x)const{
                         return x.square();
                 };
         };
 
         struct Is_square:
-        public CGAL::binary_function<Type,Type&,Boolean>{
+        public CGAL::cpp98::binary_function<Type,Type&,Boolean>{
                 Boolean operator()(const Type &x,Type &y)const{
                         return x.is_square(y);
                 };
@@ -66,14 +66,14 @@ public:
         };
 
         struct Sqrt:
-        public CGAL::unary_function<Type,Type>{
+        public CGAL::cpp98::unary_function<Type,Type>{
                 Type operator()(const Type &x)const{
                         return x.sqrt();
                 };
         };
 
         struct Kth_Root:
-        public CGAL::binary_function<int,Type,Type>{
+        public CGAL::cpp98::binary_function<int,Type,Type>{
                 Type operator()(int k,const Type &x)const{
                         return (k==3?x.cbrt():x.kthroot(k));
                 };
@@ -96,42 +96,42 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
         typedef AST::Is_zero    Is_zero;
 
         struct Is_finite:
-        public CGAL::unary_function<Type,Boolean>{
+        public CGAL::cpp98::unary_function<Type,Boolean>{
                 inline Boolean operator()(const Type &x)const{
                         return(x.is_number());
                 };
         };
 
         struct Abs:
-        public CGAL::unary_function<Type,Type>{
+        public CGAL::cpp98::unary_function<Type,Type>{
                 inline Type operator()(const Type &x)const{
                         return x.abs();
                 };
         };
 
         struct Sgn:
-        public CGAL::unary_function<Type,Sign>{
+        public CGAL::cpp98::unary_function<Type,Sign>{
                 inline Sign operator()(const Type &x)const{
                         return x.sign();
                 };
         };
 
         struct Is_positive:
-        public CGAL::unary_function<Type,Boolean>{
+        public CGAL::cpp98::unary_function<Type,Boolean>{
                 inline Boolean operator()(const Type &x)const{
                         return(x.sign()==POSITIVE);
                 };
         };
 
         struct Is_negative:
-        public CGAL::unary_function<Type,Boolean>{
+        public CGAL::cpp98::unary_function<Type,Boolean>{
                 inline Boolean operator()(const Type &x)const{
                         return(x.sign()==NEGATIVE);
                 };
         };
 
         struct Compare:
-        public CGAL::binary_function<Type,Type,Comparison_result>{
+        public CGAL::cpp98::binary_function<Type,Type,Comparison_result>{
                 inline Comparison_result operator()
                         (const Type &x,const Type &y)const{
                                 return x.compare(y);
@@ -140,14 +140,14 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
         };
 
         struct To_double:
-        public CGAL::unary_function<Type,double>{
+        public CGAL::cpp98::unary_function<Type,double>{
                 inline double operator()(const Type &x)const{
                         return x.to_double();
                 };
         };
 
         struct To_interval:
-        public CGAL::unary_function<Type,std::pair<double,double> >{
+        public CGAL::cpp98::unary_function<Type,std::pair<double,double> >{
                 inline std::pair<double,double>operator()(const Type &x)const{
                                 return x.to_interval();
                 };

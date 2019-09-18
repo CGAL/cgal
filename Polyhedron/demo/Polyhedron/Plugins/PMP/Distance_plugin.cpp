@@ -1,5 +1,9 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
+#include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Three/Edge_container.h>
+#include <CGAL/Three/Three.h>
 #include <QApplication>
 #include <QObject>
 #include <QAction>
@@ -8,13 +12,8 @@
 #include <QMessageBox>
 #include <QMap>
 #include "Messages_interface.h"
-#ifdef USE_SURFACE_MESH
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
-#endif
 #include "Color_ramp.h"
 #include "triangulate_primitive.h"
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -25,16 +24,13 @@
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <CGAL/property_map.h>
 #include <boost/container/flat_map.hpp>
-
 using namespace CGAL::Three;
 namespace PMP = CGAL::Polygon_mesh_processing;
+typedef Viewer_interface Vi;
+typedef Triangle_container Tc;
+typedef Edge_container Ec;
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
-#else
-typedef Scene_polyhedron_item Scene_face_graph_item;
-#endif
-
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
 #if defined(CGAL_LINKED_WITH_TBB)
@@ -42,19 +38,16 @@ template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
   const std::vector<Point_3>& sample_points;
-  Point_3 initial_hint;
-  tbb::atomic<double>* distance;
+  const Point_3 initial_hint;
   std::vector<double>& output;
 
   Distance_computation(const AABB_tree& tree,
                        const Point_3 p,
                        const std::vector<Point_3>& sample_points,
-                       tbb::atomic<double>* d,
                        std::vector<double>& out )
     : tree(tree)
     , sample_points(sample_points)
     , initial_hint(p)
-    , distance(d)
     , output(out)
   {
   }
@@ -62,33 +55,29 @@ struct Distance_computation{
   operator()(const tbb::blocked_range<std::size_t>& range) const
   {
     Point_3 hint = initial_hint;
-    double hdist = 0;
     for( std::size_t i = range.begin(); i != range.end(); ++i)
     {
       hint = tree.closest_point(sample_points[i], hint);
       Kernel::FT dist = squared_distance(hint,sample_points[i]);
       double d = CGAL::sqrt(dist);
       output[i] = d;
-      if (d>hdist) hdist=d;
     }
-
-    if (hdist > distance->load())
-      distance->store(hdist);
   }
 };
 #endif
 
-class Scene_distance_polyhedron_item: public Scene_item
+class Scene_distance_polyhedron_item: public Scene_item_rendering_helper
 {
   Q_OBJECT
 public:
   Scene_distance_polyhedron_item(Face_graph* poly, Face_graph* polyB, QString other_name, int sampling_pts)
-    :Scene_item(NbOfVbos,NbOfVaos),
-      poly(poly),
+    : poly(poly),
       poly_B(polyB),
-      are_buffers_filled(false),
       other_poly(other_name)
   {
+    setTriangleContainer(0, new Tc(Vi::PROGRAM_WITH_LIGHT,
+                                   false));
+    setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
     nb_pts_per_face = sampling_pts;
     this->setRenderingMode(FlatPlusEdges);
     thermal_ramp.build_thermal();
@@ -100,44 +89,30 @@ public:
   QString toolTip() const {return QString("Item %1 with color indicating distance with %2").arg(this->name()).arg(other_poly);}
   void draw(Viewer_interface *viewer) const
   {
-    if(!are_buffers_filled)
+    if(!isInit(viewer))
+      initGL(viewer);
+    if ( getBuffersFilled() &&
+         ! getBuffersInit(viewer))
     {
-      computeElements();
       initializeBuffers(viewer);
-      compute_bbox();
+      setBuffersInit(viewer, true);
     }
-    vaos[Facets]->bind();
-    attribBuffers(viewer, PROGRAM_WITH_LIGHT);
-    program = getShaderProgram(PROGRAM_WITH_LIGHT);
-    program->bind();
-    program->setUniformValue("is_selected", false);
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_pos/3));
-    program->release();
-    vaos[Facets]->release();
+    getTriangleContainer(0)->draw(viewer, false);
   }
+  
   void drawEdges(Viewer_interface* viewer) const
   {
-    vaos[Edges]->bind();
-
-    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    program->bind();
-    //draw the edges
-    program->setAttributeValue("colors", QColor(Qt::black));
-    program->setUniformValue("is_selected", false);
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_edge_pos/3));
-    vaos[Edges]->release();
-    program->release();
+    getEdgeContainer(0)->setColor(QColor(Qt::black));
+    getEdgeContainer(0)->draw(viewer, true);
   }
 
   void compute_bbox() const {
-    _bbox = PMP::bbox(*poly);
+    setBbox(PMP::bbox(*poly));
   }
 
 private:
   Face_graph* poly;
   Face_graph* poly_B;
-  mutable bool are_buffers_filled;
   QString other_poly;
   mutable std::vector<float> m_vertices;
   mutable std::vector<float> edge_vertices;
@@ -146,22 +121,8 @@ private:
   Color_ramp thermal_ramp;
   int nb_pts_per_face;
 
-  enum VAOs {
-    Facets=0,
-    Edges,
-    NbOfVaos};
-
-  enum VBOs {
-    Vertices=0,
-    Edge_vertices,
-    Normals,
-    Colors,
-    NbOfVbos};
-
   mutable std::size_t nb_pos;
   mutable std::size_t nb_edge_pos;
-  mutable QOpenGLShaderProgram *program;
-
   //fills 'out' and returns the hausdorff distance for calibration of the color_ramp.
 
   double compute_distances(const Face_graph& m, const std::vector<Kernel::Point_3>& sample_points,
@@ -175,7 +136,7 @@ private:
     tree.accelerate_distance_queries();
     tree.build();
     boost::graph_traits<Face_graph>::vertex_descriptor vd = *(vertices(m).first);
-    Traits::Point_3 hint = get(CGAL::vertex_point,*poly, vd);
+    Traits::Point_3 hint = get(CGAL::vertex_point,m, vd);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
     double hdist = 0;
@@ -189,10 +150,13 @@ private:
     }
       return hdist;
 #else
-    tbb::atomic<double> distance;
-    distance.store(0);
-    Distance_computation<Tree, Kernel::Point_3> f(tree, hint, sample_points, &distance, out);
+    double distance=0;
+    Distance_computation<Tree, Kernel::Point_3> f(tree, hint, sample_points, out);
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
+    for(std::size_t i = 0; i< out.size(); ++i){
+      if(out[i] > distance)
+        distance = out[i];
+    }
     return distance;
 #endif
   }
@@ -224,15 +188,10 @@ private:
       PMP::compute_normals(*poly, nv_pmap, nf_pmap);
       std::vector<Kernel::Point_3> total_points(0);
 
-      BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor f, faces(*poly)) {
+      for(boost::graph_traits<Face_graph>::face_descriptor f : faces(*poly)) {
         Vector nf = get(nf_pmap, f);
         typedef FacetTriangulator<Face_graph, Kernel, boost::graph_traits<Face_graph>::vertex_descriptor> FT;
-        double diagonal;
-        if(this->diagonalBbox() != std::numeric_limits<double>::infinity())
-          diagonal = this->diagonalBbox();
-        else
-          diagonal = 0.0;
-
+        
         //compute distance with other polyhedron
         //sample facet
         std::vector<Kernel::Point_3> sampled_points;
@@ -242,13 +201,13 @@ private:
         Kernel::Point_3 &q = get(vpmap,target(next(halfedge(f,*poly),*poly),*poly));
         Kernel::Point_3 &r = get(vpmap,target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
         CGAL::Random_points_in_triangle_3<Kernel::Point_3> g(p, q, r);
-        CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
+        std::copy_n(g, nb_points, std::back_inserter(sampled_points));
         sampled_points.push_back(p);
         sampled_points.push_back(q);
         sampled_points.push_back(r);
 
         //triangle facets with sample points for color display
-        FT triangulation(f,sampled_points,nf,poly,diagonal);
+        FT triangulation(f,sampled_points,nf,poly);
 
         if(triangulation.cdt->dimension() != 2 )
         {
@@ -322,7 +281,7 @@ private:
       typedef Kernel::Point_3		Point;
       typedef boost::graph_traits<Face_graph>::edge_descriptor	edge_descriptor;
 
-      BOOST_FOREACH(edge_descriptor he, edges(*poly)){
+      for(edge_descriptor he : edges(*poly)){
         const Point& a = get(vpmap,target(he,*poly));
         const Point& b = get(vpmap,source(he,*poly));
         {
@@ -337,59 +296,47 @@ private:
         }
       }
     }
+    
+    Tc* tc = getTriangleContainer(0);
+    Ec* ec = getEdgeContainer(0);
+    
+    tc->allocate(
+          Tc::Flat_vertices,
+          m_vertices.data(),
+          static_cast<GLsizei>(m_vertices.size()*sizeof(float)));
+    tc->allocate(Tc::Flat_normals,
+                 normals.data(),
+                 static_cast<GLsizei>(normals.size()*sizeof(float)));
+    tc->allocate(Tc::FColors,
+                 colors.data(),
+                 static_cast<GLsizei>(colors.size()*sizeof(float)));
+
+    ec->allocate(Ec::Vertices,
+                 edge_vertices.data(),
+                 static_cast<GLsizei>(edge_vertices.size()*sizeof(float)));
+    nb_pos = m_vertices.size();
+    nb_edge_pos = edge_vertices.size();
+    compute_bbox();
+    setBuffersFilled(true);
     QApplication::restoreOverrideCursor();
   }
+  
   void initializeBuffers(Viewer_interface *viewer)const
   {
-
-    program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
-    program->bind();
-    vaos[Facets]->bind();
-    buffers[Vertices].bind();
-    buffers[Vertices].allocate(m_vertices.data(),
-                               static_cast<GLsizei>(m_vertices.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[Vertices].release();
-    buffers[Normals].bind();
-    buffers[Normals].allocate(normals.data(),
-                              static_cast<GLsizei>(normals.size()*sizeof(float)));
-    program->enableAttributeArray("normals");
-    program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-    buffers[Normals].release();
-    buffers[Colors].bind();
-    buffers[Colors].allocate(colors.data(),
-                             static_cast<GLsizei>(colors.size()*sizeof(float)));
-    program->enableAttributeArray("colors");
-    program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-    buffers[Colors].release();
-    vaos[Facets]->release();
-    program->release();
-
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
-    program->bind();
-    vaos[Edges]->bind();
-    buffers[Edge_vertices].bind();
-    buffers[Edge_vertices].allocate(edge_vertices.data(),
-                                    static_cast<GLsizei>(edge_vertices.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[Edge_vertices].release();
-    vaos[Facets]->release();
-    program->release();
-
-    nb_pos = m_vertices.size();
-    m_vertices.resize(0);
-    //"Swap trick" insures that the memory is indeed freed and not kept available
-    std::vector<float>(m_vertices).swap(m_vertices);
-    nb_edge_pos = edge_vertices.size();
-    edge_vertices.resize(0);
-    std::vector<float>(edge_vertices).swap(edge_vertices);
-    normals.resize(0);
-    std::vector<float>(normals).swap(normals);
-    colors.resize(0);
-    std::vector<float>(colors).swap(colors);
-    are_buffers_filled = true;
+    Tc* tc = getTriangleContainer(0);
+    Ec* ec = getEdgeContainer(0);
+    tc->initializeBuffers(viewer);
+    ec->initializeBuffers(viewer);
+    tc->setFlatDataSize(nb_pos);
+    ec->setFlatDataSize(nb_edge_pos);
+    m_vertices.clear();
+    edge_vertices.clear();
+    normals.clear();
+    colors.clear();
+    m_vertices.shrink_to_fit();
+    edge_vertices.shrink_to_fit();
+    normals.shrink_to_fit();
+    colors.shrink_to_fit();
   }
 };
 class DistancePlugin :
@@ -398,7 +345,7 @@ class DistancePlugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "distance_plugin.json")
 
   typedef Kernel::Point_3 Point_3;
 public:
@@ -447,7 +394,7 @@ public Q_SLOTS:
     Scene_face_graph_item* itemB = qobject_cast<Scene_face_graph_item*>(scene->item(scene->selectionIndices().last()));
     if(! CGAL::is_triangle_mesh(*itemA->polyhedron()) ||
        !CGAL::is_triangle_mesh(*itemB->polyhedron()) ){
-      messageInterface->error(QString("Distance not computed. (Both polyhedra must be triangulated)"));
+      CGAL::Three::Three::error(QString("Distance not computed. (Both polyhedra must be triangulated)"));
       return;
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);

@@ -66,7 +66,7 @@ public:
 
     // Allows construction of const_iterator from iterator
     template < class A, class B, class C>
-    vector_iterator( const vector_iterator<A,B,C>& i) : ptr( &*i) {}
+    vector_iterator( const vector_iterator<A,B,C>& i) : ptr(i.operator->()) {}
 
     // OPERATIONS Forward Category
     // ---------------------------
@@ -158,13 +158,14 @@ public:
     // Note: the standard requires the following types to be equivalent
     // to T, T*, const T*, T&, const T&, size_t, and ptrdiff_t, respectively.
     // So we don't pass these types to the iterators explicitly.
-    typedef typename Allocator::value_type           value_type;
-    typedef typename Allocator::pointer              pointer;
-    typedef typename Allocator::const_pointer        const_pointer;
-    typedef typename Allocator::reference            reference;
-    typedef typename Allocator::const_reference      const_reference;
-    typedef typename Allocator::size_type            size_type;
-    typedef typename Allocator::difference_type      difference_type;
+  typedef typename std::allocator_traits<Allocator>::value_type            value_type;
+  typedef typename std::allocator_traits<Allocator>::pointer               pointer;
+  typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
+  typedef typename std::allocator_traits<Allocator>::size_type             size_type;
+  typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
+
+    typedef value_type&                              reference;
+    typedef const value_type&                        const_reference;
     typedef std::random_access_iterator_tag          iterator_category;
     typedef vector_iterator< T, reference, pointer>  iterator;
     typedef vector_iterator< T, const_reference, const_pointer>
@@ -183,8 +184,14 @@ protected:
     iterator end_of_storage;
 
     // ALLOCATION AND CONSTRUCTION HELPERS
-    void construct( iterator i, const T& x) { alloc.construct( &*i, x);}
-    void destroy( iterator i) { alloc.destroy( &*i); }
+    void construct( iterator i, const T& x) {
+      std::allocator_traits<Allocator>::construct(alloc,&*i, x);
+    }
+  
+    void destroy( iterator i) {
+      std::allocator_traits<Allocator>::destroy(alloc,&*i);
+    }
+  
     void destroy( iterator first, iterator last) {
         // destroy in reverse order than construction
         while ( last != first) {

@@ -58,22 +58,34 @@ int main (int argc, char** argv)
   std::copy (pts.range(label_map).begin(), pts.range(label_map).end(),
              std::back_inserter (ground_truth));
 
-  ///////////////////////////////////////////////////////////////////
-  //! [Generator]
-
-  Feature_set features;
-  
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;
   t.start();
-  Feature_generator generator (features, pts, pts.point_map(),
-                               5);  // using 5 scales
-  t.stop();
-  std::cerr << features.size() << " feature(s) generated in " << t.time() << " second(s)" << std::endl;
+  
+  ///////////////////////////////////////////////////////////////////
+  //! [Generator]
+  
+  Feature_set features;
+
+  std::size_t number_of_scales = 5;
+  Feature_generator generator (pts, pts.point_map(), number_of_scales);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  features.begin_parallel_additions();
+#endif
+  
+  generator.generate_point_based_features (features);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  features.end_parallel_additions();
+#endif
   
   //! [Generator]
   ///////////////////////////////////////////////////////////////////
   
+  t.stop();
+  std::cerr << features.size() << " feature(s) generated in " << t.time() << " second(s)" << std::endl;
+    
   // Add types
   Label_set labels;
   Label_handle ground = labels.add ("ground");

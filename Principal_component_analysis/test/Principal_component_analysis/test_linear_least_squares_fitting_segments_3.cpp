@@ -1,7 +1,9 @@
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+
 // test for the linear_least_square_fitting() functions.
 
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/point_generators_3.h>
@@ -16,7 +18,7 @@
 #define THRESHOLD 0.001
 // types
 
-typedef CGAL::Cartesian<double> Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::FT FT;
 
 typedef Kernel::Line_3 Line;
@@ -207,10 +209,9 @@ void test_5()
   // call all versions of the function
   std::cout<<"Test 5"<<std::endl;
   std::cout << "fit 3D plane...";
-	Line line;
-	Plane plane;
+  Plane plane;
   Point centroid;
-  FT quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
+  FT quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<1>());
   std::cout << "done, quality: " << quality << std::endl;
 
   if(!plane.has_on(segments[0].supporting_line()))

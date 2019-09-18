@@ -28,7 +28,7 @@
 
 #include <CGAL/Arrangement_2.h>
 #include <boost/shared_ptr.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/assertions.h>
@@ -169,7 +169,7 @@ private:
 
 
 public: 
-  Triangular_expansion_visibility_2() : p_arr(NULL){}
+  Triangular_expansion_visibility_2() : p_arr(nullptr){}
 
   /*! Constructor given an arrangement. */
   Triangular_expansion_visibility_2 (const Arrangement_2& arr)
@@ -183,7 +183,7 @@ public:
 
   bool is_attached() const {
     //std::cout << "is_attached" << std::endl;
-    return (p_arr != NULL);
+    return (p_arr != nullptr);
   }
 
   void attach(const Arrangement_2& arr) {
@@ -199,7 +199,7 @@ public:
   void detach() {
     //std::cout << "detach" << std::endl;
     observer.detach();
-    p_arr = NULL; 
+    p_arr = nullptr; 
     p_cdt.reset();
   }
 

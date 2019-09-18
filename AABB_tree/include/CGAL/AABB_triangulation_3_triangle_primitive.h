@@ -25,12 +25,13 @@
 
 #include <CGAL/license/AABB_tree.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
-    // \ingroup PkgAABB_tree
+    // \ingroup PkgAABBTreeRef
     // Primitive type that wraps a facet handle of a CGAL::Triangulation_3,
     // which is used as id, and allows the construction of the datum on
     // the fly. Since only the facet handle is stored in this primitive,
@@ -119,5 +120,6 @@ namespace CGAL {
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // AABB_TRIANGULATION_3_TRIANGLE_PRIMITIVE_H_

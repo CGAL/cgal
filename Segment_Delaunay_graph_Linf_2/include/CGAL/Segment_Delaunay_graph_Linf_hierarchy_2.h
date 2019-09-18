@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2.h>
 #include <CGAL/Segment_Delaunay_graph_hierarchy_2.h>
@@ -79,5 +80,7 @@ class Segment_Delaunay_graph_Linf_hierarchy_2
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_HIERARCHY_2_H

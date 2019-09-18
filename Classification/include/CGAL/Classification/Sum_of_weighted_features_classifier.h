@@ -27,13 +27,16 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/Classification/internal/verbosity.h>
+#include <CGAL/tags.h>
+#include <CGAL/algorithm.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <map>
+#include <iostream>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -42,6 +45,7 @@
 #include <tbb/mutex.h>
 #endif // CGAL_LINKED_WITH_TBB
 
+#define CLASSIFICATION_TRAINING_QUICK_ESTIMATION
 
 namespace CGAL {
 
@@ -113,11 +117,11 @@ private:
         std::vector<float> v;
         m_classifier (m_training_set[k], v);
 
-        float min = std::numeric_limits<float>::max();
+        float max = 0.f;
         for(std::size_t l = 0; l < v.size(); ++ l)
-          if (v[l] < min)
+          if (v[l] > max)
           {
-            min = v[l];
+            max = v[l];
             res = l;
           }
 
@@ -168,7 +172,7 @@ public:
   
 /*!
 
-  \brief Instantiate the classifier using the sets of `labels` and `features`.
+  \brief Instantiates the classifier using the sets of `labels` and `features`.
 
   \note If the label set of the feature set are modified after
   instantiating this object (addition of removal of a label and/or of
@@ -265,6 +269,7 @@ public:
       for (std::size_t f = 0; f < m_features.size(); ++ f)
         if (weight(f) != 0.)
           out[l] += value (l, f, item_index);
+      out[l] = std::exp (-out[l]);
     }
   }
   /// \endcond
@@ -305,12 +310,17 @@ public:
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (ground_truth[i] != -1)
+      if (int(ground_truth[i]) != -1)
       {
         training_sets[std::size_t(ground_truth[i])].push_back (i);
         ++ nb_tot;
       }
 
+#ifdef CLASSIFICATION_TRAINING_QUICK_ESTIMATION
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      CGAL::cpp98::random_shuffle (training_sets[i].begin(), training_sets[i].end());
+#endif
+    
     CGAL_CLASSIFICATION_CERR << "Training using " << nb_tot << " inliers" << std::endl;
     
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
@@ -733,7 +743,7 @@ public:
     boost::property_tree::ptree tree;
     boost::property_tree::read_xml(input, tree);
 
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.features"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.features"))
     {
       std::string name = v.second.get<std::string>("name");
       std::map<std::string, std::size_t>::iterator
@@ -748,7 +758,7 @@ public:
       }
     }
 
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.labels"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.labels"))
     {
       std::string label_name = v.second.get<std::string>("name");
       std::map<std::string, std::size_t>::iterator
@@ -764,7 +774,7 @@ public:
         continue;
       }
         
-      BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, v.second)
+      for(boost::property_tree::ptree::value_type& v2 : v.second)
       {
         if (v2.first == "name")
           continue;
@@ -841,12 +851,19 @@ private:
                                   
     for (std::size_t j = 0; j < m_labels.size(); ++ j)
     {
-      for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
+#ifdef CLASSIFICATION_TRAINING_QUICK_ESTIMATION
+      std::size_t training_set_size = (std::min) (std::size_t(0.1 * training_sets[j].size()),
+                                                  std::size_t(10000));
+#else
+      std::size_t training_set_size = training_sets[j].size();
+#endif
+      
+      for (std::size_t k = 0; k < training_set_size; ++ k)
       {
         float val = normalized(feature, training_sets[j][k]);
         mean[j] += val;
       }
-      mean[j] /= training_sets[j].size();
+      mean[j] /= training_set_size;
     }
 
     std::vector<float> sd (m_labels.size(), 0.);
@@ -855,12 +872,18 @@ private:
     {
       Label_handle clabel = m_labels[j];
             
-      for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
+#ifdef CLASSIFICATION_TRAINING_QUICK_ESTIMATION
+      std::size_t training_set_size = (std::min) (std::size_t(0.1 * training_sets[j].size()),
+                                                  std::size_t(10000));
+#else
+      std::size_t training_set_size = training_sets[j].size();
+#endif
+      for (std::size_t k = 0; k < training_set_size; ++ k)
       {
         float val = normalized(feature, training_sets[j][k]);
         sd[j] += (val - mean[j]) * (val - mean[j]);
       }
-      sd[j] = std::sqrt (sd[j] / training_sets[j].size());
+      sd[j] = std::sqrt (sd[j] / training_set_size);
       if (mean[j] - sd[j] > (2./3.))
         set_effect (j, feature, FAVORING);
       else if (mean[j] + sd[j] < (1./3.))
@@ -904,11 +927,11 @@ private:
           std::vector<float> v;
           (*this) (training_sets[j][k], v);
 
-          float min = std::numeric_limits<float>::max();
+          float max = 0.f;
           for(std::size_t l = 0; l < m_labels.size(); ++ l)
-            if (v[l] < min)
+            if (v[l] > max)
             {
-              min = v[l];
+              max = v[l];
               res = l;
             }
 

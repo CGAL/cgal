@@ -22,6 +22,7 @@
 // ============================================================================
 
 #include <CGAL/Random.h>
+#include <CGAL/algorithm.h>
 #include <cassert>
 #include <iterator>
 #include <vector>
@@ -160,7 +161,7 @@ main()
 
     std::vector<int> numbers;
     numbers.push_back(1);
-    std::random_shuffle(numbers.begin(), numbers.end(), CGAL::get_default_random());
+    CGAL::cpp98::random_shuffle(numbers.begin(), numbers.end(), CGAL::get_default_random());
     return( 0);
 }
 

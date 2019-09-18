@@ -27,6 +27,7 @@
 
 #include <CGAL/Optimisation/basic.h>
 #include <CGAL/Random.h>
+#include <CGAL/algorithm.h>
 #include <list>
 #include <vector>
 #include <algorithm>
@@ -347,7 +348,7 @@ class Min_ellipse_2 {
     
                     // shuffle points at random
                     std::vector<Point> v( first, last);
-                    std::random_shuffle( v.begin(), v.end(), random);
+                    CGAL::cpp98::random_shuffle( v.begin(), v.end(), random);
                     std::copy( v.begin(), v.end(),
                                std::back_inserter( points)); }
                 else
@@ -359,7 +360,20 @@ class Min_ellipse_2 {
     
     // default constructor
     inline
-    Min_ellipse_2( const Traits& traits = Traits())
+    Min_ellipse_2()
+        : n_support_points( 0)
+    {
+        // allocate support points' array
+        support_points = new Point[ 5];
+    
+        // initialize ellipse
+        tco.ellipse.set();
+    
+        CGAL_optimisation_postcondition( is_empty());
+    }
+
+    inline
+    Min_ellipse_2( const Traits& traits )
         : tco( traits), n_support_points( 0)
     {
         // allocate support points' array

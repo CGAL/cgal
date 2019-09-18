@@ -85,8 +85,8 @@ public:
     FT delta_x = pp2->x() - pp1->x();
     FT delta_y = pp2->y() - pp1->y();
     
-    FT sign_x = CGAL::sign(delta_x);
-    FT sign_y = CGAL::sign(delta_y);
+    FT sign_x = (int)CGAL::sign(delta_x);
+    FT sign_y = (int)CGAL::sign(delta_y);
 
     FT abs_x = CGAL::abs(delta_x);
     FT abs_y = CGAL::abs(delta_y);

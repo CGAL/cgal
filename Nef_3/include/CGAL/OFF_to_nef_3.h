@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Nef_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Nef_polyhedron_3.h>
 
@@ -247,4 +248,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_OFF_TO_NEF_3_H

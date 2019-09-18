@@ -48,7 +48,7 @@ class Ref_counted_virtual
     { return typeid(void); }
 
     virtual const void * object_ptr() const
-    { return NULL; }
+    { return nullptr; }
 
     virtual ~Ref_counted_virtual() {}
 
@@ -77,7 +77,7 @@ class Handle_for_virtual
 
     Handle_for_virtual()
     {
-      ptr = NULL;
+      ptr = nullptr;
     }
 
     Handle_for_virtual( const Handle_for_virtual& h)
@@ -104,14 +104,12 @@ class Handle_for_virtual
       return *this;
     }
 
-#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     Handle_for_virtual&
     operator=( Handle_for_virtual && h)
     {
       swap(h);
       return *this;
     }
-#endif
 
 // protected:
     typedef RefCounted element_type;

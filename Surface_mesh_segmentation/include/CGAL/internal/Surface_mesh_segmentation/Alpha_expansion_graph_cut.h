@@ -45,9 +45,9 @@
 #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
 #include <CGAL/Timer.h>
 #endif
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 #include <boost/version.hpp>
 #ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
@@ -276,7 +276,7 @@ public:
         edge_creation_time += timer.time();
         #endif
 
-        // initialize vertex indices, it is neccessary since we are using VertexList = listS
+        // initialize vertex indices, it is necessary since we are using VertexList = listS
         Vertex_iterator v_begin, v_end;
         Traits::vertices_size_type index = 0;
         for(boost::tie(v_begin, v_end) = vertices(graph); v_begin != v_end; ++v_begin) {
@@ -296,7 +296,7 @@ public:
         cut_time += timer.time();
         #endif
 
-        if(min_cut - flow < flow * tolerance) {
+        if(min_cut - flow <= flow * tolerance) {
           continue;
         }
         min_cut = flow;
@@ -534,7 +534,7 @@ public:
         cut_time += timer.time();
         #endif
 
-        if(min_cut - flow < flow * tolerance) {
+        if(min_cut - flow <= flow * tolerance) {
           continue;
         }
         min_cut = flow;
@@ -664,7 +664,7 @@ public:
         cut_time += timer.time();
         #endif
 
-        if(min_cut - flow < flow * tolerance) {
+        if(min_cut - flow <= flow * tolerance) {
           continue;
         }
 

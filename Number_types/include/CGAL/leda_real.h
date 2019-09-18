@@ -51,7 +51,7 @@ template <> class Algebraic_structure_traits< leda_real >
     typedef Tag_true           Is_numerical_sensitive;
 
     class Sqrt
-      : public CGAL::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CGAL_LEDA_SCOPE::sqrt( x );
@@ -59,7 +59,7 @@ template <> class Algebraic_structure_traits< leda_real >
     };
 
     class Kth_root
-      : public CGAL::binary_function<int, Type, Type> {
+      : public CGAL::cpp98::binary_function<int, Type, Type> {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -110,7 +110,7 @@ template <> class Real_embeddable_traits< leda_real >
   : public INTERN_RET::Real_embeddable_traits_base< leda_real , CGAL::Tag_true > {
   public:
     class Abs
-      : public CGAL::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
@@ -118,7 +118,7 @@ template <> class Real_embeddable_traits< leda_real >
     };
 
     class Sgn
-      : public CGAL::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
@@ -126,7 +126,7 @@ template <> class Real_embeddable_traits< leda_real >
     };
 
     class Compare
-      : public CGAL::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -140,7 +140,7 @@ template <> class Real_embeddable_traits< leda_real >
     };
 
     class To_double
-      : public CGAL::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
@@ -151,7 +151,7 @@ template <> class Real_embeddable_traits< leda_real >
     };
 
     class To_interval
-      : public CGAL::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 

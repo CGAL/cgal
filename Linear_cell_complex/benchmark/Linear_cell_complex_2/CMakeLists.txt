@@ -1,15 +1,13 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project(LCC_performance_2)
 
-cmake_minimum_required(VERSION 2.8.11)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
 
 add_subdirectory(surface_mesh)
 
 find_package(CGAL REQUIRED)
-include(${CGAL_USE_FILE})
 
-include_directories(BEFORE "../../include")
 include_directories(BEFORE "./surface_mesh")
 include_directories(BEFORE "./cgogn" "./cgogn/include")
 LINK_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/cgogn/lib/Release)
@@ -48,11 +46,11 @@ SET(QT_USE_QTSVG TRUE)
 SET(QT_USE_QTXML TRUE )
 INCLUDE(${QT_USE_FILE})
 ADD_DEFINITIONS(${QT_DEFINITIONS})
-SET (CGoGN_EXT_INCLUDES ${CGoGN_EXT_INCLUDES} ${QT_INCLUDE_DIR} ${QGLVIEWER_INCLUDE_DIR} )
-SET (CGoGN_EXT_LIBS ${CGoGN_EXT_LIBS} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
+SET (CGoGN_EXT_INCLUDES ${CGoGN_EXT_INCLUDES} ${QT_INCLUDE_DIR} )
+SET (CGoGN_EXT_LIBS ${CGoGN_EXT_LIBS} ${QT_LIBRARIES} )
 
 add_executable(cgogn_performance_2 performance_2.h cgogn_performance_2.h cgogn_performance_2.cpp)
-target_link_libraries(cgogn_performance_2 algo assimp container nl topology utils Zinri z ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
+target_link_libraries(cgogn_performance_2 algo assimp container nl topology utils Zinri z ${QT_LIBRARIES} )
 
 # Performance_2
 add_executable(performance_2
@@ -68,6 +66,6 @@ add_executable(performance_2
 target_link_libraries(performance_2
   ${CGAL_LIBRARIES}
   surface_mesh
-  algo assimp container nl topology utils Zinri z ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES}
+  algo assimp container nl topology utils Zinri z ${QT_LIBRARIES} 
   ${OPENMESH_LIBRARIES}
 )

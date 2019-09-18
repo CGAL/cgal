@@ -53,3 +53,4 @@ More information
 * [Latest CGAL release documentation pages](https://doc.cgal.org/)
 * [Latest CGAL master documentation pages, updated once a week](https://cgal.geometryfactory.com/CGAL/doc/master/)
 * [CGAL daily testsuite results](https://cgal.geometryfactory.com/CGAL/testsuite/)
+* [Guidelines for CGAL developers](https://github.com/CGAL/cgal/wiki/Guidelines) and [Informations for new developers](https://github.com/CGAL/cgal/wiki/Information-for-New-Developers)

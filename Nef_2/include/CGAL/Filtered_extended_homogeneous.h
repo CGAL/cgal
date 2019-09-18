@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Nef_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
@@ -1292,5 +1293,7 @@ const char* output_identifier() const
 #undef INCEXCEPTION
 #undef PRINT_STATISTICS
 #undef PRINT_CHECK_ENABLED
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H

@@ -30,7 +30,7 @@
 
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 #include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
 
 namespace CGAL {

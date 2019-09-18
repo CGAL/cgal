@@ -34,7 +34,7 @@
 #include <utility>
 #include <iterator>
 #include <boost/iterator/filter_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -635,7 +635,7 @@ protected:
 
 private: /** \name DEBUGGING TYPES AND DATAS */
   class From_pair_of_vertex_to_edge 
-    : public CGAL::unary_function<Constrained_edge, Edge>
+    : public CGAL::cpp98::unary_function<Constrained_edge, Edge>
   {
     Tr& tr;
   public:

@@ -3,11 +3,11 @@
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/TextRenderer.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Kernel_traits.h>
-#include <boost/foreach.hpp>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <vector>
-
+#define POINT_SIZE 11
 template<class Mesh>
 struct VKRingPMAP{
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor key_type;
@@ -85,15 +85,14 @@ void deleteIds(CGAL::Three::Viewer_interface* viewer,
                TextListItem* vitems,
                TextListItem* eitems,
                TextListItem* fitems,
-               std::vector<TextItem*>* targeted_ids,
-               bool *all_primitives_displayed)
+               std::vector<TextItem*>* targeted_ids)
 {
   TextRenderer *renderer = viewer->textRenderer();
-  BOOST_FOREACH(TextItem* it, vitems->textList())
+  for(TextItem* it : vitems->textList())
       delete it;
-  BOOST_FOREACH(TextItem* it, eitems->textList())
+  for(TextItem* it : eitems->textList())
       delete it;
-  BOOST_FOREACH(TextItem* it, fitems->textList())
+  for(TextItem* it : fitems->textList())
       delete it;
   vitems->clear();
   renderer->removeTextList(vitems);
@@ -102,7 +101,6 @@ void deleteIds(CGAL::Three::Viewer_interface* viewer,
   fitems->clear();
   renderer->removeTextList(fitems);
   targeted_ids->clear();
-  *all_primitives_displayed = false;
   viewer->update();
 }
 
@@ -118,14 +116,26 @@ bool find_primitive_id(const QPoint& point,
 {
   typedef typename CGAL::Kernel_traits<Point>::Kernel Traits;
   bool found = false;
-  qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  CGAL::qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
   //find clicked facet
-  qglviewer::Vec dir = point_under - viewer->camera()->position();
-  const Point ray_origin(viewer->camera()->position().x - offset.x,
-                         viewer->camera()->position().y - offset.y,
-                         viewer->camera()->position().z - offset.z);
+  CGAL::qglviewer::Vec dir;
+  Point ray_origin;
+  if(viewer->camera()->type() == CGAL::qglviewer::Camera::PERSPECTIVE)
+  {
+    dir = point_under - viewer->camera()->position();
+    ray_origin = Point(viewer->camera()->position().x - offset.x,
+                       viewer->camera()->position().y - offset.y,
+                       viewer->camera()->position().z - offset.z);
+  }
+  else
+  {
+    dir = viewer->camera()->viewDirection();
+    ray_origin = Point(point_under.x - dir.x,
+                       point_under.y - dir.y,
+                       point_under.z - dir.z);
+  }
 
   const typename Traits::Vector_3 ray_dir(dir.x, dir.y, dir.z);
   const typename Traits::Ray_3 ray(ray_origin, ray_dir);
@@ -171,12 +181,11 @@ void compute_displayed_ids(Mesh& mesh,
                            CGAL::Three::Viewer_interface *viewer,
                            const typename boost::graph_traits<Mesh>::face_descriptor& selected_fh,
                            const Point& pt_under,
-                           const qglviewer::Vec& offset,
+                           const CGAL::qglviewer::Vec& offset,
                            TextListItem* vitems,
                            TextListItem* eitems,
                            TextListItem* fitems,
-                           std::vector<TextItem*>* targeted_ids,
-                           bool *all_primitives_displayed)
+                           std::vector<TextItem*>* targeted_ids)
 {
   typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
@@ -197,6 +206,7 @@ void compute_displayed_ids(Mesh& mesh,
 
   QFont font;
   font.setBold(true);
+  font.setPointSize(POINT_SIZE);
   std::vector<vertex_descriptor> displayed_vertices;
   std::vector<edge_descriptor> displayed_edges;
   std::vector<face_descriptor> displayed_faces;
@@ -205,7 +215,7 @@ void compute_displayed_ids(Mesh& mesh,
   double min_dist = (std::numeric_limits<double>::max)();
 
   // test the vertices of the closest face
-  BOOST_FOREACH(vertex_descriptor vh, vertices_around_face(halfedge(selected_fh, mesh), mesh))
+  for(vertex_descriptor vh : vertices_around_face(halfedge(selected_fh, mesh), mesh))
   {
     Point test=Point(get(ppmap, vh).x()+offset.x,
                      get(ppmap, vh).y()+offset.y,
@@ -218,23 +228,23 @@ void compute_displayed_ids(Mesh& mesh,
     }
   }
   QVector3D point(
-      get(ppmap, displayed_vertices[0]).x() + offset.x,
-      get(ppmap, displayed_vertices[0]).y() + offset.y,
-      get(ppmap, displayed_vertices[0]).z() + offset.z);
+      float(get(ppmap, displayed_vertices[0]).x() + offset.x),
+      float(get(ppmap, displayed_vertices[0]).y() + offset.y),
+      float(get(ppmap, displayed_vertices[0]).z() + offset.z));
 
   //test if we want to erase or not
-  BOOST_FOREACH(TextItem* text_item, *targeted_ids)
+  for(TextItem* text_item : *targeted_ids)
   {
     if(text_item->position() == point)
     {
       //hide and stop
-      deleteIds(viewer, vitems, eitems, fitems, targeted_ids, all_primitives_displayed);
+      deleteIds(viewer, vitems, eitems, fitems, targeted_ids);
       return;
     }
   }
-  deleteIds(viewer, vitems, eitems, fitems, targeted_ids, all_primitives_displayed);
+  deleteIds(viewer, vitems, eitems, fitems, targeted_ids);
   // test the midpoint of edges of the closest face
-  BOOST_FOREACH(halfedge_descriptor e, halfedges_around_face(halfedge(selected_fh, mesh), mesh))
+  for(halfedge_descriptor e : halfedges_around_face(halfedge(selected_fh, mesh), mesh))
   {
     Point test=CGAL::midpoint(get(ppmap, source(e, mesh)),get(ppmap, target(e, mesh)));
     test = Point(test.x()+offset.x,
@@ -251,7 +261,7 @@ void compute_displayed_ids(Mesh& mesh,
   // test the centroid of the closest face
   double x(0), y(0), z(0);
   int total(0);
-  BOOST_FOREACH(vertex_descriptor vh, vertices_around_face(halfedge(selected_fh, mesh), mesh))
+  for(vertex_descriptor vh : vertices_around_face(halfedge(selected_fh, mesh), mesh))
   {
     x+=get(ppmap, vh).x();
     y+=get(ppmap, vh).y();
@@ -274,12 +284,12 @@ void compute_displayed_ids(Mesh& mesh,
 
   if(!displayed_vertices.empty())
   {
-    BOOST_FOREACH(face_descriptor f, CGAL::faces_around_target(halfedge(displayed_vertices[0],mesh), mesh))
+    for(face_descriptor f : CGAL::faces_around_target(halfedge(displayed_vertices[0],mesh), mesh))
     {
       if(f != boost::graph_traits<Mesh>::null_face())
         displayed_faces.push_back(f);
     }
-    BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_target(halfedge(displayed_vertices[0], mesh), mesh))
+    for(halfedge_descriptor h : CGAL::halfedges_around_target(halfedge(displayed_vertices[0], mesh), mesh))
     {
       displayed_edges.push_back(edge(h, mesh));
     }
@@ -298,7 +308,7 @@ void compute_displayed_ids(Mesh& mesh,
 
   else if(!displayed_faces.empty())
   {
-    BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(displayed_faces[0], mesh), mesh))
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(displayed_faces[0], mesh), mesh))
     {
       displayed_edges.push_back(edge(h, mesh));
       displayed_vertices.push_back(target(h, mesh));
@@ -308,7 +318,7 @@ void compute_displayed_ids(Mesh& mesh,
   std::vector<bool> vertex_selection(false);
   vertex_selection.resize(num_vertices(mesh));
   VKRingPMAP<Mesh> vpmap(&vertex_selection, &mesh);
-  BOOST_FOREACH(vertex_descriptor v_h, displayed_vertices)
+  for(vertex_descriptor v_h : displayed_vertices)
       put(vpmap, v_h, true);
   CGAL::expand_vertex_selection(displayed_vertices,
                                 mesh,
@@ -319,7 +329,7 @@ void compute_displayed_ids(Mesh& mesh,
   std::vector<bool> edge_selection(false);
   edge_selection.resize(num_edges(mesh));
   EdgeKRingPMAP<Mesh> epmap(&edge_selection, &mesh);
-  BOOST_FOREACH(edge_descriptor e_d, displayed_edges)
+  for(edge_descriptor e_d : displayed_edges)
       put(epmap, e_d, true);
   CGAL::expand_edge_selection(displayed_edges,
                               mesh,
@@ -330,7 +340,7 @@ void compute_displayed_ids(Mesh& mesh,
   std::vector<bool> face_selection(false);
   face_selection.resize(num_faces(mesh));
   FKRingPMAP<Mesh> fpmap(&face_selection, &mesh);
-  BOOST_FOREACH(face_descriptor f_h, displayed_faces)
+  for(face_descriptor f_h : displayed_faces)
   {
       put(fpmap, f_h, true);
   }
@@ -340,16 +350,19 @@ void compute_displayed_ids(Mesh& mesh,
                               fpmap,
                               std::back_inserter(displayed_faces));
 
-  BOOST_FOREACH(vertex_descriptor vh, displayed_vertices)
+  for(vertex_descriptor vh : displayed_vertices)
   {
     Point pos=Point(get(ppmap, vh).x()+offset.x,
                     get(ppmap, vh).y()+offset.y,
                     get(ppmap, vh).z()+offset.z);
-    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(get(vidmap, vh)), true, font, Qt::red);
+    TextItem* text_item = new TextItem(float(pos.x()),
+                                       float(pos.y()),
+                                       float(pos.z()),
+                                       QString("%1").arg(get(vidmap, vh)), true, font, Qt::red);
     vitems->append(text_item);
     targeted_ids->push_back(text_item);
   }
-  BOOST_FOREACH(edge_descriptor e, displayed_edges)
+  for(edge_descriptor e : displayed_edges)
   {
     halfedge_descriptor  h(halfedge(e, mesh));
     Point pos=CGAL::midpoint(get(ppmap, source(h, mesh)),get(ppmap, target(h, mesh)));
@@ -357,15 +370,18 @@ void compute_displayed_ids(Mesh& mesh,
                 pos.y()+offset.y,
                 pos.z()+offset.z);
 
-    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(get(hidmap, h)/2), true, font, Qt::green);
+    TextItem* text_item = new TextItem(float(pos.x()),
+                                       float(pos.y()),
+                                       float(pos.z()),
+                                       QString("%1").arg(get(hidmap, h)/2), true, font, Qt::green);
     eitems->append(text_item);
   }
 
-  BOOST_FOREACH(face_descriptor  f, displayed_faces)
+  for(face_descriptor f : displayed_faces)
   {
     double x(0), y(0), z(0);
     int total(0);
-    BOOST_FOREACH(vertex_descriptor  vh, vertices_around_face(halfedge(f, mesh), mesh))
+    for(vertex_descriptor vh :vertices_around_face(halfedge(f, mesh), mesh))
     {
       x+=get(ppmap, vh).x();
       y+=get(ppmap, vh).y();
@@ -376,15 +392,17 @@ void compute_displayed_ids(Mesh& mesh,
     Point pos(x/total+offset.x,
               y/total+offset.y,
               z/total+offset.z);
-    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(get(fidmap,f)), true, font, Qt::blue);
+    TextItem* text_item = new TextItem(float(pos.x()),
+                                       float(pos.y()),
+                                       float(pos.z()),
+                                       QString("%1").arg(get(fidmap,f)), true, font, Qt::blue);
     fitems->append(text_item);
   }
 }
 
 template<class Mesh>
 bool printVertexIds(const Mesh& mesh,
-                    TextListItem* vitems,
-                    CGAL::Three::Viewer_interface *viewer)
+                    TextListItem* vitems)
 {
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type Ppmap;
   typedef typename boost::property_traits<Ppmap>::value_type Point;
@@ -392,34 +410,39 @@ bool printVertexIds(const Mesh& mesh,
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
   IDmap idmap = get(boost::vertex_index, mesh);
-  TextRenderer *renderer = viewer->textRenderer();
-  const qglviewer::Vec offset = viewer->offset();
+  const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
   QFont font;
   font.setBold(true);
+  font.setPointSize(POINT_SIZE);
 
   //fills textItems
-  BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vh, vertices(mesh))
+  for(typename boost::graph_traits<Mesh>::vertex_descriptor vh : vertices(mesh))
   {
     const Point& p = get(ppmap, vh);
-    vitems->append(new TextItem((float)p.x() + offset.x,
-                                (float)p.y() + offset.y,
-                                (float)p.z() + offset.z,
+    vitems->append(new TextItem(float(p.x() + offset.x),
+                                float(p.y() + offset.y),
+                                float(p.z() + offset.z),
                                 QString("%1").arg(get(idmap, vh)), true, font, Qt::red));
 
   }
   //add the QList to the render's pool
-  renderer->addTextList(vitems);
-  if(vitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+  bool res = true;
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
-    return false;
+    TextRenderer *renderer = static_cast<CGAL::Three::Viewer_interface*>(v)->textRenderer();
+    renderer->addTextList(vitems);
+    v->update();
+    if(vitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+    {
+      res = false;
+    }
   }
-  return true;
+  return res;
 }
 
 template<class Mesh>
 bool printEdgeIds(const Mesh& mesh,
-                  TextListItem* eitems,
-                  CGAL::Three::Viewer_interface *viewer)
+                  TextListItem* eitems)
 {
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type Ppmap;
   typedef typename boost::property_traits<Ppmap>::value_type Point;
@@ -427,67 +450,78 @@ bool printEdgeIds(const Mesh& mesh,
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
   IDmap idmap = get(boost::halfedge_index, mesh);
-  TextRenderer *renderer = viewer->textRenderer();
-  const qglviewer::Vec offset = viewer->offset();
+  const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
   QFont font;
   font.setBold(true);
-
-  BOOST_FOREACH(typename boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
+  font.setPointSize(POINT_SIZE);
+  
+  for(typename boost::graph_traits<Mesh>::edge_descriptor e : edges(mesh))
   {
     const Point& p1 = get(ppmap, source(e, mesh));
     const Point& p2 = get(ppmap, target(e, mesh));
-    eitems->append(new TextItem((float)(p1.x() + p2.x()) / 2 + offset.x,
-                                (float)(p1.y() + p2.y()) / 2 + offset.y,
-                                (float)(p1.z() + p2.z()) / 2 + offset.z,
+    eitems->append(new TextItem(float((p1.x() + p2.x()) / 2 + offset.x),
+                                float((p1.y() + p2.y()) / 2 + offset.y),
+                                float((p1.z() + p2.z()) / 2 + offset.z),
                                 QString("%1").arg(get(idmap, halfedge(e, mesh)) / 2), true, font, Qt::green));
   }
   //add the QList to the render's pool
-  renderer->addTextList(eitems);
-  if(eitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+  bool res = true;
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
-    return false;
+    TextRenderer *renderer = static_cast<CGAL::Three::Viewer_interface*>(v)->textRenderer();
+    renderer->addTextList(eitems);
+    v->update();
+    if(eitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+    {
+      res = false;
+    }
   }
-  return true;
+  return res;
 }
 
 template<class Mesh>
 bool printFaceIds(const Mesh& mesh,
-                  TextListItem* fitems,
-                  CGAL::Three::Viewer_interface *viewer)
+                  TextListItem* fitems)
 {
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type Ppmap;
   typedef typename boost::property_map<Mesh, boost::face_index_t>::type IDmap;
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
   IDmap idmap = get(boost::face_index, mesh);
-  TextRenderer *renderer = viewer->textRenderer();
-  const qglviewer::Vec offset = viewer->offset();
+  const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
   QFont font;
   font.setBold(true);
-  BOOST_FOREACH(typename boost::graph_traits<Mesh>::face_descriptor fh, faces(mesh))
+  font.setPointSize(POINT_SIZE);
+  for(typename boost::graph_traits<Mesh>::face_descriptor fh : faces(mesh))
   {
     double x(0), y(0), z(0);
-    int total(0);
-    BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vh, vertices_around_face(halfedge(fh, mesh), mesh))
+    float total(0);
+    for(typename boost::graph_traits<Mesh>::vertex_descriptor vh : vertices_around_face(halfedge(fh, mesh), mesh))
     {
       x += get(ppmap, vh).x();
       y += get(ppmap, vh).y();
       z += get(ppmap, vh).z();
-      ++total;
+      total += 1.f;
     }
 
-    fitems->append(new TextItem((float)x / total + offset.x,
-                                (float)y / total + offset.y,
-                                (float)z / total + offset.z,
+    fitems->append(new TextItem(float(x / total + offset.x),
+                                float(y / total + offset.y),
+                                float(z / total + offset.z),
                                 QString("%1").arg(get(idmap, fh)), true, font, Qt::blue));
   }
   //add the QList to the render's pool
-  renderer->addTextList(fitems);
-  if(fitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+  bool res = true;
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
-    return false;
+    TextRenderer *renderer = static_cast<CGAL::Three::Viewer_interface*>(v)->textRenderer();
+    renderer->addTextList(fitems);
+    v->update();
+    if(fitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+    {
+      res = false;
+    }
   }
-  return true;
+  return res;
 }
 
 template<class Mesh, typename Point>
@@ -521,19 +555,25 @@ int zoomToId(const Mesh& mesh,
   {
     return 1; //("Input must be of the form [v/e/f][int]"
   }
-  const qglviewer::Vec offset = viewer->offset();
+  const CGAL::qglviewer::Vec offset = viewer->offset();
   typename Traits::Vector_3 normal;
   if(first == QString("v"))
   {
     bool found = false;
-    BOOST_FOREACH(vertex_descriptor vh, vertices(mesh))
+    for(vertex_descriptor vh : vertices(mesh))
     {
-      if(get(vidmap, vh) == id)
+      std::size_t cur_id = get(vidmap, vh);
+      if( cur_id == id)
       {
         p = Point(get(ppmap, vh).x() + offset.x,
                   get(ppmap, vh).y() + offset.y,
                   get(ppmap, vh).z() + offset.z);
-        selected_fh = face(halfedge(vh, mesh), mesh);
+        typename boost::graph_traits<Mesh>::halfedge_descriptor hf = halfedge(vh, mesh);
+        if(CGAL::is_border_edge(hf, mesh))
+        {
+          hf = opposite(hf, mesh);
+        }
+        selected_fh = face(hf, mesh);
         normal = CGAL::Polygon_mesh_processing::compute_vertex_normal(vh, mesh);
         found = true;
         break;
@@ -547,21 +587,31 @@ int zoomToId(const Mesh& mesh,
   else if(first == QString("e"))
   {
     bool found = false;
-    BOOST_FOREACH(typename boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
+    for(typename boost::graph_traits<Mesh>::edge_descriptor e : edges(mesh))
     {
       if(get(eidmap, halfedge(e, mesh))/2 == id)
       {
+        typename boost::graph_traits<Mesh>::halfedge_descriptor hf = halfedge(e, mesh);
         const Point& p1 = get(ppmap, source(e, mesh));
         const Point& p2 = get(ppmap, target(e, mesh));
         p = Point((float)(p1.x() + p2.x()) / 2 + offset.x,
                   (float)(p1.y() + p2.y()) / 2 + offset.y,
                   (float)(p1.z() + p2.z()) / 2 + offset.z );
-        typename Traits::Vector_3 normal1 = CGAL::Polygon_mesh_processing::compute_face_normal(face(halfedge(e, mesh),mesh),
-                                                                                               mesh);
-        typename Traits::Vector_3 normal2 = CGAL::Polygon_mesh_processing::compute_face_normal(face(opposite(halfedge(e, mesh), mesh), mesh),
-                                                                                               mesh);
+        typename Traits::Vector_3 normal1(0,0,0);
+        if(!is_border(hf, mesh))
+        {
+          normal1= CGAL::Polygon_mesh_processing::compute_face_normal(face(hf,mesh),
+                                                                      mesh);
+          selected_fh = face(hf, mesh);
+        }
+        typename Traits::Vector_3 normal2(0,0,0);
+        if(!is_border(opposite(hf, mesh), mesh))
+        {
+          normal2 = CGAL::Polygon_mesh_processing::compute_face_normal(face(opposite(hf, mesh), mesh),
+                                                                       mesh);
+          selected_fh = face(hf, mesh);
+        }
         normal = 0.5*normal1+0.5*normal2;
-        selected_fh = face(halfedge(e, mesh), mesh);
         found = true;
         break;
       }
@@ -576,11 +626,11 @@ int zoomToId(const Mesh& mesh,
     bool found = false;
     double x(0), y(0), z(0);
     int total(0);
-    BOOST_FOREACH(face_descriptor fh, faces(mesh))
+    for(face_descriptor fh : faces(mesh))
     {
       if(get(fidmap, fh) != id)
         continue;
-      BOOST_FOREACH(vertex_descriptor vh, vertices_around_face(halfedge(fh, mesh), mesh))
+      for(vertex_descriptor vh : vertices_around_face(halfedge(fh, mesh), mesh))
       {
         x+=get(ppmap, vh).x();
         y+=get(ppmap, vh).y();
@@ -602,24 +652,18 @@ int zoomToId(const Mesh& mesh,
       return 4; //"No face with id %1").arg(id)
     }
   }
-  qglviewer::Quaternion new_orientation(qglviewer::Vec(0,0,-1),
-                                        qglviewer::Vec(-normal.x(), -normal.y(), -normal.z()));
+  CGAL::qglviewer::Quaternion new_orientation(CGAL::qglviewer::Vec(0,0,-1),
+                                        CGAL::qglviewer::Vec(-normal.x(), -normal.y(), -normal.z()));
   Point new_pos = p +
-      qglviewer::Vec(
-        viewer->camera()->position().x - viewer->camera()->sceneCenter().x,
-        viewer->camera()->position().y - viewer->camera()->sceneCenter().y,
-        viewer->camera()->position().z - viewer->camera()->sceneCenter().z)
+      0.25*CGAL::qglviewer::Vec(
+        viewer->camera()->position().x - viewer->camera()->pivotPoint().x,
+        viewer->camera()->position().y - viewer->camera()->pivotPoint().y,
+        viewer->camera()->position().z - viewer->camera()->pivotPoint().z)
       .norm() * normal ;
 
-#if QGLVIEWER_VERSION >= 0x020502
-  viewer->camera()->setPivotPoint(qglviewer::Vec(p.x(),
+  viewer->camera()->setPivotPoint(CGAL::qglviewer::Vec(p.x(),
                                                  p.y(),
                                                  p.z()));
-#else
-  viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(p.x(),
-                                                         p.y(),
-                                                         p.z()));
-#endif
 
   viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
                                   .arg(new_pos.y())

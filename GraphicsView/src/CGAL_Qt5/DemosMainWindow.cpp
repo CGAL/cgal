@@ -22,7 +22,8 @@
 
 #ifndef CGAL_HEADER_ONLY
 
+#include <CGAL/disable_warnings.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Qt/DemosMainWindow_impl.h>
-
+#include <CGAL/enable_warnings.h>
 #endif // CGAL_HEADER_ONLY

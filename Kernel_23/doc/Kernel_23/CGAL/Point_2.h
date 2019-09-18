@@ -12,10 +12,6 @@ model `Cartesian<NT>`, the two types are the same. For the
 kernel model `Homogeneous<NT>`, `Kernel::RT` is equal
 to `NT`, and `Kernel::FT` is equal to `Quotient<NT>`.
 
-\cgalHeading{Operators}
-
-The following operations can be applied on points:
-
 \cgalHeading{Example}
 
 The following declaration creates two points with
@@ -35,6 +31,7 @@ std::cout << p.x() << " " << p.y() << std::endl;
 \endcode
 
 \cgalModels `Kernel::Point_2`
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
 */
 template< typename Kernel >
@@ -196,8 +193,7 @@ returns the dimension (the constant 2).
 int dimension() const;
 
 /*!
-returns a bounding box containing `p`. Note that bounding boxes
-are not parameterized with whatsoever.
+returns a bounding box containing `p`.
 */
 Bbox_2 bbox() const;
 

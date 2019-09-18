@@ -20,7 +20,7 @@
 #ifndef CGAL_TEST_SLS_TYPES_H
 #define CGAL_TEST_SLS_TYPES_H
 
-#include <CGAL/basic.h>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

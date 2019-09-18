@@ -28,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 namespace CGAL {
   
@@ -90,5 +91,7 @@ remove_far_points_in_mesh_3(C3T3& c3t3)
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_REMOVE_FAR_POINTS_IN_MESH_3_H

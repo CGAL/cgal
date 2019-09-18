@@ -3,19 +3,18 @@
 
 #include "Messages_interface.h"
 #include "Scene_plane_item.h"
-#include "Scene_polyhedron_item.h"
+
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "ui_Polyhedron_slicer_widget.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/bounding_box.h> 
 #include <CGAL/Polygon_mesh_slicer.h>
-
-#include "Polyhedron_type.h"
 
 #include <QTime>
 #include <QAction>
@@ -39,11 +38,10 @@ class Polyhedron_demo_polyhedron_slicer_plugin :
 public:
   bool applicable(QAction*) const
   { 
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
-           qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())); 
+    return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())); 
   }
 
-  void print_message(QString message) { messages->information(message);}
+  void print_message(QString message) { CGAL::Three::Three::information(message);}
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
   virtual void closure()
@@ -92,7 +90,7 @@ private:
   template <typename TriangleMesh>
   void intersection_of_plane_Polyhedra_3_using_AABB_wrapper(TriangleMesh& mesh, 
     const std::vector<Epic_kernel::Plane_3>& planes,
-    const std::vector<qglviewer::Vec>& plane_positions,
+    const std::vector<CGAL::qglviewer::Vec>& plane_positions,
     std::list<std::vector<Epic_kernel::Point_3> >& polylines);
 
 }; // end Polyhedron_demo_polyhedron_slicer_plugin
@@ -159,14 +157,14 @@ void Polyhedron_demo_polyhedron_slicer_plugin::slicer_widget_action(){
 
 // when manipulated frame of plane is modified, update line-edits
 void Polyhedron_demo_polyhedron_slicer_plugin::plane_manipulated_frame_modified() {
-  qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
-  const qglviewer::Vec& pos = mf->position();
+  CGAL::qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
+  const CGAL::qglviewer::Vec& pos = mf->position();
   ui_widget.Center_x->setText(QString::number(pos.x));
   ui_widget.Center_y->setText(QString::number(pos.y));
   ui_widget.Center_z->setText(QString::number(pos.z));
 
-  const qglviewer::Vec& base_1 = mf->inverseTransformOf(qglviewer::Vec(1., 0., 0.));
-  const qglviewer::Vec& base_2 = mf->inverseTransformOf(qglviewer::Vec(0., 1., 0.));
+  const CGAL::qglviewer::Vec& base_1 = mf->inverseTransformOf(CGAL::qglviewer::Vec(1., 0., 0.));
+  const CGAL::qglviewer::Vec& base_2 = mf->inverseTransformOf(CGAL::qglviewer::Vec(0., 1., 0.));
 
   ui_widget.Base_1_x->setText(QString::number(base_1.x));
   ui_widget.Base_1_y->setText(QString::number(base_1.y));
@@ -179,7 +177,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::plane_manipulated_frame_modified(
 
 // when Update Plane button is clicked, update manipulated frame of plane with line-edits
 bool Polyhedron_demo_polyhedron_slicer_plugin::on_Update_plane_button_clicked() {
-  qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
+  CGAL::qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
   // get center
   bool ok_1 = true, ok_2 = true, ok_3 = true;
   double center_x = ui_widget.Center_x->text().toDouble(&ok_1);
@@ -199,13 +197,13 @@ bool Polyhedron_demo_polyhedron_slicer_plugin::on_Update_plane_button_clicked() 
   { print_message("Error: Base-1, Base-2 coordinates not convertible to double."); return false; }
 
   // compute other axis
-  qglviewer::Vec base_1(bases[0], bases[1], bases[2]);
-  qglviewer::Vec base_2(bases[3], bases[4], bases[5]);
-  qglviewer::Vec other = cross(base_1, base_2);
+  CGAL::qglviewer::Vec base_1(bases[0], bases[1], bases[2]);
+  CGAL::qglviewer::Vec base_2(bases[3], bases[4], bases[5]);
+  CGAL::qglviewer::Vec other = cross(base_1, base_2);
   if(other.norm() == 0.0) { print_message("Error: collinear base vectors are not accepted!"); return false; }
   
   // set orientation
-  qglviewer::Quaternion orientation_from_bases;
+  CGAL::qglviewer::Quaternion orientation_from_bases;
   orientation_from_bases.setFromRotatedBasis(base_1, base_2, other);
 
   oldState = mf->blockSignals(true); // dont let it signal, it will invoke plane_manipulated_frame_modified otherwise
@@ -219,24 +217,23 @@ bool Polyhedron_demo_polyhedron_slicer_plugin::on_Update_plane_button_clicked() 
 // generate multiple cuts, until any cut does not intersect with bbox
 void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
 {
-  Scene_polyhedron_item* item = getSelectedItem<Scene_polyhedron_item>();
   Scene_surface_mesh_item* sm_item = getSelectedItem<Scene_surface_mesh_item>();
-  if(!item && ! sm_item) { 
-    print_message("Error: There is no selected Scene_polyhedron_item!");
+  if(! sm_item) { 
+    print_message("Error: There is no selected Scene_surface_mesh_item!");
     return; 
   }
-  QString item_name = (item)?item->name() : sm_item->name();
+  QString item_name = sm_item->name();
 
   if(!on_Update_plane_button_clicked()) { return; }
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
   QApplication::setOverrideCursor(Qt::WaitCursor);
   // get plane position and normal
-  qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
-  const qglviewer::Vec& pos = mf->position()-offset;
+  CGAL::qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
+  const CGAL::qglviewer::Vec& pos = mf->position()-offset;
   // WARNING: due to fp arithmetic (setting quaternion based orientation from base vectors then getting plane normal back from this orientation)
   // for base vectors like: 1,0,0 - 0,1,0 we might not have exact corresponding normal vector.
   // So not using below normal but construct plane directly from bases from text boxes
-  const qglviewer::Vec& n = mf->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+  const CGAL::qglviewer::Vec& n = mf->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
 
   // get bases
   double bases[6];
@@ -255,20 +252,19 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   }
 
   // construct a bbox for selected polyhedron
-  const CGAL::Three::Scene_interface::Bbox& bbox = (item)?item->bbox(): sm_item->bbox();
+  const CGAL::Three::Scene_interface::Bbox& bbox = sm_item->bbox();
   CGAL::Bbox_3 cgal_bbox(bbox.xmin(), bbox.ymin(), bbox.zmin(),
     bbox.xmax(), bbox.ymax(), bbox.zmax());
-  Polyhedron* poly = (item)?item->polyhedron():NULL;
-  SMesh* smesh = (sm_item)?sm_item->polyhedron():NULL;
+  SMesh* smesh = sm_item->polyhedron();
 
   // continue generating planes while inside bbox
   std::vector<Epic_kernel::Plane_3> planes;
-  std::vector<qglviewer::Vec> plane_positions;
+  std::vector<CGAL::qglviewer::Vec> plane_positions;
 
   for(int dir = 1, step = 0; /* */ ; ++step) 
   {
     double distance_norm = (dir * step) * distance_with_planes;
-    qglviewer::Vec new_pos = pos + (n*distance_norm);
+    CGAL::qglviewer::Vec new_pos = pos + (n*distance_norm);
 
     //Epic_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * new_pos);
     Epic_kernel::Point_3 new_pos_cgal(new_pos[0], new_pos[1], new_pos[2]);
@@ -293,11 +289,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
     Scene_polylines_item* new_polylines_item = new Scene_polylines_item();
     QTime time; time.start();
     // call algorithm and fill polylines in polylines_item
-    if(item){
-      intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*poly, planes, plane_positions, new_polylines_item->polylines);
-    }else{
-      intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*smesh, planes, plane_positions, new_polylines_item->polylines);
-    }
+    intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*smesh, planes, plane_positions, new_polylines_item->polylines);
     // set names etc and print timing
     print_message( QString("Done: processed %1 cuts - generated %2 polylines in %3 ms!").
       arg(planes.size()).arg(new_polylines_item->polylines.size()).arg(time.elapsed()) );
@@ -312,7 +304,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
     QTime time; time.start();
     std::list<std::vector<Epic_kernel::Point_3> > polylines;
     // call algorithm and fill polylines in polylines_item
-    intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*poly, planes, plane_positions, polylines);
+    intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*smesh, planes, plane_positions, polylines);
     // set names etc and print timing
     print_message( QString("Done: processed %1 cuts - generated %2 polylines in %3 ms!").
       arg(planes.size()).arg(polylines.size()).arg(time.elapsed()) );
@@ -352,11 +344,11 @@ template <typename TriangleMesh>
 void Polyhedron_demo_polyhedron_slicer_plugin::intersection_of_plane_Polyhedra_3_using_AABB_wrapper(
   TriangleMesh& poly, 
   const std::vector<Epic_kernel::Plane_3>& planes,
-  const std::vector<qglviewer::Vec>& plane_positions,
+  const std::vector<CGAL::qglviewer::Vec>& plane_positions,
   std::list<std::vector<Epic_kernel::Point_3> >& polylines) 
 {
   CGAL::Polygon_mesh_slicer<TriangleMesh, Epic_kernel> slicer(poly);
-  std::vector<qglviewer::Vec>::const_iterator plane_position_it = plane_positions.begin();
+  std::vector<CGAL::qglviewer::Vec>::const_iterator plane_position_it = plane_positions.begin();
   for(std::vector<Epic_kernel::Plane_3>::const_iterator plane_it = planes.begin(); plane_it != planes.end(); ++plane_it, ++plane_position_it) 
     slicer(*plane_it, std::front_inserter(polylines));
 

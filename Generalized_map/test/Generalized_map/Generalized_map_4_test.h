@@ -116,6 +116,7 @@ bool test_GMAP_4()
     return false;
 
   trace_test_begin();
+  InitDartInfo<GMAP>::run(gmap);
   GMAP gmap2(gmap);
   if ( !check_number_of_cells_4(gmap2, 12, 20, 9, 2, 2, 1) )
     return false;

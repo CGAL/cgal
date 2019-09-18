@@ -7,12 +7,15 @@
 #include "Color_ramp.h"
 #include "Messages_interface.h"
 #include "Scene_plane_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Three.h>
+#include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Three/Edge_container.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -23,8 +26,6 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/bounding_box.h>
-
-#include "Polyhedron_type.h"
 
 #include <QTime>
 
@@ -50,6 +51,12 @@
     std::size_t last;
   };
 #endif // CGAL_LINKED_WITH_TBB
+#include <CGAL/Three/Three.h>
+
+using namespace CGAL::Three;
+typedef Edge_container Ec;
+typedef Triangle_container Tc;
+typedef Viewer_interface Vi;
 
 typedef CGAL::Simple_cartesian<double> Simple_kernel;
 typedef Simple_kernel::FT FT;
@@ -74,23 +81,22 @@ Simple_kernel::Vector_3 random_vector()
 
 
 //functor for tbb parallelization
-template <typename Tree, typename SM_Tree>
+template <typename SM_Tree>
 class FillGridSize {
   std::size_t grid_size;
   Point_distance (&distance_function)[100][100];
   FT diag;
   FT& max_distance_function;
-  std::vector<Tree*>&trees;
   std::vector<SM_Tree*>&sm_trees;
   bool is_signed;
-  qglviewer::ManipulatedFrame* frame;
+  CGAL::qglviewer::ManipulatedFrame* frame;
 public:
   FillGridSize(std::size_t grid_size, FT diag, Point_distance (&distance_function)[100][100],
-  FT& max_distance_function, std::vector<Tree*>& trees, std::vector<SM_Tree*>& sm_trees,
-  bool is_signed, qglviewer::ManipulatedFrame* frame)
+  FT& max_distance_function, std::vector<SM_Tree*>& sm_trees,
+  bool is_signed, CGAL::qglviewer::ManipulatedFrame* frame)
   : grid_size(grid_size), distance_function (distance_function), diag(diag),
     max_distance_function(max_distance_function),
-    trees(trees), sm_trees(sm_trees), is_signed(is_signed), frame(frame)
+    sm_trees(sm_trees), is_signed(is_signed), frame(frame)
   {
   }
   template<typename Range>
@@ -104,7 +110,6 @@ public:
     const FT dy = 2*diag;
     const FT z (0);
     const FT fd =  FT(1);
-    Tree *min_tree = NULL ;
     SM_Tree *min_sm_tree = NULL;
     for( std::size_t t = r.begin(); t != r.end(); ++t)
     {
@@ -112,28 +117,16 @@ public:
       FT x = -diag/fd + FT(i)/FT(grid_size) * dx;
       {
         FT y = -diag/fd + FT(j)/FT(grid_size) * dy;
-        const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+        const CGAL::qglviewer::Vec v_offset = Three::mainViewer()->offset();
         Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
         Point query = transfo( Point(x,y,z))-offset;
         FT min = DBL_MAX;
-        bool is_min_sm = false;
-        Q_FOREACH(Tree *tree, trees)
-        {
-          FT dist = CGAL::sqrt( tree->squared_distance(query) );
-          if(dist < min)
-          {
-            min = dist;
-            if(is_signed)
-              min_tree = tree;
-          }
-        }
         Q_FOREACH(SM_Tree *tree, sm_trees)
         {
           FT dist = CGAL::sqrt( tree->squared_distance(query) );
           if(dist < min)
           {
             min = dist;
-            is_min_sm = true;
             if(is_signed)
               min_sm_tree = tree;
           }
@@ -144,13 +137,13 @@ public:
 
         if(is_signed)
         {
-          if(!min_tree && !min_sm_tree)
+          if(!min_sm_tree)
           {
             distance_function[i][j] = Point_distance(query,DBL_MAX);
             max_distance_function = DBL_MAX;//(std::max)(min, max_distance_function);
             continue;
           }
-          typedef typename Tree::size_type size_type;
+          typedef typename SM_Tree::size_type size_type;
           Simple_kernel::Vector_3 random_vec = random_vector();
 
           const Simple_kernel::Point_3& p = distance_function[i][j].first;
@@ -158,8 +151,7 @@ public:
 
           // get sign through ray casting (random vector)
           Simple_kernel::Ray_3  ray(p, random_vec);
-          size_type nbi = (is_min_sm) ? min_sm_tree->number_of_intersected_primitives(ray)
-                                      : min_tree->number_of_intersected_primitives(ray);
+          size_type nbi =  min_sm_tree->number_of_intersected_primitives(ray);
 
           FT sign ( (nbi&1) == 0 ? 1 : -1);
           distance_function[i][j].second = sign * unsigned_distance;
@@ -226,18 +218,6 @@ struct PPMAP
   }
 };
 
-typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, PPMAP<Polyhedron> > Facet_primitive;
-typedef CGAL::AABB_traits<Simple_kernel, Facet_primitive>           Facet_traits;
-typedef CGAL::AABB_tree<Facet_traits>                               Facet_tree;
-
-typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron, PPMAP<Polyhedron> > Edge_primitive;
-typedef CGAL::AABB_traits<Simple_kernel, Edge_primitive>              Edge_traits;
-typedef CGAL::AABB_tree<Edge_traits>                                Edge_tree;
-
-
-typedef QMap<QObject*, Facet_tree*>                   Facet_trees;
-typedef QMap<QObject*, Edge_tree*>                    Edge_trees;
-
 typedef CGAL::AABB_face_graph_triangle_primitive<SMesh, PPMAP<SMesh> > Facet_sm_primitive;
 typedef CGAL::AABB_traits<Simple_kernel, Facet_sm_primitive>           Facet_sm_traits;
 typedef CGAL::AABB_tree<Facet_sm_traits>                               Facet_sm_tree;
@@ -250,38 +230,13 @@ typedef QMap<QObject*, Facet_sm_tree*>                   Facet_sm_trees;
 typedef QMap<QObject*, Edge_sm_tree*>                    Edge_sm_trees;
 
 
-class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item
+class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
 public:
-  Scene_aabb_item(const Facet_tree& tree) : CGAL::Three::Scene_item(1,1)
+  Scene_aabb_item(const Facet_sm_tree& tree)
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-    positions_lines.clear();
-
-    CGAL::AABB_drawing_traits<Facet_primitive, CGAL::AABB_node<Facet_traits> > traits;
-    traits.v_edges = &positions_lines;
-    for(int i=0; i<3; ++i)
-      traits.offset[i] = offset[i];
-
-    tree.traversal(0, traits);
-    const CGAL::Bbox_3 bbox = tree.bbox();
-    _bbox = Bbox(bbox.xmin(),
-                bbox.ymin(),
-                bbox.zmin(),
-                bbox.xmax(),
-                bbox.ymax(),
-                bbox.zmax());
-    qDebug()<<this->name()<<" at creation: "<<bbox.xmin()<<", "<<bbox.xmax()<<", "<<bbox.ymin()<<", "<<bbox.ymax()<<", "
-              <<bbox.zmin()<<", "<<bbox.zmax();
-    tree_size = tree.size();
-    is_tree_empty = tree.empty();
-    invalidateOpenGLBuffers();
-  }
-
-  Scene_aabb_item(const Facet_sm_tree& tree) : CGAL::Three::Scene_item(1,1)
-  {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
       positions_lines.clear();
 
       CGAL::AABB_drawing_traits<Facet_sm_primitive, CGAL::AABB_node<Facet_sm_traits> > traits;
@@ -291,16 +246,23 @@ public:
 
       tree.traversal(0, traits);
       const CGAL::Bbox_3 bbox = tree.bbox();
-      _bbox = Bbox(bbox.xmin(),
+      setBbox(Bbox(bbox.xmin(),
                   bbox.ymin(),
                   bbox.zmin(),
                   bbox.xmax(),
                   bbox.ymax(),
-                  bbox.zmax());
+                  bbox.zmax()));
       qDebug()<<this->name()<<" at creation: "<<bbox.xmin()<<", "<<bbox.xmax()<<", "<<bbox.ymin()<<", "<<bbox.ymax()<<", "
                 <<bbox.zmin()<<", "<<bbox.zmax();
       tree_size = tree.size();
       is_tree_empty = tree.empty();
+      nb_lines = positions_lines.size();
+      setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
+      BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+      {
+        CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+        initGL(viewer);
+      }
       invalidateOpenGLBuffers();
   }
 
@@ -308,7 +270,7 @@ public:
     {
     }
 
-  bool isFinite() const { return true; }
+  bool isFinite() const { return false; }
   bool isEmpty() const { return is_tree_empty; }
   //computed in constructor
   void compute_bbox() const {}
@@ -337,55 +299,53 @@ public:
   // Wireframe OpenGL drawing in a display list
   void invalidateOpenGLBuffers()
   {
-      are_buffers_filled = false;
+      setBuffersFilled(false);
+      getEdgeContainer(0)->reset_vbos(ALL);
   }
 private:
    std::size_t tree_size;
    bool is_tree_empty;
    mutable  std::vector<float> positions_lines;
-
-    mutable QOpenGLShaderProgram *program;
-
-    using CGAL::Three::Scene_item::initializeBuffers;
+   mutable std::size_t nb_lines;
+public:
     void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
     {
-        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
-        program->bind();
-        vaos[0]->bind();
-
-        buffers[0].bind();
-        buffers[0].allocate(positions_lines.data(),
-                            static_cast<int>(positions_lines.size()*sizeof(float)));
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[0].release();
-        program->release();
-
-        vaos[0]->release();
-        are_buffers_filled = true;
+      Ec* ec = getEdgeContainer(0);
+        ec->allocate(Ec::Vertices,
+                     positions_lines.data(),
+                     static_cast<int>(positions_lines.size()*sizeof(float)));
+        ec->initializeBuffers(viewer);
+        ec->setFlatDataSize(nb_lines);
+        //positions_lines.clear();
+        //positions_lines.shrink_to_fit();
+        setBuffersFilled(true);
     }
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
-        if(!are_buffers_filled)
-            initializeBuffers(viewer);
-        vaos[0]->bind();
-        program = getShaderProgram(PROGRAM_NO_SELECTION);
-        attribBuffers(viewer, PROGRAM_NO_SELECTION);
-        program->bind();
-        program->setAttributeValue("colors",this->color());
-        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
-        program->release();
-        vaos[0]->release();
+      if ( getBuffersFilled() &&
+           ! getBuffersInit(viewer))
+      {
+        initializeBuffers(viewer);
+        setBuffersInit(viewer, true);
+      }
+      if(!getBuffersFilled())
+      {
+        initializeBuffers(viewer);
+      }
+        Ec* ec = getEdgeContainer(0);
+        ec->setColor(this->color());
+        ec->draw(viewer, true);
     }
 }; // end class Scene_aabb_item
 
-class Q_DECL_EXPORT Scene_edges_item : public CGAL::Three::Scene_item
+class Q_DECL_EXPORT Scene_edges_item : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
 public:
-    Scene_edges_item():CGAL::Three::Scene_item(1,1)
+    Scene_edges_item()
     {
         positions_lines.resize(0);
+        setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
     }
   ~Scene_edges_item()
   {
@@ -394,24 +354,26 @@ public:
   bool isEmpty() const { return edges.empty(); }
   void compute_bbox() const {
     if(isEmpty())
-      _bbox = Bbox();
-    return;
+    {
+      setBbox(Bbox());
+      return;
+    }
     CGAL::Bbox_3 bbox = edges.begin()->bbox();
     for(size_t i = 1, end = edges.size(); i < end; ++i) {
       bbox = bbox + edges[i].bbox();
     }
-    _bbox = Bbox(bbox.xmin(),
+    setBbox(Bbox(bbox.xmin(),
                 bbox.ymin(),
                 bbox.zmin(),
                 bbox.xmax(),
                 bbox.ymax(),
-                bbox.zmax());
+                bbox.zmax()));
   }
   void invalidateOpenGLBuffers()
   {
-      computeElements();
-      are_buffers_filled = false;
-      compute_bbox();
+   setBuffersFilled(false);
+   getEdgeContainer(0)->reset_vbos(ALL);
+   compute_bbox();
   }
 
   Scene_edges_item* clone() const {
@@ -451,30 +413,18 @@ public:
   std::vector<Simple_kernel::Segment_3> edges;
 private:
     mutable std::vector<float> positions_lines;
-
-  mutable QOpenGLShaderProgram *program;
-
-    using CGAL::Three::Scene_item::initializeBuffers;
+  mutable std::size_t nb_lines;
     void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
     {
-        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
-        program->bind();
-        vaos[0]->bind();
-
-        buffers[0].bind();
-        buffers[0].allocate(positions_lines.data(),
-                            static_cast<int>(positions_lines.size()*sizeof(float)));
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[0].release();
-        program->release();
-
-        vaos[0]->release();
-        are_buffers_filled = true;
+      Ec* ec = getEdgeContainer(0);
+      ec->initializeBuffers(viewer);
+      ec->setFlatDataSize(nb_lines);
+      positions_lines.clear();
+      positions_lines.shrink_to_fit();
     }
     void computeElements() const
     {
-       const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+       const CGAL::qglviewer::Vec v_offset = Three::mainViewer()->offset();
        Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
        QApplication::setOverrideCursor(Qt::WaitCursor);
        positions_lines.clear();
@@ -487,23 +437,33 @@ private:
          positions_lines.push_back(a.x()); positions_lines.push_back(a.y()); positions_lines.push_back(a.z());
          positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
        }
+       getEdgeContainer(0)->allocate(
+             Ec::Vertices,
+             positions_lines.data(),
+             static_cast<int>(positions_lines.size()*sizeof(float)));
+       nb_lines = positions_lines.size();
+       setBuffersFilled(true);
        QApplication::restoreOverrideCursor();
     }
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
-        if(!are_buffers_filled)
-            initializeBuffers(viewer);
-        vaos[0]->bind();
-        program = getShaderProgram(PROGRAM_NO_SELECTION);
-        attribBuffers(viewer, PROGRAM_NO_SELECTION);
-        program->bind();
-        program->setAttributeValue("colors",this->color());
-        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
-        vaos[0]->release();
-        program->release();
-
+      if(!isInit(viewer))
+        initGL(viewer);
+      if ( getBuffersFilled() &&
+           ! getBuffersInit(viewer))
+      {
+        initializeBuffers(viewer);
+        setBuffersInit(viewer, true);
+      }
+      if(!getBuffersFilled())
+      {
+        computeElements();
+        initializeBuffers(viewer);
+      }
+      Ec* ec = getEdgeContainer(0);
+      ec->setColor(this->color());
+      ec->draw(viewer, true);
     }
-
 }; // end class Scene_edges_item
 
 class Q_DECL_EXPORT Scene_aabb_plane_item : public Scene_plane_item
@@ -519,25 +479,20 @@ public:
   Scene_aabb_plane_item(const CGAL::Three::Scene_interface* scene_interface)
     :Scene_plane_item(scene_interface)
   {
-    for(int i=0; i<NbVaos; i++)
-    {
-      QOpenGLVertexArrayObject* n_vao = new QOpenGLVertexArrayObject();
-      vaos.push_back(n_vao);
-      n_vao->create();
-    }
-    for(int i=0; i<NbVbos; i++)
-    {
-      QOpenGLBuffer n_buf;
-      buffers.push_back(n_buf);
-      buffers[i].create();
-    }
     m_grid_size = slow_distance_grid_size;
     m_red_ramp.build_red();
     m_blue_ramp.build_blue();
     m_thermal_ramp.build_thermal();
-
-
-    texture = new Texture(m_grid_size,m_grid_size);
+    setTriangleContainer(1, new Tc(Vi::PROGRAM_NO_SELECTION, false));
+    setTriangleContainer(0, new Tc(Vi::PROGRAM_WITH_TEXTURE, false));
+    setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
+    texture = new ::Texture(m_grid_size,m_grid_size);
+    getTriangleContainer(0)->setTextureSize(QSize(m_grid_size, m_grid_size));
+    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+      initGL(viewer);
+    }
     //UV Mapping
     tex_map.push_back(0.0f);
     tex_map.push_back(0.0f);
@@ -557,58 +512,7 @@ public:
     tex_map.push_back(1.0f);
     tex_map.push_back(1.0f);
 
-    //Vertex source code
-    const char tex_vertex_source[] =
-    {
-        "#version 120 \n"
-        "attribute highp vec4 vertex;\n"
-        "attribute highp vec2 tex_coord; \n"
-        "uniform highp mat4 mvp_matrix;\n"
-        "uniform highp mat4 f_matrix;\n"
-        "varying highp vec2 texc;\n"
-        "void main(void)\n"
-        "{\n"
-        "   gl_Position = mvp_matrix * f_matrix * vertex;\n"
-        "    texc = tex_coord;\n"
-        "}"
-    };
-    //Vertex source code
-    const char tex_fragment_source[] =
-    {
-        "#version 120 \n"
-        "uniform sampler2D texture;\n"
-        "varying highp vec2 texc;\n"
-        "void main(void) { \n"
-        "gl_FragColor = texture2D(texture, texc.st);\n"
-        "} \n"
-        "\n"
-    };
-    QOpenGLShader *tex_vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-    if(!tex_vertex_shader->compileSourceCode(tex_vertex_source))
-    {
-        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-    }
-
-    QOpenGLShader *tex_fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!tex_fragment_shader->compileSourceCode(tex_fragment_source))
-    {
-        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
-    }
-
-    tex_rendering_program = new QOpenGLShaderProgram();
-    if(!tex_rendering_program->addShader(tex_vertex_shader))
-    {
-        std::cerr<<"adding vertex shader FAILED"<<std::endl;
-    }
-    if(!tex_rendering_program->addShader(tex_fragment_shader))
-    {
-        std::cerr<<"adding fragment shader FAILED"<<std::endl;
-    }
-    if(!tex_rendering_program->link())
-    {
-        std::cerr<<"linking Program FAILED"<<std::endl;
-    }
-    Scene_plane_item::compute_normals_and_vertices();
+    Scene_plane_item::computeElements();
   }
 
   ~Scene_aabb_plane_item()
@@ -621,17 +525,8 @@ public:
       m_grid_size = m_fast_distance ? fast_distance_grid_size
                                     : slow_distance_grid_size;
       delete texture;
-      texture = new Texture(m_grid_size,m_grid_size);
-  }
-
-  void set_facet_trees(Facet_trees *facet_trees)
-  {
-    this->facet_trees = facet_trees;
-  }
-
-  void set_edge_trees(Edge_trees *edge_trees)
-  {
-    this->edge_trees = edge_trees;
+      texture = new ::Texture(m_grid_size,m_grid_size);
+      getTriangleContainer(0)->setTextureSize(QSize(m_grid_size,m_grid_size));
   }
 
   void set_facet_sm_trees(Facet_sm_trees *facet_trees)
@@ -643,133 +538,112 @@ public:
   {
     this->edge_sm_trees = edge_trees;
   }
-  void draw(CGAL::Three::Viewer_interface* viewer) const
+  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
   {
-    if(!are_buffers_filled)
+    if(!isInit(viewer))
+      initGL(viewer);
+    if ( getBuffersFilled() &&
+         ! getBuffersInit(viewer))
+    {
       initializeBuffers(viewer);
+      setBuffersInit(viewer, true);
+    }
+    if(!getBuffersFilled())
+    {
+      computeElements();
+      initializeBuffers(viewer);
+    }
     QMatrix4x4 fMatrix;
     fMatrix.setToIdentity();
     for(int i=0; i< 16 ; i++)
       fMatrix.data()[i] =  frame->matrix()[i];
-
+    Tc *tc ;
     switch( m_cut_plane )
     {
     case UNSIGNED_EDGES:
     case UNSIGNED_FACETS:
     case SIGNED_FACETS:
-
-      viewer->glActiveTexture(GL_TEXTURE0);
-      viewer->glBindTexture(GL_TEXTURE_2D, textureId);
-
-      vaos[TexturedCutplane]->bind();
-
-      attribTexBuffers(viewer);
-
-      tex_rendering_program->bind();
-      tex_rendering_program->setUniformValue("f_matrix", fMatrix);
-      viewer->glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(positions_quad.size()/3));
-      tex_rendering_program->release();
-      vaos[TexturedCutplane]->release();
+      tc = getTriangleContainer(0);
+      tc->setFrameMatrix(fMatrix);
+      tc->draw(viewer, true);
       break;
-
     case CUT_SEGMENTS:
-      vaos[Facets]->bind();
-      program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
-      attribBuffers(viewer, PROGRAM_NO_SELECTION);
-      program->bind();
-      program->setUniformValue("f_matrix", fMatrix);
-      program->setAttributeValue("colors", this->color());
-      viewer->glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(positions_quad.size()/3));
-
-      program->release();
-      vaos[Facets]->release();
+      tc = getTriangleContainer(1);
+      tc->setFrameMatrix(fMatrix);
+      tc->setColor(this->color());
+      tc->draw(viewer, true);
       break;
     }
   }
-  void drawEdges(CGAL::Three::Viewer_interface *viewer) const
+  void drawEdges(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
   {
+    if(!isInit(viewer))
+      initGL(viewer);
+    if ( getBuffersFilled() &&
+         ! getBuffersInit(viewer))
+    {
+      initializeBuffers(viewer);
+      setBuffersInit(viewer, true);
+    }
+    if(!getBuffersFilled())
+    {
+      computeElements();
+      initializeBuffers(viewer);
+    }
     if(m_cut_plane != CUT_SEGMENTS)
       return;
     QMatrix4x4 fMatrix;
-    fMatrix.setToIdentity();
     for(int i=0; i< 16 ; i++)
       fMatrix.data()[i] =  frame->matrix()[i];
-    vaos[Edges]->bind();
-    program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    program->bind();
-    program->setUniformValue("f_matrix", fMatrix);
-    program->setAttributeValue("colors", QColor(Qt::black));
-    viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>(positions_lines.size()/3));
-    program->release();
-    vaos[Edges]->release();
+    Ec* ec = getEdgeContainer(0);
+    ec->setFrameMatrix(fMatrix);
+    ec->setColor(QColor(Qt::black));
+    ec->draw(viewer, true);
   }
 
-  void invalidateOpenGLBuffers()
+  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE
   {
-    computeElements();
-    are_buffers_filled = false;
+    setBuffersFilled(false);
+    getTriangleContainer(0)->reset_vbos(ALL);
+    getTriangleContainer(1)->reset_vbos(ALL);
+    getEdgeContainer(0)->reset_vbos(ALL);
   }
 
   void set_fast_distance(bool b)const  { m_fast_distance = b; update_grid_size(); }
   void setCutPlaneType(Cut_planes_types type){ m_cut_plane = type;}
   Cut_planes_types cutPlaneType()const {return m_cut_plane;}
 private:
-  Edge_trees* edge_trees;
-  Facet_trees* facet_trees;
   Edge_sm_trees* edge_sm_trees;
   Facet_sm_trees* facet_sm_trees;
-  enum VAOs{
-    Facets = 0,
-    Edges,
-    TexturedCutplane,
-    NbVaos
-  };
-  enum VBOs{
-    Facets_vertices = 0,
-    Edges_vertices,
-    UVCoords,
-    NbVbos
-  };
   typedef std::pair<Simple_kernel::Point_3,Simple_kernel::FT> Point_distance;
-  std::vector<QOpenGLVertexArrayObject*> vaos;
   mutable int m_grid_size;
   mutable bool m_fast_distance;
-  mutable QOpenGLShaderProgram* tex_rendering_program;
   mutable Point_distance m_distance_function[100][100];
-  mutable GLuint textureId;
-  mutable Texture *texture;
-  // An aabb_tree indexing polyhedron facets/segments
+  mutable ::Texture *texture;
+  // An aabb_tree indexing surface_mesh facets/segments
   mutable Color_ramp m_red_ramp;
   mutable Color_ramp m_blue_ramp;
   mutable Color_ramp m_thermal_ramp;
   mutable Simple_kernel::FT m_max_distance_function;
   mutable std::vector<float> tex_map;
   mutable Cut_planes_types m_cut_plane;
-  mutable std::vector<QOpenGLBuffer> buffers;
-  template <typename Tree, typename SM_Tree>
-
-
-  void compute_distance_function(QMap<QObject*, Tree*> *trees, QMap<QObject*, SM_Tree*> *sm_trees, bool is_signed = false)const
+  template <typename SM_Tree>
+  void compute_distance_function(QMap<QObject*, SM_Tree*> *sm_trees, bool is_signed = false)const
   {
 
     m_max_distance_function = FT(0);
 
     FT diag = scene_diag();
-    std::vector<Tree*> closed_trees;
     std::vector<SM_Tree*> closed_sm_trees;
-    Q_FOREACH(Tree *tree, trees->values())
-    if(!(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed()))
-      closed_trees.push_back(tree);
     Q_FOREACH(SM_Tree *sm_tree, sm_trees->values())
-    if(!(is_signed && !CGAL::is_closed(*qobject_cast<Scene_surface_mesh_item*>(sm_trees->key(sm_tree))->polyhedron())))
-      closed_sm_trees.push_back(sm_tree);
+      if(!(is_signed && !CGAL::is_closed(*qobject_cast<Scene_surface_mesh_item*>(sm_trees->key(sm_tree))->polyhedron())))
+        closed_sm_trees.push_back(sm_tree);
 #ifndef CGAL_LINKED_WITH_TBB
-    FillGridSize<Tree, SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_trees, closed_sm_trees, is_signed, frame);
+    FillGridSize<SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_sm_trees, is_signed, frame);
     HackRange range(0, static_cast<std::size_t>(m_grid_size*m_grid_size));
     f(range);
 #else
-    FillGridSize<Tree, SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_trees, closed_sm_trees, is_signed, frame);
+    FillGridSize<SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_sm_trees, is_signed, frame);
     tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size*m_grid_size), f);
 #endif
   }
@@ -812,22 +686,22 @@ private:
   };
 #endif
 
-  void computeElements()
+  void computeElements() const Q_DECL_OVERRIDE
   {
     switch(m_cut_plane)
     {
     case UNSIGNED_FACETS:
-      if ( facet_trees->empty() && facet_sm_trees->empty() ) { return; }
-      compute_distance_function(facet_trees, facet_sm_trees);
+      if ( !facet_sm_trees || facet_sm_trees->empty() ) { return; }
+      compute_distance_function(facet_sm_trees);
       break;
     case SIGNED_FACETS:
-      if ( facet_trees->empty() && facet_sm_trees->empty() ) { return; }
-      compute_distance_function(facet_trees, facet_sm_trees, true);
+      if (!facet_sm_trees || facet_sm_trees->empty() ) { return; }
+      compute_distance_function( facet_sm_trees, true);
 
       break;
     case UNSIGNED_EDGES:
-      if ( edge_trees->empty() && edge_sm_trees->empty()) { return; }
-      compute_distance_function(edge_trees, edge_sm_trees);
+      if ( !edge_sm_trees || edge_sm_trees->empty()) { return; }
+      compute_distance_function( edge_sm_trees);
       break;
     default:
       break;
@@ -846,7 +720,7 @@ private:
             }
         }
 #else
-      FillTexture f(m_grid_size, m_red_ramp, m_blue_ramp, this);
+      FillTexture f(m_grid_size, m_red_ramp, m_blue_ramp, const_cast<Scene_aabb_plane_item*>(this));
       tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size * m_grid_size), f);
 #endif
         break;
@@ -863,7 +737,7 @@ private:
             }
         }
 #else
-      FillTexture f(m_grid_size, m_thermal_ramp, m_thermal_ramp, this);
+      FillTexture f(m_grid_size, m_thermal_ramp, m_thermal_ramp, const_cast<Scene_aabb_plane_item*>(this));
       tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size * m_grid_size), f);
 #endif
         break;
@@ -871,88 +745,39 @@ private:
     default:
       break;
     }
+    
+    Tc* tc = getTriangleContainer(0);
+    tc->allocate(Tc::Flat_vertices,
+                 positions_quad.data(),
+                 static_cast<int>(positions_quad.size()*sizeof(float)));
+    tc->allocate(
+          Tc::Texture_map,
+          tex_map.data(),
+          static_cast<int>(tex_map.size()*sizeof(float)));
+    tc->getTexture()->setData(texture->getData());
+    
+    
+    tc = getTriangleContainer(1);
+    tc->allocate(Tc::Flat_vertices,
+                 positions_quad.data(),
+                 static_cast<int>(positions_quad.size()*sizeof(float)));
+    Ec* ec = getEdgeContainer(0);
+    ec->allocate(
+          Ec::Vertices,
+          positions_lines.data(),
+          static_cast<int>(positions_lines.size()*sizeof(float)));
+    setBuffersFilled(true);
+    
   }
 
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
   {
-    if(GLuint(-1) == textureId) {
-        viewer->glGenTextures(1, &textureId);
-    }
-
-    //vaos for the basic cutting plane
-    {
-      program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
-      program->bind();
-      vaos[Facets]->bind();
-
-      buffers[Facets_vertices].bind();
-      buffers[Facets_vertices].allocate(positions_quad.data(),
-                          static_cast<int>(positions_quad.size()*sizeof(float)));
-      program->enableAttributeArray("vertex");
-      program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-      buffers[Facets_vertices].release();
-      vaos[Facets]->release();
-
-
-      vaos[Edges]->bind();
-      buffers[Edges_vertices].bind();
-      buffers[Edges_vertices].allocate(positions_lines.data(),
-                          static_cast<int>(positions_lines.size()*sizeof(float)));
-      program->enableAttributeArray("vertex");
-      program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-      buffers[Edges_vertices].release();
-      vaos[Edges]->release();
-
-
-      program->release();
-    }
-    //vao for the textured cutting planes
-    {
-      tex_rendering_program->bind();
-      vaos[TexturedCutplane]->bind();
-      buffers[Facets_vertices].bind();
-      tex_rendering_program->enableAttributeArray("vertex");
-      tex_rendering_program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-      buffers[Facets_vertices].release();
-
-      buffers[UVCoords].bind();
-      buffers[UVCoords].allocate(tex_map.data(), static_cast<int>(tex_map.size()*sizeof(float)));
-      tex_rendering_program->attributeLocation("tex_coord");
-      tex_rendering_program->setAttributeBuffer("tex_coord",GL_FLOAT,0,2);
-      tex_rendering_program->enableAttributeArray("tex_coord");
-      buffers[UVCoords].release();
-
-      viewer->glBindTexture(GL_TEXTURE_2D, textureId);
-      viewer->glTexImage2D(GL_TEXTURE_2D,
-                   0,
-                   GL_RGB,
-                   texture->getWidth(),
-                   texture->getHeight(),
-                   0,
-                   GL_RGB,
-                   GL_UNSIGNED_BYTE,
-                   texture->getData());
-      viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
-      viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
-      tex_rendering_program->release();
-    }
-    are_buffers_filled = true;
-  }
-
-  void attribTexBuffers(CGAL::Three::Viewer_interface* viewer)const
-  {
-    QMatrix4x4 mvpMatrix;
-    double mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(mat);
-    for(int i=0; i < 16; i++)
-    {
-        mvpMatrix.data()[i] = (float)mat[i];
-    }
-    tex_rendering_program->bind();
-    tex_rendering_program->setUniformValue("mvp_matrix", mvpMatrix);
-    tex_rendering_program->release();
+    getTriangleContainer(0)->initializeBuffers(viewer);
+    getTriangleContainer(1)->initializeBuffers(viewer);
+    getEdgeContainer(0)->initializeBuffers(viewer);
+    getTriangleContainer(0)->setFlatDataSize(positions_quad.size());
+    getTriangleContainer(1)->setFlatDataSize(positions_quad.size());
+    getEdgeContainer(0)->setFlatDataSize(positions_lines.size());
   }
 };
 
@@ -966,47 +791,50 @@ class Polyhedron_demo_cut_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90")
 
 public:
   Polyhedron_demo_cut_plugin() : QObject(), edges_item(0) {
   }
 
-  virtual ~Polyhedron_demo_cut_plugin();
+   ~Polyhedron_demo_cut_plugin();
 
-  bool applicable(QAction*) const {
-    // returns true if one polyhedron is in the entries
+  bool applicable(QAction*) const Q_DECL_OVERRIDE{
+    // returns true if one surface_mesh is in the entries
     for (int i=0; i< scene->numberOfEntries(); ++i)
     {
-      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(i))
-        || qobject_cast<Scene_surface_mesh_item*>(scene->item(i)) )
+      if ( qobject_cast<Scene_surface_mesh_item*>(scene->item(i)) )
         return true;
     }
     return false;
   }
 
-  virtual QString name() const
+  QString name() const Q_DECL_OVERRIDE
   {
     return "cut-plugin";
   }
 
 
-  virtual QString nameFilters() const
+   QString nameFilters() const Q_DECL_OVERRIDE
   {
     return "Segment soup file (*.polylines.txt *.cgal)";
   }
 
 
-  bool canLoad() const
+  bool canLoad(QFileInfo) const Q_DECL_OVERRIDE
   {
     return false;
   }
 
-  virtual CGAL::Three::Scene_item* load(QFileInfo /* fileinfo */)
+  QList<Scene_item*> load(QFileInfo , bool& ok, bool add_to_scene=true) Q_DECL_OVERRIDE
+
   {
-    return 0;
+    Q_UNUSED(add_to_scene);
+    ok = false;
+    return QList<Scene_item*>();
   }
 
-  virtual bool canSave(const CGAL::Three::Scene_item* item)
+  bool canSave(const CGAL::Three::Scene_item* item) Q_DECL_OVERRIDE
   {
     // This plugin supports edges items
     bool b = qobject_cast<const Scene_edges_item*>(item) != 0;
@@ -1014,8 +842,10 @@ public:
   }
 
 
-  virtual bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
-  {  // This plugin supports edges items
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items) Q_DECL_OVERRIDE
+  {
+    Scene_item* item = items.front();
+    // This plugin supports edges items
     const Scene_edges_item* edges_item =
       qobject_cast<const Scene_edges_item*>(item);
 
@@ -1024,15 +854,18 @@ public:
     }
 
     std::ofstream out(fileinfo.filePath().toUtf8());
-
-    return (out && edges_item->save(out));
+    bool ok = (out && edges_item->save(out));
+    if(ok)
+      items.pop_front();
+    return ok;
   }
 
+  using Polyhedron_demo_io_plugin_interface::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,
-            Messages_interface* m);
-  QList<QAction*> actions() const;
+            Messages_interface* m) override;
+  QList<QAction*> actions() const Q_DECL_OVERRIDE;
 
-  bool eventFilter(QObject *, QEvent *event)
+  bool eventFilter(QObject *, QEvent *event) Q_DECL_OVERRIDE
   {
     if(!plane_item)
       return false;
@@ -1099,59 +932,30 @@ public Q_SLOTS:
   }
   void deleteTrees(CGAL::Three::Scene_item* sender)
   {
-    Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sender);
-    if(item)
+    Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(sender);
+    if(!sm_item)
+      return;
+    if(facet_sm_trees.keys().contains(sm_item))
     {
-      if(facet_trees.keys().contains(item))
-      {
-        delete facet_trees[item];
-        facet_trees.remove(item);
-      }
-      if(edge_trees.keys().contains(item))
-      {
-        delete edge_trees[item];
-        edge_trees.remove(item);
-      }
-      if(facet_trees.empty())
-      {
-        if(plane_item)
-          scene->erase(scene->item_id(plane_item));
-        if(edges_item)
-          scene->erase(scene->item_id(edges_item));
-      }
-      else
-      {
-        ready_to_cut = true;
-        cut();
-      }
+      delete facet_sm_trees[sm_item];
+      facet_sm_trees.remove(sm_item);
+    }
+    if(edge_sm_trees.keys().contains(sm_item))
+    {
+      delete edge_sm_trees[sm_item];
+      edge_sm_trees.remove(sm_item);
+    }
+    if(facet_sm_trees.empty())
+    {
+      if(plane_item)
+        scene->erase(scene->item_id(plane_item));
+      if(edges_item)
+        scene->erase(scene->item_id(edges_item));
     }
     else
     {
-      Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(sender);
-      if(!sm_item)
-        return;
-      if(facet_sm_trees.keys().contains(sm_item))
-      {
-        delete facet_sm_trees[sm_item];
-        facet_sm_trees.remove(sm_item);
-      }
-      if(edge_sm_trees.keys().contains(sm_item))
-      {
-        delete edge_sm_trees[sm_item];
-        edge_sm_trees.remove(sm_item);
-      }
-      if(facet_sm_trees.empty())
-      {
-        if(plane_item)
-          scene->erase(scene->item_id(plane_item));
-        if(edges_item)
-          scene->erase(scene->item_id(edges_item));
-      }
-      else
-      {
-        ready_to_cut = true;
-        cut();
-      }
+      ready_to_cut = true;
+      cut();
     }
   }
   void updateTrees(int id);
@@ -1168,8 +972,6 @@ private:
   QAction* actionUnsignedEdges;
 
   bool ready_to_cut;
-  Facet_trees facet_trees;
-  Edge_trees edge_trees;
 
   Facet_sm_trees facet_sm_trees;
   Edge_sm_trees edge_sm_trees;
@@ -1180,11 +982,11 @@ private:
 
 Polyhedron_demo_cut_plugin::~Polyhedron_demo_cut_plugin()
 {
-  Q_FOREACH(Facet_tree *tree, facet_trees.values())
+  Q_FOREACH(Facet_sm_tree *tree, facet_sm_trees.values())
   {
     delete tree;
   }
-    Q_FOREACH(Edge_tree *tree, edge_trees.values())
+    Q_FOREACH(Edge_sm_tree *tree, edge_sm_trees.values())
     {
       delete tree;
     }
@@ -1223,7 +1025,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
     connect(real_scene, SIGNAL(newItem(int)),
             this, SLOT(updateTrees(int)));
 
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = Three::mainViewer();
   viewer->installEventFilter(this);
 
   _actions << actionIntersection
@@ -1248,8 +1050,7 @@ QList<QAction*> Polyhedron_demo_cut_plugin::actions() const {
 void Polyhedron_demo_cut_plugin::updateTrees(int id)
 {
 if(plane_item &&
-   (qobject_cast<Scene_polyhedron_item*>(scene->item(id))
-   || qobject_cast<Scene_surface_mesh_item*>(scene->item(id))))
+   qobject_cast<Scene_surface_mesh_item*>(scene->item(id)))
   createCutPlane();
 }
 
@@ -1259,12 +1060,12 @@ void Polyhedron_demo_cut_plugin::apply(Item* item, QMap< QObject*, Facets_tree*>
   const Mesh& mesh = *item->polyhedron();
   if(!CGAL::is_triangle_mesh(mesh))
   {
-    messages->warning(QString("%1 ignored (not a triangulated mesh)").arg(item->name()));
+    CGAL::Three::Three::warning(QString("%1 ignored (not a triangulated mesh)").arg(item->name()));
     return;
   }
   if(!CGAL::is_closed(mesh))
   {
-    messages->warning(QString("%1 is not closed. Signed function will not be displayed.").arg(item->name()));
+    CGAL::Three::Three::warning(QString("%1 is not closed. Signed function will not be displayed.").arg(item->name()));
   }
   if(f_trees.find(item) == f_trees.end()) {
     PPMAP<Mesh> pmap(item->polyhedron());
@@ -1272,7 +1073,7 @@ void Polyhedron_demo_cut_plugin::apply(Item* item, QMap< QObject*, Facets_tree*>
     traits.set_shared_data(mesh, pmap); //Mandatory for SMesh. If not provided, mesh and PPmap are taken default, saying NULL in tree.traversal().
     connect(item, SIGNAL(item_is_about_to_be_changed()),
             this, SLOT(deleteTree()));
-    f_trees[item] = new Facets_tree(traits);
+    Facets_tree* new_tree = new Facets_tree(traits);
     //filter facets to ignore degenerated ones
 
     for(typename boost::graph_traits<Mesh>::face_iterator fit = faces(mesh).first,
@@ -1284,10 +1085,10 @@ void Polyhedron_demo_cut_plugin::apply(Item* item, QMap< QObject*, Facets_tree*>
           c(get(pmap, target(prev(halfedge(*fit, mesh), mesh), mesh)));
 
       if(!CGAL::collinear(a,b,c))
-        f_trees[item]->insert(typename Facets_tree::Primitive(fit, mesh, pmap));
+        new_tree->insert(typename Facets_tree::Primitive(fit, mesh, pmap));
     }
-
-    Scene_aabb_item* aabb_item = new Scene_aabb_item(*f_trees[item]);
+    Scene_aabb_item* aabb_item = new Scene_aabb_item(*new_tree);
+    f_trees[item] = new_tree;
     aabb_item->setName(tr("AABB tree of %1").arg(item->name()));
     aabb_item->setRenderingMode(Wireframe);
     aabb_item->setColor(Qt::black);
@@ -1339,13 +1140,10 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   }
   else
     scene->addItem(plane_item);
-  // Hide polyhedrons and call cut() (avoid that nothing shows up until user
+  // Hide surface_meshes and call cut() (avoid that nothing shows up until user
   // decides to move the plane item)
   for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
     CGAL::Three::Scene_item* item = scene->item(i);
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
-    if ( NULL != poly_item )
-      poly_item->setVisible(false);
 
     Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
     if ( NULL != sm_item )
@@ -1354,21 +1152,12 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   //fills the tree maps
   for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
     CGAL::Three::Scene_item* item = scene->item(i);
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
     Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
-    if(!poly_item)
+    if(sm_item)
     {
-      if(sm_item)
-      {
-        apply<Scene_surface_mesh_item, SMesh, Facet_sm_traits, Facet_sm_tree, Edge_sm_tree>(sm_item,facet_sm_trees, edge_sm_trees);
-      }
+      apply<Scene_surface_mesh_item, SMesh, Facet_sm_traits, Facet_sm_tree, Edge_sm_tree>(sm_item,facet_sm_trees, edge_sm_trees);
     }
-    else
-        apply<Scene_polyhedron_item, Polyhedron, Facet_traits, Facet_tree, Edge_tree>(poly_item, facet_trees, edge_trees);
   }
-
-  plane_item->set_facet_trees(&facet_trees);
-  plane_item->set_edge_trees(&edge_trees);
 
   plane_item->set_facet_sm_trees(&facet_sm_trees);
   plane_item->set_edge_sm_trees(&edge_sm_trees);
@@ -1385,6 +1174,7 @@ void Polyhedron_demo_cut_plugin::Intersection()
   plane_item->setCutPlaneType(Scene_aabb_plane_item::CUT_SEGMENTS);
   computeIntersection();
   plane_item->invalidateOpenGLBuffers();
+  plane_item->redraw();
   QApplication::restoreOverrideCursor();
 }
 
@@ -1394,6 +1184,7 @@ void Polyhedron_demo_cut_plugin::SignedFacets() {
     createCutPlane();
   plane_item->setCutPlaneType(Scene_aabb_plane_item::SIGNED_FACETS);
   plane_item->invalidateOpenGLBuffers();
+  plane_item->redraw();
   if(edges_item)
   {
     scene->erase(scene->item_id(edges_item));
@@ -1408,6 +1199,7 @@ void Polyhedron_demo_cut_plugin::UnsignedFacets() {
     createCutPlane();
   plane_item->setCutPlaneType(Scene_aabb_plane_item::UNSIGNED_FACETS);
   plane_item->invalidateOpenGLBuffers();
+  plane_item->redraw();
   if(edges_item)
   {
     scene->erase(scene->item_id(edges_item));
@@ -1421,6 +1213,7 @@ void Polyhedron_demo_cut_plugin::UnsignedEdges() {
     createCutPlane();
   plane_item->setCutPlaneType(Scene_aabb_plane_item::UNSIGNED_EDGES);
   plane_item->invalidateOpenGLBuffers();
+  plane_item->redraw();
   if(edges_item)
   {
     scene->erase(scene->item_id(edges_item));
@@ -1441,34 +1234,16 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
     scene->addItem(edges_item);
   }
 
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position() - offset;
-  const qglviewer::Vec& n =
-      plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+  const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
+  const CGAL::qglviewer::Vec& pos = plane_item->manipulatedFrame()->position() - offset;
+  const CGAL::qglviewer::Vec& n =
+      plane_item->manipulatedFrame()->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
   Simple_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
   //std::cerr << plane << std::endl;
   edges_item->edges.clear();
   QTime time;
   time.start();
   bool does_intersect = false;
-  for(Facet_trees::iterator it = facet_trees.begin(); it != facet_trees.end(); ++it)
-  {
-    if(!CGAL::do_intersect(plane, it.value()->bbox()))
-      continue;
-    does_intersect = true;
-    std::vector<Facet_tree::Object_and_primitive_id> intersections;
-    it.value()->all_intersections(plane, std::back_inserter(intersections));
-
-    for ( std::vector<Facet_tree::Object_and_primitive_id>::iterator it = intersections.begin(),
-          end = intersections.end() ; it != end ; ++it )
-    {
-      const Simple_kernel::Segment_3* inter_seg =
-          CGAL::object_cast<Simple_kernel::Segment_3>(&(it->first));
-
-      if ( NULL != inter_seg )
-        edges_item->edges.push_back(*inter_seg);
-    }
-  }
   for(Facet_sm_trees::iterator it = facet_sm_trees.begin(); it != facet_sm_trees.end(); ++it)
   {
     if(!CGAL::do_intersect(plane, it.value()->bbox()))
@@ -1488,7 +1263,7 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
     }
   }
   if(does_intersect)
-    messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
+    CGAL::Three::Three::information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
   edges_item->invalidateOpenGLBuffers();
   edges_item->itemChanged();
   ready_to_cut = false;

@@ -278,7 +278,7 @@ namespace CGAL {
     void set_dart(Dart_handle adart) { mdart = adart; }
 
     /// Test if the cell is valid.
-    /// A cell is valid if its dart is not NULL.
+    /// A cell is valid if its dart is not nullptr.
     bool is_valid() const
     { return mdart!=Refs::null_handle; }
 

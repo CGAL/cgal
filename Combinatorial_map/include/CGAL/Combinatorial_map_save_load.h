@@ -23,7 +23,6 @@
 #ifndef CGAL_COMBINATORIAL_MAP_SAVE_LOAD_H
 #define CGAL_COMBINATORIAL_MAP_SAVE_LOAD_H
 
-#include <boost/foreach.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/lexical_cast.hpp>
@@ -525,8 +524,8 @@ namespace CGAL {
     static void run(const boost::property_tree::ptree& pt, CMap& amap,
                     const std::vector<typename CMap::Dart_handle>& myDarts)
     {
-      BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
-                     pt.get_child("data.attributes") )
+      for(const boost::property_tree::ptree::value_type& v0 :
+          pt.get_child("data.attributes") )
       {
         // <dimension>
         if (v0.first == "dimension")
@@ -552,20 +551,20 @@ namespace CGAL {
                   return;
                   }*/
 
-            BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
+            for(const boost::property_tree::ptree::value_type &v1 :
                           v0.second )
             {
               if( v1.first == "a" )
               {
                 id_dart_cellule=v1.second.get<unsigned int>("d")-1;
                 
-                BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
+                for(const boost::property_tree::ptree::value_type &v2 :
                               v1.second )
                 {
                   if( type==type_map && v2.first == "v" )
                   {
                     if (amap.template attribute<i>(myDarts[id_dart_cellule])
-                        ==NULL )
+                        ==nullptr )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -576,7 +575,7 @@ namespace CGAL {
                   if( ptype==ptype_map && v2.first == "p" )
                   {
                     if (amap.template attribute<i>(myDarts[id_dart_cellule])
-                        ==NULL )
+                        ==nullptr )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -601,7 +600,7 @@ namespace CGAL {
     static void run(const boost::property_tree::ptree& pt, CMap& amap,
                     const std::vector<typename CMap::Dart_handle>& myDarts)
     {
-      BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
+      for( const boost::property_tree::ptree::value_type &v0 :
                      pt.get_child("data.attributes") )
       {
         // <dimension>
@@ -623,20 +622,20 @@ namespace CGAL {
                   return;
                   }*/
 
-            BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
+            for(const boost::property_tree::ptree::value_type &v1 :
                           v0.second )
             {
               if( v1.first == "a" )
               {
                 id_dart_cellule=v1.second.get<unsigned int>("d")-1;
                 
-                BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
+                for(const boost::property_tree::ptree::value_type &v2 :
                               v1.second )
                 {
                   if( v2.first == "p" )
                   {
                     if (amap.template attribute<i>
-                        (myDarts[id_dart_cellule])==NULL )
+                        (myDarts[id_dart_cellule])==nullptr )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -662,7 +661,7 @@ namespace CGAL {
     static void run(const boost::property_tree::ptree& pt, CMap& amap,
                     const std::vector<typename CMap::Dart_handle>& myDarts)
     {
-      BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
+      for( const boost::property_tree::ptree::value_type &v0 :
                      pt.get_child("data.attributes") )
       {
         // <dimension>
@@ -684,20 +683,20 @@ namespace CGAL {
                   return;
                   } */
 
-            BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
+            for(const boost::property_tree::ptree::value_type &v1 :
                           v0.second )
             {
               if( v1.first == "a" )
               {
                 id_dart_cellule=v1.second.get<unsigned int>("d")-1;
                 
-                BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
+                for(const boost::property_tree::ptree::value_type &v2 :
                               v1.second )
                 {
                   if( v2.first == "v" )
                   {
                     if (amap.template attribute<i>
-                        (myDarts[id_dart_cellule])==NULL)
+                        (myDarts[id_dart_cellule])==nullptr)
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -721,7 +720,7 @@ namespace CGAL {
     static void run(const boost::property_tree::ptree& pt, CMap& amap,
                     const std::vector<typename CMap::Dart_handle>& myDarts)
     {
-      BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
+      for( const boost::property_tree::ptree::value_type &v0 :
                      pt.get_child("data.attributes") )
       {
         // <dimension>
@@ -734,14 +733,14 @@ namespace CGAL {
           {
             unsigned int id_dart_cellule=0;
             
-            BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
+            for(const boost::property_tree::ptree::value_type &v1 :
                           v0.second )
             {
               if( v1.first == "a" )
               {
                 id_dart_cellule=v1.second.get<unsigned int>("d")-1;
                 
-                if (amap.template attribute<i>(myDarts[id_dart_cellule])==NULL)
+                if (amap.template attribute<i>(myDarts[id_dart_cellule])==nullptr)
                   amap.template set_attribute<i>
                     (myDarts[id_dart_cellule],
                    amap.template create_attribute<i>());
@@ -777,7 +776,7 @@ namespace CGAL {
     using boost::property_tree::ptree;
 
     // make darts
-    BOOST_FOREACH( const ptree::value_type &v, pt.get_child("data.darts") )
+    for( const ptree::value_type &v : pt.get_child("data.darts") )
     {
       if( v.first == "d" )
         myDarts.push_back(amap.create_dart());
@@ -788,11 +787,11 @@ namespace CGAL {
     unsigned int currentDartInt = 0;
     unsigned int nextDartInt;
 
-    BOOST_FOREACH( const ptree::value_type &v, pt.get_child("data.darts") )
+    for( const ptree::value_type &v : pt.get_child("data.darts") )
     {
       if( v.first == "d" )
       {
-        BOOST_FOREACH( const ptree::value_type &v2, v.second )
+        for( const ptree::value_type &v2 : v.second )
         {
           if (v2.first == "b")
           {

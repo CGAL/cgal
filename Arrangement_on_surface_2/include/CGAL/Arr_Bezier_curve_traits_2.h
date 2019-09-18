@@ -24,7 +24,7 @@
 #define CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
-
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * Definition of the Arr_Bezier_curve_traits_2 class.
@@ -167,8 +167,8 @@ public:
       delete p_cache;
       delete p_inter_map;
     }
-    p_cache = NULL;
-    p_inter_map = NULL;
+    p_cache = nullptr;
+    p_inter_map = nullptr;
   }
   //@}
 
@@ -784,7 +784,7 @@ public:
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv)
+    Comparison_result operator() (const X_monotone_curve_2& cv) const
     {
       if (cv.is_directed_right())
         return (SMALLER);
@@ -881,4 +881,5 @@ public:
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 #endif

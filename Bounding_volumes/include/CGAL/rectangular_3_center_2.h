@@ -895,7 +895,8 @@ rectangular_3_center_2_type2(
   // lower bound for the diameter (2 * radius)
   // also store the corresponding positions of q_t and q_r
   FT rho_max = 0, rho_min = -1, q_t_q_r_cover_at_rho_min = 0;
-  Point q_t_at_rho_max, q_r_at_rho_max, q_t_at_rho_min, q_r_at_rho_min;
+  Point q_t_at_rho_max(CGAL::ORIGIN), q_r_at_rho_max(CGAL::ORIGIN),
+        q_t_at_rho_min(CGAL::ORIGIN), q_r_at_rho_min(CGAL::ORIGIN);
   RandomAccessIterator s_at_rho_min = s, e_at_rho_min = s;
 
 #ifndef CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST

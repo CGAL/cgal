@@ -23,11 +23,14 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <boost/function_output_iterator.hpp>
 
 #include <cfloat>
 #include <climits>
@@ -42,7 +45,7 @@ namespace Surface_mesh_parameterization {
 // Declaration
 //
 
-/// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup PkgSurfaceMeshParameterizationBorderParameterizationMethods
 ///
 /// The class `Two_vertices_parameterizer_3` parameterizes two extreme vertices
 /// of a 3D surface.
@@ -106,7 +109,7 @@ public:
   {
     if(vertices_given) {
       bool found_min = false, found_max = false;
-      BOOST_FOREACH(vertex_descriptor vd, vertices) {
+      for(vertex_descriptor vd : vertices) {
         if(vd == vxmin) {
           found_min = true;
           if(found_max) break;
@@ -140,7 +143,7 @@ public:
     double ymax = -std::numeric_limits<double>::infinity();
     double zmax = -std::numeric_limits<double>::infinity();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       const Point_3& position = get(ppmap,vd);
 
       xmin = (std::min)(position.x(), xmin);
@@ -235,7 +238,7 @@ public:
     double vmin = std::numeric_limits<double>::infinity();
     double vmax = -std::numeric_limits<double>::infinity();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       const Point_3& position = get(ppmap, vd);
       Vector_3 position_as_vector = position - Point_3(0, 0, 0);
 
@@ -323,5 +326,7 @@ public:
 } // Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED

@@ -29,6 +29,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -37,12 +38,16 @@
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/File_maya.h>
 #include <CGAL/Bbox_3.h>
-#include <iostream>
-#include <fstream>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 
 #include <boost/functional/hash.hpp>
+#include <boost/unordered_map.hpp>
+
+#include <iostream>
+#include <fstream>
+
 
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/atomic.h>
@@ -55,12 +60,6 @@ namespace CGAL {
     return CGAL::internal::hash_value(it);
   }
 
-
-  template < class DSC, bool Const >
-  std::size_t tbb_hasher(const CGAL::CCC_internal::CCC_iterator<DSC, Const>& it)
-  {
-    return CGAL::CCC_internal::hash_value(it);
-  }
 
   // As Marc Glisse pointed out the TBB hash of a std::pair is
   // simplistic and leads to the
@@ -75,14 +74,6 @@ namespace CGAL {
                                  CGAL::internal::CC_iterator<DSC, Const> > >()(p);
   }
 
-
-  template < class DSC, bool Const >
-  std::size_t tbb_hasher(const std::pair<CGAL::CCC_internal::CCC_iterator<DSC, Const>,
-                                         CGAL::CCC_internal::CCC_iterator<DSC, Const> >& p)
-  {
-    return boost::hash<std::pair<CGAL::CCC_internal::CCC_iterator<DSC, Const>,
-                                 CGAL::CCC_internal::CCC_iterator<DSC, Const> > >()(p);
-  }
 
 }
 #endif
@@ -150,6 +141,8 @@ public:
   typedef typename Tr::Facet            Facet;
   typedef typename Tr::Edge             Edge;
   typedef typename Tr::size_type        size_type;
+
+  typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
 
   // Indices types
   typedef typename Tr::Cell::Subdomain_index      Subdomain_index;
@@ -292,7 +285,7 @@ public:
       default :
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         std::cerr << "singular edge...\n";
-        std::cerr << v->point() << std::endl;
+        std::cerr << tr_.point(v) << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         return SINGULAR;
       }
@@ -303,13 +296,13 @@ public:
     if(nb_components > 1) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       std::cerr << "singular vertex: nb_components=" << nb_components << std::endl;
-      std::cerr << v->point() << std::endl;
+      std::cerr << tr_.point(v) << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       return SINGULAR;
     }
     else { // REGULAR OR BOUNDARY
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-      std::cerr << "regular or boundary: " << v->point() << std::endl;
+      std::cerr << "regular or boundary: " << tr_.point(v) << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       if (number_of_boundary_incident_edges != 0)
         return BOUNDARY;
@@ -544,9 +537,11 @@ public:
         fit != end; ++fit)
     {
       Facet facet = *fit;
-      Facet mirror = tr_.mirror_facet(facet);
       set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
-      set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
+      if(this->triangulation().dimension() > 2) {
+        Facet mirror = tr_.mirror_facet(facet);
+        set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
+      }
     }
     this->number_of_facets_ = 0;
     clear_manifold_info();
@@ -564,7 +559,7 @@ private:
           end = triangulation().finite_vertices_end();
         vit != end; ++vit)
     {
-      vit->set_c2t3_cache(0, -1);
+      vit->set_c2t3_cache(0, (std::numeric_limits<size_type>::max)());
     }
 
     edge_facet_counter_.clear();
@@ -595,7 +590,7 @@ private:
 #endif // CGAL_LINKED_WITH_TBB
 
           const std::size_t n = edge_va->cached_number_of_incident_facets();
-          edge_va->set_c2t3_cache(n+1, -1);
+          edge_va->set_c2t3_cache(n+1, (std::numeric_limits<size_type>::max)());
         }
       }
     }
@@ -609,7 +604,7 @@ private:
     if( v->is_c2t3_cache_valid() )
     {
       const std::size_t n = v->cached_number_of_components();
-      if(n != std::size_t(-1)) return n;
+      if(n != (std::numeric_limits<size_type>::max)()) return n;
     }
 
     Union_find<Facet> facets;
@@ -630,8 +625,9 @@ private:
       }
     }
 
-    typedef std::map<Vertex_handle,
-                     typename Union_find<Facet>::handle> Vertex_set_map;
+    typedef boost::unordered_map<Vertex_handle,
+                                 typename Union_find<Facet>::handle,
+                                 Hash_fct>    Vertex_set_map;
     typedef typename Vertex_set_map::iterator Vertex_set_map_iterator;
 
     Vertex_set_map vsmap;
@@ -934,7 +930,7 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::add_to_complex(
         if (j != i) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           if(cell->vertex(j)->is_c2t3_cache_valid())
-            std::cerr << "(" << cell->vertex(j)->point() << ")->invalidate_c2t3_cache()\n";
+            std::cerr << "(" << tr_.point(cell, j) << ")->invalidate_c2t3_cache()\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           cell->vertex(j)->invalidate_c2t3_cache();
         }
@@ -985,7 +981,7 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::remove_from_complex(const Facet& 
         if (j != facet.second) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           if(cell->vertex(j)->is_c2t3_cache_valid())
-            std::cerr << "(" << cell->vertex(j)->point() << ")->invalidate_c2t3_cache()\n";
+            std::cerr << "(" << tr_.point(cell, j) << ")->invalidate_c2t3_cache()\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           cell->vertex(j)->invalidate_c2t3_cache();
         }
@@ -1009,12 +1005,12 @@ bbox() const
   }
 
   typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
-  Bbox_3 result = (vit++)->point().bbox();
+  Bbox_3 result = tr_.point(vit++).bbox();
 
   for(typename Tr::Finite_vertices_iterator end = tr_.finite_vertices_end();
       vit != end ; ++vit)
   {
-    result = result + vit->point().bbox();
+    result = result + tr_.point(vit).bbox();
   }
 
   return result;
@@ -1075,5 +1071,7 @@ rescan_after_load_of_triangulation() {
 
 }  // end namespace Mesh_3
 }  // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H

@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 
   //dump polylines
   std::ofstream output("intersection_polylines.cgal");
-  BOOST_FOREACH(const std::vector<K::Point_3>& polyline, polylines)
+  for(const std::vector<K::Point_3>& polyline : polylines)
   {
     output << polyline.size() << " ";
     std::copy(polyline.begin(), polyline.end(),std::ostream_iterator<K::Point_3>(output," "));
@@ -39,9 +39,9 @@ int main(int argc, char* argv[])
   }
   output.close();
 
-  std::cout << "Number of vertices before autorefinement " << num_vertices(mesh) << "\n";
+  std::cout << "Number of vertices before autorefinement " << mesh.number_of_vertices() << "\n";
   PMP::experimental::autorefine(mesh);
-  std::cout << "Number of vertices after autorefinement " << num_vertices(mesh) << "\n";
+  std::cout << "Number of vertices after autorefinement " << mesh.number_of_vertices() << "\n";
 
   output.open("mesh_autorefined.off");
   output << mesh;
@@ -50,10 +50,10 @@ int main(int argc, char* argv[])
   input.open(filename);
   mesh.clear();
   input >> mesh;
-  std::cout << "Number of vertices before self-intersection removal " << num_vertices(mesh) << "\n";
+  std::cout << "Number of vertices before self-intersection removal " << mesh.number_of_vertices() << "\n";
   if (!PMP::experimental::autorefine_and_remove_self_intersections(mesh))
     std::cout << "WARNING: Cannot remove all self-intersections\n";
-  std::cout << "Number of vertices after self-intersection removal " << num_vertices(mesh) << "\n";
+  std::cout << "Number of vertices after self-intersection removal " << mesh.number_of_vertices() << "\n";
 
   output.open("mesh_fixed.off");
   output << std::setprecision(17) << mesh;

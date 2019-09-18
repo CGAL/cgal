@@ -297,7 +297,7 @@ _test_cls_delaunay_3(const Triangulation &)
   /************** and I/O ****************************/
 
   std::cout << "    Constructor " << std::endl;
-  // Begining with an empty triangulation and adding point until reaching
+  // Beginning with an empty triangulation and adding point until reaching
   // 3-dimentional triangulation.
   Cls T0; 
   assert(T0.dimension() == -1);
@@ -617,33 +617,6 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T3_13.is_valid());
   assert(T3_13.number_of_vertices()==22);
   assert(T3_13.dimension()==3);
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-  {
-    std::cout << "    Testing move_point()" << std::endl;
-    Cls T;
-    std::list<Vertex_handle> L;
-    for (i=0; i<22; ++i)
-      L.push_back(T.insert(q[i]));
-    assert(T.is_valid());
-    assert(T.number_of_vertices()==22);
-    assert(T.dimension()==3);
-
-    for (i=0; i<100; ++i) {
-      assert(!L.empty());
-      Vertex_handle v = L.front();
-      L.pop_front();
-      size_type nbv = T.number_of_vertices();
-      L.push_back(T.move_point(v, q[(3*i)%22]));
-
-      if (nbv != T.number_of_vertices())
-        L.pop_back(); // it means we move onto an already existing point.
-
-      assert(T.is_valid());
-      assert(T.number_of_vertices()<=22);
-    }
-  }
-#endif
 
   {
     std::cout << "    Testing move()" << std::endl;

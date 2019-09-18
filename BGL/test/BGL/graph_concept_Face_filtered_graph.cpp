@@ -43,6 +43,7 @@ void concept_check_adapter()
 
   // null
   boost::graph_traits<Adapter>::null_vertex();
+  boost::graph_traits<Adapter>::null_halfedge();
   boost::graph_traits<Adapter>::null_face();
 }
 

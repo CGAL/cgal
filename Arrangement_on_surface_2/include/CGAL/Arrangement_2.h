@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The header file for the Arrangement_2<Traits,Dcel> class.
@@ -254,5 +255,7 @@ protected:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

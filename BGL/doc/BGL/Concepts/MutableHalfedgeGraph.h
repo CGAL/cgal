@@ -6,12 +6,11 @@ The concept `MutableHalfedgeGraph` refines the concept `HalfedgeGraph`
 and adds the requirements for operations to add vertices and edges, and to
 update the incidence information between vertices and halfedges.
 
-
 \cgalRefines `HalfedgeGraph`
-\cgalHasModel `CGAL::Polyhedron_3`
-\cgalHasModel `CGAL::Surface_mesh`
-\cgalHasModel `CGAL::Linear_cell_complex_for_combinatorial_map`
 
+\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+
+\sa \link PkgBGLConcepts Graph Concepts \endlink
 */
 class MutableHalfedgeGraph{};
 

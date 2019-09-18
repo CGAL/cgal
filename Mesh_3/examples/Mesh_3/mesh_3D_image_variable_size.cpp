@@ -7,13 +7,13 @@
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Mesh_constant_domain_field_3.h>
 
-#include <CGAL/Labeled_image_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Labeled_image_mesh_domain_3<CGAL::Image_3,K> Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
 #ifdef CGAL_CONCURRENT_MESH_3
 typedef CGAL::Parallel_tag Concurrency_tag;
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   }
 
   // Domain
-  Mesh_domain domain(image);
+  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
 
   // Sizing field: set global size to 8 and kidney size (label 127) to 3
   double kidney_size = 3.;

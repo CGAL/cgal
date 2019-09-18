@@ -24,6 +24,8 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Surface_mesh_parameterization/internal/Bool_property_map.h>
 
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
@@ -42,7 +44,7 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
-/// \ingroup  PkgSurfaceParameterizationMainFunction
+/// \ingroup  PkgSurfaceMeshParameterizationMainFunction
 ///
 /// Compute a one-to-one mapping from a 3D triangle surface `mesh` to a
 /// simple 2D domain.
@@ -94,7 +96,7 @@ Error_code parameterize(TriangleMesh& mesh,
   return parameterizer.parameterize(mesh, bhd, uvm, vipm, vpm);
 }
 
-/// \ingroup  PkgSurfaceParameterizationMainFunction
+/// \ingroup  PkgSurfaceMeshParameterizationMainFunction
 ///
 /// Compute a one-to-one mapping from a 3D triangle surface `mesh` to a
 /// 2D circle, using Floater Mean Value Coordinates algorithm.
@@ -165,5 +167,7 @@ Error_code parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_PARAMETERIZE_H

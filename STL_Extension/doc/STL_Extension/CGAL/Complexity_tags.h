@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 
 
@@ -33,7 +33,7 @@ struct Compact {
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 
 

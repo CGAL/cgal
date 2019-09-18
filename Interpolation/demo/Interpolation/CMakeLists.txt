@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Interpolation_Demo )
 
-cmake_minimum_required(VERSION 3.1)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
   cmake_policy(SET CMP0053 OLD)
@@ -15,12 +15,6 @@ set_property(DIRECTORY PROPERTY CGAL_NO_TESTING TRUE)
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
 
   create_single_source_cgal_program( "interpolation_2_demo.cpp" )
   create_single_source_cgal_program( "surface_voronoi.cpp" )

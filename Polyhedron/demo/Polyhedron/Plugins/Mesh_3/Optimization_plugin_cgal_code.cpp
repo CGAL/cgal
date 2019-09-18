@@ -3,8 +3,6 @@
 #include "C3t3_type.h"
 #include "Scene_c3t3_item.h"
 #include "Scene_surface_mesh_item.h"
-#include "Scene_polyhedron_item.h"
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Scene_image_item.h"
@@ -112,9 +110,14 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     {
       return NULL;
     }
-    
-    Image_mesh_domain* p_domain = new Image_mesh_domain(*p_image, 1e-6);
-    
+
+    Image_mesh_domain* p_domain =
+      new Image_mesh_domain(Image_mesh_domain::create_labeled_image_mesh_domain
+                              (CGAL::parameters::image = *p_image,
+                               CGAL::parameters::relative_error_bound = 1e-6,
+                               CGAL::parameters::construct_surface_patch_index =
+                                    [](int i, int j) { return (i * 1000 + j); } ));
+
     // Create thread
     typedef Optimization_function<Image_mesh_domain,Parameters> Opt_function;
     Opt_function* p_opt_function = new Opt_function(p_result_item->c3t3(), p_domain, param);
@@ -122,44 +125,25 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     return new Optimizer_thread(p_opt_function, p_result_item);
   }
 #endif
-  
-  // Polyhedron
-  const Scene_polyhedron_item* poly_item = 
-    qobject_cast<const Scene_polyhedron_item*>(c3t3_item.data_item());
-  
-  if ( NULL != poly_item )
-  {
-    // Build domain
-    const Polyhedron* p_poly = poly_item->polyhedron();
-    if ( NULL == p_poly )
-    {
-      return NULL;
-    }
-    
-    Polyhedral_mesh_domain* p_domain = new Polyhedral_mesh_domain(*p_poly);
-    
-    // Create thread
-    typedef Optimization_function<Polyhedral_mesh_domain,Parameters> Opt_function;
-    Opt_function* p_opt_function = new Opt_function(p_result_item->c3t3(), p_domain, param);
-    return new Optimizer_thread(p_opt_function, p_result_item);
-  }
-  
+
   // Surface mesh
   const Scene_surface_mesh_item* sm_item =
     qobject_cast<const Scene_surface_mesh_item*>(c3t3_item.data_item());
 
   if ( NULL != sm_item )
   {
+    const_cast<Scene_surface_mesh_item*>(sm_item)->setItemIsMulticolor(true);
+    const_cast<Scene_surface_mesh_item*>(sm_item)->computeItemColorVectorAutomatically(true);
     // Build domain
     const SMesh* smesh = sm_item->face_graph();
     if ( NULL == smesh )
     {
       return NULL;
     }
-    Polyhedral_mesh_domain_sm* sm_domain = new Polyhedral_mesh_domain_sm(*smesh);
+    Polyhedral_mesh_domain* sm_domain = new Polyhedral_mesh_domain(*smesh);
 
     // Create thread
-    typedef Optimization_function<Polyhedral_mesh_domain_sm,Parameters> Opt_function;
+    typedef Optimization_function<Polyhedral_mesh_domain,Parameters> Opt_function;
     Opt_function* p_opt_function = new Opt_function(p_result_item->c3t3(), sm_domain, param);
     return new Optimizer_thread(p_opt_function, p_result_item);
   }
@@ -183,8 +167,10 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
                            p_function->bbox().zmax());
     
     Function_mesh_domain* p_domain =
-      new Function_mesh_domain(Function_wrapper(*p_function), dom_bbox, 1e-7);
-    
+      new Function_mesh_domain(Function_wrapper(*p_function), dom_bbox, 1e-7,
+                               CGAL::parameters::construct_surface_patch_index =
+                                 [](int i, int j) { return (i * 1000 + j); } );
+
     // Create thread
     typedef Optimization_function<Function_mesh_domain,Parameters> Opt_function;
     Opt_function* p_opt_function = new Opt_function(p_result_item->c3t3(), p_domain, param);

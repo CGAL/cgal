@@ -6,3 +6,5 @@ Circulator
 Stream_support
 Solver_interface
 Point_set_processing_3
+Shape_detection
+BGL

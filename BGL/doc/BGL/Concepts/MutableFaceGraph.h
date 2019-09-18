@@ -7,10 +7,10 @@ the requirement for operations to add faces and to modify face-halfedge relation
 
 \cgalRefines `FaceGraph`
 \cgalRefines `MutableHalfedgeGraph`
-\cgalHasModel `CGAL::Polyhedron_3`
-\cgalHasModel `CGAL::Surface_mesh`
-\cgalHasModel `CGAL::Linear_cell_complex_for_combinatorial_map`
 
+\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+
+\sa \link PkgBGLConcepts Graph Concepts \endlink
 */
 class MutableFaceGraph{};
 
@@ -47,4 +47,4 @@ Indicates the expected size of vertices (`nv`), edges (`ed`) and faces (`nf`).
  */
 template <typename MutableFaceGraph>
 void
-reserve(MutableFaceGraph& g, boost::graph_traits<MutableFaceGraph>::vertices_size_type nv, boost::graph_traits<MutableFaceGraph>::vertices_size_type ne, boost::graph_traits<MutableFaceGraph>::vertices_size_type nf);
+reserve(MutableFaceGraph& g, boost::graph_traits<MutableFaceGraph>::vertices_size_type nv, boost::graph_traits<MutableFaceGraph>::edges_size_type ne, boost::graph_traits<MutableFaceGraph>::faces_size_type nf);

@@ -21,7 +21,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGTH_STOP_PREDICATE_H 1
 
 #include <CGAL/license/Surface_mesh_simplification.h>
-
+#include <CGAL/squared_distance_3.h>
 
 namespace CGAL {
 

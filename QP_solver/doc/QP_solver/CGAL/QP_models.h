@@ -57,8 +57,7 @@ namespace CGAL {
   \cgalModels `QuadraticProgram`
   \cgalModels `LinearProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example} 
 
   \ref QP_solver/first_lp_from_iterators.cpp 
 
@@ -113,8 +112,7 @@ public:
 
   \returns an instance of `Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>`, constructed from the given iterators.
 
-  Example 
-  -------------- 
+  \cgalHeading{Example} 
 
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators()`. 
@@ -160,8 +158,7 @@ make_linear_program_from_iterators (
   \returns an instance of `Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>`, constructed from the given iterators.
 
 
-  Example 
-  -------------- 
+  \cgalHeading{Example}
 
   `QP_solver/solve_convex_hull_containment_lp2.h` 
 
@@ -198,8 +195,7 @@ make_nonnegative_linear_program_from_iterators (
   `Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it,C_it>`, 
   constructed from the given iterators.
 
-  Example 
-  -------------- 
+  \cgalHeading{Example} 
 
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators()`. 
@@ -240,8 +236,7 @@ make_nonnegative_quadratic_program_from_iterators (
 
   \returns an instance of `Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>`, constructed from the given iterators.
 
-  Example 
-  -------------- 
+  \cgalHeading{Example}
 
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators()`. 
@@ -330,8 +325,7 @@ make_quadratic_program_from_iterators (
   \cgalModels `NonnegativeQuadraticProgram`
   \cgalModels `NonnegativeLinearProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example}
 
   \ref QP_solver/first_nonnegative_lp_from_iterators.cpp 
 
@@ -422,8 +416,7 @@ public:
   \cgalModels `QuadraticProgram`
   \cgalModels `NonnegativeQuadraticProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example}
 
   \ref QP_solver/first_nonnegative_qp_from_iterators.cpp 
 
@@ -522,8 +515,7 @@ public:
 
   \cgalModels `QuadraticProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example}
 
   \ref QP_solver/first_qp_from_iterators.cpp 
 
@@ -630,8 +622,7 @@ public:
   \cgalModels `NonnegativeQuadraticProgram`
   \cgalModels `NonnegativeLinearProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example} 
 
   \ref QP_solver/first_qp_from_mps.cpp 
 
@@ -726,14 +717,14 @@ public:
     sets the entry \f$ A_{ij}\f$ 
     in column \f$ j\f$ and row \f$ i\f$ of the constraint matrix \f$ A\f$ of `qp` to 
     `val`. An existing entry is overwritten. `qp` is enlarged if 
-    necessary to accomodate this entry. 
+    necessary to accommodate this entry. 
   */ 
   void set_a (int j, int i, const NT& val); 
 
   /*!
     sets the entry \f$ b_i\f$ 
     of `qp` to `val`. An existing entry is overwritten. 
-    `qp` is enlarged if necessary to accomodate this entry. 
+    `qp` is enlarged if necessary to accommodate this entry. 
   */ 
   void set_b (int i, const NT& val); 
 
@@ -741,28 +732,28 @@ public:
     sets the entry \f$ \qprel_i\f$ of `qp` to `rel`. `CGAL::SMALLER` 
     means that the \f$ i\f$-th constraint is of type "\f$ \leq\f$", `CGAL::EQUAL` 
     means "\f$ =\f$", and `CGAL::LARGER` encodes "\f$ \geq\f$". An existing entry 
-    is overwritten. `qp` is enlarged if necessary to accomodate this entry. 
+    is overwritten. `qp` is enlarged if necessary to accommodate this entry. 
   */ 
   void set_r (int i, CGAL::Comparison_result rel); 
 
   /*!
     if `is_finite`, this sets the entry \f$ l_j\f$ of `qp` to `val`, 
     otherwise it sets \f$ l_j\f$ to \f$ -\infty\f$. An existing entry is overwritten. 
-    `qp` is enlarged if necessary to accomodate this entry. 
+    `qp` is enlarged if necessary to accommodate this entry. 
   */ 
   void set_l (int j, bool is_finite, const NT& val = NT(0)); 
 
   /*!
     if `is_finite`, this sets the entry \f$ u_j\f$ of `qp` to `val`, 
     otherwise it sets \f$ u_j\f$ to \f$ \infty\f$. An existing entry is overwritten. 
-    `qp` is enlarged if necessary to accomodate this entry. 
+    `qp` is enlarged if necessary to accommodate this entry. 
   */ 
   void set_u (int j, bool is_finite, const NT& val = NT(0)); 
 
   /*!
     sets the entry \f$ c_j\f$ 
     of `qp` to `val`. An existing entry is overwritten. 
-    `qp` is enlarged if necessary to accomodate this entry. 
+    `qp` is enlarged if necessary to accommodate this entry. 
   */ 
   void set_c (int j, const NT& val); 
 
@@ -775,7 +766,7 @@ public:
   /*!
     sets the entries 
     \f$ 2D_{ij}\f$ and \f$ 2D_{ji}\f$ of `qp` to `val`. Existing entries are 
-    overwritten. `qp` is enlarged if necessary to accomodate these entries. 
+    overwritten. `qp` is enlarged if necessary to accommodate these entries. 
     \pre `j <= i` 
   */ 
   void set_d (int i, int j, const NT& val); 
@@ -854,8 +845,7 @@ namespace CGAL {
   \cgalModels `NonnegativeQuadraticProgram`
   \cgalModels `NonnegativeLinearProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example} 
 
   \ref QP_solver/first_qp.cpp 
 
@@ -931,14 +921,14 @@ public:
     sets the entry \f$ A_{ij}\f$ 
     in column \f$ j\f$ and row \f$ i\f$ of the constraint matrix \f$ A\f$ of `qp` to 
     `val`. An existing entry is overwritten. `qp` is enlarged if 
-    necessary to accomodate this entry. 
+    necessary to accommodate this entry. 
   */ 
   void set_a (int j, int i, const NT& val); 
 
   /*!
     sets the entry \f$ b_i\f$ 
     of `qp` to `val`. An existing entry is overwritten. 
-    `qp` is enlarged if necessary to accomodate this entry. 
+    `qp` is enlarged if necessary to accommodate this entry. 
   */ 
   void set_b (int i, const NT& val); 
 
@@ -946,28 +936,28 @@ public:
     sets the entry \f$ \qprel_i\f$ of `qp` to `rel`. `CGAL::SMALLER` 
     means that the \f$ i\f$-th constraint is of type "\f$ \leq\f$", `CGAL::EQUAL` 
     means "\f$ =\f$", and `CGAL::LARGER` encodes "\f$ \geq\f$". An existing entry 
-    is overwritten. `qp` is enlarged if necessary to accomodate this entry. 
+    is overwritten. `qp` is enlarged if necessary to accommodate this entry. 
   */ 
   void set_r (int i, CGAL::Comparison_result rel); 
 
   /*!
     if `is_finite`, this sets the entry \f$ l_j\f$ of `qp` to `val`, 
     otherwise it sets \f$ l_j\f$ to \f$ -\infty\f$. An existing entry is overwritten. 
-    `qp` is enlarged if necessary to accomodate this entry. 
+    `qp` is enlarged if necessary to accommodate this entry. 
   */ 
   void set_l (int j, bool is_finite, const NT& val = NT(0)); 
 
   /*!
     if `is_finite`, this sets the entry \f$ u_j\f$ of `qp` to `val`, 
     otherwise it sets \f$ u_j\f$ to \f$ \infty\f$. An existing entry is overwritten. 
-    `qp` is enlarged if necessary to accomodate this entry. 
+    `qp` is enlarged if necessary to accommodate this entry. 
   */ 
   void set_u (int j, bool is_finite, const NT& val = NT(0)); 
 
   /*!
     sets the entry \f$ c_j\f$ 
     of `qp` to `val`. An existing entry is overwritten. 
-    `qp` is enlarged if necessary to accomodate this entry. 
+    `qp` is enlarged if necessary to accommodate this entry. 
   */ 
   void set_c (int j, const NT& val); 
 
@@ -980,7 +970,7 @@ public:
   /*!
     sets the entries 
     \f$ 2D_{ij}\f$ and \f$ 2D_{ji}\f$ of `qp` to `val`. Existing entries are 
-    overwritten. `qp` is enlarged if necessary to accomodate these entries. 
+    overwritten. `qp` is enlarged if necessary to accommodate these entries. 
     \pre `j <= i` 
   */ 
   void set_d (int i, int j, const NT& val); 

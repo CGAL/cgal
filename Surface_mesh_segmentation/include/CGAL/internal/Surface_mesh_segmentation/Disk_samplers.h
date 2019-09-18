@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
+#include <CGAL/disable_warnings.h>
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
@@ -265,4 +266,7 @@ public:
 /// @endcond
 }//namespace CGAL
 #undef CGAL_ANGLE_ST_DEV_DIVIDER
+
+#include <CGAL/enable_warnings.h>
+
 #endif //CGAL_SURFACE_MESH_SEGMENTATION_DISK_SAMPLERS_H

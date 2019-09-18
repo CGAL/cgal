@@ -68,7 +68,7 @@ public:
   typedef typename Dt::Triangulation_data_structure Tds;
 
   // The Exact Comparison Tag cannot be used in conjonction with periodic triangulations
-  // because the periodic triangulations' point() function return a temporary
+  // because the periodic triangulations' point() function returns a temporary
   // value while the lazy predicate evaluations that are used when the Exact tag
   // is set to true rely on a permanent and safe access to the points.
   CGAL_static_assertion(
@@ -319,7 +319,7 @@ public:
       return n;
     }
 
-private :
+protected :
 
   //--------------------- INITIALIZATION OF PRIVATE MEMBERS -----------
 
@@ -1333,7 +1333,7 @@ Alpha_shape_2<Dt,EACT>::number_of_solid_components(const Type_of_alpha& alpha) c
        ++face_it) 
     {
       Face_handle pFace = face_it;
-      CGAL_triangulation_postcondition( pFace != NULL);
+      CGAL_triangulation_postcondition( pFace != nullptr);
       
       if (classify(pFace, alpha) == INTERIOR){
 	Data& data = marked_face_set[pFace];
@@ -1367,7 +1367,7 @@ Alpha_shape_2<Dt,EACT>::traverse(const Face_handle& pFace,
     for (int i=0; i<3; i++)
       {
 	pNeighbor = fh->neighbor(i);
-	 CGAL_triangulation_assertion(pNeighbor != NULL);
+	 CGAL_triangulation_assertion(pNeighbor != nullptr);
 	if (classify(pNeighbor, alpha) == INTERIOR){
 	  Data& data = marked_face_set[pNeighbor];
 	  if(data == false){

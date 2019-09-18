@@ -143,8 +143,8 @@ struct Cartesian_base
     typedef Aff_transformationC3<Kernel>                Aff_transformation_3;
     typedef Weighted_pointC3<Kernel>                    Weighted_point_3;
 
-    typedef typename cpp11::array<FT_, 2>::const_iterator Cartesian_const_iterator_2;
-    typedef typename cpp11::array<FT_, 3>::const_iterator Cartesian_const_iterator_3;
+    typedef typename std::array<FT_, 2>::const_iterator Cartesian_const_iterator_2;
+    typedef typename std::array<FT_, 3>::const_iterator Cartesian_const_iterator_3;
 
     // Undocumented stuff.
     typedef Data_accessorC2<Kernel>                     Data_accessor_2;

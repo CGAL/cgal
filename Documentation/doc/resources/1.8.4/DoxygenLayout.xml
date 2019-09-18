@@ -4,7 +4,7 @@
     <tab type="mainpage" visible="yes" title=""/>
     <tab type="modules" visible="yes" title="" intro=""/>
     <tab type="pages" visible="yes" title="" intro=""/>
-    <tab type="classlist" visible="yes" title="Class and Concept List" intro="Here is the list of all concepts and classes of the CGAL Library. Classes are inside the namespace CGAL. Concepts are in the global namespace."/>
+    <tab type="classlist" visible="no" title="Class and Concept List" intro="Here is the list of all concepts and classes of the CGAL Library. Classes are inside the namespace CGAL. Concepts are in the global namespace."/>
     <tab type="examples" visible="no" title="" intro=""/>  
     <!-- <tab type="user" url="@ref how_to_cite_cgal" title="Acknowledging CGAL"/> -->
   </navindex>

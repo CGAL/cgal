@@ -48,7 +48,7 @@ class Dxf_reader_doubles {
 
 public:
   typedef double       FT;
-  typedef cpp11::array<double, 3>  Triplet;
+  typedef std::array<double, 3>  Triplet;
   typedef Triplet Point_2_and_bulge;
   typedef Triplet Circle_2;
 
@@ -140,9 +140,8 @@ private:
   is >> n;
   CGAL_assertion(n == 40);
   is >> iformat(r);
-  FT rft(r);
-
-  circ = CGAL::make_array(cx,cy,rft);
+  FT sqr_ft(r*r);
+  circ = CGAL::make_array(cx,cy,sqr_ft);
 }
 
 

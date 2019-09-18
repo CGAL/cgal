@@ -24,7 +24,7 @@
 #include <CGAL/license/Surface_mesh_skeletonization.h>
 
 
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Default.h>
 
@@ -39,8 +39,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/property_map/property_map.hpp>
 
-#include <boost/iterator/transform_iterator.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/boost/graph/iterator.h>
 
@@ -59,6 +58,7 @@
 // For Voronoi diagram
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 // For debugging macro
@@ -92,8 +92,8 @@ template < class Refs, class Point, class ID, class vertex_descriptor>
 struct Skel_HDS_vertex_type : public HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID>
 {
   typedef HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID> Base;
-  Skel_HDS_vertex_type() : Base (), is_fixed(false)  {}
-  Skel_HDS_vertex_type( Point const& p) : Base(p), is_fixed(false) {}
+  Skel_HDS_vertex_type() : Base (), pole(ORIGIN), is_fixed(false)  {}
+  Skel_HDS_vertex_type( Point const& p) : Base(p), pole(ORIGIN), is_fixed(false) {}
   std::vector<vertex_descriptor> vertices;
   Point pole;
   bool is_fixed;
@@ -111,7 +111,7 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
 } //end of namespace internal
 
 
-/// \ingroup PkgMeanCurvatureSkeleton3
+/// \ingroup PkgSurfaceMeshSkeletonizationRef
 /// Function object that enables to extract the mean curvature
 /// flow skeleton of a triangulated surface mesh.
 ///
@@ -217,7 +217,7 @@ public:
   /// `Vmap` is a struct with a member `point` of type `Traits::Point_3`
   /// and a member `vertices` of type
   /// `std::vector<boost::graph_traits<TriangleMesh>::%vertex_descriptor>`.
-  /// See  <a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><tt>the boost documentation</tt></a> page for more details
+  /// See  <a href="https://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><tt>the boost documentation</tt></a> page for more details
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Vmap> Skeleton;
 
 
@@ -247,7 +247,8 @@ public:
   typedef CGAL::Exact_predicates_exact_constructions_kernel                    Exact_kernel;
   typedef CGAL::Triangulation_vertex_base_with_info_3
                                             <vertex_descriptor, Exact_kernel>  Vb;
-  typedef CGAL::Triangulation_data_structure_3<Vb>                             Tds;
+  typedef CGAL::Delaunay_triangulation_cell_base_3<Exact_kernel>               Cb;
+  typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                         Tds;
   typedef CGAL::Delaunay_triangulation_3<Exact_kernel, Tds>                    Delaunay;
   typedef typename Delaunay::Point                                             Exact_point;
   typedef typename Delaunay::Cell_handle                                       Cell_handle;
@@ -414,11 +415,13 @@ public:
     return m_min_edge_length;
   }
 
- void set_max_triangle_angle(double value)
+  /// set function for `max_triangle_angle()`
+  void set_max_triangle_angle(double value)
   {
     m_alpha_TH = value;
   }
 
+  /// set function for `min_edge_length()`
   void set_min_edge_length(double value)
   {
     m_min_edge_length = value;
@@ -443,11 +446,13 @@ public:
     return m_delta_area;
   }
 
+  /// set function for `max_iterations()`
   void set_max_iterations(std::size_t value)
   {
     m_max_iterations = value;
   }
 
+  /// set function for `area_variation_factor()`
   void set_area_variation_factor(double value)
   {
     m_delta_area = value;
@@ -457,6 +462,7 @@ public:
   /// \name Vertex Motion Parameters
   /// @{
 
+  /// \cgalAdvancedFunction
   /// \cgalAdvancedBegin
   /// Controls the velocity of movement and approximation quality:
   /// decreasing this value makes the mean curvature flow based contraction converge
@@ -476,7 +482,8 @@ public:
   {
     return m_is_medially_centered;
   }
-
+  
+  /// \cgalAdvancedFunction
   /// \cgalAdvancedBegin
   /// Controls the smoothness of the medial approximation:
   /// increasing this value results in a (less smooth) skeleton closer
@@ -489,16 +496,19 @@ public:
     return m_omega_P;
   }
 
+  /// set function for `quality_speed_tradeoff()`
   void set_quality_speed_tradeoff(double value)
   {
     m_omega_H = value;
   }
 
+  /// set function for `is_medially_centered()`
   void set_is_medially_centered(bool value)
   {
     m_is_medially_centered = value;
   }
 
+  /// set function for `medially_centered_speed_tradeoff()`
   void set_medially_centered_speed_tradeoff(double value)
   {
     m_omega_P = value;
@@ -528,7 +538,7 @@ public:
   void fixed_points(std::vector<Point>& fixed_points)
   {
     fixed_points.clear();
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       if (vd->is_fixed)
         fixed_points.push_back(get(m_tmesh_point_pmap, vd));
@@ -544,7 +554,7 @@ public:
   void non_fixed_points(std::vector<Point>& non_fixed_points)
   {
     non_fixed_points.clear();
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       if (!vd->is_fixed)
         non_fixed_points.push_back(get(m_tmesh_point_pmap, vd));
@@ -561,7 +571,7 @@ public:
   {
     max_poles.resize(num_vertices(m_tmesh));
     int cnt = 0;
-    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
+    for(vertex_descriptor v : vertices(m_tmesh))
     {
       max_poles[cnt++] = v->pole;
     }
@@ -646,7 +656,7 @@ public:
     MCFSKEL_DEBUG(std::cerr << "after solve\n";)
 
     // copy to surface mesh
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       int i = m_new_id[id];
@@ -780,7 +790,7 @@ public:
   /**
    * Converts the contracted surface mesh to a skeleton curve.
    * @tparam Skeleton
-   *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
+   *         an instantiation of <A href="https://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
    *         as a data structure for the skeleton curve.
    * @param skeleton
    *        graph that will contain the skeleton of `tmesh`. It should be empty before passed to the function.
@@ -800,14 +810,14 @@ public:
 
   /// When using the low level API it is possible to access the intermediate
   /// results of the skeletonization process, called meso-skeleton.
-  /// It is a triangulated surface mesh which is model of `FaceListGraph`.
+  /// It is a triangulated surface mesh which is model of `FaceListGraph` and `HalfedgeListGraph`.
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Meso_skeleton;
 #else
   typedef mTriangleMesh Meso_skeleton;
 #endif
   /// Reference to the collapsed triangulated surface mesh.
-  Meso_skeleton& meso_skeleton()
+  const Meso_skeleton& meso_skeleton() const
   {
     return m_tmesh;
   }
@@ -838,20 +848,21 @@ private:
   {
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
-    copy_face_graph(tmesh, m_tmesh, std::back_inserter(v2v));
+    copy_face_graph(tmesh, m_tmesh, 
+                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v)));
 
     // copy input vertices to keep correspondence
-    BOOST_FOREACH(const Vertex_pair& vp, v2v)
+    for(const Vertex_pair& vp : v2v)
       vp.second->vertices.push_back(vp.first);
 
     //init indices
     typedef typename boost::graph_traits<mTriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<mTriangleMesh>::halfedge_descriptor halfedge_descriptor;
     std::size_t i=0;
-    BOOST_FOREACH( vertex_descriptor vd, vertices(m_tmesh) )
+    for(vertex_descriptor vd : vertices(m_tmesh) )
       vd->id()=i++;
     i=0;
-    BOOST_FOREACH( halfedge_descriptor hd, halfedges(m_tmesh) )
+    for(halfedge_descriptor hd : halfedges(m_tmesh) )
       hd->id()=i++;
     m_hedge_id_pmap = get(boost::halfedge_index, m_tmesh);
     m_vertex_id_pmap = get(boost::vertex_index, m_tmesh);
@@ -889,7 +900,7 @@ private:
   {
     m_edge_weight.clear();
     m_edge_weight.reserve(2 * num_edges(m_tmesh));
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
+    for(halfedge_descriptor hd : halfedges(m_tmesh))
     {
       m_edge_weight.push_back(m_weight_calculator(hd));
     }
@@ -904,7 +915,7 @@ private:
 
     Side_of_triangle_mesh<mTriangleMesh, Traits> test_inside(m_tmesh);
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       int id = static_cast<int>(get(m_vertex_id_pmap, vd));
 
@@ -930,7 +941,7 @@ private:
       }
     }
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       int i = m_new_id[id];
@@ -941,7 +952,7 @@ private:
         L = 0;
       }
       double diagonal = 0;
-      BOOST_FOREACH(edge_descriptor ed, in_edges(vd, m_tmesh))
+      for(edge_descriptor ed : in_edges(vd, m_tmesh))
       {
         vertex_descriptor vj = source(ed, m_tmesh);
         double wij = m_edge_weight[get(m_hedge_id_pmap, halfedge(ed, m_tmesh))] * 2.0;
@@ -974,7 +985,7 @@ private:
       Bz[i] = 0;
     }
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       int i = m_new_id[id];
@@ -1021,7 +1032,7 @@ private:
     m_new_id.clear();
     int cnt = 0;
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       m_new_id[id] = cnt++;
@@ -1076,12 +1087,12 @@ private:
     m_halfedge_angle.resize(ne, 0);
 
     int idx = 0;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
+    for(halfedge_descriptor hd : halfedges(m_tmesh))
     {
       put(m_hedge_id_pmap, hd, idx++);
     }
 
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
+    for(halfedge_descriptor hd : halfedges(m_tmesh))
     {
       int e_id = static_cast<int>(get(m_hedge_id_pmap, hd));
 
@@ -1166,7 +1177,7 @@ private:
     // both opposite angle are larger than the
     // threshold
     std::vector<edge_descriptor> edges_to_split;
-    BOOST_FOREACH(edge_descriptor ed, edges(m_tmesh))
+    for(edge_descriptor ed : edges(m_tmesh))
     {
       halfedge_descriptor ei = halfedge(ed, m_tmesh);
       halfedge_descriptor ej = opposite(ei, m_tmesh);
@@ -1181,7 +1192,7 @@ private:
 
     // now split the edge
     std::size_t cnt = 0;
-    BOOST_FOREACH(edge_descriptor ed, edges_to_split)
+    for(edge_descriptor ed : edges_to_split)
     {
       halfedge_descriptor ei = halfedge(ed, m_tmesh);
       halfedge_descriptor ej = opposite(ei, m_tmesh);
@@ -1226,7 +1237,7 @@ private:
   std::size_t detect_degeneracies_in_disk()
   {
     std::size_t num_fixed = 0;
-    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
+    for(vertex_descriptor v : vertices(m_tmesh))
     {
       if (!v->is_fixed)
       {
@@ -1259,7 +1270,7 @@ private:
     std::vector<std::pair<Exact_point, vertex_descriptor> > points;
     std::vector<std::vector<int> > point_to_pole(num_vertices(m_tmesh));
 
-    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
+    for(vertex_descriptor v : vertices(m_tmesh))
     {
       const Point& input_pt = get(m_tmesh_point_pmap, v);
       Exact_point tp(get_x(input_pt), get_y(input_pt), get_z(input_pt));
@@ -1294,7 +1305,7 @@ private:
     }
 
     typedef std::pair<Exact_point, vertex_descriptor> Pair_type;
-    BOOST_FOREACH(const Pair_type& p, points)
+    for(const Pair_type& p : points)
     {
       std::size_t vid = get(m_vertex_id_pmap, p.second);
       Point surface_point = get(m_tmesh_point_pmap, p.second);
@@ -1336,7 +1347,7 @@ private:
 
     m_normals.resize(num_vertices(m_tmesh));
 
-    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
+    for(vertex_descriptor v : vertices(m_tmesh))
     {
       int vid = static_cast<int>(get(m_vertex_id_pmap, v));
       m_normals[vid] = PMP::compute_vertex_normal(v
@@ -1354,7 +1365,7 @@ private:
   {
     std::map<halfedge_descriptor, bool> visited;
 
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
+    for(halfedge_descriptor hd : halfedges(m_tmesh))
     {
       if (!visited[hd])
       {
@@ -1381,7 +1392,7 @@ std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPoi
 
   std::set<edge_descriptor> edges_to_collapse, non_topologically_valid_collapses;
 
-  BOOST_FOREACH(edge_descriptor ed, edges(m_tmesh))
+  for(edge_descriptor ed : edges(m_tmesh))
     if ( edge_should_be_collapsed(ed) )
       edges_to_collapse.insert(ed);
 
@@ -1430,7 +1441,7 @@ std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPoi
 
       CGAL_assertion(vj==v);
 
-      BOOST_FOREACH(edge_descriptor oed, out_edges(v, m_tmesh))
+      for(edge_descriptor oed : out_edges(v, m_tmesh))
         if ( edge_should_be_collapsed(oed) ) edges_to_collapse.insert(oed);
 
       ++cnt;

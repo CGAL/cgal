@@ -137,7 +137,7 @@ struct Hot_pixel_dir_cmp {
 
   Traits_ m_gt;
 
-  bool operator()(const Hot_pixel * h1, const Hot_pixel * h2);
+  bool operator()(const Hot_pixel * h1, const Hot_pixel * h2) const;
 };
 
 #ifdef CGAL_SR_DEBUG
@@ -502,7 +502,7 @@ operator()(const Hot_pixel * h1, const Hot_pixel * h2) const
 // segment intersect
 template<class Traits_>
 bool Hot_pixel_dir_cmp<Traits_>::operator ()(const Hot_pixel * h1,
-                                             const Hot_pixel * h2)
+                                             const Hot_pixel * h2) const
 {
   typedef typename Traits_::Compare_x_2         Compare_x_2;
   typedef typename Traits_::Compare_y_2         Compare_y_2;
@@ -766,7 +766,7 @@ void snap_rounding_2(InputIterator begin,
   typedef std::list<Segment_data>                     Segment_data_list;
 
   Segment_data_list seg_list;
-  Multiple_kd_tree * mul_kd_tree = NULL;
+  Multiple_kd_tree * mul_kd_tree = nullptr;
 
   output_container.clear();
   // copy segments list

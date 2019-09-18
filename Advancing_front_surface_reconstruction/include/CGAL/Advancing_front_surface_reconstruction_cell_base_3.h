@@ -23,22 +23,21 @@
 
 #include <CGAL/license/Advancing_front_surface_reconstruction.h>
 
-
-#include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 
 namespace CGAL {
 
   /*!
-  \ingroup PkgAdvancingFrontSurfaceReconstruction
+  \ingroup PkgAdvancingFrontSurfaceReconstructionRef
 
   The class `Advancing_front_surface_reconstruction_cell_base_3` is the default
   cell type for the class  `Advancing_front_surface_reconstruction`.
 
   \tparam Traits has to be a model of `DelaunayTriangulationTraits_3`.
 
-  \tparam Cb has to be a model of `TriangulationCellBase_3`.
+  \tparam Cb has to be a model of `DelaunayTriangulationCellBase_3`.
   */
-  template < typename Traits, typename Cb = Triangulation_cell_base_3<Traits> >
+  template < typename Traits, typename Cb = Delaunay_triangulation_cell_base_3<Traits> >
   class Advancing_front_surface_reconstruction_cell_base_3 : public Cb
   {
 
@@ -76,9 +75,9 @@ namespace CGAL {
 
     Advancing_front_surface_reconstruction_cell_base_3()
       : Cb(),
-        _smallest_radius_facet_tab(NULL), selected_facet(0)
+        _smallest_radius_facet_tab(nullptr), selected_facet(0)
 #ifdef AFSR_LAZY
-      , _circumcenter(NULL), _squared_radius(NULL)
+      , _circumcenter(nullptr), _squared_radius(nullptr)
 #endif
     {
 #ifdef AFSR_FACET_NUMBER
@@ -90,9 +89,9 @@ namespace CGAL {
 
     Advancing_front_surface_reconstruction_cell_base_3(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
       : Cb( v0, v1, v2, v3),
-        _smallest_radius_facet_tab(NULL), selected_facet(0)
+        _smallest_radius_facet_tab(nullptr), selected_facet(0)
 #ifdef AFSR_LAZY
-      , _circumcenter(NULL), _squared_radius(NULL)
+      , _circumcenter(nullptr), _squared_radius(nullptr)
 #endif
     {
 #ifdef FACET_NUMBER
@@ -106,9 +105,9 @@ namespace CGAL {
                                                        Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
       : Cb(v0,  v1,  v2, v3,
            n0,  n1,  n2, n3),
-        _smallest_radius_facet_tab(NULL), selected_facet(0)
+        _smallest_radius_facet_tab(nullptr), selected_facet(0)
 #ifdef AFSR_LAZY
-      , _circumcenter(NULL), _squared_radius(NULL)
+      , _circumcenter(nullptr), _squared_radius(nullptr)
 #endif
     {
 #ifdef AFSR_FACET_NUMBER
@@ -122,12 +121,12 @@ namespace CGAL {
 
     inline ~Advancing_front_surface_reconstruction_cell_base_3()
     {
-      if (_smallest_radius_facet_tab != NULL)
+      if (_smallest_radius_facet_tab != nullptr)
         delete[] _smallest_radius_facet_tab;
 #ifdef AFSR_LAZY
-      if (_circumcenter != NULL)
+      if (_circumcenter != nullptr)
 	delete _circumcenter;
-      if (_squared_radius != NULL)
+      if (_squared_radius != nullptr)
 	delete _squared_radius;
 #endif
     }
@@ -137,31 +136,31 @@ namespace CGAL {
 
     inline void clear()
     {
-      if (_smallest_radius_facet_tab != NULL)
+      if (_smallest_radius_facet_tab != nullptr)
 	delete[] _smallest_radius_facet_tab;
-      _smallest_radius_facet_tab = NULL;
+      _smallest_radius_facet_tab = nullptr;
       selected_facet = 0;
 #ifdef AFSR_LAZY
-      if (_circumcenter != NULL)
+      if (_circumcenter != nullptr)
 	delete _circumcenter;
-      _circumcenter = NULL;
-      if (_squared_radius != NULL)
+      _circumcenter = nullptr;
+      if (_squared_radius != nullptr)
 	delete _squared_radius;
-      _squared_radius = NULL;
+      _squared_radius = nullptr;
 #endif
     }
 
     //-------------------------------------------------------------------
     inline coord_type smallest_radius(const int& i)
     {
-      if (_smallest_radius_facet_tab == NULL)
+      if (_smallest_radius_facet_tab == nullptr)
 	return -1;
       return _smallest_radius_facet_tab[i];
     }
 
     inline void set_smallest_radius(const int& i, const coord_type& c)
     {
-      if (_smallest_radius_facet_tab == NULL)
+      if (_smallest_radius_facet_tab == nullptr)
 	{
 	  _smallest_radius_facet_tab = new coord_type[4];
 	  for(int i = 0; i < 4; i++)
@@ -173,7 +172,7 @@ namespace CGAL {
     // pour un controle de l'allocation memoire... utile???
     inline bool alloc_smallest_radius_tab(coord_type* ptr)
     {
-      if (_smallest_radius_facet_tab==NULL)
+      if (_smallest_radius_facet_tab==nullptr)
 	{
 	  _smallest_radius_facet_tab = ptr;
 	  return true;

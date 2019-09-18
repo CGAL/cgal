@@ -47,8 +47,7 @@ main() {
   // using value 0.1 for fuzziness paramater
   Fuzzy_iso_box approximate_range(p, q, 0.1);
   tree.search(std::back_inserter( result ), approximate_range);
-  std::cout << "The points in the fuzzy box [[0.1, 0.3], [0.6, 0.9]]^2 are: "
-	    << std::endl;
+  std::cout << "The points in the fuzzy box [[0.1, 0.3], [0.6, 0.9]]^2 are: " << std::endl;
   std::copy (result.begin(), result.end(), std::ostream_iterator<Point_d>(std::cout,"\n") );
   std::cout << std::endl;
   return 0;

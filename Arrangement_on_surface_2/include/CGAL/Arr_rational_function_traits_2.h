@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/tags.h>
@@ -983,8 +984,6 @@ public:
     return Merge_2(this);
   }
 
-  //@}
-
   /// \name Functor definitions to handle boundaries
   //@{
 
@@ -1315,5 +1314,6 @@ public:
 
 }   //namespace CGAL {
 
+#include <CGAL/enable_warnings.h>
 
 #endif  //CGAL_ARR_RATIONAL_ARC_TRAITS_D_1_H

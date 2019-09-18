@@ -25,9 +25,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-// Descriptions of the file format can be found at
+// Description of the file format can be found at the following address:
 // http://www.autodesk.com/techpubs/autocad/acad2000/dxf/
-// http://www.tnt.uni-hannover.de/soft/compgraph/fileformats/docs/DXF.ascii
 
 #ifndef CGAL_IO_DXF_VARIANT_READER_H
 #define CGAL_IO_DXF_VARIANT_READER_H
@@ -49,7 +48,7 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
   OutputIterator variant_load(std::istream& is, OutputIterator res)
 {
 
-  typedef cpp11::array<double, 3> Triplet;
+  typedef std::array<double, 3> Triplet;
   typedef typename CK::FT FT;
   typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;    
   typedef typename CK::Root_of_2 Root_of_2;

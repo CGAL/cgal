@@ -36,7 +36,7 @@ template <> class Algebraic_structure_traits< Gmpq >
     typedef Tag_false            Is_numerical_sensitive;
 
     class Is_square
-      : public CGAL::binary_function< Type, Type&,
+      : public CGAL::cpp98::binary_function< Type, Type&,
                                 bool > {
       public:
         bool operator()( const Type& x_, Type& y ) const {
@@ -54,7 +54,7 @@ template <> class Algebraic_structure_traits< Gmpq >
     };
 
     class Simplify
-      : public CGAL::unary_function< Type&, void > {
+      : public CGAL::cpp98::unary_function< Type&, void > {
       public:
         void operator()( Type& x) const {
           mpq_canonicalize( x.mpq() );
@@ -70,7 +70,7 @@ template <> class Real_embeddable_traits< Gmpq >
   public:
   
     class Sgn
-      : public CGAL::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return x.sign();
@@ -78,7 +78,7 @@ template <> class Real_embeddable_traits< Gmpq >
     };
 
     class To_double
-      : public CGAL::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
@@ -86,13 +86,18 @@ template <> class Real_embeddable_traits< Gmpq >
     };
 
     class To_interval
-      : public CGAL::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 #if MPFR_VERSION_MAJOR >= 3
+	  mpfr_exp_t emin = mpfr_get_emin();
+	  mpfr_set_emin(-1073);
 	  MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
 	  int r = mpfr_set_q (y, x.mpq(), MPFR_RNDA);
+	  r = mpfr_subnormalize (y, r, MPFR_RNDA); /* Round subnormals */
 	  double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
+	  mpfr_set_emin(emin); /* Restore old value, users may care */
+	  // With mpfr_set_emax(1024) we could drop the is_finite test
 	  if (r == 0 && is_finite (i))
 	    return std::pair<double, double>(i, i);
 	  else

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope2
+\ingroup PkgEnvelope2Ref
 
 This class is the default envelope-diagram class used by envelope functions 
 to represent the minimization or the maximization diagram of a set of curves. 
@@ -21,8 +21,6 @@ only envelopes of \f$ x\f$-monotone curves, or of the refined
 template< typename Traits >
 class Envelope_diagram_1 {
 public:
-
-/// @}
 
 }; /* end Envelope_diagram_1 */
 } /* end namespace CGAL */

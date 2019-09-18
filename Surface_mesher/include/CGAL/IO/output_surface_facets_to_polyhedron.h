@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_polyhedron_builder.h>
@@ -60,5 +61,7 @@ output_surface_facets_to_polyhedron(
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_OUTPUT_SURFACE_FACETS_TO_POLYHEDRON_H

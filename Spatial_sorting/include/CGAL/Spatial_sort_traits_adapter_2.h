@@ -22,6 +22,8 @@
 #ifndef CGAL_SPATIAL_SORT_TRAITS_ADAPTER_2_H
 #define CGAL_SPATIAL_SORT_TRAITS_ADAPTER_2_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <boost/call_traits.hpp>
 
 #include <CGAL/property_map.h>
@@ -70,5 +72,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_SPATIAL_SORT_TRAITS_ADAPTER_2_H

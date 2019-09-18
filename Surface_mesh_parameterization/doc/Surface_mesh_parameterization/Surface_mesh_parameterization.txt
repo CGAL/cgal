@@ -43,7 +43,7 @@ of the mapping.
 
 The package proposes an interface for any model of the concept `FaceGraph`,
 such as the classes `Surface_mesh`, `Polyhedron_3`, `Seam_mesh`, or the mesh
-classes of OpenMesh.
+classes of <A HREF="https://www.openmesh.org">OpenMesh</A>.
 
 \remark The class `Seam_mesh` can be used to virtually cut a mesh,
 allowing to transform an input mesh in subdomain(s) that fit the
@@ -52,7 +52,7 @@ disk-or-sphere topology requirement.
 Since parameterizing meshes requires an efficient representation of sparse
 matrices and efficient iterative or direct linear solvers, we provide
 a unified interface to linear solvers  as described in Chapter
-\ref PkgSolverSummary.
+\ref PkgSolverInterface.
 
 Note that linear solvers commonly use double precision floating point
 numbers. Therefore, this package is intended to be used with a \cgal %Cartesian kernel with doubles.
@@ -90,7 +90,7 @@ and homeomorphic to a disc (possibly with holes). The last requirement
 is not hard and we will later show how to parameterize a mesh that is
 not a topological disk (Section \ref secCuttingaMesh).
 The result is stored in a property map (whose type is here VertexUVMap)
-for the mesh vertices. See also Chapter \ref PkgProperty_mapSummary.
+for the mesh vertices. See also Chapter \ref PkgPropertyMap.
 
 \subsection Surface_mesh_parameterizationDefaultExample Default Parameterization Example
 In the following example, we apply the default parameterization (Floater Mean Value

@@ -60,7 +60,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return internal::linear_least_squares_fitting_3(first, beyond, object,
-						  centroid, (Value_type*) NULL, kernel, tag,
+						  centroid, (Value_type*) nullptr, kernel, tag,
 						  diagonalize_traits);
 }
 

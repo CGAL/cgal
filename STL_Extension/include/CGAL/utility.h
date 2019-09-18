@@ -31,10 +31,11 @@
 #include <CGAL/config.h>
 #include <utility>
 #include <functional>
+#include <type_traits>
 #include <boost/functional/hash.hpp>
 
 // The Triple and Quadruple classes are NOT RECOMMENDED anymore.
-// We recommend that you use cpp11::tuple or cpp11::array instead
+// We recommend that you use std::tuple or std::array instead
 // for new uses.
 
 namespace CGAL {
@@ -290,33 +291,6 @@ operator<(const Quadruple<T1, T2, T3, T4>& x,
                    (!(y.third < x.third) && x.fourth < y.fourth)) ) ) ) );
 }
 
-#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) || \
-    defined(CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES) || \
-    BOOST_VERSION < 105000 || \
-    defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS)
-template <class T, class Compare>
-inline
-std::pair<  T, T >
-make_sorted_pair(const T& t1, const T& t2, Compare comp)
-{
-  return comp(t1, t2) ? std::make_pair(t1,t2) : std::make_pair(t2,t1);
-}
-
-template <class T>
-inline
-std::pair<T,T>
-make_sorted_pair(const T& t1, const T& t2)
-{
-  return make_sorted_pair(t1,t2, std::less<T>());
-}
-#else
-
-} //end of namespace CGAL
-
-#include <type_traits>
-
-namespace CGAL {
-
 struct Default_using_type
 {
   template <typename Argument, typename Value>
@@ -357,7 +331,6 @@ inline P make_sorted_pair(T1&& t1, T2&& t2, Compare comp = Compare())
   return comp(t1, t2) ? P(std::forward<T1>(t1), std::forward<T2>(t2))
                       : P(std::forward<T2>(t2), std::forward<T1>(t1));
 }
-#endif
 
 } //namespace CGAL
 

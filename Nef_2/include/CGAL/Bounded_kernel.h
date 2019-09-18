@@ -23,10 +23,11 @@
 
 #include <CGAL/license/Nef_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_2.h> 
-#include <CGAL/Line_2_Line_2_intersection.h>
+#include <CGAL/Intersections_2/Line_2_Line_2.h>
 
 
 #undef CGAL_NEF_DEBUG
@@ -445,8 +446,8 @@ public:
 
 };
 
-
-
-
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_BOUNDED_KERNEL_H

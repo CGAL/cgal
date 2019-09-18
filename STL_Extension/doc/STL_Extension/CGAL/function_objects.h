@@ -1,5 +1,5 @@
 /// \defgroup projectionobjects Projection Function Objects
-/// \ingroup PkgStlExtension
+/// \ingroup PkgSTLExtensionRef
 
 namespace CGAL {
 
@@ -138,7 +138,7 @@ compare_to_less(const F& f);
 
 
 /// \defgroup STLCreators Creator Function Objects
-/// \ingroup PkgStlExtension
+/// \ingroup PkgSTLExtensionRef
 
 namespace CGAL {
 
@@ -1174,8 +1174,7 @@ typedef Value argument_type;
 
 /*!
 */ 
-typedef Value result_type; 
-/// @} 
+typedef Value result_type;
 
 /// \name Creation 
 /// @{ 

@@ -20,6 +20,8 @@
 #ifndef CGAL_GMPFR_TYPE_H
 #define CGAL_GMPFR_TYPE_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/gmp.h>
 #include <mpfr.h>
 #include <boost/operators.hpp>
@@ -349,7 +351,10 @@ class Gmpfr:
         // only avoid the binary incompatibility of a CGAL program compiled
         // with MSVC with the libmpfr-1.dll compiled with mingw.
 #ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4244)
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_d);
+#  pragma warning(pop)  
 #else
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
 #endif
@@ -886,7 +891,11 @@ CGAL_GMPFR_ARITHMETIC_FUNCTION(cbrt,mpfr_cbrt)
 inline
 Gmpfr Gmpfr::kthroot(int k,std::float_round_style r)const{
         Gmpfr result(0,CGAL_GMPFR_MEMBER_PREC());
-        mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
+        #if(MPFR_VERSION_MAJOR < 4)
+            mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
+        #else
+            mpfr_rootn_ui(result.fr(),fr(),k,_gmp_rnd(r));
+        #endif
         return result;
 }
 
@@ -896,7 +905,11 @@ Gmpfr Gmpfr::kthroot(int k,
                      std::float_round_style r)const{
         CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
         Gmpfr result(0,p);
-        mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
+        #if(MPFR_VERSION_MAJOR < 4)
+            mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
+        #else
+            mpfr_rootn_ui(result.fr(),fr(),k,_gmp_rnd(r));
+        #endif
         return result;
 }
 
@@ -1170,9 +1183,9 @@ std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
         } else {
                 // human-readable format
                 mpfr_exp_t expptr;
-                char *str = mpfr_get_str(NULL, &expptr, 10, 0, a.fr(),
+                char *str = mpfr_get_str(nullptr, &expptr, 10, 0, a.fr(),
                                 mpfr_get_default_rounding_mode());
-                if (str == NULL) return os << "@err@";
+                if (str == nullptr) return os << "@err@";
                 std::string s(str);
                 mpfr_free_str(str);
                 int i = 0;
@@ -1283,17 +1296,17 @@ bool operator==(const Gmpfr &a,double b){
 #ifdef _MSC_VER
 inline
 bool operator<(const Gmpfr &a,long double b){
-        return(mpfr_cmp_d(a.fr(),b)<0);
+        return(mpfr_cmp_d(a.fr(),static_cast<double>(b))<0);
 }
 
 inline
 bool operator>(const Gmpfr &a,long double b){
-        return(mpfr_cmp_d(a.fr(),b)>0);
+        return(mpfr_cmp_d(a.fr(),static_cast<double>(b))>0);
 }
 
 inline
 bool operator==(const Gmpfr &a,long double b){
-        return !mpfr_cmp_d(a.fr(),b);
+        return !mpfr_cmp_d(a.fr(),static_cast<double>(b));
 }
 #else
 inline
@@ -1338,5 +1351,7 @@ Gmpfr max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpfr& x,const Gmpfr& y){
 }
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_GMPFR_TYPE_H

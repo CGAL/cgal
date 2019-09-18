@@ -26,7 +26,7 @@ configure()
 {
   echo "Configuring... "
   
-  if eval 'cmake --no-warn-unused-cli "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+  if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                      -DCGAL_DIR="$CGAL_DIR" \
                                      .' ; then
                                      
@@ -140,6 +140,8 @@ distance_plugin \
 distance_sm_plugin \
 edit_polyhedron_plugin \
 edit_sm_plugin \
+extrude_poly_plugin \
+extrude_sm_plugin \
 fairing_plugin \
 features_detection_plugin \
 gocad_plugin \
@@ -194,7 +196,6 @@ polylines_io_plugin \
 p_sphere_function_plugin \
 p_tanglecube_function_plugin \
 random_perturbation_plugin \
-remeshing_plugin \
 repair_polyhedron_plugin \
 selection_io_plugin \
 selection_sm_io_plugin \
@@ -202,6 +203,7 @@ selection_plugin \
 selection_sm_plugin \
 self_intersection_plugin \
 shortest_path_plugin \
+surface_mesh_approximation_plugin \
 stl_plugin \
 subdivision_methods_plugin \
 surface_mesh_io_plugin \
@@ -212,6 +214,7 @@ triangulate_facets_plugin \
 trivial_plugin \
 vtk_plugin \
 xyz_plugin \
+smoothing_plugin \
       all
   do
       if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 

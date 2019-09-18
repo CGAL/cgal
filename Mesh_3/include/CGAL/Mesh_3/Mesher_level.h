@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <string>
 
@@ -31,6 +32,7 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
+#include <CGAL/atomic.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
@@ -42,7 +44,6 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/task.h>
-# include <tbb/tbb.h>
 #endif
 
 #include <string>
@@ -425,7 +426,7 @@ public:
     for (int i = 0 ; i < 4 ; ++i)
       vertices[i] = e->vertex(i);
   }
-  // Among the 4 values, one of them will be Vertex_handle() (~= NULL)
+  // Among the 4 values, one of them will be Vertex_handle() (~= nullptr)
   void get_valid_vertices_of_element(const Facet &e, Vertex_handle vertices[4]) const
   {
     for (int i = 0 ; i < 4 ; ++i)
@@ -684,6 +685,9 @@ public:
   // Useless here
   void set_lock_ds(Lock_data_structure *) {}
   void set_worksharing_ds(WorksharingDataStructureType *) {}
+#ifndef CGAL_NO_ATOMIC
+  void set_stop_pointer(CGAL::cpp11::atomic<bool>*) {}
+#endif
 
 protected:
 };
@@ -754,6 +758,9 @@ public:
     , m_lock_ds(0)
     , m_worksharing_ds(0)
     , m_empty_root_task(0)
+#ifndef CGAL_NO_ATOMIC
+    , m_stop_ptr(0)
+#endif
   {
   }
 
@@ -852,7 +859,7 @@ public:
   {
 
     CGAL_assertion_msg(triangulation().get_lock_data_structure() == 0,
-      "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be NULL");
+      "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be nullptr");
 
     while(! is_algorithm_done()
       && triangulation().number_of_vertices() < approx_max_num_mesh_vertices)
@@ -1041,6 +1048,11 @@ public:
     {
       // Lock the element area on the grid
       Element element = derivd.extract_element_from_container_value(ce);
+
+      // This is safe to do with the concurrent compact container because even if the element `ce`
+      // gets removed from the TDS at this point, it is not actually deleted in the cells container and
+      // `ce->vertex(0-3)` still points to a vertex of the vertices container whose `.point()`
+      // can be safely accessed (even if that vertex has itself also been removed from the TDS).
       bool locked = derivd.try_lock_element(element, FIRST_GRID_LOCK_RADIUS);
 
       if( locked )
@@ -1145,6 +1157,26 @@ public:
     m_worksharing_ds = p;
   }
 
+#ifndef CGAL_NO_ATOMIC
+  void set_stop_pointer(CGAL::cpp11::atomic<bool>* stop_ptr)
+  {
+    m_stop_ptr = stop_ptr;
+  }
+#endif
+
+  bool forced_stop() const {
+#ifndef CGAL_NO_ATOMIC
+    if(m_stop_ptr != 0 &&
+       m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+    {
+      CGAL_assertion(m_empty_root_task != 0);
+      m_empty_root_task->cancel_group_execution();
+      return true;
+    }
+#endif // not defined CGAL_NO_ATOMIC
+    return false;
+  }
+
 protected:
 
   // Member variables
@@ -1155,6 +1187,9 @@ protected:
   WorksharingDataStructureType *m_worksharing_ds;
 
   tbb::task *m_empty_root_task;
+#ifndef CGAL_NO_ATOMIC
+  CGAL::cpp11::atomic<bool>* m_stop_ptr;
+#endif
 
 private:
 
@@ -1189,6 +1224,10 @@ private:
       Mesher_level_conflict_status status;
       do
       {
+        if(m_mesher_level.forced_stop()) {
+          return;
+        }
+
         status = m_mesher_level.try_lock_and_refine_element(m_container_element, 
                                                             m_visitor);
       }
@@ -1222,5 +1261,7 @@ private:
 
 #include <CGAL/Mesher_level_visitors.h>
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_MESHER_LEVEL_H

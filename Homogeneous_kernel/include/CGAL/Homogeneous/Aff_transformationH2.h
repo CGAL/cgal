@@ -453,14 +453,12 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
 
     virtual  Direction_2
              transform(const Direction_2 & d) const
-             { return transform( Vector_2(d) ).direction(); }
+             { return transform( d.vector() ).direction(); }
 
     virtual  Aff_transformationH2<R>
              inverse() const
              {
-               return Aff_transformationH2<R>(
-                   static_cast< Aff_transformation_rep_baseH2<R>* >
-                   ( const_cast< Reflection_repH2<R>*> (this) )  );
+               return Aff_transformationH2<R>(REFLECTION, l);
              }
 
     virtual  bool
@@ -605,6 +603,21 @@ public:
 
     Aff_transformationH2<R>
     operator*(const Aff_transformationH2<R>& right_argument ) const;
+    
+    
+    bool operator==(const Aff_transformationH2 &t)const
+    {
+      for(int i=0; i<3; ++i)
+        for(int j = 0; j< 3; ++j)
+          if(homogeneous(i,j)!=t.homogeneous(i,j))
+            return false;
+      return true;
+    }
+    
+    bool operator!=(const Aff_transformationH2 &t)const
+    {
+      return !(*this == t);
+    }
 
 };
 
@@ -790,20 +803,26 @@ Aff_transformation_repH2<R>::homogeneous(int i, int j) const
               case 0: return a;
               case 1: return b;
               case 2: return c;
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return d;
               case 1: return e;
               case 2: return f;
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return g;
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return RT(0);
 }
 
@@ -828,20 +847,26 @@ Translation_repH2<R>::homogeneous(int i, int j) const
               case 0: return _tv.hw();
               case 1: return RT(0);
               case 2: return _tv.hx();
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return RT(0);
               case 1: return _tv.hw();
               case 2: return _tv.hy();
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return _tv.hw();
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return RT(0);
 }
 
@@ -857,20 +882,26 @@ Translation_repH2<R>::cartesian(int i, int j) const
               case 0: return FT(1);
               case 1: return FT(0);
               case 2: return _tv.x();
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(1);
               case 2: return _tv.y();
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return FT(0);
 }
 
@@ -887,20 +918,26 @@ homogeneous(int i, int j) const
               case 0: return _cos;
               case 1: return - _sin;
               case 2: return RT(0);
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return _sin;
               case 1: return _cos;
               case 2: return RT(0);
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return _den;
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return RT(0);
 }
 
@@ -916,21 +953,27 @@ cartesian(int i, int j) const
             {
               case 0: return FT(_cos) / FT(_den);
               case 1: return - FT(_sin) / FT(_den);
-              case 2: return RT(0);
+              case 2: return FT(0);
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT(_sin) / FT(_den);
               case 1: return FT(_cos) / FT(_den);
               case 2: return FT(0);
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return FT(0);
 }
 
@@ -947,20 +990,26 @@ homogeneous(int i, int j) const
               case 0: return _sf_num;
               case 1: return RT(0);
               case 2: return RT(0);
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return RT(0);
               case 1: return _sf_num;
               case 2: return RT(0);
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return _sf_den;
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return RT(0);
 }
 
@@ -977,20 +1026,26 @@ cartesian(int i, int j) const
               case 0: return FT(_sf_num) / FT(_sf_den);
               case 1: return FT(0);
               case 2: return FT(0);
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(_sf_num) / FT(_sf_den);
               case 2: return FT(0);
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return FT(0);
 }
 
@@ -1008,20 +1063,26 @@ homogeneous(int i, int j) const
               case 0: return l.b()*l.b() - l.a()*l.a();
               case 1: return l.a()*l.b()*mRT2;
               case 2: return l.a()*l.c()*mRT2;
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return l.a()*l.b()*mRT2;
               case 1: return l.a()*l.a() - l.b()*l.b();
               case 2: return l.b()*l.c()*mRT2;
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return l.a()*l.a() + l.b()*l.b();
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return RT(0);
 }
 
@@ -1039,20 +1100,26 @@ cartesian(int i, int j) const
               case 0: return FT( l.b()-l.a() ) / FT( l.a()+l.b());
               case 1: return FT( homogeneous(0,1)) / de;
               case 2: return FT( homogeneous(0,2)) / de;
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT( homogeneous(1,0)) / de;
               case 1: return FT( l.a()-l.b() ) / FT( l.a()+l.b());
               case 2: return FT( homogeneous(1,2)) / de;
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return FT(0);
 }
 

@@ -28,7 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
+#include <CGAL/Mesh_3/mesh_standard_criteria.h>
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
 
 namespace CGAL {
@@ -48,13 +48,15 @@ public:
   typedef Mesh_3::Cell_radius_edge_criterion<Tr, Self> Cell_radius_edge_criterion;
         
   typedef typename Base::Quality Cell_quality;
-  typedef typename Base::Badness Cell_badness;
-  typedef typename Base::Handle Handle;
+  typedef typename Base::Is_bad  Is_cell_bad;
+  typedef typename Base::Handle  Handle;
   typedef Handle Cell_handle;
 
-  typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Tr::Geom_traits::Compute_squared_radius_smallest_orthogonal_sphere_3 
-  Squared_radius_orthogonal_sphere;
+  typedef typename Tr::Bare_point      Bare_point;
+  typedef typename Tr::Weighted_point  Weighted_point;
+  typedef typename Tr::Geom_traits     Gt;
+  typedef typename Gt::FT              FT;
+
   int nb_weighted_points;
   std::vector<Weighted_point> points;
   double radius_ortho_shpere;
@@ -63,34 +65,37 @@ public:
   typedef typename Tr::Vertex_handle Vertex_handle;
 
   // Constructor
-  Cell_criteria_visitor_with_balls(const Cell_handle& ch)
-    : Base(ch) 
+  Cell_criteria_visitor_with_balls(const Tr& tr, const Cell_handle& ch)
+    : Base(tr, ch)
   {
+    typename Gt::Compare_weighted_squared_radius_3 compare_sq_radius =
+      tr.geom_traits().compare_weighted_squared_radius_3_object();
+    typename Gt::Squared_radius_orthogonal_sphere sq_radius_ortho_sphere =
+      tr.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
 
-    const Weighted_point& p = ch->vertex(0)->point();
-    const Weighted_point& q = ch->vertex(1)->point();
-    const Weighted_point& r = ch->vertex(2)->point();
-    const Weighted_point& s = ch->vertex(3)->point();
+    const Weighted_point& p = tr.point(ch, 0);
+    const Weighted_point& q = tr.point(ch, 1);
+    const Weighted_point& r = tr.point(ch, 2);
+    const Weighted_point& s = tr.point(ch, 3);
 
-    if(p.weight() > 0) points.push_back(p);
-    if(q.weight() > 0) points.push_back(q);
-    if(r.weight() > 0) points.push_back(r);
-    if(s.weight() > 0) points.push_back(s);
+    if(compare_sq_radius(p, FT(0)) == CGAL::SMALLER) points.push_back(p);
+    if(compare_sq_radius(q, FT(0)) == CGAL::SMALLER) points.push_back(q);
+    if(compare_sq_radius(r, FT(0)) == CGAL::SMALLER) points.push_back(r);
+    if(compare_sq_radius(s, FT(0)) == CGAL::SMALLER) points.push_back(s);
 
     nb_weighted_points = (int)points.size();
-                
+
     if(nb_weighted_points ==4)
-      radius_ortho_shpere = Squared_radius_orthogonal_sphere()( points[0], points[1], points[2], points[3]);
+      radius_ortho_shpere = sq_radius_ortho_sphere(points[0], points[1], points[2], points[3]);
     else if(nb_weighted_points ==3)
-      radius_ortho_shpere = Squared_radius_orthogonal_sphere()( points[0], points[1], points[2]);
+      radius_ortho_shpere = sq_radius_ortho_sphere(points[0], points[1], points[2]);
     else if(nb_weighted_points ==2)
-      radius_ortho_shpere = Squared_radius_orthogonal_sphere()( points[0], points[1]);
-                
+      radius_ortho_shpere = sq_radius_ortho_sphere(points[0], points[1]);
   }
 
   // Destructor
-  ~Cell_criteria_visitor_with_balls() { };
-        
+  ~Cell_criteria_visitor_with_balls() { }
+
   //      void visit(const Criterion& criterion)
   //      {
   //              Base::do_visit(criterion);

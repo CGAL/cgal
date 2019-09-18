@@ -13,10 +13,10 @@ work with point-offset pairs. In most cases the offsets will be
 can be used directly. For efficiency reasons we maintain for each
 functor the version without offsets.
 
-\cgalRefines Periodic_3TriangulationTraits_3
-\cgalRefines DelaunayTriangulationTraits_3
+\cgalRefines `Periodic_3TriangulationTraits_3`
+\cgalRefines `DelaunayTriangulationTraits_3`
 
-\cgalHasModel CGAL::Periodic_3_Delaunay_triangulation_traits_3
+\cgalHasModel `CGAL::Periodic_3_Delaunay_triangulation_traits_3`
 
 In addition to the requirements described by the concepts
 `Periodic_3TriangulationTraits_3` and `DelaunayTriangulationTraits_3`,
@@ -34,12 +34,7 @@ public:
 /// @{
 
 /*!
-A predicate object that must provide the function operators
-
-`Oriented_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s, Point_3 t)`,
-
-which determines on which side of the oriented sphere circumscribing
-`p, q, r, s` the point `t` lies and
+A predicate object that must provide the function operator
 
 `Oriented_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s, Point_3 t, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s, Periodic_3_offset_3 o_t)`,
 
@@ -51,12 +46,7 @@ which determines on which side of the oriented sphere circumscribing
 typedef unspecified_type Side_of_oriented_sphere_3;
 
 /*!
-A predicate object that must provide the function operators
-
-`Comparison_result operator()(Point_3 p, Point_3 q, Point_3 r)`,
-
-which compares the distance between `p` and `q` to the distance
-between `p` and `r` and
+A predicate object that must provide the function operator
 
 `Comparison_result operator()(Point_3 p, Point_3 q, Point_3 r, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r)`,
 
@@ -73,13 +63,7 @@ typedef unspecified_type Compare_distance_3;
 /// @{
 
 /*!
-A predicate object that must provide the function operators
-
-`Orientation operator()(Point_3 p, Point_3 q, Point_3 r)`,
-
-which returns `COLLINEAR`, if the points are collinear; otherwise
-it must return a consistent orientation for any three points chosen in
-a same plane and
+A predicate object that must provide the function operator
 
 `Orientation operator()(Point_3 p, Point_3 q, Point_3 r Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r)`,
 
@@ -91,12 +75,7 @@ three point-offset pairs chosen in a same plane.
 typedef unspecified_type Coplanar_orientation_3;
 
 /*!
-A predicate object that must provide the function operators
-
-`Bounded_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`,
-
-which determines the bounded side of the circle defined by `p, q`,
-and `r` on which the point `s` lies and
+A predicate object that must provide the function operator
 
 `Bounded_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s)`,
 
@@ -115,42 +94,19 @@ typedef unspecified_type Coplanar_side_of_bounded_circle_3;
 /// @{
 
 /*!
-A predicate object that must provide the function operators
-
-`Bounded_side operator()(Point_3 p, Point_3 q, Point_3 t)`,
-
-which returns the position of the point `t` relative to the sphere
-that has `pq` as its diameter,
+A predicate object that must provide the function operator
 
 `Bounded_side operator()(Point_3 p, Point_3 q, Point_3 t, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_t)`,
 
 which returns the position of the point-offset pair `(t,o_t)`
 relative to the sphere that has `(p,o_p)(q,o_q)` as its diameter,
 
-`Bounded_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 t)`,
-
-which returns the position of the point `t` relative to the sphere
-passing through `p, q`, and `r` and whose center is in the
-plane defined by these three points,
-
 `Bounded_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 t, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_q)`,
 
 which returns the position of the point-offset pair `(t,o_t)`
 relative to the sphere passing through `(p,o_p), (q,o_q)`, and
 `(r,o_r)` and whose center is in the plane defined by these three
-point-offset pairs,
-
-`Bounded_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s, Point_3 t)`,
-
-which returns the relative position of point `t` to the sphere
-defined by `p, q, r`, and `s`; the order of the points `p, q, r`, and `s` does not matter, and
-
-`Bounded_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s, Point_3 t, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s, Periodic_3_offset_3 o_q)`,
-
-which returns the relative position of the point-offset pair
-`(t,o_t)` to the sphere defined by `(p,o_p), (q,o_q), (r,o_r)`, and `(s,o_s)`; the order of the point-offset pairs
-`(p,o_p), (q,o_q), (r,o_r)`, and `(s,o_s)` does not matter.
-\pre `p, q, r`, and `s` are not coplanar, `(p,o_p), (q,o_q), (r,o_r)`, and `(s,o_s)` are not coplanar, `p`, `q`, `r`, `s`, `t` lie inside the domain.
+point-offset pairs.
 */
 typedef unspecified_type Side_of_bounded_sphere_3;
 
@@ -162,11 +118,7 @@ typedef unspecified_type Side_of_bounded_sphere_3;
 /// @{
 
 /*!
-A constructor object that must provide the function operators
-
-`Point_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`,
-
-which constructs the circumcenter of four points and
+A constructor object that must provide the function operator
 
 `Point_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s)`,
 

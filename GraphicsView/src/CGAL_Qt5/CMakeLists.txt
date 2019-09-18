@@ -13,9 +13,9 @@ if(CGAL_Qt5_MISSING_DEPS)
 endif()
 
 message( STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'" )
-
 if(NOT CGAL_HEADER_ONLY)
-  collect_cgal_library( CGAL_Qt5 "${_CGAL_Qt5_MOC_FILES_private};${_CGAL_Qt5_RESOURCE_FILES_private}")
+  collect_cgal_library( CGAL_Qt5 "${_CGAL_Qt5_MOC_FILES_private};${_CGAL_Qt5_RESOURCE_FILES_private};${_CGAL_Qt5_UI_FILES}")
+  target_include_directories( CGAL_Qt5 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 else()
   collect_cgal_library( CGAL_Qt5 "")
 endif()

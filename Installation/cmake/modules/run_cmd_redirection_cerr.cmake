@@ -15,17 +15,26 @@ if(NOT CERR)
     "The variable `CERR` should be defined to the output error file!")
 endif()
 
+# Create the file before using it
+file(WRITE ${CERR})
+
+# Execute the command ${CMD} with stderr redirected to the file ${CERR}
 execute_process(
   COMMAND ${CMD}
-  ERROR_VARIABLE err
+  ERROR_FILE "${CERR}"
   OUTPUT_VARIABLE output
   RESULT_VARIABLE error_result)
 
-file(WRITE ${CERR} "${err}")
-
 if(error_result)
-  string(REPLACE ";" " " CMD_STR "${CMD}")
-  message(SEND_ERROR 
+  if(CMD2)
+    file(REMOVE ${CERR})
+    execute_process(COMMAND ${CMD2})
+    message(SEND_ERROR)
+  else()
+    file(READ ${CERR} err)
+    file(REMOVE ${CERR})
+    string(REPLACE ";" " " CMD_STR "${CMD}")
+    message(SEND_ERROR
 "The command
   ${CMD_STR} > ${CERR}
 ended with the error code ${error_result},
@@ -34,4 +43,5 @@ ${output}
 and the following error output:
 ${err}"
 )
+  endif()
 endif()

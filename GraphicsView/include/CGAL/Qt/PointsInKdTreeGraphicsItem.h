@@ -32,6 +32,7 @@
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Fuzzy_iso_box.h>
+#include <CGAL/iterator.h>
 
 #include <QGraphicsScene>
 #include <QPainter>
@@ -53,12 +54,13 @@ class PointsInKdTreeGraphicsItem : public GraphicsItem
   // Instead of first collecting points into a container, and then draw them
   // we use an output iterator that draws them on the fly
   template <typename K>
-  class Draw : public std::iterator<std::output_iterator_tag, void, void, void, void> {
+  class Draw
+    : public CGAL::cpp98::iterator<std::output_iterator_tag, void, void, void, void> {
     QPainter* painter;
-    QMatrix* matrix;
+    QTransform* matrix;
     Converter<K> convert;
   public:
-    Draw(QPainter* painter, QMatrix* matrix)
+    Draw(QPainter* painter, QTransform* matrix)
       : painter(painter), matrix(matrix)
     {}
 
@@ -158,8 +160,8 @@ PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter,
   Iso_rectangle_2 isor = convert(option->exposedRect);
   Fuzzy_iso_box range(isor.vertex(0), isor.vertex(2));
   painter->setPen(verticesPen());
-  QMatrix matrix = painter->matrix();
-  painter->resetMatrix();
+  QTransform matrix = painter->worldTransform();
+  painter->resetTransform();
   Draw<Traits> draw(painter, &matrix);
   kdtree->search(draw, range);
 }

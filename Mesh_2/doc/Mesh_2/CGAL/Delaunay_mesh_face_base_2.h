@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh2
+\ingroup PkgMesh2Ref
 
 
 
@@ -28,8 +28,6 @@ derives. It must be a model of the `ConstrainedTriangulationFaceBase_2` concept.
 template< typename Traits, typename Fb >
 class Delaunay_mesh_face_base_2 : Fb {
 public:
-
-/// @}
 
 }; /* end Delaunay_mesh_face_base_2 */
 } /* end namespace CGAL */

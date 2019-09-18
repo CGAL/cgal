@@ -34,7 +34,7 @@ namespace CGAL {
 
   
   /*!
-    \ingroup PkgPoissonSurfaceReconstruction
+    \ingroup PkgPoissonSurfaceReconstruction3Ref
 
     Performs surface reconstruction as follows:
 
@@ -83,7 +83,6 @@ namespace CGAL {
     \param tag surface mesher tag.
     \return `true` if reconstruction succeeded, `false` otherwise.
   */
-#if defined(DOXYGEN_RUNNING) || !defined(CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES)
   template <typename PointInputIterator,
             typename PointMap,
             typename NormalMap,
@@ -100,65 +99,6 @@ namespace CGAL {
                                            double sm_radius = 30.0,
                                            double sm_distance = 0.375,
                                            Tag tag = Tag())
-#else
-  template <typename PointInputIterator,
-            typename PointMap,
-            typename NormalMap,
-            typename PolygonMesh>
-  bool
-  poisson_surface_reconstruction_delaunay (PointInputIterator begin,
-                                           PointInputIterator end,
-                                           PointMap point_map,
-                                           NormalMap normal_map,
-                                           PolygonMesh& output_mesh,
-                                           double spacing,
-                                           double sm_angle = 20.0,
-                                           double sm_radius = 30.0,
-                                           double sm_distance = 0.375)
-  {
-    return poisson_surface_reconstruction_delaunay (begin, end, point_map, normal_map, output_mesh,
-                                                    spacing, sm_angle, sm_radius, sm_distance,
-                                                    CGAL::Manifold_with_boundary_tag());
-  }
-
-  template <typename PointInputIterator,
-            typename PointMap,
-            typename NormalMap,
-            typename PolygonMesh,
-            typename Tag>
-  bool
-  poisson_surface_reconstruction_delaunay (PointInputIterator begin,
-                                           PointInputIterator end,
-                                           PointMap point_map,
-                                           NormalMap normal_map,
-                                           PolygonMesh& output_mesh,
-                                           double spacing,
-                                           double sm_angle = 20.0,
-                                           double sm_radius = 30.0,
-                                           double sm_distance = 0.375)
-  {
-    return poisson_surface_reconstruction_delaunay (begin, end, point_map, normal_map, output_mesh,
-                                                    spacing, sm_angle, sm_radius, sm_distance,
-                                                    Tag());
-  }
-
-  template <typename PointInputIterator,
-            typename PointMap,
-            typename NormalMap,
-            typename PolygonMesh,
-            typename Tag>
-  bool
-  poisson_surface_reconstruction_delaunay (PointInputIterator begin,
-                                           PointInputIterator end,
-                                           PointMap point_map,
-                                           NormalMap normal_map,
-                                           PolygonMesh& output_mesh,
-                                           double spacing,
-                                           double sm_angle,
-                                           double sm_radius,
-                                           double sm_distance,
-                                           Tag tag)
-#endif
   {
     typedef typename boost::property_traits<PointMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;

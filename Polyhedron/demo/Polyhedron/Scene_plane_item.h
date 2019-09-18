@@ -2,13 +2,13 @@
 #define SCENE_PLANE_ITEM_H
 
 
-#include  <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Scene_interface.h>
 
 #include "Scene_basic_objects_config.h"
 
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <CGAL/Three/Viewer_interface.h>
 
 #include <cmath>
@@ -18,11 +18,11 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_epic;
 typedef Kernel_epic::Plane_3 Plane_3;
 
 class SCENE_BASIC_OBJECTS_EXPORT Scene_plane_item 
-  : public CGAL::Three::Scene_item
+  : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
 public:
-  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
 
   Scene_plane_item(const CGAL::Three::Scene_interface* scene_interface);
   ~Scene_plane_item();
@@ -61,26 +61,27 @@ public:
                             zdelta*zdelta);
     return diag * 0.7;
   }
-  bool isFinite() const { return false; }
-  bool isEmpty() const { return false; }
-  void compute_bbox() const { _bbox = Bbox(); }
-  bool manipulatable() const;
-  ManipulatedFrame* manipulatedFrame();
+  bool isFinite() const Q_DECL_OVERRIDE { return false; }
+  bool isEmpty() const Q_DECL_OVERRIDE { return false; }
+  void compute_bbox() const Q_DECL_OVERRIDE { _bbox = Bbox(); }
+  bool manipulatable() const Q_DECL_OVERRIDE;
+  ManipulatedFrame* manipulatedFrame() Q_DECL_OVERRIDE;
+  QMenu* contextMenu() Q_DECL_OVERRIDE;
 
-  Scene_plane_item* clone() const;
+  Scene_plane_item* clone() const Q_DECL_OVERRIDE ;
 
-  QString toolTip() const;
+  QString toolTip() const Q_DECL_OVERRIDE ;
 
   // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const {
+  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{
     return (m == Wireframe || m == Flat || m == FlatPlusEdges);
   }
-  virtual void draw(CGAL::Three::Viewer_interface*) const;
- virtual void drawEdges(CGAL::Three::Viewer_interface* viewer)const;
-  Plane_3 plane(qglviewer::Vec offset = qglviewer::Vec(0,0,0)) const;
+  virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
+  Plane_3 plane(CGAL::qglviewer::Vec offset = CGAL::qglviewer::Vec(0,0,0)) const;
 
 public Q_SLOTS:
-  virtual void invalidateOpenGLBuffers();
+  virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
 
   void setPosition(float x, float y, float z);
   
@@ -93,12 +94,13 @@ public Q_SLOTS:
   void setClonable(bool b = true);
 
   void setManipulatable(bool b = true);
+  void setPlaneOrientation();
 protected:
 
   const CGAL::Three::Scene_interface* scene;
   bool manipulable;
   bool can_clone;
-  qglviewer::ManipulatedFrame* frame;
+  CGAL::qglviewer::ManipulatedFrame* frame;
 
   enum VAOs {
       Facets = 0,
@@ -113,12 +115,14 @@ protected:
 
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_quad;
+  mutable std::size_t nb_quads;
+  mutable std::size_t nb_lines;
   mutable GLint sampler_location;
   mutable bool smooth_shading;
   mutable QOpenGLShaderProgram *program;
 
-  void initializeBuffers(CGAL::Three::Viewer_interface*)const;
-  void compute_normals_and_vertices(void) const;
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
+  void computeElements() const Q_DECL_OVERRIDE;
 };
 
 #endif // SCENE_PLANE_ITEM_H

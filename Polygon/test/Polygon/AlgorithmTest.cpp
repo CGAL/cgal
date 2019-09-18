@@ -1,4 +1,4 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Polygon_2_algorithms.h>
 
@@ -8,6 +8,64 @@
 
 using std::cout;
 using std::endl;
+
+//------------------------------------------------------------------------------//
+//      test the almost-collinear point filtering function (undocumented)
+//------------------------------------------------------------------------------//
+template <class R>
+void test_collinear_point_filtering(const R&, const char* FileName)
+{
+  typedef typename R::Point_2                               Point;
+  std::cout << " test filter_collinear_points()" << std::endl;
+
+  std::ifstream from(FileName);
+  if (!from) {
+    std::cerr << "Could not open file " << FileName << "!" << endl;
+    std::exit(1);
+  }
+  CGAL::set_ascii_mode(from);
+
+  std::vector<Point> polygon;
+  std::copy(std::istream_iterator<Point>(from), std::istream_iterator<Point>(),
+            std::back_inserter(polygon));
+
+  std::cout << "polygon:" << endl;
+  std::cout << "initial size: " << polygon.size() << std::endl;
+  std::copy(polygon.begin(), polygon.end(), std::ostream_iterator<Point>(std::cout, "\n"));
+  std::cout << std::endl;
+
+  std::vector<Point> simplified_polygon;
+  std::size_t final_size;
+
+  // check for 3 points
+  CGAL::internal::Polygon_2::filter_collinear_points<R>(polygon.begin(), polygon.begin() + 3,
+                                                        std::back_inserter(simplified_polygon),
+                                                        0 /*tolerance*/);
+  final_size = simplified_polygon.size();
+  std::cout << "final size: " << final_size << std::endl;
+  assert(final_size == 3);
+
+  // generic tests
+  simplified_polygon.clear();
+  CGAL::internal::Polygon_2::filter_collinear_points<R>(polygon.begin(), polygon.end(),
+                                                        std::back_inserter(simplified_polygon),
+                                                        0 /*tolerance*/);
+  final_size = simplified_polygon.size();
+  std::cout << "final size (tolerance 0): " << final_size << std::endl;
+  assert(final_size == 7);
+
+    // --
+  simplified_polygon.clear();
+  CGAL::internal::Polygon_2::filter_collinear_points<R>(polygon.begin(), polygon.end(),
+                                                        std::back_inserter(simplified_polygon),
+                                                        1e-10);
+  final_size = simplified_polygon.size();
+  std::cout << "final size (tolerance 1e-10): " << final_size << std::endl;
+  assert(final_size == 5);
+
+  std::cout << "simplified polygon:" << std::endl;
+  std::copy(simplified_polygon.begin(), simplified_polygon.end(), std::ostream_iterator<Point>(std::cout, "\n"));
+}
 
 //------------------------------------------------------------------------------//
 //      test the polygon algorithms for a specific choice of the
@@ -116,6 +174,9 @@ void test_polygon(const R&, const Point&, const char* FileName)
 	cout << "the orientation is collinear" << endl;
 	break;
     }
+
+    polygon.clear();
+    assert(CGAL::is_convex_2(polygon.begin(), polygon.end()));
 }
 
 //-----------------------------------------------------------------------//
@@ -131,10 +192,11 @@ int main()
   cout << "-   testing polygon algorithms with cartesian/double   -" << endl;
   cout << "--------------------------------------------------------" << endl;
   cout << endl;
-  typedef CGAL::Cartesian<double> R1;
+  typedef CGAL::Simple_cartesian<double> R1;
 
   typedef CGAL::Point_2<R1> Point1;
   test_polygon(R1(), Point1(), "data/polygon_cartesian.dat");
+  test_collinear_point_filtering(R1(), "data/polygon_cartesian_collinear_points.dat");
 
   cout << endl;
   cout << "--------------------------------------------------------" << endl;
@@ -144,6 +206,7 @@ int main()
   typedef CGAL::Homogeneous<double> R2;
   typedef CGAL::Point_2<R2> Point2;
   test_polygon(R2(), Point2(), "data/polygon_homogeneous.dat");
+  test_collinear_point_filtering(R2(), "data/polygon_homogeneous_collinear_points.dat");
 
   return 0;
 }

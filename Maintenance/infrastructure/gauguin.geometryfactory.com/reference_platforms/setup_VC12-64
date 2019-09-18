@@ -60,4 +60,3 @@ declare -x WINDIR="C:\\WINDOWS"
 declare -x WindowsSDK_ExecutablePath_x64="C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v8.1A\\bin\\NETFX 4.5.1 Tools\\x64\\"
 declare -x WindowsSDK_ExecutablePath_x86="C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v8.1A\\bin\\NETFX 4.5.1 Tools\\"
 declare -x WindowsSdkDir="C:\\Program Files (x86)\\Windows Kits\\8.1\\"
-

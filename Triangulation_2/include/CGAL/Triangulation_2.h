@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <list>
 #include <vector>
 #include <map>
@@ -39,7 +41,7 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Triangulation_line_face_circulator_2.h>
+#include <CGAL/Triangulation_2/internal/Triangulation_line_face_circulator_2.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
@@ -50,7 +52,12 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/zip_iterator.hpp>
+
+#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+#include <CGAL/internal/info_check.h>
+#endif
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 #include <CGAL/internal/Static_filters/tools.h>
@@ -123,7 +130,6 @@ public:
 
   typedef typename Tds::Face_iterator          All_faces_iterator;
   typedef typename Tds::Edge_iterator          All_edges_iterator;
-  typedef typename Tds::Halfedge_iterator      All_halfedges_iterator;
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
 
   class Perturbation_order
@@ -205,6 +211,20 @@ public:
   typedef Project_point<Vertex>                           Proj_point;
 
   typedef boost::transform_iterator<Proj_point,Finite_vertices_iterator> Point_iterator;
+
+
+  // Range types
+
+  
+  typedef typename Tds::Face_handles           All_face_handles;
+  typedef typename Tds::Vertex_handles         All_vertex_handles;
+  typedef typename Tds::Edges                  All_edges;
+  
+  typedef Iterator_range<Prevent_deref<Finite_faces_iterator> >    Finite_face_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  typedef Iterator_range<Finite_edges_iterator>                    Finite_edges;
+  typedef Iterator_range<Point_iterator>                           Points;
+  
   typedef Point                value_type; // to have a back_inserter
   typedef const value_type&    const_reference;
   typedef value_type&          reference;
@@ -231,6 +251,15 @@ public:
   Triangulation_2(const Geom_traits& geom_traits=Geom_traits());
   Triangulation_2(const Triangulation_2<Gt,Tds> &tr);
 
+  template <class InputIterator>
+  Triangulation_2(InputIterator first, InputIterator last,
+                  const Geom_traits& geom_traits=Geom_traits())
+    : _gt(geom_traits)
+  {
+    _infinite_vertex = _tds.insert_first();
+    insert(first,last);
+  }
+  
   //Assignement
   Triangulation_2 &operator=(const Triangulation_2 &tr);
 
@@ -435,21 +464,32 @@ public:
   //TRAVERSING : ITERATORS AND CIRCULATORS
   Finite_faces_iterator finite_faces_begin() const;
   Finite_faces_iterator finite_faces_end() const;
+  Finite_face_handles finite_face_handles() const;
+  
   Finite_vertices_iterator finite_vertices_begin() const;
   Finite_vertices_iterator finite_vertices_end() const;
+  Finite_vertex_handles finite_vertex_handles() const;
+  
   Finite_edges_iterator finite_edges_begin() const;
   Finite_edges_iterator finite_edges_end() const;
+  Finite_edges finite_edges() const;
+  
   Point_iterator points_begin() const;
   Point_iterator points_end() const;
+  Points points() const;
 
   All_faces_iterator all_faces_begin() const;
   All_faces_iterator all_faces_end() const;
+  All_face_handles all_face_handles() const;
+  
   All_vertices_iterator all_vertices_begin() const;
   All_vertices_iterator all_vertices_end() const;
+  All_vertex_handles all_vertex_handles() const;
+  
   All_edges_iterator all_edges_begin() const;
   All_edges_iterator all_edges_end() const;
-  All_halfedges_iterator all_halfedges_begin() const;
-  All_halfedges_iterator all_halfedges_end() const;
+  All_edges all_edges() const;
+  
 
   //for compatibility with previous versions
   Face_iterator faces_begin() const {return finite_faces_begin();}
@@ -585,32 +625,100 @@ public:
     }
     return os;
   }
-
+  
+#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 template < class InputIterator >
-std::ptrdiff_t insert(InputIterator first, InputIterator last)
+std::ptrdiff_t insert(InputIterator first, InputIterator last,
+         typename boost::enable_if<
+         boost::is_convertible<
+         typename std::iterator_traits<InputIterator>::value_type,
+         Point
+         >
+         >::type* = NULL)
+#else
+  template < class InputIterator >
+  std::ptrdiff_t
+  insert(InputIterator first, InputIterator last)
+#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 {
   size_type n = number_of_vertices();
 
-  std::vector<Point> points (first, last);
-
-  typedef typename Geom_traits::Construct_point_2 Construct_point_2;
-  typedef typename boost::result_of<const Construct_point_2(const Point&)>::type Ret;
-  typedef CGAL::internal::boost_::function_property_map<Construct_point_2, Point, Ret> fpmap;
-  typedef CGAL::Spatial_sort_traits_adapter_2<Geom_traits, fpmap> Search_traits_2;
-
-  spatial_sort(points.begin(), points.end(),
-               Search_traits_2(
-                 CGAL::internal::boost_::make_function_property_map<Point, Ret, Construct_point_2>(
-                   geom_traits().construct_point_2_object()), geom_traits()));
-
   Face_handle f;
-  for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
-          p != end; ++p)
-      f = insert (*p, f)->face();
+  for (; first != last; ++first)
+      f = insert (*first, f)->face();
 
   return number_of_vertices() - n;
 }
 
+  
+#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+    //top stands for tuple-or-pair
+  template <class Info>
+  const Point& top_get_first(const std::pair<Point,Info>& pair) const { return pair.first; }
+  template <class Info>
+  const Info& top_get_second(const std::pair<Point,Info>& pair) const { return pair.second; }
+  template <class Info>
+  const Point& top_get_first(const boost::tuple<Point,Info>& tuple) const { return boost::get<0>(tuple); }
+  template <class Info>
+  const Info& top_get_second(const boost::tuple<Point,Info>& tuple) const { return boost::get<1>(tuple); }
+
+  template <class Tuple_or_pair,class InputIterator>
+  std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
+  {
+    size_type n = this->number_of_vertices();
+
+    std::vector<Point> points;
+    std::vector<typename Tds::Vertex::Info> infos;
+    for (InputIterator it=first;it!=last;++it) {
+      Tuple_or_pair value=*it;
+      points.push_back(top_get_first(value));
+      infos.push_back (top_get_second(value));
+    }
+
+    Vertex_handle v_hint;
+    Face_handle hint;
+    for (std::size_t i = 0; i < points.size(); ++i ) {
+      v_hint = insert(points[i], hint);
+      if(v_hint!=Vertex_handle()) {
+        v_hint->info()=infos[i];
+        hint=v_hint->face();
+      }
+    }
+
+    return this->number_of_vertices() - n;
+  }
+
+public:
+
+  template < class InputIterator >
+  std::ptrdiff_t
+  insert(InputIterator first,
+         InputIterator last,
+         typename boost::enable_if<
+           boost::is_convertible<
+             typename std::iterator_traits<InputIterator>::value_type,
+             std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
+           > >::type* = NULL)
+  {
+    return insert_with_info< std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
+  }
+
+  template <class  InputIterator_1,class InputIterator_2>
+  std::ptrdiff_t
+  insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
+         boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
+         typename boost::enable_if<
+           boost::mpl::and_<
+             boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
+             boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
+           >
+         >::type* = NULL)
+  {
+    return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
+  }
+#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+
+  
 bool well_oriented(Vertex_handle v) const
 {
   Face_circulator fc = incident_faces(v), done(fc);
@@ -1878,7 +1986,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
     typename Hole::iterator cut_after(hit);
 
     // if tested vertex is c with respect to the vertex opposite
-    // to NULL neighbor,
+    // to nullptr neighbor,
     // stop at the before last face;
     hdone--;
     while( hit != hdone) {
@@ -2139,7 +2247,7 @@ move_if_no_collision(Vertex_handle v, const Point &p)
   fill_hole(v, hole);
 
   // fixing pointer
-  Face_circulator fc = this->incident_faces(inserted), done(fc);
+  Face_circulator fc = incident_faces(inserted), done(fc);
   std::vector<Face_handle> faces_pt;
   faces_pt.reserve(16);
   do { faces_pt.push_back(fc); } while(++fc != done);
@@ -2278,7 +2386,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
   make_hole(v, hole, faces_set);
   fill_hole(v, hole, oif);
 
-  fc = this->incident_faces(inserted), done(fc);
+  fc = incident_faces(inserted), done(fc);
   std::vector<Face_handle> faces_pt;
   faces_pt.reserve(16);
   do { faces_pt.push_back(fc); } while (++fc != done);
@@ -3076,6 +3184,14 @@ finite_faces_end() const
 }
 
 template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::Finite_face_handles
+Triangulation_2<Gt, Tds>::
+finite_face_handles() const
+{
+  return make_prevent_deref_range(finite_faces_begin(),finite_faces_end());
+}
+
+template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::Finite_vertices_iterator
 Triangulation_2<Gt, Tds>::
 finite_vertices_begin() const
@@ -3094,6 +3210,14 @@ finite_vertices_end() const
 {
   return CGAL::filter_iterator(all_vertices_end(),
                                Infinite_tester(this));
+}
+
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::Finite_vertex_handles
+Triangulation_2<Gt, Tds>::
+finite_vertex_handles() const
+{
+  return make_prevent_deref_range(finite_vertices_begin(),finite_vertices_end());
 }
 
 template <class Gt, class Tds >
@@ -3117,6 +3241,15 @@ finite_edges_end() const
                                infinite_tester() );
 }
 
+
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::Finite_edges
+Triangulation_2<Gt, Tds>::
+finite_edges() const
+{
+  return Finite_edges(finite_edges_begin(), finite_edges_end());
+}
+  
 template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::Point_iterator
 Triangulation_2<Gt, Tds>::
@@ -3134,19 +3267,34 @@ points_end() const
 }
 
 template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::Points
+Triangulation_2<Gt, Tds>::
+points() const
+{
+  return Points(points_begin(), points_end());
+}
+  
+template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::All_faces_iterator
 Triangulation_2<Gt, Tds>::
 all_faces_begin() const
 {
   return _tds.faces_begin();
 }
-
 template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::All_faces_iterator
 Triangulation_2<Gt, Tds>::
 all_faces_end() const
 {
-  return _tds.faces_end();;
+  return _tds.faces_end();
+}
+  
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::All_face_handles
+Triangulation_2<Gt, Tds>::
+all_face_handles() const
+{
+  return _tds.face_handles();
 }
 
 template <class Gt, class Tds >
@@ -3163,6 +3311,14 @@ Triangulation_2<Gt, Tds>::
 all_vertices_end() const
 {
   return _tds.vertices_end();
+}
+  
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::All_vertex_handles
+Triangulation_2<Gt, Tds>::
+all_vertex_handles() const
+{
+  return _tds.vertex_handles();
 }
 
 template <class Gt, class Tds >
@@ -3182,21 +3338,13 @@ all_edges_end() const
 }
 
 template <class Gt, class Tds >
-typename Triangulation_2<Gt, Tds>::All_halfedges_iterator
+typename Triangulation_2<Gt, Tds>::All_edges
 Triangulation_2<Gt, Tds>::
-all_halfedges_begin() const
+all_edges() const
 {
-  return _tds.halfedges_begin();
+  return _tds.edges();
 }
-
-template <class Gt, class Tds >
-typename Triangulation_2<Gt, Tds>::All_halfedges_iterator
-Triangulation_2<Gt, Tds>::
-all_halfedges_end() const
-{
-  return _tds.halfedges_end();
-}
-
+  
 template <class Gt, class Tds >
 inline
 typename Triangulation_2<Gt, Tds>::Face_circulator
@@ -3652,5 +3800,7 @@ operator>>(std::istream& is, Triangulation_2<Gt, Tds> &tr)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_TRIANGULATION_2_H

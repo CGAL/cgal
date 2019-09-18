@@ -32,8 +32,6 @@
 // The include is done before the protect macro on purpose, because
 // of a cyclic dependency.
 
-#include <CGAL/number_type_basic.h>
-
 #ifndef CGAL_QUOTIENT_H
 #define CGAL_QUOTIENT_H
 
@@ -91,7 +89,7 @@ class Quotient
   { Split_double<NT>()(n, num, den); }
 
   Quotient(const CGAL_int(NT) & n)
-    : num(n), den(1) {}
+    : num(n), den(NT(1)) {}
 
   template <class T>
   explicit Quotient(const T& n) : num(n), den(1) {}
@@ -119,28 +117,9 @@ class Quotient
     return *this;
   }
 
-#ifdef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
-
   template <class T1, class T2>
   Quotient(const T1& n, const T2& d) : num(n), den(d)
   { CGAL_precondition( d != 0 ); }
-
-#else
-  template <class T1, class T2>
-  Quotient(T1 && n, T2 && d)
-     : num(std::forward<T1>(n)), den(std::forward<T2>(d))
-  { CGAL_postcondition( den != 0 ); }
-
-  Quotient(NT && n)
-    : num(std::move(n)), den(1) {}
-
-  Quotient& operator=(NT && n)
-  {
-    num = std::move(n);
-    den = 1;
-    return *this;
-  }
-#endif
 
   Quotient<NT>& operator+= (const Quotient<NT>& r);
   Quotient<NT>& operator-= (const Quotient<NT>& r);
@@ -403,8 +382,8 @@ quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
     if (diff == 0)
     {
         int msign = CGAL_NTS sign(x.den) * CGAL_NTS sign(y.den);
-        NT leftop  = x.num * y.den * msign;
-        NT rightop = y.num * x.den * msign;
+        NT leftop  = NT(x.num * y.den * msign);
+        NT rightop = NT(y.num * x.den * msign);
         return CGAL_NTS compare(leftop, rightop);
     }
     else
@@ -548,7 +527,7 @@ operator>(const Quotient<NT>& x, const CGAL_double(NT)& y)
 
 template< class NT >
 class Is_valid< Quotient<NT> >
-  : public CGAL::unary_function< Quotient<NT>, bool > {
+  : public CGAL::cpp98::unary_function< Quotient<NT>, bool > {
   public :
     bool operator()( const Quotient<NT>& x ) const {
       return is_valid(x.num) && is_valid(x.den);
@@ -607,7 +586,7 @@ namespace INTERN_QUOTIENT {
   class Sqrt_selector {
     public:
       class Sqrt
-        : public CGAL::unary_function< NT, NT > {
+        : public CGAL::cpp98::unary_function< NT, NT > {
         public:
           NT operator()( const NT& x ) const {
             CGAL_precondition(x > 0);
@@ -639,7 +618,7 @@ public:
 
 
     class Is_square
-        : public CGAL::binary_function< Quotient<NT>, Quotient<NT>&, bool > {
+        : public CGAL::cpp98::binary_function< Quotient<NT>, Quotient<NT>&, bool > {
     public:
         bool operator()( Quotient<NT> x, Quotient<NT>& y ) const {
             NT x_num, x_den, y_num, y_den;
@@ -670,7 +649,7 @@ public:
                             >::type Sqrt;
 
     class Simplify
-      : public CGAL::unary_function< Type&, void > {
+      : public CGAL::cpp98::unary_function< Type&, void > {
       public:
         void operator()( Type& x) const {
             x.normalize();
@@ -688,7 +667,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     typedef Quotient<NT> Type;
 
     class Compare
-      : public CGAL::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -698,7 +677,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     };
 
     class To_double
-      : public CGAL::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
         // Original global function was marked with an TODO!!
@@ -730,7 +709,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     };
 
     class To_interval
-      : public CGAL::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           Interval_nt<> quot =
@@ -741,7 +720,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     };
 
     class Is_finite
-      : public CGAL::unary_function< Type, bool > {
+      : public CGAL::cpp98::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
           return CGAL_NTS is_finite(x.num) && CGAL_NTS is_finite(x.den);

@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/fair_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -95,7 +96,7 @@ namespace internal {
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
         If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+      `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
     \cgalParamBegin{fairing_continuity} tangential continuity of the output surface patch. The larger `fairing_continuity` gets, the more fixed vertices are required \cgalParamEnd
     \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for fairing \cgalParamEnd
   \cgalNamedParamsEnd
@@ -115,8 +116,8 @@ namespace internal {
             const VertexRange& vertices,
             const NamedParameters& np)
   {
-    using boost::get_param;
-    using boost::choose_param;
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
 
     CGAL_precondition(is_triangle_mesh(tmesh));
 
@@ -148,13 +149,13 @@ namespace internal {
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<TriangleMesh, VPMap>
       Default_Weight_calculator;
 
-    VPMap vpmap_ = choose_param(get_param(np, internal_np::vertex_point),
+    VPMap vpmap_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                 get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
-      choose_param(get_param(np, internal_np::sparse_linear_solver), Default_solver()),
-      choose_param(get_param(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
-      choose_param(get_param(np, internal_np::fairing_continuity), 1),
+      choose_parameter(get_parameter(np, internal_np::sparse_linear_solver), Default_solver()),
+      choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
+      choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1),
       vpmap_
       );
   }
@@ -169,5 +170,7 @@ namespace internal {
 } //end namespace Polygon_mesh_processing
 
 } //end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_FAIR_H

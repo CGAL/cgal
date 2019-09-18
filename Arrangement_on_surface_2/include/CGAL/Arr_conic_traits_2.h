@@ -25,11 +25,13 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The conic traits-class for the arrangement package.
  */
 
+#include <CGAL/atomic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Conic_arc_2.h>
@@ -113,7 +115,11 @@ public:
   /*! Get the next conic index. */
   static unsigned int get_index ()
   {
-    static unsigned int index = 0;
+#ifdef CGAL_NO_ATOMIC
+    static unsigned int index;
+#else
+    static CGAL::cpp11::atomic<unsigned int> index;
+#endif
     return (++index);
   }
 
@@ -874,6 +880,8 @@ public:
   Trim_2 trim_2_object() const { return Trim_2(*this); }
   //@}
 };
+
+#include <CGAL/enable_warnings.h>
 
 } //namespace CGAL
 #endif

@@ -26,14 +26,14 @@
 #ifndef CGAL_GENERAL_POLYGON_WITH_HOLES_2_H
 #define CGAL_GENERAL_POLYGON_WITH_HOLES_2_H
 
-#include <list>
+#include <deque>
 #include <iostream>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
 
 /*!
-\ingroup PkgPolygon2
+\ingroup PkgPolygon2Ref
 
 The class `General_polygon_with_holes_2` models the concept
 `GeneralPolygonWithHoles_2`. It represents a general polygon with
@@ -41,6 +41,8 @@ holes. It is parameterized with a type `Polygon` used to define
 the exposed type `General_polygon_2`. This type represents the
 outer boundary of the general polygon and the outer boundaries of
 each hole.
+
+\tparam Polygon_ must have input and output operators.
 
 \cgalModels `GeneralPolygonWithHoles_2`
 
@@ -53,10 +55,11 @@ public:
 /// \name Definition
 
 /// @{
+  /// polygon without hole type
   typedef Polygon_							General_polygon_2;
 /// @}
 
-  typedef std::list<Polygon_>                         Holes_container;
+  typedef std::deque<General_polygon_2>               Holes_container;
 
   typedef typename Holes_container::iterator          Hole_iterator;
   typedef typename Holes_container::const_iterator    Hole_const_iterator;
@@ -78,6 +81,16 @@ public:
                        HolesInputIterator h_end) : m_pgn(pgn_boundary),
                                                    m_holes(h_begin, h_end)
   {}
+
+  Holes_container& holes()
+  {
+    return m_holes;
+  }
+
+  const Holes_container& holes() const
+  {
+    return m_holes;
+  }
 
   Hole_iterator holes_begin()
   {
@@ -168,10 +181,9 @@ be free of comments. The default for writing is ASCII without
 comments.
 
 The number of curves of the outer boundary is exported followed by the
-curves themselves in counterclockwise order. Then, the number of holes
+curves themselves. Then, the number of holes
 is exported, and for each hole, the number of curves on its outer
-boundary is exported followed by the curves themselves in clockwise
-order.
+boundary is exported followed by the curves themselves.
 
 \relates General_polygon_with_holes_2
 */
@@ -218,10 +230,9 @@ An ASCII and a binary format exist. The stream detects the format
 automatically and can read both.
 
 The format consists of the number of curves of the outer boundary
-followed by the curves themselves in counterclockwise order, followed
+followed by the curves themselves, followed
 by the number of holes, and for each hole, the number of curves on its
-outer boundary is followed by the curves themselves in clockwise
-order.
+outer boundary is followed by the curves themselves.
 
 \relates General_polygon_with_holes_2
 */

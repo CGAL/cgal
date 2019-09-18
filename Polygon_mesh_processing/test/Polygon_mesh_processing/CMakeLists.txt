@@ -1,18 +1,8 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Polygon_mesh_processing_Tests )
-
-
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
-
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -23,10 +13,6 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -42,13 +28,10 @@ endif()
 # include for local directory
 
 # include for local package
-include_directories( BEFORE ../../include )
-
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 find_package( TBB )
 
-include( CGAL_CreateSingleSourceCGALProgram )
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 
@@ -57,10 +40,11 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("fairing_test.cpp")
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_no_delaunay_test.cpp" )
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
+  create_single_source_cgal_program("test_shape_smoothing.cpp")
+
 endif(EIGEN3_FOUND)
 
 find_package( OpenMesh QUIET )
-
 if ( OpenMesh_FOUND )
   include( UseOpenMesh )
 else()
@@ -84,6 +68,8 @@ endif()
   create_single_source_cgal_program("remeshing_test.cpp" )
   create_single_source_cgal_program("measures_test.cpp")
   create_single_source_cgal_program("triangulate_faces_test.cpp")
+  create_single_source_cgal_program("triangulate_faces_hole_filling_dt3_test.cpp")
+  create_single_source_cgal_program("triangulate_faces_hole_filling_all_search_test.cpp")
   create_single_source_cgal_program("test_pmp_remove_border_edge.cpp")
   create_single_source_cgal_program("test_pmp_distance.cpp")
   create_single_source_cgal_program("test_corefinement_and_constraints.cpp")
@@ -97,6 +83,18 @@ endif()
   create_single_source_cgal_program("triangulate_hole_polyline_test.cpp")
   create_single_source_cgal_program("surface_intersection_sm_poly.cpp" )
   create_single_source_cgal_program("test_orient_cc.cpp")
+  create_single_source_cgal_program("test_pmp_transform.cpp")
+  create_single_source_cgal_program("extrude_test.cpp")
+  create_single_source_cgal_program("test_merging_border_vertices.cpp")
+  create_single_source_cgal_program("test_repair_polygon_soup.cpp")
+  create_single_source_cgal_program("test_shape_predicates.cpp")
+  create_single_source_cgal_program("test_pmp_collision_detection.cpp")
+  create_single_source_cgal_program("test_pmp_locate.cpp")
+  create_single_source_cgal_program("test_pmp_snapping.cpp")
+  create_single_source_cgal_program("test_pmp_non_conforming_snapping.cpp")
+  create_single_source_cgal_program("remove_degeneracies_test.cpp")
+  create_single_source_cgal_program("test_pmp_manifoldness.cpp")
+  create_single_source_cgal_program("test_mesh_smoothing.cpp")
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)
@@ -109,3 +107,15 @@ if(OpenMesh_FOUND)
   target_link_libraries( remeshing_test_P_SM_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 
+find_package(Ceres QUIET)
+if(TARGET ceres)
+  target_compile_definitions( test_mesh_smoothing PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+  target_link_libraries( test_mesh_smoothing PRIVATE ceres )
+endif(TARGET ceres)
+
+if(BUILD_TESTING)
+  set_tests_properties(
+      execution___of__triangulate_hole_Polyhedron_3_no_delaunay_test
+      execution___of__triangulate_hole_Polyhedron_3_test
+    PROPERTIES RESOURCE_LOCK Triangulation_with_hole)
+endif()

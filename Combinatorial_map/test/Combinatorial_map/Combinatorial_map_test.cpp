@@ -16,7 +16,7 @@ struct Map_2_dart_items
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Double_attrib, void, Double_attrib> Attributes;
+    typedef std::tuple<Double_attrib, void, Double_attrib> Attributes;
   };
 };
 
@@ -31,7 +31,7 @@ struct Map_2_dart_max_items_3
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
+    typedef std::tuple<Int_attrib, Int_attrib,
           Double_attrib> Attributes;
   };
 };
@@ -45,7 +45,7 @@ struct Map_3_dart_items_3
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Double_attrib, void,
+    typedef std::tuple<Double_attrib, void,
           Int_attrib, Double_attrib> Attributes;
   };
 };
@@ -61,7 +61,7 @@ struct Map_3_dart_max_items_3
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
+    typedef std::tuple<Int_attrib, Int_attrib,
           Int_attrib, Double_attrib> Attributes;
   };
 };
@@ -89,7 +89,7 @@ public:
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib, void, Int_attrib> Attributes;
+    typedef std::tuple<Int_attrib, void, Int_attrib> Attributes;
   };
 };
 
@@ -101,7 +101,7 @@ struct Map_dart_items_4
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib, void,
+    typedef std::tuple<Int_attrib, void,
           Int_attrib, void, Int_attrib>
     Attributes;
   };
@@ -117,7 +117,7 @@ struct Map_dart_max_items_4
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
+    typedef std::tuple<Int_attrib, Int_attrib,
           Int_attrib, Double_attrib, Double_attrib>
     Attributes;
   };

@@ -1,12 +1,11 @@
 /*!
-  \ingroup PkgSolverConcepts
+  \ingroup PkgSolverInterfaceConcepts
   \cgalConcept
 
   The concept `SvdTraits` describes the linear algebra types and algorithms needed 
   to solve in the least square sense a linear system with a singular value decomposition
 
   \cgalHasModel `CGAL::Eigen_svd`
-  \cgalHasModel `CGAL::Lapack_svd`
 */
 class SvdTraits
 {

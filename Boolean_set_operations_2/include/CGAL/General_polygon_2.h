@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <list>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
@@ -221,5 +222,7 @@ std::ostream
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

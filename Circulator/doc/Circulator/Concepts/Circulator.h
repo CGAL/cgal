@@ -10,7 +10,7 @@
 A Circulator is similar to an Iterator, with the difference that it is designed for circular data structures.
 <h1></h1>
 
-# Circulators # {#circulatorConceptsIntro}
+\section circulatorConceptsIntro Circulators
 Iterators in the \stl were tailored for linear sequences. The
 specialization for circular data structures leads to slightly
 different requirements which we will summarize in the
@@ -22,11 +22,11 @@ differs from the semantic of an iterator range. For a circulator
 `c` the range `[c, c)` denotes the sequence of all
 elements in the data structure. For iterators, this range defines the
 empty sequence. A separate test for an empty sequence has been added
-to the circulator requirements: A comparison `c == NULL`
+to the circulator requirements: A comparison `c == nullptr`
 for a circulator `c` is true for an empty sequence. As for \cpp,
-we recommend the use of 0 instead of `NULL`.
+we recommend the use of 0 instead of `nullptr`.
 
-## Circulators ## {#circulatorConceptsCirculators}
+\subsection circulatorConceptsCirculators Circulators
 Similar to \stl iterators, we distinguish between forward,
 bidirectional, and random access circulators\cgalFootnote{Input
 circulators are a contradiction, since any circulator is supposed to
@@ -44,7 +44,7 @@ anyway, there is no need to allow singular values for them. An
 un-initalized circulator does not have a singular value, but is
 supposed to refer to an empty sequence.}
 
-<B>Empty sequence:</B> The comparison `c == NULL` (or `c == 0`) 
+<B>Empty sequence:</B> The comparison `c == nullptr` (or `c == 0`) 
 for a circulator `c` is `true` if `c`
 denotes an empty sequence, and `false` otherwise.
 
@@ -103,42 +103,42 @@ circulator category.
 
 </TABLE> 
 
-## Forward Circulators ## {#circulatorConceptsForward}
+\subsection circulatorConceptsForward Forward Circulators
 
 In the following, we assume that <TT>a</TT> and <TT>b</TT> are
 circulators of type <TT>C</TT>, <TT>r</TT> is of type <TT>C&</TT> (is
 assignable), and <TT>T</TT> denotes the value type of <TT>C</TT>. Let
 <TT>D</TT> be the distance type of <TT>C</TT>. As for \cpp, we
-recommend the use of 0 instead of <TT>NULL</TT>.
+recommend the use of 0 instead of <TT>nullptr</TT>.
 
 <TABLE border="0"><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 <TT>C()</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-a circulator equal to `NULL` denoting an 
+a circulator equal to `nullptr` denoting an 
 empty sequence. 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-<TT>a == NULL</TT> 
+<TT>a == nullptr</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 Returns <TT>true</TT> if <TT>a</TT> denotes an empty 
 sequence, <TT>false</TT> otherwise. 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-For simplicity, <TT>NULL == a</TT> is not required. The 
+For simplicity, <TT>nullptr == a</TT> is not required. The 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 behavior for comparisons with pointer-like 
-values different than <TT>NULL</TT> 
+values different than <TT>nullptr</TT> 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 is undefined. A runtime assertion is 
 recommended. 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-<TT>a != NULL</TT> 
+<TT>a != nullptr</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-Returns <TT>!(a == NULL)</TT>. 
+Returns <TT>!(a == nullptr)</TT>. 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 <TT>++r</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
@@ -164,7 +164,7 @@ circulator category <TT>Forward_circulator_tag</TT>.
 
 </TABLE> 
 
-## Bidirectional Circulators ## {#circulatorConceptsBidirectional}
+\subsection circulatorConceptsBidirectional Bidirectional Circulators
 
 The same requirements as for the forward circulators hold for 
 bidirectional iterators with the following change of the iterator 
@@ -177,7 +177,7 @@ circulator category <TT>Bidirectional_circulator_tag</TT>.
 
 </TABLE> 
 
-## Random Access Circulators ## {#sectionRandomAccessCirculatorRequ}
+\subsection circulatorConceptsRandomAccessCirculators Random Access Circulators
 
 \anchor sectionMinCircleRequ
 
@@ -223,14 +223,14 @@ circulator category <TT>Random_access_circulator_tag</TT>.
 
 </TABLE> 
 
-## Const Circulators ## 
+\subsection circulatorConceptsConstCirculators Const Circulators
 
 As with iterators, we distinguish between circulators and const
 circulators. The expression <TT>*a = t</TT> with <TT>t</TT> of type
 <TT>T</TT> is valid for mutable circulators. It is invalid for const
 circulators.
 
-## Circulators in Container Classes ## 
+\subsection subsec_CircContClass Circulators in Container Classes
 
 For a container <TT>x</TT> of type <TT>X</TT> that supports
 circulators <TT>c</TT> the following naming convention is recommended:
@@ -266,7 +266,7 @@ of iterators and circulators simultaneously is not recommended, since
 it would lead to fat interfaces. The natural choice should be
 supported, the other concept will be available through adaptors.
 
-## Example ## 
+\subsection subsec_Circ_ex Example
 
 A generic <TT>contains</TT> function accepts a range of circulators
 and a value. It returns `true` if the value is contained in the
@@ -320,7 +320,7 @@ class BidirectionalCirculator {
 
 /*!
   \ingroup PkgHandlesAndCirculatorsConcepts
-  See Subsection \ref sectionRandomAccessCirculatorRequ in the page on Circulators.
+  See Subsection \ref sectionMinCircleRequ in the page on Circulators.
 \cgalConcept
 */
 class RandomAccessCirculator {

@@ -553,7 +553,7 @@ namespace CGAL {
 
     inline
     void set_separator(Separator& sep){
-      cut_dim = sep.cutting_dimension();
+      cut_dim = static_cast<boost::uint8_t>(sep.cutting_dimension());
       cut_val = sep.cutting_value();
     }
   	

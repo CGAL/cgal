@@ -26,6 +26,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * Definition of the Arr_simple_point_location<Arrangement> template.
@@ -95,9 +96,9 @@ protected:
 public:
   /*! Default constructor. */
   Arr_simple_point_location() : 
-    m_arr(NULL),
-    m_geom_traits(NULL),
-    m_topol_traits(NULL)
+    m_arr(nullptr),
+    m_geom_traits(nullptr),
+    m_topol_traits(nullptr)
   {}
         
   /*! Constructor given an arrangement. */
@@ -121,9 +122,9 @@ public:
   /*! Detach from the current arrangement object. */
   void detach()
   {
-    m_arr = NULL;
-    m_geom_traits = NULL;
-    m_topol_traits = NULL;
+    m_arr = nullptr;
+    m_geom_traits = nullptr;
+    m_topol_traits = nullptr;
   }
  
   /*!
@@ -194,5 +195,7 @@ protected:
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_simple_point_location_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif

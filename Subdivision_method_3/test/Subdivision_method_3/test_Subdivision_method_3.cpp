@@ -57,8 +57,8 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::CatmullClark_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Catmull-Clark subdivision on 'opened' quad mesh
@@ -68,8 +68,8 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::CatmullClark_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
 
@@ -80,8 +80,8 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::Loop_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Loop subdivision on 'opened' tri mesh
@@ -91,8 +91,8 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::Loop_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Doo-Sabin subdivision on general mesh
@@ -102,8 +102,8 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::DooSabin_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::DooSabin_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Sqrt-3 subdivision on tri mesh
@@ -113,8 +113,8 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Sqrt3_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::Sqrt3_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 }
 
@@ -129,8 +129,8 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::CatmullClark_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Catmull-Clark subdivision on 'opened' quad mesh
@@ -140,8 +140,8 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::CatmullClark_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
 
@@ -152,8 +152,8 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::Loop_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Loop subdivision on 'opened' tri mesh
@@ -163,8 +163,8 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::Loop_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Doo-Sabin subdivision on general mesh
@@ -174,8 +174,8 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::DooSabin_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::DooSabin_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P, true));
   }
 
   // test Doo-Sabin subdivision on 'opened' quad mesh
@@ -185,8 +185,8 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::DooSabin_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::DooSabin_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Sqrt-3 subdivision on tri mesh
@@ -196,8 +196,8 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Sqrt3_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::Sqrt3_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Sqrt-3 subdivision on 'opened' tri mesh
@@ -207,8 +207,8 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Sqrt3_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::Sqrt3_subdivision(P);
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 }
 
@@ -225,7 +225,7 @@ void test_Subdivision_surface_3_SM_NP() {
 
     Subdivision_method_3::CatmullClark_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
                                                    .number_of_iterations(TEST_DEPTH));
-    assert(P.is_valid());
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Catmull-Clark subdivision on 'opened' quad mesh
@@ -237,7 +237,7 @@ void test_Subdivision_surface_3_SM_NP() {
 
     Subdivision_method_3::CatmullClark_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
                                                    .number_of_iterations(TEST_DEPTH));
-    assert(P.is_valid());
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
 
@@ -250,7 +250,7 @@ void test_Subdivision_surface_3_SM_NP() {
 
     Subdivision_method_3::Loop_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
                                            .number_of_iterations(TEST_DEPTH));
-    assert(P.is_valid());
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Loop subdivision on 'opened' tri mesh
@@ -262,7 +262,7 @@ void test_Subdivision_surface_3_SM_NP() {
 
     Subdivision_method_3::Loop_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
                                            .number_of_iterations(TEST_DEPTH));
-    assert(P.is_valid());
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Doo-Sabin subdivision on 'opened' tri mesh
@@ -274,7 +274,7 @@ void test_Subdivision_surface_3_SM_NP() {
 
     Subdivision_method_3::DooSabin_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
                                                .number_of_iterations(TEST_DEPTH));
-    assert(P.is_valid());
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Doo-Sabin subdivision on 'opened' quad mesh
@@ -284,8 +284,8 @@ void test_Subdivision_surface_3_SM_NP() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::DooSabin_subdivision(P,TEST_DEPTH);
-    assert(P.is_valid());
+    Subdivision_method_3::DooSabin_subdivision(P,Subdivision_method_3::parameters::number_of_iterations(TEST_DEPTH));
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Sqrt-3 subdivision on tri mesh
@@ -298,7 +298,7 @@ void test_Subdivision_surface_3_SM_NP() {
     Subdivision_method_3::Sqrt3_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
                                             .number_of_iterations(TEST_DEPTH));
 
-    assert(P.is_valid());
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Sqrt-3 subdivision on 'opened' tri mesh
@@ -314,7 +314,7 @@ void test_Subdivision_surface_3_SM_NP() {
     std::ofstream out("out_0.off");
     out << P;
 
-    assert(P.is_valid());
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 
   // test Sqrt-3 subdivision on 'opened' tri mesh & with external property map
@@ -337,7 +337,7 @@ void test_Subdivision_surface_3_SM_NP() {
     VPM vpm = get(vertex_point, P);
 
     // some arbitrary new coordinates (different from the internal vpm)
-    BOOST_FOREACH(vertex_descriptor vd, vertices(P)) {
+    for(vertex_descriptor vd : vertices(P)) {
       boost::property_traits<VPM>::reference pt = get(vpm, vd);
       Vector v = pt - Point(0., 0., -3.);
       put(apm, vd, pt + 0.5*v);
@@ -347,7 +347,7 @@ void test_Subdivision_surface_3_SM_NP() {
                          Subdivision_method_3::parameters::vertex_point_map(apm)
                          .number_of_iterations(TEST_DEPTH));
 
-    assert(P.is_valid());
+    assert(CGAL::is_valid_polygon_mesh(P));
   }
 }
 

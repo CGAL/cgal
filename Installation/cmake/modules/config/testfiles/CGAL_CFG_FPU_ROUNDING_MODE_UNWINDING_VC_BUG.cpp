@@ -41,7 +41,7 @@ main()
     }
   catch ( ... )
     {
-      // Sets the rounding mode to 0 and show that it's realy the case.
+      // Sets the rounding mode to 0 and show that it's really the case.
       _controlfp( 0, _MCW_RC );
     }
 

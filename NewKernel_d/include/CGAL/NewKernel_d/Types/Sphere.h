@@ -30,6 +30,7 @@ template <class R_> class Sphere {
 	FT_ r2_;
 
 	public:
+	Sphere(){}
 	Sphere(Point_ const&p, FT_ const&r2): c_(p), r2_(r2) {}
 	// TODO: Add a piecewise constructor?
 
@@ -49,7 +50,14 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
   // Not really needed
   result_type operator()()const{
     typename Get_functor<R_, Construct_ttag<Point_tag> >::type cp(this->kernel());
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(push)
+#  pragma warning(disable: 4309)
+#endif  
     return result_type(cp(),0);
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(pop)
+#endif
   }
   template <class Iter>
   result_type operator()(Iter f, Iter e)const{
@@ -59,7 +67,7 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
     // It should be possible to avoid copying the center by moving this code to a constructor.
     Point center = cc(f, e);
     FT const& r2 = sd(center, *f);
-    return this->operator()(CGAL_MOVE(center), r2);
+    return this->operator()(std::move(center), r2);
   }
 };
 
@@ -104,7 +112,7 @@ template<class R_> struct Point_of_sphere : private Store_kernel<R_> {
   typedef Point result_type;
   typedef Sphere first_argument_type;
   typedef int second_argument_type;
-  struct Trans : CGAL::binary_function<FT,int,FT> {
+  struct Trans : CGAL::cpp98::binary_function<FT,int,FT> {
     FT const& r_; int idx; bool sgn;
     Trans (int n, FT const& r, bool b) : r_(r), idx(n), sgn(b) {}
     FT operator()(FT const&x, int i)const{

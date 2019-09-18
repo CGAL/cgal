@@ -26,7 +26,7 @@
 #define SCENE_INTERFACE_H
 #include <CGAL/license/Three.h>
 /*!
-* \ingroup PkgThree
+* \ingroup PkgThreeRef
 * The RenderingMode determines which of an item's primitives must be drawn.
 * It can be Points, PointsPlusNormals, Wireframe, Flat, FlatPlusEdges, or Gouraud.
 * - Points, PointsPlusNormals, and Wireframe have no light model.
@@ -37,11 +37,11 @@ enum RenderingMode
 {
   Points = 0, //! Renders only points without lighting.
   PointsPlusNormals, //!Renders points and normals.
-  Splatting, //!Renders splats. Splats are oriented points that look like discs.
   Wireframe, //!Renders only edges.
   Flat, //!Renders only faces, with a lighting per face.
   FlatPlusEdges, //!Renders flat faces and edges.
   Gouraud, //!Renders only faces, with a lighting per vertex.
+  GouraudPlusEdges, //!Renders faces with a lighting per vertex, and edges.
   ShadedPoints, //!Renders only points with lighting.
   NumberOfRenderingMode //!Number of values in this enum.
 };
@@ -79,6 +79,8 @@ public:
   //!Adds an item to the Geometric Objects list.
   //!@returns the index of the new item.
   virtual Item_id addItem(CGAL::Three::Scene_item* item) = 0;
+  //!Adds a CGAL::Three::Scene_item* to the list of children.
+  virtual void addChild(Scene_item* item)=0;
   //! \brief Replaces an item by a new one in the scene.
   //! The item which id is `id` is replaced by `item`.
   //! The first one is deleted and gives its index to the second one.
@@ -149,7 +151,17 @@ public:
   virtual void itemVisibilityChanged(CGAL::Three::Scene_item*) = 0;
   //! Clears the current selection then sets the selected item to the target index.
   //! Used to update the selection in the Geometric Objects view.
-  virtual void setSelectedItem(Item_id) = 0;  
+  virtual void setSelectedItem(Item_id) = 0;
+  //! \brief ignore data updating.
+  //! 
+  //! This will ignore all the individual calls to `itemChanged()` until 
+  //! `setUpdatesEnabled()` is called whith `b` being `true`.
+  //!
+  virtual void setUpdatesEnabled(bool b) =0;
+  //!
+  //! \brief Updates all the items in the SceneView.
+  //!
+  virtual void allItemsChanged() = 0;
 }; // end interface Scene_interface
 }
 }

@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Spatial_searching.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/internal/K_neighbor_search.h>
 
@@ -193,5 +194,7 @@ private:
 }; // class 
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H

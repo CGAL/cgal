@@ -23,7 +23,7 @@ intersection predicates, and point containment predicates.
 
 Ordinary Boolean set-operations, which distinguish between the
 interior and the boundary of a polygon, are not implemented within this
-package. The Chapter \ref PkgNef2Summary supports these operations for (linear)
+package. The Chapter \ref PkgNef2 supports these operations for (linear)
 polygons.
 
 In the rest of this chapter we use, unless otherwise stated, the
@@ -74,7 +74,7 @@ polygon vertices is referred to as the polygon <B>(outer) boundary</B>.
 
 <LI>A polygon whose curves are pairwise disjoint in their interior, and whose vertices' degree equals two is defined as a <B>Simple polygon</B>. Such a polygon has a well-defined interior and exterior and is topologically equivalent to a disk. Note that while traversing the edges of the relatively simple polygon illustrated above (B), no curve is crossed over.
 
-<LI>A <B>Relatively simple</B> polygon allows vertices with a degree\f$\gt 2\f$, but all of its edges are disjoint in their interior. Furthermore, it must be an orientable polygon. Namely when it is inserted into an arrangement and its outer boundary is traversed, the same face is adjacent to all of the halfedges (no crossing over any curve during the traversal). 
+<LI>A <B>Relatively simple</B> polygon allows vertices with a degree\f$> 2\f$, but all of its edges are disjoint in their interior. Furthermore, it must be an orientable polygon. Namely when it is inserted into an arrangement and its outer boundary is traversed, the same face is adjacent to all of the halfedges (no crossing over any curve during the traversal).
 Note that while polygon C has the same curves as polygon B, traversal of the curves leads to crossing over a previously traversed curve, and is therefore neither simple nor relatively simple. 
 
 <LI>A polygon in our context must be relatively simple and its outer boundary vertices must be ordered in a counterclockwise direction around the interior of the polygon.
@@ -626,8 +626,8 @@ swap its source and target points).
 </UL>
 
 The traits classes `Arr_segment_traits_2`, 
-`Arr_non_caching_segment_traits`, `Arr_circle_segment_traits_2`,
-`Arr_conic_traits_2` and `Arr_rational_arc_traits_2`, which are 
+`Arr_non_caching_segment_traits_2`, `Arr_circle_segment_traits_2`,
+`Arr_conic_traits_2` and `Arr_rational_function_traits_2`, which are 
 bundled in the `Arrangement_2` package and distributed with \cgal,
 are all models of the refined concept 
 `ArrangementDirectionalXMonotoneTraits_2`.\cgalFootnote{The `Arr_polyline_traits_2` class is <I>not</I> a model of the, `ArrangementDirectionalXMonotoneTraits_2` concept, as the \f$ x\f$-monotone curve it defines is always directed from left to right. Thus, an opposite curve cannot be constructed. However, it is not very useful to construct a polygon whose edges are polylines, as an ordinary polygon with linear edges can represent the same entity.}

@@ -125,7 +125,7 @@ public:
             Arr_parameter_space ps_x, Arr_parameter_space ps_y)
   {
     m_point = point;
-    m_type = type;
+    m_type = static_cast<char>(type);
     m_ps_x = static_cast<char>(ps_x);
     m_ps_y = static_cast<char>(ps_y);
     m_closed = 1;
@@ -136,9 +136,9 @@ public:
                              Arr_parameter_space ps_x,
                              Arr_parameter_space ps_y)
   {
-    m_type = type;
-    m_ps_x = ps_x;
-    m_ps_y = ps_y;
+    m_type = static_cast<char>(type);
+    m_ps_x = static_cast<char>(ps_x);
+    m_ps_y = static_cast<char>(ps_y);
     m_closed = 0;
   }
 

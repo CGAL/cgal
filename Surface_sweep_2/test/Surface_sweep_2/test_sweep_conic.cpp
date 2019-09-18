@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #if !defined(CGAL_USE_CORE)
 #include <iostream>
@@ -208,7 +208,7 @@ int main (int argc, char** argv)
   PointList point_list_with_ends;
   CGAL::compute_intersection_points(curves.begin(), curves.end(),
                               std::back_inserter(point_list_with_ends), true);
-  int point_count_with_ends_calculated = point_list_with_ends.size();
+  std::size_t point_count_with_ends_calculated = point_list_with_ends.size();
 
   // generate the string for the output
   std::stringstream out1;
@@ -235,7 +235,7 @@ int main (int argc, char** argv)
     in_file.getline(buf, 1024);
     out2 << buf << "\n";
   }
-  int point_count_with_ends_from_file = 0;
+  std::size_t point_count_with_ends_from_file = 0;
   in_file >> point_count_with_ends_from_file;
   in_file.close();
 

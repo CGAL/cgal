@@ -3098,12 +3098,21 @@ namespace HomogeneousKernelFunctors {
     }
 
     Point_2
-    operator()(const Line_2& l, int i) const
+    operator()(const Line_2& l, const RT& i) const
     {
       Point_2 p = K().construct_point_2_object()(l);
       Vector_2 v = K().construct_vector_2_object()(l);
       return K().construct_translated_point_2_object()
-                 (p, K().construct_scaled_vector_2_object()(v, RT(i)));
+                 (p, K().construct_scaled_vector_2_object()(v, i));
+    }
+
+    Point_2
+    operator()(const Line_2& l, const FT& i) const
+    {
+      Point_2 p = K().construct_point_2_object()(l);
+      Vector_2 v = K().construct_vector_2_object()(l);
+      return K().construct_translated_point_2_object()
+                 (p, K().construct_scaled_vector_2_object()(v, i));
     }
 
 
@@ -3315,6 +3324,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3   Vector_3;
     typedef typename K::Triangle_3 Triangle_3;
     typedef typename K::Segment_3  Segment_3;
+    typedef typename K::Ray_3      Ray_3;
   public:
     typedef Point_3          result_type;
 
@@ -3351,6 +3361,10 @@ namespace HomogeneousKernelFunctors {
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
     { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
+    
+    Point_3
+    operator()( const Ray_3& r, const Point_3& p ) const
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,r,K()); }
   };
 
   template <class K> 

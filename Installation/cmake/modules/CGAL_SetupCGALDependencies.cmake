@@ -60,6 +60,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupBoost.cmake)
 #    Set to `TRUE` if the dependencies of CGAL were found.
 if(Boost_FOUND)
   set(CGAL_FOUND TRUE)
+  set_property(GLOBAL PROPERTY CGAL_FOUND TRUE)
 endif()
 
 #.rst:
@@ -83,7 +84,9 @@ function(CGAL_setup_CGAL_dependencies target)
   else()
     set(keyword PUBLIC)
   endif()
-  if(NOT CGAL_DISABLE_GMP)
+  if(CGAL_DISABLE_GMP)
+    target_compile_definitions(${target} ${keyword} CGAL_DISABLE_GMP=1)    
+  else()
     use_CGAL_GMP_support(${target} ${keyword})
     set(CGAL_USE_GMP  TRUE CACHE INTERNAL "CGAL library is configured to use GMP")
     set(CGAL_USE_MPFR TRUE CACHE INTERNAL "CGAL library is configured to use MPFR")
@@ -96,9 +99,13 @@ function(CGAL_setup_CGAL_dependencies target)
   if (CGAL_HEADER_ONLY)
     target_compile_definitions(${target} ${keyword} CGAL_HEADER_ONLY=1)
   endif()
-  if (RUNNING_CGAL_AUTO_TEST)
+  if (RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     target_compile_definitions(${target} ${keyword} CGAL_TEST_SUITE=1)
   endif()
+
+  # CGAL now requires C++14. `decltype(auto)` is used as a marker of
+  # C++14.
+  target_compile_features(${target} ${keyword} cxx_decltype_auto)
 
   use_CGAL_Boost_support(${target} ${keyword})
 
@@ -112,7 +119,7 @@ function(CGAL_setup_CGAL_dependencies target)
   # Now setup compilation flags
   if(MSVC)
     target_compile_options(${target} ${keyword}
-      "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS"
+      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS"
       "/fp:strict"
       "/fp:except-"
       "/wd4503"  # Suppress warnings C4503 about "decorated name length exceeded"
@@ -136,7 +143,11 @@ function(CGAL_setup_CGAL_dependencies target)
     endif()
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3)
       message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
-      target_compile_options(${target} ${keyword} "-frounding-math")
+      if(CMAKE_VERSION VERSION_LESS 3.3)
+        target_compile_options(${target} ${keyword} "-frounding-math")
+      else()
+        target_compile_options(${target} ${keyword} "$<$<COMPILE_LANGUAGE:CXX>:-frounding-math>")
+      endif()
     endif()
     if ( "${GCC_VERSION}" MATCHES "^4.2" )
       message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )

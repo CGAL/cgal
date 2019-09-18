@@ -324,6 +324,7 @@ int main(int argc, char * argv[])
         extension == ".pwn" || extension == ".PWN")
     {
       std::ofstream stream(output_filename.c_str());
+      stream.precision(17);
       if (!stream ||
           !CGAL::write_xyz_points(stream,
                                   points,

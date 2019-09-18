@@ -64,7 +64,7 @@ template <> class Algebraic_structure_traits< leda_rational >
 //                                                                 Is_square;
 
     class Simplify
-      : public CGAL::unary_function< Type&, void > {
+      : public CGAL::cpp98::unary_function< Type&, void > {
       public:
         void operator()( Type& x) const {
             x.normalize();
@@ -78,7 +78,7 @@ template <> class Real_embeddable_traits< leda_rational >
   public:
   
     class Abs
-      : public CGAL::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
@@ -86,7 +86,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class Sgn
-      : public CGAL::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
@@ -94,7 +94,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class Compare
-      : public CGAL::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -105,7 +105,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class To_double
-      : public CGAL::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
@@ -113,7 +113,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class To_interval
-      : public CGAL::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 

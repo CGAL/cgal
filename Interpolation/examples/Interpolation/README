@@ -4,6 +4,10 @@ To compile and run only some of them type  : make name-of_wanted_example
 nn_coordinates_2: shows how to compute 2D natural coordinates 
 	given a 2D Delaunay triangulation  and a query point.
 
+nn_coordinates_with_info_2: same as above, using a functor to
+        change the default option and store the coordinates
+        in the vertices.
+
 nn_coordinates_3: shows how to compute 3D natural coordinates 
 	given a 3D Delaunay triangulation  and a query point.
 

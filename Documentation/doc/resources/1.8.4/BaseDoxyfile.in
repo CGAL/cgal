@@ -251,6 +251,8 @@ ALIASES += "cgalAdvancedBegin=\htmlonly <div class=\"CGALAdvanced\"> <div>Advanc
 ALIASES += "cgalAdvancedEnd=\htmlonly </div> \endhtmlonly"
 ALIASES += "cgalAdvancedFunction=This is an advanced function."
 ALIASES += "cgalAdvancedClass=This is an advanced class."
+ALIASES += "cgalAdvancedType=This is an advanced type."
+ALIASES += "cgalAdvancedConcept=This is an advanced concept."
 
 ALIASES += "cgalRequiresCPP11=\warning This function requires a C++11 compiler."
 
@@ -270,9 +272,9 @@ ALIASES += "cgalPkgDesc{1}=<div class=\"PkgDescription\">\1</div>"
 ALIASES += "cgalPkgSince{1}=<B>Introduced in:</B> \cgal \1<BR>"
 ALIASES += "cgalPkgDependsOn{1}=<B>Depends on:</B> \1 <BR>"
 ALIASES += "cgalPkgLicense{1}=<B>License:</B> \1 <BR>"
-ALIASES += "cgalPkgDemo{2}=<B>Windows Demo:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a><BR><B>Common Demo Dlls:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>"
-ALIASES += "cgalPkgDemo{4}=<B>Windows Demos:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a><BR><B>Common Demo Dlls:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>"
-ALIASES += "cgalPkgDemo{6}=<B>Windows Demos:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a>, <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\6\">\5</a><BR><B>Common Demo Dlls:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>"
+ALIASES += "cgalPkgDemo{2}=<B>Windows Demo:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>"
+ALIASES += "cgalPkgDemo{4}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>"
+ALIASES += "cgalPkgDemo{6}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\6\">\5</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>"
 
 ALIASES += "cgalPkgDescriptionEnd="
 
@@ -293,7 +295,12 @@ ALIASES+= "cgalHeading{1}= <B>\1</B><BR>"
 
 ALIASES+= "cgalClassifedRefPages=\htmlonly  <h2 class=\"groupheader\">Classified Reference Pages</h2> \endhtmlonly"
 
+ALIASES+= "cgalCRPSection{1}=<h2>\1</h2>"
+ALIASES+= "cgalCRPSubsection{1}=<h3>\1</h3>"
+
 ALIASES+= "cgalCite{1}=<!-- -->\cite \1"
+
+ALIASES+= "cgalPackageSection{2}=\htmlonly <div style=\"background-color: #EEEDF2;\">\endhtmlonly \section \1 \2 \n \htmlonly </div>\endhtmlonly"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding

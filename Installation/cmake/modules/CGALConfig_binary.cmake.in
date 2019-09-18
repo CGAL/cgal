@@ -12,6 +12,9 @@ get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
 
+include(CMakeFindDependencyMacro)
+find_dependency(Boost REQUIRED)
+
 # The code for including exported targets is different from
 # CGAL_Config_install.cmake. We do not have separate export files in
 # an installed version and we need to make sure that we are not
@@ -49,12 +52,11 @@ CGAL_set_LIB_LIBRARY_var(CGAL_Core)
 CGAL_set_LIB_LIBRARY_var(CGAL_ImageIO)
 CGAL_set_LIB_LIBRARY_var(CGAL_Qt5)
 
+set(CGAL_CONFIGURED_LIBRARIES "@CGAL_ACTUAL_CONFIGURED_LIBRARIES@")
+
 # Check for possible config files of our libraries and include them.
-file(GLOB CGAL_CONFIG_FILES LIST_DIRECTORIES false
-  RELATIVE "${CGAL_CONFIG_DIR}" "${CGAL_CONFIG_DIR}/*LibConfig.cmake")
-list(SORT CGAL_CONFIG_FILES)
-foreach(configfile ${CGAL_CONFIG_FILES})
-  include("${CGAL_CONFIG_DIR}/${configfile}")
+foreach(lib ${CGAL_CONFIGURED_LIBRARIES})
+  include("${CGAL_CONFIG_DIR}/${lib}LibConfig.cmake" OPTIONAL)
 endforeach()
 
 set(CGAL_INSTALLATION_PACKAGE_DIR "@CGAL_INSTALLATION_PACKAGE_DIR@")
@@ -107,8 +109,6 @@ else()
   endif()
 endif()
 
-set(CGAL_CONFIGURED_LIBRARIES "@CGAL_CONFIGURED_LIBRARIES@")
-
 macro(check_cgal_component COMPONENT)
 
   set( CGAL_LIB ${COMPONENT} )
@@ -117,15 +117,6 @@ macro(check_cgal_component COMPONENT)
   if ( "${CGAL_LIB}" STREQUAL "CGAL" )
     set( CGAL_FOUND TRUE )
     set( CHECK_CGAL_ERROR_TAIL "" )
-    get_property(CGAL_CGAL_is_imported TARGET CGAL::CGAL PROPERTY IMPORTED)
-    if(CGAL_CGAL_is_imported)
-      include("${CGAL_MODULES_DIR}/CGAL_SetupBoost.cmake")
-      get_property(CGAL_requires_Boost_libs
-        GLOBAL PROPERTY CGAL_requires_Boost_Thread)
-      if(CGAL_requires_Boost_libs AND TARGET Boost::thread)
-        set_property(TARGET CGAL::CGAL APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::thread)
-      endif()
-    endif()
   else( "${CGAL_LIB}" STREQUAL "CGAL" )
     if ( WITH_${CGAL_LIB} )
       if(TARGET CGAL::${CGAL_LIB})
@@ -138,6 +129,14 @@ macro(check_cgal_component COMPONENT)
             message(STATUS "libCGAL_Qt5 is missing the dependencies: ${CGAL_Qt5_MISSING_DEPS} cannot be configured.")
           else()
             set( CGAL_Qt5_FOUND TRUE )
+          endif()
+        elseif("${CGAL_LIB}" STREQUAL "CGAL_Core")
+          include("${CGAL_MODULES_DIR}/CGAL_SetupCGAL_CoreDependencies.cmake")
+          if(CGAL_Core_MISSING_DEPS)
+            set( CGAL_Core_FOUND FALSE )
+            message(STATUS "libCGAL_Core is missing the dependencies: ${CGAL_Core_MISSING_DEPS} cannot be configured.")
+          else()
+            set( CGAL_Core_FOUND TRUE )
           endif()
         else("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
           # Librairies that have no dependencies
@@ -182,12 +181,19 @@ set(CGAL_DISABLE_GMP "@CGAL_DISABLE_GMP@")
 
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
 
 # Temporary? Change the CMAKE module path
 cgal_setup_module_path()
 
-if( RUNNING_CGAL_AUTO_TEST )
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
+  # Do not use -isystem for CGAL include paths
+  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
   # Ugly hack to be compatible with current CGAL testsuite process (as of
   # Nov. 2017). -- Laurent Rineau
   include(CGAL_SetupFlags)
 endif()
+
+include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

@@ -22,10 +22,9 @@
 #define CGAL_GENERALIZED_MAP_2_TEST 1
 
 #include <CGAL/Generalized_map_operations.h>
+#include <CGAL/Random.h>
 
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <iostream>
-#include <fstream>
 
 using namespace std;
 
@@ -57,6 +56,28 @@ void trace_display_msg(const char*
   std::cout<<"***************** "<<msg<<"***************** "<<std::endl;
 #endif
 }
+
+template<typename GMap, typename Info=typename GMap::Dart_info>
+struct InitDartInfo
+{
+  static void run(GMap& gmap)
+  {
+    long long int nb=0;
+    for(typename GMap::Dart_range::iterator it=gmap.darts().begin(),
+        itend=gmap.darts().end(); it!=itend; ++it)
+    {
+      nb=CGAL::get_default_random().get_int(0,20000);
+      gmap.info(it)=Info(nb);
+    }
+  }
+};
+
+template<typename GMap>
+struct InitDartInfo<GMap, CGAL::Void>
+{
+  static void run(GMap&)
+  {}
+};
 
 template<typename GMAP>
 bool check_number_of_cells_2(GMAP& gmap, unsigned int nbv, unsigned int nbe,

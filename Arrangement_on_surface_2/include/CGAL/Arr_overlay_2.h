@@ -25,6 +25,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 /*! \file
  *
  * Definition of the global Arr_overlay_2() function.
@@ -259,5 +261,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
 }
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

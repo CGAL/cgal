@@ -8,9 +8,17 @@ The class `Convex_hull_traits_3` serves as a traits class for the function
 function when `R` is a kernel with exact predicates but inexact constructions 
 (note that the type `Plane_3` is a triple of `Point_3` and not `R::Plane_3`). 
 
-\tparam PolygonMesh must be a model of  the concept `MutableFaceGraph`
+\tparam PolygonMesh must be a model of  the concept `MutableFaceGraph`.
 \cgalModels `ConvexHullTraits_3`
 \cgalModels `IsStronglyConvexTraits_3` 
+
+\attention The user must include the header file of the polygon mesh type, even for the default type.
+
+\cgalAdvancedBegin 
+This class has a fourth undocumented template argument. Passing `CGAL::Tag_false`
+switches off a caching of a plane with coordinates with interval arithmetic. 
+Instead an orientation test of four points is performed.
+\cgalAdvancedEnd
 
 */
   template< typename R, typename PolygonMesh = Polyhedron_3<R> >

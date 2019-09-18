@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgNef2
+\ingroup PkgNef2Ref
 
 An instance of data type `Nef_polyhedron_2<T>` is a subset of the 
 plane that is the result of forming complements and intersections 
@@ -285,7 +285,7 @@ Nef_polyhedron_2<T> symmetric_difference(const Nef_polyhedron_2<T>& N1) ;
 /// @{
 
 /*!
-\ingroup PkgNef2
+\ingroup PkgNef2Ref
 
 An instance `D` of the data type `Topological_explorer` is a 
 decorator for interfacing the topological structure of a plane map 
@@ -661,7 +661,7 @@ void check_integrity_and_topological_planarity(bool faces=true) ;
 }; /* end Topological_explorer */
 
 /*!
-\ingroup PkgNef2
+\ingroup PkgNef2Ref
 
 a decorator to examine the underlying plane map. 
 

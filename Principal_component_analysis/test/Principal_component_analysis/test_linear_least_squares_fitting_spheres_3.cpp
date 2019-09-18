@@ -1,6 +1,8 @@
 // Example program for the linear_least_square_fitting function
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_diagonalize_traits.h>
@@ -9,12 +11,12 @@
 
 #include <list>
 
-typedef double               FT;
-typedef CGAL::Cartesian<FT>  Kernel;
-typedef Kernel::Line_3       Line;
-typedef Kernel::Plane_3      Plane;
-typedef Kernel::Point_3      Point;
-typedef Kernel::Sphere_3     Sphere;
+typedef double                      FT;
+typedef CGAL::Simple_cartesian<FT>  Kernel;
+typedef Kernel::Line_3              Line;
+typedef Kernel::Plane_3             Plane;
+typedef Kernel::Point_3             Point;
+typedef Kernel::Sphere_3            Sphere;
 
 int main(void)
 {

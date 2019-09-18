@@ -23,21 +23,23 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/property_map.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
-#include <CGAL/unordered.h>
 #include <CGAL/Iterator_range.h>
+#include <functional>
 #include <boost/functional/hash.hpp>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
 #include <deque>
 #include <algorithm>
 #include <cmath>
+#include <unordered_set>
 
 namespace CGAL {
 
@@ -138,14 +140,14 @@ public:
 
 template <class Point_3, class PointMap>
 class Epsilon_point_set_3
-  : public cpp11::unordered_set<Point_3,
+  : public std::unordered_set<Point_3,
                                 internal::Hash_epsilon_points_3<Point_3, PointMap>,
                                 internal::Equal_epsilon_points_3<Point_3, PointMap> >
 {
 private:
 
     // superclass
-    typedef cpp11::unordered_set<Point_3,
+    typedef std::unordered_set<Point_3,
                                 internal::Hash_epsilon_points_3<Point_3, PointMap>,
                                 internal::Equal_epsilon_points_3<Point_3, PointMap> > Base;
 
@@ -168,7 +170,7 @@ public:
 // ----------------------------------------------------------------------------
 
 /**
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
    Merges points which belong to the same cell of a grid of cell size = `epsilon`.
 
    This method modifies the order of input points so as to pack all remaining points first,
@@ -187,6 +189,13 @@ public:
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadWritePropertyMap` with value type `geom_traits::Point_3`.
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `std::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped and simplification stops with
+      no guarantee on the output.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
@@ -199,10 +208,13 @@ grid_simplify_point_set(
   double epsilon,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
+                                                                 std::function<bool(double)>());
 
   // actual type of input points
   typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Enriched_point;
@@ -213,12 +225,15 @@ grid_simplify_point_set(
   // points_to_keep[] will contain 1 point per cell; the others will be in points_to_remove[].
   Epsilon_point_set_3<Enriched_point, PointMap> points_to_keep(epsilon, point_map);
   std::deque<Enriched_point> points_to_remove;
-  for (typename PointRange::iterator it = points.begin(); it != points.end(); it++)
+  std::size_t nb = 0, nb_points = points.size();
+  for (typename PointRange::iterator it = points.begin(); it != points.end(); it++, ++ nb)
   {
     std::pair<typename Epsilon_point_set_3<Enriched_point, PointMap>::iterator,bool> result;
     result = points_to_keep.insert(*it);
     if (!result.second) // if not inserted
       points_to_remove.push_back(*it);
+    if (callback && !callback ((nb+1) / double(nb_points)))
+      break;
   }
 
   // Replaces `[first, beyond)` range by the content of points_to_keep, then points_to_remove.
@@ -238,68 +253,11 @@ grid_simplify_point_set(PointRange& points, double epsilon)
   return grid_simplify_point_set
     (points, epsilon, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template <typename ForwardIterator,
-          typename PointMap,
-          typename Kernel>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::grid_simplify_point_set(), please update your code")
-ForwardIterator grid_simplify_point_set(
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3
-  double epsilon, ///< tolerance value when merging 3D points.
-  const Kernel& /*kernel*/) ///< geometric traits.
-{
-  CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
-  return grid_simplify_point_set
-    (points,
-     epsilon,
-     CGAL::parameters::point_map (point_map).
-     geom_traits (Kernel()));
-}
-  
-
-// deprecated API
-template <typename ForwardIterator,
-          typename PointMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::grid_simplify_point_set(), please update your code")
-ForwardIterator
-grid_simplify_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
-  PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3
-  double epsilon) ///< tolerance value when merging 3D points
-{
-  CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
-  return grid_simplify_point_set
-    (points,
-     epsilon,
-     CGAL::parameters::point_map (point_map));
-}
-  
-// deprecated API
-template <typename ForwardIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::grid_simplify_point_set(), please update your code")
-ForwardIterator
-grid_simplify_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
-  double epsilon) ///< tolerance value when merging 3D points
-{
-  CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
-  return grid_simplify_point_set
-    (points,
-     epsilon);
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_GRID_SIMPLIFY_POINT_SET_H

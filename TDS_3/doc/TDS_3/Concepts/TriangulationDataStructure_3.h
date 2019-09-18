@@ -118,6 +118,7 @@ Can be `CGAL::Sequential_tag` or `CGAL::Parallel_tag`. If it is
 typedef unspecified_type Concurrency_tag;
 
 /*!
+\cgalAdvancedType
 \cgalAdvancedBegin
 This template class allows to get the type of a triangulation 
 data structure that only changes the vertex type. It has to define a type 
@@ -130,6 +131,7 @@ template <typename Vb2>
 using Rebind_vertex = unspecified_type;
 
 /*!
+\cgalAdvancedType
 \cgalAdvancedBegin
 This template class allows to get the type of a triangulation 
 data structure that only changes the cell type. It has to define a type 
@@ -248,11 +250,11 @@ a handle to the vertex created in `this` that is the copy of `v` is returned,
 otherwise `Vertex_handle()` is returned.
 
  - A model of `ConvertVertex` must provide two operator()'s that are responsible for converting the source vertex `v_src` into the target vertex:
-  - `Vertex operator()(const TDS_src::Vertex& v_src);` This operator is used to create the vertex from `v_src`.
-  - `void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt);` This operator is meant to be used in case heavy data should transferred to `v_tgt`. 
+  - `Vertex operator()(const TDS_src::Vertex& v_src) const;` This operator is used to create the vertex from `v_src`.
+  - `void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt) const;` This operator is meant to be used in case heavy data should transferred to `v_tgt`.
  - A model of ConvertCell must provide two operator()'s that are responsible for converting the source cell `c_src` into the target cell:
-  - `Cell operator()(const TDS_src::Cell& c_src);` This operator is used to create the cell from `c_src`.
-  - `void operator()(const TDS_src::Cell& c_src, Cell& c_tgt);` This operator is meant to be used in case heavy data should transferred to `c_tgt`.
+  - `Cell operator()(const TDS_src::Cell& c_src) const;` This operator is used to create the cell from `c_src`.
+  - `void operator()(const TDS_src::Cell& c_src, Cell& c_tgt) const;` This operator is meant to be used in case heavy data should transferred to `c_tgt`.
 
 \pre The optional argument `v` is a vertex of `tds_src` or is `Vertex_handle()`.
 */
@@ -384,7 +386,7 @@ and `l` of the vertices `u`, `v`, `w` and `t` in
 */ 
 bool is_cell(Vertex_handle u, Vertex_handle v, Vertex_handle w, Vertex_handle t, 
 Cell_handle & c, int & i, int & j, int & k, int & l) const; 
-
+/// @}
 /// \name has_vertex
 /// There is a method `has_vertex` in the cell class. The analogous methods for facets are defined here. 
 /// @{

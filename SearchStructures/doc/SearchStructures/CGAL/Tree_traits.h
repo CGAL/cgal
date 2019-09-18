@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgRangeSegmentTreesDTraitsClasses
+\ingroup PkgSearchStructuresTraitsClasses
 
 `tree_interval_traits` is a template class 
 that provides an interface to data items. It is similar to 
@@ -142,7 +142,7 @@ static bool comp(Key& key1, Key& key2);
 namespace CGAL {
 
 /*!
-\ingroup PkgRangeSegmentTreesDTraitsClasses
+\ingroup PkgSearchStructuresTraitsClasses
 
 `tree_point_traits` is a template class 
 that provides an interface to data items. 

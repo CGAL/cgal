@@ -29,6 +29,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * This file was developed at Inria, France, and copied over to the
@@ -127,5 +128,7 @@ public:
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CIRCULAR_KERNEL_LINE_ARC_TRAITS_H

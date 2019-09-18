@@ -1,7 +1,7 @@
 README.Debian
 -------------
 
-The homepage of CGAL (http://www.cgal.org/) offers more information about CGAL.
+The homepage of CGAL (https://www.cgal.org/) offers more information about CGAL.
 In particular, a mailing list and the documentation for the library (in PDF and
 HTML) are available. The authors ask you to give some feedback about your usage
 of CGAL in a short questionnaire (in the download section).
@@ -12,7 +12,7 @@ Documentation
 
 Note that the CGAL documentation cannot be packaged for Debian due to unclear
 license conditions. The complete documentation in PDF and HTML is available at
-http://www.cgal.org/.
+https://www.cgal.org/.
 
 
 Demos and examples

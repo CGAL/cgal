@@ -27,6 +27,7 @@
 #ifndef CGAL_IO_H
 #define CGAL_IO_H
 
+#include <CGAL/disable_warnings.h>
 
 #include <cstdio>
 #include <cctype>
@@ -176,8 +177,7 @@ public:
 	break;
       }
     }while(true);
-
-    if(sscanf(buffer.c_str(), "%lf", &t) != 1) {
+    if(sscanf_s(buffer.c_str(), "%lf", &t) != 1) {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
@@ -229,8 +229,7 @@ public:
 	break;
       }
     }while(true);
-
-    if(sscanf(buffer.c_str(), "%f", &t) != 1) {
+    if(sscanf_s(buffer.c_str(), "%f", &t) != 1) {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
@@ -394,39 +393,45 @@ std::ostream& operator<<( std::ostream& out, const Color& col)
     switch(get_mode(out)) {
     case IO::ASCII :
         return out << static_cast<int>(col.red())   << ' '
-		   << static_cast<int>(col.green()) << ' '
-		   << static_cast<int>(col.blue());
+                  << static_cast<int>(col.green()) << ' '
+                  << static_cast<int>(col.blue()) << ' '
+                  << static_cast<int>(col.alpha());
     case IO::BINARY :
-        write(out, static_cast<int>(col.red()));
-        write(out, static_cast<int>(col.green()));
-        write(out, static_cast<int>(col.blue()));
+        out.write(reinterpret_cast<const char*>(col.to_rgba().data()), 4);
         return out;
     default:
         return out << "Color(" << static_cast<int>(col.red()) << ", "
-		   << static_cast<int>(col.green()) << ", "
-                   << static_cast<int>(col.blue()) << ')';
+                  << static_cast<int>(col.green()) << ", "
+                  << static_cast<int>(col.blue()) << ", "
+                  << static_cast<int>(col.alpha()) << ")";
     }
 }
 
 inline
 std::istream &operator>>(std::istream &is, Color& col)
 {
-    int r = 0, g = 0, b = 0;
+    unsigned char r = 0, g = 0, b = 0, a = 0;
+    int ir = 0, ig = 0, ib = 0, ia = 0;
     switch(get_mode(is)) {
     case IO::ASCII :
-        is >> r >> g >> b;
+        is >> ir >> ig >> ib >> ia;
+        r = (unsigned char)ir;
+        g = (unsigned char)ig;
+        b = (unsigned char)ib;
+        a = (unsigned char)ia;
         break;
     case IO::BINARY :
         read(is, r);
         read(is, g);
         read(is, b);
+        read(is, a);
         break;
     default:
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
-    col = Color((unsigned char)r,(unsigned char)g,(unsigned char)b);
+    col = Color(r,g,b,a);
     return is;
 }
 
@@ -615,5 +620,7 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/IO/io_impl.h>
 #endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IO_H

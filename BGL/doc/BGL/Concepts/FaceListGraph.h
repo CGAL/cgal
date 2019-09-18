@@ -5,7 +5,6 @@
 The concept `FaceListGraph` refines the concept `FaceGraph` and adds
 the requirement for traversal of all faces in a graph.
 
-
 \cgalAssociatedTypesBegin
 
 \cgalAssociatedTypeBegin{boost::graph_traits<FaceListGraph>::%face_iterator} A face iterator (obtained via `faces(g)`) provides access to all of the faces in a graph. 
@@ -16,10 +15,10 @@ face iterator must be the same as the face descriptor of the graph.
 \cgalAssociatedTypesEnd
 
 \cgalRefines `FaceGraph`
-\cgalHasModel `CGAL::Polyhedron_3`
-\cgalHasModel `CGAL::Surface_mesh`
-\cgalHasModel `CGAL::Linear_cell_complex_for_combinatorial_map`
 
+\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+
+\sa \link PkgBGLConcepts Graph Concepts \endlink
 */
 class FaceListGraph{};
 

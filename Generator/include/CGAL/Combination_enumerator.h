@@ -22,6 +22,8 @@
 #ifndef CGAL_COMBINATION_ENUMERATOR_H
 #define CGAL_COMBINATION_ENUMERATOR_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <vector>
 
@@ -135,5 +137,7 @@ public:
 };
 
 } // end of namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_COMBINATION_ENUMERATOR_H

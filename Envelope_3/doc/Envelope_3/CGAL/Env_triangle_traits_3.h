@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope3
+\ingroup PkgEnvelope3Ref
 
 The traits class `Env_triangle_traits_3` models the `EnvelopeTraits_3` 
 concept, and is used for the construction of lower and upper envelopes 
@@ -37,8 +37,6 @@ same class, as <I>every</I> triangle is (weakly) \f$ xy\f$-monotone).
 template< typename Kernel >
 class Env_triangle_traits_3 : public Arr_segment_traits_2<Kernel> {
 public:
-
-/// @}
 
 }; /* end Env_triangle_traits_3 */
 } /* end namespace CGAL */

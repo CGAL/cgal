@@ -1039,7 +1039,7 @@ public:
       x2iso[&*event] = 0;
     }
     
-    ISegment next_seg;
+    ISegment next_seg = ISegment(); // to avoid /W4 warning
     seg_iterator next_it = SQ.begin();
     while ( next_it != SQ.end() && 
 	    ( next_seg = next_it->second, p_sweep == source(next_seg)) ) {

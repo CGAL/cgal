@@ -25,6 +25,7 @@
 #include <CGAL/Polyhedron_3_to_lcc.h>
 #include <CGAL/Triangulation_3_to_lcc.h>
 #include <QSettings>
+#include <QHeaderView>
 #include <CGAL/Timer.h>
 #include <CGAL/ipower.h>
 #include "import_moka.h"
@@ -38,7 +39,7 @@ void subdivide_lcc_pqq (LCC & m);
 
 #define DELAY_STATUSMSG 1500
 
-MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
+MainWindow::MainWindow (QWidget * parent) : CGAL::Qt::DemosMainWindow (parent),
   nbcube      (0),
   dialogmesh  (this),
   dialogmenger(this),
@@ -77,7 +78,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 
   QObject::connect(&dialogmesh, SIGNAL(accepted()),
                    this, SLOT(onCreateMeshOk()));
-  this->viewer->setScene(&scene);
+  this->viewer->setScene(&scene, false);
 
   connect_actions ();
   this->addAboutDemo (":/cgal/help/about_Linear_cell_complex_3.html");
@@ -1006,9 +1007,9 @@ double compute_angle3d(const Vector_3& v1, const Vector_3& v2)
   double a = CGAL::to_double( (v1*v2) /
                               ( sqrt(v1.squared_length()) * sqrt(v2.squared_length()) ) ) ;
 
-  if (a < -1.0) return acos(-1.0)/M_PI*180.0;
-  else if (a > 1.0) return acos(1.0)/M_PI*180.0;
-  else return acos(a)/M_PI*180.0;
+  if (a < -1.0) return acos(-1.0)/CGAL_PI*180.0;
+  else if (a > 1.0) return acos(1.0)/CGAL_PI*180.0;
+  else return acos(a)/CGAL_PI*180.0;
 }
 
 void MainWindow::on_actionMerge_coplanar_faces_triggered()

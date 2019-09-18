@@ -3,12 +3,12 @@
 
 //#define CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 #define CGAL_CLASSIFICATION_VERBOSE
+#define CGAL_CLASSTRAINING_VERBOSE
 
 #include <CGAL/Three/Scene_item.h>
 
 #include "Scene_points_with_normal_item.h"
 #include "Item_classification_base.h"
-#include "Polyhedron_type_fwd.h"
 #include "Kernel_type.h"
 #include "Point_set_3.h"
 
@@ -30,12 +30,53 @@ class Point_set_item_classification : public Item_classification_base
  public:
   typedef Kernel::Point_3 Point_3;
   typedef Kernel::Vector_3 Vector_3;
-  typedef CGAL::Classification::RGB_Color Color;
   
   typedef Point_set::Point_map Point_map;
   typedef Point_set::Vector_map Vector_map;
 
   typedef CGAL::Classification::Point_set_feature_generator<Kernel, Point_set, Point_map>               Generator;
+  
+  struct Cluster
+  {
+    std::vector<Point_set::Index> inliers;
+    int training;
+    int label;
+    Cluster() : training (-1), label (-1) { }
+
+    std::size_t size() const { return inliers.size(); }
+    const Point_set::Index& operator[] (std::size_t i) const { return inliers[i]; }
+  };
+  
+  struct Cluster_neighborhood
+  {
+    Point_set* point_set;
+    Point_set::Property_map<int> cluster_id;
+    std::vector<Cluster>* clusters;
+    
+    Cluster_neighborhood (Point_set* point_set,
+                          std::vector<Cluster>& clusters)
+      : point_set (point_set)
+      , clusters (&clusters)
+    {
+      cluster_id = point_set->property_map<int>("shape").first;
+    }
+    
+    template <typename OutputIterator>
+    OutputIterator operator() (const Point_set::Index& idx,
+                               OutputIterator output) const
+    {
+      int c = cluster_id[idx];
+      if (c == -1)
+        *(output ++) = idx;
+      else
+      {
+        std::copy ((*clusters)[c].inliers.begin(),
+                   (*clusters)[c].inliers.end(),
+                   output);
+      }
+      return output;
+    }
+  };
   
  public:
   
@@ -45,31 +86,117 @@ class Point_set_item_classification : public Item_classification_base
   CGAL::Three::Scene_item* item() { return m_points; }
   void erase_item() { m_points = NULL; }
 
-  void compute_features (std::size_t nb_scales);
-  
-  void add_selection_to_training_set (const char* name)
+  CGAL::Bbox_3 bbox()
   {
-    int label = int(get_label (name));
+    if (m_points->point_set()->nb_selected_points() == 0)
+      return m_points->bbox();
 
+    CGAL::Bbox_3 bb = CGAL::bbox_3 (boost::make_transform_iterator
+                                    (m_points->point_set()->first_selected(),
+                                     CGAL::Property_map_to_unary_function<Point_set::Point_map>
+                                     (m_points->point_set()->point_map())),
+                                    boost::make_transform_iterator
+                                    (m_points->point_set()->end(),
+                                     CGAL::Property_map_to_unary_function<Point_set::Point_map>
+                                     (m_points->point_set()->point_map())));
+
+    double xcenter = (bb.xmax() + bb.xmin()) / 2.;
+    double ycenter = (bb.ymax() + bb.ymin()) / 2.;
+    double zcenter = (bb.zmax() + bb.zmin()) / 2.;
+
+    double dx = bb.xmax() - bb.xmin();
+    double dy = bb.ymax() - bb.ymin();
+    double dz = bb.zmax() - bb.zmin();
+    
+    dx *= 10.;
+    dy *= 10.;
+    dz *= 10.;
+
+    return CGAL::Bbox_3 (xcenter - dx, ycenter - dy, zcenter - dz,
+                         xcenter + dx, ycenter + dy, zcenter + dz);
+  }
+
+  void compute_features (std::size_t nb_scales, float voxel_size);
+
+  std::string feature_statistics() const
+  {
+    std::ostringstream oss;
+
+    for (std::size_t i = 0; i < m_features.size(); ++ i)
+    {
+      float vmin = std::numeric_limits<float>::max();
+      float vmax = -std::numeric_limits<float>::max();
+      float vmean = 0.f;
+      std::size_t nb = 0;
+      
+      for (Point_set::const_iterator it = m_points->point_set()->begin_or_selection_begin();
+           it != m_points->point_set()->end(); ++ it)
+      {
+        float v = m_features[i]->value(std::size_t(it - m_points->point_set()->begin()));
+        vmin = (std::min) (vmin, v);
+        vmax = (std::max) (vmax, v);
+        vmean += v;
+        ++ nb;
+      }
+
+      oss << m_features[i]->name() << " in [ " << vmin << " ; " << vmax << " ], mean = " << vmean / nb << std::endl;
+    }
+
+    return oss.str();
+  }
+  
+  void add_remaining_point_set_properties_as_features();
+  
+  void select_random_region();
+
+  template <typename Type>
+  bool try_adding_simple_feature (const std::string& name)
+  {
+    typedef typename Point_set::template Property_map<Type> Pmap;
+    bool okay = false;
+    Pmap pmap;
+    boost::tie (pmap, okay) = m_points->point_set()->template property_map<Type>(name.c_str());
+    if (okay)
+    {
+      std::cerr << "Adding property<" << CGAL::demangle(typeid(Type).name()) << ">("
+                << name << ") as feature" << std::endl;
+      m_features.template add<CGAL::Classification::Feature::Simple_feature <Point_set, Pmap> >
+        (*(m_points->point_set()), pmap, name.c_str());
+    }
+
+    return okay;
+  }
+  
+  void add_selection_to_training_set (std::size_t label)
+  {
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
          it != m_points->point_set()->end(); ++ it)
-      {
-        m_training[*it] = label;
-        m_classif[*it] = label;
-      }
+    {
+      m_training[*it] = int(label);
+      m_classif[*it] = int(label);
+    }
 
     m_points->resetSelection();
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  void reset_training_set(const char* name)
+  void reset_training_set(std::size_t label)
   {
-    int label = int(get_label (name));
-
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
-      if (m_training[*it] == label)
+      if (m_training[*it] == int(label))
         m_training[*it] = -1;
+    if (m_index_color == 1 || m_index_color == 2)
+      change_color (m_index_color);
+  }
+  void reset_training_set_of_selection()
+  {
+    for (Point_set::const_iterator it = m_points->point_set()->first_selected();
+         it != m_points->point_set()->end(); ++ it)
+    {
+      m_training[*it] = -1;
+      m_classif[*it] = -1;
+    }
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
@@ -91,11 +218,11 @@ class Point_set_item_classification : public Item_classification_base
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  void train(int classifier, unsigned int nb_trials);
+  void train(int classifier, const QMultipleInputDialog& dialog);
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color () { change_color (m_index_color); }
-  void change_color (int index);
+  void change_color (int index, float* vmin = NULL, float* vmax = NULL);
   CGAL::Three::Scene_item* generate_one_item (const char* name,
                                               int label) const
   {
@@ -135,17 +262,30 @@ class Point_set_item_classification : public Item_classification_base
       }
   }
   
-  bool write_output(std::ostream& out);
-
-  void add_new_label (const char* name, const QColor& color)
+  QColor add_new_label (const char* name)
   {
-    Item_classification_base::add_new_label (name, color);
+    QColor out = Item_classification_base::add_new_label (name);
     update_comments_of_point_set_item();
+    return out;
   }
 
-  void remove_label (const char* name)
+  void remove_label (std::size_t position)
   {
-    Item_classification_base::remove_label (name);
+    Item_classification_base::remove_label (position);
+
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->end(); ++ it)
+    {
+      if (m_training[*it] == int(position))
+        m_training[*it] = -1;
+      else if (m_training[*it] > int(position))
+        m_training[*it] --;
+      
+      if (m_classif[*it] == int(position))
+        m_classif[*it] = -1;
+      else if (m_classif[*it] > int(position))
+        m_classif[*it] --;
+    }
     update_comments_of_point_set_item();
   }
   
@@ -159,7 +299,22 @@ class Point_set_item_classification : public Item_classification_base
   void update_comments_of_point_set_item()
   {
     std::string& comments = m_points->comments();
-    comments.clear();
+    
+    // Remove previously registered labels from comments
+    std::string new_comment;
+      
+    std::istringstream stream (comments);
+    std::string line;
+    while (getline(stream, line))
+    {
+      std::stringstream iss (line);
+      std::string tag;
+      if (iss >> tag && tag == "label")
+        continue;
+      new_comment += line + "\n";
+    }
+    comments = new_comment;
+
     comments += "label -1 unclassified\n";
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
     {
@@ -175,15 +330,30 @@ class Point_set_item_classification : public Item_classification_base
   {
     std::vector<int> indices (m_points->point_set()->size(), -1);
 
+    m_label_probabilities.clear();
     if (method == 0)
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, classifier,
-                                                       indices);
+                                                       indices, m_label_probabilities);
     else if (method == 1)
-      CGAL::Classification::classify_with_local_smoothing<Concurrency_tag>
-        (*(m_points->point_set()), m_points->point_set()->point_map(), m_labels, classifier,
-         m_generator->neighborhood().sphere_neighbor_query(m_generator->radius_neighbors()),
-         indices);
+    {
+      if (m_clusters.empty()) // Use real local smoothing
+        CGAL::Classification::classify_with_local_smoothing<Concurrency_tag>
+          (*(m_points->point_set()), m_points->point_set()->point_map(), m_labels, classifier,
+           m_generator->neighborhood().sphere_neighbor_query(m_generator->radius_neighbors()),
+           indices);
+      else // Smooth on clusters
+      {
+        std::cerr << "Smoothing on clusters" << std::endl;
+        CGAL::Classification::classify_with_local_smoothing<Concurrency_tag>
+          (*(m_points->point_set()),
+           CGAL::Identity_property_map<Point_set::Index>(),
+           m_labels, classifier,
+           Cluster_neighborhood(m_points->point_set(),
+                                m_clusters),
+           indices);
+      }
+    }
     else if (method == 2)
       CGAL::Classification::classify_with_graphcut<Concurrency_tag>
         (*(m_points->point_set()), m_points->point_set()->point_map(),
@@ -225,16 +395,22 @@ class Point_set_item_classification : public Item_classification_base
 
   Scene_points_with_normal_item* m_points;
 
+  std::vector<Cluster> m_clusters;
+
   Point_set::Property_map<unsigned char> m_red;
   Point_set::Property_map<unsigned char> m_green;
   Point_set::Property_map<unsigned char> m_blue;
-  Point_set::Property_map<Color> m_color;
+  Point_set::Property_map<CGAL::Color> m_color;
+  std::vector<std::vector<float> > m_label_probabilities;
+
   Point_set::Property_map<int> m_training;
   Point_set::Property_map<int> m_classif;
 
   Generator* m_generator;
   
   int m_index_color;
+
+  bool m_input_is_las;
   
 }; // end class Point_set_item_classification
 

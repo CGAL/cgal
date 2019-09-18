@@ -114,9 +114,6 @@ public:
   //! Default constructor
   Algebraic_real_d_1() : Base(static_cast<const Base&>(get_default_instance())) {}
 
-  //! copy constructor: copy existing Algebraic_real_d_1 (shares rep)
-  Algebraic_real_d_1(const Self& p) : Base(static_cast<const Base&>(p)) {}
-  
   //! creates the algebraic real from \a i.
   Algebraic_real_d_1(int i ) : Base(Algebraic_real_rep_d_1(i)) { }
 
@@ -385,7 +382,7 @@ public:
   typedef internal::Algebraic_real_d_1< Coefficient, Rational, HandlePolicy, RepClass > Type;
 
   class Compare
-    : public CGAL::binary_function< Type, Type, CGAL::Comparison_result > {
+    : public CGAL::cpp98::binary_function< Type, Type, CGAL::Comparison_result > {
   public:
     CGAL::Comparison_result operator()( const Type& a, const Type& b ) const
     { return a.compare( b ); }
@@ -414,7 +411,7 @@ public:
   };
 
   class Sgn
-    : public CGAL::unary_function< Type, CGAL::Sign > {
+    : public CGAL::cpp98::unary_function< Type, CGAL::Sign > {
   public:
     CGAL::Sign operator()( const Type& a ) const {
       return a.compare( Rational(0) );
@@ -422,7 +419,7 @@ public:
   };
 
   class To_double
-    : public CGAL::unary_function< Type, double > {
+    : public CGAL::cpp98::unary_function< Type, double > {
   public:
     double operator()(const Type& a) const {
       return a.to_double();
@@ -430,7 +427,7 @@ public:
   };
 
   class To_interval
-    : public CGAL::unary_function< Type, std::pair<double, double> > {
+    : public CGAL::cpp98::unary_function< Type, std::pair<double, double> > {
   public:
     typename std::pair<double, double> operator()(const Type& a) const {
       return a.to_interval();

@@ -26,7 +26,7 @@
 #include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
 
 
-
+#include <fstream>
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
@@ -2205,6 +2205,7 @@ private:
     CGAL_precondition(
         p.is_point() && q.is_point() && r.is_segment());
     CGAL_USE(l);
+    CGAL_USE(r);
 
     Comparison_result compare_p(EQUAL);
     Comparison_result compare_q(EQUAL);
@@ -2313,6 +2314,8 @@ private:
     CGAL_precondition(
         p.is_point() && q.is_segment() && r.is_segment());
     CGAL_USE(l);
+    CGAL_USE(q);
+    CGAL_USE(r);
 
     Comparison_result compare_p(EQUAL);
     Comparison_result compare_q(EQUAL);
@@ -2432,6 +2435,9 @@ private:
     CGAL_USE(vv);
     CGAL_USE(l);
     CGAL_USE(lref);
+    CGAL_USE(p);
+    CGAL_USE(q);
+    CGAL_USE(r);
 
     Comparison_result compare_p(EQUAL);
     Comparison_result compare_q(EQUAL);
@@ -4056,11 +4062,11 @@ private:
     /*
 #ifndef CGAL_DISABLE_AM_CODE
     // code added in previous version by Andreas + Monique -- start
-    Site_2 const *pp1 = NULL;
+    Site_2 const *pp1 = nullptr;
     if ( end_pt ) pp1 = &p;
     else if ( end_qt ) pp1 = &q;
     else if ( end_rt ) pp1 = &r;
-    if ( pp1 != NULL ) {
+    if ( pp1 != nullptr ) {
       // As the Voronoi circle and the segment t touch in p1,
       // it is enough to check that the center and the non-touching
       // point of the segment

@@ -23,7 +23,9 @@
 #define CGAL_CLASSIFICATION_FEATURE_DISTANCE_TO_PLANE_H
 
 #include <CGAL/license/Classification.h>
-
+#include <CGAL/Classification/Feature_base.h>
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Classification/Local_eigen_analysis.h>
 #include <vector>
 
 namespace CGAL {
@@ -54,7 +56,7 @@ template <typename PointRange, typename PointMap>
 class Distance_to_plane : public Feature_base
 {
 
-  typedef typename Kernel_traits<typename PointMap::value_type>::Kernel Kernel;
+  typedef typename CGAL::Kernel_traits<typename PointMap::value_type>::Kernel Kernel;
   
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
   std::vector<float> distance_to_plane_feature;

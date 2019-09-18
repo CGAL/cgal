@@ -22,6 +22,7 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <vector>
 #include <algorithm>
@@ -254,6 +255,8 @@ private:
 } // end namespace CGAL
 
 #include <CGAL/Straight_skeleton_2/Polygon_offset_builder_2_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_OFFSET_BUILDER_2_H //
 // EOF //

@@ -33,6 +33,7 @@ struct Mix_vector
   };
 };
 
+// FIXME: shouldn't we dispatch based on Max_dim_ instead?
 template <class Static_, class Dynamic_, class NT_, int d, class Max_dim_>
 struct Mix_vector<Static_, Dynamic_, NT_, Dimension_tag<d>, Max_dim_>
 : Static_::template Rebind_dimension<Dimension_tag<d>, Max_dim_>::Other

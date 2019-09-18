@@ -69,19 +69,19 @@ public:
   result_type 
   operator()(const Segment_2 &s, const Segment_2& t) const
   {
-    return internal::do_intersect(s,t, SFK());
+    return Intersections::internal::do_intersect(s,t, SFK());
   }
 
   result_type 
   operator()(const Point_2 &p, const Segment_2& t) const
   {
-    return internal::do_intersect(p,t, SFK());
+    return Intersections::internal::do_intersect(p,t, SFK());
   }
   
   result_type 
   operator()(const Segment_2& t, const Point_2 &p) const
   {
-    return internal::do_intersect(p,t, SFK());
+    return Intersections::internal::do_intersect(p,t, SFK());
   }
   
 };

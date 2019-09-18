@@ -186,7 +186,7 @@ OutputIterator range_search(Dt& delau,
    bool new_v = false;     
 
    // we have to insert the center ...
-   if ( v == NULL )
+   if ( v == nullptr )
    { 
        new_v = true;
        v = delau.insert(p); 
@@ -337,7 +337,7 @@ OutputIterator range_search(Dt& delau,
    bool new_v = false;     
 
    // we have to insert the center ...
-   if ( v == NULL )
+   if ( v == nullptr )
    { 
        new_v = true;
        v = delau.insert(p); 

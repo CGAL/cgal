@@ -6,7 +6,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/random.hpp>
 
 
@@ -36,7 +36,7 @@ int main(int argc,char** argv )
   std::vector<Point> point_set;
   point_set.reserve(2*n_segments);
   
-  CGAL::cpp11::copy_n(Point_generator(1,rand), 2*n_segments,std::back_inserter(point_set));
+  std::copy_n(Point_generator(1,rand), 2*n_segments,std::back_inserter(point_set));
 
   std::cout << point_set.size()/2  << " segments" << std::endl;
   

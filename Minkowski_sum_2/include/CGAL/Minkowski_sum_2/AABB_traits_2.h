@@ -90,7 +90,7 @@ public:
 
   // Put the n/2 smallest primitives in the front, the n/2 largest primitives
   // in the back. They are compared along the bbox' longest axis.
-  class Sort_primitives
+  class Split_primitives
   {
   public:
     template<typename PrimitiveIterator>
@@ -102,18 +102,18 @@ public:
 
       if (bbox.xmax()-bbox.xmin() >= bbox.ymax()-bbox.ymin())
       {
-        std::nth_element(first, middle, beyond, less_x); // sort along x
+        std::nth_element(first, middle, beyond, AABB_traits_2::less_x); // sort along x
       }
       else
       {
-        std::nth_element(first, middle, beyond, less_y); // sort along y
+        std::nth_element(first, middle, beyond, AABB_traits_2::less_y); // sort along y
       }
     }
   };
 
-  Sort_primitives sort_primitives_object() const
+  Split_primitives split_primitives_object() const
   {
-    return Sort_primitives();
+    return Split_primitives();
   }
 
   // Computes the bounding box of a set of primitives

@@ -3,32 +3,31 @@
 #include "Volume_plane_intersection.h"
 #include "Volume_plane_interface.h"
 
+#include <CGAL/Three/Edge_container.h>
+#include <CGAL/Three/Three.h>
 #include <QApplication>
+
+using namespace CGAL::Three;
+typedef Viewer_interface Vi;
+typedef Edge_container Ec;
 struct Volume_plane_intersection_priv
 {
-  Volume_plane_intersection_priv(float x, float y, float z, Volume_plane_intersection* parent)
-    : a(NULL), b(NULL), c(NULL), x(x), y(y), z(z) , item(parent)
+  Volume_plane_intersection_priv(float x, float y, float z,
+                                 float tx, float ty, float tz,
+                                 Volume_plane_intersection* parent)
+    : a(NULL), b(NULL), c(NULL), x(x), y(y), z(z),
+      tx(tx), ty(ty), tz(tz), item(parent)
   {
     item->are_buffers_filled = false;
   }
   Volume_plane_interface *a, *b, *c;
-  float x, y, z;
-
-  enum VAOs{
-    AArray = 0,
-    BArray,
-    CArray,
-    NumberOfVaos
-  };
-  enum VBOs{
-    AVertex = 0,
-    BVertex,
-    CVertex,
-    NumberOfVbos
-  };
-  std::vector<float> a_vertex;
-  std::vector<float> b_vertex;
-  std::vector<float> c_vertex;
+  float x, y, z, tx, ty, tz;
+  mutable std::vector<float> a_vertex;
+  mutable std::vector<float> b_vertex;
+  mutable std::vector<float> c_vertex;
+  mutable std::size_t a_size;
+  mutable std::size_t b_size;
+  mutable std::size_t c_size;
   mutable QOpenGLShaderProgram *program;
   void computeElements();
   void initializeBuffers(Viewer_interface*)const;
@@ -48,80 +47,83 @@ void Volume_plane_intersection_priv::computeElements()
    a_vertex.resize(0);
    b_vertex.resize(0);
    c_vertex.resize(0);
-   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
-   a_vertex.push_back(0.0-offset.x);
-   a_vertex.push_back(0.0-offset.y);
-   a_vertex.push_back(0.0-offset.z);
-   a_vertex.push_back(x  -offset.x);
-   a_vertex.push_back(0.0-offset.y);
-   a_vertex.push_back(0.0-offset.z);
+   a_vertex.push_back(0.0-offset.x+tx);
+   a_vertex.push_back(0.0-offset.y+ty);
+   a_vertex.push_back(0.0-offset.z+tz);
+   a_vertex.push_back(x  -offset.x+tx);
+   a_vertex.push_back(0.0-offset.y+ty);
+   a_vertex.push_back(0.0-offset.z+tz);
 
-   b_vertex.push_back(0.0-offset.x);
-   b_vertex.push_back(0.0-offset.y);
-   b_vertex.push_back(0.0-offset.z);
-   b_vertex.push_back(0.0-offset.x);
-   b_vertex.push_back(y  -offset.y);
-   b_vertex.push_back(0.0-offset.z);
+   b_vertex.push_back(0.0-offset.x+tx);
+   b_vertex.push_back(0.0-offset.y+ty);
+   b_vertex.push_back(0.0-offset.z+tz);
+   b_vertex.push_back(0.0-offset.x+tx);
+   b_vertex.push_back(y  -offset.y+ty);
+   b_vertex.push_back(0.0-offset.z+tz);
 
-   c_vertex.push_back(0.0-offset.x);
-   c_vertex.push_back(0.0-offset.y);
-   c_vertex.push_back(0.0-offset.z);
-   c_vertex.push_back(0.0-offset.x);
-   c_vertex.push_back(0.0-offset.y);
-   c_vertex.push_back(z  -offset.z);
+   c_vertex.push_back(0.0-offset.x+tx);
+   c_vertex.push_back(0.0-offset.y+ty);
+   c_vertex.push_back(0.0-offset.z+tz);
+   c_vertex.push_back(0.0-offset.x+tx);
+   c_vertex.push_back(0.0-offset.y+ty);
+   c_vertex.push_back(z  -offset.z+tz);
 
-   item->_bbox =  Scene_item::Bbox( 0, 0, 0,
-                  x, y, z);
+   item->_bbox =  Scene_item::Bbox( tx, ty, tz,
+                  tz+x, ty+y, tz+z);
+   
+   item->getEdgeContainer(0)->allocate(Ec::Vertices,
+                                       a_vertex.data(),
+                                       static_cast<int>(a_vertex.size()*sizeof(float)));
+   item->getEdgeContainer(1)->allocate(Ec::Vertices,
+                                       b_vertex.data(),
+                                       static_cast<int>(b_vertex.size()*sizeof(float)));
+   item->getEdgeContainer(2)->allocate(Ec::Vertices,
+                                       c_vertex.data(),
+                                       static_cast<int>(c_vertex.size()*sizeof(float)));
+   a_size = a_vertex.size();
+   b_size = b_vertex.size();
+   c_size = c_vertex.size();
    QApplication::restoreOverrideCursor();
 }
 
 void Volume_plane_intersection_priv::initializeBuffers(Viewer_interface* viewer)const
 {
-  program = item->getShaderProgram(Volume_plane_intersection::PROGRAM_NO_SELECTION, viewer);
-  program->bind();
-  item->vaos[AArray]->bind();
-  item->buffers[AVertex].bind();
-  item->buffers[AVertex].allocate(a_vertex.data(), static_cast<int>(a_vertex.size()*sizeof(float)));
-  program->enableAttributeArray("vertex");
-  program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  item->buffers[AVertex].release();
-  item->vaos[AArray]->release();
-
-  item->vaos[BArray]->bind();
-  item->buffers[BVertex].bind();
-  item->buffers[BVertex].allocate(b_vertex.data(), static_cast<int>(b_vertex.size()*sizeof(float)));
-  program->enableAttributeArray("vertex");
-  program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  item->buffers[BVertex].release();
-  item->vaos[BArray]->release();
-
-  item->vaos[CArray]->bind();
-  item->buffers[CVertex].bind();
-  item->buffers[CVertex].allocate(c_vertex.data(), static_cast<int>(c_vertex.size()*sizeof(float)));
-  program->enableAttributeArray("vertex");
-  program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  item->buffers[CVertex].release();
-  item->vaos[CArray]->release();
-
-  program->release();
-  item->are_buffers_filled = true;
-
+  
+  item->getEdgeContainer(0)->initializeBuffers(viewer);
+  item->getEdgeContainer(0)->setFlatDataSize(a_size);
+  item->getEdgeContainer(1)->initializeBuffers(viewer);
+  item->getEdgeContainer(1)->setFlatDataSize(b_size);
+  item->getEdgeContainer(2)->initializeBuffers(viewer);
+  item->getEdgeContainer(2)->setFlatDataSize(c_size);
+  
+  a_vertex.clear();
+  a_vertex.shrink_to_fit();
+  b_vertex.clear();        
+  b_vertex.shrink_to_fit();
+  c_vertex.clear();        
+  c_vertex.shrink_to_fit();
 }
 
 void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
-  viewer->glLineWidth(4.0f);
-  if(!are_buffers_filled)
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
   {
-    d->computeElements();
-    d->initializeBuffers(viewer);
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
   }
-  attribBuffers(viewer, PROGRAM_NO_SELECTION);
-  viewer->glDepthRange(0.0,0.9999);
+  if(!getBuffersFilled())
+  {
+    computeElements();
+    initializeBuffers(viewer);
+  }
+  viewer->glDepthRangef(0.00001f, 0.99999f);
+  
+  QVector2D vp(viewer->width(), viewer->height());
   if(d->b && d->c) {
-
-    vaos[Volume_plane_intersection_priv::AArray]->bind();
-    d->program->bind();
     GLdouble mat[16];
     d->b->manipulatedFrame()->getMatrix(mat);
     QMatrix4x4 b_mat, c_mat;
@@ -134,16 +136,17 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
     {
        c_mat.data()[i] = (float)mat[i];
     }
-    d->program->setUniformValue("f_matrix", b_mat*c_mat);
-    d->program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_LINES, 0, 2);
-    d->program->release();
-    vaos[Volume_plane_intersection_priv::AArray]->release();
+    getEdgeContainer(0)->setFrameMatrix(b_mat*c_mat);
+    getEdgeContainer(0)->setColor(this->color());
+    if(viewer->isOpenGL_4_3())
+    {
+      getEdgeContainer(0)->setViewport(vp);
+      getEdgeContainer(0)->setWidth(4.0f);
+    }
+    getEdgeContainer(0)->draw(viewer, true);
   }
 
   if(d->a && d->c) {
-      vaos[Volume_plane_intersection_priv::BArray]->bind();
-      d->program->bind();
       GLdouble mat[16];
       d->a->manipulatedFrame()->getMatrix(mat);
       QMatrix4x4 a_mat, c_mat;
@@ -156,16 +159,17 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
       {
          c_mat.data()[i] = (float)mat[i];
       }
-      d->program->setUniformValue("f_matrix", a_mat*c_mat);
-      d->program->setAttributeValue("colors", this->color());
-      viewer->glDrawArrays(GL_LINES, 0, 2);
-      d->program->release();
-      vaos[Volume_plane_intersection_priv::BArray]->release();
+      getEdgeContainer(1)->setFrameMatrix(a_mat*c_mat);
+      getEdgeContainer(1)->setColor(this->color());
+      if(viewer->isOpenGL_4_3())
+      {
+        getEdgeContainer(1)->setViewport(vp);
+        getEdgeContainer(1)->setWidth(4.0f);
+      }
+      getEdgeContainer(1)->draw(viewer, true);
   }
 
   if(d->a && d->b) {
-      vaos[Volume_plane_intersection_priv::CArray]->bind();
-      d->program->bind();
       GLdouble mat[16];
       d->a->manipulatedFrame()->getMatrix(mat);
       QMatrix4x4 a_mat, b_mat;
@@ -178,22 +182,40 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
       {
          b_mat.data()[i] = (float)mat[i];
       }
-      d->program->setUniformValue("f_matrix", a_mat*b_mat);
-      d->program->setAttributeValue("colors", this->color());
-      viewer->glDrawArrays(GL_LINES, 0, 2);
-      d->program->release();
-      vaos[Volume_plane_intersection_priv::CArray]->release();
+      getEdgeContainer(2)->setFrameMatrix(a_mat*b_mat);
+      getEdgeContainer(2)->setColor(this->color());
+      if(viewer->isOpenGL_4_3())
+      {
+        getEdgeContainer(2)->setViewport(vp);
+        getEdgeContainer(2)->setWidth(4.0f);
+      }
+      getEdgeContainer(2)->draw(viewer, true);
   }
-  viewer->glLineWidth(1.0f);
-  viewer->glDepthRange(0.00001,1.0);
+  if(!viewer->isOpenGL_4_3())
+    viewer->glDepthRangef(0.0f,1.0f);
 }
 
-Volume_plane_intersection::Volume_plane_intersection(float x, float y, float z)
-  :Scene_item(Volume_plane_intersection_priv::NumberOfVbos, Volume_plane_intersection_priv::NumberOfVaos),
-    d(new Volume_plane_intersection_priv(x,y,z,this))
+Volume_plane_intersection::Volume_plane_intersection(float x, float y, float z,
+                                                     float tx, float ty, float tz)
+  :d(new Volume_plane_intersection_priv(x,y,z,tx,ty,tz,this))
 {
   setColor(QColor(255, 128, 0));
   setName("Volume plane intersection");
+  setEdgeContainer(2, new Ec(
+                     Three::mainViewer()->isOpenGL_4_3() 
+                     ? Vi::PROGRAM_SOLID_WIREFRAME
+                     : Vi::PROGRAM_NO_SELECTION,
+                     false));
+  setEdgeContainer(1, new Ec(
+                     Three::mainViewer()->isOpenGL_4_3() 
+                     ? Vi::PROGRAM_SOLID_WIREFRAME
+                     : Vi::PROGRAM_NO_SELECTION,
+                     false));
+  setEdgeContainer(0, new Ec(
+                     Three::mainViewer()->isOpenGL_4_3() 
+                     ? Vi::PROGRAM_SOLID_WIREFRAME
+                     : Vi::PROGRAM_NO_SELECTION,
+                     false));
 }
 
 void Volume_plane_intersection::setX(Volume_plane_interface* x) { d->a = x; }
@@ -211,5 +233,19 @@ void Volume_plane_intersection::planeRemoved(Volume_plane_interface* i) {
 
 void Volume_plane_intersection::invalidateOpenGLBuffers()
 {
- are_buffers_filled = false;
+  setBuffersFilled(false);
+  
+  for(int i=0; i<3; ++i)
+    getEdgeContainer(i)->reset_vbos(ALL);
+}
+
+void Volume_plane_intersection::initializeBuffers(Viewer_interface *v) const
+{
+  d->initializeBuffers(v);
+}
+
+void Volume_plane_intersection::computeElements() const
+{
+  d->computeElements();
+  setBuffersFilled(true);
 }

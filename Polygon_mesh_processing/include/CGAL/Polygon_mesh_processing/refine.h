@@ -57,7 +57,7 @@ namespace Polygon_mesh_processing {
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`
       Instance of a class model of `ReadWritePropertyMap`.
       If this parameter is omitted, an internal property map for
-     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+     `CGAL::vertex_point_t` must be available in `TriangleMesh`
      \cgalParamEnd
     \cgalParamBegin{density_control_factor} factor to control density of the output mesh,
       where larger values lead to denser refinements.
@@ -83,20 +83,20 @@ namespace Polygon_mesh_processing {
            VertexOutputIterator vertices_out,
            const NamedParameters& np)
   {
-    using boost::choose_param;
-    using boost::get_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
 
     CGAL_precondition(is_triangle_mesh(tmesh) );
 
     typedef typename GetVertexPointMap<TriangleMesh,NamedParameters>::type VPmap;
-    VPmap vpm = choose_param(get_param(np, internal_np::vertex_point),
+    VPmap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_property_map(vertex_point, tmesh));
 
     internal::Refine_Polyhedron_3<TriangleMesh, VPmap> refine_functor(tmesh, vpm);
     refine_functor.refine(faces,
       faces_out,
       vertices_out,
-      choose_param(get_param(np, internal_np::density_control_factor), CGAL::sqrt(2.)));
+      choose_parameter(get_parameter(np, internal_np::density_control_factor), CGAL::sqrt(2.)));
     return std::make_pair(faces_out, vertices_out);
   }
 

@@ -39,7 +39,7 @@ namespace CGAL {
 namespace internal {
 
 template<typename Polynomial_1, typename Bound>
-struct Interval_evaluate_1 : public CGAL::binary_function
+struct Interval_evaluate_1 : public CGAL::cpp98::binary_function
 <Polynomial_1,std::pair<Bound,Bound>,
   std::pair<typename CGAL::Coercion_traits<typename 
      CGAL::Polynomial_traits_d<Polynomial_1>::Coefficient_type,Bound>::Type,
@@ -62,7 +62,7 @@ struct Interval_evaluate_1 : public CGAL::binary_function
   }
   
   result_type operator()(const Polynomial_1& p,
-                         const CGAL::cpp11::array< Bound, 2 >& b) const {
+                         const std::array< Bound, 2 >& b) const {
     
     typename CT::Cast cast;
   
@@ -79,7 +79,7 @@ struct Interval_evaluate_1 : public CGAL::binary_function
     Coefficient_const_iterator_range range = 
       typename PT_1::Construct_coefficient_const_iterator_range()(p);
     
-    Coefficient_const_iterator it = CGAL::cpp11::prev(range.second);
+    Coefficient_const_iterator it = std::prev(range.second);
     
     Coercion_interval res(cast(*it));
     

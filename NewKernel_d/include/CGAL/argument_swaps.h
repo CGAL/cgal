@@ -24,15 +24,7 @@
 #include <CGAL/config.h>
 #include <utility>
 
-#ifndef CGAL_CXX11
-#include <boost/preprocessor/repetition.hpp>
-#include <boost/utility/result_of.hpp>
-#endif
-
 namespace CGAL {
-
-#ifdef CGAL_CXX11
-
 namespace internal {
 
 template<int,class...> struct Apply_to_last_then_rest_;
@@ -55,9 +47,7 @@ struct Apply_to_last_then_rest_<0,F,T,U...> {
 	return std::forward<F>(f)(std::forward<T>(t), std::forward<U>(u)...);
 	}
 };
-
 } // namespace internal
-
 
 struct Apply_to_last_then_rest {
 	template<class F,class T,class...U> inline
@@ -69,20 +59,6 @@ struct Apply_to_last_then_rest {
 			std::forward<U>(u)...);
 	}
 };
-
-#else // CGAL_CXX11
-
-struct Apply_to_last_then_rest {
-#define CGAL_CODE(Z,N,_) template<class F,class T,BOOST_PP_ENUM_PARAMS(N,class T)> \
-	typename boost::result_of<F(T,BOOST_PP_ENUM_PARAMS(N,T))>::type \
-	operator()(F const&f, BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t), T const&t) const { \
-		return f(t,BOOST_PP_ENUM_PARAMS(N,t)); \
-	}
-	BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-};
-
-#endif // CGAL_CXX11
 
 } // namespace CGAL
 

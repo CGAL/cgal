@@ -64,6 +64,8 @@ data-coref/coplanar_triangles/all_cases/deg/tr15-1.off data-coref/coplanar_trian
 data-coref/coplanar_triangles/all_cases/deg/tr16-1.off data-coref/coplanar_triangles/all_cases/deg/tr16-2.off
 data-coref/coplanar_triangles/all_cases/deg/tr17-1.off data-coref/coplanar_triangles/all_cases/deg/tr17-2.off
 data-coref/coplanar_triangles/all_cases/bugreport/tr1-1.off data-coref/coplanar_triangles/all_cases/bugreport/tr1-2.off
+data-coref/coplanar_triangles/all_cases/bugreport/tr2-1.off data-coref/coplanar_triangles/all_cases/bugreport/tr2-2.off
+data-coref/coplanar_triangles/all_cases/bugreport/tr3-1.off data-coref/coplanar_triangles/all_cases/bugreport/tr3-2.off
 data-coref/coplanar_triangles/all_cases/tr1-1.off data-coref/coplanar_triangles/all_cases/tr1-2.off
 data-coref/coplanar_triangles/all_cases/tr2-1.off data-coref/coplanar_triangles/all_cases/tr2-2.off
 data-coref/coplanar_triangles/all_cases/tr3-1.off data-coref/coplanar_triangles/all_cases/tr3-2.off

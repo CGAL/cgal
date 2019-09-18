@@ -23,16 +23,106 @@
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
 
+#include <CGAL/algorithm.h>
+#include <CGAL/assertions.h>
+#include <CGAL/determinant.h>
+#include <CGAL/number_utils.h>
+
 #include <CGAL/Polygon_2/Polygon_2_simplicity.h>
-#include <cstdlib>
+
 #include <algorithm>
+#include <cstdlib>
 #include <iterator>
+#include <limits>
 #include <set>
 #include <vector>
 
 /// \cond SKIP_IN_MANUAL
 
 namespace CGAL {
+
+namespace internal {
+namespace Polygon_2 {
+
+// Filter a range of points to simplify sequences of collinear (or almost) points.
+// A point is removed if the two segments, formed using its previous and next points
+// in the range are collinear segments, up to a given tolerance.
+//
+// \tparam K must be a model of `Kernel`
+// \tparam InputForwardIterator must be a model of `ForwardIterator`
+//                              with value type `K::Point_2`
+// \tparam OutputForwardIterator must be a model of `OutputIterator`
+//                               with value type `K::Point_2`
+//
+// \param first, beyond the range
+// \param out points that are not removed are output in `out`
+// \param tolerance a tolerance on the collinearity of the two segments formed
+//                  by three consecutive points of the range (more specifically,
+//                  on the value of the determinant).
+//
+// \pre The range `(first, beyond)` is composed of at least three points.
+// \pre Not all points in the range `(first, beyond)` are (almost) collinear.
+template<typename K, typename InputForwardIterator, typename OutputForwardIterator>
+OutputForwardIterator filter_collinear_points(InputForwardIterator first,
+                                              InputForwardIterator beyond,
+                                              OutputForwardIterator out,
+                                              const typename K::FT tolerance =
+                                                std::numeric_limits<typename K::FT>::epsilon())
+{
+  CGAL_precondition(std::distance(first, beyond) >= 3);
+
+  typedef typename K::FT                              FT;
+  typedef typename K::Point_2                         Point;
+
+  InputForwardIterator last = std::prev(beyond);
+
+  InputForwardIterator vit = first, vit_next = vit, vit_next_2 = vit, vend = vit;
+  ++vit_next;
+  ++(++vit_next_2);
+
+  bool stop = false;
+
+  do
+  {
+    CGAL_assertion(vit != vit_next);
+    CGAL_assertion(vit_next != vit_next_2);
+    CGAL_assertion(vit != vit_next_2);
+
+    const Point& o = *vit;
+    const Point& p = *vit_next;
+    const Point& q = *vit_next_2;
+
+    // Stop when 'p' is the starting point. It does not matter whether we are
+    // in a collinear case or not.
+    stop = (vit_next == vend);
+
+    const FT det = CGAL::determinant(o.x() - q.x(), o.y() - q.y(),
+                                     p.x() - q.x(), p.y() - q.y());
+
+    if(CGAL::abs(det) <= tolerance)
+    {
+      // Only move 'p' and 'q' to ignore consecutive collinear points
+      vit_next = (vit_next == last) ? first : ++vit_next;
+      vit_next_2 = (vit_next_2 == last) ? first : ++vit_next_2;
+    }
+    else
+    {
+      // 'vit = vit_next' and not '++vit' because we don't necessarily have *(next(vit) == p)
+      // and collinear points between 'o' and 'p' are ignored
+      vit = vit_next;
+      vit_next = (vit_next == last) ? first : ++vit_next;
+      vit_next_2 = (vit_next_2 == last) ? first : ++vit_next_2;
+
+      *out++ = p;
+    }
+  }
+  while(!stop);
+
+  return out;
+}
+
+} // namespace Polygon_2
+} // namespace internal
 
 
 //-----------------------------------------------------------------------//
@@ -50,6 +140,8 @@ bool is_simple_2(ForwardIterator first,
                       ForwardIterator last,
                       const PolygonTraits& traits)
 {
+    if (first == last) return true;
+
     return is_simple_polygon(first, last, traits);
 }
 

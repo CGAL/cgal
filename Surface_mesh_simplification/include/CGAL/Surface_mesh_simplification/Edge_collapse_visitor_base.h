@@ -31,25 +31,25 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-template<class ECM_>
+template<class TM_>
 struct Edge_collapse_visitor_base
 {
-  typedef ECM_ ECM ;
+  typedef TM_ TM ;
   
-  typedef Edge_profile<ECM> Profile ;
+  typedef Edge_profile<TM> Profile ;
   
-  typedef boost::graph_traits  <ECM> GraphTraits ; 
+  typedef boost::graph_traits  <TM> GraphTraits ; 
   
   typedef typename GraphTraits::edges_size_type   size_type ;
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
-  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
+  typedef typename boost::property_map<TM, CGAL::vertex_point_t>::type Vertex_point_pmap;
   typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel   Kernel ;
   typedef typename Kernel::FT                     FT ;
   
-  void OnStarted( ECM& ) {}
+  void OnStarted( TM& ) {}
   
-  void OnFinished ( ECM& ) {}
+  void OnFinished ( TM& ) {}
   
   void OnStopConditionReached( Profile const& ) {}
   

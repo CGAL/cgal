@@ -1,7 +1,7 @@
 // Test file for the Interval_nt<bool> class.
 // Sylvain Pion, 1997-2005.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/exceptions.h>
 
@@ -116,7 +116,7 @@ bool overflow_test()
   IA_nt c (-2,2), d(-2.1,2.1);
   IA_nt e (-2,2), f(2), g(-2);
 
-  DEBUG( std::cout << "+infinity = " << CGAL::internal::infinity << std::endl; )
+  DEBUG( std::cout << "+infinity = " << std::numeric_limits<double>::infinity() << std::endl; )
   DEBUG( std::cout << "maxdouble = " << CGAL_IA_MAX_DOUBLE << std::endl; )
   DEBUG( std::cout << "largest   = " << CGAL::Interval_nt_advanced::largest() << std::endl; )
   DEBUG( std::cout << "smallest  = " << CGAL::Interval_nt_advanced::smallest() << std::endl; )
@@ -139,12 +139,12 @@ bool overflow_test()
     DEBUG( std::cout << "f = " << f << std::endl; )
   }
 
-  return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::internal::infinity)) &&
-         b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::internal::infinity)) &&
+  return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
+         b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
          c.is_same(IA_nt::largest()) &&
          d.is_same(IA_nt::largest()) &&
 	 e.is_same(IA_nt::largest()) &&
-	 f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::internal::infinity)) &&
+	 f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
 	 g.is_same(-f);
 }
 
@@ -211,7 +211,7 @@ bool multiplication_test()
   g = d * e;
   h = d * f;
   i = a * e;
-  j = j;
+  j = (IA_nt&)j;
 
   // When CGAL_IA_DEBUG is defined, it'll test the current rounding mode for
   // these operations.

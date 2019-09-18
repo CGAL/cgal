@@ -719,7 +719,7 @@ public:
                        m_traits->construct_min_vertex_2_object()( ce2.cv()) :
                        m_traits->construct_max_vertex_2_object()( ce2.cv())  ),
                        ce1.cv(),  ce1.ce());
-          //need to return the opposite because the function recieved 
+          //need to return the opposite because the function received 
           // the curve ends in a reverse order 
           if (res != EQUAL)
             return (res == SMALLER) ? LARGER : SMALLER;

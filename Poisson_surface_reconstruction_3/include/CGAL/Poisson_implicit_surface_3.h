@@ -129,7 +129,7 @@ namespace CGAL {
 
   // non documented class
   template <typename FT, typename Point>
-  class Poisson_implicit_function_wrapper : public CGAL::unary_function<Point, FT> 
+  class Poisson_implicit_function_wrapper : public CGAL::cpp98::unary_function<Point, FT> 
   {
     typedef FT (*Poisson_implicit_function)(FT, FT, FT);
 
