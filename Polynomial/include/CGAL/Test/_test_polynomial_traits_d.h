@@ -1857,9 +1857,11 @@ void test_rebind(const PT& /*traits*/){
   typedef CGAL::LEDA_arithmetic_kernel AT;
   typedef typename AT::Integer Integer; 
   typedef typename AT::Rational Rational;
-  const int dimension = 4;
+  const int dimension = 4; CGAL_USE(dimension);
   typedef typename PT:: template Rebind<Integer,4>::Other PT_Integer_4;
+  CGAL_USE_TYPE(PT_Integer_4);
   typedef typename PT:: template Rebind<Rational,4>::Other PT_Rational_4;
+  CGAL_USE_TYPE(PT_Rational_4);
   CGAL_static_assertion((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
           Integer>::value));
   CGAL_static_assertion((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 

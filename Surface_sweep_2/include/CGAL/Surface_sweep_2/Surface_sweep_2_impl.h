@@ -62,11 +62,7 @@ void Surface_sweep_2<Vis>::_complete_sweep()
   for (itr = m_overlap_subCurves.begin(); itr != m_overlap_subCurves.end();
        ++itr)
   {
-#ifdef CGAL_CXX11
     std::allocator_traits<Subcurve_alloc>::destroy(this->m_subCurveAlloc, *itr);
-#else
-    this->m_subCurveAlloc.destroy(*itr);
-#endif
     this->m_subCurveAlloc.deallocate(*itr, 1);
   }
 
@@ -883,11 +879,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
       CGAL_SS_PRINT_EOL();
       // no duplicate only one curve is needed
       overlap_sc = this->m_subCurveAlloc.allocate(1);
-#ifdef CGAL_CXX11
       std::allocator_traits<Subcurve_alloc>::construct(this->m_subCurveAlloc,overlap_sc, this->m_masterSubcurve);
-#else
-      this->m_subCurveAlloc.construct(overlap_sc, this->m_masterSubcurve);
-#endif
       overlap_sc->set_hint(this->m_statusLine.end());
       overlap_sc->init(overlap_cv);
       overlap_sc->set_left_event(left_event);
@@ -908,11 +900,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
                                                          ++sc_it)
     {
       overlap_sc = this->m_subCurveAlloc.allocate(1);
-#ifdef CGAL_CXX11
       std::allocator_traits<Subcurve_alloc>::construct(this->m_subCurveAlloc,overlap_sc, this->m_masterSubcurve);
-#else
-      this->m_subCurveAlloc.construct(overlap_sc, this->m_masterSubcurve);
-#endif
       overlap_sc->set_hint(this->m_statusLine.end());
       overlap_sc->init(overlap_cv);
       overlap_sc->set_left_event(left_event);

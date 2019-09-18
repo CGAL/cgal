@@ -31,7 +31,6 @@ CGAL packages, some are only needed for demos.
 
    * Boost (>= 1.48)
      Required for building CGAL and for applications using CGAL
-     Required compiled Boost library: Boost.Thread, Boost.System
      Optional compiled Boost library: Boost.Program_options
      http://www.boost.org/   or   http://www.boostpro.com/products/free/
      You need the former if you plan to compile the boost libraries yourself,

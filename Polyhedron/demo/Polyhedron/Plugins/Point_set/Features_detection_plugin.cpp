@@ -19,7 +19,7 @@ class Polyhedron_demo_features_detection_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   QAction* actionDetectFeatures;
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionDetectFeatures; }

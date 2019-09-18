@@ -286,6 +286,14 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
 
 
                 Nef_polyhedron::Vector_3 v = f->plane().orthogonal_vector();
+                if(f->plane().a() != 0)
+                  v /= f->plane().a();
+                else if(f->plane().b() != 0)
+                  v /= f->plane().b();
+                else if(f->plane().c() != 0)
+                  v /= f->plane().c();
+                else if(f->plane().d() != 0)
+                  v /= f->plane().d();
                 GLfloat normal[3];
                 normal[0] = CGAL::to_double(v.x());
                 normal[1] = CGAL::to_double(v.y());

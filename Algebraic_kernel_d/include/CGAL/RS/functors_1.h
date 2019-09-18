@@ -160,7 +160,7 @@ struct Solve_1{
 
         template <class OutputIterator>
         OutputIterator operator()(const Polynomial_1 &p,
-                                  bool known_to_be_square_free,
+                                  bool,
                                   OutputIterator res)const{
                 Isolator isol(p);
                 for(int l=0;l<isol.number_of_real_roots();++l)

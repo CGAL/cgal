@@ -520,8 +520,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
     vcross(false, Vertex_handle(), AT2::DISJOINT);
 
   hierarchy[0]->initialize_conflict_region(start_f, l);
-  hierarchy[0]->expand_conflict_region(start_f, t, ss, l, fm,
-				       sign_map, vcross);
+  hierarchy[0]->expand_conflict_region(start_f, t, l, fm, sign_map, vcross);
 
   CGAL_assertion( vcross.third == AT2::DISJOINT ||
 		  vcross.third == AT2::CROSSING ||

@@ -565,6 +565,10 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
     edit_item->insert_roi_vertex(vh);
   }
   edit_item->invalidateOpenGLBuffers();
+  if(selection_item->property("is_highlighting").toBool()){
+    selection_item->setProperty("need_hl_restore", true);
+    selection_item->set_highlighting(false);
+  }
   selection_item->setVisible(false);
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
     v->update();
@@ -579,14 +583,19 @@ void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_facegrap
        && sel_item->polyhedron() == target->polyhedron())
     {
       sel_item->invalidateOpenGLBuffers();
-      if(!ui_widget.RemeshingCheckBox->isChecked())
+      if(!ui_widget.RemeshingCheckBox->isChecked()){
         sel_item->setVisible(true);
+        if(sel_item->property("need_hl_restore").toBool()){
+          sel_item->set_highlighting(true);
+          sel_item->setProperty("need_hl_restore", false);
+        }
+      }
       else
         scene->erase(scene->item_id(sel_item));
     }
-
   }
 }
+
 void Polyhedron_demo_edit_polyhedron_plugin::dispatchAction()
 {
  if(applicable(actionDeformation))

@@ -526,7 +526,6 @@ class Polygon_2 {
     Traits_P traits;
 };
 
-/// @} // polygon_2
 
 /// \name Global Operators
 /// @{

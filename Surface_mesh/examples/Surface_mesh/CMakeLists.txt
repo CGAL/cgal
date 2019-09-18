@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Surface_mesh_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 if(POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -38,10 +38,13 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "sm_properties.cpp" )
 
   create_single_source_cgal_program("draw_surface_mesh.cpp")
+  create_single_source_cgal_program("sm_draw_small_faces.cpp")
+  create_single_source_cgal_program("check_orientation.cpp")
   if(CGAL_Qt5_FOUND )
     target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Qt5)
+    target_link_libraries(sm_draw_small_faces PUBLIC CGAL::CGAL_Qt5)
   endif()
-
+  
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

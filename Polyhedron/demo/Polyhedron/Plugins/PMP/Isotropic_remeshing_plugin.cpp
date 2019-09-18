@@ -170,7 +170,7 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "isotropic_remeshing_plugin.json")
 
   typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
   typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;

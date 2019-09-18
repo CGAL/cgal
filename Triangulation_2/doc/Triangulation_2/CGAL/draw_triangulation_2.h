@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgDrawTriangulation2
 
-Open a new window and draw `at2`, a model of the `TriangulationDataStructure_2` concept. The function is blocking, that is the program continues as soon as the user closes the window. This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+opens a new window and draws `at2`, a model of the `TriangulationDataStructure_2` concept. A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
 \tparam T2 a model of the `TriangulationDataStructure_2` concept.
 \param at2 the triangulation to draw.
 

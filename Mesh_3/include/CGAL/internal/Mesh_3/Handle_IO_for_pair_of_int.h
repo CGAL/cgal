@@ -41,13 +41,6 @@ struct Get_io_signature<std::pair<int, int> > {
   }
 }; // end Get_io_signature<std::pair<int, int> >
 
-inline std::ostream& operator<<(std::ostream& out, const std::pair<int, int>& id) {
-  return out << id.first << " " << id.second;
-}
-inline std::istream& operator>>(std::istream& in, std::pair<int, int>& id) {
-  return in >> id.first >> id.second;
-}
-
 template <>
 class Output_rep<std::pair<int, int> > : public IO_rep_is_specialized {
   typedef std::pair<int, int> T;

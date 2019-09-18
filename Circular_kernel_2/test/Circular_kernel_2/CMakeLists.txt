@@ -2,9 +2,8 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Circular_kernel_2_Tests )
-
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 find_package(CGAL QUIET)
 
@@ -31,5 +30,12 @@ else()
   
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
   
+endif()
+
+if(BUILD_TESTING)
+  set_tests_properties(
+      execution___of__test_Circular_kernel_basic
+      execution___of__test_Exact_circular_kernel_basic
+    PROPERTIES RESOURCE_LOCK Circular_kernel_basic)
 endif()
 

@@ -307,7 +307,6 @@ void Scene_polyhedron_shortest_path_item_priv::remove_nearest_point(
   Surface_mesh_shortest_path::Source_point_iterator found =
       m_shortestPaths->source_points_end();
   FT minDistance(0.0);
-  const FT thresholdDistance = FT(0.4);
   
   for (Surface_mesh_shortest_path::Source_point_iterator it =
        m_shortestPaths->source_points_begin(); 
@@ -316,8 +315,7 @@ void Scene_polyhedron_shortest_path_item_priv::remove_nearest_point(
     Point_3 sourceLocation = m_shortestPaths->point(it->first, it->second);
     FT distance = computeSquaredDistance3(sourceLocation, pickLocation);
     
-    if ((found == m_shortestPaths->source_points_end()
-         && distance <= thresholdDistance) || distance < minDistance)
+    if (found == m_shortestPaths->source_points_end() || distance < minDistance)
     {
       found = it;
       minDistance = distance;

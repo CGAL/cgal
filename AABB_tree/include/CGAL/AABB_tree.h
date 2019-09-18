@@ -195,8 +195,8 @@ namespace CGAL {
 			if(size() > 1)
 				return root_node()->bbox(); 
 			else
-				return AABB_traits().compute_bbox_object()(m_primitives.begin(), 
-																									 m_primitives.end());
+				return traits().compute_bbox_object()(m_primitives.begin(),
+								      m_primitives.end());
 		}
     
     /// Returns the number of primitives in the tree.

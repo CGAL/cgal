@@ -465,9 +465,9 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
 #ifdef CGAL_SDG_NO_FACE_MAP
-  expand_conflict_region(start_f, t, ss, l, vcross);
+  expand_conflict_region(start_f, t, l, vcross);
 #else
-  expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross);
+  expand_conflict_region(start_f, t, l, fm, sign_map, vcross);
 #endif
 
   CGAL_assertion( !vcross.first );
@@ -846,9 +846,9 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
 #ifdef CGAL_SDG_NO_FACE_MAP
-  expand_conflict_region(start_f, t, ss, l, vcross);
+  expand_conflict_region(start_f, t, l, vcross);
 #else
-  expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross);
+  expand_conflict_region(start_f, t, l, fm, sign_map, vcross);
 #endif
 
   CGAL_assertion( vcross.third == AT2::DISJOINT ||
@@ -958,152 +958,190 @@ initialize_conflict_region(const Face_handle& f, List& l)
 
 
 template<class Gt, class ST, class D_S, class LTag>
-void
+bool
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
-expand_conflict_region(const Face_handle& f, const Site_2& t,
-		       const Storage_site_2& ss,
-#ifdef CGAL_SDG_NO_FACE_MAP
-		       List& l,
-#else
-		       List& l, Face_map& fm,
-		       std::map<Face_handle,Sign>& sign_map,
+check_unregistered_face(const Face_handle& n,
+                        const Site_2& t,
+                        List& l,
+#ifndef CGAL_SDG_NO_FACE_MAP
+                        Face_map& fm,
 #endif
-		       Triple<bool,Vertex_handle,Arrangement_type>& vcross)
+                        Triple<bool, Vertex_handle, Arrangement_type>& vcross)
 {
+  for (int j = 0; j < 3; ++j)
+  {
+    Vertex_handle vf = n->vertex(j);
+
+    if ( is_infinite(vf) )
+      continue;
+
+    Arrangement_type at_res = arrangement_type(t, vf);
+
+    CGAL_assertion( vcross.third == AT2::DISJOINT ||
+                    vcross.third == AT2::CROSSING ||
+                    vcross.third == AT2::INTERIOR );
+
+    if ( vf->is_segment() )
+    {
+      CGAL_assertion( at_res != AT2::IDENTICAL );
+      CGAL_assertion( at_res != AT2::TOUCH_11_INTERIOR_1 );
+      CGAL_assertion( at_res != AT2::TOUCH_12_INTERIOR_1 );
+
+      if ( at_res == AT2::CROSSING )
+      {
+        vcross.first = true;
+        vcross.second = vf;
+        vcross.third = AT2::CROSSING;
+        l.clear();
 #ifdef CGAL_SDG_NO_FACE_MAP
-  if ( f->tds_data().is_in_conflict() ) { return; }
+        fhc_.clear();
 #else
-  if ( fm.find(f) != fm.end() ) { return; }
+        fm.clear();
 #endif
-
-  // this is done to stop the recursion when intersecting segments
-  // are found
-  if ( vcross.first ) { return; }
-
-  // setting fm[f] to true means that the face has been reached and
-  // that the face is available for recycling. If we do not want the
-  // face to be available for recycling we must set this flag to
-  // false.
-#ifdef CGAL_SDG_NO_FACE_MAP
-  f->tds_data().mark_in_conflict();
-  fhc_.push_back(f);
-#else
-  fm[f] = true;
-#endif
-
-  //  CGAL_assertion( fm.find(f) != fm.end() );
-
-  for (int i = 0; i < 3; i++) {
-    Face_handle n = f->neighbor(i);
-
-#ifdef CGAL_SDG_NO_FACE_MAP
-    bool face_registered = n->tds_data().is_in_conflict();
-#else
-    bool face_registered = (fm.find(n) != fm.end());
-#endif
-
-    if ( !face_registered ) {
-      for (int j = 0; j < 3; j++) {
-	Vertex_handle vf = n->vertex(j);
-
-	if ( is_infinite(vf) ) { continue; }
-
-	Arrangement_type at_res = arrangement_type(t, vf);
-
-	CGAL_assertion( vcross.third == AT2::DISJOINT ||
-			vcross.third == AT2::CROSSING ||
-			vcross.third == AT2::INTERIOR );
-
-	if ( vf->is_segment() ) {
-	  CGAL_assertion( at_res != AT2::IDENTICAL );
-	  CGAL_assertion( at_res != AT2::TOUCH_11_INTERIOR_1 );
-	  CGAL_assertion( at_res != AT2::TOUCH_12_INTERIOR_1 );
-
-	  if ( at_res == AT2::CROSSING ) {
-	    vcross.first = true;
-	    vcross.second = vf;
-	    vcross.third = AT2::CROSSING;
-	    l.clear();
-#ifdef CGAL_SDG_NO_FACE_MAP
-	    fhc_.clear();
-#else
-	    fm.clear();
-#endif
-	    return;
-	  } else {
-	    CGAL_assertion ( at_res == AT2::DISJOINT ||
-			     at_res == AT2::TOUCH_1 ||
-			     at_res == AT2::TOUCH_2 ||
-			     at_res == AT2::TOUCH_11 ||
-			     at_res == AT2::TOUCH_12 ||
-			     at_res == AT2::TOUCH_21 ||
-			     at_res == AT2::TOUCH_22 );
-	    // we do nothing in these cases
-	  }
-	} else {
-	  CGAL_assertion( vf->is_point() );
-	  if ( at_res == AT2::INTERIOR ) {
-	    vcross.first = true;
-	    vcross.second = vf;
-	    vcross.third = AT2::INTERIOR;
-	    l.clear();
-#ifdef CGAL_SDG_NO_FACE_MAP
-	    fhc_.clear();
-#else
-	    fm.clear();
-#endif
-	    return;
-	  }
-	}
+        return true;
+      }
+      else // at_res != AT2::CROSSING
+      {
+        CGAL_assertion ( at_res == AT2::DISJOINT ||
+                         at_res == AT2::TOUCH_1 ||
+                         at_res == AT2::TOUCH_2 ||
+                         at_res == AT2::TOUCH_11 ||
+                         at_res == AT2::TOUCH_12 ||
+                         at_res == AT2::TOUCH_21 ||
+                         at_res == AT2::TOUCH_22 );
+        // we do nothing in these cases
       }
     }
+    else // ! vf->is_segment()
+    {
+      CGAL_assertion( vf->is_point() );
+      if ( at_res == AT2::INTERIOR )
+      {
+        vcross.first = true;
+        vcross.second = vf;
+        vcross.third = AT2::INTERIOR;
+        l.clear();
+#ifdef CGAL_SDG_NO_FACE_MAP
+        fhc_.clear();
+#else
+        fm.clear();
+#endif
+        return true;
+      }
+    }
+  }
 
-    Sign s = incircle(n, t);
+  return false;
+}
+
+template<class Gt, class ST, class D_S, class LTag>
+void
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
+expand_conflict_region(const Face_handle& in_f,
+                       const Site_2& t,
+                       List& l,
+#ifndef CGAL_SDG_NO_FACE_MAP
+                       Face_map& fm,
+                       std::map<Face_handle, Sign>& sign_map,
+#endif
+                       Triple<bool, Vertex_handle, Arrangement_type>& vcross)
+{
+  std::stack<Face_handle> face_stack;
+  face_stack.push(in_f);
+
+  while(!face_stack.empty())
+  {
+    // Stop as soon as intersecting segments are found
+    if ( vcross.first )
+      break;
+
+    const Face_handle curr_f = face_stack.top();
+    face_stack.pop();
 
 #ifdef CGAL_SDG_NO_FACE_MAP
-    n->tds_data().set_incircle_sign(s);
-
-    Sign s_f = f->tds_data().incircle_sign();
+    if ( curr_f->tds_data().is_in_conflict() )
+      continue;
 #else
-    sign_map[n] = s;
-
-    Sign s_f = sign_map[f];
+    if ( fm.find(curr_f) != fm.end() )
+      continue;
 #endif
 
-    if ( s == POSITIVE ) { continue; }
-    if ( s != s_f ) { continue; }
+    // setting fm[f] to true means that the face has been reached and
+    // that the face is available for recycling. If we do not want the
+    // face to be available for recycling we must set this flag to false.
+#ifdef CGAL_SDG_NO_FACE_MAP
+    curr_f->tds_data().mark_in_conflict();
+    fhc_.push_back(curr_f);
+#else
+    fm[curr_f] = true;
+#endif
 
-    bool interior_in_conflict = edge_interior(f, i, t, s);
+//    CGAL_assertion( fm.find(curr_f) != fm.end() );
 
-    if ( !interior_in_conflict ) { continue; }
-
-    if ( face_registered ) { continue; }
-
-    Edge e = sym_edge(f, i);
-
-    CGAL_assertion( l.is_in_list(e) );
-    int j = this->_tds.mirror_index(f, i);
-    Edge e_before = sym_edge(n, ccw(j));
-    Edge e_after = sym_edge(n, cw(j));
-    if ( !l.is_in_list(e_before) ) {
-      l.insert_before(e, e_before);
-    }
-    if ( !l.is_in_list(e_after) ) {
-      l.insert_after(e, e_after);
-    }
-    l.remove(e);
+    for (int i = 0; i < 3; ++i)
+    {
+      Face_handle n = curr_f->neighbor(i);
 
 #ifdef CGAL_SDG_NO_FACE_MAP
-    expand_conflict_region(n, t, ss, l, vcross);
+      bool face_registered = n->tds_data().is_in_conflict();
 #else
-    expand_conflict_region(n, t, ss, l, fm, sign_map, vcross);
+      bool face_registered = (fm.find(n) != fm.end());
 #endif
 
-    // this is done to stop the recursion when intersecting segments
-    // are found
-    //    if ( fm.size() == 0 && l.size() == 0 ) { return; }
-    if ( vcross.first ) { return; }
-  } // for-loop
+      if ( !face_registered )
+      {
+#ifdef CGAL_SDG_NO_FACE_MAP
+        if(check_unregistered_face(n, t, l, vcross))
+#else
+        if(check_unregistered_face(n, t, l, fm, vcross))
+#endif
+        {
+          CGAL_assertion(vcross.first);
+          break; // intersecting segments were found
+        }
+      }
+
+      Sign s = incircle(n, t);
+
+#ifdef CGAL_SDG_NO_FACE_MAP
+      n->tds_data().set_incircle_sign(s);
+
+      Sign s_f = curr_f->tds_data().incircle_sign();
+#else
+      sign_map[n] = s;
+
+      Sign s_f = sign_map[curr_f];
+#endif
+
+      if ( s == POSITIVE )
+        continue;
+      if ( s != s_f )
+        continue;
+      if ( face_registered )
+        continue;
+
+      bool interior_in_conflict = edge_interior(curr_f, i, t, s);
+      if ( !interior_in_conflict )
+        continue;
+
+      Edge e = sym_edge(curr_f, i);
+      CGAL_assertion( l.is_in_list(e) );
+
+      int j = this->_tds.mirror_index(curr_f, i);
+      Edge e_before = sym_edge(n, ccw(j));
+      Edge e_after = sym_edge(n, cw(j));
+
+      if ( !l.is_in_list(e_before) )
+        l.insert_before(e, e_before);
+
+      if ( !l.is_in_list(e_after) )
+        l.insert_after(e, e_after);
+
+      l.remove(e);
+
+      face_stack.push(n);
+    } // neighbor for-loop
+  }
 }
 
 
@@ -1563,56 +1601,72 @@ equalize_degrees(const Vertex_handle& v, Self& small_d,
 template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
-expand_conflict_region_remove(const Face_handle& f, const Site_2& t,
-			      const Storage_site_2& ss,
-			      List& l, Face_map& fm, Sign_map& sign_map)
+expand_conflict_region_remove(const Face_handle& in_f,
+                              const Site_2& t,
+                              List& l,
+                              Face_map& fm,
+                              Sign_map& sign_map)
 {
-  if ( fm.find(f) != fm.end() ) { return; }
+  std::stack<Face_handle> face_stack;
+  face_stack.push(in_f);
 
-  // setting fm[f] to true means that the face has been reached and
-  // that the face is available for recycling. If we do not want the
-  // face to be available for recycling we must set this flag to
-  // false.
-  fm[f] = true;
+  while(!face_stack.empty())
+  {
+    const Face_handle curr_f = face_stack.top();
+    face_stack.pop();
 
-  //  CGAL_assertion( fm.find(f) != fm.end() );
+    if ( fm.find(curr_f) != fm.end() )
+      continue;
 
-  for (int i = 0; i < 3; i++) {
-    Face_handle n = f->neighbor(i);
+    // setting fm[curr_f] to true means that the face has been reached and
+    // that the face is available for recycling. If we do not want the
+    // face to be available for recycling we must set this flag to
+    // false.
+    fm[curr_f] = true;
 
-    bool face_registered = (fm.find(n) != fm.end());
+    //  CGAL_assertion( fm.find(f) != fm.end() );
 
-    Sign s = incircle(n, t);
+    for (int i = 0; i < 3; ++i)
+    {
+      Face_handle n = curr_f->neighbor(i);
 
-    sign_map[n] = s;
+      bool face_registered = (fm.find(n) != fm.end());
 
-    Sign s_f = sign_map[f];
+      Sign s = incircle(n, t);
 
-    if ( s == POSITIVE ) { continue; }
-    if ( s != s_f ) { continue; }
+      sign_map[n] = s;
 
-    bool interior_in_conflict = edge_interior(f, i, t, s);
+      Sign s_f = sign_map[curr_f];
 
-    if ( !interior_in_conflict ) { continue; }
+      if ( s == POSITIVE )
+        continue;
+      if ( s != s_f )
+        continue;
+      if ( face_registered )
+        continue;
 
-    if ( face_registered ) { continue; }
+      bool interior_in_conflict = edge_interior(curr_f, i, t, s);
+      if ( !interior_in_conflict )
+        continue;
 
-    Edge e = sym_edge(f, i);
+      Edge e = sym_edge(curr_f, i);
+      CGAL_assertion( l.is_in_list(e) );
 
-    CGAL_assertion( l.is_in_list(e) );
-    int j = this->_tds.mirror_index(f, i);
-    Edge e_before = sym_edge(n, ccw(j));
-    Edge e_after = sym_edge(n, cw(j));
-    if ( !l.is_in_list(e_before) ) {
-      l.insert_before(e, e_before);
-    }
-    if ( !l.is_in_list(e_after) ) {
-      l.insert_after(e, e_after);
-    }
-    l.remove(e);
+      int j = this->_tds.mirror_index(curr_f, i);
+      Edge e_before = sym_edge(n, ccw(j));
+      Edge e_after = sym_edge(n, cw(j));
 
-    expand_conflict_region_remove(n, t, ss, l, fm, sign_map);
-  } // for-loop
+      if ( !l.is_in_list(e_before) )
+        l.insert_before(e, e_before);
+
+      if ( !l.is_in_list(e_after) )
+        l.insert_after(e, e_after);
+
+      l.remove(e);
+
+      face_stack.push(n);
+    } // neighbor for-loop
+  }
 }
 
 
@@ -1690,7 +1744,7 @@ find_conflict_region_remove(const Vertex_handle& v,
   }
 
   initialize_conflict_region(start_f, l);
-  expand_conflict_region_remove(start_f, t, ss,	l, fm, sign_map);
+  expand_conflict_region_remove(start_f, t, l, fm, sign_map);
 }
 
 

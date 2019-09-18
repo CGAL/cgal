@@ -23,11 +23,16 @@
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/IO/io.h>
+#include <CGAL/property_map.h>
 
-#include <tuple>
+#include <boost/cstdint.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 #define TRY_TO_GENERATE_PROPERTY(STD_TYPE, T_TYPE, TYPE)                \
   if (type == STD_TYPE  || type == T_TYPE)                              \
@@ -375,6 +380,7 @@ public:
         t = property->buffer();
         return;
       }
+    t = {};
   }
 
   template <typename Type>
@@ -389,6 +395,7 @@ public:
         t = property->buffer();
         return;
       }
+    t = {};
   }
 
   void assign (double& t, const char* tag)
@@ -410,6 +417,7 @@ public:
           
         return;
       }
+    t = {};
   }
   
 };

@@ -24,6 +24,8 @@
 #ifndef CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_H
 #define CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_H
 
+#include <boost/type_traits/is_same.hpp>
+
 template <class R>
 bool
 _test_fct_points_implicit_sphere(const R&)
@@ -31,6 +33,8 @@ _test_fct_points_implicit_sphere(const R&)
   typedef typename R::RT    RT;
   typedef typename R::FT    FT;
   typedef CGAL::Tetrahedron_3<R>  Tetrahedron;
+
+  const bool nonexact = boost::is_same<FT, double>::value;
 
   const RT RT0(0);
   const RT RT4(4);
@@ -70,7 +74,7 @@ _test_fct_points_implicit_sphere(const R&)
   CGAL::Point_3<R> tpt = p.transform(rot_z);
   assert( CGAL::squared_distance( tpt, org ) == FT1 );
   p = tpt.transform(rot_z);
-  assert( CGAL::squared_distance(   p, org ) == FT1 );
+  assert( CGAL::squared_distance(   p, org ) == FT1 || nonexact );
   
   CGAL::rational_rotation_approximation( RT(35), RT(-8),
                                          sin, cos, den,
@@ -82,9 +86,9 @@ _test_fct_points_implicit_sphere(const R&)
   
   assert( CGAL::squared_distance(   q, org ) == FT1 );
   tpt = q.transform(rot_x);
-  assert( CGAL::squared_distance( tpt, org ) == FT1 );
+  assert( CGAL::squared_distance( tpt, org ) == FT1 || nonexact );
   q = tpt.transform(rot_y);
-  assert( CGAL::squared_distance(   q, org ) == FT1 );
+  assert( CGAL::squared_distance(   q, org ) == FT1 || nonexact );
   
   CGAL::rational_rotation_approximation( RT(9), RT(-8),
                                          sin, cos, den,
@@ -98,7 +102,7 @@ _test_fct_points_implicit_sphere(const R&)
   tpt = r.transform(rot_z);
   assert( CGAL::squared_distance( tpt, org ) == FT1 );
   r = tpt.transform(rot_y);
-  assert( CGAL::squared_distance(   r, org ) == FT1 );
+  assert( CGAL::squared_distance(   r, org ) == FT1 || nonexact );
   
   CGAL::rational_rotation_approximation( RT(-19), RT(-1),
                                          sin, cos, den,
@@ -137,11 +141,11 @@ _test_fct_points_implicit_sphere(const R&)
   CGAL::Point_3<R> ez( RT0, RT0, RT1);
   CGAL::Point_3<R> oz( RT0, RT0, -RT1);
   assert( CGAL::circumcenter(ex, ey, ez, oz) == org );
-  assert( CGAL::circumcenter(p,q,r,s) == org );
-  assert( CGAL::circumcenter(p,r,q,s) == org );
+  assert( CGAL::circumcenter(p,q,r,s) == org || nonexact );
+  assert( CGAL::circumcenter(p,r,q,s) == org || nonexact );
   assert( CGAL::circumcenter(Tetrahedron(ex, ey, ez, oz)) == org );
-  assert( CGAL::circumcenter(Tetrahedron(p,q,r,s)) == org );
-  assert( CGAL::circumcenter(Tetrahedron(p,r,q,s)) == org );
+  assert( CGAL::circumcenter(Tetrahedron(p,q,r,s)) == org || nonexact );
+  assert( CGAL::circumcenter(Tetrahedron(p,r,q,s)) == org || nonexact );
   
   CGAL::Vector_3<R>  v( RT(12), RT(4), RT(-4), RT(2) );
   CGAL::Point_3<R>   pt = p + v;
@@ -169,10 +173,10 @@ _test_fct_points_implicit_sphere(const R&)
   assert( CGAL::side_of_bounded_sphere(pt,rt,qt,st,ot) \
           == CGAL::ON_UNBOUNDED_SIDE);
 
-  assert( CGAL::circumcenter(pt,qt,rt,st) == c );
-  assert( CGAL::circumcenter(pt,rt,qt,st) == c );
-  assert( CGAL::circumcenter(Tetrahedron(pt,qt,rt,st)) == c );
-  assert( CGAL::circumcenter(Tetrahedron(pt,rt,qt,st)) == c );
+  assert( CGAL::circumcenter(pt,qt,rt,st) == c || nonexact );
+  assert( CGAL::circumcenter(pt,rt,qt,st) == c || nonexact );
+  assert( CGAL::circumcenter(Tetrahedron(pt,qt,rt,st)) == c || nonexact );
+  assert( CGAL::circumcenter(Tetrahedron(pt,rt,qt,st)) == c || nonexact );
 
   // Now test side_of_bounded_sphere(p, q, t).
 

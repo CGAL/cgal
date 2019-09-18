@@ -80,6 +80,8 @@ _test_cls_face_iterator( const Triangulation &T )
   typedef typename Triangulation::Face_handle     Face_handle;
   typedef typename Triangulation::size_type       size_type;
 
+  typedef typename Triangulation::Finite_face_handles Finite_face_handles;
+  
   Face f;
   Face_handle fh;
   Vertex_handle vh;
@@ -104,6 +106,9 @@ _test_cls_face_iterator( const Triangulation &T )
     n--;
   assert(n==0);
 
+  Finite_face_handles range = T.finite_face_handles();
+  fh = *(range.first);
+  
   return n_finite;
  }
 
@@ -119,6 +124,8 @@ _test_cls_vertex_iterator( const Triangulation &T )
   typedef typename Triangulation::Face_handle     Face_handle;
   typedef typename Triangulation::size_type       size_type;
   
+  typedef typename Triangulation::Finite_vertex_handles Finite_vertex_handles;
+    
   Vertex v;
   Face_handle fh;
   Vertex_handle vh;
@@ -143,6 +150,8 @@ _test_cls_vertex_iterator( const Triangulation &T )
     n--;
   assert( n == 0 );
 
+  Finite_vertex_handles range = T.finite_vertex_handles();
+  vh = *(range.first);
   return nv;
 }
 
@@ -153,7 +162,7 @@ _test_cls_point_iterator( Triangulation &T )
   typedef typename Triangulation::Point_iterator Point_iterator;
   typedef typename Triangulation::Point          Point;
   typedef typename Triangulation::size_type      size_type;
-
+  typedef typename Triangulation::Points         Points;
   size_type np = 0;
   Point_iterator pit;
   Point p;
@@ -172,6 +181,10 @@ _test_cls_point_iterator( Triangulation &T )
     n--;
   assert( n == 0 );
 
+  Points range = T.points();
+  if(! range.empty()){
+    p = *(range.first);
+  }
   return np;  
 }
 
@@ -184,6 +197,9 @@ _test_cls_edge_iterator( const Triangulation &T )
   typedef typename Triangulation::Edge     Edge;
   typedef typename Triangulation::Face_handle     Face_handle;
   typedef typename Triangulation::size_type      size_type;
+
+  typedef typename Triangulation::Finite_edges Finite_edges;
+  typedef typename Triangulation::All_edges All_edges;
 
   Edge e;
   Face_handle fh;
@@ -205,6 +221,15 @@ _test_cls_edge_iterator( const Triangulation &T )
     n--;
   assert( n == 0 );
 
+  Finite_edges range = T.finite_edges();
+  if(! range.empty()){
+    e = *(range.first);
+  }
+
+  All_edges aerange = T.all_edges();
+  if(! aerange.empty()){
+    e = *(aerange.first);
+  }
   return ne;
 }
 

@@ -1174,8 +1174,7 @@ typedef Value argument_type;
 
 /*!
 */ 
-typedef Value result_type; 
-/// @} 
+typedef Value result_type;
 
 /// \name Creation 
 /// @{ 

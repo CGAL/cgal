@@ -560,7 +560,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
 template<typename T>
 bool Volume_plane<T>::eventFilter(QObject *sender, QEvent *event)
 {
-    CGAL::QGLViewer* viewer = qobject_cast<CGAL::QGLViewer*>(sender);
+    CGAL::Three::Viewer_interface* viewer = qobject_cast<CGAL::Three::Viewer_interface*>(sender);
     if(!viewer)
       return false;
     if(event->type() == QEvent::MouseButtonPress)

@@ -207,16 +207,16 @@ class Io_image_plugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "io_image_plugin.json")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "io_image_plugin.json")
 
 public:
 
-  bool applicable(QAction*) const {
+  bool applicable(QAction*) const override{
     return qobject_cast<Scene_image_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface *mi) {
+  using Polyhedron_demo_io_plugin_interface::init;
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface *mi) override {
     this->message_interface = mi;
     this->scene = scene_interface;
     this->mw = mainWindow;
@@ -270,10 +270,10 @@ public:
       }
     }
   }
-  QList<QAction*> actions() const {
+  QList<QAction*> actions() const override{
     return QList<QAction*>() << planeSwitch;
   }
-  virtual void closure()
+  virtual void closure() override
   {
       QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");
       if(controlDockWidget)
@@ -281,18 +281,21 @@ public:
   }
   Io_image_plugin() : planeSwitch(NULL) {}
 
-  QString nameFilters() const;
-  bool canLoad() const;
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
+  QString nameFilters() const override;
+  bool canLoad(QFileInfo) const override;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 
-  bool canSave(const CGAL::Three::Scene_item*);
-  bool save(const CGAL::Three::Scene_item* item, QFileInfo fi) {
+  bool canSave(const CGAL::Three::Scene_item*) override;
+  bool save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items ) override{
+    Scene_item* item = items.front();
     const Scene_image_item* im_item = qobject_cast<const Scene_image_item*>(item);
 
     point_image p_im = *im_item->image()->image();
-    return _writeImage(&p_im, fi.filePath().toUtf8()) == 0;
+    bool ok = _writeImage(&p_im, fileinfo.filePath().toUtf8()) == 0;
+    items.pop_front();
+    return ok;
   }
-  QString name() const { return "segmented images"; }
+  QString name() const override{ return "segmented images"; }
 
 
 public Q_SLOTS:
@@ -590,7 +593,11 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = x_cubeLabel->fontMetrics();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+      x_cubeLabel->setFixedWidth(metric.horizontalAdvance(QString(".9999.")));
+#else
       x_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
+#endif
       x_cubeLabel->setText("0");
       x_cubeLabel->setValidator(validator);
 
@@ -616,7 +623,11 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = y_cubeLabel->fontMetrics();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+      y_cubeLabel->setFixedWidth(metric.horizontalAdvance(QString(".9999.")));
+#else
       y_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
+#endif
       y_cubeLabel->setText("0");
       y_cubeLabel->setValidator(validator);
       y_slider = new QSlider(mw);
@@ -641,7 +652,11 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = z_cubeLabel->fontMetrics();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+      z_cubeLabel->setFixedWidth(metric.horizontalAdvance(QString(".9999.")));
+#else
       z_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
+#endif
       z_cubeLabel->setText("0");
       z_cubeLabel->setValidator(validator);
       z_slider = new QSlider(mw);
@@ -965,7 +980,7 @@ QString Io_image_plugin::nameFilters() const {
 }
 
 
-bool Io_image_plugin::canLoad() const {
+bool Io_image_plugin::canLoad(QFileInfo) const {
   return true;
 }
 
@@ -987,8 +1002,11 @@ void convert(Image* image)
   image->image()->wdim = 4;
   image->image()->wordKind = WK_FLOAT;
 }
-CGAL::Three::Scene_item*
-Io_image_plugin::load(QFileInfo fileinfo) {
+
+QList<Scene_item*>
+Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
+{
+  ok = true;
   QApplication::restoreOverrideCursor();
   Image* image = new Image;
   if(fileinfo.suffix() != "H" && fileinfo.suffix() != "HH" &&
@@ -1075,8 +1093,9 @@ Io_image_plugin::load(QFileInfo fileinfo) {
         success = false;
       }
       if(!success){
+        ok = false;
         delete image;
-        return NULL;
+        return QList<Scene_item*>();
       }
     }
   //read a sep file
@@ -1117,7 +1136,8 @@ Io_image_plugin::load(QFileInfo fileinfo) {
     if(return_code != QDialog::Accepted)
     {
       delete image;
-      return NULL;
+      ok = false;
+      return QList<Scene_item*>();
     }
 
     // Get selected precision
@@ -1145,7 +1165,9 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   else
     image_item = new Scene_image_item(image,voxel_scale, false);
   image_item->setName(fileinfo.baseName());
-  return image_item;
+  if(add_to_scene)
+    CGAL::Three::Three::scene()->addItem(image_item);
+  return QList<Scene_item*>() << image_item;
 }
 
 bool Io_image_plugin::canSave(const CGAL::Three::Scene_item* item)
