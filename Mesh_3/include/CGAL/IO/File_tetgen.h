@@ -198,15 +198,6 @@ output_to_tetgen(std::string filename,
 
 
 
-/**
- * @brief outputs mesh to tetgen format
- * @param os the stream
- * @param c3t3 the mesh
- * @param rebind if true, labels of cells are rebinded into [1..nb_of_labels]
- * @param show_patches if true, patches are labeled with different labels than
- * cells. If false, each surface facet is written twice, using label of
- * each adjacent cell.
- */
 template <class C3T3>
 void
 output_to_tetgen(std::string filename,

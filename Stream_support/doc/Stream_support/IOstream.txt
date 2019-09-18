@@ -80,22 +80,13 @@ Free functions are provided for reading and writing several \cgal types using th
 within their user manual. These structures can then be listed here, with a note pointing to
 their respective IO sections in their respective user manual]
 
-- Alpha_shapes_3
-- Arrangement_on_surface_2
-- Boolean_set_operations_2
-- Circular_kernel_2
-- Convex_hull_2
+- \ref AlphaShape3DIO for 3D Alpha Shapes.
+- \ref arr_secio for 2D Arrangements
 - \ref secMesh_2_IO for Mesh 2
-- Mesh_3
-- Nef_2
-- Nef_3
-- Poisson_surface_reconstruction_3
-- Straight_skeleton_2
-- Surface_mesher
-- Triangulation
-- Triangulation_2
-- Triangulation_3
-
+- \ref Mesh_3_section_io for Mesh_3
+- \ref Nef_3File for Nef_polyhedron_3
+- \ref Surface_mesherIO for 3D Surface Mesh
+- \ref TriangulationSecIO for Triangulation
 
 \subsection IOstreamOther Reading Unsupported Formats
 

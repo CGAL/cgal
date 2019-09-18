@@ -158,6 +158,11 @@ of the traits class. This initial set of points is required
 to include at least one point on each connected component of the surface
 to be meshed.
 
+\section Surface_mesherIO Input/Output
+It is possible to output a surface mesh to the OFF format. using the function
+`CGAL::output_surface_facets_to_off()`.
+
+
 \section Surface_mesherExamples Examples
 
 \anchor SurfaceMesher_section_example
