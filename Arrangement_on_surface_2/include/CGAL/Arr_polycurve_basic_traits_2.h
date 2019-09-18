@@ -2530,11 +2530,8 @@ protected:
   template <typename Comparer>
   class Compare_points {
   private:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
-      Polycurve_basic_traits_2;
-
     /*! The polycurve traits (in case it has state). */
-    const Polycurve_basic_traits_2 m_poly_traits;
+    const Subcurve_traits_2& m_subcurve_traits;
 
     const Point_2& m_point;
 
@@ -2542,9 +2539,9 @@ protected:
 
   public:
     // Constructor
-    Compare_points(const Polycurve_basic_traits_2& traits, Comparer compare,
+    Compare_points(const Subcurve_traits_2& traits, Comparer compare,
                    const Point_2& p) :
-      m_poly_traits(traits),
+      m_subcurve_traits(traits),
       m_point(p),
       m_compare(compare)
     {}
@@ -2553,10 +2550,9 @@ protected:
     Comparison_result operator()(const X_monotone_subcurve_2& xs,
                                  Arr_curve_end ce)
     {
-      const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       const Point_2& p = (ce == ARR_MAX_END) ?
-        geom_traits->construct_max_vertex_2_object()(xs) :
-        geom_traits->construct_min_vertex_2_object()(xs);
+        m_subcurve_traits.construct_max_vertex_2_object()(xs) :
+        m_subcurve_traits.construct_min_vertex_2_object()(xs);
       return m_compare(p, m_point);
     }
   };
@@ -2705,12 +2701,12 @@ protected:
       Comparison_result res = compare_x(min_vertex(xcv[0]), q);
       if (res != EQUAL) return INVALID_INDEX;
 
-      Compare_points<Compare_xy_2> compare(geom_traits,
+      Compare_points<Compare_xy_2> compare(*geom_traits,
                                            compare_xy_2_object(), q);
       return locate_gen(xcv, compare);
     }
 
-    Compare_points<Compare_x_2> compare(geom_traits, compare_x_2_object(), q);
+    Compare_points<Compare_x_2> compare(*geom_traits, compare_x_2_object(), q);
     return locate_gen(xcv, compare);
   }
 
