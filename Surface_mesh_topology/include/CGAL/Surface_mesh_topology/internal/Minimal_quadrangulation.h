@@ -885,7 +885,8 @@ protected:
          it=get_map().darts().begin(); it!=get_map().darts().end();
          ++it)
     {
-      if (get_map().is_marked(it, oldedges) && !get_map().is_marked(it, m_mark_hole) && 
+      if (get_map().is_marked(it, oldedges) &&
+          !get_map().is_marked(it, m_mark_hole) &&
           !get_map().is_marked(it, treated))
       {
         get_map().template mark_cell<2>(it, treated);
@@ -908,6 +909,16 @@ protected:
       //         <<get_map().darts().index(p.second)<<std::endl;
     }
 
+    /* FOR DEBUG for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+         it=get_map().darts().begin(); it!=get_map().darts().end();
+         ++it)
+    {
+      if (get_map().is_marked(it, m_mark_hole))
+      { assert(get_map().template is_whole_cell_marked<2>(it, m_mark_hole)); }
+      else
+      { assert(get_map().template is_whole_cell_unmarked<2>(it, m_mark_hole)); }
+    } */
+
     // 3) We remove all the old edges and extend the holes when necessary.
     for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
            it=get_map().darts().begin(), itend=get_map().darts().end(); it!=itend;
@@ -920,9 +931,24 @@ protected:
         {
           get_map().template mark_cell<2>(it, m_mark_hole);
         }
-        get_map().template remove_cell<1>(it);
+        else if (get_map().is_marked(it, m_mark_hole) &&
+                 !get_map().is_marked(get_map().template beta<2>(it), m_mark_hole))
+        {
+          get_map().template mark_cell<2>(get_map().template beta<2>(it), m_mark_hole);
+        }
+       get_map().template remove_cell<1>(it);
       }
     }
+
+    /* FOR DEBUG for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+         it=get_map().darts().begin(); it!=get_map().darts().end();
+         ++it)
+    {
+      if (get_map().is_marked(it, m_mark_hole))
+      { assert(get_map().template is_whole_cell_marked<2>(it, m_mark_hole)); }
+      else
+      { assert(get_map().template is_whole_cell_unmarked<2>(it, m_mark_hole)); }
+    } */
 
     get_map().free_mark(oldedges);
   }
