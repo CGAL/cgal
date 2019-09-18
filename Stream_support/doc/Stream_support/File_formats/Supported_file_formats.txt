@@ -10,6 +10,11 @@ this specific format.
 - \ref IOStreamOFF
 - \ref IOStreamPLY
 - \ref IOStreamSTL
+- \ref IOStreamVTK
+- \ref IOStreamAvizo
+- \ref IOStreamMedit
+- \ref IOStreamTetgen
+
 
 \section IOStreamOFF Object File Format (OFF)
 The `OFF` file format can be used to represent collections of planar polygons with possibly shared vertices.
@@ -67,18 +72,55 @@ lose combinatorial information.
 \subsection etc etc
 
 \section IOStreamVTK VTK Formats (VTK VTU VTP)
-TODO
+The VTK libraries use different file formats to handle data structures.
+The VTU and VTP formats are XML formats specific to respectively Unstructured Grid and PolyData.
+A precise specification of the format is available at
+<a href="https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf"> vtk.org</a>.
+
+\subsection IOStreamVTKInput Reading VTK files
+Objects represented in the different`.VTP` formats can be imported into \cgal's working environment
+using the following data structures and functions.
+- CGAL::Surface_mesh
+- CGAL::Polyhedron_3
+using the function `CGAL::read_vtp()`, in the condition that CGAL has been configured
+with the VTK libraries.
+
+
+\subsection IOStreamVTKOutput Writing VTK files
+The following \cgal data structures can be exported into the `.VTP` file format:
+- CGAL::Surface_mesh
+- CGAL::Polyhedron_3
+using the function `CGAL::write_vtp()`.
+The following \cgal data structures can be exported into the `.VTU` file format:
+- CGAL::Mesh_complex_3_in_triangulation_3 using `CGAL::output_to_vtu()`.
+- CGAL::Constrained_Delaunay_triangulation_2 using the function `CGAL::write_vtu()`
+
 
 \section IOStreamAvizo Avizo Format
-TODO
+The `.am` files are used by Avizo to read 3D geometry.
 
-\section IOStreamMaya Maya Format
-TODO
+\subsection IOStreamtAvizoOutput Writing Avizo files
+Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into `.am`
+This can be done using the function `CGAL::output_to_avizo()`
+
 
 \section IOStreamMedit Medit Format
-TODO
+The `.mesh` Medit file format is a format used by the Medit software. In CGAL,
+it is mostly used to represent 3D meshes.
+A precise specification of the format is available <a href="https://hal.inria.fr/inria-00069921/document"> in this report</a>,
+in the appendices (section 7.2.1, page 36).
 
-\section IOStreamtetgen Tetgen Format
-TODO
+\subsection IOStreamtMeditOutput Writing Medit files
+Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into `.mesh`
+This can be done using the function `CGAL::output_to_medit()`
 
+
+\section IOStreamTetgen Tetgen Format
+The `Tetgen` file formatscan be used to represent lists of nodes, edges, faces, ...
+A precise specification of the format is available at <a href="https://wias-berlin.de/software/tetgen/fformats.html"> wias-berlin.de</a>.
+
+\subsection IOStreamttegenOutput Writing Tetgen files
+Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into some of the Tetgen file formats,
+naming `.node`, `.ele` and `.face`
+This can be done using the function `CGAL::output_to_tegen()`
 */

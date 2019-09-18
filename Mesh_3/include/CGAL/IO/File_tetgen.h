@@ -137,7 +137,7 @@ output_to_tetgen(std::string filename,
   // Elements
   //-------------------------------------------------------
 
-  std::string elem_filename = filename + ".elem";
+  std::string elem_filename = filename + ".ele";
   std::ofstream elem_stream(elem_filename.c_str());
 
   elem_stream << std::setprecision(17);
