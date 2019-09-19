@@ -1,8 +1,9 @@
 namespace CGAL{
-  /**
+/**
+ * \ingroup PkgMesh3IOFunctions
  * @brief outputs mesh to avizo format
  * @param os the stream
- * @param c3t3 the mesh
+ * @param c3t3 the mesh complex
  * \see \ref IOStreamAvizo
  */
 template <class C3T3>

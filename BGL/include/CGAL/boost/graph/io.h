@@ -767,7 +767,7 @@ write_polys_points(std::ostream& os,
   } // end namespace CGAL::internal::write_vtp
 } // end namespace CGAL::internal
 
-/*!\ingroup PkgBGLIOFct
+/*! \ingroup PkgBGLIOFct
  *
  * \brief  writes a triangulated surface mesh in the `PolyData` XML format.
  *
@@ -889,6 +889,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
   return true;
 }
 } //end VTK_internal
+
 template<class FaceGraph>
 bool read_vtp(const char* filename, FaceGraph& face_graph)
 {
@@ -901,6 +902,27 @@ bool read_vtp(const char* filename, FaceGraph& face_graph)
 }
 #endif //CGAL_USE_VTK
 
+#ifdef DOXYGEN_RUNNING
+/*! \ingroup PkgBGLIOFct
+ * \brief  reads a PolyData in the VTP foramt into a triangulated surface mesh.
+ *
+ * \tparam FaceGraph a model of `FaceListGraph`.
+ *
+ * \param filename the path to the file that will be read.
+ * \param face_graph the output mesh.
+ *
+ * \pre \cgal needs to be configured with the VTK Libraries for this function to be available.
+ */
+template<class FaceGraph>
+bool read_vtp(const char* filename, FaceGraph& face_graph);
+
+#endif
+
+/*!
+  \ingroup PkgBGLIOFct
+  writes the graph `tm` in the stream `out` in the STL format.
+  \pre The graph must contain only triangle faces.
+  */
 template <class TriangleMesh>
 std::ostream&
 write_STL(const TriangleMesh& tm, std::ostream& out)
@@ -1011,6 +1033,12 @@ public:
 
 };
 } // end STL_internal
+
+/*!
+  \ingroup PkgBGLIOFct
+  reads the graph `tm` from the stream `in` in the STL format.
+  \pre The data must represent a 2-manifold
+  */
 template <class TriangleMesh>
 bool
 read_STL(TriangleMesh& tm, std::istream& in)

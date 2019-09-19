@@ -1,6 +1,8 @@
 /// \defgroup PkgStreamSupportRef IO Streams Reference
 /// \defgroup IOstreamOperators Stream Operators
 /// \ingroup PkgStreamSupportRef
+/// \defgroup IOstreamFunctions I/O Functions
+/// \ingroup PkgStreamSupportRef
 /*!
 \addtogroup PkgStreamSupportRef
 \cgalPkgDescriptionBegin{IO Streams,PkgStreamSupport}
@@ -41,6 +43,7 @@ the printing mode.
 - \link IOstreamOperators `CGAL::operator<<()` \endlink
 - `CGAL::iformat()`
 - `CGAL::oformat()`
+- `CGAL::read_STL()`
 
 \cgalCRPSection{WKT I/O Functions}
 - `CGAL::read_point_WKT()`

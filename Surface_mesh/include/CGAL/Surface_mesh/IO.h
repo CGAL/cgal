@@ -242,7 +242,6 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
 }
 }
 
-#if 0
 /// \addtogroup PkgSurfaceMeshIO
 ///
 /// I/O functionality for `Surface_mesh`. The top-level functions
@@ -263,7 +262,6 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
 ///
 /// @returns `true`, if reading succeeded, `false` otherwise
 ///
-#endif
 template <typename K>
 bool read_off(Surface_mesh<K>& mesh, const std::string& filename)
 {

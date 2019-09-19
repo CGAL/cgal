@@ -26,74 +26,105 @@ A precise specification of the format is available at <a href="http://www.geomvi
 Objects represented in the `.OFF` format can be imported into \cgal's working environment
 using the following data structures and functions.
 
-[Put important remarks such as "we do not support the normal (NOFF) specification".]
-[^ this should not crash if e.g. user is passing a COFF to read_OFF]
-[or "Properties such as the colors or normals are not imported when calling `read_OFF()` and users
-that wish to associate such properties should do blablabla (read_OFF_with_properties)."]
+- CGAL::Surface_mesh (\ref read_off(Surface_mesh<K>&, const std::string&)), a halfedge data structure allowing to represent polyhedral surfaces
 
-- CGAL::Surface_mesh (read_OFF()), a halfedge data structure allowing to represent polyhedral surfaces
-- CGAL::Polyhedron_3 (read_OFF()), a halfedge data structure, which restricts the class of representable surfaces
+- CGAL::Polyhedron_3 (\ref read_off( std::istream&, Polyhedron_3<PolyhedronTraits_3>&)), a halfedge data structure, which restricts the class of representable surfaces
   to orientable 2-manifolds.
-- CGAL::Linear_cell_complex (read_OFF_LCC()), blablabla
-- ...
+
+- Any structure that is a model of the concept `FaceGraph` (read_off(std::istream&,FaceGraph&,NamedParameters))
+
+- CGAL::Point_set_3 (operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&)
+
+As documented in the functions above, the only property that we support is the color,
+and it is only supported for the CGAL::Surface_mesh.
 
 \subsection IOStreamOFFOutput Writing OFF files
 The following \cgal data structures can be exported into the `OFF` file format:
 
-again, remarks: "Note that we do not support exporting to STOFF."
+- CGAL::Surface_mesh (write_off(std::ostream&, const Surface_mesh<P>&, const NamedParameters&))
+- Any structure that is a model of the concept `FaceGraph` (write_off(std::ostream&,const FaceGraph&,const NamedParameters&))
+- CGAL::Point_set_3 (\ref write_off_point_set())
 
-- CGAL::Surface_mesh (write_OFF)
-- CGAL::Polyhedron_3 (write_OFF)
-- CGAL::Linear_cell_complex (write_OFF_LCC)
-- ...
+Note that we only support OFF, and COFF for CGAL::Surface_mesh.
 
 \section IOStreamPLY Polygon File Format (PLY)
 Conceived to store the data obtained during 3D scans, the `PLY` file format stores objects
 as a simple list of polygons, etc.
+A precise specification of those formats is available at
+<a href="http://paulbourke.net/dataformats/ply/"> paulbourke.net</a>.
 
-- CGAL::Surface_mesh,
-  - Input: read_PLY()
-  - Output: write_PLY()
-- CGAL::Point_set_3, a collection of points with dynamically associated properties
-  - Input:
-  
+\subsection IOStreamPLYInput Reading PLY files
+Objects represented in the `.PLY` format can be imported into \cgal's working environment
+using the following data structures and functions.
+- CGAL::Surface_mesh (read_ply())
+- CGAL::Point_set_3 (operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&) a collection of points with dynamically associated properties
 
-\section IOStreamSTL blab blabla (STL)
+\subsection IOStreamPLYOutput Writing PLY files
+The following \cgal data structures can be exported into the `PLY` file format:
+- CGAL::Surface_mesh (write_ply())
+- CGAL::Point_set_3 (operator<<(std::ostream&,const CGAL::Point_set_3<Point, Vector>&))
 
+
+\section IOStreamSTL Standard Triangle Language (STL)
+  STL is a file format native to the stereolithography CAD software created by
+  3D Systems.STL files describe the surface geometry of a three-dimensional object.
+  A precise specification of those formats is available at
+  <a href="http://www.fabbers.com/tech/STL_Format"> fabbers.com</a>.
 
 \subsection IOStreamSTLInput Reading STL files
-...
+Objects represented in the `.STL` format can be imported into \cgal's working environment
+using any data structure that is a model of the `FaceGraph` concept, using \ref CGAL::read_STL();
+
+In addition, if the data cannot be read in a `FaceGraph` because of bad orientation or
+manifoldness, the function \link IOstreamFunctions `CGAL::read_STL(std::istream&,PointRange&,TriangleRange&,bool)` \endlink
+allows to load data directly in a soup of triangles. From there, you can use \ref PMPRepairing
+functions to construct a valid PolygonMesh.
 
 \subsection IOStreamSTLOutput Writing STL files
+Similarly, any data structure that is a model of the `FaceGraph` concept can be exported
+as a `.STL` file using \ref CGAL::write_STL(const TriangleMesh&, std::ostream&).
+
+Polygon soups can also be exported using the function \link IOstreamFunctions `CGAL::write_STL(const PointRange&,const TriangleRange&,std::ostream&)`. \endlink
 
 Note that the STL file format exports triangular faces as geometric triangles and thus
 lose combinatorial information.
 
-\subsection etc etc
 
-\section IOStreamVTK VTK Formats (VTK VTU VTP)
-The VTK libraries use different file formats to handle data structures.
-The VTU and VTP formats are XML formats specific to respectively Unstructured Grid and PolyData.
-A precise specification of the format is available at
+\section IOStreamVTK VTK Formats (VTU VTP)
+The VTK libraries use different file formats to handle data structures, but we only support two:
+- The `VTU` format can be used to store am unordered collection of 3D cells, like tetrahedra,
+  but also points, triangles, lines, ... In the <a href="https://vtk.org/"> VTK Libraries</a>,
+  it is the format reserved to store `Unstructured Grids`, and in \cgal,
+  we use it to store triangulations(2D and 3D).
+
+- The `VTP` format can be used to store collections of points, lines and triangles.
+  In the <a href="https://vtk.org/"> VTK Libraries</a>,it is the format
+  reserved to store `PolyData`., and in CGAL, we use it to store Polygon Meshes.
+
+A precise specification of those formats is available at
 <a href="https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf"> vtk.org</a>.
 
 \subsection IOStreamVTKInput Reading VTK files
-Objects represented in the different`.VTP` formats can be imported into \cgal's working environment
+Objects represented in the `VTP` format can be imported into \cgal's working environment
 using the following data structures and functions.
 - CGAL::Surface_mesh
 - CGAL::Polyhedron_3
-using the function `CGAL::read_vtp()`, in the condition that CGAL has been configured
+
+using the function \ref CGAL::read_vtp(), in the condition that CGAL has been configured
 with the VTK libraries.
+
 
 
 \subsection IOStreamVTKOutput Writing VTK files
 The following \cgal data structures can be exported into the `.VTP` file format:
 - CGAL::Surface_mesh
 - CGAL::Polyhedron_3
-using the function `CGAL::write_vtp()`.
+
+using the function \ref CGAL::write_vtp().
+
 The following \cgal data structures can be exported into the `.VTU` file format:
-- CGAL::Mesh_complex_3_in_triangulation_3 using `CGAL::output_to_vtu()`.
-- CGAL::Constrained_Delaunay_triangulation_2 using the function `CGAL::write_vtu()`
+- CGAL::Mesh_complex_3_in_triangulation_3 using \ref CGAL::output_to_vtu()`.
+- CGAL::Constrained_Delaunay_triangulation_2 using the function \ref CGAL::write_vtu()
 
 
 \section IOStreamAvizo Avizo Format
@@ -101,7 +132,7 @@ The `.am` files are used by Avizo to read 3D geometry.
 
 \subsection IOStreamtAvizoOutput Writing Avizo files
 Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into `.am`
-This can be done using the function `CGAL::output_to_avizo()`
+This can be done using the function \ref CGAL::output_to_avizo()
 
 
 \section IOStreamMedit Medit Format
@@ -112,15 +143,15 @@ in the appendices (section 7.2.1, page 36).
 
 \subsection IOStreamtMeditOutput Writing Medit files
 Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into `.mesh`
-This can be done using the function `CGAL::output_to_medit()`
+This can be done using the function \ref CGAL::output_to_medit()
 
 
 \section IOStreamTetgen Tetgen Format
 The `Tetgen` file formatscan be used to represent lists of nodes, edges, faces, ...
 A precise specification of the format is available at <a href="https://wias-berlin.de/software/tetgen/fformats.html"> wias-berlin.de</a>.
 
-\subsection IOStreamttegenOutput Writing Tetgen files
+\subsection IOStreamTetgenOutput Writing Tetgen files
 Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into some of the Tetgen file formats,
 naming `.node`, `.ele` and `.face`
-This can be done using the function `CGAL::output_to_tegen()`
+This can be done using the function \ref CGAL::output_to_tetgen()
 */

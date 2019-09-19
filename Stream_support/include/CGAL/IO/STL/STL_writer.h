@@ -29,12 +29,13 @@
 
 namespace CGAL{
 
-template <class Point, class Triangle>
+template <class PointRange, class TriangleRange>
 std::ostream&
-write_STL(const std::vector<Point>& points,
-          const std::vector<Triangle>& facets,
+write_STL(const PointRange& points,
+          const TriangleRange& facets,
           std::ostream& out)
 {
+  typedef typename PointRange::value_type Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel K;
   typedef typename K::Vector_3 Vector_3;
 
