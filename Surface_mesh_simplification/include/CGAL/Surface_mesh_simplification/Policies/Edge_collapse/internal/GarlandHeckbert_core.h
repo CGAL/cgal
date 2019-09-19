@@ -241,7 +241,7 @@ struct GarlandHeckbert_core
       else
       {
         FT ext_t = -b/(2*a);
-        if(ext_t < 0 || ext_t > 1 || a > 0)
+        if(ext_t < 0 || ext_t > 1 || a < 0)
         {
           // one of endpoints
           FT aP0_cost = (aP0.transpose() * aQuadric * aP0)(0, 0);
