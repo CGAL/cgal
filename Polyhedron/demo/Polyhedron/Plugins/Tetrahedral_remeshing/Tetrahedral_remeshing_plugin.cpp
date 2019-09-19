@@ -1,4 +1,5 @@
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#define CGAL_DUMP_REMESHING_STEPS
 
 #include <QtCore/qglobal.h>
 
@@ -20,6 +21,7 @@
 #include <QMessageBox>
 
 //#include "ui_Tetrahedral_remeshing_dialog.h"
+
 
 using namespace CGAL::Three;
 class Polyhedron_demo_tetrahedral_remeshing_plugin :
@@ -56,6 +58,8 @@ public:
 public Q_SLOTS:
   void tetrahedral_remeshing()
   {
+    typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<EPICK, int> Remeshing_triangulation;
+
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
     Scene_c3t3_item* c3t3_item =
@@ -83,6 +87,7 @@ public Q_SLOTS:
 //      bool protect = ui.protect_checkbox->isChecked();
 //      bool smooth_features = ui.smooth1D_checkbox->isChecked();
 
+
       bool ok;
       double target_edge_length = QInputDialog::getDouble(mw,
         tr("Tetrahedral remeshing"),
@@ -104,10 +109,20 @@ public Q_SLOTS:
       QTime time;
       time.start();
 
-      CGAL::tetrahedral_adaptive_remeshing(c3t3_item->c3t3().triangulation(), target_edge_length);
+      Remeshing_triangulation tr;
+      CGAL::Tetrahedral_remeshing::build_remeshing_triangulation(c3t3_item->c3t3().triangulation(), tr);
 
-      std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+      std::cout << "Remeshing triangulation built (" << time.elapsed() << " ms)" << std::endl;
+      time.restart();
 
+      CGAL::tetrahedral_adaptive_remeshing(tr, target_edge_length);
+
+      std::cout << "Remeshing done (" << time.elapsed() << " ms)" << std::endl;
+      time.restart();
+
+      CGAL::Tetrahedral_remeshing::build_from_remeshing_triangulation(tr, c3t3_item->c3t3().triangulation());
+
+      std::cout << "Back conversion done (" << time.elapsed() << " ms)" << std::endl;
       c3t3_item->invalidateOpenGLBuffers();
 
       Q_EMIT c3t3_item->itemChanged();

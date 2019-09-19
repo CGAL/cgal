@@ -84,6 +84,8 @@ namespace CGAL
                                       const double& target_edge_length,
                                       const NamedParameters& np)
   {
+    CGAL_assertion(tr.is_valid(true));
+
     typedef Triangulation Tr;
     typedef typename Tr::Edge Edge;
 
@@ -116,6 +118,11 @@ namespace CGAL
     ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained)
                              , No_constraint());
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::cout << "Init tetrahedral remeshing...";
+    std::cout.flush();
+#endif
+
     typedef Tetrahedral_remeshing::internal::Adaptive_remesher<
       Tr, ECMap, SelectionFunctor> Remesher;
     Remesher remesher(tr, target_edge_length, protect, ecmap
@@ -123,6 +130,7 @@ namespace CGAL
                   /*, adaptive*/);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::cout << "done." << std::endl;
     Tetrahedral_remeshing::internal::compute_statistics(
       remesher.triangulation(),
       remesher.imaginary_index(), cell_select, "statistics_begin.txt");
