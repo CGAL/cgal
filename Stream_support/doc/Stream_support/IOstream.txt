@@ -76,17 +76,13 @@ Free functions are provided for reading and writing several \cgal types using th
 
 \subsection IOstreamOtherIO Other Data Structures
 
-[For data structures that have documented IO which is too specific, it should be documented
-within their user manual. These structures can then be listed here, with a note pointing to
-their respective IO sections in their respective user manual]
-
-- \ref AlphaShape3DIO for 3D Alpha Shapes.
-- \ref arr_secio for 2D Arrangements
-- \ref secMesh_2_IO for Mesh 2
-- \ref Mesh_3_section_io for Mesh_3
-- \ref Nef_3File for Nef_polyhedron_3
-- \ref Surface_mesherIO for 3D Surface Mesh
-- \ref TriangulationSecIO for Triangulation
+- \ref AlphaShape3DIO "3D Alpha Shapes".
+- \ref arr_secio "2D Arrangements"
+- \ref secMesh_2_IO "2D Conforming Triangulations and Meshes"
+- \ref Mesh_3_section_io "3D Mesh Generation"
+- \ref Nef_3File "3D Boolean Operations on Nef Polyhedra"
+- \ref Surface_mesherIO "3D Surface Mesh"
+- \ref TriangulationSecIO "Triangulation"
 
 \subsection IOstreamOther Reading Unsupported Formats
 
