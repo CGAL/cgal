@@ -163,7 +163,8 @@ private:
 
 template<class R>
 inline
-MatrixC33<R> direct_product(const Vector_3<R>& u, const Vector_3<R>& v)
+MatrixC33<R> direct_product(const typename R::Vector_3& u,
+                            const typename R::Vector_3& v)
 {
   return MatrixC33<R>(v * u.x(),
                       v * u.y(),
