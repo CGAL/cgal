@@ -74,16 +74,16 @@ private:
 
 	Certificate cert;
 
-	CInterval getInterval(Point const& point, Curve const& curve, PointID i) const;
-	CInterval getInterval(Point const& point, Curve const& curve, PointID i, CInterval* ) const;
+	CInterval getInterval(Curve const& curve1, PointID center_id, Curve const& curve2, PointID seg_start) const;
+	CInterval getInterval(Curve const& curve1, PointID center_id, Curve const& curve2, PointID seg_start, CInterval* ) const;
 	void merge(CIntervals& v, CInterval const& i) const;
 
 	Outputs createFinalOutputs();
 	Inputs computeInitialInputs();
 	// XXX: consistency of arguments in following functions!
 	distance_t getDistToPointSqr(const Curve& curve, Point const& point) const;
-	bool isClose(Point const& point, Curve const& curve) const;
-	CPoint getLastReachablePoint(Point const& point, Curve const& curve) const;
+	bool isClose(Curve const& curve1, PointID i, Curve const& curve) const;
+	CPoint getLastReachablePoint(Curve const& curve1, PointID i, Curve const& curve2) const;
 	bool isTopRightReachable(Outputs const& outputs) const;
 	void computeOutputs(Box const& initial_box, Inputs const& initial_inputs, Outputs& final_outputs);
 
@@ -198,23 +198,24 @@ void FrechetLight::visAddFreeNonReachable(CPoint begin, CPoint end, CPoint fixed
 #endif
 }
 
-inline CInterval FrechetLight::getInterval(Point const& point, Curve const& curve, PointID i) const
+inline CInterval FrechetLight::getInterval(Curve const& curve1, PointID center_id, Curve const& curve2, PointID seg_start) const
 {
-	return getInterval(point, curve, i, nullptr);
+	return getInterval(curve1, center_id, curve2, seg_start, nullptr);
 }
 
-inline CInterval FrechetLight::getInterval(Point const& point, Curve const& curve, PointID i, CInterval* outer) const
+inline CInterval FrechetLight::getInterval(Curve const& curve1, PointID center_id, Curve const& curve2, PointID seg_start, CInterval* outer) const
 {
     Interval outer_temp;
     Interval* outer_pt = outer == nullptr ? nullptr : &outer_temp;
-    auto interval = IntersectionAlgorithm::intersection_interval(point, distance, curve[i], curve[i + 1], outer_pt);
+    Point point = curve1[center_id];
+    auto interval = IntersectionAlgorithm::intersection_interval(point, distance, curve2[seg_start], curve2[seg_start + 1], outer_pt);
 
     if (outer != nullptr) {
 		//TODO change intersection_interval so that the outer interval is
 		// 0,1 instead of -eps, 1+eps ?
-		*outer = CInterval{i, std::max(outer_temp.begin,0.), i, std::min(outer_temp.end,1.)};
+		*outer = CInterval{seg_start, std::max(outer_temp.begin,0.), seg_start, std::min(outer_temp.end,1.)};
     }
-    return CInterval{i, interval.begin, i, interval.end};
+    return CInterval{seg_start, interval.begin, seg_start, interval.end};
 }
 
 inline void FrechetLight::merge(CIntervals& intervals, CInterval const& new_interval) const
@@ -557,7 +558,7 @@ inline void FrechetLight::handleCellCase(BoxData& data)
 	if (data.outputs.id1.valid()) {
 		CInterval outer1;
 		//TODO set &outer1 to nullptr if we don't certify? Probably not really costly...
-		CInterval output1 = getInterval(curve2[box.max2], curve1, box.min1, &outer1);
+		CInterval output1 = getInterval(curve2, box.max2, curve1, box.min1, &outer1);
 		if (firstinterval2->is_empty()) {
 			visAddFreeNonReachable(
 				output1.begin, std::min(output1.end, firstinterval1->begin), {box.max2,0.}, 1);
@@ -574,7 +575,7 @@ inline void FrechetLight::handleCellCase(BoxData& data)
 
 	if (data.outputs.id2.valid()) {
 		CInterval outer2;
-		CInterval output2 = getInterval(curve1[box.max1], curve2, box.min2, &outer2);
+		CInterval output2 = getInterval(curve1, box.max1, curve2, box.min2, &outer2);
 		if (firstinterval1->is_empty()) {
 			visAddFreeNonReachable(
 				output2.begin, std::min(output2.end, firstinterval2->begin), {box.max1,0.}, 0);
@@ -840,19 +841,20 @@ inline void FrechetLight::splitAndRecurse(BoxData& data)
 	}
 }
 
-CPoint FrechetLight::getLastReachablePoint(Point const& point, Curve const& curve) const
+CPoint FrechetLight::getLastReachablePoint(Curve const& curve1, PointID i, Curve const& curve2) const
 {
-	PointID max = curve.size()-1;
+  	Point const& point = curve1[i];
+	PointID max = curve2.size()-1;
 	std::size_t stepsize = 1;
 	for (PointID cur = 0; cur < max; ) {
 		// heuristic steps:
 		stepsize = std::min<std::size_t>(stepsize, max - cur);
 
 		auto mid = cur + (stepsize+1)/2; 
-		auto first_part = curve.curve_length(cur+1, mid);
-		auto second_part = curve.curve_length(mid, cur + stepsize);
+		auto first_part = curve2.curve_length(cur+1, mid);
+		auto second_part = curve2.curve_length(mid, cur + stepsize);
 		auto maxdist = std::max(first_part, second_part);
-		auto mid_dist_sqr = point.dist_sqr(curve[mid]);
+		auto mid_dist_sqr = point.dist_sqr(curve2[mid]);
 
 		auto comp_dist1 = distance - maxdist;
 		if (comp_dist1 > 0 && mid_dist_sqr <= std::pow(comp_dist1, 2)) {
@@ -866,7 +868,7 @@ CPoint FrechetLight::getLastReachablePoint(Point const& point, Curve const& curv
 		else { 
 			// stepsize = 1 and heuristic step didn't work
 			// then it follows that the last reachable point is on the current interval
-			return getInterval(point, curve, cur).end;
+			return getInterval(curve1, i, curve2, cur).end;
 		}
 	}
 	return CPoint{max, 0.};
@@ -905,8 +907,8 @@ bool FrechetLight::lessThan(distance_t distance, Curve const& curve1, Curve cons
 
 	// cases where at least one curve has length 1
 	if (curve1.size() == 1 && curve2.size() == 1) { return true; }
-	if (curve1.size() == 1) { return isClose(curve1.front(), curve2); }
-	if (curve2.size() == 1) { return isClose(curve2.front(), curve1); }
+	if (curve1.size() == 1) { return isClose(curve1, 0, curve2); }
+	if (curve2.size() == 1) { return isClose(curve2, 0, curve1); }
 
 	clear();
 
@@ -980,9 +982,9 @@ inline void FrechetLight::visAddCell(Box const& box)
 #endif
 }
 
-inline bool FrechetLight::isClose(Point const& point, Curve const& curve) const
+inline bool FrechetLight::isClose(Curve const& curve1, PointID i, Curve const& curve2) const
 {
-	return getLastReachablePoint(point, curve) == CPoint{PointID(curve.size()-1), 0.};
+	return getLastReachablePoint(curve1, i, curve2) == CPoint{PointID(curve2.size()-1), 0.};
 }
 
 inline bool FrechetLight::isTopRightReachable(Outputs const& outputs) const
@@ -1034,13 +1036,13 @@ inline auto FrechetLight::computeInitialInputs() -> Inputs
 
 	auto const first = CPoint(0,0.);
 
-	auto last1 = getLastReachablePoint(curve2.front(), curve1);
+	auto last1 = getLastReachablePoint(curve2, 0, curve1);
 	reachable_intervals_vec.emplace_back();
 	reachable_intervals_vec.back().emplace_back(first, last1);
 	inputs.begin1 = reachable_intervals_vec.back().begin();
 	inputs.end1 = reachable_intervals_vec.back().end();
 
-	auto last2 = getLastReachablePoint(curve1.front(), curve2);
+	auto last2 = getLastReachablePoint(curve1, 0, curve2);
 	reachable_intervals_vec.emplace_back();
 	reachable_intervals_vec.back().emplace_back(first, last2);
 	inputs.begin2 = reachable_intervals_vec.back().begin();
@@ -1126,7 +1128,7 @@ Certificate& FrechetLight::computeCertificate() {
 		return cert;
 	}
 	if (curve1.size() == 1) { 
-		auto last = getLastReachablePoint(curve1.front(), curve2);
+		auto last = getLastReachablePoint(curve1, 0, curve2);
 		if (last == CPoint(curve2.size()-1, 0.)) {
 			cert.setAnswer(true);
 			cert.addPoint({ CPoint(0, 0.), CPoint(0, 0.) });
@@ -1135,7 +1137,7 @@ Certificate& FrechetLight::computeCertificate() {
 			return cert;
 		} else {
 		 	CInterval outer;
-			(void) getInterval(curve1.front(), curve2, last.getPoint(), &outer);
+			(void) getInterval(curve1, 0, curve2, last.getPoint(), &outer);
 			CPoint safe_empty = outer.begin > CPoint(last.getPoint(), 0.) ? outer.begin : outer.end;
 			assert(safe_empty > CPoint(last.getPoint(), 0.) or safe_empty < CPoint(last.getPoint()+1, 0.));
 			cert.setAnswer(false);
@@ -1145,7 +1147,7 @@ Certificate& FrechetLight::computeCertificate() {
 		}
 	}
 	if (curve2.size() == 1) { 
-		auto last = getLastReachablePoint(curve2.front(), curve1);
+		auto last = getLastReachablePoint(curve2, 0, curve1);
 		if (last == CPoint(curve1.size()-1, 0.)) {
 			cert.setAnswer(true);
 			cert.addPoint({ CPoint(0, 0.), CPoint(0, 0.) });
@@ -1154,7 +1156,7 @@ Certificate& FrechetLight::computeCertificate() {
 			return cert;
 		} else {
 		 	CInterval outer;
-			(void) getInterval(curve2.front(), curve1, last.getPoint(), &outer);
+			(void) getInterval(curve2, 0, curve1, last.getPoint(), &outer);
 			CPoint safe_empty = outer.begin > CPoint(last.getPoint(), 0.) ? outer.begin : outer.end;
 			assert(safe_empty > CPoint(last.getPoint(), 0.) or safe_empty < CPoint(last.getPoint()+1, 0.));
 			cert.setAnswer(false);

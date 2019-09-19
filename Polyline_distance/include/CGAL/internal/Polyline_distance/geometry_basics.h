@@ -147,6 +147,7 @@ std::ostream& operator<<(std::ostream& out, const Interval& interval);
 
 // Data Types for FrechetLight:
 
+//NOTES: CPoint will be integral part + rational [0,1] number given as sqrt_extension 
 
 class CPoint {
 private:
@@ -209,22 +210,6 @@ public:
 	}
 	bool operator!=(size_t other) const {
 		return !(point == other);
-	}
-	CPoint operator+(distance_t other) const { 
-	  assert(other <= 1.);
-	  PointID p = point; distance_t f = fraction + other; 
-	  if (f > 1.) {
-	    ++p; f -= 1.;
-	  } 
-	  return CPoint(p, f); 
-	}
-	CPoint operator-(distance_t other) const { 
-	  assert(other <= 1.);
-	  PointID p = point; distance_t f = fraction - other; 
-	  if (f < 0.) {
-	    --p; f += 1.;
-	  } 
-	  return CPoint(p, f); 
 	}
 	CPoint ceil() const {
 		return fraction > 0 ? CPoint(point + 1, 0.) : CPoint(point, 0.);
