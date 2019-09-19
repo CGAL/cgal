@@ -24,10 +24,9 @@ int main(int argc, char** argv)
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface mesh drops below the specified number (1000)
-  SMS::Count_stop_predicate<Surface_mesh> stop(num_halfedges(surface_mesh)/2 - 1);
+  SMS::Count_stop_predicate<Surface_mesh> stop((argc > 2) ? std::stod(argv[2]) : num_halfedges(surface_mesh)/2 - 1);
 
   typedef SMS::Bounded_normal_change_placement<SMS::LindstromTurk_placement<Surface_mesh> > Placement;
-
 
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
@@ -38,7 +37,7 @@ int main(int argc, char** argv)
                       CGAL::parameters::get_cost(SMS::LindstromTurk_cost<Surface_mesh>())
                                        .get_placement(Placement()));
 
-  std::ofstream os(argc > 2 ? argv[2] : "out.off");
+  std::ofstream os(argc > 3 ? argv[3] : "out.off");
   os.precision(17);
   os << surface_mesh;
 
