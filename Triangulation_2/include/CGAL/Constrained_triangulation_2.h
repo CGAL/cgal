@@ -906,7 +906,7 @@ intersect(Face_handle f, int i,
   "using a Constrained_triangulation_plus_2 class\n"
   "would avoid cascading intersection computation\n"
   " and be much more efficient\n"
-  "This message is shown only if CGAL_NO_CDT_2_WARNING"
+  "This message is shown only if CGAL_NO_CDT_2_WARNING "
   "is not defined.\n");
 #endif
   const Point& pa = vaa->point();
