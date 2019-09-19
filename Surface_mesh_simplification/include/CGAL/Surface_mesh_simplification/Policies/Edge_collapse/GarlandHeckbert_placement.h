@@ -24,50 +24,52 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/Lindstrom_Turk_core.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_core.h>
 
+#include <boost/optional/optional.hpp>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-template<class TM_>
+template<class TM_, typename VCM_>
 class GarlandHeckbert_placement
 {
 public:
-  typedef TM_                                             TM;
-  typedef typename internal::GarlandHeckbertCore<TM>      GHC;
-  typedef typename GHC::garland_heckbert_state_type       garland_heckbert_state_type;
-  typedef typename GHC::Matrix4x4                         Matrix4x4;
-  typedef typename GHC::Row4                              Row4;
-  typedef typename GHC::Col4                              Col4;
+  typedef TM_                                                     TM;
+  typedef VCM_                                                    Vertex_cost_map;
 
-  typedef typename GHC::FT                                FT;
-  typedef typename boost::optional<FT>                    Optional_FT;
+  typedef typename internal::GarlandHeckbert_core<TM>             GH_core;
+  typedef typename GH_core::Matrix4x4                             Matrix4x4;
+  typedef typename GH_core::Col4                                  Col4;
 
-  GarlandHeckbert_placement(const garland_heckbert_state_type& aCostMatrices)
-    : mCostMatrices(aCostMatrices)
+  GarlandHeckbert_placement(const Vertex_cost_map& cost_matrices)
+    : m_cost_matrices(cost_matrices)
   { }
 
   template <typename Profile>
   boost::optional<typename Profile::Point> operator()(const Profile& aProfile) const
   {
-    const Matrix4x4 combinedMatrix = std::move(GHC::combine_matrices(
-                  mCostMatrices.at(aProfile.v0()),
-                  mCostMatrices.at(aProfile.v1())));
+    CGAL_precondition(get(m_cost_matrices, aProfile.v0()) != Matrix4x4());
+    CGAL_precondition(get(m_cost_matrices, aProfile.v1()) != Matrix4x4());
 
-    const Col4 p0 = std::move(GHC::point_to_homogenous_column(aProfile.p0()));
-    const Col4 p1 = std::move(GHC::point_to_homogenous_column(aProfile.p1()));
-    const Col4 opt = std::move(GHC::optimal_point(combinedMatrix, p0, p1));
+    // the combined matrix has already been computed in the evaluation of the cost...
+    const Matrix4x4 combinedMatrix = GH_core::combine_matrices(
+                                       get(m_cost_matrices, aProfile.v0()),
+                                       get(m_cost_matrices, aProfile.v1()));
 
-    boost::optional<typename Profile::Point> pt
-        = typename Profile::Point(opt(0) / opt(3), opt(1) / opt(3), opt(2) / opt(3));
+    const Col4 p0 = GH_core::point_to_homogenous_column(aProfile.p0());
+    const Col4 p1 = GH_core::point_to_homogenous_column(aProfile.p1());
+    const Col4 opt = GH_core::optimal_point(combinedMatrix, p0, p1);
+
+    boost::optional<typename Profile::Point> pt = typename Profile::Point(opt(0) / opt(3),
+                                                                          opt(1) / opt(3),
+                                                                          opt(2) / opt(3));
 
     return pt;
   }
 
 private:
-  const garland_heckbert_state_type& mCostMatrices;
+  const Vertex_cost_map m_cost_matrices;
 };
 
 } // namespace Surface_mesh_simplification

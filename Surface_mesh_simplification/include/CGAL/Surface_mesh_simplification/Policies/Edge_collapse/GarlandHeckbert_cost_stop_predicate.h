@@ -26,10 +26,10 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-template <class FT>
+template <class FT_>
 class GarlandHeckbert_cost_stop_predicate
 {
-  const FT m_gh_cost_threshold;
+  typedef FT_                                           FT;
 
 public:
   GarlandHeckbert_cost_stop_predicate(const FT gh_cost_threshold)
@@ -37,14 +37,17 @@ public:
       m_gh_cost_threshold(gh_cost_threshold)
   { }
 
-  template <typename F, typename Profile>
-  bool operator()(const F& aCurrentCost,
+  template <typename Profile>
+  bool operator()(const FT& current_cost,
                   const Profile&,
                   std::size_t,
                   std::size_t) const
   {
-    return aCurrentCost >= m_gh_cost_threshold;
+    return current_cost >= m_gh_cost_threshold;
   }
+
+private:
+  const FT m_gh_cost_threshold;
 };
 
 } // namespace Surface_mesh_simplification

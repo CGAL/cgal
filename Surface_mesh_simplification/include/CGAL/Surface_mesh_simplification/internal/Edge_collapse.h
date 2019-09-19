@@ -33,6 +33,21 @@
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
+namespace internal {
+
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Update_tag)
+
+template <typename Cost_oracle,
+          bool has_Update_tag = has_Update_tag<Cost_oracle>::value>
+struct Oracles_require_updates :
+  public CGAL::Boolean_tag<Cost_oracle::Update_tag::value>
+  // when Mesh_domain has the nested type Has_features
+{ };
+
+template <typename Cost_oracle>
+struct Oracles_require_updates<Cost_oracle, false> : public CGAL::Tag_false { };
+
+} // namespace internal
 
 // Implementation of the vertex-pair collapse triangulated surface mesh simplification algorithm
 template<class TM_,
@@ -171,8 +186,22 @@ public:
   int run();
 
 private:
+  template <bool Tag = internal::Oracles_require_updates<GetCost>::value>
+  void initialize_oracles() const { };
+  template <>
+  void initialize_oracles<true>() const { Get_cost.initialize(mSurface); }
+
+  template <bool Tag = internal::Oracles_require_updates<GetCost>::value>
+  void update_oracles_after_collapse(const Profile& /*aProfile*/, const vertex_descriptor /*aKeptV*/) const { };
+  template <>
+  void update_oracles_after_collapse<true>(const Profile& aProfile, const vertex_descriptor aKeptV) const
+  {
+    Get_cost.update_after_collapse(aProfile, aKeptV);
+  }
+
   void collect();
   void loop();
+
   bool is_collapse_topologically_valid(const Profile& aProfile);
   bool is_tetrahedron(const halfedge_descriptor h1);
   bool is_open_triangle(const halfedge_descriptor h1);
@@ -426,6 +455,9 @@ run()
 
   Visitor.OnStarted(mSurface);
 
+  // this is similar to the visitor, but for the cost/stop/placement oracles
+  initialize_oracles();
+
   // First collect all candidate edges in a PQ
   collect();
 
@@ -550,7 +582,9 @@ collect()
     Placement_type lPlacement = lProfile.p0();
     vertex_descriptor rResult = halfedge_collapse_bk_compatibility(lProfile.v0_v1(), Edge_is_constrained_map);
     put(Vertex_point_map, rResult, *lPlacement);
+
     Visitor.OnCollapsed(lProfile, rResult);
+    update_oracles_after_collapse(lProfile, rResult);
   }
 
   CGAL_SMS_TRACE(0, "Initial edge count: " << mInitialEdgeCount);
@@ -1196,7 +1230,8 @@ collapse(const Profile& aProfile,
     put(Vertex_point_map,rResult,*aPlacement);
   }
 
-  Visitor.OnCollapsed(aProfile,rResult);
+  Visitor.OnCollapsed(aProfile, rResult);
+  update_oracles_after_collapse(aProfile, rResult);
 
   update_neighbors(rResult);
 

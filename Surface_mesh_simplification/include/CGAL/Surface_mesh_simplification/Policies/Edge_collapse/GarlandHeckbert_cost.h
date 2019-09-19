@@ -26,6 +26,8 @@
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_core.h>
 
+#include <CGAL/tags.h>
+
 #include <boost/optional/optional.hpp>
 
 #include <utility>
@@ -33,24 +35,50 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-template<class TM_>
+template <typename TM_>
+struct GarlandHeckbert_cost_matrix
+{
+  typedef internal::GarlandHeckbert_core<TM_>                    GH_Core;
+  typedef typename GH_Core::Matrix4x4                            type;
+};
+
+template <typename TM_, typename VCM_>
 class GarlandHeckbert_cost
 {
+  typedef TM_                                                    TM;
+  typedef VCM_                                                   Vertex_cost_map;
+
 public:
-  typedef TM_                                                 TM;
+  typedef typename boost::graph_traits<TM>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<TM>::halfedge_descriptor  halfedge_descriptor;
 
-  typedef typename internal::GarlandHeckbertCore<TM>          GHC;
-  typedef typename GHC::garland_heckbert_state_type           garland_heckbert_state_type;
-  typedef typename GHC::Matrix4x4                             Matrix4x4;
-  typedef typename GHC::Row4                                  Row4;
-  typedef typename GHC::Col4                                  Col4;
+  typedef internal::GarlandHeckbert_core<TM>                     GH_Core;
 
-  typedef typename GHC::FT                                    FT;
-  typedef typename boost::optional<FT>                        Optional_FT;
+  typedef typename GH_Core::Matrix4x4                            Matrix4x4;
+  typedef typename GH_Core::Col4                                 Col4;
 
-  GarlandHeckbert_cost(const garland_heckbert_state_type& aCostMatrices)
-    : mCostMatrices(aCostMatrices)
+  typedef typename GH_Core::FT                                   FT;
+  typedef typename boost::optional<FT>                           Optional_FT;
+
+  // Tells the edge collapse main function that we need to call "initialize"
+  // and "update" functions. A bit awkward, but still better than abusing visitors.
+  typedef CGAL::Tag_true                                         Update_tag;
+
+  GarlandHeckbert_cost(Vertex_cost_map& vcm,
+                       const FT discontinuity_multiplier = 100)
+    :
+      m_cost_matrices(vcm),
+      m_discontinuity_multiplier(discontinuity_multiplier)
   { }
+
+  void initialize(const TM& tmesh) const
+  {
+    for(const halfedge_descriptor h : halfedges(tmesh))
+    {
+      const vertex_descriptor v = target(h, tmesh);
+      put(m_cost_matrices, v, GH_Core::fundamental_error_quadric(h, tmesh, m_discontinuity_multiplier));
+    }
+  }
 
   template <typename Profile>
   boost::optional<typename Profile::FT>
@@ -60,19 +88,29 @@ public:
     if(!aPlacement)
       return boost::optional<typename Profile::FT>();
 
-    Matrix4x4 combinedMatrix = std::move(GHC::combine_matrices(
-                                           mCostMatrices.at(aProfile.v0()),
-                                           mCostMatrices.at(aProfile.v1())));
+    CGAL_precondition(get(m_cost_matrices, aProfile.v0()) != Matrix4x4());
+    CGAL_precondition(get(m_cost_matrices, aProfile.v1()) != Matrix4x4());
 
-    Col4 pt = std::move(GHC::point_to_homogenous_column(*aPlacement));
-
-    Optional_FT cost = (pt.transpose() * combinedMatrix * pt)(0, 0);
+    const Matrix4x4 combined_matrix = GH_Core::combine_matrices(get(m_cost_matrices, aProfile.v0()),
+                                                                get(m_cost_matrices, aProfile.v1()));
+    const Col4 pt = GH_Core::point_to_homogenous_column(*aPlacement);
+    const Optional_FT cost = (pt.transpose() * combined_matrix * pt)(0, 0);
 
     return cost;
   }
 
+  template <typename Profile>
+  void update_after_collapse(const Profile& aProfile,
+                             const vertex_descriptor new_v) const
+  {
+    put(m_cost_matrices, new_v,
+        GH_Core::combine_matrices(get(m_cost_matrices, aProfile.v0()),
+                                  get(m_cost_matrices, aProfile.v1())));
+  }
+
 private:
-  const garland_heckbert_state_type& mCostMatrices;
+  Vertex_cost_map m_cost_matrices;
+  const FT m_discontinuity_multiplier;
 };
 
 } // namespace Surface_mesh_simplification

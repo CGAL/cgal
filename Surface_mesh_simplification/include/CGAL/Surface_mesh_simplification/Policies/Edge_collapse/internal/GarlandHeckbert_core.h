@@ -39,7 +39,7 @@ namespace Surface_mesh_simplification {
 namespace internal {
 
 template<class TM_>
-struct GarlandHeckbertCore
+struct GarlandHeckbert_core
 {
   typedef TM_                                                                   TM;
   typedef boost::graph_traits<TM>                                               GraphTraits;
@@ -60,8 +60,6 @@ struct GarlandHeckbertCore
   typedef typename Eigen::Matrix<FT, 4, 4>                                      Matrix4x4;
   typedef typename Eigen::Matrix<FT, 1, 4>                                      Row4;
   typedef typename Eigen::Matrix<FT, 4, 1>                                      Col4;
-
-  typedef std::unordered_map<vertex_descriptor, Matrix4x4>                      garland_heckbert_state_type;
 
   static Col4 point_to_homogenous_column(const Point& pt)
   {
