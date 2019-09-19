@@ -637,7 +637,7 @@ loop()
         // satisfying its constraints. In that case the remaining vertex is simply left unmoved.
         Placement_type lPlacement = get_placement(lProfile);
 
-        if(is_collapse_geometrically_valid(lProfile,lPlacement))
+        if(lPlacement != boost::none && is_collapse_geometrically_valid(lProfile, lPlacement))
         {
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
           std::cout << "step " << i_rm << " " << source(*lEdge, mSurface)->point() << " " << target(*lEdge, mSurface)->point() << "\n";
