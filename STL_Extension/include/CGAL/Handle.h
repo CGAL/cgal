@@ -41,8 +41,6 @@ class Rep
 
 #if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
     CGAL::cpp11::atomic<unsigned int> count;
-#elif CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
-    boost::detail::atomic_count count;
 #else // no atomic
     unsigned int count;
 #endif // no atomic

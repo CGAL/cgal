@@ -46,10 +46,6 @@
 
 #ifdef CGAL_HANDLE_FOR_USE_ATOMIC
 #  include <CGAL/atomic.h>
-#  ifdef CGAL_NO_ATOMIC
-#    define CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER 1
-#    include <boost/detail/atomic_count.hpp>
-#  endif
 #endif // not CGAL_HANDLE_FOR_USE_ATOMIC
 
 namespace CGAL {
@@ -62,8 +58,6 @@ class Handle_for
         T t;
 #if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
         typedef CGAL::cpp11::atomic<unsigned int> Counter;
-#elif CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
-        typedef boost::detail::atomic_count Counter;
 #else // no atomic
         typedef unsigned int Counter;
 #endif // no atomic
