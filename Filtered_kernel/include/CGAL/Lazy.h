@@ -56,14 +56,20 @@
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum.hpp>
 
-#if defined(CGAL_HAS_THREADS) && \
-      ! CGAL_HANDLE_FOR_DO_NOT_USE_ATOMIC &&                        \
-      ! CGAL_LAZY_DO_NOT_USE_MUTEX
-#  define CGAL_LAZY_USE_MUTEX 1
-#endif
+#ifdef CGAL_LAZY_ENABLE_THREAD_SAFETY
+#  if __has_feature(__cpp_lib_shared_mutex)
+#    define CGAL_LAZY_USE_SHARED_MUTEX 1
+#  else
+#    define CGAL_LAZY_USE_SHARED_TIMED_MUTEX 1
+#  endif
+#endif // CGAL_LAZY_ENABLE_THREAD_SAFETY
 
-#ifdef CGAL_LAZY_USE_MUTEX
-#  include <CGAL/mutex.h>
+#if CGAL_LAZY_USE_MUTEX
+#  include <mutex>
+#endif
+#if CGAL_LAZY_USE_SHARED_MUTEX or CGAL_LAZY_USE_SHARED_TIMED_MUTEX
+#  define CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT 1
+#  include <shared_mutex>
 #endif
 
 namespace CGAL {
@@ -246,9 +252,17 @@ public:
 
   mutable AT at;
   mutable ET *et;
-#ifdef CGAL_LAZY_USE_MUTEX
-  typedef CGAL::cpp11::mutex Mutex;
-  typedef CGAL::cpp11::lock_guard<Mutex> Lock_guard;
+#if CGAL_LAZY_USE_MUTEX
+  typedef std::mutex Mutex;
+  typedef std::lock_guard<Mutex> Lock_guard;
+  mutable Mutex update_exact_mutex;
+#endif
+#if CGAL_LAZY_USE_SHARED_TIMED_MUTEX
+  typedef std::shared_timed_mutex Mutex;
+  mutable Mutex update_exact_mutex;
+#endif
+#if CGAL_LAZY_USE_SHARED_MUTEX
+  typedef std::shared_mutex Mutex;
   mutable Mutex update_exact_mutex;
 #endif
 
@@ -265,8 +279,11 @@ public:
 
   const AT& approx() const
   {
-#ifdef CGAL_LAZY_USE_MUTEX
+#if CGAL_LAZY_USE_MUTEX
       Lock_guard guard(update_exact_mutex);
+#endif
+#if CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT
+      std::shared_lock<Mutex> lock(update_exact_mutex);
 #endif
       return at;
   }
@@ -279,11 +296,19 @@ protected:
 public:
   const ET & exact() const
   {
-#ifdef CGAL_LAZY_USE_MUTEX
+#if CGAL_LAZY_USE_MUTEX
     Lock_guard guard(update_exact_mutex);
 #endif // CGAL_LAZY_USE_MUTEX
-    if (et==nullptr)
+#if CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT
+    std::shared_lock<Mutex> lock(update_exact_mutex);
+#endif
+    if (et==nullptr) {
+#if CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT
+      lock.unlock();
+      std::unique_lock<Mutex> write_guard(update_exact_mutex);
+#endif
       update_exact();
+    }
     return *et;
   }
 
