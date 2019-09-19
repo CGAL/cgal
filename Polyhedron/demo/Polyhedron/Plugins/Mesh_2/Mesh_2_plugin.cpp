@@ -257,15 +257,15 @@ private:
 
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    typedef ProjectionTraits                                             Gt;
-    typedef CGAL::Delaunay_mesh_vertex_base_2<Gt>                        Vb;
-    typedef CGAL::Delaunay_mesh_face_base_2<Gt>                          Fm;
-    typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2,Gt,Fm>   Fb;
-    typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                TDS;
-    typedef CGAL::No_intersection_tag                                   Tag;
-    typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, Tag>    CDT;
-    typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>               Criteria;
-    typedef CGAL::Delaunay_mesher_2<CDT, Criteria>                   Mesher;
+    typedef ProjectionTraits                                              Gt;
+    typedef CGAL::Delaunay_mesh_vertex_base_2<Gt>                         Vb;
+    typedef CGAL::Delaunay_mesh_face_base_2<Gt>                           Fm;
+    typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2,Gt,Fm>    Fb;
+    typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                  TDS;
+    typedef CGAL::No_constraint_intersection_requiring_constructions_tag  Tag;
+    typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, Tag>      CDT;
+    typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>                      Criteria;
+    typedef CGAL::Delaunay_mesher_2<CDT, Criteria>                        Mesher;
 
     QTime time; // global timer
     time.start();

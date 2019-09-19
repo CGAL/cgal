@@ -22,6 +22,8 @@
 
 #define CGAL_NO_CDT_2_WARNING
 
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Constrained_triangulation_2.h>
@@ -33,15 +35,23 @@ template class CGAL::Constrained_triangulation_2<TestK>;
 int main()
 {
   std::cout << "Testing constrained_triangulation "<< std::endl;
-  std::cout << " with No_intersection_tag : " << std::endl;
-  typedef CGAL::Constrained_triangulation_2<TestK>         Ct;
-  _test_cls_constrained_triangulation(Ct());
-
-  std::cout << "Testing constrained_triangulation "<< std::endl;
-  std::cout << " with No_intersection_requiring_constructions_tag : " << std::endl;
-  typedef CGAL::No_intersection_requiring_constructions_tag              CItag;
+  std::cout << " with No_constraint_intersection_tag : " << std::endl;
+  typedef CGAL::No_constraint_intersection_tag                           CItag;
   typedef CGAL::Constrained_triangulation_2<TestK, CGAL::Default, CItag> Ctwoc;
   _test_cls_constrained_triangulation(Ctwoc());
+
+  std::exit(1);
+
+  std::cout << "Testing constrained_triangulation "<< std::endl;
+  std::cout << " with No_constraint_intersection_requiring_constructions_tag (default): " << std::endl;
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  typedef CGAL::No_intersection_tag                                       CDItag;
+  typedef CGAL::Constrained_triangulation_2<TestK, CGAL::Default, CDItag> Ct;
+#else
+  typedef CGAL::Constrained_triangulation_2<TestK>                        Ct;
+#endif
+  _test_cls_constrained_triangulation(Ct());
 
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with Exact_predicates_tag : " << std::endl;

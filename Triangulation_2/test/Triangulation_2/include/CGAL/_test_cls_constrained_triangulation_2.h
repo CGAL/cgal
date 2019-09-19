@@ -52,24 +52,36 @@ _test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3,
     // There must have been an intersection
     assert(intersection_type != NO_INTERSECTION);
 
-    // If the intersection requires no construction, then only 'no_intersection_tag' throws
-    if(intersection_type == INTERSECTION_WITHOUT_CONSTRUCTION) {
-      assert((boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value));
-    } else {
+    // If the intersection requires no construction, then only 'No_constraint_intersection_tag' throws
+    if(intersection_type == INTERSECTION_WITHOUT_CONSTRUCTION)
+    {
+      assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value));
+    }
+    else // threw and it's not a construction-less intersection ---> real intersection
+    {
       assert(intersection_type == INTERSECTION);
-      assert((boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) ||
-             (boost::is_same<typename Triang::Itag, CGAL::No_intersection_requiring_constructions_tag>::value));
+      assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) ||
+#ifndef CGAL_NO_DEPRECATED_CODE
+             (boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) ||
+#endif
+             (boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
     }
 
     return;
   }
 
-  if(intersection_type == INTERSECTION_WITHOUT_CONSTRUCTION) {
-    // Even with an intersection without construction, 'No_intersection_tag' should throw
-    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value));
-  } else if(intersection_type == INTERSECTION) {
-    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) &&
-           !(boost::is_same<typename Triang::Itag, CGAL::No_intersection_requiring_constructions_tag>::value));
+  if(intersection_type == INTERSECTION_WITHOUT_CONSTRUCTION)
+  {
+    // Even with an intersection without construction, 'No_constraint_intersection_tag' should have thrown
+    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value));
+  }
+  else if(intersection_type == INTERSECTION)
+  {
+    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) &&
+#ifndef CGAL_NO_DEPRECATED_CODE
+           !(boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) &&
+#endif
+           !(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
   }
 }
 

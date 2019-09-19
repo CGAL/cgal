@@ -221,11 +221,11 @@ public:
   template<typename Kernel>
   class Triangulation_handler {
 
-    typedef typename CGAL::Triangulation_vertex_base_2<Kernel>               Vb;
-    typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel>     Fb;
-    typedef typename CGAL::Triangulation_data_structure_2<Vb,Fb>             TDS;
-    typedef typename CGAL::No_intersection_tag                               Itag;
-    typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS,Itag>      CT;
+    typedef typename CGAL::Triangulation_vertex_base_2<Kernel>                      Vb;
+    typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel>            Fb;
+    typedef typename CGAL::Triangulation_data_structure_2<Vb,Fb>                    TDS;
+    typedef typename CGAL::No_constraint_intersection_requiring_constructions_tag   Itag;
+    typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS,Itag>             CT;
 
     typedef typename CT::Face_handle           Face_handle;
     typedef typename CT::Finite_faces_iterator Finite_face_iterator;

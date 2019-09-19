@@ -75,13 +75,13 @@ public:
   typedef CGAL::Tag_true                      Supports_simple_polygon_category;
 
 private:
-  typedef CGAL::Triangulation_vertex_base_2<K>                     Vb;
-  typedef CGAL::Constrained_triangulation_face_base_2<K>           Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
-  typedef CGAL::No_intersection_tag                                Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
+  typedef CGAL::Triangulation_vertex_base_2<K>                          Vb;
+  typedef CGAL::Constrained_triangulation_face_base_2<K>                Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                  TDS;
+  typedef CGAL::No_constraint_intersection_requiring_constructions_tag  Itag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>      CDT;
 
-  typedef std::pair<Point_2,Point_2>                               Constraint;
+  typedef std::pair<Point_2, Point_2>                                   Constraint;
 
   // Functor to create edge constraints for the CDT out of Halfedges
   struct Make_constraint
