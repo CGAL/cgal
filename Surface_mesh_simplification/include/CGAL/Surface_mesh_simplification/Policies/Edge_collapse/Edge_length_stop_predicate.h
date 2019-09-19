@@ -29,21 +29,22 @@ namespace Surface_mesh_simplification {
 template <class FT>
 class Edge_length_stop_predicate
 {
-  FT m_edge_sq_length_threshold;
-
 public:
-  Edge_length_stop_predicate(double edge_length_threshold)
+  Edge_length_stop_predicate(const FT edge_length_threshold)
     : m_edge_sq_length_threshold(edge_length_threshold * edge_length_threshold)
   {}
 
-  template <typename F, typename Profile>
-  bool operator()(const F&,
+  template <typename Profile>
+  bool operator()(const FT&,
                   const Profile&  profile,
                   std::size_t,
                   std::size_t) const
   {
     return CGAL::squared_distance(profile.p0(), profile.p1()) > m_edge_sq_length_threshold;
   }
+
+private:
+  const FT m_edge_sq_length_threshold;
 };
 
 } // namespace Surface_mesh_simplification

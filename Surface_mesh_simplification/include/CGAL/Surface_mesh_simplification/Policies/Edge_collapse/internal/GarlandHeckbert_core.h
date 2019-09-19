@@ -44,17 +44,18 @@ struct GarlandHeckbert_core
   typedef TM_                                                                   TM;
   typedef boost::graph_traits<TM>                                               GraphTraits;
 
-  typedef typename GraphTraits::edges_size_type                                 size_type;
   typedef typename GraphTraits::vertex_descriptor                               vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor                             halfedge_descriptor;
   typedef typename GraphTraits::face_descriptor                                 face_descriptor;
+
   typedef typename boost::property_map<TM, CGAL::vertex_point_t>::type          Vertex_point_pmap;
+
   typedef typename boost::property_traits<Vertex_point_pmap>::value_type        Point;
   typedef typename Kernel_traits<Point>::Kernel                                 Kernel;
-  typedef typename Kernel::Plane_3                                              Plane_3;
-  typedef typename Kernel::Line_3                                               Line_3;
   typedef typename Kernel::FT                                                   FT;
   typedef typename Kernel::RT                                                   RT;
+  typedef typename Kernel::Line_3                                               Line_3;
+  typedef typename Kernel::Plane_3                                              Plane_3;
   typedef typename Kernel::Vector_3                                             Vector_3;
 
   typedef typename Eigen::Matrix<FT, 4, 4>                                      Matrix4x4;
@@ -75,17 +76,18 @@ struct GarlandHeckbert_core
     return aFirst + aSecond;
   }
 
-  /*
-  * Returns true if the target of aHD is a discontinuity vertex in aTM
+  /**
+  * Returns `true` if the target of aHD is a discontinuity vertex in aTM
   *
   * Currently, only checks if vertex belongs to a border.
   */
-  /*static bool is_discontinuity_vertex(const halfedge_descriptor& aHD, const TM& aTM) {
-    if(is_border(target(aHD, aTM), aTM)) {
+  static bool is_discontinuity_vertex(const halfedge_descriptor& aHD, const TM& aTM)
+  {
+    if(is_border(target(aHD, aTM), aTM))
       return true;
-    }
+
     return false;
-  }*/
+  }
 
   static bool is_discontinuity_edge(const halfedge_descriptor& aHD, const TM& aTM)
   {
@@ -108,20 +110,14 @@ struct GarlandHeckbert_core
                                         target_vertex_point.y(),
                                         target_vertex_point.z());
 
-    //std::cout << "point: " << target_vertex_point.x() << " "
-    //            << target_vertex_point.y() << " "
-    //            << target_vertex_point.z() << std::endl;
+    // const bool discontinuity_vertex = is_discontinuity_vertex(aHD, aTM);
 
-    //bool discontinuity_vertex = is_discontinuity_vertex(aHD, aTM);
-
-    int i = 0;
     for(const halfedge_descriptor hd: halfedges_around_target(target_vd, aTM))
     {
       const face_descriptor fd = face(hd, aTM);
       if(fd == GraphTraits::null_face())
         continue;
 
-      //std::cout << "face" << std::endl;
       std::vector<vertex_descriptor> vds;
       for(vertex_descriptor vd : vertices_around_face(hd, aTM))
         vds.push_back(vd);
@@ -131,7 +127,9 @@ struct GarlandHeckbert_core
                     get(boost::vertex_point, aTM, vds[2]));
 
       Row4 plane_mtr;
-      const FT norm = sqrt(CGAL::square(plane.a()) + CGAL::square(plane.b()) + CGAL::square(plane.c()));
+      const FT norm = sqrt(CGAL::square(plane.a()) +
+                           CGAL::square(plane.b()) +
+                           CGAL::square(plane.c()));
       const FT den = FT(1) / norm;
 
       plane_mtr << den * plane.a(),
@@ -139,7 +137,6 @@ struct GarlandHeckbert_core
                    den * plane.c(),
                    den * plane.d();
       quadric += plane_mtr.transpose() * plane_mtr;
-      //std::cout << plane_mtr << std::endl;
 
       if(is_discontinuity_edge(hd, aTM))
       {
@@ -171,7 +168,7 @@ struct GarlandHeckbert_core
         const FT norm = sqrt(CGAL::square(normal.x()) +
                              CGAL::square(normal.y()) +
                              CGAL::square(normal.z()));
-        const FT den = FT(1) / den;
+        const FT den = FT(1) / norm;
 
         plane_mtr << den * normal.x(),
                      den * normal.y(),
@@ -180,7 +177,8 @@ struct GarlandHeckbert_core
         quadric += plane_mtr.transpose() * plane_mtr * aDiscontinuityMultiplier;
       }
 
-      /*if(discontinuity_vertex)
+      /*
+      if(discontinuity_vertex)
       {
         const vertex_descriptor source_vd = source(hd, aTM);
         const Line_3 edge_line = Line_3(get(boost::vertex_point, aTM, source_vd),
