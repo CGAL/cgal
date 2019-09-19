@@ -23,17 +23,14 @@ Supported file formats are listed on the \link IOStreamSupportedFileFormats foll
 
 \section IOstreamSupportedFormats Importing and Exporting Data
 
-CGAL algorithms work on different types of data structures, such as point sets ([link to some
-point set packages]), polygon soups and polygon meshes ([link to some BGL/PMP]), and ... .
+CGAL algorithms work on different types of data structures, such as \ref Chapter_Point_Set_3 "point sets",
+ \ref PolygonSoups "polygon soups" or \ref PMPDef "polygon meshes".
 
 \subsection IOstreamPolygonMeshIO Polygon Mesh IO
+Basically, a Polygon Mesh is a 3D structure that refines the concept of `FaceGraph`
+with some other restrictions. A more precise definition can be found \ref PMPDef "here".
 
 TODO:
-- Definition of a (3D) polygon mesh and pointer to the actual definition (make it something official in
-  the user manual of the BGL rather than hidden in the documentation of is_valid_polygon_mesh()).
-
-- Make a nicer table not using Markdown (header is not just the first line, but both the formats
-  and the subcategories (ascii/binary)
 
 - In the table below, if the READER/WRITER/BINARY etc. does not exist, put a red cross. Otherwise,
   put a link to the documentation of the function.
@@ -41,17 +38,44 @@ TODO:
 - Each category (OFF, STL, OBJ) in the table is a link towards a page which describes the format (see example
   for OFF).
 
-- This table assumes that the functions in the table are BGL functions that can be used with either
-  Surface_mesh or Polyhedron_3.
+<table>
+    <tr>
+      <th colspan="1"></th>
+      <th colspan="1">OFF</th>
+      <th colspan="1">STL</th>
+      <th colspan="2">VTP</th>
+      <th colspan="2">OBJ</th>
+    </tr>
+    <tr>
+    <th colspan="1"></th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">ASCII</th>  <th colspan="1">BINARY</th>
+      <th colspan="1">ASCII</th>  <th colspan="1">BINARY</th>
+    </tr>
+    <tr>
+      <td>Export</td>
+      <td>\ref write_off(std::ostream&,const FaceGraph&,const NamedParameters&) "CGAL::write_off()"</td>
+      <td>\ref CGAL::write_STL(const TriangleMesh&, std::ostream&) "CGAL::write_STL()"</td>
+      <td>\ref CGAL::write_vtp()</td>
+      <td>\ref CGAL::write_vtp()</td>
+      <td>write_obj()</td>
+      <td>write_obj()</td>
+    </tr>
+    <tr>
+      <td>Import</td>
+      <td>\ref read_off(std::istream&,FaceGraph&,NamedParameters) "CGAL::read_off()"</td>
+      <td>\ref CGAL::read_STL()</td>
+      <td>\ref CGAL::read_vtp()</td>
+      <td>\ref CGAL::read_vtp()</td>
+      <td>read_obj()</td>
+      <td>read_obj()</td>
+    </tr>
+</table>
 
-<center>
-|        | OFF             || STL            || OBJ            || PLY            || etc.            ||
-| :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
-|        | ACSII  | BINARY | ACSII  | BINARY | ACSII  | BINARY | ACSII  | BINARY | ACSII  | BINARY |
-| Export | write_off [LINK] |  |  |  |  |  |  |  |  |  |
-| Import | read_off [LINK] | read_off [LINK] |  |  |  |  |  |  |  |  |
-</center>
-
+The table above only lists the functions that work with any Polygon Mesh.
+More functions are available for more specific classes, and they can be found
+\link IOStreamSupportedFileFormats here\endlink.
 \subsection IOstreamPolygonSoupIO Polygon Soup IO
 A polygon soup is a set of polygons with no global combinatorial information, etc.
 

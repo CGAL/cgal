@@ -8,13 +8,16 @@ and the data structures offered by \cgal that may be used to read and write file
 this specific format.
 
 - \ref IOStreamOFF
+- \ref IOStreamOBJ
 - \ref IOStreamPLY
 - \ref IOStreamSTL
 - \ref IOStreamVTK
 - \ref IOStreamAvizo
 - \ref IOStreamMedit
 - \ref IOStreamTetgen
-
+TODO:
+GOCAD
+OBJ implem
 
 \section IOStreamOFF Object File Format (OFF)
 The `OFF` file format can be used to represent collections of planar polygons with possibly shared vertices.
@@ -46,6 +49,24 @@ The following \cgal data structures can be exported into the `OFF` file format:
 - CGAL::Point_set_3 (\ref write_off_point_set())
 
 Note that we only support OFF, and COFF for CGAL::Surface_mesh.
+
+
+\section IOStreamOBJ Wavefront (OBJ)
+The OBJ file format is a simple data-format that represents 3D geometry.
+Vertices are stored in a counter-clockwise order by default, making explicit declaration of face normals unnecessary.
+A precise specification of the format is available <a href="http://www.martinreddy.net/gfx/3d/OBJ.spec">here</a>.
+
+\subsection IOStreamOBJInput Reading OBJ files
+Objects represented in the `.OBJ` format can be imported into \cgal's working environment
+using the following data structures and functions.
+
+- Any structure that is a model of the concept `FaceGraph` ()
+
+\subsection IOStreamOBJOutput Writing OBJ files
+The following \cgal data structures can be exported into the `OBJ` file format:
+
+- Any structure that is a model of the concept `FaceGraph` (write_off(std::ostream&,const FaceGraph&,const NamedParameters&))
+
 
 \section IOStreamPLY Polygon File Format (PLY)
 Conceived to store the data obtained during 3D scans, the `PLY` file format stores objects

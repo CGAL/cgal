@@ -41,6 +41,7 @@
 #include <CGAL/IO/write_vtk.h>
 #include <CGAL/internal/Generic_facegraph_builder.h>
 #include <CGAL/IO/STL/STL_reader.h>
+#include <CGAL/IO/OBJ/OBJ_reader.h>
 
 namespace CGAL {
   /*!
@@ -904,7 +905,7 @@ bool read_vtp(const char* filename, FaceGraph& face_graph)
 
 #ifdef DOXYGEN_RUNNING
 /*! \ingroup PkgBGLIOFct
- * \brief  reads a PolyData in the VTP foramt into a triangulated surface mesh.
+ * \brief  reads a PolyData in the VTP format into a triangulated surface mesh.
  *
  * \tparam FaceGraph a model of `FaceListGraph`.
  *
@@ -1052,6 +1053,78 @@ read_STL(TriangleMesh& tm, std::istream& in)
   ok &= tm.is_valid();
   return ok;
 }
+
+
+
+
+
+
+
+namespace OBJ_internal
+{
+//Use CRTP to gain access to the protected members without getters/setters.
+template <class Facegraph, class P>
+class OBJ_builder : public CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, OBJ_builder<Facegraph, P> >
+{
+  typedef OBJ_builder<Facegraph, P> Self;
+  typedef CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, Self> Base;
+  typedef typename Base::Point_3 Point_3;
+  typedef typename Base::Points_3 Points_3;
+  typedef typename Base::Facet Facet;
+  typedef typename Base::Surface Surface;
+public:
+  OBJ_builder(std::istream& is_)
+    :Base(is_){}
+  void do_construct(Facegraph& graph)
+  {
+    typedef typename boost::graph_traits<Facegraph>::vertex_descriptor
+        vertex_descriptor;
+
+    std::vector<vertex_descriptor> vertices(this->meshPoints.size());
+    for(std::size_t id = 0; id < this->meshPoints.size(); ++id)
+    {
+      vertices[id] = add_vertex( this->meshPoints[id], graph);
+    }
+    //    graph.begin_surface( meshPoints.size(), mesh.size());
+    typedef typename Points_3::size_type size_type;
+
+    for(size_type i=0; i < this->mesh.size(); i++){
+      std::vector<vertex_descriptor> face;
+      for(std::size_t j=0; j< this->mesh[i].size(); ++j)
+        face[j] = vertices[this->mesh[i][j]];
+
+      CGAL::Euler::add_face(face, graph);
+    }
+  }
+
+  void
+  read(std::istream& input, Points_3& points, Surface& surface)
+  {
+    read_OBJ(input, points, surface);
+  }
+
+};
+} // end STL_internal
+
+/*!
+  \ingroup PkgBGLIOFct
+  reads the graph `tm` from the stream `in` in the OBJ format.
+  \pre The data must represent a 2-manifold
+  */
+template <class TriangleMesh>
+bool
+read_OBJ(TriangleMesh& tm, std::istream& in)
+{
+  //typedef typename Polyhedron::HalfedgeDS HDS;
+  typedef typename boost::property_traits<typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type>::value_type Point_3;
+
+  OBJ_internal::OBJ_builder<TriangleMesh, Point_3> builder(in);
+  builder(tm);
+  bool ok = in.good() || in.eof();
+  ok &= tm.is_valid();
+  return ok;
+}
+
 
 } // namespace CGAL
 
