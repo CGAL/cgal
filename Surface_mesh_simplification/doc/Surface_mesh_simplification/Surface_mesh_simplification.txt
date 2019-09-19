@@ -370,21 +370,14 @@ Garland-Heckbert simplification is implemented with 2 policy classes, a visitor,
 that ties everything together.
 
 `Surface_mesh_simplification::GarlandHeckbert_cost` is used as the `GetCost` policy,
-`Surface_mesh_simplification::GarlandHeckbert_placement` is used as the `GetPlacement` policy,
-`Surface_mesh_simplification::GarlandHeckbert_edge_collapse_visitor_base` is used as the visitor,
-and `Surface_mesh_simplification::GarlandHeckbert_edge_collapse_visitor_base::garland_heckbert_state_type` is used as the
-state.
+`Surface_mesh_simplification::GarlandHeckbert_placement` is used as the `GetPlacement` policy.
 
 There is also a stop predicate called `Surface_mesh_simplification::GarlandHeckbert_cost_stop_predicate` which
 stops the operation when the Garland-Heckbert cost of collapsing an edge exceeds a given threshold.
 
-\cgalExample{Surface_mesh_simplification/edge_collapse_garland_heckbert.cpp}
-
-\subsection Surface_mesh_simplificationExampleWithGarlandHeckbertCombinedWithBoundedChangeOfFaceNormals Example with Garland-Heckbert Combined With Bounded Change of Face Normals
-
 `Surface_mesh_simplification::Bounded_normal_change_placement` can be used with Garland-Heckbert
 as well in order to produce surfaces without self intersections.
 
-\cgalExample{Surface_mesh_simplification/edge_collapse_garland_heckbert_bounded_normal_change.cpp}
+\cgalExample{Surface_mesh_simplification/edge_collapse_garland_heckbert.cpp}
 */
 } /* namespace CGAL */

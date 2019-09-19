@@ -15,8 +15,6 @@ a halfedge-collapse, following the Garland-Heckbert strategy
 
 \sa `CGAL::Surface_mesh_simplification::GarlandHeckbert_cost<TriangleMesh>`
 
-\sa `CGAL::Surface_mesh_simplification::GarlandHeckbert_edge_collapse_visitor_base<TriangleMesh>`
-
 */
 template<class TriangleMesh>
 class GarlandHeckbert_placement
@@ -29,7 +27,7 @@ public:
   Initializes the policy with the given <I>garland heckbert state</I> object.
   Garland&Heckbert strategy requires a shared state object between cost, placement, and visitor policies.
   */
-  GarlandHeckbert_placement(const GarlandHeckbert_edge_collapse_visitor_base<TriangleMesh>::garland_heckbert_state_type& state);
+  GarlandHeckbert_placement();
   /// @}
 
   /// \name Operations
