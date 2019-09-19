@@ -31,6 +31,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <boost/tuple/tuple.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Default.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -692,6 +693,10 @@ public:
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  No_intersection_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          No_intersection_requiring_constructions_tag);
   Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
@@ -1027,11 +1032,16 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
-  if ( lt == Triangulation::EDGE && loc->is_constrained(li) ){
+  if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
+  {
+    if(boost::is_same<typename Tr::Itag, No_intersection_tag>::value)
+      throw typename Tr::Intersection_of_constraints_exception();
+
     insert_in_constrained_edge = true;
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
   }
+
   Vertex_handle va = Triangulation::insert(a,lt,loc,li);
   // update the hierarchy
   if (insert_in_constrained_edge) {
@@ -1053,16 +1063,24 @@ intersect(Face_handle f, int i,
 template <class Tr>
 typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
 Constrained_triangulation_plus_2<Tr>::
-
-intersect(Face_handle , int , 
-	  Vertex_handle ,
-	  Vertex_handle ,
-	  No_intersection_tag)
+intersect(Face_handle, int,
+          Vertex_handle,
+          Vertex_handle,
+          No_intersection_tag)
 {
-  std::cerr << " sorry, this triangulation does not deal with" 
-	    <<    std::endl
-	    << " intersecting constraints" << std::endl;
-  CGAL_triangulation_assertion(false);
+  throw typename Tr::Intersection_of_constraints_exception();
+  return Vertex_handle();
+}
+
+template <class Tr>
+typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle
+Constrained_triangulation_plus_2<Tr>::
+intersect(Face_handle, int,
+          Vertex_handle,
+          Vertex_handle,
+          No_intersection_requiring_constructions_tag)
+{
+  throw typename Tr::Intersection_of_constraints_exception();
   return Vertex_handle();
 }
 

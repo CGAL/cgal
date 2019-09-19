@@ -43,10 +43,12 @@
 
 #include <boost/utility/result_of.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 
 struct No_intersection_tag{};
+struct No_intersection_requiring_constructions_tag{};
 struct Exact_intersections_tag{}; // to be used with an exact number type
 struct Exact_predicates_tag{}; // to be used with filtered exact number
 
@@ -112,7 +114,7 @@ public:
   {
     const char* what() const throw ()
     {
-      return "Intersection of constraints while using No_intersection_tag";
+      return "Unauthorized intersections of constraints";
     }
   };
 
@@ -309,7 +311,21 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
 
   Face_handle fr;
   int i;
-  if(includes_edge(vaa,vbb,vi,fr,i)) {
+  if(includes_edge(vaa,vbb,vi,fr,i))
+  {
+    // if the segment (or a subpart of the segment) that we are trying to constraint is already
+    // present in the triangulation and is already marked as constrained,
+    // then this is an intersection
+    if(boost::is_same<Itag, No_intersection_tag>::value) {
+      if(dimension() == 1) {
+        if(fr->is_constrained(2))
+          throw Intersection_of_constraints_exception();
+      } else {
+        if(fr->is_constrained(i))
+          throw Intersection_of_constraints_exception();
+      }
+    }
+
     mark_constraint(fr,i);
     if (vi != vbb)  {
       insert_constraint(vi,vbb,out);
@@ -464,6 +480,10 @@ protected:
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  No_intersection_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          No_intersection_requiring_constructions_tag);
   Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
@@ -658,16 +678,26 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
-  if ( lt == Triangulation::EDGE && loc->is_constrained(li) ){
+  if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
+  {
+    if(boost::is_same<Itag, No_intersection_tag>::value)
+      throw Intersection_of_constraints_exception();
+
     insert_in_constrained_edge = true;
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
   }
 
   va = Triangulation::insert(a,lt,loc,li);
-  if (insert_in_constrained_edge) update_constraints_incident(va, v1,v2);
-  else if(lt != Triangulation::VERTEX) clear_constraints_incident(va);
-  if (dimension() == 2) update_constraints_opposite(va);
+
+  if (insert_in_constrained_edge)
+    update_constraints_incident(va, v1,v2);
+  else if(lt != Triangulation::VERTEX)
+    clear_constraints_incident(va);
+
+  if (dimension() == 2)
+    update_constraints_opposite(va);
+
   return va;
 }
 
@@ -728,7 +758,21 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
 
     Face_handle fr;
     int i;
-    if(includes_edge(vaa,vbb,vi,fr,i)) {
+    if(includes_edge(vaa,vbb,vi,fr,i))
+    {
+      // if the segment (or a subpart of the segment) that we are trying to constraint is already
+      // present in the triangulation and is already marked as constrained,
+      // then this is an intersection
+      if(boost::is_same<Itag, No_intersection_tag>::value) {
+        if(dimension() == 1) {
+          if(fr->is_constrained(2))
+            throw Intersection_of_constraints_exception();
+        } else {
+          if(fr->is_constrained(i))
+            throw Intersection_of_constraints_exception();
+        }
+      }
+
       mark_constraint(fr,i);
       if (vi != vbb)  {
         stack.push(std::make_pair(vi,vbb));
@@ -738,7 +782,6 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       
     List_faces intersected_faces;
     List_edges conflict_boundary_ab, conflict_boundary_ba;
-     
     bool intersection  = find_intersected_faces( vaa, vbb,
                                                  intersected_faces,
                                                  conflict_boundary_ab,
@@ -882,7 +925,18 @@ intersect(Face_handle , int ,
           Vertex_handle ,
           No_intersection_tag)
 {
+  throw Intersection_of_constraints_exception();
+  return Vertex_handle() ;
+}
 
+template <class Gt, class Tds, class Itag >
+typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
+Constrained_triangulation_2<Gt,Tds,Itag>::
+intersect(Face_handle , int ,
+          Vertex_handle ,
+          Vertex_handle ,
+          No_intersection_requiring_constructions_tag)
+{
   throw Intersection_of_constraints_exception();
   return Vertex_handle() ;
 }
@@ -907,7 +961,7 @@ intersect(Face_handle f, int i,
   "would avoid cascading intersection computation\n"
   " and be much more efficient\n"
   "This message is shown only if CGAL_NO_CDT_2_WARNING"
-  "is not defined.\n");
+  " is not defined.\n");
 #endif
   const Point& pa = vaa->point();
   const Point& pb = vbb->point();
@@ -1429,7 +1483,20 @@ intersection(const Gt& ,
 {
   return false;
 }
-	     
+
+template<class Gt>
+bool
+intersection(const Gt& ,
+             const typename Gt::Point_2& ,
+             const typename Gt::Point_2& ,
+             const typename Gt::Point_2& ,
+             const typename Gt::Point_2& ,
+             typename Gt::Point_2& ,
+             No_intersection_requiring_constructions_tag)
+{
+  return false;
+}
+
 template<class Gt>
 bool
 intersection(const Gt& gt,
@@ -1545,6 +1612,18 @@ limit_intersection(const Gt& ,
 		   const typename Gt::Point_2& , 
 		   const typename Gt::Point_2& ,
 		   No_intersection_tag)
+{
+  return 0;
+}
+
+template<class Gt>
+int
+limit_intersection(const Gt& ,
+       const typename Gt::Point_2& ,
+       const typename Gt::Point_2& ,
+       const typename Gt::Point_2& ,
+       const typename Gt::Point_2& ,
+       No_intersection_requiring_constructions_tag)
 {
   return 0;
 }

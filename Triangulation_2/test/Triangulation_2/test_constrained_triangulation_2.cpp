@@ -20,6 +20,8 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+#define CGAL_NO_CDT_2_WARNING
+
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Constrained_triangulation_2.h>
@@ -34,6 +36,12 @@ int main()
   std::cout << " with No_intersection_tag : " << std::endl;
   typedef CGAL::Constrained_triangulation_2<TestK>         Ct;
   _test_cls_constrained_triangulation(Ct());
+
+  std::cout << "Testing constrained_triangulation "<< std::endl;
+  std::cout << " with No_intersection_requiring_constructions_tag : " << std::endl;
+  typedef CGAL::No_intersection_requiring_constructions_tag              CItag;
+  typedef CGAL::Constrained_triangulation_2<TestK, CGAL::Default, CItag> Ctwoc;
+  _test_cls_constrained_triangulation(Ctwoc());
 
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with Exact_predicates_tag : " << std::endl;
