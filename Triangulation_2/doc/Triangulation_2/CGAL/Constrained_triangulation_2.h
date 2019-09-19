@@ -5,10 +5,29 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation2TriangulationClasses
 
+\deprecated This class is deprecated since \cgal 5.1 as it was ambiguous. Users should instead
+use the tags `No_constraint_intersection_tag` and `No_constraint_intersection_requiring_constructions_tag`,
+depending on their needs.
+
 Intersection tag for constrained triangulations, when input constraints do not intersect.
 */
 struct No_intersection_tag{};
 
+/*!
+\ingroup PkgTriangulation2TriangulationClasses
+
+Intersection tag for constrained triangulations, when input constraints are not allowed to intersect
+except at a single common extremity.
+*/
+struct No_constraint_intersection_tag{};
+
+/*!
+\ingroup PkgTriangulation2TriangulationClasses
+
+Intersection tag for constrained triangulations, when input constraints are not allowed to intersect
+except if the intersection does not require any new point construction.
+*/
+struct No_constraint_intersection_requiring_constructions_tag{};
 
 /*!
 \ingroup PkgTriangulation2TriangulationClasses
@@ -99,8 +118,11 @@ of the concept `TriangulationDataStructure_2` or `Default`.
 which serves to choose between the different 
 strategies to deal with constraints intersections. 
 \cgal provides three valid types for this parameter: 
-- `No_intersection_tag` disallows intersections of 
-input constraints, 
+- `No_constraint_intersection_tag` disallows intersections of input constraints
+except for the case of a single common extremity,
+- `No_constraint_intersection_requiring_constructions_tag` disallows intersections of input constraints
+except for configurations where the intersection can be represented without requiring the construction
+of a new point (e.g. overlapping constraints),
 - `Exact_predicates_tag` is to be used when the traits 
 class 
 provides exact predicates but approximate constructions of the 
@@ -130,7 +152,7 @@ the default for
 and the default for the 
 triangulation data structure parameter is the class 
 `Triangulation_data_structure_2 < Triangulation_vertex_base_2<Gt>, Constrained_triangulation_face_base_2<Gt> >`. 
-The default intersection tag is `No_intersection_tag`.
+The default intersection tag is `No_constraint_intersection_requiring_constructions_tag`.
 
 \sa `CGAL::Triangulation_2<Traits,Tds>`
 \sa `TriangulationDataStructure_2`
@@ -344,8 +366,8 @@ template <typename  Traits, typename Tds, typename Itag>
 std::istream& operator>>(std::istream& is,Constrained_triangulation_2<Traits,Tds,Itag> Ct& ct); 
 
 /*! Exception used by constrained triangulations configured with
-the tag `No_intersection_tag`. It is thrown upon insertion of a constraint
-that is intersecting an already inserted constraint in its interior.
+the tags `No_constraint_intersection_tag` or `No_constraint_intersection_requiring_constructions_tag`
+when the insertion of a new constraint would break the respective conditions associated to each tag.
 */
 class Intersection_of_constraints_exception;
 } /* end namespace CGAL */
