@@ -47,10 +47,16 @@
 
 namespace CGAL {
 
-struct No_intersection_tag{};
-struct No_intersection_requiring_constructions_tag{};
+struct No_constraint_intersection_tag{};
+struct No_constraint_intersection_requiring_constructions_tag{};
 struct Exact_intersections_tag{}; // to be used with an exact number type
 struct Exact_predicates_tag{}; // to be used with filtered exact number
+
+// This tag was deprecated in favor of `No_consNo_constraint_intersection_requiring_constructions_tagint_intersection_requiring_constructions_tag`
+// due to an inaccuracy between the code and the documenation.
+struct CGAL_DEPRECATED No_intersection_tag :
+  public No_constraint_intersection_requiring_constructions_tag
+{ };
 
 namespace internal {
 
@@ -78,7 +84,7 @@ public:
                                         Triangulation_vertex_base_2<Gt>,
                                         Constrained_triangulation_face_base_2<Gt> > >::type Tds;
 
-  typedef typename Default::Get<Itag_, No_intersection_tag>::type Itag;
+  typedef typename Default::Get<Itag_, No_constraint_intersection_requiring_constructions_tag>::type Itag;
 
   typedef Triangulation_2<Gt,Tds> Triangulation;
   typedef Constrained_triangulation_2<Gt,Tds_,Itag_>  Constrained_triangulation;
@@ -316,7 +322,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
     // if the segment (or a subpart of the segment) that we are trying to constraint is already
     // present in the triangulation and is already marked as constrained,
     // then this is an intersection
-    if(boost::is_same<Itag, No_intersection_tag>::value) {
+    if(boost::is_same<Itag, No_constraint_intersection_tag>::value) {
       if(dimension() == 1) {
         if(fr->is_constrained(2))
           throw Intersection_of_constraints_exception();
@@ -473,25 +479,25 @@ protected:
 
   void mark_constraint(Face_handle fr, int i);
 
-  virtual Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  No_intersection_tag);
+  virtual Vertex_handle intersect(Face_handle f, int i,
+                                  Vertex_handle vaa,
+                                  Vertex_handle vbb);
   Vertex_handle intersect(Face_handle f, int i,
                           Vertex_handle vaa,
                           Vertex_handle vbb,
-                          No_intersection_requiring_constructions_tag);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			   Exact_intersections_tag);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  Exact_predicates_tag);
+                          No_constraint_intersection_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          No_constraint_intersection_requiring_constructions_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          Exact_intersections_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          Exact_predicates_tag);
 private:
   //made private to avoid using the Triangulation_2 version
   Vertex_handle move(Vertex_handle v, const Point &)
@@ -680,7 +686,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
-    if(boost::is_same<Itag, No_intersection_tag>::value)
+    if(boost::is_same<Itag, No_constraint_intersection_tag>::value)
       throw Intersection_of_constraints_exception();
 
     insert_in_constrained_edge = true;
@@ -763,7 +769,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       // if the segment (or a subpart of the segment) that we are trying to constraint is already
       // present in the triangulation and is already marked as constrained,
       // then this is an intersection
-      if(boost::is_same<Itag, No_intersection_tag>::value) {
+      if(boost::is_same<Itag, No_constraint_intersection_tag>::value) {
         if(dimension() == 1) {
           if(fr->is_constrained(2))
             throw Intersection_of_constraints_exception();
@@ -923,7 +929,7 @@ Constrained_triangulation_2<Gt,Tds,Itag>::
 intersect(Face_handle , int ,
           Vertex_handle ,
           Vertex_handle ,
-          No_intersection_tag)
+          No_constraint_intersection_tag)
 {
   throw Intersection_of_constraints_exception();
   return Vertex_handle() ;
@@ -935,7 +941,7 @@ Constrained_triangulation_2<Gt,Tds,Itag>::
 intersect(Face_handle , int ,
           Vertex_handle ,
           Vertex_handle ,
-          No_intersection_requiring_constructions_tag)
+          No_constraint_intersection_requiring_constructions_tag)
 {
   throw Intersection_of_constraints_exception();
   return Vertex_handle() ;
@@ -1474,12 +1480,12 @@ operator>>(std::istream& is,
 template<class Gt>
 bool
 intersection(const Gt& ,
-	     const typename Gt::Point_2& , 
-	     const typename Gt::Point_2& , 
-	     const typename Gt::Point_2& , 
-	     const typename Gt::Point_2& ,
-	     typename Gt::Point_2& ,
-	     No_intersection_tag)
+             const typename Gt::Point_2& ,
+             const typename Gt::Point_2& ,
+             const typename Gt::Point_2& ,
+             const typename Gt::Point_2& ,
+             typename Gt::Point_2& ,
+             No_constraint_intersection_tag)
 {
   return false;
 }
@@ -1492,7 +1498,7 @@ intersection(const Gt& ,
              const typename Gt::Point_2& ,
              const typename Gt::Point_2& ,
              typename Gt::Point_2& ,
-             No_intersection_requiring_constructions_tag)
+             No_constraint_intersection_requiring_constructions_tag)
 {
   return false;
 }
@@ -1607,11 +1613,11 @@ compute_intersection(const Gt& gt,
 template<class Gt>
 int
 limit_intersection(const Gt& ,
-		   const typename Gt::Point_2& , 
-		   const typename Gt::Point_2& , 
-		   const typename Gt::Point_2& , 
-		   const typename Gt::Point_2& ,
-		   No_intersection_tag)
+                   const typename Gt::Point_2& ,
+                   const typename Gt::Point_2& ,
+                   const typename Gt::Point_2& ,
+                   const typename Gt::Point_2& ,
+                   No_constraint_intersection_tag)
 {
   return 0;
 }
@@ -1619,11 +1625,11 @@ limit_intersection(const Gt& ,
 template<class Gt>
 int
 limit_intersection(const Gt& ,
-       const typename Gt::Point_2& ,
-       const typename Gt::Point_2& ,
-       const typename Gt::Point_2& ,
-       const typename Gt::Point_2& ,
-       No_intersection_requiring_constructions_tag)
+                   const typename Gt::Point_2& ,
+                   const typename Gt::Point_2& ,
+                   const typename Gt::Point_2& ,
+                   const typename Gt::Point_2& ,
+                   No_constraint_intersection_requiring_constructions_tag)
 {
   return 0;
 }

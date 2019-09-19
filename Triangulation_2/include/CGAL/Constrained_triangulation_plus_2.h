@@ -686,25 +686,25 @@ public:
     return cid;
   }
 
-  virtual Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  No_intersection_tag);
+  virtual Vertex_handle intersect(Face_handle f, int i,
+                                  Vertex_handle vaa,
+                                  Vertex_handle vbb);
   Vertex_handle intersect(Face_handle f, int i,
                           Vertex_handle vaa,
                           Vertex_handle vbb,
-                          No_intersection_requiring_constructions_tag);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  Exact_intersections_tag);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  Exact_predicates_tag);
+                          No_constraint_intersection_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          No_constraint_intersection_requiring_constructions_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          Exact_intersections_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          Exact_predicates_tag);
  
   // REMOVAL
 
@@ -1034,7 +1034,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
-    if(boost::is_same<typename Tr::Itag, No_intersection_tag>::value)
+    if(boost::is_same<typename Tr::Itag, No_constraint_intersection_tag>::value)
       throw typename Tr::Intersection_of_constraints_exception();
 
     insert_in_constrained_edge = true;
@@ -1066,7 +1066,7 @@ Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle, int,
           Vertex_handle,
           Vertex_handle,
-          No_intersection_tag)
+          No_constraint_intersection_tag)
 {
   throw typename Tr::Intersection_of_constraints_exception();
   return Vertex_handle();
@@ -1078,7 +1078,7 @@ Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle, int,
           Vertex_handle,
           Vertex_handle,
-          No_intersection_requiring_constructions_tag)
+          No_constraint_intersection_requiring_constructions_tag)
 {
   throw typename Tr::Intersection_of_constraints_exception();
   return Vertex_handle();
