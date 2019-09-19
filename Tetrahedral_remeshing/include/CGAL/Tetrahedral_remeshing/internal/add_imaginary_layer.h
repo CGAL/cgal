@@ -217,7 +217,7 @@ namespace internal
     compute_normals_on_convex_hull(tr, normals);
 
     //compute bbox max size
-    const double& offset = 0.04 * compute_bbox_max_size(tr);
+    const double offset = 0.04 * compute_bbox_max_size(tr);
 
     //compute points to be inserted
     std::vector<Point_3> offset_points;

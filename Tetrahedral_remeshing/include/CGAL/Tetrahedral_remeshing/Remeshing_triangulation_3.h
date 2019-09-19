@@ -73,8 +73,10 @@ namespace Tetrahedral_remeshing
           typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
         CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
 
+        typedef typename TDS_tgt::Vertex::Point Tgt_point;
+
         typename TDS_tgt::Vertex v_tgt;
-        v_tgt.set_point(conv(v_src.point()));
+        v_tgt.set_point(Tgt_point(conv(point(v_src.point()))));
         v_tgt.set_time_stamp(-1);
         v_tgt.set_dimension(3);//-1 if unset, 0,1,2, or 3 if set
         return v_tgt;
@@ -89,7 +91,9 @@ namespace Tetrahedral_remeshing
           typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
         CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
 
-        v_tgt.set_point(conv(v_src.point()));
+        typedef typename TDS_tgt::Vertex::Point Tgt_point;
+
+        v_tgt.set_point(Tgt_point(conv(point(v_src.point()))));
         v_tgt.set_dimension(3);//v_src.info());
       }
     };
@@ -101,6 +105,7 @@ namespace Tetrahedral_remeshing
       typename TDS_tgt::Cell operator()(const typename TDS_src::Cell& c_src) const
       {
         typename TDS_tgt::Cell c_tgt;
+        c_tgt.set_subdomain_index(c_src.subdomain_index());
 //        c_tgt.info() = c_src.info();
         c_tgt.set_time_stamp(-1);
         return c_tgt;
@@ -109,7 +114,8 @@ namespace Tetrahedral_remeshing
       void operator()(const typename TDS_src::Cell& c_src,
                       typename TDS_tgt::Cell& c_tgt) const
       {
-//        c_tgt.info() = c_src.info();
+        c_tgt.set_subdomain_index(c_src.subdomain_index());
+        //        c_tgt.info() = c_src.info();
       }
     };
 
@@ -132,6 +138,23 @@ namespace Tetrahedral_remeshing
         internal::Cell_converter<Tds, RTds>()));
   }
 
+  template<typename T3, typename K, typename Info>
+  void build_from_remeshing_triangulation(
+    const Remeshing_triangulation_3<K, Info>& remeshing_tr,
+    T3& tr)
+  {
+    typedef typename T3::Triangulation_data_structure Tds;
+    typedef Remeshing_triangulation_3<K, Info>::Tds   RTds;
+
+    tr.clear();
+
+    tr.set_infinite_vertex(
+      tr.tds().copy_tds(
+        remeshing_tr.tds(),
+        remeshing_tr.infinite_vertex(),
+        internal::Vertex_converter<RTds, Tds>(),
+        internal::Cell_converter<RTds, Tds>()));
+  }
 
 }//end namespace Tetrahedral_remeshing
 }//end namespace CGAL

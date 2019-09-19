@@ -51,16 +51,13 @@ namespace internal
   struct All_cells_selected
   {
     typedef typename Tr::Cell_handle argument_type;
-    typedef bool                     result_type;
-    result_type operator()(const argument_type) const
-    {
-      return true;
-    }
-
     typedef typename Tr::Cell::Subdomain_index Subdomain_index;
-    Subdomain_index subdomain_index(const argument_type c) const
+
+    typedef bool                     result_type;
+
+    result_type operator()(const argument_type c) const
     {
-      return Subdomain_index(1);
+      return c->subdomain_index() != Subdomain_index();
     }
   };
 
@@ -321,6 +318,9 @@ namespace internal
         }
       }
       m_imaginary_index = max_si + 1;
+      if(m_imaginary_index == 1)
+        std::cerr << "Warning : Maximal subdomain index is 0" << std::endl
+                  << "          Remeshing is likely to fail." << std::endl;
 
       //tag facets
       typedef typename Tr::Facet                  Facet;
