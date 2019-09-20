@@ -10,4 +10,4 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: configure all
-      run: cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON .
+      run: mkdir build && cd build && cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON ..
