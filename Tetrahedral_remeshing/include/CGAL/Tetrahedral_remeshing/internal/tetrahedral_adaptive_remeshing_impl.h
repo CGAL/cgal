@@ -255,7 +255,16 @@ namespace internal
       std::cout << "Postprocess...";
       std::cout.flush();
 #endif
-      ///TODO
+      //unset imaginary cells
+      typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
+      for (Finite_cells_iterator cit = tr().finite_cells_begin();
+           cit != tr().finite_cells_end(); ++cit)
+      {
+        if (cit->subdomain_index() == m_imaginary_index)
+        {
+          m_c3t3.remove_from_complex(cit);
+        }
+      }
 
       CGAL_assertion(tr().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
