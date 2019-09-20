@@ -19,6 +19,6 @@
 - \subpage devman_testing
 - \subpage devman_submission
 - \subpage devman_info
+- \subpage devman_create_cgal_CMakeLists
 - \subpage deprecated
-
 */

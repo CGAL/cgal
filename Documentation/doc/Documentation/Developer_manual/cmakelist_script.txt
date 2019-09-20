@@ -1,11 +1,12 @@
 /*!
 
-\page manual_create_cgal_CMakeLists Creating a CMake Script for a Program Using %CGAL
+\page devman_create_cgal_CMakeLists Creating a CMake Script for a Program Using %CGAL
 
 To compile a program that is not shipped with \cgal, it is recommended to also rely on a CMake-supported
 configuration using a `CMakeLists.txt`. The Bourne-shell script `cgal_create_CMakeLists.txt`
 can be used to create such `CMakeLists.txt` files.
-This script resides in the `CGAL-\cgalReleaseNumber``/scripts` directory.
+This script resides in the `scripts` directory of \cgal (e.g. `CGAL-\cgalReleaseNumber``/scripts`
+directory if you have downloaded a tarball).
 Executing `cgal_create_CMakeLists.txt` in an application directory creates a
 `CMakeLists.txt` containing rules to build the contained
 application(s). Three command line options determine details of the

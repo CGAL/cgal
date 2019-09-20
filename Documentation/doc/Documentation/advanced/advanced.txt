@@ -1,0 +1,8 @@
+/*!
+
+\page advanced Advanced
+
+- \subpage configurationvariables
+- \subpage installation
+
+*/

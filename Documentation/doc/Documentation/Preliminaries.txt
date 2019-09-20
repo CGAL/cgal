@@ -77,19 +77,10 @@ defined, unless `BOOST_HAS_THREADS` or `_OPENMP` is defined.  It is possible
 to force its definition on the command line, and it is possible to prevent its default
 definition by setting `CGAL_HAS_NO_THREADS` from the command line.
 
+\section Preliminaries_cc0x C++14 Support
 
-\section Preliminaries_cc0x C++11 Support
-
-\cgal is based on the \CC standard released in 1998 (and later refined in 2003).
-A new major version of this standard has been released, and is refered to as \cpp11.
-Some compilers and standard library implementations already provide some of the
-functionality of this new standard, as a preview.  For example, \gcc provides
-a command-line switch (`-std=c++0x` or or `-std=c++11` depending on the compiler version)
-which enables some of those features.
-
-\cgal attempts to support this mode progressively, and already makes use of
-some of these features if they are available, although no extensive support has
-been implemented yet.
+After being based on the \CC standard released in 1998 (and later refined in 2003) for a long time,
+\cgal is now based on a newer major version of the standard, C++14.
 
 \section Preliminaries_functor Functor Return Types
 
@@ -107,40 +98,6 @@ Much of the \cgal code contains assert statements for preconditions, and postcon
 as well as in the code.  These assertions can be switched on and off per package
 and the user can change the error behaviour. For details see Section \ref secchecks
 of Chapter \ref Chapter_STL_Extensions_for_CGAL.
-
-\section seccgal_version Identifying the Version of CGAL
-
-`<CGAL/config.h>`
-
-Every release of \cgal defines the following preprocessor macros:
-
-<DL>
-<DT>`CGAL_VERSION_STR`</DT>
-<DD>a textual description of the current release (e.g., or 3.3 or 3.2.1 or 3.2.1-I-15) as a string literal</DD>
-<DT>`CGAL_VERSION_NR`</DT>
-<DD>a numerical description of the current release such that more recent
-releases have higher number.
-
-More precisely, it is defined as `1MMmmbiiii`, where `MM` is
-the major release number (e.g. 03), `mm` is the minor release
-number (e.g. 02), `b` is the bug-fix release number (e.g. 0),
-and `iiii` is the internal release number (e.g. 0001). For
-public releases, the latter is defined as 1000.  Examples: for the
-public release 3.2.4 this number is 1030241000; for internal release
-3.2-I-1, it is 1030200001.  Note that this scheme was modified around
-3.2-I-30.
-</DD>
-<DT>`CGAL_VERSION_NUMBER(M,m,b)`</DT>
-<DD>
-a function macro computing the version number macro from the
-M.m.b release version. Note that the internal release number is
-dropped here. Example: `CGAL_VERSION_NUMBER(3,2,4)` is equal to
-1030241000.
-</DD>
-</DL>
-
-The macro `CGAL_VERSION` is deprecated. It is the same as
-`CGAL_VERSION_STR`, but not as a string literal.
 
 \section Preliminaries_flags Compile-time Flags to Control Inlining
 

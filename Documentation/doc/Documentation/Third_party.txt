@@ -36,7 +36,7 @@ The focus of \cgal is on geometry, and we rely on other
 highly specialized libraries and software for non-geometric issues,
 for instance for numeric solvers or visualization. We first list software
 that is essential to most of \cgal, and must therefore be found during the configuration of \cgal.
-The page \ref configurationvariables can be used to learn which variables can be used to specify
+The page \ref configurationvariables lists variables which can be used to specify
 the location of third-party software.
 
 \subsection thirdpartystl Standard Template Library (STL)
