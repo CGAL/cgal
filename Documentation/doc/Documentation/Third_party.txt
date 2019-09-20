@@ -2,13 +2,12 @@
 
 \page thirdparty Essential and Optional Third Party Dependencies
 \cgalAutoToc
-\author %CGAL Editorial Board
 
 \section seccompilers Supported Compilers
 
 In order to build a program using \cgal, you need a \cpp compiler
 supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
-\cgal \cgalReleaseNumber is supported, that is continuously tested, for the following compilers/operating systems:
+\cgal \cgalReleaseNumber is supported (continuously tested) for the following compilers/operating systems:
 
 | Operating System | Compiler |
 | :------- | :--------------- |
@@ -19,68 +18,62 @@ supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
 | MacOS X | \sc{Gnu} `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
 |         | Apple `Clang` compiler versions 7.0.2 and 10.0.1 |
 
-It may work for older versions of the above listed compilers.
+Older versions of the above listed compilers might work, but no guarantee is provided.
 
 \section seccmake CMake
 
-In order to configure and build the \cgal libraries, examples, and demos,
-you need CMake, a cross-platform "makefile generator".
-If CMake is not already installed you can obtain it from <A HREF="https://cmake.org/">`https://cmake.org/`</A>.
+In order to configure and build the \cgal examples, demos, or libraries,
+you need <a href="https://cmake.org/">CMake</a>, a cross-platform "makefile generator".
 CMake version 3.1 or higher is required.
 
-This manual explains only those features of
-CMake which are needed in order to build \cgal. Please refer to the
-CMake documentation at <A HREF="https://cmake.org/">`https://cmake.org/`</A> for further details.
+This manual explains only the features of CMake which are needed in order to build \cgal.
+Please refer to the <a href="https://cmake.org/documentation/">CMake documentation</a>
+for further details.
 
 \section secessential3rdpartysoftware Essential Third Party Libraries
 
 The focus of \cgal is on geometry, and we rely on other
 highly specialized libraries and software for non-geometric issues,
-for instance, for numeric solvers, or visualization. We first list software
-that is essential to build (all) libraries of \cgal, that is,
-this software must be found during the configuration of \cgal for an
-actived library of \cgal (i.e.\ <TT>WITH_<library>=ON</TT>);
-see the page \ref configurationvariables to specify the location of 3rd
-party software.
-
-The libraries \stl (shipped with any compiler) and \sc{Boost} are essential to all components (i.e.\ libCGAL,
-libCGAL_Core, libCGAL_ImageIO, and libCGAL_Qt5).
+for instance for numeric solvers or visualization. We first list software
+that is essential to most of \cgal, and must therefore be found during the configuration of \cgal.
+The page \ref configurationvariables can be used to learn which variables can be used to specify
+the location of third-party software.
 
 \subsection thirdpartystl Standard Template Library (STL)
 
-\cgal heavily uses the \stl, and in particular adopted
-many of its design ideas. You can find online
+\cgal heavily uses the \stl, and in particular adopted many of its design ideas. You can find online
 documentation for the \stl at various web sites, for instance,
 <A HREF="https://en.cppreference.com/w/">`https://en.cppreference.com `</A>,
 or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`https://msdn.microsoft.com`</A>.
 
-The \stl comes with the compiler, so there is nothing to install.
+The \stl comes with the compiler, and as such no installation is required.
 
 \subsection thirdpartyBoost Boost
 
-The \sc{Boost} libraries are a set of portable C++ source libraries. Most of
-\sc{Boost} libraries are header-only, but a few of them need to be compiled or
+The \sc{Boost} libraries are a set of portable C++ source libraries.
+Most of \sc{Boost} libraries are header-only, but a few of them need to be compiled or
 installed as binaries.
 
-\cgal only requires the headers of the \sc{Boost} libraries, but some demos and examples depend on the binary library `Boost.Program_options`.
+\cgal only requires the headers of the \sc{Boost} libraries, but some demos and examples
+depend on the binary library `Boost.Program_options`.
 
-As an exception, because of a bug in the \gcc compiler about the \cpp 11
+As an exception and because of a bug in the \gcc compiler about the \cpp 11
 keyword `thread_local`, the `CGAL_Core` library always requires
 the binary library `Boost.Thread` if the \gcc compiler version 9.0 or
 earlier is used.
 
 In case the \sc{Boost} libraries are not installed on your system already, you
-can obtain them from <A HREF="https://www.boost.org/">`https://www.boost.org/`</A>. For Visual C++ you can download precompiled libraries
+can obtain them from <A HREF="https://www.boost.org">`https://www.boost.org/`</A>.
+For Visual C++ you can download precompiled libraries
 from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`https://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
 
-As on Windows there is no canonical directory for where to find
-\sc{Boost}, we recommend that you define the environment variable
-`BOOST_ROOT` and set it to where you have installed \sc{Boost}, e.g.,
-<A HREF="C:\boost\boost_1_41_0">`C:\boost\boost_1_41_0`</A>.
+As there is no canonical directory for where to find \sc{Boost} on Windows,
+we recommend that you define the environment variable
+`BOOST_ROOT` and set it to where you have installed \sc{Boost}, e.g., `C:\boost\boost_1_69_0`.
 
 \subsection thirdpartyMPFR GMP and MPFR
 
-The components libCGAL, libCGAL_Core, and libCGAL_Qt5 require
+The components `libCGAL`, `libCGAL_Core`, and `libCGAL_Qt5` require
 \sc{Gmp} and \sc{Mpfr} which are libraries for multi precision integers and rational numbers,
 and for multi precision floating point numbers.
 
@@ -96,22 +89,21 @@ installed is recommended. These libraries can be obtained from
 As Visual \cpp is not properly
 supported by the \sc{Gmp} and \sc{Mpfr} projects, we provide precompiled versions
 of \sc{Gmp} and \sc{Mpfr}, which can be downloaded with the installer
-`CGAL-\cgalReleaseNumber``-Setup.exe`.
+<a href="https://github.com/CGAL/cgal/releases">`CGAL-\cgalReleaseNumber``-Setup.exe`</a>.
 
-\subsection thirdpartyzlib zlib
+\section secoptional3rdpartysoftware Optional Third Party Libraries
 
-\sc{zlib} is a data compression library, and is essential for the component libCGAL_ImageIO.
-
-In \cgal this library is used in the examples of the \ref PkgSurfaceMesher3Ref package.
-
-If it is not already on your system,
-for instance, on Windows, you can download it from <A HREF="https://www.zlib.net/">`https://www.zlib.net/`</A>.
+Optional 3rd party software can be used by \cgal for various reasons:
+Usually certain optional libraries are required to build examples and
+demos shipped with \cgal or to build your own project using \cgal.
+Another reason is to speed up basic tasks.
 
 \subsection thirdpartyQt Qt5
 
 Qt is a cross-platform application and UI framework.
 
-The component libCGAL_Qt5 requires \sc{Qt}5 installed on your system.
+The component libCGAL_Qt5 is essential to run the \cgal demos and basic viewers.
+It requires \sc{Qt}5 installed on your system.
 In case \sc{Qt} is not yet installed on your system, you can download
 it from <A HREF="https://www.qt-project.org/">`https://www.qt-project.org/`</A>.
 
@@ -120,13 +112,6 @@ The exhaustive list of \sc{Qt}5 components used in demos is:
 `qcollectiongenerator` (with `sqlite` driver plugin) and `Xml`.
 
 \sc{Qt} version 5.9.0 or later is required.
-
-\section secoptional3rdpartysoftware Optional Third Party Libraries
-
-Optional 3rd party software can be used by \cgal for various reasons:
-Usually certain optional libraries are required to build examples and
-demos shipped with \cgal or to build your own project using \cgal.
-Another reason is to speed up basic tasks.
 
 \subsection thirdpartyLeda LEDA
 
@@ -255,5 +240,14 @@ and, by extension, of surface meshes (see Section \ref BGLPartitioning of the pa
 
 More information is available on the METIS library
 at <A HREF="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">`http://glaros.dtc.umn.edu/gkhome/metis/metis/overview`</A>.
+
+\subsection thirdpartyzlib zlib
+
+\sc{zlib} is a data compression library, and is essential for the component libCGAL_ImageIO.
+
+In \cgal this library is used in the examples of the \ref PkgSurfaceMesher3Ref package.
+
+If it is not already on your system,
+for instance, on Windows, you can download it from <A HREF="https://www.zlib.net/">`https://www.zlib.net/`</A>.
 
 */

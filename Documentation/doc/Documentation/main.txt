@@ -35,7 +35,7 @@ License
 together with Open Source software free of charge. Using %CGAL in
 other contexts can be done by obtaining a commercial license from
 [GeometryFactory](http://www.geometryfactory.com). For more details
-see the \ref licenseIssues "License" page.
+see the \ref cgallicensepage "License" page.
 
 Manuals for the Previous Releases
 =================================

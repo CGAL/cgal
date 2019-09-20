@@ -2,91 +2,14 @@
 
 \page preliminaries Preliminaries
 \cgalAutoToc
-\author %CGAL Editorial Board
 
-This chapter lists the licenses
-under which the \cgal datastructures and algorithms are distributed.
 The chapter further explains how to control inlining, thread safety,
 code deprecation, checking of pre- and postconditions,
 and how to alter the failure behavior.
 
-\section licenseIssues License Issues
-
-\cgal is distributed under a dual license scheme, that is under the
-\sc{Gpl}/\sc{Lgpl} open source license, as well as under commercial licenses.
-
-\cgal consists of different parts covered by different open source licenses.
-In this section we explain the essence of the different licenses, as well as
-the rationale why we have chosen them.
-
-The fact that \cgal is Open Source software does not mean that users are free
-to do whatever they want with the software. Using the software means to accept
-the license, which has the status of a contract between the user and the owner
-of the \cgal software.
-
-\subsection licensesGPL GPL
-
-The \sc{Gpl} is an Open Source license that, if you distribute your software
-based on \sc{Gpl}ed \cgal data structures,you are obliged to distribute the
-source code of your software under the \sc{Gpl}.
-
-The exact license terms can be found at the  Free Software Foundation
-web site: http://www.gnu.org/copyleft/gpl.html.
-
-\subsection licensesLGPL LGPL
-
-The \sc{Lgpl} is an Open Source license that obliges you to distribute
-modifications you make on \cgal software accessible to the users.
-In contrast to the \sc{Gpl}, there is no obligation to make the source
-code of software you build on top of \sc{Lgpl}ed \cgal data structures
-
-The exact license terms can be found at the Free Software Foundation web site:
-http://www.gnu.org/copyleft/lesser.html.
-
-\subsection licensesRationale Rationale of the License Choice
-
-We have chosen the \sc{Gpl} and the \sc{Lgpl} as they are well known
-and well understood open source licenses. The former restricts
-commercial use, and the latter allows to promote software as de facto standard
-so that people can build new higher level data structures on top.
-
-Therefore, the packages forming a foundation layer are distributed under
-the \sc{Lgpl}, and the higher level packages under the \sc{Gpl}.
-The package overview states for each package under which license
-it is distributed.
-
-\subsection licensesCommercial Commercial Licenses
-
-Users who cannot comply with the Open Source license terms can buy individual
-data structures under various commercial licenses from GeometryFactory:
-http://www.geometryfactory.com/.  License fees paid by commercial
-customers are reinvested in R\&D performed by the \cgal project partners,
-as well as in evolutive maintenance.
-
-\subsection licenseCheck License Checking
-
-Users who have a commercial license for specific packages can check that
-they do not accidentally use packages for which they do not have a commercial
-license. The same holds for users who want to be sure that they only
-use packages of \cgal released under the \sc{Lgpl}.
-
-To enable checking, users have to define one of the following macros:
-
-| Macro Name                   | Effect |
-| :---------                   | :------ |
-| `CGAL_LICENSE_WARNING`       | get a warning during the compilation  |
-| `CGAL_LICENSE_ERROR`         | get an error during the compilation  |
-
-
-The license checking is not a mean to control users as no information
-is collected or transmitted.
-
-
-
 \section markingSpecialFunctionality Marking of Special Functionality
 
 In this manual you will encounter sections marked as follows.
-
 
 \subsection advanced_features Advanced Features
 

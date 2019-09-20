@@ -1,34 +1,33 @@
 /*!
 \page usage Usage
 \cgalAutoToc
-\authors Eric Berberich, Joachim Reichel, and Fernando Cacciola
 
 <b>Since \cgal version 5.0, \cgal is header-only be default, which means
 that there is no need to compile and install anything before it can be
-used. However, the dependencies of \cgal might still need to be installed.</b>
+used. However, some dependencies of \cgal might still need to be installed.</b>
 
 \section usage_introduction Quick Start
 
-Ideally, compiling an example or a demo shipped with \cgal is as simple as:
+Ideally, compiling an example shipped with \cgal is as simple as:
 
     cd examples/Triangulation_2 # go to an example directory
-    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the examples
+    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release . # configure the examples
     make # build the examples
-    
-    cd demo/Triangulation_2 # go to a demo directory
-    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the demos
-    make # build the demos
 
 Compiling your own program is similar:
 
-    cd /path/to/program
+    cd /path/to/your/program
     cgal_create_CMakeLists -s executable
-    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber .
+    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release .
     make
 
-where the second line creates a file `CMakeLists.txt` (see Section \ref seccreate_cgal_CMakeLists for more details).
+The script `cgal_create_CMakeLists` and its options are detailed in Section \ref manual_create_cgal_CMakeLists.
 
-In a less ideal world, you might have to install required tools, and third party libraries.
+\cgalModifBegin
+Something about Windows?
+\cgalModifEnd
+
+In a less ideal world, you might have to install the required tools and third party libraries.
 This is what this page is about.
 
 \section secprerequisites Prerequisites 
@@ -41,14 +40,15 @@ Using \cgal requires a few core components to be previously installed:
 <li> \ref thirdpartyMPFR. </li>
 </ul>
 
-See Section \ref secessential3rdpartysoftware for more details on essential third party software.
+Optional third-party software might be required to build examples and demos shipped with \cgal,
+or to build your own project using \cgal, see Section \ref secoptional3rdpartysoftware.
 
 \section secgettingcgal Downloading CGAL
 
 You can obtain the \cgal library from
 <A HREF="https://www.cgal.org/download.html">https://www.cgal.org/download.html</A>.
 
-After you have downloaded the file `CGAL-\cgalReleaseNumber``.tar.gz` containing the
+Once you have downloaded the file `CGAL-\cgalReleaseNumber``.tar.gz` containing the
 \cgal sources, you have to unpack it. Under a Unix-like shell, use the
 command:
 
@@ -57,59 +57,51 @@ command:
 In both cases the directory `CGAL-\cgalReleaseNumber` will be created. This directory
 contains the following subdirectories:
 
-
-| Directory       | Contents   |
-| :-----------    | :----------|
-| `auxiliary`     | precompiled \sc{Gmp} and \sc{Mpfr} for Windows |
-| `cmake/modules` | modules for finding and using libraries |
-| `config`        | configuration files for install script |
-| `demo`          | demo programs (most of them need \sc{Qt}, geomview or other third-party products) |
-| `doc_html`      | documentation (HTML) |
-| `examples`      | example programs |
-| `include`       | header files |
-| `scripts`       | some useful scripts (e.g. for creating CMakeLists.txt files) |
-| `src`           | source files |
-
+| Directory                  | Contents   |
+| :------------------------- | :----------|
+| `auxiliary` (Windows only) | precompiled \sc{Gmp} and \sc{Mpfr} for Windows |
+| `cmake/modules`            | modules for finding and using libraries |
+| `config`                   | configuration files for install script |
+| `demo`                     | demo programs (most of them need \sc{Qt}, geomview or other third-party products) |
+| `doc_html`                 | documentation (HTML) |
+| `examples`                 | example programs |
+| `include`                  | header files |
+| `scripts`                  | some useful scripts (e.g. for creating CMakeLists.txt files) |
+| `src`                      | source files |
 
 The directories `include/CGAL/CORE` and `src/CGALCore` contain a
-distribution of the \sc{Core} library\cgalFootnote{<A HREF="https://cs.nyu.edu/exact/">`https://cs.nyu.edu/exact/`</A>} version 1.7 for
-dealing with algebraic numbers. \sc{Core} is not part of \cgal and has its
+distribution of the <a href="https://cs.nyu.edu/exact/">\sc{Core} library</a> version 1.7 for
+dealing with algebraic numbers. Note that \sc{Core} is not part of \cgal and has its
 own license.
 
 The directory `include/CGAL/OpenNL` contains a distribution of the
-Open Numerical Library which provides solvers for sparse linear systems,
-especially designed for the Computer Graphics community. \sc{OpenNL} is not part
-of \cgal and has its own license.
+<a href="http://alice.loria.fr/index.php/software/4-library/23-opennl.html">Open Numerical Library</a>,
+which provides solvers for sparse linear systems, especially designed for the Computer Graphics community.
+\sc{OpenNL} is not part of \cgal and has its own license.
 
 The only documentation shipped within \cgal sources is the present
 installation manual. The \cgal manual can be accessed online at
 <A HREF="https://doc.cgal.org/latest/Manual/index.html">`https://doc.cgal.org`</A>
-or downloaded separately from
+or downloaded separately at
 <A HREF="https://github.com/CGAL/cgal/releases">`https://github.com/CGAL/cgal/releases`</A>.
 
-\section subsection_headeronly Header-only Usage
+\section section_headeronly Header-only Usage
 
-Since \cgal 4.12, \cgal can be used in header-only mode, without even
-configuring \cgal\. Programs using \cgal (examples, tests, demos, etc.)
-must be directly configured using CMake. In this case, \cgal will be
-configured at the same time. The variable `CGAL_DIR` must point to the root
-directory of the \cgal source code (either the root of the unpacked release
-tarball, or the root of the Git working directory).
+Since \cgal 4.12, it has been possible to use \cgal in <a href="https://en.wikipedia.org/wiki/Header-only">header-only mode</a>,
+without even configuring \cgal\. Programs using \cgal (examples, tests, demos, etc.)
+are instead configured using CMake and \cgal will be configured at the same time.
 
-So, using \cgal becomes now:
-
-    cd /path/to/your/code # go to the directory of the code source using CGAL
-    cmake -DCGAL_DIR=<CGAL-root> .
-
-\subsection subsection_headeronly_dependencies CGAL Dependencies
-
-\cgal can be used as a header-only library, though not all its dependencies
+Note that even though \cgal can be used as a header-only library, not all its dependencies
 are header-only. The libraries \sc{Gmp} and \sc{Mpfr}, for example, are not
-header-only.
+header-only. As such, these dependencies must be built or installed independently.
 
-\subsection subsection_headeronly_pbonwindows Possible Problem on Windows
+\subsection subsection_headeronly_pbonwindows Potential Issue on Windows
 
-There is one possible problem when using \cgal in header-only mode on a Windows operating system
+\cgalModifBegin
+(RE)MOVE THAT?
+\cgalModifEnd
+
+A potential issue when using \cgal in header-only mode on a Windows operating system can arise
 when compiling a program using several modules (executable programs or dynamic-link libraries DLL).
 If two different modules use the same static variable, this variable is defined independently
 in each of these modules. If one module modifies the value of this variable, it will not be modified
@@ -119,92 +111,58 @@ the <A HREF="https://doc.cgal.org/latest/STL_Extension/group__PkgSTLExtensionAss
 `CGAL::IO::Mode`. One example is the following: if you change the default random in one DLL, then
 if you use the default random in another DLL, you will not obtain the modified default random but the original one.
 
-\cgalModifBegin
-EXPLAIN THAT YOU CAN INSTALL IN CASE OF MEETING THIS PROBLEM (?)
-\cgalModifEnd
+\subsection usage_installingcgal Building and Installing CGAL
 
-\section installation_configuring_using Configuring and Building Programs Using CGAL
+Although using the header-only mode makes building and installing \cgal obsolete, it is still possible
+to configure, build, and install \cgal. Head over to \ref installation for more information. It is
+however advised by the \cgal project to use the much simpler header-only mode, and the present page
+assumes that this configuration is being used.
 
-Configuring and compiling a demo/example/program amounts to
+\section usage_configuring_cgal Configuring your Program
+
+Before building anything using \cgal you have to choose the compiler/linker, set compiler
+and linker flags, specify which third-party libraries you want to use and where they can be found.
+Gathering all this information is called <I>configuration</I>. The end of the process is marked
+by the generation of a makefile or a Visual \cpp solution and project file that you can use
+to build your program. Configuring a program such as a \cgal example amounts to:
 
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber .
-    make
 
 The required `CMakeLists.txt` is already provided for all shipped examples and demos of \cgal.
 For other programs, CMake can also be used to configure and build user programs,
 but one has to provide the `CMakeLists.txt` script either manually, or with the help of a
-shell-script that is introduced below. For a user program `executable.cpp`, this ideally then resumes to:
+shell-script that is described in Section \ref manual_create_cgal_CMakeLists. For a user program
+`executable.cpp`, this then ideally resumes to:
 
-    cd /path/to/program
+    cd /path/to/your/program
     cgal_create_CMakeLists -s executable
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber .
-    make
 
-The script `cgal_create_CMakeLists` and its options are detailed in Section \ref seccreate_cgal_CMakeLists.
+Note that in both examples we have specified the `CGAL_DIR` variable, which must point
+to the root directory of the \cgal source code (either the root of the unpacked release tarball,
+or the root of the Git working directory).
 
-Note that in both examples we specify the `CGAL_DIR`: during configuration of the \cgal libraries
-a file named `CGALConfig.cmake` is generated in \cgal's root directory (in contrast
-to \cgal's source directory that has been used for installation). This file
-contains the definitions of several CMake variable that summarize the
-configuration of \cgal. In order to configure a program, you need
-to indicate the location of that config file in the CMake variable
-`CGAL_DIR` (as indicated in the example above). 
-`CGAL_DIR` can also be an environment variable. Setting
-`CGAL_DIR` makes particular sense if having multiple
+\cgalModifBegin
+TMP
+Note that in both examples we have specified the `CGAL_DIR` variable: during configuration
+of the \cgal libraries a file named `CGALConfig.cmake` is generated in \cgal's root directory
+(in contrast to \cgal's source directory that has been used for installation).
+This file contains the definitions of several CMake variables that summarize the
+configuration of \cgal.
+In order to configure a program, you need to indicate the location of this config file
+in the CMake variable `CGAL_DIR` (as indicated in the example above).
+`CGAL_DIR` can also be an environment variable.
+
+Setting `CGAL_DIR` makes particular sense if having multiple
 out-of-source builds of \cgal as in Section \ref seccmakeoutofsource.
 
-If you have installed \cgal, `CGAL_DIR` must afterwards be set to
+TMP If you have installed \cgal, `CGAL_DIR` must afterwards be set to
 `$CMAKE_INSTALLED_PREFIX/lib/CGAL`. Note that \cgal is
 recommended to be installed in release mode when using it to build programs.
+\cgalModifEnd
 
-\subsection seccreate_cgal_CMakeLists Creating a CMake Script for a Program Using CGAL
-
-For compiling a non-shipped program, it is recommended to also rely on a CMake-supported configuration using a
-`CMakeLists.txt` used for configuration. The Bourne-shell script `cgal_create_CMakeLists.txt` can
-be used to create `CMakeLists.txt` files for compiling \cgal applications
-This script resides in the `CGAL-\cgalReleaseNumber``/scripts` directory.
-Executing `cgal_create_CMakeLists.txt` in an application directory creates a
-`CMakeLists.txt` containing rules to build the contained
-application(s). Three command line options determine details of the
-configuration.
-
-<DL>
-<DT><B>`-s source`</B><DD> If this parameter is given the script will
-create <B>a single executable</B> for 'source' linked with
-compilations of all other source files
-(`*.cc`, `*.cp`, `*.cxx`, `*.cpp`, `*.CPP`, `*.c++`, or `*.C`).
-This behaviour is usually needed for (graphical) demos. 
-
-If the parameter is not given, the script creates <B>one executable for each given
-source file</B>.
-<DT><B>`-c com1:com2:...`</B><DD> Lists components ("com1",
-"com2") of \cgal to which the executable(s) should be linked. Valid components are \cgal's
-libraries (i.e.\ "Core", "ImageIO", and "Qt5"). An example is `-c Core`.
-
-<DT><B>`-b boost1:boost2:...`</B><DD> Lists components ("boost1",
-"boost2") of \sc{Boost} to which the executable(s) should be
-linked. Valid options are, for instance, "filesystem" or "program_options".
-
-</DL>
-
-This options should suffice to create `CMakeLists.txt` script
-for most directories containing programs. However, in some special
-cases, it might still be required to create the script manually, for
-instance, if some source files/executables need a different linking than
-other source files.
-
-\section secconfigwithcmake Configuring CGAL with CMake
-
-Before building anything using \cgal you have to choose the compiler/linker,
-set compiler and linker flags, specify which
-third-party libraries you want to use and where they can be found, and
-which \cgal libraries you want to build. Gathering
-all this information is called <I>configuration</I>.
-The end of the process is marked by the generation of a makefile or a
-Visual \cpp solution and project file that you can use to build \cgal.
-
-\subsection installation_configuring_gui Configuring CGAL with the CMake GUI
+\subsection usage_configuring_gui Configuring CGAL with the CMake GUI
 
 The simplest way to start the configuration is to run the graphical
 user interface of CMake. We recommend to use `cmake-gui`. You must pass as
@@ -214,7 +172,7 @@ argument the root directory of \cgal. For example:
     cmake-gui . # Notice the dot to indicate the current directory.
 
 After `cmake-gui` opens, press 'Configure'.
-A dialog will pop up and you will have to choose what shall gets generated.
+A dialog will pop up and you will have to choose what shall be generated.
 After you have made your choice and pressed 'Finish', you will see
 the output of configuration tests in the lower portion of the application.
 When these tests are done, you will see many
@@ -226,7 +184,7 @@ Providing information and pressing 'Configure' goes on until
 all entries are grayed. You are now ready to press 'Generate'. Once this is
 done, you can quit `cmake-gui`.
 
-\subsection installation_configuring_cmd Configuring CGAL with the cmake Command-Line Tool
+\subsection usage_configuring_cmd Configuring CGAL with the cmake Command-Line Tool
 
 \cgalModifBegin
 MERGE THAT WITH ABOVE, ADAPT TO FIT EXAMPLE CONFIG RATHER THAN CGAL CONFIG, TRIM IT
@@ -299,40 +257,35 @@ The configuration process not only determines the location of the required depen
 `CGALConfig.cmake`, which is used to build programs using \cgal. The
 purpose of this file is explained below.
 
-\section seccmakeoutofsource Multiple Variants of Makefiles (out-of-source build)
+\section usage_building_program Building your Program
 
-While you can choose between release or debug builds, and shared or static libraries,
-it is not possible to generate different variants during a single configuration. You need to run CMake in a
-different directory for each variant you are interested in, each with its own selection of configuration parameters.
+The results of a successful configuration are build files that control the build step.
+The nature of the build files depends on the generator used during configuration, but in most cases
+they contain several <I>targets</I>, such as all the examples of the Triangulation_2 package.
 
-CMake stores the resulting makefiles and project files, along with several temporary and auxiliary files such
-as the variables cache, in the directory where it is executed, called `CMAKE_BINARY_DIR`, but it
-takes the source files and configuration scripts from
-`CMAKE_SOURCE_DIR`.
+In a \sc{Unix}-like environment the default generator produces makefiles.
+You can use the `make` command-line tool for the succeeding build step as follows:
 
-The binary and source directories do not need to be the same. Thus, you can configure multiple variants by creating a
-distinct directory for each configuration and by running CMake from there. This is known in CMake terminology
-as <I>out-of-source configuration</I>, as opposite to an <I>in-source
-configuration</I>, as showed in the previous sections.
+    cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
+    make # build all the examples of the Triangulation_2 package
 
-You can, for example, generate subdirectories `CGAL-\cgalReleaseNumber``/cmake/platforms/debug` and
-`CGAL-\cgalReleaseNumber``/cmake/platforms/release` for two configurations, respectively:
+With generators other than `UNIX Makefiles` the resulting build files are solution and project files
+which should be launched in an \sc{Ide}, such as Visual Studio or KDevelop3. They will contain the targets described
+above, which you can manually build as with any other solution/project within your \sc{Ide}.
 
-    mkdir CGAL-\cgalReleaseNumber/cmake/platforms/debug
-    cd CGAL-\cgalReleaseNumber/cmake/platforms/debug
-    cmake -DCMAKE_BUILD_TYPE=Debug ../../..
+Alternatively, you can build it with the command line version of the \sc{Visual Studio Ide}:
 
-    mkdir CGAL-\cgalReleaseNumber/cmake/platforms/release
-    cd CGAL-\cgalReleaseNumber/cmake/platforms/release
-    cmake -DCMAKE_BUILD_TYPE=Release ../../..
+    devenv CGAL.sln /Build Release
 
-\section installingcgal Installing CGAL
+The "Release" argument is needed because CMake creates solution files for
+all four configurations, and you need to explicitly choose one when building
+(the other choices are `Debug`, `RelWithDebInfo`, and `MinSizeRel`).
 
-Although header-only makes building \cgal obsolete, it is still possible to configure, build,
-and install \cgal. Head to \ref installation for more information.
-
-\cgalModifBegin
-+ might still be required to build some cgal libs like cgal-qt?
-\cgalModifEnd
+\cgalAdvancedBegin
+The build files produced by CMake are autoconfigured. That is, if you change any of the dependencies,
+the build step automatically goes all the way back to the configuration step. This way, once the target
+has been configured the very first time by invoking cmake, you don't necessarily need to invoke `cmake`
+again. Rebuilding will call itself `cmake` and re-generate the build file whenever needed.
+\cgalAdvancedEnd
 
 */
