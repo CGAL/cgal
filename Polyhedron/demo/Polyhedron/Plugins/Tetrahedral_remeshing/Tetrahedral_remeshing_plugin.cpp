@@ -123,18 +123,19 @@ public Q_SLOTS:
       CGAL::Tetrahedral_remeshing::build_from_remeshing_triangulation(tr, c3t3_item->c3t3().triangulation());
 
       std::cout << "Back conversion done (" << time.elapsed() << " ms)" << std::endl;
-      c3t3_item->invalidateOpenGLBuffers();
 
-      Q_EMIT c3t3_item->itemChanged();
+      c3t3_item->c3t3_changed();
+      c3t3_item->update_histogram();
+      const Scene_interface::Item_id index = scene->mainSelectionIndex();
+      this->scene->itemChanged(index);
 
+      // default cursor
+      QApplication::restoreOverrideCursor();
     }
     else
     {
       std::cout << "Can't remesh that type of thing" << std::endl;
     }
-
-    // default cursor
-    QApplication::restoreOverrideCursor();
   }
 
 private:
