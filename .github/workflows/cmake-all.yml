@@ -1,0 +1,13 @@
+name: CMake all CGAL
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: configure all
+      run: cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON .
