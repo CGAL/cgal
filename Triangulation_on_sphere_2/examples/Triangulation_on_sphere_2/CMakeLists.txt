@@ -9,6 +9,7 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
+  create_single_source_cgal_program( "constrained_triang_on_sphere_ex.cpp" )
   create_single_source_cgal_program( "triang_on_sphere_ex.cpp" )
   create_single_source_cgal_program( "triang_on_sphere_ex_proj.cpp" )
 

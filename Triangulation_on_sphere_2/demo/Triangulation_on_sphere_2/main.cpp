@@ -20,7 +20,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel         Kernel;
 #include "ui_Mainwindow.h"
 
 
-typedef CGAL::Projection_sphere_traits_3<Kernel>					Projection_traits;
+typedef CGAL::Projection_sphere_traits_3<Kernel>          Projection_traits;
 typedef CGAL::Delaunay_triangulation_sphere_2<Projection_traits>                 Projected_DToS2;
 
 
@@ -69,15 +69,15 @@ public slots:
     read_points(filename.toUtf8().data(),
                 std::back_inserter(lst_pt));
   
-    	  
-	Projection_traits::Construct_projected_point_3 cst =
-	traits.construct_projected_point_3_object();
-	dtos.insert(
-		boost::make_transform_iterator(lst_pt.begin(), cst),
-		boost::make_transform_iterator(lst_pt.end(), cst)
-	 );
-	  
-	 	  
+        
+  Projection_traits::Construct_projected_point_3 cst =
+  traits.construct_projected_point_3_object();
+  dtos.insert(
+    boost::make_transform_iterator(lst_pt.begin(), cst),
+    boost::make_transform_iterator(lst_pt.end(), cst)
+   );
+    
+       
 
     Point_3 center(0,0,0);
     double scale=1;
@@ -87,8 +87,8 @@ public slots:
   
     // Instantiate the viewer.
     viewer->open(lst_pt.begin(),lst_pt.end(),dtos,center,scale);
-	  
-	    }
+    
+      }
 
   void on_action_Quit_triggered() {
     close();

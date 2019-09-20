@@ -15,6 +15,7 @@ int main()
   std::vector<K::Point_3> points;
   points.emplace_back( 2, 1, 1);
   points.emplace_back(-2, 1, 1);
+  points.emplace_back( 0, 1, 1);
   points.emplace_back( 1, 2, 1);
   points.emplace_back( 0, 1, 1);
   points.emplace_back( 1, 0, 1);
