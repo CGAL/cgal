@@ -9,6 +9,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
+      with:
+        fetch-depth: 0
     - name: install dependencies
       run: apt install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev
     - name: configure all
