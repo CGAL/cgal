@@ -12,6 +12,6 @@ jobs:
       with:
         fetch-depth: 0
     - name: install dependencies
-      run: apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev
+      run: sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev
     - name: configure all
       run: mkdir build && cd build && cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON ..
