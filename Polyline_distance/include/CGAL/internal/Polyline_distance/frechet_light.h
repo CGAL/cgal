@@ -74,8 +74,11 @@ private:
 
 	Certificate cert;
 
-	CInterval getInterval(Curve const& curve1, PointID center_id, Curve const& curve2, PointID seg_start) const;
-	CInterval getInterval(Curve const& curve1, PointID center_id, Curve const& curve2, PointID seg_start, CInterval* ) const;
+	//TODO re-inline these functions!
+	template <class IndexType>
+	CInterval getInterval(Curve const& curve1, IndexType const& center_id, Curve const& curve2, PointID seg_start) const;
+	template <class IndexType>
+	CInterval getInterval(Curve const& curve1, IndexType const& center_id, Curve const& curve2, PointID seg_start, CInterval* ) const;
 	void merge(CIntervals& v, CInterval const& i) const;
 
 	Outputs createFinalOutputs();
@@ -110,9 +113,16 @@ private:
 	bool out1_valid = false, out2_valid = false;
 
 	// qsimple interval calculation functions
-	QSimpleInterval getFreshQSimpleInterval(const Point& fixed_point, PointID min1, PointID max1, const Curve& curve) const;
-	bool updateQSimpleInterval(QSimpleInterval& qsimple, const Point& fixed_point, PointID min1, PointID max1, const Curve& curve) const;
-	void continueQSimpleSearch(QSimpleInterval& qsimple, const Point& fixed_point, PointID min1, PointID max1, const Curve& curve) const;
+	QSimpleInterval getTestFullQSimpleInterval(CPoint const& fixed, const Curve& fixed_curve, PointID min, PointID max, const Curve& curve) const;
+	//bool updateQSimpleInterval(QSimpleInterval& qsimple, PointID const& fixed, const Curve& fixed_curve, PointID min1, PointID max1, const Curve& curve) const;
+	//internal use:
+	class TestFullMode; //mode to test whether simple interval is fill 
+	class RegularMode;  //mode to obtain complete information
+	template <class MODE = RegularMode, typename IndexType = PointID>
+	bool updateQSimpleInterval(QSimpleInterval& qsimple, const IndexType& fixed, const Curve& fixed_curve, PointID min1, PointID max1, const Curve& curve) const;
+	template <class MODE = RegularMode, typename IndexType = PointID>
+	void continueQSimpleSearch(QSimpleInterval& qsimple, const IndexType& fixed, const Curve& fixed_curve, PointID min1, PointID max1, const Curve& curve) const;
+
 
 	bool isOnLowerRight(const CPosition& pt) const;
 	bool isOnUpperLeft(const CPosition& pt) const;
@@ -197,13 +207,19 @@ void FrechetLight::visAddFreeNonReachable(CPoint begin, CPoint end, CPoint fixed
 	assert(free_non_reachable.back().end <= curve_pair[1-free_non_reachable.back().fixed_curve]->size() - 1);
 #endif
 }
+template <> CInterval FrechetLight::getInterval<PointID>(Curve const& curve1, PointID const& center_id, Curve const& curve2, PointID seg_start, CInterval* outer) const;
+template <> CInterval FrechetLight::getInterval<CPoint>(Curve const& curve1, CPoint const& center_id, Curve const& curve2, PointID seg_start, CInterval* outer) const;
 
-inline CInterval FrechetLight::getInterval(Curve const& curve1, PointID center_id, Curve const& curve2, PointID seg_start) const
+//TODO get rid of template instantiations by using if_static
+//TODO re-inline this code!
+template <>
+CInterval FrechetLight::getInterval<PointID>(Curve const& curve1, PointID const& center_id, Curve const& curve2, PointID seg_start) const
 {
-	return getInterval(curve1, center_id, curve2, seg_start, nullptr);
+	return FrechetLight::getInterval<PointID>(curve1, center_id, curve2, seg_start, nullptr);
 }
 
-inline CInterval FrechetLight::getInterval(Curve const& curve1, PointID center_id, Curve const& curve2, PointID seg_start, CInterval* outer) const
+template <>
+CInterval FrechetLight::getInterval<PointID>(Curve const& curve1, PointID const& center_id, Curve const& curve2, PointID seg_start, CInterval* outer) const
 {
     Interval outer_temp;
     Interval* outer_pt = outer == nullptr ? nullptr : &outer_temp;
@@ -218,6 +234,21 @@ inline CInterval FrechetLight::getInterval(Curve const& curve1, PointID center_i
     return CInterval{seg_start, interval.begin, seg_start, interval.end};
 }
 
+//TODO get rid of this!
+template <>
+CInterval FrechetLight::getInterval<CPoint>(Curve const& curve1, CPoint const& center_id, Curve const& curve2, PointID seg_start) const
+{
+  assert(false); //we should never get here
+}
+
+//TODO get rid of this!
+template <>
+CInterval FrechetLight::getInterval<CPoint>(Curve const& curve1, CPoint const& center_id, Curve const& curve2, PointID seg_start, CInterval* outer) const
+{
+  assert(false); //we should never get here
+}
+
+
 inline void FrechetLight::merge(CIntervals& intervals, CInterval const& new_interval) const
 {
 	if (new_interval.is_empty()) { return; }
@@ -230,15 +261,17 @@ inline void FrechetLight::merge(CIntervals& intervals, CInterval const& new_inte
 	}
 }
 
-inline QSimpleInterval FrechetLight::getFreshQSimpleInterval(Point const& fixed_point, PointID min, PointID max, const Curve& curve) const
+//TODO: better distinction -- returned SimpleIntervals are only useful to determine full/not full
+inline QSimpleInterval FrechetLight::getTestFullQSimpleInterval(CPoint const& fixed, const Curve& fixed_curve, PointID min, PointID max, const Curve& curve) const
 {
 	QSimpleInterval qsimple;
-	updateQSimpleInterval(qsimple, fixed_point, min, max, curve);
+	updateQSimpleInterval<TestFullMode, CPoint>(qsimple, fixed, fixed_curve, min, max, curve);
 	return qsimple;
 }
 
 
-inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple, Point const& fixed_point, PointID min, PointID max, const Curve& curve) const
+template <class MODE, class IndexType>
+inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple, const IndexType& fixed, const Curve& fixed_curve, PointID min, PointID max, const Curve& curve) const
 {
 	assert( (qsimple.getFreeInterval().is_empty() and qsimple.getOuterInterval().is_empty()) or (!qsimple.getFreeInterval().is_empty() and !qsimple.getOuterInterval().is_empty()));
 	if (qsimple.is_valid() or (qsimple.hasPartialInformation() and qsimple.getLastValidPoint() >= max)) {
@@ -263,6 +296,7 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple, Point 
 		// heuristic check:
 		auto mid = (min + max)/2;
 		auto maxdist = std::max(curve.curve_length(min, mid), curve.curve_length(mid, max));
+		auto fixed_point = fixed_curve.interpolate_at(fixed);
 		auto mid_dist_sqr = fixed_point.dist_sqr(curve[mid]);
 
 		//heuristic tests avoiding sqrts
@@ -283,14 +317,15 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple, Point 
 		}
 	}
 
-	continueQSimpleSearch(qsimple, fixed_point, min, max, curve);
+	continueQSimpleSearch<MODE, IndexType>(qsimple, fixed, fixed_curve, min, max, curve);
 
 	assert( (qsimple.getFreeInterval().is_empty() and qsimple.getOuterInterval().is_empty()) or (!qsimple.getFreeInterval().is_empty() and !qsimple.getOuterInterval().is_empty()));
 	return true;
 }
 
 
-inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, Point const& fixed_point, PointID min, PointID max, const Curve& curve) const
+template <class MODE, class IndexType>
+inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const IndexType& fixed, const Curve& fixed_curve, PointID min, PointID max, const Curve& curve) const
 {
 	assert(!qsimple.hasPartialInformation() or (qsimple.getLastValidPoint() >= min and qsimple.getLastValidPoint() <= max));
 
@@ -304,6 +339,7 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, Point 
 	//Logical assert: there should be no free point in [min, start):
 	// if start > min, then the free interval must be empty
 
+	auto fixed_point = fixed_curve.interpolate_at(fixed);
 	bool current_free = fixed_point.dist_sqr(curve[start]) <= dist_sqr;
 	// Work directly on the simple_interval of the boundary
 	//CPoint first_free = current_free ? CPoint{min,0.} : CPoint{max+1,0.};
@@ -361,11 +397,21 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, Point 
 			
 			continue;
 		}
+	
 		
+	        if (std::is_same<MODE, TestFullMode>::value) {
+		  return; //Simple interval is not full -- can return in TestFullMode
+		}	  
+		//from here on, regular mode -> IndexType = PointID
+
+		//TODO: re-inline using if_static 
+
 		// otherwise we have to compute the intersection interval:
-		auto const& cur_point = curve[cur];
-		Interval outer;
-		auto interval = IntersectionAlgorithm::intersection_interval(fixed_point, distance, cur_point, end_point, &outer);
+		//TODO: bad style: stripping down information added by getInterval
+		CInterval temp_outer;
+		CInterval temp_interval = FrechetLight::getInterval<IndexType>(fixed_curve, fixed, curve, cur, &temp_outer);
+		Interval interval = Interval(temp_interval.begin.getFraction(), temp_interval.end.getFraction()); 
+		Interval outer = Interval(temp_outer.begin.getFraction(), temp_outer.end.getFraction());
 		outer.begin = std::max(outer.begin, 0.);
 		outer.end = std::min(outer.end, 1.);
 		if (interval.is_empty()) {
@@ -607,7 +653,7 @@ inline void FrechetLight::getQSimpleIntervals(BoxData& data)
 		} else {
 			qsimple1 = QSimpleInterval();
 		}
-		bool changed = updateQSimpleInterval(qsimple1, curve2[box.max2], box.min1, box.max1, curve1);
+		bool changed = updateQSimpleInterval(qsimple1, box.max2, curve2, box.min1, box.max1, curve1);
 		if (changed) {
 			qsimple_intervals.push_back(qsimple1);
 			data.qsimple_outputs.id1 = qsimple_intervals.size() - 1;
@@ -619,7 +665,7 @@ inline void FrechetLight::getQSimpleIntervals(BoxData& data)
 		} else {
 			qsimple2 = QSimpleInterval();
 		}
-		bool changed = updateQSimpleInterval(qsimple2, curve1[box.max1], box.min2, box.max2, curve2);
+		bool changed = updateQSimpleInterval(qsimple2, box.max1, curve1, box.min2, box.max2, curve2);
 		if (changed) {
 			qsimple_intervals.push_back(qsimple2);
 			data.qsimple_outputs.id2 = qsimple_intervals.size()-1;
@@ -668,7 +714,7 @@ inline void FrechetLight::calculateQSimple1(BoxData& data)
 			else if (x > box.min1 && pruning_level > 4 && enable_propagation2) {
 				auto it = getIntervalContainingNumber(data.inputs.begin1, data.inputs.end1, x);
 				if (it != data.inputs.end1) { //(x, box.min2) is reachable from interval *it 
-					auto interval = getFreshQSimpleInterval(curve1.interpolate_at(x), box.min2, box.max2, curve2);
+					auto interval = getTestFullQSimpleInterval(x, curve1, box.min2, box.max2, curve2);
 					if (interval.is_valid()) {
 						CInterval &parent = *it; 
 						out1 = qsimple1.getFreeInterval();
@@ -733,7 +779,7 @@ inline void FrechetLight::calculateQSimple2(BoxData& data)
 			else if (x > box.min2 && pruning_level > 4 && enable_propagation2) {
 				auto it = getIntervalContainingNumber(data.inputs.begin2, data.inputs.end2, x);
 				if (it != data.inputs.end2) {
-					auto interval = getFreshQSimpleInterval(curve2.interpolate_at(x), box.min1, box.max1, curve1);
+					auto interval = getTestFullQSimpleInterval(x, curve2, box.min1, box.max1, curve1);
 					if (interval.is_valid()) {
 						CInterval &parent = *it; 
 						out2 = qsimple2.getFreeInterval();
@@ -1137,7 +1183,7 @@ Certificate& FrechetLight::computeCertificate() {
 			return cert;
 		} else {
 		 	CInterval outer;
-			(void) getInterval(curve1, 0, curve2, last.getPoint(), &outer);
+			(void) getInterval(curve1, (PointID) 0, curve2, last.getPoint(), &outer);
 			CPoint safe_empty = outer.begin > CPoint(last.getPoint(), 0.) ? outer.begin : outer.end;
 			assert(safe_empty > CPoint(last.getPoint(), 0.) or safe_empty < CPoint(last.getPoint()+1, 0.));
 			cert.setAnswer(false);
@@ -1156,7 +1202,7 @@ Certificate& FrechetLight::computeCertificate() {
 			return cert;
 		} else {
 		 	CInterval outer;
-			(void) getInterval(curve2, 0, curve1, last.getPoint(), &outer);
+			(void) getInterval(curve2, (PointID) 0, curve1, last.getPoint(), &outer);
 			CPoint safe_empty = outer.begin > CPoint(last.getPoint(), 0.) ? outer.begin : outer.end;
 			assert(safe_empty > CPoint(last.getPoint(), 0.) or safe_empty < CPoint(last.getPoint()+1, 0.));
 			cert.setAnswer(false);

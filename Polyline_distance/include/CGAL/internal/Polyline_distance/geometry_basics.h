@@ -319,7 +319,7 @@ public:
 	* If x = 0 then x' = -eps, while if x > 0 then the distance at x' is more than the radius.
 	* If y = 1 then y' = 1+eps, while if y < 1 then the distance at y' is more than the radius.
     */
-	static Interval intersection_interval(Point circle_center, distance_t radius, Point line_start, Point line_end, Interval * outer = nullptr);
+	static Interval intersection_interval(const Point& circle_center, distance_t radius, Point line_start, Point line_end, Interval * outer = nullptr);
 private:
 	IntersectionAlgorithm() {} // Make class static-only
 	static inline bool smallDistanceAt(distance_t interpolate, Point line_start, Point line_end, Point circle_center, distance_t radius_sqr);
@@ -483,8 +483,10 @@ inline distance_t IntersectionAlgorithm::distanceAt(distance_t interpolate, Poin
 	return circle_center.dist_sqr(line_start * (1. - interpolate) + line_end * interpolate);
 }
 
-Interval IntersectionAlgorithm::intersection_interval(Point circle_center, distance_t radius, Point line_start, Point line_end, Interval * outer /* = nullptr*/)
+
+Interval IntersectionAlgorithm::intersection_interval(const Point& circle_center, distance_t radius, Point line_start, Point line_end, Interval * outer /* = nullptr*/)
 {
+
     // The line can be represented as line_start + lambda * v
     const Point v = line_end - line_start;
 	const distance_t rad_sqr = radius * radius;

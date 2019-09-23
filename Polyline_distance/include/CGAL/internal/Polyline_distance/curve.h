@@ -26,6 +26,7 @@ public:
 		assert((pt.getPoint() < points.size()-1 || (pt.getPoint() == points.size()-1 && pt.getFraction() == 0.)));
 		return pt.getFraction() == 0. ? points[pt.getPoint()] : points[pt.getPoint()]*(1.-pt.getFraction()) + points[pt.getPoint()+1]*pt.getFraction();
 	}
+	Point interpolate_at(PointID const& pt) const  { return points[pt]; }
     distance_t curve_length(PointID i, PointID j) const
 		{ return prefix_length[j] - prefix_length[i]; }
 
