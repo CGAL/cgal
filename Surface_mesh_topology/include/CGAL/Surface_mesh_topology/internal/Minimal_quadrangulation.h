@@ -23,19 +23,18 @@
 
 // Should be defined before to include Path_on_surface_with_rle.h
 // If nothing is defined, use V1
-#define CGAL_PWRLE_TURN_V1  // Compute turns by turning (method of CMap)
+// #define CGAL_PWRLE_TURN_V1  // Compute turns by turning (method of CMap)
 // #define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash-table (built and given by Curves_on_surface_topology)
-// #define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Curves_on_surface_topology)
+#define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Curves_on_surface_topology)
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
-#include <CGAL/Union_find.h>
-#include <CGAL/Random.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h>
 #include <CGAL/Surface_mesh_topology/internal/Path_generators.h>
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Cell_attribute.h>
+#include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 #include <boost/unordered_map.hpp>
 #include <queue>
@@ -71,13 +70,7 @@ public:
   Dart_handle;
   typedef typename CMap_for_minimal_quadrangulation::Dart_const_handle
   Dart_const_handle;
-  typedef CGAL::Union_find<Dart_handle> UFTree;
-  typedef typename UFTree::handle UFTree_handle;
-
   typedef typename Get_map<Mesh, Mesh>::type Map;
-
-  typedef CGAL::Union_find<typename Map::Dart_const_handle> UFTree2;
-  typedef typename UFTree2::handle UFTree_handle2;
 
   // Associate each dart of the original map, not removed, a pair of darts in the
   // reduced map.
@@ -91,17 +84,10 @@ public:
   Minimal_quadrangulation(const Mesh& amap, bool display_time=false) :
     m_original_map(amap)
   {
-    if (!get_map().is_without_boundary(1))
+    if (!m_original_map.is_without_boundary(1))
     {
       std::cerr<<"ERROR: the given amap has 1-boundaries; "
                <<"such a surface is not possible to process here."
-               <<std::endl;
-      return;
-    }
-    if (!get_map().is_without_boundary(2))
-    {
-      std::cerr<<"ERROR: the given amap has 2-boundaries; "
-               <<"which are not yet considered (but this will be done later)."
                <<std::endl;
       return;
     }
@@ -711,24 +697,30 @@ protected:
     {
       if (!m_original_map.is_marked(it, m_mark_T))
       {
-	if (m_original_map.template is_free<2>(it))
-	{// case of a boundary
+        if (m_original_map.template is_free<2>(it))
+        {// case of a boundary
           d1=get_map().create_dart();
           d2=get_map().create_dart();
           get_map().template basic_link_beta_for_involution<2>(d1, d2);
           origin_to_copy[it]=d1;
           copy_to_origin[d1]=it;
           get_map().mark(d2, m_mark_hole);
-	}
+        }
         else if (typename Map::Dart_const_handle(it)<m_original_map.template beta<2>(it))
-	{
+        {
           d1=get_map().create_dart();
           d2=get_map().create_dart();
           get_map().template basic_link_beta_for_involution<2>(d1, d2);
+
           origin_to_copy[it]=d1;
           origin_to_copy[m_original_map.template beta<2>(it)]=d2;
           copy_to_origin[d1]=it;
           copy_to_origin[d2]=m_original_map.template beta<2>(it);
+
+          if (m_original_map.is_perforated(it))
+          { get_map().mark(d1, m_mark_hole); }
+          if (m_original_map.is_perforated(m_original_map.template beta<2>(it)))
+          { get_map().mark(d2, m_mark_hole); }
         }
       }
     }
@@ -745,13 +737,14 @@ protected:
         while(m_original_map.is_marked(dd1, m_mark_T))
         { dd1=m_original_map.template beta<1>(dd1); }
         get_map().basic_link_beta_1(origin_to_copy[it], origin_to_copy[dd1]); // let's link both
-	if (m_original_map.template is_free<2>(it))
-	{
-	  dd1=prev_in_boundary(it);
+        if (m_original_map.template is_free<2>(it))
+        {
+          dd1=prev_in_boundary(it);
           while(m_original_map.is_marked(dd1, m_mark_T))
           { dd1=prev_in_boundary(dd1); }
-          get_map().basic_link_beta_1(get_map().template beta<2>(origin_to_copy[it]), get_map().template beta<2>(origin_to_copy[dd1]));
-	}
+          get_map().basic_link_beta_1(get_map().template beta<2>(origin_to_copy[it]),
+                                      get_map().template beta<2>(origin_to_copy[dd1]));
+        }
       }
     }
   }
@@ -773,7 +766,7 @@ protected:
       if (!m_original_map.is_marked(it, m_mark_T))
       {
         if (m_original_map.template is_free<2>(it) ||
-	    typename Map::Dart_const_handle(it)<m_original_map.template beta<2>(it))
+            typename Map::Dart_const_handle(it)<m_original_map.template beta<2>(it))
         {
           m_paths[it]=std::make_pair
               (origin_to_copy.at(it),
@@ -797,8 +790,8 @@ protected:
 
   /// Marks all darts belonging to L using a BFS
   void compute_L(typename CMap_for_minimal_quadrangulation::size_type toremove,
-		 boost::unordered_map<Dart_handle, typename Map::Dart_const_handle>&
-		 copy_to_origin)
+                 boost::unordered_map<Dart_handle, typename Map::Dart_const_handle>&
+                 copy_to_origin)
   {
     Dart_handle dh;
     Dart_handle ddh;
@@ -892,8 +885,9 @@ protected:
          it=get_map().darts().begin(); it!=get_map().darts().end();
          ++it)
     {
-      if (get_map().is_marked(it, oldedges) && !get_map().is_marked(it, m_mark_hole) && 
-	  !get_map().is_marked(it, treated))
+      if (get_map().is_marked(it, oldedges) &&
+          !get_map().is_marked(it, m_mark_hole) &&
+          !get_map().is_marked(it, treated))
       {
         get_map().template mark_cell<2>(it, treated);
         get_map().insert_cell_0_in_cell_2(it);
@@ -915,6 +909,16 @@ protected:
       //         <<get_map().darts().index(p.second)<<std::endl;
     }
 
+    /* FOR DEBUG for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+         it=get_map().darts().begin(); it!=get_map().darts().end();
+         ++it)
+    {
+      if (get_map().is_marked(it, m_mark_hole))
+      { assert(get_map().template is_whole_cell_marked<2>(it, m_mark_hole)); }
+      else
+      { assert(get_map().template is_whole_cell_unmarked<2>(it, m_mark_hole)); }
+    } */
+
     // 3) We remove all the old edges and extend the holes when necessary.
     for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
            it=get_map().darts().begin(), itend=get_map().darts().end(); it!=itend;
@@ -922,13 +926,29 @@ protected:
     {
       if (get_map().is_dart_used(it) && get_map().is_marked(it, oldedges))
       {
-        if (get_map().is_marked(get_map().template beta<2>(it), m_mark_hole))
-	{
+        if (get_map().is_marked(get_map().template beta<2>(it), m_mark_hole) &&
+            !get_map().is_marked(it, m_mark_hole))
+        {
           get_map().template mark_cell<2>(it, m_mark_hole);
-	}
-        get_map().template remove_cell<1>(it);
+        }
+        else if (get_map().is_marked(it, m_mark_hole) &&
+                 !get_map().is_marked(get_map().template beta<2>(it), m_mark_hole))
+        {
+          get_map().template mark_cell<2>(get_map().template beta<2>(it), m_mark_hole);
+        }
+       get_map().template remove_cell<1>(it);
       }
     }
+
+    /* FOR DEBUG for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+         it=get_map().darts().begin(); it!=get_map().darts().end();
+         ++it)
+    {
+      if (get_map().is_marked(it, m_mark_hole))
+      { assert(get_map().template is_whole_cell_marked<2>(it, m_mark_hole)); }
+      else
+      { assert(get_map().template is_whole_cell_unmarked<2>(it, m_mark_hole)); }
+    } */
 
     get_map().free_mark(oldedges);
   }

@@ -64,9 +64,6 @@ public:
     m_map(apath.get_map()),
     m_is_closed(apath.is_closed())
   {
-    // TEMPO POUR DEBUG
-    CGAL_assertion(const_cast<internal::Path_on_surface_with_rle<COST>&>(apath).is_valid(true));
-    // END TEMPO
     for (auto it=apath.m_path.begin(), itend=apath.m_path.end(); it!=itend; ++it)
     {
       push_back(it->begin, false, false);

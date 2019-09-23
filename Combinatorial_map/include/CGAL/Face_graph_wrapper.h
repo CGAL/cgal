@@ -26,6 +26,7 @@
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
+#include <bitset>
 
 namespace CGAL
 {
@@ -136,10 +137,14 @@ public:
       mindex_marks[i]            =i;
       mnb_marked_darts[i]        =0;
       mnb_times_reserved_marks[i]=0;
-      // m_marks[i]                 =nullptr;
     }
 
     m_nb_darts=darts().size(); // Store locally the number of darts: the HEG must not be modified
+
+    m_all_marks=get(CGAL::dynamic_halfedge_property_t<std::bitset<NB_MARKS> >(), m_fg);
+    for (typename Dart_range::const_iterator it(darts().begin()),
+           itend(darts().end()); it!=itend; ++it)
+    { put(m_all_marks, it, std::bitset<NB_MARKS>()); }
   }
 
   const HEG& get_fg() const
@@ -147,12 +152,15 @@ public:
   
   template<unsigned int i>
   bool is_free(Dart_const_handle dh) const
-  { return Is_free<HEG, i>::value(m_fg, dh); }
+  { return false; } // Not possible to have a free dart with an HEG.
+ //return Is_free<HEG, i>::value(m_fg, dh); }
   bool is_free(Dart_const_handle dh, unsigned int i) const
   {
-    if (i==2) { return Is_free<HEG, 2>::value(m_fg, dh); }
-    return false; // Not possible to have 0 or 1 free dart with an HEG.
+    // if (i==2) { return Is_free<HEG, 2>::value(m_fg, dh); }
+    return false; // Not possible to have a free dart with an HEG.
   }
+  bool is_perforated(Dart_const_handle dh) const
+  { return is_border(dh, m_fg); }
 
   Dart_const_handle get_beta(Dart_const_handle ADart, int B1) const
   {
@@ -175,7 +183,7 @@ public:
       { return true; ?? } */
   
   int highest_nonfree_dimension(Dart_const_handle dh) const
-  { return (Is_free<HEG, 2>(m_fg, dh)?1:2); }
+  { return 2; } //(Is_free<HEG, 2>(m_fg, dh)?1:2); }
 
   Dart_const_handle previous(Dart_const_handle ADart) const
   { return get_beta<0>(ADart); }  
@@ -200,7 +208,7 @@ public:
   { return true; }
   template<unsigned int dim>
   bool is_opposite_exist(Dart_const_handle ADart) const
-  { return !this->template is_free<dim>(ADart); }
+  { return true; } // !this->template is_free<dim>(ADart); }
 
   template<typename ...Betas>
   Dart_handle beta(Dart_handle ADart, Betas... betas)
@@ -273,15 +281,6 @@ public:
     ++mnb_used_marks;
     CGAL_assertion(is_whole_map_unmarked(m));
 
-    // m_marks[m]=new std::vector<bool>(CGAL::num_halfedges(m_fg),  mmask_marks[m]); // TODO use property map
-    // CGAL::num_halfedges is an upper bound; depending on the removed halfedges
-
-    m_marks_new[m]=get(CGAL::dynamic_halfedge_property_t<bool>(),
-                       const_cast<HEG&>(m_fg)); // Strange...
-    for (typename Dart_range::const_iterator it(darts().begin()),
-         itend(darts().end()); it!=itend; ++it)
-    { set_dart_mark(*it, m, mmask_marks[m]); }
-
     return m;
   }
   
@@ -310,12 +309,11 @@ public:
   
   bool get_dart_mark(Dart_const_handle ADart, size_type amark) const
   {
-    // return (*(m_marks[amark]))[ADart];
-    return get(m_marks_new[amark], ADart);
+    return get(m_all_marks, ADart)[amark];
   }
   void set_dart_mark(Dart_const_handle ADart, size_type amark, bool avalue) const
-  { // (*(m_marks[amark]))[ADart]=avalue;
-    put(m_marks_new[amark], ADart, avalue);
+  {
+    const_cast<std::bitset<NB_MARKS>& >(get(m_all_marks, ADart)).set(amark, avalue);
   }
 
   void flip_dart_mark(Dart_const_handle ADart, size_type amark) const
@@ -403,10 +401,6 @@ public:
     mindex_marks[amark] = mnb_used_marks;
     
     mnb_times_reserved_marks[amark]=0;
-
-    // delete m_marks[amark]; m_marks[amark]=nullptr; // TODO use property map
-    m_marks_new[amark]=get(CGAL::dynamic_halfedge_property_t<bool>(),
-                           const_cast<HEG&>(m_fg)); // To erase the property map ??
   }
   
   bool is_without_boundary(unsigned int i) const
@@ -416,7 +410,7 @@ public:
     
     for ( typename Dart_range::const_iterator it(darts().begin()),
             itend(darts().end()); it!=itend; ++it)
-    { if (is_free<2>(it)) return false; }
+    { if (is_perforated(it)) return false; }
     return true;
   }
   
@@ -480,10 +474,7 @@ public:
     size_type size() const
     {
       if (msize==0)
-      {
-        for (const_iterator it=begin(), itend=end(); it!=itend; ++it)
-        { ++msize; }
-      }
+      { msize=halfedges(mmap.get_fg()).size(); }
       return msize;
     }
     bool empty() const
@@ -608,7 +599,8 @@ public:
   {
     if (i==0) { return mark_cell<0>(adart, amark); }
     else if (i==1) { return mark_cell<1>(adart, amark); }
-    return mark_cell<2>(adart, amark);
+    else if (i==2) { return mark_cell<2>(adart, amark); }
+    return mark_cell<3>(adart, amark);
   } 
 
   template <unsigned int i>
@@ -708,9 +700,9 @@ public:
 
   std::vector<unsigned int> count_all_cells() const
   {
-    std::vector<unsigned int> dim(dimension+1);
+    std::vector<unsigned int> dim(dimension+2);
     
-    for ( unsigned int i=0; i<=dimension; ++i)
+    for ( unsigned int i=0; i<=dimension+1; ++i)
     { dim[i]=i; }
     
     return count_cells(dim);
@@ -718,8 +710,8 @@ public:
 
   std::ostream& display_characteristics(std::ostream & os) const
   {
-    std::vector<unsigned int> cells(dimension+1);
-    for ( unsigned int i=0; i<=dimension; ++i)
+    std::vector<unsigned int> cells(dimension+2);
+    for ( unsigned int i=0; i<=dimension+1; ++i)
     { cells[i]=i; }
     
     std::vector<unsigned int> res=count_cells(cells);
@@ -727,7 +719,7 @@ public:
     os<<"#Darts="<<number_of_darts();
     for (unsigned int i=0; i<=dimension; ++i)
       os<<", #"<<i<<"-cells="<<res[i];
-    //  os<<", #ccs="<<res[dimension+1];
+    os<<", #ccs="<<res[dimension+1];
 
     return os;
   }
@@ -759,10 +751,9 @@ protected:
   mutable size_type mnb_marked_darts[NB_MARKS];
 
   /// Array of property maps; one for each reserved mark.
-  // mutable std::vector<bool>* m_marks[NB_MARKS];
   typedef typename boost::property_map
-              <HEG, CGAL::dynamic_halfedge_property_t<bool> >::type MarkPMap;
-  mutable MarkPMap m_marks_new[NB_MARKS];
+  <HEG, CGAL::dynamic_halfedge_property_t<std::bitset<NB_MARKS> > >::const_type MarkPMap;
+  mutable MarkPMap m_all_marks;
 };
 
   /// null_handle

@@ -23,6 +23,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/helpers.h>
+#include <stack>
 
 namespace CGAL
 {
@@ -47,9 +48,9 @@ namespace CGAL
       mmap(amap),
       m_it(halfedges(amap.get_fg()).begin())
     {
-      if (m_it!=halfedges(amap.get_fg()).end() &&
+      /*if (m_it!=halfedges(amap.get_fg()).end() &&
           is_border(*m_it, amap.get_fg()))
-      { operator++(0); }
+      { operator++(0); } */
     }
 
     /// Constructor with a dart in parameter (for end iterator).
@@ -77,12 +78,12 @@ namespace CGAL
     {
       CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).end());
 
-      do
+      //do
       {
         ++m_it;
       }
-      while(m_it!=halfedges(this->mmap.get_fg()).end() &&
-            is_border(*m_it, this->mmap.get_fg()));
+      /*while(m_it!=halfedges(this->mmap.get_fg()).end() &&
+            is_border(*m_it, this->mmap.get_fg())); */
       
       return *this;
     }
@@ -279,6 +280,58 @@ public:
   /// Postfix ++ operator.
   Self operator++(int)
   { Self res=*this; operator ++(); return res; }
+};
+template<typename Map_>
+class FGW_cell_iterator<Map_, 3>: public FGW_basis_for_cell_iterator<Map_> // CC
+{
+public:
+  typedef FGW_cell_iterator Self;
+  typedef FGW_basis_for_cell_iterator<Map_> Base;
+  typedef Map_ Map;    
+  typedef typename Map::Dart_handle Dart_handle;
+  typedef typename Map::size_type size_type;
+  
+  FGW_cell_iterator(const Map& amap, Dart_handle adart) : Base(amap, adart)
+  { m_mark=this->mmap.get_new_mark(); }
+  
+  /// Constructor with two darts in parameter (for end iterator).
+  FGW_cell_iterator(const Map& amap, Dart_handle adart,
+                    Dart_handle d2): Base(amap, adart, d2)
+  { m_mark=this->mmap.get_new_mark(); }
+
+  ~FGW_cell_iterator()
+  { this->mmap.free_mark(m_mark); }
+
+  /// Prefix ++ operator.
+  Self& operator++()
+  {
+    if (!this->mmap.is_marked(this->mmap.template beta<1>(this->m_curdart), m_mark))
+    {
+      m_to_treat.push(this->mmap.template beta<1>(this->m_curdart));
+      this->mmap.mark(this->mmap.template beta<1>(this->m_curdart), m_mark);
+    }
+    if (!this->mmap.template is_free<2>(this->m_curdart) &&
+        !this->mmap.is_marked(this->mmap.template beta<2>(this->m_curdart), m_mark))
+    {
+      m_to_treat.push(this->mmap.template beta<2>(this->m_curdart));
+      this->mmap.mark(this->mmap.template beta<2>(this->m_curdart), m_mark);
+    }
+
+    if (m_to_treat.empty())
+    { this->m_curdart=Dart_handle(); }
+    else
+    { this->m_curdart=m_to_treat.top(); m_to_treat.pop(); }
+    
+    return *this;
+  }
+    
+  /// Postfix ++ operator.
+  Self operator++(int)
+  { Self res=*this; operator ++(); return res; }
+  
+protected:
+  typename Map_::size_type m_mark;
+  std::stack<Dart_handle> m_to_treat;
 };
 ////////////////////////////////////////////////////////////////////////////////
 
