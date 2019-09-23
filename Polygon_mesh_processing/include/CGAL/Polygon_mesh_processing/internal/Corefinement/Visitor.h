@@ -468,6 +468,28 @@ public:
       }
       else{
         //handle intersection on principal edge
+        typename std::map<const TriangleMesh*, const NM_features_map*>::iterator it_find =
+          non_manifold_feature_maps.find(&tm1);
+        if ( it_find != non_manifold_feature_maps.end() )
+        {
+          // update h_1 if it is not the canonical non-manifold edge
+          // This is important to make sure intersection points on non-manifold
+          // edges are all connected for the same edge so that the redistribution
+          // on other edges does not overwrite some nodes.
+          // This update might be required in case of EDGE-EDGE intersection or
+          // COPLANAR intersection.
+          const NM_features_map& nm_features_map_1 = *it_find->second;
+          std::size_t eid1 = nm_features_map_1.non_manifold_edges.empty()
+                           ? std::size_t(-1)
+                           : get(nm_features_map_1.e_nm_id, edge(h_1, tm1));
+
+          if (eid1 != std::size_t(-1))
+          {
+            if ( edge(h_1, tm1) != nm_features_map_1.non_manifold_edges[eid1].front() )
+              h_1 = halfedge(nm_features_map_1.non_manifold_edges[eid1].front(), tm1);
+          }
+        }
+
         on_edge[tm1_ptr][edge(h_1,tm1)].push_back(node_id);
       //   check_node_on_non_manifold_edge(node_id,h_1,tm1);
       }
