@@ -331,6 +331,10 @@ class Point_set_item_classification : public Item_classification_base
     std::vector<int> indices (m_points->point_set()->size(), -1);
 
     m_label_probabilities.clear();
+    m_label_probabilities.resize (m_labels.size());
+    for (std::size_t i = 0; i < m_label_probabilities.size(); ++ i)
+      m_label_probabilities[i].resize (m_points->point_set()->size(), -1);
+    
     if (method == 0)
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, classifier,
