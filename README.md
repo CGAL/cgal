@@ -10,8 +10,18 @@ CGAL releases
 =============
 The primary vector of distribution of CGAL are sources tarballs, released
 twice a year, announced on [the web site of CGAL](https://www.cgal.org/).
-The sources distributed that way can be built using the
-[CGAL installation manual](https://doc.cgal.org/latest/Manual/installation.html).
+
+Header-only
+===========
+
+Since version 5.0, CGAL is header-only by default, which means
+that there is **no need to build or install \cgal before it can be used**.
+
+Getting started with CGAL
+=========================
+
+Head over to the [CGAL manual](https://doc.cgal.org/latest/Manual/general_intro.html)
+for usage guides and tutorials that will get you started smoothly.
 
 CGAL Git repository layout
 ==========================
@@ -32,6 +42,7 @@ or `Triangulation_3`); however some packages serve special needs:
 
 Compilation and installation
 ============================
+
 The compilation and installation of CGAL from a sources tarball are
 described in the
 [CGAL installation manual](https://doc.cgal.org/latest/Manual/installation.html)

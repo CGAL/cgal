@@ -1,53 +1,12 @@
 /*!
 
-\page preliminaries Preliminaries
+\page preliminaries General Information
 \cgalAutoToc
 
-The chapter further explains how to control inlining, thread safety,
-code deprecation, checking of pre- and postconditions,
-and how to alter the failure behavior.
+The chapter explains some basic features of \cgal such as thread safety, code deprecation,
+checking of pre- and postconditions and altering the failure behavior, and how to control inlining.
 
-\section markingSpecialFunctionality Marking of Special Functionality
-
-In this manual you will encounter sections marked as follows.
-
-\subsection advanced_features Advanced Features
-
-Some functionality is considered more advanced, for example because it is
-relatively low-level, or requires special care to be properly used.
-
-\cgalAdvancedBegin
-Such functionality is identified this way in the manual.
-\cgalAdvancedEnd
-
-\subsection debugging_support Debugging Support Features
-
-Usually related to advanced features that for example may not guarantee
-class invariants, some functionality is provided that helps debugging,
-for example by performing invariants checks on demand.
-
-\cgalDebugBegin
-Such functionality is identified this way in the manual.
-\cgalDebugEnd
-
-\subsection deprecated_code Deprecated Code
-
-Sometimes, the \cgal project decides that a feature is deprecated.  This means
-that it still works in the current release, but it will be removed in the next,
-or a subsequent release.  This can happen when we have found a better way to do
-something, and we would like to reduce the maintenance cost of \cgal at some
-point in the future.  There is a trade-off between maintaining backward
-compatibility and implementing new features more easily.
-
-In order to help users manage the changes to apply to their code, we attempt
-to make \cgal code emit warnings when deprecated code is used.  This can be
-done using some compiler specific features.  Those warnings can be disabled
-by defining the macro `CGAL_NO_DEPRECATION_WARNINGS`.  On top of this, we
-also provide a macro, `CGAL_NO_DEPRECATED_CODE`, which, when defined,
-disables all deprecated features.  This allows users to easily test if their
-code relies on deprecated features.
-
-\deprecated Such functionality is identified this way in the manual.
+These concepts are further developed in the \ref dev_manual.
 
 \section Preliminaries_namespace Namespace CGAL
 
@@ -80,7 +39,7 @@ definition by setting `CGAL_HAS_NO_THREADS` from the command line.
 \section Preliminaries_cc0x C++14 Support
 
 After being based on the \CC standard released in 1998 (and later refined in 2003) for a long time,
-\cgal is now based on a newer major version of the standard, C++14.
+\cgal is now based on a newer major version of the standard, <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a>.
 
 \section Preliminaries_functor Functor Return Types
 

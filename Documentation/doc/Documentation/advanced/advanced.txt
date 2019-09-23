@@ -2,7 +2,7 @@
 
 \page advanced Advanced
 
-- \subpage configurationvariables
-- \subpage installation
+- \subpage configurationvariables lists the various CMake variables that can be used to help find third-party dependencies.
+- \subpage installation describes the (optional) process of building and installing %CGAL itself.
 
 */

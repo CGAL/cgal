@@ -62,13 +62,17 @@ defined by cmake.
 
 \subsection installation_misc Miscellaneous Variables
 
+Note that the default build type is <b>`Debug`</b>, which should only be used to debug
+and will serverly limit performances.
 
 | Variable              | Description                                                           | Type        | %Default Value |
 | :-                    | :-                    | :-   |  :-            |
-| `CMAKE_BUILD_TYPE`    | Indicates type of build. Possible values are 'Debug' or 'Release'     | CMake       | Release |
+| `CMAKE_BUILD_TYPE`    | Indicates type of build. Possible values are 'Debug' or 'Release'     | CMake       |  |
+| `CMAKE_INSTALL_PREFIX`| Installation directory path                                           | CMake       | Debug |
+| `CMAKE_C_COMPILER`    | Full-path to the executable corresponding to the C compiler to use.   | CMake       | platform-dependent |
 | `CMAKE_CXX_COMPILER`  | Full-path to the executable corresponding to the C++ compiler to use. | CMake       | platform-dependent |
 | `CXX`                 | Idem                                                                  | Environment | Idem |
-
+| `BUILD_SHARED_LIBS`   | Whether to build shared or static libraries.                          | CMake       | TRUE |
 
 \subsection installation_variables_building Variables Used Only When Building Programs (Such as Demos or Examples)
 
