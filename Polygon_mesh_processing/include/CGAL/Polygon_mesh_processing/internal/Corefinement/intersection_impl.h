@@ -202,7 +202,7 @@ class Intersection_of_triangle_meshes
   std::vector<Node_id> extra_terminal_nodes; //used only for autorefinement
   Non_manifold_feature_map<TriangleMesh> non_manifold_feature_map_1,
                                          non_manifold_feature_map_2;
-  std::size_t NM_NID;
+  static const constexpr std::size_t NM_NID = (std::numeric_limits<std::size_t>::max)();
   CGAL_assertion_code(bool doing_autorefinement;)
 
 // member functions
@@ -242,27 +242,27 @@ class Intersection_of_triangle_meshes
           h ) );
         edge_boxes_ptr.push_back( &edge_boxes.back() );
       }
-      else
-        // non-manifold case
-        for(edge_descriptor ed : edges(tm_e))
+    else
+      // non-manifold case
+      for(edge_descriptor ed : edges(tm_e))
+      {
+        std::size_t eid=get(non_manifold_feature_map.e_nm_id, ed);
+        halfedge_descriptor h=halfedge(ed,tm_e);
+        // insert only one copy of a non-manifold edge
+        if (eid!=NM_NID)
         {
-          std::size_t eid=get(non_manifold_feature_map.e_nm_id, ed);
-          halfedge_descriptor h=halfedge(ed,tm_e);
-          // insert only one copy of a non-manifold edge
-          if (eid!=NM_NID)
-          {
-            if (non_manifold_feature_map.non_manifold_edges[eid].front()!=ed)
-              continue;
-            else
-              // make sure the halfedge used is consistant with stored one
-              h = halfedge(non_manifold_feature_map.non_manifold_edges[eid].front(), tm_e);
-          }
-          edge_boxes.push_back( Box(
-            get(vpm_e,source(h,tm_e)).bbox() +
-            get(vpm_e,target(h,tm_e)).bbox(),
-            h ) );
-          edge_boxes_ptr.push_back( &edge_boxes.back() );
+          if (non_manifold_feature_map.non_manifold_edges[eid].front()!=ed)
+            continue;
+          else
+            // make sure the halfedge used is consistant with stored one
+            h = halfedge(non_manifold_feature_map.non_manifold_edges[eid].front(), tm_e);
         }
+        edge_boxes.push_back( Box(
+          get(vpm_e,source(h,tm_e)).bbox() +
+          get(vpm_e,target(h,tm_e)).bbox(),
+          h ) );
+        edge_boxes_ptr.push_back( &edge_boxes.back() );
+      }
 
     /// \todo experiments different cutoff values
     std::ptrdiff_t cutoff = 2 * std::ptrdiff_t(
@@ -1474,7 +1474,6 @@ public:
                                   const Node_visitor& v=Node_visitor())
   : nodes(tm1, tm2, vpm1, vpm2)
   , visitor(v)
-  , NM_NID((std::numeric_limits<std::size_t>::max)())
   {
     CGAL_assertion_code( doing_autorefinement=false; )
   }
@@ -1485,7 +1484,6 @@ public:
                                   const Node_visitor& v=Node_visitor())
   : nodes(tm, tm, vpm, vpm)
   , visitor(v)
-  , NM_NID((std::numeric_limits<std::size_t>::max)())
   {
     CGAL_assertion_code( doing_autorefinement=true; )
   }
