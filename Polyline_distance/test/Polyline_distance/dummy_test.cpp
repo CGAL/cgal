@@ -16,8 +16,7 @@ namespace polyline_distance_tests {
 using Kernel = CGAL::Cartesian<double>;
 using NT = Kernel::FT;
 using Point = Kernel::Point_2;
-using Points = std::vector<Point>;
-using Curve = Points;
+using Curve = std::vector<Point>;
 using Curves = std::vector<Curve>;
 
 struct Query {
@@ -32,21 +31,14 @@ void readCurve(std::ifstream& curve_file, Curve& curve)
 	// Read everything into a stringstream.
 	std::stringstream ss;
 	ss << curve_file.rdbuf();
+	CGAL::set_ascii_mode(ss);
 
-	auto const ignore_count = std::numeric_limits<std::streamsize>::max();
-
-	std::string x_str, y_str;
-	while (ss >> x_str >> y_str) {
-		distance_t x, y;
-		x = std::stod(x_str);
-		y = std::stod(y_str);
-
-		ss.ignore(ignore_count, '\n');
-		// ignore duplicate rows
-		if (curve.size() && curve.back().x() == x && curve.back().y() == y) {
+	Point p;
+	while (ss >> p) {
+		if (!curve.empty() && p == curve.back()) {
 			continue;
 		}
-		curve.push_back({x, y});
+		curve.push_back(p);
 	}
 }
 
@@ -72,7 +64,6 @@ Curves readCurves(std::string const& curve_directory)
 
 		curves.emplace_back();
 		readCurve(curve_file, curves.back());
-		// curves.back().filename = curve_filename;
 
 		if (curves.back().empty()) { curves.pop_back(); }
 	}
