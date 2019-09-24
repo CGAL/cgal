@@ -90,21 +90,6 @@ namespace CGAL {
           return idx_ != inf;
         }
 
-        /// are two indices equal?
-        bool operator==(const T& _rhs) const {
-            return idx_ == _rhs.idx_;
-        }
-
-        /// are two indices different?
-        bool operator!=(const T& _rhs) const {
-            return idx_ != _rhs.idx_;
-        }
-
-        /// Comparison by index.
-        bool operator<(const T& _rhs) const {
-            return idx_ < _rhs.idx_;
-        }
-
         // Compatibility with OpenMesh handle
         size_type idx() const {
           return idx_;
@@ -130,7 +115,7 @@ namespace CGAL {
 
         SM_Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
       
-    private:
+    protected:
         size_type idx_;
     };
 
@@ -141,8 +126,8 @@ namespace CGAL {
     return ret;
   }
 
-    // Implementation for Surface_mesh::Vertex_index
- 
+  
+    // Implementation for Surface_mesh::Vertex_index  
     class SM_Vertex_index
  : public SM_Index<SM_Vertex_index>
     {
@@ -151,6 +136,25 @@ namespace CGAL {
         SM_Vertex_index() : SM_Index<SM_Vertex_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Vertex_index(size_type _idx) : SM_Index<SM_Vertex_index>(_idx) {}
+
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
+      
+        /// are two indices equal?
+        bool operator==(const SM_Vertex_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Vertex_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Vertex_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
 
 
         friend std::ostream& operator<<(std::ostream& os, SM_Vertex_index const& v)
@@ -177,6 +181,25 @@ namespace CGAL {
         SM_Halfedge_index() : SM_Index<SM_Halfedge_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
+      
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
+
+        /// are two indices equal?
+        bool operator==(const SM_Halfedge_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Halfedge_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Halfedge_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
 
         friend std::ostream& operator<<(std::ostream& os, SM_Halfedge_index const& h)
         {
@@ -193,7 +216,25 @@ namespace CGAL {
         SM_Face_index() : SM_Index<SM_Face_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
+      
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
 
+        /// are two indices equal?
+        bool operator==(const SM_Face_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Face_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Face_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
 
         friend std::ostream& operator<<(std::ostream& os, SM_Face_index const& f)
         {
@@ -227,6 +268,11 @@ namespace CGAL {
 
         // returns whether the index is valid, i.e., the index is not equal to std::numeric_limits<size_type>::max().
         bool is_valid() const { return halfedge_.is_valid(); }
+
+      
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
 
         // Are two indices equal?
         bool operator==(const SM_Edge_index& other) const { return (size_type)(*this) == (size_type)other; }
