@@ -46,6 +46,8 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, Vertex_handle s, Vertex_han
         c = c->neighbor(inf);
 
     _cur = Simplex( c, Tr::VERTEX, c->index(s), -1 );
+
+    jump_to_intersecting_cell();
 }
 
 template < class Tr, class Inc >
@@ -70,6 +72,8 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, Vertex_handle s, const Poin
         c = c->neighbor(inf);
 
     _cur = Simplex( c, Tr::VERTEX, c->index(s), -1 );
+
+    jump_to_intersecting_cell();
 }
 
 template < class Tr, class Inc >
@@ -91,6 +95,8 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, const Point& s, Vertex_hand
     get<0>(_cur) = _tr.locate( s, get<1>(_cur), get<2>(_cur), get<3>(_cur), hint );
 
     CGAL_triangulation_postcondition( get<0>(_cur) != Cell_handle() );
+
+    jump_to_intersecting_cell();
 }
 
 template < class Tr, class Inc >
@@ -111,6 +117,8 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, const Point& s, const Point
     get<0>(_cur) = _tr.locate( s, get<1>(_cur), get<2>(_cur), get<3>(_cur), hint );
 
     CGAL_triangulation_postcondition( get<0>(_cur) != Cell_handle() );
+
+    jump_to_intersecting_cell();
 }
 
 template < class Tr, class Inc >
@@ -193,6 +201,55 @@ template < class Tr, class Inc >
 inline bool Triangulation_segment_cell_iterator_3<Tr,Inc>::
 operator!=( Nullptr_t n ) const {
     return !( *this == n );
+}
+
+template < class Tr, class Inc >
+void Triangulation_segment_cell_iterator_3<Tr, Inc>::
+jump_to_intersecting_cell()
+{
+  //copy _cur
+  Cell_handle ch = get<0>(_cur);
+  Locate_type lt;
+  int li, lj;
+  entry(lt, li, lj);
+
+  if (lt == Tr::FACET || lt == Tr::EDGE || lt == Tr::VERTEX)
+  {
+    //go forward once in the iterator
+    Triangulation_segment_cell_iterator_3 cit(*this);
+    ++cit;
+
+    // collect the properties of "previous" to be in the right cell
+    Cell_handle new_ch = cit.previous();
+    if (new_ch == ch) //initialization already went to the good cell
+      return;
+
+    if (lt == Tr::VERTEX)
+    {
+      get<0>(_cur) = new_ch;
+      //get<1>(_cur) is Locate_type and unchanged
+      get<2>(_cur) = new_ch->index(ch->vertex(li));
+      //get<3>(_cur) is lj and unchanged
+    }
+    else if (lt == Tr::EDGE)
+    {
+      get<0>(_cur) = new_ch;
+      //get<1>(_cur) is Locate_type and unchanged
+      get<2>(_cur) = new_ch->index(ch->vertex(li));
+      get<3>(_cur) = new_ch->index(ch->vertex(lj));
+    }
+    else
+    {
+      get<0>(_cur) = new_ch;
+      //get<1>(_cur) is Locate_type and unchanged
+      get<2>(_cur) = new_ch->index(ch);
+      //get<3>(_cur) is lj and unchanged
+    }
+  }
+
+  //for other cases (CELL, OUTSIDE_CONVEX_HULL, OUTSIDE_AFFINE_HULL)
+  //the entry cell is already the good one, given by `locate()`
+  //in the traverser constructor
 }
 
 template < class Tr, class Inc >

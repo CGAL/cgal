@@ -483,6 +483,11 @@ protected:
 // \}
 
 private:
+    // at the end of the constructors, entry() is a vertex, edge or facet,
+    // we need to circulate/iterate over its incident cells to
+    // make sure that the current cell intersects the input query
+    void jump_to_intersecting_cell();
+
     //  walk_to_next(), if the triangulation is 3D.
     void            walk_to_next_3();
     void            walk_to_next_3_inf( int inf );
