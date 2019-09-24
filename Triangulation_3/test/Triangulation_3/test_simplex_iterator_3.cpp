@@ -74,7 +74,7 @@ void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests)
     for (; st != st.end(); ++st)
     {
       std::cout << st.simplex_dimension();
-      if(dt.is_infinite(st))
+      if(Cell_handle(st) != Cell_handle() && dt.is_infinite(st))
         std::cout << "i";
       std::cout << " ";
 
@@ -127,7 +127,7 @@ void test_edge_facet_edge(const DT& dt, const std::size_t& nb_tests)
     for (; st != st.end(); ++st)
     {
       std::cout << st.simplex_dimension();
-      if (dt.is_infinite(st))
+      if (Cell_handle(st) != Cell_handle() && dt.is_infinite(st))
         std::cout << "i";
       std::cout << " ";
 
@@ -186,7 +186,7 @@ void test_edge_facet_vertex(const DT& dt, const std::size_t& nb_tests)
     for (; st != end; ++st)
     {
       std::cout << st.simplex_dimension();
-      if (dt.is_infinite(st))
+      if (Cell_handle(st) != Cell_handle() && dt.is_infinite(st))
         std::cout << "i";
       std::cout << " ";
 
@@ -248,7 +248,7 @@ void test_vertex_facet_edge(const DT& dt, const std::size_t& nb_tests)
     for (; st != end; ++st)
     {
       std::cout << st.simplex_dimension();
-      if (dt.is_infinite(st))
+      if (Cell_handle(st) != Cell_handle() && dt.is_infinite(st))
         std::cout << "i";
       std::cout << " ";
 
@@ -378,8 +378,8 @@ int main(int argc, char* argv[])
     {
       if (st.is_cell())
       {
-        if (dt.is_infinite(st)) ++inf;
-        else                    ++fin;
+        if (Cell_handle(st) != Cell_handle() && dt.is_infinite(st)) ++inf;
+        else                                                        ++fin;
       }
       if (st.is_facet())       ++nb_facets;
       else if (st.is_edge())   ++nb_edges;

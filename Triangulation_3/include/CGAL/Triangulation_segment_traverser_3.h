@@ -625,17 +625,22 @@ private:
 private:
   void set_curr_simplex_to_entry()
   {
+    Locate_type lt;
+    int li, lj;
+    Cell_handle cell;
+
     //check what is the entry type of _cell_iterator
     if (Cell_handle(_cell_iterator) == Cell_handle())
     {
-      _curr_simplex = Simplex_type();
-      return;//end has been reached
+      //where did the segment get out from previous cell
+      cell = _cell_iterator.previous();
+      _cell_iterator.exit(lt, li, lj);
     }
-
-    Cell_handle cell = Cell_handle(_cell_iterator);
-    Locate_type lt;
-    int li, lj;
-    _cell_iterator.entry(lt, li, lj);
+    else
+    {
+      cell = Cell_handle(_cell_iterator);
+      _cell_iterator.entry(lt, li, lj);
+    }
 
     switch (lt)
     {
@@ -672,11 +677,19 @@ public:
   {
     CGAL_assertion(_curr_simplex.incident_cell() != Cell_handle());
 
+    Cell_handle ch = Cell_handle(_cell_iterator);
+    if (ch == Cell_handle())
+    {
+      _curr_simplex = Simplex_type();
+      return *this;
+    }
+
     switch(_curr_simplex.dimension())
     {
     case 3 :/*Cell_handle*/
     {
-      ++_cell_iterator;
+      if (!cell_iterator_is_ahead())
+        ++_cell_iterator;
       set_curr_simplex_to_entry();
       break;
     }
@@ -727,7 +740,6 @@ public:
     }
     case 1:/*Edge*/
     {
-      Cell_handle ch = Cell_handle(_cell_iterator);
       Locate_type lt;
       int li, lj;
       _cell_iterator.entry(lt, li, lj);
@@ -921,6 +933,9 @@ private:
   bool cell_iterator_is_ahead() const
   {
     Cell_handle ch = Cell_handle(_cell_iterator);
+    if(ch == Cell_handle())
+      return true;
+
     switch (_curr_simplex.dimension())
     {
     case 0 ://vertex
