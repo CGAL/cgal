@@ -1,32 +1,130 @@
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/Cartesian.h>
 
+#include <cassert>
+#include <fstream>
+#include <sstream>
+#include <string>
 #include <vector>
+
+namespace polyline_distance_tests {
+
+//
+// helpers
+//
+
+using Kernel = CGAL::Cartesian<double>;
+using NT = Kernel::FT;
+using Point = Kernel::Point_2;
+using Points = std::vector<Point>;
+using Curve = Points;
+using Curves = std::vector<Curve>;
+
+struct Query {
+	std::size_t id1, id2;
+	distance_t distance;
+	bool decision;
+};
+using Queries = std::vector<Query>;
+
+void readCurve(std::ifstream& curve_file, Curve& curve)
+{
+	// Read everything into a stringstream.
+	std::stringstream ss;
+	ss << curve_file.rdbuf();
+
+	auto const ignore_count = std::numeric_limits<std::streamsize>::max();
+
+	std::string x_str, y_str;
+	while (ss >> x_str >> y_str) {
+		distance_t x, y;
+		x = std::stod(x_str);
+		y = std::stod(y_str);
+
+		ss.ignore(ignore_count, '\n');
+		// ignore duplicate rows
+		if (curve.size() && curve.back().x() == x && curve.back().y() == y) {
+			continue;
+		}
+		curve.push_back({x, y});
+	}
+}
+
+Curves readCurves(std::string const& curve_directory)
+{
+	Curves curves;
+	std::vector<std::string> curve_filenames;
+
+	// read filenames of curve files
+	std::ifstream file(curve_directory + "dataset.txt");
+	assert(file);
+
+	std::string line;
+	while (std::getline(file, line)) {
+		curve_filenames.push_back(line);
+	}
+
+	// read curves
+	curves.reserve(curve_filenames.size());
+	for (auto const& curve_filename: curve_filenames) {
+		std::ifstream curve_file(curve_directory + curve_filename);
+		assert(curve_file);
+
+		curves.emplace_back();
+		readCurve(curve_file, curves.back());
+		// curves.back().filename = curve_filename;
+
+		if (curves.back().empty()) { curves.pop_back(); }
+	}
+
+	return curves;
+}
+
+Queries readQueries(std::string const& query_file)
+{
+	Queries queries;
+
+	std::ifstream file(query_file);
+	assert(file);
+
+	std::string line;
+	while (std::getline(file, line)) {
+		std::stringstream ss(line);
+
+		queries.emplace_back();
+		auto& query = queries.back();
+
+		ss >> query.id1 >> query.id2 >> query.distance >> query.decision;
+	}
+
+	return queries;
+}
+
+//
+// tests
+//
+
+int testCorrectness()
+{
+	std::string curve_directory = "data/curves/";
+	std::vector<std::string> datasets = { "sigspatial", "OV" };
+	std::string query_directory = "data/queries/";
+
+	for (auto const& dataset: datasets) {
+		auto curves = readCurves(curve_directory + dataset + "/");
+		auto queries = readQueries(query_directory + dataset + ".txt");
+
+		for (auto const& query: queries) {
+			auto decision = continuous_Frechet_distance_less_than(curves[query.id1], curves[query.id1], query.distance);
+			assert(decision == query.decision);
+		}
+	}
+}
+
+} // end namespace
 
 int main()
 {
-	using Kernel = CGAL::Cartesian<double>;
-	using NT = Kernel::FT;
-	using Point = Kernel::Point_2;
-	using Points = std::vector<Point>;
-
-	Points curve1 = { Point(0., 0.), Point(1., 1.) };
-	Points curve2 = { Point(0., 1.), Point(1., 2.) };
-	NT distance1 = 2.;
-	NT distance2 = .5;
-
-	if (!continuous_Frechet_distance_less_than(curve1, curve2, distance1)) {
-		return EXIT_FAILURE;
-	}
-	if (continuous_Frechet_distance_less_than(curve1, curve2, distance2)) {
-		return EXIT_FAILURE;
-	}
-
-	auto dist = continuous_Frechet_distance(curve1, curve2);
-	if (dist > 1.01 || dist < 0.99) {
-		return EXIT_FAILURE;
-	}
-
-
-	return EXIT_SUCCESS;
+	// TODO: measure time and print it
+	polyline_distance_tests::testCorrectness();
 }
