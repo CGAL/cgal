@@ -410,8 +410,8 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
 		//TODO: bad style: stripping down information added by getInterval
 		CInterval temp_outer;
 		CInterval temp_interval = FrechetLight::getInterval<IndexType>(fixed_curve, fixed, curve, cur, &temp_outer);
-		Interval interval = Interval(temp_interval.begin.getFraction(), temp_interval.end.getFraction()); 
-		Interval outer = Interval(temp_outer.begin.getFraction(), temp_outer.end.getFraction());
+		Interval interval = Interval(temp_interval.begin.getPoint() == cur ? temp_interval.begin.getFraction() : 1., temp_interval.end.getPoint() == cur ? temp_interval.end.getFraction() : 1.); 
+		Interval outer = Interval(temp_outer.begin.getPoint() == cur ? temp_outer.begin.getFraction() : 1., temp_outer.end.getPoint() == cur ? temp_outer.end.getFraction() : 1.);
 		outer.begin = std::max(outer.begin, 0.);
 		outer.end = std::min(outer.end, 1.);
 		if (interval.is_empty()) {
