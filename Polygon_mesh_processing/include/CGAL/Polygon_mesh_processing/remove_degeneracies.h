@@ -181,7 +181,9 @@ boost::optional<double> get_collapse_volume(typename boost::graph_traits<Triangl
                                             const Traits& gt)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
+
   typedef typename boost::property_traits<VPM>::reference                         Point_ref;
+  typedef typename Traits::Vector_3                                               Vector_3;
 
   const typename Traits::Point_3 origin(ORIGIN);
 
@@ -211,9 +213,13 @@ boost::optional<double> get_collapse_volume(typename boost::graph_traits<Triangl
 
       //ack a-b-point_remove and a-b-point_kept has a compatible orientation
       /// @todo use a predicate
-      typename Traits::Vector_3 n1 = gt.construct_cross_product_vector_3_object()(removed-a, b-a);
-      typename Traits::Vector_3 n2 = gt.construct_cross_product_vector_3_object()(kept-a, b-a);
-      if(n1*n2 <= 0)
+      Vector_3 v_ab = gt.construct_vector_3_object()(a, b);
+      Vector_3 v_ar = gt.construct_vector_3_object()(a, removed);
+      Vector_3 v_ak = gt.construct_vector_3_object()(a, kept);
+
+      Vector_3 n1 = gt.construct_cross_product_vector_3_object()(v_ar, v_ab);
+      Vector_3 n2 = gt.construct_cross_product_vector_3_object()(v_ak, v_ab);
+      if(gt.compute_scalar_product_3_object()(n1, n2) <= 0)
         return boost::none;
 
       delta_vol += volume(b, a, removed, origin) + volume(a, b, kept, origin); // opposite orientation
