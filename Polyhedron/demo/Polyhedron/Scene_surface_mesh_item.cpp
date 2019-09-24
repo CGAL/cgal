@@ -1508,9 +1508,8 @@ Scene_surface_mesh_item::load_obj(std::istream& in)
 bool
 Scene_surface_mesh_item::save_obj(std::ostream& out) const
 {
-  CGAL::File_writer_wavefront  writer;
-  CGAL::generic_print_surface_mesh(out, *(d->smesh_), writer);
-  return out.good();
+
+  return CGAL::write_OBJ(*d->smesh_, out);
 }
 
 void

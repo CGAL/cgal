@@ -42,6 +42,7 @@
 #include <CGAL/internal/Generic_facegraph_builder.h>
 #include <CGAL/IO/STL/STL_reader.h>
 #include <CGAL/IO/OBJ/OBJ_reader.h>
+#include <CGAL/IO/OBJ/File_writer_wavefront.h>
 
 namespace CGAL {
   /*!
@@ -1098,12 +1099,11 @@ public:
     {
       vertices[id] = add_vertex( this->meshPoints[id], graph);
     }
-    //    graph.begin_surface( meshPoints.size(), mesh.size());
     typedef typename Points_3::size_type size_type;
 
     for(size_type i=0; i < this->mesh.size(); i++){
-      std::vector<vertex_descriptor> face;
-      for(std::size_t j=0; j< this->mesh[i].size(); ++j)
+      std::vector<vertex_descriptor> face(this->mesh[i].size());
+      for(std::size_t j=0; j< face.size(); ++j)
         face[j] = vertices[this->mesh[i][j]];
 
       CGAL::Euler::add_face(face, graph);
@@ -1139,7 +1139,50 @@ read_OBJ(TriangleMesh& tm, std::istream& in)
   return ok;
 }
 
+template <typename FaceGraph>
+bool
+write_OBJ(const FaceGraph& face_graph, std::ostream& os)
+{
+  // writes M to `out' in the format provided by `writer'.
+  CGAL::File_writer_wavefront writer;
+  typedef typename boost::graph_traits<FaceGraph >::vertex_iterator VCI;
+  typedef typename boost::graph_traits<FaceGraph >::face_iterator   FCI;
+  typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type VPmap;
+  VPmap map = get(CGAL::vertex_point, face_graph);
+  // Print header.
+  writer.write_header( os,
+                       num_vertices(face_graph),
+                       num_halfedges(face_graph),
+                       num_faces(face_graph));
 
+  std::map<typename boost::graph_traits<FaceGraph>::vertex_descriptor, std::size_t> index_map;
+  auto hint = index_map.begin();
+  std::size_t id = 0;
+
+  for( VCI vi = vertices(face_graph).begin(); vi != vertices(face_graph).end(); ++vi) {
+    writer.write_vertex( ::CGAL::to_double( get(map, *vi).x()),
+                         ::CGAL::to_double( get(map, *vi).y()),
+                         ::CGAL::to_double( get(map, *vi).z()));
+
+    hint = index_map.insert(hint, std::make_pair(*vi, id++));
+  }
+
+  writer.write_facet_header();
+  for( FCI fi = faces(face_graph).begin(); fi != faces(face_graph).end(); ++fi) {
+    CGAL::Halfedge_around_face_circulator<FaceGraph> hc(halfedge(*fi, face_graph), face_graph);
+    auto hc_end = hc;
+    std::size_t n = circulator_size( hc);
+    CGAL_assertion( n >= 3);
+    writer.write_facet_begin( n);
+    do {
+      writer.write_facet_vertex_index(index_map[target(*hc, face_graph)]);
+      ++hc;
+    } while( hc != hc_end);
+    writer.write_facet_end();
+  }
+  writer.write_footer();
+  return os.good();
+}
 } // namespace CGAL
 
 
