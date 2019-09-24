@@ -115,6 +115,22 @@ namespace CGAL {
 
   namespace internal_np
   {
+
+  template<typename PMapCategory>
+  bool is_pmap_writable(PMapCategory)
+  {
+    return false;
+  }
+  template<>
+  bool is_pmap_writable(boost::read_write_property_map_tag)
+  {
+    return true;
+  }
+  template<>
+  bool is_pmap_writable(boost::writable_property_map_tag)
+  {
+    return true;
+  }
   //overloads used to select a default map:
   // use the one passed in the named parameters (user must have initialized it)
   template <class MapFromNP, class Default_tag, class Dynamic_tag, class Mesh>
@@ -130,7 +146,7 @@ namespace CGAL {
   typename boost::property_map<Mesh, Default_tag >::const_type
   get_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m, bool& need_init)
   {
-    need_init = false;
+    need_init = is_pmap_writable(typename boost::property_traits<typename boost::property_map<Mesh, Default_tag >::const_type>::category());
     return get(t,m);
   }
 
@@ -139,6 +155,7 @@ namespace CGAL {
   typename boost::property_map<Mesh, Dynamic_tag >::const_type
   get_map(CGAL::internal_np::Param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m, bool& need_init)
   {
+
     need_init = true;
     return get(t,m);
   }
@@ -148,7 +165,7 @@ namespace CGAL {
   namespace Polygon_mesh_processing
   {
   template<typename Tag, typename Dynamic_tag, typename Mesh, typename NamedParameters, typename Parameter>
-  class GetMapFromNP {
+  class Get_index_map_from_NP {
   private :
     const Dynamic_tag dtag;
     const Mesh& m;
@@ -172,7 +189,7 @@ namespace CGAL {
     > ::type  PropertyMapType;
 
 
-    GetMapFromNP(const Tag,
+    Get_index_map_from_NP(const Tag,
                  const Dynamic_tag dtag,
                  const Mesh& m,
                  const NamedParameters& np,
