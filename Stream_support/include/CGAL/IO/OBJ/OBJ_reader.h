@@ -28,12 +28,15 @@
 
 namespace CGAL {
 
-template <class Point_3>
+//Points_3 a RandomAccessContainer of Point_3,
+//Faces a RandomAccessContainer of RandomAccessContainer of std::size_t
+template <class Points_3, class Faces>
 bool
 read_OBJ( std::istream& input,
-          std::vector<Point_3> &points,
-          std::vector<std::vector<std::size_t> > &faces)
+          Points_3 &points,
+          Faces &faces)
 {
+  typedef typename Points_3::value_type Point_3;
   int mini(1),
       maxi(-INT_MAX);
   Point_3 p;

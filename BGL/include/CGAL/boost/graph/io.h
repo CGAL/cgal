@@ -500,6 +500,15 @@ public:
 };
 }//end GOCAD_internal
 
+/*!
+   \ingroup PkgBGLIOFct
+    reads the graph `face_graph` from data in the TS format.
+    `name` and `color` will be filled according to the values contained in the file.
+
+    \pre The data must represent a 2-manifold
+    \attention The graph `face_graph` is not cleared, and the data from the stream are added.
+    \see \ref IOStreamGocad
+  */
 template <typename FaceGraph>
 bool
 read_gocad(FaceGraph& face_graph, std::istream& in, std::string& name, std::string& color)
@@ -515,7 +524,11 @@ read_gocad(FaceGraph& face_graph, std::istream& in, std::string& name, std::stri
   return in.good() && face_graph.is_valid();
 }
 
-//todo : better management of the id_map
+/*!
+   \ingroup PkgBGLIOFct
+    writes the graph `face_graph` in the TS format into `os`. `name` is the
+    mandatory name that will be assigned to `face_graph`in the file.
+  */
 template <typename FaceGraph>
 bool
 write_gocad(FaceGraph& face_graph, std::ostream& os, const std::string& name)
@@ -1109,6 +1122,7 @@ public:
 /*!
   \ingroup PkgBGLIOFct
   reads the graph `tm` from the stream `in` in the OBJ format.
+  \returns `true` if the resulting mesh is valid.
   \pre The data must represent a 2-manifold
   */
 template <class TriangleMesh>

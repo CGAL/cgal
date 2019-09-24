@@ -36,7 +36,7 @@ class Generic_facegraph_builder
 protected:
   typedef P Point_3;
   typedef std::deque<Point_3> Points_3;
-  typedef std::vector<int> Facet;
+  typedef std::vector<std::size_t> Facet;
   typedef std::deque<Facet> Surface;
 
 public:

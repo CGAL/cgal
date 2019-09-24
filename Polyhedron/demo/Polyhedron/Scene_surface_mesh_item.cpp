@@ -44,6 +44,7 @@
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/boost/graph/io.h>
 
 #include <CGAL/Buffer_for_vao.h>
 #include <QMenu>
@@ -1487,12 +1488,15 @@ bool
 Scene_surface_mesh_item::load_obj(std::istream& in)
 {
   typedef SMesh::Point Point;
-  std::vector<Point> points;
-  std::vector<std::vector<std::size_t> > faces;
-  bool failed = !CGAL::read_OBJ(in,points,faces);
+  bool failed = !CGAL::read_OBJ(*d->smesh_, in);
+  if(failed){
+    std::vector<Point> points;
+    std::vector<std::vector<std::size_t> > faces;
+    failed = !CGAL::read_OBJ(in,points,faces);
 
-  CGAL::Polygon_mesh_processing::orient_polygon_soup(points,faces);
-  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points,faces,*(d->smesh_));
+    CGAL::Polygon_mesh_processing::orient_polygon_soup(points,faces);
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points,faces,*(d->smesh_));
+  }
   if ( (! failed) && !isEmpty() )
   {
     invalidate(ALL);

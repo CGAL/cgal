@@ -15,8 +15,8 @@ this specific format.
 - \ref IOStreamAvizo
 - \ref IOStreamMedit
 - \ref IOStreamTetgen
+- \ref IOStreamGocad
 TODO:
-GOCAD
 OBJ implem
 
 \section IOStreamOFF Object File Format (OFF)
@@ -175,4 +175,17 @@ A precise specification of the format is available at <a href="https://wias-berl
 Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into some of the Tetgen file formats,
 naming `.node`, `.ele` and `.face`
 This can be done using the function \ref CGAL::output_to_tetgen()
+
+\section IOStreamGocad GOCAD Format (TS)
+The `.ts` format is an ASCII file format that allows a range of primitive types to be imported into the GOCAD package.
+A precise specification of the format is available <a href="http://paulbourke.net/dataformats/gocad/gocad.pdf"> here</a>.
+
+\subsection IOStreamGocadInput Reading Gocad files
+Objects represented in the `.ts` format can be imported into \cgal's working environment
+using any structure that is a model of the concept `FaceGraph`, and the function `read_gocad()`.
+
+\subsection IOStreamGocadOutput Writing Gocad files
+ Any structure that is a model of the concept `FaceGraph` can be exported into the `.ts` file format
+ using the function `write_gocad()`
+
 */
