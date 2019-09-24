@@ -185,7 +185,7 @@ namespace CGAL {
       clear_nodes();
 			m_primitives.clear();
 			clear_search_tree();
-			m_default_search_tree_constructed = false;
+			m_default_search_tree_constructed = m_use_lazy_kd_tree;
 		}
 
 		/// Returns the axis-aligned bounding box of the whole tree.
@@ -439,6 +439,9 @@ public:
 		/// a point set taken on the internal primitives
 		/// returns `true` iff successful memory allocation
 		bool accelerate_distance_queries() const;
+		///Turns off the lazy construction of the internal search tree.
+		/// Must be called before the first distance query.
+		void do_not_accelerate_distance_queries() const;
 
     /// Constructs an internal KD-tree containing the specified point
     /// set, to be used as the set of potential hints for accelerating
@@ -590,6 +593,7 @@ public:
 		// search KD-tree
 		mutable const Search_tree* m_p_search_tree;
 		mutable bool m_search_tree_constructed;
+		mutable bool m_use_lazy_kd_tree;
     mutable bool m_default_search_tree_constructed; // indicates whether the internal kd-tree should be built
     bool m_need_build;
 
@@ -610,7 +614,8 @@ public:
     , m_p_root_node(nullptr)
     , m_p_search_tree(nullptr)
     , m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(false)
+    , m_use_lazy_kd_tree(true)
+    , m_default_search_tree_constructed(true)
     , m_need_build(false)
   {}
 
@@ -621,10 +626,11 @@ public:
                            T&& ... t)
 		: m_traits()
     , m_primitives()
-		, m_p_root_node(nullptr)
+                , m_p_root_node(nullptr)
 		, m_p_search_tree(nullptr)
 		, m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(false)
+		, m_use_lazy_kd_tree(true)
+    , m_default_search_tree_constructed(true)
     , m_need_build(false)
 	{
 		// Insert each primitive into tree
@@ -682,7 +688,6 @@ public:
 	void AABB_tree<Tr>::build()
 	{
     clear_nodes();
-
     if(m_primitives.size() > 1) {
 
 			// allocates tree nodes
@@ -704,8 +709,9 @@ public:
 		// In case the users has switched on the accelerated distance query
 		// data structure with the default arguments, then it has to be
 		// /built/rebuilt.
-		if(m_default_search_tree_constructed)
+		if(m_default_search_tree_constructed){
 			build_kd_tree();
+		}
 		m_need_build = false;
 	}
 	// constructs the search KD tree from given points
@@ -737,7 +743,7 @@ public:
 		ConstPointIterator beyond) const
 	{
 		m_p_search_tree = new Search_tree(first, beyond);
-                m_default_search_tree_constructed = true;
+		m_default_search_tree_constructed = true;
 		if(m_p_search_tree != nullptr)
 		{
 			m_search_tree_constructed = true;
@@ -749,6 +755,15 @@ public:
 			return false;
     }
 	}
+
+	template<typename Tr>
+	void AABB_tree<Tr>::do_not_accelerate_distance_queries()const
+	{
+	  clear_search_tree();
+	  m_use_lazy_kd_tree = false;
+	  m_default_search_tree_constructed = false;
+	}
+
 
 	// constructs the search KD tree from internal primitives
 	template<typename Tr>
