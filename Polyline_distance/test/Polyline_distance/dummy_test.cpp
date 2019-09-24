@@ -81,6 +81,8 @@ Queries readQueries(std::string const& query_file)
 	std::string line;
 	while (std::getline(file, line)) {
 		std::stringstream ss(line);
+		// FIXME: is this necessary?
+		ss.precision(20);
 
 		queries.emplace_back();
 		auto& query = queries.back();
@@ -106,7 +108,7 @@ int testCorrectness()
 		auto queries = readQueries(query_directory + dataset + ".txt");
 
 		for (auto const& query: queries) {
-			auto decision = continuous_Frechet_distance_less_than(curves[query.id1], curves[query.id1], query.distance);
+			auto decision = continuous_Frechet_distance_less_than(curves[query.id1], curves[query.id2], query.distance);
 			assert(decision == query.decision);
 		}
 	}
