@@ -1106,7 +1106,7 @@ distance_t FrechetLight::calcDistance(Curve const& curve1, Curve const& curve2)
 
 	while (max - min >= epsilon) {
 		auto split = (max + min)/2.;
-		if (lessThanWithFilters(split, curve1, curve2)) {
+		if (lessThan(split, curve1, curve2)) {
 			max = split;
 		}
 		else {

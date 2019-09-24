@@ -34,7 +34,10 @@ void readCurve(std::ifstream& curve_file, Curve& curve)
 	CGAL::set_ascii_mode(ss);
 
 	Point p;
+	auto ignore_count = std::numeric_limits<std::streamsize>::max();
 	while (ss >> p) {
+		ss.ignore(ignore_count, '\n');
+
 		if (!curve.empty() && p == curve.back()) {
 			continue;
 		}
@@ -80,13 +83,10 @@ Queries readQueries(std::string const& query_file)
 
 	std::string line;
 	while (std::getline(file, line)) {
-		std::stringstream ss(line);
-		// FIXME: is this necessary?
-		ss.precision(20);
-
 		queries.emplace_back();
 		auto& query = queries.back();
 
+		std::stringstream ss(line);
 		ss >> query.id1 >> query.id2 >> query.distance >> query.decision;
 	}
 
