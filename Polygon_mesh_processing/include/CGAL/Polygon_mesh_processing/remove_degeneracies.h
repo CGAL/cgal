@@ -28,6 +28,7 @@
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/property_map.h>
@@ -231,16 +232,25 @@ boost::optional<double> get_collapse_volume(typename boost::graph_traits<Triangl
   return CGAL::abs(delta_vol);
 }
 
-template <typename TriangleMesh, typename VPM, typename Traits>
+template <typename TriangleMesh, typename VPM, typename VCM, typename Traits>
 typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
 get_best_edge_orientation(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
                           const TriangleMesh& tmesh,
                           const VPM& vpm,
+                          const VCM& vcm,
                           const Traits& gt)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   halfedge_descriptor h = halfedge(e, tmesh), ho = opposite(h, tmesh);
+
+  CGAL_assertion(!get(vcm, source(h, tmesh)) || !get(vcm, target(h, tmesh)));
+
+  // the resulting point of the collapse of a halfedge is the target of the halfedge before collapse
+  if(get(vcm, source(h, tmesh)))
+     return ho;
+  if(get(vcm, target(h, tmesh)))
+     return h;
 
   boost::optional<double> dv1 = get_collapse_volume(h, tmesh, vpm, gt);
   boost::optional<double> dv2 = get_collapse_volume(ho, tmesh, vpm, gt);
@@ -331,12 +341,17 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor           edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor           face_descriptor;
 
+  typedef Constant_property_map<vertex_descriptor, bool>                        Default_VCM;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
+                                                       NamedParameters,
+                                                       Default_VCM>::type       VCM;
+  VCM vcm_np = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained), Default_VCM(false));
+
+  typedef Constant_property_map<edge_descriptor, bool>                          Default_ECM;
   typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t,
                                                        NamedParameters,
-                                                       Constant_property_map<edge_descriptor, bool> //default
-                                                       > ::type                 ECM;
-  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             Constant_property_map<edge_descriptor, bool>(false) /*default*/);
+                                                       Default_ECM>::type       ECM;
+  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), Default_ECM(false));
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -345,6 +360,30 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type           Traits;
   Traits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
+  // Vertex property map that combines the VCM and the fact that extremities of a constrained edge should be constrained
+  typedef CGAL::dynamic_vertex_property_t<bool>                                 Vertex_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type DVCM;
+  DVCM vcm = get(Vertex_property_tag(), tmesh);
+
+  for(face_descriptor f : face_range)
+  {
+    if(f == boost::graph_traits<TriangleMesh>::null_face())
+      continue;
+
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, tmesh), tmesh))
+    {
+      if(get(vcm_np, target(h, tmesh)))
+        put(vcm, target(h, tmesh), true);
+
+      if(get(ecm, edge(h, tmesh)))
+      {
+        put(vcm, source(h, tmesh), true);
+        put(vcm, target(h, tmesh), true);
+      }
+    }
+  }
+
+  // Start the process of removing bad elements
   std::set<edge_descriptor> edges_to_collapse;
   std::set<edge_descriptor> edges_to_flip;
 
@@ -389,6 +428,11 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
     {
       edge_descriptor e = *edges_to_collapse.begin();
       edges_to_collapse.erase(edges_to_collapse.begin());
+
+      CGAL_assertion(!get(ecm, e));
+
+      if(get(vcm, source(e, tmesh)) && get(vcm, target(e, tmesh)))
+        continue;
 
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
       std::cout << "  treat needle: " << e << " (" << tmesh.point(source (e, tmesh))
@@ -436,7 +480,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         }
 
         // pick the orientation of edge to keep the vertex minimizing the volume variation
-        h = internal::get_best_edge_orientation(e, tmesh, vpm, gt);
+        h = internal::get_best_edge_orientation(e, tmesh, vpm, vcm, gt);
 
         if(h == boost::graph_traits<TriangleMesh>::null_halfedge())
         {
@@ -458,6 +502,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         // moving to the midpoint is not a good idea. On a circle for example you might endpoint with
         // a bad geometry because you iteratively move one point
         // auto mp = midpoint(tmesh.point(source(h, tmesh)), tmesh.point(target(h, tmesh)));
+
         vertex_descriptor v = Euler::collapse_edge(edge(h, tmesh), tmesh);
 
         //tmesh.point(v) = mp;
@@ -501,6 +546,11 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
     {
       edge_descriptor e = *edges_to_flip.begin();
       edges_to_flip.erase(edges_to_flip.begin());
+
+      CGAL_assertion(!get(ecm, e));
+
+      if(get(vcm, source(e, tmesh)) && get(vcm, target(e, tmesh)))
+        continue;
 
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
       std::cout << "treat cap: " << e << " (" << tmesh.point(source(e, tmesh))
