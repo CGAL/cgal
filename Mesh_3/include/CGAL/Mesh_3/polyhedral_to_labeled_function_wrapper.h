@@ -99,7 +99,7 @@ public:
     , step_size_(step_size)
     , first_level_(first_level)
   {
-    tree_->accelerate_distance_queries();
+
   }
 
   // Default copy constructor and assignment operator are ok
@@ -216,7 +216,6 @@ public:
     , sq_tolerance_size_(tolerance_size*tolerance_size)
     , hint_(p.facets_begin()->halfedge()->vertex()->point())
   {
-    tree_->accelerate_distance_queries();
   }
 
   // Default copy constructor and assignment operator are ok
@@ -292,7 +291,6 @@ public:
     , sq_tolerance_size_(tolerance_size*tolerance_size)
     , hint_(p.facets_begin()->halfedge()->vertex()->point())
   {
-    tree_->accelerate_distance_queries();
   }
 
   // Default copy constructor and assignment operator are ok

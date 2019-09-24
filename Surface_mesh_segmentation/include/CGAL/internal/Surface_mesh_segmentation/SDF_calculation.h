@@ -173,9 +173,6 @@ public:
     }
     tree.build();
 
-    if(build_kd_tree) {
-      tree.accelerate_distance_queries();
-    }
 
     if(use_diagonal) {
       CGAL::Bbox_3 bbox = tree.bbox();

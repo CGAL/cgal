@@ -225,7 +225,6 @@ void smooth_mesh(const FaceRange& faces,
   }
 
   Tree aabb_tree(input_triangles.begin(), input_triangles.end());
-  aabb_tree.accelerate_distance_queries();
 
   // Setup the working ranges and check some preconditions
   Angle_smoother angle_smoother(tmesh, vpmap, vcmap, gt);

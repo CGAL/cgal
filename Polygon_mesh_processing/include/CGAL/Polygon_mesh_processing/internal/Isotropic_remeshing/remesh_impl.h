@@ -381,7 +381,6 @@ namespace internal {
       }
       for(std::size_t i=0; i < trees.size(); ++i){
         trees[i]->build();
-        trees[i]->accelerate_distance_queries();
       }
     }
 

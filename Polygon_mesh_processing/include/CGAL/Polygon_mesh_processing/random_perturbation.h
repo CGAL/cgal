@@ -83,7 +83,6 @@ namespace internal {
     if(do_project)
     {
       tree.rebuild(faces(tmesh).first, faces(tmesh).second, tmesh);
-      tree.accelerate_distance_queries();
     }
     typename GT::Construct_translated_point_3 translate
       = gt.construct_translated_point_3_object();

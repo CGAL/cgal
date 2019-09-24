@@ -77,7 +77,6 @@ double compute_distances(const Mesh& m,
   typedef CGAL::AABB_tree< Traits > Tree;
 
   Tree tree( faces(m).first, faces(m).second, m);
-  tree.accelerate_distance_queries();
   tree.build();
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type VPMap;
   VPMap vpmap = get(boost::vertex_point, m);
