@@ -240,11 +240,7 @@ connected_components(const PolygonMesh& pmesh,
                     CGAL::dynamic_face_property_t<int>(),
                     pmesh, np, internal_np::face_index);
 
-  bool need_init;
-  typename MapGetter::PropertyMapType fimap = get_map.property_map(need_init);
-  if(need_init)
-    CGAL::helpers::init_face_indices(pmesh, fimap);
-
+  typename MapGetter::PropertyMapType fimap = get_map.property_map();
   return boost::connected_components(finite_dual,
     fcm,
     boost::vertex_index_map(fimap)
@@ -327,11 +323,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                     CGAL::dynamic_face_property_t<int>(),
                     pmesh, np, internal_np::face_index);
 
-  bool need_init;
-  FaceIndexMap fimap = get_map.property_map(need_init);
-  if(need_init)
-    CGAL::helpers::init_face_indices(pmesh, fimap);
-
+  FaceIndexMap fimap = get_map.property_map();
   // FaceSizeMap
   typedef typename internal_np::Lookup_named_param_def<internal_np::face_size_map_t,
                                                  NamedParameters,

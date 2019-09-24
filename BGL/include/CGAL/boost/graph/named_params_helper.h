@@ -115,49 +115,106 @@ namespace CGAL {
 
   namespace internal_np
   {
+  template<typename key_value, class PMap, class Graph, typename Tag>
+  struct MapInitializer{
+    void operator()(PMap, const Graph& )
+    {}
+  };
+
+  template<typename key_value, class PMap, class Graph>
+  struct MapInitializer<key_value, PMap, Graph, CGAL::Tag_false>{
+    void operator()( PMap, const Graph& )
+    {
+      //do nothing.
+    }
+  };
+
+  template< class PMap, class Graph>
+  struct MapInitializer<
+      typename boost::graph_traits<Graph>::vertex_descriptor,
+      PMap, Graph,
+      CGAL::Tag_true>{
+    void operator()(PMap map, const Graph& g)
+    {
+      CGAL::helpers::init_vertex_indices(g, map);
+    }
+  };
+
+  template< class PMap, class Graph>
+  struct MapInitializer<
+      typename boost::graph_traits<Graph>::halfedge_descriptor,
+      PMap, Graph,
+      CGAL::Tag_true>{
+    void operator()(PMap map, const Graph& g)
+    {
+      CGAL::helpers::init_halfedge_indices(g, map);
+    }
+  };
+
+  template< class PMap, class Graph>
+  struct MapInitializer<
+      typename boost::graph_traits<Graph>::face_descriptor,
+      PMap, Graph,
+      CGAL::Tag_true>{
+    void operator()(PMap map,const Graph& g)
+    {
+      CGAL::helpers::init_face_indices(g, map);
+    }
+  };
 
   template<typename PMapCategory>
-  bool is_pmap_writable(PMapCategory)
-  {
-    return false;
-  }
+  struct Is_pmap_writable{
+    typedef CGAL::Tag_false result;
+  };
+
   template<>
-  bool is_pmap_writable(boost::read_write_property_map_tag)
-  {
-    return true;
-  }
+  struct Is_pmap_writable<boost::read_write_property_map_tag>{
+    typedef CGAL::Tag_true result;
+  };
+
   template<>
-  bool is_pmap_writable(boost::writable_property_map_tag)
-  {
-    return true;
-  }
+  struct Is_pmap_writable<boost::writable_property_map_tag>{
+    typedef CGAL::Tag_true result;
+  };
   //overloads used to select a default map:
   // use the one passed in the named parameters (user must have initialized it)
   template <class MapFromNP, class Default_tag, class Dynamic_tag, class Mesh>
   MapFromNP
-  get_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&, bool& need_init)
+  get_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&)
   {
-    need_init = false;
     return m;
   }
 
   // use the one internal to the mesh (user must have initialized it)
   template <class Default_tag, class Dynamic_tag, class Mesh>
   typename boost::property_map<Mesh, Default_tag >::const_type
-  get_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m, bool& need_init)
+  get_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m)
   {
-    need_init = is_pmap_writable(typename boost::property_traits<typename boost::property_map<Mesh, Default_tag >::const_type>::category());
-    return get(t,m);
+    typename boost::property_map<Mesh, Default_tag >::const_type map = get(t, m);
+    MapInitializer<
+        typename boost::property_traits<typename boost::property_map<Mesh, Default_tag >::const_type>::key_type,
+        typename boost::property_map<Mesh, Default_tag >::const_type,
+        Mesh,
+        typename Is_pmap_writable<
+        typename boost::property_traits
+        <typename boost::property_map<Mesh, Default_tag >
+        ::const_type>::category>::result>
+        ()(map, m);
+    return map;
   }
 
   // create a dynamic property and initialize it
   template <class Dynamic_tag, class Mesh>
   typename boost::property_map<Mesh, Dynamic_tag >::const_type
-  get_map(CGAL::internal_np::Param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m, bool& need_init)
+  get_map(CGAL::internal_np::Param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m)
   {
-
-    need_init = true;
-    return get(t,m);
+    typename boost::property_map<Mesh, Dynamic_tag >::const_type map = get(t,m);
+    MapInitializer<
+        typename boost::property_traits<typename boost::property_map<Mesh, Dynamic_tag >::const_type>::key_type,
+        typename boost::property_map<Mesh, Dynamic_tag >::const_type,
+        Mesh,
+        CGAL::Tag_true>()(map, m);
+    return map;
   }
 
   }//end of internal_np
@@ -197,13 +254,13 @@ namespace CGAL {
       : dtag(dtag), m(m), np(np), p(p) {}
 
 
-    PropertyMapType property_map(bool& need_init)
+    PropertyMapType property_map()
     {
       return internal_np::get_map(
             parameters::get_parameter(np, p),
             Final_tag(),
             dtag,
-            m, need_init);
+            m);
     }
   };
 
