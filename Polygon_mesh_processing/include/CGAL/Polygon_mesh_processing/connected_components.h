@@ -327,7 +327,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                     CGAL::dynamic_face_property_t<int>(),
                     pmesh, np, internal_np::face_index);
 
-  bool need_init = false;
+  bool need_init;
   FaceIndexMap fimap = get_map.property_map(need_init);
   if(need_init)
     CGAL::helpers::init_face_indices(pmesh, fimap);
