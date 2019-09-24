@@ -193,7 +193,6 @@ boost::optional<double> get_collapse_volume(typename boost::graph_traits<Triangl
   h = opposite(h, tmesh); // Euler::collapse edge keeps the target and removes the source
 
   // source is kept, target is removed
-  CGAL_assertion( target(h, tmesh)==vertex_removed );
   Point_ref kept = get(vpm, source(h, tmesh));
   Point_ref removed= get(vpm, target(h, tmesh));
 
