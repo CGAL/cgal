@@ -54,6 +54,7 @@ namespace CGAL {
     *       If this parameter is omitted, an internal property map for
     *       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
     * \cgalNamedParamsEnd
+    * \see \ref IOStreamWRL
     */ 
 template <typename FaceGraph, typename NamedParameters>
 bool write_wrl(std::ostream& os,
@@ -139,6 +140,7 @@ bool write_wrl(std::ostream& os,
     * \cgalNamedParamsEnd
     
     \sa Overloads of this function for specific models of the concept `FaceGraph`.
+    \see \ref IOStreamOFF
 
   */ 
 template <typename FaceGraph, typename NamedParameters>
@@ -180,7 +182,7 @@ bool write_off(std::ostream& os,
    \ingroup PkgBGLIOFct
     writes the graph `g` in the OFF format into a file named `fname`.
     \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
+    \see \ref IOStreamOFF
   */ 
 template <typename FaceGraph, typename NamedParameters>
 bool write_off(const char* fname,
@@ -259,6 +261,7 @@ inline std::string next_non_comment(std::istream& is)
     \sa Overloads of this function for specific models of the concept `FaceGraph`.
     \pre The data must represent a 2-manifold
     \attention The graph `g` is not cleared, and the data from the stream are added.
+    \see \ref IOStreamOFF
 
   */ 
 template <typename FaceGraph, typename NamedParameters>
@@ -332,6 +335,7 @@ bool read_off(std::istream& is,
     \sa Overloads of this function for specific models of the concept `FaceGraph`.
     \pre The data must represent a 2-manifold
     \attention The graph `g` is not cleared, and the data from the stream are added.
+    \see \ref IOStreamOFF
 
   */ 
 template <typename FaceGraph, typename NamedParameters>
@@ -529,6 +533,7 @@ read_gocad(FaceGraph& face_graph, std::istream& in, std::string& name, std::stri
    \ingroup PkgBGLIOFct
     writes the graph `face_graph` in the TS format into `os`. `name` is the
     mandatory name that will be assigned to `face_graph`in the file.
+    \see \ref IOStreamGocad
   */
 template <typename FaceGraph>
 bool
@@ -807,6 +812,7 @@ write_polys_points(std::ostream& os,
  *       `CGAL::vertex_index_t` must be available in `TriangleMesh`.
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
+ * \see \ref IOStreamVTK
  */
 template<class TriangleMesh,
          class NamedParameters>
@@ -937,6 +943,7 @@ bool read_vtp(const char* filename, FaceGraph& face_graph);
   \ingroup PkgBGLIOFct
   writes the graph `tm` in the stream `out` in the STL format.
   \pre The graph must contain only triangle faces.
+  \see \ref IOStreamSTL
   */
 template <class TriangleMesh>
 std::ostream&
@@ -1052,7 +1059,9 @@ public:
 /*!
   \ingroup PkgBGLIOFct
   reads the graph `tm` from the stream `in` in the STL format.
+  \returns `true` if the resulting mesh is valid.
   \pre The data must represent a 2-manifold
+  \see \ref IOStreamSTL
   */
 template <class TriangleMesh>
 bool
@@ -1124,6 +1133,7 @@ public:
   reads the graph `tm` from the stream `in` in the OBJ format.
   \returns `true` if the resulting mesh is valid.
   \pre The data must represent a 2-manifold
+  \see \ref IOStreamOBJ
   */
 template <class TriangleMesh>
 bool
@@ -1139,6 +1149,12 @@ read_OBJ(TriangleMesh& tm, std::istream& in)
   return ok;
 }
 
+/*!
+ \ingroup PkgBGLIOFct
+  writes the graph `face_graph` in the OBJ format.
+  \returns `true` if writing was successful.
+  \see \ref IOStreamOBJ
+  */
 template <typename FaceGraph>
 bool
 write_OBJ(const FaceGraph& face_graph, std::ostream& os)

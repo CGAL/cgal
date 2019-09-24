@@ -16,8 +16,8 @@ this specific format.
 - \ref IOStreamMedit
 - \ref IOStreamTetgen
 - \ref IOStreamGocad
-TODO:
-OBJ implem
+- \ref IOStreamOBJ
+- \ref IOStreamWRL
 
 \section IOStreamOFF Object File Format (OFF)
 The `OFF` file format can be used to represent collections of planar polygons with possibly shared vertices.
@@ -58,14 +58,13 @@ A precise specification of the format is available <a href="http://www.martinred
 
 \subsection IOStreamOBJInput Reading OBJ files
 Objects represented in the `.OBJ` format can be imported into \cgal's working environment
-using the following data structures and functions.
+using any structure that is a model of the concept `FaceGraph`, and the function `read_OBJ()`.
 
-- Any structure that is a model of the concept `FaceGraph` ()
+
 
 \subsection IOStreamOBJOutput Writing OBJ files
-The following \cgal data structures can be exported into the `OBJ` file format:
-
-- Any structure that is a model of the concept `FaceGraph` (write_off(std::ostream&,const FaceGraph&,const NamedParameters&))
+Any structure that is a model of the concept `FaceGraph` can be exported into the `OBJ` file format
+using the function `write_OBJ()`.
 
 
 \section IOStreamPLY Polygon File Format (PLY)
@@ -187,5 +186,19 @@ using any structure that is a model of the concept `FaceGraph`, and the function
 \subsection IOStreamGocadOutput Writing Gocad files
  Any structure that is a model of the concept `FaceGraph` can be exported into the `.ts` file format
  using the function `write_gocad()`
+
+
+\section IOStreamWRL
+WRL is a file extension for a Virtual Reality Modeling Language (VRML)
+file format often used by browser plug-ins to display virtual reality environments.
+VRML files are known as “worlds,” which is what WRL stands for.
+WRL files are plain ASCII text files.
+A WRL file includes data specifying 3-D details such as vertices,
+edges for a 3-D polygon, surface color, ...
+A precise specification of the format is available <a href="http://gun.teipir.gr/VRML-amgem/spec/"> here</a>.
+
+\subsection IOStreamtWRLOutput Writing WRL files
+Any structure that is a model of the concept `FaceGraph` can be exported into the `.wrl` file format
+using the `write_wrl()` function.
 
 */
