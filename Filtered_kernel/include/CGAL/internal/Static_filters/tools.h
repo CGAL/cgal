@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-template < typename ET >
+template < typename ET, typename Thread_safety_policy >
 class Lazy_exact_nt;
 
 template <bool Protected>
@@ -95,64 +95,64 @@ inline void init_double(double&, double&, double&, double&, double&, double&, do
 
 
 
-template < typename ET >
-inline void init_double(double& d0, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = d4 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = d4 = d5 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = d4 = d5 = d6 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double& d8, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double& d8, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = d11 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, double& d12, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, double& d12, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = d11 = d12 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, double& d12, double& d13, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, double& d12, double& d13, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = d11 = d12 = d13 = 0;}
 
-template < typename ET >
-inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, double& d12, double& d13, double& d14, Lazy_exact_nt<ET>* )
+template < typename ET, typename Thread_safety_policy >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, double& d12, double& d13, double& d14, Lazy_exact_nt<ET, Thread_safety_policy>* )
 {d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = d11 = d12 = d13 = d14 = 0;}
 
 template < bool P >
@@ -239,8 +239,8 @@ inline bool fit_in_double(const float& f, double& r) { r = f; return true; }
 
 inline bool fit_in_double(const int& i, double& r) { r = i; return true; }
 
-template < typename ET >
-inline bool fit_in_double(const Lazy_exact_nt<ET>&, double&);
+template < typename ET, typename Thread_safety_policy >
+inline bool fit_in_double(const Lazy_exact_nt<ET, Thread_safety_policy>&, double&);
 
 
 // Auxiliary functor, to get the approximation of a kernel object:

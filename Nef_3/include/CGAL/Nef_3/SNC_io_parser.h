@@ -54,7 +54,7 @@
 
 namespace CGAL {
 
-template <class NT> class Lazy_exact_nt;
+template <class NT, typename Thread_safety_policy> class Lazy_exact_nt;
 class Homogeneous_tag;
 class Cartesian_tag;
 template <class T> struct Simple_cartesian;
@@ -87,8 +87,10 @@ struct Type_converter<R, true>{
   static Vector_3 convert(const CGAL::Vector_3<R>& v){return v.exact();}
 };
 
-template <class R, class NT>
-struct Type_converter<R, false, ::CGAL::Lazy_exact_nt<NT>, ::CGAL::Cartesian_tag >{
+template <class R, class NT, typename Thread_safety_policy>
+struct Type_converter<R, false,
+                      ::CGAL::Lazy_exact_nt<NT, Thread_safety_policy>,
+                      ::CGAL::Cartesian_tag >{
   typedef CGAL::Simple_cartesian< NT > EK;
   typedef CGAL::Cartesian_converter<R, EK> Converter;
   typedef CGAL::Point_3<EK> Point_3;
@@ -100,8 +102,10 @@ struct Type_converter<R, false, ::CGAL::Lazy_exact_nt<NT>, ::CGAL::Cartesian_tag
   static Vector_3 convert(const CGAL::Vector_3<R>& v){return Converter()(v);}
 };
 
-template <class R, class NT>
-struct Type_converter<R, false, ::CGAL::Lazy_exact_nt<NT>, ::CGAL::Homogeneous_tag>{
+template <class R, class NT, typename Thread_safety_policy>
+struct Type_converter<R, false,
+                      ::CGAL::Lazy_exact_nt<NT, Thread_safety_policy>,
+                      ::CGAL::Homogeneous_tag>{
   typedef CGAL::Simple_homogeneous< NT, CGAL::Quotient<NT> > EK;
   typedef CGAL::Homogeneous_converter<R, EK> Converter;
   typedef CGAL::Point_3<EK> Point_3;

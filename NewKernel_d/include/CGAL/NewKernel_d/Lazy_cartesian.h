@@ -120,7 +120,7 @@ class Lazy_rep_XXX :
 {
   // Lazy_rep_0 does not inherit from EC or take a parameter AC. It has different constructors.
   static_assert(sizeof...(L)>0, "Use Lazy_rep_0 instead");
-  template <class Ei, class Ai, class E2Ai, class Ki> friend class Lazy_kernel_base;
+  template <class Ei, class Ai, class E2Ai, class Ki, typename> friend class Lazy_kernel_base;
   typedef Lazy_internal::analyze_args_for_lazy<L...> Args;
   // How to go from l to Lazy_rep's data
   typedef typename Args::creator Creator;

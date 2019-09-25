@@ -22,31 +22,14 @@
 #include <CGAL/config.h>
 
 #ifdef CGAL_HAS_THREADS
-#  ifdef CGAL_CAN_USE_CXX11_MUTEX
-#    include <mutex>
-#    define CGAL_MUTEX_NS std::
-#  else // not CGAL_CAN_USE_CXX11_MUTEX
-#    include <boost/thread/mutex.hpp>
-#    if BOOST_VERSION < 105300
-       // before Boost.Thread 1.53, `boost::lock_guard` was in ../locks.hpp
-#      include <boost/thread/locks.hpp>
-#    else
-#      include <boost/thread/lock_guard.hpp>
-#    endif
-#    define CGAL_MUTEX_NS boost::
-#  endif // not CGAL_CAN_USE_CXX11_MUTEX
-
-   namespace CGAL {
-     namespace cpp11 {
-       using CGAL_MUTEX_NS mutex;
-       using CGAL_MUTEX_NS lock_guard;
-       using CGAL_MUTEX_NS unique_lock;
-     }
-   }
-
-#  define CGAL_MUTEX CGAL::cpp11::mutex
-#  define CGAL_SCOPED_LOCK(M) CGAL::cpp11::unique_lock<CGAL::cpp11::mutex> lock(M)
-
-#endif // CGAL_HAS_THREADS
-
+#ifdef CGAL_CAN_USE_CXX11_MUTEX
+#include <mutex>
+#define CGAL_MUTEX std::mutex
+#define CGAL_SCOPED_LOCK(M) std::unique_lock<std::mutex> scoped_lock(M)
+#else
+#include <boost/thread/mutex.hpp>
+#define CGAL_MUTEX boost::mutex
+#define CGAL_SCOPED_LOCK(M) boost::mutex::scoped_lock scoped_lock(M)
+#endif
+#endif
 #endif // CGAL_MUTEX_H

@@ -167,8 +167,8 @@ struct Exact_field_selector<CORE::Expr>
 { typedef CORE::Expr  Type; };
 #endif
 
-template < typename ET >
-struct Exact_field_selector<Lazy_exact_nt<ET> >
+template < typename ET, typename Thread_safety_policy >
+struct Exact_field_selector<Lazy_exact_nt<ET, Thread_safety_policy> >
 : Exact_field_selector<ET>
 {
   // We have a choice here :
@@ -177,8 +177,8 @@ struct Exact_field_selector<Lazy_exact_nt<ET> >
   // typedef ET  Type;
   // typedef Lazy_exact_nt<ET>  Type;
 };
-template < typename ET >
-struct Exact_ring_selector<Lazy_exact_nt<ET> >
+template < typename ET, typename Thread_safety_policy >
+struct Exact_ring_selector<Lazy_exact_nt<ET, Thread_safety_policy> >
 : Exact_ring_selector<ET>
 {};
 

@@ -40,6 +40,7 @@
 #include<CGAL/tss.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
+#include <CGAL/tags.h>
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
@@ -56,56 +57,56 @@
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum.hpp>
 
-#ifdef CGAL_LAZY_ENABLE_THREAD_SAFETY
-#  if __has_feature(__cpp_lib_shared_mutex)
-#    define CGAL_LAZY_USE_SHARED_MUTEX 1
-#  else
-#    define CGAL_LAZY_USE_SHARED_TIMED_MUTEX 1
-#  endif
-#endif // CGAL_LAZY_ENABLE_THREAD_SAFETY
-
-#if CGAL_LAZY_USE_MUTEX
-#  include <mutex>
-#endif
-#if CGAL_LAZY_USE_SHARED_MUTEX or CGAL_LAZY_USE_SHARED_TIMED_MUTEX
-#  define CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT 1
-#  include <shared_mutex>
-#endif
-
 namespace CGAL {
 
 template <class E,
           class A,
           class E2A,
-          class K>
+          class K,
+          typename Thread_safety_policy>
 class Lazy_kernel_base;
   
-template <typename AT, typename ET, typename E2A> class Lazy;
+template <typename AT, typename ET, typename E2A,
+          typename Thread_safety_policy = void> class Lazy;
 
-template <typename ET_>
+template <typename ET_, typename Thread_safety_policy>
 class Lazy_exact_nt;
 
-template <typename AT, typename ET, typename E2A>
+template <typename AT, typename ET, typename E2A,
+          typename Thread_safety_policy>
 inline
 const AT&
-approx(const Lazy<AT,ET,E2A>& l)
+approx(const Lazy<AT,ET,E2A,Thread_safety_policy>& l)
 {
   return l.approx();
 }
 
-template <typename AT, typename ET, typename E2A>
+// Where is this one (non-const) needed ?  Is it ?
+template <typename AT, typename ET, typename E2A,
+          typename Thread_safety_policy>
+inline
+AT&
+approx(Lazy<AT,ET,E2A,Thread_safety_policy>& l)
+{
+  return l.approx();
+}
+
+
+template <typename AT, typename ET, typename E2A,
+          typename Thread_safety_policy>
 inline
 const ET&
-exact(const Lazy<AT,ET,E2A>& l)
+exact(const Lazy<AT,ET,E2A,Thread_safety_policy>& l)
 {
   return l.exact();
 }
 
 
-template <typename AT, typename ET, typename E2A>
+template <typename AT, typename ET, typename E2A,
+          typename Thread_safety_policy>
 inline
 unsigned
-depth(const Lazy<AT,ET,E2A>& l)
+depth(const Lazy<AT,ET,E2A,Thread_safety_policy>& l)
 {
   return l.depth();
 }
@@ -239,32 +240,104 @@ struct Depth_base {
 #endif
 };
 
+template <typename Tag>
+struct Lazy_rep_base : public Rep
+{
+};
+
+template <>
+struct Lazy_rep_base<Thread_safe_tag>
+{
+};
+
+template <typename AT, typename ET, typename E2A, typename Thread_safety_policy = void>
+class Lazy_rep_0;
+
+template <typename Thread_safety_policy, typename Self_rep>
+struct Lazy_base : public Handle
+{
+  using Smart_pointer = Handle;
+  using Rep_0 = Lazy_rep_0<typename Self_rep::AT,
+                           typename Self_rep::ET,
+                           typename Self_rep::E2A,
+                           Thread_safety_policy>;
+
+  const Handle & smart_pointer() const {
+    return *this;
+  }
+
+  Self_rep* ptr() const {
+    return static_cast<Self_rep*>(this->PTR);
+  }
+
+  Lazy_base(Null_tag) {
+    PTR = new Rep_0;
+  }
+
+  Lazy_base(const Smart_pointer& other) : Handle(other) {}
+
+  Lazy_base(Self_rep* r) {
+    PTR = r;
+  }
+
+  using ET = typename Self_rep::ET;
+
+  Lazy_base(const ET& e) {
+    PTR = new Rep_0(e);
+  }
+
+  Lazy_base(ET&& e) {
+    PTR = new Rep_0(std::move(e));
+  }
+};
+
+template <typename Self_rep>
+struct Lazy_base<Thread_safe_tag, Self_rep>
+{
+  using Rep_0 = Lazy_rep_0<typename Self_rep::AT,
+                           typename Self_rep::ET,
+                           typename Self_rep::E2A,
+                           Thread_safety_policy>;
+
+  using Smart_pointer = std::shared_ptr<Self_rep>;
+  Smart_pointer smart_ptr;
+
+  const Smart_pointer& smart_pointer() const {
+    return smart_ptr;
+  }
+
+  Self_rep* ptr() const {
+    return smart_ptr.get();
+  }
+
+  Lazy_base(Null_tag)
+    : smart_ptr(std::make_shared<Rep_0>())
+  {}
+
+  Lazy_base(const Smart_pointer& other) : smart_ptr(other) {}
+
+  Lazy_base(Self_rep* r) : smart_ptr(r) {}
+
+  using ET = typename Self_rep::ET;
+
+  Lazy_base(const ET& e) : smart_ptr(std::make_shared<Rep_0>(e)) {}
+  Lazy_base(ET&& e) : smart_ptr(std::make_shared<Rep_0>(std::move(e))) {}
+};
 
 // Abstract base class for lazy numbers and lazy objects
-template <typename AT_, typename ET, typename E2A>
-class Lazy_rep : public Rep, public Depth_base
+template <typename AT_, typename ET_, typename E2A_, typename Thread_safety_policy = void>
+class Lazy_rep : public Lazy_rep_base<Thread_safety_policy> , public Depth_base
 {
   Lazy_rep (const Lazy_rep&) = delete; // cannot be copied.
 
 public:
 
-  typedef AT_ AT;
+  typedef AT_  AT;
+  typedef ET_  ET;
+  typedef E2A_ E2A;
 
   mutable AT at;
   mutable ET *et;
-#if CGAL_LAZY_USE_MUTEX
-  typedef std::mutex Mutex;
-  typedef std::lock_guard<Mutex> Lock_guard;
-  mutable Mutex update_exact_mutex;
-#endif
-#if CGAL_LAZY_USE_SHARED_TIMED_MUTEX
-  typedef std::shared_timed_mutex Mutex;
-  mutable Mutex update_exact_mutex;
-#endif
-#if CGAL_LAZY_USE_SHARED_MUTEX
-  typedef std::shared_mutex Mutex;
-  mutable Mutex update_exact_mutex;
-#endif
 
   Lazy_rep ()
     : at(), et(nullptr){}
@@ -279,36 +352,30 @@ public:
 
   const AT& approx() const
   {
-#if CGAL_LAZY_USE_MUTEX
-      Lock_guard guard(update_exact_mutex);
-#endif
-#if CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT
-      std::shared_lock<Mutex> lock(update_exact_mutex);
-#endif
       return at;
   }
-protected:
-  const AT& approx_with_locked_mutex() const
+
+  AT& approx()
   {
-    return at;
+      return at;
   }
 
-public:
+  const AT& approx_with_locked_mutex() const
+  {
+      return at;
+  }
+
   const ET & exact() const
   {
-#if CGAL_LAZY_USE_MUTEX
-    Lock_guard guard(update_exact_mutex);
-#endif // CGAL_LAZY_USE_MUTEX
-#if CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT
-    std::shared_lock<Mutex> lock(update_exact_mutex);
-#endif
-    if (et==nullptr) {
-#if CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT
-      lock.unlock();
-      std::unique_lock<Mutex> write_guard(update_exact_mutex);
-#endif
+    if (et==nullptr)
       update_exact();
-    }
+    return *et;
+  }
+
+  ET & exact()
+  {
+    if (et==nullptr)
+      update_exact();
     return *et;
   }
 
@@ -346,13 +413,14 @@ public:
 };
 
 
-template<typename AT, typename ET, typename AC, typename EC, typename E2A, typename...L>
+template<typename AT, typename ET, typename AC, typename EC, typename E2A,
+         typename Thread_safety_policy, typename...L>
 class Lazy_rep_n :
-  public Lazy_rep< AT, ET, E2A >, private EC
+  public Lazy_rep< AT, ET, E2A, Thread_safety_policy >, private EC
 {
   // Lazy_rep_0 does not inherit from EC or take a parameter AC. It has different constructors.
   static_assert(sizeof...(L)>0, "Use Lazy_rep_0 instead");
-  template <class Ei, class Ai, class E2Ai, class Ki> friend class Lazy_kernel_base;
+  template <class Ei, class Ai, class E2Ai, class Ki, typename> friend class Lazy_kernel_base;
   mutable std::tuple<L...> l; // L...l; is not yet allowed.
   const EC& ec() const { return *this; }
   template<std::size_t...I>
@@ -367,7 +435,8 @@ class Lazy_rep_n :
   }
   template<class...LL>
   Lazy_rep_n(const AC& ac, const EC& ec, LL&&...ll) :
-    Lazy_rep<AT, ET, E2A>(ac(CGAL::approx(ll)...)), EC(ec), l(std::forward<LL>(ll)...)
+    Lazy_rep<AT, ET, E2A, Thread_safety_policy>
+    (ac(CGAL::approx(ll)...)), EC(ec), l(std::forward<LL>(ll)...)
   {
     this->set_depth((std::max)({ -1, (int)CGAL::depth(ll)...}) + 1);
   }
@@ -395,11 +464,11 @@ class Lazy_rep_n :
 //____________________________________________________________
 // The rep for the leaf node
 
-template <typename AT, typename ET, typename E2A>
-class Lazy_rep_0 : public Lazy_rep<AT, ET, E2A>
+template <typename AT, typename ET, typename E2A, typename Thread_safety_policy>
+class Lazy_rep_0 : public Lazy_rep<AT, ET, E2A, Thread_safety_policy>
 {
 
-  typedef Lazy_rep<AT, ET, E2A> Base;
+  typedef Lazy_rep<AT, ET, E2A, Thread_safety_policy> Base;
 public:
 
   void
@@ -409,16 +478,16 @@ public:
   }
 
   Lazy_rep_0()
-    : Lazy_rep<AT,ET, E2A>() {}
+    : Base() {}
 
   template<class A, class E>
   Lazy_rep_0(A&& a, E&& e)
-    : Lazy_rep<AT,ET,E2A>(std::forward<A>(a), std::forward<E>(e)) {}
+    : Base(std::forward<A>(a), std::forward<E>(e)) {}
 
 #if 0
   // unused. Find a less ambiguous placeholder if necessary
   Lazy_rep_0(const AT& a, void*)
-    : Lazy_rep<AT,ET,E2A>(a) {}
+    : Base(a) {}
 #endif
 
   // E2A()(e) and std::forward<E>(e) could be evaluated in any order, but
@@ -427,7 +496,7 @@ public:
   // call E2A()(e).
   template<class E>
   Lazy_rep_0(E&& e)
-    : Lazy_rep<AT,ET,E2A>(E2A()(e), std::forward<E>(e)) {}
+    : Base(E2A()(e), std::forward<E>(e)) {}
 
   void
   print_dag(std::ostream& os, int level) const
@@ -497,7 +566,7 @@ struct Exact_converter
 //____________________________________________________________
 
 
-
+#if 0
 template <typename AC, typename EC, typename E2A, typename L1>
 class Lazy_rep_with_vector_1
   : public Lazy_rep<std::vector<Object>, std::vector<Object>, E2A>
@@ -548,8 +617,6 @@ public:
   }
 #endif
 };
-
-
 template <typename AC, typename EC, typename E2A, typename L1, typename L2>
 class Lazy_rep_with_vector_2
   : public Lazy_rep<std::vector<Object>, std::vector<Object>, E2A>
@@ -699,28 +766,31 @@ public:
   }
 #endif
 };
-
+#endif // 0
 
 //____________________________________________________________
 // The handle class
-template <typename AT_, typename ET_, typename E2A>
-class Lazy : public Handle
+template <typename AT_, typename ET_, typename E2A, typename Thread_safety_policy>
+class Lazy : public Lazy_base<Thread_safety_policy,
+                              Lazy_rep<AT_, ET_, E2A, Thread_safety_policy> >
 {
   template <class Exact_kernel_,
+            class Thread_safety_policy_,
             class Approximate_kernel_,
             class E2A_>
   friend struct Lazy_kernel;
-  
+
   template <class E_,
             class A_,
+            class Thread_safety_policy_,
             class E2A_,
             class K_>
   friend class Lazy_kernel_base;
-  
 public :
 
-  typedef Lazy<AT_, ET_, E2A>  Self;
-  typedef Lazy_rep<AT_, ET_, E2A>   Self_rep;
+  typedef Lazy<AT_, ET_, E2A, Thread_safety_policy>  Self;
+  typedef Lazy_rep<AT_, ET_, E2A, Thread_safety_policy>   Self_rep;
+  typedef Lazy_base<Thread_safety_policy, Self_rep> Base;
 
   typedef AT_ AT; // undocumented
   typedef ET_ ET; // undocumented
@@ -742,38 +812,28 @@ public :
   }
 */
 
-  Lazy()
-    : Handle(zero()) {}
+  Lazy(Null_tag)    : Base(Null_tag())  {}
 
-  // Before Lazy::zero() used Boost.Thread, the definition of Lazy() was:
-  //   Lazy()
-  //   #ifndef CGAL_HAS_THREAD
-  //     : Handle(zero()) {}
-  //   #else
-  //   {
-  //     PTR = new Lazy_rep_0<AT, ET, E2A>();
-  //   }
-  //   #endif
+  Lazy()            : Base(zero().smart_pointer()) {}
 
-  Lazy(Self_rep *r)
-  {
-    PTR = r;
-  }
+  Lazy(Self_rep *r) : Base(r) {}
 
-  Lazy(const ET& e)
-  {
-    PTR = new Lazy_rep_0<AT,ET,E2A>(e);
-  }
+  Lazy(const ET& e) : Base(e) {}
 
-  Lazy(ET&& e)
-  {
-    PTR = new Lazy_rep_0<AT,ET,E2A>(std::move(e));
-  }
+  Lazy(ET&& e)      : Base(std::move(e)) {}
 
+  using Base::ptr;
+  using Base::smart_pointer;
   const AT& approx() const
   { return ptr()->approx(); }
 
   const ET& exact() const
+  { return ptr()->exact(); }
+
+  AT& approx()
+  { return ptr()->approx(); }
+
+  ET& exact()
   { return ptr()->exact(); }
 
   unsigned depth() const
@@ -786,19 +846,17 @@ public :
     ptr()->print_dag(os, level);
   }
 
-  private:
+private:
 
   // We have a static variable for optimizing the default constructor,
   // which is in particular heavily used for pruning DAGs.
   static const Self & zero()
   {
-    // Note that the new only happens inside an if() inside the macro
-    // So it would be a mistake to put the new before the macro
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(Self,z,(new Lazy_rep_0<AT, ET, E2A>()));
+    static thread_local Self z{Null_tag()};
     return z;
   }
 
-  Self_rep * ptr() const { return (Self_rep*) PTR; }
+  std::shared_ptr<Self_rep> smart_ptr;
 };
 
 // The magic functor for Construct_bbox_[2,3], as there is no Lazy<Bbox>
@@ -831,7 +889,7 @@ struct Lazy_construction_bbox
 };
 
 
-template <typename LK, typename AC, typename EC>
+template <typename LK, typename AC, typename EC, typename Thread_safety_policy = void>
 struct Lazy_construction_nt {
   Lazy_construction_nt(){}
   Lazy_construction_nt(LK const&){}
@@ -848,31 +906,36 @@ struct Lazy_construction_nt {
   template<typename>
   struct result { };
 
-#define CGAL_RESULT_NT(z, n, d)                                              \
-  template< typename F, BOOST_PP_ENUM_PARAMS(n, class T) >              \
-  struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> {                      \
-    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, T)                                   \
-    typedef Lazy_exact_nt<                                              \
-      typename boost::remove_cv< typename boost::remove_reference <     \
-      typename cpp11::result_of<EC( BOOST_PP_ENUM_PARAMS(n, E) )>::type >::type >::type > type; \
+#define CGAL_RESULT_NT(z, n, d)                                             \
+  template< typename F, BOOST_PP_ENUM_PARAMS(n, class T) >                  \
+  struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> {                          \
+    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, T)                                  \
+    typedef Lazy_exact_nt<                                                  \
+      typename boost::remove_cv<                                            \
+        typename boost::remove_reference <                                  \
+          typename cpp11::result_of<EC( BOOST_PP_ENUM_PARAMS(n, E) )>::type \
+                                         >::type                            \
+                               >::type,                                     \
+      Thread_safety_policy> type;                                           \
   };
 
   BOOST_PP_REPEAT_FROM_TO(1, 6, CGAL_RESULT_NT, _)
 
   template<class...L>
   auto operator()(L const&...l) const ->
-  Lazy_exact_nt<std::remove_cv_t<std::remove_reference_t<decltype(ec(CGAL::exact(l)...))>>>
+  Lazy_exact_nt<std::remove_cv_t<std::remove_reference_t<decltype(ec(CGAL::exact(l)...))>>,
+                Thread_safety_policy>
   {
     typedef std::remove_cv_t<std::remove_reference_t<decltype(ec(CGAL::exact(l)...))>> ET;
     typedef std::remove_cv_t<std::remove_reference_t<decltype(ac(CGAL::approx(l)...))>> AT;
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     Protect_FPU_rounding<Protection> P;
     try {
-      return new Lazy_rep_n<AT, ET, AC, EC, To_interval<ET>, L... >(ac, ec, l...);
+      return new Lazy_rep_n<AT, ET, AC, EC, To_interval<ET>, Thread_safety_policy, L... >(ac, ec, l...);
     } catch (Uncertain_conversion_exception&) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-      return new Lazy_rep_0<AT,ET,To_interval<ET> >(ec( CGAL::exact(l)... ));
+      return new Lazy_rep_0<AT,ET,To_interval<ET>,Thread_safety_policy>(ec( CGAL::exact(l)... ));
     }
   }
 
@@ -887,13 +950,14 @@ make_lazy(const Object& eto)
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
   typedef typename LK::E2A E2A;
+  typedef typename LK::Thread_safety_policy Thread_safety_policy;
 
   if (eto.is_empty())
     return Object();
 
 #define CGAL_Kernel_obj(X) \
   if (const typename EK::X* ptr = object_cast<typename EK::X>(&eto)) \
-    return make_object(typename LK::X(new Lazy_rep_0<typename AK::X, typename EK::X, E2A>(*ptr)));
+    return make_object(typename LK::X(new Lazy_rep_0<typename AK::X, typename EK::X, E2A, Thread_safety_policy>(*ptr)));
 
 #include <CGAL/Kernel/interface_macros.h>
 
@@ -905,7 +969,7 @@ make_lazy(const Object& eto)
           std::vector<typename LK::X> V;\
           V.resize(v_ptr->size());                           \
           for (unsigned int i = 0; i < v_ptr->size(); ++i)                \
-            V[i] = typename LK::X( new Lazy_rep_0<typename AK::X,typename EK::X,E2A>((*v_ptr)[i])); \
+            V[i] = typename LK::X( new Lazy_rep_0<typename AK::X,typename EK::X,E2A,Thread_safety_policy>((*v_ptr)[i])); \
           return make_object(V);                                      \
         }\
       }
@@ -1071,7 +1135,7 @@ public:
 // This is the magic functor for functors that write their result in a  reference argument
 // In a first version we assume that the references are of type Lazy<Something>,
 // and that the result type is void
-
+#if 0
 template <typename AC, typename EC, typename E2A>
 struct Lazy_functor_2_1
 {
@@ -1101,7 +1165,7 @@ public:
     }
   }
 };
-
+#endif // 0
 
 template <typename T>
 struct First
@@ -1130,7 +1194,7 @@ struct Second
 // This is the magic functor for functors that write their result in a reference argument
 // In a first version we assume that the references are of type Lazy<Something>,
 // and that the result type is void
-
+#if 0
 //template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 template <typename LK, typename AC, typename EC>
 struct Lazy_functor_2_2
@@ -1171,8 +1235,6 @@ public:
     }
   }
 };
-
-
 // This is the magic functor for functors that write their result as Objects into an output iterator
 
 template <typename LK, typename AC, typename EC>
@@ -1232,6 +1294,8 @@ public:
     return it;
   }
 };
+#endif // 0
+
 
 
 template <typename T>
@@ -1252,7 +1316,7 @@ struct Object_cast
 //
 // TODO: write operators for other than two arguments. For the current kernel we only need two for Intersect_2
 
-template <typename LK, typename AC, typename EC>
+template <typename LK, typename AC, typename EC, typename Thread_safety_policy>
 struct Lazy_construction_object
 {
   static const bool Protection = true;
@@ -1264,7 +1328,7 @@ struct Lazy_construction_object
   typedef typename EC::result_type ET;
   typedef Object result_type;
 
-  typedef Lazy<Object, Object, E2A> Lazy_object;
+  typedef Lazy<Object, Object, E2A, Thread_safety_policy> Lazy_object;
 
   CGAL_NO_UNIQUE_ADDRESS AC ac;
   CGAL_NO_UNIQUE_ADDRESS EC ec;
@@ -1278,14 +1342,14 @@ public:
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     Protect_FPU_rounding<Protection> P;
     try {
-      Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, L1>(ac, ec, l1));
+      Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, Thread_safety_policy, L1>(ac, ec, l1));
 
       if(lo.approx().is_empty())
         return Object();
 
 #define CGAL_Kernel_obj(X) \
       if (object_cast<typename AK::X>(& (lo.approx()))) { \
-	typedef Lazy_rep_n< typename AK::X, typename EK::X, Object_cast<typename AK::X>, Object_cast<typename EK::X>, E2A, Lazy_object> Lcr; \
+	typedef Lazy_rep_n< typename AK::X, typename EK::X, Object_cast<typename AK::X>, Object_cast<typename EK::X>, E2A, Thread_safety_policy, Lazy_object> Lcr; \
 	Lcr * lcr = new Lcr(Object_cast<typename AK::X>(), Object_cast<typename EK::X>(), lo); \
 	return make_object(typename LK::X(lcr)); \
       }
@@ -1311,14 +1375,14 @@ public:
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     Protect_FPU_rounding<Protection> P;
     try {
-      Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
+      Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, Thread_safety_policy, L1, L2>(ac, ec, l1, l2));
 
       if(lo.approx().is_empty())
         return Object();
 
 #define CGAL_Kernel_obj(X) \
       if (object_cast<typename AK::X>(& (lo.approx()))) { \
-	typedef Lazy_rep_n<typename AK::X, typename EK::X, Object_cast<typename AK::X>, Object_cast<typename EK::X>, E2A, Lazy_object> Lcr; \
+	typedef Lazy_rep_n<typename AK::X, typename EK::X, Object_cast<typename AK::X>, Object_cast<typename EK::X>, E2A, Thread_safety_policy, Lazy_object> Lcr; \
 	Lcr * lcr = new Lcr(Object_cast<typename AK::X>(), Object_cast<typename EK::X>(), lo); \
 	return make_object(typename LK::X(lcr)); \
       }
@@ -1335,7 +1399,7 @@ public:
           V.resize(v_ptr->size());                           \
           for (unsigned int i = 0; i < v_ptr->size(); i++) {               \
             V[i] = typename LK::X(new Lazy_rep_n<typename AK::X, typename EK::X, Ith_for_intersection<typename AK::X>, \
-                                                 Ith_for_intersection<typename EK::X>, E2A, Lazy_object> \
+                                  Ith_for_intersection<typename EK::X>, E2A, Thread_safety_policy, Lazy_object> \
                                   (Ith_for_intersection<typename AK::X>(i), Ith_for_intersection<typename EK::X>(i), lo)); \
           }                                                           \
           return make_object(V);                                      \
@@ -1365,14 +1429,14 @@ CGAL_Kernel_obj(Point_3)
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     Protect_FPU_rounding<Protection> P;
     try {
-      Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, L1, L2, L3>(ac, ec, l1, l2, l3));
+      Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, Thread_safety_policy, L1, L2, L3>(ac, ec, l1, l2, l3));
 
       if(lo.approx().is_empty())
         return Object();
 
 #define CGAL_Kernel_obj(X) \
       if (object_cast<typename AK::X>(& (lo.approx()))) { \
-	typedef Lazy_rep_n<typename AK::X, typename EK::X, Object_cast<typename AK::X>, Object_cast<typename EK::X>, E2A, Lazy_object> Lcr; \
+	typedef Lazy_rep_n<typename AK::X, typename EK::X, Thread_safety_policy, Object_cast<typename AK::X>, Object_cast<typename EK::X>, E2A, Lazy_object> Lcr; \
 	Lcr * lcr = new Lcr(Object_cast<typename AK::X>(), Object_cast<typename EK::X>(), lo); \
 	return make_object(typename LK::X(lcr)); \
       }
@@ -1430,7 +1494,8 @@ struct Variant_cast {
 };
 
 
-template<typename Result, typename AK, typename LK, typename EK, typename Origin>
+template<typename Result, typename AK, typename LK, typename EK, typename Origin,
+         typename Thread_safety_policy>
 struct Fill_lazy_variant_visitor_2 : boost::static_visitor<> {
   Fill_lazy_variant_visitor_2(Result& r, Origin& o) : r(&r), o(&o) {}
   Result* r;
@@ -1443,7 +1508,8 @@ struct Fill_lazy_variant_visitor_2 : boost::static_visitor<> {
     typedef typename Type_mapper<AKT, AK, EK>::type EKT;
     typedef typename Type_mapper<AKT, AK, LK>::type LKT;
 
-    typedef Lazy_rep_n<AKT, EKT, Variant_cast<AKT>, Variant_cast<EKT>, typename LK::E2A, Origin> Lcr;
+    typedef Lazy_rep_n<AKT, EKT, Variant_cast<AKT>, Variant_cast<EKT>,
+                       typename LK::E2A, Thread_safety_policy, Origin> Lcr;
     Lcr * lcr = new Lcr(Variant_cast<AKT>(), Variant_cast<EKT>(), *o);
       
     *r = LKT(lcr);
@@ -1459,7 +1525,8 @@ struct Fill_lazy_variant_visitor_2 : boost::static_visitor<> {
     V.resize(t.size()); 
     for (unsigned int i = 0; i < t.size(); i++) {
       V[i] = LKT(new Lazy_rep_n<AKT, EKT, Ith_for_intersection<AKT>,
-                 Ith_for_intersection<EKT>, typename LK::E2A, Origin>
+                 Ith_for_intersection<EKT>, typename LK::E2A,
+                 Thread_safety_policy, Origin>
                  (Ith_for_intersection<AKT>(i), Ith_for_intersection<EKT>(i), *o));
     }
       
@@ -1467,7 +1534,8 @@ struct Fill_lazy_variant_visitor_2 : boost::static_visitor<> {
   }
 };
 
-template<typename Result, typename AK, typename LK, typename EK>
+template<typename Result, typename AK, typename LK, typename EK,
+         typename Thread_safety_policy>
 struct Fill_lazy_variant_visitor_0 : boost::static_visitor<> {
   Fill_lazy_variant_visitor_0(Result& r) : r(&r) {}
   Result* r;
@@ -1479,7 +1547,7 @@ struct Fill_lazy_variant_visitor_0 : boost::static_visitor<> {
     typedef typename Type_mapper<EKT, EK, AK>::type AKT;
     typedef typename Type_mapper<EKT, EK, LK>::type LKT;
       
-    *r = LKT(new Lazy_rep_0<AKT, EKT, typename LK::E2A>(t));
+    *r = LKT(new Lazy_rep_0<AKT, EKT, typename LK::E2A, Thread_safety_policy>(t));
   }
 
   template<typename T>
@@ -1491,7 +1559,7 @@ struct Fill_lazy_variant_visitor_0 : boost::static_visitor<> {
     std::vector<LKT> V;
     V.resize(t.size()); 
     for (unsigned int i = 0; i < t.size(); i++) {
-      V[i] = LKT(new Lazy_rep_0<AKT, EKT, typename LK::E2A>(t[i]));
+      V[i] = LKT(new Lazy_rep_0<AKT, EKT, typename LK::E2A, Thread_safety_policy>(t[i]));
     }
       
     *r = V;
@@ -1500,7 +1568,7 @@ struct Fill_lazy_variant_visitor_0 : boost::static_visitor<> {
 
 } // internal
 
-template <typename LK, typename AC, typename EC>
+template <typename LK, typename AC, typename EC, typename Thread_safety_policy>
 struct Lazy_construction_variant {
   static const bool Protection = true;
 
@@ -1539,7 +1607,7 @@ struct Lazy_construction_variant {
     Protect_FPU_rounding<Protection> P;
 
     try {
-      Lazy<AT, ET, E2A> lazy(new Lazy_rep_n<AT, ET, AC, EC, E2A, L1, L2>(AC(), EC(), l1, l2));
+      Lazy<AT, ET, E2A, Thread_safety_policy> lazy(new Lazy_rep_n<AT, ET, AC, EC, E2A, Thread_safety_policy, L1, L2>(AC(), EC(), l1, l2));
 
       // the approximate result requires the trait with types from the AK 
       AT approx_v = lazy.approx();
@@ -1552,7 +1620,9 @@ struct Lazy_construction_variant {
       }
 
       // the static visitor fills the result_type with the correct unwrapped type
-      internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
+      internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK,
+                                             Lazy<AT, ET, E2A, Thread_safety_policy>,
+                                             Thread_safety_policy> visitor(res, lazy);
       boost::apply_visitor(visitor, *approx_v);
       
       return res;
@@ -1567,7 +1637,8 @@ struct Lazy_construction_variant {
         return res;
       }
 
-      internal::Fill_lazy_variant_visitor_0<result_type, AK, LK, EK> visitor(res);
+      internal::Fill_lazy_variant_visitor_0<result_type, AK, LK, EK,
+                                            Thread_safety_policy> visitor(res);
       boost::apply_visitor(visitor, *exact_v);
       return res;
     }
@@ -1588,7 +1659,7 @@ struct Lazy_construction_variant {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     Protect_FPU_rounding<Protection> P;
     try {
-      Lazy<AT, ET, E2A> lazy(new Lazy_rep_n<AT, ET, AC, EC, E2A, L1, L2, L3>(AC(), EC(), l1, l2, l3));
+      Lazy<AT, ET, E2A, Thread_safety_policy> lazy(new Lazy_rep_n<AT, ET, AC, EC, E2A, Thread_safety_policy, L1, L2, L3>(AC(), EC(), l1, l2, l3));
 
       // the approximate result requires the trait with types from the AK 
       AT approx_v = lazy.approx();
@@ -1601,7 +1672,9 @@ struct Lazy_construction_variant {
       }
 
       // the static visitor fills the result_type with the correct unwrapped type
-      internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
+      internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK,
+                                             Lazy<AT, ET, E2A, Thread_safety_policy>,
+                                             Thread_safety_policy > visitor(res, lazy);
       boost::apply_visitor(visitor, *approx_v);
       
       return res;
@@ -1616,21 +1689,25 @@ struct Lazy_construction_variant {
         return res;
       }
 
-      internal::Fill_lazy_variant_visitor_0< result_type, AK, LK, EK> visitor(res);
+      internal::Fill_lazy_variant_visitor_0< result_type, AK, LK, EK,
+                                             Thread_safety_policy> visitor(res);
       boost::apply_visitor(visitor, *exact_v);
       return res;
     }
   }
 };
 
-template<typename LK, typename AC, typename EC, typename E2A = Default, 
+template<typename LK, typename AC, typename EC,
+         typename Thread_safety_policy = void,
+         typename E2A = Default,
          bool has_result_type = internal::has_result_type<AC>::value && internal::has_result_type<EC>::value >
 struct Lazy_construction;
 
 
 // we have a result type, low effort
-template<typename LK, typename AC, typename EC, typename E2A_>
-struct Lazy_construction<LK, AC, EC, E2A_, true> {
+template<typename LK, typename AC, typename EC, typename E2A_,
+         typename Thread_safety_policy>
+struct Lazy_construction<LK, AC, EC,Thread_safety_policy,E2A_,true> {
   static const bool Protection = true;
 
   typedef typename LK::Approximate_kernel AK;
@@ -1651,15 +1728,15 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
   result_type                                                           \
   operator()( BOOST_PP_ENUM(n, CGAL_LARGS, _) ) const {                 \
-    typedef Lazy< AT, ET, E2A> Handle;                                  \
+    typedef Lazy< AT, ET, E2A, Thread_safety_policy> Handle;            \
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
     Protect_FPU_rounding<Protection> P;                                 \
     try {                                                               \
-      return result_type( Handle(new Lazy_rep_n<AT, ET, AC, EC, E2A, BOOST_PP_ENUM_PARAMS(n, L)>(ac, ec, BOOST_PP_ENUM_PARAMS(n, l)))); \
+      return result_type( Handle(new Lazy_rep_n<AT, ET, AC, EC, E2A, Thread_safety_policy, BOOST_PP_ENUM_PARAMS(n, L)>(ac, ec, BOOST_PP_ENUM_PARAMS(n, l)))); \
     } catch (Uncertain_conversion_exception&) {                          \
       CGAL_BRANCH_PROFILER_BRANCH(tmp);                                 \
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);          \
-      return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ))) ); \
+      return result_type( Handle(new Lazy_rep_0<AT,ET,E2A,Thread_safety_policy>(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ))) ); \
     }                                                                   \
   }        
 
@@ -1670,8 +1747,8 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
   result_type
   operator()() const
   {
-    typedef Lazy<AT, ET, E2A> Handle;
-    return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>()) );
+    typedef Lazy<AT, ET, E2A, Thread_safety_policy> Handle;
+    return result_type( Handle(new Lazy_rep_0<AT,ET,E2A,Thread_safety_policy>()) );
   }
 
 #undef CGAL_CONSTRUCTION_OPERATOR
@@ -1679,8 +1756,9 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
 };
 
 
-template <typename LK, typename AC, typename EC, typename E2A_>
-struct Lazy_construction<LK, AC, EC, E2A_, false>
+template <typename LK, typename AC, typename EC,
+          typename Thread_safety_policy, typename E2A_>
+struct Lazy_construction<LK, AC, EC, Thread_safety_policy, E2A_, false>
 {
   static const bool Protection = true;
 
@@ -1717,16 +1795,16 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
                                         typename cpp11::result_of< EC(BOOST_PP_ENUM_PARAMS(n, E)) >::type >::type >::type ET; \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
                                         typename cpp11::result_of< AC(BOOST_PP_ENUM_PARAMS(n, A)) >::type >::type >::type AT; \
-    typedef Lazy< AT, ET, E2A> Handle; \
+    typedef Lazy< AT, ET, E2A, Thread_safety_policy> Handle;                                 \
     typedef typename cpp11::result_of<Lazy_construction(BOOST_PP_ENUM_PARAMS(n, L))>::type result_type; \
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
     Protect_FPU_rounding<Protection> P;                                   \
     try {                                                                 \
-      return result_type( Handle(new Lazy_rep_n<AT, ET, AC, EC, E2A, BOOST_PP_ENUM_PARAMS(n, L)>(ac, ec, BOOST_PP_ENUM_PARAMS(n, l)))); \
+      return result_type( Handle(new Lazy_rep_n<AT, ET, AC, EC, E2A, Thread_safety_policy, BOOST_PP_ENUM_PARAMS(n, L)>(ac, ec, BOOST_PP_ENUM_PARAMS(n, l)))); \
     } catch (Uncertain_conversion_exception&) {                          \
       CGAL_BRANCH_PROFILER_BRANCH(tmp);                                 \
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);          \
-      return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ))) ); \
+      return result_type( Handle(new Lazy_rep_0<AT,ET,E2A,Thread_safety_policy>(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ))) ); \
     }                                                                   \
   }        
 
@@ -1739,10 +1817,10 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
   {
     typedef typename cpp11::result_of<AC()>::type AT;
     typedef typename cpp11::result_of<EC()>::type ET;
-    typedef Lazy<AT, ET, E2A> Handle;
+    typedef Lazy<AT, ET, E2A, Thread_safety_policy> Handle;
     typedef typename Type_mapper< typename cpp11::result_of<AC()>::type ,AK, LK>::type result_type;
 
-    return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>()) );
+    return result_type( Handle(new Lazy_rep_0<AT,ET,E2A,Thread_safety_policy>()) );
   }
 };
 

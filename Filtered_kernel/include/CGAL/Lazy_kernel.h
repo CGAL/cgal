@@ -100,7 +100,9 @@ protected:
 
 // the Generic base simplies applies the generic magic functor stupidly.
 // then the real base fixes up a few special cases.
-template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >
+template < typename EK_, typename AK_,
+           typename E2A_, typename Kernel_,
+           typename Thread_safety_policy >
 class Lazy_kernel_generic_base : protected internal::Enum_holder
   // : public Filtered_kernel_base<EK_>
     // TODO : Static_filters_base too ?  Check performance
@@ -112,7 +114,8 @@ public:
   typedef E2A_  E2A;
   typedef Kernel_ Kernel;
 
-  typedef Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_> Self;
+  typedef Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_,
+                                   Thread_safety_policy> Self;
   
   // synonym identical to Filtered_kernel
   typedef AK_   FK;
@@ -122,7 +125,11 @@ public:
   typedef Exact_converter<Kernel, Exact_kernel>    C2E;
 
   template < typename Kernel2 >
-  struct Base { typedef Lazy_kernel_generic_base<Exact_kernel, Approximate_kernel, E2A, Kernel2>  Type; };
+  struct Base { typedef Lazy_kernel_generic_base<Exact_kernel,
+                                                 Approximate_kernel,
+                                                 E2A,
+                                                 Kernel2,
+                                                 Thread_safety_policy>  Type; };
 
   template < typename T >
   struct Ambient_dimension {
@@ -142,7 +149,8 @@ public:
   typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
 
   // Types
-  typedef CGAL::Lazy_exact_nt<typename Exact_kernel::FT>  FT;
+  typedef CGAL::Lazy_exact_nt<typename Exact_kernel::FT,
+                              Thread_safety_policy>  FT;
   typedef FT RT;
 
   typedef typename Same_uncertainty_nt<bool, FT>::type
@@ -164,7 +172,9 @@ public:
   typedef CGAL::Object Object_3;
 
 #define CGAL_Kernel_obj(X) \
-  typedef Lazy<typename Approximate_kernel::X, typename Exact_kernel::X, E2A>  X;
+  typedef Lazy<typename Approximate_kernel::X, \
+               typename Exact_kernel::X, E2A, \
+               Thread_safety_policy>  X;
 
   CGAL_Kernel_obj(Data_accessor_2)
   CGAL_Kernel_obj(Conic_2)
@@ -235,25 +245,29 @@ private:
   template <typename Construction>
   struct Select_wrapper_impl<Construction, NONE> {
     template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction<Kernel, AKC, EKC> type; };
+    struct apply { typedef Lazy_construction<Kernel, AKC, EKC,
+                                             Thread_safety_policy> type; };
   };
 
   template <typename Construction>
   struct Select_wrapper_impl<Construction, NT> {
     template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_nt<Kernel, AKC, EKC> type; };
+    struct apply { typedef Lazy_construction_nt<Kernel, AKC, EKC,
+                                                Thread_safety_policy> type; };
   };
 
   template <typename Construction>
   struct Select_wrapper_impl<Construction, VARIANT> {
     template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_variant<Kernel, AKC, EKC> type; };
+    struct apply { typedef Lazy_construction_variant<Kernel, AKC, EKC,
+                                                     Thread_safety_policy> type; };
   };
 
   template <typename Construction>
   struct Select_wrapper_impl<Construction, OBJECT> {
     template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_object<Kernel, AKC, EKC> type; };
+    struct apply { typedef Lazy_construction_object<Kernel, AKC, EKC,
+                                                    Thread_safety_policy> type; };
   };
 
   template <typename Construction>
@@ -289,9 +303,10 @@ public:
 
 
   
-template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >
+template < typename EK_, typename AK_, typename Thread_safety_policy,
+           typename E2A_, typename Kernel_ >
 class Lazy_kernel_base
-  : public Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_>
+  : public Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_, Thread_safety_policy>
 {
 public:
   typedef Kernel_ Kernel;
@@ -299,9 +314,14 @@ public:
   typedef EK_   Exact_kernel;
   typedef E2A_  E2A;
 
-  typedef Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_> BaseClass;
+  typedef Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_,
+                                   Thread_safety_policy> BaseClass;
   template < typename Kernel2 >
-  struct Base { typedef Lazy_kernel_base<Exact_kernel, Approximate_kernel, E2A, Kernel2>  Type; };
+  struct Base { typedef Lazy_kernel_base<Exact_kernel,
+                                         Approximate_kernel,
+                                         Thread_safety_policy,
+                                         E2A,
+                                         Kernel2>  Type; };
 
   typedef CommonKernelFunctors::Assign_2<Kernel>        Assign_2;
   typedef CommonKernelFunctors::Assign_3<Kernel>        Assign_3;
@@ -330,6 +350,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
                          E2A_,
+                         Thread_safety_policy,
                          Return_base_tag,
                          Point_2,
                          FT
@@ -360,6 +381,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
                          E2A_,
+                         Thread_safety_policy,
                          Return_base_tag,
                          Point_3,
                          FT
@@ -408,6 +430,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
                          E2A_,
+                         Thread_safety_policy,
                          Return_base_tag,
                          Point_2,
                          FT
@@ -418,6 +441,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
                          E2A_,
+                         Thread_safety_policy,
                          Return_base_tag,
                          Point_2,
                          int
@@ -470,6 +494,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
                          E2A_,
+                         Thread_safety_policy,
                          Return_base_tag,
                          Point_3,
                          FT
@@ -480,6 +505,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
                          E2A_,
+                         Thread_safety_policy,
                          Return_base_tag,
                          Point_3,
                          int
@@ -557,18 +583,27 @@ public:
 }; // end class Lazy_kernel_base<EK_, AK_, E2A_, Kernel_2>
 
 
-template <class Exact_kernel, class Approximate_kernel, class E2A>
+template <class Exact_kernel, class Approximate_kernel, class E2A,
+          typename Thread_safety_policy>
 struct Lazy_kernel_without_type_equality
-  : public Lazy_kernel_base< Exact_kernel, Approximate_kernel, E2A, Lazy_kernel_without_type_equality<Exact_kernel,Approximate_kernel, E2A> >
+  : public Lazy_kernel_base< Exact_kernel,
+                             Approximate_kernel,
+                             Thread_safety_policy,
+                             E2A,
+                             Lazy_kernel_without_type_equality<Exact_kernel,
+                                                               Approximate_kernel,
+                                                               E2A,
+                                                               Thread_safety_policy> >
 {};
 
 template <class Exact_kernel,
+          class Thread_safety_policy = void,
 	  class Approximate_kernel = Simple_cartesian<Interval_nt_advanced>,
           class E2A = Cartesian_converter<Exact_kernel, Approximate_kernel> >
 struct Lazy_kernel
   : public Type_equality_wrapper<
-             Lazy_kernel_base< Exact_kernel, Approximate_kernel, E2A, Lazy_kernel<Exact_kernel, Approximate_kernel, E2A> >,
-             Lazy_kernel<Exact_kernel, Approximate_kernel, E2A> >
+             Lazy_kernel_base< Exact_kernel, Approximate_kernel, Thread_safety_policy, E2A, Lazy_kernel<Exact_kernel, Thread_safety_policy, Approximate_kernel, E2A> >,
+             Lazy_kernel<Exact_kernel, Thread_safety_policy, Approximate_kernel, E2A> >
 {
 // WARNING: If you change the definition of Lazy_kernel, then you need to
 // change also the definition of Epeck in

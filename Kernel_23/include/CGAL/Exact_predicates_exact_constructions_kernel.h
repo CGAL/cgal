@@ -64,12 +64,23 @@ class Epeck
   : public Type_equality_wrapper<
              Lazy_kernel_base< Simple_cartesian<Epeck_ft>,
                                Simple_cartesian<Interval_nt_advanced>,
+                               Sequential_tag,
 	                       Cartesian_converter< Simple_cartesian<Epeck_ft>,
                                                     Simple_cartesian<Interval_nt_advanced> >,
                                Epeck>,
              Epeck >
 {};
 
+class Thread_safe_epeck
+  : public Type_equality_wrapper<
+             Lazy_kernel_base< Simple_cartesian<Epeck_ft>,
+                               Simple_cartesian<Interval_nt_advanced>,
+                               Thread_safe_tag,
+	                       Cartesian_converter< Simple_cartesian<Epeck_ft>,
+                                                    Simple_cartesian<Interval_nt_advanced> >,
+                               Thread_safe_epeck>,
+             Thread_safe_epeck >
+{};
 #endif // no CGAL_DONT_USE_LAZY_KERNEL
 
 typedef Epeck Exact_predicates_exact_constructions_kernel;
