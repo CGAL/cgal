@@ -28,6 +28,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/AABB_tree.h>
@@ -104,6 +105,8 @@ class Side_of_triangle_mesh
   typename GeomTraits::Construct_vector_3  vector_functor;
   const AABB_tree_* tree_ptr;
   bool own_tree;
+  CGAL::Bbox_3 box;
+  mutable bool tree_built;
 
 public:
 
@@ -135,6 +138,8 @@ public:
     tree_ptr = new AABB_tree(faces(tmesh).first,
                              faces(tmesh).second,
                              tmesh, vpmap);
+    box = Polygon_mesh_processing::bbox(tmesh, parameters::vertex_point_map(vpmap));
+    tree_built = false;
   }
 
   /**
@@ -157,6 +162,8 @@ public:
     tree_ptr = new AABB_tree(faces(tmesh).first,
                              faces(tmesh).second,
                              tmesh);
+    box = Polygon_mesh_processing::bbox(tmesh);
+    tree_built = false;
   }
 
   /**
@@ -195,8 +202,21 @@ public:
    */
   Bounded_side operator()(const Point& point) const
   {
+    bool is_outside = tree_built;
+    if(!is_outside){
+      is_outside = (point.x() < box.xmin()
+                    || point.x() > box.xmax()
+                    || point.y() < box.ymin()
+                    || point.y() > box.ymax()
+                    || point.z() < box.zmin()
+                    || point.z() > box.zmax());
+      if(is_outside)
+        return CGAL::ON_UNBOUNDED_SIDE;
+    }
+
+    tree_built = true;
     return internal::Point_inside_vertical_ray_cast<GeomTraits, AABB_tree>()(
-      point, *tree_ptr, ray_functor, vector_functor);
+          point, *tree_ptr, ray_functor, vector_functor);
   }
 
 };
