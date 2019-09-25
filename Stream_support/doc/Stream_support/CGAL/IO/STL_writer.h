@@ -13,7 +13,5 @@ namespace CGAL{
 ///
 template <class PointRange, class TriangleRange>
 std::ostream&
-write_STL(const PointRange& points,
-          const TriangleRange& facets,
-          std::ostream& out);
+write_STL(const PointRange& points, const TriangleRange& facets, std::ostream& out);
 }

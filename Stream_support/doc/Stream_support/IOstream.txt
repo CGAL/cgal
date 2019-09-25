@@ -30,23 +30,15 @@ CGAL algorithms work on different types of data structures, such as \ref Chapter
 Basically, a Polygon Mesh is a 3D structure that refines the concept of `FaceGraph`
 with some other restrictions. A more precise definition can be found \ref PMPDef "here".
 
-TODO:
-
-- In the table below, if the READER/WRITER/BINARY etc. does not exist, put a red cross. Otherwise,
-  put a link to the documentation of the function.
-
-- Each category (OFF, STL, OBJ) in the table is a link towards a page which describes the format (see example
-  for OFF).
-
-<table>
+<table class="iotable">
     <tr>
       <th colspan="1"></th>
-      <th colspan="1">OFF</th>
-      <th colspan="1">STL</th>
-      <th colspan="2">VTP</th>
-      <th colspan="1">OBJ</th>
-      <th colspan="1">GOCAD</th>
-      <th colspan="1">WRL</th>
+      <th colspan="1">\ref IOStreamOFF "OFF"</th>
+      <th colspan="1">\ref IOStreamSTL "STL"</th>
+      <th colspan="2">\ref IOStreamVTK "VTP"</th>
+      <th colspan="1">\ref IOStreamOBJ "OBJ"</th>
+      <th colspan="1">\ref IOStreamGocad "GOCAD"</th>
+      <th colspan="1">\ref IOStreamWRL "WRL"</th>
     </tr>
     <tr>
     <th colspan="1"></th>
@@ -87,6 +79,34 @@ A polygon soup is a set of polygons with no global combinatorial information, et
 
 TODO, same as above
 
+<table class="iotable">
+    <tr>
+      <th colspan="1"></th>
+      <th colspan="1">\ref IOStreamOFF "OFF"</th>
+      <th colspan="1">\ref IOStreamSTL "STL"</th>
+      <th colspan="2">\ref IOStreamVTK "VTP"</th>
+      <th colspan="1">\ref IOStreamOBJ "OBJ"</th>
+      <th colspan="1">\ref IOStreamWRL "WRL"</th>
+    </tr>
+    <tr>
+    <th colspan="1"></th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">ASCII</th>  <th colspan="1">BINARY</th>
+      <th colspan="1">BINARY</th>
+      <th colspan="1">ASCII</th>
+    </tr>
+    <tr>
+      <td>Export</td>
+      <td>write_OFF()</td>
+      <td> \ref IOstreamFunctions "write_STL()" </td>
+    </tr>
+    <tr>
+      <td>Import</td>
+      <td>read_OFF()</td>
+      <td>\ref IOstreamFunctions "read_STL()"</td>
+    </tr>
+</table>
 \subsection IOstreamPointSetIO Point Set IO
 Definition from the package.
 
