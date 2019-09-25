@@ -7,14 +7,14 @@
 #include <string>
 #include <vector>
 
-namespace polyline_distance_tests {
+namespace {
 
 //
 // helpers
 //
 
 using Kernel = CGAL::Cartesian<double>;
-using NT = Kernel::FT;
+// using NT = Kernel::FT;
 using Point = Kernel::Point_2;
 using Curve = std::vector<Point>;
 using Curves = std::vector<Curve>;
@@ -114,10 +114,9 @@ int testCorrectness()
 	}
 }
 
-} // end namespace
+} // end anonymous namespace
 
 int main()
 {
-	// TODO: measure time and print it
-	polyline_distance_tests::testCorrectness();
+	testCorrectness();
 }
