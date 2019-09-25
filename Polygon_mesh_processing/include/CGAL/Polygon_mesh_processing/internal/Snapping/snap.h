@@ -427,6 +427,10 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
     container_by_target.erase(vt);
   }
 
+#ifdef CGAL_PMP_SNAP_DEBUG
+    std::cout << "Snapped " << counter << " pair(s)!" << std::endl;
+#endif
+
   return counter;
 }
 
@@ -639,37 +643,22 @@ private:
   typename Primitive::Id m_closest_primitive;
 };
 
-template <typename PolygonMesh, typename GeomTraits, typename VPM>
-struct Compare_points_along_edge
-{
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
-  typedef typename GeomTraits::Point_3                                      Point;
-
-  Compare_points_along_edge(halfedge_descriptor support,
-                            const GeomTraits& gt, const VPM& vpm, const PolygonMesh& pm)
-    : gt(gt), m_src(get(vpm, source(support, pm)))
-  { }
-
-  bool operator()(const Point& p1, const Point& p2) const {
-    return gt.less_distance_to_point_3_object()(m_src, p1, p2);
-  }
-
-  const GeomTraits& gt;
-  Point m_src;
-};
-
-template <typename TriangleMesh, typename EdgeToSplitContainer, typename AABBTree, typename VPM, typename GT>
-void find_splittable_edge(const std::pair<typename boost::property_traits<VPM>::value_type,
-                                          typename GT::FT>& point_with_tolerance,
-                          EdgeToSplitContainer& edges_to_split,
+// The UniqueVertex is a pair of a container of vertex_descriptor and FT, representing
+// vertices with the same geometric position and their associated snapping tolerance
+// (defined as the minimum of the tolerances of the vertices of the bunch)
+template <typename UniqueVertex, typename TriangleMesh,
+          typename EdgeToSplitMap, typename AABBTree, typename VPM, typename GT>
+void find_splittable_edge(const UniqueVertex& unique_vertex,
+                          EdgeToSplitMap& edges_to_split,
                           const AABBTree* aabb_tree_ptr,
                           const TriangleMesh& /* pms */,
-                          const VPM& /* vpms */,
+                          const VPM& vpms,
                           const TriangleMesh& pmt,
                           const VPM& vpmt,
                           const GT& gt)
 {
   CGAL_USE(vpmt);
+
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor       edge_descriptor;
 
@@ -678,10 +667,12 @@ void find_splittable_edge(const std::pair<typename boost::property_traits<VPM>::
 
   typedef typename AABBTree::AABB_traits                                    AABB_traits;
 
-  const Point& query = point_with_tolerance.first;
-  const FT sq_tolerance = CGAL::square(point_with_tolerance.second);
+  CGAL_assertion(!unique_vertex.first.empty());
 
-  // use the current halfedge as hint
+  const Point& query = get(vpms, unique_vertex.first.front()); // by construction the whole range has the same position
+  const FT sq_tolerance = CGAL::square(unique_vertex.second);
+
+  // use the source halfedge as hint
   internal::Projection_traits<AABB_traits> traversal_traits(aabb_tree_ptr->traits(), sq_tolerance);
   aabb_tree_ptr->traversal(query, traversal_traits);
 
@@ -698,7 +689,7 @@ void find_splittable_edge(const std::pair<typename boost::property_traits<VPM>::
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
   std::cout << "  Closest point: (" << closest_p << ")" << std::endl
             << "  at distance " << gt.compute_squared_distance_3_object()(query, closest_p)
-            << " with a tolerance of " << point_with_tolerance.second << " at vertex (squared tol: " << sq_tolerance
+            << " with squared tolerance: " << sq_tolerance
             << " && close enough? " << is_close_enough << ")" << std::endl;
 #endif
 
@@ -709,31 +700,38 @@ void find_splittable_edge(const std::pair<typename boost::property_traits<VPM>::
   std::cout << "\t and is thus beneath tolerance" << std::endl;
 #endif
 
-  edge_descriptor closest = traversal_traits.closest_primitive_id();
-  CGAL_assertion(get(vpmt, source(closest, pmt)) != query &&
-                                                    get(vpmt, target(closest, pmt)) != query);
+  edge_descriptor closest_e = traversal_traits.closest_primitive_id();
+  CGAL_assertion(get(vpmt, source(closest_e, pmt)) != query &&
+                 get(vpmt, target(closest_e, pmt)) != query);
 
-  halfedge_descriptor clos_hd = halfedge(closest, pmt);
-  CGAL_assertion(is_border(edge(clos_hd, pmt), pmt));
+  halfedge_descriptor closest_h = halfedge(closest_e, pmt);
+  CGAL_assertion(is_border(edge(closest_h, pmt), pmt));
 
-  if(!is_border(clos_hd, pmt))
-    clos_hd = opposite(clos_hd, pmt);
+  if(!is_border(closest_h, pmt))
+    closest_h = opposite(closest_h, pmt);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
   std::cout << "splitting position: " << query << std::endl;
 #endif
 
-  edges_to_split.push_back(std::make_pair(query, clos_hd));
+  // a map because we need to know if the same halfedge is split multiple times
+#ifdef CGAL_LINKED_WITH_TBB
+  typename EdgeToSplitMap::accessor acc;
+  edges_to_split.insert(acc, closest_h);
+  acc->second.emplace_back(&(unique_vertex.first), closest_p);
+#else
+  edges_to_split[closest_h].emplace_back(&(unique_vertex.first), closest_p);
+#endif
 }
 
 #ifdef CGAL_LINKED_WITH_TBB
 template <typename PointWithToleranceContainer,
-          typename TriangleMesh, typename EdgeToSplitContainer,
+          typename TriangleMesh, typename EdgeToSplitMap,
           typename AABBTree, typename VPM, typename GT>
 struct Find_splittable_edge_for_parallel_for
 {
   Find_splittable_edge_for_parallel_for(const PointWithToleranceContainer& points_with_tolerance,
-                                        EdgeToSplitContainer& edges_to_split,
+                                        EdgeToSplitMap& edges_to_split,
                                         const AABBTree* aabb_tree_ptr,
                                         const TriangleMesh& pms,
                                         const VPM& vpms,
@@ -759,7 +757,7 @@ struct Find_splittable_edge_for_parallel_for
 
 private:
   const PointWithToleranceContainer& m_points_with_tolerance;
-  EdgeToSplitContainer& m_edges_to_split;
+  EdgeToSplitMap& m_edges_to_split;
   const AABBTree* m_aabb_tree_ptr;
   const TriangleMesh& m_pms;
   const VPM m_vpms;
@@ -794,9 +792,6 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       GT;
   typedef typename GT::FT                                                   FT;
-  typedef typename GT::Vector_3                                             Vector;
-
-  typedef internal::Compare_points_along_edge<TriangleMesh, GT, VPM>        Point_along_edge_comparer;
 
   typedef CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh, VPM>    Primitive;
   typedef CGAL::AABB_traits<GT, Primitive>                                  AABB_Traits;
@@ -826,16 +821,32 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 #endif
 
   // Collect border points that can be projected onto a border edge
-  typedef std::map<Point, FT>                       Unique_vertices_with_tolerance;  // unordered map is empirically slower
+  //
+  // If multiple vertices on the source border have the same geometric position, they are moved
+  // all at once and we use the smallest tolerance from all source vertices with that position
 
-  // If the point appears multiple times on the source border, use it only once to snap target edges
-  // use the smallest tolerance from all source vertices
+  // Pair of:
+  // - vertices with the same geometric position
+  // - the smallest tolerance for the corresponding geometric position
+  typedef std::vector<vertex_descriptor>                                      Vertex_container;
+  typedef std::pair<Vertex_container, FT>                                     Unique_vertex;
+  typedef std::vector<Unique_vertex>                                          Unique_vertices_with_tolerance;
+
+  // Map[unique geometric position, iterator of unique vertex]
+  // This is not simply a map[unique_vertices, tolerance] sorted on the geometric position
+  // because we need to use a vector in the tbb::parallel_for()
+  typedef typename Unique_vertices_with_tolerance::iterator                   Unique_vertex_iterator;
+  typedef std::map<Point, Unique_vertex_iterator>                             Unique_positions_with_iterator;
 
 #ifdef CGAL_PMP_SNAP_DEBUG
-  std::cout << "gather unique points in source range" << std::endl;
+  std::cout << "Gather unique points in source range..." << std::endl;
 #endif
 
-  Unique_vertices_with_tolerance unique_source_vertices;
+  Unique_positions_with_iterator unique_positions;
+
+  Unique_vertices_with_tolerance unique_vertices_with_tolerance;
+  unique_vertices_with_tolerance.reserve(source_hrange.size()); // ensures that iterators stay valid
+
   for(halfedge_descriptor hd : source_hrange)
   {
     // Skip the source vertex if its two incident halfedges are geometrically identical (it means that
@@ -844,20 +855,35 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
     if(get(vpms, source(hd, pms)) == get(vpms, target(next(hd, pms), pms)))
       continue;
 
-    const vertex_descriptor vd = target(hd, pms);
-    const Point_ref query = get(vpms, vd);
-    const FT tolerance = get(tol_pmap, vd);
-
-    std::pair<typename Unique_vertices_with_tolerance::iterator, bool> is_insert_successful =
-      unique_source_vertices.insert(std::make_pair(query, tolerance));
-
-    // Keep the lowest tolerance out of all the source vertices with the same position
-    is_insert_successful.first->second = (std::min)(is_insert_successful.first->second, tolerance);
+    const vertex_descriptor v = target(hd, pms);
+    const Point_ref query = get(vpms, v);
+    const FT tolerance = get(tol_pmap, v);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-    if(is_insert_successful.second)
-      std::cout << "Query: " << vd << " (" << query << ")" << std::endl;
+      std::cout << "Query: " << v << " (" << query << ")" << std::endl;
 #endif
+
+    // The iterator will be set after insertion
+    std::pair<typename Unique_positions_with_iterator::iterator, bool> is_insert_successful =
+      unique_positions.insert(std::make_pair(query, Unique_vertex_iterator()));
+
+    if(is_insert_successful.second) // successful insertion <=> never met this point
+    {
+      std::vector<vertex_descriptor> vv {{ v }};
+      unique_vertices_with_tolerance.emplace_back(vv, tolerance);
+      is_insert_successful.first->second = std::prev(unique_vertices_with_tolerance.end());
+    }
+    else // point was already met
+    {
+      CGAL_assertion(is_insert_successful.first->second != Unique_vertex_iterator());
+      Unique_vertex& uv = *(is_insert_successful.first->second);
+
+      std::vector<vertex_descriptor>& vv = uv.first;
+      CGAL_assertion(std::find(vv.begin(), vv.end(), v) == vv.end());
+      vv.push_back(v);
+
+      uv.second = (std::min)(uv.second, tolerance);
+    }
   }
 
   // Since we're inserting primitives one by one, we can't pass this shared data in the constructor of the tree
@@ -873,60 +899,49 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 
   // Now, check which edges of the target range ought to be split by source vertices
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-  std::cout << "Collect edges to split w/ " << unique_source_vertices.size() << " unique vertices" << std::endl;
+  std::cout << "Collect edges to split w/ " << unique_vertices_with_tolerance.size() << " unique vertices" << std::endl;
 #endif
+
+  typedef std::pair<const Vertex_container*, Point>                               Vertices_with_new_position;
+  typedef std::vector<Vertices_with_new_position>                                 VNP_container;
 
 #ifdef CGAL_LINKED_WITH_TBB
-#ifdef CGAL_PMP_SNAP_DEBUG
+ #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "Parallel find splittable edges!" << std::endl;
-#endif
+ #endif
 
-  typedef tbb::concurrent_vector<std::pair<Point, halfedge_descriptor> >        Concurrent_edge_to_split_container;
-
-  // Can't parallel for a map...
-  std::vector<std::pair<Point, FT> > unique_vertices_with_tolerance_vector(unique_source_vertices.begin(),
-                                                                           unique_source_vertices.end());
-
-  typedef internal::Find_splittable_edge_for_parallel_for<std::vector<std::pair<Point, FT> >,
+  typedef tbb::concurrent_hash_map<halfedge_descriptor, VNP_container>            Concurrent_edge_to_split_container;
+  typedef internal::Find_splittable_edge_for_parallel_for<Unique_vertices_with_tolerance,
                                                           TriangleMesh,
                                                           Concurrent_edge_to_split_container,
-                                                          AABB_tree, VPM, GT>    Functor;
+                                                          AABB_tree, VPM, GT>     Functor;
 
   Concurrent_edge_to_split_container edges_to_split;
-  Functor f(unique_vertices_with_tolerance_vector, edges_to_split, &aabb_tree, pms, vpms, pmt, vpmt, gt);
-  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, unique_vertices_with_tolerance_vector.size()), f);
+  Functor f(unique_vertices_with_tolerance, edges_to_split, &aabb_tree, pms, vpms, pmt, vpmt, gt);
+  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, unique_vertices_with_tolerance.size()), f);
 #else // CGAL_LINKED_WITH_TBB
-#ifdef CGAL_PMP_SNAP_DEBUG
+ #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "Sequential find splittable edges!" << std::endl;
-#endif
-  typedef std::pair<Point, FT>                      Point_with_tolerance;
+ #endif
 
-  std::vector<std::pair<Point, halfedge_descriptor> > edges_to_split;
-  for(const Point_with_tolerance& point_with_tolerance : unique_source_vertices)
-  {
-    internal::find_splittable_edge(point_with_tolerance, edges_to_split, &aabb_tree,
-                                   pms, vpms, pmt, vpmt, gt);
-  }
-#endif
-
-  // Sort points falling on the same edge and split the edge
-  std::map<halfedge_descriptor, std::vector<Point> > points_per_edge;
-  typedef std::pair<Point, halfedge_descriptor> Pair_type;
-  for(const Pair_type& p : edges_to_split)
-    points_per_edge[p.second].push_back(p.first);
+  std::map<halfedge_descriptor, VNP_container> edges_to_split; // @todo hash ?
+  for(const Unique_vertex& uv : unique_vertices_with_tolerance)
+    internal::find_splittable_edge(uv, edges_to_split, &aabb_tree, pms, vpms, pmt, vpmt, gt);
+#endif // CGAL_LINKED_WITH_TBB
 
 #ifdef CGAL_PMP_SNAP_DEBUG
-  std::cout << "split " << points_per_edge.size() << " edges" << std::endl;
+  std::cout << "split " << edges_to_split.size() << " edges" << std::endl;
 #endif
 
-  typedef std::pair<const halfedge_descriptor, std::vector<Point> > Map_type;
-  for(Map_type& mt : points_per_edge)
+  typedef std::pair<const halfedge_descriptor, VNP_container>                     Splitters;
+  for(Splitters& splitter : edges_to_split)
   {
-    const halfedge_descriptor mt_hd = mt.first;
-    const halfedge_descriptor mt_hd_opp = opposite(mt_hd, pmt);
-    CGAL_assertion(!is_border(mt_hd_opp, pmt));
+    const halfedge_descriptor h = splitter.first;
+    CGAL_assertion(is_border(h, pmt));
 
-    if(mt.second.size() > 1)
+    VNP_container& splitters = splitter.second;
+
+    if(splitters.size() > 1)
     {
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
       std::cout << " MUST SORT ON BORDER!" << std::endl;
@@ -936,77 +951,47 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
       ///       the order along the matching border. Note that this requires identifying
       ///       matching polylines because a sequence of zigzaging points might not all project
       ///       onto the same halfedge.
-      Point_along_edge_comparer cmp(mt_hd, gt, vpmt, pmt);
-      std::sort(mt.second.begin(), mt.second.end(), cmp);
+
+      const Point_ref hsp = get(vpmt, source(h, pmt));
+      std::sort(splitters.begin(), splitters.end(),
+                [&](const Vertices_with_new_position& l, const Vertices_with_new_position& r) -> bool
+                {
+                  return gt.less_distance_to_point_3_object()(hsp, l.second, r.second);
+                });
     }
 
-    halfedge_descriptor hd_to_split = mt_hd;
-    for(const Point& p : mt.second)
+    halfedge_descriptor h_to_split = h;
+    for(const Vertices_with_new_position& vnp : splitters)
     {
+      // vnp.first is an iterator in the container of std::pair<vertices with same position, tolerance>
+      const Vertex_container& vertices_to_move = *(vnp.first);
+      const Point& p = vnp.second;
+
+      CGAL_assertion(!vertices_to_move.empty());
+
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << "SPLIT " << edge(hd_to_split, pmt) << " |||| "
-                << " vs " << source(hd_to_split, pmt) << " (" << pmt.point(source(hd_to_split, pmt)) << ")"
-                << " --- vt " << target(hd_to_split, pmt) << " (" << pmt.point(target(hd_to_split, pmt)) << ")" << std::endl;
+      std::cout << "Splitting " << edge(h_to_split, pmt) << " |||| "
+                << " Vs " << source(h_to_split, pmt) << " (" << pmt.point(source(h_to_split, pmt)) << ")"
+                << " --- Vt " << target(h_to_split, pmt) << " (" << pmt.point(target(h_to_split, pmt)) << ")" << std::endl;
       std::cout << "  with pos " << p << std::endl;
+      std::cout << vertices_to_move.size() << " vertices to move" << std::endl;
 #endif
 
-      halfedge_descriptor res = CGAL::Euler::split_edge(hd_to_split, pmt);
-      put(vpmt, target(res, pmt), p);
+      halfedge_descriptor res = CGAL::Euler::split_edge(h_to_split, pmt);
       ++snapped_n;
 
-      // @todo ensuring hd_to_split is safe... but is it necessary?
-      hd_to_split = next(res, pmt);
-      halfedge_descriptor hd_to_split_opp = opposite(hd_to_split, pmt);
+      h_to_split = next(res, pmt); // inserting new points ordered from the source to the target of (the initial) 'h'
 
-      // Look at the geometry to determine which diagonal is better to use to split this new quad face
+      // Update positions of the the source mesh and set the position of the new point in the target mesh
+      put(vpmt, target(res, pmt), p);
+      for(const vertex_descriptor v : vertices_to_move)
+        put(vpms, v, p);
 
-      /*           p
-       *         /   \
-       *    res /     \ hd_to_split
-       *       /       \
-       *      /         \
-       *    left       right
-       *     |         /
-       *     |        /
-       *     |       /
-       *     |      /
-       *     |     /
-       *       opp
-       */
+      // Now need to triangulate the quad created by the edge split
+      const halfedge_descriptor face_split_h1 = opposite(h_to_split, pmt);
+      const halfedge_descriptor face_split_h2 = prev(prev(face_split_h1, pmt), pmt);
 
-      const Point_ref left_pt = get(vpmt, source(res, pmt));
-      const Point_ref right_pt = get(vpmt, target(hd_to_split, pmt));
-      const Point_ref opp = get(vpmt, target(next(opposite(res, pmt), pmt), pmt));
-
-      // Check if 'p' is "visible" from 'opp' (i.e. its projection on the plane 'Pl(left, opp, right)'
-      // falls in the cone with apex 'opp' and sides given by 'left' and 'right')
-      const Vector n = gt.construct_orthogonal_vector_3_object()(right_pt, left_pt, opp);
-
-      const Point trans_left_pt = gt.construct_translated_point_3_object()(left_pt, n);
-      const Point trans_right_pt = gt.construct_translated_point_3_object()(right_pt, n);
-
-      const bool left_of_left = (gt.orientation_3_object()(trans_left_pt, left_pt, opp, p) == CGAL::POSITIVE);
-      const bool right_of_right = (gt.orientation_3_object()(right_pt, trans_right_pt, opp, p) == CGAL::POSITIVE);
-
-      const bool is_visible = (!left_of_left && !right_of_right);
-
-#ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << "Left/Right: " << left_of_left << " " << right_of_right << std::endl;
-      std::cout << "visible from " << opp << " ? " << is_visible << std::endl;
-#endif
-
-      if(is_visible)
-      {
-        halfedge_descriptor new_hd = CGAL::Euler::split_face(hd_to_split_opp,
-                                                             prev(prev(mt_hd_opp, pmt), pmt), pmt);
-        hd_to_split = opposite(prev(new_hd, pmt), pmt);
-      }
-      else
-      {
-        halfedge_descriptor new_hd = CGAL::Euler::split_face(opposite(res, pmt),
-                                                             prev(hd_to_split_opp, pmt), pmt);
-        hd_to_split = opposite(next(new_hd, pmt), pmt);
-      }
+      CGAL::Euler::split_face(face_split_h1, face_split_h2, pmt);
     }
   }
 
@@ -1094,6 +1079,8 @@ std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm1,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Same as above, but with a single mesh
 
 template <typename TriangleMesh>
 std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm)
