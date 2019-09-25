@@ -32,6 +32,11 @@
 
 namespace CGAL{
 
+template <typename PointRange>
+using PointRangeKernel = typename CGAL::Kernel_traits<
+                           typename std::iterator_traits<
+                             typename PointRange::iterator>::value_type>::Kernel;
+
 /**
  * \ingroup PkgPolylineDistanceFunctions
  * Decides if the Frechet distance between two polylines given as a range of points
@@ -43,10 +48,7 @@ namespace CGAL{
  * with Traits::Point_2 as value type.
  */
 template <class PointRange,
-          class Traits = typename CGAL::Kernel_traits<
-                           typename std::iterator_traits<
-                             typename PointRange::iterator>::value_type
-                           >::Kernel >
+          class Traits = PointRangeKernel<PointRange>>
 bool
 continuous_Frechet_distance_less_than(const PointRange& curve1,
                                       const PointRange& curve2,
@@ -68,10 +70,7 @@ continuous_Frechet_distance_less_than(const PointRange& curve1,
  * with Traits::Point_2 as value type.
  */
 template <class PointRange,
-          class Traits = typename CGAL::Kernel_traits<
-                           typename std::iterator_traits<
-                             typename PointRange::iterator>::value_type
-                           >::Kernel >
+          class Traits = PointRangeKernel<PointRange>>
 typename Traits::FT
 continuous_Frechet_distance(const PointRange& curve1,
                             const PointRange& curve2)
