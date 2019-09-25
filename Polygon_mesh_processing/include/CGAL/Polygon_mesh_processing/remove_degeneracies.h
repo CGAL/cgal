@@ -372,12 +372,13 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 
     for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, tmesh), tmesh))
     {
-      if(get(vcm_np, target(h, tmesh)))
-        put(vcm, target(h, tmesh), true);
-
       if(get(ecm, edge(h, tmesh)))
       {
         put(vcm, source(h, tmesh), true);
+        put(vcm, target(h, tmesh), true);
+      }
+      else if(get(vcm_np, target(h, tmesh)))
+      {
         put(vcm, target(h, tmesh), true);
       }
     }
