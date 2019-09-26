@@ -520,6 +520,22 @@ public:
 			}
 		}
 
+		
+		template <class Query, class Traversal_traits>
+		void traversal_with_priority(const Query& query, Traversal_traits& traits) const
+		{
+			switch(size())
+			{
+			case 0:
+				break;
+			case 1:
+				traits.intersection(query, singleton_data());
+				break;
+			default: // if(size() >= 2)
+				root_node()->template traversal_with_priority<Traversal_traits,Query>(query, traits, m_primitives.size());
+			}
+		}
+
 	private:
 		typedef AABB_node<AABBTraits> Node;
 

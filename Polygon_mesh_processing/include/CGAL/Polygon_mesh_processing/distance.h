@@ -883,7 +883,7 @@ double bounded_error_Hausdorff_impl(
   // Build traversal traits for tm1_tree
   Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1( tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, hint.first );
   // Find candidate triangles in TM1 which might realise the Hausdorff bound
-  tm1_tree.traversal( Point_3(0,0,0), traversal_traits_tm1 ); // dummy point given as query as not needed
+  tm1_tree.traversal_with_priority( Point_3(0,0,0), traversal_traits_tm1 ); // dummy point given as query as not needed
 
   // TODO Is there a better/faster data structure than the Heap used here?
   // Can already build a sorted structure while collecting the candidates
@@ -961,7 +961,7 @@ double bounded_error_Hausdorff_impl(
           std::numeric_limits<double>::infinity(),
           std::numeric_limits<double>::infinity()
         );
-        tm2_tree.traversal(sub_triangles[i], traversal_traits_tm2);
+        tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
 
         // Update global lower Hausdorff bound according to the obtained local bounds
         Hausdorff_bounds local_bounds = traversal_traits_tm2.get_local_bounds();

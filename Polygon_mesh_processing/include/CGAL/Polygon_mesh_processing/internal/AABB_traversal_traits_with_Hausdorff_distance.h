@@ -65,6 +65,8 @@ namespace CGAL {
     typedef typename Kernel::Vector_3 Vector_3;
 
   public:
+    typedef int Priority;
+    
     Hausdorff_primitive_traits_tm2(
       const AABBTraits& traits,
       const TriangleMesh& tm2,
@@ -187,6 +189,12 @@ namespace CGAL {
       }
     }
 
+    std::pair<bool,Priority> do_intersect_with_priority(const Query& query, const Node& node) const
+    {
+      bool b = do_intersect(query, node);
+      return std::make_pair(b, Priority(0));
+    }
+    
     // Return the local Hausdorff bounds computed for the passed query triangle
     Hausdorff_bounds get_local_bounds()
     {
@@ -235,6 +243,7 @@ namespace CGAL {
           Heap_type;
 
   public:
+    typedef int Priority;
     Hausdorff_primitive_traits_tm1(
       const AABBTraits& traits, const TM2_tree& tree, const TriangleMesh& tm1,
       const TriangleMesh& tm2 , const VPM1& vpm1, const VPM2& vpm2,
@@ -335,6 +344,12 @@ namespace CGAL {
       }
     }
 
+    std::pair<bool,Priority> do_intersect_with_priority(const Query& query, const Node& node) const
+    {
+      bool b = do_intersect(query, node);
+      return std::make_pair(b, Priority(0));
+    }
+          
     // Return those triangles from TM1 which are candidates for including a
     // point realizing the Hausdorff distance
     Heap_type get_candidate_triangles() {

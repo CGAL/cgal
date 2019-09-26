@@ -86,6 +86,11 @@ public:
                  Traversal_traits& traits,
                  const std::size_t nb_primitives) const;
 
+  template<class Traversal_traits, class Query>
+  void traversal_with_priority(const Query& query,
+                               Traversal_traits& traits,
+                               const std::size_t nb_primitives) const;
+
 private:
   typedef AABBTraits AABB_traits;
   typedef AABB_node<AABB_traits> Node;
@@ -197,6 +202,69 @@ AABB_node<Tr>::traversal(const Query& query,
     else if( traits.do_intersect(query, right_child()) )
     {
       right_child().traversal(query, traits, nb_primitives-nb_primitives/2);
+    }
+  }
+}
+
+  
+
+template<typename Tr>
+template<class Traversal_traits, class Query>
+void
+AABB_node<Tr>::traversal_with_priority(const Query& query,
+                                       Traversal_traits& traits,
+                                       const std::size_t nb_primitives) const
+{
+  // Recursive traversal
+  switch(nb_primitives)
+  {
+  case 2:
+    traits.intersection(query, left_data());
+    if( traits.go_further() )
+    {
+      traits.intersection(query, right_data());
+    }
+    break;
+  case 3:
+    traits.intersection(query, left_data());
+    if( traits.go_further() && traits.do_intersect(query, right_child()) )
+    {
+      right_child().traversal_with_priority(query, traits, 2);
+    }
+    break;
+  default:
+    bool ileft, iright;
+    typename Traversal_traits::Priority pleft, pright;
+    std::tie(ileft,pleft) = traits.do_intersect_with_priority(query, left_child());
+    std::tie(iright,pright) = traits.do_intersect_with_priority(query, right_child());
+
+    if(pleft >= pright)
+    {
+      if( ileft )
+        {
+          left_child().traversal_with_priority(query, traits, nb_primitives/2);
+          if( traits.go_further() && traits.do_intersect(query, right_child()) )
+            {
+              right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
+            }
+        }
+      else if( iright )
+        {
+          right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
+        }
+    }else{
+    if( iright )
+        {
+          right_child().traversal_with_priority(query, traits, nb_primitives/2);
+          if( traits.go_further() && traits.do_intersect(query, left_child()) )
+            {
+              left_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
+            }
+        }
+      else if( ileft )
+        {
+          left_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
+        }
     }
   }
 }
