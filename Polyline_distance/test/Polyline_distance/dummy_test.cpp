@@ -1,6 +1,9 @@
 #include <CGAL/Frechet_distance.h>
+#include <CGAL/Frechet_distance_near_neighbors_ds.h>
+
 #include <CGAL/Cartesian.h>
 
+#include <algorithm>
 #include <cassert>
 #include <fstream>
 #include <sstream>
@@ -19,12 +22,19 @@ using Point = Kernel::Point_2;
 using Curve = std::vector<Point>;
 using Curves = std::vector<Curve>;
 
-struct Query {
+struct FrechetDistanceQuery {
 	std::size_t id1, id2;
 	distance_t distance;
 	bool decision;
 };
-using Queries = std::vector<Query>;
+using FrechetDistanceQueries = std::vector<FrechetDistanceQuery>;
+
+struct FrechetDistanceNearNeighborsDSQuery {
+	std::size_t id;
+	distance_t distance;
+	std::vector<std::size_t> expected_result; // TODO: should be curve ids
+};
+using FrechetDistanceNearNeighborsDSQueries = std::vector<FrechetDistanceNearNeighborsDSQuery>;
 
 void readCurve(std::ifstream& curve_file, Curve& curve)
 {
@@ -74,9 +84,9 @@ Curves readCurves(std::string const& curve_directory)
 	return curves;
 }
 
-Queries readQueries(std::string const& query_file)
+FrechetDistanceQueries readFrechetDistanceQueries(std::string const& query_file)
 {
-	Queries queries;
+	FrechetDistanceQueries queries;
 
 	std::ifstream file(query_file);
 	assert(file);
@@ -93,11 +103,20 @@ Queries readQueries(std::string const& query_file)
 	return queries;
 }
 
+FrechetDistanceNearNeighborsDSQueries readFrechetDistanceNearNeighborsDSQueries(std::string const& query_file)
+{
+	FrechetDistanceNearNeighborsDSQueries queries;
+
+	// TODO
+
+	return queries;
+}
+
 //
 // tests
 //
 
-int testCorrectness()
+void testFrechetDistance()
 {
 	std::string curve_directory = "data/curves/";
 	std::vector<std::string> datasets = { "sigspatial", "OV" };
@@ -105,7 +124,7 @@ int testCorrectness()
 
 	for (auto const& dataset: datasets) {
 		auto curves = readCurves(curve_directory + dataset + "/");
-		auto queries = readQueries(query_directory + dataset + ".txt");
+		auto queries = readFrechetDistanceQueries(query_directory + dataset + ".txt");
 
 		for (auto const& query: queries) {
 			auto decision = continuous_Frechet_distance_less_than(curves[query.id1], curves[query.id2], query.distance);
@@ -114,9 +133,30 @@ int testCorrectness()
 	}
 }
 
+void testFrechetDistanceNearNeighborsDS()
+{
+	std::string curve_directory = "data/curves/";
+	std::vector<std::string> datasets = { "sigspatial", "OV" };
+
+	for (auto const& dataset: datasets) {
+		auto curves = readCurves(curve_directory + dataset + "/");
+		auto queries = readFrechetDistanceNearNeighborsDSQueries(curve_directory + dataset + "/");
+
+		CGAL::FrechetDistanceNearNeighborsDS<Curve> ds;
+		ds.fill(curves);
+
+		for (auto const& query: queries) {
+			auto result = ds.get_close_curves(curves[query.id], query.distance);
+			std::sort(result.begin(), result.end());
+			std::equal(result.begin(), result.end(), query.expected_result.begin());
+		}
+	}
+}
+
 } // end anonymous namespace
 
 int main()
 {
-	testCorrectness();
+	testFrechetDistance();
+	testFrechetDistanceNearNeighborsDS();
 }
