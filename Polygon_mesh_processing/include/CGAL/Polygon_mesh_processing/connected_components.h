@@ -232,15 +232,11 @@ connected_components(const PolygonMesh& pmesh,
   FiniteDual finite_dual(dual,
     internal::No_border<PolygonMesh, EdgeConstraintMap>(pmesh, ecmap));
 
-  typedef CGAL::Polygon_mesh_processing::Get_index_map_from_NP<boost::face_index_t,
-      CGAL::dynamic_face_property_t<int>,
-      PolygonMesh, NamedParameters, internal_np::face_index_t> MapGetter;
+//#define old_one 1
 
-  MapGetter get_map(boost::face_index_t(),
-                    CGAL::dynamic_face_property_t<int>(),
-                    pmesh, np, internal_np::face_index);
+  typename Default_face_index_map<NamedParameters, PolygonMesh>::type fimap
+      = get_initialized_face_index_map(pmesh, np);
 
-  typename MapGetter::PropertyMapType fimap = get_map.property_map();
   return boost::connected_components(finite_dual,
     fcm,
     boost::vertex_index_map(fimap)
@@ -312,18 +308,9 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  // FaceIndexMap
-  typedef CGAL::Polygon_mesh_processing::Get_index_map_from_NP<boost::face_index_t,
-      CGAL::dynamic_face_property_t<int>,
-      PolygonMesh, NamedParameters, internal_np::face_index_t> MapGetter;
+  typedef typename Default_face_index_map<NamedParameters, PolygonMesh>::type FaceIndexMap;
 
-  typedef typename MapGetter::PropertyMapType FaceIndexMap;
-
-  MapGetter get_map(boost::face_index_t(),
-                    CGAL::dynamic_face_property_t<int>(),
-                    pmesh, np, internal_np::face_index);
-
-  FaceIndexMap fimap = get_map.property_map();
+  FaceIndexMap fimap = get_initialized_face_index_map(pmesh, np);
   // FaceSizeMap
   typedef typename internal_np::Lookup_named_param_def<internal_np::face_size_map_t,
                                                  NamedParameters,
