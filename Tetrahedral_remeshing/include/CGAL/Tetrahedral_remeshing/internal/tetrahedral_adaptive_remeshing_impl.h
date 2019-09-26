@@ -85,15 +85,12 @@ namespace internal
     typedef Triangulation Tr;
     typedef typename Tr::Geom_traits::FT FT;
 
-    typedef int Corner_index;
-    typedef int Curve_segment_index;
-    typedef typename CGAL::Mesh_complex_3_in_triangulation_3<Tr,
-      Corner_index, Curve_segment_index> C3t3;
+    typedef typename CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
     typedef typename C3t3::Cell_handle         Cell_handle;
     typedef typename C3t3::Vertex_handle       Vertex_handle;
-    typedef typename int                       Surface_patch_index; //only needed for is_in_complex()
     typedef typename C3t3::Subdomain_index     Subdomain_index;
+    typedef int Surface_patch_index; //only needed for is_in_complex()
 
   private:
     const FT& m_target_edge_length;
@@ -303,7 +300,7 @@ namespace internal
       std::size_t nbv = 0;
 #endif
 
-      Subdomain_index max_si = tr().finite_cells_begin()->subdomain_index();
+      Subdomain_index max_si = 0;
 
       //tag cells (no imaginary cell yet)
       typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
@@ -319,7 +316,6 @@ namespace internal
           ++nbc;
 #endif
         }
-
         for (int i = 0; i < 4; ++i)
         {
           if (cit->vertex(i)->in_dimension() == -1)
@@ -327,7 +323,7 @@ namespace internal
         }
       }
       m_imaginary_index = max_si + 1;
-      if(m_imaginary_index == 1)
+      if(max_si == 0)
         std::cerr << "Warning : Maximal subdomain index is 0" << std::endl
                   << "          Remeshing is likely to fail." << std::endl;
 
@@ -344,13 +340,8 @@ namespace internal
         Subdomain_index s2 = mf.first->subdomain_index();
         if (s1 != s2)
         {
-          if(s1 < s2)
-            m_c3t3.add_to_complex(f, 1);
-          else
-            m_c3t3.add_to_complex(f, 1);
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-          ++nbf;
-#endif
+          m_c3t3.add_to_complex(f, 1);
+
           const int i = f.second;
           for (int j = 0; j < 3; ++j)
           {
@@ -358,6 +349,9 @@ namespace internal
             if (vij->in_dimension() == -1 || vij->in_dimension() > 2)
               vij->set_dimension(2);
           }
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+          ++nbf;
+#endif
         }
       }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -375,9 +369,7 @@ namespace internal
         if (get(ecmap, e) || nb_incident_subdomains(e, m_c3t3) > 2)
         {
           m_c3t3.add_to_complex(e, 1);
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-          ++nbe;
-#endif
+
           Vertex_handle v = e.first->vertex(e.second);
           if(v->in_dimension() == -1 || v->in_dimension() > 1)
             v->set_dimension(1);
@@ -385,6 +377,9 @@ namespace internal
           v = e.first->vertex(e.third);
           if (v->in_dimension() == -1 || v->in_dimension() > 1)
             v->set_dimension(1);
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+          ++nbe;
+#endif
         }
       }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -401,11 +396,13 @@ namespace internal
         if (vit->in_dimension() == 0 || nb_incident_complex_edges(vit, m_c3t3) > 2)
         {
           m_c3t3.add_to_complex(vit, ++corner_id);
+
+          if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
+            vit->set_dimension(0);
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           ++nbv;
 #endif
-          if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
-            vit->set_dimension(0);
         }
       }
 
