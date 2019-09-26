@@ -206,8 +206,6 @@ AABB_node<Tr>::traversal(const Query& query,
   }
 }
 
-  
-
 template<typename Tr>
 template<class Traversal_traits, class Query>
 void
@@ -238,34 +236,27 @@ AABB_node<Tr>::traversal_with_priority(const Query& query,
     std::tie(ileft,pleft) = traits.do_intersect_with_priority(query, left_child());
     std::tie(iright,pright) = traits.do_intersect_with_priority(query, right_child());
 
-    if(pleft >= pright)
+    if (ileft)
     {
-      if( ileft )
+      if (iright)
+      {
+        if(pleft >= pright)
         {
           left_child().traversal_with_priority(query, traits, nb_primitives/2);
-          if( traits.go_further() && traits.do_intersect(query, right_child()) )
-            {
-              right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
-            }
+          if( traits.go_further() /* && traits.do_intersect(query, right_child()) */ ) // TODO shall we call again do_intersect?
+            right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
         }
-      else if( iright )
-        {
-          right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
-        }
-    }else{
-    if( iright )
+        else
         {
           right_child().traversal_with_priority(query, traits, nb_primitives/2);
-          if( traits.go_further() && traits.do_intersect(query, left_child()) )
-            {
-              left_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
-            }
+          if( traits.go_further() /* && traits.do_intersect(query, left_child()) */ ) // TODO shall we call again do_intersect?
+            left_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
         }
-      else if( ileft )
-        {
-          left_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
-        }
+      }
     }
+    else
+      if (iright)
+        right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
   }
 }
 
