@@ -27,7 +27,14 @@
 #include <CGAL/Classification/Label_set.h>
 
 #include <opencv2/opencv.hpp>
+
+#if CV_VERSION_MAJOR > 2 \
+||  (CV_VERSION_MINOR == 4 && CV_VERSION_REVISION >= 11)
 #include <opencv2/ml.hpp>
+#else
+#include <opencv2/ml/ml.hpp>
+#endif
+
 
 
 namespace CGAL {
