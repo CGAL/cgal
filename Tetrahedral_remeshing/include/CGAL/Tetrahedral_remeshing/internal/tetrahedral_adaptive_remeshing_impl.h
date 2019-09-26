@@ -154,7 +154,7 @@ namespace internal
     {
       CGAL_assertion(check_vertex_dimensions());
 
-      FT emax = FT(4)/FT(3) * m_target_edge_length;
+      const FT emax = FT(4)/FT(3) * m_target_edge_length;
       split_long_edges(m_c3t3, emax, m_protect_boundaries, m_imaginary_index,
                        m_cell_selector);
 

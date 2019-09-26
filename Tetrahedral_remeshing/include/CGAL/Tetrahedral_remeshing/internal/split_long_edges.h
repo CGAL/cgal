@@ -250,7 +250,8 @@ namespace internal
         std::cout << "\rSplit (" << high << ")... ("
           << long_edges.left.size() << " long edges, "
           << "length  = " << std::sqrt(sqlen) << ", "
-          << std::sqrt(CGAL::squared_distance(e.first->point(), e.second->point())) << ", "
+          << std::sqrt(CGAL::squared_distance(point(e.first->point()),
+                                              point(e.second->point()))) << ", "
           << nb_splits << " splits)";
         std::cout.flush();
 #endif
