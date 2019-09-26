@@ -189,10 +189,9 @@ namespace CGAL {
       }
     }
 
-    bool do_intersect(const Query& /*query*/, const Node& /* node */) const
+    bool do_intersect(const Query& query, const Node& node ) const
     {
-      CGAL_assertion(false);
-      return false;
+      return this->do_intersect_with_priority(query, node).first;
     }
 
     // Return the local Hausdorff bounds computed for the passed query triangle
@@ -286,7 +285,7 @@ namespace CGAL {
         std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity()
       );
-      m_tm2_tree.traversal(candidate_triangle, traversal_traits_tm2);
+      m_tm2_tree.traversal_with_priority(candidate_triangle, traversal_traits_tm2);
 
       // Update global Hausdorff bounds according to the obtained local bounds
       Hausdorff_bounds local_bounds = traversal_traits_tm2.get_local_bounds();
@@ -344,10 +343,9 @@ namespace CGAL {
       }
     }
 
-    bool do_intersect(const Query& /*query*/, const Node& /* node */) const
+    bool do_intersect(const Query& query, const Node& node ) const
     {
-      CGAL_assertion(false);
-      return false;
+      return this->do_intersect_with_priority(query, node).first;
     }
 
     // Return those triangles from TM1 which are candidates for including a
