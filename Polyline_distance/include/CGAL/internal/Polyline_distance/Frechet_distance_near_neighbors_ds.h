@@ -70,26 +70,55 @@ private:
 	Kd_tree<Tree_traits> kd_tree; // FIXME: what traits?
 
 	// FIXME: rename
-	Point_and_id to_kd_tree_point(const Curve& curve) const;
+	Point_d to_kd_tree_point(const Curve& curve) const;
 
-	struct QueryItem {
+	class QueryItem {
+		const Curve& curve;
+		const NT distance;
+
+	public:
 		using D = FrechetKdTree::D;
-		using Point_d = FrechetKdTree::Point_d;
+		using Point_d = FrechetKdTree::Point_and_id;
 		using FT = NT;
+
+		QueryItem(Curve const& curve, NT distance) : curve(curve), distance(distance) {}
 
 		bool contains(Point_d p) const { return true; } // FIXME
 		bool inner_range_intersects(const Kd_tree_rectangle<FT,D>& rectangle) const { return true; } // FIXME
 		bool outer_range_contains(const Kd_tree_rectangle<FT,D>& rectangle) const { return true; } // FIXME
 	};
-	QueryItem construct_fuzzy_query_item(const Curve& curve, NT distance);
 };
 
 template <class Traits>
 auto
 FrechetKdTree<Traits>::to_kd_tree_point(const Curve& curve) const
--> Point_and_id
+-> Point_d
 {
-	return Point_and_id{Point_d(), 0}; // FIXME
+	CGAL_precondition(!curve.empty());
+
+	// TODO: remove this when curves are preprocessed first
+	NT x_min, y_min, x_max, y_max;
+	x_min = y_min = std::numeric_limits<NT>::max();
+	x_max = y_max = std::numeric_limits<NT>::min();
+	for (auto const& point: curve) {
+		x_min = std::min(x_min, point.x());
+		y_min = std::min(y_min, point.y());
+		x_max = std::max(x_max, point.x());
+		y_max = std::max(y_max, point.y());
+	}
+
+	// FIXME: this is ugly......
+	std::vector<NT> values = {
+		curve.front().x(),
+		curve.front().y(),
+		curve.back().x(),
+		curve.back().y(),
+		x_min,
+		y_min,
+		x_max,
+		y_max
+	};
+	return Point_d(D::value, values.begin(), values.end());
 }
 
 template <class Traits>
@@ -97,9 +126,8 @@ void
 FrechetKdTree<Traits>::insert(Curves const& curves)
 {
 	for (std::size_t id = 0; id < curves.size(); ++id) {
-		auto const& curve = curves[id];
-		auto kd_tree_point = to_kd_tree_point(curve);
-		kd_tree.insert(kd_tree_point);
+		auto kd_tree_point = to_kd_tree_point(curves[id]);
+		kd_tree.insert(Point_and_id{kd_tree_point, id});
 	}
 }
 
@@ -107,26 +135,25 @@ template <class Traits>
 void
 FrechetKdTree<Traits>::build()
 {
-	// TODO
+	kd_tree.build();
 }
 
 template <class Traits>
 CurveIDs
 FrechetKdTree<Traits>::search(Curve const& curve, NT distance)
 {
-	// TODO
-	// kd_tree.search(std::back_insert_iterator<TreePoints>(candidates), construct_fuzzy_query_item(curve, distance));
-}
+	using Candidates = std::vector<Point_and_id>;
+	Candidates candidates;
 
-template <class Traits>
-auto
-FrechetKdTree<Traits>::construct_fuzzy_query_item(const Curve& curve, NT distance)
--> QueryItem
-{
-	// TODO
-	return QueryItem();
-}
+	kd_tree.search(std::back_insert_iterator<Candidates>(candidates), QueryItem(curve, distance));
 
+	// FIXME: ugly.........
+	CurveIDs result;
+	for (auto const& candidate: candidates) {
+		result.push_back(get<1>(candidate));
+	}
+	return result;
+}
 
 } // end of namespace CGAL
 

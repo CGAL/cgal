@@ -158,5 +158,5 @@ void testFrechetDistanceNearNeighborsDS()
 int main()
 {
 	testFrechetDistance();
-	testFrechetDistanceNearNeighborsDS();
+	// testFrechetDistanceNearNeighborsDS();
 }
