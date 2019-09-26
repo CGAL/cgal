@@ -53,12 +53,12 @@ namespace internal
   template<typename C3t3>
   class CollapseTriangulation
   {
-    typedef typename C3t3::Triangulation Tr;
-    typedef typename C3t3::Edge Edge;
-    typedef typename C3t3::Cell_handle Cell_handle;
-    typedef typename C3t3::Vertex_handle Vertex_handle;
-    typedef typename C3t3::Subdomain_index Subdomain_index;
-    typedef typename C3t3::Triangulation::Point Point_3;
+    typedef typename C3t3::Triangulation                        Tr;
+    typedef typename C3t3::Edge                                 Edge;
+    typedef typename C3t3::Cell_handle                          Cell_handle;
+    typedef typename C3t3::Vertex_handle                        Vertex_handle;
+    typedef typename C3t3::Subdomain_index                      Subdomain_index;
+    typedef typename C3t3::Triangulation::Point                 Point_3;
     typedef typename C3t3::Triangulation::Geom_traits::Vector_3 Vector_3;
 
     typedef CGAL::Triangulation_incremental_builder_3<Tr> Builder;
@@ -85,9 +85,8 @@ namespace internal
       collapse_type = _collapse_type;
 
       //To add the vertices only once
-      for (unsigned int i = 0; i < vertices_to_insert.size(); i++)
+      for (Vertex_handle vh : vertices_to_insert)
       {
-        const Vertex_handle vh = vertices_to_insert[i];
         if (v2v.left.find(vh) == v2v.left.end())
         {
           Vertex_handle new_vh = builder.add_vertex();
@@ -103,9 +102,8 @@ namespace internal
       c3t3.triangulation().finite_incident_cells(v1_init, std::back_inserter(cells_to_insert));
 
       //To add the cells only once
-      for (unsigned int i = 0; i < cells_to_insert.size(); i++)
+      for (Cell_handle ch : cells_to_insert)
       {
-        const Cell_handle ch = cells_to_insert[i];
         if (c2c.left.find(ch) == c2c.left.end())
         {
           Cell_handle new_ch = builder.add_cell(v2v.left.at(ch->vertex(0)), v2v.left.at(ch->vertex(1)),
@@ -483,9 +481,9 @@ namespace internal
                          const typename C3t3::Subdomain_index& /*imaginary_index*/,
                          CellSelector cell_selector)
   {
-    typedef typename C3t3::Vertex_handle Vertex_handle;
-    typedef typename C3t3::Cell_handle   Cell_handle;
-    typedef typename C3t3::Triangulation::Geom_traits::Point_3 Point;
+    typedef typename C3t3::Vertex_handle        Vertex_handle;
+    typedef typename C3t3::Cell_handle          Cell_handle;
+    typedef typename C3t3::Triangulation::Point Point;
 
     Vertex_handle v0 = edge.first->vertex(edge.second);
     Vertex_handle v1 = edge.first->vertex(edge.third);
@@ -519,12 +517,13 @@ namespace internal
         if (!ch->has_vertex(v1))
         {
           //check orientation
-          boost::array<Point, 4> pts = { point(ch->vertex(0)->point()),
-                                         point(ch->vertex(1)->point()),
-                                         point(ch->vertex(2)->point()),
-                                         point(ch->vertex(3)->point())};
-          pts[ch->index(v0)] = point(new_pos);
-          if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
+          boost::array<Point, 4> pts = { ch->vertex(0)->point(),
+                                         ch->vertex(1)->point(),
+                                         ch->vertex(2)->point(),
+                                         ch->vertex(3)->point()};
+          pts[ch->index(v0)] = new_pos;
+          if (CGAL::orientation(point(pts[0]), point(pts[1]),
+                                point(pts[2]), point(pts[3])) != CGAL::POSITIVE)
             return false;
         }
       }
@@ -541,12 +540,14 @@ namespace internal
         if (!ch->has_vertex(v0))
         {
           //check orientation
-          boost::array<Point, 4> pts = { point(ch->vertex(0)->point()),
-                                         point(ch->vertex(1)->point()),
-                                         point(ch->vertex(2)->point()),
-                                         point(ch->vertex(3)->point()) };
-          pts[ch->index(v1)] = point(new_pos);
-          if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
+          //check orientation
+          boost::array<Point, 4> pts = { ch->vertex(0)->point(),
+                                         ch->vertex(1)->point(),
+                                         ch->vertex(2)->point(),
+                                         ch->vertex(3)->point() };
+          pts[ch->index(v1)] = new_pos;
+          if (CGAL::orientation(point(pts[0]), point(pts[1]),
+                                point(pts[2]), point(pts[3])) != CGAL::POSITIVE)
             return false;
         }
       }
@@ -568,8 +569,9 @@ namespace internal
   {
     //SqLengthMap::key_type is Vertex_handle
     //SqLengthMap::value_type is double
-    typedef typename C3t3::Edge Edge;
-    typedef typename C3t3::Vertex_handle Vertex_handle;
+    typedef typename C3t3::Triangulation::Geom_traits::FT FT;
+    typedef typename C3t3::Edge                           Edge;
+    typedef typename C3t3::Vertex_handle                  Vertex_handle;
 
     std::vector<Edge> inc_edges;
     c3t3.triangulation().finite_incident_edges(v1,
@@ -588,7 +590,7 @@ namespace internal
 
       if (v2 != ivh && edges_sqlength.find(ivh) == edges_sqlength.end())
       {
-        double sqlen_i = CGAL::squared_distance(new_pos, ivh->point());
+        FT sqlen_i = CGAL::squared_distance(new_pos, ivh->point());
 
         //if (adaptive){
         //  if (is_boundary_edge(ei) || is_hull_edge(ei)){
@@ -892,11 +894,6 @@ namespace internal
                         const typename C3T3::Subdomain_index& imaginary_index,
                         CellSelector cell_selector)
   {
-#ifdef CGAL_LIMITED_APERTURE_EDGE_SELECTION
-    if (CGAL::helpers::is_on_the_outer_box(e, c3t3, imaginary_index))
-      return true;
-#endif
-
     if (is_outside(e, c3t3, imaginary_index, cell_selector))
       return false;
     if (is_imaginary(e, c3t3, imaginary_index))
@@ -963,7 +960,7 @@ namespace internal
     for (Finite_edges_iterator eit = tr.finite_edges_begin();
          eit != tr.finite_edges_end(); ++eit)
     {
-      Edge e = *eit;
+      const Edge& e = *eit;
       if (!can_be_collapsed(e, c3t3, protect_boundaries, imaginary_index, cell_selector))
         continue;
 
