@@ -11,12 +11,12 @@ this specific format.
 - \ref IOStreamOBJ
 - \ref IOStreamPLY
 - \ref IOStreamSTL
+- \ref IOStreamXYZ
 - \ref IOStreamVTK
 - \ref IOStreamAvizo
 - \ref IOStreamMedit
 - \ref IOStreamTetgen
 - \ref IOStreamGocad
-- \ref IOStreamOBJ
 - \ref IOStreamWRL
 
 \section IOStreamOFF Object File Format (OFF)
@@ -38,6 +38,8 @@ using the following data structures and functions.
 
 - CGAL::Point_set_3 (operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&)
 
+Polygon soups can also be imported using the function read_OFF().
+
 As documented in the functions above, the only property that we support is the color,
 and it is only supported for the CGAL::Surface_mesh.
 
@@ -48,6 +50,7 @@ The following \cgal data structures can be exported into the `OFF` file format:
 - Any structure that is a model of the concept `FaceGraph` (write_off(std::ostream&,const FaceGraph&,const NamedParameters&))
 - CGAL::Point_set_3 (\ref write_off_point_set())
 
+Polygon soups can also be exported using the function write_OFF().
 Note that we only support OFF, and COFF for CGAL::Surface_mesh.
 
 
@@ -60,7 +63,7 @@ A precise specification of the format is available <a href="http://www.martinred
 Objects represented in the `.OBJ` format can be imported into \cgal's working environment
 using any structure that is a model of the concept `FaceGraph`, and the function `read_OBJ()`.
 
-
+Polygon soups can also be imported using the function \ref IOstreamFunctions "read_OBJ()".
 
 \subsection IOStreamOBJOutput Writing OBJ files
 Any structure that is a model of the concept `FaceGraph` can be exported into the `OBJ` file format
@@ -77,7 +80,7 @@ A precise specification of those formats is available at
 Objects represented in the `.PLY` format can be imported into \cgal's working environment
 using the following data structures and functions.
 - CGAL::Surface_mesh (read_ply())
-- CGAL::Point_set_3 (operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&) a collection of points with dynamically associated properties
+- CGAL::Point_set_3 (operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&))a collection of points with dynamically associated properties
 
 \subsection IOStreamPLYOutput Writing PLY files
 The following \cgal data structures can be exported into the `PLY` file format:
@@ -109,6 +112,19 @@ Polygon soups can also be exported using the function \link IOstreamFunctions `C
 Note that the STL file format exports triangular faces as geometric triangles and thus
 lose combinatorial information.
 
+\section IOStreamXYZ XYZ (or PWN)
+The `XYZ` format is a non standard format regularly used to described point sets.
+each line represent a point, and is composed of its coordinates and other properties.
+We only support coordinates and normals (in that case the standard extension in CGAL
+is .pwn for points with normals.)
+
+\subsection IOStreamZYZInput Reading XYZ files
+Objects represented in the `.XYZ` or `.PWN` format can be imported into \cgal's working environment
+using the CGAL::Point_set_3 and the function read_xyz_point_set().
+
+\subsection IOStreamXYZOutput Writing XYZ files
+The CGAL::Point_set_3 can be exported into a `XYZ` or a `PWN` file using the function
+write_xyz_point_set().
 
 \section IOStreamVTK VTK Formats (VTU VTP)
 The VTK libraries use different file formats to handle data structures, but we only support two:

@@ -67,7 +67,7 @@ with some other restrictions. A more precise definition can be found \ref PMPDef
       <td>\ref CGAL::read_vtp()</td>
       <td>`read_OBJ()`</td>
       <td>`read_gocad()`</td>
-      <td></td>
+      <td>n/a</td>
     </tr>
 </table>
 
@@ -75,42 +75,67 @@ The table above only lists the functions that work with any Polygon Mesh.
 More functions are available for more specific classes, and they can be found
 \link IOStreamSupportedFileFormats here\endlink.
 \subsection IOstreamPolygonSoupIO Polygon Soup IO
-A polygon soup is a set of polygons with no global combinatorial information, etc.
-
-TODO, same as above
+A polygon soup is a set of polygons with no global combinatorial information,
+stored in a two containers: one storing the points, and the other one storing
+their indices per face (i.e a vector of 3 integers represent a triangle face).
 
 <table class="iotable">
     <tr>
       <th colspan="1"></th>
       <th colspan="1">\ref IOStreamOFF "OFF"</th>
       <th colspan="1">\ref IOStreamSTL "STL"</th>
-      <th colspan="2">\ref IOStreamVTK "VTP"</th>
       <th colspan="1">\ref IOStreamOBJ "OBJ"</th>
-      <th colspan="1">\ref IOStreamWRL "WRL"</th>
+    </tr>
+    <tr>
+    <th colspan="1"></th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">BINARY</th>
+    </tr>
+    <tr>
+      <td>Export</td>
+      <td>write_OFF()</td>
+      <td> \ref IOstreamFunctions "write_STL()" </td>
+      <td>n/a</td>
+    </tr>
+    <tr>
+      <td>Import</td>
+      <td>read_OFF()</td>
+      <td>\ref IOstreamFunctions "read_STL()"</td>
+      <td>\ref IOstreamFunctions "read_OBJ()"</td>
+    </tr>
+</table>
+\subsection IOstreamPointSetIO Point Set IO
+The CGAL::Point_set_3 is a vector based data structure that contains
+a default property (named point) for the coordinates of the points,
+and is able to work with dynamic properties.
+
+<table class="iotable">
+    <tr>
+      <th colspan="1"></th>
+      <th colspan="1">\ref IOStreamOFF "OFF"</th>
+      <th colspan="1">\ref IOStreamXYZ "XYZ"</th>
+      <th colspan="2<td>operator<<(std::ostream&,const CGAL::Point_set_3<Point, Vector>&)</td>">\ref IOStreamPLY "PLY"</th>
     </tr>
     <tr>
     <th colspan="1"></th>
       <th colspan="1">ASCII</th>
       <th colspan="1">ASCII</th>
       <th colspan="1">ASCII</th>  <th colspan="1">BINARY</th>
-      <th colspan="1">BINARY</th>
-      <th colspan="1">ASCII</th>
     </tr>
     <tr>
       <td>Export</td>
       <td>write_OFF()</td>
-      <td> \ref IOstreamFunctions "write_STL()" </td>
+      <td>write_xyz_point_set()</td>
+      <td>operator<<(std::ostream&,const CGAL::Point_set_3<Point, Vector>&)</td><td>write_ply_point_set()</td>
     </tr>
     <tr>
       <td>Import</td>
       <td>read_OFF()</td>
-      <td>\ref IOstreamFunctions "read_STL()"</td>
+      <td>read_xyz_point_set()</td>
+      <td>operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&)</td><td>operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&)</td>
     </tr>
 </table>
-\subsection IOstreamPointSetIO Point Set IO
-Definition from the package.
-
-TODO, same as above
 
 \subsection IOstreamWKT Simple 2D Geometry IO
 
@@ -123,6 +148,34 @@ Free functions are provided for reading and writing several \cgal types using th
 - `CGAL::Point_3`
 - `CGAL::Polygon_with_holes_2`
 - random access range of the above types.
+
+You can find more information about WKT \ref PkgStreamSupportRef "here", but
+here is a table to summarize the most useful functions :
+<table>
+<tr>
+<th colspan="1"></th>
+<th colspan="1">Points</th>
+<th colspan="1">Polylines</th>
+<th colspan="1">Polygons</th>
+<th colspan="1">Everything</th>
+
+</tr>
+<tr>
+<td>Import</td>
+<td>read_multi_point_WKT()</td>
+<td>read_multi_linestring_WKT()</td>
+<td>read_multi_polygon_WKT()</td>
+<td>read_WKT()</td>
+</tr>
+
+<tr>
+<td>Export</td>
+<td>write_multi_point_WKT()</td>
+<td>write_multi_linestring_WKT()</td>
+<td>write_multi_polygon_WKT()</td>
+<td>n/a</td>
+</tr>
+</table>
 
 \subsection IOstreamOtherIO Other Data Structures
 
