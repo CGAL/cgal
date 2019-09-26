@@ -25,13 +25,8 @@
 #define CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Kd_tree.h>
 #include <CGAL/Frechet_distance.h>
-#include <CGAL/Kernel_d/Point_d.h>
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/Search_traits_d.h>
-#include <CGAL/Cartesian_d.h>
-#include <CGAL/Dimension.h>
+#include <CGAL/internal/Polyline_distance/Frechet_distance_near_neighbors_ds.h>
 
 // FIXME: vector too restricted?
 #include <iterator>
@@ -59,26 +54,10 @@ public:
 
 	void fill(const Curves& curves); // FIXME: should this be a range?
 	CurveIDs get_close_curves(const Curve& curve, NT distance);
+
 private:
 	Curves curves;
-
-	using TreeTraits = Search_traits_d<Cartesian_d<typename Traits::FT>, Dimension_tag<8>>;
-	using TreePoint = typename TreeTraits::Point_d;
-	using TreePoints = std::vector<TreePoint>;
-
-	Kd_tree<TreeTraits> kd_tree; // FIXME: what traits?
-	TreePoint to_kd_tree_point(const Curve& curve) const;
-
-	struct QueryItem {
-		using D = Dimension_tag<8>;
-		using Point_d = TreePoint;
-		using FT = NT;
-
-		bool contains(Point_d p) const { return true; } // FIXME
-		bool inner_range_intersects(const Kd_tree_rectangle<FT,D>& rectangle) const { return true; } // FIXME
-		bool outer_range_contains(const Kd_tree_rectangle<FT,D>& rectangle) const { return true; } // FIXME
-	};
-	QueryItem construct_fuzzy_query_item(const Curve& curve, NT distance);
+	FrechetKdTree<Traits> kd_tree;
 };
 
 // TODO: store preprocessed curves after CGALization
@@ -86,9 +65,9 @@ template <class PointRange, class Traits>
 void
 FrechetDistanceNearNeighborsDS<PointRange,Traits>::fill(const Curves& curves)
 {
-	for (auto const& curve: curves) {
-		kd_tree.insert(to_kd_tree_point(curve));
-	}
+	this->curves = curves; // FIXME: copies all the curves...
+
+	kd_tree.insert(curves);
 	kd_tree.build();
 }
 
@@ -97,12 +76,7 @@ auto
 FrechetDistanceNearNeighborsDS<PointRange,Traits>::get_close_curves(const Curve& curve, NT distance)
 -> CurveIDs
 {
-	TreePoints candidates;
-
-	kd_tree.search(std::back_insert_iterator<TreePoints>(candidates), construct_fuzzy_query_item(curve, distance));
-
-	// TODO: convert candidates to curve ids. This is unnecessary but the kd tree doesn't seem to provide the functionality that we want of returning values associated with d-dimensional keys.
-	CurveIDs result;
+	auto result = kd_tree.search(curve, distance);
 
 	auto predicate = [&](CurveID id) {
 		return !continuous_Frechet_distance_less_than(curve, curves[id], distance);
@@ -111,22 +85,6 @@ FrechetDistanceNearNeighborsDS<PointRange,Traits>::get_close_curves(const Curve&
 	result.erase(new_end, result.end());
 
 	return result;
-}
-
-template <class PointRange, class Traits>
-auto
-FrechetDistanceNearNeighborsDS<PointRange,Traits>::to_kd_tree_point(const Curve& curve) const
--> TreePoint
-{
-	return TreePoint(8, ORIGIN); // FIXME: why is there no point type with dimension as template parameter?
-}
-
-template <class PointRange, class Traits>
-auto
-FrechetDistanceNearNeighborsDS<PointRange,Traits>::construct_fuzzy_query_item(const Curve& curve, NT distance)
--> QueryItem
-{
-	return QueryItem();
 }
 
 } // end of namespace CGAL
