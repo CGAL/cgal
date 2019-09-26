@@ -253,7 +253,9 @@ struct Lazy_rep_base<Thread_safe_tag>
 template <typename AT, typename ET, typename E2A, typename Thread_safety_policy = void>
 class Lazy_rep_0;
 
-template <typename Thread_safety_policy, typename Self_rep>
+template <typename Thread_safety_policy, typename Self_rep,
+          bool use_shared_pointer = std::is_base_of<Atomic_reference_counting_tag,
+                                                    Thread_safety_policy>::value>
 struct Lazy_base : public Handle
 {
   using Smart_pointer = Handle;
@@ -291,8 +293,9 @@ struct Lazy_base : public Handle
   }
 };
 
-template <typename Self_rep>
-struct Lazy_base<Thread_safe_tag, Self_rep>
+template <typename Thread_safety_policy, typename Self_rep>
+struct Lazy_base<Thread_safety_policy, Self_rep,
+                 /* use_shared_pointer = */ true>
 {
   using Rep_0 = Lazy_rep_0<typename Self_rep::AT,
                            typename Self_rep::ET,
