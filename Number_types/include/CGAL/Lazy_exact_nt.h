@@ -283,7 +283,7 @@ struct NAME : public Lazy_exact_unary<ET, Thread_safety_policy>          \
   void update_exact() const                                              \
   {                                                                      \
     this->et = new ET(OP(this->op1.exact()));                            \
-    if (!this->approx().is_point())                                      \
+    if (!this->approx_with_locked_mutex().is_point())                                      \
       this->at = CGAL_NTS to_interval(*(this->et));                      \
     this->prune_dag();                                                   \
    }                                                                     \
@@ -311,7 +311,7 @@ struct NAME : public Lazy_exact_binary<ET,Thread_safety_policy,ET1, ET2> \
   void update_exact() const                                              \
   {                                                                      \
     this->et = new ET(this->op1.exact() OP this->op2.exact());           \
-    if (!this->approx().is_point())                                      \
+    if (!this->approx_with_locked_mutex().is_point())                                      \
       this->at = CGAL_NTS to_interval(*(this->et));                      \
     this->prune_dag();                                                   \
    }                                                                     \
@@ -335,7 +335,7 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET, Thread_safety_policy>
   void update_exact() const
   {
     this->et = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
-    if (!this->approx().is_point())
+    if (!this->approx_with_locked_mutex().is_point())
       this->at = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
   }
@@ -354,7 +354,7 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET, Thread_safety_policy>
   void update_exact() const
   {
     this->et = new ET((CGAL::max)(this->op1.exact(), this->op2.exact()));
-    if (!this->approx().is_point())
+    if (!this->approx_with_locked_mutex().is_point())
       this->at = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
   }

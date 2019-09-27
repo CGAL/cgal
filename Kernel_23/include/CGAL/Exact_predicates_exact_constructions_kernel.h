@@ -57,6 +57,26 @@ class Epeck
 #endif
 {}; // end class Epeck
 
+class Atomic_ref_counted_epeck
+  : public Filtered_kernel_adaptor<
+               Type_equality_wrapper< Simple_cartesian<Lazy_exact_nt<Epeck_ft, Atomic_reference_counting_tag> >::Base<Atomic_ref_counted_epeck>::Type, Atomic_ref_counted_epeck >,
+#ifdef CGAL_NO_STATIC_FILTERS
+               false >
+#else
+               true >
+#endif
+{}; // end class Atomic_ref_counted_epeck
+
+class Thread_safe_epeck
+  : public Filtered_kernel_adaptor<
+               Type_equality_wrapper< Simple_cartesian<Lazy_exact_nt<Epeck_ft, Thread_safe_tag> >::Base<Thread_safe_epeck>::Type, Thread_safe_epeck >,
+#ifdef CGAL_NO_STATIC_FILTERS
+               false >
+#else
+               true >
+#endif
+{}; // end class Thread_safe_epeck
+
 #else // no CGAL_DONT_USE_LAZY_KERNEL
 
 // Equivalent to Lazy_kernel<Simple_cartesian<Epeck_ft> >
@@ -69,6 +89,17 @@ class Epeck
                                                     Simple_cartesian<Interval_nt_advanced> >,
                                Epeck>,
              Epeck >
+{};
+
+class Atomic_ref_counted_epeck
+  : public Type_equality_wrapper<
+             Lazy_kernel_base< Simple_cartesian<Epeck_ft>,
+                               Simple_cartesian<Interval_nt_advanced>,
+                               Atomic_reference_counting_tag,
+	                       Cartesian_converter< Simple_cartesian<Epeck_ft>,
+                                                    Simple_cartesian<Interval_nt_advanced> >,
+                               Atomic_ref_counted_epeck>,
+             Atomic_ref_counted_epeck >
 {};
 
 class Thread_safe_epeck
@@ -87,6 +118,14 @@ typedef Epeck Exact_predicates_exact_constructions_kernel;
 
 template <>
 struct Triangulation_structural_filtering_traits<Epeck> {
+  typedef Tag_true Use_structural_filtering_tag;
+};
+template <>
+struct Triangulation_structural_filtering_traits<Atomic_ref_counted_epeck> {
+  typedef Tag_true Use_structural_filtering_tag;
+};
+template <>
+struct Triangulation_structural_filtering_traits<Thread_safe_epeck> {
   typedef Tag_true Use_structural_filtering_tag;
 };
 

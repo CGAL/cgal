@@ -57,6 +57,22 @@
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum.hpp>
 
+#ifndef CGAL_LAZY_DISABLE_THREAD_SAFETY
+#  if __has_feature(__cpp_lib_shared_mutex)
+#    define CGAL_LAZY_USE_SHARED_MUTEX 1
+#  else
+#    define CGAL_LAZY_USE_SHARED_TIMED_MUTEX 1
+#  endif
+#endif // CGAL_LAZY_ENABLE_THREAD_SAFETY
+
+#if CGAL_LAZY_USE_MUTEX
+#  include <mutex>
+#endif
+#if CGAL_LAZY_USE_SHARED_MUTEX || CGAL_LAZY_USE_SHARED_TIMED_MUTEX
+#  define CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT 1
+#  include <shared_mutex>
+#endif
+
 namespace CGAL {
 
 template <class E,
@@ -80,17 +96,6 @@ approx(const Lazy<AT,ET,E2A,Thread_safety_policy>& l)
 {
   return l.approx();
 }
-
-// Where is this one (non-const) needed ?  Is it ?
-template <typename AT, typename ET, typename E2A,
-          typename Thread_safety_policy>
-inline
-AT&
-approx(Lazy<AT,ET,E2A,Thread_safety_policy>& l)
-{
-  return l.approx();
-}
-
 
 template <typename AT, typename ET, typename E2A,
           typename Thread_safety_policy>
@@ -243,11 +248,26 @@ struct Depth_base {
 template <typename Tag>
 struct Lazy_rep_base : public Rep
 {
+  typedef void Mutex;
+};
+
+template <>
+struct Lazy_rep_base<Atomic_reference_counting_tag>
+{
+  typedef void Mutex;
 };
 
 template <>
 struct Lazy_rep_base<Thread_safe_tag>
 {
+#if CGAL_LAZY_USE_SHARED_TIMED_MUTEX
+  typedef std::shared_timed_mutex Mutex;
+  mutable Mutex update_exact_mutex;
+#endif
+#if CGAL_LAZY_USE_SHARED_MUTEX
+  typedef std::shared_mutex Mutex;
+  mutable Mutex update_exact_mutex;
+#endif
 };
 
 template <typename AT, typename ET, typename E2A, typename Thread_safety_policy = void>
@@ -332,7 +352,7 @@ template <typename AT_, typename ET_, typename E2A_, typename Thread_safety_poli
 class Lazy_rep : public Lazy_rep_base<Thread_safety_policy> , public Depth_base
 {
   Lazy_rep (const Lazy_rep&) = delete; // cannot be copied.
-
+  using Mutex = typename Lazy_rep_base<Thread_safety_policy>::Mutex;
 public:
 
   typedef AT_  AT;
@@ -353,34 +373,54 @@ public:
   Lazy_rep (A&& a, E&& e)
       : at(std::forward<A>(a)), et(new ET(std::forward<E>(e))) {}
 
-  const AT& approx() const
+  const AT& approx() const {
+    return approx(Boolean_tag<std::is_base_of<Use_mutex_tag,
+                                              Thread_safety_policy>::value>());
+  }
+
+  const AT& approx(Tag_false) const
   {
       return at;
   }
 
-  AT& approx()
+#if CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT
+  const AT& approx(Tag_true) const 
   {
-      return at;
+    std::shared_lock<Mutex> lock(this->update_exact_mutex);
+    return at;
   }
+#endif // CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT
 
   const AT& approx_with_locked_mutex() const
   {
-      return at;
+    return at;
   }
 
-  const ET & exact() const
+  const ET& exact() const {
+    return exact(Boolean_tag<std::is_base_of<Use_mutex_tag,
+                                             Thread_safety_policy>::value>());
+  }
+
+  const ET & exact(Tag_false) const
   {
     if (et==nullptr)
       update_exact();
     return *et;
   }
 
-  ET & exact()
+
+#if CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT
+  const ET & exact(Tag_true) const
   {
-    if (et==nullptr)
+    std::shared_lock<Mutex> lock(this->update_exact_mutex);
+    if (et==nullptr) {
+      lock.unlock();
+      std::unique_lock<Mutex> write_guard(this->update_exact_mutex);
       update_exact();
+    }
     return *et;
   }
+#endif // CGAL_LAZY_USE_SHARED_MUTEX_TIMED_OR_NOT
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void print_at_et(std::ostream& os, int level) const
@@ -831,12 +871,6 @@ public :
   { return ptr()->approx(); }
 
   const ET& exact() const
-  { return ptr()->exact(); }
-
-  AT& approx()
-  { return ptr()->approx(); }
-
-  ET& exact()
   { return ptr()->exact(); }
 
   unsigned depth() const
