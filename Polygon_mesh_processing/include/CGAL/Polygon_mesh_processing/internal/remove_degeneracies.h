@@ -69,8 +69,11 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
   if(res != null_h && !get(ecm, edge(res, tmesh)))
   {
     // don't want to collapse edges that are too large
-    if(edge_length(res, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt)) <= collapse_length_threshold)
+    if(collapse_length_threshold != 0  &&
+       edge_length(res, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt)) <= collapse_length_threshold)
+    {
       return make_array(res, null_h);
+    }
   }
   else // let's not make it possible to have a face be both a cap and a needle (for now)
   {
