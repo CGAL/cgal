@@ -25,13 +25,23 @@
 
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
-#if (CV_MAJOR_VERSION < 3)
-#include <cv.h>
-#include <ml.h>
+
+#include <opencv2/opencv.hpp>
+
+//In opencv version 2.X the first digit is named EPOCH,
+//until version 3.0 where EPOCH disappears and it becomes MAJOR. Hence this
+//weird condition
+#ifdef CV_VERSION_EPOCH
+  #if  CV_VERSION_MAJOR == 4 && CV_VERSION_MINOR>= 11
+    #include <opencv2/ml.hpp>
+  #else
+    #include <opencv2/ml/ml.hpp>
+  #endif
 #else
-#include <opencv/cv.h>
-#include <opencv/ml.h>
-#endif
+  #include <opencv2/ml.hpp>
+#endif`
+
+
 
 namespace CGAL {
 
