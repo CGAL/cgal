@@ -323,14 +323,15 @@ bool read_STL(std::istream& input,
   // We are within the first 80 characters, both ASCII and binary are possible
 
   // Read the 5 first characters to check if the first word is "solid"
-  std::string s, solid("solid");
+  std::string s;
 
-  char word[5];
+  char word[6];
   if(input.read(reinterpret_cast<char*>(&word[0]), sizeof(c)) &&
      input.read(reinterpret_cast<char*>(&word[1]), sizeof(c)) &&
      input.read(reinterpret_cast<char*>(&word[2]), sizeof(c)) &&
      input.read(reinterpret_cast<char*>(&word[3]), sizeof(c)) &&
-     input.read(reinterpret_cast<char*>(&word[4]), sizeof(c)))
+     input.read(reinterpret_cast<char*>(&word[4]), sizeof(c)) &&
+     input.read(reinterpret_cast<char*>(&word[5]), sizeof(c)))
   {
     s = std::string(word, 5);
     pos += 5;
@@ -339,7 +340,9 @@ bool read_STL(std::istream& input,
     return true; // empty file
 
   // If the first word is not 'solid', the file must be binary
-  if(s != solid)
+  if(s != "solid"
+     || (word[5] !='\n'
+     && word[5] != ' '))
   {
     if(parse_binary_STL(input, points, facets, verbose))
     {
