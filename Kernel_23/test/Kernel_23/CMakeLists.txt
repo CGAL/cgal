@@ -39,28 +39,21 @@ if ( CGAL_FOUND )
   foreach(cppfile ${cppfiles})
     create_single_source_cgal_program( "${cppfile}" )
   endforeach()
-  find_package(benchmark)
+  find_package(benchmark QUIET)
+  if(NOT TARGET benchmark::benchmark)
+    include(CGAL_Setup_google-benchmark)
+  endif()
   if(TARGET benchmark::benchmark)
     foreach(bench
         bench_Epeck
-        bench_Epeck-no-atomic
-        bench_Epeck-with-atomic-intervals
-        bench_Epeck-with-mutex
-        bench_Epeck-with-shared-timed-mutex
-        bench_Epeck-with-shared-mutex
+        bench_Epeck-no-Lazy_kernel
         )
       add_executable(${bench} bench_Epeck.cpp)
       target_link_libraries(${bench} PRIVATE CGAL::CGAL benchmark::benchmark)
       cgal_add_test(${bench})
+      add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${bench})
     endforeach()
-    target_compile_definitions(bench_Epeck-with-mutex              PRIVATE CGAL_LAZY_USE_MUTEX)
-    target_compile_definitions(bench_Epeck-with-shared-mutex       PRIVATE CGAL_LAZY_USE_SHARED_MUTEX)
-    target_compile_definitions(bench_Epeck-with-shared-timed-mutex PRIVATE CGAL_LAZY_USE_SHARED_TIMED_MUTEX)
-    target_compile_definitions(bench_Epeck-with-atomic-intervals   PRIVATE CGAL_LAZY_USE_ATOMIC_APPROX)
-
-    target_compile_features   (bench_Epeck-with-shared-mutex       PRIVATE cxx_std_17)
-  else()
-    message(FATAL_ERROR "Cannot find Google benchmark")
+    target_compile_definitions(bench_Epeck-no-Lazy_kernel PRIVATE CGAL_DONT_USE_LAZY_KERNEL)
   endif()
 else()
   
