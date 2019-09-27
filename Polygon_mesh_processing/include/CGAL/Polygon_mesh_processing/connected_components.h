@@ -182,8 +182,10 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  * \ingroup keep_connected_components_grp
  *  computes for each face the index of the corresponding connected component.
  *
- *  A property map for `CGAL::face_index_t` must be either available as an internal property map 
- *  to `pmesh` or provided as one of the \ref pmp_namedparameters "Named Parameters".
+ * If `PolygonMesh`
+  *  has an internal not writable property map
+  *  for `CGAL::face_index_t` and no `face_index_map` is given
+  *  as a named parameter, then the internal one must be initialized; else, it will be.
  *
  *  \tparam PolygonMesh a model of `FaceListGraph`
  *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
@@ -232,8 +234,6 @@ connected_components(const PolygonMesh& pmesh,
   FiniteDual finite_dual(dual,
     internal::No_border<PolygonMesh, EdgeConstraintMap>(pmesh, ecmap));
 
-//#define old_one 1
-
   typename Default_face_index_map<NamedParameters, PolygonMesh>::type fimap
       = get_initialized_face_index_map(pmesh, np);
 
@@ -272,9 +272,10 @@ void keep_connected_components(PolygonMesh& pmesh
  * By default, the size of a face is `1` (and thus the size of a connected component is the number
  * of faces it contains), but it is also possible to pass custom sizes, such as the area of the face.
  *
- * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
- * must be either available as internal property maps
- * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
+* If `PolygonMesh`
+*  has a not writable internal property map
+*  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
+*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -372,9 +373,10 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  * the size of a connected component is the number of faces it contains), but it is also possible
  * to pass custom sizes, such as the area of the face.
  *
- * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
- * must be either available as internal property maps
- * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
+* If `PolygonMesh`
+*  has a not writable internal property map
+*  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
+*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * \tparam ThresholdValueType the type of the threshold value
@@ -607,9 +609,10 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
-* Property maps for `CGAL::vertex_index_t`
-* must be either available as internal property map
-* to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
+* If `PolygonMesh`
+*  has a not writable internal property map
+*  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
+*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -650,9 +653,10 @@ void keep_connected_components(PolygonMesh& pmesh
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
-* Property maps for `CGAL::vertex_index_t`
-* must be either available as internal property map
-* to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
+* If `PolygonMesh`
+*  has a not writable internal property map
+*  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
+*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
 *
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
@@ -691,9 +695,10 @@ void remove_connected_components(PolygonMesh& pmesh
 *  keeps the connected components not designated by the faces in `components_to_remove`,
 *  and removes the other connected components and all isolated vertices.
 *
-* Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
-* must be either available as internal property maps
-* to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
+* If `PolygonMesh`
+*  has a not writable internal property map
+*  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
+*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
@@ -749,9 +754,10 @@ void remove_connected_components(PolygonMesh& pmesh
 *  keeps the connected components designated by the faces in `components_to_keep`,
 *  and removes the other connected components and all isolated vertices.
 *
-* Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
-* must be either available as internal property maps
-* to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
+* If `PolygonMesh`
+*  has a not writable internal property map
+*  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
+*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.

@@ -444,8 +444,10 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
 * inward or outward oriented.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
-*                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
-*                      as a named parameter, then it must be initialized.
+*                      If `TriangleMesh`
+  *  has an internal not writable property map
+  *  for `CGAL::face_index_t` and no `face_index_map` is given
+  *  as a named parameter, then the internal one must be initialized; else, it will be.
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters
 *
 * @param tm a closed triangulated surface mesh
@@ -547,8 +549,10 @@ void orient(TriangleMesh& tm)
  * See \ref coref_def_subsec for a precise definition.
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
- *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
- *                      as a named parameter, then it must be initialized.
+ *                      If `TriangleMesh`
+  *  has an internal not writable property map
+  *  for `CGAL::face_index_t` and no `face_index_map` is given
+  *  as a named parameter, then the internal one must be initialized; else, it will be.
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
  * @param tm a closed triangulated surface mesh

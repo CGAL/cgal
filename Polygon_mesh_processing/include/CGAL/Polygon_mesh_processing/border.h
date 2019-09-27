@@ -152,9 +152,9 @@ namespace Polygon_mesh_processing {
   * but `face(h, pmesh)` does not belong to the patch.
   *
   * @tparam PolygonMesh model of `HalfedgeGraph`. If `PolygonMesh`
-  *  has an internal property map
+  *  has an internal not writable property map
   *  for `CGAL::face_index_t` and no `face_index_map` is given
-  *  as a named parameter, then the internal one must be initialized
+  *  as a named parameter, then the internal one must be initialized; else, it will be.
   * @tparam FaceRange range of
        `boost::graph_traits<PolygonMesh>::%face_descriptor`, model of `Range`.
         Its iterator type is `InputIterator`.

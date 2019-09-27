@@ -283,8 +283,9 @@ clip_to_bbox(const Plane_3& plane,
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(clipper)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
-  *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
-  *                      as a named parameter, then it must be initialized.
+  * If `TriangleMesh` *  has an internal not writable property map
+  *  for `CGAL::face_index_t` and no `face_index_map` is given
+  *  as a named parameter, then the internal one must be initialized; else, it will be.
   *
   * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -373,8 +374,9 @@ bool dispatch_clip_call(TriangleMesh& tm, TriangleMesh& clipper,
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
-  *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
-  *                      as a named parameter, then it must be initialized.
+  * If `TriangleMesh` has an internal not writable property map
+  *  for `CGAL::face_index_t` and no `face_index_map` is given
+  *  as a named parameter, then the internal one must be initialized; else, it will be.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   *
   * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
