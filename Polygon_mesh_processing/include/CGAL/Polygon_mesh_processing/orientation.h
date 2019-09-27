@@ -519,7 +519,6 @@ void copy_nested_parents(
   }
 }
 
-template <>
 void copy_nested_parents(
   std::vector< std::vector<std::size_t> >& nested_parents,
   std::reference_wrapper<std::vector< std::vector<std::size_t> > > ref_to_vector)
@@ -527,7 +526,7 @@ void copy_nested_parents(
   nested_parents.swap(ref_to_vector.get());
 }
 
-template <>
+
 void copy_nested_parents(
   std::vector< std::vector<std::size_t> >& nested_parents,
   boost::reference_wrapper<std::vector< std::vector<std::size_t> > > ref_to_vector)
