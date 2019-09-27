@@ -249,14 +249,17 @@ get_best_edge_orientation(typename boost::graph_traits<TriangleMesh>::edge_descr
 
   CGAL_assertion(!get(vcm, source(h, tmesh)) || !get(vcm, target(h, tmesh)));
 
-  // the resulting point of the collapse of a halfedge is the target of the halfedge before collapse
-  if(get(vcm, source(h, tmesh)))
-     return ho;
-  if(get(vcm, target(h, tmesh)))
-     return h;
-
   boost::optional<double> dv1 = get_collapse_volume(h, tmesh, vpm, gt);
   boost::optional<double> dv2 = get_collapse_volume(ho, tmesh, vpm, gt);
+
+  // the resulting point of the collapse of a halfedge is the target of the halfedge before collapse
+  if(get(vcm, source(h, tmesh)))
+     return dv2 != boost::none ? ho
+                               : boost::graph_traits<TriangleMesh>::null_halfedge();
+
+  if(get(vcm, target(h, tmesh)))
+     return dv1 != boost::none ? h
+                               : boost::graph_traits<TriangleMesh>::null_halfedge();
 
   if(dv1 != boost::none)
   {
