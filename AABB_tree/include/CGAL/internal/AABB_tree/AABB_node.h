@@ -248,9 +248,9 @@ AABB_node<Tr>::traversal_with_priority(const Query& query,
         }
         else
         {
-          right_child().traversal_with_priority(query, traits, nb_primitives/2);
+          right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
           if( traits.go_further() /* && traits.do_intersect(query, left_child()) */ ) // TODO shall we call again do_intersect?
-            left_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
+            left_child().traversal_with_priority(query, traits, nb_primitives/2);
         }
       }
     }
