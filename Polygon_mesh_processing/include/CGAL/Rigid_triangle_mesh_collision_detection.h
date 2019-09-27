@@ -551,12 +551,9 @@ public:
       std::vector<std::size_t> cc_ids(num_faces(tm));
 
       // face index map
-      typedef typename GetFaceIndexMap<TriangleMesh,
-                                       NamedParameters>::type Fid_map;
 
-      Fid_map fid_map =
-        parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                            get_const_property_map(boost::face_index, tm));
+      auto fid_map =
+        CGAL::Polygon_mesh_processing::get_initialized_face_index_map(tm, np);
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(

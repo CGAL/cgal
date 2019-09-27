@@ -187,20 +187,9 @@ namespace Polygon_mesh_processing {
   {
     if (faces.empty()) return out;
 
-    typedef PolygonMesh PM;
-    typedef typename GetFaceIndexMap<PM, NamedParameters>::const_type     FIMap;
-    typedef typename boost::property_map<typename internal::Dummy_PM,
-                                              CGAL::face_index_t>::type   Unset_FIMap;
 
-    if (boost::is_same<FIMap, Unset_FIMap>::value || faces.size() == 1)
-    {
-      //face index map is not given in named parameters, nor as an internal property map
-      return internal::border_halfedges_impl(faces, out, pmesh);
-    }
-
-    //face index map given as a named parameter, or as an internal property map
-    FIMap fim = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                                             get_const_property_map(CGAL::face_index, pmesh));
+    auto fim =
+        CGAL::Polygon_mesh_processing::get_initialized_face_index_map(pmesh, np);
 
     return internal::border_halfedges_impl(faces, fim, out, pmesh, np);
   }

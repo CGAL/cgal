@@ -185,8 +185,6 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::const_type Vpm;
-  typedef typename GetFaceIndexMap<TriangleMesh,
-                                   NamedParameters>::const_type Fid_map;
   typedef typename Kernel_traits<
     typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
 
@@ -196,8 +194,8 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                 get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                                        get_const_property_map(boost::face_index, tm));
+  auto fid_map =
+      CGAL::Polygon_mesh_processing::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
@@ -524,19 +522,18 @@ corefine_and_compute_boolean_operations(
                                                             Edge_mark_map_tuple;
 
 // Face index point maps
-  typedef typename GetFaceIndexMap<TriangleMesh,
-                                   NamedParameters1>::type Fid_map;
-  typedef typename GetFaceIndexMap<TriangleMesh,
-                                   NamedParameters2>::type Fid_map2;
+
+  typedef typename CGAL::Polygon_mesh_processing::
+      Default_face_index_map<NamedParameters1, TriangleMesh>::type Fid_map;
+  typedef typename CGAL::Polygon_mesh_processing::
+      Default_face_index_map<NamedParameters2, TriangleMesh>::type Fid_map2;
+
   CGAL_USE_TYPE(Fid_map2);
   CGAL_assertion_code(
     static const bool same_fidmap = (boost::is_same<Fid_map,Fid_map2>::value);)
   CGAL_static_assertion(same_fidmap);
-
-  Fid_map fid_map1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::face_index),
-                                        get_property_map(boost::face_index, tm1));
-  Fid_map fid_map2 = parameters::choose_parameter(parameters::get_parameter(np2, internal_np::face_index),
-                                         get_property_map(boost::face_index, tm2));
+  Fid_map fid_map1 = get_initialized_face_index_map(tm1, np1);
+  Fid_map fid_map2 = get_initialized_face_index_map(tm2, np2);
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::graph_visitor_t,
@@ -1023,10 +1020,10 @@ namespace experimental {
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                 get_property_map(boost::vertex_point, tm));
 // Face index map
-  typedef typename GetFaceIndexMap<TriangleMesh,
-                                   NamedParameters>::type Fid_map;
-  Fid_map fid_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                                        get_property_map(boost::face_index, tm));
+  typedef typename Default_face_index_map<NamedParameters, TriangleMesh>::type Fid_map;
+  Fid_map fid_map =
+      CGAL::Polygon_mesh_processing::get_initialized_face_index_map(tm, np);
+
 // Edge is-constrained maps
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,

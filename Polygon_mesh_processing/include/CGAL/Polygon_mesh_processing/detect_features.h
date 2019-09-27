@@ -148,9 +148,8 @@ detect_surface_patches(PolygonMesh& p,
                        const NamedParameters& np)
 {
   //extract types from NPs
-  typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
-          fimap = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                                      get_const_property_map(boost::face_index, p));
+  auto fimap =
+      CGAL::Polygon_mesh_processing::get_initialized_face_index_map(p, np);
 
   int offset = static_cast<int>(
           parameters::choose_parameter(parameters::get_parameter(np, internal_np::first_index),

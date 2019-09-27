@@ -475,8 +475,6 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename GetVertexPointMap<TriangleMesh,
       NamedParameters>::const_type Vpm;
-  typedef typename GetFaceIndexMap<TriangleMesh,
-      NamedParameters>::const_type Fid_map;
 
   CGAL_assertion(is_triangle_mesh(tm));
   CGAL_assertion(is_valid_polygon_mesh(tm));
@@ -491,8 +489,8 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = choose_parameter(get_parameter(np, internal_np::face_index),
-                                 get_const_property_map(boost::face_index, tm));
+  auto fid_map =
+      CGAL::Polygon_mesh_processing::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
@@ -582,8 +580,6 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename GetVertexPointMap<TriangleMesh,
       NamedParameters>::const_type Vpm;
-  typedef typename GetFaceIndexMap<TriangleMesh,
-      NamedParameters>::const_type Fid_map;
   typedef typename Kernel_traits<
       typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
   if (!is_closed(tm)) return;
@@ -598,8 +594,8 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = choose_parameter(get_parameter(np, internal_np::face_index),
-                                 get_const_property_map(boost::face_index, tm));
+  auto fid_map =
+    CGAL::Polygon_mesh_processing::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
