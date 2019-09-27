@@ -176,7 +176,7 @@ namespace CGAL {
     return m;
   }
 
-  // use the one internal to the mesh (user must have initialized it)
+  // use the one internal to the mesh (it will be init if writable)
   template <class Default_tag, class Dynamic_tag, class Mesh>
   typename boost::property_map<Mesh, Default_tag >::const_type
   get_ndi_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m)
