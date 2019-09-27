@@ -3,7 +3,7 @@
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <fstream>
-#include <CGAL/Polygon_mesh_processing/remove_degeneracies.h>
+#include <CGAL/Polygon_mesh_processing/internal/remove_degeneracies.h>
 
 #include <iostream>
 #include <vector>
@@ -32,8 +32,10 @@ int main(int argc, char** argv)
   if (PMP::does_self_intersect(mesh))
     std::cout << "Input mesh has self-intersections\n";
 
-  PMP::remove_almost_degenerate_faces(mesh);
-
+  PMP::experimental::remove_almost_degenerate_faces(mesh,
+                                                    std::cos(160. / 180 * CGAL_PI),
+                                                    4,
+                                                    0.14);
   std::ofstream out("cleaned_mesh.off");
   out << std::setprecision(17) << mesh;
 

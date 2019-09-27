@@ -95,6 +95,7 @@ endif()
   create_single_source_cgal_program("remove_degeneracies_test.cpp")
   create_single_source_cgal_program("test_pmp_manifoldness.cpp")
   create_single_source_cgal_program("test_mesh_smoothing.cpp")
+  create_single_source_cgal_program("test_remove_caps_needles.cpp")
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)

@@ -324,6 +324,8 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
 
 } // namespace internal
 
+namespace experimental {
+
 // @todo check what to use as priority queue with removable elements, set might not be optimal
 template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
 bool remove_almost_degenerate_faces(const FaceRange& face_range,
@@ -704,6 +706,7 @@ bool remove_almost_degenerate_faces(TriangleMesh& tmesh,
                                         CGAL::parameters::all_default());
 }
 
+} // namespace experimental
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
