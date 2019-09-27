@@ -165,6 +165,8 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 
 It may work for older versions of the above listed compilers.
 
+\attention Recent versions of CMake are needed for recent versions of MS Visual C++. Please refer to CMake's documentation for further information.
+
 
 \section secconfigwithcmake Configuring CGAL with CMake 
 
