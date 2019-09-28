@@ -64,6 +64,7 @@ public:
 
   // ACCESS FUNCTIONS
 
+private: 
   Vertex_handle vertex(int i) const
   {
     CGAL_precondition( i >= 0 && i <= 3 );
@@ -178,14 +179,50 @@ public:
   bool is_valid(bool = false, int = 0) const
   { return true; }
 
+  
+  // TDS internal data access functions.
+  TDS_data& tds_data()       { return _tds_data; }
+  const TDS_data& tds_data() const { return _tds_data; }
+  
+public:
+  Vertex_handle ivertex(int i) const { return vertex(i); }
+  bool ihas_vertex(Vertex_handle v) const { return has_vertex(v); }
+  bool ihas_vertex(Vertex_handle v, int & i) const { return has_vertex(v,i); }
+  int iindex(Vertex_handle v) const { return index(v); }
+  Cell_handle ineighbor(int i) const { return neighbor(i); }
+  bool ihas_neighbor(Cell_handle n) const { return has_neighbor(n); }
+  bool ihas_neighbor(Cell_handle n, int & i) const { return has_neighbor(n,i); }
+  int iindex(Cell_handle n) const { return index(n); }
+  void iset_vertex(int i, Vertex_handle v) { set_vertex(i,v);}
+  void iset_neighbor(int i, Cell_handle n) { set_neighbor(i,n);}
+  void iset_vertices() { set_vertices();}
+  void iset_vertices(Vertex_handle v0, Vertex_handle v1,
+                      Vertex_handle v2, Vertex_handle v3)
+  {
+    set_vertices(v0,v1,v2,v3);
+  }
+  void iset_neighbors() { set_neighbors();}
+  void iset_neighbors(Cell_handle n0, Cell_handle n1,
+                     Cell_handle n2, Cell_handle n3)
+  {
+    set_neighbors(n0,n1,n2,n3);
+  }
+  bool iis_valid(bool = false, int = 0) const
+  { return true; }
+  TDS_data& itds_data()       { return _tds_data; }
+  const TDS_data& itds_data() const { return _tds_data; }
+  
   // For use by Compact_container.
   void * for_compact_container() const { return N[0].for_compact_container(); }
   void for_compact_container(void* p) { N[0].for_compact_container(p); }
 
+<<<<<<< HEAD
   // TDS internal data access functions.
         TDS_data& tds_data()       { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }
 
+=======
+>>>>>>> f30d5b4d4ab (Replace vertex/cell member function calls in TDS_3)
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
   int mark;
   int mark2;
