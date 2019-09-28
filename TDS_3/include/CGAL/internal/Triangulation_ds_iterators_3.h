@@ -63,7 +63,7 @@ public:
       case 3:
 	pos = _tds->cells().begin();
 	while (// there must be at least one facet
-	       pos->neighbor(facet.second) < pos ) {
+	       _tds->neighbor(pos, facet.second) < pos ) {
 	  increment();
 	}
 	return;
@@ -92,7 +92,7 @@ public:
       do {
 	increment();
       } while ( pos != _tds->cells().end()
-	     && pos->neighbor(facet.second) < pos );
+                && _tds->neighbor(pos, facet.second) < pos );
       // reports a facet when the current cell has a pointer inferior
       // to the pointer of the neighbor cell
       return *this;
@@ -122,7 +122,7 @@ public:
       else
 	  --facet.second;
     } while ( pos != _tds->cells().end()
-	   && pos->neighbor(facet.second) < pos );
+              && _tds->neighbor(pos, facet.second) < pos );
     // reports a facet when the current cell has a pointer inferior
     // to the pointer of the neighbor cell
     return *this;
@@ -224,7 +224,7 @@ public:
 	{
 	  pos = _tds->cells().begin();
 	  while ( // there must be at least one edge
-		 pos->neighbor(3-edge.second-edge.third) < pos ) {
+		 _tds->neighbor(pos,3-edge.second-edge.third) < pos ) {
 	    increment2();
 	  }
 	  return;
@@ -279,7 +279,7 @@ public:
 	do {
 	  increment2();
 	} while ( pos != _tds->cells().end() &&
-		  pos->neighbor(3-edge.second-edge.third) < pos );
+		  _tds->neighbor(pos, 3-edge.second-edge.third) < pos );
 	break;
       }
     case 3:
@@ -332,7 +332,7 @@ public:
 	    // case edge.second==2, edge.third==0 forbids to write edge.third--
 	  }
 	} while ( pos != _tds->cells().end() &&
-		  pos->neighbor(3-edge.second-edge.third) < pos );
+		  _tds->neighbor(pos, 3-edge.second-edge.third) < pos );
 	break;
       }
     case 3:
