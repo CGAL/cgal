@@ -19,82 +19,12 @@
 //Timer
 #include <CGAL/Timer.h>
 //filter{
-#include<CGAL/intersections.h>
-
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef CGAL::Surface_mesh<Kernel::Point_3> Surface;
-
-typedef CGAL::AABB_face_graph_triangle_primitive<Surface> Primitive;
-typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
-typedef CGAL::AABB_tree<Traits> Tree;
-
-namespace SMS = CGAL::Surface_mesh_simplification ;
-
-namespace CGAL {
-
-namespace Surface_mesh_simplification
-{
-
-template<class Placement>
-class Bounded_distance_placement
-{
-public:
-
-  typedef typename Placement::TM TM ;
-
-public:
-
-  Bounded_distance_placement(const double sq_dist,
-                             const Placement& placement = Placement() )
-    : mPlacement(placement), threshold_sq_dist(sq_dist)
-  {
-  }
-
-  template <typename Profile>
-  boost::optional<typename Profile::Point>
-  operator()( Profile const& aProfile) const
-  {
-    boost::optional<typename Profile::Point> op = mPlacement(aProfile);
-    typedef typename Profile::Point Point;
-    if(op){
-      const Point* p = boost::get<Point>(&op);
-      const typename Profile::Triangle_vector& triangles = aProfile.triangles();
-      typename Profile::Triangle_vector::const_iterator it = triangles.begin();
-      bool does_intersect = false;
-      CGAL::Sphere_3<Kernel> s(*p, threshold_sq_dist);
-      if(aProfile.left_face_exists()){
-        ++it;
-      }
-      if(aProfile.right_face_exists()){
-        ++it;
-      }
-      while(it!= triangles.end()){
-        typename Profile::Triangle t = *it;
-        if(CGAL::do_intersect(t, s)){
-          does_intersect = true;
-          break;
-        }
-      }
-      if(!does_intersect)
-      {
-        return boost::none;
-      }
-    }
-    return op;
-  }
-
-
-private:
-
-  Placement  mPlacement ;
-  double threshold_sq_dist;
-
-};
-}
-}
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_distance_placement.h>
 //} end filter
 
-
+namespace SMS = CGAL::Surface_mesh_simplification ;
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Surface;
 
 int main( int argc, char** argv )
 {
@@ -141,7 +71,7 @@ int main( int argc, char** argv )
   placement1_time=timer.time();
   surface_mesh.collect_garbage();
   copy_mesh.collect_garbage();
-  std::cout<<"Filtered placement total time = "<<placement2_time<<"s. The placement itself took "<<placement2_time<<"s."<<std::endl;
+  std::cout<<"Filtered placement time = "<<placement2_time<<"s."<<std::endl;
   std::cout<<" Not filtered placement took "<<placement1_time<<"s."<<std::endl;
   std::cout<<"There are "<<num_vertices(surface_mesh)<<" vertices left when filtered and "<<num_vertices(copy_mesh)<<" when not filtered."<<std::endl;
   std::ofstream os( "out_filtered.off" );
