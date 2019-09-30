@@ -107,7 +107,23 @@ FrechetDistanceNearNeighborsDSQueries readFrechetDistanceNearNeighborsDSQueries(
 {
 	FrechetDistanceNearNeighborsDSQueries queries;
 
-	// TODO
+	std::ifstream file(query_file);
+	assert(file);
+
+	std::string line;
+	while (std::getline(file, line)) {
+		queries.emplace_back();
+		auto& query = queries.back();
+
+		std::stringstream ss(line);
+		ss >> query.id >> query.distance;
+
+		CurveID result_id;
+		while (ss >> result_id) {
+			query.expected_result.push_back(result_id);
+		}
+		std::sort(query.expected_result.begin(), query.expected_result.end());
+	}
 
 	return queries;
 }
@@ -136,11 +152,12 @@ void testFrechetDistance()
 void testFrechetDistanceNearNeighborsDS()
 {
 	std::string curve_directory = "data/curves/";
-	std::vector<std::string> datasets = { "sigspatial", "OV" };
+	std::vector<std::string> datasets = { "sigspatial" };
+	std::string query_directory = "data/ds_queries/";
 
 	for (auto const& dataset: datasets) {
 		auto curves = readCurves(curve_directory + dataset + "/");
-		auto queries = readFrechetDistanceNearNeighborsDSQueries(curve_directory + dataset + "/");
+		auto queries = readFrechetDistanceNearNeighborsDSQueries(query_directory + dataset + ".txt");
 
 		CGAL::FrechetDistanceNearNeighborsDS<Curve> ds;
 		ds.fill(curves);
@@ -148,7 +165,8 @@ void testFrechetDistanceNearNeighborsDS()
 		for (auto const& query: queries) {
 			auto result = ds.get_close_curves(curves[query.id], query.distance);
 			std::sort(result.begin(), result.end());
-			std::equal(result.begin(), result.end(), query.expected_result.begin());
+			assert(std::equal(result.begin(), result.end(),
+			  query.expected_result.begin(), query.expected_result.end()));
 		}
 	}
 }
@@ -157,6 +175,9 @@ void testFrechetDistanceNearNeighborsDS()
 
 int main()
 {
+	// TODO: add actualy query data for DS
+	testFrechetDistanceNearNeighborsDS();
+	std::cout << "testFrechetDistanceNearNeighborsDS done" << std::endl;
 	testFrechetDistance();
-	// testFrechetDistanceNearNeighborsDS();
+	std::cout << "testFrechetDistance done" << std::endl;
 }

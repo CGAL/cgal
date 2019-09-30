@@ -53,7 +53,8 @@ class FrechetKdTree
 	using CurveIDs = std::vector<std::size_t>; // FIXME: 
 
 	using D = Dimension_tag<8>;
-	using Tree_traits_base = Search_traits_d<Cartesian_d<typename Traits::FT>, D>;
+	using Traits_d = Cartesian_d<typename Traits::FT>;
+	using Tree_traits_base = Search_traits_d<Traits_d, D>;
 	using Point_d = typename Tree_traits_base::Point_d;
 	using Point_and_id = boost::tuple<Point_d,std::size_t>; // TODO: use some ID type here instead of size_t
 	using Tree_traits = CGAL::Search_traits_adapter<Point_and_id, CGAL::Nth_of_tuple_property_map<0, Point_and_id>, Tree_traits_base>;
@@ -70,28 +71,58 @@ private:
 	Kd_tree<Tree_traits> kd_tree; // FIXME: what traits?
 
 	// FIXME: rename
-	Point_d to_kd_tree_point(const Curve& curve) const;
+	static Point_d to_kd_tree_point(const Curve& curve);
 
 	class QueryItem {
-		const Curve& curve;
+		using D = FrechetKdTree::D;
+		using Point_d = FrechetKdTree::Point_d;
+		using Point_and_id = FrechetKdTree::Point_and_id;
+		using FT = NT;
+
+		// const Curve& curve;
+		Point_d const p;
 		const NT distance;
 
 	public:
-		using D = FrechetKdTree::D;
-		using Point_d = FrechetKdTree::Point_and_id;
-		using FT = NT;
+		QueryItem(Curve const& curve, NT distance)
+			: p(to_kd_tree_point(curve))
+			, distance(distance) {}
 
-		QueryItem(Curve const& curve, NT distance) : curve(curve), distance(distance) {}
+		bool contains(Point_and_id const& point) const {
+			auto const& q = get<0>(point);
 
-		bool contains(Point_d p) const { return true; } // FIXME
-		bool inner_range_intersects(const Kd_tree_rectangle<FT,D>& rectangle) const { return true; } // FIXME
-		bool outer_range_contains(const Kd_tree_rectangle<FT,D>& rectangle) const { return true; } // FIXME
+			// FIXME: Make more CGAL-ish
+			for (size_t i = 0; i < 4; i += 2) {
+				auto d = (p[i] - q[i])*(p[i] - q[i]) + (p[i + 1] - q[i + 1])*(p[i + 1] - q[i + 1]);
+				if (d > distance*distance) { return false; }
+			}
+			for (size_t i = 4; i < 8; ++i) {
+				auto d = std::abs(p[i] - q[i]);
+				if (d > distance) { return false; }
+			}
+
+			return true;
+		}
+		bool inner_range_intersects(const Kd_tree_rectangle<FT,D>& rect) const {
+			for (int d = 0; d < D::value; ++d) {
+				if (rect.min_coord(d) > p[d] + distance && rect.max_coord(d) + distance < p[d]) {
+					return false;
+				}
+			}
+			return true;
+		}
+		bool outer_range_contains(const Kd_tree_rectangle<FT,D>& rect) const {
+			// rect[0:2] is contained in circle of start point
+			// rect[2:4] is contained in circle of end point
+			// rect[4:8] is contained in intersection rect (see notebook)
+			return false;
+		}
 	};
 };
 
 template <class Traits>
 auto
-FrechetKdTree<Traits>::to_kd_tree_point(const Curve& curve) const
+FrechetKdTree<Traits>::to_kd_tree_point(const Curve& curve)
 -> Point_d
 {
 	CGAL_precondition(!curve.empty());
