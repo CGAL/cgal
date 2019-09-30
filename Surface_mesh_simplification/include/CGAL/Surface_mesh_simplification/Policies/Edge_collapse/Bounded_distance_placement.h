@@ -1,4 +1,4 @@
-// Copyright (c) 2017  GeometryFactory (France). All rights reserved.
+// Copyright (c) 2019  GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
@@ -15,7 +15,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Andreas Fabri
+// Author(s)     : Maxime Gimeno
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_BOUNDED_DISTANCE_PLACEMENT_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_BOUNDED_DISTANCE_PLACEMENT_H
@@ -29,7 +29,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-template<class Placement>
+template<class Placement, class Tree>
 class Bounded_distance_placement
 {
 public:
@@ -38,9 +38,10 @@ public:
 
 public:
 
-  Bounded_distance_placement(const double sq_dist,
+  Bounded_distance_placement(const double dist,
+                              const Tree& tree,
                              const Placement& placement = Placement() )
-    : mPlacement(placement), threshold_sq_dist(sq_dist)
+    : mPlacement(placement), tree(tree), threshold_dist(dist)
   {
   }
 
@@ -53,24 +54,12 @@ public:
     typedef typename CGAL::Kernel_traits< Point >::Kernel Kernel;
     if(op){
       const Point* p = boost::get<Point>(&op);
-      const typename Profile::Triangle_vector& triangles = aProfile.triangles();
-      typename Profile::Triangle_vector::const_iterator it = triangles.begin();
-      typename Profile::VertexPointMap ppmap = aProfile.vertex_point_map();
 
-      bool does_intersect = false;
-      CGAL::Sphere_3<Kernel> s(*p, threshold_sq_dist);
-      while(it!= triangles.end()){
-        typename Kernel::Triangle_3 t(get(ppmap, it->v0), get(ppmap, it->v1), get(ppmap, it->v2));
-        if(CGAL::do_intersect(t, s)){
-          does_intersect = true;
-          break;
-        }
-        ++it;
+
+      if(tree.do_intersect(CGAL::Sphere_3<Kernel>(*p, threshold_dist*threshold_dist))){
+        return op;
       }
-      if(!does_intersect)
-      {
-        return boost::none;
-      }
+      return boost::none;
     }
     return op;
   }
@@ -79,7 +68,8 @@ public:
 private:
 
   Placement  mPlacement ;
-  double threshold_sq_dist;
+  const Tree& tree;
+  double threshold_dist;
 
 };
 }
