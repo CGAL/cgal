@@ -15,10 +15,11 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
+
 //Timer
 #include <CGAL/Timer.h>
-
 //filter{
+#include<CGAL/intersections.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface;
@@ -34,7 +35,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-template<class Placement, class Tree>
+template<class Placement>
 class Bounded_distance_placement
 {
 public:
@@ -44,9 +45,8 @@ public:
 public:
 
   Bounded_distance_placement(const double sq_dist,
-                             const Tree& tree,
                              const Placement& placement = Placement() )
-    : mPlacement(placement), tree(tree), threshold_sq_dist(sq_dist)
+    : mPlacement(placement), threshold_sq_dist(sq_dist)
   {
   }
 
@@ -58,17 +58,35 @@ public:
     typedef typename Profile::Point Point;
     if(op){
       const Point* p = boost::get<Point>(&op);
-      if(tree.squared_distance(*p) > threshold_sq_dist){
+      const typename Profile::Triangle_vector& triangles = aProfile.triangles();
+      typename Profile::Triangle_vector::const_iterator it = triangles.begin();
+      bool does_intersect = false;
+      CGAL::Sphere_3<Kernel> s(*p, threshold_sq_dist);
+      if(aProfile.left_face_exists()){
+        ++it;
+      }
+      if(aProfile.right_face_exists()){
+        ++it;
+      }
+      while(it!= triangles.end()){
+        typename Profile::Triangle t = *it;
+        if(CGAL::do_intersect(t, s)){
+          does_intersect = true;
+          break;
+        }
+      }
+      if(!does_intersect)
+      {
         return boost::none;
       }
     }
     return op;
   }
 
+
 private:
 
   Placement  mPlacement ;
-  const Tree& tree;
   double threshold_sq_dist;
 
 };
@@ -88,9 +106,9 @@ int main( int argc, char** argv )
   // left in the surface mesh drops below the specified number (1000)
   SMS::Count_stop_predicate<Surface> stop(num_halfedges(surface_mesh)/10);
 
-  typedef SMS::Bounded_distance_placement<SMS::LindstromTurk_placement<Surface>, Tree > Filtered_placement;
+  typedef SMS::Bounded_distance_placement<SMS::LindstromTurk_placement<Surface> > Filtered_placement;
   typedef SMS::LindstromTurk_placement<Surface> Placement;
-  double copy_time, tree_time, placement1_time, placement2_time;
+  double placement1_time, placement2_time;
 
   std::cout<<"input has "<<num_vertices(surface_mesh)<<" vertices."<<std::endl;
   double input_sq_dist=0.000000001;
@@ -100,19 +118,9 @@ int main( int argc, char** argv )
   // The surface mesh and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
   // of this surface mesh lack an "id()" field.
-  timer.start();
   Surface copy_mesh = surface_mesh;
-  timer.stop();
-  copy_time=timer.time();
-  timer.reset();
-  timer.start();
-  Tree tree( faces(copy_mesh).first, faces(copy_mesh).second, copy_mesh);
-  tree.accelerate_distance_queries();
-  timer.stop();
-  tree_time=timer.time();
-  timer.reset();
   Placement placement1;
-  Filtered_placement placement2(input_sq_dist, tree, placement1);
+  Filtered_placement placement2(input_sq_dist, placement1);
   timer.start();
 
   SMS::edge_collapse( surface_mesh,
@@ -133,7 +141,7 @@ int main( int argc, char** argv )
   placement1_time=timer.time();
   surface_mesh.collect_garbage();
   copy_mesh.collect_garbage();
-  std::cout<<"Filtered placement total time = "<<copy_time+tree_time+placement2_time<<"s. The placement itself took "<<placement2_time<<"s."<<std::endl;
+  std::cout<<"Filtered placement total time = "<<placement2_time<<"s. The placement itself took "<<placement2_time<<"s."<<std::endl;
   std::cout<<" Not filtered placement took "<<placement1_time<<"s."<<std::endl;
   std::cout<<"There are "<<num_vertices(surface_mesh)<<" vertices left when filtered and "<<num_vertices(copy_mesh)<<" when not filtered."<<std::endl;
   std::ofstream os( "out_filtered.off" );
