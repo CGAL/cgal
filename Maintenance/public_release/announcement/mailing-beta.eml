@@ -41,6 +41,7 @@ Polygonal Surface Reconstruction (new package)
     
       https://www.cgal.org/2019/08/05/Polygonal_surface_reconstruction/
 
+
 Shape Detection (major changes)
 
 -   BREAKING CHANGE: The concept ShapeDetectionTraits has been renamed
