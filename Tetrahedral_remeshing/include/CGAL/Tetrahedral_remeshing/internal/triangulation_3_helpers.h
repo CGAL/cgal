@@ -584,18 +584,11 @@ namespace CGAL
                  const CGAL::Iso_cuboid_3<K>& bbox,
                  typename Tr::Facet& facet)
   {
-#ifdef CGAL_LIMITED_APERTURE_DEBUG
-    bool res = true;
-#endif
-
     typedef typename Tr::Cell_handle            Cell_handle;
     typedef typename Tr::Vertex_handle          Vertex_handle;
     typedef typename Tr::Facet                  Facet;
     typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
 
-#ifdef CGAL_LIMITED_APERTURE_DEBUG
-    std::vector<boost::array<Vertex_handle, 4> > tetra;
-#endif
     for (Finite_facets_iterator fit = tr.finite_facets_begin();
          fit != tr.finite_facets_end(); ++fit)
     {
@@ -650,34 +643,11 @@ namespace CGAL
             facet = Facet(ni, ni->index(tr.infinite_vertex()));
           }
 
-#ifdef CGAL_LIMITED_APERTURE_DEBUG
-          boost::array<Vertex_handle, 4> tet = { vs[0], vs[1], vs[2], v3 };
-          tetra.push_back(tet);
-          res = false;
-#else
           return false;
-#endif
         }
       }
     }
-
-#ifdef CGAL_LIMITED_APERTURE_DEBUG
-    std::ofstream ofs("non-convex-tets.polylines.txt");
-    for (std::size_t i = 0; i < tetra.size(); ++i)
-    {
-      const boost::array<Vertex_handle, 4>& tet = tetra[i];
-      ofs << "2 " << tet[0]->point() << " " << tet[1]->point() << std::endl;
-      ofs << "2 " << tet[0]->point() << " " << tet[2]->point() << std::endl;
-      ofs << "2 " << tet[0]->point() << " " << tet[3]->point() << std::endl;
-      ofs << "2 " << tet[1]->point() << " " << tet[2]->point() << std::endl;
-      ofs << "2 " << tet[1]->point() << " " << tet[3]->point() << std::endl;
-      ofs << "2 " << tet[2]->point() << " " << tet[3]->point() << std::endl;
-    }
-    ofs.close();
-    return res;
-#else
     return true;
-#endif
   }
 
   template<typename Tr>
@@ -751,13 +721,6 @@ namespace internal
     vertices.insert(c->vertex((index + 3) % 4));
     CGAL_assertion(vertices.size() == 3);
 
-#ifdef CGAL_LIMITED_APERTURE_VERBOSE
-    if (verbose)
-      std::cout << "add_to_incidence_map facet : " << std::endl
-      << &*(c->vertex((index + 1) % 4)) << "\t"
-      << &*(c->vertex((index + 2) % 4)) << "\t"
-      << &*(c->vertex((index + 3) % 4)) << std::endl;
-#endif
     typename IncidentFacetsMap::iterator it = incidence_map.find(vertices);
     if (it == incidence_map.end())
     {
@@ -769,35 +732,6 @@ namespace internal
     {
       it->second.push_back(typename Tr::Facet(c, index));
 
-#ifdef CGAL_LIMITED_APERTURE_DEBUG
-      if (it->second.size() != 2)
-      {
-        std::cout << "size is " << it->second.size() << std::endl;
-        std::cout << "facet is " << std::endl;
-        for (typename Vertex_set::iterator vit = vertices.begin();
-          vit != vertices.end();
-          ++vit)
-          std::cout << (*vit)->point() << std::endl;
-
-        std::vector<typename Tr::Cell_handle> bad_cells(it->second.size());
-        for (std::size_t i = 0; i < it->second.size(); ++i)
-        {
-          bad_cells[i] = it->second[i].first;
-          std::cout << &*(it->second[i].first) << "\t" << it->second[i].second << std::endl;
-          std::cout
-            << "\t" << &*((it->second[i].first)->vertex(0))
-            << "\t" << ((it->second[i].first)->vertex(0))->point() << std::endl
-            << "\t" << &*((it->second[i].first)->vertex(1))
-            << "\t" << ((it->second[i].first)->vertex(1))->point() << std::endl
-            << "\t" << &*((it->second[i].first)->vertex(2))
-            << "\t" << ((it->second[i].first)->vertex(2))->point() << std::endl
-            << "\t" << &*((it->second[i].first)->vertex(3))
-            << "\t" << ((it->second[i].first)->vertex(3))->point() << std::endl
-            << std::endl;
-        }
-        CGAL::debug::dump_polylines(bad_cells, "bad_cells_in_incidence_map.polylines.txt");
-      }
-#endif
       CGAL_assertion(it->second.size() == 2);
       CGAL_assertion(it->second[0] != it->second[1]);
     }

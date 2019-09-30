@@ -375,21 +375,6 @@ namespace Tetrahedral_remeshing
 #endif
   }
 
-  namespace internal
-  {
-    template<typename Tr, typename CellsSet, typename CellHandle>
-    bool insert_in_cells(const CellHandle c, CellsSet& cells)
-    {
-      std::set<typename Tr::Vertex_handle> vertices;
-      for (int i = 0; i < 4; ++i)
-        vertices.insert(c->vertex(i));
-      if (cells.find(vertices) != cells.end())
-        return false;
-      cells.insert(vertices);
-      return true;
-    }
-  } // end internal
-
   namespace debug {
     // forward-declaration
     template<typename Tr, typename CellRange>
@@ -397,27 +382,6 @@ namespace Tetrahedral_remeshing
   }
   namespace helpers
   {
-
-    template<typename K>
-    void read_iso_cuboid(std::istream& is,
-      CGAL::Iso_cuboid_3<K>& bbox)
-    {
-      typedef typename K::Point_3 Point_3;
-      Point_3 p1, p2;
-      double x, y, z;
-      is >> x >> y >> z;
-      p1 = Point_3(x, y, z);
-      is >> x >> y >> z;
-      p2 = Point_3(x, y, z);
-
-      if (p1 < p2)
-        bbox = CGAL::Iso_cuboid_3<K>(p1, p2);
-      else
-        bbox = CGAL::Iso_cuboid_3<K>(p2, p1);
-
-      CGAL_assertion(p1 != p2);
-    }
-
     template<typename Tr>
     void set_time_stamps(Tr& tr)
     {
@@ -502,226 +466,12 @@ namespace Tetrahedral_remeshing
       }
     };
 
-    template<typename Tr, typename CellsSet, typename K>
-    bool check_size_of_padding_box(const CellsSet& inside_cells,
-      const CGAL::Iso_cuboid_3<K>& cuboid)
-    {
-      // all cells that are in intersecting_cells AND inside_cells
-      // should NOT be clipped
-      typedef typename CellsSet::value_type Cell_handle;
-
-#ifdef CGAL_LIMITED_APERTURE_DEBUG
-      std::vector<Cell_handle> cells;
-#endif
-      for (typename CellsSet::iterator cit = inside_cells.begin();
-        cit != inside_cells.end(); ++cit)
-      {
-        Cell_handle c = *cit;
-        for (int i = 0; i < 4; ++i)
-        {
-          if (cuboid.has_on_unbounded_side(c->vertex(i)->point()))
-          {
-#ifdef CGAL_LIMITED_APERTURE_DEBUG
-            cells.push_back(c);
-            break;
-#else
-            return false;
-#endif
-          }
-        }
-      }
-#ifdef CGAL_LIMITED_APERTURE_DEBUG
-      debug::dump_cells<Tr>(cells, "cells_from_padding_zone.mesh");
-      return cells.empty();
-#else
-      return true;
-#endif
-    }
-
-#ifdef CGAL_LIMITED_APERTURE_EDGE_SELECTION
-
-    template<typename C3T3, typename CellCirculator>
-    bool outer_box_criterion(const C3T3& c3t3,
-      CellCirculator circ,
-      CellCirculator end,
-      const typename C3T3::Subdomain_index& imaginary_index)
-    {
-      std::size_t nb_imaginary = 0;
-      std::size_t nb_total = 0;
-      std::size_t nb_padding = 0;
-      std::size_t nb_outside = 0;
-      do
-      {
-        if (circ->subdomain_index() == imaginary_index)
-          ++nb_imaginary;
-        else if (!c3t3.is_in_complex(circ))
-          ++nb_outside;
-        else if (circ->info().padding())
-          ++nb_padding;
-
-        ++nb_total;
-      } while (++circ != end);
-
-      return nb_padding > 0 && (nb_imaginary + nb_outside) < nb_total;
-    }
-
-    template <typename C3T3>
-    bool is_on_the_outer_box(const typename C3T3::Edge& e,
-      const C3T3& c3t3,
-      const typename C3T3::Subdomain_index& imaginary_index)
-    {
-      typedef typename C3T3::Triangulation::Cell_circulator Cell_circulator;
-      Cell_circulator circ = c3t3.triangulation().incident_cells(e);
-      Cell_circulator end = circ;
-
-      return outer_box_criterion(c3t3, circ, end, imaginary_index);
-    }
-
-    template <typename C3T3>
-    bool is_on_the_outer_box(const typename C3T3::Vertex_handle& v,
-      const C3T3& c3t3,
-      const typename C3T3::Subdomain_index& imaginary_index)
-    {
-      std::vector<typename C3T3::Cell_handle> cells;
-      c3t3.triangulation().incident_cells(v, std::back_inserter(cells));
-
-      return outer_box_criterion(c3t3, cells.begin(), cells.end(), imaginary_index);
-    }
-#endif CGAL_LIMITED_APERTURE_EDGE_SELECTION
 
   }//end namespace helpers
 
 
   namespace debug
   {
-    template<typename Tr>
-    void rebuild_with_insert(Tr& tr, const int nbv_max)
-    {
-      typedef typename Tr::Point Point;
-      std::vector<Point> points(tr.number_of_vertices());
-      int index = 0;
-      for (typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
-        vit != tr.finite_vertices_end(); ++vit)
-      {
-        points[index++] = vit->point();
-      }
-
-      tr.clear();
-      for (int i = 0; i < nbv_max; ++i)
-        tr.insert(points[i]);
-    }
-
-    template<typename Tr>
-    void check_validity(const Tr& tr)
-    {
-      CGAL_assertion(tr.is_valid(true));
-      for (typename Tr::All_vertices_iterator vit = tr.all_vertices_begin();
-        vit != tr.all_vertices_end();
-        ++vit)
-      {
-        typename Tr::Cell_handle c = vit->cell();
-        CGAL_assertion(c->has_vertex(vit));
-      }
-
-      std::ofstream ofs("extra_cells.polylines.txt");
-      std::set<typename Tr::Cell_handle> extra_cells;
-      std::set<std::set<typename Tr::Vertex_handle> > cells;
-      for (typename Tr::All_cells_iterator cit = tr.all_cells_begin();
-        cit != tr.all_cells_end();
-        ++cit)
-      {
-        typename Tr::Cell_handle c = cit;
-        for (int i = 0; i < 4; ++i)
-        {
-          typename Tr::Cell_handle ci = c->neighbor(i);
-          int j;
-          CGAL_assertion(c->has_neighbor(ci, j));
-          CGAL_assertion(i == j);
-          j = ci->index(c);
-          CGAL_assertion(ci->neighbor(j) == c);
-          CGAL_assertion(ci->has_neighbor(c, j));
-        }
-        if (!internal::insert_in_cells<Tr>(c, cells))
-        {
-          extra_cells.insert(c);
-          for (int j = 0; j < 4; ++j)
-            dump_facet(std::make_pair(c, j), ofs);
-        }
-      }
-      ofs.close();
-    }
-
-    template<typename ClippedCellsMap, typename Tr>
-    void debug_infinite_facets(const ClippedCellsMap& clipped_cells,
-      const Tr& tr)
-    {
-      typedef typename Tr::Point Point;
-      //collect convex hull of tr edges (as pairs of ordered points)
-      std::vector<std::pair<Point, Point>/*ordered pair*/> ch_edges;
-
-      for (typename ClippedCellsMap::const_iterator cmit = clipped_cells.begin();
-        cmit != clipped_cells.end();
-        ++cmit)
-      {
-        typedef typename ClippedCellsMap::mapped_type CellTr;
-        const CellTr& ctr = cmit->second;
-
-        typename ClippedCellsMap::key_type cell = cmit->first;
-
-        for (typename CellTr::Finite_edges_iterator eit = ctr.finite_edges_begin();
-          eit != ctr.finite_edges_end();
-          ++eit)
-        {
-          Point p1 = (eit->first)->vertex(eit->second)->point();
-          Point p2 = (eit->first)->vertex(eit->third)->point();
-          if (p2 < p1)
-            std::swap(p1, p2); //make sure that p1 <= p2
-
-          int vi = 0, vj = 0;
-          for (; vi < 4; ++vi)
-          {
-            if (cell->vertex(vi)->point() == p1)
-              break;
-          }
-          if (vi == 4)
-            continue;
-          for (; vj < 4; ++vj)
-          {
-            if (cell->vertex(vj)->point() == p2)
-              break;
-          }
-          if (vj == 4)
-            continue;
-
-          int vk = Tr::next_around_edge(vi, vj);
-          int vl = Tr::next_around_edge(vj, vi);
-          if (tr.is_infinite(cell->neighbor(vk)))
-            ch_edges.push_back(std::make_pair(p1, p2));
-          if (tr.is_infinite(cell->neighbor(vl)))
-            ch_edges.push_back(std::make_pair(p1, p2));
-        }
-      }
-
-      //check that each edge appears exactly twice
-      std::sort(ch_edges.begin(), ch_edges.end());
-      bool twice_each = (ch_edges.size() % 2 == 0);
-      for (std::size_t i = 0; i < ch_edges.size() - 1; i = i + 2)
-      {
-        if (ch_edges[i] != ch_edges[i + 1])
-          twice_each = false;
-      }
-      if (!twice_each)
-      {
-        for (std::size_t i = 0; i < ch_edges.size(); ++i)
-        {
-          std::cout << i << "\t"
-            << ch_edges[i].first << " " << ch_edges[i].second
-            << std::endl;
-        }
-      }
-      CGAL_assertion(twice_each);
-    }
-
     template<typename Tr>
     void dump_surface_off(const Tr& tr, const char* filename)
     {
@@ -1046,7 +796,7 @@ namespace Tetrahedral_remeshing
 
     template<typename Tr>
     void dump_without_imaginary(const Tr& tr, const char* filename,
-      const int imaginary_index)
+                                const int imaginary_index)
     {
       std::vector<typename Tr::Cell_handle> cells;
       std::vector<std::ptrdiff_t> indices;
@@ -1059,110 +809,10 @@ namespace Tetrahedral_remeshing
         {
           cells.push_back(cit);
           indices.push_back(1);
-            //cit->info().padding() ?
-            //-1 :
-            //cit->info().original_index());
         }
       }
       dump_cells<Tr>(cells, indices, filename);
     }
-
-    template<typename Tr>
-    void dump_padding_cells(const Tr& tr, const char* filename)
-    {
-      std::vector<typename Tr::Cell_handle> cells;
-      std::vector<typename Tr::Cell::Subdomain_index> indices;
-
-      for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
-        cit != tr.finite_cells_end(); ++cit)
-      {
-        if (cit->info().padding())
-        {
-          cells.push_back(cit);
-          if (cit->subdomain_index() > 0)
-            indices.push_back(cit->subdomain_index());
-          else
-            indices.push_back(1);
-        }
-      }
-      dump_cells<Tr>(cells, indices, filename);
-    }
-
-    template <typename Tr, typename Isocuboid>
-    void dump_non_padding_plus_the_outer_bbox(const Tr& tr,
-      const Isocuboid& bbox,
-      const char* filename)
-    {
-      typedef typename Tr::Vertex_handle                         Vertex_handle;
-      typedef typename Tr::Point                                 Point;
-      typedef boost::bimap<Vertex_handle, int>                   Bimap_t;
-      typedef typename Bimap_t::left_map::value_type             value_type;
-
-      Bimap_t vertices;
-      int index = 9; // because we output first the 8 vertices of the
-                     // bbox
-      std::size_t nb_of_cells = 0;
-      for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
-        cit != tr.finite_cells_end(); ++cit)
-      {
-        if (cit->info().padding()) {
-          continue;
-        }
-        ++nb_of_cells;
-        for (int i = 0; i < 4; ++i)
-        {
-          Vertex_handle vi = cit->vertex(i);
-          if (vertices.left.find(vi) == vertices.left.end())
-            vertices.left.insert(value_type(vi, index++));
-        }
-      }
-      std::ofstream ofs(filename);
-      ofs.precision(17);
-      ofs << "MeshVersionFormatted 1\n"
-        << "Dimension 3\n"
-        << "Vertices\n"
-        << vertices.size() + 8 << std::endl;
-      const CGAL::cpp11::array<int, 8> indices = { 0, 3, 2, 1, 5, 4, 7, 6 };
-      for (int i = 0; i < 8; ++i) {
-        const typename Tr::Point_3 p = bbox[indices[i]];
-        ofs << p.x() << " " << p.y() << " " << p.z() << " 1" << std::endl;
-      }
-      for (typename Bimap_t::right_const_iterator vit = vertices.right.begin();
-        vit != vertices.right.end();
-        ++vit)
-      {
-        const Point& p = vit->second->point();
-        ofs << p.x() << " " << p.y() << " " << p.z() << " 2" << std::endl;
-      }
-      ofs << "Triangles\n"
-        << "12\n"
-        << "1 2 4 1\n"
-        << "4 2 3 1\n"
-        << "1 5 2 1\n"
-        << "2 5 6 1\n"
-        << "4 3 8 1\n"
-        << "8 3 7 1\n"
-        << "5 1 4 1\n"
-        << "8 5 4 1\n"
-        << "7 5 8 1\n"
-        << "7 6 5 1\n"
-        << "2 6 7 1\n"
-        << "3 2 7 1\n";
-      ofs << "Tetrahedra" << std::endl << nb_of_cells << std::endl;
-      for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
-        cit != tr.finite_cells_end(); ++cit)
-      {
-        if (cit->info().padding()) continue;
-        ofs << vertices.left.at(cit->vertex(0)) << " "
-          << vertices.left.at(cit->vertex(1)) << " "
-          << vertices.left.at(cit->vertex(2)) << " "
-          << vertices.left.at(cit->vertex(3)) << " "
-          << cit->info().original_index() << std::endl;
-      }
-      ofs << "End" << std::endl;
-      ofs.close();
-    }
-
 
     template<typename VertexPairsSet>
     void dump_edges(const VertexPairsSet& edges, const char* filename)
