@@ -40,11 +40,11 @@ namespace internal
   enum Flip_Criterion{ MIN_ANGLE_BASED, AVERAGE_ANGLE_BASED,
                        VALENCE_BASED, VALENCE_MIN_DH_BASED };
 
-  template<typename VertexPair>
-  void flip_inside_edges(std::vector<VertexPair>&)
-  {
-    //TODO
-  }
+  //template<typename VertexPair>
+  //void flip_inside_edges(std::vector<VertexPair>&)
+  //{
+  //  //TODO
+  //}
 
   template<typename C3t3>
   Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
@@ -1112,7 +1112,7 @@ namespace internal
     std::size_t nb_flips = 0;
 #endif
 
-    const Flip_Criterion criterion = VALENCE_MIN_DH_BASED;
+    //const Flip_Criterion criterion = VALENCE_MIN_DH_BASED;
 
     //collect long edges
 
@@ -1145,15 +1145,15 @@ namespace internal
                            cell_selector,
                            std::back_inserter(inside_edges));
 
-    if (criterion == VALENCE_BASED)
-      flip_inside_edges(inside_edges);
-    else
-    {
+    //if (criterion == VALENCE_BASED)
+    //  flip_inside_edges(inside_edges);
+    //else
+    //{
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       nb_flips =
 #endif
       flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED);
-    }
+    //}
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << " done (" << nb_flips << " flips)." << std::endl;

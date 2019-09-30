@@ -289,15 +289,12 @@ namespace internal
     typedef typename C3T3::Vertex_handle          Vertex_handle;
     typedef typename C3T3::Cell_handle            Cell_handle;
     typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
-
-    typedef typename Tr::Geom_traits     Gt;
-    typedef typename Gt::Point_3         Point_3;
-    typedef typename Gt::Vector_3        Vector_3;
+    typedef typename C3T3::Point                  Point;
+    typedef typename Tr::Geom_traits::Vector_3    Vector_3;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Smooth vertices...";
     std::cout.flush();
-    std::size_t nb_done = 0; CGAL_USE(nb_done);
 #endif
 
     Tr& tr = c3t3.triangulation();
@@ -309,7 +306,6 @@ namespace internal
     const std::size_t nbv = tr.number_of_vertices();
     boost::unordered_map<Vertex_handle, std::size_t> vertex_id;
     std::vector<Vector_3> smoothing_vecs(nbv, CGAL::NULL_VECTOR);
-//    std::vector<int> neighbors(nbv, -1);
 
     // generate ids for vertices
     std::size_t id = 0;
@@ -368,7 +364,7 @@ namespace internal
          vit != tr.finite_vertices_end(); ++vit)
     {
       const std::size_t& vid = vertex_id.at(vit);
-      const Point_3 new_pos = CGAL::ORIGIN + smoothing_vecs[vid];
+      const Point new_pos(CGAL::ORIGIN + smoothing_vecs[vid]);
       const Vector_3 move(point(vit->point()), new_pos);
 
       std::vector<Cell_handle> cells;
@@ -387,393 +383,393 @@ namespace internal
 #endif
   }
 
-  template<typename C3T3, typename CellSelector>
-  void smooth_vertices(C3T3& c3t3,
-                       const typename C3T3::Subdomain_index&,
-                       const bool protect_boundaries,
-                       CellSelector cell_selector)
-  {
-    typedef typename C3T3::Surface_patch_index    Surface_patch_index;
-    typedef typename C3T3::Subdomain_index        Subdomain_index;
-    typedef typename C3T3::Triangulation          Tr;
-    typedef typename C3T3::Vertex_handle          Vertex_handle;
-    typedef typename C3T3::Cell_handle            Cell_handle;
-    typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
-    typedef typename Tr::Finite_edges_iterator    Finite_edges_iterator;
-
-    typedef typename Tr::Geom_traits     Gt;
-    typedef typename Gt::Point_3         Point_3;
-    typedef typename Gt::Vector_3        Vector_3;
-    typedef typename Gt::FT              FT;
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    std::cout << "Smooth vertices...";
-    std::cout.flush();
-    std::size_t nb_done = 0;
-#endif
-
-    Tr& tr = c3t3.triangulation();
-
-    const std::size_t nbv = tr.number_of_vertices();
-    boost::unordered_map<Vertex_handle, std::size_t> vertex_id;
-    std::vector<Vector_3> smoothing_vecs(nbv, CGAL::NULL_VECTOR);
-    std::vector<int> neighbors(nbv, -1);
-
-    //collect ids
-    std::size_t id = 0;
-    for (Finite_vertices_iterator vit = tr.finite_vertices_begin();
-         vit != tr.finite_vertices_end(); ++vit)
-    {
-      vertex_id[vit] = id++;
-    }
-
-    if (!protect_boundaries)
-    {
-      for (Finite_edges_iterator eit = tr.finite_edges_begin();
-           eit != tr.finite_edges_end(); ++eit)
-      {
-        const Vertex_handle vh0 = eit->first->vertex(eit->second);
-        const Vertex_handle vh1 = eit->first->vertex(eit->third);
-
-        const std::size_t& i0 = vertex_id.at(vh0);
-        const std::size_t& i1 = vertex_id.at(vh1);
-
-        if (/*toRemesh != REMESH_IMAGINARY &&*/ c3t3.is_in_complex(*eit))
-        {
-          if (!is_feature(vh0, c3t3))
-            neighbors[i0] = std::max(0, neighbors[i0]);
-          if (!is_feature(vh1, c3t3))
-            neighbors[i1] = std::max(0, neighbors[i1]);
-
-          bool update_v0 = false, update_v1 = false;
-
-          helpers::get_edge_info(*eit, update_v0, update_v1, c3t3, cell_selector);
-          if (update_v0)
-          {
-            const Point_3& p1 = vh1->point();
-            smoothing_vecs[i0] = smoothing_vecs[i0] + Vector_3(p1.x(), p1.y(), p1.z());
-            neighbors[i0]++;
-          }
-          if (update_v1)
-          {
-            const Point_3& p0 = vh0->point();
-            smoothing_vecs[i1] = smoothing_vecs[i1] + Vector_3(p0.x(), p0.y(), p0.z());
-            neighbors[i1]++;
-          }
-        }
-      }
-
-      //collect a map of vertices subdomain indices
-      boost::unordered_map<Vertex_handle, std::vector<Subdomain_index> > vertices_subdomain_indices;
-      for (typename C3T3::Cell_iterator cit = c3t3.cells_in_complex_begin();
-           cit != c3t3.cells_in_complex_end(); ++cit)
-      {
-        for (int i = 0; i < 4; ++i)
-        {
-          Vertex_handle vi = cit->vertex(i);
-          Subdomain_index si = cit->subdomain_index();
-
-          if (vertices_subdomain_indices.find(vi) == vertices_subdomain_indices.end())
-          {
-            std::vector<Subdomain_index> indices(1);
-            indices[0] = si;
-            vertices_subdomain_indices.insert(std::make_pair(vi, indices));
-          }
-          else
-          {
-            std::vector<Subdomain_index>& v_indices = vertices_subdomain_indices.at(vi);
-            if (std::find(v_indices.begin(), v_indices.end(), si) == v_indices.end())
-              v_indices.push_back(si);
-          }
-        }
-      }
-
-      //collect a map of vertices surface indices
-      boost::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
-      for(typename C3T3::Facet_iterator fit = c3t3.facets_in_complex_begin();
-          fit != c3t3.facets_in_complex_end(); ++fit)
-      { 
-        Surface_patch_index surface_index
-          = helpers::make_surface_patch_index(fit->first->subdomain_index(),
-                                              fit->first->neighbor(fit->second)->subdomain_index());
-        for (int i = 0; i < 3; ++i)
-        {
-          Vertex_handle vi = fit->first->vertex(indices(fit->second, i));
-          if (vertices_subdomain_indices.at(vi).size() > 2)
-          {
-            if (vertices_surface_indices.find(vi) == vertices_surface_indices.end())
-            {
-              std::vector<Surface_patch_index> indices(1);
-              indices[0] = surface_index;
-              vertices_surface_indices.insert(std::make_pair(vi, indices));
-            }
-            else
-            {
-              std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(vi);
-              if (std::find(v_surface_indices.begin(), v_surface_indices.end(), surface_index)
-                  == v_surface_indices.end())
-                v_surface_indices.push_back(surface_index);
-            }
-          }
-        }
-      }
-
-      //collect a map of normals at surface vertices
-      boost::unordered_map<Vertex_handle,
-                           boost::unordered_map<Surface_patch_index, Vector_3> > vertices_normals;
-      for (Finite_vertices_iterator vit = tr.finite_vertices_begin();
-           vit != tr.finite_vertices_end(); ++vit)
-      {
-        const std::size_t& vid = vertex_id.at(vit);
-        if (neighbors[vid] > 1)
-        {
-          Point_3 smoothed_position = CGAL::ORIGIN + smoothing_vecs[vid] / neighbors[vid];
-          Vector_3 final_move = CGAL::NULL_VECTOR;
-          Point_3 final_position;
-
-          std::size_t count = 0;
-          Point_3 current_pos = vit->point();
-
-          const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices[vit];
-          for (std::size_t i = 0; i < v_surface_indices.size(); ++i)
-          {
-            const Surface_patch_index& si = v_surface_indices[i];
-
-            Vector_3 normal_projection
-              = project_on_tangent_plane(smoothed_position, current_pos, vertices_normals[vit][si]);
-
-            //Check if the mls surface exists to avoid degenrated cases
-            Vector_3 mls_projection;
-            if (project(si, normal_projection, mls_projection)){
-              final_move = final_move + mls_projection;
-            }
-            else {
-              final_move = final_move + normal_projection;
-            }
-            count++;
-          }
-
-          if (count > 0)
-            final_position = CGAL::ORIGIN + final_move / static_cast<FT>(count);
-          else
-            final_position = smoothed_position;
-
-          // move vertex
-          vit->set_point(final_position);
-
-        }
-        else if (neighbors[vid] > 0)
-        {
-          Vector_3 final_move = CGAL::NULL_VECTOR;
-          Point_3 final_position;
-
-          int count = 0;
-          Vector_3 current_move(CGAL::ORIGIN, vit->point());
-
-          const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices[vit];
-          for (std::size_t i = 0; i < v_surface_indices.size(); ++i)
-          {
-            Surface_patch_index si = v_surface_indices[i];
-            //Check if the mls surface exists to avoid degenrated cases
-
-            Vector_3 mls_projection;
-            if (project(si, current_move, mls_projection)){
-              final_move = final_move + mls_projection;
-            }
-            else {
-              final_move = final_move + current_move;
-            }
-            count++;
-          }
-
-          if (count > 0)
-            final_position = CGAL::ORIGIN + final_move / count;
-          else
-            final_position = CGAL::ORIGIN + current_move;
-
-          // move vertex
-          vit->set_point(final_position);
-        }
-      }
-
-      smoothing_vecs.clear();
-      smoothing_vecs.resize(nbv, CGAL::NULL_VECTOR);
-
-      neighbors.clear();
-      neighbors.resize(nbv, -1);
-
-      for (Finite_edges_iterator eit = tr.finite_edges_begin();
-           eit != tr.finite_edges_end(); ++eit)
-      {
-        const Vertex_handle vh0 = eit->first->vertex(eit->second);
-        const Vertex_handle vh1 = eit->first->vertex(eit->third);
-
-        const std::size_t& i0 = vertex_id.at(vh0);
-        const std::size_t& i1 = vertex_id.at(vh1);
-
-        if ((/*toRemesh != REMESH_IN_COMPLEX &&*/ is_on_hull(*eit, c3t3))
-         || (/*toRemesh != REMESH_IMAGINARY &&*/
-             helpers::is_boundary(c3t3, *eit, cell_selector) && !c3t3.is_in_complex(*eit)))
-        {
-          bool update_v0 = false, update_v1 = false;
-          if (!is_feature(vh0, c3t3))
-            neighbors[i0] = (std::max)(0, neighbors[i0]);
-          if (!is_feature(vh1, c3t3))
-            neighbors[i1] = (std::max)(0, neighbors[i1]);
-
-          helpers::get_edge_info(*eit, update_v0, update_v1, c3t3, cell_selector);
-          if (update_v0)
-          {
-            const Point_3& p1 = vh1->point();
-            smoothing_vecs[i0] = smoothing_vecs[i0] + Vector_3(p1.x(), p1.y(), p1.z());
-            neighbors[i0]++;
-          }
-          if (update_v1)
-          {
-            const Point_3& p0 = vh0->point();
-            smoothing_vecs[i1] = smoothing_vecs[i1] + Vector_3(p0.x(), p0.y(), p0.z());
-            neighbors[i1]++;
-          }
-        }
-      }
-
-      for (Finite_vertices_iterator vit = tr.finite_vertices_begin();
-           vit != tr.finite_vertices_end(); ++vit)
-      {
-        const std::size_t& vid = vertex_id.at(vit);
-
-        if (neighbors[vid] > 1)
-        {
-          Point_3 smoothed_position = CGAL::ORIGIN + smoothing_vecs[vid] / neighbors[vid];
-          Point_3 current_pos = vit->point();
-          Point_3 final_position = CGAL::ORIGIN;
-
-          if (vit->in_dimension() == 3 && is_on_hull(vit, c3t3))
-          {
-            Vector_3 final_move = project_on_tangent_plane(
-              smoothed_position, current_pos, vertices_normals[vit][Surface_patch_index()]);
-            final_position = CGAL::ORIGIN + final_move;
-          }
-          else {
-            // Surface_patch_index si = helpers::make_surface_patch_index(
-            //   vertices_subdomain_indices[vit][0], vertices_subdomain_indices[vit][1]);
-
-            // Vector_3 normal_projection = project_on_tangent_plane(smoothed_position,
-            //                                                       current_pos,
-            //                                                       vertices_normals[vit][si]);
-            //Vector_3 mls_projection;
-            //if (project(si, normal_projection, mls_projection) /*|| project( si, smoothed_position, mls_projection )*/){
-            //  final_position = mls_projection;
-            //  //final_position = smoothed_position;
-            //}
-            //else {
-              final_position = smoothed_position;
-            //}
-            // std::cout << "MLS " << final_position[0] << " - " << final_position[1] << " : " << final_position[2] << std::endl;
-          }
-          /*
-          Normal_iterator it = vertices_normals[vit->info()].end();
-          it--;
-          final_position = final_position + projectOnTangentPlane( smoothed_position, current_pos , it->second );
-          */
-
-          vit->set_point(final_position);
-        }
-        else if (neighbors[vid] > 0)
-        {
-          if (vit->in_dimension() == 2)
-          {
-            // Surface_patch_index si = helpers::make_surface_patch_index(
-            //   vertices_subdomain_indices[vit][0],
-            //   vertices_subdomain_indices[vit][1]);
-
-            Vector_3 current_pos(CGAL::ORIGIN, vit->point());
-            Vector_3 mls_projection;
-//            if (project(si, current_pos, mls_projection) /*|| project( si, smoothed_position, mls_projection )*/){
-//              vit->set_point(Point_3(mls_projection.x(), mls_projection.y(), mls_projection.z()));
+//  template<typename C3T3, typename CellSelector>
+//  void smooth_vertices(C3T3& c3t3,
+//                       const typename C3T3::Subdomain_index&,
+//                       const bool protect_boundaries,
+//                       CellSelector cell_selector)
+//  {
+//    typedef typename C3T3::Surface_patch_index    Surface_patch_index;
+//    typedef typename C3T3::Subdomain_index        Subdomain_index;
+//    typedef typename C3T3::Triangulation          Tr;
+//    typedef typename C3T3::Vertex_handle          Vertex_handle;
+//    typedef typename C3T3::Cell_handle            Cell_handle;
+//    typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
+//    typedef typename Tr::Finite_edges_iterator    Finite_edges_iterator;
+//
+//    typedef typename Tr::Geom_traits     Gt;
+//    typedef typename Gt::Point_3         Point_3;
+//    typedef typename Gt::Vector_3        Vector_3;
+//    typedef typename Gt::FT              FT;
+//
+//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//    std::cout << "Smooth vertices...";
+//    std::cout.flush();
+//    std::size_t nb_done = 0;
+//#endif
+//
+//    Tr& tr = c3t3.triangulation();
+//
+//    const std::size_t nbv = tr.number_of_vertices();
+//    boost::unordered_map<Vertex_handle, std::size_t> vertex_id;
+//    std::vector<Vector_3> smoothing_vecs(nbv, CGAL::NULL_VECTOR);
+//    std::vector<int> neighbors(nbv, -1);
+//
+//    //collect ids
+//    std::size_t id = 0;
+//    for (Finite_vertices_iterator vit = tr.finite_vertices_begin();
+//         vit != tr.finite_vertices_end(); ++vit)
+//    {
+//      vertex_id[vit] = id++;
+//    }
+//
+//    if (!protect_boundaries)
+//    {
+//      for (Finite_edges_iterator eit = tr.finite_edges_begin();
+//           eit != tr.finite_edges_end(); ++eit)
+//      {
+//        const Vertex_handle vh0 = eit->first->vertex(eit->second);
+//        const Vertex_handle vh1 = eit->first->vertex(eit->third);
+//
+//        const std::size_t& i0 = vertex_id.at(vh0);
+//        const std::size_t& i1 = vertex_id.at(vh1);
+//
+//        if (/*toRemesh != REMESH_IMAGINARY &&*/ c3t3.is_in_complex(*eit))
+//        {
+//          if (!is_feature(vh0, c3t3))
+//            neighbors[i0] = std::max(0, neighbors[i0]);
+//          if (!is_feature(vh1, c3t3))
+//            neighbors[i1] = std::max(0, neighbors[i1]);
+//
+//          bool update_v0 = false, update_v1 = false;
+//
+//          helpers::get_edge_info(*eit, update_v0, update_v1, c3t3, cell_selector);
+//          if (update_v0)
+//          {
+//            const Point_3& p1 = vh1->point();
+//            smoothing_vecs[i0] = smoothing_vecs[i0] + Vector_3(p1.x(), p1.y(), p1.z());
+//            neighbors[i0]++;
+//          }
+//          if (update_v1)
+//          {
+//            const Point_3& p0 = vh0->point();
+//            smoothing_vecs[i1] = smoothing_vecs[i1] + Vector_3(p0.x(), p0.y(), p0.z());
+//            neighbors[i1]++;
+//          }
+//        }
+//      }
+//
+//      //collect a map of vertices subdomain indices
+//      boost::unordered_map<Vertex_handle, std::vector<Subdomain_index> > vertices_subdomain_indices;
+//      for (typename C3T3::Cell_iterator cit = c3t3.cells_in_complex_begin();
+//           cit != c3t3.cells_in_complex_end(); ++cit)
+//      {
+//        for (int i = 0; i < 4; ++i)
+//        {
+//          Vertex_handle vi = cit->vertex(i);
+//          Subdomain_index si = cit->subdomain_index();
+//
+//          if (vertices_subdomain_indices.find(vi) == vertices_subdomain_indices.end())
+//          {
+//            std::vector<Subdomain_index> indices(1);
+//            indices[0] = si;
+//            vertices_subdomain_indices.insert(std::make_pair(vi, indices));
+//          }
+//          else
+//          {
+//            std::vector<Subdomain_index>& v_indices = vertices_subdomain_indices.at(vi);
+//            if (std::find(v_indices.begin(), v_indices.end(), si) == v_indices.end())
+//              v_indices.push_back(si);
+//          }
+//        }
+//      }
+//
+//      //collect a map of vertices surface indices
+//      boost::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
+//      for(typename C3T3::Facet_iterator fit = c3t3.facets_in_complex_begin();
+//          fit != c3t3.facets_in_complex_end(); ++fit)
+//      { 
+//        Surface_patch_index surface_index
+//          = helpers::make_surface_patch_index(fit->first->subdomain_index(),
+//                                              fit->first->neighbor(fit->second)->subdomain_index());
+//        for (int i = 0; i < 3; ++i)
+//        {
+//          Vertex_handle vi = fit->first->vertex(indices(fit->second, i));
+//          if (vertices_subdomain_indices.at(vi).size() > 2)
+//          {
+//            if (vertices_surface_indices.find(vi) == vertices_surface_indices.end())
+//            {
+//              std::vector<Surface_patch_index> indices(1);
+//              indices[0] = surface_index;
+//              vertices_surface_indices.insert(std::make_pair(vi, indices));
 //            }
-          }
-        }
-      }
-    }
-    smoothing_vecs.clear();
-    smoothing_vecs.resize(nbv, CGAL::NULL_VECTOR);
-
-    neighbors.clear();
-    neighbors.resize(nbv, 0);
-
-    for (Finite_edges_iterator eit = tr.finite_edges_begin();
-         eit != tr.finite_edges_end(); ++eit)
-    {
-      //bool in_complex = c3t3.is_in_complex(*eit);
-      //if (  toRemesh == REMESH_ALL
-      //  || (toRemesh == REMESH_IN_COMPLEX && in_complex)
-      //  || (toRemesh == REMESH_IMAGINARY && !in_complex))
-      {
-        const Vertex_handle vh0 = eit->first->vertex(eit->second);
-        const Vertex_handle vh1 = eit->first->vertex(eit->third);
-
-        const std::size_t& i0 = vertex_id.at(vh0);
-        const std::size_t& i1 = vertex_id.at(vh1);
-
-        if (c3t3.in_dimension(vh0) == 3 && !is_on_hull(vh0, c3t3))
-        {
-          const Point_3& p1 = vh1->point();
-          smoothing_vecs[i0] = smoothing_vecs[i0] + Vector_3(CGAL::ORIGIN, p1);
-          neighbors[i0]++;
-        }
-        if (c3t3.in_dimension(vh1) == 3 && !is_on_hull(vh1, c3t3))
-        {
-          const Point_3& p0 = vh0->point();
-          smoothing_vecs[i1] = smoothing_vecs[i1] + Vector_3(CGAL::ORIGIN, p0);
-          neighbors[i1]++;
-        }
-      }
-    }
-
-    for (Finite_vertices_iterator vit = tr.finite_vertices_begin();
-         vit != tr.finite_vertices_end(); ++vit)
-    {
-      const std::size_t& vid = vertex_id.at(vit);
-      if (neighbors[vid] > 1)
-      {
-        if (smoothing_vecs[vid] != CGAL::NULL_VECTOR)
-        {
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-          ++nb_done;
-#endif
-          Point_3 new_pos = CGAL::ORIGIN + smoothing_vecs[vid] / neighbors[vid];
-          const Vector_3 move(vit->point(), new_pos);
-
-          std::vector<Cell_handle> cells;
-          tr.finite_incident_cells(vit, std::back_inserter(cells));
-
-          bool selected = true;
-          for (std::size_t i = 0; i < cells.size(); ++i)
-          {
-            if (!cell_selector(cells[i]))
-            {
-              selected = false;
-              break;
-            }
-          }
-          if (!selected)
-            continue;
-
-          double frac = 1.;
-          while (frac > 0.05   /// 1/16 = 0.0625
-                && !check_inversion_and_move(vit, frac * move, cells))
-          {
-            frac = 0.5 * frac;
-          }
-        }
-      }
-    }
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    std::cout << " done (" << nb_done << " vertices smoothed)." << std::endl;
-#endif
-  }
+//            else
+//            {
+//              std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(vi);
+//              if (std::find(v_surface_indices.begin(), v_surface_indices.end(), surface_index)
+//                  == v_surface_indices.end())
+//                v_surface_indices.push_back(surface_index);
+//            }
+//          }
+//        }
+//      }
+//
+//      //collect a map of normals at surface vertices
+//      boost::unordered_map<Vertex_handle,
+//                           boost::unordered_map<Surface_patch_index, Vector_3> > vertices_normals;
+//      for (Finite_vertices_iterator vit = tr.finite_vertices_begin();
+//           vit != tr.finite_vertices_end(); ++vit)
+//      {
+//        const std::size_t& vid = vertex_id.at(vit);
+//        if (neighbors[vid] > 1)
+//        {
+//          Point_3 smoothed_position = CGAL::ORIGIN + smoothing_vecs[vid] / neighbors[vid];
+//          Vector_3 final_move = CGAL::NULL_VECTOR;
+//          Point_3 final_position;
+//
+//          std::size_t count = 0;
+//          Point_3 current_pos = vit->point();
+//
+//          const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices[vit];
+//          for (std::size_t i = 0; i < v_surface_indices.size(); ++i)
+//          {
+//            const Surface_patch_index& si = v_surface_indices[i];
+//
+//            Vector_3 normal_projection
+//              = project_on_tangent_plane(smoothed_position, current_pos, vertices_normals[vit][si]);
+//
+//            //Check if the mls surface exists to avoid degenrated cases
+//            Vector_3 mls_projection;
+//            if (project(si, normal_projection, mls_projection)){
+//              final_move = final_move + mls_projection;
+//            }
+//            else {
+//              final_move = final_move + normal_projection;
+//            }
+//            count++;
+//          }
+//
+//          if (count > 0)
+//            final_position = CGAL::ORIGIN + final_move / static_cast<FT>(count);
+//          else
+//            final_position = smoothed_position;
+//
+//          // move vertex
+//          vit->set_point(final_position);
+//
+//        }
+//        else if (neighbors[vid] > 0)
+//        {
+//          Vector_3 final_move = CGAL::NULL_VECTOR;
+//          Point_3 final_position;
+//
+//          int count = 0;
+//          Vector_3 current_move(CGAL::ORIGIN, vit->point());
+//
+//          const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices[vit];
+//          for (std::size_t i = 0; i < v_surface_indices.size(); ++i)
+//          {
+//            Surface_patch_index si = v_surface_indices[i];
+//            //Check if the mls surface exists to avoid degenrated cases
+//
+//            Vector_3 mls_projection;
+//            if (project(si, current_move, mls_projection)){
+//              final_move = final_move + mls_projection;
+//            }
+//            else {
+//              final_move = final_move + current_move;
+//            }
+//            count++;
+//          }
+//
+//          if (count > 0)
+//            final_position = CGAL::ORIGIN + final_move / count;
+//          else
+//            final_position = CGAL::ORIGIN + current_move;
+//
+//          // move vertex
+//          vit->set_point(final_position);
+//        }
+//      }
+//
+//      smoothing_vecs.clear();
+//      smoothing_vecs.resize(nbv, CGAL::NULL_VECTOR);
+//
+//      neighbors.clear();
+//      neighbors.resize(nbv, -1);
+//
+//      for (Finite_edges_iterator eit = tr.finite_edges_begin();
+//           eit != tr.finite_edges_end(); ++eit)
+//      {
+//        const Vertex_handle vh0 = eit->first->vertex(eit->second);
+//        const Vertex_handle vh1 = eit->first->vertex(eit->third);
+//
+//        const std::size_t& i0 = vertex_id.at(vh0);
+//        const std::size_t& i1 = vertex_id.at(vh1);
+//
+//        if ((/*toRemesh != REMESH_IN_COMPLEX &&*/ is_on_hull(*eit, c3t3))
+//         || (/*toRemesh != REMESH_IMAGINARY &&*/
+//             helpers::is_boundary(c3t3, *eit, cell_selector) && !c3t3.is_in_complex(*eit)))
+//        {
+//          bool update_v0 = false, update_v1 = false;
+//          if (!is_feature(vh0, c3t3))
+//            neighbors[i0] = (std::max)(0, neighbors[i0]);
+//          if (!is_feature(vh1, c3t3))
+//            neighbors[i1] = (std::max)(0, neighbors[i1]);
+//
+//          helpers::get_edge_info(*eit, update_v0, update_v1, c3t3, cell_selector);
+//          if (update_v0)
+//          {
+//            const Point_3& p1 = vh1->point();
+//            smoothing_vecs[i0] = smoothing_vecs[i0] + Vector_3(p1.x(), p1.y(), p1.z());
+//            neighbors[i0]++;
+//          }
+//          if (update_v1)
+//          {
+//            const Point_3& p0 = vh0->point();
+//            smoothing_vecs[i1] = smoothing_vecs[i1] + Vector_3(p0.x(), p0.y(), p0.z());
+//            neighbors[i1]++;
+//          }
+//        }
+//      }
+//
+//      for (Finite_vertices_iterator vit = tr.finite_vertices_begin();
+//           vit != tr.finite_vertices_end(); ++vit)
+//      {
+//        const std::size_t& vid = vertex_id.at(vit);
+//
+//        if (neighbors[vid] > 1)
+//        {
+//          Point_3 smoothed_position = CGAL::ORIGIN + smoothing_vecs[vid] / neighbors[vid];
+//          Point_3 current_pos = vit->point();
+//          Point_3 final_position = CGAL::ORIGIN;
+//
+//          if (vit->in_dimension() == 3 && is_on_hull(vit, c3t3))
+//          {
+//            Vector_3 final_move = project_on_tangent_plane(
+//              smoothed_position, current_pos, vertices_normals[vit][Surface_patch_index()]);
+//            final_position = CGAL::ORIGIN + final_move;
+//          }
+//          else {
+//            // Surface_patch_index si = helpers::make_surface_patch_index(
+//            //   vertices_subdomain_indices[vit][0], vertices_subdomain_indices[vit][1]);
+//
+//            // Vector_3 normal_projection = project_on_tangent_plane(smoothed_position,
+//            //                                                       current_pos,
+//            //                                                       vertices_normals[vit][si]);
+//            //Vector_3 mls_projection;
+//            //if (project(si, normal_projection, mls_projection) /*|| project( si, smoothed_position, mls_projection )*/){
+//            //  final_position = mls_projection;
+//            //  //final_position = smoothed_position;
+//            //}
+//            //else {
+//              final_position = smoothed_position;
+//            //}
+//            // std::cout << "MLS " << final_position[0] << " - " << final_position[1] << " : " << final_position[2] << std::endl;
+//          }
+//          /*
+//          Normal_iterator it = vertices_normals[vit->info()].end();
+//          it--;
+//          final_position = final_position + projectOnTangentPlane( smoothed_position, current_pos , it->second );
+//          */
+//
+//          vit->set_point(final_position);
+//        }
+//        else if (neighbors[vid] > 0)
+//        {
+//          if (vit->in_dimension() == 2)
+//          {
+//            // Surface_patch_index si = helpers::make_surface_patch_index(
+//            //   vertices_subdomain_indices[vit][0],
+//            //   vertices_subdomain_indices[vit][1]);
+//
+//            Vector_3 current_pos(CGAL::ORIGIN, vit->point());
+//            Vector_3 mls_projection;
+////            if (project(si, current_pos, mls_projection) /*|| project( si, smoothed_position, mls_projection )*/){
+////              vit->set_point(Point_3(mls_projection.x(), mls_projection.y(), mls_projection.z()));
+////            }
+//          }
+//        }
+//      }
+//    }
+//    smoothing_vecs.clear();
+//    smoothing_vecs.resize(nbv, CGAL::NULL_VECTOR);
+//
+//    neighbors.clear();
+//    neighbors.resize(nbv, 0);
+//
+//    for (Finite_edges_iterator eit = tr.finite_edges_begin();
+//         eit != tr.finite_edges_end(); ++eit)
+//    {
+//      //bool in_complex = c3t3.is_in_complex(*eit);
+//      //if (  toRemesh == REMESH_ALL
+//      //  || (toRemesh == REMESH_IN_COMPLEX && in_complex)
+//      //  || (toRemesh == REMESH_IMAGINARY && !in_complex))
+//      {
+//        const Vertex_handle vh0 = eit->first->vertex(eit->second);
+//        const Vertex_handle vh1 = eit->first->vertex(eit->third);
+//
+//        const std::size_t& i0 = vertex_id.at(vh0);
+//        const std::size_t& i1 = vertex_id.at(vh1);
+//
+//        if (c3t3.in_dimension(vh0) == 3 && !is_on_hull(vh0, c3t3))
+//        {
+//          const Point_3& p1 = vh1->point();
+//          smoothing_vecs[i0] = smoothing_vecs[i0] + Vector_3(CGAL::ORIGIN, p1);
+//          neighbors[i0]++;
+//        }
+//        if (c3t3.in_dimension(vh1) == 3 && !is_on_hull(vh1, c3t3))
+//        {
+//          const Point_3& p0 = vh0->point();
+//          smoothing_vecs[i1] = smoothing_vecs[i1] + Vector_3(CGAL::ORIGIN, p0);
+//          neighbors[i1]++;
+//        }
+//      }
+//    }
+//
+//    for (Finite_vertices_iterator vit = tr.finite_vertices_begin();
+//         vit != tr.finite_vertices_end(); ++vit)
+//    {
+//      const std::size_t& vid = vertex_id.at(vit);
+//      if (neighbors[vid] > 1)
+//      {
+//        if (smoothing_vecs[vid] != CGAL::NULL_VECTOR)
+//        {
+//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//          ++nb_done;
+//#endif
+//          Point_3 new_pos = CGAL::ORIGIN + smoothing_vecs[vid] / neighbors[vid];
+//          const Vector_3 move(vit->point(), new_pos);
+//
+//          std::vector<Cell_handle> cells;
+//          tr.finite_incident_cells(vit, std::back_inserter(cells));
+//
+//          bool selected = true;
+//          for (std::size_t i = 0; i < cells.size(); ++i)
+//          {
+//            if (!cell_selector(cells[i]))
+//            {
+//              selected = false;
+//              break;
+//            }
+//          }
+//          if (!selected)
+//            continue;
+//
+//          double frac = 1.;
+//          while (frac > 0.05   /// 1/16 = 0.0625
+//                && !check_inversion_and_move(vit, frac * move, cells))
+//          {
+//            frac = 0.5 * frac;
+//          }
+//        }
+//      }
+//    }
+//
+//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//    std::cout << " done (" << nb_done << " vertices smoothed)." << std::endl;
+//#endif
+//  }
 
 }//namespace internal
 }//namespace Tetrahedral_adaptive_remeshing
