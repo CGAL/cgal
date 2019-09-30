@@ -498,7 +498,7 @@ _test_cls_triangulation_3(const Triangulation &)
   v0=T3_5.insert(p115);
   v0=T3_5.insert(p116);
   v0=T3_5.insert(p117);
-  v0=T3_5.insert(p118, v0->cell()); // testing with the hint
+  v0=T3_5.insert(p118, T3_5.tds().cell(v0)); // testing with the hint
   v0=T3_5.insert(p119, v0);         // testing with the hint
   
   assert(T3_5.is_valid());
@@ -573,7 +573,7 @@ _test_cls_triangulation_3(const Triangulation &)
   // testing the locate with hint.
   Cell_handle ccc = Ti.locate(Point(100,100,0),c);
   assert(c == ccc);
-  ccc = Ti.locate(Point(100,100,0),c->vertex(0));
+  ccc = Ti.locate(Point(100,100,0),Ti.tds().vertex(c,0));
 
   Point p22(50,50,0);
   v0=Ti.insert_in_edge(p22,Ti.locate(Point(50,40,1)),i1,i2);
@@ -736,7 +736,7 @@ _test_cls_triangulation_3(const Triangulation &)
   std::cout << "   Boolean and query functions " <<std::endl;
   c=T0.infinite_cell();
   assert(T0.is_infinite(c));
-  int ind=c->index(T0.infinite_vertex());
+  int ind = T0.tds().index(c, T0.infinite_vertex());
        
   Facet f ; 
   for (i=0;i<4;i++) 
@@ -766,9 +766,9 @@ _test_cls_triangulation_3(const Triangulation &)
   // test mirrors
   c = T0.infinite_cell();
   for (i=0;i<4;i++) {
-    Cell_handle d = c->neighbor(i);
+    Cell_handle d = T0.tds().neighbor(c,i);
     int j  = T0.mirror_index(c,i);
-    assert(d->vertex(j) == T0.mirror_vertex(c,i));
+    assert(T0.tds().vertex(d,j) == T0.mirror_vertex(c,i));
     assert(Facet(d,j) == T0.mirror_facet(Facet(c,i)));
   }
 	   
@@ -794,10 +794,10 @@ _test_cls_triangulation_3(const Triangulation &)
   c= T0.locate(Point(50,0,5),lt,li,lj);
   Point pt1 = T0.point(c,0);
   c= T0.locate(Point(10,0,1),lt,li,lj);
-  Point pt2 = T0.point(c->vertex(0));
+  Point pt2 = T0.point(T0.tds().vertex(c,0));
   assert(pt1==pt2);
   c= T0.locate(Point(20,0,2),lt,li,lj);
-  Point pt3 = c->vertex(0)->point();
+  Point pt3 = T0.tds().vertex(c, 0)->point();
   assert(pt2==pt3);
      
   if (! del) { // Delaunay should not be flipped

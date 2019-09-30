@@ -100,14 +100,14 @@ public:
   typedef typename Cb::template Rebind_TDS<Tds>::Other  Cell;
 
   class Cell_data {
-    unsigned char conflict_state;
+    mutable unsigned char conflict_state;
   public:
     Cell_data() : conflict_state(0) {}
 
-    void clear()            { conflict_state = 0; }
-    void mark_in_conflict() { conflict_state = 1; }
-    void mark_on_boundary() { conflict_state = 2; }
-    void mark_processed()   { conflict_state = 1; }
+    void clear() const          { conflict_state = 0; }
+    void mark_in_conflict() const { conflict_state = 1; }
+    void mark_on_boundary() const { conflict_state = 2; }
+    void mark_processed() const   { conflict_state = 1; }
 
     bool is_clear()       const { return conflict_state == 0; }
     bool is_in_conflict() const { return conflict_state == 1; }
@@ -851,7 +851,7 @@ private:
         
         std::stack<Cell_handle> cell_stack;
         cell_stack.push(d);
-        const_cast<Tds*>(this)->tds_data(d).mark_in_conflict();
+        tds_data(d).mark_in_conflict();
         *it.first++ = d;
         
         do {
@@ -867,7 +867,7 @@ private:
                         if (! tds_data(next).is_clear())
                                 continue;
                         cell_stack.push(next);
-                        const_cast<Tds*>(this)->tds_data(next).mark_in_conflict();
+                        tds_data(next).mark_in_conflict();
                         *it.first++ = next;
                 }
         } while(!cell_stack.empty());
@@ -912,7 +912,7 @@ private:
 
     Cell_handle d = cell(v);
     cells.push_back(d);
-    const_cast<Tds*>(this)->tds_data(d).mark_in_conflict(); // AF: why did this work before
+    tds_data(d).mark_in_conflict();
     int head=0;
     int tail=1;
     do {
@@ -926,7 +926,7 @@ private:
           continue;
         cells.push_back(next);
         ++tail;
-        const_cast<Tds*>(this)->tds_data(next).mark_in_conflict();
+        tds_data(next).mark_in_conflict();
       }
       ++head;
     } while(head != tail);
@@ -1191,7 +1191,7 @@ public:
               cit != end;
               ++cit)
     {
-      const_cast<Tds*>(this)->tds_data(*cit).clear(); // AF:  why did that work before
+      tds_data(*cit).clear();
     }
   }
   
@@ -1395,7 +1395,7 @@ public:
         cit != tmp_cells.end();
         ++cit)
     {
-      const_cast<Tds*>(this)->tds_data(*cit).clear();
+      tds_data(*cit).clear();
       visit(*cit);
     } 
 
@@ -1457,7 +1457,7 @@ public:
         cit != cells.end();
         ++cit)
     {
-      const_cast<Tds*>(this)->tds_data(*cit).clear();
+      tds_data(*cit).clear();
       visit(*cit);
     }
     return visit.result();
@@ -1488,7 +1488,7 @@ public:
         cit != tmp_cells.end();
         ++cit)
     {
-      const_cast<Tds*>(this)->tds_data(*cit).clear();
+      tds_data(*cit).clear();
       visit(*cit);
     }
     return visit.result();

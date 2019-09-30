@@ -99,7 +99,7 @@ public:
 
   Cell_circulator operator++(int)
   {
-    Cell_circulator tmp(tds,*this);
+    Cell_circulator tmp(*this);
     ++(*this);
     return tmp;
   }
@@ -114,7 +114,7 @@ public:
 
   Cell_circulator operator--(int)
   {
-    Cell_circulator tmp(tds,*this);
+    Cell_circulator tmp(*this);
     --(*this);
     return tmp;
   }
@@ -323,7 +323,7 @@ public:
 
   Facet_circulator operator++(int)
   {
-    Facet_circulator tmp(tds,*this);
+    Facet_circulator tmp(*this);
     ++(*this);
     return tmp;
   }
@@ -338,7 +338,7 @@ public:
 
   Facet_circulator operator--(int)
   {
-    Facet_circulator tmp(tds, *this);
+    Facet_circulator tmp(*this);
     --(*this);
     return tmp;
   }
@@ -430,7 +430,7 @@ public:
 
   Face_circulator operator++(int)
   {
-    Face_circulator tmp(tds,*this);
+    Face_circulator tmp(this);
     ++(*this);
     return tmp;
   }
@@ -445,7 +445,7 @@ public:
 
   Face_circulator operator--(int)
   {
-    Face_circulator tmp(tds, *this);
+    Face_circulator tmp(*this);
     --(*this);
     return tmp;
   }

@@ -40,7 +40,7 @@ _test_vertex_iterator( const Triangulation &T )
 	  Vertex_handle vh = vit; // Test the conversion.
 	  n++;
 	  const Vertex & v = *vit; // Test operator*;
-	  Cell_handle c = vit->cell(); // Test operator->;
+	  Cell_handle c = T.tds().cell(vit); // Test operator->;
 	  (void) vh;
 	  (void) v;
 	  (void) c;
@@ -52,7 +52,7 @@ _test_vertex_iterator( const Triangulation &T )
     {
 	  Vertex_handle vh = fvit; // Test the conversion.
 	  const Vertex & v = *fvit; // Test operator*;
-	  Cell_handle c = fvit->cell(); // Test operator->;
+	  Cell_handle c = T.tds().cell(fvit); // Test operator->;
 	  n++;
 	  (void) vh;
 	  (void) v;
@@ -188,7 +188,7 @@ _test_triangulation_iterator( const Triangulation &T )
   {
      Cell_handle ch = FCit; // Test the conversion.
      const Cell & c = *FCit; // Test operator*.
-     Cell_handle ch2 = FCit->neighbor(0); // Test operator->.
+     Cell_handle ch2 = T.tds().neighbor(FCit, 0); // Test operator->.
      (void) ch;
      (void) c;
      (void) ch2;
@@ -210,7 +210,7 @@ _test_triangulation_iterator( const Triangulation &T )
   }
   for (FVit = T.finite_vertices_begin(); FVit != T.finite_vertices_end(); ++FVit) {
      const Vertex & v = *FVit; // Test operator*.
-     Cell_handle ch = FVit->cell(); // Test operator->.
+     Cell_handle ch = T.tds().cell(FVit); // Test operator->.
      (void) v;
      (void) ch;
      n++;
