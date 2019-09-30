@@ -4,7 +4,7 @@ Release History
 Release 5.0
 -----------
 
-Release date: September 2019
+Release date: October 2019
 
 ### Polygonal Surface Reconstruction (new package)
 
