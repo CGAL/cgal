@@ -1,6 +1,15 @@
 Release History
 ===============
 
+Release 5.1
+-----------
+
+Release date: March 2020
+
+###Polygon Mesh Processing
+-  Added a new named paramerter for `keep_large_connected_components()` that allows a dry run of this operation.
+   This means it will return the number of connected components that would be removed, but without removing them.
+
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------
 

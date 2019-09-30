@@ -91,6 +91,7 @@ CGAL_add_named_parameter(use_angle_smoothing_t, use_angle_smoothing, use_angle_s
 CGAL_add_named_parameter(use_area_smoothing_t, use_area_smoothing, use_area_smoothing)
 CGAL_add_named_parameter(use_Delaunay_flips_t, use_Delaunay_flips, use_Delaunay_flips)
 CGAL_add_named_parameter(do_project_t, do_project, do_project)
+CGAL_add_named_parameter(dry_run_t, dry_run, dry_run)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

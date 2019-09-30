@@ -394,6 +394,10 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *      is chosen by the user, but must be constructible from `0` and support `operator+=()` and
  *      comparisons.
  *    \cgalParamEnd
+ * *    \cgalParamBegin{dry_run}
+ *      a boolean paramter. If `true`, the operation will be performed normally. This is the default.
+ *      If `false`, the mesh will not be altered, but the number of components that would be removed is returned.
+ *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * \pre If a face size property map is passed by the user, `ThresholdValueType` must be the same
@@ -429,6 +433,8 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
 
   FaceSizeMap face_size_pmap = choose_parameter(get_parameter(np, internal_np::face_size_map),
                                            Constant_property_map<face_descriptor, std::size_t>(1));
+  bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run),
+                                           false);
 
   // vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
@@ -450,7 +456,8 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
       cc_to_keep.push_back(i);
   }
 
-  keep_connected_components(pmesh, cc_to_keep, face_cc, np);
+  if(!dry_run)
+    keep_connected_components(pmesh, cc_to_keep, face_cc, np);
 
   return num - cc_to_keep.size();
 }
