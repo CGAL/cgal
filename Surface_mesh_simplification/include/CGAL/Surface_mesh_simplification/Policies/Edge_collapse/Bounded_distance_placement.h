@@ -53,10 +53,24 @@ public:
     typedef typename Profile::Point Point;
     typedef typename CGAL::Kernel_traits< Point >::Kernel Kernel;
     if(op){
+
+      CGAL_assertion(!tree.empty());
+
       const Point* p = boost::get<Point>(&op);
 
+      tree.accelerate_distance_queries();
+      Point cp = tree.best_hint(*p).first; // requires accelerate distance query to be called.
+                                    // We could do better by having access to the internal kd-tree
+                                    // and call search_any_point with a fuzzy_sphere.
 
-      if(tree.do_intersect(CGAL::Sphere_3<Kernel>(*p, threshold_dist*threshold_dist))){
+      const double sqtd = threshold_dist*threshold_dist;
+
+      // if no input vertex is closer than the threshold, then
+      // any face closer than the threshold is intersected by
+      // the sphere (avoid the inclusion of the mesh into the threshold sphere)
+      if( CGAL::compare_squared_distance(*p,cp, sqtd)!=LARGER ||
+          tree.do_intersect(CGAL::Sphere_3<Kernel>(*p, sqtd)))
+      {
         return op;
       }
       return boost::none;
