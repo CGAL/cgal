@@ -40,8 +40,6 @@ int main()
   typedef CGAL::Constrained_triangulation_2<TestK, CGAL::Default, CItag> Ctwoc;
   _test_cls_constrained_triangulation(Ctwoc());
 
-  std::exit(1);
-
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with No_constraint_intersection_requiring_constructions_tag (default): " << std::endl;
 
