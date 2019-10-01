@@ -270,10 +270,10 @@ _test_triangulation_iterator( const Triangulation &T )
   Finite_vertices_iterator Vit2;
   FVit = T.finite_vertices_begin();
   Vit2=FVit;
-  assert(FVit->point()==Vit2->point());
+  assert(T.point(FVit) == T.point(Vit2));
   FVit++ ; FVit-- ; ++FVit ; --FVit ;
   assert(FVit==Vit2);
-  assert(FVit->point()==Vit2->point());
+  assert(T.point(FVit) == T.point(Vit2));
   return(n-m+f-t);
 }
 
