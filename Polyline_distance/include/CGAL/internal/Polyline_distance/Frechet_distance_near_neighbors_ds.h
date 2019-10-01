@@ -31,6 +31,7 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/number_utils.h>
 
 #include <array>
 #include <iterator>
@@ -77,25 +78,30 @@ private:
 		using FT = NT;
 
 		// const Curve& curve;
-		Point_d const p;
+		const Point_d p;
 		const NT distance;
+		const NT distance_sqr;
 
 	public:
 		QueryItem(Curve const& curve, NT distance)
 			: p(to_kd_tree_point(curve))
-			, distance(distance) {}
+			, distance(distance)
+			, distance_sqr(distance*distance) {}
 
 		bool contains(Point_and_id const& point) const {
-			auto const& q = get<0>(point);
+			auto const& q = std::get<0>(point);
 
-			// FIXME: Make more CGAL-ish
 			for (size_t i = 0; i < 4; i += 2) {
-				auto d = (p[i] - q[i])*(p[i] - q[i]) + (p[i + 1] - q[i + 1])*(p[i + 1] - q[i + 1]);
-				if (d > distance*distance) { return false; }
+				auto a = Point(p[i], p[i+1]);
+				auto b = Point(q[i], q[i+1]);
+				if (compare_squared_distance(a, b, distance_sqr) == LARGER) {
+					return false;
+				}
 			}
 			for (size_t i = 4; i < 8; ++i) {
-				auto d = std::abs(p[i] - q[i]);
-				if (d > distance) { return false; }
+				if (CGAL::abs(p[i] - q[i]) > distance) {
+					return false;
+				}
 			}
 
 			return true;
@@ -109,10 +115,31 @@ private:
 			return true;
 		}
 		bool outer_range_contains(const Kd_tree_rectangle<FT,D>& rect) const {
-			// rect[0:2] is contained in circle of start point
-			// rect[2:4] is contained in circle of end point
+			// check if rect[0:2] is contained in circle of start point AND
+			// check if rect[2:4] is contained in circle of end point
+			for (size_t i = 0; i < 4; i += 2) {
+				// TODO: this is a manual test if a rectangle is contained in a circle.
+				// Does CGAL offer anything handy for that?
+				auto point = Point(p[i], p[i+1]);
+				for (auto x: {rect.min_coord(i), rect.max_coord(i)}) {
+					for (auto y: {rect.min_coord(i+1), rect.max_coord(i+1)}) {
+						if (compare_squared_distance(Point(x,y), point, distance_sqr) == LARGER) {
+							return false;
+						}
+					}
+				}
+			}
+
 			// rect[4:8] is contained in intersection rect (see notebook)
-			return false;
+			// TODO: this is a manual test if a rectangle is contained in another rectangle.
+			// Does CGAL offer anything handy for that?
+			for (std::size_t i = 4; i < 8; ++i) {
+				if (p[i] - distance > rect.min_coord(i) || p[i] + distance < rect.max_coord(i)) {
+					return false;
+				}
+			}
+
+			return true;
 		}
 	};
 };
@@ -183,7 +210,7 @@ FrechetKdTree<Traits>::search(Curve const& curve, NT distance)
 		back_insert_it& operator++(int) { return *this; }
 		back_insert_it& operator=(back_insert_it const& it) = default;
 		back_insert_it& operator=(const Point_and_id& point_and_id) {
-			curve_ids->push_back(get<1>(point_and_id));
+			curve_ids->push_back(std::get<1>(point_and_id));
 			return *this;
 		}
 	};
