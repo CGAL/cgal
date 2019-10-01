@@ -16,6 +16,9 @@
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/internal/repair_extra.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Polygon_mesh_processing/internal/remove_degeneracies.h>
+
+#include "ui_RemoveNeedlesDialog.h"
 
 using namespace CGAL::Three;
 class Polyhedron_demo_repair_polyhedron_plugin :
@@ -43,6 +46,7 @@ public:
     actionDuplicateNMVertices = new QAction(tr("Duplicate Non-Manifold Vertices"), mw);
     actionAutorefine = new QAction(tr("Autorefine Mesh"), mw);
     actionAutorefineAndRMSelfIntersections = new QAction(tr("Autorefine and Remove Self-Intersections"), mw);
+    actionRemoveNeedlesAndCaps = new QAction(tr("Remove Needles And Caps"));
 
     actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
     actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
@@ -51,6 +55,7 @@ public:
     actionDuplicateNMVertices->setObjectName("actionDuplicateNMVertices");
     actionAutorefine->setObjectName("actionAutorefine");
     actionAutorefineAndRMSelfIntersections->setObjectName("actionAutorefineAndRMSelfIntersections");
+    actionRemoveNeedlesAndCaps->setObjectName("actionRemoveNeedlesAndCaps");
 
     actionRemoveDegenerateFaces->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionStitchCloseBorderHalfedges->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
@@ -59,6 +64,7 @@ public:
     actionDuplicateNMVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionAutorefineAndRMSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionRemoveNeedlesAndCaps->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
 
     autoConnectActions();
   }
@@ -71,7 +77,8 @@ public:
                              << actionStitchCloseBorderHalfedges
                              << actionDuplicateNMVertices
                              << actionAutorefine
-                             << actionAutorefineAndRMSelfIntersections;
+                             << actionAutorefineAndRMSelfIntersections
+                             << actionRemoveNeedlesAndCaps;
   }
 
   bool applicable(QAction*) const
@@ -102,6 +109,7 @@ public Q_SLOTS:
   void on_actionDuplicateNMVertices_triggered();
   void on_actionAutorefine_triggered();
   void on_actionAutorefineAndRMSelfIntersections_triggered();
+  void on_actionRemoveNeedlesAndCaps_triggered();
 
 private:
   QAction* actionRemoveIsolatedVertices;
@@ -111,6 +119,7 @@ private:
   QAction* actionDuplicateNMVertices;
   QAction* actionAutorefine;
   QAction* actionAutorefineAndRMSelfIntersections;
+  QAction* actionRemoveNeedlesAndCaps;
 
   Messages_interface* messages;
 }; // end Polyhedron_demo_repair_polyhedron_plugin
@@ -138,6 +147,30 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_t
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   on_actionRemoveIsolatedVertices_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
+}
+
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveNeedlesAndCaps_triggered()
+{
+  CGAL::Three::Three::CursorScopeGuard(Qt::WaitCursor);
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  if(!sm_item)
+  {
+    return;
+  }
+
+  QDialog dialog;
+  Ui::NeedleDialog ui;
+  ui.setupUi(&dialog);
+  ui.collapseBox->setValue(sm_item->diagonalBbox()*0.01);
+  if(dialog.exec() != QDialog::Accepted)
+    return;
+  CGAL::Polygon_mesh_processing::experimental::remove_almost_degenerate_faces(*sm_item->face_graph(),
+                                                                               std::cos((ui.capBox->value()/180.0) * CGAL_PI),
+                                                                              ui.needleBox->value(),
+                                                                              ui.collapseBox->value());
+  sm_item->invalidateOpenGLBuffers();
+  sm_item->itemChanged();
 }
 
 template <typename Item>
