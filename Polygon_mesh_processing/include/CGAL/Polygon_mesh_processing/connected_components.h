@@ -473,8 +473,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
 
   FaceSizeMap face_size_pmap = choose_parameter(get_parameter(np, internal_np::face_size_map),
                                            Constant_property_map<face_descriptor, std::size_t>(1));
-  bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run),
-                                           false);
+  const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
 
   // vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);

@@ -168,8 +168,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   // If no threshold is provided, compute it as a % of the bbox
   const bool is_default_area_threshold = is_default_parameter(get_parameter(np, internal_np::area_threshold));
   const bool is_default_volume_threshold = is_default_parameter(get_parameter(np, internal_np::volume_threshold));
-  const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run),
-                                           false);
+  const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << "default threshold? " << is_default_area_threshold << " " << is_default_volume_threshold << std::endl;
@@ -211,9 +210,8 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << num << " different connected components" << std::endl;
 #endif
-  if(!dry_run){
+  if(!dry_run)
     CGAL::Polygon_mesh_processing::remove_isolated_vertices(tmesh);
-  }
 
   // Compute CC-wide and total areas/volumes
   FT total_area = 0;
@@ -285,7 +283,8 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << "Removing " << ccs_to_remove.size() << " CCs" << std::endl;
 #endif
-  if(!dry_run){
+  if(!dry_run)
+  {
     remove_connected_components(tmesh, ccs_to_remove, face_cc, np);
     CGAL_postcondition(is_valid_polygon_mesh(tmesh));
   }
