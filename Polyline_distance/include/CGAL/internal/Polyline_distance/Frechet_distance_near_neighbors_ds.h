@@ -175,16 +175,13 @@ FrechetKdTree<Traits>::search(Curve const& curve, NT distance)
 		CurveIDs* curve_ids;
 	public:
 		back_insert_it(CurveIDs& curve_ids) : curve_ids(&curve_ids) {}
-		back_insert_it(back_insert_it& it): curve_ids(it.curve_ids) {}
-		back_insert_it(back_insert_it&& it): curve_ids(it.curve_ids) {}
+		back_insert_it(back_insert_it& it) = default;
+		back_insert_it(back_insert_it&& it) = default;
 
 		back_insert_it& operator*() { return *this; }
 		back_insert_it& operator++() { return *this; }
 		back_insert_it& operator++(int) { return *this; }
-		back_insert_it& operator=(back_insert_it const& it) {
-			curve_ids = it.curve_ids;
-			return *this;
-		}
+		back_insert_it& operator=(back_insert_it const& it) = default;
 		back_insert_it& operator=(const Point_and_id& point_and_id) {
 			curve_ids->push_back(get<1>(point_and_id));
 			return *this;
