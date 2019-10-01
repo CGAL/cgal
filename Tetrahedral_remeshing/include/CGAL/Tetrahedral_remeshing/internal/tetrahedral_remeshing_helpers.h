@@ -24,9 +24,6 @@
 
 #include <utility>
 
-#include <CGAL/Point_3.h>
-#include <CGAL/Weighted_point_3.h>
-
 #include <CGAL/Tetrahedral_remeshing/internal/triangulation_3_helpers.h>
 
 namespace CGAL
@@ -354,10 +351,15 @@ namespace Tetrahedral_remeshing
           std::cout << std::endl;
         std::cout << "\t" << cit->subdomain_index();
       }
-
     }
+  }
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+  namespace debug
+  {
+    // forward-declaration
+    template<typename Tr, typename CellRange>
+    void dump_cells(const CellRange& cells, const char* filename);
+
     template <typename Bimap>
     void dump_edges(const Bimap& edges, const char* filename)
     {
@@ -369,109 +371,47 @@ namespace Tetrahedral_remeshing
         ofs << "2 " << it.first.first->point()
           << " " << it.first.second->point() << std::endl;
       }
-
       ofs.close();
     }
-#endif
-  }
 
-  namespace debug {
-    // forward-declaration
-    template<typename Tr, typename CellRange>
-    void dump_cells(const CellRange& cells, const char* filename);
-  }
-  namespace helpers
-  {
-    template<typename Tr>
-    void set_time_stamps(Tr& tr)
+    template<typename Facet, typename OutputStream>
+    void dump_facet(const Facet& f, OutputStream& os)
     {
-      typedef typename Tr::Triangulation_data_structure::Vertex Vertex;
-      typedef typename Tr::Triangulation_data_structure::Cell   Cell;
-      typedef typename Tr::Vertex_handle Vertex_handle;
-      typedef typename Tr::Cell_handle   Cell_handle;
+      os << "4 ";
+      os << f.first->vertex((f.second + 1) % 4)->point() << " "
+        << f.first->vertex((f.second + 2) % 4)->point() << " "
+        << f.first->vertex((f.second + 3) % 4)->point() << " "
+        << f.first->vertex((f.second + 1) % 4)->point();
+      os << std::endl;
+    }
 
-      CGAL::Time_stamper_impl<Vertex> v_ts;
-      for (typename Tr::All_vertices_iterator vit = tr.all_vertices_begin();
-        vit != tr.all_vertices_end();
-        ++vit)
+    template<typename FacetRange>
+    void dump_facets(const FacetRange& facets, const char* filename)
+    {
+      std::ofstream os(filename);
+      for (typename FacetRange::const_iterator fit = facets.begin();
+        fit != facets.end(); ++fit)
       {
-        Vertex_handle vh = vit;
-        Vertex* pv = &*vh;
-        v_ts.initialize_time_stamp(pv);
-        v_ts.set_time_stamp(pv);
-      }
-      CGAL::Time_stamper_impl<Cell> c_ts;
-      for (typename Tr::All_cells_iterator cit = tr.all_cells_begin();
-        cit != tr.all_cells_end();
-        ++cit)
-      {
-        Cell_handle ch = cit;
-        Cell* pc = &*ch;
-        c_ts.initialize_time_stamp(pc);
-        c_ts.set_time_stamp(pc);
+        typename FacetRange::value_type f = *fit;
+        dump_facet(f, os);
       }
     }
 
-    template<typename TDS_src, typename TDS_tgt>
-    struct Vertex_converter
+    template<typename CellRange>
+    void dump_polylines(const CellRange& cells, const char* filename)
     {
-      //This operator is used to create the vertex from v_src.
-      typename TDS_tgt::Vertex operator()(const typename TDS_src::Vertex& v_src) const
+      std::ofstream ofs(filename);
+      if (!ofs) return;
+
+      for (typename CellRange::const_iterator it = cells.begin();
+        it != cells.end(); ++it)
       {
-        typedef typename CGAL::Kernel_traits<
-          typename TDS_src::Vertex::Point>::Kernel GT_src;
-        typedef typename CGAL::Kernel_traits<
-          typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
-        CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
-
-        typename TDS_tgt::Vertex v_tgt;
-        v_tgt.set_point(conv(v_src.point()));
-        v_tgt.set_time_stamp(-1);
-        v_tgt.set_dimension(v_src.info());//-1 if unset, 0,1,2, or 3 if set
-        return v_tgt;
+        for (int i = 0; i < 4; ++i)
+          dump_facet(std::make_pair(*it, i), ofs);
       }
-      //This operator is meant to be used in case heavy data should transferred to v_tgt.
-      void operator()(const typename TDS_src::Vertex& v_src,
-        typename TDS_tgt::Vertex& v_tgt) const
-      {
-        typedef typename CGAL::Kernel_traits<
-          typename TDS_src::Vertex::Point>::Kernel GT_src;
-        typedef typename CGAL::Kernel_traits<
-          typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
-        CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
+      ofs.close();
+    }
 
-        v_tgt.set_point(conv(v_src.point()));
-        v_tgt.set_dimension(v_src.info());
-      }
-    };
-
-    template<typename TDS_src, typename TDS_tgt>
-    struct Cell_converter
-    {
-      //This operator is used to create the cell from c_src.
-      typename TDS_tgt::Cell operator()(const typename TDS_src::Cell& c_src) const
-      {
-        typename TDS_tgt::Cell c_tgt;
-        c_tgt.info() = c_src.info();
-        c_tgt.input_cell() = c_src;
-        c_tgt.set_time_stamp(-1);
-        return c_tgt;
-      }
-      //This operator is meant to be used in case heavy data should transferred to c_tgt.
-      void operator()(const typename TDS_src::Cell& c_src,
-        typename TDS_tgt::Cell& c_tgt) const
-      {
-        c_tgt.info() = c_src.info();
-        c_tgt.input_cell() = c_src;
-      }
-    };
-
-
-  }//end namespace helpers
-
-
-  namespace debug
-  {
     template<typename Tr>
     void dump_surface_off(const Tr& tr, const char* filename)
     {
@@ -814,17 +754,17 @@ namespace Tetrahedral_remeshing
       dump_cells<Tr>(cells, indices, filename);
     }
 
-    template<typename VertexPairsSet>
-    void dump_edges(const VertexPairsSet& edges, const char* filename)
-    {
-      std::ofstream ofs(filename);
-      BOOST_FOREACH(typename VertexPairsSet::key_type vp, edges)
-      {
-        ofs << "2 " << vp.first->point()
-          << " " << vp.second->point() << std::endl;
-      }
-      ofs.close();
-    }
+    //template<typename VertexPairsSet>
+    //void dump_edges(const VertexPairsSet& edges, const char* filename)
+    //{
+    //  std::ofstream ofs(filename);
+    //  BOOST_FOREACH(typename VertexPairsSet::key_type vp, edges)
+    //  {
+    //    ofs << "2 " << vp.first->point()
+    //      << " " << vp.second->point() << std::endl;
+    //  }
+    //  ofs.close();
+    //}
   }// end namespace debug
 
 }

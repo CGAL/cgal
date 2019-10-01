@@ -300,7 +300,8 @@ namespace internal
     Tr& tr = c3t3.triangulation();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-    CGAL::debug::dump_vertices_by_dimension(c3t3.triangulation(), "c3t3_vertices_before_smoothing");
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      c3t3.triangulation(), "c3t3_vertices_before_smoothing");
 #endif
 
     const std::size_t nbv = tr.number_of_vertices();
@@ -379,7 +380,8 @@ namespace internal
     }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-    CGAL::debug::dump_vertices_by_dimension(c3t3.triangulation(), "c3t3_vertices_after_smoothing");
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      c3t3.triangulation(), "c3t3_vertices_after_smoothing");
 #endif
   }
 

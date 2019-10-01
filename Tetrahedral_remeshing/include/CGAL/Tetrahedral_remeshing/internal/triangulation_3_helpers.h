@@ -44,48 +44,6 @@
 
 namespace CGAL
 {
-  namespace debug
-  {
-    template<typename Facet, typename OutputStream>
-    void dump_facet(const Facet& f, OutputStream& os)
-    {
-      os << "4 ";
-      os << f.first->vertex((f.second + 1) % 4)->point() << " "
-        << f.first->vertex((f.second + 2) % 4)->point() << " "
-        << f.first->vertex((f.second + 3) % 4)->point() << " "
-        << f.first->vertex((f.second + 1) % 4)->point();
-      os << std::endl;
-    }
-
-    template<typename FacetRange>
-    void dump_facets(const FacetRange& facets, const char* filename)
-    {
-      std::ofstream os(filename);
-      for (typename FacetRange::const_iterator fit = facets.begin();
-           fit != facets.end(); ++fit)
-      {
-        typename FacetRange::value_type f = *fit;
-        dump_facet(f, os);
-      }
-    }
-
-    template<typename CellRange>
-    void dump_polylines(const CellRange& cells, const char* filename)
-    {
-      std::ofstream ofs(filename);
-      if (!ofs) return;
-
-      for (typename CellRange::const_iterator it = cells.begin();
-        it != cells.end(); ++it)
-      {
-        for (int i = 0; i < 4; ++i)
-          dump_facet(std::make_pair(*it, i), ofs);
-      }
-      ofs.close();
-    }
-
-  } // end namespace debug (in ::CGAL)
-
   template<typename K>
   CGAL::Point_3<K> point(const CGAL::Point_3<K>& p)
   {
@@ -704,73 +662,6 @@ namespace CGAL
     }
     return oit;
   }
-
-namespace internal
-{
-  template<typename Tr, typename IncidentFacetsMap>
-  void add_to_incidence_map(const typename Tr::Cell_handle& c,
-                            const int& index,
-                            IncidentFacetsMap& incidence_map,
-                            const bool verbose = false)
-  {
-    CGAL_USE(verbose);
-    typedef typename IncidentFacetsMap::key_type Vertex_set;
-    Vertex_set vertices;
-    vertices.insert(c->vertex((index + 1) % 4));
-    vertices.insert(c->vertex((index + 2) % 4));
-    vertices.insert(c->vertex((index + 3) % 4));
-    CGAL_assertion(vertices.size() == 3);
-
-    typename IncidentFacetsMap::iterator it = incidence_map.find(vertices);
-    if (it == incidence_map.end())
-    {
-      std::vector<typename Tr::Facet> facets(1);
-      facets[0] = typename Tr::Facet(c, index);
-      incidence_map.insert(std::make_pair(vertices, facets));
-    }
-    else
-    {
-      it->second.push_back(typename Tr::Facet(c, index));
-
-      CGAL_assertion(it->second.size() == 2);
-      CGAL_assertion(it->second[0] != it->second[1]);
-    }
-  }
-
-  template<typename Tr>
-  typename Tr::Cell_handle
-    create_neighbor_infinite_cell(const typename Tr::Cell_handle c,
-                                  const int i,
-                                  Tr& tr)
-  {
-    CGAL_assertion(!tr.is_infinite(c));
-    CGAL_assertion_code(std::size_t nbc = tr.number_of_cells());
-
-    typedef typename Tr::Cell_handle Cell_handle;
-    Cell_handle opp_c;
-    // the infinite cell that we are creating needs to be well oriented
-    if (i == 0 || i == 2)
-    {
-      opp_c = create_cell(c->vertex((i + 3) % 4),
-        tr.infinite_vertex(),
-        c->vertex((i + 1) % 4),
-        c->vertex((i + 2) % 4), tr);
-    }
-    else
-    {
-      opp_c = create_cell(tr.infinite_vertex(),
-        c->vertex((i + 1) % 4),
-        c->vertex((i + 2) % 4),
-        c->vertex((i + 3) % 4), tr);
-    }
-    tr.infinite_vertex()->set_cell(opp_c);
-
-    CGAL_assertion(nbc + 1 == tr.number_of_cells());
-    return opp_c;
-  }
-
-
-}//end namespace internal
 
 }//end namespace CGAL
 

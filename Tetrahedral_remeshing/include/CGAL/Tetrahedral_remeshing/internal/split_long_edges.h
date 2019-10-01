@@ -192,7 +192,7 @@ namespace internal
     }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-    helpers::dump_edges(long_edges, "long_edges.polylines.txt");
+    debug::dump_edges(long_edges, "long_edges.polylines.txt");
 
     std::ofstream ofs("midpoints.off");
     ofs << "OFF" << std::endl;

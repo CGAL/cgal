@@ -970,7 +970,7 @@ namespace internal
     }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-    helpers::dump_edges(short_edges, "short_edges.polylines.txt");
+    debug::dump_edges(short_edges, "short_edges.polylines.txt");
 #endif
 
     while(!short_edges.empty())

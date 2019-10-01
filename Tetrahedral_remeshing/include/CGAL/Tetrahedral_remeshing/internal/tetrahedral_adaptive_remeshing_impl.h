@@ -37,10 +37,6 @@
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-#include "../../../limited_aperture_helpers.h"
-#endif
-
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
@@ -355,7 +351,7 @@ namespace internal
         }
       }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      CGAL::debug::dump_facets_in_complex(m_c3t3, "facets_in_complex.off");
+      CGAL::Tetrahedral_remeshing::debug::dump_facets_in_complex(m_c3t3, "facets_in_complex.off");
 #endif
 
       //tag edges
@@ -383,7 +379,7 @@ namespace internal
         }
       }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      CGAL::debug::dump_edges_in_complex(m_c3t3, "edges_in_complex.polylines.txt");
+      CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3, "edges_in_complex.polylines.txt");
 #endif
 
       //tag vertices
@@ -413,7 +409,8 @@ namespace internal
       std::cout << "\t edges    = " << nbe << std::endl;
       std::cout << "\t vertices = " << nbv << std::endl;
 
-      CGAL::debug::dump_vertices_by_dimension(m_c3t3.triangulation(), "c3t3_vertices_");
+      CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+        m_c3t3.triangulation(), "c3t3_vertices_");
 #endif
     }
 
