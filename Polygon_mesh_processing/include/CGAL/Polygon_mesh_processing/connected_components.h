@@ -395,8 +395,8 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *      comparisons.
  *    \cgalParamEnd
  * *    \cgalParamBegin{dry_run}
- *      a boolean paramter. If `true`, the operation will be performed normally. This is the default.
- *      If `false`, the mesh will not be altered, but the number of components that would be removed is returned.
+ *      a boolean paramter. If `false`, the operation will be performed normally. This is the default.
+ *      If `true`, the mesh will not be altered, but the number of components that would be removed is returned.
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
