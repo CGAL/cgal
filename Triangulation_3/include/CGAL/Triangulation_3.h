@@ -325,7 +325,7 @@ public:
       for(int iVertex = 0 ; locked && iVertex < 4 ; ++iVertex)
       {
         locked = m_lock_ds->is_locked_by_this_thread(
-                              tds.vertex(cell_handle, iVertex)->point());
+                              tds().vertex(cell_handle, iVertex)->point());
       }
     }
     return locked;
@@ -1625,7 +1625,7 @@ protected:
       int i = tds().index(f, inserted);
       tds().set_vertex(f, i, v);
     }
-    v->set_cell(cell(inserted));
+    tds().set_cell(v, tds().cell(inserted));
 
     tds().delete_vertex(inserted);
   }
@@ -3900,7 +3900,7 @@ insert_in_conflict(const Point& p,
       tds().set_adjacency(c0, 1, c1, 0);
       tds().set_adjacency(bound[0], 1, c0, 0);
       tds().set_adjacency(c1, 1, bound[1], 0);
-      tds.set_cell(tds().vertex(bound[0], 0), bound[0]);
+      tds().set_cell(tds().vertex(bound[0], 0), bound[0]);
       tds().set_cell(tds().vertex(bound[1], 1), bound[1]);
       tds().set_cell(v, c0);
       v->set_point (p);
@@ -4374,7 +4374,7 @@ make_hole_2D(Vertex_handle v, std::list<Edge_2D>& hole, VertexRemover& remover)
     Cell_handle fn = tds().neighbor(f, i);
     int in = tds().index(fn, f);
 
-    tds().vertex(f, cw(i))->set_cell(fn);
+    tds().set_cell(tds().vertex(f, cw(i)), fn);
     tds().set_neighbor(fn, in, Cell_handle());
 
     hole.push_back(Edge_2D(fn, in));
@@ -4830,7 +4830,7 @@ remove_1D(Vertex_handle v, VertexRemover& remover)
   CGAL_triangulation_precondition (dimension() == 1);
 
   Cell_handle c1 = tds().cell(v);
-  Cell_handle c2 = c1->neighbor(tds().index(c1, v) == 0 ? 1 : 0);
+  Cell_handle c2 = tds().neighbor(c1, tds().index(c1, v) == 0 ? 1 : 0);
   remover.add_hidden_points(c1);
   remover.add_hidden_points(c2);
 
@@ -4934,7 +4934,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover)
     if(! is_infinite(vertices[i]))
     {
       Vertex_handle vh = remover.tmp.insert(vertices[i]->point(), ch);
-      ch = tds.cell(vh);
+      ch = tds().cell(vh);
       vmap[vh] = vertices[i];
     }
     else
@@ -5014,11 +5014,12 @@ remove_3D(Vertex_handle v, VertexRemover& remover)
 
     // Create a new cell and glue it to the outer surface
     Cell_handle new_ch = tds().create_cell();
-    new_ch->set_vertices(vmap[tds().vertex(i_ch, 0)], vmap[tds().vertex(i_ch, 1)],
-                         vmap[tds().vertex(i_ch, 2)], vmap[tds().vertex(i_ch, 3)]);
+    tds().set_vertices(new_ch,
+                       vmap[tds().vertex(i_ch, 0)], vmap[tds().vertex(i_ch, 1)],
+                       vmap[tds().vertex(i_ch, 2)], vmap[tds().vertex(i_ch, 3)]);
 
-    o_ch->set_neighbor(o_i,new_ch);
-    new_ch->set_neighbor(i_i, o_ch);
+    tds().set_neighbor(o_ch, o_i,new_ch);
+    tds().set_neighbor(new_ch, i_i, o_ch);
 
     // For the other faces check, if they can also be glued
     for(i = 0; i < 4; i++)
@@ -5042,8 +5043,8 @@ remove_3D(Vertex_handle v, VertexRemover& remover)
           typename Vertex_triple_Facet_map::value_type o_vt_f_pair2 = *oit2;
           Cell_handle o_ch2 = o_vt_f_pair2.second.first;
           int o_i2 = o_vt_f_pair2.second.second;
-          o_ch2->set_neighbor(o_i2,new_ch);
-          new_ch->set_neighbor(i, o_ch2);
+          tds().set_neighbor(o_ch2, o_i2,new_ch);
+          tds().set_neighbor(new_ch, i, o_ch2);
           outer_map.erase(oit2);
         }
       }
@@ -5131,7 +5132,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover,
     if(! is_infinite(adj_vertices[i]))
     {
       Vertex_handle vh = remover.tmp.insert(adj_vertices[i]->point(), ch);
-      ch = tds.cell(vh);
+      ch = tds().cell(vh);
       vmap[vh] = adj_vertices[i];
     }
     else
@@ -5212,11 +5213,12 @@ remove_3D(Vertex_handle v, VertexRemover& remover,
 
     // create a new cell and glue it to the outer surface
     Cell_handle new_ch = tds().create_cell();
-    new_ch->set_vertices(vmap[tds().vertex(i_ch, 0)], vmap[tds().vertex(i_ch, 1)],
-                         vmap[tds().vertex(i_ch, 2)], vmap[tds().vertex(i_ch, 3)]);
+    tds().set_vertices(new_ch,
+                       vmap[tds().vertex(i_ch, 0)], vmap[tds().vertex(i_ch, 1)],
+                       vmap[tds().vertex(i_ch, 2)], vmap[tds().vertex(i_ch, 3)]);
 
-    o_ch->set_neighbor(o_i,new_ch);
-    new_ch->set_neighbor(i_i, o_ch);
+    tds().set_neighbor(o_ch, o_i,new_ch);
+    tds().set_neighbor(new_ch, i_i, o_ch);
 
     // for the other faces check, if they can also be glued
     for(i = 0; i < 4; i++)
@@ -5240,8 +5242,8 @@ remove_3D(Vertex_handle v, VertexRemover& remover,
           typename Vertex_triple_Facet_map::value_type o_vt_f_pair2 = *oit2;
           Cell_handle o_ch2 = o_vt_f_pair2.second.first;
           int o_i2 = o_vt_f_pair2.second.second;
-          o_ch2->set_neighbor(o_i2,new_ch);
-          new_ch->set_neighbor(i, o_ch2);
+          tds().set_neighbor(o_ch2, o_i2,new_ch);
+          tds().set_neighbor(new_ch, i, o_ch2);
           outer_map.erase(oit2);
         }
       }
@@ -5434,7 +5436,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover, OutputItCells fit)
     if(! is_infinite(vertices[i]))
     {
       Vertex_handle vh = remover.tmp.insert(vertices[i]->point(), ch);
-      ch = tds.cell(vh);
+      ch = tds().cell(vh);
       vmap[vh] = vertices[i];
     }
     else
@@ -5517,11 +5519,12 @@ remove_3D(Vertex_handle v, VertexRemover& remover, OutputItCells fit)
     Cell_handle new_ch = tds().create_cell();
     *fit++ = new_ch;
 
-    new_ch->set_vertices(vmap[tds().vertex(i_ch, 0)], vmap[tds().vertex(i_ch, 1)],
-                         vmap[tds().vertex(i_ch, 2)], vmap[tds().vertex(i_ch, 3)]);
+    tds().set_vertices(new_ch,
+                       vmap[tds().vertex(i_ch, 0)], vmap[tds().vertex(i_ch, 1)],
+                       vmap[tds().vertex(i_ch, 2)], vmap[tds().vertex(i_ch, 3)]);
 
-    o_ch->set_neighbor(o_i,new_ch);
-    new_ch->set_neighbor(i_i, o_ch);
+    tds().set_neighbor(o_ch, o_i,new_ch);
+    tds().set_neighbor(new_ch, i_i, o_ch);
 
     // for the other faces check, if they can also be glued
     for(i = 0; i < 4; i++)
@@ -5544,8 +5547,8 @@ remove_3D(Vertex_handle v, VertexRemover& remover, OutputItCells fit)
           typename Vertex_triple_Facet_map::value_type o_vt_f_pair2 = *oit2;
           Cell_handle o_ch2 = o_vt_f_pair2.second.first;
           int o_i2 = o_vt_f_pair2.second.second;
-          o_ch2->set_neighbor(o_i2, new_ch);
-          new_ch->set_neighbor(i, o_ch2);
+          tds().set_neighbor(o_ch2, o_i2, new_ch);
+          tds().set_neighbor(new_ch, i, o_ch2);
           outer_map.erase(oit2);
         }
       }
@@ -5646,7 +5649,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
 
   if((lt != OUTSIDE_AFFINE_HULL) && (dim == 1))
   {
-    if(loc->has_vertex(v))
+    if(tds().has_vertex(loc, v))
     {
       v->set_point(p);
     }
@@ -5663,9 +5666,9 @@ move_if_no_collision(Vertex_handle v, const Point& p,
       tds().set_vertex(f, 1, tds().vertex(g,1));
       tds().set_neighbor(f,0, tds().neighbor(g, 0));
       tds().set_neighbor(tds().neighbor(g, 0), 1, f);
-      tds().set_cell(tds.vertex(g, 1), f);
+      tds().set_cell(tds().vertex(g, 1), f);
       tds().delete_cell(g);
-      Cell_handle f_ins = tds.cell(inserted);
+      Cell_handle f_ins = tds().cell(inserted);
       i = tds().index(f_ins, inserted);
       if(i == 0)
         f_ins = tds().neighbor(f_ins, 1);
@@ -5675,7 +5678,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
       tds().set_vertex(f_ins, 1, v);
       tds().set_vertex(g_ins, 0, v);
       v->set_point(p);
-      tds().set_cell(v, tds.cell(inserted));
+      tds().set_cell(v, tds().cell(inserted));
       tds().delete_vertex(inserted);
     }
     return v;
@@ -5721,13 +5724,13 @@ move_if_no_collision(Vertex_handle v, const Point& p,
     fill_hole_2D(hole, remover);
 
     // fixing pointer
-    Cell_handle fc = tds.cell(inserted), done(fc);
+    Cell_handle fc = tds().cell(inserted), done(fc);
     std::vector<Cell_handle> faces_pt;
     faces_pt.reserve(16);
     do
     {
       faces_pt.push_back(fc);
-      fc = fc->neighbor((tds().index(fc, inserted) + 1)%3);
+      fc = tds().neighbor(fc, (tds().index(fc, inserted) + 1)%3);
     }
     while(fc != done);
 
@@ -5739,7 +5742,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
       tds().set_vertex(f, i, v);
     }
     v->set_point(p);
-    tds().set_cell(v, tds.cell(inserted));
+    tds().set_cell(v, tds().cell(inserted));
 
     tds().delete_vertex(inserted);
 
@@ -5822,7 +5825,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
     if(! is_infinite(vertices[i]))
     {
       Vertex_handle vh = remover.tmp.insert(vertices[i]->point(), ch);
-      ch = tds.cell(vh);
+      ch = tds().cell(vh);
       vmap[vh] = vertices[i];
     }
     else
@@ -5954,7 +5957,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
   }
 
   v->set_point(p);
-  tds().set_cell(v, tds.cell(inserted));
+  tds().set_cell(v, tds().cell(inserted));
   tds().delete_vertex(inserted);
   tds().delete_cells(hole.begin(), hole.end());
   return v;
@@ -6071,7 +6074,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
       tds().set_cell(tds().vertex(g, 1), f);
       tds().delete_cell(g);
       *fit++ = f;
-      Cell_handle f_ins = tds.cell(inserted);
+      Cell_handle f_ins = tds().cell(inserted);
       i = tds().index(f_ins, inserted);
       if(i==0)
         f_ins = tds().neighbor(f_ins,1);
@@ -6081,7 +6084,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
       tds().set_vertex(f_ins, 1, v);
       tds().set_vertex(g_ins, 0, v);
       v->set_point(p);
-      tds().set_cell(v, tds.cell(inserted));
+      tds().set_cell(v, tds().cell(inserted));
       tds().delete_vertex(inserted);
     }
 
@@ -6134,7 +6137,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
     // This is insert must be from Delaunay (or the particular trian.)
     // not Triangulation_3 !
     Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
-    Cell_handle c = tds.cell(inserted), end = c;
+    Cell_handle c = tds().cell(inserted), end = c;
     do
     {
       cells_set.insert(c);
@@ -6148,7 +6151,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
     fill_hole_2D(hole, remover, fit);
 
     // fixing pointer
-    Cell_handle fc = tds.cell(inserted), done(fc);
+    Cell_handle fc = tds().cell(inserted), done(fc);
     std::vector<Cell_handle> faces_pt;
     faces_pt.reserve(16);
     do
@@ -6166,7 +6169,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
       tds().set_vertex(f, i, v);
     }
     v->set_point(p);
-    tds().set_cell(v, tds.cell(inserted));
+    tds().set_cell(v, tds().cell(inserted));
 
     tds().delete_vertex(inserted);
 
@@ -6278,7 +6281,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
     if(! is_infinite(vertices[i]))
     {
       Vertex_handle vh = remover.tmp.insert(vertices[i]->point(), ch);
-      ch = tds.cell(vh);
+      ch = tds().cell(vh);
       vmap[vh] = vertices[i];
     }else {
       inf = true;
@@ -6408,7 +6411,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
   }
 
   v->set_point(p);
-  tds().set_cell(v, tds.cell(inserted));
+  tds().set_cell(v, tds().cell(inserted));
   tds().delete_vertex(inserted);
   tds().delete_cells(hole.begin(), hole.end());
 
@@ -6597,7 +6600,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover& rem
       {
         Vertex_handle vv = mp_vps[vps[i]];
         Vertex_handle vh = remover.tmp.insert(vv->point(), ch);
-        ch = tds.cell(vh);
+        ch = tds().cell(vh);
         vmap[vh] = vv;
       }
 
@@ -6618,7 +6621,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover& rem
         if(!this->is_infinite(vertices[i]))
         {
           Vertex_handle vh = remover.tmp.insert(vertices[i]->point(), ch);
-          ch = tds.cell(vh);
+          ch = tds().cell(vh);
           vmap[vh] = vertices[i];
         }
         else
