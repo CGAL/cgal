@@ -32,31 +32,29 @@
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Dimension.h>
 
-// FIXME: vector too restricted?
+#include <array>
 #include <iterator>
+#include <tuple>
 #include <vector>
-
-#include <boost/iterator/zip_iterator.hpp>
 
 namespace CGAL
 {
 
-// TODO: which boost parts can be replaced by modern C++ std library?
 template <class Traits>
 class FrechetKdTree
 {
-	// FIXME: somehow make it more clear that those come from the Fréchet things...
 	using NT = typename Traits::FT;
 	using Point = typename Traits::Point_2;
 	using Curve = std::vector<Point>;
 	using Curves = std::vector<Curve>;
-	using CurveIDs = std::vector<std::size_t>; // FIXME: 
+	using CurveIDs = std::vector<std::size_t>;
 
 	using D = Dimension_tag<8>;
+	// FIXME: is fixing Cartesian_d too non-general here?
 	using Traits_d = Cartesian_d<typename Traits::FT>;
 	using Tree_traits_base = Search_traits_d<Traits_d, D>;
 	using Point_d = typename Tree_traits_base::Point_d;
-	using Point_and_id = boost::tuple<Point_d,std::size_t>; // TODO: use some ID type here instead of size_t
+	using Point_and_id = std::tuple<Point_d,std::size_t>;
 	using Tree_traits = CGAL::Search_traits_adapter<Point_and_id, CGAL::Nth_of_tuple_property_map<0, Point_and_id>, Tree_traits_base>;
 	using Tree = Kd_tree<Tree_traits>;
 
@@ -68,9 +66,8 @@ public:
 	CurveIDs search(Curve const& curve, NT distance);
 
 private:
-	Kd_tree<Tree_traits> kd_tree; // FIXME: what traits?
+	Kd_tree<Tree_traits> kd_tree;
 
-	// FIXME: rename
 	static Point_d to_kd_tree_point(const Curve& curve);
 
 	class QueryItem {
@@ -138,8 +135,7 @@ FrechetKdTree<Traits>::to_kd_tree_point(const Curve& curve)
 		y_max = std::max(y_max, point.y());
 	}
 
-	// FIXME: this is ugly......
-	std::vector<NT> values = {
+	std::array<NT, D::value> values = {
 		curve.front().x(),
 		curve.front().y(),
 		curve.back().x(),
@@ -173,16 +169,31 @@ template <class Traits>
 CurveIDs
 FrechetKdTree<Traits>::search(Curve const& curve, NT distance)
 {
-	using Candidates = std::vector<Point_and_id>;
-	Candidates candidates;
+	// TODO: This is the best way I found to not copy the 8-dimensional point,
+	// but only the id. Is there an even better way?
+	class back_insert_it {
+		CurveIDs* curve_ids;
+	public:
+		back_insert_it(CurveIDs& curve_ids) : curve_ids(&curve_ids) {}
+		back_insert_it(back_insert_it& it): curve_ids(it.curve_ids) {}
+		back_insert_it(back_insert_it&& it): curve_ids(it.curve_ids) {}
 
-	kd_tree.search(std::back_insert_iterator<Candidates>(candidates), QueryItem(curve, distance));
+		back_insert_it& operator*() { return *this; }
+		back_insert_it& operator++() { return *this; }
+		back_insert_it& operator++(int) { return *this; }
+		back_insert_it& operator=(back_insert_it const& it) {
+			curve_ids = it.curve_ids;
+			return *this;
+		}
+		back_insert_it& operator=(const Point_and_id& point_and_id) {
+			curve_ids->push_back(get<1>(point_and_id));
+			return *this;
+		}
+	};
 
-	// FIXME: ugly.........
 	CurveIDs result;
-	for (auto const& candidate: candidates) {
-		result.push_back(get<1>(candidate));
-	}
+	kd_tree.search(back_insert_it(result), QueryItem(curve, distance));
+
 	return result;
 }
 

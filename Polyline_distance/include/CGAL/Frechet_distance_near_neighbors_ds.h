@@ -28,7 +28,6 @@
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/internal/Polyline_distance/Frechet_distance_near_neighbors_ds.h>
 
-// FIXME: vector too restricted?
 #include <iterator>
 #include <vector>
 
@@ -47,7 +46,7 @@ class FrechetDistanceNearNeighborsDS
 	using Point = typename Traits::Point_2;
 	using Curve = std::vector<Point>;
 	using Curves = std::vector<Curve>;
-	using CurveIDs = std::vector<std::size_t>; // FIXME: 
+	using CurveIDs = std::vector<std::size_t>;
 
 public:
 	FrechetDistanceNearNeighborsDS() = default;
