@@ -240,13 +240,14 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   for(face_descriptor f : faces(tmesh))
   {
     const std::size_t i = face_cc[f];
-    if(!cc_closeness[i])
+    if(!cc_closeness[i]){
       continue;
+    }
 
-      const FT fv = cv3(origin,
-                        get(vpm, target(halfedge(f, tmesh), tmesh)),
-                        get(vpm, target(next(halfedge(f, tmesh), tmesh), tmesh)),
-                        get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
+    const FT fv = cv3(origin,
+                      get(vpm, target(halfedge(f, tmesh), tmesh)),
+                      get(vpm, target(next(halfedge(f, tmesh), tmesh), tmesh)),
+                      get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
 
     component_volumes[i] += fv;
   }
@@ -284,7 +285,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << "Removing " << ccs_to_remove.size() << " CCs" << std::endl;
 #endif
-  if(dry_run){
+  if(!dry_run){
     remove_connected_components(tmesh, ccs_to_remove, face_cc, np);
     CGAL_postcondition(is_valid_polygon_mesh(tmesh));
   }

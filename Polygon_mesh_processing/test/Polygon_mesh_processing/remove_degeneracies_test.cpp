@@ -248,7 +248,11 @@ void remove_negligible_connected_components(const char* filename)
 
   // Could also have used default paramaters, which does the job by itself
   std::cout << "---------\ndefault values..." << std::endl;
-  PMP::remove_connected_components_of_negligible_size(mesh_cpy);
+
+  std::size_t nb_to_be_rm = PMP::remove_connected_components_of_negligible_size(mesh_cpy, CGAL::parameters::dry_run(true));
+  assert(nb_to_be_rm ==
+  PMP::remove_connected_components_of_negligible_size(mesh_cpy));
+
   assert(PMP::internal::number_of_connected_components(mesh_cpy) == 1);
 }
 
@@ -308,6 +312,7 @@ void test()
                                6, 7, 2, 4, 3, 3);
 
   remove_negligible_connected_components<K, Mesh>("data_degeneracies/small_ccs.off");
+
 }
 
 template <typename Kernel>
