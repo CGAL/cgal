@@ -273,7 +273,7 @@ int main()
                          .use_safety_constraints(A<56>(56))
                          .area_threshold(A<57>(57))
                          .volume_threshold(A<58>(58))
-                         .dry_run(A<58>(59))
+                         .dry_run(A<59>(59))
        );
 
   return EXIT_SUCCESS;
