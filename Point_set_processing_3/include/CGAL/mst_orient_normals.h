@@ -128,7 +128,8 @@ class Default_constrained_map
 public:
 
   typedef boost::readable_property_map_tag     category;
-  typedef typename ForwardIterator::value_type key_type;
+  typedef typename std::iterator_traits<
+            ForwardIterator>::value_type       key_type;
   typedef bool                                 value_type;
   typedef value_type                           reference;
 

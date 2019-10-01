@@ -1964,8 +1964,10 @@ void Scene_polyhedron_selection_item::validateMoveVertex()
   viewer->setManipulatedFrame(NULL);
   invalidateOpenGLBuffers();
   poly_item->itemChanged();
-  if(property("need_hl_restore").toBool())
+  if(property("need_hl_restore").toBool()){
     set_highlighting(true);
+    setProperty("need_hl_restore", false);
+  }
   Q_EMIT updateInstructions("Select a vertex. (1/2)");
 }
 

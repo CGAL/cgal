@@ -787,19 +787,20 @@ namespace internal {
           //fix constrained case
           CGAL_assertion((is_constrained(vkept) || is_corner(vkept) || is_on_patch_border(vkept)) ==
                          (is_va_constrained || is_vb_constrained || is_va_on_constrained_polyline || is_vb_on_constrained_polyline));
-          fix_degenerate_faces(vkept, short_edges, sq_low, collapse_constraints);
-
+          if (fix_degenerate_faces(vkept, short_edges, sq_low, collapse_constraints))
+          {
 #ifdef CGAL_PMP_REMESHING_DEBUG
-          debug_status_map();
-          CGAL_assertion(!incident_to_degenerate(halfedge(vkept, mesh_)));
+            debug_status_map();
+            CGAL_assertion(!incident_to_degenerate(halfedge(vkept, mesh_)));
 #endif
 
-          //insert new/remaining short edges
-          for(halfedge_descriptor ht : halfedges_around_target(vkept, mesh_))
-          {
-            double sqlen = sqlength(ht);
-            if ((sqlen < sq_low) && is_collapse_allowed(edge(ht, mesh_), collapse_constraints))
-              short_edges.insert(short_edge(ht, sqlen));
+            //insert new/remaining short edges
+            for (halfedge_descriptor ht : halfedges_around_target(vkept, mesh_))
+            {
+              double sqlen = sqlength(ht);
+              if ((sqlen < sq_low) && is_collapse_allowed(edge(ht, mesh_), collapse_constraints))
+                short_edges.insert(short_edge(ht, sqlen));
+            }
           }
         }//end if(collapse_ok)
       }
@@ -1599,7 +1600,7 @@ private:
     }
 
     template<typename Bimap>
-    void fix_degenerate_faces(const vertex_descriptor& v,
+    bool fix_degenerate_faces(const vertex_descriptor& v,
                               Bimap& short_edges,
                               const double& sq_low,
                               const bool collapse_constraints)
@@ -1617,6 +1618,10 @@ private:
           degenerate_faces.insert(h);
       }
 
+      if(degenerate_faces.empty())
+        return true;
+
+      bool done = false;
       while(!degenerate_faces.empty())
       {
         halfedge_descriptor h = *(degenerate_faces.begin());
@@ -1653,10 +1658,15 @@ private:
 
             short_edges.left.erase(hf);
             short_edges.left.erase(hfo);
-            CGAL_assertion( is_flip_topologically_allowed(edge(hf, mesh_)) );
+
             CGAL_assertion( !get(ecmap_, edge(hf, mesh_)) );
+
+            if (!is_flip_topologically_allowed(edge(hf, mesh_)))
+              continue;
+
             CGAL::Euler::flip_edge(hf, mesh_);
             CGAL_assertion_code(++nb_done);
+            done = true;
 
             //update status
             set_status(h_ab, merge_status(h_ab, hf, hfo));
@@ -1696,6 +1706,7 @@ private:
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
 #endif
+      return done;
     }
 
     bool incident_to_degenerate(const halfedge_descriptor& he)

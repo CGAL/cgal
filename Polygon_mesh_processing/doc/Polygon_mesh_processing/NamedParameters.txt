@@ -470,6 +470,17 @@ than this value are removed from the mesh.
 <b>Default:</b> The third power of one percent of the length of the diagonal of the bounding box of the mesh.
 \cgalNPEnd
 
+
+\cgalNPBegin{dry_run} \anchor PMP_dry_run
+Parameter used in the function `keep_large_connected_components()`
+to tell the function not to alter the input, only to return the number of connected components
+that would be removed.
+
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */

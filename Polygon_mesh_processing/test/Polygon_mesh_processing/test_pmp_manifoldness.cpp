@@ -95,11 +95,19 @@ std::size_t test_nm_vertices_duplication(const Vertices_to_merge_container& all_
                                            typename boost::graph_traits<PolygonMesh>::vertex_descriptor> >& duplicated_vertices,
                                          PolygonMesh& mesh)
 {
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor              halfedge_descriptor;
+
   merge_vertices(all_merges, merged_onto, mesh);
 
   std::size_t new_vertices_nb =
     CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(mesh,
       CGAL::parameters::output_iterator(std::back_inserter(duplicated_vertices)));
+
+  std::vector<halfedge_descriptor> non_manifold_cones;
+  CGAL::Polygon_mesh_processing::non_manifold_vertices(mesh, std::back_inserter(non_manifold_cones));
+  assert(non_manifold_cones.empty());
+
+  assert(CGAL::is_valid_polygon_mesh(mesh));
 
   return new_vertices_nb;
 }
@@ -115,6 +123,16 @@ std::size_t test_nm_vertices_duplication(const Vertices_to_merge_container& all_
   return test_nm_vertices_duplication(all_merges, useless_map, duplicated_vertices, mesh);
 }
 
+template <typename PolygonMesh>
+std::size_t test_nm_vertices_duplication(std::vector<std::vector<
+                                           typename boost::graph_traits<PolygonMesh>::vertex_descriptor> >& duplicated_vertices,
+                                         PolygonMesh& mesh)
+{
+  Vertices_to_merge_container all_merges;
+  std::map<typename boost::graph_traits<PolygonMesh>::vertex_descriptor, std::size_t> useless_map;
+
+  return test_nm_vertices_duplication(all_merges, useless_map, duplicated_vertices, mesh);
+}
 
 template <typename PolygonMesh>
 void test_unpinched_mesh(const Vertices_to_merge_container& all_merges,
@@ -250,6 +268,24 @@ void test_many_umbrellas()
   assert(final_vertices_size == 19); // 5 new ones, but we merged 2 before, so +3 from '16' at the start
 }
 
+template <typename PolygonMesh>
+void test_torso()
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
+
+  std::cout << "  test: data_repair/torso.off" << std::endl;
+
+  PolygonMesh mesh;
+  read_mesh("data_repair/torso.off", mesh);
+
+  CGAL::Polygon_mesh_processing::remove_isolated_vertices(mesh);
+
+  std::vector<std::vector<vertex_descriptor> > duplicated_vertices;
+  std::size_t nb = test_nm_vertices_duplication(duplicated_vertices, mesh);
+
+  std::cout << "    new vertices: " << nb << std::endl;
+}
+
 int main(int /*argc*/, char** /*argv*/)
 {
   std::cout << "Test Vertex Manifoldness Functions (SM)" << std::endl;
@@ -259,6 +295,7 @@ int main(int /*argc*/, char** /*argv*/)
   test_pinched_triangles<Surface_mesh>("data_repair/two_triangles_sharing_a_vertex.off", 1);
   test_pinched_triangles<Surface_mesh>("data_repair/three_triangles_sharing_a_vertex.off", 2);
   test_many_umbrellas<Surface_mesh>(); // data_repair/many_umbrellas.off
+  test_torso<Surface_mesh>(); // data_repair/torso.off (only for SM because Polyhedron cannot even read it)
 
   std::cout << "Test Vertex Manifoldness Functions (Polyhedron)" << std::endl;
 
