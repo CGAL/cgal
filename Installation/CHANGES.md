@@ -6,16 +6,19 @@ Release History
 
 Release date: October 2019
 
-### CGAL now requires C++14
+### General changes
 
 - CGAL 5.0 is the first release of CGAL that requires a C++ compiler
   with the support of C++14 or later. The new list of supported
   compilers is:
-    
   - Visual C++ 14.0 (from Visual Studio 2015 Update 3) or later,
   - Gnu g++ 6.3 or later (on Linux or MacOS),
   - LLVM Clang version 8.0 or later (on Linux or MacOS), and
   - Apple Clang compiler versions 7.0.2 and 10.0.1 (on MacOS).
+- Since CGAL 4.9, CGAL can be used as a header-only library, with
+  dependencies. Since CGAL 5.0, that is now the default, unless
+  specified differently in the (optional) CMake configuration.
+
 
 ### [Polygonal Surface Reconstruction](https://doc.cgal.org/5.0/Manual/packages.html#PkgPolygonalSurfaceReconstruction) (new package)
 
