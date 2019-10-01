@@ -152,6 +152,9 @@
 //  platform specific workaround flags (CGAL_CFG_...)
 //----------------------------------------------------------------------//
 
+#if ! CGAL_NOT_HEADER_ONLY
+#  define CGAL_HEADER_ONLY 1
+#endif
 #if CGAL_HEADER_ONLY
 #  include <CGAL/internal/enable_third_party_libraries.h>
 #  if(BOOST_MSVC)
