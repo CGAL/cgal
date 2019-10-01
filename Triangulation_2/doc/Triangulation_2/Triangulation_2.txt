@@ -848,9 +848,9 @@ input constraints are disallowed, except for the configuration of a single commo
 input constraints are disallowed, except if no actual construction is needed to represent the intersection.
 For example, if two constraints intersect in a 'T'-like junction, the intersection point is one of
 the constraints' extremity and as such, no construction is in fact needed. Other similar configurations include
-overlapping segments, common extremities, or equal constraints.
+overlapping segments, common extremities, or equal constraints;
 - `Exact_predicates_tag` if the geometric traits class provides
-exact predicates but approximate constructions 
+exact predicates but approximate constructions;
 - `Exact_intersections_tag` when exact predicates
 and exact constructions are provided.
 
@@ -946,7 +946,7 @@ As in the case of constrained triangulations, the third parameter
 `Itag` is the intersection tag
 and serves to choose how intersecting constraints
 are dealt with. It can be instantiated with one of the following
-classes: `No_constraint_intersection_tag`, `No_constraint_intersection_requiring_constructions_tag`
+classes: `No_constraint_intersection_tag`, `No_constraint_intersection_requiring_constructions_tag`,
 `Exact_predicates_tag`, or `Exact_intersections_tag`
 (see Section \ref Section_2D_Triangulations_Constrained).
 
