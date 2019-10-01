@@ -67,14 +67,12 @@ dD Geometry Kernel
     removed. See the full list of breaking changes in the release
     notes.
 
--   BREAKING CHANGE: Insertion of a range of points (either via
-    constructors or insert() functions) in a CGAL::Triangulation_2 and
-    CGAL::Triangulation_3 no longer performs spatial sorting before
-    insertion. Consequently, the combinatorics of the triangulation
-    will now correspond faithfully to the order of the points within
-    the range. Note that this change only affects the base classes
-    CGAL::Triangulation_[23] and not any derived classes, such as
-    Delaunay_triangulation_[23].
+-   BREAKING CHANGE: The constructor and the insert() function of
+    CGAL::Triangulation_2 or CGAL::Triangulation_3 which take a range
+    of points as argument are now guaranteed to insert the points
+    following the order of InputIterator.  Note that this change only
+    affects the base class CGAL::Triangulation_[23] and not any
+    derived class, such as CGAL::Delaunay_triangulation_[23].
 
 
 Polygon Mesh Processing

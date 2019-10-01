@@ -111,12 +111,14 @@ Release date: October 2019
      are now visibile through this scope. The complete triangulation can still be accessed as a graph,
      by using the graph traits of the underlying triangulation data structure (usually,
      [`CGAL::Triangulation_data_structure_2`](https://doc.cgal.org/5.0/TDS_2/classCGAL_1_1Triangulation__data__structure__2.html)).
-  -   **Breaking change**: Insertion of a range of points (either via constructors or `insert()` functions) in a 
+ -   **Breaking change**: The `insert()` function
+     of
      [`CGAL::Triangulation_2`](https://doc.cgal.org/latest/Triangulation_2/classCGAL_1_1Triangulation__2.html)
-     no longer performs spatial sorting before insertion. Consequently, the combinatorics of the triangulation will now
-     correspond faithfully to the order of the points within the range. Note that this change only affects the base class
-     `Triangulation_2` and not any derived class, such as `Delaunay_triangulation_2`.
- -   Added a new [constructor](https://doc.cgal.org/5.0/Triangulation_2/classCGAL_1_1Triangulation__2.html#a6cfa7d3aaa375a25d217858b49e2eb07=)
+     which takes a range of points as argument is now guaranteed to
+     insert the points following the order of `InputIterator`.  Note
+     that this change only affects the base class `Triangulation_2`
+     and not any derived class, such as `Delaunay_triangulation_2`.
+-   Added a new [constructor](https://doc.cgal.org/5.0/Triangulation_2/classCGAL_1_1Triangulation__2.html#a6cfa7d3aaa375a25d217858b49e2eb07=)
      and [`insert()`](https://doc.cgal.org/5.0/Triangulation_2/classCGAL_1_1Triangulation__2.html#ac5e9bc8adef80dc01a0b31c2d0234545)
      function to [`CGAL::Triangulation_2`](https://doc.cgal.org/5.0/Triangulation_2/classCGAL_1_1Triangulation__2.html)
      that takes a range of points with info.
@@ -130,12 +132,10 @@ Release date: October 2019
  -   **Breaking change**: The [constructor](https://doc.cgal.org/5.0/Triangulation_3/classCGAL_1_1Triangulation__3.html#a63f67cf6aaadcee14318cf56a36d247a)
      and the [`insert()`](https://doc.cgal.org/5.0/Triangulation_3/classCGAL_1_1Triangulation__3.html#ad3353128386bbb51f79d0263e7f67337)
      function of [`CGAL::Triangulation_3`](https://doc.cgal.org/5.0/Triangulation_3/classCGAL_1_1Triangulation__3.html) 
-     which takes a range of points as argument no longer performs a call to `spatial_sort()` of the points. 
-     Consequently, the combinatorics of the triangulation will now
-     correspond faithfully to the order of the points within the
-     range. Note that this change only affects the base class
-     `Triangulation_3` and not any derived class, such as
-     `Delaunay_triangulation_3`.
+     which take a range of points as argument are now guaranteed to
+     insert the points following the order of `InputIterator`. Note
+     that this change only affects the base class `Triangulation_3`
+     and not any derived class, such as `Delaunay_triangulation_3`.
  -   Added constructor and [`insert()`](https://doc.cgal.org/5.0/Triangulation_3/classCGAL_1_1Triangulation__3.html#a8aa85f88733d30aa3ec5385538e13ace)
      function to `CGAL::Triangulation_3` that takes a range of points with info.
  -   Added range types and functions that return ranges, for example for all vertices, which enables to use C++11 for-loops.
