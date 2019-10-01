@@ -472,9 +472,7 @@ than this value are removed from the mesh.
 
 
 \cgalNPBegin{dry_run} \anchor PMP_dry_run
-Parameter used in the function `keep_large_connected_components()`
-to tell the function not to alter the input, only to return the number of connected components
-that would be removed.
+Parameter that tells a function not to alter the input, only to return the expected result.
 
 \n
 <b>Type:</b> `bool` \n
