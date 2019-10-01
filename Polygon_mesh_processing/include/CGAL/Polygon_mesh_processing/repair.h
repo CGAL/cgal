@@ -131,8 +131,8 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///                                     If this parameter is omitted, an internal property map for
 ///                                     `CGAL::vertex_point_t` should be available in `TriangleMesh` \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel` \cgalParamEnd
-///    \cgalParamBegin{dry_run} a boolean paramter. If `false`, the operation will be performed normally. This is the default.
-///                             If `true`, the mesh will not be altered, but the number of components that would be removed is returned.\cgalParamEnd
+///    \cgalParamBegin{dry_run} a Boolean parameter. If set to `true`, the mesh will not be altered,
+///                             but the number of components that would be removed is returned. The default value is `false`.\cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
 ///  \return the number of connected components removed (ignoring isolated vertices).

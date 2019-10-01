@@ -472,8 +472,8 @@ than this value are removed from the mesh.
 
 
 \cgalNPBegin{dry_run} \anchor PMP_dry_run
-Parameter that tells a function not to alter the input, only to return the expected result.
-
+Parameter that tells a function not to alter the input, but rather to only return the expected result.
+It is for example used in the fucntion `keep_large_connected_components()`.
 \n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `false`

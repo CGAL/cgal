@@ -434,9 +434,9 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *      is chosen by the user, but must be constructible from `0` and support `operator+=()` and
  *      comparisons.
  *    \cgalParamEnd
- * *    \cgalParamBegin{dry_run}
- *      a boolean paramter. If `false`, the operation will be performed normally. This is the default.
- *      If `true`, the mesh will not be altered, but the number of components that would be removed is returned.
+ *    \cgalParamBegin{dry_run}
+ *      a Boolean parameter. If set to `true`, the mesh will not be altered, but the number
+ *      of components that would be removed is returned. The default value is `false`.
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
