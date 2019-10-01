@@ -182,6 +182,7 @@ public:
   , tree_ptr(&tree)
   , own_tree(false)
   {
+    tree_built = false;
   }
 
   ~Side_of_triangle_mesh()
