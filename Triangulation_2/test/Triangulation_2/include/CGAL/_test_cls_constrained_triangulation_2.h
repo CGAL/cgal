@@ -61,7 +61,7 @@ _test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3,
     {
       assert(intersection_type == INTERSECTION);
       assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) ||
-#ifndef CGAL_NO_DEPRECATED_CODE
+#if !defined(CGAL_NO_DEPRECATED_CODE) && defined(CGAL_NO_DEPRECATION_WARNINGS)
              (boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) ||
 #endif
              (boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
@@ -78,7 +78,7 @@ _test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3,
   else if(intersection_type == INTERSECTION)
   {
     assert(!(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) &&
-#ifndef CGAL_NO_DEPRECATED_CODE
+#if !defined(CGAL_NO_DEPRECATED_CODE) && defined(CGAL_NO_DEPRECATION_WARNINGS)
            !(boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) &&
 #endif
            !(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
