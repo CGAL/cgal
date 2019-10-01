@@ -20,6 +20,10 @@ compilers is:
   -   LLVM Clang version 8.0 or later (on Linux or MacOS), and
   -   Apple Clang compiler versions 7.0.2 and 10.0.1 (on MacOS).
 
+Since CGAL 4.9, CGAL can be used as a header-only library, with
+dependencies. Since CGAL 5.0, that is now the default, unless
+specified differently in the (optional) CMake configuration.
+
 
 Besides fixes and general enhancement to existing packages, the following
 has changed since CGAL 4.14:
