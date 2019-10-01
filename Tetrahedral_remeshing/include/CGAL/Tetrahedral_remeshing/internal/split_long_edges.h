@@ -127,7 +127,7 @@ namespace internal
     {
       if (c3t3.is_in_complex(e))
         return false;
-      else if (helpers::is_boundary(c3t3, e, cell_selector))
+      else if (is_boundary(c3t3, e, cell_selector))
         return false;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG

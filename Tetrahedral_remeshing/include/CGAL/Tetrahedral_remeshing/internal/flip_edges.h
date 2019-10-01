@@ -1141,9 +1141,9 @@ namespace internal
     std::cout << "\tInside flips" << std::endl;
 #endif
     std::vector<Edge_vv> inside_edges;
-    CGAL::get_inside_edges(c3t3, imaginary_index,
-                           cell_selector,
-                           std::back_inserter(inside_edges));
+    get_inside_edges(c3t3, imaginary_index,
+                              cell_selector,
+                              std::back_inserter(inside_edges));
 
     //if (criterion == VALENCE_BASED)
     //  flip_inside_edges(inside_edges);

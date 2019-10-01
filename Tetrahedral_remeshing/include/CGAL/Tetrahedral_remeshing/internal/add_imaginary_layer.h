@@ -25,8 +25,6 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Bbox_3.h>
 
-#include <CGAL/Tetrahedral_remeshing/internal/triangulation_3_helpers.h>
-
 #include <boost/unordered_map.hpp>
 #include <vector>
 #include <limits>

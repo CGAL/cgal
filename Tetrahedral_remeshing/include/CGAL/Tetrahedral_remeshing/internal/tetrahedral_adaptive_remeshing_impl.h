@@ -227,7 +227,7 @@ namespace internal
         if (m_protect_boundaries)
         {
           if(  m_c3t3.is_in_complex(e)
-            || helpers::is_boundary(m_c3t3, e, m_cell_selector))
+            || is_boundary(m_c3t3, e, m_cell_selector))
             continue;
         }
         // skip imaginary edges
@@ -389,7 +389,8 @@ namespace internal
            vit != tr().finite_vertices_end();
            ++vit)
       {
-        if (vit->in_dimension() == 0 || nb_incident_complex_edges(vit, m_c3t3) > 2)
+        if ( vit->in_dimension() == 0
+          || nb_incident_complex_edges(vit, m_c3t3) > 2)
         {
           m_c3t3.add_to_complex(vit, ++corner_id);
 

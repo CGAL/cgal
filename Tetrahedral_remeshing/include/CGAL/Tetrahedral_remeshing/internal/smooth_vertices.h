@@ -54,7 +54,7 @@ namespace internal
 
       if (si != si_mirror || tr.is_infinite(ch) || tr.is_infinite(n_ch))
       {
-        Surface_patch_index surf_i = helpers::make_surface_patch_index(si, si_mirror);
+        Surface_patch_index surf_i = make_surface_patch_index(si, si_mirror);
         for (int i = 0; i < 3; ++i)
         {
           Vertex_handle v_id = fit->first->vertex(indices(fit->second ,i));
@@ -74,7 +74,7 @@ namespace internal
 
       if (si != si_mirror || tr.is_infinite(ch) || tr.is_infinite(n_ch))
       {
-        Surface_patch_index surf_i = helpers::make_surface_patch_index(si, si_mirror);
+        Surface_patch_index surf_i = make_surface_patch_index(si, si_mirror);
 
         Vector_3 n = CGAL::normal(*fit, tr.geom_traits());
 
@@ -225,7 +225,7 @@ namespace internal
     std::size_t nbe = 0;
     BOOST_FOREACH(Edge e, edges)
     {
-      if (CGAL::is_on_domain_hull(e, c3t3, imaginary_index))
+      if (is_on_domain_hull(e, c3t3, imaginary_index))
       {
         Vertex_handle ve = (e.first->vertex(e.second) != v)
                           ? e.first->vertex(e.second)
@@ -328,7 +328,8 @@ namespace internal
       switch (vit->in_dimension())
       {
       case 3:
-        if (is_imaginary(vit, c3t3, imaginary_index) || !is_selected(vit, c3t3, cell_selector))
+        if ( is_imaginary(vit, c3t3, imaginary_index)
+          || !is_selected(vit, c3t3, cell_selector))
           break;
         else
           smoothing_vecs[vertex_id.at(vit)] = move_3d(vit, c3t3);

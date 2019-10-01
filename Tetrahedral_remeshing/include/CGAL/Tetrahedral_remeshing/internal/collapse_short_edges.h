@@ -344,7 +344,7 @@ namespace internal
   {
     bool update_v0 = false;
     bool update_v1 = false;
-    helpers::get_edge_info(edge, update_v0, update_v1, c3t3, cell_selector);
+    get_edge_info(edge, update_v0, update_v1, c3t3, cell_selector);
 
     if (update_v0 && update_v1) return TO_MIDPOINT;
     else if (update_v0)         return TO_V1;
@@ -496,8 +496,8 @@ namespace internal
     //    return false;
     //}
     //we need to check that surfaces are not broken anyhow
-    bool v0_boundary = helpers::is_boundary_vertex(v0, c3t3, cell_selector);
-    bool v1_boundary = helpers::is_boundary_vertex(v1, c3t3, cell_selector);
+    bool v0_boundary = is_boundary_vertex(v0, c3t3, cell_selector);
+    bool v1_boundary = is_boundary_vertex(v1, c3t3, cell_selector);
     if (collapse_type == TO_V0 && v1_boundary && !v0_boundary)
       return false;
     if (collapse_type == TO_V1 && v0_boundary && !v1_boundary)
@@ -903,7 +903,7 @@ namespace internal
     {
       if (c3t3.is_in_complex(e))
         return false;
-      else if (helpers::is_boundary(c3t3, e, cell_selector))
+      else if (is_boundary(c3t3, e, cell_selector))
         return false;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
