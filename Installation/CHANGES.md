@@ -39,7 +39,7 @@ Release date: October 2019
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.0/Manual/packages.html#PkgKernel23)
  -   Added [`ComputeApproximateAngle_3`](https://doc.cgal.org/5.0/Kernel_23/classKernel_1_1ComputeApproximateAngle__3.html) 
-     in the 2D/3D Kernel concepts to compute the approximate dihedral angle between 2 vectors. Corresponding functors
+     in the 2D/3D Kernel concepts to compute the approximate angle between two vectors. Corresponding functors
      in the model ([`Compute_approximate_angle_3`](https://doc.cgal.org/5.0/Kernel_23/classKernel.html#a183c9ac358a4ccddc04e680f8ed16c0b)) 
      and free function ([`approximate_angle`](https://doc.cgal.org/5.0/Kernel_23/group__approximate__angle__grp.html))
      are also added.
