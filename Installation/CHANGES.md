@@ -7,8 +7,12 @@ Release 5.1
 Release date: March 2020
 
 ### Polygon Mesh Processing
--  Added a new named paramerter for `keep_large_connected_components()` that allows a dry run of this operation.
-   This means it will return the number of connected components that would be removed, but without removing them.
+-   Introduced a new function, `remove_connected_components_of_negligible_size()`, which can be used to remove connected
+    components whose area or volume is under a certain threshold. Area and volume thresholds are either specified by the user
+    or deduced from the bounding box of the mesh.
+-   Added a new named parameter for `keep_large_connected_components()` and `remove_connected_components_of_negligible_size`
+    that can be used to perform a dry run of the operation, meaning that the function will return the number of connected
+    components that would be removed with the specified threshold, but without actually removing them.
 
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------
