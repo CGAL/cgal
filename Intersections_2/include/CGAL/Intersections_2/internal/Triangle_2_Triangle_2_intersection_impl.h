@@ -285,13 +285,7 @@ Triangle_2_Triangle_2_pair<K>::vertex(int n) const
 template <typename K, typename ArrayOfPoints>
 bool is_cw(const ArrayOfPoints& ps)
 {
-  typename K::FT res(0);
-  std::size_t length = ps.size();
-  for(std::size_t i = 0; i<length; ++i)
-  {
-    res += (ps[(i+1)%length].x() - ps[i].x())*(ps[(i+1)%length].y()+ps[i].y());
-  }
-  return res > 0;
+  return !CGAL::left_turn(ps[0], ps[1], ps[2]);
 }
 
 template <class K>
