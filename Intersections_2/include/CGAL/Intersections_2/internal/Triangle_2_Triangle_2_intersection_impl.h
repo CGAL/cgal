@@ -282,8 +282,8 @@ Triangle_2_Triangle_2_pair<K>::vertex(int n) const
 }
 
 //algorithm taken from here : https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
-template <typename K>
-bool is_cw(std::vector<typename K::Point_2> ps)
+template <typename K, typename ArrayOfPoints>
+bool is_cw(const ArrayOfPoints& ps)
 {
   typename K::FT res(0);
   std::size_t length = ps.size();
@@ -302,10 +302,10 @@ Triangle_2_Triangle_2_pair<K>::intersection_triangle() const
   if (!_known)
     intersection_type();
   CGAL_kernel_assertion(_result == TRIANGLE);
-  std::vector<typename K::Point_2> res;
-  res.push_back(_pointlist.first->point);
-  res.push_back(_pointlist.first->next->point);
-  res.push_back(_pointlist.first->next->next->point);
+  std::array<typename K::Point_2, 3> res;
+  res[0]=_pointlist.first->point;
+  res[1]=_pointlist.first->next->point;
+  res[2]=_pointlist.first->next->next->point;
   if(!is_cw<K>(res))
   {
     return Triangle_2(res[0], res[1], res[2]);
