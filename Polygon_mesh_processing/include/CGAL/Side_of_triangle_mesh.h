@@ -204,18 +204,15 @@ public:
    */
   Bounded_side operator()(const Point& point) const
   {
-    bool is_outside = tree_built;
-    if(!is_outside){
-      is_outside = (point.x() < box.xmin()
-                    || point.x() > box.xmax()
-                    || point.y() < box.ymin()
-                    || point.y() > box.ymax()
-                    || point.z() < box.zmin()
-                    || point.z() > box.zmax());
-      if(is_outside)
+    if(!tree_built){
+      if(point.x() < box.xmin()
+          || point.x() > box.xmax()
+          || point.y() < box.ymin()
+          || point.y() > box.ymax()
+          || point.z() < box.zmin()
+          || point.z() > box.zmax())
         return CGAL::ON_UNBOUNDED_SIDE;
     }
-
     tree_built = true;
     return internal::Point_inside_vertical_ray_cast<GeomTraits, AABB_tree>()(
           point, *tree_ptr, ray_functor, vector_functor);
