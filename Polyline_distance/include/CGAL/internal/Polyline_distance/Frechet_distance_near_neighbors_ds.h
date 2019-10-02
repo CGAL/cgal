@@ -44,11 +44,13 @@ namespace CGAL
 template <class Traits>
 class FrechetKdTree
 {
-	using NT = typename Traits::FT;
-	using Point = typename Traits::Point_2;
-	using Curve = std::vector<Point>;
-	using Curves = std::vector<Curve>;
-	using CurveIDs = std::vector<std::size_t>;
+	using PT = PolylineTraits_2<Traits>;
+	using NT = typename PT::NT;
+	using Point = typename PT::Point;
+	using Polyline = typename PT::Polyline;
+	using Polylines = typename PT::Polylines;
+	using PolylineID = typename PT::PolylineID;
+	using PolylineIDs = typename PT::PolylineIDs;
 
 	using D = Dimension_tag<8>;
 	// FIXME: is fixing Cartesian_d too non-general here?
@@ -62,14 +64,14 @@ class FrechetKdTree
 public:
 	FrechetKdTree() = default;
 
-	void insert(Curves const& curves); // TODO: also add other methods of inserting points
+	void insert(Polylines const& curves); // TODO: also add other methods of inserting points
 	void build();
-	CurveIDs search(Curve const& curve, NT distance);
+	PolylineIDs search(Polyline const& curve, NT distance);
 
 private:
 	Kd_tree<Tree_traits> kd_tree;
 
-	static Point_d to_kd_tree_point(const Curve& curve);
+	static Point_d to_kd_tree_point(const Polyline& curve);
 
 	class QueryItem {
 		using D = FrechetKdTree::D;
@@ -77,13 +79,13 @@ private:
 		using Point_and_id = FrechetKdTree::Point_and_id;
 		using FT = NT;
 
-		// const Curve& curve;
+		// const Polyline& curve;
 		const Point_d p;
-		const NT distance;
-		const NT distance_sqr;
+		const FT distance;
+		const FT distance_sqr;
 
 	public:
-		QueryItem(Curve const& curve, NT distance)
+		QueryItem(Polyline const& curve, FT distance)
 			: p(to_kd_tree_point(curve))
 			, distance(distance)
 			, distance_sqr(distance*distance) {}
@@ -146,7 +148,7 @@ private:
 
 template <class Traits>
 auto
-FrechetKdTree<Traits>::to_kd_tree_point(const Curve& curve)
+FrechetKdTree<Traits>::to_kd_tree_point(const Polyline& curve)
 -> Point_d
 {
 	CGAL_precondition(!curve.empty());
@@ -177,7 +179,7 @@ FrechetKdTree<Traits>::to_kd_tree_point(const Curve& curve)
 
 template <class Traits>
 void
-FrechetKdTree<Traits>::insert(Curves const& curves)
+FrechetKdTree<Traits>::insert(Polylines const& curves)
 {
 	for (std::size_t id = 0; id < curves.size(); ++id) {
 		auto kd_tree_point = to_kd_tree_point(curves[id]);
@@ -193,15 +195,16 @@ FrechetKdTree<Traits>::build()
 }
 
 template <class Traits>
-CurveIDs
-FrechetKdTree<Traits>::search(Curve const& curve, NT distance)
+auto
+FrechetKdTree<Traits>::search(Polyline const& curve, NT distance)
+-> PolylineIDs
 {
 	// TODO: This is the best way I found to not copy the 8-dimensional point,
 	// but only the id. Is there an even better way?
 	class back_insert_it {
-		CurveIDs* curve_ids;
+		PolylineIDs* curve_ids;
 	public:
-		back_insert_it(CurveIDs& curve_ids) : curve_ids(&curve_ids) {}
+		back_insert_it(PolylineIDs& curve_ids) : curve_ids(&curve_ids) {}
 		back_insert_it(back_insert_it& it) = default;
 		back_insert_it(back_insert_it&& it) = default;
 
@@ -215,7 +218,7 @@ FrechetKdTree<Traits>::search(Curve const& curve, NT distance)
 		}
 	};
 
-	CurveIDs result;
+	PolylineIDs result;
 	kd_tree.search(back_insert_it(result), QueryItem(curve, distance));
 
 	return result;

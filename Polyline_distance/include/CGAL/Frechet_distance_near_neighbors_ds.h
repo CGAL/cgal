@@ -25,6 +25,7 @@
 #define CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Polyline_traits_2.h>
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/internal/Polyline_distance/Frechet_distance_near_neighbors_ds.h>
 
@@ -42,27 +43,29 @@ template <class PointRange,
           class Traits = PointRangeKernel<PointRange>>
 class FrechetDistanceNearNeighborsDS
 {
-	using NT = typename Traits::FT;
-	using Point = typename Traits::Point_2;
-	using Curve = std::vector<Point>;
-	using Curves = std::vector<Curve>;
-	using CurveIDs = std::vector<std::size_t>;
+	using PT = PolylineTraits_2<Traits>;
+	using NT = typename PT::NT;
+	using Point = typename PT::Point;
+	using Polyline = typename PT::Polyline;
+	using Polylines = typename PT::Polylines;
+	using PolylineID = typename PT::PolylineID;
+	using PolylineIDs = typename PT::PolylineIDs;
 
 public:
 	FrechetDistanceNearNeighborsDS() = default;
 
-	void fill(const Curves& curves); // FIXME: should this be a range?
-	CurveIDs get_close_curves(const Curve& curve, NT distance);
+	void fill(const Polylines& curves); // FIXME: should this be a range?
+	PolylineIDs get_close_curves(const Polyline& curve, NT distance);
 
 private:
-	Curves curves;
+	Polylines curves;
 	FrechetKdTree<Traits> kd_tree;
 };
 
 // TODO: store preprocessed curves after CGALization
 template <class PointRange, class Traits>
 void
-FrechetDistanceNearNeighborsDS<PointRange,Traits>::fill(const Curves& curves)
+FrechetDistanceNearNeighborsDS<PointRange,Traits>::fill(const Polylines& curves)
 {
 	this->curves = curves; // FIXME: copies all the curves...
 
@@ -72,12 +75,12 @@ FrechetDistanceNearNeighborsDS<PointRange,Traits>::fill(const Curves& curves)
 
 template <class PointRange, class Traits>
 auto
-FrechetDistanceNearNeighborsDS<PointRange,Traits>::get_close_curves(const Curve& curve, NT distance)
--> CurveIDs
+FrechetDistanceNearNeighborsDS<PointRange,Traits>::get_close_curves(const Polyline& curve, NT distance)
+-> PolylineIDs
 {
 	auto result = kd_tree.search(curve, distance);
 
-	auto predicate = [&](CurveID id) {
+	auto predicate = [&](PolylineID id) {
 		return !continuous_Frechet_distance_less_than(curve, curves[id], distance);
 	};
 	auto new_end = std::remove_if(result.begin(), result.end(), predicate);
