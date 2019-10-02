@@ -29,5 +29,5 @@ EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/internal
 EXCLUDE_SYMBOLS += experimental
 
 HTML_EXTRA_FILES           = ${CGAL_PACKAGE_DOC_DIR}/fig/selfintersections.jpg \
-                             ${CGAL_PACKAGE_DOC_DIR}/fig/mesh_smoothing.jpg \
-                             ${CGAL_PACKAGE_DOC_DIR}/fig/shape_smoothing.jpg
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/mesh_smoothing.png \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/shape_smoothing.png
