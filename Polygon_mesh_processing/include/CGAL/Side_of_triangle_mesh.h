@@ -183,6 +183,7 @@ public:
   , own_tree(false)
   {
     tree_built = false;
+    box = tree.bbox();
   }
 
   ~Side_of_triangle_mesh()
