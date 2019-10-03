@@ -52,8 +52,8 @@ struct No_constraint_intersection_requiring_constructions_tag{};
 struct Exact_intersections_tag{}; // to be used with an exact number type
 struct Exact_predicates_tag{}; // to be used with filtered exact number
 
-// This was deprecated in favor of `No_consNo_constraint_intersection_requiring_constructions_tagint_intersection_requiring_constructions_tag`
-// due to an inaccuracy between the code and the documenation.
+// This was deprecated and replaced by ` No_constraint_intersection_tag` and `No_constraint_intersection_requiring_constructions_tag`
+// due to an inconsistency between the code and the documenation.
 struct CGAL_DEPRECATED No_intersection_tag :
   public No_constraint_intersection_requiring_constructions_tag
 { };
