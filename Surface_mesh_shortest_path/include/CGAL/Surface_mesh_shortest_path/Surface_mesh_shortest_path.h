@@ -1083,7 +1083,7 @@ private:
       halfedge_descriptor current = node->entry_edge();
       for (std::size_t i = 0; i < 3; ++i)
       {
-        std::cout << get(m_vertexIndexMap, source(current, m_graph)) << " ";
+        std::cout << " " << get(m_vertexIndexMap, source(current, m_graph));
         current = next(current, m_graph);
       }
       std::cout << std::endl;
