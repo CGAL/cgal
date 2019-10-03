@@ -55,6 +55,7 @@ int main(int, char* [])
   std::cerr << dt.number_of_finite_cells() << '\n';
 
   const std::vector < std::tuple<Point_3, Point_3, std::array<unsigned, 4>>> queries = {
+      // {{-1, 0,  0}, { 1, 0,  0}, {0, 0, 1, 2}}, // CFC: assertion
       {{-1, 0,  0}, { 2, 0,  0}, {1, 0, 1, 2}}, // CFCV
       // {{ 2, 0,  0}, {-1, 0,  0}, {1, 0, 1, 2}}, // reverse: assertion
       {{-2, 0,  0}, { 2, 0,  0}, {2, 0, 1, 2}}, // VCFCV
