@@ -21,8 +21,10 @@
 #include <cstddef>
 
 #include <boost/graph/graph_traits.hpp>
-#include <CGAL/result_of.h>
+
 #include <CGAL/assertions.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/result_of.h>
 
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
@@ -246,8 +248,8 @@ public:
 
     Point_3 projectedLocation3d(m_construct_projected_point_3(baseSegment, m_construct_vertex_3(t3, 2)));
     FT scalePoint = m_parametric_distance_along_segment_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1), projectedLocation3d);
-    FT triangleHeight = CGAL::internal::select_sqrt(m_compute_squared_distance_3(projectedLocation3d, t3[2]));
-    FT v01Len = CGAL::internal::select_sqrt(m_compute_squared_distance_3(t3[1], t3[0]));
+    FT triangleHeight = CGAL::approximate_sqrt(m_compute_squared_distance_3(projectedLocation3d, t3[2]));
+    FT v01Len = CGAL::approximate_sqrt(m_compute_squared_distance_3(t3[1], t3[0]));
 
     Point_2 A(m_construct_point_2(0.0, 0.0));
     Point_2 B(m_construct_point_2(v01Len, 0.0));
@@ -367,12 +369,12 @@ public:
   {
     Point_3 projectedLocation3d(m_construct_projected_point_3(m_construct_line_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), m_construct_vertex_3(t3, edgeIndex + 2)));
     FT scalePoint = m_parametric_distance_along_segment_3(m_construct_segment_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), projectedLocation3d);
-    FT triangleHeight = CGAL::internal::select_sqrt(m_compute_squared_distance_3(projectedLocation3d, m_construct_vertex_3(t3, edgeIndex + 2)));
+    FT triangleHeight = CGAL::approximate_sqrt(m_compute_squared_distance_3(projectedLocation3d, m_construct_vertex_3(t3, edgeIndex + 2)));
 
     Vector_2 edgeVector(m_construct_vector_2(segment));
 
     Vector_2 perpendicularEdgeVector(m_construct_perpendicular_vector_2(edgeVector, CGAL::COUNTERCLOCKWISE));
-    perpendicularEdgeVector = m_construct_scaled_vector_2(perpendicularEdgeVector, FT(1) / CGAL::internal::select_sqrt(m_compute_squared_length_2(perpendicularEdgeVector)));
+    perpendicularEdgeVector = m_construct_scaled_vector_2(perpendicularEdgeVector, FT(1) / CGAL::approximate_sqrt(m_compute_squared_length_2(perpendicularEdgeVector)));
 
     Point_2 points[3];
     points[edgeIndex] = m_construct_source_2(segment);

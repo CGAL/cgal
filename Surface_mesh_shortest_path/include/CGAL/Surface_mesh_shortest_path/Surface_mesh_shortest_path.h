@@ -42,6 +42,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/Default.h>
+#include <CGAL/number_utils.h>
 
 #include <CGAL/Surface_mesh_shortest_path/barycentric.h>
 #include <CGAL/Surface_mesh_shortest_path/internal/Cone_tree.h>
@@ -290,10 +291,10 @@ private:
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Vector_2 Vector_2;
 
-  typedef internal::Cone_tree_node<Traits> Cone_tree_node;
-  typedef internal::Cone_expansion_event<Traits> Cone_expansion_event;
+  typedef SMSP::internal::Cone_tree_node<Traits> Cone_tree_node;
+  typedef SMSP::internal::Cone_expansion_event<Traits> Cone_expansion_event;
 
-  typedef std::priority_queue<Cone_expansion_event*, std::vector<Cone_expansion_event*>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
+  typedef std::priority_queue<Cone_expansion_event*, std::vector<Cone_expansion_event*>, SMSP::internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
   typedef std::pair<Cone_tree_node*, FT> Node_distance_pair;
 
 private:
@@ -492,7 +493,7 @@ private:
 
   static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const Triangle_mesh& tm, Vertex_point_map vertexPointMap)
   {
-    return CGAL::internal::triangle_from_halfedge<Triangle_3, Triangle_mesh, Vertex_point_map>(edge, tm, vertexPointMap);
+    return SMSP::internal::triangle_from_halfedge<Triangle_3, Triangle_mesh, Vertex_point_map>(edge, tm, vertexPointMap);
   }
 
   Triangle_3 triangle_from_face(face_descriptor f) const
@@ -564,47 +565,47 @@ private:
     bool hasD2 = v2Distance.first != NULL && v2Distance.first != cone->parent();
     bool hasD3 = v3Distance.first != NULL && v3Distance.first != cone->parent();
 
-    if (hasD1 && (d + CGAL::internal::select_sqrt(csd2(I, B)) > d1 + CGAL::internal::select_sqrt(csd2(v1, B))))
+    if (hasD1 && (d + CGAL::approximate_sqrt(csd2(I, B)) > d1 + CGAL::approximate_sqrt(csd2(v1, B))))
     {
       if (m_debugOutput)
       {
         std::cout << "Filter: d + |I,B| > d1 + |v1,B|: " << std::endl;
         std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
         std::cout << "d = " << d << std::endl;
-        std::cout << "v1,B = " << CGAL::internal::select_sqrt(csd2(v1, B)) << std::endl;
-        std::cout << "I,B = " << CGAL::internal::select_sqrt(csd2(I, B)) << std::endl;
-        std::cout << "I,A = " << CGAL::internal::select_sqrt(csd2(I, A)) << std::endl;
-        std::cout << (d + CGAL::internal::select_sqrt(csd2(I, B))) << " vs. " << (d1 + CGAL::internal::select_sqrt(csd2(v1, B))) << std::endl;
+        std::cout << "v1,B = " << CGAL::approximate_sqrt(csd2(v1, B)) << std::endl;
+        std::cout << "I,B = " << CGAL::approximate_sqrt(csd2(I, B)) << std::endl;
+        std::cout << "I,A = " << CGAL::approximate_sqrt(csd2(I, A)) << std::endl;
+        std::cout << (d + CGAL::approximate_sqrt(csd2(I, B))) << " vs. " << (d1 + CGAL::approximate_sqrt(csd2(v1, B))) << std::endl;
       }
 
       return false;
     }
 
-    if (hasD2 && (d + CGAL::internal::select_sqrt(csd2(I, A)) > d2 + CGAL::internal::select_sqrt(csd2(v2, A))))
+    if (hasD2 && (d + CGAL::approximate_sqrt(csd2(I, A)) > d2 + CGAL::approximate_sqrt(csd2(v2, A))))
     {
       if (m_debugOutput)
       {
         std::cout << "Filter: d + |I,A| > d2 + |v2,A|: " << std::endl;
         std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
         std::cout << "d = " << d << std::endl;
-        std::cout << "v2,A = " << CGAL::internal::select_sqrt(csd2(v2, A)) << std::endl;
-        std::cout << "I,A = " << CGAL::internal::select_sqrt(csd2(I, A)) << std::endl;
-        std::cout << (d + CGAL::internal::select_sqrt(csd2(I, A))) << " vs. " << (d2 + CGAL::internal::select_sqrt(csd2(v2, A))) << std::endl;
+        std::cout << "v2,A = " << CGAL::approximate_sqrt(csd2(v2, A)) << std::endl;
+        std::cout << "I,A = " << CGAL::approximate_sqrt(csd2(I, A)) << std::endl;
+        std::cout << (d + CGAL::approximate_sqrt(csd2(I, A))) << " vs. " << (d2 + CGAL::approximate_sqrt(csd2(v2, A))) << std::endl;
       }
 
       return false;
     }
 
-    if (hasD3 && (d + CGAL::internal::select_sqrt(csd2(I, A)) > d3 + CGAL::internal::select_sqrt(csd2(v3, A))))
+    if (hasD3 && (d + CGAL::approximate_sqrt(csd2(I, A)) > d3 + CGAL::approximate_sqrt(csd2(v3, A))))
     {
       if (m_debugOutput)
       {
         std::cout << "Filter: d + |I,A| > d3 + |v3,A|: " << std::endl;
         std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
         std::cout << "d = " << d << std::endl;
-        std::cout << "v3,A = " << CGAL::internal::select_sqrt(csd2(v3, A)) << std::endl;
-        std::cout << "I,A = " << CGAL::internal::select_sqrt(csd2(I, A)) << std::endl;
-        std::cout << (d + CGAL::internal::select_sqrt(csd2(I, A))) << " vs. " << (d3 + CGAL::internal::select_sqrt(csd2(v3, A))) << std::endl;
+        std::cout << "v3,A = " << CGAL::approximate_sqrt(csd2(v3, A)) << std::endl;
+        std::cout << "I,A = " << CGAL::approximate_sqrt(csd2(I, A)) << std::endl;
+        std::cout << (d + CGAL::approximate_sqrt(csd2(I, A))) << " vs. " << (d3 + CGAL::approximate_sqrt(csd2(v3, A))) << std::endl;
       }
 
       return false;
@@ -1320,7 +1321,7 @@ private:
         }
       }
 
-      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::internal::select_sqrt(csd2(parent->source_image(), leftWindow));
+      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::approximate_sqrt(csd2(parent->source_image(), leftWindow));
 
       if (m_debugOutput)
       {
@@ -1354,7 +1355,7 @@ private:
         return;
       }
 
-      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::internal::select_sqrt(csd2(parent->source_image(), rightWindow));
+      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::approximate_sqrt(csd2(parent->source_image(), rightWindow));
 
       if (m_debugOutput)
       {
@@ -1747,7 +1748,7 @@ private:
           halfedge_descriptor oppositeHalfedge = opposite(he, m_graph);
           if(!CGAL::is_border(oppositeHalfedge, m_graph))
           {
-              std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
+              std::size_t oppositeIndex = SMSP::internal::edge_index(oppositeHalfedge, m_graph);
 
               FT oppositeLocationCoords[3] = { FT(0), FT(0), FT(0) };
               oppositeLocationCoords[oppositeIndex] = cbcw(location, (associatedEdge + 1) % 3);
@@ -2551,7 +2552,7 @@ public:
 
     halfedge_descriptor he = next(hinit, tm);
     face_descriptor locationFace = face(he, tm);
-    std::size_t edgeIndex = CGAL::internal::edge_index(he, tm);
+    std::size_t edgeIndex = SMSP::internal::edge_index(he, tm);
 
     FT coords[3] = { FT(0), FT(0), FT(0) };
 
@@ -2582,7 +2583,7 @@ public:
   {
     typename Traits::Construct_barycentric_coordinates cbc(traits.construct_barycentric_coordinates_object());
     face_descriptor locationFace = face(he, tm);
-    std::size_t edgeIndex = CGAL::internal::edge_index(he, tm);
+    std::size_t edgeIndex = SMSP::internal::edge_index(he, tm);
 
     const FT oneMinusT(FT(1) - t);
 

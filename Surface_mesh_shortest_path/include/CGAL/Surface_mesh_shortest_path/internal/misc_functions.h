@@ -29,7 +29,7 @@
 #include <CGAL/boost/graph/iterator.h>
 
 namespace CGAL {
-
+namespace SMSP {
 namespace internal {
 
 template <class Triangle_3, class Triangle_mesh, class VertexPointMap>
@@ -73,28 +73,8 @@ size_t edge_index(typename boost::graph_traits<Triangle_mesh>::halfedge_descript
   return count;
 }
 
-template <class FT>
-FT internal_sqrt(const FT& x, CGAL::Tag_true)
-{
-  return CGAL::sqrt(x);
-}
-
-template <class FT>
-FT internal_sqrt(const FT& x, CGAL::Tag_false)
-{
-  return FT(std::sqrt(CGAL::to_double(x)));
-}
-
-template <class FT>
-FT select_sqrt(const FT& x)
-{
-  typedef ::CGAL::Algebraic_structure_traits<FT> AST;
-  static const bool has_sqrt = ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
-  return internal_sqrt(x, ::CGAL::Boolean_tag<has_sqrt>());
-}
-
 } // namespace internal
-
+} // namespace SMSP
 } // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_MISC_H

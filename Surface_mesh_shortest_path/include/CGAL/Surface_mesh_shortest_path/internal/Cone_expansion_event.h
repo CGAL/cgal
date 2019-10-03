@@ -23,9 +23,8 @@
 
 #include <CGAL/license/Surface_mesh_shortest_path.h>
 
-
 namespace CGAL {
-
+namespace SMSP {
 namespace internal {
 
 template<class Traits>
@@ -84,7 +83,7 @@ public:
 };
 
 } // namespace internal
-
+} // namespace SMSP
 } // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_CONE_EXPANSION_EVENT_H

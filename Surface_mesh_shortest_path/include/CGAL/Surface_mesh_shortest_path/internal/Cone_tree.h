@@ -23,7 +23,6 @@
 
 #include <CGAL/license/Surface_mesh_shortest_path.h>
 
-
 #include <vector>
 
 #include <boost/graph/graph_traits.hpp>
@@ -32,11 +31,11 @@
 #include <CGAL/Surface_mesh_shortest_path/internal/Cone_expansion_event.h>
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
-namespace CGAL
-{
+#include <CGAL/number_utils.h>
 
-namespace internal
-{
+namespace CGAL {
+namespace SMSP {
+namespace internal {
 
 template<class Traits>
 class Cone_tree_node
@@ -62,7 +61,7 @@ private:
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
-  typedef typename CGAL::internal::Cone_expansion_event<Traits> Cone_expansion_event;
+  typedef Cone_expansion_event<Traits> Cone_expansion_event;
 
 private:
   // These could be pulled back into a 'context' class to save space
@@ -193,7 +192,7 @@ public:
 
   size_t edge_face_index() const
   {
-    return CGAL::internal::edge_index(entry_edge(), m_graph);
+    return edge_index(entry_edge(), m_graph);
   }
 
   halfedge_descriptor entry_edge() const
@@ -229,7 +228,7 @@ public:
   FT distance_to_root(const Point_2& point) const
   {
     typename Traits::Compute_squared_distance_2 csd2(m_traits.compute_squared_distance_2_object());
-    return CGAL::internal::select_sqrt(csd2(point, m_sourceImage)) + m_pseudoSourceDistance;
+    return CGAL::approximate_sqrt(csd2(point, m_sourceImage)) + m_pseudoSourceDistance;
   }
 
   FT distance_from_source_to_root() const
@@ -435,7 +434,7 @@ public:
 };
 
 } // namespace internal
-
+} // namespace SMSP
 } // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_CONE_TREE_H

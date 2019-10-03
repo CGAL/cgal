@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
     size_t faceIndex = random.get_int(0, static_cast<int>(facesList.size()));
     face_descriptor face = facesList[faceIndex];
 
-    Triangle_3 faceTriangle = CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(halfedge(face, polyhedron), polyhedron, vertexPointMap);
+    Triangle_3 faceTriangle = CGAL::SMSP::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(halfedge(face, polyhedron), polyhedron, vertexPointMap);
 
     Barycentric_coordinates location = CGAL::test::random_coordinates<Traits>(random);
 
