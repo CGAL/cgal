@@ -645,8 +645,7 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
   if ( "${POSITION}" STRGREATER "-1" ) # if lib is essential
    option(WITH_${lib} "Select external library ${lib}" ON)
   else() #GMPXX set in CGAL_SetupGMP.cmake
-    string(COMPARE EQUAL "${lib}" "GMPXX" IS_LIB_GMPXX)
-    if(NOT ${IS_LIB_GMPXX})
+    if(NOT "${lib}" STREQUAL "GMPXX")
       option(WITH_${lib} "Select external library ${lib}" OFF)
     endif()
   endif()
