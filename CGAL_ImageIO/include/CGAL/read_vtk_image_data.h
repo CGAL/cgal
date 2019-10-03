@@ -69,9 +69,9 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
   image->ydim = dims[1];
   image->zdim = dims[2];
   image->vdim = 1;
-  image->vx = spacing[0];
-  image->vy = spacing[1];
-  image->vz = spacing[2];
+  image->vx = (spacing[0] == 0) ? 1 : spacing[0];
+  image->vy = (spacing[1] == 0) ? 1 : spacing[1];
+  image->vz = (spacing[2] == 0) ? 1 : spacing[2];
   image->tx = static_cast<float>(offset[0]);
   image->ty = static_cast<float>(offset[1]);
   image->tz = static_cast<float>(offset[2]);
