@@ -42,6 +42,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/Default.h>
+#include <CGAL/enum.h>
 #include <CGAL/number_utils.h>
 
 #include <CGAL/Surface_mesh_shortest_path/barycentric.h>
@@ -1048,8 +1049,6 @@ private:
   */
   void process_node(Cone_tree_node* node)
   {
-    typename Traits::Compare_relative_intersection_along_segment_2 crias2(m_traits.compare_relative_intersection_along_segment_2_object());
-
     bool leftSide = false;
     bool rightSide = false;
 
@@ -1106,44 +1105,30 @@ private:
       Node_distance_pair currentOccupier = m_vertexOccupiers[entryEdgeIndex];
       FT currentNodeDistance = node->distance_from_target_to_root();
 
-      bool isLeftOfCurrent = false;
-
       if (m_debugOutput)
       {
         std::cout << "\t Entry Edge = " << entryEdgeIndex << std::endl;
         std::cout << "\t Target vertex = " << get(m_vertexIndexMap, node->target_vertex()) << std::endl;
       }
 
+      // the relative position of the ray between node.source() and node.target_vertex() and the ray
+      // from occupier.source() (-1 left, 0 collinear, 1 right)
+      CGAL::Sign s;
+
       if (currentOccupier.first != NULL)
       {
-        if (node->is_vertex_node())
-        {
-          isLeftOfCurrent = false;
-        }
-        else if (currentOccupier.first->is_vertex_node())
-        {
-          isLeftOfCurrent = true;
-        }
-        else
-        {
-          CGAL::Comparison_result comparison = crias2(
-            node->entry_segment(),
-            node->ray_to_target_vertex().supporting_line(),
-            currentOccupier.first->entry_segment(),
-            currentOccupier.first->ray_to_target_vertex().supporting_line()
-          );
+        CGAL_assertion(m_graph.is_valid());
+        CGAL_assertion(node->entry_edge() == currentOccupier.first->entry_edge());
+        CGAL_assertion(node->target_vertex() == currentOccupier.first->target_vertex());
 
-          if (comparison == CGAL::SMALLER)
-          {
-            isLeftOfCurrent = true;
-          }
-        }
+        typename Traits::Orientation_2 o2(m_traits.orientation_2_object());
+        s = o2(currentOccupier.first->source_image(), currentOccupier.first->target_point(), node->source_image());
 
         if (m_debugOutput)
         {
           std::cout << "\t Current occupier = " << currentOccupier.first << std::endl;
           std::cout << "\t Current Occupier Distance = " << currentOccupier.second << std::endl;
-          std::cout << "\t " << (isLeftOfCurrent ? "Left" : "Right") << " of current" << std::endl;
+          std::cout << "\t left/collinear/right turn? " << s << std::endl;
         }
       }
 
@@ -1181,7 +1166,7 @@ private:
 
         if (currentOccupier.first != NULL)
         {
-          if (isLeftOfCurrent)
+          if (s != RIGHT_TURN)
           {
             if (currentOccupier.first->get_left_child())
             {
@@ -1193,7 +1178,8 @@ private:
               currentOccupier.first->m_pendingLeftSubtree = NULL;
             }
           }
-          else
+
+          if(s != LEFT_TURN)
           {
             if (currentOccupier.first->get_right_child())
             {
@@ -1259,14 +1245,12 @@ private:
       }
       else // there is already an occupier, at a closer distance
       {
-        if (isLeftOfCurrent)
-        {
+        if (s != RIGHT_TURN)
           propagateLeft = true;
-        }
-        else if (!node->is_source_node())
-        {
+        if (s != LEFT_TURN)
           propagateRight = true;
-        }
+        if (!node->is_source_node())
+          propagateRight = true;
       }
     }
     else // interval node that does not contain the target vertex
