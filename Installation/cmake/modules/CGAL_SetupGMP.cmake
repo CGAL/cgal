@@ -23,12 +23,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_MODULES_DIR})
 
 find_package(GMP REQUIRED)
 find_package(MPFR REQUIRED)
+find_package(GMPXX QUIET)
 
-if(NOT DEFINED WITH_GMPXX)
+if(NOT GMPXX_FOUND)
   option(CGAL_WITH_GMPXX "Use CGAL with GMPXX: use C++ classes of GNU MP instead of CGAL wrappers" OFF)
-endif()
-if(WITH_GMPXX OR CGAL_WITH_GMPXX)
-  find_package(GMPXX REQUIRED)
+  option(WITH_GMPXX "Select external library GMPXX" OFF)
+else()
+  option(CGAL_WITH_GMPXX "Use CGAL with GMPXX: use C++ classes of GNU MP instead of CGAL wrappers" ON)
+  option(WITH_GMPXX "Select external library GMPXX" ON)
 endif()
 
 #.rst:
