@@ -1137,14 +1137,17 @@ private:
         std::cout << "\t New Distance = " << currentNodeDistance << std::endl;
       }
 
-      if (currentOccupier.first == NULL || currentOccupier.second > currentNodeDistance)
+      if (currentOccupier.first == NULL || currentOccupier.second >= currentNodeDistance)
       {
         if (m_debugOutput)
         {
           std::cout << "\t Current node is now the occupier" << std::endl;
         }
 
-        m_vertexOccupiers[entryEdgeIndex] = std::make_pair(node, currentNodeDistance);
+        // Only replace the current occupier if the time is _strictly_ greater
+        if(currentOccupier.second > currentNodeDistance ||
+           (currentOccupier.second > currentNodeDistance && node->node_type() == Cone_tree_node::VERTEX_SOURCE))
+          m_vertexOccupiers[entryEdgeIndex] = std::make_pair(node, currentNodeDistance);
 
         propagateLeft = true;
         propagateRight = true;
@@ -1203,7 +1206,10 @@ private:
           std::cout << "\t Current Closest Distance = " << currentClosest.second << std::endl;
         }
 
-        if (currentClosest.first == NULL || currentClosest.second > currentNodeDistance)
+        // If equal times, give priority to vertex sources since it's cleaner and simpler to handle than interval windows
+        if(currentClosest.first == nullptr ||
+           currentClosest.second > currentNodeDistance ||
+           (currentClosest.second == currentNodeDistance && node->node_type() == Cone_tree_node::VERTEX_SOURCE))
         {
           if (m_debugOutput)
           {
