@@ -29,7 +29,7 @@
 #include <CGAL/boost/graph/iterator.h>
 
 namespace CGAL {
-namespace SMSP {
+namespace Surface_mesh_shortest_paths_3 {
 namespace internal {
 
 template <class Triangle_3, class Triangle_mesh, class VertexPointMap>
@@ -74,7 +74,7 @@ size_t edge_index(typename boost::graph_traits<Triangle_mesh>::halfedge_descript
 }
 
 } // namespace internal
-} // namespace SMSP
+} // namespace Surface_mesh_shortest_paths_3
 } // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_MISC_H

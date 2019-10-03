@@ -292,10 +292,12 @@ private:
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Vector_2 Vector_2;
 
-  typedef SMSP::internal::Cone_tree_node<Traits> Cone_tree_node;
-  typedef SMSP::internal::Cone_expansion_event<Traits> Cone_expansion_event;
+  typedef Surface_mesh_shortest_paths_3::internal::Cone_tree_node<Traits> Cone_tree_node;
+  typedef Surface_mesh_shortest_paths_3::internal::Cone_expansion_event<Traits> Cone_expansion_event;
 
-  typedef std::priority_queue<Cone_expansion_event*, std::vector<Cone_expansion_event*>, SMSP::internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
+  typedef std::priority_queue<Cone_expansion_event*,
+                              std::vector<Cone_expansion_event*>,
+                              Surface_mesh_shortest_paths_3::internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
   typedef std::pair<Cone_tree_node*, FT> Node_distance_pair;
 
 private:
@@ -494,7 +496,7 @@ private:
 
   static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const Triangle_mesh& tm, Vertex_point_map vertexPointMap)
   {
-    return SMSP::internal::triangle_from_halfedge<Triangle_3, Triangle_mesh, Vertex_point_map>(edge, tm, vertexPointMap);
+    return Surface_mesh_shortest_paths_3::internal::triangle_from_halfedge<Triangle_3, Triangle_mesh, Vertex_point_map>(edge, tm, vertexPointMap);
   }
 
   Triangle_3 triangle_from_face(face_descriptor f) const
@@ -1742,7 +1744,7 @@ private:
           halfedge_descriptor oppositeHalfedge = opposite(he, m_graph);
           if(!CGAL::is_border(oppositeHalfedge, m_graph))
           {
-              std::size_t oppositeIndex = SMSP::internal::edge_index(oppositeHalfedge, m_graph);
+              std::size_t oppositeIndex = Surface_mesh_shortest_paths_3::internal::edge_index(oppositeHalfedge, m_graph);
 
               FT oppositeLocationCoords[3] = { FT(0), FT(0), FT(0) };
               oppositeLocationCoords[oppositeIndex] = cbcw(location, (associatedEdge + 1) % 3);
@@ -2546,7 +2548,7 @@ public:
 
     halfedge_descriptor he = next(hinit, tm);
     face_descriptor locationFace = face(he, tm);
-    std::size_t edgeIndex = SMSP::internal::edge_index(he, tm);
+    std::size_t edgeIndex = Surface_mesh_shortest_paths_3::internal::edge_index(he, tm);
 
     FT coords[3] = { FT(0), FT(0), FT(0) };
 
@@ -2577,7 +2579,7 @@ public:
   {
     typename Traits::Construct_barycentric_coordinates cbc(traits.construct_barycentric_coordinates_object());
     face_descriptor locationFace = face(he, tm);
-    std::size_t edgeIndex = SMSP::internal::edge_index(he, tm);
+    std::size_t edgeIndex = Surface_mesh_shortest_paths_3::internal::edge_index(he, tm);
 
     const FT oneMinusT(FT(1) - t);
 

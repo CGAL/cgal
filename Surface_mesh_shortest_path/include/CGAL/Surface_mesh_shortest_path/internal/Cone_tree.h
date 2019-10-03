@@ -34,7 +34,7 @@
 #include <CGAL/number_utils.h>
 
 namespace CGAL {
-namespace SMSP {
+namespace Surface_mesh_shortest_paths_3 {
 namespace internal {
 
 template<class Traits>
@@ -434,7 +434,7 @@ public:
 };
 
 } // namespace internal
-} // namespace SMSP
+} // namespace Surface_mesh_shortest_paths_3
 } // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_CONE_TREE_H
