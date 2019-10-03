@@ -1058,15 +1058,18 @@ private:
       leftSide = node->has_left_side();
       rightSide = node->has_right_side();
     }
-    else if (node->node_type() == Cone_tree_node::EDGE_SOURCE) 
+    else // node corresponds to a source
     {
-      leftSide = true;
-      rightSide = true;
-    }
-    else
-    {
-      leftSide = true;
-      rightSide = false;
+      if (node->node_type() == Cone_tree_node::EDGE_SOURCE)
+      {
+        leftSide = true;
+        rightSide = true;
+      }
+      else
+      {
+        leftSide = true;
+        rightSide = false;
+      }
     }
 
     bool propagateLeft = false;
@@ -1254,7 +1257,7 @@ private:
           m_closestToVertices[targetVertexIndex] = Node_distance_pair(node, currentNodeDistance);
         }
       }
-      else
+      else // there is already an occupier, at a closer distance
       {
         if (isLeftOfCurrent)
         {
@@ -1266,7 +1269,7 @@ private:
         }
       }
     }
-    else
+    else // interval node that does not contain the target vertex
     {
       propagateLeft = leftSide;
       propagateRight = rightSide;
@@ -1332,7 +1335,6 @@ private:
       parent->m_pendingLeftSubtree = event;
 
       m_expansionPriqueue.push(event);
-
       queue_pushed();
     }
   }
@@ -1363,10 +1365,10 @@ private:
       }
 
       Cone_expansion_event* event = new Cone_expansion_event(parent, distanceEstimate, Cone_expansion_event::RIGHT_CHILD, rightWindow);
-      queue_pushed();
       parent->m_pendingRightSubtree = event;
 
       m_expansionPriqueue.push(event);
+      queue_pushed();
     }
   }
 
@@ -1378,12 +1380,10 @@ private:
     }
 
     Cone_expansion_event* event = new Cone_expansion_event(parent, parent->distance_from_target_to_root(), Cone_expansion_event::PSEUDO_SOURCE);
-
-    queue_pushed();
-
     parent->m_pendingMiddleSubtree = event;
 
     m_expansionPriqueue.push(event);
+    queue_pushed();
   }
 
   void delete_node(Cone_tree_node* node, bool destruction = false)
@@ -1475,15 +1475,7 @@ private:
     for (boost::tie(current, end) = vertices(m_graph); current != end; ++current)
     {
       std::size_t vertexIndex = get(m_vertexIndexMap, *current);
-
-      if (is_saddle_vertex(*current) || is_boundary_vertex(*current))
-      {
-        m_vertexIsPseudoSource[vertexIndex] = true;
-      }
-      else
-      {
-        m_vertexIsPseudoSource[vertexIndex] = false;
-      }
+      m_vertexIsPseudoSource[vertexIndex] = (is_saddle_vertex(*current) || is_boundary_vertex(*current));
     }
   }
 
@@ -2060,8 +2052,8 @@ public:
     if (m_debugOutput)
     {
       std::cout << "Final node count: " << m_currentNodeCount << std::endl;
+      std::cout << "Peak node count: " << m_peakNodeCount << std::endl;
     }
-    return;
 #endif
   }
 
