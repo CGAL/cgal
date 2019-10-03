@@ -81,7 +81,7 @@ public:
 
     FT v = (d11 * d20 - d01 * d21) / denom;
     FT w = (d00 * d21 - d01 * d20) / denom;
-    return m_construct_barycentric_coordinates(FT(1.0) - v - w, v, w);
+    return m_construct_barycentric_coordinates(FT(1) - v - w, v, w);
   }
 };
 
@@ -132,7 +132,7 @@ public:
 
     FT v = (d11 * d20 - d01 * d21) / denom;
     FT w = (d00 * d21 - d01 * d20) / denom;
-    return m_construct_barycentric_coordinates(FT(1.0) - v - w, v, w);
+    return m_construct_barycentric_coordinates(FT(1) - v - w, v, w);
   }
 };
 

@@ -739,7 +739,7 @@ private:
       Barycentric_coordinates rotatedFaceLocation(shifted_coordinates(faceLocation, currentVertex));
       Point_2 sourcePoint(construct_barycenter_in_triangle_2(layoutFace, rotatedFaceLocation));
 
-      Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, current, layoutFace, sourcePoint, FT(0.0), cv2(layoutFace, 0), cv2(layoutFace, 2), Cone_tree_node::FACE_SOURCE);
+      Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, current, layoutFace, sourcePoint, FT(0), cv2(layoutFace, 0), cv2(layoutFace, 2), Cone_tree_node::FACE_SOURCE);
       node_created();
       faceRoot->push_middle_child(child);
 
@@ -800,7 +800,7 @@ private:
         std::cout << "\t\tLocation = " << sourcePoints[side] << std::endl;
       }
 
-      Cone_tree_node* mainChild = new Cone_tree_node(m_traits, m_graph, baseEdges[side], layoutFaces[side], sourcePoints[side], FT(0.0), cv2(layoutFaces[side], 0), cv2(layoutFaces[side], 1), Cone_tree_node::EDGE_SOURCE);
+      Cone_tree_node* mainChild = new Cone_tree_node(m_traits, m_graph, baseEdges[side], layoutFaces[side], sourcePoints[side], FT(0), cv2(layoutFaces[side], 0), cv2(layoutFaces[side], 1), Cone_tree_node::EDGE_SOURCE);
       node_created();
       edgeRoot->push_middle_child(mainChild);
       process_node(mainChild);
@@ -822,7 +822,7 @@ private:
     node_created();
     m_rootNodes.push_back(std::make_pair(vertexRoot, sourcePointIt));
 
-    m_closestToVertices[get(m_vertexIndexMap, vertex)] = Node_distance_pair(vertexRoot, FT(0.0));
+    m_closestToVertices[get(m_vertexIndexMap, vertex)] = Node_distance_pair(vertexRoot, FT(0));
 
     expand_pseudo_source(vertexRoot);
   }
@@ -920,7 +920,7 @@ private:
         std::cout << "\tLeft is completely covered." << std::endl;
       }
       leftPoint = cs2(segment);
-      leftT = FT(0.0);
+      leftT = FT(0);
     }
     else
     {
@@ -939,7 +939,7 @@ private:
         Point_2* result = boost::get<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
-        if (t0 >= FT(1.00000))
+        if (t0 >= FT(1))
         {
           if (m_debugOutput)
           {
@@ -948,7 +948,7 @@ private:
 
           return false;
         }
-        else if (t0 <= FT(0.00000))
+        else if (t0 <= FT(0))
         {
           if (m_debugOutput)
           {
@@ -956,7 +956,7 @@ private:
           }
 
           leftPoint = cs2(segment);
-          leftT = FT(0.0);
+          leftT = FT(0);
         }
         else
         {
@@ -980,7 +980,7 @@ private:
         std::cout << "Right is completely covered." << std::endl;
       }
       rightPoint = ct2(segment);
-      rightT = FT(1.0);
+      rightT = FT(1);
     }
     else
     {
@@ -999,7 +999,7 @@ private:
         Point_2* result = boost::get<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
-        if (t0 <= FT(0.00000))
+        if (t0 <= FT(0))
         {
           if (m_debugOutput)
           {
@@ -1007,14 +1007,14 @@ private:
           }
           return false;
         }
-        else if (t0 >= FT(1.00000))
+        else if (t0 >= FT(1))
         {
           if (m_debugOutput)
           {
             std::cout << "\tRight is completely covered (secondary check). " << t0 << std::endl;
           }
           rightPoint = ct2(segment);
-          rightT = FT(1.0);
+          rightT = FT(1);
         }
         else
         {
@@ -1522,9 +1522,9 @@ private:
   {
     Cone_tree_node* null_value=NULL;
     m_closestToVertices.resize(num_vertices(m_graph));
-    std::fill(m_closestToVertices.begin(), m_closestToVertices.end(), Node_distance_pair(null_value, FT(0.0)));
+    std::fill(m_closestToVertices.begin(), m_closestToVertices.end(), Node_distance_pair(null_value, FT(0)));
     m_vertexOccupiers.resize(num_halfedges(m_graph));
-    std::fill(m_vertexOccupiers.begin(), m_vertexOccupiers.end(), Node_distance_pair(null_value, FT(0.0)));
+    std::fill(m_vertexOccupiers.begin(), m_vertexOccupiers.end(), Node_distance_pair(null_value, FT(0)));
 
     while (!m_expansionPriqueue.empty())
     {
@@ -1716,7 +1716,7 @@ private:
     }
     else
     {
-      return std::make_pair(Node_distance_pair((Cone_tree_node*)NULL, FT(0.0)), cbc(FT(0.0), FT(0.0), FT(0.0)));
+      return std::make_pair(Node_distance_pair((Cone_tree_node*)NULL, FT(0)), cbc(FT(0), FT(0), FT(0)));
     }
   }
 
@@ -1749,7 +1749,7 @@ private:
           {
               std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
 
-              FT oppositeLocationCoords[3] = { FT(0.0), FT(0.0), FT(0.0) };
+              FT oppositeLocationCoords[3] = { FT(0), FT(0), FT(0) };
               oppositeLocationCoords[oppositeIndex] = cbcw(location, (associatedEdge + 1) % 3);
               oppositeLocationCoords[(oppositeIndex + 1) % 3] = cbcw(location, associatedEdge);
               Barycentric_coordinates oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
@@ -1783,7 +1783,7 @@ private:
 
           vertex_descriptor vertex = source(he, m_graph);
 
-          return std::make_pair(m_closestToVertices[get(m_vertexIndexMap, vertex)], cbc(FT(0.0), FT(0.0), FT(1.0)));
+          return std::make_pair(m_closestToVertices[get(m_vertexIndexMap, vertex)], cbc(FT(0), FT(0), FT(1)));
         }
         break;
 
@@ -2279,7 +2279,7 @@ public:
     }
     else
     {
-      return std::make_pair(FT(-1.0), source_points_end());
+      return std::make_pair(FT(-1), source_points_end());
     }
   }
 
@@ -2307,7 +2307,7 @@ public:
     }
     else
     {
-      return std::make_pair(FT(-1.0), source_points_end());
+      return std::make_pair(FT(-1), source_points_end());
     }
   }
 
@@ -2349,7 +2349,7 @@ public:
     }
     else
     {
-      return std::make_pair(FT(-1.0), source_points_end());
+      return std::make_pair(FT(-1), source_points_end());
     }
   }
 
@@ -2388,7 +2388,7 @@ public:
     }
     else
     {
-      return std::make_pair(FT(-1.0), source_points_end());
+      return std::make_pair(FT(-1), source_points_end());
     }
   }
 
@@ -2553,9 +2553,9 @@ public:
     face_descriptor locationFace = face(he, tm);
     std::size_t edgeIndex = CGAL::internal::edge_index(he, tm);
 
-    FT coords[3] = { FT(0.0), FT(0.0), FT(0.0) };
+    FT coords[3] = { FT(0), FT(0), FT(0) };
 
-    coords[edgeIndex] = FT(1.0);
+    coords[edgeIndex] = FT(1);
 
     return Face_location(locationFace, construct_barycentric_coordinates(coords[0], coords[1], coords[2]));
   }
@@ -2584,9 +2584,9 @@ public:
     face_descriptor locationFace = face(he, tm);
     std::size_t edgeIndex = CGAL::internal::edge_index(he, tm);
 
-    const FT oneMinusT(FT(1.0) - t);
+    const FT oneMinusT(FT(1) - t);
 
-    FT coords[3] = { FT(0.0), FT(0.0), FT(0.0) };
+    FT coords[3] = { FT(0), FT(0), FT(0) };
 
     coords[edgeIndex] = oneMinusT;
     coords[(edgeIndex + 1) % 3] = t;
@@ -2766,7 +2766,7 @@ public:
     }
     else
     {
-      return Face_location(Graph_traits::null_face(), cbc(FT(0.0), FT(0.0), FT(0.0)));
+      return Face_location(Graph_traits::null_face(), cbc(FT(0), FT(0), FT(0)));
     }
   }
 

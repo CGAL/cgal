@@ -372,7 +372,7 @@ public:
     Vector_2 edgeVector(m_construct_vector_2(segment));
 
     Vector_2 perpendicularEdgeVector(m_construct_perpendicular_vector_2(edgeVector, CGAL::COUNTERCLOCKWISE));
-    perpendicularEdgeVector = m_construct_scaled_vector_2(perpendicularEdgeVector, FT(1.0) / CGAL::internal::select_sqrt(m_compute_squared_length_2(perpendicularEdgeVector)));
+    perpendicularEdgeVector = m_construct_scaled_vector_2(perpendicularEdgeVector, FT(1) / CGAL::internal::select_sqrt(m_compute_squared_length_2(perpendicularEdgeVector)));
 
     Point_2 points[3];
     points[edgeIndex] = m_construct_source_2(segment);
@@ -479,7 +479,7 @@ public:
     if (!p1_ptr) return CGAL::SMALLER;
 
     CGAL_assertion_code(FT t1 = m_parametric_distance_along_segment_2(s1, *p1_ptr);)
-    CGAL_assertion(t1 >= FT(-0.00001) && t1 <= FT(1.00001));
+    CGAL_assertion(t1 >= FT(-1)/FT(100000) && t1 <= FT(1)+FT(1)/FT(100000));
 
     LineLineIntersectResult intersectResult2 = m_intersect_2(s2Line, l2);
     CGAL_assertion(bool(intersectResult2));
@@ -491,7 +491,7 @@ public:
     if (!p2_ptr) return CGAL::SMALLER;
 
     CGAL_assertion_code(FT t2 = m_parametric_distance_along_segment_2(s2, *p2_ptr);)
-    CGAL_assertion(t2 >= FT(-0.00001) && t2 <= FT(1.00001));
+    CGAL_assertion(t1 >= FT(-1)/FT(100000) && t1 <= FT(1)+FT(1)/FT(100000));
 
     return m_compare_distance_2(s1.source(), *p1_ptr, s2.source(), *p2_ptr);
   }
