@@ -17,7 +17,9 @@
 #include <QOpenGLDebugLogger>
 #include <QStyleFactory>
 #include <QAction>
+#ifdef CGAL_USE_WEBSOCKETS
 #include <QtWebSockets/QWebSocket>
+#endif
 
 #include <CGAL/Three/Three.h>
 
@@ -110,8 +112,9 @@ public:
   {
     return shader_programs;
   }
-
+#ifdef CGAL_USE_WEBSOCKETS
   QWebSocket m_webSocket;
+#endif
   bool is_connected;
   QString session;
   QUrl m_url;
@@ -1845,7 +1848,7 @@ bool Viewer::isClipping() const
 {
   return d->clipping;
 }
-
+#ifdef CGAL_USE_WEBSOCKETS
 void Viewer::setShareCam(bool b, QString session)
 {
   static bool init = false;
@@ -1919,5 +1922,5 @@ void Viewer::onTextMessageSocketReceived(QString message)
   }
   moveCameraToCoordinates(position, 0.05f);
 }
-
+#endif
 #include "Viewer.moc"

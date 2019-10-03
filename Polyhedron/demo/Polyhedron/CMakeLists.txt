@@ -343,6 +343,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     target_link_libraries(polyhedron_demo PUBLIC ${LIBSSH_LIBRARIES})
   endif() #libssh
   if(TARGET Qt5::WebSockets)
+    add_definitions(-DCGAL_USE_WEBSOCKETS)
     target_link_libraries(polyhedron_demo PUBLIC Qt5::WebSockets)
   endif()
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )

@@ -130,10 +130,11 @@ public Q_SLOTS:
   void setLighting();
 
   void messageLogged(QOpenGLDebugMessage);
-
+#ifdef CGAL_USE_WEBSOCKETS
   void setShareCam(bool, QString);
   void onSocketConnected();
   void onTextMessageSocketReceived(QString message);
+#endif
 
 protected:
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;

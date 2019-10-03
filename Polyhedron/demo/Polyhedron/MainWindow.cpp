@@ -76,10 +76,11 @@
 #include "Color_map.h"
 
 
+#ifdef CGAL_USE_WEBSOCKETS
 #include <QWebSocketServer>
 #include <QWebSocket>
-#include <QRandomGenerator>
 #include <QNetworkInterface>
+#endif
 
 using namespace CGAL::Three;
 QScriptValue
@@ -3233,7 +3234,7 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
     information(s);
   });
 
-
+#ifdef CGAL_USE_WEBSOCKETS
   action= subviewer->viewer->findChild<QAction*>("actionShareCamera");
   connect(action, &QAction::toggled,
           this, [this, viewer](bool b)
@@ -3258,6 +3259,7 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
     }
     viewer->setShareCam(b, session);
   });
+#endif
   
 }
 
@@ -3410,11 +3412,13 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);
+#ifdef CGAL_USE_WEBSOCKETS
   QAction* actionShareCamera= new QAction("Join &WS Server",viewer);
   actionShareCamera->setObjectName("actionShareCamera");
   actionShareCamera->setCheckable(true);
   actionShareCamera->setChecked(false);
   viewMenu->addAction(actionShareCamera);
+#endif
   if(mainviewer)
     setAttribute(Qt::WA_DeleteOnClose);
   setWindowIcon(QIcon(":/cgal/icons/resources/menu.png"));
@@ -3639,6 +3643,7 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
   }
 }
 
+#ifdef CGAL_USE_WEBSOCKETS
 void MainWindow::on_action_Start_a_Session_triggered()
 {
   QAction * action= findChild<QAction*>("action_Start_a_Session");
@@ -3652,7 +3657,6 @@ void MainWindow::on_action_Start_a_Session_triggered()
     server->deleteLater();
   }
 }
-
 
 EchoServer::EchoServer(quint16 port) :
     QObject(CGAL::Three::Three::mainWindow()),
@@ -3724,3 +3728,4 @@ void EchoServer::socketDisconnected()
         pClient->deleteLater();
     }
 }
+#endif
