@@ -30,6 +30,7 @@
 
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
 #include <CGAL/Intersection_traits_2.h>
+#include <CGAL/Algebraic_structure_traits.h>
 
 namespace CGAL {
   
@@ -281,13 +282,6 @@ Triangle_2_Triangle_2_pair<K>::vertex(int n) const
     return cur->point;
 }
 
-//algorithm taken from here : https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
-template <typename K, typename ArrayOfPoints>
-bool is_cw(const ArrayOfPoints& ps)
-{
-  return !CGAL::left_turn(ps[0], ps[1], ps[2]);
-}
-
 template <class K>
 typename K::Triangle_2
 Triangle_2_Triangle_2_pair<K>::intersection_triangle() const
@@ -296,16 +290,18 @@ Triangle_2_Triangle_2_pair<K>::intersection_triangle() const
   if (!_known)
     intersection_type();
   CGAL_kernel_assertion(_result == TRIANGLE);
-  std::array<typename K::Point_2, 3> res;
-  res[0]=_pointlist.first->point;
-  res[1]=_pointlist.first->next->point;
-  res[2]=_pointlist.first->next->next->point;
-  if(!is_cw<K>(res))
+  if(CGAL::left_turn(_pointlist.first->point,
+                     _pointlist.first->next->point,
+                     _pointlist.first->next->next->point))
   {
-    return Triangle_2(res[0], res[1], res[2]);
+    return Triangle_2(_pointlist.first->point,
+                      _pointlist.first->next->point,
+                      _pointlist.first->next->next->point);
   }
   else {
-    return Triangle_2(res[0], res[2], res[1]);
+    return Triangle_2(_pointlist.first->point,
+                      _pointlist.first->next->next->point,
+                      _pointlist.first->next->point);
   }
 }
 
@@ -330,6 +326,30 @@ Triangle_2_Triangle_2_pair<K>::intersection_point() const
     CGAL_kernel_assertion(_result == POINT);
     return _pointlist.first->point;
 }
+
+
+//algorithm taken from here : https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
+template <typename K, typename ArrayOfPoints, typename Exact>
+struct Is_cw{
+bool operator()(const ArrayOfPoints& ps)
+{
+  typename K::FT res(0);
+   std::size_t length = ps.size();
+   for(std::size_t i = 0; i<length; ++i)
+   {
+     res += (ps[(i+1)%length].x() - ps[i].x())*(ps[(i+1)%length].y()+ps[i].y());
+   }
+   return res > 0;
+}
+};
+
+template <typename K, typename ArrayOfPoints>
+struct Is_cw<K, ArrayOfPoints,Tag_true>{
+bool operator()(const ArrayOfPoints& ps)
+{
+  return !CGAL::left_turn(ps[0], ps[1], ps[2]);
+}
+};
 
 
 
@@ -358,7 +378,7 @@ intersection(const typename K::Triangle_2 &tr1,
         for (int i =0; i < ispair.vertex_count(); i++) {
             points[i] = ispair.vertex(i);
         }
-        if(is_cw<K>(points))
+        if(Is_cw<K, Container, typename Algebraic_structure_traits<typename K::FT>::Is_exact>()(points))
         {
           std::size_t length = points.size();
 

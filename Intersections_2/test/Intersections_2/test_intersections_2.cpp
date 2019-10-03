@@ -98,7 +98,8 @@ struct Test
   {
     if (p.size() != q.size())
       return false;
-    if (CGAL::Intersections::internal::is_cw<K>(p))
+    if (CGAL::Intersections::internal::Is_cw<K, Pol,
+        typename CGAL::Algebraic_structure_traits<typename K::FT>::Is_exact>()(p))
       return false;
     for(typename Pol::const_iterator itp = p.begin(), itq = q.begin(); itp != p.end(); ++itp, ++itq)
       if (!approx_equal(*itp, *itq))
@@ -111,7 +112,8 @@ struct Test
   {
     std::vector<P> vec(3);
     for(int i=0; i<3; ++i){vec[i]=p[i];}
-    if (CGAL::Intersections::internal::is_cw<K>(vec))
+    if (CGAL::Intersections::internal::Is_cw<K, std::vector<P>,
+        typename CGAL::Algebraic_structure_traits<typename K::FT>::Is_exact>(vec))
       return false;
     return p == q;
   }
