@@ -172,7 +172,7 @@ struct Triangle_structure_sampler_base{
   OutputIterator& out;
   Triangle_structure_sampler_base(OutputIterator& out,
                                   NamedParameters np)
-    :out(out), np(np)
+    :np(np), out(out)
   {}
   void sample_points();
   double get_minimum_edge_length();
@@ -224,7 +224,7 @@ struct Triangle_structure_sampler_base{
       if (grid_spacing_==0.)
       {
         // set grid spacing to the shortest edge length
-        double grid_spacing_ = static_cast<Derived*>(this)->get_minimum_edge_length();
+        grid_spacing_ = static_cast<Derived*>(this)->get_minimum_edge_length();
       }
       static_cast<Derived*>(this)->internal_sample_triangles(
             grid_spacing_, smpl_fcs, smpl_dgs);
