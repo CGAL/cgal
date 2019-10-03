@@ -1,0 +1,29 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Tetrahedral_Remeshing
+\anchor userchaptertetrahedralremeshing
+\authors Jane Tournois, Noura Faraj
+\cgalAutoToc
+
+This chapter describes the tetrahedral remeshing algorithm...
+
+\section secmydefinitions Definitions
+
+Section on definitions here ...
+
+\section secmyexamples Examples
+
+\subsection myFirstExample First Example
+
+The following example shows ...
+
+\cgalExample{ }
+
+\cgalFigureBegin{figPck,bench.png}
+Left: ...
+\cgalFigureEnd
+
+*/
+} /* namespace CGAL */
