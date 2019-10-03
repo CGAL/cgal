@@ -571,8 +571,8 @@ public:
   typedef CGAL::Triangulation_simplex_3<Tds>  Simplex_type;
 
   typedef Simplex_type   value_type;       //< defines the value type  the iterator refers to.
-  typedef Simplex_type&  reference;        //< defines the reference type of the iterator.
-  typedef Simplex_type*  pointer;          //< defines the pointer type of the iterator.
+  typedef const Simplex_type&  reference;  //< defines the reference type of the iterator.
+  typedef const Simplex_type*  pointer;    //< defines the pointer type of the iterator.
   typedef std::size_t    size_type;        //< defines the integral type that can hold the size of a sequence.
   typedef std::ptrdiff_t difference_type;  //< defines the signed integral type that can hold the distance between two iterators.
   typedef std::forward_iterator_tag iterator_category;      //< defines the iterator category.
@@ -866,12 +866,12 @@ public:
   //  provides a dereference operator.
   /* 	\return a pointer to the current cell.
   */
-  Simplex_type*   operator->()        { return &*_curr_simplex; }
+  const Simplex_type*   operator->()        { return &_curr_simplex; }
 
   //  provides an indirection operator.
   /*  \return the current cell.
   */
-  Simplex_type&   operator*()         { return _curr_simplex; }
+  const Simplex_type&   operator*()         { return _curr_simplex; }
 
   //  provides a conversion operator.
   /* 	\return a handle to the current cell.
