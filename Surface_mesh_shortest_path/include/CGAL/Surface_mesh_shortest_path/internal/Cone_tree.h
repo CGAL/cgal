@@ -88,6 +88,11 @@ private:
   std::vector<Cone_tree_node*> m_middleChildren;
   Cone_tree_node* m_parent;
 
+public:
+  Cone_expansion_event* m_pendingLeftSubtree;
+  Cone_expansion_event* m_pendingRightSubtree;
+  Cone_expansion_event* m_pendingMiddleSubtree;
+
 private:
   void on_child_link(Cone_tree_node* child)
   {
@@ -441,12 +446,6 @@ public:
   {
     return m_parent != NULL && m_parent->m_rightChild == this;
   }
-
-public:
-  Cone_expansion_event* m_pendingLeftSubtree;
-  Cone_expansion_event* m_pendingRightSubtree;
-  Cone_expansion_event* m_pendingMiddleSubtree;
-
 };
 
 } // namespace internal
