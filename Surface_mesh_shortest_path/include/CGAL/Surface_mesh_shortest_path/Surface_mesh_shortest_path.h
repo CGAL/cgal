@@ -976,9 +976,7 @@ private:
     FT leftT;
     FT rightT;
 
-    CGAL::Orientation leftOrientation = o2(cs2(leftBoundary), cpo2(leftBoundary, 1), cs2(segment));
-
-    if (leftOrientation == CGAL::RIGHT_TURN || leftOrientation == CGAL::COLLINEAR)
+    if (o2(cs2(leftBoundary), cpo2(leftBoundary, 1), cs2(segment)) != CGAL::LEFT_TURN)
     {
       if (m_debugOutput)
       {
@@ -1036,9 +1034,7 @@ private:
       }
     }
 
-    CGAL::Orientation rightOrientation = o2(cs2(rightBoundary), cpo2(rightBoundary, 1), ct2(segment));
-
-    if (rightOrientation == CGAL::LEFT_TURN || rightOrientation == CGAL::COLLINEAR)
+    if (o2(cs2(rightBoundary), cpo2(rightBoundary, 1), ct2(segment)) != CGAL::RIGHT_TURN)
     {
       if (m_debugOutput)
       {

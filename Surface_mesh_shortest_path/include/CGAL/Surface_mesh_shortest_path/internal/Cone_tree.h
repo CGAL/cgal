@@ -309,25 +309,17 @@ public:
 
   bool has_left_side() const
   {
-    typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
-
     if (is_source_node())
     {
       return true;
     }
 
-    CGAL::Orientation orientation = orientation_2(source_image(), m_windowLeft, target_point());
-
-    return (orientation == CGAL::RIGHT_TURN || orientation == CGAL::COLLINEAR);
+    return (m_traits.orientation_2_object()(source_image(), m_windowLeft, target_point()) != CGAL::LEFT_TURN);
   }
 
   bool has_right_side() const
   {
-    typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
-
-    CGAL::Orientation orientation = orientation_2(source_image(), m_windowRight, target_point());
-
-    return (orientation == CGAL::LEFT_TURN || orientation == CGAL::COLLINEAR);
+    return (m_traits.orientation_2_object()(source_image(), m_windowRight, target_point()) != CGAL::RIGHT_TURN);
   }
 
   Segment_2 left_child_base_segment() const
