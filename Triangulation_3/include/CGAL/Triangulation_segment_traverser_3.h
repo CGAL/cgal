@@ -663,7 +663,10 @@ private:
     case Locate_type::CELL:
     case Locate_type::OUTSIDE_CONVEX_HULL:
     case Locate_type::OUTSIDE_AFFINE_HULL:
-      _curr_simplex = cell;
+      if (Cell_handle(_cell_iterator) == Cell_handle())
+        _curr_simplex = Simplex_type();
+      else
+        _curr_simplex = cell;
       break;
     default:
       CGAL_assertion(false);
