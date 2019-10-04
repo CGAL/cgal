@@ -65,22 +65,22 @@ private:
 
 private:
   // These could be pulled back into a 'context' class to save space
-  Traits& m_traits;
-  Triangle_mesh& m_graph;
+  const Traits& m_traits;
+  const Triangle_mesh& m_graph;
 
-  halfedge_descriptor m_entryEdge;
+  const halfedge_descriptor m_entryEdge;
 
-  Point_2 m_sourceImage;
-  Triangle_2 m_layoutFace;
-  FT m_pseudoSourceDistance;
+  const Point_2 m_sourceImage;
+  const Triangle_2 m_layoutFace;
+  const FT m_pseudoSourceDistance;
 
-  Point_2 m_windowLeft;
-  Point_2 m_windowRight;
+  const Point_2 m_windowLeft;
+  const Point_2 m_windowRight;
 
-  size_t m_level;
-  size_t m_treeId;
+  std::size_t m_level;
+  std::size_t m_treeId;
 
-  Node_type m_nodeType;
+  const Node_type m_nodeType;
 
   Cone_tree_node* m_leftChild;
   Cone_tree_node* m_rightChild;
@@ -97,7 +97,9 @@ private:
   }
 
 public:
-  Cone_tree_node(Traits& traits, Triangle_mesh& g, size_t treeId)
+  Cone_tree_node(const Traits& traits,
+                 const Triangle_mesh& g,
+                 const std::size_t treeId)
     : m_traits(traits)
     , m_graph(g)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
@@ -114,7 +116,10 @@ public:
   {
   }
 
-  Cone_tree_node(Traits& traits, Triangle_mesh& g, size_t treeId, halfedge_descriptor entryEdge)
+  Cone_tree_node(const Traits& traits,
+                 const Triangle_mesh& g,
+                 const std::size_t treeId,
+                 const halfedge_descriptor entryEdge)
     : m_traits(traits)
     , m_graph(g)
     , m_entryEdge(entryEdge)
@@ -132,7 +137,15 @@ public:
   {
   }
 
-  Cone_tree_node(Traits& traits, Triangle_mesh& g, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
+  Cone_tree_node(const Traits& traits,
+                 const Triangle_mesh& g,
+                 const halfedge_descriptor entryEdge,
+                 const Triangle_2& layoutFace,
+                 const Point_2& sourceImage,
+                 const FT& pseudoSourceDistance,
+                 const Point_2& windowLeft,
+                 const Point_2& windowRight,
+                 const Node_type nodeType = INTERVAL)
     : m_traits(traits)
     , m_graph(g)
     , m_entryEdge(entryEdge)
@@ -150,12 +163,12 @@ public:
   {
   }
 
-  size_t tree_id() const
+  std::size_t tree_id() const
   {
     return m_treeId;
   }
 
-  size_t level() const
+  std::size_t level() const
   {
     return m_level;
   }
@@ -175,7 +188,7 @@ public:
     return m_nodeType == ROOT;
   }
 
-  Triangle_2 layout_face() const
+  const Triangle_2& layout_face() const
   {
     return m_layoutFace;
   }
@@ -190,7 +203,7 @@ public:
     return current_face() == Graph_traits::null_face();
   }
 
-  size_t edge_face_index() const
+  std::size_t edge_face_index() const
   {
     return edge_index(entry_edge(), m_graph);
   }
@@ -215,7 +228,7 @@ public:
     return target(next(m_entryEdge, m_graph), m_graph);
   }
 
-  Point_2 source_image() const
+  const Point_2& source_image() const
   {
     return m_sourceImage;
   }
@@ -251,12 +264,12 @@ public:
     return Ray_2(source_image(), m_windowRight);
   }
 
-  Point_2 window_left() const
+  const Point_2& window_left() const
   {
     return m_windowLeft;
   }
 
-  Point_2 window_right() const
+  const Point_2& window_right() const
   {
     return m_windowRight;
   }
@@ -334,12 +347,12 @@ public:
     return m_middleChildren.size() > 0;
   }
 
-  size_t num_middle_children() const
+  std::size_t num_middle_children() const
   {
     return m_middleChildren.size();
   }
 
-  Cone_tree_node* get_middle_child(size_t i) const
+  Cone_tree_node* get_middle_child(const std::size_t i) const
   {
     return m_middleChildren.at(i);
   }

@@ -37,8 +37,8 @@ Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Triangle_mesh>::h
 {
   typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor halfedge_descriptor;
 
-  halfedge_descriptor e0 = edge;
-  halfedge_descriptor e1 = next(edge, g);
+  const halfedge_descriptor e0 = edge;
+  const halfedge_descriptor e1 = next(edge, g);
 
   return Triangle_3(get(vertexPointMap, source(e0, g)), get(vertexPointMap, target(e0, g)), get(vertexPointMap, target(e1, g)));
 }
@@ -57,9 +57,9 @@ size_t edge_index(typename boost::graph_traits<Triangle_mesh>::halfedge_descript
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
 
-  face_descriptor f = face(he, p);
+  const face_descriptor f = face(he, p);
 
-  halfedge_descriptor start = halfedge(f, p);
+  const halfedge_descriptor start = halfedge(f, p);
   halfedge_descriptor current = start;
 
   size_t count = 0;
