@@ -140,7 +140,7 @@ public:
       t2.reset(); t2.start();
     }
 
-#ifdef CGAL_TRACE_CMAP_TOOLS
+    // #ifdef CGAL_TRACE_CMAP_TOOLS
     std::cout<<"All non loop contracted: ";
     get_map().display_characteristics(std::cout) << ", valid=" 
                                              << get_map().is_valid() << std::endl;
@@ -148,7 +148,7 @@ public:
        <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
        <<"; number of darts in copy_to_origin: "<<copy_to_origin.size()
        <<std::endl; */
-#endif
+    // #endif
 
     // 2) Now we compute each length two path associated with each edge that does
     // not belong to the spanning tree (which are thus all the survival edges).
@@ -184,7 +184,7 @@ public:
       t2.reset(); t2.start();
     }
 
-#ifdef CGAL_TRACE_CMAP_TOOLS
+    // #ifdef CGAL_TRACE_CMAP_TOOLS
     std::cout<<"All faces merges: ";
     get_map().display_characteristics(std::cout) << ", valid=" 
                                              << get_map().is_valid() << std::endl;
@@ -193,7 +193,7 @@ public:
             <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
             <<"; number of darts in copy_to_origin: "<<copy_to_origin.size()
             <<std::endl; */
-#endif
+    // #endif
 
     if (!get_map().is_empty()) // m_map is_empty if the surface is a sphere
     {
@@ -201,7 +201,18 @@ public:
       if (!m_map_is_a_torus_quadrangulation())
       {
         surface_quadrangulate();
+
+        std::cout<<"All faces quadrangulate: ";
+        get_map().display_characteristics(std::cout) << ", valid=" 
+                                                     << get_map().is_valid() << std::endl;
+        get_map().display_darts(std::cout);
+        
         remove_spurs_from_quadrangulation();
+
+        std::cout<<"remove spurs: ";
+        get_map().display_characteristics(std::cout) << ", valid=" 
+                                                     << get_map().is_valid() << std::endl;
+        get_map().display_darts(std::cout);
 
         if (display_time)
         {
@@ -924,7 +935,9 @@ protected:
            it=get_map().darts().begin(), itend=get_map().darts().end(); it!=itend;
          ++it)
     {
-      if (get_map().is_dart_used(it) && get_map().is_marked(it, oldedges))
+      if (get_map().is_dart_used(it) && get_map().is_marked(it, oldedges) &&
+          (!get_map().is_marked(it, m_mark_hole) ||
+           !get_map().is_marked(get_map().template beta<2>(it), m_mark_hole)))
       {
         if (get_map().is_marked(get_map().template beta<2>(it), m_mark_hole) &&
             !get_map().is_marked(it, m_mark_hole))
