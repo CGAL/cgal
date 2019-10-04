@@ -30,6 +30,7 @@
 namespace CGAL {
 namespace Intersections {
 namespace internal {
+
 template <class K>
 bool
 do_intersect(const typename K::Circle_2 & c,

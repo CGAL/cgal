@@ -39,18 +39,17 @@ do_intersect(const CGAL::Bbox_2& c,
   return CGAL::do_overlap(c, bbox);
 }
 
-typename boost::optional< typename
-boost::variant< Bbox_2> >
+typename boost::optional< typename boost::variant< Bbox_2> >
 inline
 intersection(const CGAL::Bbox_2& a,
              const CGAL::Bbox_2& b) {
 
   typedef typename
   boost::variant< Bbox_2> variant_type;
-  typedef typename boost::optional< variant_type > Result_type;
+  typedef typename boost::optional< variant_type > result_type;
   if(!do_intersect(a,b))
   {
-    return Result_type();
+    return result_type();
   }
 
   double xmin, xmax, ymin, ymax;
@@ -60,7 +59,7 @@ intersection(const CGAL::Bbox_2& a,
   ymin = (std::max)(a.ymin(), b.ymin());
   ymax = (std::min)(a.ymax(), b.ymax());
 
-  return Result_type(std::forward<Bbox_2>(Bbox_2(xmin, ymin, xmax, ymax)));
+  return result_type(std::forward<Bbox_2>(Bbox_2(xmin, ymin, xmax, ymax)));
 }
 
 }

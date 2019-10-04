@@ -39,8 +39,9 @@ CGAL_INTERSECTION_TRAITS_2(Line_3, Segment_3, Point_3, Segment_3)
 CGAL_INTERSECTION_TRAITS_2(Segment_3, Line_3, Point_3, Segment_3)
 
 CGAL_INTERSECTION_TRAITS_2(Line_3, Triangle_3, Point_3, Segment_3)
-CGAL_INTERSECTION_TRAITS_2(Line_3, Tetrahedron_3, Point_3, Segment_3)
 CGAL_INTERSECTION_TRAITS_2(Triangle_3, Line_3, Point_3, Segment_3)
+
+CGAL_INTERSECTION_TRAITS_2(Line_3, Tetrahedron_3, Point_3, Segment_3)
 
 CGAL_INTERSECTION_TRAITS_2(Plane_3, Plane_3, Line_3, Plane_3)
 

@@ -329,9 +329,9 @@ Triangle_2_Triangle_2_pair<K>::intersection_point() const
 
 
 //algorithm taken from here : https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
-template <typename K, typename ArrayOfPoints, typename Exact>
+template <typename K,  typename Exact>
 struct Is_cw{
-bool operator()(const ArrayOfPoints& ps)
+bool operator()(const std::vector<typename K::Point_2>& ps)
 {
   typename K::FT res(0);
    std::size_t length = ps.size();
@@ -343,9 +343,9 @@ bool operator()(const ArrayOfPoints& ps)
 }
 };
 
-template <typename K, typename ArrayOfPoints>
-struct Is_cw<K, ArrayOfPoints,Tag_true>{
-bool operator()(const ArrayOfPoints& ps)
+template <typename K>
+struct Is_cw<K,Tag_true>{
+bool operator()(const std::vector<typename K::Point_2>& ps)
 {
   return !CGAL::left_turn(ps[0], ps[1], ps[2]);
 }
@@ -378,7 +378,7 @@ intersection(const typename K::Triangle_2 &tr1,
         for (int i =0; i < ispair.vertex_count(); i++) {
             points[i] = ispair.vertex(i);
         }
-        if(Is_cw<K, Container, typename Algebraic_structure_traits<typename K::FT>::Is_exact>()(points))
+        if(Is_cw<K, typename Algebraic_structure_traits<typename K::FT>::Is_exact>()(points))
         {
           std::size_t length = points.size();
 

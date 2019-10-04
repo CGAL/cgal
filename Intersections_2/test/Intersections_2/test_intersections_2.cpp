@@ -98,7 +98,7 @@ struct Test
   {
     if (p.size() != q.size())
       return false;
-    if (CGAL::Intersections::internal::Is_cw<K, Pol,
+    if (CGAL::Intersections::internal::Is_cw<K,
         typename CGAL::Algebraic_structure_traits<typename K::FT>::Is_exact>()(p))
       return false;
     for(typename Pol::const_iterator itp = p.begin(), itq = q.begin(); itp != p.end(); ++itp, ++itq)
@@ -110,9 +110,12 @@ struct Test
 
   bool approx_equal(const T & p, const T & q)
   {
-    std::vector<P> vec(3);
-    for(int i=0; i<3; ++i){vec[i]=p[i];}
-    if (CGAL::Intersections::internal::Is_cw<K, std::vector<P>,
+    if(p.size() != q.size())
+      return false;
+
+    std::vector<P> vec { p[0], p[1], p[2] };
+
+    if (CGAL::Intersections::internal::Is_cw<K,
         typename CGAL::Algebraic_structure_traits<typename K::FT>::Is_exact>(vec))
       return false;
     return p == q;
@@ -336,11 +339,15 @@ struct Test
 
     check_no_do_intersect  (C(p( 2, 8), 6), S(p(-3, -2), p( 2,  -4)));
     check_no_do_intersect  (C(p( 2, 8), 6), S(p(-3, 22), p( 2, 34)));
+    check_no_do_intersect  (C(p( 2, 8), 9), S(p(2.5, 3.5), p(3, 4)));
 
     check_do_intersect     (C(p( 3, 4), 0), S(p(-3,  8), p( 6,  2)));
     check_do_intersect     (C(p( 4, 3), 4), S(p( 6, -7), p( 5, 2)));
 
     check_do_intersect     (C(p(-3, 1), 7), S(p(-1, -3), p(-6,  7)));
+
+    check_do_intersect     (C(p(1, 1), 4), S(p(-1, 1), p(-6,  -8)));
+    check_do_intersect     (C(p(1, 1), 4), S(p(-1, 4), p(-1,  -4)));
   }
 
   void C_R()
@@ -360,6 +367,7 @@ struct Test
   {
     std::cout << "Circle - Triangle" << std::endl;
     check_no_do_intersect  (C(p( 2, 8), 6), T(p(6,0), p( 8, 0), p(8,2)));
+    check_no_do_intersect  (C(p( 0, 0), 9), T(p(1,1), p( 1, -1), p(0.1,0.1)));
 
     check_do_intersect     (C(p( 3, 4), 0), T(p(-3,  8), p( 6,  2), p(4,6)));
     check_do_intersect     (C(p( 4, 3), 4), T(p( 6, -7), p( 5, 2), p(2,-3)));

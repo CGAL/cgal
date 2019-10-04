@@ -25,8 +25,6 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Triangle_2.h>
-#include <CGAL/kernel_assertions.h>
-#include <CGAL/number_utils.h>
 #include <CGAL/Intersections_2/Iso_rectangle_2_Triangle_2.h>
 
 namespace CGAL {
@@ -34,35 +32,35 @@ namespace CGAL {
 
 template <class K>
 inline bool do_intersect(
-    const Triangle_2<K> &line,
+    const Triangle_2<K> &tr,
     const Bbox_2 &box)
 {
   typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
-  return do_intersect(rec, line);
+  return do_intersect(rec, tr);
 }
 
 template <class K>
 inline bool do_intersect(
     const Bbox_2 &box,
-const Triangle_2<K> &line)
+const Triangle_2<K> &tr)
 {
-  return do_intersect(line, box);
+  return do_intersect(tr, box);
 }
 
 template<typename K>
 typename Intersection_traits<K, typename K::Triangle_2, Bbox_2>::result_type
-intersection(const CGAL::Bbox_2& box,
-             const Triangle_2<K>& line) {
+intersection(const Bbox_2& box,
+             const Triangle_2<K>& tr) {
   typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
-  return intersection(rec, line);
+  return intersection(rec, tr);
 }
 
 template<typename K>
 typename Intersection_traits<K, typename K::Triangle_2, Bbox_2>::result_type
-intersection(const Triangle_2<K>& line,
-             const CGAL::Bbox_2& box) {
-  return intersection(box, line);
+intersection(const Triangle_2<K>& tr,
+             const Bbox_2& box) {
+  return intersection(box, tr);
 }
 
 }
-#endif // BBOX_2_TRIANGLE_2_H
+#endif // CGAL_INTERSECTIONS_BBOX_2_TRIANGLE_2_H
