@@ -552,20 +552,20 @@ public:
 template<typename Triangle, typename PointRange>
 class Triangle_from_soup
 {
-  typedef typename PointRange::value_type Point_3;
-  typedef typename Kernel_traits<Point_3>::Kernel          Kernel;
+  typedef typename boost::range_value<PointRange>::type  Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel        Kernel;
+public:
+  typedef typename Kernel::Triangle_3                    result_type;
+private:
   const PointRange& points;
 public:
   Triangle_from_soup(const PointRange& pts)
     :points(pts)
   {}
-  typedef typename Kernel::Triangle_3 result_type;
 
   result_type operator()(const Triangle& t) const
   {
-    return result_type(points[t[0]],
-        points[t[1]],
-        points[t[2]]);
+    return result_type(points[t[0]], points[t[1]], points[t[2]]);
   }
 };
 
@@ -720,7 +720,7 @@ struct Random_points_in_triangles_3
 
 
 template <class PointRange,
-          class Triangle=std::vector<std::size_t>,
+          class Triangle = std::vector<std::size_t>,
           class Creator = Creator_uniform_3<
                             typename Kernel_traits< typename PointRange::value_type >::Kernel::RT,
                             typename PointRange::value_type>
@@ -734,26 +734,29 @@ struct Random_points_in_triangle_soup
   typedef Generic_random_point_generator<Triangle,
                                          internal::Triangle_from_soup<Triangle, PointRange>,
                                          Random_points_in_triangle_3<typename PointRange::value_type>,
-                                         typename PointRange::value_type>            Base;
-
-  typedef typename PointRange::value_type                  Point_3;
-  typedef typename Kernel_traits<Point_3>::Kernel          Kernel;
-  typedef Triangle                                         Id;
-  typedef Point_3                                          result_type;
-  typedef Random_points_in_triangle_soup<PointRange, Triangle, Creator>  This;
+                                         typename PointRange::value_type> Base;
+  typedef typename PointRange::value_type                                 Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel                         Kernel;
+  typedef Triangle                                                        Id;
+  typedef Point_3                                                         result_type;
+  typedef Random_points_in_triangle_soup<PointRange, Triangle, Creator>   This;
 
   template<typename TriangleRange>
-  Random_points_in_triangle_soup( const TriangleRange& triangles, const PointRange& points, Random& rnd = get_default_random())
+  Random_points_in_triangle_soup(const TriangleRange& triangles,
+                                 const PointRange& points,
+                                 Random& rnd = get_default_random())
     : Base(triangles,
            internal::Triangle_from_soup<Triangle, PointRange>(points),
            internal::Apply_approx_sqrt<typename Kernel_traits<Point_3>::Kernel::Compute_squared_area_3>()
            ,rnd )
   {
   }
+
   This& operator++() {
     Base::generate_point();
     return *this;
   }
+
   This operator++(int) {
     This tmp = *this;
     ++(*this);
