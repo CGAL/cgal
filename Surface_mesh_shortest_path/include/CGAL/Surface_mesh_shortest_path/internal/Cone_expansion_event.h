@@ -53,7 +53,9 @@ public:
   bool m_cancelled;
 
 public:
-  Cone_expansion_event(Cone_tree_node<Traits>* parent, const FT& distanceEstimate, Expansion_type type)
+  Cone_expansion_event(Cone_tree_node<Traits>* parent,
+                       const FT& distanceEstimate,
+                       Expansion_type type)
     : m_parent(parent)
     , m_distanceEstimate(distanceEstimate)
     , m_type(type)
@@ -61,7 +63,10 @@ public:
   {
   }
 
-  Cone_expansion_event(Cone_tree_node<Traits>* parent, const FT& distanceEstimate, Expansion_type type, const Segment_2& windowSegment)
+  Cone_expansion_event(Cone_tree_node<Traits>* parent,
+                       const FT& distanceEstimate,
+                       Expansion_type type,
+                       const Segment_2& windowSegment)
     : m_parent(parent)
     , m_distanceEstimate(distanceEstimate)
     , m_type(type)
@@ -76,7 +81,8 @@ template <class Traits>
 struct Cone_expansion_event_min_priority_queue_comparator
 {
 public:
-  bool operator () (const Cone_expansion_event<Traits>* lhs, const Cone_expansion_event<Traits>* rhs) const
+  bool operator () (const Cone_expansion_event<Traits>* lhs,
+                    const Cone_expansion_event<Traits>* rhs) const
   {
     return rhs->m_distanceEstimate < lhs->m_distanceEstimate;
   }

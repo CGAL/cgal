@@ -282,10 +282,13 @@ public:
   bool inside_window(const Point_2& point) const
   {
     typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
+
     Point_2 sourceImagePoint(source_image());
     CGAL::Orientation leftOrientation = orientation_2(sourceImagePoint, m_windowLeft, point);
     CGAL::Orientation rightOrientation = orientation_2(sourceImagePoint, m_windowRight, point);
-    return (leftOrientation == CGAL::RIGHT_TURN || leftOrientation == CGAL::COLLINEAR) && (rightOrientation == CGAL::LEFT_TURN || rightOrientation == CGAL::COLLINEAR);
+
+    return (leftOrientation == CGAL::RIGHT_TURN || leftOrientation == CGAL::COLLINEAR) &&
+           (rightOrientation == CGAL::LEFT_TURN || rightOrientation == CGAL::COLLINEAR);
   }
 
   Point_2 target_point() const

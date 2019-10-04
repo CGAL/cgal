@@ -171,7 +171,8 @@ public:
   \brief A model of `BidirectionalIterator` to access the source points
 
   \details An iterator becomes invalid if:
-   - the corresponding point is removed (either with `Surface_mesh_shortest_path::remove_source_point()` or `Surface_mesh_shortest_path::remove_all_source_points()`).
+   - the corresponding point is removed (either with `Surface_mesh_shortest_path::remove_source_point()`
+     or `Surface_mesh_shortest_path::remove_all_source_points()`).
    - the structure is re-built (triggered by a shortest path query or a call to `Surface_mesh_shortest_path::build_sequence_tree()`).
    - the structure is cleared (`Surface_mesh_shortest_path::clear()`).
 
@@ -388,13 +389,15 @@ public:
 
   std::size_t current_memory_usage() const
   {
-    std::size_t baseUsage = m_rootNodes.size() * sizeof(Cone_tree_node*) + m_closestToVertices.size() * sizeof(Node_distance_pair);
+    std::size_t baseUsage = m_rootNodes.size() * sizeof(Cone_tree_node*)
+                            + m_closestToVertices.size() * sizeof(Node_distance_pair);
 
     std::size_t finalUsage = baseUsage + sizeof(Cone_tree_node) * m_currentNodeCount;
 
     for (std::size_t i = 0; i < m_faceOccupiers.size(); ++i)
     {
-      finalUsage += (m_faceOccupiers[i].size() * sizeof(Cone_tree_node*)) + sizeof(std::vector<Cone_tree_node*>);
+      finalUsage += (m_faceOccupiers[i].size() * sizeof(Cone_tree_node*))
+                    + sizeof(std::vector<Cone_tree_node*>);
     }
 
     return finalUsage;
@@ -402,11 +405,17 @@ public:
 
   std::size_t peak_memory_usage() const
   {
-    std::size_t baseUsage = m_rootNodes.size() * sizeof(Cone_tree_node*) + m_vertexOccupiers.size() * sizeof(Node_distance_pair) + m_closestToVertices.size() * sizeof(Node_distance_pair);
+    std::size_t baseUsage = m_rootNodes.size() * sizeof(Cone_tree_node*)
+                            + m_vertexOccupiers.size() * sizeof(Node_distance_pair)
+                            + m_closestToVertices.size() * sizeof(Node_distance_pair);
 
-    std::size_t peakNodeUsage = baseUsage + (sizeof(Cone_tree_node) * m_peakNodeCount) + ((sizeof(Cone_expansion_event) + sizeof(Cone_expansion_event*)) * m_queueAtPeakNodes);
+    std::size_t peakNodeUsage = baseUsage + (sizeof(Cone_tree_node) * m_peakNodeCount)
+                                + ((sizeof(Cone_expansion_event)
+                                    + sizeof(Cone_expansion_event*)) * m_queueAtPeakNodes);
 
-    std::size_t peakQueueUsage = baseUsage + (sizeof(Cone_expansion_event) + (sizeof(Cone_expansion_event*)) * m_peakQueueSize) + (sizeof(Cone_tree_node) * m_nodesAtPeakQueue);
+    std::size_t peakQueueUsage = baseUsage
+                                 + (sizeof(Cone_expansion_event) + (sizeof(Cone_expansion_event*)) * m_peakQueueSize)
+                                 + (sizeof(Cone_tree_node) * m_nodesAtPeakQueue);
 
     return std::max(peakNodeUsage, peakQueueUsage);
   }
@@ -452,17 +461,20 @@ private:
 
   void node_deleted()
   {
-#if !defined(NDEBUG)
+#if 1// !defined(NDEBUG)
     --m_currentNodeCount;
 #endif
   }
 
-  Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t, const Barycentric_coordinates& b) const
+  Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t,
+                                             const Barycentric_coordinates& b) const
   {
     return construct_barycenter_in_triangle_2(t, b, m_traits);
   }
 
-  static Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t, const Barycentric_coordinates& b, const Traits& traits)
+  static Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t,
+                                                    const Barycentric_coordinates& b,
+                                                    const Traits& traits)
   {
     typename Traits::Construct_vertex_2 cv2(traits.construct_vertex_2_object());
     typename Traits::Construct_barycentric_coordinates_weight cbcw(traits.construct_barycentric_coordinates_weight_object());
@@ -471,12 +483,15 @@ private:
     return cb2(cv2(t, 0), cbcw(b, 0), cv2(t, 1), cbcw(b, 1), cv2(t, 2), cbcw(b, 2));
   }
 
-  Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t, const Barycentric_coordinates& b) const
+  Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t,
+                                             const Barycentric_coordinates& b) const
   {
     return construct_barycenter_in_triangle_3(t, b, m_traits);
   }
 
-  static Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t, const Barycentric_coordinates& b, const Traits& traits)
+  static Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t,
+                                                    const Barycentric_coordinates& b,
+                                                    const Traits& traits)
   {
     typename Traits::Construct_vertex_3 cv3(traits.construct_vertex_3_object());
     typename Traits::Construct_barycentric_coordinates_weight cbcw(traits.construct_barycentric_coordinates_weight_object());
@@ -574,21 +589,23 @@ private:
     d2 = v2Distance.second;
     d3 = v3Distance.second;
 
-    bool hasD1 = v1Distance.first != NULL && v1Distance.first != cone->parent();
-    bool hasD2 = v2Distance.first != NULL && v2Distance.first != cone->parent();
-    bool hasD3 = v3Distance.first != NULL && v3Distance.first != cone->parent();
+    const bool hasD1 = v1Distance.first != NULL && v1Distance.first != cone->parent();
+    const bool hasD2 = v2Distance.first != NULL && v2Distance.first != cone->parent();
+    const bool hasD3 = v3Distance.first != NULL && v3Distance.first != cone->parent();
 
     if (hasD1 && (d + CGAL::approximate_sqrt(csd2(I, B)) > d1 + CGAL::approximate_sqrt(csd2(v1, B))))
     {
       if (m_debugOutput)
       {
         std::cout << "Filter: d + |I,B| > d1 + |v1,B|: " << std::endl;
-        std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
+        std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index
+                  << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
         std::cout << "d = " << d << std::endl;
         std::cout << "v1,B = " << CGAL::approximate_sqrt(csd2(v1, B)) << std::endl;
         std::cout << "I,B = " << CGAL::approximate_sqrt(csd2(I, B)) << std::endl;
         std::cout << "I,A = " << CGAL::approximate_sqrt(csd2(I, A)) << std::endl;
-        std::cout << (d + CGAL::approximate_sqrt(csd2(I, B))) << " vs. " << (d1 + CGAL::approximate_sqrt(csd2(v1, B))) << std::endl;
+        std::cout << (d + CGAL::approximate_sqrt(csd2(I, B)))
+                  << " vs. " << (d1 + CGAL::approximate_sqrt(csd2(v1, B))) << std::endl;
       }
 
       return false;
@@ -599,11 +616,13 @@ private:
       if (m_debugOutput)
       {
         std::cout << "Filter: d + |I,A| > d2 + |v2,A|: " << std::endl;
-        std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
+        std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index
+                  << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
         std::cout << "d = " << d << std::endl;
         std::cout << "v2,A = " << CGAL::approximate_sqrt(csd2(v2, A)) << std::endl;
         std::cout << "I,A = " << CGAL::approximate_sqrt(csd2(I, A)) << std::endl;
-        std::cout << (d + CGAL::approximate_sqrt(csd2(I, A))) << " vs. " << (d2 + CGAL::approximate_sqrt(csd2(v2, A))) << std::endl;
+        std::cout << (d + CGAL::approximate_sqrt(csd2(I, A)))
+                  << " vs. " << (d2 + CGAL::approximate_sqrt(csd2(v2, A))) << std::endl;
       }
 
       return false;
@@ -614,11 +633,13 @@ private:
       if (m_debugOutput)
       {
         std::cout << "Filter: d + |I,A| > d3 + |v3,A|: " << std::endl;
-        std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
+        std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index
+                  << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
         std::cout << "d = " << d << std::endl;
         std::cout << "v3,A = " << CGAL::approximate_sqrt(csd2(v3, A)) << std::endl;
         std::cout << "I,A = " << CGAL::approximate_sqrt(csd2(I, A)) << std::endl;
-        std::cout << (d + CGAL::approximate_sqrt(csd2(I, A))) << " vs. " << (d3 + CGAL::approximate_sqrt(csd2(v3, A))) << std::endl;
+        std::cout << (d + CGAL::approximate_sqrt(csd2(I, A)))
+                  << " vs. " << (d3 + CGAL::approximate_sqrt(csd2(v3, A))) << std::endl;
       }
 
       return false;
@@ -644,7 +665,10 @@ private:
     {
       Triangle_3 adjacentFace = triangle_from_halfedge(cone->left_child_edge());
       Triangle_2 layoutFace = ft3as2(adjacentFace, 0, cone->left_child_base_segment());
-      Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, cone->left_child_edge(), layoutFace, cone->source_image(), cone->distance_from_source_to_root(), cv2(windowSegment, 0), cv2(windowSegment, 1), Cone_tree_node::INTERVAL);
+      Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, cone->left_child_edge(), layoutFace,
+                                                 cone->source_image(), cone->distance_from_source_to_root(),
+                                                 cv2(windowSegment, 0), cv2(windowSegment, 1),
+                                                 Cone_tree_node::INTERVAL);
       node_created();
       cone->set_left_child(child);
       process_node(child);
@@ -672,7 +696,10 @@ private:
     {
       Triangle_3 adjacentFace = triangle_from_halfedge(cone->right_child_edge());
       Triangle_2 layoutFace = ft3as2(adjacentFace, 0, cone->right_child_base_segment());
-      Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, cone->right_child_edge(), layoutFace, cone->source_image(), cone->distance_from_source_to_root(), cv2(windowSegment, 0), cv2(windowSegment, 1), Cone_tree_node::INTERVAL);
+      Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, cone->right_child_edge(), layoutFace,
+                                                 cone->source_image(), cone->distance_from_source_to_root(),
+                                                 cv2(windowSegment, 0), cv2(windowSegment, 1),
+                                                 Cone_tree_node::INTERVAL);
       node_created();
       cone->set_right_child(child);
       process_node(child);
@@ -749,7 +776,9 @@ private:
     if (m_debugOutput)
     {
       typename Traits::Construct_barycentric_coordinates_weight cbcw(m_traits.construct_barycentric_coordinates_weight_object());
-      std::cout << "\tFace Root Expansion: id = " << get(m_faceIndexMap, f) << " , Location = " << cbcw(faceLocation, 0) << " " << cbcw(faceLocation, 1) << " " << cbcw(faceLocation, 2) << " " << std::endl;
+      std::cout << "\tFace Root Expansion: id = " << get(m_faceIndexMap, f)
+                << " , Location = " << cbcw(faceLocation, 0) << " " << cbcw(faceLocation, 1)
+                << " " << cbcw(faceLocation, 2) << " " << std::endl;
     }
 
     for (std::size_t currentVertex = 0; currentVertex < 3; ++currentVertex)
@@ -759,7 +788,9 @@ private:
       const Barycentric_coordinates rotatedFaceLocation(shifted_coordinates(faceLocation, currentVertex));
       const Point_2 sourcePoint(construct_barycenter_in_triangle_2(layoutFace, rotatedFaceLocation));
 
-      Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, current, layoutFace, sourcePoint, FT(0), cv2(layoutFace, 0), cv2(layoutFace, 2), Cone_tree_node::FACE_SOURCE);
+      Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, current, layoutFace, sourcePoint,
+                                                 FT(0), cv2(layoutFace, 0), cv2(layoutFace, 2),
+                                                 Cone_tree_node::FACE_SOURCE);
       node_created();
       faceRoot->push_middle_child(child);
 
@@ -789,7 +820,9 @@ private:
 
     if (m_debugOutput)
     {
-      std::cout << "\tEdge Root Expansion: faceA = " << get(m_faceIndexMap, face(baseEdge, m_graph)) << " , faceB = " << get(m_faceIndexMap, face(opposite(baseEdge, m_graph), m_graph)) << " , t0 = " << t0 << " , t1 = " << t1 << std::endl;
+      std::cout << "\tEdge Root Expansion: faceA = " << get(m_faceIndexMap, face(baseEdge, m_graph))
+                << " , faceB = " << get(m_faceIndexMap, face(opposite(baseEdge, m_graph), m_graph))
+                << " , t0 = " << t0 << " , t1 = " << t1 << std::endl;
     }
 
     halfedge_descriptor baseEdges[2];
@@ -822,7 +855,9 @@ private:
         std::cout << "\t\tLocation = " << sourcePoints[side] << std::endl;
       }
 
-      Cone_tree_node* mainChild = new Cone_tree_node(m_traits, m_graph, baseEdges[side], layoutFaces[side], sourcePoints[side], FT(0), cv2(layoutFaces[side], 0), cv2(layoutFaces[side], 1), Cone_tree_node::EDGE_SOURCE);
+      Cone_tree_node* mainChild = new Cone_tree_node(m_traits, m_graph, baseEdges[side], layoutFaces[side],
+                                                     sourcePoints[side], FT(0), cv2(layoutFaces[side], 0),
+                                                     cv2(layoutFaces[side], 1), Cone_tree_node::EDGE_SOURCE);
       node_created();
       edgeRoot->push_middle_child(mainChild);
       process_node(mainChild);
@@ -832,14 +867,16 @@ private:
   /*
     Create a 'source' node for each face surrounding the given vertex.
   */
-  void expand_vertex_root(vertex_descriptor vertex, Source_point_iterator sourcePointIt)
+  void expand_vertex_root(const vertex_descriptor vertex,
+                          Source_point_iterator sourcePointIt)
   {
     if (m_debugOutput)
     {
       std::cout << "\tVertex Root Expansion: Vertex = " << get(m_vertexIndexMap, vertex) << std::endl;
     }
 
-    Cone_tree_node* vertexRoot = new Cone_tree_node(m_traits, m_graph, m_rootNodes.size(), prev(halfedge(vertex, m_graph), m_graph));
+    Cone_tree_node* vertexRoot = new Cone_tree_node(m_traits, m_graph, m_rootNodes.size(),
+                                                    prev(halfedge(vertex, m_graph), m_graph));
 
     node_created();
     m_rootNodes.push_back(std::make_pair(vertexRoot, sourcePointIt));
@@ -894,7 +931,10 @@ private:
         std::cout << std::endl;
       }
 
-      Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, currentEdge, layoutFace, cv2(layoutFace, 1), distanceFromTargetToRoot, cv2(layoutFace, 0), cv2(layoutFace, 2), Cone_tree_node::VERTEX_SOURCE);
+      Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, currentEdge, layoutFace,
+                                                 cv2(layoutFace, 1), distanceFromTargetToRoot,
+                                                 cv2(layoutFace, 0), cv2(layoutFace, 2),
+                                                 Cone_tree_node::VERTEX_SOURCE);
 
       node_created();
       parent->push_middle_child(child);
@@ -1113,7 +1153,8 @@ private:
       std::cout << "\tSource Image = " << node->source_image() << std::endl;
       std::cout << "\tWindow Left = " << node->window_left() << std::endl;
       std::cout << "\tWindow Right = " << node->window_right() << std::endl;
-      std::cout << "\t Has Left : " << (leftSide ? "yes" : "no") << " , Has Right : " << (rightSide ? "yes" : "no") << std::endl;
+      std::cout << "\t Has Left : " << (leftSide ? "yes" : "no") << " , Has Right : "
+                                    << (rightSide ? "yes" : "no") << std::endl;
     }
 
     if (node->is_source_node() || (leftSide && rightSide))
@@ -1338,7 +1379,8 @@ private:
       }
       else
       {
-        bool result = clip_to_bounds(parent->left_child_base_segment(), parent->left_boundary(), parent->right_boundary(), leftWindow);
+        bool result = clip_to_bounds(parent->left_child_base_segment(), parent->left_boundary(),
+                                     parent->right_boundary(), leftWindow);
         if (!result)
         {
           if (m_debugOutput)
@@ -1349,14 +1391,17 @@ private:
         }
       }
 
-      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::approximate_sqrt(csd2(parent->source_image(), leftWindow));
+      FT distanceEstimate = parent->distance_from_source_to_root()
+                            + CGAL::approximate_sqrt(csd2(parent->source_image(), leftWindow));
 
       if (m_debugOutput)
       {
-        std::cout << "\tPushing Left Child, Segment = " << parent->left_child_base_segment() << " , clipped = " << leftWindow << " , Estimate = " << distanceEstimate << std::endl;
+        std::cout << "\tPushing Left Child, Segment = " << parent->left_child_base_segment()
+                  << " , clipped = " << leftWindow << " , Estimate = " << distanceEstimate << std::endl;
       }
 
-      Cone_expansion_event* event = new Cone_expansion_event(parent, distanceEstimate, Cone_expansion_event::LEFT_CHILD, leftWindow);
+      Cone_expansion_event* event = new Cone_expansion_event(parent, distanceEstimate,
+                                                             Cone_expansion_event::LEFT_CHILD, leftWindow);
       parent->m_pendingLeftSubtree = event;
 
       m_expansionPriqueue.push(event);
@@ -1371,7 +1416,8 @@ private:
     if (face(parent->right_child_edge(), m_graph) != Graph_traits::null_face())
     {
       Segment_2 rightWindow;
-      bool result = clip_to_bounds(parent->right_child_base_segment(), parent->left_boundary(), parent->right_boundary(), rightWindow);
+      bool result = clip_to_bounds(parent->right_child_base_segment(), parent->left_boundary(),
+                                   parent->right_boundary(), rightWindow);
 
       if (!result)
       {
@@ -1382,14 +1428,17 @@ private:
         return;
       }
 
-      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::approximate_sqrt(csd2(parent->source_image(), rightWindow));
+      FT distanceEstimate = parent->distance_from_source_to_root()
+                            + CGAL::approximate_sqrt(csd2(parent->source_image(), rightWindow));
 
       if (m_debugOutput)
       {
-        std::cout << "\tPushing Right Child, Segment = " << parent->right_child_base_segment() << " , clipped = " << rightWindow << " , Estimate = " << distanceEstimate << std::endl;
+        std::cout << "\tPushing Right Child, Segment = " << parent->right_child_base_segment()
+                  << " , clipped = " << rightWindow << " , Estimate = " << distanceEstimate << std::endl;
       }
 
-      Cone_expansion_event* event = new Cone_expansion_event(parent, distanceEstimate, Cone_expansion_event::RIGHT_CHILD, rightWindow);
+      Cone_expansion_event* event = new Cone_expansion_event(parent, distanceEstimate,
+                                                             Cone_expansion_event::RIGHT_CHILD, rightWindow);
       parent->m_pendingRightSubtree = event;
 
       m_expansionPriqueue.push(event);
@@ -1469,7 +1518,8 @@ private:
         delete_node(node->pop_middle_child(), destruction);
       }
 
-      // At the point of destruction, the `Triangle_mesh` referenced may have gone out of scope, we wish to distinguish between deletion with an assumed reference
+      // At the point of destruction, the `Triangle_mesh` referenced may have gone out of scope,
+      // we wish to distinguish between deletion with an assumed reference
       // to the original `Triangle_mesh`, and deletion without
       if (!node->is_root_node() && !destruction)
       {
@@ -1573,7 +1623,9 @@ private:
   }
 
   template <class Visitor>
-  void visit_shortest_path(Cone_tree_node* startNode, const Point_2& startLocation, Visitor& visitor)
+  void visit_shortest_path(Cone_tree_node* startNode,
+                           const Point_2& startLocation,
+                           Visitor& visitor)
   {
     typename Traits::Compute_parametric_distance_along_segment_2 parametric_distance_along_segment_2(m_traits.compute_parametric_distance_along_segment_2_object());
     typename Traits::Construct_ray_2 construct_ray_2(m_traits.construct_ray_2_object());
@@ -1624,10 +1676,13 @@ private:
             std::cout << "Inside cone: " << (current->inside_window(currentLocation) ? "Yes" : "No") << std::endl;
             std::cout << "Current Source: " << current->source_image() << std::endl;
             std::cout << "Current Segment: " << entrySegment << std::endl;
-            std::cout << "Current Left Window: " << current->window_left() << "  ,  " << m_traits.compute_parametric_distance_along_segment_2_object()(entrySegment.start(), entrySegment.end(), current->window_left()) << std::endl;
-            std::cout << "Current Right Window: " << current->window_right() << "  ,  " << m_traits.compute_parametric_distance_along_segment_2_object()(entrySegment.start(), entrySegment.end(), current->window_right()) << std::endl;
+            std::cout << "Current Left Window: " << current->window_left() << "  ,  "
+                      << m_traits.compute_parametric_distance_along_segment_2_object()(entrySegment.start(), entrySegment.end(), current->window_left()) << std::endl;
+            std::cout << "Current Right Window: " << current->window_right() << "  ,  "
+                      << m_traits.compute_parametric_distance_along_segment_2_object()(entrySegment.start(), entrySegment.end(), current->window_right()) << std::endl;
             std::cout << "Current Segment Intersection: " << *result << std::endl;
-            std::cout << "Edge: (" << get(m_vertexIndexMap, source(current->entry_edge(), m_graph)) << "," << get(m_vertexIndexMap, target(current->entry_edge(), m_graph)) << ")  :  " << t0 << std::endl;
+            std::cout << "Edge: (" << get(m_vertexIndexMap, source(current->entry_edge(), m_graph))
+                      << "," << get(m_vertexIndexMap, target(current->entry_edge(), m_graph)) << ")  :  " << t0 << std::endl;
           }
 
           visitor(current->entry_edge(), t0);
@@ -1823,7 +1878,8 @@ private:
   }
 
   template <class InputIterator>
-  Source_point_iterator add_source_points_internal(InputIterator begin, InputIterator end, vertex_descriptor)
+  Source_point_iterator add_source_points_internal(InputIterator begin, InputIterator end,
+                                                   const vertex_descriptor)
   {
     Source_point_iterator firstAdded;
 
@@ -1875,7 +1931,9 @@ private:
 
       for (boost::tie(current,end) = vertices(m_graph); current != end; ++current)
       {
-        std::cout << "Vertex#" << numVertices << ": p = " << get(m_vertexPointMap,*current) << " , Saddle Vertex: " << (is_saddle_vertex(*current) ? "yes" : "no") << " , Boundary Vertex: " << (is_boundary_vertex(*current) ? "yes" : "no") << std::endl;
+        std::cout << "Vertex#" << numVertices << ": p = " << get(m_vertexPointMap,*current)
+                  << " , Saddle Vertex: " << (is_saddle_vertex(*current) ? "yes" : "no")
+                  << " , Boundary Vertex: " << (is_boundary_vertex(*current) ? "yes" : "no") << std::endl;
         ++numVertices;
       }
     }
@@ -1920,7 +1978,8 @@ private:
     {
       if (m_debugOutput)
       {
-        std::cout << "Root: " << get(m_faceIndexMap, it->first) << " , " << it->second[0] << " " << it->second[1] << " " << it->second[2] << " " << std::endl;
+        std::cout << "Root: " << get(m_faceIndexMap, it->first)
+                  << " , " << it->second[0] << " " << it->second[1] << " " << it->second[2] << " " << std::endl;
       }
 
       expand_root(it->first, it->second, Source_point_iterator(it));
@@ -1950,7 +2009,9 @@ private:
           case Cone_expansion_event::PSEUDO_SOURCE:
             if (m_debugOutput)
             {
-              std::cout << "PseudoSource Expansion: Parent = " << parent << " , Vertex = " << get(m_vertexIndexMap, event->m_parent->target_vertex()) << " , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+              std::cout << "PseudoSource Expansion: Parent = " << parent
+                        << " , Vertex = " << get(m_vertexIndexMap, event->m_parent->target_vertex())
+                        << " , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_pseudo_source(parent);
@@ -1958,7 +2019,10 @@ private:
           case Cone_expansion_event::LEFT_CHILD:
             if (m_debugOutput)
             {
-              std::cout << "Left Expansion: Parent = " << parent << " Edge = (" << get(m_vertexIndexMap, source(event->m_parent->left_child_edge(), m_graph)) << "," << get(m_vertexIndexMap, target(event->m_parent->left_child_edge(), m_graph)) << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+              std::cout << "Left Expansion: Parent = " << parent
+                        << " Edge = (" << get(m_vertexIndexMap, source(event->m_parent->left_child_edge(), m_graph))
+                        << "," << get(m_vertexIndexMap, target(event->m_parent->left_child_edge(), m_graph))
+                        << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_left_child(parent, event->m_windowSegment);
@@ -1966,7 +2030,10 @@ private:
           case Cone_expansion_event::RIGHT_CHILD:
             if (m_debugOutput)
             {
-              std::cout << "Right Expansion: Parent = " << parent << " , Edge = (" << get(m_vertexIndexMap, source(event->m_parent->right_child_edge(), m_graph)) << "," << get(m_vertexIndexMap, target(event->m_parent->right_child_edge(), m_graph)) << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+              std::cout << "Right Expansion: Parent = " << parent
+                        << " , Edge = (" << get(m_vertexIndexMap, source(event->m_parent->right_child_edge(), m_graph))
+                        << "," << get(m_vertexIndexMap, target(event->m_parent->right_child_edge(), m_graph))
+                        << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_right_child(parent, event->m_windowSegment);
@@ -2029,9 +2096,11 @@ public:
   /*!
   \brief Creates a shortest paths object using `tm` as input.
 
-  Equivalent to `Surface_mesh_shortest_path(tm, get(boost::vertex_index, tm), get(boost::halfedge_index, tm), get(boost::face_index, tm), get(CGAL::vertex_point, tm), traits)`.
+  Equivalent to `Surface_mesh_shortest_path(tm, get(boost::vertex_index, tm), get(boost::halfedge_index, tm),
+                                            get(boost::face_index, tm), get(CGAL::vertex_point, tm), traits)`.
   */
-  Surface_mesh_shortest_path(const Triangle_mesh& tm, const Traits& traits = Traits())
+  Surface_mesh_shortest_path(Triangle_mesh& tm,
+                             const Traits& traits = Traits())
     : m_traits(traits)
     , m_graph(const_cast<Triangle_mesh&>(tm))
     , m_vertexIndexMap(get(boost::vertex_index, tm))
@@ -2060,7 +2129,12 @@ public:
 
   \param traits Optional instance of the traits class to use.
   */
-  Surface_mesh_shortest_path(const Triangle_mesh& tm, Vertex_index_map vertexIndexMap, Halfedge_index_map halfedgeIndexMap, Face_index_map faceIndexMap, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  Surface_mesh_shortest_path(Triangle_mesh& tm,
+                             Vertex_index_map vertexIndexMap,
+                             Halfedge_index_map halfedgeIndexMap,
+                             Face_index_map faceIndexMap,
+                             Vertex_point_map vertexPointMap,
+                             const Traits& traits = Traits())
     : m_traits(traits)
     , m_graph(const_cast<Triangle_mesh&>(tm))
     , m_vertexIndexMap(vertexIndexMap)
@@ -2149,7 +2223,8 @@ public:
   until either `Surface_mesh_shortest_path::build_sequence_tree()` or
   the first shortest path query is done.
 
-  \tparam InputIterator A `ForwardIterator` which dereferences to either `Surface_mesh_shortest_path::Face_location`, or `Surface_mesh_shortest_path::vertex_descriptor`.
+  \tparam InputIterator A `ForwardIterator` which dereferences to either `Surface_mesh_shortest_path::Face_location`,
+                        or `Surface_mesh_shortest_path::vertex_descriptor`.
 
   \param begin iterator to the first in the list of source point locations.
   \param end iterator to one past the end of the list of source point locations.
@@ -2191,7 +2266,8 @@ public:
   */
   void remove_all_source_points()
   {
-    m_deletedSourceLocations.splice(m_deletedSourceLocations.begin(), m_faceLocations, m_faceLocations.begin(), m_faceLocations.end());
+    m_deletedSourceLocations.splice(m_deletedSourceLocations.begin(), m_faceLocations,
+                                    m_faceLocations.begin(), m_faceLocations.end());
     m_firstNewSourcePoint = m_faceLocations.end();
   }
 
@@ -2659,7 +2735,8 @@ public:
     that accept a reference to an `AABB_tree` as input.
 
   \details The following static overload is also available:
-    - `static Face_location locate(const Point_3& p, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const Point_3& p, const Triangle_mesh& tm,
+                                   Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -2674,8 +2751,10 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static Face_location locate(const Point_3& location, const Triangle_mesh& tm,
-                              Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Point_3& location,
+                              const Triangle_mesh& tm,
+                              Vertex_point_map vertexPointMap,
+                              const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
     build_aabb_tree(tm, tree, vertexPointMap);
@@ -2688,7 +2767,8 @@ public:
   \brief Returns the face location nearest to the given point.
 
   \details The following static overload is also available:
-    - static Face_location locate(const Point_3& p, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const Point_3& p, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm,
+                                  Vertex_point_map vertexPointMap, const Traits& traits = Traits())
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -2696,7 +2776,8 @@ public:
   \param tree A `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
   */
   template <class AABBTraits>
-  Face_location locate(const Point_3& p, const AABB_tree<AABBTraits>& tree) const
+  Face_location locate(const Point_3& p,
+                       const AABB_tree<AABBTraits>& tree) const
   {
     return locate(p, tree, m_graph, m_vertexPointMap, m_traits);
   }
@@ -2704,7 +2785,11 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Point_3& location,
+                              const AABB_tree<AABBTraits>& tree,
+                              const Triangle_mesh& tm,
+                              Vertex_point_map vertexPointMap,
+                              const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinates_in_triangle_3 cbcit3(traits.construct_barycentric_coordinates_in_triangle_3_object());
     typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(location);
@@ -2739,8 +2824,10 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static Face_location locate(const Ray_3& ray, const Triangle_mesh& tm,
-                              Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Ray_3& ray,
+                              const Triangle_mesh& tm,
+                              Vertex_point_map vertexPointMap,
+                              const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
     build_aabb_tree(tm, tree, vertexPointMap);
@@ -2754,7 +2841,8 @@ public:
     its source point.
 
   \details The following static overload is also available:
-    - static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm,
+                                  Vertex_point_map vertexPointMap, const Traits& traits = Traits())
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -2762,7 +2850,8 @@ public:
   \param tree A `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
   */
   template <class AABBTraits>
-  Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree) const
+  Face_location locate(const Ray_3& ray,
+                       const AABB_tree<AABBTraits>& tree) const
   {
     return locate(ray, tree, m_graph, m_vertexPointMap, m_traits);
   }
@@ -2770,7 +2859,11 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Ray_3& ray,
+                              const AABB_tree<AABBTraits>& tree,
+                              const Triangle_mesh& tm,
+                              Vertex_point_map vertexPointMap,
+                              const Traits& traits = Traits())
   {
     typedef AABB_tree<AABBTraits> AABB_face_graph_tree;
     typename Traits::Construct_barycentric_coordinates_in_triangle_3 cbcit3(traits.construct_barycentric_coordinates_in_triangle_3_object());
@@ -2841,7 +2934,8 @@ public:
   }
 
   template <class AABBTraits>
-  void build_aabb_tree(AABB_tree<AABBTraits>& outTree, Vertex_point_map vertexPointMap) const
+  void build_aabb_tree(AABB_tree<AABBTraits>& outTree,
+                       Vertex_point_map vertexPointMap) const
   {
     build_aabb_tree(m_graph, outTree, vertexPointMap);
   }
@@ -2849,7 +2943,8 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static void build_aabb_tree(const Triangle_mesh& tm, AABB_tree<AABBTraits>& outTree,
+  static void build_aabb_tree(const Triangle_mesh& tm,
+                              AABB_tree<AABBTraits>& outTree,
                               Vertex_point_map vertexPointMap)
   {
     face_iterator facesStart, facesEnd;

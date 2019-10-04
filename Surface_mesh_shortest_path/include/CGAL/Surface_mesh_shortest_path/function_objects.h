@@ -542,7 +542,9 @@ public:
   {
   }
 
-  Is_saddle_vertex(const Kernel& kernel, const Construct_triangle_3_to_triangle_2_projection& pt3tt2, const Construct_triangle_3_along_segment_2_flattening& ft3as2)
+  Is_saddle_vertex(const Kernel& kernel,
+                   const Construct_triangle_3_to_triangle_2_projection& pt3tt2,
+                   const Construct_triangle_3_along_segment_2_flattening& ft3as2)
     : m_orientation_2(kernel.orientation_2_object())
     , m_construct_triangle_3(kernel.construct_triangle_3_object())
     , m_construct_vertex_2(kernel.construct_vertex_2_object())

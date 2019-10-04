@@ -33,25 +33,30 @@ namespace Surface_mesh_shortest_paths_3 {
 namespace internal {
 
 template <class Triangle_3, class Triangle_mesh, class VertexPointMap>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor edge, const Triangle_mesh& g, VertexPointMap vertexPointMap)
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor edge,
+                                  const Triangle_mesh& g,
+                                  const VertexPointMap vertexPointMap)
 {
   typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor halfedge_descriptor;
 
   const halfedge_descriptor e0 = edge;
   const halfedge_descriptor e1 = next(edge, g);
 
-  return Triangle_3(get(vertexPointMap, source(e0, g)), get(vertexPointMap, target(e0, g)), get(vertexPointMap, target(e1, g)));
+  return Triangle_3(get(vertexPointMap, source(e0, g)),
+                    get(vertexPointMap, target(e0, g)),
+                    get(vertexPointMap, target(e1, g)));
 }
 
 template <class Triangle_3, class Triangle_mesh>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor edge, const Triangle_mesh& g)
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor edge,
+                                  const Triangle_mesh& g)
 {
-  return triangle_from_halfedge<Triangle_3, Triangle_mesh, typename boost::property_map<Triangle_mesh, boost::vertex_point_t>::type>(edge, g, get(boost::vertex_point, g));
+  return triangle_from_halfedge<Triangle_3>(edge, g, get(boost::vertex_point, g));
 }
 
-
 template <class Triangle_mesh>
-size_t edge_index(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor he, Triangle_mesh& p)
+std::size_t edge_index(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor he,
+                       const Triangle_mesh& p)
 {
   typedef typename boost::graph_traits<Triangle_mesh> Graph_traits;
   typedef typename Graph_traits::face_descriptor face_descriptor;
@@ -62,8 +67,7 @@ size_t edge_index(typename boost::graph_traits<Triangle_mesh>::halfedge_descript
   const halfedge_descriptor start = halfedge(f, p);
   halfedge_descriptor current = start;
 
-  size_t count = 0;
-
+  std::size_t count = 0;
   while (current != he)
   {
     current = next(current, p);

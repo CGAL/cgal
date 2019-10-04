@@ -58,7 +58,9 @@ public:
   {
   }
 
-  Construct_barycentric_coordinates_in_triangle_2(const Construct_barycentric_coordinates& cbc, const Construct_vector_2& cv2, const Compute_scalar_product_2& csp2)
+  Construct_barycentric_coordinates_in_triangle_2(const Construct_barycentric_coordinates& cbc,
+                                                  const Construct_vector_2& cv2,
+                                                  const Compute_scalar_product_2& csp2)
     : m_construct_barycentric_coordinates(cbc)
     , m_construct_vector_2(cv2)
     , m_compute_scalar_product_2(csp2)
@@ -109,7 +111,9 @@ public:
   {
   }
 
-  Construct_barycentric_coordinates_in_triangle_3(const Construct_barycentric_coordinates& cbc, const Construct_vector_3& cv3, const Compute_scalar_product_3& csp3)
+  Construct_barycentric_coordinates_in_triangle_3(const Construct_barycentric_coordinates& cbc,
+                                                  const Construct_vector_3& cv3,
+                                                  const Compute_scalar_product_3& csp3)
     : m_construct_barycentric_coordinates(cbc)
     , m_construct_vector_3(cv3)
     , m_compute_scalar_product_3(csp3)
@@ -194,7 +198,8 @@ public:
     bool nonZero[3];
     std::size_t numNonZero = 0;
 
-    if (cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) > 1.00001 || cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) < 0.99999)
+    if (cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) > 1.00001 ||
+        cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) < 0.99999)
     {
       return std::make_pair(BARYCENTRIC_COORDINATES_ON_UNBOUNDED_SIDE, 0);
     }
