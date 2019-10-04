@@ -367,7 +367,7 @@ struct Test
   {
     std::cout << "Circle - Triangle" << std::endl;
     check_no_do_intersect  (C(p( 2, 8), 6), T(p(6,0), p( 8, 0), p(8,2)));
-    check_no_do_intersect  (C(p( 0, 0), 9), T(p(1,1), p( 1, -1), p(0.1,0.1)));
+    check_no_do_intersect  (C(p( 0, 0), 9), T(p(1,1), p( 1, -1), p(0,0)));
 
     check_do_intersect     (C(p( 3, 4), 0), T(p(-3,  8), p( 6,  2), p(4,6)));
     check_do_intersect     (C(p( 4, 3), 4), T(p( 6, -7), p( 5, 2), p(2,-3)));

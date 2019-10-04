@@ -37,7 +37,21 @@ do_intersect(const typename K::Circle_2 & c,
              const typename K::Triangle_2& t,
              const K&)
 {
-  return squared_distance(c.center(), t) <= c.squared_radius();
+  char nb_close(0);
+//if all three points are inside the circle, there is no intersection.
+  if(squared_distance(c.center(), t) < c.squared_radius())
+  {
+    for(int i = 0; i< 3; ++i)
+    {
+      if(squared_distance(c.center(), t[i]) == c.squared_radius())
+        return true;
+      if(squared_distance(c.center(), t[i]) < c.squared_radius())
+        ++nb_close;
+    }
+    return (nb_close < 3);
+  }
+  else
+    return squared_distance(c.center(), t) == c.squared_radius();
 }
 
 template <class K>
@@ -46,7 +60,7 @@ do_intersect(const typename K::Triangle_2& t,
              const typename K::Circle_2 & c,
              const K&)
 {
-  return squared_distance(c.center(), t) <= c.squared_radius();
+  return do_intersect(c,t);
 }
 
 } // namespace internal

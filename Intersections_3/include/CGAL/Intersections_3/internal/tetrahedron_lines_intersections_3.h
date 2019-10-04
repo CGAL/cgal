@@ -20,8 +20,8 @@
 // Author(s)     : Maxime Gimeno
 //
 
-#ifndef TETRAHEDRON_LINES_INTERSECTIONS_3_H
-#define TETRAHEDRON_LINES_INTERSECTIONS_3_H
+#ifndef CGAL_INTERNAL_INTERSECTIONS_3_TETRAHEDRON_LINES_INTERSECTIONS_3_H
+#define CGAL_INTERNAL_INTERSECTIONS_3_TETRAHEDRON_LINES_INTERSECTIONS_3_H
 
 #include <vector>
 #include <CGAL/kernel_basic.h>
@@ -73,10 +73,15 @@ struct Tetrahedron_lines_intersection_3_base
      const typename K::Triangle_3 triangle(tet.vertex((i+1)%4),
                              tet.vertex((i+2)%4),
                              tet.vertex((i+3)%4));
-      tr_seg[i] = typename K::Intersect_3()(o, triangle);
-      if(tr_seg[i])
-        if( boost::get<typename K::Segment_3>(&*tr_seg[i]) != nullptr)
-          res_id = i;
+     if(do_intersect(o, triangle))
+     {
+       tr_seg[i] = typename K::Intersect_3()(o, triangle);
+       if( boost::get<typename K::Segment_3>(&*tr_seg[i]) != nullptr)
+       {
+         res_id = i;
+         break;
+       }
+     }
     }
 
     //if there is a segment in the intersections, then we return it
@@ -110,12 +115,14 @@ struct Tetrahedron_lines_intersection_3_base
       }
     }
     if(res_points.empty())
+    {
       return;
+    }
     if(res_id != -1)
     {
       if(static_cast<T*>(this)->are_extremities_inside_test())
         return;
-      //else point and segment entirely not inside:
+      //else point and segment entirely not inside or one intersection on boundary:
       output = tr_seg[res_id];
       return;
     }
@@ -151,4 +158,4 @@ struct Tetrahedron_lines_intersection_3_base
 }
 }
 }
-#endif // TETRAHEDRON_LINES_INTERSECTIONS_3_H
+#endif // CGAL_INTERNAL_INTERSECTIONS_3_TETRAHEDRON_LINES_INTERSECTIONS_3_H
