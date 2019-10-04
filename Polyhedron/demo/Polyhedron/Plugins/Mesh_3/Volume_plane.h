@@ -352,10 +352,13 @@ private:
       sphere_radius = max_dim / 40.0f;
       create_flat_sphere(1.0f, v_spheres, n_spheres, 18);
 
-      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + max_dim/15.0f); c_spheres.push_back(0.0f);
-      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_ ); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + max_dim/15.0f);
-      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + max_dim/15.0f); c_spheres.push_back((bdim_ - 1 ) * zscale_);
-      c_spheres.push_back(0.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + max_dim/15.0f);
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + 1.1*sphere_radius); c_spheres.push_back(0.0f);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_ ); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + 1.1*sphere_radius);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + 1.1*sphere_radius); c_spheres.push_back((bdim_ - 1 ) * zscale_);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + 1.1*sphere_radius);
 
   }
 
@@ -377,10 +380,10 @@ private:
       sphere_radius = max_dim / 40.0f;
       create_flat_sphere(1.0f, v_spheres, n_spheres,18);
 
-      c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f - max_dim/15.0f); c_spheres.push_back(0.0f);
-      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back((bdim_ - 1) * yscale_); c_spheres.push_back(0.0f);
-      c_spheres.push_back((adim_ - 1) * xscale_); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f);
-      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
+      c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f - 1.1*sphere_radius); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-1.1*sphere_radius); c_spheres.push_back((bdim_ - 1) * yscale_); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f-1.1*sphere_radius); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-1.1*sphere_radius); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
   }
 
   CGAL::qglviewer::Constraint* setConstraint(x_tag) {
