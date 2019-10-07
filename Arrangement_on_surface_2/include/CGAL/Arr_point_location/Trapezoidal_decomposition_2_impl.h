@@ -510,10 +510,10 @@ update_vtx_cw_he_after_remove(Halfedge_const_handle old_he,
 
   Halfedge_const_handle cw_he(boost::apply_visitor(cw_he_visitor(), vtx_item));
   if ((old_he == cw_he) || (old_he->twin() == cw_he)) {
-    Halfedge_const_handle new_he = cw_he->twin()->prev();
-    if (new_he != old_he)
+    Halfedge_const_handle new_he = cw_he->twin()->next();
+    if (new_he != cw_he)
       boost::apply_visitor(set_cw_he_visitor(new_he), vtx_item);
-    else boost::apply_visitor(reset_cw_he_visitor(), vtx_item);
+    else boost::apply_visitor(reset_cw_he_visitor(), vtx_item); // dangling edge removed
   }
 }
 
