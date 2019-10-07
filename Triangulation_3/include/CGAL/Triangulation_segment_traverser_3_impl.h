@@ -398,13 +398,14 @@ walk_to_next_3()
             else
               inside=3;
           }else if (o1==ZERO){
-            if (_tr.orientation(*vert[i], *vert[j0], *vert[j1], _target) == POSITIVE) {
+            if (_tr.orientation(*vert[i], *vert[j0], *vert[j2], _target) == POSITIVE)
+              inside = 55;
+            else
+            {
               nnext = get<0>(_cur)->neighbor(j2);  //VERTEX i
               degenerate = 3;
               outside = 5;
             }
-            else
-              inside = 55;
           }else {
             if (_tr.orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
               nnext= get<0>(_cur)->neighbor(j0);
