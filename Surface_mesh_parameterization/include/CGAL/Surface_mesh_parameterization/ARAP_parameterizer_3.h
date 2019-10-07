@@ -306,7 +306,7 @@ private:
     std::ostringstream out_ss;
     out_ss << filename << iter << ".off" << std::ends;
     std::ofstream out(out_ss.str().c_str());
-    output_uvmap_to_off(mesh, vertices, faces, uvmap, vimap, out);
+    IO::output_uvmap_to_off(mesh, vertices, faces, uvmap, vimap, out);
   }
 
   // Copy the data from two vectors to the UVmap.
