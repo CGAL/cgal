@@ -42,6 +42,9 @@
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
+#ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+#include <Eigen/UmfPackSupport>
+#endif
 #endif
 
 #include <CGAL/assertions.h>
@@ -157,7 +160,14 @@ namespace Surface_mesh_parameterization {
 ///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits`
 ///         is provided as default parameter:
 /// \code
-///   CGAL::Eigen_solver_traits<Eigen::BICGSTAB< Eigen::SparseMatrix<double> > >
+///   CGAL::Eigen_solver_traits<
+///           Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
+/// \endcode
+///         Moreover, if SparseSuite solvers are available, which is greatly preferable for speed,
+///         then the default parameter is:
+/// \code
+///   CGAL::Eigen_solver_traits<
+///           Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
 /// \endcode
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
@@ -176,7 +186,13 @@ public:
   typedef typename Default::Get<
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
-    Eigen_solver_traits< > // defaults to Eigen::BICGSTAB with Eigen_sparse_matrix
+    #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+      CGAL::Eigen_solver_traits<
+        Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
+    #else
+      CGAL::Eigen_solver_traits<
+        Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
+    #endif
   #else
     #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library")
     SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
