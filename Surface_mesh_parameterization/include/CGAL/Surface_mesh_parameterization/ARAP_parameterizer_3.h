@@ -311,14 +311,21 @@ private:
 
   // Copy the data from two vectors to the UVmap.
   template <typename VertexUVMap,
-            typename VertexIndexMap>
+            typename VertexIndexMap,
+            typename VertexParameterizedMap>
   void assign_solution(const Vector& Xu,
                        const Vector& Xv,
                        const Vertex_set& vertices,
                        VertexUVMap uvmap,
-                       const VertexIndexMap vimap)
+                       const VertexIndexMap vimap,
+                       const VertexParameterizedMap vpmap)
   {
     BOOST_FOREACH(vertex_descriptor vd, vertices) {
+      // The solver might not have managed to exactly constrain the vertex that was marked
+      // as constrained; simply don't update its position.
+      if(get(vpmap, vd))
+        continue;
+
       int index = get(vimap, vd);
       NT u = Xu(index);
       NT v = Xv(index);
@@ -1132,13 +1139,13 @@ private:
       BOOST_FOREACH(vertex_descriptor vd, vertices) {
         if(get(vpmap, vd)) {
           int index = get(vimap, vd);
-          CGAL_postcondition(std::abs(Xu[index] - Bu[index] ) < 1e-10);
-          CGAL_postcondition(std::abs(Xv[index] - Bv[index] ) < 1e-10);
+          CGAL_warning(std::abs(Xu[index] - Bu[index] ) < 1e-7);
+          CGAL_warning(std::abs(Xv[index] - Bv[index] ) < 1e-7);
         }
       }
     )
 
-    assign_solution(Xu, Xv, vertices, uvmap, vimap);
+    assign_solution(Xu, Xv, vertices, uvmap, vimap, vpmap);
     return status;
   }
 
