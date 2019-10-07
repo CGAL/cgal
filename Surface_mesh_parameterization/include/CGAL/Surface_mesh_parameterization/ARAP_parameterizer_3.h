@@ -1363,41 +1363,52 @@ public:
 #endif
 
     // main loop
-    for(unsigned int ite=1; ite<=m_iterations; ++ite)
+    unsigned int ite = 1;
+    for(;;)
     {
       compute_optimal_Lt_matrices(mesh, faces, ctmap, lp, lpmap, uvmap, ltmap);
       status = update_solution(mesh, vertices, ctmap, lp, lpmap, ltmap,
                                                uvmap, vimap, vpmap, A);
 
-      // Output the current situation
+      // Output the current parameterization
 #ifdef CGAL_SMP_ARAP_DEBUG
-      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap vimap);
+      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap, vimap);
 #endif
-      energy_last = energy_this;
-      energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
-                                                        ltmap, uvmap);
-#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
-      std::cout << "Energy at iteration " << ite << " : " << energy_this << std::endl;
-#endif
-      CGAL_warning(energy_this >= 0);
 
       if(status != OK)
         return status;
 
       // energy based termination
-      if(m_tolerance > 0.0 && ite <= m_iterations) // if tolerance <= 0, don't compute energy
-      {  // also no need compute energy if this iteration is the last iteration
+      if(m_tolerance > 0. && ite <= m_iterations) { // if tolerance <= 0, don't compute energy
+        energy_last = energy_this;
+        energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap, ltmap, uvmap);
+
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
+        std::cout << "Energy at iteration " << ite << " : " << energy_this << std::endl;
+#endif
+
+        if(energy_this < 0) {
+          // numerical issues can make it so you may get an energy of -1e-17,
+          // but it shouldn't be too wrong
+          CGAL_assertion(energy_this >= - std::numeric_limits<NT>::epsilon());
+          break;
+        }
+
         double energy_diff = std::abs((energy_last - energy_this) / energy_this);
         if(energy_diff < m_tolerance) {
-#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
-          std::cout << "Minimization process ended after: "
-                    << ite + 1 << " iterations. "
-                    << "Energy diff: " << energy_diff << std::endl;
-#endif
           break;
         }
       }
+
+      if(ite >= m_iterations)
+        break;
+      else
+        ++ite;
     }
+
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
+    std::cout << "Minimization process ended after: " << ite << " iterations. " << std::endl;
+#endif
 
 #ifdef CGAL_SMP_ARAP_DEBUG
     output_uvmap("ARAP_final_pre_processing.off", mesh, vertices, faces, uvmap, vimap);
@@ -1405,7 +1416,9 @@ public:
 
     if(!is_one_to_one_mapping(mesh, faces, uvmap)) {
      // Use post processing to handle flipped elements
-      std::cerr << "Parameterization is not valid; calling post processor" << std::endl;
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
+      std::cout << "Parameterization is not valid; calling post processor" << std::endl;
+#endif
       status = post_process(mesh, vertices, faces, bhd, uvmap, vimap);
     }
 
