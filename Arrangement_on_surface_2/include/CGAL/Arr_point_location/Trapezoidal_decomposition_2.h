@@ -1853,14 +1853,14 @@ public:
     ds->filter(representatives, Td_active_edge_item(*traits));
 
 #ifndef CGAL_TD_DEBUG
-    CGAL_warning(sz == representatives.size());
+    CGAL_warning(sz <= representatives.size());
 #else
 
     unsigned long rep = representatives.size();
-    if (sz != rep) {
+    if (sz > rep) {
       std::cerr << "\nnumber_of_curves()=" << sz;
       std::cerr << "\nrepresentatives.size()=" << rep;
-      CGAL_assertion(number_of_curves()==representatives.size());
+      CGAL_assertion(number_of_curves()<=representatives.size());
     }
 #endif
 
@@ -1873,6 +1873,14 @@ public:
       }
     }
     if (! container.empty()) {
+      if (sz != representatives.size())
+      {
+        std::sort(container.begin(),container.end());
+        typename Halfedge_container::iterator last = std::unique(container.begin(), container.end());
+        container.erase(last, container.end());
+      }
+      CGAL_assertion(sz==container.size());
+
       CGAL::cpp98::random_shuffle(container.begin(),container.end());
     }
     return sz;
