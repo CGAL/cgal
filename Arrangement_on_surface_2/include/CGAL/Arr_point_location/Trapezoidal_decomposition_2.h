@@ -1447,7 +1447,9 @@ public:
       {
         if (do_rebuild && not_within_limits())
         {
+#ifdef CGAL_TD_DEBUG
           std::cout << "starting over after " << number_of_curves() << std::flush;
+#endif
           start_over = true;
           clear();
           break;
