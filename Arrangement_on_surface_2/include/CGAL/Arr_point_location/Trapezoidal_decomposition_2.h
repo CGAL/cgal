@@ -1883,7 +1883,7 @@ public:
       }
       CGAL_assertion(sz==container.size());
 
-      CGAL::cpp98::random_shuffle(container.begin(),container.end());
+      // CGAL::cpp98::random_shuffle(container.begin(),container.end()); // already done in insert()
     }
     return sz;
   }
