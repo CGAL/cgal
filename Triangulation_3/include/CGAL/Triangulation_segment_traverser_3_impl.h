@@ -230,6 +230,7 @@ jump_to_intersecting_cell()
       //get<1>(_cur) is Locate_type and unchanged
       get<2>(_cur) = new_ch->index(ch->vertex(li));
       //get<3>(_cur) is lj and unchanged
+      CGAL_assertion(get<0>(_cur)->vertex(get<2>(_cur)) == ch->vertex(li));
     }
     else if (lt == Tr::EDGE)
     {
