@@ -427,7 +427,7 @@ random_location_on_halfedge(typename boost::graph_traits<TriangleMesh>::halfedge
 
   std::array<FT, 3> coordinates;
   coordinates[h_id] = t;
-  coordinates[(h_id+1)%3] = FT(1-t);
+  coordinates[(h_id+1)%3] = FT(1)-t;
   coordinates[(h_id+2)%3] = FT(0);
 
   return std::make_pair(face(hd, tm), coordinates);
@@ -1208,7 +1208,7 @@ locate_in_adjacent_face(const std::pair<typename boost::graph_traits<TriangleMes
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor       face_descriptor;
+  CGAL_assertion_code(typedef typename boost::graph_traits<TriangleMesh>::face_descriptor       face_descriptor;)
 
   if(loc.first == fd)
     return loc;
