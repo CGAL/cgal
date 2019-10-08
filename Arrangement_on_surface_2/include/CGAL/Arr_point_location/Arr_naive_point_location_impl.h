@@ -91,7 +91,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
       else if (! fh->is_unbounded() && fh->number_of_outer_ccbs() > 0)
       {
         // As we have already some other containing face, one face must be
-        // contained inside the other. Two check that, we select a
+        // contained inside the other. To check that, we select a
         // representative vertex of inner_f and check whether it is contained
         // in our current face.
 
