@@ -85,6 +85,7 @@ create_single_source_cgal_program( "detect_features_example.cpp" )
 create_single_source_cgal_program( "manifoldness_repair_example.cpp" )
 create_single_source_cgal_program( "repair_polygon_soup_example.cpp" )
 create_single_source_cgal_program( "mesh_smoothing_example.cpp")
+create_single_source_cgal_program( "locate_example.cpp")
 
 if(OpenMesh_FOUND)
 create_single_source_cgal_program( "compute_normals_example_OM.cpp" )
