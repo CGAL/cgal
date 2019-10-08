@@ -742,11 +742,12 @@ make_icosahedron(Graph& g,
  * If `triangulated` is `true`, the diagonal of each cell is oriented from (0,0) to (1,1)
  * in the cell coordinates.
  *
- *\tparam CoordinateFunctor a function object providing `Point_3 operator()(size_type I, size_type J)` with `Point_3` being
- * the value_type of the internal property_map for `CGAL::vertex_point_t`.
- * and outputs a `boost::property_traits<boost::property_map<Graph,CGAL::vertex_point_t>::%type>::%value_type`.
- *  It will be called with arguments (`w`, `h`), with `w` in [0..`i`] and `h` in [0..`j`].
- * <p>%Default: a point with positive integer coordinates (`w`, `h`, 0), with `w` in [0..`i`] and `h` in [0..`j`]
+ *\tparam CoordinateFunctor a function object providing:
+ * `%Point_3 operator()(size_type I, size_type J)`, with `%Point_3` being the value_type
+ * of the internal property_map for `CGAL::vertex_point_t` and outputs an object of type
+ * `boost::property_traits<boost::property_map<Graph,CGAL::vertex_point_t>::%type>::%value_type`.
+ *  It will be called with arguments (`w`, `h`), with `w` in [0..`i`] and `h` in [0..`j`].<br>
+ * %Default: a point with positive integer coordinates (`w`, `h`, 0), with `w` in [0..`i`] and `h` in [0..`j`]
  *
  * \returns the non-border non-diagonal halfedge that has the target vertex associated with the first point of the grid (default is (0,0,0) ).
  */
