@@ -486,6 +486,7 @@ public:
     void swap (Property_container& other)
     {
       this->parrays_.swap (other.parrays_);
+      std::swap(this->size_, other.size_);
     }
   
 private:
