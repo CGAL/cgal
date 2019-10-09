@@ -121,7 +121,7 @@ _test_circulator( const Triangulation &T )
   std::vector<Vertex_handle > vertices;
   std::vector<Facet > facets;
 
-  Vertex_handle vh = T.vertices_begin();
+  Vertex_handle vh = *T.vertices_begin();
 
   T.incident_cells(vh, std::back_inserter(cells));
   // old name (up to CGAL 3.4)

@@ -405,7 +405,8 @@ public:
 
   // point types
   typedef typename GT::Point_3                 Point_3;
-  typedef typename Tds::Vertex::Point          Point;
+  // AF typedef typename Tds::Vertex::Point    Point;
+  typedef Point_3                              Point;
 
   typedef typename Tds::Concurrency_tag        Concurrency_tag;
 
@@ -419,6 +420,8 @@ public:
 
   typedef typename Tds::Vertex_handle          Vertex_handle;
   typedef typename Tds::Cell_handle            Cell_handle;
+  typedef typename Tds::Vertex_index          Vertex_index;
+  typedef typename Tds::Cell_index            Cell_index;
 
   typedef typename Tds::Cell_circulator        Cell_circulator;
   typedef typename Tds::Facet_circulator       Facet_circulator;
@@ -436,8 +439,8 @@ public:
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
 
-  typedef typename Tds::Cell_handles           All_cell_handles;
-  typedef typename Tds::Vertex_handles         All_vertex_handles;
+  typedef typename Tds::Cell_range             All_cells;
+  typedef typename Tds::Vertex_range           All_vertices;
   typedef typename Tds::Facets                 All_facets;
   typedef typename Tds::Edges                  All_edges;
   
@@ -457,7 +460,7 @@ private:
 
     bool operator()(const Vertex_iterator& v) const
     {
-      return t->is_infinite(v);
+      return t->is_infinite(*v);
     }
 
     bool operator()(typename std::vector<Vertex_handle>::const_iterator v) const
@@ -467,7 +470,7 @@ private:
 
     bool operator()(const Cell_iterator& c) const
     {
-      return t->is_infinite(c);
+      return t->is_infinite(*c);
     }
 
     bool operator()(const Edge_iterator& e) const
@@ -498,7 +501,7 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Cell_handle() const { return Base::base(); }
+    operator Cell_handle() const { return *Base::base(); }
   };
 
   // We derive in order to add a conversion to handle.
@@ -517,11 +520,11 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Vertex_handle() const { return Base::base(); }
+    operator Vertex_handle() const { return *Base::base(); }
   };
 
-  typedef Iterator_range<Prevent_deref<Finite_cells_iterator> >    Finite_cell_handles;
-  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  typedef Iterator_range<Prevent_deref<Finite_cells_iterator> >    Finite_cells;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertices;
 
   typedef Filter_iterator<Edge_iterator, Infinite_tester>     Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>    Finite_facets_iterator;
@@ -532,17 +535,18 @@ public:
 private:
   // Auxiliary iterators for convenience
   // do not use default template argument to please VC++
-  typedef Project_ipoint<Vertex>                               Proj_point;
+  // typedef Project_ipoint<Vertex>                               Proj_point;
 
 public:
-
+  /*
   typedef Iterator_project<Finite_vertices_iterator,
   Proj_point,
   const Point&,
   const Point*,
   std::ptrdiff_t,
   std::bidirectional_iterator_tag>   Point_iterator;
-
+  */
+  typedef typename Tds:: template Property_map<Vertex_index, Point>::const_iterator Point_iterator; 
 
 
   typedef Iterator_range<Point_iterator> Points;
@@ -571,7 +575,8 @@ protected:
   Tds _tds;
   GT  _gt;
   Vertex_handle infinite; // infinite vertex
-
+  typename Tds:: template Property_map<Vertex_index, Point>    vpoint_;
+  
 public:
   template<typename P> // Point or Point_3
   Point_3 construct_point(const P& p) const
@@ -690,11 +695,13 @@ public:
 
   void init_tds()
   {
+    vpoint_ = tds().add_property_map<Vertex_index, Point>("v:point").first;
     infinite = _tds.insert_increase_dimension();
   }
 
   void init_tds(const Point& p0, const Point& p1, const Point& p2, const Point& p3)
   {
+    vpoint_ = tds().add_property_map<Vertex_index, Point>("v:point").first;
     Vertex_handle v0, v1, v2, v3;
     infinite = _tds.insert_first_finite_cell(v0, v1, v2, v3, infinite);
     set_point(v0, p0);
@@ -708,6 +715,7 @@ public:
                 Vertex_handle& vh0, Vertex_handle& vh1,
                 Vertex_handle& vh2, Vertex_handle& vh3)
   {
+    vpoint_ = tds().add_property_map<Vertex_index, Point>("v:point").first;
     infinite = _tds.insert_first_finite_cell(vh0, vh1, vh2, vh3, infinite);
     set_point(vh0, p0);
     set_point(vh1, p1);
@@ -733,6 +741,7 @@ public:
   Triangulation_3(const Triangulation_3& tr)
     : Base(tr.get_lock_data_structure()), _gt(tr._gt)
   {
+    vpoint_ = tds().add_property_map<Vertex_index, Point>("v:point").first;
     infinite = _tds.copy_tds(tr._tds, tr.infinite);
     CGAL_triangulation_expensive_postcondition(*this == tr);
   }
@@ -862,14 +871,14 @@ public:
   {
     CGAL_triangulation_precondition(dimension() >= 0);
     CGAL_triangulation_precondition(! is_infinite(v));
-    v->ipoint() = p;
+    vpoint_[v] = p;
   }
 
   const Point& point(Vertex_handle v) const
   {
     CGAL_triangulation_precondition(number_of_vertices() > 0);
     CGAL_triangulation_precondition(! is_infinite(v));
-    return v->ipoint();
+    return vpoint_[v];
   }
 
   // TEST IF INFINITE FEATURES
@@ -1764,7 +1773,7 @@ public:
   }
 
   
-  Finite_cell_handles finite_cell_handles() const
+  Finite_cells finite_cells() const
   {
     return make_prevent_deref_range(finite_cells_begin(), finite_cells_end()); 
   }
@@ -1776,9 +1785,10 @@ public:
   All_cells_iterator all_cells_begin() const { return _tds.cells_begin(); }
   All_cells_iterator all_cells_end() const { return _tds.cells_end(); }
 
-  All_cell_handles all_cell_handles() const
+  
+  All_cells all_cells() const
   {
-    return _tds.cell_handles();
+    return _tds.cells();
   }
   
   Finite_vertices_iterator finite_vertices_begin() const
@@ -1794,7 +1804,7 @@ public:
     return CGAL::filter_iterator(vertices_end(), Infinite_tester(this));
   }
 
-  Finite_vertex_handles finite_vertex_handles() const
+  Finite_vertices finite_vertices() const
   {
     return make_prevent_deref_range(finite_vertices_begin(), finite_vertices_end()); 
   }
@@ -1805,10 +1815,12 @@ public:
   All_vertices_iterator all_vertices_begin() const { return _tds.vertices_begin(); }
   All_vertices_iterator all_vertices_end() const { return _tds.vertices_end(); }
 
-  All_vertex_handles all_vertex_handles() const
+  
+  All_vertices all_vertices() const
   {
-    return _tds.vertex_handles();
+    return _tds.vertices();
   }
+  
   
   Finite_edges_iterator finite_edges_begin() const
   {
@@ -1870,11 +1882,11 @@ public:
   
   Point_iterator points_begin() const
   {
-    return Point_iterator(finite_vertices_begin());
+    return ++(vpoint_.begin()); // as the first is the infinite vertex
   }
   Point_iterator points_end() const
   {
-    return Point_iterator(finite_vertices_end());
+    return vpoint_.end();
   }
 
   Points points() const
@@ -2233,8 +2245,11 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   for(std::size_t i=1; i <= n; i++)
   {
     V[i] = tr._tds.create_vertex();
+    assert(false);
+    /* AF
     if(!(is >> *V[i]))
       return is;
+    */
   }
 
   std::vector< Cell_handle > C;
@@ -2242,9 +2257,13 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   std::size_t m;
   tr._tds.read_cells(is, V, m, C);
 
-  for(std::size_t j=0 ; j < m; j++)
+  for(std::size_t j=0 ; j < m; j++){
+    assert(false);
+    /*
     if(!(is >> *(C[j])))
       return is;
+    */
+  }
 
   CGAL_triangulation_assertion(tr.is_valid(false));
   return is;
@@ -2291,16 +2310,16 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
 
   // write the vertices
   for(Vertex_iterator it = tr.vertices_begin(), end = tr.vertices_end(); it != end; ++it)
-    TV[i++] = it;
+    TV[i++] = *it;
 
   CGAL_triangulation_assertion(i == n+1);
   CGAL_triangulation_assertion(tr.is_infinite(TV[0]));
 
-  Unique_hash_map<Vertex_handle, std::size_t > V;
+  Unique_hash_map<Vertex_handle, size_type > V;
   V[tr.infinite_vertex()] = 0;
   for(i=1; i <= n; i++)
   {
-    os << *TV[i];
+    // AF: os << *TV[i];
     V[TV[i]] = i;
     if(is_ascii(os))
       os << std::endl;
@@ -2319,7 +2338,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
     {
       for(Cell_iterator it = tr.cells_begin(), end = tr.cells_end(); it != end; ++it)
       {
-        os << *it; // other information
+        // AF: os << *it; // other information
         if(is_ascii(os))
           os << std::endl;
       }
@@ -2329,7 +2348,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
     {
       for(Facet_iterator it = tr.facets_begin(), end = tr.facets_end(); it != end; ++it)
       {
-        os << *((*it).first); // other information
+        // AF:  os << *((*it).first); // other information
         if(is_ascii(os))
           os << std::endl;
       }
@@ -2339,7 +2358,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
     {
       for(Edge_iterator it = tr.edges_begin(), end = tr.edges_end(); it != end; ++it)
       {
-        os << *((*it).first); // other information
+        // AF: os << *((*it).first); // other information
         if(is_ascii(os))
           os << std::endl;
       }
@@ -2357,7 +2376,15 @@ number_of_finite_cells() const
   if(dimension() < 3)
     return 0;
 
-  return std::distance(finite_cells_begin(), finite_cells_end());
+  size_type res = 0;
+  for(auto v : finite_cells()){
+    ++res;
+  }
+  return res;
+  // AF:
+  // As now random acess it wants to call operator-()
+  // with operator-()  only true if no garbage
+  // return std::distance(finite_cells_begin(), finite_cells_end());
 }
 
 template < class GT, class Tds, class Lds >
@@ -4805,7 +4832,7 @@ remove_dim_down(Vertex_handle v, VertexRemover& remover)
   // Collect all the hidden points.
   for(All_cells_iterator ci = tds().raw_cells_begin(),
                          end = tds().raw_cells_end(); ci != end; ++ci)
-    remover.add_hidden_points(ci);
+    remover.add_hidden_points(*ci);
 
   tds().remove_decrease_dimension(v, infinite_vertex());
 
@@ -4969,7 +4996,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover)
     {
       for(i=0; i < 4; i++)
       {
-        Facet f = std::pair<Cell_handle,int>(it,i);
+        Facet f = std::pair<Cell_handle,int>(*it,i);
         Vertex_triple vt_aux = make_vertex_triple(f);
         Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
         make_canonical(vt);
@@ -4984,7 +5011,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover)
     {
       for(i=0; i < 4; i++)
       {
-        Facet f = std::pair<Cell_handle,int>(it,i);
+        Facet f = std::pair<Cell_handle,int>(*it,i);
         Vertex_triple vt_aux = make_vertex_triple(f);
         Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
         make_canonical(vt);
@@ -5166,7 +5193,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover,
     {
       for(i=0; i < 4; i++)
       {
-        Facet f = std::pair<Cell_handle,int>(it,i);
+        Facet f = std::pair<Cell_handle,int>(*it,i);
         Vertex_triple vt_aux = make_vertex_triple(f);
         Vertex_triple vt(vmap[vt_aux.first],vmap[vt_aux.third],vmap[vt_aux.second]);
         make_canonical(vt);
@@ -5181,7 +5208,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover,
     {
       for(i=0; i < 4; i++)
       {
-        Facet f = std::pair<Cell_handle,int>(it,i);
+        Facet f = std::pair<Cell_handle,int>(*it,i);
         Vertex_triple vt_aux = make_vertex_triple(f);
         Vertex_triple vt(vmap[vt_aux.first],vmap[vt_aux.third],vmap[vt_aux.second]);
         make_canonical(vt);
@@ -5471,7 +5498,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover, OutputItCells fit)
     {
       for(i=0; i < 4; i++)
       {
-        Facet f = std::pair<Cell_handle,int>(it,i);
+        Facet f = std::pair<Cell_handle,int>(*it,i);
         Vertex_triple vt_aux = make_vertex_triple(f);
         Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
         make_canonical(vt);
@@ -5485,7 +5512,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover, OutputItCells fit)
     {
       for(i=0; i < 4; i++)
       {
-        Facet f = std::pair<Cell_handle,int>(it,i);
+        Facet f = std::pair<Cell_handle,int>(*it,i);
         Vertex_triple vt_aux = make_vertex_triple(f);
         Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
         make_canonical(vt);
@@ -5860,7 +5887,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
     {
       for(i=0; i < 4; i++)
       {
-        Facet f = std::pair<Cell_handle,int>(it,i);
+        Facet f = std::pair<Cell_handle,int>(*it,i);
         Vertex_triple vt_aux = make_vertex_triple(f);
         Vertex_triple vt(vmap[vt_aux.first],vmap[vt_aux.third],vmap[vt_aux.second]);
         make_canonical(vt);
@@ -5875,7 +5902,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
     {
       for(i=0; i < 4; i++)
       {
-        Facet f = std::pair<Cell_handle,int>(it,i);
+        Facet f = std::pair<Cell_handle,int>(*it,i);
         Vertex_triple vt_aux = make_vertex_triple(f);
         Vertex_triple vt(vmap[vt_aux.first],vmap[vt_aux.third],vmap[vt_aux.second]);
         make_canonical(vt);
@@ -6313,7 +6340,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
     {
       for(i=0; i < 4; i++)
       {
-        Facet f = std::pair<Cell_handle,int>(it,i);
+        Facet f = std::pair<Cell_handle,int>(*it,i);
         Vertex_triple vt_aux = make_vertex_triple(f);
         Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
         make_canonical(vt);
@@ -6328,7 +6355,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
     {
       for(i=0; i < 4; i++)
       {
-        Facet f = std::pair<Cell_handle,int>(it,i);
+        Facet f = std::pair<Cell_handle,int>(*it,i);
         Vertex_triple vt_aux = make_vertex_triple(f);
         Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
         make_canonical(vt);
@@ -6653,7 +6680,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover& rem
       {
         for(unsigned int index=0; index < 4; index++)
         {
-          Facet f = std::pair<Cell_handle,int>(it,index);
+          Facet f = std::pair<Cell_handle,int>(*it,index);
           Vertex_triple vt_aux = this->make_vertex_triple(f);
           Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
           this->make_canonical(vt);
@@ -6668,7 +6695,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover& rem
       {
         for(unsigned int index=0; index < 4; index++)
         {
-          Facet f = std::pair<Cell_handle,int>(it,index);
+          Facet f = std::pair<Cell_handle,int>(*it,index);
           Vertex_triple vt_aux = this->make_vertex_triple(f);
           Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
           this->make_canonical(vt);
@@ -6845,7 +6872,7 @@ is_valid(bool verbose, int level) const
     {
       for(Finite_cells_iterator it = finite_cells_begin(),
                                 end = finite_cells_end(); it != end; ++it)
-        is_valid_finite(it, verbose, level);
+        is_valid_finite(*it, verbose, level);
       break;
     }
     case 2:

@@ -32,13 +32,12 @@ namespace CGAL { namespace internal {
 
 template < class Tds_ >
 class Triangulation_ds_cell_circulator_3
- : public Bidirectional_circulator_base<typename Tds_::Cell,
+ : public Bidirectional_circulator_base<typename Tds_::Cell_index,
                                         std::ptrdiff_t, std::size_t>
 {
   // circulates on cells around a given edge
 
   typedef Tds_                         Tds;
-  typedef typename Tds::Cell           Cell;
   typedef typename Tds::Edge           Edge;
   typedef typename Tds::Vertex_handle  Vertex_handle;
   typedef typename Tds::Cell_handle    Cell_handle;
@@ -119,12 +118,12 @@ public:
     return tmp;
   }
 
-  Cell& operator*() const
+  Cell_handle operator*() const
   {
-    return *pos;
+    return pos;
   }
 
-  Cell* operator->() const
+  Cell_handle operator->() const
   {
     return &*pos;
   }
@@ -450,12 +449,12 @@ public:
     return tmp;
   }
 
-  Cell& operator*() const
+  Cell_handle operator*() const
   {
     return *pos;
   }
 
-  Cell* operator->() const
+  Cell_handle operator->() const
   {
     return &*pos;
   }

@@ -761,7 +761,7 @@ _test_cls_triangulation_3(const Triangulation &)
   Finite_vertices_iterator vit;
   Vertex_handle w;
   for (vit=T3_1.finite_vertices_begin();vit!=T3_1.finite_vertices_end();vit++)
-    assert(T3_1.is_vertex(vit->point(), w));
+    assert(T3_1.is_vertex(T3_1.point(*vit), w));
 
   // test mirrors
   c = T0.infinite_cell();
@@ -797,7 +797,7 @@ _test_cls_triangulation_3(const Triangulation &)
   Point pt2 = T0.point(T0.tds().vertex(c,0));
   assert(pt1==pt2);
   c= T0.locate(Point(20,0,2),lt,li,lj);
-  Point pt3 = T0.tds().vertex(c, 0)->point();
+  Point pt3 = T0.point(T0.tds().vertex(c, 0));
   assert(pt2==pt3);
      
   if (! del) { // Delaunay should not be flipped
