@@ -75,6 +75,15 @@ class Handle
       return *this;
     }
 
+    void reset()
+    {
+      if (PTR)
+      {
+        --PTR->count;
+        PTR=0;
+      }
+    }
+
     int
     refs()  const { return PTR->count; }
 
