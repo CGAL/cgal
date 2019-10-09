@@ -276,6 +276,7 @@ public:
 
   
 private:
+
   #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
   std::vector<Vertex_handle>
   add_temporary_points_on_far_sphere(const size_t num_points)
@@ -368,6 +369,10 @@ public:
     std::vector<Point> points(first, last);
     spatial_sort(points.begin(), points.end(), geom_traits());
 
+    if(n == 0){
+      tds().reserve(points.size(), points.size() * 7);
+    }
+    
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
     if(this->is_parallel())

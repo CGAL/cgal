@@ -438,6 +438,12 @@ public:
   {
     *this = rhs;
   }
+
+  void reserve(size_type nv, size_type nc)
+  {
+    vprops_.reserve(nv);
+    cprops_.reserve(nc);
+  }
   
 #ifndef DOXYGEN_RUNNING
    /// returns the number of used and removed vertices.
