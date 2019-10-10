@@ -799,7 +799,6 @@ public:
   void delete_vertex( Vertex_handle v )
   {
     CGAL_triangulation_expensive_precondition( is_vertex(v) );
-    vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
     vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
     vconn_[v].c = Cell_index(vertices_freelist_);
     vertices_freelist_ = (size_type)v;
@@ -808,7 +807,6 @@ public:
   void delete_cell( Cell_handle c )
   {
       CGAL_triangulation_expensive_precondition( is_simplex(c) );
-      cremoved_ = add_property_map<Cell_index, bool>("c:removed", false).first;
       cremoved_[c] = true; ++removed_cells_; garbage_ = true;
       cconn_[c].V[0] = Vertex_index(cells_freelist_);
       cells_freelist_ = (size_type)c;

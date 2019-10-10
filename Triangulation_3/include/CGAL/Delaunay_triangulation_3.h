@@ -370,7 +370,8 @@ public:
     spatial_sort(points.begin(), points.end(), geom_traits());
 
     if(n == 0){
-      tds().reserve(points.size(), points.size() * 7);
+      std::cout <<  "We reserve " << (points.size() + 1) << " vertices and "  << (points.size() * 7) << " cells"<< std::endl;
+      tds().reserve(points.size()+1, points.size() * 7);
     }
     
     // Parallel
