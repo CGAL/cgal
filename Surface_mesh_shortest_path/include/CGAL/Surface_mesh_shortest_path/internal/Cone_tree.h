@@ -61,7 +61,7 @@ private:
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
-  typedef Cone_expansion_event<Traits> Cone_expansion_event;
+  typedef typename Surface_mesh_shortest_paths_3::internal::Cone_expansion_event<Traits> Cone_expansion_event;
 
 private:
   // These could be pulled back into a 'context' class to save space
@@ -83,9 +83,9 @@ private:
   const Node_type m_nodeType;
 
   Cone_tree_node* m_leftChild;
+  std::vector<Cone_tree_node*> m_middleChildren;
   Cone_tree_node* m_rightChild;
 
-  std::vector<Cone_tree_node*> m_middleChildren;
   Cone_tree_node* m_parent;
 
 public:
