@@ -61,7 +61,7 @@ public:
   ;
 #else
   {
-    return static_cast<result_type>(Certified_approx_predicate(std::forward(a)...));
+    return static_cast<result_type>(Certified_approx_predicate(std::forward<A>(a)...));
   }
 #endif
 
@@ -75,7 +75,7 @@ typename Unfiltered_predicate_adaptor<CAP>::result_type
 Unfiltered_predicate_adaptor<CAP>::
   operator()(const A&& ... a) const
 {
-  return static_cast<result_type>(Certified_approx_predicate(std::forward(a)...));
+  return static_cast<result_type>(Certified_approx_predicate(std::forward<A>(a)...));
 }
 #endif
 

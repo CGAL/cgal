@@ -122,14 +122,14 @@ public:
     try
     {
       Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(std::forward(a))...);
+      FC_result_type fr = Filter_construction(To_Filtered(std::forward<A>(a))...);
       if ( fr )
         return From_Filtered(fr);
     }
     catch (Uncertain_conversion_exception&) {}
 
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(std::forward(a))...) ;
+    EC_result_type er = Exact_construction(To_Exact(std::forward<A>(a))...) ;
     return From_Exact(er);
   }
 };

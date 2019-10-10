@@ -48,7 +48,7 @@ struct Primitive_profiler
     operator()(const A&& ... a) const
     {
 	CGAL_KERNEL_PROFILER;
-	return P::operator()(std::forward(a)...);
+	return P::operator()(std::forward<A>(a)...);
     }
 };
 
