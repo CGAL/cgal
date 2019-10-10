@@ -657,6 +657,11 @@ private:
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     typename Traits::Construct_triangle_3_along_segment_2_flattening ft3as2(m_traits.construct_triangle_3_along_segment_2_flattening_object());
 
+    if (m_debugOutput)
+    {
+      std::cout << std::endl << " >>>>>>>>>>>>>>>>>>> Expanding LEFT CHILD <<<<<<<<<<<<<<<<<<<" <<std::endl;
+    }
+
     CGAL_assertion(cone->m_pendingLeftSubtree != NULL);
 
     cone->m_pendingLeftSubtree = NULL;
@@ -689,6 +694,11 @@ private:
     typename Traits::Construct_triangle_3_along_segment_2_flattening ft3as2(m_traits.construct_triangle_3_along_segment_2_flattening_object());
 
     CGAL_assertion(cone->m_pendingRightSubtree != NULL);
+
+    if (m_debugOutput)
+    {
+      std::cout << std::endl << " >>>>>>>>>>>>>>>>>>> Expanding RIGHT CHILD <<<<<<<<<<<<<<<<<<<" <<std::endl;
+    }
 
     cone->m_pendingRightSubtree = NULL;
 
@@ -905,6 +915,7 @@ private:
 
     if (m_debugOutput)
     {
+      std::cout << "expansionVertex: " << get(m_vertexIndexMap, expansionVertex) << std::endl;
       std::cout << "Distance from target to root: " << distanceFromTargetToRoot << std::endl;
     }
 
@@ -919,16 +930,23 @@ private:
 
       if (m_debugOutput)
       {
-        std::cout << "Expanding PsuedoSource: id = ";
-        if (face(currentEdge, m_graph) != Graph_traits::null_face())
+        std::cout << std::endl << " >>>>>>>>>>>>>>>>>>> Expanding PseudoSource <<<<<<<<<<<<<<<<<<<" <<std::endl;
+        std::cout << "currentEdge: "
+                  << get(m_vertexIndexMap, source(currentEdge, m_graph)) << " "
+                  << get(m_vertexIndexMap, target(currentEdge, m_graph)) << std::endl;
+        std::cout << "face id = ";
+        if(face(currentEdge, m_graph) != Graph_traits::null_face())
         {
-          std::cout << get(m_faceIndexMap, face(currentEdge, m_graph));
+          std::cout << get(m_faceIndexMap, face(currentEdge, m_graph)) << std::endl;
+
+          std::cout << "3D face:" << std::endl << face3d[0] << std::endl << face3d[1] << std::endl << face3d[2] << std::endl;
+          std::cout << "current face: " << face(currentEdge, m_graph) << " gives 2D layout: " << layoutFace << std::endl;
+          std::cout << "source: " << face3d[1] << std::endl;
         }
         else
         {
-          std::cout << "EXTERNAL";
+          std::cout << "EXTERNAL" << std::endl;
         }
-        std::cout << std::endl;
       }
 
       Cone_tree_node* child = new Cone_tree_node(m_traits, m_graph, currentEdge, layoutFace,
@@ -970,7 +988,9 @@ private:
 
     if (m_debugOutput)
     {
-      std::cout << "Clipping Segment " << segment << " with left = " << leftBoundary << " and right = " << rightBoundary << std::endl;
+      std::cout << "Clipping Segment " << segment << std::endl
+                << "\t with left = " << leftBoundary << std::endl
+                << "\t with right = " << rightBoundary << std::endl;
     }
 
     FT leftT;
@@ -1038,7 +1058,7 @@ private:
     {
       if (m_debugOutput)
       {
-        std::cout << "Right is completely covered." << std::endl;
+        std::cout << "\tRight is completely covered." << std::endl;
       }
       rightPoint = ct2(segment);
       rightT = FT(1);
@@ -1108,6 +1128,33 @@ private:
   */
   void process_node(Cone_tree_node* node)
   {
+    if (m_debugOutput)
+    {
+      std::cout << std::endl << " ---------------- Processing node ---------------" << std::endl;
+      std::cout << "Node id: " << node->m_id << std::endl;
+      std::cout << "Tree ID: " << node->tree_id() << " at level = " << node->level() << std::endl;
+      std::cout << "\tParent node: " << node->m_parent->m_id << std::endl;
+      std::cout << "\tParent node type: " << node->m_parent->m_nodeType << std::endl;
+      std::cout << "Node type: " << node->node_type() << std::endl;
+      std::cout << "\tFace = " << node->layout_face() << std::endl;
+      std::cout << "\tVertices = ";
+      halfedge_descriptor current = node->entry_edge();
+      for(std::size_t i = 0; i<3; ++i)
+      {
+        std::cout << get(m_vertexIndexMap, source(current, m_graph)) << " ";
+        current = next(current, m_graph);
+      }
+      std::cout << std::endl;
+      std::cout << "\tSource Image = " << node->source_image() << std::endl;
+      std::cout << "\tSource Image (3D) = " << node->source_image_3() << std::endl;
+      std::cout << "\tEntry Halfedge = (" << get(m_vertexIndexMap, source(node->entry_edge(), m_graph)) << " "
+                                           << get(m_vertexIndexMap, target(node->entry_edge(), m_graph)) << ")" << std::endl;
+      std::cout << "\tTarget vertex = " << get(m_vertexIndexMap, node->target_vertex()) << std::endl;
+
+      std::cout << "\tWindow Left = " << node->window_left() << std::endl;
+      std::cout << "\tWindow Right = " << node->window_right() << std::endl;
+    }
+
     bool leftSide = false;
     bool rightSide = false;
 
@@ -1130,28 +1177,15 @@ private:
       }
     }
 
+    if(m_debugOutput)
+    {
+      std::cout << "\t Has Left : " << (leftSide ? "yes" : "no")
+                << " , Has Right : " << (rightSide ? "yes" : "no") << std::endl;
+    }
+
     bool propagateLeft = false;
     bool propagateRight = false;
     bool propagateMiddle = false;
-
-    if (m_debugOutput)
-    {
-      std::cout << " Processing node " << node << " , level = " << node->level() << std::endl;
-      std::cout << "\tFace = " << node->layout_face() << std::endl;
-      std::cout << "\tVertices = ";
-      halfedge_descriptor current = node->entry_edge();
-      for (std::size_t i = 0; i < 3; ++i)
-      {
-        std::cout << " " << get(m_vertexIndexMap, source(current, m_graph));
-        current = next(current, m_graph);
-      }
-      std::cout << std::endl;
-      std::cout << "\tSource Image = " << node->source_image() << std::endl;
-      std::cout << "\tWindow Left = " << node->window_left() << std::endl;
-      std::cout << "\tWindow Right = " << node->window_right() << std::endl;
-      std::cout << "\t Has Left : " << (leftSide ? "yes" : "no") << " , Has Right : "
-                                    << (rightSide ? "yes" : "no") << std::endl;
-    }
 
     if (node->is_source_node() || (leftSide && rightSide))
     {
@@ -1160,15 +1194,15 @@ private:
         std::cout << "\tContains target vertex" << std::endl;
       }
 
-      std::size_t entryEdgeIndex = get(m_halfedgeIndexMap, node->entry_edge());
+      std::size_t entryHalfEdgeIndex = get(m_halfedgeIndexMap, node->entry_edge());
 
-      Node_distance_pair currentOccupier = m_vertexOccupiers[entryEdgeIndex];
+      Node_distance_pair currentOccupier = m_vertexOccupiers[entryHalfEdgeIndex];
       FT currentNodeDistance = node->distance_from_target_to_root();
 
       if (m_debugOutput)
       {
-        std::cout << "\t Entry Edge = " << entryEdgeIndex << std::endl;
-        std::cout << "\t Target vertex = " << get(m_vertexIndexMap, node->target_vertex()) << std::endl;
+        std::cout << "\t Distance to target: " << currentNodeDistance << std::endl;
+        std::cout << "\t Is there a current occupier? " << (currentOccupier.first != nullptr) << std::endl;
       }
 
       // the relative position of the ray between node.source() and node.target_vertex() and the ray
@@ -1186,7 +1220,10 @@ private:
 
         if (m_debugOutput)
         {
-          std::cout << "\t Current occupier = " << currentOccupier.first << std::endl;
+          std::cout << "\t Current occupier, EH ("
+                    << get(m_vertexIndexMap, source(currentOccupier.first->entry_edge(), m_graph)) << " "
+                    << get(m_vertexIndexMap, target(currentOccupier.first->entry_edge(), m_graph)) << ")" << std::endl;
+          std::cout << "\t Current occupier, 3D source = " << currentOccupier.first->source_image_3() << std::endl;
           std::cout << "\t Current Occupier Distance = " << currentOccupier.second << std::endl;
           std::cout << "\t left/collinear/right turn? " << s << std::endl;
         }
@@ -1201,7 +1238,8 @@ private:
       {
         if (m_debugOutput)
         {
-          std::cout << "\t Current node is now the occupier" << std::endl;
+          std::cout << "\t Current node is now the occupier of target vertex "
+                    << get(m_vertexIndexMap, node->target_vertex()) << std::endl;
         }
 
         // Only replace the current occupier if the time is _strictly_ greater
@@ -1213,7 +1251,7 @@ private:
         propagateRight = true;
 
         // This is a consequence of using the same basic node type for source and interval nodes
-        // If this is a source node, it is only pointing to one of the two opposite edges (the left one by convention)
+        // If this is a source node, it is only pointing to one of the two opposite edges he left one by convention)
         if (node->node_type() != Cone_tree_node::INTERVAL && node->node_type() != Cone_tree_node::EDGE_SOURCE)
         {
           propagateRight = false;
@@ -1227,6 +1265,7 @@ private:
           }
         }
 
+        // Some branches from the old occupier that has been superseded can now be pruned
         if (currentOccupier.first != NULL)
         {
           if (s != RIGHT_TURN)
@@ -1285,12 +1324,18 @@ private:
         {
           if (m_debugOutput)
           {
-            std::cout << "\t Current node is now the closest" << std::endl;
+            std::cout << "\t Current node is now the closest at target vertex "
+                      << get(m_vertexIndexMap, node->target_vertex()) << std::endl;
           }
 
           // if this is a saddle vertex, then evict previous closest vertex
           if (m_vertexIsPseudoSource[targetVertexIndex])
           {
+            if (m_debugOutput)
+            {
+              std::cout << "\t Vertex " << targetVertexIndex << " is a pseudo-source" << std::endl;
+            }
+
             if (currentClosest.first != NULL)
             {
               if (m_debugOutput)
@@ -1321,7 +1366,7 @@ private:
           m_closestToVertices[targetVertexIndex] = Node_distance_pair(node, currentNodeDistance);
         }
       }
-      else // there is already an occupier, at a closer distance
+      else // there is already an occupier, at a strictly smaller distance
       {
         if (s != RIGHT_TURN)
           propagateLeft = true;
@@ -1335,6 +1380,11 @@ private:
     {
       propagateLeft = leftSide;
       propagateRight = rightSide;
+    }
+
+    if(m_debugOutput)
+    {
+      std::cout << "Propagate (L/M/R): " << propagateLeft << " " << propagateMiddle << " " << propagateRight << std::endl;
     }
 
     if (node->level() <= static_cast<std::size_t>(num_faces(m_graph)))
@@ -1392,7 +1442,7 @@ private:
 
       if (m_debugOutput)
       {
-        std::cout << "\tPushing Left Child, Segment = " << parent->left_child_base_segment()
+        std::cout << ">>> Pushing Left Child, Segment = " << parent->left_child_base_segment()
                   << " , clipped = " << leftWindow << " , Estimate = " << distanceEstimate << std::endl;
       }
 
@@ -1407,6 +1457,11 @@ private:
 
   void push_right_child(Cone_tree_node* parent)
   {
+    if (m_debugOutput)
+    {
+      std::cout << "Tentative push of right child..." << std::endl;
+    }
+
     typename Traits::Compute_squared_distance_2 csd2(m_traits.compute_squared_distance_2_object());
 
     if (face(parent->right_child_edge(), m_graph) != Graph_traits::null_face())
@@ -1429,7 +1484,7 @@ private:
 
       if (m_debugOutput)
       {
-        std::cout << "\tPushing Right Child, Segment = " << parent->right_child_base_segment()
+        std::cout << ">>> Pushing Right Child, Segment = " << parent->right_child_base_segment()
                   << " , clipped = " << rightWindow << " , Estimate = " << distanceEstimate << std::endl;
       }
 
@@ -1446,7 +1501,7 @@ private:
   {
     if (m_debugOutput)
     {
-      std::cout << "\tPushing Middle Child, Estimate = " << parent->distance_from_target_to_root() << std::endl;
+      std::cout << ">>> Pushing Middle Child, Estimate = " << parent->distance_from_target_to_root() << std::endl;
     }
 
     Cone_expansion_event* event = new Cone_expansion_event(parent, parent->distance_from_target_to_root(), Cone_expansion_event::PSEUDO_SOURCE);
@@ -1519,11 +1574,11 @@ private:
       // to the original `Triangle_mesh`, and deletion without
       if (!node->is_root_node() && !destruction)
       {
-        std::size_t entryEdgeIndex = get(m_halfedgeIndexMap, node->entry_edge());
+        std::size_t entryHalfEdgeIndex = get(m_halfedgeIndexMap, node->entry_edge());
 
-        if (m_vertexOccupiers[entryEdgeIndex].first == node)
+        if (m_vertexOccupiers[entryHalfEdgeIndex].first == node)
         {
-          m_vertexOccupiers[entryEdgeIndex].first = NULL;
+          m_vertexOccupiers[entryHalfEdgeIndex].first = NULL;
 
           std::size_t targetVertexIndex = get(m_vertexIndexMap, node->target_vertex());
 
@@ -1992,6 +2047,39 @@ private:
 
     while (m_expansionPriqueue.size() > 0)
     {
+      if(m_debugOutput)
+      {
+        std::cout << " -----------------------------------------------------------------------" << std::endl;
+        std::cout << " -----------------------------------------------------------------------" << std::endl;
+        std::cout << "Num face locations: " << m_faceLocations.size() << std::endl;
+        std::cout << "Num root nodes: " << m_rootNodes.size() << " (Hint: these should be the same size)" << std::endl;
+
+        std::cout << "Prio Queue size = " << m_expansionPriqueue.size() << std::endl;
+        std::cout << "Queue:" << std::endl;
+        auto duplicate_queue = m_expansionPriqueue;
+        while(duplicate_queue.size() > 0)
+        {
+          Cone_expansion_event* event = duplicate_queue.top();
+
+          std::cout << "event type: " << event->m_type << " "
+                    << " time: " << event->m_distanceEstimate << " ";
+          std::cout << "cancelled? " << event->m_cancelled << " " ;
+
+          if(!event->m_cancelled)
+          {
+            std::cout << " ------ Parent Info: ID = " << event->m_parent->m_id << " ";
+            std::cout << "EH = (" << get(m_vertexIndexMap, source(event->m_parent->entry_edge(), m_graph)) << " "
+                                              << get(m_vertexIndexMap, target(event->m_parent->entry_edge(), m_graph)) << ") ";
+            std::cout << "S = (" << event->m_parent->source_image_3() << ") ";
+            std::cout << "T = " << get(m_vertexIndexMap, target(next(event->m_parent->entry_edge(), m_graph), m_graph));
+          }
+
+          std::cout << std::endl;
+
+          duplicate_queue.pop();
+        }
+      }
+
       Cone_expansion_event* event = m_expansionPriqueue.top();
       m_expansionPriqueue.pop();
 
