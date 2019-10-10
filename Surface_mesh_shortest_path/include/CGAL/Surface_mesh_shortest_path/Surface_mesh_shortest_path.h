@@ -1247,23 +1247,31 @@ private:
         }
       }
 
-      if (m_debugOutput)
+      bool is_node_new_occupier = false;
+      if(currentOccupier.first == NULL)
       {
-        std::cout << "\t New Distance = " << currentNodeDistance << std::endl;
+        m_vertexOccupiers[entryHalfEdgeIndex] = std::make_pair(node, currentNodeDistance);
+        is_node_new_occupier = true;
+      }
+      else
+      {
+        // Only replace the current occupier if the time is _strictly_ larger
+        // and yield the way to vertex sources (cleaner than manipulating 0-length intervals)
+        if(currentOccupier.second > currentNodeDistance ||
+           (currentOccupier.second == currentNodeDistance && node->node_type() == Cone_tree_node::VERTEX_SOURCE))
+        {
+          m_vertexOccupiers[entryHalfEdgeIndex] = std::make_pair(node, currentNodeDistance);
+          is_node_new_occupier = true;
+        }
       }
 
-      if (currentOccupier.first == NULL || currentOccupier.second >= currentNodeDistance)
+      if(is_node_new_occupier)
       {
         if (m_debugOutput)
         {
           std::cout << "\t Current node is now the occupier of target vertex "
                     << get(m_vertexIndexMap, node->target_vertex()) << std::endl;
         }
-
-        // Only replace the current occupier if the time is _strictly_ greater
-        if(currentOccupier.second > currentNodeDistance ||
-           (currentOccupier.second > currentNodeDistance && node->node_type() == Cone_tree_node::VERTEX_SOURCE))
-          m_vertexOccupiers[entryEdgeIndex] = std::make_pair(node, currentNodeDistance);
 
         propagateLeft = true;
         propagateRight = true;
