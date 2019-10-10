@@ -1320,20 +1320,7 @@ private:
           }
         }
 
-        // If times are equal, we can do some pruning on the node itself: it's the same as for the occupier,
-        // if the node is left of the occupier, prune its right, and oppositely
-        if(currentOccupier.second == currentNodeDistance)
-        {
-          // Not exactly sure what do if it's both equal times and rays (i.e. both sources are equals
-          // and s == 0) so no pruning for that case
-          if(s == LEFT_TURN)
-            propagateRight = false;
-
-          if(s == RIGHT_TURN)
-            propagateLeft = false;
-        }
-
-        // Check if this is now the absolute closest node, and replace the current closest as appropriate
+        // Check if node is now the absolute closest node, and replace the current closest as appropriate
         std::size_t targetVertexIndex = get(m_vertexIndexMap, node->target_vertex());
         Node_distance_pair currentClosest = m_closestToVertices[targetVertexIndex];
 
