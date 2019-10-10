@@ -56,12 +56,12 @@ public:
 
   template <class ... A>
   result_type
-  operator()(const A& ... a) const
+  operator()(const A&& ... a) const
 #ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   ;
 #else
   {
-    return static_cast<result_type>(Certified_approx_predicate(a...));
+    return static_cast<result_type>(Certified_approx_predicate(std::forward(a)...));
   }
 #endif
 
@@ -73,9 +73,9 @@ template <class CAP>
   template <class ... A>
 typename Unfiltered_predicate_adaptor<CAP>::result_type
 Unfiltered_predicate_adaptor<CAP>::
-  operator()(const A& ... a) const
+  operator()(const A&& ... a) const
 {
-  return static_cast<result_type>(Certified_approx_predicate(a...));
+  return static_cast<result_type>(Certified_approx_predicate(std::forward(a)...));
 }
 #endif
 

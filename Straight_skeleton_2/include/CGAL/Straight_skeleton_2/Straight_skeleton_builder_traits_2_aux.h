@@ -117,19 +117,19 @@ public:
 
   template <class ... A>
   result_type
-  operator()(const A& ... a) const
+  operator()(const A&& ... a) const
   {
     try
     {
       Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(a)...);
+      FC_result_type fr = Filter_construction(To_Filtered(std::forward(a))...);
       if ( fr )
         return From_Filtered(fr);
     }
     catch (Uncertain_conversion_exception&) {}
 
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(a)...) ;
+    EC_result_type er = Exact_construction(To_Exact(std::forward(a))...) ;
     return From_Exact(er);
   }
 };

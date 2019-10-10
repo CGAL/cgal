@@ -45,10 +45,10 @@ struct Primitive_profiler
 
     template <class ... A>
     result_type
-    operator()(const A& ... a) const
+    operator()(const A&& ... a) const
     {
 	CGAL_KERNEL_PROFILER;
-	return P::operator()(a...);
+	return P::operator()(std::forward(a)...);
     }
 };
 

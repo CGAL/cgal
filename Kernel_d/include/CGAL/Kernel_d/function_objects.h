@@ -43,8 +43,8 @@ class Construct
 
     template <class ... A>
     ToBeConstructed
-    operator()( const A& ... a) const
-    { return ToBeConstructed(a...); }
+    operator()( const A&& ... a) const
+    { return ToBeConstructed(std::forward(a)...); }
 };
 
 class Call_has_on_positive_side
