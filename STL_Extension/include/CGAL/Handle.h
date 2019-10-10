@@ -79,7 +79,8 @@ class Handle
     {
       if (PTR)
       {
-        --PTR->count;
+        if (--PTR->count==0)
+          delete PTR;
         PTR=0;
       }
     }
