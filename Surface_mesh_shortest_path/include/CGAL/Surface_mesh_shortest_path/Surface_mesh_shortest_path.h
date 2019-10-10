@@ -1131,11 +1131,11 @@ private:
     if (m_debugOutput)
     {
       std::cout << std::endl << " ---------------- Processing node ---------------" << std::endl;
-      std::cout << "Node id: " << node->m_id << std::endl;
-      std::cout << "Tree ID: " << node->tree_id() << " at level = " << node->level() << std::endl;
-      std::cout << "\tParent node: " << node->m_parent->m_id << std::endl;
-      std::cout << "\tParent node type: " << node->m_parent->m_nodeType << std::endl;
+      std::cout << "Node: " << node << std::endl;
       std::cout << "Node type: " << node->node_type() << std::endl;
+      std::cout << "Tree ID: " << node->tree_id() << " at level = " << node->level() << std::endl;
+      std::cout << "\tParent node: " << node->parent() << std::endl;
+      std::cout << "\tParent node type: " << node->parent()->node_type() << std::endl;
       std::cout << "\tFace = " << node->layout_face() << std::endl;
       std::cout << "\tVertices = ";
       halfedge_descriptor current = node->entry_edge();
@@ -1146,7 +1146,6 @@ private:
       }
       std::cout << std::endl;
       std::cout << "\tSource Image = " << node->source_image() << std::endl;
-      std::cout << "\tSource Image (3D) = " << node->source_image_3() << std::endl;
       std::cout << "\tEntry Halfedge = (" << get(m_vertexIndexMap, source(node->entry_edge(), m_graph)) << " "
                                            << get(m_vertexIndexMap, target(node->entry_edge(), m_graph)) << ")" << std::endl;
       std::cout << "\tTarget vertex = " << get(m_vertexIndexMap, node->target_vertex()) << std::endl;
@@ -1241,7 +1240,7 @@ private:
           std::cout << "\t Current occupier, EH ("
                     << get(m_vertexIndexMap, source(currentOccupier.first->entry_edge(), m_graph)) << " "
                     << get(m_vertexIndexMap, target(currentOccupier.first->entry_edge(), m_graph)) << ")" << std::endl;
-          std::cout << "\t Current occupier, 3D source = " << currentOccupier.first->source_image_3() << std::endl;
+          std::cout << "\t Current occupier, Source = " << currentOccupier.first->source_image() << std::endl;
           std::cout << "\t Current Occupier Distance = " << currentOccupier.second << std::endl;
           std::cout << "\t smaller (-1)/equal (0)/larger (1) comparison? " << c << std::endl;
         }
@@ -2080,10 +2079,10 @@ private:
 
           if(!event->m_cancelled)
           {
-            std::cout << " ------ Parent Info: ID = " << event->m_parent->m_id << " ";
+            std::cout << " ------ Parent (" << event->m_parent << ") INFO: ";
             std::cout << "EH = (" << get(m_vertexIndexMap, source(event->m_parent->entry_edge(), m_graph)) << " "
                                               << get(m_vertexIndexMap, target(event->m_parent->entry_edge(), m_graph)) << ") ";
-            std::cout << "S = (" << event->m_parent->source_image_3() << ") ";
+            std::cout << "S = (" << event->m_parent->source_image() << ") ";
             std::cout << "T = " << get(m_vertexIndexMap, target(next(event->m_parent->entry_edge(), m_graph), m_graph));
           }
 
