@@ -603,21 +603,22 @@ bool clip(      TriangleMesh& tm,
   * @param splitter triangulated surface mesh used to split `tm`
   * @param np_tm optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
   * @param np_s optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-* \cgalNamedParamsBegin
-*   \cgalParamBegin{vertex_point_map}
-*     the property map with the points associated to the vertices of `tm` (`splitter`).
-*     If this parameter is omitted, an internal property map for
-*     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-*   \cgalParamEnd
-*   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
-*                            that is used to track the creation of new faces.
-*   \cgalParamEnd
-*   \cgalParamBegin{throw_on_self_intersection} if `true`,
-*      the set of triangles closed to the intersection of `tm` and `splitter` will be
-*      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-*      will be thrown if at least one is found.
-*   \cgalParamEnd
-* \cgalNamedParamsEnd
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamBegin{vertex_point_map}
+  *     the property map with the points associated to the vertices of `tm` (`splitter`).
+  *     If this parameter is omitted, an internal property map for
+  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
+  *   \cgalParamEnd
+  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
+  *                            that is used to track the creation of new faces.
+  *   \cgalParamEnd
+  *   \cgalParamBegin{throw_on_self_intersection} if `true`,
+  *      the set of triangles closed to the intersection of `tm` and `splitter` will be
+  *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *      will be thrown if at least one is found.
+  *   \cgalParamEnd
+  * \cgalNamedParamsEnd
 */
 
 template <class TriangleMesh,
