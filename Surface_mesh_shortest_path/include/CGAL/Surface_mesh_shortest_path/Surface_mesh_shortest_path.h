@@ -1207,7 +1207,7 @@ private:
 
       // the relative position of the ray between node.source() and node.target_vertex() and the ray
       // from occupier.source() (-1 left, 0 collinear, 1 right)
-      CGAL::Sign s;
+      CGAL::Comparison_result c;
 
       if (currentOccupier.first != NULL)
       {
@@ -1215,8 +1215,26 @@ private:
         CGAL_assertion(node->entry_edge() == currentOccupier.first->entry_edge());
         CGAL_assertion(node->target_vertex() == currentOccupier.first->target_vertex());
 
-        typename Traits::Orientation_2 o2(m_traits.orientation_2_object());
-        s = o2(currentOccupier.first->source_image(), currentOccupier.first->target_point(), node->source_image());
+        // for a vertex source, the ray is along the halfedge pointing towards the target
+        if (node->is_vertex_node())
+        {
+          if(currentOccupier.first->is_vertex_node())
+            c = CGAL::EQUAL;
+          else
+            c = CGAL::LARGER;
+        }
+        else if(currentOccupier.first->is_vertex_node()) // node is not a vertex source
+        {
+          c = CGAL::SMALLER;
+        }
+        else // generic case
+        {
+          c = m_traits.compare_relative_intersection_along_segment_2_object()(
+                node->entry_segment(),
+                node->ray_to_target_vertex().supporting_line(),
+                currentOccupier.first->entry_segment(),
+                currentOccupier.first->ray_to_target_vertex().supporting_line());
+        }
 
         if (m_debugOutput)
         {
@@ -1225,7 +1243,7 @@ private:
                     << get(m_vertexIndexMap, target(currentOccupier.first->entry_edge(), m_graph)) << ")" << std::endl;
           std::cout << "\t Current occupier, 3D source = " << currentOccupier.first->source_image_3() << std::endl;
           std::cout << "\t Current Occupier Distance = " << currentOccupier.second << std::endl;
-          std::cout << "\t left/collinear/right turn? " << s << std::endl;
+          std::cout << "\t smaller (-1)/equal (0)/larger (1) comparison? " << c << std::endl;
         }
       }
 
@@ -1268,7 +1286,7 @@ private:
         // Some branches from the old occupier that has been superseded can now be pruned
         if (currentOccupier.first != NULL)
         {
-          if (s != RIGHT_TURN)
+          if (c == CGAL::SMALLER) // node's ray is left of occupier's ray
           {
             if (currentOccupier.first->get_left_child())
             {
@@ -1280,8 +1298,7 @@ private:
               currentOccupier.first->m_pendingLeftSubtree = NULL;
             }
           }
-
-          if(s != LEFT_TURN)
+          else if(c == CGAL::LARGER) // node's ray is right of occupier's ray
           {
             if (currentOccupier.first->get_right_child())
             {
@@ -1368,9 +1385,10 @@ private:
       }
       else // there is already an occupier, at a strictly smaller distance
       {
-        if (s != RIGHT_TURN)
+        // this is an application of "one angle one split"
+        if (c != CGAL::LARGER) // propage on the left if the node's ray is left of the occupier's
           propagateLeft = true;
-        if (s != LEFT_TURN)
+        if (c != CGAL::SMALLER) // propage on the right if the node's ray is right of the occupier's
           propagateRight = true;
         if (!node->is_source_node())
           propagateRight = true;
