@@ -18,13 +18,10 @@
 //
 // Author(s)     : Stephen Kiazyk
 
-#include <cstddef>
+#ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
+#define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
 
-#include <boost/graph/graph_traits.hpp>
-
-#include <CGAL/assertions.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/result_of.h>
+#include <CGAL/license/Surface_mesh_shortest_path.h>
 
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
@@ -34,13 +31,15 @@
 #endif
 #endif
 
+#include <CGAL/assertions.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/result_of.h>
 #include <CGAL/Cartesian_converter.h>
 
-#ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
-#define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
-
-#include <CGAL/license/Surface_mesh_shortest_path.h>
-
+#include <cmath>
+#include <cstddef>
+#include <limits>
 
 namespace CGAL {
 
@@ -468,7 +467,6 @@ public:
     typedef typename CGAL::cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
 
     Line_2 s1Line(m_construct_line_2(s1));
-
     Line_2 s2Line(m_construct_line_2(s2));
 
     LineLineIntersectResult intersectResult1(m_intersect_2(s1Line, l1));
@@ -495,7 +493,25 @@ public:
     CGAL_assertion_code(FT t2 = m_parametric_distance_along_segment_2(s2, *p2_ptr);)
     CGAL_assertion(t1 >= FT(-1)/FT(100000) && t1 <= FT(1)+FT(1)/FT(100000));
 
+#define CGAL_SMSP_DONT_USE_RELAXED_PRUNING
+#ifndef CGAL_SMSP_DONT_USE_RELAXED_PRUNING
+    const FT sqd_1 = CGAL::squared_distance(s1.source(), *p1_ptr);
+    const FT sqd_2 = CGAL::squared_distance(s2.source(), *p2_ptr);
+
+    // In the case of multiple rays reaching the same target, we want to know their respective position
+    // so that pruning of branches can be done according to the "one angle one split" idiom.
+    // However, the orientation predicate is evaluated in the unfolded 2D plane, which is obtained
+    // via square roots; inconsisnties will exist. We don't want to prune in case it might be wrong,
+    // so we add a little bit of tolerance on the evaluation of the predicate. If it's almost collinear,
+    // return 'collinear' (EQUAL).
+    const FT eps = (FT(100) * std::numeric_limits<FT>::epsilon());
+    if(CGAL::abs(sqd_1 - sqd_2) < eps)
+      return CGAL::EQUAL;
+
+    return CGAL::compare(sqd_1, sqd_2);
+#else
     return m_compare_distance_2(s1.source(), *p1_ptr, s2.source(), *p2_ptr);
+#endif
   }
 };
 
@@ -503,13 +519,14 @@ template <class Kernel, class FaceListGraph>
 class Is_saddle_vertex
 {
 public:
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Segment_2 Segment_2;
+  typedef typename Kernel::Vector_2 Vector_2;
   typedef typename Kernel::Vector_3 Vector_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
   typedef typename Kernel::Triangle_2 Triangle_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Point_2 Point_2;
 
   typedef typename boost::graph_traits<FaceListGraph> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
@@ -561,9 +578,69 @@ public:
     return (*this)(v, g, get(boost::vertex_point, g));
   }
 
+ FT angle(const Vector_3& u, const Vector_3& v) const
+ {
+   typename Kernel::Compute_scalar_product_3 scalar_product;
+
+   double product = CGAL::sqrt(to_double(scalar_product(u,u)) * to_double(scalar_product(v,v)));
+
+   if(product == 0)
+     return 0;
+
+   // cosine
+   double dot = to_double(scalar_product(u,v));
+   double cosine = dot / product;
+
+   if(cosine > 1.)
+     cosine = 1.;
+
+   if(cosine < -1.)
+     cosine = -1.;
+
+   return std::acos(cosine) * 180./CGAL_PI;
+ }
+
+
+ FT angle(const Point_3& p, const Point_3& q, const Point_3& r) const
+ {
+   typename Kernel::Construct_vector_3 cv;
+
+   Vector_3 u = cv(q, p);
+   Vector_3 v = cv(q, r);
+
+   return angle(u, v);
+ }
+
+  template<class VertexPointMap>
+  FT vertex_angle(const vertex_descriptor v,
+                  const FaceListGraph& g,
+                  const VertexPointMap& pointMap) const
+  {
+    FT angle_sum = 0;
+
+    for(halfedge_descriptor h : halfedges_around_target(v, g))
+    {
+      if(is_border(h, g))
+        continue;
+
+      angle_sum += angle(get(pointMap, source(h, g)),
+                         get(pointMap, target(h, g)),
+                         get(pointMap, target(next(h, g), g)));
+    }
+
+    angle_sum *= CGAL_PI / FT(180);
+
+    return angle_sum;
+  }
+
   template<class VertexPointMap>
   result_type operator() (vertex_descriptor v, const FaceListGraph& g, VertexPointMap const& pointMap) const
   {
+#ifndef CGAL_SMSP_DONT_USE_RELAXED_PRUNING
+    const FT ang_sum = vertex_angle(v, g, pointMap);
+    const FT bound = (FT(1) - FT(100) * std::numeric_limits<FT>::epsilon()) * 2 * CGAL_PI;
+    return (ang_sum >= bound);
+#else
     halfedge_descriptor startEdge = halfedge(v, g);
     while (face(startEdge, g) == Graph_traits::null_face())
       startEdge=opposite(next(startEdge, g), g);
@@ -613,6 +690,7 @@ public:
     while (currentEdge != startEdge);
 
     return false;
+#endif
   }
 };
 
