@@ -20,8 +20,6 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#define CGAL_NO_CDT_2_WARNING
-
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/_test_types.h>
