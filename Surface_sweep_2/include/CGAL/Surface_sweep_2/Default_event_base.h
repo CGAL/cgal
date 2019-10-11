@@ -166,13 +166,28 @@ public:
     return std::make_pair(false, --iter);
   }
 
+  Subcurve_iterator
+  get_curve_after_on_right(Subcurve* curve)
+  {
+    Subcurve_iterator iter = this->right_curves_begin();
+    for (Subcurve_iterator end = this->right_curves_end(); iter!=end; ++iter)
+    {
+      // TODO refine the condition
+      if ( (*iter)->is_leaf(curve) || curve->is_leaf(*iter) || curve->has_common_leaf(*iter) )
+        break;
+    }
+    CGAL_assertion( iter!=this->right_curves_end() );
+    ++iter;
+    return iter;
+  }
+
   /*! Remove a curve from the set of left curves. */
   void remove_curve_from_left(Subcurve* curve)
   {
     for (Subcurve_iterator iter = this->left_curves_begin();
          iter != this->left_curves_end(); ++iter)
     {
-      if ((curve == *iter) || curve->are_all_leaves_contained(*iter)) {
+      if ((curve == *iter)) {
         this->left_curves_erase(iter);
         return;
       }
@@ -217,6 +232,8 @@ public:
     return tr->compare_y_at_x_right_2_object()
       (c1->last_curve(), c2->last_curve(), this->point()) == LARGER;
   }
+
+  std::vector< std::pair<Subcurve*, Subcurve*> > overlaps_on_right;
 };
 
 } // namespace Surface_sweep_2
