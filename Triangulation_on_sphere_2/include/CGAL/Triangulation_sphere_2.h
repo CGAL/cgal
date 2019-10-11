@@ -33,8 +33,9 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Triangulation_2.h>
 
-#include <boost/type_traits.hpp>
-#include <boost/type_traits/integral_constant.hpp>
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_smallint.hpp>
+#include <boost/random/variate_generator.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -161,8 +162,6 @@ protected:
   Gt _gt;
   Tds _tds;
   Face_handle _ghost; // stores an arbitary ghost-face
-
-  mutable Random rng; // used to decide how tostart the march_locate
 
 public:
   // CONSTRUCTORS
@@ -656,6 +655,10 @@ march_locate_2D(Face_handle c, const Point& t,Locate_type& lt, int& li) const
 {
   CGAL_triangulation_assertion(!c->is_ghost());
 
+  boost::rand48 rng;
+  boost::uniform_smallint<> two(0, 1);
+  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > coin(rng, two);
+
   Face_handle prev = Face_handle();
   bool first = true;
 
@@ -701,7 +704,7 @@ march_locate_2D(Face_handle c, const Point& t,Locate_type& lt, int& li) const
     // We do loop unrolling in order to find out if this is faster.
     // In the very beginning we do not have a prev, but for the first step
     // we do not need randomness
-    int left_first = rng.template get_bits<1>(); // @fixme update to what's done in contemporary T2 code
+    int left_first = coin()%2;
     Orientation o0, o1, o2;
 
     /************************FIRST*************************/
