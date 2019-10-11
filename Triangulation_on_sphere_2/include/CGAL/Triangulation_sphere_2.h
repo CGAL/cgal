@@ -147,8 +147,8 @@ public:
     operator const Face_handle() const { return Base::base(); }
   };
 
-  typedef Filter_iterator<All_edges_iterator, Ghost_tester>   Solid_edges_iterator;  //Solid edges : both adjacent faces are solid
-  typedef Filter_iterator<All_edges_iterator, Contour_tester> Contour_edges_iterator; //one solid and one ghost face adjacent to this face
+  typedef Filter_iterator<All_edges_iterator, Ghost_tester>   Solid_edges_iterator; // solid edges : both adjacent faces are solid
+  typedef Filter_iterator<All_edges_iterator, Contour_tester> Contour_edges_iterator; // one solid and one ghost face adjacent to this face
 
   enum Locate_type {VERTEX = 0,
                     EDGE, // 1
@@ -172,27 +172,18 @@ public:
 
 public:
   // note that this function clears the triangulation
-  void set_radius(FT radius)
+  void set_radius(const FT radius)
   {
     clear();
     _gt.set_radius(radius);
   }
 
-  //Assignement
+  // Assignement
   Triangulation_sphere_2& operator=(Triangulation_sphere_2 tr);
   void swap(Triangulation_sphere_2& tr);
 
-  // CHECKING
-  bool is_valid(bool verbose = false, int level = 0) const;
-  FT squared_distance(const Point& p, const Point& q) const;
-
-  // TESTS
-  bool is_edge(Vertex_handle va, Vertex_handle vb) const;
-  bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int& i) const;
-  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const;
-  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle& fr) const;
-
-  //ACCESS FUNCTION
+public:
+  // Members
   const Geom_traits& geom_traits() const { return _gt; }
   const Tds& tds() const { return _tds; }
   Tds& tds() { return _tds; }
@@ -202,6 +193,16 @@ public:
   size_type number_of_vertices() const { return _tds.number_of_vertices(); }
   size_type number_of_ghost_faces() const;
   size_type number_of_faces() const { return _tds.number_of_faces(); } // total number of faces (solid + ghost)
+
+  // TDS predicates
+  bool is_edge(Vertex_handle va, Vertex_handle vb) const;
+  bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int& i) const;
+  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const;
+  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle& fr) const;
+
+  // Validity
+  bool is_valid(bool verbose = false, int level = 0) const;
+  FT squared_distance(const Point& p, const Point& q) const;
 
   //-----------------------LOCATION-----------------------------------------------------------------
   Face_handle march_locate_2D(Face_handle c, const Point& t,Locate_type& lt, int& li) const;
@@ -399,7 +400,7 @@ is_valid(bool verbose,
   {
     All_vertices_iterator vit=vertices_begin();
   }
-  else //dimension() == 2
+  else // dimension() == 2
   {
     for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
     {
@@ -410,7 +411,7 @@ is_valid(bool verbose,
       result = result && (s == LEFT_TURN || it->is_ghost());
     }
 
-    // check number of faces. This cannot be done by the Tds
+    // check number of faces. This cannot be done by the TDS,
     // which does not know the number of components nor the genus
     result = result && (number_of_faces() == (2 * number_of_vertices() - 4));
 
@@ -649,7 +650,8 @@ march_locate_1D(const Point& p, Locate_type& lt, int& li) const
     return locate_edge(p, lt, li, false);
 }
 
-template <typename Gt, typename Tds>   typename Triangulation_sphere_2<Gt, Tds>::Face_handle
+template <typename Gt, typename Tds>
+typename Triangulation_sphere_2<Gt, Tds>::Face_handle
 Triangulation_sphere_2<Gt, Tds>::
 march_locate_2D(Face_handle c, const Point& t,Locate_type& lt, int& li) const
 {
