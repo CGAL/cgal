@@ -167,6 +167,9 @@ protected:
   /*! Handle the subcurves to the left of the current event point. */
   virtual void _handle_left_curves();
 
+  /*! Handle the overlap on the right curves of the current event point. */
+  virtual void _handle_overlaps_in_right_curves();
+
   /*! Handle the subcurves to the right of the current event point. */
   virtual void _handle_right_curves();
 
