@@ -493,7 +493,7 @@ public:
     CGAL_assertion_code(FT t2 = m_parametric_distance_along_segment_2(s2, *p2_ptr);)
     CGAL_assertion(t1 >= FT(-1)/FT(100000) && t1 <= FT(1)+FT(1)/FT(100000));
 
-#define CGAL_SMSP_DONT_USE_RELAXED_PRUNING
+// #define CGAL_SMSP_DONT_USE_RELAXED_PRUNING
 #ifndef CGAL_SMSP_DONT_USE_RELAXED_PRUNING
     const FT sqd_1 = CGAL::squared_distance(s1.source(), *p1_ptr);
     const FT sqd_2 = CGAL::squared_distance(s2.source(), *p2_ptr);
