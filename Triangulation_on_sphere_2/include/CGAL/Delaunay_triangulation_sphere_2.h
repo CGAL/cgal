@@ -865,7 +865,7 @@ remove(Vertex_handle v)
   if(number_of_vertices() <= 3)
     this->_tds.remove_dim_down(v);
   else if(dimension() == 2)
-    remove_2D (v);
+    remove_2D(v);
   else
     remove_1D(v);
 }
@@ -1059,7 +1059,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
 
     fn = hole.front().first;
     in = hole.front().second;
-    if(fn->has_vertex(v2, i) && i == (int)fn->ccw(in))
+    if(fn->has_vertex(v2, i) && i == fn->ccw(in))
     {
       newf->set_neighbor(0, fn);
       fn->set_neighbor(in, newf);
@@ -1071,7 +1071,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
     {
       fn = hole.back().first;
       in = hole.back().second;
-      if(fn->has_vertex(v2, i) && i == (int)fn->cw(in))
+      if(fn->has_vertex(v2, i) && i == fn->cw(in))
       {
         newf->set_neighbor(1, fn);
         fn->set_neighbor(in, newf);
