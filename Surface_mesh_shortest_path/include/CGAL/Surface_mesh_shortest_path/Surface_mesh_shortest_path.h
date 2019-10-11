@@ -935,7 +935,7 @@ private:
                   << get(m_vertexIndexMap, source(currentEdge, m_graph)) << " "
                   << get(m_vertexIndexMap, target(currentEdge, m_graph)) << std::endl;
         std::cout << "face id = ";
-        if(face(currentEdge, m_graph) != Graph_traits::null_face())
+        if (face(currentEdge, m_graph) != Graph_traits::null_face())
         {
           std::cout << get(m_faceIndexMap, face(currentEdge, m_graph)) << std::endl;
 
@@ -1139,7 +1139,7 @@ private:
       std::cout << "\tFace = " << node->layout_face() << std::endl;
       std::cout << "\tVertices = ";
       halfedge_descriptor current = node->entry_edge();
-      for(std::size_t i = 0; i<3; ++i)
+      for (std::size_t i = 0; i<3; ++i)
       {
         std::cout << get(m_vertexIndexMap, source(current, m_graph)) << " ";
         current = next(current, m_graph);
@@ -1176,7 +1176,7 @@ private:
       }
     }
 
-    if(m_debugOutput)
+    if (m_debugOutput)
     {
       std::cout << "\t Has Left : " << (leftSide ? "yes" : "no")
                 << " , Has Right : " << (rightSide ? "yes" : "no") << std::endl;
@@ -1217,12 +1217,12 @@ private:
         // for a vertex source, the ray is along the halfedge pointing towards the target
         if (node->is_vertex_node())
         {
-          if(currentOccupier.first->is_vertex_node())
+          if (currentOccupier.first->is_vertex_node())
             c = CGAL::EQUAL;
           else
             c = CGAL::LARGER;
         }
-        else if(currentOccupier.first->is_vertex_node()) // node is not a vertex source
+        else if (currentOccupier.first->is_vertex_node()) // node is not a vertex source
         {
           c = CGAL::SMALLER;
         }
@@ -1247,7 +1247,7 @@ private:
       }
 
       bool is_node_new_occupier = false;
-      if(currentOccupier.first == NULL)
+      if (currentOccupier.first == NULL)
       {
         m_vertexOccupiers[entryHalfEdgeIndex] = std::make_pair(node, currentNodeDistance);
         is_node_new_occupier = true;
@@ -1256,15 +1256,15 @@ private:
       {
         // Only replace the current occupier if the time is _strictly_ larger
         // and yield the way to vertex sources (cleaner than manipulating 0-length intervals)
-        if(currentOccupier.second > currentNodeDistance ||
-           (currentOccupier.second == currentNodeDistance && node->node_type() == Cone_tree_node::VERTEX_SOURCE))
+        if (currentOccupier.second > currentNodeDistance /*||
+           (currentOccupier.second == currentNodeDistance && node->node_type() == Cone_tree_node::VERTEX_SOURCE)*/)
         {
           m_vertexOccupiers[entryHalfEdgeIndex] = std::make_pair(node, currentNodeDistance);
           is_node_new_occupier = true;
         }
       }
 
-      if(is_node_new_occupier)
+      if (is_node_new_occupier)
       {
         if (m_debugOutput)
         {
@@ -1276,7 +1276,7 @@ private:
         propagateRight = true;
 
         // This is a consequence of using the same basic node type for source and interval nodes
-        // If this is a source node, it is only pointing to one of the two opposite edges he left one by convention)
+        // If this is a source node, it is only pointing to one of the two opposite edges (the left one by convention)
         if (node->node_type() != Cone_tree_node::INTERVAL && node->node_type() != Cone_tree_node::EDGE_SOURCE)
         {
           propagateRight = false;
@@ -1305,7 +1305,7 @@ private:
               currentOccupier.first->m_pendingLeftSubtree = NULL;
             }
           }
-          else if(c == CGAL::LARGER) // node's ray is right of occupier's ray
+          else if (c == CGAL::LARGER) // node's ray is right of occupier's ray
           {
             if (currentOccupier.first->get_right_child())
             {
@@ -1329,7 +1329,7 @@ private:
         }
 
         // If equal times, give priority to vertex sources since it's cleaner and simpler to handle than interval windows
-        if(currentClosest.first == nullptr ||
+        if (currentClosest.first == nullptr ||
            currentClosest.second > currentNodeDistance ||
            (currentClosest.second == currentNodeDistance && node->node_type() == Cone_tree_node::VERTEX_SOURCE))
         {
@@ -1394,7 +1394,7 @@ private:
       propagateRight = rightSide;
     }
 
-    if(m_debugOutput)
+    if (m_debugOutput)
     {
       std::cout << "Propagate (L/M/R): " << propagateLeft << " " << propagateMiddle << " " << propagateRight << std::endl;
     }
@@ -1887,7 +1887,7 @@ private:
           std::pair<Node_distance_pair,Barycentric_coordinates> mainFace = nearest_on_face(f, location);
 
           halfedge_descriptor oppositeHalfedge = opposite(he, m_graph);
-          if(!CGAL::is_border(oppositeHalfedge, m_graph))
+          if (!CGAL::is_border(oppositeHalfedge, m_graph))
           {
               std::size_t oppositeIndex = Surface_mesh_shortest_paths_3::internal::edge_index(oppositeHalfedge, m_graph);
 
@@ -2059,7 +2059,7 @@ private:
 
     while (m_expansionPriqueue.size() > 0)
     {
-      if(m_debugOutput)
+      if (m_debugOutput)
       {
         std::cout << " -----------------------------------------------------------------------" << std::endl;
         std::cout << " -----------------------------------------------------------------------" << std::endl;
@@ -2077,7 +2077,7 @@ private:
                     << " time: " << event->m_distanceEstimate << " ";
           std::cout << "cancelled? " << event->m_cancelled << " " ;
 
-          if(!event->m_cancelled)
+          if (!event->m_cancelled)
           {
             std::cout << " ------ Parent (" << event->m_parent << ") INFO: ";
             std::cout << "EH = (" << get(m_vertexIndexMap, source(event->m_parent->entry_edge(), m_graph)) << " "
