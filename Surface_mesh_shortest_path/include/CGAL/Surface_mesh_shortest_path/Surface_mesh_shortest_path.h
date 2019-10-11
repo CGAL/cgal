@@ -1228,6 +1228,7 @@ private:
         }
         else // generic case
         {
+          // must compute intersections because although entry edges are identical, their 2D representation is not
           c = m_traits.compare_relative_intersection_along_segment_2_object()(
                 node->entry_segment(),
                 node->ray_to_target_vertex().supporting_line(),
@@ -1256,8 +1257,8 @@ private:
       {
         // Only replace the current occupier if the time is _strictly_ larger
         // and yield the way to vertex sources (cleaner than manipulating 0-length intervals)
-        if (currentOccupier.second > currentNodeDistance /*||
-           (currentOccupier.second == currentNodeDistance && node->node_type() == Cone_tree_node::VERTEX_SOURCE)*/)
+        if (currentOccupier.second > currentNodeDistance ||
+           (currentOccupier.second == currentNodeDistance && node->node_type() == Cone_tree_node::VERTEX_SOURCE))
         {
           m_vertexOccupiers[entryHalfEdgeIndex] = std::make_pair(node, currentNodeDistance);
           is_node_new_occupier = true;
@@ -1382,10 +1383,12 @@ private:
         // this is an application of "one angle one split"
         if (c != CGAL::LARGER) // propage on the left if the node's ray is left of the occupier's
           propagateLeft = true;
-        if (c != CGAL::SMALLER) // propage on the right if the node's ray is right of the occupier's
+        if (c != CGAL::SMALLER && !node->is_source_node()) // by convention a source node only points at the left edge
           propagateRight = true;
-        if (!node->is_source_node())
-          propagateRight = true;
+
+        // No point propagating middle because we know the current occupier has a better time
+        // at the target and if the target is a saddle, middle children have already been spawned
+        // when we were in the current occupier.
       }
     }
     else // interval node that does not contain the target vertex
