@@ -940,7 +940,7 @@ private:
           std::cout << get(m_faceIndexMap, face(currentEdge, m_graph)) << std::endl;
 
           std::cout << "3D face:" << std::endl << face3d[0] << std::endl << face3d[1] << std::endl << face3d[2] << std::endl;
-          std::cout << "current face: " << face(currentEdge, m_graph) << " gives 2D layout: " << layoutFace << std::endl;
+          std::cout << "current face: " << get(m_faceIndexMap, face(currentEdge, m_graph)) << " gives 2D layout: " << layoutFace << std::endl;
           std::cout << "source: " << face3d[1] << std::endl;
         }
         else
