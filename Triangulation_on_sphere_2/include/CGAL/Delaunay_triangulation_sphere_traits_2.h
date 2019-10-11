@@ -34,7 +34,7 @@ public:
   typedef typename TTraits::Comparison_result     Comparison_result;
   typedef Oriented_side                           result_type;
 
-  Power_test_2(const Point_2& sphere) : _sphere(sphere) { }
+  Power_test_2(const Point_2& center) : _center(center) { }
 
   Oriented_side operator()(const Point_2& p,
                            const Point_2& q,
@@ -48,7 +48,7 @@ public:
                            const Point_2& q,
                            const Point_2& r) const
   {
-    return -coplanar_orientation(p, q,_sphere, r);
+    return -coplanar_orientation(p, q, _center, r);
   }
 
   Oriented_side operator()(const Point_2& p,
@@ -59,7 +59,7 @@ public:
     if(pq == EQUAL)
       return ON_ORIENTED_BOUNDARY;
 
-    Comparison_result sq = compare_xyz(_sphere, q);
+    Comparison_result sq = compare_xyz(_center, q);
     if(pq == sq)
       return ON_POSITIVE_SIDE;
 
@@ -67,7 +67,7 @@ public:
   }
 
 protected:
-  const Point_2& _sphere;
+  const Point_2& _center;
 };
 
 template <typename TTraits>
@@ -78,18 +78,18 @@ public:
   typedef typename TTraits::Comparison_result        Comparison_result;
   typedef Comparison_result                          result_type;
 
-  Orientation_sphere_2(const Point_2& sphere) : _sphere(sphere) { }
+  Orientation_sphere_2(const Point_2& center) : _center(center) { }
 
   Comparison_result operator()(const Point_2& p, const Point_2& q,
                                const Point_2& r) const
-  { return orientation(_sphere, p, q, r); }
+  { return orientation(_center, p, q, r); }
 
   Comparison_result operator()(const Point_2& p, const Point_2& q,
                                const Point_2& r, const Point_2& s) const
   { return orientation(p, q, r, s); }
 
 protected:
-  const Point_2& _sphere;
+  const Point_2& _center;
 };
 
 template <typename TTraits>
@@ -99,17 +99,17 @@ public:
   typedef typename TTraits::Point_2                  Point_2;
   typedef bool                                       result_type;
 
-  Coradial_sphere_2(const Point_2& sphere) : _sphere(sphere) { }
+  Coradial_sphere_2(const Point_2& center) : _center(center) { }
 
   bool operator()(const Point_2& p, const Point_2 q) const
   {
-    return collinear(_sphere, p, q) &&
-           (are_ordered_along_line(_sphere, p, q) ||
-            are_ordered_along_line(_sphere, q, p));
+    return collinear(_center, p, q) &&
+           (are_ordered_along_line(_center, p, q) ||
+            are_ordered_along_line(_center, q, p));
   }
 
 protected:
-  const Point_2& _sphere;
+  const Point_2& _center;
 };
 
 template <typename TTraits>
@@ -119,24 +119,24 @@ public:
   typedef typename TTraits::Point_2                  Point_2;
   typedef bool                                       result_type;
 
-  Inside_cone_2(const Point_2& sphere) : _sphere(sphere) { }
+  Inside_cone_2(const Point_2& center) : _center(center) { }
 
   bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
   {
-    if(collinear(_sphere, p, r) ||
-       collinear(_sphere, q, r) ||
-       orientation(_sphere, p, q, r) != COLLINEAR)
+    if(collinear(_center, p, r) ||
+       collinear(_center, q, r) ||
+       orientation(_center, p, q, r) != COLLINEAR)
       return false;
 
-    if(collinear(_sphere, p, q))
+    if(collinear(_center, p, q))
       return true;
 
-    return coplanar_orientation(_sphere, p, q, r) ==
-             (POSITIVE == coplanar_orientation(_sphere, q, p, r));
+    return coplanar_orientation(_center, p, q, r) ==
+             (POSITIVE == coplanar_orientation(_center, q, p, r));
   }
 
 protected:
-  const Point_2& _sphere;
+  const Point_2& _center;
 };
 
 template <typename K>
@@ -169,10 +169,10 @@ public:
 
   typedef typename K::Coplanar_orientation_3        Orientation_1;
 
-  Delaunay_triangulation_sphere_traits_2(const Point_2& sphere = CGAL::ORIGIN,
+  Delaunay_triangulation_sphere_traits_2(const Point_2& center = CGAL::ORIGIN,
                                          const FT radius = 1,
                                          const K& k = K())
-    : Base(k), _sphere(sphere), _radius(radius)
+    : Base(k), _center(center), _radius(radius)
   {
     initialize_bounds();
   }
@@ -189,13 +189,13 @@ private:
   }
 
 public:
-  Point_2 center() const { return _sphere; }
-  void set_center(const Point_2& sphere) { _sphere = sphere; }
+  const Point_2& center() const { return _center; }
+  void set_center(const Point_2& center) { _center = center; }
   void set_radius(const FT radius) { _radius = radius; initialize_bounds(); }
 
   bool is_on_sphere(const Point_2& p) const
   {
-    const FT sq_dist = Base::compute_squared_distance_3_object()(p, _sphere);
+    const FT sq_dist = Base::compute_squared_distance_3_object()(p, _center);
     return (_minRadiusSquared < sq_dist && sq_dist < _maxRadiusSquared);
   }
 
@@ -222,7 +222,7 @@ public:
 
   Orientation_2
   orientation_2_object() const
-  { return Orientation_2(_sphere); }
+  { return Orientation_2(_center); }
 
   Orientation_1
   orientation_1_object() const
@@ -230,18 +230,18 @@ public:
 
   Power_test_2
   power_test_2_object() const
-  { return Power_test_2(_sphere); }
+  { return Power_test_2(_center); }
 
   Coradial_sphere_2
   coradial_sphere_2_object() const
-  { return Coradial_sphere_2(_sphere); }
+  { return Coradial_sphere_2(_center); }
 
   Inside_cone_2
   inside_cone_2_object() const
-  { return Inside_cone_2(_sphere); }
+  { return Inside_cone_2(_center); }
 
 protected:
-  Point_2 _sphere;
+  Point_2 _center;
   FT _radius;
 
   FT _minDistSquared; // minimal distance of two points to each other
