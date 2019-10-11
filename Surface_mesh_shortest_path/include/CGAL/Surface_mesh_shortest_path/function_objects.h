@@ -434,9 +434,11 @@ public:
 
   typedef typename K::Intersect_2 Intersect_2;
   typedef typename K::Compare_distance_2 Compare_distance_2;
+  typedef typename K::Compute_squared_distance_2 Compute_squared_distance_2;
   typedef typename K::Construct_line_2 Construct_line_2;
   typedef typename K::Construct_source_2 Construct_source_2;
   typedef typename K::Construct_target_2 Construct_target_2;
+
 
   typedef CGAL::Comparison_result result_type;
 
@@ -444,6 +446,7 @@ private:
   Compute_parametric_distance_along_segment_2<K> m_parametric_distance_along_segment_2;
   Intersect_2 m_intersect_2;
   Compare_distance_2 m_compare_distance_2;
+  Compute_squared_distance_2 m_compute_squared_distance_2;
   Construct_line_2 m_construct_line_2;
   Construct_source_2 m_construct_source_2;
   Construct_target_2 m_construct_target_2;
@@ -456,6 +459,7 @@ public:
   Compare_relative_intersection_along_segment_2(const K& kernel)
     : m_intersect_2(kernel.intersect_2_object())
     , m_compare_distance_2(kernel.compare_distance_2_object())
+    , m_compute_squared_distance_2(kernel.compute_squared_distance_2_object())
     , m_construct_line_2(kernel.construct_line_2_object())
     , m_construct_source_2(kernel.construct_source_2_object())
     , m_construct_target_2(kernel.construct_target_2_object())
@@ -495,8 +499,8 @@ public:
 
 // #define CGAL_SMSP_DONT_USE_RELAXED_PRUNING
 #ifndef CGAL_SMSP_DONT_USE_RELAXED_PRUNING
-    const FT sqd_1 = CGAL::squared_distance(s1.source(), *p1_ptr);
-    const FT sqd_2 = CGAL::squared_distance(s2.source(), *p2_ptr);
+    const FT sqd_1 = m_compute_squared_distance_2(s1.source(), *p1_ptr);
+    const FT sqd_2 = m_compute_squared_distance_2(s2.source(), *p2_ptr);
 
     // In the case of multiple rays reaching the same target, we want to know their respective position
     // so that pruning of branches can be done according to the "one angle one split" idiom.
