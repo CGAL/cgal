@@ -240,22 +240,29 @@ AABB_node<Tr>::traversal_with_priority(const Query& query,
     {
       if (iright)
       {
+        // Both children have to be inspected
         if(pleft >= pright)
         {
+          // Inspect left first, has higher priority
           left_child().traversal_with_priority(query, traits, nb_primitives/2);
-          if( traits.go_further() /* && traits.do_intersect(query, right_child()) */ ) // TODO shall we call again do_intersect?
+          if( traits.go_further() ) //&& traits.do_intersect(query, right_child()) ) // TODO shall we call again do_intersect? (Benchmarks show it slows down the Hausdorff Distance)
             right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
         }
         else
         {
+          // Inspect right first, has higher priority
           right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
-          if( traits.go_further() /* && traits.do_intersect(query, left_child()) */ ) // TODO shall we call again do_intersect?
+          if( traits.go_further() ) //&& traits.do_intersect(query, left_child()) ) // TODO shall we call again do_intersect? (Benchmarks show it slows down the Hausdorff Distance)
             left_child().traversal_with_priority(query, traits, nb_primitives/2);
         }
       }
+      else
+        // Only the left child has to be inspected
+        left_child().traversal_with_priority(query, traits, nb_primitives/2);
     }
     else
       if (iright)
+        // Only the right child has to be inspected
         right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
   }
 }
