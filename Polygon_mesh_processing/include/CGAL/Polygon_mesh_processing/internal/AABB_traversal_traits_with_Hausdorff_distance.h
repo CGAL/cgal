@@ -91,6 +91,7 @@ namespace CGAL {
     void intersection(const Query& query, const Primitive& primitive)
     {
       /* Have reached a single triangle, process it */
+      // TODO Already perform these computations once we have <=k
 
       /*
       / Determine the distance accroding to
@@ -285,6 +286,7 @@ namespace CGAL {
         std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity()
       );
+      // TODO Pass on the current global bounds to the TM2 tree traversal. There, only enter subtrees that can still be better than the current global bound.
       m_tm2_tree.traversal_with_priority(candidate_triangle, traversal_traits_tm2);
 
       // Update global Hausdorff bounds according to the obtained local bounds

@@ -34,6 +34,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 
 #include <CGAL/spatial_sort.h>
@@ -882,7 +883,11 @@ double bounded_error_Hausdorff_impl(
 
   // Build traversal traits for tm1_tree
   Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1( tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, hint.first );
+
   // Find candidate triangles in TM1 which might realise the Hausdorff bound
+// TODO Initialize the distances on all the vertices first and store those.
+// TODO Do not traverse TM1, but only TM2, i.e. reduce to Culling on TM2 (Can do this for all triangles in TM1 in parallel)
+
   tm1_tree.traversal_with_priority( Point_3(0,0,0), traversal_traits_tm1 ); // dummy point given as query as not needed
 
   // TODO Is there a better/faster data structure than the Heap used here?
