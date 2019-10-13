@@ -71,11 +71,13 @@ namespace CGAL {
       const AABBTraits& traits,
       const TriangleMesh& tm2,
       const VPM2& vpm2,
+      const double h_upper_current_global,
       const double h_lower_init, const double h_upper_init,
       const double h_v0_lower_init, const double h_v1_lower_init, const double h_v2_lower_init
     )
       : m_traits(traits), m_tm2(tm2), m_vpm2(vpm2) {
         // Initialize the global and local bounds with the given values
+        h_upper_global = h_upper_current_global;
         h_local_lower = h_lower_init;
         h_local_upper = h_upper_init;
         h_v0_lower = h_v0_lower_init;
@@ -182,8 +184,8 @@ namespace CGAL {
       double dist = approximate_sqrt( Vector_3(dist_x,dist_y,dist_z).squared_length() );
 
       // Check whether investigating the bbox can still lower the Hausdorff
-      // distance. If so, enter the box.
-      if ( dist <= h_local_lower) {
+      // distance and improve the current global bound. If so, enter the box.
+      if ( dist <= std::min(h_local_lower, h_upper_global) ) {
         return std::make_pair(true, -dist);
       } else {
         return std::make_pair(false, 0);
@@ -207,6 +209,8 @@ namespace CGAL {
     const TriangleMesh& m_tm2;
     // its vertex point map
     const VPM2& m_vpm2;
+    // Current global upper bound on the Hausdorff distance
+    double h_upper_global;
     // Local Hausdorff bounds for the query triangle
     double h_local_upper;
     double h_local_lower;
@@ -280,13 +284,13 @@ namespace CGAL {
         Tree_traits, Triangle_3, Kernel, TriangleMesh, VPM2
       > traversal_traits_tm2(
         m_tm2_tree.traits(), m_tm2, m_vpm2,
+        (h_upper == 0.) ? std::numeric_limits<double>::infinity() : h_upper, // Only pass current global bounds if they have been established yet
         std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity()
       );
-      // TODO Pass on the current global bounds to the TM2 tree traversal. There, only enter subtrees that can still be better than the current global bound.
       m_tm2_tree.traversal_with_priority(candidate_triangle, traversal_traits_tm2);
 
       // Update global Hausdorff bounds according to the obtained local bounds
