@@ -461,7 +461,7 @@ private:
 
   void node_deleted()
   {
-#if 1// !defined(NDEBUG)
+#if !defined(NDEBUG)
     --m_currentNodeCount;
 #endif
   }
