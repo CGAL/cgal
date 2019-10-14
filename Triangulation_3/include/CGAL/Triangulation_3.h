@@ -37,8 +37,12 @@
 #include <list>
 #include <set>
 #include <map>
+#include <unordered_map>
 #include <utility>
 #include <stack>
+
+// #include <parallel_hashmap/phmap.h>
+// #include <absl/container/flat_hash_map.h>
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
@@ -56,6 +60,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Default.h>
 #include <CGAL/internal/boost/function_property_map.hpp>
+#include <CGAL/Small_unordered_map.h>
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Spatial_lock_grid_3.h>
@@ -3586,6 +3591,9 @@ insert(const Point& p, Locate_type lt, Cell_handle c, int li, int lj)
   }
 }
 
+#define AF_NEW  
+
+  
 template < class GT, class Tds, class Lds >
 template < class Conflict_tester, class Hidden_points_visitor >
 typename Triangulation_3<GT,Tds,Lds>::Vertex_handle
@@ -3596,6 +3604,7 @@ insert_in_conflict(const Point& p,
                    Hidden_points_visitor& hider,
                    bool *could_lock_zone)
 {
+
   if(could_lock_zone)
     *could_lock_zone = true;
 
@@ -3621,11 +3630,12 @@ insert_in_conflict(const Point& p,
       cells.reserve(32);
       Facet facet;
 
+      std::vector<Facet> facets;
+      facets.reserve(32);
+      
       // Parallel
       if(could_lock_zone)
       {
-        std::vector<Facet> facets;
-        facets.reserve(32);
 
         find_conflicts(c,
                        tester,
@@ -3647,8 +3657,6 @@ insert_in_conflict(const Point& p,
           }
           return Vertex_handle();
         }
-
-        facet = facets.back();
       }
       // Sequential
       else
@@ -3657,22 +3665,76 @@ insert_in_conflict(const Point& p,
         find_conflicts(c,
                        tester,
                        make_triple(
-                         Oneset_iterator<Facet>(facet),
+                         std::back_inserter(facets),
                          std::back_inserter(cells),
                          Emptyset_iterator()));
       }
 
+      facet = facets.back();
+
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
       hider.process_cells_in_conflict(cells.begin(), cells.end());
+      Vertex_handle nv;
+      // AF: the new code
 
-      Vertex_handle v = _insert_in_hole(p,
+      if( facets.size() < 128){
+         // LESS64++;
+        typedef std::pair<Vertex_handle,Vertex_handle> Halfedge;
+        typedef Small_unordered_map<Halfedge, Facet, boost::hash<Halfedge>, 128 > Halfedge_facet_map;
+        //      typedef absl::flat_hash_map<std::pair<Vertex_handle,Vertex_handle>, Facet// , boost::hash<std::pair<Vertex_handle,Vertex_handle> >> E2F;
+      static Halfedge_facet_map h2f;
+      nv = tds().create_vertex();
+      nv->set_point(p);
+      for(Facet f : facets){
+
+        f = mirror_facet(f);
+        f.first->tds_data().clear(); // was on boundary
+        Vertex_handle u = f.first->vertex(vertex_triple_index(f.second, 0));
+        Vertex_handle v = f.first->vertex(vertex_triple_index(f.second, 1));
+        Vertex_handle w = f.first->vertex(vertex_triple_index(f.second, 2));
+        u->set_cell(f.first);
+        v->set_cell(f.first);
+        w->set_cell(f.first);        
+        Cell_handle nc = tds().create_cell(v, u, w, nv);
+        nv->set_cell(nc);
+        nc->set_neighbor(3, f.first);
+        f.first->set_neighbor(f.second, nc);
+        
+        h2f.set(std::make_pair(u,v), Facet(nc,nc->index(w)));
+        h2f.set(std::make_pair(v,w), Facet(nc,nc->index(u)));
+        h2f.set(std::make_pair(w,u), Facet(nc,nc->index(v)));
+      }
+
+      int E = 3* facets.size();
+      int ei = 0;
+      for(auto it = h2f.begin(); it != h2f.end(); ++it){
+        if(ei>E){
+          std::cout << "Stop"<< std::flush;
+          char c; std::cin >> c;
+        }
+        ++ei;
+        const std::pair<Halfedge,Facet>& ef = *it;
+        if(ef.first.first < ef.first.second){
+          Facet f = ef.second;
+          Facet n = h2f.get(std::make_pair(ef.first.second, ef.first.first));
+          f.first->set_neighbor(f.second, n.first);
+          n.first->set_neighbor(n.second, f.first);
+        }
+      }
+      for(Cell_handle c : cells){
+        c->tds_data().clear(); // was in conflict
+      }
+      tds().delete_cells(cells.begin(), cells.end());
+      h2f.clear();
+      }else{
+      Vertex_handle nv = _insert_in_hole(p,
                                         cells.begin(), cells.end(),
                                         facet.first, facet.second);
-
+      }
       // Store the hidden points in their new cells.
-      hider.reinsert_vertices(v);
-      return v;
+      hider.reinsert_vertices(nv);
+      return nv;
     }
     case 2:
     {
