@@ -23,7 +23,6 @@
 
 #include <CGAL/license/Surface_mesh_shortest_path.h>
 
-
 #include <vector>
 
 #include <boost/graph/graph_traits.hpp>
@@ -32,11 +31,11 @@
 #include <CGAL/Surface_mesh_shortest_path/internal/Cone_expansion_event.h>
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
-namespace CGAL
-{
+#include <CGAL/number_utils.h>
 
-namespace internal
-{
+namespace CGAL {
+namespace Surface_mesh_shortest_paths_3 {
+namespace internal {
 
 template<class Traits>
 class Cone_tree_node
@@ -62,32 +61,37 @@ private:
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
-  typedef typename CGAL::internal::Cone_expansion_event<Traits> Cone_expansion_event;
+  typedef typename Surface_mesh_shortest_paths_3::internal::Cone_expansion_event<Traits> Cone_expansion_event;
 
 private:
   // These could be pulled back into a 'context' class to save space
-  Traits& m_traits;
-  Triangle_mesh& m_graph;
+  const Traits& m_traits;
+  const Triangle_mesh& m_graph;
 
-  halfedge_descriptor m_entryEdge;
+  const halfedge_descriptor m_entryEdge;
 
-  Point_2 m_sourceImage;
-  Triangle_2 m_layoutFace;
-  FT m_pseudoSourceDistance;
+  const Point_2 m_sourceImage;
+  const Triangle_2 m_layoutFace;
+  const FT m_pseudoSourceDistance;
 
-  Point_2 m_windowLeft;
-  Point_2 m_windowRight;
+  const Point_2 m_windowLeft;
+  const Point_2 m_windowRight;
 
-  size_t m_level;
-  size_t m_treeId;
+  std::size_t m_level;
+  std::size_t m_treeId;
 
-  Node_type m_nodeType;
+  const Node_type m_nodeType;
 
   Cone_tree_node* m_leftChild;
+  std::vector<Cone_tree_node*> m_middleChildren;
   Cone_tree_node* m_rightChild;
 
-  std::vector<Cone_tree_node*> m_middleChildren;
   Cone_tree_node* m_parent;
+
+public:
+  Cone_expansion_event* m_pendingLeftSubtree;
+  Cone_expansion_event* m_pendingRightSubtree;
+  Cone_expansion_event* m_pendingMiddleSubtree;
 
 private:
   void on_child_link(Cone_tree_node* child)
@@ -98,7 +102,9 @@ private:
   }
 
 public:
-  Cone_tree_node(Traits& traits, Triangle_mesh& g, size_t treeId)
+  Cone_tree_node(const Traits& traits,
+                 const Triangle_mesh& g,
+                 const std::size_t treeId)
     : m_traits(traits)
     , m_graph(g)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
@@ -115,7 +121,10 @@ public:
   {
   }
 
-  Cone_tree_node(Traits& traits, Triangle_mesh& g, size_t treeId, halfedge_descriptor entryEdge)
+  Cone_tree_node(const Traits& traits,
+                 const Triangle_mesh& g,
+                 const std::size_t treeId,
+                 const halfedge_descriptor entryEdge)
     : m_traits(traits)
     , m_graph(g)
     , m_entryEdge(entryEdge)
@@ -133,7 +142,15 @@ public:
   {
   }
 
-  Cone_tree_node(Traits& traits, Triangle_mesh& g, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
+  Cone_tree_node(const Traits& traits,
+                 const Triangle_mesh& g,
+                 const halfedge_descriptor entryEdge,
+                 const Triangle_2& layoutFace,
+                 const Point_2& sourceImage,
+                 const FT& pseudoSourceDistance,
+                 const Point_2& windowLeft,
+                 const Point_2& windowRight,
+                 const Node_type nodeType = INTERVAL)
     : m_traits(traits)
     , m_graph(g)
     , m_entryEdge(entryEdge)
@@ -151,12 +168,12 @@ public:
   {
   }
 
-  size_t tree_id() const
+  std::size_t tree_id() const
   {
     return m_treeId;
   }
 
-  size_t level() const
+  std::size_t level() const
   {
     return m_level;
   }
@@ -176,7 +193,7 @@ public:
     return m_nodeType == ROOT;
   }
 
-  Triangle_2 layout_face() const
+  const Triangle_2& layout_face() const
   {
     return m_layoutFace;
   }
@@ -191,9 +208,9 @@ public:
     return current_face() == Graph_traits::null_face();
   }
 
-  size_t edge_face_index() const
+  std::size_t edge_face_index() const
   {
-    return CGAL::internal::edge_index(entry_edge(), m_graph);
+    return edge_index(entry_edge(), m_graph);
   }
 
   halfedge_descriptor entry_edge() const
@@ -216,7 +233,7 @@ public:
     return target(next(m_entryEdge, m_graph), m_graph);
   }
 
-  Point_2 source_image() const
+  const Point_2& source_image() const
   {
     return m_sourceImage;
   }
@@ -229,7 +246,7 @@ public:
   FT distance_to_root(const Point_2& point) const
   {
     typename Traits::Compute_squared_distance_2 csd2(m_traits.compute_squared_distance_2_object());
-    return CGAL::internal::select_sqrt(csd2(point, m_sourceImage)) + m_pseudoSourceDistance;
+    return CGAL::approximate_sqrt(csd2(point, m_sourceImage)) + m_pseudoSourceDistance;
   }
 
   FT distance_from_source_to_root() const
@@ -252,12 +269,12 @@ public:
     return Ray_2(source_image(), m_windowRight);
   }
 
-  Point_2 window_left() const
+  const Point_2& window_left() const
   {
     return m_windowLeft;
   }
 
-  Point_2 window_right() const
+  const Point_2& window_right() const
   {
     return m_windowRight;
   }
@@ -270,10 +287,13 @@ public:
   bool inside_window(const Point_2& point) const
   {
     typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
+
     Point_2 sourceImagePoint(source_image());
     CGAL::Orientation leftOrientation = orientation_2(sourceImagePoint, m_windowLeft, point);
     CGAL::Orientation rightOrientation = orientation_2(sourceImagePoint, m_windowRight, point);
-    return (leftOrientation == CGAL::RIGHT_TURN || leftOrientation == CGAL::COLLINEAR) && (rightOrientation == CGAL::LEFT_TURN || rightOrientation == CGAL::COLLINEAR);
+
+    return (leftOrientation == CGAL::RIGHT_TURN || leftOrientation == CGAL::COLLINEAR) &&
+           (rightOrientation == CGAL::LEFT_TURN || rightOrientation == CGAL::COLLINEAR);
   }
 
   Point_2 target_point() const
@@ -289,25 +309,17 @@ public:
 
   bool has_left_side() const
   {
-    typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
-
     if (is_source_node())
     {
       return true;
     }
 
-    CGAL::Orientation orientation = orientation_2(source_image(), m_windowLeft, target_point());
-
-    return (orientation == CGAL::RIGHT_TURN || orientation == CGAL::COLLINEAR);
+    return (m_traits.orientation_2_object()(source_image(), m_windowLeft, target_point()) != CGAL::LEFT_TURN);
   }
 
   bool has_right_side() const
   {
-    typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
-
-    CGAL::Orientation orientation = orientation_2(source_image(), m_windowRight, target_point());
-
-    return (orientation == CGAL::LEFT_TURN || orientation == CGAL::COLLINEAR);
+    return (m_traits.orientation_2_object()(source_image(), m_windowRight, target_point()) != CGAL::RIGHT_TURN);
   }
 
   Segment_2 left_child_base_segment() const
@@ -335,12 +347,12 @@ public:
     return m_middleChildren.size() > 0;
   }
 
-  size_t num_middle_children() const
+  std::size_t num_middle_children() const
   {
     return m_middleChildren.size();
   }
 
-  Cone_tree_node* get_middle_child(size_t i) const
+  Cone_tree_node* get_middle_child(const std::size_t i) const
   {
     return m_middleChildren.at(i);
   }
@@ -426,16 +438,10 @@ public:
   {
     return m_parent != nullptr && m_parent->m_rightChild == this;
   }
-
-public:
-  Cone_expansion_event* m_pendingLeftSubtree;
-  Cone_expansion_event* m_pendingRightSubtree;
-  Cone_expansion_event* m_pendingMiddleSubtree;
-
 };
 
 } // namespace internal
-
+} // namespace Surface_mesh_shortest_paths_3
 } // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_CONE_TREE_H
