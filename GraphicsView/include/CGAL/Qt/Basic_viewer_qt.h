@@ -24,6 +24,8 @@
 
 #include <CGAL/license/GraphicsView.h>
 #include <iostream>
+#include <tuple>
+#include <string>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -258,7 +260,8 @@ public:
                   bool use_mono_color=false,
                   bool inverse_normal=false,
                   bool draw_rays=true,
-                  bool draw_lines=true) :
+                  bool draw_lines=true,
+                  bool draw_text=true) :
     CGAL::QGLViewer(parent),
     m_draw_vertices(draw_vertices),
     m_draw_edges(draw_edges),
@@ -268,6 +271,7 @@ public:
     m_flatShading(true),
     m_use_mono_color(use_mono_color),
     m_inverse_normal(inverse_normal),
+    m_draw_text(draw_text),
     m_size_points(7.),
     m_size_edges(3.1),
     m_size_rays(3.1),
@@ -351,6 +355,7 @@ public:
     { arrays[i].clear(); }
 
     m_bounding_box=CGAL::Bbox_3();
+    m_texts.clear();
   }
 
   bool is_empty() const
@@ -484,6 +489,21 @@ public:
     m_buffer_for_colored_lines.add_line_segment((p - (bigNumber)*v),
                                                 (p + (bigNumber)*v), acolor);
   }
+
+  template<typename KPoint>
+  void add_text(const KPoint& kp, const QString& txt)
+  {
+    Local_point p=internal::get_local_point(kp);
+    m_texts.push_back(std::make_tuple(p, txt));
+  }
+
+  template<typename KPoint>
+  void add_text(const KPoint& kp, const char* txt)
+  { add_text(kp, QString(txt)); }
+
+  template<typename KPoint>
+  void add_text(const KPoint& kp, const std::string& txt)
+  { add_text(kp, txt.c_str()); }
 
   bool is_a_face_started() const
   {
@@ -1158,6 +1178,21 @@ protected:
       constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(cx, cy, cz));
       camera()->frame()->setConstraint(&constraint);
     }
+
+    if (m_draw_text)
+    {
+      glDisable(GL_LIGHTING);
+      for (std::size_t i=0; i<m_texts.size(); ++i)
+      {
+        CGAL::qglviewer::Vec screenPos=camera()->projectedCoordinatesOf
+          (CGAL::qglviewer::Vec(std::get<0>(m_texts[i]).x(),
+                                std::get<0>(m_texts[i]).y(),
+                                std::get<0>(m_texts[i]).z()));
+        
+        drawText((int)screenPos[0], (int)screenPos[1], std::get<1>(m_texts[i]));
+      }
+      glEnable(GL_LIGHTING);
+    }
   }
 
   virtual void redraw()
@@ -1181,6 +1216,7 @@ protected:
     setKeyDescription(::Qt::Key_G, "Switch between flat/Gouraud shading display");
     setKeyDescription(::Qt::Key_M, "Toggles mono color");
     setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
+    setKeyDescription(::Qt::Key_T, "Toggles text display");
     setKeyDescription(::Qt::Key_V, "Toggles vertices display");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
@@ -1265,6 +1301,12 @@ protected:
       displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
       negate_all_normals();
       redraw();
+    }
+    else if ((e->key()==::Qt::Key_T) && (modifiers==::Qt::NoButton))
+    {
+      m_draw_text=!m_draw_text;
+      displayMessage(QString("Draw text=%1.").arg(m_draw_text?"true":"false"));
+      update();
     }
     else if ((e->key()==::Qt::Key_V) && (modifiers==::Qt::NoButton))
     {
@@ -1416,7 +1458,8 @@ protected:
   bool m_flatShading;
   bool m_use_mono_color;
   bool m_inverse_normal;
-
+  bool m_draw_text;
+  
   double m_size_points;
   double m_size_edges;
   double m_size_rays;
@@ -1501,6 +1544,8 @@ protected:
 
   QOpenGLShaderProgram rendering_program_face;
   QOpenGLShaderProgram rendering_program_p_l;
+
+  std::vector<std::tuple<Local_point, QString> > m_texts;
 };
 
 } // End namespace CGAL
