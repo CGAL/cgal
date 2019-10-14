@@ -489,7 +489,8 @@ private:
     void jump_to_intersecting_cell();
 
     //  walk_to_next(), if the triangulation is 3D.
-    void            walk_to_next_3();
+    std::pair<Simplex, Simplex> walk_to_next_3(const Simplex& prev,
+                                               const Simplex& cur) const;
     void            walk_to_next_3_inf( int inf );
 	
     //  walk_to_next(), if the triangulation is 2D.
@@ -685,8 +686,6 @@ public:
   {
     CGAL_assertion(_curr_simplex.incident_cell() != Cell_handle());
 
-    Cell_handle ch = Cell_handle(_cell_iterator);
-
     switch(_curr_simplex.dimension())
     {
     case 3 :/*Cell_handle*/
@@ -749,6 +748,8 @@ public:
     }
     case 1:/*Edge*/
     {
+      Cell_handle ch = Cell_handle(_cell_iterator);
+
       Locate_type lt;
       int li, lj;
       _cell_iterator.entry(lt, li, lj);
@@ -824,6 +825,7 @@ public:
           int liprev, ljprev;
           prev = _cell_iterator.previous();
           _cell_iterator.exit(ltprev, liprev, ljprev);
+
           if (prev == ch && ltprev == Locate_type::VERTEX)
           {
             CGAL_assertion(prev->vertex(liprev) == get_vertex());

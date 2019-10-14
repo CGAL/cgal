@@ -207,7 +207,7 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr, Inc>::
 jump_to_intersecting_cell()
 {
-  //copy _cur
+  //copy current simplex
   Cell_handle ch = get<0>(_cur);
   Locate_type lt;
   int li, lj;
@@ -280,7 +280,10 @@ walk_to_next() {
             {
               const Simplex backup = _cur;
               do {
-                walk_to_next_3();
+                std::pair<Simplex, Simplex> p = walk_to_next_3(_prev, _cur);
+                _prev = p.first;
+                _cur = p.second;
+
               } while (get<0>(_cur) != Cell_handle()//end
                     && !get<0>(_cur)->has_vertex(_tr.infinite_vertex(), inf)
                     && have_same_entry(backup, _cur));
@@ -349,111 +352,115 @@ have_same_entry(const Simplex& s1, const Simplex& s2) const
 }
 
 template < class Tr, class Inc >
-void Triangulation_segment_cell_iterator_3<Tr,Inc>::
-walk_to_next_3()
+std::pair<typename Triangulation_segment_cell_iterator_3<Tr, Inc>::Simplex,
+          typename Triangulation_segment_cell_iterator_3<Tr, Inc>::Simplex >
+Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& prev,
+                                                              const Simplex& cur) const
 {
     using CGAL::cpp11::get;
-    boost::array<Point*, 4> vert
-      = {&(get<0>(_cur)->vertex(0)->point()),
-         &(get<0>(_cur)->vertex(1)->point()),
-         &(get<0>(_cur)->vertex(2)->point()),
-         &(get<0>(_cur)->vertex(3)->point()) };
+    boost::array<const Point*, 4> vert
+      = {&(get<0>(cur)->vertex(0)->point()),
+         &(get<0>(cur)->vertex(1)->point()),
+         &(get<0>(cur)->vertex(2)->point()),
+         &(get<0>(cur)->vertex(3)->point()) };
 
-    Orientation o0, o1, o2;
     int inside=0,outside=0,regular_case=0,degenerate=0;
     Cell_handle nnext;
 
-    if( get<1>(_cur) == Tr::FACET ) {
-        regular_case=1;
-        int i = get<2>(_cur);
-        int j0 = Tr::vertex_triple_index(i,0);
-        int j1 = Tr::vertex_triple_index(i,1);
-        int j2 = Tr::vertex_triple_index(i,2);
-        o0 = _tr.orientation(_source, *vert[i], *vert[j0], _target);
-        if (o0==POSITIVE){
-          o1 = _tr.orientation(_source, *vert[i], *vert[j1], _target);
-          if(o1!=POSITIVE){
-            if (_tr.orientation(*vert[i], *vert[j0], *vert[j1], _target)==POSITIVE){
-              nnext= get<0>(_cur)->neighbor(j2);
-              outside=j2;
-              if(o1==ZERO) degenerate=1; //EDGE i j1
-            }
-            else
-              inside=1;
-          }else{
-            if (_tr.orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
-              nnext= get<0>(_cur)->neighbor(j0);
-              outside=j0;
-            }
-            else
-              inside=2;
+    if (get<1>(cur) == Tr::FACET) {
+      regular_case = 1;
+      int i = get<2>(cur);
+      int j0 = Tr::vertex_triple_index(i, 0);
+      int j1 = Tr::vertex_triple_index(i, 1);
+      int j2 = Tr::vertex_triple_index(i, 2);
+      Orientation o0 = _tr.orientation(_source, *vert[i], *vert[j0], _target);
+      if (o0 == POSITIVE) {
+        Orientation o1 = _tr.orientation(_source, *vert[i], *vert[j1], _target);
+        if (o1 != POSITIVE) {
+          if (_tr.orientation(*vert[i], *vert[j0], *vert[j1], _target) == POSITIVE) {
+            nnext = get<0>(cur)->neighbor(j2);
+            outside = j2;
+            if (o1 == ZERO) degenerate = 1; //EDGE i j1
           }
-        }else if (o0==ZERO){
-          o1 = _tr.orientation(_source, *vert[i], *vert[j1], _target);
-          if(o1==NEGATIVE){
-            if (_tr.orientation(*vert[i], *vert[j0], *vert[j1], _target)==POSITIVE){
-              nnext= get<0>(_cur)->neighbor(j2); //EDGE i j0
-              degenerate=2;
-              outside=44;
-            }
-            else
-              inside=3;
-          }else if (o1==ZERO){
-            if (_tr.orientation(*vert[i], *vert[j0], *vert[j2], _target) == POSITIVE)
-              inside = 55;
-            else
-            {
-              nnext = get<0>(_cur)->neighbor(j2);  //VERTEX i
-              degenerate = 3;
-              outside = 5;
-            }
-          }else {
-            if (_tr.orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
-              nnext= get<0>(_cur)->neighbor(j0);
-              outside=j0;
-            }
-            else
-              inside=4;
+          else
+            inside = 1;
+        }
+        else {
+          if (_tr.orientation(*vert[i], *vert[j1], *vert[j2], _target) == POSITIVE) {
+            nnext = get<0>(cur)->neighbor(j0);
+            outside = j0;
           }
-        }else{
-          o2 = _tr.orientation(_source, *vert[i], *vert[j2], _target);
-          if(o2!=NEGATIVE){
-            if (_tr.orientation(*vert[i], *vert[j2], *vert[j0], _target)==POSITIVE){
-              nnext= get<0>(_cur)->neighbor(j1);
-              outside=j1;
-              if(o2==ZERO) degenerate =4; // EDGE i j2
-            }
-            else
-              inside=5;
-          }else{
-            if (_tr.orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
-              nnext= get<0>(_cur)->neighbor(j0);
-              outside=j0;
-            }
-            else
-              inside=6;
+          else
+            inside = 2;
+        }
+      }
+      else if (o0 == ZERO) {
+        Orientation o1 = _tr.orientation(_source, *vert[i], *vert[j1], _target);
+        if (o1 == NEGATIVE) {
+          if (_tr.orientation(*vert[i], *vert[j0], *vert[j1], _target) == POSITIVE) {
+            nnext = get<0>(cur)->neighbor(j2); //EDGE i j0
+            degenerate = 2;
+            outside = 44;
+          }
+          else
+            inside = 3;
+        }
+        else if (o1 == ZERO) {
+          if (_tr.orientation(*vert[i], *vert[j0], *vert[j2], _target) == POSITIVE)
+            inside = 55;
+          else
+          {
+            nnext = get<0>(cur)->neighbor(j2);  //VERTEX i
+            degenerate = 3;
+            outside = 5;
           }
         }
-
-
-        if( (! degenerate) && (! inside) ){
-          get<0>(_prev) = get<0>(_cur);
-          get<0>(_cur) = nnext;
-          get<1>(_prev) = Tr::FACET;
-          get<2>(_prev) = outside;
-          get<1>(_cur) = Tr::FACET;
-          get<2>(_cur) = nnext->index(get<0>(_prev));
-          return;
+        else {
+          if (_tr.orientation(*vert[i], *vert[j1], *vert[j2], _target) == POSITIVE) {
+            nnext = get<0>(cur)->neighbor(j0);
+            outside = j0;
+          }
+          else
+            inside = 4;
         }
-
-        if((! degenerate) && inside){
-          _prev = Simplex( get<0>(_cur), Tr::CELL, -1, -1 );
-          get<0>(_cur) = Cell_handle();
-          return;
+      }
+      else {
+        Orientation o2 = _tr.orientation(_source, *vert[i], *vert[j2], _target);
+        if (o2 != NEGATIVE) {
+          if (_tr.orientation(*vert[i], *vert[j2], *vert[j0], _target) == POSITIVE) {
+            nnext = get<0>(cur)->neighbor(j1);
+            outside = j1;
+            if (o2 == ZERO) degenerate = 4; // EDGE i j2
+          }
+          else
+            inside = 5;
+        }
+        else {
+          if (_tr.orientation(*vert[i], *vert[j1], *vert[j2], _target) == POSITIVE) {
+            nnext = get<0>(cur)->neighbor(j0);
+            outside = j0;
+          }
+          else
+            inside = 6;
         }
       }
 
-    
+      if ((!degenerate) && (!inside))
+      {
+        Simplex prev_after_walk(get<0>(cur), Tr::FACET, outside, -1);
+        Simplex cur_after_walk( nnext,       Tr::FACET, nnext->index(get<0>(cur)), -1);
+        return std::make_pair(prev_after_walk, cur_after_walk);
+      }
+
+      if ((!degenerate) && inside)
+      {
+        Simplex prev_after_walk(get<0>(cur),  Tr::CELL, -1, -1);
+        Simplex cur_after_walk(Cell_handle(), Tr::OUTSIDE_AFFINE_HULL, -1, -1);
+        return std::make_pair(prev_after_walk, cur_after_walk);
+      }
+    }
+
+
     // We check in which direction the target lies
     // by comparing its position relative to the planes through the
     // source and the edges of the cell.
@@ -463,19 +470,19 @@ walk_to_next_3()
     // We keep track of which orientations are calculated.
     bool calc[6] = { false, false, false, false, false, false };
 
-    if( get<1>(_cur) == Tr::VERTEX ) {
+    if( get<1>(cur) == Tr::VERTEX ) {
         // The three planes through the vertex are set to coplanar.
         for( int j = 0; j < 4; ++j ) {
-            if( get<2>(_cur) != j ) {
-                int ij = edgeIndex( get<2>(_cur), j );
+            if( get<2>(cur) != j ) {
+                int ij = edgeIndex( get<2>(cur), j );
                 o[ij] = COPLANAR;
                 calc[ij] = true;
             }
         }
     }
-    else if( get<1>(_cur) == Tr::EDGE ) {
+    else if( get<1>(cur) == Tr::EDGE ) {
         // The plane through the edge is set to coplanar.
-        int ij = edgeIndex( get<2>(_cur), get<3>(_cur) );
+        int ij = edgeIndex( get<2>(cur), get<3>(cur) );
         o[ij] = COPLANAR;
         calc[ij] = true;
     }
@@ -486,14 +493,14 @@ walk_to_next_3()
     for( int k = 0; k < 4; ++k, ++li )
     {
         // Skip the previous cell.
-        Cell_handle next = get<0>(_cur)->neighbor(li);
-        if( next == get<0>(_prev) )
+        Cell_handle next = get<0>(cur)->neighbor(li);
+        if( next == get<0>(prev) )
         {
           op[li] = POSITIVE;
           pos += li;
           continue;
         }
-        Point* backup = vert[li];
+        const Point* backup = vert[li];
         vert[li] = &_target;
 
         // Check if the target is on the opposite side of the supporting plane.
@@ -518,7 +525,7 @@ walk_to_next_3()
             // Through the source and the edge opposite of ij.
             int oij = 5 - edgeIndex( li, lj );
             if( !calc[oij] ) {
-                Point* backup2 = vert[lj];
+                const Point* backup2 = vert[lj];
                 vert[lj] = &_source;
                 o[oij] = _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
                 vert[lj] = backup2;
@@ -551,91 +558,105 @@ walk_to_next_3()
         }
 
         // The target is inside the pyramid.
-        get<0>(_prev) = get<0>(_cur);
-        get<0>(_cur) = next;
+
+        Simplex prev_after_walk;
+        Simplex cur_after_walk;
+
+        get<0>(prev_after_walk) = get<0>(cur);
+        get<0>(cur_after_walk)  = next;
         switch( Or ) {
             case 3:
-                get<1>(_prev) = Tr::FACET;
-                get<2>(_prev) = li;
-                get<1>(_cur) = Tr::FACET;
-                get<2>(_cur) = get<0>(_cur)->index(get<0>(_prev));
+                get<1>(prev_after_walk) = Tr::FACET;
+                get<2>(prev_after_walk) = li;
+                get<1>(cur_after_walk) = Tr::FACET;
+                get<2>(cur_after_walk) = get<0>(cur_after_walk)->index(get<0>(prev_after_walk));
 
                 if(regular_case)
                 {
-                  CGAL_triangulation_assertion( get<0>(_cur)==nnext );
+                  CGAL_triangulation_assertion( get<0>(cur_after_walk)==nnext );
                   CGAL_triangulation_assertion( li==outside );
                   CGAL_triangulation_assertion( ! inside );
                 }
-                return;
+                return std::make_pair(prev_after_walk, cur_after_walk);
 
             case 2:
                 if(regular_case)
                   CGAL_triangulation_assertion(degenerate );
 
-                get<1>(_prev) = Tr::EDGE;
-                get<1>(_cur) = Tr::EDGE;
+                get<1>(prev_after_walk) = Tr::EDGE;
+                get<1>(cur_after_walk)  = Tr::EDGE;
                 for( int j = 0; j < 4; ++j ) {
                     if( li != j && o[ 5 - edgeIndex(li, j) ] == COPLANAR) {
-                        Edge opp = opposite_edge( get<0>(_prev), li, j );
-                        get<2>(_prev) = opp.second;
-                        get<3>(_prev) = opp.third;
-                        get<2>(_cur) = get<0>(_cur)->index( get<0>(_prev)->vertex( get<2>(_prev) ) );
-                        get<3>(_cur) = get<0>(_cur)->index( get<0>(_prev)->vertex( get<3>(_prev) ) );
-                        return;
+                        Edge opp = opposite_edge( get<0>(prev), li, j );
+                        get<2>(prev_after_walk) = opp.second;
+                        get<3>(prev_after_walk) = opp.third;
+                        get<2>(cur_after_walk)
+                          = get<0>(cur_after_walk)->index(
+                              get<0>(prev_after_walk)->vertex( get<2>(prev_after_walk) ) );
+                        get<3>(cur_after_walk)
+                          = get<0>(cur_after_walk)->index(
+                              get<0>(prev_after_walk)->vertex( get<3>(prev_after_walk) ) );
+
+                        return std::make_pair(prev_after_walk, cur_after_walk);
                     }
                 }
                 CGAL_triangulation_assertion( false );
-                return;
+                return std::make_pair(prev, cur);
             case 1:
                 if(regular_case)
                   CGAL_triangulation_assertion(degenerate );
 
-                get<1>(_prev) = Tr::VERTEX;
-                get<1>(_cur) = Tr::VERTEX;
+                get<1>(prev_after_walk) = Tr::VERTEX;
+                get<1>(cur_after_walk) = Tr::VERTEX;
                 for( int j = 0; j < 4; ++j ) {
                     if( li != j && o[ 5 - edgeIndex(li, j) ] == NEGATIVE ) {
-                        get<2>(_prev) = j;
-                        get<2>(_cur) = get<0>(_cur)->index( get<0>(_prev)->vertex(j) );
-                        return;
+                        get<2>(prev_after_walk) = j;
+                        get<2>(cur_after_walk)
+                          = get<0>(cur_after_walk)->index(
+                              get<0>(prev_after_walk)->vertex(j) );
+
+                        return std::make_pair(prev_after_walk, cur_after_walk);
                     }
                 }
                 CGAL_triangulation_assertion( false );
-                return;
+                return std::make_pair(prev, cur);
             default:
                 CGAL_triangulation_assertion( false );
-                return;
+                return std::make_pair(prev, cur);
         }
     }
-    
+
     // The target lies inside this cell.
+    Simplex prev_after_walk;
     CGAL_triangulation_assertion( incell );
     switch( op[0] + op[1] + op[2] + op[3] ) {
     case 4:
-        CGAL_triangulation_assertion( pos == 6 );
-        _prev = Simplex( get<0>(_cur), Tr::CELL, -1, -1 );
-        CGAL_triangulation_assertion( (! regular_case) || inside );
-        break;
+      CGAL_triangulation_assertion( pos == 6 );
+      prev_after_walk = Simplex( get<0>(cur), Tr::CELL, -1, -1 );
+      CGAL_triangulation_assertion( (! regular_case) || inside );
+      break; 
 
     case 3:
-        _prev = Simplex( get<0>(_cur), Tr::FACET, 6-pos, -1 );
-        break;
+      prev_after_walk = Simplex( get<0>(cur), Tr::FACET, 6-pos, -1 );
+      break;
     case 2:
-        if( pos < 3 )
-            _prev = Simplex( get<0>(_cur), Tr::EDGE, 0, pos+1 );
-        else if( pos < 5 )
-            _prev = Simplex( get<0>(_cur), Tr::EDGE, 1, pos-1 );
-        else
-            _prev = Simplex( get<0>(_cur), Tr::EDGE, 2, 3 );
-        break;
+      if( pos < 3 )
+        prev_after_walk = Simplex( get<0>(cur), Tr::EDGE, 0, pos+1 );
+      else if( pos < 5 )
+        prev_after_walk = Simplex( get<0>(cur), Tr::EDGE, 1, pos-1 );
+      else
+        prev_after_walk = Simplex( get<0>(cur), Tr::EDGE, 2, 3 );
+      break;
     case 1:
-        _prev = Simplex( get<0>(_cur), Tr::VERTEX, pos, -1 );
-        break;
+      prev_after_walk = Simplex( get<0>(cur), Tr::VERTEX, pos, -1 );
+      break;
     default:
-        _prev = Simplex( get<0>(_cur), Tr::OUTSIDE_AFFINE_HULL, -1, -1 );
-        CGAL_triangulation_assertion( false );
+      prev_after_walk = Simplex( get<0>(cur), Tr::OUTSIDE_AFFINE_HULL, -1, -1 );
+      CGAL_triangulation_assertion( false );
     }
-    get<0>(_cur) = Cell_handle();
-    return;
+
+    Simplex cur_after_walk(Cell_handle(), Tr::OUTSIDE_AFFINE_HULL, -1, -1);
+    return std::make_pair(prev_after_walk, cur_after_walk);
 }
 
 template < class Tr, class Inc >
