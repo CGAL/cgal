@@ -16,6 +16,7 @@ if(NOT CGAL_HEADER_ONLY)
     ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/manipulatedFrame.h
     ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/qglviewer.h
     ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/image_interface.h
+    TARGET CGAL_Qt5
     )
 endif()#CGAL_HEADER_ONLY 
 
