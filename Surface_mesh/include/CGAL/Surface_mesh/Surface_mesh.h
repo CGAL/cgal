@@ -1758,6 +1758,8 @@ public:
     /// With `check_all_incident_halfedges == false` the function returns `true`, if the incident
     /// halfedge associated to vertex `v` is a border halfedge, or if the vertex is isolated.
     /// \cgalAdvancedEnd
+    /// \attention If the data contained in the `Surface_mesh` is not a 2-manifold, then
+    /// this operation is not guaranteed to return the right result.
   bool is_border(Vertex_index v, bool check_all_incident_halfedges = true) const
     {
         Halfedge_index h(halfedge(v));
