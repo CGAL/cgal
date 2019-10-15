@@ -443,9 +443,6 @@ public:
     connect(dock_widget->deleteButton, &QPushButton::clicked,
             this, &DisplayPropertyPlugin::delete_group);
 
-    connect(dock_widget->resetButton, &QPushButton::pressed,
-            this, &DisplayPropertyPlugin::resetRampExtremas);
-
     dock_widget->zoomToMaxButton->setEnabled(false);
     dock_widget->zoomToMinButton->setEnabled(false);
     Scene* scene_obj =static_cast<Scene*>(scene);
@@ -464,29 +461,6 @@ private Q_SLOTS:
       dock_widget->raise(); }
   }
 
-  void resetRampExtremas()
-  {
-    Scene_surface_mesh_item* item =
-        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
-    if(!item)
-      return;
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    item->face_graph()->collect_garbage();
-    bool ok;
-    switch(dock_widget->propertyBox->currentIndex())
-    {
-    case 0:
-      ok = resetAngles(item);
-      break;
-    default:
-      ok = resetScaledJacobian(item);
-      break;
-    }
-    QApplication::restoreOverrideCursor();
-    if(!ok)
-      QMessageBox::warning(mw, "Error", "You must first run colorize once to initialize the values.");
-  }
-  
   void colorize()
   {
     Scene_heat_item* h_item = nullptr;

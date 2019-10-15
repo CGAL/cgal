@@ -12,11 +12,19 @@
 #  define CGAL_DOUBLE_EDIT_EXPORT Q_DECL_IMPORT
 #endif
 
+class QDoubleValidator;
 class CGAL_DOUBLE_EDIT_EXPORT DoubleEdit : public QLineEdit {
 
   Q_OBJECT
 
 public:
-  DoubleEdit(QWidget *parent);
+  DoubleEdit(QWidget* parent = nullptr);
+  ~DoubleEdit();
+  double value() const;
+  void setValue(double d);
+  void setMinimum(double d);
+  void setMaximum(double d);
+private:
+  QDoubleValidator* validator;
 };
 #endif // CGAL_DOUBLE_EDIT_H
