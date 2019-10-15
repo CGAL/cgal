@@ -36,7 +36,7 @@ class Small_unordered_map{
   int head = -2;
   std::array<int, M>           occupied; 
   std::array<std::pair<K,T>, M> data;
-  const H hash;
+  const H hash = {};
 
   
 public:
