@@ -408,7 +408,7 @@ barycentric_coordinates(const Point& p, const Point& q, const Point& r, const Po
 ///          and `0` for respetively the source and target of `hd`, and the third vertex.
 ///
 /// \tparam FT must be a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param hd a halfedge of `tm`
 /// \param tm a triangulated surface mesh
@@ -443,7 +443,7 @@ random_location_on_halfedge(typename boost::graph_traits<TriangleMesh>::halfedge
 ///          `1-u-v` for respectively the source and target of `halfedge(fd, tm)`, and the third point.
 ///
 /// \tparam FT must be a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param fd a face of `tm`
 /// \param tm a triangulated surface mesh
@@ -475,7 +475,7 @@ random_location_on_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 ///          are thus all positive. Note that all faces have the same probability to be chosen.
 ///
 /// \tparam FT must be a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param tm a triangulated surface mesh
 /// \param rnd optional random number generator
@@ -510,7 +510,7 @@ random_location_on_mesh(const TriangleMesh& tm,
 ///            `fd` (equal to `loc.first`).
 ///
 /// \tparam FT must be a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param loc a location with `loc.first` a face of `tm`
 /// \param tm a triangulated surface mesh
@@ -570,7 +570,7 @@ get_descriptor_from_location(const std::pair<typename boost::graph_traits<Triang
 ///        by these coordinates, as a point.
 ///
 /// \tparam FT must be a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param loc the location from which a point is constructed
@@ -658,8 +658,8 @@ construct_point(const std::pair<typename boost::graph_traits<TriangleMesh>::face
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
-/// \tparam FT a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param loc a location with `loc.first` a face of `tm`
 /// \param vd a vertex of `tm`
@@ -702,8 +702,8 @@ is_on_vertex(const std::pair<typename boost::graph_traits<TriangleMesh>::face_de
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
-/// \tparam FT a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param loc a location with `loc.first` a face of `tm`
 /// \param hd a halfedge of `tm`
@@ -751,8 +751,8 @@ is_on_halfedge(const std::pair<typename boost::graph_traits<TriangleMesh>::face_
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
-/// \tparam FT a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param bar an array of barycentric coordinates
 /// \param tm a triangulated surface mesh
@@ -791,8 +791,8 @@ is_in_face(const std::array<FT, 3>& bar,
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
-/// \tparam FT a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param loc a location with `loc.first` a face of `tm`
 /// \param tm a triangulated surface mesh
@@ -823,8 +823,8 @@ is_in_face(const std::pair<typename boost::graph_traits<TriangleMesh>::face_desc
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
-/// \tparam FT a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param loc a location with `loc.first` a face of `tm`
 /// \param tm a triangulated surface mesh
@@ -864,8 +864,8 @@ is_on_face_border(const std::pair<typename boost::graph_traits<TriangleMesh>::fa
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
-/// \tparam FT a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param loc a location with `loc.first` a face of `tm`
 /// \param tm a triangulated surface mesh
@@ -933,8 +933,8 @@ is_on_mesh_border(const std::pair<typename boost::graph_traits<TriangleMesh>::fa
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
-/// \tparam FT a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param vd a vertex of `tm`
 /// \param tm a triangulated surface mesh
@@ -995,8 +995,8 @@ locate_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
-/// \tparam FT a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param vd a vertex of `tm` and a vertex of the face `fd`
 /// \param fd a face of `tm`
@@ -1034,8 +1034,8 @@ locate_vertex(const typename boost::graph_traits<TriangleMesh>::vertex_descripto
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
-/// \tparam FT a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param hd a halfedge of `tm`
 /// \param t the parametric distance of the desired point along `hd`
@@ -1074,7 +1074,7 @@ locate_on_halfedge(const typename boost::graph_traits<TriangleMesh>::halfedge_de
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param query a point, whose type is equal to the value type of the vertex point property map
@@ -1186,8 +1186,8 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh>::Point& qu
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
-/// \tparam FT a model of `FieldNumberType`
-/// \tparam TriangleMesh a model of `FaceGraph`
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
 /// \param loc the first location, with `loc.first` being a face of `tm`
 /// \param fd the second face, adjacent to `loc.first`
@@ -1562,8 +1562,8 @@ void build_AABB_tree(const TriangleMesh& tm,
 ///          `locate_with_AABB_tree()` that takes as parameter an AABB tree, instead of calling `locate()`
 ///          multiple times, which will build a new AABB tree on every call.
 ///
-/// \tparam TriangleMesh a model of `FaceListGraph`
-/// \tparam Point3VPM a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+/// \tparam TriangleMesh must be a model of `FaceListGraph`
+/// \tparam Point3VPM must be a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                   as key type and the \cgal 3D point type (your traits' `%Point_3`) as value type.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
@@ -1624,8 +1624,8 @@ void build_AABB_tree(const TriangleMesh& tm, AABB_tree<AABBTraits>& outTree)
 /// is a 2D triangulation, or a CGAL::Surface_mesh<CGAL::Point_2<Kernel> >), as long as an appropriate
 /// vertex point property map is passed in the AABB tree, which will convert from 2D to 3D.
 ///
-/// \tparam TriangleMesh a model of `FaceListGraph`
-/// \tparam Point3VPM a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+/// \tparam TriangleMesh must be a model of `FaceListGraph`
+/// \tparam Point3VPM must be a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                   as key type and the \cgal 3D point type (your traits' `%Point_3`) as value type.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
@@ -1723,7 +1723,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Po
 ///          to call this function more than once, first use `build_AABB_tree()` to create a
 ///          an AABB tree that you can store and use the function `locate_with_AABB_tree()`.
 ///
-/// \tparam TriangleMesh a model of `FaceListGraph`.
+/// \tparam TriangleMesh must be a model of `FaceListGraph`.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param p the point to locate on the input triangulated surface mesh
@@ -1806,8 +1806,8 @@ locate(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::t
 ///
 /// If the ray does not intersect the mesh, a default constructed location is returned.
 ///
-/// \tparam TriangleMesh a model of `FaceListGraph`.
-/// \tparam Point3VPM a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+/// \tparam TriangleMesh must be a model of `FaceListGraph`.
+/// \tparam Point3VPM must be a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                   as key type and the \cgal 3D point type (your traits' `%Point_3`) as value type.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
@@ -1944,7 +1944,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Ra
 ///          copy of the `AABB_tree`, and use the overloads of this function
 ///          that accept a reference to an AABB tree as input.
 ///
-/// \tparam TriangleMesh a model of `FaceListGraph`.
+/// \tparam TriangleMesh must be a model of `FaceListGraph`.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param ray a ray to intersect with the input triangulated surface mesh
