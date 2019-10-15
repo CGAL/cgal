@@ -269,6 +269,7 @@ void detect_is_saddle_vertex()
 
   Traits traits;
   Traits::Is_saddle_vertex is_saddle_vertex(traits.is_saddle_vertex_object());
+  CGAL_USE(is_saddle_vertex);
 
   std::ifstream inFile("data/saddle_vertex_mesh.off");
 
