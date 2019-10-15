@@ -125,20 +125,10 @@ public:
     typedef typename Face_wrapper::Face                Face_base;
     typedef HalfedgeDS_in_place_list_face< Face_base>  Face;
 
-#ifdef CGAL_CXX11
     typedef std::allocator_traits<Allocator> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Halfedge> Halfedge_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Face> Face_allocator;
-#else // CGAL_CXX11
-    typedef typename Allocator::template rebind< Vertex> Vertex_alloc_rebind;
-    typedef typename Vertex_alloc_rebind::other        Vertex_allocator;
-    typedef typename Allocator::template rebind< Halfedge>
-                                                       Halfedge_alloc_rebind;
-    typedef typename Halfedge_alloc_rebind::other      Halfedge_allocator;
-    typedef typename Allocator::template rebind< Face> Face_alloc_rebind;
-    typedef typename Face_alloc_rebind::other          Face_allocator;
-#endif // not CGAL_CXX11
 
     typedef In_place_list<Vertex,false,Vertex_allocator>  Vertex_list;
     typedef typename Vertex_list::iterator             Vertex_handle;
@@ -258,14 +248,8 @@ public:
 
     // Halfedges are allocated in pairs. Here is the type for that.
     typedef std::pair<Halfedge,Halfedge>              Halfedge_pair;
-#ifdef CGAL_CXX11
     typedef std::allocator_traits<Allocator> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Halfedge_pair> Edge_allocator;
-#else
-    typedef typename Allocator::template rebind< Halfedge_pair>
-                                                       Edge_alloc_rebind;
-    typedef typename Edge_alloc_rebind::other          Edge_allocator;
-#endif
 
 protected:
     // Changed from static to local variable
@@ -276,20 +260,12 @@ protected:
     template <typename A, typename T>
     void destroy(A& a, const T& t)
     {
-#ifdef CGAL_CXX11
         std::allocator_traits<A>::destroy(a,t);
-#else
-        a.destroy(t);
-#endif
     }
 
     Vertex* get_vertex_node( const Vertex& t) {
         Vertex* p = vertex_allocator.allocate(1);
-#ifdef CGAL_CXX11
         std::allocator_traits<Vertex_allocator>::construct(vertex_allocator, p,t);
-#else
-        vertex_allocator.construct(p, t);
-#endif
         return p;
     }
     void put_vertex_node( Vertex* p) {
@@ -300,11 +276,7 @@ protected:
     Halfedge* get_edge_node( const Halfedge& h, const Halfedge& g) {
         // creates a new pair of opposite border halfedges.
         Halfedge_pair* hpair = edge_allocator.allocate(1);
-#ifdef CGAL_CXX11
         std::allocator_traits<Edge_allocator>::construct(edge_allocator, hpair, h, g);
-#else
-        edge_allocator.construct(hpair, Halfedge_pair( h, g));
-#endif
         Halfedge* h2 = &(hpair->first);
         Halfedge* g2 = &(hpair->second);
         CGAL_assertion( h2 == (Halfedge*)hpair);
@@ -326,11 +298,7 @@ protected:
 
     Face* get_face_node( const Face& t) {
         Face* p = face_allocator.allocate(1);
-#ifdef CGAL_CXX11
         std::allocator_traits<Face_allocator>::construct(face_allocator, p, t);
-#else
-        face_allocator.construct(p, t);
-#endif
         return p;
     }
 

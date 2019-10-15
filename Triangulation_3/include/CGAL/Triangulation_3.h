@@ -436,6 +436,11 @@ public:
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
 
+  typedef typename Tds::Cell_handles           All_cell_handles;
+  typedef typename Tds::Vertex_handles         All_vertex_handles;
+  typedef typename Tds::Facets                 All_facets;
+  typedef typename Tds::Edges                  All_edges;
+  
   typedef typename Tds::Simplex                Simplex;
 
 private:
@@ -515,9 +520,15 @@ public:
     operator Vertex_handle() const { return Base::base(); }
   };
 
+  typedef Iterator_range<Prevent_deref<Finite_cells_iterator> >    Finite_cell_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+
   typedef Filter_iterator<Edge_iterator, Infinite_tester>     Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>    Finite_facets_iterator;
 
+  typedef Iterator_range<Finite_edges_iterator> Finite_edges;
+  typedef Iterator_range<Finite_facets_iterator> Finite_facets;
+  
 private:
   // Auxiliary iterators for convenience
   // do not use default template argument to please VC++
@@ -531,6 +542,9 @@ public:
   std::ptrdiff_t,
   std::bidirectional_iterator_tag>   Point_iterator;
 
+
+  typedef Iterator_range<Point_iterator> Points;
+  
   // To have a back_inserter
   typedef Point                                               value_type;
   typedef const value_type&                                   const_reference;
@@ -1746,12 +1760,24 @@ public:
     return CGAL::filter_iterator(cells_end(), Infinite_tester(this));
   }
 
+  
+  Finite_cell_handles finite_cell_handles() const
+  {
+    return make_prevent_deref_range(finite_cells_begin(), finite_cells_end()); 
+  }
+
+  
   Cell_iterator cells_begin() const { return _tds.cells_begin(); }
   Cell_iterator cells_end() const { return _tds.cells_end(); }
 
   All_cells_iterator all_cells_begin() const { return _tds.cells_begin(); }
   All_cells_iterator all_cells_end() const { return _tds.cells_end(); }
 
+  All_cell_handles all_cell_handles() const
+  {
+    return _tds.cell_handles();
+  }
+  
   Finite_vertices_iterator finite_vertices_begin() const
   {
     if(number_of_vertices() <= 0)
@@ -1765,12 +1791,22 @@ public:
     return CGAL::filter_iterator(vertices_end(), Infinite_tester(this));
   }
 
+  Finite_vertex_handles finite_vertex_handles() const
+  {
+    return make_prevent_deref_range(finite_vertices_begin(), finite_vertices_end()); 
+  }
+  
   Vertex_iterator vertices_begin() const { return _tds.vertices_begin(); }
   Vertex_iterator vertices_end() const { return _tds.vertices_end(); }
 
   All_vertices_iterator all_vertices_begin() const { return _tds.vertices_begin(); }
   All_vertices_iterator all_vertices_end() const { return _tds.vertices_end(); }
 
+  All_vertex_handles all_vertex_handles() const
+  {
+    return _tds.vertex_handles();
+  }
+  
   Finite_edges_iterator finite_edges_begin() const
   {
     if(dimension() < 1)
@@ -1783,12 +1819,23 @@ public:
     return CGAL::filter_iterator(edges_end(), Infinite_tester(this));
   }
 
+  Finite_edges finite_edges() const
+  {
+    return Finite_edges(finite_edges_begin(),finite_edges_end());
+  }
+  
   Edge_iterator edges_begin() const { return _tds.edges_begin(); }
   Edge_iterator edges_end() const { return _tds.edges_end(); }
 
+  
   All_edges_iterator all_edges_begin() const { return _tds.edges_begin(); }
   All_edges_iterator all_edges_end() const { return _tds.edges_end(); }
 
+  All_edges all_edges() const
+  {
+    return _tds.edges();
+  }
+  
   Finite_facets_iterator finite_facets_begin() const
   {
     if(dimension() < 2)
@@ -1801,19 +1848,37 @@ public:
     return CGAL::filter_iterator(facets_end(), Infinite_tester(this));
   }
 
+  Finite_facets finite_facets() const
+  {
+    return Finite_facets(finite_facets_begin(),finite_facets_end());
+  }
+
   Facet_iterator facets_begin() const { return _tds.facets_begin(); }
   Facet_iterator facets_end() const { return _tds.facets_end(); }
 
+  
   All_facets_iterator all_facets_begin() const { return _tds.facets_begin(); }
   All_facets_iterator all_facets_end() const { return _tds.facets_end(); }
 
-  Point_iterator points_begin() const {
+  All_facets all_facets() const
+  {
+    return _tds.facets();
+  }
+  
+  Point_iterator points_begin() const
+  {
     return Point_iterator(finite_vertices_begin());
   }
-  Point_iterator points_end() const {
+  Point_iterator points_end() const
+  {
     return Point_iterator(finite_vertices_end());
   }
 
+  Points points() const
+  {
+    return Points(points_begin(),points_end());
+  }
+  
   // cells around an edge
   Cell_circulator incident_cells(const Edge& e) const
   {

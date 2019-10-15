@@ -46,6 +46,7 @@ CGAL_INLINE_FUNCTION
 Camera::Camera(QObject *parent)
     : frame_(nullptr), fieldOfView_(CGAL_PI / 4.0), modelViewMatrixIsUpToDate_(false),
       projectionMatrixIsUpToDate_(false) {
+  m_zMin = 0;
   setParent(parent);
   // #CONNECTION# Camera copy constructor
   interpolationKfi_ = new KeyFrameInterpolator;
@@ -228,7 +229,7 @@ qreal Camera::zNear() const {
       z = zMin;
       break;
     case Camera::ORTHOGRAPHIC:
-      z = 0.0;
+      z = m_zMin;
       break;
     }
   return z;

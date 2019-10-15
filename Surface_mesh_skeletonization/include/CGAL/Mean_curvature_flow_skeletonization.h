@@ -810,14 +810,14 @@ public:
 
   /// When using the low level API it is possible to access the intermediate
   /// results of the skeletonization process, called meso-skeleton.
-  /// It is a triangulated surface mesh which is model of `FaceListGraph`.
+  /// It is a triangulated surface mesh which is model of `FaceListGraph` and `HalfedgeListGraph`.
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Meso_skeleton;
 #else
   typedef mTriangleMesh Meso_skeleton;
 #endif
   /// Reference to the collapsed triangulated surface mesh.
-  Meso_skeleton& meso_skeleton()
+  const Meso_skeleton& meso_skeleton() const
   {
     return m_tmesh;
   }

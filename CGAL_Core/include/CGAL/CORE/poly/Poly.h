@@ -65,7 +65,6 @@
 #include <CGAL/tss.h>
 
 namespace CORE { 
-using namespace std;
 class Expr;
 // ==================================================
 // Typedefs
@@ -117,25 +116,25 @@ public:
   Polynomial(const Polynomial &);
   Polynomial(const VecNT &);
   Polynomial(int n, const char* s[]);
-  Polynomial(const string & s, char myX='x');
+  Polynomial(const std::string & s, char myX='x');
   Polynomial(const char* s, char myX='x');
   ~Polynomial();
 
   private:
   void constructX(int n, Polynomial<NT>& P);
-  void constructFromString(string & s, char myX='x');
+  void constructFromString(std::string & s, char myX='x');
   int getnumber(const char* c, int i, unsigned int len, Polynomial<NT> & P);
   bool isint(char c);
   int getint(const char* c, int i, unsigned int len, int & n);
   int matchparen(const char* cstr, int start);
-  int getbasicterm(string & s, Polynomial<NT> & P);
-  int getterm(string & s, Polynomial<NT> & P);
+  int getbasicterm(std::string & s, Polynomial<NT> & P);
+  int getterm(std::string & s, Polynomial<NT> & P);
 
 
   public:
   //Returns a Polynomial corresponding to s, which is supposed to
   //contain as place-holders the chars 'x' and 'y'.
-  Polynomial<NT> getpoly(string & s);
+  Polynomial<NT> getpoly(std::string & s);
 
   // Assignment:
   Polynomial & operator=(const Polynomial&);

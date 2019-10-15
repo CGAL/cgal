@@ -1,18 +1,8 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( AABB_traits_benchmark)
-
-
-cmake_minimum_required(VERSION 3.1)
-  cmake_policy(VERSION 3.1)
-
-
-if ( COMMAND cmake_policy )
-
-  cmake_policy( SET CMP0003 NEW )  
-
-endif()
 
 # CGAL and its components
 find_package( CGAL QUIET)

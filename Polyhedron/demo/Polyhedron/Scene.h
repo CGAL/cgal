@@ -52,6 +52,7 @@ public:
   Scene(QObject*  parent);
   ~Scene();
   int addItem(CGAL::Three::Scene_item* item) Q_DECL_OVERRIDE;
+  void addChild(Scene_item* item) Q_DECL_OVERRIDE;
   void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) Q_DECL_OVERRIDE;
   CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) Q_DECL_OVERRIDE;
   Q_INVOKABLE int erase(int) Q_DECL_OVERRIDE;

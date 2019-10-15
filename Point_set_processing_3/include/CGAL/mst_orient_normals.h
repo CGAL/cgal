@@ -36,7 +36,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/use.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -128,7 +128,8 @@ class Default_constrained_map
 public:
 
   typedef boost::readable_property_map_tag     category;
-  typedef typename ForwardIterator::value_type key_type;
+  typedef typename std::iterator_traits<
+            ForwardIterator>::value_type       key_type;
   typedef bool                                 value_type;
   typedef value_type                           reference;
 
@@ -613,7 +614,9 @@ mst_orient_normals(
   unsigned int k,
   const NamedParameters& np)
 {
-    using boost::choose_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
     CGAL_TRACE("Calls mst_orient_normals()\n");
 
     typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
@@ -625,11 +628,11 @@ mst_orient_normals(
                                 typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                               "Error: no normal map");
 
-    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-    NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-    typename Kernel::FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius),
+    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+    typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
                                                        typename Kernel::FT(0));
-    ConstrainedMap constrained_map = choose_param(get_param(np, internal_np::point_is_constrained), ConstrainedMap());
+    ConstrainedMap constrained_map = choose_parameter(get_parameter(np, internal_np::point_is_constrained), ConstrainedMap());
     Kernel kernel;
 
   // Bring private stuff to scope

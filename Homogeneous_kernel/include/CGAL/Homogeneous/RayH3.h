@@ -36,7 +36,6 @@ namespace CGAL {
 template < class R_ >
 class RayH3
 {
-   typedef typename R_::RT                   RT;
    typedef typename R_::FT                   FT;
    typedef typename R_::Point_3              Point_3;
    typedef typename R_::Line_3               Line_3;
@@ -68,7 +67,7 @@ public:
     const Point_3 & start() const;
     const Point_3 & source() const;
     Point_3 second_point() const;
-    Point_3 point(int i) const;
+    Point_3 point(const FT i) const;
     Direction_3 direction() const;
     const Vector_3 & to_vector() const;
     Line_3  supporting_line() const;
@@ -118,10 +117,11 @@ RayH3<R>::second_point() const
 template < class R >
 CGAL_KERNEL_INLINE
 typename RayH3<R>::Point_3
-RayH3<R>::point(int i) const
+RayH3<R>::point(const FT i) const
 {
-  CGAL_kernel_precondition( i >= 0 );
-  return start() + RT(i)*to_vector();
+  CGAL_kernel_precondition( i >= FT(0) );
+  if (i == FT(0)) return source();
+  return start() + i * to_vector();
 }
 
 template < class R >

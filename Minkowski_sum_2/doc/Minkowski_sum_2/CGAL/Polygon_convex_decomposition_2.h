@@ -25,8 +25,6 @@ public:
 
   typedef CGAL::Polygon_2<Kernel,Container> Polygon_2;
 
-/// @}
-
 }; /* end Greene_convex_decomposition_2 */
 } /* end namespace CGAL */
 
@@ -60,8 +58,6 @@ public:
 
   typedef CGAL::Polygon_2<Kernel,Container> Polygon_2;
 
-/// @}
-
 }; /* end Hertel_Mehlhorn_convex_decomposition_2 */
 } /* end namespace CGAL */
 
@@ -91,8 +87,6 @@ class Optimal_convex_decomposition_2 {
 public:
 
   typedef CGAL::Polygon_2<Kernel,Container> Polygon_2;
-
-/// @}
 
 }; /* end Optimal_convex_decomposition_2 */
 } /* end namespace CGAL */

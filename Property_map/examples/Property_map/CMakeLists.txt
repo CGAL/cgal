@@ -1,7 +1,7 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Property_map_Examples )
 
 
-cmake_minimum_required(VERSION 3.1)
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )

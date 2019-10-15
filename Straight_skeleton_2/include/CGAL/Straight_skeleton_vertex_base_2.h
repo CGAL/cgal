@@ -27,6 +27,7 @@
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Origin.h>
+#include <CGAL/use.h>
 
 #include <boost/iterator/iterator_facade.hpp>
 
@@ -85,6 +86,7 @@ protected :
 
       bool operator==( std::nullptr_t p ) const 
       {
+        CGAL_USE(p);
         CGAL_assertion( p == nullptr ); 
         HalfedgeHandle null ;
         return mHandle == null ;

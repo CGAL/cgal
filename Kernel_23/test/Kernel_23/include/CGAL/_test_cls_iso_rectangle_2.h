@@ -26,6 +26,7 @@
 
 #include <CGAL/Bbox_2.h>
 #include <cassert>
+#include <CGAL/use.h>
 
 template <class R>
 bool
@@ -35,9 +36,6 @@ _test_cls_iso_rectangle_2(const R& )
 
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
-
- typename R::Iso_rectangle_2 ir;
- CGAL::Iso_rectangle_2<R>  r0(ir);
 
  RT n1 =  1;
  RT n2 =  2;
@@ -58,6 +56,10 @@ _test_cls_iso_rectangle_2(const R& )
  CGAL::Point_2<R> p7( n6, n3, n2);    // ( 3, 1.5)
  CGAL::Point_2<R> p8( n4, n6, n2);    // ( 2, 3)
  CGAL::Point_2<R> p9(-n3, n7);        // (-3, 7)
+
+ typename R::Iso_rectangle_2 ir0; CGAL_USE(ir0); // test default-construction
+ typename R::Iso_rectangle_2 ir(p1, p3);
+ CGAL::Iso_rectangle_2<R>  r0(ir);
 
  const CGAL::Iso_rectangle_2<R> r1( p1, p3);
  CGAL::Iso_rectangle_2<R> r1_( p1, p3, 0);

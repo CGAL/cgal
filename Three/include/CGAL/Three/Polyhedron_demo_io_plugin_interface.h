@@ -28,16 +28,23 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QtPlugin>
-
+class QMainWindow;
+class Messages_interface;
 namespace CGAL{
 namespace Three {
 class Scene_item;
+class Scene_interface;
   /*!
    * This class provides a base for creating a new IO plugin.
    */
 class Polyhedron_demo_io_plugin_interface 
 {
 public:
+  //! \brief Initializes the plugin
+  //! This function is called in the constructor of the MainWindow.
+  //! Whatever initialization the plugin needs can be done here. Default
+  //! behavior is to do nothing.
+  virtual void init(){}
   //!Returns the name of the plugin
   //!It is used by the loading system.
   virtual QString name() const = 0;
@@ -58,17 +65,23 @@ public:
 
   //! Specifies if the io_plugin is able to load an item or not.
   //! This must be overriden.
-  virtual bool canLoad() const = 0;
-  //!  Loads an item from a file.
+  virtual bool canLoad(QFileInfo fileinfo) const = 0;
+  //! Loads one or more item(s) from a file. `ok` is `true` if the loading
+  //! was successful, `false` otherwise.
+  //! New items will be added to the scene if `add_to_scene` is `true`.
+  //! You don't want that when you reload an item, for example,
+  //! as it will be added at some other point of the process.
   //! This must be overriden.
-  virtual Scene_item* load(QFileInfo fileinfo) = 0;
+  virtual QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) = 0;
   //!Specifies if the io_plugin can save the item or not.
   //!This must be overriden.
   virtual bool canSave(const Scene_item*) = 0;
-  //!Saves the item in the file corresponding to the path
+  //!Saves one or more items in the file corresponding to the path
   //!contained in fileinfo. Returns false if error.
   //! This must be overriden.
-  virtual bool save(const Scene_item*, QFileInfo fileinfo) = 0;
+  //! @attention When a file is successfully saved, it must be removed from the
+  //! list.
+  virtual bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& ) = 0;
   
   //! If this returns `true`, then the loader will be chosen as default in the
   //! list of available loaders when saving a file, which means it will be the 
@@ -83,6 +96,6 @@ public:
 }
 }
 Q_DECLARE_INTERFACE(CGAL::Three::Polyhedron_demo_io_plugin_interface,
-                    "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+                    "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90")
 
 #endif // POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H

@@ -27,7 +27,7 @@
 
 
 #include <CGAL/Variational_shape_approximation.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/property_map.h>
@@ -127,22 +127,22 @@ unspecified_type all_default();
 template <typename TriangleMesh, typename NamedParameters>
 bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np)
 {
-  using boost::get_param;
-  using boost::choose_param;
-  using boost::is_default_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
 
   typedef typename Polygon_mesh_processing::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
   typedef typename Geom_traits::FT FT;
 
   typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::type Vertex_point_map;
-  Vertex_point_map point_pmap = choose_param(get_param(np, internal_np::vertex_point),
+  Vertex_point_map point_pmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm)));
 
   typedef CGAL::Variational_shape_approximation<TriangleMesh, Vertex_point_map> L21_approx;
   typedef typename L21_approx::Error_metric L21_metric;
 
-  const Verbose_level vl = choose_param(
-    get_param(np, internal_np::verbose_level), SILENT);
+  const Verbose_level vl = choose_parameter(
+    get_parameter(np, internal_np::verbose_level), SILENT);
 
   const std::size_t number_of_faces = std::distance(faces(tm).first, faces(tm).second);
   const std::size_t number_of_vertices = std::distance(vertices(tm).first, vertices(tm).second);
@@ -157,14 +157,14 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
   L21_approx approx(tm, point_pmap, metric);
 
   // hierarchical seeding by default
-  const Seeding_method method = choose_param(
-    get_param(np, internal_np::seeding_method), HIERARCHICAL);
-  const std::size_t max_nb_of_proxies = choose_param(
-    get_param(np, internal_np::max_number_of_proxies), 0);
-  const FT min_error_drop = choose_param(
-    get_param(np, internal_np::min_error_drop), FT(0.0));
-  const std::size_t nb_of_relaxations = choose_param(
-    get_param(np, internal_np::number_of_relaxations), 5);
+  const Seeding_method method = choose_parameter(
+    get_parameter(np, internal_np::seeding_method), HIERARCHICAL);
+  const std::size_t max_nb_of_proxies = choose_parameter(
+    get_parameter(np, internal_np::max_number_of_proxies), 0);
+  const FT min_error_drop = choose_parameter(
+    get_parameter(np, internal_np::min_error_drop), FT(0.0));
+  const std::size_t nb_of_relaxations = choose_parameter(
+    get_parameter(np, internal_np::number_of_relaxations), 5);
 
   if (vl == VERBOSE) {
     std::cout << (method == RANDOM ? "Random" :
@@ -179,8 +179,8 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
   if (vl == MAIN_STEPS || vl == VERBOSE)
     std::cout << "Seeding done." << std::endl;
 
-  const std::size_t nb_of_iterations = choose_param(
-    get_param(np, internal_np::number_of_iterations), 20);
+  const std::size_t nb_of_iterations = choose_parameter(
+    get_parameter(np, internal_np::number_of_iterations), 20);
 
   if (vl == VERBOSE)
     std::cout << "\n#nb_of_iterations = " << nb_of_iterations << std::endl;
@@ -193,30 +193,30 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
   }
 
   // get proxy map
-  approx.proxy_map( get_param(np, internal_np::face_proxy_map) );
+  approx.proxy_map( get_parameter(np, internal_np::face_proxy_map) );
 
-  if (!boost::is_default_param(get_param(np, internal_np::face_proxy_map))
+  if (!parameters::is_default_parameter(get_parameter(np, internal_np::face_proxy_map))
     && (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Filling face proxy map done." << std::endl;
 
   // get proxies
-  approx.proxies( get_param(np, internal_np::proxies) );
+  approx.proxies( get_parameter(np, internal_np::proxies) );
 
-  if (!is_default_param( get_param(np, internal_np::proxies) )
+  if (!is_default_parameter( get_parameter(np, internal_np::proxies) )
     && (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Get proxies done." << std::endl;
 
   // meshing
   bool is_manifold = false;
-  if (!is_default_param( get_param(np, internal_np::anchors))
-    || !is_default_param( get_param(np, internal_np::triangles) ))
+  if (!is_default_parameter( get_parameter(np, internal_np::anchors))
+    || !is_default_parameter( get_parameter(np, internal_np::triangles) ))
   {
     if (vl == VERBOSE) {
-      const FT subdivision_ratio = choose_param(get_param(np, internal_np::subdivision_ratio), FT(5.0));
-      const bool relative_to_chord = choose_param(get_param(np, internal_np::relative_to_chord), false);
-      const bool with_dihedral_angle = choose_param(get_param(np, internal_np::with_dihedral_angle), false);
-      const bool optimize_anchor_location = choose_param(get_param(np, internal_np::optimize_anchor_location), true);
-      const bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
+      const FT subdivision_ratio = choose_parameter(get_parameter(np, internal_np::subdivision_ratio), FT(5.0));
+      const bool relative_to_chord = choose_parameter(get_parameter(np, internal_np::relative_to_chord), false);
+      const bool with_dihedral_angle = choose_parameter(get_parameter(np, internal_np::with_dihedral_angle), false);
+      const bool optimize_anchor_location = choose_parameter(get_parameter(np, internal_np::optimize_anchor_location), true);
+      const bool pca_plane = choose_parameter(get_parameter(np, internal_np::pca_plane), false);
       std::cout << "Meshing: "
         << "\nchord_error = " << subdivision_ratio
         << "\nrelative_to_chord = " << relative_to_chord
@@ -233,16 +233,16 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
   }
 
   // get anchor points
-  approx.anchor_points( get_param(np, internal_np::anchors) );
+  approx.anchor_points( get_parameter(np, internal_np::anchors) );
 
-  if (!is_default_param( get_param(np, internal_np::anchors) )
+  if (!is_default_parameter( get_parameter(np, internal_np::anchors) )
     && (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Get anchors done." << std::endl;
 
   // get indexed triangles
-  approx.indexed_triangles( get_param(np, internal_np::triangles) );
+  approx.indexed_triangles( get_parameter(np, internal_np::triangles) );
 
-  if (!is_default_param( get_param(np, internal_np::triangles) )
+  if (!is_default_parameter( get_parameter(np, internal_np::triangles) )
     && (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Get indexed triangles done." << std::endl;
 

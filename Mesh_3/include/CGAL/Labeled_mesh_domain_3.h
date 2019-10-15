@@ -88,10 +88,10 @@ namespace internal {
   /// Returns a box enclosing image \c im
   inline Bbox_3 compute_bounding_box(const Image_3& im)
   {
-    return Bbox_3(-1,-1,-1,
-                  double(im.xdim())*im.vx()+1,
-                  double(im.ydim())*im.vy()+1,
-                  double(im.zdim())*im.vz()+1);
+    return Bbox_3(-1+im.tx(),-1+im.ty(),-1+im.tz(),
+                  double(im.xdim())*im.vx()+im.tx()+1,
+                  double(im.ydim())*im.vy()+im.ty()+1,
+                  double(im.zdim())*im.vz()+im.tz()+1);
   }
 
   template <typename Image_values_to_subdom_indices>

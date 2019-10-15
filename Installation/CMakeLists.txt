@@ -4,14 +4,10 @@
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
 if(NOT PROJECT_NAME)
+  cmake_minimum_required(VERSION 3.1...3.15)
   project(CGAL CXX C)
 endif()
 
-# Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1)
-
-# Tested version:
-cmake_policy(VERSION 3.1)
 
 if(POLICY CMP0056)
   # https://cmake.org/cmake/help/v3.2/policy/CMP0056.html
@@ -32,7 +28,7 @@ include(GNUInstallDirs)
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" FALSE)
+option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" TRUE)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -961,12 +957,17 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
+if(NOT TARGET ALL_CGAL_TARGETS)
+  add_custom_target( ALL_CGAL_TARGETS )
+endif()
+
 macro( add_programs subdir target ON_OFF )
 
   cache_set( CGAL_EXECUTABLE_TARGETS "" )
   
   add_custom_target( ${target} )
-  
+  add_dependencies( ALL_CGAL_TARGETS ${target} )
+
   option( WITH_${target} "Select ${target}" ${ON_OFF} )
   if ( WITH_${target} )
     add_subdirectory( ${subdir} EXCLUDE_FROM_ALL )

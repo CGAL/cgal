@@ -27,6 +27,7 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Weighted_point_3.h>
 
+#include <boost/type_traits/is_same.hpp>
 #include <cassert>
 #include <iostream>
 
@@ -37,6 +38,7 @@ _test_fct_weighted_point_3(const R& )
   std::cout << "Testing functions Weighted_point_3" ;
 
   typedef typename  R::RT    RT;
+  const bool nonexact = boost::is_same<RT, double>::value;
 
   CGAL::Point_3<R> p1(RT(18), RT(15), RT(-21), RT(3) ); //  6,  5, -7
   CGAL::Point_3<R> p2(RT(18), RT(15), RT( 12), RT(3) ); //  6,  5,  4
@@ -138,7 +140,7 @@ _test_fct_weighted_point_3(const R& )
   assert( CGAL::power_side_of_bounded_power_sphere(wp3_b, wp1_b, wp6b_b) == CGAL::ON_BOUNDED_SIDE );
   assert( CGAL::power_side_of_bounded_power_sphere(wp1_b, wp3_b, wp6b_b) == CGAL::ON_BOUNDED_SIDE );
 
-  assert( CGAL::coplanar(p4, p5, p6, p7) );
+  assert( CGAL::coplanar(p4, p5, p6, p7) || nonexact );
   assert( CGAL::power_side_of_bounded_power_sphere(wp4, wp5, wp6, wp7)
           == CGAL::side_of_bounded_sphere(p4, p5, p6, p7) );
   assert( CGAL::power_side_of_bounded_power_sphere(wp4, wp5, wp6, wp5)
@@ -171,11 +173,11 @@ _test_fct_weighted_point_3(const R& )
   assert( CGAL::squared_radius_smallest_orthogonal_sphere(wp1_b, wp3_b) == RT(164));
 
   assert( CGAL::squared_radius_smallest_orthogonal_sphere(wp1, wp3, wp5)
-            == CGAL::squared_radius(p1, p3, p5));
+            == CGAL::squared_radius(p1, p3, p5) || nonexact);
   assert( CGAL::squared_radius_smallest_orthogonal_sphere(wp000, wp100, wp010) == RT(0));
 
   assert( CGAL::squared_radius_smallest_orthogonal_sphere(wp1, wp3, wp4, wp5)
-            == CGAL::squared_radius(p1, p3, p4, p5));
+            == CGAL::squared_radius(p1, p3, p4, p5) || nonexact);
   assert( CGAL::squared_radius_smallest_orthogonal_sphere(wp000, wp100, wp010, wp001) == RT(0));
 
   std::cout << ".";

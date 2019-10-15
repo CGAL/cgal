@@ -179,21 +179,27 @@ public:
   // for user interface with the constraint hierarchy
   typedef typename Constraint_hierarchy::Vertex_it 
                                             Vertices_in_constraint_iterator;
+
+  typedef Iterator_range<Vertices_in_constraint_iterator> Vertices_in_constraint;
   
   typedef typename Constraint_hierarchy::Point_it
                                             Points_in_constraint_iterator;
-
-  typedef typename Constraint_hierarchy::Context      Context;
-  typedef typename Constraint_hierarchy::Context_iterator  Context_iterator;
+  typedef Iterator_range<Points_in_constraint_iterator> Points_in_constraint;
+  
+  typedef typename Constraint_hierarchy::Context          Context;
+  typedef typename Constraint_hierarchy::Context_iterator Context_iterator;
+  typedef Iterator_range<Context_iterator>                Contexts;
+  
   typedef typename Constraint_hierarchy::C_iterator   Constraint_iterator;
+  typedef Iterator_range<Constraint_iterator> Constraints;
+  
   typedef typename Constraint_hierarchy::Subconstraint_iterator  Subconstraint_iterator;
+  typedef Iterator_range<Subconstraint_iterator> Subconstraints;
+  
   typedef typename Constraint_hierarchy::Constraint_id Constraint_id;   
                                             
   typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
   
-  //for backward compatibility
-  typedef Vertices_in_constraint_iterator     Vertices_in_constraint;
-
   using Triangulation::geom_traits;
   using Triangulation::cw;
   using Triangulation::ccw;
@@ -623,10 +629,7 @@ public:
 
     for(Constraint_iterator cit = constraints_begin(); cit != constraints_end(); ++cit){
       os << (*cit).second->all_size();
-       for(Vertices_in_constraint it = vertices_in_constraint_begin(*cit);
-           it != vertices_in_constraint_end(*cit);
-           it++){
-         Vertex_handle vh = *it;
+      for(Vertex_handle vh : vertices_in_constraint(*cit)){
          os << " " << V[vh];
        }
        os << std::endl;
@@ -767,8 +770,19 @@ public:
   // Query of the constraint hierarchy
   Constraint_iterator constraints_begin() const;
   Constraint_iterator constraints_end()   const;
+  Constraints constraints() const
+  {
+    return Constraints(constraints_begin(),constraints_end());
+  }
+  
   Subconstraint_iterator subconstraints_begin() const;
   Subconstraint_iterator subconstraints_end() const;
+
+  Subconstraints subconstraints() const
+  {
+    return Subconstraints(subconstraints_begin(),subconstraints_end());
+  }
+  
   Context   context(Vertex_handle va, Vertex_handle vb); //AF: const; 
 
   bool is_subconstraint(Vertex_handle va, 
@@ -780,11 +794,26 @@ public:
   Context_iterator   contexts_end(Vertex_handle va, 
 				  Vertex_handle vb) const;
 
+  Contexts contexts(Vertex_handle va, Vertex_handle vb) const
+  {
+    return Contexts(contexts_begin(va,vb),contexts_end(va,vb));
+  }
+  
   Vertices_in_constraint_iterator vertices_in_constraint_begin(Constraint_id cid) const;
-  Vertices_in_constraint_iterator vertices_in_constraint_end(Constraint_id cid) const ;  
+  Vertices_in_constraint_iterator vertices_in_constraint_end(Constraint_id cid) const;
+  
+  Vertices_in_constraint vertices_in_constraint(Constraint_id cid) const
+  {
+    return Vertices_in_constraint(vertices_in_constraint_begin(cid), vertices_in_constraint_end(cid));
+  }
+  
   Points_in_constraint_iterator points_in_constraint_begin(Constraint_id cid) const;
   Points_in_constraint_iterator points_in_constraint_end(Constraint_id cid) const ;
 
+  Points_in_constraint points_in_constraint(Constraint_id cid) const
+  {
+    return Points_in_constraint(points_in_constraint_begin(cid), points_in_constraint_end(cid));
+  }
 
   size_type number_of_constraints() {
     return static_cast<size_type> (hierarchy.number_of_constraints());}

@@ -4,4 +4,6 @@
 \example Polygon/Polygon.cpp
 \example Polygon/projected_polygon.cpp
 \example Stream_support/Polygon_WKT.cpp
+\example Polygon/draw_polygon.cpp
+\example Polygon/draw_polygon_with_holes.cpp
 */

@@ -41,6 +41,7 @@ void draw(const SM& asm);
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -202,16 +203,16 @@ protected:
   const ColorFunctor& m_fcolor;
 };
 
-template<class SM, class ColorFunctor>
-void draw(const SM& amesh,
-          const char* title,
-          bool nofill,
-          const ColorFunctor& fcolor)
+// Specialization of draw function.
+template<class K>
+void draw(const Surface_mesh<K>& amesh,
+          const char* title="Surface_mesh Basic Viewer",
+          bool nofill=false)
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
   if (!cgal_test_suite)
@@ -219,30 +220,13 @@ void draw(const SM& amesh,
     int argc=1;
     const char* argv[2]={"surface_mesh_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(app.activeWindow(),
-                                                           amesh,
-                                                           title,
-                                                           nofill,
-                                                           fcolor);
+    DefaultColorFunctorSM fcolor;
+    SimpleSurfaceMeshViewerQt<Surface_mesh<K>, DefaultColorFunctorSM>
+      mainwindow(app.activeWindow(), amesh, title, nofill, fcolor);
     mainwindow.show();
     app.exec();
   }
 }
-
-template<class SM>
-void draw(const SM& amesh, const char* title, bool nofill)
-{
-  DefaultColorFunctorSM c;
-  draw(amesh, title, nofill, c);
-}
-
-template<class SM>
-void draw(const SM& amesh, const char* title)
-{ draw(amesh, title, false); }
-
-template<class SM>
-void draw(const SM& amesh)
-{ draw(amesh, "Basic Surface_mesh Viewer"); }
 
 } // End namespace CGAL
 

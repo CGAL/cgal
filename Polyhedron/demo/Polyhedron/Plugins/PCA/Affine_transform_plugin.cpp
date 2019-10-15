@@ -591,24 +591,20 @@ void Polyhedron_demo_affine_transform_plugin::end(){
   }
   else if(transform_points_item)
   {
-    const Point_set *base_ps = transform_points_item->getBase()->point_set();
-    Point_set* new_ps = new Point_set();
-    new_ps->reserve(base_ps->size());
+    Scene_points_with_normal_item* new_item
+      = new Scene_points_with_normal_item (*(transform_points_item->getBase()));
+    Point_set* new_ps = new_item->point_set();
     CGAL::qglviewer::Vec c = transform_points_item->center();
-    for(Point_set::const_iterator it = base_ps->begin(); it != base_ps->end(); ++ it)
+
+    for(Point_set::Index idx : *new_ps)
     {
-      QVector3D vec = transform_matrix * QVector3D(base_ps->point(*it).x() - c.x,
-                                                   base_ps->point(*it).y() - c.y,
-                                                   base_ps->point(*it).z() - c.z);
-      new_ps->insert(Kernel::Point_3 (vec.x(), vec.y(), vec.z()));
+      QVector3D vec = transform_matrix * QVector3D(new_ps->point(idx).x() - c.x,
+                                                   new_ps->point(idx).y() - c.y,
+                                                   new_ps->point(idx).z() - c.z);
+      new_ps->point(idx) = Kernel::Point_3 (vec.x(), vec.y(), vec.z());
     }
-
-
-    Scene_points_with_normal_item* new_item=new Scene_points_with_normal_item();
-    for(Point_set::const_iterator it = new_ps->begin(); it != new_ps->end(); ++ it)
-      new_item->point_set()->insert(new_ps->point(*it));
+    
     new_item->setName(tr("%1_transformed").arg(transform_points_item->getBase()->name()));
-
     scene->replaceItem(tr_item_index,new_item);
     delete transform_points_item;
     transform_points_item = NULL;

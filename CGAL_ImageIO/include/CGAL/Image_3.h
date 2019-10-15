@@ -155,6 +155,10 @@ public:
   double vy() const { return image_ptr->vy; }
   double vz() const { return image_ptr->vz; }
 
+  double tx() const { return image_ptr->tx; }
+  double ty() const { return image_ptr->ty; }
+  double tz() const { return image_ptr->tz; }
+
   float value(const std::size_t i,
               const std::size_t j,
               const std::size_t k) const
@@ -263,9 +267,9 @@ Image_3::trilinear_interpolation(const Coord_type& x,
   if ( x < 0 || y < 0 || z < 0 )
     return value_outside;
   
-  const Coord_type lx = x / image()->vx;
-  const Coord_type ly = y / image()->vy;
-  const Coord_type lz = z / image()->vz;
+  const Coord_type lx = static_cast<Coord_type>(x / image()->vx);
+  const Coord_type ly = static_cast<Coord_type>(y / image()->vy);
+  const Coord_type lz = static_cast<Coord_type>(z / image()->vz);
   const std::size_t dimx = xdim();
   const std::size_t dimy = ydim();
   const std::size_t dimz = zdim();

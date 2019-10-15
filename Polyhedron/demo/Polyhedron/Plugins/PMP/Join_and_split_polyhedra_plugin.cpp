@@ -33,7 +33,7 @@ class Polyhedron_demo_join_and_split_polyhedra_plugin:
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "join_and_split_polyhedra_plugin.json")
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   QAction* actionJoinPolyhedra, *actionSplitPolyhedra, *actionColorConnectedComponents;
   Messages_interface* msg_interface;
@@ -154,8 +154,6 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
 
       for(int i=0; i<nb_patches; ++i)
       {
-        //std::vector<int> pids;
-        //pids.push_back(i);
         CGAL::Face_filtered_graph<FaceGraph> filter_graph(*item->face_graph(), i, pidmap);
         FaceGraph* new_graph = new FaceGraph();
         CGAL::copy_face_graph(filter_graph, *new_graph);
@@ -175,9 +173,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
 
       int cc=0;
       std::vector<QColor> color_map;
-      if(
-//           item->isItemMulticolor() || 
-         item->hasPatchIds())
+      if(item->hasPatchIds())
         color_map = item->color_vector();
       else
         compute_color_map(item->color(), new_polyhedra.size(), std::back_inserter(color_map));
@@ -191,6 +187,12 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
         ++cc;
         scene->addItem(new_item);
         scene->changeGroup(new_item, group);
+      }
+
+      if(!item->hasPatchIds())//still valid bc the item has not been invalidated.
+      {
+        //remove f:patch_id map to avoid tricking the isMulticolor system.
+        item->face_graph()->remove_property_map(pidmap);
       }
       item->setVisible(false);
       QApplication::restoreOverrideCursor();

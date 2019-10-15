@@ -1,4 +1,4 @@
-#version 120
+
 varying highp vec4 color;
 varying highp vec4 fP;
 varying highp vec3 fN;
@@ -44,18 +44,18 @@ void main(void) {
     gl_FragColor = vec4(d,d,d,1.0);
   else
   {
-    vec4 my_color = vec4(color.xyz, 1.0);
+    highp vec4 my_color = vec4(color.xyz, 1.0);
     highp vec3 L = light_pos.xyz - fP.xyz;
     highp vec3 V = -fP.xyz;
     highp vec3 N;
-    if(fN == highp vec3(0.0,0.0,0.0))
-      N = highp vec3(0.0,0.0,0.0);
+    if(fN == vec3(0.0,0.0,0.0))
+      N = vec3(0.0,0.0,0.0);
     else
       N = normalize(fN);
     L = normalize(L);
     V = normalize(V);
     highp vec3 R = reflect(-L, N);
-    vec4 diffuse;
+    highp vec4 diffuse;
     if(is_two_side == 1)
       diffuse = abs(dot(N,L)) * light_diff * color;
     else

@@ -385,7 +385,8 @@ public:
 
   virtual void read_halfedge_data(Halfedge_handle)
   {}
- 
+  
+  //@}
   /// \name Reading a face.
   //@{
   void read_face_begin()
