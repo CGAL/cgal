@@ -132,7 +132,7 @@
 
 // workaround for the bug https://svn.boost.org/trac10/ticket/12534
 // That bug was introduced in Boost 1.62 and fixed in 1.63.
-#if BOOST_VERSION >= 106200 && BOOSTS_VERSION < 106300
+#if BOOST_VERSION >= 106200 && BOOST_VERSION < 106300
 #  include <boost/container/flat_map.hpp>
 #endif
 
