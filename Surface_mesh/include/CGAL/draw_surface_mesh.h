@@ -165,8 +165,8 @@ protected:
     do
     {
       internal::newell_single_step_3
-        (internal::Geom_utils<Kernel>::get_local_point(sm.point(sm.source(he))),
-         internal::Geom_utils<Kernel>::get_local_point(sm.point(sm.target(he))), normal);
+        (this->get_local_point(sm.point(sm.source(he))),
+         this->get_local_point(sm.point(sm.target(he))), normal);
       ++nb;
       he=sm.next(he);
     }
