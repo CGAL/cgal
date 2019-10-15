@@ -157,7 +157,8 @@ public:
   public:
     
     No_lvalue_iterator() : point(NULL), idx(0) { }
-    No_lvalue_iterator(const Point& point, std::size_t idx = 0) : point(new Point(point)), idx(idx) { }
+    No_lvalue_iterator(const Point& point) : point(new Point(point)), idx(0) { }
+    No_lvalue_iterator(const Point& point, int) : point(new Point(point)), idx(Base::Dimension::value) { }
     
   private:
     
@@ -279,9 +280,6 @@ class Distance_adapter : public Base_distance {
   PointPropertyMap ppmap;
   typedef typename Base_distance::FT FT;
 
-  CGAL_static_assertion( ( boost::is_same< boost::lvalue_property_map_tag,
-                           typename boost::property_traits<PointPropertyMap>::category
-                         >::value ) );
 public:
     
   Distance_adapter( const PointPropertyMap& ppmap_=PointPropertyMap(),
