@@ -290,7 +290,7 @@ operator()()
         }
         else{
           (*u)->set_cost(*dist);
-          find_result_u->second=mpq->push(u);
+          h[u.base()->id]=mpq->push(u);
         }
       }
     }
