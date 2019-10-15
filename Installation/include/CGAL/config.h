@@ -361,8 +361,6 @@
 #    define CGAL_BIG_ENDIAN
 #  elif BOOST_ENDIAN_LITTLE_BYTE
 #    define CGAL_LITTLE_ENDIAN
-#  else
-#    error Unknown endianness
 #  endif
 #elif defined (__GLIBC__)
 #  include <endian.h>
@@ -370,8 +368,6 @@
 #    define CGAL_LITTLE_ENDIAN
 #  elif (__BYTE_ORDER == __BIG_ENDIAN)
 #    define CGAL_BIG_ENDIAN
-#  else
-#    error Unknown endianness
 #  endif
 #elif defined(__sparc) || defined(__sparc__) \
    || defined(_POWER) || defined(__powerpc__) \
@@ -385,11 +381,19 @@
    || defined(_M_IX86) || defined(_M_IA64) \
    || defined(_M_ALPHA) || defined(_WIN64)
 #  define CGAL_LITTLE_ENDIAN
-#else
-#  error Unknown endianness
 #endif
 
-
+#if ! defined(CGAL_LITTLE_ENDIAN) && ! defined(CGAL_BIG_ENDIAN)
+#  ifdef CGAL_DEFAULT_IS_LITTLE_ENDIAN
+#    if CGAL_DEFAULT_IS_LITTLE_ENDIAN
+#      define CGAL_LITTLE_ENDIAN
+#    else
+#      define CGAL_BIG_ENDIAN
+#    endif
+#  else
+#    error Unknown endianness: Define CGAL_DEFAULT_IS_LITTLE_ENDIAN to 1 for little endian and to 0 for big endian.
+#  endif
+#endif
 // Symbolic constants to tailor inlining. Inlining Policy.
 // =======================================================
 #ifndef CGAL_MEDIUM_INLINE
@@ -550,7 +554,7 @@ using std::max;
 #  define CGAL_NORETURN  __attribute__ ((__noreturn__))
 #elif defined (_MSC_VER)
 #  define CGAL_NORETURN __declspec(noreturn)
-#else  
+#else
 #  define CGAL_NORETURN
 #endif
 
