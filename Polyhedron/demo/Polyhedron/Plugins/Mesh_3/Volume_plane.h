@@ -278,18 +278,37 @@ private:
   QString name(y_tag) const { return tr("Y Slice for %2").arg(name_); }
   QString name(z_tag) const { return tr("Z Slice for %2").arg(name_); }
 
-  double compute_maxDim() const
+  //according to the tag, a,b,c dim change but not the scale. We look for the max dimension of the whole image.
+  //A high scale factor will often go with a low dimesion, to compensate it. So we don't want a max being the
+  //higher scale * the higher dim, hence the tag specialisation.
+//TODO: set the scale factors according to the dimensipon to avoid doing that.
+  double compute_maxDim(x_tag) const
   {
-    double ax((adim_ - 1) * xscale_), ay((adim_ - 1) * yscale_), az((adim_ - 1) * zscale_),
-           bx((bdim_ - 1) * xscale_), by((bdim_ - 1) * yscale_), bz((bdim_ - 1) * zscale_),
-           cx((cdim_ - 1) * xscale_), cy((cdim_ - 1) * yscale_), cz((cdim_ - 1) * zscale_);
+    double max_a((adim_ - 1) * yscale_),
+        max_b((bdim_ - 1) * zscale_),
+        max_c((cdim_ - 1) * xscale_);
 
-    double max_a = (std::max)((std::max)(ax, ay), az);
-    double max_b = (std::max)((std::max)(bx, by), bz);
-    double max_c = (std::max)((std::max)(cx, cy), cz);
     return (std::max)((std::max)(max_a, max_b), max_c);
-
   }
+
+  double compute_maxDim(y_tag) const
+  {
+    double max_a((adim_ - 1) * xscale_),
+        max_b((bdim_ - 1) * zscale_),
+        max_c((cdim_ - 1) * yscale_);
+
+    return (std::max)((std::max)(max_a, max_b), max_c);
+  }
+
+  double compute_maxDim(z_tag) const
+  {
+    double max_a((adim_ - 1) * xscale_),
+        max_b((bdim_ - 1) * yscale_),
+        max_c((cdim_ - 1) * zscale_);
+
+    return (std::max)((std::max)(max_a, max_b), max_c);
+  }
+
   void drawRectangle(x_tag, bool is_loop) const {
 
 
@@ -348,20 +367,23 @@ private:
 
   void drawSpheres(x_tag) const
   {
-      double max_dim = compute_maxDim();
+      double max_dim = compute_maxDim(x_tag());
       sphere_radius = max_dim / 40.0f;
       create_flat_sphere(1.0f, v_spheres, n_spheres, 18);
 
-      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + max_dim/15.0f); c_spheres.push_back(0.0f);
-      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_ ); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + max_dim/15.0f);
-      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + max_dim/15.0f); c_spheres.push_back((bdim_ - 1 ) * zscale_);
-      c_spheres.push_back(0.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + max_dim/15.0f);
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + 1.1*sphere_radius); c_spheres.push_back(0.0f);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_ ); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + 1.1*sphere_radius);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + 1.1*sphere_radius); c_spheres.push_back((bdim_ - 1 ) * zscale_);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + 1.1*sphere_radius);
 
   }
 
   void drawSpheres(y_tag) const
   {
-      double max_dim = compute_maxDim();
+      double max_dim = compute_maxDim(y_tag());
       sphere_radius = max_dim / 40.0f;
       create_flat_sphere(1.0f, v_spheres, n_spheres,18);
 
@@ -373,14 +395,14 @@ private:
 
   void drawSpheres(z_tag) const
   {
-      double max_dim = compute_maxDim();
+      double max_dim = compute_maxDim(z_tag());
       sphere_radius = max_dim / 40.0f;
       create_flat_sphere(1.0f, v_spheres, n_spheres,18);
 
-      c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f - max_dim/15.0f); c_spheres.push_back(0.0f);
-      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back((bdim_ - 1) * yscale_); c_spheres.push_back(0.0f);
-      c_spheres.push_back((adim_ - 1) * xscale_); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f);
-      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
+      c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f - 1.1*sphere_radius); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-1.1*sphere_radius); c_spheres.push_back((bdim_ - 1) * yscale_); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f-1.1*sphere_radius); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-1.1*sphere_radius); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
   }
 
   CGAL::qglviewer::Constraint* setConstraint(x_tag) {
@@ -544,7 +566,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
      bDim() <= 1 ||
      cDim() <=1)
     return;
-  double max_dim = compute_maxDim();
+  double max_dim = compute_maxDim(*this);
   sphere_radius = max_dim/20.0f * sphere_Slider->value()/100.0f;
   getTriangleContainer(1)->getVbo(Tc::Radius)->bind();
   getTriangleContainer(1)->getVao(viewer)->program->setAttributeValue("radius", sphere_radius);
