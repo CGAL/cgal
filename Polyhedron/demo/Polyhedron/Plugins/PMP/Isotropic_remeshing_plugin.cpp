@@ -51,6 +51,7 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
+
 // give a halfedge and a target edge length, put in `out` points
 // which the edge equally spaced such that splitting the edge
 // using the sequence of points make the edges shorter than
@@ -331,7 +332,7 @@ public Q_SLOTS:
       }
       bool edges_only = ui.splitEdgesOnly_checkbox->isChecked();
       bool preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
-      double target_length = ui.edgeLength_dspinbox->value();
+      double target_length = ui.edgeLength_dspinbox->text().toDouble();
       unsigned int nb_iter = ui.nbIterations_spinbox->value();
       unsigned int nb_smooth = ui.nbSmoothing_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
@@ -672,7 +673,7 @@ public Q_SLOTS:
 
         edges_only = ui.splitEdgesOnly_checkbox->isChecked();
         preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
-        target_length = ui.edgeLength_dspinbox->value();
+        target_length = ui.edgeLength_dspinbox->text().toDouble();
         nb_iter = ui.nbIterations_spinbox->value();
         protect = ui.protect_checkbox->isChecked();
         smooth_features = ui.smooth1D_checkbox->isChecked();
@@ -904,14 +905,9 @@ private:
     double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
                                    + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin())
                                    + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
-    double log = std::log10(diago_length);
-    unsigned int nb_decimals = (log > 0) ? 5 : (std::ceil(-log)+3);
 
-    ui.edgeLength_dspinbox->setDecimals(nb_decimals);
-    ui.edgeLength_dspinbox->setSingleStep(1e-3);
-    ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min
-                                     2.   * diago_length);//max
-    ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
+
+    ui.edgeLength_dspinbox->setText(tr("%1").arg(0.05 * diago_length));
 
     std::ostringstream oss;
     oss << "Diagonal length of the Bbox of the selection to remesh is ";
