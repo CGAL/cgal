@@ -95,7 +95,6 @@ public:
   void init_ui()
   {
     ui_widget.time_step_spinBox->setValue(0.00001);
-    ui_widget.time_step_spinBox->setSingleStep(0.00001);
     ui_widget.time_step_spinBox->setMinimum(1e-6);
 
     ui_widget.smooth_iter_spinBox->setValue(1);

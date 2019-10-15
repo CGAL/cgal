@@ -33,5 +33,11 @@
   {
     this->validator->setTop(d);
   }
+
+  void DoubleEdit::setRange(double min, double max)
+  {
+    setMinimum(min);
+    setMaximum(max);
+  }
   #include "CGAL_double_edit.moc"
 

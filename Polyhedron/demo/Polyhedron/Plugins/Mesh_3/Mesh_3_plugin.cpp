@@ -361,8 +361,6 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
   int decimals = 0;
   double sizing_default = get_approximate(diag * 0.05, 2, decimals);
-  ui.facetSizing->setDecimals(-decimals+2);
-  ui.facetSizing->setSingleStep(std::pow(10.,decimals));
   ui.facetSizing->setRange(diag * 10e-6, // min
                            diag); // max
   ui.facetSizing->setValue(sizing_default); // default value
@@ -375,8 +373,6 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   ui.tetSizing->setValue(sizing_default); // default value
 
   double approx_default = get_approximate(diag * 0.005, 2, decimals);
-  ui.approx->setDecimals(-decimals+2);
-  ui.approx->setSingleStep(std::pow(10.,decimals));
   ui.approx->setRange(diag * 10e-7, // min
                       diag); // max
   ui.approx->setValue(approx_default);

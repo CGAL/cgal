@@ -24,6 +24,7 @@ public:
   void setValue(double d);
   void setMinimum(double d);
   void setMaximum(double d);
+  void setRange(double min, double max);
 private:
   QDoubleValidator* validator;
 };
