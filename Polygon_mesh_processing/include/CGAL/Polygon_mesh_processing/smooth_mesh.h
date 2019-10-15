@@ -34,6 +34,11 @@
 
 #include <CGAL/property_map.h>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
