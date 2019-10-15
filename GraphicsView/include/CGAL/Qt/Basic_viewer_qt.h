@@ -446,6 +446,20 @@ public:
   }
 
 protected:
+  // Shortcuts to simplify function calls.
+  template<typename KPoint>
+  static Local_point get_local_point(const KPoint& p)
+  {
+    return internal::Geom_utils<typename CGAL::Kernel_traits<KPoint>::Kernel, Local_kernel>::
+      get_local_point(p);
+  }
+  template<typename KVector>
+  static Local_vector get_local_vector(const KVector& v)
+  {
+    return internal::Geom_utils<typename CGAL::Kernel_traits<KVector>::Kernel, Local_kernel>::
+      get_local_vector(v);
+  }
+
   void compile_shaders()
   {
     rendering_program_face.removeAllShaders();
