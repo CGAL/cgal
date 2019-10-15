@@ -86,10 +86,11 @@
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4146 4244 4267 4800)
+#  pragma warning(disable:4146 4244 4267 4702 4800)
      // warning on - applied on unsigned number
      // conversion with loss of data
      // conversion with loss of data
+     // unreachable code
      // int to bool performance
 #endif
 
