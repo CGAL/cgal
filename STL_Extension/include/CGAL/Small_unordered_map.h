@@ -22,7 +22,7 @@
 #define CGAL_SMALL_UNORDERED_MAP_H
 
 #include <array>
-#inc;ude <iostream>
+#include <iostream>
 
 //#define CGAL_SMALL_UNORDERED_MAP_STATS
 namespace CGAL {

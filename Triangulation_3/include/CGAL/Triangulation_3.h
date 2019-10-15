@@ -3841,7 +3841,7 @@ insert_in_conflict(const Point& p,
 
       int E = 3* facets.size();
       int ei = 0;
-      for(Halfedge_facet_map::iterator it = h2f.begin(); it != h2f.end(); ++it){
+      for(auto it = h2f.begin(); it != h2f.end(); ++it){
         if(ei>E){
           std::cout << "Stop"<< std::flush;
           char c; std::cin >> c;
