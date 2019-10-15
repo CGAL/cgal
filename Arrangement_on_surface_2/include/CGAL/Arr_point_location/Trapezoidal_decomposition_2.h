@@ -49,6 +49,111 @@
 
 namespace CGAL {
 
+namespace internal{
+
+// struct used to avoid recursive deletion of elements of
+// Td_map_item. Td_active_edge and Td_active_edge_item are
+// both refering to elements of the same type creating
+// recursive call to ~Handle() if we let the regular
+// calls of destructors. Here elements are copied in
+// a vector and the true deletion is done when the vector
+// is cleared.
+template <class Traits>
+struct Non_recursive_td_map_item_destructor
+{
+  typedef typename Traits::Td_map_item Td_map_item;
+  typedef typename Traits::Td_active_trapezoid Td_active_trapezoid;
+  typedef typename Traits::Td_active_edge Td_active_edge;
+
+
+  struct Child_visitor
+  {
+    typedef void result_type;
+    std::vector<Td_map_item>& m_queue;
+
+    Child_visitor(std::vector<Td_map_item>& queue)
+      : m_queue(queue)
+    {}
+
+    void operator()(Td_active_trapezoid& item)
+    {
+      if (item.is_last_reference())
+        m_queue.push_back(item);
+    }
+
+    void operator()(Td_active_edge& item)
+    {
+      if (item.is_last_reference())
+        m_queue.push_back(item);
+    }
+
+    template <class T>
+    void operator()(T&) {} // nothing to do for the other types of the variant
+  };
+
+  struct Item_visitor
+  {
+    typedef void result_type;
+    Child_visitor& m_child_visitor;
+
+    Item_visitor(Child_visitor& child_visitor)
+      : m_child_visitor(child_visitor)
+    {}
+
+    void operator()(Td_active_trapezoid& item)
+    {
+      boost::apply_visitor(m_child_visitor, item.lb());
+      boost::apply_visitor(m_child_visitor, item.lt());
+      boost::apply_visitor(m_child_visitor, item.rb());
+      boost::apply_visitor(m_child_visitor, item.rt());
+      item.clear_neighbors();
+    }
+
+    void operator()(Td_active_edge& item)
+    {
+      boost::apply_visitor(m_child_visitor, item.next());
+      item.set_next(Td_map_item(0));
+    }
+
+    template <class T>
+    void operator()(T&) {} // nothing to do for the other types of the variant
+  };
+
+  std::vector<Td_map_item> queue;
+  Child_visitor child_visitor;
+  Item_visitor item_visitor;
+
+  Non_recursive_td_map_item_destructor(Td_active_trapezoid& item)
+    : child_visitor(queue)
+    , item_visitor(child_visitor)
+  {
+    item_visitor(item);
+
+    while (!queue.empty())
+    {
+      Td_map_item item = queue.back();
+      queue.pop_back();
+      boost::apply_visitor(item_visitor, item);
+    }
+  }
+
+  Non_recursive_td_map_item_destructor(Td_active_edge& item)
+    : child_visitor(queue)
+    , item_visitor(child_visitor)
+  {
+    item_visitor(item);
+
+    while (!queue.empty())
+    {
+      Td_map_item item = queue.back();
+      queue.pop_back();
+      boost::apply_visitor(item_visitor, item);
+    }
+  }
+};
+
+} // internal
+
 /*! \class Trapezoidal_decomposition_2
  * parameters    Traits
  * Description   Implementation for a planar trapezoidal map also known as
@@ -1447,7 +1552,9 @@ public:
       {
         if (do_rebuild && not_within_limits())
         {
+#ifdef CGAL_TD_DEBUG
           std::cout << "starting over after " << number_of_curves() << std::flush;
+#endif
           start_over = true;
           clear();
           break;
@@ -1853,14 +1960,14 @@ public:
     ds->filter(representatives, Td_active_edge_item(*traits));
 
 #ifndef CGAL_TD_DEBUG
-    CGAL_warning(sz == representatives.size());
+    CGAL_warning(sz <= representatives.size());
 #else
 
     unsigned long rep = representatives.size();
-    if (sz != rep) {
+    if (sz > rep) {
       std::cerr << "\nnumber_of_curves()=" << sz;
       std::cerr << "\nrepresentatives.size()=" << rep;
-      CGAL_assertion(number_of_curves()==representatives.size());
+      CGAL_assertion(number_of_curves()<=representatives.size());
     }
 #endif
 
@@ -1873,7 +1980,15 @@ public:
       }
     }
     if (! container.empty()) {
-      CGAL::cpp98::random_shuffle(container.begin(),container.end());
+      if (sz != representatives.size())
+      {
+        std::sort(container.begin(),container.end());
+        typename Halfedge_container::iterator last = std::unique(container.begin(), container.end());
+        container.erase(last, container.end());
+      }
+      CGAL_assertion(sz==container.size());
+
+      // CGAL::cpp98::random_shuffle(container.begin(),container.end()); // already done in insert()
     }
     return sz;
   }
