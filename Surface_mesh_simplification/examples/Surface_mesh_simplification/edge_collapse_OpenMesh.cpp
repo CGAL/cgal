@@ -78,8 +78,8 @@ int main(int argc, char** argv)
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface mesh drops below the specified number (1000)
-  SMS::Count_stop_predicate<Surface_mesh> stop(0);
-     
+  SMS::Count_stop_predicate<Surface_mesh> stop(1000);
+
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
 
