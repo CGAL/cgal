@@ -293,8 +293,12 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   Ui::Meshing_dialog ui;
   ui.setupUi(&dialog);
 
-  ui.facetAngle->setRange(0.0, 20.0);
+  ui.facetAngle->setRange(0.0, 30.0);
   ui.facetAngle->setValue(25.0);
+  ui.edgeSizing->setMinimum(0.0);
+  ui.sharpEdgesAngle->setMaximum(180);
+  ui.iso_value_spinBox->setRange(-65536.0, 65536.0);
+  ui.tetShape->setMinimum(1.0);
 
   ui.advanced->setVisible(false);
   connect(ui.facetTopologyLabel,
