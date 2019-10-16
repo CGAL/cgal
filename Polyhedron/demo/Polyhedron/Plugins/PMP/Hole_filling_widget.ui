@@ -87,18 +87,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="vertices_threshold_spin_box">
-           <property name="decimals">
-            <number>0</number>
-           </property>
-           <property name="maximum">
-            <double>999999999.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>10.000000000000000</double>
+          <widget class="DoubleEdit" name="vertices_threshold_spin_box">
+           <property name="text">
+            <string>10.0</string>
            </property>
           </widget>
          </item>
@@ -131,7 +122,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>1,41</string>
+            <string>1.41</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

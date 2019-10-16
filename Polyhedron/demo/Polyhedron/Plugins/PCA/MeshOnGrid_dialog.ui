@@ -53,7 +53,7 @@
       <item row="1" column="1">
        <widget class="DoubleEdit" name="x_space_doubleSpinBox">
         <property name="text">
-         <string>0,00</string>
+         <string>0.00</string>
         </property>
        </widget>
       </item>
@@ -93,7 +93,7 @@
       <item row="1" column="1">
        <widget class="DoubleEdit" name="y_space_doubleSpinBox">
         <property name="text">
-         <string>0,00</string>
+         <string>0.00</string>
         </property>
        </widget>
       </item>
@@ -133,7 +133,7 @@
       <item row="1" column="1">
        <widget class="DoubleEdit" name="z_space_doubleSpinBox">
         <property name="text">
-         <string>0,00</string>
+         <string>0.00</string>
         </property>
        </widget>
       </item>

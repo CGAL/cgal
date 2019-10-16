@@ -626,7 +626,7 @@ public Q_SLOTS:
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    float vsize = float(voxel_size->text().toDouble());
+    float vsize = float(voxel_size->value());
     if (vsize == 0.f)
       vsize = -1.f; // auto value
     
@@ -928,7 +928,7 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     CGAL::Real_timer t;
     t.start();
-    run (classif, 2, std::size_t(subdivisions->value()), smoothing->text().toDouble());
+    run (classif, 2, std::size_t(subdivisions->value()), smoothing->value());
     t.stop();
     std::cerr << "Graph Cut classification computed in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
@@ -1368,7 +1368,8 @@ public Q_SLOTS:
       trials->setRange (1, 99999);
       trials->setValue (500);
       DoubleEdit* rate = dialog.add<DoubleEdit> ("Learning rate: ", "learning_rate");
-      rate->setText(tr("%1").arg(0.001));
+      rate->setRange (0.00001, 10000.0);
+      rate->setValue (0.001);
       QSpinBox* batch = dialog.add<QSpinBox> ("Batch size: ", "batch_size");
       batch->setRange (1, 2000000000);
       batch->setValue (1000);

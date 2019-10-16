@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="selector_tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="prismTab">
        <attribute name="title">
@@ -138,7 +138,7 @@ QGroupBox::title {
                <item>
                 <widget class="DoubleEdit" name="prismBaseSpinBox">
                  <property name="text">
-                  <string>1,00</string>
+                  <string>1.00</string>
                  </property>
                 </widget>
                </item>
@@ -159,7 +159,7 @@ QGroupBox::title {
                <item>
                 <widget class="DoubleEdit" name="prismHeightSpinBox">
                  <property name="text">
-                  <string>1,00</string>
+                  <string>1.00</string>
                  </property>
                 </widget>
                </item>
@@ -412,18 +412,15 @@ QGroupBox::title {
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="pyramidHeightSpinBox">
-                 <property name="decimals">
-                  <number>5</number>
+                <widget class="DoubleEdit" name="pyramidHeightSpinBox">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
                  </property>
-                 <property name="minimum">
-                  <double>-999999.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>999999.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>1.000000000000000</double>
+                 <property name="text">
+                  <string>1.00</string>
                  </property>
                 </widget>
                </item>
@@ -457,7 +454,7 @@ QGroupBox::title {
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="0,0">
+              <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,0">
                <item>
                 <widget class="QLabel" name="label_13">
                  <property name="toolTip">
@@ -469,18 +466,15 @@ QGroupBox::title {
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="pyramidBaseSpinBox">
-                 <property name="decimals">
-                  <number>5</number>
+                <widget class="DoubleEdit" name="pyramidBaseSpinBox">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
                  </property>
-                 <property name="minimum">
-                  <double>-999999.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>999999.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>1.000000000000000</double>
+                 <property name="text">
+                  <string>1.00</string>
                  </property>
                 </widget>
                </item>

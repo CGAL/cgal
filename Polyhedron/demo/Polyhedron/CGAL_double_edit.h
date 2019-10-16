@@ -6,14 +6,11 @@
 #include <QObject>
 #include <QtCore/qglobal.h>
 #include <QLineEdit>
-#ifdef cgal_double_edit_EXPORTS
-#  define CGAL_DOUBLE_EDIT_EXPORT Q_DECL_EXPORT
-#else
-#  define CGAL_DOUBLE_EDIT_EXPORT Q_DECL_IMPORT
-#endif
+#include "Scene_config.h"
 
-class QDoubleValidator;
-class CGAL_DOUBLE_EDIT_EXPORT DoubleEdit : public QLineEdit {
+
+class DoubleValidator;
+class SCENE_EXPORT DoubleEdit : public QLineEdit {
 
   Q_OBJECT
 
@@ -26,6 +23,6 @@ public:
   void setMaximum(double d);
   void setRange(double min, double max);
 private:
-  QDoubleValidator* validator;
+  DoubleValidator* validator;
 };
 #endif // CGAL_DOUBLE_EDIT_H

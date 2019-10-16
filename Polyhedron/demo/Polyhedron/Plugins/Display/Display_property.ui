@@ -112,14 +112,14 @@
            <item>
             <widget class="DoubleEdit" name="minBox">
              <property name="text">
-              <string>0,00</string>
+              <string>0.00</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="DoubleEdit" name="maxBox">
              <property name="text">
-              <string>2,00</string>
+              <string>2.00</string>
              </property>
             </widget>
            </item>

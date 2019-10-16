@@ -824,7 +824,7 @@ protected Q_SLOTS:
     DoubleEdit* epsilon = dialog.add<DoubleEdit> ("Epsilon: ");
     if (rg_epsilon < 0.)
       rg_epsilon = (std::max)(0.00001, 0.005 * scene->len_diagonal());
-    epsilon->setText(tr("%1").arg(rg_epsilon));
+    epsilon->setValue(rg_epsilon);
     
     DoubleEdit* cluster_epsilon = dialog.add<DoubleEdit> ("Cluster epsilon: ");
     if (rg_cluster_epsilon < 0.)
@@ -838,8 +838,8 @@ protected Q_SLOTS:
     
     if (dialog.exec())
     {
-      rg_epsilon = epsilon->text().toDouble();
-      rg_cluster_epsilon = cluster_epsilon->text().toDouble();
+      rg_epsilon = epsilon->value();
+      rg_cluster_epsilon = cluster_epsilon->value();
       rg_normal_threshold = normal_threshold->value();
     }
   }

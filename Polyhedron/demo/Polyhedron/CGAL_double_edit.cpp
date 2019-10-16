@@ -2,11 +2,32 @@
 
 #include <QDoubleValidator>
 
-  DoubleEdit::DoubleEdit(QWidget *parent)
-    : QLineEdit()
+class DoubleValidator : public QDoubleValidator
+{
+public:
+  DoubleValidator(QObject* parent = nullptr)
+    : QDoubleValidator(parent)
   {
-    validator = new QDoubleValidator(this);
-    validator->setLocale(QLocale::C);
+    setLocale(QLocale::C);
+  }
+
+  void fixup ( QString & input ) const
+  {
+    input.replace(".", locale().decimalPoint());
+    input.replace(",", locale().decimalPoint());
+    QDoubleValidator::fixup(input);
+  }
+  QValidator::State validate ( QString & input, int & pos ) const
+  {
+    fixup(input);
+    return QDoubleValidator::validate(input, pos);
+  }
+};
+
+  DoubleEdit::DoubleEdit(QWidget *parent)
+    : QLineEdit(parent)
+  {
+    validator = new DoubleValidator(this);
     this->setValidator(validator);
   }
 
@@ -14,6 +35,8 @@
   {
     delete validator;
   }
+
+
   double DoubleEdit::value() const
   {
     return this->text().toDouble();
@@ -36,8 +59,7 @@
 
   void DoubleEdit::setRange(double min, double max)
   {
-    setMinimum(min);
-    setMaximum(max);
+    this->validator->setRange(min, max);
   }
   #include "CGAL_double_edit.moc"
 

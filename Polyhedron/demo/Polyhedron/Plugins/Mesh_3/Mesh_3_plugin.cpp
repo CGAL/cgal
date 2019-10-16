@@ -293,6 +293,9 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   Ui::Meshing_dialog ui;
   ui.setupUi(&dialog);
 
+  ui.facetAngle->setRange(0.0, 20.0);
+  ui.facetAngle->setValue(25.0);
+
   ui.advanced->setVisible(false);
   connect(ui.facetTopologyLabel,
           &QLabel::linkActivated,
@@ -366,8 +369,6 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   ui.facetSizing->setValue(sizing_default); // default value
   ui.edgeSizing->setValue(sizing_default);
 
-  ui.tetSizing->setDecimals(-decimals+2);
-  ui.tetSizing->setSingleStep(std::pow(10.,decimals));
   ui.tetSizing->setRange(diag * 10e-6, // min
                          diag); // max
   ui.tetSizing->setValue(sizing_default); // default value

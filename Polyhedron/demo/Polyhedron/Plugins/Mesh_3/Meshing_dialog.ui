@@ -160,14 +160,14 @@
       <item row="3" column="1">
        <widget class="DoubleEdit" name="sharpEdgesAngle">
         <property name="text">
-         <string>60,00</string>
+         <string>60.00</string>
         </property>
        </widget>
       </item>
       <item row="7" column="1">
        <widget class="DoubleEdit" name="edgeSizing">
         <property name="text">
-         <string>0,0</string>
+         <string>0.0</string>
         </property>
        </widget>
       </item>
@@ -320,7 +320,7 @@
       <item row="1" column="1">
        <widget class="DoubleEdit" name="approx">
         <property name="text">
-         <string>0,00</string>
+         <string>0.00</string>
         </property>
        </widget>
       </item>
@@ -372,35 +372,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="tetShape">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="minimum">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>3.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="tetSizing">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="decimals">
-         <number>4</number>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
@@ -408,9 +379,6 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>tetShape</cstring>
         </property>
        </widget>
       </item>
@@ -422,8 +390,19 @@
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="buddy">
-         <cstring>tetSizing</cstring>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="DoubleEdit" name="tetSizing">
+        <property name="text">
+         <string>0.00</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="DoubleEdit" name="tetShape">
+        <property name="text">
+         <string>3.00</string>
         </property>
        </widget>
       </item>
@@ -457,22 +436,6 @@
          <bool>true</bool>
         </property>
        </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="iso_value_spinBox">
-        <property name="minimum">
-         <double>-65536.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>65536.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>3.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="value_outside_spinBox"/>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_4">
@@ -510,6 +473,20 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="DoubleEdit" name="value_outside_spinBox">
+        <property name="text">
+         <string>0.00</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="DoubleEdit" name="iso_value_spinBox">
+        <property name="text">
+         <string>3.00</string>
         </property>
        </widget>
       </item>
@@ -562,9 +539,7 @@
   <tabstop>noApprox</tabstop>
   <tabstop>noFacetSizing</tabstop>
   <tabstop>noAngle</tabstop>
-  <tabstop>tetSizing</tabstop>
   <tabstop>noTetSizing</tabstop>
-  <tabstop>tetShape</tabstop>
   <tabstop>noTetShape</tabstop>
   <tabstop>checkBox</tabstop>
   <tabstop>manifoldCheckBox</tabstop>

@@ -101,7 +101,7 @@
          <item>
           <widget class="DoubleEdit" name="Density_control_factor_spin_box">
            <property name="text">
-            <string>2,41</string>
+            <string>2.41</string>
            </property>
           </widget>
          </item>

@@ -57,7 +57,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>0,000001</string>
+          <string>0.000001</string>
          </property>
         </widget>
        </item>

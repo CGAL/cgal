@@ -141,7 +141,7 @@
       <item row="1" column="1">
        <widget class="DoubleEdit" name="edgeLength_dspinbox">
         <property name="text">
-         <string>0,00</string>
+         <string>0.00</string>
         </property>
        </widget>
       </item>

@@ -332,7 +332,7 @@ public Q_SLOTS:
       }
       bool edges_only = ui.splitEdgesOnly_checkbox->isChecked();
       bool preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
-      double target_length = ui.edgeLength_dspinbox->text().toDouble();
+      double target_length = ui.edgeLength_dspinbox->value();
       unsigned int nb_iter = ui.nbIterations_spinbox->value();
       unsigned int nb_smooth = ui.nbSmoothing_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
@@ -673,7 +673,7 @@ public Q_SLOTS:
 
         edges_only = ui.splitEdgesOnly_checkbox->isChecked();
         preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
-        target_length = ui.edgeLength_dspinbox->text().toDouble();
+        target_length = ui.edgeLength_dspinbox->value();
         nb_iter = ui.nbIterations_spinbox->value();
         protect = ui.protect_checkbox->isChecked();
         smooth_features = ui.smooth1D_checkbox->isChecked();
@@ -907,7 +907,7 @@ private:
                                    + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
 
 
-    ui.edgeLength_dspinbox->setText(tr("%1").arg(0.05 * diago_length));
+    ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
 
     std::ostringstream oss;
     oss << "Diagonal length of the Bbox of the selection to remesh is ";
