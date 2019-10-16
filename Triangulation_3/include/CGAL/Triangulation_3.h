@@ -72,6 +72,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
+#include <boost/container/small_vector.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/internal/info_check.h>
@@ -1334,7 +1335,11 @@ protected:
     CGAL_triangulation_precondition(tester(d));
 
     // To store the boundary cells, in case we need to rollback
-    std::stack<Cell_handle> cell_stack;
+
+    typedef boost::container::small_vector<Cell_handle,64> SV;
+    SV sv;
+    std::stack<Cell_handle, SV > cell_stack(sv);
+    
     cell_stack.push(d);
     d->tds_data().mark_in_conflict();
 
