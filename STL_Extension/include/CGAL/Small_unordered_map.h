@@ -34,7 +34,8 @@ class Small_unordered_map{
 #endif
   static const unsigned int M = N<<3;
   int head = -2;
-  std::array<int, M>           occupied; 
+  mutable std::array<int, M>           occupied;
+  std::array<int, M>           unfreelist; 
   std::array<std::pair<K,T>, M> data;
   const H hash = {};
 
@@ -64,9 +65,10 @@ public:
 #endif     
     do {
       if(occupied[i]== -1){
+        occupied[i] = 1;
         data[i].first = k;
         data[i].second = t;
-        occupied[i] = head;
+        unfreelist[i] = head;
         head = i;
 #ifdef  CGAL_SMALL_UNORDERED_MAP_STATS        
         if(collision>9){
@@ -91,7 +93,8 @@ public:
     unsigned int h  = hash(k)%M;
     int i = h;
     do{
-      if(data[i].first == k){
+      if((occupied[i] == 1) && (data[i].first == k)){
+        occupied[i] = -1;
         return data[i].second;
       }
       i = (i+1)%M;
@@ -103,7 +106,7 @@ public:
   void clear()
   {
     head = -2;
-    occupied.fill(-1);
+    //    occupied.fill(-1);
   }
 
   struct iterator {
@@ -129,7 +132,7 @@ public:
     }
     iterator operator++()
     {
-      pos = map.occupied[pos];
+      pos = map.unfreelist[pos];
       return *this;
     }
     
@@ -149,6 +152,11 @@ public:
     return iterator(*this);
   }
 
+  void clear(const iterator it)
+  {
+    occupied[it.pos] = -1;
+  }
+  
   friend struct iterator;
 };
 
