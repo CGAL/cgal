@@ -495,7 +495,7 @@ public:
     if (!p2_ptr) return CGAL::SMALLER;
 
     CGAL_assertion_code(FT t2 = m_parametric_distance_along_segment_2(s2, *p2_ptr);)
-    CGAL_assertion(t1 >= FT(-1)/FT(100000) && t1 <= FT(1)+FT(1)/FT(100000));
+    CGAL_assertion(t2 >= FT(-1)/FT(100000) && t2 <= FT(1)+FT(1)/FT(100000));
 
 // #define CGAL_SMSP_DONT_USE_RELAXED_PRUNING
 #ifndef CGAL_SMSP_DONT_USE_RELAXED_PRUNING
