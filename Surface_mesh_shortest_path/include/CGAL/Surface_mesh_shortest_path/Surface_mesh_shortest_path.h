@@ -1210,7 +1210,6 @@ private:
 
       if (currentOccupier.first != NULL)
       {
-        CGAL_assertion(m_graph.is_valid());
         CGAL_assertion(node->entry_edge() == currentOccupier.first->entry_edge());
         CGAL_assertion(node->target_vertex() == currentOccupier.first->target_vertex());
 
