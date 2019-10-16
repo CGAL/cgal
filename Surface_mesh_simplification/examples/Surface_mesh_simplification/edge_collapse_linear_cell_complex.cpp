@@ -12,11 +12,11 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
 typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
          <2, 3, MyTraits>::type LCC;
-namespace SMS = CGAL::Surface_mesh_simplification ;
+namespace SMS = CGAL::Surface_mesh_simplification;
 
-int main( int argc, char** argv )
+int main(int argc, char** argv)
 {
-  if (argc<2 || argc>3)
+  if(argc<2 || argc>3)
   {
     std::cout<<"Usage: simplification_Linear_cell_complex inofffile [outofffile]"<<std::endl;
     return EXIT_FAILURE;
@@ -42,10 +42,10 @@ int main( int argc, char** argv )
           .vertex_index_map(get(boost::vertex_index, lcc))
           .get_cost(SMS::Edge_length_cost<LCC>())
           .get_placement(SMS::Midpoint_placement<LCC>())
-     );
+    );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
-            << (lcc.number_of_darts()/2) << " final edges.\n" ;
+            << (lcc.number_of_darts()/2) << " final edges.\n";
 
   lcc.display_characteristics(std::cout)<<", is_valid="<<CGAL::is_valid(lcc)<<std::endl;
 

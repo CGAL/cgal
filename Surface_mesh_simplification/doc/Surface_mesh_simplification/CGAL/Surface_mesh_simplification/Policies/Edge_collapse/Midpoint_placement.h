@@ -36,8 +36,8 @@ the points of the source and target vertices
 (`profile.p0()` and `profile.p1()`) 
 */ 
 template <typename Profile>
-optional<typename Profile::Point> 
-operator()( Profile const& profile ) const; 
+boost::optional<typename Profile::Point>
+operator()(const Profile& profile) const; 
 
 /// @}
 

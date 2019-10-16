@@ -18,41 +18,33 @@
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H 1
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
 
-#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 namespace CGAL {
+namespace Surface_mesh_simplification {
 
-namespace Surface_mesh_simplification
-{
-
-  template<class TM_>
+template<class TM_>
 class Midpoint_placement
 {
 public:
+  typedef TM_                                                     TM;
 
-  typedef TM_ TM;
-  
-  Midpoint_placement()
-  {}
-  
+  Midpoint_placement() {}
+
   template <typename Profile>
-  optional<typename Profile::Point> operator()( Profile const& aProfile ) const
+  boost::optional<typename Profile::Point> operator()(const Profile& aProfile) const
   {
-    return optional<typename Profile::Point> (midpoint(aProfile.p0(),aProfile.p1()));
+    return boost::optional<typename Profile::Point>(midpoint(aProfile.p0(), aProfile.p1()));
   }
-
 };
 
 } // namespace Surface_mesh_simplification
+} // namespace CGAL
 
-} //namespace CGAL
-
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H //
-// EOF //
- 
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H

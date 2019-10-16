@@ -15,7 +15,8 @@ This predicate is meant to be used with `Edge_length_cost`.
 
 */
 template< typename FT >
-class Edge_length_stop_predicate {
+class Edge_length_stop_predicate
+{
 public:
 
 /// \name Creation
@@ -24,7 +25,7 @@ public:
 /*!
 Initializes the predicate establishing the `threshold` value.
 */
-Edge_length_stop_predicate<TriangleMesh>( FT threshold );
+Edge_length_stop_predicate<TriangleMesh>(FT threshold);
 
 /// @}
 
@@ -35,11 +36,10 @@ Edge_length_stop_predicate<TriangleMesh>( FT threshold );
 Returns `(CGAL::squared_distance(edge_profile.p0(),edge_profile.p1()) > threshold*threshold)`.
 All other parameters are ignored (but exist since this is a generic policy).
 */
-bool operator()( FT const&
-, Profile const& edge_profile
-, size_type
-, size_type
-) const ;
+bool operator()(const FT&,
+                const Profile& edge_profile,
+                size_type,
+                size_type) const;
 
 /// @}
 
