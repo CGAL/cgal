@@ -189,7 +189,7 @@ private:
   template <bool Tag = internal::Oracles_require_updates<GetCost>::value>
   void initialize_oracles() const { };
   template <>
-  void initialize_oracles<true>() const { Get_cost.initialize(mSurface); }
+  void initialize_oracles<true>() const { Get_cost.initialize(mSurface, Vertex_point_map); }
 
   template <bool Tag = internal::Oracles_require_updates<GetCost>::value>
   void update_oracles_after_collapse(const Profile& /*aProfile*/, const vertex_descriptor /*aKeptV*/) const { };

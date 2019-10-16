@@ -15,7 +15,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Baskin Burak Senbaslar
+// Author(s)     : Baskin Burak Senbaslar,
+//                 Mael Rouxel-Labbé
 //
 
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_INTERNAL_GARLAND_HECKBERT_CORE_H
@@ -38,19 +39,19 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 namespace internal {
 
-template<class TM_>
+template<class TM_, class VPM_>
 struct GarlandHeckbert_core
 {
   typedef TM_                                                                   TM;
   typedef boost::graph_traits<TM>                                               GraphTraits;
-
   typedef typename GraphTraits::vertex_descriptor                               vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor                             halfedge_descriptor;
   typedef typename GraphTraits::face_descriptor                                 face_descriptor;
 
-  typedef typename boost::property_map<TM, CGAL::vertex_point_t>::type          Vertex_point_pmap;
-
+  typedef VPM_                                                                  Vertex_point_pmap;
   typedef typename boost::property_traits<Vertex_point_pmap>::value_type        Point;
+  typedef typename boost::property_traits<Vertex_point_pmap>::reference         Point_reference;
+
   typedef typename Kernel_traits<Point>::Kernel                                 Kernel;
   typedef typename Kernel::FT                                                   FT;
   typedef typename Kernel::RT                                                   RT;
@@ -81,7 +82,7 @@ struct GarlandHeckbert_core
   *
   * Currently, only checks if vertex belongs to a border.
   */
-  static bool is_discontinuity_vertex(const halfedge_descriptor& aHD, const TM& aTM)
+  static bool is_discontinuity_vertex(const halfedge_descriptor aHD, const TM& aTM)
   {
     if(is_border(target(aHD, aTM), aTM))
       return true;
@@ -89,42 +90,36 @@ struct GarlandHeckbert_core
     return false;
   }
 
-  static bool is_discontinuity_edge(const halfedge_descriptor& aHD, const TM& aTM)
+  static bool is_discontinuity_edge(const halfedge_descriptor aHD, const TM& aTM)
   {
     return is_border_edge(aHD, aTM);
   }
 
   /*
   * fundamental error quadric for the target vertex of aHD in aTM
+  * Unused, but leaving it as it might still be useful somehow
   */
-  static Matrix4x4 fundamental_error_quadric(const halfedge_descriptor& aHD,
+  static Matrix4x4 fundamental_error_quadric(const halfedge_descriptor aHD,
                                              const TM& aTM,
-                                             const FT aDiscontinuityMultiplier = FT(1))
+                                             const Vertex_point_pmap& aVPM,
+                                             const FT aDiscontinuityMultiplier = FT(100))
   {
-    Matrix4x4 quadric;
-    quadric.setZero();
+    Matrix4x4 quadric = Matrix4x4::Zero();
 
-    vertex_descriptor target_vd = target(aHD, aTM);
-    const Point target_vertex_point = std::move(get(boost::vertex_point, aTM, target_vd));
-    const Vector_3 target_vertex_vector(target_vertex_point.x(),
-                                        target_vertex_point.y(),
-                                        target_vertex_point.z());
+    const vertex_descriptor target_vd = target(aHD, aTM);
+    const Vector_3 target_vertex_vector(CGAL::ORIGIN, get(aVPM, target_vd));
 
     // const bool discontinuity_vertex = is_discontinuity_vertex(aHD, aTM);
 
-    for(const halfedge_descriptor hd: halfedges_around_target(target_vd, aTM))
+    for(const halfedge_descriptor hd : halfedges_around_target(target_vd, aTM))
     {
       const face_descriptor fd = face(hd, aTM);
       if(fd == GraphTraits::null_face())
         continue;
 
-      std::vector<vertex_descriptor> vds;
-      for(vertex_descriptor vd : vertices_around_face(hd, aTM))
-        vds.push_back(vd);
-
-      Plane_3 plane(get(boost::vertex_point, aTM, vds[0]),
-                    get(boost::vertex_point, aTM, vds[1]),
-                    get(boost::vertex_point, aTM, vds[2]));
+      Plane_3 plane(get(aVPM, source(hd, aTM)),
+                    get(aVPM, target(hd, aTM)),
+                    get(aVPM, target(next(hd, aTM), aTM)));
 
       Row4 plane_mtr;
       const FT norm = sqrt(CGAL::square(plane.a()) +
@@ -141,7 +136,7 @@ struct GarlandHeckbert_core
       if(is_discontinuity_edge(hd, aTM))
       {
         const vertex_descriptor source_vd = source(hd, aTM);
-        const Vector_3 p1p2(target_vertex_point, get(boost::vertex_point, aTM, source_vd));
+        const Vector_3 p1p2(get(aVPM, source_vd), get(aVPM, target_vd));
         const Vector_3 normal = cross_product(p1p2, plane.orthogonal_vector());
 
         const FT d = - normal * target_vertex_vector;
@@ -154,14 +149,13 @@ struct GarlandHeckbert_core
                      den * normal.y(),
                      den * normal.z(),
                      den * d;
-        quadric += plane_mtr.transpose() * plane_mtr * aDiscontinuityMultiplier;
+        quadric += aDiscontinuityMultiplier * plane_mtr.transpose() * plane_mtr;
       }
 
-      halfedge_descriptor shd = next(hd, aTM);
+      const halfedge_descriptor shd = next(hd, aTM);
       if(is_discontinuity_edge(shd, aTM))
       {
-        const vertex_descriptor target_vd = target(shd, aTM);
-        const Vector_3 p1p2(target_vertex_point, get(boost::vertex_point, aTM, target_vd));
+        const Vector_3 p1p2(get(aVPM, target_vd), get(aVPM, target(shd, aTM)));
         const Vector_3 normal = cross_product(p1p2, plane.orthogonal_vector());
 
         const FT d = - normal * target_vertex_vector;
@@ -174,34 +168,85 @@ struct GarlandHeckbert_core
                      den * normal.y(),
                      den * normal.z(),
                      den * d;
-        quadric += plane_mtr.transpose() * plane_mtr * aDiscontinuityMultiplier;
+        quadric += aDiscontinuityMultiplier * plane_mtr.transpose() * plane_mtr;
       }
-
-      /*
-      if(discontinuity_vertex)
-      {
-        const vertex_descriptor source_vd = source(hd, aTM);
-        const Line_3 edge_line = Line_3(get(boost::vertex_point, aTM, source_vd),
-                                        target_vertex_point);
-
-        Plane_3 plane = edge_line.perpendicular_plane(target_vertex_point);
-
-        const FT norm = sqrt(CGAL::square(plane.a()) +
-                             CGAL::square(plane.b()) +
-                             CGAL::square(plane.c()));
-        const FT den = FT(1) / norm;
-
-        Row4 plane_mtr;
-        plane_mtr << den * plane.a(),
-                     den * plane.b(),
-                     den * plane.c(),
-                     den * plane.d();
-        std::cout << plane_mtr << std::endl;
-        quadric += plane_mtr.transpose() * plane_mtr;
-      }*/
     }
 
     return quadric;
+  }
+
+  template <typename VCM>
+  static void fundamental_error_quadrics(VCM& vcm, // quadrics container
+                                         const TM& aTM,
+                                         const Vertex_point_pmap& aVPM,
+                                         const FT aDiscontinuityMultiplier = FT(100))
+  {
+    Matrix4x4 nq = Eigen::Matrix<FT, 4, 4>::Zero();
+    for(vertex_descriptor v : vertices(aTM))
+      put(vcm, v, nq); // @todo necessary ?
+
+    for(face_descriptor f : faces(aTM))
+    {
+      const halfedge_descriptor h = halfedge(f, aTM);
+
+      const Point_reference p = get(aVPM, source(h, aTM));
+      const Point_reference q = get(aVPM, target(h, aTM));
+      const Point_reference r = get(aVPM, target(next(h, aTM), aTM));
+
+      const FT rpx = p.x() - r.x();
+      const FT rpy = p.y() - r.y();
+      const FT rpz = p.z() - r.z();
+      const FT rqx = q.x() - r.x();
+      const FT rqy = q.y() - r.y();
+      const FT rqz = q.z() - r.z();
+
+      // Cross product rp * rq
+      const FT a = rpy*rqz - rqy*rpz;
+      const FT b = rpz*rqx - rqz*rpx;
+      const FT c = rpx*rqy - rqx*rpy;
+      const FT d = - a*r.x() - b*r.y() - c*r.z();
+
+      const Vector_3 plane_n(a, b, c);
+      const FT norm = CGAL::sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
+      const FT den = FT(1) / norm;
+
+      Row4 plane_mtr_r;
+      plane_mtr_r << den * a, den * b, den * c, den * d;
+      const Matrix4x4 plane_mtr = plane_mtr_r.transpose() * plane_mtr_r;
+
+      for(halfedge_descriptor shd : halfedges_around_face(h, aTM))
+      {
+        const vertex_descriptor vs = source(shd, aTM);
+        const vertex_descriptor vt = target(shd, aTM);
+
+        put(vcm, vt, combine_matrices(get(vcm, vt), plane_mtr));
+
+        if(!is_discontinuity_edge(shd, aTM))
+          continue;
+
+        const Vector_3 pspt(get(aVPM, vs), get(aVPM, vt));
+        const Vector_3 disc_plane_n = cross_product(pspt, plane_n);
+
+        // the plane contains the edge, so taking 'vs' or 'vt' will yield the same 'd'
+        const FT disc_d = - disc_plane_n * Vector_3(CGAL::ORIGIN, get(aVPM, vt));
+
+        const FT disc_norm = CGAL::sqrt(CGAL::square(disc_plane_n.x()) +
+                                        CGAL::square(disc_plane_n.y()) +
+                                        CGAL::square(disc_plane_n.z()));
+        const FT disc_den = FT(1) / disc_norm;
+
+        Row4 disc_mtr_r;
+        disc_mtr_r << disc_den * disc_plane_n.x(),
+                      disc_den * disc_plane_n.y(),
+                      disc_den * disc_plane_n.z(),
+                      disc_den * d;
+
+        const Matrix4x4 disc_mtr = aDiscontinuityMultiplier * disc_mtr_r.transpose() * disc_mtr_r;
+
+        put(vcm, vs, combine_matrices(get(vcm, vs), disc_mtr));
+        put(vcm, vt, combine_matrices(get(vcm, vt), disc_mtr));
+      }
+    }
   }
 
 

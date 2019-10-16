@@ -15,7 +15,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Baskin Burak Senbaslar
+// Author(s)     : Baskin Burak Senbaslar,
+//                 Mael Rouxel-Labbé
 //
 
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_GARLANDHECKBERT_COST_H
@@ -35,34 +36,27 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-template <typename TM_>
+template <typename GT, typename TM_>
 struct GarlandHeckbert_cost_matrix
 {
-  typedef internal::GarlandHeckbert_core<TM_>                    GH_Core;
-  typedef typename GH_Core::Matrix4x4                            type;
+  typedef typename Eigen::Matrix<typename GT::FT, 4, 4>         type;
 };
 
 template <typename TM_, typename VCM_>
 class GarlandHeckbert_cost
 {
-  typedef TM_                                                    TM;
-  typedef VCM_                                                   Vertex_cost_map;
+  typedef TM_                                                      TM;
+  typedef VCM_                                                     Vertex_cost_map;
 
 public:
-  typedef typename boost::graph_traits<TM>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<TM>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::property_traits<VCM_>::value_type        Cost_matrix; // @tmp name
+  typedef typename Eigen::internal::traits<Cost_matrix>::Scalar    FT;
 
-  typedef internal::GarlandHeckbert_core<TM>                     GH_Core;
-
-  typedef typename GH_Core::Matrix4x4                            Matrix4x4;
-  typedef typename GH_Core::Col4                                 Col4;
-
-  typedef typename GH_Core::FT                                   FT;
-  typedef typename boost::optional<FT>                           Optional_FT;
+  typedef typename boost::graph_traits<TM>::vertex_descriptor      vertex_descriptor;
 
   // Tells the edge collapse main function that we need to call "initialize"
   // and "update" functions. A bit awkward, but still better than abusing visitors.
-  typedef CGAL::Tag_true                                         Update_tag;
+  typedef CGAL::Tag_true                                           Update_tag;
 
   GarlandHeckbert_cost(Vertex_cost_map& vcm,
                        const FT discontinuity_multiplier = 100)
@@ -71,13 +65,12 @@ public:
       m_discontinuity_multiplier(discontinuity_multiplier)
   { }
 
-  void initialize(const TM& tmesh) const
+  template <typename VPM>
+  void initialize(const TM& aTM, const VPM& vpm) const
   {
-    for(const halfedge_descriptor h : halfedges(tmesh))
-    {
-      const vertex_descriptor v = target(h, tmesh);
-      put(m_cost_matrices, v, GH_Core::fundamental_error_quadric(h, tmesh, m_discontinuity_multiplier));
-    }
+    typedef internal::GarlandHeckbert_core<TM, VPM>                GH_Core;
+
+    GH_Core::fundamental_error_quadrics(m_cost_matrices, aTM, vpm, m_discontinuity_multiplier);
   }
 
   template <typename Profile>
@@ -85,6 +78,12 @@ public:
   operator()(const Profile& aProfile,
              const boost::optional<typename Profile::Point>& aPlacement) const
   {
+    typedef typename Profile::VertexPointMap                       Vertex_point_map;
+    typedef internal::GarlandHeckbert_core<TM, Vertex_point_map>   GH_Core;
+    typedef typename GH_Core::Matrix4x4                            Matrix4x4;
+    typedef typename GH_Core::Col4                                 Col4;
+    typedef boost::optional<typename Profile::FT>                  Optional_FT;
+
     if(!aPlacement)
       return boost::optional<typename Profile::FT>();
 
@@ -103,6 +102,9 @@ public:
   void update_after_collapse(const Profile& aProfile,
                              const vertex_descriptor new_v) const
   {
+    typedef typename Profile::VertexPointMap                       Vertex_point_map;
+    typedef internal::GarlandHeckbert_core<TM, Vertex_point_map>   GH_Core;
+
     put(m_cost_matrices, new_v,
         GH_Core::combine_matrices(get(m_cost_matrices, aProfile.v0()),
                                   get(m_cost_matrices, aProfile.v1())));

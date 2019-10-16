@@ -38,10 +38,6 @@ public:
   typedef TM_                                                     TM;
   typedef VCM_                                                    Vertex_cost_map;
 
-  typedef typename internal::GarlandHeckbert_core<TM>             GH_core;
-  typedef typename GH_core::Matrix4x4                             Matrix4x4;
-  typedef typename GH_core::Col4                                  Col4;
-
   GarlandHeckbert_placement(const Vertex_cost_map& cost_matrices)
     : m_cost_matrices(cost_matrices)
   { }
@@ -49,6 +45,11 @@ public:
   template <typename Profile>
   boost::optional<typename Profile::Point> operator()(const Profile& aProfile) const
   {
+    typedef typename Profile::VertexPointMap                                 Vertex_point_map;
+    typedef typename internal::GarlandHeckbert_core<TM, Vertex_point_map>    GH_core;
+    typedef typename GH_core::Matrix4x4                                      Matrix4x4;
+    typedef typename GH_core::Col4                                           Col4;
+
     CGAL_precondition(get(m_cost_matrices, aProfile.v0()) != Matrix4x4());
     CGAL_precondition(get(m_cost_matrices, aProfile.v1()) != Matrix4x4());
 

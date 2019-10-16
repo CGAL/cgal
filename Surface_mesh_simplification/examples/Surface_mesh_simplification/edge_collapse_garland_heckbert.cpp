@@ -94,10 +94,10 @@ int main(int argc, char** argv)
 
   // Garland&Heckbert simplification maintains an error matrix at each vertex,
   // which must be accessible for the cost and placement evaluations.
-  typedef typename SMS::GarlandHeckbert_cost_matrix<Surface_mesh>::type     Cost_matrix;
-  typedef CGAL::dynamic_vertex_property_t<Cost_matrix>                      Cost_property;
-  typedef typename boost::property_map<Surface_mesh, Cost_property>::type   Vertex_cost_map;
-  typedef SMS::GarlandHeckbert_placement<Surface_mesh, Vertex_cost_map>     GH_placement;
+  typedef typename SMS::GarlandHeckbert_cost_matrix<Kernel, Surface_mesh>::type     Cost_matrix;
+  typedef CGAL::dynamic_vertex_property_t<Cost_matrix>                              Cost_property;
+  typedef typename boost::property_map<Surface_mesh, Cost_property>::type           Vertex_cost_map;
+  typedef SMS::GarlandHeckbert_placement<Surface_mesh, Vertex_cost_map>             GH_placement;
 
   Vertex_cost_map vcm = get(Cost_property(), surface_mesh);
   SMS::GarlandHeckbert_cost<Surface_mesh, Vertex_cost_map> cost(vcm);
