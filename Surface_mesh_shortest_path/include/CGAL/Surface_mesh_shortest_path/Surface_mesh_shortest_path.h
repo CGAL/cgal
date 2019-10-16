@@ -1206,11 +1206,10 @@ private:
 
       // the relative position of the ray between node.source() and node.target_vertex() and the ray
       // from occupier.source() (-1 left, 0 collinear, 1 right)
-      CGAL::Comparison_result c;
+      CGAL::Comparison_result c = CGAL::EQUAL; // initializing to please weak compilers
 
       if (currentOccupier.first != nullptr)
       {
-        CGAL_assertion(m_graph.is_valid());
         CGAL_assertion(node->entry_edge() == currentOccupier.first->entry_edge());
         CGAL_assertion(node->target_vertex() == currentOccupier.first->target_vertex());
 
