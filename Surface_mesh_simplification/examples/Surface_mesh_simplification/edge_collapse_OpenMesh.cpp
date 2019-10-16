@@ -1,8 +1,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
@@ -13,8 +11,6 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> Surface_mesh;
 

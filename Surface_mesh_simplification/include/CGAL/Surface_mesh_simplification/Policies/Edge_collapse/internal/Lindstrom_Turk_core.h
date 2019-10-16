@@ -26,7 +26,6 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 
-#include <CGAL/Cartesian_converter.h>
 #include <CGAL/Cartesian/MatrixC33.h>
 
 #include <limits>
@@ -57,11 +56,9 @@ public:
 
   typedef LindstromTurk_params                                           Params;
 
-  typedef typename Profile::Point                                        Point;
   typedef typename Profile::VertexPointMap                               Vertex_point_pmap;
-  typedef typename boost::property_traits<Vertex_point_pmap>::value_type TM_Point;
-
-  typedef typename Kernel_traits<TM_Point>::Kernel                       TM_Kernel;
+  typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
+  typedef typename boost::property_traits<Vertex_point_pmap>::reference  Point_reference;
 
   typedef typename Kernel_traits<Point>::Kernel                          Kernel;
   typedef typename Kernel::Vector_3                                      Vector;
@@ -122,9 +119,9 @@ private :
   FT compute_volume_cost(const Vector& v, const Triangle_data_vector& aTriangles);
   FT compute_shape_cost(const Point& p, const vertex_descriptor_vector& aLink);
 
-  Point get_point(const vertex_descriptor v) const
+  Point_reference get_point(const vertex_descriptor v) const
   {
-    return convert(get(mProfile.vertex_point_map(), v));
+    return get(mProfile.vertex_point_map(), v);
   }
 
   static Vector point_cross_product(const Point& a, const Point& b)
@@ -179,8 +176,6 @@ private:
   Matrix mConstraints_A;
   Vector mConstraints_b;
 
-  Cartesian_converter<TM_Kernel, Kernel> convert;
-
   FT mSquared_cos_alpha;
   FT mSquared_sin_alpha;
 };
@@ -220,8 +215,8 @@ extract_boundary_data()
     vertex_descriptor sv = source(face_edge, surface());
     vertex_descriptor tv = target(face_edge, surface());
 
-    const Point& sp = get_point(sv);
-    const Point& tp = get_point(tv);
+    const Point_reference sp = get_point(sv);
+    const Point_reference tp = get_point(tv);
 
     Vector v = tp - sp;
     Vector n = point_cross_product(tp,sp);
@@ -242,9 +237,9 @@ extract_triangle_data()
 
   for(const Triangle& tri : mProfile.triangles())
   {
-    const Point& p0 = get_point(tri.v0);
-    const Point& p1 = get_point(tri.v1);
-    const Point& p2 = get_point(tri.v2);
+    const Point_reference p0 = get_point(tri.v0);
+    const Point_reference p1 = get_point(tri.v1);
+    const Point_reference p2 = get_point(tri.v2);
 
     Vector v01 = p1 - p0;
     Vector v02 = p2 - p0;
