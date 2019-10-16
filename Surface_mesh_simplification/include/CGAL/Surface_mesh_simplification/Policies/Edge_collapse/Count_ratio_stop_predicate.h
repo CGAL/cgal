@@ -42,24 +42,25 @@ class Count_ratio_stop_predicate
 {
 public:
   typedef TM_                                                 TM;
-  typedef Edge_profile<TM>                                    Profile;
-
-  typedef typename boost::graph_traits<TM>::edge_descriptor   edge_descriptor;
   typedef typename boost::graph_traits<TM>::edges_size_type   size_type;
 
-  Count_ratio_stop_predicate(double aRatio) : mRatio(aRatio) {}
-
-  template <typename F>
-  bool operator()(const F&, // aCurrentCost
-                  const Profile&, // aEdgeProfile
-                  size_type aInitialCount,
-                  size_type aCurrentCount) const
+  Count_ratio_stop_predicate(const double ratio)
+    : m_ratio(ratio)
   {
-    return (static_cast<double>(aCurrentCount) / static_cast<double>(aInitialCount)) < mRatio;
+    CGAL_warning(0. < ratio && ratio <= 1.);
+  }
+
+  template <typename F, typename Profile>
+  bool operator()(const F& /*current_cost*/,
+                  const Profile& /*profile*/,
+                  size_type initial_edge_count,
+                  size_type current_edge_count) const
+  {
+    return (static_cast<double>(current_edge_count) / static_cast<double>(initial_edge_count)) < m_ratio;
   }
 
 private:
-  double mRatio;
+  double m_ratio;
 };
 
 } // namespace Surface_mesh_simplification

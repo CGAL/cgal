@@ -133,14 +133,4 @@ inline std::string optional_to_string(const boost::optional<T>& o) {
 #endif
 #undef CGAL_SMS_ENABLE_TRACE
 
-#ifdef CGAL_TESTING_SURFACE_MESH_SIMPLIFICATION
-  #define CGAL_SURF_SIMPL_TEST_assertion(EX)         CGAL_assertion(EX)
-  #define CGAL_SURF_SIMPL_TEST_assertion_msg(EX,MSG) CGAL_assertion_msg(EX,MSG)
-  #define CGAL_SURF_SIMPL_TEST_assertion_code(CODE)  CGAL_assertion_code(CODE)
-#else
-  #define CGAL_SURF_SIMPL_TEST_assertion(EX)
-  #define CGAL_SURF_SIMPL_TEST_assertion_msg(EX,MSG)
-  #define CGAL_SURF_SIMPL_TEST_assertion_code(CODE)
-#endif
-
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_COMMON_H

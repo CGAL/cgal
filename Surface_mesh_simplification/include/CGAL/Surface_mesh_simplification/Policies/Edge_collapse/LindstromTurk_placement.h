@@ -33,6 +33,7 @@ class LindstromTurk_placement
 {
 public:
   typedef TM_                                                             TM;
+  typedef internal::LindstromTurk_params                                  LindstromTurk_params;
 
   LindstromTurk_placement(const LindstromTurk_params& aParams = LindstromTurk_params())
     : mParams(aParams)

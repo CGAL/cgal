@@ -35,11 +35,12 @@ public:
   {}
 
   template <typename Profile>
-  bool operator()(const FT&,
-                  const Profile&  profile,
-                  std::size_t,
-                  std::size_t) const
+  bool operator()(const FT& /*current_cost*/,
+                  const Profile& profile,
+                  std::size_t /*initial_edge_count*/,
+                  std::size_t /*current_edge_count*/) const
   {
+    // @fixme profile.traits().distance()
     return CGAL::squared_distance(profile.p0(), profile.p1()) > m_edge_sq_length_threshold;
   }
 

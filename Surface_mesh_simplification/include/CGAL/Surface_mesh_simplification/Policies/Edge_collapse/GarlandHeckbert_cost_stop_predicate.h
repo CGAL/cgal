@@ -39,9 +39,9 @@ public:
 
   template <typename Profile>
   bool operator()(const FT& current_cost,
-                  const Profile&,
-                  std::size_t,
-                  std::size_t) const
+                  const Profile& /*profile*/,
+                  std::size_t /*initial_edge_count*/,
+                  std::size_t /*current_edge_count*/) const
   {
     return current_cost >= m_gh_cost_threshold;
   }

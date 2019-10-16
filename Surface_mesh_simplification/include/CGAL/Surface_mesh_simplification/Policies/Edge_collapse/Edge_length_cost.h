@@ -36,10 +36,10 @@ public:
   Edge_length_cost() {}
 
   template <typename Profile, typename T>
-  boost::optional<typename Profile::FT> operator()(const Profile& aProfile, const T& /*aPlacement*/) const
+  boost::optional<typename Profile::FT> operator()(const Profile& profile, const T& /*placement*/) const
   {
     typedef boost::optional<typename Profile::FT>                     result_type;
-    return result_type(squared_distance(aProfile.p0(), aProfile.p1()));
+    return result_type(squared_distance(profile.p0(), profile.p1())); // @fixme profile.traits().squared_distance()
   }
 };
 

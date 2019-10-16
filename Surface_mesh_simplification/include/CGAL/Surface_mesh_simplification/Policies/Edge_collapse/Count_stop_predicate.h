@@ -44,19 +44,21 @@ public:
   typedef TM_                                                                   TM;
   typedef typename boost::graph_traits<TM>::edges_size_type                     size_type;
 
-  Count_stop_predicate(std::size_t aThres) : mThres(aThres) {}
+  Count_stop_predicate(const std::size_t edge_count_threshold)
+    : m_edge_count_threshold(edge_count_threshold)
+  { }
 
   template <typename F, typename Profile>
-  bool operator()(const F&, // aCurrentCost
-                  const Profile&, // aEdgeProfile
-                  std::size_t, // aInitialCount
-                  std::size_t aCurrentCount) const
+  bool operator()(const F& /*current_cost*/,
+                  const Profile& /*profile*/,
+                  std::size_t /*initial_edge_count*/,
+                  std::size_t current_edge_count) const
   {
-    return aCurrentCount < mThres;
+    return current_edge_count < m_edge_count_threshold;
   }
 
 private:
-  std::size_t mThres;
+  std::size_t m_edge_count_threshold;
 };
 
 } // namespace Surface_mesh_simplification

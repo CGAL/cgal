@@ -23,8 +23,8 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/LindstromTurk_params.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 
 #include <CGAL/Cartesian/MatrixC33.h>
 
@@ -54,7 +54,7 @@ public:
   typedef typename GraphTraits::vertex_descriptor                        vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor                      halfedge_descriptor;
 
-  typedef LindstromTurk_params                                           Params;
+  typedef internal::LindstromTurk_params                                 LT_params;
 
   typedef typename Profile::VertexPointMap                               Vertex_point_pmap;
   typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
@@ -77,7 +77,7 @@ public:
   typedef typename Profile::halfedge_descriptor_vector::const_iterator   const_border_edge_iterator;
 
 public:
-  LindstromTurkCore(const Params& aParams, const Profile& aProfile);
+  LindstromTurkCore(const LT_params& aParams, const Profile& aProfile);
 
   Optional_point compute_placement();
   Optional_FT compute_cost(const Optional_point& p);
@@ -110,14 +110,14 @@ private :
   void extract_boundary_data();
 
   void add_boundary_preservation_constraints(const Boundary_data_vector& aBdry);
-  void add_volume_preservation_constraints(const Triangle_data_vector& aTriangles);
+  void add_volume_preservation_constraints(const Triangle_data_vector& triangles);
   void add_boundary_and_volume_optimization_constraints(const Boundary_data_vector& aBdry,
-                                                        const Triangle_data_vector& aTriangles);
-  void add_shape_optimization_constraints(const vertex_descriptor_vector& aLink);
+                                                        const Triangle_data_vector& triangles);
+  void add_shape_optimization_constraints(const vertex_descriptor_vector& link);
 
   FT compute_boundary_cost(const Vector& v, const Boundary_data_vector& aBdry);
-  FT compute_volume_cost(const Vector& v, const Triangle_data_vector& aTriangles);
-  FT compute_shape_cost(const Point& p, const vertex_descriptor_vector& aLink);
+  FT compute_volume_cost(const Vector& v, const Triangle_data_vector& triangles);
+  FT compute_shape_cost(const Point& p, const vertex_descriptor_vector& link);
 
   Point_reference get_point(const vertex_descriptor v) const
   {
@@ -159,10 +159,10 @@ private :
   template<class T>
   static boost::optional<T> filter_infinity(const T& n) { return is_finite(n) ? boost::optional<T>(n) : boost::optional<T>(); }
 
-  TM& surface() const { return mProfile.surface(); }
+  const TM& surface() const { return mProfile.surface(); }
 
 private:
-  const Params& mParams;
+  const LT_params& mParams;
   const Profile& mProfile;
 
   void add_constraint_if_alpha_compatible(const Vector& Ai, const FT& bi);
@@ -182,7 +182,7 @@ private:
 
 template<class TM, class K>
 LindstromTurkCore<TM,K>::
-LindstromTurkCore(const Params& aParams, const Profile& aProfile)
+LindstromTurkCore(const LT_params& aParams, const Profile& aProfile)
   :
     mParams(aParams),
     mProfile(aProfile),
@@ -350,16 +350,16 @@ compute_cost(const Optional_point& aP)
     FT lVolumeCost = compute_volume_cost(lV, mTriangle_data);
     FT lShapeCost  = compute_shape_cost(*aP, mProfile.link());
 
-    FT lTotalCost = FT(mParams.VolumeWeight) * lVolumeCost
-                    + FT(mParams.BoundaryWeight) * lBdryCost * lSquaredLength
-                    + FT(mParams.ShapeWeight) * lShapeCost  * lSquaredLength * lSquaredLength;
+    FT lTotalCost = FT(mParams.m_volume_weight) * lVolumeCost
+                    + FT(mParams.m_boundary_weight) * lBdryCost * lSquaredLength
+                    + FT(mParams.m_shape_weight) * lShapeCost  * lSquaredLength * lSquaredLength;
 
     rCost = filter_infinity(lTotalCost);
 
     CGAL_SMS_LT_TRACE(0, "    Squared edge length: " << n_to_string(lSquaredLength)
-                           << "\n    Boundary cost: " << n_to_string(lBdryCost) << " weight: " << mParams.BoundaryWeight
-                           << "\n    Volume cost: " << n_to_string(lVolumeCost) << " weight: " << mParams.VolumeWeight
-                           << "\n    Shape cost: " << n_to_string(lShapeCost)   << " weight: " << mParams.ShapeWeight
+                           << "\n    Boundary cost: " << n_to_string(lBdryCost) << " weight: " << mParams.m_boundary_weight
+                           << "\n    Volume cost: " << n_to_string(lVolumeCost) << " weight: " << mParams.m_volume_weight
+                           << "\n    Shape cost: " << n_to_string(lShapeCost)   << " weight: " << mParams.m_shape_weight
                            << "\n  TOTAL COST: " << n_to_string(lTotalCost));
 
   }
@@ -414,14 +414,14 @@ add_boundary_preservation_constraints(const Boundary_data_vector& aBdry)
 template<class TM, class K>
 void
 LindstromTurkCore<TM,K>::
-add_volume_preservation_constraints(const Triangle_data_vector& aTriangles)
+add_volume_preservation_constraints(const Triangle_data_vector& triangles)
 {
-  CGAL_SMS_LT_TRACE(1,"  Adding volume preservation constraint. " << aTriangles.size() << " triangles.");
+  CGAL_SMS_LT_TRACE(1,"  Adding volume preservation constraint. " << triangles.size() << " triangles.");
 
   Vector lSumV = NULL_VECTOR;
   FT lSumL(0);
 
-  for(typename Triangle_data_vector::const_iterator it = aTriangles.begin(), eit = aTriangles.end(); it != eit; ++it)
+  for(typename Triangle_data_vector::const_iterator it = triangles.begin(), eit = triangles.end(); it != eit; ++it)
   {
     lSumV = lSumV + it->NormalV;
     lSumL = lSumL + it->NormalL;
@@ -436,7 +436,7 @@ template<class TM, class K>
 void
 LindstromTurkCore<TM,K>::
 add_boundary_and_volume_optimization_constraints(const Boundary_data_vector& aBdry,
-                                                 const Triangle_data_vector& aTriangles)
+                                                 const Triangle_data_vector& triangles)
 {
   CGAL_SMS_LT_TRACE(1,"  Adding boundary and volume optimization constraints. ");
 
@@ -444,7 +444,7 @@ add_boundary_and_volume_optimization_constraints(const Boundary_data_vector& aBd
   Vector c = NULL_VECTOR;
 
   // Volume optimization
-  for(const Triangle_data& lTri : aTriangles)
+  for(const Triangle_data& lTri : triangles)
   {
     H += direct_product(lTri.NormalV, lTri.NormalV);
     c = c - (lTri.NormalL * lTri.NormalV);
@@ -470,16 +470,16 @@ add_boundary_and_volume_optimization_constraints(const Boundary_data_vector& aBd
     CGAL_SMS_LT_TRACE(2,"      Hb:" << matrix_to_string(Hb) << "\n      cb:" << xyz_to_string(cb));
 
     // Weighted average
-    FT lScaledBoundaryWeight = FT(9) * FT(mParams.BoundaryWeight) * squared_distance(mProfile.p0(),mProfile.p1()) ;
+    FT scaled_boundary_weight = FT(9) * FT(mParams.m_boundary_weight) * squared_distance(mProfile.p0(),mProfile.p1()) ;
 
-    H *= mParams.VolumeWeight;
-    c = c * mParams.VolumeWeight;
+    H *= mParams.m_volume_weight;
+    c = c * mParams.m_volume_weight;
 
-    H += lScaledBoundaryWeight * Hb;
-    c = c + (lScaledBoundaryWeight * cb);
+    H += scaled_boundary_weight * Hb;
+    c = c + (scaled_boundary_weight * cb);
 
     CGAL_SMS_LT_TRACE(2, "      H:" << matrix_to_string(H) << "\n      c:" << xyz_to_string(c));
-    CGAL_SMS_LT_TRACE(2, "      VolW:" << mParams.VolumeWeight << " BdryW:" << mParams.BoundaryWeight << " ScaledBdryW:" << lScaledBoundaryWeight);
+    CGAL_SMS_LT_TRACE(2, "      VolW:" << mParams.m_volume_weight << " BdryW:" << mParams.m_boundary_weight << " ScaledBdryW:" << scaled_boundary_weight);
   }
 
   add_constraint_from_gradient(H,c);
@@ -488,16 +488,16 @@ add_boundary_and_volume_optimization_constraints(const Boundary_data_vector& aBd
 template<class TM, class K>
 void
 LindstromTurkCore<TM,K>::
-add_shape_optimization_constraints(const vertex_descriptor_vector& aLink)
+add_shape_optimization_constraints(const vertex_descriptor_vector& link)
 {
-  FT s(double(aLink.size()));
+  FT s(double(link.size()));
 
   Matrix H(s, 0.0, 0.0,
            0.0, s, 0.0,
            0.0, 0.0, s);
 
   Vector c = NULL_VECTOR;
-  for(const vertex_descriptor v : aLink)
+  for(const vertex_descriptor v : link)
     c = c + (ORIGIN - get_point(v));
 
   CGAL_SMS_LT_TRACE(1,"  Adding shape optimization constraint. Shape vector: " << xyz_to_string(c));
@@ -526,11 +526,11 @@ template<class TM, class K>
 typename LindstromTurkCore<TM,K>::FT
 LindstromTurkCore<TM,K>::
 compute_volume_cost(const Vector& v,
-                    const Triangle_data_vector& aTriangles)
+                    const Triangle_data_vector& triangles)
 {
   FT rCost(0);
 
-  for(const Triangle_data& lTri : aTriangles)
+  for(const Triangle_data& lTri : triangles)
   {
     FT lF = lTri.NormalV * v - lTri.NormalL;
     rCost += (lF * lF);
@@ -543,10 +543,10 @@ template<class TM, class K>
 typename LindstromTurkCore<TM,K>::FT
 LindstromTurkCore<TM,K>::
 compute_shape_cost(const Point& p,
-                   const vertex_descriptor_vector& aLink)
+                   const vertex_descriptor_vector& link)
 {
   FT rCost(0);
-  for(const vertex_descriptor v : aLink)
+  for(const vertex_descriptor v : link)
     rCost += squared_distance(p, get_point(v));
 
   return rCost;

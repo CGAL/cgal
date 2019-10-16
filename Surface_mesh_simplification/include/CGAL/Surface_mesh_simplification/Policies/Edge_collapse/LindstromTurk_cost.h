@@ -24,6 +24,7 @@
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/Lindstrom_Turk_core.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/LindstromTurk_params.h>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -33,6 +34,7 @@ class LindstromTurk_cost
 {
 public:
   typedef TM_                                                                 TM;
+  typedef internal::LindstromTurk_params                                      LindstromTurk_params;
 
   LindstromTurk_cost(const LindstromTurk_params& aParams = LindstromTurk_params())
     : mParams(aParams)

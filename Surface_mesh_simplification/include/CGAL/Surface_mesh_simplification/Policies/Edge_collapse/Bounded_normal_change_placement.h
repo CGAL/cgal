@@ -26,38 +26,37 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-template<class Placement>
+template<class GetPlacement>
 class Bounded_normal_change_placement
 {
 public:
-  typedef typename Placement::TM                                      TM;
-
-  Bounded_normal_change_placement(const Placement& placement = Placement())
-    : mPlacement(placement)
+  Bounded_normal_change_placement(const GetPlacement& get_placement = GetPlacement())
+    : m_get_placement(get_placement)
   {}
 
   template <typename Profile>
   boost::optional<typename Profile::Point>
-  operator()(const Profile& aProfile) const
+  operator()(const Profile& profile) const
   {
-    boost::optional<typename Profile::Point> op = mPlacement(aProfile);
+    typedef typename Profile::Point                               Point;
+    typedef typename Profile::Kernel                              Traits;
+    typedef typename Traits::Vector_3                             Vector;
+
+    boost::optional<typename Profile::Point> op = m_get_placement(profile);
     if(op)
     {
       // triangles returns the triangles of the star of the vertices of the edge to collapse
       // First the two trianges incident to the edge, then the other triangles
       // The second vertex of each triangle is the vertex that gets placed
-       const typename Profile::Triangle_vector& triangles = aProfile.triangles();
+       const typename Profile::Triangle_vector& triangles = profile.triangles();
        if(triangles.size() > 2)
        {
-         typedef typename Profile::Point Point;
-         typedef typename Profile::Kernel Traits;
-         typedef typename Traits::Vector_3 Vector;
-         typename Profile::VertexPointMap ppmap = aProfile.vertex_point_map();
+         typename Profile::VertexPointMap ppmap = profile.vertex_point_map();
          typename Profile::Triangle_vector::const_iterator it = triangles.begin();
 
-         if(aProfile.left_face_exists())
+         if(profile.left_face_exists())
            ++it;
-         if(aProfile.right_face_exists())
+         if(profile.right_face_exists())
            ++it;
 
          while(it!= triangles.end())
@@ -86,7 +85,7 @@ public:
   }
 
 private:
-  Placement mPlacement;
+  GetPlacement m_get_placement;
 };
 
 } // namespace Surface_mesh_simplification

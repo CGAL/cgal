@@ -38,9 +38,9 @@ public:
   Midpoint_placement() {}
 
   template <typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile& aProfile) const
+  boost::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
-    return boost::optional<typename Profile::Point>(midpoint(aProfile.p0(), aProfile.p1()));
+    return boost::optional<typename Profile::Point>(midpoint(profile.p0(), profile.p1()));
   }
 };
 

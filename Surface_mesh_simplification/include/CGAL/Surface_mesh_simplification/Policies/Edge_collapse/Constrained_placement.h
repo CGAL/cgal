@@ -33,34 +33,35 @@ class Constrained_placement
   : public BasePlacement
 {
 public:
-  EdgeIsConstrainedMap Edge_is_constrained_map;
-
-  Constrained_placement(EdgeIsConstrainedMap map=EdgeIsConstrainedMap(),
-                        BasePlacement base = BasePlacement())
+  Constrained_placement(const EdgeIsConstrainedMap map = EdgeIsConstrainedMap(),
+                        const BasePlacement& base = BasePlacement())
     : BasePlacement(base),
-      Edge_is_constrained_map(map)
+      m_ecm(map)
   {}
 
   template <typename Profile> 
-  boost::optional<typename Profile::Point> operator()(const Profile& aProfile) const
+  boost::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
     typedef typename Profile::TM                                    TM;
     typedef typename boost::graph_traits<TM>::halfedge_descriptor   halfedge_descriptor;
 
-    for(halfedge_descriptor h : halfedges_around_target(aProfile.v0(), aProfile.surface_mesh()))
+    for(halfedge_descriptor h : halfedges_around_target(profile.v0(), profile.surface_mesh()))
     {
-      if(get(Edge_is_constrained_map, edge(h, aProfile.surface_mesh())))
-        return get(aProfile.vertex_point_map(), aProfile.v0());
+      if(get(m_ecm, edge(h, profile.surface_mesh())))
+        return get(profile.vertex_point_map(), profile.v0());
     }
 
-    for(halfedge_descriptor h : halfedges_around_target(aProfile.v1(), aProfile.surface_mesh()))
+    for(halfedge_descriptor h : halfedges_around_target(profile.v1(), profile.surface_mesh()))
     {
-      if(get(Edge_is_constrained_map, edge(h, aProfile.surface_mesh())))
-        return get(aProfile.vertex_point_map(), aProfile.v1());
+      if(get(m_ecm, edge(h, profile.surface_mesh())))
+        return get(profile.vertex_point_map(), profile.v1());
     }
 
-    return static_cast<const BasePlacement*>(this)->operator()(aProfile);
+    return static_cast<const BasePlacement*>(this)->operator()(profile);
   }
+
+private:
+  EdgeIsConstrainedMap m_ecm;
 };
 
 } // namespace Surface_mesh_simplification
