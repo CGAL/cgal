@@ -3666,7 +3666,6 @@ insert_in_conflict(const Point& p,
       // Sequential
       else
       {
-        cells.reserve(32);
         find_conflicts(c,
                        tester,
                        make_triple(
@@ -3722,6 +3721,7 @@ insert_in_conflict(const Point& p,
         const std::pair<Halfedge,Facet>& ef = *it;
         if(ef.first.first < ef.first.second){
           Facet f = ef.second;
+          h2f.clear(it);
           Facet n = h2f.get(std::make_pair(ef.first.second, ef.first.first));
           f.first->set_neighbor(f.second, n.first);
           n.first->set_neighbor(n.second, f.first);
