@@ -95,7 +95,7 @@ public:
   //friend class declarations:
 
   friend class Trapezoidal_decomposition_2<Traits>;
-  friend class internal::Non_recursive_td_map_item_destructor<Traits>;
+  friend struct internal::Non_recursive_td_map_item_destructor<Traits>;
   
 #ifdef CGAL_PM_FRIEND_CLASS
 #if defined(__SUNPRO_CC) || defined(__PGI) || defined(__INTEL_COMPILER)
