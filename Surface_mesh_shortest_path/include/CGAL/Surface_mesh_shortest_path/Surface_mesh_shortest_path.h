@@ -1206,7 +1206,7 @@ private:
 
       // the relative position of the ray between node.source() and node.target_vertex() and the ray
       // from occupier.source() (-1 left, 0 collinear, 1 right)
-      CGAL::Comparison_result c;
+      CGAL::Comparison_result c = CGAL::EQUAL; // initializing to please weak compilers
 
       if (currentOccupier.first != NULL)
       {
