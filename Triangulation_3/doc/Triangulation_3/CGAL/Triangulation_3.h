@@ -220,6 +220,13 @@ circulator over all facets incident to a given edge
 */ 
 typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
+/*!
+\cgalModifBegin
+iterator over cells intersected by a line segment
+\cgalModifEnd
+*/
+typedef unspecified_type Segment_cell_iterator;
+
 /// @}
 
 /*! \name
@@ -274,11 +281,6 @@ range type for iterating over finite vertex handles, with a nested type `iterato
 that has as value type `Vertex_handle`.
 */ 
   typedef Iterator_range<unspecified_type> Finite_vertex_handles;
-
-/*!
-iterator over the cells intersected by a line segment.
-*/
-typedef unspecified_type Segment_cell_iterator;
 
 /*!
   range type for iterating over the points of the finite vertices.
@@ -1286,30 +1288,48 @@ Points points() const;
  
 /// @} 
   
-/*!\name Walk Iterator
+
+/*!\name Segment Cell Iterator
 \cgalModifBegin
+The triangulation defines an iterator that visits the cells intersected by a line segment.
 
-The triangulation defines an iterator that visits the cells intersected by a line segment. It is a non-mutable and forward iterator. It is invalidated by any modification of one of the cells traversed.
-
-The cells visited comprise a connected region containing both source and target points of the line segment `s`. Each cell falls within one or more of the following categories:
-1. a finite cell whose interior intersects `s`.
-2. a finite cell with a facet `f` whose interior intersects `s` in a line segment. If such a cell is visited, its neighbor incident to `f` is not visited.
-3. a finite cell with an edge `e` whose interior intersects `s` in a line segment. If such a cell is visited, none of the other cells incident to `e` are visited.
-4. a finite cell with an edge `e` whose interior intersects `s` in a point. This cell must form a connected component together with the other cells incident to `e` that are visited. Exactly two of these visited cells must also fall in category 1 or 2.
-5. a finite cell with a vertex `v` that is an endpoint of `s`. This cell must also fit in either category 1 or 2.
-6. a finite cell with a vertex `v` that lies on the interior of `s`. This cell must form a connected component together with the other cells incident to `v` that are visited. Exactly two of these cells must also fall in category 1 or 2.
+The cells visited form a connected region containing both source and target points of the line segment `s`.
+Each cell falls within one or more of the following categories:
+1. a finite cell whose interior intersects `s`
+2. a finite cell with a facet `f` whose interior intersects `s` in a line segment.
+If such a cell is visited, its neighbor incident to `f` is not visited.
+3. a finite cell with an edge `e` whose interior intersects `s` in a line segment.
+If such a cell is visited, none of the other cells incident to `e` are visited.
+4. a finite cell with an edge `e` whose interior intersects `s` in a point.
+This cell must form a connected component together with the other cells incident to `e` that are visited.
+Exactly two of these visited cells must also fall in category 1 or 2.
+5. a finite cell with a vertex `v` that is an endpoint of `s`.
+This cell must also fit in either category 1 or 2.
+6. a finite cell with a vertex `v` that lies on the interior of `s`.
+This cell must form a connected component together with the other cells incident to `v` that are visited.
+Exactly two of these cells must also fall in category 1 or 2.
 7. an infinite cell with a finite facet whose interior intersects the interior of `s`.
-8. an infinite cell with a finite edge `e` whose interior intersects the interior of `s`. If such a cell is visited, its infinite neighbor incident to `e` is not visited.
-9. an infinite cell with a finite vertex `v` that lies on the interior of `s`. If such a cell is visited, none of the other infinite cells incident to `v` are visited.
+8. an infinite cell with a finite edge `e` whose interior intersects the interior of `s`.
+If such a cell is visited, its infinite neighbor incident to `e` is not visited.
+9. an infinite cell with a finite vertex `v` that lies on the interior of `s`.
+If such a cell is visited, none of the other infinite cells incident to `v` are visited.
 
-In the special case the segment does not intersect any finite facets, exactly one infinite cell is visited. This cell shares a facet `f` with a finite cell `c` such that `f` is intersected by the line through the source of `s` and the vertex of `c` opposite of `f`.
+In the special case where the segment does not intersect any finite facets, exactly one infinite cell is visited.
+This cell shares a facet `f` with a finite cell `c` such that `f` is intersected by the line through
+the source of `s` and the vertex of `c` opposite of `f`.
 
-Note that for categories 4 and 6, it is not predetermined which incident cells are visited. However, exactly two of the incident cells `c0,c1` visited also fall in category 1 or 2. The remaining incident cells visited make a facet-connected sequence connecting `c0` to `c1`.
+Note that for categories 4 and 6, it is not predetermined which incident cells are visited.
+However, exactly two of the incident cells `c0,c1` visited also fall in category 1 or 2.
+The remaining incident cells visited make a facet-connected sequence connecting `c0` to `c1`.
 
+`Segment_cell_iterator` implements the concept `ForwardIterator` and is non-mutable.
+It is invalidated by any modification of one of the cells traversed. Its `value_type`
+is `Cell_handle`.
 \cgalModifEnd
 */
 /// @{
 /*!
+\cgalModifBegin
 returns the iterator that allows to visit the cells intersected by the line segment `st`.
 
 The starting point of the iterator is an arbitrary cell incident to `s`.
@@ -1318,10 +1338,12 @@ The iterator remains valid until the first cell incident to `t` is passed.
 
 \pre `s` and `t` must be different vertices and neither can be the infinite vertex.
 \pre `t.dimension() >= 2`
+\cgalModifEnd
 */
 Segment_cell_iterator segment_walk_begin(Vertex_handle s, Vertex_handle t) const;
 
 /*!
+\cgalModifBegin
 returns the past-the-end iterator over the cells intersected by the line segment `st`.
 
 This iterator cannot be dereferenced. It indicates when the `Segment_cell_iterator` has
@@ -1329,10 +1351,12 @@ passed the target.
 
 \pre `s` and `t` must be different vertices and neither can be the infinite vertex.
 \pre `t.dimension() >= 2`
+\cgalModifEnd
 */
 Segment_cell_iterator segment_walk_end(Vertex_handle s, Vertex_handle t) const;
 
 /*!
+\cgalModifBegin
 returns the iterator that allows to visit the cells intersected by the line segment `st`.
 
 If there is no such cell, the iterator visits exactly one infinite cell.
@@ -1345,10 +1369,12 @@ The optional argument `hint` can reduce the time to construct the iterator if it
 
 \pre `s` and `t` must be different points.
 \pre  `t.dimension() >= 2`. If the dimension is 2, both `s` and `t` must lie in the affine hull.
+\cgalModifEnd
 */
 Segment_cell_iterator segment_walk_begin(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
 
 /*!
+\cgalModifBegin
 returns the past-the-end iterator over the cells intersected by the line segment `st`.
 
 This iterator cannot be dereferenced. It indicates when the `Segment_cell_iterator` has
@@ -1358,8 +1384,10 @@ The optional argument `hint` can reduce the time to construct the iterator if it
 
 \pre `s` and `t` must be different and finite points
 \pre `t.dimension() >= 2`
+\cgalModifEnd
 */
 Segment_cell_iterator segment_walk_end(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
+
 /// @}
 
 /*!\name Cell and Facet Circulators 
