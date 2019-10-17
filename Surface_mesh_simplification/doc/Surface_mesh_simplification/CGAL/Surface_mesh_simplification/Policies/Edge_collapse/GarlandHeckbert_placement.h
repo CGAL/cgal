@@ -9,6 +9,9 @@ It computes the placement, that is, the new position for the remaining vertex af
 a halfedge-collapse, following the Garland-Heckbert strategy
 (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
 
+It must be used in conjonction with the Garland-Heckbert cost policy,
+`CGAL::Surface_mesh_simplification::GarlandHeckbert_cost<TriangleMesh>`
+
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 \cgalModels `GetPlacement`

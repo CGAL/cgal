@@ -31,7 +31,6 @@ public:
 
   /*!
   Returns `current_cost >= threshold`.
-  All other parameters are ignored (but exist since this is a generic policy).
   */
   template <typename F, typename Profile>
   bool operator()(const F& current_cost,

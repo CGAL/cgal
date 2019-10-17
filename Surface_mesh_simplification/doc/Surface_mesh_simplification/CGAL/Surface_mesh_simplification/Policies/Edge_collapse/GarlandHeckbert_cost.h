@@ -5,7 +5,10 @@ namespace Surface_mesh_simplification {
 
 The class `GarlandHeckbert_cost` provides a model for the `GetCost` concept.
 It computes the collapse cost following the Garland-Heckbert strategy
-(Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy)
+(Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
+
+It must be used in conjonction with the Garland-Heckbert placement policy,
+`CGAL::Surface_mesh_simplification::GarlandHeckbert_placement<TriangleMesh>`
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
