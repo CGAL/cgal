@@ -67,6 +67,6 @@ int edge_collapse(TriangleMesh& surface_mesh,
                   const StopPolicy& should_stop,
                   const NamedParameters& np);
 
-} /* namespace Surface_mesh_simplification */
+} // namespace Surface_mesh_simplification
 } /* namespace CGAL */
 

@@ -49,7 +49,9 @@ public:
   typedef boost::graph_traits<TM>                                             GraphTraits;
   typedef typename GraphTraits::vertex_descriptor                             vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor                           halfedge_descriptor;
+  typedef typename GraphTraits::edge_descriptor                               edge_descriptor;
   typedef typename GraphTraits::face_descriptor                               face_descriptor;
+  typedef typename GraphTraits::edges_size_type                               edges_size_type;
 
   typedef std::vector<vertex_descriptor>                                      vertex_descriptor_vector;
   typedef std::vector<halfedge_descriptor>                                    halfedge_descriptor_vector;

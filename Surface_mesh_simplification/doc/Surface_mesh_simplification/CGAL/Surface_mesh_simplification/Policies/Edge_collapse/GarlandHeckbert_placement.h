@@ -40,9 +40,9 @@ public:
   Returns the new position for the remaining vertex after collapsing the edge
   (represented by its profile).
   */
-  template <typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile& profile) const;
+  boost::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile) const;
   /// @}
 };
+
 } // namespace Surface_mesh_simplification
 } // namespace CGAL

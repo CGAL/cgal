@@ -14,7 +14,7 @@ which returns `true` when the number of current edges drops below a certain thre
 \sa `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<TriangleMesh>`
 
 */
-template< typename TriangleMesh >
+template <typename TriangleMesh>
 class Count_stop_predicate {
 public:
 
@@ -24,7 +24,7 @@ public:
 /*!
 Initializes the predicate establishing the `threshold` value.
 */
-Count_stop_predicate<TriangleMesh>(size_type threshold);
+Count_stop_predicate<TriangleMesh>(Edge_profile::edges_size_type threshold);
 
 /// @}
 
@@ -32,15 +32,16 @@ Count_stop_predicate<TriangleMesh>(size_type threshold);
 /// @{
 
 /*!
-Returns `(current_count < threshold)`. All other parameters are ignored (but exist since this is a generic policy).
+Returns `(current_edge_count < threshold)`. All other parameters are ignored (but exist since this is a generic policy).
 */
-bool operator()(const FT& current_cost,
-                const Profile& edge_profile,
-                size_type initial_count,
-                size_type current_count) const;
+bool operator()(const Edge_profile::FT& current_cost,
+                const Edge_profile& edge_profile,
+                const Edge_profile::edges_size_type initial_edge_count,
+                const Edge_profile::edges_size_type current_edge_count) const;
 
 /// @}
 
-}; /* end Surface_mesh_simplification::Count_stop_predicate */
-} /* namespace Surface_mesh_simplification */
-} /* end namespace CGAL */
+};
+
+} // namespace Surface_mesh_simplification
+} // namespace CGAL

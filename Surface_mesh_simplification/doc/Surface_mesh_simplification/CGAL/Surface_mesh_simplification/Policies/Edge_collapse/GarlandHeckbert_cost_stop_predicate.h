@@ -8,7 +8,7 @@ which returns `true` when the Garland-Heckbert collapse cost of top edge in the 
 queue is larger than a certain threshold.
 This predicate is meant to be used with `GarlandHeckbert_cost`.
 
-\tparam FT is the number type of the point coordinates.
+\tparam FT is the number type of the point coordinates and must be equal to `Edge_profile::FT`.
 
 \cgalModels `StopPredicate`
 
@@ -23,7 +23,7 @@ public:
   /*!
   Initializes the predicate establishing the `threshold` value.
   */
-  GarlandHeckbert_cost_stop_predicate(FT threshold);
+  GarlandHeckbert_cost_stop_predicate(Edge_profile::FT threshold);
   /// @}
 
   /// \name Operations
@@ -32,11 +32,10 @@ public:
   /*!
   Returns `current_cost >= threshold`.
   */
-  template <typename F, typename Profile>
-  bool operator()(const F& current_cost,
-                  const Profile&,
-                  std::size_t,
-                  std::size_t) const;
+  bool operator()(const Edge_profile::FT& current_cost,
+                  const Edge_profile&,
+                  Edge_profile::edges_size_type initial_edge_count,
+                  Edge_profile::edges_size_type current_edge_count) const;
   /// @}
 };
 } // namespace Surface_mesh_simplification

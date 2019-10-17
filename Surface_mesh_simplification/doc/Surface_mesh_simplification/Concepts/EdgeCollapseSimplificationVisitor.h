@@ -16,29 +16,7 @@ public:
 /*!
 The type of the surface mesh to simplify. Must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 */
-typedef unspecified_type TriangleMesh;
-
-/*!
-A field type representing the collapse cost
-*/
-typedef unspecified_type FT;
-
-/*!
-The type of the edge profile cache. Must be a model of the `EdgeProfile` concept.
-*/
-typedef unspecified_type Profile;
-
-/*!
-The point type for the surface mesh vertex. Must be a model of `Point_3`.
-*/
-typename unspecified_type Point;
-
-/*!
-An integer type representing the number of edges
-*/
-typedef unspecified_type size_type;
-
-/// @}
+typedef Edge_profile::Triangle_mesh TriangleMesh;
 
 /// \name Operations
 /// @{
@@ -65,28 +43,26 @@ Called during the <I>collecting phase</I> (when a cost is assigned to the edges)
 for each edge collected.
 
 */
-void OnCollected(const Profile& profile,
-                 boost::optional<FT> cost);
+void OnCollected(const Edge_profile& profile,
+                 boost::optional<Edge_profile::FT> cost);
 
 /*!
 Called during the <I>processing phase</I> (when edges are collapsed),
 for each edge that is selected.
 
-This method is called before the algorithm checks
-if the edge is collapsable.
+This method is called before the algorithm checks if the edge is collapsable.
 
 `cost` indicates the current collapse cost for the edge.
 If absent (meaning that it could not be computed)
 the edge will not be collapsed.
 
-`initial_count` and `current_count` refer to
-the number of edges.
+`initial_edge_count` and `current_edge_count` refer to the number of edges.
 
 */
-void OnSelected(const Profile& profile,
-                boost::optional<FT> cost,
-                size_type initial_count,
-                size_type current_count);
+void OnSelected(const Edge_profile& profile,
+                boost::optional<Edge_profile::FT> cost,
+                const Edge_profile::edges_size_type initial_edge_count,
+                const Edge_profile::edges_size_type current_edge_count);
 
 /*!
 Called when an edge is about to be collapsed and replaced by a vertex
@@ -96,14 +72,14 @@ If `placement` is absent (meaning that it could not be computed)
 the edge will not be collapsed.
 
 */
-void OnCollapsing(const Profile& profile,
-                  boost::optional<Point> placement);
+void OnCollapsing(const Edge_profile& profile,
+                  boost::optional<Edge_profile::Point> placement);
 
 /*!
 Called when an edge has been collapsed and replaced by the vertex `vd`
 */
-void OnCollapsed(const Profile&,
-                 const Profile::vertex_descriptor vd) {}
+void OnCollapsed(const Edge_profile& profile,
+                 const Edge_profile::vertex_descriptor vd) {}
 
 /*!
 Called for each selected edge which cannot be
@@ -112,7 +88,7 @@ type of the surface mesh (turn it into a non-manifold
 for instance).
 
 */
-void OnNonCollapsable(const Profile& profile);
+void OnNonCollapsable(const Edge_profile& profile);
 
 /// @}
 

@@ -14,7 +14,7 @@ It computes the collapse cost following the Lindstrom-Turk strategy
 \sa `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
 
 */
-template< typename TriangleMesh >
+template <typename TriangleMesh>
 class LindstromTurk_cost {
 public:
 
@@ -43,6 +43,7 @@ operator()(const Profile& profile,
 
 /// @}
 
-}; /* end Surface_mesh_simplification::LindstromTurk_cost */
-} /* namespace Surface_mesh_simplification */
-} /* end namespace CGAL */
+};
+
+} // namespace Surface_mesh_simplification
+} // namespace CGAL

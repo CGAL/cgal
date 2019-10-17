@@ -16,7 +16,7 @@ a halfedge-collapse, following the Lindstrom-Turk strategy
 \sa `CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>`
 
 */
-template< typename TriangleMesh >
+template <typename TriangleMesh>
 class LindstromTurk_placement {
 public:
 
@@ -27,7 +27,7 @@ public:
 Initializes the policy with the given <I>weighting unit factor</I>.
 See \ref SurfaceMeshSimplificationLindstromTurkStrategy for details on the meaning of this factor.
 */
-LindstromTurk_placement<TriangleMesh>(const FT& factor = FT(0.5));
+LindstromTurk_placement<TriangleMesh>(const Edge_profile::FT& factor = FT(0.5));
 
 /// @}
 
@@ -38,12 +38,12 @@ LindstromTurk_placement<TriangleMesh>(const FT& factor = FT(0.5));
 Returns the new position for the remaining vertex after collapsing the edge
 (represented by its profile).
 */
-template <typename Profile>
-boost::optional<typename Profile::Point>
-operator()(const Profile& profile) const;
+boost::optional<typename Edge_profile::Point>
+operator()(const Edge_profile& profile) const;
 
 /// @}
 
-}; /* end Surface_mesh_simplification::LindstromTurk_placement */
-} /* namespace Surface_mesh_simplification */
-} /* end namespace CGAL */
+};
+
+} // namespace Surface_mesh_simplification
+} // namespace CGAL

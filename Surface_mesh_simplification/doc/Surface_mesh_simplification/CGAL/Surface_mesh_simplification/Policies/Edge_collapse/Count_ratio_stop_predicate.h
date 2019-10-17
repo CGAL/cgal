@@ -15,7 +15,7 @@ which returns `true` when the relation between the initial and current number of
 \sa `CGAL::Surface_mesh_simplification::Count_stop_predicate<TriangleMesh>`
 
 */
-template< typename TriangleMesh >
+template< typename TriangleMesh>
 class Count_ratio_stop_predicate
 {
 public:
@@ -26,7 +26,7 @@ public:
 /*!
 Initializes the predicate establishing the `ratio`.
 */
-Count_ratio_stop_predicate<TriangleMesh>(double ratio);
+Count_ratio_stop_predicate<TriangleMesh>(const double ratio);
 
 /// @}
 
@@ -34,16 +34,17 @@ Count_ratio_stop_predicate<TriangleMesh>(double ratio);
 /// @{
 
 /*!
-Returns ` (((double)current_count / (double)initial_count) < ratio)`.
+Returns `((double)current_edge_count / (double)initial_edge_count) < ratio`.
 All other parameters are ignored (but exist since this is a generic policy).
 */
-bool operator()(const FT& current_cost,
-                const Profile& edge_profile,
-                size_type initial_count,
-                size_type current_count) const;
+bool operator()(const Edge_profile::FT& current_cost,
+                const Edge_profile& edge_profile,
+                const Edge_profile::edges_size_type initial_edge_count,
+                const Edge_profile::edges_size_type current_edge_count) const;
 
 /// @}
 
-}; /* end Surface_mesh_simplification::Count_ratio_stop_predicate */
-} /* namespace Surface_mesh_simplification */
-} /* end namespace CGAL */
+};
+
+} // namespace Surface_mesh_simplification
+} // namespace CGAL
