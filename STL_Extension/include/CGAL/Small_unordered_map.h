@@ -83,8 +83,7 @@ public:
       ++collision;
 #endif      
     }while(i != h);
-    std::cerr << "In set: continue? " << std::flush;
-    char c; std::cin >> c;
+    CGAL_error();
   }
 
   
@@ -99,8 +98,7 @@ public:
       }
       i = (i+1)%M;
     }while(i != h);
-    std::cerr << "In get: continue? " << std::flush;
-    char c; std::cin >> c;
+    CGAL_error();
   }
 
   void clear()
