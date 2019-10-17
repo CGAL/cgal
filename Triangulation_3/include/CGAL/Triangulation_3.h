@@ -3681,41 +3681,53 @@ insert_in_conflict(const Point& p,
       hider.process_cells_in_conflict(cells.begin(), cells.end());
       Vertex_handle nv;
       // AF: the new code
-
-      if( facets.size() < 128){
+      constexpr int maximal_nb_of_facets = 128;
+      if( facets.size() < maximal_nb_of_facets){
          // LESS64++;
         typedef std::pair<Vertex_handle,Vertex_handle> Halfedge;
-        typedef Small_unordered_map<Halfedge, Facet, boost::hash<Halfedge>, 128 > Halfedge_facet_map;
-        //      typedef absl::flat_hash_map<std::pair<Vertex_handle,Vertex_handle>, Facet// , boost::hash<std::pair<Vertex_handle,Vertex_handle> >> E2F;
-      static Halfedge_facet_map h2f;
-      nv = tds().create_vertex();
-      nv->set_point(p);
-      for(Facet f : facets){
+        typedef std::pair<unsigned char, unsigned char> Local_facet;
+        typedef Small_unordered_map<Halfedge, Local_facet,
+                                    boost::hash<Halfedge>, maximal_nb_of_facets>
+            Halfedge_facet_map;
+        //      typedef
+        //      absl::flat_hash_map<std::pair<Vertex_handle,Vertex_handle>,
+        //      Facet// , boost::hash<std::pair<Vertex_handle,Vertex_handle> >>
+        //      E2F;
+        static Halfedge_facet_map h2f;
+        nv = tds().create_vertex();
+        nv->set_point(p);
+        std::array <Cell_handle, maximal_nb_of_facets> new_cells;
+        for (int local_facet_index = 0, end = facets.size();
+             local_facet_index < end; ++local_facet_index) {
+          const Facet f = mirror_facet(facets[local_facet_index]);
+          f.first->tds_data().clear(); // was on boundary
+          const Vertex_handle u = f.first->vertex(vertex_triple_index(f.second, 0));
+          const Vertex_handle v = f.first->vertex(vertex_triple_index(f.second, 1));
+          const Vertex_handle w = f.first->vertex(vertex_triple_index(f.second, 2));
+          u->set_cell(f.first);
+          v->set_cell(f.first);
+          w->set_cell(f.first);
+          const Cell_handle nc = tds().create_cell(v, u, w, nv);
+          new_cells[local_facet_index] = nc;
+          nv->set_cell(nc);
+          nc->set_neighbor(3, f.first);
+          f.first->set_neighbor(f.second, nc);
 
-        f = mirror_facet(f);
-        f.first->tds_data().clear(); // was on boundary
-        Vertex_handle u = f.first->vertex(vertex_triple_index(f.second, 0));
-        Vertex_handle v = f.first->vertex(vertex_triple_index(f.second, 1));
-        Vertex_handle w = f.first->vertex(vertex_triple_index(f.second, 2));
-        u->set_cell(f.first);
-        v->set_cell(f.first);
-        w->set_cell(f.first);        
-        Cell_handle nc = tds().create_cell(v, u, w, nv);
-        nv->set_cell(nc);
-        nc->set_neighbor(3, f.first);
-        f.first->set_neighbor(f.second, nc);
-        
-        h2f.set(std::make_pair(u,v), Facet(nc,nc->index(w)));
-        h2f.set(std::make_pair(v,w), Facet(nc,nc->index(u)));
-        h2f.set(std::make_pair(w,u), Facet(nc,nc->index(v)));
+          h2f.set({u, v}, {local_facet_index,
+                           static_cast<unsigned char>(nc->index(w))});
+          h2f.set({v, w}, {local_facet_index,
+                           static_cast<unsigned char>(nc->index(u))});
+          h2f.set({w, u}, {local_facet_index,
+                           static_cast<unsigned char>(nc->index(v))});
       }
 
       for(auto it = h2f.begin(); it != h2f.end(); ++it){
-        const std::pair<Halfedge,Facet>& ef = *it;
+        const std::pair<Halfedge,Local_facet>& ef = *it;
         if(ef.first.first < ef.first.second){
-          Facet f = ef.second;
+          const Facet f = Facet{new_cells[ef.second.first], ef.second.second};
           h2f.clear(it);
-          Facet n = h2f.get(std::make_pair(ef.first.second, ef.first.first));
+          const auto p = h2f.get(std::make_pair(ef.first.second, ef.first.first));
+          const Facet n = Facet{new_cells[p.first], p.second};
           f.first->set_neighbor(f.second, n.first);
           n.first->set_neighbor(n.second, f.first);
         }
