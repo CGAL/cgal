@@ -14,26 +14,11 @@ twice a year, announced on [the web site of CGAL](https://www.cgal.org/).
 Getting Started with CGAL
 =========================
 
-**Since version 5.0, CGAL is header-only by default, meaning that
-it is no longer necessary to build or install CGAL before it can be used.**
+**Since version 5.0, CGAL is a header-only library, meaning that
+it is no longer needed to build or install CGAL before it can be used.**
 
 Head over to the [CGAL manual](https://doc.cgal.org/latest/Manual/general_intro.html)
 for usage guides and tutorials that will get you started smoothly.
-
-Compilation and Installation
-============================
-
-If you do not wish to use the header-only mode of CGAL, it is still possible to build CGAL itself.
-
-The compilation and installation of CGAL from a sources tarball are
-described in the [CGAL installation manual](https://doc.cgal.org/latest/Manual/installation.html)
-and in the file [INSTALL.md](Installation/INSTALL.md) that is at the root
-of any sources tarball.
-
-You can also clone this repository and compile from your local Git repository.
-This kind of compilation is called a *branch build*, and is
-described in the file [INSTALL.md](INSTALL.md) that is at the root of the
-Git repository.
 
 License
 =======

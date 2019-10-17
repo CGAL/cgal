@@ -6,13 +6,15 @@ Since \cgal version 5.0, \cgal is header-only be default, which means
 that there is <b>no need to build or install \cgal before it can be used</b>.
 However, some dependencies of \cgal might still need to be installed.
 
-\section usage_introduction Quick Start
+\section usage_introduction Quick Start: Compiling a Program using CGAL
 
-Ideally, compiling an example shipped with \cgal is as simple as:
+Given that you have extracted the \cgal source archive in `$HOME`, compiling an example shipped with \cgal is as simple as:
 
-    cd examples/Triangulation_2 # go to an example directory
+    cd $HOME/CGAL-\cgalReleaseNumber/examples/Triangulation_2 # go to an example directory
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release . # configure the examples
     make # build the examples
+
+On Windows, instead of calling `make` simply double-click on the generated solution (`.sln`) to open Visual C++.
 
 Compiling your own program is similar:
 
@@ -23,14 +25,10 @@ Compiling your own program is similar:
 
 The script `cgal_create_CMakeLists` and its options are detailed in Section \ref devman_create_cgal_CMakeLists.
 
-\cgalModifBegin
-Something about Windows?
-\cgalModifEnd
-
 In a less ideal world, you might have to install some required tools and third-party libraries.
 This is what this page is about.
 
-\section secprerequisites Prerequisites 
+\section secprerequisites Prerequisites
 
 Using \cgal requires a few core components to be previously installed:
 <ul>
@@ -44,6 +42,41 @@ Optional third-party software might be required to build examples and demos ship
 or to build your own project using \cgal, see Section \ref secoptional3rdpartysoftware.
 
 \section secgettingcgal Downloading CGAL
+
+\subsection secusingpkgman Using a Package Manager
+
+On most common operating systems, package managers offer \cgal and its essential third party dependencies.
+
+On macOS we recommend to use of <a href="https://brew.sh/">Homebrew</a> in the following way:
+
+    brew install cgal
+
+If not automatically found, the `CGAL_DIR` to provide to cmake when configuring a program using \cgal should be something like `/usr/local/Cellar/cgal/4.14.1/lib/cmake/CGAL`.
+
+On Linux distributions like Debian/Ubuntu/Mint, use `apt-get` in the following way:
+
+    sudo apt-get install libcgal-dev
+
+If not automatically found, the `CGAL_DIR` to provide to cmake when configuring a program using \cgal should be something like `/usr/lib/x86_64-linux-gnu/cmake/CGAL`.
+
+On Windows, we recommand to use  <a href="https://github.com/microsoft/vcpkg">vcpkg</a> in the following way:
+
+    vcpkg install cgal
+
+If not automatically found, the `CGAL_DIR` to provide to cmake when configuring a program using \cgal should be something like `VCPK_DIR/packages/cgal_x64-windows/lib/cgal`
+
+For other distributions or package manager, please consult your respective documentation.
+
+\subsection sseccgalwindows Using CGAL installer on Windows
+
+You can download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from https://www.cgal.org/download/windows.html.
+It is a self extracting executable that installs the \cgal source, and that allows you
+to select and download some precompiled third party libraries. However, you will need to compile
+the library using your favorite compiler.
+A <a href="https://www.cgal.org/download/windows.html">tutorial</a> is provided on how to proceed with Microsoft Visual Studio.
+
+
+\subsection secusingwebsite From CGAL website
 
 You can obtain the \cgal library from
 <A HREF="https://www.cgal.org/download.html">https://www.cgal.org/download.html</A>.
@@ -94,29 +127,6 @@ are instead configured using CMake and \cgal will be configured at the same time
 Note that even though \cgal can be used as a header-only library, not all its dependencies
 are header-only. The libraries \sc{Gmp} and \sc{Mpfr}, for example, are not
 header-only. As such, these dependencies must be built or installed independently.
-
-\subsection subsection_headeronly_pbonwindows Potential Issue on Windows
-
-\cgalModifBegin
-(RE)MOVE THAT?
-\cgalModifEnd
-
-A potential issue when using \cgal in header-only mode on a Windows operating system can arise
-when compiling a program using several modules (executable programs or dynamic-link libraries DLL).
-If two different modules use the same static variable, this variable is defined independently
-in each of these modules. If one module modifies the value of this variable, it will not be modified
-in the other module, which could induce an unexpected behavior. In \cgal, this concerns only
-a few specific variables: the <A HREF="https://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>,
-the <A HREF="https://doc.cgal.org/latest/STL_Extension/group__PkgSTLExtensionAssertions.html">failure behavior</A>,
-`CGAL::IO::Mode`. One example is the following: if you change the default random in one DLL, then
-if you use the default random in another DLL, you will not obtain the modified default random but the original one.
-
-\subsection usage_installingcgal Building and Installing CGAL
-
-Although using the header-only mode makes building and installing \cgal obsolete, it is still possible
-to configure, build, and install \cgal. Head over to \ref installation for more information. It is
-however advised by the \cgal project to use the much simpler header-only mode, and the present page
-assumes that this configuration is being used.
 
 \section usage_configuring Configuring your Program
 

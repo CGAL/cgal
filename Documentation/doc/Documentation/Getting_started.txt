@@ -1,9 +1,9 @@
 /*!
 \page general_intro Getting Started with %CGAL
 
-- \subpage usage describes the few steps required to build a program using \cgal.
+- \subpage usage describes how to get \cgal and the few steps required to build a program using \cgal.
 
-- \subpage thirdparty lists the third party libraries on which \cgal depends, or for which \cgal provides interfaces.
+- \subpage thirdparty lists required and optional third party libraries.
 
 - \subpage manual gives an idea of where you should look for documentation.
 

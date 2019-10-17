@@ -3,10 +3,6 @@
 \page preliminaries General Information
 \cgalAutoToc
 
-\cgalModifBegin
-This page is bad...
-\cgalModifEnd
-
 The chapter explains some basic features of \cgal such as thread safety, code deprecation,
 checking of pre- and postconditions and altering the failure behavior, and how to control inlining.
 

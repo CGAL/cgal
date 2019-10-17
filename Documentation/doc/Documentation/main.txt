@@ -25,14 +25,6 @@ the Boost Graph Library.
 Getting Started
 ===============
 
-\cgalModifBegin
-remove?
-In the distribution of the library, you will find the directories *demo* and *examples*.
-They contain subdirectories for the \cgal packages.
-The demos use third-party libraries for the graphical user interface.
-The examples do not have this dependency and most examples are referred to in the user manual.
-\cgalModifEnd
-
 Head over to the page \ref general_intro, which will guide your first steps with \cgal.
 
 License
@@ -56,7 +48,6 @@ For releases X.Y, with 3.1 <= X.Y <= 4.1 visit
 \endhtmlonly
 
 \subpage general_intro
-\subpage advanced
 \subpage tutorials
 \subpage packages
 \subpage dev_manual
