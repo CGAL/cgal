@@ -39,7 +39,7 @@ public:
   boost::optional<typename Profile::FT> operator()(const Profile& profile, const T& /*placement*/) const
   {
     typedef boost::optional<typename Profile::FT>                     result_type;
-    return result_type(squared_distance(profile.p0(), profile.p1())); // @fixme profile.traits().squared_distance()
+    return result_type(profile.geom_traits().compute_squared_distance_3_object()(profile.p0(), profile.p1()));
   }
 };
 

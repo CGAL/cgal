@@ -38,9 +38,16 @@ public:
   boost::optional<typename Profile::Point>
   operator()(const Profile& profile) const
   {
-    typedef typename Profile::Point                               Point;
-    typedef typename Profile::Kernel                              Traits;
-    typedef typename Traits::Vector_3                             Vector;
+    typedef typename Profile::VertexPointMap                              Vertex_point_map;
+
+    typedef typename Profile::Geom_traits                                 Geom_traits;
+    typedef typename Geom_traits::Vector_3                                Vector;
+
+    typedef typename boost::property_traits<Vertex_point_map>::value_type Point;
+    typedef typename boost::property_traits<Vertex_point_map>::reference  Point_reference;
+
+    const Geom_traits& gt = profile.geom_traits();
+    const Vertex_point_map& vpm = profile.vertex_point_map();
 
     boost::optional<typename Profile::Point> op = m_get_placement(profile);
     if(op)
@@ -51,7 +58,6 @@ public:
        const typename Profile::Triangle_vector& triangles = profile.triangles();
        if(triangles.size() > 2)
        {
-         typename Profile::VertexPointMap ppmap = profile.vertex_point_map();
          typename Profile::Triangle_vector::const_iterator it = triangles.begin();
 
          if(profile.left_face_exists())
@@ -62,30 +68,32 @@ public:
          while(it!= triangles.end())
          {
            const typename Profile::Triangle& t = *it;
-           Point p = get(ppmap,t.v0);
-           Point q = get(ppmap,t.v1);
-           Point r = get(ppmap,t.v2);
-           Point q2 = *op;
+           Point_reference p = get(vpm, t.v0);
+           Point_reference q = get(vpm, t.v1);
+           Point_reference r = get(vpm, t.v2);
+           const Point& q2 = *op;
 
-           Vector eqp = Traits().construct_vector_3_object()(q,p);
-           Vector eqr = Traits().construct_vector_3_object()(q,r);
-           Vector eq2p = Traits().construct_vector_3_object()(q2,p);
-           Vector eq2r = Traits().construct_vector_3_object()(q2,r);
+           Vector eqp = gt.construct_vector_3_object()(q, p);
+           Vector eqr = gt.construct_vector_3_object()(q, r);
+           Vector eq2p = gt.construct_vector_3_object()(q2, p);
+           Vector eq2r = gt.construct_vector_3_object()(q2, r);
 
-           Vector n1 = Traits().construct_cross_product_vector_3_object()(eqp,eqr);
-           Vector n2 = Traits().construct_cross_product_vector_3_object()(eq2p,eq2r);
-           if(!is_positive(Traits().compute_scalar_product_3_object()(n1, n2)))
+           Vector n1 = gt.construct_cross_product_vector_3_object()(eqp, eqr);
+           Vector n2 = gt.construct_cross_product_vector_3_object()(eq2p, eq2r);
+
+           if(!is_positive(gt.compute_scalar_product_3_object()(n1, n2)))
              return boost::optional<typename Profile::Point>();
 
            ++it;
          }
        }
     }
+
     return op;
   }
 
 private:
-  GetPlacement m_get_placement;
+  const GetPlacement m_get_placement;
 };
 
 } // namespace Surface_mesh_simplification

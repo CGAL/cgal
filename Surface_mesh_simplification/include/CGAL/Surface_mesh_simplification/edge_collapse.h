@@ -24,6 +24,7 @@
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/internal/Edge_collapse.h>
@@ -31,8 +32,10 @@
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
+namespace internal {
 
 template<class TM,
+         class GT,
          class ShouldStop,
          class VertexIndexMap,
          class VertexPointMap,
@@ -44,6 +47,7 @@ template<class TM,
 int edge_collapse(TM& tmesh,
                   const ShouldStop& should_stop,
                   // optional mesh information policies
+                  const GT& traits,
                   const VertexIndexMap& vim, // defaults to get(vertex_index, tmesh)
                   const VertexPointMap& vpm, // defaults to get(vertex_point, tmesh)
                   const HalfedgeIndexMap& him, // defaults to get(edge_index, tmesh)
@@ -53,11 +57,11 @@ int edge_collapse(TM& tmesh,
                   const GetPlacement& get_placement,
                   Visitor visitor)
 {
-  typedef EdgeCollapse<TM, ShouldStop,
+  typedef EdgeCollapse<TM, GT, ShouldStop,
                        VertexIndexMap, VertexPointMap, HalfedgeIndexMap, EdgeIsConstrainedMap,
                        GetCost, GetPlacement, Visitor> Algorithm;
 
-  Algorithm algorithm(tmesh, should_stop, vim, vpm, him, ecm, get_cost, get_placement, visitor);
+  Algorithm algorithm(tmesh, traits, should_stop, vim, vpm, him, ecm, get_cost, get_placement, visitor);
 
   return algorithm.run();
 }
@@ -82,72 +86,41 @@ struct Dummy_visitor
   void OnNonCollapsable(const Profile&) const {}
 };
 
-template<class TM, class ShouldStop, class P, class T, class R>
+} // namespace internal
+
+template<class TM, class ShouldStop, class NamedParameters>
 int edge_collapse(TM& tmesh,
                   const ShouldStop& should_stop,
-                  const Named_function_parameters<P,T,R>& np)
+                  const NamedParameters& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  internal_np::graph_visitor_t vis = internal_np::graph_visitor_t();
+  typedef typename GetGeomTraits<TM, NamedParameters>::type                   Geom_traits;
 
-  return edge_collapse(tmesh, should_stop,
-                       choose_parameter(get_parameter(np, internal_np::vertex_index),
-                                        get_const_property_map(boost::vertex_index, tmesh)),
-                       choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                        get_property_map(vertex_point, tmesh)),
-                       choose_parameter(get_parameter(np, internal_np::halfedge_index),
-                                        get_const_property_map(boost::halfedge_index, tmesh)),
-                       choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                        No_constrained_edge_map<TM>()),
-                       choose_parameter(get_parameter(np, internal_np::get_cost_policy),
-                                        LindstromTurk_cost<TM>()),
-                       choose_parameter(get_parameter(np, internal_np::get_placement_policy),
-                                        LindstromTurk_placement<TM>()),
-                       choose_parameter(get_parameter(np, vis),
-                                        Dummy_visitor()));
-}
-
-template<class TM, class ShouldStop, class GT, class P, class T, class R>
-int edge_collapse(TM& tmesh,
-                  const ShouldStop& should_stop,
-                  const Named_function_parameters<P,T,R>& np)
-{
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  internal_np::graph_visitor_t vis = internal_np::graph_visitor_t();
-
-  return edge_collapse(tmesh, should_stop,
-                       choose_parameter(get_parameter(np, internal_np::vertex_index),
-                                        get_const_property_map(boost::vertex_index, tmesh)),
-                       choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                        get_property_map(vertex_point, tmesh)),
-                       choose_parameter(get_parameter(np, internal_np::halfedge_index),
-                                        get_const_property_map(boost::halfedge_index, tmesh)),
-                       choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                        No_constrained_edge_map<TM>()),
-                       choose_parameter(get_parameter(np, internal_np::get_cost_policy),
-                                        LindstromTurk_cost<TM>()),
-                       choose_parameter(get_parameter(np, internal_np::get_placement_policy),
-                                        LindstromTurk_placement<TM>()),
-                       choose_parameter(get_parameter(np, vis),
-                                        Dummy_visitor()));
+  return internal::edge_collapse(tmesh, should_stop,
+                                 choose_parameter(get_parameter(np, internal_np::geom_traits),
+                                                  Geom_traits()),
+                                 choose_parameter(get_parameter(np, internal_np::vertex_index),
+                                                  get_const_property_map(boost::vertex_index, tmesh)),
+                                 choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                                  get_property_map(vertex_point, tmesh)),
+                                 choose_parameter(get_parameter(np, internal_np::halfedge_index),
+                                                  get_const_property_map(boost::halfedge_index, tmesh)),
+                                 choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+                                                  No_constrained_edge_map<TM>()),
+                                 choose_parameter(get_parameter(np, internal_np::get_cost_policy),
+                                                  LindstromTurk_cost<TM>()),
+                                 choose_parameter(get_parameter(np, internal_np::get_placement_policy),
+                                                  LindstromTurk_placement<TM>()),
+                                 choose_parameter(get_parameter(np, internal_np::graph_visitor),
+                                                  internal::Dummy_visitor()));
 }
 
 template<class TM, class ShouldStop>
 int edge_collapse(TM& tmesh, const ShouldStop& should_stop)
 {
-  return edge_collapse(tmesh, should_stop,
-                       CGAL::parameters::halfedge_index_map(get(boost::halfedge_index, tmesh)));
-}
-
-template<class TM, class ShouldStop, class GT>
-int edge_collapse(TM& tmesh, const ShouldStop& should_stop)
-{
-  return edge_collapse(tmesh, should_stop,
-                       CGAL::parameters::halfedge_index_map(get(boost::halfedge_index, tmesh)));
+  return edge_collapse(tmesh, should_stop, CGAL::parameters::all_default());
 }
 
 } // namespace Surface_mesh_simplification

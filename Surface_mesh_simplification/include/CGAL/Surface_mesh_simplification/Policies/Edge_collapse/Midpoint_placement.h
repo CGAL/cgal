@@ -40,7 +40,8 @@ public:
   template <typename Profile>
   boost::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
-    return boost::optional<typename Profile::Point>(midpoint(profile.p0(), profile.p1()));
+    typedef boost::optional<typename Profile::Point>              result_type;
+    return result_type(profile.geom_traits().construct_midpoint_3_object()(profile.p0(), profile.p1()));
   }
 };
 

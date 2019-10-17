@@ -24,6 +24,8 @@
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 
+#include <CGAL/Kernel_traits.h>
+
 #include <vector>
 #include <set>
 
@@ -31,14 +33,20 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 template<class TM_,
-         class VertexPointMap_ = typename boost::property_map<TM_, CGAL::vertex_point_t>::type>
+         class VertexPointMap_ = typename boost::property_map<TM_, CGAL::vertex_point_t>::type,
+         class GeomTraits_ = typename Kernel_traits<typename boost::property_traits<VertexPointMap_>::value_type>::type>
 class Edge_profile
 {
 public:
-  typedef TM_                                                                 TM;
-  typedef VertexPointMap_                                                     VertexPointMap;
-  typedef boost::graph_traits<TM>                                             GraphTraits;
+  typedef TM_                                                                 TM; // backward compatibility
+  typedef TM_                                                                 Triangle_mesh;
+  typedef VertexPointMap_                                                     VertexPointMap; // backward compatibility
+  typedef VertexPointMap_                                                     Vertex_point_map;
 
+  typedef typename boost::property_traits<VertexPointMap>::value_type         Point;
+  typedef typename boost::property_traits<VertexPointMap>::reference          Point_reference;
+
+  typedef boost::graph_traits<TM>                                             GraphTraits;
   typedef typename GraphTraits::vertex_descriptor                             vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor                           halfedge_descriptor;
   typedef typename GraphTraits::face_descriptor                               face_descriptor;
@@ -46,9 +54,8 @@ public:
   typedef std::vector<vertex_descriptor>                                      vertex_descriptor_vector;
   typedef std::vector<halfedge_descriptor>                                    halfedge_descriptor_vector;
 
-  typedef typename boost::property_traits<VertexPointMap>::value_type         Point;
-  typedef typename Kernel_traits<Point>::Kernel                               Kernel;
-  typedef typename Kernel::FT                                                 FT;
+  typedef GeomTraits_                                                         Geom_traits;
+  typedef typename Geom_traits::FT                                            FT;
 
 public:
   struct Triangle
@@ -75,6 +82,7 @@ public :
   template<class VertexIndexMap, class HalfedgeIndexMap>
   Edge_profile(const halfedge_descriptor h_v0v1,
                TM& tmesh,
+               const Geom_traits& traits,
                const VertexIndexMap& vim,
                const VertexPointMap& vpm,
                const HalfedgeIndexMap& him,
@@ -119,7 +127,8 @@ public :
   const halfedge_descriptor_vector& border_edges() const { return m_border_edges; }
   const TM& surface() const { return m_tm; }
   const TM& surface_mesh() const { return m_tm; }
-  VertexPointMap vertex_point_map() const { return m_vpm; }
+  const VertexPointMap& vertex_point_map() const { return m_vpm; }
+  const Geom_traits& geom_traits() const { return m_traits; }
 
 public :
   const Point& p0() const { return m_p0; }
@@ -136,17 +145,17 @@ private:
   void extract_triangles_and_link();
 
 private:
-  halfedge_descriptor m_h_v0v1;
-  halfedge_descriptor m_h_v1v0;
+  const halfedge_descriptor m_h_v0v1;
+  const halfedge_descriptor m_h_v1v0;
 
   bool m_is_v0v1_border;
   bool m_is_v1v0_border;
 
-  vertex_descriptor m_v0;
-  vertex_descriptor m_v1;
+  const vertex_descriptor m_v0;
+  const vertex_descriptor m_v1;
 
-  Point m_p0;
-  Point m_p1;
+  const Point_reference m_p0;
+  const Point_reference m_p1;
 
   vertex_descriptor m_vL;
   vertex_descriptor m_vR;
@@ -161,39 +170,39 @@ private:
   Triangle_vector m_triangles;
 
   const TM& m_tm;
-  VertexPointMap m_vpm;
+  const VertexPointMap& m_vpm;
+  const Geom_traits& m_traits;
 };
 
-template<class TM, class VertexPointMap>
+template<class TM, class VertexPointMap, class GeomTraits>
 template<class VertexIndexMap, class HalfedgeIndexMap>
-Edge_profile<TM, VertexPointMap>::
+Edge_profile<TM, VertexPointMap, GeomTraits>::
 Edge_profile(const halfedge_descriptor h_v0v1,
              TM& tmesh,
+             const Geom_traits& traits,
              const VertexIndexMap& /*vim*/,
              const VertexPointMap& vpm,
              const HalfedgeIndexMap& /*him*/,
              bool has_border)
   :
     m_h_v0v1(h_v0v1),
+    m_h_v1v0(opposite(h_v0v1, tmesh)),
+    m_is_v0v1_border(is_border(h_v0v1, tmesh)),
+    m_is_v1v0_border(is_border(m_h_v1v0, tmesh)),
+    m_v0(source(h_v0v1, tmesh)),
+    m_v1(target(h_v0v1, tmesh)),
+    m_p0(get(vpm, m_v0)),
+    m_p1(get(vpm, m_v1)),
     m_tm(tmesh),
-    m_vpm(vpm)
+    m_vpm(vpm),
+    m_traits(traits)
 {
   CGAL_PROFILER("Edge_profile constructor calls");
 
+  CGAL_precondition(m_v0 != m_v1);
+
   m_link_vertices.reserve(12);
   m_triangles.reserve(16);
-  m_h_v1v0 = opposite(v0_v1(), surface_mesh());
-
-  m_v0 = source(v0_v1(), surface_mesh());
-  m_v1 = target(v0_v1(), surface_mesh());
-
-  CGAL_assertion(m_v0 != m_v1);
-
-  m_p0 = get(vertex_point_map(), m_v0);
-  m_p1 = get(vertex_point_map(), m_v1);
-
-  m_is_v0v1_border = is_border(v0_v1(), surface_mesh());
-  m_is_v1v0_border = is_border(v1_v0(), surface_mesh());
 
   if(left_face_exists())
   {
@@ -231,9 +240,9 @@ Edge_profile(const halfedge_descriptor h_v0v1,
     extract_borders();
 }
 
-template<class TM, class VertexPointMap>
+template<class TM, class VertexPointMap, class GeomTraits>
 void
-Edge_profile<TM,VertexPointMap>::
+Edge_profile<TM, VertexPointMap, GeomTraits>::
 extract_borders()
 {
   halfedge_descriptor e = m_h_v0v1;
@@ -267,9 +276,9 @@ extract_borders()
 }
 
 // Extract all triangles (its normals) and vertices (the link) around the collapsing edge p_q
-template<class TM, class VertexPointMap>
+template<class TM, class VertexPointMap, class GeomTraits>
 void
-Edge_profile<TM,VertexPointMap>::
+Edge_profile<TM, VertexPointMap, GeomTraits>::
 extract_triangles_and_link()
 {
 #ifdef CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK
@@ -334,7 +343,7 @@ extract_triangles_and_link()
     v2 = v;
   }
 
-  if(m_link_vertices.empty() || //handle link of an isolated triangle
+  if(m_link_vertices.empty() || // handle link of an isolated triangle
      target(opposite(prev(v0_v1(), surface_mesh()), surface_mesh()), surface_mesh())!=v)
   {
 #ifdef CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK
@@ -343,7 +352,7 @@ extract_triangles_and_link()
       m_link_vertices.push_back(v);
   }
 
-  CGAL_assertion(!m_link_vertices.empty());
+  CGAL_postcondition(!m_link_vertices.empty());
 }
 
 } // namespace Surface_mesh_simplification

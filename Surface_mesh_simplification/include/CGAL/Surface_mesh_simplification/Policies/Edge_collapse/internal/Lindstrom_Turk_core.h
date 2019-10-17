@@ -50,31 +50,32 @@ public:
   typedef Profile_                                                       Profile;
 
   typedef boost::graph_traits<TM>                                        GraphTraits;
-
   typedef typename GraphTraits::vertex_descriptor                        vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor                      halfedge_descriptor;
 
   typedef internal::LindstromTurk_params                                 LT_params;
 
   typedef typename Profile::VertexPointMap                               Vertex_point_pmap;
+  typedef typename Profile::VertexPointMap                               Vertex_point_map;
   typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
   typedef typename boost::property_traits<Vertex_point_pmap>::reference  Point_reference;
 
-  typedef typename Kernel_traits<Point>::Kernel                          Kernel;
-  typedef typename Kernel::Vector_3                                      Vector;
-  typedef typename Kernel::FT                                            FT;
+  typedef typename Profile::Geom_traits                                  Geom_traits;
+  typedef typename Geom_traits::FT                                       FT;
+  typedef typename Geom_traits::Vector_3                                 Vector;
 
   typedef boost::optional<FT>                                            Optional_FT;
   typedef boost::optional<Point>                                         Optional_point;
   typedef boost::optional<Vector>                                        Optional_vector;
 
-  typedef MatrixC33<Kernel>                                              Matrix;
+  typedef MatrixC33<Geom_traits>                                         Matrix;
 
   typedef typename Profile::Triangle                                     Triangle;
-  typedef typename Profile::vertex_descriptor_vector                     vertex_descriptor_vector;
+  typedef std::vector<vertex_descriptor>                                 vertex_descriptor_vector;
+  typedef std::vector<halfedge_descriptor>                               halfedge_descriptor_vector;
 
   typedef typename Profile::Triangle_vector::const_iterator              const_triangle_iterator;
-  typedef typename Profile::halfedge_descriptor_vector::const_iterator   const_border_edge_iterator;
+  typedef typename halfedge_descriptor_vector::const_iterator            const_border_edge_iterator;
 
 public:
   LindstromTurkCore(const LT_params& aParams, const Profile& aProfile);
@@ -95,11 +96,11 @@ private :
 
   struct Boundary_data
   {
-    Boundary_data(Point s_, Point t_, const Vector& v_, const Vector& n_)
+    Boundary_data(const Point& s_, const Point& t_, const Vector& v_, const Vector& n_)
       : s(s_), t(t_), v(v_), n(n_) {}
 
-    Point s, t;
-    Vector v, n;
+    const Point s, t;
+    const Vector v, n;
   };
 
   typedef std::vector<Triangle_data>                                       Triangle_data_vector;
@@ -123,6 +124,9 @@ private :
   {
     return get(mProfile.vertex_point_map(), v);
   }
+
+  const Geom_traits& geom_traits() const { return mProfile.geom_traits(); }
+  const TM& surface() const { return mProfile.surface(); }
 
   static Vector point_cross_product(const Point& a, const Point& b)
   {
@@ -159,7 +163,6 @@ private :
   template<class T>
   static boost::optional<T> filter_infinity(const T& n) { return is_finite(n) ? boost::optional<T>(n) : boost::optional<T>(); }
 
-  const TM& surface() const { return mProfile.surface(); }
 
 private:
   const LT_params& mParams;
@@ -645,10 +648,10 @@ add_constraint_if_alpha_compatible(const Vector& Ai,
   }
 }
 
-template<class V>
-int index_of_max_component(const V& v)
+template<class K>
+int index_of_max_component(const typename K::Vector_3& v)
 {
-  typedef typename Kernel_traits<V>::Kernel::FT                     FT;
+  typedef typename K::FT                     FT;
 
   int i = 0;
   FT max = v.x();
@@ -696,7 +699,7 @@ add_constraint_from_gradient(const Matrix& H,
                    CGAL::abs(A0.z()));
 
       Vector Q0;
-      switch(index_of_max_component(AbsA0))
+      switch(index_of_max_component<Geom_traits>(AbsA0))
       {
         // Since A0 is guaranteed to be non-zero, the denominators here are known to be non-zero too.
 

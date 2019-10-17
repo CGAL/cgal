@@ -126,14 +126,14 @@ public:
 // Constructs a flat polyhedron containing just the link of a vertex
 class Vertex_link_builder : public Link_builder
 {
-  Surface*      m_tm;
+  const Surface& m_tm;
   Vertex_handle mV;
 
-  Surface& tm() { return *m_tm; }
+  const Surface& tm() { return m_tm; }
 
 public:
 
-  Vertex_link_builder(Surface& aTM, Vertex_handle aV) : m_tm(&aTM), mV(aV) {}
+  Vertex_link_builder(const Surface& aTM, Vertex_handle aV) : m_tm(aTM), mV(aV) {}
 
   void operator()(Surface::HalfedgeDS& hds)
   {

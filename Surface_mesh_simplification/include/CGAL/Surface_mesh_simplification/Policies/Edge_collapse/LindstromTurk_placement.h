@@ -35,18 +35,18 @@ public:
   typedef TM_                                                             TM;
   typedef internal::LindstromTurk_params                                  LindstromTurk_params;
 
-  LindstromTurk_placement(const LindstromTurk_params& aParams = LindstromTurk_params())
-    : mParams(aParams)
+  LindstromTurk_placement(const LindstromTurk_params& LT_params = LindstromTurk_params())
+    : m_LT_params(LT_params)
   {}
 
   template <typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile& aProfile) const
+  boost::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
-    return internal::LindstromTurkCore<TM,Profile>(mParams, aProfile).compute_placement();
+    return internal::LindstromTurkCore<TM,Profile>(m_LT_params, profile).compute_placement();
   }
 
 private:
-  LindstromTurk_params mParams;
+  LindstromTurk_params m_LT_params;
 };
 
 } // namespace Surface_mesh_simplification

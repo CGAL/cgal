@@ -94,16 +94,18 @@ int main(int argc, char** argv)
 
   // Garland&Heckbert simplification maintains an error matrix at each vertex,
   // which must be accessible for the cost and placement evaluations.
-  typedef typename SMS::GarlandHeckbert_cost_matrix<Kernel, Surface_mesh>::type     Cost_matrix;
-  typedef CGAL::dynamic_vertex_property_t<Cost_matrix>                              Cost_property;
-  typedef typename boost::property_map<Surface_mesh, Cost_property>::type           Vertex_cost_map;
-  typedef SMS::GarlandHeckbert_placement<Surface_mesh, Vertex_cost_map>             GH_placement;
-
+  typedef typename SMS::GarlandHeckbert_cost_matrix<Kernel>::type               Cost_matrix;
+  typedef CGAL::dynamic_vertex_property_t<Cost_matrix>                          Cost_property;
+  typedef typename boost::property_map<Surface_mesh, Cost_property>::type       Vertex_cost_map;
   Vertex_cost_map vcm = get(Cost_property(), surface_mesh);
-  SMS::GarlandHeckbert_cost<Surface_mesh, Vertex_cost_map> cost(vcm);
 
+  typedef SMS::GarlandHeckbert_cost<Vertex_cost_map>                            GH_cost;
+  typedef SMS::GarlandHeckbert_placement<Vertex_cost_map>                       GH_placement;
+  typedef SMS::Bounded_normal_change_placement<GH_placement>                    Bounded_GH_placement;
+
+  GH_cost cost(vcm);
   GH_placement gh_placement(vcm);
-  SMS::Bounded_normal_change_placement<GH_placement> placement(gh_placement);
+  Bounded_GH_placement placement(gh_placement);
 
   int r = SMS::edge_collapse(surface_mesh, stop, CGAL::parameters::get_cost(cost)
                                                                   .get_placement(placement));

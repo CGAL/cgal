@@ -33,11 +33,11 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 namespace internal {
 
-template<class TM_, class VPM_>
+template<class TM_, class VPM_, typename GT_>
 struct GarlandHeckbert_core
 {
-  typedef TM_                                                                   TM;
-  typedef boost::graph_traits<TM>                                               GraphTraits;
+  typedef TM_                                                                   Triangle_mesh;
+  typedef boost::graph_traits<Triangle_mesh>                                    GraphTraits;
   typedef typename GraphTraits::vertex_descriptor                               vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor                             halfedge_descriptor;
   typedef typename GraphTraits::face_descriptor                                 face_descriptor;
@@ -46,12 +46,11 @@ struct GarlandHeckbert_core
   typedef typename boost::property_traits<Vertex_point_pmap>::value_type        Point;
   typedef typename boost::property_traits<Vertex_point_pmap>::reference         Point_reference;
 
-  typedef typename Kernel_traits<Point>::Kernel                                 Kernel;
-  typedef typename Kernel::FT                                                   FT;
-  typedef typename Kernel::RT                                                   RT;
-  typedef typename Kernel::Line_3                                               Line_3;
-  typedef typename Kernel::Plane_3                                              Plane_3;
-  typedef typename Kernel::Vector_3                                             Vector_3;
+  typedef GT_                                                                   Geom_traits;
+  typedef typename Geom_traits::FT                                              FT;
+  typedef typename Geom_traits::Line_3                                          Line_3;
+  typedef typename Geom_traits::Plane_3                                         Plane_3;
+  typedef typename Geom_traits::Vector_3                                        Vector_3;
 
   typedef Eigen::Matrix<FT, 4, 4>                                               Matrix4x4;
   typedef Eigen::Matrix<FT, 1, 4>                                               Row4;
@@ -76,7 +75,7 @@ struct GarlandHeckbert_core
   *
   * Currently, only checks if vertex belongs to a border.
   */
-  static bool is_discontinuity_vertex(const halfedge_descriptor h, const TM& tmesh)
+  static bool is_discontinuity_vertex(const halfedge_descriptor h, const Triangle_mesh& tmesh)
   {
     if(is_border(target(h, tmesh), tmesh))
       return true;
@@ -84,7 +83,7 @@ struct GarlandHeckbert_core
     return false;
   }
 
-  static bool is_discontinuity_edge(const halfedge_descriptor h, const TM& tmesh)
+  static bool is_discontinuity_edge(const halfedge_descriptor h, const Triangle_mesh& tmesh)
   {
     return is_border_edge(h, tmesh);
   }
@@ -94,14 +93,15 @@ struct GarlandHeckbert_core
   * Unused, but leaving it as it might still be useful somehow
   */
   static Matrix4x4 fundamental_error_quadric(const halfedge_descriptor h,
-                                             const TM& tmesh,
+                                             const Triangle_mesh& tmesh,
                                              const Vertex_point_pmap& vpm,
+                                             const Geom_traits& gt,
                                              const FT discontinuity_multiplier = FT(100))
   {
     Matrix4x4 quadric = Matrix4x4::Zero();
 
     const vertex_descriptor target_vd = target(h, tmesh);
-    const Vector_3 target_vertex_vector(CGAL::ORIGIN, get(vpm, target_vd));
+    const Vector_3 target_vertex_vector = gt.construct_vector_3_object()(CGAL::ORIGIN, get(vpm, target_vd));
 
     // const bool discontinuity_vertex = is_discontinuity_vertex(h, tmesh);
 
@@ -130,8 +130,10 @@ struct GarlandHeckbert_core
       if(is_discontinuity_edge(hd, tmesh))
       {
         const vertex_descriptor source_vd = source(hd, tmesh);
-        const Vector_3 p1p2(get(vpm, source_vd), get(vpm, target_vd));
-        const Vector_3 normal = cross_product(p1p2, plane.orthogonal_vector());
+
+        const Vector_3 p1p2 = gt.construct_vector_3_object()(get(vpm, source_vd), get(vpm, target_vd));
+        const Vector_3 normal = gt.construct_cross_product_vector_3_object()(
+                                  p1p2, gt.construct_orthogonal_vector_3_object()(plane));
 
         const FT d = - normal * target_vertex_vector;
         const FT norm = sqrt(CGAL::square(normal.x()) +
@@ -149,8 +151,9 @@ struct GarlandHeckbert_core
       const halfedge_descriptor shd = next(hd, tmesh);
       if(is_discontinuity_edge(shd, tmesh))
       {
-        const Vector_3 p1p2(get(vpm, target_vd), get(vpm, target(shd, tmesh)));
-        const Vector_3 normal = cross_product(p1p2, plane.orthogonal_vector());
+        const Vector_3 p1p2 = gt.construct_vector_3_object()(get(vpm, target_vd), get(vpm, target(shd, tmesh)));
+        const Vector_3 normal = gt.construct_cross_product_vector_3_object()(
+                                  p1p2, gt.construct_orthogonal_vector_3_object()(plane));
 
         const FT d = - normal * target_vertex_vector;
         const FT norm = sqrt(CGAL::square(normal.x()) +
@@ -171,13 +174,14 @@ struct GarlandHeckbert_core
 
   template <typename VCM>
   static void fundamental_error_quadrics(VCM& vcm, // quadrics container
-                                         const TM& tmesh,
+                                         const Triangle_mesh& tmesh,
                                          const Vertex_point_pmap& vpm,
+                                         const Geom_traits& gt,
                                          const FT discontinuity_multiplier = FT(100))
   {
     Matrix4x4 nq = Eigen::Matrix<FT, 4, 4>::Zero();
     for(vertex_descriptor v : vertices(tmesh))
-      put(vcm, v, nq); // @todo necessary ?
+      put(vcm, v, nq); // @todo is that necessary ?
 
     for(face_descriptor f : faces(tmesh))
     {
@@ -200,7 +204,7 @@ struct GarlandHeckbert_core
       const FT c = rpx*rqy - rqx*rpy;
       const FT d = - a*r.x() - b*r.y() - c*r.z();
 
-      const Vector_3 plane_n(a, b, c);
+      const Vector_3 plane_n = gt.construct_vector_3_object()(a, b, c);
       const FT norm = CGAL::sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
       const FT den = FT(1) / norm;
 
@@ -218,11 +222,12 @@ struct GarlandHeckbert_core
         if(!is_discontinuity_edge(shd, tmesh))
           continue;
 
-        const Vector_3 pspt(get(vpm, vs), get(vpm, vt));
-        const Vector_3 disc_plane_n = cross_product(pspt, plane_n);
+        const Vector_3 pspt = gt.construct_vector_3_object()(get(vpm, vs), get(vpm, vt));
+        const Vector_3 disc_plane_n = gt.construct_cross_product_vector_3_object()(pspt, plane_n);
 
         // the plane contains the edge, so taking 'vs' or 'vt' will yield the same 'd'
-        const FT disc_d = - disc_plane_n * Vector_3(CGAL::ORIGIN, get(vpm, vt));
+        const Vector_3 vvt = gt.construct_vector_3_object()(CGAL::ORIGIN, get(vpm, vt));
+        const FT disc_d = - gt.compute_scalar_product_3_object()(disc_plane_n, vvt);
 
         const FT disc_norm = CGAL::sqrt(CGAL::square(disc_plane_n.x()) +
                                         CGAL::square(disc_plane_n.y()) +
@@ -262,7 +267,7 @@ struct GarlandHeckbert_core
     if(X.determinant() == 0)
     {
       // not invertible
-      Col4 p1mp0 = std::move(p1 - p0);
+      const Col4 p1mp0 = std::move(p1 - p0);
       const FT a = (p1mp0.transpose() * aQuadric * p1mp0)(0, 0);
       const FT b = 2 * (p0.transpose() * aQuadric * p1mp0)(0, 0);
 

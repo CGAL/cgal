@@ -40,8 +40,8 @@ public:
                   std::size_t /*initial_edge_count*/,
                   std::size_t /*current_edge_count*/) const
   {
-    // @fixme profile.traits().distance()
-    return CGAL::squared_distance(profile.p0(), profile.p1()) > m_edge_sq_length_threshold;
+    const typename Profile::Geom_traits& gt = profile.geom_traits();
+    return gt.compute_squared_distance_3_object()(profile.p0(), profile.p1()) > m_edge_sq_length_threshold;
   }
 
 private:

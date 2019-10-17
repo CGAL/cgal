@@ -51,6 +51,7 @@ struct Oracles_require_updates<Cost_oracle, false> : public CGAL::Tag_false { };
 
 // Implementation of the vertex-pair collapse triangulated surface mesh simplification algorithm
 template<class TM_,
+         class GeomTraits_,
          class ShouldStop_,
          class VertexIndexMap_,
          class VertexPointMap_,
@@ -65,6 +66,7 @@ class EdgeCollapse
 
 public:
   typedef TM_                                                             Triangle_mesh;
+  typedef GeomTraits_                                                     Geom_traits;
   typedef ShouldStop_                                                     Should_stop;
   typedef VertexIndexMap_                                                 Vertex_index_map;
   typedef VertexPointMap_                                                 Vertex_point_map;
@@ -74,7 +76,7 @@ public:
   typedef GetPlacement_                                                   Get_placement;
   typedef VisitorT_                                                       Visitor;
 
-  typedef Edge_profile<Triangle_mesh, Vertex_point_map>                   Profile;
+  typedef Edge_profile<Triangle_mesh, Vertex_point_map, Geom_traits>      Profile;
 
   typedef boost::graph_traits<Triangle_mesh>                              Graph_traits;
   typedef typename Graph_traits::vertex_descriptor                        vertex_descriptor;
@@ -87,11 +89,10 @@ public:
   typedef typename Graph_traits::edges_size_type                          size_type;
 
   typedef typename boost::property_traits<Vertex_point_map>::value_type   Point;
-  typedef typename Kernel_traits<Point>::Kernel                           Traits;
 
-  typedef typename Traits::FT                                             FT;
-  typedef typename Traits::Vector_3                                       Vector;
-  typedef typename Traits::Equal_3                                        Equal_3;
+  typedef typename Geom_traits::FT                                        FT;
+  typedef typename Geom_traits::Vector_3                                  Vector;
+  typedef typename Geom_traits::Equal_3                                   Equal_3;
 
   typedef boost::optional<FT>                                             Cost_type;
   typedef boost::optional<Point>                                          Placement_type;
@@ -169,6 +170,7 @@ public:
 
 public:
   EdgeCollapse(Triangle_mesh& tmesh,
+               const Geom_traits& traits,
                const Should_stop& should_stop,
                const Vertex_index_map& vim,
                const Vertex_point_map& vpm,
@@ -184,7 +186,7 @@ private:
   template <bool Tag = internal::Oracles_require_updates<Get_cost>::value>
   void initialize_oracles() const { };
   template <>
-  void initialize_oracles<true>() const { m_get_cost.initialize(m_tm, m_vpm); }
+  void initialize_oracles<true>() const { m_get_cost.initialize(m_tm, m_vpm, m_traits); }
 
   template <bool Tag = internal::Oracles_require_updates<Get_cost>::value>
   void update_oracles_after_collapse(const Profile& /*profile*/, const vertex_descriptor /*v_kept*/) const { };
@@ -205,7 +207,7 @@ private:
   void update_neighbors(const vertex_descriptor v_kept);
 
   Profile create_profile(const halfedge_descriptor h) {
-    return Profile(h, m_tm, m_vim, m_vpm, m_him, m_has_border);
+    return Profile(h, m_tm, m_traits, m_vim, m_vpm, m_him, m_has_border);
   }
 
   size_type get_halfedge_id(const halfedge_descriptor h) const { return get(m_him, h); }
@@ -271,36 +273,36 @@ private:
   {
     CGAL_assertion(is_primary_edge(h));
     CGAL_assertion(!data.is_in_PQ());
-    CGAL_assertion(!mPQ->contains(h));
+    CGAL_expensive_assertion(!mPQ->contains(h));
 
     data.set_PQ_handle(mPQ->push(h));
 
     CGAL_assertion(data.is_in_PQ());
-    CGAL_assertion(mPQ->contains(h));
+    CGAL_expensive_assertion(mPQ->contains(h));
   }
 
   void update_in_PQ(const halfedge_descriptor h, Edge_data& data)
   {
     CGAL_assertion(is_primary_edge(h));
     CGAL_assertion(data.is_in_PQ());
-    CGAL_assertion(mPQ->contains(h));
+    CGAL_expensive_assertion(mPQ->contains(h));
 
     data.set_PQ_handle(mPQ->update(h, data.queue_handle()));
 
     CGAL_assertion(data.is_in_PQ());
-    CGAL_assertion(mPQ->contains(h));
+    CGAL_expensive_assertion(mPQ->contains(h));
   }
 
   void remove_from_PQ(const halfedge_descriptor h, Edge_data& data)
   {
     CGAL_assertion(is_primary_edge(h));
     CGAL_assertion(data.is_in_PQ());
-    CGAL_assertion(mPQ->contains(h));
+    CGAL_expensive_assertion(mPQ->contains(h));
 
     data.set_PQ_handle(mPQ->erase(h, data.queue_handle()));
 
     CGAL_assertion(!data.is_in_PQ());
-    CGAL_assertion(!mPQ->contains(h));
+    CGAL_expensive_assertion(!mPQ->contains(h));
   }
 
   boost::optional<halfedge_descriptor> pop_from_PQ()
@@ -314,7 +316,7 @@ private:
       get_data(*opt_h).reset_queue_handle();
 
       CGAL_assertion(!get_data(*opt_h).is_in_PQ());
-      CGAL_assertion(!mPQ->contains(*opt_h));
+      CGAL_expensive_assertion(!mPQ->contains(*opt_h));
     }
     return opt_h;
   }
@@ -347,6 +349,7 @@ private:
 
 private:
   Triangle_mesh& m_tm;
+  const Geom_traits& m_traits;
   const Should_stop& m_should_stop;
   const Vertex_index_map& m_vim;
   const Vertex_point_map& m_vpm;
@@ -370,9 +373,10 @@ private:
   CGAL_SMS_DEBUG_CODE(unsigned m_step;)
 };
 
-template<class TM, class SP, class VIM, class VPM,class HIM, class ECM, class CF, class PF, class V>
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+template<class TM, class GT, class SP, class VIM, class VPM,class HIM, class ECM, class CF, class PF, class V>
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 EdgeCollapse(Triangle_mesh& tmesh,
+             const Geom_traits& traits,
              const Should_stop& should_stop,
              const Vertex_index_map& vim,
              const Vertex_point_map& vpm,
@@ -383,6 +387,7 @@ EdgeCollapse(Triangle_mesh& tmesh,
              Visitor visitor)
   :
     m_tm(tmesh),
+    m_traits(traits),
     m_should_stop(should_stop),
     m_vim(vim),
     m_vpm(vpm),
@@ -408,12 +413,12 @@ EdgeCollapse(Triangle_mesh& tmesh,
 #endif
 }
 
-template<class TM, class SP, class VIM, class VPM,class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM,class HIM, class ECM, class CF, class PF, class V>
 int
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 run()
 {
-  CGAL_assertion(is_valid_polygon_mesh(m_tm) && CGAL::is_triangle_mesh(m_tm));
+  CGAL_precondition(is_valid_polygon_mesh(m_tm) && CGAL::is_triangle_mesh(m_tm));
 
   m_visitor.OnStarted(m_tm);
 
@@ -435,16 +440,14 @@ run()
   return r;
 }
 
-template<class TM, class SP, class VIM, class VPM,class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM,class HIM, class ECM, class CF, class PF, class V>
 void
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 collect()
 {
   CGAL_SMS_TRACE(0, "collecting edges...");
 
   // loop over all the _undirected_ edges in the surface putting them in the PQ
-
-  Equal_3 equal_points = Traits().equal_3_object();
 
   const size_type ne = num_edges(m_tm); // if the mesh has garbage, you might have "ne > edges(tm).size()"
   m_initial_edge_count = m_current_edge_count = edges(m_tm).size();
@@ -465,7 +468,7 @@ collect()
       continue; // no not insert constrainted edges
 
     const Profile profile = create_profile(h);
-    if(!equal_points(profile.p0(), profile.p1()))
+    if(!m_traits.equal_3_object()(profile.p0(), profile.p1()))
     {
       Edge_data& data = get_data(h);
 
@@ -543,9 +546,9 @@ collect()
   CGAL_SMS_TRACE(0, "Initial edge count: " << m_initial_edge_count);
 }
 
-template<class TM, class SP, class VIM, class VPM,class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM,class HIM, class ECM, class CF, class PF, class V>
 void
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 loop()
 {
   CGAL_SMS_TRACE(0, "Collapsing edges...");
@@ -623,9 +626,9 @@ loop()
   }
 }
 
-template<class TM, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
 bool
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 is_border_or_constrained(const vertex_descriptor v) const
 {
   for(halfedge_descriptor h : halfedges_around_target(v, m_tm))
@@ -637,9 +640,9 @@ is_border_or_constrained(const vertex_descriptor v) const
   return false;
 }
 
-template<class TM, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
 bool
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 is_constrained(const vertex_descriptor v) const
 {
   for(halfedge_descriptor h : halfedges_around_target(v, m_tm))
@@ -658,9 +661,9 @@ is_constrained(const vertex_descriptor v) const
 // The link condition is as follows: for every vertex 'k' adjacent to both 'p and 'q',
 // "p,k,q" is a facet of the mesh.
 //
-template<class TM, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
 bool
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 is_collapse_topologically_valid(const Profile& profile)
 {
   bool res = true;
@@ -826,17 +829,17 @@ is_collapse_topologically_valid(const Profile& profile)
   return res;
 }
 
-template<class TM, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
 bool
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 is_tetrahedron(const halfedge_descriptor h)
 {
   return CGAL::is_tetrahedron(h, m_tm);
 }
 
-template<class TM, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
 bool
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 is_open_triangle(const halfedge_descriptor h1)
 {
   bool res = false;
@@ -865,22 +868,22 @@ is_open_triangle(const halfedge_descriptor h1)
 // respective areas is no greater than a max value and the internal
 // dihedral angle formed by their supporting planes is no greater than
 // a given threshold
-template<class TM, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
 bool
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 are_shared_triangles_valid(const Point& p0, const Point& p1, const Point& p2, const Point& p3) const
 {
   bool res = false;
 
-  Vector e01 = Traits().construct_vector_3_object()(p0, p1);
-  Vector e02 = Traits().construct_vector_3_object()(p0, p2);
-  Vector e03 = Traits().construct_vector_3_object()(p0, p3);
+  Vector e01 = m_traits.construct_vector_3_object()(p0, p1);
+  Vector e02 = m_traits.construct_vector_3_object()(p0, p2);
+  Vector e03 = m_traits.construct_vector_3_object()(p0, p3);
 
-  Vector n012 = Traits().construct_cross_product_vector_3_object()(e01, e02);
-  Vector n023 = Traits().construct_cross_product_vector_3_object()(e02, e03);
+  Vector n012 = m_traits.construct_cross_product_vector_3_object()(e01, e02);
+  Vector n023 = m_traits.construct_cross_product_vector_3_object()(e02, e03);
 
-  FT l012 = Traits().compute_scalar_product_3_object()(n012, n012);
-  FT l023 = Traits().compute_scalar_product_3_object()(n023, n023);
+  FT l012 = m_traits.compute_scalar_product_3_object()(n012, n012);
+  FT l023 = m_traits.compute_scalar_product_3_object()(n023, n023);
 
   FT larger = (std::max)(l012, l023);
   FT smaller = (std::min)(l012, l023);
@@ -895,7 +898,7 @@ are_shared_triangles_valid(const Point& p0, const Point& p1, const Point& p2, co
 
   if(larger < max_area_ratio * smaller)
   {
-    FT l0123 = Traits().compute_scalar_product_3_object()(n012, n023);
+    FT l0123 = m_traits.compute_scalar_product_3_object()(n012, n023);
     CGAL_SMS_TRACE(4,"\n      l0123=" << n_to_string(l0123));
 
     if(CGAL_NTS is_positive(l0123))
@@ -917,9 +920,9 @@ are_shared_triangles_valid(const Point& p0, const Point& p1, const Point& p2, co
 }
 
 // Returns the directed halfedge connecting v0 to v1, if exists.
-template<class TM, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
-typename EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::halfedge_descriptor
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+template<class TM, class GT, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
+typename EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::halfedge_descriptor
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 find_connection(const vertex_descriptor v0,
                 const vertex_descriptor v1) const
 {
@@ -934,9 +937,9 @@ find_connection(const vertex_descriptor v0,
 
 // Given the edge 'e' around the link for the collapsinge edge "v0-v1", finds the vertex that makes a triangle adjacent to 'e' but exterior to the link (i.e not containing v0 nor v1)
 // If 'e' is a null handle OR 'e' is a border edge, there is no such triangle and a null handle is returned.
-template<class TM, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
-typename EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::vertex_descriptor
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+template<class TM, class GT, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
+typename EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::vertex_descriptor
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 find_exterior_link_triangle_3rd_vertex(const halfedge_descriptor e,
                                        const vertex_descriptor v0,
                                        const vertex_descriptor v1) const
@@ -970,9 +973,9 @@ find_exterior_link_triangle_3rd_vertex(const halfedge_descriptor e,
 // A collapse is geometrically valid if, in the resulting local mesh no two adjacent triangles form an internal dihedral angle
 // greater than a fixed threshold (i.e. triangles do not "fold" into each other)
 //
-template<class TM, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
 bool
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 is_collapse_geometrically_valid(const Profile& profile, Placement_type k0)
 {
   bool res = true;
@@ -1067,9 +1070,9 @@ is_collapse_geometrically_valid(const Profile& profile, Placement_type k0)
   return res;
 }
 
-template<class TM, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
 void
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 collapse(const Profile& profile,
          Placement_type placement)
 {
@@ -1147,7 +1150,7 @@ collapse(const Profile& profile,
 
   CGAL_assertion(result_edge_count == edges(m_tm).size());
   CGAL_assertion(resulting_vertex_count == vertices(m_tm).size());
-  CGAL_assertion(is_valid_polygon_mesh(m_tm) && CGAL::is_triangle_mesh(m_tm));
+  CGAL_expensive_assertion(is_valid_polygon_mesh(m_tm) && CGAL::is_triangle_mesh(m_tm));
 
   CGAL_SMS_TRACE(1, "V" << get(m_vim, v_res) << " kept.");
 
@@ -1170,9 +1173,9 @@ collapse(const Profile& profile,
   CGAL_SMS_DEBUG_CODE(++m_step;)
 }
 
-template<class TM, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
+template<class TM, class GT, class SP, class VIM, class VPM, class HIM, class ECM, class CF, class PF, class V>
 void
-EdgeCollapse<TM,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
+EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 update_neighbors(const vertex_descriptor v_kept)
 {
   CGAL_SMS_TRACE(3,"Updating cost of neighboring edges...");
