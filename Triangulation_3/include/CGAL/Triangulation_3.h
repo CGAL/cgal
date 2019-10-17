@@ -3843,14 +3843,7 @@ insert_in_conflict(const Point& p,
         h2f.set(std::make_pair(w,u), Facet(nc,nc->index(v)));
       }
 
-      int E = 3* facets.size();
-      int ei = 0;
       for(auto it = h2f.begin(); it != h2f.end(); ++it){
-        if(ei>E){
-          std::cout << "Stop"<< std::flush;
-          char c; std::cin >> c;
-        }
-        ++ei;
         const std::pair<Halfedge,Facet>& ef = *it;
         if(ef.first.first < ef.first.second){
           Facet f = ef.second;
