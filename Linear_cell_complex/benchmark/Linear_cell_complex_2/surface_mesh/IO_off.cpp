@@ -54,7 +54,7 @@ bool read_off_ascii(Surface_mesh& mesh,
     Vec3f                p, n, c;
     Vec2f                t;
     Surface_mesh::Vertex v;
-    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Surface_mesh, NamedParameters>::const_type
+    typename CGAL::GetVertexPointMap<Surface_mesh, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, CGAL::boost::internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, mesh));
 
@@ -176,7 +176,7 @@ bool read_off_binary(Surface_mesh& mesh,
     Surface_mesh::Vertex_property<Texture_coordinate>  texcoords;
     if (has_normals)   normals   = mesh.vertex_property<Normal>("v:normal");
     if (has_texcoords) texcoords = mesh.vertex_property<Texture_coordinate>("v:texcoord");
-    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Surface_mesh, NamedParameters>::const_type
+    typename CGAL::GetVertexPointMap<Surface_mesh, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, CGAL::boost::internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, mesh));
 

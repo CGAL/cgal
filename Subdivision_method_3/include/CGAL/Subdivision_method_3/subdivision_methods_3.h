@@ -130,7 +130,8 @@ template <class PolygonMesh, class NamedParameters>
 void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -183,7 +184,8 @@ template <class PolygonMesh, class NamedParameters>
 void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -236,7 +238,8 @@ template <class PolygonMesh, class NamedParameters>
 void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -294,7 +297,8 @@ template <class PolygonMesh, class NamedParameters>
 void Sqrt3_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 

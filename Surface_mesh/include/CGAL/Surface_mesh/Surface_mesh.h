@@ -2120,7 +2120,7 @@ private: //------------------------------------------------------- private data
     else
       os << "COFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
     std::vector<int> reindex;
-    typename Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
+    typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, sm));
     reindex.resize(sm.num_vertices());
@@ -2404,7 +2404,7 @@ private: //------------------------------------------------------- private data
    using parameters::choose_parameter;
    using parameters::get_parameter;
 
-    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
+    typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
         vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point),
                            get_property_map(CGAL::vertex_point, sm));
     int n, f, e;
