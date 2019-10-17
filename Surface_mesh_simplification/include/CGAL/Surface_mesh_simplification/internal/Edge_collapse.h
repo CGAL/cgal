@@ -853,8 +853,8 @@ is_open_triangle(const halfedge_descriptor h1)
     res = is_border(h2, m_tm) && is_border(h3, m_tm);
 
     CGAL_assertion(res == (is_border(h1, m_tm) &&
-                                           is_border(next(h1, m_tm), m_tm) &&
-                                           is_border(next(next(h1, m_tm), m_tm), m_tm)));
+                           is_border(next(h1, m_tm), m_tm) &&
+                           is_border(next(next(h1, m_tm), m_tm), m_tm)));
   }
 
   return res;
@@ -885,7 +885,7 @@ are_shared_triangles_valid(const Point& p0, const Point& p1, const Point& p2, co
   FT larger = (std::max)(l012, l023);
   FT smaller = (std::min)(l012, l023);
 
-  const double max_area_ratio = 1e8;
+  const FT max_area_ratio = 1e8;
 
   CGAL_SMS_TRACE(4,"    Testing validity of shared triangles:"
                  << "\n      p0=" << xyz_to_string(p0) << "\n      p1=" << xyz_to_string(p1) << "\n      p2=" << xyz_to_string(p2) << "\n      p3=" << xyz_to_string(p3)
@@ -1003,7 +1003,7 @@ is_collapse_geometrically_valid(const Profile& profile, Placement_type k0)
                           << " k3=V" << get(m_vim, k3));
 
       halfedge_descriptor e12 = find_connection(k1,k2);
-      halfedge_descriptor e23 = k3 != k1 ? find_connection(k2,k3) : Graph_traits::null_halfedge();
+      halfedge_descriptor e23 = (k3 != k1) ? find_connection(k2,k3) : Graph_traits::null_halfedge();
 
       // If 'k1-k2-k3' are connected there will be two adjacent triangles 'k0,k1,k2' and 'k0,k2,k3' after the collapse.
       if(handle_assigned(e12) && handle_assigned(e23))
@@ -1023,7 +1023,7 @@ is_collapse_geometrically_valid(const Profile& profile, Placement_type k0)
       if(res)
       {
         // Also check the triangles 'k0,k1,k2' and it's adjacent along e12: 'k4,k2,k1', if exist
-        vertex_descriptor k4 = find_exterior_link_triangle_3rd_vertex(e12,profile.v0(), profile.v1());
+        vertex_descriptor k4 = find_exterior_link_triangle_3rd_vertex(e12, profile.v0(), profile.v1());
 
         // There is indeed a triangle shared along e12
         if(handle_assigned(k4))
@@ -1184,23 +1184,23 @@ update_neighbors(const vertex_descriptor v_kept)
   Edge_set edges_to_insert(Compare_id(this));
 
   // (A.1) loop around all vertices adjacent to the vertex kept
-  for(halfedge_descriptor lEdge1 : halfedges_around_target(v_kept, m_tm))
+  for(halfedge_descriptor h : halfedges_around_target(v_kept, m_tm))
   {
-    vertex_descriptor lAdj_k = source(lEdge1, m_tm);
+    vertex_descriptor v_adj = source(h, m_tm);
 
     // (A.2) loop around all edges incident on each adjacent vertex
-    for(halfedge_descriptor lEdge2 : halfedges_around_target(lAdj_k, m_tm))
+    for(halfedge_descriptor h2 : halfedges_around_target(v_adj, m_tm))
     {
-      lEdge2 = primary_edge(lEdge2);
+      h2 = primary_edge(h2);
 
-      Edge_data& data2 = get_data(lEdge2);
-      CGAL_SMS_TRACE(4,"Inedge around V" << get(m_vim, lAdj_k) << edge_to_string(lEdge2));
+      Edge_data& data2 = get_data(h2);
+      CGAL_SMS_TRACE(4,"Inedge around V" << get(m_vim, v_adj) << edge_to_string(h2));
 
       // Only edges still in the PQ needs to be updated, the other needs to be re-inserted
       if(data2.is_in_PQ())
-        edges_to_update.insert(lEdge2);
+        edges_to_update.insert(h2);
       else
-        edges_to_insert.insert(lEdge2);
+        edges_to_insert.insert(h2);
     }
   }
 
