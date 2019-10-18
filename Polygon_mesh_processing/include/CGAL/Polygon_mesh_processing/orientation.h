@@ -625,7 +625,7 @@ inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std
  * a finite volume. We say that the finite volume is <i>enclosed</i> by this surface
  * component.
  *
- * The volume connected components (*volume components* in the following) are defines as follow:
+ * The volume connected components (*volume components* in the following) are defined as follows:
  * Each surface component `S` that is outside any volume enclosed by
  * another surface component defines the *outer boundary* of a volume component.
  * Each surface component that is inside the volume enclosed by `S`
