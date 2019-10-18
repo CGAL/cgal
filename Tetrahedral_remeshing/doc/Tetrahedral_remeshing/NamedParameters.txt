@@ -28,7 +28,8 @@ functions. Note that the type may be more specific for some functions.
 
 \cgalNPTableBegin
 
-\cgalNPBegin{number_of_iterations} \anchor Remeshing_number_of_iterations
+\cgalNPBegin{number_of_iterations}
+\anchor Remeshing_number_of_iterations
 the number of iterations for the full sequence of atomic operations
 (edge splits, edge collapses, edge flips, smoothing and projection to the initial surface)
 performed to reach the input target edge length while improving the quality of dihedral angles
@@ -37,21 +38,38 @@ in the mesh.\n
 \b Default value is `1`
 \cgalNPEnd
 
-\cgalNPBegin{protect_boundaries} \anchor Remeshing_protect_boundaries
+\cgalNPBegin{protect_boundaries}
+\anchor Remeshing_protect_boundaries
 a boolean that states whether the boudaries should be modified by the remeshing
 process. Boundaries are between the exterior and the interior,
 between two subdomains, and between the areas selected or not for remeshing
-(cf \ref \Remeshing_cell_selector). If `true` they cannot.\n
+(cf \ref Remeshing_cell_selector). If `true` they cannot.\n
 \b Type : `bool` \n
 \b Default value is `true`
 \cgalNPEnd
 
-\cgalNPBegin{cell_selector} \anchor Remeshing_cell_selector
-a functor that takes a `Cell_handle` as parameter and returns a `bool` that states whether
-a cell is part of the zone to the remeshed. Unselected cells will not be modified by
-the remeshing algorithm.\n
-\b Type : Unary function object with `Cell_handle` as argument type and `bool` as return type.\n
-\b Default value is a function object that always returns `true`.
+\cgalNPBegin{edge_is_constrained_map}
+\anchor Remeshing_edge_is_constrained_map
+is a property map containing information about edges of the input triangulation
+being marked as constrained or not. In `tetrahedral_adaptive_remeshing()`,
+the marked edges are constrained.\n
+<b>Type:</b> a class model of `ReadWritePropertyMap` with
+`Triangulation::%Edge` as key type and
+`bool` as value type. It must be default constructible.\n
+<b>Default:</b> a default property map where no edge is constrained
+\cgalNPEnd
+
+\cgalNPBegin{cell_is_selected_map}
+\anchor Remeshing_cell_is_selected_map
+is a property map containing information about cells of the input triangulation
+being marked as selected or not for tetrahedral remeshing.
+Only selected cells are modified (and possibly their neighbors if surfaces are
+modified) by the remeshing process. Unselected cells will not be modified.\n
+\b Type : a class model of `ReadWritePropertyMap` with
+`Triangulation::%Cell_handle` as key type and `bool` as value type.
+It must be default constructible.\n
+<b>Default:</b> a default property map where all cells of the domain
+(i.e. with a non-zero `Subdomain_index` are selected)
 \cgalNPEnd
 
 \cgalNPTableEnd

@@ -61,13 +61,17 @@ namespace CGAL
   *     sequence of atomic operations
   *     performed (listed in the above description)
   *  \cgalParamEnd
-  *  \cgalParamBegin{protect_boundaries} If `true`, the
-  *     volume boundaries cannot be modified
+  *  \cgalParamBegin{protect_boundaries} If `true`, the volume boundaries cannot be modified
   *  \cgalParamEnd
-  *  \cgalParamBegin{cell_selector} a functor that returns a boolean setting whether the given
-  *    `Triangulation::Cell_handle` should be part of the remeshing.
-  *    By default, all cells are all part
-  *    of the remeshing.
+  *  \cgalParamBegin{edge_is_constrained_map} a property map containing the
+  *    constrained - or - not status of each edge of `tr`. A constrained edge can be split
+  *    or collapsed, but not flipped, nor its endpoints moved by smoothing
+  *  \cgalParamEnd
+  *  \cgalParamBegin{cell_is_selected_map} a property map containing the
+  *    selected - or - not status for each cell of `tr` for remeshing.
+  *    Only selected cells are modified (and possibly their neighbors if surfaces are
+  *    modified) by remeshing.
+  *    By default, all inside cells are selected.
   *  \cgalParamEnd
   * \cgalNamedParamsEnd
   */
@@ -77,10 +81,6 @@ namespace CGAL
   //*  \cgalParamBegin{ adaptive } If `true`, size of elements adapts
   //*     ....
   //*  \cgalParamEnd
-    //*  \cgalParamBegin{ edge_is_constrained_map } a property map containing the
-    //*    constrained - or - not status of each edge of `tr`. A constrained edge can be split
-    //*    or collapsed, but not flipped, nor its endpoints moved by smoothing.
-    //*  \cgalParamEnd
     //template<typename Triangulation,
   //         typename SizingField,
   //         typename NamedParameters>

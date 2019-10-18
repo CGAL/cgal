@@ -17,8 +17,10 @@ public:
 
   /// @name Operations
   /// @{
-    /// Returns the index of the input subdomain that contains the cell `cell`
-    /// of the triangulation.
+    /// Returns the index of the input subdomain of the triangulation
+    /// that contains the cell.
+    /// Cells with a non-zero `Subdomain_index` are considered as the "inside"
+    /// of the domain to be remeshed
     const Subdomain_index& subdomain_index() const;
 
     /// Sets the subdomain index of the cell. 
