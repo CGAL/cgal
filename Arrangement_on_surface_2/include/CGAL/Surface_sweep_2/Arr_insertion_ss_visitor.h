@@ -158,7 +158,7 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
   if (Base::add_subcurve_(cv, sc)) return;
 
   // sc is an overlap Subcurve of existing edge and new curve,
-  // which means that the edeg will have to be modified
+  // which means that the edge will have to be modified
   if (sc->originating_subcurve1()) {
     this->m_arr->modify_edge
       (this->current_event()->halfedge_handle()->next()->twin(), cv.base());
