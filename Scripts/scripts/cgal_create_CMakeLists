@@ -468,11 +468,10 @@ EOF
     echo
     echo "# Link the executable to CGAL and third-party libraries"
     LIBS=""
-    if [ "$qt4" = "y" ]; then
-      LIBS="\${QT_LIBRARIES}" 
-    fi
-    LIBS=$LIBS" \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES}"
-    echo "target_link_libraries(${target_name}  $LIBS )"
+    for comp in ${CGAL_COMPONENTS}; do
+        LIBS=$LIBS" CGAL::CGAL_${comp}"
+    done
+    echo "target_link_libraries(${target_name} PRIVATE CGAL::CGAL${LIBS} )"
 
   fi # single source or all files #===========================================
 
