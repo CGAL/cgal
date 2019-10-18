@@ -325,8 +325,8 @@ are allowed in \cgal), and a pointer to the file containing its text in the
 <LI>\$URL\$ : canonical path to the file on github,
 <LI>\$Id\$ : the release version the file is from.
 </UL>
-<LI> Then [SPDX license identifier](https://spdx.org/). For GPL-3+ it should be `SPDX-License-Identifier: GPL-3.0+`,
-and  `SPDX-License-Identifier: LGPL-3.0+` for LGPL-3+.
+<LI> Then [SPDX license identifier](https://spdx.org/). For GPL-3+ it should be `SPDX-License-Identifier: GPL-3.0-or-later`,
+and  `SPDX-License-Identifier: LGPL-3.0-or-later` for LGPL-3+.
 <LI>Then the authors of (non-negligible parts of) this file are listed, with
 optional affiliation or e-mail address.
 </UL>
