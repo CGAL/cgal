@@ -77,7 +77,7 @@ the library using your favorite compiler.
 A <a href="https://www.cgal.org/download/windows.html">tutorial</a> is provided on how to proceed with Microsoft Visual Studio.
 
 
-\subsection secusingwebsite From CGAL website
+\subsection secusingwebsite Using CGAL Source Archive
 
 You can obtain the \cgal library from
 <A HREF="https://www.cgal.org/download.html">https://www.cgal.org/download.html</A>.
@@ -88,7 +88,7 @@ command:
 
     tar xzf CGAL-\cgalReleaseNumber.tar.gz
 
-In both cases, the directory `CGAL-\cgalReleaseNumber` will be created. This directory
+The directory `CGAL-\cgalReleaseNumber` will be created. This directory
 contains the following subdirectories:
 
 | Directory                  | Contents   |
