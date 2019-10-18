@@ -63,6 +63,7 @@ On Windows, we recommand to use  <a href="https://github.com/microsoft/vcpkg">vc
 
     vcpkg install cgal
 
+To see how to use libraries installed with <code>vcpkg</code> refer to the <a href="https://github.com/microsoft/vcpkg/blob/master/docs/examples/installing-and-using-packages.md#step-2-use">official documentation</a>.
 If not automatically found, the `CGAL_DIR` to provide to cmake when configuring a program using \cgal should be something like `VCPK_DIR/packages/cgal_x64-windows/lib/cgal`
 
 For other distributions or package manager, please consult your respective documentation.
