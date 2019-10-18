@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later
 //
 // Author(s): Oren Nechushtan   <theoren@math.tau.ac.il>
 //            Michal Balas      <balasmic@post.tau.ac.il>

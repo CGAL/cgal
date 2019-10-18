@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef CGAL_QT_GRAPHICS_VIEW_POINT_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_POINT_INPUT_H

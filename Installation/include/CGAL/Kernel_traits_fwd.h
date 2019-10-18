@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 
 #ifndef CGAL_KERNEL_TRAITS_FWD_H

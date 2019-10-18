@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later
 // $Date$
 // Author(s)     :  Aymeric PELLE <aymeric.pelle@sophia.inria.fr>
 //                  Mael Rouxel-Labbé

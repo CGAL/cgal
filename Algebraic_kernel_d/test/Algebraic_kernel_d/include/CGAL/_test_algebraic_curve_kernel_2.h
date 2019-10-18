@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 // Author(s)     :   Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //                   Michael Kerber <mkerber@mpi-inf.mpg.de>

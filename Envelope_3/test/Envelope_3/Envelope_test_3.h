@@ -15,7 +15,7 @@
 // $Source: /CVSROOT/CGAL/Packages/Envelope_3/include/CGAL/Envelope_test_3.h,v $
 // $Revision$ $Date$
 // $Name:  $
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 

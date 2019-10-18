@@ -18,7 +18,7 @@
  *                                                                           
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 /******************************************************************
  * Core Library Version 1.7, August 2004

@@ -15,7 +15,7 @@
 // $URL: svn+ssh://hemmer@scm.gforge.inria.fr/svn/cgal/trunk/Polynomial/include/CGAL/Polynomial.h $
 // $Id: Polynomial.h 47254 2008-12-06 21:18:27Z afabri $
 // 
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 // Author(s)     : Michael Kerber  <mkerber@mpi-inf.mpg.de>
 //                 Eric Berberich <eric@mpi-inf.mpg.de>
