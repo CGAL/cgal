@@ -292,7 +292,7 @@ private:
   {
     // Build the constrained triangulation
 
-    // Since the border is closed and we are interest in triangles that are outside
+    // Since the border is closed and we are interested in triangles that are outside
     // of the border, we actually only need to insert points on the border
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
       vertex_descriptor s = source(hd, mesh);
