@@ -30,7 +30,7 @@ targetting high quality meshes with respect to dihedral angles.}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.0}
+\cgalPkgSince{5.1}
 \cgalPkgDependsOn{\ref PkgTriangulation3}
 \cgalPkgBib{faraj2016mvr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
@@ -42,8 +42,6 @@ targetting high quality meshes with respect to dihedral angles.}
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
-
-Here are the main concepts of this package:
 
 - `RemeshingCellBase_3`
 - `RemeshingVertexBase_3`

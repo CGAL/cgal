@@ -24,7 +24,6 @@
 #define CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_H
 
 #include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Mesh_vertex_base_3.h>
 
 namespace CGAL
 {
@@ -44,13 +43,14 @@ namespace Tetrahedral_remeshing
   template<typename GT,
            typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
   class Remeshing_vertex_base
-    : public CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD, Vb>
+    : public Vb
   {
-    typedef CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD, Vb> Base;
-
   private:
     short dimension_;
     std::size_t time_stamp_;
+    std::size_t number_of_incident_facets_;
+    std::size_t number_of_components_;
+    bool cache_validity_;
 
   public:
     Remeshing_vertex_base() : dimension_(-1)
@@ -89,6 +89,31 @@ namespace Tetrahedral_remeshing
       time_stamp_ = ts;
     }
     ///@}
+
+    // documented as invalidate_cache()
+    void invalidate_c2t3_cache()
+    {
+      cache_validity_ = false;
+    }
+    // documented as set_cache()
+    void set_cache(const std::size_t i, const std::size_t j)
+    {
+      number_of_incident_facets_ = i;
+      number_of_components_ = j;
+      cache_validity_ = true;
+    }
+
+    // documented as number_of_incident_facets
+    std::size_t cached_number_of_incident_facets() const
+    {
+      return number_of_incident_facets_;
+    }
+
+    // documented as number_of_incident_subdomains
+    std::size_t cached_number_of_components() const
+    {
+      return number_of_components_;
+    }
 
   };
 

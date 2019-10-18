@@ -103,7 +103,7 @@ namespace Tetrahedral_remeshing
     void set_surface_patch_index(const int, const Surface_patch_index&)
     {/*nothing to do because we use incident subdomain indices*/ }
 
-    const Surface_patch_index surface_patch_index(const int& i)
+    const Surface_patch_index surface_patch_index(const int& i) const
     {
       CGAL_precondition(i >= 0 && i < 4);
       if(is_facet_on_surface(i))
@@ -113,7 +113,7 @@ namespace Tetrahedral_remeshing
     }
 
     /// Returns true if facet lies on a surface patch
-    bool is_facet_on_surface(const int facet) const
+    bool is_facet_on_surface(const int& facet) const
     {
       CGAL_precondition(facet >= 0 && facet<4);
       return this->subdomain_index() != this->neighbor(facet)->subdomain_index();
