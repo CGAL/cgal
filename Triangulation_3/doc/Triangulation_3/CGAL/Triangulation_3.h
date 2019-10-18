@@ -222,10 +222,17 @@ typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
 /*!
 \cgalModifBegin
-iterator over cells intersected by a line segment
+iterator over cells intersected by a line segment.
 \cgalModifEnd
 */
 typedef unspecified_type Segment_cell_iterator;
+
+/*!
+\cgalModifBegin
+iterator over simplices intersected by a line segment.
+\cgalModifEnd
+*/
+typedef unspecified_type Segment_simplex_iterator;
 
 /// @}
 
@@ -1287,7 +1294,7 @@ Points points() const;
   
  
 /// @} 
-  
+
 
 /*!\name Segment Cell Iterator
 \cgalModifBegin
@@ -1332,7 +1339,8 @@ is `Cell_handle`.
 \cgalModifBegin
 returns the iterator that allows to visit the cells intersected by the line segment `st`.
 
-The starting point of the iterator is an arbitrary cell incident to `s`.
+The starting point of the iterator is the cell containing `s` and intersecting the
+line segment `st`.
 
 The iterator remains valid until the first cell incident to `t` is passed.
 
@@ -1340,7 +1348,7 @@ The iterator remains valid until the first cell incident to `t` is passed.
 \pre `t.dimension() >= 2`
 \cgalModifEnd
 */
-Segment_cell_iterator segment_walk_begin(Vertex_handle s, Vertex_handle t) const;
+Segment_cell_iterator segment_traverser_cells_begin(Vertex_handle s, Vertex_handle t) const;
 
 /*!
 \cgalModifBegin
@@ -1353,7 +1361,7 @@ passed the target.
 \pre `t.dimension() >= 2`
 \cgalModifEnd
 */
-Segment_cell_iterator segment_walk_end(Vertex_handle s, Vertex_handle t) const;
+Segment_cell_iterator segment_traverser_cells_end(Vertex_handle s, Vertex_handle t) const;
 
 /*!
 \cgalModifBegin
@@ -1361,7 +1369,10 @@ returns the iterator that allows to visit the cells intersected by the line segm
 
 If there is no such cell, the iterator visits exactly one infinite cell.
 
-The starting point of the iterator is a cell containing `s`.
+The starting point of the iterator is the cell containing `s`.
+If more than one cell
+contains `s` (e.g. if `s` lies on a vertex),
+the starting point is the cell intersecting the line segment `st`.
 
 The iterator remains valid until the first cell containing `t` is passed.
 
@@ -1371,7 +1382,7 @@ The optional argument `hint` can reduce the time to construct the iterator if it
 \pre  `t.dimension() >= 2`. If the dimension is 2, both `s` and `t` must lie in the affine hull.
 \cgalModifEnd
 */
-Segment_cell_iterator segment_walk_begin(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
+Segment_cell_iterator segment_traverser_cells_begin(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
 
 /*!
 \cgalModifBegin
@@ -1386,7 +1397,93 @@ The optional argument `hint` can reduce the time to construct the iterator if it
 \pre `t.dimension() >= 2`
 \cgalModifEnd
 */
-Segment_cell_iterator segment_walk_end(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
+Segment_cell_iterator segment_traverser_cells_end(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
+
+/// @}
+
+/*!\name Segment Simplex Iterator
+\cgalModifBegin
+The triangulation defines an iterator that visits all the triangulation simplices
+(vertices, edges, facets and cells) intersected by a line segment.
+The iterator covers a connected sequence of simplices - possibly of all dimensions -
+intersected by the line segment `s`.
+
+Each simplex falls within one or more of the following categories:
+1. a finite cell whose interior intersects `s`,
+2. a facet `f` whose interior intersects `s` in a point,
+3. a facet `f` whose interior intersects `s` in a line segment,
+4. an edge `e` whose interior intersects `s` in a point,
+5. an edge `e` whose interior intersects `s` in a line segment,
+6. a vertex `v` lying on `s`.
+
+In the special case where the segment does not intersect any finite facets, exactly one infinite cell is visited.
+This cell shares a facet `f` with a finite cell `c` such that `f` is intersected by the line through
+the source of `s` and the vertex of `c` opposite of `f`.
+
+`Segment_simplex_iterator` implements the concept `ForwardIterator` and is non-mutable.
+It is invalidated by any modification of one of the cells traversed.
+Its `value_type` is `Triangulation_simplex_3`.
+\cgalModifEnd
+*/
+/// @{
+/*!
+\cgalModifBegin
+returns the iterator that allows to visit the simplices intersected by the line segment `st`.
+
+The starting point of the iterator is `s`.
+The iterator remains valid until `t` is passed.
+
+\pre `s` and `t` must be different vertices and neither can be the infinite vertex.
+\pre `t.dimension() >= 2`
+\cgalModifEnd
+*/
+Segment_simplex_iterator segment_traverser_simplices_begin(Vertex_handle s, Vertex_handle t) const;
+
+/*!
+\cgalModifBegin
+returns the past-the-end iterator over the cells intersected by the line segment `st`.
+
+This iterator cannot be dereferenced. It indicates when the `Segment_cell_iterator` has
+passed the target.
+
+\pre `s` and `t` must be different vertices and neither can be the infinite vertex.
+\pre `t.dimension() >= 2`
+\cgalModifEnd
+*/
+Segment_simplex_iterator segment_traverser_simplices_end(Vertex_handle s, Vertex_handle t) const;
+
+/*!
+\cgalModifBegin
+returns the iterator that allows to visit the simplices intersected by the line segment `st`.
+
+If there is no such cell, the iterator visits exactly one infinite cell.
+
+The starting point of the iterator is the lowest dimension simplex containing `s`.
+
+The iterator remains valid until the first simplex containing `t` is passed.
+
+The optional argument `hint` can reduce the time to construct the iterator if it is close to `s`.
+
+\pre `s` and `t` must be different points.
+\pre  `t.dimension() >= 2`. If the dimension is 2, both `s` and `t` must lie in the affine hull.
+\cgalModifEnd
+*/
+Segment_simplex_iterator segment_traverser_simplices_begin(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
+
+/*!
+\cgalModifBegin
+returns the past-the-end iterator over the simplices intersected by the line segment `st`.
+
+This iterator cannot be dereferenced. It indicates when the `Segment_simplex_iterator` has
+passed the target.
+
+The optional argument `hint` can reduce the time to construct the iterator if it is close to `s`.
+
+\pre `s` and `t` must be different and finite points
+\pre `t.dimension() >= 2`
+\cgalModifEnd
+*/
+Segment_simplex_iterator segment_traverser_simplices_end(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
 
 /// @}
 
