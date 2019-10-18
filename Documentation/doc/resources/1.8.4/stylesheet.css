@@ -466,7 +466,7 @@ table.memberdecls {
         white-space: nowrap;
 }
 
-.memItemRight {
+.memItemRight, .memTemplItemRight {
 	width: 100%;
 }
 
