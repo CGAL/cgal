@@ -6,8 +6,8 @@ EXTRACT_ALL = false
 HIDE_UNDOC_CLASSES = true
 WARN_IF_UNDOCUMENTED = false
 
-INPUT        = ${CMAKE_SOURCE_DIR}/Tetrahedral_remeshing/doc/Tetrahedral_remeshing/ \
-               ${CMAKE_SOURCE_DIR}/Tetrahedral_remeshing/include
+#INPUT        = ${CMAKE_SOURCE_DIR}/Tetrahedral_remeshing/doc/Tetrahedral_remeshing/ \
+#               ${CMAKE_SOURCE_DIR}/Tetrahedral_remeshing/include/CGAL
 
 # macros to be used inside the code
 ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><dd> <table class=\"params\">"
@@ -20,6 +20,8 @@ ALIASES += "cgalNPTableBegin=<dl class=\"params\"><dt></dt><dd> <table class=\"p
 ALIASES += "cgalNPTableEnd=</table> </dd> </dl>"
 ALIASES += "cgalNPBegin{1}=<tr><td class=\"paramname\">\1 </td><td>"
 ALIASES += "cgalNPEnd=</td></tr>"
+
+EXAMPLE_PATH += ${CGAL_Tetrahedral_remeshing_EXAMPLE_DIR}
 
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES

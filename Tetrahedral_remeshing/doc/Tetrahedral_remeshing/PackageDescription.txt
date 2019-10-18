@@ -23,7 +23,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Jane Tournois, Noura Faraj}
-\cgalPkgDesc{PACKAGE DESCRIPTION.
+\cgalPkgDesc{
 The package provides a function for remeshing of tetrahedral meshes,
 targetting high quality meshes with respect to dihedral angles.}
 \cgalPkgManuals{Chapter_3D_Mesh_Generation,PkgTetrahedralRemeshingRef}
@@ -45,7 +45,6 @@ targetting high quality meshes with respect to dihedral angles.}
 
 Here are the main concepts of this package:
 
-- `RemeshingTriangulation_3`
 - `RemeshingCellBase_3`
 - `RemeshingVertexBase_3`
 

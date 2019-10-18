@@ -23,9 +23,9 @@ The following example shows ...
 \cgalExample{tetrahedral_remeshing_of_one_subdomain.cpp }
 \cgalExample{tetrahedral_remeshing_with_features.cpp }
 
-\cgalFigureBegin{figPck,bench.png}
-Left: ...
-\cgalFigureEnd
+#\cgalFigureBegin{figPck,bench.png}
+#Left: ...
+#\cgalFigureEnd
 
 */
 } /* namespace CGAL */
