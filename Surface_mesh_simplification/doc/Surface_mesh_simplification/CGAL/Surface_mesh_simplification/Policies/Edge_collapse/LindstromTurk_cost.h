@@ -25,7 +25,7 @@ public:
 Initializes the policy with the given <I>weighting unit factor</I>.
 See \ref SurfaceMeshSimplificationLindstromTurkStrategy for details on the meaning of this factor.
 */
-LindstromTurk_cost<TriangleMesh>(const FT& factor = FT(0.5));
+LindstromTurk_cost<TriangleMesh>(const FT factor = FT(0.5));
 
 /// @}
 
@@ -36,10 +36,9 @@ LindstromTurk_cost<TriangleMesh>(const FT& factor = FT(0.5));
 Returns the cost of collapsing the edge (represented by its profile) considering
 the new `placement` computed for it.
 */
-template <typename Profile>
-boost::optional<typename Profile::FT>
-operator()(const Profile& profile,
-           const boost::optional<typename Profile::Point>& placement) const;
+boost::optional<typename Edge_profile::FT>
+operator()(const Edge_profile& edge_profile,
+           const boost::optional<typename Edge_profile::Point>& placement) const;
 
 /// @}
 

@@ -1,5 +1,18 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
+
+/*!
+\ingroup PkgSurfaceMeshSimplificationRef
+
+This class is a type accessor for the quadric type.
+*/
+template <typename GeomTraits>
+struct GarlandHeckbert_cost_matrix
+{
+  /// The type of a quadric in the Garland-Heckbert algorithm
+  typedef typename Eigen::Matrix<typename GeomTraits::FT, 4, 4>           type;
+};
+
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
@@ -10,11 +23,11 @@ It computes the collapse cost following the Garland-Heckbert strategy
 It must be used in conjonction with the Garland-Heckbert placement policy,
 `CGAL::Surface_mesh_simplification::GarlandHeckbert_placement<TriangleMesh>`
 
-\tparam VertexCostMap must be a model of `ReadWritePropertyMap` with value type ``.
+\tparam VertexCostMap must be a model of `ReadWritePropertyMap` with value type `GarlandHeckbert_cost_matrix`.
 
 \cgalModels `GetCost`
 
-\sa `CGAL::Surface_mesh_simplification::GarlandHeckbert_placement<TriangleMesh>`
+\sa `CGAL::Surface_mesh_simplification::GarlandHeckbert_placement<VertexCostMap>`
 
 */
 template<class VertexCostMap>

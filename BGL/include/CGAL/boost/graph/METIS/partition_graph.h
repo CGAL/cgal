@@ -94,7 +94,7 @@ void partition_graph(const TriangleMesh& tm,
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator       face_iterator;
 
   //Vertex index map
-  typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<TriangleMesh, NamedParameters>::type Indices;
+  typedef typename CGAL::GetVertexIndexMap<TriangleMesh, NamedParameters>::type Indices;
   Indices indices = choose_parameter(get_parameter(np, internal_np::vertex_index),
                                  get_const_property_map(boost::vertex_index, tm));
 

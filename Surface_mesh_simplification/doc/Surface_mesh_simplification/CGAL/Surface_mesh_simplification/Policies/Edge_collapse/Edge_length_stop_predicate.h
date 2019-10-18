@@ -19,29 +19,29 @@ class Edge_length_stop_predicate
 {
 public:
 
-/// \name Creation
-/// @{
+  /// \name Creation
+  /// @{
 
-/*!
-Initializes the predicate establishing the `threshold` value.
-*/
-Edge_length_stop_predicate<TriangleMesh>(Edge_profile::FT threshold);
+  /*!
+  Initializes the predicate establishing the `threshold` value.
+  */
+  Edge_length_stop_predicate<TriangleMesh>(const Edge_profile::FT threshold);
 
-/// @}
+  /// @}
 
-/// \name Operations
-/// @{
+  /// \name Operations
+  /// @{
 
-/*!
-Returns `(CGAL::squared_distance(edge_profile.p0(),edge_profile.p1()) > threshold*threshold)`.
-All other parameters are ignored (but exist since this is a generic policy).
-*/
-bool operator()(const Edge_profile::FT&,
-                const Edge_profile& edge_profile,
-                Edge_profile::edges_size_type initial_edge_count,
-                Edge_profile::edges_size_type current_edge_count) const;
+  /*!
+  Returns `(CGAL::squared_distance(edge_profile.p0(),edge_profile.p1()) > threshold*threshold)`.
+  All other parameters are ignored (but exist since this is a generic policy).
+  */
+  bool operator()(const Edge_profile::FT&,
+                  const Edge_profile& edge_profile,
+                  const Edge_profile::edges_size_type initial_edge_count,
+                  const Edge_profile::edges_size_type current_edge_count) const;
 
-/// @}
+  /// @}
 
 };
 

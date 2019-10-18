@@ -11,16 +11,22 @@ The placement returned is a `boost::optional` value (i.e., it can
 be absent). An absent result indicates that the remaining vertex
 must be kept in place, not moved to a new position.
 
+\cgalRefines `DefaultConstructible`
 \cgalRefines `CopyConstructible`
 
 \cgalHasModel `CGAL::Surface_mesh_simplification::Midpoint_placement<TriangleMesh>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::GarlandHeckbert_placement<VertexCostMap>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Constrained_placement<Placement>`
 
 */
 class GetPlacement
 {
 public:
+
+  /// The class Edge_profile regroups useful information about an edge, such as its incident vertices and faces.
+  typedef CGAL::Surface_mesh_simplification::Edge_profile Edge_profile;
 
   /// \name Operations
   /// @{

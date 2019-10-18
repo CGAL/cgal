@@ -6,20 +6,20 @@ namespace Surface_mesh_simplification {
 
 The class `GarlandHeckbert_placement` provides a model for the `GetPlacement` concept.
 It computes the placement, that is, the new position for the remaining vertex after
-a halfedge-collapse, following the Garland-Heckbert strategy
+a halfedge collapse, following the Garland-Heckbert strategy
 (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
 
 It must be used in conjonction with the Garland-Heckbert cost policy,
 `CGAL::Surface_mesh_simplification::GarlandHeckbert_cost<TriangleMesh>`
 
-\tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
+\tparam VertexCostMap must be a model of `ReadWritePropertyMap` with value type `GarlandHeckbert_cost_matrix`.
 
 \cgalModels `GetPlacement`
 
-\sa `CGAL::Surface_mesh_simplification::GarlandHeckbert_cost<TriangleMesh>`
+\sa `CGAL::Surface_mesh_simplification::GarlandHeckbert_cost<VertexCostMap>`
 
 */
-template<class TriangleMesh>
+template<class VertexCostMap>
 class GarlandHeckbert_placement
 {
 public:
@@ -30,7 +30,7 @@ public:
   Initializes the policy with the given <I>garland heckbert state</I> object.
   Garland&Heckbert strategy requires a shared state object between cost, placement, and visitor policies.
   */
-  GarlandHeckbert_placement();
+  GarlandHeckbert_placement(const VertexCostMap&);
   /// @}
 
   /// \name Operations

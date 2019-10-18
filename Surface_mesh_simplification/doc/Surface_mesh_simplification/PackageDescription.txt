@@ -42,7 +42,6 @@
 - `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::GarlandHeckbert_cost<VertexCostMap>`
 - `CGAL::Surface_mesh_simplification::GarlandHeckbert_placement<VertexCostMap>`
-- `CGAL::Surface_mesh_simplification::GarlandHeckbert_cost_stop_predicate<FT>`
 - `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
 - `CGAL::Surface_mesh_simplification::Constrained_placement<Placement, TriangleMesh>`
 */

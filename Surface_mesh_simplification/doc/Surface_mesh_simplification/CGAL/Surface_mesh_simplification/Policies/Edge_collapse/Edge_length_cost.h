@@ -17,31 +17,29 @@ class Edge_length_cost
 {
 public:
 
-/// \name Creation
-/// @{
+  /// \name Creation
+  /// @{
 
-/*!
-Default constructor
-*/
-Edge_length_cost<TriangleMesh>();
+  /*!
+  %Default constructor
+  */
+  Edge_length_cost();
 
-/// @}
+  /// @}
 
-/// \name Operations
-/// @{
+  /// \name Operations
+  /// @{
 
-/*!
-Returns the <I>collapse cost</I> as the squared distance between the points
-of the source and target vertices (that is, `profile.p0()` and `profile.p1()`.
+  /*!
+  Returns the <I>collapse cost</I> as the squared distance between the points
+  of the source and target vertices (that is, `profile.p0()` and `profile.p1()`.
 
-The argument `placement` is unused.
+  The argument `placement` is unused.
+  */
+  boost::optional<typename Edge_profile::FT> operator()(const Edge_profile& profile,
+                                                        const boost::optional<typename Edge_profile::Point>& placement) const;
 
-*/
-template <typename Profile, typename Placement>
-boost::optional<typename Profile::FT> operator()(const Edge_profile& profile,
-                                                 const boost::optional<typename Edge_profile::Point>& placement) const;
-
-/// @}
+  /// @}
 
 };
 

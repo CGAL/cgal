@@ -5,23 +5,33 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
-The class `Edge_profile` regroups useful information about an edge that has been selected
-to be collapsed.
+The class `Edge_profile` regroups useful information about an edge, such as its incident vertices
+and faces. Its purpose is to pass this information onto the chosen models of `GetCost` and `GetPlacement`,
+and as such an object of this type appears as a parameter in the `operator()` of both concepts.
 
-Its template parameters must be consistent with your choice of optional parameters in the call
-to `edge_collapse`.
+The template parameters of this class must be consistent with the types used in the main call
+to `edge_collapse()`: if you have specified a vertex point map or a geometric traits
+(via `CGAL::parameters::vertex_point_map` and `CGAL::parameters::geom_traits` respectively),
+then the template parameters must be identical.
+
+Note however that if you wish to define your own models to the `GetCost` or `GetPlacement` concepts, you can
+simply template the call to `operator()` by an "EdgeProfile" template parameter, which will
+avoid having to explicit the template parameters of the `Edge_profile` class: indeed, the profile appears
+as an argument of the `operator()` functions of these two concepts and automatic template deduction
+can therefore be used.
 
 \tparam TriangleMesh is the type of surface mesh being simplified
 \tparam VertexPointMap is the type of the map that associates geometric positions to vertices of the mesh.
-                       If you have not specified a vertex point map in the named parameters in the call to `edge_collapse()`,
-                       you can ignore this template parameter and it will be automatically deduced.
+                       If you have specified a vertex point map in the named parameters in the call to `edge_collapse()`,
+                       it must the same map type. Otherwise, you need not specify this template
+                       parameter and it will be automatically deduced.
 \tparam GeomTraits is the type of the kernel that is used to perform predicates and constructions
-                   on geometric objects. If you have not specified a geometric traits in the named parameters
-                   in the call to `edge_collapse()`, you can ignore this template parameter
-                   and it will be automatically deduced.
+                   on geometric objects. If you have specified a traits class in the named parameters
+                   in the call to `edge_collapse()`, it must be the same traits class type. Otherwise, you need not
+                   specify this template parameter and it will be automatically deduced.
 
-\sa `GetCost` 
-\sa `GetPlacement` 
+\sa `GetCost`
+\sa `GetPlacement`
 
 */
 template< typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
@@ -32,14 +42,14 @@ public:
   /// @{
 
   /*!
-  The type of the surface mesh to simplify. Must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
+  The type of the surface mesh to simplify.
   */
-  typedef TriangleMesh TriangleMesh;
+  typedef TriangleMesh Triangle_mesh;
 
   /*!
   The type of a property map that maps vertices on points.
   */
-  typedef VertexPointMap VertexPointMap;
+  typedef VertexPointMap Vertex_point_map;
 
   /*!
   The type of a kernel-like objects used for predicates and constructions.
@@ -67,7 +77,7 @@ public:
   typedef typename boost::graph_traits<TriangleMesh>::edges_size_type edges_size_type;
 
   /*!
-  The point type for the surface mesh vertex. Must be a model of `Point_3`.
+  The point type for the surface mesh vertex.
   */
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 

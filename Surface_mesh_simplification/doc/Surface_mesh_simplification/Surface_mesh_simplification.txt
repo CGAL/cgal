@@ -163,32 +163,32 @@ the end a global change reasonably close to the absolute minimum.
 
 \subsection SurfaceMeshSimplificationGarlandHeckbertStrategy Garland-Heckbert Cost and Placement Strategy
 
-As in Lindstrom-Turk strategy, Garland-Heckbert strategy presented in \cgalCite{gh-ssqem-97}
-does not compare resulting mesh with the original mesh and does not depend on
+As in the case of the Lindstrom-Turk strategy, the Garland-Heckbert strategy presented in \cgalCite{gh-ssqem-97}
+does not compare the resulting mesh with the original mesh and does not depend on
 history of local changes. Instead, it encodes approximate distance to the original
 mesh by using quadric matrices that it assigns to each vertex.
 
-In the beginning, quadric matrix \f$ Q \f$ assigned to a vertex \f$ v \f$ encodes the total
-squared distance that any point \f$ p \f$ has to \f$ v \f$'s neighboring faces. (given by the matrix
-product \f$ p'Qp \f$)
+In the beginning, a quadric matrix \f$ Q \f$ is assigned to each vertex \f$ v \f$ and encodes the total
+squared distance that any point \f$ p \f$ has to \f$ v \f$'s neighboring faces, which is given by the matrix
+product \f$ p'Qp \f$.
 
-At each step, an edge which minimizes the cost of collapsing gets choosen for
+At each step, the edge which minimizes the cost of collapsing is selected for
 the collapse operation. The cost of collapsing an edge is calculated by
 minimizing the error function \f$ p'Qp \f$ where \f$ Q \f$ is the combined quadric
-matrices of edge's endpoints,
+matrices of the edge's endpoints
 and \f$ p \f$ is the point that minimizes the cost (i.e., decision variables). The point
-\f$ p \f$ that minimizes the objective function is choosen as the new placement point.
+\f$ p \f$ that minimizes the objective function is picked as the new placement point.
 
 Since the error function is quadratic, finding its minimum can be done by simply calculating
-the gradient and equating it to zero. If this fails due to a singularity, optimal point
+the gradient and equating it to zero. If this fails due to a singularity, the optimal point
 and the cost are found on the edge.
 
-After placing the new vertex, the quadric matrix assigned to it is simply the
-sum of quadric matrices of previous vertices.
+After placing the new vertex, a new quadric matrix is assigned to it by simply summing the
+quadric matrices of the two extremities of the edge that has been collapsed.
 
 Additional pseudo-faces that are perpendicular to neighboring faces
-are added to quadric matrices of border vertices in order to preserve borders of
-the mesh.
+are added to quadric matrices of border vertices in order to preserve sharp borders of
+the mesh as much as possible.
 
 \subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
 
@@ -365,17 +365,15 @@ steps of the simplification algorithm.
 
 \subsection Surface_mesh_simplificationExampleWithGarlandHeckbertUsingAPolyhedron Example with Garland-Heckbert using a Polyhedron
 
-Garland-Heckbert simplification is implemented with 2 policy classes, a visitor, and a state variable
-that ties everything together.
+Garland-Heckbert simplification is implemented with the following two policy classes:
 
-`Surface_mesh_simplification::GarlandHeckbert_cost` is used as the `GetCost` policy,
-`Surface_mesh_simplification::GarlandHeckbert_placement` is used as the `GetPlacement` policy.
+- `Surface_mesh_simplification::GarlandHeckbert_cost` is used as the `GetCost` policy,
+- `Surface_mesh_simplification::GarlandHeckbert_placement` is used as the `GetPlacement` policy.
 
-There is also a stop predicate called `Surface_mesh_simplification::GarlandHeckbert_cost_stop_predicate` which
-stops the operation when the Garland-Heckbert cost of collapsing an edge exceeds a given threshold.
-
-`Surface_mesh_simplification::Bounded_normal_change_placement` can be used with Garland-Heckbert
-as well in order to produce surfaces without self intersections.
+Either of this policy require the other one to function properly. Note that it is still possible
+to wrap either policy, for example it is possible to use `Surface_mesh_simplification::Bounded_normal_change_placement`
+with the Garland-Heckbert placement policy, to reduce the odds of self-intersections in the final
+mesh.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_garland_heckbert.cpp}
 */

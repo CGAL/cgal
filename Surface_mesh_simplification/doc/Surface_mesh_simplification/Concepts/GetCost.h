@@ -15,11 +15,15 @@ or can be intentionally returned to prevent the edge from being collapsed.
 
 \cgalHasModel `CGAL::Surface_mesh_simplification::Edge_length_cost<TriangleMesh>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::GarlandHeckbert_cost<VertexCostMap>`
 
 */
 class GetCost
 {
 public:
+
+  /// The class Edge_profile regroups useful information about an edge, such as its incident vertices and faces.
+  typedef CGAL::Surface_mesh_simplification::Edge_profile Edge_profile;
 
   /// \name Operations
   /// @{

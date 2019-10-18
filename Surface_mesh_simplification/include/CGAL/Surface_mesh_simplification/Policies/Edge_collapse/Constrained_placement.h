@@ -39,7 +39,7 @@ public:
       m_ecm(map)
   {}
 
-  template <typename Profile> 
+  template <typename Profile>
   boost::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
     typedef typename Profile::TM                                    TM;

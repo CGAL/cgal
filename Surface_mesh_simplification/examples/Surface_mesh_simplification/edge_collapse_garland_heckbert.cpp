@@ -10,7 +10,6 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_placement.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_cost_stop_predicate.h>
 
 // @tmp only required for STL reading
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
@@ -90,7 +89,6 @@ int main(int argc, char** argv)
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
   SMS::Count_ratio_stop_predicate<Surface_mesh> stop(stop_threshold);
-  // SMS::GarlandHeckbert_cost_stop_predicate<FT> stop(stop_threshold);
 
   // Garland&Heckbert simplification maintains an error matrix at each vertex,
   // which must be accessible for the cost and placement evaluations.
