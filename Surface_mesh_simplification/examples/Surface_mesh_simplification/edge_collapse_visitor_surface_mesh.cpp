@@ -1,6 +1,3 @@
-#include <iostream>
-#include <fstream>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -12,6 +9,9 @@
 
 // Stop-condition policy
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
+
+#include <iostream>
+#include <fstream>
 
 typedef CGAL::Simple_cartesian<double>                                  Kernel;
 typedef Kernel::Point_3                                                 Point_3;

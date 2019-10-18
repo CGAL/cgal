@@ -3,17 +3,9 @@
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
-
-#include <CGAL/IO/STL_reader.h>
-#include <CGAL/IO/PLY_reader.h>
-
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_placement.h>
-
-// @tmp only required for STL reading
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <chrono>
 #include <iostream>
@@ -27,53 +19,20 @@ typedef CGAL::Surface_mesh<Point_3>                             Surface_mesh;
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 
-template <typename K, typename Mesh>
-void read_mesh(const char* filename,
-               Mesh& sm)
-{
-  typedef typename K::Point_3                                   Point;
-
-  std::ifstream in(filename, std::ios::binary);
-  if(!in.good())
-  {
-    std::cerr << "Error: can't read file: " << filename << std::endl;
-    std::exit(1);
-  }
-
-  std::string fn(filename);
-  if(fn.substr(fn.find_last_of(".") + 1) == "stl")
-  {
-    std::vector<Point> points;
-    std::vector<std::array<int, 3> > faces;
-    CGAL::read_STL(in, points, faces);
-
-    if(!CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces))
-      std::cerr << "W: File does not describe a polygon mesh" << std::endl;
-
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, faces, sm);
-  }
-  else if(fn.substr(fn.find_last_of(".") + 1) == "off")
-  {
-    if(!in || !(in >> sm))
-    {
-      std::cerr << "Error: cannot OFF open mesh\n";
-      return;
-    }
-  }
-  else
-  {
-    std::cerr << "Unknown file type" << std::endl;
-    return;
-  }
-}
-
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
 
   const char* filename = argv[1];
-  read_mesh<Kernel>(filename, surface_mesh);
+  std::ifstream is(argv[1]);
 
+  if(!is)
+  {
+    std::cerr << "Filename provided is invalid\n";
+    return EXIT_FAILURE;
+  }
+
+  is >> surface_mesh;
   if(!CGAL::is_triangle_mesh(surface_mesh))
   {
     std::cerr << "Input geometry is not triangulated." << std::endl;
