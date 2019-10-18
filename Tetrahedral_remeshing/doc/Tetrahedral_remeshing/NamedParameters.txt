@@ -1,0 +1,58 @@
+/*!
+\defgroup Remeshing_namedparameters Named Parameters for Tetrahedral Remeshing
+\ingroup PkgTetrahedralRemeshingRef
+
+\cgalHeading{How to use BGL Optional Named Parameters}
+
+The notion of named parameters was introduced in the BGL.
+Details can be found from: https://www.boost.org/libs/graph/doc/bgl_named_params.html.
+Named parameters enable the user to specify only those parameters which are really needed, by name, making the parameter ordering not required.
+See also \ref bgl_namedparameters.
+
+The sequence of named parameters should start with `CGAL::parameters::`.
+The function `#all_default()` can be used to indicate
+that default values of optional named parameters are used.
+<!-- clashing tag with PMP named space -->
+
+\cgalHeading{List of Available Named Parameters}
+
+In this package, functions optional parameters are implemented as BGL optional named parameters and listed below.
+
+In the following, we assume that the following types are provided as template parameters of tetrahedral remeshing
+functions. Note that the type may be more specific for some functions.
+
+<ul>
+<li>`Triangulation` implements a `Triangulation_3` with specific vertex base and cell base.</li>
+</ul>
+
+\cgalNPTableBegin
+
+\cgalNPBegin{number_of_iterations} \anchor Remeshing_number_of_iterations
+the number of iterations for the full sequence of atomic operations
+(edge splits, edge collapses, edge flips, smoothing and projection to the initial surface)
+performed to reach the input target edge length while improving the quality of dihedral angles
+in the mesh.\n
+\b Type : `std::size_t` \n
+\b Default value is `1`
+\cgalNPEnd
+
+\cgalNPBegin{protect_boundaries} \anchor Remeshing_protect_boundaries
+a boolean that states whether the boudaries should be modified by the remeshing
+process. Boundaries are between the exterior and the interior,
+between two subdomains, and between the areas selected or not for remeshing
+(cf \ref \Remeshing_cell_selector). If `true` they cannot.\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
+\cgalNPBegin{cell_selector} \anchor Remeshing_cell_selector
+a functor that takes a `Cell_handle` as parameter and returns a `bool` that states whether
+a cell is part of the zone to the remeshed. Unselected cells will not be modified by
+the remeshing algorithm.\n
+\b Type : Unary function object with `Cell_handle` as argument type and `bool` as return type.\n
+\b Default value is a function object that always returns `true`.
+\cgalNPEnd
+
+\cgalNPTableEnd
+
+*/

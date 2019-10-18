@@ -19,14 +19,14 @@
 \todo add pkg-small.png
 
 \cgalPkgDescriptionBegin{Tetrahedral Remeshing,PkgTetrahedralRemeshing}
-\cgalPkgPicture{pkg-small.png}
+\todo cgalPkgPicture{pkg-small.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Jane Tournois, Noura Faraj}
 \cgalPkgDesc{
 The package provides a function for remeshing of tetrahedral meshes,
 targetting high quality meshes with respect to dihedral angles.}
-\cgalPkgManuals{Chapter_3D_Mesh_Generation,PkgTetrahedralRemeshingRef}
+\cgalPkgManuals{Chapter_Tetrahedral_Remeshing,PkgTetrahedralRemeshingRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin

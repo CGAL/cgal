@@ -4,7 +4,7 @@
 /// The concept `RemeshingCellBase_3` defines the requirements for the cell base
 /// used in the triangulation given as input to the remeshing algorithm
 ///
-/// \cgalRefines `TriangulationCellBase_3`, `CopyConstructible`
+/// \cgalRefines `TriangulationCellBaseWithInfo_3`, `CopyConstructible`
 /// \cgalHasModel `CGAL::Tetrahedral_remeshing::Remeshing_cell_base`.
 
 

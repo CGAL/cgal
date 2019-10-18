@@ -38,6 +38,7 @@
 namespace CGAL
 {
   /*!
+  * \ingroup PkgTetrahedralRemeshingRef
   * remeshes a tetrahedral mesh.
   *
   * This operation sequentially performs edge splits, edge collapses,
@@ -45,21 +46,28 @@ namespace CGAL
   * a quality mesh with a prescribed edge length.
   *
   * @tparam Triangulation model of `Triangulation_3`,
-  * with cell base model of `TriangulationCellBaseWithInfo_3`
+  * with cell base model of `RemeshingCellBase_3`
+  * and vertex base model of `RemeshingVertexBase_3`.
   * 
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
-
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @tparam NamedParameters a sequence of \ref Remeshing_namedparameters "Named Parameters"
+  *
+  * @param tr the triangulation to the remeshed
+  * @param target_edge_length the uniform target edge length. This parameter provides a
+  *          mesh density target for the remeshing algorithm.
+  * @param np optional sequence of \ref Remeshing_namedparameters "Named Parameters"
+  *          among the ones listed below
   * \cgalNamedParamsBegin
-  *  \cgalParamBegin{protect_boundaries} If `true`, the
-  *     volume boundaries cannot be modified (no modification of boundaries in this version)
-  *  \cgalParamEnd
-  *  \cgalParamBegin{number_of_iterations} the number of iterations for the sequence of atomic operations
+  *  \cgalParamBegin{number_of_iterations} the number of iterations for the full
+  *     sequence of atomic operations
   *     performed (listed in the above description)
-  *  \cgalParam
+  *  \cgalParamEnd
+  *  \cgalParamBegin{protect_boundaries} If `true`, the
+  *     volume boundaries cannot be modified
+  *  \cgalParamEnd
   *  \cgalParamBegin{cell_selector} a functor that returns a boolean setting whether the given
-  *    `Triangulation::Cell_handle` should be part of the remeshing (by default, cells are all part
-  *    of the remeshing)
+  *    `Triangulation::Cell_handle` should be part of the remeshing.
+  *    By default, all cells are all part
+  *    of the remeshing.
   *  \cgalParamEnd
   * \cgalNamedParamsEnd
   */
