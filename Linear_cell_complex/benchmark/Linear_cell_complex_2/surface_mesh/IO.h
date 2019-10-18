@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// SPDX-License-Identifier: LGPL-2.0
+// SPDX-License-Identifier: LGPL-2.0-only
 //
 //=============================================================================
 

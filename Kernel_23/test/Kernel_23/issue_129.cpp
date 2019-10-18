@@ -12,7 +12,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// SPDX-License-Identifier: LGPL-2.1
+// SPDX-License-Identifier: LGPL-2.1-only
 //
 // Author(s)     : Philipp Moeller
 

@@ -16,7 +16,7 @@
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 #ifndef QGLVIEWER_FRAME_H
 #define QGLVIEWER_FRAME_H
 

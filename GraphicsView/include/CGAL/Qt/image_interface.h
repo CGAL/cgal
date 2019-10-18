@@ -16,7 +16,7 @@
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifndef CGAL_IMAGE_INTERFACE_H
 #define CGAL_IMAGE_INTERFACE_H
