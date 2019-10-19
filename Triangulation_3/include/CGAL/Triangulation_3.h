@@ -3631,12 +3631,10 @@ insert_in_conflict(const Point& p,
 
       // Ok, we really insert the point now.
       // First, find the conflict region.
-      std::vector<Cell_handle> cells;
-      cells.reserve(32);
+      boost::container::small_vector<Cell_handle,32> cells;
       Facet facet;
 
-      std::vector<Facet> facets;
-      facets.reserve(32);
+      boost::container::small_vector<Facet,32> facets;
       
       // Parallel
       if(could_lock_zone)
