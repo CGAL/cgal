@@ -1,13 +1,17 @@
 /*!
-\page general_intro Getting Started
+\page general_intro Getting Started with %CGAL
 
-- \subpage installation describes how to install %CGAL, and lists the third party libraries on which %CGAL depends, or for which %CGAL provides interfaces. 
+- \subpage usage describes how to get \cgal and the few steps required to build a program using \cgal.
 
-- \subpage manual gives an idea where you should look for documentation.
-  The documentation for a class, may be spread over manual pages of
-  base classes, and reference manual pages of concepts the class is a model of.
-  
+- \subpage thirdparty lists required and optional third party libraries.
 
-- \subpage preliminaries lists the licenses under which the %CGAL datastructures and algorithms are distributed, how to control inlining, thread safety, code deprecation, checking of pre- and postconditions, and how to alter the failure behavior. 
+- \subpage manual gives an idea of where you should look for documentation.
+
+- \subpage preliminaries lists how to control inlining, thread safety, code deprecation, checking of pre- and postconditions, and how to alter the failure behavior.
+
+Once you are familiar with building your programs with \cgal and how the documentation is structured,
+you can head over to the \ref tutorials for a hand-in-hand introduction to \cgal data structures
+and algorithms, or directly to the package(s) that interest you the \ref packages. Each package
+contains simple examples of the various functionalities of the package.
 
 */
