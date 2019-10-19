@@ -575,6 +575,18 @@ sub parselicense {
         $license = "WTFPL $license";
     }
 
+    if ($licensetext =~ /SPDX-License-Identifier GPL-3.0-or-later/i) {
+      $license = "GPL (v3 or later)";
+    }
+
+    if ($licensetext =~ /SPDX-License-Identifier LGPL-3.0-or-later/i) {
+      $license = "LGPL (v3 or later)";
+    }
+
+    if ($licensetext =~ /SPDX-License-Identifier LGPL-3.0-only/i) {
+      $license = "LGPL (v3)";
+    }
+
     $license = "UNKNOWN" if (!length($license));
 
     # Remove trailing spaces.
