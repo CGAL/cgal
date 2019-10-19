@@ -5,8 +5,10 @@
 //
 // $URL$
 // $Id$
+// Re-licensed for CGAL distribution to:
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Original license is:
 // SPDX-License-Identifier: GPL-2.0-or-later
-//
 /*
 ###################################################################
 #                                                                 #
