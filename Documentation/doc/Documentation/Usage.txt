@@ -8,7 +8,8 @@ However, some dependencies of \cgal might still need to be installed.
 
 \section usage_introduction Quick Start: Compiling a Program using CGAL
 
-Given that you have extracted the \cgal source archive in `$HOME`, compiling an example shipped with \cgal is as simple as:
+Assuming that you have extracted the \cgal source archive in your `$HOME` folder,
+compiling an example shipped with \cgal is as simple as:
 
     cd $HOME/CGAL-\cgalReleaseNumber/examples/Triangulation_2 # go to an example directory
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release . # configure the examples

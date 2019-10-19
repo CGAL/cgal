@@ -5,13 +5,12 @@
 The Computational Geometry Algorithms Library (\cgal) is a software project
 that provides easy access to efficient and reliable geometric algorithms
 in the form of a C++ library.
-
+<br><br>
 \cgal offers data structures and algorithms like \ref PartTriangulationsAndDelaunayTriangulations "triangulations",
 \ref PartVoronoiDiagrams "Voronoi diagrams", \ref PartPolygons, \ref PartPolyhedra,
 \ref PartArrangements "arrangements of curves", \ref PartMeshing "mesh generation",
 \ref PartGeometryProcessing "geometry processing", \ref PartConvexHullAlgorithms "convex hull algorithms",
 to name just a few.
-
 All these data structures and algorithms operate on geometric objects
 like points and segments, and perform geometric tests on them. These
 objects and predicates are regrouped in \ref PartKernels "CGAL Kernels".
@@ -26,7 +25,7 @@ Getting Started
 ===============
 
 
-- \ref usage describes how to get \cgal and the few steps required to build a program using \cgal.
+- \ref usage describes how to obtain \cgal and the few steps required to build a program using \cgal.
 
 - \ref thirdparty lists required and optional third party libraries.
 
