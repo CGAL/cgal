@@ -1,9 +1,12 @@
-//=============================================================================
 // Copyright (C) 2001-2005 by Computer Graphics Group, RWTH Aachen
 // Copyright (C) 2011 by Graphics & Geometry Group, Bielefeld University
 // Copyright (C) 2014 GeometryFactory
 //
 // This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later
 //
 
 
