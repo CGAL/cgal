@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>

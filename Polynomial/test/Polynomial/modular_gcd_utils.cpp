@@ -21,7 +21,7 @@
 // CGAL_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Dominik Huelse <dominik.huelse@gmx.de>
 //

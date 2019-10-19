@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sebastian Limbach <slimbach@mpi-inf.mpg.de>
 //                 Michael Hemmer <hemmer@mpi-inf.mpg.de>    

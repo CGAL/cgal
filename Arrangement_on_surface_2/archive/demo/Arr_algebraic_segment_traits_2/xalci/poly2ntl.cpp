@@ -21,7 +21,7 @@
 // NiX_release   : $Name:  $
 // Revision      : $Revision: 1.1 $
 // Revision_date : $Date: 2009-06-30 13:14:58 $
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : ... ?
 //

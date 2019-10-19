@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 
 #ifndef CGAL_MUTEX_H
 #define CGAL_MUTEX_H
