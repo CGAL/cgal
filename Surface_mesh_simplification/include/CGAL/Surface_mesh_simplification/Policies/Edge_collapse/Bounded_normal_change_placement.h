@@ -21,6 +21,9 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_BOUNDED_NORMAL_CHANGE_PLACEMENT_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
+
+#include <CGAL/property_map.h>
+
 #include <boost/optional.hpp>
 
 namespace CGAL {
