@@ -15,7 +15,7 @@ or can be intentionally returned to prevent the edge from being collapsed.
 
 \cgalHasModel `CGAL::Surface_mesh_simplification::Edge_length_cost<TriangleMesh>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>`
-\cgalHasModel `CGAL::Surface_mesh_simplification::GarlandHeckbert_cost<VertexCostMap>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>`
 
 */
 class GetCost

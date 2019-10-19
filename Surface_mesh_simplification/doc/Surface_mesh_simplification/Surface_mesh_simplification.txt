@@ -365,15 +365,12 @@ steps of the simplification algorithm.
 
 \subsection Surface_mesh_simplificationExampleWithGarlandHeckbertUsingAPolyhedron Example with Garland-Heckbert using a Polyhedron
 
-Garland-Heckbert simplification is implemented with the following two policy classes:
-
-- `Surface_mesh_simplification::GarlandHeckbert_cost` is used as the `GetCost` policy,
-- `Surface_mesh_simplification::GarlandHeckbert_placement` is used as the `GetPlacement` policy.
-
-Either of this policy require the other one to function properly. Note that it is still possible
-to wrap either policy, for example it is possible to use `Surface_mesh_simplification::Bounded_normal_change_placement`
-with the Garland-Heckbert placement policy, to reduce the odds of self-intersections in the final
-mesh.
+Garland-Heckbert simplification is implemented with a single class,
+`Surface_mesh_simplification::GarlandHeckbert_policies`, that regroups both a cost and
+a placement policy class: this is because either of these policies require the other one to function properly.
+Note that it is still possible to wrap either policy, for example it is possible to use
+behavior modifiers such as `Surface_mesh_simplification::Bounded_normal_change_placement`
+with the Garland-Heckbert placement policy.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_garland_heckbert.cpp}
 */

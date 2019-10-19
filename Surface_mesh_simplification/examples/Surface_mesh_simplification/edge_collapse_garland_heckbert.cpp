@@ -4,8 +4,7 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_cost.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_policies.h>
 
 #include <chrono>
 #include <iostream>
@@ -51,20 +50,18 @@ int main(int argc, char** argv)
 
   // Garland&Heckbert simplification maintains an error matrix at each vertex,
   // which must be accessible for the cost and placement evaluations.
-  typedef typename SMS::GarlandHeckbert_cost_matrix<Kernel>::type               Cost_matrix;
-  typedef CGAL::dynamic_vertex_property_t<Cost_matrix>                          Cost_property;
-  typedef typename boost::property_map<Surface_mesh, Cost_property>::type       Vertex_cost_map;
-  Vertex_cost_map vcm = get(Cost_property(), surface_mesh);
 
-  typedef SMS::GarlandHeckbert_cost<Vertex_cost_map>                            GH_cost;
-  typedef SMS::GarlandHeckbert_placement<Vertex_cost_map>                       GH_placement;
+  typedef typename SMS::GarlandHeckbert_policies<Surface_mesh, Kernel>          GH_policies;
+  typedef typename GH_policies::Get_cost                                        GH_cost;
+  typedef typename GH_policies::Get_placement                                   GH_placement;
   typedef SMS::Bounded_normal_change_placement<GH_placement>                    Bounded_GH_placement;
 
-  GH_cost cost(vcm);
-  GH_placement gh_placement(vcm);
+  GH_policies gh_policies(surface_mesh);
+  const GH_cost& gh_cost = gh_policies.get_cost();
+  const GH_placement& gh_placement = gh_policies.get_placement();
   Bounded_GH_placement placement(gh_placement);
 
-  int r = SMS::edge_collapse(surface_mesh, stop, CGAL::parameters::get_cost(cost)
+  int r = SMS::edge_collapse(surface_mesh, stop, CGAL::parameters::get_cost(gh_cost)
                                                                   .get_placement(placement));
 
   std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
