@@ -73,8 +73,9 @@ public:
 #ifdef  CGAL_SMALL_UNORDERED_MAP_STATS        
         if(collision>9){
           std::cerr << collision << " collisions" << std::endl;
+        }else{
+          ++collisions[collision];
         }
-        ++collisions[collision];
 #endif        
         return;
       }
