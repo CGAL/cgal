@@ -23,8 +23,9 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 
 #include <CGAL/determinant.h>
-#include <CGAL/number_utils.h>
 #include <CGAL/Null_matrix.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Vector_3.h>
 
 #include <boost/optional/optional.hpp>
 
