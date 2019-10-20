@@ -593,6 +593,10 @@ sub parselicense {
       if ($licensetext =~ /SPDX-License-Identifier LGPL-3.0-only/i) {
         $license = "LGPL (v3)";
       }
+
+      if ($licensetext =~ /SPDX-License-Identifier LicenseRef-RFL/i) {
+        $license = "MIT/X11 (BSD like)";
+      }
     }
 
     $license = "UNKNOWN" if (!length($license));
