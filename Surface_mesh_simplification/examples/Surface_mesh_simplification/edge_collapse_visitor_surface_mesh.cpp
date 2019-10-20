@@ -31,22 +31,17 @@ typedef SMS::Edge_profile<Surface_mesh>                                 Profile;
 //
 struct Stats
 {
-  Stats()
-    : collected(0), processed(0), collapsed(0),
-      non_collapsable(0), cost_uncomputable(0), placement_uncomputable(0)
-  {}
-
-  std::size_t collected;
-  std::size_t processed;
-  std::size_t collapsed;
-  std::size_t non_collapsable;
-  std::size_t cost_uncomputable;
-  std::size_t placement_uncomputable;
+  std::size_t collected = 0;
+  std::size_t processed = 0;
+  std::size_t collapsed = 0;
+  std::size_t non_collapsable = 0;
+  std::size_t cost_uncomputable = 0;
+  std::size_t placement_uncomputable = 0;
 };
 
 struct My_visitor : SMS::Edge_collapse_visitor_base<Surface_mesh>
 {
-  My_visitor(Stats* s) : stats(s){}
+  My_visitor(Stats* s) : stats(s) {}
 
   // Called during the collecting phase for each edge collected.
   void OnCollected(const Profile&, const boost::optional<double>&)
@@ -100,9 +95,14 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface_mesh>
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
+  const char* filename = (argc > 1) ? argv[1] : "data/cube.off";
+  std::ifstream is(filename);
+  if(!is || !(is >> surface_mesh))
+  {
+    std::cerr << "Failed to read input mesh: " << filename << std::endl;
+    return EXIT_FAILURE;
+  }
 
-  std::ifstream is(argv[1]);
-  is >> surface_mesh;
   if(!CGAL::is_triangle_mesh(surface_mesh))
   {
     std::cerr << "Input geometry is not triangulated." << std::endl;
@@ -110,11 +110,11 @@ int main(int argc, char** argv)
   }
 
   // In this example, the simplification stops when the number of undirected edges
-  // drops below 10% of the initial count
-  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(0.1);
+  // drops below xx% of the initial count
+  const double ratio = (argc > 2) ? std::stod(argv[2]) : 0.1;
+  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(ratio);
 
   Stats stats;
-
   My_visitor vis(&stats);
 
   // The index maps are not explicitelty passed as in the previous
@@ -133,10 +133,10 @@ int main(int argc, char** argv)
             << "\nEdge not collapsed due to placement computation constraints: " << stats.placement_uncomputable
             << std::endl;
 
-  std::cout << "\nFinished...\n" << r << " edges removed.\n"
+  std::cout << "\nFinished!\n" << r << " edges removed.\n"
             << surface_mesh.number_of_edges() << " final edges.\n";
 
-  std::ofstream os(argc > 2 ? argv[2] : "out.off");
+  std::ofstream os(argc > 3 ? argv[3] : "out.off");
   os.precision(17);
   os << surface_mesh;
 

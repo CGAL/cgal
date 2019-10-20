@@ -28,9 +28,9 @@ struct Border_is_constrained_edge_map
 {
   const Surface_mesh* sm_ptr;
   typedef boost::graph_traits<Surface_mesh>::edge_descriptor key_type;
-  typedef bool value_type;
-  typedef value_type reference;
-  typedef boost::readable_property_map_tag category;
+  typedef bool                                               value_type;
+  typedef value_type                                         reference;
+  typedef boost::readable_property_map_tag                   category;
 
   Border_is_constrained_edge_map(const Surface_mesh& sm) : sm_ptr(&sm) {}
 
@@ -46,21 +46,14 @@ typedef SMS::Constrained_placement<SMS::Midpoint_placement<Surface_mesh>,
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-
-  if(argc != 2)
+  const char* filename = (argc > 1) ? argv[1] : "data/mesh_with_border.off";
+  std::ifstream is(filename);
+  if(!is || !(is >> surface_mesh))
   {
-    std::cerr << "Usage: " << argv[0] << " input.off\n";
+    std::cerr << "Failed to read input mesh: " << filename << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::ifstream is(argv[1]);
-  if(!is)
-  {
-    std::cerr << "Filename provided is invalid\n";
-    return EXIT_FAILURE;
-  }
-
-  is >> surface_mesh;
   if(!CGAL::is_triangle_mesh(surface_mesh))
   {
     std::cerr << "Input geometry is not triangulated." << std::endl;
@@ -69,7 +62,7 @@ int main(int argc, char** argv)
 
   // map used to check that constrained_edges and the points of its vertices
   // are preserved at the end of the simplification
-  std::map<Surface_mesh::Halfedge_handle,std::pair<Point_3, Point_3> >constrained_edges;
+  std::map<Surface_mesh::Halfedge_handle, std::pair<Point_3, Point_3> >constrained_edges;
   std::size_t nb_border_edges=0;
 
   for(Surface_mesh::Halfedge_iterator hit=surface_mesh.halfedges_begin(),
@@ -92,6 +85,7 @@ int main(int argc, char** argv)
   // The surface mesh and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
   // of this surface mesh lack an "id()" field.
+  std::cout << "Collapsing as many edges of mesh: " << filename << " as possible..." << std::endl;
   int r = SMS::edge_collapse(surface_mesh,
                              stop,
                              CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh))
@@ -99,7 +93,7 @@ int main(int argc, char** argv)
                                               .edge_is_constrained_map(bem)
                                               .get_placement(Placement(bem)));
 
-  std::cout << "\nFinished...\n" << r << " edges removed.\n"
+  std::cout << "\nFinished!\n" << r << " edges removed.\n"
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n";
 
   std::ofstream os(argc > 2 ? argv[2] : "out.off");
@@ -108,8 +102,8 @@ int main(int argc, char** argv)
 
   // now check!
   for(Surface_mesh::Halfedge_iterator hit=surface_mesh.halfedges_begin(),
-                                       hit_end=surface_mesh.halfedges_end();
-                                       hit!=hit_end; ++hit)
+                                      hit_end=surface_mesh.halfedges_end();
+                                      hit!=hit_end; ++hit)
   {
     if(hit->is_border())
     {
@@ -119,7 +113,7 @@ int main(int argc, char** argv)
     }
   }
 
-  assert(nb_border_edges==0);
+  assert(nb_border_edges == 0);
 
   return EXIT_SUCCESS;
 }
