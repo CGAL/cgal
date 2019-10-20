@@ -1,0 +1,9 @@
+namespace CGAL {
+/*!
+\mainpage User Manual
+\anchor Chapter_OptimalBoundingBox
+
+\cgalAutoToc
+\authors
+
+} /* namespace CGAL */

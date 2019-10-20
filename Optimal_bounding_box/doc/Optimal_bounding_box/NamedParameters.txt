@@ -1,0 +1,315 @@
+/*!
+\defgroup pmp_namedparameters Named Parameters for Polygon Mesh Processing
+\ingroup PkgPolygonMeshProcessing
+
+In this package, all functions optional parameters are implemented as BGL optional
+named parameters (see \ref BGLNamedParameters for more information on how to use them).
+Since the parameters of the various polygon mesh processing functions defined
+in this package are redundant, their long descriptions are centralized below.
+The sequence of named parameters should start with `CGAL::parameters::`.
+`CGAL::parameters::all_default()` can be used to indicate
+that default values of optional named parameters must be used.
+
+In the following, we assume that the following types are provided as template parameters
+of polygon mesh processing functions and classes. Note that, for some of these functions,
+the type is more specific:
+<ul>
+<li>`PolygonMesh` is a model of the concept `FaceGraph`</li>.
+<li>`GeomTraits` a geometric traits class in which constructions are performed and
+     predicates evaluated. Everywhere in this package, a \cgal `Kernel` fulfills the requirements.</li>
+</ul>
+
+The following named parameters, offered by the package \ref PkgBGLSummary
+(see \ref bgl_namedparameters), are used in this package:
+
+\cgalNPTableBegin
+\cgalNPBegin{vertex_point_map} \anchor PMP_vertex_point_map
+is the property map with the points associated to the vertices of the polygon mesh `pmesh`.\n
+<b>Type:</b> a class model of `ReadablePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+`GeomTraits::Point_3` as value type. \n
+<b>Default:</b> \code boost::get(CGAL::vertex_point, pmesh) \endcode
+\cgalNPEnd
+
+\cgalNPBegin{vertex_index_map} \anchor PMP_vertex_index_map
+is the property map containing the index of each vertex of the input polygon mesh.\n
+<b>Type:</b> a class model of `ReadablePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and the value type
+\code typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::vertex_index_t>::type>::value_type \endcode
+<b>Default:</b> \code boost::get(CGAL::vertex_index, pmesh)\endcode
+\cgalNPEnd
+
+\cgalNPBegin{face_index_map} \anchor PMP_face_index_map
+is the property map containing the index of each face of the input polygon mesh.\n
+<b>Type:</b> a class model of `ReadablePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and the value type:
+\code typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type>::value_type \endcode
+<b>Default:</b> \code boost::get(CGAL::face_index, pmesh)\endcode
+If this internal property map exists, its values should be initialized.
+\cgalNPEnd
+
+\cgalNPBegin{edge_is_constrained_map} \anchor PMP_edge_is_constrained_map
+is the property map containing information about edges of the input polygon mesh
+being marked or not. In `isotropic_remeshing()` and `connected_components()`,
+the marked edges are constrained.\n
+<b>Type:</b> a class model of `ReadWritePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
+`bool` as value type. It should be default constructible.\n
+<b>Default:</b> a default property map where no edge is constrained
+\cgalNPEnd
+\cgalNPTableEnd
+
+In addition to these named parameters, this package offers the following named parameters:
+
+\cgalNPTableBegin
+\cgalNPBegin{geom_traits} \anchor PMP_geom_traits
+is the geometric traits instance in which the mesh processing operation should be performed.\n
+<b>Type:</b> a Geometric traits class.\n
+<b>Default</b>:
+\code typename CGAL::Kernel_traits<
+        typename boost::property_traits<
+          typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel \endcode
+\cgalNPEnd
+
+\cgalNPBegin{vertex_incident_patches_map} \anchor PMP_vertex_incident_patches_map
+is the property map containing the surface patches incident to each vertex of the input polygon mesh.\n
+<b>Type:</b> a class model of `LvaluePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type. Its value type
+must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
+A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
+inserted several times.\n
+<b>Default:</b> \code boost::get(CGAL::vertex_incident_patches_t, pmesh)\endcode
+\cgalNPEnd
+
+\cgalNPBegin{vertex_feature_degree_map} \anchor PMP_vertex_feature_degree_map
+is the property map containing the number of feature edges being incident to the vertices of the polygon mesh `pmesh`.\n
+<b>Type:</b> a class model of `ReadWritePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+`int` as value type. It should be default constructible.\n
+<b>Default:</b> \code boost::get(CGAL::vertex_feature_degree_t(), pmesh) \endcode
+\cgalNPEnd
+
+\cgalNPBegin{vertex_is_constrained_map} \anchor PMP_vertex_is_constrained_map
+is the property map containing information about vertices of the input polygon mesh being constrained or not.
+Constrained vertices may be replaced by new vertices, but the number and location
+of vertices remain unchanged.\n
+<b>Type:</b> a class model of `ReadWritePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+`bool` as value type. It should be default constructible.\n
+<b>Default:</b> a default property map where no vertex is constrained is provided.
+\cgalNPEnd
+
+\cgalNPBegin{face_patch_map} \anchor PMP_face_patch_map
+is a property map containing information about faces.
+It is particularly well-suited for preserving surface patch IDs,
+or face colors.
+The edges at the interface between surface patches are treated similarly
+to the ones of `edge_is_constrained_map`.\n
+<b>Type:</b> a class model of `ReadWritePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+the desired property, model of `CopyConstructible` as value type.\n
+<b>Default:</b> a default property map where each face is associated with the ID of
+the connected component it belongs to. Connected components are
+computed with respect to the constrained edges listed in the property map
+`edge_is_constrained_map`
+\cgalNPEnd
+
+\cgalNPBegin{first_index} \anchor PMP_first_index
+is the index of the first surface patch.\n
+<b>Type:</b> `std::size_t`\n
+<b>Default:</b> 1
+\cgalNPEnd
+
+\cgalNPBegin{density_control_factor} \anchor PMP_density_control_factor
+controls the density of the mesh generated by refinement, with larger values causing denser refinements.
+The density of vertices in the refined region is this factor times higher than before refinement.\n
+<b>Type:</b> floating scalar value\n
+<b>Default:</b> `CGAL::sqrt(2)`
+\cgalNPEnd
+
+\cgalNPBegin{fairing_continuity} \anchor PMP_fairing_continuity
+controls the tangential continuity of the output surface in `fair()`.
+The possible values are 0, 1 and 2, refering to the  C<sup>0</sup>, C<sup>1</sup>
+and C<sup>2</sup> continuity.\n
+<b>Type:</b> \c unsigned \c int between 0 and 2\n
+<b>Default:</b> `1`
+\cgalNPEnd
+
+\cgalNPBegin{sparse_linear_solver} \anchor PMP_sparse_linear_solver
+is the solver used in `fair()`.\n
+<b>Type:</b> a class model of `SparseLinearAlgebraWithFactorTraits_d`.\n
+<b>Default:</b> if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and
+`CGAL_EIGEN3_ENABLED` is defined, then the following overload of `Eigen_solver_traits`
+is provided as default value:\n
+\code CGAL::Eigen_solver_traits<Eigen::SparseLU<CGAL::Eigen_sparse_matrix<double>::EigenType, Eigen::COLAMDOrdering<int> > > \endcode
+\cgalNPEnd
+
+\cgalNPBegin{number_of_iterations} \anchor PMP_number_of_iterations
+is the number of iterations of the sequence of iterations performed in `isotropic_remeshing()`.\n
+<b>Type:</b> \c unsigned \c int \n
+<b>Default:</b> `1`
+\cgalNPEnd
+
+\cgalNPBegin{protect_constraints} \anchor PMP_protect_constraints
+enables the protection of constraints listed by \ref PMP_edge_is_constrained_map
+"edge_is_constrained_map" and boundary edges
+in `isotropic_remeshing()`. If `true`, constraint edges cannot be modified at all
+during the remeshing process.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
+\cgalNPEnd
+
+\cgalNPBegin{relax_constraints} \anchor PMP_relax_constraints
+enables the tangential relaxation step in `isotropic_remeshing()`
+to be performed on vertices that are endpoints of constraints listed
+by \ref PMP_edge_is_constrained_map "edge_is_constrained_map", and boundary edges.
+The vertices move along the constrained polylines they belong to.
+Corners (i.e. vertices incident to more than 2 constraints, and vertices listed in
+\ref PMP_vertex_is_constrained_map "vertex_is_constrained_map") are not allowed
+to move at all.
+If \ref PMP_protect_constraints "protect_constraints" is
+set to `true`, this parameter is ignored.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{number_of_relaxation_steps} \anchor PMP_number_of_relaxation_steps
+is the number of iterations of tangential relaxation that are performed at each iteration
+of `isotropic_remeshing()`. A larger number of relaxation steps lead to
+a more isotropic mesh.\n
+<b>Type:</b> \c unsigned \c int \n
+<b>Default:</b> `1`
+\cgalNPEnd
+
+\cgalNPBegin{use_delaunay_triangulation} \anchor PMP_use_delaunay_triangulation
+enables the use of the Delaunay triangulation facet search space for hole filling functions.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{use_random_uniform_sampling} \anchor PMP_use_random_uniform_sampling
+is a parameter used in `sample_triangle_mesh()` to indicate if points should be picked
+in a random uniform way.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{use_grid_sampling} \anchor PMP_use_grid_sampling
+is a parameter used in `sample_triangle_mesh()` to indicate if points should be picked
+in on a grid in each face.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
+\cgalNPEnd
+
+\cgalNPBegin{use_monte_carlo_sampling} \anchor PMP_use_monte_carlo_sampling
+is a parameter used in `sample_triangle_mesh()` to indicate if points should be picked
+using a Monte-Carlo approach.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
+\cgalNPEnd
+
+\cgalNPBegin{sample_edges} \anchor PMP_sample_edges
+is a parameter used in `sample_triangle_mesh()` to indicate if a dedicated sampling
+of edges should be done.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{sample_vertices} \anchor PMP_sample_vertices
+is a parameter used in `sample_triangle_mesh()` to indicate if triangle vertices should
+be copied in the output iterator.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{sample_faces} \anchor PMP_sample_faces
+is a parameter used in `sample_triangle_mesh()` to indicate if the interior of faces
+should be considered for the sampling.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{number_of_points_on_faces} \anchor PMP_number_of_points_on_faces
+is a parameter used in `sample_triangle_mesh()` to set the number of points picked
+using the random uniform method on faces.\n
+<b>Type:</b> `std::size_t` \n
+<b>Default:</b> `0`
+\cgalNPEnd
+
+\cgalNPBegin{number_of_points_on_edges} \anchor PMP_number_of_points_on_edges
+is a parameter used in `sample_triangle_mesh()` to set the number of points picked
+using the random uniform method on edges.\n
+<b>Type:</b> `std::size_t` \n
+<b>Default:</b> `0`
+\cgalNPEnd
+
+\cgalNPBegin{number_of_points_per_face} \anchor PMP_number_of_points_per_face
+is a parameter used in `sample_triangle_mesh()` to set the number of points picked
+per face using the Monte-Carlo method.\n
+<b>Type:</b> `std::size_t` \n
+<b>Default:</b> `0`
+\cgalNPEnd
+
+\cgalNPBegin{number_of_points_per_edge} \anchor PMP_number_of_points_per_edge
+is a parameter used in `sample_triangle_mesh()` to set the number of points picked
+per edge using the Monte-Carlo method.\n
+<b>Type:</b> `std::size_t` \n
+<b>Default:</b> `0`
+\cgalNPEnd
+
+\cgalNPBegin{grid_spacing} \anchor PMP_grid_spacing
+is a parameter used in `sample_triangle_mesh()` to set the grid spacing when using
+the grid sampling method.\n
+<b>Type:</b> `double` \n
+<b>Default:</b> `0`
+\cgalNPEnd
+
+\cgalNPBegin{number_of_points_per_area_unit} \anchor PMP_number_of_points_per_area_unit
+is a parameter used in `sample_triangle_mesh()` to set the number of points per
+area unit to be picked up in faces for the random uniform sampling and
+Monte-Carlo methods.\n
+<b>Type:</b> `double` \n
+<b>Default:</b> `0`
+\cgalNPEnd
+
+\cgalNPBegin{number_of_points_per_distance_unit} \anchor PMP_number_of_points_per_distance_unit
+is a parameter used in `sample_triangle_mesh()` to set the number of points per
+distance unit to be picked up on edges for the random uniform sampling and
+Monte-Carlo methods.\n
+<b>Type:</b> `double` \n
+<b>Default:</b> `0`
+\cgalNPEnd
+
+\cgalNPBegin{do_project} \anchor PMP_do_project
+is a parameter used in `random_perturbation()` to set whether vertices should be re-projected
+to the input surface after their geometric perturbation.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{random_seed} \anchor PMP_random_seed
+is a parameter used in `random_perturbation()` to choose a seed to initialize
+the random number generator `CGAL::Random()`.
+If this parameter is not provided, the perturbation is not deterministic
+(i.e. not reproducible from one run to the other).\n
+<b>Type:</b> `unsigned int` \n
+<b>Default:</b> the random number generator is initialized with `CGAL::Random()`
+\cgalNPEnd
+
+\cgalNPBegin{outward_orientation} \anchor PMP_outward_orientation
+Parameter used in orientation functions to choose between an outward or inward orientation.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+
+\cgalNPBegin{do_overlap_test_of_bounded_sides} \anchor PMP_do_overlap_test_of_bounded_sides
+Parameter used in intersection test functions to indicate whether overlapping tests of bounded sides
+of close meshes should be done in addition to surface intersection tests.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPTableEnd
+
+*/
