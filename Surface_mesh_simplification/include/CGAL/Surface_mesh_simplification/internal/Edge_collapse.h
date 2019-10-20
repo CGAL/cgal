@@ -465,7 +465,10 @@ collect()
     const halfedge_descriptor h = halfedge(e, m_tm);
 
     if(is_constrained(h))
+    {
+      CGAL_assertion_code(++num_not_inserted);
       continue; // no not insert constrainted edges
+    }
 
     const Profile profile = create_profile(h);
     if(!m_traits.equal_3_object()(profile.p0(), profile.p1()))
