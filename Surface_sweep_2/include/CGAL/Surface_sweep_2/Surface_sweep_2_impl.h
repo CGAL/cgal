@@ -86,7 +86,6 @@ void Surface_sweep_2<Vis>::_handle_left_curves()
   CGAL_SS_PRINT_TEXT(")");
   CGAL_SS_PRINT_EOL();
 
-  _fix_overlap_subcurves();
   _handle_overlaps_in_right_curves();
 
   this->m_is_event_on_above = false;
@@ -200,6 +199,33 @@ void Surface_sweep_2<Vis>::_handle_left_curves()
 }
 
 //-----------------------------------------------------------------------------
+// clip the last curve of a subcurve if it is not in the status line
+// and with a left end not being the current event
+//
+template <typename Vis>
+void Surface_sweep_2<Vis>::_clip_non_active_curve_at_current_event(Subcurve* subcurve)
+{
+  // ignore active curve (will be split at intersection point)
+  if (subcurve->hint() != this->m_statusLine.end() &&
+      subcurve->hint() != Status_line_iterator()  ) return;
+
+  if (!subcurve->is_start_point(this->m_currentEvent))
+  {
+    CGAL_SS_PRINT_TEXT("Splitting ");
+    CGAL_SS_PRINT_CURVE(subcurve);
+    CGAL_SS_PRINT_EOL();
+    // current event splits the subcurve.
+    const X_monotone_curve_2& lastCurve = subcurve->last_curve();
+    this->m_traits->split_2_object()(lastCurve, this->m_currentEvent->point(),
+                                     sub_cv1, sub_cv2);
+    subcurve->set_last_curve(sub_cv2);
+
+    this->m_currentEvent->set_weak_intersection();
+    this->m_visitor->update_event(this->m_currentEvent, subcurve);
+  }
+}
+
+//-----------------------------------------------------------------------------
 // Handle the overlaps between subcurves to the right of the current event point.
 //
 template <typename Vis>
@@ -257,6 +283,9 @@ void Surface_sweep_2<Vis>::_handle_overlaps_in_right_curves()
       }
       CGAL_assertion( std::set<Subcurve*>(it->second.begin(), it->second.end()).size() == nbc);
 
+      //  clipping only one curve is sufficient since we compute an intersection
+      _clip_non_active_curve_at_current_event(it->second.front());
+
       if ( nbc==1 )
         _intersect(it->second.front(), it->first, this->m_currentEvent);
       else{
@@ -271,6 +300,14 @@ void Surface_sweep_2<Vis>::_handle_overlaps_in_right_curves()
     }
     CGAL_SS_PRINT_EVENT_INFO(this->m_currentEvent);
     CGAL_SS_PRINT_END_EOL("handling overlaps on the right");
+  }
+
+  // split curves not already split. TODO: this should be done above?
+  for (Event_subcurve_iterator subcurve_it =  this->m_currentEvent->right_curves_begin();
+                               subcurve_it != this->m_currentEvent->right_curves_end();
+                               ++subcurve_it)
+  {
+    _clip_non_active_curve_at_current_event(*subcurve_it);
   }
 }
 
@@ -867,39 +904,6 @@ void Surface_sweep_2<Vis>::_create_intersection_point(const Point_2& xp,
   CGAL_SS_PRINT_END_EOL("Creating an intersection point");
 }
 
-//-----------------------------------------------------------------------------
-// Fix overlap Subcurves before handling the current event.
-//
-template <typename Vis>
-void Surface_sweep_2<Vis>::_fix_overlap_subcurves()
-{
-  CGAL_SS_PRINT_START_EOL("fixing overlap subcurves");
-
-  if (!this->m_currentEvent->has_left_curves()) return;
-
-  Event_subcurve_iterator iter = this->m_currentEvent->left_curves_begin();
-
-  //special treatment for Subcurves that store overlaps
-  while (iter != this->m_currentEvent->left_curves_end()) {
-    Subcurve* leftCurve = *iter;
-
-    // we check if the subcurve store overlap and current event is its
-    // right end point.
-    if ((Event*)leftCurve->right_event() == this->m_currentEvent) {
-      if (leftCurve->originating_subcurve1() != NULL) {
-        Subcurve* orig_sc_1 = leftCurve->originating_subcurve1();
-        Subcurve* orig_sc_2 = leftCurve->originating_subcurve2();
-
-        _fix_finished_overlap_subcurve(orig_sc_1);
-        _fix_finished_overlap_subcurve(orig_sc_2);
-      }
-    }
-    ++iter;
-  }
-
-  CGAL_SS_PRINT_END_EOL("Fixing overlap subcurves");
-}
-
 template <typename Vis>
 void Surface_sweep_2<Vis>::
 _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
@@ -1074,55 +1078,6 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
       std::swap(c1, c2);
 
   CGAL_SS_PRINT_END_EOL("creating an overlapping curve");
-}
-
-//-----------------------------------------------------------------------------
-// Fix a subcurve that represents an overlap.
-// sc - some originating subcurve of a subcurve that stores an overlap
-// notice thah this function is recursive since an originating subcurve of
-// an overlap can be itself a subcurve that stores overlap and so on.
-template <typename Vis>
-void Surface_sweep_2<Vis>::_fix_finished_overlap_subcurve(Subcurve* sc)
-{
-  CGAL_SS_PRINT_START("fixing finished overlap subcurve ");
-  CGAL_SS_PRINT_CURVE(sc);
-  CGAL_SS_PRINT_EOL();
-
-  CGAL_assertion(sc != NULL);
-
-  // split 'sc' if necessary and update to event as weak intersection
-  if ((Event*)sc->right_event() != this->m_currentEvent) {
-    // the following assertion explains why visitor->add_subcurve is not called:
-    // the curve is not an active one (in the status line)
-    CGAL_assertion( sc->hint() == this->m_statusLine.end() ||
-                    sc->hint() == Status_line_iterator()  );
-    this->m_traits->split_2_object()(sc->last_curve(),
-                                     this->m_currentEvent->point(),
-                                     sub_cv1, sub_cv2);
-    sc->set_last_curve(sub_cv2);
-
-    this->m_currentEvent->set_weak_intersection();
-    this->m_visitor->update_event(this->m_currentEvent, sc);
-
-    CGAL_SS_PRINT_END_EOL("Fixing finished overlap subcurve");
-    return;
-  }
-
-  if (!sc->originating_subcurve1()) {
-    // sc does not store an overlap, we are done
-    CGAL_SS_PRINT_END_EOL("fixing finished overlap subcurve");
-    return;
-  }
-
-  // sc is a subcurve that stores overlap, we have to continue with the
-  // recursion and deal with his two originating subcurves recursively.
-  Subcurve* orig_sc_1 = sc->originating_subcurve1();
-  Subcurve* orig_sc_2 = sc->originating_subcurve2();
-
-  _fix_finished_overlap_subcurve(orig_sc_1);
-  _fix_finished_overlap_subcurve(orig_sc_2);
-
-  CGAL_SS_PRINT_END_EOL("fixing finished overlap subcurve");
 }
 
 //-----------------------------------------------------------------------------
