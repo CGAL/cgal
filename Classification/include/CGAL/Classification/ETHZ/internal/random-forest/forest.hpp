@@ -4,7 +4,8 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: LicenseRef-RFL
+// License notice in Installation/LICENSE.RFL
 //
 // Author(s)     : Stefan Walk
 

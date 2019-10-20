@@ -4,13 +4,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: LicenseRef-RFL
+// License notice in Installation/LICENSE.RFL
 //
 // Author(s)     : Stefan Walk
 
 // Modifications from original library:
 //  * changed inclusion protection tag
 //  * moved to namespace CGAL::internal::
+//
+
 
 
 #ifndef CGAL_INTERNAL_LIBLEARNING_DATAVIEW_H
