@@ -20,9 +20,9 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 int main(int argc, char** argv)
 {
   LCC lcc;
-  const char* filename = (argc > 1) ? argv[1] : "data/cube.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/cube-meshed.off";
   std::ifstream is(filename);
-  if(!is || !(CGAL::read_off(argv[1], lcc)))
+  if(!is || !(CGAL::read_off(filename, lcc)))
   {
     std::cerr << "Failed to read input mesh: " << filename << std::endl;
     return EXIT_FAILURE;
