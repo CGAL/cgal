@@ -272,15 +272,13 @@ get_placement(pf)             : function object computing the placement for the 
 visitor(vis)                  : function object tracking the simplification process
 */
 
-int r = edge_collapse(surface_mesh
-                     ,stop_predicate
-                     ,vertex_index_map(vimap)
-                       .edge_index_map(eimap)
-                       .edge_is_border_map(ebmap)
-                       .get_cost(cf)
-                       .get_placement(pf)
-                       .visitor(vis)
-                    );
+int r = edge_collapse(surface_mesh, stop_predicate,
+                      CGAL::parameters::vertex_index_map(vimap)
+                                       .edge_index_map(eimap)
+                                       .edge_is_border_map(ebmap)
+                                       .get_cost(cf)
+                                       .get_placement(pf)
+                                       .visitor(vis));
 
 \endcode
 
