@@ -13,6 +13,9 @@ public:
 /// \name Types
 /// @{
 
+/// Convenience typedef to the Edge_profile class.
+typedef CGAL::Surface_mesh_simplification::Edge_profile Edge_profile;
+
 /*!
 The type of the surface mesh to simplify. Must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 */

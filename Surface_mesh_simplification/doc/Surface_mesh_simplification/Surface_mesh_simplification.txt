@@ -131,7 +131,6 @@ the name <I>memoryless</I> simplification.
 
 At each step, all remaining edges are potential candidates for
 collapsing and the one with the lowest cost is selected.
-
 The cost of collapsing an edge is given by the position chosen for the
 vertex that replaces it.
 
@@ -139,13 +138,10 @@ The replacement vertex position is computed as
 the solution to a system of 3 linearly-independent linear equality constraints.
 Each constraint is obtained by minimizing a quadratic objective function
 subject to the previously computed constraints.
-
 There are several possible candidate constraints and each is considered in order of importance.
 A candidate constraint might be <I>incompatible</I> with the previously accepted constraints,
 in which case it is rejected and the next constraint is considered.
-
 Once 3 constraints have been accepted, the system is solved for the vertex position.
-
 The first constraints considered preserves the shape of the surface mesh boundaries
 (in case the edge profile has boundary edges).
 The next constraints preserve the total volume of the surface mesh.
@@ -171,18 +167,15 @@ mesh by using quadric matrices that it assigns to each vertex.
 In the beginning, a quadric matrix \f$ Q \f$ is assigned to each vertex \f$ v \f$ and encodes the total
 squared distance that any point \f$ p \f$ has to \f$ v \f$'s neighboring faces, which is given by the matrix
 product \f$ p'Qp \f$.
-
 At each step, the edge which minimizes the cost of collapsing is selected for
 the collapse operation. The cost of collapsing an edge is calculated by
 minimizing the error function \f$ p'Qp \f$ where \f$ Q \f$ is the combined quadric
 matrices of the edge's endpoints
 and \f$ p \f$ is the point that minimizes the cost (i.e., decision variables). The point
 \f$ p \f$ that minimizes the objective function is picked as the new placement point.
-
 Since the error function is quadratic, finding its minimum can be done by simply calculating
 the gradient and equating it to zero. If this fails due to a singularity, the optimal point
 and the cost are found on the edge.
-
 After placing the new vertex, a new quadric matrix is assigned to it by simply summing the
 quadric matrices of the two extremities of the edge that has been collapsed.
 
@@ -219,7 +212,6 @@ is called for each and every edge, `GetPlacement` must also be called to obtain
 the placement parameter to the cost function.
 But that placement, which is a 3D Point, is not attached to each and every edge since
 that would easily <I>triple</I> the additional storage requirement.
-
 On the one hand, this dramatically saves on memory but on the other hand is
 a processing waste because when an edge is effectively collapsed, `GetPlacement`
 must be called <I>again</I> to know were to move the remaining vertex.
@@ -301,7 +293,6 @@ The unspecified cost strategy defaults to Lindstrom-Turk.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_surface_mesh.cpp}
 
-
 \subsection Surface_mesh_simplificationExampleUsinga Example Using a Default Polyhedron
 
 The following example illustrates the simplification of a `Polyhedron_3` with default
@@ -327,7 +318,6 @@ What is particular in this example is the property map that allows to associate
 3D \cgal points to the vertices.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_OpenMesh.cpp}
-
 
 \subsection Surface_mesh_simplificationExamplewithedges Example with Edges Marked as Non-Removable
 
