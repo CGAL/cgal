@@ -168,7 +168,10 @@ protected:
   virtual void _handle_left_curves();
 
   /*! Handle the overlap on the right curves of the current event point. */
-  virtual void _handle_overlaps_in_right_curves();
+  void _handle_overlaps_in_right_curves();
+
+  /*! clip the last curve of a subcurve if it is not in the status line and with a left end not being the current event*/
+  void _clip_non_active_curve_at_current_event(Subcurve*);
 
   /*! Handle the subcurves to the right of the current event point. */
   virtual void _handle_right_curves();
@@ -183,9 +186,6 @@ protected:
    * or updated.
    */
   void _add_curve(Event* e, Subcurve* sc, Attribute type);
-
-  /*! Fix overlapping subcurves before handling the current event. */
-  void _fix_overlap_subcurves();
 
   /*! create an overlap subcurve from overlap_cv between c1 and c2.
    * \param overlap_cv the overlapping curve.
@@ -232,11 +232,6 @@ protected:
                                   unsigned int mult,
                                   Subcurve*& c1,
                                   Subcurve*& c2);
-
-  /*! Fix a subcurve that represents an overlap.
-   * \param sc The subcurve.
-   */
-  void _fix_finished_overlap_subcurve(Subcurve* sc);
 };
 
 } // namespace Surface_sweep_2
