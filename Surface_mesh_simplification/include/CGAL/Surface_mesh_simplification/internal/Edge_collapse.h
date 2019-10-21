@@ -590,11 +590,9 @@ loop()
 
       if(is_collapse_topologically_valid(profile))
       {
-        // The external function Get_new_vertex_point() is allowed to return an absent point if there is no way to place the vertex
-        // satisfying its constraints. In that case the remaining vertex is simply left unmoved.
         Placement_type placement = get_placement(profile);
 
-        if(placement != boost::none && is_collapse_geometrically_valid(profile, placement))
+        if(is_collapse_geometrically_valid(profile, placement))
         {
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
           std::cout << "step " << i_rm << " " << source(*h, m_tm)->point() << " " << target(*h, m_tm)->point() << "\n";
@@ -981,13 +979,15 @@ bool
 EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 is_collapse_geometrically_valid(const Profile& profile, Placement_type k0)
 {
-  bool res = true;
+  bool res = false;
 
   CGAL_SMS_TRACE(3,"Testing geometrical collapsabilty of v0-v1=E" << get_edge_id(profile.v0_v1()));
   if(k0)
   {
-    // Use the current link to extract all local triangles incident to 'vx' in the collapsed mesh (which at this point doesn't exist yet)
-    //
+    res = true;
+
+    // Use the current link to extract all local triangles incident to 'vx' in the collapsed mesh
+    // (which at this point doesn't exist yet)
     typedef typename std::vector<vertex_descriptor>::const_iterator link_iterator;
 
     link_iterator linkb = profile.link().begin();
