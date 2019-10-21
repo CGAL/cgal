@@ -21,7 +21,7 @@ NO_SCM=""                # If set, git pull is not called.
 SOURCES_DIR="$PWD"       # Directory containing the sources, default is "$PWD"
 VERBOSE=""               # Verbose mode (displays log to standard err)
 BETA=""                  #If set, will change the release number and version number accordingly.
-DESTINATION="/tmp"
+DESTINATION="$PWD"
 IS_MASTER="y"
 
 SOURCES_DIR_HAS_BEEN_SET=
@@ -303,30 +303,15 @@ if [ -n "$DO_PUBLIC" ]; then
 	public_release_name="CGAL-${public_release_version}"
     fi
 
-    cmake -DGIT_REPO=${SOURCES_DIR} -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
-    pushd "${DESTINATION}/${public_release_name}"
-
-    # Modify the version numbers in <CGAL/version.h>
-    sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
-
-    # Patch the date and CGAL version in man(1) pages
-    sed -i -e "s/@DATE@/`date '+%B %Y'`/; s/@CGAL_VERSION@/$public_release_version/" auxiliary/*.1
-
-    echo -n $public_release_version > VERSION 2>&1
-    cd ..
-
-    rm -f "${public_release_name}".tar*
-    tar -cf "${public_release_name}.tar" "${public_release_name}"
+    cmake -DGIT_REPO=${SOURCES_DIR} -DGENERATE_TARBALLS="ON" -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${public_release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
+    tar -xf ${public_release_name}.tar.xz
     mkdir "${HTML_DIR}/${release_name}-public"
-    xz --best "${public_release_name}.tar" -c > "${HTML_DIR}/${release_name}-public/${public_release_name}.tar.xz"
-    gzip "${public_release_name}.tar"
-    cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/"
+    mv ${public_release_name}*.tar.xz "${HTML_DIR}/${release_name}-public/"
     # Do a Zip file as well for the public version.
     zip -q -r ${public_release_name}.zip ${public_release_name}
     cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/"
     rm -f "$HTML_DIR/CGAL-last-public"
     ln -s "${release_name}-public" "$HTML_DIR/CGAL-last-public"
-    popd
 fi
 
 if [ -n "$DO_PUBLIC" ]; then
