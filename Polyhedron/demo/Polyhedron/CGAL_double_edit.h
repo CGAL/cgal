@@ -13,7 +13,9 @@ class DoubleValidator;
 class SCENE_EXPORT DoubleEdit : public QLineEdit {
 
   Q_OBJECT
-
+  Q_PROPERTY(double value READ getValue WRITE setValue)
+  Q_PROPERTY(double minimum READ getMinimum WRITE setMinimum)
+  Q_PROPERTY(double maximum READ getMaximum WRITE setMaximum)
 public:
   DoubleEdit(QWidget* parent = nullptr);
   ~DoubleEdit();
@@ -22,6 +24,9 @@ public:
   void setMinimum(double d);
   void setMaximum(double d);
   void setRange(double min, double max);
+  double getValue();
+  double getMinimum();
+  double getMaximum();
 private:
   DoubleValidator* validator;
 };

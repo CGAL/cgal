@@ -61,5 +61,20 @@ public:
   {
     this->validator->setRange(min, max);
   }
+
+  double DoubleEdit::getValue()
+  {
+    return this->value();
+  }
+
+  double DoubleEdit::getMinimum()
+  {
+    return this->validator->bottom();
+  }
+
+  double DoubleEdit::getMaximum()
+  {
+    return this->validator->top();
+  }
   #include "CGAL_double_edit.moc"
 
