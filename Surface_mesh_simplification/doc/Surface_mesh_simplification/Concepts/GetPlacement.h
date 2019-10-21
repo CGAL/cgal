@@ -8,8 +8,9 @@ that is, the new position of the vertex that remains after a
 halfedge-collapse operation.
 
 The placement returned is a `boost::optional` value (i.e., it can
-be absent). An absent result indicates that the remaining vertex
-must be kept in place, not moved to a new position.
+be absent). An absent result indicates that the edge should not be collapsed.
+This could be the result of a computational limitation (such as an overflow),
+or can be intentionally returned to prevent the edge from being collapsed.
 
 \cgalRefines `DefaultConstructible`
 \cgalRefines `CopyConstructible`

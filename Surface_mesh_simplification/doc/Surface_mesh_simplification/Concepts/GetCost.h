@@ -7,7 +7,7 @@ which gets the <I>collapse cost</I> of an edge.
 
 The cost returned is a `boost::optional` value (i.e.\ it can be absent).
 An <I>absent</I> cost indicates that the edge should not be collapsed.
-This could be the result of a computational limitation (such as overflow),
+This could be the result of a computational limitation (such as an overflow),
 or can be intentionally returned to prevent the edge from being collapsed.
 
 \cgalRefines `DefaultConstructible`

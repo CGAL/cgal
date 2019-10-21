@@ -190,8 +190,7 @@ The cost strategy used by the algorithm is selected by means of two policies:
 
 The `GetPlacement` policy is called to compute the new position
 for the remaining vertex after the halfedge-collapse. It returns
-an optional value, which can be absent, in which case the
-remaining vertex is kept in its place.
+an optional value, which can be absent if the edge should not be collapsed.
 
 The `GetCost` policy is called to compute the cost
 of collapsing an edge. This policy uses the placement to compute
