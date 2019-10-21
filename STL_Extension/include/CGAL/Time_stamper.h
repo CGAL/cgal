@@ -127,7 +127,8 @@ public:
   }
 
   static std::size_t hash_value(const T* p) {
-    return reinterpret_cast<std::size_t>(p)/sizeof(T);
+
+    return reinterpret_cast<std::size_t>(p) >> 5; // sizeof(T);
   }
 
   void reset()                {}

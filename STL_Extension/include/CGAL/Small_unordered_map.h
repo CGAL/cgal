@@ -37,8 +37,14 @@ class Small_unordered_map{
   mutable std::array<int, M>           occupied;
   std::array<int, M>           unfreelist; 
   std::array<std::pair<K,T>, M> data;
-  const H hash = {};
+  //const H h = {};
 
+  int hash(const K& k)const
+  {
+    std::size_t hf = boost::hash<typename K::first_type>()(k.first);
+    std::size_t hs = boost::hash<typename K::second_type>()(k.second);
+	return (hf + 1) ^ (419 * (hs + 1));
+  }
   
 public:
   Small_unordered_map()
