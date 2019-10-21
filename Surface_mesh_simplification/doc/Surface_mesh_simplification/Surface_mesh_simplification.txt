@@ -6,7 +6,7 @@ namespace CGAL {
 
 \cgalAutoToc
 
-\authors Fernando Cacciola
+\authors Fernando Cacciola, Mael Rouxel-Labbé, and Baskın Şenbaşlar
 
 \image html Illustration-Simplification-ALL.jpg
 \image latex Illustration-Simplification-ALL.jpg
@@ -361,5 +361,17 @@ behavior modifiers such as `Surface_mesh_simplification::Bounded_normal_change_p
 with the Garland-Heckbert placement policy.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_garland_heckbert.cpp}
+
+\section SimplificationDesign Design and Implementation History
+
+The core of the package, as well as most of the simplification strategies, are the work of Fernando Cacciola,
+betwen 2006 and 2009.
+
+Andreas Fabri added the `Bounded_normal_change_placement` functionality in %CGAL 4.11.
+
+The implementation of the Garland-Heckbert simplification policies is the result of the work
+of Baskın Şenbaşlar during the 2019 season of the Google Summer of Code.
+He was mentored by Mael Rouxel-Labbé, who also contributed to the code and to the documentation.
+
 */
 } /* namespace CGAL */
