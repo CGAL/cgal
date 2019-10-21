@@ -30,6 +30,7 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QMessageBox>
+#include <QSpinBox>
 
 #include <QMultipleInputDialog.h>
 #include "CGAL_double_edit.h"
