@@ -595,7 +595,8 @@ loop()
         if(is_collapse_geometrically_valid(profile, placement))
         {
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
-          std::cout << "step " << i_rm << " " << source(*h, m_tm)->point() << " " << target(*h, m_tm)->point() << "\n";
+          std::cout << "step " << i_rm << " " << get(m_vpm, source(*h, m_tm))
+                                       << " " << get(m_vpm, target(*h, m_tm)) << "\n";
 #endif
           collapse(profile, placement);
 
@@ -613,7 +614,7 @@ loop()
       }
       else
       {
-        CGAL_assertion_code(non_collapsable_count++);
+        CGAL_assertion_code(++non_collapsable_count);
 
         m_visitor.OnNonCollapsable(profile);
 
@@ -1083,7 +1084,7 @@ collapse(const Profile& profile,
 
   vertex_descriptor v_res;
 
-  m_visitor.OnCollapsing(profile,placement);
+  m_visitor.OnCollapsing(profile, placement);
 
   --m_current_edge_count;
 
@@ -1142,7 +1143,7 @@ collapse(const Profile& profile,
 
   // Perform the actuall collapse.
   // This is an external function.
-  // It's REQUIRED to remove ONLY 1 vertex (P or Q) and edges PQ,PT and QB
+  // It's REQUIRED to remove ONLY 1 vertex (P or Q) and edges PQ, PT and QB
   // (PT and QB are removed if they are not null).
   // All other edges must be kept.
   // All directed edges incident to vertex removed are relink to the vertex kept.
