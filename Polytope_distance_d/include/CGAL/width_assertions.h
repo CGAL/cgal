@@ -24,7 +24,6 @@
 
 #include <CGAL/license/Polytope_distance_d.h>
 
-
 #ifdef SIMPLIFY
 #define GCD_COMPUTATION 1
 #endif
@@ -98,16 +97,16 @@
  #include<iostream>
 
  #define DEBUGENDL(doit,msg,var)\
- if(doit!=0) std::cout << msg << " " << var << endl;
+ if(doit!=0) std::cout << msg << " " << var << std::endl;
 
  #define DEBUGPRINT(doit,msg,var)\
  if(doit!=0) std::cout << msg << " " << var;
 
  #define DEBUGMSG(doit,msg)\
- if(doit!=0) std::cout << msg << endl;
+ if(doit!=0) std::cout << msg << std::endl;
 
  #define INFOMSG(doit,msg)\
- if(doit!=0) std::cerr<<msg<<endl;
+ if(doit!=0) std::cerr<<msg<<std::endl;
 
 #else
  #define DEBUGENDL(doit,msg,var)

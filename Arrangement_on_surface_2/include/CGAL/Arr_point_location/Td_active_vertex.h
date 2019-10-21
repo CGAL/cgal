@@ -129,7 +129,10 @@ public:
     Data(Vertex_const_handle _v, Halfedge_const_handle _cw_he,
          Dag_node* _p_node) :
       v(_v), cw_he(_cw_he), p_node(_p_node)
-    {}
+    {
+      CGAL_assertion( _cw_he==Halfedge_const_handle()
+                     || _cw_he->source() == v );
+    }
 
     ~Data() {}
 
@@ -176,9 +179,8 @@ public:
    */
   inline void set_cw_he(Halfedge_const_handle he)
   {
-    ptr()->cw_he = ((cw_he() != Traits::empty_he_handle()) &&
-                    (cw_he()->direction() != he->direction())) ?
-      he->twin() : he;
+    ptr()->cw_he = he->twin()->source()==ptr()->v ? he->twin() : he;
+    CGAL_assertion( ptr()->v == ptr()->cw_he->source() );
   }
 
   /*! Reset the first he going clockwise starting at 12 o'clock.

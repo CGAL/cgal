@@ -157,8 +157,8 @@ protected:
     do
     {
       internal::newell_single_step_3
-        (internal::Geom_utils<Kernel>::get_local_point(he->vertex()->point()),
-         internal::Geom_utils<Kernel>::get_local_point(he->next()->vertex()->point()),
+        (this->get_local_point(he->vertex()->point()),
+         this->get_local_point(he->next()->vertex()->point()),
          normal);
       ++nb;
       he=he->next();

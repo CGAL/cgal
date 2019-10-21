@@ -95,6 +95,7 @@ public:
   //friend class declarations:
 
   friend class Trapezoidal_decomposition_2<Traits>;
+  friend struct internal::Non_recursive_td_map_item_destructor<Traits>;
   
 #ifdef CGAL_PM_FRIEND_CLASS
 #if defined(__SUNPRO_CC) || defined(__PGI) || defined(__INTEL_COMPILER)
@@ -154,7 +155,14 @@ public:
   
   Data* ptr() const { return (Data*)(PTR); }
 	
+public:
 
+  ~Td_active_trapezoid(){
+    if (this->refs()==1)
+      internal::Non_recursive_td_map_item_destructor<Traits>(*this);
+  }
+
+private:
   
 
 #ifndef CGAL_TD_DEBUG
@@ -414,12 +422,22 @@ public:
   /*! Access DAG node. */
   Dag_node* dag_node() const            {return ptr()->p_node; }
   
+  bool is_last_reference() const
+  {
+    return this->refs()==1;
+  }
+
   void clear_neighbors()
   {
     set_lb(Td_map_item(0));
     set_lt(Td_map_item(0));
     set_rb(Td_map_item(0));
     set_rt(Td_map_item(0));
+  }
+
+  void non_recursive_clear_neighbors()
+  {
+    internal::Non_recursive_td_map_item_destructor<Traits>(*this);
   }
   
   //@}

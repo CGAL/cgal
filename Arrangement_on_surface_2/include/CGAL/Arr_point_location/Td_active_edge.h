@@ -98,6 +98,7 @@ public:
   //friend class declarations:
 
   friend class Trapezoidal_decomposition_2<Traits>;
+  friend struct internal::Non_recursive_td_map_item_destructor<Traits>;
   
 #ifdef CGAL_PM_FRIEND_CLASS
 #if defined(__SUNPRO_CC) || defined(__PGI) || defined(__INTEL_COMPILER)
@@ -114,7 +115,10 @@ public:
   friend class In_face_iterator;
 #endif
 #endif
-  
+  ~Td_active_edge(){
+    if (this->refs()==1)
+      internal::Non_recursive_td_map_item_destructor<Traits>(*this);
+  }
    /*! \class
    * Inner class Data derived from Rep class
    */
@@ -281,6 +285,10 @@ public:
   /*! Access DAG node. */
   Dag_node* dag_node() const            {return ptr()->p_node; } //m_dag_node;}
   
+  bool is_last_reference() const
+  {
+    return this->refs()==1;
+  }
   
   //@}
   

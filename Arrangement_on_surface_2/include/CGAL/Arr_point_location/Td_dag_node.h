@@ -68,8 +68,8 @@ public:
 
   //bool operator!() const {  return PTR == 0;  } //MICHAL: maybe use ptr(), and also can change to is_null or something similar
   bool is_null() const { return PTR == 0; }
-protected:
   Rep * ptr() const { return (Rep*) PTR; }
+protected:
   //Rep *& ptr() { return (Rep*) PTR; }
   void set_ptr(Rep* rep) { PTR = rep; }
 
@@ -126,7 +126,7 @@ protected:
     public:
       void operator()(Td_active_trapezoid& t) const
       {
-        t.clear_neighbors();
+        t.non_recursive_clear_neighbors();
       }
 
       template < typename Tp >
@@ -209,7 +209,49 @@ public:
   }
 
   //d'tor
-  ~Td_dag_node() { }
+  ~Td_dag_node()
+  {
+    // The following code is used to avoid recursive calls to ~Handle
+    // Node being holding elements of type Td_dag_node_handle
+    if (!this->is_null() && this->refs()==1)
+    {
+      std::vector<Td_dag_node_handle> children;
+      if (!node()->m_left_child.is_null())
+      {
+        children.push_back(node()->m_left_child);
+        node()->m_left_child.reset();
+      }
+      if (!node()->m_right_child.is_null())
+      {
+        children.push_back(node()->m_right_child);
+        node()->m_right_child.reset();
+      }
+
+      while(!children.empty())
+      {
+        Td_dag_node_handle child = children.back();
+        children.pop_back();
+        Node* child_node = (Node*) child.ptr();
+
+        if (child_node != NULL)
+        {
+          if (child.refs()==1)
+          {
+            if (!child_node->m_left_child.is_null())
+            {
+              children.push_back(child_node->m_left_child);
+              child_node->m_left_child.reset();
+            }
+            if( !child_node->m_right_child.is_null() )
+            {
+              children.push_back(child_node->m_right_child);
+              child_node->m_right_child.reset();
+            }
+          }
+        }
+      }
+    }
+  }
 
   //information retrieval
 

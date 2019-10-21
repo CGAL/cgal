@@ -30,6 +30,11 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
+// CGAL is header-only by default since CGAL-5.0.
+#if !defined(CGAL_HEADER_ONLY) && ! CGAL_NOT_HEADER_ONLY
+#  define CGAL_HEADER_ONLY 1
+#endif
+
 #ifdef CGAL_HEADER_ONLY
 #  define CGAL_NO_AUTOLINK 1
 #endif
@@ -132,7 +137,7 @@
 
 // workaround for the bug https://svn.boost.org/trac10/ticket/12534
 // That bug was introduced in Boost 1.62 and fixed in 1.63.
-#if BOOST_VERSION >= 106200 && BOOSTS_VERSION < 106300
+#if BOOST_VERSION >= 106200 && BOOST_VERSION < 106300
 #  include <boost/container/flat_map.hpp>
 #endif
 
@@ -361,8 +366,6 @@
 #    define CGAL_BIG_ENDIAN
 #  elif BOOST_ENDIAN_LITTLE_BYTE
 #    define CGAL_LITTLE_ENDIAN
-#  else
-#    error Unknown endianness
 #  endif
 #elif defined (__GLIBC__)
 #  include <endian.h>
@@ -370,8 +373,6 @@
 #    define CGAL_LITTLE_ENDIAN
 #  elif (__BYTE_ORDER == __BIG_ENDIAN)
 #    define CGAL_BIG_ENDIAN
-#  else
-#    error Unknown endianness
 #  endif
 #elif defined(__sparc) || defined(__sparc__) \
    || defined(_POWER) || defined(__powerpc__) \
@@ -385,11 +386,19 @@
    || defined(_M_IX86) || defined(_M_IA64) \
    || defined(_M_ALPHA) || defined(_WIN64)
 #  define CGAL_LITTLE_ENDIAN
-#else
-#  error Unknown endianness
 #endif
 
-
+#if ! defined(CGAL_LITTLE_ENDIAN) && ! defined(CGAL_BIG_ENDIAN)
+#  ifdef CGAL_DEFAULT_IS_LITTLE_ENDIAN
+#    if CGAL_DEFAULT_IS_LITTLE_ENDIAN
+#      define CGAL_LITTLE_ENDIAN
+#    else
+#      define CGAL_BIG_ENDIAN
+#    endif
+#  else
+#    error Unknown endianness: Define CGAL_DEFAULT_IS_LITTLE_ENDIAN to 1 for little endian and to 0 for big endian.
+#  endif
+#endif
 // Symbolic constants to tailor inlining. Inlining Policy.
 // =======================================================
 #ifndef CGAL_MEDIUM_INLINE
@@ -550,7 +559,7 @@ using std::max;
 #  define CGAL_NORETURN  __attribute__ ((__noreturn__))
 #elif defined (_MSC_VER)
 #  define CGAL_NORETURN __declspec(noreturn)
-#else  
+#else
 #  define CGAL_NORETURN
 #endif
 

@@ -127,29 +127,30 @@ struct DefaultDrawingFunctorLCC
   }
 };
 
-template<class LCC, class Kernel, int dim=LCC::ambient_dimension>
+template<class LCC, class Local_kernel, int dim=LCC::ambient_dimension>
 struct LCC_geom_utils;
 
-template<class LCC, class Kernel>
-struct LCC_geom_utils<LCC, Kernel, 3>
+template<class LCC, class Local_kernel>
+struct LCC_geom_utils<LCC, Local_kernel, 3>
 {
-  static typename Kernel::Vector_3
+  static typename Local_kernel::Vector_3
   get_vertex_normal(const LCC& lcc, typename LCC::Dart_const_handle dh)
   {
-    typename Kernel::Vector_3 n = internal::Geom_utils<typename LCC::Traits>::
+    typename Local_kernel::Vector_3 n = internal::Geom_utils
+      <typename LCC::Traits, Local_kernel>::
       get_local_vector(CGAL::compute_normal_of_cell_0<LCC>(lcc,dh));
     n = n/(CGAL::sqrt(n*n));
     return n;
   }
 };
 
-template<class LCC, class Kernel>
-struct LCC_geom_utils<LCC, Kernel, 2>
+template<class LCC, class Local_kernel>
+struct LCC_geom_utils<LCC, Local_kernel, 2>
 {
-  static typename Kernel::Vector_3
+  static typename Local_kernel::Vector_3
   get_vertex_normal(const LCC&, typename LCC::Dart_const_handle)
   {
-    typename Kernel::Vector_3 n=CGAL::NULL_VECTOR;
+    typename Local_kernel::Vector_3 n=CGAL::NULL_VECTOR;
     return n;
   }
 };
