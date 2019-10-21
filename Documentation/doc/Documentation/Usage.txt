@@ -8,11 +8,12 @@ However, some dependencies of \cgal might still need to be installed.
 
 \section usage_introduction Quick Start: Compiling a Program using CGAL
 
-Assuming that you have extracted the \cgal source archive in your `$HOME` folder,
-compiling an example shipped with \cgal is as simple as:
+Assuming that you have obtained \cgal through one of the package managers offering \cgal on your platform
+(see Section \ref secgettingcgal), compiling \cgal examples, which can be downloaded <a href="TODO">here</a>,
+is as simple as:
 
     cd $HOME/CGAL-\cgalReleaseNumber/examples/Triangulation_2 # go to an example directory
-    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release . # configure the examples
+    cmake -DCMAKE_BUILD_TYPE=Release . # configure the examples
     make # build the examples
 
 On Windows, instead of calling `make` simply double-click on the generated solution (`.sln`) to open Visual C++.
@@ -21,7 +22,7 @@ Compiling your own program is similar:
 
     cd /path/to/your/program
     cgal_create_CMakeLists -s executable
-    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release .
+    cmake -DCMAKE_BUILD_TYPE=Release .
     make
 
 The script `cgal_create_CMakeLists` and its options are detailed in Section \ref devman_create_cgal_CMakeLists.
@@ -46,37 +47,32 @@ or to build your own project using \cgal, see Section \ref secoptional3rdpartyso
 
 \subsection secusingpkgman Using a Package Manager
 
-On most common operating systems, package managers offer \cgal and its essential third party dependencies.
+On most operating systems, package managers offer \cgal and its essential third party dependencies.
 
-On macOS we recommend to use of <a href="https://brew.sh/">Homebrew</a> in the following way:
+On macOS, we recommend using of <a href="https://brew.sh/">Homebrew</a> in the following way:
 
     brew install cgal
 
-If not automatically found, the `CGAL_DIR` to provide to cmake when configuring a program using \cgal should be something like `/usr/local/Cellar/cgal/4.14.1/lib/cmake/CGAL`.
-
-On Linux distributions like Debian/Ubuntu/Mint, use `apt-get` in the following way:
+On Linux distributions such as Debian/Ubuntu/Mint, use `apt-get` in the following way:
 
     sudo apt-get install libcgal-dev
 
-If not automatically found, the `CGAL_DIR` to provide to cmake when configuring a program using \cgal should be something like `/usr/lib/x86_64-linux-gnu/cmake/CGAL`.
-
-On Windows, we recommand to use  <a href="https://github.com/microsoft/vcpkg">vcpkg</a> in the following way:
+On Windows, we recommand using <a href="https://github.com/microsoft/vcpkg">vcpkg</a> in the following way:
 
     vcpkg install cgal
 
-To see how to use libraries installed with <code>vcpkg</code> refer to the <a href="https://github.com/microsoft/vcpkg/blob/master/docs/examples/installing-and-using-packages.md#step-2-use">official documentation</a>.
-If not automatically found, the `CGAL_DIR` to provide to cmake when configuring a program using \cgal should be something like `VCPK_DIR/packages/cgal_x64-windows/lib/cgal`
+To see how to use libraries installed with <code>vcpkg</code>,
+refer to the <a href="https://github.com/microsoft/vcpkg/blob/master/docs/examples/installing-and-using-packages.md#step-2-use">official documentation</a>.
 
 For other distributions or package manager, please consult your respective documentation.
 
-\subsection sseccgalwindows Using CGAL installer on Windows
+\subsection sseccgalwindows Using the CGAL Installer on Windows
 
 You can download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from https://www.cgal.org/download/windows.html.
 It is a self extracting executable that installs the \cgal source, and that allows you
 to select and download some precompiled third party libraries. However, you will need to compile
 the library using your favorite compiler.
 A <a href="https://www.cgal.org/download/windows.html">tutorial</a> is provided on how to proceed with Microsoft Visual Studio.
-
 
 \subsection secusingwebsite Using CGAL Source Archive
 
@@ -122,11 +118,11 @@ or downloaded separately at
 
 \section section_headeronly Header-only Usage
 
-Since \cgal 4.12, it has been possible to use \cgal in <a href="https://en.wikipedia.org/wiki/Header-only">header-only mode</a>,
-without even configuring \cgal\. Programs using \cgal (examples, tests, demos, etc.)
+\cgal is a <a href="https://en.wikipedia.org/wiki/Header-only">header-only</a> library, and as such
+there is no need to even configure it before using it. Programs using \cgal (examples, tests, demos, etc.)
 are instead configured using CMake and \cgal will be configured at the same time.
 
-Note that even though \cgal can be used as a header-only library, not all its dependencies
+Note that even though \cgal is a header-only library, not all its dependencies
 are header-only. The libraries \sc{Gmp} and \sc{Mpfr}, for example, are not
 header-only. As such, these dependencies must be built or installed independently.
 
@@ -144,19 +140,32 @@ Some of the CMake variables represent user choices, such as `CMAKE_BUILD_TYPE`,
 whereas others indicate the details of a third-party library, such as `Boost_INCLUDE_DIR`
 or the compiler flags to use, such as `CMAKE_CXX_FLAGS`.
 
-In a typical installation of dependencies, almost all CMake variables will be set automatically;
-users need only to provide the variable `CGAL_DIR`, which must point to the root directory
+The most important CMake variable is the variable `CGAL_DIR`, which will serve to configure \cgal
+as you configure your program.
+
+In a typical installation of dependencies, almost all CMake variables will be set automatically.
+The variable `CGAL_DIR` is also generally found when \cgal has been obtained via a package manger.
+In the rare event that it has not, the variable `CGAL_DIR` should be set manually to:
+
+<ul>
+<li>something like `/usr/local/Cellar/cgal/CGAL-\cgalReleaseNumber/lib/cmake/CGAL`, for Brew.</li>
+<li>something like `/usr/lib/x86_64-linux-gnu/cmake/CGAL` for Linux distributions.</li>
+<li>something like `VCPKG_DIR/packages/cgal_x64-windows/lib/cgal`, for VCPKG_DIR.</li>
+</ul>
+
+If \cgal has been obtained via other means, `CGAL_DIR` must point to the root directory
 of the \cgal source code (either the root of the unpacked release tarball or the root
 of the Git working directory).
-It is also strongly recommended to set the build type to `Release` for performance reasons
+
+It is also strongly recommended to set the build type variable to `Release` for performance reasons
 if no debugging is intended. Users should thus run:
 
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
-    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -CMAKE_BUILD_TYPE=Release .
+    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -CMAKE_BUILD_TYPE=Release . # we are here using a release tarball
 
 \subsection usage_configuring_cmake_gui Specifying Missing Dependencies
 
-The configuration process launched above might however fail if CMake fails to find
+The configuration process launched above might fail if CMake fails to find
 all the required dependencies. This typically happens if you have installed dependencies
 at non-standard locations.
 Although the command line tool `cmake` accepts CMake variables as arguments of the form
@@ -165,7 +174,7 @@ need to be explicitly defined. or this reason, the simplest way to manually set 
 is to run the graphical user interface of CMake, `cmake-gui`.
 
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
-    cmake-gui -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -CMAKE_BUILD_TYPE=Release .
+    cmake-gui -CMAKE_BUILD_TYPE=Release .
 
 After the `CMake` window opens, press 'Configure'. A dialog will pop up and you will have to choose
 what shall be generated. After you have made your choice and pressed 'Finish', you will see
@@ -179,8 +188,8 @@ if desired) and lines are gray, you are now ready to press 'Generate',
 and to exit `cmake-gui` afterwards.
 
 \cgalAdvancedBegin
-If you decide to solve missing dependencies using the command line tool (not the recommended way),
-the page \ref configurationvariables lists variables which can be used to specify
+You may also decide to solve missing dependencies using the command line tool (which is not recommended).
+If so, the page \ref configurationvariables lists variables which can be used to specify
 the location of third-party software.
 \cgalAdvancedEnd
 
@@ -196,6 +205,11 @@ the process of configuring a user's program called `executable.cpp` amounts to:
     cd /path/to/your/program
     cgal_create_CMakeLists -s executable
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -CMAKE_BUILD_TYPE=Release .
+
+Note that the script `cgal_create_CMakeLists` creates a very coarse `CMakeLists.txt` file which
+might not properly encode the third party dependencies of your program. Users are advised to look
+at the `CMakeLists.txt` files in the example folder(s) of the package that they are using to
+learn how to specify their dependencies.
 
 \subsection usage_configuring_advanced_cmake Advanced Configuration Options
 
