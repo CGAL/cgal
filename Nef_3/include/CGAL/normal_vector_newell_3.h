@@ -35,6 +35,8 @@
 
 namespace CGAL {
 
+namespace internal_nef 
+{
 template <class Handle, class Vector>
 CGAL_MEDIUM_INLINE
 void newell_single_step_3( const Handle& p, const Handle& q, Vector& n )
@@ -63,6 +65,7 @@ void newell_single_step_3( const Handle& p, const Handle& q, Vector& n )
         * q.hw() * q.hw()
     );
 }
+}
 
 template <class IC, class Vector>
 void normal_vector_newell_3( IC first, IC last, Vector& n )
@@ -86,11 +89,11 @@ void normal_vector_newell_3( IC first, IC last, Vector& n )
     IC prev = first;
     ++first;
     while( first != last) {
-        newell_single_step_3( *prev, *first, n);
+        internal_nef::newell_single_step_3( *prev, *first, n);
         prev = first;
         ++first;
     }
-    newell_single_step_3( *prev, *start_point, n);
+    internal_nef::newell_single_step_3( *prev, *start_point, n);
     CGAL_NEF_TRACEN("newell normal vector "<<n);
 }
 
@@ -108,11 +111,11 @@ void normal_vector_newell_3( IC first, IC last, VertexPointMap vpm, Vector& n )
     IC prev = first;
     ++first;
     while( first != last) {
-      newell_single_step_3( get(vpm,*prev), get(vpm,*first), n);
+        internal_nef::newell_single_step_3( get(vpm,*prev), get(vpm,*first), n);
         prev = first;
         ++first;
     }
-    newell_single_step_3( get(vpm,*prev), get(vpm,*start_point), n);
+    internal_nef::newell_single_step_3( get(vpm,*prev), get(vpm,*start_point), n);
     CGAL_NEF_TRACEN("newell normal vector "<<n);
 }
 
