@@ -702,13 +702,13 @@ public:
 
   void init_tds()
   {
-    vpoint_ = tds().add_property_map<Vertex_index, Point>("v:point").first;
+    vpoint_ = tds().template add_property_map<Vertex_index, Point>("v:point").first;
     infinite = _tds.insert_increase_dimension();
   }
 
   void init_tds(const Point& p0, const Point& p1, const Point& p2, const Point& p3)
   {
-    vpoint_ = tds().add_property_map<Vertex_index, Point>("v:point").first;
+    vpoint_ = tds().template add_property_map<Vertex_index, Point>("v:point").first;
     Vertex_handle v0, v1, v2, v3;
     infinite = _tds.insert_first_finite_cell(v0, v1, v2, v3, infinite);
     set_point(v0, p0);
@@ -722,7 +722,7 @@ public:
                 Vertex_handle& vh0, Vertex_handle& vh1,
                 Vertex_handle& vh2, Vertex_handle& vh3)
   {
-    vpoint_ = tds().add_property_map<Vertex_index, Point>("v:point").first;
+    vpoint_ = tds().template add_property_map<Vertex_index, Point>("v:point").first;
     infinite = _tds.insert_first_finite_cell(vh0, vh1, vh2, vh3, infinite);
     set_point(vh0, p0);
     set_point(vh1, p1);
@@ -748,7 +748,7 @@ public:
   Triangulation_3(const Triangulation_3& tr)
     : Base(tr.get_lock_data_structure()), _gt(tr._gt)
   {
-    vpoint_ = tds().add_property_map<Vertex_index, Point>("v:point").first;
+    vpoint_ = tds().template add_property_map<Vertex_index, Point>("v:point").first;
     infinite = _tds.copy_tds(tr._tds, tr.infinite);
     CGAL_triangulation_expensive_postcondition(*this == tr);
   }

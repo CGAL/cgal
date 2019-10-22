@@ -1532,7 +1532,7 @@ public:
 	  continue;
 	if (w != v){
 
-          if(! w->visited_for_vertex_extractor){
+          if(! t->visited_for_vertex_extractor(w)){
             t->visited_for_vertex_extractor(w) = true;
             tmp_vertices.push_back(w);
 	    treat(c, v, j);
