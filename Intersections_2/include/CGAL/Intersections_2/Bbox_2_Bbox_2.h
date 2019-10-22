@@ -19,15 +19,10 @@
 //
 // Author(s)     : Maxime Gimeno
 
-
 #ifndef CGAL_INTERSECTIONS_BBOX_2_BBOX_2_H
 #define CGAL_INTERSECTIONS_BBOX_2_BBOX_2_H
 
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Iso_rectangle_2.h>
-#include <CGAL/kernel_assertions.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Iso_rectangle_2.h>
 
 namespace CGAL {
 
@@ -39,28 +34,26 @@ do_intersect(const CGAL::Bbox_2& c,
   return CGAL::do_overlap(c, bbox);
 }
 
-typename boost::optional< typename boost::variant< Bbox_2> >
+typename boost::optional< typename boost::variant<Bbox_2> >
 inline
 intersection(const CGAL::Bbox_2& a,
-             const CGAL::Bbox_2& b) {
+             const CGAL::Bbox_2& b)
+{
+  typedef typename boost::variant<Bbox_2> variant_type;
+  typedef typename boost::optional<variant_type> result_type;
 
-  typedef typename
-  boost::variant< Bbox_2> variant_type;
-  typedef typename boost::optional< variant_type > result_type;
-  if(!do_intersect(a,b))
-  {
+  if(!do_intersect(a, b))
     return result_type();
-  }
 
-  double xmin, xmax, ymin, ymax;
-  xmin = (std::max)(a.xmin(), b.xmin());
-  xmax = (std::min)(a.xmax(), b.xmax());
+  double xmin = (std::max)(a.xmin(), b.xmin());
+  double xmax = (std::min)(a.xmax(), b.xmax());
 
-  ymin = (std::max)(a.ymin(), b.ymin());
-  ymax = (std::min)(a.ymax(), b.ymax());
+  double ymin = (std::max)(a.ymin(), b.ymin());
+  double ymax = (std::min)(a.ymax(), b.ymax());
 
   return result_type(std::forward<Bbox_2>(Bbox_2(xmin, ymin, xmax, ymax)));
 }
 
-}
-#endif // BBOX_2_BBOX_2_H
+} // namespace CGAL
+
+#endif // CGAL_INTERSECTIONS_BBOX_2_BBOX_2_H

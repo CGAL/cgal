@@ -42,6 +42,7 @@ CGAL_INTERSECTION_TRAITS_2(Line_3, Triangle_3, Point_3, Segment_3)
 CGAL_INTERSECTION_TRAITS_2(Triangle_3, Line_3, Point_3, Segment_3)
 
 CGAL_INTERSECTION_TRAITS_2(Line_3, Tetrahedron_3, Point_3, Segment_3)
+CGAL_INTERSECTION_TRAITS_2(Tetrahedron_3, Line_3, Point_3, Segment_3)
 
 CGAL_INTERSECTION_TRAITS_2(Plane_3, Plane_3, Line_3, Plane_3)
 
@@ -63,21 +64,20 @@ CGAL_INTERSECTION_TRAITS_2(Ray_3, Segment_3, Point_3, Segment_3)
 CGAL_INTERSECTION_TRAITS_2(Segment_3, Ray_3, Point_3, Segment_3)
 
 CGAL_INTERSECTION_TRAITS_2(Ray_3, Triangle_3, Point_3, Segment_3)
-CGAL_INTERSECTION_TRAITS_2(Ray_3, Tetrahedron_3, Point_3, Segment_3)
 CGAL_INTERSECTION_TRAITS_2(Triangle_3, Ray_3, Point_3, Segment_3)
+
+CGAL_INTERSECTION_TRAITS_2(Ray_3, Tetrahedron_3, Point_3, Segment_3)
+CGAL_INTERSECTION_TRAITS_2(Tetrahedron_3, Ray_3, Point_3, Segment_3)
 
 CGAL_INTERSECTION_TRAITS_2(Segment_3, Segment_3, Point_3, Segment_3)
 
 CGAL_INTERSECTION_TRAITS_2(Segment_3, Triangle_3, Point_3, Segment_3)
-CGAL_INTERSECTION_TRAITS_2(Segment_3, Tetrahedron_3, Point_3, Segment_3)
-
 CGAL_INTERSECTION_TRAITS_2(Triangle_3, Segment_3, Point_3, Segment_3)
 
-CGAL_INTERSECTION_TRAITS_3(Sphere_3, Sphere_3, Point_3, Circle_3, Sphere_3)
-
-CGAL_INTERSECTION_TRAITS_2(Tetrahedron_3, Line_3, Point_3, Segment_3)
+CGAL_INTERSECTION_TRAITS_2(Segment_3, Tetrahedron_3, Point_3, Segment_3)
 CGAL_INTERSECTION_TRAITS_2(Tetrahedron_3, Segment_3, Point_3, Segment_3)
-CGAL_INTERSECTION_TRAITS_2(Tetrahedron_3, Ray_3, Point_3, Segment_3)
+
+CGAL_INTERSECTION_TRAITS_3(Sphere_3, Sphere_3, Point_3, Circle_3, Sphere_3)
 
 template<typename K>
 struct Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3>  {
@@ -330,7 +330,7 @@ struct Intersection_traits<K, typename K::Point_3, typename K::Plane_3>  {
   boost::variant< typename K::Point_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
- 
+
 // Plane_3 Point_3, variant of one
 template<typename K>
 struct Intersection_traits<K, typename K::Plane_3, typename K::Point_3>  {
@@ -338,7 +338,7 @@ struct Intersection_traits<K, typename K::Plane_3, typename K::Point_3>  {
   boost::variant< typename K::Point_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
-   
+
 // Point_3 Triangle_3, variant of one
 template<typename K>
 struct Intersection_traits<K, typename K::Point_3, typename K::Triangle_3>  {
@@ -346,6 +346,7 @@ struct Intersection_traits<K, typename K::Point_3, typename K::Triangle_3>  {
   boost::variant< typename K::Point_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
+
 // Triangle_3 Point_3, variant of one
 template<typename K>
 struct Intersection_traits<K, typename K::Triangle_3, typename K::Point_3>  {
@@ -353,7 +354,7 @@ struct Intersection_traits<K, typename K::Triangle_3, typename K::Point_3>  {
   boost::variant< typename K::Point_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
-  
+
 // Point_3 Tetrahedron_3, variant of one
 template<typename K>
 struct Intersection_traits<K, typename K::Point_3, typename K::Tetrahedron_3>  {
@@ -361,6 +362,7 @@ struct Intersection_traits<K, typename K::Point_3, typename K::Tetrahedron_3>  {
   boost::variant< typename K::Point_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
+
 // Tetrahedron_3 Point_3, variant of one
 template<typename K>
 struct Intersection_traits<K, typename K::Tetrahedron_3, typename K::Point_3>  {
@@ -368,7 +370,7 @@ struct Intersection_traits<K, typename K::Tetrahedron_3, typename K::Point_3>  {
   boost::variant< typename K::Point_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
-  
+
 // Point_3 Sphere_3, variant of one
 template<typename K>
 struct Intersection_traits<K, typename K::Point_3, typename K::Sphere_3>  {
@@ -376,6 +378,7 @@ struct Intersection_traits<K, typename K::Point_3, typename K::Sphere_3>  {
   boost::variant< typename K::Point_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
+
 // Sphere_3 Point_3, variant of one
 template<typename K>
 struct Intersection_traits<K, typename K::Sphere_3, typename K::Point_3>  {
@@ -393,6 +396,7 @@ struct Intersection_traits<K, typename K::Tetrahedron_3, typename K::Plane_3>
   typename K::Triangle_3, std::vector<typename K::Point_3> > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
+
 //Plane_3 Tetrahedron_3, variant of 4
 template<class K>
 struct Intersection_traits<K, typename K::Plane_3,typename K::Tetrahedron_3>

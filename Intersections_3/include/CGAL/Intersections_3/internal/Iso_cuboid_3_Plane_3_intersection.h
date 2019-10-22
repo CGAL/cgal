@@ -22,13 +22,16 @@
 
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_PLANE_3_INTERSECTION_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_PLANE_3_INTERSECTION_H
+
 #include <CGAL/kernel_basic.h>
 #include <CGAL/intersections.h>
+
 #include <CGAL/Intersections_3/internal/tetrahedron_intersection_helpers.h>
 #include <CGAL/Intersections_3/Iso_cuboid_3_Segment_3.h>
 #include <CGAL/Intersections_3/Plane_3_Plane_3.h>
 
 #include <set>
+
 namespace CGAL {
 
 namespace Intersections {
@@ -61,7 +64,7 @@ intersection(
   typedef std::vector<Point_3> Poly;
 
   typedef typename Intersection_traits<K, CGAL::Iso_cuboid_3<K>,
-      CGAL::Plane_3<K> >::result_type Result_type;
+      CGAL::Plane_3<K> >::result_type result_type;
 
   typedef typename Intersection_traits<K, CGAL::Segment_3<K>,
       CGAL::Plane_3<K> >::result_type Inter_type;
@@ -71,72 +74,92 @@ intersection(
 
   //get all edges of cub
   for(int i=0; i< 4; ++i)
-  {
     edges.push_back(Segment_3(cub.vertex(i), cub.vertex((i+1)%4)));
-  }
-
   for(int i=0; i < 4; ++i)
-  {
     edges.push_back(Segment_3(cub.vertex(i+4), cub.vertex((i+1)%4+4)));
-  }
-
   for(int i=0; i < 4; ++i)
-  {
     edges.push_back(Segment_3(cub.vertex(i), cub.vertex((i+1)%4+4)));
-  }
+
   //get all intersections between pl and cub edges
   std::vector<Segment_3> segments;
   std::vector<Point_3> points;
 
   for(int i=0; i < 12; ++i)
   {
+    // Intersect_3 checks the orientation of the segment's extremities to avoid actually computing
+    // the intersection if possible
     Inter_type inter = typename K::Intersect_3()(pl, edges[i]);
-    if(inter){
+    if(inter)
+    {
       if(const Segment_3* seg = boost::get<Segment_3>(&*inter))
-      {
         segments.push_back(*seg);
-      }
       else if(const Point_3* p = boost::get<Point_3>(&*inter))
-      {
         points.push_back(*p);
-      }
     }
   }
 
   switch(segments.size())
   {
-  case 1:
-  {
-    //adj to an edge
-    if(points.size() == 4)
+    case 1:
     {
-      return Result_type(std::forward<Segment_3>(segments.front()));
-    }
-    //through an edge not on diagonal
-    else{
-      Poly res(4);
-      Segment_3 front(segments.front());
-      Point_3 p1,p2;
-      bool has_p1(false),
-          has_p2(false);
-      for(auto p : points)
+      //adj to an edge
+      if(points.size() == 4)
       {
-        if(!front.has_on(p))
+        return result_type(std::forward<Segment_3>(segments.front()));
+      }
+      //through an edge not on diagonal
+      else
+      {
+        Poly res(4);
+        Segment_3 front(segments.front());
+        Point_3 p1, p2;
+        bool has_p1(false),
+             has_p2(false);
+
+        for(auto p : points)
         {
-          if(!has_p1)
+          if(!front.has_on(p))
           {
-            p1 = p;
-            has_p1 = true;
-          }
-          else {
-            p2 = p;
-            has_p2 = true;
-            break;
+            if(!has_p1)
+            {
+              p1 = p;
+              has_p1 = true;
+            }
+            else {
+              p2 = p;
+              has_p2 = true;
+              break;
+            }
           }
         }
+
+        CGAL_assertion(has_p1 && has_p2);
+        Segment_3 back(p1,p2);
+        res[0] = front.target();
+
+        if((front.target() - front.source())
+           * (back.target() - back.source()) > 0)
+        {
+          res[1] = back.target();
+          res[2] = back.source();
+        }
+        else
+        {
+          res[1] = back.source();
+          res[2] = back.target();
+        }
+        res[3] = front.source();
+
+        return result_type(std::forward<Poly>(res));
       }
-      CGAL_assertion(has_p1 && has_p2);
-      Segment_3 back(p1,p2);
+    }
+      break;
+
+    case 2: //intersects diagonally
+    {
+      Poly res(4);
+      Segment_3 front(segments.front()),
+          back(segments.back());
       res[0] = front.target();
       if((front.target() - front.source())
          * (back.target() - back.source()) > 0)
@@ -151,59 +174,37 @@ intersection(
       }
       res[3] = front.source();
 
-      return Result_type(std::forward<Poly>(res));
+      return result_type(std::forward<Poly>(res));
     }
-  }
-    break;
-
-  case 2: //intersects diagonally
-  {
-    Poly res(4);
-    Segment_3 front(segments.front()),
-        back(segments.back());
-    res[0] = front.target();
-    if((front.target() - front.source())
-       * (back.target() - back.source()) > 0)
+      break;
+    case 4: // intersects a face
     {
-      res[1] = back.target();
-      res[2] = back.source();
-    }
-    else
-    {
-      res[1] = back.source();
-      res[2] = back.target();
-    }
-    res[3] = front.source();
+      Poly res;
+      res.reserve(4);
+      std::list<Point_3> tmp;
+      std::list<Segment_3> seg_list;
+      for(const Segment_3& s : segments)
+        seg_list.push_back(s);
+      fill_points_list(seg_list, tmp);
+      for(const Point_3& p : tmp)
+        res.push_back(p);
 
-    return Result_type(std::forward<Poly>(res));
-  }
-    break;
-  case 4: // intersects a face
-  {
-    Poly res;
-    res.reserve(4);
-    std::list<Point_3> tmp;
-    std::list<Segment_3> seg_list;
-    for(auto s : segments)
-      seg_list.push_back(s);
-    fill_points_list(seg_list, tmp);
-    for(auto p : tmp)
-      res.push_back(p);
-    return Result_type(std::forward<Poly>(res));
-  }
-    break;
-  default:
-    break;
+      return result_type(std::forward<Poly>(res));
+    }
+      break;
+    default:
+      break;
   }
 
   Poly filtered_points;
   filter_points(points, filtered_points);
   if(filtered_points.empty())
-    return Result_type();
+    return result_type();
+
   //adjacent to a vertex
   if(filtered_points.size() == 1)
   {
-    return Result_type(std::forward<Point_3>(filtered_points.front()));
+    return result_type(std::forward<Point_3>(filtered_points.front()));
   }
   else
   {
@@ -273,7 +274,7 @@ intersection(
       }
     }
     if(tmp_segs.size() < 3)
-      return Result_type();
+      return result_type();
     std::list<Point_3> tmp_pts;
     fill_points_list(tmp_segs,tmp_pts);
     Poly res;
@@ -281,11 +282,11 @@ intersection(
       res.push_back(p);
     if(res.size() == 3){
       typename K::Triangle_3 tr(res[0], res[1], res[2]);
-      return Result_type(std::forward<typename K::Triangle_3>(tr));
+      return result_type(std::forward<typename K::Triangle_3>(tr));
     }
     else
     {
-      return Result_type(std::forward<Poly>(res));
+      return result_type(std::forward<Poly>(res));
     }
   }
 }

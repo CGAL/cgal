@@ -29,19 +29,16 @@
 
 namespace CGAL {
 
-
-template <class K>
-inline bool do_intersect(
-    const Iso_rectangle_2<K> &rect,
-    const Bbox_2 &box)
+template <typename K>
+inline bool do_intersect(const Iso_rectangle_2<K> &rect,
+                         const Bbox_2 &box)
 {
   return do_intersect(K::Iso_rectangle_2(box), rect);
 }
 
-template <class K>
-inline bool do_intersect(
-    const Bbox_2 &box,
-const Iso_rectangle_2<K> &rect)
+template <typename K>
+inline bool do_intersect(const Bbox_2 &box,
+                         const Iso_rectangle_2<K> &rect)
 {
   return do_intersect(rect, box);
 }
@@ -49,7 +46,8 @@ const Iso_rectangle_2<K> &rect)
 template<typename K>
 typename Intersection_traits<K, typename K::Iso_rectangle_2, Bbox_2>::result_type
 intersection(const Bbox_2& box,
-             const Iso_rectangle_2<K>& rect) {
+             const Iso_rectangle_2<K>& rect)
+{
   typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
   return intersection(rec, rect);
 }
@@ -57,9 +55,11 @@ intersection(const Bbox_2& box,
 template<typename K>
 typename Intersection_traits<K, typename K::Iso_rectangle_2, Bbox_2>::result_type
 intersection(const Iso_rectangle_2<K>& rect,
-             const Bbox_2& box) {
+             const Bbox_2& box)
+{
   return intersection(box, rect);
 }
 
-}
+} // namespace CGAL
+
 #endif // CGAL_INTERSECTIONS_BBOX_2_ISO_RECTANGLE_2_H

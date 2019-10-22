@@ -213,13 +213,16 @@ template <typename Segment,
           typename Point>
 void fill_points_list(std::list<Segment>& segments, std::list<Point>& points)
 {
-  assert(segments.size() > 1);
+  CGAL_assertion(segments.size() > 1);
+
   //init : take seg.front = seg.
   Segment seg = segments.front();
   segments.pop_front();
+
   //put source and target in points.
   points.push_back(seg.source());
   points.push_back(seg.target());
+
   //find first seg with a point in common with seg.front = s2.
   do{
     auto seg_it = segments.begin();
