@@ -306,10 +306,16 @@ if [ -n "$DO_PUBLIC" ]; then
     cmake -DGIT_REPO=${SOURCES_DIR} -DGENERATE_TARBALLS="ON" -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${public_release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
     tar -xf ${public_release_name}.tar.xz
     mkdir "${HTML_DIR}/${release_name}-public"
-    mv ${public_release_name}*.tar.xz "${HTML_DIR}/${release_name}-public/"
     # Do a Zip file as well for the public version.
     zip -q -r ${public_release_name}.zip ${public_release_name}
-    cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/"
+    rm -rf ./${public_release_name}
+    tar -xf ${public_release_name}-examples.tar.xz
+    zip -q -r ${public_release_name}-examples.zip ${public_release_name}
+    rm -rf ./${public_release_name}
+    tar xf ${public_release_name}-library.tar.xz
+    zip -q -r ${public_release_name}-library.zip ${public_release_name}
+    mv ${public_release_name}*.tar.xz "${HTML_DIR}/${release_name}-public/"
+    mv ${public_release_name}*.zip "${HTML_DIR}/${release_name}-public/"
     rm -f "$HTML_DIR/CGAL-last-public"
     ln -s "${release_name}-public" "$HTML_DIR/CGAL-last-public"
 fi
