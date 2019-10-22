@@ -73,6 +73,37 @@ Release date: October 2019
  -   Added the functions [`CGAL::Polygon_mesh_processing::stitch_boundary_cycle()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__PMP__repairing__grp.html#ga9c12c4878c08a117b3733bb45f1a34cf)
      and [`CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__PMP__repairing__grp.html#ga24d5ae37f62064b3fc576ba48a4ccc63),
      which can be used to try and merge together geometrically compatible but combinatorially different halfedges
+
+### dD Spatial Searching
+
+-   Improved the performance of the kd-tree in some cases:
+    -   Not storing the points coordinates inside the tree usually 
+        generates a lot of cache misses, leading to non-optimal 
+        performance. This is the case for example
+        when indices are stored inside the tree, or to a lesser extent when the points
+        coordinates are stored in a dynamically allocated array (e.g., `Epick_d`
+        with dynamic dimension) &mdash; we says "to a lesser extent" because the points
+        are re-created by the kd-tree in a cache-friendly order after its construction,
+        so the coordinates are more likely to be stored in a near-optimal order
+        on the heap.
+        In these cases, the new `EnablePointsCache` template parameter of the
+        `CGAL::Kd_tree` class can be set to `CGAL::Tag_true`. The points coordinates
+        will then be cached in an optimal way. This will increase memory
+        consumption but provides better search performance. See the updated
+        `GeneralDistance` and `FuzzyQueryItem`
+        concepts for additional requirements when using such a cache.
+    -   In most cases (e.g., Euclidean distance), the distance computation
+        algorithm knows before its end that the distance will be greater
+        than or equal to some given value. This is used in the (orthogonal)
+        k-NN search to interrupt some distance computations before its end,
+        saving precious milliseconds, in particular in medium-to-high dimension.
+
+### Polygon Mesh Processing
+ -   Added the function `CGAL::Polygon_mesh_processing::centroid()`, which computes
+     the centroid of a closed triangle mesh.
+-    Added the functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()` and
+     `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`, which can be used
+     to try and merge together geometrically compatible but combinatorially different halfedges
      that belong to the same boundary cycle.
  -   It is now possible to pass a face-size property map to [`CGAL::Polygon_mesh_processing::keep_large_connected_components()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__keep__connected__components__grp.html#ga48e7b3e6922ee78cf8ce801e3e325d9a)
      and [`CGAL::Polygon_mesh_processing::keep_largest_connected_components()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__keep__connected__components__grp.html#ga68c6c29dfc6a26a6a2f8befe6944f19d), enabling users to define

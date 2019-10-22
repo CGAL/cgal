@@ -126,8 +126,10 @@ struct Construct_cartesian_const_iterator_vertex_handle_3
 template <class Vertex_handle>
 struct Euclidean_distance_vertex_handle_3
 {
+  typedef double FT;
   typedef CGAL::internal::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
   typedef Point_vertex_handle_3 Query_item;
+  typedef Point_vertex_handle_3 Point_d;
 
   double transformed_distance(const Point_vertex_handle_3& p1, const Point_vertex_handle_3& p2) const {
     double distx = p1.x()-p2.x();

@@ -503,6 +503,23 @@ instead of the distance itself. For instance for the Euclidean
 distance, to avoid the expensive computation of square roots, squared
 distances are used instead of the Euclidean distance itself.
 
+\cgalModifBegin
+Not storing the points coordinates inside the tree usually generates a
+lot of cache misses, leading to non-optimal performance. This is the case
+for example when indices are stored inside the tree,
+or to a lesser extent when the points coordinates are stored
+in a dynamically allocated array (e.g., `Epick_d` with dynamic
+dimension) &mdash; we says "to a lesser extent" because the points
+are re-created by the kd-tree in a cache-friendly order after its construction,
+so the coordinates are more likely to be stored in a near-optimal order on the
+heap.
+In this case, the `EnablePointsCache` template parameter of the `Kd_tree` class can be
+set to `Tag_true`. The points coordinates will then be cached in an optimal
+way. This will increase memory consumption but provide better search
+performance. See also the `GeneralDistance` and `FuzzyQueryItem` concepts for
+additional requirements when using such a cache.
+\cgalModifEnd
+
 \section Spatial_searchingImplementationHistory Implementation History
 
 The initial implementation of this package was done by Hans Tangelder and

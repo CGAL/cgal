@@ -104,7 +104,7 @@ namespace Point_set {
     CGAL::Sliding_midpoint<Search_traits>;
 
     using Search_tree = 
-    CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true>;
+      CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true, CGAL::Tag_true>;
 
     using Neighbor_search = 
     CGAL::Orthogonal_k_neighbor_search<

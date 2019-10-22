@@ -278,7 +278,6 @@ public:
 template <class Point_with_info,class PointPropertyMap,class Base_distance>
 class Distance_adapter : public Base_distance {
   PointPropertyMap ppmap;
-  typedef typename Base_distance::FT FT;
 
 public:
     
@@ -287,7 +286,8 @@ public:
   ):Base_distance(distance),ppmap(ppmap_){}
 
   using Base_distance::transformed_distance;
-  
+
+  typedef typename Base_distance::FT FT;
   typedef Point_with_info Point_d;
   typedef typename Base_distance::Query_item Query_item;
 
