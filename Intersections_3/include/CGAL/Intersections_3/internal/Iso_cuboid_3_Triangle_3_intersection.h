@@ -26,8 +26,9 @@
 #include <CGAL/kernel_basic.h>
 #include <CGAL/intersections.h>
 
-#include <vector>
+#include <iterator>
 #include <list>
+#include <vector>
 
 namespace CGAL {
 
@@ -38,49 +39,61 @@ namespace internal {
 //only work for convex polygons, but in here that's always the case
 template<class K>
 void clip_poly_halfspace(
-    const std::vector<typename K::Point_3>& input,
+    std::vector<typename K::Point_3>& polygon,
     const typename K::Plane_3& pl,
-    std::vector<typename K::Point_3>& output)
+    const K& k)
 {
-  if(input.empty())
+  if(polygon.empty())
     return;
 
   typedef typename K::Point_3 Point;
   typedef typename K::Plane_3 Plane;
-  typedef typename K::Segment_3 S;
+  typedef typename K::Segment_3 Segment;
 
   typedef typename Intersection_traits<K,
       CGAL::Plane_3<K>,
       CGAL::Segment_3<K> >::result_type SP_type;
 
-  std::list<Point> p_list(input.begin(), input.end());
-  auto it = p_list.begin();
+  // Keep in memory which points we are going to delete later (newer intersection points
+  // by construction will not be deleted)
+  std::list<std::pair<Point, bool> > p_list;
+  for(const Point& p : polygon)
+    p_list.emplace_back(p, pl.has_on_positive_side(p));
+
   //corefine with plane.
+  auto it = p_list.begin();
   while(it != p_list.end())
   {
-    Point p = *it;
-    ++it;
+    const Point& p1 = (it++)->first;
     if(it == p_list.end())
       break;
-    if(do_intersect(S(p, *it), pl))
+
+    const Point& p2 = it->first;
+    const Segment seg = k.construct_segment_3_object()(p1, p2);
+
+    if(do_intersect(seg, pl))
     {
-      SP_type inter = typename K::Intersect_3()(S(p, *it), pl);
+      SP_type inter = k.intersect_3_object()(seg, pl);
       if(inter)
       {
         Point* p_inter = boost::get<Point>(&*inter);
         if(p_inter
-           && *p_inter != p
-           && *p_inter != *it)
-          p_list.insert(it, *p_inter);
+           && !(k.equal_3_object()(*p_inter, p1))
+           && !(k.equal_3_object()(*p_inter, p2)))
+        {
+          // 'false' because we know the intersection is by construction not on the positive side of the plane
+          p_list.insert(it, std::make_pair(*p_inter, false));
+        }
       }
     }
   }
 
-  if(input.size() >2)
+  if(polygon.size() > 2)
   {
-    Point p2(p_list.front()),
-        p1(p_list.back());
-    S seg(p1, p2);
+    const Point& p2 = p_list.front().first;
+    const Point& p1 = p_list.back().first;
+    const Segment seg(p1, p2);
+
     if(do_intersect(seg, pl))
     {
       SP_type inter = typename K::Intersect_3()(seg, pl);
@@ -88,25 +101,29 @@ void clip_poly_halfspace(
       {
         Point* p_inter = boost::get<Point>(&*inter);
         if(p_inter
-           && *p_inter != p1
-           && *p_inter != p2)
-          p_list.push_back(*p_inter);
+           && !(k.equal_3_object()(*p_inter, p1))
+           && !(k.equal_3_object()(*p_inter, p2)))
+        {
+          // 'false' because we know the intersection is by construction not on the positive side of the plane
+          p_list.emplace_back(*p_inter, false);
+        }
       }
     }
   }
+
   //remove all points on positive side
-
-  for(auto p_it = p_list.begin();
-      p_it != p_list.end();)
+  for(auto it = p_list.begin(); it != p_list.end();)
   {
-    if(pl.has_on_positive_side(*p_it))
-      p_it = p_list.erase(p_it);
+    if(it->second)
+      it = p_list.erase(it);
     else
-      ++p_it;
+      ++it;
   }
-  for(auto p : p_list)
-    output.push_back(p);
 
+  // Update the polygon
+  polygon.clear();
+  for(const auto& pr : p_list)
+    polygon.push_back(pr.first);
 }
 
 template <class K>
@@ -114,12 +131,12 @@ typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Triangle_3
 intersection(
     const typename K::Iso_cuboid_3 &cub,
     const typename K::Triangle_3 &tr,
-    const K&)
+    const K& k)
 {
   typedef typename K::Point_3 Point;
   typedef typename K::Segment_3 Segment;
   typedef typename K::Triangle_3 Triangle;
-  typedef typename K::Plane_3 Plane_3;
+  typedef typename K::Plane_3 Plane;
   typedef std::vector<Point> Poly;
 
   typedef typename Intersection_traits<K,
@@ -127,30 +144,30 @@ intersection(
       CGAL::Triangle_3<K> >::result_type Res_type;
 
   //Lazy implem: clip 6 times the input triangle.
-  Plane_3 planes[6];
-  planes[0] = Plane_3(cub.vertex(0),
-                      cub.vertex(1),
-                      cub.vertex(5));
+  Plane planes[6];
+  planes[0] = Plane(cub.vertex(0),
+                    cub.vertex(1),
+                    cub.vertex(5));
 
-  planes[1] = Plane_3(cub.vertex(0),
-                      cub.vertex(4),
-                      cub.vertex(3));
+  planes[1] = Plane(cub.vertex(0),
+                    cub.vertex(4),
+                    cub.vertex(3));
 
-  planes[2]=Plane_3(cub.vertex(0),
+  planes[2] = Plane(cub.vertex(0),
                     cub.vertex(3),
                     cub.vertex(1));
 
-  planes[3] = Plane_3(cub.vertex(7),
-                      cub.vertex(6),
-                      cub.vertex(1));
+  planes[3] = Plane(cub.vertex(7),
+                    cub.vertex(6),
+                    cub.vertex(1));
 
-  planes[4] = Plane_3(cub.vertex(7),
-                      cub.vertex(3),
-                      cub.vertex(4));
+  planes[4] = Plane(cub.vertex(7),
+                    cub.vertex(3),
+                    cub.vertex(4));
 
-  planes[5] = Plane_3(cub.vertex(7),
-                      cub.vertex(4),
-                      cub.vertex(6));
+  planes[5] = Plane(cub.vertex(7),
+                    cub.vertex(4),
+                    cub.vertex(6));
 
   std::vector<Point> poly;
   poly.push_back(tr.vertex(0));
@@ -158,11 +175,7 @@ intersection(
   poly.push_back(tr.vertex(2));
 
   for (int i = 0; i < 6; ++i)
-  {
-    Poly clipped;
-    clip_poly_halfspace<K>(poly, planes[i], clipped);
-    poly = clipped;
-  }
+    clip_poly_halfspace<K>(poly, planes[i], k);
 
   switch(poly.size())
   {
@@ -184,7 +197,7 @@ intersection(
   case 3:
   {
 
-    Triangle res = Triangle (poly[0], poly[1], poly[2]);
+    Triangle res = Triangle(poly[0], poly[1], poly[2]);
     return Res_type(std::forward<Triangle>(res));
   }
     break;
@@ -205,6 +218,9 @@ intersection(
 {
   return intersection(cub, tr, k);
 }
-}}}
+
+} // namespace internal
+} // namespace Intersections
+} // namespace CGAL
 
 #endif // CGAL_INTERSECTIONS_3_INTERNAL_ISO_CUBOID_3_TRIANGLE_3_INTERSECTION_H
