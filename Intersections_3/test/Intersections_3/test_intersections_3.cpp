@@ -62,6 +62,7 @@ struct Test {
   typedef CGAL::Iso_cuboid_3< K >     Cub;
   typedef CGAL::Sphere_3< K >         Sph;
   typedef CGAL::Bbox_3                Bbox;
+  typedef std::vector<P>              Pol;
 
 
   template < typename Type >
@@ -95,20 +96,20 @@ struct Test {
 
   bool approx_equal(const S & p, const S & q)
   {
-	return approx_equal(p.source(), q.source()) && approx_equal(p.target(), q.target());
+  return approx_equal(p.source(), q.source()) && approx_equal(p.target(), q.target());
   }
 
-  /*
   bool approx_equal(const Pol & p, const Pol & q)
   {
-	if (p.size() != q.size())
-		return false;
-	for(typename Pol::const_iterator itp = p.begin(), itq = q.begin(); itp != p.end(); ++itp, ++itq)
-		if (!approx_equal(*itp, *itq))
-			return false;
-	return true;
+    if(p.size() != q.size())
+      return false;
+
+    for(typename Pol::const_iterator itp = p.begin(), itq = q.begin(); itp != p.end(); ++itp, ++itq)
+      if(!approx_equal(*itp, *itq))
+        return false;
+
+    return true;
   }
-  */
 
   template < typename O1, typename O2>
   void check_no_intersection(const O1& o1, const O2& o2)
@@ -565,75 +566,113 @@ struct Test {
   } // end function Bbox_Tr
 
   void Cub_Tr(bool is_exact)
+  {
+    typedef typename CGAL::Intersection_traits<K, Tr, Cub>::result_type Res;
+
+    std::cout << "Triangle_3 - Cuboid_3\n";
+
+    // tr outside
+    Cub cub(P(1,1,1), P(2,2,2));
+    check_no_intersection(cub, Tr(P(1.1, 2, 0),  P(2, 3, 1), P(4, 5, 6)));
+
+    // tr in a face
+    check_intersection(cub, Tr(P(1, 1.1, 1), P(1, 1.5, 1), P(1, 1, 1.1)),
+                       Tr(P(1, 1.1, 1), P(1, 1.5, 1), P(1, 1, 1.1)));
+
+    //face in a tr
+    Tr tr(P(-3, -3, 1), P(3, -3, 1), P(1.5, 6, 1));
+    Res res = CGAL::intersection(cub, tr);
+    Pol* poly = boost::get<std::vector<P> >(&*res);
+    CGAL_assertion(poly != nullptr);
+    CGAL_assertion(poly->size() == 4);
+    if(is_exact)
     {
-      std::cout << "Triangle_3 - Cuboid_3\n";
-
-      Cub cub(P(1,1,1), P(2,2,2));
-
-      check_no_intersection(cub, Tr(P(1.1, 2,0),
-                                    P(2, 3, 1),
-                                    P(4, 5, 6)));
-
-      //tr in a face
-      check_intersection(cub, Tr(P(1,1.1,1),
-                                 P(1,1.5,1),
-                                 P(1,1,1.1)),
-                         Tr(P(1,1.1,1),
-                            P(1,1.5,1),
-                            P(1,1,1.1))
-                         );
-      //face in a tr
-
-      typedef typename CGAL::Intersection_traits<K,
-          typename K::Triangle_3,
-          typename K::Iso_cuboid_3>::result_type Res;
-      Tr tr(P(-3, -3, 1), P(3,-3,1), P(1.5,6,1));
-      Res res = CGAL::intersection(cub, tr);
-      if(is_exact)
-      {
-        std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
-        CGAL_assertion(poly != nullptr);
-        CGAL_assertion(poly->size() == 4);
-        for(auto p : *poly)
-        {
-          CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
-        }
-      }
-
-      //tr adj to a point
-
-      check_intersection (cub, Tr(P(1, 0.5, 0.5),
-                                  P(3, 2, 1),
-                                  P(3, 1, 2)),
-                          P(2,1,1));
-      //tr adj to an edge
-      check_intersection (cub, Tr(P(1,0,4), P(2,1,0), P(4,3,0)),
-                          S(P(2,1,2), P(2,1,1)));
-      //tr inside
-      check_intersection (cub, Tr(P(1.1,1.1,1.1), P(1.8,1.8,1.8), P(1.5,1.8,1.1)),
-                          Tr(P(1.1,1.1,1.1), P(1.8,1.8,1.8), P(1.5,1.8,1.1)));
-      //tr through
-      tr = Tr(P(2, 4, 2),
-             P(1, 3.5, -0.5),
-             P(1, -1, 1));
-      res = CGAL::intersection(cub, tr);
-      if(is_exact)
-      {
-        std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
-        CGAL_assertion(poly != nullptr);
-        CGAL_assertion(poly->size() == 4);
-        for(auto p : *poly)
-        {
-          CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
-        }
-      }
+      CGAL_assertion_code(for(auto& p : *poly))
+      CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
     }
+
+    //tr adj to a cuboid vertex
+    check_intersection(cub, Tr(P(1, 0.5, 0.5), P(3, 2, 1), P(3, 1, 2)), P(2,1,1));
+
+    //tr adj to a point on a cuboid edge
+    check_intersection(cub, Tr(P(1, 0.5, 0.5), P(3, 2, 1), P(3, 1, 2)), P(2,1,1));
+
+    //tr adj to a point on a cuboid face
+    check_intersection(cub, Tr(P(1, 1.5, 1.5), P(0, 0, 0), P(-4, 3, 1)), P(1, 1.5, 1.5));
+
+    //tr adj to an edge
+    check_intersection(cub, Tr(P(2, 1.5, 2), P(5, 6, 7), P(4, 7, 6)), P(2, 1.5, 2));
+
+    //tr sharing an edge
+    check_intersection(cub, Tr(P(2, 1.5, 2), P(2, 2.5, 2), P(4, 7, 6)),
+                       S(P(2, 1.5, 2), P(2, 2, 2)));
+
+    //tr sharing part of an edge
+    check_intersection(cub, Tr(P(2, 1.5, 2), P(5, 6, 7), P(4, 7, 6)), P(2, 1.5, 2));
+
+    //tr inside
+    check_intersection(cub, Tr(P(1.1,1.1,1.1), P(1.8,1.8,1.8), P(1.5,1.8,1.1)),
+                       Tr(P(1.1,1.1,1.1), P(1.8,1.8,1.8), P(1.5,1.8,1.1)));
+
+    //tr through
+    tr = Tr(P(2, 4, 2), P(1, 3.5, -0.5), P(1, -1, 1));
+    res = CGAL::intersection(cub, tr);
+    poly = boost::get<std::vector<P> >(&*res);
+    CGAL_assertion(poly != nullptr);
+    CGAL_assertion(poly->size() == 4);
+    if(is_exact)
+    {
+      CGAL_assertion_code(for(const P& p : *poly))
+      CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
+    }
+
+    //cutting in half along diagonal (intersection == triangle)
+    check_intersection(cub, Tr(P(1, 1, 1), P(2, 2, 2), P(2, 2, 1)),
+                       Tr(P(1, 1, 1), P(2, 2, 2), P(2, 2, 1)));
+
+    //cutting in half along diagonal (intersection included in triangle)
+    tr = Tr(P(1, 1, 10), P(10, 10, 1), P(1, 1, 1));
+    res = CGAL::intersection(cub, tr);
+    poly = boost::get<std::vector<P> >(&*res);
+    CGAL_assertion(poly != nullptr);
+    CGAL_assertion(poly->size() == 4);
+    if(is_exact)
+    {
+      CGAL_assertion_code(for(const P& p : *poly))
+      CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
+    }
+
+    //6 points intersection
+    tr = Tr(P(18.66, -5.4, -11.33), P(-2.41, -7.33, 19.75), P(-10.29, 20.15, -10.33));
+    res = CGAL::intersection(cub, tr);
+    poly = boost::get<std::vector<P> >(&*res);
+    CGAL_assertion(poly != nullptr);
+    CGAL_assertion(poly->size() == 6);
+    if(is_exact)
+    {
+      CGAL_assertion_code(for(const P& p : *poly))
+      CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
+    }
+
+    //triangle clipping a cuboid corner
+    tr = Tr(P(1.02, 1.33, 0.62), P(1.95, 2.54, 0.95), P(0.79, 2.36, 1.92));
+    res = CGAL::intersection(cub, tr);
+    Tr* tr_res = boost::get<Tr>(&*res);
+    CGAL_assertion(tr_res != nullptr);
+    if(is_exact)
+    {
+      CGAL_assertion(cub.has_on_boundary((*tr_res)[0]));
+      CGAL_assertion(cub.has_on_boundary((*tr_res)[1]));
+      CGAL_assertion(cub.has_on_boundary((*tr_res)[2]));
+    }
+  }
 
   void run(bool is_exact = false)
   {
     std::cout << "3D Intersection tests\n";
     P_do_intersect();
     Cub_Cub();
+    Cub_Tr(is_exact);
     L_Cub();
     Pl_L();
     Pl_Pl();
@@ -650,17 +689,22 @@ struct Test {
     Bbox_L();
     Bbox_R();
     Bbox_Tr();
-    Cub_Tr(is_exact);
   }
 
 };
 
 int main()
 {
-	Test< CGAL::Simple_cartesian<double>   >().run();
-	Test< CGAL::Homogeneous<CGAL::MP_Float> >().run();
-        Test< CGAL::Epeck >().run(true);
-         Test< CGAL::Homogeneous<CGAL::Epeck_ft>  >().run(true);
-	// TODO : test more kernels.
+  std::cout << " |||||||| Test Simple_cartesian<double> ||||||||" << std::endl;
+  Test< CGAL::Simple_cartesian<double> >().run();
+
+  std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::MP_Float> ||||||||" << std::endl;
+  Test< CGAL::Homogeneous<CGAL::MP_Float> >().run();
+
+  std::cout << " |||||||| Test EPECK ||||||||" << std::endl;
+  Test< CGAL::Epeck >().run(true);
+
+  std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::Epeck_ft> ||||||||" << std::endl;
+  Test< CGAL::Homogeneous<CGAL::Epeck_ft> >().run(true);
 }
 
