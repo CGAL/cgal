@@ -279,7 +279,7 @@ namespace CGAL {
         typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
         typename std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + m_dim*(it_node_point - m_tree.begin());
 
-        for (; it_node_point != node->end(); ++it_node_point)
+        for (; it_node_point != it_node_point_end; ++it_node_point)
         {
           number_of_items_visited++;
           FT distance_to_query_point =
