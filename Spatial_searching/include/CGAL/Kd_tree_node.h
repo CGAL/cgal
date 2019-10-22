@@ -209,7 +209,7 @@ namespace CGAL {
         if (node->size() > 0)
         {
           typename internal::Has_points_cache<Kdt, internal::has_Enable_points_cache<Kdt>::type::value>::type dummy;
-          search_in_leaf(node, q, tree_points_begin, cache_begin, dim, it, dummy);
+          it = search_in_leaf(node, q, tree_points_begin, cache_begin, dim, it, dummy);
         }
       }
       else {
@@ -297,7 +297,7 @@ namespace CGAL {
 
     // With cache
     template<class FuzzyQueryItem, class OutputIterator>
-    void search_in_leaf(
+    OutputIterator search_in_leaf(
       Leaf_node_const_handle node, 
       const FuzzyQueryItem &q,
       typename Kdt::const_iterator tree_points_begin,
@@ -314,11 +314,12 @@ namespace CGAL {
         if (contains(q, *it_node_point, cache_point_it, cache_point_it + dim, dummy))
           *oit++ = *it_node_point;
       }
+      return oit;
     }
 
     // Without cache
     template<class FuzzyQueryItem, class OutputIterator>
-    void search_in_leaf(
+    OutputIterator search_in_leaf(
       Leaf_node_const_handle node,
       const FuzzyQueryItem &q,
       typename Kdt::const_iterator /*tree_points_begin*/,
@@ -332,6 +333,7 @@ namespace CGAL {
         if (q.contains(*i))
           *oit++ = *i;
       }
+      return oit;
     }
 
     // With cache
