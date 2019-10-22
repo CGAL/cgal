@@ -36,7 +36,7 @@ namespace Intersections {
 namespace internal {
 
 
-//Tetrahedron_3 Segment_3
+//Tetrahedron_3 Plane_3
 template <class K>
 typename Intersection_traits<K, typename K::Tetrahedron_3, typename K::Plane_3>::result_type
 intersection(

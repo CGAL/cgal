@@ -47,15 +47,12 @@ intersection(const CGAL::Bbox_3& a,
   if(!do_intersect(a,b))
     return Result_type();
 
-  double xmin, xmax, ymin, ymax, zmin, zmax;
-  xmin = (std::max)(a.xmin(), b.xmin());
-  xmax = (std::min)(a.xmax(), b.xmax());
-
-  ymin = (std::max)(a.ymin(), b.ymin());
-  ymax = (std::min)(a.ymax(), b.ymax());
-
-  zmin = (std::max)(a.zmin(), b.zmin());
-  zmax = (std::min)(a.zmax(), b.zmax());
+  double xmin = (std::max)(a.xmin(), b.xmin());
+  double xmax = (std::min)(a.xmax(), b.xmax());
+  double ymin = (std::max)(a.ymin(), b.ymin());
+  double ymax = (std::min)(a.ymax(), b.ymax());
+  double zmin = (std::max)(a.zmin(), b.zmin());
+  double zmax = (std::min)(a.zmax(), b.zmax());
 
   return Result_type(std::forward<Bbox_3>(Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax)));
 }

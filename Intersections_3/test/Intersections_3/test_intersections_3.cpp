@@ -1215,6 +1215,5 @@ int main()
   Test< CGAL::Homogeneous<CGAL::MP_Float> >().run();
   Test< CGAL::Epeck >().run(true);
   Test< CGAL::Homogeneous<CGAL::Epeck_ft>  >().run(true);
-  // TODO : test more kernels.
 }
 
