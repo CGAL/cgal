@@ -45,6 +45,14 @@ or to build your own project using \cgal, see Section \ref secoptional3rdpartyso
 
 \section secgettingcgal Downloading CGAL
 
+\cgal can be obtained through different channels. We recommend using a package manager as
+this will ensure that all essential third party dependencies are present, and with the correct versions.
+You may also download the sources of \cgal directly, but it is then your responsability to independently
+acquire these dependencies.
+
+The examples and demos of \cgal are not included when you install \cgal with a package manager,
+and must be downloaded <a href="TODO">here</a>.
+
 \subsection secusingpkgman Using a Package Manager
 
 On most operating systems, package managers offer \cgal and its essential third party dependencies.
