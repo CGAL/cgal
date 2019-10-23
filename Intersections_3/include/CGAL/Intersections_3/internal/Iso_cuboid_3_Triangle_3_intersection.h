@@ -51,7 +51,7 @@ void clip_poly_halfspace(
   typedef typename K::Segment_3 Segment;
 
   typedef typename Intersection_traits<K,
-      CGAL::Plane_3<K>,
+      Plane,
       CGAL::Segment_3<K> >::result_type SP_type;
 
   // Keep in memory which points we are going to delete later (newer intersection points
