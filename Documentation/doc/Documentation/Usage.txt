@@ -109,7 +109,7 @@ contains the following subdirectories:
 | `src`                      | source files |
 
 The directories `include/CGAL/CORE` and `src/CGALCore` contain a
-distribution of the <a href="https://cs.nyu.edu/exact/">\sc{Core} library</a> version 1.7 for
+distribution of the <a href="https://cs.nyu.edu/exact/">Core library</a> version 1.7 for
 dealing with algebraic numbers. Note that \sc{Core} is not part of \cgal and has its
 own license.
 
@@ -120,9 +120,9 @@ which provides solvers for sparse linear systems, especially designed for the Co
 
 The only documentation shipped within \cgal sources is the present
 installation manual. The \cgal manual can be accessed online at
-<A HREF="https://doc.cgal.org/latest/Manual/index.html">`https://doc.cgal.org`</A>
+<a href="https://doc.cgal.org/latest/Manual/index.html">`https://doc.cgal.org`</a>
 or downloaded separately at
-<A HREF="https://github.com/CGAL/cgal/releases">`https://github.com/CGAL/cgal/releases`</A>.
+<a href="https://github.com/CGAL/cgal/releases">`https://github.com/CGAL/cgal/releases`</a>.
 
 \section section_headeronly Header-only Usage
 
