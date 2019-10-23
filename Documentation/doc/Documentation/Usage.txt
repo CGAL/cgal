@@ -142,7 +142,7 @@ Gathering all this information is called <I>configuration</I>. The end of the pr
 by the generation of a makefile or a Visual \cpp solution and project file that you can use
 to build your program.
 
-CMake maintains configuration parameters in so-called <I>cmake variables</I>, like the `CMAKE_CXX_COMPILER`
+CMake maintains configuration parameters in so-called <I>Cmake variables</I>, like the `CMAKE_CXX_COMPILER`
 in the example above. These variables <I>are not environment variables</I> but <I>CMake variables</I>.
 Some of the CMake variables represent user choices, such as `CMAKE_BUILD_TYPE`,
 whereas others indicate the details of a third-party library, such as `Boost_INCLUDE_DIR`
@@ -152,13 +152,13 @@ The most important CMake variable is the variable `CGAL_DIR`, which will serve t
 as you configure your program.
 
 In a typical installation of dependencies, almost all CMake variables will be set automatically.
-The variable `CGAL_DIR` is also generally found when \cgal has been obtained via a package manger.
+The variable `CGAL_DIR` is also generally found when \cgal has been obtained via a package manager.
 In the rare event that it has not, the variable `CGAL_DIR` should be set manually to:
 
 <ul>
 <li>something like `/usr/local/Cellar/cgal/CGAL-\cgalReleaseNumber/lib/cmake/CGAL`, for Brew.</li>
 <li>something like `/usr/lib/x86_64-linux-gnu/cmake/CGAL` for Linux distributions.</li>
-<li>something like `VCPKG_DIR/packages/cgal_x64-windows/lib/cgal`, for VCPKG_DIR.</li>
+<li>something like `VCPKG_DIR/installed/x64-windows/lib/cgal`, for vcpk.</li>
 </ul>
 
 If \cgal has been obtained via other means, `CGAL_DIR` must point to the root directory
