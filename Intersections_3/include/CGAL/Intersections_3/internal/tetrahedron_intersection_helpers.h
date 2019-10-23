@@ -28,9 +28,7 @@
 #include <vector>
 
 namespace CGAL {
-
 namespace Intersections {
-
 namespace internal {
 
 template<typename Segment>
@@ -41,19 +39,19 @@ void filter_segments(const std::vector<Segment>& input,
 
   do
   {
-  Segment s = tmp.back();
-  tmp.pop_back();
-  for(auto s_it = tmp.begin(); s_it != tmp.end();)
-  {
-    if(s == *s_it || s == s_it->opposite())
+    Segment s = tmp.back();
+    tmp.pop_back();
+    for(auto s_it = tmp.begin(); s_it != tmp.end();)
     {
-      s_it = tmp.erase(s_it);
+      if(s == *s_it || s == s_it->opposite())
+      {
+        s_it = tmp.erase(s_it);
+      }
+      else {
+        ++s_it;
+      }
     }
-    else {
-      ++s_it;
-    }
-  }
-  output.push_back(s);
+    output.push_back(s);
   }while (!tmp.empty());
 }
 
@@ -215,16 +213,15 @@ void fill_points_list(std::list<Segment>& segments, std::list<Point>& points)
 {
   CGAL_assertion(segments.size() > 1);
 
-  //init : take seg.front = seg.
   Segment seg = segments.front();
   segments.pop_front();
 
-  //put source and target in points.
   points.push_back(seg.source());
   points.push_back(seg.target());
 
   //find first seg with a point in common with seg.front = s2.
-  do{
+  do
+  {
     auto seg_it = segments.begin();
     bool found = false;
     for(;seg_it != segments.end(); ++seg_it)
@@ -266,5 +263,7 @@ void fill_points_list(std::list<Segment>& segments, std::list<Point>& points)
   }while(!segments.empty());
 }
 
-}}}//end namespaces
+}
+}
+}//end namespaces
 #endif // CGAL_INTERNAL_TETRAHEDRON_INTERSECTION_HELPERS_H

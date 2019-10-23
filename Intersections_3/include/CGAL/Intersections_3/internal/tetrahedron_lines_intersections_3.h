@@ -28,28 +28,29 @@
 #include <CGAL/intersections.h>
 
 namespace CGAL {
-
 namespace Intersections {
-
 namespace internal {
-template<class K, class O, class T>
+
+template<class K, class O, class Derived>
 struct Tetrahedron_lines_intersection_3_base
 {
   typedef typename Intersection_traits<K,
-      CGAL::Tetrahedron_3<K>,
-      O>::result_type Result_type;
+  CGAL::Tetrahedron_3<K>,
+  O>::result_type Result_type;
 
   typedef typename Intersection_traits<K,
-      CGAL::Triangle_3<K>,
-      O>::result_type Inter_type;
+  CGAL::Triangle_3<K>,
+  O>::result_type Inter_type;
 
-  Tetrahedron_lines_intersection_3_base(const typename K::Tetrahedron_3& tet,
-  const O& o):tet(tet), o(o)
-  {}
   const typename K::Tetrahedron_3& tet;
   const O& o;
   std::vector<typename K::Point_3> res_points;
   Result_type output;
+
+  Tetrahedron_lines_intersection_3_base(const typename K::Tetrahedron_3& tet,
+                                        const O& o):tet(tet), o(o)
+  {}
+
   bool all_inside_test()
   {
     return false;
@@ -62,7 +63,7 @@ struct Tetrahedron_lines_intersection_3_base
 
   void do_procede()
   {
-    if(static_cast<T*>(this)->all_inside_test())
+    if(static_cast<Derived*>(this)->all_inside_test())
       return;
 
     int res_id = -1;
@@ -70,18 +71,18 @@ struct Tetrahedron_lines_intersection_3_base
     Inter_type tr_seg[4];
     for(std::size_t i = 0; i < 4; ++i)
     {
-     const typename K::Triangle_3 triangle(tet.vertex((i+1)%4),
-                             tet.vertex((i+2)%4),
-                             tet.vertex((i+3)%4));
-     if(do_intersect(o, triangle))
-     {
-       tr_seg[i] = typename K::Intersect_3()(o, triangle);
-       if( boost::get<typename K::Segment_3>(&*tr_seg[i]) != nullptr)
-       {
-         res_id = i;
-         break;
-       }
-     }
+      const typename K::Triangle_3 triangle(tet.vertex((i+1)%4),
+                                            tet.vertex((i+2)%4),
+                                            tet.vertex((i+3)%4));
+      if(do_intersect(o, triangle))
+      {
+        tr_seg[i] = typename K::Intersect_3()(o, triangle);
+        if( boost::get<typename K::Segment_3>(&*tr_seg[i]) != nullptr)
+        {
+          res_id = i;
+          break;
+        }
+      }
     }
 
     //if there is a segment in the intersections, then we return it
@@ -94,6 +95,7 @@ struct Tetrahedron_lines_intersection_3_base
     //else if there is only 1 intersection
     res_points.reserve(4);
     res_id = -1;
+
     for(std::size_t i = 0; i< 4; ++i)
     {
       if(tr_seg[i])
@@ -114,22 +116,26 @@ struct Tetrahedron_lines_intersection_3_base
         }
       }
     }
+
     if(res_points.empty())
     {
       return;
     }
+
     if(res_id != -1)
     {
-      if(static_cast<T*>(this)->are_extremities_inside_test())
+      if(static_cast<Derived*>(this)->are_extremities_inside_test())
         return;
       //else point and segment entirely not inside or one intersection on boundary:
       output = tr_seg[res_id];
       return;
     }
+
     //else, we return a segment of the 2 intersection points (the most far away, in case of inexact)
     typename K::FT max_dist = 0;
     std::size_t res_id_2 = -1;
     std::vector<std::vector<typename K::FT> > sq_distances(res_points.size());
+
     for(std::size_t i = 0; i< res_points.size(); ++i)
     {
       auto p1 = res_points[i];
@@ -144,12 +150,12 @@ struct Tetrahedron_lines_intersection_3_base
         }
       }
     }
+
     CGAL_assertion(res_id != -1);
     CGAL_assertion(res_id_2 != -1);
     CGAL_assertion(max_dist >0 );
 
     typename K::Segment_3 res_seg(res_points[res_id], res_points[res_id_2]);
-
     output = Result_type(std::forward<typename K::Segment_3>(res_seg));
     return;
   }
@@ -157,5 +163,5 @@ struct Tetrahedron_lines_intersection_3_base
 
 }
 }
-}
+} //end namespaces
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_TETRAHEDRON_LINES_INTERSECTIONS_3_H
