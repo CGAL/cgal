@@ -3,6 +3,8 @@
 
 - \subpage usage describes how to obtain \cgal and the few steps required to build a program using \cgal.
 
+- \subpage windows blabla
+
 - \subpage thirdparty lists required and optional third party libraries.
 
 - \subpage manual gives an idea of where you should look for documentation.
