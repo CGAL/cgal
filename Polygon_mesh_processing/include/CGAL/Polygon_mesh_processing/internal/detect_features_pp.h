@@ -241,11 +241,12 @@ private:
     // compute the eigenvalues/vectors
     Eigen::SelfAdjointEigenSolver<Eigen_matrix> eigen_solver;
 
-    eigen_solver.computeDirect(M);
+    eigen_solver.compute(M);
 
     std::map<double, Vector> sorted_eigenvalues;
     for(int i=0; i<3; ++i)
     {
+      CGAL_assertion(eigen_solver.eigenvalues()[i] >= - std::numeric_limits<double>::epsilon());
       sorted_eigenvalues.insert(std::make_pair(eigen_solver.eigenvalues()[i],
                                                gt_.construct_vector_3_object()(eigen_solver.eigenvectors()(0, i),
                                                                                eigen_solver.eigenvectors()(1, i),
@@ -254,18 +255,18 @@ private:
 
     typename std::map<double, Vector>::iterator it = sorted_eigenvalues.begin();
 
-    bool is_usable = sorted_eigenvalues.size();
+    bool is_usable = (sorted_eigenvalues.size() == 3);
     if(is_usable)
     {
-      const double lambda_1 = (it++)->first;
+      const double lambda_3 = (it++)->first;
       const double lambda_2 = (it++)->first;
-      const double lambda_3 = it->first;
+      const double lambda_1 = it->first;
 
       is_usable = (lambda_2 >= eps * lambda_1 && lambda_3 >= 0.7 * lambda_2);
     }
 
     if(is_usable)
-      return std::make_pair(sorted_eigenvalues.begin()->second, true);
+      return std::make_pair(sorted_eigenvalues.rbegin()->second, true);
     else
       return std::make_pair(CGAL::NULL_VECTOR, false);
   }
