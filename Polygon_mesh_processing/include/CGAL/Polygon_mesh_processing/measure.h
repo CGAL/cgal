@@ -328,14 +328,15 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 
   CGAL_precondition(boost::graph_traits<TriangleMesh>::null_face() != f);
 
-  typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
-      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+  typedef typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type VPM;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
 
   halfedge_descriptor hd = halfedge(f, tmesh);
   halfedge_descriptor nhd = next(hd, tmesh);
 
-  typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type traits;
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type GT;
+  GT traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   return approximate_sqrt(traits.compute_squared_area_3_object()(get(vpm, source(hd, tmesh)),
                                                                  get(vpm, target(hd, tmesh)),
