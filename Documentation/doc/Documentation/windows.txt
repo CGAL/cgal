@@ -13,12 +13,14 @@ installation instructions.
 
 If you choose to use `vcpkg`, you might have to bootstrap and download
 and compile it, but from then on `vcpkg` will make your life easier.
+On the other hand, if you need to specify a specific version, or have already installed
+a certain version of a dependency and do not wish to potentially have multiple versions installed,
+you will want to use the CGAL Installer.
 
-[You may opt for not using `vcpkg` because you upgraded and you already
-have installed boost, or you need a specific boost version, and not
-the latest one, which you would get with `vcpkg`.]
-
-We explain the two approaches in the next sections.
+We explain the two approaches in the next sections:
+<ul>
+<li>\ref sec-installing-with-vcpkg</li>
+<li>\ref install-with-installer</li>
 
 \section sec-installing-with-vcpkg Installing CGAL with the vcpkg Library Manager
 
@@ -148,7 +150,7 @@ you are advised to look at the `CMakeLists.txt` files in the example
 folder of the package that you are using to learn how to specify CGAL and additional third party
 dependencies.
 
-\section install-with-installer Installing with the Installer
+\section install-with-installer Installing with the CGAL Installer
 
 You can download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from https://www.cgal.org/download/windows.html.
 It is a self extracting executable that downloads the \cgal header files, and optionally the source code of the
@@ -158,7 +160,7 @@ examples and demos. Additionally, it can download precompiled versions of GMP an
 
 Binary versions of `Boost` are available on SourceForge.
 
-The installers install both `Boost` headers and precompiled libraries.
+The `Boost` installers install both `Boost` headers and precompiled libraries.
 Please note that the \cgal project is not responsible for the files provided on this website.
 When \cgal \cgalReleaseNumber was released, the latest version of `Boost` was 1.71.
 
@@ -189,7 +191,7 @@ as this will help `cmake` to find \cgal.
 
 \subsection ssect-installer-compile-example Compiling an Example
 
-We assume you have downloaded the examples with the installer.
+We assume you have downloaded the examples with the \cgal Installer.
 
 Before building anything using \cgal, you have to choose the compiler/linker, set compiler
 and linker flags, specify which third-party libraries you want to use and where they can be found.
@@ -270,7 +272,7 @@ dependencies.
 
 \section install-with-tarball Installing from the tarball
 
-Instead of the installer you can also download release tarballs. The sole difference with the installer
+Instead of the installer you can also download release tarballs. The sole difference with the \cgal Installer
 procedure is that the installer also downloads precompiled GMP and MPFR libraries.
 
 */
