@@ -1,9 +1,9 @@
 /*!
 \page general_intro Getting Started with %CGAL
 
-- \subpage usage describes how to obtain \cgal and the few steps required to build a program using \cgal.
+- \subpage usage Using \cgal on Unix
 
-- \subpage windows blabla
+- \subpage windows Using \cgal on Windows
 
 - \subpage thirdparty lists required and optional third party libraries.
 

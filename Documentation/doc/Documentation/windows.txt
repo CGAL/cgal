@@ -18,7 +18,7 @@ and compile it, but from then on `vcpkg` will make your life easier.
 have installed boost, or you need a specific boost version, and not
 the latest one, which you would get with `vcpkg`.]
 
-In the next two sections we explain the two approaches.
+We explain the two approaches in the next sections.
 
 \section sec-installing-with-vcpkg Installing CGAL with the vcpkg Library Manager
 
@@ -34,7 +34,7 @@ The first step is to clone or download `vcpkg` from
   C:\dev\vcpkg> .\vcpkg integrate install
 \endcode
 
-The last step requires to run *cmd* with administrator rights.
+The last step requires to run `cmd` with administrator rights.
 
 \subsection ssec-vcpk-install-cgal Installing CGAL Itself
 
@@ -72,34 +72,34 @@ next compile an example from the 2D Triangulation package.
 
 \subsubsection sssec-vcpkg-configuration-example Configuring of an Example
 
-Before building anything using \cgal you have to choose the compiler/linker, set compiler
+Before building anything using \cgal, you have to choose the compiler/linker, set compiler
 and linker flags, specify which third-party libraries you want to use and where they can be found.
 Gathering all this information is called *configuration* and we use CMake as configuration tool
-(see Section \ref seccmake for more information on minimal supported versions and where to
-download it).
+(see Section \ref seccmake for more information on supported versions and where to download it).
 
-The end of the process is marked by the generation of a Visual \cpp solution and
-project file that you can use to build your program.
+The end of the process is marked by the generation of a Visual \cpp solution
+and a project file that you can use to build your program.
 
 \code{.sh}
   C:\Users\Me\CGAL-5.0> cd examples\Triangulation_2
   C:\Users\Me\CGAL-5.0\examples\Triangulation_2> mkdir build
   C:\Users\Me\CGAL-5.0\examples\Triangulation_2> cd build
-  C:\Users\Me\CGAL-5.0\examples\Triangulation_2\build> cmake-gui ..
+  C:\Users\Me\CGAL-5.0\examples\Triangulation_2\build> cmake-gui .. # cmake-gui is the graphical interface for cmake, which we recommend to use
 \endcode
 
-When you hit the *Configure* button you must choose the compiler,
-you must *Specify the Generator* (e.g., Visual Studio 16 2019), you must
-specify the *Optional Platform* (`x64 in case you want to create 64 bit binaries),
-and you must select *Specify toolchain file for cross compilation*
-(`C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake`, which you have
-to adapt to where you installed `vcpkg` on your machine).
-Once the configuration is done, tick *Advanced* and *Grouped* in `cmake-gui`.
+When you hit the `Configure` button, you must:
+<ul>
+<li>specify the `Generator` (e.g., Visual Studio 16 2019),</li>
+<li>specify the `Optional Platform` (e.g., `x64` in case you want to create 64 bit binaries),</li>
+<li>select `Specify toolchain file for cross compilation` (the file `vcpkg.cmake` within the directory
+where you have installed `vcpkg`, e.g. `C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake`).</li>
+</ul>
+Once the configuration process is done, tick `Advanced` and `Grouped` in `cmake-gui`.
 You will see entries for where header files and libraries are taken from.
 
 \subsubsection sssect-vcpkg-additional-dependencies Additional Dependencies
 
-Individual \cgal packages may also have additional dependencies. During the configuration
+Some \cgal packages also have additional dependencies. During the configuration
 of the above examples, you may have observed the following message:
 
 \code{.sh}
@@ -107,66 +107,79 @@ of the above examples, you may have observed the following message:
 \endcode
 
 \cgal is a library of algorithms and data structures and as such does
-not depend on Qt. However, one of the examples does for visualization purposes only. Either you
-have Qt installed and you can fill in the requested CMake variables, or we install it now using `vcpkg`:
+not depend on `Qt`. However, one of the examples in the Triangulation_2 package does require `Qt`
+for visualization purposes. If you already have `Qt` installed, you can simply fill in the requested
+CMake variables and paths. Otherwise, you can also install it using `vcpkg`:
 
 \code{.sh}
   C:\dev\vcpkg> .\vcpkg.exe install qt5
 \endcode
 
-Remember to specify `--triplet` or the related environment variable in case you target 64 bit applications.
+Remember to specify `--triplet` or the related environment variable in case you target 64-bit applications.
 
-When you start *cmake-gui* again and hit the *Configure* button,
-the CMake variables concerning Qt should now be filled.
+When you start `cmake-gui` again and hit the `Configure` button,
+the CMake variables and paths concerning Qt should now be filled.
 
-Note that not all dependencies are available through the `vcpkg` library manager.
-In this case you have to download and install them
+Note that not all optional dependencies are available through the `vcpkg` library manager.
+In this case, you must download and install them independently (see page \ref thirdparty
+for information on support versions and download links) as well as fill the missing information
+within the `CMake` interface until configuration is successful (no more red lines indicating
+missing dependencies).
 
-See page \ref configurationvariables   et \ref thirdparty 
-
+\cgalAdvancedBegin
+You may also decide to solve missing dependencies using the `CMake` command line tool (which is not recommended).
+If so, the page \ref configurationvariables lists variables which can be used to specify
+the location of third-party software.
+\cgalAdvancedEnd
 
 \subsubsection sssect-vcpkg-compilation Compilation of an Example
 
-Hit the *Generate* button, and you will find the file `Triangulation_2_examples.sln`
+Hit the `Generate` button, and you will find the file `Triangulation_2_examples.sln`
 in the directory `C:\Users\Me\CGAL-5.0\examples\Triangulation_2\build`.
-Double click in order to open it. You will see one project per `.cpp` file.
-Compile them all or just the one you are interested in.
+Double-click it to open it. There is one project per `.cpp` file in the directory.
+Compile them all, or just the one you are interested in.
 
+\subsection subsect-vpckg-my-code Configuring and Compiling My Code Using CGAL
 
-
-
+Configuring and compiling your own code is practically the same as for \cgal examples
+if you use `cmake`. Running `cmake` (or `cmake-gui`) requires a `CMakeLists.txt` file.
+This file is automatically provided for all examples and demos of \cgal. For your own programs,
+you are advised to look at the `CMakeLists.txt` files in the example
+folder of the package that you are using to learn how to specify CGAL and additional third party
+dependencies.
 
 \section install-with-installer Installing with the Installer
 
 You can download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from https://www.cgal.org/download/windows.html.
 It is a self extracting executable that downloads the \cgal header files, and optionally the source code of the
-examples and demos. Additionally, it can download the precompiled versions of GMP and Mpfr.
+examples and demos. Additionally, it can download precompiled versions of GMP and MPFR.
 
-\subsection ssect-installer-boost Installing boost
+\subsection ssect-installer-boost Installing `Boost`
 
-Binary versions of Boost are available on SourceForge.
+Binary versions of `Boost` are available on SourceForge.
 
-The installers install both Boost headers and precompiled libraries.
-Please note that the \cgal project is not responsible for the files provided on this web site.
-When \cgal \cgalReleaseNumber was released, the latest version of  boost was 1.71.
+The installers install both `Boost` headers and precompiled libraries.
+Please note that the \cgal project is not responsible for the files provided on this website.
+When \cgal \cgalReleaseNumber was released, the latest version of `Boost` was 1.71.
 
-Download and run the file boost_1_71_0-msvc-XX.Y-64.exe (where XX.Y = 14.0 for VC 2015, XX.Y = 14.1 for 2017, XX.Y = 14.2 for VC 2019).
+<ul>
+<li>Download and run the file boost_1_71_0-msvc-XX.Y-64.exe (where XX.Y = 14.0 for VC 2015, XX.Y = 14.1 for 2017, XX.Y = 14.2 for VC 2019).</li>
+<li>Extract the files to a new directory, e.g. `c:\dev\libboost_1_71_0`.</li>
+<li>Set the following two environment variables to point respectively to the path of the libraries and the headers
 
-Choose to extract the files to a new directory: c:\dev\libboost_1_71_0.
-
-Set the following two environment variables to point respectively to the path of the libraries and the headers
-
+\code{.sh}
   BOOST_LIBRARYDIR=C:\dev\libboost_1_71_0\lib64-msvc-XX.Y
   BOOST_INCLUDEDIR=C:\dev\libboost_1_71_0
+\endcode
 
-as this will help `cmake` to find Boost.
-
-Add the path to the Boost `dlls` (C:\dev\libboost_1_71_0\lib64-msvc-XX.Y) files to the `PATH` environment variable. 
-
+as this will help `cmake` to find Boost.</li>
+<li>Add the path to the Boost `dlls` (`C:\dev\libboost_1_71_0\lib64-msvc-XX.Y`) files to the `PATH` environment variable.</li>
+</ul>
 
 \subsection ssect-installer-install-cgal Installing CGAL Itself
 
-Download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from <a href="https://www.cgal.org/download/windows.html">https://www.cgal.org/download/windows.html</a>.
+Download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from <
+a href="https://www.cgal.org/download/windows.html">https://www.cgal.org/download/windows.html</a>.
 It is a self extracting executable that downloads the \cgal header files, and optionally the source code of the
 examples and demos. Additionally, it can download the precompiled versions of GMP and Mpfr.  You must
 specify if yoy want the 32 or the 64 bit versions of these two libraries.
@@ -174,33 +187,33 @@ specify if yoy want the 32 or the 64 bit versions of these two libraries.
 \cgal being a header-only library, there is no need to compile it.  Set the environment variable `CGAL_DIR` to `C:\dev\CGAL-5.0,
 as this will help `cmake` to find \cgal.
 
-\subsection ssect-installer-compile-example  Compiling an Example
+\subsection ssect-installer-compile-example Compiling an Example
 
 We assume you have downloaded the examples with the installer.
 
-Before building anything using \cgal you have to choose the compiler/linker, set compiler
+Before building anything using \cgal, you have to choose the compiler/linker, set compiler
 and linker flags, specify which third-party libraries you want to use and where they can be found.
 Gathering all this information is called *configuration* and we use CMake as configuration tool
 (see Section \ref seccmake for more information on minimal supported versions and where to
 download it).
 
-The end of the process is marked by the generation of a Visual \cpp solution and
-project file that you can use to build your program.
+The end of the process is marked by the generation of a Visual \cpp solution
+and a project file that you can use to build your program.
 
 \code{.sh}
   C:\dev\CGAL-5.0> cd examples\Triangulation_2
   C:\dev\CGAL-5.0\examples\Triangulation_2> mkdir build
   C:\dev\CGAL-5.0\examples\Triangulation_2> cd build
-  C:\dev\CGAL-5.0\examples\Triangulation_2\build> cmake-gui ..
+  C:\dev\CGAL-5.0\examples\Triangulation_2\build> cmake-gui .. # cmake-gui is the graphical interface for cmake, which we recommend to use
 \endcode
 
-When you hit the *Configure* button you must choose the compiler,
-you must *Specify the Generator* (e.g., Visual Studio 16 2019), you must
-specify the *Optional Platform* (`x64 in case you want to create 64 bit binaries).
-Once the configuration is done, tick *Advanced* and *Grouped* in `cmake-gui.
+When you hit the `Configure` button you must:
+<ul>
+<li>Specify the `Generator`, e.g., Visual Studio 16 2019), and</li>
+<li>specify an `Optional Platform` (`x64` in case you want to create 64 bit binaries).</li>
+</ul>
+Once the configuration is done, tick `Advanced` and `Grouped` in `cmake-gui.
 You will see entries for where header files and libraries are taken from.
-
-
 
 \subsubsection ssect-installer-additional-dependencies Additional Dependencies
 
@@ -215,43 +228,41 @@ of the above examples, you may have observed the following message:
 not depend on Qt. However, one of the examples does for visualization purposes only. Either you
 have Qt installed and you can fill in the requested CMake variables, or we install it now.
 
-
+<ul>
+<li>
 Download and install the Qt library for open source development package for your Visual Studio version at
 <a href="https://www.qt.io/download/">https://www.qt.io/download/</a>
-(here is the direct link to the <a href="https://www1.qt.io/offline-installers/">offline installers</a>).
+(here is the direct link to the <a href="https://www1.qt.io/offline-installers/">offline installers</a>).</li>
+<li>Add the environment variable `QTDIR` pointing to the place you installed Qt, e.g., `C:\dev\Qt\Qt5.13.1`,
+as this will help `cmake` to find Qt.</li>
+<li>Add the bin directory of Qt, e.g. add  `C:\dev\Qt\Qt5.13.1\msvcXXXX_YY\bin` to `PATH`, where `XXXX_YY` is something like `vc2017_64`.
+To avoid any conflict with another dll with the same name from another folder, add this path as the first in the list.</li>
+<li>When you start `cmake-gui` again and hit the `Configure` button,
+the CMake variables concerning Qt should now be filled.</li>
+</ul>
 
-Add the environment variable `QTDIR` pointing to the place you installed Qt, e.g., `C:\dev\Qt\Qt5.13.1`,
-as this will help `cmake` to find Qt.
-
-Add the bin directory of Qt, e.g. add  `C:\dev\Qt\Qt5.13.1\msvcXXXX_YY\bin` to `PATH`, where `XXXX_YY` is something like `vc2017_64`. 
-To avoid any conflict with another dll with the same name from another folder, add this path as the first in the list.
-
-
-When you start *cmake-gui* again and hit the *Configure* button,
-the CMake variables concerning Qt should now be filled.
-
-For other dependencies it will be similar page \ref thirdparty \ref configurationvariables
+You must follow a similar process for other dependencies (see page \ref thirdparty for information
+on supported versions of third party libraries as well as download links).
 
 \subsubsection sssect-installer-compilation Compilation of an Example
 
-Hit the *Generate* button, and you will find the file `Triangulation_2_examples.sln`
+Hit the `Generate` button, and you will find the file `Triangulation_2_examples.sln`
 in the directory `C:\dev\CGAL-5.0\examples\Triangulation_2\build`.
 Double click in order to open it. You will see one project per `.cpp` file.
 Compile them all or just the one you are interested in.
 
+\subsection subsect-installer-my-code Configuring and Compiling My Code Using CGAL
 
+Configuring and compiling your own code is practically the same as for \cgal examples
+if you use `cmake`. Running `cmake` (or `cmake-gui`) requires a `CMakeLists.txt` file.
+This file is automatically provided for all examples and demos of \cgal. For your own programs,
+you are advised to look at the `CMakeLists.txt` files in the example
+folder of the package that you are using to learn how to specify CGAL and additional third party
+dependencies.
 
 \section install-with-tarball Installing from the tarball
 
-Instead of the installer you can also download the tarball. The sole difference is that the installer
-also downloads the precompiled GMP and Mpfr libraries.
-
-
-\section sect-my-code Configuring and Compiling My Code Using CGAL
-
-Configuring and compiling your own code is practically the same as for \cgal examples
-if you use `cmake`.  You are advised to look at the `CMakeLists.txt` files in the example
-folder of the package that you are using to learn how to specify dependencies.
-
+Instead of the installer you can also download release tarballs. The sole difference with the installer
+procedure is that the installer also downloads precompiled GMP and MPFR libraries.
 
 */
