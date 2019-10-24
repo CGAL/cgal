@@ -46,10 +46,6 @@
 #include <sstream>
 #include <fstream>
 
-// @fixme compare scalar products instead of computing so many angles
-
-// @fixme anchor_dense --> filter small salient curves with no strong DA ?
-
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
@@ -57,6 +53,19 @@ namespace internal {
 // Based on the paper
 // Identification of C^1 and C^2 Discontinuities for Surface Meshes in CAD
 // Xiangmin Jiao and Narasimha R. Bayyana
+
+// The idea is to start from a large set of "candidate" edges and trim to a set of "sharp" edges
+// using a large set of heurestics.
+
+// Experimental code, probably has some bugs and improvements
+
+// Usage: API gives access to two of the (many) parameters, so called "strong" and "weak" dihedral angles.
+// Candidate edges have a dihedral angle greater than the weak dihedral angle.
+// A dihedral angle greater than the strong value ensures that the edge will be marked as sharp.
+// The same behavior as the basic CGAL::detect_features() can be obtained by choosing weak == strong
+
+// @fixme compare scalar products instead of computing so many angles
+// @fixme anchor_dense --> filter small salient curves with no strong DA ?
 
 template <typename PolygonMesh, typename VPM, typename GeomTraits, typename EIFMap>
 class Detector
