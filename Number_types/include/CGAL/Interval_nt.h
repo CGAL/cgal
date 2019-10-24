@@ -551,13 +551,23 @@ private:
     __m128d bz = _mm_xor_pd(bb, m);                       // {bi,bs}
     bz = IA_opacify128(bz);
     __m128d c = swap_m128d (bz);                          // {bs,bi}
+
+    // The multiplications could produce some NaN, with 0 * inf. Replacing it with inf is safe.
+    // min(x,y) (the order is essential) returns its second argument when the first is NaN.
+    __m128d big = IA::largest().simd();
     __m128d x1 = _mm_mul_pd(aa,bz);                       // {-ai*bi,as*bs}
+    x1 = _mm_min_pd(x1,big); // no NaN
     __m128d x2 = _mm_mul_pd(aa,c);                        // {-ai*bs,as*bi}
+    x2 = _mm_min_pd(x2,big); // no NaN
     __m128d x3 = _mm_mul_pd(ap,bz);                       // {-as*bi,ai*bs}
+    x3 = _mm_min_pd(x3,big); // no NaN
     __m128d x4 = _mm_mul_pd(ap,c);                        // {-as*bs,ai*bi}
+    x4 = _mm_min_pd(x4,big); // no NaN
+
     __m128d y1 = _mm_max_pd(x1,x2);
     __m128d y2 = _mm_max_pd(x3,x4);
     __m128d r = _mm_max_pd (y1, y2);
+    // __m128d r = _mm_max_pd(x1,_mm_max_pd(x2,_mm_max_pd(x3,_mm_min_pd(x4,big))));
     return IA (IA_opacify128(r));
 # elif 0
     // we want to multiply ai,as with {ai<0?-bs:-bi,as<0?bi:bs}
