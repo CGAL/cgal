@@ -7,7 +7,7 @@ project( Triangulation_3_Tests )
 
 
 
-find_package(CGAL QUIET)
+find_package(CGAL QUIET COMPONENTS Qt5)
 
 if ( CGAL_FOUND )
 
@@ -31,6 +31,12 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_segment_simplex_traverser_3.cpp" )
   create_single_source_cgal_program( "test_static_filters.cpp" )
   create_single_source_cgal_program( "test_triangulation_3.cpp" )
+
+  create_single_source_cgal_program( "cdt_3.cpp" )
+  target_compile_features(cdt_3 PRIVATE cxx_std_17) # Structured bindings
+  if(CGAL_Qt5_FOUND)
+    target_link_libraries(cdt_3 PRIVATE CGAL::CGAL_Qt5)
+  endif()
 
   if(TBB_FOUND)
     foreach(target
