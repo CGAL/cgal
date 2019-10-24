@@ -242,7 +242,15 @@ the CMake variables concerning Qt should now be filled.</li>
 </ul>
 
 You must follow a similar process for other dependencies (see page \ref thirdparty for information
-on supported versions of third party libraries as well as download links).
+on supported versions of third party libraries as well as download links) and fill the missing information
+within the `CMake` interface until configuration is successful (no more red lines indicating
+missing dependencies).
+
+\cgalAdvancedBegin
+You may also decide to solve missing dependencies using the `CMake` command line tool (which is not recommended).
+If so, the page \ref configurationvariables lists variables which can be used to specify
+the location of third-party software.
+\cgalAdvancedEnd
 
 \subsubsection sssect-installer-compilation Compilation of an Example
 
