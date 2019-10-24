@@ -1,4 +1,4 @@
-3// Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
+// Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
 // This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
