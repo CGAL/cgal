@@ -539,9 +539,9 @@ private:
 #endif
       Internal_protector P;
 #ifdef CGAL_USE_SSE2
-# if 1
+# if !defined __SSE4_1__ && !defined __AVX__
       // Brutal, compute all products in all directions.
-      // The actual winner (by a hair) on recent hardware
+      // The actual winner (by a hair) on recent hardware before removing NaNs.
       __m128d aa = IA_opacify128_weak(a.simd());            // {-ai,as}
     __m128d bb = b.simd();                                // {-bi,bs}
     __m128d m = _mm_set_sd(-0.);                          // {-0,+0}
@@ -569,13 +569,14 @@ private:
     __m128d r = _mm_max_pd (y1, y2);
     // __m128d r = _mm_max_pd(x1,_mm_max_pd(x2,_mm_max_pd(x3,_mm_min_pd(x4,big))));
     return IA (IA_opacify128(r));
-# elif 0
+# elif 1
     // we want to multiply ai,as with {ai<0?-bs:-bi,as<0?bi:bs}
     // we want to multiply as,ai with {as<0?-bs:-bi,ai<0?bi:bs}
     // requires SSE4 (otherwise use _mm_cmplt_pd, _mm_and_pd, _mm_andnot_pd and _mm_or_pd to avoid blendv)
     // probably faster on older hardware
     __m128d m = _mm_set_sd(-0.);                          // {-0,+0}
     __m128d m1 = _mm_set1_pd(-0.);                        // {-0,-0}
+    __m128d big = IA::largest().simd();
     __m128d aa = a.simd();                                // {-ai,as}
     __m128d az = _mm_xor_pd(aa, m);                       // {ai,as}
     az = IA_opacify128_weak(az);
@@ -586,7 +587,9 @@ private:
     __m128d x = _mm_blendv_pd (bb, bp, az);               // {ai<0?-bs:-bi,as<0?bi:bs}
     __m128d y = _mm_blendv_pd (bb, bp, azp);              // {as<0?-bs:-bi,ai<0?bi:bs}
     __m128d p1 = _mm_mul_pd (az, x);
+    p1 = _mm_min_pd(p1,big); // no NaN
     __m128d p2 = _mm_mul_pd (azp, y);
+    p2 = _mm_min_pd(p2,big); // no NaN
     __m128d r = _mm_max_pd (p1, p2);
     return IA (IA_opacify128(r));
 # elif 0
@@ -594,6 +597,7 @@ private:
     // we want to multiply -as,ai with {as<0?bs:bi,ai>0?bs:bi}
     // slightly worse than the previous one
     __m128d m1 = _mm_set1_pd(-0.);                        // {-0,-0}
+    __m128d big = IA::largest().simd();
     __m128d aa = IA_opacify128_weak(a.simd());            // {-ai,as}
     __m128d ax = swap_m128d (aa);                         // {as,-ai}
     __m128d ap = _mm_xor_pd (ax, m1);                     // {-as,ai}
@@ -605,13 +609,16 @@ private:
     __m128d x = _mm_blendv_pd (bbs, bbi, aa);             // {ai>0?bi:bs,as<0?bi:bs}
     __m128d y = _mm_blendv_pd (bbi, bbs, ax);             // {as<0?bs:bi,ai>0?bs:bi}
     __m128d p1 = _mm_mul_pd (aa, x);
+    p1 = _mm_min_pd(p1,big); // no NaN
     __m128d p2 = _mm_mul_pd (ap, y);
+    p2 = _mm_min_pd(p2,big); // no NaN
     __m128d r = _mm_max_pd (p1, p2);
     return IA (IA_opacify128(r));
 # else
     // AVX version of the brutal method, same running time or slower
     __m128d aa = IA_opacify128_weak(a.simd());            // {-ai,as}
     __m128d bb = b.simd();                                // {-bi,bs}
+    __m256d big = _mm256_set1_pd(std::numeric_limits<double>::infinity());
     __m128d m = _mm_set_sd(-0.);                          // {-0,+0}
     __m128d m1 = _mm_set1_pd(-0.);                        // {-0,-0}
     __m128d ax = swap_m128d (aa);                         // {as,-ai}
@@ -622,7 +629,9 @@ private:
     __m256d Y1 = _mm256_set_m128d(bz,bz);                 // {bi,bs,bi,bs}
     __m256d Y2 = _mm256_permute_pd(Y1,5);                 // {bs,bi,bs,bi}
     __m256d Z1 = _mm256_mul_pd(X,Y1);
+    Z1 = _mm256_min_pd(Z1,big); // no NaN
     __m256d Z2 = _mm256_mul_pd(X,Y2);
+    Z2 = _mm256_min_pd(Z2,big); // no NaN
     __m256d Z = _mm256_max_pd(Z1,Z2);
     __m128d z1 = _mm256_castpd256_pd128(Z);
     __m128d z2 = _mm256_extractf128_pd(Z,1);
