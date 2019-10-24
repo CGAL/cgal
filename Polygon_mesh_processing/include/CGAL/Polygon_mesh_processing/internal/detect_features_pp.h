@@ -744,7 +744,7 @@ private:
 
     const bool cond_1 = ((is_start_end_obscure && is_last_end_obscure) ||
                          is_dangling(start) || is_dangling(last_opp)) && // @fixme xor?
-                        number_of_edges_with_DAs_over_threshold < k_; // @fixme, with equality?
+                        number_of_edges_with_DAs_over_threshold <= k_;
 #ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
     std::cout << "thus cond_1: " << cond_1 << std::endl;
 #endif
