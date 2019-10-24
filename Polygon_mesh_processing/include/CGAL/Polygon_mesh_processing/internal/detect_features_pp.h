@@ -1116,20 +1116,20 @@ void detect_sharp_edges_pp(const FaceRange& /*faces*/,
                            EdgeIsFeatureMap edge_is_feature_map,
                            const NamedParameters& np)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type                VPM;
-  VPM vpm = choose_param(get_param(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, pmesh));
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, pmesh));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type                    GeomTraits;
-  GeomTraits traits = choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
+  GeomTraits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
 
   typedef typename internal::Detector<PolygonMesh, VPM, GeomTraits, EdgeIsFeatureMap>   Detector;
   Detector detector(pmesh, vpm, traits, edge_is_feature_map);
 
-  const double weak_DA_in_deg = choose_param(get_param(np, internal_np::weak_dihedral_angle), 10.);
+  const double weak_DA_in_deg = choose_parameter(get_parameter(np, internal_np::weak_dihedral_angle), 10.);
 
   detector.tag_sharp_edges(strong_DA_in_deg, weak_DA_in_deg);
 }
