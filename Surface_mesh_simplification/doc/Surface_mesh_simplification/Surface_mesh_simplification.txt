@@ -361,6 +361,8 @@ with the Garland-Heckbert placement policy.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_garland_heckbert.cpp}
 
+Note that these policies depend on the third party \ref thirdpartyEigen library.
+
 \section SimplificationDesign Design and Implementation History
 
 The core of the package, as well as most of the simplification strategies, are the work of Fernando Cacciola,
