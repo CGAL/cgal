@@ -19,8 +19,8 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 //
-#ifndef CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_PP_H
-#define CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_PP_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_DETECT_FEATURES_IN_POLYGON_MESH_PP_H
+#define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_DETECT_FEATURES_IN_POLYGON_MESH_PP_H
 
 #include <CGAL/license/Polygon_mesh_processing/detect_features.h>
 
@@ -1103,6 +1103,8 @@ private:
 
 } // end namespace internal
 
+namespace experimental {
+
 template <typename FaceRange,
           typename PolygonMesh,
           typename FT,
@@ -1144,7 +1146,8 @@ void detect_sharp_edges_pp(PolygonMesh& pmesh,
   return detect_sharp_edges_pp(faces(pmesh), pmesh, strong_DA_in_deg, edge_is_feature_map, np);
 }
 
-} // end namespace PMP
+} // end namespace experimental
+} // end namespace Polygon_mesh_processing
 } // end namespace CGAL
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_PP_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_DETECT_FEATURES_IN_POLYGON_MESH_PP_H
