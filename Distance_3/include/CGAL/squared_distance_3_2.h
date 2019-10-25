@@ -404,11 +404,10 @@ inline
 typename K::FT
 squared_distance(const Plane_3<K> & p1,
                  const Plane_3<K> & p2) {
-  K k;;
-  if( k.compute_squared_length_3_object()(
-        k.construct_cross_product_vector_3_object()(p1.orthogonal_vector(),
-                                                    p2.orthogonal_vector()))
-      != 0)
+  K k;
+  typename K::Construct_orthogonal_vector_3 ortho_vec =
+      k.construct_orthogonal_vector_3_object();
+  if (!internal::is_null(internal::wcross(ortho_vec(p1), ortho_vec(p2), k), k))
     return typename K::FT(0);
   else
     return internal::squared_distance(p1.point(), p2, k);

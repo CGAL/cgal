@@ -224,10 +224,10 @@ struct Test {
   void Pl_Pl()
   {
     std::cout << "Plane - Plane\n";
-    Pl p1(12, 1, 4, 0);
+    Pl p1(0, 1, 0, 0);
     typename K::Vector_3 v = -p1.orthogonal_vector();
     v /= CGAL::sqrt(v.squared_length());
-    Pl p2 = Pl(p1.point()+6*v, -p1.orthogonal_vector());
+    Pl p2 = Pl(0,-1,0,6);
     check_squared_distance (p1,p2, 36);
     check_squared_distance (Pl(-2, 1, 1, 0), Pl(2, 1, 3, 0), 0);
   }
