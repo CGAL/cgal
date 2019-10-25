@@ -190,7 +190,7 @@ public:
   /*! Get the last intersecing curve so far (non-const version). */
   X_monotone_curve_2& last_curve() { return m_last_curve; }
 
-  /*! Set the last intersecing curve so far.
+  /*! Set the last intersecting curve so far.
    */
   void set_last_curve(const X_monotone_curve_2& cv) { m_last_curve = cv; }
 
