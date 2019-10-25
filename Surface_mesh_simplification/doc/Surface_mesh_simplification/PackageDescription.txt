@@ -3,12 +3,14 @@
 /// \ingroup PkgSurfaceMeshSimplificationRef
 /*!
 \addtogroup PkgSurfaceMeshSimplificationRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Simplification,PkgSurfaceMeshSimplification}
 \cgalPkgPicture{SMS-detail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Fernando Cacciola}
-\cgalPkgDesc{This package provides an algorithm to simplify a triangulated surface mesh  by edge collapsing.  It is an implementation of the Turk/Lindstrom <I>memoryless</I>  surface mesh simplification algorithm.}
+\cgalPkgAuthor{Fernando Cacciola, Mael Rouxel-Labbé, and Baskın Şenbaşlar}
+\cgalPkgDesc{This package provides an algorithm to simplify a triangulated surface mesh by edge collapsing.
+             Users can define cost, constraint, and placement strategies to decide when and how should
+             edges be collapsed. A few strategies are offered by default, such as the Turk/Lindstrom
+             and Garland-Heckbert <I>memoryless</I> approaches.}
 \cgalPkgManuals{Chapter_Triangulated_Surface_Mesh_Simplification,PkgSurfaceMeshSimplificationRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -22,7 +24,6 @@
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
-- `EdgeProfile`
 - `StopPredicate`
 - `GetCost`
 - `GetPlacement`
@@ -33,15 +34,15 @@
 
 \cgalCRPSection{Classes}
 - `CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<TriangleMesh>`
-- `CGAL::Surface_mesh_simplification::Edge_profile<TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::Edge_profile<TriangleMesh, VertexPointMap, GeomTraits>`
 - `CGAL::Surface_mesh_simplification::Count_stop_predicate<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<TriangleMesh>`
-- `CGAL::Surface_mesh_simplification::Edge_length_stop_predicate<TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::Edge_length_stop_predicate<FT>`
 - `CGAL::Surface_mesh_simplification::Edge_length_cost<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::Midpoint_placement<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
-- `CGAL::Surface_mesh_simplification::Constrained_placement<Placement,TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>`
 - `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
+- `CGAL::Surface_mesh_simplification::Constrained_placement<Placement, TriangleMesh>`
 */
-
