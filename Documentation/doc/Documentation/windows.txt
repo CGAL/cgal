@@ -5,7 +5,7 @@
 \cgal is a library that has mandatory dependencies that must be first installed:
 \ref thirdpartyBoost and \ref thirdpartyMPFR.
 
-You have two options to install dependencies: you can either use
+You have two options to install \cgal and its dependencies: you can either use
 the *Vcpkg library manager*, which will automatically install an appropriate version of
 these dependencies as you install \cgal, or you can install the dependencies on your own
 (making sure that you are using a supported version) by following their respective
@@ -21,7 +21,7 @@ We explain the two approaches in the next two sections.
 
 \section sec-installing-with-vcpkg Installing CGAL with the Vcpkg library manager
 
-\subsection ssec-vcpk-install-vcpk Installing vcpkg
+\subsection ssec-vcpk-install-vcpk Installing Vcpkg
 
 The first step is to clone or download `vcpkg` from
 <a href="https://github.com/microsoft/vcpkg">https://github.com/microsoft/vcpkg</a>.
@@ -41,9 +41,9 @@ libraries, and dlls to project settings.
   C:\dev\vcpkg> .\vcpkg integrate install
 \endcode
 
-However this step requires to run `cmd` with administrator rights.
+However, this step requires to run `cmd` with administrator rights.
 
-\subsection ssec-vcpk-install-cgal Installing CGAL Itself
+\subsection ssec-vcpk-install-cgal Installing with Vcpkg
 
 By default `vcpkg` installs for 32 bit binaries and will use the latest version of Visual C++
 installed on your machine.   If you develop 64 bit software you must
