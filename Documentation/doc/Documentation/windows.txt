@@ -32,17 +32,6 @@ The first step is to clone or download `vcpkg` from
   C:\dev\vcpkg> .\bootstrap-vcpkg.bat
 \endcode
 
-Note that `vcpk` even has a command to integrate installed packages directly into
-Visual Studio, that is for all installed libraries it adds the paths to header files,
-libraries, and dlls to project settings.
-
-
-\code{.sh}
-  C:\dev\vcpkg> .\vcpkg integrate install
-\endcode
-
-However, this step requires to run `cmd` with administrator rights.
-
 \subsection ssec-vcpk-install-cgal Installing with Vcpkg
 
 By default `vcpkg` installs for 32 bit binaries and will use the latest version of Visual C++
@@ -59,29 +48,30 @@ You are now ready to install \cgal:
   C:\dev\vcpkg> ./vcpkg.exe install cgal
 \endcode
 
-This will take roughly 15 minutes and it downloads \mpir (a fork of \gmp),
+This will take several minutes as it downloads \mpir (a fork of \gmp),
 \mpfr, all boost header files, and it will compile \mpir and \mpfr, as well
 as several boost libraries.
 Afterwards, you will find the include files, libraries, and dlls in the
 subdirectory `C:\dev\vcpkg\installed\x64-windows`.
 
-Note that \cgal is a header-only library, and there are therefore no `lib` or `dll` files.
+Note that \cgal is a header-only library, and there are therefore no `lib` or `dll` files for \cgal.
+
 
 \subsection ssec-vcpkg-compile-example Compiling an Example
 
-Let's next compile a program that uses \cgal.
+In this section we show how to compile a program that uses \cgal.
 The examples you find in these User Manual pages are not downloaded when you install \cgal
-with the Vcpkg library manager and you must download them separately from the following download page:
+with the Vcpkg library manager. You must download them separately from the following download page:
 <a href="https://github.com/CGAL/cgal/releases/CGAL-\cgalReleaseNumber-examples.zip">CGAL-\cgalReleaseNumber-examples.zip</a>
 
-Assuming you have unzipped this file in your home directory, we will
-next compile an example from the 2D Triangulation package.
+Assuming you have unzipped this file in your home directory `C:\Users\Me`,
+we will next compile an example from the 2D Triangulation package.
 
 \subsubsection sssec-vcpkg-configuration-example Configuring of an Example
 
 Before building anything using \cgal, you have to choose the compiler/linker, set compiler
 and linker flags, specify which third-party libraries you want to use and where they can be found.
-Gathering all this information is called *configuration* and we use CMake as configuration tool
+Gathering all this information is called *configuration* and we use *CMake* as configuration tool
 (see Section \ref seccmake for more information on supported versions and where to download it).
 
 The end of the process is marked by the generation of a Visual \cpp solution
@@ -124,7 +114,15 @@ CMake variables and paths. Otherwise, you can also install it using `vcpkg`:
 
 Remember to specify `--triplet` or the related environment variable in case you target 64-bit applications.
 
-When you start `cmake-gui` again and hit the *Configure* button,
+As Qt5 is modular and as the \cgal examples and demos use only some of these modules
+you can save download and compilation time by specifying an *installation option*:
+
+\code{.sh}
+  C:\dev\vcpkg> ./vcpkg.exe install cgal [qt]
+\endcode
+
+
+In both cases, when you start `cmake-gui` again and hit the *Configure* button,
 the CMake variables and paths concerning Qt should now be filled.
 
 Note that not all optional dependencies are available through the Vcpkg library manager.
