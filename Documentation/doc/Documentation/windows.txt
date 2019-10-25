@@ -161,7 +161,7 @@ You can download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from https://www.
 It is a self extracting executable that downloads the \cgal header files, and optionally the source code of the
 examples and demos. Additionally, it can download precompiled versions of \gmp and \mpfr.
 
-\subsection ssect-installer-boost Installing `Boost`
+\subsection ssect-installer-boost Installing Boost
 
 Binary versions of `Boost` are available on SourceForge.
 
