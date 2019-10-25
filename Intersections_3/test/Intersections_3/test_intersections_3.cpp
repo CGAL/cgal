@@ -583,12 +583,12 @@ struct Test {
     Tr tr(P(-3, -3, 1), P(3, -3, 1), P(1.5, 6, 1));
     Res res = CGAL::intersection(cub, tr);
     Pol* poly = boost::get<std::vector<P> >(&*res);
-    CGAL_assertion(poly != nullptr);
-    CGAL_assertion(poly->size() == 4);
+    assert(poly != nullptr);
+    assert(poly->size() == 4);
     if(is_exact)
     {
-      CGAL_assertion_code(for(auto& p : *poly))
-      CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
+      for(auto& p : *poly)
+        assert(tr.has_on(p) && cub.has_on_boundary(p));
     }
 
     //tr adj to a cuboid vertex
@@ -618,12 +618,12 @@ struct Test {
     tr = Tr(P(2, 4, 2), P(1, 3.5, -0.5), P(1, -1, 1));
     res = CGAL::intersection(cub, tr);
     poly = boost::get<std::vector<P> >(&*res);
-    CGAL_assertion(poly != nullptr);
-    CGAL_assertion(poly->size() == 4);
+    assert(poly != nullptr);
+    assert(poly->size() == 4);
     if(is_exact)
     {
-      CGAL_assertion_code(for(const P& p : *poly))
-      CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
+      for(const P& p : *poly)
+        assert(tr.has_on(p) && cub.has_on_boundary(p));
     }
 
     //cutting in half along diagonal (intersection == triangle)
@@ -634,36 +634,36 @@ struct Test {
     tr = Tr(P(1, 1, 10), P(10, 10, 1), P(1, 1, 1));
     res = CGAL::intersection(cub, tr);
     poly = boost::get<std::vector<P> >(&*res);
-    CGAL_assertion(poly != nullptr);
-    CGAL_assertion(poly->size() == 4);
+    assert(poly != nullptr);
+    assert(poly->size() == 4);
     if(is_exact)
     {
-      CGAL_assertion_code(for(const P& p : *poly))
-      CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
+      for(const P& p : *poly)
+        assert(tr.has_on(p) && cub.has_on_boundary(p));
     }
 
     //6 points intersection
     tr = Tr(P(18.66, -5.4, -11.33), P(-2.41, -7.33, 19.75), P(-10.29, 20.15, -10.33));
     res = CGAL::intersection(cub, tr);
     poly = boost::get<std::vector<P> >(&*res);
-    CGAL_assertion(poly != nullptr);
-    CGAL_assertion(poly->size() == 6);
+    assert(poly != nullptr);
+    assert(poly->size() == 6);
     if(is_exact)
     {
-      CGAL_assertion_code(for(const P& p : *poly))
-      CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
+      for(const P& p : *poly)
+        assert(tr.has_on(p) && cub.has_on_boundary(p));
     }
 
     //triangle clipping a cuboid corner
     tr = Tr(P(1.02, 1.33, 0.62), P(1.95, 2.54, 0.95), P(0.79, 2.36, 1.92));
     res = CGAL::intersection(cub, tr);
     Tr* tr_res = boost::get<Tr>(&*res);
-    CGAL_assertion(tr_res != nullptr);
+    assert(tr_res != nullptr);
     if(is_exact)
     {
-      CGAL_assertion(cub.has_on_boundary((*tr_res)[0]));
-      CGAL_assertion(cub.has_on_boundary((*tr_res)[1]));
-      CGAL_assertion(cub.has_on_boundary((*tr_res)[2]));
+      assert(cub.has_on_boundary((*tr_res)[0]));
+      assert(cub.has_on_boundary((*tr_res)[1]));
+      assert(cub.has_on_boundary((*tr_res)[2]));
     }
   }
 
