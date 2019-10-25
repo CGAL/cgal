@@ -20,12 +20,12 @@ Ideally, compiling and installing \cgal, as well as compiling some examples ship
     cd $HOME/CGAL-\cgalReleaseNumber
     mkdir build
     cd build
-    cmake -DCMAKE_BUILD_TYPE=Release ..                                   # configure CGAL
-    make                                                                  # build CGAL
-    make install                                                          # install CGAL
-    cd examples/Triangulation_2                                           # go to an example directory
-    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber/build -DCMAKE_BUILD_TYPE=Release .    # configure the examples
-    make                                                                  # build the examples
+    cmake -DCGAL_HEADER_ONLY=OFF -DCMAKE_BUILD_TYPE=Release ..                        # configure CGAL
+    make                                                                              # build CGAL
+    make install                                                                      # install CGAL
+    cd examples/Triangulation_2                                                       # go to an example directory
+    cmake -DCGAL_DIR=$CMAKE_INSTALLED_PREFIX/lib/CGAL -DCMAKE_BUILD_TYPE=Release .    # configure the examples
+    make                                                                              # build the examples
 
 In a less ideal world, you might have to install some required tools and third-party libraries.
 This is what this page is about.
@@ -142,6 +142,11 @@ This typically happens if you have installed software at non-standard locations.
 Providing information and pressing *Configure* goes on until
 all entries are grayed. You are now ready to press *Generate*. Once this is
 done, you can quit `cmake-gui`.
+
+Since you intend to build CGAL libraries, you should also ensure that the variable
+`CGAL_HEADER_ONLY` has not been set.
+
+If you do not need to debug, you should set the variable `CMAKE_BUILD_TYPE` to `Release`.
 
 \subsection installation_configuring_cmd Configuring CGAL with the cmake Command-Line Tool
 

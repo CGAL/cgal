@@ -19,7 +19,7 @@ and the compilation of an example is as simple as:
 Compiling your own program is similar:
 
     cd /path/to/your/program
-    cgal_create_CMakeLists -s your_program
+    path/to/cgal/Scripts/scripts/cgal_create_CMakeLists -s your_program
     cmake -DCMAKE_BUILD_TYPE=Release .
     make
 
@@ -164,7 +164,7 @@ need to be explicitly defined. or this reason, the simplest way to manually set 
 is to run the graphical user interface of CMake, `cmake-gui`.
 
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
-    cmake-gui -CMAKE_BUILD_TYPE=Release .
+    cmake-gui .
 
 After the `CMake` window opens, press 'Configure'. A dialog will pop up and you will have to choose
 what shall be generated. After you have made your choice and pressed 'Finish', you will see
@@ -183,6 +183,8 @@ If so, the page \ref configurationvariables lists variables which can be used to
 the location of third-party software.
 \cgalAdvancedEnd
 
+If you do not need to debug, you should set the variable `CMAKE_BUILD_TYPE` to `Release`.
+
 \subsection usage_configuring_external Configuring an External Program
 
 Running `cmake` (or `cmake-gui`) requires a `CMakeLists.txt` file. This file is automatically provided
@@ -193,7 +195,7 @@ see Section \ref devman_create_cgal_CMakeLists. Using this shell-script,
 the process of configuring a user's program called `your_program.cpp` amounts to:
 
     cd /path/to/your/program
-    cgal_create_CMakeLists -s your_program
+    path/to/cgal/Scripts/scripts/cgal_create_CMakeLists -s your_program
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -CMAKE_BUILD_TYPE=Release .
 
 Note that the script `cgal_create_CMakeLists` creates a very coarse `CMakeLists.txt` file which

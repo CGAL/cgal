@@ -88,6 +88,8 @@ where you have installed `vcpkg`, e.g. `C:/dev/vcpkg/scripts/buildsystems/vcpkg.
 Once the configuration process is done, tick *Advanced* and *Grouped* in `cmake-gui`.
 You will see entries for where header files and libraries are taken from.
 
+If you do not need to debug, you should set the variable `CMAKE_BUILD_TYPE` to `Release`.
+
 \subsubsection sssect-vcpkg-additional-dependencies Additional Dependencies
 
 Some \cgal packages also have additional dependencies. For example, during the configuration process
@@ -205,6 +207,8 @@ When you hit the *Configure* button, you must:
 </ul>
 Once the configuration is done, tick `Advanced` and `Grouped` in `cmake-gui`.
 You will see entries for where header files and libraries are taken from.
+
+If you do not need to debug, you should set the variable `CMAKE_BUILD_TYPE` to `Release`.
 
 \subsubsection ssect-installer-additional-dependencies Additional Dependencies
 
