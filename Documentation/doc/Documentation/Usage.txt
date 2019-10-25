@@ -1,5 +1,5 @@
 /*!
-\page usage Using %CGAL on UNIX
+\page usage Using %CGAL on Linux and macOS
 \cgalAutoToc
 
 Since \cgal version 5.0, \cgal is header-only be default, which means
@@ -9,8 +9,8 @@ However, some dependencies of \cgal might still need to be installed.
 \section usage_introduction Quick Start: Compiling a Program using CGAL
 
 Assuming that you have obtained \cgal through one of the package managers offering \cgal on your platform
-(see Section \ref secgettingcgal), compiling <a href="TODO">\cgal examples</a>
-is as simple as:
+(see Section \ref secgettingcgal), you can download \cgal examples <a href="TODO">here</a>
+and the compilation of an example is as simple as:
 
     cd $HOME/CGAL-\cgalReleaseNumber/examples/Triangulation_2 # go to an example directory
     cmake -DCMAKE_BUILD_TYPE=Release . # configure the examples
@@ -19,7 +19,7 @@ is as simple as:
 Compiling your own program is similar:
 
     cd /path/to/your/program
-    cgal_create_CMakeLists -s executable
+    cgal_create_CMakeLists -s your_program
     cmake -DCMAKE_BUILD_TYPE=Release .
     make
 
@@ -55,7 +55,7 @@ and must be downloaded <a href="TODO">here</a>.
 
 On most operating systems, package managers offer \cgal and its essential third party dependencies.
 
-On `macOS`, we recommend using of <a href="https://brew.sh/">Homebrew</a> in the following way:
+On macOS, we recommend using of <a href="https://brew.sh/">Homebrew</a> in the following way:
 
     brew install cgal
 
@@ -101,8 +101,8 @@ The directory `include/CGAL/OpenNL` contains a distribution of the
 which provides solvers for sparse linear systems, especially designed for the Computer Graphics community.
 \sc{OpenNL} is not part of \cgal and has its own license.
 
-The only documentation shipped within \cgal sources is the present
-installation manual. The \cgal manual can be accessed online at
+The only documentation shipped within \cgal sources is the present manual.
+The \cgal manual can also be accessed online at
 <a href="https://doc.cgal.org/latest/Manual/index.html">`https://doc.cgal.org`</a>
 or downloaded separately at
 <a href="https://github.com/CGAL/cgal/releases">`https://github.com/CGAL/cgal/releases`</a>.
@@ -190,10 +190,10 @@ for all shipped examples and demos of \cgal. For other programs, CMake can also 
 and build user programs, but one has to provide the corresponding `CMakeLists.txt`.
 This script can be generated either manually, or with the help of a shell-script,
 see Section \ref devman_create_cgal_CMakeLists. Using this shell-script,
-the process of configuring a user's program called `executable.cpp` amounts to:
+the process of configuring a user's program called `your_program.cpp` amounts to:
 
     cd /path/to/your/program
-    cgal_create_CMakeLists -s executable
+    cgal_create_CMakeLists -s your_program
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -CMAKE_BUILD_TYPE=Release .
 
 Note that the script `cgal_create_CMakeLists` creates a very coarse `CMakeLists.txt` file which

@@ -15,7 +15,7 @@ Getting Started with CGAL
 =========================
 
 **Since version 5.0, CGAL is a header-only library, meaning that
-it is no longer needed to build or install CGAL before it can be used.**
+it is no longer needed to build CGAL libraries before it can be used.**
 
 Head over to the [CGAL manual](https://doc.cgal.org/latest/Manual/general_intro.html)
 for usage guides and tutorials that will get you started smoothly.
