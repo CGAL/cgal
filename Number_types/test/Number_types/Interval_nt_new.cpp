@@ -5,6 +5,7 @@
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
 #include <CGAL/Uncertain.h>
+#include <limits>
 
 #define CGAL_catch_error(expr, error)                            \
     {                                                            \
@@ -158,6 +159,19 @@ int main() {
         CGAL_catch_error((bool)(I> J),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(I>=J),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(I<=J),CGAL::Uncertain_conversion_exception&);
+    }
+    { // Multiplication
+        const double inf = std::numeric_limits<double>::infinity();
+        // For CGAL's purposes, [0,0]*anything is 0, but we tolerate larger intervals if they can be produced faster.
+        Interval all = Interval::largest();
+        Interval zero = 0;
+        for (Interval I : { all*zero, zero*all, all*0., 0.*all })
+          assert(I.inf()<=0 && I.sup()>=0);
+        // This should be [0,inf], but again we tolerate more.
+        Interval a(0,1);
+        Interval b(1,inf);
+        for (Interval I : { a*b, b*a })
+          assert(I.inf()<=0 && I.sup()==inf);
     }
     {// external functions on Intervals
      // functions (abs, square, sqrt, pow)

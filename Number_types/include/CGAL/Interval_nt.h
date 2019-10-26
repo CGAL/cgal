@@ -645,6 +645,7 @@ private:
       // b<=0     [a.sup()*b.inf(); a.inf()*b.sup()]
       // b~=0     [a.sup()*b.inf(); a.sup()*b.sup()]
       double aa = a.inf(), bb = a.sup();
+      if (bb <= 0.) return 0.; // In case b has an infinite bound, avoid NaN.
       if (b.inf() < 0.0)
       {
         aa = bb;
@@ -670,8 +671,11 @@ private:
     else						// 0 \in a
     {
       if (b.inf()>=0.0)				// b>=0
-        return IA(-CGAL_IA_MUL(-a.inf(), b.sup()),
-            CGAL_IA_MUL( a.sup(), b.sup()));
+        if (b.sup()<=0.0)
+          return 0.; // In case a has an infinite bound, avoid NaN.
+        else
+          return IA(-CGAL_IA_MUL(-a.inf(), b.sup()),
+              CGAL_IA_MUL( a.sup(), b.sup()));
       if (b.sup()<=0.0)				// b<=0
         return IA(-CGAL_IA_MUL( a.sup(), -b.inf()),
             CGAL_IA_MUL(-a.inf(), -b.inf()));
@@ -689,6 +693,7 @@ private:
     Interval_nt
     operator* (double a, Interval_nt b)
     {
+      CGAL_assertion(is_finite(a));
       // return Interval_nt(a)*b;
       Internal_protector P;
       if (a < 0) { a = -a; b = -b; }
@@ -698,8 +703,12 @@ private:
       __m128d bb = IA_opacify128_weak(b.simd());
       __m128d aa = _mm_set1_pd(IA_opacify(a));
       __m128d r = _mm_mul_pd(aa, bb);
+      // In case a is 0 and b has an infinite bound. This returns an interval
+      // larger than necessary, but is likely faster to produce.
+      r = _mm_min_pd(r,largest().simd());
       return IA(IA_opacify128(r));
 #else
+      else if (!(a > 0)) return 0.; // We could test this before the SSE block and remove the minpd line.
       return IA(-CGAL_IA_MUL(a, -b.inf()), CGAL_IA_MUL(a, b.sup()));
 #endif
     }
