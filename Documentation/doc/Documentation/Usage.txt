@@ -70,11 +70,11 @@ For other distributions or package manager, please consult your respective docum
 You can also obtain the \cgal library sources directly from
 <A HREF="https://www.cgal.org/download.html">https://www.cgal.org/download.html</A>.
 
-Once you have downloaded the file `CGAL-\cgalReleaseNumber``.tar.gz` containing the
+Once you have downloaded the file `CGAL-\cgalReleaseNumber``.tar.xz` containing the
 \cgal sources, you have to unpack it. Under a Unix-like shell, use the
 command:
 
-    tar xzf CGAL-\cgalReleaseNumber.tar.gz
+    tar xf CGAL-\cgalReleaseNumber.tar.xz
 
 The directory `CGAL-\cgalReleaseNumber` will be created. This directory
 contains the following subdirectories:
@@ -83,7 +83,6 @@ contains the following subdirectories:
 | :------------------------- | :----------|
 | `auxiliary` (Windows only) | precompiled \sc{Gmp} and \sc{Mpfr} for Windows |
 | `cmake/modules`            | modules for finding and using libraries |
-| `config`                   | configuration files for install script |
 | `demo`                     | demo programs (most of them need \sc{Qt}, geomview or other third-party products) |
 | `doc_html`                 | documentation (HTML) |
 | `examples`                 | example programs |
