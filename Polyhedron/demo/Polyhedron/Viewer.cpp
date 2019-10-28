@@ -1354,8 +1354,8 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
       return 0;
     }
     QOpenGLShaderProgram* program = declare_program(name,
-                                                    ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.vert", 
-                                                    ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.frag");
+                                                    ":/cgal/Polyhedron_3/resources/no_interpolation_shader.vert",
+                                                    ":/cgal/Polyhedron_3/resources/no_interpolation_shader.frag");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
     program->setProperty("drawLinesAdjacency", true);

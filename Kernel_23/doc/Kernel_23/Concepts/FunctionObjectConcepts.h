@@ -4744,8 +4744,8 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::Plane_3<Kernel>` 
-
+  \sa `CGAL::Plane_3<Kernel>`
+  \sa `ConstructProjectedXYPoint_2`
 */
 class ConstructLiftedPoint_3 {
 public:
@@ -4755,8 +4755,10 @@ public:
   /// @{
 
   /*!
-    returns a point `q` on plane `h`, such that the projection of 
-    this point onto the \f$ xy\f$-plane is `p`. 
+    returns the image point of the projection of `p`
+    under an affine transformation which maps the \f$ xy\f$-plane onto `h`.
+    This affine transformation must be the inverse of the affine transformation used
+    in `ConstructProjectedXYPoint_2`.
   */ 
   Kernel::Point_3 operator()(const Kernel::Plane_3& h, 
                              const Kernel::Point_2& p); 
@@ -6042,8 +6044,8 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::Plane_3<Kernel>` 
-
+  \sa `CGAL::Plane_3<Kernel>`
+  \sa `ConstructLiftedPoint_3`
 */
 class ConstructProjectedXYPoint_2 {
 public:
@@ -6055,7 +6057,9 @@ public:
   /*!
     returns the image point of the projection of `p` under an affine 
     transformation, which maps `h` onto the \f$ xy\f$-plane, with the 
-    \f$ z\f$-coordinate removed. 
+    \f$ z\f$-coordinate removed.
+    This affine transformation must be the inverse of the affine transformation used
+    in `ConstructLiftedPoint_3`.
   */ 
   Kernel::Point_2 operator()(const Kernel::Plane_3& h, 
                              const Kernel::Point_3& p); 

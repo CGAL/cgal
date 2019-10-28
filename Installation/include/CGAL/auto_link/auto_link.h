@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-//  SPDX-License-Identifier: BSL-1.0
+// SPDX-License-Identifier: BSL-1.0
 //
  /*
   *   LOCATION:    see https://www.boost.org for most recent version.
@@ -173,13 +173,20 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 
 #  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1900)
 
+
      // vc12:
 #    define CGAL_LIB_TOOLSET "vc120"
 
-# elif defined(BOOST_MSVC)
-
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1910)
    // vc14:
 #  define CGAL_LIB_TOOLSET "vc140"
+
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1920)
+// vc141:
+#  define CGAL_LIB_TOOLSET "vc141"
+#  elif defined(BOOST_MSVC)
+// vc142:
+#  define CGAL_LIB_TOOLSET "vc142"
 
 #  elif defined(__BORLANDC__)
 

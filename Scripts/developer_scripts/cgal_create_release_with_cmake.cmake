@@ -171,6 +171,7 @@ if(EXISTS ${GIT_REPO}/.git)
 endif()
 #  update CGAL_RELEASE_DATE
 string(TIMESTAMP TODAY "%Y%m%d")
+string(TIMESTAMP TODAY_FOR_MANPAGES "%B %Y")
 string(REPLACE "CGAL_RELEASE_DATE 20170101" "CGAL_RELEASE_DATE ${TODAY}" file_content "${file_content}")
 #  update CGAL_VERSION
 string(REPLACE "CGAL_VERSION ${CGAL_VERSION_INPUT}" "CGAL_VERSION ${CGAL_VERSION}" file_content "${file_content}")
@@ -179,6 +180,15 @@ if (CGAL_VERSION_NR)
   string(REGEX REPLACE "CGAL_VERSION_NR 10[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]" "CGAL_VERSION_NR ${CGAL_VERSION_NR}" file_content "${file_content}")
 endif()
 file(WRITE ${release_dir}/include/CGAL/version.h "${file_content}")
+
+# Equivalent to
+#    # Patch the date and CGAL version in man(1) pages
+#    sed -i -e "s/@DATE@/`date '+%B %Y'`/; s/@CGAL_VERSION@/$public_release_version/" auxiliary/*.1
+set(DATE ${TODAY_FOR_MANPAGES})
+file(GLOB MANPAGES RELATIVE "${GIT_REPO}/Installation" "${GIT_REPO}/Installation/auxiliary/*.1")
+foreach(manpage ${MANPAGES})
+  configure_file(${GIT_REPO}/Installation/${manpage} ${release_dir}/${manpage} @ONLY)
+endforeach()
 
 # make an extra copy of examples and demos for the testsuite and generate
 # create_cgal_test_with_cmake for tests, demos, and examples
