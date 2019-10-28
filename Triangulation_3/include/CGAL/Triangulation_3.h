@@ -57,7 +57,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Default.h>
 #include <CGAL/internal/boost/function_property_map.hpp>
-#include <CGAL/Small_unordered_map.h>
+
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Spatial_lock_grid_3.h>
@@ -1194,7 +1194,18 @@ public:
     v->set_point(p);
     return v;
   }
-
+  
+ // Internal function, cells should already be marked.
+  template <class Cells, class Facets>
+  Vertex_handle _insert_in_small_hole(const Point& p,
+                                      const Cells& cells,
+                                      const Facets& facets )
+  {
+    Vertex_handle v = _tds._insert_in_small_hole(cells, facets);
+    v->set_point(p);
+    return v;
+  }
+  
   // Internal function, cells should already be marked.
   template <class CellIt>
   Vertex_handle _insert_in_hole(const Point& p,
@@ -3675,63 +3686,13 @@ insert_in_conflict(const Point& p,
       // as they will be deleted during the insertion.
       hider.process_cells_in_conflict(cells.begin(), cells.end());
       Vertex_handle nv;
-      // AF: the new code
-      constexpr int maximal_nb_of_facets = 128;
-      if( facets.size() < maximal_nb_of_facets){
-         // LESS64++;
-        typedef std::pair<Vertex_handle,Vertex_handle> Halfedge;
-        typedef std::pair<unsigned char, unsigned char> Local_facet;
-        typedef Small_unordered_map<Halfedge, Local_facet,
-                                    boost::hash<Halfedge>, maximal_nb_of_facets>
-          Halfedge_facet_map;
-        static Halfedge_facet_map h2f;
-        nv = tds().create_vertex();
-        nv->set_point(p);
-        std::array <Cell_handle, maximal_nb_of_facets> new_cells;
-        for (int local_facet_index = 0, end = facets.size();
-             local_facet_index < end; ++local_facet_index) {
-          const Facet f = mirror_facet(facets[local_facet_index]);
-          f.first->tds_data().clear(); // was on boundary
-          const Vertex_handle u = f.first->vertex(vertex_triple_index(f.second, 0));
-          const Vertex_handle v = f.first->vertex(vertex_triple_index(f.second, 1));
-          const Vertex_handle w = f.first->vertex(vertex_triple_index(f.second, 2));
-          u->set_cell(f.first);
-          v->set_cell(f.first);
-          w->set_cell(f.first);
-          const Cell_handle nc = tds().create_cell(v, u, w, nv);
-          new_cells[local_facet_index] = nc;
-          nv->set_cell(nc);
-          nc->set_neighbor(3, f.first);
-          f.first->set_neighbor(f.second, nc);
 
-          h2f.set({u, v}, {local_facet_index,
-                           static_cast<unsigned char>(nc->index(w))});
-          h2f.set({v, w}, {local_facet_index,
-                           static_cast<unsigned char>(nc->index(u))});
-          h2f.set({w, u}, {local_facet_index,
-                           static_cast<unsigned char>(nc->index(v))});
-      }
-
-      for(auto it = h2f.begin(); it != h2f.end(); ++it){
-        const std::pair<Halfedge,Local_facet>& ef = *it;
-        if(ef.first.first < ef.first.second){
-          const Facet f = Facet{new_cells[ef.second.first], ef.second.second};
-          h2f.clear(it);
-          const auto p = h2f.get(std::make_pair(ef.first.second, ef.first.first));
-          const Facet n = Facet{new_cells[p.first], p.second};
-          f.first->set_neighbor(f.second, n.first);
-          n.first->set_neighbor(n.second, f.first);
-        }
-      }
-      for(Cell_handle c : cells){
-        c->tds_data().clear(); // was in conflict
-      }
-      tds().delete_cells(cells.begin(), cells.end());
-      h2f.clear();
+      if(tds().is_small_hole(facets.size())){
+          nv = _insert_in_small_hole(p, cells, facets);
       }else{
-      Vertex_handle nv = _insert_in_hole(p,
-                                        cells.begin(), cells.end(),
-                                        facet.first, facet.second);
+      nv = _insert_in_hole(p,
+                           cells.begin(), cells.end(),
+                           facet.first, facet.second);
       }
       // Store the hidden points in their new cells.
       hider.reinsert_vertices(nv);
