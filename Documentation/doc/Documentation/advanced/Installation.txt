@@ -298,7 +298,7 @@ the process of configuring a user's program called `your_program.cpp` amounts to
 
     cd /path/to/your/program
     cgal_create_CMakeLists -s your_program
-    cmake -DCGAL_DIR=XXXXXX -CMAKE_BUILD_TYPE=Release .
+    cmake -DCGAL_DIR=XXXXXX -DCMAKE_BUILD_TYPE=Release .
     make
 
 In order to configure a program, you need to indicate the location of the \cgal configuration file

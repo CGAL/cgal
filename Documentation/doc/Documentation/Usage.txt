@@ -150,7 +150,7 @@ It is also strongly recommended to set the build type variable to `Release` for 
 if no debugging is intended. Users should thus run:
 
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
-    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -CMAKE_BUILD_TYPE=Release . # we are here using a release tarball
+    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release . # we are here using a release tarball
 
 \subsection usage_configuring_cmake_gui Specifying Missing Dependencies
 
@@ -195,7 +195,7 @@ the process of configuring a user's program called `your_program.cpp` amounts to
 
     cd /path/to/your/program
     path/to/cgal/Scripts/scripts/cgal_create_CMakeLists -s your_program
-    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -CMAKE_BUILD_TYPE=Release .
+    cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release .
 
 Note that the script `cgal_create_CMakeLists` creates a very coarse `CMakeLists.txt` file which
 might not properly encode the third party dependencies of your program. Users are advised to look
