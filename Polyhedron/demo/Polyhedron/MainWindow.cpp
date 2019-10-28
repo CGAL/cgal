@@ -2275,6 +2275,11 @@ void MainWindow::on_actionPreferences_triggered()
     this->s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
   });
   
+  connect(prefdiag.backFrontColor_pushButton, &QPushButton::clicked,
+          this, [this](){
+    qobject_cast<Viewer*>(CGAL::Three::Three::activeViewer())->setBackFrontColors();
+  });
+
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
       errorBrush(Qt::red),
@@ -2959,6 +2964,9 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
     }
     viewer->setTotalPass(nb);
   });
+  action= subviewer->findChild<QAction*>("actionBackFrontShading");
+  connect(action, SIGNAL(toggled(bool)),
+          viewer, SLOT(setBackFrontShading(bool)));
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
   connect(viewer, SIGNAL(selected(int)),
@@ -3127,6 +3135,11 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);
+  QAction* actionBackFrontShading = new QAction("Activate Back/Front shading.",this);
+  actionBackFrontShading->setObjectName("actionBackFrontShading");
+  actionBackFrontShading->setCheckable(true);
+  actionBackFrontShading->setChecked(false);
+  viewMenu->addAction(actionBackFrontShading);
   if(mainviewer)
     setAttribute(Qt::WA_DeleteOnClose);
   setWindowIcon(QIcon(":/cgal/icons/resources/menu.png"));
