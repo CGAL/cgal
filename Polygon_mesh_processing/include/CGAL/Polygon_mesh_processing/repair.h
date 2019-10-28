@@ -108,8 +108,8 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 /// The area and volume of a connected component will always be positive values (regardless
 /// of the orientation of the mesh).
 ///
-/// As a consequence of the last sentence, users can specify a zero value as threshold value
-/// to ignore the corresponding criterion.
+/// As a consequence of the last sentence, the area or volume criteria can be disabled
+/// by passing zero (`0`) as threshold value.
 ///
 /// Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
 /// must be either available as internal property maps
