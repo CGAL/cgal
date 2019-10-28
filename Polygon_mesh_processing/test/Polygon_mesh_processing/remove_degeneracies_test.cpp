@@ -1,3 +1,5 @@
+#define CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
@@ -16,6 +18,7 @@
 //
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+namespace CP = CGAL::parameters;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel             EPICK;
 
@@ -33,10 +36,10 @@ void detect_degeneracies(const EdgeRange& edge_range,
   std::set<edge_descriptor> dedges;
   PMP::degenerate_edges(mesh, std::inserter(dedges, dedges.end()));
   PMP::degenerate_edges(edge_range, mesh, std::inserter(dedges, dedges.begin()));
-  PMP::degenerate_edges(mesh, std::inserter(dedges, dedges.end()), CGAL::parameters::all_default());
+  PMP::degenerate_edges(mesh, std::inserter(dedges, dedges.end()), CP::all_default());
 
   dedges.clear();
-  PMP::degenerate_edges(edge_range, mesh, std::inserter(dedges, dedges.begin()), CGAL::parameters::all_default());
+  PMP::degenerate_edges(edge_range, mesh, std::inserter(dedges, dedges.begin()), CP::all_default());
   std::cout << "\t" << dedges.size() << " degenerate edges vs " <<  expected_dedges_n << std::endl;
   assert(dedges.size() == expected_dedges_n);
 
@@ -44,10 +47,10 @@ void detect_degeneracies(const EdgeRange& edge_range,
   std::vector<face_descriptor> dfaces;
   PMP::degenerate_faces(mesh, std::back_inserter(dfaces));
   PMP::degenerate_faces(face_range, mesh, std::back_inserter(dfaces));
-  PMP::degenerate_faces(mesh, std::back_inserter(dfaces), CGAL::parameters::all_default());
+  PMP::degenerate_faces(mesh, std::back_inserter(dfaces), CP::all_default());
 
   dfaces.clear();
-  PMP::degenerate_faces(face_range, mesh, std::back_inserter(dfaces), CGAL::parameters::all_default());
+  PMP::degenerate_faces(face_range, mesh, std::back_inserter(dfaces), CP::all_default());
   std::cout << "\t" << dfaces.size() << " degenerate faces vs " << expected_dfaces_n << std::endl;
   assert(dfaces.size() == expected_dfaces_n);
 }
@@ -98,7 +101,7 @@ bool remove_dedges(const std::vector<std::size_t>& edges_selection_ids,
   for(std::size_t edge_id : edges_selection_ids)
     edge_range.push_back(all_edges[edge_id]);
 
-  return CGAL::Polygon_mesh_processing::remove_degenerate_edges(edge_range, mesh, CGAL::parameters::all_default());
+  return CGAL::Polygon_mesh_processing::remove_degenerate_edges(edge_range, mesh, CP::all_default());
 }
 
 template <typename Mesh>
@@ -114,7 +117,7 @@ bool remove_dfaces(const std::vector<std::size_t>& faces_selection_ids,
   for(std::size_t face_id : faces_selection_ids)
     face_range.push_back(all_faces[face_id]);
 
-  return CGAL::Polygon_mesh_processing::remove_degenerate_faces(face_range, mesh, CGAL::parameters::all_default());
+  return CGAL::Polygon_mesh_processing::remove_degenerate_faces(face_range, mesh, CP::all_default());
 }
 
 template <typename K, typename Mesh>
@@ -148,12 +151,12 @@ void remove_degeneracies(const char* filename,
   // Complete remove
   std::cout << "    Remove all..." << std::endl;
   mesh = mesh_cpy;
-  /* bool all_removed = */ CGAL::Polygon_mesh_processing::remove_degenerate_edges(mesh, CGAL::parameters::all_default());
+  /* bool all_removed = */ CGAL::Polygon_mesh_processing::remove_degenerate_edges(mesh, CP::all_default());
   //assert(all_removed);
   assert(CGAL::is_valid_polygon_mesh(mesh));
 
   mesh = mesh_cpy;
-  /* all_removed = */ CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh, CGAL::parameters::all_default());
+  /* all_removed = */ CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh, CP::all_default());
   // assert(all_removed);
   assert(CGAL::is_valid_polygon_mesh(mesh));
 
@@ -220,36 +223,45 @@ void remove_negligible_connected_components(const char* filename)
 
   std::cout << "before: " << ini_nv << " nv & " << ini_nf << " nf" << std::endl;
 
+  // negative thresholds --> doesn't remove anything
+  std::cout << "---------\nnull or negative threshold, nothing happens..." << std::endl;
+  std::size_t res = PMP::remove_connected_components_of_negligible_size(mesh, CP::area_threshold(-1e15)
+                                                                                 .volume_threshold(0));
+  assert(PMP::internal::number_of_connected_components(mesh) == 4);
+  assert(num_vertices(mesh) == ini_nv);
+  assert(num_faces(mesh) == ini_nf);
+
   // threshold too small, doesn't remove anything
   std::cout << "---------\ntiny threshold, nothing happens..." << std::endl;
-  PMP::remove_connected_components_of_negligible_size(mesh, CGAL::parameters::area_threshold(1e-15)
-                                                                             .volume_threshold(1e-15));
+  PMP::remove_connected_components_of_negligible_size(mesh, CP::area_threshold(1e-15)
+                                                               .volume_threshold(1e-15));
   assert(PMP::internal::number_of_connected_components(mesh) == 4);
   assert(num_vertices(mesh) == ini_nv);
   assert(num_faces(mesh) == ini_nf);
 
   // that removes the CCs with small volumes
   std::cout << "---------\nremove small volumes..." << std::endl;
-  PMP::remove_connected_components_of_negligible_size(mesh, CGAL::parameters::area_threshold(1e-15)
-                                                                             .volume_threshold(0.1));
+  res = PMP::remove_connected_components_of_negligible_size(mesh, CP::area_threshold(1e-15)
+                                                                     .volume_threshold(0.1));
+  std::cout << "res: " << res << std::endl;
   initialize_IDs(mesh);
   assert(PMP::internal::number_of_connected_components(mesh) == 2);
 
   // that removes the open CC with a small area
   std::cout << "---------\nremove small areas..." << std::endl;
-  PMP::remove_connected_components_of_negligible_size(mesh, CGAL::parameters::area_threshold(20));
+  PMP::remove_connected_components_of_negligible_size(mesh, CP::area_threshold(20));
   initialize_IDs(mesh);
   assert(PMP::internal::number_of_connected_components(mesh) == 1);
 
   // Remove everything with a large value
   std::cout << "---------\nremove everything..." << std::endl;
-  PMP::remove_connected_components_of_negligible_size(mesh, CGAL::parameters::area_threshold(1e15));
+  PMP::remove_connected_components_of_negligible_size(mesh, CP::area_threshold(1e15));
   assert(is_empty(mesh));
 
   // Could also have used default paramaters, which does the job by itself
   std::cout << "---------\ndefault values..." << std::endl;
 
-  std::size_t nb_to_be_rm = PMP::remove_connected_components_of_negligible_size(mesh_cpy, CGAL::parameters::dry_run(true));
+  std::size_t nb_to_be_rm = PMP::remove_connected_components_of_negligible_size(mesh_cpy, CP::dry_run(true));
   assert(nb_to_be_rm == PMP::remove_connected_components_of_negligible_size(mesh_cpy));
 
   assert(PMP::internal::number_of_connected_components(mesh_cpy) == 1);

@@ -191,9 +191,9 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     threshold_value = bbox_diagonal / FT(100); // default filter is 1%
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
-    std::cout << "bb: " << bb.xmin() << " " << bb.xmax() << std::endl;
-    std::cout << "bb: " << bb.ymin() << " " << bb.ymax() << std::endl;
-    std::cout << "bb: " << bb.zmin() << " " << bb.zmax() << std::endl;
+    std::cout << "bb xmin xmax: " << bb.xmin() << " " << bb.xmax() << std::endl;
+    std::cout << "bb ymin ymax: " << bb.ymin() << " " << bb.ymax() << std::endl;
+    std::cout << "bb zmin zmax: " << bb.zmin() << " " << bb.zmax() << std::endl;
     std::cout << "bbox_diagonal: " << bbox_diagonal << std::endl;
     std::cout << "threshold_value: " << threshold_value << std::endl;
 #endif
