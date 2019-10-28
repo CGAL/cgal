@@ -47,7 +47,7 @@ class Small_unordered_map{
     hs += 1;
     hs += (hs << 1) + (hs << 5) + (hs << 7) + (hs << 8);
     */
-    return (hf + 1) ^ (419 * (hs + 1));
+    return (hf+1) ^ (419 * (hs+1));
   }
   
 public:
