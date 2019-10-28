@@ -164,8 +164,8 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   FaceIndexMap fim = choose_parameter(get_parameter(np, internal_np::face_index),
                                       get_property_map(boost::face_index, tmesh));
 
-  FT area_threshold = choose_parameter(get_parameter(np, internal_np::area_threshold), -1.);
-  FT volume_threshold = choose_parameter(get_parameter(np, internal_np::volume_threshold), -1.);
+  FT area_threshold = choose_parameter(get_parameter(np, internal_np::area_threshold), FT(-1));
+  FT volume_threshold = choose_parameter(get_parameter(np, internal_np::volume_threshold), FT(-1));
 
   // If no threshold is provided, compute it as a % of the bbox
   const bool is_default_area_threshold = is_default_parameter(get_parameter(np, internal_np::area_threshold));
@@ -205,6 +205,12 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   if(is_default_volume_threshold)
     volume_threshold = CGAL::square(threshold_value);
 
+  const bool use_areas = (is_default_area_threshold || area_threshold > 0);
+  const bool use_volumes = (is_default_volume_threshold || volume_threshold > 0);
+
+  if(!use_areas && !use_volumes)
+    return 0;
+
   // Compute the connected components only once
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
   std::size_t num = connected_components(tmesh, face_cc, np);
@@ -212,60 +218,71 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << num << " different connected components" << std::endl;
 #endif
+
   if(!dry_run)
     CGAL::Polygon_mesh_processing::remove_isolated_vertices(tmesh);
 
   // Compute CC-wide and total areas/volumes
   FT total_area = 0;
   std::vector<FT> component_areas(num, 0);
-  for(face_descriptor f : faces(tmesh))
+
+  if(use_areas)
   {
-    const FT fa = face_area(f, tmesh, np);
-    component_areas[face_cc[f]] += fa;
-    total_area += fa;
+    for(face_descriptor f : faces(tmesh))
+    {
+      const FT fa = face_area(f, tmesh, np);
+      component_areas[face_cc[f]] += fa;
+      total_area += fa;
+    }
+
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+  std::cout << "area threshold: " << area_threshold << std::endl;
+  std::cout << "total area: " << total_area << std::endl;
+#endif
   }
 
   // Volumes make no sense for CCs that are not closed
   std::vector<bool> cc_closeness(num, true);
-  for(halfedge_descriptor h : halfedges(tmesh))
-  {
-    if(is_border(h, tmesh))
-      cc_closeness[face_cc[face(opposite(h, tmesh), tmesh)]] = false;
-  }
-
   std::vector<FT> component_volumes(num);
-  typename GT::Compute_volume_3 cv3 = traits.compute_volume_3_object();
-  Point_3 origin(0, 0, 0);
 
-  for(face_descriptor f : faces(tmesh))
+  if(use_volumes)
   {
-    const std::size_t i = face_cc[f];
-    if(!cc_closeness[i]){
-      continue;
+    for(halfedge_descriptor h : halfedges(tmesh))
+    {
+      if(is_border(h, tmesh))
+        cc_closeness[face_cc[face(opposite(h, tmesh), tmesh)]] = false;
     }
 
-    const FT fv = cv3(origin,
-                      get(vpm, target(halfedge(f, tmesh), tmesh)),
-                      get(vpm, target(next(halfedge(f, tmesh), tmesh), tmesh)),
-                      get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
+    typename GT::Compute_volume_3 cv3 = traits.compute_volume_3_object();
+    Point_3 origin(0, 0, 0);
 
-    component_volumes[i] += fv;
-  }
+    for(face_descriptor f : faces(tmesh))
+    {
+      const std::size_t i = face_cc[f];
+      if(!cc_closeness[i])
+        continue;
 
-  // negative volume means the CC was oriented inward
-  FT total_volume = 0;
-  for(std::size_t i=0; i<num; ++i)
-  {
-    component_volumes[i] = CGAL::abs(component_volumes[i]);
-    total_volume += component_volumes[i];
-  }
+      const FT fv = cv3(origin,
+                        get(vpm, target(halfedge(f, tmesh), tmesh)),
+                        get(vpm, target(next(halfedge(f, tmesh), tmesh), tmesh)),
+                        get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
+
+      component_volumes[i] += fv;
+    }
+
+    // negative volume means the CC was oriented inward
+    FT total_volume = 0;
+    for(std::size_t i=0; i<num; ++i)
+    {
+      component_volumes[i] = CGAL::abs(component_volumes[i]);
+      total_volume += component_volumes[i];
+    }
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
-  std::cout << "area threshold: " << area_threshold << std::endl;
-  std::cout << "volume threshold: " << volume_threshold << std::endl;
-  std::cout << "total area: " << total_area << std::endl;
-  std::cout << "total volume: " << total_volume << std::endl;
+    std::cout << "volume threshold: " << volume_threshold << std::endl;
+    std::cout << "total volume: " << total_volume << std::endl;
 #endif
+  }
 
   std::vector<std::size_t> ccs_to_remove;
   for(std::size_t i=0; i<num; ++i)
@@ -275,16 +292,16 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
               << " and volume: " << component_volumes[i] << std::endl;
 #endif
 
-    if((cc_closeness[i] && component_volumes[i] <= volume_threshold) ||
-       component_areas[i] <= area_threshold)
-    {
+    if(use_volumes && cc_closeness[i] && component_volumes[i] <= volume_threshold)
       ccs_to_remove.push_back(i);
-    }
+    else if(use_areas && component_areas[i] <= area_threshold)
+      ccs_to_remove.push_back(i);
   }
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << "Removing " << ccs_to_remove.size() << " CCs" << std::endl;
 #endif
+
   if(!dry_run)
   {
     remove_connected_components(tmesh, ccs_to_remove, face_cc, np);
