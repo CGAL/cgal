@@ -105,6 +105,12 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 /// - the volume threshold is taken as the third power of one percent of the length of the diagonal
 ///   of the bounding box of the mesh.
 ///
+/// The area and volume of a connected component will always be positive values (regardless
+/// of the orientation of the mesh).
+///
+/// As a consequence of the last sentence, users can specify a zero value as threshold value
+/// to ignore the corresponding criterion.
+///
 /// Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
 /// must be either available as internal property maps
 /// to `tmesh` or provided as \ref pmp_namedparameters "Named Parameters".
@@ -131,7 +137,7 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///                             but the number of components that would be removed is returned. The default value is `false`.\cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-///  \return the number of connected components removed (ignoring isolated vertices).
+/// \return the number of connected components removed (ignoring isolated vertices).
 ///
 template <typename TriangleMesh,
           typename NamedParameters>
