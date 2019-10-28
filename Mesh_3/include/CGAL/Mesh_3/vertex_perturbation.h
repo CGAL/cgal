@@ -24,6 +24,7 @@
 
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
+#include <CGAL/Time_stamper.h>
 
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
   #include <CGAL/Timer.h>
