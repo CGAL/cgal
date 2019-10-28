@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-//  SPDX-License-Identifier: BSL-1.0
+// SPDX-License-Identifier: BSL-1.0
 //
  /*
   *   LOCATION:    see https://www.boost.org for most recent version.

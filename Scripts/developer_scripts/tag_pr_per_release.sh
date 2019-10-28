@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # this script requires ghi: https://github.com/stephencelis/ghi
+# See the wiki for how to assign a token to connect without password:
+# https://github.com/stephencelis/ghi/wiki/FAQ
+#
 # example calls within a git repo
 # bash tag_pr_per_release.sh 4.12 4.12.1
 # bash tag_pr_per_release.sh 4.12 4.13
@@ -26,7 +29,7 @@ for i in ${PR_LIST}; do
 done
 
 read -p "Please confirm operation by typing YES? " -n 4 -r
-echo    # (optional) move to a new line
+echo
 if [[ $REPLY =~ ^YES$ ]]; then
 
   for i in ${PR_LIST}; do

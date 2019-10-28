@@ -20,6 +20,10 @@ compilers is:
   -   LLVM Clang version 8.0 or later (on Linux or MacOS), and
   -   Apple Clang compiler versions 7.0.2 and 10.0.1 (on MacOS).
 
+Since CGAL 4.9, CGAL can be used as a header-only library, with
+dependencies. Since CGAL 5.0, that is now the default, unless
+specified differently in the (optional) CMake configuration.
+
 
 Besides fixes and general enhancement to existing packages, the following
 has changed since CGAL 4.14:
@@ -40,6 +44,7 @@ Polygonal Surface Reconstruction (new package)
     entry:
     
       https://www.cgal.org/2019/08/05/Polygonal_surface_reconstruction/
+
 
 Shape Detection (major changes)
 
@@ -66,14 +71,12 @@ dD Geometry Kernel
     removed. See the full list of breaking changes in the release
     notes.
 
--   BREAKING CHANGE: Insertion of a range of points (either via
-    constructors or insert() functions) in a CGAL::Triangulation_2 and
-    CGAL::Triangulation_3 no longer performs spatial sorting before
-    insertion. Consequently, the combinatorics of the triangulation
-    will now correspond faithfully to the order of the points within
-    the range. Note that this change only affects the base classes
-    CGAL::Triangulation_[23] and not any derived classes, such as
-    Delaunay_triangulation_[23].
+-   BREAKING CHANGE: The constructor and the insert() function of
+    CGAL::Triangulation_2 or CGAL::Triangulation_3 which take a range
+    of points as argument are now guaranteed to insert the points
+    following the order of InputIterator.  Note that this change only
+    affects the base class CGAL::Triangulation_[23] and not any
+    derived class, such as CGAL::Delaunay_triangulation_[23].
 
 
 Polygon Mesh Processing

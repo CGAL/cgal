@@ -7,20 +7,11 @@
 # Max-Planck-Institute for Informatics Saarbruecken (Germany), 
 # and Tel-Aviv University (Israel).  All rights reserved.
 #
-# This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License as
-# published by the Free Software Foundation; either version 3 of the License,
-# or (at your option) any later version.
-#
-# Licensees holding a valid commercial license may use this file in
-# accordance with the commercial license agreement provided with the software.
-#
-# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+# This file is part of CGAL (www.cgal.org)
 #
 # $URL$
 # $Id$
-# SPDX-License-Identifier: LGPL-3.0+
+# SPDX-License-Identifier: LGPL-3.0-or-later
 #
 # Author(s)     : various
 
@@ -53,6 +44,8 @@
 
 create_cmake_script_with_options()
 {
+  qt4='n'
+
   # parse options file
   if [ -e "$OPTIONS_FILE" ]; then
 
@@ -97,8 +90,6 @@ create_cmake_script_with_options()
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.14)
-
 EOF
   #---------------------------------------------------------------------------
   if [ "$SINGLE_SOURCE" = "n" ]; then
@@ -110,15 +101,22 @@ EOF
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
 
+
+cmake_minimum_required(VERSION 2.8.11)
+
 # CGAL and its components
 EOF
+if [ -n "$ENABLE_CTEST" ]; then
+  echo "enable_testing()"
+fi
   #---------------------------------------------------------------------------
   # echo "CGAL_COMPONENTS: $CGAL_COMPONENTS"
   if [ ! -z "$CGAL_COMPONENTS" ]; then
     # ensure capitalization
 
-    # CGAL: Core, PDB, ImageIO
+    # CGAL: Core, Qt4, PDB, ImageIO
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[c|C][o|O][r|R][e|E]/Core}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[q|Q][t|T]4/Qt4}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[i|I][m|M][a|A][g|G][e|E][i|I][o|O]/ImageIO}
   
     # external libs
@@ -154,34 +152,119 @@ EOF
     IFS=':'
     for cgal_component in $CGAL_COMPONENTS; do
       COMPONENT=`echo $cgal_component | tr '[:upper:]' '[:lower:]'`
+
+      # for qtmoc
+      if [ "$COMPONENT" = "qt4" ]; then
+        qt4='y'
+      fi
+
     done
     IFS=$OLDIFS
+
   fi
 
-  if [ -n "${CGAL_COMPONENTS}" ]; then
-    echo "find_package( CGAL REQUIRED OPTIONAL_COMPONENTS ${CGAL_COMPONENTS//:/ } )"
-  else
-    echo "find_package( CGAL REQUIRED )"
-  fi
+  echo "find_package( CGAL QUIET COMPONENTS ${CGAL_COMPONENTS//:/ } )"
+
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
 
-  if [ ! -z "$BOOST_COMPONENTS" ]; then
-    cat << 'EOF'
+if ( NOT CGAL_FOUND )
+
+  message(STATUS "This project requires the CGAL library, and will not be compiled.")
+  return()  
+
+endif()
+
+EOF
+  #---------------------------------------------------------------------------
+
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
 
 # Boost and its components
 EOF
-    echo "find_package( Boost REQUIRED OPTIONAL_COMPONENTS ${BOOST_COMPONENTS//:/ } )"
-
-  fi # additional Boost components
   #---------------------------------------------------------------------------
 
-  if [ -d include ] ; then
-    cat << 'EOF'
+  if [ ! -z "$BOOST_COMPONENTS" ]; then
+
+    echo "find_package( Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS//:/ } )"
+
+  else
+
+    echo "find_package( Boost REQUIRED )"
+
+  fi # additional Boost components
+
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
+
+if ( NOT Boost_FOUND )
+
+  message(STATUS "This project requires the Boost library, and will not be compiled.")
+
+  return()  
+
+endif()
+EOF
+  #---------------------------------------------------------------------------
+
+
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
 
 # include for local directory
 EOF
+  #---------------------------------------------------------------------------
+
+  if [ -d include ] ; then
     echo 'include_directories( BEFORE include )'
   fi		
+
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
+
+# include for local package
+EOF
+  #---------------------------------------------------------------------------
+
+  # includes for local package
+  if [ -d ../include ] ; then
+    echo 'include_directories( BEFORE ../include )'
+  fi
+
+  if [ ! -z "$PACKAGES" ]; then
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
+
+# include of additional packages
+EOF
+    #-------------------------------------------------------------------------
+  fi
+
+  # Qt4
+  if [ "$qt4" = "y" ]; then
+
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
+
+# Qt4
+set( QT_USE_QTXML     true )
+set( QT_USE_QTMAIN    true )
+set( QT_USE_QTSCRIPT  true )
+set( QT_USE_QTOPENGL  true )
+
+find_package(Qt4)  
+
+if ( NOT QT_FOUND )
+
+  message(STATUS "This project requires the Qt4 library, and will not be compiled.")
+  return()  
+
+endif()
+EOF
+    #-------------------------------------------------------------------------
+
+  fi #qt4
 
   if [ ! -z "$BOOST_COMPONENTS" ]; then
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -196,7 +279,7 @@ EOF
     for boost_component in $BOOST_COMPONENTS; do
       BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
       echo "add_definitions( \"-DCGAL_USE_BOOST_${BOOST_COMPONENT}\" )"
-      echo "list(APPEND CGAL_3RD_PARTY_LIBRARIES Boost::${boost_component} )"
+      echo "list(APPEND CGAL_3RD_PARTY_LIBRARIES \${Boost_${BOOST_COMPONENT}_LIBRARY} )"
     done
     IFS=$OLDIFS
 
@@ -214,11 +297,32 @@ EOF
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     cat << 'EOF'
 
+
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
+
 EOF
     #-------------------------------------------------------------------------
 
+
+    # add a new line
+    echo
+
+    # Qt4
+    if [ "$qt4" = "y" ]; then
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
+
+if ( CGAL_Qt4_FOUND AND QT_FOUND )
+
+  include( ${QT_USE_FILE} )
+  include_directories( ${QT_INCLUDE_DIR} )  
+
+endif()
+
+EOF
+      #-----------------------------------------------------------------------
+    fi # qt4
 
     for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
       # Create an executable for each cpp that  contains a function "main()"
@@ -231,8 +335,32 @@ EOF
       BASE=`basename $BASE .C`
       egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
-        echo "create_single_source_cgal_program( \"$file\" )"
+        if [ "$qt4" = "y" ]; then
+          echo "create_single_source_cgal_program_qt4( \"$file\" )"
+        else
+          echo "create_single_source_cgal_program( \"$file\" )"
+        fi
+        if [ -n "$ENABLE_CTEST" ]; then 
+          if [ -f "$BASE.cin" ] ; then
+            CIN=" < $BASE.cin"
+          else
+            CIN=
+          fi
+          cat <<EOF
+add_test( "$BASE" \${CMAKE_CTEST_COMMAND}
+  --build-and-test "\${CMAKE_CURRENT_SOURCE_DIR}"
+                   "\${CMAKE_CURRENT_BINARY_DIR}"
+  --build-generator "\${CMAKE_GENERATOR}"
+  --build-makeprogram "\${CMAKE_MAKE_PROGRAM}"
+  --build-target $BASE
+  --build-no-clean
+  --build-run-dir "\${CMAKE_CURRENT_SOURCE_DIR}"
+  --test-command sh -c "\${CMAKE_CURRENT_BINARY_DIR}/$BASE$CIN" )
+EOF
+        fi
       fi
+      #add a new line
+      echo 
     done
     
   else #======================================================================
@@ -256,6 +384,73 @@ EOF
       all="$all $file"
     done
 
+    # Qt4
+    if [ "$qt4" = "y" ]; then
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
+
+if ( CGAL_Qt4_FOUND AND QT_FOUND )
+
+  include( ${QT_USE_FILE} )
+  include_directories( ${QT_INCLUDE_DIR} )  
+
+EOF
+      #-----------------------------------------------------------------------
+
+      echo "  # UI files (Qt Designer files)"
+      for file in `ls *.ui 2> /dev/null | sort`; do
+        echo "  qt4_wrap_ui( DT_UI_FILES $file )"
+      done
+      echo
+      echo "  # qrc files (resources files, that contain icons, at least)"
+      for file in `ls *.qrc 2> /dev/null | sort`; do
+        echo "  qt4_add_resources ( DT_RESOURCE_FILES ./$file )"
+      done
+      echo
+      MOC_FILES=""
+      echo "  # use the Qt MOC preprocessor on classes that derives from QObject"
+      for file in `ls include/*.h 2> /dev/null | sort`; do
+        BASE=`basename $file .h`
+        egrep 'Q_OBJECT' $file >/dev/null 2>&1
+        if [ $? -eq 0 ]; then
+          echo "  qt4_generate_moc( include/${BASE}.h ${BASE}.moc )"
+          MOC_FILES="${BASE}.moc $MOC_FILES"
+        fi
+      done
+      for file in `ls *.h 2> /dev/null | sort`; do
+        BASE=`basename $file .h`
+        egrep 'Q_OBJECT' $file >/dev/null 2>&1
+        if [ $? -eq 0 ]; then
+          echo "  qt4_generate_moc( ${BASE}.h ${BASE}.moc )"
+          MOC_FILES="${BASE}.moc $MOC_FILES"
+        fi
+      done
+      for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
+        BASE=`basename $file .cc`
+        BASE=`basename $BASE .cp`
+        BASE=`basename $BASE .cxx`
+        BASE=`basename $BASE .cpp`
+        BASE=`basename $BASE .CPP`
+        BASE=`basename $BASE .c++`
+        BASE=`basename $BASE .C`
+        egrep 'Q_OBJECT' $file >/dev/null 2>&1
+        if [ $? -eq 0 ]; then
+          echo "  qt4_generate_moc( ${BASE}.cpp ${BASE}.moc )"
+          MOC_FILES="${BASE}.moc $MOC_FILES"
+        fi
+      done
+
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
+
+endif()
+EOF
+      #-----------------------------------------------------------------------
+
+      all="${all} ${MOC_FILES} \${DT_UI_FILES} \${DT_RESOURCE_FILES}"
+
+    fi # qt4
+
     # no 'cat' here, as variable substitution required
     echo
     echo "add_executable( ${target_name} ${all} )"
@@ -264,10 +459,19 @@ EOF
     echo
     echo "# Link the executable to CGAL and third-party libraries"
     LIBS=""
-    LIBS=$LIBS" \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES}"
-    echo "target_link_libraries(${target_name}  $LIBS )"
+    for comp in ${CGAL_COMPONENTS}; do
+        LIBS=$LIBS" CGAL::CGAL_${comp}"
+    done
+    echo "target_link_libraries(${target_name} PRIVATE CGAL::CGAL${LIBS} )"
 
   fi # single source or all files #===========================================
+
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
+EOF
+  #---------------------------------------------------------------------------
+
+echo
 
 }
 
@@ -276,9 +480,9 @@ usage()
   echo "Usage: `basename $0` [-s source] [-c cgal-component1:cgal-component2:...] [-b boost-component1:boost-component2:...] [-p] [-o options_file='`pwd`/cgal_cmake_options:$HOME/.cgal_cmake_options_rc'] [-v] [-h]" >&2
   echo >&2
   echo "  -s source If this parameter is given the script will create one single executable for 'source' with all source files; otherwise it creates one executable for each main'ed source." >&2
-  echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','ImageIO'." >&2
+  echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','ImageIO','Qt4' ('benchmark', 'symbolic')." >&2
   echo "  boost_componentX - must be a valid boost component, like 'filesystem', 'program_options'." >&2
-  echo "  -o options_file - file with CGAL_COMPONENT, and BOOST_COMPONENT directives" >&2
+  echo "  -o options_file - file with PACKAGE, DIRECTORY, CGAL_COMPONENT, and BOOST_COMPONENT directives" >&2
   echo "  -v the version" >&2
   echo "  -h this info screen" >&2
   echo  >&2
@@ -362,6 +566,8 @@ while getopts s:c:b:o:phvt OPT; do
           echo "Options-file '$OPTIONS_FILE' does not exist." >&2
           exit 1
         fi
+        ;;
+    t)  ENABLE_CTEST='y'
         ;;
     h)  usage
         exit 0
