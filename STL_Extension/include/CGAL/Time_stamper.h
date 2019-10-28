@@ -26,6 +26,14 @@
 
 namespace CGAL {
 
+namespace internal {  
+
+constexpr size_t rounded_down_log2(size_t n)
+{
+  return ( (n<2) ? 0 : 1+rounded_down_log2(n/2));
+}
+} // namespace internal
+  
 template <typename T>
 struct Time_stamper
 {
@@ -128,7 +136,8 @@ public:
 
   static std::size_t hash_value(const T* p) {
 
-    return reinterpret_cast<std::size_t>(p) >> 5; // sizeof(T);
+    std::size_t shift = internal::rounded_down_log2(sizeof(p));
+    return reinterpret_cast<std::size_t>(p) >> shift; // AF:  was: / sizeof(T);
   }
 
   void reset()                {}

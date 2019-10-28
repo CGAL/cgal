@@ -30,7 +30,7 @@ namespace CGAL {
 template <typename K, typename T, typename H, unsigned int N>
 class Small_unordered_map{
 #ifdef    CGAL_SMALL_UNORDERED_MAP_STATS
-  std::array<int,10> collisions = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  std::array<int,20> collisions = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 #endif
   static const unsigned int M = N<<3;
   int head = -2;
@@ -43,7 +43,11 @@ class Small_unordered_map{
   {
     std::size_t hf = boost::hash<typename K::first_type>()(k.first);
     std::size_t hs = boost::hash<typename K::second_type>()(k.second);
-	return (hf + 1) ^ (419 * (hs + 1));
+    /*
+    hs += 1;
+    hs += (hs << 1) + (hs << 5) + (hs << 7) + (hs << 8);
+    */
+    return (hf + 1) ^ (419 * (hs + 1));
   }
   
 public:
@@ -55,9 +59,15 @@ public:
 #ifdef CGAL_SMALL_UNORDERED_MAP_STATS  
   ~Small_unordered_map()
   {
-    for(int i = 0; i < 10; i++){
-      std::cout << i << " " << collisions[i] << std::endl;
+    int total = 0;
+    std::cout << "0 " << collisions[0] << std::endl;
+    for(int i = 1; i < 20; i++){
+      total += collisions[i];
+      if(collisions[i] != 0){
+        std::cout << i << " " << collisions[i] << std::endl;
+      }
     }
+    std::cout << "Total: " << total << " " << 100 * (double(total) / double(total + collisions[0])) << "%" << std::endl; 
   }
 #endif
   
@@ -77,7 +87,7 @@ public:
         unfreelist[i] = head;
         head = i;
 #ifdef  CGAL_SMALL_UNORDERED_MAP_STATS        
-        if(collision>9){
+        if(collision>19){
           std::cerr << collision << " collisions" << std::endl;
         }else{
           ++collisions[collision];

@@ -41,9 +41,6 @@
 #include <utility>
 #include <stack>
 
-// #include <parallel_hashmap/phmap.h>
-// #include <absl/container/flat_hash_map.h>
-
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
@@ -3686,11 +3683,7 @@ insert_in_conflict(const Point& p,
         typedef std::pair<unsigned char, unsigned char> Local_facet;
         typedef Small_unordered_map<Halfedge, Local_facet,
                                     boost::hash<Halfedge>, maximal_nb_of_facets>
-            Halfedge_facet_map;
-        //      typedef
-        //      absl::flat_hash_map<std::pair<Vertex_handle,Vertex_handle>,
-        //      Facet// , boost::hash<std::pair<Vertex_handle,Vertex_handle> >>
-        //      E2F;
+          Halfedge_facet_map;
         static Halfedge_facet_map h2f;
         nv = tds().create_vertex();
         nv->set_point(p);
