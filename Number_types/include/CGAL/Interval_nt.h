@@ -670,15 +670,17 @@ private:
     }
     else						// 0 \in a
     {
-      if (b.inf()>=0.0)				// b>=0
+      if (b.inf()>=0.0) {				// b>=0
         if (b.sup()<=0.0)
           return 0.; // In case a has an infinite bound, avoid NaN.
         else
           return IA(-CGAL_IA_MUL(-a.inf(), b.sup()),
               CGAL_IA_MUL( a.sup(), b.sup()));
-      if (b.sup()<=0.0)				// b<=0
+      }
+      if (b.sup()<=0.0) {				// b<=0
         return IA(-CGAL_IA_MUL( a.sup(), -b.inf()),
             CGAL_IA_MUL(-a.inf(), -b.inf()));
+      }
       // 0 \in b
       double tmp1 = CGAL_IA_MUL(-a.inf(),  b.sup());
       double tmp2 = CGAL_IA_MUL( a.sup(), -b.inf());
