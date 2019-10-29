@@ -252,8 +252,7 @@ private:
     bool runMesh2 = ui.runMesh2_checkbox->isChecked();
     double target_length = ui.edgeLength_dspinbox->value();
     unsigned int nb_iter = ui.nbIterations_spinbox->value();
-    bool runLloyd = ui.runLloyd_checkbox->isChecked();
-
+    bool runLloyd = runMesh2?ui.runLloyd_checkbox->isChecked():false;
 
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -334,11 +333,12 @@ private:
     }
 
     // export result as a surface_mesh item
-    QString iname =
-      polylines_items.size()==1?
-      polylines_items.front()->name()+QString("_meshed_"):
-      QString("2dmesh_");
-    iname+=QString::number(target_length);
+    QString iname = runMesh2 ? (( polylines_items.size()==1?
+                                  polylines_items.front()->name()+QString("_meshed_"):
+                                  QString("2dmesh_") )+QString::number(target_length) )
+                             : ( polylines_items.size()==1?
+                                 polylines_items.front()->name()+QString("_triangulated"):
+                                 QString("polylines_triangulation") );
     if (runLloyd) iname+=QString("_Lloyd_")+QString::number(nb_iter);
     Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();
     poly_item->setName(iname);
