@@ -18,6 +18,8 @@ Release date: November 2019
 - Since CGAL 4.9, CGAL can be used as a header-only library, with
   dependencies. Since CGAL 5.0, that is now the default, unless
   specified differently in the (optional) CMake configuration.
+- The section "Getting Started with CGAL" of the documentation has
+  been updated and reorganized.
 - The minimal version of Boost is now 1.57.0.
 
 
