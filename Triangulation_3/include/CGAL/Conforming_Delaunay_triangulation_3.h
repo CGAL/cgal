@@ -50,6 +50,15 @@ class Triangulation_conformer_3 {
   using Constraints_hierarchy =
       Constraint_hierarchy_2<Vertex_handle, Compare_vertex_handle, bool>;
 
+#if CGAL_DEBUG_CDT_3
+  auto display_vert(Vertex_handle v) {
+    std::stringstream os;
+    os.precision(17);
+    os << oformat(v) << "=(" << this->tr.point(v) << ")";
+    return os.str();
+  };
+#endif // CGAL_DEBUG_CDT_3
+
 public:
   Triangulation_conformer_3(T_3 &tr)
       : tr(tr), comp(&tr), constraints_hierarchy(comp) {
@@ -62,6 +71,9 @@ public:
 
   void restore_Delaunay() {
     bool not_yet_restored = false;
+#if CGAL_DEBUG_CDT_3
+    auto counter = 0;
+#endif // CGAL_DEBUG_CDT_3
     do {
       not_yet_restored = false;
       for (auto h_sc : make_range(constraints_hierarchy.sc_begin(),
@@ -75,6 +87,9 @@ public:
         if (!tr.is_edge(va, vb, c, i, j)) {
           const auto& [steiner_pt, hint] = construct_Steiner_point(h_sc);
           const Vertex_handle v = tr.insert(steiner_pt, hint);
+#if CGAL_DEBUG_CDT_3
+          std::cerr << "New Steiner vertex: " << display_vert(v) << '\n';
+#endif // CGAL_DEBUG_CDT_3
           CGAL_triangulation_assertion(v != va);
           CGAL_triangulation_assertion(v != vb);
           constraints_hierarchy.add_Steiner(va, vb, v);
@@ -82,8 +97,14 @@ public:
           break;
         }
       }
+#if CGAL_DEBUG_CDT_3
+      ++counter;
+#endif
     }
     while(not_yet_restored);
+#if CGAL_DEBUG_CDT_3
+    std::cerr << "restore_Delaunay() finished after " << counter << " steps\n";
+#endif // CGAL_DEBUG_CDT_3
   }
 protected:
   auto construct_Steiner_point(typename Constraints_hierarchy::H_sc_to_c_map::value_type h_sc)
@@ -103,6 +124,10 @@ protected:
     const auto& pa = tr.point(va);
     const auto& pb = tr.point(vb);
 
+#ifdef CGAL_DEBUG_CDT_3
+    std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
+              << display_vert(vb) << " )\n";
+#endif // CGAL_DEBUG_CDT_3
     const CGAL::Triangulation_segment_cell_iterator_3<T_3> cell_traverser_begin{tr, va, vb};
     const auto cell_traverser_end = cell_traverser_begin.end();
 
@@ -120,13 +145,28 @@ protected:
     std::for_each(cell_traverser_begin, cell_traverser_end,
                   fill_encroaching_vertices);
     auto vector_of_encroaching_vertices = encroaching_vertices.extract_sequence();
+#ifdef CGAL_DEBUG_CDT_3
+    std::cerr << "  -> vector_of_encroaching_vertices (before filter):\n";
+    std::for_each(vector_of_encroaching_vertices.begin(),
+                  vector_of_encroaching_vertices.end(),
+                  [=](Vertex_handle v){
+                    std::cerr << "    " << display_vert(v) << '\n';
+                  });
+#endif
     auto end = std::remove_if(vector_of_encroaching_vertices.begin(),
-                             vector_of_encroaching_vertices.end(),
+                              vector_of_encroaching_vertices.end(),
                               [pa, pb, &angle_functor, this](Vertex_handle v) {
                                return angle_functor(pa,
                                                     this->tr.point(v),
                                                     pb) == ACUTE;
                              });
+#ifdef CGAL_DEBUG_CDT_3
+    std::cerr << "  -> vector_of_encroaching_vertices (after filter):\n";
+    std::for_each(vector_of_encroaching_vertices.begin(), end,
+                  [=](Vertex_handle v){
+                    std::cerr << "    " << display_vert(v) << '\n';
+                  });
+#endif
     CGAL_triangulation_assertion(vector_of_encroaching_vertices.begin() != end);
 
     auto reference_point_it = std::max_element(
@@ -137,6 +177,10 @@ protected:
                                        this->tr.point(v2), pb) == SMALLER;
         });
     CGAL_triangulation_assertion(reference_point_it != end);
+#ifdef CGAL_DEBUG_CDT_3
+    std::cerr << "  -> reference point: " << display_vert(*reference_point_it)
+              << '\n';
+#endif // CGAL_DEBUG_CDT_3
     const auto &reference_point = tr.point(*reference_point_it);
     const auto cell_incident_to_reference_point = (*reference_point_it)->cell();
 
@@ -151,6 +195,9 @@ protected:
       midpoint_functor(pa, pb) :
       translate_functor(pa, scaled_vector_functor(vector_ab, lambda));
 
+#ifdef CGAL_DEBUG_CDT_3
+    std::cerr << "  -> Steiner point: " << result_point << '\n';
+#endif // CGAL_DEBUG_CDT_3
     return std::make_pair(result_point, cell_incident_to_reference_point);
   }
 

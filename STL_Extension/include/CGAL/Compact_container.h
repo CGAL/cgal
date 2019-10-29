@@ -39,6 +39,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/IO/io.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -1139,6 +1140,17 @@ namespace internal {
   }
 
 } // namespace internal
+
+template <class DSC, bool Const >
+class Output_rep<CGAL::internal::CC_iterator<DSC, Const> > {
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  CC_iterator it;
+public:
+  Output_rep( const CC_iterator it) : it(it) {}
+  std::ostream& operator()( std::ostream& out) const {
+    return (out << static_cast<void*>(it.operator->()));
+  }
+};
 
 } //namespace CGAL
 
