@@ -3,6 +3,11 @@
 \page configurationvariables Summary of %CGAL's Configuration Variables
 \cgalAutoToc
 
+\cgalAdvancedBegin
+This page lists CMake variables which you can use to help CMake find missing dependencies
+while using the command line. We however recommend using the graphical interface (`cmake-gui`).
+\cgalAdvancedEnd
+
 \section installation_summary Summary of CGAL's Configuration Variables
 
 Most configuration variables are not environment variables but

@@ -1,5 +1,5 @@
 /*!
-\page usage Using %CGAL on Linux and macOS
+\page usage Using %CGAL on Unix (Linux, macOS, ...)
 \cgalAutoToc
 
 Since \cgal version 5.0, \cgal is header-only be default, which means
@@ -9,7 +9,8 @@ However, some dependencies of \cgal might still need to be installed.
 \section usage_introduction Quick Start: Compiling a Program using CGAL
 
 Assuming that you have obtained \cgal through one of the package managers offering \cgal on your platform
-(see Section \ref secgettingcgal), you can download \cgal examples <a href="TODO">here</a>
+(see Section \ref secgettingcgal), you can download \cgal examples
+<a href="https://github.com/CGAL/cgal/releases/CGAL-\cgalReleaseNumber/CGAL-\cgalReleaseNumber-examples.tar.xz">CGAL-\cgalReleaseNumber-examples.tar.xz</a>
 and the compilation of an example is as simple as:
 
     cd $HOME/CGAL-\cgalReleaseNumber/examples/Triangulation_2 # go to an example directory
@@ -111,6 +112,14 @@ or downloaded separately at
 \cgal is a <a href="https://en.wikipedia.org/wiki/Header-only">header-only</a> library, and as such
 there is no need to even configure it before using it. Programs using \cgal (examples, tests, demos, etc.)
 are instead configured using CMake and \cgal will be configured at the same time.
+
+There is one exception to the paragraph before: if you want to install \cgal header files to
+a standard location (such as `/usr/local/include`):
+
+    cmake .
+    make install
+
+For more advanced usage, we refer to Section \ref installation_configwithcmake.
 
 Note that even though \cgal is a header-only library, not all its dependencies
 are header-only. The libraries \sc{Gmp} and \sc{Mpfr}, for example, are not

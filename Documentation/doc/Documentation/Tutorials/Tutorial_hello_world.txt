@@ -266,7 +266,7 @@ given by a direction, which is hardwired in the class
 \section intro_concept Concepts and Models
 
 In the previous section, we wrote that "Any model of the CGAL concept
-Kernel provides what is required by the concept ConvexHullTraits_2".
+Kernel provides what is required by the concept `ConvexHullTraits_2`.
 
 A \em concept is a set of requirements on a type, namely that it has
 certain nested types, certain member functions, or comes with certain

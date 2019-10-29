@@ -18,6 +18,8 @@ supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
 | MacOS X | \sc{Gnu} `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
 |         | Apple `Clang` compiler versions 7.0.2 and 10.0.1 |
 
+<!-- Windows supported version are also listed on windows.html (must change both) -->
+
 Older versions of the above listed compilers might work, but no guarantee is provided.
 
 \section seccmake CMake
@@ -54,7 +56,7 @@ or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`h
 The \stl comes with the compiler, and as such no installation is required.
 
 \subsection thirdpartyBoost Boost
-<b>Version 1.48 or later</b>
+<b>Version 1.57 or later</b>
 
 The \sc{Boost} libraries are a set of portable C++ source libraries.
 Most of \sc{Boost} libraries are header-only, but a few of them need to be compiled or

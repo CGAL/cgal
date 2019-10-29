@@ -2,11 +2,13 @@
 \page installation Building %CGAL libraries (non header-only mode)
 \cgalAutoToc
 
-<b>Since \cgal version 5.0, \cgal is header-only be default, which means
+\cgalAdvancedBegin
+Since \cgal version 5.0, \cgal is header-only be default, which means
 that there is no need to compile \cgal or its libraries before it can be used.
 
 This page is for advanced users that have a good reason to still use the old way.
-If this is not your case, head over back to the page \ref general_intro.</b>
+If this is not your case, head over back to the page \ref general_intro.
+\cgalAdvancedEnd
 
 This page is a step-by-step description of how to configure, build, and (optionally) install \cgal
 in case you do not wish to use the - now enabled by default - header-only mode of \cgal.
