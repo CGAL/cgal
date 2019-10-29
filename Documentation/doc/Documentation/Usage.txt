@@ -113,13 +113,13 @@ or downloaded separately at
 there is no need to even configure it before using it. Programs using \cgal (examples, tests, demos, etc.)
 are instead configured using CMake and \cgal will be configured at the same time.
 
-There is one exception to the paragraph before: if you want to install \cgal header files to
+There is one exception to the last paragraph: if you want to install \cgal header files to
 a standard location (such as `/usr/local/include`):
 
     cmake .
     make install
 
-For more advanced usage, we refer to Section \ref installation_configwithcmake.
+For more advanced installations, we refer to Section \ref installation_configwithcmake.
 
 Note that even though \cgal is a header-only library, not all its dependencies
 are header-only. The libraries \sc{Gmp} and \sc{Mpfr}, for example, are not
