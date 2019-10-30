@@ -391,19 +391,23 @@ private:
 
   bool is_e_strong_in_DA(const edge_descriptor e) const
   {
-    return std::abs(get(dihedral_angles_, e)) >= theta_e_;
+    const double dh = std::abs(get(dihedral_angles_, e));
+    return (dh >= theta_e_ && (!use_upper_bound_on_DA_ || dh <= 180. - theta_e_));
   }
   bool is_f_strong_in_DA(const edge_descriptor e) const
   {
-    return std::abs(get(dihedral_angles_, e)) >= theta_f_;
+    const double dh = std::abs(get(dihedral_angles_, e));
+    return (dh >= theta_f_ && (!use_upper_bound_on_DA_ || dh <= 180. - theta_f_));
   }
   bool is_k_strong_in_DA(const edge_descriptor e) const
   {
-    return std::abs(get(dihedral_angles_, e)) >= theta_k_;
+    const double dh = std::abs(get(dihedral_angles_, e));
+    return (dh >= theta_k_ && (!use_upper_bound_on_DA_ || dh <= 180. - theta_k_));
   }
   bool is_unconditionally_strong_in_DA(const edge_descriptor e) const
   {
-    return std::abs(get(dihedral_angles_, e)) >= theta_F_;
+    const double dh = std::abs(get(dihedral_angles_, e));
+    return (dh >= theta_F_ && (!use_upper_bound_on_DA_ || dh <= 180. - theta_F_));
   }
   bool is_unconditionally_strong_in_DA(const vertex_descriptor v) const
   {
@@ -962,6 +966,7 @@ private:
 public:
   void tag_sharp_edges(const FT theta_F = 65, // all angles in degrees
                        const FT theta_f = 10,
+                       const bool use_upper_bound_on_DA = false,
                        const FT theta_D = 60,
                        const FT theta_T = 40,
                        const FT theta_t = 20,
@@ -970,6 +975,9 @@ public:
                        int k = 5)
   {
     std::cout << "Tagging sharp edges..." << std::endl;
+
+    use_upper_bound_on_DA_ = use_upper_bound_on_DA;
+    std::cout << "Use upper bound on DA? " << use_upper_bound_on_DA << std::endl;
 
     initialize_bounds(theta_F, theta_f, theta_D, theta_T, theta_t, theta_e, theta_k, k);
     initialize_maps();
@@ -1109,6 +1117,8 @@ private:
   double theta_T_;
 
   int k_;
+
+  bool use_upper_bound_on_DA_;
 };
 
 } // end namespace internal
@@ -1140,8 +1150,9 @@ void detect_sharp_edges_pp(const FaceRange& /*faces*/,
   Detector detector(pmesh, vpm, traits, edge_is_feature_map);
 
   const double weak_DA_in_deg = choose_parameter(get_parameter(np, internal_np::weak_dihedral_angle), 10.);
+  const bool use_upper_bound = choose_parameter(get_parameter(np, internal_np::use_upper_DA_bound), false);
 
-  detector.tag_sharp_edges(strong_DA_in_deg, weak_DA_in_deg);
+  detector.tag_sharp_edges(strong_DA_in_deg, weak_DA_in_deg, use_upper_bound);
 }
 
 template <typename PolygonMesh,
@@ -1154,6 +1165,17 @@ void detect_sharp_edges_pp(PolygonMesh& pmesh,
                            const CGAL_PMP_NP_CLASS& np)
 {
   return detect_sharp_edges_pp(faces(pmesh), pmesh, strong_DA_in_deg, edge_is_feature_map, np);
+}
+
+template <typename PolygonMesh,
+          typename FT,
+          typename EdgeIsFeatureMap>
+void detect_sharp_edges_pp(PolygonMesh& pmesh,
+                           const FT strong_DA_in_deg,
+                           EdgeIsFeatureMap edge_is_feature_map)
+{
+  return detect_sharp_edges_pp(faces(pmesh), pmesh, strong_DA_in_deg, edge_is_feature_map,
+                               CGAL::parameters::all_default());
 }
 
 } // end namespace experimental

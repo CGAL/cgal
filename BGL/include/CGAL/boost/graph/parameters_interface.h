@@ -86,6 +86,7 @@ CGAL_add_named_parameter(erase_all_duplicates_t, erase_all_duplicates, erase_all
 CGAL_add_named_parameter(require_same_orientation_t, require_same_orientation, require_same_orientation)
 CGAL_add_named_parameter(face_size_map_t, face_size_map, face_size_map)
 CGAL_add_named_parameter(weak_dihedral_angle_t, weak_dihedral_angle, weak_dihedral_angle)
+CGAL_add_named_parameter(use_upper_DA_bound_t, use_upper_DA_bound, use_upper_DA_bound)
 CGAL_add_named_parameter(snapping_tolerance_t, snapping_tolerance, snapping_tolerance)
 CGAL_add_named_parameter(use_safety_constraints_t, use_safety_constraints, use_safety_constraints)
 CGAL_add_named_parameter(use_angle_smoothing_t, use_angle_smoothing, use_angle_smoothing)
