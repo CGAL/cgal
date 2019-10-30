@@ -246,7 +246,7 @@ private:
     std::map<double, Vector> sorted_eigenvalues;
     for(int i=0; i<3; ++i)
     {
-      CGAL_assertion(eigen_solver.eigenvalues()[i] >= - std::numeric_limits<double>::epsilon());
+      CGAL_assertion(eigen_solver.eigenvalues()[i] >= - 100 * std::numeric_limits<double>::epsilon());
       sorted_eigenvalues.insert(std::make_pair(eigen_solver.eigenvalues()[i],
                                                gt_.construct_vector_3_object()(eigen_solver.eigenvectors()(0, i),
                                                                                eigen_solver.eigenvectors()(1, i),
