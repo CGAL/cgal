@@ -170,12 +170,31 @@ int main() {
         Interval d(0,inf);
         // For CGAL's purposes, [0,0]*anything is 0, but we tolerate larger intervals if they can be produced faster.
         for (Interval I : { all*zero, zero*all, all*0., 0.*all, b*zero, zero*b, -b*zero, zero*-b, c*zero, zero*c, -c*zero, zero*-c })
+        {
+          //std::cout << I << '\n';
           assert(I.inf()<=0 && I.sup()>=0);
+        }
         // This should be [0,inf], but again we tolerate more.
         for (Interval I : { a*b, b*a, -a*-b, -b*-a, d*d, -d*-d })
+        {
+          //std::cout << I << '\n';
           assert(I.inf()<=0 && I.sup()==inf);
+        }
+        for (Interval I : { -a*b, -b*a, a*-b, b*-a, -d*d, d*-d })
+        {
+          //std::cout << I << '\n';
+          assert(I.inf()==-inf && I.sup()>=0);
+        }
         for (Interval I : { all*a, a*all, all*-a, -a*all })
+        {
+          //std::cout << I << '\n';
           assert(I.inf()==-inf && I.sup()==inf);
+        }
+        for (Interval I : { all*d, d*all, all*-d, -d*all })
+        {
+          //std::cout << I << '\n';
+          assert(I.inf()==-inf && I.sup()==inf);
+        }
     }
     {// external functions on Intervals
      // functions (abs, square, sqrt, pow)

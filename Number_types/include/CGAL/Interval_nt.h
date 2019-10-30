@@ -639,6 +639,7 @@ private:
     return IA (IA_opacify128(r));
 # endif
 #else
+    // TODO: try to move some NaN tests out of the hot path (test a.inf()>0 instead of >=0?).
     if (a.inf() >= 0.0)					// a>=0
     {
       // b>=0     [a.inf()*b.inf(); a.sup()*b.sup()]
@@ -652,7 +653,8 @@ private:
         if (b.sup() < 0.0)
           bb = a.inf();
       }
-      return IA(-CGAL_IA_MUL(aa, -b.inf()), CGAL_IA_MUL(bb, b.sup()));
+      double r = (b.sup() == 0) ? 0. : CGAL_IA_MUL(bb, b.sup()); // In case bb is infinite, avoid NaN.
+      return IA(-CGAL_IA_MUL(aa, -b.inf()), r);
     }
     else if (a.sup()<=0.0)				// a<=0
     {
@@ -663,9 +665,10 @@ private:
       if (b.inf() < 0.0)
       {
         aa=bb;
-        if (b.sup() < 0.0)
+        if (b.sup() <= 0.0)
           bb=a.sup();
       }
+      else if (b.sup() <= 0) return 0.; // In case a has an infinite bound, avoid NaN.
       return IA(-CGAL_IA_MUL(-bb, b.sup()), CGAL_IA_MUL(-aa, -b.inf()));
     }
     else						// 0 \in a
