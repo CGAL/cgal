@@ -793,6 +793,10 @@ private:
     int counter = 0; // @tmp
     for(edge_descriptor e : edges(mesh_))
     {
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+      std::cout << std::endl << "---- Evaluate edge " << e << std::endl;
+#endif
+
       const bool is_qs_edge = is_quasi_strong(e);
       put(candidate_edges_, e, is_qs_edge);
 
@@ -810,7 +814,7 @@ private:
     }
 
 #ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
-    std::cout << counter << " candidate edges" << std::endl;
+    std::cout << counter << " initial candidate edges" << std::endl;
     print_candidate_edges("results/all_unfiltered_sharp_edges.polylines.txt");
 
     for(vertex_descriptor v : vertices(mesh_))
@@ -995,6 +999,10 @@ public:
     do
     {
       removed_some_halfedges = false;
+
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+    std::cout << std::endl << "Iteration: " << iter << std::endl;
+#endif
 
       std::stringstream oss_i;
       oss_i << "results/iter_" << iter++ << "_sharp_edges.polylines.txt" << std::ends;
