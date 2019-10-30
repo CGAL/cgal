@@ -136,7 +136,7 @@ public:
 
   static std::size_t hash_value(const T* p) {
 
-    std::size_t shift = internal::rounded_down_log2(sizeof(p));
+    constexpr std::size_t shift = internal::rounded_down_log2(sizeof(p));
     return reinterpret_cast<std::size_t>(p) >> shift; // AF:  was: / sizeof(T);
   }
 
