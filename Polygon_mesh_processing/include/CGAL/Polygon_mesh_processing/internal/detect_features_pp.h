@@ -553,7 +553,7 @@ private:
                         second_h = boost::graph_traits<PolygonMesh>::null_halfedge();
     for(halfedge_descriptor other_h : CGAL::halfedges_around_source(h, mesh_))
     {
-      if(get(candidate_edges_, edge(other_h, mesh_)))
+      if(other_h != h && get(candidate_edges_, edge(other_h, mesh_)))
       {
         if(second_h == boost::graph_traits<PolygonMesh>::null_halfedge())
         {
