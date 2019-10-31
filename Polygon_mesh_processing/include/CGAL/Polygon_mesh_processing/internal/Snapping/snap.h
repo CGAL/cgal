@@ -701,12 +701,13 @@ void find_splittable_edge(const UniqueVertex& unique_vertex,
 
   typedef typename GT::FT                                                   FT;
   typedef typename boost::property_traits<VPM>::value_type                  Point;
+  typedef typename boost::property_traits<VPM>::reference                   Point_ref;
 
   typedef typename AABBTree::AABB_traits                                    AABB_traits;
 
   CGAL_assertion(!unique_vertex.first.empty());
 
-  const Point& query = get(vpms, unique_vertex.first.front()); // by construction the whole range has the same position
+  const Point_ref query = get(vpms, unique_vertex.first.front()); // by construction the whole range has the same position
   const FT sq_tolerance = CGAL::square(unique_vertex.second);
 
   // use the source halfedge as hint
@@ -841,15 +842,28 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
   // of the third p oint of the face 'f' incident to 'e'
   CGAL_precondition(is_triangle_mesh(pmt));
 
-  std::size_t snapped_n = 0;
-
   VPM vpms = choose_parameter(get_parameter(nps, internal_np::vertex_point), get_property_map(vertex_point, pms));
   VPM vpmt = choose_parameter(get_parameter(npt, internal_np::vertex_point), get_property_map(vertex_point, pmt));
 
   const GT gt = choose_parameter(get_parameter(nps, internal_np::geom_traits), GT());
 
   // start by snapping vertices together to simplify things
-  snapped_n = snap_vertex_range_onto_vertex_range(source_hrange, pms, target_hrange, pmt, tol_pmap, nps, npt);
+  std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > stitchable_pairs;
+
+  std::size_t snapped_n = snap_vertex_range_onto_vertex_range(source_hrange, pms, target_hrange, pmt,
+                                                              tol_pmap, std::back_inserter(stitchable_pairs),
+                                                              nps, npt);
+
+  typedef CGAL::dynamic_halfedge_property_t<bool>                                Halfedge_bool_tag;
+  typedef typename boost::property_map<TriangleMesh, Halfedge_bool_tag>::type    Invalid_halfedge;
+
+  Invalid_halfedge locked_target_halfedges = get(Halfedge_bool_tag(), pmt);
+
+  for(const halfedge_descriptor ht : target_hrange) // still unsure about dynamic pmaps default values...
+    put(locked_target_halfedges, ht, false);
+
+  for(const auto& stitchable_pair : stitchable_pairs)
+    put(locked_target_halfedges, stitchable_pair.second, true);
 
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "Snapping vertices to edges. Range sizes: "
@@ -931,6 +945,9 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
   for(halfedge_descriptor hd : target_hrange)
   {
     CGAL_precondition(is_border(edge(hd, pmt), pmt));
+    if(get(locked_target_halfedges, hd))
+      continue;
+
     aabb_tree.insert(Primitive(edge(hd, pmt), pmt, vpmt));
   }
 
