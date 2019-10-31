@@ -29,6 +29,7 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Dynamic_property_map.h>
@@ -585,13 +586,18 @@ private:
     edge_descriptor first_e = edge(first_h, mesh_);
     edge_descriptor second_e = edge(second_h, mesh_);
 
+    const bool cond_1 = is_sharp_corner(source(h, mesh_)) || turning_angle(first_h, second_h) <= theta_T_;
+    const bool cond_2 = !is_unconditionally_strong_in_DA(first_e) || !is_unconditionally_strong_in_DA(second_e);
+
 #ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
-    std::cout << ((is_sharp_corner(source(h, mesh_)) || turning_angle(first_h, second_h) > theta_T_) &&
-                  (!is_unconditionally_strong_in_DA(first_e) || !is_unconditionally_strong_in_DA(second_e))) << std::endl;
+    std::cout << "valence 2, cond_1/2: " << cond_1 << " " << cond_2 << std::endl;
+    std::cout << "sharp: " << is_sharp_corner(source(h, mesh_)) << std::endl;
+    std::cout << "turning angle: " << turning_angle(first_h, second_h) << std::endl;
+    std::cout << "u_DA_1: " << is_unconditionally_strong_in_DA(first_e)
+              << " u_DA_2: " << is_unconditionally_strong_in_DA(second_e) << std::endl;
 #endif
 
-    return ((is_sharp_corner(source(h, mesh_)) || turning_angle(first_h, second_h) > theta_T_) &&
-            (!is_unconditionally_strong_in_DA(first_e) || !is_unconditionally_strong_in_DA(second_e)));
+    return (cond_1 && cond_2);
   }
 
   bool has_incident_unconditionally_strong_in_DA_incident_edges(const vertex_descriptor v) const
@@ -716,11 +722,34 @@ private:
   bool is_salient_curve(const halfedge_descriptor start_h,
                         const halfedge_descriptor last_h) const
   {
-    if(is_obscure_end_halfedge(start_h) || is_obscure_end_halfedge(opposite(last_h, mesh_)))
-      return false;
+
 
     // both end edges are non-obscure
     return true;
+  }
+
+  bool is_negligible_curve(const std::list<halfedge_descriptor>& curve_halfedges,
+                           const double feature_length) const
+  {
+//    const halfedge_descriptor start_h = curve_halfedges.front();
+//    const halfedge_descriptor last_h = curve_halfedges.back();
+//    bool is_start_h_incident = is_semi_joint(start_h) || is_multi_joint(start_h);
+//    bool is_last_h_incident = is_semi_joint(last_h) || is_multi_joint(last_h);
+
+    // @tentative Below is done not to remove small features incident to other features,
+    // with the imaginary case of a slim paralleliped. Keep?
+//    std::cout << "Incidence: " << is_start_h_incident << " " << is_last_h_incident << std::endl;
+//    if(is_start_h_incident || is_last_h_incident)
+//      continue;
+
+    double curve_length = 0.;
+    for(halfedge_descriptor h : curve_halfedges)
+    {
+      curve_length += CGAL::sqrt(CGAL::squared_distance(get(vpmap_, source(h, mesh_)),
+                                                        get(vpmap_, target(h, mesh_))));
+    }
+
+    return curve_length <= feature_length;
   }
 
   bool is_obscure_curve(const std::list<halfedge_descriptor>& curve_halfedges,
@@ -735,23 +764,26 @@ private:
 
     const bool is_closed_curve = (target(last_h, mesh_) == source(start_h, mesh_));
     if(is_closed_curve)
-      return false; // @tentative (curve_halfedges.size() <= k_); // consider a closed curve salient only if it's long enough
-
-    if(is_salient_curve(start_h, last_h))
       return false;
 
     const halfedge_descriptor last_h_opp = opposite(last_h, mesh_);
     const bool is_start_h_end_obscure = is_obscure_end_halfedge(start_h);
     const bool is_last_h_end_obscure = is_obscure_end_halfedge(last_h_opp);
+    const bool is_start_h_dangling = is_dangling(start_h);
+    const bool is_last_h_dangling = is_dangling(last_h_opp);
 
 #ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
     std::cout << "start/last: obscurity? " << is_start_h_end_obscure << " " << is_last_h_end_obscure << std::endl;
-    std::cout << "start/Ast: danglingness? " << is_dangling(start_h) << " " << is_dangling(last_h_opp) << std::endl;
+    std::cout << "start/last: danglingness? " << is_start_h_dangling << " " << is_last_h_dangling << std::endl;
     std::cout << "over DAs #: " << number_of_edges_with_DAs_over_threshold << std::endl;
 #endif
 
+    // If neither ends are obscure, the curve is salient and it is not obscure
+    if(!is_start_h_end_obscure && !is_last_h_end_obscure)
+      return false;
+
     const bool cond_1 = ((is_start_h_end_obscure && is_last_h_end_obscure) ||
-                         is_dangling(start_h) || is_dangling(last_h_opp)) && // @fixme xor?
+                         is_start_h_dangling || is_last_h_dangling) && // @fixme xor?
                         number_of_edges_with_DAs_over_threshold <= k_;
 #ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
     std::cout << "thus cond_1: " << cond_1 << std::endl;
@@ -776,8 +808,10 @@ private:
     return cond_2;
   }
 
-  bool is_semi_salient_curve(const halfedge_descriptor start_h, const halfedge_descriptor last_h) const
+  bool is_semi_salient_curve(const halfedge_descriptor start_h,
+                             const halfedge_descriptor last_h) const
   {
+    // @cache
     return !is_salient_curve(start_h, last_h) && !is_obscure_curve(start_h, last_h);
   }
 
@@ -852,6 +886,47 @@ private:
     return boost::graph_traits<PolygonMesh>::null_halfedge();
   }
 
+  halfedge_descriptor prev_candidate_edge(const halfedge_descriptor in_h) const
+  {
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+    std::cout << "walking (backwwards) through: " << source(in_h, mesh_) << " valence " << get(candidate_valence_, source(in_h, mesh_)) << std::endl;
+#endif
+    CGAL_precondition(get(candidate_valence_, source(in_h, mesh_)) == 2);
+
+    const edge_descriptor in_e = edge(in_h, mesh_);
+    for(halfedge_descriptor h : CGAL::halfedges_around_target(source(in_h, mesh_), mesh_))
+    {
+      if(edge(h, mesh_) == in_e)
+        continue;
+
+      if(get(candidate_edges_, edge(h, mesh_)))
+      {
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+        std::cout << "onto " << edge(h, mesh_) << std::endl;
+#endif
+        return h;
+      }
+    }
+
+    CGAL_assertion(false);
+    return boost::graph_traits<PolygonMesh>::null_halfedge();
+  }
+
+  void untag_curve(const std::list<halfedge_descriptor>& curve_halfedges)
+  {
+    for(halfedge_descriptor h : curve_halfedges)
+    {
+      put(candidate_edges_, edge(h, mesh_), false);
+      CGAL_assertion(get(candidate_valence_, source(h, mesh_)) > 0);
+      put(candidate_valence_, source(h, mesh_), get(candidate_valence_, source(h, mesh_)) - 1);
+    }
+
+    const halfedge_descriptor last_h = curve_halfedges.back();
+
+    CGAL_assertion(get(candidate_valence_, target(last_h, mesh_)) > 0);
+    put(candidate_valence_, target(last_h, mesh_), get(candidate_valence_, target(last_h, mesh_)) - 1);
+  }
+
   void walk_curve(const halfedge_descriptor start_h,
                   std::list<halfedge_descriptor>& curve_halfedges,
                   int& number_of_edges_with_DAs_over_threshold) const
@@ -866,10 +941,10 @@ private:
 #endif
 
       CGAL_assertion(get(candidate_edges_, edge(curr_h, mesh_)));
+
       curve_halfedges.push_back(curr_h);
 
       edge_descriptor curr_e = edge(curr_h, mesh_);
-
       if(is_k_strong_in_DA(curr_e))
         ++number_of_edges_with_DAs_over_threshold;
 
@@ -908,10 +983,174 @@ private:
     }
   }
 
-  void initialize_bounds(const FT theta_F, const FT theta_f, const FT theta_D, const FT theta_T,
-                         const FT theta_t, const FT theta_e, const FT theta_k, int k)
+  void trim_candidate_list(const double feature_length)
+  {
+    int iter = 0;
+
+    bool removed_some_halfedges;
+    do
+    {
+      removed_some_halfedges = false;
+
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+    std::cout << std::endl << "Iteration: " << iter << std::endl;
+#endif
+
+      std::stringstream oss_i;
+      oss_i << "results/iter_" << iter++ << "_sharp_edges.polylines.txt" << std::ends;
+      print_candidate_edges(oss_i.str());
+
+      // collect obscure end-edges from quasi-strong edges
+      std::unordered_set<halfedge_descriptor> obscure_end_halfedges;
+      for(halfedge_descriptor h : halfedges(mesh_))
+      {
+        // @cache
+        // @tentative check if the halfedge belongs to a small cycle (e.g. size <= k_ ?), and if so, untag the full cycle
+        if(get(candidate_edges_, edge(h, mesh_)) && is_obscure_end_halfedge(h))
+          obscure_end_halfedges.insert(h);
+      }
+
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+      std::cout << obscure_end_halfedges.size() << " obscure end halfedges" << std::endl;
+#endif
+
+      // while there are still obscure end-edges left
+      while(!obscure_end_halfedges.empty())
+      {
+        // traverse curve
+        halfedge_descriptor start_h = *(obscure_end_halfedges.begin());
+        obscure_end_halfedges.erase(obscure_end_halfedges.begin());
+
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+        std::cout << "-----" << std::endl;
+        std::cout << "start at: " << edge(start_h, mesh_) << " ["
+                                  << get(vpmap_, source(start_h, mesh_)) << " "
+                                  << get(vpmap_, target(start_h, mesh_)) << "]" << std::endl;
+#endif
+
+        // check if this is still a candidate or it's been cleaned up
+        // simpler than removing the end edge of obscure curves (which wouldn't be enough in any case:
+        // imagine a triple point with one edge being uncandidated, then surviving start edges
+        // can now be in the middle of an obscure curve)
+        if(!get(candidate_edges_, edge(start_h, mesh_)))
+           continue;
+
+        std::list<halfedge_descriptor> curve_halfedges;
+        int number_of_edges_with_DAs_over_threshold = 0;
+
+        walk_curve(start_h, curve_halfedges, number_of_edges_with_DAs_over_threshold);
+
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+        std::cout << "~~~~~> Curve has length: " << curve_halfedges.size() << std::endl;
+#endif
+
+        // check if the curve is obscure
+        if(is_negligible_curve(curve_halfedges, feature_length) ||
+           is_obscure_curve(curve_halfedges, number_of_edges_with_DAs_over_threshold))
+        {
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+          std::cout << "Obscure curve!!" << std::endl;
+#endif
+
+          untag_curve(curve_halfedges);
+
+          removed_some_halfedges = true;
+        }
+        else
+        {
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+          std::cout << "Curve is NOT obscure!!" << std::endl;
+#endif
+        }
+      }
+    }
+    while(removed_some_halfedges); // while removed halfedges
+
+    print_candidate_edges("results/sharp_edges_after_trimming.polylines.txt");
+  }
+
+  // Curves with length <= feature_length are removed
+  //
+  // @tentative, also bound the number of edges? Immediately lose some edges on e.g. fandisk that are
+  // curves of length '3' and actual sharp edges
+  void remove_small_features(const double feature_length)
+  {
+    std::cout << "Remove small cycles" << std::endl;
+
+    Edge_bool_pmap visited_edges = get(Edge_bool_tag(), mesh_);
+
+    // starts by tagging all curves with ends (non cycles)
+    for(halfedge_descriptor start_h : halfedges(mesh_))
+    {
+      if(!get(candidate_edges_, edge(start_h, mesh_)) ||
+         get(visited_edges, edge(start_h, mesh_)) ||
+         !is_end_halfedge(start_h))
+        continue;
+
+      std::cout << "Start a new curve at " << edge(start_h, mesh_) << std::endl;
+
+      std::list<halfedge_descriptor> curve_halfedges;
+      int number_of_edges_with_DAs_over_threshold = 0;
+      walk_curve(start_h, curve_halfedges, number_of_edges_with_DAs_over_threshold);
+
+      double curve_length = 0.;
+      for(const halfedge_descriptor h : curve_halfedges)
+      {
+        put(visited_edges, edge(h, mesh_), true);
+
+        curve_length += CGAL::sqrt(CGAL::squared_distance(get(vpmap_, source(h, mesh_)),
+                                                          get(vpmap_, target(h, mesh_))));
+
+      }
+
+      std::cout << "curve of length: " << curve_length << " (bound: " << feature_length
+                << ") made of " << curve_halfedges.size() << " edges" << std::endl;
+
+      if(curve_length <= feature_length)
+        untag_curve(curve_halfedges);
+    }
+
+    // Now, loops are left
+    for(halfedge_descriptor start_h : halfedges(mesh_))
+    {
+      if(!get(candidate_edges_, edge(start_h, mesh_)) || get(visited_edges, edge(start_h, mesh_)))
+        continue;
+
+      std::cout << "Start a new cycle at " << edge(start_h, mesh_) << std::endl;
+
+      // simplified version of 'walk_curve' since we know these are cycles
+      std::list<halfedge_descriptor> curve_halfedges;
+
+      halfedge_descriptor curr_h = start_h;
+      do
+      {
+        curve_halfedges.push_back(curr_h);
+        curr_h = next_candidate_edge(curr_h);
+      }
+      while (curr_h != start_h);
+
+      double curve_length = 0.;
+      for(halfedge_descriptor h : curve_halfedges)
+      {
+        put(visited_edges, edge(curr_h, mesh_), true);
+
+        curve_length += CGAL::sqrt(CGAL::squared_distance(get(vpmap_, source(h, mesh_)),
+                                                          get(vpmap_, target(h, mesh_))));
+      }
+
+      std::cout << "cycle of length: " << curve_length << " (bound: " << feature_length
+                << ") made of " << curve_halfedges.size() << " edges" << std::endl;
+
+      if(curve_length <= feature_length)
+        untag_curve(curve_halfedges);
+    }
+  }
+
+  void initialize_angle_bounds(const FT theta_F, const FT theta_f, const FT theta_D, const FT theta_T,
+                               const FT theta_t, const FT theta_e, const FT theta_k, int k)
   {
     std::cout << "Initialize bounds" << std::endl;
+
     std::cout << "theta_F: " << theta_F << std::endl;
     std::cout << "theta_f: " << theta_f << std::endl;
     std::cout << "theta_D: " << theta_D << std::endl;
@@ -972,11 +1211,13 @@ private:
   }
 
 public:
-  void tag_sharp_edges(const FT theta_F = 65, // all angles in degrees
-                       const FT theta_f = 10,
-                       const bool use_upper_bound_on_DA = false,
+  void tag_sharp_edges(const double feature_length,
+                       const bool use_upper_bound_on_DA,
+                       // all angles in degrees
+                       const FT theta_F,
+                       const FT theta_f,
                        const FT theta_D = 60,
-                       const FT theta_T = 40,
+                       const FT theta_T = 120,
                        const FT theta_t = 20,
                        const FT theta_e = 25,
                        const FT theta_k = 50,
@@ -985,108 +1226,22 @@ public:
     std::cout << "Tagging sharp edges..." << std::endl;
 
     use_upper_bound_on_DA_ = use_upper_bound_on_DA;
-    std::cout << "Use upper bound on DA? " << use_upper_bound_on_DA << std::endl;
 
-    initialize_bounds(theta_F, theta_f, theta_D, theta_T, theta_t, theta_e, theta_k, k);
+    initialize_angle_bounds(theta_F, theta_f, theta_D, theta_T, theta_t, theta_e, theta_k, k);
+
     initialize_maps();
 
-    // build list of incident candidate halfedges at each vertex
-    tag_candidate_edges();
+    tag_candidate_edges(); // also builds a list of incident candidate halfedges at each vertex
 
-    int iter = 0;
+    trim_candidate_list(feature_length);
 
-    bool removed_some_halfedges;
-    do
-    {
-      removed_some_halfedges = false;
+    // In a post-phase, get rid of sharp polylines with a total length that is small
+    remove_small_features(feature_length);
 
-#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
-    std::cout << std::endl << "Iteration: " << iter << std::endl;
-#endif
-
-      std::stringstream oss_i;
-      oss_i << "results/iter_" << iter++ << "_sharp_edges.polylines.txt" << std::ends;
-      print_candidate_edges(oss_i.str());
-
-      // collect obscure end-edges from quasi-strong edges
-      std::unordered_set<halfedge_descriptor> obscure_end_halfedges;
-      for(halfedge_descriptor h : halfedges(mesh_))
-      {
-        // @cache
-        // @tentative check if the halfedge belongs to a small cycle (e.g. size <= k_ ?), and if so, untag the full cycle
-        if(get(candidate_edges_, edge(h, mesh_)) && is_obscure_end_halfedge(h))
-          obscure_end_halfedges.insert(h);
-      }
-
-#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
-      std::cout << obscure_end_halfedges.size() << " obscure end halfedges" << std::endl;
-#endif
-
-      // while there are still obscure end-edges left
-      while(!obscure_end_halfedges.empty())
-      {
-        // traverse curve
-        halfedge_descriptor start_h = *(obscure_end_halfedges.begin());
-        obscure_end_halfedges.erase(obscure_end_halfedges.begin());
-
-#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
-        std::cout << "-----" << std::endl;
-        std::cout << "start at: " << edge(start_h, mesh_) << " ["
-                                  << get(vpmap_, source(start_h, mesh_)) << " "
-                                  << get(vpmap_, target(start_h, mesh_)) << "]" << std::endl;
-#endif
-
-        // check if this is still a candidate or it's been cleaned up
-        // simpler than removing the end edge of obscure curves (which wouldn't be enough in any case:
-        // imagine a triple point with one edge being uncandidated, then surviving start edges
-        // can now be in the middle of an obscure curve)
-        if(!get(candidate_edges_, edge(start_h, mesh_)))
-           continue;
-
-        std::list<halfedge_descriptor> curve_halfedges;
-        int number_of_edges_with_DAs_over_threshold = 0;
-
-        walk_curve(start_h, curve_halfedges, number_of_edges_with_DAs_over_threshold);
-#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
-        std::cout << "~~~~~> Curve has length: " << curve_halfedges.size() << std::endl;
-#endif
-
-        // check if the curve is obscure
-        if(is_obscure_curve(curve_halfedges, number_of_edges_with_DAs_over_threshold))
-        {
-#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
-          std::cout << "Obscure curve!!" << std::endl;
-#endif
-
-          for(halfedge_descriptor h : curve_halfedges)
-          {
-            put(candidate_edges_, edge(h, mesh_), false);
-            CGAL_assertion(get(candidate_valence_, source(h, mesh_)) > 0);
-            put(candidate_valence_, source(h, mesh_), get(candidate_valence_, source(h, mesh_)) - 1);
-          }
-
-          const halfedge_descriptor last_h = curve_halfedges.back();
-
-          CGAL_assertion(get(candidate_valence_, target(last_h, mesh_)) > 0);
-          put(candidate_valence_, target(last_h, mesh_), get(candidate_valence_, target(last_h, mesh_)) - 1);
-
-          removed_some_halfedges = true;
-        }
-        else
-        {
-#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
-          std::cout << "Curve is NOT obscure!!" << std::endl;
-#endif
-        }
-      }
-    }
-    while(removed_some_halfedges); // while removed halfedges
-
+    // Mark remaining candidates halfedges as C1 discontinuities
 #ifndef SHARP_EDGES_IN_INDEPENDENT_FILES
     std::ofstream out("results/all_sharp_edges.polylines.txt");
 #endif
-
-    // mark remaining candidates halfedges as C1 discontinuities
     int counter = 0; // @tmp
     for(edge_descriptor e : edges(mesh_))
     {
@@ -1132,8 +1287,30 @@ private:
 
   int k_;
 
+  double feature_size_;
+
   bool use_upper_bound_on_DA_;
 };
+
+template <typename TriangleMesh, typename VPM, typename GeomTraits>
+double default_feature_length(const TriangleMesh& tmesh,
+                              const VPM vpmap,
+                              const GeomTraits& gt)
+{
+  const Bbox_3 bb = bbox(tmesh, CGAL::parameters::geom_traits(gt).vertex_point_map(vpmap));
+
+  const double bbox_diagonal = CGAL::sqrt(CGAL::square(bb.xmax() - bb.xmin()) +
+                                          CGAL::square(bb.ymax() - bb.ymin()) +
+                                          CGAL::square(bb.zmax() - bb.zmin()));
+
+  const double def_val = 0.01 * bbox_diagonal; // default filter is 1% of the bbox's diagonal
+
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+  std::cout << "default feature length: " << def_val << std::endl;
+#endif
+
+  return def_val;
+}
 
 } // end namespace internal
 
@@ -1158,15 +1335,21 @@ void detect_sharp_edges_pp(const FaceRange& /*faces*/,
                              get_const_property_map(CGAL::vertex_point, pmesh));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type                    GeomTraits;
-  GeomTraits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
 
   typedef typename internal::Detector<PolygonMesh, VPM, GeomTraits, EdgeIsFeatureMap>   Detector;
-  Detector detector(pmesh, vpm, traits, edge_is_feature_map);
+  Detector detector(pmesh, vpm, gt, edge_is_feature_map);
+
+  const double feature_length = internal::default_feature_length(pmesh, vpm, gt);
 
   const double weak_DA_in_deg = choose_parameter(get_parameter(np, internal_np::weak_dihedral_angle), 10.);
-  const bool use_upper_bound = choose_parameter(get_parameter(np, internal_np::use_upper_DA_bound), false);
+  const bool use_upper_bound_on_DA = choose_parameter(get_parameter(np, internal_np::use_upper_DA_bound), false);
 
-  detector.tag_sharp_edges(strong_DA_in_deg, weak_DA_in_deg, use_upper_bound);
+#ifdef CGAL_PMP_DETECT_FEATURES_PP_DEBUG
+  std::cout << "Use upper bound on DA? " << use_upper_bound_on_DA << std::endl;
+#endif
+
+  detector.tag_sharp_edges(feature_length, use_upper_bound_on_DA, strong_DA_in_deg, weak_DA_in_deg);
 }
 
 template <typename PolygonMesh,
