@@ -133,15 +133,15 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& hrange,
 template <typename PolygonMesh, typename GeomTraits>
 struct Snapping_pair
 {
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor       vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor     halfedge_descriptor;
   typedef typename GeomTraits::FT                                            FT;
 
-  Snapping_pair(const vertex_descriptor vs_, const vertex_descriptor vt_, const FT sq_dist_)
-    : vs(vs_), vt(vt_), sq_dist(sq_dist_)
+  Snapping_pair(const halfedge_descriptor hs_, const halfedge_descriptor ht_, const FT sq_dist_)
+    : hs(hs_), ht(ht_), sq_dist(sq_dist_)
   { }
 
-  vertex_descriptor vs;
-  vertex_descriptor vt;
+  halfedge_descriptor hs;
+  halfedge_descriptor ht;
   FT sq_dist;
 };
 
@@ -153,10 +153,12 @@ template <typename PolygonMesh, typename GeomTraits,
 struct Vertex_proximity_report
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor       vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor     halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor         edge_descriptor;
 
   typedef typename GeomTraits::FT                                            FT;
-  typedef typename boost::property_traits<SVPM>::value_type                  Point;
+  typedef typename boost::property_traits<SVPM>::reference                   SPoint_ref;
+  typedef typename boost::property_traits<TVPM>::reference                   TPoint_ref;
 
   Vertex_proximity_report(DistanceMultiIndexContainer& snapping_pairs,
                           const SVPM& svpm, const PolygonMesh& smesh,
@@ -166,21 +168,24 @@ struct Vertex_proximity_report
     :
       m_snapping_pairs(snapping_pairs),
       is_same_mesh((&smesh == &tmesh)),
-      svpm(svpm), tvpm(tvpm),
+      smesh(smesh), svpm(svpm),
+      tmesh(tmesh), tvpm(tvpm),
       tol_pmap(tol_pmap),
       gt(gt)
   { }
 
   void operator()(const Box& a, const Box& b)
   {
-    vertex_descriptor va = a.info();
-    vertex_descriptor vb = b.info();
+    const halfedge_descriptor ha = a.info();
+    const halfedge_descriptor hb = b.info();
+    const vertex_descriptor va = target(ha, smesh);
+    const vertex_descriptor vb = target(hb, tmesh);
 
-    if(is_same_mesh && va == vb)
+    if(is_same_mesh && ha == hb)
       return;
 
-    const Point sp = get(svpm, va);
-    const Point tp = get(tvpm, vb);
+    const SPoint_ref sp = get(svpm, va);
+    const TPoint_ref tp = get(tvpm, vb);
     const FT tol = get(tol_pmap, va);
 
     // Don't reject a '0' distance, it still needs to lock the points in place
@@ -197,14 +202,16 @@ struct Vertex_proximity_report
     if(res == CGAL::LARGER)
       return;
 
-    m_snapping_pairs.insert(Snapping_pair<PolygonMesh, GeomTraits>(va, vb, sq_dist));
+    m_snapping_pairs.insert(Snapping_pair<PolygonMesh, GeomTraits>(ha, hb, sq_dist));
   }
 
 private:
   DistanceMultiIndexContainer& m_snapping_pairs;
 
   const bool is_same_mesh;
+  const PolygonMesh& smesh;
   const SVPM& svpm;
+  const PolygonMesh& tmesh;
   const TVPM& tvpm;
   const ToleranceMap& tol_pmap;
   const GeomTraits& gt;
@@ -284,13 +291,14 @@ namespace experimental {
 //
 template <typename PolygonMesh,
           typename SourceHalfedgeRange, typename TargetHalfedgeRange,
-          typename ToleranceMap,
+          typename ToleranceMap, typename StitchableHalfedgesOutputIterator,
           typename SourceNamedParameters, typename TargetNamedParameters>
 std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& source_hrange,
                                                 PolygonMesh& smesh,
                                                 const TargetHalfedgeRange& target_hrange,
                                                 const PolygonMesh& tmesh,
                                                 const ToleranceMap& tol_pmap,
+                                                StitchableHalfedgesOutputIterator out,
                                                 const SourceNamedParameters& snp,
                                                 const TargetNamedParameters& tnp)
 {
@@ -300,11 +308,12 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
 
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, vertex_descriptor>     Box;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor>   Box;
 
   typedef typename GetVertexPointMap<PolygonMesh, SourceNamedParameters>::type        SVPM;
   typedef typename GetVertexPointMap<PolygonMesh, TargetNamedParameters>::const_type  TVPM;
   typedef typename boost::property_traits<TVPM>::value_type                           Point;
+  typedef typename boost::property_traits<TVPM>::reference                            Point_ref;
 
   typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
   typedef typename GT::FT                                                             FT;
@@ -340,22 +349,19 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
     if(!unique_vertices.insert(vd).second)
       continue; // if 'vd' appears multiple times on the border, move it only once
 
-    // only making the box a little larger, but the final tolerance is not changed
+    // this only makes the box a little larger to facilitate intersection computations,
+    // the final tolerance is not changed
     const double eps = 1.01 * CGAL::to_double(get(tol_pmap, vd));
 
     const Bbox_3 pb = gt.construct_bbox_3_object()(get(svpm, vd));
     const Bbox_3 b(pb.xmin() - eps, pb.ymin() - eps, pb.zmin() - eps,
                    pb.xmax() + eps, pb.ymax() + eps, pb.zmax() + eps);
-    boxes.push_back(Box(b, vd));
+    boxes.push_back(Box(b, hd));
   }
 
   std::vector<Box> target_boxes;
   for(halfedge_descriptor hd : target_hrange)
-  {
-    const vertex_descriptor vd = target(hd, tmesh);
-    const Point& p = get(tvpm, vd);
-    target_boxes.push_back(Box(gt.construct_bbox_3_object()(p), vd));
-  }
+    target_boxes.push_back(Box(gt.construct_bbox_3_object()(get(tvpm, target(hd, tmesh))), hd));
 
   // Use a multi index to sort easily by sources, targets, AND distance.
   // Then, look up the distances in increasing order, and snap whenever the source and the target
@@ -365,9 +371,9 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
     Snapping_pair,
     boost::multi_index::indexed_by<
       boost::multi_index::ordered_non_unique<
-        BOOST_MULTI_INDEX_MEMBER(Snapping_pair, vertex_descriptor, vs)>,
+        BOOST_MULTI_INDEX_MEMBER(Snapping_pair, halfedge_descriptor, hs)>,
       boost::multi_index::ordered_non_unique<
-        BOOST_MULTI_INDEX_MEMBER(Snapping_pair, vertex_descriptor, vt)>,
+        BOOST_MULTI_INDEX_MEMBER(Snapping_pair, halfedge_descriptor, ht)>,
       boost::multi_index::ordered_non_unique<
         BOOST_MULTI_INDEX_MEMBER(Snapping_pair, FT, sq_dist)>
     >
@@ -408,23 +414,36 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
   while(!container_by_dist.empty())
   {
     const Snapping_pair& sp = *(container_by_dist.begin());
-    const vertex_descriptor vs = sp.vs;
-    const vertex_descriptor vt = sp.vt;
+    const halfedge_descriptor hs = sp.hs;
+    const halfedge_descriptor ht = sp.ht;
     CGAL_assertion(sp.sq_dist >= prev);
     CGAL_assertion_code(prev = sp.sq_dist;)
 
+    const vertex_descriptor vs = target(hs, smesh);
+    const vertex_descriptor vt = target(ht, tmesh);
+
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "Snapping " /*<< vs*/ << " (" << get(svpm, vs) << ") "
-              << " to " /*<< vt*/ << " (" << get(tvpm, vt) << ") at dist: " << sp.sq_dist << std::endl;
+              << " to " /*<< vt*/ << " (" << get(tvpm, vt)
+              << ") at dist: " << sp.sq_dist << std::endl;
 #endif
 
-    // Collect all the source vertices projecting onto that target vertex
+    // Move the source vertex
    ++counter;
     put(svpm, vs, get(tvpm, vt));
 
     // 'vs' and 'vt' cannot be used anymore, remove them from the container
-    container_by_source.erase(vs);
-    container_by_target.erase(vt);
+    container_by_source.erase(hs);
+    container_by_target.erase(ht);
+
+    // Check if there's a match between the edges incident to 'vs' and 'vt',
+    // if so, make the halfedge untargettable for non-conformal snapping to avoid foldings
+    const halfedge_descriptor nhs = next(hs, smesh);
+    const halfedge_descriptor nht = next(ht, tmesh);
+    if(gt.equal_3_object()(get(svpm, source(hs, smesh)), get(tvpm, target(nht, tmesh))))
+      *out++ = std::make_pair(hs, nht);
+    if(gt.equal_3_object()(get(svpm, target(nhs, smesh)), get(tvpm, source(ht, tmesh))))
+      *out++ = std::make_pair(nhs, ht);
   }
 
 #ifdef CGAL_PMP_SNAP_DEBUG
@@ -432,6 +451,24 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
 #endif
 
   return counter;
+}
+
+template <typename PolygonMesh,
+          typename SourceHalfedgeRange, typename TargetHalfedgeRange,
+          typename ToleranceMap, typename StitchableHalfedgesOutputIterator,
+          typename SourceNamedParameters, typename TargetNamedParameters>
+std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& source_hrange,
+                                                PolygonMesh& smesh,
+                                                const TargetHalfedgeRange& target_hrange,
+                                                const PolygonMesh& tmesh,
+                                                const ToleranceMap& tol_pmap,
+                                                const SourceNamedParameters& snp,
+                                                const TargetNamedParameters& tnp)
+{
+  CGAL::Emptyset_iterator unused_output_iterator;
+
+  return snap_vertex_range_onto_vertex_range(source_hrange, smesh, target_hrange, tmesh,
+                                             tol_pmap, unused_output_iterator, snp, tnp);
 }
 
 template <typename PolygonMesh, typename SourceHalfedgeRange, typename TargetHalfedgeRange,
