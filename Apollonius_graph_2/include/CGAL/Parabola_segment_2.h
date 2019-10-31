@@ -75,9 +75,9 @@ public:
     return int(CGAL::sqrt(CGAL::to_double(tt) / 2));
   }
 
-  void generate_points(std::vector<Point_2>& p) const
+  void generate_points(std::vector<Point_2>& p,
+                       const FT STEP = FT(2)) const
   {
-    const FT STEP(2);
     FT s0, s1;
 
     s0 = t(p1);
