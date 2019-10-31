@@ -60,7 +60,7 @@ Note that \cgal is a header-only library, and there are therefore no `lib` or `d
 In this section we show how to compile a program that uses \cgal.
 The examples you find in these User Manual pages are not downloaded when you install \cgal
 with the Vcpkg library manager. You must download them separately from the following download page:
-<a href="https://github.com/CGAL/cgal/releases/CGAL-\cgalReleaseNumber/CGAL-\cgalReleaseNumber-examples.zip">CGAL-\cgalReleaseNumber-examples.zip</a>
+<a href="https://github.com/CGAL/cgal/releases/download/releases/CGAL-\cgalReleaseNumber/CGAL-\cgalReleaseNumber-examples.zip">CGAL-\cgalReleaseNumber-examples.zip</a>
 
 Assuming you have unzipped this file in your home directory `C:\Users\Me`,
 we will next compile an example from the 2D Triangulation package.
