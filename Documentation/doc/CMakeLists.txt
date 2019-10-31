@@ -253,10 +253,15 @@ if (NOT CGAL_CREATED_VERSION_NUM)
       set(CGAL_CREATED_VERSION_NUM "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
     endif()
   else()
-    #read version.h and get the line with CGAL_VERSION
-    file(STRINGS "${CGAL_ROOT}/include/CGAL/version.h" CGAL_VERSION_LINE REGEX "CGAL_VERSION ")
-    #extract release id
-    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.?[0-9]*" CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_LINE}")
+    if(EXISTS "${CGAL_ROOT}/doc/public_release_name")
+      file(STRINGS "${CGAL_ROOT}/doc/public_release_name" CGAL_VERSION_LINE)
+      string(REGEX REPLACE "CGAL-" "" CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_LINE}")
+    else()
+      #read version.h and get the line with CGAL_VERSION
+      file(STRINGS "${CGAL_ROOT}/include/CGAL/version.h" CGAL_VERSION_LINE REGEX "CGAL_VERSION ")
+      #extract release id
+      string(REGEX MATCH "[0-9]+\\.[0-9]+\\.?[0-9]*" CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_LINE}")
+    endif()
   endif()
 endif()
 
@@ -264,6 +269,7 @@ endif()
 # closely to the convoluted versioning code and can adapt without a
 # huge diff.
 set(CGAL_DOC_VERSION ${CGAL_CREATED_VERSION_NUM})
+message(CGAL_DOC_VERSION: ${CGAL_DOC_VERSION})
 
 ## generate how_to_cite files
 if(PYTHONINTERP_FOUND)
