@@ -4,7 +4,7 @@ Release History
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------
 
-Release date: October 2019
+Release date: November 2019
 
 ### General changes
 
@@ -18,6 +18,9 @@ Release date: October 2019
 - Since CGAL 4.9, CGAL can be used as a header-only library, with
   dependencies. Since CGAL 5.0, that is now the default, unless
   specified differently in the (optional) CMake configuration.
+- The section "Getting Started with CGAL" of the documentation has
+  been updated and reorganized.
+- The minimal version of Boost is now 1.57.0.
 
 
 ### [Polygonal Surface Reconstruction](https://doc.cgal.org/5.0/Manual/packages.html#PkgPolygonalSurfaceReconstruction) (new package)
