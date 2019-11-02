@@ -9,6 +9,9 @@
 #include "curve.h"
 #include "certificate.h"
 
+// predicate headers
+#include "high_level_predicates.h"
+
 #include <algorithm>
 #include <array>
 #include <vector>
@@ -222,9 +225,8 @@ template <>
 CInterval FrechetLight::getInterval<PointID>(Curve const& curve1, PointID const& center_id, Curve const& curve2, PointID seg_start, CInterval* outer) const
 {
     Interval outer_temp;
-    Interval* outer_pt = outer == nullptr ? nullptr : &outer_temp;
     Point point = curve1[center_id];
-    auto interval = IntersectionAlgorithm::intersection_interval(point, distance, curve2[seg_start], curve2[seg_start + 1], outer_pt);
+    auto interval = HLPred::intersection_interval(point, distance, curve2[seg_start], curve2[seg_start + 1]);
 
     if (outer != nullptr) {
 		//TODO change intersection_interval so that the outer interval is
