@@ -17,6 +17,7 @@ Interval intersection_interval(const Point& circle_center, distance_t radius, Po
 
 	std::vector<OutputType> intersections;
 	LLPred::IntersectionAlgorithm::intersection(circle_2, line_arc_2, std::back_inserter(intersections));
+	// TODO: do we have to make a projection onto the line here?
 
 	std::vector<distance_t> ratios;
 	for (auto const& intersection: intersections) {
