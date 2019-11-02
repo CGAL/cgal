@@ -51,7 +51,7 @@ void IntersectionAlgorithm::intersection(Circle const& circle, LineArc line_arc,
 	Point const& line_start = line_arc.start;
 	Point const& line_end = line_arc.end;
 	// This pointer is just here to avoid changing the code... it is of no use right now.
-	Interval* outer;
+	Interval* outer = nullptr;
 
     // The line can be represented as line_start + lambda * v
     const Point v = line_end - line_start;
