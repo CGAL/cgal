@@ -17,6 +17,8 @@
 #include <cstddef>
 #include <CGAL/Hilbert_sort_base.h>
 
+#include <boost/type_traits/is_convertible.hpp>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_invoke.h>
 #endif
@@ -69,11 +71,11 @@ namespace internal {
     };
 }
 
-template <class K>
+template <class K, class ConcurrencyTag>
 class Hilbert_sort_median_2
 {
 public:
-    typedef Hilbert_sort_median_2<K> Self;
+  typedef Hilbert_sort_median_2<K, ConcurrencyTag> Self;
     typedef K Kernel;
     typedef typename Kernel::Point_2 Point;
     
@@ -139,39 +141,46 @@ public:
     }
   };
   
-    template <int x, bool upx, bool upy, class RandomAccessIterator>
-    void sort (RandomAccessIterator begin, RandomAccessIterator end) const
-    {
-        const int y = (x + 1) % 2;
-        if (end - begin <= _limit) return;
-
-        RandomAccessIterator m0 = begin, m4 = end;
-
-#if defined( CGAL_LINKED_WITH_TBB) && ( ! defined (CGAL_NO_PARALLEL_SPATIAL_SORT) )
+  template <int x, bool upx, bool upy, class RandomAccessIterator>
+  void sort (RandomAccessIterator begin, RandomAccessIterator end, Parallel_tag) const
+  {
+#ifndef CGAL_LINKED_WITH_TBB 
+    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but TBB is unavailable.");
+#else  
+    const int y = (x + 1) % 2;
+    if (end - begin <= _limit) return;
+    
+    RandomAccessIterator m0 = begin, m4 = end;
+    
     if((end - begin) > 1024){
       RandomAccessIterator m1, m2, m3;
-        m2 = internal::hilbert_split (m0, m4, Cmp< x,  upx> (_k));
-        
-        tbb::parallel_invoke(Hilbert_split<RandomAccessIterator, Cmp< y,  upy> > (m1, m0, m2, Cmp< y,  upy> (_k)),
-                             Hilbert_split<RandomAccessIterator, Cmp< y, !upy> > (m3, m2, m4, Cmp< y, !upy> (_k)));
-
-        tbb::parallel_invoke(Recursive_sort<y, upy, upx, RandomAccessIterator> (*this, m0, m1),
-                             Recursive_sort<x, upx, upy, RandomAccessIterator> (*this, m1, m2),
-                             Recursive_sort<x, upx, upy, RandomAccessIterator> (*this, m2, m3),
-                             Recursive_sort<y,!upy,!upx, RandomAccessIterator> (*this, m3, m4));
+      m2 = internal::hilbert_split (m0, m4, Cmp< x,  upx> (_k));
+      
+      tbb::parallel_invoke(Hilbert_split<RandomAccessIterator, Cmp< y,  upy> > (m1, m0, m2, Cmp< y,  upy> (_k)),
+                           Hilbert_split<RandomAccessIterator, Cmp< y, !upy> > (m3, m2, m4, Cmp< y, !upy> (_k)));
+      
+      tbb::parallel_invoke(Recursive_sort<y, upy, upx, RandomAccessIterator> (*this, m0, m1),
+                           Recursive_sort<x, upx, upy, RandomAccessIterator> (*this, m1, m2),
+                           Recursive_sort<x, upx, upy, RandomAccessIterator> (*this, m2, m3),
+                           Recursive_sort<y,!upy,!upx, RandomAccessIterator> (*this, m3, m4));
     } else {
       recursive_sort<0, false, false>(begin, end);
     }
-#else
-    recursive_sort<0, false, false>(begin, end);
 #endif
-    }
+  }
 
-    template <class RandomAccessIterator>
-    void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
-    {
-        sort <0, false, false> (begin, end);
-    }
+  template <int x, bool upx, bool upy, class RandomAccessIterator>
+  void sort (RandomAccessIterator begin, RandomAccessIterator end, Sequential_tag) const
+   {
+    recursive_sort<0, false, false>(begin, end);
+  }
+  
+  template <class RandomAccessIterator>
+  void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
+  {
+    sort <0, false, false> (begin, end, ConcurrencyTag());
+  }
 };
 
 } // namespace CGAL

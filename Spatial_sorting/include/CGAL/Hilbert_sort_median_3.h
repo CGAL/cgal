@@ -17,6 +17,8 @@
 #include <cstddef>
 #include <CGAL/Hilbert_sort_base.h>
 
+#include <boost/type_traits/is_convertible.hpp>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_invoke.h>
 #endif
@@ -83,12 +85,12 @@ namespace internal {
     };
 }
 
-template <class K>
+template <class K, class ConcurrencyTag>
 class Hilbert_sort_median_3
 {
 public:
 
-  typedef Hilbert_sort_median_3<K> Self;
+  typedef Hilbert_sort_median_3<K, ConcurrencyTag> Self;
     typedef K Kernel;
     typedef typename Kernel::Point_3 Point;
 
@@ -163,15 +165,18 @@ public:
     }
   };
   
-    
+
   template <int x, bool upx, bool upy, bool upz, class RandomAccessIterator>
-  void sort (RandomAccessIterator begin, RandomAccessIterator end) const
+  void sort (RandomAccessIterator begin, RandomAccessIterator end, Parallel_tag) const
   {
+#ifndef CGAL_LINKED_WITH_TBB 
+  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+			     "Parallel_tag is enabled but TBB is unavailable.");
+#else  
     const int y = (x + 1) % 3, z = (x + 2) % 3;
     if ((end - begin) <= _limit) return;
 
     RandomAccessIterator m0 = begin, m8 = end;
-#if defined( CGAL_LINKED_WITH_TBB) && ( ! defined (CGAL_NO_PARALLEL_SPATIAL_SORT) )
     if((end - begin) > 1024){
       RandomAccessIterator m1, m2, m3, m4, m5, m6, m7;
       m4 = internal::hilbert_split(m0, m8, Cmp<x, upx>(_k));
@@ -197,15 +202,19 @@ public:
     } else {
       recursive_sort<0, false, false, false>(begin, end);
     }
-#else
-    recursive_sort<0, false, false, false>(begin, end);
-#endif        
+#endif
   }
-  
+   
+  template <int x, bool upx, bool upy, bool upz, class RandomAccessIterator>
+  void sort (RandomAccessIterator begin, RandomAccessIterator end, Sequential_tag) const
+  {
+    recursive_sort<0, false, false, false>(begin, end);
+  }
+    
     template <class RandomAccessIterator>
     void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
     {
-        sort <0, false, false, false> (begin, end);
+      sort <0, false, false, false> (begin, end, ConcurrencyTag());
     }
 };
 

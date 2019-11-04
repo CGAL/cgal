@@ -29,7 +29,7 @@ namespace CGAL {
 
 namespace internal {
 
-    template <class RandomAccessIterator, class Policy, class Kernel>
+    template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator, class Policy, class Kernel>
     void spatial_sort (
                        RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, 
@@ -41,7 +41,7 @@ namespace internal {
     {
       typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
       typedef typename Iterator_traits::difference_type Diff_t;
-      typedef Hilbert_sort_2<Kernel, Policy> Sort;
+      typedef Hilbert_sort_2<Kernel, Policy, ConcurrencyTag> Sort;
         boost::rand48 random;
         boost::random_number_generator<boost::rand48, Diff_t> rng(random);
         CGAL::cpp98::random_shuffle(begin,end,rng);
@@ -54,7 +54,7 @@ namespace internal {
 				threshold_multiscale, ratio)) (begin, end);
     }
 
-    template <class RandomAccessIterator, class Policy, class Kernel>
+    template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator, class Policy, class Kernel>
     void spatial_sort (
                        RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, 
@@ -66,7 +66,7 @@ namespace internal {
     {
       typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
       typedef typename Iterator_traits::difference_type Diff_t;
-      typedef Hilbert_sort_3<Kernel, Policy> Sort;
+      typedef Hilbert_sort_3<Kernel, Policy, ConcurrencyTag> Sort;
         boost::rand48 random;
         boost::random_number_generator<boost::rand48, Diff_t> rng(random);
         CGAL::cpp98::random_shuffle(begin,end, rng);
@@ -79,7 +79,7 @@ namespace internal {
 				threshold_multiscale, ratio)) (begin, end);
     }
 
-    template <class RandomAccessIterator, class Policy, class Kernel>
+    template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator, class Policy, class Kernel>
     void spatial_sort (
 		       RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, 
@@ -104,10 +104,10 @@ namespace internal {
 				threshold_multiscale, ratio)) (begin, end);
     }
 
-}
+} //namespace internal
 
 
-template <class RandomAccessIterator, class Policy, class Kernel>
+template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator, class Policy, class Kernel>
 void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
                    const Kernel &k,
 		   Policy policy,
@@ -118,11 +118,11 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
     typedef std::iterator_traits<RandomAccessIterator> ITraits;
     typedef typename ITraits::value_type               value_type;
 
-    internal::spatial_sort(begin, end, k, policy, static_cast<value_type *> (0),
+    internal::spatial_sort<ConcurrencyTag>(begin, end, k, policy, static_cast<value_type *> (0),
 			   threshold_hilbert,threshold_multiscale,ratio);
 }
 
-template <class RandomAccessIterator>
+template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator>
 void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
 		   Hilbert_sort_median_policy policy,
 		   std::ptrdiff_t threshold_hilbert=0,
@@ -134,10 +134,11 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
     typedef CGAL::Kernel_traits<value_type>            KTraits;
     typedef typename KTraits::Kernel                   Kernel;
 
-    spatial_sort (begin, end, Kernel(), policy,
+    spatial_sort<ConcurrencyTag> (begin, end, Kernel(), policy,
 		  threshold_hilbert,threshold_multiscale,ratio);
 }
-template <class RandomAccessIterator>
+  
+template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator>
 void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
 		   Hilbert_sort_middle_policy policy,
 		   std::ptrdiff_t threshold_hilbert=0,
@@ -149,30 +150,30 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
     typedef CGAL::Kernel_traits<value_type>            KTraits;
     typedef typename KTraits::Kernel                   Kernel;
 
-    spatial_sort (begin, end, Kernel(), policy,
+    spatial_sort<ConcurrencyTag> (begin, end, Kernel(), policy,
 		  threshold_hilbert,threshold_multiscale,ratio);
 }
 
 
-template <class RandomAccessIterator, class Kernel>
+template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator, class Kernel>
 void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
                    const Kernel &k,
 		   std::ptrdiff_t threshold_hilbert=0,
 		   std::ptrdiff_t threshold_multiscale=0,
 		   double ratio=0.0)
 {
-    spatial_sort (begin, end, k,
+    spatial_sort<ConcurrencyTag> (begin, end, k,
 		  Hilbert_sort_median_policy(),
 		  threshold_hilbert,threshold_multiscale,ratio);
 }
 
-template <class RandomAccessIterator>
+  template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator>
 void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
 		   std::ptrdiff_t threshold_hilbert=0,
 		   std::ptrdiff_t threshold_multiscale=0,
 		   double ratio=0.0)
 {
-    spatial_sort (begin, end,
+  spatial_sort<ConcurrencyTag> (begin, end,
 		  Hilbert_sort_median_policy(),
 		  threshold_hilbert,threshold_multiscale,ratio);
 }
