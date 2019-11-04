@@ -18,7 +18,7 @@
 #include <CGAL/Hilbert_sort_base.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/task_group.h>
+#include <tbb/parallel_invoke.h>
 #endif
 
 namespace CGAL {
@@ -175,34 +175,25 @@ public:
     if((end - begin) > 1024){
       RandomAccessIterator m1, m2, m3, m4, m5, m6, m7;
       m4 = internal::hilbert_split(m0, m8, Cmp<x, upx>(_k));
-      {
-        tbb::task_group g;
-        g.run(Hilbert_split<RandomAccessIterator,Cmp<y, upy> >(m2,m0,m4,Cmp<y,  upy>(_k)));
-        g.run(Hilbert_split<RandomAccessIterator,Cmp<y, !upy> >(m6,m4,m8,Cmp<y,  !upy>(_k)));
-        g.wait();
-      }
       
-      {
-        tbb::task_group g;
-        g.run(Hilbert_split<RandomAccessIterator,Cmp<z, upz> >(m1,m0,m2,Cmp<z,  upz>(_k)));
-        g.run(Hilbert_split<RandomAccessIterator,Cmp<z, !upz> >(m3,m2,m4,Cmp<z, !upz>(_k)));
-        g.run(Hilbert_split<RandomAccessIterator,Cmp<z, upz> >(m5,m4,m6,Cmp<z,  upz>(_k)));
-        g.run(Hilbert_split<RandomAccessIterator,Cmp<z, !upz> >(m7,m6,m8,Cmp<z, !upz>(_k)));
-        g.wait();
-      }
+      tbb::parallel_invoke(Hilbert_split<RandomAccessIterator,Cmp<y, upy> >(m2,m0,m4,Cmp<y,  upy>(_k)),
+                           Hilbert_split<RandomAccessIterator,Cmp<y, !upy> >(m6,m4,m8,Cmp<y,  !upy>(_k)));
       
-      {
-        tbb::task_group g;
-        g.run(Recursive_sort<z, upz, upx, upy, RandomAccessIterator>(*this, m0, m1));
-        g.run(Recursive_sort<y, upy, upz, upx, RandomAccessIterator>(*this, m1, m2));
-        g.run(Recursive_sort<y, upy, upz, upx, RandomAccessIterator>(*this, m2, m3));
-        g.run(Recursive_sort<x, upx, !upy, !upz, RandomAccessIterator>(*this, m3, m4));
-        g.run(Recursive_sort<x, upx, !upy, !upz, RandomAccessIterator>(*this, m4, m5));
-        g.run(Recursive_sort<y, !upy, upz, !upx, RandomAccessIterator>(*this, m5, m6));
-        g.run(Recursive_sort<y, !upy, upz, !upx, RandomAccessIterator>(*this, m6, m7));
-        g.run(Recursive_sort<z, !upz, !upx, upy, RandomAccessIterator>(*this, m7, m8));
-        g.wait();
-      }
+
+      tbb::parallel_invoke(Hilbert_split<RandomAccessIterator,Cmp<z, upz> >(m1,m0,m2,Cmp<z,  upz>(_k)),
+                           Hilbert_split<RandomAccessIterator,Cmp<z, !upz> >(m3,m2,m4,Cmp<z, !upz>(_k)),
+                           Hilbert_split<RandomAccessIterator,Cmp<z, upz> >(m5,m4,m6,Cmp<z,  upz>(_k)),
+                           Hilbert_split<RandomAccessIterator,Cmp<z, !upz> >(m7,m6,m8,Cmp<z, !upz>(_k)));
+        
+      tbb::parallel_invoke(Recursive_sort<z, upz, upx, upy, RandomAccessIterator>(*this, m0, m1),
+                           Recursive_sort<y, upy, upz, upx, RandomAccessIterator>(*this, m1, m2),
+                           Recursive_sort<y, upy, upz, upx, RandomAccessIterator>(*this, m2, m3),
+                           Recursive_sort<x, upx, !upy, !upz, RandomAccessIterator>(*this, m3, m4),
+                           Recursive_sort<x, upx, !upy, !upz, RandomAccessIterator>(*this, m4, m5),
+                           Recursive_sort<y, !upy, upz, !upx, RandomAccessIterator>(*this, m5, m6),
+                           Recursive_sort<y, !upy, upz, !upx, RandomAccessIterator>(*this, m6, m7),
+                           Recursive_sort<z, !upz, !upx, upy, RandomAccessIterator>(*this, m7, m8));
+
     } else {
       recursive_sort<0, false, false, false>(begin, end);
     }
