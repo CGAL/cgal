@@ -11,6 +11,11 @@ namespace HLPred
 // FIXME: Yes... bad style, but this is just temporary anyway.
 using namespace LLPred;
 
+bool dist_at_most(Point const& p, Point const& q, distance_t d)
+{
+	return compare_squared_distance(p, q, d*d) != LARGER;
+}
+
 Interval intersection_interval(const Point& circle_center, distance_t radius, Point line_start, Point line_end)
 {
 	using OutputType = std::pair<Circular_arc_point_2, unsigned>;
@@ -19,7 +24,7 @@ Interval intersection_interval(const Point& circle_center, distance_t radius, Po
 	auto line_arc_2 = LineArc(line_start, line_end);
 
 	std::vector<OutputType> intersections;
-	IntersectionAlgorithm::intersection(circle_2, line_arc_2, std::back_inserter(intersections));
+	intersection(circle_2, line_arc_2, std::back_inserter(intersections));
 
 	std::vector<distance_t> ratios;
 	for (auto const& intersection: intersections) {
@@ -45,12 +50,10 @@ Interval intersection_interval(const Point& circle_center, distance_t radius, Po
 		return Interval(); // empty interval
 	case 1:
 		if (intersections[0].second == 2) { return Interval(ratios[0], ratios[0]); }
-		// TODO: replace by predicates
-		
-		if (compare_squared_distance(line_start, circle_center, radius*radius) != LARGER) {
+		if (dist_at_most(line_start, circle_center, radius)) {
 			return Interval(0., ratios[0]);
 		}
-		if (compare_squared_distance(line_end, circle_center, radius*radius) != LARGER) {
+		if (dist_at_most(line_end, circle_center, radius)) {
 			return Interval(ratios[0], 1.);
 		}
 		assert(false);

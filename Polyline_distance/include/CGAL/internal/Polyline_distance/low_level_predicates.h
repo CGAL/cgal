@@ -12,6 +12,11 @@ namespace LLPred
 // compare_squared_distance
 //
 
+distance_t squared_distance(Point const& p, Point const& q)
+{
+	return p.dist_sqr(q);
+}
+
 enum Comparison_result {
 	LESS,
 	EQUAL,
@@ -20,10 +25,10 @@ enum Comparison_result {
 
 Comparison_result compare_squared_distance(Point const& p, Point const& q, distance_t d2)
 {
-	auto const squared_dist = p.dist_sqr(q);
+	auto const pq_dist_sqr = squared_distance(p, q);
 
-	if (squared_dist < d2) { return LESS; }
-	if (squared_dist == d2) { return EQUAL; }
+	if (pq_dist_sqr < d2) { return LESS; }
+	if (pq_dist_sqr == d2) { return EQUAL; }
 	else { return LARGER; }
 }
 
@@ -31,14 +36,14 @@ Comparison_result compare_squared_distance(Point const& p, Point const& q, dista
 // circle-segment intersection
 //
 
+using IntersectionOutputType = std::pair<Circular_arc_point_2, unsigned>;
+using IntersectionBackInserter = std::back_insert_iterator<std::vector<IntersectionOutputType>>;
+
 class IntersectionAlgorithm
 {
-	using OutputType = std::pair<Circular_arc_point_2, unsigned>;
-	using BackInserter = std::back_insert_iterator<std::vector<OutputType>>;
+	static constexpr distance_t eps = 1e-8;
 
 public:
-	static constexpr distance_t eps = 1e-8;
-	
    /*
     * Returns which section of the line segment from line_start to line_end is inside the circle given by circle_center and radius.
     * If the circle and line segment do not intersect, the result is the empty Interval (and outer is the empty Interval, too).
@@ -48,7 +53,7 @@ public:
 	* If x = 0 then x' = -eps, while if x > 0 then the distance at x' is more than the radius.
 	* If y = 1 then y' = 1+eps, while if y < 1 then the distance at y' is more than the radius.
     */
-	static void intersection(Circle const& circle, LineArc line_arc, BackInserter it);
+	static void intersection(Circle const& circle, LineArc line_arc, IntersectionBackInserter it);
 private:
 	IntersectionAlgorithm() {} // Make class static-only
 	static inline bool smallDistanceAt(distance_t interpolate, Point line_start, Point line_end, Point circle_center, distance_t radius_sqr);
@@ -67,7 +72,7 @@ inline distance_t IntersectionAlgorithm::distanceAt(distance_t interpolate, Poin
 }
 
 
-void IntersectionAlgorithm::intersection(Circle const& circle, LineArc line_arc, BackInserter it)
+void IntersectionAlgorithm::intersection(Circle const& circle, LineArc line_arc, IntersectionBackInserter it)
 {
 	Point const& circle_center = circle.center;
 	distance_t radius = circle.radius;
@@ -238,6 +243,11 @@ void IntersectionAlgorithm::intersection(Circle const& circle, LineArc line_arc,
 		it = std::make_pair(line_start + (line_end - line_start)*begin, 1);
 		it = std::make_pair(line_start + (line_end - line_start)*end, 1);
 	}
+}
+
+void intersection(Circle const& circle, LineArc line_arc, IntersectionBackInserter it)
+{
+	IntersectionAlgorithm::intersection(circle, line_arc, it);
 }
 
 } // end LLPred namespace
