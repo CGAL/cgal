@@ -17,6 +17,10 @@
 #include <cstddef>
 #include <CGAL/Hilbert_sort_base.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_invoke.h>
+#endif
+
 namespace CGAL {
 
 namespace internal {
@@ -69,6 +73,7 @@ template <class K>
 class Hilbert_sort_median_2
 {
 public:
+    typedef Hilbert_sort_median_2<K> Self;
     typedef K Kernel;
     typedef typename Kernel::Point_2 Point;
     
@@ -85,7 +90,7 @@ public:
     {}
 
     template <int x, bool upx, bool upy, class RandomAccessIterator>
-    void sort (RandomAccessIterator begin, RandomAccessIterator end) const
+    void recursive_sort (RandomAccessIterator begin, RandomAccessIterator end) const
     {
         const int y = (x + 1) % 2;
         if (end - begin <= _limit) return;
@@ -96,10 +101,70 @@ public:
         RandomAccessIterator m1 = internal::hilbert_split (m0, m2, Cmp< y,  upy> (_k));
         RandomAccessIterator m3 = internal::hilbert_split (m2, m4, Cmp< y, !upy> (_k));
 
-        sort<y, upy, upx> (m0, m1);
-        sort<x, upx, upy> (m1, m2);
-        sort<x, upx, upy> (m2, m3);
-        sort<y,!upy,!upx> (m3, m4);
+        recursive_sort<y, upy, upx> (m0, m1);
+        recursive_sort<x, upx, upy> (m1, m2);
+        recursive_sort<x, upx, upy> (m2, m3);
+        recursive_sort<y,!upy,!upx> (m3, m4);
+    }
+
+  template <int x, bool upx, bool upy, class RandomAccessIterator>
+  struct Recursive_sort {
+    const Self& hs;
+    RandomAccessIterator begin,end;
+    
+    Recursive_sort(const Self& hs, RandomAccessIterator begin, RandomAccessIterator end)
+      : hs(hs), begin(begin), end(end)
+    {}
+    
+    void operator()() const
+    {
+      hs.recursive_sort<x,upx,upy>(begin,end);
+    }
+  };
+  
+  template <class RandomAccessIterator, class Comp>
+  struct Hilbert_split
+  {
+    RandomAccessIterator& res;
+    RandomAccessIterator begin, end;
+    const Comp& comp;
+    
+    Hilbert_split(RandomAccessIterator& res, RandomAccessIterator begin, RandomAccessIterator end, const Comp comp)
+      : res(res), begin(begin), end(end), comp(comp)
+    {}
+    
+    void operator()() const
+    {
+      res = internal::hilbert_split(begin, end, comp);
+    }
+  };
+  
+    template <int x, bool upx, bool upy, class RandomAccessIterator>
+    void sort (RandomAccessIterator begin, RandomAccessIterator end) const
+    {
+        const int y = (x + 1) % 2;
+        if (end - begin <= _limit) return;
+
+        RandomAccessIterator m0 = begin, m4 = end;
+
+#if defined( CGAL_LINKED_WITH_TBB) && ( ! defined (CGAL_NO_PARALLEL_SPATIAL_SORT) )
+    if((end - begin) > 1024){
+      RandomAccessIterator m1, m2, m3;
+        m2 = internal::hilbert_split (m0, m4, Cmp< x,  upx> (_k));
+        
+        tbb::parallel_invoke(Hilbert_split<RandomAccessIterator, Cmp< y,  upy> > (m1, m0, m2, Cmp< y,  upy> (_k)),
+                             Hilbert_split<RandomAccessIterator, Cmp< y, !upy> > (m3, m2, m4, Cmp< y, !upy> (_k)));
+
+        tbb::parallel_invoke(Recursive_sort<y, upy, upx, RandomAccessIterator> (*this, m0, m1),
+                             Recursive_sort<x, upx, upy, RandomAccessIterator> (*this, m1, m2),
+                             Recursive_sort<x, upx, upy, RandomAccessIterator> (*this, m2, m3),
+                             Recursive_sort<y,!upy,!upx, RandomAccessIterator> (*this, m3, m4));
+    } else {
+      recursive_sort<0, false, false>(begin, end);
+    }
+#else
+    recursive_sort<0, false, false>(begin, end);
+#endif
     }
 
     template <class RandomAccessIterator>
