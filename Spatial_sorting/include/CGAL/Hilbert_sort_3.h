@@ -18,7 +18,7 @@
 
 namespace CGAL {
 
-  template <class K,  class Hilbert_policy, class ConcurrencyTag>
+  template <class K,  class Hilbert_policy, class ConcurrencyTag = Sequential_tag>
   class Hilbert_sort_3;
 
   template <class K, class ConcurrencyTag>  
