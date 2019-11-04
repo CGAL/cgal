@@ -1694,7 +1694,7 @@ public:
                     else
                     {
                       // we push-back the halfedge for the next round only if it was not the first
-                      if (h != *cpp11::prev(hit))
+                      if (h != *std::prev(hit))
                         --hit;
                       break;
                     }
