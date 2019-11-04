@@ -28,7 +28,7 @@ bool is_ccw(int xi, int yi,
   CGAL::Polygon_2<K> polygon;
   if(polyline.front() == polyline.back())
   {
-    BOOST_FOREACH(const typename K::Point_3& p, polyline)
+    for(const typename K::Point_3& p : polyline)
     {
       polygon.push_back(typename K::Point_2(p[xi], p[yi]));
     }

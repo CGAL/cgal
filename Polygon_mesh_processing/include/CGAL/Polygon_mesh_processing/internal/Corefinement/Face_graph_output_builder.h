@@ -1259,7 +1259,7 @@ public:
         // non-manifold vertices would not be duplicated in interior
         // vertices of patche)
         // special code to handle non-manifold vertices on the boundary
-        BOOST_FOREACH (vertex_descriptor vd, vertices(tm1))
+        for (vertex_descriptor vd : vertices(tm1))
         {
           boost::optional<halfedge_descriptor> op_h = is_border(vd, tm1);
           if (op_h == boost::none) continue;
@@ -1629,12 +1629,12 @@ public:
           }
 
           // Code dedicated to the handling of non-manifold vertices
-          BOOST_FOREACH(vertex_descriptor vd, border_nm_vertices)
+          for(vertex_descriptor vd : border_nm_vertices)
           {
             // first check if at least one incident patch will be kept
             boost::unordered_set<std::size_t> id_p_rm;
             bool all_removed=true;
-            BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(vd, tm1))
+            for(halfedge_descriptor h : halfedges_around_target(vd, tm1))
             {
               face_descriptor f = face(h, tm1);
               if ( f != GT::null_face() )
@@ -1649,7 +1649,7 @@ public:
             if (all_removed)
               id_p_rm.erase(id_p_rm.begin());
             // remove the vertex from the interior vertices of patches to be removed
-            BOOST_FOREACH(std::size_t pid, id_p_rm)
+            for(std::size_t pid : id_p_rm)
               patches_of_tm1[pid].interior_vertices.erase(vd);
 
             // we now need to update the next/prev relationship induced by the future removal of patches
@@ -1703,7 +1703,7 @@ public:
                 while(true);
                 if (hit == end) break;
               }
-              BOOST_FOREACH ( const Hedge_pair& p, hedges_to_link)
+              for(const Hedge_pair& p : hedges_to_link)
                 set_next(p.first, p.second, tm1);
             }
           }

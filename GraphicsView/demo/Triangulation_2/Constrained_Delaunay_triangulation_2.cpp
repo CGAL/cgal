@@ -572,12 +572,12 @@ MainWindow::loadWKT(QString
     typedef CGAL::Point_2<K> Point;
     std::vector<Polygon> mps;
     CGAL::read_multi_polygon_WKT(ifs, mps);
-    BOOST_FOREACH(const Polygon& p, mps)
+    for(const Polygon& p : mps)
     {
       if(p.outer_boundary().is_empty())
         continue;
       
-      BOOST_FOREACH(Point point, p.outer_boundary().container())
+      for(Point point : p.outer_boundary().container())
           cdt.insert(point);
       for(Polygon::General_polygon_2::Edge_const_iterator 
           e_it=p.outer_boundary().edges_begin(); e_it != p.outer_boundary().edges_end(); ++e_it)
@@ -586,7 +586,7 @@ MainWindow::loadWKT(QString
       for(Polygon::Hole_const_iterator h_it = 
           p.holes_begin(); h_it != p.holes_end(); ++h_it)
       {                  
-        BOOST_FOREACH(Point point, h_it->container())
+        for(Point point : h_it->container())
             cdt.insert(point);
         for(Polygon::General_polygon_2::Edge_const_iterator 
             e_it=h_it->edges_begin(); e_it != h_it->edges_end(); ++e_it)
@@ -604,7 +604,7 @@ MainWindow::loadWKT(QString
     typedef std::vector<K::Point_2> LineString;
     std::vector<LineString> mls;
     CGAL::read_multi_linestring_WKT(ifs, mls);
-    BOOST_FOREACH(const LineString& ls, mls)
+    for(const LineString& ls : mls)
     {
       if(ls.empty())
         continue;
@@ -642,7 +642,7 @@ MainWindow::loadWKT(QString
   {
     std::vector<K::Point_2> mpts;
     CGAL::read_multi_point_WKT(ifs, mpts);
-    BOOST_FOREACH(const K::Point_2& p, mpts)
+    for(const K::Point_2& p : mpts)
     {
       cdt.insert(p);
     }

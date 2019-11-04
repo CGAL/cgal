@@ -6,8 +6,6 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
-#include <boost/foreach.hpp>
-
 #include <cassert>
 #include <fstream>
 #include <map>
