@@ -8,6 +8,29 @@
 namespace LLPred
 {
 
+//
+// compare_squared_distance
+//
+
+enum Comparison_result {
+	LESS,
+	EQUAL,
+	LARGER,
+};
+
+Comparison_result compare_squared_distance(Point const& p, Point const& q, distance_t d2)
+{
+	auto const squared_dist = p.dist_sqr(q);
+
+	if (squared_dist < d2) { return LESS; }
+	if (squared_dist == d2) { return EQUAL; }
+	else { return LARGER; }
+}
+
+//
+// circle-segment intersection
+//
+
 class IntersectionAlgorithm
 {
 	using OutputType = std::pair<Circular_arc_point_2, unsigned>;
