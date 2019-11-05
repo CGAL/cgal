@@ -10,22 +10,23 @@ of being close in the order.
 
 It sorts the range `[begin, end)` in place. 
 
+\tparam ConcurrencyTag must be `Sequential_tag`or `Parallel_tag`. 
+With `Parallel_tag` and TBB enabled, the sorting will be 
+done using up to four threads in 2D, and up to eight threads in 3D with the median policy.
+
+\tparam RandomAccessIterator `std::iterator_traits<RandomAccessIterator>::%value_type` must be convertible to 
+`Traits::Point_2`, `Traits::Point_3`, or `Traits::Point_d`. 
+
+\tparam Traits  must be a model for concept `SpatialSortingTraits_2`, 
+`SpatialSortingTraits_3`, or `SpatialSortingTraits_d`. 
 The default traits class `Default_traits` is the kernel in which the type 
 `std::iterator_traits<RandomAccessIterator>::%value_type` is defined. 
 
-The default policy is `Hilbert_sort_median_policy()` and the 
-other option is `Hilbert_sort_middle_policy()`. 
+\tparam PolicyTag The default policy is `Hilbert_sort_median_policy` and the 
+other option is `Hilbert_sort_middle_policy`. 
 
 The default values for the thresholds and the ratio depend on the dimension. 
 
-\cgalHeading{Requirements}
-
-<OL> 
-<LI>`std::iterator_traits<RandomAccessIterator>::%value_type` is convertible to 
-`Traits::Point_2`, `Traits::Point_3`, or `Traits::Point_d`. 
-<LI>`Traits` is a model for concept `SpatialSortingTraits_2`, 
-`SpatialSortingTraits_3`, or `SpatialSortingTraits_d`. 
-</OL> 
 
 \cgalHeading{Implementation}
 
@@ -44,7 +45,7 @@ times the original size of the set, Hilbert sort is applied on the
 second subset. 
 
 */
-template <class RandomAccessIterator, class Traits, class PolicyTag>
+  template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator, class Traits, class PolicyTag>
 void
 spatial_sort( RandomAccessIterator begin,
 RandomAccessIterator end,

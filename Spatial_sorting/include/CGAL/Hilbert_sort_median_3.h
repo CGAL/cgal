@@ -13,6 +13,7 @@
 #define CGAL_HILBERT_SORT_MEDIAN_3_H
 
 #include <CGAL/config.h>
+#include <CGAL/tags.h>
 #include <functional>
 #include <cstddef>
 #include <CGAL/Hilbert_sort_base.h>

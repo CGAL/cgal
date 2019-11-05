@@ -9,22 +9,19 @@ If input points are not close to the input sphere, this function still works, bu
 
 It sorts the range `[begin, end)` in place. 
 
+\tparam RandomAccessIterator `std::iterator_traits<RandomAccessIterator>::%value_type` must be convertible to 
+`Traits::Point_3`. 
+
+\tparam Traits must be a model for concept `SpatialSortingTraits_3`.
 The default traits class `Default_traits` is the kernel in which the type 
 `std::iterator_traits<RandomAccessIterator>::%value_type` is defined. 
-The default policy is `Hilbert_sort_median_policy()` and the 
+
+\tparam PolicyTag The default policy is `Hilbert_sort_median_policy()` and the 
 other option is `Hilbert_sort_middle_policy()`. 
 
 The input sphere is given by a squared radius and a center, parameter `sqr_radius` and parameter `center` respectively.
 The default squared radius of the sphere is 1.0.
 The default center of the sphere is the origin (0,0,0).
-
-\cgalHeading{Requirements}
-
-<OL> 
-<LI>`std::iterator_traits<RandomAccessIterator>::%value_type` is convertible to 
-`Traits::Point_3`. 
-<LI>`Traits` is a model for concept `SpatialSortingTraits_3`.
-</OL> 
 
 \cgalHeading{Precondition}
 
