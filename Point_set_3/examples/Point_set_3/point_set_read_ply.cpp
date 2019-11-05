@@ -42,7 +42,7 @@ int main (int argc, char** argv)
         std::cerr << " * " << label_prop[*it] << std::endl;
     }
 
-  if (argc > 2 && argv[2] == "-b") // Optional binary output
+  if (argc > 2 && strcmp (argv[2], "-b") == 0) // Optional binary output
   {
     std::ofstream out ("out.ply",
                        std::ios_base::binary); // Mandatory on Windows
