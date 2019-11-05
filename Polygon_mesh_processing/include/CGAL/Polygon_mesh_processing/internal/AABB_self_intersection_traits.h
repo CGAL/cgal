@@ -37,16 +37,15 @@ class AABB_self_intersection_traits
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef CGAL::AABB_node<AABBTraits> Node;
 
-  //just for the declaration of the facet_intersector, not needed.
+  //just for the declaration of the facet_intersector, it only needs to compile,
+  // bc we use the operator() with faces, so the boxes are never used.
   template< typename Info>
   struct Dummy_box {
-    Info id;
-    Dummy_box(const Info& id)
-      :id(id){}
+    Dummy_box(){}
 
     Info info() const
     {
-      return id;
+      return Info();
     }
   };
 
@@ -88,7 +87,8 @@ private:
 
 //todo: move it in self_intersections.h, but careful to the Facet_intersectors that is in there and needed by this file.
 // It makes it impossible to put that function in s_i.h without creating a dep-cycle right now. It probably needs to be moved in its own header.
-template<typename Query, typename TM, typename VPM, typename Kernel,
+template <class Concurrency_tag,
+          typename Query, typename TM, typename VPM, typename Kernel,
          typename Tr, typename OutputIterator> //query = face
 OutputIterator self_intersections_with_tree(const TM& m,
                                   VPM vpmap,
@@ -101,10 +101,35 @@ OutputIterator self_intersections_with_tree(const TM& m,
   AABB_self_intersection_traits<Tr,
       TM, VPM, Kernel,
       Query, OutputIterator> traversal_traits(m, vpmap, out,tree->traits());
-  for(const auto& f : faces(m))
+
+#if !defined(CGAL_LINKED_WITH_TBB)
+  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+                             "Parallel_tag is enabled but TBB is unavailable.");
+#else
+  if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
   {
-    Query q(f, m);
-    tree->traversal(q, traversal_traits);
+    std::vector<typename boost::graph_traits<TM>::face_descriptor> fs;
+    fs.reserve(num_faces(m));
+    for(const auto& f : faces(m))
+    {
+      fs.push_back(f);
+    }
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0,num_faces(m)), [fs, m, traversal_traits, tree](const blocked_range<size_t>& r){
+      for( size_t i=r.begin(); i!=r.end(); ++i )
+      {
+        Query q(fs[i], m);
+        tree->traversal(q, traversal_traits);
+      }
+    });
+  }
+  else
+#endif
+  {
+    for(const auto& f : faces(m))
+    {
+      Query q(f, m);
+      tree->traversal(q, traversal_traits);
+    }
   }
   return out;
 }
