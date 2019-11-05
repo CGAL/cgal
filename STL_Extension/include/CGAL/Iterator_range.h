@@ -14,6 +14,7 @@
 
 #include <CGAL/tuple.h>
 #include <utility>
+#include <boost/foreach.hpp>
 
 namespace CGAL {
 
