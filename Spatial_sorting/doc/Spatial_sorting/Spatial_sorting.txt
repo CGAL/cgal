@@ -208,6 +208,11 @@ In this example program, the sorted sequence of points is retrieved
 using the indices of the points in a vector of pairs of points and integers.
 \cgalExample{Spatial_sorting/sp_sort_using_property_map_d.cpp}
 
+\section Spatial_sortingParallel Spatial Sorting in Parallel
+
+The Hilbert sort and spatial sort functions when using the median policy and with TBB
+enabled, are parallized and use up to four/eight threads for 2D/3D. 
+
 \section Spatial_sortingDesign Design and Implementation History
 
 The first implementation of Hilbert and spatial sorting (2D and 3D) in CGAL was done by Cristophe Delage. Then, Olivier Devillers improved its design,
