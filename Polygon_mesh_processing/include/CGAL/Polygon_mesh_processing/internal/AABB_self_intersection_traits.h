@@ -37,14 +37,14 @@ class AABB_self_intersection_traits
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef CGAL::AABB_node<AABBTraits> Node;
 
+  //just for the declaration of the facet_intersector, not needed.
+  template< typename Info>
   struct Dummy_box {
-
-    Primitive_id id;
-
-    Dummy_box(const Primitive_id& id)
+    Info id;
+    Dummy_box(const Info& id)
       :id(id){}
 
-    Primitive_id info() const
+    Info info() const
     {
       return id;
     }
@@ -58,7 +58,7 @@ public:
     : m_out_it(out_it), m_traits(traits) {
   facets_intersector =
       new CGAL::internal::Intersect_facets<TM, typename AABBTraits::Geom_traits,
-      Dummy_box, Output_iterator, VPM >
+      Dummy_box<typename boost::graph_traits<TM>::face_descriptor>, Output_iterator, VPM >
       (m, m_out_it, vpmap, Kernel());
   }
   ~AABB_self_intersection_traits() { delete facets_intersector;}
@@ -68,8 +68,7 @@ public:
   void intersection(const Query& query, const Primitive& primitive)
   {
       if ( query.id() >= primitive.id()) return;
-      Dummy_box a(query.id()), b(primitive.id());
-      facets_intersector->operator ()(&a, &b);
+      facets_intersector->operator ()(query.id(), primitive.id());
   }
 
   bool do_intersect(const Query& query, const Node& node) const
@@ -82,7 +81,9 @@ public:
 private:
   Output_iterator m_out_it;
   const AABBTraits& m_traits;
-  CGAL::internal::Intersect_facets<TM, Kernel, Dummy_box, Output_iterator, VPM > *facets_intersector;
+  CGAL::internal::Intersect_facets<TM, Kernel,
+  Dummy_box<typename boost::graph_traits<TM>::face_descriptor>,
+  Output_iterator, VPM > *facets_intersector;
 };
 
 //todo: move it in self_intersections.h, but careful to the Facet_intersectors that is in there and needed by this file.

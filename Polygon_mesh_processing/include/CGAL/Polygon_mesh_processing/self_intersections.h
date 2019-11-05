@@ -77,6 +77,7 @@ struct Intersect_facets
   typedef typename Kernel::Triangle_3   Triangle;
   typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::property_map<TM, boost::vertex_point_t>::const_type Ppmap;
+  typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
 
 // members
   const TM& m_tmesh;
@@ -104,13 +105,18 @@ struct Intersect_facets
 
   void operator()(const Box* b, const Box* c) const
   {
-    halfedge_descriptor h = halfedge(b->info(), m_tmesh);
+    operator ()(b->info(), c->info());
+  }
+
+  void operator()(const face_descriptor& b, const face_descriptor& c) const
+  {
+    halfedge_descriptor h = halfedge(b, m_tmesh);
     halfedge_descriptor opp_h;
 
     // check for shared egde
     for(unsigned int i=0; i<3; ++i){
       opp_h = opposite(h, m_tmesh);
-      if(face(opp_h, m_tmesh) == c->info()){
+      if(face(opp_h, m_tmesh) == c){
         // there is an intersection if the four points are coplanar and
         // the triangles overlap
         if(CGAL::coplanar(get(m_vpmap, target(h, m_tmesh)),
@@ -122,7 +128,7 @@ struct Intersect_facets
                                       get(m_vpmap, target(next(h, m_tmesh), m_tmesh)),
                                       get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh)))
              == CGAL::POSITIVE){
-          *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+          *m_iterator_wrapper++ = std::make_pair(b, c);
           return;
         } else { // there is a shared edge but no intersection
           return;
@@ -132,7 +138,7 @@ struct Intersect_facets
     }
 
     // check for shared vertex --> maybe intersection, maybe not
-    halfedge_descriptor g = halfedge(c->info(),m_tmesh);
+    halfedge_descriptor g = halfedge(c,m_tmesh);
     halfedge_descriptor v;
 
     if(target(h,m_tmesh) == target(g,m_tmesh))
@@ -178,9 +184,9 @@ struct Intersect_facets
                                     get(m_vpmap, target(next(next(v,m_tmesh),m_tmesh),m_tmesh)));
 
       if(do_intersect_3_functor(t1,s2)){
-        *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+        *m_iterator_wrapper++ = std::make_pair(b, c);
       } else if(do_intersect_3_functor(t2,s1)){
-        *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+        *m_iterator_wrapper++ = std::make_pair(b, c);
       }
       return;
     }
@@ -193,7 +199,7 @@ struct Intersect_facets
                                     get(m_vpmap, target(next(g,m_tmesh),m_tmesh)),
                                     get(m_vpmap, target(next(next(g,m_tmesh),m_tmesh),m_tmesh)));
     if(do_intersect_3_functor(t1, t2)){
-      *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+      *m_iterator_wrapper++ = std::make_pair(b, c);
     }
   } // end operator ()
 }; // end struct Intersect_facets
