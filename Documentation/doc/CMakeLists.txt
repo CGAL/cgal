@@ -269,7 +269,6 @@ endif()
 # closely to the convoluted versioning code and can adapt without a
 # huge diff.
 set(CGAL_DOC_VERSION ${CGAL_CREATED_VERSION_NUM})
-message(CGAL_DOC_VERSION: ${CGAL_DOC_VERSION})
 
 ## generate how_to_cite files
 if(PYTHONINTERP_FOUND)
