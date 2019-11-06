@@ -445,7 +445,7 @@ class Polygon_2 {
     Point_2& vertex(std::size_t i)
       {
         CGAL_precondition( i < d_container.size() );
-        return *(cpp11::next(d_container.begin(), i));
+        return *(std::next(d_container.begin(), i));
       }
     /// Returns a reference to the `i`-th vertex.
     Point_2& operator[](std::size_t i)
