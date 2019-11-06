@@ -42,6 +42,7 @@
 
 #include <CGAL/internal/AABB_tree/AABB_node.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/AABB_tree.h>
 #ifdef CGAL_LINKED_WITH_TBB
@@ -95,7 +96,6 @@ struct Intersect_facets
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
-
 
   Intersect_facets(const TM& tmesh, OutputIterator it, VertexPointMap vpmap, const Kernel& kernel)
     :
@@ -223,7 +223,7 @@ struct Throw_at_output {
 
 
 template<typename AABBTraits,class TM, class VPM, typename Kernel,
-         typename Query, typename Output_iterator>
+          typename Output_iterator>
 class AABB_self_intersection_traits
 {
   typedef typename AABBTraits::FT FT;
@@ -234,6 +234,8 @@ class AABB_self_intersection_traits
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef CGAL::AABB_node<AABBTraits> Node;
+  typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
+  typedef Triangle_from_face_descriptor_map<TM, typename Default::Get<VPM, typename boost::property_map< TM, vertex_point_t>::const_type >::type> Triangle_map;
 
   //just for the declaration of the facet_intersector, it only needs to compile,
   // bc we use the operator() with faces, so the boxes are never used.
@@ -257,30 +259,37 @@ public:
       new CGAL::internal::Intersect_facets<TM, typename AABBTraits::Geom_traits,
       Dummy_box<typename boost::graph_traits<TM>::face_descriptor>, Output_iterator, VPM >
       (m, m_out_it, vpmap, Kernel());
+  tmap = Triangle_map(const_cast<TM*>(&m),vpmap);
   }
   ~AABB_self_intersection_traits() { delete facets_intersector;}
 
   bool go_further() const { return true; }
 
-  void intersection(const Query& query, const Primitive& primitive) const
+  void intersection(const face_descriptor& query, const Primitive& primitive) const
   {
-      if ( query.id() >= primitive.id()) return;
-      facets_intersector->operator ()(query.id(), primitive.id());
+      if ( query>= primitive.id()) return;
+#ifdef CGAL_LINKED_WITH_TBB
+      CGAL_SCOPED_LOCK(it_mutex);
+#endif
+      facets_intersector->operator ()(query, primitive.id());
   }
 
-  bool do_intersect(const Query& query, const Node& node) const
+  bool do_intersect(const face_descriptor& query, const Node& node) const
   {
 
-    return m_traits.do_intersect_object()(CGAL::internal::Primitive_helper<AABBTraits>::
-                                          get_datum(query, m_traits), node.bbox());
+    return m_traits.do_intersect_object()(get(tmap, query), node.bbox());
   }
 
 private:
   Output_iterator m_out_it;
   const AABBTraits& m_traits;
   CGAL::internal::Intersect_facets<TM, Kernel,
-  Dummy_box<typename boost::graph_traits<TM>::face_descriptor>,
+  Dummy_box<face_descriptor>,
     Output_iterator, VPM > *facets_intersector;
+   Triangle_map tmap;
+#ifdef CGAL_LINKED_WITH_TBB
+  mutable CGAL_MUTEX it_mutex;//mutex used to protect iterator
+#endif
 };
 
 }// namespace internal
@@ -560,7 +569,7 @@ bool does_self_intersect(const FaceRange& face_range,
 
 
 template <class Concurrency_tag,
-          typename Query, typename TM, typename VPM, typename Kernel,
+          typename TM, typename VPM, typename Kernel,
          typename Tr, typename OutputIterator> //query = face
 OutputIterator self_intersections_with_tree(const TM& m,
                                   VPM vpmap,
@@ -570,7 +579,7 @@ OutputIterator self_intersections_with_tree(const TM& m,
 {
   internal::AABB_self_intersection_traits<Tr,
       TM, VPM, Kernel,
-      Query, OutputIterator> traversal_traits(m, vpmap, out,tree->traits());
+       OutputIterator> traversal_traits(m, vpmap, out,tree->traits());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
@@ -584,11 +593,10 @@ OutputIterator self_intersections_with_tree(const TM& m,
     {
       fs.push_back(f);
     }
-    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_faces(m)), [fs, m, traversal_traits, tree](const tbb::blocked_range<size_t>& r) {
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_faces(m)), [&fs, &m, &traversal_traits, tree](const tbb::blocked_range<size_t>& r) {
       for( size_t i=r.begin(); i!=r.end(); ++i )
       {
-        Query q(fs[i], m);
-        tree->traversal(q, traversal_traits);
+        tree->traversal(fs[i], traversal_traits);
       }
     });
   }
@@ -597,8 +605,7 @@ OutputIterator self_intersections_with_tree(const TM& m,
   {
     for(const auto& f : faces(m))
     {
-      Query q(f, m);
-      tree->traversal(q, traversal_traits);
+      tree->traversal(f, traversal_traits);
     }
   }
   return out;
