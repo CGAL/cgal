@@ -545,19 +545,21 @@ private:
 
     // The multiplications could produce some NaN, with 0 * inf. Replacing it with inf is safe.
     // min(x,y) (the order is essential) returns its second argument when the first is NaN.
+    // An IEEE 754-2019 maximum could help.
     __m128d big = IA::largest().simd();
     __m128d x1 = _mm_mul_pd(aa,bz);                       // {-ai*bi,as*bs}
-    x1 = _mm_min_pd(x1,big); // no NaN
+    //x1 = _mm_min_pd(x1,big); // no NaN
     __m128d x2 = _mm_mul_pd(aa,c);                        // {-ai*bs,as*bi}
     x2 = _mm_min_pd(x2,big); // no NaN
     __m128d x3 = _mm_mul_pd(ap,bz);                       // {-as*bi,ai*bs}
-    x3 = _mm_min_pd(x3,big); // no NaN
+    //x3 = _mm_min_pd(x3,big); // no NaN
     __m128d x4 = _mm_mul_pd(ap,c);                        // {-as*bs,ai*bi}
     x4 = _mm_min_pd(x4,big); // no NaN
 
     __m128d y1 = _mm_max_pd(x1,x2);
     __m128d y2 = _mm_max_pd(x3,x4);
     __m128d r = _mm_max_pd (y1, y2);
+    // Alternative with fewer instructions but more dependency
     // __m128d r = _mm_max_pd(x1,_mm_max_pd(x2,_mm_max_pd(x3,_mm_min_pd(x4,big))));
     return IA (IA_opacify128(r));
 # elif 1
@@ -578,7 +580,7 @@ private:
     __m128d x = _mm_blendv_pd (bb, bp, az);               // {ai<0?-bs:-bi,as<0?bi:bs}
     __m128d y = _mm_blendv_pd (bb, bp, azp);              // {as<0?-bs:-bi,ai<0?bi:bs}
     __m128d p1 = _mm_mul_pd (az, x);
-    p1 = _mm_min_pd(p1,big); // no NaN
+    //p1 = _mm_min_pd(p1,big); // no NaN
     __m128d p2 = _mm_mul_pd (azp, y);
     p2 = _mm_min_pd(p2,big); // no NaN
     __m128d r = _mm_max_pd (p1, p2);
@@ -600,7 +602,7 @@ private:
     __m128d x = _mm_blendv_pd (bbs, bbi, aa);             // {ai>0?bi:bs,as<0?bi:bs}
     __m128d y = _mm_blendv_pd (bbi, bbs, ax);             // {as<0?bs:bi,ai>0?bs:bi}
     __m128d p1 = _mm_mul_pd (aa, x);
-    p1 = _mm_min_pd(p1,big); // no NaN
+    //p1 = _mm_min_pd(p1,big); // no NaN
     __m128d p2 = _mm_mul_pd (ap, y);
     p2 = _mm_min_pd(p2,big); // no NaN
     __m128d r = _mm_max_pd (p1, p2);
@@ -620,7 +622,7 @@ private:
     __m256d Y1 = _mm256_set_m128d(bz,bz);                 // {bi,bs,bi,bs}
     __m256d Y2 = _mm256_permute_pd(Y1,5);                 // {bs,bi,bs,bi}
     __m256d Z1 = _mm256_mul_pd(X,Y1);
-    Z1 = _mm256_min_pd(Z1,big); // no NaN
+    //Z1 = _mm256_min_pd(Z1,big); // no NaN
     __m256d Z2 = _mm256_mul_pd(X,Y2);
     Z2 = _mm256_min_pd(Z2,big); // no NaN
     __m256d Z = _mm256_max_pd(Z1,Z2);
@@ -630,6 +632,7 @@ private:
     return IA (IA_opacify128(r));
 # endif
 #else
+    // TODO: try to move some NaN tests out of the hot path (test a.inf()>0 instead of >=0?).
     if (a.inf() >= 0.0)					// a>=0
     {
       // b>=0     [a.inf()*b.inf(); a.sup()*b.sup()]
@@ -643,7 +646,8 @@ private:
         if (b.sup() < 0.0)
           bb = a.inf();
       }
-      return IA(-CGAL_IA_MUL(aa, -b.inf()), CGAL_IA_MUL(bb, b.sup()));
+      double r = (b.sup() == 0) ? 0. : CGAL_IA_MUL(bb, b.sup()); // In case bb is infinite, avoid NaN.
+      return IA(-CGAL_IA_MUL(aa, -b.inf()), r);
     }
     else if (a.sup()<=0.0)				// a<=0
     {
@@ -654,9 +658,10 @@ private:
       if (b.inf() < 0.0)
       {
         aa=bb;
-        if (b.sup() < 0.0)
+        if (b.sup() <= 0.0)
           bb=a.sup();
       }
+      else if (b.sup() <= 0) return 0.; // In case a has an infinite bound, avoid NaN.
       return IA(-CGAL_IA_MUL(-bb, b.sup()), CGAL_IA_MUL(-aa, -b.inf()));
     }
     else						// 0 \in a
