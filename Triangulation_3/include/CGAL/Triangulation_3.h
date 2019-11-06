@@ -420,11 +420,13 @@ public:
   typedef typename Tds::Cell_iterator          Cell_iterator;
   typedef typename Tds::Facet_iterator         Facet_iterator;
   typedef typename Tds::Edge_iterator          Edge_iterator;
+  typedef typename Tds::Marking_edge_iterator  Marking_edge_iterator;
   typedef typename Tds::Vertex_iterator        Vertex_iterator;
 
   typedef Cell_iterator                        All_cells_iterator;
   typedef Facet_iterator                       All_facets_iterator;
   typedef Edge_iterator                        All_edges_iterator;
+  typedef Marking_edge_iterator                All_marking_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
 
   typedef typename Tds::Cell_handles           All_cell_handles;
@@ -466,6 +468,11 @@ private:
       return t->is_infinite(*e);
     }
 
+    bool operator()(const Marking_edge_iterator& e) const
+    {
+      return t->is_infinite(*e);
+    }
+    
     bool operator()(const Facet_iterator& f) const
     {
       return t->is_infinite(*f);
@@ -515,6 +522,7 @@ public:
   typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
 
   typedef Filter_iterator<Edge_iterator, Infinite_tester>     Finite_edges_iterator;
+    typedef Filter_iterator<Marking_edge_iterator, Infinite_tester>     Finite_marking_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>    Finite_facets_iterator;
 
   typedef Iterator_range<Finite_edges_iterator> Finite_edges;
@@ -1810,6 +1818,19 @@ public:
     return CGAL::filter_iterator(edges_end(), Infinite_tester(this));
   }
 
+  Finite_marking_edges_iterator finite_marking_edges_begin() const
+  {
+    if(dimension() < 1)
+      return finite_marking_edges_end();
+
+    return CGAL::filter_iterator(marking_edges_end(), Infinite_tester(this), marking_edges_begin());
+  }
+  
+  Finite_marking_edges_iterator finite_marking_edges_end() const
+  {
+    return CGAL::filter_iterator(marking_edges_end(), Infinite_tester(this));
+  }
+  
   Finite_edges finite_edges() const
   {
     return Finite_edges(finite_edges_begin(),finite_edges_end());
@@ -1818,6 +1839,13 @@ public:
   Edge_iterator edges_begin() const { return _tds.edges_begin(); }
   Edge_iterator edges_end() const { return _tds.edges_end(); }
 
+  Marking_edge_iterator marking_edges_begin() const { return _tds.marking_edges_begin(); }
+  Marking_edge_iterator marking_edges_end() const { return _tds.marking_edges_end(); }
+
+  void clear_marked_edges()
+  {
+    _tds.clear_marked_edges();
+  }
   
   All_edges_iterator all_edges_begin() const { return _tds.edges_begin(); }
   All_edges_iterator all_edges_end() const { return _tds.edges_end(); }

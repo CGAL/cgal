@@ -116,6 +116,7 @@ public:
   typedef typename Tr_Base::Finite_cells_iterator    Finite_cells_iterator;
   typedef typename Tr_Base::Finite_facets_iterator   Finite_facets_iterator;
   typedef typename Tr_Base::Finite_edges_iterator    Finite_edges_iterator;
+  typedef typename Tr_Base::Finite_marking_edges_iterator    Finite_marking_edges_iterator;
   typedef typename Tr_Base::All_cells_iterator       All_cells_iterator;
 
   // Traits are not supposed to define Bare_point, but leaving below

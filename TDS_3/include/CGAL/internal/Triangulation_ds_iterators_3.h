@@ -449,6 +449,261 @@ private:
   }
 };
 
+
+    
+template < class Tds >
+class Triangulation_ds_marking_edge_iterator_3
+{
+// traverses the list of cells and reports each edge.
+public:
+
+  typedef typename Tds::Edge                      value_type;
+  typedef const typename Tds::Edge *              pointer;
+  typedef const typename Tds::Edge &              reference;
+  typedef std::size_t                             size_type;
+  typedef std::ptrdiff_t                          difference_type;
+  typedef std::forward_iterator_tag               iterator_category;
+
+  typedef typename Tds::Edge                      Edge;
+  typedef Triangulation_ds_marking_edge_iterator_3<Tds>   Edge_iterator;
+  typedef typename Tds::Cell_iterator             Cell_iterator;
+  typedef typename Tds::Cell_handle               Cell_handle;
+  typedef internal::Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
+
+  Triangulation_ds_marking_edge_iterator_3()
+    : _tds(nullptr)
+    {
+      edge.second = 0;
+      edge.third = 1;
+    }
+
+  Triangulation_ds_marking_edge_iterator_3(const Tds * tds)
+    : _tds(tds)
+    {
+      edge.second = 0;
+      edge.third = 1;
+      switch ( _tds->dimension() ) {
+      case 1:
+	{
+	  pos = _tds->cells().begin();
+	  return;
+	}
+      case 2:
+	{
+	  pos = _tds->cells().begin();
+	  while ( // there must be at least one edge
+		 pos->neighbor(3-edge.second-edge.third) < pos ) {
+	    increment2();
+	  }
+	  return;
+	}
+      case 3:
+	{
+	  pos = _tds->cells().begin();
+          int i(0), j(0);
+          int mini(0), minj(0);
+	  for( ;; ) {
+            int ei = Tds::edge_index(edge.second,edge.third);
+            if(pos->tds_data().edge(ei)){
+              increment3();
+              continue;
+            }
+            // this edge was not yet considered
+            // now find the incident cell with the smallest index
+	    edge.first = pos;
+            {
+              Cell_handle min = pos;
+
+              Cell_circulator ccir = _tds->incident_cells(edge), done(ccir);
+              do {
+                Cell_handle ch = ccir;
+                i = ch->index(pos->vertex(edge.second));
+                j = ch->index(pos->vertex(edge.third));
+                int ei = Tds::edge_index(i,j);
+                ch->tds_data().set_edge(ei);
+                                
+                if(ch <= min){
+                  min = ch;
+                  mini = i;
+                  minj = j;
+                }
+
+                ++ccir;
+              }while(ccir != done);
+              report.first = min;
+              report.second = mini;
+              report.third = minj;
+              break;
+            }
+	    
+	  }
+	  return;
+	}
+      default:
+	{
+	  pos = _tds->cells().end();
+	  return;
+	}
+      }
+    }
+
+  // used to initialize the past-the end iterator
+  Triangulation_ds_marking_edge_iterator_3(const Tds* tds, int)
+    : _tds(tds)
+    {
+	edge.second = 0;
+	edge.third = 1;
+	pos = _tds->cells().end();
+    }
+
+  Edge_iterator& operator++()
+  {
+    switch ( _tds->dimension() ) {
+    case 1:
+      {
+	++pos;
+	break;
+      }
+    case 2:
+      {
+	do {
+	  increment2();
+	} while ( pos != _tds->cells().end() &&
+		  pos->neighbor(3-edge.second-edge.third) < pos );
+	break;
+      }
+    case 3:
+      {
+        int i(0), j(0);
+        int mini(0), minj(0);
+        for( ;; ){
+          increment3();
+          if (pos != _tds->cells().end()) {
+            int ei = Tds::edge_index(edge.second,edge.third);
+            if(pos->tds_data().edge(ei)){
+              continue;
+            }
+            // this edge was not yet considered
+            // now find the incident cell with the smallest index
+            Cell_handle min = pos;
+            edge.first = pos;
+            Cell_circulator ccir = _tds->incident_cells(edge), done(ccir);
+
+            do {
+              Cell_handle ch = ccir;
+              i = ch->index(pos->vertex(edge.second));
+              j = ch->index(pos->vertex(edge.third));
+              int ei = Tds::edge_index(i,j);
+              ch->tds_data().set_edge(ei);
+              if(ch <= min){
+                min = ch;
+                mini = i;
+                minj = j;
+              }
+              ++ccir;
+            }while(ccir != done);
+            report.first = min;
+            report.second = mini;
+            report.third = minj;
+            break;
+            
+          } else {
+            edge.second=0; edge.third=1;
+            break;
+          }
+        }
+	break;
+      }
+    default:
+      {
+	return *this;
+      }
+    }
+    return *this;
+  }
+
+  Edge_iterator operator++(int)
+    {
+      Edge_iterator tmp(*this);
+      ++(*this);
+      return tmp;
+    }
+
+
+  bool operator==(const Edge_iterator& ei) const
+    {
+      return _tds == ei._tds && pos == ei.pos &&
+	     edge.second == ei.edge.second && edge.third == ei.edge.third;
+    }
+
+  bool operator!=(const Edge_iterator& ei) const
+    {
+      return !(*this == ei);
+    }
+
+  reference operator*() const
+    {
+      if(_tds->dimension() == 3){
+        return report;
+      }
+      edge.first = pos;
+      return edge;
+    }
+
+  pointer operator->() const
+    {
+      if(_tds->dimension() == 3){
+        return &report;
+      }
+      edge.first = pos;
+      return &edge;
+    }
+
+private:
+  const Tds*  _tds;
+  Cell_iterator pos;  // current "cell". Even if the dimension is <3 when
+                      // there is no true cell yet.
+  mutable Edge edge;  // keeps the indices of the current edge.
+  mutable Edge report;
+
+  void increment2()
+  {
+    if (edge.second == 2) { // edge.third == 0
+      // all the edges of the current cell have been examined
+      edge.second = 0; edge.third = 1;
+      ++pos;
+    }
+    // be careful : index should always be 0 when pos = cells_end
+    else {
+      ++edge.second;
+      if ( edge.second == 2 )
+	edge.third = 0;
+      else // edge.second==1
+	edge.third = 2;
+    }
+  }
+
+  void increment3()
+  {
+    if (edge.second == 2) { // then edge.third == 3
+      // all the edges of the current cell have been examined
+      edge.second = 0; edge.third = 1;
+      ++pos;
+    }
+    else {
+      if (edge.third == 3) {
+	edge.second++;
+	edge.third = edge.second+1;
+      }
+      else
+	++edge.third;
+    }
+  }
+};
+
+
+
+    
 }} // namespace CGAL::internal
 
 #endif // CGAL_INTERNAL_TRIANGULATION_DS_ITERATORS_3_H

@@ -1334,9 +1334,9 @@ refine_balls()
     ++refine_balls_iteration_nb;
     restart = false;
     boost::unordered_map<Vertex_handle, FT, Hash_fct> new_sizes;
-
-    for(typename Tr::Finite_edges_iterator eit = tr.finite_edges_begin(),
-        end = tr.finite_edges_end(); eit != end; ++eit)
+    
+    for(typename Tr::Finite_marking_edges_iterator eit = tr.finite_marking_edges_begin(),
+        end = tr.finite_marking_edges_end(); eit != end; ++eit)
     {
       if(forced_stop()) break;
       const Vertex_handle& va = eit->first->vertex(eit->second);
@@ -1385,6 +1385,10 @@ refine_balls()
         }
       }
     }
+
+    tr.clear_marked_edges();
+
+    
     if(forced_stop()) new_sizes.clear();
 
     // The std::map with Vertex_handle as the key is not robust, because

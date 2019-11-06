@@ -25,6 +25,7 @@ namespace CGAL {
 template < class T = void >
 struct Triangulation_utils_base_3
 {
+  static const int tab_edge_index[4][4];
   static const char tab_next_around_edge[4][4];
   static const int tab_vertex_triple_index[4][3];
   
@@ -33,6 +34,10 @@ struct Triangulation_utils_base_3
   static const int cw_map[3];
 };
 
+template < class T >
+const int Triangulation_utils_base_3<T>::tab_edge_index[4][4] = {
+  { -1, 0, 2, 3 }, { 0, -1, 1, 4}, {2, 1, -1, 5}, {3, 4, 5, -1} };
+  
 template < class T >
 const char Triangulation_utils_base_3<T>::tab_next_around_edge[4][4] = {
       {5, 2, 3, 1},
@@ -93,6 +98,10 @@ struct Triangulation_utils_3
     return tab_vertex_triple_index[i][j];
   }
 
+  static int edge_index(const int i, const int j)
+  {
+    return tab_edge_index[i][j];
+  }
 };
 
 } //namespace CGAL
