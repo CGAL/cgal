@@ -154,6 +154,10 @@ foreach(pkg ${files})
     process_package(${pkg})
   endif()
 endforeach()
+if(EXISTS ${GIT_REPO}/Maintenance/release_building/public_release_name)
+  file(COPY "${GIT_REPO}/Maintenance/release_building/public_release_name"
+    DESTINATION "${release_dir}/doc")
+endif()
 
 #create VERSION
 file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")
