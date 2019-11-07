@@ -921,7 +921,8 @@ public:
     using namespace CGAL::internal::AABB_tree;
     typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
 		Projection_traits<AABBTraits> projection_traits(hint.first,hint.second,m_traits);
-		this->traversal(query, projection_traits);		return projection_traits.closest_point_and_primitive();
+		this->traversal(query, projection_traits);
+		return projection_traits.closest_point_and_primitive();
 	}
 
 } // end namespace CGAL
