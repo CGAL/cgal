@@ -42,6 +42,8 @@
 #endif // CGAL_DISABLE_STATIC_FILTERS_ADDED_2011
 
 
+#  include <CGAL/internal/Static_filters/Coplanar_3.h>
+
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
 #  include <CGAL/internal/Static_filters/Equal_3.h>
 #  include <CGAL/internal/Static_filters/Equal_2.h>
@@ -96,6 +98,7 @@ class Static_filters : public K_base
 {
   typedef Static_filters<K_base>                    Self;
 
+  typedef Static_filters_predicates::Coplanar_3<K_base,Self>                     Coplanar_3;
 public:
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
   typedef Static_filters_predicates::Equal_2<K_base>                        Equal_2;
@@ -137,6 +140,12 @@ public:
   collinear_3_object() const
   { return Collinear_3(); }
 
+  Coplanar_3
+  coplanar_3_object() const
+  {
+    return Coplanar_3();
+  }
+  
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
  Equal_2
   equal_2_object() const
