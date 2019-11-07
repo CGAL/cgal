@@ -219,8 +219,55 @@ struct Throw_at_output {
   }
 };
 
-template<typename AABBTraits,class TM, class VPM, typename Kernel,
-          typename Output_iterator>
+template <class OutputIterator>
+struct Concurrent_output_iterator_wrapper
+  : public CGAL::cpp98::iterator< std::output_iterator_tag, void, void, void, void >
+{
+  Concurrent_output_iterator_wrapper(OutputIterator out, CGAL_MUTEX& mutex)
+    : m_out(out)
+    , mutex(mutex)
+  {}
+
+  template< class T >
+  Concurrent_output_iterator_wrapper& operator=(const T& t)
+  {
+#ifdef CGAL_LINKED_WITH_TBB
+      CGAL_SCOPED_LOCK(mutex);
+#endif
+    *m_out=t;
+    return *this;
+  }
+
+  Concurrent_output_iterator_wrapper& operator++()        {
+#ifdef CGAL_LINKED_WITH_TBB
+    CGAL_SCOPED_LOCK(mutex);
+#endif
+    ++m_out;
+    return *this;
+  }
+
+  Concurrent_output_iterator_wrapper& operator++(int)
+  {
+#ifdef CGAL_LINKED_WITH_TBB
+    CGAL_SCOPED_LOCK(mutex);
+#endif
+    m_out++;
+    return *this;
+  }
+
+  Concurrent_output_iterator_wrapper& operator*()
+  {
+    *m_out;
+    return *this;
+  }
+
+  OutputIterator m_out;
+#ifdef CGAL_LINKED_WITH_TBB
+  CGAL_MUTEX& mutex;
+#endif
+};
+
+template< typename AABBTraits,class TM, class VPM, typename Kernel, typename Output_iterator>
 class AABB_self_intersection_traits
 {
   typedef typename AABBTraits::FT FT;
@@ -236,10 +283,10 @@ class AABB_self_intersection_traits
 
 public:
   AABB_self_intersection_traits(const TM& m,
-              VPM vpmap,
-              Output_iterator out_it,
-              const AABBTraits& traits)
-    : m_out_it(out_it)
+                                      VPM vpmap,
+                                      Output_iterator out_it,
+                                const AABBTraits& traits)
+    : m_out_it(out_it, mutex)
     , m_traits(traits)
     , facets_intersector(m, m_out_it, vpmap, Kernel())
     , tmap(const_cast<TM*>(&m),vpmap)
@@ -250,9 +297,6 @@ public:
   void intersection(const face_descriptor& query, const Primitive& primitive) const
   {
       if ( query>= primitive.id()) return;
-#ifdef CGAL_LINKED_WITH_TBB
-      CGAL_SCOPED_LOCK(it_mutex);
-#endif
       facets_intersector.operator ()(query, primitive.id());
   }
 
@@ -262,13 +306,13 @@ public:
   }
 
 private:
-  Output_iterator m_out_it;
-  const AABBTraits& m_traits;
-  CGAL::internal::Intersect_facets<TM, Kernel, Output_iterator, VPM > facets_intersector;
-   Triangle_map tmap;
 #ifdef CGAL_LINKED_WITH_TBB
-  mutable CGAL_MUTEX it_mutex;//mutex used to protect iterator
+  mutable CGAL_MUTEX mutex;//mutex used to protect iterator
 #endif
+  Concurrent_output_iterator_wrapper<Output_iterator> m_out_it;
+  const AABBTraits& m_traits;
+  CGAL::internal::Intersect_facets<TM, Kernel, Concurrent_output_iterator_wrapper<Output_iterator>, VPM > facets_intersector;
+   Triangle_map tmap;
 };
 
 }// namespace internal
