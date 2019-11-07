@@ -219,7 +219,6 @@ struct Throw_at_output {
   }
 };
 
-
 template<typename AABBTraits,class TM, class VPM, typename Kernel,
           typename Output_iterator>
 class AABB_self_intersection_traits
@@ -240,16 +239,11 @@ public:
               VPM vpmap,
               Output_iterator out_it,
               const AABBTraits& traits)
-    : m_out_it(out_it), m_traits(traits)
-  {
-    facets_intersector =
-        new CGAL::internal::Intersect_facets<TM, typename AABBTraits::Geom_traits,
-         Output_iterator, VPM >
-        (m, m_out_it, vpmap, Kernel());
-    tmap = Triangle_map(const_cast<TM*>(&m),vpmap);
-  }
-
-  ~AABB_self_intersection_traits() { delete facets_intersector;}
+    : m_out_it(out_it)
+    , m_traits(traits)
+    , facets_intersector(m, m_out_it, vpmap, Kernel())
+    , tmap(const_cast<TM*>(&m),vpmap)
+  {}
 
   bool go_further() const { return true; }
 
@@ -259,20 +253,18 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
       CGAL_SCOPED_LOCK(it_mutex);
 #endif
-      facets_intersector->operator ()(query, primitive.id());
+      facets_intersector.operator ()(query, primitive.id());
   }
 
   bool do_intersect(const face_descriptor& query, const Node& node) const
   {
-
     return m_traits.do_intersect_object()(get(tmap, query), node.bbox());
   }
 
 private:
   Output_iterator m_out_it;
   const AABBTraits& m_traits;
-  CGAL::internal::Intersect_facets<TM, Kernel,
-    Output_iterator, VPM > *facets_intersector;
+  CGAL::internal::Intersect_facets<TM, Kernel, Output_iterator, VPM > facets_intersector;
    Triangle_map tmap;
 #ifdef CGAL_LINKED_WITH_TBB
   mutable CGAL_MUTEX it_mutex;//mutex used to protect iterator
@@ -557,16 +549,15 @@ bool does_self_intersect(const FaceRange& face_range,
 
 template <class Concurrency_tag,
           typename TM, typename VPM, typename Kernel,
-         typename Tr, typename OutputIterator> //query = face
+          typename Tr, typename OutputIterator>
 OutputIterator self_intersections_with_tree(const TM& m,
-                                  VPM vpmap,
-                                  Kernel,
-                                  CGAL::AABB_tree<Tr>* tree, //should probably be a template param to avoid include AABB_tree.h
-                                  OutputIterator out) //const
+                                                  VPM vpmap,
+                                                  Kernel,
+                                            const CGAL::AABB_tree<Tr>& tree, //should probably be a template param to avoid include AABB_tree.h
+                                                  OutputIterator out)
 {
-  internal::AABB_self_intersection_traits<Tr,
-      TM, VPM, Kernel,
-       OutputIterator> traversal_traits(m, vpmap, out,tree->traits());
+  internal::AABB_self_intersection_traits<Tr, TM, VPM, Kernel, OutputIterator>
+    traversal_traits(m, vpmap, out,tree.traits());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
@@ -580,10 +571,10 @@ OutputIterator self_intersections_with_tree(const TM& m,
     {
       fs.push_back(f);
     }
-    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_faces(m)), [&fs, &m, &traversal_traits, tree](const tbb::blocked_range<size_t>& r) {
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_faces(m)), [&fs, &m, &traversal_traits, &tree](const tbb::blocked_range<size_t>& r) {
       for( size_t i=r.begin(); i!=r.end(); ++i )
       {
-        tree->traversal(fs[i], traversal_traits);
+        tree.traversal(fs[i], traversal_traits);
       }
     });
   }
@@ -592,7 +583,7 @@ OutputIterator self_intersections_with_tree(const TM& m,
   {
     for(const auto& f : faces(m))
     {
-      tree->traversal(f, traversal_traits);
+      tree.traversal(f, traversal_traits);
     }
   }
   return out;
