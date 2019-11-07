@@ -40,11 +40,9 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <CGAL/internal/AABB_tree/AABB_node.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
@@ -59,7 +57,6 @@ namespace CGAL {
 namespace internal {
 template <class TM,//TriangleMesh
           class Kernel,
-          class Box,
           class OutputIterator,
           class VertexPointMap>
 struct Intersect_facets
@@ -108,11 +105,6 @@ struct Intersect_facets
     triangle_functor(kernel.construct_triangle_3_object()),
     do_intersect_3_functor(kernel.do_intersect_3_object())
   { }
-
-  void operator()(const Box* b, const Box* c) const
-  {
-    operator ()(b->info(), c->info());
-  }
 
   void operator()(const face_descriptor& b, const face_descriptor& c) const
   {
@@ -208,6 +200,12 @@ struct Intersect_facets
       *m_iterator_wrapper++ = std::make_pair(b, c);
     }
   } // end operator ()
+
+  template <class Box>
+  void operator()(const Box* b, const Box* c) const
+  {
+    operator ()(b->info(), c->info());
+  }
 }; // end struct Intersect_facets
 
 
@@ -237,30 +235,20 @@ class AABB_self_intersection_traits
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef Triangle_from_face_descriptor_map<TM, typename Default::Get<VPM, typename boost::property_map< TM, vertex_point_t>::const_type >::type> Triangle_map;
 
-  //just for the declaration of the facet_intersector, it only needs to compile,
-  // bc we use the operator() with faces, so the boxes are never used.
-  template< typename Info>
-  struct Dummy_box {
-    Dummy_box(){}
-
-    Info info() const
-    {
-      return Info();
-    }
-  };
-
 public:
   AABB_self_intersection_traits(const TM& m,
               VPM vpmap,
               Output_iterator out_it,
               const AABBTraits& traits)
-    : m_out_it(out_it), m_traits(traits) {
-  facets_intersector =
-      new CGAL::internal::Intersect_facets<TM, typename AABBTraits::Geom_traits,
-      Dummy_box<typename boost::graph_traits<TM>::face_descriptor>, Output_iterator, VPM >
-      (m, m_out_it, vpmap, Kernel());
-  tmap = Triangle_map(const_cast<TM*>(&m),vpmap);
+    : m_out_it(out_it), m_traits(traits)
+  {
+    facets_intersector =
+        new CGAL::internal::Intersect_facets<TM, typename AABBTraits::Geom_traits,
+         Output_iterator, VPM >
+        (m, m_out_it, vpmap, Kernel());
+    tmap = Triangle_map(const_cast<TM*>(&m),vpmap);
   }
+
   ~AABB_self_intersection_traits() { delete facets_intersector;}
 
   bool go_further() const { return true; }
@@ -284,7 +272,6 @@ private:
   Output_iterator m_out_it;
   const AABBTraits& m_traits;
   CGAL::internal::Intersect_facets<TM, Kernel,
-  Dummy_box<face_descriptor>,
     Output_iterator, VPM > *facets_intersector;
    Triangle_map tmap;
 #ifdef CGAL_LINKED_WITH_TBB
@@ -442,7 +429,7 @@ self_intersections( const FaceRange& face_range,
 
   // compute self-intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
-  CGAL::internal::Intersect_facets<TM,GeomTraits,Box,OutputIterator,VertexPointMap>
+  CGAL::internal::Intersect_facets<TM,GeomTraits,OutputIterator,VertexPointMap>
     intersect_facets(tmesh, out, vpmap,
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GeomTraits()));
 
