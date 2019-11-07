@@ -122,13 +122,18 @@ struct Intersect_facets
       if(face(opp_h, m_tmesh) == c->info()){
         // there is an intersection if the four points are coplanar and
         // the triangles overlap
+		  get(m_vpmap, hv[i]);
+		  get(m_vpmap, hv[(i + 1) % 3]);
+		  get(m_vpmap, hv[(i + 2) % 3]);
+		  get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh));
+
         if(CGAL::coplanar(get(m_vpmap, hv[i]),
-                          get(m_vpmap, hv[(i+1)&3]),
-                          get(m_vpmap, hv[(i+2)&3]),
+                          get(m_vpmap, hv[(i+1)%3]),
+                          get(m_vpmap, hv[(i+2)%3]),
                           get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh))) &&
-           CGAL::coplanar_orientation(get(m_vpmap, hv[(i+2)&3]),
+           CGAL::coplanar_orientation(get(m_vpmap, hv[(i+2)%3]),
                                       get(m_vpmap, hv[i]),
-                                      get(m_vpmap, hv[(i+1)&3]),
+                                      get(m_vpmap, hv[(i+1)%3]),
                                       get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh)))
              == CGAL::POSITIVE){
           *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
@@ -152,14 +157,14 @@ struct Intersect_facets
           shared = true;
           break;
         }
-        if(shared){
-          break;
-        }
       }
+	  if (shared) {
+		  break;
+	  }
     }
     if(shared){
       // found shared vertex:
-      CGAL_assertion(target(h,m_tmesh) == target(v,m_tmesh));
+		assert(hv[i] == gv[j]);
       // geometric check if the opposite segments intersect the triangles
       Triangle t1 = triangle_functor( get(m_vpmap, hv[0]),
                                       get(m_vpmap, hv[1]),
@@ -168,10 +173,10 @@ struct Intersect_facets
                                       get(m_vpmap, gv[1]),
                                       get(m_vpmap, gv[2]));
 
-      Segment s1 = segment_functor( get(m_vpmap, hv[(i+1)&3]),
-                                    get(m_vpmap, hv[(i+2)&3]) );
-      Segment s2 = segment_functor( get(m_vpmap, gv[(j+1)&3]),
-                                    get(m_vpmap, gv[(j+2)&3]));
+      Segment s1 = segment_functor( get(m_vpmap, hv[(i+1)%3]),
+                                    get(m_vpmap, hv[(i+2)%3]) );
+      Segment s2 = segment_functor( get(m_vpmap, gv[(j+1)%3]),
+                                    get(m_vpmap, gv[(j+2)%3]));
 
       if(do_intersect_3_functor(t1,s2)){
         *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
