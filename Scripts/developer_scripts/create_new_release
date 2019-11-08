@@ -322,6 +322,9 @@ fi
 
 if [ -n "$DO_PUBLIC" ]; then
   if docker version > /dev/null; then
+    # Re-extract the full version of CGAL, with examples/, and doc_html/
+    rm -rf ./${public_release_name}
+    tar -xf ${public_release_name}.tar.xz
     # Build the Windows installer
     docker pull cgal/cgal-nsis-dockerfile
     docker create -v `realpath ${DESTINATION}/${public_release_name}`:/mnt/cgal_release:ro,z \
