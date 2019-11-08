@@ -59,12 +59,6 @@ pushd "$DEST_DIR"
 zip -q -r "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.zip" doc_html
 popd
 
-printf "bzip2 doc_html tarball...\n"
-bzip2 --best < "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar.bz2"
-
-printf "bzip2 source tarball...\n"
-zcat "$DEST_DIR/${PUBLIC_RELEASE_NAME}.tar.gz" | bzip2 --best > "$DEST_DIR/${PUBLIC_RELEASE_NAME}.tar.bz2"
-
 printf "xz doc_html tarball...\n"
 xz --best < "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar.xz"
 
