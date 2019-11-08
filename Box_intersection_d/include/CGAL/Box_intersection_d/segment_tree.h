@@ -24,7 +24,8 @@
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
 
-
+#include <tbb/parallel_sort.h>
+#include <tbb/task_group.h>
 #include <algorithm>
 #include <iterator>
 #include <functional>
@@ -93,8 +94,8 @@ void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
-    std::sort( p_begin, p_end, Compare( 0 ) );
-    std::sort( i_begin, i_end, Compare( 0 ) );
+    tbb::parallel_sort( p_begin, p_end, Compare( 0 ) );
+    tbb::parallel_sort( i_begin, i_end, Compare( 0 ) );
 
     // for each box viewed as interval i
     for( RandomAccessIter2 i = i_begin; i != i_end; ++i ) {
@@ -133,8 +134,8 @@ void modified_two_way_scan(
 {
     typedef typename Traits::Compare Compare;
 
-    std::sort( p_begin, p_end, Compare( 0 ) );
-    std::sort( i_begin, i_end, Compare( 0 ) );
+    tbb::parallel_sort( p_begin, p_end, Compare( 0 ) );
+    tbb::parallel_sort( i_begin, i_end, Compare( 0 ) );
 
     // for each box viewed as interval
     while( i_begin != i_end && p_begin != p_end ) {
@@ -323,7 +324,8 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                    T lo, T hi,
                    Callback callback, Predicate_traits traits,
-                   std::ptrdiff_t cutoff, int dim, bool in_order )
+                   std::ptrdiff_t cutoff, int dim, bool in_order,
+                   tbb::task_group& tg)
 {
     typedef typename Predicate_traits::Spanning   Spanning;
     typedef typename Predicate_traits::Lo_less    Lo_less;
@@ -332,37 +334,10 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     const T inf = box_limits< T >::inf();
     const T sup = box_limits< T >::sup();
 
-#if CGAL_BOX_INTERSECTION_DEBUG
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, level, -1);
-    Counter<int> bla( level );
-    CGAL_BOX_INTERSECTION_DUMP("range: [" << lo << "," << hi << ") dim " 
-                                          << dim << std::endl )
-    CGAL_BOX_INTERSECTION_DUMP("intervals: " )
-    //dump_box_numbers( i_begin, i_end, traits );
-    dump_intervals( i_begin, i_end, traits, dim );
-    CGAL_BOX_INTERSECTION_DUMP("points: " )
-    //dump_box_numbers( p_begin, p_end, traits );
-    dump_points( p_begin, p_end, traits, dim );
-#endif
-
-#if CGAL_SEGMENT_TREE_CHECK_INVARIANTS
-    {
-        // first: each point is inside segment [lo,hi)
-        for( RandomAccessIter1 it = p_begin; it != p_end; ++it ) {
-            CGAL_assertion( Lo_less( hi, dim )(*it) );
-            CGAL_assertion( Lo_less( lo, dim )(*it) == false );
-        }
-        // second: each interval intersects segment [lo,hi)
-        for( RandomAccessIter2 it = i_begin; it != i_end; ++it )
-            CGAL_assertion( Hi_greater(lo,dim)(*it) && Lo_less(hi,dim)(*it));
-    }
-#endif
-
     if( p_begin == p_end || i_begin == i_end || lo >= hi )
         return;
 
     if( dim == 0 )  {
-        CGAL_BOX_INTERSECTION_DUMP( "dim = 0. scanning ... " << std::endl )
         one_way_scan( p_begin, p_end, i_begin, i_end,
                       callback, traits, dim, in_order );
         return;
@@ -371,7 +346,6 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     if( std::distance( p_begin, p_end ) < cutoff ||
         std::distance( i_begin, i_end ) < cutoff  )
     {
-        CGAL_BOX_INTERSECTION_DUMP( "scanning ... " << std::endl )
         modified_two_way_scan( p_begin, p_end, i_begin, i_end,
                                callback, traits, dim, in_order );
         return;
@@ -381,23 +355,18 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
         std::partition( i_begin, i_end, Spanning( lo, hi, dim ) );
 
     if( i_begin != i_span_end ) {
-        CGAL_BOX_INTERSECTION_DUMP( "checking spanning intervals ... " 
-                                    << std::endl )
+
         // make two calls for roots of segment tree at next level.
         segment_tree( p_begin, p_end, i_begin, i_span_end, inf, sup,
-                      callback, traits, cutoff, dim - 1,  in_order );
+                      callback, traits, cutoff, dim - 1,  in_order, tg );
         segment_tree( i_begin, i_span_end, p_begin, p_end, inf, sup,
-                      callback, traits, cutoff, dim - 1, !in_order );
+                      callback, traits, cutoff, dim - 1, !in_order, tg );
     }
 
     T mi;
     RandomAccessIter1 p_mid = split_points( p_begin, p_end, traits, dim, mi );
 
     if( p_mid == p_begin || p_mid == p_end )  {
-        CGAL_BOX_INTERSECTION_DUMP( "unable to split points! ")
-        //dump_points( p_begin, p_end, traits, dim );
-        CGAL_BOX_INTERSECTION_DUMP( "performing modified two_way_san ... " 
-                                     << std::endl )
         modified_two_way_scan( p_begin, p_end, i_span_end, i_end,
                                callback, traits, dim, in_order );
         return;
@@ -407,21 +376,17 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     // separate left intervals.
     // left intervals have a low point strictly less than mi
     i_mid = std::partition( i_span_end, i_end, Lo_less( mi, dim ) );
-    CGAL_BOX_INTERSECTION_DUMP("->left" << std::endl )
+
     segment_tree( p_begin, p_mid, i_span_end, i_mid, lo, mi,
-                  callback, traits, cutoff, dim, in_order );
+                  callback, traits, cutoff, dim, in_order, tg );
     // separate right intervals.
     // right intervals have a high point strictly higher than mi
     i_mid = std::partition( i_span_end, i_end, Hi_greater( mi, dim ) );
-    CGAL_BOX_INTERSECTION_DUMP("->right"<< std::endl )
+
     segment_tree( p_mid, p_end, i_span_end, i_mid, mi, hi,
-                  callback, traits, cutoff, dim, in_order );
+                  callback, traits, cutoff, dim, in_order, tg );
 }
 
-#if CGAL_BOX_INTERSECTION_DEBUG
- #undef CGAL_BOX_INTERSECTION_DUMP
-#endif
-#undef CGAL_BOX_INTERSECTION_DEBUG
 
 } // end namespace Box_intersection_d
 

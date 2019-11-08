@@ -40,12 +40,17 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
 #define CGAL_PMP_NP_CLASS NamedParameters
 #endif
 
 namespace CGAL {
+
+
 namespace internal {
 template <class TM,//TriangleMesh
           class Kernel,
@@ -100,6 +105,38 @@ struct Intersect_facets
     do_intersect_3_functor(kernel.do_intersect_3_object())
   { }
 
+  void operator()(const tbb::blocked_range<std::size_t> &r) const
+  {
+    for (std::size_t i = r.begin(); i != r.end(); ++i) {
+      vertex_descriptor vd(i);
+      if(degree(vd, m_tmesh)<= 3){
+        return;
+      }
+      halfedge_descriptor hd = halfedge(vd, m_tmesh), done(hd);
+
+      do { //for each hd with vd as target
+        // no need to look at the neighbor faces
+        // later do the shared edge test with them
+        Triangle th = triangle_functor( get(m_vpmap, vd),
+                                        get(m_vpmap, source(hd,m_tmesh)),
+                                        get(m_vpmap, target(next(hd,m_tmesh), m_tmesh)) );
+        halfedge_descriptor start = prev(opposite(prev(opposite(hd,m_tmesh),m_tmesh),m_tmesh),m_tmesh);
+        halfedge_descriptor stop = opposite(next(hd,m_tmesh),m_tmesh);
+        while(start != stop){
+          if(start < h){
+            Segment ss = segment_functor(get(m_vpmap, source(start,m_tmesh)),
+                                         get(m_vpmap, target(next(start,m_tmesh), m_tmesh)));
+            if(do_intersect_3_functor(th, ss)){
+              *m_iterator_wrapper++ = std::make_pair(face(h,m_tmesh), face(start, m_tmesh));
+            }
+          }
+          start = prev(opposite(hd,m_tmesh),m_tmesh);
+        }
+        ++hd;
+      }while(hd != done);
+    }
+  }
+  
   void operator()(const Box* b, const Box* c) const
   {
     halfedge_descriptor h = halfedge(b->info(), m_tmesh);
@@ -163,6 +200,7 @@ struct Intersect_facets
 	  }
     }
     if(shared){
+#if 0
       // found shared vertex:
 		assert(hv[i] == gv[j]);
       // geometric check if the opposite segments intersect the triangles
@@ -183,6 +221,7 @@ struct Intersect_facets
       } else if(do_intersect_3_functor(t2,s1)){
         *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
       }
+#endif      
       return;
     }
 
@@ -211,6 +250,8 @@ struct Throw_at_output {
 
 }// namespace internal
 
+
+  
 namespace Polygon_mesh_processing {
 
 #ifndef DOXYGEN_RUNNING
@@ -225,6 +266,7 @@ self_intersections( const FaceRange& face_range,
                     OutputIterator out,
                     const NamedParameters& np);
 #endif
+
 
 /**
  * \ingroup PMP_intersection_grp
@@ -253,22 +295,27 @@ self_intersections( const FaceRange& face_range,
  *
  * @return `out`
  */
+
+  
 template <class TriangleMesh
         , class OutputIterator
 #ifdef DOXYGEN_RUNNING
-        , class NamedParameters
+          , class NamedParameters>
 #else //avoid ambiguity with self_intersections(faces, tmesh, out)
-        , class P, class T, class R
+          , class P, class T, class R>
 #endif
->
+
+
 OutputIterator
 self_intersections(const TriangleMesh& tmesh
                  , OutputIterator out
 #ifdef DOXYGEN_RUNNING
-                 , const NamedParameters& np)
+                 , const NamedParameters& np
 #else
-                 , const Named_function_parameters<P,T,R>& np)
+                 , const Named_function_parameters<P,T,R>& np
 #endif
+    )
+
 {
   return self_intersections(faces(tmesh), tmesh, out, np);
 }
@@ -281,6 +328,8 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
   return self_intersections(tmesh, out,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
+
+
 /// \endcond
 
 /*!
@@ -326,6 +375,7 @@ self_intersections( const FaceRange& face_range,
 
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
   typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor> Box;
 
   // make one box per facet
@@ -357,8 +407,18 @@ self_intersections( const FaceRange& face_range,
   for(Box& b : boxes)
     box_ptr.push_back(&b);
 
-  // compute self-intersections filtered out by boxes
+
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
+
+  Emptyset_iterator dev0;
+  CGAL::internal::Intersect_facets<TM,GeomTraits,Box,Emptyset_iterator,VertexPointMap>
+    intersect_facets_parallel(tmesh, dev0, vpmap,
+      parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GeomTraits()));
+
+  std::cout << "do it"<< std::endl;
+  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_vertices(tmesh)), intersect_facets_parallel);
+  
+  // compute self-intersections filtered out by boxes
   CGAL::internal::Intersect_facets<TM,GeomTraits,Box,OutputIterator,VertexPointMap>
     intersect_facets(tmesh, out, vpmap,
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GeomTraits()));
