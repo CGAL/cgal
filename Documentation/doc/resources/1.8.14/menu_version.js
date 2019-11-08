@@ -3,7 +3,7 @@
 
   var url_re =  /(cgal\.geometryfactory\.com\/CGAL\/doc\/|doc\.cgal\.org\/)(master|latest|(\d\.\d+|\d\.\d+\.\d+))\//;
   var url_local =  /.*\/doc_output\//;
-  var current_version_local = '5.0-beta2'
+  var current_version_local = '5.0'
   var all_versions = [
       'master',
       'latest',
