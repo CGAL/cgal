@@ -233,7 +233,7 @@ template <class R_> struct Power_center : Store_kernel<R_> {
         j=0;
         for(Iter f3=f; f3!=e; ++f3,++j){
           // FIXME: scalar product of points ???
-          m(j,i) = m(i,j) = sp(pdw(*f2),pdw(*f3));
+          m(j,i) = m(i,j) = sp(p,pdw(*f3));
         }
       }
       for(i=1;i<k;++i){
@@ -251,8 +251,10 @@ template <class R_> struct Power_center : Store_kernel<R_> {
       for(i=0;i<d;++i) center(i)=0;
       j=0;
       for(Iter f2=f;f2!=e;++f2,++j){
+        WPoint const& wp = *f2;
+        Point const& p = pdw(wp);
         for(i=0;i<d;++i){
-          center(i)+=l(j)*c(pdw(*f2),i);
+          center(i)+=l(j)*c(p,i);
         }
       }
 
