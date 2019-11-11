@@ -14,7 +14,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point_3;
 typedef CGAL::Creator_uniform_3<double,Point_3> Creator_3;
 
-int main(int argc, char* argv[])
+int main()
 {
   std::vector<Point_3> points;
   points.reserve (2000);
