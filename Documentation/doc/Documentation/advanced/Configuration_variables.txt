@@ -324,6 +324,44 @@ Note that the variables in the table below are being used.
 | `TBB_MALLOCPROXY_DEBUG_LIBRARY` | Full pathname of the compiled TBB debug malloc_proxy library (optional) | CMake |
 | `TBB_MALLOCPROXY_RELEASE_LIBRARY` | Full pathname of the compiled TBB release malloc_proxy library (optional) | CMake |
 
+\subsection installation_laslib LASlib library
+
+If LASLIB is not automatically found, the following variables must be set:
+
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `LASLIB_INCLUDE_DIR` | Directory containing the file `lasreader.hpp` | CMake |
+| `LASZIP_INCLUDE_DIR` | Directory containing the file `mydefs.hpp` | CMake |
+| `LASLIB_LIBRARIES` | Full pathname of the compiled LASLIB library | CMake |
+
+\subsection installation_OpenCV OpenCV library
+
+The environment variable `OPENCV_DIR` should be set to the directory
+containing the file `OpenCVConfig.cmake` provided by OpenCV.
+
+\subsection installation_TensorFlow TensorFlow library
+
+If TensorFlow is not automatically found, the following variables must be set:
+
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `TensorFlow_INCLUDE_DIR` | Directory containing the directories `tensorflow/core`, `tensorflow/cc`, etc. | CMake |
+| `TensorFlow_LIBRARY` | Full pathname of the compiled TensorFlow C++ library | CMake |
+
+\subsection installation_SCIP SCIP library
+
+The environment variable `SCIP_DIR` should be set to the directory
+containing the file `scip-config.cmake` provided by SCIP.
+
+\subsection installation_GLPK GLPK library
+
+If GLPK is not automatically found, the following variables must be set:
+
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `GLPK_INCLUDE_DIR` | Directory containing the file `glpk.h` | CMake |
+| `GLPK_LIBRARIES` | Full pathname of the compiled GLPK library | CMake |
+
 \section installation_compiler_workarounds Compiler Workarounds
 
 A number of boolean flags are used to workaround compiler bugs and
