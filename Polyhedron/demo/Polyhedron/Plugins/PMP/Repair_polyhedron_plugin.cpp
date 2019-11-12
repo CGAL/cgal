@@ -151,7 +151,9 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_t
 
 void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveNeedlesAndCaps_triggered()
 {
-  CGAL::Three::Three::CursorScopeGuard(Qt::WaitCursor);
+  QCursor tmp_cursor(Qt::WaitCursor);
+  CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
+
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
   if(!sm_item)
