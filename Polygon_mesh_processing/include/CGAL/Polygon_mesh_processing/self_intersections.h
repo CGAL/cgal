@@ -204,7 +204,7 @@ struct Intersect_facets
       *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
     }
   } // end operator ()
-}; // end struct Intersect_facets
+  }; // end struct Intersect_facets
 
   
 template <class TM,//TriangleMesh
@@ -469,12 +469,14 @@ template <class TriangleMesh
         , class FaceRange
         , class OutputIterator
         , class NamedParameters
+	, class ConcurrencyTag
 >
 OutputIterator
 self_intersections( const FaceRange& face_range,
                     const TriangleMesh& tmesh,
                     OutputIterator out,
-                    const NamedParameters& np);
+                    const NamedParameters& np,
+                    ConcurrencyTag);
 #endif
 
 
@@ -506,8 +508,8 @@ self_intersections( const FaceRange& face_range,
  * @return `out`
  */
 
-  
-template <class TriangleMesh
+template < class ConcurrencyTag = Sequential_tag
+        , class TriangleMesh
         , class OutputIterator
 #ifdef DOXYGEN_RUNNING
           , class NamedParameters>
@@ -527,16 +529,16 @@ self_intersections(const TriangleMesh& tmesh
     )
 
 {
-  return self_intersections(faces(tmesh), tmesh, out, np);
+  return self_intersections(faces(tmesh), tmesh, out, np, ConcurrencyTag());
 }
 
 /// \cond SKIP_IN_MANUAL
-template <class TriangleMesh, class OutputIterator>
+template <class ConcurrencyTag = Sequential_tag, class TriangleMesh, class OutputIterator>
 OutputIterator
 self_intersections(const TriangleMesh& tmesh, OutputIterator out)
 {
-  return self_intersections(tmesh, out,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
+  return self_intersections(faces(tmesh), tmesh, out,
+                            CGAL::Polygon_mesh_processing::parameters::all_default(), ConcurrencyTag());
 }
 
 
@@ -579,7 +581,67 @@ OutputIterator
 self_intersections( const FaceRange& face_range,
                     const TriangleMesh& tmesh,
                     OutputIterator out,
-                    const NamedParameters& np)
+                    const NamedParameters& np,
+                    Sequential_tag)
+{
+  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
+
+  typedef TriangleMesh TM;
+  typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
+  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor> Box;
+
+  // make one box per facet
+  std::vector<Box> boxes;
+  boxes.reserve(
+    std::distance( boost::begin(face_range), boost::end(face_range) )
+  );
+
+  typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
+  VertexPointMap vpmap = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                                      get_const_property_map(boost::vertex_point, tmesh));
+
+  for(face_descriptor f : face_range)
+  {
+    typename boost::property_traits<VertexPointMap>::reference
+      p = get(vpmap, target(halfedge(f,tmesh),tmesh)),
+      q = get(vpmap, target(next(halfedge(f, tmesh), tmesh), tmesh)),
+      r = get(vpmap, target(next(next(halfedge(f, tmesh), tmesh), tmesh), tmesh));
+
+    if ( collinear(p, q, r) )
+      *out++= std::make_pair(f,f);
+    else
+      boxes.push_back(Box(p.bbox() + q.bbox() + r.bbox(), f));
+  }
+  // generate box pointers
+  std::vector<const Box*> box_ptr;
+  box_ptr.reserve(num_faces(tmesh));
+
+  for(Box& b : boxes)
+    box_ptr.push_back(&b);
+
+  // compute self-intersections filtered out by boxes
+  typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
+  CGAL::internal::Intersect_facets<TM,GeomTraits,Box,OutputIterator,VertexPointMap>
+    intersect_facets(tmesh, out, vpmap,
+      parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GeomTraits()));
+
+  std::ptrdiff_t cutoff = 2000;
+  CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
+  return intersect_facets.m_iterator;
+}
+
+  
+template <class TriangleMesh
+        , class FaceRange
+        , class OutputIterator
+        , class NamedParameters
+>
+OutputIterator
+self_intersections( const FaceRange& face_range,
+                    const TriangleMesh& tmesh,
+                    OutputIterator out,
+                    const NamedParameters& np,
+                    Parallel_tag)
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
 
@@ -682,7 +744,8 @@ self_intersections( const FaceRange& face_range,
 }
 
 /// \cond SKIP_IN_MANUAL
-template <class TriangleMesh
+template <class ConcurrencyTag = Sequential_tag
+        , class TriangleMesh
         , class FaceRange
         , class OutputIterator
 >
@@ -691,7 +754,8 @@ OutputIterator self_intersections(const FaceRange& face_range,
                                   OutputIterator out)
 {
   return self_intersections(face_range, tmesh, out,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
+                            CGAL::Polygon_mesh_processing::parameters::all_default(),
+                            ConcurrencyTag());
 }
 /// \endcond
 
