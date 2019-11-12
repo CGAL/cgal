@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -57,7 +48,7 @@ class Color
 {
 private:
 
-  cpp11::array<unsigned char, 4> m_data;
+  std::array<unsigned char, 4> m_data;
   
 public:
 
@@ -168,21 +159,21 @@ public:
   /*!
     returns the array with rgba values.
   */ 
-  const cpp11::array<unsigned char, 4>& to_rgba() const { return m_data; }
+  const std::array<unsigned char, 4>& to_rgba() const { return m_data; }
 
   /*!
     returns the array with rgb values.
   */ 
-  const cpp11::array<unsigned char, 3>& to_rgb() const
+  const std::array<unsigned char, 3>& to_rgb() const
   {
-    return reinterpret_cast<const cpp11::array<unsigned char, 3>&>(m_data);
+    return reinterpret_cast<const std::array<unsigned char, 3>&>(m_data);
   }
 
   /*!  
     computes the hsv (hue, saturation, value) values and returns an
     array representing them as float values between 0 and 1.
   */ 
-  cpp11::array<double, 3> to_hsv() const
+  std::array<double, 3> to_hsv() const
   {
     double r = (double)(m_data[0]) / 255.;
     double g = (double)(m_data[1]) / 255.;
