@@ -3,6 +3,7 @@ if(EIGEN3_FOUND)
 
   polyhedron_demo_plugin(jet_fitting_plugin Jet_fitting_plugin)
   target_link_libraries(jet_fitting_plugin PUBLIC scene_surface_mesh_item scene_polylines_item)
+  CGAL_target_use_Eigen(jet_fitting_plugin)
 
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
@@ -14,13 +15,16 @@ if(EIGEN3_FOUND)
     qt5_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
     polyhedron_demo_plugin(hole_filling_plugin Hole_filling_plugin ${hole_fillingUI_FILES} KEYWORDS PMP)
     target_link_libraries(hole_filling_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_selection_item)
+    CGAL_target_use_Eigen(hole_filling_plugin)
 
     qt5_wrap_ui( fairingUI_FILES Fairing_widget.ui)
     polyhedron_demo_plugin(fairing_plugin Fairing_plugin ${fairingUI_FILES} KEYWORDS PMP)
     target_link_libraries(fairing_plugin PUBLIC scene_selection_item)
+    CGAL_target_use_Eigen(fairing_plugin)
 
     polyhedron_demo_plugin(hole_filling_polyline_plugin Hole_filling_polyline_plugin )
     target_link_libraries(hole_filling_polyline_plugin PUBLIC scene_surface_mesh_item scene_polylines_item)
+    CGAL_target_use_Eigen(hole_filling_polyline_plugin)
     
     qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
     polyhedron_demo_plugin(mean_curvature_flow_skeleton_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
@@ -31,6 +35,7 @@ if(EIGEN3_FOUND)
         scene_polylines_item
         scene_mcf_item
         demo_framework)
+      CGAL_target_use_Eigen(mean_curvature_flow_skeleton_plugin)
   else()
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()

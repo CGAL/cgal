@@ -14,9 +14,10 @@ if ( CGAL_FOUND )
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 
   if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
     create_single_source_cgal_program( "singular_value_decomposition.cpp" )
+    CGAL_target_use_Eigen(singular_value_decomposition)
     create_single_source_cgal_program( "sparse_solvers.cpp" )
+    CGAL_target_use_Eigen(sparse_solvers)
   endif()
 
   create_single_source_cgal_program( "diagonalize_matrix.cpp" )

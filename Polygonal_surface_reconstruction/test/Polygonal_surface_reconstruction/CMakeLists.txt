@@ -11,7 +11,7 @@ find_package( CGAL QUIET COMPONENTS  )
 
 if ( NOT CGAL_FOUND )
 
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
+  message(STATUS "NOTICE: This project requires the CGAL library, and will not be compiled.")
   return()  
 
 endif()
@@ -24,8 +24,11 @@ include( ${CGAL_USE_FILE} )
 find_package( Boost REQUIRED )
 
 if ( NOT Boost_FOUND )
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
+
+  message(STATUS "NOTICE: This project requires the Boost library, and will not be compiled.")
+
   return()  
+
 endif()
 
 # Creating entries for all C++ files with "main" routine
@@ -33,49 +36,26 @@ endif()
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "polygonal_surface_reconstruction_test.cpp" )
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-if(EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
+if(NOT EIGEN3_FOUND)
+  message(STATUS "NOTICE: This project requires Eigen 3.1 (or greater) and will not be compiled.")
+  return()
+endif()
 
-  # Executables that require Eigen 3.1
-  find_package( SCIP QUIET)
-
-  if (SCIP_FOUND)
-
-    include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
-
-    target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${SCIP_LIBRARIES} )
-
-    target_compile_definitions(polygonal_surface_reconstruction_test PRIVATE -DCGAL_USE_SCIP)
-
-    message("SCIP found and used")
-
-  endif()
-
-
+find_package(SCIP QUIET)
+if (NOT SCIP_FOUND )
   find_package( GLPK QUIET)
-
-  if (GLPK_FOUND)
-
-    include_directories( BEFORE ${GLPK_INCLUDE_DIR} )
-
-    target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${GLPK_LIBRARIES} )
-
-    target_compile_definitions(polygonal_surface_reconstruction_test PRIVATE -DCGAL_USE_GLPK)
-
-    message("GLPK found and used")
-
+  if ( NOT GLPK_FOUND )
+    message( STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled.")
+    return()
   endif()
+endif()
 
-
-  if (NOT SCIP_FOUND AND NOT GLPK_FOUND)
-
-    message(STATUS "NOTICE: This project requires either SCIP or GLPK, some functions will not be tested. "
-      "Please provide either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
-
-  endif()
+create_single_source_cgal_program( "polygonal_surface_reconstruction_test.cpp")
+CGAL_target_use_Eigen(polygonal_surface_reconstruction_test)
+if (SCIP_FOUND)
+  CGAL_target_use_SCIP(polygonal_surface_reconstruction_test)
 else()
-  message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
+  CGAL_target_use_GLPK(polygonal_surface_reconstruction_test)
 endif()

@@ -46,13 +46,14 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 create_single_source_cgal_program( "hausdorff_distance_remeshing_example.cpp")
 
 if (EIGEN3_FOUND)
-  # Executables that require Eigen 3.2
-  include( ${EIGEN3_USE_FILE} )
-
   create_single_source_cgal_program( "hole_filling_example.cpp" )
+  CGAL_target_use_Eigen(hole_filling_example)
   create_single_source_cgal_program( "hole_filling_example_SM.cpp" )
+  CGAL_target_use_Eigen(hole_filling_example_SM)
   create_single_source_cgal_program( "refine_fair_example.cpp")
+  CGAL_target_use_Eigen(refine_fair_example)
   create_single_source_cgal_program( "shape_smoothing_example.cpp")
+  CGAL_target_use_Eigen(shape_smoothing_example)
 
 endif(EIGEN3_FOUND)
 
