@@ -170,11 +170,15 @@ void test_CC_with_area_size_map(Mesh sm,
                                                            PMP::parameters::face_size_map(CGAL::internal::boost_::make_function_property_map<face_descriptor>(f))
                                                                            .dry_run(true)
                                                                            .output_iterator(std::back_inserter(faces_to_remove)));
-  assert(num_vertices(sm) == nv); // didn't actually remove anything
+
+  // didn't actually remove anything
+  assert(PMP::internal::number_of_connected_components(sm) == num);
+  assert(num_vertices(sm) == nv);
+
   if(num > 2)
   {
     assert(res == num - 2);
-    assert(!faces_to_remove.empty()); // if there are 2 ccs, we are not removing anything
+    assert(!faces_to_remove.empty());
   }
 
   PMP::keep_largest_connected_components(sm, 2,
@@ -197,6 +201,12 @@ void test_CC_with_area_size_map(Mesh sm,
                                          CGAL::parameters::face_size_map(
                                            CGAL::internal::boost_::make_function_property_map<face_descriptor>(f)));
     assert(vertices(m).size() == 3);
+
+    PMP::keep_largest_connected_components(m, 1);
+    assert(PMP::internal::number_of_connected_components(m) == 1);
+    PMP::keep_largest_connected_components(m, 0);
+    assert(is_empty(m));
+    assert(PMP::internal::number_of_connected_components(m) == 0);
   }
 }
 

@@ -311,7 +311,8 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh)
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
- * \param nb_components_to_keep the number of components to be kept
+ * \param nb_components_to_keep the number of components to be kept. If this number is larger than
+ *                              the number of components in the mesh, all components are kept.
  * \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
  *
  * \cgalNamedParamsBegin
@@ -376,12 +377,13 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   // Even if we do not want to keep anything we need to first
   // calculate the number of existing connected_components to get the
   // correct return value.
-  if(nb_components_to_keep == 0) {
+  if(nb_components_to_keep == 0)
+  {
     CGAL::clear(pmesh);
     return num;
   }
 
-  if((num == 1)|| (nb_components_to_keep > num) )
+  if(nb_components_to_keep >= num)
     return 0;
 
   std::vector<std::pair<std::size_t, Face_size> > component_size(num);
