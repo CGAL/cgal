@@ -203,6 +203,8 @@ void initialize_IDs(const CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with
 template <typename K, typename Mesh>
 void remove_negligible_connected_components(const char* filename)
 {
+  typedef typename boost::graph_traits<Mesh>::face_descriptor           face_descriptor;
+
   std::cout << "  remove negligible CCs, file: " << filename << std::endl;
 
   std::ifstream input(filename);
@@ -253,7 +255,7 @@ void remove_negligible_connected_components(const char* filename)
   initialize_IDs(mesh);
   assert(PMP::internal::number_of_connected_components(mesh) == 1);
 
-  // Remove everything with a large value
+  // Remove everything with a too-large value
   std::cout << "---------\nremove everything..." << std::endl;
   PMP::remove_connected_components_of_negligible_size(mesh, CP::area_threshold(1e15));
   assert(is_empty(mesh));
@@ -261,9 +263,15 @@ void remove_negligible_connected_components(const char* filename)
   // Could also have used default paramaters, which does the job by itself
   std::cout << "---------\ndefault values..." << std::endl;
 
-  std::size_t nb_to_be_rm = PMP::remove_connected_components_of_negligible_size(mesh_cpy, CP::dry_run(true));
-  assert(nb_to_be_rm == PMP::remove_connected_components_of_negligible_size(mesh_cpy));
+  std::vector<face_descriptor> faces_to_be_removed;
+  std::size_t nb_to_be_rm = PMP::remove_connected_components_of_negligible_size(
+                              mesh_cpy, CP::dry_run(true)
+                                           .output_iterator(std::back_inserter(faces_to_be_removed)));
+  assert(nb_to_be_rm == 3);
+  assert(PMP::internal::number_of_connected_components(mesh_cpy) == 4); // a dry run does not remove anything
+  assert(faces_to_be_removed.size() == 216); // sum of #faces of the small CCs
 
+  assert(nb_to_be_rm == PMP::remove_connected_components_of_negligible_size(mesh_cpy));
   assert(PMP::internal::number_of_connected_components(mesh_cpy) == 1);
 }
 
@@ -323,7 +331,6 @@ void test()
                                6, 7, 2, 4, 3, 3);
 
   remove_negligible_connected_components<K, Mesh>("data_degeneracies/small_ccs.off");
-
 }
 
 template <typename Kernel>
