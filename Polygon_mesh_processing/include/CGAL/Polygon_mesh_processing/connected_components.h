@@ -323,6 +323,14 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh)
  *      is chosen by the user, but must be constructible from `0` and support `operator+=()` and
  *      comparisons.
  *    \cgalParamEnd
+ *    \cgalParamBegin{dry_run}
+ *      a Boolean parameter. If set to `true`, the mesh will not be altered, but the number
+ *      of components that would be removed is returned. The default value is `false`.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type
+ *      `face_descriptor`, which can be used to collect faces that would be removed when the
+ *      named parameter `dry_run` is set to `true`.
+ *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  *  \return the number of connected components removed (ignoring isolated vertices).
@@ -450,6 +458,10 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *    \cgalParamBegin{dry_run}
  *      a Boolean parameter. If set to `true`, the mesh will not be altered, but the number
  *      of components that would be removed is returned. The default value is `false`.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type
+ *      `face_descriptor`, which can be used to collect faces that would be removed when the
+ *      named parameter `dry_run` is set to `true`.
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
