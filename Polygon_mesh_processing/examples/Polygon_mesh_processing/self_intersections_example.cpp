@@ -1,3 +1,5 @@
+struct Parallel_tag_bis {};
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
