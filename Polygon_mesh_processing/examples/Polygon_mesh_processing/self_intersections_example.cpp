@@ -1,3 +1,4 @@
+int I,J,KK;
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -15,6 +16,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
+  I = J = KK = 0;
   const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
   std::ifstream input(filename);
 
@@ -42,6 +44,8 @@ int main(int argc, char* argv[])
   PMP::self_intersections(mesh, std::back_inserter(intersected_tris));
   std::cout  << rtimer.time() << "  " << timer.time() << " sec." << std::endl;
   std::cout << intersected_tris.size() << " pairs of triangles intersect." << std::endl;
-  
+  std::cout << "I = " << I << std::endl;
+  std::cout << "J = " << J << std::endl;
+  std::cout << "KK = " << KK << std::endl;
   return 0;
 }

@@ -25,7 +25,6 @@
 #include <CGAL/Box_intersection_d/Box_traits_d.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
-#include <tbb/task_group.h>
 
 #include <vector>
 
@@ -42,7 +41,6 @@ void box_intersection_custom_predicates_d(
     std::ptrdiff_t cutoff = 10,
     Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE)
 {
-  tbb::task_group tg;
     typedef BoxPredicateTraits Traits;
     typedef typename Traits::NT NT;
     CGAL_assertion( Traits::dimension() > 0 );
@@ -50,12 +48,11 @@ void box_intersection_custom_predicates_d(
     const NT inf = Box_intersection_d::box_limits<NT>::inf();
     const NT sup = Box_intersection_d::box_limits<NT>::sup();
     Box_intersection_d::segment_tree(begin1, end1, begin2, end2,
-                                     inf, sup, callback, traits, cutoff, dim, true, tg);
+                                     inf, sup, callback, traits, cutoff, dim, true);
     if(setting == Box_intersection_d::BIPARTITE)
         Box_intersection_d::segment_tree(begin2, end2, begin1, end1,
-                                         inf, sup, callback, traits, cutoff, dim, false, tg);
+                                         inf, sup, callback, traits, cutoff, dim, false);
 
-    tg.wait();
 }
 
 

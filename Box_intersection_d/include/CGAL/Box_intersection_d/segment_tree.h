@@ -25,7 +25,6 @@
 #include <boost/random/variate_generator.hpp>
 
 #include <tbb/parallel_sort.h>
-#include <tbb/task_group.h>
 #include <algorithm>
 #include <iterator>
 #include <functional>
@@ -324,8 +323,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                    T lo, T hi,
                    Callback callback, Predicate_traits traits,
-                   std::ptrdiff_t cutoff, int dim, bool in_order,
-                   tbb::task_group& tg)
+                   std::ptrdiff_t cutoff, int dim, bool in_order)
 {
     typedef typename Predicate_traits::Spanning   Spanning;
     typedef typename Predicate_traits::Lo_less    Lo_less;
@@ -358,9 +356,9 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
 
         // make two calls for roots of segment tree at next level.
         segment_tree( p_begin, p_end, i_begin, i_span_end, inf, sup,
-                      callback, traits, cutoff, dim - 1,  in_order, tg );
+                      callback, traits, cutoff, dim - 1,  in_order );
         segment_tree( i_begin, i_span_end, p_begin, p_end, inf, sup,
-                      callback, traits, cutoff, dim - 1, !in_order, tg );
+                      callback, traits, cutoff, dim - 1, !in_order );
     }
 
     T mi;
@@ -378,13 +376,13 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     i_mid = std::partition( i_span_end, i_end, Lo_less( mi, dim ) );
 
     segment_tree( p_begin, p_mid, i_span_end, i_mid, lo, mi,
-                  callback, traits, cutoff, dim, in_order, tg );
+                  callback, traits, cutoff, dim, in_order );
     // separate right intervals.
     // right intervals have a high point strictly higher than mi
     i_mid = std::partition( i_span_end, i_end, Hi_greater( mi, dim ) );
 
     segment_tree( p_mid, p_end, i_span_end, i_mid, mi, hi,
-                  callback, traits, cutoff, dim, in_order, tg );
+                  callback, traits, cutoff, dim, in_order );
 }
 
 
