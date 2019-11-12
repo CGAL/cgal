@@ -33,6 +33,7 @@
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/Default.h>
 #include <CGAL/Dynamic_property_map.h>
+#include <CGAL/iterator.h>
 #include <CGAL/tuple.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -353,6 +354,13 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   FaceSizeMap face_size_pmap = choose_parameter(get_parameter(np, internal_np::face_size_map),
                                                 Constant_property_map<face_descriptor, std::size_t>(1));
 
+  const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
+
+  typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
+                                                       NamedParameters,
+                                                       Emptyset_iterator>::type Output_iterator;
+  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
+
   // vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fimap);
   std::size_t num = connected_components(pmesh, face_cc, np);
@@ -378,11 +386,25 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 
   // we sort the range [0, num) by component size
   std::sort(component_size.begin(), component_size.end(), internal::MoreSecond());
-  std::vector<std::size_t> cc_to_keep;
-  for(std::size_t i=0; i<nb_components_to_keep; ++i)
-    cc_to_keep.push_back( component_size[i].first );
 
-  keep_connected_components(pmesh, cc_to_keep, face_cc, np);
+  if(dry_run)
+  {
+    std::vector<bool> is_to_be_removed(num, false);
+    for(std::size_t i=0; i<nb_components_to_keep; ++i)
+      is_to_be_removed[component_size[i].first] = true;
+
+    for(face_descriptor f : faces(pmesh))
+      if(is_to_be_removed[face_cc[f]])
+        *out++ = f;
+  }
+  else
+  {
+    std::vector<std::size_t> cc_to_keep;
+    for(std::size_t i=0; i<nb_components_to_keep; ++i)
+      cc_to_keep.push_back(component_size[i].first);
+
+    keep_connected_components(pmesh, cc_to_keep, face_cc, np);
+  }
 
   return num - nb_components_to_keep;
 }
@@ -462,9 +484,14 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
 
   CGAL_static_assertion((std::is_convertible<ThresholdValueType, Face_size>::value));
 
+  typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
+                                                       NamedParameters,
+                                                       Emptyset_iterator>::type Output_iterator;
+
   FaceSizeMap face_size_pmap = choose_parameter(get_parameter(np, internal_np::face_size_map),
                                            Constant_property_map<face_descriptor, std::size_t>(1));
   const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
+  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
 
   // vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
@@ -475,20 +502,36 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
     component_size[face_cc[f]] += get(face_size_pmap, f);
 
   const Face_size thresh = threshold_value;
+  std::vector<bool> is_to_be_kept(num, false);
+  std::size_t res = 0;
 
-  std::vector<std::size_t> cc_to_keep;
   for(std::size_t i=0; i<num; ++i)
   {
     if(component_size[i] >= thresh)
-      cc_to_keep.push_back(i);
+    {
+      is_to_be_kept[i] = true;
+      ++res;
+    }
   }
 
-  if(!dry_run)
-    keep_connected_components(pmesh, cc_to_keep, face_cc, np);
+  if(dry_run)
+  {
+    for(face_descriptor f : faces(pmesh))
+      if(!is_to_be_kept[face_cc[f]])
+        *out++ = f;
+  }
+  else
+  {
+    std::vector<std::size_t> ccs_to_keep;
+    for(std::size_t i=0; i<num; ++i)
+      if(is_to_be_kept[i])
+        ccs_to_keep.push_back(i);
 
-  return num - cc_to_keep.size();
+    keep_connected_components(pmesh, ccs_to_keep, face_cc, np);
+  }
+
+  return num - res;
 }
-
 
 template <typename PolygonMesh>
 std::size_t keep_large_connected_components(PolygonMesh& pmesh,

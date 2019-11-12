@@ -170,7 +170,13 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   // If no threshold is provided, compute it as a % of the bbox
   const bool is_default_area_threshold = is_default_parameter(get_parameter(np, internal_np::area_threshold));
   const bool is_default_volume_threshold = is_default_parameter(get_parameter(np, internal_np::volume_threshold));
+
   const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
+
+  typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
+                                                       NamedParameters,
+                                                       Emptyset_iterator>::type Output_iterator;
+  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << "default threshold? " << is_default_area_threshold << " " << is_default_volume_threshold << std::endl;
@@ -284,31 +290,46 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 #endif
   }
 
-  std::vector<std::size_t> ccs_to_remove;
+  std::size_t res = 0;
+  std::vector<bool> is_to_be_removed(num, false);
+
   for(std::size_t i=0; i<num; ++i)
   {
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
-    std::cout << "this CC has area: " << component_areas[i]
+    std::cout << "CC " << i << " has area: " << component_areas[i]
               << " and volume: " << component_volumes[i] << std::endl;
 #endif
 
-    if(use_volumes && cc_closeness[i] && component_volumes[i] <= volume_threshold)
-      ccs_to_remove.push_back(i);
-    else if(use_areas && component_areas[i] <= area_threshold)
-      ccs_to_remove.push_back(i);
+    if((use_volumes && cc_closeness[i] && component_volumes[i] <= volume_threshold) ||
+       (use_areas && component_areas[i] <= area_threshold))
+    {
+      is_to_be_removed[i] = true;
+      ++res;
+    }
   }
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
-  std::cout << "Removing " << ccs_to_remove.size() << " CCs" << std::endl;
+  std::cout << "Removing " << res << " CCs" << std::endl;
 #endif
 
-  if(!dry_run)
+  if(dry_run)
   {
+    for(face_descriptor f : faces(tmesh))
+      if(is_to_be_removed[face_cc[f]])
+        *out++ = f;
+  }
+  else
+  {
+    std::vector<std::size_t> ccs_to_remove;
+    for(std::size_t i=0; i<num; ++i)
+      if(is_to_be_removed[i])
+        ccs_to_remove.push_back(i);
+
     remove_connected_components(tmesh, ccs_to_remove, face_cc, np);
-    CGAL_postcondition(is_valid_polygon_mesh(tmesh));
+    CGAL_expensive_postcondition(is_valid_polygon_mesh(tmesh));
   }
 
-  return ccs_to_remove.size();
+  return res;
 }
 
 template <typename TriangleMesh>
