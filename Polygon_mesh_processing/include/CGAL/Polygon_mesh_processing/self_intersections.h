@@ -843,7 +843,7 @@ self_intersections( const FaceRange& face_range,
   }
   // generate box pointers
   std::vector<const Box*> box_ptr;
-  box_ptr.reserve(num_faces(tmesh));
+  box_ptr.reserve(boxes.size());
 
   for(Box& b : boxes)
     box_ptr.push_back(&b);
