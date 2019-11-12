@@ -135,10 +135,9 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel` \cgalParamEnd
 ///    \cgalParamBegin{dry_run} a Boolean parameter. If set to `true`, the mesh will not be altered,
 ///                             but the number of components that would be removed is returned. The default value is `false`.\cgalParamEnd
-///    \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type
-///      `face_descriptor`, which can be used to collect faces that would be removed when the
-///      named parameter `dry_run` is set to `true`.
-///    \cgalParamEnd
+///    \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type `face_descriptor`.
+///                                     When using the "dry run" mode (see parameter `dry_run`), faces
+///                                     that would be removed by the algorithm can be collected with this output iterator. \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
 /// \return the number of connected components removed (ignoring isolated vertices).
