@@ -2276,7 +2276,7 @@ void MainWindow::on_actionPreferences_triggered()
   });
   
   connect(prefdiag.backFrontColor_pushButton, &QPushButton::clicked,
-          this, [this](){
+          this, [](){
     qobject_cast<Viewer*>(CGAL::Three::Three::activeViewer())->setBackFrontColors();
   });
 
