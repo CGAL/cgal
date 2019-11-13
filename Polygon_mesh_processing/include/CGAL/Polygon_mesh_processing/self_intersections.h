@@ -62,22 +62,7 @@ namespace internal {
           class OutputIterator,
           class VertexPointMap>
 struct Intersect_facets
-{
-  // wrapper to check whether anything is inserted to output iterator
-  struct Output_iterator_with_bool
   {
-    Output_iterator_with_bool(OutputIterator* out, bool* intersected)
-      : m_iterator(out), m_intersected(intersected) { }
-
-    template<class T>
-    void operator()(const T& t) {
-      *m_intersected = true;
-      *(*m_iterator)++ = t;
-    }
-
-    OutputIterator* m_iterator;
-    bool* m_intersected;
-  };
 // typedefs
   typedef typename Kernel::Segment_3    Segment;
   typedef typename Kernel::Triangle_3   Triangle;
@@ -90,8 +75,6 @@ struct Intersect_facets
   const TM& m_tmesh;
   const VertexPointMap m_vpmap;
   mutable OutputIterator  m_iterator;
-  mutable bool            m_intersected;
-  mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
 
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Construct_triangle_3 triangle_functor;
@@ -103,8 +86,6 @@ struct Intersect_facets
     m_tmesh(tmesh),
     m_vpmap(vpmap),
     m_iterator(it),
-    m_intersected(false),
-    m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
     segment_functor(kernel.construct_segment_3_object()),
     triangle_functor(kernel.construct_triangle_3_object()),
     do_intersect_3_functor(kernel.do_intersect_3_object())
@@ -146,7 +127,7 @@ struct Intersect_facets
                                       get(m_vpmap, hv[(i+1)%3]),
                                       get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh)))
              == CGAL::POSITIVE){
-          *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+          *m_iterator++ = std::make_pair(b->info(), c->info());
           return;
         } else { // there is a shared edge but no intersection
           return;
@@ -189,9 +170,9 @@ struct Intersect_facets
                                     get(m_vpmap, gv[(j+2)%3]));
 
       if(do_intersect_3_functor(t1,s2)){
-        *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+        *m_iterator++ = std::make_pair(b->info(), c->info());
       } else if(do_intersect_3_functor(t2,s1)){
-        *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+        *m_iterator++ = std::make_pair(b->info(), c->info());
       }
       return;
     }
@@ -204,7 +185,7 @@ struct Intersect_facets
                                     get(m_vpmap, gv[1]),
                                     get(m_vpmap, gv[2]));
     if(do_intersect_3_functor(t1, t2)){
-      *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+      *m_iterator++ = std::make_pair(b->info(), c->info());
     }
   } // end operator ()
   }; // end struct Intersect_facets
@@ -420,21 +401,6 @@ template <class TM,//TriangleMesh
           class OutputIterator>
 struct Incident_faces_filter
 {
-  // wrapper to check whether anything is inserted to output iterator
-  struct Output_iterator_with_bool
-  {
-    Output_iterator_with_bool(OutputIterator* out, bool* intersected)
-      : m_iterator(out), m_intersected(intersected) { }
-
-    template<class T>
-    void operator()(const T& t) {
-      *m_intersected = true;
-      *(*m_iterator)++ = t;
-    }
-
-    OutputIterator* m_iterator;
-    bool* m_intersected;
-  };
 // typedefs
   typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
@@ -442,14 +408,10 @@ struct Incident_faces_filter
 // members
   const TM& m_tmesh;
   mutable OutputIterator  m_iterator;
-  mutable bool            m_intersected;
-  mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
-
 
   Incident_faces_filter(const TM& tmesh, OutputIterator it)
     : m_tmesh(tmesh),
-      m_iterator(it),
-      m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected))
+      m_iterator(it)
   {}
 
   void operator()(const Box* b, const Box* c) const
@@ -480,7 +442,7 @@ struct Incident_faces_filter
         }
       }
     }
-    *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+    *m_iterator++ = std::make_pair(b->info(), c->info());
    
   } // end operator ()
 };
@@ -513,21 +475,6 @@ template <class TM,//TriangleMesh
           class VertexPointMap>
 struct Intersect_facets_incident_to_vertex
 {
-  // wrapper to check whether anything is inserted to output iterator
-  struct Output_iterator_with_bool
-  {
-    Output_iterator_with_bool(OutputIterator* out, bool* intersected)
-      : m_iterator(out), m_intersected(intersected) { }
-
-    template<class T>
-    void operator()(const T& t) {
-      *m_intersected = true;
-      *(*m_iterator)++ = t;
-    }
-
-    OutputIterator* m_iterator;
-    bool* m_intersected;
-  };
 // typedefs
   typedef typename Kernel::Point_3      Point;
   typedef typename Kernel::Segment_3    Segment;
@@ -540,8 +487,6 @@ struct Intersect_facets_incident_to_vertex
   const TM& m_tmesh;
   const VertexPointMap m_vpmap;
   mutable OutputIterator  m_iterator;
-  mutable bool            m_intersected;
-  mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
 
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Construct_triangle_3 triangle_functor;
@@ -553,8 +498,6 @@ struct Intersect_facets_incident_to_vertex
     m_tmesh(tmesh),
     m_vpmap(vpmap),
     m_iterator(it),
-    m_intersected(false),
-    m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
     segment_functor(kernel.construct_segment_3_object()),
     triangle_functor(kernel.construct_triangle_3_object()),
     do_intersect_3_functor(kernel.do_intersect_3_object())
@@ -584,7 +527,7 @@ struct Intersect_facets_incident_to_vertex
           vertex_descriptor ov = target(next(ohd,m_tmesh), m_tmesh);
           Point s = get(m_vpmap, ov);
           if(CGAL::coplanar(p,q,r,s) && CGAL::coplanar_orientation(r,p,q,s) == POSITIVE){
-            *m_iterator_wrapper++ = std::make_pair(face(hd,m_tmesh), face(ohd, m_tmesh));
+            *m_iterator++ = std::make_pair(face(hd,m_tmesh), face(ohd, m_tmesh));
           }
         }
         ohd = opposite(next(hd,m_tmesh), m_tmesh);
@@ -592,7 +535,7 @@ struct Intersect_facets_incident_to_vertex
           vertex_descriptor ov = target(next(ohd,m_tmesh), m_tmesh);
           Point s = get(m_vpmap, ov);
           if(CGAL::coplanar(p,q,r,s) && CGAL::coplanar_orientation(p,q,r,s) == POSITIVE){
-            *m_iterator_wrapper++ = std::make_pair(face(hd,m_tmesh), face(ohd, m_tmesh));
+            *m_iterator++ = std::make_pair(face(hd,m_tmesh), face(ohd, m_tmesh));
           }
         }
         halfedge_descriptor po = prev(opposite(hd,m_tmesh),m_tmesh);
@@ -605,7 +548,7 @@ struct Intersect_facets_incident_to_vertex
           Segment ss = segment_functor(get(m_vpmap, source(start,m_tmesh)),
                                        get(m_vpmap, target(next(start,m_tmesh), m_tmesh)));
           if(do_intersect_3_functor(th, ss)){
-            *m_iterator_wrapper++ = std::make_pair(face(hd,m_tmesh), face(start, m_tmesh));
+            *m_iterator++ = std::make_pair(face(hd,m_tmesh), face(start, m_tmesh));
           }
         }
         hd = prev(opposite(hd,m_tmesh),m_tmesh);
