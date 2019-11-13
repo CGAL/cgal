@@ -210,9 +210,10 @@ protected:
 
     CGAL_For_all(he, end)
     {
-      internal::newell_single_step_3(internal::Geom_utils<Kernel>::get_local_point(he->next()->source()->center_vertex()->point()),
-                                     internal::Geom_utils<Kernel>::get_local_point(he->source()->center_vertex()->point()),
-                                     normal);
+      internal::newell_single_step_3(this->get_local_point
+                                     (he->next()->source()->center_vertex()->point()),
+                                     this->get_local_point(he->source()->center_vertex()->
+                                                           point()), normal);
       ++nb;
     }
 
