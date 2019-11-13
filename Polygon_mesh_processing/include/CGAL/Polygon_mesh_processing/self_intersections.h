@@ -25,6 +25,10 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>
 
+#ifdef CGAL_PMP_SI_DEBUG
+#include <CGAL/Real_timer.h>
+#endif
+
 #include <CGAL/Kernel/global_functions_3.h>
 
 #include <sstream>
@@ -804,18 +808,21 @@ self_intersections( const FaceRange& face_range,
                                         std::back_inserter(cv_faces), // result
                                         vpmap,
                                         parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GeomTraits()));
-
+#ifdef CGAL_PMP_SI_DEBUG
   Real_timer rt;
   rt.start();
+#endif
   
   tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_vertices(tmesh)), intersect_facets_incident_to_vertex);
 
   // Copy from the concurent container to the output iterator
-  for(CV::iterator it = cv_faces.begin(); it != cv_faces.end(); ++it){
+  for(typename CV::iterator it = cv_faces.begin(); it != cv_faces.end(); ++it){
     *out ++= *it;
   }
+#ifdef CGAL_PMP_SI_DEBUG
   std::cout << "(A) Parallel: faces incident to each vertex " << rt.time() << "sec."<< std::endl;
   rt.reset();
+#endif
   
   // (B) Sequential: Look at pairs of triangles with intersecting bbox
   //     Copy the pairs which do not share an edge or a vertex into a std::vector
@@ -829,8 +836,10 @@ self_intersections( const FaceRange& face_range,
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),incident_faces_filter,cutoff);
+#ifdef CGAL_PMP_SI_DEBUG
   std::cout << "(B) Sequential: boxes that intersect " << rt.time() << "sec."<< std::endl;
   rt.reset();
+#endif
   
   // (C) Parallel: Perform geometric test on pairs not sharing an edge or a vertex
   std::vector<int> dointersect(seq_v_faces.size());
@@ -849,8 +858,9 @@ self_intersections( const FaceRange& face_range,
       }
     }
   }
-  
+#ifdef CGAL_PMP_SI_DEBUG
   std::cout << "(C) Parallel: Filter triangles that intersect " << rt.time() << "sec."<< std::endl;
+#endif
   return out;
 }
 
@@ -924,9 +934,6 @@ self_intersections( const FaceRange& face_range,
               vpmap,
               parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GeomTraits()));
 
-  Real_timer rt;
-  rt.start();
-  
   tbb::parallel_for(tbb::blocked_range<std::size_t>(0, face_pairs.size()), all_pairs);
 
   // (C) Sequentially: Copy from the concurent container to the output iterator
