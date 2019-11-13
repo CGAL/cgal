@@ -429,23 +429,21 @@ public:
   { m_buffer_for_colored_segments.add_segment(p1, p2, acolor); }
 
   template <typename KPoint, typename KVector>
-  void update_bounding_box_for_ray(const KPoint &p, const KVector &v) {
-    // m_buffer_for_mono_points.add_point(p);
-    Local_point lp = internal::get_local_point(p);
-    Local_vector lv = internal::get_local_vector(v);
+  void update_bounding_box_for_ray(const KPoint &p, const KVector &v)
+  {
+    Local_point lp = get_local_point(p);
+    Local_vector lv = get_local_vector(v);
     CGAL::Bbox_3 b = (lp + lv).bbox();
     m_bounding_box += b;
-    // m_bounding_box += CGAL::Bbox_3(b.xmin(), 0, b.ymin(), b.xmax(), 0,
-    // b.ymax());
   }
 
   template <typename KPoint, typename KVector>
   void update_bounding_box_for_line(const KPoint &p, const KVector &v,
                                     const KVector &pv)
   {
-    Local_point lp = internal::get_local_point(p);
-    Local_vector lv = internal::get_local_vector(v);
-    Local_vector lpv = internal::get_local_vector(pv);
+    Local_point lp = get_local_point(p);
+    Local_vector lv = get_local_vector(v);
+    Local_vector lpv = get_local_vector(pv);
 
     CGAL::Bbox_3 b = lp.bbox() + (lp + lv).bbox() + (lp + lpv).bbox();
     m_bounding_box += b;
@@ -484,7 +482,7 @@ public:
   template<typename KPoint>
   void add_text(const KPoint& kp, const QString& txt)
   {
-    Local_point p=internal::get_local_point(kp);
+    Local_point p=get_local_point(kp);
     m_texts.push_back(std::make_tuple(p, txt));
   }
 

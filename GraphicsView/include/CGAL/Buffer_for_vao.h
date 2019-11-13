@@ -98,7 +98,7 @@ namespace internal
       CGAL::Cartesian_converter<K, Local_kernel> converter;
       return converter(v);
     }
-    static Local_ray get_local_ray(const typename K::Ray_2& r)
+    static typename Local_kernel::Ray_2 get_local_ray(const typename K::Ray_2& r)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
       return converter(r);
@@ -121,6 +121,8 @@ namespace internal
     { return typename Local_kernel::Vector_3(v.x(), 0, v.y()); }
     static const typename Local_kernel::Vector_3& get_local_vector(const typename Local_kernel::Vector_3& v)
     { return v; }
+    static const typename Local_kernel::Ray_2& get_local_ray(const typename Local_kernel::Ray_2& r)
+    { return r; }
   };
 } // End namespace internal
 
@@ -223,7 +225,7 @@ public:
   {
       if (!has_position()) return (std::size_t)-1;
 
-      Local_point p=internal::get_local_point(kp);
+      Local_point p=get_local_point(kp);
       add_point_in_buffer(p, *m_pos_buffer);
       return m_pos_buffer->size()-3;
   }
