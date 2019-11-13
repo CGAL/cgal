@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 
   
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  PMP::self_intersections<CGAL::Parallel_tag>(mesh, std::back_inserter(intersected_tris));
+  PMP::self_intersections<CGAL::Sequential_tag>(mesh, std::back_inserter(intersected_tris));
   std::cout   << std::endl << "Total: " << rtimer.time() << "  " << timer.time() << " sec." << std::endl;
   std::cout << intersected_tris.size() << " pairs of triangles intersect." << std::endl;
  

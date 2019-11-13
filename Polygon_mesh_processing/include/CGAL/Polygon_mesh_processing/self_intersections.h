@@ -259,12 +259,10 @@ struct TriangleTriangle {
 // The functor for doing all geometric tests in parallel
 template <class TM,//TriangleMesh
           class Kernel,
-          class OutputIterator,
           class VertexPointMap>
 struct AllPairs {
   const TM& m_tmesh;
   const VertexPointMap m_vpmap;
-  mutable OutputIterator  m_iterator;
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
@@ -275,15 +273,15 @@ struct AllPairs {
   typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   const std::vector<std::pair<face_descriptor,face_descriptor> >& seq_faces;
-
+  std::vector<int>& dointersect;
   
   AllPairs(const std::vector<std::pair<face_descriptor,face_descriptor> >& seq_faces,
-           OutputIterator it,
+           std::vector<int>& dointersect,
            const TM& tmesh, VertexPointMap vpmap, const Kernel& kernel)
     : seq_faces(seq_faces),
+      dointersect(dointersect),
       m_tmesh(tmesh),
       m_vpmap(vpmap),
-      m_iterator(it),
       triangle_functor(kernel.construct_triangle_3_object()),
       do_intersect_3_functor(kernel.do_intersect_3_object())
   {}
@@ -291,13 +289,14 @@ struct AllPairs {
   void operator()(const tbb::blocked_range<std::size_t> &r) const
   {
     for (std::size_t ri = r.begin(); ri != r.end(); ++ri) {
-      const std::pair<face_descriptor,face_descriptor>& ff = seq_faces[ri];
-      this->operator()(ff);
+
+      this->operator()(ri);
     }
   }
 
-  void operator()(const std::pair<face_descriptor,face_descriptor>& ff) const
+  void operator()(std::size_t ri) const
   {
+    const std::pair<face_descriptor,face_descriptor>& ff = seq_faces[ri];
     halfedge_descriptor h = halfedge(ff.first, m_tmesh), g = halfedge(ff.second, m_tmesh);
       
     vertex_descriptor hv[3], gv[3];
@@ -331,7 +330,7 @@ struct AllPairs {
                                       get(m_vpmap, hv[(i+1)%3]),
                                       get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh)))
              == CGAL::POSITIVE){
-          *m_iterator++ = ff;
+          dointersect[ri]=true;
           return;
         } else { // there is a shared edge but no intersection
           return;
@@ -374,9 +373,9 @@ struct AllPairs {
                                     get(m_vpmap, gv[(j+2)%3]));
 
       if(do_intersect_3_functor(t1,s2)){
-        *m_iterator ++ = ff;
+        dointersect[ri] = true;
       } else if(do_intersect_3_functor(t2,s1)){
-        *m_iterator ++ = ff;
+        dointersect[ri] = true;
       }
       return;
     }
@@ -389,7 +388,7 @@ struct AllPairs {
                                     get(m_vpmap, gv[1]),
                                     get(m_vpmap, gv[2]));
     if(do_intersect_3_functor(t1, t2)){
-      *m_iterator ++ = ff;
+      dointersect[ri] = true;
     }
   }
 };
@@ -916,14 +915,11 @@ self_intersections( const FaceRange& face_range,
   // (B) Parallel: perform the geometric tests
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
 
-  typedef tbb::concurrent_vector<std::pair<face_descriptor,face_descriptor> > CV;
-  CV cv_faces;
-  typedef std::back_insert_iterator<CV> CVI;
-
+  std::vector<int> dointersect(face_pairs.size(),0);
                                     
-  CGAL::internal::AllPairs<TM,GeomTraits,CVI,VertexPointMap>
+  CGAL::internal::AllPairs<TM,GeomTraits,VertexPointMap>
     all_pairs(face_pairs,
-              std::back_inserter(cv_faces), // result
+              dointersect,
               tmesh,
               vpmap,
               parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GeomTraits()));
@@ -934,8 +930,9 @@ self_intersections( const FaceRange& face_range,
   tbb::parallel_for(tbb::blocked_range<std::size_t>(0, face_pairs.size()), all_pairs);
 
   // (C) Sequentially: Copy from the concurent container to the output iterator
-  for(CV::iterator it = cv_faces.begin(); it != cv_faces.end(); ++it){
-    *out ++= *it;
+  for(int i=0; i < dointersect.size(); ++i){
+    if(dointersect[i])
+      *out ++= face_pairs[i];
   }
   return out;
 }
