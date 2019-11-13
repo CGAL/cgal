@@ -329,6 +329,9 @@ public:
       setWindowTitle(title);
 
     resize(500, 450);
+
+    if (inverse_normal)
+    { negate_all_normals(); }
   }
 
   ~Basic_viewer_qt()
@@ -1261,11 +1264,8 @@ protected:
 
   void negate_all_normals()
   {
-    for (unsigned int k=BEGIN_NORMAL; k<END_NORMAL; ++k)
-    {
-      for (std::size_t i=0; i<arrays[k].size(); ++i)
-      { arrays[k][i]=-arrays[k][i]; }
-    }
+    m_buffer_for_mono_faces.negate_normals();
+    m_buffer_for_colored_faces.negate_normals();
   }
 
   virtual void keyPressEvent(QKeyEvent *e)

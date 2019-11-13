@@ -151,6 +151,7 @@ public:
     m_zero_x(true),
     m_zero_y(true),
     m_zero_z(true),
+    m_inverse_normal(false),
     m_face_started(false)
   {}
 
@@ -201,6 +202,17 @@ public:
   bool has_zero_z() const
   { return m_zero_z; }  
 
+  void negate_normals()
+  {
+    m_inverse_normal=!m_inverse_normal;
+    for (std::vector<BufferType>*array=m_flat_normal_buffer; array!=nullptr;
+         array=(array==m_gouraud_normal_buffer?nullptr:m_gouraud_normal_buffer))
+    {
+      for (std::size_t i=0; i<array->size(); ++i)
+      { (*array)[i]=-(*array)[i]; }
+    }
+  }
+  
   // 1.1) Add a point, without color. Return the index of the added point.
   template<typename KPoint>
   std::size_t add_point(const KPoint& kp)
@@ -445,7 +457,7 @@ public:
 
   /// adds `kp` coordinates to `buffer`
   template<typename KPoint>
-  static void add_point_in_buffer(const KPoint& kp, std::vector<float>& buffer)
+  void add_point_in_buffer(const KPoint& kp, std::vector<float>& buffer)
   {
     Local_point p=get_local_point(kp);
     buffer.push_back(p.x());
@@ -455,16 +467,16 @@ public:
 
   /// adds `kv` coordinates to `buffer`
   template<typename KVector>
-  static void add_normal_in_buffer(const KVector& kv, std::vector<float>& buffer)
+  void add_normal_in_buffer(const KVector& kv, std::vector<float>& buffer)
   {
-    Local_vector n=get_local_vector(kv);
+    Local_vector n=(m_inverse_normal?-get_local_vector(kv):get_local_vector(kv));
     buffer.push_back(n.x());
     buffer.push_back(n.y());
     buffer.push_back(n.z());
   }
 
   ///adds `acolor` RGB components to `buffer`
-  static void add_color_in_buffer(const CGAL::Color& acolor, std::vector<float>& buffer)
+  void add_color_in_buffer(const CGAL::Color& acolor, std::vector<float>& buffer)
   {
     buffer.push_back((float)acolor.red()/(float)255);
     buffer.push_back((float)acolor.green()/(float)255);
@@ -541,23 +553,23 @@ public:
       if (m_indices_of_points_of_face.size()>0)
       { 
 	add_indexed_point(m_indices_of_points_of_face[i]); 
-	}
+      }
       else
       {
         add_point(m_points_of_face[i]); // Add the position of the point
-      if (m_started_face_is_colored)
-      { add_color(m_color_of_face); } // Add the color      
-      add_flat_normal(normal); // Add the flat normal
-      // Its smooth normal (if given by the user)
-      if (m_vertex_normals_for_face.size()>0)
-      { // Here we have 3 vertex normals; we can use Gouraud
-        add_gouraud_normal(m_vertex_normals_for_face[i]);
-      }
-      else
-      { // Here user does not provide all vertex normals: we use face normal istead
-        // and thus we will not be able to use Gouraud
-        add_gouraud_normal(normal);
-      }
+        if (m_started_face_is_colored)
+        { add_color(m_color_of_face); } // Add the color      
+        add_flat_normal(normal); // Add the flat normal
+        // Its smooth normal (if given by the user)
+        if (m_vertex_normals_for_face.size()>0)
+        { // Here we have 3 vertex normals; we can use Gouraud
+          add_gouraud_normal(m_vertex_normals_for_face[i]);
+        }
+        else
+        { // Here user does not provide all vertex normals: we use face normal istead
+          // and thus we will not be able to use Gouraud
+          add_gouraud_normal(normal);
+        }
       }
     }
   }
@@ -883,8 +895,10 @@ protected:
   bool m_zero_x; /// True iff all points have x==0
   bool m_zero_y; /// True iff all points have y==0
   bool m_zero_z; /// True iff all points have z==0
+
+  bool m_inverse_normal;;
   
-  // Local variables, used when we started a new face.
+  // Local variables, used when we started a new face.g
   bool m_face_started;
   bool m_started_face_is_colored;
   bool m_started_face_has_normal;
