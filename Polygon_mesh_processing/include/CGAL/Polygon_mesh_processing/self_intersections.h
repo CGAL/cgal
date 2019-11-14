@@ -48,7 +48,6 @@
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#include <tbb/concurrent_vector.h>
 #endif
 
 #ifdef DOXYGEN_RUNNING
