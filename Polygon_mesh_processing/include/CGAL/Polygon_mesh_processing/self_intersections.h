@@ -457,7 +457,7 @@ self_intersections( const FaceRange& face_range,
     typedef std::vector<std::pair<face_descriptor,face_descriptor> >SeqV;
     typedef std::back_insert_iterator<SeqV> SeqVI;
     SeqV face_pairs;
-    internal::All_faces_filter<SeqVI> all_faces_filter(std::back_inserter(face_pairs));
+    CGAL::internal::All_faces_filter<SeqVI> all_faces_filter(std::back_inserter(face_pairs));
     CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),all_faces_filter,cutoff);
 
     // (B) Parallel: perform the geometric tests
@@ -475,7 +475,7 @@ self_intersections( const FaceRange& face_range,
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, face_pairs.size()), all_pairs);
 
     // (C) Sequentially: Copy from the concurent container to the output iterator
-    for(int i=0; i < dointersect.size(); ++i){
+    for(std::size_t i=0; i < dointersect.size(); ++i){
       if(dointersect[i])
         *out ++= face_pairs[i];
     }
